@@ -384,6 +384,9 @@ tab:
       has_edges_plural: "Tento dílec obsahuje {{ count }} hranování"
       has_faces: "Tato část obsahuje {{ count }} dýhovaný povrch"
       has_faces_plural: "Tato část obsahuje {{ count }} dýhované povrchy"
+      size_increased_0: |
+      size_increased_1: |
+      size_increased_2: |
       edge_decremented: "Zmenšeno o tloušťku hrany ({{ decrement }})"
       edge_ymin: Hrana podél 1
       edge_ymax: Hrana podél 2
@@ -466,6 +469,13 @@ tab:
 
         *Příklad:* Pokud máte navržený díl o tloušťce *38 mm* a chcete jej vyrobit slepením dvou panelů o tloušťce *19 mm*, zadejte do tohoto pole **2**.
         *OpenCutList pak bude počítat 2 díly o tloušťce 19 mm místo 1 dílu o tloušťce 38 mm.*
+      cut_options: $t(tab.materials.edit_material.cut_options)
+      length_increase: $t(tab.materials.edit_material.length_increase)
+      length_increase_help: ""
+      width_increase: $t(tab.materials.edit_material.width_increase)
+      width_increase_help: ""
+      thickness_increase: $t(tab.materials.edit_material.thickness_increase)
+      thickness_increase_help: ""
       description: Popis
       description_help: |
         *Popis* vám umožňuje poskytnout personalizované informace o každé definované části.
@@ -2152,6 +2162,7 @@ tool:
     action_option_axes_context_status: Manipulovat podél os skupiny nebo dílců obsahující díl
     action_option_axes_entity_status: Manipulace podél os dílu
     action_option_options_mirror_status: Zrcadlení
+    action_toggle_raytest_status: ""
     warning:
       copies_disable_mirror: Více kopií zakáže volbu '$t(tool.smart_handle.action_option_options_mirror_status)'
   smart_reshape:

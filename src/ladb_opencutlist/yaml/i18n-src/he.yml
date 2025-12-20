@@ -384,6 +384,9 @@ tab:
       has_edges_plural: "החלק מכיל {{ count }} קאנטים"
       has_faces: "החלק מכיל משטח פורניר {{ count }}"
       has_faces_plural: "החלק מכיל {{ count }} משטחי פורניר"
+      size_increased_0: |
+      size_increased_1: |
+      size_increased_2: |
       edge_decremented: "עובי קאנט מופחת ({{ decrement }})"
       edge_ymin: קאנט לאורך 1
       edge_ymax: קאנט לאורך 2
@@ -466,6 +469,13 @@ tab:
 
         *דוגמה:* אם עבור חלק מצויר בעובי *38 מ"מ*, ברצונך להשיג זאת על ידי הדבקת שני לוחות של *19 מ"מ*, ציין **2** בשדה זה.
         *OpenCutList יספור 2 חתיכות בעובי 19 מ"מ במקום חתיכה אחת בעובי 38 מ"מ.*
+      cut_options: $t(tab.materials.edit_material.cut_options)
+      length_increase: $t(tab.materials.edit_material.length_increase)
+      length_increase_help: ""
+      width_increase: $t(tab.materials.edit_material.width_increase)
+      width_increase_help: ""
+      thickness_increase: $t(tab.materials.edit_material.thickness_increase)
+      thickness_increase_help: ""
       description: תיאור
       description_help: |
         *התיאור* מאפשר לך לספק מידע מותאם אישית על כל הגדרת חלק.
@@ -2043,6 +2053,7 @@ tool:
     action_option_options_measure_reversed_status: ""
     action_option_options_pull_centered: ""
     action_option_options_pull_centered_status: ""
+    action_option_options_pull_locked_status: ""
     action_option_options_ask_name: ""
     action_option_options_ask_name_status: ""
     action_measure_locked_status: ""
@@ -2081,10 +2092,9 @@ tool:
     action_option_axes_context_status: ""
     action_option_axes_entity_status: ""
     action_option_options_mirror_status: ""
+    action_toggle_raytest_status: ""
     warning:
       copies_disable_mirror: ""
-    error:
-      min_distance: ""
   smart_reshape:
     title: ""
     action_0: ""
@@ -2105,6 +2115,7 @@ tool:
     action_option_axes_active_status: ""
     action_option_axes_context_status: ""
     action_option_axes_entity_status: ""
+    action_option_options_centred_status: ""
     action_option_options_make_unique_status: ""
     error:
       curve_intersect: ""

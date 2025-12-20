@@ -384,6 +384,9 @@ tab:
       has_edges_plural: "Ten kawałek zawiera {{ count }} formirowane krawędzie"
       has_faces: "Ta część zawiera {{ count }} powierzchnię fornirowaną"
       has_faces_plural: "Ta część zawiera {{ count }} powierzchni fornirowanych"
+      size_increased_0: |
+      size_increased_1: |
+      size_increased_2: |
       edge_decremented: "Zmniejszona o grubość obrzeża ({{ decrement }})"
       edge_ymin: Długość krawędzi 1
       edge_ymax: Długość krawędzi 2
@@ -466,6 +469,13 @@ tab:
 
         *Przykład:* Jeśli masz część zaprojektowaną o grubości *38mm* i chcesz ją wykonać poprzez sklejenie dwóch paneli o grubości *19mm*, wpisz **2** w tym polu.
         *Wtedy OpenCutList policzy 2 części o grubości 19mm zamiast 1 części o grubości 38mm.*
+      cut_options: $t(tab.materials.edit_material.cut_options)
+      length_increase: $t(tab.materials.edit_material.length_increase)
+      length_increase_help: ""
+      width_increase: $t(tab.materials.edit_material.width_increase)
+      width_increase_help: ""
+      thickness_increase: $t(tab.materials.edit_material.thickness_increase)
+      thickness_increase_help: ""
       description: Opis
       description_help: |
         Opcja *Opis* umożliwia podanie spersonalizowanych informacji na temat każdej definicji części.
@@ -2113,6 +2123,7 @@ tool:
     action_option_options_measure_reversed_status: Odwróć kierunek pomiaru
     action_option_options_pull_centered: Wysokość wyśrodkowana
     action_option_options_pull_centered_status: Wyśrodkuj wysokość względem pierwszego punktu
+    action_option_options_pull_locked_status: ""
     action_option_options_ask_name: Nadawanie nazw częściom
     action_option_options_ask_name_status: Ręczne wprowadzanie nazw części
     action_measure_locked_status: Zablokuj na ostatnim pomiarze
@@ -2151,6 +2162,7 @@ tool:
     action_option_axes_context_status: Manipuluj wzdłuż osi grupy lub komponentu zawierającego element
     action_option_axes_entity_status: Manipuluj wzdłuż osi elementu
     action_option_options_mirror_status: Kopiowanie symetryczne
+    action_toggle_raytest_status: ""
     warning:
       copies_disable_mirror: Kopiowanie wielokrotne wyłącza opcję '$t(tool.smart_handle.action_option_options_mirror_status)'
   smart_reshape:

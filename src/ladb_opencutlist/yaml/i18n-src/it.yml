@@ -384,6 +384,9 @@ tab:
       has_edges_plural: "Questa parte contiene {{ count }} lati bordati"
       has_faces: "Questa parte contiene {{ count }} superficie placcata"
       has_faces_plural: "Questa parte contiene {{ count }} superfici placcate"
+      size_increased_0: |
+      size_increased_1: |
+      size_increased_2: |
       edge_decremented: "Dimensione ridotta dello spessore della bordatura ({{ decrement }})"
       edge_ymin: Lunghezza bordo 1
       edge_ymax: Lunghezza bordo 2
@@ -466,6 +469,13 @@ tab:
 
         *Esempio:* Per un elemento disegnato di spessore *38mm* che si desideri realizzare incollando insieme due pannelli da *19mm*, inserire **2** in questo campo.
         *OpenCutList conterà 2 pezzi da 19 mm di spessore anzichè uno da 38 mm.*
+      cut_options: $t(tab.materials.edit_material.cut_options)
+      length_increase: $t(tab.materials.edit_material.length_increase)
+      length_increase_help: ""
+      width_increase: $t(tab.materials.edit_material.width_increase)
+      width_increase_help: ""
+      thickness_increase: $t(tab.materials.edit_material.thickness_increase)
+      thickness_increase_help: ""
       description: Descrizione
       description_help: |
         La *Descrizione* permette di fornire informazioni personalizzate su ogni definizione di parte.
@@ -2152,6 +2162,7 @@ tool:
     action_option_axes_context_status: Modificare lungo gli assi del gruppo o del componente contenente il pezzo
     action_option_axes_entity_status: Modifica su un asse dell'elemento
     action_option_options_mirror_status: Copia simmetrica
+    action_toggle_raytest_status: ""
     warning:
       copies_disable_mirror: La copia multipla disabilita l'opzione '$t(tool.smart_handle.action_option_options_mirror_status)'
   smart_reshape:

@@ -22,7 +22,7 @@ https://extensions.sketchup.com/extension/00f0bf69-7a42-4295-9e1c-226080814e3e/o
 
 ## Supported Languages
 
-**OpenCutList** is available in French, English, German, Russian, Italian, Portuguese, Spanish, Polish, Czech, Vietnamese, Ukrainian, Dutch and Simplified Chinese. Experimental versions of Arabic and Hebrew are also available, although without RTL interface. The interface language of **OpenCutList** can be selected independently of the language version of SketchUp. Translators or reviewers can join us on [Transifex](https://www.transifex.com/opencutlist/opencutlist/) and actively participate in improving the quality of the translations.
+**OpenCutList** is available in French, English, German, Russian, Italian, Portuguese, Spanish, Polish, Czech, Vietnamese, Ukrainian, Dutch, Simplified Chinese, Serbian and Hungarian. Experimental versions of Arabic and Hebrew are also available, although without RTL interface. The interface language of **OpenCutList** can be selected independently of the language version of SketchUp. Translators or reviewers can join us on [Transifex](https://www.transifex.com/opencutlist/opencutlist/) and actively participate in improving the quality of the translations.
 
 ## Supported Units
 
@@ -30,7 +30,7 @@ In addition to the selected SketchUp unit, **OpenCutList** works with dimensions
 
 ## FAQ
 
-A few frequently asked questions are listed [here](docs/02-faq.md).
+A few frequently asked questions are listed in the [FAQ](https://docs.opencutlist.org/support/frequently-asked-questions).
 
 ## Documentation
 

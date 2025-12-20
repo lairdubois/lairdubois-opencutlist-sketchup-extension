@@ -384,6 +384,15 @@ tab:
       has_edges_plural: "Эти детали содержат {{ count }} кромки"
       has_faces: "Эта деталь содержит {{ count }} облицованную поверхность"
       has_faces_plural: "Эта деталь содержит {{ count }} облицованные поверхности"
+      size_increased_0: |
+        С учетом припуска материала
+        ({{ increase_1 }})
+      size_increased_1: |
+        С учетом припуска детали
+        ({{ increase_2 }})
+      size_increased_2: |
+        С учетом припуска материала и детали
+        ({{ increase_1 }} + {{ increase_2 }})
       edge_decremented: "Вычтена толщина кромки ({{ decrement }})"
       edge_ymin: Кромка по длине 1
       edge_ymax: Кромка по длине 2
@@ -466,6 +475,13 @@ tab:
 
         *Пример:* Если вы хотите сделать деталь толщиной *38 мм*, склеив две панели толщиной *19 мм*, то введите **2** в это поле.
         *OpenCutList будет считать 2 детали толщиной 19 мм вместо 1 детали толщиной 38 мм.*
+      cut_options: $t(tab.materials.edit_material.cut_options)
+      length_increase: $t(tab.materials.edit_material.length_increase)
+      length_increase_help: "Припуск, добавляемый к габаритной длине детали для определения её **длины раскроя**."
+      width_increase: $t(tab.materials.edit_material.width_increase)
+      width_increase_help: "Припуск, добавляемый к габаритной ширине детали для определения её **ширины раскроя**."
+      thickness_increase: $t(tab.materials.edit_material.thickness_increase)
+      thickness_increase_help: "Припуск, добавляемый к габаритной толщине детали для определения её **толщины раскроя**."
       description: Описание
       description_help: |
         Параметр *Описание* дает возможность задать необходимую уточняющую информацию по детали.
@@ -2152,6 +2168,7 @@ tool:
     action_option_axes_context_status: "Перемещение по осям группы или компонента, содержащего деталь"
     action_option_axes_entity_status: Перемещение по осям детали
     action_option_options_mirror_status: Симметричное копирование
+    action_toggle_raytest_status: Проецировать на следующую точку
     warning:
       copies_disable_mirror: Многократное копирование не работает $t(tool.smart_handle.action_option_options_mirror_status)'
   smart_reshape:
