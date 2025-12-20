@@ -470,12 +470,12 @@ tab:
         *مثال:* إن كانت لديك قطعة سمكها *38 مم* و تريدها أن تتكون من لصق لوحين سمك كل منهما *19 مم* فأدخل **2** في هذا الحقل.
         *عندها ستضع OpenCutList في حسابها أن هناك قطعتين سمكهما 19 مم بدلا من قطعة واحدة سمكها 38 مم.*
       cut_options: $t(tab.materials.edit_material.cut_options)
-      length_increase: ""
-      length_increase_help: ""  # TODO: singular version of tab.materials.edit_material.length_increase
-      width_increase: ""
-      width_increase_help: "" # TODO: singular version of tab.materials.edit_material.width_increase
-      thickness_increase: ""
-      thickness_increase_help: "" # TODO: singular version of tab.materials.edit_material.thickness_increase
+      length_increase: $t(tab.materials.edit_material.length_increase)
+      length_increase_help: ""
+      width_increase: $t(tab.materials.edit_material.width_increase)
+      width_increase_help: ""
+      thickness_increase: $t(tab.materials.edit_material.thickness_increase)
+      thickness_increase_help: ""
       description: تعليق وصفيّ
       description_help: |
         يتيح لك *الوصف* معلومات معلومات مخصصة عن تعريف كل قطعة.

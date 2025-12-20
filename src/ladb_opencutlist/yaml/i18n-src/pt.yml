@@ -384,6 +384,9 @@ tab:
       has_edges_plural: "Esta peça contém {{ count }} fitas de borda"
       has_faces: "Esta peça contém {{ count }} superfície laminada"
       has_faces_plural: "Esta peça contém {{ count }} superfícies laminadas"
+      size_increased_0: |
+      size_increased_1: |
+      size_increased_2: |
       edge_decremented: "Reduzido pela espessura das fitas da borda ({{ decrement }})"
       edge_ymin: Comprimento da borda 1
       edge_ymax: Comprimento da borda 2
@@ -466,6 +469,13 @@ tab:
 
         *Exemplo:* Se você quiser fazer um desenho com *38mm* de espessura colando dois painéis de *19mm*, digite **2** neste campo.
         *OpenCutList contará então 2 peças de 19mm de espessura ao invés de 1 peça de 38mm de espessura*
+      cut_options: $t(tab.materials.edit_material.cut_options)
+      length_increase: $t(tab.materials.edit_material.length_increase)
+      length_increase_help: ""
+      width_increase: $t(tab.materials.edit_material.width_increase)
+      width_increase_help: ""
+      thickness_increase: $t(tab.materials.edit_material.thickness_increase)
+      thickness_increase_help: ""
       description: Descrição
       description_help: |
         A *Descrição* permite que você forneça informações personalizadas sobre cada definição de peça.
@@ -2152,6 +2162,7 @@ tool:
     action_option_axes_context_status: Manipular ao longo dos eixos do grupo ou componente que contém a peça
     action_option_axes_entity_status: Manipular ao longo dos eixos da peça
     action_option_options_mirror_status: Copiar em simetria
+    action_toggle_raytest_status: ""
     warning:
       copies_disable_mirror: A cópia múltipla desativa a opção '$t(tool.smart_handle.action_option_options_mirror_status)'
   smart_reshape:

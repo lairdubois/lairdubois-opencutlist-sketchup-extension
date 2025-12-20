@@ -384,6 +384,9 @@ tab:
       has_edges_plural: "Esta parte contiene {{ count }} tiras de los cantos"
       has_faces: "Esta parte contiene {{ count }} superficie chapada"
       has_faces_plural: "Esta parte contiene {{ count }} superficies chapadas"
+      size_increased_0: |
+      size_increased_1: |
+      size_increased_2: |
       edge_decremented: "Reducido por el grosor de las tiras de los cantos ({{ decrement }})"
       edge_ymin: Longitud del borde 1
       edge_ymax: Longitud del borde 2
@@ -466,6 +469,13 @@ tab:
 
         *Ejemplo:* Si tienes una pieza dibujada de *38mm* de grosor y quieres hacerla pegando dos paneles de *19mm*, introduce **2** en este campo.
         *OpenCutList contará entonces 2 piezas de 19mm de grosor en lugar de 1 pieza de 38mm.*
+      cut_options: $t(tab.materials.edit_material.cut_options)
+      length_increase: $t(tab.materials.edit_material.length_increase)
+      length_increase_help: ""
+      width_increase: $t(tab.materials.edit_material.width_increase)
+      width_increase_help: ""
+      thickness_increase: $t(tab.materials.edit_material.thickness_increase)
+      thickness_increase_help: ""
       description: Descripción
       description_help: |
         La *Descripción* le permite proporcionar información personalizada sobre la definición de cada pieza.
@@ -2152,6 +2162,7 @@ tool:
     action_option_axes_context_status: Modificar la longitud de los ejes del grupo o componente que contienen la pieza
     action_option_axes_entity_status: Modificar la longitud de los ejes de la pieza
     action_option_options_mirror_status: Copiar simétricamente
+    action_toggle_raytest_status: ""
     warning:
       copies_disable_mirror: La copia múltiple desactiva la opción '$t(tool.smart_handle.action_option_options_mirror_status)'
   smart_reshape:

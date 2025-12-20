@@ -384,6 +384,9 @@ tab:
       has_edges_plural: "此部件包含 {{ count }} 条封边"
       has_faces: "此部件包含 {{ count }} 片贴面"
       has_faces_plural: "此部件包含 {{ count }} 片贴面"
+      size_increased_0: |
+      size_increased_1: |
+      size_increased_2: |
       edge_decremented: "减去封边条的厚度 ({{ decrement }})"
       edge_ymin: 边缘长度 1
       edge_ymax: 边缘长度 2
@@ -466,6 +469,13 @@ tab:
 
         *示例:* 如果您有一个厚度为 *38mm* 的部件, 并且您想通过将两块 *19mm* 的面板粘合在一起制作它, 那么在此字段中输入 **2** .
         *OpenCutList 将计算出2个厚度为 19mm 的部件, 而不是1个厚度为 38mm 的部件.*
+      cut_options: $t(tab.materials.edit_material.cut_options)
+      length_increase: $t(tab.materials.edit_material.length_increase)
+      length_increase_help: ""
+      width_increase: $t(tab.materials.edit_material.width_increase)
+      width_increase_help: ""
+      thickness_increase: $t(tab.materials.edit_material.thickness_increase)
+      thickness_increase_help: ""
       description: 描述
       description_help: |
         *描述* 允许您在每个部件定义上提供个性化的信息.
@@ -2109,6 +2119,7 @@ tool:
     action_option_options_measure_reversed_status: 反转测量
     action_option_options_pull_centered: 高度居中
     action_option_options_pull_centered_status: 以第一个点为基准居中高度
+    action_option_options_pull_locked_status: ""
     action_option_options_ask_name: 部件命名
     action_option_options_ask_name_status: 手动输入部件名称
     action_measure_locked_status: 锁定为上一次测量
@@ -2147,6 +2158,7 @@ tool:
     action_option_axes_context_status: 沿群组轴或包含部件的组件的轴操作
     action_option_axes_entity_status: 沿部件轴操作
     action_option_options_mirror_status: 对称复制
+    action_toggle_raytest_status: ""
     warning:
       copies_disable_mirror: 多重复制会停用 '$t(tool.smart_handle.action_option_options_mirror_status)' 选项
   smart_reshape:

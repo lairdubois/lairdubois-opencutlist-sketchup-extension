@@ -384,6 +384,9 @@ tab:
       has_edges_plural: "Bộ phận này chứa {{ count }} dải cạnh"
       has_faces: "Bộ phận này chứa {{ count }} mặt veneer"
       has_faces_plural: "Bộ phận này chứa {{ count }} mặt veneer"
+      size_increased_0: |
+      size_increased_1: |
+      size_increased_2: |
       edge_decremented: "Giảm theo độ dày của dải cạnh ({{ decrement }})"
       edge_ymin: Chiều dài cạnh 1
       edge_ymax: Chiều dài cạnh 2
@@ -466,6 +469,13 @@ tab:
 
         *Ví dụ:* Nếu bạn có một bộ phận được thiết kế với độ dày *38mm* và bạn muốn tạo ra nó bằng cách dán hai tấm *19mm* lại với nhau, hãy nhập **2** vào trường này.
         *OpenCutList sau đó sẽ đếm 2 phần có độ dày 19mm thay vì 1 phần 38mm.*
+      cut_options: $t(tab.materials.edit_material.cut_options)
+      length_increase: $t(tab.materials.edit_material.length_increase)
+      length_increase_help: ""
+      width_increase: $t(tab.materials.edit_material.width_increase)
+      width_increase_help: ""
+      thickness_increase: $t(tab.materials.edit_material.thickness_increase)
+      thickness_increase_help: ""
       description: Mô tả
       description_help: |
         *Mô tả* cho phép bạn cung cấp thông tin được cá nhân hóa về từng định nghĩa bộ phận.
@@ -2112,6 +2122,7 @@ tool:
     action_option_options_measure_reversed_status: Đảo ngược phép đo
     action_option_options_pull_centered: Độ cao trung tâm
     action_option_options_pull_centered_status: Độ cao trung tâm tại điểm đầu tiên
+    action_option_options_pull_locked_status: ""
     action_option_options_ask_name: Đặt tên bộ phận
     action_option_options_ask_name_status: Nhập tên bộ phận theo cách thủ công
     action_measure_locked_status: Khóa ở phép đo cuối cùng
@@ -2150,6 +2161,7 @@ tool:
     action_option_axes_context_status: Thao tác dọc theo các trục của nhóm hoặc thành phần chứa bộ phận
     action_option_axes_entity_status: Thao tác dọc theo trục bộ phận
     action_option_options_mirror_status: Sao chép đối xứng
+    action_toggle_raytest_status: ""
     warning:
       copies_disable_mirror: Nhiều bản sao vô hiệu hóa lựa chọn '$t(tool.smart_handle.action_option_options_mirror_status)'
   smart_reshape:

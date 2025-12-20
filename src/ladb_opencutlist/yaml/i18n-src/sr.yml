@@ -156,8 +156,8 @@ core:
       Da biste prijavili grešku: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
     not_available_in_context: Nije dostupno u ovom kontekstu
   error:
-    exception: ""
-    forbidden: ""
+    exception: "Greška: **{{ error }}**"
+    forbidden: "Nije ovlašćeno: **{{ error }}**"
     extern: "Spoljašnja greška: **{{ error }}**"
     feature_unavailable: "Ova funkcija zahteva SketchUp {{ version }} ili noviji"
     failed_export_to: |
@@ -308,7 +308,7 @@ tab:
     part_drawing_type_7: 3D
     tooltip:
       show_hide_block: Prikaži / sakrij grupu
-      show_hide_blocks: ""
+      show_hide_blocks: Prikaži/Sakrij sve grupe
       scroll_to_block: Pomaknite se do grupe
       not_available_std_width: "Širina *{{ std_dimension_real }}* nije definisana u standardnim širinama materijala '{{ material_name }}'"
       not_available_std_thickness: "Debljina *{{ std_dimension_real }}* nije definisana u standardnim debljinama materijala '{{ material_name }}'"
@@ -384,6 +384,9 @@ tab:
       has_edges_plural: "Ovaj deo sadrži {{ count }} kantovanih ivica"
       has_faces: "Ovaj komad sadrži {{ count }} obložene strane"
       has_faces_plural: "Ovaj komad sadrži {{ count }} obloženih strana"
+      size_increased_0: |
+      size_increased_1: |
+      size_increased_2: |
       edge_decremented: "Smanjeno za debljinu kant trake ({{ decrement }})"
       edge_ymin: Dužina ivice 1
       edge_ymax: Dužina ivice 2
@@ -466,6 +469,13 @@ tab:
 
         *Exemple :* Ako za nacrtani komad debljine *38* mm želite da ga napravite lepljenjem od dva panela od *19* mm, unesite **2** u ovo polje.
         *OpenCutList će tada uračunati 2 komada debljine 19 mm umesto 1 komada debljine 38 mm.*
+      cut_options: $t(tab.materials.edit_material.cut_options)
+      length_increase: $t(tab.materials.edit_material.length_increase)
+      length_increase_help: ""
+      width_increase: $t(tab.materials.edit_material.width_increase)
+      width_increase_help: ""
+      thickness_increase: $t(tab.materials.edit_material.thickness_increase)
+      thickness_increase_help: ""
       description: Opis
       description_help: |
         Polje *Opis* omogućava unošenje prilagođenih informacija za svaku definiciju komada.
@@ -2109,6 +2119,7 @@ tool:
     action_option_options_measure_reversed_status: Obrni merenje
     action_option_options_pull_centered: Centrirana visina
     action_option_options_pull_centered_status: Centriraj visinu na prvoj tački
+    action_option_options_pull_locked_status: ""
     action_option_options_ask_name: Imenovanje komada
     action_option_options_ask_name_status: Ručno unosite ime komada
     action_measure_locked_status: Zaključaj na poslednje merenje
@@ -2147,6 +2158,7 @@ tool:
     action_option_axes_context_status: Manipuliši po osama grupe/komponente koja sadrži komad
     action_option_axes_entity_status: Manipuliši po osama komada
     action_option_options_mirror_status: Kopiraj simetrično
+    action_toggle_raytest_status: ""
     warning:
       copies_disable_mirror: Višestruka kopija onemogućava opciju '$t(tool.smart_handle.action_option_options_mirror_status)'
   smart_reshape:

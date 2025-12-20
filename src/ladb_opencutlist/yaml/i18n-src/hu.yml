@@ -384,6 +384,9 @@ tab:
       has_edges_plural: "Ez az alkatrész {{ count }} élzárt"
       has_faces: "Ez az alkatrész {{ count }} furnérozott felületet tartalmaz"
       has_faces_plural: "Ez az alkatrész {{ count }} furnérozott felületet tartalmaz"
+      size_increased_0: |
+      size_increased_1: |
+      size_increased_2: |
       edge_decremented: "Csökkentve az élzáró szalag vastagságával ({{ decrement }})"
       edge_ymin: 1. Hosszanti él
       edge_ymax: 2. Hosszanti él
@@ -466,6 +469,13 @@ tab:
 
         *Példa:* Ha van egy *38mm* vastagságú tábla és két *19mm*-es tábla összeragasztásával szeretné elkészíteni, írjon **2**-t ebbe a mezőbe.
         *Az OpenCutList ekkor 2 db 19mm-es vastagságú táblát fog számolni 1 db 38mm-es helyett.*
+      cut_options: $t(tab.materials.edit_material.cut_options)
+      length_increase: $t(tab.materials.edit_material.length_increase)
+      length_increase_help: ""
+      width_increase: $t(tab.materials.edit_material.width_increase)
+      width_increase_help: ""
+      thickness_increase: $t(tab.materials.edit_material.thickness_increase)
+      thickness_increase_help: ""
       description: Leírás
       description_help: |
         A *Leírás* személyre szabott információt ad minden alkatrész definícióhoz.
@@ -2152,6 +2162,7 @@ tool:
     action_option_axes_context_status: "Kezelés annak a csoportnak vagy komponensnek a tengelyei mentén, amely tartalmazza az alkatrészt"
     action_option_axes_entity_status: Kezelés az alkatrész tengelyei mentén
     action_option_options_mirror_status: Szimmetrikus másolás
+    action_toggle_raytest_status: ""
     warning:
       copies_disable_mirror: Több másolat esetén a '$t(tool.smart_handle.action_option_options_mirror_status)' opció kikapcsolásra kerül
   smart_reshape:
