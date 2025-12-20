@@ -815,6 +815,12 @@ module Ladb::OpenCutList
                 folder_part_def.price = first_child_part_def.price
                 folder_part_def.tags = first_child_part_def.tags
                 folder_part_def.ignore_grain_direction = first_child_part_def.ignore_grain_direction
+                folder_part_def.length_increase = first_child_part_def.length_increase
+                folder_part_def.length_increased = first_child_part_def.length_increased
+                folder_part_def.width_increase = first_child_part_def.width_increase
+                folder_part_def.width_increased = first_child_part_def.width_increased
+                folder_part_def.thickness_increase = first_child_part_def.thickness_increase
+                folder_part_def.thickness_increased = first_child_part_def.thickness_increased
                 folder_part_def.edge_count = first_child_part_def.edge_count
                 folder_part_def.edge_pattern = first_child_part_def.edge_pattern
                 folder_part_def.edge_materials.merge!(first_child_part_def.edge_materials)
