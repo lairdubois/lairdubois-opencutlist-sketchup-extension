@@ -465,16 +465,15 @@ module Ladb::OpenCutList
           if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
 
             part_def = part.def
-            group_def = part.group.def
-            material_length_increase = group_def.material_attributes.l_length_increase
-            material_width_increase = group_def.material_attributes.l_width_increase
+            length_increased = group.material_length_increased || part.length_increased
+            width_increased = group.material_width_increased || part.width_increased
 
-            if material_length_increase > 0 || material_width_increase > 0
+            if length_increased || width_increased
 
               # Part is oversized: use cutting rect instead of the real part shape
 
-              length = part.def.cutting_length
-              width = part.def.cutting_width
+              length = part_def.cutting_length
+              width = part_def.cutting_width
               boxed = true
 
               shapes = [{
@@ -495,8 +494,8 @@ module Ladb::OpenCutList
                   vertices: poly_def.points.map { |point| { x: _to_packy_length(point.x), y: _to_packy_length(point.y) } }
                 }},
               }}
-              length = part.def.edge_cutting_length
-              width = part.def.edge_cutting_width
+              length = part_def.edge_cutting_length
+              width = part_def.edge_cutting_width
               boxed = false
 
             end
