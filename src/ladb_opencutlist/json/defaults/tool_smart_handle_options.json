@@ -12,7 +12,7 @@
     "mirror": false
   },
   "action_3": { /* ACTION_MOVE_LINE */
-    "move_measure_type": "inside",
+    "move_measure_type": "center",
     "axes": "context"
   },
   "action_4": { /* ACTION_DISTRIBUTE */

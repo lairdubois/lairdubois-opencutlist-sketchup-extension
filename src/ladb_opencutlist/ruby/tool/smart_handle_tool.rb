@@ -162,11 +162,11 @@ module Ladb::OpenCutList
       when ACTION_OPTION_MOVE_MEASURE_TYPE
         case option
         when ACTION_OPTION_COPY_MEASURE_TYPE_OUTSIDE
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.333,0.833L0.333,0.917L0.25,0.917M0.083,0.917L0,0.917L0,0.833M0.667,0.917L0.667,0.583L1.001,0.583L1.001,0.917L0.667,0.917M0,0.667L0,0.583L0.083,0.583M0.25,0.583L0.333,0.583L0.334,0.667 M0,0.25L1,0.25M0,0.083L0,0.417M1,0.083L1,0.417'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.333,0.833L0.333,0.917L0.25,0.917M0.083,0.917L0,0.917L0,0.833M0.667,0.917L0.667,0.583L1.001,0.583L1.001,0.917L0.667,0.917M0,0.667L0,0.583L0.083,0.583M0.25,0.583L0.333,0.583L0.334,0.667M0.167,0.25L1,0.25M0.167,0.083L0.167,0.417M1,0.083L1,0.417'))
         when ACTION_OPTION_COPY_MEASURE_TYPE_CENTERED
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.333,0.833L0.333,0.917L0.25,0.917M0.083,0.917L0,0.917L0,0.833M0.667,0.917L0.667,0.583L1.001,0.583L1.001,0.917L0.667,0.917M0,0.667L0,0.583L0.083,0.583M0.25,0.583L0.333,0.583L0.334,0.667 M0,0.25L0.833,0.25M0,0.083L0,0.417M0.833,0.083L0.833,0.417'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.333,0.833L0.333,0.917L0.25,0.917M0.083,0.917L0,0.917L0,0.833M0.667,0.917L0.667,0.583L1.001,0.583L1.001,0.917L0.667,0.917M0,0.667L0,0.583L0.083,0.583M0.25,0.583L0.333,0.583L0.334,0.667M0.167,0.25L0.833,0.25M0.167,0.083L0.167,0.417M0.833,0.083L0.833,0.417'))
         when ACTION_OPTION_COPY_MEASURE_TYPE_INSIDE
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.333,0.833L0.333,0.917L0.25,0.917M0.083,0.917L0,0.917L0,0.833M0.667,0.917L0.667,0.583L1.001,0.583L1.001,0.917L0.667,0.917M0,0.667L0,0.583L0.083,0.583M0.25,0.583L0.333,0.583L0.334,0.667 M0,0.25L0.667,0.25M0,0.083L0,0.417M0.667,0.083L0.667,0.417'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.333,0.833L0.333,0.917L0.25,0.917M0.083,0.917L0,0.917L0,0.833M0.667,0.917L0.667,0.583L1.001,0.583L1.001,0.917L0.667,0.917M0,0.667L0,0.583L0.083,0.583M0.25,0.583L0.333,0.583L0.334,0.667M0.167,0.25L0.667,0.25M0.167,0.083L0.167,0.417M0.667,0.083L0.667,0.417'))
         end
       when ACTION_OPTION_AXES
         case option
@@ -2161,7 +2161,7 @@ module Ladb::OpenCutList
 
   end
 
-  class SmartHandleMoveLineActionHandler < SmartHandleOneStepActionHandler
+  class SmartHandleMoveLineActionHandler < SmartHandleTwoStepActionHandler
 
     def initialize(tool, previous_action_handler = nil)
       super(SmartHandleTool::ACTION_MOVE_LINE, tool, previous_action_handler)
@@ -2390,11 +2390,6 @@ module Ladb::OpenCutList
       _preview_edit_axes(false, !mv.parallel?(_get_active_x_axis), !mv.parallel?(_get_active_y_axis), !mv.parallel?(_get_active_z_axis), true)
 
       mt = Geom::Transformation.translation(mv)
-      if _fetch_option_mirror
-        mt = Geom::Transformation.scaling(mpe, *mv.normalize.to_a.map { |f| (f.abs * -1) > 0 ? 1 : -1 })
-        mt *= Geom::Transformation.rotation(mpe, mv, Geometrix::ONE_PI)
-        mt *= Geom::Transformation.translation(mv)
-      end
 
       # Preview
 
@@ -2426,6 +2421,19 @@ module Ladb::OpenCutList
 
       @tool.append_3d(_create_floating_points(points: [ mps, mpe ], style: Kuix::POINT_STYLE_PLUS, stroke_color: Kuix::COLOR_DARK_GREY), LAYER_3D_HANDLE_PREVIEW)
       @tool.append_3d(_create_floating_points(points: [ dps, dpe ], style: Kuix::POINT_STYLE_CIRCLE, fill_color: Kuix::COLOR_WHITE, stroke_color: color, size: 2), LAYER_3D_HANDLE_PREVIEW)
+
+      # Preview vector
+
+      k_edge = Kuix::EdgeMotif3d.new
+      k_edge.start.copy!(@picked_handle_start_point)
+      k_edge.end.copy!(@mouse_snap_point)
+      k_edge.line_stipple = Kuix::LINE_STIPPLE_SOLID
+      k_edge.line_width = 1.5 unless @locked_axis.nil?
+      k_edge.end_arrow = true
+      k_edge.arrow_size = @tool.get_unit * 2.0
+      k_edge.color = color
+      k_edge.on_top = true
+      @tool.append_3d(k_edge, LAYER_3D_HANDLE_PREVIEW)
 
       # Preview bounds
 
@@ -2470,7 +2478,7 @@ module Ladb::OpenCutList
       distance = _read_user_text_length(tool, text, dv.length)
       return true if distance.nil?
 
-      @picked_handle_end_point = dps.offset(dv, distance)
+      @picked_handle_end_point = @picked_handle_start_point.offset(dv, distance)
 
       _handle_entity
       Sketchup.set_status_text('', SB_VCB_VALUE)
@@ -2565,10 +2573,10 @@ module Ladb::OpenCutList
       ve = vs.reverse
 
       lps = center
-      lpe = pe.project_to_line(line)
+      lpe = center.offset(v) # pe.project_to_line(line)
 
       mps = lps
-      dps = lps.offset(vs)
+      dps = lps #.offset(vs)
       dpe = lpe
       case type
       when SmartHandleTool::ACTION_OPTION_MOVE_MEASURE_TYPE_OUTSIDE
