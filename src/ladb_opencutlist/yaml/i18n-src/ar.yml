@@ -385,8 +385,14 @@ tab:
       has_faces: "تحتوي هذه القطعة على {{ count }} سطح مكسو بقشرة خشب"
       has_faces_plural: "تحتوي هذه القطعة على {{ count }} أسطح مكسوة بقشرة خشب"
       size_increased_0: |
+        زيدت بقيمة التمديد الخاص بالخامة
+        ({{ increase_1 }})
       size_increased_1: |
+        زيدت بقيمة التمديد الخاص بالقِطعة
+        ({{ increase_2 }})
       size_increased_2: |
+        زيدت بقيمة التمديد الخاص بالخامة و القِطعة
+        ({{ increase_1 }} + {{ increase_2 }})
       edge_decremented: "تقليل بقدر سُمك الحواشي ({{ decrement }})"
       edge_ymin: طول الحاشية 1
       edge_ymax: طول الحاشية 2
@@ -471,11 +477,11 @@ tab:
         *عندها ستضع OpenCutList في حسابها أن هناك قطعتين سمكهما 19 مم بدلا من قطعة واحدة سمكها 38 مم.*
       cut_options: $t(tab.materials.edit_material.cut_options)
       length_increase: $t(tab.materials.edit_material.length_increase)
-      length_increase_help: ""
+      length_increase_help: طُبق تمديد على الطول لتحديد **الطول الأولي**.
       width_increase: $t(tab.materials.edit_material.width_increase)
-      width_increase_help: ""
+      width_increase_help: طُبق تمديد على العرض لتحديد **العرض الأولي**.
       thickness_increase: $t(tab.materials.edit_material.thickness_increase)
-      thickness_increase_help: ""
+      thickness_increase_help: طُبق تمديد على السُّمك لتحديد **السمك الأولي**.
       description: تعليق وصفيّ
       description_help: |
         يتيح لك *الوصف* معلومات معلومات مخصصة عن تعريف كل قطعة.
@@ -2162,7 +2168,7 @@ tool:
     action_option_axes_context_status: المعالجة على طول محاور المجموعة أو العنصر الذي يحتوي على القِطعة
     action_option_axes_entity_status: المعالجة على طول محاور القطعة
     action_option_options_mirror_status: نسخ بشكل متناظر
-    action_toggle_raytest_status: ""
+    action_toggle_raytest_status: أسقط على النقطة التالية
     warning:
       copies_disable_mirror: النسخ المتعدد يعطل خيار '$t(tool.smart_handle.action_option_options_mirror_status)'
   smart_reshape:
