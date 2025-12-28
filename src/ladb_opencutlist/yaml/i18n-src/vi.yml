@@ -125,7 +125,7 @@ core:
       dialog: OpenCutList
       smart_draw: Vẽ các bộ phận
       smart_handle: Thao tác các bộ phận
-      smart_reshape: ""
+      smart_reshape: Định hình lại các bộ phận
       smart_paint: Tô màu các bộ phận
       smart_axes: Định hướng các bộ phận
       smart_export: Xuất các bộ phận
@@ -156,8 +156,8 @@ core:
       Để báo cáo lỗi: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
     not_available_in_context: Không có sẳn trong bối cảnh này
   error:
-    exception: ""
-    forbidden: ""
+    exception: "Lỗi: **{{ error }}**"
+    forbidden: "Không được phép: **{{ error }}**"
     extern: "Lỗi bên ngoài : **{{ error }}**"
     feature_unavailable: "Chức năng này yêu cầu Sketchup phiên bản {{ version }} hoặc cao hơn"
     failed_export_to: |
@@ -385,8 +385,14 @@ tab:
       has_faces: "Bộ phận này chứa {{ count }} mặt veneer"
       has_faces_plural: "Bộ phận này chứa {{ count }} mặt veneer"
       size_increased_0: |
+        Tăng lên do kích thước quá khổ so với vật liệu
+        ({{ increase_1 }})
       size_increased_1: |
+        Tăng lên do kích thước quá khổ của bộ phận đó.
+        ({{ increase_2 }})
       size_increased_2: |
+        Tăng lên do kích thước quá khổ của Vật liệu và bộ phận
+        ({{ increase_1 }} + {{ increase_2 }})
       edge_decremented: "Giảm theo độ dày của dải cạnh ({{ decrement }})"
       edge_ymin: Chiều dài cạnh 1
       edge_ymax: Chiều dài cạnh 2
@@ -471,11 +477,11 @@ tab:
         *OpenCutList sau đó sẽ đếm 2 phần có độ dày 19mm thay vì 1 phần 38mm.*
       cut_options: $t(tab.materials.edit_material.cut_options)
       length_increase: $t(tab.materials.edit_material.length_increase)
-      length_increase_help: ""
+      length_increase_help: Kích thước lớn hơn mức tiêu chuẩn được áp dụng cho chiều dài thành phẩm để xác định **chiều dài thô**.
       width_increase: $t(tab.materials.edit_material.width_increase)
-      width_increase_help: ""
+      width_increase_help: Kích thước lớn hơn quy định được áp dụng cho chiều rộng hoàn thiện để xác định **chiều rộng thô**.
       thickness_increase: $t(tab.materials.edit_material.thickness_increase)
-      thickness_increase_help: ""
+      thickness_increase_help: Độ dày được điều chỉnh vượt quá kích thước tiêu chuẩn để xác định **độ dày thô**.
       description: Mô tả
       description_help: |
         *Mô tả* cho phép bạn cung cấp thông tin được cá nhân hóa về từng định nghĩa bộ phận.
@@ -1762,21 +1768,22 @@ tab:
       tags: Nhãn hiệu
       layer_name: Thẻ
       explode: Phân tách
-      explode_message: ""
+      explode_message: "Bạn có xác nhận việc tách của **{{ name }}**?"
       erase: Trống
-      erase_message: ""
+      erase_message: "Bạn có xác nhận việc xóa bỏ **{{ name }}**?"
     deep_make_unique:
-      title: ""
+      title: Tạo đối tượng độc lập
     deep_rename_parts:
-      title: ""
+      title: Đổi tên bộ phận
       info_0: |
+        Tính năng này cho phép bạn đổi tên các bộ phận có trong tập hợp đã chọn bằng cách áp dụng công thức bên dưới cho từng đối tượng.
       formula: Công thức
-      old_name: ""
-      new_name: ""
-      count: ""
+      old_name: Tên gốc
+      new_name: Tên mới
+      count: Số lượng
     create_container:
-      title_group: ""
-      title_component: ""
+      title_group: "Tạo Group"
+      title_component: "Tạo Component"
     option:
       general: Chung
       show_hidden_instances: Hiển thị các đối tượng ẩn
@@ -1792,7 +1799,7 @@ tab:
       no_entities: Mô hình của bạn trống!
       node_not_found: Không tìm thấy nút
       entity_not_found: Không tìm thấy đối tượng
-      invalid_target: ""
+      invalid_target: Phiên bản được nhắm mục tiêu không hỗ trợ thao tác này.
       obsolete_outliner: "Không thể, cấu trúc được tạo ra đã lỗi thời. Xin vui lòng, tái tạo nó."
     tip:
       no_node: |
@@ -2067,37 +2074,37 @@ tool:
       invalid_divider: "Số chia {{ value }} không hợp lệ"
       invalid_offset: "Độ lệch {{ value }} không hợp lệ"
       invalid_segment_count: "Số lượng phân đoạn {{ value }} không hợp lệ. Nó phải nằm trong khoảng từ 3 đến 999."
-      syntax_error: ""
-      unexpected_close_parenthesis: ""
-      missing_close_parenthesis: ""
-      missing_operand: ""
-      zero_division: ""
+      syntax_error: "Lỗi cú pháp: {{ error }}"
+      unexpected_close_parenthesis: "Dấu ngoặc đóng không mong muốn"
+      missing_close_parenthesis: "Thiếu dấu ngoặc đóng"
+      missing_operand: "Thiếu toán hạng"
+      zero_division: "Chia cho số 0"
       lt_min_distance: "Khoảng cách {{ value1 }} nhỏ hơn khoảng cách tối thiểu {{ value2 }}"
-      gt_max_distance: ""
+      gt_max_distance: "Khoảng cách {{ value1 }} lớn hơn khoảng cách tối đa của {{ value2 }}"
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_select:
     state_0_status: Nhấp vào một bộ phận để chọn nó
-    state_0_to_6_status: ""
-    state_4_status: ""
-    state_5_status: ""
-    state_6_status: ""
+    state_0_to_6_status: Chọn một phần tử cha
+    state_4_status: "Kéo chuột vào một mảnh ghép giống hệt có cùng mảnh ghép cha để thêm nó vào vùng chọn, sau đó thả chuột để tiếp tục."
+    state_5_status: Vuốt để thêm vào vùng chọn và thả ra để tiếp tục
+    state_6_status: Chọn một phần tử từ danh sách
     warning:
-      no_active_part: ""
+      no_active_part: Trước tiên bạn phải di chuột qua một bộ phận
   smart_draw:
     title: Vẽ
     action_0: Vẽ hình chữ nhật
     action_0_status: Vẽ thể tích trên một hình chữ nhật
-    action_0_state_0_status: ""
+    action_0_state_0_status: Nhấp chuột để đặt điểm đầu tiên của hình chữ nhật.
     action_0_state_1_status: "Nhấp để xác định góc đối diện hoặc nhập chiều dài, chiều rộng"
     action_1: Vẽ hình tròn
-    action_1_state_0_status: ""
+    action_1_state_0_status: Nhấp chuột để đặt tâm của hình tròn.
     action_1_status: Vẽ thể tích trên một hình tròn
     action_1_state_1_radius_status: Nhấp để đặt bán kính hoặc nhập khoảng cách
     action_1_state_1_diameter_status: Nhấp để đặt đường kính hoặc nhập khoảng cách
     action_2: Vẽ đa giác
-    action_2_state_0_status: ""
+    action_2_state_0_status: Nhấp chuột để đặt điểm đầu tiên của đa giác
     action_2_status: Vẽ thể tích trên một hình đa giác
     action_2_state_1_status: Nhấp để xác định điểm mới hoặc nhập khoảng cách
     action_x_state_2_status: Nhấp để đặt độ cao hoặc nhập khoảng cách
@@ -2122,7 +2129,7 @@ tool:
     action_option_options_measure_reversed_status: Đảo ngược phép đo
     action_option_options_pull_centered: Độ cao trung tâm
     action_option_options_pull_centered_status: Độ cao trung tâm tại điểm đầu tiên
-    action_option_options_pull_locked_status: ""
+    action_option_options_pull_locked_status: Khóa độ cao trên một trục
     action_option_options_ask_name: Đặt tên bộ phận
     action_option_options_ask_name_status: Nhập tên bộ phận theo cách thủ công
     action_measure_locked_status: Khóa ở phép đo cuối cùng
@@ -2133,18 +2140,18 @@ tool:
   smart_handle:
     title: Xử lý
     action_0: Lựa chọn
-    action_0_status: ""
+    action_0_status: Chọn một bộ phận
     action_1: Sao chép trong dòng
-    action_1_status: ""
+    action_1_status: Sao chép một bộ phận dọc theo một trục.
     action_1_state_2_status: Nhấp để đặt bản sao của bộ phận hoặc nhập khoảng cách
     action_2: Sao chép trong lưới
-    action_2_status: ""
+    action_2_status: Sao chép một bộ phận theo lưới
     action_2_state_2_status: Nhấp để đặt bản sao của bộ phận hoặc nhập hai khoảng cách
     action_3: Di chuyển
-    action_3_status: ""
+    action_3_status: Di chuyển một bộ phận dọc theo một trục.
     action_3_state_2_status: Nhấp để đặt bộ phận hoặc nhập khoảng cách
     action_4: Phân tán
-    action_4_status: ""
+    action_4_status: Phân bố đều bộ phận dọc theo một trục.
     action_4_state_1_status: Nhấp để đặt điểm đo đầu tiên
     action_4_state_2_status: Nhấp để đặt điểm đo thứ hai hoặc nhập khoảng cách
     action_option_group_copy_measure_type: Đo lường
@@ -2161,33 +2168,33 @@ tool:
     action_option_axes_context_status: Thao tác dọc theo các trục của nhóm hoặc thành phần chứa bộ phận
     action_option_axes_entity_status: Thao tác dọc theo trục bộ phận
     action_option_options_mirror_status: Sao chép đối xứng
-    action_toggle_raytest_status: ""
+    action_toggle_raytest_status: Dự án ở điểm tiếp theo
     warning:
       copies_disable_mirror: Nhiều bản sao vô hiệu hóa lựa chọn '$t(tool.smart_handle.action_option_options_mirror_status)'
   smart_reshape:
-    title: ""
-    action_0: ""
-    action_0_status: ""
-    action_0_state_1_status: ""
-    action_0_state_1a_status: ""
-    action_0_state_1b_status: ""
-    action_0_state_1c_status: ""
-    action_0_state_10_status: ""
-    action_0_state_11_status: ""
-    action_0_state_12_status: ""
-    action_0_state_2_status: ""
+    title: Định hình lại
+    action_0: Kéo dài
+    action_0_status: Kéo dài một bộ phận
+    action_0_state_1_status: Nhấp vào tay cầm để kéo dài
+    action_0_state_1a_status: Nhấp chuột vào mặt phẳng cắt để di chuyển nó.
+    action_0_state_1b_status: Thêm một mặt phẳng cắt
+    action_0_state_1c_status: Xóa một mặt phẳng cắt
+    action_0_state_10_status: Kéo mặt phẳng cắt để di chuyển nó.
+    action_0_state_11_status: Nhấp chuột để thêm mặt phẳng cắt
+    action_0_state_12_status: Nhấp chuột vào mặt phẳng cắt để xóa nó.
+    action_0_state_2_status: Nhấp chuột để xác nhận động tác kéo dài hoặc nhập khoảng cách.
     action_option_group_stretch_measure_type: Đo lường
     action_option_group_axes: Trục
     action_option_group_options: Tùy chọn
     action_option_stretch_measure_type_outside_status: Đo lường bên ngoài
-    action_option_stretch_measure_type_offset_status: ""
+    action_option_stretch_measure_type_offset_status: Đo lường sự khác biệt
     action_option_axes_active_status: Thao tác dọc theo các trục đang hoạt động
     action_option_axes_context_status: Thao tác dọc theo các trục của nhóm hoặc thành phần chứa bộ phận
     action_option_axes_entity_status: Thao tác dọc theo trục bộ phận
-    action_option_options_centred_status: ""
-    action_option_options_make_unique_status: ""
+    action_option_options_centred_status: Tập trung vào các yếu tố bị kéo dài
+    action_option_options_make_unique_status: Làm cho các phần tử kéo dài trở nên độc lập
     error:
-      curve_intersect: ""
+      curve_intersect: Một trong các mặt phẳng cắt ngang một đường cong không co giãn.
   smart_paint:
     title: Sơn
     default_material: Không có vật liệu
