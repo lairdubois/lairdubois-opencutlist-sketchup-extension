@@ -519,6 +519,10 @@ module Ladb::OpenCutList
 
     PX_INFLATE_VALUE = 50
 
+    OPERATION_NONE = 0
+    OPERATION_MOVE = 1
+    OPERATION_SPLIT = 2
+
     @@last_cutters_data = nil
 
     def initialize(tool, previous_action_handler = nil)
@@ -1688,7 +1692,7 @@ module Ladb::OpenCutList
                         .each do |md5, container_defs|
 
             make_unique_d = make_unique_o && count_stretched_instances < definition.count_used_instances
-            make_unique_c = (make_unique_g || make_unique_d || container_defs.size < count_stretched_instances) && container_defs.any? { |container_def| container_def.operation == SplitContainerDef::OPERATION_SPLIT }
+            make_unique_c = (make_unique_g || make_unique_d || container_defs.size < count_stretched_instances) && container_defs.any? { |container_def| container_def.operation == OPERATION_SPLIT }
 
             # puts "  make_unique_d: #{make_unique_d}"
             # puts "  make_unique_c: #{make_unique_c}"
@@ -1773,7 +1777,7 @@ module Ladb::OpenCutList
             # ----------
 
             container_def.edge_defs
-                         .select { |edge_def| edge_def.operation == SplitEdgeDef::OPERATION_MOVE }
+                         .select { |edge_def| edge_def.operation == OPERATION_MOVE }
                          .group_by { |edge_def| edge_def.start_section_def }
                          .sort_by { |section_def, _| section_def.index * sorting_order }.to_h # Sort edges to be sure that farest points are moved first
                          .each do |section_def, edge_defs|
@@ -1801,7 +1805,7 @@ module Ladb::OpenCutList
             # ----------
 
             container_def.snap_defs
-                         .select { |snap_def| snap_def.operation == SplitSnapDef::OPERATION_MOVE }
+                         .select { |snap_def| snap_def.operation == OPERATION_MOVE }
                          .group_by { |snap_def| snap_def.section_def }
                          .each do |section_def, snap_defs|
 
@@ -1832,7 +1836,7 @@ module Ladb::OpenCutList
           # Move container
           # --------------
 
-          next if container_def.operation == SplitContainerDef::OPERATION_NONE ||
+          next if container_def.operation == OPERATION_NONE ||
                   container_def.section_def.nil?
 
           edv = edvs[container_def.section_def]
@@ -2047,7 +2051,7 @@ module Ladb::OpenCutList
 
             # No section_def for the model
 
-            operation = SplitContainerDef::OPERATION_SPLIT
+            operation = OPERATION_SPLIT
 
           # Check if the container is glued or always face camera to search the section according to its origin only
           elsif drawing_container_def.container.respond_to?(:glued_to) && drawing_container_def.container.glued_to ||
@@ -2058,7 +2062,7 @@ module Ladb::OpenCutList
 
             # Container bounds are not considered in this case
 
-            operation = SplitContainerDef::OPERATION_MOVE
+            operation = OPERATION_MOVE
 
           else
 
@@ -2072,7 +2076,7 @@ module Ladb::OpenCutList
               # Default container section_def is where the bounds extreme is the nearest origin
               section_def = section_defs.find { |section_def| section_def.contains_point?(min_max, xyz_method) }
 
-              operation = SplitContainerDef::OPERATION_SPLIT
+              operation = OPERATION_SPLIT
 
 
               # color = [ Kuix::COLOR_RED, Kuix::COLOR_GREEN, Kuix::COLOR_BLUE, Kuix::COLOR_MAGENTA ][depth % 4]
@@ -2094,14 +2098,14 @@ module Ladb::OpenCutList
               # Add the container bounds to the section bounds
               section_def.bounds.add(drawing_container_def.bounds)
 
-              operation = SplitContainerDef::OPERATION_MOVE
+              operation = OPERATION_MOVE
 
             end
 
           end
 
         else
-          operation = SplitContainerDef::OPERATION_NONE
+          operation = OPERATION_NONE
         end
 
         container_def = SplitContainerDef.new(
@@ -2115,7 +2119,7 @@ module Ladb::OpenCutList
         container_defs << container_def
 
         # Keep container section as entire parent section
-        parent_section_def = section_def unless operation == SplitContainerDef::OPERATION_SPLIT
+        parent_section_def = section_def unless operation == OPERATION_SPLIT
 
         # k_box = Kuix::BoxMotif.new
         # k_box.bounds.copy!(drawing_container_def.bounds)
@@ -2146,10 +2150,10 @@ module Ladb::OpenCutList
                 edge.start.position,
                 section_def,
                 section_def,
-                if operation == SplitContainerDef::OPERATION_SPLIT
-                  SplitEdgeDef::OPERATION_MOVE
+                if operation == OPERATION_SPLIT
+                  OPERATION_MOVE
                 else
-                  SplitEdgeDef::OPERATION_NONE
+                  OPERATION_NONE
                 end
               )
               fn_store_vertex_section_def.call(edge.start, drawing_container_def, section_def)
@@ -2189,10 +2193,10 @@ module Ladb::OpenCutList
             em.edge.start.position,
             start_section_def,
             end_section_def,
-            if operation == SplitContainerDef::OPERATION_SPLIT
-              start_section_def == end_section_def ? SplitEdgeDef::OPERATION_MOVE : SplitEdgeDef::OPERATION_SPLIT
+            if operation == OPERATION_SPLIT
+              start_section_def == end_section_def ? OPERATION_MOVE : OPERATION_SPLIT
             else
-              SplitEdgeDef::OPERATION_NONE
+              OPERATION_NONE
             end
           )
 
@@ -2221,10 +2225,10 @@ module Ladb::OpenCutList
             sm.transformation,
             sm.snap.position,
             section_def,
-            if operation == SplitContainerDef::OPERATION_SPLIT
-              SplitSnapDef::OPERATION_MOVE
+            if operation == OPERATION_SPLIT
+              OPERATION_MOVE
             else
-              SplitSnapDef::OPERATION_NONE
+              OPERATION_NONE
             end
           )
 
@@ -2406,10 +2410,10 @@ module Ladb::OpenCutList
           unless parent.nil?
             local_axis = axis.transform((transformation * container.transformation).inverse)
             data << (local_axis.angle_between(axis) % Math::PI).round(6) if local_axis.valid?  # Differentiating rotations but not perfect aligned mirrors
-            data << local_axis.length.to_f.round(6) if local_axis.valid? && operation == SplitContainerDef::OPERATION_SPLIT  # Differentiating scaling
+            data << local_axis.length.to_f.round(6) if local_axis.valid? && operation == OPERATION_SPLIT  # Differentiating scaling
           end
 
-          if operation == SplitContainerDef::OPERATION_SPLIT
+          if operation == OPERATION_SPLIT
             data << edge_defs.map { |edge_def|
               [
                 edge_def.edge.object_id,
@@ -2444,9 +2448,6 @@ module Ladb::OpenCutList
       end
 
     end
-    SplitContainerDef::OPERATION_NONE = 0
-    SplitContainerDef::OPERATION_MOVE = 1
-    SplitContainerDef::OPERATION_SPLIT = 2
 
     SplitEdgeDef = Struct.new(
       :edge,
@@ -2471,9 +2472,6 @@ module Ladb::OpenCutList
       end
 
     end
-    SplitEdgeDef::OPERATION_NONE = 0
-    SplitEdgeDef::OPERATION_MOVE = 1
-    SplitEdgeDef::OPERATION_SPLIT = 2
 
     SplitSnapDef = Struct.new(
       :snap,
@@ -2496,8 +2494,6 @@ module Ladb::OpenCutList
       end
 
     end
-    SplitSnapDef::OPERATION_NONE = 0
-    SplitSnapDef::OPERATION_MOVE = 1
 
   end
 
