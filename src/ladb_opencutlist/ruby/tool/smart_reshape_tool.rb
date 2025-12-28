@@ -1643,24 +1643,6 @@ module Ladb::OpenCutList
       { X_AXIS => :x, Y_AXIS => :y, Z_AXIS => :z }[@picked_axis]
     end
 
-    def _assert_valid_cutters
-      return false if !@cutters.is_a?(Hash) ||
-                      @picked_axis.nil? ||
-                      !(ratios = @cutters[@picked_axis]).is_a?(Array) || ratios.empty? ||
-                      (section_defs, _ = _get_split_def.values_at(:section_defs)).nil?
-
-      xyz_method = _get_xyz_method
-
-      # Check section pt_boxes oversize
-      unless section_defs.all? { |section_def| !section_def.bounds.valid? || section_def.min_xyz <= section_def.bounds.min.send(xyz_method) && section_def.max_xyz >= section_def.bounds.max.send(xyz_method) }
-        UI.beep
-        @tool.notify_errors([ "tool.smart_reshape.error.curve_intersect" ])
-        return false
-      end
-
-      true
-    end
-
     # -----
 
     def _reshape_entity
@@ -1960,6 +1942,24 @@ module Ladb::OpenCutList
         Y_AXIS => fn_valid_cutters.call(data, 'y'),
         Z_AXIS => fn_valid_cutters.call(data, 'z'),
       }
+    end
+
+    def _assert_valid_cutters
+      return false if !@cutters.is_a?(Hash) ||
+                      @picked_axis.nil? ||
+                      !(ratios = @cutters[@picked_axis]).is_a?(Array) || ratios.empty? ||
+                      (section_defs, _ = _get_split_def.values_at(:section_defs)).nil?
+
+      xyz_method = _get_xyz_method
+
+      # Check section pt_boxes oversize
+      unless section_defs.all? { |section_def| !section_def.bounds.valid? || section_def.min_xyz <= section_def.bounds.min.send(xyz_method) && section_def.max_xyz >= section_def.bounds.max.send(xyz_method) }
+        UI.beep
+        @tool.notify_errors([ "tool.smart_reshape.error.curve_intersect" ])
+        return false
+      end
+
+      true
     end
 
     # -----
