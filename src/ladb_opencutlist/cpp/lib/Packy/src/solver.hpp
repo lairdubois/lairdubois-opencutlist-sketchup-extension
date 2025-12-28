@@ -838,8 +838,12 @@ namespace Packy {
                     height,
                     profit,
                     copies,
-                    oriented,
-                    group_id
+                    oriented
+            );
+
+            builder.instance_builder().set_item_type_group(
+                item_type_id,
+                group_id
             );
 
             return item_type_id;
