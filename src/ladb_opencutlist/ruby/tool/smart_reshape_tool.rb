@@ -932,7 +932,7 @@ module Ladb::OpenCutList
 
     end
 
-    def onPartSelected
+    def onSelected
 
       _reset_drawing_def
 

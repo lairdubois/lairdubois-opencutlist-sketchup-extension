@@ -446,7 +446,7 @@ module Ladb::OpenCutList
 
     end
 
-    def onPartSelected
+    def onSelected
       return true if super
 
       if (sibling_instances = _get_sibling_instances).is_a?(Array)
@@ -723,7 +723,7 @@ module Ladb::OpenCutList
 
   class SmartHandleOneStepActionHandler < SmartHandleActionHandler
 
-    def onPartSelected
+    def onSelected
       super
 
       set_state(STATE_HANDLE)
@@ -771,7 +771,7 @@ module Ladb::OpenCutList
       super
     end
 
-    def onPartSelected
+    def onSelected
       super
 
       set_state(STATE_HANDLE_START)
@@ -789,7 +789,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def onPartSelected
+    def onSelected
 
       Sketchup.active_model.selection.clear
       Sketchup.active_model.selection.add(get_active_selection_instances)
@@ -964,7 +964,7 @@ module Ladb::OpenCutList
 
     end
 
-    def onPartSelected
+    def onSelected
       super
       @operator = '/'
       @number = [ @cpy_instances.size, 1 ].max
@@ -2800,7 +2800,7 @@ module Ladb::OpenCutList
 
     end
 
-    def onPartSelected
+    def onSelected
       super
       @number = @cpy_instances.size + 1
       _refresh

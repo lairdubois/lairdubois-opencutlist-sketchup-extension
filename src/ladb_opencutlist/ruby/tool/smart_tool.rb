@@ -2650,7 +2650,7 @@ module Ladb::OpenCutList
 
           end
 
-          onPartSelected
+          onSelected
 
         elsif (selection_path = @previous_action_handler.get_active_selection_path) &&
               (instances = @previous_action_handler.get_active_selection_instances)
@@ -2658,7 +2658,7 @@ module Ladb::OpenCutList
           _reset_active_part
           _set_active_selection(selection_path, instances)
 
-          onPartSelected
+          onSelected
 
         end
 
@@ -2680,7 +2680,7 @@ module Ladb::OpenCutList
             _set_active_selection(active_path, entities)
           end
 
-          onPartSelected
+          onSelected
 
         end
 
@@ -2819,7 +2819,7 @@ module Ladb::OpenCutList
           Sketchup.active_model.selection.clear
           return true
         end
-        onPartSelected
+        onSelected
         return true
 
       when STATE_SELECT_RECT
@@ -2866,7 +2866,7 @@ module Ladb::OpenCutList
               _reset_active_part
               _set_active_selection(active_path, instances.to_a)
 
-              onPartSelected
+              onSelected
 
               return true
             end
@@ -3011,7 +3011,7 @@ module Ladb::OpenCutList
               else
                 _set_active_selection(path[0...depth-path.size], [ entity ])
               end
-              onPartSelected
+              onSelected
             end
             k_panel.append(k_btn)
 
@@ -3067,7 +3067,7 @@ module Ladb::OpenCutList
 
     end
 
-    def onPartSelected
+    def onSelected
     end
 
     # -----
