@@ -336,7 +336,7 @@ gulp.task('c_libs_prepare', function () {
 
     var config = options.config ? options.config : 'Release';
 
-    return run('cmake -S .. -B ' + cmakeBuildDir + ' -DCMAKE_BUILD_TYPE=' + config, { verbosity: 3 }).exec();
+    return run('cmake -S .. -B ' + cmakeBuildDir + ' -DCMAKE_BUILD_TYPE=' + config + ' --fresh', { verbosity: 3 }).exec();
 });
 
 gulp.task('c_libs_build', function () {
