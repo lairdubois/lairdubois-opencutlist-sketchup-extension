@@ -234,7 +234,7 @@ module Ladb::OpenCutList
       drawing_def.input_plane_manipulator.transformation = tai * drawing_def.input_plane_manipulator.transformation unless drawing_def.input_plane_manipulator.nil?
       drawing_def.input_line_manipulator.transformation = tai * drawing_def.input_line_manipulator.transformation unless drawing_def.input_line_manipulator.nil?
 
-      # STEP 2 : Populate faces, edges and clines manipulators
+      # STEP 2 : Populate manipulators
 
       face_validator = nil
       if drawing_def.input_plane_manipulator

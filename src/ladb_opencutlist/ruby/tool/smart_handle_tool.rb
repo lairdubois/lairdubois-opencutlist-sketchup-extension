@@ -2568,15 +2568,14 @@ module Ladb::OpenCutList
       # Restore to 'Global' space
 
       center = ecenter.transform(et)
-      line = [ center, v ]
       vs = evs.transform(et)
       ve = vs.reverse
 
       lps = center
-      lpe = center.offset(v) # pe.project_to_line(line)
+      lpe = center.offset(v)
 
       mps = lps
-      dps = lps #.offset(vs)
+      dps = lps
       dpe = lpe
       case type
       when SmartHandleTool::ACTION_OPTION_MOVE_MEASURE_TYPE_OUTSIDE
