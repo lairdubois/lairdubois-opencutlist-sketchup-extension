@@ -147,6 +147,10 @@
                         <hr>
                         <section id="ladb_cutlist_part_section_increase">
                             <h4>{{ 'tab.cutlist.edit_part.cut_options'|i18next }}</h4>
+                            <div class="row" style="margin-bottom: 10px;">
+                                <div class="col-xs-offset-3 col-xs-3 text-center"><i class="ladb-opencutlist-icon-size-increase-0"></i> {{ 'tab.cutlist.edit_part.material'|i18next }}</div>
+                                <div class="col-xs-offset-1 col-xs-3 text-center"><i class="ladb-opencutlist-icon-size-increase-1"></i> {{ 'default.part_single'|i18next|capitalize }}</div>
+                            </div>
                             <div class="form-group">
                                 <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.length_increase_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                                 <label class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.length_increase'|i18next }}</label>
@@ -154,7 +158,7 @@
                                     <div class="ladb-part-increase">
                                         <div class="ladb-part-increase-material">
                                             <span class="ladb-flex-grow-1">{{ group.material_length_increase }}</span>
-                                            <div class="ladb-minitools"><a href="#" class="ladb-btn-edit-material" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edit_material'|i18next({ 'material_name':group.material_display_name }) }}..."><i class="ladb-opencutlist-icon-edit"></i></a></div>
+                                            <div class="ladb-minitools"><a href="#" class="ladb-btn-edit-material" data-toggle="tooltip" data-html="true" title="{{ 'tab.cutlist.tooltip.edit_material'|i18next({ 'material_name':group.material_display_name }) }}..."><i class="ladb-opencutlist-icon-edit"></i></a></div>
                                         </div>
                                         <div class="ladb-part-increase-plus"><i class="ladb-opencutlist-icon-plus"></i></div>
                                         <div class="ladb-part-increase-part">
@@ -171,7 +175,7 @@
                                         <div class="ladb-part-increase">
                                             <div class="ladb-part-increase-material">
                                                 <span class="ladb-flex-grow-1">{{ group.material_width_increase }}</span>
-                                                <div class="ladb-minitools"><a href="#" class="ladb-btn-edit-material" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edit_material'|i18next({ 'material_name':group.material_display_name }) }}..."><i class="ladb-opencutlist-icon-edit"></i></a></div>
+                                                <div class="ladb-minitools"><a href="#" class="ladb-btn-edit-material" data-toggle="tooltip" data-html="true" title="{{ 'tab.cutlist.tooltip.edit_material'|i18next({ 'material_name':group.material_display_name }) }}..."><i class="ladb-opencutlist-icon-edit"></i></a></div>
                                             </div>
                                             <div class="ladb-part-increase-plus"><i class="ladb-opencutlist-icon-plus"></i></div>
                                             <div class="ladb-part-increase-part">
@@ -183,7 +187,7 @@
                             {% endif %}
                             {% if group.material_type == 1 %}  {# 1 = TYPE_SOLID_WOOD #}
                                 <div class="form-group">
-                                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.thickness_increase_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-html="true" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.thickness_increase_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                                     <label class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.thickness_increase'|i18next }}</label>
                                     <div class="col-xs-7">
                                         <div class="ladb-part-increase">
