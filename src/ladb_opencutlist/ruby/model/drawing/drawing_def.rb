@@ -93,6 +93,10 @@ module Ladb::OpenCutList
         cline_manipulator.transformation = ti * cline_manipulator.transformation
       end
 
+      @snap_manipulators.each do |snap_manipulator|
+        snap_manipulator.transformation = ti * snap_manipulator.transformation
+      end
+
       @container_defs.each do |container_def|
         container_def.transform!(transformation)
       end

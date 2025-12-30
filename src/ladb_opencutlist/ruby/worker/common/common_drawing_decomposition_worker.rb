@@ -104,7 +104,7 @@ module Ladb::OpenCutList
       if @ipaths.one?
 
         ipath = @ipaths.first
-        if (leaf = ipath.leaf)
+        if (leaf = ipath.leaf) && !leaf.respond_to?(:entities)
           container_path = ipath.to_a[0...-1]
           container = container_path.last
           entities = [ leaf ]

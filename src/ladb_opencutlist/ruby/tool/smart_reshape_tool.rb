@@ -984,7 +984,7 @@ module Ladb::OpenCutList
       @picked_grip_index = nil
       @picked_cutter_index = nil
 
-      drawing_def = _get_drawing_def
+      return false unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
       et = _get_edit_transformation
       eb = _get_drawing_def_edit_bounds(drawing_def, et)
       keb = Kuix::Bounds3d.new.copy!(eb)
@@ -1469,7 +1469,7 @@ module Ladb::OpenCutList
       fn_preview_container.call(container_defs.first, axis_color)
 
       # eti = et.inverse
-      # epmin, eps, epe, evpspe, reversed, section_defs = split_def.values_at(:epmin, :eps, :epe, :evpspe, :reversed, :section_defs)
+      # epmin, eps, evpspe, reversed, section_defs = split_def.values_at(:epmin, :eps, :evpspe, :reversed, :section_defs)
       # l = [ epmin, evpspe ]
       # epo = reversed ? lpe.transform(eti) : eps
       # epomax = reversed ? eps : lpe.transform(eti)
@@ -1500,6 +1500,9 @@ module Ladb::OpenCutList
       # k_points = _create_floating_points(points: epomax, fill_color: Kuix::COLOR_MAGENTA)
       # k_points.transformation = et
       # @tool.append_3d(k_points, LAYER_3D_RESHAPE_PREVIEW)
+      # k_points = _create_floating_points(points: ORIGIN, style: Kuix::POINT_STYLE_DIAMOND, fill_color: Kuix::COLOR_CYAN, stroke_color: Kuix::COLOR_BLACK)
+      # k_points.transformation = et
+      # @tool.append_3d(k_points, LAYER_3D_RESHAPE_PREVIEW)
 
 
       # colors = [ Kuix::COLOR_CYAN, Kuix::COLOR_MAGENTA, Kuix::COLOR_YELLOW ]
@@ -1510,7 +1513,7 @@ module Ladb::OpenCutList
       #   dv = edvs[section_def]
       #
       #   # if section_def.bounds.valid?
-      #   #   k_box = Kuix::BoxMotif.new
+      #   #   k_box = Kuix::BoxMotif3d.new
       #   #   k_box.bounds.copy!(section_def.bounds)
       #   #   k_box.bounds.translate!(*dv.to_a) if dv.valid?
       #   #   k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
@@ -1521,7 +1524,7 @@ module Ladb::OpenCutList
       #   # end
       #
       #   if section_def.bounds.valid?
-      #     k_box = Kuix::BoxMotif.new
+      #     k_box = Kuix::BoxMotif3d.new
       #     k_box.bounds.copy!(section_def.bounds)
       #     k_box.bounds.translate!(*dv.to_a)
       #     k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
@@ -1841,9 +1844,6 @@ module Ladb::OpenCutList
 
           edv = edvs[container_def.section_def]
 
-          # Special case if container_def is root. Use its container transformation because container_def.transformation is relative to model origin there
-          t = container_def.parent.nil? ? container_def.container.transformation : container_def.transformation
-
           # Subtract parent container move
           unless container_def.parent.nil? || container_def.parent.section_def.nil?
             edv -= edvs[container_def.parent.section_def]
@@ -1851,7 +1851,7 @@ module Ladb::OpenCutList
           end
 
           target_position = container_def.ref_position
-          target_position = target_position.offset(edv.transform(container_def.depth == 0 ? t : t.inverse)) if edv.valid?
+          target_position = target_position.offset(edv.transform(container_def.depth == 0 ? et : container_def.transformation.inverse)) if edv.valid?
           current_position = ORIGIN.transform(container.transformation)
 
           v = current_position.vector_to(target_position)
@@ -2036,7 +2036,7 @@ module Ladb::OpenCutList
         # Extract container
         # -----------------
 
-        # k_box = Kuix::BoxMotif.new
+        # k_box = Kuix::BoxMotif3d.new
         # k_box.bounds.copy!(drawing_container_def.bounds)
         # k_box.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
         # k_box.line_width = 2
@@ -2049,7 +2049,7 @@ module Ladb::OpenCutList
 
           if drawing_container_def.is_root? && !get_active_selection_instances.one?
 
-            # No section_def for the model
+            # No section_def if the root container is just the instance holder
 
             operation = OPERATION_SPLIT
 
@@ -2081,7 +2081,7 @@ module Ladb::OpenCutList
 
               # color = [ Kuix::COLOR_RED, Kuix::COLOR_GREEN, Kuix::COLOR_BLUE, Kuix::COLOR_MAGENTA ][depth % 4]
               #
-              # k_box = Kuix::BoxMotif.new
+              # k_box = Kuix::BoxMotif3d.new
               # k_box.bounds.copy!(drawing_container_def.bounds)
               # k_box.color = color
               # @tool.append_3d(k_box, LAYER_3D_PART_PREVIEW)
@@ -2092,6 +2092,7 @@ module Ladb::OpenCutList
               #   size: [ 6, 4, 2, 1 ][depth % 4]
               # )
               # @tool.append_3d(k_points, LAYER_3D_PART_PREVIEW)
+
 
             else
 
@@ -2121,7 +2122,7 @@ module Ladb::OpenCutList
         # Keep container section as entire parent section
         parent_section_def = section_def unless operation == OPERATION_SPLIT
 
-        # k_box = Kuix::BoxMotif.new
+        # k_box = Kuix::BoxMotif3d.new
         # k_box.bounds.copy!(drawing_container_def.bounds)
         # k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
         # k_box.line_width = 2
