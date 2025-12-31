@@ -1851,7 +1851,11 @@ module Ladb::OpenCutList
           end
 
           target_position = container_def.ref_position
-          target_position = target_position.offset(edv.transform(container_def.depth == 0 ? et : container_def.transformation.inverse)) if edv.valid?
+          target_position = target_position.offset(edv.transform(if container_def.depth == 0
+                                                                   PathUtils.get_transformation(get_active_selection_path, IDENTITY).inverse * container_def.transformation
+                                                                 else
+                                                                   container_def.transformation.inverse
+                                                                 end)) if edv.valid?
           current_position = ORIGIN.transform(container.transformation)
 
           v = current_position.vector_to(target_position)
