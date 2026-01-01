@@ -58,12 +58,12 @@ module Ladb::OpenCutList
     COLOR_BOX = Kuix::COLOR_BLACK
     COLOR_ACTION = Kuix::COLOR_MAGENTA
     COLOR_ACTION_FILL = Sketchup::Color.new(255, 0, 255, 0.2).blend(COLOR_MESH, 0.5).freeze
-    COLOR_LENGTH = Kuix::COLOR_RED
-    COLOR_LENGTH_FILL = Sketchup::Color.new(255, 0, 0, 0.2).freeze
-    COLOR_WIDTH = Kuix::COLOR_GREEN
-    COLOR_WIDTH_FILL = Sketchup::Color.new(0, 255, 0, 0.2).freeze
-    COLOR_THICKNESS = Kuix::COLOR_BLUE
-    COLOR_THICKNESS_FILL = Sketchup::Color.new(0, 0, 255, 0.2).freeze
+    COLOR_LENGTH = Kuix::COLOR_X
+    COLOR_LENGTH_FILL = ColorUtils.color_translucent(COLOR_LENGTH, 0.3).freeze
+    COLOR_WIDTH = Kuix::COLOR_Y
+    COLOR_WIDTH_FILL = ColorUtils.color_translucent(COLOR_WIDTH, 0.3).freeze
+    COLOR_THICKNESS = Kuix::COLOR_Z
+    COLOR_THICKNESS_FILL = ColorUtils.color_translucent(COLOR_THICKNESS, 0.3).freeze
 
     def initialize(
 
