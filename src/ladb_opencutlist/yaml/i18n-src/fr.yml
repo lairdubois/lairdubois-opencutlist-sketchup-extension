@@ -2149,6 +2149,7 @@ tool:
     action_2_state_2_status: Cliquez pour placer les copies de la pièce ou entrez deux distances
     action_3: Déplacer
     action_3_status: Déplacer une pièce le long d'un axe
+    action_3_state_1_status: Cliquez pour déterminer le premier point de mesure
     action_3_state_2_status: Cliquez pour placer la pièce ou entrez une distance
     action_4: Répartir
     action_4_status: Répartir une pièce le long d'un axe

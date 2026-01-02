@@ -2182,7 +2182,7 @@ module Ladb::OpenCutList
     def get_state_cursor(state)
 
       case state
-      when STATE_SELECT, STATE_HANDLE
+      when STATE_SELECT
         return @tool.cursor_select_move_line
       end
 
@@ -2205,12 +2205,16 @@ module Ladb::OpenCutList
 
     def onToolSuspend(tool, view)
       super
-      _unhide_instances if @state == STATE_HANDLE
+      if @state == STATE_HANDLE
+        _unhide_instances
+      end
     end
 
     def onToolResume(tool, view)
       super
-      _hide_instances if @state == STATE_HANDLE
+      if @state == STATE_HANDLE
+        _hide_instances
+      end
     end
 
     def onToolKeyDown(tool, key, repeat, flags, view)
@@ -2260,11 +2264,14 @@ module Ladb::OpenCutList
       @locked_axis = nil
 
       if has_active_selection?
-        if new_state == STATE_HANDLE
-          @tool.remove_3d(LAYER_3D_PART_PREVIEW)  # Remove part preview
-          _hide_instances
-        else
-          _unhide_instances
+        if has_active_selection?
+          if new_state == STATE_HANDLE
+            @tool.set_3d_visibility(false, [ LAYER_3D_PART_PREVIEW, LAYER_3D_PART_SIBLING_PREVIEW ]) # Hide part preview
+            _hide_instances
+          else
+            @tool.set_3d_visibility(true, [ LAYER_3D_PART_PREVIEW, LAYER_3D_PART_SIBLING_PREVIEW ]) # Unhide part preview
+            _unhide_instances
+          end
         end
       end
 
@@ -2670,12 +2677,18 @@ module Ladb::OpenCutList
 
     def onToolSuspend(tool, view)
       super
-      _unhide_instances if @state == STATE_HANDLE
+      if @state == STATE_HANDLE
+        _unhide_instances
+        _unhide_sibling_instances
+      end
     end
 
     def onToolResume(tool, view)
       super
-      _hide_instances if @state == STATE_HANDLE
+      if @state == STATE_HANDLE
+        _hide_instances
+        _hide_sibling_instances
+      end
     end
 
     def onToolLButtonDoubleClick(tool, flags, x, y, view)
