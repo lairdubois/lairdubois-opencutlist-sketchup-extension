@@ -12,7 +12,7 @@ module Ladb::OpenCutList
   require_relative '../utils/axis_utils'
   require_relative '../utils/transformation_utils'
 
-  class SmartAxesToolNew < SmartTool
+  class SmartAxes2Tool < SmartTool
 
     include LayerVisibilityHelper
     include FaceTrianglesHelper
@@ -167,19 +167,31 @@ module Ladb::OpenCutList
 
   # -----
 
-  class SmartAxesActionHandler < SmartActionHandler
-
-    include SmartActionHandlerPartHelper
+  class SmartAxesActionHandler < SmartSelectActionHandler
 
     LAYER_3D_AXES_PREVIEW = 2
     LAYER_3D_ACTION_PREVIEW = 3
 
+    COLOR_ACTION = Kuix::COLOR_MAGENTA
+    COLOR_ACTION_FILL = Sketchup::Color.new(255, 0, 255, 0.2).blend(COLOR_PART, 0.5).freeze
+
     def initialize(action, tool, previous_action_handler = nil)
       super
 
-      @global_instance_transformation = nil
-      @drawing_def = nil
+    end
 
+    # -----
+
+    def get_state_status(state)
+
+      case state
+
+      when STATE_SELECT
+        return @tool.get_action_status(@tool.fetch_action)
+
+      end
+
+      super
     end
 
     # -----
@@ -187,7 +199,7 @@ module Ladb::OpenCutList
     def onToolLButtonUp(tool, flags, x, y, view)
       super
 
-      if @active_part_entity_path.nil?
+      unless has_active_part?
         UI.beep
         return true
       end
@@ -202,36 +214,17 @@ module Ladb::OpenCutList
       onToolLButtonUp(tool, flags, x, y, view)
     end
 
-    def onActivePartChanged(part_entity_path, part, highlighted = false)
-      @global_instance_transformation = nil
-      @drawing_def = nil
-      super
-    end
-
     def onToolActionOptionStored(tool, action, option_group, option)
       _preview_action
-    end
-
-    def onPickerChanged(picker, view)
-      _pick_part(picker, view)
-      super
     end
 
     # -----
 
     protected
 
-    def _reset
-      @global_instance_transformation = nil
-      @drawing_def = nil
-      super
-      set_state(0)
-    end
-
     # -----
 
     def _preview_part(part_entity_path, part, layer = 0, highlighted = false)
-      super
       if part
 
         # Show part infos
@@ -242,10 +235,10 @@ module Ladb::OpenCutList
       else
 
         @tool.remove_tooltip
-        @tool.remove_3d(LAYER_3D_AXES_PREVIEW)
-        @tool.remove_3d(LAYER_3D_ACTION_PREVIEW)
+        @tool.remove_3d([ LAYER_3D_AXES_PREVIEW, LAYER_3D_ACTION_PREVIEW ])
 
       end
+      super
     end
 
     def _preview_action
@@ -265,25 +258,14 @@ module Ladb::OpenCutList
       super
     end
 
-    def _get_drawing_def_edit_bounds(drawing_def, et)
-      eb = Geom::BoundingBox.new
-      if drawing_def.is_a?(DrawingDef)
-
-        points = drawing_def.face_manipulators.flat_map { |manipulator| manipulator.outer_loop_manipulator.points }
-        eti = et.inverse
-
-        eb.add(points.map { |point| point.transform(eti * drawing_def.transformation) })
-
-      end
-      eb
-    end
-
   end
 
   class SmartAxesFlipActionHandler < SmartAxesActionHandler
 
+    PX_INFLATE_VALUE = 50
+
     def initialize(tool, previous_action_handler = nil)
-      super(SmartAxesTool::ACTION_FLIP, tool, previous_action_handler)
+      super(SmartAxes2Tool::ACTION_FLIP, tool, previous_action_handler)
     end
 
     # -- STATE --
@@ -299,14 +281,7 @@ module Ladb::OpenCutList
     def get_state_status(state)
       super +
              ' | ↑↓ + ' + PLUGIN.get_i18n_string('tool.default.transparency') + ' = ' + PLUGIN.get_i18n_string('tool.default.toggle_depth') + '.' +
-             ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_1') + '.' +
-             ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_3') + '.'
-    end
-
-    # ------
-
-    def start
-      super
+             ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_1') + '.'
     end
 
     # -----
@@ -325,6 +300,8 @@ module Ladb::OpenCutList
       true
     end
 
+    # -----
+
     def _preview_action
       super
       if (drawing_def = _get_drawing_def).is_a?(DrawingDef)
@@ -332,17 +309,18 @@ module Ladb::OpenCutList
         et = _get_edit_transformation
         eb = _get_drawing_def_edit_bounds(drawing_def, et)
 
-        px_offset = Sketchup.active_model.active_view.pixels_to_model(50, eb.center.transform(et))
+        inch_inflate_value = Sketchup.active_model.active_view.pixels_to_model(PX_INFLATE_VALUE, eb.center.transform(et))
 
-        fn_preview_plane = lambda do |color, section|
+        fn_preview_plane = lambda do |color, section, patterns_transformation|
 
-          k_box = Kuix::BoxMotif3d.new
-          k_box.bounds.copy!(section)
-          k_box.line_width = 2
-          k_box.line_stipple = Kuix::LINE_STIPPLE_SOLID
-          k_box.color = color
-          k_box.transformation = et
-          @tool.append_3d(k_box, LAYER_3D_ACTION_PREVIEW)
+          k_rectangle = Kuix::RectangleMotif3d.new
+          k_rectangle.bounds.copy!(section)
+          k_rectangle.line_width = 1
+          k_rectangle.line_stipple = Kuix::LINE_STIPPLE_SOLID
+          k_rectangle.color = color
+          k_rectangle.transformation = et
+          k_rectangle.patterns_transformation = patterns_transformation
+          @tool.append_3d(k_rectangle, LAYER_3D_ACTION_PREVIEW)
 
           k_mesh = Kuix::Mesh.new
           k_mesh.add_quads(section.get_quads)
@@ -353,15 +331,29 @@ module Ladb::OpenCutList
         end
 
         if _fetch_option_direction_length
-          fn_preview_plane.call(Kuix::COLOR_X, Kuix::Bounds3d.new.copy!(eb).x_section.inflate!(0, px_offset, px_offset))
+          fn_preview_plane.call(
+            Kuix::COLOR_X,
+            Kuix::Bounds3d.new.copy!(eb).x_section.inflate!(0, inch_inflate_value, inch_inflate_value),
+            Geom::Transformation.axes(ORIGIN, Z_AXIS, Y_AXIS, X_AXIS)
+          )
         elsif _fetch_option_direction_width
-          fn_preview_plane.call(Kuix::COLOR_Y, Kuix::Bounds3d.new.copy!(eb).y_section.inflate!(px_offset, 0, px_offset))
+          fn_preview_plane.call(
+            Kuix::COLOR_Y,
+            Kuix::Bounds3d.new.copy!(eb).y_section.inflate!(inch_inflate_value, 0, inch_inflate_value),
+            Geom::Transformation.axes(ORIGIN, X_AXIS, Z_AXIS, Y_AXIS)
+          )
         elsif _fetch_option_direction_thickness
-          fn_preview_plane.call(Kuix::COLOR_Z, Kuix::Bounds3d.new.copy!(eb).z_section.inflate!(px_offset, px_offset, 0))
+          fn_preview_plane.call(
+            Kuix::COLOR_Z,
+            Kuix::Bounds3d.new.copy!(eb).z_section.inflate!(inch_inflate_value, inch_inflate_value, 0),
+            IDENTITY
+          )
         end
 
       end
     end
+
+    # -----
 
     def _do_action
       if (drawing_def = _get_drawing_def).is_a?(DrawingDef)
@@ -369,7 +361,8 @@ module Ladb::OpenCutList
         et = _get_edit_transformation
         eb = _get_drawing_def_edit_bounds(drawing_def, et)
 
-        size = @active_part.def.size
+        part = get_active_part
+        size = part.def.size
 
         scaling = {
           X_AXIS => 1,
@@ -403,15 +396,15 @@ module Ladb::OpenCutList
     # -----
 
     def _fetch_option_direction_length
-      @tool.fetch_action_option_boolean(@action, SmartAxesToolNew::ACTION_OPTION_DIRECTION, SmartAxesToolNew::ACTION_OPTION_DIRECTION_LENGTH)
+      @tool.fetch_action_option_boolean(@action, SmartAxes2Tool::ACTION_OPTION_DIRECTION, SmartAxes2Tool::ACTION_OPTION_DIRECTION_LENGTH)
     end
 
     def _fetch_option_direction_width
-      @tool.fetch_action_option_boolean(@action, SmartAxesToolNew::ACTION_OPTION_DIRECTION, SmartAxesToolNew::ACTION_OPTION_DIRECTION_WIDTH)
+      @tool.fetch_action_option_boolean(@action, SmartAxes2Tool::ACTION_OPTION_DIRECTION, SmartAxes2Tool::ACTION_OPTION_DIRECTION_WIDTH)
     end
 
     def _fetch_option_direction_thickness
-      @tool.fetch_action_option_boolean(@action, SmartAxesToolNew::ACTION_OPTION_DIRECTION, SmartAxesToolNew::ACTION_OPTION_DIRECTION_THICKNESS)
+      @tool.fetch_action_option_boolean(@action, SmartAxes2Tool::ACTION_OPTION_DIRECTION, SmartAxes2Tool::ACTION_OPTION_DIRECTION_THICKNESS)
     end
 
   end
@@ -419,7 +412,7 @@ module Ladb::OpenCutList
   class SmartAxesSwapLengthWidthActionHandler < SmartAxesActionHandler
 
     def initialize(tool, previous_action_handler = nil)
-      super(SmartAxesTool::ACTION_SWAP_LENGTH_WIDTH, tool, previous_action_handler)
+      super(SmartAxes2Tool::ACTION_SWAP_LENGTH_WIDTH, tool, previous_action_handler)
     end
 
     # -- STATE --
@@ -435,14 +428,7 @@ module Ladb::OpenCutList
     def get_state_status(state)
       super +
         ' | ↑↓ + ' + PLUGIN.get_i18n_string('tool.default.transparency') + ' = ' + PLUGIN.get_i18n_string('tool.default.toggle_depth') + '.' +
-        ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_2') + '.' +
-        ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_3') + '.'
-    end
-
-    # ------
-
-    def start
-      super
+        ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_2') + '.'
     end
 
     # -----
@@ -465,11 +451,14 @@ module Ladb::OpenCutList
       true
     end
 
+    # -----
+
     def _do_action
 
-      definition = @active_part.def.definition
+      part = get_active_part
+      definition = part.def.definition
 
-      size = @active_part.def.size
+      size = part.def.size
       x_axis, y_axis, z_axis = size.axes
 
       ti = Geom::Transformation.axes(
@@ -512,7 +501,7 @@ module Ladb::OpenCutList
   class SmartAxesSwapFrontBackActionHandler < SmartAxesActionHandler
 
     def initialize(tool, previous_action_handler = nil)
-      super(SmartAxesTool::ACTION_SWAP_FRONT_BACK, tool, previous_action_handler)
+      super(SmartAxes2Tool::ACTION_SWAP_FRONT_BACK, tool, previous_action_handler)
     end
 
     # -- STATE --
@@ -528,16 +517,8 @@ module Ladb::OpenCutList
     def get_state_status(state)
       super +
         ' | ↑↓ + ' + PLUGIN.get_i18n_string('tool.default.transparency') + ' = ' + PLUGIN.get_i18n_string('tool.default.toggle_depth') + '.' +
-        ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_3') + '.' +
-        ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_3') + '.'
+        ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_3') + '.'
     end
-
-    # ------
-
-    def start
-      super
-    end
-
 
     # -----
 
@@ -576,11 +557,14 @@ module Ladb::OpenCutList
       end
     end
 
+    # -----
+
     def _do_action
 
-      definition = @active_part.def.definition
+      part = get_active_part
+      definition = part.def.definition
 
-      size = @active_part.def.size
+      size = part.def.size
       x_axis, y_axis, z_axis = size.axes
 
       ti = Geom::Transformation.axes(
@@ -623,7 +607,7 @@ module Ladb::OpenCutList
   class SmartAxesAdaptAxesActionHandler < SmartAxesActionHandler
 
     def initialize(tool, previous_action_handler = nil)
-      super(SmartAxesTool::ACTION_ADAPT_AXES, tool, previous_action_handler)
+      super(SmartAxes2Tool::ACTION_ADAPT_AXES, tool, previous_action_handler)
     end
 
     # -- STATE --
@@ -641,13 +625,178 @@ module Ladb::OpenCutList
         ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_4') + '.'
     end
 
+    # -----
+
+    def onPickerChanged(picker, view)
+      super
+      @tool.remove_3d(LAYER_3D_ACTION_PREVIEW)
+      _preview_action
+    end
+
     # ------
 
-    def start
+    protected
+
+    def _preview_all_instances?
+      true
+    end
+
+    def _preview_arrows?
+      true
+    end
+
+    def _preview_box?
+      true
+    end
+
+    def _can_pick_deeper?
+      false
+    end
+
+    # -----
+
+    def _preview_action
       super
+      unless @picker.picked_face.nil? || !has_active_part?
 
-      puts "#{self.class.name} start"
+        part = get_active_part
+        instance_info = part.def.get_one_instance_info
 
+        origin, x_axis, y_axis, z_axis, plane_manipulator, line_manipulator = _get_input_axes(instance_info)
+        t = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis)
+
+        if plane_manipulator.is_a?(FaceManipulator)
+
+          # Highlight picked face
+          k_mesh = Kuix::Mesh.new
+          k_mesh.add_triangles(plane_manipulator.triangles)
+          k_mesh.background_color = COLOR_ACTION_FILL
+          @tool.append_3d(k_mesh, LAYER_3D_ACTION_PREVIEW)
+
+        end
+
+        if (t * part.def.size.oriented_transformation).identity?
+
+          # Already adapted
+          # tooltip_type = MESSAGE_TYPE_SUCCESS # TODO
+
+        else
+
+          bounds = Geom::BoundingBox.new
+          bounds.add(_compute_children_faces_triangles(instance_info.entity.definition.entities, t.inverse))
+
+          # Front arrow
+          k_arrow = Kuix::ArrowMotif3d.new
+          k_arrow.patterns_transformation = Geom::Transformation.translation(Z_AXIS)
+          k_arrow.bounds.origin.copy!(bounds.min)
+          k_arrow.bounds.size.copy!(bounds)
+          k_arrow.color = COLOR_ACTION
+          k_arrow.line_width = 2
+          k_arrow.transformation = instance_info.transformation * t
+          @tool.append_3d(k_arrow, LAYER_3D_ACTION_PREVIEW)
+
+          # Box helper
+          k_box = Kuix::BoxMotif3d.new
+          k_box.bounds.copy!(bounds)
+          k_box.color = COLOR_ACTION
+          k_box.line_width = 1
+          k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+          k_box.transformation = instance_info.transformation * t
+          @tool.append_3d(k_box, LAYER_3D_ACTION_PREVIEW)
+
+          # Axes helper
+          k_axes_helper = Kuix::AxesHelper.new
+          k_axes_helper.transformation = instance_info.transformation * t
+          @tool.append_3d(k_axes_helper, LAYER_3D_ACTION_PREVIEW)
+
+        end
+
+        if line_manipulator.is_a?(LineManipulator)
+
+          if line_manipulator.infinite?
+
+            # Highlight picked line
+            k_line = Kuix::Line.new
+            k_line.position = line_manipulator.position
+            k_line.direction = line_manipulator.direction
+            k_line.color = COLOR_ACTION
+            k_line.line_width = 2
+            @tool.append_3d(k_line, LAYER_3D_ACTION_PREVIEW)
+
+          else
+
+            # Highlight picked segment
+            k_segments = Kuix::Segments.new
+            k_segments.add_segments(line_manipulator.segment)
+            k_segments.color = COLOR_ACTION
+            k_segments.line_width = 4
+            k_segments.on_top = true
+            @tool.append_3d(k_segments, LAYER_3D_ACTION_PREVIEW)
+
+          end
+
+        end
+
+      end
+    end
+
+    # -----
+
+    def _do_action
+
+      part = get_active_part
+      instance_info = part.def.get_one_instance_info
+      definition = instance_info.definition
+
+      origin, x_axis, y_axis, z_axis = _get_input_axes(instance_info)
+      ti = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis)
+
+      t = ti.inverse
+
+      model = Sketchup.active_model
+      model.start_operation('OCL Change Axes', true, false, false)
+
+        # Transform definition's entities
+        entities = definition.entities
+        entities.transform_entities(t, entities.to_a)
+
+        # Inverse transform definition's instances
+        definition.instances.each do |instance|
+          instance.transformation *= ti
+        end
+
+      # Commit model modification operation
+      model.commit_operation
+
+      # Fire event
+      PLUGIN.app_observer.model_observer.onDrawingChange
+
+    end
+
+    # -----
+
+    def _get_input_axes(instance_info)
+
+      plane_manipulator = @picker.picked_plane_manipulator
+      if plane_manipulator.nil?
+        face, inner_path = _find_largest_face(instance_info.entity, instance_info.transformation)
+        container_path = instance_info.path + inner_path
+        plane_manipulator = FaceManipulator.new(face, PathUtils.get_transformation(container_path, IDENTITY))
+      end
+
+      line_manipulator = @picker.picked_line_manipulator
+      if line_manipulator.nil? || !line_manipulator.direction.perpendicular?(plane_manipulator.normal)
+        line_manipulator = EdgeManipulator.new(plane_manipulator.longest_outer_edge, plane_manipulator.transformation)
+      end
+
+      ti = instance_info.transformation.inverse
+
+      z_axis = plane_manipulator.normal.transform(ti)
+      x_axis = line_manipulator.direction.transform(ti)
+      x_axis.reverse! if line_manipulator.respond_to?(:reversed_in?) && plane_manipulator.respond_to?(:face) && line_manipulator.reversed_in?(plane_manipulator.face)
+      y_axis = z_axis.cross(x_axis)
+
+      [ ORIGIN, x_axis, y_axis, z_axis, plane_manipulator, line_manipulator ]
     end
 
   end
@@ -655,7 +804,7 @@ module Ladb::OpenCutList
   class SmartAxesMoveAxesActionHandler < SmartAxesActionHandler
 
     def initialize(tool, previous_action_handler = nil)
-      super(SmartAxesTool::ACTION_MOVE_AXES, tool, previous_action_handler)
+      super(SmartAxes2Tool::ACTION_MOVE_AXES, tool, previous_action_handler)
     end
 
     # -- STATE --
@@ -670,14 +819,7 @@ module Ladb::OpenCutList
 
     def get_state_status(state)
       super +
-        ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_0') +
-        ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_3') + '.'
-    end
-
-    # ------
-
-    def start
-      super
+        ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_0')
     end
 
     # -----
@@ -704,13 +846,24 @@ module Ladb::OpenCutList
       true
     end
 
+    def _preview_box?
+      true
+    end
+
+    def _can_pick_deeper?
+      false
+    end
+
+    # -----
+
     def _preview_action
       super
-      unless @picker.picked_point.nil? || @active_part.nil?
+      unless @picker.picked_point.nil? || !has_active_part?
 
         et = _get_edit_transformation
 
-        instance_info = @active_part.def.get_one_instance_info
+        part = get_active_part
+        instance_info = part.def.get_one_instance_info
 
         input_point = @picker.picked_point.transform(instance_info.transformation.inverse)
         ti = Geom::Transformation.translation(Geom::Vector3d.new(input_point.to_a))
@@ -722,6 +875,8 @@ module Ladb::OpenCutList
       end
     end
 
+    # -----
+
     def _do_action
 
       if @picker.picked_point.nil?
@@ -729,13 +884,14 @@ module Ladb::OpenCutList
         return true
       end
 
-      instance_info = @active_part.def.get_one_instance_info
+      part = get_active_part
+      instance_info = part.def.get_one_instance_info
 
       input_point = @picker.picked_point.transform(instance_info.transformation.inverse)
       ti = Geom::Transformation.translation(Geom::Vector3d.new(input_point.to_a))
       t = ti.inverse
 
-      definition = @active_part.def.definition
+      definition = part.def.definition
 
       model = Sketchup.active_model
       model.start_operation('OCL Change Axes', true, false, false)

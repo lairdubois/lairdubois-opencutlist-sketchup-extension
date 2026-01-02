@@ -501,7 +501,6 @@ module Ladb::OpenCutList
       @src_transformations.clear
       @cpy_instances.clear
       super
-      set_state(STATE_SELECT)
     end
 
     def _restart
@@ -520,6 +519,10 @@ module Ladb::OpenCutList
     end
 
     def _allows_multiple_selections?
+      true
+    end
+
+    def _allows_tree_selection?
       true
     end
 

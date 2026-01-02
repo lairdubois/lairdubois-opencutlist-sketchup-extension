@@ -24,7 +24,7 @@ module Ladb::OpenCutList
   require_relative 'tool/smart_handle_tool'
   require_relative 'tool/smart_paint_tool'
   require_relative 'tool/smart_axes_tool'
-  require_relative 'tool/smart_axes_tool_new'
+  require_relative 'tool/smart_axes2_tool'
   require_relative 'tool/smart_export_tool'
   require_relative 'tool/smart_reshape_tool'
 

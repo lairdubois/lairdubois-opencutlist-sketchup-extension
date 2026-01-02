@@ -17,13 +17,14 @@ module Ladb::OpenCutList::Kuix
       stroke_width: 1
     )
 
+      points = [ points ] if points.is_a?(Geom::Point3d)
+
       if style == POINT_STYLE_CIRCLE
 
         segment_count = 12
         delta = 2 * Math::PI / segment_count
         half_size = size / 2.0
 
-        points = [ points ] if points.is_a?(Geom::Point3d)
         points.each do |point|
 
           screen_point = screen_coords(point)
@@ -47,7 +48,6 @@ module Ladb::OpenCutList::Kuix
 
         half_size = size / 2.0
 
-        points = [ points ] if points.is_a?(Geom::Point3d)
         points.each do |point|
 
           screen_point = screen_coords(point)
@@ -71,7 +71,7 @@ module Ladb::OpenCutList::Kuix
 
         end
 
-      else
+      elsif points.any?
 
         case style
         when POINT_STYLE_SQUARE

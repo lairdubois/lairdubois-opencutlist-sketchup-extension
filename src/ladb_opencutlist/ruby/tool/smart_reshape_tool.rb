@@ -371,7 +371,6 @@ module Ladb::OpenCutList
       @picked_reshape_start_point = nil
       @picked_reshape_end_point = nil
       super
-      set_state(STATE_SELECT)
     end
 
     def _restart
@@ -384,6 +383,10 @@ module Ladb::OpenCutList
     end
 
     # -----
+
+    def _allows_tree_selection?
+      true
+    end
 
     def _clear_selection_on_start
       true
@@ -1284,10 +1287,10 @@ module Ladb::OpenCutList
           k_rectangle = Kuix::RectangleMotif3d.new
           k_rectangle.bounds.copy!(section)
           k_rectangle.line_width = if is_highligted
-                               3
-                             else
-                               is_remove || is_add ? 2 : 1
-                             end
+                                     3
+                                   else
+                                     is_remove || is_add ? 2 : 1
+                                   end
           k_rectangle.line_stipple = is_remove || is_add ? Kuix::LINE_STIPPLE_SHORT_DASHES : Kuix::LINE_STIPPLE_SOLID
           k_rectangle.color = section_color
           k_rectangle.transformation = et
@@ -1330,9 +1333,10 @@ module Ladb::OpenCutList
 
         k_points = _create_floating_points(
           points: [ p1, p2 ],
-          style: Kuix::POINT_STYLE_CIRCLE,
+          style: Kuix::POINT_STYLE_SQUARE,
           stroke_color: color,
-          fill_color: Kuix::COLOR_WHITE
+          fill_color: Kuix::COLOR_WHITE,
+          size: 2
         )
         k_points.transformation = et
         @tool.append_3d(k_points, LAYER_3D_RESHAPE_PREVIEW)
@@ -1341,9 +1345,10 @@ module Ladb::OpenCutList
 
           k_points = _create_floating_points(
             points: keb.face_center(@picked_grip_index).to_p,
-            style: Kuix::POINT_STYLE_CIRCLE,
+            style: Kuix::POINT_STYLE_SQUARE,
             stroke_color: nil,
-            fill_color: color
+            fill_color: color,
+            size: 2
           )
           k_points.transformation = et
           @tool.append_3d(k_points, LAYER_3D_RESHAPE_PREVIEW)
@@ -1391,9 +1396,10 @@ module Ladb::OpenCutList
 
         k_points = _create_floating_points(
           points: axes.flat_map { |axis| Kuix::Bounds3d.faces_by_axis(axis).map { |face| keb.face_center(face).to_p } },
-          style: Kuix::POINT_STYLE_CIRCLE,
+          style: Kuix::POINT_STYLE_SQUARE,
           stroke_color: Kuix::COLOR_DARK_GREY,
-          fill_color: Kuix::COLOR_WHITE
+          fill_color: Kuix::COLOR_WHITE,
+          size: 2
         )
         k_points.transformation = et
         @tool.append_3d(k_points, LAYER_3D_GRIPS_PREVIEW)
@@ -1456,9 +1462,10 @@ module Ladb::OpenCutList
             ti = t.inverse
             snap.position.offset(edvs[snap_def.section_def].transform(ti)).transform(t).offset(emv)
           },
-          style: Kuix::POINT_STYLE_CIRCLE,
+          style: Kuix::POINT_STYLE_SQUARE,
           fill_color: Kuix::COLOR_SNAP_FILL,
           stroke_color: Kuix::COLOR_SNAP_STROKE,
+          size: 2
         )
         k_points.transformation = et
         @tool.append_3d(k_points, LAYER_3D_RESHAPE_PREVIEW)
@@ -1555,8 +1562,8 @@ module Ladb::OpenCutList
       k_edge.color = color
       @tool.append_3d(k_edge, LAYER_3D_RESHAPE_PREVIEW)
 
-      @tool.append_3d(_create_floating_points(points: [ lps, lpe ], style: Kuix::POINT_STYLE_CIRCLE, fill_color: Kuix::COLOR_WHITE, stroke_color: color, size: 2), LAYER_3D_RESHAPE_PREVIEW)
-      @tool.append_3d(_create_floating_points(points: @picked_reshape_start_point, style: Kuix::POINT_STYLE_CIRCLE, stroke_color: nil, fill_color: color, size: 2), LAYER_3D_RESHAPE_PREVIEW)
+      @tool.append_3d(_create_floating_points(points: [ lps, lpe ], style: Kuix::POINT_STYLE_SQUARE, fill_color: Kuix::COLOR_WHITE, stroke_color: color, size: 2), LAYER_3D_RESHAPE_PREVIEW)
+      @tool.append_3d(_create_floating_points(points: @picked_reshape_start_point, style: Kuix::POINT_STYLE_SQUARE, stroke_color: nil, fill_color: color, size: 2), LAYER_3D_RESHAPE_PREVIEW)
 
       # Preview distance
 

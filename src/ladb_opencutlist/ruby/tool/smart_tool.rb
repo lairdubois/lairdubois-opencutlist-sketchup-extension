@@ -1381,7 +1381,7 @@ module Ladb::OpenCutList
 
         end
 
-      elsif key == VK_UP || key == VK_DOWN
+      elsif (key == VK_UP || key == VK_DOWN) && _can_pick_deeper?
         if @active_part_entity_path
           _pick_deeper(key == VK_UP ? 1 : -1)
         end
@@ -1945,6 +1945,7 @@ module Ladb::OpenCutList
       _reset_transformations
       _reset_drawing_def
       super
+      set_state(STATE_SELECT)
     end
 
     def _reset_transformations
@@ -2783,7 +2784,7 @@ module Ladb::OpenCutList
 
       end
 
-      view.tooltip = @mouse_ip.tooltip
+      view.tooltip = @mouse_ip.tooltip unless @mouse_ip.nil?  # TODO @mouse_ip should not be used there
       view.invalidate
 
       false
@@ -2890,7 +2891,7 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_SELECT
-        if tool.is_key_ctrl_or_option?(key)
+        if tool.is_key_ctrl_or_option?(key) && _allows_tree_selection?
           if has_active_part?
             set_state(STATE_SELECT_TREE)
           else
@@ -2908,6 +2909,12 @@ module Ladb::OpenCutList
 
       case @state
 
+      when STATE_SELECT
+        if (key == VK_UP || key == VK_DOWN) && _can_pick_deeper?
+          _pick_deeper(key == VK_UP ? 1 : -1) if has_active_part?
+          return true
+        end
+
       when STATE_SELECT_TREE
         if tool.is_key_ctrl_or_option?(key)
           Sketchup.active_model.selection.clear
@@ -2919,7 +2926,6 @@ module Ladb::OpenCutList
 
       end
 
-      false
     end
 
     def onPickerChanged(picker, view)
@@ -3082,8 +3088,52 @@ module Ladb::OpenCutList
       false
     end
 
+    def _allows_tree_selection?
+      false
+    end
+
     def _clear_selection_on_start
       false
+    end
+
+    # -----
+
+    def _can_pick_deeper?
+      !@picker.nil? && has_active_part?
+    end
+
+    def _pick_deeper(delta = 1)
+      if _can_pick_deeper?
+
+        ph = Sketchup.active_model.active_view.pick_helper(@picker.pick_position.x, @picker.pick_position.y)
+
+        picked_paths = []
+        picked_part_entity_paths = []
+        ph.count.times do |index|
+          path = ph.path_at(index)
+          part_entity_path = _get_part_entity_path_from_path(path.clone)
+          unless part_entity_path.nil? || picked_part_entity_paths.include?(part_entity_path)
+            picked_paths << path
+            picked_part_entity_paths << part_entity_path
+          end
+        end
+
+        # Try to retrieve the current index
+        active_index = picked_part_entity_paths.map { |path| path.last }.index(get_active_part_entity_path.last)
+        if active_index
+
+          # Compute the new index
+          new_index = (active_index + delta) % picked_part_entity_paths.length
+
+          # Compute the new part
+          picked_part_entity_path = picked_part_entity_paths[new_index]
+          unless (part = _generate_part_from_path(picked_part_entity_path)).nil?
+            _set_active_part(picked_part_entity_path, part) unless part.nil?
+          end
+
+        end
+
+      end
     end
 
     # -----
