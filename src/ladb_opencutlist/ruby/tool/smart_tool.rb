@@ -1945,7 +1945,6 @@ module Ladb::OpenCutList
       _reset_transformations
       _reset_drawing_def
       super
-      set_state(STATE_SELECT)
     end
 
     def _reset_transformations
@@ -3079,6 +3078,13 @@ module Ladb::OpenCutList
     # -----
 
     protected
+
+    def _reset
+      super
+      set_state(STATE_SELECT)
+    end
+
+    #-----
 
     def _start_with_previous_selection?
       false
