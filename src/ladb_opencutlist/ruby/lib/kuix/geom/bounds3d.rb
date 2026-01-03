@@ -275,6 +275,18 @@ module Ladb::OpenCutList::Kuix
         y_section_min
       when BACK
         y_section_max
+      else
+        throw "Invalid section index (index=#{index})"
+      end
+    end
+
+    def section_by_axis(axis)
+      case axis
+      when X_AXIS then x_section
+      when Y_AXIS then y_section
+      when Z_AXIS then z_section
+      else
+        throw "Invalid section_by_axis axis (axis=#{axis})"
       end
     end
 

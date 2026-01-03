@@ -264,6 +264,16 @@ module Ladb::OpenCutList
       super
     end
 
+    # -----
+
+    def _update_orientation_locked_on_axis(definition)
+      if PLUGIN.get_model_preset('cutlist_options')['auto_orient']
+        definition_attributes = DefinitionAttributes.new(definition)
+        definition_attributes.orientation_locked_on_axis = true
+        definition_attributes.write_to_attributes
+      end
+    end
+
   end
 
   class SmartAxesFlipActionHandler < SmartAxesActionHandler
@@ -312,17 +322,31 @@ module Ladb::OpenCutList
       super
       if (drawing_def = _get_drawing_def).is_a?(DrawingDef)
 
+        part = get_active_part
+        size = part.def.size
+
         et = _get_edit_transformation
         eb = _get_drawing_def_edit_bounds(drawing_def, et)
 
         inch_inflate_value = Sketchup.active_model.active_view.pixels_to_model(PX_INFLATE_VALUE, eb.center.transform(et))
 
-        fn_preview_plane = lambda do |color, section, patterns_transformation|
+        kebi = Kuix::Bounds3d.new.copy!(eb).inflate_all!(inch_inflate_value)
+        patterns_transformations = {
+          X_AXIS => Geom::Transformation.axes(ORIGIN, Z_AXIS, Y_AXIS, X_AXIS),
+          Y_AXIS => Geom::Transformation.axes(ORIGIN, X_AXIS, Z_AXIS, Y_AXIS),
+          Z_AXIS => IDENTITY
+        }
+
+        fn_preview_plane = lambda do |axis, color|
+
+          oriented_axis = size.oriented_axis(axis)
+          section = kebi.section_by_axis(oriented_axis)
+          patterns_transformation = patterns_transformations[oriented_axis]
 
           k_rectangle = Kuix::RectangleMotif3d.new
           k_rectangle.bounds.copy!(section)
           k_rectangle.line_width = 1
-          k_rectangle.line_stipple = Kuix::LINE_STIPPLE_SOLID
+          k_rectangle.line_stipple = size.auto_oriented? ? Kuix::LINE_STIPPLE_LONG_DASHES : Kuix::LINE_STIPPLE_SOLID
           k_rectangle.color = color
           k_rectangle.transformation = et
           k_rectangle.patterns_transformation = patterns_transformation
@@ -337,23 +361,11 @@ module Ladb::OpenCutList
         end
 
         if _fetch_option_direction_length
-          fn_preview_plane.call(
-            Kuix::COLOR_X,
-            Kuix::Bounds3d.new.copy!(eb).x_section.inflate!(0, inch_inflate_value, inch_inflate_value),
-            Geom::Transformation.axes(ORIGIN, Z_AXIS, Y_AXIS, X_AXIS)
-          )
+          fn_preview_plane.call(X_AXIS, Kuix::COLOR_X)
         elsif _fetch_option_direction_width
-          fn_preview_plane.call(
-            Kuix::COLOR_Y,
-            Kuix::Bounds3d.new.copy!(eb).y_section.inflate!(inch_inflate_value, 0, inch_inflate_value),
-            Geom::Transformation.axes(ORIGIN, X_AXIS, Z_AXIS, Y_AXIS)
-          )
+          fn_preview_plane.call(Y_AXIS, Kuix::COLOR_Y)
         elsif _fetch_option_direction_thickness
-          fn_preview_plane.call(
-            Kuix::COLOR_Z,
-            Kuix::Bounds3d.new.copy!(eb).z_section.inflate!(inch_inflate_value, inch_inflate_value, 0),
-            IDENTITY
-          )
+          fn_preview_plane.call(Z_AXIS, Kuix::COLOR_Z)
         end
 
       end
@@ -388,7 +400,7 @@ module Ladb::OpenCutList
         model = Sketchup.active_model
         model.start_operation('OCL Part Flip', true, false, false)
 
-          _get_active_part_entity.transformation *= t
+          _get_instance.transformation *= t
 
         # Commit model modification operation
         model.commit_operation
@@ -488,11 +500,8 @@ module Ladb::OpenCutList
           instance.transformation *= ti
         end
 
-        if PLUGIN.get_model_preset('cutlist_options')['auto_orient']
-          definition_attributes = DefinitionAttributes.new(definition)
-          definition_attributes.orientation_locked_on_axis = true
-          definition_attributes.write_to_attributes
-        end
+        # Update definition attributes
+        _update_orientation_locked_on_axis(definition)
 
       # Commit model modification operation
       model.commit_operation
@@ -594,11 +603,8 @@ module Ladb::OpenCutList
           instance.transformation *= ti
         end
 
-        if PLUGIN.get_model_preset('cutlist_options')['auto_orient']
-          definition_attributes = DefinitionAttributes.new(definition)
-          definition_attributes.orientation_locked_on_axis = true
-          definition_attributes.write_to_attributes
-        end
+        # Update definition attributes
+        _update_orientation_locked_on_axis(definition)
 
       # Commit model modification operation
       model.commit_operation
@@ -771,6 +777,9 @@ module Ladb::OpenCutList
           instance.transformation *= ti
         end
 
+        # Update definition attributes
+        _update_orientation_locked_on_axis(definition)
+
       # Commit model modification operation
       model.commit_operation
 
@@ -911,11 +920,8 @@ module Ladb::OpenCutList
           instance.transformation *= ti
         end
 
-        if PLUGIN.get_model_preset('cutlist_options')['auto_orient']
-          definition_attributes = DefinitionAttributes.new(definition)
-          definition_attributes.orientation_locked_on_axis = true
-          definition_attributes.write_to_attributes
-        end
+        # Update definition attributes
+        _update_orientation_locked_on_axis(definition)
 
       # Commit model modification operation
       model.commit_operation
