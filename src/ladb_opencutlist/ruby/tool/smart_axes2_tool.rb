@@ -224,6 +224,12 @@ module Ladb::OpenCutList
 
     # -----
 
+    def _start_with_previous_selection?
+      true
+    end
+
+    # -----
+
     def _preview_part(part_entity_path, part, layer = 0, highlighted = false)
       if part
 

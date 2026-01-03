@@ -2361,10 +2361,14 @@ module Ladb::OpenCutList
 
           if _preview_arrows?
 
+            instance_info = part.def.get_one_instance_info
+            arrow_color = part.auto_oriented ? Sketchup::Color.new(123, 213, 239).freeze : Kuix::COLOR_WHITE
+
             # Back arrow
             k_arrow = Kuix::ArrowMotif3d.new
+            k_arrow.patterns_transformation = instance_info.size.oriented_transformation
             k_arrow.bounds.copy!(eb)
-            k_arrow.color = Kuix::COLOR_WHITE
+            k_arrow.color = arrow_color
             k_arrow.line_width = 2
             k_arrow.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
             k_arrow.transformation = et
@@ -2372,9 +2376,10 @@ module Ladb::OpenCutList
 
             # Front arrow
             k_arrow = Kuix::ArrowMotif3d.new
-            k_arrow.patterns_transformation = Geom::Transformation.translation(Z_AXIS)
+            k_arrow.patterns_transformation = instance_info.size.oriented_transformation
+            k_arrow.patterns_transformation *= Geom::Transformation.translation(Z_AXIS)
             k_arrow.bounds.copy!(eb)
-            k_arrow.color = Kuix::COLOR_WHITE
+            k_arrow.color = arrow_color
             k_arrow.line_width = 2
             k_arrow.transformation = et
             @tool.append_3d(k_arrow, layer)
