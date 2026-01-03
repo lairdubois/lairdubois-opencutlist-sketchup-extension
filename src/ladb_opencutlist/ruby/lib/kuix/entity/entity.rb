@@ -31,16 +31,16 @@ module Ladb::OpenCutList::Kuix
       @parent && @parent.in_dom?
     end
 
-    # Append given widget to self and returns self
+    # Append a given entity to self and returns self
     def append(entity)
       raise 'Entity.append only supports Entity' unless entity.is_a?(Entity)
       raise 'Entity.append can\'t append itself' if entity == self
       raise 'Entity.append can\'t append nil' if entity.nil?
 
-      # Remove widget from previous parent
+      # Remove the entity from its previous parent
       entity.remove if entity.parent
 
-      # Append widget to linked list
+      # Append entity to the linked list
       entity.parent = self
       @last_child.next = entity if @last_child
       entity.previous = @last_child
@@ -54,16 +54,16 @@ module Ladb::OpenCutList::Kuix
       self
     end
 
-    # Prepend given widget to self and returns self
+    # Prepend a given entity to self and returns self
     def prepend(entity)
-      raise 'Entity.append only supports Entity' unless entity.is_a?(Entity)
-      raise 'Entity.append can\'t prepend itself' if entity == self
-      raise 'Entity.append can\'t prepend nil' if entity.nil?
+      raise 'Entity.prepend only supports Entity' unless entity.is_a?(Entity)
+      raise 'Entity.prepend can\'t prepend itself' if entity == self
+      raise 'Entity.prepend can\'t prepend nil' if entity.nil?
 
-      # Remove widget from previous parent
+      # Remove the entity from its previous parent
       entity.remove if entity.parent
 
-      # Prepend widget to linked list
+      # Prepend the entity to the linked list
       entity.parent = self
       @child.previous = entity if @child
       entity.next = @child
@@ -77,7 +77,7 @@ module Ladb::OpenCutList::Kuix
       self
     end
 
-    # Remove self widget from its parent and returns parent
+    # Remove self-entity from its parent and returns parent
     def remove
       return unless @parent
       @parent.child = @next if @parent.child == self
@@ -94,7 +94,8 @@ module Ladb::OpenCutList::Kuix
       parent
     end
 
-    def remove_all
+    # Remove all children from self
+    def clear
       if @child
         entity = @child
         until entity.nil?

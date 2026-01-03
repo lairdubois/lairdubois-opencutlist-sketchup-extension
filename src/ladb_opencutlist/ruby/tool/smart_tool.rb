@@ -49,6 +49,8 @@ module Ladb::OpenCutList
     COLOR_ARROW_AUTO_ORIENTED = Sketchup::Color.new(123, 213, 239).freeze
 
     attr_accessor :tab_name_to_show_on_quit,
+                  :highlighted_parts,
+                  :cursor_select_error,
                   :last_mouse_x, :last_mouse_y
 
     def initialize(
@@ -525,12 +527,12 @@ module Ladb::OpenCutList
       return unless layers.is_a?(Array)
       layers.each do |layer|
         k_layer = @layers_2d[layer]
-        k_layer.remove_all unless k_layer.nil?
+        k_layer.clear unless k_layer.nil?
       end
     end
 
     def remove_all_2d
-      @layers_2d.each { |layer, k_layer| k_layer.remove_all }
+      @layers_2d.each { |layer, k_layer| k_layer.clear }
     end
 
     def set_2d_visibility(visible, layers = 0)
@@ -547,7 +549,7 @@ module Ladb::OpenCutList
       k_layer = @layers_3d[layer]
       if k_layer.nil?
         k_layer = @layers_3d[layer] = Kuix::Group.new
-        @space.append(k_layer)
+        @overlay_layer.append(k_layer)
       end
       k_layer.append(entity)
     end
@@ -557,12 +559,12 @@ module Ladb::OpenCutList
       return unless layers.is_a?(Array)
       layers.each do |layer|
         k_layer = @layers_3d[layer]
-        k_layer.remove_all unless k_layer.nil?
+        k_layer.clear unless k_layer.nil?
       end
     end
 
     def remove_all_3d
-      @layers_3d.each { |layer, k_layer| k_layer.remove_all }
+      @layers_3d.each { |layer, k_layer| k_layer.clear }
     end
 
     def set_3d_visibility(visible, layers = 0)
@@ -1606,7 +1608,7 @@ module Ladb::OpenCutList
     def _reset_ui
 
       # Clear Overlay layer
-      @overlay_layer.remove_all
+      @overlay_layer.clear
 
       # Reset cursor
       pop_to_root_cursor
@@ -2324,7 +2326,7 @@ module Ladb::OpenCutList
 
     def _preview_part(part_entity_path, part, layer = LAYER_3D_PART_PREVIEW, highlighted = false)
       @tool.remove_3d(layer)
-      if part
+      if part.is_a?(Part)
 
         instance_paths = []
         if _preview_all_instances?
@@ -2362,7 +2364,7 @@ module Ladb::OpenCutList
           if _preview_arrows?
 
             instance_info = part.def.get_one_instance_info
-            arrow_color = part.auto_oriented ? Sketchup::Color.new(123, 213, 239).freeze : Kuix::COLOR_WHITE
+            arrow_color = part.auto_oriented ? SmartTool::COLOR_ARROW_AUTO_ORIENTED : SmartTool::COLOR_ARROW
 
             # Back arrow
             k_arrow = Kuix::ArrowMotif3d.new
@@ -2443,6 +2445,14 @@ module Ladb::OpenCutList
 
     # --
 
+    def _can_activate_part?(part)
+      true
+    end
+
+    def _get_cant_activate_part_tooltip(part)
+      nil
+    end
+
     def _refresh_active_part(highlighted = false)
       _set_active_part(@active_part_entity_path, _generate_part_from_path(@active_part_entity_path), highlighted)
     end
@@ -2452,6 +2462,24 @@ module Ladb::OpenCutList
     end
 
     def _set_active_part(part_entity_path, part, highlighted = false)
+      if _can_activate_part?(part)
+
+        if @active_part_entity_path != part_entity_path || part.nil?
+          @tool.remove_tooltip
+          @tool.pop_cursor
+        end
+
+      else
+
+        part_entity_path = nil
+        part = nil
+
+        if (tooltip = _get_cant_activate_part_tooltip(part)).is_a?(String)
+          @tool.show_tooltip(tooltip, SmartTool::MESSAGE_TYPE_ERROR)
+        end
+        @tool.push_cursor(@tool.cursor_select_error)
+
+      end
       if @active_part_entity_path != part_entity_path # Has changed?
 
         @active_part_entity_path = part_entity_path
@@ -2464,6 +2492,23 @@ module Ladb::OpenCutList
           _set_active_selection(part_entity_path[0...-1], [ part_entity_path[-1] ])
         else
           _set_active_selection(nil, nil)
+        end
+
+        # Update highlighted parts if necessary
+        if part.is_a?(Part) && !@tool.highlighted_parts.nil? && @tool.highlighted_parts.any?
+
+          if _preview_all_instances?
+            instance_paths = []
+            active_instance = part_entity_path.last
+            instances = active_instance.definition.instances
+            model = Sketchup.active_model
+            _instances_to_paths(instances, instance_paths, model.active_entities, model.active_path ? model.active_path : [])
+          else
+            instance_paths = [ part_entity_path ]
+          end
+
+          @tool.setup_highlighted_part_helper(part, instance_paths)
+
         end
 
         onActivePartChanged(part_entity_path, part, highlighted)

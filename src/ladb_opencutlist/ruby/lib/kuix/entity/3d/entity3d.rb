@@ -21,9 +21,15 @@ module Ladb::OpenCutList::Kuix
 
     # -- DOM --
 
-    # Append given entity to self and returns self
+    # Append a given entity to self and returns self
     def append(entity)
       throw 'Entity3d.append only supports Entity3d' unless entity.is_a?(Entity3d)
+      super
+    end
+
+    # Prepend a given entity to self and returns self
+    def prepend(entity)
+      throw 'Entity3d.prepend only supports Entity3d' unless entity.is_a?(Entity3d)
       super
     end
 

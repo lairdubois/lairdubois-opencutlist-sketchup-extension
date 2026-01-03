@@ -1117,7 +1117,7 @@ module Ladb::OpenCutList
 
     def _setup_material_buttons
 
-      @materials_btns_panel.remove_all
+      @materials_btns_panel.clear
 
       @material_buttons = []
 

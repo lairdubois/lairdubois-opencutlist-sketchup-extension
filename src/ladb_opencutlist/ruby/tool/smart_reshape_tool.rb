@@ -1333,7 +1333,7 @@ module Ladb::OpenCutList
 
         k_points = _create_floating_points(
           points: [ p1, p2 ],
-          style: Kuix::POINT_STYLE_SQUARE,
+          style: Kuix::POINT_STYLE_CIRCLE,
           stroke_color: color,
           fill_color: Kuix::COLOR_WHITE,
           size: 2
@@ -1345,7 +1345,7 @@ module Ladb::OpenCutList
 
           k_points = _create_floating_points(
             points: keb.face_center(@picked_grip_index).to_p,
-            style: Kuix::POINT_STYLE_SQUARE,
+            style: Kuix::POINT_STYLE_CIRCLE,
             stroke_color: nil,
             fill_color: color,
             size: 2
@@ -1396,10 +1396,10 @@ module Ladb::OpenCutList
 
         k_points = _create_floating_points(
           points: axes.flat_map { |axis| Kuix::Bounds3d.faces_by_axis(axis).map { |face| keb.face_center(face).to_p } },
-          style: Kuix::POINT_STYLE_SQUARE,
+          style: Kuix::POINT_STYLE_CIRCLE,
           stroke_color: Kuix::COLOR_DARK_GREY,
           fill_color: Kuix::COLOR_WHITE,
-          size: 2
+          size: 2.5
         )
         k_points.transformation = et
         @tool.append_3d(k_points, LAYER_3D_GRIPS_PREVIEW)
@@ -1462,7 +1462,7 @@ module Ladb::OpenCutList
             ti = t.inverse
             snap.position.offset(edvs[snap_def.section_def].transform(ti)).transform(t).offset(emv)
           },
-          style: Kuix::POINT_STYLE_SQUARE,
+          style: Kuix::POINT_STYLE_CIRCLE,
           fill_color: Kuix::COLOR_SNAP_FILL,
           stroke_color: Kuix::COLOR_SNAP_STROKE,
           size: 2
@@ -1562,8 +1562,8 @@ module Ladb::OpenCutList
       k_edge.color = color
       @tool.append_3d(k_edge, LAYER_3D_RESHAPE_PREVIEW)
 
-      @tool.append_3d(_create_floating_points(points: [ lps, lpe ], style: Kuix::POINT_STYLE_SQUARE, fill_color: Kuix::COLOR_WHITE, stroke_color: color, size: 2), LAYER_3D_RESHAPE_PREVIEW)
-      @tool.append_3d(_create_floating_points(points: @picked_reshape_start_point, style: Kuix::POINT_STYLE_SQUARE, stroke_color: nil, fill_color: color, size: 2), LAYER_3D_RESHAPE_PREVIEW)
+      @tool.append_3d(_create_floating_points(points: [ lps, lpe ], style: Kuix::POINT_STYLE_CIRCLE, fill_color: Kuix::COLOR_WHITE, stroke_color: color, size: 2), LAYER_3D_RESHAPE_PREVIEW)
+      @tool.append_3d(_create_floating_points(points: @picked_reshape_start_point, style: Kuix::POINT_STYLE_CIRCLE, stroke_color: nil, fill_color: color, size: 2), LAYER_3D_RESHAPE_PREVIEW)
 
       # Preview distance
 

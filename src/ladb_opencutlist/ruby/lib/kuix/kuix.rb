@@ -152,11 +152,11 @@ module Ladb::OpenCutList
       end
 
       def clear_canvas
-        @canvas.remove_all unless @canvas.nil?
+        @canvas.clear unless @canvas.nil?
       end
 
       def clear_space
-        @space.remove_all unless @space.nil?
+        @space.clear unless @space.nil?
       end
 
       # -- Cursors stuff --
@@ -319,8 +319,8 @@ module Ladb::OpenCutList
         # Stop observing model events
         view.model.remove_observer(self)
 
-        @canvas.remove_all
-        @space.remove_all
+        @canvas.clear
+        @space.clear
 
         view.invalidate
       end

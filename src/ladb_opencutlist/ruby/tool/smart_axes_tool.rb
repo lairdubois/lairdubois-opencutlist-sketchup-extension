@@ -54,24 +54,28 @@ module Ladb::OpenCutList
     ].freeze
 
     COLOR_MESH = Sketchup::Color.new(254, 222, 11, 200).freeze
-    COLOR_MESH_HIGHLIGHTED = Sketchup::Color.new(254, 222, 11, 240).freeze
+    COLOR_MESH_HIGHLIGHTED = Sketchup::Color.new(254, 222, 11, 220).freeze
     COLOR_BOX = Kuix::COLOR_BLACK
     COLOR_ACTION = Kuix::COLOR_MAGENTA
     COLOR_ACTION_FILL = Sketchup::Color.new(255, 0, 255, 0.2).blend(COLOR_MESH, 0.5).freeze
-    COLOR_LENGTH = Kuix::COLOR_X
-    COLOR_LENGTH_FILL = ColorUtils.color_translucent(COLOR_LENGTH, 0.3).freeze
-    COLOR_WIDTH = Kuix::COLOR_Y
-    COLOR_WIDTH_FILL = ColorUtils.color_translucent(COLOR_WIDTH, 0.3).freeze
-    COLOR_THICKNESS = Kuix::COLOR_Z
-    COLOR_THICKNESS_FILL = ColorUtils.color_translucent(COLOR_THICKNESS, 0.3).freeze
+    COLOR_LENGTH = Kuix::COLOR_RED
+    COLOR_LENGTH_FILL = Sketchup::Color.new(255, 0, 0, 0.2).freeze
+    COLOR_WIDTH = Kuix::COLOR_GREEN
+    COLOR_WIDTH_FILL = Sketchup::Color.new(0, 255, 0, 0.2).freeze
+    COLOR_THICKNESS = Kuix::COLOR_BLUE
+    COLOR_THICKNESS_FILL = Sketchup::Color.new(0, 0, 255, 0.2).freeze
+
+    # -----
+
+    attr_reader :cursor_flip, :cursor_swap_length_width, :cursor_swap_front_back, :cursor_adapt_axes
 
     def initialize(
 
-                   tab_name_to_show_on_quit: nil,
+      tab_name_to_show_on_quit: nil,
 
-                   highlighted_parts: nil,
+      highlighted_parts: nil,
 
-                   current_action: nil
+      current_action: nil
 
     )
 
@@ -79,13 +83,13 @@ module Ladb::OpenCutList
         tab_name_to_show_on_quit: tab_name_to_show_on_quit,
         highlighted_parts: highlighted_parts,
         current_action: current_action,
-      )
+        )
 
       # Create cursors
+      @cursor_flip = create_cursor('flip', 0, 0)
       @cursor_swap_length_width = create_cursor('swap-length-width', 0, 0)
       @cursor_swap_front_back = create_cursor('swap-front-back', 0, 0)
       @cursor_adapt_axes = create_cursor('adapt-axes', 0, 0)
-      @cursor_flip = create_cursor('flip', 0, 0)
 
     end
 
@@ -97,68 +101,6 @@ module Ladb::OpenCutList
 
     def get_action_defs
       ACTIONS
-    end
-
-    def get_action_status(action)
-
-      case action
-      when ACTION_FLIP
-        return super +
-          ' | ↑↓ + ' + PLUGIN.get_i18n_string('tool.default.transparency') + ' = ' + PLUGIN.get_i18n_string('tool.default.toggle_depth') + '.' +
-          ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_1') + '.' +
-          ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_3') + '.'
-      when ACTION_SWAP_LENGTH_WIDTH
-        return super +
-          ' | ↑↓ + ' + PLUGIN.get_i18n_string('tool.default.transparency') + ' = ' + PLUGIN.get_i18n_string('tool.default.toggle_depth') + '.' +
-          ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_2') + '.' +
-          ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_3') + '.'
-      when ACTION_SWAP_FRONT_BACK
-        return super +
-          ' | ↑↓ + ' + PLUGIN.get_i18n_string('tool.default.transparency') + ' = ' + PLUGIN.get_i18n_string('tool.default.toggle_depth') + '.' +
-          ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_3') + '.' +
-          ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_3') + '.'
-      when ACTION_ADAPT_AXES
-        return super +
-          ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_4') + '.'
-      when ACTION_MOVE_AXES
-        return super +
-          ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_0') +
-          ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_3') + '.'
-      end
-
-      super
-    end
-
-    def get_action_cursor(action)
-
-      case action
-      when ACTION_SWAP_LENGTH_WIDTH
-        return @cursor_swap_length_width
-      when ACTION_SWAP_FRONT_BACK
-        return @cursor_swap_front_back
-      when ACTION_FLIP
-        return @cursor_flip
-      when ACTION_ADAPT_AXES
-        return @cursor_adapt_axes
-      when ACTION_MOVE_AXES
-        return @cursor_adapt_axes
-      end
-
-      super
-    end
-
-    def get_action_picker(action)
-
-      case action
-      when ACTION_SWAP_LENGTH_WIDTH, ACTION_SWAP_FRONT_BACK, ACTION_FLIP
-        return SmartPicker.new(tool: self)
-      when ACTION_ADAPT_AXES
-        return SmartPicker.new(tool: self, pick_edges: true, pick_clines: true, pick_axes: true)
-      when ACTION_MOVE_AXES
-        return SmartPicker.new(tool: self, pick_point: true)
-      end
-
-      super
     end
 
     def get_action_option_group_unique?(action, option_group)
@@ -181,26 +123,6 @@ module Ladb::OpenCutList
       super
     end
 
-    def is_action_flip?
-      fetch_action == ACTION_FLIP
-    end
-
-    def is_action_swap_length_width?
-      fetch_action == ACTION_SWAP_LENGTH_WIDTH
-    end
-
-    def is_action_swap_front_back?
-      fetch_action == ACTION_SWAP_FRONT_BACK
-    end
-
-    def is_action_adapt_axes?
-      fetch_action == ACTION_ADAPT_AXES
-    end
-
-    def is_action_move_axes?
-      fetch_action == ACTION_MOVE_AXES
-    end
-
     # -- Events --
 
     def onActivate(view)
@@ -211,494 +133,708 @@ module Ladb::OpenCutList
 
     end
 
-    def onKeyDown(key, repeat, flags, view)
-      return true if super
-      if is_key_alt_or_command?(key)
-        push_action(ACTION_ADAPT_AXES) unless is_action_adapt_axes?
-        return true
+    def onActionChanged(action)
+
+      case action
+      when ACTION_FLIP
+        set_action_handler(SmartAxesFlipActionHandler.new(self))
+      when ACTION_SWAP_LENGTH_WIDTH
+        set_action_handler(SmartAxesSwapLengthWidthActionHandler.new(self))
+      when ACTION_SWAP_FRONT_BACK
+        set_action_handler(SmartAxesSwapFrontBackActionHandler.new(self))
+      when ACTION_ADAPT_AXES
+        set_action_handler(SmartAxesAdaptAxesActionHandler.new(self))
+      when ACTION_MOVE_AXES
+        set_action_handler(SmartAxesMoveAxesActionHandler.new(self))
+
       end
-      false
+
+      refresh
+
     end
 
-    def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
-      return true if super
-      if is_key_alt_or_command?(key)
-        pop_action if is_action_adapt_axes?
-        return true
-      end
-      false
-    end
-
-    def onLButtonDown(flags, x, y, view)
-      return true if super
-      _handle_mouse_event(:l_button_down)
-      false
-    end
-
-    def onLButtonUp(flags, x, y, view)
-      return true if super
-      _handle_mouse_event(:l_button_up)
-      false
-    end
-
-    def onLButtonDoubleClick(flags, x, y, view)
-      return true if super
-      _handle_mouse_event(:l_button_dblclick)
-      false
-    end
-
-    def onMouseLeave(view)
-      return true if super
-      _reset_active_part
-      false
-    end
-
-    def onMouseLeaveSpace(view)
-      return true if super
-      _reset_active_part
-      false
-    end
-
-    def onPickerChanged(picker, view)
+    def onViewChanged(view)
       super
-      _handle_mouse_event(:move)
+      refresh
     end
 
     def onTransactionUndo(model)
       super
-      _refresh_active_part
+      refresh
+    end
+
+  end
+
+  # -----
+
+  class SmartAxesActionHandler < SmartSelectActionHandler
+
+    LAYER_3D_AXES_PREVIEW = 2
+    LAYER_3D_ACTION_PREVIEW = 3
+
+    COLOR_ACTION = Kuix::COLOR_MAGENTA
+    COLOR_ACTION_FILL = Sketchup::Color.new(255, 0, 255, 0.2).blend(COLOR_PART, 0.5).freeze
+
+    def initialize(action, tool, previous_action_handler = nil)
+      super
+
+    end
+
+    # -----
+
+    def get_state_status(state)
+
+      case state
+
+      when STATE_SELECT
+        return @tool.get_action_status(@tool.fetch_action)
+
+      end
+
+      super
+    end
+
+    # -----
+
+    def onToolLButtonUp(tool, flags, x, y, view)
+      super
+
+      unless has_active_part?
+        UI.beep
+        return true
+      end
+
+      _do_action
+      _restart
+
+      false
+    end
+
+    def onToolLButtonDoubleClick(tool, flags, x, y, view)
+      onToolLButtonUp(tool, flags, x, y, view)
+    end
+
+    def onToolActionOptionStored(tool, action, option_group, option)
+      _preview_action
+    end
+
+    def onActivePartChanged(part_entity_path, part, highlighted = nil)
+      super
+
+      # Instance status
+      if part && (definition = part.def.definition) && definition.count_used_instances > 1 && _preview_all_instances?
+        @tool.show_message("⚠ #{PLUGIN.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", SmartTool::MESSAGE_TYPE_WARNING)
+      else
+        @tool.hide_message
+      end
+
     end
 
     # -----
 
     protected
 
-    def _set_active_part(part_entity_path, part, highlighted = false)
-      super
+    # -----
 
-      if part
-
-        model = Sketchup.active_model
-
-        tooltip_type = MESSAGE_TYPE_DEFAULT
-
-        instance_info = part.def.get_one_instance_info
-
-        # Create drawing helpers
-
-        arrow_color = part.auto_oriented ? COLOR_ARROW_AUTO_ORIENTED : COLOR_ARROW
-        arrow_line_width = 2
-
-        k_group = Kuix::Group.new
-        k_group.transformation = instance_info.transformation
-        @overlay_layer.append(k_group)
-
-        show_axes = true
-        if is_action_adapt_axes? && part.group.material_type != MaterialAttributes::TYPE_HARDWARE
-
-          origin, x_axis, y_axis, z_axis, plane_manipulator, line_manipulator = _get_input_axes(instance_info)
-
-          if plane_manipulator.is_a?(FaceManipulator)
-
-            # Highlight picked face
-            k_mesh = Kuix::Mesh.new
-            k_mesh.transformation = instance_info.transformation.inverse
-            k_mesh.add_triangles(plane_manipulator.triangles)
-            k_mesh.background_color = COLOR_ACTION_FILL
-            k_group.append(k_mesh)
-
-          end
-
-          t = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis)
-          if (t * part.def.size.oriented_transformation).identity?
-
-            # Already adapted
-            tooltip_type = MESSAGE_TYPE_SUCCESS
-
-          else
-
-            show_axes = false
-
-            bounds = Geom::BoundingBox.new
-            bounds.add(_compute_children_faces_triangles(instance_info.entity.definition.entities, t.inverse))
-
-            # Front arrow
-            k_arrow = Kuix::ArrowMotif3d.new
-            k_arrow.patterns_transformation = Geom::Transformation.translation(Z_AXIS)
-            k_arrow.bounds.origin.copy!(bounds.min)
-            k_arrow.bounds.size.copy!(bounds)
-            k_arrow.color = COLOR_ACTION
-            k_arrow.line_width = arrow_line_width
-            k_arrow.transformation = t
-            k_group.append(k_arrow)
-
-            # Box helper
-            k_box = Kuix::BoxMotif3d.new
-            k_box.bounds.copy!(bounds)
-            k_box.color = COLOR_ACTION
-            k_box.line_width = 1
-            k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-            k_box.transformation = t
-            k_group.append(k_box)
-
-            # Axes helper
-            k_axes_helper = Kuix::AxesHelper.new
-            k_axes_helper.transformation = t
-            k_group.append(k_axes_helper)
-
-          end
-
-          if line_manipulator.is_a?(LineManipulator)
-
-            if line_manipulator.infinite?
-
-              # Highlight picked line
-              k_line = Kuix::Line.new
-              k_line.transformation = instance_info.transformation.inverse
-              k_line.position = line_manipulator.position
-              k_line.direction = line_manipulator.direction
-              k_line.color = COLOR_ACTION
-              k_line.line_width = 2
-              k_group.append(k_line)
-
-            else
-
-              # Highlight picked segment
-              k_segments = Kuix::Segments.new
-              k_segments.transformation = instance_info.transformation.inverse
-              k_segments.add_segments(line_manipulator.segment)
-              k_segments.color = COLOR_ACTION
-              k_segments.line_width = 4
-              k_segments.on_top = true
-              k_group.append(k_segments)
-
-            end
-
-          end
-
-        end
-
-        if is_action_flip?
-
-          ti = instance_info.transformation.inverse
-
-          rect_offset = model.active_view.pixels_to_model(30, model.active_view.guess_target)
-          rect_offset_bounds = Geom::BoundingBox.new
-          rect_offset_bounds.add(Geom::Point3d.new.transform!(ti))
-          rect_offset_bounds.add(Geom::Point3d.new(rect_offset, rect_offset, rect_offset).transform!(ti))
-
-          r_width = 0
-          r_height = 0
-          r_t = Geom::Transformation.translation(instance_info.definition_bounds.center)
-          r_t *= instance_info.size.oriented_transformation
-          r_color = COLOR_ACTION
-          f_color = COLOR_ACTION_FILL
-
-          if fetch_action_option_boolean(ACTION_FLIP, ACTION_OPTION_DIRECTION, ACTION_OPTION_DIRECTION_LENGTH)
-            r_width += _get_bounds_dim_along_axis(instance_info, instance_info.definition_bounds, Y_AXIS) + _get_bounds_dim_along_axis(instance_info, rect_offset_bounds, Y_AXIS) * 2
-            r_height += _get_bounds_dim_along_axis(instance_info, instance_info.definition_bounds, Z_AXIS) + _get_bounds_dim_along_axis(instance_info, rect_offset_bounds, Z_AXIS) * 2
-            r_t *= Geom::Transformation.rotation(ORIGIN, Z_AXIS, 90.degrees) * Geom::Transformation.rotation(ORIGIN, X_AXIS, 90.degrees)
-            r_color = COLOR_LENGTH
-            f_color = COLOR_LENGTH_FILL
-          elsif fetch_action_option_boolean(ACTION_FLIP, ACTION_OPTION_DIRECTION, ACTION_OPTION_DIRECTION_WIDTH)
-            r_width += _get_bounds_dim_along_axis(instance_info, instance_info.definition_bounds, X_AXIS) + _get_bounds_dim_along_axis(instance_info, rect_offset_bounds, X_AXIS) * 2
-            r_height += _get_bounds_dim_along_axis(instance_info, instance_info.definition_bounds, Z_AXIS) + _get_bounds_dim_along_axis(instance_info, rect_offset_bounds, Z_AXIS) * 2
-            r_t *= Geom::Transformation.rotation(ORIGIN, X_AXIS, 90.degrees)
-            r_color = COLOR_WIDTH
-            f_color = COLOR_WIDTH_FILL
-          elsif fetch_action_option_boolean(ACTION_FLIP, ACTION_OPTION_DIRECTION, ACTION_OPTION_DIRECTION_THICKNESS)
-            r_width += _get_bounds_dim_along_axis(instance_info, instance_info.definition_bounds, X_AXIS) + _get_bounds_dim_along_axis(instance_info, rect_offset_bounds, X_AXIS) * 2
-            r_height += _get_bounds_dim_along_axis(instance_info, instance_info.definition_bounds, Y_AXIS) + _get_bounds_dim_along_axis(instance_info, rect_offset_bounds, Y_AXIS) * 2
-            r_color = COLOR_THICKNESS
-            f_color = COLOR_THICKNESS_FILL
-          end
-          r_t *= Geom::Transformation.translation(Geom::Vector3d.new(r_width / -2.0, r_height / -2.0, 0))
-          r_t *= Geom::Transformation.scaling(ORIGIN, r_width, r_height, 0)
-
-          k_rectangle = Kuix::RectangleMotif3d.new
-          k_rectangle.bounds.size.set!(1, 1, 0)
-          k_rectangle.transformation = r_t
-          k_rectangle.color = r_color
-          k_rectangle.line_width = 2
-          k_rectangle.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if instance_info.size.auto_oriented?
-          k_group.append(k_rectangle)
-
-            k_mesh = Kuix::Mesh.new
-            k_mesh.add_triangles([
-                                 Geom::Point3d.new(0, 0, 0), Geom::Point3d.new(1, 0, 0), Geom::Point3d.new(1, 1, 0),
-                                 Geom::Point3d.new(0, 0, 0), Geom::Point3d.new(0, 1, 0), Geom::Point3d.new(1, 1, 0)
-                               ])
-            k_mesh.background_color = f_color
-            k_rectangle.append(k_mesh)
-
-        end
-
-        if is_action_move_axes?
-
-          input_point = _get_input_point(instance_info)
-          if input_point
-
-            k_axes_helper = Kuix::AxesHelper.new
-            k_axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(input_point.to_a))
-            k_group.append(k_axes_helper)
-
-          end
-
-        end
-
-        if part.group.material_type != MaterialAttributes::TYPE_HARDWARE
-
-          # Back arrow
-          k_arrow = Kuix::ArrowMotif3d.new
-          k_arrow.patterns_transformation = instance_info.size.oriented_transformation
-          k_arrow.bounds.origin.copy!(instance_info.definition_bounds.min)
-          k_arrow.bounds.size.copy!(instance_info.definition_bounds)
-          k_arrow.color = arrow_color
-          k_arrow.line_width = arrow_line_width
-          k_arrow.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-          k_group.append(k_arrow)
-
-          # Front arrow
-          k_arrow = Kuix::ArrowMotif3d.new
-          k_arrow.patterns_transformation = instance_info.size.oriented_transformation
-          k_arrow.patterns_transformation *= Geom::Transformation.translation(Z_AXIS)
-          k_arrow.bounds.origin.copy!(instance_info.definition_bounds.min)
-          k_arrow.bounds.size.copy!(instance_info.definition_bounds)
-          k_arrow.color = arrow_color
-          k_arrow.line_width = arrow_line_width
-          k_group.append(k_arrow)
-
-          # Bounding box helper
-          k_box = Kuix::BoxMotif3d.new
-          k_box.bounds.copy!(instance_info.definition_bounds)
-          k_box.color = COLOR_BOX
-          k_box.line_width = 1
-          k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-          k_group.append(k_box)
-
-        end
-
-        if show_axes
-
-          # Axes helper
-          k_axes_helper = Kuix::AxesHelper.new
-          k_axes_helper.transformation = Geom::Transformation.scaling(1 / part.def.scale.x, 1 / part.def.scale.y, 1 / part.def.scale.z)
-          k_group.append(k_axes_helper)
-
-        end
-
-        # Mesh
-        instance_paths = []
-        if is_action_flip?
-
-          # Only current instance
-          instance_paths << part_entity_path
-
-        else
-
-          # All instances
-          unless part_entity_path.nil?
-            active_instance = part_entity_path.last
-            instances = active_instance.definition.instances
-            _instances_to_paths(instances, instance_paths, model.active_entities, model.active_path ? model.active_path : [])
-          end
-
-        end
-        instance_paths.each do |path|
-
-          k_mesh = Kuix::Mesh.new
-          k_mesh.add_triangles(_compute_children_faces_triangles(path.last.definition.entities))
-          k_mesh.background_color = highlighted ? COLOR_MESH_HIGHLIGHTED : COLOR_MESH
-          k_mesh.transformation = PathUtils::get_transformation(path)
-          @overlay_layer.append(k_mesh)
-
-        end
-
-        setup_highlighted_part_helper(part, instance_paths) if part.is_a?(Part)
-
-        # Show part infos
-        show_tooltip([ "##{_get_active_part_name}", _get_active_part_material_name, '-', _get_active_part_size, _get_active_part_icons ], tooltip_type)
-
-        # Status
-
-        if !is_action_flip? && !is_action_move_axes? && part.group.material_type == MaterialAttributes::TYPE_HARDWARE
-          show_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.smart_axes.error.not_orientable')}", MESSAGE_TYPE_ERROR)
-          push_cursor(@cursor_select_error)
-          return
-        end
-
-        unless is_action_flip?
-          definition = model.definitions[part.def.definition_id]
-          if definition && definition.count_used_instances > 1
-            show_message("⚠ #{PLUGIN.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
-          end
-        end
-
-      end
-
+    def _start_with_previous_selection?
+      true
     end
 
-    def _can_pick_deeper?
-      super && !is_action_adapt_axes?
+    def _can_activate_part?(part)
+      !part.is_a?(Part) || part.group.material_type != MaterialAttributes::TYPE_HARDWARE
+    end
+
+    def _get_cant_activate_part_tooltip(part)
+      "⚠ #{PLUGIN.get_i18n_string('tool.smart_axes.error.not_orientable')}"
     end
 
     # -----
 
-    private
+    def _preview_part(part_entity_path, part, layer = 0, highlighted = false)
 
-    def _handle_mouse_event(event = nil)
-      if event == :move
+      @tool.remove_tooltip
+      @tool.remove_3d([ LAYER_3D_AXES_PREVIEW, LAYER_3D_ACTION_PREVIEW ])
 
-        if @picker.picked_face_path
-          picked_part_entity_path = _get_part_entity_path_from_path(@picker.picked_face_path)
-          if picked_part_entity_path
+      if part.is_a?(Part)
 
-            part = _generate_part_from_path(picked_part_entity_path)
-            if part
-              _set_active_part(picked_part_entity_path, part)
-            else
-              _reset_active_part
-              show_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
-              push_cursor(@cursor_select_error)
-            end
-            return
+        # Preview action on part geometry
+        _preview_action
 
-          else
-            _reset_active_part
-            show_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
-            push_cursor(@cursor_select_error)
-            return
-          end
+        # Show part infos
+        @tool.show_tooltip([ "##{_get_active_part_name}", _get_active_part_material_name, '-', _get_active_part_size, _get_active_part_icons ])
+
+      end
+      super
+    end
+
+    def _preview_action
+
+      @tool.remove_3d(LAYER_3D_ACTION_PREVIEW)
+
+    end
+
+    def _do_action
+    end
+
+    # -----
+
+    def _get_edit_transformation
+      t = _get_global_instance_transformation(nil)
+      return t unless t.nil?
+      super
+    end
+
+    # -----
+
+    def _update_orientation_locked_on_axis(definition)
+      if PLUGIN.get_model_preset('cutlist_options')['auto_orient']
+        definition_attributes = DefinitionAttributes.new(definition)
+        definition_attributes.orientation_locked_on_axis = true
+        definition_attributes.write_to_attributes
+      end
+    end
+
+  end
+
+  class SmartAxesFlipActionHandler < SmartAxesActionHandler
+
+    PX_INFLATE_VALUE = 50
+
+    def initialize(tool, previous_action_handler = nil)
+      super(SmartAxesTool::ACTION_FLIP, tool, previous_action_handler)
+    end
+
+    # -- STATE --
+
+    def get_state_cursor(state)
+      @tool.cursor_flip
+    end
+
+    def get_state_picker(state)
+      SmartPicker.new(tool: @tool, observer: self)
+    end
+
+    def get_state_status(state)
+      super +
+             ' | ↑↓ + ' + PLUGIN.get_i18n_string('tool.default.transparency') + ' = ' + PLUGIN.get_i18n_string('tool.default.toggle_depth') + '.' +
+             ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_1') + '.'
+    end
+
+    # -----
+
+    protected
+
+    def _preview_axes?
+      true
+    end
+
+    def _preview_arrows?
+      true
+    end
+
+    def _preview_box?
+      true
+    end
+
+    def _can_activate_part?(part)
+      true
+    end
+
+    # -----
+
+    def _preview_action
+      super
+      if (drawing_def = _get_drawing_def).is_a?(DrawingDef)
+
+        part = get_active_part
+        size = part.def.size
+
+        et = _get_edit_transformation
+        eb = _get_drawing_def_edit_bounds(drawing_def, et)
+
+        inch_inflate_value = Sketchup.active_model.active_view.pixels_to_model(PX_INFLATE_VALUE, eb.center.transform(et))
+
+        kebi = Kuix::Bounds3d.new.copy!(eb).inflate_all!(inch_inflate_value)
+        patterns_transformations = {
+          X_AXIS => Geom::Transformation.axes(ORIGIN, Z_AXIS, Y_AXIS, X_AXIS),
+          Y_AXIS => Geom::Transformation.axes(ORIGIN, X_AXIS, Z_AXIS, Y_AXIS),
+          Z_AXIS => IDENTITY
+        }
+
+        fn_preview_plane = lambda do |axis, color|
+
+          oriented_axis = size.oriented_axis(axis)
+          section = kebi.section_by_axis(oriented_axis)
+          patterns_transformation = patterns_transformations[oriented_axis]
+
+          k_rectangle = Kuix::RectangleMotif3d.new
+          k_rectangle.bounds.copy!(section)
+          k_rectangle.line_width = 1
+          k_rectangle.line_stipple = size.auto_oriented? ? Kuix::LINE_STIPPLE_LONG_DASHES : Kuix::LINE_STIPPLE_SOLID
+          k_rectangle.color = color
+          k_rectangle.transformation = et
+          k_rectangle.patterns_transformation = patterns_transformation
+          @tool.append_3d(k_rectangle, LAYER_3D_ACTION_PREVIEW)
+
+          k_mesh = Kuix::Mesh.new
+          k_mesh.add_quads(section.get_quads)
+          k_mesh.background_color = ColorUtils.color_translucent(color, 0.3)
+          k_mesh.transformation = et
+          @tool.append_3d(k_mesh, LAYER_3D_ACTION_PREVIEW)
+
         end
-        _reset_active_part  # No input
 
-      elsif event == :l_button_down
-
-        _refresh_active_part(true)
-
-      elsif event == :l_button_up || event == :l_button_dblclick
-
-        if @active_part && (is_action_flip? || @active_part.group.material_type != MaterialAttributes::TYPE_HARDWARE)
-
-          model = Sketchup.active_model
-          definition = model.definitions[@active_part.def.definition_id]
-          unless definition.nil?
-
-            size = @active_part.def.size
-            lock_orientation_on_axis = true
-
-            ti = nil
-            if is_action_flip?
-
-              entity = @active_part_entity_path.last
-              bounds = _compute_faces_bounds(entity.definition)
-
-              scaling = {
-                X_AXIS => 1,
-                Y_AXIS => 1,
-                Z_AXIS => 1,
-              }
-              if fetch_action_option_boolean(ACTION_FLIP, ACTION_OPTION_DIRECTION, ACTION_OPTION_DIRECTION_LENGTH)
-                scaling[size.oriented_axis(X_AXIS)] = -1
-              elsif fetch_action_option_boolean(ACTION_FLIP, ACTION_OPTION_DIRECTION, ACTION_OPTION_DIRECTION_WIDTH)
-                scaling[size.oriented_axis(Y_AXIS)] = -1
-              elsif fetch_action_option_boolean(ACTION_FLIP, ACTION_OPTION_DIRECTION, ACTION_OPTION_DIRECTION_THICKNESS)
-                scaling[size.oriented_axis(Z_AXIS)] = -1
-              end
-
-              t = Geom::Transformation.scaling(bounds.center, scaling[X_AXIS], scaling[Y_AXIS], scaling[Z_AXIS])
-
-              # Start undoable model modification operation
-              model.start_operation('OCL Part Flip', true, false, false)
-
-              entity.transformation *= t
-
-              # Commit model modification operation
-              model.commit_operation
-
-              # Fire event
-              PLUGIN.app_observer.model_observer.onDrawingChange
-
-              # Refresh active
-              _refresh_active_part
-
-            elsif is_action_swap_length_width?
-
-              ti = Geom::Transformation.axes(
-                ORIGIN,
-                AxisUtils.flipped?(size.axes[1], size.axes[0], size.axes[2]) ? size.axes[1].reverse : size.axes[1],
-                size.axes[0],
-                size.axes[2]
-              )
-
-            elsif is_action_swap_front_back?
-
-              ti = Geom::Transformation.axes(
-                ORIGIN,
-                size.axes[0],
-                AxisUtils.flipped?(size.axes[0], size.axes[1], size.axes[2].reverse) ? size.axes[1].reverse : size.axes[1],
-                size.axes[2].reverse
-              )
-
-            elsif is_action_adapt_axes?
-
-              instance_info = @active_part.def.get_one_instance_info
-              origin, x_axis, y_axis, z_axis = _get_input_axes(instance_info)
-              ti = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis)
-
-            elsif is_action_move_axes?
-
-              instance_info = @active_part.def.get_one_instance_info
-              input_point = _get_input_point(instance_info)
-              if input_point
-
-                ti = Geom::Transformation.translation(Geom::Vector3d.new(input_point.to_a))
-                lock_orientation_on_axis = false
-
-              end
-
-            end
-            unless ti.nil?
-
-              t = ti.inverse
-
-              # Start undoable model modification operation
-              model.start_operation('OCL Change Axes', true, false, false)
-
-              # Transform definition's entities
-              entities = definition.entities
-              entities.transform_entities(t, entities.to_a)
-
-              # Inverse transform definition's instances
-              definition.instances.each do |instance|
-                instance.transformation *= ti
-              end
-
-              if lock_orientation_on_axis && PLUGIN.get_model_preset('cutlist_options')['auto_orient']
-                definition_attributes = DefinitionAttributes.new(definition)
-                definition_attributes.orientation_locked_on_axis = true
-                definition_attributes.write_to_attributes
-              end
-
-              # Commit model modification operation
-              model.commit_operation
-
-              # Fire event
-              PLUGIN.app_observer.model_observer.onDrawingChange
-
-              # Refresh active
-              _refresh_active_part
-
-            end
-
-          end
-
-        else
-          UI.beep
+        if _fetch_option_direction_length
+          fn_preview_plane.call(X_AXIS, Kuix::COLOR_X)
+        elsif _fetch_option_direction_width
+          fn_preview_plane.call(Y_AXIS, Kuix::COLOR_Y)
+        elsif _fetch_option_direction_thickness
+          fn_preview_plane.call(Z_AXIS, Kuix::COLOR_Z)
         end
 
       end
     end
+
+    # -----
+
+    def _do_action
+      if (drawing_def = _get_drawing_def).is_a?(DrawingDef)
+
+        et = _get_edit_transformation
+        eb = _get_drawing_def_edit_bounds(drawing_def, et)
+
+        part = get_active_part
+        size = part.def.size
+
+        scaling = {
+          X_AXIS => 1,
+          Y_AXIS => 1,
+          Z_AXIS => 1,
+        }
+        if _fetch_option_direction_length
+          scaling[size.oriented_axis(X_AXIS)] = -1
+        elsif _fetch_option_direction_width
+          scaling[size.oriented_axis(Y_AXIS)] = -1
+        elsif _fetch_option_direction_thickness
+          scaling[size.oriented_axis(Z_AXIS)] = -1
+        end
+
+        t = Geom::Transformation.scaling(eb.center, scaling[X_AXIS], scaling[Y_AXIS], scaling[Z_AXIS])
+
+        model = Sketchup.active_model
+        model.start_operation('OCL Part Flip', true, false, false)
+
+          _get_instance.transformation *= t
+
+        # Commit model modification operation
+        model.commit_operation
+
+        # Fire event
+        PLUGIN.app_observer.model_observer.onDrawingChange
+
+      end
+    end
+
+    # -----
+
+    def _fetch_option_direction_length
+      @tool.fetch_action_option_boolean(@action, SmartAxesTool::ACTION_OPTION_DIRECTION, SmartAxesTool::ACTION_OPTION_DIRECTION_LENGTH)
+    end
+
+    def _fetch_option_direction_width
+      @tool.fetch_action_option_boolean(@action, SmartAxesTool::ACTION_OPTION_DIRECTION, SmartAxesTool::ACTION_OPTION_DIRECTION_WIDTH)
+    end
+
+    def _fetch_option_direction_thickness
+      @tool.fetch_action_option_boolean(@action, SmartAxesTool::ACTION_OPTION_DIRECTION, SmartAxesTool::ACTION_OPTION_DIRECTION_THICKNESS)
+    end
+
+  end
+
+  class SmartAxesSwapLengthWidthActionHandler < SmartAxesActionHandler
+
+    def initialize(tool, previous_action_handler = nil)
+      super(SmartAxesTool::ACTION_SWAP_LENGTH_WIDTH, tool, previous_action_handler)
+    end
+
+    # -- STATE --
+
+    def get_state_cursor(state)
+      @tool.cursor_swap_length_width
+    end
+
+    def get_state_picker(state)
+      SmartPicker.new(tool: @tool, observer: self)
+    end
+
+    def get_state_status(state)
+      super +
+        ' | ↑↓ + ' + PLUGIN.get_i18n_string('tool.default.transparency') + ' = ' + PLUGIN.get_i18n_string('tool.default.toggle_depth') + '.' +
+        ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_2') + '.'
+    end
+
+    # -----
+
+    protected
+
+    def _preview_all_instances?
+      true
+    end
+
+    def _preview_axes?
+      true
+    end
+
+    def _preview_arrows?
+      true
+    end
+
+    def _preview_box?
+      true
+    end
+
+    # -----
+
+    def _do_action
+
+      part = get_active_part
+      definition = part.def.definition
+
+      size = part.def.size
+      x_axis, y_axis, z_axis = size.axes
+
+      ti = Geom::Transformation.axes(
+        ORIGIN,
+        AxisUtils.flipped?(y_axis, x_axis, z_axis) ? y_axis.reverse : y_axis,
+        x_axis,
+        z_axis
+      )
+
+      t = ti.inverse
+
+      model = Sketchup.active_model
+      model.start_operation('OCL Change Axes', true, false, false)
+
+        # Transform definition's entities
+        entities = definition.entities
+        entities.transform_entities(t, entities.to_a)
+
+        # Inverse transform definition's instances
+        definition.instances.each do |instance|
+          instance.transformation *= ti
+        end
+
+        # Update definition attributes
+        _update_orientation_locked_on_axis(definition)
+
+      # Commit model modification operation
+      model.commit_operation
+
+      # Fire event
+      PLUGIN.app_observer.model_observer.onDrawingChange
+
+    end
+
+  end
+
+  class SmartAxesSwapFrontBackActionHandler < SmartAxesActionHandler
+
+    def initialize(tool, previous_action_handler = nil)
+      super(SmartAxesTool::ACTION_SWAP_FRONT_BACK, tool, previous_action_handler)
+    end
+
+    # -- STATE --
+
+    def get_state_cursor(state)
+      @tool.cursor_swap_front_back
+    end
+
+    def get_state_picker(state)
+      SmartPicker.new(tool: @tool, observer: self)
+    end
+
+    def get_state_status(state)
+      super +
+        ' | ↑↓ + ' + PLUGIN.get_i18n_string('tool.default.transparency') + ' = ' + PLUGIN.get_i18n_string('tool.default.toggle_depth') + '.' +
+        ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_3') + '.'
+    end
+
+    # -----
+
+    protected
+
+    def _preview_all_instances?
+      true
+    end
+
+    def _preview_axes?
+      true
+    end
+
+    def _preview_arrows?
+      true
+    end
+
+    def _preview_box?
+      true
+    end
+
+    def _preview_action
+      super
+      if (drawing_def = _get_drawing_def).is_a?(DrawingDef)
+
+        et = _get_edit_transformation
+        eb = _get_drawing_def_edit_bounds(drawing_def, et)
+
+        k_box = Kuix::BoxMotif3d.new
+        k_box.bounds.copy!(eb)
+        k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+        k_box.color = Kuix::COLOR_BLACK
+        k_box.transformation = et
+        @tool.append_3d(k_box, LAYER_3D_ACTION_PREVIEW)
+
+      end
+    end
+
+    # -----
+
+    def _do_action
+
+      part = get_active_part
+      definition = part.def.definition
+
+      size = part.def.size
+      x_axis, y_axis, z_axis = size.axes
+
+      ti = Geom::Transformation.axes(
+        ORIGIN,
+        x_axis,
+        AxisUtils.flipped?(x_axis, y_axis, z_axis.reverse) ? y_axis.reverse : y_axis,
+        z_axis.reverse
+      )
+
+      t = ti.inverse
+
+      model = Sketchup.active_model
+      model.start_operation('OCL Change Axes', true, false, false)
+
+        # Transform definition's entities
+        entities = definition.entities
+        entities.transform_entities(t, entities.to_a)
+
+        # Inverse transform definition's instances
+        definition.instances.each do |instance|
+          instance.transformation *= ti
+        end
+
+        # Update definition attributes
+        _update_orientation_locked_on_axis(definition)
+
+      # Commit model modification operation
+      model.commit_operation
+
+      # Fire event
+      PLUGIN.app_observer.model_observer.onDrawingChange
+
+    end
+
+  end
+
+  class SmartAxesAdaptAxesActionHandler < SmartAxesActionHandler
+
+    def initialize(tool, previous_action_handler = nil)
+      super(SmartAxesTool::ACTION_ADAPT_AXES, tool, previous_action_handler)
+    end
+
+    # -- STATE --
+
+    def get_state_cursor(state)
+      @tool.cursor_adapt_axes
+    end
+
+    def get_state_picker(state)
+      SmartPicker.new(tool: @tool, observer: self, pick_edges: true, pick_clines: true, pick_axes: true)
+    end
+
+    def get_state_status(state)
+      super +
+        ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_4') + '.'
+    end
+
+    # -----
+
+    def onToolKeyDown(tool, key, repeat, flags, view)
+
+      if tool.is_key_ctrl_or_option?(key)
+        @tool.remove_3d(LAYER_3D_ACTION_PREVIEW)
+        _preview_action
+        return true
+      end
+
+      super
+    end
+
+    def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
+
+      if tool.is_key_ctrl_or_option?(key)
+        @tool.remove_3d(LAYER_3D_ACTION_PREVIEW)
+        _preview_action
+        return true
+      end
+
+      super
+    end
+
+    def onPickerChanged(picker, view)
+      super
+      @tool.remove_3d(LAYER_3D_ACTION_PREVIEW)
+      _preview_action
+    end
+
+    # ------
+
+    protected
+
+    def _preview_all_instances?
+      true
+    end
+
+    def _preview_arrows?
+      true
+    end
+
+    def _preview_box?
+      true
+    end
+
+    def _can_pick_deeper?
+      false
+    end
+
+    # -----
+
+    def _preview_action
+      super
+      unless @picker.picked_face.nil? || !has_active_part?
+
+        part = get_active_part
+        instance_info = part.def.get_one_instance_info
+
+        origin, x_axis, y_axis, z_axis, plane_manipulator, line_manipulator = _get_input_axes(instance_info)
+        t = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis)
+
+        if plane_manipulator.is_a?(FaceManipulator)
+
+          # Highlight picked face
+          k_mesh = Kuix::Mesh.new
+          k_mesh.add_triangles(plane_manipulator.triangles)
+          k_mesh.background_color = COLOR_ACTION_FILL
+          @tool.append_3d(k_mesh, LAYER_3D_ACTION_PREVIEW)
+
+        end
+
+        if (t * part.def.size.oriented_transformation).identity?
+
+          # Already adapted
+          # tooltip_type = MESSAGE_TYPE_SUCCESS # TODO
+
+        else
+
+          bounds = Geom::BoundingBox.new
+          bounds.add(_compute_children_faces_triangles(instance_info.entity.definition.entities, t.inverse))
+
+          # Front arrow
+          k_arrow = Kuix::ArrowMotif3d.new
+          k_arrow.patterns_transformation = Geom::Transformation.translation(Z_AXIS)
+          k_arrow.bounds.origin.copy!(bounds.min)
+          k_arrow.bounds.size.copy!(bounds)
+          k_arrow.color = COLOR_ACTION
+          k_arrow.line_width = 2
+          k_arrow.transformation = instance_info.transformation * t
+          @tool.append_3d(k_arrow, LAYER_3D_ACTION_PREVIEW)
+
+          # Box helper
+          k_box = Kuix::BoxMotif3d.new
+          k_box.bounds.copy!(bounds)
+          k_box.color = COLOR_ACTION
+          k_box.line_width = 1
+          k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+          k_box.transformation = instance_info.transformation * t
+          @tool.append_3d(k_box, LAYER_3D_ACTION_PREVIEW)
+
+          # Axes helper
+          k_axes_helper = Kuix::AxesHelper.new
+          k_axes_helper.transformation = instance_info.transformation * t
+          @tool.append_3d(k_axes_helper, LAYER_3D_ACTION_PREVIEW)
+
+        end
+
+        if line_manipulator.is_a?(LineManipulator)
+
+          if line_manipulator.infinite?
+
+            # Highlight picked line
+            k_line = Kuix::Line.new
+            k_line.position = line_manipulator.position
+            k_line.direction = line_manipulator.direction
+            k_line.color = COLOR_ACTION
+            k_line.line_width = 2
+            @tool.append_3d(k_line, LAYER_3D_ACTION_PREVIEW)
+
+          else
+
+            # Highlight picked segment
+            k_segments = Kuix::Segments.new
+            k_segments.add_segments(line_manipulator.segment)
+            k_segments.color = COLOR_ACTION
+            k_segments.line_width = 4
+            k_segments.on_top = true
+            @tool.append_3d(k_segments, LAYER_3D_ACTION_PREVIEW)
+
+          end
+
+        end
+
+      end
+    end
+
+    # -----
+
+    def _do_action
+
+      part = get_active_part
+      instance_info = part.def.get_one_instance_info
+      definition = instance_info.definition
+
+      origin, x_axis, y_axis, z_axis = _get_input_axes(instance_info)
+      ti = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis)
+
+      t = ti.inverse
+
+      model = Sketchup.active_model
+      model.start_operation('OCL Change Axes', true, false, false)
+
+        # Transform definition's entities
+        entities = definition.entities
+        entities.transform_entities(t, entities.to_a)
+
+        # Inverse transform definition's instances
+        definition.instances.each do |instance|
+          instance.transformation *= ti
+        end
+
+        # Update definition attributes
+        _update_orientation_locked_on_axis(definition)
+
+      # Commit model modification operation
+      model.commit_operation
+
+      # Fire event
+      PLUGIN.app_observer.model_observer.onDrawingChange
+
+    end
+
+    # -----
 
     def _get_input_axes(instance_info)
 
@@ -719,36 +855,133 @@ module Ladb::OpenCutList
       z_axis = plane_manipulator.normal.transform(ti)
       x_axis = line_manipulator.direction.transform(ti)
       x_axis.reverse! if line_manipulator.respond_to?(:reversed_in?) && plane_manipulator.respond_to?(:face) && line_manipulator.reversed_in?(plane_manipulator.face)
+      x_axis.reverse! if @tool.is_key_ctrl_or_option_down?
       y_axis = z_axis.cross(x_axis)
 
       [ ORIGIN, x_axis, y_axis, z_axis, plane_manipulator, line_manipulator ]
     end
 
-    def _get_input_point(instance_info)
+  end
 
-      if @picker.picked_point
-        return @picker.picked_point.transform(instance_info.transformation.inverse)
-      end
+  class SmartAxesMoveAxesActionHandler < SmartAxesActionHandler
 
-      nil
+    def initialize(tool, previous_action_handler = nil)
+      super(SmartAxesTool::ACTION_MOVE_AXES, tool, previous_action_handler)
     end
 
-    def _get_bounds_dim_along_axis(instance_info, bounds, axis)
-      begin
-        case instance_info.size.oriented_axis(axis)
-        when X_AXIS
-          return bounds.width
-        when Y_AXIS
-          return bounds.height
-        when Z_AXIS
-          return bounds.depth
-        else
-          return 0
+    # -- STATE --
+
+    def get_state_cursor(state)
+      @tool.cursor_adapt_axes
+    end
+
+    def get_state_picker(state)
+      SmartPicker.new(tool: @tool, observer: self, pick_point: true)
+    end
+
+    def get_state_status(state)
+      super +
+        ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_0')
+    end
+
+    # -----
+
+    def onPickerChanged(picker, view)
+      super
+      @tool.remove_3d(LAYER_3D_ACTION_PREVIEW)
+      _preview_action
+    end
+
+    # -----
+
+    protected
+
+    def _preview_all_instances?
+      true
+    end
+
+    def _preview_axes?
+      true
+    end
+
+    def _preview_arrows?
+      true
+    end
+
+    def _preview_box?
+      true
+    end
+
+    def _can_activate_part?(part)
+      true
+    end
+
+    def _can_pick_deeper?
+      false
+    end
+
+    # -----
+
+    def _preview_action
+      super
+      unless @picker.picked_point.nil? || !has_active_part?
+
+        et = _get_edit_transformation
+
+        part = get_active_part
+        instance_info = part.def.get_one_instance_info
+
+        input_point = @picker.picked_point.transform(instance_info.transformation.inverse)
+        ti = Geom::Transformation.translation(Geom::Vector3d.new(input_point.to_a))
+
+        k_axes_helper = Kuix::AxesHelper.new
+        k_axes_helper.transformation = et * ti
+        @tool.append_3d(k_axes_helper, LAYER_3D_ACTION_PREVIEW)
+
+      end
+    end
+
+    # -----
+
+    def _do_action
+
+      if @picker.picked_point.nil?
+        UI.beep
+        return true
+      end
+
+      part = get_active_part
+      instance_info = part.def.get_one_instance_info
+
+      input_point = @picker.picked_point.transform(instance_info.transformation.inverse)
+      ti = Geom::Transformation.translation(Geom::Vector3d.new(input_point.to_a))
+      t = ti.inverse
+
+      definition = part.def.definition
+
+      model = Sketchup.active_model
+      model.start_operation('OCL Change Axes', true, false, false)
+
+        # Transform definition's entities
+        entities = definition.entities
+        entities.transform_entities(t, entities.to_a)
+
+        # Inverse transform definition's instances
+        definition.instances.each do |instance|
+          instance.transformation *= ti
         end
-      rescue
-        return 0
-      end
+
+        # Update definition attributes
+        _update_orientation_locked_on_axis(definition)
+
+      # Commit model modification operation
+      model.commit_operation
+
+      # Fire event
+      PLUGIN.app_observer.model_observer.onDrawingChange
+
     end
+
 
   end
 
