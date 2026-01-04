@@ -9,9 +9,12 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added Smart Reshape Tool
   * Added SHIFT + (+/-) shortcuts in Smart Handle Tools
   * Improved Smart Draw Tool with sheared pull
+  * Rewrote Smart Axes Tool
 
 ## Lab
 
+### 2026-01-04
+  * Rewrote Smart Axes Tool
 ### 2025-12-31
   * Fixed Smart Stretch Tool
 ### 2025-12-20
