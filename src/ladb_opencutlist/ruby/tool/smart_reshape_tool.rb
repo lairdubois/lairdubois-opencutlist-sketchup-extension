@@ -140,8 +140,8 @@ module Ladb::OpenCutList
 
     def onActionChanged(action)
 
-      remove_all_2d
-      remove_all_3d
+      clear_all_2d
+      clear_all_3d
 
       case action
       when ACTION_STRETCH
@@ -257,8 +257,8 @@ module Ladb::OpenCutList
 
         @mouse_snap_point = nil
 
-        @tool.remove_all_2d
-        @tool.remove_3d([LAYER_3D_RESHAPE_PREVIEW ])
+        @tool.clear_all_2d
+        @tool.clear_3d([LAYER_3D_RESHAPE_PREVIEW ])
 
         _snap_reshape_start(flags, x, y, view)
         _preview_reshape_start(view)
@@ -268,8 +268,8 @@ module Ladb::OpenCutList
         @mouse_snap_point = nil
         @mouse_ip.pick(view, x, y)
 
-        @tool.remove_all_2d
-        @tool.remove_3d([LAYER_3D_RESHAPE_PREVIEW ])
+        @tool.clear_all_2d
+        @tool.clear_3d([LAYER_3D_RESHAPE_PREVIEW ])
 
         _snap_reshape(flags, x, y, view)
         _preview_reshape(view)
@@ -284,8 +284,8 @@ module Ladb::OpenCutList
 
     def onToolMouseLeave(tool, view)
       return true if super
-      @tool.remove_all_2d
-      @tool.remove_3d([ LAYER_3D_RESHAPE_PREVIEW ])
+      @tool.clear_all_2d
+      @tool.clear_3d([LAYER_3D_RESHAPE_PREVIEW ])
       @mouse_ip.clear
       view.tooltip = ''
     end
@@ -344,7 +344,7 @@ module Ladb::OpenCutList
           Sketchup.active_model.selection.clear
           Sketchup.active_model.selection.add(get_active_selection_instances)
         end
-        @tool.remove_all_2d
+        @tool.clear_all_2d
 
       end
 
@@ -736,7 +736,7 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_RESHAPE_START
-        @tool.remove_3d([LAYER_3D_PART_PREVIEW, LAYER_3D_CUTTERS_PREVIEW, LAYER_3D_GRIPS_PREVIEW ])
+        @tool.clear_3d([LAYER_3D_PART_PREVIEW, LAYER_3D_CUTTERS_PREVIEW, LAYER_3D_GRIPS_PREVIEW ])
         check_super = @mouse_down_point.nil?
 
       end
@@ -766,8 +766,8 @@ module Ladb::OpenCutList
 
         @mouse_snap_point = nil
 
-        @tool.remove_all_2d
-        @tool.remove_3d([LAYER_3D_CUTTERS_PREVIEW ])
+        @tool.clear_all_2d
+        @tool.clear_3d([LAYER_3D_CUTTERS_PREVIEW ])
 
         _snap_reshape_cutter_move(flags, x, y, view)
         _preview_reshape_cutter_move(view)
@@ -776,8 +776,8 @@ module Ladb::OpenCutList
 
         @mouse_snap_point = nil
 
-        @tool.remove_all_2d
-        @tool.remove_3d([LAYER_3D_CUTTERS_PREVIEW ])
+        @tool.clear_all_2d
+        @tool.clear_3d([LAYER_3D_CUTTERS_PREVIEW ])
 
         _snap_reshape_cutter_add(flags, x, y, view)
         _preview_reshape_cutter_add(view)
@@ -786,8 +786,8 @@ module Ladb::OpenCutList
 
         @mouse_snap_point = nil
 
-        @tool.remove_all_2d
-        @tool.remove_3d([LAYER_3D_CUTTERS_PREVIEW ])
+        @tool.clear_all_2d
+        @tool.clear_3d([LAYER_3D_CUTTERS_PREVIEW ])
 
         _snap_reshape_cutter_remove(flags, x, y, view)
         _preview_reshape_cutter_remove(view)
@@ -799,7 +799,7 @@ module Ladb::OpenCutList
 
     def onToolMouseLeave(tool, view)
       return true if super
-      @tool.remove_3d([ LAYER_3D_PART_PREVIEW, LAYER_3D_GRIPS_PREVIEW, LAYER_3D_CUTTERS_PREVIEW ])
+      @tool.clear_3d([LAYER_3D_PART_PREVIEW, LAYER_3D_GRIPS_PREVIEW, LAYER_3D_CUTTERS_PREVIEW ])
       super
     end
 
@@ -912,20 +912,20 @@ module Ladb::OpenCutList
         case new_state
 
         when STATE_RESHAPE_START
-          @tool.remove_all_2d
-          @tool.remove_3d([ LAYER_3D_PART_PREVIEW, LAYER_3D_PART_SIBLING_PREVIEW ])  # Remove part preview
+          @tool.clear_all_2d
+          @tool.clear_3d([LAYER_3D_PART_PREVIEW, LAYER_3D_PART_SIBLING_PREVIEW ])  # Remove part preview
           _unhide_instances
 
         when STATE_RESHAPE_CUTTER_MOVE
-          @tool.remove_3d(LAYER_3D_GRIPS_PREVIEW)
+          @tool.clear_3d(LAYER_3D_GRIPS_PREVIEW)
           _unhide_instances
 
         when STATE_RESHAPE_CUTTER_ADD, STATE_RESHAPE_CUTTER_REMOVE
-          @tool.remove_3d(LAYER_3D_GRIPS_PREVIEW)
+          @tool.clear_3d(LAYER_3D_GRIPS_PREVIEW)
           _unhide_instances
 
         when STATE_RESHAPE
-          @tool.remove_3d([ LAYER_3D_GRIPS_PREVIEW, LAYER_3D_CUTTERS_PREVIEW ])
+          @tool.clear_3d([LAYER_3D_GRIPS_PREVIEW, LAYER_3D_CUTTERS_PREVIEW ])
           _get_split_def    # Compute a new split_def
           _hide_instances
 

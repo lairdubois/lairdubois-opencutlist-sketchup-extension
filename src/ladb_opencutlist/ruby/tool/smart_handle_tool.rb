@@ -191,8 +191,8 @@ module Ladb::OpenCutList
 
     def onActionChanged(action)
 
-      remove_all_2d
-      remove_all_3d
+      clear_all_2d
+      clear_all_3d
 
       case action
       when ACTION_SELECT
@@ -323,8 +323,8 @@ module Ladb::OpenCutList
         @mouse_snap_point = nil
         @mouse_ip.pick(view, x, y)
 
-        @tool.remove_all_2d
-        @tool.remove_3d([ LAYER_3D_HANDLE_PREVIEW, LAYER_3D_AXES_PREVIEW ])
+        @tool.clear_all_2d
+        @tool.clear_3d([LAYER_3D_HANDLE_PREVIEW, LAYER_3D_AXES_PREVIEW ])
 
         _snap_handle_start(flags, x, y, view)
         _preview_handle_start(view)
@@ -334,8 +334,8 @@ module Ladb::OpenCutList
         @mouse_snap_point = nil
         @mouse_ip.pick(view, x, y)
 
-        @tool.remove_all_2d
-        @tool.remove_3d([ LAYER_3D_HANDLE_PREVIEW, LAYER_3D_AXES_PREVIEW ])
+        @tool.clear_all_2d
+        @tool.clear_3d([LAYER_3D_HANDLE_PREVIEW, LAYER_3D_AXES_PREVIEW ])
 
         _snap_handle(flags, x, y, view)
         _preview_handle(view)
@@ -350,8 +350,8 @@ module Ladb::OpenCutList
 
     def onToolMouseLeave(tool, view)
       return true if super
-      @tool.remove_all_2d
-      @tool.remove_3d([ LAYER_3D_HANDLE_PREVIEW, LAYER_3D_AXES_PREVIEW ])
+      @tool.clear_all_2d
+      @tool.clear_3d([LAYER_3D_HANDLE_PREVIEW, LAYER_3D_AXES_PREVIEW ])
       @mouse_ip.clear
       view.tooltip = ''
     end
@@ -440,7 +440,7 @@ module Ladb::OpenCutList
           Sketchup.active_model.selection.clear
           Sketchup.active_model.selection.add(get_active_selection_instances)
         end
-        @tool.remove_all_2d
+        @tool.clear_all_2d
 
       end
 
@@ -549,13 +549,13 @@ module Ladb::OpenCutList
         # Show part infos
         @tool.show_tooltip([ "##{_get_active_part_name}", _get_active_part_material_name, '-', _get_active_part_size, _get_active_part_icons ])
 
-        @tool.remove_3d(LAYER_3D_AXES_PREVIEW)
+        @tool.clear_3d(LAYER_3D_AXES_PREVIEW)
         _preview_edit_axes(true)
 
       else
 
         @tool.remove_tooltip
-        @tool.remove_3d(LAYER_3D_AXES_PREVIEW)
+        @tool.clear_3d(LAYER_3D_AXES_PREVIEW)
 
       end
     end

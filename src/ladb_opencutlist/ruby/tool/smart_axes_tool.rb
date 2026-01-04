@@ -169,14 +169,19 @@ module Ladb::OpenCutList
 
   class SmartAxesActionHandler < SmartSelectActionHandler
 
-    LAYER_3D_AXES_PREVIEW = 2
     LAYER_3D_ACTION_PREVIEW = 3
 
     COLOR_ACTION = Kuix::COLOR_MAGENTA
-    COLOR_ACTION_FILL = Sketchup::Color.new(255, 0, 255, 0.2).blend(COLOR_PART, 0.5).freeze
+    COLOR_ACTION_FILL = ColorUtils.color_translucent(COLOR_ACTION, 0.4) # Sketchup::Color.new(255, 0, 255, 0.2).blend(COLOR_PART, 0.5).freeze
 
     def initialize(action, tool, previous_action_handler = nil)
       super
+
+      @tooltip_type = SmartTool::MESSAGE_TYPE_DEFAULT
+
+      # Create 3D layers
+      @tool.create_3d(LAYER_3D_PART_PREVIEW)
+      @tool.create_3d(LAYER_3D_ACTION_PREVIEW)
 
     end
 
@@ -218,6 +223,11 @@ module Ladb::OpenCutList
       _preview_action
     end
 
+    def onPickerChanged(picker, view)
+      super
+      _preview_action
+    end
+
     def onActivePartChanged(part_entity_path, part, highlighted = nil)
       super
 
@@ -236,6 +246,13 @@ module Ladb::OpenCutList
 
     # -----
 
+    def _reset
+      @tooltip_type = SmartTool::MESSAGE_TYPE_DEFAULT
+      super
+    end
+
+    # -----
+
     def _start_with_previous_selection?
       true
     end
@@ -250,26 +267,23 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _preview_part(part_entity_path, part, layer = 0, highlighted = false)
-
-      @tool.remove_tooltip
-      @tool.remove_3d([ LAYER_3D_AXES_PREVIEW, LAYER_3D_ACTION_PREVIEW ])
-
-      if part.is_a?(Part)
-
-        # Preview action on part geometry
-        _preview_action
-
-        # Show part infos
-        @tool.show_tooltip([ "##{_get_active_part_name}", _get_active_part_material_name, '-', _get_active_part_size, _get_active_part_icons ])
-
-      end
-      super
+    def _preview_action
+      _preview_action_clean
+      _preview_action_draw
+      _preview_action_tooltip
     end
 
-    def _preview_action
+    def _preview_action_clean
+      @tool.clear_3d(LAYER_3D_ACTION_PREVIEW)
+    end
 
-      @tool.remove_3d(LAYER_3D_ACTION_PREVIEW)
+    def _preview_action_draw
+    end
+
+    def _preview_action_tooltip
+
+      # Show part infos
+      @tool.show_tooltip([ "##{_get_active_part_name}", _get_active_part_material_name, '-', _get_active_part_size, _get_active_part_icons ], @tooltip_type) if has_active_part?
 
     end
 
@@ -342,7 +356,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _preview_action
+    def _preview_action_draw
       super
       if (drawing_def = _get_drawing_def).is_a?(DrawingDef)
 
@@ -579,7 +593,7 @@ module Ladb::OpenCutList
       true
     end
 
-    def _preview_action
+    def _preview_action_draw
       super
       if (drawing_def = _get_drawing_def).is_a?(DrawingDef)
 
@@ -666,7 +680,6 @@ module Ladb::OpenCutList
     def onToolKeyDown(tool, key, repeat, flags, view)
 
       if tool.is_key_ctrl_or_option?(key)
-        @tool.remove_3d(LAYER_3D_ACTION_PREVIEW)
         _preview_action
         return true
       end
@@ -677,18 +690,11 @@ module Ladb::OpenCutList
     def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
 
       if tool.is_key_ctrl_or_option?(key)
-        @tool.remove_3d(LAYER_3D_ACTION_PREVIEW)
         _preview_action
         return true
       end
 
       super
-    end
-
-    def onPickerChanged(picker, view)
-      super
-      @tool.remove_3d(LAYER_3D_ACTION_PREVIEW)
-      _preview_action
     end
 
     # ------
@@ -713,7 +719,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _preview_action
+    def _preview_action_draw
       super
       unless @picker.picked_face.nil? || !has_active_part?
 
@@ -723,51 +729,60 @@ module Ladb::OpenCutList
         origin, x_axis, y_axis, z_axis, plane_manipulator, line_manipulator = _get_input_axes(instance_info)
         t = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis)
 
+        # Offset transformation to force arrow and mesh to be on top of part preview
+        ov = Geom::Vector3d.new(plane_manipulator.normal)
+        ov.length = 0.01
+        ot = Geom::Transformation.translation(ov)
+
         if plane_manipulator.is_a?(FaceManipulator)
 
           # Highlight picked face
           k_mesh = Kuix::Mesh.new
           k_mesh.add_triangles(plane_manipulator.triangles)
           k_mesh.background_color = COLOR_ACTION_FILL
+          k_mesh.transformation = ot
           @tool.append_3d(k_mesh, LAYER_3D_ACTION_PREVIEW)
 
         end
 
         if (t * part.def.size.oriented_transformation).identity?
 
-          # Already adapted
-          # tooltip_type = MESSAGE_TYPE_SUCCESS # TODO
+          # Already adapted, notify it by tooltip success color
+          @tooltip_type = SmartTool::MESSAGE_TYPE_SUCCESS
 
         else
 
-          bounds = Geom::BoundingBox.new
-          bounds.add(_compute_children_faces_triangles(instance_info.entity.definition.entities, t.inverse))
-
-          # Front arrow
-          k_arrow = Kuix::ArrowMotif3d.new
-          k_arrow.patterns_transformation = Geom::Transformation.translation(Z_AXIS)
-          k_arrow.bounds.origin.copy!(bounds.min)
-          k_arrow.bounds.size.copy!(bounds)
-          k_arrow.color = COLOR_ACTION
-          k_arrow.line_width = 2
-          k_arrow.transformation = instance_info.transformation * t
-          @tool.append_3d(k_arrow, LAYER_3D_ACTION_PREVIEW)
-
-          # Box helper
-          k_box = Kuix::BoxMotif3d.new
-          k_box.bounds.copy!(bounds)
-          k_box.color = COLOR_ACTION
-          k_box.line_width = 1
-          k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-          k_box.transformation = instance_info.transformation * t
-          @tool.append_3d(k_box, LAYER_3D_ACTION_PREVIEW)
-
-          # Axes helper
-          k_axes_helper = Kuix::AxesHelper.new
-          k_axes_helper.transformation = instance_info.transformation * t
-          @tool.append_3d(k_axes_helper, LAYER_3D_ACTION_PREVIEW)
+          # New orientation
+          @tooltip_type = SmartTool::MESSAGE_TYPE_DEFAULT
 
         end
+
+        bounds = Geom::BoundingBox.new
+        bounds.add(_compute_children_faces_triangles(instance_info.entity.definition.entities, t.inverse))
+
+        # Front arrow
+        k_arrow = Kuix::ArrowFillMotif3d.new
+        k_arrow.patterns_transformation = Geom::Transformation.translation(Z_AXIS)
+        k_arrow.bounds.origin.copy!(bounds.min)
+        k_arrow.bounds.size.copy!(bounds)
+        k_arrow.color = COLOR_ACTION_FILL
+        k_arrow.line_width = 2
+        k_arrow.transformation = ot * ot * instance_info.transformation * t
+        @tool.append_3d(k_arrow, LAYER_3D_ACTION_PREVIEW)
+
+        # Box helper
+        k_box = Kuix::BoxMotif3d.new
+        k_box.bounds.copy!(bounds)
+        k_box.color = COLOR_ACTION
+        k_box.line_width = 1
+        k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+        k_box.transformation = instance_info.transformation * t
+        @tool.append_3d(k_box, LAYER_3D_ACTION_PREVIEW)
+
+        # Axes helper
+        k_axes_helper = Kuix::AxesHelper.new
+        k_axes_helper.transformation = instance_info.transformation * t
+        @tool.append_3d(k_axes_helper, LAYER_3D_ACTION_PREVIEW)
 
         if line_manipulator.is_a?(LineManipulator)
 
@@ -886,14 +901,6 @@ module Ladb::OpenCutList
 
     # -----
 
-    def onPickerChanged(picker, view)
-      super
-      @tool.remove_3d(LAYER_3D_ACTION_PREVIEW)
-      _preview_action
-    end
-
-    # -----
-
     protected
 
     def _preview_all_instances?
@@ -922,7 +929,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _preview_action
+    def _preview_action_draw
       super
       unless @picker.picked_point.nil? || !has_active_part?
 

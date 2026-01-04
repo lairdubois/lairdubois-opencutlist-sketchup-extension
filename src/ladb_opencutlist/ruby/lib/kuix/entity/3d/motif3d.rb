@@ -296,4 +296,41 @@ module Ladb::OpenCutList::Kuix
 
   end
 
+  class ArrowFillMotif3d < Motif3d
+
+    def initialize(offset = 0.1, id = nil)
+      super([[
+
+               [   offset ,     1/3.0 , 0 ],
+               [    1/2.0 ,     1/3.0 , 0 ],
+               [    1/2.0 ,     2/3.0 , 0 ],
+               [   offset ,     2/3.0 , 0 ],
+
+             ], [
+
+               [    1/2.0 ,    offset , 0 ],
+               [ 1-offset ,     1/2.0 , 0 ],
+               [    1/2.0 ,  1-offset , 0 ],
+               [    1/2.0 ,     2/3.0 , 0 ],
+
+           ]], id)
+    end
+
+    # -- RENDER --
+
+    def paint_content(graphics)
+      @_paths.each do |points|
+        if @on_top
+          graphics.set_drawing_color(@color)
+          graphics.view.draw2d(GL_QUADS, points.map { |point| graphics.view.screen_coords(point) })
+        else
+          graphics.draw_quads(
+            points: points,
+            fill_color: @color)
+        end
+      end
+    end
+
+  end
+
 end

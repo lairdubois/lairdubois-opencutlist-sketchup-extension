@@ -509,8 +509,7 @@ module Ladb::OpenCutList
       k_btn
     end
 
-    def append_2d(entity, layer = 0)
-      raise "layer can't be nil" if layer.nil?
+    def create_2d(layer = 0)
       k_layer = @layers_2d[layer]
       if k_layer.nil?
         k_layer = @layers_2d[layer] = Kuix::Panel.new
@@ -519,10 +518,16 @@ module Ladb::OpenCutList
         k_layer.hittable = false
         @canvas.append(k_layer)
       end
+      k_layer
+    end
+
+    def append_2d(entity, layer = 0)
+      raise "layer can't be nil" if layer.nil?
+      k_layer = create_2d(layer)
       k_layer.append(entity)
     end
 
-    def remove_2d(layers = 0)
+    def clear_2d(layers = 0)
       layers = [ layers ] if layers.is_a?(Integer)
       return unless layers.is_a?(Array)
       layers.each do |layer|
@@ -531,7 +536,7 @@ module Ladb::OpenCutList
       end
     end
 
-    def remove_all_2d
+    def clear_all_2d
       @layers_2d.each { |layer, k_layer| k_layer.clear }
     end
 
@@ -544,17 +549,22 @@ module Ladb::OpenCutList
       end
     end
 
-    def append_3d(entity, layer = 0)
-      raise "layer can't be nil" if layer.nil?
+    def create_3d(layer = 0)
       k_layer = @layers_3d[layer]
       if k_layer.nil?
         k_layer = @layers_3d[layer] = Kuix::Group.new
         @overlay_layer.append(k_layer)
       end
+      k_layer
+    end
+
+    def append_3d(entity, layer = 0)
+      raise "layer can't be nil" if layer.nil?
+      k_layer = create_3d(layer)
       k_layer.append(entity)
     end
 
-    def remove_3d(layers = 0)
+    def clear_3d(layers = 0)
       layers = [ layers ] if layers.is_a?(Integer)
       return unless layers.is_a?(Array)
       layers.each do |layer|
@@ -563,7 +573,7 @@ module Ladb::OpenCutList
       end
     end
 
-    def remove_all_3d
+    def clear_all_3d
       @layers_3d.each { |layer, k_layer| k_layer.clear }
     end
 
@@ -1788,15 +1798,15 @@ module Ladb::OpenCutList
 
     def _reset
       @previous_action_handler = nil
-      @tool.remove_all_2d
-      @tool.remove_all_3d
+      @tool.clear_all_2d
+      @tool.clear_all_3d
       Sketchup.active_model.active_view.lock_inference unless Sketchup.active_model.nil?
     end
 
     def _restart
 
-      @tool.remove_all_2d
-      @tool.remove_all_3d
+      @tool.clear_all_2d
+      @tool.clear_all_3d
       Sketchup.active_model.active_view.lock_inference unless Sketchup.active_model.nil?
       @previous_action_handler = nil
 
@@ -2325,7 +2335,7 @@ module Ladb::OpenCutList
     end
 
     def _preview_part(part_entity_path, part, layer = LAYER_3D_PART_PREVIEW, highlighted = false)
-      @tool.remove_3d(layer)
+      @tool.clear_3d(layer)
       if part.is_a?(Part)
 
         instance_paths = []
@@ -2423,7 +2433,7 @@ module Ladb::OpenCutList
     end
 
     def _preview_part_siblings(layer = LAYER_3D_PART_SIBLING_PREVIEW, highlighted = false)
-      @tool.remove_3d(layer)
+      @tool.clear_3d(layer)
       if @active_part_sibling_entity_paths.is_a?(Array)
 
         # Mesh
@@ -2792,7 +2802,7 @@ module Ladb::OpenCutList
     # -----
 
     def onToolSuspend(tool, view)
-      tool.remove_2d(LAYER_2D_FLOATING_TOOLS) if STATE_SELECT_TREE
+      tool.clear_2d(LAYER_2D_FLOATING_TOOLS) if STATE_SELECT_TREE
     end
 
     def onToolCancel(tool, reason, view)
@@ -2824,7 +2834,7 @@ module Ladb::OpenCutList
 
       when STATE_SELECT_RECT
 
-        @tool.remove_all_2d
+        @tool.clear_all_2d
 
         unless @mouse_down_point_2d.nil?
           @mouse_move_point_2d = Geom::Point3d.new(x, y)
@@ -2887,7 +2897,7 @@ module Ladb::OpenCutList
             pick_type
           )
 
-          @tool.remove_all_2d
+          @tool.clear_all_2d
           @mouse_down_point_2d = nil
           @mouse_move_point_2d = nil
 
@@ -2967,7 +2977,7 @@ module Ladb::OpenCutList
       when STATE_SELECT_TREE
         if tool.is_key_ctrl_or_option?(key)
           Sketchup.active_model.selection.clear
-          tool.remove_2d(LAYER_2D_FLOATING_TOOLS)
+          tool.clear_2d(LAYER_2D_FLOATING_TOOLS)
           set_state(STATE_SELECT)
           _refresh
           return true
@@ -3014,8 +3024,8 @@ module Ladb::OpenCutList
           path = get_active_part_entity_path
           active_path_depth = Sketchup.active_model.active_path.is_a?(Array) ? Sketchup.active_model.active_path.size : 0
 
-          @tool.remove_all_2d
-          @tool.remove_all_3d
+          @tool.clear_all_2d
+          @tool.clear_all_3d
           _reset_active_part
 
           unit = @tool.get_unit
@@ -3049,13 +3059,13 @@ module Ladb::OpenCutList
               if entity == path.last
                 _preview_part(path, part)
               else
-                tool.remove_3d(LAYER_3D_PART_PREVIEW)
+                tool.clear_3d(LAYER_3D_PART_PREVIEW)
                 Sketchup.active_model.selection.clear
                 Sketchup.active_model.selection.add(entity)
               end
             end
             k_btn.on(:leave) do
-              tool.remove_3d(LAYER_3D_PART_PREVIEW)
+              tool.clear_3d(LAYER_3D_PART_PREVIEW)
               Sketchup.active_model.selection.clear
             end
             k_btn.on(:click) do

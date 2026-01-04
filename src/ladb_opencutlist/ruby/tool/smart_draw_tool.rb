@@ -370,8 +370,8 @@ module Ladb::OpenCutList
       # puts "best_picked = #{view.pick_helper(x, y).best_picked}"
       # puts "---"
 
-      @tool.remove_2d(LAYER_2D_DIMENSIONS)
-      @tool.remove_all_3d
+      @tool.clear_2d(LAYER_2D_DIMENSIONS)
+      @tool.clear_all_3d
 
       case @state
 
@@ -411,8 +411,8 @@ module Ladb::OpenCutList
     end
 
     def onToolMouseLeave(tool, view)
-      @tool.remove_2d(LAYER_2D_DIMENSIONS)
-      @tool.remove_all_3d
+      @tool.clear_2d(LAYER_2D_DIMENSIONS)
+      @tool.clear_all_3d
       @mouse_ip.clear
       view.tooltip = ''
       super
@@ -1788,7 +1788,7 @@ module Ladb::OpenCutList
 
     def _remove_floating_tools
       @tool.hide_message
-      @tool.remove_2d(LAYER_2D_FLOATING_TOOLS)
+      @tool.clear_2d(LAYER_2D_FLOATING_TOOLS)
     end
 
     # -- UTILS --
