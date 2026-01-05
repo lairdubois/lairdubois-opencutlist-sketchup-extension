@@ -3492,7 +3492,9 @@ module Ladb::OpenCutList
                    pick_point: false,
                    pick_edges: false,
                    pick_clines: false,
-                   pick_axes: false
+                   pick_axes: false,
+
+                   lockable: true
 
     )
 
@@ -3511,6 +3513,8 @@ module Ladb::OpenCutList
       @pick_edges = pick_edges
       @pick_clines = pick_clines
       @pick_axes = pick_axes
+
+      @lockable = lockable
 
       @picked_face = nil
       @picked_face_path = nil
@@ -3584,7 +3588,7 @@ module Ladb::OpenCutList
     end
 
     def onToolKeyUp(tool, key, repeat, flags, view)
-      do_pick if tool.is_key_shift?(key)
+      do_pick if @lockable && tool.is_key_shift?(key)
       false
     end
 
@@ -3598,9 +3602,9 @@ module Ladb::OpenCutList
 
     def do_pick
 
-      active_path = @view.model.active_path.nil? ? [] : @view.model.active_path # Picker 'path_at' returns path only in active_path context
+      active_path = @view.model.active_path.nil? ? [] : @view.model.active_path # Picker 'path_at' returns a path only in the active_path context
 
-      context_locked = @tool.is_key_shift_down?
+      context_locked = @lockable && @tool.is_key_shift_down?
 
       picked_face = context_locked && @pick_context_by_face ? @picked_face : nil
       picked_face_path = context_locked && @pick_context_by_face ? @picked_face_path : nil
