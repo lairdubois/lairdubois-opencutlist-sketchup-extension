@@ -3032,103 +3032,63 @@ module Ladb::OpenCutList
           @tool.clear_all_3d
           _reset_active_part
 
-          unit = @tool.get_unit
+          k_dropup = SmartDropup.new(
+            @tool,
+            path.each_with_index.map { |entity, depth|
 
-          k_panel = Kuix::Panel.new
-          k_panel.layout_data = Kuix::StaticLayoutData.new(@tool.last_mouse_x, @tool.last_mouse_y, -1, -1, Kuix::Anchor.new(Kuix::Anchor::BOTTOM_RIGHT))
-          k_panel.layout = Kuix::GridLayout.new(1, path.size, 0, unit * 0.25)
-          k_panel.border.set_all!(unit * 0.25)
-          k_panel.padding.set_all!(unit * 0.25)
-          k_panel.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_LIGHT)
-          k_panel.set_style_attribute(:border_color, ColorUtils.color_darken(SmartTool::COLOR_BRAND_LIGHT, 0.1))
-          @tool.append_2d(k_panel, LAYER_2D_FLOATING_TOOLS)
-
-          path.each_with_index do |entity, depth|
-
-            disabled = depth < active_path_depth
-            text_color = disabled ? SmartTool::COLOR_BRAND_LIGHT : Kuix::COLOR_BLACK
-
-            k_btn = Kuix::Button.new
-            k_btn.layout = Kuix::BorderLayout.new(unit)
-            k_btn.margin.left = unit * depth
-            k_btn.border.set_all!(unit * 0.5)
-            k_btn.padding.set_all!(unit)
-            k_btn.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
-            k_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_LIGHT, :hover)
-            k_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND, :active)
-            k_btn.set_style_attribute(:border_color, Kuix::COLOR_WHITE)
-            k_btn.set_style_attribute(:border_color, SmartTool::COLOR_BRAND, :hover)
-            k_btn.disabled = disabled
-            k_btn.on(:enter) do
-              if entity == path.last
-                _preview_part(path, part)
-              else
+              indent = depth
+              disabled = depth < active_path_depth
+              on_enter = lambda {
+                if entity == path.last
+                  _preview_part(path, part)
+                else
+                  tool.clear_3d(LAYER_3D_PART_PREVIEW)
+                  Sketchup.active_model.selection.clear
+                  Sketchup.active_model.selection.add(entity)
+                end
+              }
+              on_leave = lambda {
                 tool.clear_3d(LAYER_3D_PART_PREVIEW)
                 Sketchup.active_model.selection.clear
-                Sketchup.active_model.selection.add(entity)
-              end
-            end
-            k_btn.on(:leave) do
-              tool.clear_3d(LAYER_3D_PART_PREVIEW)
-              Sketchup.active_model.selection.clear
-            end
-            k_btn.on(:click) do
-              Sketchup.active_model.selection.clear
-              _reset_active_part
-              if entity == path.last
-                _set_active_part(path, part)
-              else
-                _set_active_selection(path[0...depth-path.size], [ entity ])
-              end
-              onSelected
-            end
-            k_panel.append(k_btn)
-
-              k_names = Kuix::Panel.new
-              k_names.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
-              k_names.layout = Kuix::InlineLayout.new(true, unit * 0.5, Kuix::Anchor.new(Kuix::Anchor::LEFT))
-              k_btn.append(k_names)
-
-                unless entity.name.empty?
-                  k_label = Kuix::Label.new
-                  k_label.text = entity.name
-                  k_label.text_size = unit * 3
-                  k_label.text_bold = true
-                  k_label.set_style_attribute(:color, text_color)
-                  k_label.set_style_attribute(:color, Kuix::COLOR_WHITE, :active)
-                  k_names.append(k_label)
+              }
+              on_click = lambda {
+                Sketchup.active_model.selection.clear
+                _reset_active_part
+                if entity == path.last
+                  _set_active_part(path, part)
+                else
+                  _set_active_selection(path[0...depth - path.size], [entity])
                 end
+                onSelected
+              }
 
-                unless entity.definition.group? && !entity.name.empty?
-                  k_label = Kuix::Label.new
-                  k_label.text = entity.definition.group? ? PLUGIN.get_i18n_string('tab.outliner.type_1') : "<#{entity.definition.name}>"
-                  k_label.text_size = unit * 3
-                  k_label.set_style_attribute(:color, text_color)
-                  k_label.set_style_attribute(:color, Kuix::COLOR_WHITE, :active)
-                  k_names.append(k_label)
-                end
+              text_color = disabled ? SmartTool::COLOR_BRAND_LIGHT : Kuix::COLOR_BLACK
+              text_defs = []
+              unless entity.name.empty?
+                text_defs << SmartDropup::SmartDropupTextDef.new(
+                  entity.name,
+                  text_color,
+                  true
+                )
+              end
+              unless entity.definition.group? && !entity.name.empty?
+                text_defs << SmartDropup::SmartDropupTextDef.new(
+                  entity.definition.group? ? PLUGIN.get_i18n_string('tab.outliner.type_1') : "<#{entity.definition.name}>",
+                  text_color
+                )
+              end
 
-              # k_select_btn = Kuix::Button.new
-              # k_select_btn.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
-              # k_select_btn.border.set_all!(unit * 0.5)
-              # k_select_btn.min_size.set_all!(unit * 3)
-              # k_select_btn.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
-              # k_select_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_LIGHT, :hover)
-              # k_select_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND, :active)
-              # k_select_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND, :selected)
-              # k_select_btn.set_style_attribute(:border_color, Kuix::COLOR_WHITE)
-              # k_select_btn.set_style_attribute(:border_color, SmartTool::COLOR_BRAND, :hover)
-              # k_select_btn.on(:click) do
-              #   k_select_btn.selected = !k_select_btn.selected?
-              #   if k_select_btn.selected?
-              #     Sketchup.active_model.selection.add(entity)
-              #   else
-              #     Sketchup.active_model.selection.remove(entity)
-              #   end
-              # end
-              # k_btn.append(k_select_btn)
-
-          end
+              SmartDropup::SmartDropupBtnDef.new(
+                indent,
+                disabled,
+                on_enter,
+                on_leave,
+                on_click,
+                text_defs
+              )
+            }
+          )
+          @tool.append_2d(k_dropup, LAYER_2D_FLOATING_TOOLS)
 
         end
 
@@ -3217,6 +3177,117 @@ module Ladb::OpenCutList
       )
       @tool.append_2d(k_rect)
 
+    end
+
+  end
+
+  # -----
+
+  class SmartDropup < Kuix::Panel
+
+    def initialize(tool, btn_defs, id = nil)
+      super(id)
+
+      unit = tool.get_unit
+
+      self.layout_data = Kuix::StaticLayoutData.new(tool.last_mouse_x, tool.last_mouse_y, -1, -1, Kuix::Anchor.new(Kuix::Anchor::BOTTOM_RIGHT))
+      self.layout = Kuix::GridLayout.new(1, btn_defs.size, 0, unit * 0.25)
+      self.border.set_all!(unit * 0.25)
+      self.padding.set_all!(unit * 0.25)
+      self.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_LIGHT)
+      self.set_style_attribute(:border_color, ColorUtils.color_darken(SmartTool::COLOR_BRAND_LIGHT, 0.1))
+
+        btn_defs.each do |btn_def|
+
+          k_btn = Kuix::Button.new
+          k_btn.layout = Kuix::BorderLayout.new(unit)
+          k_btn.margin.left = unit * btn_def.indent
+          k_btn.border.set_all!(unit * 0.5)
+          k_btn.padding.set_all!(unit)
+          k_btn.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
+          k_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_LIGHT, :hover)
+          k_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND, :active)
+          k_btn.set_style_attribute(:border_color, Kuix::COLOR_WHITE)
+          k_btn.set_style_attribute(:border_color, SmartTool::COLOR_BRAND, :hover)
+          k_btn.disabled = btn_def.disabled
+          k_btn.on(:enter) { btn_def.on_enter.call } unless btn_def.on_enter.nil?
+          k_btn.on(:leave) { btn_def.on_leave.call } unless btn_def.on_leave.nil?
+          k_btn.on(:click) { btn_def.on_click.call } unless btn_def.on_click.nil?
+          self.append(k_btn)
+
+            k_labels = Kuix::Panel.new
+            k_labels.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
+            k_labels.layout = Kuix::InlineLayout.new(true, unit * 0.5, Kuix::Anchor.new(Kuix::Anchor::LEFT))
+            k_btn.append(k_labels)
+
+              btn_def.text_defs.each do |text_def|
+
+                k_label = Kuix::Label.new
+                k_label.text = text_def.text
+                k_label.text_size = unit * 3
+                k_label.text_bold = text_def.bold
+                k_label.set_style_attribute(:color, text_def.color)
+                k_label.set_style_attribute(:color, Kuix::COLOR_WHITE, :active)
+                k_labels.append(k_label)
+
+              end
+
+            # k_select_btn = Kuix::Button.new
+            # k_select_btn.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
+            # k_select_btn.border.set_all!(unit * 0.5)
+            # k_select_btn.min_size.set_all!(unit * 3)
+            # k_select_btn.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
+            # k_select_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_LIGHT, :hover)
+            # k_select_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND, :active)
+            # k_select_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND, :selected)
+            # k_select_btn.set_style_attribute(:border_color, Kuix::COLOR_WHITE)
+            # k_select_btn.set_style_attribute(:border_color, SmartTool::COLOR_BRAND, :hover)
+            # k_select_btn.on(:click) do
+            #   k_select_btn.selected = !k_select_btn.selected?
+            #   if k_select_btn.selected?
+            #     Sketchup.active_model.selection.add(entity)
+            #   else
+            #     Sketchup.active_model.selection.remove(entity)
+            #   end
+            # end
+            # k_btn.append(k_select_btn)
+
+        end
+
+    end
+
+    SmartDropupBtnDef = Struct.new(
+      :indent,
+      :disabled,
+      :on_enter,
+      :on_leave,
+      :on_click,
+      :text_defs
+    ) do
+      def initialize(
+        indent = 0,
+        disabled = false,
+        on_enter = nil,
+        on_leave = nil,
+        on_click = nil,
+        text_defs = []
+      )
+        super
+      end
+    end
+
+    SmartDropupTextDef = Struct.new(
+      :text,
+      :color,
+      :bold
+    ) do
+      def initialize(
+        text,
+        color = Kuix::COLOR_BLACK,
+        bold = false
+      )
+        super
+      end
     end
 
   end
