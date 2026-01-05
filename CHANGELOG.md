@@ -14,6 +14,8 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 ## Lab
 
 ### 2026-01-04
+  * Improved Smart Tools startup
+### 2026-01-04
   * Rewrote Smart Axes Tool
 ### 2025-12-31
   * Fixed Smart Stretch Tool
