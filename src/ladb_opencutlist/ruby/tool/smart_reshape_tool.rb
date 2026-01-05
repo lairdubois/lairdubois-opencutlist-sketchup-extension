@@ -269,7 +269,7 @@ module Ladb::OpenCutList
         @mouse_ip.pick(view, x, y)
 
         @tool.clear_all_2d
-        @tool.clear_3d([LAYER_3D_RESHAPE_PREVIEW ])
+        @tool.clear_3d(LAYER_3D_RESHAPE_PREVIEW)
 
         _snap_reshape(flags, x, y, view)
         _preview_reshape(view)
@@ -285,7 +285,6 @@ module Ladb::OpenCutList
     def onToolMouseLeave(tool, view)
       return true if super
       @tool.clear_all_2d
-      @tool.clear_3d([LAYER_3D_RESHAPE_PREVIEW ])
       @mouse_ip.clear
       view.tooltip = ''
     end
@@ -777,7 +776,7 @@ module Ladb::OpenCutList
         @mouse_snap_point = nil
 
         @tool.clear_all_2d
-        @tool.clear_3d([LAYER_3D_CUTTERS_PREVIEW ])
+        @tool.clear_3d(LAYER_3D_CUTTERS_PREVIEW)
 
         _snap_reshape_cutter_add(flags, x, y, view)
         _preview_reshape_cutter_add(view)
@@ -787,7 +786,7 @@ module Ladb::OpenCutList
         @mouse_snap_point = nil
 
         @tool.clear_all_2d
-        @tool.clear_3d([LAYER_3D_CUTTERS_PREVIEW ])
+        @tool.clear_3d(LAYER_3D_CUTTERS_PREVIEW)
 
         _snap_reshape_cutter_remove(flags, x, y, view)
         _preview_reshape_cutter_remove(view)
@@ -795,12 +794,6 @@ module Ladb::OpenCutList
       end
 
       false
-    end
-
-    def onToolMouseLeave(tool, view)
-      return true if super
-      @tool.clear_3d([LAYER_3D_PART_PREVIEW, LAYER_3D_GRIPS_PREVIEW, LAYER_3D_CUTTERS_PREVIEW ])
-      super
     end
 
     def onToolKeyDown(tool, key, repeat, flags, view)

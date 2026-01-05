@@ -1682,8 +1682,12 @@ module Ladb::OpenCutList
 
       # ---------
 
+      # Set the startup state
       set_state(get_startup_state)
-      onToolMouseMove(@tool, 0, @tool.last_mouse_x, @tool.last_mouse_y, Sketchup.active_model.active_view)
+
+      # Simulate mouse move if the tool has already moved
+      onToolMouseMove(@tool, 0, @tool.last_mouse_x, @tool.last_mouse_y, Sketchup.active_model.active_view) unless @tool.last_mouse_x < 0 || @tool.last_mouse_y < 0
+
     end
 
     def stop
@@ -3031,7 +3035,7 @@ module Ladb::OpenCutList
           unit = @tool.get_unit
 
           k_panel = Kuix::Panel.new
-          k_panel.layout_data = Kuix::StaticLayoutData.new(tool.last_mouse_x, tool.last_mouse_y, -1, -1, Kuix::Anchor.new(Kuix::Anchor::BOTTOM_RIGHT))
+          k_panel.layout_data = Kuix::StaticLayoutData.new(@tool.last_mouse_x, @tool.last_mouse_y, -1, -1, Kuix::Anchor.new(Kuix::Anchor::BOTTOM_RIGHT))
           k_panel.layout = Kuix::GridLayout.new(1, path.size, 0, unit * 0.25)
           k_panel.border.set_all!(unit * 0.25)
           k_panel.padding.set_all!(unit * 0.25)

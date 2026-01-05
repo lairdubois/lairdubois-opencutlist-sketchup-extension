@@ -172,7 +172,7 @@ module Ladb::OpenCutList
     LAYER_3D_ACTION_PREVIEW = 3
 
     COLOR_ACTION = Kuix::COLOR_MAGENTA
-    COLOR_ACTION_FILL = ColorUtils.color_translucent(COLOR_ACTION, 0.4) # Sketchup::Color.new(255, 0, 255, 0.2).blend(COLOR_PART, 0.5).freeze
+    COLOR_ACTION_FILL = Sketchup::Color.new(255, 0, 255, 0.2).blend(COLOR_PART, 0.5).freeze
 
     def initialize(action, tool, previous_action_handler = nil)
       super
@@ -766,6 +766,14 @@ module Ladb::OpenCutList
         k_arrow.bounds.origin.copy!(bounds.min)
         k_arrow.bounds.size.copy!(bounds)
         k_arrow.color = COLOR_ACTION_FILL
+        k_arrow.transformation = ot * ot * instance_info.transformation * t
+        @tool.append_3d(k_arrow, LAYER_3D_ACTION_PREVIEW)
+
+        k_arrow = Kuix::ArrowMotif3d.new
+        k_arrow.patterns_transformation = Geom::Transformation.translation(Z_AXIS)
+        k_arrow.bounds.origin.copy!(bounds.min)
+        k_arrow.bounds.size.copy!(bounds)
+        k_arrow.color = COLOR_ACTION
         k_arrow.line_width = 2
         k_arrow.transformation = ot * ot * instance_info.transformation * t
         @tool.append_3d(k_arrow, LAYER_3D_ACTION_PREVIEW)
