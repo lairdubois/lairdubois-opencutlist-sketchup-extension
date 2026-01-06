@@ -3036,8 +3036,16 @@ module Ladb::OpenCutList
             @tool,
             path.each_with_index.map { |entity, depth|
 
-              indent = depth
-              disabled = depth < active_path_depth
+              on_click = lambda {
+                Sketchup.active_model.selection.clear
+                _reset_active_part
+                if entity == path.last
+                  _set_active_part(path, part)
+                else
+                  _set_active_selection(path[0...depth - path.size], [entity])
+                end
+                onSelected
+              }
               on_enter = lambda {
                 if entity == path.last
                   _preview_part(path, part)
@@ -3051,16 +3059,9 @@ module Ladb::OpenCutList
                 tool.clear_3d(LAYER_3D_PART_PREVIEW)
                 Sketchup.active_model.selection.clear
               }
-              on_click = lambda {
-                Sketchup.active_model.selection.clear
-                _reset_active_part
-                if entity == path.last
-                  _set_active_part(path, part)
-                else
-                  _set_active_selection(path[0...depth - path.size], [entity])
-                end
-                onSelected
-              }
+
+              indent = depth
+              disabled = depth < active_path_depth
 
               text_color = disabled ? SmartTool::COLOR_BRAND_LIGHT : Kuix::COLOR_BLACK
               text_defs = []
@@ -3079,12 +3080,12 @@ module Ladb::OpenCutList
               end
 
               SmartDropup::SmartDropupBtnDef.new(
-                indent,
-                disabled,
+                text_defs,
+                on_click,
                 on_enter,
                 on_leave,
-                on_click,
-                text_defs
+                indent,
+                disabled
               )
             }
           )
@@ -3257,20 +3258,20 @@ module Ladb::OpenCutList
     end
 
     SmartDropupBtnDef = Struct.new(
-      :indent,
-      :disabled,
+      :text_defs,
+      :on_click,
       :on_enter,
       :on_leave,
-      :on_click,
-      :text_defs
+      :indent,
+      :disabled
     ) do
       def initialize(
-        indent = 0,
-        disabled = false,
+        text_defs = [],
+        on_click = nil,
         on_enter = nil,
         on_leave = nil,
-        on_click = nil,
-        text_defs = []
+        indent = 0,
+        disabled = false
       )
         super
       end
