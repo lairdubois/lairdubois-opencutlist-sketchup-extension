@@ -2149,6 +2149,7 @@ tool:
     action_2_state_2_status: انقر لوضع نسخٍ من القطعة أو أدخل مسافتين
     action_3: نقل
     action_3_status: حرك قِطعة وفقا لمحور معين
+    action_3_state_1_status: انقر لتحديد نقطة القياس الأولى
     action_3_state_2_status: انقر لوضع القِطعة أو أدخل مسافة معينة
     action_4: توزيع
     action_4_status: وزع قِطعة على محور معين

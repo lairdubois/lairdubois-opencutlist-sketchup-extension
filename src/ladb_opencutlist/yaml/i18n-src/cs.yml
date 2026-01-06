@@ -2143,6 +2143,7 @@ tool:
     action_2_state_2_status: Kliknutím umístěte kopie dílce nebo zadejte dvě vzdálenosti
     action_3: Posun
     action_3_status: Pohybovat částí podél osy
+    action_3_state_1_status: Kliknutím nastavíte první bod měření
     action_3_state_2_status: Kliknutím umístěte dílec nebo zadejte vzdálenost
     action_4: Rozložení
     action_4_status: Rozmístění části podél osy

@@ -2143,6 +2143,7 @@ tool:
     action_2_state_2_status: Seleziona un punto per copiare un elemento o digita due distanze
     action_3: Sposta
     action_3_status: Spostare un elemento lungo un asse
+    action_3_state_1_status: Seleziona il primo punto della misura
     action_3_state_2_status: Seleziona un punto dove posizionare l'elemento o digita una distanza
     action_4: Distribuisci
     action_4_status: Distribuire un elemento lungo un asse

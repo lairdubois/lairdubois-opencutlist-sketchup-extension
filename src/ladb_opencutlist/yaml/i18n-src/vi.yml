@@ -2149,6 +2149,7 @@ tool:
     action_2_state_2_status: Nhấp để đặt bản sao của bộ phận hoặc nhập hai khoảng cách
     action_3: Di chuyển
     action_3_status: Di chuyển một bộ phận dọc theo một trục.
+    action_3_state_1_status: Nhấp để đặt điểm đo đầu tiên
     action_3_state_2_status: Nhấp để đặt bộ phận hoặc nhập khoảng cách
     action_4: Phân tán
     action_4_status: Phân bố đều bộ phận dọc theo một trục.

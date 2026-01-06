@@ -2143,6 +2143,7 @@ tool:
     action_2_state_2_status: "Kattintson a másolatok elhelyezéséhez, vagy adjon meg egy távolságot"
     action_3: Mozgatás
     action_3_status: ""
+    action_3_state_1_status: Kattintson az első mérési pont meghatározásához
     action_3_state_2_status: "Kattintson az alkatrész elhelyezéséhez, vagy adjon meg egy távolságot"
     action_4: Elosztás
     action_4_status: ""

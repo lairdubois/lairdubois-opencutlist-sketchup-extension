@@ -2139,6 +2139,7 @@ tool:
     action_2_state_2_status: Kliknite za postavljanje kopija komada ili unesite dve udaljenosti
     action_3: Premestiti
     action_3_status: ""
+    action_3_state_1_status: Kliknite za prvu tačku merenja
     action_3_state_2_status: Kliknite za postavljanje komada ili unesite rastojanje
     action_4: Rasporediti
     action_4_status: ""

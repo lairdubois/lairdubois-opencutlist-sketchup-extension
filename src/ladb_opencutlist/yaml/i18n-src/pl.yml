@@ -2143,6 +2143,7 @@ tool:
     action_2_state_2_status: "Kliknij, aby umieścić kopie części lub wprowadź dwie odległości"
     action_3: Przesuń
     action_3_status: ""
+    action_3_state_1_status: "Kliknij, aby ustawić pierwszy punkt pomiarowy"
     action_3_state_2_status: "Kliknij, aby umieścić część lub wprowadź odległość"
     action_4: Rozmieść
     action_4_status: ""
