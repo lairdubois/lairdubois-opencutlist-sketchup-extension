@@ -477,11 +477,11 @@ tab:
         *Тоді OpenCutList зарахує 2 деталі товщиною 19мм замість 1 деталі 38мм.*
       cut_options: $t(tab.materials.edit_material.cut_options)
       length_increase: $t(tab.materials.edit_material.length_increase)
-      length_increase_help: "Припуск, застосований до готової довжини, щоб визначити **необроблену довжину**."  # TODO: singular version of tab.materials.edit_material.length_increase
+      length_increase_help: "Припуск, застосований до готової довжини, щоб визначити **необроблену довжину**."
       width_increase: $t(tab.materials.edit_material.width_increase)
-      width_increase_help: "Припуск, застосований до готової ширини, щоб визначити **необроблену ширину**." # TODO: singular version of tab.materials.edit_material.width_increase
+      width_increase_help: "Припуск, застосований до готової ширини, щоб визначити **необроблену ширину**."
       thickness_increase: $t(tab.materials.edit_material.thickness_increase)
-      thickness_increase_help: "Припуск, застосований до готової товщини, щоб визначити **необроблену товщину**." # TODO: singular version of tab.materials.edit_material.thickness_increase
+      thickness_increase_help: "Припуск, застосований до готової товщини, щоб визначити **необроблену товщину**."
       description: Опис
       description_help: |
         *Опис* використовується для надання персоналізованої інформації щодо визначення кожної деталі.
@@ -2149,6 +2149,7 @@ tool:
     action_2_state_2_status: "Натисніть, щоб розмістити копії деталі, або введіть дві відстані"
     action_3: Перемістити
     action_3_status: Переміщення деталі вздовж осі
+    action_3_state_1_status: "Натисніть, щоб визначити першу точку вимірювання"
     action_3_state_2_status: "Натисніть, щоб розмістити деталь або ввести відстань"
     action_4: Розподілити
     action_4_status: Розподілити деталь по осі

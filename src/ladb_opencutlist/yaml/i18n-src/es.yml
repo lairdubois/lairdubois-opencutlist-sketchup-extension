@@ -2143,6 +2143,7 @@ tool:
     action_2_state_2_status: Hacer clic para colocar las copias de la pieza o introducir dos distancias
     action_3: Mover
     action_3_status: Mover una pieza a lo largo de un eje
+    action_3_state_1_status: Hacer clic para indicar el primer punto de medida
     action_3_state_2_status: Hacer click para colocar la pieza o introducir una distancia
     action_4: Distribuir
     action_4_status: Distribuir una pieza a lo largo de un eje

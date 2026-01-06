@@ -2139,6 +2139,7 @@ tool:
     action_2_state_2_status: 点击以放置部件复制或输入两个距离
     action_3: 移动
     action_3_status: ""
+    action_3_state_1_status: 点击以确定第一个测量点
     action_3_state_2_status: 点击以放置部件或输入距离
     action_4: 均分排列
     action_4_status: ""

@@ -477,11 +477,11 @@ tab:
         *OpenCutList will then count 2 parts of 19mm thickness instead of 1 part of 38mm.*
       cut_options: $t(tab.materials.edit_material.cut_options)
       length_increase: $t(tab.materials.edit_material.length_increase)
-      length_increase_help: Oversize applied to the finished length to define the **raw length**.  # TODO: singular version of tab.materials.edit_material.length_increase
+      length_increase_help: Oversize applied to the finished length to define the **raw length**.
       width_increase: $t(tab.materials.edit_material.width_increase)
-      width_increase_help: Oversize applied to the finished width to define the **raw width**. # TODO: singular version of tab.materials.edit_material.width_increase
+      width_increase_help: Oversize applied to the finished width to define the **raw width**.
       thickness_increase: $t(tab.materials.edit_material.thickness_increase)
-      thickness_increase_help: Oversize applied to the thickness to define the **raw thickness**. # TODO: singular version of tab.materials.edit_material.thickness_increase
+      thickness_increase_help: Oversize applied to the thickness to define the **raw thickness**.
       description: Description
       description_help: |
         The *Description* provides a personalized information on each part definition.
@@ -2149,6 +2149,7 @@ tool:
     action_2_state_2_status: "Click to place copies of the part, or enter two distances"
     action_3: Move
     action_3_status: Move a part along an axis
+    action_3_state_1_status: Click to set the first measurement point
     action_3_state_2_status: "Click to place the part, or enter a distance"
     action_4: Distribute
     action_4_status: Distribute a part along an axis

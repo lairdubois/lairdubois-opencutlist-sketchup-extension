@@ -477,11 +477,11 @@ tab:
         *OpenCutList zählt dann 2 Teile mit 19mm Dicke statt 1 Teil mit 38mm Dicke.*
       cut_options: $t(tab.materials.edit_material.cut_options)
       length_increase: $t(tab.materials.edit_material.length_increase)
-      length_increase_help: Übermaß welches das **Längenrohmaß** vergrössert.  # TODO: singular version of tab.materials.edit_material.length_increase
+      length_increase_help: Übermaß welches das **Längenrohmaß** vergrössert.
       width_increase: $t(tab.materials.edit_material.width_increase)
-      width_increase_help: Übermaß welches das **Breitenrohmaß** vergrössert. # TODO: singular version of tab.materials.edit_material.width_increase
+      width_increase_help: Übermaß welches das **Breitenrohmaß** vergrössert.
       thickness_increase: $t(tab.materials.edit_material.thickness_increase)
-      thickness_increase_help: Übermaß welches das **Dickerohmaß** vergrössert. # TODO: singular version of tab.materials.edit_material.thickness_increase
+      thickness_increase_help: Übermaß welches das **Dickerohmaß** vergrössert.
       description: Beschreibung
       description_help: |
         Die *Beschreibung* ermöglicht es Ihnen, benutzerdefinierte Informationen zu jeder Teildefinition anzugeben.
@@ -2149,6 +2149,7 @@ tool:
     action_2_state_2_status: "Klicken Sie, um die Kopien des Teils zu platzieren, oder geben Sie zwei Distanzen ein"
     action_3: Verschieben
     action_3_status: Teil entlang einer Achse verschieben
+    action_3_state_1_status: "Klicken Sie, um den ersten Messpunkt zu setzen"
     action_3_state_2_status: "Klicken Sie, um das Teil zu platzieren, oder geben Sie eine Distanz ein"
     action_4: Verteilen
     action_4_status: Teil entlang einer Achse verteilen

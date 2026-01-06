@@ -2143,6 +2143,7 @@ tool:
     action_2_state_2_status: Clique para posicionar as cópias da peça ou insira duas distâncias
     action_3: Mover
     action_3_status: Mover uma peça ao longo de um eixo
+    action_3_state_1_status: Clique para definir o primeiro ponto de medição
     action_3_state_2_status: Clique para posicionar a peça ou insira uma distância
     action_4: Distribuir
     action_4_status: Dividir uma peça ao longo de um eixo
