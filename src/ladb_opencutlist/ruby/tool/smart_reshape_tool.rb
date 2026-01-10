@@ -1446,6 +1446,23 @@ module Ladb::OpenCutList
         k_segments.transformation = et
         @tool.append_3d(k_segments, LAYER_3D_RESHAPE_PREVIEW)
 
+        # Render clines
+
+        k_segments = Kuix::Segments.new
+        k_segments.add_segments(container_def.cline_defs.flat_map { |cline_def|
+          cline = cline_def.cline
+          t = cline_def.transformation
+          ti = t.inverse
+          [
+            cline.start.offset(edvs[cline_def.start_section_def].transform(ti)).transform(t).offset(emv),
+            cline.end.offset(edvs[cline_def.end_section_def].transform(ti)).transform(t).offset(emv)
+          ]
+        })
+        k_segments.color = color
+        k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+        k_segments.transformation = et
+        @tool.append_3d(k_segments, LAYER_3D_RESHAPE_PREVIEW)
+
         # Render snaps
 
         k_points = _create_floating_points(
@@ -1639,7 +1656,7 @@ module Ladb::OpenCutList
         ignore_faces: false,
         ignore_edges: false,
         ignore_soft_edges: false,
-        ignore_clines: true,
+        ignore_clines: false,
         container_validator: has_active_part? && !has_active_part_siblings? ? CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART : CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_ALL
       }
     end
@@ -1719,6 +1736,12 @@ module Ladb::OpenCutList
                   container_def.container = new_container
                   container_def.edge_defs.each do |edge_def|
                     edge_def.edge = new_definition.entities[edge_def.entity_pos]
+                  end
+                  container_def.cline_defs.each do |cline_def|
+                    cline_def.cline = new_definition.entities[cline_def.entity_pos]
+                  end
+                  container_def.snap_defs.each do |snap_def|
+                    snap_def.snap = new_definition.entities[snap_def.entity_pos]
                   end
                   container_def.children.each do |container_def|
                     container_def.container = new_definition.entities[container_def.entity_pos]
@@ -1801,6 +1824,44 @@ module Ladb::OpenCutList
               v = current_position0.vector_to(target_position0)
 
               entities.transform_entities(Geom::Transformation.translation(v), edge_defs.map { |edge_def| edge_def.edge }) if v.valid?
+
+            end
+
+            # Move clines
+            # -----------
+
+            container_def.cline_defs
+                         .each do |cline_def|
+
+              t = cline_def.transformation
+
+              # Compute Start point
+
+              edv = edvs[cline_def.start_section_def]
+
+              # Subtract container move
+              edv -= edvs[container_def.section_def]
+              edv.reverse! if container_def.section_def == cline_def.start_section_def && edv.valid?
+
+              target_start = cline_def.ref_start_position
+              target_start = target_start.offset(edv.transform(t.inverse)) if edv.valid?
+
+              # Compute End point
+
+              edv = edvs[cline_def.end_section_def]
+
+              # Subtract container move
+              edv -= edvs[container_def.section_def]
+              edv.reverse! if container_def.section_def == cline_def.end_section_def && edv.valid?
+
+              target_end = cline_def.ref_end_position
+              target_end = target_end.offset(edv.transform(t.inverse)) if edv.valid?
+
+              # Apply
+
+              cline_def.cline.direction = target_start.vector_to(target_end)
+              cline_def.cline.position = cline_def.cline.start = target_start
+              cline_def.cline.end = target_end
 
             end
 
@@ -2213,7 +2274,41 @@ module Ladb::OpenCutList
 
         end
 
-        # 3. Iterate on snaps
+        # 3. Iterate on finite clines
+
+        drawing_container_def.cline_manipulators.each do |cm|
+
+          next if cm.infinite?
+
+          if parent_section_def.nil?
+            start_section_def = section_defs.find { |s| s.contains_point?(cm.start_point, xyz_method) }
+            end_section_def = section_defs.find { |s| s.contains_point?(cm.end_point, xyz_method) }
+          else
+            start_section_def = end_section_def = parent_section_def
+          end
+
+          container_def.cline_defs << SplitClineDef.new(
+            cm.cline,
+            cm.transformation,
+            cm.cline.start,
+            cm.cline.end,
+            start_section_def,
+            end_section_def,
+            if operation == OPERATION_SPLIT
+              start_section_def == end_section_def ? OPERATION_MOVE : OPERATION_SPLIT
+            else
+              OPERATION_NONE
+            end
+          )
+
+          if parent_section_def.nil? &&
+             start_section_def == end_section_def &&
+            start_section_def.bounds.add(cm.points)  # Add to content bbox
+          end
+
+        end
+
+        # 4. Iterate on snaps
 
         drawing_container_def.snap_manipulators.each do |sm|
 
@@ -2243,7 +2338,7 @@ module Ladb::OpenCutList
 
         end
 
-        # 4. Iterate over children
+        # 5. Iterate over children
 
         depth += 1
         drawing_container_def.container_defs.each do |child_drawing_container_def|
@@ -2370,6 +2465,7 @@ module Ladb::OpenCutList
       :operation,
       :entity_pos,
       :edge_defs,
+      :cline_defs,
       :snap_defs,
       :parent,
       :children,
@@ -2384,6 +2480,7 @@ module Ladb::OpenCutList
         operation,
         entity_pos = -1,
         edge_defs = [],
+        cline_defs = [],
         snap_defs = [],
         parent = nil,
         children = []
@@ -2426,6 +2523,13 @@ module Ladb::OpenCutList
                 (section_def.index - edge_def.end_section_def.index).abs
               ]
             }
+            data << cline_defs.map { |cline_def|
+              [
+                cline_def.cline.object_id,
+                (section_def.index - cline_def.start_section_def.index).abs, # Use "delta" to be able to unify flipped elements
+                (section_def.index - cline_def.end_section_def.index).abs
+              ]
+            }
             data << snap_defs.map { |snap_def|
               [
                 snap_def.snap.object_id,
@@ -2445,6 +2549,9 @@ module Ladb::OpenCutList
         return if (entities = self.entities).nil?
         edge_defs.each do |edge_def|
           edge_def.entity_pos = entities.to_a.index(edge_def.edge)
+        end
+        cline_defs.each do |cline_def|
+          cline_def.entity_pos = entities.to_a.index(cline_def.cline)
         end
         children.each do |container_def|
           container_def.entity_pos = entities.to_a.index(container_def.container)
@@ -2468,6 +2575,32 @@ module Ladb::OpenCutList
         edge,
         transformation,
         ref_position,
+        start_section_def,
+        end_section_def,
+        operation,
+        entity_pos = -1
+      )
+        super
+      end
+
+    end
+
+    SplitClineDef = Struct.new(
+      :cline,
+      :transformation,
+      :ref_start_position,
+      :ref_end_position,
+      :start_section_def,
+      :end_section_def,
+      :operation,
+      :entity_pos
+    ) do
+
+      def initialize(
+        cline,
+        transformation,
+        ref_start_position,
+        ref_end_position,
         start_section_def,
         end_section_def,
         operation,

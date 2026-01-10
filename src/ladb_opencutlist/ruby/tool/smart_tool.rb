@@ -1173,7 +1173,7 @@ module Ladb::OpenCutList
         item = menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_part_instance_properties')) {
           require_relative '../model/outliner/outliner_node_def'
           _select_active_part_entity
-          PLUGIN.execute_tabs_dialog_command_on_tab('outliner', 'edit_node', "{ node_id: '#{OutlinerNodePartDef.generate_node_id(@active_part_entity_path)}', tab: 'general' }")
+          PLUGIN.execute_tabs_dialog_command_on_tab('outliner', 'edit_node', "{ node_id: '#{OutlinerNodeDef.generate_node_id(@active_part_entity_path)}', tab: 'general' }")
         }
         menu.set_validation_proc(item, &locked_validation_proc)
         unless Sketchup.version_number < 2000000000
@@ -2223,7 +2223,7 @@ module Ladb::OpenCutList
         item = menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_part_instance_properties')) {
           require_relative '../model/outliner/outliner_node_def'
           _select_active_part_entity
-          PLUGIN.execute_tabs_dialog_command_on_tab('outliner', 'edit_node', "{ node_id: '#{OutlinerNodePartDef.generate_node_id(@active_part_entity_path)}', tab: 'general' }")
+          PLUGIN.execute_tabs_dialog_command_on_tab('outliner', 'edit_node', "{ node_id: '#{OutlinerNodeDef.generate_node_id(@active_part_entity_path)}', tab: 'general' }")
         }
         menu.set_validation_proc(item) {
           if @active_part_entity_path && @active_part_entity_path.find { |entity| entity.locked? }.nil?
