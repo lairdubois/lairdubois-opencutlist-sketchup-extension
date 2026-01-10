@@ -752,7 +752,7 @@
                 const $inputCutsOpening = $('#ladb_outliner_node_input_cuts_opening', $modal);
                 const $inputAlwaysFaceCamera = $('#ladb_outliner_node_input_always_face_camera', $modal);
                 const $inputShadowsFaceSun = $('#ladb_outliner_node_input_shadows_face_sun', $modal);
-                const $inputNoScaleMask = $('#ladb_outliner_node_input_no_scale_mask', $modal);
+                const $inputsNoScaleMask = Array(7).keys().toArray().map(function (i) { return $('#ladb_outliner_node_input_no_scale_mask_' + i, $modal); })
                 const $btnsModalFooterCollapseHandle = $('.modal-footer-collapse-handle-btn', $modal)
                 const $btnErase = $('#ladb_outliner_node_erase', $modal);
                 const $btnExplode = $('#ladb_outliner_node_explode', $modal);
@@ -825,7 +825,6 @@
                 });
                 $inputAlwaysFaceCamera
                     .on('change', function() { fnUpdateBehaviorFields(); });
-                $inputNoScaleMask.ladbTextinputText();
 
                 // Bind select
                 if (editedNode.material) {
@@ -946,12 +945,12 @@
                         if ($inputShadowsFaceSun.length > 0) {
                             nodeData.shadows_face_sun = $inputShadowsFaceSun.is(':checked');
                         }
-                        if ($inputNoScaleMask.length > 0) {
-                            if (!$inputNoScaleMask.ladbTextinputText('isMultiple')) {
-                                nodeData.no_scale_mask = parseInt($inputNoScaleMask.val());
-                            } else {
-                                nodeData.no_scale_mask = editedNodes[i].no_scale_mask;
-                            }
+                        if ($inputsNoScaleMask.length > 0) {
+                            let no_scale_mask = [];
+                            Array(7).keys().toArray().forEach(function (i) {
+                                no_scale_mask.push(!$inputsNoScaleMask[i].is(':checked'));
+                            });
+                            nodeData.no_scale_mask = no_scale_mask;
                         }
 
                     }

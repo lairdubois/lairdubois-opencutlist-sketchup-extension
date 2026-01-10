@@ -112,19 +112,19 @@
                         {% endif %}
                         {% if node.always_face_camera is defined %}
                             <div class="form-group">
-                                <div class="col-xs-offset-3 col-xs-8 col-sm-7 checkbox">
-                                    <label>
-                                        <input type="checkbox" id="ladb_outliner_node_input_always_face_camera"{% if node.always_face_camera %} checked{% endif %}>{{ 'tab.outliner.edit_node.always_face_camera'|i18next }}
-                                    </label>
-                                </div>
-                            </div>
-                        {% endif %}
-                        {% if node.shadows_face_sun is defined %}
-                            <div class="form-group">
-                                <div class="col-xs-offset-3 col-xs-8 col-sm-7 checkbox">
-                                    <label>
-                                        <input type="checkbox" id="ladb_outliner_node_input_shadows_face_sun"{% if node.shadows_face_sun %} checked{% endif %}>{{ 'tab.outliner.edit_node.shadows_face_sun'|i18next }}
-                                    </label>
+                                <div class="col-xs-offset-3 col-xs-8 col-sm-7">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" id="ladb_outliner_node_input_always_face_camera"{% if node.always_face_camera %} checked{% endif %}>{{ 'tab.outliner.edit_node.always_face_camera'|i18next }}
+                                        </label>
+                                    </div>
+                                    {% if node.shadows_face_sun is defined %}
+                                        <div class="checkbox">
+                                            <label style="margin-left: 10px;">
+                                                <input type="checkbox" id="ladb_outliner_node_input_shadows_face_sun"{% if node.shadows_face_sun %} checked{% endif %}>{{ 'tab.outliner.edit_node.shadows_face_sun'|i18next }}
+                                            </label>
+                                        </div>
+                                    {% endif %}
                                 </div>
                             </div>
                         {% endif %}
@@ -132,7 +132,13 @@
                             <div class="form-group">
                                 <label class="control-label col-xs-3">{{ 'tab.outliner.edit_node.no_scale_mask'|i18next }}</label>
                                 <div class="col-xs-8 col-sm-7">
-                                    <input type="text" class="form-control" id="ladb_outliner_node_input_no_scale_mask" value="{{ node.no_scale_mask }}">
+                                    {% for i in range(0,6) %}
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" id="ladb_outliner_node_input_no_scale_mask_{{ i }}"{% if not node.no_scale_mask[i] %} checked{% endif %}>{{ ('tab.outliner.edit_node.no_scale_mask_'~i)|i18next }}
+                                            </label>
+                                        </div>
+                                    {% endfor %}
                                 </div>
                             </div>
                         {% endif %}

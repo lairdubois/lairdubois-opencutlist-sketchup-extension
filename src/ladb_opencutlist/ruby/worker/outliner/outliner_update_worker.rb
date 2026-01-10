@@ -49,7 +49,7 @@ module Ladb::OpenCutList
           node_data.fetch('cuts_opening', false),
           node_data.fetch('always_face_camera', false),
           node_data.fetch('shadows_face_sun', false),
-          node_data.fetch('no_scale_mask', 0).to_i,
+          node_data.fetch('no_scale_mask', []).each_with_index.map { |v, i| v ? (1 << i) : 0 }.sum,
         )
       }
 
@@ -131,14 +131,25 @@ module Ladb::OpenCutList
              node_data.snapto != entity.definition.behavior.snapto ||
              node_data.cuts_opening != entity.definition.behavior.cuts_opening? ||
              node_data.always_face_camera != entity.definition.behavior.always_face_camera? ||
-             node_data.shadows_face_sun != entity.definition.behavior.shadows_face_sun? ||
-             node_data.no_scale_mask != entity.definition.behavior.no_scale_mask?
+             node_data.shadows_face_sun != entity.definition.behavior.shadows_face_sun?
            )
           entity.definition.behavior.is2d = node_data.is2d
           entity.definition.behavior.snapto = node_data.snapto
           entity.definition.behavior.cuts_opening = node_data.cuts_opening
           entity.definition.behavior.always_face_camera = node_data.always_face_camera
           entity.definition.behavior.shadows_face_sun = node_data.shadows_face_sun
+        end
+
+        if entity.respond_to?(:definition) &&
+           (
+             node_data.no_scale_mask != entity.definition.behavior.no_scale_mask?
+           )
+
+          # Workaround for triggering the behavior modified event
+          entity.definition.behavior.is2d = !entity.definition.behavior.is2d?
+          entity.definition.behavior.is2d = !entity.definition.behavior.is2d?
+          # Workaround for triggering the behavior modified event
+
           entity.definition.behavior.no_scale_mask = node_data.no_scale_mask
         end
 

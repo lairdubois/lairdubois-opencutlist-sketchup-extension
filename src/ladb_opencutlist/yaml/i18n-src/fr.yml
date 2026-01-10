@@ -1776,7 +1776,14 @@ tab:
       cuts_opening: Découper l'ouverture
       always_face_camera: Toujours faire face à la caméra
       shadows_face_sun: Ombre face au soleil
-      no_scale_mask: Mise à l'échelle
+      no_scale_mask: Echelle et Etirement
+      no_scale_mask_0: Déformable le long de l'axe rouge (X)
+      no_scale_mask_1: Déformable le long de l'axe vert (Y)
+      no_scale_mask_2: Déformable le long de l'axe bleu (Z)
+      no_scale_mask_3: Déformable sur le plan rouge/bleu (X+Z)
+      no_scale_mask_4: Déformable sur le plan vert/bleu (Y+Z)
+      no_scale_mask_5: Déformable sur le plan rouge/vert (X+Y)
+      no_scale_mask_6: Déformable à partir des coins (XYZ)
       explode: Eclater
       explode_message: "Confirmez-vous l'éclatement de **{{ name }}** ?"
       erase: Effacer

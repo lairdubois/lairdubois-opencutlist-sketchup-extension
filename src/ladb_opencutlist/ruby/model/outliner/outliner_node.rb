@@ -70,7 +70,7 @@ module Ladb::OpenCutList
       @always_face_camera = _def.always_face_camera?
       @cuts_opening = _def.cuts_opening?
       @shadows_face_sun = _def.shadows_face_sun?
-      @no_scale_mask = _def.no_scale_mask?
+      @no_scale_mask = (0..6).map { |i| _def.no_scale_mask? & (1 << i) != 0 } # convert to Array of bool
 
     end
 
