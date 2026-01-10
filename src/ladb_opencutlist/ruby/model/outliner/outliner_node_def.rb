@@ -193,9 +193,14 @@ module Ladb::OpenCutList
 
     # -----
 
-    def always_face_camera?
+    def is2d?
       return false unless valid?
-      @entity.definition.behavior.always_face_camera?
+      @entity.definition.behavior.is2d?
+    end
+
+    def snapto
+      return false unless valid?
+      @entity.definition.behavior.snapto
     end
 
     def cuts_opening?
@@ -203,14 +208,9 @@ module Ladb::OpenCutList
       @entity.definition.behavior.cuts_opening?
     end
 
-    def is2d?
+    def always_face_camera?
       return false unless valid?
-      @entity.definition.behavior.is2d?
-    end
-
-    def no_scale_mask?
-      return false unless valid?
-      @entity.definition.behavior.no_scale_mask?
+      @entity.definition.behavior.always_face_camera?
     end
 
     def shadows_face_sun?
@@ -218,9 +218,9 @@ module Ladb::OpenCutList
       @entity.definition.behavior.shadows_face_sun?
     end
 
-    def snapto
+    def no_scale_mask?
       return false unless valid?
-      @entity.definition.behavior.snapto
+      @entity.definition.behavior.no_scale_mask?
     end
 
     # -----
@@ -235,6 +235,12 @@ module Ladb::OpenCutList
   class OutlinerNodeComponentDef < OutlinerNodeGroupDef
 
     def type
+      unless @entity.definition.behavior.cuts_opening? || @entity.definition.behavior.always_face_camera?
+        # TODO: Check face bounds only
+        unless (bounds = @entity.definition.bounds).empty? || [ bounds.width, bounds.height, bounds.depth ].min == 0    # Exclude empty or flat bounds
+          return TYPE_PART
+        end
+      end
       TYPE_COMPONENT
     end
 
@@ -261,21 +267,6 @@ module Ladb::OpenCutList
 
     def get_hashable
       @hashable = OutlinerNodeComponent.new(self) if @hashable.nil?
-      @hashable
-    end
-
-  end
-
-  class OutlinerNodePartDef < OutlinerNodeComponentDef
-
-    def type
-      TYPE_PART
-    end
-
-    # -----
-
-    def get_hashable
-      @hashable = OutlinerNodePart.new(self) if @hashable.nil?
       @hashable
     end
 

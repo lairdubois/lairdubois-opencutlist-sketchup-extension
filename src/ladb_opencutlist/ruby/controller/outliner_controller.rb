@@ -454,9 +454,25 @@ module Ladb::OpenCutList
 
       elsif entity.is_a?(Sketchup::AttributeDictionary)
 
-        if (entity.name == Plugin::ATTRIBUTE_DICTIONARY || entity.name == Plugin::SU_ATTRIBUTE_DICTIONARY) && entity.parent.parent.is_a?(Sketchup::ComponentDefinition)
+        if entity.parent.is_a?(Sketchup::Entity) && entity.parent.parent.is_a?(Sketchup::ComponentDefinition)
+          if entity.name == Plugin::ATTRIBUTE_DICTIONARY || entity.name == Plugin::SU_ATTRIBUTE_DICTIONARY
 
-          entity.parent.parent.instances.each do |instance|
+            entity.parent.parent.instances.each do |instance|
+              unless (node_defs = @outliner_def.get_node_defs_by_entity_id(instance.entityID)).nil?
+                node_defs.each do |node_def|
+                  node_def.invalidate
+                end
+              end
+            end
+
+          end
+        end
+
+      elsif entity.is_a?(Sketchup::Behavior)
+
+        if entity.parent.is_a?(Sketchup::ComponentDefinition)
+
+          entity.parent.instances.each do |instance|
             unless (node_defs = @outliner_def.get_node_defs_by_entity_id(instance.entityID)).nil?
               node_defs.each do |node_def|
                 node_def.invalidate
@@ -598,7 +614,7 @@ module Ladb::OpenCutList
     end
 
     def refresh_command
-      return generate_command unless @outliner_def
+      return generate_command(nil) unless @outliner_def
       @outliner_def.get_hashable.to_hash
     end
 

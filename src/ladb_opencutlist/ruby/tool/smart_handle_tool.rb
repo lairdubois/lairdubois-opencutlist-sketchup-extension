@@ -3061,15 +3061,15 @@ module Ladb::OpenCutList
     end
 
     def _read_handle(tool, text, view)
+      return false if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point)).nil?
 
-      ps = @picked_handle_start_point
-      pe = @mouse_snap_point
-      v = ps.vector_to(pe)
+      lps, lpe = move_def.values_at(:lps, :lpe)
+      v = lps.vector_to(lpe)
 
       distance = _read_user_text_length(tool, text, v.length)
       return true if distance.nil?
 
-      @picked_handle_end_point = ps.offset(v, distance)
+      @picked_handle_end_point = @picked_handle_start_point.offset(v, distance)
 
       _handle_entity
       Sketchup.set_status_text('', SB_VCB_VALUE)

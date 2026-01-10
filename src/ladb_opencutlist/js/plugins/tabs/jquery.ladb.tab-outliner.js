@@ -340,7 +340,10 @@
                                                     { name: 'layer', type: 'string' },
                                                     { name: 'component_definition', type: 'component_definition' },
                                                     { name: 'component_instance', type: 'component_instance' },
-                                                ])
+                                                ]),
+                                                snippetDefs: [
+                                                    { name: i18next.t('tab.outliner.snippet.name_size'), value: '@name + " - " + @bbox_length + " x " + @bbox_width' },
+                                                ]
                                             })
                                             .on('change', function () {
 
@@ -681,10 +684,30 @@
                     delete editedNode.tags;
                 }
                 if (editedNode.type !== 0) {    // 0 = TYPE_MODEL
+                    if (editedNode.is2d !== editedNodes[i].is2d) {
+                        editedNode.is2d = MULTIPLE_VALUE;
+                    }
+                    if (editedNode.snapto !== editedNodes[i].snapto) {
+                        editedNode.snapto = MULTIPLE_VALUE;
+                    }
+                    if (editedNode.always_face_camera !== editedNodes[i].always_face_camera) {
+                        editedNode.always_face_camera = MULTIPLE_VALUE;
+                    }
+                    if (editedNode.cuts_opening !== editedNodes[i].cuts_opening) {
+                        editedNode.cuts_opening = MULTIPLE_VALUE;
+                    }
+                    if (editedNode.shadows_face_sun !== editedNodes[i].shadows_face_sun) {
+                        editedNode.shadows_face_sun = MULTIPLE_VALUE;
+                    }
                     if (editedNode.no_scale_mask !== editedNodes[i].no_scale_mask) {
                         editedNode.no_scale_mask = MULTIPLE_VALUE;
                     }
                 } else {
+                    delete editedNode.is2d;
+                    delete editedNode.snapto;
+                    delete editedNode.always_face_camera;
+                    delete editedNode.cuts_opening;
+                    delete editedNode.shadows_face_sun;
                     delete editedNode.no_scale_mask;
                 }
             }
@@ -725,7 +748,12 @@
                 const $inputDescription = $('#ladb_outliner_node_input_description', $modal);
                 const $inputUrl = $('#ladb_outliner_node_input_url', $modal);
                 const $inputTags = $('#ladb_outliner_node_input_tags', $modal);
+                const $selectSnapto = $('#ladb_outliner_node_select_snapto', $modal);
+                const $inputCutsOpening = $('#ladb_outliner_node_input_cuts_opening', $modal);
+                const $inputAlwaysFaceCamera = $('#ladb_outliner_node_input_always_face_camera', $modal);
+                const $inputShadowsFaceSun = $('#ladb_outliner_node_input_shadows_face_sun', $modal);
                 const $inputNoScaleMask = $('#ladb_outliner_node_input_no_scale_mask', $modal);
+                const $btnsModalFooterCollapseHandle = $('.modal-footer-collapse-handle-btn', $modal)
                 const $btnErase = $('#ladb_outliner_node_erase', $modal);
                 const $btnExplode = $('#ladb_outliner_node_explode', $modal);
                 const $btnUpdate = $('#ladb_outliner_node_update', $modal);
@@ -739,10 +767,39 @@
                     }
                     return false;
                 };
+                const fnUpdateBehaviorFields = function() {
+                    const is2d = $selectSnapto.val() !== '';
+                    const isAlwaysFaceCamera = $inputAlwaysFaceCamera.is(':checked');
+                    $inputCutsOpening.prop('disabled', !is2d);
+                    if (!is2d) $inputCutsOpening.prop('checked', false);
+                    $inputAlwaysFaceCamera.prop('disabled', is2d);
+                    if (is2d) $inputAlwaysFaceCamera.prop('checked', false);
+                    $inputShadowsFaceSun.prop('disabled', is2d || !isAlwaysFaceCamera);
+                    if (is2d || !isAlwaysFaceCamera) $inputShadowsFaceSun.prop('checked', false);
+                }
 
                 // Bind tabs
                 $tabs.on('shown.bs.tab', function (e) {
                     that.lastEditNodeTab = $(e.target).attr('href').substring('#tab_edit_node_'.length);
+                });
+
+                // Bind collapses
+                $btnsModalFooterCollapseHandle.each(function () {
+                    const $btn = $(this);
+                    $('#' + $btn.data('collapse-id'))
+                        .on('shown.bs.collapse', function () {
+                            $('i', $btn)
+                                .removeClass('ladb-opencutlist-icon-plus')
+                                .addClass('ladb-opencutlist-icon-minus')
+                            ;
+                        })
+                        .on('hidden.bs.collapse', function () {
+                            $('i', $btn)
+                                .addClass('ladb-opencutlist-icon-plus')
+                                .removeClass('ladb-opencutlist-icon-minus')
+                            ;
+                        })
+                    ;
                 });
 
                 // Bind input
@@ -766,6 +823,8 @@
                 $inputTags.ladbTextinputTokenfield({
                     unique: true
                 });
+                $inputAlwaysFaceCamera
+                    .on('change', function() { fnUpdateBehaviorFields(); });
                 $inputNoScaleMask.ladbTextinputText();
 
                 // Bind select
@@ -777,8 +836,22 @@
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                         fnNewCheck($(this));
                     });
+                if (editedNode.is2d) {
+                    $selectSnapto.val(editedNode.snapto === MULTIPLE_VALUE ? MULTIPLE_VALUE : editedNode.snapto);
+                }
+                $selectSnapto
+                    .selectpicker(SELECT_PICKER_OPTIONS)
+                    .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+                        fnUpdateBehaviorFields();
+                    });
+
+                fnUpdateBehaviorFields();
 
                 // Bind buttons
+                $btnsModalFooterCollapseHandle.on('click', function () {
+                    $('#' + $(this).data('collapse-id')).collapse('toggle');
+                    $(this).blur();
+                });
                 $btnErase.on('click', function () {
                     that.eraseNode(editedNode, function () {
 
@@ -851,6 +924,28 @@
                             nodeData.tags = untouchTags.concat($inputTags.tokenfield('getTokensList').split(';'));
                         }
 
+                        if ($selectSnapto.length > 0) {
+                            if ($selectSnapto.val() !== MULTIPLE_VALUE) {
+                                if ($selectSnapto.val() === '') {
+                                    nodeData.is2d = false;
+                                    nodeData.snapto = 0;
+                                } else {
+                                    nodeData.is2d = true;
+                                    nodeData.snapto = parseInt($selectSnapto.val());
+                                }
+                            } else {
+                                nodeData.snapto = editedNodes[i].snapto;
+                            }
+                        }
+                        if ($inputCutsOpening.length > 0) {
+                            nodeData.cuts_opening = $inputCutsOpening.is(':checked');
+                        }
+                        if ($inputAlwaysFaceCamera.length > 0) {
+                            nodeData.always_face_camera = $inputAlwaysFaceCamera.is(':checked');
+                        }
+                        if ($inputShadowsFaceSun.length > 0) {
+                            nodeData.shadows_face_sun = $inputShadowsFaceSun.is(':checked');
+                        }
                         if ($inputNoScaleMask.length > 0) {
                             if (!$inputNoScaleMask.ladbTextinputText('isMultiple')) {
                                 nodeData.no_scale_mask = parseInt($inputNoScaleMask.val());

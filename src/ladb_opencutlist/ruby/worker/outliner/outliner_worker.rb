@@ -210,21 +210,6 @@ module Ladb::OpenCutList
 
         path += [ entity ]
 
-        # Treat cuts_opening and always_face_camera behavior component instances as a simple component
-        unless entity.definition.behavior.cuts_opening? || entity.definition.behavior.always_face_camera?
-
-          face_bounds_cache[entity.definition] = _compute_faces_bounds(entity.definition) unless face_bounds_cache.has_key?(entity.definition)
-          bounds = face_bounds_cache[entity.definition]
-          unless bounds.empty? || [ bounds.width, bounds.height, bounds.depth ].min == 0    # Exclude empty or flat bounds
-
-            # It's a part
-
-            node_def = OutlinerNodePartDef.new(path)
-
-          end
-
-        end
-
         node_def = OutlinerNodeComponentDef.new(path) if node_def.nil?
         node_def.material_def = @outliner_def.available_material_defs[entity.material]
         node_def.layer_def = @outliner_def.available_layer_defs[entity.layer]

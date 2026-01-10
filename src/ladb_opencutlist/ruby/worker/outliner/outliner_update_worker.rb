@@ -16,7 +16,12 @@ module Ladb::OpenCutList
       :description,
       :url,
       :tags,
-      :no_scale_mask
+      :is2d,
+      :snapto,
+      :cuts_opening,
+      :always_face_camera,
+      :shadows_face_sun,
+      :no_scale_mask,
     )
 
     def initialize(outliner_def,
@@ -39,6 +44,11 @@ module Ladb::OpenCutList
           fn_sanitize_string.call(node_data.fetch('description', nil)),
           fn_sanitize_string.call(node_data.fetch('url', nil)),
           DefinitionAttributes.valid_tags(node_data.fetch('tags', nil)),
+          node_data.fetch('is2d', nil),
+          node_data.fetch('snapto', nil).to_i,
+          node_data.fetch('cuts_opening', false),
+          node_data.fetch('always_face_camera', false),
+          node_data.fetch('shadows_face_sun', false),
           node_data.fetch('no_scale_mask', 0).to_i,
         )
       }
@@ -102,19 +112,34 @@ module Ladb::OpenCutList
 
         if entity.is_a?(Sketchup::Drawingelement) && node_data.layer_name.is_a?(String) && node_data.layer_name != entity.layer.name
           node_data.layer_name.strip!
-          if node_data.layer_name.empty?
-            entity.layer = cached_layer0
-          else
-            layer = model.layers[node_data.layer_name]
-            if layer.nil?
-              layer = model.layers.add(node_data.layer_name)
+          unless node_data.layer_name.empty? && entity.layer == cached_layer0
+            if node_data.layer_name.empty?
+              entity.layer = cached_layer0
+            else
+              layer = model.layers[node_data.layer_name]
+              if layer.nil?
+                layer = model.layers.add(node_data.layer_name)
+              end
+              entity.layer = layer
             end
-            entity.layer = layer
           end
         end
 
-        if entity.respond_to?(:definition) && node_data.no_scale_mask != entity.definition.behavior.no_scale_mask?
-          entity.definition.behavior.no_scale_mask = node_data.no_scale_mask  # TODO : fire change event
+        if entity.respond_to?(:definition) &&
+           (
+             node_data.is2d != entity.definition.behavior.is2d? ||
+             node_data.snapto != entity.definition.behavior.snapto ||
+             node_data.cuts_opening != entity.definition.behavior.cuts_opening? ||
+             node_data.always_face_camera != entity.definition.behavior.always_face_camera? ||
+             node_data.shadows_face_sun != entity.definition.behavior.shadows_face_sun? ||
+             node_data.no_scale_mask != entity.definition.behavior.no_scale_mask?
+           )
+          entity.definition.behavior.is2d = node_data.is2d
+          entity.definition.behavior.snapto = node_data.snapto
+          entity.definition.behavior.cuts_opening = node_data.cuts_opening
+          entity.definition.behavior.always_face_camera = node_data.always_face_camera
+          entity.definition.behavior.shadows_face_sun = node_data.shadows_face_sun
+          entity.definition.behavior.no_scale_mask = node_data.no_scale_mask
         end
 
       end

@@ -10,6 +10,9 @@
             </div>
             <div class="ladb-minitools ladb-minitools-right">
                 {% if node.live_component %}<span class="label label-default">Live</span>{% endif %}
+                {% if node.cuts_opening %}<a href="#" class="ladb-tool-info" data-toggle="tooltip" title="{{ 'tab.outliner.edit_node.cuts_opening'|i18next }}"><i class="ladb-opencutlist-icon-cuts-opening"></i></a>{% endif %}
+                {% if node.always_face_camera %}<a href="#" class="ladb-tool-info" data-toggle="tooltip" title="{{ 'tab.outliner.edit_node.always_face_camera'|i18next }}"><i class="ladb-opencutlist-icon-always-face-camera"></i></a>{% endif %}
+                {% if node.shadows_face_sun %}<a href="#" class="ladb-tool-info" data-toggle="tooltip" title="{{ 'tab.outliner.edit_node.shadows_face_sun'|i18next }}"><i class="ladb-opencutlist-icon-shadows-face-sun"></i></a>{% endif %}
                 <span class="ladb-separator no-print"></span>
                 {% if node.url is not empty %}<a href="{{ node.url }}" class="ladb-btn-node-open-url" data-toggle="tooltip" title="{{ 'tab.outliner.tooltip.open_node_url'|i18next }}"><i class="ladb-opencutlist-icon-link"></i></a>{% endif %}
                 {% if node.computed_locked %}

@@ -147,14 +147,14 @@ module Ladb::OpenCutList
           end
           case property
             when 'length'
-              a_value = [ part_def_a.cumulative_cutting_length ]
-              b_value = [ part_def_b.cumulative_cutting_length ]
+              a_value = [ part_def_a.cumulative_cutting_length.to_f ]
+              b_value = [ part_def_b.cumulative_cutting_length.to_f ]
             when 'width'
-              a_value = [ part_def_a.cumulative_cutting_width ]
-              b_value = [ part_def_b.cumulative_cutting_width ]
+              a_value = [ part_def_a.cumulative_cutting_width.to_f ]
+              b_value = [ part_def_b.cumulative_cutting_width.to_f ]
             when 'thickness'
-              a_value = [ part_def_a.size.thickness ]
-              b_value = [ part_def_b.size.thickness ]
+              a_value = [ part_def_a.size.thickness.to_f ]
+              b_value = [ part_def_b.size.thickness.to_f ]
             when 'name'
               a_value = [ part_def_a.name.downcase ]
               b_value = [ part_def_b.name.downcase ]

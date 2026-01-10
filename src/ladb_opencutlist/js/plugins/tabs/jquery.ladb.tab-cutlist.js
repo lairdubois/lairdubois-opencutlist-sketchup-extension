@@ -3365,7 +3365,7 @@
                             ;
                         })
                     ;
-                })
+                });
 
                 // Bind clickable
                 $('.ladb-clickable[data-material-properties-tab]').on('click', function (e) {
@@ -3391,7 +3391,7 @@
                 $btnsModalFooterCollapseHandle.on('click', function () {
                     $('#' + $(this).data('collapse-id')).collapse('toggle');
                     $(this).blur();
-                })
+                });
                 $btnGenerate.on('click', function () {
 
                     // Fetch options

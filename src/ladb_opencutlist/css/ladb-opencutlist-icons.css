@@ -40,41 +40,14 @@ i, span.ladb-opencutlist-icon:before {
 }
 
 
-.ladb-opencutlist-icon-make-unique:before {
-    content: "\e9be";
+.ladb-opencutlist-icon-always-face-camera:before {
+    content: "\e9c2";
 }
-.ladb-opencutlist-icon-input-field:before {
-    content: "\e9bf";
+.ladb-opencutlist-icon-shadows-face-sun:before {
+    content: "\e9c3";
 }
-.ladb-opencutlist-icon-bomb:before {
-    content: "\e9bd";
-}
-.ladb-opencutlist-icon-stop:before {
-    content: "\e9ba";
-}
-.ladb-opencutlist-icon-skip-forward:before {
-    content: "\e9bb";
-}
-.ladb-opencutlist-icon-side-fold:before {
-    content: "\e9b9";
-}
-.ladb-opencutlist-icon-qr-code:before {
-    content: "\e9b1";
-}
-.ladb-opencutlist-icon-align-left:before {
-    content: "\e98f";
-}
-.ladb-opencutlist-icon-align-center:before {
-    content: "\e990";
-}
-.ladb-opencutlist-icon-align-right:before {
-    content: "\e991";
-}
-.ladb-opencutlist-icon-news:before {
-    content: "\e925";
-}
-.ladb-opencutlist-icon-news-fill:before {
-    content: "\e9bc";
+.ladb-opencutlist-icon-cuts-opening:before {
+    content: "\e9c4";
 }
 .ladb-opencutlist-icon-circle-checked:before {
     content: "\e9b5";
@@ -432,6 +405,42 @@ i, span.ladb-opencutlist-icon:before {
 }
 .ladb-opencutlist-icon-eye-open-multiple:before {
     content: "\e9b8";
+}
+.ladb-opencutlist-icon-make-unique:before {
+    content: "\e9be";
+}
+.ladb-opencutlist-icon-input-field:before {
+    content: "\e9bf";
+}
+.ladb-opencutlist-icon-bomb:before {
+    content: "\e9bd";
+}
+.ladb-opencutlist-icon-stop:before {
+    content: "\e9ba";
+}
+.ladb-opencutlist-icon-skip-forward:before {
+    content: "\e9bb";
+}
+.ladb-opencutlist-icon-side-fold:before {
+    content: "\e9b9";
+}
+.ladb-opencutlist-icon-qr-code:before {
+    content: "\e9b1";
+}
+.ladb-opencutlist-icon-align-left:before {
+    content: "\e98f";
+}
+.ladb-opencutlist-icon-align-center:before {
+    content: "\e990";
+}
+.ladb-opencutlist-icon-align-right:before {
+    content: "\e991";
+}
+.ladb-opencutlist-icon-news:before {
+    content: "\e925";
+}
+.ladb-opencutlist-icon-news-fill:before {
+    content: "\e9bc";
 }
 .ladb-opencutlist-icon-zzz:before {
     content: "\e952";

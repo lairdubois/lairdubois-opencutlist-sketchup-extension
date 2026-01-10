@@ -1767,6 +1767,16 @@ tab:
       url: URL
       tags: Badges
       layer_name: Balise
+      snapto: Liaison
+      snapto_none: Aucune
+      snapto_0: Quelconque
+      snapto_1: Horizontale
+      snapto_2: Verticale
+      snapto_3: Inclinée
+      cuts_opening: Découper l'ouverture
+      always_face_camera: Toujours faire face à la caméra
+      shadows_face_sun: Ombre face au soleil
+      no_scale_mask: Mise à l'échelle
       explode: Eclater
       explode_message: "Confirmez-vous l'éclatement de **{{ name }}** ?"
       erase: Effacer
@@ -1794,6 +1804,8 @@ tab:
       hide_tags_help: "Si cette option est activée, les **badges** placés sur les pièces ne sont pas affichés."
       minimize_on_set_active: Réduire après '$t(tab.outliner.tooltip.set_active_node)'
       minimize_on_set_active_help: "Si cette option est activée, la fenêtre OpenCutList sera réduite lorsque la fonction *'$t(tab.outliner.tooltip.set_active_node)'* est utilisée."
+    snippet:
+      name_size: Désignation - Taille
     error:
       no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
       no_entities: Votre modèle est vide !
