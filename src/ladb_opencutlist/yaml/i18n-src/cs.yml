@@ -385,8 +385,14 @@ tab:
       has_faces: "Tato část obsahuje {{ count }} dýhovaný povrch"
       has_faces_plural: "Tato část obsahuje {{ count }} dýhované povrchy"
       size_increased_0: |
+        Zvětšeno o nadměrnou velikost materiálu
+        ({{ increase_1 }})
       size_increased_1: |
+        Zvětšeno o nadmíru pro díl
+        ({{ increase_2 }})
       size_increased_2: |
+        Zvětšeno o nadmíru pro materiál a díl
+        ({{ increase_1 }} + {{ increase_2 }})
       edge_decremented: "Zmenšeno o tloušťku hrany ({{ decrement }})"
       edge_ymin: Hrana podél 1
       edge_ymax: Hrana podél 2
@@ -471,11 +477,11 @@ tab:
         *OpenCutList pak bude počítat 2 díly o tloušťce 19 mm místo 1 dílu o tloušťce 38 mm.*
       cut_options: $t(tab.materials.edit_material.cut_options)
       length_increase: $t(tab.materials.edit_material.length_increase)
-      length_increase_help: ""
+      length_increase_help: Na konečnou šířku byl aplikován nadměrný rozměr pro definování **nezpracované šířky**.
       width_increase: $t(tab.materials.edit_material.width_increase)
-      width_increase_help: ""
+      width_increase_help: Na konečnou šířku byl aplikován nadměrný rozměr pro definování **nezpracované šířky**.
       thickness_increase: $t(tab.materials.edit_material.thickness_increase)
-      thickness_increase_help: ""
+      thickness_increase_help: Na tloušťku byl aplikován nadměrný rozměr pro definování **hrubé tloušťky**.
       description: Popis
       description_help: |
         *Popis* vám umožňuje poskytnout personalizované informace o každé definované části.
@@ -2163,7 +2169,7 @@ tool:
     action_option_axes_context_status: Manipulovat podél os skupiny nebo dílců obsahující díl
     action_option_axes_entity_status: Manipulace podél os dílu
     action_option_options_mirror_status: Zrcadlení
-    action_toggle_raytest_status: ""
+    action_toggle_raytest_status: Projekt na dalším bodě
     warning:
       copies_disable_mirror: Více kopií zakáže volbu '$t(tool.smart_handle.action_option_options_mirror_status)'
   smart_reshape:
