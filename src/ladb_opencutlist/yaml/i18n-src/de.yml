@@ -1767,6 +1767,23 @@ tab:
       url: URL
       tags: Badges
       layer_name: Tag
+      snapto: Verbindung
+      snapto_none: Keine
+      snapto_0: Beliebig
+      snapto_1: Horizontal
+      snapto_2: Vertikal
+      snapto_3: Schräg
+      cuts_opening: Öffnung ausschneiden
+      always_face_camera: Immer zur Kamera schauen
+      shadows_face_sun: Schatten gegenüber der Sonne
+      no_scale_mask: Maßstab und Dehnung
+      no_scale_mask_0: Entlang der roten Achse (X) verformbar
+      no_scale_mask_1: Entlang der grünen Achse (Y) verformbar
+      no_scale_mask_2: Entlang der blauen Achse (Z) verformbar
+      no_scale_mask_3: Verformbar auf der roten/blauen Ebene (X+Z)
+      no_scale_mask_4: Verformbar auf der grünen/blauen Ebene (Y+Z)
+      no_scale_mask_5: Verformbar auf der roten/grünen Ebene (X+Y)
+      no_scale_mask_6: Verformbar ab den Ecken (XYZ)
       explode: Explodieren
       explode_message: "Bestätigen Sie die Auflösung von **{{ name }}**?"
       erase: Löschen
@@ -1794,6 +1811,8 @@ tab:
       hide_tags_help: "Ist diese Option aktiv, werden **Badges** nicht angezeigt."
       minimize_on_set_active: Verkleinern nach '$t(tab.outliner.tooltip.set_active_node)'
       minimize_on_set_active_help: "Wenn diese Option aktiviert ist, wird das OpenCutList-Fenster minimiert, wenn die Funktion *'$t(tab.outliner.tooltip.set_active_node)'* verwendet wird."
+    snippet:
+      name_size: Bezeichnung - Größe
     error:
       no_model: Kein Modell ist offen. Sie müssen mir mehr Information geben ;)
       no_entities: Ihr Modell ist leer!

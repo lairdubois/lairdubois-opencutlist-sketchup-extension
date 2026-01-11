@@ -1767,6 +1767,23 @@ tab:
       url: URL
       tags: Badges
       layer_name: Tag
+      snapto: Connection
+      snapto_none: None
+      snapto_0: Any
+      snapto_1: Horizontal
+      snapto_2: Vertical
+      snapto_3: Inclined
+      cuts_opening: Cut out the opening
+      always_face_camera: Always face the camera
+      shadows_face_sun: Shadow facing the sun
+      no_scale_mask: Scaling and Stretching
+      no_scale_mask_0: Stretchable along the red axis (X)
+      no_scale_mask_1: Stretchable along the green axis (Y)
+      no_scale_mask_2: Stretchable along the blue axis (Z)
+      no_scale_mask_3: Stretchable on the red/blue plane (X+Z)
+      no_scale_mask_4: Stretchable on the green/blue plane (Y+Z)
+      no_scale_mask_5: Stretchable on the red/green plane (X+Y)
+      no_scale_mask_6: Stretchable from corners (XYZ)
       explode: Explode
       explode_message: "Do you confirm the breakup of **{{ name }}**?"
       erase: Clear
@@ -1794,6 +1811,8 @@ tab:
       hide_tags_help: "If this option is selected, **badges** of parts will not be displayed."
       minimize_on_set_active: Minimize after '$t(tab.outliner.tooltip.set_active_node)'
       minimize_on_set_active_help: "If this option is selected, the OpenCutList window will be minimized when the function *'$t(tab.outliner.tooltip.set_active_node)'* is used."
+    snippet:
+      name_size: Designation - Size
     error:
       no_model: No model is open. You will have to give me more information ;)
       no_entities: Your model is empty!
@@ -2141,10 +2160,10 @@ tool:
     title: Handle
     action_0: Select
     action_0_status: Select a part
-    action_1: Copy along line
+    action_1: Copy along Line
     action_1_status: Copy a part along an axis
     action_1_state_2_status: Click to place the copy of the part or enter a distance
-    action_2: Copy along grid
+    action_2: Copy along Grid
     action_2_status: Copy a part along a grid
     action_2_state_2_status: "Click to place copies of the part, or enter two distances"
     action_3: Move

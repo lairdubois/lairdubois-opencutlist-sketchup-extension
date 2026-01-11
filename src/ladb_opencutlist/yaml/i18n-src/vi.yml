@@ -1767,6 +1767,23 @@ tab:
       url: URL
       tags: Nhãn hiệu
       layer_name: Thẻ
+      snapto: ""
+      snapto_none: Không có
+      snapto_0: Bất kỳ
+      snapto_1: Nằm ngang
+      snapto_2: Thẳng đứng
+      snapto_3: ""
+      cuts_opening: ""
+      always_face_camera: ""
+      shadows_face_sun: ""
+      no_scale_mask: ""
+      no_scale_mask_0: ""
+      no_scale_mask_1: ""
+      no_scale_mask_2: ""
+      no_scale_mask_3: ""
+      no_scale_mask_4: ""
+      no_scale_mask_5: ""
+      no_scale_mask_6: ""
       explode: Phân tách
       explode_message: "Bạn có xác nhận việc tách của **{{ name }}**?"
       erase: Trống
@@ -1794,6 +1811,8 @@ tab:
       hide_tags_help: "Nếu tùy chọn này được chọn, **Nhãn hiệu** sẽ không được hiển thị."
       minimize_on_set_active: Thu nhỏ sau '$t(tab.outliner.tooltip.set_active_node)'
       minimize_on_set_active_help: "Nếu tùy chọn này được chọn, cửa sổ OpenCutList sẽ được thu nhỏ khi hàm *'$t(tab.outliner.tooltip.set_active_node)'* được sử dụng."
+    snippet:
+      name_size: ""
     error:
       no_model: Không có mô hình nào được mở. Bạn sẽ cần phải cung cấp cho tôi thêm thông tin;)
       no_entities: Mô hình của bạn trống!

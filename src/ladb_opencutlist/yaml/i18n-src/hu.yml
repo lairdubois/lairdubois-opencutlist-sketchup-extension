@@ -1761,6 +1761,23 @@ tab:
       url: URL
       tags: Címkék
       layer_name: Címke
+      snapto: ""
+      snapto_none: Nincs
+      snapto_0: Bármelyik
+      snapto_1: Vízszintes
+      snapto_2: Függőleges
+      snapto_3: ""
+      cuts_opening: ""
+      always_face_camera: ""
+      shadows_face_sun: ""
+      no_scale_mask: ""
+      no_scale_mask_0: ""
+      no_scale_mask_1: ""
+      no_scale_mask_2: ""
+      no_scale_mask_3: ""
+      no_scale_mask_4: ""
+      no_scale_mask_5: ""
+      no_scale_mask_6: ""
       explode: Szétrobbantás
       explode_message: "Biztosan fel szeretnéd bontani a **{{ name }}** elemet?"
       erase: Töröl
@@ -1788,6 +1805,8 @@ tab:
       hide_tags_help: "Ha ez az opció be van kapcsolva, az alkatrészek **címkéi** nem lesznek megjelenítve."
       minimize_on_set_active: Kisméretűre állítás '$t(tab.outliner.tooltip.set_active_node)' után
       minimize_on_set_active_help: "Ha ez az opció engedélyezve van, az OpenCutList ablak automatikusan kisméretű lesz, amikor a *'$t(tab.outliner.tooltip.set_active_node)'* funkciót használja."
+    snippet:
+      name_size: ""
     error:
       no_model: Nincs nyitott modell. További információra van szükségem ;)
       no_entities: A modell üres!

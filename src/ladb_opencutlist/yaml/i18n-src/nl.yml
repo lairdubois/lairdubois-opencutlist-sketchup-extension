@@ -1767,6 +1767,23 @@ tab:
       url: URL
       tags: Badges
       layer_name: Tag
+      snapto: ""
+      snapto_none: Geen
+      snapto_0: Elke
+      snapto_1: Horizontaal
+      snapto_2: Verticaal
+      snapto_3: ""
+      cuts_opening: ""
+      always_face_camera: ""
+      shadows_face_sun: ""
+      no_scale_mask: ""
+      no_scale_mask_0: ""
+      no_scale_mask_1: ""
+      no_scale_mask_2: ""
+      no_scale_mask_3: ""
+      no_scale_mask_4: ""
+      no_scale_mask_5: ""
+      no_scale_mask_6: ""
       explode: Uitbarsten/ splitsing
       explode_message: "Bevestigt u dat **{{ name }}** wordt uitgeklapt?"
       erase: Leeg maken
@@ -1794,6 +1811,8 @@ tab:
       hide_tags_help: "Wanneer deze optie ingeschakeld is, dan zullen de **badges** die op de onderdelen geplaatst werden niet weergegeven worden."
       minimize_on_set_active: Samenvouwen na '$t(tab.outliner.tooltip.set_active_node)'
       minimize_on_set_active_help: "Als deze optie is ingeschakeld, wordt het OpenCutList-venster samengevouwen wanneer de functie *'$t(tab.outliner.tooltip.set_active_node)'* wordt gebruikt."
+    snippet:
+      name_size: ""
     error:
       no_model: Er is geen enkel model open. U moet me wat meer informatie geven ;)
       no_entities: Je model is leeg!
