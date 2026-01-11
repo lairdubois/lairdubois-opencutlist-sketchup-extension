@@ -1767,6 +1767,23 @@ tab:
       url: URL
       tags: Мітки
       layer_name: Тег
+      snapto: ""
+      snapto_none: Ні
+      snapto_0: Будь-який
+      snapto_1: По горизонталі
+      snapto_2: По вертикалі
+      snapto_3: ""
+      cuts_opening: ""
+      always_face_camera: ""
+      shadows_face_sun: ""
+      no_scale_mask: ""
+      no_scale_mask_0: ""
+      no_scale_mask_1: ""
+      no_scale_mask_2: ""
+      no_scale_mask_3: ""
+      no_scale_mask_4: ""
+      no_scale_mask_5: ""
+      no_scale_mask_6: ""
       explode: Розбити
       explode_message: "Підтверджуєте вибух **{{ name }}** ?"
       erase: Видалити
@@ -1794,6 +1811,8 @@ tab:
       hide_tags_help: "Якщо цю опцію активовано, **мітки**, розміщені на деталях, не відображаються."
       minimize_on_set_active: Згортання після '$t(tab.outliner.tooltip.set_active_node)'
       minimize_on_set_active_help: "Якщо ця опція включена, то вікно OpenCutList буде згорнуто при використанні функції *'$t(tab.outliner.tooltip.set_active_node)'*."
+    snippet:
+      name_size: ""
     error:
       no_model: Жодна модель не відкрита. Вам доведеться дати мені трохи більше інформації ;)
       no_entities: Ваша модель порожня!

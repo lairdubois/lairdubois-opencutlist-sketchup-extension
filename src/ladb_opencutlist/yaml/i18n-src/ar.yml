@@ -1767,6 +1767,23 @@ tab:
       url: رابط
       tags: الوسوم
       layer_name: وسم
+      snapto: ""
+      snapto_none: لا شيء
+      snapto_0: عشوائي
+      snapto_1: أفقي
+      snapto_2: عمودي
+      snapto_3: ""
+      cuts_opening: ""
+      always_face_camera: ""
+      shadows_face_sun: ""
+      no_scale_mask: ""
+      no_scale_mask_0: ""
+      no_scale_mask_1: ""
+      no_scale_mask_2: ""
+      no_scale_mask_3: ""
+      no_scale_mask_4: ""
+      no_scale_mask_5: ""
+      no_scale_mask_6: ""
       explode: تفجير
       explode_message: "هل تؤكد على تقسيم **{{ name }}**؟"
       erase: مسح
@@ -1794,6 +1811,8 @@ tab:
       hide_tags_help: "إن كانت هذه الخاصية محددة، فستخفى **الوسوم**."
       minimize_on_set_active: تصغير بعد '$t(tab.outliner.tooltip.set_active_node)'
       minimize_on_set_active_help: "إن تم تفعيل هذا الخيار، ستصغر نافذة OpenCutList عند استخدام وظيفة *'$t(tab.outliner.tooltip.set_active_node)'*"
+    snippet:
+      name_size: ""
     error:
       no_model: لا يوجد نموذج مفتوح. عليك أن تزودني بمعلومات أكثر ;)
       no_entities: نموذجك فارغ!

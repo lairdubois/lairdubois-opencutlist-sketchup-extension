@@ -1696,6 +1696,23 @@ tab:
       url: קישור
       tags: תגים
       layer_name: תג
+      snapto: ""
+      snapto_none: אין
+      snapto_0: כל
+      snapto_1: אופקי
+      snapto_2: אנכי
+      snapto_3: ""
+      cuts_opening: ""
+      always_face_camera: ""
+      shadows_face_sun: ""
+      no_scale_mask: ""
+      no_scale_mask_0: ""
+      no_scale_mask_1: ""
+      no_scale_mask_2: ""
+      no_scale_mask_3: ""
+      no_scale_mask_4: ""
+      no_scale_mask_5: ""
+      no_scale_mask_6: ""
       explode: פיצול
       explode_message: ""
       erase: לנקות
@@ -1722,6 +1739,8 @@ tab:
       hide_tags_help: "אם אפשרות זו מופעלת, **תגים** המוצבים על החלקים לא יוצגו."
       minimize_on_set_active: ""
       minimize_on_set_active_help: ""
+    snippet:
+      name_size: ""
     error:
       no_model: אין מודל פתוח. אתה תצטרך לתת לי קצת יותר מידע ;)
       no_entities: הדגם שלך ריק!
@@ -2073,6 +2092,7 @@ tool:
     action_2_state_2_status: ""
     action_3: ""
     action_3_status: ""
+    action_3_state_1_status: ""
     action_3_state_2_status: ""
     action_4: ""
     action_4_status: ""

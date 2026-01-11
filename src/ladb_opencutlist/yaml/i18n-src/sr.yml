@@ -1758,6 +1758,23 @@ tab:
       url: URL
       tags: Oznake
       layer_name: Oznaka
+      snapto: ""
+      snapto_none: Bez odabira
+      snapto_0: Bilo koji
+      snapto_1: Horizontalno
+      snapto_2: Vertikalno
+      snapto_3: ""
+      cuts_opening: ""
+      always_face_camera: ""
+      shadows_face_sun: ""
+      no_scale_mask: ""
+      no_scale_mask_0: ""
+      no_scale_mask_1: ""
+      no_scale_mask_2: ""
+      no_scale_mask_3: ""
+      no_scale_mask_4: ""
+      no_scale_mask_5: ""
+      no_scale_mask_6: ""
       explode: Eksplodirati
       explode_message: ""
       erase: Očisti
@@ -1784,6 +1801,8 @@ tab:
       hide_tags_help: "Ako je ova opcija odabrana, **oznake** neće biti prikazane."
       minimize_on_set_active: Minimizuj nakon '$t(tab.outliner.tooltip.set_active_node)'
       minimize_on_set_active_help: "Kada je opcija aktivna, prozor OpenCutList se minimizira prilikom korišćenja funkcije *'$t(tab.outliner.tooltip.set_active_node)'*."
+    snippet:
+      name_size: ""
     error:
       no_model: Nijedan model nije otvoren. Morate mi dati više informacija ;)
       no_entities: Nema sadržaja u vašem modelu !

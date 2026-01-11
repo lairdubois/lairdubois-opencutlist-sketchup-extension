@@ -1758,6 +1758,23 @@ tab:
       url: URL
       tags: 标签
       layer_name: 标签
+      snapto: ""
+      snapto_none: 无
+      snapto_0: 任何
+      snapto_1: 水平的
+      snapto_2: 垂直的
+      snapto_3: ""
+      cuts_opening: ""
+      always_face_camera: ""
+      shadows_face_sun: ""
+      no_scale_mask: ""
+      no_scale_mask_0: ""
+      no_scale_mask_1: ""
+      no_scale_mask_2: ""
+      no_scale_mask_3: ""
+      no_scale_mask_4: ""
+      no_scale_mask_5: ""
+      no_scale_mask_6: ""
       explode: 爆炸图
       explode_message: ""
       erase: 清除
@@ -1784,6 +1801,8 @@ tab:
       hide_tags_help: "如果选择此选项, 将不会显示 **标签** ."
       minimize_on_set_active: 完成后最小化'$t(tab.outliner.tooltip.set_active_node)'
       minimize_on_set_active_help: "如果启用此选项，当使用功能*'$t(tab.outliner.tooltip.set_active_node)'*时，OpenCutList 窗口将被最小化"
+    snippet:
+      name_size: ""
     error:
       no_model: 没有打开的模型. 您需要提供更多信息 ;)
       no_entities: 您的模型为空！

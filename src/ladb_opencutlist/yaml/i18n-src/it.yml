@@ -1761,6 +1761,23 @@ tab:
       url: URL
       tags: Cartellini
       layer_name: Tag
+      snapto: ""
+      snapto_none: Nessuna
+      snapto_0: Qualunque
+      snapto_1: Orizzontale
+      snapto_2: Verticale
+      snapto_3: ""
+      cuts_opening: ""
+      always_face_camera: ""
+      shadows_face_sun: ""
+      no_scale_mask: ""
+      no_scale_mask_0: ""
+      no_scale_mask_1: ""
+      no_scale_mask_2: ""
+      no_scale_mask_3: ""
+      no_scale_mask_4: ""
+      no_scale_mask_5: ""
+      no_scale_mask_6: ""
       explode: Esplodi
       explode_message: "Confermi la dissoluzione di **{{ name }}**?"
       erase: Reset
@@ -1788,6 +1805,8 @@ tab:
       hide_tags_help: "Selezionando questa opzione i **cartellini** non verranno mostrati."
       minimize_on_set_active: Minimizza dopo '$t(tab.outliner.tooltip.set_active_node)'
       minimize_on_set_active_help: "Selezionando questa opzione, la finestra di OpenCutList verrà minimizzata dopo aver opzionato *'$t(tab.outliner.tooltip.set_active_node)'* ."
+    snippet:
+      name_size: ""
     error:
       no_model: Nessun modello aperto. Sono necessarie più informazioni per procedere ;)
       no_entities: Il modello è vuoto!

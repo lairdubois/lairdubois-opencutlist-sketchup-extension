@@ -1761,6 +1761,23 @@ tab:
       url: URL
       tags: Etiquetas
       layer_name: Etiqueta
+      snapto: ""
+      snapto_none: Ninguna
+      snapto_0: Cualquier
+      snapto_1: Horizontal
+      snapto_2: Vertical
+      snapto_3: ""
+      cuts_opening: ""
+      always_face_camera: ""
+      shadows_face_sun: ""
+      no_scale_mask: ""
+      no_scale_mask_0: ""
+      no_scale_mask_1: ""
+      no_scale_mask_2: ""
+      no_scale_mask_3: ""
+      no_scale_mask_4: ""
+      no_scale_mask_5: ""
+      no_scale_mask_6: ""
       explode: Desmontar
       explode_message: "¿Confirma la separación de **{{ name }}**?"
       erase: Borrar
@@ -1788,6 +1805,8 @@ tab:
       hide_tags_help: "Si se selecciona esta opción, se ocultarán las **etiquetas**."
       minimize_on_set_active: Minimizar después de '$t(tab.outliner.tooltip.set_active_node)'
       minimize_on_set_active_help: "Si se activa esta opción, la ventana OpenCutList se minimizará hasta que se use la función *'$t(tab.outliner.tooltip.set_active_node)'*."
+    snippet:
+      name_size: ""
     error:
       no_model: Ningún modelo está abierto. Necesitarás darme más información ;)
       no_entities: Su modelo se encuentra vacío

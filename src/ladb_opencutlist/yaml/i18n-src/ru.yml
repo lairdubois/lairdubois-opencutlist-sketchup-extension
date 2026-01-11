@@ -1767,6 +1767,23 @@ tab:
       url: URL
       tags: Маркеры
       layer_name: Маяк
+      snapto: ""
+      snapto_none: Нет
+      snapto_0: Любое
+      snapto_1: По горизонтали
+      snapto_2: По вертикали
+      snapto_3: ""
+      cuts_opening: ""
+      always_face_camera: ""
+      shadows_face_sun: ""
+      no_scale_mask: ""
+      no_scale_mask_0: ""
+      no_scale_mask_1: ""
+      no_scale_mask_2: ""
+      no_scale_mask_3: ""
+      no_scale_mask_4: ""
+      no_scale_mask_5: ""
+      no_scale_mask_6: ""
       explode: Разброс
       explode_message: "Подтвердите деление **{{ name }}** ?"
       erase: Очистить
@@ -1794,6 +1811,8 @@ tab:
       hide_tags_help: "Если эта опция активирована, **маркеры**, размещенные на деталях, не отображаются."
       minimize_on_set_active: Уменьшить после '$t(tab.outliner.tooltip.set_active_node)'
       minimize_on_set_active_help: "Если эта опция включена, окно OpenCutList будет сворачиваться, когда *'$t(tab.outliner.tooltip.set_active_node)'* используется."
+    snippet:
+      name_size: ""
     error:
       no_model: Ни одна модель не открыта. Вам необходимо дать мне больше информации ;)
       no_entities: Ваша модель пуста!
