@@ -7,7 +7,7 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 # 8.0.0 (WIP)
 
   * Added Smart Reshape Tool
-  * Added SHIFT + (+/-) shortcuts in Smart Handle Tools
+  * Added SHIFT + (+/-) shortcuts in Smart Handle Tools to change copies during preview
   * Improved Smart Draw Tool with sheared pull
   * Rewrote Smart Axes Tool
 
