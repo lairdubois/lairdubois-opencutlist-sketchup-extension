@@ -385,8 +385,14 @@ tab:
       has_faces: "Questa parte contiene {{ count }} superficie placcata"
       has_faces_plural: "Questa parte contiene {{ count }} superfici placcate"
       size_increased_0: |
+        Aumentato dell'abbondanza del materiale
+        ({{ increase_1 }})
       size_increased_1: |
+        Aumentato dell'abbondanza del pezzo
+        ({{ increase_2 }})
       size_increased_2: |
+        Aumentato dell'abbondanza del materiale e del pezzo
+        ({{ increase_1 }} + {{ increase_2 }})
       edge_decremented: "Dimensione ridotta dello spessore della bordatura ({{ decrement }})"
       edge_ymin: Lunghezza bordo 1
       edge_ymax: Lunghezza bordo 2
@@ -471,11 +477,11 @@ tab:
         *OpenCutList conterà 2 pezzi da 19 mm di spessore anzichè uno da 38 mm.*
       cut_options: $t(tab.materials.edit_material.cut_options)
       length_increase: $t(tab.materials.edit_material.length_increase)
-      length_increase_help: ""
+      length_increase_help: Margine applicato alla lunghezza utile del pezzo per definirne la **lunghezza grezza**.
       width_increase: $t(tab.materials.edit_material.width_increase)
-      width_increase_help: ""
+      width_increase_help: Margine applicato alla larghezza utile del pezzo per definirne la **larghezza grezza**.
       thickness_increase: $t(tab.materials.edit_material.thickness_increase)
-      thickness_increase_help: ""
+      thickness_increase_help: Margine applicato allo spessore utile del pezzo per definirne lo **spessore grezzo**.
       description: Descrizione
       description_help: |
         La *Descrizione* permette di fornire informazioni personalizzate su ogni definizione di parte.
@@ -1761,26 +1767,26 @@ tab:
       url: URL
       tags: Cartellini
       layer_name: Tag
-      snapto: ""
+      snapto: Giunzione
       snapto_none: Nessuna
       snapto_0: Qualunque
       snapto_1: Orizzontale
       snapto_2: Verticale
-      snapto_3: ""
-      cuts_opening: ""
-      always_face_camera: ""
-      shadows_face_sun: ""
-      no_scale_mask: ""
-      no_scale_mask_0: ""
-      no_scale_mask_1: ""
-      no_scale_mask_2: ""
-      no_scale_mask_3: ""
-      no_scale_mask_4: ""
-      no_scale_mask_5: ""
-      no_scale_mask_6: ""
+      snapto_3: Inclinazione
+      cuts_opening: Eseguire lo scasso
+      always_face_camera: Sempre faccia alla camera
+      shadows_face_sun: Ombre verso il sole
+      no_scale_mask: Scala e stira
+      no_scale_mask_0: Deformabile lungo l'asse rosso (X)
+      no_scale_mask_1: Deformabile lungo l'asse verde (Y)
+      no_scale_mask_2: Deformabile lungo l'asse blu (Z)
+      no_scale_mask_3: Deformabile lungo gli assi rosso/blu (X+Y)
+      no_scale_mask_4: Deformabile lungo gli assi verde/blu (Y+Z)
+      no_scale_mask_5: Deformabile lungo il piano rosso/verde (X+Y)
+      no_scale_mask_6: Deformabile a partire dagli angoli (XYZ)
       explode: Esplodi
       explode_message: "Confermi la dissoluzione di **{{ name }}**?"
-      erase: Reset
+      erase: Elimina
       erase_message: "Confermi la cancellazione di **{{ name }}**?"
     deep_make_unique:
       title: Rendere unico
@@ -1806,7 +1812,7 @@ tab:
       minimize_on_set_active: Minimizza dopo '$t(tab.outliner.tooltip.set_active_node)'
       minimize_on_set_active_help: "Selezionando questa opzione, la finestra di OpenCutList verrà minimizzata dopo aver opzionato *'$t(tab.outliner.tooltip.set_active_node)'* ."
     snippet:
-      name_size: ""
+      name_size: Denominazione - Dimensione
     error:
       no_model: Nessun modello aperto. Sono necessarie più informazioni per procedere ;)
       no_entities: Il modello è vuoto!
@@ -2182,7 +2188,7 @@ tool:
     action_option_axes_context_status: Modificare lungo gli assi del gruppo o del componente contenente il pezzo
     action_option_axes_entity_status: Modifica su un asse dell'elemento
     action_option_options_mirror_status: Copia simmetrica
-    action_toggle_raytest_status: ""
+    action_toggle_raytest_status: Proiettare sul punto successivo
     warning:
       copies_disable_mirror: La copia multipla disabilita l'opzione '$t(tool.smart_handle.action_option_options_mirror_status)'
   smart_reshape:
