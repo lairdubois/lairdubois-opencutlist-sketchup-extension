@@ -49,7 +49,7 @@ module Ladb::OpenCutList
           node_data.fetch('cuts_opening', false),
           node_data.fetch('always_face_camera', false),
           node_data.fetch('shadows_face_sun', false),
-          node_data.fetch('no_scale_mask', []).each_with_index.map { |v, i| v ? (1 << i) : 0 }.sum,
+          node_data.fetch('no_scale_mask', []).each_with_index.map { |v, i| v ? (1 << i) : 0 }.reduce(0, :+), # .reduce(0, :+) == .sum for Ruby < 2.4
         )
       }
 

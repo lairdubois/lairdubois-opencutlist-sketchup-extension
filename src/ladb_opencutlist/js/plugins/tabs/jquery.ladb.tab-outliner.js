@@ -752,7 +752,7 @@
                 const $inputCutsOpening = $('#ladb_outliner_node_input_cuts_opening', $modal);
                 const $inputAlwaysFaceCamera = $('#ladb_outliner_node_input_always_face_camera', $modal);
                 const $inputShadowsFaceSun = $('#ladb_outliner_node_input_shadows_face_sun', $modal);
-                const $inputsNoScaleMask = Array(7).keys().toArray().map(function (i) { return $('#ladb_outliner_node_input_no_scale_mask_' + i, $modal); })
+                const $inputsNoScaleMask = Array.from(Array(7).keys()).map(function (i) { return $('#ladb_outliner_node_input_no_scale_mask_' + i, $modal); })
                 const $btnsModalFooterCollapseHandle = $('.modal-footer-collapse-handle-btn', $modal)
                 const $btnErase = $('#ladb_outliner_node_erase', $modal);
                 const $btnExplode = $('#ladb_outliner_node_explode', $modal);
@@ -947,7 +947,7 @@
                         }
                         if ($inputsNoScaleMask.length > 0) {
                             let no_scale_mask = [];
-                            Array(7).keys().toArray().forEach(function (i) {
+                            Array.from(Array(7).keys()).forEach(function (i) {
                                 no_scale_mask.push(!$inputsNoScaleMask[i].is(':checked'));
                             });
                             nodeData.no_scale_mask = no_scale_mask;
