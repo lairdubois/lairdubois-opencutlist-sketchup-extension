@@ -349,6 +349,10 @@ module Ladb::OpenCutList
 
     end
 
+    def onSelected
+      super
+    end
+
     # -----
 
     def draw(view)
@@ -929,6 +933,7 @@ module Ladb::OpenCutList
     end
 
     def onSelected
+      return true if super
 
       _reset_drawing_def
 
@@ -1427,7 +1432,8 @@ module Ladb::OpenCutList
 
       fn_preview_container = lambda do |container_def, color|
 
-        color = no_scale_color if container_def.container.respond_to?(:definition) && container_def.container.definition.behavior.no_scale_mask? == 127
+        color = no_scale_color if container_def.container.respond_to?(:locked?) && container_def.container.locked? ||
+                                  container_def.container.respond_to?(:definition) && container_def.container.definition.behavior.no_scale_mask? == 127
 
         # Render edges
 
@@ -2119,6 +2125,18 @@ module Ladb::OpenCutList
             operation = OPERATION_SPLIT
 
           # Check if the container is glued or always face camera to search the section according to its origin only
+          elsif drawing_container_def.container.respond_to?(:locked?) && drawing_container_def.container.locked?
+
+            # TODO how to handle locked containers ?
+
+            container_origin = ORIGIN.transform(drawing_container_def.transformation) # * drawing_container_def.container.transformation)
+            section_def = section_defs.find { |section_def| section_def.contains_point?(container_origin, xyz_method) }
+
+            # Container bounds are not considered in this case
+
+            operation = OPERATION_MOVE
+
+          # Check if the container is glued or always face camera to search the section according to its origin only
           elsif drawing_container_def.container.respond_to?(:glued_to) && drawing_container_def.container.glued_to ||
                 drawing_container_def.container.respond_to?(:definition) && (drawing_container_def.container.definition.behavior.always_face_camera? || drawing_container_def.container.definition.behavior.no_scale_mask? == 127)
 
@@ -2356,13 +2374,20 @@ module Ladb::OpenCutList
       el = [ eps, evpspe ]
       sd = section_defs
       sd = sd.reverse if reversed
-      min_distance = sd
-        .select { |section_def| section_def.bounds.valid? }
-        .each_cons(2).map { |section_def0, section_def1|
-          section_def0.bounds.max.project_to_line(el).transform(et).distance(section_def1.bounds.min.project_to_line(el).transform(et))
-        }
-        .min
-      min_distance = 0 if min_distance.nil?
+      vsd = sd.select { |section_def| section_def.bounds.valid? }
+      if vsd.one?
+        # TODO : Improve this case where there's only one section
+        drawing_size = drawing_def.bounds.min.project_to_line(el).transform(et).distance(drawing_def.bounds.max.project_to_line(el).transform(et))
+        section_size = vsd.first.bounds.min.project_to_line(el).transform(et).distance(vsd.first.bounds.max.project_to_line(el).transform(et))
+        min_distance = drawing_size - section_size
+      else
+        min_distance = vsd
+         .each_cons(2).map { |section_def0, section_def1|
+            section_def0.bounds.max.project_to_line(el).transform(et).distance(section_def1.bounds.min.project_to_line(el).transform(et))
+          }
+         .min
+        min_distance = 0 if min_distance.nil?
+      end
       max_compression_distance = [ (min_distance * (section_defs.size - 1)) - 1.mm, 0 ].max # Keep 1mm to avoid geometry merge problems
 
       @split_def = {

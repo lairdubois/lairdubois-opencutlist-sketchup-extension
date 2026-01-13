@@ -1131,7 +1131,7 @@ module Ladb::OpenCutList
         k_box = Kuix::BoxMotif3d.new
         k_box.bounds.copy!(eb)
         k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
-        k_box.color = color
+        k_box.color = Kuix::COLOR_BLACK
         k_box.transformation = et
         @tool.append_3d(k_box, LAYER_3D_HANDLE_PREVIEW)
 
@@ -1749,7 +1749,7 @@ module Ladb::OpenCutList
           k_box = Kuix::BoxMotif3d.new
           k_box.bounds.copy!(eb)
           k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
-          k_box.color = color
+          k_box.color = x == 0 && y == 0 ? Kuix::COLOR_BLACK : color
           k_box.transformation = mt * et
           @tool.append_3d(k_box, LAYER_3D_HANDLE_PREVIEW)
 
@@ -2450,7 +2450,7 @@ module Ladb::OpenCutList
       k_box = Kuix::BoxMotif3d.new
       k_box.bounds.copy!(eb)
       k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
-      k_box.color = color
+      k_box.color = Kuix::COLOR_BLACK
       k_box.transformation = et
       @tool.append_3d(k_box, LAYER_3D_HANDLE_PREVIEW)
 

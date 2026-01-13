@@ -13,6 +13,9 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
+### 2026-01-13
+  * Improved Smart Stretch Tool locked support (WIP)
+  * Improved SketchUp 2017 compatibility
 ### 2026-01-12
   * Added translations
   * Added finite clines considerations in the stretching tool

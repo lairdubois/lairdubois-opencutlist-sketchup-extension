@@ -12,6 +12,7 @@ module Ladb::OpenCutList
   require_relative '../manipulator/cline_manipulator'
   require_relative '../helper/entities_helper'
   require_relative '../helper/user_text_helper'
+  require_relative '../helper/part_helper'
   require_relative '../worker/common/common_drawing_decomposition_worker'
 
   class SmartDrawTool < SmartTool
@@ -210,8 +211,10 @@ module Ladb::OpenCutList
 
   class SmartDrawActionHandler < SmartActionHandler
 
+    include SmartActionHandlerPartHelper
     include UserTextHelper
     include EntitiesHelper
+    include PartHelper
 
     STATE_SHAPE_START = 0
     STATE_SHAPE = 1
@@ -265,6 +268,16 @@ module Ladb::OpenCutList
       when STATE_PULL
         return @tool.cursor_pull
 
+      end
+
+      super
+    end
+
+    def get_state_picker(state)
+
+      case state
+      when STATE_SHAPE_START
+        return SmartPicker.new(tool: @tool, observer: self, pick_point: false)
       end
 
       super
@@ -371,7 +384,9 @@ module Ladb::OpenCutList
       # puts "---"
 
       @tool.clear_2d(LAYER_2D_DIMENSIONS)
-      @tool.clear_all_3d
+      @tool.clear_3d(0)
+
+      super
 
       case @state
 
@@ -694,6 +709,56 @@ module Ladb::OpenCutList
 
     end
 
+    def onPickerChanged(picker, view)
+
+      case @state
+
+      when STATE_SHAPE_START
+        _pick_part(picker, view)
+
+      end
+
+      super
+    end
+
+    def onActivePartChanged(part_entity_path, part, highlighted = false)
+
+      # @tool.clear_3d(500)
+      #
+      # # Sketchup.active_model.selection.clear
+      #
+      # if part_entity_path.is_a?(Array) && part_entity_path.length > 1
+      #
+      #   parent_entity_path = part_entity_path[0...-1]
+      #   parent_entity = parent_entity_path.last
+      #
+      #   # Sketchup.active_model.selection.add(parent_entity)
+      #
+      #   kb = Kuix::Bounds3d.new.copy!(parent_entity.bounds)
+      #   # kb.inflate_all!(1)
+      #
+      #   # k_box = Kuix::BoxMotif3d.new
+      #   # k_box.bounds.copy!(kb)
+      #   # k_box.color = Kuix::COLOR_WHITE
+      #   # k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+      #   # k_box.line_width = 2
+      #   # k_box.transformation = PathUtils.get_transformation(parent_entity_path[0...-1]) if parent_entity_path.length > 1
+      #   # k_box.on_top = false
+      #   # @tool.append_3d(k_box, 500)
+      #
+      #   k_box = Kuix::BoxMotif3d.new
+      #   k_box.bounds.copy!(kb)
+      #   k_box.color = Kuix::COLOR_MAGENTA
+      #   k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+      #   k_box.line_width = 2
+      #   k_box.transformation = PathUtils.get_transformation(parent_entity_path[0...-1]) if parent_entity_path.length > 1
+      #   k_box.on_top = false
+      #   @tool.append_3d(k_box, 500)
+      #
+      # end
+
+    end
+
     # -----
 
     def draw(view)
@@ -758,6 +823,13 @@ module Ladb::OpenCutList
         @normal = @locked_normal
 
       else
+
+        # if @mouse_ip.instance_path.length > 1
+        #   part_path = _get_part_entity_path_from_path(@mouse_ip.instance_path.to_a)
+        #   if part_path.length > 1
+        #     puts "active_container_path = #{part_path[0...-1]}"
+        #   end
+        # end
 
         if @mouse_ip.vertex
 
@@ -1464,12 +1536,8 @@ module Ladb::OpenCutList
 
           if !top_face.nil?
 
-            if bottom_face.normal.samedirection?(psb.vector_to(pst))
-              bottom_face.reverse!
-            end
-            if top_face.normal.samedirection?(pst.vector_to(psb))
-              top_face.reverse!
-            end
+            bottom_face.reverse! if bottom_face.normal.samedirection?(psb.vector_to(pst))
+            top_face.reverse! if top_face.normal.samedirection?(pst.vector_to(psb))
 
             entities = bottom_face.parent.entities
             group = entities.add_group
