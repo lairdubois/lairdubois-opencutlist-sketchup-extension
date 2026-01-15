@@ -1767,23 +1767,23 @@ tab:
       url: URL
       tags: Мітки
       layer_name: Тег
-      snapto: ""
+      snapto: З'єднання
       snapto_none: Ні
       snapto_0: Будь-який
       snapto_1: По горизонталі
       snapto_2: По вертикалі
-      snapto_3: ""
-      cuts_opening: ""
-      always_face_camera: ""
-      shadows_face_sun: ""
-      no_scale_mask: ""
-      no_scale_mask_0: ""
-      no_scale_mask_1: ""
-      no_scale_mask_2: ""
-      no_scale_mask_3: ""
-      no_scale_mask_4: ""
-      no_scale_mask_5: ""
-      no_scale_mask_6: ""
+      snapto_3: Нахил
+      cuts_opening: Вирізи
+      always_face_camera: Завжди до камери
+      shadows_face_sun: Тінь перед сонцем
+      no_scale_mask: Масштабування та розтягування
+      no_scale_mask_0: Розтягування вздовж червоної осі (X)
+      no_scale_mask_1: Розтягування вздовж червоної осі (Y)
+      no_scale_mask_2: Розтягування вздовж червоної осі (Z)
+      no_scale_mask_3: Розтягування по червоній/синій площині (X+Z)
+      no_scale_mask_4: Розтягування по зеленій/синій площині (Y+Z)
+      no_scale_mask_5: Розтягування по червоній/зеленій площині (X+Y)
+      no_scale_mask_6: Розтягування з кутів (XYZ)
       explode: Розбити
       explode_message: "Підтверджуєте вибух **{{ name }}** ?"
       erase: Видалити
@@ -1812,7 +1812,7 @@ tab:
       minimize_on_set_active: Згортання після '$t(tab.outliner.tooltip.set_active_node)'
       minimize_on_set_active_help: "Якщо ця опція включена, то вікно OpenCutList буде згорнуто при використанні функції *'$t(tab.outliner.tooltip.set_active_node)'*."
     snippet:
-      name_size: ""
+      name_size: Позначення - Розмір
     error:
       no_model: Жодна модель не відкрита. Вам доведеться дати мені трохи більше інформації ;)
       no_entities: Ваша модель порожня!
