@@ -1767,23 +1767,23 @@ tab:
       url: URL
       tags: Маркеры
       layer_name: Маяк
-      snapto: ""
+      snapto: Связь
       snapto_none: Нет
       snapto_0: Любое
       snapto_1: По горизонтали
       snapto_2: По вертикали
-      snapto_3: ""
-      cuts_opening: ""
-      always_face_camera: ""
-      shadows_face_sun: ""
-      no_scale_mask: ""
-      no_scale_mask_0: ""
-      no_scale_mask_1: ""
-      no_scale_mask_2: ""
-      no_scale_mask_3: ""
-      no_scale_mask_4: ""
-      no_scale_mask_5: ""
-      no_scale_mask_6: ""
+      snapto_3: Наклон
+      cuts_opening: Вырезать отверстие
+      always_face_camera: Всегда вид в камеру
+      shadows_face_sun: Теневая сторона
+      no_scale_mask: Масштаб и Растяжка
+      no_scale_mask_0: Деформация по красной оси (X)
+      no_scale_mask_1: Деформация по зеленой оси (Y)
+      no_scale_mask_2: Деформация по синей оси (Z)
+      no_scale_mask_3: Деформация в красно-синей плоскости (X+Z)
+      no_scale_mask_4: Деформация в зелено-синей плоскости (Y+Z)
+      no_scale_mask_5: Деформация в зелено-красной плоскости (Y+X)
+      no_scale_mask_6: Деформация по вершинам (XYZ)
       explode: Разброс
       explode_message: "Подтвердите деление **{{ name }}** ?"
       erase: Очистить
@@ -1812,7 +1812,7 @@ tab:
       minimize_on_set_active: Уменьшить после '$t(tab.outliner.tooltip.set_active_node)'
       minimize_on_set_active_help: "Если эта опция включена, окно OpenCutList будет сворачиваться, когда *'$t(tab.outliner.tooltip.set_active_node)'* используется."
     snippet:
-      name_size: ""
+      name_size: Наименование — Размер
     error:
       no_model: Ни одна модель не открыта. Вам необходимо дать мне больше информации ;)
       no_entities: Ваша модель пуста!
