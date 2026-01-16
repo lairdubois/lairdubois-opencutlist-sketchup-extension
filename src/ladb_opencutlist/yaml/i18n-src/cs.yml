@@ -1767,23 +1767,23 @@ tab:
       url: URL
       tags: Znaky
       layer_name: Štítek
-      snapto: ""
+      snapto: Připojení
       snapto_none: Ne
       snapto_0: Žádný
       snapto_1: Horizontální
       snapto_2: Vertikální
-      snapto_3: ""
-      cuts_opening: ""
-      always_face_camera: ""
-      shadows_face_sun: ""
-      no_scale_mask: ""
-      no_scale_mask_0: ""
-      no_scale_mask_1: ""
-      no_scale_mask_2: ""
-      no_scale_mask_3: ""
-      no_scale_mask_4: ""
-      no_scale_mask_5: ""
-      no_scale_mask_6: ""
+      snapto_3: Naklonený
+      cuts_opening: Vyřízněte otvor
+      always_face_camera: Vždy čelem k fotoaparátu
+      shadows_face_sun: Stín obrácený ke slunci
+      no_scale_mask: Změna měřítka a roztažení
+      no_scale_mask_0: Roztažitelné podél červené osy (X)
+      no_scale_mask_1: Roztažitelné podél zelené osy (Y)
+      no_scale_mask_2: Roztažitelné podél modré osy (Z)
+      no_scale_mask_3: Roztažitelné v červeno-modré rovině (X+Z)
+      no_scale_mask_4: Roztažitelné v zelené/modré rovině (Y+Z)
+      no_scale_mask_5: Roztažitelné v červeno-zelené rovině (X+Y)
+      no_scale_mask_6: Roztažitelné z rohů (XYZ)
       explode: Rozpad
       explode_message: "Potvrzujete rozdělení **{{ name }}**?"
       erase: Smazat
@@ -1812,7 +1812,7 @@ tab:
       minimize_on_set_active: Minimalizovat po '$t(tab.outliner.tooltip.set_active_node)'
       minimize_on_set_active_help: "Pokud je tato možnost vybrána, okno OpenCutList bude minimalizováno při použití funkce *'$t(tab.outliner.tooltip.set_active_node)'*."
     snippet:
-      name_size: ""
+      name_size: Označení - Velikost
     error:
       no_model: Model není otevřen. Potřebujeme více informací ;)
       no_entities: Váš model je prázdný!
