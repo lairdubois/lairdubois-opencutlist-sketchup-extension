@@ -1,6 +1,7 @@
 module Ladb::OpenCutList
 
   require_relative '../../lib/fiddle/clippy/clippy'
+  require_relative '../../lib/geometrix/geometrix'
   require_relative '../../lib/kuix/kuix'
   require_relative '../../model/drawing/drawing_def'
   require_relative '../../model/drawing/drawing_projection_def'
@@ -58,7 +59,9 @@ module Ladb::OpenCutList
       curve_manipulators = []
 
       @drawing_def.face_manipulators.each do |face_manipulator|
-        next unless !face_manipulator.normal.perpendicular?(Z_AXIS) && face_manipulator.normal.angle_between(Z_AXIS) < Math::PI / 2.0  # Filter only exposed faces
+        # TODO Sketchup perpendicular? function may be too lazy
+        # next unless !face_manipulator.normal.perpendicular?(Z_AXIS) && face_manipulator.normal.angle_between(Z_AXIS) < Geometrix::HALF_PI  # Filter only exposed faces
+        next unless face_manipulator.normal.angle_between(Z_AXIS) <= Geometrix::HALF_PI  # Filter only exposed faces
         face_manipulators << face_manipulator
         faces_bounds.add(face_manipulator.outer_loop_manipulator.points)
       end

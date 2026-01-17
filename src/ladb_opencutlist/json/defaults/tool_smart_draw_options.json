@@ -8,6 +8,7 @@
     "rectangle_centered": false,
     "measure_from_vertex": false,
     "pull_centered": false,
+    "draw_in": false,
     "ask_name": false
   },
   "action_1": { /* ACTION_DRAW_CIRCLE */
@@ -18,6 +19,7 @@
     "measure_from_vertex": false,
     "measure_from_diameter": false,
     "pull_centered": false,
+    "draw_in": false,
     "ask_name": false
   },
   "action_2": { /* ACTION_DRAW_POLYGON */
@@ -26,6 +28,7 @@
     "measure_from_vertex": false,
     "measure_reversed": false,
     "pull_centered": false,
+    "draw_in": false,
     "ask_name": false
   }
 }

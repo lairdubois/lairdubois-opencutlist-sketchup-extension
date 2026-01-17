@@ -1491,6 +1491,31 @@ module Ladb::OpenCutList
       end
       fn_preview_container.call(container_defs.first, axis_color)
 
+
+      # _unhide_instances
+      # rt = PathUtils.get_transformation(get_active_selection_path, IDENTITY)
+      # _get_instances.each do |instance|
+      #
+      #   it = instance.transformation
+      #   iti = it.inverse
+      #
+      #   p0 = ORIGIN
+      #   p1 = ORIGIN + emv.transform(iti)
+      #
+      #   k_edge = Kuix::EdgeMotif3d.new
+      #   k_edge.start.copy!(p0)
+      #   k_edge.end.copy!(p1)
+      #   k_edge.arrow_size = 2 * @tool.get_unit
+      #   k_edge.end_arrow = true
+      #   k_edge.color = Kuix::COLOR_CYAN
+      #   k_edge.line_width = 2
+      #   k_edge.on_top = true
+      #   k_edge.transformation = rt * it
+      #   @tool.append_3d(k_edge, LAYER_3D_RESHAPE_PREVIEW)
+      #
+      # end
+      # _hide_instances
+
       # eti = et.inverse
       # epmin, eps, evpspe, reversed, section_defs = split_def.values_at(:epmin, :eps, :evpspe, :reversed, :section_defs)
       # l = [ epmin, evpspe ]
@@ -1917,6 +1942,9 @@ module Ladb::OpenCutList
             edv.reverse! if container_def.parent.section_def == container_def.section_def if edv.valid?
           end
 
+          # Apply move translation (if the centred option is enabled)
+          edv = edv + emv if container_def.depth <= 1 && _get_instances.include?(container_def.container)
+
           target_position = container_def.ref_position
           target_position = target_position.offset(edv.transform(if container_def.depth == 0
                                                                    PathUtils.get_transformation(get_active_selection_path, IDENTITY).inverse * container_def.transformation
@@ -1928,21 +1956,6 @@ module Ladb::OpenCutList
           v = current_position.vector_to(target_position)
 
           container.transform!(Geom::Transformation.translation(v)) if v.valid?
-
-        end
-
-        if emv.valid?
-
-          # Apply move translation (if the centred option is enabled)
-
-          mt = Geom::Transformation.translation(emv)
-          _get_instances.each do |instance|
-            if drawing_def.container == instance
-              instance.transform!(Geom::Transformation.translation(emv.transform(instance.transformation)))
-            else
-              instance.transform!(mt)
-            end
-          end
 
         end
 

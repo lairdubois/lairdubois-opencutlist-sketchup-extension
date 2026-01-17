@@ -33,6 +33,7 @@
             const $selectConstrution = $('#ladb_select_construction', that.$element);
             const $selectMeasureReversed = $('#ladb_select_measure_reversed', that.$element);
             const $selectPullCentered = $('#ladb_select_pull_centered', that.$element);
+            const $selectDrawIn = $('#ladb_select_draw_in', that.$element);
             const $selectAskName = $('#ladb_select_ask_name', that.$element);
             const $btnValidate = $('#ladb_btn_validate', that.$element);
 
@@ -41,6 +42,7 @@
                 options.construction = $selectConstrution.val() === '1';
                 options.measure_reversed = $selectMeasureReversed.val() === '1';
                 options.pull_centered = $selectPullCentered.val() === '1';
+                options.draw_in = $selectDrawIn.val() === '1';
                 options.ask_name = $selectAskName.val() === '1';
             };
             const fnFillInputs = function (options) {
@@ -48,6 +50,7 @@
                 $selectConstrution.selectpicker('val', options.construction ? '1' : '0');
                 $selectMeasureReversed.selectpicker('val', options.measure_reversed ? '1' : '0');
                 $selectPullCentered.selectpicker('val', options.pull_centered ? '1' : '0');
+                $selectDrawIn.selectpicker('val', options.draw_in ? '1' : '0');
                 $selectAskName.selectpicker('val', options.ask_name ? '1' : '0');
             };
 
@@ -62,6 +65,7 @@
             $selectConstrution.selectpicker(SELECT_PICKER_OPTIONS);
             $selectMeasureReversed.selectpicker(SELECT_PICKER_OPTIONS);
             $selectPullCentered.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectDrawIn.selectpicker(SELECT_PICKER_OPTIONS);
             $selectAskName.selectpicker(SELECT_PICKER_OPTIONS);
 
             fnFillInputs(options);

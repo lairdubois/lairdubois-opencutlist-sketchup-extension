@@ -9,6 +9,7 @@ module Ladb::OpenCutList
   require_relative '../utils/dimension_utils'
   require_relative '../utils/hash_utils'
   require_relative '../utils/view_utils'
+  require_relative '../utils/drawingelement_utils'
   require_relative '../model/geom/size3d'
   require_relative '../model/cutlist/cutlist'
   require_relative '../manipulator/face_manipulator'
@@ -2351,7 +2352,7 @@ module Ladb::OpenCutList
           unless part_entity_path.nil?
             active_instance = part_entity_path.last
             instances = active_instance.definition.instances
-            _instances_to_paths(instances, instance_paths, model.active_entities, model.active_path ? model.active_path : [])
+            _instances_to_paths(instances, instance_paths, model.active_entities, model.active_path.to_a)
           end
 
         else
@@ -2516,7 +2517,7 @@ module Ladb::OpenCutList
             active_instance = part_entity_path.last
             instances = active_instance.definition.instances
             model = Sketchup.active_model
-            _instances_to_paths(instances, instance_paths, model.active_entities, model.active_path ? model.active_path : [])
+            _instances_to_paths(instances, instance_paths, model.active_entities, model.active_path.to_a)
           else
             instance_paths = [ part_entity_path ]
           end
@@ -2694,9 +2695,11 @@ module Ladb::OpenCutList
       selection = model.selection
 
       # Try to copy the previous action handler selection
+
       if @previous_action_handler && _start_with_previous_selection?
 
-        if (part_entity_path = @previous_action_handler.get_active_part_entity_path) &&
+        if @previous_action_handler.is_a?(SmartActionHandlerPartHelper) &&
+           (part_entity_path = @previous_action_handler.get_active_part_entity_path) &&
            (part = @previous_action_handler.get_active_part)
 
           _set_active_part(part_entity_path, part)
@@ -2716,7 +2719,8 @@ module Ladb::OpenCutList
 
           onSelected
 
-        elsif (selection_path = @previous_action_handler.get_active_selection_path) &&
+        elsif @previous_action_handler.is_a?(SmartActionHandlerSelectionHelper) &&
+              (selection_path = @previous_action_handler.get_active_selection_path) &&
               (instances = @previous_action_handler.get_active_selection_instances)
 
           _reset_active_part
@@ -2731,20 +2735,24 @@ module Ladb::OpenCutList
         if (entities = selection.select { |entity| entity.respond_to?(:transformation) }).any?
 
           entities = entities[0,1] unless _allows_multiple_selections?
-          active_path = model.active_path.is_a?(Array) ? model.active_path : []
+          if (first_entity_path = DrawingelementUtils.get_drawingelement_path(entities.first)).is_a?(Array) && first_entity_path.any?
 
-          if entities.one?
-            path = active_path + [ entities.first ]
-            unless (part = _generate_part_from_path(path)).nil?
-              _set_active_part(path, part)
+            active_path = first_entity_path[0...-1]
+
+            if entities.one?
+              path = active_path + [ entities.first ]
+              unless (part = _generate_part_from_path(path)).nil?
+                _set_active_part(path, part)
+              end
             end
-          end
 
-          unless has_active_part?
-            _set_active_selection(active_path, entities)
-          end
+            unless has_active_part?
+              _set_active_selection(active_path, entities)
+            end
 
-          onSelected
+            onSelected
+
+          end
 
         end
 
@@ -2908,7 +2916,7 @@ module Ladb::OpenCutList
           if ph.count > 0
 
             model = Sketchup.active_model
-            active_path = model.active_path.is_a?(Array) ? model.active_path : []
+            active_path = model.active_path.to_a
             active_path_length = active_path.length
 
             instances = Set[]
@@ -3026,7 +3034,7 @@ module Ladb::OpenCutList
 
           part = get_active_part
           path = get_active_part_entity_path
-          active_path_depth = Sketchup.active_model.active_path.is_a?(Array) ? Sketchup.active_model.active_path.size : 0
+          active_path_depth = Sketchup.active_model.active_path.to_a.size
 
           @tool.clear_all_2d
           @tool.clear_all_3d
@@ -3112,6 +3120,10 @@ module Ladb::OpenCutList
     #-----
 
     def _start_with_previous_selection?
+      false
+    end
+
+    def _start_with_callback_selection?
       false
     end
 
@@ -3674,7 +3686,7 @@ module Ladb::OpenCutList
 
     def do_pick
 
-      active_path = @view.model.active_path.nil? ? [] : @view.model.active_path # Picker 'path_at' returns a path only in the active_path context
+      active_path = @view.model.active_path.to_a # Picker 'path_at' returns a path only in the active_path context
 
       context_locked = @lockable && @tool.is_key_shift_down?
 

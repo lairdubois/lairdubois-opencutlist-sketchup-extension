@@ -14,6 +14,7 @@ module Ladb::OpenCutList
   require_relative '../helper/user_text_helper'
   require_relative '../helper/part_helper'
   require_relative '../worker/common/common_drawing_decomposition_worker'
+  require_relative '../utils/drawingelement_utils'
 
   class SmartDrawTool < SmartTool
 
@@ -36,6 +37,7 @@ module Ladb::OpenCutList
     ACTION_OPTION_OPTIONS_MEASURE_FROM_DIAMETER = 'measure_from_diameter'
     ACTION_OPTION_OPTIONS_MEASURE_REVERSED = 'measure_reversed'
     ACTION_OPTION_OPTIONS_PULL_CENTRED = 'pull_centered'
+    ACTION_OPTION_OPTIONS_DRAW_IN = 'draw_in'
     ACTION_OPTION_OPTIONS_ASK_NAME = 'ask_name'
 
     ACTIONS = [
@@ -43,7 +45,7 @@ module Ladb::OpenCutList
         :action => ACTION_DRAW_RECTANGLE,
         :options => {
           ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_SHAPE_OFFSET ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED, ACTION_OPTION_OPTIONS_PULL_CENTRED, ACTION_OPTION_OPTIONS_ASK_NAME ]
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED, ACTION_OPTION_OPTIONS_PULL_CENTRED, ACTION_OPTION_OPTIONS_DRAW_IN, ACTION_OPTION_OPTIONS_ASK_NAME ]
         }
       },
       {
@@ -51,14 +53,14 @@ module Ladb::OpenCutList
         :options => {
           ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_SHAPE_OFFSET ],
           ACTION_OPTION_SEGMENTS => [ ACTION_OPTION_SEGMENTS_SEGMENT_COUNT ],
-          ACTION_OPTION_OPTIONS => [ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_SMOOTHING, ACTION_OPTION_OPTIONS_MEASURE_FROM_DIAMETER, ACTION_OPTION_OPTIONS_PULL_CENTRED, ACTION_OPTION_OPTIONS_ASK_NAME ]
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_SMOOTHING, ACTION_OPTION_OPTIONS_MEASURE_FROM_DIAMETER, ACTION_OPTION_OPTIONS_PULL_CENTRED, ACTION_OPTION_OPTIONS_DRAW_IN, ACTION_OPTION_OPTIONS_ASK_NAME ]
         }
       },
       {
         :action => ACTION_DRAW_POLYGON,
         :options => {
           ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_SHAPE_OFFSET ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_PULL_CENTRED, ACTION_OPTION_OPTIONS_ASK_NAME ]
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_PULL_CENTRED, ACTION_OPTION_OPTIONS_DRAW_IN, ACTION_OPTION_OPTIONS_ASK_NAME ]
         }
       }
     ].freeze
@@ -160,6 +162,8 @@ module Ladb::OpenCutList
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1L0,0.667L1,0.667L1,1L0,1 M0.25,0.667L0.25,0.833 M0.5,0.667L0.5,0.833 M0.75,0.667L0.75,0.833  M0.861,0.292L0.708,0.139L0.5,0.083L0.292,0.139L0.14,0.292 M0.14,0.083L0.14,0.292L0.333,0.292'))
         when ACTION_OPTION_OPTIONS_PULL_CENTRED
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1L0.667,1L1,0.667L1,0L0.333,0L0,0.333L0,1 M0,0.333L0.667,0.333L0.667,1 M0.667,0.333L1,0 M0.333,0.5L0.333,0.833 M0.167,0.667L0.5,0.667'))
+        when ACTION_OPTION_OPTIONS_DRAW_IN
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0L0.25,0L0,0L0,0.25 M1,0L1,0.25L1,0L0.75,0 M0,1L0.25,1L0,1L0,0.75 M1,1L1,0.75L1,1L0.75,1 M0.583,0.417L0.25,0.417L0.25,0.75L0.583,0.75L0.583,0.417 M0.583,0.583L0.75,0.583L0.75,0.25L0.417,0.25L0.417,0.417'))
         when ACTION_OPTION_OPTIONS_ASK_NAME
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.25L1,0.25L1,0.75L0,0.75L0,0.25 M0.438,0.313L0.438,0.688 M0.125,0.625L0.125,0.375L0.313,0.625L0.313,0.375'))
         end
@@ -252,6 +256,8 @@ module Ladb::OpenCutList
       @normal = _get_active_z_axis
 
       @definition = nil
+
+      @active_container_path = nil
 
     end
 
@@ -714,7 +720,7 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_SHAPE_START
-        _pick_part(picker, view)
+        _pick_part(picker, view) if _fetch_option_draw_in
 
       end
 
@@ -723,39 +729,49 @@ module Ladb::OpenCutList
 
     def onActivePartChanged(part_entity_path, part, highlighted = false)
 
-      # @tool.clear_3d(500)
-      #
-      # # Sketchup.active_model.selection.clear
-      #
-      # if part_entity_path.is_a?(Array) && part_entity_path.length > 1
-      #
-      #   parent_entity_path = part_entity_path[0...-1]
-      #   parent_entity = parent_entity_path.last
-      #
-      #   # Sketchup.active_model.selection.add(parent_entity)
-      #
-      #   kb = Kuix::Bounds3d.new.copy!(parent_entity.bounds)
-      #   # kb.inflate_all!(1)
-      #
-      #   # k_box = Kuix::BoxMotif3d.new
-      #   # k_box.bounds.copy!(kb)
-      #   # k_box.color = Kuix::COLOR_WHITE
-      #   # k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
-      #   # k_box.line_width = 2
-      #   # k_box.transformation = PathUtils.get_transformation(parent_entity_path[0...-1]) if parent_entity_path.length > 1
-      #   # k_box.on_top = false
-      #   # @tool.append_3d(k_box, 500)
-      #
-      #   k_box = Kuix::BoxMotif3d.new
-      #   k_box.bounds.copy!(kb)
-      #   k_box.color = Kuix::COLOR_MAGENTA
-      #   k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-      #   k_box.line_width = 2
-      #   k_box.transformation = PathUtils.get_transformation(parent_entity_path[0...-1]) if parent_entity_path.length > 1
-      #   k_box.on_top = false
-      #   @tool.append_3d(k_box, 500)
-      #
-      # end
+      @tool.clear_3d(500)
+      @active_container_path = nil
+
+      if part_entity_path.is_a?(Array) && part_entity_path.length > 1
+
+        container_path = part_entity_path[0...-1]
+        return true if container_path == Sketchup.active_model.active_path
+
+        container = container_path.last
+
+        kb = Kuix::Bounds3d.new.copy!(container.bounds)
+        # kb.inflate_all!(1)
+
+        # k_box = Kuix::BoxMotif3d.new
+        # k_box.bounds.copy!(kb)
+        # k_box.color = Kuix::COLOR_WHITE
+        # k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+        # k_box.line_width = 2
+        # k_box.transformation = PathUtils.get_transformation(parent_entity_path[0...-1]) if parent_entity_path.length > 1
+        # k_box.on_top = false
+        # @tool.append_3d(k_box, 500)
+
+        k_box = Kuix::BoxMotif3d.new
+        k_box.bounds.copy!(kb)
+        k_box.color = Kuix::COLOR_MAGENTA
+        k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+        k_box.line_width = 2
+        k_box.transformation = PathUtils.get_transformation(container_path[0...-1]) if container_path.length > 1
+        k_box.on_top = false
+        @tool.append_3d(k_box, 500)
+
+        k_box = Kuix::BoxFillMotif3d.new
+        k_box.bounds.copy!(kb)
+        k_box.color = ColorUtils.color_translucent(Kuix::COLOR_MAGENTA, 0.05)
+        k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+        k_box.line_width = 2
+        k_box.transformation = PathUtils.get_transformation(container_path[0...-1]) if container_path.length > 1
+        k_box.on_top = false
+        @tool.append_3d(k_box, 500)
+
+        @active_container_path = container_path
+
+      end
 
     end
 
@@ -1359,6 +1375,10 @@ module Ladb::OpenCutList
       @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_PULL_CENTRED)
     end
 
+    def _fetch_option_draw_in
+      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_DRAW_IN)
+    end
+
     def _fetch_option_ask_name
       @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_ASK_NAME)
     end
@@ -1417,6 +1437,7 @@ module Ladb::OpenCutList
       @locked_axis = nil
       @locked_pull_axis = nil
       @locked_pull_manipulator = nil
+      @active_container_path = nil
       super
       set_state(STATE_SHAPE_START)
     end
@@ -1468,6 +1489,18 @@ module Ladb::OpenCutList
       model = Sketchup.active_model
       model.start_operation('OCL Create Part', true, false, !active?)
 
+
+      if @active_container_path.is_a?(Array) && @active_container_path.any? &&
+         (active_container = @active_container_path.last) && active_container.respond_to?(:definition)
+        active_path = @active_container_path
+        active_entities = active_container.definition.entities
+        active_transformation = PathUtils.get_transformation(@active_container_path)
+      else
+        active_path = []
+        active_entities = model.active_entities
+        active_transformation = IDENTITY
+      end
+
       # Remove previously created entity if exists
       if @definition.is_a?(Sketchup::ComponentDefinition)
         model.active_entities.erase_entities(@definition.instances)
@@ -1481,8 +1514,8 @@ module Ladb::OpenCutList
 
       if _fetch_option_construction || measure == 0
 
-        group = model.active_entities.add_group
-        group.transformation = t
+        group = active_entities.add_group
+        group.transformation = active_transformation.inverse * t
 
         if _fetch_option_construction
 
@@ -1569,7 +1602,7 @@ module Ladb::OpenCutList
 
         end
 
-        instance = model.active_entities.add_instance(definition, t)
+        instance = active_entities.add_instance(definition, active_transformation.inverse * t)
 
         if active?
 
@@ -1702,7 +1735,9 @@ module Ladb::OpenCutList
       return nil if model.nil?
 
       instance = _get_instance
-      instance_path = (model.active_path.nil? ? [] : model.active_path) + [ instance ]
+      instance_path = (@active_container_path.nil? ? Sketchup.active_model.active_path.to_a : @active_container_path) + [ instance ]
+
+      return nil unless instance_path.is_a?(Array) && instance_path.any?
 
       @drawing_def = CommonDrawingDecompositionWorker.new(Sketchup::InstancePath.new(instance_path),
         ignore_surfaces: true,

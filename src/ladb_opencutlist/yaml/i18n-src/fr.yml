@@ -2149,6 +2149,10 @@ tool:
     action_option_options_pull_centered: Élévation centrée
     action_option_options_pull_centered_status: Centrer l'élévation sur le premier point
     action_option_options_pull_locked_status: Verrouiller l'élévation sur un axe
+    action_option_options_draw_in: Dessiner dans
+    action_option_options_draw_in_0: Dessiner dans l'élément actif
+    action_option_options_draw_in_1: Dessiner dans le parent de la pièce du premier point
+    action_option_options_draw_in_status: Dessiner dans le parent de la pièce ciblée par le premier point
     action_option_options_ask_name: Nommage des pièces
     action_option_options_ask_name_status: Saisir manuellement le nom des pièces
     action_measure_locked_status: Verrouiller sur la dernière mesure
@@ -2181,9 +2185,6 @@ tool:
     action_option_copy_measure_type_outside_status: Mesurer à l'extérieur
     action_option_copy_measure_type_centered_status: Mesurer de centre à centre
     action_option_copy_measure_type_inside_status: Mesurer entre les pièces
-    action_option_move_measure_type_outside_status: Mesurer à l'extérieur
-    action_option_move_measure_type_centered_status: Mesurer au centre
-    action_option_move_measure_type_inside_status: Mesurer à l'intérieur
     action_option_axes_active_status: Manipuler le long des axes actifs
     action_option_axes_context_status: Manipuler le long des axes du groupe ou composant contenant la pièce
     action_option_axes_entity_status: Manipuler le long des axes de la pièce

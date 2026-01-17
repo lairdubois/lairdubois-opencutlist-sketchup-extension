@@ -21,17 +21,12 @@ module Ladb::OpenCutList
     ACTION_DISTRIBUTE = 4
 
     ACTION_OPTION_COPY_MEASURE_TYPE = 'copy_measure_type'
-    ACTION_OPTION_MOVE_MEASURE_TYPE = 'move_measure_type'
     ACTION_OPTION_AXES = 'axes'
     ACTION_OPTION_OPTIONS = 'options'
 
     ACTION_OPTION_COPY_MEASURE_TYPE_OUTSIDE = 'outside'
     ACTION_OPTION_COPY_MEASURE_TYPE_CENTERED = 'centered'
     ACTION_OPTION_COPY_MEASURE_TYPE_INSIDE = 'inside'
-
-    ACTION_OPTION_MOVE_MEASURE_TYPE_OUTSIDE = 'outside'
-    ACTION_OPTION_MOVE_MEASURE_TYPE_CENTERED = 'centered'
-    ACTION_OPTION_MOVE_MEASURE_TYPE_INSIDE = 'inside'
 
     ACTION_OPTION_AXES_ACTIVE = 'active'
     ACTION_OPTION_AXES_CONTEXT = 'context'
@@ -62,7 +57,6 @@ module Ladb::OpenCutList
       {
         :action => ACTION_MOVE_LINE,
         :options => {
-          ACTION_OPTION_MOVE_MEASURE_TYPE => [ ACTION_OPTION_MOVE_MEASURE_TYPE_OUTSIDE, ACTION_OPTION_MOVE_MEASURE_TYPE_CENTERED, ACTION_OPTION_MOVE_MEASURE_TYPE_INSIDE ],
           ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_CONTEXT, ACTION_OPTION_AXES_ENTITY ]
         }
       },
@@ -135,9 +129,6 @@ module Ladb::OpenCutList
       when ACTION_OPTION_COPY_MEASURE_TYPE
         return true
 
-      when ACTION_OPTION_MOVE_MEASURE_TYPE
-        return true
-
       when ACTION_OPTION_AXES
         return true
 
@@ -158,15 +149,6 @@ module Ladb::OpenCutList
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.917L0,0.583L0.333,0.583L0.333,0.917L0,0.917 M0.655,0.917L0.655,0.583L0.989,0.583L0.989,0.917L0.655,0.917 M0.167,0.25L0.822,0.25 M0.167,0.083L0.167,0.417 M0.822,0.083L0.822,0.417'))
         when ACTION_OPTION_COPY_MEASURE_TYPE_INSIDE
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.917L0,0.583L0.333,0.583L0.333,0.917L0,0.917M0.655,0.917L0.655,0.583L0.989,0.583L0.989,0.917L0.655,0.917 M0.333,0.25L0.667,0.25 M0.333,0.083L0.333,0.417 M0.667,0.083L0.667,0.417'))
-        end
-      when ACTION_OPTION_MOVE_MEASURE_TYPE
-        case option
-        when ACTION_OPTION_COPY_MEASURE_TYPE_OUTSIDE
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.333,0.833L0.333,0.917L0.25,0.917M0.083,0.917L0,0.917L0,0.833M0.667,0.917L0.667,0.583L1.001,0.583L1.001,0.917L0.667,0.917M0,0.667L0,0.583L0.083,0.583M0.25,0.583L0.333,0.583L0.334,0.667M0.167,0.25L1,0.25M0.167,0.083L0.167,0.417M1,0.083L1,0.417'))
-        when ACTION_OPTION_COPY_MEASURE_TYPE_CENTERED
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.333,0.833L0.333,0.917L0.25,0.917M0.083,0.917L0,0.917L0,0.833M0.667,0.917L0.667,0.583L1.001,0.583L1.001,0.917L0.667,0.917M0,0.667L0,0.583L0.083,0.583M0.25,0.583L0.333,0.583L0.334,0.667M0.167,0.25L0.833,0.25M0.167,0.083L0.167,0.417M0.833,0.083L0.833,0.417'))
-        when ACTION_OPTION_COPY_MEASURE_TYPE_INSIDE
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.333,0.833L0.333,0.917L0.25,0.917M0.083,0.917L0,0.917L0,0.833M0.667,0.917L0.667,0.583L1.001,0.583L1.001,0.917L0.667,0.917M0,0.667L0,0.583L0.083,0.583M0.25,0.583L0.333,0.583L0.334,0.667M0.167,0.25L0.667,0.25M0.167,0.083L0.167,0.417M0.667,0.083L0.667,0.417'))
         end
       when ACTION_OPTION_AXES
         case option
@@ -518,6 +500,10 @@ module Ladb::OpenCutList
       !@previous_action_handler.is_a?(self.class)
     end
 
+    def _start_with_callback_selection?
+      true
+    end
+
     def _allows_multiple_selections?
       true
     end
@@ -640,10 +626,6 @@ module Ladb::OpenCutList
 
     def _fetch_option_copy_measure_type
       @tool.fetch_action_option_value(@action, SmartHandleTool::ACTION_OPTION_COPY_MEASURE_TYPE)
-    end
-
-    def _fetch_option_move_measure_type
-      @tool.fetch_action_option_value(@action, SmartHandleTool::ACTION_OPTION_MOVE_MEASURE_TYPE)
     end
 
     def _fetch_option_axes
@@ -2390,7 +2372,7 @@ module Ladb::OpenCutList
     end
 
     def _preview_handle(view)
-      return super if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point, _fetch_option_move_measure_type)).nil?
+      return super if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point)).nil?
 
       drawing_def, drawing_def_segments, et, eb, mps, mpe, dps, dpe = move_def.values_at(:drawing_def, :drawing_def_segments, :et, :eb, :mps, :mpe, :dps, :dpe)
 
@@ -2480,7 +2462,7 @@ module Ladb::OpenCutList
     end
 
     def _read_handle(tool, text, view)
-      return false if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point, _fetch_option_move_measure_type)).nil?
+      return false if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point)).nil?
 
       dps, dpe = move_def.values_at(:dps, :dpe)
       dv = dps.vector_to(dpe)
@@ -2503,7 +2485,7 @@ module Ladb::OpenCutList
     end
 
     def _move_line_entity
-      return if (move_def = _get_move_def(@picked_handle_start_point, @picked_handle_end_point, _fetch_option_move_measure_type)).nil?
+      return if (move_def = _get_move_def(@picked_handle_start_point, @picked_handle_end_point)).nil?
 
       mps, mpe = move_def.values_at(:mps, :mpe)
 
@@ -2535,7 +2517,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _get_move_def(ps, pe, type = 0)
+    def _get_move_def(ps, pe)
       return unless ps.is_a?(Geom::Point3d) && pe.is_a?(Geom::Point3d)
       return unless (v = ps.vector_to(pe)).valid?
       return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
@@ -2587,16 +2569,7 @@ module Ladb::OpenCutList
       mps = lps
       dps = lps
       dpe = lpe
-      case type
-      when SmartHandleTool::ACTION_OPTION_MOVE_MEASURE_TYPE_OUTSIDE
-        mpe = lpe.offset(vs)
-      when SmartHandleTool::ACTION_OPTION_MOVE_MEASURE_TYPE_CENTERED
-        mpe = lpe
-      when SmartHandleTool::ACTION_OPTION_MOVE_MEASURE_TYPE_INSIDE
-        mpe = lpe.offset(ve)
-      else
-        return
-      end
+      mpe = lpe
 
       return unless mps.vector_to(mpe).valid? # No move
 

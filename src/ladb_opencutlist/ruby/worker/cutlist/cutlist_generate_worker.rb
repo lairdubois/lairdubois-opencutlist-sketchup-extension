@@ -286,7 +286,7 @@ module Ladb::OpenCutList
           edge_xmax_material = edge_xmax_materials.empty? ? nil : edge_xmax_materials.first
           edge_materials = [ edge_ymin_material, edge_ymax_material, edge_xmin_material, edge_xmax_material ].compact.uniq
 
-          # Materials filter
+          # Edge materials filter
           if !@edge_material_names_filter.empty? && !(@edge_material_names_filter - edge_materials.map { |m| m.display_name }).empty?
             cutlist.ignored_instance_count += 1
             next
@@ -346,7 +346,7 @@ module Ladb::OpenCutList
           veneer_zmax_material = veneer_zmax_materials.empty? ? nil : veneer_zmax_materials.first
           veneer_materials = [ veneer_zmin_material, veneer_zmax_material ].compact.uniq
 
-          # Materials filter
+          # Veneer materials filter
           if !@veneer_material_names_filter.empty? && !(@veneer_material_names_filter - veneer_materials.map { |m| m.display_name }).empty?
             cutlist.ignored_instance_count += 1
             next

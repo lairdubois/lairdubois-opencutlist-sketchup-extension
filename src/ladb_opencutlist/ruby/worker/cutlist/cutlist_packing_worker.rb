@@ -233,6 +233,11 @@ module Ladb::OpenCutList
                    spacing: '20mm',
                    trimming: '10mm',
                    time_limit: 0,
+                   use_tree_search: true,
+                   use_sequential_single_knapsack: true,
+                   use_sequential_value_correction: true,
+                   use_column_generation: true,
+                   use_dichotomic_search: true,
                    not_anytime_tree_search_queue_size: 16,
                    verbosity_level: 0,
                    input_to_json_bin_dir: '',
@@ -278,6 +283,11 @@ module Ladb::OpenCutList
       @spacing = DimensionUtils.str_to_ifloat(DimensionUtils.str_add_units(spacing)).to_l.to_f
       @trimming = DimensionUtils.str_to_ifloat(DimensionUtils.str_add_units(trimming)).to_l.to_f
       @time_limit = Plugin::IS_RBZ ? 300 : [ 0 , time_limit.to_i ].max # Only dev from src uses custom time limit
+      @use_tree_search = use_tree_search
+      @use_sequential_single_knapsack = use_sequential_single_knapsack
+      @use_sequential_value_correction = use_sequential_value_correction
+      @use_column_generation = use_column_generation
+      @use_dichotomic_search = use_dichotomic_search
       @not_anytime_tree_search_queue_size = [ 1 , not_anytime_tree_search_queue_size.to_i ].max
       @verbosity_level = verbosity_level.to_i
       @input_to_json_bin_dir = input_to_json_bin_dir
@@ -549,6 +559,11 @@ module Ladb::OpenCutList
                              else
                                @optimization_mode
                              end,
+          use_tree_search: @use_tree_search,
+          use_sequential_single_knapsack: @use_sequential_single_knapsack,
+          use_sequential_value_correction: @use_sequential_value_correction,
+          use_column_generation: @use_column_generation,
+          use_dichotomic_search: @use_dichotomic_search,
           not_anytime_tree_search_queue_size: @not_anytime_tree_search_queue_size,
           verbosity_level: @verbosity_level
         }
