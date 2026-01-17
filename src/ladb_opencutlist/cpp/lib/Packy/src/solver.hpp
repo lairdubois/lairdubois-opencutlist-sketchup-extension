@@ -19,6 +19,7 @@
 #include "packingsolver/irregular/optimize.hpp"
 
 #include "shape/labeling.hpp"
+#include <shape/clean.hpp>
 
 #include <mutex>
 
@@ -1675,13 +1676,17 @@ namespace Packy {
 
                 // Multiple item shape.
                 for (auto& j_item: j["shapes"].items()) {
-                    item_shapes.push_back(read_item_shape(j_item.value()));
+                    for (auto& item_shape : read_item_shape(j_item.value())) {
+                        item_shapes.push_back(item_shape);
+                    }
                 }
 
             } else {
 
                 // Single item shape.
-                item_shapes.push_back(read_item_shape(j));
+                for (auto& item_shape : read_item_shape(j)) {
+                    item_shapes.push_back(item_shape);
+                }
 
             }
 
@@ -1942,16 +1947,21 @@ namespace Packy {
 
         bool label_offsets_ = false;
 
-        static irregular::ItemShape read_item_shape(
+        static std::vector<irregular::ItemShape> read_item_shape(
                 basic_json<>& j
         ) {
 
             using namespace irregular;
 
-            ItemShape item_shape;
-            item_shape.shape_orig = ShapeWithHoles::from_json(j);
+            ShapeWithHoles shape = ShapeWithHoles::from_json(j);
+            std::vector<ShapeWithHoles> fixed_shapes = fix_self_intersections(shape);
+            std::vector<ItemShape> item_shapes;
 
-            return std::move(item_shape);
+            for (const auto& fixed_shape: fixed_shapes) {
+                item_shapes.emplace_back(ItemShape{fixed_shape});
+            }
+
+            return std::move(item_shapes);
         }
 
     };
