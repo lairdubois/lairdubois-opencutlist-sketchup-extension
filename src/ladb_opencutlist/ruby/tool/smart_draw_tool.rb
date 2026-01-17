@@ -739,20 +739,8 @@ module Ladb::OpenCutList
 
         container = container_path.last
 
-        kb = Kuix::Bounds3d.new.copy!(container.bounds)
-        # kb.inflate_all!(1)
-
-        # k_box = Kuix::BoxMotif3d.new
-        # k_box.bounds.copy!(kb)
-        # k_box.color = Kuix::COLOR_WHITE
-        # k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
-        # k_box.line_width = 2
-        # k_box.transformation = PathUtils.get_transformation(parent_entity_path[0...-1]) if parent_entity_path.length > 1
-        # k_box.on_top = false
-        # @tool.append_3d(k_box, 500)
-
         k_box = Kuix::BoxMotif3d.new
-        k_box.bounds.copy!(kb)
+        k_box.bounds.copy!(container.bounds)
         k_box.color = Kuix::COLOR_MAGENTA
         k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
         k_box.line_width = 2
@@ -761,7 +749,7 @@ module Ladb::OpenCutList
         @tool.append_3d(k_box, 500)
 
         k_box = Kuix::BoxFillMotif3d.new
-        k_box.bounds.copy!(kb)
+        k_box.bounds.copy!(container.bounds)
         k_box.color = ColorUtils.color_translucent(Kuix::COLOR_MAGENTA, 0.05)
         k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
         k_box.line_width = 2

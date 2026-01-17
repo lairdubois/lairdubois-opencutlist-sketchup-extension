@@ -172,8 +172,10 @@ module Ladb::OpenCutList::Kuix
 
       end
 
-      fn_draw_arrow.call( ps_3d, ps_2d, a) if @start_arrow
-      fn_draw_arrow.call( pe_3d, pe_2d, a + Math::PI) if @end_arrow
+      if ps_2d.distance(pe_2d).to_i > 1
+        fn_draw_arrow.call(ps_3d, ps_2d, a) if @start_arrow
+        fn_draw_arrow.call(pe_3d, pe_2d, a + Math::PI) if @end_arrow
+      end
 
     end
 

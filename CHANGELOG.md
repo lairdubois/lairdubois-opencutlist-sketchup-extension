@@ -9,14 +9,16 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added Smart Reshape Tool
   * Added SHIFT + (+/-) shortcuts in Smart Handle Tools to change copies during preview
   * Improved Smart Draw Tool with sheared pull
+  * Improved Smart Draw Tool with the "draw in" option
   * Rewrote Smart Axes Tool
 
 ## Lab
 
-### 2026-01-XX
+### 2026-01-17
   * Updated translations
   * Updated Clipper2 dependency
   * Updated PackingSolver dependency
+  * Added the "draw in" option to Smart Draw Tool
 ### 2026-01-13
   * Improved Smart Stretch Tool locked support (WIP)
   * Improved SketchUp 2017 compatibility
