@@ -520,7 +520,7 @@ module Ladb::OpenCutList
     # -----
 
     def _preview_part_container?
-      true
+      false
     end
 
     # -----
