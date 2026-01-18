@@ -242,6 +242,11 @@ module Ladb::OpenCutList
       @src_transformations = {}
       _reset_drawing_def
 
+      tool.create_3d(LAYER_3D_HANDLE_PREVIEW)
+      tool.create_3d(LAYER_3D_AXES_PREVIEW)
+      tool.create_3d(LAYER_3D_PART_SIBLING_PREVIEW)
+      tool.create_3d(LAYER_3D_PART_PREVIEW)
+
     end
 
     # -----
@@ -509,6 +514,12 @@ module Ladb::OpenCutList
     end
 
     def _allows_tree_selection?
+      true
+    end
+
+    # -----
+
+    def _preview_part_container?
       true
     end
 

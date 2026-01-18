@@ -19,6 +19,7 @@ module Ladb::OpenCutList::Kuix
       @on_top = false
 
       @_paths = []
+      @_path_transformation = IDENTITY
 
     end
 
@@ -26,8 +27,8 @@ module Ladb::OpenCutList::Kuix
 
     def do_layout(transformation)
       super
-      transformation = transformation * @transformation unless @transformation.identity?
-      no_transform = transformation.identity?
+      @_path_transformation = transformation * @transformation
+      no_transform = @_path_transformation.identity?
       no_pattern_transform = @patterns_transformation.identity?
       @_paths.clear
       @patterns.each do |pattern|
@@ -36,7 +37,7 @@ module Ladb::OpenCutList::Kuix
           pt = Geom::Point3d.new(pattern_point)
           pt.transform!(@patterns_transformation) unless no_pattern_transform
           point = Geom::Point3d.new(@bounds.x + pt.x * @bounds.width, @bounds.y + pt.y * @bounds.height, @bounds.z + pt.z * @bounds.depth)
-          point.transform!(transformation) unless no_transform
+          point.transform!(@_path_transformation) unless no_transform
           points << point
         end
         @_paths << points
@@ -212,39 +213,71 @@ module Ladb::OpenCutList::Kuix
 
   class BoxMotif3d < Motif3d
 
+    LFB = [ 0, 0, 0 ]
+    RFB = [ 1, 0, 0 ]
+    LBB = [ 0, 1, 0 ]
+    RBB = [ 1, 1, 0 ]
+    LFT = [ 0, 0, 1 ]
+    RFT = [ 1, 0, 1 ]
+    LBT = [ 0, 1, 1 ]
+    RBT = [ 1, 1, 1 ]
+
     def initialize(id = nil)
       super([
-              [
-                [ 0, 0, 0 ],
-                [ 1, 0, 0 ],
-                [ 1, 1, 0 ],
-                [ 0, 1, 0 ],
-                [ 0, 0, 0 ],
-              ],
-              [
-                [ 0, 0, 1 ],
-                [ 1, 0, 1 ],
-                [ 1, 1, 1 ],
-                [ 0, 1, 1 ],
-                [ 0, 0, 1 ],
-              ],
-              [
-                [ 0, 0, 0 ],
-                [ 0, 0, 1 ],
-              ],
-              [
-                [ 1, 0, 0 ],
-                [ 1, 0, 1 ],
-              ],
-              [
-                [ 0, 1, 0 ],
-                [ 0, 1, 1 ],
-              ],
-              [
-                [ 1, 1, 0 ],
-                [ 1, 1, 1 ],
-              ],
+
+              [ LFB, RFB ], # 0
+              [ RFB, RBB ], # 1
+              [ RBB, LBB ], # 2
+              [ LBB, LFB ], # 3
+
+              [ LFT, RFT ], # 4
+              [ RFT, RBT ], # 5
+              [ RBT, LBT ], # 6
+              [ LBT, LFT ], # 7
+
+              [ LFB, LFT ], # 8
+              [ RFB, RFT ], # 9
+              [ LBB, LBT ], # 10
+              [ RBB, RBT ], # 11
+
             ], id)
+    end
+
+    # -- RENDER --
+
+    def paint_content(graphics)
+      super
+
+      unless @on_top
+
+        # Display only face edges that are exposed to the camera
+
+        points_2d = 6.times
+                     .select { |face|
+                       face_center_3d = @bounds.face_center(face).to_p.transform(@_path_transformation)
+                       face_center_2d = graphics.view.screen_coords(face_center_3d)
+                       face_normal = Bounds3d.normal_by_face(face).transform(@_path_transformation)
+                       _, ray = graphics.view.pickray(face_center_2d.x, face_center_2d.y)
+                       face_normal.angle_between(ray) > Math::PI / 2
+                     }
+                     .map { |face|
+                       case face
+                       when Bounds3d::BOTTOM then [ 0, 1, 2, 3]
+                       when Bounds3d::TOP then [ 4, 5, 6, 7 ]
+                       when Bounds3d::LEFT then [ 3, 7, 8, 10 ]
+                       when Bounds3d::RIGHT then [ 1, 5, 9, 11 ]
+                       when Bounds3d::FRONT then [ 0, 4, 8, 9 ]
+                       when Bounds3d::BACK then [ 2, 6, 10, 11 ]
+                       end
+                     }.flatten(1).uniq
+                     .map { |i|
+                       @_paths[i].map { |point_3d| graphics.view.screen_coords(point_3d) }
+                     }.flatten(1)
+
+        graphics.view.draw2d(GL_LINES, points_2d)
+
+      end
+
     end
 
   end

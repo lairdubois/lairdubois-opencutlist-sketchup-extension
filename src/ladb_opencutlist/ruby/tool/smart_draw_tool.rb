@@ -729,33 +729,16 @@ module Ladb::OpenCutList
 
     def onActivePartChanged(part_entity_path, part, highlighted = false)
 
-      @tool.clear_3d(500)
+      # Preview part's container
+      _preview_part(part_entity_path, part, 500)
+
+      # Reset active container path
       @active_container_path = nil
 
       if part_entity_path.is_a?(Array) && part_entity_path.length > 1
 
         container_path = part_entity_path[0...-1]
         return true if container_path == Sketchup.active_model.active_path
-
-        container = container_path.last
-
-        k_box = Kuix::BoxMotif3d.new
-        k_box.bounds.copy!(container.bounds)
-        k_box.color = Kuix::COLOR_MAGENTA
-        k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-        k_box.line_width = 2
-        k_box.transformation = PathUtils.get_transformation(container_path[0...-1]) if container_path.length > 1
-        k_box.on_top = false
-        @tool.append_3d(k_box, 500)
-
-        k_box = Kuix::BoxFillMotif3d.new
-        k_box.bounds.copy!(container.bounds)
-        k_box.color = ColorUtils.color_translucent(Kuix::COLOR_MAGENTA, 0.05)
-        k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-        k_box.line_width = 2
-        k_box.transformation = PathUtils.get_transformation(container_path[0...-1]) if container_path.length > 1
-        k_box.on_top = false
-        @tool.append_3d(k_box, 500)
 
         @active_container_path = container_path
 
@@ -780,6 +763,16 @@ module Ladb::OpenCutList
 
     # -----
 
+    def _preview_part_mesh?
+      false
+    end
+
+    def _preview_part_container?
+      true
+    end
+
+    # -----
+
     def _get_previous_input_point
       return Sketchup::InputPoint.new(@picked_shape_start_point) if @state == STATE_SHAPE
       return Sketchup::InputPoint.new(@picked_shape_end_point) if @state == STATE_PULL
@@ -787,19 +780,11 @@ module Ladb::OpenCutList
     end
 
     def _get_picked_points
-
       points = []
       points << @picked_shape_start_point unless @picked_shape_start_point.nil?
       points << @picked_shape_end_point unless @picked_shape_end_point.nil?
       points << @picked_pull_end_point unless @picked_pull_end_point.nil?
       points << @mouse_snap_point unless @mouse_snap_point.nil?
-
-      # if _fetch_option_pull_centered && _picked_shape_end_point? && points.length > 2
-      #   offset = points[2].vector_to(points[1])
-      #   points[0] = points[0].offset(offset)
-      #   points[1] = points[1].offset(offset)
-      # end
-
       points
     end
 

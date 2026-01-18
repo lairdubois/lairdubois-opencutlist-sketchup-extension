@@ -338,15 +338,15 @@ module Ladb::OpenCutList
 
     protected
 
-    def _preview_axes?
+    def _preview_part_axes?
       true
     end
 
-    def _preview_arrows?
+    def _preview_part_arrows?
       true
     end
 
-    def _preview_box?
+    def _preview_part_box?
       true
     end
 
@@ -495,15 +495,15 @@ module Ladb::OpenCutList
       true
     end
 
-    def _preview_axes?
+    def _preview_part_axes?
       true
     end
 
-    def _preview_arrows?
+    def _preview_part_arrows?
       true
     end
 
-    def _preview_box?
+    def _preview_part_box?
       true
     end
 
@@ -581,15 +581,15 @@ module Ladb::OpenCutList
       true
     end
 
-    def _preview_axes?
+    def _preview_part_axes?
       true
     end
 
-    def _preview_arrows?
+    def _preview_part_arrows?
       true
     end
 
-    def _preview_box?
+    def _preview_part_box?
       true
     end
 
@@ -705,11 +705,11 @@ module Ladb::OpenCutList
       true
     end
 
-    def _preview_arrows?
+    def _preview_part_arrows?
       true
     end
 
-    def _preview_box?
+    def _preview_part_box?
       true
     end
 
@@ -915,15 +915,15 @@ module Ladb::OpenCutList
       true
     end
 
-    def _preview_axes?
+    def _preview_part_axes?
       true
     end
 
-    def _preview_arrows?
+    def _preview_part_arrows?
       true
     end
 
-    def _preview_box?
+    def _preview_part_box?
       true
     end
 

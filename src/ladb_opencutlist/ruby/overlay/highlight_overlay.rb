@@ -54,7 +54,6 @@ module Ladb::OpenCutList
             k_box.color = highlight_def.color
             k_box.line_width = 1
             k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-            k_box.on_top = true
             k_group.append(k_box)
 
           # 2D

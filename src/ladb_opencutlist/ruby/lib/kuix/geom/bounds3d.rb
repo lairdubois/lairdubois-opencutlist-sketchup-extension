@@ -201,6 +201,19 @@ module Ladb::OpenCutList::Kuix
       end
     end
 
+    def self.normal_by_face(face)
+      case face
+      when LEFT then X_AXIS.reverse
+      when RIGHT then X_AXIS
+      when FRONT then Y_AXIS.reverse
+      when BACK then Y_AXIS
+      when BOTTOM then Z_AXIS.reverse
+      when TOP then Z_AXIS
+      else
+        throw "Invalid normale_by_face face (face=#{face})"
+      end
+    end
+
     def min
       Point3d.new(
         x_min,

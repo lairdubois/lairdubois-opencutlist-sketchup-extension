@@ -2327,15 +2327,23 @@ module Ladb::OpenCutList
       false
     end
 
-    def _preview_axes?
+    def _preview_part_axes?
       false
     end
 
-    def _preview_arrows?
+    def _preview_part_arrows?
       false
     end
 
-    def _preview_box?
+    def _preview_part_box?
+      false
+    end
+
+    def _preview_part_mesh?
+      true
+    end
+
+    def _preview_part_container?
       false
     end
 
@@ -2362,12 +2370,13 @@ module Ladb::OpenCutList
 
         end
 
-        if (drawing_def = _get_drawing_def).is_a?(DrawingDef)
+        if (_preview_part_axes? || _preview_part_arrows? || _preview_part_box?) &&
+           (drawing_def = _get_drawing_def).is_a?(DrawingDef)
 
           et = _get_edit_transformation
           eb = _get_drawing_def_edit_bounds(drawing_def, et)
 
-          if _preview_axes?
+          if _preview_part_axes?
 
             # Axes helper
             k_axes_helper = Kuix::AxesHelper.new
@@ -2376,7 +2385,7 @@ module Ladb::OpenCutList
 
           end
 
-          if _preview_arrows?
+          if _preview_part_arrows?
 
             instance_info = part.def.get_one_instance_info
             arrow_color = part.auto_oriented ? SmartTool::COLOR_ARROW_AUTO_ORIENTED : SmartTool::COLOR_ARROW
@@ -2403,7 +2412,7 @@ module Ladb::OpenCutList
 
           end
 
-          if _preview_box?
+          if _preview_part_box?
 
             k_box = Kuix::BoxMotif3d.new
             k_box.bounds.copy!(eb)
@@ -2417,20 +2426,52 @@ module Ladb::OpenCutList
         end
 
         # Mesh
-        instance_paths.each do |path|
+        if _preview_part_mesh?
 
-          triangles = _compute_children_faces_triangles(path.last.definition.entities)
-          t = PathUtils::get_transformation(path)
+          instance_paths.each do |path|
 
-          k_mesh = Kuix::Mesh.new
-          k_mesh.add_triangles(triangles)
-          k_mesh.background_color = if highlighted
-                                      path == @active_part_entity_path ? COLOR_PART_HIGHLIGHTED : COLOR_INSTANCE_HIGHLIGHTED
-                                    else
-                                      path == @active_part_entity_path ? COLOR_PART : COLOR_INSTANCE
-                                    end
-          k_mesh.transformation = t
-          @tool.append_3d(k_mesh, layer)
+            triangles = _compute_children_faces_triangles(path.last.definition.entities)
+            t = PathUtils::get_transformation(path)
+
+            k_mesh = Kuix::Mesh.new
+            k_mesh.add_triangles(triangles)
+            k_mesh.background_color = if highlighted
+                                        path == @active_part_entity_path ? COLOR_PART_HIGHLIGHTED : COLOR_INSTANCE_HIGHLIGHTED
+                                      else
+                                        path == @active_part_entity_path ? COLOR_PART : COLOR_INSTANCE
+                                      end
+            k_mesh.transformation = t
+            @tool.append_3d(k_mesh, layer)
+
+          end
+
+        end
+
+        # Container
+        if _preview_part_container?
+
+          container_path = part_entity_path[0...-1]
+          if container_path.any? && container_path != Sketchup.active_model.active_path
+
+            container = container_path.last
+
+            k_box = Kuix::BoxMotif3d.new
+            k_box.bounds.copy!(container.bounds)
+            k_box.color = Kuix::COLOR_BLUE
+            k_box.line_stipple = Kuix::LINE_STIPPLE_SOLID
+            k_box.line_width = 1.5
+            k_box.transformation = PathUtils.get_transformation(container_path[0...-1]) if container_path.length > 1
+            k_box.on_top = false
+            @tool.append_3d(k_box, layer)
+
+            k_box = Kuix::BoxFillMotif3d.new
+            k_box.bounds.copy!(container.bounds)
+            k_box.color = ColorUtils.color_translucent(Kuix::COLOR_BLUE, 0.05)
+            k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+            k_box.transformation = PathUtils.get_transformation(container_path[0...-1]) if container_path.length > 1
+            @tool.append_3d(k_box, layer)
+
+          end
 
         end
 
