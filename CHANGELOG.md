@@ -14,6 +14,8 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
+### 2026-01-19
+  * Updated PackingSolver dependency
 ### 2026-01-17
   * Updated translations
   * Updated Clipper2 dependency
