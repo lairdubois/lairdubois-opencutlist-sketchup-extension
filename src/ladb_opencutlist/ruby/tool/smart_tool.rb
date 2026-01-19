@@ -2454,21 +2454,21 @@ module Ladb::OpenCutList
           if container_path.any? && container_path != Sketchup.active_model.active_path
 
             container = container_path.last
+            bounds = container.definition.bounds
+            t = PathUtils.get_transformation(container_path, IDENTITY)
 
             k_box = Kuix::BoxMotif3d.new
-            k_box.bounds.copy!(container.bounds)
+            k_box.bounds.copy!(bounds)
             k_box.color = Kuix::COLOR_BLUE
-            k_box.line_stipple = Kuix::LINE_STIPPLE_SOLID
             k_box.line_width = 1.5
-            k_box.transformation = PathUtils.get_transformation(container_path[0...-1]) if container_path.length > 1
-            k_box.on_top = false
+            k_box.line_stipple = Kuix::LINE_STIPPLE_SOLID
+            k_box.transformation = t
             @tool.append_3d(k_box, layer)
 
             k_box = Kuix::BoxFillMotif3d.new
-            k_box.bounds.copy!(container.bounds)
+            k_box.bounds.copy!(bounds)
             k_box.color = ColorUtils.color_translucent(Kuix::COLOR_BLUE, 0.05)
-            k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-            k_box.transformation = PathUtils.get_transformation(container_path[0...-1]) if container_path.length > 1
+            k_box.transformation = t
             @tool.append_3d(k_box, layer)
 
           end

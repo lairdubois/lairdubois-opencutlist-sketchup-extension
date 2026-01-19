@@ -222,6 +222,8 @@ module Ladb::OpenCutList::Kuix
     LBT = [ 0, 1, 1 ]
     RBT = [ 1, 1, 1 ]
 
+    attr_accessor :shell_on_top
+
     def initialize(id = nil)
       super([
 
@@ -241,6 +243,9 @@ module Ladb::OpenCutList::Kuix
               [ RBB, RBT ], # 11
 
             ], id)
+
+      @shell_on_top = true
+
     end
 
     # -- RENDER --
@@ -248,7 +253,7 @@ module Ladb::OpenCutList::Kuix
     def paint_content(graphics)
       super
 
-      unless @on_top
+      if @shell_on_top && !@on_top
 
         # Display only face edges that are exposed to the camera
 
@@ -285,29 +290,42 @@ module Ladb::OpenCutList::Kuix
   class BoxFillMotif3d < Motif3d
 
     def initialize(id = nil)
-      super([[
-              [ 0, 0, 0 ], [ 1, 0, 0 ], [ 1, 1, 0 ], [ 0, 1, 0 ],
-              [ 0, 0, 1 ], [ 1, 0, 1 ], [ 1, 1, 1 ], [ 0, 1, 1 ],
-              [ 0, 0, 0 ], [ 1, 0, 0 ], [ 1, 0, 1 ], [ 0, 0, 1 ],
-              [ 0, 1, 0 ], [ 1, 1, 0 ], [ 1, 1, 1 ], [ 0, 1, 1 ],
-              [ 0, 0, 0 ], [ 0, 1, 0 ], [ 0, 1, 1 ], [ 0, 0, 1 ],
-              [ 1, 0, 0 ], [ 1, 1, 0 ], [ 1, 1, 1 ], [ 1, 0, 1 ]
-             ]], id)
+      super([
+              [ [ 0, 0, 0 ], [ 1, 0, 0 ], [ 1, 1, 0 ], [ 0, 1, 0 ] ], # 0 = BOTTOM
+              [ [ 0, 0, 1 ], [ 1, 0, 1 ], [ 1, 1, 1 ], [ 0, 1, 1 ] ], # 1 = TOP
+              [ [ 0, 0, 0 ], [ 0, 1, 0 ], [ 0, 1, 1 ], [ 0, 0, 1 ] ], # 2 = LEFT
+              [ [ 1, 0, 0 ], [ 1, 1, 0 ], [ 1, 1, 1 ], [ 1, 0, 1 ] ], # 3 = RIGHT
+              [ [ 0, 0, 0 ], [ 1, 0, 0 ], [ 1, 0, 1 ], [ 0, 0, 1 ] ], # 4 = FRONT
+              [ [ 0, 1, 0 ], [ 1, 1, 0 ], [ 1, 1, 1 ], [ 0, 1, 1 ] ], # 5 = BACK
+             ], id)
     end
 
     # -- RENDER --
 
     def paint_content(graphics)
-      @_paths.each do |points|
-        if @on_top
-          graphics.set_drawing_color(@color)
-          graphics.view.draw2d(GL_QUADS, points.map { |point| graphics.view.screen_coords(point) })
-        else
-          graphics.draw_quads(
-            points: points,
-            fill_color: @color)
-        end
-      end
+
+      # Display only faces that are exposed to the camera
+
+      6.times
+       .select { |face|
+         face_center_3d = @bounds.face_center(face).to_p.transform(@_path_transformation)
+         face_center_2d = graphics.view.screen_coords(face_center_3d)
+         face_normal = Bounds3d.normal_by_face(face).transform(@_path_transformation)
+         _, ray = graphics.view.pickray(face_center_2d.x, face_center_2d.y)
+         face_normal.angle_between(ray) > Math::PI / 2
+       }
+       .each { |face|
+         points = @_paths[face]
+         if @on_top
+           graphics.set_drawing_color(@color)
+           graphics.view.draw2d(GL_QUADS, points.map { |point| graphics.view.screen_coords(point) })
+         else
+           graphics.draw_quads(
+             points: points,
+             fill_color: @color)
+         end
+       }
+
     end
 
   end
