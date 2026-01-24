@@ -901,10 +901,12 @@ namespace Packy {
             Length height = read_length(j, "height", -1);
 
             if (fake_spacing_ > 0) {
-                if (x >= 0) x -= fake_spacing_ / 2;
-                if (y >= 0) y -= fake_spacing_ / 2;
                 if (width >= 0) width += fake_spacing_;
                 if (height >= 0) height += fake_spacing_;
+            }
+            if (fake_trimming_ > 0) {
+                if (x >= 0) x -= fake_trimming_;
+                if (y >= 0) y -= fake_trimming_;
             }
 
             builder.instance_builder().add_defect(

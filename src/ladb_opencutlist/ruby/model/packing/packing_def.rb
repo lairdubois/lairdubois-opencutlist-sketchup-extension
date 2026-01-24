@@ -211,7 +211,8 @@ module Ladb::OpenCutList
                 :cost,
                 :std_price,
                 :std_cut_price,
-                :type
+                :type,
+                :defect_defs
 
     def initialize(id:,
                    length:, width:,
@@ -219,7 +220,8 @@ module Ladb::OpenCutList
                    cost:,
                    std_price:,
                    std_cut_price:,
-                   type: BIN_TYPE_STD)
+                   type: BIN_TYPE_STD,
+                   defect_defs: [])
 
       @id = id
       @length = length
@@ -229,6 +231,8 @@ module Ladb::OpenCutList
       @std_price = std_price
       @std_cut_price = std_cut_price
       @type = type
+
+      @defect_defs = defect_defs
 
     end
 
@@ -289,6 +293,23 @@ module Ladb::OpenCutList
 
     def create_bin
       PackingBin.new(self)
+    end
+
+  end
+
+  # -----
+
+  class PackingDefectDef < DataContainer
+
+    attr_reader :x, :y, :length, :width
+
+    def initialize(x:, y:, length:, width:)
+
+      @x = x
+      @y = y
+      @length = length
+      @width = width
+
     end
 
   end

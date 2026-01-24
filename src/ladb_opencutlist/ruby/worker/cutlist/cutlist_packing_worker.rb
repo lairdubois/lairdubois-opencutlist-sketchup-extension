@@ -427,17 +427,35 @@ module Ladb::OpenCutList
           end
 
           # Test for primary cut 0
+          defect_defs = []
           # if @problem_type != Packy::PROBLEM_TYPE_ONEDIMENSIONAL
-          #   defect = {
-          #       x: _to_packy_length(@trimming),
-          #       y: _to_packy_length(1247.mm),
-          #       width: _to_packy_length(length - @trimming * 2),
-          #       height: _to_packy_length(@spacing),
+          #   v_pos = 1500.mm
+          #   h_pos = 400.mm
+          #   saw_kerf = 10.mm
+          #   # Vertical
+          #   defect_defs << PackingDefectDef.new(
+          #     x: v_pos,
+          #     y: @trimming,
+          #     length: saw_kerf,
+          #     width: width - @trimming * 2,
+          #   )
+          #   # Horizontal
+          #   defect_defs << PackingDefectDef.new(
+          #     x: @trimming,
+          #     y: h_pos,
+          #     length: v_pos - @trimming,
+          #     width: saw_kerf,
+          #   )
+          #   bin_type[:defects] = defect_defs.map { |defect_def|
+          #     defect = {
+          #       x: _to_packy_length(defect_def.x),
+          #       y: _to_packy_length(defect_def.y),
+          #       width: _to_packy_length(defect_def.length),
+          #       height: _to_packy_length(defect_def.width)
           #     }
-          #   if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
-          #     defect[:type] = 'rectangle'
-          #   end
-          #   bin_type[:defects] = [ defect ]
+          #     defect[:type] = 'rectangle' if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
+          #     defect
+          #   }
           # end
 
           bin_types << bin_type
@@ -449,7 +467,8 @@ module Ladb::OpenCutList
             cost: cost,
             std_price: std_price,
             std_cut_price: std_cut_price,
-            type: BIN_TYPE_STD
+            type: BIN_TYPE_STD,
+            defect_defs: defect_defs
           )
 
         end
@@ -1199,6 +1218,18 @@ module Ladb::OpenCutList
               svg += "<rect class='cut-outer' x='#{px_cut_rect_x - px_cut_outline_width}' y='#{px_cut_rect_y - px_cut_outline_width}' width='#{px_cut_rect_width + px_cut_outline_width * 2}' height='#{px_cut_rect_height + px_cut_outline_width * 2}' />"
               svg += "<rect class='cut-inner' x='#{px_cut_rect_x}' y='#{px_cut_rect_y}' width='#{px_cut_rect_width}' height='#{px_cut_rect_height}'#{" fill='url(#pattern_cut_bg_#{uuid})'" if is_cut_bg}/>"
             svg += "</g>"
+
+          end
+          bin_def.bin_type_def.defect_defs.each do |defect_def|
+
+            px_defect_rect_width = _to_px(defect_def.length)
+            px_defect_rect_height = _to_px(defect_def.width)
+            px_defect_rect_x = _compute_x_with_origin_corner(@problem_type, @origin_corner, _to_px(defect_def.x), px_defect_rect_width, px_bin_length)
+            px_defect_rect_y = px_bin_width - _compute_y_with_origin_corner(@problem_type, @origin_corner, _to_px(defect_def.y), px_defect_rect_height, px_bin_width)
+
+            svg += "<g class='defect' transform='translate(#{px_defect_rect_x} #{px_defect_rect_y})'>"
+              svg += "<rect class='defect' x='0' y='#{-px_defect_rect_height}' width='#{px_defect_rect_width}' height='#{px_defect_rect_height}' fill='#555555' />"
+            svg += '</g>'
 
           end
         end
