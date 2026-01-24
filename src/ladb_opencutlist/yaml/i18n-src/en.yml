@@ -817,7 +817,7 @@ tab:
       option_part_drawing_type: Shape of Parts
       option_part_drawing_type_0: Hidden
       option_part_drawing_type_1: Displaying front face
-      option_part_drawing_type_2: Displaying rear face
+      option_part_drawing_type_2: Displaying Backside
       option_part_drawing_type_help: |
         Shows or hides the actual shape of parts and their machining on the diagram.
 
@@ -1111,7 +1111,7 @@ tab:
       option_part_drawing_type: Shape of Parts
       option_part_drawing_type_0: Hidden
       option_part_drawing_type_1: Displaying front face
-      option_part_drawing_type_2: Displaying rear face
+      option_part_drawing_type_2: Displaying Backside View
       option_part_drawing_type_help: |
         Shows or hides the actual shape of parts and their machining on the diagram.
 
@@ -1324,10 +1324,10 @@ tab:
         part_edge_ymax: Edge length 2
         part_edge_xmin: Edge width 1
         part_edge_xmax: Edge width 2
-        part_face_zmin: Veneer backside
+        part_face_zmin: Veneer Backside
         part_face_zmax: Veneer front
         thumbnail_proportional_drawing: Thumbnail (Front View)
-        thumbnail_proportional_drawing_bottom: Thumbnail (Rear View)
+        thumbnail_proportional_drawing_bottom: Thumbnail (Backside View)
         thumbnail_proportional: Proportional thumbnail
         thumbnail_square: Square thumbnail
         group_material: Material / Dimension
@@ -2149,6 +2149,10 @@ tool:
     action_option_options_pull_centered: Elevation Centered
     action_option_options_pull_centered_status: Center elevation on the first point
     action_option_options_pull_locked_status: Lock elevation on one axis
+    action_option_options_draw_in: Draw in
+    action_option_options_draw_in_0: Draw in the active element
+    action_option_options_draw_in_1: Draw in the parent of the part of the first point
+    action_option_options_draw_in_status: Draw in the parent of the part targeted by the first point
     action_option_options_ask_name: Parts naming
     action_option_options_ask_name_status: Enter part names manually
     action_measure_locked_status: Lock on last measurement
@@ -2181,9 +2185,6 @@ tool:
     action_option_copy_measure_type_outside_status: External measurement
     action_option_copy_measure_type_centered_status: Central measurement
     action_option_copy_measure_type_inside_status: Measurement taken between parts
-    action_option_move_measure_type_outside_status: External measurement
-    action_option_move_measure_type_centered_status: Central measurement
-    action_option_move_measure_type_inside_status: Internal measurement
     action_option_axes_active_status: Manipulate along active axes
     action_option_axes_context_status: Manipulate along the axes of the group or component containing the part
     action_option_axes_entity_status: Manipulate along part axes

@@ -1949,7 +1949,7 @@ tab:
     contribute: Поддержи проект
     backers: "{{ count }} финансовый спонсор"
     backers_plural: "{{ count }} финансовые спонсоры"
-    ad: "OpenCutList не является бесплатным"
+    ad: "OpenCutList примет Вашу помощь"
     objective: Цель
     objective_slogan: "OpenCutList - это все мы"
     objective_title:

@@ -2294,7 +2294,7 @@ tool:
     action_0_status: Klikněte na díl
     action_1: Export 2D dílu
     action_1_status: Klikněte na plochu dílu
-    action_2: Export plochy
+    action_2: Export 2D cesty
     action_2_status: Klikněte na plochu
     action_3: Export dílu
     action_3_status: Klikněte na hranu

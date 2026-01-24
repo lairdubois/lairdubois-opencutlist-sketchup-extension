@@ -2149,6 +2149,10 @@ tool:
     action_option_options_pull_centered: Erhebung zentriert
     action_option_options_pull_centered_status: Erhebung auf den ersten Punkt zentrieren
     action_option_options_pull_locked_status: Höhe auf einer Achse sperren
+    action_option_options_draw_in: Zeichnen in
+    action_option_options_draw_in_0: Zeichnen im aktiven Element
+    action_option_options_draw_in_1: Zeichnen im Elternteil des ersten Punkts
+    action_option_options_draw_in_status: Zeichnen Sie im Elternteil des vom ersten Punkt ausgewählten Teils
     action_option_options_ask_name: Benennung der Teile
     action_option_options_ask_name_status: Namen der Teile manuell eingeben
     action_measure_locked_status: Auf die letzte Messung fixieren
@@ -2181,9 +2185,6 @@ tool:
     action_option_copy_measure_type_outside_status: Außenmessung
     action_option_copy_measure_type_centered_status: Messung von Mitte zu Mitte
     action_option_copy_measure_type_inside_status: Messung zwischen den Teilen
-    action_option_move_measure_type_outside_status: Außenmessung
-    action_option_move_measure_type_centered_status: Messung in der Mitte
-    action_option_move_measure_type_inside_status: Messung im Inneren
     action_option_axes_active_status: Manipulieren entlang der aktiven Achsen
     action_option_axes_context_status: "Manipulieren entlang der Achsen der Gruppe oder Komponente, die das Teil enthält"
     action_option_axes_entity_status: Manipulieren entlang der Achsen des Teils
