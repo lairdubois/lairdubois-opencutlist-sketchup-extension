@@ -434,7 +434,7 @@ module Ladb::OpenCutList::Kuix
     # --
 
     def to_b
-      Geom::BoundingBox.new.add([ min, max ])
+      Geom::BoundingBox.new.add([ min.to_p, max.to_p ])
     end
 
     def to_s

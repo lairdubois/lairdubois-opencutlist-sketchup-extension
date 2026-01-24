@@ -216,7 +216,6 @@ module Ladb::OpenCutList
   class SmartHandleActionHandler < SmartSelectActionHandler
 
     include UserTextHelper
-    include SmartActionHandlerPartHelper
 
     STATE_HANDLE_START = 1
     STATE_HANDLE = 2
@@ -311,7 +310,7 @@ module Ladb::OpenCutList
         @mouse_ip.pick(view, x, y)
 
         @tool.clear_all_2d
-        @tool.clear_3d([LAYER_3D_HANDLE_PREVIEW, LAYER_3D_AXES_PREVIEW ])
+        @tool.clear_3d([ LAYER_3D_HANDLE_PREVIEW, LAYER_3D_AXES_PREVIEW ])
 
         _snap_handle_start(flags, x, y, view)
         _preview_handle_start(view)
@@ -322,7 +321,7 @@ module Ladb::OpenCutList
         @mouse_ip.pick(view, x, y)
 
         @tool.clear_all_2d
-        @tool.clear_3d([LAYER_3D_HANDLE_PREVIEW, LAYER_3D_AXES_PREVIEW ])
+        @tool.clear_3d([ LAYER_3D_HANDLE_PREVIEW, LAYER_3D_AXES_PREVIEW ])
 
         _snap_handle(flags, x, y, view)
         _preview_handle(view)
