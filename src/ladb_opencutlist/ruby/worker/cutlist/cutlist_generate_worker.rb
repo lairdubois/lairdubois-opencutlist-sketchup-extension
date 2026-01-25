@@ -457,7 +457,7 @@ module Ladb::OpenCutList
 
         group_id = GroupDef.generate_group_id(material, material_attributes, std_info)
         group_def = _get_group_def(group_id)
-        unless group_def
+        if group_def.nil?
 
           group_def = GroupDef.new(group_id)
           group_def.material = material
@@ -469,11 +469,11 @@ module Ladb::OpenCutList
           group_def.std_dimension_rounded = std_info[:dimension_rounded]
           group_def.std_width = std_info[:width]
           group_def.std_thickness = std_info[:thickness]
-          group_def.show_cutting_dimensions = length_increase > 0 || width_increase > 0
 
           _store_group_def(group_def)
 
         end
+        group_def.show_cutting_dimensions ||= length_increase > 0 || width_increase > 0
 
         # Define part
 
