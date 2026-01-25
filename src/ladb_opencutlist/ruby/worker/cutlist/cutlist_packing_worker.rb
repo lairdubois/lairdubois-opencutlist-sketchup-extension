@@ -430,35 +430,35 @@ module Ladb::OpenCutList
 
           # Test for primary cut 0
           defect_defs = []
-          if @problem_type != Packy::PROBLEM_TYPE_ONEDIMENSIONAL
-            v_pos = 1500.mm
-            h_pos = 410.mm
-            saw_kerf = 10.mm
-            # Vertical
-            defect_defs << PackingDefectDef.new(
-              x: v_pos,
-              y: @trimming,
-              length: saw_kerf,
-              width: width - @trimming * 2,
-            )
-            # Horizontal
-            defect_defs << PackingDefectDef.new(
-              x: @trimming,
-              y: h_pos,
-              length: v_pos - @trimming,
-              width: saw_kerf,
-            )
-            bin_type[:defects] = defect_defs.map { |defect_def|
-              defect = {
-                x: _to_packy_length(defect_def.x),
-                y: _to_packy_length(defect_def.y),
-                width: _to_packy_length(defect_def.length),
-                height: _to_packy_length(defect_def.width)
-              }
-              defect[:type] = 'rectangle' if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
-              defect
-            }
-          end
+          # if @problem_type != Packy::PROBLEM_TYPE_ONEDIMENSIONAL
+          #   v_pos = 1500.mm
+          #   h_pos = 410.mm
+          #   saw_kerf = 10.mm
+          #   # Vertical
+          #   defect_defs << PackingDefectDef.new(
+          #     x: v_pos,
+          #     y: @trimming,
+          #     length: saw_kerf,
+          #     width: width - @trimming * 2,
+          #   )
+          #   # Horizontal
+          #   defect_defs << PackingDefectDef.new(
+          #     x: @trimming,
+          #     y: h_pos,
+          #     length: v_pos - @trimming - @spacing,
+          #     width: saw_kerf,
+          #   )
+          #   bin_type[:defects] = defect_defs.map { |defect_def|
+          #     defect = {
+          #       x: _to_packy_length(defect_def.x),
+          #       y: _to_packy_length(defect_def.y),
+          #       width: _to_packy_length(defect_def.length),
+          #       height: _to_packy_length(defect_def.width)
+          #     }
+          #     defect[:type] = 'rectangle' if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
+          #     defect
+          #   }
+          # end
 
           bin_types << bin_type
           @bin_type_defs << PackingBinTypeDef.new(
