@@ -116,6 +116,7 @@ core:
       smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
+      smart_join: $t(core.toolbar.command.smart_join)
       smart_export: $t(core.toolbar.command.smart_export)
       reset_dialog_position: Réinitialiser la position de la fenêtre
   toolbar:
@@ -128,6 +129,7 @@ core:
       smart_reshape: Remodeler des pièces
       smart_paint: Colorier des pièces
       smart_axes: Orienter des pièces
+      smart_join: Assembler des pièces
       smart_export: Exporter des pièces
   messagebox:
     dir_override: |
@@ -2289,6 +2291,9 @@ tool:
     error:
       not_part: L'objet ciblé n'est pas une pièce (composant)
       not_orientable: Le type de cette pièce ne permet pas de l'orienter
+  smart_join:
+    title: Assembler
+    action_0: Touch-Touch # TODO: It's currently just for dev purposes
   smart_export:
     title: Exporter
     action_0: Exporter une pièce 3D
