@@ -384,6 +384,7 @@ module Ladb::OpenCutList
             bin_type[:left_trim] = bin_type[:right_trim] = bin_type[:bottom_trim] = bin_type[:top_trim] = _to_packy_length(@trimming)
           elsif @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
             bin_type[:type] = 'rectangle'
+            bin_type[:item_bin_minimum_spacing] = _to_packy_length(@trimming)
           end
           bin_types << bin_type
           @bin_type_defs << PackingBinTypeDef.new(
@@ -426,6 +427,7 @@ module Ladb::OpenCutList
             bin_type[:left_trim] = bin_type[:right_trim] = bin_type[:bottom_trim] = bin_type[:top_trim] = _to_packy_length(@trimming)
           elsif @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
             bin_type[:type] = 'rectangle'
+            bin_type[:item_bin_minimum_spacing] = _to_packy_length(@trimming)
           end
 
           # Test for primary cut 0
@@ -607,7 +609,6 @@ module Ladb::OpenCutList
           parameters.merge!({ label_offsets: true })
           instance_parameters = {
             item_item_minimum_spacing: _to_packy_length(@spacing),
-            item_bin_minimum_spacing: _to_packy_length(@trimming),
             fake_trimming_y: @group.material_is_1d ? _to_packy_length(@trimming) : 0
           }
         end

@@ -1656,9 +1656,6 @@ namespace Packy {
             if (j.contains("item_item_minimum_spacing")) {
                 builder.instance_builder().set_item_item_minimum_spacing(j["item_item_minimum_spacing"].get<irregular::LengthDbl>());
             }
-            if (j.contains("item_bin_minimum_spacing")) {
-                builder.instance_builder().set_item_bin_minimum_spacing(j["item_bin_minimum_spacing"].get<irregular::LengthDbl>());
-            }
 
             if (j.contains("fake_trimming_y")) {
                 fake_trimming_y_ = j["fake_trimming_y"].get<irregular::LengthDbl>();
@@ -1774,6 +1771,12 @@ namespace Packy {
                     copies_min
             );
 
+            // Trim
+
+            if (j.contains("item_bin_minimum_spacing")) {
+                builder.instance_builder().set_item_bin_minimum_spacing(bin_type_id, j["item_bin_minimum_spacing"].get<LengthDbl>());
+            }
+
             // Defects
 
             if (j.contains("defects")) {
@@ -1785,7 +1788,7 @@ namespace Packy {
             return bin_type_id;
         }
 
-        void read_defect(
+        static void read_defect(
                 BinTypeId bin_type_id,
                 basic_json<>& j,
                 TypedBuilder<irregular::InstanceBuilder>& builder
@@ -1796,11 +1799,15 @@ namespace Packy {
             const DefectTypeId type = j.value("defect_type", static_cast<DefectTypeId>(-1));
             const ShapeWithHoles shape = ShapeWithHoles::from_json(j);
 
-            builder.instance_builder().add_defect(
+            DefectId defect_id = builder.instance_builder().add_defect(
                     bin_type_id,
                     type,
                     shape
             );
+
+            if (j.contains("item_defect_minimum_spacing")) {
+                builder.instance_builder().set_item_defect_minimum_spacing(bin_type_id, defect_id, j["item_defect_minimum_spacing"].get<LengthDbl>());
+            }
 
         }
 
