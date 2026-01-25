@@ -23,9 +23,10 @@ module Ladb::OpenCutList
   require_relative 'tool/smart_draw_tool'
   require_relative 'tool/smart_handle_tool'
   require_relative 'tool/smart_paint_tool'
-  require_relative 'tool/smart_axes_tool'
-  require_relative 'tool/smart_export_tool'
   require_relative 'tool/smart_reshape_tool'
+  require_relative 'tool/smart_axes_tool'
+  require_relative 'tool/smart_join_tool'
+  require_relative 'tool/smart_export_tool'
 
   attr_reader :app_observer
 
@@ -98,7 +99,11 @@ module Ladb::OpenCutList
     DOCS_DEV_URL = 'https://www.lairdubois.fr/opencutlist/docs-dev'
 
     TABS_STRIPPED_NAMES = %w[materials cutlist outliner importer]
-    SMART_TOOLS_STRIPPED_NAMES = %w[draw handle reshape paint axes export]
+    if IS_RBZ
+      SMART_TOOLS_STRIPPED_NAMES = %w[draw handle reshape paint axes export]
+    else
+      SMART_TOOLS_STRIPPED_NAMES = %w[draw handle reshape paint axes join export]
+    end
 
     # -----
 
