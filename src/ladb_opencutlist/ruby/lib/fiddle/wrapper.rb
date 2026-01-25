@@ -14,6 +14,7 @@ module Ladb::OpenCutList::Fiddle
     include Fiddle::Importer
 
     @lib_loaded = false
+    @lib_dir = nil
 
     def loaded?
       @lib_loaded
@@ -27,8 +28,14 @@ module Ladb::OpenCutList::Fiddle
     def unload
       return unless @lib_loaded
       @lib_loaded = false
+      @lib_dir = nil
       @handler.handlers.each { |h| h.close unless h.close_enabled? } unless @handler.nil?
       GC.start
+    end
+
+    def lib_dir
+      _load_lib
+      @lib_dir
     end
 
     protected
@@ -93,10 +100,12 @@ module Ladb::OpenCutList::Fiddle
         end
 
         @lib_loaded = true
+        @lib_dir = lib_dir
 
       rescue Exception => e
         Ladb::OpenCutList::PLUGIN.dump_exception(e, true, Sketchup.platform == :platform_win ? "To resolve this issue, try installing the Microsoft Visual C++ Redistributable available here :\nhttps://aka.ms/vs/17/release/vc_redist.x64.exe" : nil)
         @lib_loaded = false
+        @lib_dir = nil
       end
 
     end

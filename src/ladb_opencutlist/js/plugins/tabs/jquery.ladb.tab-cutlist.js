@@ -2615,14 +2615,15 @@
                 const $selectObjective = $('#ladb_select_objective', $modal);
                 const $selectOptimizationMode = $('#ladb_select_optimization_mode', $modal);
                 const $inputTimeLimit = $('#ladb_input_time_limit', $modal);
+                const $selectVerbosityLevel = $('#ladb_select_verbosity_level', $modal);
                 const $inputUseTreeSearch = $('#ladb_input_use_tree_search', $modal);
                 const $inputUseSequentialSingleKnapsack = $('#ladb_input_use_sequential_single_knapsack', $modal);
                 const $inputUseSequentialValueCorrection = $('#ladb_input_use_sequential_value_correction', $modal);
                 const $inputUseColumnGeneration = $('#ladb_input_use_column_generation', $modal);
                 const $inputUseDichotomicSearch = $('#ladb_input_use_dichotomic_search', $modal);
-                const $inputNotAnytimeTreeSearchQueueSize = $('#ladb_input_not_anytime_tree_search_queue_size', $modal);
-                const $selectVerbosityLevel = $('#ladb_select_verbosity_level', $modal);
-                const $selectInputToJsonBinDir = $('#ladb_select_input_to_json_bin_dir', $modal);
+                const $inputWriteInput = $('#ladb_input_write_input', $modal);
+                const $inputWriteInstance = $('#ladb_input_write_instance', $modal);
+                const $inputWriteCertificate = $('#ladb_input_write_certificate', $modal);
                 const $btnsModalFooterCollapseHandle = $('.modal-footer-collapse-handle-btn', $modal)
                 const $btnEditMaterial = $('#ladb_btn_edit_material', $modal);
                 const $btnUnloadLib = $('#ladb_btn_unload_lib', $modal);
@@ -2663,14 +2664,15 @@
                     options.hide_edges_preview = $selectHideEdgesPreview.val() === '1';
                     options.zoom_threshold = $inputZoomThreshold.val();
                     options.time_limit = that.toInt($inputTimeLimit.val());
+                    options.verbosity_level = that.toInt($selectVerbosityLevel.val());
                     options.use_tree_search = $inputUseTreeSearch.is(':checked');
                     options.use_sequential_single_knapsack = $inputUseSequentialSingleKnapsack.is(':checked');
                     options.use_sequential_value_correction = $inputUseSequentialValueCorrection.is(':checked');
                     options.use_column_generation = $inputUseColumnGeneration.is(':checked');
                     options.use_dichotomic_search = $inputUseDichotomicSearch.is(':checked');
-                    options.not_anytime_tree_search_queue_size = that.toInt($inputNotAnytimeTreeSearchQueueSize.val());
-                    options.verbosity_level = that.toInt($selectVerbosityLevel.val());
-                    options.input_to_json_bin_dir = $selectInputToJsonBinDir.val();
+                    options.write_input = $inputWriteInput.is(':checked');
+                    options.write_instance = $inputWriteInstance.is(':checked');
+                    options.write_certificate = $inputWriteCertificate.is(':checked');
                 }
                 const fnFillInputs = function (options) {
                     $radiosProblemType.filter('[value=' + fnValidProblemType(options.problem_type) + ']').click();
@@ -2694,14 +2696,15 @@
                     $selectHideEdgesPreview.selectpicker('val', options.hide_edges_preview ? '1' : '0');
                     $inputZoomThreshold.val(options.zoom_threshold);
                     $inputTimeLimit.val(options.time_limit);
+                    $selectVerbosityLevel.selectpicker('val', options.verbosity_level);
                     $inputUseTreeSearch.prop('checked',options.use_tree_search);
                     $inputUseSequentialSingleKnapsack.prop('checked',options.use_sequential_single_knapsack);
                     $inputUseSequentialValueCorrection.prop('checked',options.use_sequential_value_correction);
                     $inputUseColumnGeneration.prop('checked',options.use_column_generation);
                     $inputUseDichotomicSearch.prop('checked',options.use_dichotomic_search);
-                    $inputNotAnytimeTreeSearchQueueSize.val(options.not_anytime_tree_search_queue_size);
-                    $selectVerbosityLevel.selectpicker('val', options.verbosity_level);
-                    $selectInputToJsonBinDir.selectpicker('val', options.input_to_json_bin_dir);
+                    $inputWriteInput.prop('checked', options.write_input);
+                    $inputWriteInstance.prop('checked', options.write_instance);
+                    $inputWriteCertificate.prop('checked', options.write_certificate);
                     fnUpdateFieldsVisibility();
                 }
                 const fnConvertToVariableDefs = function (vars) {
@@ -3343,9 +3346,7 @@
                 $selectObjective.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectOptimizationMode.selectpicker(SELECT_PICKER_OPTIONS)
                 $inputTimeLimit.ladbTextinputText();
-                $inputNotAnytimeTreeSearchQueueSize.ladbTextinputText();
                 $selectVerbosityLevel.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectInputToJsonBinDir.selectpicker(SELECT_PICKER_OPTIONS);
 
                 fnFillInputs(packingOptions);
 

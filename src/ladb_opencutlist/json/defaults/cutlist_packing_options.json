@@ -42,14 +42,15 @@
     "objective": "auto",
     "optimization_mode": "auto",
     "time_limit": 0,
+    "verbosity_level": 0,
     "use_tree_search": true,
     "use_sequential_single_knapsack": true,
     "use_sequential_value_correction": true,
     "use_column_generation": true,
     "use_dichotomic_search": true,
-    "not_anytime_tree_search_queue_size": 16,
-    "verbosity_level": 0,
-    "input_to_json_bin_dir": "",
+    "write_input": false,
+    "write_instance": false,
+    "write_certificate": false,
     "hidden_group_ids": []
   }
 }

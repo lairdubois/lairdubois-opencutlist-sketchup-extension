@@ -220,7 +220,7 @@ module Ladb::OpenCutList
 
     def initialize(cutlist,
 
-                   part_ids: ,
+                   part_ids:,
 
                    std_bin_1d_sizes: '',
                    std_bin_2d_sizes: '',
@@ -233,14 +233,15 @@ module Ladb::OpenCutList
                    spacing: '20mm',
                    trimming: '10mm',
                    time_limit: 0,
+                   verbosity_level: 0,
                    use_tree_search: true,
                    use_sequential_single_knapsack: true,
                    use_sequential_value_correction: true,
                    use_column_generation: true,
                    use_dichotomic_search: true,
-                   not_anytime_tree_search_queue_size: 16,
-                   verbosity_level: 0,
-                   input_to_json_bin_dir: '',
+                   write_input: false,
+                   write_instance: false,
+                   write_certificate: false,
 
                    items_formula: '',
                    bin_folding: true,
@@ -283,14 +284,15 @@ module Ladb::OpenCutList
       @spacing = DimensionUtils.str_to_ifloat(DimensionUtils.str_add_units(spacing)).to_l.to_f
       @trimming = DimensionUtils.str_to_ifloat(DimensionUtils.str_add_units(trimming)).to_l.to_f
       @time_limit = Plugin::IS_RBZ ? 300 : [ 0 , time_limit.to_i ].max # Only dev from src uses custom time limit
+      @verbosity_level = verbosity_level.to_i
       @use_tree_search = use_tree_search
       @use_sequential_single_knapsack = use_sequential_single_knapsack
       @use_sequential_value_correction = use_sequential_value_correction
       @use_column_generation = use_column_generation
       @use_dichotomic_search = use_dichotomic_search
-      @not_anytime_tree_search_queue_size = [ 1 , not_anytime_tree_search_queue_size.to_i ].max
-      @verbosity_level = verbosity_level.to_i
-      @input_to_json_bin_dir = input_to_json_bin_dir
+      @write_input = write_input
+      @write_instance = write_instance
+      @write_certificate = write_certificate
 
       @items_formula = items_formula.empty? ? '@number' : items_formula
       @bin_folding = @items_formula.include?('@instance_name') || @items_formula.include?('@component_instance') || @items_formula.include?('@batch') ? false : bin_folding  # Disable bin folding if items_formula uses instance-dependent attributes.
@@ -428,35 +430,35 @@ module Ladb::OpenCutList
 
           # Test for primary cut 0
           defect_defs = []
-          # if @problem_type != Packy::PROBLEM_TYPE_ONEDIMENSIONAL
-          #   v_pos = 1500.mm
-          #   h_pos = 400.mm
-          #   saw_kerf = 10.mm
-          #   # Vertical
-          #   defect_defs << PackingDefectDef.new(
-          #     x: v_pos,
-          #     y: @trimming,
-          #     length: saw_kerf,
-          #     width: width - @trimming * 2,
-          #   )
-          #   # Horizontal
-          #   defect_defs << PackingDefectDef.new(
-          #     x: @trimming,
-          #     y: h_pos,
-          #     length: v_pos - @trimming,
-          #     width: saw_kerf,
-          #   )
-          #   bin_type[:defects] = defect_defs.map { |defect_def|
-          #     defect = {
-          #       x: _to_packy_length(defect_def.x),
-          #       y: _to_packy_length(defect_def.y),
-          #       width: _to_packy_length(defect_def.length),
-          #       height: _to_packy_length(defect_def.width)
-          #     }
-          #     defect[:type] = 'rectangle' if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
-          #     defect
-          #   }
-          # end
+          if @problem_type != Packy::PROBLEM_TYPE_ONEDIMENSIONAL
+            v_pos = 1500.mm
+            h_pos = 410.mm
+            saw_kerf = 10.mm
+            # Vertical
+            defect_defs << PackingDefectDef.new(
+              x: v_pos,
+              y: @trimming,
+              length: saw_kerf,
+              width: width - @trimming * 2,
+            )
+            # Horizontal
+            defect_defs << PackingDefectDef.new(
+              x: @trimming,
+              y: h_pos,
+              length: v_pos - @trimming,
+              width: saw_kerf,
+            )
+            bin_type[:defects] = defect_defs.map { |defect_def|
+              defect = {
+                x: _to_packy_length(defect_def.x),
+                y: _to_packy_length(defect_def.y),
+                width: _to_packy_length(defect_def.length),
+                height: _to_packy_length(defect_def.width)
+              }
+              defect[:type] = 'rectangle' if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
+              defect
+            }
+          end
 
           bin_types << bin_type
           @bin_type_defs << PackingBinTypeDef.new(
@@ -578,13 +580,12 @@ module Ladb::OpenCutList
                              else
                                @optimization_mode
                              end,
+          verbosity_level: @verbosity_level,
           use_tree_search: @use_tree_search,
           use_sequential_single_knapsack: @use_sequential_single_knapsack,
           use_sequential_value_correction: @use_sequential_value_correction,
           use_column_generation: @use_column_generation,
           use_dichotomic_search: @use_dichotomic_search,
-          not_anytime_tree_search_queue_size: @not_anytime_tree_search_queue_size,
-          verbosity_level: @verbosity_level
         }
         parameters.merge!({ time_limit: @time_limit }) if @time_limit > 0 # time_limit = 0 == not time limit
         instance_parameters = {}
@@ -610,6 +611,8 @@ module Ladb::OpenCutList
             fake_trimming_y: @group.material_is_1d ? _to_packy_length(@trimming) : 0
           }
         end
+        parameters.merge!({ instance_path: File.join(Packy.lib_dir, "instance#{'.json' if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR}") }) if @write_instance
+        parameters.merge!({ certificate_path: File.join(Packy.lib_dir, "certificate.json") }) if @write_certificate
 
         input = {
           problem_type: @problem_type,
@@ -637,9 +640,9 @@ module Ladb::OpenCutList
           puts '-- input --'
         end
 
-        unless @input_to_json_bin_dir.empty?
+        if @write_input
           # Write input to a JSON file in the bin directory for debug purpose
-          File.write(File.join(PLUGIN_DIR, 'bin', @input_to_json_bin_dir, 'lib', 'input.json'), JSON.pretty_generate(input))
+          File.write(File.join(Packy.lib_dir, 'input.json'), JSON.pretty_generate(input))
         end
 
         Packy.optimize_cancel_all
