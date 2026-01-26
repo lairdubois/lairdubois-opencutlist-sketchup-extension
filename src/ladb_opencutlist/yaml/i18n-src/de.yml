@@ -116,6 +116,7 @@ core:
       smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
+      smart_join: $t(core.toolbar.command.smart_join)
       smart_export: $t(core.toolbar.command.smart_export)
       reset_dialog_position: Fensterposition zurücksetzen
   toolbar:
@@ -128,6 +129,7 @@ core:
       smart_reshape: Teile umgestalten
       smart_paint: Teile einfärben
       smart_axes: Teile orientieren
+      smart_join: Teile zusammenbauen
       smart_export: Teile exportieren
   messagebox:
     dir_override: |
@@ -2289,6 +2291,9 @@ tool:
     error:
       not_part: Das Zielobjekt ist kein Teil (Komponente)
       not_orientable: Der Typ dieses Teils lässt keine Orientierung zu
+  smart_join:
+    title: Zusammenstellen
+    action_0: Touch-Touch
   smart_export:
     title: Exportieren
     action_0: 3D Teil exportieren
