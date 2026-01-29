@@ -1767,23 +1767,23 @@ tab:
       url: رابط
       tags: الوسوم
       layer_name: وسم
-      snapto: ""
+      snapto: وصل
       snapto_none: لا شيء
       snapto_0: عشوائي
       snapto_1: أفقي
       snapto_2: عمودي
-      snapto_3: ""
-      cuts_opening: ""
-      always_face_camera: ""
-      shadows_face_sun: ""
-      no_scale_mask: ""
-      no_scale_mask_0: ""
-      no_scale_mask_1: ""
-      no_scale_mask_2: ""
-      no_scale_mask_3: ""
-      no_scale_mask_4: ""
-      no_scale_mask_5: ""
-      no_scale_mask_6: ""
+      snapto_3: مائل
+      cuts_opening: أحدث فتحة
+      always_face_camera: واجه الكاميرا دائما
+      shadows_face_sun: الظل في مواجهة الشمس
+      no_scale_mask: تحجيم و تمديد
+      no_scale_mask_0: قابل للتمدد على المحور (X) الأحمر
+      no_scale_mask_1: قابل للتمدد على المحور (Y) الأخضر
+      no_scale_mask_2: قابل للتمدد على المحور (Z) الأزرق
+      no_scale_mask_3: قابل للتمدد على المستوي (X+Z) الأحمر/الأزرق
+      no_scale_mask_4: قابل للتمدد على المستوي (Y+Z) الأخضر/الأزرق
+      no_scale_mask_5: قابل للتمدد على المستوي (X+Y) الأحمر/الأخضر
+      no_scale_mask_6: قابل للتمدد من الزوايا (XYZ)
       explode: تفجير
       explode_message: "هل تؤكد على تقسيم **{{ name }}**؟"
       erase: مسح
@@ -1812,7 +1812,7 @@ tab:
       minimize_on_set_active: تصغير بعد '$t(tab.outliner.tooltip.set_active_node)'
       minimize_on_set_active_help: "إن تم تفعيل هذا الخيار، ستصغر نافذة OpenCutList عند استخدام وظيفة *'$t(tab.outliner.tooltip.set_active_node)'*"
     snippet:
-      name_size: ""
+      name_size: التسمية - المقاس
     error:
       no_model: لا يوجد نموذج مفتوح. عليك أن تزودني بمعلومات أكثر ;)
       no_entities: نموذجك فارغ!
