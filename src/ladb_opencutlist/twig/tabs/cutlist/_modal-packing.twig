@@ -130,6 +130,7 @@
                             <option value="0">{{ 'tab.cutlist.packing.option_irregular_allowed_rotations_0'|i18next }}</option>
                             <option value="180">{{ 'tab.cutlist.packing.option_irregular_allowed_rotations_180'|i18next }}</option>
                             <option value="90"{% if group.material_grained or group.material_is_1d %} disabled{% endif %}>{{ 'tab.cutlist.packing.option_irregular_allowed_rotations_90'|i18next }}</option>
+                            <option value="free"{% if group.material_grained or group.material_is_1d %} disabled{% endif %}>{{ 'tab.cutlist.packing.option_irregular_allowed_rotations_free'|i18next }}</option>
                         </select>
                     </div>
                 </div>

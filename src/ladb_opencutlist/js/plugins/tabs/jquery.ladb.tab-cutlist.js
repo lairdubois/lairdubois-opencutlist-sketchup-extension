@@ -2744,7 +2744,7 @@
                 }
                 const fnValidIrregularAllowedRotations = function (irregularAllowedRotations) {
                     if ((group.material_grained || group.material_is_1d)
-                        && (irregularAllowedRotations === '90' || irregularAllowedRotations === '45')) {
+                        && (irregularAllowedRotations === '90' || irregularAllowedRotations === '45' || irregularAllowedRotations === 'free')) {
                         return '180';
                     }
                     return irregularAllowedRotations;

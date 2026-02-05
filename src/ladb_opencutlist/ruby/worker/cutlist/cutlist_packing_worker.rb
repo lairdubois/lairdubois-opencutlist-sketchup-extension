@@ -215,6 +215,9 @@ module Ladb::OpenCutList
         { start: 90, end: 90 },
         { start: 180, end: 180 },
         { start: 270, end: 270 },
+      ],
+      "free" => [
+        { start: 0, end: 360 }
       ]
     }
 
