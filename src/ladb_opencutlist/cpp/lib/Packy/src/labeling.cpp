@@ -1,4 +1,5 @@
 #include "shape/labeling.hpp"
+#include "shape/approximation.hpp"
 
 using namespace shape;
 

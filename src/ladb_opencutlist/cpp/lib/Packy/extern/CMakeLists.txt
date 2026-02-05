@@ -21,7 +21,7 @@ set(PACKINGSOLVER_USE_CLP OFF)
 FetchContent_Declare(
         packingsolver
         GIT_REPOSITORY https://github.com/lairdubois/fontanf-packingsolver.git
-        GIT_TAG a376a87427015efefef46b9a039cfffb25fe9d77
+        GIT_TAG ece0d05cda137c409b209f1919c2aaa2783c5077
 #        SOURCE_DIR "${PROJECT_SOURCE_DIR}/../fontanf-packingsolver/"
         EXCLUDE_FROM_ALL)
 FetchContent_MakeAvailable(packingsolver)
