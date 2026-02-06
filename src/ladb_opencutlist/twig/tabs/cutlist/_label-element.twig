@@ -163,7 +163,7 @@
         {% else %}
             {% if value is iterable %}
                 {% for line in value %}
-                    <tspan {% if loop.first %}dy="-{{ elementDef.size * minUnit * ((value|length) - 1) }}"{% else %}x="0" dy="{{ elementDef.size * minUnit }}"{% endif %}>{{ line|trim|escape }}</tspan>
+                    <tspan {% if loop.first %}dy="-{{ elementDef.size * minUnit * ((value|length) - 1) }}"{% else %}x="0" dy="{{ elementDef.size * minUnit }}"{% endif %}{% if line|trim == '' %}visibility="hidden">.{% else %}>{{ line|trim|escape }}{% endif %}</tspan>
                 {% endfor %}
             {% else %}
                 {{ value|trim|escape }}
