@@ -43,22 +43,22 @@ module Ladb::OpenCutList
     end
 
     def faces_bounds
-      _compute_bounds if @bounds.nil?
+      _compute_bounds if @faces_bounds.nil?
       @faces_bounds
     end
 
     def edges_bounds
-      _compute_bounds if @bounds.nil?
+      _compute_bounds if @edges_bounds.nil?
       @edges_bounds
     end
 
     def clines_bounds
-      _compute_bounds if @bounds.nil?
+      _compute_bounds if @clines_bounds.nil?
       @clines_bounds
     end
 
     def snap_bounds
-      _compute_bounds if @bounds.nil?
+      _compute_bounds if @snap_bounds.nil?
       @snap_bounds
     end
 

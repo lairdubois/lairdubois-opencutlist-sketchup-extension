@@ -544,6 +544,8 @@ module Ladb::OpenCutList
 
       @locked_axis = nil
 
+      @extern_instances_ref_positions = {}
+
     end
 
     # -----
@@ -954,6 +956,7 @@ module Ladb::OpenCutList
       @picked_axis = nil
       @picked_grip_index = nil
       @picked_cutter_index = nil
+      @extern_instances_ref_positions = {}
       super
     end
 
@@ -1794,6 +1797,12 @@ module Ladb::OpenCutList
                   container_def.edge_defs.each do |edge_def|
                     edge_def.edge = new_definition.entities[edge_def.entity_pos]
                   end
+                  container_def.cline_defs.each do |cline_def|
+                    cline_def.cline = new_definition.entities[cline_def.entity_pos]
+                  end
+                  container_def.snap_defs.each do |snap_def|
+                    snap_def.snap = new_definition.entities[snap_def.entity_pos]
+                  end
                   container_def.children.each do |container_def|
                     container_def.container = new_definition.entities[container_def.entity_pos]
                   end
@@ -1817,18 +1826,22 @@ module Ladb::OpenCutList
         # Stretch routine
         # ---------------
 
-        # Keep stretched definitions to avoid stretching the same definition twice
-        stretched_definitions = Set[]
+        # Keep stretched definitions (and their instances) to avoid stretching the same definition twice
+        stretched_definition_defs = {}
 
-        # Defined a sorting order to be sure that farest edges are moved first
+        # Defined a sorting order to be sure that farthest edges are moved first
         sorting_order = (esv.valid? && esv.samedirection?(evpspe)) ? -1 : 1
 
         container_defs.each do |container_def|
 
-          container = container_def.container
-          entities = container.respond_to?(:entities) ? container.entities : container.definition.entities
+          next if container_def.model?
 
-          unless stretched_definitions.include?(container_def.definition) # Stretch definition edges only once
+          container = container_def.container
+          container_edv = edvs[container_def.section_def]
+          entities = container_def.entities
+
+          # Stretch definition edges only once
+          unless stretched_definition_defs.has_key?(container_def.definition)
 
             # Move edges
             # ----------
@@ -1836,7 +1849,7 @@ module Ladb::OpenCutList
             container_def.edge_defs
                          .select { |edge_def| edge_def.operation == OPERATION_MOVE }
                          .group_by { |edge_def| edge_def.start_section_def }
-                         .sort_by { |section_def, _| section_def.index * sorting_order }.to_h # Sort edges to be sure that farest points are moved first
+                         .sort_by { |section_def, _| section_def.index * sorting_order }.to_h # Sort edges to be sure that farthest points are moved first
                          .each do |section_def, edge_defs|
 
               edv = edvs[section_def]
@@ -1845,7 +1858,7 @@ module Ladb::OpenCutList
               t = edge_def0.transformation
 
               # Subtract container move
-              edv -= edvs[container_def.section_def]
+              edv -= container_edv
               edv.reverse! if container_def.section_def == section_def && edv.valid?
 
               target_position0 = edge_def0.ref_position
@@ -1871,7 +1884,7 @@ module Ladb::OpenCutList
               edv = edvs[cline_def.start_section_def]
 
               # Subtract container move
-              edv -= edvs[container_def.section_def]
+              edv -= container_edv
               edv.reverse! if container_def.section_def == cline_def.start_section_def && edv.valid?
 
               target_start = cline_def.ref_start_position
@@ -1882,7 +1895,7 @@ module Ladb::OpenCutList
               edv = edvs[cline_def.end_section_def]
 
               # Subtract container move
-              edv -= edvs[container_def.section_def]
+              edv -= container_edv
               edv.reverse! if container_def.section_def == cline_def.end_section_def && edv.valid?
 
               target_end = cline_def.ref_end_position
@@ -1910,7 +1923,7 @@ module Ladb::OpenCutList
               t = snap_def0.transformation
 
               # Subtract container move
-              edv -= edvs[container_def.section_def]
+              edv -= container_edv
               edv.reverse! if container_def.section_def == section_def && edv.valid?
 
               target_position0 = snap_def0.ref_position
@@ -1924,9 +1937,14 @@ module Ladb::OpenCutList
             end
 
             # Flag definition as stretched
-            stretched_definitions << container_def.definition
+            stretched_definition_defs[container_def.definition] = StretchedDefinitionDef.new(
+              container_def.depth == 0 ? container_edv : container_edv.transform(container_def.container_transformation.inverse)
+            )
 
           end
+
+          # Keep stretched container def, if not make unique to be able to back transform extern instances
+          stretched_definition_defs[container_def.definition].containers << container_def.container if !make_unique_o && container_def.component? && container_def.operation == OPERATION_SPLIT
 
           # Move container
           # --------------
@@ -1934,7 +1952,7 @@ module Ladb::OpenCutList
           next if container_def.operation == OPERATION_NONE ||
                   container_def.section_def.nil?
 
-          edv = edvs[container_def.section_def]
+          edv = container_edv
 
           # Subtract parent container move
           unless container_def.parent.nil? || container_def.parent.section_def.nil?
@@ -1943,7 +1961,7 @@ module Ladb::OpenCutList
           end
 
           # Apply move translation (if the centred option is enabled)
-          edv = edv + emv if container_def.depth <= 1 && _get_instances.include?(container_def.container)
+          edv = edv + emv if container_def.depth <= 1 && get_active_selection_instances.include?(container_def.container)
 
           target_position = container_def.ref_position
           target_position = target_position.offset(edv.transform(if container_def.depth == 0
@@ -1958,6 +1976,60 @@ module Ladb::OpenCutList
           container.transform!(Geom::Transformation.translation(v)) if v.valid?
 
         end
+
+        # Apply back transformation on extern instances if needed
+        unless make_unique_o
+
+          stretched_definition_defs.each do |definition, stretched_definition_def|
+
+            # k_edge = Kuix::EdgeMotif3d.new
+            # k_edge.start.copy!(ORIGIN)
+            # k_edge.end.copy!(ORIGIN.offset(stretched_definition_def.ddv))
+            # k_edge.end_arrow = true
+            # k_edge.color = Kuix::COLOR_RED
+            # k_edge.line_width = 2
+            # k_edge.on_top = true
+            # @tool.append_3d(k_edge, 800)
+
+            if stretched_definition_def.containers.any?
+              extern_instances = definition.instances.difference(stretched_definition_def.containers)
+              if extern_instances.any?
+
+                # puts "Apply back transformation on #{extern_instances.size} extern instance(s)"
+
+                extern_instances.each do |extern_instance|
+
+                  if (ref_position = @extern_instances_ref_positions[extern_instance]).nil?
+                    ref_position = @extern_instances_ref_positions[extern_instance] = ORIGIN.transform(extern_instance.transformation)
+                  end
+
+                  target_position = ref_position
+                  target_position = target_position.offset(stretched_definition_def.ddv.transform(extern_instance.transformation)) if stretched_definition_def.ddv.valid?
+                  current_position = ORIGIN.transform(extern_instance.transformation)
+
+                  # k_edge = Kuix::EdgeMotif3d.new
+                  # k_edge.start.copy!(current_position)
+                  # k_edge.end.copy!(target_position)
+                  # k_edge.end_arrow = true
+                  # k_edge.color = Kuix::COLOR_CYAN
+                  # k_edge.line_width = 2
+                  # k_edge.on_top = true
+                  # @tool.append_3d(k_edge, 800)
+
+                  v = current_position.vector_to(target_position)
+
+                  extern_instance.transform!(Geom::Transformation.translation(v)) if v.valid?
+
+                end
+
+              end
+            end
+
+          end
+
+        end
+
+      # raise "STOP"
 
         # Adjust cutters
         eti = et.inverse
@@ -2137,12 +2209,12 @@ module Ladb::OpenCutList
 
             operation = OPERATION_SPLIT
 
-          # Check if the container is glued or always face camera to search the section according to its origin only
+          # Check if the container is locked
           elsif drawing_container_def.container.respond_to?(:locked?) && drawing_container_def.container.locked?
 
             # TODO how to handle locked containers ?
 
-            container_origin = ORIGIN.transform(drawing_container_def.transformation) # * drawing_container_def.container.transformation)
+            container_origin = ORIGIN.transform(drawing_container_def.transformation)
             section_def = section_defs.find { |section_def| section_def.contains_point?(container_origin, xyz_method) }
 
             # Container bounds are not considered in this case
@@ -2538,6 +2610,29 @@ module Ladb::OpenCutList
         nil
       end
 
+      def group?
+        unless (definition = self.definition).nil?
+          return definition.group?
+        end
+        false
+      end
+
+      def component?
+        unless (definition = self.definition).nil?
+          return !definition.group?
+        end
+        false
+      end
+
+      def model?
+        container.is_a?(Sketchup::Model)
+      end
+
+      def container_transformation
+        return container.transformation if container.respond_to?(:transformation)
+        IDENTITY
+      end
+
       def md5
         @md5
       end
@@ -2665,6 +2760,20 @@ module Ladb::OpenCutList
         section_def,
         operation,
         entity_pos = -1
+      )
+        super
+      end
+
+    end
+
+    StretchedDefinitionDef = Struct.new(
+    :ddv,
+    :containers
+    ) do
+
+      def initialize(
+        ddv,
+        containers = []
       )
         super
       end
