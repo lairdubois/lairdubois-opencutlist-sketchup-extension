@@ -19,7 +19,7 @@
 #include "packingsolver/irregular/optimize.hpp"
 
 #include "shape/labeling.hpp"
-#include <shape/clean.hpp>
+#include "shape/clean.hpp"
 
 #include <mutex>
 
@@ -1962,8 +1962,8 @@ namespace Packy {
 
             using namespace irregular;
 
-            ShapeWithHoles shape = ShapeWithHoles::from_json(j);
-            std::vector<ShapeWithHoles> fixed_shapes = fix_self_intersections(shape);
+            const ShapeWithHoles shape = ShapeWithHoles::from_json(j);
+            const std::vector<ShapeWithHoles> fixed_shapes = fix_self_intersections(shape);
             std::vector<ItemShape> item_shapes;
 
             for (const auto& fixed_shape: fixed_shapes) {
