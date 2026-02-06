@@ -26,8 +26,7 @@ module Ladb::OpenCutList
 
         current_line = ''
 
-        # Split while keeping punctuation attached to words
-        # We split on spaces but preserve word+punctuation groups
+        # Split on words
         tokens = paragraph.scan(/\S+/)
         tokens.each do |token|
 

@@ -1936,10 +1936,11 @@ module Ladb::OpenCutList
 
             end
 
-            # Flag definition as stretched
-            stretched_definition_defs[container_def.definition] = StretchedDefinitionDef.new(
-              container_def.depth == 0 ? container_edv : container_edv.transform(container_def.container_transformation.inverse)
-            )
+            # Flag definition as stretched + keep edv converted to definition space
+            ddv = container_edv
+            ddv = ddv + emv if container_def.depth <= 1 && get_active_selection_instances.include?(container_def.container) # Apply move translation (if the centred option is enabled)
+            ddv = ddv.transform(container_def.container_transformation.inverse) if container_def.depth > 0
+            stretched_definition_defs[container_def.definition] = StretchedDefinitionDef.new(ddv)
 
           end
 
@@ -1982,20 +1983,9 @@ module Ladb::OpenCutList
 
           stretched_definition_defs.each do |definition, stretched_definition_def|
 
-            # k_edge = Kuix::EdgeMotif3d.new
-            # k_edge.start.copy!(ORIGIN)
-            # k_edge.end.copy!(ORIGIN.offset(stretched_definition_def.ddv))
-            # k_edge.end_arrow = true
-            # k_edge.color = Kuix::COLOR_RED
-            # k_edge.line_width = 2
-            # k_edge.on_top = true
-            # @tool.append_3d(k_edge, 800)
-
             if stretched_definition_def.containers.any?
               extern_instances = definition.instances.difference(stretched_definition_def.containers)
               if extern_instances.any?
-
-                # puts "Apply back transformation on #{extern_instances.size} extern instance(s)"
 
                 extern_instances.each do |extern_instance|
 
@@ -2006,15 +1996,6 @@ module Ladb::OpenCutList
                   target_position = ref_position
                   target_position = target_position.offset(stretched_definition_def.ddv.transform(extern_instance.transformation)) if stretched_definition_def.ddv.valid?
                   current_position = ORIGIN.transform(extern_instance.transformation)
-
-                  # k_edge = Kuix::EdgeMotif3d.new
-                  # k_edge.start.copy!(current_position)
-                  # k_edge.end.copy!(target_position)
-                  # k_edge.end_arrow = true
-                  # k_edge.color = Kuix::COLOR_CYAN
-                  # k_edge.line_width = 2
-                  # k_edge.on_top = true
-                  # @tool.append_3d(k_edge, 800)
 
                   v = current_position.vector_to(target_position)
 
@@ -2028,8 +2009,6 @@ module Ladb::OpenCutList
           end
 
         end
-
-      # raise "STOP"
 
         # Adjust cutters
         eti = et.inverse
