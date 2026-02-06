@@ -1075,7 +1075,7 @@ tab:
       option_irregular_allowed_rotations_0: Aucune
       option_irregular_allowed_rotations_90: Pas de 90°
       option_irregular_allowed_rotations_180: Pas de 180°
-      option_irregular_allowed_rotations_free: Libre
+      option_irregular_allowed_rotations_free: Libre (Expérimental)
       option_irregular_allow_mirroring: Mirroir autorisé
       option_irregular_allow_mirroring_help: |
         Définit si le mirroir de la pièce est autorisée pour le placement.
