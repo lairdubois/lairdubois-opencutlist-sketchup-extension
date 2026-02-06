@@ -942,6 +942,18 @@ module Ladb::OpenCutList
       @group_def.material_attributes.grained
     end
 
+    def length_oversize
+      LengthFormulaWrapper.new(@group_def.nil? || @group_def.material_attributes.nil? ? 0 : @group_def.material_attributes.l_length_increase)
+    end
+
+    def width_oversize
+      LengthFormulaWrapper.new(@group_def.nil? || @group_def.material_attributes.nil? ? 0 : @group_def.material_attributes.l_width_increase)
+    end
+
+    def thickness_oversize
+      LengthFormulaWrapper.new(@group_def.nil? || @group_def.material_attributes.nil? ? 0 : @group_def.material_attributes.l_thickness_increase)
+    end
+
     def to_s
       return PLUGIN.get_i18n_string('tab.cutlist.material_undefined') if empty?
       name.to_s
