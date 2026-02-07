@@ -53,8 +53,8 @@ module Ladb::OpenCutList
       parts_data.each { |part_data|
         @parts_data << PartData.new(
             part_data.fetch('virtual'),
-            part_data.fetch('definition_id'),
-            part_data.fetch('name'),
+            CGI.unescape(part_data.fetch('definition_id')),
+            CGI.unescape(part_data.fetch('name')),
             part_data.fetch('is_dynamic_attributes_name'),
             part_data.fetch('material_name'),
             DefinitionAttributes.valid_cumulable(part_data.fetch('cumulable')),

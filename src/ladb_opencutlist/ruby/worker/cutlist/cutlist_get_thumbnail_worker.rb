@@ -14,7 +14,7 @@ module Ladb::OpenCutList
 
       @cutlist = cutlist
 
-      @definition_id = definition_id
+      @definition_id = CGI.unescape(definition_id)
       @id = id
 
     end
