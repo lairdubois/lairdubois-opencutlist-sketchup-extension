@@ -1,21 +1,16 @@
 module Ladb::OpenCutList
 
-  require_relative '../../plugin'
-  require_relative 'cutlist_convert_to_three_worker'
-
   class CutlistGetThumbnailWorker
 
     def initialize(cutlist,
 
-                   definition_id: ,
-                   id:
+                   part_id:
 
     )
 
       @cutlist = cutlist
 
-      @definition_id = CGI.unescape(definition_id)
-      @id = id
+      @part_id = part_id
 
     end
 
@@ -30,16 +25,17 @@ module Ladb::OpenCutList
       model = Sketchup.active_model
       return response unless model
 
-      definitions = model.definitions
-      definition = definitions[@definition_id]
+      part = @cutlist.get_part(@part_id)
+      return response unless part
+
+      definition = part.def.definition
       if definition
 
         if Sketchup.version_number >= 1800000000 && PLUGIN.webgl_available?
 
           # Convert part drawing to ThreeJS
 
-          part = @cutlist.get_part(@id)
-          return response unless part
+          require_relative 'cutlist_convert_to_three_worker'
 
           worker = CutlistConvertToThreeWorker.new([ part ])
           begin

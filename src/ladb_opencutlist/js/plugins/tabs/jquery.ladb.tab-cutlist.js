@@ -4408,8 +4408,7 @@
 
                     // Generate and Retrieve part thumbnail file
                     rubyCallCommand('cutlist_part_get_thumbnail', {
-                        definition_id: part.definition_id,
-                        id: part.id
+                        part_id: part.id
                     }, function (response) {
 
                         const threeModelDef = response['three_model_def'];

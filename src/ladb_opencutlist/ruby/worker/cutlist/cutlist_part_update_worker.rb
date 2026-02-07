@@ -1,5 +1,6 @@
 module Ladb::OpenCutList
 
+  require 'CGI'
   require_relative '../../helper/bounding_box_helper'
   require_relative '../../model/attributes/definition_attributes'
   require_relative '../../utils/axis_utils'
