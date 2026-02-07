@@ -1075,6 +1075,7 @@ tab:
       option_irregular_allowed_rotations_0: None
       option_irregular_allowed_rotations_90: Steps of 90°
       option_irregular_allowed_rotations_180: Steps of 180°
+      option_irregular_allowed_rotations_free: Free (experimental)
       option_irregular_allow_mirroring: Mirroring Allowed
       option_irregular_allow_mirroring_help: |
         Defines if mirroring the part is allowed for placement.
