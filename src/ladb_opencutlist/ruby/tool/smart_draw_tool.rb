@@ -1451,7 +1451,9 @@ module Ladb::OpenCutList
     # -----
 
     def _create_faces(definition, t, ps, pe)
-      _get_local_shapes_points_with_offset.map { |shape_points| definition.entities.add_face(shape_points.map { |p| p.transform(t) }) }
+      _get_local_shapes_points_with_offset
+        .map { |shape_points| definition.entities.add_face(shape_points.map { |p| p.transform(t) }) if shape_points.size >= 3 }
+        .compact
     end
 
     def _create_entity
@@ -3730,6 +3732,7 @@ module Ladb::OpenCutList
         join_type: Fiddle::Clippy::JOIN_TYPE_MITER,
         miter_limit: 100.0
       ).map { |o_path| Fiddle::Clippy.rpath_to_points(o_path, points[0].z) }
+       .delete_if { |o_points| o_points.size < 3 }  # Remove flat polygons
     end
 
   end
