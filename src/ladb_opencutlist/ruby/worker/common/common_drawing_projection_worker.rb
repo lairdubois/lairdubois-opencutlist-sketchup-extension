@@ -61,7 +61,8 @@ module Ladb::OpenCutList
       @drawing_def.face_manipulators.each do |face_manipulator|
         # TODO Sketchup perpendicular? function may be too lazy
         # next unless !face_manipulator.normal.perpendicular?(Z_AXIS) && face_manipulator.normal.angle_between(Z_AXIS) < Geometrix::HALF_PI  # Filter only exposed faces
-        next unless face_manipulator.normal.angle_between(Z_AXIS) <= Geometrix::HALF_PI  # Filter only exposed faces
+        # next unless face_manipulator.normal.angle_between(Z_AXIS) < Geometrix::HALF_PI  # Filter only exposed faces
+        next unless (face_manipulator.normal.angle_between(Z_AXIS) - Geometrix::HALF_PI).round(4) < 0  # Filter only exposed faces
         face_manipulators << face_manipulator
         faces_bounds.add(face_manipulator.outer_loop_manipulator.points)
       end
