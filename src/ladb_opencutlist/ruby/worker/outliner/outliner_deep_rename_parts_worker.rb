@@ -51,8 +51,7 @@ module Ladb::OpenCutList
         fn_populate_dn = lambda { |node_def|
           if node_def.type == OutlinerNodeModelDef::TYPE_PART && !node_def.entity.deleted?
             unless (part = _generate_part_from_path(node_def.path)).nil?
-              d_nps[node_def.entity.definition] ||= []
-              d_nps[node_def.entity.definition] << [ node_def, part ]
+              (d_nps[node_def.entity.definition] ||= []) << [ node_def, part ]
             end
           end
           node_def.children.each do |child_node_def|
@@ -188,10 +187,9 @@ module Ladb::OpenCutList
           # Flatten the tree by definition
           d_n_rprns = {}  # Definition => Name => RPath, RNode
           fn_populate_drn = lambda { |rpath, rnode|
+            return unless rnode.is_a?(RNode)
             if rnode.is_a?(RNodePart)
-              d_n_rprns[rnode.entity.definition] = {} unless d_n_rprns.has_key?(rnode.entity.definition)
-              d_n_rprns[rnode.entity.definition][rnode.name] = [] unless d_n_rprns[rnode.entity.definition].has_key?(rnode.name)
-              d_n_rprns[rnode.entity.definition][rnode.name] << [ rpath, rnode ]
+              ((d_n_rprns[rnode.entity.definition] ||= {})[rnode.name] ||= []) << [ rpath, rnode ]
             end
             rpath = rpath + [ rnode ]
             rnode.children.each do |child_rnode|
@@ -215,68 +213,68 @@ module Ladb::OpenCutList
           model.start_operation('OCL Outliner Deep Rename', true, false, false)
 
 
-          # Make unique and rename definitions
-          d_n_rprns.each do |definition, n_rprns|
-            n_rprns.each do |name, rprns|
+            # Make unique and rename definitions
+            d_n_rprns.each do |definition, n_rprns|
+              n_rprns.each do |name, rprns|
 
-              rpaths, rnodes = rprns.transpose
+                rpaths, rnodes = rprns.transpose
 
-              next if name == definition.name || name.empty?  # No need to rename
+                next if name == definition.name || name.empty?  # No need to rename
 
-              # Make unique the path if necessary
-              rpaths
-              .flatten
-              .uniq
-              .group_by { |rnode| rnode.entity.definition }
-              .each do |definition, rnodes|
-                next if rnodes.size == rnodes.first.entity.definition.count_used_instances
-                if definition.group?
-                  rnodes.each do |rnode|
-                    rnode.entity = rnode.entity.make_unique
-                    new_definition = rnode.entity.definition
-                    rnode.children.each do |child_rnode|
-                      child_rnode.entity = new_definition.entities[child_rnode.entity_pos]
+                # Make unique the path if necessary
+                rpaths
+                .flatten
+                .uniq
+                .group_by { |rnode| rnode.entity.definition }
+                .each do |definition, rnodes|
+                  next if rnodes.size == rnodes.first.entity.definition.count_used_instances
+                  if definition.group?
+                    rnodes.each do |rnode|
+                      rnode.entity = rnode.entity.make_unique
+                      new_definition = rnode.entity.definition
+                      rnode.children.each do |child_rnode|
+                        child_rnode.entity = new_definition.entities[child_rnode.entity_pos]
+                      end
+                    end
+                  else
+                    new_entity = rnodes.first.entity.make_unique
+                    new_definition = new_entity.definition
+                    rnodes.each_with_index do |rnode, index|
+                      if index == 0
+                        rnode.entity = new_entity
+                      else
+                        rnode.entity.definition = new_definition
+                      end
+                      rnode.children.each do |child_rnode|
+                        child_rnode.entity = new_definition.entities[child_rnode.entity_pos]
+                      end
                     end
                   end
-                else
-                  new_entity = rnodes.first.entity.make_unique
-                  new_definition = new_entity.definition
-                  rnodes.each_with_index do |rnode, index|
-                    if index == 0
-                      rnode.entity = new_entity
-                    else
-                      rnode.entity.definition = new_definition
-                    end
-                    rnode.children.each do |child_rnode|
-                      child_rnode.entity = new_definition.entities[child_rnode.entity_pos]
-                    end
+                end
+
+                # Make unique part nodes
+                new_entity = rnodes.first.entity.make_unique
+                new_definition = new_entity.definition
+                rnodes.each_with_index do |rnode, index|
+                  if index == 0
+                    rnode.entity = new_entity
+                  else
+                    rnode.entity.definition = new_definition
+                  end
+                  rnode.children.each do |child_rnode|
+                    child_rnode.entity = new_definition.entities[child_rnode.entity_pos]
                   end
                 end
+
+                # Rename the new definition
+                new_definition.name = name
+
               end
 
-              # Make unique part nodes
-              new_entity = rnodes.first.entity.make_unique
-              new_definition = new_entity.definition
-              rnodes.each_with_index do |rnode, index|
-                if index == 0
-                  rnode.entity = new_entity
-                else
-                  rnode.entity.definition = new_definition
-                end
-                rnode.children.each do |child_rnode|
-                  child_rnode.entity = new_definition.entities[child_rnode.entity_pos]
-                end
-              end
-
-              # Rename the new definition
-              new_definition.name = name
+              # Clean up old definition if no longer used
+              model.definitions.remove(definition) if definition.count_used_instances == 0 && Sketchup.version_number >= 1800000000
 
             end
-
-            # Clean up old definition if no longer used
-            model.definitions.remove(definition) if definition.count_used_instances == 0 && Sketchup.version_number >= 1800000000
-
-          end
 
 
           # Commit model modification operation
@@ -372,7 +370,7 @@ module Ladb::OpenCutList
 
       def initialize(entity)
         @entity = entity
-        @entity_pos = entity.parent.entities.to_a.index(entity)
+        @entity_pos = entity.parent.entities.find_index(entity)
 
         @parent = nil
         @children = []

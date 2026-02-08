@@ -226,8 +226,7 @@ module Ladb::OpenCutList
     # -----
 
     def get_hashable
-      @hashable = OutlinerNodeGroup.new(self) if @hashable.nil?
-      @hashable
+      @hashable ||= OutlinerNodeGroup.new(self)
     end
 
   end
@@ -237,7 +236,8 @@ module Ladb::OpenCutList
     def type
       unless @entity.definition.behavior.cuts_opening? || @entity.definition.behavior.always_face_camera?
         # TODO: Check face bounds only
-        unless (bounds = @entity.definition.bounds).empty? || [ bounds.width, bounds.height, bounds.depth ].min == 0    # Exclude empty or flat bounds
+        if @entity.definition.entities.find { |e| e.is_a?(Sketchup::Face) } &&  # Contains at least one face
+           !(bounds = @entity.definition.bounds).empty? && [ bounds.width, bounds.height, bounds.depth ].min > 0    # Exclude empty or flat bounds
           return TYPE_PART
         end
       end

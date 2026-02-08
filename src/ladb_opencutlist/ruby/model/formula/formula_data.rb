@@ -10,7 +10,7 @@ module Ladb::OpenCutList
 
     # Utils
 
-    def word_wrap(text, line_length = 15)
+    def word_wrap(text, line_length = 15, line_separator = "\n")
       text = text.to_s
       return text if text.empty? || line_length < 1
 
@@ -60,7 +60,7 @@ module Ladb::OpenCutList
         lines << "" unless paragraph == paragraphs.last
       end
 
-      lines.join("\n")
+      lines.join(line_separator)
     end
 
   end
