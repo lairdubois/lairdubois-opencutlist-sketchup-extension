@@ -1962,7 +1962,10 @@ namespace Packy {
 
             using namespace irregular;
 
-            const ShapeWithHoles shape = ShapeWithHoles::from_json(j);
+            // Build the shape from JSON
+            ShapeWithHoles shape = ShapeWithHoles::from_json(j);
+
+            // Fix self-intersections
             const std::vector<ShapeWithHoles> fixed_shapes = fix_self_intersections(shape);
             std::vector<ItemShape> item_shapes;
 
