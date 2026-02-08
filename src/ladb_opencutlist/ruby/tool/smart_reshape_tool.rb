@@ -938,10 +938,10 @@ module Ladb::OpenCutList
       return true if super
 
       _reset_drawing_def
-
       _load_cutters
 
       set_state(STATE_RESHAPE_START)
+
       _refresh
 
     end
@@ -1440,54 +1440,60 @@ module Ladb::OpenCutList
 
         # Render edges
 
-        k_segments = Kuix::Segments.new
-        k_segments.add_segments(container_def.edge_defs.flat_map { |edge_def|
-          edge = edge_def.edge
-          t = edge_def.transformation
-          ti = t.inverse
-          [
-            edge.start.position.offset(edvs[edge_def.start_section_def].transform(ti)).transform(t).offset(emv),
-            edge.end.position.offset(edvs[edge_def.end_section_def].transform(ti)).transform(t).offset(emv)
-          ]
-        })
-        k_segments.color = color
-        k_segments.line_width = 1.5
-        k_segments.transformation = et
-        @tool.append_3d(k_segments, LAYER_3D_RESHAPE_PREVIEW)
+        if container_def.edge_defs.any?
+          k_segments = Kuix::Segments.new
+          k_segments.add_segments(container_def.edge_defs.flat_map { |edge_def|
+            edge = edge_def.edge
+            t = edge_def.transformation
+            ti = t.inverse
+            [
+              edge.start.position.offset(edvs[edge_def.start_section_def].transform(ti)).transform(t).offset(emv),
+              edge.end.position.offset(edvs[edge_def.end_section_def].transform(ti)).transform(t).offset(emv)
+            ]
+          })
+          k_segments.color = color
+          k_segments.line_width = 1.5
+          k_segments.transformation = et
+          @tool.append_3d(k_segments, LAYER_3D_RESHAPE_PREVIEW)
+        end
 
         # Render clines
 
-        k_segments = Kuix::Segments.new
-        k_segments.add_segments(container_def.cline_defs.flat_map { |cline_def|
-          cline = cline_def.cline
-          t = cline_def.transformation
-          ti = t.inverse
-          [
-            cline.start.offset(edvs[cline_def.start_section_def].transform(ti)).transform(t).offset(emv),
-            cline.end.offset(edvs[cline_def.end_section_def].transform(ti)).transform(t).offset(emv)
-          ]
-        })
-        k_segments.color = color
-        k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-        k_segments.transformation = et
-        @tool.append_3d(k_segments, LAYER_3D_RESHAPE_PREVIEW)
+        if container_def.cline_defs.any?
+          k_segments = Kuix::Segments.new
+          k_segments.add_segments(container_def.cline_defs.flat_map { |cline_def|
+            cline = cline_def.cline
+            t = cline_def.transformation
+            ti = t.inverse
+            [
+              cline.start.offset(edvs[cline_def.start_section_def].transform(ti)).transform(t).offset(emv),
+              cline.end.offset(edvs[cline_def.end_section_def].transform(ti)).transform(t).offset(emv)
+            ]
+          })
+          k_segments.color = color
+          k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+          k_segments.transformation = et
+          @tool.append_3d(k_segments, LAYER_3D_RESHAPE_PREVIEW)
+        end
 
         # Render snaps
 
-        k_points = _create_floating_points(
-          points: container_def.snap_defs.map { |snap_def|
-            snap = snap_def.snap
-            t = snap_def.transformation
-            ti = t.inverse
-            snap.position.offset(edvs[snap_def.section_def].transform(ti)).transform(t).offset(emv)
-          },
-          style: Kuix::POINT_STYLE_CIRCLE,
-          fill_color: Kuix::COLOR_SNAP_FILL,
-          stroke_color: Kuix::COLOR_SNAP_STROKE,
-          size: 2
-        )
-        k_points.transformation = et
-        @tool.append_3d(k_points, LAYER_3D_RESHAPE_PREVIEW)
+        if container_def.snap_defs.any?
+          k_points = _create_floating_points(
+            points: container_def.snap_defs.map { |snap_def|
+              snap = snap_def.snap
+              t = snap_def.transformation
+              ti = t.inverse
+              snap.position.offset(edvs[snap_def.section_def].transform(ti)).transform(t).offset(emv)
+            },
+            style: Kuix::POINT_STYLE_CIRCLE,
+            fill_color: Kuix::COLOR_SNAP_FILL,
+            stroke_color: Kuix::COLOR_SNAP_STROKE,
+            size: 2
+          )
+          k_points.transformation = et
+          @tool.append_3d(k_points, LAYER_3D_RESHAPE_PREVIEW)
+        end
 
         container_def.children.each { |container_def| fn_preview_container.call(container_def, color) }
 
@@ -1711,7 +1717,7 @@ module Ladb::OpenCutList
       return if (stretch_def = _get_stretch_def(@picked_reshape_start_point, @picked_reshape_end_point)).nil?
 
       split_def, emv, esv, edvs, lpe = stretch_def.values_at(:split_def, :emv, :esv, :edvs, :lpe)
-      drawing_def, et, eps, evpspe, reversed, section_defs, container_defs = split_def.values_at(:drawing_def, :et, :eps, :evpspe, :reversed, :section_defs, :container_defs)
+      et, eps, evpspe, reversed, section_defs, container_defs = split_def.values_at(:et, :eps, :evpspe, :reversed, :section_defs, :container_defs)
 
       _unhide_instances
 
@@ -1730,8 +1736,8 @@ module Ladb::OpenCutList
 
         make_unique_o = _fetch_option_options_make_unique
 
-        container_defs.group_by { |container_def| container_def.definition }
-                      .sort_by { |definition, container_defs| container_defs.map(&:depth).max }.to_h  # Ensure that lowest depth containers are processed first
+        container_defs.group_by(&:definition)
+                      .sort_by { |definition, container_defs| container_defs.map(&:depth).max }  # Ensure that lowest depth containers are processed first
                       .each do |definition, container_defs|
 
           next if definition.nil?
@@ -1739,10 +1745,10 @@ module Ladb::OpenCutList
           count_stretched_instances = container_defs.size
 
           # Groups with edges must be made unique because SketchUp make them unique when transform entities and this causing troubles with the stretching.
-          make_unique_g = definition.group? && (container_defs.first.edge_defs.any? && count_stretched_instances > 1 || !make_unique_o)
+          make_unique_g = definition.group? && (!make_unique_o || container_defs.first.edge_defs.any? && count_stretched_instances > 1)
 
-          container_defs.sort_by { |container_def| container_def.operation }.reverse
-                        .group_by { |container_def| container_def.md5 }.to_h
+          container_defs.sort_by { |container_def| -container_def.operation }
+                        .group_by(&:md5)
                         .each do |md5, container_defs|
 
             make_unique_d = make_unique_o && count_stretched_instances < definition.count_used_instances
@@ -1848,7 +1854,7 @@ module Ladb::OpenCutList
 
             container_def.edge_defs
                          .select { |edge_def| edge_def.operation == OPERATION_MOVE }
-                         .group_by { |edge_def| edge_def.start_section_def }
+                         .group_by(&:start_section_def)
                          .sort_by { |section_def, _| section_def.index * sorting_order }.to_h # Sort edges to be sure that farthest points are moved first
                          .each do |section_def, edge_defs|
 
@@ -1914,7 +1920,7 @@ module Ladb::OpenCutList
 
             container_def.snap_defs
                          .select { |snap_def| snap_def.operation == OPERATION_MOVE }
-                         .group_by { |snap_def| snap_def.section_def }
+                         .group_by(&:section_def)
                          .each do |section_def, snap_defs|
 
               edv = edvs[section_def]
@@ -1978,7 +1984,7 @@ module Ladb::OpenCutList
 
         end
 
-        # Apply back transformation on extern instances if needed
+        # Apply back translation on extern instances if needed
         unless make_unique_o
 
           stretched_definition_defs.each do |definition, stretched_definition_def|
@@ -1989,13 +1995,13 @@ module Ladb::OpenCutList
 
                 extern_instances.each do |extern_instance|
 
-                  if (ref_position = @extern_instances_ref_positions[extern_instance]).nil?
-                    ref_position = @extern_instances_ref_positions[extern_instance] = ORIGIN.transform(extern_instance.transformation)
-                  end
+                  t = extern_instance.transformation
+
+                  ref_position = @extern_instances_ref_positions[extern_instance] ||= ORIGIN.transform(t)
 
                   target_position = ref_position
-                  target_position = target_position.offset(stretched_definition_def.ddv.transform(extern_instance.transformation)) if stretched_definition_def.ddv.valid?
-                  current_position = ORIGIN.transform(extern_instance.transformation)
+                  target_position = target_position.offset(stretched_definition_def.ddv.transform(t)) if stretched_definition_def.ddv.valid?
+                  current_position = ORIGIN.transform(t)
 
                   v = current_position.vector_to(target_position)
 
@@ -2617,14 +2623,15 @@ module Ladb::OpenCutList
       end
 
       def compute_md5(axis)
-        if @md5.nil?
+        @md5 ||= begin
           data = []
-          data = [ container.definition.object_id ] if container.respond_to?(:definition)
+          data << container.definition.object_id if container.respond_to?(:definition)
 
           unless parent.nil?
-            local_axis = axis.transform((transformation * container.transformation).inverse)
-            data << (local_axis.angle_between(axis) % Math::PI).round(6) if local_axis.valid?  # Differentiating rotations but not perfect aligned mirrors
-            data << local_axis.length.to_f.round(6) if local_axis.valid? && operation == OPERATION_SPLIT  # Differentiating scaling
+            if (local_axis = axis.transform((transformation * container.transformation).inverse)).valid?
+              data << (local_axis.angle_between(axis) % Math::PI).round(6) # Differentiating rotations but not perfect aligned mirrors
+              data << local_axis.length.to_f.round(6) if operation == OPERATION_SPLIT  # Differentiating scaling
+            end
           end
 
           if operation == OPERATION_SPLIT
@@ -2634,39 +2641,42 @@ module Ladb::OpenCutList
                 (section_def.index - edge_def.start_section_def.index).abs, # Use "delta" to be able to unify flipped elements
                 (section_def.index - edge_def.end_section_def.index).abs
               ]
-            }
+            } if edge_defs.any?
             data << cline_defs.map { |cline_def|
               [
                 cline_def.cline.object_id,
                 (section_def.index - cline_def.start_section_def.index).abs, # Use "delta" to be able to unify flipped elements
                 (section_def.index - cline_def.end_section_def.index).abs
               ]
-            }
+            } if cline_defs.any?
             data << snap_defs.map { |snap_def|
               [
                 snap_def.snap.object_id,
                 (section_def.index - snap_def.section_def.index).abs, # Use "delta" to be able to unify flipped elements
               ]
-            }
+            } if snap_defs.any?
           end
 
           data << children.map { |container_def| container_def.compute_md5(axis) }
 
-          @md5 = Digest::MD5.hexdigest(data.to_json)
+          Digest::MD5.hexdigest(Marshal.dump(data))
         end
-        @md5
       end
 
       def compute_entity_pos
         return if (entities = self.entities).nil?
+        entity_positions = entities.each_with_index.to_h { |entity, index| [ entity, index ] }
         edge_defs.each do |edge_def|
-          edge_def.entity_pos = entities.to_a.index(edge_def.edge)
+          edge_def.entity_pos = entity_positions[edge_def.edge]
         end
         cline_defs.each do |cline_def|
-          cline_def.entity_pos = entities.to_a.index(cline_def.cline)
+          cline_def.entity_pos = entity_positions[cline_def.cline]
+        end
+        snap_defs.each do |snap_def|
+          snap_def.entity_pos = entity_positions[snap_def.snap]
         end
         children.each do |container_def|
-          container_def.entity_pos = entities.to_a.index(container_def.container)
+          container_def.entity_pos = entity_positions[container_def.container]
           container_def.compute_entity_pos
         end
       end
