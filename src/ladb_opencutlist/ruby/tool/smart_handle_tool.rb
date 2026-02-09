@@ -707,13 +707,6 @@ module Ladb::OpenCutList
       end
     end
 
-    def _points_to_segments(points, closed = true, flatten = true)
-      segments = points.each_cons(2).to_a
-      segments << [ points.last, points.first ] if closed && !points.empty?
-      segments.flatten!(1) if flatten
-      segments
-    end
-
   end
 
   class SmartHandleOneStepActionHandler < SmartHandleActionHandler

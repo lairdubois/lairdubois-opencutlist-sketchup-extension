@@ -493,25 +493,6 @@ module Ladb::OpenCutList
       }
     end
 
-    def _get_drawing_def_segments(drawing_def)
-      segments = []
-      if drawing_def.is_a?(DrawingDef)
-        segments += drawing_def.cline_manipulators.flat_map { |manipulator| manipulator.segment }
-        segments += drawing_def.edge_manipulators.flat_map { |manipulator| manipulator.segment }
-        segments += drawing_def.curve_manipulators.flat_map { |manipulator| manipulator.segments }
-      end
-      segments
-    end
-
-    # -- UTILS --
-
-    def _points_to_segments(points, closed = true, flatten = true)
-      segments = points.each_cons(2).to_a
-      segments << [ points.last, points.first ] if closed && !points.empty?
-      segments.flatten!(1) if flatten
-      segments
-    end
-
   end
 
   class SmartReshapeStretchActionHandler < SmartReshapeActionHandler
