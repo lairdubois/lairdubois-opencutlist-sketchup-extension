@@ -1,6 +1,6 @@
 # This starter workflow is for a CMake project running on multiple platforms. There is a different starter workflow if you just want a single platform.
 # See: https://github.com/actions/starter-workflows/blob/main/ci/cmake-single-platform.yml
-name: Make OpenCutList C/C++ Libs
+name: Make OpenCutList C/C++ Libs (MacOS)
 
 on:
   workflow_dispatch:
@@ -13,62 +13,35 @@ jobs:
       # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
       fail-fast: false
 
-      # Set up a matrix to run the following 2 configurations:
-      # 1. <Windows, Release, latest MSVC compiler toolchain on the default runner image, default generator>
-      # 2. <MacOS, Release, latest Clang compiler toolchain on the default runner image, default generator>
+      # Set up a matrix to run the following configuration:
+
+      # <MacOS, Release, latest Clang compiler toolchain on the default runner image, default generator>
       #
       # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the build_type list.
       matrix:
-        os: [windows-latest, macos-latest]
+        os: [macos-latest]
         build_type: [Release]
         c_compiler: [clang, cl]
         include:
-          - os: windows-latest
-            c_compiler: cl
-            cpp_compiler: cl
-            install_dir: 'src/ladb_opencutlist/bin/win/lib'
           - os: macos-latest
             c_compiler: clang
             cpp_compiler: clang++
             install_dir: 'src/ladb_opencutlist/bin/osx/lib'
         exclude:
-          - os: windows-latest
-            c_compiler: clang
           - os: macos-latest
             c_compiler: cl
 
     steps:
-      - name: Support longpaths
-        run: |
-          git config --global core.longpaths true
-        if: ${{ (matrix.os == 'windows-latest') }}
-
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Link for Windows
-        # Hard-coded link, may fail in the future!
-        run: |
-          New-Item -Path D:/a/ocl -ItemType SymbolicLink -Value D:/a/lairdubois-opencutlist-sketchup-extension/lairdubois-opencutlist-sketchup-extension
-        if: ${{ (matrix.os == 'windows-latest') }}
-
-      - name: Check LongPathsEnabled (Windows)
-        run: |
-          (Get-ItemProperty "HKLM:System\CurrentControlSet\Control\FileSystem").LongPathsEnabled
-        if: ${{ (matrix.os == 'windows-latest') }}
 
       - name: Set reusable strings
         # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
         id: strings
         shell: bash
         run: |
-          if [[ "$RUNNER_OS" == "Windows" ]]; then
-            echo "build_output_dir=D:/a/ocl/build/cmake-build" >> "$GITHUB_OUTPUT"
-            echo "src_dir=D:/a/ocl" >> "$GITHUB_OUTPUT"
-          else
-            echo "build_output_dir=${{ github.workspace }}/build/cmake-build" >> "$GITHUB_OUTPUT"
-            echo "src_dir=${{ github.workspace }}" >> "$GITHUB_OUTPUT"
-          fi
+          echo "build_output_dir=${{ github.workspace }}/build/cmake-build" >> "$GITHUB_OUTPUT"
+          echo "src_dir=${{ github.workspace }}" >> "$GITHUB_OUTPUT"
         env:
           RUNNER_OS: ${{ runner.os }}
 
