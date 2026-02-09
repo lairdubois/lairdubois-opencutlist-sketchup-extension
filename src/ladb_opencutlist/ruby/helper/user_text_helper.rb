@@ -203,7 +203,7 @@ module Ladb::OpenCutList
     #  50=,-12  → [ 50, 50, -12 ]
     #  50==     → [ 50, 50, 50 ]
     def _split_user_text(text)
-      values = text.split(Sketchup::RegionalSettings.list_separator)
+      values = text.split(Sketchup::RegionalSettings.list_separator, -1)
       values.map { |value|
         if (match = value.strip.match(/^([^=]+)(=+)$/))
           v, equals = match[1, 2]

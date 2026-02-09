@@ -2600,6 +2600,7 @@ module Ladb::OpenCutList
       @locked_axis = nil
 
       @number = 1
+      @spacings = []
 
       @raytest_path = nil
 
@@ -2763,6 +2764,24 @@ module Ladb::OpenCutList
       false
     end
 
+    def onToolUserText(tool, text, view)
+
+      case @state
+
+      when STATE_HANDLE
+        if _read_handle_spacing(tool, text, view)
+          _refresh
+          return true
+        end
+
+      when STATE_HANDLE_COPIES
+        return true if _read_handle_spacing(tool, text, view)
+
+      end
+
+      super
+    end
+
     def onStateChanged(old_state, new_state)
       super
 
@@ -2918,9 +2937,9 @@ module Ladb::OpenCutList
     end
 
     def _preview_handle(view)
-      return super if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point)).nil?
+      return super if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point, @number, @spacings)).nil?
 
-      drawing_def, et, eb, center, lps, lpe, mps, mpe = move_def.values_at(:drawing_def, :et, :eb, :center, :lps, :lpe, :mps, :mpe)
+      drawing_def, et, eb, center, lps, lpe, mps, mpe, mvs = move_def.values_at(:drawing_def, :et, :eb, :center, :lps, :lpe, :mps, :mpe, :mvs)
       drawing_def_segments = _get_drawing_def_segments(drawing_def)
 
       return super unless (mv = mps.vector_to(mpe)).valid?
@@ -2938,9 +2957,9 @@ module Ladb::OpenCutList
       k_box.transformation = et
       @tool.append_3d(k_box, LAYER_3D_HANDLE_PREVIEW)
 
-      (1..@number).each do |i|
+      @number.times do |i|
 
-        mt = Geom::Transformation.translation(center.vector_to(mps.offset(mv, mv.length * i / (@number + 1.0))))
+        mt = Geom::Transformation.translation(mvs[i])
 
         k_segments = Kuix::Segments.new
         k_segments.add_segments(drawing_def_segments)
@@ -3037,7 +3056,7 @@ module Ladb::OpenCutList
     end
 
     def _read_handle(tool, text, view)
-      return false if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point)).nil?
+      return false if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point, @number, @spacings)).nil?
 
       lps, lpe = move_def.values_at(:lps, :lpe)
       v = lps.vector_to(lpe)
@@ -3053,14 +3072,30 @@ module Ladb::OpenCutList
       true
     end
 
+    def _read_handle_spacing(tool, text, view)
+
+      list = _split_user_text(text)
+      if list.is_a?(Array) && list.size > 1
+
+        @spacings = list.map { |spacing| (length = _read_user_text_length(tool, spacing, -1)) == -1 ? -1 : length.abs.to_l }
+
+        case @state
+
+        when STATE_HANDLE_COPIES
+          _handle_entity
+
+        end
+        Sketchup.set_status_text('', SB_VCB_VALUE)
+
+        return true
+      end
+
+      false
+    end
+
     def _read_handle_copies(tool, text, view)
 
       if text && (match = text.match(/^([x*\/])(\d+)$/))
-
-        if _fetch_option_mirror
-          tool.notify_errors([ [ "tool.smart_handle.error.disabled_by_mirror" ] ])
-          return true
-        end
 
         operator, value = match ? match[1, 2] : [ nil, nil ]
 
@@ -3077,15 +3112,12 @@ module Ladb::OpenCutList
           return true
         end
 
-        count = operator == '/' ? number - 1 : number
+        @number = operator == '/' ? number - 1 : number
 
         case @state
 
-        when STATE_HANDLE
-          @number = count
-
         when STATE_HANDLE_COPIES
-          _distribute_entity(count)
+          _handle_entity
 
         end
         Sketchup.set_status_text('', SB_VCB_VALUE)
@@ -3099,21 +3131,21 @@ module Ladb::OpenCutList
     # -----
 
     def _handle_entity
-      _distribute_entity(@number)
+      _distribute_entity(@number, @spacings)
     end
 
-    def _distribute_entity(number = 1)
-      return if (move_def = _get_move_def(@picked_handle_start_point, @picked_handle_end_point)).nil?
+    def _distribute_entity(number = 1, spacings = [])
+      return if (move_def = _get_move_def(@picked_handle_start_point, @picked_handle_end_point, number, spacings)).nil?
 
-      center, mps, mpe = move_def.values_at(:center, :mps, :mpe)
+      center, mps, mpe, mvs = move_def.values_at(:center, :mps, :mpe, :mvs)
 
       ct = _get_global_context_transformation
       cti = ct.inverse
 
-      center = center.transform(cti)
-      mps = mps.transform(cti)
-      mpe = mpe.transform(cti)
-      mv = mps.vector_to(mpe)
+      # center = center.transform(cti)
+      # mps = mps.transform(cti)
+      # mpe = mpe.transform(cti)
+      # mv = mps.vector_to(mpe)
 
       _unhide_instances
       _unhide_sibling_instances
@@ -3137,12 +3169,12 @@ module Ladb::OpenCutList
 
           definition = src_instance.definition
 
-          (1..number).each do |i|
+          number.times do |i|
 
-            mt = Geom::Transformation.translation(center.vector_to(mps.offset(mv, mv.length * i / (number + 1.0))))
+            mt = Geom::Transformation.translation(mvs[i])
             mt *= @src_transformations[src_instance]
 
-            if i == 1
+            if i == 0
 
               src_instance.transformation = mt
 
@@ -3161,6 +3193,7 @@ module Ladb::OpenCutList
         end
 
         @number = number
+        @spacings = spacings
 
       model.commit_operation
 
@@ -3168,9 +3201,10 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _get_move_def(ps, pe)
+    def _get_move_def(ps, pe, number = 1, spacings = [])
       return unless ps.is_a?(Geom::Point3d) && pe.is_a?(Geom::Point3d)
       return unless (v = ps.vector_to(pe)).valid?
+      return unless number.is_a?(Numeric) && number > 0 && spacings.is_a?(Array)
       return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
 
       et = _get_edit_transformation
@@ -3220,6 +3254,46 @@ module Ladb::OpenCutList
 
       mps = lps.offset(vs)
       mpe = lpe.offset(ve)
+      mv = mps.vector_to(mpe)
+      mvs = []
+
+      # Extract valid spacings
+      fn_valid_spacing = lambda { |spacing| spacing.is_a?(Length) && spacing > 0 }
+      start_spacings = spacings.take_while(&fn_valid_spacing)
+      end_spacings = start_spacings.size == spacings.size ? [] : spacings.reverse.take_while(&fn_valid_spacing)
+
+      # Trim to number
+      if start_spacings.size > number
+        start_spacings = start_spacings.take(number)
+        end_spacings = []
+      elsif start_spacings.size + end_spacings.size > number
+        end_spacings = end_spacings.take(number - start_spacings.size)
+      end
+
+      # Compute middle size
+      middle_size = number - (start_spacings.size + end_spacings.size)
+
+      # Compute interesting lengths
+      instance_length = vs.length * 2
+
+      start_length = 0
+      start_lengths = start_spacings.map { |spacing| (start_length += (spacing + instance_length)).to_l }
+
+      end_length = mv.length
+      end_lengths = end_spacings.map { |spacing| (end_length -= (spacing + instance_length)).to_l }
+
+      middle_length = (end_length - start_length).to_l
+
+      # Convert lengths to vectors
+      start_lengths.each do |length|
+        mvs << center.vector_to(mps.offset(mv, length))
+      end
+      (1..middle_size).each do |i|
+        mvs << center.vector_to(mps.offset(mv, start_length + middle_length * i / (middle_size + 1.0)))
+      end
+      end_lengths.each do |length|
+        mvs << center.vector_to(mps.offset(mv, length))
+      end
 
       {
         drawing_def: drawing_def,
@@ -3231,7 +3305,8 @@ module Ladb::OpenCutList
         lps: lps,
         lpe: lpe,
         mps: mps,
-        mpe: mpe
+        mpe: mpe,
+        mvs: mvs
       }
     end
 
