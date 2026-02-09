@@ -19,8 +19,7 @@ jobs:
       #
       # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the build_type list.
       matrix:
-#        os: [windows-latest, macos-latest]
-        os: [windows-latest]
+        os: [windows-latest, macos-latest]
         build_type: [Release]
         c_compiler: [clang, cl]
         include:
