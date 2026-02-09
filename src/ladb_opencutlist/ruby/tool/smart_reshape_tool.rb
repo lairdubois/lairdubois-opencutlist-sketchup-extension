@@ -1744,6 +1744,26 @@ module Ladb::OpenCutList
 
           count_stretched_instances = container_defs.size
 
+          # If some external instances are locked, we need to make unique unlocked instances
+          if make_unique_o
+            make_unique_e = false
+          else
+
+            # Extract external instances
+            extern_instances = definition.instances.difference(container_defs.map(&:container))
+
+            # 1. Select only unlocked external instances
+            unlocked_extern_instances = extern_instances.select { |extern_instance| !extern_instance.locked? }
+
+            # 2. Exclude instances locked by parents
+            if unlocked_extern_instances.any?
+              _instances_to_paths(unlocked_extern_instances, (instance_paths = []), model.entities, model.active_path.to_a)
+              unlocked_extern_instances = instance_paths.delete_if { |instance_path| instance_path.any? { |entity| entity.locked? } }.map { |path| path.last }
+            end
+
+            make_unique_e = unlocked_extern_instances.size < extern_instances.size
+          end
+
           # Groups with edges must be made unique because SketchUp make them unique when transform entities and this causing troubles with the stretching.
           make_unique_g = definition.group? && (!make_unique_o || container_defs.first.edge_defs.any? && count_stretched_instances > 1)
 
@@ -1752,7 +1772,7 @@ module Ladb::OpenCutList
                         .each do |md5, container_defs|
 
             make_unique_d = make_unique_o && count_stretched_instances < definition.count_used_instances
-            make_unique_c = (make_unique_g || make_unique_d || container_defs.size < count_stretched_instances) && container_defs.any? { |container_def| container_def.operation == OPERATION_SPLIT }
+            make_unique_c = (make_unique_e || make_unique_g || make_unique_d || container_defs.size < count_stretched_instances) && container_defs.any? { |container_def| container_def.operation == OPERATION_SPLIT }
 
             # puts "  make_unique_d: #{make_unique_d}"
             # puts "  make_unique_c: #{make_unique_c}"
@@ -1811,6 +1831,12 @@ module Ladb::OpenCutList
                   end
                   container_def.children.each do |container_def|
                     container_def.container = new_definition.entities[container_def.entity_pos]
+                  end
+                end
+
+                if make_unique_e && defined?(unlocked_extern_instances)
+                  unlocked_extern_instances.each do |extern_instance|
+                    extern_instance.definition = new_definition
                   end
                 end
 
@@ -2293,9 +2319,9 @@ module Ladb::OpenCutList
           # Treat curves as a whole undeformable entity
 
           section_def = parent_section_def
-          section_def = fn_fetch_vertex_section_def.call(cm.curve.first_edge.start, drawing_container_def) if section_def.nil?
-          section_def = fn_fetch_vertex_section_def.call(cm.curve.last_edge.end, drawing_container_def) if section_def.nil?
-          section_def = section_defs.find { |s| s.intersects_bounds?(cm.bounds, xyz_method) } if section_def.nil?
+          section_def ||= fn_fetch_vertex_section_def.call(cm.curve.first_edge.start, drawing_container_def)
+          section_def ||= fn_fetch_vertex_section_def.call(cm.curve.last_edge.end, drawing_container_def)
+          section_def ||= section_defs.find { |s| s.intersects_bounds?(cm.bounds, xyz_method) }
           unless section_def.nil?
             cm.curve.edges.each do |edge|
               container_def.edge_defs << SplitEdgeDef.new(

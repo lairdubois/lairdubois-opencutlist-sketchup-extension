@@ -910,8 +910,7 @@ module Ladb::OpenCutList
     end
 
     def _get_instance_info(serialized_path)
-      return @instance_infos_cache[serialized_path] if @instance_infos_cache.has_key?(serialized_path)
-      nil
+      @instance_infos_cache[serialized_path]
     end
 
     # GroupDefs
@@ -921,15 +920,11 @@ module Ladb::OpenCutList
     end
 
     def _get_group_def(id)
-      return @group_defs_cache[id] if @group_defs_cache.has_key?(id)
-      nil
+      @group_defs_cache[id]
     end
 
     def _group_defs_include_number?(number)
-      @group_defs_cache.each { |key, group_def|
-        return true if group_def.include_number?(number)
-      }
-      false
+      @group_defs_cache.any? { |key, group_def| group_def.include_number?(number) }
     end
 
     # MaterialUsage
@@ -939,22 +934,22 @@ module Ladb::OpenCutList
     end
 
     def _get_material_usage(name)
-      return @material_usages_cache[name] if @material_usages_cache.has_key?(name)
-      nil
+      @material_usages_cache[name]
     end
 
     # -- Components utils --
 
     def _fetch_useful_instance_infos(entity, path, auto_orient, face_bounds_cache = {})
-      return 0 if entity.is_a?(Sketchup::Edge)   # Minor Speed improvement when there's a lot of edges
+      return 0 if entity.is_a?(Sketchup::Edge)   # Minor Speed improvement when there are a lot of edges
       face_count = 0
       if entity.visible? && _layer_visible?(entity.layer, path.empty?)
 
         if entity.is_a?(Sketchup::Group)
 
           # Entity is a group : check its children
+          entity_path = path + [ entity ]
           entity.entities.each { |child_entity|
-            face_count += _fetch_useful_instance_infos(child_entity, path + [ entity ], auto_orient, face_bounds_cache)
+            face_count += _fetch_useful_instance_infos(child_entity, entity_path, auto_orient, face_bounds_cache)
           }
 
         elsif entity.is_a?(Sketchup::ComponentInstance)
@@ -963,8 +958,9 @@ module Ladb::OpenCutList
           return 0 if entity.definition.behavior.always_face_camera?
 
           # Entity is a component instance : check its children
+          entity_path = path + [ entity ]
           entity.definition.entities.each { |child_entity|
-            face_count += _fetch_useful_instance_infos(child_entity, path + [ entity ], auto_orient, face_bounds_cache)
+            face_count += _fetch_useful_instance_infos(child_entity, entity_path, auto_orient, face_bounds_cache)
           }
 
           # Treat cuts_opening behavior component instances as simple group
@@ -973,12 +969,11 @@ module Ladb::OpenCutList
           # Consider the component instance only if it contains faces
           if face_count > 0
 
-            face_bounds_cache[entity.definition] = _compute_faces_bounds(entity.definition) unless face_bounds_cache.has_key?(entity.definition)
-            bounds = face_bounds_cache[entity.definition]
+            bounds = face_bounds_cache[entity.definition] ||= _compute_faces_bounds(entity.definition)
             unless bounds.empty? || [ bounds.width, bounds.height, bounds.depth ].min == 0    # Exclude empty or flat bounds
 
               # Create the instance info
-              instance_info = InstanceInfo.new(path + [ entity ])
+              instance_info = InstanceInfo.new(entity_path)
               instance_info.size = Size3d.create_from_bounds(bounds, instance_info.scale, auto_orient && !_get_definition_attributes(entity.definition).orientation_locked_on_axis)
               instance_info.definition_bounds = bounds
 
@@ -1196,13 +1191,7 @@ module Ladb::OpenCutList
     # -- Material Utils --
 
     def _get_material(path, smart = true, no_virtual = true)
-      unless path
-        return nil, MATERIAL_ORIGIN_UNKNOWN
-      end
-      entity = path.last
-      unless entity.is_a?(Sketchup::Drawingelement)
-        return nil, MATERIAL_ORIGIN_UNKNOWN
-      end
+      return [ nil, MATERIAL_ORIGIN_UNKNOWN ] if !path.is_a?(Array) || !(entity = path.last).is_a?(Sketchup::Drawingelement)
       material = entity.material
       material = nil if no_virtual && MaterialAttributes.is_virtual?(_get_material_attributes(material))
       material_origin = material ? MATERIAL_ORIGIN_OWNED : MATERIAL_ORIGIN_UNKNOWN
@@ -1235,12 +1224,10 @@ module Ladb::OpenCutList
         entities.each do |child_entity|
           child_material = _get_dominant_child_material(child_entity, level + 1, no_virtual)
           next if child_material.nil?
-          unless materials_type_and_count.has_key?(child_material)
-            materials_type_and_count[child_material] = {
-              :type => _get_material_attributes(child_material).type,
-              :count => 0
-            }
-          end
+          materials_type_and_count[child_material] ||= {
+            :type => _get_material_attributes(child_material).type,
+            :count => 0
+          }
           materials_type_and_count[child_material][:count] += 1
         end
 

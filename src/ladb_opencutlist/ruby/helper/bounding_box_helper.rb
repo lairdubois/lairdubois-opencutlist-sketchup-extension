@@ -11,7 +11,7 @@ module Ladb::OpenCutList
     def _compute_faces_bounds(definition_or_group, transformation = nil)
       bounds = Geom::BoundingBox.new
       definition_or_group.entities.each { |entity|
-        next if entity.is_a?(Sketchup::Edge)   # Minor Speed improvement when there's a lot of edges
+        next if entity.is_a?(Sketchup::Edge)   # Minor Speed improvement when there are a lot of edges
         if entity.visible? && _layer_visible?(entity.layer)
           if entity.is_a?(Sketchup::Face)
             face_bounds = entity.bounds
