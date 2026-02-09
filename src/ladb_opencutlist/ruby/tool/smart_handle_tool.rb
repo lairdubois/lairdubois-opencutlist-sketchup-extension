@@ -3258,11 +3258,11 @@ module Ladb::OpenCutList
       mvs = []
 
       # Extract valid spacings
-      fn_valid_spacing = lambda { |spacing| spacing.is_a?(Length) && spacing > 0 }
+      fn_valid_spacing = lambda { |spacing| spacing.is_a?(Length) && spacing >= 0 }
       start_spacings = spacings.take_while(&fn_valid_spacing)
       end_spacings = start_spacings.size == spacings.size ? [] : spacings.reverse.take_while(&fn_valid_spacing)
 
-      # Trim to number
+      # Trim spacing according to number
       if start_spacings.size > number
         start_spacings = start_spacings.take(number)
         end_spacings = []
