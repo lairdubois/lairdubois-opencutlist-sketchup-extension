@@ -2692,6 +2692,7 @@ module Ladb::OpenCutList
       if @previous_action_handler.is_a?(self.class)
 
         unless @previous_action_handler.number.nil? ||
+               @previous_action_handler.spacings.nil? ||
                @previous_action_handler.picked_handle_start_point.nil? ||
                @previous_action_handler.picked_handle_end_point.nil?
 
