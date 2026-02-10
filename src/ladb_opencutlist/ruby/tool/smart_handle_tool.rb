@@ -2609,7 +2609,7 @@ module Ladb::OpenCutList
 
   class SmartHandleDistributeActionHandler < SmartHandleTwoStepActionHandler
 
-    attr_reader :number
+    attr_reader :number, :spacings
 
     def initialize(tool, previous_action_handler = nil)
       super(SmartHandleTool::ACTION_DISTRIBUTE, tool, previous_action_handler)
@@ -2696,6 +2696,7 @@ module Ladb::OpenCutList
                @previous_action_handler.picked_handle_end_point.nil?
 
           @number = @previous_action_handler.number
+          @spacings = @previous_action_handler.spacings
           @picked_handle_start_point = @previous_action_handler.picked_handle_start_point
           @picked_handle_end_point = @previous_action_handler.picked_handle_end_point
 
