@@ -441,11 +441,11 @@ module Ladb::OpenCutList
       @tool.fetch_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_STRETCH_MEASURE_TYPE)
     end
 
-    def _fetch_option_stretch_measure_type_outside
+    def _fetch_option_stretch_measure_type_outside?
       @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_STRETCH_MEASURE_TYPE, SmartReshapeTool::ACTION_OPTION_STRETCH_MEASURE_TYPE_OUTSIDE)
     end
 
-    def _fetch_option_stretch_measure_type_offset
+    def _fetch_option_stretch_measure_type_offset?
       @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_STRETCH_MEASURE_TYPE, SmartReshapeTool::ACTION_OPTION_STRETCH_MEASURE_TYPE_OFFSET)
     end
 
@@ -453,11 +453,11 @@ module Ladb::OpenCutList
       @tool.fetch_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_AXES)
     end
 
-    def _fetch_option_options_centred
+    def _fetch_option_options_centred?
       @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_CENTRED)
     end
 
-    def _fetch_option_options_make_unique
+    def _fetch_option_options_make_unique?
       @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_MAKE_UNIQUE)
     end
 
@@ -843,7 +843,7 @@ module Ladb::OpenCutList
       return true if super
 
       if tool.is_key_alt_or_command?(key) && is_quick && (@state == STATE_SELECT || @state == STATE_RESHAPE)
-        @tool.store_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_MAKE_UNIQUE, !_fetch_option_options_make_unique, true)
+        @tool.store_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_MAKE_UNIQUE, !_fetch_option_options_make_unique?, true)
         _refresh
         return true
       end
@@ -865,7 +865,7 @@ module Ladb::OpenCutList
 
       when STATE_RESHAPE
         if tool.is_key_ctrl_or_option?(key) && is_quick
-          @tool.store_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_CENTRED, !_fetch_option_options_centred, true)
+          @tool.store_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_CENTRED, !_fetch_option_options_centred?, true)
           _refresh
           return true
         end
@@ -1626,7 +1626,7 @@ module Ladb::OpenCutList
       distance = _read_user_text_length(tool, text, v.length)
       return true if distance.nil?
 
-      measure_type_outside = _fetch_option_stretch_measure_type_outside
+      measure_type_outside = _fetch_option_stretch_measure_type_outside?
 
       # Error if distance < 0 and the measure type is outside
       if measure_type_outside && distance < 0
@@ -1715,7 +1715,7 @@ module Ladb::OpenCutList
         # Make Unique routine
         # -------------------
 
-        make_unique_o = _fetch_option_options_make_unique
+        make_unique_o = _fetch_option_options_make_unique?
 
         container_defs.group_by(&:definition)
                       .sort_by { |definition, container_defs| container_defs.map(&:depth).max }  # Ensure that lowest depth containers are processed first
@@ -2493,7 +2493,7 @@ module Ladb::OpenCutList
       v = ps.vector_to(pe)     # Move vector in global space
       ev = v.transform(eti)
 
-      factor = _fetch_option_options_centred ? 2.0 : 1.0
+      factor = _fetch_option_options_centred? ? 2.0 : 1.0
 
       # Limit move to max compression distance
       compressed = ev.valid? && (reversed ? ev.samedirection?(@picked_axis) : !ev.samedirection?(@picked_axis))
@@ -2521,7 +2521,7 @@ module Ladb::OpenCutList
         [ section_def, edv ]
       }.to_h
 
-      lps = _fetch_option_stretch_measure_type_outside ? eps.transform(et).offset(mv) : ps
+      lps = _fetch_option_stretch_measure_type_outside? ? eps.transform(et).offset(mv) : ps
       lpe = pe
 
       {

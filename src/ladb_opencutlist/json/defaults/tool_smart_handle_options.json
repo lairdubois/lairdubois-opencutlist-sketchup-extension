@@ -15,6 +15,7 @@
     "axes": "context"
   },
   "action_4": { /* ACTION_DISTRIBUTE */
+    "copy_measure_type": "inside",
     "axes": "context"
   }
 }

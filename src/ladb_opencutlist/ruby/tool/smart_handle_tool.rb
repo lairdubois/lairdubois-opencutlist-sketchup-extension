@@ -63,6 +63,7 @@ module Ladb::OpenCutList
       {
         :action => ACTION_DISTRIBUTE,
         :options => {
+          ACTION_OPTION_COPY_MEASURE_TYPE => [ ACTION_OPTION_COPY_MEASURE_TYPE_CENTERED, ACTION_OPTION_COPY_MEASURE_TYPE_INSIDE ],
           ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_CONTEXT, ACTION_OPTION_AXES_ENTITY ]
         }
       }
@@ -376,7 +377,7 @@ module Ladb::OpenCutList
       return true if super
 
       if tool.is_key_alt_or_command?(key) && is_quick
-        @tool.store_action_option_value(@action, SmartHandleTool::ACTION_OPTION_OPTIONS, SmartHandleTool::ACTION_OPTION_OPTIONS_MIRROR, !_fetch_option_mirror, true)
+        @tool.store_action_option_value(@action, SmartHandleTool::ACTION_OPTION_OPTIONS, SmartHandleTool::ACTION_OPTION_OPTIONS_MIRROR, !_fetch_option_mirror?, true)
         _refresh
         return true
       end
@@ -638,11 +639,23 @@ module Ladb::OpenCutList
       @tool.fetch_action_option_value(@action, SmartHandleTool::ACTION_OPTION_COPY_MEASURE_TYPE)
     end
 
+    def _fetch_option_copy_measure_type_outside?
+      @tool.fetch_action_option_boolean(@action, SmartHandleTool::ACTION_OPTION_COPY_MEASURE_TYPE, SmartHandleTool::ACTION_OPTION_COPY_MEASURE_TYPE_OUTSIDE)
+    end
+
+    def _fetch_option_copy_measure_type_centered?
+      @tool.fetch_action_option_boolean(@action, SmartHandleTool::ACTION_OPTION_COPY_MEASURE_TYPE, SmartHandleTool::ACTION_OPTION_COPY_MEASURE_TYPE_CENTERED)
+    end
+
+    def _fetch_option_copy_measure_type_inside?
+      @tool.fetch_action_option_boolean(@action, SmartHandleTool::ACTION_OPTION_COPY_MEASURE_TYPE, SmartHandleTool::ACTION_OPTION_COPY_MEASURE_TYPE_INSIDE)
+    end
+
     def _fetch_option_axes
       @tool.fetch_action_option_value(@action, SmartHandleTool::ACTION_OPTION_AXES)
     end
 
-    def _fetch_option_mirror
+    def _fetch_option_mirror?
       @tool.fetch_action_option_boolean(@action, SmartHandleTool::ACTION_OPTION_OPTIONS, SmartHandleTool::ACTION_OPTION_OPTIONS_MIRROR)
     end
 
@@ -1071,7 +1084,7 @@ module Ladb::OpenCutList
     end
 
     def _preview_handle(view)
-      return super if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point, _fetch_option_copy_measure_type)).nil?
+      return super if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point)).nil?
 
       drawing_def, et, eb, ve, mps, mpe, dps, dpe = move_def.values_at(:drawing_def, :et, :eb, :ve, :mps, :mpe, :dps, :dpe)
       drawing_def_segments = _get_drawing_def_segments(drawing_def)
@@ -1098,7 +1111,7 @@ module Ladb::OpenCutList
         mvu = Geom::Vector3d.new(ux * i, uy * i, uz * i)
 
         mt = Geom::Transformation.translation(mvu)
-        if _fetch_option_mirror && i == @number && @number == 1
+        if _fetch_option_mirror? && i == @number && @number == 1
           mt = Geom::Transformation.scaling(mpe, *mvu.normalize.to_a.map { |f| (f.abs * -1) > 0 ? 1 : -1 })
           mt *= Geom::Transformation.rotation(mpe, mvu, Geometrix::ONE_PI)
           mt *= Geom::Transformation.translation(mvu)
@@ -1153,7 +1166,7 @@ module Ladb::OpenCutList
 
       # Preview mirror
 
-      if _fetch_option_mirror && @number == 1
+      if _fetch_option_mirror? && @number == 1
 
         unit = @tool.get_unit(view)
 
@@ -1187,7 +1200,7 @@ module Ladb::OpenCutList
     end
 
     def _read_handle(tool, text, view)
-      return false if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point, _fetch_option_copy_measure_type)).nil?
+      return false if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point)).nil?
 
       dps, dpe, dmin = move_def.values_at(:dps, :dpe, :dmin)
       v = dps.vector_to(dpe)
@@ -1257,7 +1270,7 @@ module Ladb::OpenCutList
     end
 
     def _copy_line_entity(operator = '*', number = 1)
-      return if (move_def = _get_move_def(@picked_handle_start_point, @picked_handle_end_point, _fetch_option_copy_measure_type)).nil?
+      return if (move_def = _get_move_def(@picked_handle_start_point, @picked_handle_end_point)).nil?
 
       mps, mpe = move_def.values_at(:mps, :mpe)
 
@@ -1303,7 +1316,7 @@ module Ladb::OpenCutList
             mvu = Geom::Vector3d.new(ux * i, uy * i, uz * i)
 
             mt = Geom::Transformation.translation(mvu)
-            if _fetch_option_mirror && i == number && number == 1
+            if _fetch_option_mirror? && i == number && number == 1
               mt = Geom::Transformation.scaling(mpe, *mvu.normalize.to_a.map { |f| (f.abs * -1) > 0 ? 1 : -1 })
               mt *= Geom::Transformation.rotation(mpe, mvu, Geometrix::ONE_PI)
               mt *= Geom::Transformation.translation(mvu)
@@ -1328,7 +1341,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _get_move_def(ps, pe, type = 0)
+    def _get_move_def(ps, pe)
       return unless pe.is_a?(Geom::Point3d)
       return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
 
@@ -1336,6 +1349,8 @@ module Ladb::OpenCutList
       eti = et.inverse
 
       return unless (eb = _get_drawing_def_edit_bounds(drawing_def, et)).valid?
+
+      measure_type = _fetch_option_copy_measure_type
 
       # Compute in 'Edit' space
 
@@ -1380,7 +1395,7 @@ module Ladb::OpenCutList
 
       f = @operator == '/' ? @number : 1
 
-      case type
+      case measure_type
       when SmartHandleTool::ACTION_OPTION_COPY_MEASURE_TYPE_OUTSIDE
         dlmin = eve.length * (2 * f + 1)
         dmin = eve.length * (2 * f + 2)
@@ -1406,7 +1421,7 @@ module Ladb::OpenCutList
 
       mps = lps
       dpe = lpe
-      case type
+      case measure_type
       when SmartHandleTool::ACTION_OPTION_COPY_MEASURE_TYPE_OUTSIDE
         mpe = lpe.offset(vs)
         dps = lps.offset(vs)
@@ -1440,7 +1455,7 @@ module Ladb::OpenCutList
 
     def _warn_if_mirrored(number)
       # Warn if the mirror option enabled
-      @tool.notify_warnings([ [ "tool.smart_handle.warning.copies_disable_mirror" ] ]) if _fetch_option_mirror && number != 1
+      @tool.notify_warnings([ [ "tool.smart_handle.warning.copies_disable_mirror" ] ]) if _fetch_option_mirror? && number != 1
     end
 
   end
@@ -1636,7 +1651,7 @@ module Ladb::OpenCutList
 
     def _preview_handle(view)
       super
-      return if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point, _fetch_option_copy_measure_type)).nil?
+      return if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point)).nil?
 
       drawing_def, et, eb, ve, mps, mpe, dps, dpe = move_def.values_at(:drawing_def, :et, :eb, :ve, :mps, :mpe, :dps, :dpe)
       drawing_def_segments = _get_drawing_def_segments(drawing_def)
@@ -1704,7 +1719,7 @@ module Ladb::OpenCutList
 
           unless x == 0 && y == 0
 
-            if _fetch_option_mirror && @number_x == 1 && @number_y == 1
+            if _fetch_option_mirror? && @number_x == 1 && @number_y == 1
 
               if x == @number_x && y == @number_y
                 mt *= Geom::Transformation.rotation(mp, Z_AXIS.transform(ht), Geometrix::ONE_PI)
@@ -1746,7 +1761,7 @@ module Ladb::OpenCutList
 
       # Preview mirror
 
-      if _fetch_option_mirror && @number_x == 1 && @number_y == 1
+      if _fetch_option_mirror? && @number_x == 1 && @number_y == 1
 
         unit = @tool.get_unit(view)
 
@@ -1792,7 +1807,7 @@ module Ladb::OpenCutList
     end
 
     def _read_handle(tool, text, view)
-      return false if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point, _fetch_option_copy_measure_type)).nil?
+      return false if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point)).nil?
 
       ht = _get_handle_transformation
       hti = ht.inverse
@@ -1894,7 +1909,7 @@ module Ladb::OpenCutList
     end
 
     def _copy_grid_entity(operator_x = '*', number_x = 1, operator_y = '*', number_y = 1)
-      return if (move_def = _get_move_def(@picked_handle_start_point, @picked_handle_end_point, _fetch_option_copy_measure_type)).nil?
+      return if (move_def = _get_move_def(@picked_handle_start_point, @picked_handle_end_point)).nil?
 
       mps, mpe = move_def.values_at(:mps, :mpe)
 
@@ -1945,7 +1960,7 @@ module Ladb::OpenCutList
               mvu = Geom::Vector3d.new(ux * x, uy * y).transform(ht)
 
               mt = Geom::Transformation.translation(mvu.transform(cti))
-              if _fetch_option_mirror && number_x == 1 && number_y == 1
+              if _fetch_option_mirror? && number_x == 1 && number_y == 1
 
                 mp = mps.offset(mvu)
 
@@ -2001,7 +2016,7 @@ module Ladb::OpenCutList
       Geom::Transformation.axes(origin, *_get_handle_axes)
     end
 
-    def _get_move_def(ps, pe, type = 0)
+    def _get_move_def(ps, pe)
       return unless pe.is_a?(Geom::Point3d)
       return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
 
@@ -2009,6 +2024,8 @@ module Ladb::OpenCutList
       hti = ht.inverse
 
       return unless (eb = _get_drawing_def_edit_bounds(drawing_def, ht)).valid?
+
+      measure_type = _fetch_option_copy_measure_type
 
       # Compute in 'Edit/Handle' space
 
@@ -2074,7 +2091,7 @@ module Ladb::OpenCutList
       f_x = @operator_x == '/' ? @number_x : 1
       f_y = @operator_y == '/' ? @number_y : 1
 
-      case type
+      case measure_type
       when SmartHandleTool::ACTION_OPTION_COPY_MEASURE_TYPE_OUTSIDE
         dlminx = evex.length * (2 * f_x + 1)
         dlminy = evey.length * (2 * f_y + 1)
@@ -2107,7 +2124,7 @@ module Ladb::OpenCutList
 
       mps = lps
       dpe = lpe
-      case type
+      case measure_type
       when SmartHandleTool::ACTION_OPTION_COPY_MEASURE_TYPE_OUTSIDE
         mpe = lpe.offset(vs)
         dps = lps.offset(vs)
@@ -2144,7 +2161,7 @@ module Ladb::OpenCutList
 
     def _warn_if_mirrored(number_x, number_y)
       # Warn if the mirror option enabled
-      @tool.notify_warnings([ [ "tool.smart_handle.warning.copies_disable_mirror" ] ]) if _fetch_option_mirror && (number_x != 1 || number_y != 1)
+      @tool.notify_warnings([ [ "tool.smart_handle.warning.copies_disable_mirror" ] ]) if _fetch_option_mirror? && (number_x != 1 || number_y != 1)
     end
 
   end
@@ -3212,6 +3229,8 @@ module Ladb::OpenCutList
 
       return unless (eb = _get_drawing_def_edit_bounds(drawing_def, et)).valid?
 
+      measure_type_centered = _fetch_option_copy_measure_type_centered?
+
       # Compute in 'Edit' space
 
       ev = v.transform(eti)
@@ -3219,25 +3238,29 @@ module Ladb::OpenCutList
       ecenter = eb.center
       eline = [ ecenter, ev ]
 
-      plane_btm = [ eb.corner(0), Z_AXIS ]
-      ibtm = Geom.intersect_line_plane(eline, plane_btm)
-      if !ibtm.nil? && eb.contains?(ibtm)
-        evs = ecenter.vector_to(ibtm)
-        evs.reverse! if evs.valid? && evs.samedirection?(ev)
+      if measure_type_centered
+        evs = Geom::Vector3d.new
       else
-        plane_lft = [ eb.corner(0), X_AXIS ]
-        ilft = Geom.intersect_line_plane(eline, plane_lft)
-        if !ilft.nil? && eb.contains?(ilft)
-          evs = ecenter.vector_to(ilft)
+        plane_btm = [ eb.corner(0), Z_AXIS ]
+        ibtm = Geom.intersect_line_plane(eline, plane_btm)
+        if !ibtm.nil? && eb.contains?(ibtm)
+          evs = ecenter.vector_to(ibtm)
           evs.reverse! if evs.valid? && evs.samedirection?(ev)
         else
-          plane_frt = [ eb.corner(0), Y_AXIS ]
-          ifrt = Geom.intersect_line_plane(eline, plane_frt)
-          if !ifrt.nil? && eb.contains?(ifrt)
-            evs = ecenter.vector_to(ifrt)
+          plane_lft = [ eb.corner(0), X_AXIS ]
+          ilft = Geom.intersect_line_plane(eline, plane_lft)
+          if !ilft.nil? && eb.contains?(ilft)
+            evs = ecenter.vector_to(ilft)
             evs.reverse! if evs.valid? && evs.samedirection?(ev)
           else
-            evs = Geom::Vector3d.new
+            plane_frt = [ eb.corner(0), Y_AXIS ]
+            ifrt = Geom.intersect_line_plane(eline, plane_frt)
+            if !ifrt.nil? && eb.contains?(ifrt)
+              evs = ecenter.vector_to(ifrt)
+              evs.reverse! if evs.valid? && evs.samedirection?(ev)
+            else
+              evs = Geom::Vector3d.new
+            end
           end
         end
       end
