@@ -397,6 +397,12 @@ module Ladb::OpenCutList
 
     # -----
 
+    def _can_activate_locked?
+      false
+    end
+
+    # -----
+
     def _preview_part(part_entity_path, part, layer = 0, highlighted = false)
       super
       if part && fetch_state == STATE_SELECT
@@ -1724,25 +1730,71 @@ module Ladb::OpenCutList
           next if definition.nil?
 
           count_stretched_instances = container_defs.size
+          count_instances = definition.count_instances
+          count_used_instances = definition.count_used_instances
 
-          # If some external instances are locked, we need to make unique unlocked instances
-          if make_unique_o
-            make_unique_e = false
-          else
+          # Process extern instances
+          if !make_unique_o && count_used_instances > count_stretched_instances
 
-            # Extract external instances
-            extern_instances = definition.instances.difference(container_defs.map(&:container))
+            puts "-- Extern instances exist"
 
-            # 1. Select only unlocked external instances
-            unlocked_extern_instances = extern_instances.select { |extern_instance| !extern_instance.locked? }
+            # -- Extern instances exist
 
-            # 2. Exclude instances locked by parents
-            if unlocked_extern_instances.any?
-              _instances_to_paths(unlocked_extern_instances, (instance_paths = []), model.entities, model.active_path.to_a)
-              unlocked_extern_instances = instance_paths.delete_if { |instance_path| instance_path.any? { |entity| entity.locked? } }.map { |path| path.last }
+            # Extract definition instances
+            definition_instances = definition.instances
+
+            # Extract stretched instances
+            stretched_instances = container_defs.map(&:container)
+
+            if count_used_instances > count_instances
+
+              puts "--- deep find"
+
+              active_selection_path = get_active_selection_path
+              active_selection_path_size = active_selection_path.size
+
+              # Retrieve all instance paths
+              _instances_to_paths(definition_instances, (extern_instance_paths = []), model.entities)
+
+              # Reduce to extern instances only
+              extern_instance_paths.delete_if { |path|
+                path.take(active_selection_path_size) == active_selection_path &&
+                stretched_instances.include?(path[active_selection_path_size])
+              }
+
+              unlocked_extern_instance_paths = extern_instance_paths.reject { |path| path.any?(&:locked?) }
+              unlocked_extern_instances = unlocked_extern_instance_paths.map! { |path| path.last }
+
+              puts "stretched_instances = #{stretched_instances}"
+              puts "unlocked_extern_instances = #{unlocked_extern_instances}"
+
+              make_unique_e = unlocked_extern_instances.size < extern_instance_paths.size
+
+            else
+
+              puts "--- simple find"
+
+              extern_instances = definition_instances.difference(stretched_instances)
+              unlocked_extern_instances = extern_instances.reject(&:locked?)
+              if unlocked_extern_instances.any?
+                _instances_to_paths(unlocked_extern_instances, (extern_instance_paths = []), model.entities)
+                unlocked_extern_instances = extern_instance_paths.reject { |path| path.any?(&:locked?) }
+                                                                 .map! { |path| path.last }
+                make_unique_e = unlocked_extern_instances.size < extern_instances.size
+              else
+                make_unique_e = false
+              end
+
             end
 
-            make_unique_e = unlocked_extern_instances.size < extern_instances.size
+          else
+
+            puts "-- No extern instances"
+
+            # -- No extern instances
+
+            make_unique_e = false
+
           end
 
           # Groups with edges must be made unique because SketchUp make them unique when transform entities and this causing troubles with the stretching.
@@ -1752,18 +1804,19 @@ module Ladb::OpenCutList
                         .group_by(&:md5)
                         .each do |md5, container_defs|
 
-            make_unique_d = make_unique_o && count_stretched_instances < definition.count_used_instances
+            make_unique_d = make_unique_o && count_stretched_instances < count_used_instances
             make_unique_c = (make_unique_e || make_unique_g || make_unique_d || container_defs.size < count_stretched_instances) && container_defs.any? { |container_def| container_def.operation == OPERATION_SPLIT }
 
-            # puts "  make_unique_d: #{make_unique_d}"
-            # puts "  make_unique_c: #{make_unique_c}"
-            # puts "  #{md5}: #{container_defs.size} / #{count_stretched_instances} / #{definition.count_used_instances} (op: #{container_defs.map {|container_def| container_def.operation }}))"
-            # container_defs.each do |container_def|
-            #   puts "   ↳ C <#{definition.name}> (#{container_def.container.name}) #{container_def.entity_pos} (edeges: #{container_def.edge_defs.size})"
-            #   # container_def.edge_defs.each do |edge_def|
-            #   #   puts "     ↳ E #{edge_def.entity_pos}"
-            #   # end
-            # end
+            puts "  make_unique_e: #{make_unique_e}"
+            puts "  make_unique_d: #{make_unique_d}"
+            puts "  make_unique_c: #{make_unique_c}"
+            puts "  #{md5}: #{container_defs.size} / #{count_stretched_instances} / #{count_used_instances} (op: #{container_defs.map(&:operation)}))"
+            container_defs.each do |container_def|
+              puts "   ↳ C <#{definition.name}> (#{container_def.container.name}) #{container_def.entity_pos} (edeges: #{container_def.edge_defs.size})"
+              # container_def.edge_defs.each do |edge_def|
+              #   puts "     ↳ E #{edge_def.entity_pos}"
+              # end
+            end
 
             if make_unique_c
 
@@ -1824,6 +1877,7 @@ module Ladb::OpenCutList
               end
 
               count_stretched_instances -= container_defs.size
+              count_used_instances -= container_defs.size
 
             end
 

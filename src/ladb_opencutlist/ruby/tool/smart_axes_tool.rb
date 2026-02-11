@@ -257,12 +257,21 @@ module Ladb::OpenCutList
       true
     end
 
-    def _can_activate_part?(part)
-      !part.is_a?(Part) || part.group.material_type != MaterialAttributes::TYPE_HARDWARE
+    def _can_activate_part?(part_entity_path, part)
+      super && (_can_activate_hardware? || (!part.is_a?(Part) || part.group.material_type != MaterialAttributes::TYPE_HARDWARE))
     end
 
-    def _get_cant_activate_part_tooltip(part)
-      "⚠ #{PLUGIN.get_i18n_string('tool.smart_axes.error.not_orientable')}"
+    def _can_activate_hardware?
+      false
+    end
+
+    def _can_activate_locked?
+      false
+    end
+
+    def _get_cant_activate_part_error_key(part)
+      return super if _can_activate_hardware?
+      'tool.smart_axes.error.not_orientable'
     end
 
     # -----
@@ -350,7 +359,9 @@ module Ladb::OpenCutList
       true
     end
 
-    def _can_activate_part?(part)
+    # -----
+
+    def _can_activate_hardware?
       true
     end
 
@@ -927,7 +938,9 @@ module Ladb::OpenCutList
       true
     end
 
-    def _can_activate_part?(part)
+    # -----
+
+    def _can_activate_hardware?
       true
     end
 

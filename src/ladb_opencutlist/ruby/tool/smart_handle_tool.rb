@@ -519,6 +519,12 @@ module Ladb::OpenCutList
 
     # -----
 
+    def _can_activate_locked?
+      false
+    end
+
+    # -----
+
     def _preview_part_container?
       false
     end
@@ -811,6 +817,12 @@ module Ladb::OpenCutList
     protected
 
     def _pick_part_siblings?
+      true
+    end
+
+    # -----
+
+    def _can_activate_locked?
       true
     end
 

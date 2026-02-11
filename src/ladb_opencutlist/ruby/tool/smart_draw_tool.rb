@@ -227,6 +227,8 @@ module Ladb::OpenCutList
     LAYER_2D_DIMENSIONS = 10
     LAYER_2D_FLOATING_TOOLS = 20
 
+    LAYER_3D_DRAW_PREVIEW = 10
+
     @@last_pull_measure = 0
 
     attr_reader :picked_shape_start_point, :picked_shape_end_point, :picked_pull_end_point, :picked_move_end_point, :normal, :direction
@@ -258,6 +260,9 @@ module Ladb::OpenCutList
       @definition = nil
 
       @active_container_path = nil
+
+      tool.create_3d(LAYER_3D_PART_PREVIEW)
+      tool.create_3d(LAYER_3D_DRAW_PREVIEW)
 
     end
 
@@ -390,7 +395,7 @@ module Ladb::OpenCutList
       # puts "---"
 
       @tool.clear_2d(LAYER_2D_DIMENSIONS)
-      @tool.clear_3d(0)
+      @tool.clear_3d(LAYER_3D_DRAW_PREVIEW)
 
       super
 
@@ -730,7 +735,7 @@ module Ladb::OpenCutList
     def onActivePartChanged(part_entity_path, part, highlighted = false)
 
       # Preview part's container
-      _preview_part(part_entity_path, part, 500)
+      _preview_part(part_entity_path, part)
 
       # Reset active container path
       @active_container_path = nil
@@ -760,6 +765,12 @@ module Ladb::OpenCutList
     # -----
 
     protected
+
+    # -----
+
+    def _can_activate_locked?
+      false
+    end
 
     # -----
 
@@ -1002,7 +1013,7 @@ module Ladb::OpenCutList
           fill_color: Sketchup::Color.new(17, 98, 160),
           stroke_color: Kuix::COLOR_WHITE
         )
-        @tool.append_3d(k_points)
+        @tool.append_3d(k_points, LAYER_3D_DRAW_PREVIEW)
 
       end
 
@@ -1029,7 +1040,7 @@ module Ladb::OpenCutList
             k_edge.line_stipple = Kuix::LINE_STIPPLE_SOLID
             k_edge.color = colors[index]
             k_edge.on_top = true
-            @tool.append_3d(k_edge)
+            @tool.append_3d(k_edge, LAYER_3D_DRAW_PREVIEW)
 
           else
 
@@ -1039,7 +1050,7 @@ module Ladb::OpenCutList
             k_edge.line_width = 1
             k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
             k_edge.color = Kuix::COLOR_BLACK
-            @tool.append_3d(k_edge)
+            @tool.append_3d(k_edge, LAYER_3D_DRAW_PREVIEW)
 
             k_edge = Kuix::EdgeMotif3d.new
             k_edge.start.copy!(p)
@@ -1047,7 +1058,7 @@ module Ladb::OpenCutList
             k_edge.line_width = 1
             k_edge.line_stipple = Kuix::LINE_STIPPLE_DOTTED
             k_edge.color = colors[index]
-            @tool.append_3d(k_edge)
+            @tool.append_3d(k_edge, LAYER_3D_DRAW_PREVIEW)
 
           end
 
@@ -1058,7 +1069,7 @@ module Ladb::OpenCutList
             fill_color: nil,
             size: 1.5
           )
-          @tool.append_3d(k_points)
+          @tool.append_3d(k_points, LAYER_3D_DRAW_PREVIEW)
 
           if view.pixels_to_model(60, p0) < dd[index]
 
@@ -1080,7 +1091,7 @@ module Ladb::OpenCutList
           stroke_color: Kuix::COLOR_BLACK,
           fill_color: Kuix::COLOR_WHITE
         )
-        @tool.append_3d(k_points)
+        @tool.append_3d(k_points, LAYER_3D_DRAW_PREVIEW)
 
         Sketchup.set_status_text(dd.join("#{Sketchup::RegionalSettings.list_separator} "), SB_VCB_VALUE)
 
@@ -1108,7 +1119,7 @@ module Ladb::OpenCutList
         k_edge.color = Kuix::COLOR_MAGENTA
         k_edge.line_width = 2
         k_edge.on_top = true
-        @tool.append_3d(k_edge)
+        @tool.append_3d(k_edge, LAYER_3D_DRAW_PREVIEW)
 
       end
 
@@ -1126,7 +1137,7 @@ module Ladb::OpenCutList
         k_segments.line_stipple = Kuix::LINE_STIPPLE_DOTTED
         k_segments.color = color
         k_segments.transformation = t
-        @tool.append_3d(k_segments)
+        @tool.append_3d(k_segments, LAYER_3D_DRAW_PREVIEW)
 
       end
 
@@ -1143,7 +1154,7 @@ module Ladb::OpenCutList
         k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES if _fetch_option_construction
         k_segments.color = color
         k_segments.transformation = t
-        @tool.append_3d(k_segments)
+        @tool.append_3d(k_segments, LAYER_3D_DRAW_PREVIEW)
 
       end
 
@@ -1160,7 +1171,7 @@ module Ladb::OpenCutList
         k_edge.arrow_size = @tool.get_unit * 2.0
         k_edge.on_top = true
         k_edge.transformation = t
-        @tool.append_3d(k_edge)
+        @tool.append_3d(k_edge, LAYER_3D_DRAW_PREVIEW)
 
         # Bottom link to thickness arrow
         k_edge = Kuix::EdgeMotif3d.new
@@ -1171,7 +1182,7 @@ module Ladb::OpenCutList
         k_edge.color = Kuix::COLOR_DARK_GREY
         k_edge.on_top = true
         k_edge.transformation = t
-        @tool.append_3d(k_edge)
+        @tool.append_3d(k_edge, LAYER_3D_DRAW_PREVIEW)
 
         # Top link to thickness arrow
         k_edge = Kuix::EdgeMotif3d.new
@@ -1182,7 +1193,7 @@ module Ladb::OpenCutList
         k_edge.color = Kuix::COLOR_DARK_GREY
         k_edge.on_top = true
         k_edge.transformation = t
-        @tool.append_3d(k_edge)
+        @tool.append_3d(k_edge, LAYER_3D_DRAW_PREVIEW)
 
       elsif centred
 
@@ -1191,14 +1202,14 @@ module Ladb::OpenCutList
           points: @picked_shape_start_point,
           style: Kuix::POINT_STYLE_PLUS
         )
-        @tool.append_3d(k_point)
+        @tool.append_3d(k_point, LAYER_3D_DRAW_PREVIEW)
 
         # Draw line from first picked point to snap point
         k_edge = Kuix::EdgeMotif3d.new
         k_edge.start.copy!(@picked_shape_start_point)
         k_edge.end.copy!(@mouse_snap_point)
         k_edge.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-        @tool.append_3d(k_edge)
+        @tool.append_3d(k_edge, LAYER_3D_DRAW_PREVIEW)
 
       end
 
@@ -1467,11 +1478,9 @@ module Ladb::OpenCutList
 
       if @active_container_path.is_a?(Array) && @active_container_path.any? &&
          (active_container = @active_container_path.last) && active_container.respond_to?(:definition)
-        active_path = @active_container_path
         active_entities = active_container.definition.entities
         active_transformation = PathUtils.get_transformation(@active_container_path)
       else
-        active_path = []
         active_entities = model.active_entities
         active_transformation = IDENTITY
       end
@@ -2234,7 +2243,7 @@ module Ladb::OpenCutList
         k_rectangle.on_top = true
         k_rectangle.transformation = Geom::Transformation.translation(Geom::Vector3d.new(*@mouse_snap_point.to_a)) * _get_transformation
         k_rectangle.transformation *= Geom::Transformation.translation(Geom::Vector3d.new(-width / 2, -height / 2)) if _fetch_option_rectangle_centered
-        @tool.append_3d(k_rectangle)
+        @tool.append_3d(k_rectangle, LAYER_3D_DRAW_PREVIEW)
 
       end
 
@@ -2247,7 +2256,7 @@ module Ladb::OpenCutList
       k_rectangle.on_top = true
       k_rectangle.transformation = Geom::Transformation.translation(Geom::Vector3d.new(*@mouse_snap_point.to_a)) * _get_transformation
       k_rectangle.transformation *= Geom::Transformation.translation(Geom::Vector3d.new(-width / 2, -height / 2)) if _fetch_option_rectangle_centered
-      @tool.append_3d(k_rectangle)
+      @tool.append_3d(k_rectangle, LAYER_3D_DRAW_PREVIEW)
 
     end
 
@@ -2273,7 +2282,7 @@ module Ladb::OpenCutList
         k_segments.line_stipple = Kuix::LINE_STIPPLE_DOTTED
         k_segments.color = _get_normal_color
         k_segments.transformation = t
-        @tool.append_3d(k_segments)
+        @tool.append_3d(k_segments, LAYER_3D_DRAW_PREVIEW)
 
       end
 
@@ -2287,7 +2296,7 @@ module Ladb::OpenCutList
         k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES if _fetch_option_construction
         k_segments.color = _get_normal_color
         k_segments.transformation = t
-        @tool.append_3d(k_segments)
+        @tool.append_3d(k_segments, LAYER_3D_DRAW_PREVIEW)
 
       end
 
@@ -2302,7 +2311,7 @@ module Ladb::OpenCutList
           k_edge.end.copy!(@mouse_snap_point)
           k_edge.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
           k_edge.color = _get_normal_color
-          @tool.append_3d(k_edge)
+          @tool.append_3d(k_edge, LAYER_3D_DRAW_PREVIEW)
 
         end
 
@@ -2312,7 +2321,7 @@ module Ladb::OpenCutList
             points: @picked_shape_start_point,
             style: Kuix::POINT_STYLE_PLUS
           )
-          @tool.append_3d(k_points)
+          @tool.append_3d(k_points, LAYER_3D_DRAW_PREVIEW)
 
           if bounds.width != bounds.height
 
@@ -2320,7 +2329,7 @@ module Ladb::OpenCutList
             k_edge.start.copy!(@picked_shape_start_point)
             k_edge.end.copy!(@mouse_snap_point)
             k_edge.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-            @tool.append_3d(k_edge)
+            @tool.append_3d(k_edge, LAYER_3D_DRAW_PREVIEW)
 
           end
 
@@ -2648,7 +2657,7 @@ module Ladb::OpenCutList
         k_circle.color = _get_normal_color
         k_circle.on_top = true
         k_circle.transformation = Geom::Transformation.translation(Geom::Vector3d.new(*@mouse_snap_point.to_a)) * _get_transformation * Geom::Transformation.translation(Geom::Vector3d.new(-diameter / 2, -diameter / 2))
-        @tool.append_3d(k_circle)
+        @tool.append_3d(k_circle, LAYER_3D_DRAW_PREVIEW)
 
       end
 
@@ -2659,7 +2668,7 @@ module Ladb::OpenCutList
       k_circle.color = _get_normal_color
       k_circle.on_top = true
       k_circle.transformation = Geom::Transformation.translation(Geom::Vector3d.new(*@mouse_snap_point.to_a)) * _get_transformation * Geom::Transformation.translation(Geom::Vector3d.new(-(diameter + offset) / 2, -(diameter + offset) / 2))
-      @tool.append_3d(k_circle)
+      @tool.append_3d(k_circle, LAYER_3D_DRAW_PREVIEW)
 
     end
 
@@ -2673,14 +2682,14 @@ module Ladb::OpenCutList
         points: @picked_shape_start_point,
         style: Kuix::POINT_STYLE_PLUS
       )
-      @tool.append_3d(k_points)
+      @tool.append_3d(k_points, LAYER_3D_DRAW_PREVIEW)
 
       k_edge = Kuix::EdgeMotif3d.new
       k_edge.start.copy!(measure_start)
       k_edge.end.copy!(@mouse_snap_point)
       k_edge.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
       k_edge.color = _get_direction_color
-      @tool.append_3d(k_edge)
+      @tool.append_3d(k_edge, LAYER_3D_DRAW_PREVIEW)
 
       t = _get_transformation(@picked_shape_start_point)
 
@@ -2694,7 +2703,7 @@ module Ladb::OpenCutList
         k_segments.line_stipple = Kuix::LINE_STIPPLE_DOTTED
         k_segments.color = _get_normal_color
         k_segments.transformation = t
-        @tool.append_3d(k_segments)
+        @tool.append_3d(k_segments, LAYER_3D_DRAW_PREVIEW)
 
       end
 
@@ -2708,7 +2717,7 @@ module Ladb::OpenCutList
         k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES if _fetch_option_construction
         k_segments.color = _get_normal_color
         k_segments.transformation = t
-        @tool.append_3d(k_segments)
+        @tool.append_3d(k_segments, LAYER_3D_DRAW_PREVIEW)
 
       end
 
@@ -3146,7 +3155,7 @@ module Ladb::OpenCutList
               fill_color: Kuix::COLOR_BLACK,
               stroke_color: Kuix::COLOR_WHITE
             )
-            @tool.append_3d(k_points)
+            @tool.append_3d(k_points, LAYER_3D_DRAW_PREVIEW)
 
             if @locked_axis
               @mouse_snap_point = point.project_to_line([ _fetch_option_measure_reversed ? @picked_points.first : @picked_points.last, @locked_axis ])
@@ -3474,14 +3483,14 @@ module Ladb::OpenCutList
                 fill_color: Kuix::COLOR_BLACK,
                 stroke_color: Kuix::COLOR_WHITE
               )
-              @tool.append_3d(k_points)
+              @tool.append_3d(k_points, LAYER_3D_DRAW_PREVIEW)
 
               k_edge = Kuix::EdgeMotif3d.new
               k_edge.start.copy!(point)
               k_edge.end.copy!(pp)
               k_edge.line_stipple = Kuix::LINE_STIPPLE_DOTTED
               k_edge.color = Kuix::COLOR_MAGENTA
-              @tool.append_3d(k_edge)
+              @tool.append_3d(k_edge, LAYER_3D_DRAW_PREVIEW)
 
               @mouse_snap_point = pp
               @mouse_ip.clear
@@ -3531,7 +3540,7 @@ module Ladb::OpenCutList
         k_motif.color = _get_normal_color
         k_motif.on_top = true
         k_motif.transformation = Geom::Transformation.translation(Geom::Vector3d.new(*@mouse_snap_point.to_a)) * _get_transformation
-        @tool.append_3d(k_motif)
+        @tool.append_3d(k_motif, LAYER_3D_DRAW_PREVIEW)
 
       end
 
@@ -3551,7 +3560,7 @@ module Ladb::OpenCutList
       k_motif.color = _get_normal_color
       k_motif.on_top = true
       k_motif.transformation = Geom::Transformation.translation(Geom::Vector3d.new(*@mouse_snap_point.to_a)) * _get_transformation
-      @tool.append_3d(k_motif)
+      @tool.append_3d(k_motif, LAYER_3D_DRAW_PREVIEW)
 
     end
 
@@ -3569,7 +3578,7 @@ module Ladb::OpenCutList
         k_segments.line_stipple = Kuix::LINE_STIPPLE_DOTTED
         k_segments.color = _get_normal_color
         k_segments.transformation = t
-        @tool.append_3d(k_segments)
+        @tool.append_3d(k_segments, LAYER_3D_DRAW_PREVIEW)
 
       end
 
@@ -3583,7 +3592,7 @@ module Ladb::OpenCutList
         k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES if _fetch_option_construction
         k_segments.color = _get_normal_color
         k_segments.transformation = t
-        @tool.append_3d(k_segments)
+        @tool.append_3d(k_segments, LAYER_3D_DRAW_PREVIEW)
 
       end
 
@@ -3599,7 +3608,7 @@ module Ladb::OpenCutList
           points: measure_start,
           style: Kuix::POINT_STYLE_PLUS
         )
-        @tool.append_3d(k_points)
+        @tool.append_3d(k_points, LAYER_3D_DRAW_PREVIEW)
 
         if measure_vector.valid?
 
@@ -3608,7 +3617,7 @@ module Ladb::OpenCutList
           k_line.direction = measure_vector
           k_line.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
           k_line.color = _get_vector_color(measure_vector, Kuix::COLOR_DARK_GREY)
-          @tool.append_3d(k_line)
+          @tool.append_3d(k_line, LAYER_3D_DRAW_PREVIEW)
 
           k_segments = Kuix::Segments.new
           k_segments.add_segments([ measure_start, @mouse_snap_point ])
@@ -3616,7 +3625,7 @@ module Ladb::OpenCutList
           k_segments.line_stipple = _fetch_option_shape_offset != 0 ? Kuix::LINE_STIPPLE_DOTTED : (_fetch_option_construction ? Kuix::LINE_STIPPLE_LONG_DASHES : Kuix::LINE_STIPPLE_SOLID)
           k_segments.color = _get_vector_color(@locked_axis, _get_normal_color)
           k_segments.on_top = true
-          @tool.append_3d(k_segments)
+          @tool.append_3d(k_segments, LAYER_3D_DRAW_PREVIEW)
 
           if view.pixels_to_model(60, measure_start) < measure
 

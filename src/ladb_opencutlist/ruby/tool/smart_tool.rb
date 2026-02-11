@@ -1632,18 +1632,19 @@ module Ladb::OpenCutList
 
     def _instances_to_paths(instances, instance_paths, entities, path = [])
       entities.each do |entity|
-        next if entity.is_a?(Sketchup::Edge) || entity.is_a?(Sketchup::Face)   # Minor Speed improvement
-        if entity.visible? && _layer_visible?(entity.layer, path.empty?)
-          if entity.is_a?(Sketchup::ComponentInstance)
-            if instances.include?(entity)
-              instance_paths << path + [ entity ]
-            else
-              _instances_to_paths(instances, instance_paths, entity.definition.entities, path + [ entity ])
-            end
-          elsif entity.is_a?(Sketchup::Group)
-            _instances_to_paths(instances, instance_paths, entity.entities, path + [ entity ])
+        next unless entity.respond_to?(:definition)   # Minor Speed improvement
+        next unless entity.visible? && _layer_visible?(entity.layer, path.empty?)
+        path.push(entity)
+        if entity.definition.group?
+          _instances_to_paths(instances, instance_paths, entity.entities, path)
+        else
+          if instances.include?(entity)
+            instance_paths << path.dup
+          else
+            _instances_to_paths(instances, instance_paths, entity.definition.entities, path)
           end
         end
+        path.pop
       end
     end
 
@@ -1952,6 +1953,10 @@ module Ladb::OpenCutList
       @active_selection_instances
     end
 
+    def active_selection_locked?
+      has_active_selection? && (@active_selection_instances.any?(&:locked?) || @active_selection_path.any?(&:locked?))
+    end
+
     # -----
 
     protected
@@ -1976,17 +1981,49 @@ module Ladb::OpenCutList
 
     # --
 
+    def _can_activate_locked?
+      true
+    end
+
+    def _can_activate_selection?(path, instances)
+      _can_activate_locked? || (path.nil? || path.none?(&:locked?)) && (instances.nil? || instances.none?(&:locked?))
+    end
+
+    def _get_cant_activate_selection_error_key(path, instances)
+      'tool.default.error.selection_contains_locked_entities'
+    end
+
+    # --
+
     def _reset_active_selection
       _set_active_selection(nil, nil)
     end
 
-    def _set_active_selection(path, entities)
-      if @active_selection_path != path || @active_selection_instances != entities # Has changed?
+    def _set_active_selection(path, instances, silent = false)
+      if _can_activate_selection?(path, instances)
+
+        if @active_selection_path != path
+          @tool.remove_tooltip
+        end
+
+      else
+
+        path = nil
+        instances = nil
+
+        unless silent
+          if (error_key = _get_cant_activate_selection_error_key(path, instances)).is_a?(String)
+            @tool.notify_errors([ error_key ])
+          end
+        end
+
+      end
+      if @active_selection_path != path || @active_selection_instances != instances # Has changed?
 
         @active_selection_path = path
-        @active_selection_instances = entities
+        @active_selection_instances = instances
 
-        onActiveSelectionChanged(path, entities)
+        onActiveSelectionChanged(path, instances)
 
       end
     end
@@ -2315,10 +2352,20 @@ module Ladb::OpenCutList
           return if picked_part_entity_path == @active_part_entity_path                   # Abandon if part seems to be the active one
           return if picked_part_entity_path[0...-1] != @active_part_entity_path[0...-1]   # Abandon if part does not have the same ancestors
           if (picked_part = _generate_part_from_path(picked_part_entity_path)).is_a?(Part)
-            _add_part_sibling(picked_part_entity_path, picked_part) if picked_part.id == @active_part.id
+            if _can_activate_part?(picked_part_entity_path, picked_part)
+              _add_part_sibling(picked_part_entity_path, picked_part) if picked_part.id == @active_part.id
+            else
+              if (error_key = _get_cant_activate_part_error_key(picked_part)).is_a?(String)
+                @tool.show_tooltip(PLUGIN.get_i18n_string(error_key), SmartTool::MESSAGE_TYPE_ERROR)
+              end
+              @tool.push_cursor(@tool.cursor_select_error)
+              return
+            end
           end
         end
       end
+      @tool.remove_tooltip
+      @tool.pop_to_root_cursor
     end
 
     # --
@@ -2501,12 +2548,12 @@ module Ladb::OpenCutList
 
     # --
 
-    def _can_activate_part?(part)
-      true
+    def _can_activate_part?(part_entity_path, part)
+      _can_activate_locked? || part.nil? || part_entity_path.nil? || part_entity_path.none?(&:locked?)
     end
 
-    def _get_cant_activate_part_tooltip(part)
-      nil
+    def _get_cant_activate_part_error_key(part)
+      'tool.default.error.locked_part'
     end
 
     def _refresh_active_part(highlighted = false)
@@ -2517,8 +2564,8 @@ module Ladb::OpenCutList
       _set_active_part(nil, nil)
     end
 
-    def _set_active_part(part_entity_path, part, highlighted = false)
-      if _can_activate_part?(part)
+    def _set_active_part(part_entity_path, part, highlighted = false, silent = false)
+      if _can_activate_part?(part_entity_path, part)
 
         if @active_part_entity_path != part_entity_path || part.nil?
           @tool.remove_tooltip
@@ -2530,10 +2577,12 @@ module Ladb::OpenCutList
         part_entity_path = nil
         part = nil
 
-        if (tooltip = _get_cant_activate_part_tooltip(part)).is_a?(String)
-          @tool.show_tooltip(tooltip, SmartTool::MESSAGE_TYPE_ERROR)
+        unless silent
+          if (error_key = _get_cant_activate_part_error_key(part)).is_a?(String)
+            @tool.show_tooltip(PLUGIN.get_i18n_string(error_key), SmartTool::MESSAGE_TYPE_ERROR)
+          end
+          @tool.push_cursor(@tool.cursor_select_error)
         end
-        @tool.push_cursor(@tool.cursor_select_error)
 
       end
       if @active_part_entity_path != part_entity_path # Has changed?
@@ -2689,20 +2738,22 @@ module Ladb::OpenCutList
 
     def _instances_to_paths(instances, instance_paths, entities, path = [])
       entities.each do |entity|
-        next if entity.is_a?(Sketchup::Edge) || entity.is_a?(Sketchup::Face)   # Minor Speed improvement
-        if entity.visible? && _layer_visible?(entity.layer, path.empty?)
-          if entity.is_a?(Sketchup::ComponentInstance)
-            if instances.include?(entity)
-              instance_paths << path + [ entity ]
-            else
-              _instances_to_paths(instances, instance_paths, entity.definition.entities, path + [ entity ])
-            end
-          elsif entity.is_a?(Sketchup::Group)
-            _instances_to_paths(instances, instance_paths, entity.entities, path + [ entity ])
+        next unless entity.respond_to?(:definition)   # Minor Speed improvement
+        next unless entity.visible? && _layer_visible?(entity.layer, path.empty?)
+        path.push(entity)
+        if entity.definition.group?
+          _instances_to_paths(instances, instance_paths, entity.entities, path)
+        else
+          if instances.include?(entity)
+            instance_paths << path.dup
+          else
+            _instances_to_paths(instances, instance_paths, entity.definition.entities, path)
           end
         end
+        path.pop
       end
     end
+
 
   end
 
@@ -2743,7 +2794,7 @@ module Ladb::OpenCutList
            (part_entity_path = @previous_action_handler.get_active_part_entity_path) &&
            (part = @previous_action_handler.get_active_part)
 
-          _set_active_part(part_entity_path, part)
+          _set_active_part(part_entity_path, part, false, true)
 
           if _pick_part_siblings?
 
@@ -2758,7 +2809,7 @@ module Ladb::OpenCutList
 
           end
 
-          onSelected
+          onSelected if has_active_part?
 
         elsif @previous_action_handler.is_a?(SmartActionHandlerSelectionHelper) &&
               (selection_path = @previous_action_handler.get_active_selection_path) &&
@@ -2767,7 +2818,7 @@ module Ladb::OpenCutList
           _reset_active_part
           _set_active_selection(selection_path, instances)
 
-          onSelected
+          onSelected if has_active_selection?
 
         end
 
@@ -2783,7 +2834,7 @@ module Ladb::OpenCutList
             if entities.one?
               path = active_path + [ entities.first ]
               unless (part = _generate_part_from_path(path)).nil?
-                _set_active_part(path, part)
+                _set_active_part(path, part, false, true)
               end
             end
 
@@ -2791,7 +2842,7 @@ module Ladb::OpenCutList
               _set_active_selection(active_path, entities)
             end
 
-            onSelected
+            onSelected if has_active_selection?
 
           end
 
@@ -2979,7 +3030,11 @@ module Ladb::OpenCutList
               _reset_active_part
               _set_active_selection(active_path, instances.to_a)
 
-              onSelected
+              if has_active_selection?
+                onSelected
+              else
+                _reset
+              end
 
               return true
             end
