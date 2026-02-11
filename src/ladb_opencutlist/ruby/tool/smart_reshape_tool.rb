@@ -1736,7 +1736,7 @@ module Ladb::OpenCutList
           # Process extern instances
           if !make_unique_o && count_used_instances > count_stretched_instances
 
-            puts "-- Extern instances exist"
+            # puts "-- Extern instances exist"
 
             # -- Extern instances exist
 
@@ -1748,7 +1748,7 @@ module Ladb::OpenCutList
 
             if count_used_instances > count_instances
 
-              puts "--- deep find"
+              # puts "--- deep find"
 
               active_selection_path = get_active_selection_path
               active_selection_path_size = active_selection_path.size
@@ -1765,14 +1765,14 @@ module Ladb::OpenCutList
               unlocked_extern_instance_paths = extern_instance_paths.reject { |path| path.any?(&:locked?) }
               unlocked_extern_instances = unlocked_extern_instance_paths.map! { |path| path.last }
 
-              puts "stretched_instances = #{stretched_instances}"
-              puts "unlocked_extern_instances = #{unlocked_extern_instances}"
+              # puts "stretched_instances = #{stretched_instances}"
+              # puts "unlocked_extern_instances = #{unlocked_extern_instances}"
 
               make_unique_e = unlocked_extern_instances.size < extern_instance_paths.size
 
             else
 
-              puts "--- simple find"
+              # puts "--- simple find"
 
               extern_instances = definition_instances.difference(stretched_instances)
               unlocked_extern_instances = extern_instances.reject(&:locked?)
@@ -1789,7 +1789,7 @@ module Ladb::OpenCutList
 
           else
 
-            puts "-- No extern instances"
+            # puts "-- No extern instances"
 
             # -- No extern instances
 
@@ -1807,16 +1807,16 @@ module Ladb::OpenCutList
             make_unique_d = make_unique_o && count_stretched_instances < count_used_instances
             make_unique_c = (make_unique_e || make_unique_g || make_unique_d || container_defs.size < count_stretched_instances) && container_defs.any? { |container_def| container_def.operation == OPERATION_SPLIT }
 
-            puts "  make_unique_e: #{make_unique_e}"
-            puts "  make_unique_d: #{make_unique_d}"
-            puts "  make_unique_c: #{make_unique_c}"
-            puts "  #{md5}: #{container_defs.size} / #{count_stretched_instances} / #{count_used_instances} (op: #{container_defs.map(&:operation)}))"
-            container_defs.each do |container_def|
-              puts "   ↳ C <#{definition.name}> (#{container_def.container.name}) #{container_def.entity_pos} (edeges: #{container_def.edge_defs.size})"
-              # container_def.edge_defs.each do |edge_def|
-              #   puts "     ↳ E #{edge_def.entity_pos}"
-              # end
-            end
+            # puts "  make_unique_e: #{make_unique_e}"
+            # puts "  make_unique_d: #{make_unique_d}"
+            # puts "  make_unique_c: #{make_unique_c}"
+            # puts "  #{md5}: #{container_defs.size} / #{count_stretched_instances} / #{count_used_instances} (op: #{container_defs.map(&:operation)}))"
+            # container_defs.each do |container_def|
+            #   puts "   ↳ C <#{definition.name}> (#{container_def.container.name}) #{container_def.entity_pos} (edeges: #{container_def.edge_defs.size})"
+            #   # container_def.edge_defs.each do |edge_def|
+            #   #   puts "     ↳ E #{edge_def.entity_pos}"
+            #   # end
+            # end
 
             if make_unique_c
 

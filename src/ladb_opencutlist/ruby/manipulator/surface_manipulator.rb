@@ -11,7 +11,7 @@ module Ladb::OpenCutList
 
     def initialize(transformation = IDENTITY)
       super
-      @faces = []
+      @faces = Set.new
     end
 
     # -----
@@ -23,7 +23,7 @@ module Ladb::OpenCutList
         current_face = faces_to_explore.pop
         current_face.edges.each do |edge|
           next unless edge.soft?
-          faces.push(current_face)
+          @faces.add(current_face)
           edge.faces.each do |f|
             next if f == current_face
             next unless f.visible? && _layer_visible?(f.layer)
@@ -40,10 +40,9 @@ module Ladb::OpenCutList
 
     def reset_cache
       super
+      @flat = nil
       @outer_loops_points = nil
       @bounds = nil
-      @z_min = nil
-      @z_max = nil
     end
 
     # -----
@@ -53,23 +52,21 @@ module Ladb::OpenCutList
     end
 
     def flat?
-      @faces.each_cons(2) { |face_a, face_b| return false unless face_a.normal.parallel?(face_b.normal) }
-      true
+      @flat ||= @faces.each_cons(2).all? { |face_a, face_b| face_a.normal.parallel?(face_b.normal) }
     end
 
     # -----
 
     def outer_loops_points
-      if @outer_loops_points.nil?
+      @outer_loops_points ||= begin
         @outer_loops_points = @faces.flat_map { |face| face.outer_loop.vertices.map { |vertex| vertex.position.transform(@transformation) } }
         @outer_loops_points.reverse! if flipped?
+        @outer_loops_points
       end
-      @outer_loops_points
     end
 
     def bounds
       @bounds ||= Geom::BoundingBox.new.add(outer_loops_points)
-      @bounds
     end
 
     # -----

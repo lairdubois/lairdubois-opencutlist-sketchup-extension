@@ -37,11 +37,11 @@ module Ladb::OpenCutList
     end
 
     def points
-      if @points.nil?
+      @points ||= begin
         @points = @edge.vertices.map { |vertex| vertex.position.transform(@transformation) }
         @points.reverse! if flipped?
+        @points
       end
-      @points
     end
     alias_method :segment, :points
 
@@ -54,23 +54,18 @@ module Ladb::OpenCutList
     end
 
     def middle_point
-      return nil if infinite?
       @middle_point ||= Geom::linear_combination(0.5, start_point, 0.5, end_point)
-      @middle_point
     end
 
     def third_points
-      return nil if infinite?
       @third_points ||= [
         Geom::linear_combination(1 / 3.0, start_point, 2 / 3.0, end_point),
         Geom::linear_combination(2 / 3.0, start_point, 1 / 3.0, end_point),
       ]
-      @third_points
     end
 
     def bounds
       @bounds ||= Geom::BoundingBox.new.add(points)
-      @bounds
     end
 
     def length
@@ -87,7 +82,6 @@ module Ladb::OpenCutList
 
     def vertex_manipulators
       @vertex_manipulators ||= @edge.vertices.map { |vertex| VertexManipulator.new(vertex, @transformation) }
-      @vertex_manipulators
     end
 
     # -----

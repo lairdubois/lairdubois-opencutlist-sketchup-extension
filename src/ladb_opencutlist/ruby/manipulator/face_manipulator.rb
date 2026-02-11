@@ -49,12 +49,10 @@ module Ladb::OpenCutList
 
     def mesh
       @mesh ||= @face.mesh(4).transform!(@transformation) # PolygonMeshPoints | PolygonMeshNormals
-      @mesh
     end
 
     def triangles
       @triangles ||= _compute_face_triangles(@face, @transformation)
-      @triangles
     end
 
     def longest_outer_edge
@@ -69,12 +67,10 @@ module Ladb::OpenCutList
 
     def outer_loop_manipulator
       @outer_loop_manipulator ||= LoopManipulator.new(@face.outer_loop, @transformation)
-      @outer_loop_manipulator
     end
 
     def loop_manipulators
       @loop_manipulators ||= @face.loops.map { |loop| loop.outer? ? outer_loop_manipulator : LoopManipulator.new(loop, @transformation) }
-      @loop_manipulators
     end
 
     # -----

@@ -32,28 +32,25 @@ module Ladb::OpenCutList
     # -----
 
     def points
-      if @points.nil?
+      @points ||= begin
         @points = @loop.vertices.map { |vertex| vertex.position.transform(@transformation) }
         @points.reverse! if flipped?
+        @points
       end
-      @points
     end
 
     def bounds
       @bounds ||= Geom::BoundingBox.new.add(points)
-      @bounds
     end
 
     def segments
       @segments ||= points.each_cons(2).to_a.flatten(1)
-      @segments
     end
 
     # -----
 
     def vertex_manipulators
       @vertex_manipulators ||= @loop.vertices.map { |vertex| VertexManipulator.new(vertex, @transformation) }
-      @vertex_manipulators
     end
 
     # -----

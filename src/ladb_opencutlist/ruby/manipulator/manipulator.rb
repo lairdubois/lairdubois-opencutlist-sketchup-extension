@@ -25,12 +25,10 @@ module Ladb::OpenCutList
 
     def flipped?
       @flipped ||= TransformationUtils.flipped?(@transformation)
-      @flipped
     end
 
     def skewed?
       @skewed ||= TransformationUtils.skewed?(@transformation)
-      @skewed
     end
 
     # -----

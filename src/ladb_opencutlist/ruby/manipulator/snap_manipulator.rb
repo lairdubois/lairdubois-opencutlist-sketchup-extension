@@ -25,17 +25,14 @@ module Ladb::OpenCutList
 
     def position
       @position ||= @snap.position.transform(@transformation)
-      @position
     end
 
     def direction
       @direction ||= @snap.direction.transform(@transformation).normalize
-      @direction
     end
 
     def up
       @up ||= @snap.up.transform(@transformation).normalize
-      @up
     end
 
     # -----
