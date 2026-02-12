@@ -116,6 +116,7 @@ core:
       smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
+      smart_join: ""
       smart_export: $t(core.toolbar.command.smart_export)
       reset_dialog_position: Resetujte polohu okna
   toolbar:
@@ -128,6 +129,7 @@ core:
       smart_reshape: Předělat díly
       smart_paint: Materiály dílů
       smart_axes: Orientace dílů
+      smart_join: ""
       smart_export: Export dílů
   messagebox:
     dir_override: |
@@ -477,11 +479,11 @@ tab:
         *OpenCutList pak bude počítat 2 díly o tloušťce 19 mm místo 1 dílu o tloušťce 38 mm.*
       cut_options: $t(tab.materials.edit_material.cut_options)
       length_increase: $t(tab.materials.edit_material.length_increase)
-      length_increase_help: Na konečnou šířku byl aplikován nadměrný rozměr pro definování **nezpracované šířky**.
+      length_increase_help: Na konečnou šířku byl aplikován nadměrný rozměr pro definování **nezpracované šířky**.  # TODO: singular version of tab.materials.edit_material.length_increase
       width_increase: $t(tab.materials.edit_material.width_increase)
-      width_increase_help: Na konečnou šířku byl aplikován nadměrný rozměr pro definování **nezpracované šířky**.
+      width_increase_help: Na konečnou šířku byl aplikován nadměrný rozměr pro definování **nezpracované šířky**. # TODO: singular version of tab.materials.edit_material.width_increase
       thickness_increase: $t(tab.materials.edit_material.thickness_increase)
-      thickness_increase_help: Na tloušťku byl aplikován nadměrný rozměr pro definování **hrubé tloušťky**.
+      thickness_increase_help: Na tloušťku byl aplikován nadměrný rozměr pro definování **hrubé tloušťky**. # TODO: singular version of tab.materials.edit_material.thickness_increase
       description: Popis
       description_help: |
         *Popis* vám umožňuje poskytnout personalizované informace o každé definované části.
@@ -1073,6 +1075,7 @@ tab:
       option_irregular_allowed_rotations_0: Ne
       option_irregular_allowed_rotations_90: Kroky po 90°
       option_irregular_allowed_rotations_180: Kroky po 180°
+      option_irregular_allowed_rotations_free: ""
       option_irregular_allow_mirroring: Zrcadlení povoleno
       option_irregular_allow_mirroring_help: |
         Definuje, zda je pro umístění povoleno zrcadlení dílce.
@@ -2100,6 +2103,8 @@ tool:
       zero_division: "Dělení nulou"
       lt_min_distance: "Vzdálenost {{ value1 }} je menší než minimální vzdálenost {{ value2 }}"
       gt_max_distance: "Vzdálenost {{ value1 }} je větší než maximální vzdálenost {{ value2 }}"
+      locked_part: ""
+      selection_contains_locked_entities: ""
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2149,6 +2154,10 @@ tool:
     action_option_options_pull_centered: Výškové vycentrování
     action_option_options_pull_centered_status: Kreslení 3D tělesa od středu
     action_option_options_pull_locked_status: Zamknout výšku na jedné ose
+    action_option_options_draw_in: ""
+    action_option_options_draw_in_0: ""
+    action_option_options_draw_in_1: ""
+    action_option_options_draw_in_status: ""
     action_option_options_ask_name: Pojmenování dílců
     action_option_options_ask_name_status: Ruční zadání názvů dílců
     action_measure_locked_status: Zamknout poslední měření
@@ -2181,9 +2190,6 @@ tool:
     action_option_copy_measure_type_outside_status: Vzdálenost včetně dílců
     action_option_copy_measure_type_centered_status: Vzdálenost mezi středy dílců
     action_option_copy_measure_type_inside_status: Vzdálenost mezi dílci
-    action_option_move_measure_type_outside_status: Vzdálenost včetně dílce
-    action_option_move_measure_type_centered_status: Vzdálenost po střed dílce
-    action_option_move_measure_type_inside_status: Vzdálenost po dílec
     action_option_axes_active_status: Manipulace podél os
     action_option_axes_context_status: Manipulovat podél os skupiny nebo dílců obsahující díl
     action_option_axes_entity_status: Manipulace podél os dílu
@@ -2288,6 +2294,9 @@ tool:
     error:
       not_part: Cílový objekt není díl (komponenty)
       not_orientable: Typ tohoto dílce neumožňuje orientaci
+  smart_join:
+    title: ""
+    action_0: "" # TODO: It's currently just for dev purposes
   smart_export:
     title: Export
     action_0: Export 3D dílu

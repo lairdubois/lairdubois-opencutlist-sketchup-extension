@@ -116,6 +116,7 @@ core:
       smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
+      smart_join: ""
       smart_export: $t(core.toolbar.command.smart_export)
       reset_dialog_position: Ripristina la Posizione della Finestra
   toolbar:
@@ -128,6 +129,7 @@ core:
       smart_reshape: Rimodellare le parti
       smart_paint: Colorare parti
       smart_axes: Orienta gli elementi
+      smart_join: ""
       smart_export: Esporta elementi
   messagebox:
     dir_override: |
@@ -477,11 +479,11 @@ tab:
         *OpenCutList conterà 2 pezzi da 19 mm di spessore anzichè uno da 38 mm.*
       cut_options: $t(tab.materials.edit_material.cut_options)
       length_increase: $t(tab.materials.edit_material.length_increase)
-      length_increase_help: Margine applicato alla lunghezza utile del pezzo per definirne la **lunghezza grezza**.
+      length_increase_help: Margine applicato alla lunghezza utile del pezzo per definirne la **lunghezza grezza**.  # TODO: singular version of tab.materials.edit_material.length_increase
       width_increase: $t(tab.materials.edit_material.width_increase)
-      width_increase_help: Margine applicato alla larghezza utile del pezzo per definirne la **larghezza grezza**.
+      width_increase_help: Margine applicato alla larghezza utile del pezzo per definirne la **larghezza grezza**. # TODO: singular version of tab.materials.edit_material.width_increase
       thickness_increase: $t(tab.materials.edit_material.thickness_increase)
-      thickness_increase_help: Margine applicato allo spessore utile del pezzo per definirne lo **spessore grezzo**.
+      thickness_increase_help: Margine applicato allo spessore utile del pezzo per definirne lo **spessore grezzo**. # TODO: singular version of tab.materials.edit_material.thickness_increase
       description: Descrizione
       description_help: |
         La *Descrizione* permette di fornire informazioni personalizzate su ogni definizione di parte.
@@ -1073,6 +1075,7 @@ tab:
       option_irregular_allowed_rotations_0: Nessuna
       option_irregular_allowed_rotations_90: Passi di 90°
       option_irregular_allowed_rotations_180: Passi di 180°
+      option_irregular_allowed_rotations_free: ""
       option_irregular_allow_mirroring: Specchiatura consentita
       option_irregular_allow_mirroring_help: |
         Definisce se la specchiatura nel posizionamento degli elementi sia consentita.
@@ -2100,6 +2103,8 @@ tool:
       zero_division: "Divisione per zero"
       lt_min_distance: "La distanza {{ value1 }} è inferiore alla distanza minima {{ value2 }}"
       gt_max_distance: "La distanza {{ value1 }} è superiore alla distanza massima di {{ value2 }}"
+      locked_part: ""
+      selection_contains_locked_entities: ""
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2149,6 +2154,10 @@ tool:
     action_option_options_pull_centered: Elevazione centrata
     action_option_options_pull_centered_status: Centra l'elevazione sul primo punto
     action_option_options_pull_locked_status: Bloccare l'elevazione su un asse
+    action_option_options_draw_in: ""
+    action_option_options_draw_in_0: ""
+    action_option_options_draw_in_1: ""
+    action_option_options_draw_in_status: ""
     action_option_options_ask_name: Nomenclatura delle parti
     action_option_options_ask_name_status: Definisci manualmente i nomi degli elementi
     action_measure_locked_status: Blocca sull'ultima misura
@@ -2181,9 +2190,6 @@ tool:
     action_option_copy_measure_type_outside_status: Misura esterna
     action_option_copy_measure_type_centered_status: Misura da centro a centro
     action_option_copy_measure_type_inside_status: Misura tra i pezzi
-    action_option_move_measure_type_outside_status: Misura esterna
-    action_option_move_measure_type_centered_status: Misura al centro
-    action_option_move_measure_type_inside_status: Misura interna
     action_option_axes_active_status: Sposta lungo l'asse attivo
     action_option_axes_context_status: Modificare lungo gli assi del gruppo o del componente contenente il pezzo
     action_option_axes_entity_status: Modifica su un asse dell'elemento
@@ -2288,6 +2294,9 @@ tool:
     error:
       not_part: La destinazione non è un elemento (componente)
       not_orientable: Questo elemento non consente di cambiarne l'orientamento
+  smart_join:
+    title: ""
+    action_0: "" # TODO: It's currently just for dev purposes
   smart_export:
     title: Esporta
     action_0: Esporta un elemento 3D

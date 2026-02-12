@@ -116,6 +116,7 @@ core:
       smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
+      smart_join: ""
       smart_export: $t(core.toolbar.command.smart_export)
       reset_dialog_position: Zresetuj położenie okna
   toolbar:
@@ -128,6 +129,7 @@ core:
       smart_reshape: Przebudować pomieszczenia
       smart_paint: Malowanie części
       smart_axes: Orientuj części
+      smart_join: ""
       smart_export: Eksportuj części
   messagebox:
     dir_override: |
@@ -471,11 +473,11 @@ tab:
         *Wtedy OpenCutList policzy 2 części o grubości 19mm zamiast 1 części o grubości 38mm.*
       cut_options: $t(tab.materials.edit_material.cut_options)
       length_increase: $t(tab.materials.edit_material.length_increase)
-      length_increase_help: ""
+      length_increase_help: ""  # TODO: singular version of tab.materials.edit_material.length_increase
       width_increase: $t(tab.materials.edit_material.width_increase)
-      width_increase_help: ""
+      width_increase_help: "" # TODO: singular version of tab.materials.edit_material.width_increase
       thickness_increase: $t(tab.materials.edit_material.thickness_increase)
-      thickness_increase_help: ""
+      thickness_increase_help: "" # TODO: singular version of tab.materials.edit_material.thickness_increase
       description: Opis
       description_help: |
         Opcja *Opis* umożliwia podanie spersonalizowanych informacji na temat każdej definicji części.
@@ -1067,6 +1069,7 @@ tab:
       option_irregular_allowed_rotations_0: Brak
       option_irregular_allowed_rotations_90: Obrót co 90°
       option_irregular_allowed_rotations_180: Obrót co 180°
+      option_irregular_allowed_rotations_free: ""
       option_irregular_allow_mirroring: Odbicie lustrzane dozwolone
       option_irregular_allow_mirroring_help: |
         Określa, czy odbicie lustrzane elementu jest dozwolone podczas umieszczania.
@@ -2094,6 +2097,8 @@ tool:
       zero_division: "Dzielenie przez zero"
       lt_min_distance: "Odległość {{ value1 }} jest mniejsza niż minimalna odległość {{ value2 }}"
       gt_max_distance: "Odległość {{ value1 }} jest większa niż maksymalna odległość {{ value2 }}"
+      locked_part: ""
+      selection_contains_locked_entities: ""
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2143,6 +2148,10 @@ tool:
     action_option_options_pull_centered: Wysokość wyśrodkowana
     action_option_options_pull_centered_status: Wyśrodkuj wysokość względem pierwszego punktu
     action_option_options_pull_locked_status: ""
+    action_option_options_draw_in: ""
+    action_option_options_draw_in_0: ""
+    action_option_options_draw_in_1: ""
+    action_option_options_draw_in_status: ""
     action_option_options_ask_name: Nadawanie nazw częściom
     action_option_options_ask_name_status: Ręczne wprowadzanie nazw części
     action_measure_locked_status: Zablokuj na ostatnim pomiarze
@@ -2175,9 +2184,6 @@ tool:
     action_option_copy_measure_type_outside_status: Pomiar zewnętrzny
     action_option_copy_measure_type_centered_status: Mierz od środka do środka
     action_option_copy_measure_type_inside_status: Pomiar pomiędzy częściami
-    action_option_move_measure_type_outside_status: Pomiar zewnętrzny
-    action_option_move_measure_type_centered_status: Mierz w środku
-    action_option_move_measure_type_inside_status: Pomiar wewnątrz
     action_option_axes_active_status: Manipuluj wzdłuż aktywnych osi
     action_option_axes_context_status: Manipuluj wzdłuż osi grupy lub komponentu zawierającego element
     action_option_axes_entity_status: Manipuluj wzdłuż osi elementu
@@ -2282,6 +2288,9 @@ tool:
     error:
       not_part: Obiekt docelowy nie jest częścią (komponentem)
       not_orientable: Typ tej części nie pozwala na jej orientację
+  smart_join:
+    title: ""
+    action_0: "" # TODO: It's currently just for dev purposes
   smart_export:
     title: Eksportuj
     action_0: Eksportuj część 3D

@@ -129,7 +129,7 @@ core:
       smart_reshape: Teile umgestalten
       smart_paint: Teile einfärben
       smart_axes: Teile orientieren
-      smart_join: Teile zusammenbauen
+      smart_join: Teile zusammenstellen
       smart_export: Teile exportieren
   messagebox:
     dir_override: |
@@ -479,11 +479,11 @@ tab:
         *OpenCutList zählt dann 2 Teile mit 19mm Dicke statt 1 Teil mit 38mm Dicke.*
       cut_options: $t(tab.materials.edit_material.cut_options)
       length_increase: $t(tab.materials.edit_material.length_increase)
-      length_increase_help: Übermaß welches das **Längenrohmaß** vergrössert.
+      length_increase_help: Übermaß welches das **Längenrohmaß** vergrössert.  # TODO: singular version of tab.materials.edit_material.length_increase
       width_increase: $t(tab.materials.edit_material.width_increase)
-      width_increase_help: Übermaß welches das **Breitenrohmaß** vergrössert.
+      width_increase_help: Übermaß welches das **Breitenrohmaß** vergrössert. # TODO: singular version of tab.materials.edit_material.width_increase
       thickness_increase: $t(tab.materials.edit_material.thickness_increase)
-      thickness_increase_help: Übermaß welches das **Dickerohmaß** vergrössert.
+      thickness_increase_help: Übermaß welches das **Dickerohmaß** vergrössert. # TODO: singular version of tab.materials.edit_material.thickness_increase
       description: Beschreibung
       description_help: |
         Die *Beschreibung* ermöglicht es Ihnen, benutzerdefinierte Informationen zu jeder Teildefinition anzugeben.
@@ -2156,8 +2156,8 @@ tool:
     action_option_options_pull_locked_status: Höhe auf einer Achse sperren
     action_option_options_draw_in: Zeichnen in
     action_option_options_draw_in_0: Zeichnen im aktiven Element
-    action_option_options_draw_in_1: Zeichnen im Elternteil des ersten Punkts
-    action_option_options_draw_in_status: Zeichnen Sie im Elternteil des vom ersten Punkt ausgewählten Teils
+    action_option_options_draw_in_1: Zeichnen im übergeordneten Teil des ersten Punktes
+    action_option_options_draw_in_status: "Zeichnen im übergeordneten Element des Teils, auf das der erste Punkt bezieht"
     action_option_options_ask_name: Benennung der Teile
     action_option_options_ask_name_status: Namen der Teile manuell eingeben
     action_measure_locked_status: Auf die letzte Messung fixieren
@@ -2296,7 +2296,7 @@ tool:
       not_orientable: Der Typ dieses Teils lässt keine Orientierung zu
   smart_join:
     title: Zusammenstellen
-    action_0: Touch-Touch
+    action_0: Touch-Touch # TODO: It's currently just for dev purposes
   smart_export:
     title: Exportieren
     action_0: 3D Teil exportieren

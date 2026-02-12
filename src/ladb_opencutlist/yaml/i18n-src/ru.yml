@@ -116,6 +116,7 @@ core:
       smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
+      smart_join: ""
       smart_export: $t(core.toolbar.command.smart_export)
       reset_dialog_position: Сброс положения окна
   toolbar:
@@ -128,6 +129,7 @@ core:
       smart_reshape: Редактирование деталей
       smart_paint: Раскраска деталей
       smart_axes: Ориентация деталей
+      smart_join: ""
       smart_export: Экспорт деталей
   messagebox:
     dir_override: |
@@ -477,11 +479,11 @@ tab:
         *OpenCutList будет считать 2 детали толщиной 19 мм вместо 1 детали толщиной 38 мм.*
       cut_options: $t(tab.materials.edit_material.cut_options)
       length_increase: $t(tab.materials.edit_material.length_increase)
-      length_increase_help: "Припуск, добавляемый к габаритной длине детали для определения её **длины раскроя**."
+      length_increase_help: "Припуск, добавляемый к габаритной длине детали для определения её **длины раскроя**."  # TODO: singular version of tab.materials.edit_material.length_increase
       width_increase: $t(tab.materials.edit_material.width_increase)
-      width_increase_help: "Припуск, добавляемый к габаритной ширине детали для определения её **ширины раскроя**."
+      width_increase_help: "Припуск, добавляемый к габаритной ширине детали для определения её **ширины раскроя**." # TODO: singular version of tab.materials.edit_material.width_increase
       thickness_increase: $t(tab.materials.edit_material.thickness_increase)
-      thickness_increase_help: "Припуск, добавляемый к габаритной толщине детали для определения её **толщины раскроя**."
+      thickness_increase_help: "Припуск, добавляемый к габаритной толщине детали для определения её **толщины раскроя**." # TODO: singular version of tab.materials.edit_material.thickness_increase
       description: Описание
       description_help: |
         Параметр *Описание* дает возможность задать необходимую уточняющую информацию по детали.
@@ -1073,6 +1075,7 @@ tab:
       option_irregular_allowed_rotations_0: Нет
       option_irregular_allowed_rotations_90: Шаг 90°
       option_irregular_allowed_rotations_180: Шаг 180°
+      option_irregular_allowed_rotations_free: ""
       option_irregular_allow_mirroring: Разрешить отражение
       option_irregular_allow_mirroring_help: |
         Определяет, разрешено ли зеркальное отражение детали.
@@ -2100,6 +2103,8 @@ tool:
       zero_division: "Деление на ноль"
       lt_min_distance: "Расстояние {{ value1 }} меньше минимального {{ value2 }}"
       gt_max_distance: "Расстояние {{ value1 }} превышает максимальное расстояние {{ value2 }}"
+      locked_part: ""
+      selection_contains_locked_entities: ""
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2149,6 +2154,10 @@ tool:
     action_option_options_pull_centered: Центр для вытягивания
     action_option_options_pull_centered_status: Первым кликом задайте центр вытягивания
     action_option_options_pull_locked_status: Блокировка подъема по оси
+    action_option_options_draw_in: ""
+    action_option_options_draw_in_0: ""
+    action_option_options_draw_in_1: ""
+    action_option_options_draw_in_status: ""
     action_option_options_ask_name: Задать имена деталям
     action_option_options_ask_name_status: Ввод названий деталей вручную
     action_measure_locked_status: Фиксация результатов последнего измерения
@@ -2181,9 +2190,6 @@ tool:
     action_option_copy_measure_type_outside_status: Внешнее измерение
     action_option_copy_measure_type_centered_status: Измерение между центрами
     action_option_copy_measure_type_inside_status: Измерение между деталями
-    action_option_move_measure_type_outside_status: Внешнее измерение
-    action_option_move_measure_type_centered_status: Измерение по центру
-    action_option_move_measure_type_inside_status: Внутренние измерения
     action_option_axes_active_status: Перемещение по активным осям
     action_option_axes_context_status: "Перемещение по осям группы или компонента, содержащего деталь"
     action_option_axes_entity_status: Перемещение по осям детали
@@ -2288,6 +2294,9 @@ tool:
     error:
       not_part: Целевой объект не является частью (компонентом)
       not_orientable: Тип этой детали не позволяет сориентировать ее по осям
+  smart_join:
+    title: ""
+    action_0: "" # TODO: It's currently just for dev purposes
   smart_export:
     title: Экспорт
     action_0: Экспорт 3D-детали
