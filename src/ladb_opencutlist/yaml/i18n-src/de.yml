@@ -2103,6 +2103,8 @@ tool:
       zero_division: "Division durch Null"
       lt_min_distance: "Der Abstand {{ value1 }} ist kleiner als der Mindestabstand von {{ value2 }}"
       gt_max_distance: "Der Abstand {{ value1 }} ist größer als der Maximalabstand von {{ value2 }}"
+      locked_part: Dieses Teil ist gesperrt
+      selection_contains_locked_entities: Die Auswahl enthält gesperrte Entitäten
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
