@@ -479,11 +479,11 @@ tab:
         *OpenCutList will then count 2 parts of 19mm thickness instead of 1 part of 38mm.*
       cut_options: $t(tab.materials.edit_material.cut_options)
       length_increase: $t(tab.materials.edit_material.length_increase)
-      length_increase_help: Oversize applied to the finished length to define the **raw length**.
+      length_increase_help: Oversize applied to the finished length to define the **raw length**.  # TODO: singular version of tab.materials.edit_material.length_increase
       width_increase: $t(tab.materials.edit_material.width_increase)
-      width_increase_help: Oversize applied to the finished width to define the **raw width**.
+      width_increase_help: Oversize applied to the finished width to define the **raw width**. # TODO: singular version of tab.materials.edit_material.width_increase
       thickness_increase: $t(tab.materials.edit_material.thickness_increase)
-      thickness_increase_help: Oversize applied to the thickness to define the **raw thickness**.
+      thickness_increase_help: Oversize applied to the thickness to define the **raw thickness**. # TODO: singular version of tab.materials.edit_material.thickness_increase
       description: Description
       description_help: |
         The *Description* provides a personalized information on each part definition.
@@ -2103,6 +2103,8 @@ tool:
       zero_division: "Division by zero"
       lt_min_distance: "The distance {{ value1 }} is less than the minimum distance of {{ value2 }}"
       gt_max_distance: "The distance {{ value1 }} is greater than the maximum distance of {{ value2 }}"
+      locked_part: This part is locked
+      selection_contains_locked_entities: The selection contains locked entities
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2294,7 +2296,7 @@ tool:
       not_orientable: The type of this part does not allow orienting it
   smart_join:
     title: Assemble
-    action_0: Touch-Touch
+    action_0: Touch-Touch # TODO: It's currently just for dev purposes
   smart_export:
     title: Export
     action_0: Export 3D Part

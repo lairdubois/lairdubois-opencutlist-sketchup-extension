@@ -116,6 +116,7 @@ core:
       smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
+      smart_join: ""
       smart_export: $t(core.toolbar.command.smart_export)
       reset_dialog_position: Reinicializar a posição da janela
   toolbar:
@@ -128,6 +129,7 @@ core:
       smart_reshape: Remodelar peças
       smart_paint: Pintar Peças
       smart_axes: Orientação das Peças
+      smart_join: ""
       smart_export: Exportar as Peças
   messagebox:
     dir_override: |
@@ -471,11 +473,11 @@ tab:
         *OpenCutList contará então 2 peças de 19mm de espessura ao invés de 1 peça de 38mm de espessura*
       cut_options: $t(tab.materials.edit_material.cut_options)
       length_increase: $t(tab.materials.edit_material.length_increase)
-      length_increase_help: ""
+      length_increase_help: ""  # TODO: singular version of tab.materials.edit_material.length_increase
       width_increase: $t(tab.materials.edit_material.width_increase)
-      width_increase_help: ""
+      width_increase_help: "" # TODO: singular version of tab.materials.edit_material.width_increase
       thickness_increase: $t(tab.materials.edit_material.thickness_increase)
-      thickness_increase_help: ""
+      thickness_increase_help: "" # TODO: singular version of tab.materials.edit_material.thickness_increase
       description: Descrição
       description_help: |
         A *Descrição* permite que você forneça informações personalizadas sobre cada definição de peça.
@@ -1067,6 +1069,7 @@ tab:
       option_irregular_allowed_rotations_0: Nenhum
       option_irregular_allowed_rotations_90: Passo de 90°
       option_irregular_allowed_rotations_180: Passo de 180°
+      option_irregular_allowed_rotations_free: ""
       option_irregular_allow_mirroring: Espelhamento permitido
       option_irregular_allow_mirroring_help: |
         Define se o espelhamento da peça é permitido para o posicionamento.
@@ -2094,6 +2097,8 @@ tool:
       zero_division: "Divisão por zero"
       lt_min_distance: "A distância {{ value1 }} é menor que a distância mínima de {{ value2 }}"
       gt_max_distance: "A distância {{ value1 }} é superior à distância máxima de {{ value2 }}"
+      locked_part: ""
+      selection_contains_locked_entities: ""
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2143,6 +2148,10 @@ tool:
     action_option_options_pull_centered: Elevação Centralizada
     action_option_options_pull_centered_status: Centralizar a elevação no primeiro ponto
     action_option_options_pull_locked_status: Bloquear a elevação em um eixo
+    action_option_options_draw_in: ""
+    action_option_options_draw_in_0: ""
+    action_option_options_draw_in_1: ""
+    action_option_options_draw_in_status: ""
     action_option_options_ask_name: Nomeação das Peças
     action_option_options_ask_name_status: Inserir manualmente o nome das peças
     action_measure_locked_status: Bloquear na última medida
@@ -2175,9 +2184,6 @@ tool:
     action_option_copy_measure_type_outside_status: Medida externa
     action_option_copy_measure_type_centered_status: Medida de centro a centro
     action_option_copy_measure_type_inside_status: Medida entre as peças
-    action_option_move_measure_type_outside_status: Medida externa
-    action_option_move_measure_type_centered_status: Medida no centro
-    action_option_move_measure_type_inside_status: Medida interna
     action_option_axes_active_status: Manipular ao longo dos eixos ativos
     action_option_axes_context_status: Manipular ao longo dos eixos do grupo ou componente que contém a peça
     action_option_axes_entity_status: Manipular ao longo dos eixos da peça
@@ -2282,6 +2288,9 @@ tool:
     error:
       not_part: O objeto de destino não é uma peça (componente)
       not_orientable: O tipo desta peça não permite que a orientação seja modificada
+  smart_join:
+    title: ""
+    action_0: "" # TODO: It's currently just for dev purposes
   smart_export:
     title: Exportar
     action_0: Exportar uma Peça 3D

@@ -116,6 +116,7 @@ core:
       smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
+      smart_join: ""
       smart_export: $t(core.toolbar.command.smart_export)
       reset_dialog_position: أعد تعيين موضع النافذة
   toolbar:
@@ -128,6 +129,7 @@ core:
       smart_reshape: إعادة تشكيل القِطع
       smart_paint: اصبغ القِطع
       smart_axes: وجِّه القطع
+      smart_join: ""
       smart_export: صدّر القِطع
   messagebox:
     dir_override: |
@@ -477,11 +479,11 @@ tab:
         *عندها ستضع OpenCutList في حسابها أن هناك قطعتين سمكهما 19 مم بدلا من قطعة واحدة سمكها 38 مم.*
       cut_options: $t(tab.materials.edit_material.cut_options)
       length_increase: $t(tab.materials.edit_material.length_increase)
-      length_increase_help: طُبق تمديد على الطول لتحديد **الطول الأولي**.
+      length_increase_help: طُبق تمديد على الطول لتحديد **الطول الأولي**.  # TODO: singular version of tab.materials.edit_material.length_increase
       width_increase: $t(tab.materials.edit_material.width_increase)
-      width_increase_help: طُبق تمديد على العرض لتحديد **العرض الأولي**.
+      width_increase_help: طُبق تمديد على العرض لتحديد **العرض الأولي**. # TODO: singular version of tab.materials.edit_material.width_increase
       thickness_increase: $t(tab.materials.edit_material.thickness_increase)
-      thickness_increase_help: طُبق تمديد على السُّمك لتحديد **السمك الأولي**.
+      thickness_increase_help: طُبق تمديد على السُّمك لتحديد **السمك الأولي**. # TODO: singular version of tab.materials.edit_material.thickness_increase
       description: تعليق وصفيّ
       description_help: |
         يتيح لك *الوصف* معلومات معلومات مخصصة عن تعريف كل قطعة.
@@ -1073,6 +1075,7 @@ tab:
       option_irregular_allowed_rotations_0: لا شيء
       option_irregular_allowed_rotations_90: خطوة 90°
       option_irregular_allowed_rotations_180: خطوة 180°
+      option_irregular_allowed_rotations_free: ""
       option_irregular_allow_mirroring: الانعكاس مسموح
       option_irregular_allow_mirroring_help: |
         يحدد ما إذا كان تطبيق الانعكاس على القطعة مسموحًا أثناء وضعها
@@ -2100,6 +2103,8 @@ tool:
       zero_division: "القسمة على الصفر"
       lt_min_distance: "المسافة {{ value1 }} أقل من المسافة الدنيا البالغة {{ value2 }}"
       gt_max_distance: "المسافة {{ value1 }} أكبر من المسافة القصوى {{ value2 }}"
+      locked_part: ""
+      selection_contains_locked_entities: ""
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2149,6 +2154,10 @@ tool:
     action_option_options_pull_centered: ارتفاع انطلاقا من المركز
     action_option_options_pull_centered_status: توسيط الارتفاع على النقطة الأولى
     action_option_options_pull_locked_status: قفل الارتفاع على محور واحد
+    action_option_options_draw_in: ""
+    action_option_options_draw_in_0: ""
+    action_option_options_draw_in_1: ""
+    action_option_options_draw_in_status: ""
     action_option_options_ask_name: تسمية القِطع
     action_option_options_ask_name_status: إدخال تسمية القِطع يدويًا
     action_measure_locked_status: قفل على آخر قياس
@@ -2181,9 +2190,6 @@ tool:
     action_option_copy_measure_type_outside_status: القياس من الخارج
     action_option_copy_measure_type_centered_status: القياس من مركز إلى مركز
     action_option_copy_measure_type_inside_status: القياس بين القِطع
-    action_option_move_measure_type_outside_status: القياس من الخارج
-    action_option_move_measure_type_centered_status: القياس من المركز
-    action_option_move_measure_type_inside_status: القياس من الداخل
     action_option_axes_active_status: المعالجة على طول المحاور النشطة
     action_option_axes_context_status: المعالجة على طول محاور المجموعة أو العنصر الذي يحتوي على القِطعة
     action_option_axes_entity_status: المعالجة على طول محاور القطعة
@@ -2288,6 +2294,9 @@ tool:
     error:
       not_part: المجسم المستهدف ليس قِطعة (عنصر)
       not_orientable: نوع هذه القِطعة لا يسمح بتوجيهها
+  smart_join:
+    title: ""
+    action_0: "" # TODO: It's currently just for dev purposes
   smart_export:
     title: تصدير
     action_0: صدّر قِطعة ثلاثية البعد

@@ -116,6 +116,7 @@ core:
       smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
+      smart_join: ""
       smart_export: $t(core.toolbar.command.smart_export)
       reset_dialog_position: 重置窗口位置
   toolbar:
@@ -128,6 +129,7 @@ core:
       smart_reshape: ""
       smart_paint: 部件材质
       smart_axes: 部件方向
+      smart_join: ""
       smart_export: 导出部件
   messagebox:
     dir_override: |
@@ -471,11 +473,11 @@ tab:
         *OpenCutList 将计算出2个厚度为 19mm 的部件, 而不是1个厚度为 38mm 的部件.*
       cut_options: $t(tab.materials.edit_material.cut_options)
       length_increase: $t(tab.materials.edit_material.length_increase)
-      length_increase_help: ""
+      length_increase_help: ""  # TODO: singular version of tab.materials.edit_material.length_increase
       width_increase: $t(tab.materials.edit_material.width_increase)
-      width_increase_help: ""
+      width_increase_help: "" # TODO: singular version of tab.materials.edit_material.width_increase
       thickness_increase: $t(tab.materials.edit_material.thickness_increase)
-      thickness_increase_help: ""
+      thickness_increase_help: "" # TODO: singular version of tab.materials.edit_material.thickness_increase
       description: 描述
       description_help: |
         *描述* 允许您在每个部件定义上提供个性化的信息.
@@ -1067,6 +1069,7 @@ tab:
       option_irregular_allowed_rotations_0: 无
       option_irregular_allowed_rotations_90: 间隔90°
       option_irregular_allowed_rotations_180: 间隔180°
+      option_irregular_allowed_rotations_free: ""
       option_irregular_allow_mirroring: 允许镜象
       option_irregular_allow_mirroring_help: |
         定义是否允许对部件进行镜像放置
@@ -2090,6 +2093,8 @@ tool:
       zero_division: ""
       lt_min_distance: "距离 {{ value1 }} 小于最小距离 {{ value2 }}"
       gt_max_distance: ""
+      locked_part: ""
+      selection_contains_locked_entities: ""
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2139,6 +2144,10 @@ tool:
     action_option_options_pull_centered: 高度居中
     action_option_options_pull_centered_status: 以第一个点为基准居中高度
     action_option_options_pull_locked_status: ""
+    action_option_options_draw_in: ""
+    action_option_options_draw_in_0: ""
+    action_option_options_draw_in_1: ""
+    action_option_options_draw_in_status: ""
     action_option_options_ask_name: 部件命名
     action_option_options_ask_name_status: 手动输入部件名称
     action_measure_locked_status: 锁定为上一次测量
@@ -2171,9 +2180,6 @@ tool:
     action_option_copy_measure_type_outside_status: 外部测量
     action_option_copy_measure_type_centered_status: 中心到中心测量
     action_option_copy_measure_type_inside_status: 测量部件之间的距离
-    action_option_move_measure_type_outside_status: 外部测量
-    action_option_move_measure_type_centered_status: 以中心测量
-    action_option_move_measure_type_inside_status: 内部测量
     action_option_axes_active_status: 沿活动轴操作
     action_option_axes_context_status: 沿群组轴或包含部件的组件的轴操作
     action_option_axes_entity_status: 沿部件轴操作
@@ -2278,6 +2284,9 @@ tool:
     error:
       not_part: 目标对象不是部件 (组件)
       not_orientable: 此部件类型不允许进行定向操作
+  smart_join:
+    title: ""
+    action_0: "" # TODO: It's currently just for dev purposes
   smart_export:
     title: 导出
     action_0: 导出3D模型

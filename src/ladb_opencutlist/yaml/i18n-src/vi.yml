@@ -116,6 +116,7 @@ core:
       smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
+      smart_join: ""
       smart_export: $t(core.toolbar.command.smart_export)
       reset_dialog_position: Đặt lại vị trí cửa sổ
   toolbar:
@@ -128,6 +129,7 @@ core:
       smart_reshape: Định hình lại các bộ phận
       smart_paint: Tô màu các bộ phận
       smart_axes: Định hướng các bộ phận
+      smart_join: ""
       smart_export: Xuất các bộ phận
   messagebox:
     dir_override: |
@@ -477,11 +479,11 @@ tab:
         *OpenCutList sau đó sẽ đếm 2 phần có độ dày 19mm thay vì 1 phần 38mm.*
       cut_options: $t(tab.materials.edit_material.cut_options)
       length_increase: $t(tab.materials.edit_material.length_increase)
-      length_increase_help: Kích thước lớn hơn mức tiêu chuẩn được áp dụng cho chiều dài thành phẩm để xác định **chiều dài thô**.
+      length_increase_help: Kích thước lớn hơn mức tiêu chuẩn được áp dụng cho chiều dài thành phẩm để xác định **chiều dài thô**.  # TODO: singular version of tab.materials.edit_material.length_increase
       width_increase: $t(tab.materials.edit_material.width_increase)
-      width_increase_help: Kích thước lớn hơn quy định được áp dụng cho chiều rộng hoàn thiện để xác định **chiều rộng thô**.
+      width_increase_help: Kích thước lớn hơn quy định được áp dụng cho chiều rộng hoàn thiện để xác định **chiều rộng thô**. # TODO: singular version of tab.materials.edit_material.width_increase
       thickness_increase: $t(tab.materials.edit_material.thickness_increase)
-      thickness_increase_help: Độ dày được điều chỉnh vượt quá kích thước tiêu chuẩn để xác định **độ dày thô**.
+      thickness_increase_help: Độ dày được điều chỉnh vượt quá kích thước tiêu chuẩn để xác định **độ dày thô**. # TODO: singular version of tab.materials.edit_material.thickness_increase
       description: Mô tả
       description_help: |
         *Mô tả* cho phép bạn cung cấp thông tin được cá nhân hóa về từng định nghĩa bộ phận.
@@ -1073,6 +1075,7 @@ tab:
       option_irregular_allowed_rotations_0: Không có
       option_irregular_allowed_rotations_90: Các bước 90°
       option_irregular_allowed_rotations_180: Các bước 180°
+      option_irregular_allowed_rotations_free: ""
       option_irregular_allow_mirroring: Cho phép đối xứng
       option_irregular_allow_mirroring_help: |
         Xác định xem việc đối xứng bộ phận có được phép để đặt hay không.
@@ -2100,6 +2103,8 @@ tool:
       zero_division: "Chia cho số 0"
       lt_min_distance: "Khoảng cách {{ value1 }} nhỏ hơn khoảng cách tối thiểu {{ value2 }}"
       gt_max_distance: "Khoảng cách {{ value1 }} lớn hơn khoảng cách tối đa của {{ value2 }}"
+      locked_part: ""
+      selection_contains_locked_entities: ""
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2149,6 +2154,10 @@ tool:
     action_option_options_pull_centered: Độ cao trung tâm
     action_option_options_pull_centered_status: Độ cao trung tâm tại điểm đầu tiên
     action_option_options_pull_locked_status: Khóa độ cao trên một trục
+    action_option_options_draw_in: ""
+    action_option_options_draw_in_0: ""
+    action_option_options_draw_in_1: ""
+    action_option_options_draw_in_status: ""
     action_option_options_ask_name: Đặt tên bộ phận
     action_option_options_ask_name_status: Nhập tên bộ phận theo cách thủ công
     action_measure_locked_status: Khóa ở phép đo cuối cùng
@@ -2181,9 +2190,6 @@ tool:
     action_option_copy_measure_type_outside_status: Đo lường bên ngoài
     action_option_copy_measure_type_centered_status: Đo lường trung tâm
     action_option_copy_measure_type_inside_status: Đo lường được thực hiện giữa các bộ phận
-    action_option_move_measure_type_outside_status: Đo lường bên ngoài
-    action_option_move_measure_type_centered_status: Đo lường trung tâm
-    action_option_move_measure_type_inside_status: Đo lường bên trong
     action_option_axes_active_status: Thao tác dọc theo các trục đang hoạt động
     action_option_axes_context_status: Thao tác dọc theo các trục của nhóm hoặc thành phần chứa bộ phận
     action_option_axes_entity_status: Thao tác dọc theo trục bộ phận
@@ -2288,6 +2294,9 @@ tool:
     error:
       not_part: Đối tượng mục tiêu không phải là đối tượng của bộ phận (component)
       not_orientable: Loại bộ phận này không cho phép định hướng nó
+  smart_join:
+    title: ""
+    action_0: "" # TODO: It's currently just for dev purposes
   smart_export:
     title: Xuất
     action_0: Xuất 3D bộ phận

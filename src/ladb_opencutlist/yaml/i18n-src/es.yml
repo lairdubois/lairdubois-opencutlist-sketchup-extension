@@ -116,6 +116,7 @@ core:
       smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
+      smart_join: ""
       smart_export: $t(core.toolbar.command.smart_export)
       reset_dialog_position: Reiniciar la posición de la ventana
   toolbar:
@@ -128,6 +129,7 @@ core:
       smart_reshape: Remodelar piezas
       smart_paint: Colorear piezas
       smart_axes: Orientar piezas
+      smart_join: ""
       smart_export: Exportar piezas
   messagebox:
     dir_override: |
@@ -471,11 +473,11 @@ tab:
         *OpenCutList contará entonces 2 piezas de 19mm de grosor en lugar de 1 pieza de 38mm.*
       cut_options: $t(tab.materials.edit_material.cut_options)
       length_increase: $t(tab.materials.edit_material.length_increase)
-      length_increase_help: ""
+      length_increase_help: ""  # TODO: singular version of tab.materials.edit_material.length_increase
       width_increase: $t(tab.materials.edit_material.width_increase)
-      width_increase_help: ""
+      width_increase_help: "" # TODO: singular version of tab.materials.edit_material.width_increase
       thickness_increase: $t(tab.materials.edit_material.thickness_increase)
-      thickness_increase_help: ""
+      thickness_increase_help: "" # TODO: singular version of tab.materials.edit_material.thickness_increase
       description: Descripción
       description_help: |
         La *Descripción* le permite proporcionar información personalizada sobre la definición de cada pieza.
@@ -1067,6 +1069,7 @@ tab:
       option_irregular_allowed_rotations_0: Ninguna
       option_irregular_allowed_rotations_90: Pasos de 90°
       option_irregular_allowed_rotations_180: Pasos de 180°
+      option_irregular_allowed_rotations_free: ""
       option_irregular_allow_mirroring: Simetría válida
       option_irregular_allow_mirroring_help: |
         Indica si la simetría de la pieza es válida en la ubicación.
@@ -2094,6 +2097,8 @@ tool:
       zero_division: "División por cero"
       lt_min_distance: "La distancia {{ value1 }} es inferior al valor mínimo de {{ value2 }}"
       gt_max_distance: "La distancia {{ value1 }} es superior a la distancia máxima de {{ value2 }}"
+      locked_part: ""
+      selection_contains_locked_entities: ""
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2143,6 +2148,10 @@ tool:
     action_option_options_pull_centered: Elevación centrada
     action_option_options_pull_centered_status: Centrar la elevación en el primer punto
     action_option_options_pull_locked_status: Bloquear la elevación en un eje
+    action_option_options_draw_in: ""
+    action_option_options_draw_in_0: ""
+    action_option_options_draw_in_1: ""
+    action_option_options_draw_in_status: ""
     action_option_options_ask_name: Nombrado de las piezas
     action_option_options_ask_name_status: Elegir manualmente el número de piezas
     action_measure_locked_status: Bloquear con la última medida
@@ -2175,9 +2184,6 @@ tool:
     action_option_copy_measure_type_outside_status: Medir por el exterior
     action_option_copy_measure_type_centered_status: Medir de centro a centro
     action_option_copy_measure_type_inside_status: Medir entre las piezas
-    action_option_move_measure_type_outside_status: Medir por el exterior
-    action_option_move_measure_type_centered_status: Medir hasta el centro
-    action_option_move_measure_type_inside_status: Medir por el interior
     action_option_axes_active_status: Cambiar la longitud de los ejes activos
     action_option_axes_context_status: Modificar la longitud de los ejes del grupo o componente que contienen la pieza
     action_option_axes_entity_status: Modificar la longitud de los ejes de la pieza
@@ -2282,6 +2288,9 @@ tool:
     error:
       not_part: El objeto seleccionado no es una pieza (componente)
       not_orientable: El tipo de esta pieza no permite orientarla
+  smart_join:
+    title: ""
+    action_0: "" # TODO: It's currently just for dev purposes
   smart_export:
     title: Exportar
     action_0: Exportar una pieza 3D

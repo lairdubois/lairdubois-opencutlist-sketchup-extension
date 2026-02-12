@@ -116,6 +116,7 @@ core:
       smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
+      smart_join: ""
       smart_export: $t(core.toolbar.command.smart_export)
       reset_dialog_position: Ablak Pozíció Alaphelyzetbe
   toolbar:
@@ -128,6 +129,7 @@ core:
       smart_reshape: Alkatrészek átformálása
       smart_paint: Alkatrészek Festése
       smart_axes: Alkatrészek Tájolása
+      smart_join: ""
       smart_export: Alkatrészek Exportálása
   messagebox:
     dir_override: |
@@ -471,11 +473,11 @@ tab:
         *Az OpenCutList ekkor 2 db 19mm-es vastagságú táblát fog számolni 1 db 38mm-es helyett.*
       cut_options: $t(tab.materials.edit_material.cut_options)
       length_increase: $t(tab.materials.edit_material.length_increase)
-      length_increase_help: ""
+      length_increase_help: ""  # TODO: singular version of tab.materials.edit_material.length_increase
       width_increase: $t(tab.materials.edit_material.width_increase)
-      width_increase_help: ""
+      width_increase_help: "" # TODO: singular version of tab.materials.edit_material.width_increase
       thickness_increase: $t(tab.materials.edit_material.thickness_increase)
-      thickness_increase_help: ""
+      thickness_increase_help: "" # TODO: singular version of tab.materials.edit_material.thickness_increase
       description: Leírás
       description_help: |
         A *Leírás* személyre szabott információt ad minden alkatrész definícióhoz.
@@ -1067,6 +1069,7 @@ tab:
       option_irregular_allowed_rotations_0: Nincs
       option_irregular_allowed_rotations_90: 90°-os elforgatás
       option_irregular_allowed_rotations_180: 180°-os elforgatás
+      option_irregular_allowed_rotations_free: ""
       option_irregular_allow_mirroring: Tükrözés engedélyezése
       option_irregular_allow_mirroring_help: |
         Meghatározza, hogy az alkatrész tükrözése engedélyezett-e az elhelyezéshez.
@@ -2094,6 +2097,8 @@ tool:
       zero_division: "Nem lehet nullával osztani"
       lt_min_distance: "A(z) {{ value1 }} távolság nem éri el a minimálisan megengedett értéket ami: {{ value2 }}"
       gt_max_distance: "Az {{ value1 }} távolság nagyobb, mint az {{ value2 }} maximális távolság"
+      locked_part: ""
+      selection_contains_locked_entities: ""
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2143,6 +2148,10 @@ tool:
     action_option_options_pull_centered: Középpontos magasság állítás
     action_option_options_pull_centered_status: A középpontól indul kétirányba az emelés
     action_option_options_pull_locked_status: A magasság rögzítése egy tengelyen
+    action_option_options_draw_in: ""
+    action_option_options_draw_in_0: ""
+    action_option_options_draw_in_1: ""
+    action_option_options_draw_in_status: ""
     action_option_options_ask_name: Alkatrészek elnevezése
     action_option_options_ask_name_status: Az alkatrész nevének kézi megadása
     action_measure_locked_status: Zárolás az utolsó mérésre
@@ -2175,9 +2184,6 @@ tool:
     action_option_copy_measure_type_outside_status: Külső mérés
     action_option_copy_measure_type_centered_status: Középponttól középpontig történő mérés
     action_option_copy_measure_type_inside_status: Mérés az alkatrészek között
-    action_option_move_measure_type_outside_status: Kívülről mérve
-    action_option_move_measure_type_centered_status: Mérés középpontból
-    action_option_move_measure_type_inside_status: Belső méret mérése
     action_option_axes_active_status: Kezelés az aktív tengelyek mentén
     action_option_axes_context_status: "Kezelés annak a csoportnak vagy komponensnek a tengelyei mentén, amely tartalmazza az alkatrészt"
     action_option_axes_entity_status: Kezelés az alkatrész tengelyei mentén
@@ -2282,6 +2288,9 @@ tool:
     error:
       not_part: A célobjektum nem alkatrész (komponens)
       not_orientable: Ennek az alkatrésznek a típusa nem teszi lehetővé a tájolását
+  smart_join:
+    title: ""
+    action_0: "" # TODO: It's currently just for dev purposes
   smart_export:
     title: Exportálás
     action_0: 3D alkatrész exportálása
