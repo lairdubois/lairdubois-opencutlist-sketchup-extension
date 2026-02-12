@@ -963,6 +963,12 @@ module Ladb::OpenCutList
 
     # -----
 
+    def _preview_part_box?
+      true
+    end
+
+    # -----
+
     def _add_part_sibling(part_entity_path, part)
       return true if super
       get_active_selection_instances << part_entity_path.last
