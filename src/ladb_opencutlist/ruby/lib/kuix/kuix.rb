@@ -6,7 +6,7 @@ module Ladb::OpenCutList
 
     VK_TAB = 9
     VK_ENTER = 13
-    if Sketchup.platform == :platform_osx
+    if Sketchup.platform == :platform_osx && Sketchup.version_number < 2700000000
       VK_NUMPAD0 = 48
       VK_NUMPAD1 = 49
       VK_NUMPAD2 = 50
@@ -164,9 +164,7 @@ module Ladb::OpenCutList
       def create_cursor(name, hot_x, hot_y)
         cursor_id = nil
         cursor_path = File.join(PLUGIN_DIR,'img', "cursor-#{name}.#{PLUGIN.platform_is_mac? ? 'pdf' : 'svg'}")
-        if cursor_path
-          cursor_id = UI.create_cursor(cursor_path, hot_x, hot_y)
-        end
+        cursor_id = UI.create_cursor(cursor_path, hot_x, hot_y) if cursor_path
         cursor_id
       end
 

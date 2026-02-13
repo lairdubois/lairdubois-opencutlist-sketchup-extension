@@ -2056,28 +2056,18 @@ module Ladb::OpenCutList
       @global_instance_transformation
     end
 
-    # -- Entities --
-
-    def _get_container
-      return @active_selection_path.last if @active_selection_path.is_a?(Array)
-      nil
-    end
-
-    def _get_instances
-      return @active_selection_instances if @active_selection_instances.is_a?(Array)
-      nil
-    end
+    # -- Instances --
 
     def _hide_instances
-      return if (instances = _get_instances).nil? || @unhide_local_instances_transformations.is_a?(Hash)
+      return if (instances = get_active_selection_instances).nil? || @unhide_local_instances_transformations.is_a?(Hash)
       _get_global_instance_transformation(nil)
       _get_drawing_def
       @unhide_local_instances_transformations = instances.map { |instance| [ instance, Geom::Transformation.new(instance.transformation) ] }.to_h
-      instances.each { |instance| instance.move!(Geom::Transformation.scaling(0, 0, 0)) }
+      instances.each { |instance| instance.move!(Geom::Transformation.scaling(0)) }
     end
 
     def _unhide_instances
-      return if !@unhide_local_instances_transformations.is_a?(Hash) || (instances = _get_instances).nil?
+      return if !@unhide_local_instances_transformations.is_a?(Hash) || (instances = get_active_selection_instances).nil?
       instances.each { |instance| instance.move!(@unhide_local_instances_transformations[instance]) }
       @unhide_local_instances_transformations = nil
     end
@@ -2085,7 +2075,7 @@ module Ladb::OpenCutList
     # --
 
     def _get_drawing_def_ipaths
-      return nil if @active_selection_path.nil? || !(instances = _get_instances).is_a?(Array)
+      return nil if @active_selection_path.nil? || !(instances = get_active_selection_instances).is_a?(Array)
       instances.map { |instance| Sketchup::InstancePath.new(@active_selection_path + [ instance ]) }
     rescue
       nil
@@ -2671,13 +2661,6 @@ module Ladb::OpenCutList
 
     # -- INSTANCE --
 
-    def _get_instance
-      if (instances = _get_instances).is_a?(Array)
-        return instances.last
-      end
-      nil
-    end
-
     def _hide_instance
       _hide_instances
     end
@@ -2688,7 +2671,7 @@ module Ladb::OpenCutList
 
     def _select_instance
       model = Sketchup.active_model
-      if model && !(instance = _get_instance).nil?
+      if model && !(instance = _get_active_part_entity).nil?
         selection = model.selection
         selection.clear
         selection.add(instance)
@@ -2762,6 +2745,7 @@ module Ladb::OpenCutList
     include SmartActionHandlerPartHelper
 
     STATE_SELECT = 0
+    STATE_SELECT_MULTIPLE = 7
     STATE_SELECT_RECT = 5
     STATE_SELECT_TREE = 6
     STATE_SELECT_SIBLINGS = 4
@@ -2824,34 +2808,12 @@ module Ladb::OpenCutList
 
       else
 
-        if (entities = selection.select { |entity| entity.respond_to?(:transformation) }).any?
-
-          entities = entities[0,1] unless _allows_multiple_selections?
-          if (first_entity_path = DrawingelementUtils.get_drawingelement_path(entities.first)).is_a?(Array) && first_entity_path.any?
-
-            active_path = first_entity_path[0...-1]
-
-            if entities.one?
-              path = active_path + [ entities.first ]
-              unless (part = _generate_part_from_path(path)).nil?
-                _set_active_part(path, part, false, true)
-              end
-            end
-
-            unless has_active_part?
-              _set_active_selection(active_path, entities)
-            end
-
-            onSelected if has_active_selection?
-
-          end
-
-        end
+        _select_from_model_selection
 
       end
 
       # Clear current selection
-      selection.clear if _clear_selection_on_start
+      selection.clear if _clear_selection_on_start?
 
     end
 
@@ -2867,11 +2829,14 @@ module Ladb::OpenCutList
       when STATE_SELECT
         return @tool.cursor_select_part
 
-      when STATE_SELECT_SIBLINGS
-        return @tool.cursor_select_part_plus
+      when STATE_SELECT_MULTIPLE
+        return @tool.cursor_select_plus_minus
 
       when STATE_SELECT_RECT
         return @tool.cursor_select_rect
+
+      when STATE_SELECT_SIBLINGS
+        return @tool.cursor_select_part_plus
       end
 
       super
@@ -2880,8 +2845,8 @@ module Ladb::OpenCutList
     def get_state_picker(state)
 
       case state
-      when STATE_SELECT, STATE_SELECT_SIBLINGS
-        return SmartPicker.new(tool: @tool, observer: self, pick_point: false)
+      when STATE_SELECT, STATE_SELECT_MULTIPLE, STATE_SELECT_SIBLINGS
+        return SmartPicker.new(tool: @tool, observer: self, pick_point: false, lockable: false)
       end
 
       super
@@ -2895,7 +2860,7 @@ module Ladb::OpenCutList
         return PLUGIN.get_i18n_string("tool.smart_select.state_0_status") +
                ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_select.state_0_to_6_status") + '.'
 
-      when STATE_SELECT_SIBLINGS, STATE_SELECT_RECT, STATE_SELECT_TREE
+      when STATE_SELECT_MULTIPLE, STATE_SELECT_RECT, STATE_SELECT_TREE, STATE_SELECT_SIBLINGS
         return PLUGIN.get_i18n_string("tool.smart_select.state_#{state}_status") + '.'
 
       end
@@ -2906,7 +2871,7 @@ module Ladb::OpenCutList
     # -----
 
     def onToolSuspend(tool, view)
-      tool.clear_2d(LAYER_2D_FLOATING_TOOLS) if STATE_SELECT_TREE
+      tool.clear_2d(LAYER_2D_FLOATING_TOOLS) if @state == STATE_SELECT_TREE
     end
 
     def onToolCancel(tool, reason, view)
@@ -2985,6 +2950,16 @@ module Ladb::OpenCutList
         end
         onSelected
         return true
+
+      when STATE_SELECT_MULTIPLE
+        if (instances = get_active_selection_instances).is_a?(Array) && instances.any?
+          selection = Sketchup.active_model.selection
+          removed_instances = instances.select { |instance| selection.include?(instance) }
+          selection.remove(removed_instances)
+          added_instances = instances.difference(removed_instances)
+          selection.add(added_instances)
+          return true
+        end
 
       when STATE_SELECT_RECT
         if @mouse_down_point_2d.nil?
@@ -3065,6 +3040,9 @@ module Ladb::OpenCutList
             tool.notify_warnings([ 'tool.smart_select.warning.no_active_part' ])
           end
           return true
+        elsif tool.is_key_shift?(key) && _allows_multiple_selections?
+          set_state(STATE_SELECT_MULTIPLE)
+          return true
         end
 
       end
@@ -3079,6 +3057,15 @@ module Ladb::OpenCutList
       when STATE_SELECT
         if (key == VK_UP || key == VK_DOWN) && _can_pick_deeper?
           _pick_deeper(key == VK_UP ? 1 : -1) if has_active_part?
+          return true
+        end
+
+      when STATE_SELECT_MULTIPLE
+        if tool.is_key_shift?(key)
+          _reset_active_part
+          _select_from_model_selection
+          Sketchup.active_model.selection.clear if _clear_selection_on_start?
+          set_state(STATE_SELECT) unless has_active_selection?
           return true
         end
 
@@ -3099,7 +3086,7 @@ module Ladb::OpenCutList
 
       case @state
 
-      when STATE_SELECT
+      when STATE_SELECT, STATE_SELECT_MULTIPLE
         _pick_part(picker, view)
 
       when STATE_SELECT_SIBLINGS
@@ -3121,6 +3108,11 @@ module Ladb::OpenCutList
 
         when STATE_SELECT
           _unhide_instances
+
+        when STATE_SELECT_MULTIPLE
+          _reset_active_part
+          _reset_active_selection
+          _refresh
 
         when STATE_SELECT_RECT
           _reset_active_part
@@ -3231,8 +3223,37 @@ module Ladb::OpenCutList
       false
     end
 
-    def _clear_selection_on_start
+    def _clear_selection_on_start?
       false
+    end
+
+    # -----
+
+    def _select_from_model_selection
+      return if (model = Sketchup.active_model).nil?
+      selection = model.selection
+      if (instances = selection.select { |entity| entity.respond_to?(:transformation) }).any?
+        instances = instances[0,1] unless _allows_multiple_selections?
+        if (first_entity_path = DrawingelementUtils.get_drawingelement_path(instances.first)).is_a?(Array) && first_entity_path.any?
+
+          active_path = first_entity_path[0...-1]
+
+          if instances.one?
+            path = active_path + [ instances.first ]
+            unless (part = _generate_part_from_path(path)).nil?
+              _set_active_part(path, part, false, true)
+            end
+          end
+
+          unless has_active_part?
+            _set_active_selection(active_path, instances)
+          end
+
+          onSelected if has_active_selection?
+
+        end
+
+      end
     end
 
     # -----

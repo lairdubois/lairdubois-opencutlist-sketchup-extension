@@ -18,7 +18,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    attr_reader :cursor_select, :cursor_select_part, :cursor_select_part_plus, :cursor_select_rect
+    attr_reader :cursor_select, :cursor_select_part, :cursor_select_part_plus, :cursor_select_plus_minus, :cursor_select_rect
 
     def initialize(
 
@@ -34,6 +34,7 @@ module Ladb::OpenCutList
       @cursor_select = create_cursor('select', 0, 0)
       @cursor_select_part = create_cursor('select-part', 0, 0)
       @cursor_select_part_plus = create_cursor('select-part-plus', 0, 0)
+      @cursor_select_plus_minus = create_cursor('select-plus-minus', 0, 0)
       @cursor_select_rect = create_cursor('select-rect', 0, 0)
 
     end

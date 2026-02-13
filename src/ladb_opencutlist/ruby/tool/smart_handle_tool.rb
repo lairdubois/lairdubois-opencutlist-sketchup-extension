@@ -72,7 +72,7 @@ module Ladb::OpenCutList
     # -----
 
     attr_reader :callback_action_handler,
-                :cursor_select, :cursor_select_part, :cursor_select_part_plus, :cursor_select_rect, :cursor_select_copy_line, :cursor_select_copy_grid, :cursor_select_move_line, :cursor_select_distribute, :cursor_move, :cursor_move_copy, :cursor_pin_1, :cursor_pin_2
+                :cursor_select, :cursor_select_part, :cursor_select_part_plus, :cursor_select_plus_minus, :cursor_select_rect, :cursor_select_copy_line, :cursor_select_copy_grid, :cursor_select_move_line, :cursor_select_distribute, :cursor_move, :cursor_move_copy, :cursor_pin_1, :cursor_pin_2
 
     def initialize(current_action: nil, callback_action_handler: nil)
       super(current_action: current_action)
@@ -83,6 +83,7 @@ module Ladb::OpenCutList
       @cursor_select = create_cursor('select', 0, 0)
       @cursor_select_part = create_cursor('select-part', 0, 0)
       @cursor_select_part_plus = create_cursor('select-part-plus', 0, 0)
+      @cursor_select_plus_minus = create_cursor('select-plus-minus', 0, 0)
       @cursor_select_rect = create_cursor('select-rect', 0, 0)
       @cursor_select_copy_line = create_cursor('select-copy-line', 0, 0)
       @cursor_select_copy_grid = create_cursor('select-copy-grid', 0, 0)
@@ -745,7 +746,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _clear_selection_on_start
+    def _clear_selection_on_start?
       true
     end
 
@@ -957,7 +958,7 @@ module Ladb::OpenCutList
 
       @locked_axis = nil
 
-      unless _get_instance.nil?
+      if has_active_part?
         if new_state == STATE_HANDLE
           @tool.set_3d_visibility(false, [ LAYER_3D_PART_SIBLING_PREVIEW ]) # Hide part preview
           _hide_sibling_instances
@@ -1241,7 +1242,7 @@ module Ladb::OpenCutList
 
     def _read_handle_copies(tool, text, view)
       return true if super
-      return if _get_instances.empty?
+      return unless has_active_selection?
 
       v, _ = _split_user_text(text)
 
@@ -1870,7 +1871,7 @@ module Ladb::OpenCutList
 
     def _read_handle_copies(tool, text, view)
       return true if super
-      return if _get_instances.empty?
+      return unless has_active_selection?
 
       v1, v2 = _split_user_text(text)
 

@@ -45,7 +45,7 @@ module Ladb::OpenCutList
     # -----
 
     attr_reader :callback_action_handler,
-                :cursor_select, :cursor_select_part, :cursor_select_part_plus, :cursor_select_rect, :cursor_select_stretch
+                :cursor_select, :cursor_select_part, :cursor_select_part_plus, :cursor_select_plus_minus, :cursor_select_rect, :cursor_select_stretch
 
     def initialize(current_action: nil, callback_action_handler: nil)
       super(current_action: current_action)
@@ -56,6 +56,7 @@ module Ladb::OpenCutList
       @cursor_select = create_cursor('select', 0, 0)
       @cursor_select_part = create_cursor('select-part', 0, 0)
       @cursor_select_part_plus = create_cursor('select-part-plus', 0, 0)
+      @cursor_select_plus_minus = create_cursor('select-plus-minus', 0, 0)
       @cursor_select_rect = create_cursor('select-rect', 0, 0)
       @cursor_select_stretch = create_cursor('select-stretch', 0, 0)
 
@@ -391,7 +392,7 @@ module Ladb::OpenCutList
       true
     end
 
-    def _clear_selection_on_start
+    def _clear_selection_on_start?
       true
     end
 
@@ -893,7 +894,7 @@ module Ladb::OpenCutList
     def onStateChanged(old_state, new_state)
       super
 
-      unless _get_instances.nil?
+      if has_active_selection?
 
         case new_state
 
@@ -1496,7 +1497,7 @@ module Ladb::OpenCutList
 
       # _unhide_instances
       # rt = PathUtils.get_transformation(get_active_selection_path, IDENTITY)
-      # _get_instances.each do |instance|
+      # get_active_selection_instances.each do |instance|
       #
       #   it = instance.transformation
       #   iti = it.inverse
@@ -2112,7 +2113,7 @@ module Ladb::OpenCutList
     # -----
 
     def _get_cutters_holder
-      if (instances = _get_instances).is_a?(Array) && instances.one? &&
+      if (instances = get_active_selection_instances).is_a?(Array) && instances.one? &&
          (instance = instances.first).respond_to?(:definition)
         return instance.definition
       end

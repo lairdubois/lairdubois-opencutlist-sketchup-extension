@@ -2114,6 +2114,7 @@ tool:
     state_4_status: Glissez sur une pièce identique ayant le même parent pour l'ajouter à la sélection et relâchez pour continuer
     state_5_status: Faites glisser pour ajouter à la sélection et relâchez pour continuer
     state_6_status: Choisisez un élément dans la liste
+    state_7_status: Cliquez sur une pièce pour l'ajouter ou la soustraire à la sélection
     warning:
       no_active_part: Vous devez d'abord survoler une pièce
   smart_draw:

@@ -449,7 +449,7 @@ module Ladb::OpenCutList
         model = Sketchup.active_model
         model.start_operation('OCL Part Flip', true, false, false)
 
-          _get_instance.transformation *= t
+        _get_active_part_entity.transformation *= t
 
         # Commit model modification operation
         model.commit_operation
