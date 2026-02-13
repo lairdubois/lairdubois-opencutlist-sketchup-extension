@@ -162,7 +162,7 @@ module Ladb::OpenCutList
         @cumulable = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'cumulable', CUMULABLE_NONE)
         @instance_count_by_part = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'instance_count_by_part', 1)
         @mass = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'mass', '')
-        @price = DefinitionAttributes.valid_price(@definition.get_attribute(Plugin::SU_ATTRIBUTE_DICTIONARY, 'Price', ''))
+        @price = DefinitionAttributes.valid_price(@definition.get_attribute(Plugin::SU_ATTRIBUTE_DICTIONARY, Plugin::SU_PRICE_ATTRIBUTE_KEY, ''))
         @length_increase = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'length_increase', '0')
         @width_increase = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'width_increase', '0')
         @thickness_increase = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'thickness_increase', '0')

@@ -409,7 +409,8 @@ module Ladb::OpenCutList
 
       definition = part.def.get_one_instance_info.definition
       triangles = _compute_children_faces_triangles(definition.entities)
-      bounds = Geom::BoundingBox.new.add(triangles)
+      bounds = Geom::BoundingBox.new
+      bounds.add(triangles) if triangles.any?
 
       if instance_paths.nil?
         instance_paths = part.def.instance_infos.values.map { |instance_info| instance_info.path }
@@ -2465,9 +2466,10 @@ module Ladb::OpenCutList
         # Mesh
         if _preview_part_mesh?
 
+          triangles = _compute_children_faces_triangles(part.def.definition.entities)
+
           instance_paths.each do |path|
 
-            triangles = _compute_children_faces_triangles(path.last.definition.entities)
             t = PathUtils::get_transformation(path)
 
             k_mesh = Kuix::Mesh.new

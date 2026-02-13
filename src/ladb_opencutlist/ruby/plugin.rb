@@ -38,7 +38,9 @@ module Ladb::OpenCutList
     require 'pp' if IS_DEV
 
     DEFAULT_SECTION = ATTRIBUTE_DICTIONARY = 'ladb_opencutlist'.freeze
+
     SU_ATTRIBUTE_DICTIONARY = 'SU_DefinitionSet'.freeze
+    SU_PRICE_ATTRIBUTE_KEY = 'Price'.freeze
 
     PRESETS_KEY = 'core.presets'.freeze
     PRESETS_DEFAULT_NAME = '_default'.freeze

@@ -33,9 +33,7 @@ module Ladb::OpenCutList
 
       # Thank you, @thomthom for this piece of code ;)
 
-      if face.deleted?
-        return []
-      end
+      return [] if face.deleted?
 
       mesh = face.mesh(0) # POLYGON_MESH_POINTS
       points = mesh.points

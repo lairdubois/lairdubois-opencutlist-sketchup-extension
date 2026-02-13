@@ -112,7 +112,7 @@ module Ladb::OpenCutList
 
         # Retrieve selected entities or all if no selection
         if model
-          path = model.active_path ? model.active_path : []
+          path = model.active_path.to_a
           if model.selection.empty?
             entities = model.active_entities
             is_entity_selection = false
@@ -946,7 +946,7 @@ module Ladb::OpenCutList
 
         if entity.is_a?(Sketchup::Group)
 
-          # Entity is a group : check its children
+          # Entity is a group -> check its children
           entity_path = path + [ entity ]
           entity.entities.each { |child_entity|
             face_count += _fetch_useful_instance_infos(child_entity, entity_path, auto_orient, face_bounds_cache)
@@ -957,7 +957,7 @@ module Ladb::OpenCutList
           # Exclude special behavior components
           return 0 if entity.definition.behavior.always_face_camera?
 
-          # Entity is a component instance : check its children
+          # Entity is a component instance -> check its children
           entity_path = path + [ entity ]
           entity.definition.entities.each { |child_entity|
             face_count += _fetch_useful_instance_infos(child_entity, entity_path, auto_orient, face_bounds_cache)
@@ -970,7 +970,7 @@ module Ladb::OpenCutList
           if face_count > 0
 
             bounds = face_bounds_cache[entity.definition] ||= _compute_faces_bounds(entity.definition)
-            unless bounds.empty? || [ bounds.width, bounds.height, bounds.depth ].min == 0    # Exclude empty or flat bounds
+            unless bounds.empty? || [ bounds.width, bounds.height, bounds.depth ].min == 0   # Exclude empty or flat bounds
 
               # Create the instance info
               instance_info = InstanceInfo.new(entity_path)
@@ -987,7 +987,7 @@ module Ladb::OpenCutList
 
         elsif entity.is_a?(Sketchup::Face)
 
-          # Entity is a face : return 1
+          # Entity is a face -> return 1
           return 1
 
         end
