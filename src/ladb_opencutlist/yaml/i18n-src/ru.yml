@@ -2114,6 +2114,7 @@ tool:
     state_4_status: "Перетащите идентичный элемент, имеющий того же родителя, чтобы добавить его в выделение, и отпустите, чтобы продолжить"
     state_5_status: "Проведите указателем мыши, чтобы добавить в выделение, и отпустите, чтобы продолжить"
     state_6_status: Выберите элемент из списка
+    state_7_status: "Кликните элемент, чтобы добавить или убрать его из выделения"
     warning:
       no_active_part: Сначала вы должны выделить одну деталь
   smart_draw:
@@ -2156,7 +2157,7 @@ tool:
     action_option_options_pull_locked_status: Блокировка подъема по оси
     action_option_options_draw_in: Рисовать в
     action_option_options_draw_in_0: Рисование в активном элементе
-    action_option_options_draw_in_1: "Нарисовать детали первой точки в родительском элементе "
+    action_option_options_draw_in_1: Нарисовать детали первой точки в родительском элементе
     action_option_options_draw_in_status: "Нарисовать в родительском элементе, на который указывает первая точка"
     action_option_options_ask_name: Задать имена деталям
     action_option_options_ask_name_status: Ввод названий деталей вручную
