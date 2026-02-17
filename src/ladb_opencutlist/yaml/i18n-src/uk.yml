@@ -116,7 +116,7 @@ core:
       smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
-      smart_join: ""
+      smart_join: $t(core.toolbar.command.smart_join)
       smart_export: $t(core.toolbar.command.smart_export)
       reset_dialog_position: Скинути позицію вікна
   toolbar:
@@ -129,7 +129,7 @@ core:
       smart_reshape: Редагування деталей
       smart_paint: Нанесення матеріалів на деталі
       smart_axes: Орієнтація деталей
-      smart_join: ""
+      smart_join: Збірка деталей
       smart_export: Експорт деталей
   messagebox:
     dir_override: |
@@ -1075,7 +1075,7 @@ tab:
       option_irregular_allowed_rotations_0: Ні
       option_irregular_allowed_rotations_90: Крок 90°
       option_irregular_allowed_rotations_180: Крок 180°
-      option_irregular_allowed_rotations_free: ""
+      option_irregular_allowed_rotations_free: Вільний (експериментальний)
       option_irregular_allow_mirroring: Дозволити відзеркалювання
       option_irregular_allow_mirroring_help: |
         Визначає, чи дозволено відзеркалювання деталі деталі.
@@ -2103,8 +2103,8 @@ tool:
       zero_division: "Ділення на нуль"
       lt_min_distance: "Відстань {{ value1 }} менша за мінімальну відстань {{ value2 }}"
       gt_max_distance: "Відстань {{ value1 }} більша за максимальну відстань {{ value2 }}"
-      locked_part: ""
-      selection_contains_locked_entities: ""
+      locked_part: Ця деталь заблокована
+      selection_contains_locked_entities: Вибір містить заблоковані функції
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2114,6 +2114,7 @@ tool:
     state_4_status: "Перетягніть ідентичну частину з тим самим батьківським елементом, щоб додати її до виділення, і відпустіть, щоб продовжити"
     state_5_status: "Перетягніть, щоб додати до вибору, і відпустіть, щоб продовжити"
     state_6_status: Обрати пункт зі списку
+    state_7_status: "Клацніть на елемент, щоб додати його або видалити з вибору"
     warning:
       no_active_part: Спочатку потрібно навести курсор на деталь
   smart_draw:
@@ -2154,10 +2155,10 @@ tool:
     action_option_options_pull_centered: Центроване видавлювання
     action_option_options_pull_centered_status: Центроване видавлювання на першій точці
     action_option_options_pull_locked_status: Блокування підйому по осі
-    action_option_options_draw_in: ""
-    action_option_options_draw_in_0: ""
-    action_option_options_draw_in_1: ""
-    action_option_options_draw_in_status: ""
+    action_option_options_draw_in: Втягнути
+    action_option_options_draw_in_0: Малювати в активному елементі
+    action_option_options_draw_in_1: Намалювати деталь у батьківському контейнері у початковій точці
+    action_option_options_draw_in_status: "Намалювати деталь у батьківському контейнері, на який вказує перша точка"
     action_option_options_ask_name: Найменування деталей
     action_option_options_ask_name_status: Введення назв деталей вручну
     action_measure_locked_status: Фіксація під час останнього вимірювання
@@ -2295,8 +2296,8 @@ tool:
       not_part: "Об'єкт, на який наведено, не є деталлю (компонентом)"
       not_orientable: Тип цієї деталі не дозволяє її зорієнтувати
   smart_join:
-    title: ""
-    action_0: "" # TODO: It's currently just for dev purposes
+    title: Збірка
+    action_0: Дотик-Дотик # TODO: It's currently just for dev purposes
   smart_export:
     title: Експорт
     action_0: Експортувати деталь 3D

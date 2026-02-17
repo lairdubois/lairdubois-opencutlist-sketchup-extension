@@ -2114,6 +2114,7 @@ tool:
     state_4_status: "Ziehen Sie ein identisches Teil mit demselben übergeordneten Teil, um es zur Auswahl hinzuzufügen, und lassen Sie es los, um fortzufahren"
     state_5_status: Zum Hinzufügen zur Auswahl ziehen und zum Fortfahren loslassen
     state_6_status: Wählen Sie einen Eintrag aus der Liste aus
+    state_7_status: "Klicken Sie auf ein Teil, um es zur Auswahl hinzuzufügen oder daraus zu entfernen"
     warning:
       no_active_part: Sie müssen zunächst mit der Maus über ein Teil fahren
   smart_draw:

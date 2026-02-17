@@ -2114,6 +2114,7 @@ tool:
     state_4_status: "Drag onto an identical piece with the same parent to add it to the selection, then release to continue"
     state_5_status: Swipe to add to selection and release to continue
     state_6_status: Select an element from the list
+    state_7_status: Click on a part to add or subtract it from the selection
     warning:
       no_active_part: You must first hover over a part
   smart_draw:
