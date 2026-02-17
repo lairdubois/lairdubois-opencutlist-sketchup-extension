@@ -42,7 +42,7 @@ module Ladb::OpenCutList
               # Highlight clines
               k_segments = Kuix::Segments.new
               k_segments.add_segments(@drawing_def.cline_manipulators.flat_map { |cline_manipulator| cline_manipulator.segment })
-              k_segments.color = ColorUtils.color_translucent(highlight_def.color)
+              k_segments.color = highlight_def.color
               k_segments.line_width = 2
               k_group.append(k_segments)
 

@@ -67,7 +67,6 @@ module Ladb::OpenCutList
     SETTINGS_KEY_DIALOG_FONT_SIZE = 'settings.dialog_font_size'
     SETTINGS_KEY_DIALOG_TABLE_ROW_SIZE = 'settings.dialog_table_row_size'
     SETTINGS_KEY_DIALOG_PRINT_MARGIN = 'settings.dialog_print_margin'
-    SETTINGS_KEY_COMPONENTS_LAST_DIR = 'settings.components_last_dir'
     SETTINGS_KEY_MATERIALS_LAST_DIR = 'settings.materials_last_dir'
 
     TABS_DIALOG_STYLE = Sketchup.version_number >= 2300000000 ? UI::HtmlDialog::STYLE_UTILITY : UI::HtmlDialog::STYLE_DIALOG
@@ -727,8 +726,7 @@ module Ladb::OpenCutList
 
     def execute_command(command, params = nil)
       start unless @started
-      if @commands.has_key?(command)
-        block = @commands[command]
+      if (block = @commands[command])
         return block.call(params.is_a?(Hash) ? HashUtils.symbolize_keys(params) : params) # params keys are symbolized to be ready for using as "keyword arguments"
       end
       raise "Command '#{command}' not found"
@@ -737,33 +735,20 @@ module Ladb::OpenCutList
     # -----
 
     def add_event_callback(event, &block)
-      if event.is_a?(Array)
-        events = event
-      else
-        events = [ event ]
-      end
-      events.each do |e|
-        @event_callbacks[e] = [] unless @event_callbacks.has_key?(e)
-        @event_callbacks[e].push(block)
+      Array(event).each do |e|
+        (@event_callbacks[e] ||= []) << block
       end
       block
     end
 
     def remove_event_callback(event, block)
-      if event.is_a?(Array)
-        events = event
-      else
-        events = [ event ]
-      end
-      events.each do |e|
-        next unless @event_callbacks.has_key?(e)
-        @event_callbacks[e].delete(block)
+      Array(event).each do |e|
+        @event_callbacks[e].delete(block) if @event_callbacks.key?(e)
       end
     end
 
     def trigger_event(event, params = nil)
-      if @event_callbacks.has_key?(event)
-        blocks = @event_callbacks[event]
+      if (blocks = @event_callbacks[event])
         blocks.each do |block|
           block.call(params)
         end
@@ -1096,10 +1081,14 @@ module Ladb::OpenCutList
         @tabs_dialog.execute_script("setDialogContext('tabs');")
       end
       @tabs_dialog.add_action_callback('ladb_opencutlist_command') do |action_context, call_json|
-        call = JSON.parse(call_json)
-        response = execute_command(call['command'], call['params'])
-        script = "rubyCommandCallback(#{call['id']}, '#{response.is_a?(Hash) ? Base64.strict_encode64(JSON.generate(response)) : ''}');"
-        @tabs_dialog.execute_script(script) if @tabs_dialog
+        begin
+          call = JSON.parse(call_json)
+          response = execute_command(call['command'], call['params'])
+          script = "rubyCommandCallback(#{call['id']}, '#{response.is_a?(Hash) ? Base64.strict_encode64(JSON.generate(response)) : ''}');"
+          @tabs_dialog.execute_script(script) if @tabs_dialog
+        rescue Exception => e
+          dump_exception(e)
+        end
       end
 
     end
@@ -1275,19 +1264,21 @@ module Ladb::OpenCutList
         @modal_dialog.execute_script("setDialogContext('modal', '#{Base64.strict_encode64(JSON.generate({ :startup_modal_name => modal_name, :params => params }))}');")
       end
       @modal_dialog.add_action_callback('ladb_opencutlist_command') do |action_context, call_json|
-        call = JSON.parse(call_json)
-        response = execute_command(call['command'], call['params'])
-        script = "rubyCommandCallback(#{call['id']}, '#{response.is_a?(Hash) ? Base64.strict_encode64(JSON.generate(response)) : ''}');"
-        @modal_dialog.execute_script(script) if @modal_dialog
+        begin
+          call = JSON.parse(call_json)
+          response = execute_command(call['command'], call['params'])
+          script = "rubyCommandCallback(#{call['id']}, '#{response.is_a?(Hash) ? Base64.strict_encode64(JSON.generate(response)) : ''}');"
+          @modal_dialog.execute_script(script) if @modal_dialog
+        rescue Exception => e
+          dump_exception(e)
+        end
       end
 
     end
 
     def show_modal_dialog(modal_name = nil, params = nil)
 
-      unless @modal_dialog
-        create_modal_dialog(modal_name, params)
-      end
+      create_modal_dialog(modal_name, params) unless @modal_dialog
 
       unless @modal_dialog.visible?
 
@@ -1303,10 +1294,9 @@ module Ladb::OpenCutList
     def hide_modal_dialog
       if @modal_dialog
         @modal_dialog.close
-        true
-      else
-        false
+        return true
       end
+      false
     end
 
     def toggle_modal_dialog
