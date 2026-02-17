@@ -21,7 +21,7 @@ module Ladb::OpenCutList
       if material
         color = material.color
       else
-        color = Sketchup::Color.new(255, 255, 255)  # No material. Default color is white
+        color = Sketchup::Color.new(255, 255, 255)  # No material. The default color is white
       end
       color
     end

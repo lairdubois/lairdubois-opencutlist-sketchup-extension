@@ -18,7 +18,7 @@ module Ladb::OpenCutList
         transformation = transformation * entity.transformation if entity.is_a?(Sketchup::Group)
         face_area = 0
         entity.entities.each do |e|
-          next if e.is_a?(Sketchup::Edge)   # Minor Speed improvement when there's a lot of edges
+          next if e.is_a?(Sketchup::Edge)   # Minor Speed improvement when there are a lot of edges
 
           f, p = _find_largest_face(e, transformation)
           unless f.nil?

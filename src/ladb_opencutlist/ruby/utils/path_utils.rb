@@ -29,13 +29,13 @@ module Ladb::OpenCutList
     # -- Named --
 
     def self.get_named_path(path, ignore_empty_names = true, ignored_leaf_count = 1)  # path is Array<ComponentInstance>
-      return nil if path.nil?
+      return nil unless path.is_a?(Array)
       path_names = []
       path.first(path.size - ignored_leaf_count).each { |entity|
         if ignore_empty_names
           path_names.push(entity.name) unless entity.name.empty?  # ignore empty names
         else
-          path_names.push(entity.name.empty? ? "##{entity.entityID}#{entity.is_a?(Sketchup::ComponentInstance) ? " <#{entity.definition.name}>" : ''}" : entity.name)
+          path_names.push(entity.name.empty? ? "##{entity.entityID}#{" <#{entity.definition.name}>" if entity.is_a?(Sketchup::ComponentInstance)}" : entity.name)
         end
       }
       path_names  # Array<String>
@@ -45,11 +45,7 @@ module Ladb::OpenCutList
 
     def self.get_transformation(path, default_transformation = nil)
       return default_transformation if path.nil? || path.empty?
-      transformation = Geom::Transformation.new
-      path.each do |entity|
-        transformation *= entity.transformation if entity.respond_to?(:transformation)
-      end
-      transformation
+      path.inject(Geom::Transformation.new) { |transformation, entity| entity.respond_to?(:transformation) ? transformation * entity.transformation : transformation  }
     end
 
   end

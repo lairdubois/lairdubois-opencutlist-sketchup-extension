@@ -1,8 +1,11 @@
 module Ladb::OpenCutList
 
   require 'securerandom'
+  require_relative '../../helper/sanitizer_helper'
 
   class MaterialsImportFromSkmWorker
+
+    include SanitizerHelper
 
     ATTRIBUTE_TYPE_INTEGER = '4'.freeze
     ATTRIBUTE_TYPE_FLOAT = '6'.freeze
@@ -20,7 +23,7 @@ module Ladb::OpenCutList
       # Fetch material
       materials = model.materials
 
-      last_dir = PLUGIN.read_default(Plugin::SETTINGS_KEY_MATERIALS_LAST_DIR, nil)
+      last_dir = _sanitize_filepath(PLUGIN.read_default(Plugin::SETTINGS_KEY_MATERIALS_LAST_DIR, nil))
       if last_dir && File.exist?(last_dir) && File.directory?(last_dir)
         dir = last_dir
       else

@@ -20,15 +20,15 @@ module Ladb::OpenCutList
       cutlist = worker.run
 
       part = nil
-      cutlist.groups.each { |group|
-        group.parts.each { |p|
+      cutlist.groups.each do |group|
+        group.parts.each do |p|
           if p.def.definition_id == entity.definition.name
             part = p
             break
           end
-        }
+          end
         break unless part.nil?
-      }
+        end
 
       part
     end

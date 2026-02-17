@@ -7,15 +7,15 @@ module Ladb::OpenCutList
       self.instance_variables.each do |var|
         key = var.to_s.delete('@')
         next if key.start_with? '_'   # Exclude "private" instance variables
-        value = self.instance_variable_get(var)
-        if value.is_a?(HashableHelper)
-          value = value.to_hash
-        elsif value.is_a?(Array)
-          value = value.collect{ |v| v.is_a?(HashableHelper) ? v.to_hash : v }
-        elsif value.is_a?(Hash)
-          value = value.map{ |k,v| [ k, v.is_a?(HashableHelper) ? v.to_hash : v ] }.to_h
+        variable = self.instance_variable_get(var)
+        if variable.is_a?(HashableHelper)
+          variable = variable.to_hash
+        elsif variable.is_a?(Array)
+          variable = variable.map { |v| v.is_a?(HashableHelper) ? v.to_hash : v }
+        elsif variable.is_a?(Hash)
+          variable = variable.map { |k,v| [ k, v.is_a?(HashableHelper) ? v.to_hash : v ] }.to_h
         end
-        hash[key] = value
+        hash[key] = variable
       end
       hash
     end

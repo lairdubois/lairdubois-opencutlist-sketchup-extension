@@ -127,13 +127,13 @@ module Ladb::OpenCutList
         end
 
         # Fetch component instances in given entities
-        entities.each { |entity|
+        entities.each do |entity|
           _fetch_useful_instance_infos(entity, path, @auto_orient)
-        }
+        end
 
       end
 
-      # Retrieve model infos
+      # Retrieve model info
       length_unit = DimensionUtils.length_unit
       mass_unit_strippedname = MassUtils.get_strippedname
       currency_symbol = PriceUtils.currency_symbol
@@ -148,9 +148,9 @@ module Ladb::OpenCutList
       cutlist = Cutlist.new(dir, filename, model_name, model_description, model_active_path, page_name, page_description, is_entity_selection, length_unit, mass_unit_strippedname, currency_symbol, @instance_infos_cache.length)
 
       # Errors & tips
-      if @instance_infos_cache.length == 0
+      if @instance_infos_cache.empty?
         if model
-          if entities && entities.length == 0
+          if entities && entities.empty?
             cutlist.add_error('tab.cutlist.error.no_entities')
           else
             if is_entity_selection
@@ -167,11 +167,11 @@ module Ladb::OpenCutList
 
       # Materials usages
       materials = model ? model.materials : []
-      materials.each { |material|
+      materials.each do |material|
         material_attributes = _get_material_attributes(material)
         material_usage = MaterialUsage.new(material.name, material.display_name, material_attributes.type, material.color, material_attributes.grained, !material.texture.nil?)
         _store_material_usage(material_usage)
-      }
+      end
 
       # PHASE 1 - Populate cutlist
 
@@ -948,9 +948,9 @@ module Ladb::OpenCutList
 
           # Entity is a group -> check its children
           entity_path = path + [ entity ]
-          entity.entities.each { |child_entity|
+          entity.entities.each do |child_entity|
             face_count += _fetch_useful_instance_infos(child_entity, entity_path, auto_orient, face_bounds_cache)
-          }
+          end
 
         elsif entity.is_a?(Sketchup::ComponentInstance)
 
@@ -959,9 +959,9 @@ module Ladb::OpenCutList
 
           # Entity is a component instance -> check its children
           entity_path = path + [ entity ]
-          entity.definition.entities.each { |child_entity|
+          entity.definition.entities.each do |child_entity|
             face_count += _fetch_useful_instance_infos(child_entity, entity_path, auto_orient, face_bounds_cache)
-          }
+          end
 
           # Treat cuts_opening behavior component instances as simple group
           return face_count if entity.definition.behavior.cuts_opening?
