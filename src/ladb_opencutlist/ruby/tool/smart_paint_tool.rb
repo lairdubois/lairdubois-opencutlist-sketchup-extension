@@ -796,6 +796,11 @@ module Ladb::OpenCutList
       _setup_material_buttons
     end
 
+    def onActionOptionStored(action, option_group, option)
+      super
+      set_root_cursor(get_action_cursor(fetch_action))
+    end
+
     # -----
 
     protected

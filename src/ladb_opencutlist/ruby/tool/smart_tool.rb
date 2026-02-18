@@ -3346,8 +3346,8 @@ module Ladb::OpenCutList
       create_cursor('select-part-plus')
     end
 
-    def cursor_select_part_minus
-      create_cursor('select-part-minus')
+    def cursor_select_plus_minus
+      create_cursor('select-plus-minus')
     end
 
     def cursor_select_rect

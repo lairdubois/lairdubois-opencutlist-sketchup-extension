@@ -125,29 +125,29 @@ module Ladb::OpenCutList
 
       case action
       when ACTION_EXPORT_PART_3D
-        if fetch_action_option_boolean(ACTION_EXPORT_PART_3D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_STL)
+        if fetch_action_option_boolean(action, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_STL)
           return SmartCursorManager.cursor_select_stl
-        elsif fetch_action_option_boolean(ACTION_EXPORT_PART_3D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_OBJ)
+        elsif fetch_action_option_boolean(action, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_OBJ)
           return SmartCursorManager.cursor_select_obj
-        elsif fetch_action_option_boolean(ACTION_EXPORT_PART_3D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
+        elsif fetch_action_option_boolean(action, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
           return SmartCursorManager.cursor_select_dxf
         end
       when ACTION_EXPORT_PART_2D
-        if fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_SVG)
+        if fetch_action_option_boolean(action, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_SVG)
           return SmartCursorManager.cursor_select_svg
-        elsif fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
+        elsif fetch_action_option_boolean(action, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
           return SmartCursorManager.cursor_select_dxf
         end
       when ACTION_EXPORT_FACE
-        if fetch_action_option_boolean(ACTION_EXPORT_FACE, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_SVG)
+        if fetch_action_option_boolean(action, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_SVG)
           return SmartCursorManager.cursor_select_svg
-        elsif fetch_action_option_boolean(ACTION_EXPORT_FACE, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
+        elsif fetch_action_option_boolean(action, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
           return SmartCursorManager.cursor_select_dxf
         end
       when ACTION_EXPORT_PATHS
-        if fetch_action_option_boolean(ACTION_EXPORT_PATHS, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_SVG)
+        if fetch_action_option_boolean(action, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_SVG)
           return SmartCursorManager.cursor_select_svg
-        elsif fetch_action_option_boolean(ACTION_EXPORT_PATHS, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
+        elsif fetch_action_option_boolean(action, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
           return SmartCursorManager.cursor_select_dxf
         end
       end
@@ -295,6 +295,11 @@ module Ladb::OpenCutList
     def onPickerChanged(picker, view)
       super
       _handle_mouse_event(:move)
+    end
+
+    def onActionOptionStored(action, option_group, option)
+      super
+      set_root_cursor(get_action_cursor(fetch_action))
     end
 
     # -----
