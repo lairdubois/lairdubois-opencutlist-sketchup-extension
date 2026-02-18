@@ -67,8 +67,6 @@ module Ladb::OpenCutList
 
     # -----
 
-    attr_reader :cursor_flip, :cursor_swap_length_width, :cursor_swap_front_back, :cursor_adapt_axes
-
     def initialize(
 
       tab_name_to_show_on_quit: nil,
@@ -84,12 +82,6 @@ module Ladb::OpenCutList
         highlighted_parts: highlighted_parts,
         current_action: current_action,
         )
-
-      # Create cursors
-      @cursor_flip = create_cursor('flip', 0, 0)
-      @cursor_swap_length_width = create_cursor('swap-length-width', 0, 0)
-      @cursor_swap_front_back = create_cursor('swap-front-back', 0, 0)
-      @cursor_adapt_axes = create_cursor('adapt-axes', 0, 0)
 
     end
 
@@ -330,7 +322,7 @@ module Ladb::OpenCutList
     # -- STATE --
 
     def get_state_cursor(state)
-      @tool.cursor_flip
+      SmartCursorManager.cursor_select_flip
     end
 
     def get_state_picker(state)
@@ -485,7 +477,7 @@ module Ladb::OpenCutList
     # -- STATE --
 
     def get_state_cursor(state)
-      @tool.cursor_swap_length_width
+      SmartCursorManager.cursor_select_swap_length_width
     end
 
     def get_state_picker(state)
@@ -571,7 +563,7 @@ module Ladb::OpenCutList
     # -- STATE --
 
     def get_state_cursor(state)
-      @tool.cursor_swap_front_back
+      SmartCursorManager.cursor_select_swap_front_back
     end
 
     def get_state_picker(state)
@@ -674,7 +666,7 @@ module Ladb::OpenCutList
     # -- STATE --
 
     def get_state_cursor(state)
-      @tool.cursor_adapt_axes
+      SmartCursorManager.cursor_select_axes
     end
 
     def get_state_picker(state)
@@ -906,7 +898,7 @@ module Ladb::OpenCutList
     # -- STATE --
 
     def get_state_cursor(state)
-      @tool.cursor_adapt_axes
+      SmartCursorManager.cursor_select_axes
     end
 
     def get_state_picker(state)

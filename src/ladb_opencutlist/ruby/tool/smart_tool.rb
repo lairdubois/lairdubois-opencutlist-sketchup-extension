@@ -51,7 +51,6 @@ module Ladb::OpenCutList
 
     attr_accessor :tab_name_to_show_on_quit,
                   :highlighted_parts,
-                  :cursor_select_error,
                   :last_mouse_x, :last_mouse_y
 
     def initialize(
@@ -88,9 +87,6 @@ module Ladb::OpenCutList
       # Action handler
       @action_handler = nil
 
-      # Create cursors
-      @cursor_select_error = create_cursor('select-error', 0, 0)
-
       # Tool ID (available only if the tool is active)
       @tool_id = nil
 
@@ -114,6 +110,10 @@ module Ladb::OpenCutList
     end
 
     # -- UI stuff --
+
+    def get_default_cursor
+      SmartCursorManager.cursor_select
+    end
 
     def get_unit(view = nil)
       return @unit unless @unit.nil?
@@ -942,7 +942,7 @@ module Ladb::OpenCutList
     end
 
     def get_action_cursor(action)
-      @cursor_select_error
+      SmartCursorManager.cursor_select_error
     end
 
     def get_action_picker(action)
@@ -2349,7 +2349,7 @@ module Ladb::OpenCutList
               if (error_key = _get_cant_activate_part_error_key(picked_part)).is_a?(String)
                 @tool.show_tooltip(PLUGIN.get_i18n_string(error_key), SmartTool::MESSAGE_TYPE_ERROR)
               end
-              @tool.push_cursor(@tool.cursor_select_error)
+              @tool.push_cursor(SmartCursorManager.cursor_select_error)
               return
             end
           end
@@ -2573,7 +2573,7 @@ module Ladb::OpenCutList
           if (error_key = _get_cant_activate_part_error_key(part)).is_a?(String)
             @tool.show_tooltip(PLUGIN.get_i18n_string(error_key), SmartTool::MESSAGE_TYPE_ERROR)
           end
-          @tool.push_cursor(@tool.cursor_select_error)
+          @tool.push_cursor(SmartCursorManager.cursor_select_error)
         end
 
       end
@@ -2829,16 +2829,16 @@ module Ladb::OpenCutList
 
       case state
       when STATE_SELECT
-        return @tool.cursor_select_part
+        return SmartCursorManager.cursor_select_part
 
       when STATE_SELECT_MULTIPLE
-        return @tool.cursor_select_plus_minus
+        return SmartCursorManager.cursor_select_plus_minus
 
       when STATE_SELECT_RECT
-        return @tool.cursor_select_rect
+        return SmartCursorManager.cursor_select_rect
 
       when STATE_SELECT_SIBLINGS
-        return @tool.cursor_select_part_plus
+        return SmartCursorManager.cursor_select_part_plus
       end
 
       super
@@ -3309,6 +3309,175 @@ module Ladb::OpenCutList
       )
       @tool.append_2d(k_rect)
 
+    end
+
+  end
+
+  # -----
+
+  module SmartCursorManager
+
+    extend self
+
+    def create_cursor(name, hot_x = 0, hot_y = 0)
+      (@cursors ||= {})[name] ||= begin
+        cursor_id = 0
+        cursor_path = File.join(PLUGIN_DIR, 'img', "cursor-#{name}.#{PLUGIN.platform_is_mac? ? 'pdf' : 'svg'}")
+        cursor_id = UI.create_cursor(cursor_path, hot_x, hot_y) if File.exist?(cursor_path)
+        cursor_id
+      end
+    end
+
+    # -- CURSORS --
+
+    def cursor_select
+      create_cursor('select')
+    end
+
+    def cursor_select_error
+      create_cursor('select-error')
+    end
+
+    def cursor_select_part
+      create_cursor('select-part')
+    end
+
+    def cursor_select_part_plus
+      create_cursor('select-part-plus')
+    end
+
+    def cursor_select_part_minus
+      create_cursor('select-part-minus')
+    end
+
+    def cursor_select_rect
+      create_cursor('select-rect')
+    end
+
+    def cursor_select_copy_line
+      create_cursor('select-copy-line')
+    end
+
+    def cursor_select_copy_grid
+      create_cursor('select-copy-grid')
+    end
+
+    def cursor_select_move_line
+      create_cursor('select-move-line')
+    end
+
+    def cursor_select_distribute
+      create_cursor('select-distribute')
+    end
+
+    def cursor_select_stretch
+      create_cursor('select-stretch')
+    end
+
+    def cursor_select_flip
+      create_cursor('select-flip')
+    end
+
+    def cursor_select_swap_length_width
+      create_cursor('select-swap-length-width')
+    end
+
+    def cursor_select_swap_front_back
+      create_cursor('select-swap-front-back')
+    end
+
+    def cursor_select_axes
+      create_cursor('select-axes')
+    end
+
+    def cursor_select_stl
+      create_cursor('select-stl')
+    end
+
+    def cursor_select_obj
+      create_cursor('select-obj')
+    end
+
+    def cursor_select_dxf
+      create_cursor('select-dxf')
+    end
+
+    def cursor_select_svg
+      create_cursor('select-svg')
+    end
+
+
+    def cursor_move
+      create_cursor('move', 16, 16)
+    end
+
+    def cursor_move_copy
+      create_cursor('move-copy', 16, 16)
+    end
+
+
+    def cursor_pin_1
+      create_cursor('pin-1', 11, 31)
+    end
+
+    def cursor_pin_2
+      create_cursor('pin-2', 11, 31)
+    end
+
+
+    def cursor_pencil_rectangle
+      create_cursor('pencil-rectangle', 0, 31)
+    end
+
+    def cursor_pencil_circle
+      create_cursor('pencil-circle', 0, 31)
+    end
+
+    def cursor_pencil_polygon
+      create_cursor('pencil-polygon', 0, 31)
+    end
+
+
+    def cursor_pull
+      create_cursor('pull', 16, 3)
+    end
+
+
+    def cursor_paint_error
+      create_cursor('paint-error', 2 ,15)
+    end
+
+    def cursor_paint_part
+      create_cursor('paint-part', 2 ,15)
+    end
+
+    def cursor_paint_edge_1
+      create_cursor('paint-edge-1', 2 ,15)
+    end
+
+    def cursor_paint_edge_2
+      create_cursor('paint-edge-2', 2 ,15)
+    end
+
+    def cursor_paint_edge_4
+      create_cursor('paint-edge-4', 2 ,15)
+    end
+
+    def cursor_paint_face_1
+      create_cursor('paint-face-1', 2 ,15)
+    end
+
+    def cursor_paint_face_2
+      create_cursor('paint-face-2', 2 ,15)
+    end
+
+    def cursor_paint_clean
+      create_cursor('paint-clean', 2 ,15)
+    end
+
+
+    def cursor_picker
+      create_cursor('picker')
     end
 
   end

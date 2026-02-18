@@ -67,8 +67,6 @@ module Ladb::OpenCutList
 
     # -----
 
-    attr_reader :cursor_select, :cursor_pencil_rectangle, :cursor_pencil_circle, :cursor_pencil_rectangle, :cursor_pull
-
     def initialize(
 
                    current_action: nil
@@ -78,13 +76,6 @@ module Ladb::OpenCutList
       super(
         current_action: current_action
       )
-
-      # Create cursors
-      @cursor_select = create_cursor('select', 0, 0)
-      @cursor_pencil_rectangle = create_cursor('pencil-rectangle', 0, 31)
-      @cursor_pencil_circle = create_cursor('pencil-circle', 0, 31)
-      @cursor_pencil_polygon = create_cursor('pencil-polygon', 0, 31)
-      @cursor_pull = create_cursor('pull', 16, 3)
 
     end
 
@@ -102,11 +93,11 @@ module Ladb::OpenCutList
 
       case action
       when ACTION_DRAW_RECTANGLE
-          return @cursor_pencil_rectangle
+          return SmartCursorManager.cursor_pencil_rectangle
       when ACTION_DRAW_CIRCLE
-          return @cursor_pencil_circle
+          return SmartCursorManager.cursor_pencil_circle
       when ACTION_DRAW_POLYGON
-          return @cursor_pencil_polygon
+          return SmartCursorManager.cursor_pencil_polygon
       end
 
       super
@@ -277,7 +268,7 @@ module Ladb::OpenCutList
       case state
 
       when STATE_PULL
-        return @tool.cursor_pull
+        return SmartCursorManager.cursor_pull
 
       end
 

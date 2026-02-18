@@ -121,9 +121,7 @@ module Ladb::OpenCutList
 
       def initialize(quit_on_esc = true, quit_on_undo = false)
 
-        if Plugin::IS_DEV
-          SKETCHUP_CONSOLE.clear
-        end
+        SKETCHUP_CONSOLE.clear if Plugin::IS_DEV
 
         # Determine if the tool is deactiveted when the user hit the ESC key
         @quit_on_esc = quit_on_esc
@@ -131,9 +129,8 @@ module Ladb::OpenCutList
         # Determine if the tool is deactiveted when the user undo last action
         @quit_on_undo = quit_on_undo
 
-        # Cursor management
-        @cursor_select_id = create_cursor('select', 0, 0)
-        @cursors = [ @cursor_select_id ]
+        # Cursors stack
+        @cursors = [ get_default_cursor ]
 
         # Internals
 
@@ -161,11 +158,8 @@ module Ladb::OpenCutList
 
       # -- Cursors stuff --
 
-      def create_cursor(name, hot_x, hot_y)
-        cursor_id = nil
-        cursor_path = File.join(PLUGIN_DIR,'img', "cursor-#{name}.#{PLUGIN.platform_is_mac? ? 'pdf' : 'svg'}")
-        cursor_id = UI.create_cursor(cursor_path, hot_x, hot_y) if cursor_path
-        cursor_id
+      def get_default_cursor
+        0
       end
 
       def set_root_cursor(cursor_id)
@@ -399,7 +393,7 @@ module Ladb::OpenCutList
             end
             @mouse_hover_widget = hit_widget
             @mouse_hover_widget.onMouseEnter(flags)
-            push_cursor(@cursor_select_id)
+            push_cursor(get_default_cursor)
           end
           @mouse_is_outside = false
           return true
@@ -437,7 +431,7 @@ module Ladb::OpenCutList
       end
 
       def onSetCursor
-        UI.set_cursor(@cursors.last)
+        UI.set_cursor(@cursors.last.to_i)
       end
 
       def onTransactionUndo(model)

@@ -71,28 +71,12 @@ module Ladb::OpenCutList
 
     # -----
 
-    attr_reader :callback_action_handler,
-                :cursor_select, :cursor_select_part, :cursor_select_part_plus, :cursor_select_plus_minus, :cursor_select_rect, :cursor_select_copy_line, :cursor_select_copy_grid, :cursor_select_move_line, :cursor_select_distribute, :cursor_move, :cursor_move_copy, :cursor_pin_1, :cursor_pin_2
+    attr_reader :callback_action_handler
 
     def initialize(current_action: nil, callback_action_handler: nil)
       super(current_action: current_action)
 
       @callback_action_handler = callback_action_handler
-
-      # Create cursors
-      @cursor_select = create_cursor('select', 0, 0)
-      @cursor_select_part = create_cursor('select-part', 0, 0)
-      @cursor_select_part_plus = create_cursor('select-part-plus', 0, 0)
-      @cursor_select_plus_minus = create_cursor('select-plus-minus', 0, 0)
-      @cursor_select_rect = create_cursor('select-rect', 0, 0)
-      @cursor_select_copy_line = create_cursor('select-copy-line', 0, 0)
-      @cursor_select_copy_grid = create_cursor('select-copy-grid', 0, 0)
-      @cursor_select_move_line = create_cursor('select-move-line', 0, 0)
-      @cursor_select_distribute = create_cursor('select-distribute', 0, 0)
-      @cursor_move = create_cursor('move', 16, 16)
-      @cursor_move_copy = create_cursor('move-copy', 16, 16)
-      @cursor_pin_1 = create_cursor('pin-1', 11, 31)
-      @cursor_pin_2 = create_cursor('pin-2', 11, 31)
 
     end
 
@@ -110,7 +94,7 @@ module Ladb::OpenCutList
 
       case action
       when ACTION_COPY_LINE, ACTION_COPY_GRID, ACTION_MOVE_LINE, ACTION_DISTRIBUTE
-          return @cursor_select
+          return SmartCursorManager.cursor_select
       end
 
       super
@@ -760,9 +744,9 @@ module Ladb::OpenCutList
 
       case state
       when STATE_HANDLE_START
-        return @tool.cursor_pin_1
+        return SmartCursorManager.cursor_pin_1
       when STATE_HANDLE
-        return @tool.cursor_pin_2
+        return SmartCursorManager.cursor_pin_2
       end
 
       super
@@ -865,7 +849,7 @@ module Ladb::OpenCutList
 
       case state
       when STATE_SELECT, STATE_HANDLE
-        return @tool.cursor_select_copy_line
+        return SmartCursorManager.cursor_select_copy_line
       end
 
       super
@@ -1500,7 +1484,7 @@ module Ladb::OpenCutList
 
       case state
       when STATE_SELECT, STATE_HANDLE
-        return @tool.cursor_select_copy_grid
+        return SmartCursorManager.cursor_select_copy_grid
       end
 
       super
@@ -2206,7 +2190,7 @@ module Ladb::OpenCutList
 
       case state
       when STATE_SELECT
-        return @tool.cursor_select_move_line
+        return SmartCursorManager.cursor_select_move_line
       end
 
       super
@@ -2656,7 +2640,7 @@ module Ladb::OpenCutList
       case state
 
       when STATE_SELECT
-        return @tool.cursor_select_distribute
+        return SmartCursorManager.cursor_select_distribute
 
       end
 

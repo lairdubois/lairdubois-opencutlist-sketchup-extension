@@ -89,12 +89,6 @@ module Ladb::OpenCutList
         current_action: current_action
       )
 
-      # Create cursors
-      @cursor_export_stl = create_cursor('export-stl', 0, 0)
-      @cursor_export_obj = create_cursor('export-obj', 0, 0)
-      @cursor_export_dxf = create_cursor('export-dxf', 0, 0)
-      @cursor_export_svg = create_cursor('export-svg', 0, 0)
-
     end
 
     def get_stripped_name
@@ -132,29 +126,29 @@ module Ladb::OpenCutList
       case action
       when ACTION_EXPORT_PART_3D
         if fetch_action_option_boolean(ACTION_EXPORT_PART_3D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_STL)
-          return @cursor_export_stl
+          return SmartCursorManager.cursor_select_stl
         elsif fetch_action_option_boolean(ACTION_EXPORT_PART_3D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_OBJ)
-          return @cursor_export_obj
+          return SmartCursorManager.cursor_select_obj
         elsif fetch_action_option_boolean(ACTION_EXPORT_PART_3D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
-          return @cursor_export_dxf
+          return SmartCursorManager.cursor_select_dxf
         end
       when ACTION_EXPORT_PART_2D
         if fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_SVG)
-          return @cursor_export_svg
+          return SmartCursorManager.cursor_select_svg
         elsif fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
-          return @cursor_export_dxf
+          return SmartCursorManager.cursor_select_dxf
         end
       when ACTION_EXPORT_FACE
         if fetch_action_option_boolean(ACTION_EXPORT_FACE, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_SVG)
-          return @cursor_export_svg
+          return SmartCursorManager.cursor_select_svg
         elsif fetch_action_option_boolean(ACTION_EXPORT_FACE, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
-          return @cursor_export_dxf
+          return SmartCursorManager.cursor_select_dxf
         end
       when ACTION_EXPORT_PATHS
         if fetch_action_option_boolean(ACTION_EXPORT_PATHS, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_SVG)
-          return @cursor_export_svg
+          return SmartCursorManager.cursor_select_svg
         elsif fetch_action_option_boolean(ACTION_EXPORT_PATHS, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
-          return @cursor_export_dxf
+          return SmartCursorManager.cursor_select_dxf
         end
       end
 
@@ -788,7 +782,7 @@ module Ladb::OpenCutList
           if (is_action_export_part_2d? || is_action_export_face? || is_action_export_paths?) && @picker.picked_face.edges.index { |edge| edge.soft? } && !SurfaceManipulator.new.populate_from_face(@picker.picked_face).flat?
             _reset_active_part
             show_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.smart_export.error.not_flat_face')}", MESSAGE_TYPE_ERROR)
-            push_cursor(@cursor_select_error)
+            push_cursor(SmartCursorManager.cursor_select_error)
             return
           end
 
@@ -804,7 +798,7 @@ module Ladb::OpenCutList
 
                 _reset_active_part
                 show_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.smart_export.error.incompatible_active_path')}", MESSAGE_TYPE_ERROR)
-                push_cursor(@cursor_select_error)
+                push_cursor(SmartCursorManager.cursor_select_error)
                 return
 
               end
@@ -815,14 +809,14 @@ module Ladb::OpenCutList
               else
                 _reset_active_part
                 show_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.smart_export.error.not_part')}", MESSAGE_TYPE_ERROR)
-                push_cursor(@cursor_select_error)
+                push_cursor(SmartCursorManager.cursor_select_error)
               end
               return
 
             else
               _reset_active_part
               show_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.smart_export.error.not_part')}", MESSAGE_TYPE_ERROR)
-              push_cursor(@cursor_select_error)
+              push_cursor(SmartCursorManager.cursor_select_error)
               return
             end
 

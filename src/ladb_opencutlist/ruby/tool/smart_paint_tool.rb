@@ -101,17 +101,6 @@ module Ladb::OpenCutList
         end
       end
 
-      # Create cursors
-      @cursor_paint_part_id = create_cursor('paint-part', 2, 15)
-      @cursor_paint_edge_1_id = create_cursor('paint-edge-1', 2, 15)
-      @cursor_paint_edge_2_id = create_cursor('paint-edge-2', 2, 15)
-      @cursor_paint_edge_4_id = create_cursor('paint-edge-4', 2, 15)
-      @cursor_paint_face_1_id = create_cursor('paint-face-1', 2, 15)
-      @cursor_paint_face_2_id = create_cursor('paint-face-2', 2, 15)
-      @cursor_paint_clean_id = create_cursor('paint-clean', 2, 15)
-      @cursor_picker_id = create_cursor('picker', 0, 0)
-      @cursor_paint_error_id = create_cursor('paint-error', 2, 15)
-
     end
 
     def get_stripped_name
@@ -410,27 +399,27 @@ module Ladb::OpenCutList
       # Update status text and root cursor
       case action
       when ACTION_PAINT_PARTS
-        return @cursor_paint_part_id
+        return SmartCursorManager.cursor_paint_part
       when ACTION_PAINT_EDGES
         if fetch_action_option_boolean(ACTION_PAINT_EDGES, ACTION_OPTION_EDGES, ACTION_OPTION_EDGES_4)
-          return @cursor_paint_edge_4_id
+          return SmartCursorManager.cursor_paint_edge_4
         elsif fetch_action_option_boolean(ACTION_PAINT_EDGES, ACTION_OPTION_EDGES, ACTION_OPTION_EDGES_2)
-          return @cursor_paint_edge_2_id
+          return SmartCursorManager.cursor_paint_edge_2
         else
-          return @cursor_paint_edge_1_id
+          return SmartCursorManager.cursor_paint_edge_1
         end
       when ACTION_PAINT_FACES
         if fetch_action_option_boolean(ACTION_PAINT_FACES, ACTION_OPTION_FACES, ACTION_OPTION_FACES_2)
-          return @cursor_paint_face_2_id
+          return SmartCursorManager.cursor_paint_face_2
         else
-          return @cursor_paint_face_1_id
+          return SmartCursorManager.cursor_paint_face_1
         end
       when ACTION_PICK
-        return @cursor_picker_id
+        return SmartCursorManager.cursor_picker
       when ACTION_PAINT_CLEAN
-        return @cursor_paint_clean_id
+        return SmartCursorManager.cursor_paint_clean
       else
-        return @cursor_paint_error_id
+        return SmartCursorManager.cursor_paint_error
       end
 
       super
@@ -861,7 +850,7 @@ module Ladb::OpenCutList
 
           if part.group.material_type != MaterialAttributes::TYPE_SHEET_GOOD
             show_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.smart_paint.error.wrong_material_type', { :type => PLUGIN.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_SHEET_GOOD}") })}", MESSAGE_TYPE_ERROR)
-            push_cursor(@cursor_paint_error_id)
+            push_cursor(SmartCursorManager.cursor_paint_error)
           else
 
             edge_faces = {}
@@ -906,7 +895,7 @@ module Ladb::OpenCutList
 
             if faces.empty?
               show_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.smart_paint.error.not_edge')}", MESSAGE_TYPE_ERROR)
-              push_cursor(@cursor_paint_error_id)
+              push_cursor(SmartCursorManager.cursor_paint_error)
             else
 
               @active_material = get_current_material
@@ -953,7 +942,7 @@ module Ladb::OpenCutList
 
           if part.group.material_type != MaterialAttributes::TYPE_SHEET_GOOD
             show_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.smart_paint.error.wrong_material_type', { :type => PLUGIN.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_SHEET_GOOD}") })}", MESSAGE_TYPE_ERROR)
-            push_cursor(@cursor_paint_error_id)
+            push_cursor(SmartCursorManager.cursor_paint_error)
           else
 
             face_faces = {}
@@ -990,7 +979,7 @@ module Ladb::OpenCutList
 
             if faces.empty?
               show_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.smart_paint.error.not_face')}", MESSAGE_TYPE_ERROR)
-              push_cursor(@cursor_paint_error_id)
+              push_cursor(SmartCursorManager.cursor_paint_error)
             else
 
               @active_material = get_current_material
@@ -1240,14 +1229,14 @@ module Ladb::OpenCutList
               else
                 _reset_active_part
                 show_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.smart_paint.error.not_part')}", MESSAGE_TYPE_ERROR)
-                push_cursor(@cursor_paint_error_id)
+                push_cursor(SmartCursorManager.cursor_paint_error)
               end
               return
 
             else
               _reset_active_part
               show_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.smart_paint.error.not_part')}", MESSAGE_TYPE_ERROR)
-              push_cursor(@cursor_paint_error_id)
+              push_cursor(SmartCursorManager.cursor_paint_error)
               return
             end
           end
