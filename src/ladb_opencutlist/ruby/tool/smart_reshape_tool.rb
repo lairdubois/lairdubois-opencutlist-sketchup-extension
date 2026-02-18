@@ -187,6 +187,11 @@ module Ladb::OpenCutList
       @picked_reshape_start_point = nil
       @picked_reshape_end_point = nil
 
+      # Create 3D layers
+      tool.create_3d(LAYER_3D_RESHAPE_PREVIEW)
+      tool.create_3d(LAYER_3D_PART_SIBLING_PREVIEW)
+      tool.create_3d(LAYER_3D_PART_PREVIEW)
+
     end
 
     # -- STATE --

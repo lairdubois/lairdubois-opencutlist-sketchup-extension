@@ -252,6 +252,7 @@ module Ladb::OpenCutList
 
       @active_container_path = nil
 
+      # Create 3D layers
       tool.create_3d(LAYER_3D_PART_PREVIEW)
       tool.create_3d(LAYER_3D_DRAW_PREVIEW)
 

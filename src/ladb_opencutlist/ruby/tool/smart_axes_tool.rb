@@ -172,8 +172,8 @@ module Ladb::OpenCutList
       @tooltip_type = SmartTool::MESSAGE_TYPE_DEFAULT
 
       # Create 3D layers
-      @tool.create_3d(LAYER_3D_PART_PREVIEW)
-      @tool.create_3d(LAYER_3D_ACTION_PREVIEW)
+      tool.create_3d(LAYER_3D_PART_PREVIEW)
+      tool.create_3d(LAYER_3D_ACTION_PREVIEW)
 
     end
 
