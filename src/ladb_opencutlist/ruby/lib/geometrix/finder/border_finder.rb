@@ -1,6 +1,6 @@
 module Ladb::OpenCutList::Geometrix
 
-  class BorderFinder
+  module BorderFinder
 
     def self.find_borders(outer_polygons, polygons)
 

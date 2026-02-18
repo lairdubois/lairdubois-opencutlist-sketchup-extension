@@ -1,6 +1,6 @@
 module Ladb::OpenCutList::Geometrix
 
-  class CentroidFinder
+  module CentroidFinder
 
     def self.find_centroid(points)
 

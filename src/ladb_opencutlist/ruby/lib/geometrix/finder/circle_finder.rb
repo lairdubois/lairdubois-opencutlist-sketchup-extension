@@ -1,6 +1,6 @@
 module Ladb::OpenCutList::Geometrix
 
-  class CircleFinder
+  module CircleFinder
 
     # Use first 3 points to find circle 2D definition or nil if it doesn't match a cirlce.
     #  Input points are only considered as 2D points.

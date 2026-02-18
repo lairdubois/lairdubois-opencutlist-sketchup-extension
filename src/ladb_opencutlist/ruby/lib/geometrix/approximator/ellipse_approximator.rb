@@ -3,7 +3,7 @@ module Ladb::OpenCutList::Geometrix
   require_relative '../finder/ellipse_finder'
   require_relative '../finder/circle_finder'
 
-  class EllipseApproximator
+  module EllipseApproximator
 
     # This function try to approximate an 'EllipseDef' to a list of circular arcs.
     # Result is CCW.

@@ -2,7 +2,7 @@ module Ladb::OpenCutList::Geometrix
 
   require_relative 'ellipse_finder'
 
-  class CurveFinder
+  module CurveFinder
 
     MIN_ARC_DELTA_ANGLE = QUARTER_PI.round(2)
     MIN_ARC_POINT_COUNT = 5

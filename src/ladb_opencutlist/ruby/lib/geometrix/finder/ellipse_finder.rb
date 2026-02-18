@@ -2,7 +2,7 @@ require 'matrix'
 
 module Ladb::OpenCutList::Geometrix
 
-  class EllipseFinder
+  module EllipseFinder
 
     # Use first 5 points to find ellipse 2D definition or nil if it doesn't match an ellipse.
     # Input points are only considered as 2D points.
