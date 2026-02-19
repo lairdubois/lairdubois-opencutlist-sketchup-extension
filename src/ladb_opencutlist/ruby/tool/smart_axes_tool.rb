@@ -139,8 +139,7 @@ module Ladb::OpenCutList
 
       end
 
-      refresh
-
+      super
     end
 
     def onViewChanged(view)

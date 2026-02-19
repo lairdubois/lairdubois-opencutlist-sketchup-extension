@@ -1452,6 +1452,10 @@ module Ladb::OpenCutList
       end
     end
 
+    def onActionChanged(action)
+      refresh
+    end
+
     def onActionOptionStored(action, option_group, option)
       @action_handler.onToolActionOptionStored(self, action, option_group, option) if !@action_handler.nil? && @action_handler.respond_to?(:onToolActionOptionStored)
     end
@@ -1524,6 +1528,7 @@ module Ladb::OpenCutList
 
     def onActionChanged(action)
       @picker.do_pick unless @picker.nil?
+      super
     end
 
     def onPickerChanged(picker, view)

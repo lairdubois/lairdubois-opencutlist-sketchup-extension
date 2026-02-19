@@ -175,9 +175,6 @@ module Ladb::OpenCutList
       end
 
       super
-
-      refresh
-
     end
 
     def onViewChanged(view)
@@ -3158,15 +3155,10 @@ module Ladb::OpenCutList
     def _distribute_entity(number = 1, spacings = [])
       return if (move_def = _get_move_def(@picked_handle_start_point, @picked_handle_end_point, number, spacings)).nil?
 
-      center, mps, mpe, mvs = move_def.values_at(:center, :mps, :mpe, :mvs)
+      mvs, _ = move_def.values_at(:mvs)
 
       ct = _get_global_context_transformation
       cti = ct.inverse
-
-      # center = center.transform(cti)
-      # mps = mps.transform(cti)
-      # mpe = mpe.transform(cti)
-      # mv = mps.vector_to(mpe)
 
       _unhide_instances
       _unhide_twin_instances
@@ -3192,7 +3184,7 @@ module Ladb::OpenCutList
 
           number.times do |i|
 
-            mt = Geom::Transformation.translation(mvs[i])
+            mt = Geom::Transformation.translation(mvs[i].transform(cti))
             mt *= @src_transformations[src_instance]
 
             if i == 0
