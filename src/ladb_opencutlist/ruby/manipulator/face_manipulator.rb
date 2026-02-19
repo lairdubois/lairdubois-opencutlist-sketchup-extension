@@ -2,20 +2,18 @@ module Ladb::OpenCutList
 
   require_relative 'plane_manipulator'
   require_relative 'loop_manipulator'
-  require_relative '../helper/entities_helper'
   require_relative '../helper/face_triangles_helper'
 
   class FaceManipulator < PlaneManipulator
 
-    include EntitiesHelper
     include FaceTrianglesHelper
 
     attr_reader :face
     attr_accessor :surface_manipulator
 
     def initialize(face, transformation = IDENTITY)
-      super(face.plane, transformation)
       raise "face must be a Sketchup::Face." unless face.is_a?(Sketchup::Face)
+      super(face.plane, transformation)
       @face = face
       @surface_manipulator = nil
     end
@@ -56,7 +54,21 @@ module Ladb::OpenCutList
     end
 
     def longest_outer_edge
-      _find_longest_outer_edge(@face, @transformation)
+      @longest_outer_edge ||= begin
+                                edges = @face.outer_loop.edges
+                                visible_edges = edges.reject { |e| !e.visible? || e.smooth? || e.soft? }
+
+                                candidates = (visible_edges.empty? ? edges : visible_edges)
+                                               .group_by { |e| e.length(@transformation).round(4) }
+                                               .max_by { |length, _| length }
+                                               .last
+
+                                candidates.min_by { |e|
+                                  _, v = e.line
+                                  v.reverse! if e.reversed_in?(@face)
+                                  v.angle_between(X_AXIS).abs
+                                }
+                              end
     end
 
     def has_cuts_opening?

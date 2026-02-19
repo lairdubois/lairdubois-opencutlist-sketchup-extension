@@ -7,7 +7,7 @@ module Ladb::OpenCutList::Geometrix
     MIN_ARC_DELTA_ANGLE = QUARTER_PI.round(2)
     MIN_ARC_POINT_COUNT = 5
 
-    # This function try to split an array of ordered points to line or arc portions
+    # This function tries to split an array of ordered points to line or arc portions
     #
     # @param [Array<Geom::Point3d>] points (the last must not be equal to the first)
     # @param [Boolean] closed

@@ -10,7 +10,6 @@ module Ladb::OpenCutList
   require_relative '../manipulator/face_manipulator'
   require_relative '../manipulator/plane_manipulator'
   require_relative '../manipulator/cline_manipulator'
-  require_relative '../helper/entities_helper'
   require_relative '../helper/user_text_helper'
   require_relative '../helper/part_helper'
   require_relative '../worker/common/common_drawing_decomposition_worker'
@@ -208,7 +207,6 @@ module Ladb::OpenCutList
 
     include SmartActionHandlerPartHelper
     include UserTextHelper
-    include EntitiesHelper
     include PartHelper
 
     STATE_SHAPE_START = 0
@@ -253,8 +251,8 @@ module Ladb::OpenCutList
       @active_container_path = nil
 
       # Create 3D layers
-      tool.create_3d(LAYER_3D_PART_PREVIEW)
       tool.create_3d(LAYER_3D_DRAW_PREVIEW)
+      tool.create_3d(LAYER_3D_PART_PREVIEW)
 
     end
 

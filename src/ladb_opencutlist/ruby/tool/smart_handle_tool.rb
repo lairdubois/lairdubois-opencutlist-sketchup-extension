@@ -8,7 +8,6 @@ module Ladb::OpenCutList
   require_relative '../manipulator/face_manipulator'
   require_relative '../manipulator/plane_manipulator'
   require_relative '../manipulator/cline_manipulator'
-  require_relative '../helper/entities_helper'
   require_relative '../helper/user_text_helper'
   require_relative '../worker/common/common_drawing_decomposition_worker'
 

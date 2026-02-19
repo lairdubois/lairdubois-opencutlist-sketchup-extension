@@ -13,8 +13,8 @@ module Ladb::OpenCutList
         @plane_vector = plane[1]
       elsif plane.length == 4
         raise "Bad plane data structure. Must be [ Float, Float, Float, Float ]." unless plane[0].is_a?(Float) && plane[1].is_a?(Float) && plane[2].is_a?(Float) && plane[3].is_a?(Float)
-        @plane_point = Geom::Point3d.new(plane[0..2].map { |v| v * -plane.last })
-        @plane_vector = Geom::Vector3d.new(plane[0..2])
+        @plane_point = Geom::Point3d.new(plane.take(3).map { |v| v * -plane.last })
+        @plane_vector = Geom::Vector3d.new(plane.take(3))
       end
     end
 

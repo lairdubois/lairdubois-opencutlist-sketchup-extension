@@ -5,7 +5,6 @@ module Ladb::OpenCutList
   require_relative '../helper/layer_visibility_helper'
   require_relative '../helper/face_triangles_helper'
   require_relative '../helper/bounding_box_helper'
-  require_relative '../helper/entities_helper'
   require_relative '../model/attributes/definition_attributes'
   require_relative '../model/geom/size3d'
   require_relative '../observer/model_observer'
@@ -17,7 +16,6 @@ module Ladb::OpenCutList
     include LayerVisibilityHelper
     include FaceTrianglesHelper
     include BoundingBoxHelper
-    include EntitiesHelper
     include CutlistObserverHelper
 
     ACTION_FLIP = 0
@@ -865,11 +863,6 @@ module Ladb::OpenCutList
     def _get_input_axes(instance_info)
 
       plane_manipulator = @picker.picked_plane_manipulator
-      if plane_manipulator.nil?
-        face, inner_path = _find_largest_face(instance_info.entity, instance_info.transformation)
-        container_path = instance_info.path + inner_path
-        plane_manipulator = FaceManipulator.new(face, PathUtils.get_transformation(container_path, IDENTITY))
-      end
 
       line_manipulator = @picker.picked_line_manipulator
       if line_manipulator.nil? || !line_manipulator.direction.perpendicular?(plane_manipulator.normal)
