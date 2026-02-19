@@ -1374,11 +1374,6 @@ module Ladb::OpenCutList
 
         end
 
-      elsif (key == VK_UP || key == VK_DOWN) && _can_pick_deeper?
-        if @active_part_entity_path
-          _pick_deeper(key == VK_UP ? 1 : -1)
-        end
-        return true
       end
       @action_handler.onToolKeyUpExtended(self, key, repeat, flags, view, after_down, is_quick) if !@action_handler.nil? && @action_handler.respond_to?(:onToolKeyUpExtended)
     end
@@ -1509,6 +1504,17 @@ module Ladb::OpenCutList
     def onKeyUp(key, repeat, flags, view)
       return true if super
       @picker.onToolKeyUp(self, key, repeat, flags, view) unless @picker.nil?
+    end
+
+    def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
+      return true if super
+      if (key == VK_UP || key == VK_DOWN) && _can_pick_deeper?
+        if @active_part_entity_path
+          _pick_deeper(key == VK_UP ? 1 : -1)
+        end
+        return true
+      end
+      false
     end
 
     def onMouseMove(flags, x, y, view)
