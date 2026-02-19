@@ -90,9 +90,6 @@ module Ladb::OpenCutList
       # Tool ID (available only if the tool is active)
       @tool_id = nil
 
-      # Picker
-      @picker = nil
-
       # Mouse
       @last_mouse_x = -1
       @last_mouse_y = -1
@@ -475,15 +472,15 @@ module Ladb::OpenCutList
     def setup_minitools_btns(view)
 
       # Transparency
-      @transparency_minitool_btn = append_minitool_btn('M0,0.2L0.6,0L1,0.2L0.4,0.4L0,0.2 M0.5,0.6333L0.6,0.6 M0.6,0.6L0.7,0.65 M0.6,0.1L0.6,0.2 M0.6,0.3L0.6,0.4 M0.6,0.5L0.6,0.6 M0.8,0.7L0.9,0.75 M0.4,0.6667L0.3,0.7 M0.2,0.7333L0.1,0.7667 M0.4,0.4L0.4,1 M0,0.2L0,0.8L0.4,1L1,0.8L1,0.2') do |button|
+      @transparency_minitool_btn = append_minitool_btn('M0,0.2L0.6,0L1,0.2L0.4,0.4L0,0.2 M0.5,0.6333L0.6,0.6 M0.6,0.6L0.7,0.65 M0.6,0.1L0.6,0.2 M0.6,0.3L0.6,0.4 M0.6,0.5L0.6,0.6 M0.8,0.7L0.9,0.75 M0.4,0.6667L0.3,0.7 M0.2,0.7333L0.1,0.7667 M0.4,0.4L0.4,1 M0,0.2L0,0.8L0.4,1L1,0.8L1,0.2') { |button|
         view.model.rendering_options["ModelTransparency"] = !view.model.rendering_options["ModelTransparency"]
-      end
+      }
       @transparency_minitool_btn.selected = view.model.rendering_options['ModelTransparency']
 
       # Zoom extends
-      append_minitool_btn('M0,0.3L0,0L0.3,0 M0.7,0L1,0L1,0.3 M1,0.7L1,1L0.7,1 M0.3,1L0,1L0,0.7 M0.2,0.3L0.5,0.2L0.8,0.3L0.5,0.4L0.2,0.3 M0.2,0.3L0.2,0.7L0.5,0.8L0.8,0.7L0.8,0.3 M0.5,0.4L0.5,0.8') do |button|
+      append_minitool_btn('M0,0.3L0,0L0.3,0 M0.7,0L1,0L1,0.3 M1,0.7L1,1L0.7,1 M0.3,1L0,1L0,0.7 M0.2,0.3L0.5,0.2L0.8,0.3L0.5,0.4L0.2,0.3 M0.2,0.3L0.2,0.7L0.5,0.8L0.8,0.7L0.8,0.3 M0.5,0.4L0.5,0.8') { |button|
         ViewUtils.zoom_active_entities(view)
-      end
+      }
 
     end
 
@@ -945,10 +942,6 @@ module Ladb::OpenCutList
       SmartCursorManager.cursor_select_error
     end
 
-    def get_action_picker(action)
-      nil
-    end
-
     def get_action_options_dictionary_and_section(action)
       [ "tool_smart_#{get_stripped_name}_options", "action_#{action}" ] # [ DICTIONARY, SECTION ]
     end
@@ -1063,14 +1056,6 @@ module Ladb::OpenCutList
       Sketchup.set_status_text(get_action_status(action), SB_PROMPT)
       set_root_cursor(get_action_cursor(action))
       pop_to_root_cursor
-
-      # Update picker
-      previous_picker = @picker
-      @picker = get_action_picker(action)
-      unless @picker.nil? || previous_picker.nil?
-        @picker.pick_position.x = previous_picker.pick_position.x
-        @picker.pick_position.y = previous_picker.pick_position.y
-      end
 
       # Fire event
       onActionChanged(action)
@@ -1215,7 +1200,6 @@ module Ladb::OpenCutList
 
     def draw(view)
       super
-      @picker.draw(view) unless @picker.nil?
       @action_handler.draw(view) if !@action_handler.nil? && @action_handler.respond_to?(:draw)
     end
 
@@ -1309,7 +1293,7 @@ module Ladb::OpenCutList
 
     def onSuspend(view)
       super
-      return @action_handler.onToolSuspend(self, view) if !@action_handler.nil? && @action_handler.respond_to?(:onToolSuspend)
+      @action_handler.onToolSuspend(self, view) if !@action_handler.nil? && @action_handler.respond_to?(:onToolSuspend)
     end
 
     def onResume(view)
@@ -1327,11 +1311,6 @@ module Ladb::OpenCutList
     def onKeyDown(key, repeat, flags, view)
       return true if super
       @action_handler.onToolKeyDown(self, key, repeat, flags, view) if !@action_handler.nil? && @action_handler.respond_to?(:onToolKeyDown)
-    end
-
-    def onKeyUp(key, repeat, flags, view)
-      return true if super
-      @picker.onToolKeyUp(self, key, repeat, flags, view) unless @picker.nil?
     end
 
     def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
@@ -1417,21 +1396,16 @@ module Ladb::OpenCutList
       # Tooltip
       move_tooltip(x, y)
 
-      # Action
-      @picker.onToolMouseMove(self, flags, x, y, view) unless is_action_none? || @picker.nil?
-
       @action_handler.onToolMouseMove(self, flags, x, y, view) if !@action_handler.nil? && @action_handler.respond_to?(:onToolMouseMove)
     end
 
     def onMouseLeave(view)
       return true if super
-      @picker.onToolMouseLeave(self, view) unless is_action_none? || @picker.nil?
       @action_handler.onToolMouseLeave(self, view) if !@action_handler.nil? && @action_handler.respond_to?(:onToolMouseLeave)
     end
 
     def onMouseLeaveSpace(view)
       return true if super
-      @picker.onToolMouseLeave(self, view) unless is_action_none? || @picker.nil?
       @action_handler.onToolMouseLeave(self, view) if !@action_handler.nil? && @action_handler.respond_to?(:onToolMouseLeave)
     end
 
@@ -1478,12 +1452,78 @@ module Ladb::OpenCutList
       end
     end
 
-    def onActionChanged(action)
-      @picker.do_pick unless @picker.nil?
-    end
-
     def onActionOptionStored(action, option_group, option)
       @action_handler.onToolActionOptionStored(self, action, option_group, option) if !@action_handler.nil? && @action_handler.respond_to?(:onToolActionOptionStored)
+    end
+
+  end
+
+  class SmartToolLegacy < SmartTool
+
+    def initialize(
+
+                   quit_on_esc: true,
+                   quit_on_undo: false,
+
+                   tab_name_to_show_on_quit: nil,
+
+                   highlighted_parts: nil,
+
+                   current_action: nil
+
+    )
+
+      super
+
+      # Picker
+      @picker = nil
+
+    end
+
+    def get_action_picker(action)
+      nil
+    end
+
+    def set_action(action)
+
+      # Update picker
+      previous_picker = @picker
+      @picker = get_action_picker(action)
+      unless @picker.nil? || previous_picker.nil?
+        @picker.pick_position.x = previous_picker.pick_position.x
+        @picker.pick_position.y = previous_picker.pick_position.y
+      end
+
+      super
+    end
+
+    def draw(view)
+      super
+      @picker.draw(view) unless @picker.nil?
+    end
+
+    def onKeyUp(key, repeat, flags, view)
+      return true if super
+      @picker.onToolKeyUp(self, key, repeat, flags, view) unless @picker.nil?
+    end
+
+    def onMouseMove(flags, x, y, view)
+      return true if super
+      @picker.onToolMouseMove(self, flags, x, y, view) unless is_action_none? || @picker.nil?
+    end
+
+    def onMouseLeave(view)
+      return true if super
+      @picker.onToolMouseLeave(self, view) unless is_action_none? || @picker.nil?
+    end
+
+    def onMouseLeaveSpace(view)
+      return true if super
+      @picker.onToolMouseLeave(self, view) unless is_action_none? || @picker.nil?
+    end
+
+    def onActionChanged(action)
+      @picker.do_pick unless @picker.nil?
     end
 
     def onPickerChanged(picker, view)
@@ -1492,7 +1532,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    #protected # TODO
+    protected
 
     def _refresh_active_context(highlighted = false)
       _set_active_context(@active_context_path, highlighted)
@@ -2178,25 +2218,25 @@ module Ladb::OpenCutList
     COLOR_INSTANCE_HIGHLIGHTED = Sketchup::Color.new(254, 222, 11, 175).freeze
 
     LAYER_3D_PART_PREVIEW = 0
-    LAYER_3D_PART_SIBLING_PREVIEW = 1
+    LAYER_3D_PART_TWINS_PREVIEW = 1
 
     # -----
 
     def onToolLButtonDown(tool, flags, x, y, view)
       _preview_part(@active_part_entity_path, @active_part, LAYER_3D_PART_PREVIEW, true) if @active_part_entity_path.is_a?(Array)
-      _preview_part_siblings(LAYER_3D_PART_SIBLING_PREVIEW, true)
+      _preview_part_twins(LAYER_3D_PART_TWINS_PREVIEW, true)
       false
     end
 
     def onToolLButtonUp(tool, flags, x, y, view)
       _preview_part(@active_part_entity_path, @active_part, LAYER_3D_PART_PREVIEW, false) if @active_part_entity_path.is_a?(Array)
-      _preview_part_siblings(LAYER_3D_PART_SIBLING_PREVIEW, false)
+      _preview_part_twins(LAYER_3D_PART_TWINS_PREVIEW, false)
       false
     end
 
     def onActivePartChanged(part_entity_path, part, highlighted = false)
       _preview_part(part_entity_path, part, LAYER_3D_PART_PREVIEW, highlighted)
-      _preview_part_siblings(LAYER_3D_PART_SIBLING_PREVIEW, highlighted)
+      _preview_part_twins(LAYER_3D_PART_TWINS_PREVIEW, highlighted)
       false
     end
 
@@ -2293,16 +2333,16 @@ module Ladb::OpenCutList
       @active_part_entity_path
     end
 
-    def has_active_part_siblings?
-      @active_part_siblings.is_a?(Array) && @active_part_siblings.any?
+    def has_active_part_twins?
+      @active_part_twins.is_a?(Array) && @active_part_twins.any?
     end
 
-    def get_active_part_sibling_entity_paths
-      @active_part_sibling_entity_paths
+    def get_active_part_twin_entity_paths
+      @active_part_twins_entity_paths
     end
 
-    def get_active_part_siblings
-      @active_part_siblings
+    def get_active_part_twins
+      @active_part_twins
     end
 
     protected
@@ -2312,8 +2352,8 @@ module Ladb::OpenCutList
     def _reset
       @active_part_entity_path = nil
       @active_part = nil
-      @active_part_sibling_entity_paths = nil
-      @active_part_siblings = nil
+      @active_part_twins_entity_paths = nil
+      @active_part_twins = nil
       super
     end
 
@@ -2332,19 +2372,19 @@ module Ladb::OpenCutList
       _reset_active_part
     end
 
-    def _pick_part_siblings?
+    def _pick_part_twins?
       false
     end
 
-    def _pick_part_sibling(picker, view)
-      return unless _pick_part_siblings?
+    def _pick_part_twin(picker, view)
+      return unless _pick_part_twins?
       if @active_part_entity_path.is_a?(Array) && picker.picked_face_path.is_a?(Array)
         if (picked_part_entity_path = _get_part_entity_path_from_path(picker.picked_face_path)).is_a?(Array)
           return if picked_part_entity_path == @active_part_entity_path                   # Abandon if part seems to be the active one
           return if picked_part_entity_path[0...-1] != @active_part_entity_path[0...-1]   # Abandon if part does not have the same ancestors
           if (picked_part = _generate_part_from_path(picked_part_entity_path)).is_a?(Part)
             if _can_activate_part?(picked_part_entity_path, picked_part)
-              _add_part_sibling(picked_part_entity_path, picked_part) if picked_part.id == @active_part.id
+              _add_part_twin(picked_part_entity_path, picked_part) if picked_part.id == @active_part.id
             else
               if (error_key = _get_cant_activate_part_error_key(picked_part)).is_a?(String)
                 @tool.show_tooltip(PLUGIN.get_i18n_string(error_key), SmartTool::MESSAGE_TYPE_ERROR)
@@ -2517,14 +2557,15 @@ module Ladb::OpenCutList
       end
     end
 
-    def _preview_part_siblings(layer = LAYER_3D_PART_SIBLING_PREVIEW, highlighted = false)
+    def _preview_part_twins(layer = LAYER_3D_PART_TWINS_PREVIEW, highlighted = false)
       @tool.clear_3d(layer)
-      if @active_part_sibling_entity_paths.is_a?(Array)
+      if @active_part_twins_entity_paths.is_a?(Array) && has_active_part?
+
+        triangles = _compute_children_faces_triangles(get_active_part.def.definition.entities)
 
         # Mesh
-        @active_part_sibling_entity_paths.each do |path|
+        @active_part_twins_entity_paths.each do |path|
 
-          triangles = _compute_children_faces_triangles(path.last.definition.entities)
           t = PathUtils::get_transformation(path)
 
           k_mesh = Kuix::Mesh.new
@@ -2582,8 +2623,8 @@ module Ladb::OpenCutList
         @active_part_entity_path = part_entity_path
         @active_part = part
 
-        @active_part_sibling_entity_paths = nil
-        @active_part_siblings = nil
+        @active_part_twins_entity_paths = nil
+        @active_part_twins = nil
 
         if part_entity_path.is_a?(Array)
           _set_active_selection(part_entity_path[0...-1], [ part_entity_path[-1] ])
@@ -2654,10 +2695,10 @@ module Ladb::OpenCutList
       end
     end
 
-    def _add_part_sibling(part_entity_path, part)
-      return true if @active_part_sibling_entity_paths.is_a?(Array) && @active_part_sibling_entity_paths.include?(part_entity_path)
-      (@active_part_sibling_entity_paths ||= []) << part_entity_path
-      (@active_part_siblings ||= []) << part
+    def _add_part_twin(part_entity_path, part)
+      return true if @active_part_twins_entity_paths.is_a?(Array) && @active_part_twins_entity_paths.include?(part_entity_path)
+      (@active_part_twins_entity_paths ||= []) << part_entity_path
+      (@active_part_twins ||= []) << part
       onActivePartChanged(@active_part_entity_path, @active_part, false)
     end
 
@@ -2680,29 +2721,29 @@ module Ladb::OpenCutList
       end
     end
 
-    def _get_sibling_instances
-      return @active_part_sibling_entity_paths.map { |path| path.last } if @active_part_sibling_entity_paths.is_a?(Array)
+    def _get_twin_instances
+      return @active_part_twins_entity_paths.map { |path| path.last } if @active_part_twins_entity_paths.is_a?(Array)
       nil
     end
 
-    def _hide_sibling_instances
-      return if (sibling_instances = _get_sibling_instances).nil?
-      @unhide_local_sibling_instance_transformations = sibling_instances.map { |sibling_instance| Geom::Transformation.new(sibling_instance.transformation) }
-      sibling_instances.each { |sibling_instance| sibling_instance.move!(Geom::Transformation.scaling(0)) unless sibling_instance.deleted? }
+    def _hide_twin_instances
+      return if (twin_instances = _get_twin_instances).nil?
+      @unhide_local_twin_instance_transformations = twin_instances.map { |twin_instance| Geom::Transformation.new(twin_instance.transformation) }
+      twin_instances.each { |twin_instance| twin_instance.move!(Geom::Transformation.scaling(0)) unless twin_instance.deleted? }
     end
 
-    def _unhide_sibling_instances
-      return if !@unhide_local_sibling_instance_transformations.is_a?(Array) || (sibling_instances = _get_sibling_instances).nil?
-      sibling_instances.each_with_index { |sibling_instance, i| sibling_instance.move!(@unhide_local_sibling_instance_transformations[i]) unless sibling_instance.deleted? }
-      @unhide_local_sibling_instance_transformations = nil
+    def _unhide_twin_instances
+      return if !@unhide_local_twin_instance_transformations.is_a?(Array) || (twin_instances = _get_twin_instances).nil?
+      twin_instances.each_with_index { |twin_instance, i| twin_instance.move!(@unhide_local_twin_instance_transformations[i]) unless twin_instance.deleted? }
+      @unhide_local_twin_instance_transformations = nil
     end
 
-    def _select_sibling_instances
+    def _select_twin_instances
       model = Sketchup.active_model
-      if model && !(sibling_instances = _get_sibling_instances).nil?
+      if model && !(twin_instances = _get_twin_instances).nil?
         selection = model.selection
         selection.clear
-        selection.add(sibling_instances)
+        selection.add(twin_instances)
       end
     end
 
@@ -2782,13 +2823,13 @@ module Ladb::OpenCutList
 
           _set_active_part(part_entity_path, part, false, true)
 
-          if _pick_part_siblings?
+          if _pick_part_twins?
 
-            if (part_sibling_entity_paths = @previous_action_handler.get_active_part_sibling_entity_paths) &&
-               (part_siblings = @previous_action_handler.get_active_part_siblings)
+            if (part_twin_entity_paths = @previous_action_handler.get_active_part_twin_entity_paths) &&
+               (part_twin = @previous_action_handler.get_active_part_twins)
 
-              part_sibling_entity_paths.zip(part_siblings).each do |part_sibling_entity_path, part_sibling|
-                _add_part_sibling(part_sibling_entity_path, part_sibling)
+              part_twin_entity_paths.zip(part_twin).each do |part_twin_entity_path, part_twin|
+                _add_part_twin(part_twin_entity_path, part_twin)
               end
 
             end
@@ -2925,7 +2966,7 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_SELECT
-        if has_active_part? && _pick_part_siblings?
+        if has_active_part? && _pick_part_twins?
           set_state(STATE_SELECT_SIBLINGS)
           return true
         else
@@ -3092,7 +3133,7 @@ module Ladb::OpenCutList
         _pick_part(picker, view)
 
       when STATE_SELECT_SIBLINGS
-        _pick_part_sibling(picker, view)
+        _pick_part_twin(picker, view)
 
       end
 

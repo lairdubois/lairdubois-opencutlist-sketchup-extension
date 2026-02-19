@@ -229,7 +229,7 @@ module Ladb::OpenCutList
       # Create 3D layers
       tool.create_3d(LAYER_3D_HANDLE_PREVIEW)
       tool.create_3d(LAYER_3D_AXES_PREVIEW)
-      tool.create_3d(LAYER_3D_PART_SIBLING_PREVIEW)
+      tool.create_3d(LAYER_3D_PART_TWINS_PREVIEW)
       tool.create_3d(LAYER_3D_PART_PREVIEW)
 
     end
@@ -271,7 +271,7 @@ module Ladb::OpenCutList
         when STATE_HANDLE_START, STATE_HANDLE
           @picked_shape_start_point = nil
           _unhide_instances
-          _unhide_sibling_instances
+          _unhide_twin_instances
         end
 
         _reset
@@ -421,8 +421,8 @@ module Ladb::OpenCutList
     def onSelected
       return true if super
 
-      if (sibling_instances = _get_sibling_instances).is_a?(Array)
-        @cpy_instances.concat(sibling_instances)
+      if (twin_instances = _get_twin_instances).is_a?(Array)
+        @cpy_instances.concat(twin_instances)
       end
 
       @src_transformations = get_active_selection_instances.map { |instance| [ instance, Geom::Transformation.new(instance.transformation) ] }.to_h
@@ -790,8 +790,8 @@ module Ladb::OpenCutList
 
       Sketchup.active_model.selection.clear
       Sketchup.active_model.selection.add(get_active_selection_instances)
-      if (sibling_instances = _get_sibling_instances).is_a?(Array)
-        Sketchup.active_model.selection.add(sibling_instances)
+      if (twin_instances = _get_twin_instances).is_a?(Array)
+        Sketchup.active_model.selection.add(twin_instances)
       end
 
       _reset_active_part
@@ -806,7 +806,7 @@ module Ladb::OpenCutList
 
     protected
 
-    def _pick_part_siblings?
+    def _pick_part_twins?
       true
     end
 
@@ -839,7 +839,7 @@ module Ladb::OpenCutList
     # -----
 
     def stop
-      _unhide_sibling_instances
+      _unhide_twin_instances
       super
     end
 
@@ -944,11 +944,11 @@ module Ladb::OpenCutList
 
       if has_active_part?
         if new_state == STATE_HANDLE
-          @tool.set_3d_visibility(false, [ LAYER_3D_PART_SIBLING_PREVIEW ]) # Hide part preview
-          _hide_sibling_instances
+          @tool.set_3d_visibility(false, [LAYER_3D_PART_TWINS_PREVIEW ]) # Hide part preview
+          _hide_twin_instances
         else
-          @tool.set_3d_visibility(true, [ LAYER_3D_PART_SIBLING_PREVIEW ]) # Unhide part preview
-          _unhide_sibling_instances
+          @tool.set_3d_visibility(true, [LAYER_3D_PART_TWINS_PREVIEW ]) # Unhide part preview
+          _unhide_twin_instances
         end
       end
 
@@ -985,7 +985,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _pick_part_siblings?
+    def _pick_part_twins?
       true
     end
 
@@ -1283,7 +1283,7 @@ module Ladb::OpenCutList
       mpe = mpe.transform(cti)
       mv = mps.vector_to(mpe)
 
-      _unhide_sibling_instances
+      _unhide_twin_instances
 
       model = Sketchup.active_model
       model.start_operation('OCL Copy Part', true, false, !active?)
@@ -2273,10 +2273,10 @@ module Ladb::OpenCutList
       if has_active_selection?
         if has_active_selection?
           if new_state == STATE_HANDLE
-            @tool.set_3d_visibility(false, [ LAYER_3D_PART_PREVIEW, LAYER_3D_PART_SIBLING_PREVIEW ]) # Hide part preview
+            @tool.set_3d_visibility(false, [LAYER_3D_PART_PREVIEW, LAYER_3D_PART_TWINS_PREVIEW ]) # Hide part preview
             _hide_instances
           else
-            @tool.set_3d_visibility(true, [ LAYER_3D_PART_PREVIEW, LAYER_3D_PART_SIBLING_PREVIEW ]) # Unhide part preview
+            @tool.set_3d_visibility(true, [LAYER_3D_PART_PREVIEW, LAYER_3D_PART_TWINS_PREVIEW ]) # Unhide part preview
             _unhide_instances
           end
         end
@@ -2629,7 +2629,7 @@ module Ladb::OpenCutList
 
     def stop
       _unhide_instances
-      _unhide_sibling_instances
+      _unhide_twin_instances
       super
     end
 
@@ -2678,7 +2678,7 @@ module Ladb::OpenCutList
       super
       if @state == STATE_HANDLE
         _unhide_instances
-        _unhide_sibling_instances
+        _unhide_twin_instances
       end
     end
 
@@ -2686,7 +2686,7 @@ module Ladb::OpenCutList
       super
       if @state == STATE_HANDLE
         _hide_instances
-        _hide_sibling_instances
+        _hide_twin_instances
       end
     end
 
@@ -2810,13 +2810,13 @@ module Ladb::OpenCutList
 
       if has_active_selection?
         if new_state == STATE_HANDLE
-          @tool.set_3d_visibility(false, [ LAYER_3D_PART_PREVIEW, LAYER_3D_PART_SIBLING_PREVIEW ]) # Hide part preview
+          @tool.set_3d_visibility(false, [LAYER_3D_PART_PREVIEW, LAYER_3D_PART_TWINS_PREVIEW ]) # Hide part preview
           _hide_instances
-          _hide_sibling_instances
+          _hide_twin_instances
         else
-          @tool.set_3d_visibility(true, [ LAYER_3D_PART_PREVIEW, LAYER_3D_PART_SIBLING_PREVIEW ]) # Unhide part preview
+          @tool.set_3d_visibility(true, [LAYER_3D_PART_PREVIEW, LAYER_3D_PART_TWINS_PREVIEW ]) # Unhide part preview
           _unhide_instances
-          _unhide_sibling_instances
+          _unhide_twin_instances
         end
       end
 
@@ -2848,7 +2848,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _pick_part_siblings?
+    def _pick_part_twins?
       true
     end
 
@@ -3169,7 +3169,7 @@ module Ladb::OpenCutList
       # mv = mps.vector_to(mpe)
 
       _unhide_instances
-      _unhide_sibling_instances
+      _unhide_twin_instances
 
       model = Sketchup.active_model
       model.start_operation('OCL Distribute Part', true, false, !active?)

@@ -219,7 +219,7 @@ module Ladb::OpenCutList
           # k_polyline = Kuix::Polyline.new
           # k_polyline.add_points(touching_def.neighbor_face_manipulator.outer_loop_manipulator.points)
           # k_polyline.line_width = 2
-          # k_polyline.color = Kuix::COLOR_MAGENTA
+          # k_polyline.color = Kuix::COLOR_CYAN
           # k_polyline.transformation = neighbor_def.drawing_def.transformation
           # k_polyline.closed = true
           # k_polyline.on_top = true
@@ -275,7 +275,7 @@ module Ladb::OpenCutList
 
       ph = view.pick_helper
 
-      # 1. Pick from bounding box
+      # 1. Pick from the bounding box
 
       num_picked = ph.boundingbox_pick(kb.to_b, Sketchup::PickHelper::PICK_CROSSING, drawing_def.transformation)
       num_picked.times do |index|

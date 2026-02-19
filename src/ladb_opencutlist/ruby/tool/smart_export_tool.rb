@@ -11,7 +11,7 @@ module Ladb::OpenCutList
   require_relative '../worker/common/common_drawing_projection_worker'
   require_relative '../observer/plugin_observer'
 
-  class SmartExportTool < SmartTool
+  class SmartExportTool < SmartToolLegacy
 
     ACTION_EXPORT_PART_3D = 0
     ACTION_EXPORT_PART_2D = 1

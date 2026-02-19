@@ -188,7 +188,7 @@ module Ladb::OpenCutList
 
       # Create 3D layers
       tool.create_3d(LAYER_3D_RESHAPE_PREVIEW)
-      tool.create_3d(LAYER_3D_PART_SIBLING_PREVIEW)
+      tool.create_3d(LAYER_3D_PART_TWINS_PREVIEW)
       tool.create_3d(LAYER_3D_PART_PREVIEW)
 
     end
@@ -228,7 +228,7 @@ module Ladb::OpenCutList
         when STATE_RESHAPE_START
           @picked_shape_start_point = nil
           _unhide_instance
-          _unhide_sibling_instances
+          _unhide_twin_instances
         end
 
         _reset
@@ -895,7 +895,7 @@ module Ladb::OpenCutList
 
         when STATE_RESHAPE_START
           @tool.clear_all_2d
-          @tool.clear_3d([LAYER_3D_PART_PREVIEW, LAYER_3D_PART_SIBLING_PREVIEW ])  # Remove part preview
+          @tool.clear_3d([LAYER_3D_PART_PREVIEW, LAYER_3D_PART_TWINS_PREVIEW ])  # Remove part preview
           _unhide_instances
 
         when STATE_RESHAPE_CUTTER_MOVE
@@ -945,7 +945,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _pick_part_siblings?
+    def _pick_part_twins?
       true
     end
 
@@ -965,7 +965,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _add_part_sibling(part_entity_path, part)
+    def _add_part_twin(part_entity_path, part)
       return true if super
       get_active_selection_instances << part_entity_path.last
     end
@@ -1686,7 +1686,7 @@ module Ladb::OpenCutList
         ignore_edges: false,
         ignore_soft_edges: false,
         ignore_clines: false,
-        container_validator: has_active_part? && !has_active_part_siblings? ? CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART : CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_ALL
+        container_validator: has_active_part? && !has_active_part_twins? ? CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART : CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_ALL
       }
     end
 

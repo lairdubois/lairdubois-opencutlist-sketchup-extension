@@ -9,7 +9,7 @@ module Ladb::OpenCutList
   require_relative '../model/attributes/material_attributes'
   require_relative '../worker/cutlist/cutlist_generate_worker'
 
-  class SmartPaintTool < SmartTool
+  class SmartPaintTool < SmartToolLegacy
 
     include FaceTrianglesHelper
 
