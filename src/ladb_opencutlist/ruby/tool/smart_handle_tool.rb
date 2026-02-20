@@ -2957,8 +2957,9 @@ module Ladb::OpenCutList
       return true unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
 
       drawing_def_segments = _get_drawing_def_segments(drawing_def)
+      drawin_def_origin = ORIGIN.transform(drawing_def.transformation)
 
-      at = PathUtils.get_transformation(get_active_selection_path, IDENTITY)
+      ast = PathUtils.get_transformation(get_active_selection_path)
 
       # Preview
 
@@ -2974,11 +2975,13 @@ module Ladb::OpenCutList
       if @unhide_local_twin_instance_transformations.is_a?(Array)
         @unhide_local_twin_instance_transformations.each do |transformation|
 
+          mt = Geom::Transformation.translation(drawin_def_origin.vector_to(ORIGIN.transform(ast * transformation)))
+
           k_segments = Kuix::Segments.new
           k_segments.add_segments(drawing_def_segments)
           k_segments.line_width = 1.5
           k_segments.color = Kuix::COLOR_BLACK
-          k_segments.transformation = at * transformation
+          k_segments.transformation = mt * drawing_def.transformation
           @tool.append_3d(k_segments, LAYER_3D_HANDLE_PREVIEW)
 
         end
