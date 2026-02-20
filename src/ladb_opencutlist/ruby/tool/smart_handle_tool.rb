@@ -583,7 +583,7 @@ module Ladb::OpenCutList
           k_box = Kuix::BoxMotif3d.new
           k_box.bounds.copy!(eb)
           k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
-          k_box.color = Kuix::COLOR_BLACK
+          k_box.color = Kuix::COLOR_DARK_GREY
           k_box.transformation = et
           @tool.append_3d(k_box, LAYER_3D_AXES_PREVIEW)
 
@@ -2801,22 +2801,21 @@ module Ladb::OpenCutList
     end
 
     def onStateChanged(old_state, new_state)
-      super
+
+      case new_state
+      when STATE_HANDLE_START, STATE_HANDLE
+        @tool.set_3d_visibility(false, [ LAYER_3D_PART_PREVIEW, LAYER_3D_PART_TWINS_PREVIEW ]) # Hide part preview
+        _hide_instances
+        _hide_twin_instances
+      else
+        @tool.set_3d_visibility(true, [ LAYER_3D_PART_PREVIEW, LAYER_3D_PART_TWINS_PREVIEW ]) # Unhide part preview
+        _unhide_instances
+        _unhide_twin_instances
+      end
 
       @locked_axis = nil
 
-      if has_active_selection?
-        if new_state == STATE_HANDLE
-          @tool.set_3d_visibility(false, [LAYER_3D_PART_PREVIEW, LAYER_3D_PART_TWINS_PREVIEW ]) # Hide part preview
-          _hide_instances
-          _hide_twin_instances
-        else
-          @tool.set_3d_visibility(true, [LAYER_3D_PART_PREVIEW, LAYER_3D_PART_TWINS_PREVIEW ]) # Unhide part preview
-          _unhide_instances
-          _unhide_twin_instances
-        end
-      end
-
+      super
     end
 
     def onToolActionOptionStored(tool, action, option_group, option)
@@ -2954,6 +2953,39 @@ module Ladb::OpenCutList
 
     end
 
+    def _preview_handle_start(view)
+      return true unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
+
+      drawing_def_segments = _get_drawing_def_segments(drawing_def)
+
+      at = PathUtils.get_transformation(get_active_selection_path, IDENTITY)
+
+      # Preview
+
+      _preview_edit_axes
+
+      k_segments = Kuix::Segments.new
+      k_segments.add_segments(drawing_def_segments)
+      k_segments.line_width = 1.5
+      k_segments.color = Kuix::COLOR_BLACK
+      k_segments.transformation = drawing_def.transformation
+      @tool.append_3d(k_segments, LAYER_3D_HANDLE_PREVIEW)
+
+      if @unhide_local_twin_instance_transformations.is_a?(Array)
+        @unhide_local_twin_instance_transformations.each do |transformation|
+
+          k_segments = Kuix::Segments.new
+          k_segments.add_segments(drawing_def_segments)
+          k_segments.line_width = 1.5
+          k_segments.color = Kuix::COLOR_BLACK
+          k_segments.transformation = at * transformation
+          @tool.append_3d(k_segments, LAYER_3D_HANDLE_PREVIEW)
+
+        end
+      end
+
+    end
+
     def _preview_handle(view)
       return super if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point, @number, @spacings)).nil?
 
@@ -2964,16 +2996,9 @@ module Ladb::OpenCutList
       lv = lps.vector_to(lpe)
       color = _get_vector_color(lv, Kuix::COLOR_DARK_GREY)
 
-      _preview_edit_axes(false, !mv.parallel?(_get_active_x_axis), !mv.parallel?(_get_active_y_axis), !mv.parallel?(_get_active_z_axis), true)
-
       # Preview
 
-      k_box = Kuix::BoxMotif3d.new
-      k_box.bounds.copy!(eb)
-      k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
-      k_box.color = Kuix::COLOR_DARK_GREY
-      k_box.transformation = et
-      @tool.append_3d(k_box, LAYER_3D_HANDLE_PREVIEW)
+      _preview_edit_axes(true, !mv.parallel?(_get_active_x_axis), !mv.parallel?(_get_active_y_axis), !mv.parallel?(_get_active_z_axis), true)
 
       @number.times do |i|
 
