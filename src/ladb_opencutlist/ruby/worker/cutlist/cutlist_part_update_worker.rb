@@ -49,37 +49,35 @@ module Ladb::OpenCutList
       @cutlist = cutlist
 
       @auto_orient = auto_orient
-      @parts_data = []
-
-      parts_data.each { |part_data|
-        @parts_data << PartData.new(
-            part_data.fetch('virtual'),
-            CGI.unescape(part_data.fetch('definition_id')),
-            CGI.unescape(part_data.fetch('name')),
-            part_data.fetch('is_dynamic_attributes_name'),
-            part_data.fetch('material_name'),
-            DefinitionAttributes.valid_cumulable(part_data.fetch('cumulable')),
-            part_data.fetch('instance_count_by_part'),
-            part_data.fetch('mass'),
-            part_data.fetch('price'),
-            part_data.fetch('thickness_layer_count'),
-            part_data.fetch('length_increase'),
-            part_data.fetch('width_increase'),
-            part_data.fetch('thickness_increase'),
-            part_data.fetch('description'),
-            part_data.fetch('url'),
-            DefinitionAttributes.valid_tags(part_data.fetch('tags')),
-            part_data.fetch('orientation_locked_on_axis'),
-            part_data.fetch('symmetrical'),
-            part_data.fetch('ignore_grain_direction'),
-            part_data.fetch('axes_order', nil),
-            part_data.fetch('axes_origin_position', nil),
-            part_data.fetch('edge_material_names'),
-            part_data.fetch('edge_entity_ids'),
-            part_data.fetch('face_material_names'),
-            part_data.fetch('face_entity_ids'),
-            part_data.fetch('face_texture_angles'),
-            part_data.fetch('entity_ids')
+      @parts_data = parts_data.map { |part_data|
+        PartData.new(
+          part_data.fetch('virtual'),
+          _unescape_string(part_data.fetch('definition_id')),
+          _unescape_string(part_data.fetch('name')),
+          part_data.fetch('is_dynamic_attributes_name'),
+          part_data.fetch('material_name'),
+          DefinitionAttributes.valid_cumulable(part_data.fetch('cumulable')),
+          part_data.fetch('instance_count_by_part'),
+          part_data.fetch('mass'),
+          part_data.fetch('price'),
+          part_data.fetch('thickness_layer_count'),
+          part_data.fetch('length_increase'),
+          part_data.fetch('width_increase'),
+          part_data.fetch('thickness_increase'),
+          part_data.fetch('description'),
+          part_data.fetch('url'),
+          DefinitionAttributes.valid_tags(part_data.fetch('tags')),
+          part_data.fetch('orientation_locked_on_axis'),
+          part_data.fetch('symmetrical'),
+          part_data.fetch('ignore_grain_direction'),
+          part_data.fetch('axes_order', nil),
+          part_data.fetch('axes_origin_position', nil),
+          part_data.fetch('edge_material_names'),
+          part_data.fetch('edge_entity_ids'),
+          part_data.fetch('face_material_names'),
+          part_data.fetch('face_entity_ids'),
+          part_data.fetch('face_texture_angles'),
+          part_data.fetch('entity_ids')
         )
       }
 
@@ -259,6 +257,11 @@ module Ladb::OpenCutList
     end
 
     # -----
+
+    def _unescape_string(string)
+      return string unless string.is_a?(String)
+      CGI.unescape(string)
+    end
 
     def _apply_material(material_name, entity_ids, model, removable_type = nil, angle = nil)  # angle in radians [0..2PI]
       return if entity_ids.nil?
