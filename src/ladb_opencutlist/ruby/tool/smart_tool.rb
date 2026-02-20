@@ -1271,6 +1271,9 @@ module Ladb::OpenCutList
       # Stop the current action handler
       @action_handler.stop if @action_handler.is_a?(SmartActionHandler)
 
+      # Stop observing view events
+      view.remove_observer(self)
+
       # Stop observing rendering options events
       view.model.rendering_options.remove_observer(self)
 
@@ -2111,7 +2114,7 @@ module Ladb::OpenCutList
     # -- Instances --
 
     def _hide_instances
-      return if (instances = get_active_selection_instances).nil? || @unhide_local_instances_transformations.is_a?(Hash)
+      return if @unhide_local_instances_transformations.is_a?(Hash) || (instances = get_active_selection_instances).nil?
       _get_global_instance_transformation(nil)
       _get_drawing_def
       @unhide_local_instances_transformations = instances.map { |instance| [ instance, Geom::Transformation.new(instance.transformation) ] }.to_h
@@ -2738,7 +2741,7 @@ module Ladb::OpenCutList
     end
 
     def _hide_twin_instances
-      return if (twin_instances = _get_twin_instances).nil?
+      return if @unhide_local_twin_instance_transformations.is_a?(Array) || (twin_instances = _get_twin_instances).nil?
       @unhide_local_twin_instance_transformations = twin_instances.map { |twin_instance| Geom::Transformation.new(twin_instance.transformation) }
       twin_instances.each { |twin_instance| twin_instance.move!(Geom::Transformation.scaling(0)) unless twin_instance.deleted? }
     end
