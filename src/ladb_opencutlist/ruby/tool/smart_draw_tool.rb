@@ -551,7 +551,7 @@ module Ladb::OpenCutList
           return true
         end
         if key == VK_DOWN
-          face_manipulator = @mouse_ip.valid? && @mouse_ip.face ? FaceManipulator.new(@mouse_ip.face, @mouse_ip.transformation) : nil
+          face_manipulator = @mouse_ip.valid? && @mouse_ip.face ? FaceManipulator.new(@mouse_ip.face, @mouse_ip.face_transformation) : nil
           if !@locked_normal.nil? && (face_manipulator.nil? || !face_manipulator.nil? && @locked_normal.samedirection?(face_manipulator.normal))
             @locked_normal = nil
           elsif !face_manipulator.nil?
@@ -831,7 +831,7 @@ module Ladb::OpenCutList
           #
           # if @mouse_ip.face && @mouse_ip.vertex.faces.include?(@mouse_ip.face)
           #
-          #   face_manipulator = FaceManipulator.new(@mouse_ip.face, @mouse_ip.transformation)
+          #   face_manipulator = FaceManipulator.new(@mouse_ip.face, @mouse_ip.face_transformation)
           #
           #   k_mesh = Kuix::Mesh.new
           #   k_mesh.add_triangles(face_manipulator.triangles)
@@ -901,10 +901,10 @@ module Ladb::OpenCutList
           @locked_direction = nil
           @normal = face_manipulator.normal
 
-          k_mesh = Kuix::Mesh.new
-          k_mesh.add_triangles(face_manipulator.triangles)
-          k_mesh.background_color = Sketchup::Color.new(255, 0, 255, 50)
-          @tool.append_3d(k_mesh, LAYER_3D_DRAW_PREVIEW)
+          # k_mesh = Kuix::Mesh.new
+          # k_mesh.add_triangles(face_manipulator.triangles)
+          # k_mesh.background_color = Sketchup::Color.new(255, 0, 255, 50)
+          # @tool.append_3d(k_mesh, LAYER_3D_DRAW_PREVIEW)
 
           position = @mouse_ip.position
           degrees_of_freedom = @mouse_ip.degrees_of_freedom
@@ -1974,7 +1974,7 @@ module Ladb::OpenCutList
           #
           # if @mouse_ip.face && @mouse_ip.vertex.faces.include?(@mouse_ip.face)
           #
-          #   face_manipulator = FaceManipulator.new(@mouse_ip.face, @mouse_ip.transformation)
+          #   face_manipulator = FaceManipulator.new(@mouse_ip.face, @mouse_ip.face_transformation)
           #
           #   k_mesh = Kuix::Mesh.new
           #   k_mesh.add_triangles(face_manipulator.triangles)
@@ -3204,7 +3204,7 @@ module Ladb::OpenCutList
             #
             # if @mouse_ip.face && @mouse_ip.vertex.faces.include?(@mouse_ip.face)
             #
-            #   face_manipulator = FaceManipulator.new(@mouse_ip.face, @mouse_ip.transformation)
+            #   face_manipulator = FaceManipulator.new(@mouse_ip.face, @mouse_ip.face_transformation)
             #
             #   k_mesh = Kuix::Mesh.new
             #   k_mesh.add_triangles(face_manipulator.triangles)
@@ -3328,7 +3328,7 @@ module Ladb::OpenCutList
 
           else
 
-            face_manipulator = FaceManipulator.new(@mouse_ip.face, @mouse_ip.transformation)
+            face_manipulator = FaceManipulator.new(@mouse_ip.face, @mouse_ip.face_transformation)
 
             if @picked_shape_start_point.on_plane?(face_manipulator.plane)
 
