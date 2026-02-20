@@ -412,11 +412,11 @@ module Ladb::OpenCutList
       #   style: Kuix::POINT_STYLE_TRIANGLE,
       #   stroke_color: Kuix::COLOR_YELLOW
       # )
-      # @tool.append_3d(k_points)
+      # @tool.append_3d(k_points, LAYER_3D_DRAW_PREVIEW)
 
       # k_axes_helper = Kuix::AxesHelper.new
       # k_axes_helper.transformation = _get_transformation
-      # @tool.append_3d(k_axes_helper)
+      # @tool.append_3d(k_axes_helper, LAYER_3D_DRAW_PREVIEW)
 
       view.tooltip = @mouse_ip.tooltip
       view.invalidate
@@ -827,7 +827,7 @@ module Ladb::OpenCutList
           # k_points.size = 30
           # k_points.stroke_style = Kuix::POINT_STYLE_SQUARE
           # k_points.color = Kuix::COLOR_MAGENTA
-          # @tool.append_3d(k_points)
+          # @tool.append_3d(k_points, LAYER_3D_DRAW_PREVIEW)
           #
           # if @mouse_ip.face && @mouse_ip.vertex.faces.include?(@mouse_ip.face)
           #
@@ -836,7 +836,7 @@ module Ladb::OpenCutList
           #   k_mesh = Kuix::Mesh.new
           #   k_mesh.add_triangles(face_manipulator.triangles)
           #   k_mesh.background_color = Sketchup::Color.new(255, 255, 0, 50)
-          #   @tool.append_3d(k_mesh)
+          #   @tool.append_3d(k_mesh, LAYER_3D_DRAW_PREVIEW)
           #
           # end
 
@@ -849,7 +849,7 @@ module Ladb::OpenCutList
           # k_segments.color = Kuix::COLOR_MAGENTA
           # k_segments.line_width = 4
           # k_segments.on_top = true
-          # @tool.append_3d(k_segments)
+          # @tool.append_3d(k_segments, LAYER_3D_DRAW_PREVIEW)
 
           if @mouse_ip.face && @mouse_ip.edge.faces.include?(@mouse_ip.face)
 
@@ -860,7 +860,7 @@ module Ladb::OpenCutList
             # k_mesh = Kuix::Mesh.new
             # k_mesh.add_triangles(face_manipulator.triangles)
             # k_mesh.background_color = Sketchup::Color.new(255, 255, 0, 50)
-            # @tool.append_3d(k_mesh)
+            # @tool.append_3d(k_mesh, LAYER_3D_DRAW_PREVIEW)
 
           end
 
@@ -887,7 +887,7 @@ module Ladb::OpenCutList
             # k_mesh = Kuix::Mesh.new
             # k_mesh.add_triangles(face_manipulator.triangles)
             # k_mesh.background_color = Sketchup::Color.new(255, 255, 0, 50)
-            # @tool.append_3d(k_mesh)
+            # @tool.append_3d(k_mesh, LAYER_3D_DRAW_PREVIEW)
 
           end
 
@@ -901,10 +901,10 @@ module Ladb::OpenCutList
           @locked_direction = nil
           @normal = face_manipulator.normal
 
-          # k_mesh = Kuix::Mesh.new
-          # k_mesh.add_triangles(face_manipulator.triangles)
-          # k_mesh.background_color = Sketchup::Color.new(255, 0, 255, 50)
-          # @tool.append_3d(k_mesh)
+          k_mesh = Kuix::Mesh.new
+          k_mesh.add_triangles(face_manipulator.triangles)
+          k_mesh.background_color = Sketchup::Color.new(255, 0, 255, 50)
+          @tool.append_3d(k_mesh, LAYER_3D_DRAW_PREVIEW)
 
           position = @mouse_ip.position
           degrees_of_freedom = @mouse_ip.degrees_of_freedom
@@ -1970,7 +1970,7 @@ module Ladb::OpenCutList
           # k_points.size = 30
           # k_points.style = Kuix::POINT_STYLE_SQUARE
           # k_points.stroke_color = Kuix::COLOR_MAGENTA
-          # @tool.append_3d(k_points)
+          # @tool.append_3d(k_points, LAYER_3D_DRAW_PREVIEW)
           #
           # if @mouse_ip.face && @mouse_ip.vertex.faces.include?(@mouse_ip.face)
           #
@@ -1979,7 +1979,7 @@ module Ladb::OpenCutList
           #   k_mesh = Kuix::Mesh.new
           #   k_mesh.add_triangles(face_manipulator.triangles)
           #   k_mesh.background_color = Sketchup::Color.new(255, 255, 0, 50)
-          #   @tool.append_3d(k_mesh)
+          #   @tool.append_3d(k_mesh, LAYER_3D_DRAW_PREVIEW)
           #
           # end
 
@@ -2025,14 +2025,14 @@ module Ladb::OpenCutList
           # k_points.size = 30
           # k_points.style = Kuix::POINT_STYLE_TRIANGLE
           # k_points.stroke_color = Kuix::COLOR_BLUE
-          # @tool.append_3d(k_points)
+          # @tool.append_3d(k_points, LAYER_3D_DRAW_PREVIEW)
           #
           # k_segments = Kuix::Segments.new
           # k_segments.add_segments(edge_manipulator.segment)
           # k_segments.color = Kuix::COLOR_MAGENTA
           # k_segments.line_width = 4
           # k_segments.on_top = true
-          # @tool.append_3d(k_segments)
+          # @tool.append_3d(k_segments, LAYER_3D_DRAW_PREVIEW)
 
         end
 
@@ -2076,14 +2076,14 @@ module Ladb::OpenCutList
           # k_points.size = 30
           # k_points.style = Kuix::POINT_STYLE_TRIANGLE
           # k_points.stroke_color = Kuix::COLOR_BLUE
-          # @tool.append_3d(k_points)
+          # @tool.append_3d(k_points, LAYER_3D_DRAW_PREVIEW)
           #
           # k_segments = Kuix::Segments.new
           # k_segments.add_segments(cline_manipulator.segment)
           # k_segments.color = Kuix::COLOR_MAGENTA
           # k_segments.line_width = 4
           # k_segments.on_top = true
-          # @tool.append_3d(k_segments)
+          # @tool.append_3d(k_segments, LAYER_3D_DRAW_PREVIEW)
 
         end
 
@@ -2115,7 +2115,7 @@ module Ladb::OpenCutList
             # k_points.size = 30
             # k_points.style = Kuix::POINT_STYLE_PLUS
             # k_points.stroke_color = Kuix::COLOR_RED
-            # @tool.append_3d(k_points)
+            # @tool.append_3d(k_points, LAYER_3D_DRAW_PREVIEW)
 
             plane = Geom.fit_plane_to_points([ p1, p2, p3 ])
             plane_manipulator = PlaneManipulator.new(plane)
@@ -2130,7 +2130,7 @@ module Ladb::OpenCutList
           # k_mesh = Kuix::Mesh.new
           # k_mesh.add_triangles(face_manipulator.triangles)
           # k_mesh.background_color = Sketchup::Color.new(255, 0, 255, 50)
-          # @tool.append_3d(k_mesh)
+          # @tool.append_3d(k_mesh, LAYER_3D_DRAW_PREVIEW)
 
         end
 
@@ -2165,7 +2165,7 @@ module Ladb::OpenCutList
             # k_points.size = 30
             # k_points.style = Kuix::POINT_STYLE_CROSS
             # k_points.stroke_color = Kuix::COLOR_RED
-            # @tool.append_3d(k_points)
+            # @tool.append_3d(k_points, LAYER_3D_DRAW_PREVIEW)
 
             plane = Geom.fit_plane_to_points([ p1, p2, p3 ])
             plane_manipulator = PlaneManipulator.new(plane)
@@ -3200,7 +3200,7 @@ module Ladb::OpenCutList
             # k_points.size = 30
             # k_points.style = Kuix::POINT_STYLE_SQUARE
             # k_points.stroke_color = Kuix::COLOR_MAGENTA
-            # @tool.append_3d(k_points)
+            # @tool.append_3d(k_points, LAYER_3D_DRAW_PREVIEW)
             #
             # if @mouse_ip.face && @mouse_ip.vertex.faces.include?(@mouse_ip.face)
             #
@@ -3209,7 +3209,7 @@ module Ladb::OpenCutList
             #   k_mesh = Kuix::Mesh.new
             #   k_mesh.add_triangles(face_manipulator.triangles)
             #   k_mesh.background_color = Sketchup::Color.new(255, 255, 0, 50)
-            #   @tool.append_3d(k_mesh)
+            #   @tool.append_3d(k_mesh, LAYER_3D_DRAW_PREVIEW)
             #
             # end
 
@@ -3255,14 +3255,14 @@ module Ladb::OpenCutList
             # k_points.size = 30
             # k_points.style = Kuix::POINT_STYLE_TRIANGLE
             # k_points.stroke_color = Kuix::COLOR_BLUE
-            # @tool.append_3d(k_points)
+            # @tool.append_3d(k_points, LAYER_3D_DRAW_PREVIEW)
 
             # k_segments = Kuix::Segments.new
             # k_segments.add_segments(edge_manipulator.segment)
             # k_segments.color = Kuix::COLOR_MAGENTA
             # k_segments.line_width = 4
             # k_segments.on_top = true
-            # @tool.append_3d(k_segments)
+            # @tool.append_3d(k_segments, LAYER_3D_DRAW_PREVIEW)
 
           end
 
@@ -3306,14 +3306,14 @@ module Ladb::OpenCutList
             # k_points.size = 30
             # k_points.style = Kuix::POINT_STYLE_TRIANGLE
             # k_points.stroke_color = Kuix::COLOR_BLUE
-            # @tool.append_3d(k_points)
+            # @tool.append_3d(k_points, LAYER_3D_DRAW_PREVIEW)
 
             # k_segments = Kuix::Segments.new
             # k_segments.add_segments(cline_manipulator.segment)
             # k_segments.color = Kuix::COLOR_MAGENTA
             # k_segments.line_width = 4
             # k_segments.on_top = true
-            # @tool.append_3d(k_segments)
+            # @tool.append_3d(k_segments, LAYER_3D_DRAW_PREVIEW)
 
           end
 
@@ -3345,7 +3345,7 @@ module Ladb::OpenCutList
               # k_points.size = 30
               # k_points.style = Kuix::POINT_STYLE_PLUS
               # k_points.stroke_color = Kuix::COLOR_RED
-              # @tool.append_3d(k_points)
+              # @tool.append_3d(k_points, LAYER_3D_DRAW_PREVIEW)
 
               plane = Geom.fit_plane_to_points([ p1, p2, p3 ])
               plane_manipulator = PlaneManipulator.new(plane)
@@ -3358,7 +3358,7 @@ module Ladb::OpenCutList
             # k_mesh = Kuix::Mesh.new
             # k_mesh.add_triangles(face_manipulator.triangles)
             # k_mesh.background_color = Sketchup::Color.new(255, 0, 255, 50)
-            # @tool.append_3d(k_mesh)
+            # @tool.append_3d(k_mesh, LAYER_3D_DRAW_PREVIEW)
 
           end
 
@@ -3393,7 +3393,7 @@ module Ladb::OpenCutList
               # k_points.size = 30
               # k_points.style = Kuix::POINT_STYLE_CROSS
               # k_points.stroke_color = Kuix::COLOR_RED
-              # @tool.append_3d(k_points)
+              # @tool.append_3d(k_points, LAYER_3D_DRAW_PREVIEW)
 
               plane = Geom.fit_plane_to_points([ p1, p2, p3 ])
               plane_manipulator = PlaneManipulator.new(plane)

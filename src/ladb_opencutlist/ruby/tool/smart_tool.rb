@@ -3841,7 +3841,7 @@ module Ladb::OpenCutList
 
         ph = view.pick_helper(x, y, 40) if ph.nil?
         entity = @ip.instance_path.leaf
-        entity = ph.best_picked if entity.nil?  # Allows to detect ConstructionLines outside a group
+        entity = ph.best_picked if entity.nil?  # Allows detecting ConstructionLines outside a group
 
         if entity.is_a?(Sketchup::ConstructionLine)
 
@@ -3879,12 +3879,9 @@ module Ladb::OpenCutList
       # Try to retrieve the background face transformation
       unless @ip.face.nil?
 
-        ph = view.pick_helper(x, y, 40) if ph.nil?
-        ph.count.times do |i|
-          if ph.leaf_at(i) == @ip.face
-            @face_transformation = ph.transformation_at(i)
-            break
-          end
+        _, path = Sketchup.active_model.raytest(view.pickray(x, y))
+        if path.is_a?(Array) && path.last == @ip.face
+          @face_transformation = PathUtils.get_transformation(path)
         end
 
       end
