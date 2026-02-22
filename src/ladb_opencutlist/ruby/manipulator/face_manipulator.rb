@@ -2,11 +2,9 @@ module Ladb::OpenCutList
 
   require_relative 'plane_manipulator'
   require_relative 'loop_manipulator'
-  require_relative '../helper/face_triangles_helper'
+  require_relative '../lib/geometrix/finder/circle_finder'
 
   class FaceManipulator < PlaneManipulator
-
-    include FaceTrianglesHelper
 
     attr_reader :face
     attr_accessor :surface_manipulator
@@ -24,6 +22,7 @@ module Ladb::OpenCutList
       super
       @normal = nil
       @triangles = nil
+      @centroid = nil
       @outer_loop_manipulator = nil
       @loop_manipulators = nil
     end
@@ -50,7 +49,13 @@ module Ladb::OpenCutList
     end
 
     def triangles
-      @triangles ||= _compute_face_triangles(@face, @transformation)
+      @triangles ||= mesh.polygons.flat_map do |polygon|
+        polygon.map { |index| mesh.point_at(index.abs) }
+      end
+    end
+
+    def centroid
+      @centroid ||= Geometrix::CentroidFinder.find_centroid(outer_loop_manipulator.points)
     end
 
     def longest_outer_edge

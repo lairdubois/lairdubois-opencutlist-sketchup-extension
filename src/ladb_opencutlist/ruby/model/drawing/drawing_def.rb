@@ -180,7 +180,7 @@ module Ladb::OpenCutList
 
     attr_accessor :input_plane_manipulator, :input_line_manipulator, :input_view
 
-    def initialize(container)
+    def initialize(container, transformation = IDENTITY)
       super
 
       @input_plane_manipulator = nil

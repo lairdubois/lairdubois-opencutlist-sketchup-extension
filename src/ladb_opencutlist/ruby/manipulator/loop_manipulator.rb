@@ -49,6 +49,10 @@ module Ladb::OpenCutList
 
     # -----
 
+    def edge_manipulators
+      @edge_manipulators ||= @loop.edges.map { |edge| EdgeManipulator.new(edge, @transformation) }
+    end
+
     def vertex_manipulators
       @vertex_manipulators ||= @loop.vertices.map { |vertex| VertexManipulator.new(vertex, @transformation) }
     end

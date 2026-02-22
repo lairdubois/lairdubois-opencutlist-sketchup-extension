@@ -15,13 +15,21 @@ module Ladb::OpenCutList
   class SmartReshapeTool < SmartTool
 
     ACTION_STRETCH = 0
+    ACTION_BOX = 1
 
+    ACTION_OPTION_THICKNESS = 'thickness'
     ACTION_OPTION_STRETCH_MEASURE_TYPE = 'stretch_measure_type'
+    ACTION_OPTION_BOX_JOINT_TYPE = 'box_joint_type'
     ACTION_OPTION_AXES = 'axes'
     ACTION_OPTION_OPTIONS = 'options'
 
+    ACTION_OPTION_THICKNESS_THICKNESS = 'thickness'
+
     ACTION_OPTION_STRETCH_MEASURE_TYPE_OUTSIDE = 'outside'
     ACTION_OPTION_STRETCH_MEASURE_TYPE_OFFSET = 'offset'
+
+    ACTION_OPTION_BOX_JOINT_TYPE_FLAT = 'flat'
+    ACTION_OPTION_BOX_JOINT_TYPE_MITER = 'miter'
 
     ACTION_OPTION_AXES_ACTIVE = 'active'
     ACTION_OPTION_AXES_CONTEXT = 'context'
@@ -37,6 +45,13 @@ module Ladb::OpenCutList
           ACTION_OPTION_STRETCH_MEASURE_TYPE => [ ACTION_OPTION_STRETCH_MEASURE_TYPE_OUTSIDE, ACTION_OPTION_STRETCH_MEASURE_TYPE_OFFSET ],
           ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_CONTEXT, ACTION_OPTION_AXES_ENTITY ],
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CENTRED, ACTION_OPTION_OPTIONS_MAKE_UNIQUE ]
+        }
+      },
+      {
+        :action => ACTION_BOX,
+        :options => {
+          ACTION_OPTION_THICKNESS => [ ACTION_OPTION_THICKNESS_THICKNESS ],
+          ACTION_OPTION_BOX_JOINT_TYPE => [ACTION_OPTION_BOX_JOINT_TYPE_FLAT, ACTION_OPTION_BOX_JOINT_TYPE_MITER ],
         }
       }
     ].freeze
@@ -67,6 +82,8 @@ module Ladb::OpenCutList
       case action
       when ACTION_STRETCH
         return SmartCursorManager.cursor_select
+      when ACTION_BOX
+        return SmartCursorManager.cursor_select
       end
 
       super
@@ -77,7 +94,16 @@ module Ladb::OpenCutList
     end
 
     def get_action_option_toggle?(action, option_group, option)
-      true
+
+      case option_group
+      when ACTION_OPTION_THICKNESS
+        case option
+        when ACTION_OPTION_THICKNESS_THICKNESS
+          return false
+        end
+      end
+
+      super
     end
 
     def get_action_option_group_unique?(action, option_group)
@@ -85,6 +111,9 @@ module Ladb::OpenCutList
       case option_group
 
       when ACTION_OPTION_STRETCH_MEASURE_TYPE
+        return true
+
+      when ACTION_OPTION_BOX_JOINT_TYPE
         return true
 
       when ACTION_OPTION_AXES
@@ -99,12 +128,24 @@ module Ladb::OpenCutList
 
       case option_group
 
+      when ACTION_OPTION_THICKNESS
+        case option
+        when ACTION_OPTION_THICKNESS_THICKNESS
+          return Kuix::Label.new(fetch_action_option_value(action, option_group, option).to_s)
+          end
       when ACTION_OPTION_STRETCH_MEASURE_TYPE
         case option
         when ACTION_OPTION_STRETCH_MEASURE_TYPE_OUTSIDE
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.917L0,0.583L1,0.583L1,0.917L0,0.917M0,0.25L1,0.25M0,0.083L0,0.417M1,0.083L1,0.417'))
         when ACTION_OPTION_STRETCH_MEASURE_TYPE_OFFSET
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.917L0,0.583L0.5,0.583L0.5,0.917L0,0.917M0.5,0.25L1,0.25M0.5,0.083L0.5,0.417M1,0.083L1,0.417 M0.75,0.583L1,0.583L1,0.917L0.75,0.917'))
+        end
+      when ACTION_OPTION_BOX_JOINT_TYPE
+        case option
+        when ACTION_OPTION_BOX_JOINT_TYPE_FLAT
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M1,0L1,1L0.625,1L0.625,0.375 M1,0L0,0L0,0.375L0.625,0.375L0.625,0'))
+        when ACTION_OPTION_BOX_JOINT_TYPE_MITER
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0L0,0.375L0.625,0.375L1,0L0,0 M1,0L1,1L0.625,1L0.625,0.375'))
         end
       when ACTION_OPTION_AXES
         case option
@@ -137,6 +178,8 @@ module Ladb::OpenCutList
       case action
       when ACTION_STRETCH
         set_action_handler(SmartReshapeStretchActionHandler.new(self, fetch_action_handler))
+      when ACTION_BOX
+        set_action_handler(SmartReshapeBoxActionHandler.new(self, fetch_action_handler))
       end
 
       super
@@ -2825,6 +2868,479 @@ module Ladb::OpenCutList
         containers = []
       )
         super
+      end
+
+    end
+
+  end
+
+  class SmartReshapeBoxActionHandler < SmartActionHandler
+
+    STATE_BOX_START = 0
+    STATE_BOX = 1
+
+    def initialize(tool, previous_action_handler = nil)
+      super(SmartReshapeTool::ACTION_BOX, tool, previous_action_handler)
+
+      @drawing_def = nil
+
+      @selected_face_manipulators = []
+      @edge_joint_types = {}
+
+    end
+
+    # -----
+
+    def stop
+      _unhide_drawings
+      if @selected_face_manipulators.any?
+        @group.explode if @group.is_a?(Sketchup::Group)
+        entities = @drawing_def.container.respond_to?(:definition) ? @drawing_def.container.definition.entities : Sketchup.active_model.active_entities
+        entities.erase_entities(@drawing_def.face_manipulators.map { |fm| fm.face })
+        entities.erase_entities(@drawing_def.edge_manipulators.map { |em| em.edge })
+        @drawing_def = nil
+      end
+      super
+    end
+
+    # -----
+
+    def get_state_picker(state)
+
+      case state
+      when STATE_BOX_START
+        return SmartPicker.new(tool: @tool, observer: self, pick_point: false)
+      end
+
+      super
+    end
+
+    def get_state_status(state)
+      super
+    end
+
+    # -----
+
+    def onToolCancel(tool, reason, view)
+      super
+
+      case @state
+
+      when STATE_BOX_START
+        _reset
+
+      when STATE_BOX
+        _clear_joint_types
+        _clear_selected
+        _clear_computed
+        set_state(STATE_BOX_START)
+
+      end
+      _refresh
+
+    end
+
+    def onToolMouseMove(tool, flags, x, y, view)
+      return true if super
+
+      case @state
+
+      when STATE_BOX
+        _snap_box(flags, x, y, view)
+        _preview_box(view)
+        return true
+
+      end
+
+      false
+    end
+
+    def onToolLButtonUp(tool, flags, x, y, view)
+
+      case @state
+
+      when STATE_BOX_START
+        unless @drawing_def.nil?
+          set_state(STATE_BOX)
+          return true
+        else
+          UI.beep
+        end
+
+      when STATE_BOX
+        if @hover_face_manipulator
+          _toggle_selected(@hover_face_manipulator)
+          _compute(_fetch_option_thickness)
+          _refresh
+        elsif @hover_edge_manipulator
+          _toggle_joint_type(@hover_edge_manipulator.edge)
+          _compute(_fetch_option_thickness)
+          _refresh
+        end
+        return true
+
+      end
+
+    end
+
+    def onToolLButtonDoubleClick(tool, flags, x, y, view)
+      onToolLButtonUp(tool, flags, x, y, view)
+    end
+
+    def onStateChanged(old_state, new_state)
+
+      case new_state
+
+      when STATE_BOX_START
+        _unhide_drawings
+        @drawing_def = nil
+        @tool.clear_all_3d
+
+      when STATE_BOX
+        _clear_selected
+        _clear_joint_types
+        _hide_drawings
+        _preview_box(Sketchup.active_model.active_view)
+
+      end
+
+      super
+    end
+
+    def onPickerChanged(picker, view)
+
+      case @state
+
+      when STATE_BOX_START
+        @drawing_def = nil
+        _snap_box_start(picker, view)
+        _preview_box_start
+
+      end
+
+      super
+    end
+
+    # -----
+
+    protected
+
+    def _reset
+      _unhide_drawings
+      @drawing_def = nil
+      @selected_face_manipulators.clear
+      @edge_joint_types.clear
+      super
+      set_state(STATE_BOX_START)
+    end
+
+    # -----
+
+    def _snap_box_start(picker, view)
+      return unless (picked_face = picker.picked_face).is_a?(Sketchup::Face)
+      return unless (picked_face_path = picker.picked_face_path).is_a?(Array)
+
+      container = picked_face_path[-2]
+      container_transformation = PathUtils.get_transformation(picked_face_path[0..-2], IDENTITY)
+
+      all_connected = picked_face.all_connected
+
+      @drawing_def = DrawingDef.new(container, container_transformation)
+      @drawing_def.face_manipulators.concat(all_connected
+                                              .grep(Sketchup::Face)
+                                              .map { |face| FaceManipulator.new(face) })
+      @drawing_def.edge_manipulators.concat(all_connected
+                                              .grep(Sketchup::Edge)
+                                              .map { |face| EdgeManipulator.new(face) })
+
+    end
+
+    def _snap_box(flags, x, y, view)
+
+      return unless @drawing_def.is_a?(DrawingDef)
+
+      ph = view.pick_helper(x, y, 30)
+
+      @hover_face_manipulator = nil
+      @hover_edge_manipulator = nil
+
+      @drawing_def.face_manipulators.each do |fm|
+        if ph.test_point(fm.centroid.transform(@drawing_def.transformation))
+          @hover_face_manipulator = fm
+          break
+        end
+      end
+
+      if @hover_face_manipulator.nil?
+        @drawing_def.edge_manipulators.each do |em|
+          if ph.pick_segment(em.points.map { |point| point.transform(@drawing_def.transformation) }) &&
+             em.edge.faces.all? { |face| @selected_face_manipulators.any? { |fm| fm.face == face } }
+            @hover_edge_manipulator = em
+            break
+          end
+        end
+      end
+
+    end
+
+    def _preview_box_start
+
+      @tool.clear_all_3d
+
+      return unless @drawing_def.is_a?(DrawingDef)
+
+      k_mesh = Kuix::Mesh.new
+      k_mesh.add_triangles(@drawing_def.face_manipulators.map { |fm| fm.triangles }.flatten(1))
+      k_mesh.background_color = ColorUtils.color_translucent(Kuix::COLOR_GREEN, 0.3)
+      k_mesh.transformation = @drawing_def.transformation
+      @tool.append_3d(k_mesh)
+
+      kb = Kuix::Bounds3d.new.copy!(@drawing_def.bounds).inflate_all!(1)
+
+      k_box = Kuix::BoxMotif3d.new
+      k_box.bounds.copy!(kb)
+      k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+      k_box.color = Kuix::COLOR_DARK_GREY
+      k_box.transformation = @drawing_def.transformation
+      @tool.append_3d(k_box)
+
+    end
+
+    def _preview_box(view)
+
+      @tool.clear_all_3d
+
+      return unless @drawing_def.is_a?(DrawingDef)
+
+      size = view.pixels_to_model(30, @drawing_def.bounds.center.transform(@drawing_def.transformation))
+
+      @drawing_def.face_manipulators.each do |fm|
+
+        x_axis = EdgeManipulator.new(fm.longest_outer_edge).direction
+        z_axis = fm.normal
+        y_axis = x_axis.cross(z_axis).normalize!
+
+        hover = @hover_face_manipulator == fm
+        selected = @selected_face_manipulators.include?(fm)
+
+        if hover
+
+          color = ColorUtils.color_translucent(Kuix::COLOR_WHITE, 0.8)
+
+          k_mesh = Kuix::Mesh.new
+          k_mesh.add_triangles(fm.triangles)
+          k_mesh.background_color = ColorUtils.color_translucent(Kuix::COLOR_MAGENTA, 0.3)
+          k_mesh.transformation = @drawing_def.transformation
+          @tool.append_3d(k_mesh)
+
+        else
+
+          color = ColorUtils.color_translucent(selected ? Kuix::COLOR_MAGENTA : Kuix::COLOR_DARK_GREY, 0.8)
+
+        end
+
+        k_box_fill = Kuix::BoxFillMotif3d.new
+        k_box_fill.bounds.origin.set!(-(size * 0.4), -(size * 0.4), 0)
+        k_box_fill.bounds.size.set!(size * 0.8, size * 0.8, 0)
+        k_box_fill.color = color
+        k_box_fill.transformation = @drawing_def.transformation * Geom::Transformation.axes(fm.centroid, x_axis, y_axis, z_axis)
+        k_box_fill.on_top = true
+        @tool.append_3d(k_box_fill)
+
+        k_rectangle = Kuix::RectangleMotif3d.new
+        k_rectangle.bounds.origin.set!(-(size * 0.5), -(size * 0.5), 0)
+        k_rectangle.bounds.size.set!(size, size, 0)
+        k_rectangle.line_width = 1
+        k_rectangle.color = Kuix::COLOR_DARK_GREY
+        k_rectangle.transformation = @drawing_def.transformation * Geom::Transformation.axes(fm.centroid, x_axis, y_axis, z_axis)
+        k_rectangle.on_top = true
+        @tool.append_3d(k_rectangle)
+
+      end
+
+      if @hover_edge_manipulator.is_a?(EdgeManipulator)
+
+        k_edge = Kuix::EdgeMotif3d.new
+        k_edge.start.copy!(@hover_edge_manipulator.start_point)
+        k_edge.end.copy!(@hover_edge_manipulator.end_point)
+        k_edge.line_width = 2
+        k_edge.color = Kuix::COLOR_MAGENTA
+        k_edge.on_top = true
+        k_edge.transformation = @drawing_def.transformation
+        @tool.append_3d(k_edge)
+
+      end
+
+    end
+
+    # -----
+
+    def _fetch_option_thickness
+      @tool.fetch_action_option_length(@action, SmartReshapeTool::ACTION_OPTION_THICKNESS, SmartReshapeTool::ACTION_OPTION_THICKNESS_THICKNESS)
+    end
+
+    def _fetch_option_box_join_type
+      @tool.fetch_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_BOX_JOINT_TYPE)
+    end
+
+    def _fetch_option_box_join_type_flat?
+      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_BOX_JOINT_TYPE, SmartReshapeTool::ACTION_OPTION_BOX_JOINT_TYPE_FLAT)
+    end
+
+    def _fetch_option_box_join_type_miter?
+      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_BOX_JOINT_TYPE, SmartReshapeTool::ACTION_OPTION_BOX_JOINT_TYPE_MITER)
+    end
+
+    # -----
+
+    def _hide_drawings
+      if @drawing_def.is_a?(DrawingDef)
+        @drawing_def.face_manipulators.each { |fm| fm.face.visible = false }
+        # @drawing_def.edge_manipulators.each { |em| em.edge.visible = false }
+      end
+    end
+
+    def _unhide_drawings
+      if @drawing_def.is_a?(DrawingDef)
+        @drawing_def.face_manipulators.each { |fm| fm.face.visible = true }
+        # @drawing_def.edge_manipulators.each { |em| em.edge.visible = true }
+      end
+    end
+
+    # -----
+
+    def _toggle_selected(face_manipulator)
+      if @selected_face_manipulators.include?(face_manipulator)
+        @selected_face_manipulators.delete(face_manipulator)
+        face_manipulator.face.edges
+                        .select { |edge| @selected_face_manipulators.none? { |fm| fm.face.edges.include?(edge) } }
+                        .each { |edge| _delete_joint_type(edge) }
+      else
+        @selected_face_manipulators << face_manipulator
+      end
+    end
+
+    def _clear_selected
+      @selected_face_manipulators.clear
+    end
+
+    # -----
+
+    def _get_joint_type(edge)
+      @edge_joint_types[edge] ||= _fetch_option_box_join_type
+    end
+
+    def _toggle_joint_type(edge)
+      case _get_joint_type(edge)
+      when SmartReshapeTool::ACTION_OPTION_BOX_JOINT_TYPE_FLAT
+        @edge_joint_types[edge] = SmartReshapeTool::ACTION_OPTION_BOX_JOINT_TYPE_MITER
+      when SmartReshapeTool::ACTION_OPTION_BOX_JOINT_TYPE_MITER
+        @edge_joint_types[edge] = SmartReshapeTool::ACTION_OPTION_BOX_JOINT_TYPE_FLAT
+      else
+        @edge_joint_types[edge] = _fetch_option_box_join_type
+      end
+    end
+
+    def _delete_joint_type(edge)
+      @edge_joint_types.delete(edge)
+    end
+
+    def _clear_joint_types
+      @edge_joint_types.clear
+    end
+
+    # -----
+
+    def _clear_computed
+      @group.entities.clear! unless @group.nil?
+    end
+
+    def _compute(thickness)
+      return unless @drawing_def.is_a?(DrawingDef)
+
+      @group ||= (@drawing_def.container.respond_to?(:definition) ? @drawing_def.container.definition.entities : Sketchup.active_model.active_entities).add_group
+      _clear_computed
+
+      extruded_face_manipulators = {}
+
+      @selected_face_manipulators.each do |sfm|
+
+        group = @group.entities.add_group
+        entities = group.entities
+
+        miter_face = sfm.face.edges
+                        .select { |edge| edge.faces.all? { |face| @selected_face_manipulators.any? { |fm| fm.face == face } } }
+                        .any? { |edge| _get_joint_type(edge) == SmartReshapeTool::ACTION_OPTION_BOX_JOINT_TYPE_MITER }
+
+        # 1. Extract points from face vertices
+
+        gd_points = []
+        th_points = []
+        sfm.outer_loop_manipulator.vertex_manipulators.each do |vm|
+
+          mitter = miter_face && vm.vertex.edges
+                                   .select { |edge| edge.faces.all? { |face| @selected_face_manipulators.any? { |fm| fm.face == face } } }
+                                   .any? { |edge| _get_joint_type(edge) == SmartReshapeTool::ACTION_OPTION_BOX_JOINT_TYPE_MITER }
+
+          # Ground points
+
+          gd_plans = vm.vertex.faces
+                       .map { |face| @drawing_def.face_manipulators.find { |fm| fm.face == face } }
+                       .map { |fm|
+                         if fm == sfm || mitter || !mitter && !extruded_face_manipulators.include?(fm.face)
+                           fm.plane
+                         else
+                           [ fm.position.offset(fm.normal, -thickness), fm.normal.reverse ]
+                         end
+                       }
+
+          line = Geom.intersect_plane_plane(gd_plans[0], gd_plans[1])
+          gd_point = Geom.intersect_line_plane(line, gd_plans[2])
+
+          gd_points << gd_point
+
+          # Thickness points
+
+          th_plans = vm.vertex.faces
+                       .map { |face| @drawing_def.face_manipulators.find { |fm| fm.face == face } }
+                       .map { |fm|
+                         if fm == sfm || !mitter && extruded_face_manipulators.include?(fm.face) || mitter && @selected_face_manipulators.include?(fm)
+                           [ fm.position.offset(fm.normal, -thickness), fm.normal.reverse ]
+                         else
+                           fm.plane
+                         end
+                       }
+
+          line = Geom.intersect_plane_plane(th_plans[0], th_plans[1])
+          th_point = Geom.intersect_line_plane(line, th_plans[2])
+
+          th_points << th_point
+
+        end
+
+        # 2. Create main faces
+
+        gd_face = entities.add_face(gd_points)
+        gd_face.reverse! if thickness < 0
+
+        th_face = entities.add_face(th_points)
+        th_face.reverse! unless thickness < 0
+
+        # 3. Connect faces
+
+        th_edges = []
+        gd_points.zip(th_points).each do |gd_point, th_point|
+          edges = entities.add_edges(gd_point, th_point)
+          th_edges.concat(edges) if edges.is_a?(Array)  # Zero length returns nil
+        end
+
+        # 4. Find all other faces
+
+        th_edges.each(&:find_faces)
+
+
+        extruded_face_manipulators[sfm.face] = sfm
+
       end
 
     end

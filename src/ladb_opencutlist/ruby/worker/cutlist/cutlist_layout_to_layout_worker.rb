@@ -508,14 +508,8 @@ module Ladb::OpenCutList
       end
 
       # Remove coplanar edges created by fill_from_mesh and add_faces_from_mesh to reduce exported data
-      coplanar_edges = []
-      group.entities.grep(Sketchup::Edge).each do |edge|
-        edge.faces.each_cons(2) { |face_a, face_b|
-          if face_a.normal.parallel?(face_b.normal)
-            coplanar_edges << edge
-            break
-          end
-        }
+      coplanar_edges = group.entities.grep(Sketchup::Edge).select do |edge|
+        edge.faces.each_cons(2).any? { |face_a, face_b| face_a.normal.parallel?(face_b.normal) }
       end
       group.entities.erase_entities(coplanar_edges)
 

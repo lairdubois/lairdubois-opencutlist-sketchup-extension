@@ -1,8 +1,15 @@
 {
+  "_preprocessors": {
+    "thickness": 5 /* PRESETS_PREPROCESSOR_D_NEGATIVE_ALLOWED */
+  },
   "action_0": { /* ACTION_STRETCH */
     "stretch_measure_type": "outside",
     "axes": "entity",
     "centred": false,
     "make_unique": true
+  },
+  "action_1": { /* ACTION_BOX */
+    "thickness": "19mm",
+    "box_joint_type": "flat"
   }
 }

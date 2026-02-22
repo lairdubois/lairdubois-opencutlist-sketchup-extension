@@ -35,20 +35,11 @@ module Ladb::OpenCutList
       return [] if face.deleted?
 
       mesh = face.mesh(0) # POLYGON_MESH_POINTS
-      points = mesh.points
+      mesh.transform!(transformation) if transformation.is_a?(Geom::Transformation)
 
-      points.each { |point| point.transform!(transformation) } if transformation.is_a?(Geom::Transformation)
-
-      triangles = []
-      mesh.polygons.each do |polygon|
-        polygon.each do |index|
-          # Indicies start at 1 and can be negative to indicate edge smoothing.
-          # Must take this into account when looking up the points in our array.
-          triangles << points[index.abs - 1]
-        end
+      mesh.polygons.flat_map do |polygon|
+        polygon.map { |index| mesh.point_at(index.abs) }  # Indicies can be negative to indicate edge smoothing.
       end
-
-      triangles
     end
 
   end
