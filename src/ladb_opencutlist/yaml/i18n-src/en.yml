@@ -2210,11 +2210,21 @@ tool:
     action_0_state_11_status: Click to add the cutting plan
     action_0_state_12_status: Click on a cutting plane to delete it
     action_0_state_2_status: Click to confirm the stretch or enter a distance
+    action_1: Paneling
+    action_1_status: Create a series of parts from a closed solid
+    action_1_state_0_status: Click on a closed solid to define the reference geometry.
+    action_1_state_1_status: Select the faces to extrude
+    action_option_group_thickness: Thickness
+    action_option_group_box_joint_type: Joint
     action_option_group_stretch_measure_type: Measure
     action_option_group_axes: Axes
     action_option_group_options: Options
+    action_option_thickness_thickness: Thickness
+    action_option_thickness_thickness_status: Defines the thickness of the panels
     action_option_stretch_measure_type_outside_status: External measurement
     action_option_stretch_measure_type_offset_status: Measure difference
+    action_option_box_joint_type_flat_status: Flat joint
+    action_option_box_joint_type_miter_status: Mitre cut
     action_option_axes_active_status: Manipulate along active axes
     action_option_axes_context_status: Manipulate along the axes of the group or component containing the part
     action_option_axes_entity_status: Manipulate along part axes
