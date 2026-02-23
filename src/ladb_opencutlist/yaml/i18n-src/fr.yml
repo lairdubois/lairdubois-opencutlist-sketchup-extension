@@ -2217,7 +2217,7 @@ tool:
     action_option_group_thickness: Epaisseur
     action_option_group_stretch_measure_type: Mesure
     action_option_group_axes: Axes
-    action_option_group_box_joint_type: Liaison
+    action_option_group_box_joint_type: Assemblage
     action_option_group_box_direction: Direction
     action_option_group_options: Options
     action_option_thickness_thickness: Epaisseur
