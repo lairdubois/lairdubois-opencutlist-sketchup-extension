@@ -6,7 +6,8 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 # 8.0.0 (WIP)
 
-  * Added Smart Reshape Tool
+  * Added Smart Stretch Tool
+  * Added Smart Box Tool
   * Added SHIFT + (+/-) shortcuts in Smart Handle Tools to change copies during preview
   * Improved Smart Draw Tool with sheared pull
   * Improved Smart Draw Tool with the "draw in" option
@@ -15,6 +16,8 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
+### 2026-02-23
+  * First draft for the Smart Box Tool
 ### 2026-02-20
   * Fixed unescaped characters in Part identifier
   * Improved Smart Distribute preview
