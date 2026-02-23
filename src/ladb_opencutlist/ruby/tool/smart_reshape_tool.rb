@@ -3441,12 +3441,12 @@ module Ladb::OpenCutList
       thickness = _fetch_option_thickness.abs
       thickness *= -1 unless outward
       active_entities = _get_active_entities
-      extruded_face_manipulators = {}
+      extruded_face_manipulators = Set.new
 
       @selected_face_manipulators.each do |sfm|
 
         definition = _create_definition(sfm.face, PLUGIN.get_i18n_string('default.part_single').capitalize)
-        active_entities.add_instance(definition, IDENTITY)
+        instance = active_entities.add_instance(definition, IDENTITY)
         entities = definition.entities
 
         # 1. Extract points from face vertices
@@ -3460,8 +3460,7 @@ module Ladb::OpenCutList
           gd_plans = vm.vertex.faces
                        .map { |face| @drawing_def.face_manipulators.find { |fm| fm.face == face } }
                        .map { |fm|
-                         miter = _get_faces_joint_type_miter?(fm, sfm)
-                         if fm == sfm || miter || !miter && !extruded_face_manipulators.include?(fm.face)
+                         if fm == sfm || (miter = _get_faces_joint_type_miter?(fm, sfm)) || !miter && !extruded_face_manipulators.include?(fm)
                            fm.plane
                          else
                            [ fm.position.offset(fm.normal, thickness), fm.normal.reverse ]
@@ -3473,23 +3472,26 @@ module Ladb::OpenCutList
 
           gd_points << gd_point
 
-          # Thickness points
+          unless thickness.zero?
 
-          th_plans = vm.vertex.faces
-                       .map { |face| @drawing_def.face_manipulators.find { |fm| fm.face == face } }
-                       .map { |fm|
-                         miter = _get_faces_joint_type_miter?(fm, sfm)
-                         if fm == sfm || !miter && extruded_face_manipulators.include?(fm.face) || miter && @selected_face_manipulators.include?(fm)
-                           [ fm.position.offset(fm.normal, thickness), fm.normal.reverse ]
-                         else
-                           fm.plane
-                         end
-                       }
+            # Thickness points
 
-          line = Geom.intersect_plane_plane(th_plans[0], th_plans[1])
-          th_point = Geom.intersect_line_plane(line, th_plans[2])
+            th_plans = vm.vertex.faces
+                         .map { |face| @drawing_def.face_manipulators.find { |fm| fm.face == face } }
+                         .map { |fm|
+                           if fm == sfm || !(miter = _get_faces_joint_type_miter?(fm, sfm)) && extruded_face_manipulators.include?(fm) || miter && @selected_face_manipulators.include?(fm)
+                             [ fm.position.offset(fm.normal, thickness), fm.normal.reverse ]
+                           else
+                             fm.plane
+                           end
+                         }
 
-          th_points << th_point
+            line = Geom.intersect_plane_plane(th_plans[0], th_plans[1])
+            th_point = Geom.intersect_line_plane(line, th_plans[2])
+
+            th_points << th_point
+
+          end
 
         end
 
@@ -3499,24 +3501,39 @@ module Ladb::OpenCutList
         gd_face.reverse! unless gd_face.normal.samedirection?(sfm.face.normal)
         gd_face.reverse! if outward
 
-        th_face = entities.add_face(th_points)
-        th_face.reverse! unless outward
+        unless thickness.zero?
+          th_face = entities.add_face(th_points)
+          th_face.reverse! unless outward
+        end
 
         # 3. Connect faces
 
         th_edges = []
-        gd_points.zip(th_points).each do |gd_point, th_point|
-          edges = entities.add_edges(gd_point, th_point)
-          th_edges.concat(edges) if edges.is_a?(Array)  # Zero length returns nil
+        unless thickness.zero?
+          gd_points.zip(th_points).each do |gd_point, th_point|
+            edges = entities.add_edges(gd_point, th_point)
+            th_edges.concat(edges) if edges.is_a?(Array)  # Zero length returns nil
+          end
         end
 
         # 4. Find all other faces
 
         th_edges.each(&:find_faces)
 
+        # 5. Adapt part axes
+
+        z_axis = outward ? sfm.normal : sfm.normal.reverse
+        x_axis = EdgeManipulator.new(sfm.longest_outer_edge, sfm.transformation).direction
+        y_axis = x_axis.cross(z_axis).normalize!
+
+        t = Geom::Transformation.axes(sfm.centroid, x_axis, y_axis, z_axis)
+
+        instance.transform!(t)
+        definition.entities.transform_entities(t.inverse, definition.entities.to_a)
+
 
         # Flag face as extruded
-        extruded_face_manipulators[sfm.face] = sfm
+        extruded_face_manipulators << sfm
 
       end
 
