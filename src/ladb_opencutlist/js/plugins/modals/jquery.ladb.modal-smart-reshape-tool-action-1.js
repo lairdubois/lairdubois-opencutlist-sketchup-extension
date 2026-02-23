@@ -30,15 +30,18 @@
             // Fetch UI elements
             const $widgetPreset = $('.ladb-widget-preset', that.$element);
             const $inputThickness = $('#ladb_input_thickness', that.$element);
+            const $selectBoxDirection = $('#ladb_select_box_direction', that.$element);
             const $selectBoxJointType = $('#ladb_select_box_joint_type', that.$element);
             const $btnValidate = $('#ladb_btn_validate', that.$element);
 
             const fnFetchOptions = function (options) {
                 options.thickness = $inputThickness.val();
+                options.box_direction = $selectBoxDirection.val();
                 options.box_joint_type = $selectBoxJointType.val();
             };
             const fnFillInputs = function (options) {
                 $inputThickness.val(options.thickness);
+                $selectBoxDirection.selectpicker('val', options.box_direction);
                 $selectBoxJointType.selectpicker('val', options.box_joint_type);
             };
 
@@ -50,6 +53,7 @@
                 fnFillInputs: fnFillInputs
             });
             $inputThickness.ladbTextinputDimension();
+            $selectBoxDirection.selectpicker(SELECT_PICKER_OPTIONS);
             $selectBoxJointType.selectpicker(SELECT_PICKER_OPTIONS);
 
             fnFillInputs(options);

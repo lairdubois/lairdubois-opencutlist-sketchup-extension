@@ -1,6 +1,6 @@
 {
   "_preprocessors": {
-    "thickness": 5 /* PRESETS_PREPROCESSOR_D_NEGATIVE_ALLOWED */
+    "thickness": 1 /* PRESETS_PREPROCESSOR_D */
   },
   "action_0": { /* ACTION_STRETCH */
     "stretch_measure_type": "outside",
@@ -10,6 +10,7 @@
   },
   "action_1": { /* ACTION_BOX */
     "thickness": "19mm",
+    "box_direction": "inward",
     "box_joint_type": "flat"
   }
 }

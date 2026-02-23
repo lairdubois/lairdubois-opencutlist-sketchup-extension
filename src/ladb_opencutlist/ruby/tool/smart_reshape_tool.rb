@@ -19,8 +19,9 @@ module Ladb::OpenCutList
 
     ACTION_OPTION_THICKNESS = 'thickness'
     ACTION_OPTION_STRETCH_MEASURE_TYPE = 'stretch_measure_type'
-    ACTION_OPTION_BOX_JOINT_TYPE = 'box_joint_type'
     ACTION_OPTION_AXES = 'axes'
+    ACTION_OPTION_BOX_DIRECTION = 'box_direction'
+    ACTION_OPTION_BOX_JOINT_TYPE = 'box_joint_type'
     ACTION_OPTION_OPTIONS = 'options'
 
     ACTION_OPTION_THICKNESS_THICKNESS = 'thickness'
@@ -28,12 +29,15 @@ module Ladb::OpenCutList
     ACTION_OPTION_STRETCH_MEASURE_TYPE_OUTSIDE = 'outside'
     ACTION_OPTION_STRETCH_MEASURE_TYPE_OFFSET = 'offset'
 
-    ACTION_OPTION_BOX_JOINT_TYPE_FLAT = 'flat'
-    ACTION_OPTION_BOX_JOINT_TYPE_MITER = 'miter'
-
     ACTION_OPTION_AXES_ACTIVE = 'active'
     ACTION_OPTION_AXES_CONTEXT = 'context'
     ACTION_OPTION_AXES_ENTITY = 'entity'
+
+    ACTION_OPTION_BOX_DIRECTION_INWARD = 'inward'
+    ACTION_OPTION_BOX_DIRECTION_OUTWARD = 'outward'
+
+    ACTION_OPTION_BOX_JOINT_TYPE_FLAT = 'flat'
+    ACTION_OPTION_BOX_JOINT_TYPE_MITER = 'miter'
 
     ACTION_OPTION_OPTIONS_CENTRED = 'centred'
     ACTION_OPTION_OPTIONS_MAKE_UNIQUE = 'make_unique'
@@ -51,7 +55,8 @@ module Ladb::OpenCutList
         :action => ACTION_BOX,
         :options => {
           ACTION_OPTION_THICKNESS => [ ACTION_OPTION_THICKNESS_THICKNESS ],
-          ACTION_OPTION_BOX_JOINT_TYPE => [ACTION_OPTION_BOX_JOINT_TYPE_FLAT, ACTION_OPTION_BOX_JOINT_TYPE_MITER ],
+          ACTION_OPTION_BOX_DIRECTION => [ ACTION_OPTION_BOX_DIRECTION_INWARD, ACTION_OPTION_BOX_DIRECTION_OUTWARD ],
+          ACTION_OPTION_BOX_JOINT_TYPE => [ ACTION_OPTION_BOX_JOINT_TYPE_FLAT, ACTION_OPTION_BOX_JOINT_TYPE_MITER ],
         }
       }
     ].freeze
@@ -90,6 +95,12 @@ module Ladb::OpenCutList
     end
 
     def get_action_options_modal?(action)
+
+      case action
+      when ACTION_BOX
+        return true
+      end
+
       false
     end
 
@@ -113,10 +124,13 @@ module Ladb::OpenCutList
       when ACTION_OPTION_STRETCH_MEASURE_TYPE
         return true
 
-      when ACTION_OPTION_BOX_JOINT_TYPE
+      when ACTION_OPTION_AXES
         return true
 
-      when ACTION_OPTION_AXES
+      when ACTION_OPTION_BOX_DIRECTION
+        return true
+
+      when ACTION_OPTION_BOX_JOINT_TYPE
         return true
 
       end
@@ -140,13 +154,6 @@ module Ladb::OpenCutList
         when ACTION_OPTION_STRETCH_MEASURE_TYPE_OFFSET
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.917L0,0.583L0.5,0.583L0.5,0.917L0,0.917M0.5,0.25L1,0.25M0.5,0.083L0.5,0.417M1,0.083L1,0.417 M0.75,0.583L1,0.583L1,0.917L0.75,0.917'))
         end
-      when ACTION_OPTION_BOX_JOINT_TYPE
-        case option
-        when ACTION_OPTION_BOX_JOINT_TYPE_FLAT
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M1,0L1,1L0.625,1L0.625,0.375 M1,0L0,0L0,0.375L0.625,0.375L0.625,0'))
-        when ACTION_OPTION_BOX_JOINT_TYPE_MITER
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0L0,0.375L0.625,0.375L1,0L0,0 M1,0L1,1L0.625,1L0.625,0.375'))
-        end
       when ACTION_OPTION_AXES
         case option
         when ACTION_OPTION_AXES_ACTIVE
@@ -155,6 +162,20 @@ module Ladb::OpenCutList
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.167,0L0.167,0.833L1,0.833 M0,0.167L0.167,0L0.333,0.167 M0.833,0.667L1,0.833L0.833,1 M0.5,0.083L0.5,0.5L0.917,0.5L0.917,0.083L0.5,0.083'))
         when ACTION_OPTION_AXES_ENTITY
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.25,0L0.25,0.75L1,0.75 M0.083,0.167L0.25,0L0.417,0.167 M0.833,0.583L1,0.75L0.833,0.917 M0.042,0.5L0.042,0.958L0.5,0.958L0.5,0.5L0.042,0.5'))
+        end
+      when ACTION_OPTION_BOX_DIRECTION
+        case option
+        when ACTION_OPTION_BOX_DIRECTION_INWARD
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.25L0.75,0.25L0.75,1 M0.5,0.5L0.25,0.75 M0.25,0.5L0.25,0.75L0.5,0.75'))
+        when ACTION_OPTION_BOX_DIRECTION_OUTWARD
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.375L0.625,0.375L0.625,1 M0.75,0.25L1,0 M1,0.25L1,0L0.75,0'))
+        end
+      when ACTION_OPTION_BOX_JOINT_TYPE
+        case option
+        when ACTION_OPTION_BOX_JOINT_TYPE_FLAT
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M1,0L1,1L0.625,1L0.625,0.375 M1,0L0,0L0,0.375L0.625,0.375L0.625,0'))
+        when ACTION_OPTION_BOX_JOINT_TYPE_MITER
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0L0,0.375L0.625,0.375L1,0L0,0 M1,0L1,1L0.625,1L0.625,0.375'))
         end
       when ACTION_OPTION_OPTIONS
         case option
@@ -2886,7 +2907,7 @@ module Ladb::OpenCutList
 
       @drawing_def = nil
 
-      @selected_face_manipulators = []
+      @selected_face_manipulators = Set.new
       @edge_joint_types = {}
 
     end
@@ -2971,7 +2992,7 @@ module Ladb::OpenCutList
         end
 
       when STATE_BOX
-        _clear_joint_types
+        _clear_edge_joint_types
         _clear_selected
         _clear_computed
         set_state(STATE_BOX_START)
@@ -3011,11 +3032,11 @@ module Ladb::OpenCutList
       when STATE_BOX
         if @hover_face_manipulator
           _toggle_selected(@hover_face_manipulator)
-          _compute(_fetch_option_thickness)
+          _compute
           _refresh
         elsif @hover_edge_manipulator
-          _toggle_joint_type(@hover_edge_manipulator.edge)
-          _compute(_fetch_option_thickness)
+          _toggle_edge_joint_type(@hover_edge_manipulator.edge)
+          _compute
           _refresh
         end
         return true
@@ -3064,7 +3085,7 @@ module Ladb::OpenCutList
         Sketchup.active_model.start_operation(PLUGIN.get_i18n_string("tool.smart_reshape.action_1"), true)
 
         _clear_selected
-        _clear_joint_types
+        _clear_edge_joint_types
         _hide_drawings
         _preview_box(Sketchup.active_model.active_view)
 
@@ -3085,6 +3106,15 @@ module Ladb::OpenCutList
       end
 
       super
+    end
+
+    def onToolActionOptionStored(tool, action, option_group, option)
+      if option_group == SmartReshapeTool::ACTION_OPTION_BOX_JOINT_TYPE
+        _clear_edge_joint_types
+        _compute
+      elsif option_group == SmartReshapeTool::ACTION_OPTION_BOX_DIRECTION
+        _compute
+      end
     end
 
     # -----
@@ -3250,9 +3280,11 @@ module Ladb::OpenCutList
       thickness = _read_user_text_length(tool, text)
       return true if thickness.nil?
 
+      thickness = thickness.abs.to_l  # Force positive thickness
+
       @tool.store_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_THICKNESS, SmartReshapeTool::ACTION_OPTION_THICKNESS_THICKNESS, thickness.to_s, true)
       Sketchup.set_status_text('', SB_VCB_VALUE)
-      _compute(thickness)
+      _compute
       _refresh
 
       false
@@ -3262,6 +3294,18 @@ module Ladb::OpenCutList
 
     def _fetch_option_thickness
       @tool.fetch_action_option_length(@action, SmartReshapeTool::ACTION_OPTION_THICKNESS, SmartReshapeTool::ACTION_OPTION_THICKNESS_THICKNESS)
+    end
+
+    def _fetch_option_box_direction
+      @tool.fetch_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_BOX_DIRECTION)
+    end
+
+    def _fetch_option_box_direction_inward?
+      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_BOX_DIRECTION, SmartReshapeTool::ACTION_OPTION_BOX_DIRECTION_INWARD)
+    end
+
+    def _fetch_option_box_direction_outward?
+      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_BOX_DIRECTION, SmartReshapeTool::ACTION_OPTION_BOX_DIRECTION_OUTWARD)
     end
 
     def _fetch_option_box_join_type
@@ -3306,7 +3350,7 @@ module Ladb::OpenCutList
         @selected_face_manipulators.delete(face_manipulator)
         face_manipulator.face.edges
                         .select { |edge| @selected_face_manipulators.none? { |fm| fm.face.edges.include?(edge) } }
-                        .each { |edge| _delete_joint_type(edge) }
+                        .each { |edge| _delete_edge_joint_type(edge) }
       else
         @selected_face_manipulators << face_manipulator
       end
@@ -3322,7 +3366,17 @@ module Ladb::OpenCutList
       @edge_joint_types[edge] ||= _fetch_option_box_join_type
     end
 
-    def _toggle_joint_type(edge)
+    def _get_joint_type_miter?(edge)
+      _get_joint_type(edge) == SmartReshapeTool::ACTION_OPTION_BOX_JOINT_TYPE_MITER
+    end
+
+    def _get_faces_joint_type_miter?(face_manipulator_1, face_manipulator_2)
+      return false unless @selected_face_manipulators.include?(face_manipulator_1) && @selected_face_manipulators.include?(face_manipulator_2)
+      shared_edge = (face_manipulator_1.face.edges & face_manipulator_2.face.edges).first
+      !shared_edge.nil? && _get_joint_type_miter?(shared_edge)
+    end
+
+    def _toggle_edge_joint_type(edge)
       case _get_joint_type(edge)
       when SmartReshapeTool::ACTION_OPTION_BOX_JOINT_TYPE_FLAT
         @edge_joint_types[edge] = SmartReshapeTool::ACTION_OPTION_BOX_JOINT_TYPE_MITER
@@ -3333,11 +3387,11 @@ module Ladb::OpenCutList
       end
     end
 
-    def _delete_joint_type(edge)
+    def _delete_edge_joint_type(edge)
       @edge_joint_types.delete(edge)
     end
 
-    def _clear_joint_types
+    def _clear_edge_joint_types
       @edge_joint_types.clear
     end
 
@@ -3377,11 +3431,15 @@ module Ladb::OpenCutList
       _get_active_entities.erase_entities(_get_definitions_factory.values.flat_map { |definition| definition.instances })
     end
 
-    def _compute(thickness)
-      return unless @drawing_def.is_a?(DrawingDef)
+    def _compute
 
       _clear_computed
 
+      return unless @drawing_def.is_a?(DrawingDef)
+
+      outward = _fetch_option_box_direction_outward?
+      thickness = _fetch_option_thickness.abs
+      thickness *= -1 unless outward
       active_entities = _get_active_entities
       extruded_face_manipulators = {}
 
@@ -3391,29 +3449,22 @@ module Ladb::OpenCutList
         active_entities.add_instance(definition, IDENTITY)
         entities = definition.entities
 
-        miter_face = sfm.face.edges
-                        .select { |edge| edge.faces.all? { |face| @selected_face_manipulators.any? { |fm| fm.face == face } } }
-                        .any? { |edge| _get_joint_type(edge) == SmartReshapeTool::ACTION_OPTION_BOX_JOINT_TYPE_MITER }
-
         # 1. Extract points from face vertices
 
         gd_points = []
         th_points = []
         sfm.outer_loop_manipulator.vertex_manipulators.each do |vm|
 
-          mitter = miter_face && vm.vertex.edges
-                                   .select { |edge| edge.faces.all? { |face| @selected_face_manipulators.any? { |fm| fm.face == face } } }
-                                   .any? { |edge| _get_joint_type(edge) == SmartReshapeTool::ACTION_OPTION_BOX_JOINT_TYPE_MITER }
-
           # Ground points
 
           gd_plans = vm.vertex.faces
                        .map { |face| @drawing_def.face_manipulators.find { |fm| fm.face == face } }
                        .map { |fm|
-                         if fm == sfm || mitter || !mitter && !extruded_face_manipulators.include?(fm.face)
+                         miter = _get_faces_joint_type_miter?(fm, sfm)
+                         if fm == sfm || miter || !miter && !extruded_face_manipulators.include?(fm.face)
                            fm.plane
                          else
-                           [ fm.position.offset(fm.normal, -thickness), fm.normal.reverse ]
+                           [ fm.position.offset(fm.normal, thickness), fm.normal.reverse ]
                          end
                        }
 
@@ -3427,8 +3478,9 @@ module Ladb::OpenCutList
           th_plans = vm.vertex.faces
                        .map { |face| @drawing_def.face_manipulators.find { |fm| fm.face == face } }
                        .map { |fm|
-                         if fm == sfm || !mitter && extruded_face_manipulators.include?(fm.face) || mitter && @selected_face_manipulators.include?(fm)
-                           [ fm.position.offset(fm.normal, -thickness), fm.normal.reverse ]
+                         miter = _get_faces_joint_type_miter?(fm, sfm)
+                         if fm == sfm || !miter && extruded_face_manipulators.include?(fm.face) || miter && @selected_face_manipulators.include?(fm)
+                           [ fm.position.offset(fm.normal, thickness), fm.normal.reverse ]
                          else
                            fm.plane
                          end
@@ -3444,10 +3496,11 @@ module Ladb::OpenCutList
         # 2. Create main faces
 
         gd_face = entities.add_face(gd_points)
-        gd_face.reverse! if thickness < 0
+        gd_face.reverse! unless gd_face.normal.samedirection?(sfm.face.normal)
+        gd_face.reverse! if outward
 
         th_face = entities.add_face(th_points)
-        th_face.reverse! unless thickness < 0
+        th_face.reverse! unless outward
 
         # 3. Connect faces
 
