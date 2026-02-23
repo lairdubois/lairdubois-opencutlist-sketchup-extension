@@ -2223,7 +2223,7 @@ tool:
     action_option_thickness_thickness_status: Défini l'épaisseur des panneaux
     action_option_stretch_measure_type_outside_status: Mesurer à l'extérieur
     action_option_stretch_measure_type_offset_status: Mesurer la différence
-    action_option_box_joint_type_flat_status: Join plat
+    action_option_box_joint_type_flat_status: Joint plat
     action_option_box_joint_type_miter_status: Coupe d'onglet
     action_option_axes_active_status: Manipuler le long des axes actifs
     action_option_axes_context_status: Manipuler le long des axes du groupe ou composant contenant la pièce
