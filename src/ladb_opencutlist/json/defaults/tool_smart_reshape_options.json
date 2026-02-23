@@ -9,7 +9,7 @@
     "make_unique": true
   },
   "action_1": { /* ACTION_BOX */
-    "thickness": "19mm",
+    "thickness": { "metric": "18mm", "imperial": "1/2\"" },
     "box_direction": "inward",
     "box_joint_type": "flat"
   }
