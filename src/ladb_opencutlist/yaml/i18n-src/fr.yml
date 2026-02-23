@@ -2212,7 +2212,8 @@ tool:
     action_0_state_2_status: Cliquez pour valider l'étirement ou entrez une distance
     action_1: Panneauter
     action_1_status: Créer une série de pièces à partir d'un solide fermé
-    action_1_state_0_status: Cliquez sur une face pour définir la géométrie de référence
+    action_1_state_0_status: Cliquez sur un solide fermé pour définir la géométrie de référence
+    action_1_state_1_status: Sélectionnez les faces à extruder
     action_option_group_thickness: Epaisseur
     action_option_group_stretch_measure_type: Mesure
     action_option_group_box_joint_type: Liaison

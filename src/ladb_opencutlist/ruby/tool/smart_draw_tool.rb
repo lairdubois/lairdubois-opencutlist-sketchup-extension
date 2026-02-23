@@ -1816,6 +1816,16 @@ module Ladb::OpenCutList
               callback_action_handler: callback_action_handler
             ))
           }
+        },
+        {
+          tooltip_key: "tool.smart_reshape.action_#{SmartReshapeTool::ACTION_BOX}",
+          path: 'M0,1L1,1L1,0.375L0,0L0,1',
+          block: lambda {
+            Sketchup.active_model.tools.push_tool(SmartReshapeTool.new(
+              current_action: SmartReshapeTool::ACTION_BOX,
+              callback_action_handler: callback_action_handler
+            ))
+          }
         }
       ]
 

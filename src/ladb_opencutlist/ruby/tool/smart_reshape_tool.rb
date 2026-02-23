@@ -2876,6 +2876,8 @@ module Ladb::OpenCutList
 
   class SmartReshapeBoxActionHandler < SmartActionHandler
 
+    include UserTextHelper
+
     STATE_BOX_START = 0
     STATE_BOX = 1
 
@@ -2891,14 +2893,43 @@ module Ladb::OpenCutList
 
     # -----
 
+    def start
+      super
+
+      return if (model = Sketchup.active_model).nil?
+      selection = model.selection
+
+      if selection.any?
+        if (container = selection.first).is_a?(Sketchup::Group) || container.is_a?(Sketchup::ComponentInstance)
+          @drawing_def = CommonDrawingDecompositionWorker
+                           .new([ Sketchup::InstancePath.new(model.active_path.to_a + [ container ]) ],
+                                ignore_faces: false,
+                                ignore_edges: false
+                           )
+                           .run
+          if @drawing_def.is_a?(DrawingDef)
+            set_state(STATE_BOX)
+            selection.clear
+          end
+        end
+      end
+
+    end
+
     def stop
       _unhide_drawings
+      _purge_definitions
       if @selected_face_manipulators.any?
-        @group.explode if @group.is_a?(Sketchup::Group)
-        entities = @drawing_def.container.respond_to?(:definition) ? @drawing_def.container.definition.entities : Sketchup.active_model.active_entities
-        entities.erase_entities(@drawing_def.face_manipulators.map { |fm| fm.face })
-        entities.erase_entities(@drawing_def.edge_manipulators.map { |em| em.edge })
-        @drawing_def = nil
+
+        # Remove faces and edges
+        _erase_drawings
+
+        Sketchup.active_model.commit_operation
+
+      else
+
+        Sketchup.active_model.abort_operation
+
       end
       super
     end
@@ -2919,6 +2950,10 @@ module Ladb::OpenCutList
       super
     end
 
+    def get_state_vcb_label(state)
+      PLUGIN.get_i18n_string("tool.smart_reshape.action_option_group_thickness")
+    end
+
     # -----
 
     def onToolCancel(tool, reason, view)
@@ -2927,7 +2962,13 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_BOX_START
-        _reset
+        if @tool.callback_action_handler.nil?
+          _reset
+        else
+          stop
+          Sketchup.active_model.tools.pop_tool
+          return true
+        end
 
       when STATE_BOX
         _clear_joint_types
@@ -2987,7 +3028,29 @@ module Ladb::OpenCutList
       onToolLButtonUp(tool, flags, x, y, view)
     end
 
+    def onToolUserText(tool, text, view)
+      return true if super
+
+      if _read_thickness(tool, text, view)
+        return true
+      end
+
+      false
+    end
+
     def onStateChanged(old_state, new_state)
+
+      case old_state
+
+      when STATE_BOX
+
+        _clear_definitions_factory
+
+        Sketchup.active_model.abort_operation
+
+        @group = nil
+
+      end
 
       case new_state
 
@@ -2997,6 +3060,9 @@ module Ladb::OpenCutList
         @tool.clear_all_3d
 
       when STATE_BOX
+
+        Sketchup.active_model.start_operation(PLUGIN.get_i18n_string("tool.smart_reshape.action_1"), true)
+
         _clear_selected
         _clear_joint_types
         _hide_drawings
@@ -3019,6 +3085,12 @@ module Ladb::OpenCutList
       end
 
       super
+    end
+
+    # -----
+
+    def enableVCB?
+      true
     end
 
     # -----
@@ -3173,6 +3245,19 @@ module Ladb::OpenCutList
 
     end
 
+    def _read_thickness(tool, text, view)
+
+      thickness = _read_user_text_length(tool, text)
+      return true if thickness.nil?
+
+      @tool.store_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_THICKNESS, SmartReshapeTool::ACTION_OPTION_THICKNESS_THICKNESS, thickness.to_s, true)
+      Sketchup.set_status_text('', SB_VCB_VALUE)
+      _compute(thickness)
+      _refresh
+
+      false
+    end
+
     # -----
 
     def _fetch_option_thickness
@@ -3204,6 +3289,13 @@ module Ladb::OpenCutList
       if @drawing_def.is_a?(DrawingDef)
         @drawing_def.face_manipulators.each { |fm| fm.face.visible = true }
         # @drawing_def.edge_manipulators.each { |em| em.edge.visible = true }
+      end
+    end
+
+    def _erase_drawings
+      if @drawing_def.is_a?(DrawingDef)
+        _get_active_entities.erase_entities(@drawing_def.face_manipulators.map { |fm| fm.face } + @drawing_def.edge_manipulators.map { |em| em.edge })
+        @drawing_def = nil
       end
     end
 
@@ -3251,22 +3343,53 @@ module Ladb::OpenCutList
 
     # -----
 
+    def _get_active_entities
+      return @drawing_def.container.definition.entities if @drawing_def && @drawing_def.container.respond_to?(:definition)
+      Sketchup.active_model.active_entities
+    end
+    
+    def _get_definitions_factory
+      @definitions_factory ||= {}
+    end
+
+    def _clear_definitions_factory
+      @definitions_factory.clear if @definitions_factory.is_a?(Hash)
+    end
+
+    def _create_definition(face, name = 'Part')
+      definitions_factory = _get_definitions_factory
+      if (definition = definitions_factory[face]).nil?
+        definition = definitions_factory[face] = Sketchup.active_model.definitions.add(name)
+      else
+        definition.entities.clear!
+      end
+      definition
+    end
+
+    def _purge_definitions
+      _get_definitions_factory.each_value do |definition|
+        next if definition.count_used_instances > 0
+        Sketchup.active_model.definitions.remove(definition)
+      end
+    end
+
     def _clear_computed
-      @group.entities.clear! unless @group.nil?
+      _get_active_entities.erase_entities(_get_definitions_factory.values.flat_map { |definition| definition.instances })
     end
 
     def _compute(thickness)
       return unless @drawing_def.is_a?(DrawingDef)
 
-      @group ||= (@drawing_def.container.respond_to?(:definition) ? @drawing_def.container.definition.entities : Sketchup.active_model.active_entities).add_group
       _clear_computed
 
+      active_entities = _get_active_entities
       extruded_face_manipulators = {}
 
       @selected_face_manipulators.each do |sfm|
 
-        group = @group.entities.add_group
-        entities = group.entities
+        definition = _create_definition(sfm.face, PLUGIN.get_i18n_string('default.part_single').capitalize)
+        active_entities.add_instance(definition, IDENTITY)
+        entities = definition.entities
 
         miter_face = sfm.face.edges
                         .select { |edge| edge.faces.all? { |face| @selected_face_manipulators.any? { |fm| fm.face == face } } }
@@ -3339,6 +3462,7 @@ module Ladb::OpenCutList
         th_edges.each(&:find_faces)
 
 
+        # Flag face as extruded
         extruded_face_manipulators[sfm.face] = sfm
 
       end
