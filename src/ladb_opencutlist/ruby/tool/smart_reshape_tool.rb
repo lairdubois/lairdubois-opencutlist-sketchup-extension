@@ -2902,6 +2902,8 @@ module Ladb::OpenCutList
     STATE_BOX_START = 0
     STATE_BOX = 1
 
+    LAYER_3D_BOX_PREVIEW = 10
+
     def initialize(tool, previous_action_handler = nil)
       super(SmartReshapeTool::ACTION_BOX, tool, previous_action_handler)
 
@@ -3078,7 +3080,7 @@ module Ladb::OpenCutList
       when STATE_BOX_START
         _unhide_drawings
         @drawing_def = nil
-        @tool.clear_all_3d
+        @tool.clear_3d([ LAYER_3D_BOX_PREVIEW ])
 
       when STATE_BOX
 
@@ -3187,7 +3189,7 @@ module Ladb::OpenCutList
 
     def _preview_box_start
 
-      @tool.clear_all_3d
+      @tool.clear_3d([ LAYER_3D_BOX_PREVIEW ])
 
       return unless @drawing_def.is_a?(DrawingDef)
 
@@ -3195,7 +3197,7 @@ module Ladb::OpenCutList
       k_mesh.add_triangles(@drawing_def.face_manipulators.map { |fm| fm.triangles }.flatten(1))
       k_mesh.background_color = ColorUtils.color_translucent(Kuix::COLOR_GREEN, 0.3)
       k_mesh.transformation = @drawing_def.transformation
-      @tool.append_3d(k_mesh)
+      @tool.append_3d(k_mesh, LAYER_3D_BOX_PREVIEW)
 
       kb = Kuix::Bounds3d.new.copy!(@drawing_def.bounds).inflate_all!(1)
 
@@ -3204,13 +3206,13 @@ module Ladb::OpenCutList
       k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
       k_box.color = Kuix::COLOR_DARK_GREY
       k_box.transformation = @drawing_def.transformation
-      @tool.append_3d(k_box)
+      @tool.append_3d(k_box, LAYER_3D_BOX_PREVIEW)
 
     end
 
     def _preview_box(view)
 
-      @tool.clear_all_3d
+      @tool.clear_3d([ LAYER_3D_BOX_PREVIEW ])
 
       return unless @drawing_def.is_a?(DrawingDef)
 
@@ -3233,7 +3235,7 @@ module Ladb::OpenCutList
           k_mesh.add_triangles(fm.triangles)
           k_mesh.background_color = ColorUtils.color_translucent(Kuix::COLOR_MAGENTA, 0.3)
           k_mesh.transformation = @drawing_def.transformation
-          @tool.append_3d(k_mesh)
+          @tool.append_3d(k_mesh, LAYER_3D_BOX_PREVIEW)
 
         else
 
@@ -3247,7 +3249,7 @@ module Ladb::OpenCutList
         k_box_fill.color = color
         k_box_fill.transformation = @drawing_def.transformation * Geom::Transformation.axes(fm.centroid, x_axis, y_axis, z_axis)
         k_box_fill.on_top = true
-        @tool.append_3d(k_box_fill)
+        @tool.append_3d(k_box_fill, LAYER_3D_BOX_PREVIEW)
 
         k_rectangle = Kuix::RectangleMotif3d.new
         k_rectangle.bounds.origin.set!(-(size * 0.5), -(size * 0.5), 0)
@@ -3256,7 +3258,7 @@ module Ladb::OpenCutList
         k_rectangle.color = Kuix::COLOR_DARK_GREY
         k_rectangle.transformation = @drawing_def.transformation * Geom::Transformation.axes(fm.centroid, x_axis, y_axis, z_axis)
         k_rectangle.on_top = true
-        @tool.append_3d(k_rectangle)
+        @tool.append_3d(k_rectangle, LAYER_3D_BOX_PREVIEW)
 
       end
 
@@ -3269,7 +3271,7 @@ module Ladb::OpenCutList
         k_edge.color = Kuix::COLOR_MAGENTA
         k_edge.on_top = true
         k_edge.transformation = @drawing_def.transformation
-        @tool.append_3d(k_edge)
+        @tool.append_3d(k_edge, LAYER_3D_BOX_PREVIEW)
 
       end
 
@@ -3373,7 +3375,7 @@ module Ladb::OpenCutList
     def _get_faces_joint_type_miter?(face_manipulator_1, face_manipulator_2)
       return false unless @selected_face_manipulators.include?(face_manipulator_1) && @selected_face_manipulators.include?(face_manipulator_2)
       shared_edge = (face_manipulator_1.face.edges & face_manipulator_2.face.edges).first
-      !shared_edge.nil? && _get_joint_type_miter?(shared_edge)
+      shared_edge.nil? || _get_joint_type_miter?(shared_edge) # shared_edge.nil? is in case of faces not connected or connected by a vertex si it returns miter joint
     end
 
     def _toggle_edge_joint_type(edge)
@@ -3449,47 +3451,107 @@ module Ladb::OpenCutList
         instance = active_entities.add_instance(definition, IDENTITY)
         entities = definition.entities
 
+        x_axis = (sfm.triangles.first - sfm.centroid).normalize!
+        y_axis = sfm.normal.cross(x_axis).normalize!
+
         # 1. Extract points from face vertices
+
+        gd_plane = sfm.plane
+        th_plane = [ sfm.position.offset(sfm.normal, thickness), sfm.normal ]
 
         gd_points = []
         th_points = []
+
+        vertex_gd_points = {}
+        vertex_th_points = {}
+
         sfm.outer_loop_manipulator.vertex_manipulators.each do |vm|
 
           # Ground points
 
-          gd_plans = vm.vertex.faces
+          planes = vm.vertex.faces
                        .map { |face| @drawing_def.face_manipulators.find { |fm| fm.face == face } }
                        .map { |fm|
                          if fm == sfm || (miter = _get_faces_joint_type_miter?(fm, sfm)) || !miter && !extruded_face_manipulators.include?(fm)
                            fm.plane
                          else
-                           [ fm.position.offset(fm.normal, thickness), fm.normal.reverse ]
+                           [ fm.position.offset(fm.normal, thickness), fm.normal ]
                          end
                        }
 
-          line = Geom.intersect_plane_plane(gd_plans[0], gd_plans[1])
-          gd_point = Geom.intersect_line_plane(line, gd_plans[2])
+          if planes.size >= 3
 
-          gd_points << gd_point
+            points = []
+
+            lines = planes.combination(2).map { |plane1, plane2| Geom.intersect_plane_plane(plane1, plane2) }
+            lines.combination(3).each { |line1, line2, line3|
+              p1 = Geom.intersect_line_line(line1, line2)
+              next if p1.nil? || points.include?(p1)
+              p2 = Geom.intersect_line_line(line2, line3)
+              points << p1 if p1 == p2
+            }
+            points.select! { |point|
+              point.on_plane?(gd_plane) &&
+                planes.all? { |plane|
+                  !(v = point.vector_to(point.project_to_plane(plane))).valid? ||
+                    v.samedirection?(plane[1])
+                }
+            }
+            points.sort_by! { |point|
+              v = point - sfm.centroid
+              x = v.dot(x_axis)
+              y = v.dot(y_axis)
+              Math.atan2(y, x)
+            }
+
+            vertex_gd_points[vm.vertex] = points
+            gd_points.concat(points)
+
+          end
 
           unless thickness.zero?
 
             # Thickness points
 
-            th_plans = vm.vertex.faces
+            planes = vm.vertex.faces
                          .map { |face| @drawing_def.face_manipulators.find { |fm| fm.face == face } }
                          .map { |fm|
                            if fm == sfm || !(miter = _get_faces_joint_type_miter?(fm, sfm)) && extruded_face_manipulators.include?(fm) || miter && @selected_face_manipulators.include?(fm)
-                             [ fm.position.offset(fm.normal, thickness), fm.normal.reverse ]
+                             [ fm.position.offset(fm.normal, thickness), fm.normal ]
                            else
                              fm.plane
                            end
                          }
 
-            line = Geom.intersect_plane_plane(th_plans[0], th_plans[1])
-            th_point = Geom.intersect_line_plane(line, th_plans[2])
+            if planes.size >= 3
 
-            th_points << th_point
+              points = []
+
+              lines = planes.combination(2).map { |plane1, plane2| Geom.intersect_plane_plane(plane1, plane2) }
+              lines.combination(3).each { |line1, line2, line3|
+                p1 = Geom.intersect_line_line(line1, line2)
+                next if p1.nil? || points.include?(p1)
+                p2 = Geom.intersect_line_line(line2, line3)
+                points << p1 if p1 == p2
+              }
+              points.select! { |point|
+                point.on_plane?(th_plane) &&
+                  planes.all? { |plane|
+                    !(v = point.vector_to(point.project_to_plane(plane))).valid? ||
+                      v.samedirection?(plane[1])
+                  }
+              }
+              points.sort_by! { |point|
+                v = point - sfm.centroid
+                x = v.dot(x_axis)
+                y = v.dot(y_axis)
+                Math.atan2(y, x)
+              }
+
+              vertex_th_points[vm.vertex] = points
+              th_points.concat(points)
+
+            end
 
           end
 
@@ -3508,17 +3570,23 @@ module Ladb::OpenCutList
 
         # 3. Connect faces
 
-        th_edges = []
         unless thickness.zero?
-          gd_points.zip(th_points).each do |gd_point, th_point|
-            edges = entities.add_edges(gd_point, th_point)
-            th_edges.concat(edges) if edges.is_a?(Array)  # Zero length returns nil
+
+          edges = []
+          sfm.outer_loop_manipulator.vertex_manipulators.each do |vm|
+            a1 = vertex_gd_points[vm.vertex]
+            a2 = vertex_th_points[vm.vertex]
+            next if a1.nil? || a2.nil?
+            a1 = a1.cycle.take(a2.size) if a2.size > a1.size
+            a2 = a2.cycle.take(a1.size) if a1.size > a2.size
+            a1.zip(a2).each { |p1, p2| edges.concat(entities.add_edges(p1, p2)) }
           end
+
         end
 
         # 4. Find all other faces
 
-        th_edges.each(&:find_faces)
+        edges.each(&:find_faces)
 
         # 5. Adapt part axes
 

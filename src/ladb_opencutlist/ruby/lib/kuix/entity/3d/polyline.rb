@@ -44,12 +44,12 @@ module Ladb::OpenCutList::Kuix
       if @_points.any?
         if @on_top
           points2d = @_points.map { |point| graphics.view.screen_coords(point) }
-          graphics.set_drawing_color(@color)
+          graphics.set_drawing_color(@color) if @color.is_a?(Sketchup::Color)
           graphics.set_line_width(@line_width)
           graphics.set_line_stipple(@line_stipple)
           graphics.view.draw2d(@closed ? GL_LINE_LOOP : GL_LINE_STRIP, points2d)
         else
-          graphics.set_drawing_color(@color)
+          graphics.set_drawing_color(@color) if @color.is_a?(Sketchup::Color)
           graphics.set_line_width(@line_width)
           graphics.set_line_stipple(@line_stipple)
           graphics.view.draw(@closed ? GL_LINE_LOOP : GL_LINE_STRIP, @_points)
