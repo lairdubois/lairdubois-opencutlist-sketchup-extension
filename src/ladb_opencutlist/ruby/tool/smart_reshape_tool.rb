@@ -3254,7 +3254,7 @@ module Ladb::OpenCutList
         k_rectangle = Kuix::RectangleMotif3d.new
         k_rectangle.bounds.origin.set!(-(size * 0.5), -(size * 0.5), 0)
         k_rectangle.bounds.size.set!(size, size, 0)
-        k_rectangle.line_width = 1
+        k_rectangle.line_width = hover ? 2 : 1
         k_rectangle.color = Kuix::COLOR_DARK_GREY
         k_rectangle.transformation = @drawing_def.transformation * Geom::Transformation.axes(fm.centroid, x_axis, y_axis, z_axis)
         k_rectangle.on_top = true
