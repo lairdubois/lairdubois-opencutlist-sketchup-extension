@@ -30,19 +30,19 @@
             // Fetch UI elements
             const $widgetPreset = $('.ladb-widget-preset', that.$element);
             const $inputThickness = $('#ladb_input_thickness', that.$element);
-            const $selectBoxDirection = $('#ladb_select_box_direction', that.$element);
-            const $selectBoxJointType = $('#ladb_select_box_joint_type', that.$element);
+            const $selectPanelingDirection = $('#ladb_select_paneling_direction', that.$element);
+            const $selectPanelingJointType = $('#ladb_select_paneling_joint_type', that.$element);
             const $btnValidate = $('#ladb_btn_validate', that.$element);
 
             const fnFetchOptions = function (options) {
                 options.thickness = $inputThickness.val();
-                options.box_direction = $selectBoxDirection.val();
-                options.box_joint_type = $selectBoxJointType.val();
+                options.paneling_direction = $selectPanelingDirection.val();
+                options.paneling_joint_type = $selectPanelingJointType.val();
             };
             const fnFillInputs = function (options) {
                 $inputThickness.val(options.thickness);
-                $selectBoxDirection.selectpicker('val', options.box_direction);
-                $selectBoxJointType.selectpicker('val', options.box_joint_type);
+                $selectPanelingDirection.selectpicker('val', options.paneling_direction);
+                $selectPanelingJointType.selectpicker('val', options.paneling_joint_type);
             };
 
             $widgetPreset.ladbWidgetPreset({
@@ -53,8 +53,8 @@
                 fnFillInputs: fnFillInputs
             });
             $inputThickness.ladbTextinputDimension();
-            $selectBoxDirection.selectpicker(SELECT_PICKER_OPTIONS);
-            $selectBoxJointType.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectPanelingDirection.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectPanelingJointType.selectpicker(SELECT_PICKER_OPTIONS);
 
             fnFillInputs(options);
 

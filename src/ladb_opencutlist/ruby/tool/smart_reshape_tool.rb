@@ -15,13 +15,13 @@ module Ladb::OpenCutList
   class SmartReshapeTool < SmartTool
 
     ACTION_STRETCH = 0
-    ACTION_BOX = 1
+    ACTION_PANELING = 1
 
     ACTION_OPTION_THICKNESS = 'thickness'
     ACTION_OPTION_STRETCH_MEASURE_TYPE = 'stretch_measure_type'
     ACTION_OPTION_AXES = 'axes'
-    ACTION_OPTION_BOX_DIRECTION = 'box_direction'
-    ACTION_OPTION_BOX_JOINT_TYPE = 'box_joint_type'
+    ACTION_OPTION_PANELING_DIRECTION = 'paneling_direction'
+    ACTION_OPTION_PANELING_JOINT_TYPE = 'paneling_joint_type'
     ACTION_OPTION_OPTIONS = 'options'
 
     ACTION_OPTION_THICKNESS_THICKNESS = 'thickness'
@@ -52,11 +52,11 @@ module Ladb::OpenCutList
         }
       },
       {
-        :action => ACTION_BOX,
+        :action => ACTION_PANELING,
         :options => {
           ACTION_OPTION_THICKNESS => [ ACTION_OPTION_THICKNESS_THICKNESS ],
-          ACTION_OPTION_BOX_DIRECTION => [ ACTION_OPTION_BOX_DIRECTION_INWARD, ACTION_OPTION_BOX_DIRECTION_OUTWARD ],
-          ACTION_OPTION_BOX_JOINT_TYPE => [ ACTION_OPTION_BOX_JOINT_TYPE_FLAT, ACTION_OPTION_BOX_JOINT_TYPE_MITER ],
+          ACTION_OPTION_PANELING_DIRECTION => [ACTION_OPTION_BOX_DIRECTION_INWARD, ACTION_OPTION_BOX_DIRECTION_OUTWARD ],
+          ACTION_OPTION_PANELING_JOINT_TYPE => [ACTION_OPTION_BOX_JOINT_TYPE_FLAT, ACTION_OPTION_BOX_JOINT_TYPE_MITER ],
         }
       }
     ].freeze
@@ -87,7 +87,7 @@ module Ladb::OpenCutList
       case action
       when ACTION_STRETCH
         return SmartCursorManager.cursor_select
-      when ACTION_BOX
+      when ACTION_PANELING
         return SmartCursorManager.cursor_select
       end
 
@@ -97,7 +97,7 @@ module Ladb::OpenCutList
     def get_action_options_modal?(action)
 
       case action
-      when ACTION_BOX
+      when ACTION_PANELING
         return true
       end
 
@@ -127,10 +127,10 @@ module Ladb::OpenCutList
       when ACTION_OPTION_AXES
         return true
 
-      when ACTION_OPTION_BOX_DIRECTION
+      when ACTION_OPTION_PANELING_DIRECTION
         return true
 
-      when ACTION_OPTION_BOX_JOINT_TYPE
+      when ACTION_OPTION_PANELING_JOINT_TYPE
         return true
 
       end
@@ -163,14 +163,14 @@ module Ladb::OpenCutList
         when ACTION_OPTION_AXES_ENTITY
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.25,0L0.25,0.75L1,0.75 M0.083,0.167L0.25,0L0.417,0.167 M0.833,0.583L1,0.75L0.833,0.917 M0.042,0.5L0.042,0.958L0.5,0.958L0.5,0.5L0.042,0.5'))
         end
-      when ACTION_OPTION_BOX_DIRECTION
+      when ACTION_OPTION_PANELING_DIRECTION
         case option
         when ACTION_OPTION_BOX_DIRECTION_INWARD
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.25L0.75,0.25L0.75,1 M0.5,0.5L0.25,0.75 M0.25,0.5L0.25,0.75L0.5,0.75'))
         when ACTION_OPTION_BOX_DIRECTION_OUTWARD
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.375L0.625,0.375L0.625,1 M0.75,0.25L1,0 M1,0.25L1,0L0.75,0'))
         end
-      when ACTION_OPTION_BOX_JOINT_TYPE
+      when ACTION_OPTION_PANELING_JOINT_TYPE
         case option
         when ACTION_OPTION_BOX_JOINT_TYPE_FLAT
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M1,0L1,1L0.625,1L0.625,0.375 M1,0L0,0L0,0.375L0.625,0.375L0.625,0'))
@@ -199,8 +199,8 @@ module Ladb::OpenCutList
       case action
       when ACTION_STRETCH
         set_action_handler(SmartReshapeStretchActionHandler.new(self, fetch_action_handler))
-      when ACTION_BOX
-        set_action_handler(SmartReshapeBoxActionHandler.new(self, fetch_action_handler))
+      when ACTION_PANELING
+        set_action_handler(SmartReshapePanelingActionHandler.new(self, fetch_action_handler))
       end
 
       super
@@ -2895,17 +2895,17 @@ module Ladb::OpenCutList
 
   end
 
-  class SmartReshapeBoxActionHandler < SmartActionHandler
+  class SmartReshapePanelingActionHandler < SmartActionHandler
 
     include UserTextHelper
 
-    STATE_BOX_START = 0
-    STATE_BOX = 1
+    STATE_SELECT = 0
+    STATE_PANELING = 1
 
-    LAYER_3D_BOX_PREVIEW = 10
+    LAYER_3D_PANELING_PREVIEW = 10
 
     def initialize(tool, previous_action_handler = nil)
-      super(SmartReshapeTool::ACTION_BOX, tool, previous_action_handler)
+      super(SmartReshapeTool::ACTION_PANELING, tool, previous_action_handler)
 
       @drawing_def = nil
 
@@ -2931,7 +2931,7 @@ module Ladb::OpenCutList
                            )
                            .run
           if @drawing_def.is_a?(DrawingDef)
-            set_state(STATE_BOX)
+            set_state(STATE_PANELING)
             selection.clear
           end
         end
@@ -2962,7 +2962,7 @@ module Ladb::OpenCutList
     def get_state_picker(state)
 
       case state
-      when STATE_BOX_START
+      when STATE_SELECT
         return SmartPicker.new(tool: @tool, observer: self, pick_point: false)
       end
 
@@ -2984,7 +2984,7 @@ module Ladb::OpenCutList
 
       case @state
 
-      when STATE_BOX_START
+      when STATE_SELECT
         if @tool.callback_action_handler.nil?
           _reset
         else
@@ -2993,11 +2993,11 @@ module Ladb::OpenCutList
           return true
         end
 
-      when STATE_BOX
+      when STATE_PANELING
         _clear_edge_joint_types
         _clear_selected
         _clear_computed
-        set_state(STATE_BOX_START)
+        set_state(STATE_SELECT)
 
       end
       _refresh
@@ -3009,9 +3009,9 @@ module Ladb::OpenCutList
 
       case @state
 
-      when STATE_BOX
-        _snap_box(flags, x, y, view)
-        _preview_box(view)
+      when STATE_PANELING
+        _snap_paneling(flags, x, y, view)
+        _preview_paneling(view)
         return true
 
       end
@@ -3023,15 +3023,15 @@ module Ladb::OpenCutList
 
       case @state
 
-      when STATE_BOX_START
+      when STATE_SELECT
         unless @drawing_def.nil?
-          set_state(STATE_BOX)
+          set_state(STATE_PANELING)
           return true
         else
           UI.beep
         end
 
-      when STATE_BOX
+      when STATE_PANELING
         if @hover_face_manipulator
           _toggle_selected(@hover_face_manipulator)
           _compute
@@ -3065,7 +3065,7 @@ module Ladb::OpenCutList
 
       case old_state
 
-      when STATE_BOX
+      when STATE_PANELING
 
         _clear_definitions_factory
 
@@ -3077,19 +3077,19 @@ module Ladb::OpenCutList
 
       case new_state
 
-      when STATE_BOX_START
+      when STATE_SELECT
         _unhide_drawings
         @drawing_def = nil
-        @tool.clear_3d([ LAYER_3D_BOX_PREVIEW ])
+        @tool.clear_3d([LAYER_3D_PANELING_PREVIEW ])
 
-      when STATE_BOX
+      when STATE_PANELING
 
         Sketchup.active_model.start_operation(PLUGIN.get_i18n_string("tool.smart_reshape.action_1"), true)
 
         _clear_selected
         _clear_edge_joint_types
         _hide_drawings
-        _preview_box(Sketchup.active_model.active_view)
+        _preview_paneling(Sketchup.active_model.active_view)
 
       end
 
@@ -3100,10 +3100,10 @@ module Ladb::OpenCutList
 
       case @state
 
-      when STATE_BOX_START
+      when STATE_SELECT
         @drawing_def = nil
-        _snap_box_start(picker, view)
-        _preview_box_start
+        _snap_select(picker, view)
+        _preview_select
 
       end
 
@@ -3111,10 +3111,10 @@ module Ladb::OpenCutList
     end
 
     def onToolActionOptionStored(tool, action, option_group, option)
-      if option_group == SmartReshapeTool::ACTION_OPTION_BOX_JOINT_TYPE
+      if option_group == SmartReshapeTool::ACTION_OPTION_PANELING_JOINT_TYPE
         _clear_edge_joint_types
         _compute
-      elsif option_group == SmartReshapeTool::ACTION_OPTION_BOX_DIRECTION
+      elsif option_group == SmartReshapeTool::ACTION_OPTION_PANELING_DIRECTION
         _compute
       end
     end
@@ -3135,12 +3135,12 @@ module Ladb::OpenCutList
       @selected_face_manipulators.clear
       @edge_joint_types.clear
       super
-      set_state(STATE_BOX_START)
+      set_state(STATE_SELECT)
     end
 
     # -----
 
-    def _snap_box_start(picker, view)
+    def _snap_select(picker, view)
       return unless (picked_face = picker.picked_face).is_a?(Sketchup::Face)
       return unless (picked_face_path = picker.picked_face_path).is_a?(Array)
 
@@ -3159,7 +3159,7 @@ module Ladb::OpenCutList
 
     end
 
-    def _snap_box(flags, x, y, view)
+    def _snap_paneling(flags, x, y, view)
 
       return unless @drawing_def.is_a?(DrawingDef)
 
@@ -3187,9 +3187,9 @@ module Ladb::OpenCutList
 
     end
 
-    def _preview_box_start
+    def _preview_select
 
-      @tool.clear_3d([ LAYER_3D_BOX_PREVIEW ])
+      @tool.clear_3d([LAYER_3D_PANELING_PREVIEW ])
 
       return unless @drawing_def.is_a?(DrawingDef)
 
@@ -3197,7 +3197,7 @@ module Ladb::OpenCutList
       k_mesh.add_triangles(@drawing_def.face_manipulators.map { |fm| fm.triangles }.flatten(1))
       k_mesh.background_color = ColorUtils.color_translucent(Kuix::COLOR_GREEN, 0.3)
       k_mesh.transformation = @drawing_def.transformation
-      @tool.append_3d(k_mesh, LAYER_3D_BOX_PREVIEW)
+      @tool.append_3d(k_mesh, LAYER_3D_PANELING_PREVIEW)
 
       kb = Kuix::Bounds3d.new.copy!(@drawing_def.bounds).inflate_all!(1)
 
@@ -3206,13 +3206,13 @@ module Ladb::OpenCutList
       k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
       k_box.color = Kuix::COLOR_DARK_GREY
       k_box.transformation = @drawing_def.transformation
-      @tool.append_3d(k_box, LAYER_3D_BOX_PREVIEW)
+      @tool.append_3d(k_box, LAYER_3D_PANELING_PREVIEW)
 
     end
 
-    def _preview_box(view)
+    def _preview_paneling(view)
 
-      @tool.clear_3d([ LAYER_3D_BOX_PREVIEW ])
+      @tool.clear_3d([LAYER_3D_PANELING_PREVIEW ])
 
       return unless @drawing_def.is_a?(DrawingDef)
 
@@ -3235,7 +3235,7 @@ module Ladb::OpenCutList
           k_mesh.add_triangles(fm.triangles)
           k_mesh.background_color = ColorUtils.color_translucent(Kuix::COLOR_MAGENTA, 0.3)
           k_mesh.transformation = @drawing_def.transformation
-          @tool.append_3d(k_mesh, LAYER_3D_BOX_PREVIEW)
+          @tool.append_3d(k_mesh, LAYER_3D_PANELING_PREVIEW)
 
         else
 
@@ -3249,7 +3249,7 @@ module Ladb::OpenCutList
         k_box_fill.color = color
         k_box_fill.transformation = @drawing_def.transformation * Geom::Transformation.axes(fm.centroid, x_axis, y_axis, z_axis)
         k_box_fill.on_top = true
-        @tool.append_3d(k_box_fill, LAYER_3D_BOX_PREVIEW)
+        @tool.append_3d(k_box_fill, LAYER_3D_PANELING_PREVIEW)
 
         k_rectangle = Kuix::RectangleMotif3d.new
         k_rectangle.bounds.origin.set!(-(size * 0.5), -(size * 0.5), 0)
@@ -3258,7 +3258,7 @@ module Ladb::OpenCutList
         k_rectangle.color = Kuix::COLOR_DARK_GREY
         k_rectangle.transformation = @drawing_def.transformation * Geom::Transformation.axes(fm.centroid, x_axis, y_axis, z_axis)
         k_rectangle.on_top = true
-        @tool.append_3d(k_rectangle, LAYER_3D_BOX_PREVIEW)
+        @tool.append_3d(k_rectangle, LAYER_3D_PANELING_PREVIEW)
 
       end
 
@@ -3271,7 +3271,7 @@ module Ladb::OpenCutList
         k_edge.color = Kuix::COLOR_MAGENTA
         k_edge.on_top = true
         k_edge.transformation = @drawing_def.transformation
-        @tool.append_3d(k_edge, LAYER_3D_BOX_PREVIEW)
+        @tool.append_3d(k_edge, LAYER_3D_PANELING_PREVIEW)
 
       end
 
@@ -3298,28 +3298,28 @@ module Ladb::OpenCutList
       @tool.fetch_action_option_length(@action, SmartReshapeTool::ACTION_OPTION_THICKNESS, SmartReshapeTool::ACTION_OPTION_THICKNESS_THICKNESS)
     end
 
-    def _fetch_option_box_direction
-      @tool.fetch_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_BOX_DIRECTION)
+    def _fetch_option_paneling_direction
+      @tool.fetch_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_PANELING_DIRECTION)
     end
 
-    def _fetch_option_box_direction_inward?
-      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_BOX_DIRECTION, SmartReshapeTool::ACTION_OPTION_BOX_DIRECTION_INWARD)
+    def _fetch_option_paneling_direction_inward?
+      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_PANELING_DIRECTION, SmartReshapeTool::ACTION_OPTION_BOX_DIRECTION_INWARD)
     end
 
-    def _fetch_option_box_direction_outward?
-      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_BOX_DIRECTION, SmartReshapeTool::ACTION_OPTION_BOX_DIRECTION_OUTWARD)
+    def _fetch_option_paneling_direction_outward?
+      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_PANELING_DIRECTION, SmartReshapeTool::ACTION_OPTION_BOX_DIRECTION_OUTWARD)
     end
 
-    def _fetch_option_box_join_type
-      @tool.fetch_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_BOX_JOINT_TYPE)
+    def _fetch_option_paneling_join_type
+      @tool.fetch_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_PANELING_JOINT_TYPE)
     end
 
-    def _fetch_option_box_join_type_flat?
-      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_BOX_JOINT_TYPE, SmartReshapeTool::ACTION_OPTION_BOX_JOINT_TYPE_FLAT)
+    def _fetch_option_paneling_join_type_flat?
+      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_PANELING_JOINT_TYPE, SmartReshapeTool::ACTION_OPTION_BOX_JOINT_TYPE_FLAT)
     end
 
-    def _fetch_option_box_join_type_miter?
-      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_BOX_JOINT_TYPE, SmartReshapeTool::ACTION_OPTION_BOX_JOINT_TYPE_MITER)
+    def _fetch_option_paneling_join_type_miter?
+      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_PANELING_JOINT_TYPE, SmartReshapeTool::ACTION_OPTION_BOX_JOINT_TYPE_MITER)
     end
 
     # -----
@@ -3365,7 +3365,7 @@ module Ladb::OpenCutList
     # -----
 
     def _get_joint_type(edge)
-      @edge_joint_types[edge] ||= _fetch_option_box_join_type
+      @edge_joint_types[edge] ||= _fetch_option_paneling_join_type
     end
 
     def _get_joint_type_miter?(edge)
@@ -3375,7 +3375,10 @@ module Ladb::OpenCutList
     def _get_faces_joint_type_miter?(face_manipulator_1, face_manipulator_2)
       return false unless @selected_face_manipulators.include?(face_manipulator_1) && @selected_face_manipulators.include?(face_manipulator_2)
       shared_edge = (face_manipulator_1.face.edges & face_manipulator_2.face.edges).first
-      shared_edge.nil? || _get_joint_type_miter?(shared_edge) # shared_edge.nil? is in case of faces not connected or connected by a vertex si it returns miter joint
+      return _get_joint_type_miter?(shared_edge) unless shared_edge.nil?  # Faces shared one edge
+      shared_vertex = (face_manipulator_1.face.vertices & face_manipulator_2.face.vertices).first
+      return _get_joint_type_miter?(shared_vertex.edges.first) unless shared_vertex.nil?  # Faces shared one vertex : use joint type of the first vertex edge
+      false  # Faces shared nothing
     end
 
     def _toggle_edge_joint_type(edge)
@@ -3385,7 +3388,7 @@ module Ladb::OpenCutList
       when SmartReshapeTool::ACTION_OPTION_BOX_JOINT_TYPE_MITER
         @edge_joint_types[edge] = SmartReshapeTool::ACTION_OPTION_BOX_JOINT_TYPE_FLAT
       else
-        @edge_joint_types[edge] = _fetch_option_box_join_type
+        @edge_joint_types[edge] = _fetch_option_paneling_join_type
       end
     end
 
@@ -3439,7 +3442,7 @@ module Ladb::OpenCutList
 
       return unless @drawing_def.is_a?(DrawingDef)
 
-      outward = _fetch_option_box_direction_outward?
+      outward = _fetch_option_paneling_direction_outward?
       thickness = _fetch_option_thickness.abs
       thickness *= -1 unless outward
       active_entities = _get_active_entities
@@ -3576,7 +3579,7 @@ module Ladb::OpenCutList
           sfm.outer_loop_manipulator.vertex_manipulators.each do |vm|
             a1 = vertex_gd_points[vm.vertex]
             a2 = vertex_th_points[vm.vertex]
-            next if a1.nil? || a2.nil?
+            next if a1.nil? || a1.empty? || a2.nil? || a2.empty?
             a1 = a1.cycle.take(a2.size) if a2.size > a1.size
             a2 = a2.cycle.take(a1.size) if a1.size > a2.size
             a1.zip(a2).each { |p1, p2| edges.concat(entities.add_edges(p1, p2)) }

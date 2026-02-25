@@ -2217,8 +2217,8 @@ tool:
     action_option_group_thickness: Thickness
     action_option_group_stretch_measure_type: Measure
     action_option_group_axes: Axes
-    action_option_group_box_joint_type: Joint
-    action_option_group_box_direction: Direction
+    action_option_group_paneling_joint_type: Joint
+    action_option_group_paneling_direction: Direction
     action_option_group_options: Options
     action_option_thickness_thickness: Thickness
     action_option_thickness_thickness_status: Defines the thickness of the panels
@@ -2227,10 +2227,10 @@ tool:
     action_option_axes_active_status: Manipulate along active axes
     action_option_axes_context_status: Manipulate along the axes of the group or component containing the part
     action_option_axes_entity_status: Manipulate along part axes
-    action_option_box_joint_type_flat_status: Flat joint
-    action_option_box_joint_type_miter_status: Mitre cut
-    action_option_box_direction_inward_status: Inward direction
-    action_option_box_direction_outward_status: Outward direction
+    action_option_paneling_joint_type_flat_status: Flat joint
+    action_option_paneling_joint_type_miter_status: Mitre cut
+    action_option_paneling_direction_inward_status: Inward direction
+    action_option_paneling_direction_outward_status: Outward direction
     action_option_options_centred_status: Center on stretched elements
     action_option_options_make_unique_status: Make stretched elements unique
     error:

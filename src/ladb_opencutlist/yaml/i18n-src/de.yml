@@ -2216,18 +2216,18 @@ tool:
     action_1_state_1_status: Wählen Sie die zu extrudierenden Flächen aus
     action_option_group_thickness: Dicke
     action_option_group_stretch_measure_type: Maß
-    action_option_group_box_joint_type: Verbindung
     action_option_group_axes: Achsen
+    action_option_group_paneling_joint_type: Verbindung
     action_option_group_options: Optionen
     action_option_thickness_thickness: Dicke
     action_option_thickness_thickness_status: Definiert die Dicke der Platten
     action_option_stretch_measure_type_outside_status: Außenmessung
     action_option_stretch_measure_type_offset_status: Differenzwert messen
-    action_option_box_joint_type_flat_status: Stumpf
-    action_option_box_joint_type_miter_status: Auf Gehrung
     action_option_axes_active_status: Manipulieren entlang der aktiven Achsen
     action_option_axes_context_status: "Manipulieren entlang der Achsen der Gruppe oder Komponente, die das Teil enthält"
     action_option_axes_entity_status: Manipulieren entlang der Achsen des Teils
+    action_option_paneling_joint_type_flat_status: Stumpf
+    action_option_paneling_ joint_type_miter_status: Auf Gehrung
     action_option_options_centred_status: Auf die gestreckten Elemente zentrieren
     action_option_options_make_unique_status: Gestreckte Elemente einzigartig machen
     error:

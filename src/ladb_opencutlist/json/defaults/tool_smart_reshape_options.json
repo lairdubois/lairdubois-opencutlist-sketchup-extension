@@ -10,7 +10,7 @@
   },
   "action_1": { /* ACTION_BOX */
     "thickness": { "metric": "18mm", "imperial": "1/2\"" },
-    "box_direction": "inward",
-    "box_joint_type": "flat"
+    "paneling_direction": "inward",
+    "paneling_joint_type": "flat"
   }
 }
