@@ -2,7 +2,6 @@ module Ladb::OpenCutList
 
   require 'digest'
   require_relative 'smart_tool'
-  require_relative '../lib/geometrix/finder/circle_finder'
   require_relative '../lib/kuix/geom/bounds3d'
   require_relative '../manipulator/vertex_manipulator'
   require_relative '../manipulator/edge_manipulator'
@@ -2940,17 +2939,18 @@ module Ladb::OpenCutList
     end
 
     def stop
-      _unhide_drawings
       _purge_definitions
       if @selected_face_manipulators.any?
 
         # Remove faces and edges
         _erase_drawings
 
+        # Commit operation (apply entity changes)
         Sketchup.active_model.commit_operation
 
       else
 
+        # Abord operation (restore entities)
         Sketchup.active_model.abort_operation
 
       end
@@ -3024,11 +3024,11 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_SELECT
-        unless @drawing_def.nil?
+        if @drawing_def.nil?
+          UI.beep
+        else
           set_state(STATE_PANELING)
           return true
-        else
-          UI.beep
         end
 
       when STATE_PANELING
@@ -3069,22 +3069,21 @@ module Ladb::OpenCutList
 
         _clear_definitions_factory
 
+        # Abord operation (restore entities state)
         Sketchup.active_model.abort_operation
-
-        @group = nil
 
       end
 
       case new_state
 
       when STATE_SELECT
-        _unhide_drawings
         @drawing_def = nil
-        @tool.clear_3d([LAYER_3D_PANELING_PREVIEW ])
+        @tool.clear_3d([ LAYER_3D_PANELING_PREVIEW ])
 
       when STATE_PANELING
 
-        Sketchup.active_model.start_operation(PLUGIN.get_i18n_string("tool.smart_reshape.action_1"), true)
+        # Start operation (allows manipulating entities without altering the undo stack)
+        Sketchup.active_model.start_operation(PLUGIN.get_i18n_string('tool.smart_reshape.action_1'), true)
 
         _clear_selected
         _clear_edge_joint_types
@@ -3436,6 +3435,50 @@ module Ladb::OpenCutList
       _get_active_entities.erase_entities(_get_definitions_factory.values.flat_map { |definition| definition.instances })
     end
 
+    def _intersect_planes(planes, ref_plane, ref_centroid)
+      return [] unless planes.is_a?(Array) && planes.size >= 3
+
+      points = []
+
+      # Calculate all intersection lines of plane pairs
+      lines = planes.combination(2).map { |plane1, plane2| Geom.intersect_plane_plane(plane1, plane2) }.compact
+
+      # Calculate all unique intersection points of the lines
+      lines.combination(3).each { |line1, line2, line3|
+        p1 = Geom.intersect_line_line(line1, line2)
+        next if p1.nil? || points.include?(p1)
+        p2 = Geom.intersect_line_line(line2, line3)
+        points << p1 if p1 == p2
+      }
+
+      # Filter points
+      points.select! { |point|
+        point.on_plane?(ref_plane) &&
+          planes.all? { |plane|
+            !(v = point.vector_to(point.project_to_plane(plane))).valid? ||
+              v.samedirection?(plane[1])
+          }
+      }
+
+      if points.size > 1
+
+        _, plane_normal = ref_plane
+        x_axis = ref_centroid.vector_to(points.first).normalize!
+        y_axis = plane_normal.cross(x_axis).normalize!
+
+        # Sort points in clockwise order
+        points.sort_by! { |point|
+          v = ref_centroid.vector_to(point)
+          x = v.dot(x_axis)
+          y = v.dot(y_axis)
+          Math.atan2(y, x)
+        }
+
+      end
+
+      points
+    end
+
     def _compute
 
       _clear_computed
@@ -3450,20 +3493,16 @@ module Ladb::OpenCutList
 
       @selected_face_manipulators.each do |sfm|
 
-        definition = _create_definition(sfm.face, PLUGIN.get_i18n_string('default.part_single').capitalize)
-        instance = active_entities.add_instance(definition, IDENTITY)
-        entities = definition.entities
+        gd_centroid = sfm.centroid
+        up_centroid = sfm.centroid.offset(sfm.normal, thickness)
 
-        x_axis = (sfm.triangles.first - sfm.centroid).normalize!
-        y_axis = sfm.normal.cross(x_axis).normalize!
+        gd_plane = sfm.plane
+        up_plane = [ up_centroid, sfm.normal ]
 
         # 1. Extract points from face vertices
 
-        gd_plane = sfm.plane
-        th_plane = [ sfm.position.offset(sfm.normal, thickness), sfm.normal ]
-
         gd_points = []
-        th_points = []
+        up_points = []
 
         vertex_gd_points = {}
         vertex_th_points = {}
@@ -3482,39 +3521,14 @@ module Ladb::OpenCutList
                          end
                        }
 
-          if planes.size >= 3
-
-            points = []
-
-            lines = planes.combination(2).map { |plane1, plane2| Geom.intersect_plane_plane(plane1, plane2) }
-            lines.combination(3).each { |line1, line2, line3|
-              p1 = Geom.intersect_line_line(line1, line2)
-              next if p1.nil? || points.include?(p1)
-              p2 = Geom.intersect_line_line(line2, line3)
-              points << p1 if p1 == p2
-            }
-            points.select! { |point|
-              point.on_plane?(gd_plane) &&
-                planes.all? { |plane|
-                  !(v = point.vector_to(point.project_to_plane(plane))).valid? ||
-                    v.samedirection?(plane[1])
-                }
-            }
-            points.sort_by! { |point|
-              v = point - sfm.centroid
-              x = v.dot(x_axis)
-              y = v.dot(y_axis)
-              Math.atan2(y, x)
-            }
-
+          if (points = _intersect_planes(planes, gd_plane, gd_centroid)).any?
             vertex_gd_points[vm.vertex] = points
             gd_points.concat(points)
-
           end
 
           unless thickness.zero?
 
-            # Thickness points
+            # Up points
 
             planes = vm.vertex.faces
                          .map { |face| @drawing_def.face_manipulators.find { |fm| fm.face == face } }
@@ -3526,52 +3540,34 @@ module Ladb::OpenCutList
                            end
                          }
 
-            if planes.size >= 3
-
-              points = []
-
-              lines = planes.combination(2).map { |plane1, plane2| Geom.intersect_plane_plane(plane1, plane2) }
-              lines.combination(3).each { |line1, line2, line3|
-                p1 = Geom.intersect_line_line(line1, line2)
-                next if p1.nil? || points.include?(p1)
-                p2 = Geom.intersect_line_line(line2, line3)
-                points << p1 if p1 == p2
-              }
-              points.select! { |point|
-                point.on_plane?(th_plane) &&
-                  planes.all? { |plane|
-                    !(v = point.vector_to(point.project_to_plane(plane))).valid? ||
-                      v.samedirection?(plane[1])
-                  }
-              }
-              points.sort_by! { |point|
-                v = point - sfm.centroid
-                x = v.dot(x_axis)
-                y = v.dot(y_axis)
-                Math.atan2(y, x)
-              }
-
+            if (points = _intersect_planes(planes, up_plane, up_centroid)).any?
               vertex_th_points[vm.vertex] = points
-              th_points.concat(points)
-
+              up_points.concat(points)
             end
 
           end
 
         end
 
-        # 2. Create main faces
+        next if gd_points.size < 3 || up_points.size < 3
+
+        # 2. Create part definition + instance
+
+        definition = _create_definition(sfm.face, PLUGIN.get_i18n_string('default.part_single').capitalize)
+        instance = active_entities.add_instance(definition, IDENTITY)
+        entities = definition.entities
+
+        # 3. Draw main faces
 
         gd_face = entities.add_face(gd_points)
-        gd_face.reverse! unless gd_face.normal.samedirection?(sfm.face.normal)
         gd_face.reverse! if outward
 
         unless thickness.zero?
-          th_face = entities.add_face(th_points)
-          th_face.reverse! unless outward
+          up_face = entities.add_face(up_points)
+          up_face.reverse! unless outward
         end
 
-        # 3. Connect faces
+        # 4. Connect faces
 
         unless thickness.zero?
 
@@ -3585,11 +3581,11 @@ module Ladb::OpenCutList
             a1.zip(a2).each { |p1, p2| edges.concat(entities.add_edges(p1, p2)) }
           end
 
+          # 4. Find all other faces
+
+          edges.each(&:find_faces)
+
         end
-
-        # 4. Find all other faces
-
-        edges.each(&:find_faces)
 
         # 5. Adapt part axes
 
