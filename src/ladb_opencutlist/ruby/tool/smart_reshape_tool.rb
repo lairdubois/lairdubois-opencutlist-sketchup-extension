@@ -54,8 +54,8 @@ module Ladb::OpenCutList
         :action => ACTION_PANELING,
         :options => {
           ACTION_OPTION_THICKNESS => [ ACTION_OPTION_THICKNESS_THICKNESS ],
-          ACTION_OPTION_PANELING_DIRECTION => [ACTION_OPTION_BOX_DIRECTION_INWARD, ACTION_OPTION_BOX_DIRECTION_OUTWARD ],
-          ACTION_OPTION_PANELING_JOINT_TYPE => [ACTION_OPTION_BOX_JOINT_TYPE_FLAT, ACTION_OPTION_BOX_JOINT_TYPE_MITER ],
+          ACTION_OPTION_PANELING_DIRECTION => [ ACTION_OPTION_BOX_DIRECTION_INWARD, ACTION_OPTION_BOX_DIRECTION_OUTWARD ],
+          ACTION_OPTION_PANELING_JOINT_TYPE => [ ACTION_OPTION_BOX_JOINT_TYPE_FLAT, ACTION_OPTION_BOX_JOINT_TYPE_MITER ]
         }
       }
     ].freeze
@@ -97,7 +97,7 @@ module Ladb::OpenCutList
 
       case action
       when ACTION_PANELING
-        return true
+        return false
       end
 
       false
@@ -110,6 +110,19 @@ module Ladb::OpenCutList
         case option
         when ACTION_OPTION_THICKNESS_THICKNESS
           return false
+        end
+      end
+
+      super
+    end
+
+    def get_action_option_group_titled?(action, option_group)
+
+      case action
+      when ACTION_PANELING
+        case option_group
+        when ACTION_OPTION_PANELING_JOINT_TYPE
+          return true
         end
       end
 
@@ -165,7 +178,7 @@ module Ladb::OpenCutList
       when ACTION_OPTION_PANELING_DIRECTION
         case option
         when ACTION_OPTION_BOX_DIRECTION_INWARD
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.25L0.75,0.25L0.75,1 M0.5,0.5L0.25,0.75 M0.25,0.5L0.25,0.75L0.5,0.75'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.125,0.125L0.875,0.125L0.875,0.875 M0.625,0.375L0.375,0.625 M0.375,0.375L0.375,0.625L0.625,0.625'))
         when ACTION_OPTION_BOX_DIRECTION_OUTWARD
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.375L0.625,0.375L0.625,1 M0.75,0.25L1,0 M1,0.25L1,0L0.75,0'))
         end
@@ -2974,7 +2987,7 @@ module Ladb::OpenCutList
     end
 
     def get_state_vcb_label(state)
-      PLUGIN.get_i18n_string("tool.smart_reshape.action_option_group_thickness")
+      PLUGIN.get_i18n_string("tool.default.vcb_thickness")
     end
 
     # -----
@@ -3154,7 +3167,7 @@ module Ladb::OpenCutList
                                               .map { |face| FaceManipulator.new(face) })
       @drawing_def.edge_manipulators.concat(all_connected
                                               .grep(Sketchup::Edge)
-                                              .map { |face| EdgeManipulator.new(face) })
+                                              .map { |edge| EdgeManipulator.new(edge) })
 
     end
 
@@ -3194,7 +3207,7 @@ module Ladb::OpenCutList
 
       k_mesh = Kuix::Mesh.new
       k_mesh.add_triangles(@drawing_def.face_manipulators.map { |fm| fm.triangles }.flatten(1))
-      k_mesh.background_color = ColorUtils.color_translucent(Kuix::COLOR_GREEN, 0.3)
+      k_mesh.background_color = Sketchup::Color.new(254, 222, 11, 200) #ColorUtils.color_translucent(Kuix::COLOR_GREEN, 0.3)
       k_mesh.transformation = @drawing_def.transformation
       @tool.append_3d(k_mesh, LAYER_3D_PANELING_PREVIEW)
 
@@ -3281,7 +3294,10 @@ module Ladb::OpenCutList
       thickness = _read_user_text_length(tool, text)
       return true if thickness.nil?
 
-      thickness = thickness.abs.to_l  # Force positive thickness
+      if thickness < 0
+        tool.notify_errors([[ 'tool.default.error.invalid_thickness', { :value => thickness } ]])
+        return true
+      end
 
       @tool.store_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_THICKNESS, SmartReshapeTool::ACTION_OPTION_THICKNESS_THICKNESS, thickness.to_s, true)
       Sketchup.set_status_text('', SB_VCB_VALUE)
@@ -3591,7 +3607,7 @@ module Ladb::OpenCutList
 
         z_axis = outward ? sfm.normal : sfm.normal.reverse
         x_axis = EdgeManipulator.new(sfm.longest_outer_edge, sfm.transformation).direction
-        y_axis = x_axis.cross(z_axis).normalize!
+        y_axis = z_axis.cross(x_axis).normalize!
 
         t = Geom::Transformation.axes(sfm.centroid, x_axis, y_axis, z_axis)
 

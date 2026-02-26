@@ -2085,6 +2085,7 @@ tool:
     middle_point: Point du milieu
     third_point: Point au tiers
     vcb_length: Longueur
+    vcb_thickness: Epaisseur
     vcb_size: Cotations
     vcb_radius: Rayon
     vcb_diameter: Diamètre
@@ -2092,6 +2093,7 @@ tool:
     error:
       no_direction: Veuillez indiquer une direction avec la souris
       invalid_length: "La longueur {{ value }} est invalide"
+      invalid_thickness: "L'épaisseur {{ value }} est invalide"
       invalid_multiplicator: "Le multiplicateur {{ value }} est invalide"
       invalid_divider: "Le diviseur {{ value }} est invalide"
       invalid_offset: "Le décalage {{ value }} est invalide"

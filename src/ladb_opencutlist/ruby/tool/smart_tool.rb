@@ -250,8 +250,11 @@ module Ladb::OpenCutList
 
               options.each do |option_group, options|
 
+                group_title = PLUGIN.get_i18n_string("tool.smart_#{get_stripped_name}.action_option_group_#{option_group}")
+                group_titled = get_action_option_group_titled?(action, option_group)
+
                 lbl = Kuix::Label.new
-                lbl.text = PLUGIN.get_i18n_string("tool.smart_#{get_stripped_name}.action_option_group_#{option_group}")
+                lbl.text = group_titled ? group_title : ""
                 lbl.text_bold = true
                 lbl.text_size = unit * 3 * get_text_unit_factor
                 if actions_options_panel.child
@@ -287,7 +290,7 @@ module Ladb::OpenCutList
                         button.selected = true
                         store_action_option_value(action, option_group, option)
                         refresh
-                        # set_root_action(fetch_action) # TODO find a beter solution to update current Axes Tool
+                        # set_root_action(fetch_action) # TODO find a better solution to update current Axes Tool
                       else
                         button.selected = !button.selected?
                         store_action_option_value(action, option_group, option, button.selected?)
@@ -297,7 +300,7 @@ module Ladb::OpenCutList
                     end
                   }
                   btn.on(:enter) { |button|
-                    show_message(get_action_option_status(action, option_group, option))
+                    show_message("#{"#{group_title}: " unless group_titled}#{get_action_option_status(action, option_group, option)}")
                   }
                   btn.on(:leave) { |button|
                     hide_message
@@ -948,6 +951,10 @@ module Ladb::OpenCutList
 
     def get_action_options_modal?(action)
       false
+    end
+
+    def get_action_option_group_titled?(action, option_group)
+      true
     end
 
     def get_action_option_group_unique?(action, option_group)
