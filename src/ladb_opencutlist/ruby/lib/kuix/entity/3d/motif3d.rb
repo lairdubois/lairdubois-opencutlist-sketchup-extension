@@ -188,9 +188,47 @@ module Ladb::OpenCutList::Kuix
       delta = 2 * Math::PI / segment_count
       super([
 
-               Array.new(segment_count + 1) { |i| Geom::Point3d.new(0.5 + 0.5 * Math.cos(i * delta), 0.5 + 0.5 * Math.sin(i * delta)) },
+               Array
+                 .new(segment_count + 1) { |i|
+                   Geom::Point3d.new(0.5 + 0.5 * Math.cos(i * delta), 0.5 + 0.5 * Math.sin(i * delta))
+                 }
 
              ], id)
+    end
+
+  end
+
+  class CircleFillMotif3d < Motif3d
+
+    def initialize(segment_count = 24, id = nil)
+      delta = 2 * Math::PI / segment_count
+      center = Geom::Point3d.new(0.5, 0.5)
+      super([
+
+               Array
+                 .new(segment_count + 1) { |i|
+                   Geom::Point3d.new(0.5 + 0.5 * Math.cos(i * delta), 0.5 + 0.5 * Math.sin(i * delta))
+                 }
+                 .each_cons(2).to_a.flat_map { |p1, p2| [ p1, p2, center ] }
+
+             ], id)
+    end
+
+    # -- RENDER --
+
+    def paint_content(graphics)
+
+      @_paths.each do |points|
+        if @on_top
+          graphics.set_drawing_color(@color)
+          graphics.view.draw2d(GL_TRIANGLES, points.map { |point| graphics.view.screen_coords(point) })
+        else
+          graphics.draw_triangles(
+            points: points,
+            fill_color: @color)
+        end
+      end
+
     end
 
   end
@@ -207,6 +245,38 @@ module Ladb::OpenCutList::Kuix
                [ 0, 0, 0 ],
 
              ]], id)
+    end
+
+  end
+
+  class RectangleFillMotif3d < Motif3d
+
+    def initialize(id = nil)
+      super([[
+
+               [ 0, 0, 0 ],
+               [ 1, 0, 0 ],
+               [ 1, 1, 0 ],
+               [ 0, 1, 0 ]
+
+             ]], id)
+    end
+
+    # -- RENDER --
+
+    def paint_content(graphics)
+
+      @_paths.each do |points|
+        if @on_top
+         graphics.set_drawing_color(@color)
+         graphics.view.draw2d(GL_QUADS, points.map { |point| graphics.view.screen_coords(point) })
+        else
+         graphics.draw_quads(
+           points: points,
+           fill_color: @color)
+        end
+      end
+
     end
 
   end
