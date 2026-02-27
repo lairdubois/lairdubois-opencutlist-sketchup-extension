@@ -3225,7 +3225,7 @@ module Ladb::OpenCutList
 
     def _preview_paneling(view)
 
-      @tool.clear_3d([LAYER_3D_PANELING_PREVIEW ])
+      @tool.clear_3d([ LAYER_3D_PANELING_PREVIEW ])
 
       return unless @drawing_def.is_a?(DrawingDef)
 
@@ -3233,16 +3233,10 @@ module Ladb::OpenCutList
 
       @drawing_def.face_manipulators.each do |fm|
 
-        x_axis = EdgeManipulator.new(fm.longest_outer_edge).direction
-        z_axis = fm.normal
-        y_axis = x_axis.cross(z_axis).normalize!
-
         hover = @hover_face_manipulator == fm
         selected = @selected_face_manipulators.include?(fm)
 
         if hover
-
-          color = ColorUtils.color_translucent(Kuix::COLOR_WHITE, 0.8)
 
           k_mesh = Kuix::Mesh.new
           k_mesh.add_triangles(fm.triangles)
@@ -3250,17 +3244,22 @@ module Ladb::OpenCutList
           k_mesh.transformation = @drawing_def.transformation
           @tool.append_3d(k_mesh, LAYER_3D_PANELING_PREVIEW)
 
-        else
-
-          color = ColorUtils.color_translucent(selected ? Kuix::COLOR_MAGENTA : Kuix::COLOR_DARK_GREY, 0.8)
-
         end
+
+        color = ColorUtils.color_translucent(selected ? Kuix::COLOR_MAGENTA : Kuix::COLOR_DARK_GREY, 0.8)
+        color = ColorUtils.color_darken(color, 0.4) if hover
+
+        x_axis = fm.centroid.vector_to(fm.outer_loop_manipulator.points.first).normalize
+        z_axis = fm.normal
+        y_axis = x_axis.cross(z_axis).normalize!
+
+        ct = @drawing_def.transformation * Geom::Transformation.axes(fm.centroid, x_axis, y_axis, z_axis)
 
         k_circle_fill = Kuix::CircleFillMotif3d.new(12)
         k_circle_fill.bounds.origin.set!(-(size * 0.4), -(size * 0.4), 0)
         k_circle_fill.bounds.size.set!(size * 0.8, size * 0.8, 0)
         k_circle_fill.color = color
-        k_circle_fill.transformation = @drawing_def.transformation * Geom::Transformation.axes(fm.centroid, x_axis, y_axis, z_axis)
+        k_circle_fill.transformation = ct
         k_circle_fill.on_top = true
         @tool.append_3d(k_circle_fill, LAYER_3D_PANELING_PREVIEW)
 
@@ -3268,8 +3267,8 @@ module Ladb::OpenCutList
         k_circle.bounds.origin.set!(-(size * 0.5), -(size * 0.5), 0)
         k_circle.bounds.size.set!(size, size, 0)
         k_circle.line_width = hover ? 2 : 1
-        k_circle.color = Kuix::COLOR_DARK_GREY
-        k_circle.transformation = @drawing_def.transformation * Geom::Transformation.axes(fm.centroid, x_axis, y_axis, z_axis)
+        k_circle.color = color
+        k_circle.transformation = ct
         k_circle.on_top = true
         @tool.append_3d(k_circle, LAYER_3D_PANELING_PREVIEW)
 
