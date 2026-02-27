@@ -1360,11 +1360,12 @@ module Ladb::OpenCutList
           k_rectangle.patterns_transformation = patterns_transformation
           @tool.append_3d(k_rectangle, LAYER_3D_CUTTERS_PREVIEW)
 
-          k_mesh = Kuix::Mesh.new
-          k_mesh.add_quads(section.get_quads)
-          k_mesh.background_color = ColorUtils.color_translucent(section_color, is_highligted ? 0.6 : 0.3)
-          k_mesh.transformation = et
-          @tool.append_3d(k_mesh, LAYER_3D_CUTTERS_PREVIEW)
+          k_rectangle_fill = Kuix::RectangleFillMotif3d.new
+          k_rectangle_fill.bounds.copy!(section)
+          k_rectangle_fill.color = ColorUtils.color_translucent(section_color, is_highligted ? 0.6 : 0.3)
+          k_rectangle_fill.transformation = et
+          k_rectangle_fill.patterns_transformation = patterns_transformation
+          @tool.append_3d(k_rectangle_fill, LAYER_3D_CUTTERS_PREVIEW)
 
         end
 
@@ -2934,7 +2935,7 @@ module Ladb::OpenCutList
       return if (model = Sketchup.active_model).nil?
       selection = model.selection
 
-      if selection.any?
+      if selection.any? && @tool.callback_action_handler
         if (container = selection.first).is_a?(Sketchup::Group) || container.is_a?(Sketchup::ComponentInstance)
           @drawing_def = CommonDrawingDecompositionWorker
                            .new([ Sketchup::InstancePath.new(model.active_path.to_a + [ container ]) ],
@@ -3255,22 +3256,22 @@ module Ladb::OpenCutList
 
         end
 
-        k_box_fill = Kuix::BoxFillMotif3d.new
-        k_box_fill.bounds.origin.set!(-(size * 0.4), -(size * 0.4), 0)
-        k_box_fill.bounds.size.set!(size * 0.8, size * 0.8, 0)
-        k_box_fill.color = color
-        k_box_fill.transformation = @drawing_def.transformation * Geom::Transformation.axes(fm.centroid, x_axis, y_axis, z_axis)
-        k_box_fill.on_top = true
-        @tool.append_3d(k_box_fill, LAYER_3D_PANELING_PREVIEW)
+        k_circle_fill = Kuix::CircleFillMotif3d.new(12)
+        k_circle_fill.bounds.origin.set!(-(size * 0.4), -(size * 0.4), 0)
+        k_circle_fill.bounds.size.set!(size * 0.8, size * 0.8, 0)
+        k_circle_fill.color = color
+        k_circle_fill.transformation = @drawing_def.transformation * Geom::Transformation.axes(fm.centroid, x_axis, y_axis, z_axis)
+        k_circle_fill.on_top = true
+        @tool.append_3d(k_circle_fill, LAYER_3D_PANELING_PREVIEW)
 
-        k_rectangle = Kuix::RectangleMotif3d.new
-        k_rectangle.bounds.origin.set!(-(size * 0.5), -(size * 0.5), 0)
-        k_rectangle.bounds.size.set!(size, size, 0)
-        k_rectangle.line_width = hover ? 2 : 1
-        k_rectangle.color = Kuix::COLOR_DARK_GREY
-        k_rectangle.transformation = @drawing_def.transformation * Geom::Transformation.axes(fm.centroid, x_axis, y_axis, z_axis)
-        k_rectangle.on_top = true
-        @tool.append_3d(k_rectangle, LAYER_3D_PANELING_PREVIEW)
+        k_circle = Kuix::CircleMotif3d.new(12)
+        k_circle.bounds.origin.set!(-(size * 0.5), -(size * 0.5), 0)
+        k_circle.bounds.size.set!(size, size, 0)
+        k_circle.line_width = hover ? 2 : 1
+        k_circle.color = Kuix::COLOR_DARK_GREY
+        k_circle.transformation = @drawing_def.transformation * Geom::Transformation.axes(fm.centroid, x_axis, y_axis, z_axis)
+        k_circle.on_top = true
+        @tool.append_3d(k_circle, LAYER_3D_PANELING_PREVIEW)
 
       end
 

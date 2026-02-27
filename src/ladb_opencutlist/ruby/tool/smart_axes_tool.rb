@@ -390,11 +390,12 @@ module Ladb::OpenCutList
           k_rectangle.patterns_transformation = patterns_transformation
           @tool.append_3d(k_rectangle, LAYER_3D_ACTION_PREVIEW)
 
-          k_mesh = Kuix::Mesh.new
-          k_mesh.add_quads(section.get_quads)
-          k_mesh.background_color = ColorUtils.color_translucent(color, 0.3)
-          k_mesh.transformation = et
-          @tool.append_3d(k_mesh, LAYER_3D_ACTION_PREVIEW)
+          k_rectangle_fill = Kuix::RectangleFillMotif3d.new
+          k_rectangle_fill.bounds.copy!(section)
+          k_rectangle_fill.color = ColorUtils.color_translucent(color, 0.3)
+          k_rectangle_fill.transformation = et
+          k_rectangle_fill.patterns_transformation = patterns_transformation
+          @tool.append_3d(k_rectangle_fill, LAYER_3D_ACTION_PREVIEW)
 
         end
 
