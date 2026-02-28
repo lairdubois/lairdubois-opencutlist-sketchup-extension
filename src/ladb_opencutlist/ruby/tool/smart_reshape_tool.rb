@@ -2922,7 +2922,11 @@ module Ladb::OpenCutList
 
       @drawing_def = nil
 
+      @hover_face_manipulators = Set.new
+      @hover_edge_manipulators = Set.new
+
       @selected_face_manipulators = Set.new
+
       @edge_joint_types = {}
 
     end
@@ -3018,6 +3022,22 @@ module Ladb::OpenCutList
 
     end
 
+    def onToolKeyDown(tool, key, repeat, flags, view)
+
+      if tool.is_key_shift?(key) && @hover_face_manipulators.any?
+        _refresh
+      end
+
+    end
+
+    def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
+
+      if tool.is_key_shift?(key) && @hover_face_manipulators.any?
+        _refresh
+      end
+
+    end
+
     def onToolMouseMove(tool, flags, x, y, view)
       return true if super
 
@@ -3046,16 +3066,22 @@ module Ladb::OpenCutList
         end
 
       when STATE_PANELING
-        if @hover_face_manipulator
-          _toggle_selected(@hover_face_manipulator)
+        if @hover_edge_manipulators.any?
+          @hover_edge_manipulators.each do |em|
+            _toggle_edge_joint_type(em.edge)
+          end
           _compute
           _refresh
-        elsif @hover_edge_manipulator
-          _toggle_edge_joint_type(@hover_edge_manipulator.edge)
-          _compute
-          _refresh
+          return true
         end
-        return true
+        if @hover_face_manipulators.any?
+          @hover_face_manipulators.each do |fm|
+            _toggle_selected(fm)
+          end
+          _compute
+          _refresh
+          return true
+        end
 
       end
 
@@ -3145,6 +3171,8 @@ module Ladb::OpenCutList
     def _reset
       _unhide_drawings
       @drawing_def = nil
+      @hover_face_manipulators.clear
+      @hover_edge_manipulators.clear
       @selected_face_manipulators.clear
       @edge_joint_types.clear
       super
@@ -3178,24 +3206,35 @@ module Ladb::OpenCutList
 
       ph = view.pick_helper(x, y, 30)
 
-      @hover_face_manipulator = nil
-      @hover_edge_manipulator = nil
+      @hover_face_manipulators.clear
+      @hover_edge_manipulators.clear
 
       @drawing_def.face_manipulators.each do |fm|
         if ph.test_point(fm.centroid.transform(@drawing_def.transformation))
-          @hover_face_manipulator = fm
+          @hover_face_manipulators << fm
           break
         end
       end
 
-      if @hover_face_manipulator.nil?
+      if @hover_face_manipulators.any? && @tool.is_key_shift_down?
+
+        @drawing_def.edge_manipulators.each do |em|
+          if em.edge.faces.any? { |face| @hover_face_manipulators.any? { |fm| fm.face == face} } &&
+             em.edge.faces.all? { |face| @selected_face_manipulators.any? { |fm| fm.face == face } }
+            @hover_edge_manipulators << em
+          end
+        end
+
+      elsif @hover_face_manipulators.empty? && @selected_face_manipulators.any?
+
         @drawing_def.edge_manipulators.each do |em|
           if ph.pick_segment(em.points.map { |point| point.transform(@drawing_def.transformation) }) &&
              em.edge.faces.all? { |face| @selected_face_manipulators.any? { |fm| fm.face == face } }
-            @hover_edge_manipulator = em
+            @hover_edge_manipulators << em
             break
           end
         end
+
       end
 
     end
@@ -3233,7 +3272,7 @@ module Ladb::OpenCutList
 
       @drawing_def.face_manipulators.each do |fm|
 
-        hover = @hover_face_manipulator == fm
+        hover = @hover_face_manipulators.include?(fm)
         selected = @selected_face_manipulators.include?(fm)
 
         if hover
@@ -3255,35 +3294,41 @@ module Ladb::OpenCutList
 
         ct = @drawing_def.transformation * Geom::Transformation.axes(fm.centroid, x_axis, y_axis, z_axis)
 
-        k_circle_fill = Kuix::CircleFillMotif3d.new(12)
-        k_circle_fill.bounds.origin.set!(-(size * 0.4), -(size * 0.4), 0)
-        k_circle_fill.bounds.size.set!(size * 0.8, size * 0.8, 0)
-        k_circle_fill.color = color
-        k_circle_fill.transformation = ct
-        k_circle_fill.on_top = true
-        @tool.append_3d(k_circle_fill, LAYER_3D_PANELING_PREVIEW)
+        k_circle_bg = Kuix::CircleFillMotif3d.new(12)
+        k_circle_bg.bounds.origin.set!(-(size * 0.5), -(size * 0.5), 0)
+        k_circle_bg.bounds.size.set!(size, size, 0)
+        k_circle_bg.color = Kuix::COLOR_WHITE
+        k_circle_bg.transformation = ct
+        k_circle_bg.on_top = true
+        @tool.append_3d(k_circle_bg, LAYER_3D_PANELING_PREVIEW)
 
-        k_circle = Kuix::CircleMotif3d.new(12)
-        k_circle.bounds.origin.set!(-(size * 0.5), -(size * 0.5), 0)
-        k_circle.bounds.size.set!(size, size, 0)
-        k_circle.line_width = hover ? 2 : 1
-        k_circle.color = color
-        k_circle.transformation = ct
-        k_circle.on_top = true
-        @tool.append_3d(k_circle, LAYER_3D_PANELING_PREVIEW)
+        k_circle_stroke = Kuix::CircleMotif3d.new(12)
+        k_circle_stroke.bounds.copy!(k_circle_bg.bounds)
+        k_circle_stroke.line_width = hover ? 2 : 1
+        k_circle_stroke.color = color
+        k_circle_stroke.transformation = ct
+        k_circle_stroke.on_top = true
+        @tool.append_3d(k_circle_stroke, LAYER_3D_PANELING_PREVIEW)
+
+        k_circle_fg = Kuix::CircleFillMotif3d.new(12)
+        k_circle_fg.bounds.origin.set!(-(size * 0.35), -(size * 0.35), 0)
+        k_circle_fg.bounds.size.set!(size * 0.7, size * 0.7, 0)
+        k_circle_fg.color = color
+        k_circle_fg.transformation = ct
+        k_circle_fg.on_top = true
+        @tool.append_3d(k_circle_fg, LAYER_3D_PANELING_PREVIEW)
 
       end
 
-      if @hover_edge_manipulator.is_a?(EdgeManipulator)
+      if @hover_edge_manipulators.any?
 
-        k_edge = Kuix::EdgeMotif3d.new
-        k_edge.start.copy!(@hover_edge_manipulator.start_point)
-        k_edge.end.copy!(@hover_edge_manipulator.end_point)
-        k_edge.line_width = 2
-        k_edge.color = Kuix::COLOR_MAGENTA
-        k_edge.on_top = true
-        k_edge.transformation = @drawing_def.transformation
-        @tool.append_3d(k_edge, LAYER_3D_PANELING_PREVIEW)
+        k_segments = Kuix::Segments.new
+        k_segments.add_segments(@hover_edge_manipulators.flat_map { |em| em.points })
+        k_segments.line_width = 2
+        k_segments.color = Kuix::COLOR_MAGENTA
+        k_segments.on_top = true
+        k_segments.transformation = @drawing_def.transformation
+        @tool.append_3d(k_segments, LAYER_3D_PANELING_PREVIEW)
 
       end
 
