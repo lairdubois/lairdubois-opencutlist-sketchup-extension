@@ -3272,10 +3272,10 @@ module Ladb::OpenCutList
 
       @drawing_def.face_manipulators.each do |fm|
 
-        hover = @hover_face_manipulators.include?(fm)
+        hover_face = @hover_face_manipulators.include?(fm)
         selected = @selected_face_manipulators.include?(fm)
 
-        if hover
+        if hover_face && @hover_edge_manipulators.none?
 
           k_mesh = Kuix::Mesh.new
           k_mesh.add_triangles(fm.triangles)
@@ -3286,7 +3286,7 @@ module Ladb::OpenCutList
         end
 
         color = ColorUtils.color_translucent(selected ? Kuix::COLOR_MAGENTA : Kuix::COLOR_DARK_GREY, 0.8)
-        color = ColorUtils.color_darken(color, 0.4) if hover
+        color = ColorUtils.color_darken(color, 0.4) if hover_face
 
         x_axis = fm.centroid.vector_to(fm.outer_loop_manipulator.points.first).normalize
         z_axis = fm.normal
@@ -3304,7 +3304,7 @@ module Ladb::OpenCutList
 
         k_circle_stroke = Kuix::CircleMotif3d.new(12)
         k_circle_stroke.bounds.copy!(k_circle_bg.bounds)
-        k_circle_stroke.line_width = hover ? 2 : 1
+        k_circle_stroke.line_width = hover_face ? 2 : 1
         k_circle_stroke.color = color
         k_circle_stroke.transformation = ct
         k_circle_stroke.on_top = true
@@ -3621,6 +3621,7 @@ module Ladb::OpenCutList
         # 3. Draw main faces
 
         gd_face = entities.add_face(gd_points)
+        gd_face.reverse! unless gd_face.normal.samedirection?(sfm.normal)
         gd_face.reverse! if outward
 
         unless thickness.zero?
