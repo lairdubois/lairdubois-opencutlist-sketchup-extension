@@ -2960,7 +2960,7 @@ module Ladb::OpenCutList
       drawing_def_segments = _get_drawing_def_segments(drawing_def)
       drawin_def_origin = ORIGIN.transform(drawing_def.transformation)
 
-      ast = PathUtils.get_transformation(get_active_selection_path)
+      ast = PathUtils.get_transformation(get_active_selection_path, IDENTITY)
 
       # Preview
 
