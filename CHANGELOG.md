@@ -16,6 +16,8 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
+### 2026-03-01
+  * Improved Smart Paneling Tool
 ### 2026-02-28
   * Improved Smart Paneling Tool with multi edges toggle (hover face + SHIFT key)
   * Updated PackingSolver dependency

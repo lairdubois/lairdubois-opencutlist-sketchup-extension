@@ -3286,7 +3286,7 @@ module Ladb::OpenCutList
 
       return unless @drawing_def.is_a?(DrawingDef)
 
-      size = view.pixels_to_model(30, @drawing_def.bounds.center.transform(@drawing_def.transformation))
+      size = view.pixels_to_model(25, @drawing_def.bounds.center.transform(@drawing_def.transformation))
 
       @drawing_def.face_manipulators.each do |fm|
 
