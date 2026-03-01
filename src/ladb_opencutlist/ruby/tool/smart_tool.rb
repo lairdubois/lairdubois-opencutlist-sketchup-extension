@@ -316,6 +316,7 @@ module Ladb::OpenCutList
                       elsif child.is_a?(Kuix::Motif2d)
                         child.margin.set_all!(unit)
                         child.min_size.set_all!(unit * 4)
+                        child.line_width = unit * 0.25
                       end
                       child.set_style_attribute(:color, Kuix::COLOR_BLACK)
                       child.set_style_attribute(:color, Kuix::COLOR_WHITE, :active)
@@ -394,14 +395,29 @@ module Ladb::OpenCutList
 
         setup_minitools_btns(view)
 
-      # -- NOTIFICATION
+      # -- BOTTOM
 
-      @notification_panel = Kuix::Panel.new
-      @notification_panel.layout_data = Kuix::StaticLayoutData.new(0.5, 1.0, -1, -1, Kuix::Anchor.new(Kuix::Anchor::BOTTOM))
-      @notification_panel.layout = Kuix::InlineLayout.new(false, unit)
-      @notification_panel.margin.bottom = unit * 2
-      @notification_panel.visible = false
-      @canvas.append(@notification_panel)
+      @bottom_panel = Kuix::Panel.new
+      @bottom_panel.layout_data = Kuix::StaticLayoutData.new(0.0, 1.0, 1.0, -1, Kuix::Anchor.new(Kuix::Anchor::BOTTOM_LEFT))
+      @bottom_panel.layout = Kuix::InlineLayout.new(false, 0, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+      @canvas.append(@bottom_panel)
+
+        # -- NOTIFICATION
+
+        @notification_panel = Kuix::Panel.new
+        # @notification_panel.layout_data = Kuix::StaticLayoutData.new(0.5, 1.0, -1, -1, Kuix::Anchor.new(Kuix::Anchor::BOTTOM))
+        @notification_panel.layout = Kuix::InlineLayout.new(false, unit)
+        @notification_panel.margin.bottom = unit * 2
+        @notification_panel.visible = false
+        @bottom_panel.append(@notification_panel)
+
+        # -- VALIDATION
+
+        @validation_panel = Kuix::Panel.new
+        @validation_panel.layout = Kuix::InlineLayout.new(true, unit * 4, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+        @validation_panel.padding.set_all!(unit * 4)
+        @validation_panel.visible = false
+        @bottom_panel.append(@validation_panel)
 
     end
 
@@ -925,6 +941,68 @@ module Ladb::OpenCutList
       end
     end
 
+    def show_validation
+      return if @validation_panel.visible?
+
+      @validation_panel.clear
+      @validation_panel.visible = true
+
+      unit = get_unit
+
+      btn = Kuix::Button.new
+      btn.layout = Kuix::GridLayout.new
+      btn.border.set_all!(unit * 0.5)
+      btn.padding.set_all!(unit * 3)
+      btn.min_size.set_all!(unit * 5)
+      btn.set_style_attribute(:background_color, COLOR_MESSAGE_BACKGROUND_ERROR)
+      btn.set_style_attribute(:background_color, COLOR_MESSAGE_BACKGROUND_ERROR, :active)
+      btn.set_style_attribute(:background_color, COLOR_MESSAGE_TEXT_ERROR, :hover)
+      btn.set_style_attribute(:border_color, COLOR_MESSAGE_TEXT_ERROR)
+      btn.on(:click) do |button|
+        onCancel(0, Sketchup.active_model.active_view)
+      end
+      @validation_panel.append(btn)
+
+        motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path("M0,0L1,1 M0,1L1,0"))
+        motif.hittable = false
+        motif.line_width = unit * 0.5
+        motif.set_style_attribute(:color, COLOR_MESSAGE_TEXT_ERROR)
+        motif.set_style_attribute(:color, COLOR_MESSAGE_TEXT_ERROR, :active)
+        motif.set_style_attribute(:color, COLOR_MESSAGE_BACKGROUND_ERROR, :hover)
+        btn.append(motif)
+
+      btn = Kuix::Button.new
+      btn.layout = Kuix::GridLayout.new
+      btn.border.set_all!(unit * 0.5)
+      btn.padding.set_all!(unit * 3)
+      btn.min_size.set_all!(unit * 5)
+      btn.set_style_attribute(:background_color, COLOR_MESSAGE_BACKGROUND_SUCCESS)
+      btn.set_style_attribute(:background_color, COLOR_MESSAGE_BACKGROUND_SUCCESS, :active)
+      btn.set_style_attribute(:background_color, COLOR_MESSAGE_TEXT_SUCCESS, :hover)
+      btn.set_style_attribute(:border_color, COLOR_MESSAGE_TEXT_SUCCESS)
+      btn.on(:click) do |button|
+        onValidate(Sketchup.active_model.active_view)
+      end
+      @validation_panel.append(btn)
+
+        motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path("M0,0.5L0.375,1L1,0"))
+        motif.hittable = false
+        motif.line_width = unit * 0.5
+        motif.set_style_attribute(:color, COLOR_MESSAGE_TEXT_SUCCESS)
+        motif.set_style_attribute(:color, COLOR_MESSAGE_TEXT_SUCCESS, :active)
+        motif.set_style_attribute(:color, COLOR_MESSAGE_BACKGROUND_SUCCESS, :hover)
+        btn.append(motif)
+
+    end
+
+    def hide_validation
+      return unless @validation_panel.visible?
+
+      @validation_panel.clear
+      @validation_panel.visible = false
+
+    end
+
     # -- Actions --
 
     def get_action_defs  # Array<{ :action => THE_ACTION, :options => { OPTION_GROUP_1 => [ OPTION_1, OPTION_2 ] } }>
@@ -1318,6 +1396,10 @@ module Ladb::OpenCutList
       super
     end
 
+    def onValidate(view)
+      @action_handler.onToolValidate(self, view) if !@action_handler.nil? && @action_handler.respond_to?(:onToolValidate)
+    end
+
     def onKeyDown(key, repeat, flags, view)
       return true if super
       @action_handler.onToolKeyDown(self, key, repeat, flags, view) if !@action_handler.nil? && @action_handler.respond_to?(:onToolKeyDown)
@@ -1463,6 +1545,14 @@ module Ladb::OpenCutList
 
     def onActionOptionStored(action, option_group, option)
       @action_handler.onToolActionOptionStored(self, action, option_group, option) if !@action_handler.nil? && @action_handler.respond_to?(:onToolActionOptionStored)
+    end
+
+    def onValidationCancel
+      @action_handler.onToolValidationCancel(self) if !@action_handler.nil? && @action_handler.respond_to?(:onToolValidationCancel)
+    end
+
+    def onValidationOk
+      @action_handler.onToolValidationOk(self) if !@action_handler.nil? && @action_handler.respond_to?(:onToolValidationOk)
     end
 
   end

@@ -324,7 +324,7 @@ module Ladb::OpenCutList
     def onToolResume(tool, view)
 
       # If resume from SmartHandleTool
-      if @previous_action_handler.is_a?(SmartHandleActionHandler)
+      if @previous_action_handler.is_a?(SmartHandleActionHandler) || @previous_action_handler.is_a?(SmartReshapePanelingActionHandler)  # TODO find a better way to detect previous action handler
 
         # Remove floating tools
         _remove_floating_tools
@@ -1819,7 +1819,7 @@ module Ladb::OpenCutList
         },
         {
           tooltip_key: "tool.smart_reshape.action_#{SmartReshapeTool::ACTION_PANELING}",
-          path: 'M0,1L1,1L1,0.375L0,0L0,1',
+          path: 'M1,0L1,1L0.625,1L0.625,0.375 M1,0L0,0L0,0.375L0.625,0.375L0.625,0',
           block: lambda {
             Sketchup.active_model.tools.push_tool(SmartReshapeTool.new(
               current_action: SmartReshapeTool::ACTION_PANELING,
@@ -1861,6 +1861,7 @@ module Ladb::OpenCutList
         k_panel.append(k_btn)
 
           k_motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path(tool_def[:path]))
+          k_motif.line_width = unit * 0.25
           k_motif.min_size.set_all!(unit * 4)
           k_motif.set_style_attribute(:color, Kuix::COLOR_BLACK)
           k_motif.set_style_attribute(:color, Kuix::COLOR_WHITE, :active)

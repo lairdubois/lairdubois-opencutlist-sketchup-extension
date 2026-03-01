@@ -221,7 +221,7 @@ module Ladb::OpenCutList
 
       def draw(view)
 
-        # Check if space need to be revalidated
+        # Check if space needs to be revalidated
         if @space.invalidated?
           @space.do_layout(IDENTITY)
         end
@@ -237,7 +237,7 @@ module Ladb::OpenCutList
           @canvas.do_layout
         end
 
-        # Check if canvas need to be revalidated
+        # Check if canvas needs to be revalidated
         if @canvas.invalidated?
           @canvas.do_layout
         end

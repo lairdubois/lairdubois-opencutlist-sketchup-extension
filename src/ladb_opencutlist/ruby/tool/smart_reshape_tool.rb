@@ -3000,26 +3000,32 @@ module Ladb::OpenCutList
     def onToolCancel(tool, reason, view)
       super
 
-      case @state
+      if @tool.callback_action_handler.nil?
 
-      when STATE_SELECT
-        if @tool.callback_action_handler.nil?
+        case @state
+
+        when STATE_SELECT
           _reset
-        else
-          stop
-          Sketchup.active_model.tools.pop_tool
-          return true
+
+        when STATE_PANELING
+          _clear_edge_joint_types
+          _clear_selected
+          _clear_computed
+          _reset
+
         end
+        _refresh
 
-      when STATE_PANELING
-        _clear_edge_joint_types
-        _clear_selected
-        _clear_computed
-        set_state(STATE_SELECT)
-
+      else
+        _reset
+        stop
+        Sketchup.active_model.tools.pop_tool
       end
-      _refresh
 
+    end
+
+    def onToolValidate(tool, view)
+      _restart
     end
 
     def onToolKeyDown(tool, key, repeat, flags, view)
@@ -3107,6 +3113,8 @@ module Ladb::OpenCutList
 
       when STATE_PANELING
 
+        @tool.hide_validation
+
         _clear_definitions_factory
 
         # Abord operation (restore entities state)
@@ -3179,6 +3187,16 @@ module Ladb::OpenCutList
       set_state(STATE_SELECT)
     end
 
+    def _restart
+      if @tool.callback_action_handler.nil?
+        @tool.hide_validation
+        super
+      else
+        @tool.callback_action_handler.previous_action_handler = self
+        Sketchup.active_model.tools.pop_tool if active?
+      end
+    end
+
     # -----
 
     def _snap_select(picker, view)
@@ -3247,7 +3265,7 @@ module Ladb::OpenCutList
 
       k_mesh = Kuix::Mesh.new
       k_mesh.add_triangles(@drawing_def.face_manipulators.map { |fm| fm.triangles }.flatten(1))
-      k_mesh.background_color = Sketchup::Color.new(254, 222, 11, 200) #ColorUtils.color_translucent(Kuix::COLOR_GREEN, 0.3)
+      k_mesh.background_color = ColorUtils.color_translucent(Kuix::COLOR_BLUE, 0.3) #Sketchup::Color.new(254, 222, 11, 200)
       k_mesh.transformation = @drawing_def.transformation
       @tool.append_3d(k_mesh, LAYER_3D_PANELING_PREVIEW)
 
@@ -3304,7 +3322,7 @@ module Ladb::OpenCutList
 
         k_circle_stroke = Kuix::CircleMotif3d.new(12)
         k_circle_stroke.bounds.copy!(k_circle_bg.bounds)
-        k_circle_stroke.line_width = hover_face ? 2 : 1
+        k_circle_stroke.line_width = 2
         k_circle_stroke.color = color
         k_circle_stroke.transformation = ct
         k_circle_stroke.on_top = true
@@ -3610,6 +3628,9 @@ module Ladb::OpenCutList
 
         end
 
+        gd_points.uniq! { |point| point.to_a }
+        up_points.uniq! { |point| point.to_a }
+
         next if gd_points.size < 3 || up_points.size < 3
 
         # 2. Create part definition + instance
@@ -3664,6 +3685,12 @@ module Ladb::OpenCutList
         # Flag face as extruded
         extruded_face_manipulators << sfm
 
+      end
+
+      if @selected_face_manipulators.any?
+        @tool.show_validation
+      else
+        @tool.hide_validation
       end
 
     end
