@@ -1819,7 +1819,7 @@ module Ladb::OpenCutList
         },
         {
           tooltip_key: "tool.smart_reshape.action_#{SmartReshapeTool::ACTION_PANELING}",
-          path: 'M1,0L1,1L0.625,1L0.625,0.375 M1,0L0,0L0,0.375L0.625,0.375L0.625,0',
+          path: 'M0,0L0,0.375L0.625,0.375L1,0L0,0 M1,0L1,1L0.625,1L0.625,0.375',
           block: lambda {
             Sketchup.active_model.tools.push_tool(SmartReshapeTool.new(
               current_action: SmartReshapeTool::ACTION_PANELING,

@@ -3526,6 +3526,10 @@ module Ladb::OpenCutList
       create_cursor('select-stretch')
     end
 
+    def cursor_select_paneling
+      create_cursor('select-paneling')
+    end
+
     def cursor_select_flip
       create_cursor('select-flip')
     end

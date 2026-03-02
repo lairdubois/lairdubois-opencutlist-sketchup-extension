@@ -2977,6 +2977,16 @@ module Ladb::OpenCutList
 
     # -----
 
+    def get_state_cursor(state)
+
+      case state
+      when STATE_SELECT, STATE_PANELING
+        return SmartCursorManager.cursor_select_paneling
+      end
+
+      super
+    end
+
     def get_state_picker(state)
 
       case state
