@@ -2229,7 +2229,7 @@ tool:
     action_option_axes_active_status: Manipuler le long des axes actifs
     action_option_axes_context_status: Manipuler le long des axes du groupe ou composant contenant la pièce
     action_option_axes_entity_status: Manipuler le long des axes de la pièce
-    action_option_paneling_joint_type_flat_status: Join plat
+    action_option_paneling_joint_type_flat_status: Joint plat
     action_option_paneling_joint_type_miter_status: Coupe d'onglet
     action_option_paneling_direction_inward_status: Intérieure
     action_option_paneling_direction_outward_status: Extérieure
