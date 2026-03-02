@@ -2085,6 +2085,7 @@ tool:
     middle_point: Mittelpunkt
     third_point: Punkt auf Drittel
     vcb_length: Länge
+    vcb_thickness: Dicke
     vcb_size: Bemaßung
     vcb_radius: Radius
     vcb_diameter: Durchmesser
@@ -2092,6 +2093,7 @@ tool:
     error:
       no_direction: Bitte mit der Maus eine Richtung angeben
       invalid_length: "Die Länge {{ value }} ist ungültig"
+      invalid_thickness: "Die Dicke {{ value }} ist ungültig"
       invalid_multiplicator: "Der Faktor {{ value }} ist ungültig"
       invalid_divider: "Der Teiler {{ value }} ist ungültig"
       invalid_offset: "Die Verschiebung {{ value }} ist ungültig"
@@ -2218,6 +2220,7 @@ tool:
     action_option_group_stretch_measure_type: Maß
     action_option_group_axes: Achsen
     action_option_group_paneling_joint_type: Verbindung
+    action_option_group_paneling_direction: Richtung
     action_option_group_options: Optionen
     action_option_thickness_thickness: Dicke
     action_option_thickness_thickness_status: Definiert die Dicke der Platten
@@ -2227,7 +2230,9 @@ tool:
     action_option_axes_context_status: "Manipulieren entlang der Achsen der Gruppe oder Komponente, die das Teil enthält"
     action_option_axes_entity_status: Manipulieren entlang der Achsen des Teils
     action_option_paneling_joint_type_flat_status: Stumpf
-    action_option_paneling_ joint_type_miter_status: Auf Gehrung
+    action_option_paneling_joint_type_miter_status: Auf Gehrung
+    action_option_paneling_direction_inward_status: Nach innen
+    action_option_paneling_direction_outward_status: Nach aussen
     action_option_options_centred_status: Auf die gestreckten Elemente zentrieren
     action_option_options_make_unique_status: Gestreckte Elemente einzigartig machen
     error:

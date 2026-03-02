@@ -2085,6 +2085,7 @@ tool:
     middle_point: Midpoint
     third_point: One-third Point
     vcb_length: Length
+    vcb_thickness: Thickness
     vcb_size: Dimensions
     vcb_radius: Radius
     vcb_diameter: Diameter
@@ -2093,6 +2094,7 @@ tool:
       no_direction: Please indicate a direction with your mouse
       invalid_length: "Length {{ value }} is invalid"
       invalid_multiplicator: "Factor {{ value }} is invalid"
+      invalid_thickness: "Thickness {{ value }} is invalid"
       invalid_divider: "Divisor {{ value }} is invalid"
       invalid_offset: "Offset {{ value }} is invalid"
       invalid_segment_count: "The number of segments {{ value }} is invalid. It must be between 3 and 999."
@@ -2228,7 +2230,7 @@ tool:
     action_option_axes_context_status: Manipulate along the axes of the group or component containing the part
     action_option_axes_entity_status: Manipulate along part axes
     action_option_paneling_joint_type_flat_status: Flat joint
-    action_option_paneling_joint_type_miter_status: Mitre cut
+    action_option_paneling_joint_type_miter_status: Mitre joint
     action_option_paneling_direction_inward_status: Inward direction
     action_option_paneling_direction_outward_status: Outward direction
     action_option_options_centred_status: Center on stretched elements
