@@ -44,12 +44,13 @@ module Ladb::OpenCutList
           :dimensional_material_count => 0,
           :edge_material_count => 0,
           :hardware_material_count => 0,
+          :veneer_material_count => 0,
           :untyped_material_count => 0,
           :materials => []
       }
 
       if materials
-        materials.each { |material|
+        materials.each do |material|
 
           thumbnail_file = File.join(material_thumbnails_dir, "#{SecureRandom.uuid}.png")
           size = material.texture.nil? ? 8 : [ 128, material.texture.image_width - 1, material.texture.image_height - 1 ].min
@@ -97,20 +98,22 @@ module Ladb::OpenCutList
           )
 
           case material_attributes.type
-            when MaterialAttributes::TYPE_SOLID_WOOD
-              response[:solid_wood_material_count] += 1
-            when MaterialAttributes::TYPE_SHEET_GOOD
-              response[:sheet_good_material_count] += 1
-            when MaterialAttributes::TYPE_DIMENSIONAL
-              response[:dimensional_material_count] += 1
-            when MaterialAttributes::TYPE_EDGE
-              response[:edge_material_count] += 1
-            when MaterialAttributes::TYPE_HARDWARE
-              response[:hardware_material_count] += 1
-            else
-              response[:untyped_material_count] += 1
+          when MaterialAttributes::TYPE_SOLID_WOOD
+            response[:solid_wood_material_count] += 1
+          when MaterialAttributes::TYPE_SHEET_GOOD
+            response[:sheet_good_material_count] += 1
+          when MaterialAttributes::TYPE_DIMENSIONAL
+            response[:dimensional_material_count] += 1
+          when MaterialAttributes::TYPE_EDGE
+            response[:edge_material_count] += 1
+          when MaterialAttributes::TYPE_HARDWARE
+            response[:hardware_material_count] += 1
+          when MaterialAttributes::TYPE_VENEER
+            response[:veneer_material_count] += 1
+          else
+            response[:untyped_material_count] += 1
           end
-        }
+        end
       end
 
       # Errors
@@ -129,6 +132,7 @@ module Ladb::OpenCutList
         response[:dimensional_material_count],
         response[:edge_material_count],
         response[:hardware_material_count],
+        response[:veneer_material_count],
         response[:untyped_material_count]
       ].select { |v| v > 0 }.length > 1
 
