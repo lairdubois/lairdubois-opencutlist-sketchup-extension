@@ -351,8 +351,8 @@ module Ladb::OpenCutList
       end
 
       def onLButtonDown(flags, x, y, view)
-        hit_widget = @canvas.hit_widget(x, y)
-        @mouse_down_widget = hit_widget
+        hit_entity = @canvas.hit_entity(x, y)
+        @mouse_down_widget = hit_entity
         if @mouse_down_widget
           @mouse_down_widget.onMouseDown(flags)
           return true
@@ -361,8 +361,8 @@ module Ladb::OpenCutList
       end
 
       def onLButtonUp(flags, x, y, view)
-        hit_widget = @canvas.hit_widget(x, y)
-        if hit_widget && @mouse_down_widget == hit_widget
+        hit_entity = @canvas.hit_entity(x, y)
+        if hit_entity && @mouse_down_widget == hit_entity
           @mouse_down_widget.onMouseClick(flags)
           @mouse_down_widget = nil
           return true
@@ -372,9 +372,9 @@ module Ladb::OpenCutList
       end
 
       def onLButtonDoubleClick(flags, x, y, view)
-        hit_widget = @canvas.hit_widget(x, y)
-        if hit_widget
-          hit_widget.onMouseDoubleClick(flags)
+        hit_entity = @canvas.hit_entity(x, y)
+        if hit_entity
+          hit_entity.onMouseDoubleClick(flags)
           @mouse_down_widget = nil
           return true
         end
@@ -383,15 +383,15 @@ module Ladb::OpenCutList
       end
 
       def onMouseMove(flags, x, y, view)
-        hit_widget = @canvas.hit_widget(x, y)
-        if hit_widget
+        hit_entity = @canvas.hit_entity(x, y)
+        if hit_entity
           onMouseLeaveSpace(view) if @mouse_hover_widget.nil? && !@mouse_is_outside
-          if hit_widget != @mouse_hover_widget
+          if hit_entity != @mouse_hover_widget
             if @mouse_hover_widget
               @mouse_hover_widget.onMouseLeave if @mouse_hover_widget.in_dom?
               pop_cursor
             end
-            @mouse_hover_widget = hit_widget
+            @mouse_hover_widget = hit_entity
             @mouse_hover_widget.onMouseEnter(flags)
             push_cursor(get_default_cursor)
           end
@@ -425,8 +425,8 @@ module Ladb::OpenCutList
       end
 
       def onMouseWheel(flags, delta, x, y, view)
-        hit_widget = @canvas.hit_widget(x, y, :wheel)
-        return true if hit_widget && hit_widget.in_dom? && hit_widget.onMouseWheel(flags, delta)
+        hit_entity = @canvas.hit_entity(x, y, :wheel)
+        return true if hit_entity && hit_entity.in_dom? && hit_entity.onMouseWheel(flags, delta)
         false
       end
 

@@ -31,9 +31,9 @@ module Ladb::OpenCutList::Kuix
 
     # -- LAYOUT --
 
-    def do_layout(transformation)
+    def do_layout_content(transformation)
+      @_points = @points.map { |point| point.transform(transformation) }
       super
-      @_points = @points.map { |point| point.transform(transformation * @transformation) }
     end
 
     # -- RENDER --

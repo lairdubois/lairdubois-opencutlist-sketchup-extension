@@ -27,15 +27,14 @@ module Ladb::OpenCutList::Kuix
 
     # -- LAYOUT --
 
-    def do_layout(transformation)
-      super
-      transformation = transformation * @transformation unless @transformation.identity?
+    def do_layout_content(transformation)
       if transformation.identity?
         @_points = @points
       else
         @_points = @points.map { |point| point.transform(transformation) }
       end
       @extents.add(@_points) unless @on_top || @_points.empty?
+      super
     end
 
     # -- RENDER --
@@ -53,12 +52,6 @@ module Ladb::OpenCutList::Kuix
           graphics.set_line_width(@line_width)
           graphics.set_line_stipple(@line_stipple)
           graphics.view.draw(@closed ? GL_LINE_LOOP : GL_LINE_STRIP, @_points)
-          # graphics.draw_polyline(
-          #   points: @_points,
-          #   color: @color,
-          #   line_width: @line_width,
-          #   line_stipple: @line_stipple
-          # )
         end
       end
       super

@@ -257,7 +257,7 @@ module Ladb::OpenCutList
                 lbl.text = group_titled ? group_title : ""
                 lbl.text_bold = true
                 lbl.text_size = unit * 3 * get_text_unit_factor
-                if actions_options_panel.child
+                unless actions_options_panel.empty?
                   lbl.margin.left = unit * 3
                   lbl.border.left = unit * 0.2
                   lbl.padding.left = unit * 3
@@ -280,12 +280,10 @@ module Ladb::OpenCutList
                   btn.on(:click) { |button|
                     if get_action_option_toggle?(action, option_group, option)
                       if get_action_option_group_unique?(action, option_group)
-                        b = button.parent.child
-                        until b.nil? do
+                        button.parent.children.each do |b|
                           if b.is_a?(Kuix::Button) && !b.data.nil? && b.data[:option_group] == option_group
                             b.selected = false
                           end
-                          b = b.next
                         end
                         button.selected = true
                         store_action_option_value(action, option_group, option)
@@ -841,7 +839,7 @@ module Ladb::OpenCutList
         box.remove
 
         # Hide notification panel if no more child
-        @notification_panel.visible = false if @notification_panel.last_child.nil?
+        @notification_panel.visible = @notification_panel.children.any?
 
       }
       advance_lambda = lambda {
@@ -905,7 +903,7 @@ module Ladb::OpenCutList
       end
 
       @notification_panel.append(box)
-      @notification_panel.visible = !@notification_panel.last_child.nil?
+      @notification_panel.visible = @notification_panel.children.any?
 
       start_lambda.call
 
@@ -1328,17 +1326,15 @@ module Ladb::OpenCutList
             action = actions_options_panel.data[:action]
             next unless action == fetch_action
 
-            b = actions_options_panel.child
-            until b.nil? do
+            actions_options_panel.children.each do |b|
               unless b.data.nil?
                 option_group = b.data[:option_group]
                 option = b.data[:option]
                 if b.is_a?(Kuix::Button)
-                  b.child.text = fetch_action_option_string(action, option_group, option) if !get_action_option_toggle?(action, option_group, option) && b.child.is_a?(Kuix::Label)
+                  b.children.first.text = fetch_action_option_string(action, option_group, option) if !get_action_option_toggle?(action, option_group, option) && b.children.first.is_a?(Kuix::Label)
                   b.selected = fetch_action_option_boolean(action, option_group, option)
                 end
               end
-              b = b.next
             end
 
           end
@@ -1435,13 +1431,11 @@ module Ladb::OpenCutList
                   @actions_options_panels.each do |actions_options_panel|
                     next unless actions_options_panel.data[:action] == action
 
-                    b = actions_options_panel.child
-                    until b.nil? do
+                    actions_options_panel.children.each do |b|
                       if b.is_a?(Kuix::Button) && b.data[:option_group] == modifier_option_group && b.data[:option] == next_modifier_option
                         b.fire(:click, flags)
                         break
                       end
-                      b = b.next
                     end
 
                   end

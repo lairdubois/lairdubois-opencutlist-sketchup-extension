@@ -61,7 +61,7 @@ module Ladb::OpenCutList::Kuix
 
     # -- STYLE --
 
-    def propagable_pseudo_class(pseudo_class, depth)
+    def propagable_pseudo_class?(pseudo_class, depth)
       depth == 0
     end
 

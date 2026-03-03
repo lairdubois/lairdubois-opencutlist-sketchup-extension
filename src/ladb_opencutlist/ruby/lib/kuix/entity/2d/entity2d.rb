@@ -83,15 +83,16 @@ module Ladb::OpenCutList::Kuix
 
     # -- STYLE --
 
-    def propagable_pseudo_class(pseudo_class, depth)
+    def propagable_pseudo_class?(pseudo_class, depth)
       true
     end
 
     def activate_pseudo_class(pseudo_class, depth = 0)
       unless @active_pseudo_classes.include?(pseudo_class)
         @active_pseudo_classes.push(pseudo_class)
-        @child.activate_pseudo_class(pseudo_class, depth + 1) if @child && @child.propagable_pseudo_class(pseudo_class, depth + 1)
-        @next.activate_pseudo_class(pseudo_class, depth) if @next && @next.propagable_pseudo_class(pseudo_class, depth) && depth > 0
+        @children.each do |child|
+          child.activate_pseudo_class(pseudo_class, depth + 1) if child.propagable_pseudo_class?(pseudo_class, depth + 1)
+        end
         invalidate
       end
     end
@@ -99,8 +100,9 @@ module Ladb::OpenCutList::Kuix
     def deactivate_pseudo_class(pseudo_class, depth = 0)
       if @active_pseudo_classes.include?(pseudo_class)
         @active_pseudo_classes.delete(pseudo_class)
-        @child.deactivate_pseudo_class(pseudo_class, depth + 1) if @child && @child.propagable_pseudo_class(pseudo_class, depth + 1)
-        @next.deactivate_pseudo_class(pseudo_class, depth) if @next && @next.propagable_pseudo_class(pseudo_class, depth) && depth > 0
+        @children.each do |child|
+          child.deactivate_pseudo_class(pseudo_class, depth + 1) if child.propagable_pseudo_class?(pseudo_class, depth + 1)
+        end
         invalidate
       end
     end
@@ -110,10 +112,7 @@ module Ladb::OpenCutList::Kuix
     end
 
     def set_style_attribute(attribute, value, pseudo_class = :default)
-      unless @styles.has_key?(pseudo_class)
-        @styles[pseudo_class] = {}
-      end
-      @styles[pseudo_class][attribute] = value
+      (@styles[pseudo_class] ||= {})[attribute] = value
       invalidate
     end
 
@@ -125,11 +124,10 @@ module Ladb::OpenCutList::Kuix
       @color = @styles[:default][:color]
 
       @active_pseudo_classes.each do |pseudo_class|
-        style = @styles[pseudo_class]
-        if style
-          @background_color = style[:background_color] if style.has_key?(:background_color)
-          @border_color = style[:border_color] if style.has_key?(:border_color)
-          @color = style[:color] if style.has_key?(:color)
+        if (style = @styles[pseudo_class])
+          @background_color = style[:background_color] if style.key?(:background_color)
+          @border_color = style[:border_color] if style.key?(:border_color)
+          @color = style[:color] if style.key?(:color)
         end
       end
 
@@ -139,7 +137,13 @@ module Ladb::OpenCutList::Kuix
 
     # Append given entity to self and returns self
     def append(entity)
-      raise 'Widget.append only supports Widget' unless entity.is_a?(Entity2d)
+      raise 'Entity2d.append only supports Entity2d' unless entity.is_a?(Entity2d)
+      super
+    end
+
+    # Prepend given entity to self and returns self
+    def prepend(entity)
+      raise 'Entity2d.prepend only supports Entity2d' unless entity.is_a?(Entity2d)
       super
     end
 
@@ -177,7 +181,7 @@ module Ladb::OpenCutList::Kuix
       end
     end
 
-    def paint_itself(graphics)
+    def paint_content(graphics)
 
       graphics.translate(@bounds.x + @margin.left, @bounds.y + @margin.top)
       paint_border(graphics)
@@ -194,8 +198,8 @@ module Ladb::OpenCutList::Kuix
 
     # -- Hit --
 
-    def hit_widget(x, y, event = nil)
-      widget = nil
+    def hit_entity(x, y, event = nil)
+      entity = nil
       hit_bounds = Bounds2d.new(   # Exclude margin from hit test
         @bounds.origin.x + @margin.left,
         @bounds.origin.y + @margin.top,
@@ -203,17 +207,17 @@ module Ladb::OpenCutList::Kuix
         @bounds.size.height - @margin.top - @margin.bottom
       )
       if self.visible? && hit_bounds.inside?(x, y)
-        if @last_child
-          widget = @last_child.hit_widget(
+        @children.reverse_each do |child|
+          entity = child.hit_entity(
             x - hit_bounds.origin.x - @border.left - @padding.left,
             y - hit_bounds.origin.y - @border.top - @padding.top,
             event
           )
+          break if entity
         end
-        widget = self if widget.nil? && self.hittable?(event)
+        entity = self if entity.nil? && self.hittable?(event)
       end
-      widget = @previous.hit_widget(x, y, event) if widget.nil? && @previous
-      widget
+      entity
     end
 
     # -- Events --

@@ -22,7 +22,7 @@ module Ladb::OpenCutList::Kuix
 
     # -- RENDER --
 
-    def paint_content(graphics)
+    def paint_itself(graphics)
 
       width = (@bounds.width - @margin.left - @border.left - @margin.right - @border.right) * @value / (@max - @min)
       height = @bounds.height - @margin.top - @border.top - @margin.bottom - @border.bottom

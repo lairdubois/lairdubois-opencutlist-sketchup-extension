@@ -54,86 +54,83 @@ module Ladb::OpenCutList::Kuix
       content_bounds = Bounds2d.new unless layout
 
       # Loop on children
-      entity = target.child
-      until entity.nil?
-        if entity.visible?
+      target.children.each do |entity|
+        next unless entity.visible?
 
-          preferred_size = entity.get_preferred_size(available_width)
-          entity_bounds = Bounds2d.new
+        preferred_size = entity.get_preferred_size(available_width)
+        entity_bounds = Bounds2d.new
 
-          if entity.layout_data.is_a?(StaticLayoutData)
+        if entity.layout_data.is_a?(StaticLayoutData)
 
-            if entity.layout_data.is_a?(StaticLayoutDataWithSnap)
+          if entity.layout_data.is_a?(StaticLayoutDataWithSnap)
 
-              model = Sketchup.active_model
-              entity_bounds.origin.copy!(model.active_view.screen_coords(entity.layout_data.snap_position)) unless model.nil?
-
-            else
-
-              # X
-              if entity.layout_data.x.is_a?(Float) && entity.layout_data.x <= 1.0
-                entity_bounds.origin.x = available_width * entity.layout_data.x
-              else
-                entity_bounds.origin.x = entity.layout_data.x
-              end
-
-              # Y
-              if entity.layout_data.y.is_a?(Float) && entity.layout_data.y <= 1.0
-                entity_bounds.origin.y = available_height * entity.layout_data.y
-              else
-                entity_bounds.origin.y = entity.layout_data.y
-              end
-
-            end
-
-            # Width
-            if entity.layout_data.width < 0
-              entity_bounds.size.width = preferred_size.width
-            elsif entity.layout_data.width.is_a?(Float) && entity.layout_data.width <= 1.0
-              entity_bounds.size.width = available_width * entity.layout_data.width
-            else
-              entity_bounds.size.width = [ entity.layout_data.width, preferred_size.width ].max
-            end
-
-            # Height
-            if entity.layout_data.height < 0
-              entity_bounds.size.height = preferred_size.height
-            elsif entity.layout_data.height.is_a?(Float) && entity.layout_data.height <= 1.0
-              entity_bounds.size.height = available_height * entity.layout_data.height
-            else
-              entity_bounds.size.height = [ entity.layout_data.height, preferred_size.height ].max
-            end
-
-            # Anchor
-            if entity.layout_data.anchor
-              if entity.layout_data.anchor.right?
-                entity_bounds.origin.x -= entity_bounds.size.width
-              elsif entity.layout_data.anchor.vertical_center?
-                entity_bounds.origin.x -= entity_bounds.size.width / 2
-              end
-              if entity.layout_data.anchor.bottom?
-                entity_bounds.origin.y -= entity_bounds.size.height
-              elsif entity.layout_data.anchor.horizontal_center?
-                entity_bounds.origin.y -= entity_bounds.size.height / 2
-              end
-            end
+            model = Sketchup.active_model
+            entity_bounds.origin.copy!(model.active_view.screen_coords(entity.layout_data.snap_position)) unless model.nil?
 
           else
-            entity_bounds.origin.x = 0
-            entity_bounds.origin.y = 0
+
+            # X
+            if entity.layout_data.x.is_a?(Float) && entity.layout_data.x <= 1.0
+              entity_bounds.origin.x = available_width * entity.layout_data.x
+            else
+              entity_bounds.origin.x = entity.layout_data.x
+            end
+
+            # Y
+            if entity.layout_data.y.is_a?(Float) && entity.layout_data.y <= 1.0
+              entity_bounds.origin.y = available_height * entity.layout_data.y
+            else
+              entity_bounds.origin.y = entity.layout_data.y
+            end
+
+          end
+
+          # Width
+          if entity.layout_data.width < 0
             entity_bounds.size.width = preferred_size.width
-            entity_bounds.size.height = preferred_size.height
-          end
-
-          if layout
-            entity.bounds.copy!(entity_bounds)
-            entity.do_layout
+          elsif entity.layout_data.width.is_a?(Float) && entity.layout_data.width <= 1.0
+            entity_bounds.size.width = available_width * entity.layout_data.width
           else
-            content_bounds.union!(entity_bounds)
+            entity_bounds.size.width = [ entity.layout_data.width, preferred_size.width ].max
           end
 
+          # Height
+          if entity.layout_data.height < 0
+            entity_bounds.size.height = preferred_size.height
+          elsif entity.layout_data.height.is_a?(Float) && entity.layout_data.height <= 1.0
+            entity_bounds.size.height = available_height * entity.layout_data.height
+          else
+            entity_bounds.size.height = [ entity.layout_data.height, preferred_size.height ].max
+          end
+
+          # Anchor
+          if entity.layout_data.anchor
+            if entity.layout_data.anchor.right?
+              entity_bounds.origin.x -= entity_bounds.size.width
+            elsif entity.layout_data.anchor.vertical_center?
+              entity_bounds.origin.x -= entity_bounds.size.width / 2
+            end
+            if entity.layout_data.anchor.bottom?
+              entity_bounds.origin.y -= entity_bounds.size.height
+            elsif entity.layout_data.anchor.horizontal_center?
+              entity_bounds.origin.y -= entity_bounds.size.height / 2
+            end
+          end
+
+        else
+          entity_bounds.origin.x = 0
+          entity_bounds.origin.y = 0
+          entity_bounds.size.width = preferred_size.width
+          entity_bounds.size.height = preferred_size.height
         end
-        entity = entity.next
+
+        if layout
+          entity.bounds.copy!(entity_bounds)
+          entity.do_layout
+        else
+          content_bounds.union!(entity_bounds)
+        end
+
       end
 
       unless layout

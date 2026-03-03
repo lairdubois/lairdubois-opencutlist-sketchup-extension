@@ -3,7 +3,7 @@ module Ladb::OpenCutList::Kuix
   class Entity
 
     attr_accessor :id
-    attr_accessor :parent, :child, :last_child, :next, :previous
+    attr_accessor :parent, :children
     attr_accessor :data
 
     def initialize(id = nil)
@@ -11,11 +11,7 @@ module Ladb::OpenCutList::Kuix
       @id = id
 
       @parent = nil
-      @child = nil
-      @last_child = nil
-
-      @next = nil
-      @previous = nil
+      @children = []
 
       @invalidated = true
 
@@ -31,6 +27,10 @@ module Ladb::OpenCutList::Kuix
       @parent && @parent.in_dom?
     end
 
+    def empty?
+      @children.empty?
+    end
+
     # Append a given entity to self and returns self
     def append(entity)
       raise 'Entity.append only supports Entity' unless entity.is_a?(Entity)
@@ -40,12 +40,11 @@ module Ladb::OpenCutList::Kuix
       # Remove the entity from its previous parent
       entity.remove if entity.parent
 
-      # Append entity to the linked list
+      # Append entity to children array
+      @children.push(entity)
+
+      # Set parent of entity
       entity.parent = self
-      @last_child.next = entity if @last_child
-      entity.previous = @last_child
-      @child = entity unless @child
-      @last_child = entity
 
       # Invalidate self
       invalidate
@@ -63,12 +62,11 @@ module Ladb::OpenCutList::Kuix
       # Remove the entity from its previous parent
       entity.remove if entity.parent
 
-      # Prepend the entity to the linked list
+      # Prepend entity to children array
+      @children.unshift(entity)
+
+      # Set parent of entity
       entity.parent = self
-      @child.previous = entity if @child
-      entity.next = @child
-      @child = entity
-      @last_child = entity unless @last_child
 
       # Invalidate self
       invalidate
@@ -80,46 +78,29 @@ module Ladb::OpenCutList::Kuix
     # Remove self-entity from its parent and returns parent
     def remove
       return unless @parent
-      @parent.child = @next if @parent.child == self
-      @parent.last_child = @previous if @parent.last_child == self
-      @previous.next = @next unless @previous.nil?
-      unless @next.nil?
-        @next.previous = @previous
-        @next = nil
-      end
-      @previous = nil
+
       parent = @parent
+
+      @parent.children.delete(self)
       @parent = nil
+
       parent.invalidate
       parent
     end
 
     # Remove all children from self
     def clear
-      if @child
-        entity = @child
-        until entity.nil?
-          next_widget = entity.next
-          entity.next = nil
-          entity.previous = nil
-          entity.parent = nil
-          entity = next_widget
-        end
-        @child = nil
-        @last_child = nil
-        invalidate
-      end
+      return if @children.empty?
+
+      @children.each { |child| child.remove }
+      @children.clear
+      invalidate
+
+      self
     end
 
     def num_children
-      return 0 if @child.nil?
-      num_children = 0
-      entity = @child
-      until entity.nil?
-        num_children += 1
-        entity = entity.next
-      end
-      num_children
+      @children.size
     end
 
     # -- LAYOUT --
@@ -154,20 +135,16 @@ module Ladb::OpenCutList::Kuix
     # -- RENDER --
 
     def paint(graphics)
-      paint_itself(graphics) if visible? && valid?
-      paint_sibling(graphics)
-    end
-
-    def paint_content(graphics)
-      @child.paint(graphics) if @child
-    end
-
-    def paint_itself(graphics)
+      return unless visible? && valid?
       paint_content(graphics)
     end
 
-    def paint_sibling(graphics)
-      @next.paint(graphics) if @next
+    def paint_content(graphics)
+      paint_itself(graphics)
+      @children.each { |child| child.paint(graphics) }
+    end
+
+    def paint_itself(graphics)
     end
 
     # --

@@ -28,9 +28,7 @@ module Ladb::OpenCutList::Kuix
 
     # -- LAYOUT --
 
-    def do_layout(transformation)
-      super
-      transformation = transformation * @transformation unless @transformation.identity?
+    def do_layout_content(transformation)
       if transformation.identity?
         @_triangle_points = @triangles
         @_quad_points = @quads
@@ -40,6 +38,7 @@ module Ladb::OpenCutList::Kuix
       end
       @extents.add(@_triangle_points) unless @_triangle_points.empty?
       @extents.add(@_quad_points) unless @_quad_points.empty?
+      super
     end
 
     # -- RENDER --

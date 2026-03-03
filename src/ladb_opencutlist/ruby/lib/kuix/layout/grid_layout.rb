@@ -53,26 +53,23 @@ module Ladb::OpenCutList::Kuix
       col = 0
       row = 0
 
-      entity = target.child
-      until entity.nil?
-        if entity.visible?
+      target.children.each do |entity|
+        next unless entity.visible?
 
-          if entity.layout_data.is_a?(GridLayoutData)
-            col_span = [ entity.layout_data.col_span, @num_cols - col ].min
-          else
-            col_span = 1
-          end
-
-          yield(entity, col, row, col_span) if block_given?
-
-          col += col_span
-          if col >= @num_cols
-            col = 0
-            row += 1
-          end
-
+        if entity.layout_data.is_a?(GridLayoutData)
+          col_span = [ entity.layout_data.col_span, @num_cols - col ].min
+        else
+          col_span = 1
         end
-        entity = entity.next
+
+        yield(entity, col, row, col_span) if block_given?
+
+        col += col_span
+        if col >= @num_cols
+          col = 0
+          row += 1
+        end
+
       end
 
       # Returns max row index

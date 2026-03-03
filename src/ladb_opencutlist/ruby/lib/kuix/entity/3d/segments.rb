@@ -26,15 +26,14 @@ module Ladb::OpenCutList::Kuix
 
     # -- LAYOUT --
 
-    def do_layout(transformation)
-      super
-      transformation = transformation * @transformation unless @transformation.identity?
+    def do_layout_content(transformation)
       if transformation.identity?
         @_points = @segments
       else
         @_points = @segments.map { |point| point.transform(transformation) }
       end
       @extents.add(@_points) unless @on_top || @_points.empty?
+      super
     end
 
     # -- RENDER --

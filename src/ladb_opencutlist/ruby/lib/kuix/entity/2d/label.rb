@@ -138,12 +138,13 @@ module Ladb::OpenCutList::Kuix
 
     # -- RENDER --
 
-    def paint_content(graphics)
+    def paint_itself(graphics)
       graphics.draw_text(
         x: @text_point.x,
         y: @text_point.y,
         text: @truncated_text,
-        text_options: @text_options)
+        text_options: @text_options
+      )
       super
     end
 

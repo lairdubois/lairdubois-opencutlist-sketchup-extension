@@ -29,26 +29,23 @@ module Ladb::OpenCutList::Kuix
       child_defs = []
 
       # 1st Loop on children
-      entity = target.child
-      until entity.nil?
-        if entity.visible?
+      target.children.each do |entity|
+        next unless entity.visible?
 
-          preferred_size = entity.get_preferred_size(available_width)
-          child_defs.push({
-                            :entity => entity,
-                            :preferred_size => preferred_size
-                          })
+        preferred_size = entity.get_preferred_size(available_width)
+        child_defs.push({
+                          :entity => entity,
+                          :preferred_size => preferred_size
+                        })
 
-          if @horizontal
-            content_bounds.size.width += preferred_size.width
-            content_bounds.size.height = [ preferred_size.height, content_bounds.size.height ].max
-          else
-            content_bounds.size.width = [ preferred_size.width, content_bounds.size.width ].max
-            content_bounds.size.height += preferred_size.height
-          end
-
+        if @horizontal
+          content_bounds.size.width += preferred_size.width
+          content_bounds.size.height = [ preferred_size.height, content_bounds.size.height ].max
+        else
+          content_bounds.size.width = [ preferred_size.width, content_bounds.size.width ].max
+          content_bounds.size.height += preferred_size.height
         end
-        entity = entity.next
+
       end
 
       # Gap

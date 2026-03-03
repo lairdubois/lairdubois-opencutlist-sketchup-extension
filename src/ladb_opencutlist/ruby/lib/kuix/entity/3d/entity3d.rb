@@ -23,13 +23,13 @@ module Ladb::OpenCutList::Kuix
 
     # Append a given entity to self and returns self
     def append(entity)
-      throw 'Entity3d.append only supports Entity3d' unless entity.is_a?(Entity3d)
+      raise 'Entity3d.append only supports Entity3d' unless entity.is_a?(Entity3d)
       super
     end
 
     # Prepend a given entity to self and returns self
     def prepend(entity)
-      throw 'Entity3d.prepend only supports Entity3d' unless entity.is_a?(Entity3d)
+      raise 'Entity3d.prepend only supports Entity3d' unless entity.is_a?(Entity3d)
       super
     end
 
@@ -37,15 +37,15 @@ module Ladb::OpenCutList::Kuix
 
     def do_layout(transformation)
       @extents.clear
-      if @child
-        @child.do_layout(transformation * @transformation)
-        @extents.add(@child.extents)
-      end
-      if @next
-        @next.do_layout(transformation)
-        @extents.add(@next.extents)
-      end
+      do_layout_content(transformation * @transformation)
       self.invalidated = false
+    end
+
+    def do_layout_content(transformation)
+      @children.each do |child|
+        child.do_layout(transformation)
+        @extents.add(child.extents)
+      end
     end
 
   end

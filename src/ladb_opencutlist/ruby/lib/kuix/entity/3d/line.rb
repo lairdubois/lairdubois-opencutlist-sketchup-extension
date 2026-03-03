@@ -22,13 +22,13 @@ module Ladb::OpenCutList::Kuix
 
     # -- LAYOUT --
 
-    def do_layout(transformation)
+    def do_layout_content(transformation)
       if !@position.is_a?(Geom::Point3d) || !@direction.is_a?(Geom::Vector3d) || !@direction.valid?
         @_lp1_3d = nil
         @_lp2_3d = nil
       else
-        @_lp1_3d = @position.transform(transformation * @transformation)
-        @_lp2_3d = (@position + @direction).transform(transformation * @transformation)
+        @_lp1_3d = @position.transform(transformation)
+        @_lp2_3d = (@position + @direction).transform(transformation)
       end
       super
     end

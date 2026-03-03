@@ -14,7 +14,7 @@ module Ladb::OpenCutList::Kuix
       @line_width = 1
       @line_stipple = LINE_STIPPLE_SOLID
 
-      @paths = []
+      @_paths = []
 
     end
 
@@ -48,16 +48,17 @@ module Ladb::OpenCutList::Kuix
     def do_layout
 
       content_size = self.content_size
+      no_pattern_transform = @patterns_transformation.identity?
 
-      @paths.clear
+      @_paths.clear
       @patterns.each do |pattern|
         points = []
         pattern.each do |pattern_point|
           pt = Geom::Point3d.new(pattern_point.x, pattern_point.y, 0)
-          pt.transform!(@patterns_transformation) unless @patterns_transformation.identity?
+          pt.transform!(@patterns_transformation) unless no_pattern_transform
           points << Geom::Point3d.new(pt.x * content_size.width, pt.y * content_size.height, 0)
         end
-        @paths << points
+        @_paths << points
       end
 
       super
@@ -65,8 +66,8 @@ module Ladb::OpenCutList::Kuix
 
     # -- RENDER --
 
-    def paint_content(graphics)
-      @paths.each do |points|
+    def paint_itself(graphics)
+      @_paths.each do |points|
         graphics.draw_line_strip(
           points: points,
           color: @color,

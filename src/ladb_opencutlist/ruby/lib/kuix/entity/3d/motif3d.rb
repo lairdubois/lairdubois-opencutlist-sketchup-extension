@@ -25,9 +25,8 @@ module Ladb::OpenCutList::Kuix
 
     # -- LAYOUT --
 
-    def do_layout(transformation)
-      super
-      @_path_transformation = transformation * @transformation
+    def do_layout_content(transformation)
+      @_path_transformation = transformation
       no_transform = @_path_transformation.identity?
       no_pattern_transform = @patterns_transformation.identity?
       @_paths.clear
@@ -43,6 +42,7 @@ module Ladb::OpenCutList::Kuix
         @_paths << points
         @extents.add(points) unless points.empty?
       end
+      super
     end
 
     # -- RENDER --

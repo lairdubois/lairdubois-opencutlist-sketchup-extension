@@ -59,33 +59,30 @@ module Ladb::OpenCutList::Kuix
       center_entity = nil
 
       # Loop on children
-      entity = target.child
-      until entity.nil?
-        if entity.visible?
+      target.children.each do |entity|
+        next unless entity.visible?
 
-          if entity.layout_data.is_a?(BorderLayoutData)
+        if entity.layout_data.is_a?(BorderLayoutData)
 
-            case entity.layout_data.position
-            when BorderLayoutData::NORTH
-              north_entity = entity
-            when BorderLayoutData::WEST
-              west_entity = entity
-            when BorderLayoutData::EAST
-              east_entity = entity
-            when BorderLayoutData::SOUTH
-              south_entity = entity
-            else
-              if center_entity.nil?
-                center_entity = entity
-              end
+          case entity.layout_data.position
+          when BorderLayoutData::NORTH
+            north_entity = entity
+          when BorderLayoutData::WEST
+            west_entity = entity
+          when BorderLayoutData::EAST
+            east_entity = entity
+          when BorderLayoutData::SOUTH
+            south_entity = entity
+          else
+            if center_entity.nil?
+              center_entity = entity
             end
-
-          elsif center_entity.nil?
-            center_entity = entity
           end
 
+        elsif center_entity.nil?
+          center_entity = entity
         end
-        entity = entity.next
+
       end
 
       # Compute gap values
