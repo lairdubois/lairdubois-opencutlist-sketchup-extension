@@ -2960,6 +2960,9 @@ module Ladb::OpenCutList
       _purge_definitions
       if @selected_face_manipulators.any?
 
+        # Hide tool validation
+        @tool.hide_validation
+
         # Remove faces and edges
         _erase_drawings
 
@@ -3588,7 +3591,7 @@ module Ladb::OpenCutList
         gd_plane = sfm.plane
         up_plane = [ up_centroid, sfm.normal ]
 
-        # 1. Extract points from face vertices
+        # 1. Extract points from face outer vertices
 
         gd_points = []
         up_points = []
@@ -3646,7 +3649,6 @@ module Ladb::OpenCutList
         # 2. Create part definition + instance
 
         definition = _create_definition(sfm.face, PLUGIN.get_i18n_string('default.part_single').capitalize)
-        instance = active_entities.add_instance(definition, IDENTITY)
         entities = definition.entities
 
         # 3. Draw main faces
@@ -3688,7 +3690,7 @@ module Ladb::OpenCutList
 
         t = Geom::Transformation.axes(sfm.centroid, x_axis, y_axis, z_axis)
 
-        instance.transform!(t)
+        active_entities.add_instance(definition, t)
         definition.entities.transform_entities(t.inverse, definition.entities.to_a)
 
 
@@ -3697,6 +3699,7 @@ module Ladb::OpenCutList
 
       end
 
+      # Update tool validation display
       if @selected_face_manipulators.any?
         @tool.show_validation
       else
