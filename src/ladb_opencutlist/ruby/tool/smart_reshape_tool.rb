@@ -308,7 +308,7 @@ module Ladb::OpenCutList
         _refresh
 
       else
-        stop
+        # stop
         Sketchup.active_model.tools.pop_tool
       end
 
@@ -3190,6 +3190,7 @@ module Ladb::OpenCutList
     protected
 
     def _reset
+      _purge_definitions
       _unhide_drawings
       @drawing_def = nil
       @hover_face_manipulators.clear
@@ -3202,7 +3203,6 @@ module Ladb::OpenCutList
 
     def _restart
       if @tool.callback_action_handler.nil?
-        @tool.hide_validation
         super
       else
         @tool.callback_action_handler.previous_action_handler = self
