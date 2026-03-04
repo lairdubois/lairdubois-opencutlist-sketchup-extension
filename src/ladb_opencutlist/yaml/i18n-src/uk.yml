@@ -2093,7 +2093,7 @@ tool:
     error:
       no_direction: "Будь ласка, вкажіть напрямок мишкою"
       invalid_length: "Довжина {{ value }} недійсна"
-      invalid_thickness: ""
+      invalid_thickness: "Товщина {{ value }} недійсна"
       invalid_multiplicator: "Коефіцієнт {{ value }} недійсний"
       invalid_divider: "Дільник {{ value }} недійсний"
       invalid_offset: "Зміщення {{ value }} недійсне"
@@ -2212,27 +2212,27 @@ tool:
     action_0_state_11_status: "Натисніть, щоб додати січну площину"
     action_0_state_12_status: "Натисніть на січну площину, щоб видалити її"
     action_0_state_2_status: "Натисніть, щоб підтвердити розтяжку або ввести відстань"
-    action_1: ""
-    action_1_status: ""
-    action_1_state_0_status: ""
-    action_1_state_1_status: ""
+    action_1: Створення панелей
+    action_1_status: Створіть серію деталей із замкнутого тіла
+    action_1_state_0_status: "Клацніть замкнуте тіло, щоб визначити еталонну геометрію"
+    action_1_state_1_status: Виберіть грані для екструдування
     action_option_group_thickness: Товщина
     action_option_group_stretch_measure_type: Вимірювання
     action_option_group_axes: Осі
-    action_option_group_paneling_joint_type: ""
+    action_option_group_paneling_joint_type: Збірка
     action_option_group_paneling_direction: Напрямок
     action_option_group_options: Опції
     action_option_thickness_thickness: Товщина
-    action_option_thickness_thickness_status: ""
+    action_option_thickness_thickness_status: Визначте товщину панелей
     action_option_stretch_measure_type_outside_status: Зовнішнє вимірювання
     action_option_stretch_measure_type_offset_status: Виміряти різницю
     action_option_axes_active_status: Переміщення вздовж активних осей
     action_option_axes_context_status: "Переміщення вздовж осей групи або компонента, що містить деталь"
     action_option_axes_entity_status: Переміщення по осях деталі
-    action_option_paneling_joint_type_flat_status: ""
-    action_option_paneling_joint_type_miter_status: ""
-    action_option_paneling_direction_inward_status: ""
-    action_option_paneling_direction_outward_status: ""
+    action_option_paneling_joint_type_flat_status: Плоске з'єднання
+    action_option_paneling_joint_type_miter_status: Косий зріз
+    action_option_paneling_direction_inward_status: В середині
+    action_option_paneling_direction_outward_status: Ззовні
     action_option_options_centred_status: Центрувати на розтягнутих елементах
     action_option_options_make_unique_status: Зробити розтягнуті елементи унікальними
     error:
