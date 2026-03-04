@@ -129,7 +129,7 @@ core:
       smart_reshape: Předělat díly
       smart_paint: Materiály dílů
       smart_axes: Orientace dílů
-      smart_join: ""
+      smart_join: Sestavit díly
       smart_export: Export dílů
   messagebox:
     dir_override: |
@@ -1075,7 +1075,7 @@ tab:
       option_irregular_allowed_rotations_0: Ne
       option_irregular_allowed_rotations_90: Kroky po 90°
       option_irregular_allowed_rotations_180: Kroky po 180°
-      option_irregular_allowed_rotations_free: ""
+      option_irregular_allowed_rotations_free: Zdarma (experimentální)
       option_irregular_allow_mirroring: Zrcadlení povoleno
       option_irregular_allow_mirroring_help: |
         Definuje, zda je pro umístění povoleno zrcadlení dílce.
@@ -2085,6 +2085,7 @@ tool:
     middle_point: Střed
     third_point: Jedna třetina bodu
     vcb_length: Délka
+    vcb_thickness: Tloušťka
     vcb_size: Rozměry
     vcb_radius: Radius
     vcb_diameter: Průměr
@@ -2092,6 +2093,7 @@ tool:
     error:
       no_direction: "Prosím, označte směr myší"
       invalid_length: "Délka {{ value }} je neplatná"
+      invalid_thickness: ""
       invalid_multiplicator: "Faktor {{ value }} je neplatný"
       invalid_divider: "Dělitel {{ value }} je neplatný"
       invalid_offset: "Offset {{ value }} je neplatný"
@@ -2103,8 +2105,8 @@ tool:
       zero_division: "Dělení nulou"
       lt_min_distance: "Vzdálenost {{ value1 }} je menší než minimální vzdálenost {{ value2 }}"
       gt_max_distance: "Vzdálenost {{ value1 }} je větší než maximální vzdálenost {{ value2 }}"
-      locked_part: ""
-      selection_contains_locked_entities: ""
+      locked_part: Tato část je uzamčena
+      selection_contains_locked_entities: Výběr obsahuje uzamčené entity
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2114,6 +2116,7 @@ tool:
     state_4_status: "Přetáhněte na identický díl se stejným rodičem, abyste jej přidali do výběru, a poté uvolněte, abyste pokračovali"
     state_5_status: "Přejeďte prstem, abyste přidali do výběru, a uvolněte, abyste pokračovali"
     state_6_status: Vyberte položku ze seznamu
+    state_7_status: Kliknutím na díl ho přidáte nebo odeberete z výběru
     warning:
       no_active_part: Nejprve musíte najet kurzorem na díl
   smart_draw:
@@ -2154,10 +2157,10 @@ tool:
     action_option_options_pull_centered: Výškové vycentrování
     action_option_options_pull_centered_status: Kreslení 3D tělesa od středu
     action_option_options_pull_locked_status: Zamknout výšku na jedné ose
-    action_option_options_draw_in: ""
-    action_option_options_draw_in_0: ""
-    action_option_options_draw_in_1: ""
-    action_option_options_draw_in_status: ""
+    action_option_options_draw_in: Kreslit v
+    action_option_options_draw_in_0: Nakreslit aktivní prvek
+    action_option_options_draw_in_1: Nakreslete nadřazený bod části prvního bodu
+    action_option_options_draw_in_status: "Nakreslete rodičovský objekt části, na kterou je zaměřen první bod."
     action_option_options_ask_name: Pojmenování dílců
     action_option_options_ask_name_status: Ruční zadání názvů dílců
     action_measure_locked_status: Zamknout poslední měření
@@ -2198,7 +2201,7 @@ tool:
     warning:
       copies_disable_mirror: Více kopií zakáže volbu '$t(tool.smart_handle.action_option_options_mirror_status)'
   smart_reshape:
-    title: Přetvořit
+    title: Předělat díly
     action_0: Protažení
     action_0_status: Natáhnout díl
     action_0_state_1_status: Klikněte na úchytku pro roztažení
@@ -2209,14 +2212,27 @@ tool:
     action_0_state_11_status: Klikněte pro přidání řezacího plánu
     action_0_state_12_status: Kliknutím na řeznou rovinu ji odstraníte
     action_0_state_2_status: Kliknutím potvrďte roztažení nebo zadejte vzdálenost
+    action_1: ""
+    action_1_status: ""
+    action_1_state_0_status: ""
+    action_1_state_1_status: ""
+    action_option_group_thickness: Tloušťka
     action_option_group_stretch_measure_type: Kopie dílce
     action_option_group_axes: Osy
+    action_option_group_paneling_joint_type: ""
+    action_option_group_paneling_direction: Směr
     action_option_group_options: Nastavení
+    action_option_thickness_thickness: Tloušťka
+    action_option_thickness_thickness_status: ""
     action_option_stretch_measure_type_outside_status: Vzdálenost včetně dílce
     action_option_stretch_measure_type_offset_status: Rozdíl v měření
     action_option_axes_active_status: Manipulace podél os
     action_option_axes_context_status: Manipulovat podél os skupiny nebo dílců obsahující díl
     action_option_axes_entity_status: Manipulace podél os dílu
+    action_option_paneling_joint_type_flat_status: ""
+    action_option_paneling_joint_type_miter_status: ""
+    action_option_paneling_direction_inward_status: ""
+    action_option_paneling_direction_outward_status: ""
     action_option_options_centred_status: Vycentrovat na protáhlé prvky
     action_option_options_make_unique_status: Udělejte roztažené prvky jedinečnými
     error:
@@ -2295,8 +2311,8 @@ tool:
       not_part: Cílový objekt není díl (komponenty)
       not_orientable: Typ tohoto dílce neumožňuje orientaci
   smart_join:
-    title: ""
-    action_0: "" # TODO: It's currently just for dev purposes
+    title: Sestavit
+    action_0: Dotek dotek # TODO: It's currently just for dev purposes
   smart_export:
     title: Export
     action_0: Export 3D dílu

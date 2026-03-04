@@ -2075,6 +2075,7 @@ tool:
     middle_point: 中点
     third_point: 三分点
     vcb_length: 引线
+    vcb_thickness: 厚度
     vcb_size: 尺寸
     vcb_radius: 半径
     vcb_diameter: 直径
@@ -2082,6 +2083,7 @@ tool:
     error:
       no_direction: 请用鼠标指示一个方向
       invalid_length: "长度 {{ value }} 无效"
+      invalid_thickness: ""
       invalid_multiplicator: "倍数 {{ value }} 无效"
       invalid_divider: "除数 {{ value }} 无效"
       invalid_offset: "偏移 {{ value }} 无效"
@@ -2104,6 +2106,7 @@ tool:
     state_4_status: ""
     state_5_status: ""
     state_6_status: ""
+    state_7_status: ""
     warning:
       no_active_part: ""
   smart_draw:
@@ -2199,14 +2202,27 @@ tool:
     action_0_state_11_status: ""
     action_0_state_12_status: ""
     action_0_state_2_status: ""
+    action_1: ""
+    action_1_status: ""
+    action_1_state_0_status: ""
+    action_1_state_1_status: ""
+    action_option_group_thickness: 厚度
     action_option_group_stretch_measure_type: 测量
     action_option_group_axes: 坐标轴
+    action_option_group_paneling_joint_type: ""
+    action_option_group_paneling_direction: 方向
     action_option_group_options: 选项
+    action_option_thickness_thickness: 厚度
+    action_option_thickness_thickness_status: ""
     action_option_stretch_measure_type_outside_status: 外部测量
     action_option_stretch_measure_type_offset_status: ""
     action_option_axes_active_status: 沿活动轴操作
     action_option_axes_context_status: 沿群组轴或包含部件的组件的轴操作
     action_option_axes_entity_status: 沿部件轴操作
+    action_option_paneling_joint_type_flat_status: ""
+    action_option_paneling_joint_type_miter_status: ""
+    action_option_paneling_direction_inward_status: ""
+    action_option_paneling_direction_outward_status: ""
     action_option_options_centred_status: ""
     action_option_options_make_unique_status: ""
     error:

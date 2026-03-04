@@ -2075,6 +2075,7 @@ tool:
     middle_point: Središnja tačka
     third_point: Tačka na trećini
     vcb_length: Dužina
+    vcb_thickness: Debljina
     vcb_size: Dimenzije
     vcb_radius: Poluprečnik
     vcb_diameter: Prečnik
@@ -2082,6 +2083,7 @@ tool:
     error:
       no_direction: Odredite smer mišem
       invalid_length: "Dužina {{ value }} nije validna"
+      invalid_thickness: ""
       invalid_multiplicator: "Množilac {{ value }} nije validan"
       invalid_divider: "Delilac {{ value }} nije validan"
       invalid_offset: "Pomak {{ value }} nije validan"
@@ -2104,6 +2106,7 @@ tool:
     state_4_status: ""
     state_5_status: ""
     state_6_status: ""
+    state_7_status: ""
     warning:
       no_active_part: ""
   smart_draw:
@@ -2199,14 +2202,27 @@ tool:
     action_0_state_11_status: ""
     action_0_state_12_status: ""
     action_0_state_2_status: ""
+    action_1: ""
+    action_1_status: ""
+    action_1_state_0_status: ""
+    action_1_state_1_status: ""
+    action_option_group_thickness: Debljina
     action_option_group_stretch_measure_type: Merenje
     action_option_group_axes: Ose
+    action_option_group_paneling_joint_type: ""
+    action_option_group_paneling_direction: Pravac
     action_option_group_options: Opcije
+    action_option_thickness_thickness: Debljina
+    action_option_thickness_thickness_status: ""
     action_option_stretch_measure_type_outside_status: Merite spolja
     action_option_stretch_measure_type_offset_status: ""
     action_option_axes_active_status: Manipuliši po aktivnim osama
     action_option_axes_context_status: Manipuliši po osama grupe/komponente koja sadrži komad
     action_option_axes_entity_status: Manipuliši po osama komada
+    action_option_paneling_joint_type_flat_status: ""
+    action_option_paneling_joint_type_miter_status: ""
+    action_option_paneling_direction_inward_status: ""
+    action_option_paneling_direction_outward_status: ""
     action_option_options_centred_status: ""
     action_option_options_make_unique_status: ""
     error:

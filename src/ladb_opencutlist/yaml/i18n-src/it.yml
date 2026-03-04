@@ -2085,6 +2085,7 @@ tool:
     middle_point: Punto medio
     third_point: Punto terzo
     vcb_length: Lunghezza
+    vcb_thickness: Spessore
     vcb_size: Quotatura
     vcb_radius: Raggio
     vcb_diameter: Diametro
@@ -2092,6 +2093,7 @@ tool:
     error:
       no_direction: Indicate una direzione con il mouse
       invalid_length: "La lunghezza {{ value }} non è valida"
+      invalid_thickness: ""
       invalid_multiplicator: "Il moltiplicatore {{ value }} non è valido"
       invalid_divider: "Il divisore {{ value }} non è valido"
       invalid_offset: "L'offset {{ value }} non è valido"
@@ -2114,6 +2116,7 @@ tool:
     state_4_status: "Trascina su un elemento identico con lo stesso genitore per aggiungerlo alla selezione, quindi rilascia per continuare"
     state_5_status: Scorri per aggiungere alla selezione e rilascia per continuare
     state_6_status: Selezionare un elemento dall'elenco
+    state_7_status: ""
     warning:
       no_active_part: Devi prima passare con il mouse su una parte
   smart_draw:
@@ -2209,14 +2212,27 @@ tool:
     action_0_state_11_status: Clicca per aggiungere il piano di taglio
     action_0_state_12_status: Clicca su un piano di taglio per eliminarlo
     action_0_state_2_status: Clicca per confermare l'allungamento o inserisci una distanza
+    action_1: ""
+    action_1_status: ""
+    action_1_state_0_status: ""
+    action_1_state_1_status: ""
+    action_option_group_thickness: Spessore
     action_option_group_stretch_measure_type: Misura
     action_option_group_axes: Assi
+    action_option_group_paneling_joint_type: ""
+    action_option_group_paneling_direction: Direzione
     action_option_group_options: Opzioni
+    action_option_thickness_thickness: Spessore
+    action_option_thickness_thickness_status: ""
     action_option_stretch_measure_type_outside_status: Misura esterna
     action_option_stretch_measure_type_offset_status: Misura la differenza
     action_option_axes_active_status: Sposta lungo l'asse attivo
     action_option_axes_context_status: Modificare lungo gli assi del gruppo o del componente contenente il pezzo
     action_option_axes_entity_status: Modifica su un asse dell'elemento
+    action_option_paneling_joint_type_flat_status: ""
+    action_option_paneling_joint_type_miter_status: ""
+    action_option_paneling_direction_inward_status: ""
+    action_option_paneling_direction_outward_status: ""
     action_option_options_centred_status: Centrare sugli elementi allungati
     action_option_options_make_unique_status: Rendere unici gli elementi allungati
     error:

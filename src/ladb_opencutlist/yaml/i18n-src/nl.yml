@@ -2085,6 +2085,7 @@ tool:
     middle_point: Middelpunt
     third_point: Punt van derden
     vcb_length: Lengte
+    vcb_thickness: Dikte
     vcb_size: Afmetingen
     vcb_radius: Radius
     vcb_diameter: Diameter
@@ -2092,6 +2093,7 @@ tool:
     error:
       no_direction: Geef een richting aan met de cursor
       invalid_length: "De lengte {{ value }} is ongeldig"
+      invalid_thickness: ""
       invalid_multiplicator: "De vermenigvuldigingsfactor {{ value }} is ongeldig"
       invalid_divider: "De deler {{ value }} is ongeldig"
       invalid_offset: "De verschuiving {{ value }} is ongeldig"
@@ -2114,6 +2116,7 @@ tool:
     state_4_status: Sleep naar een identiek onderdeel met dezelfde bovenliggende component om het aan de selectie toe te voegen en laat vervolgens los om door te gaan
     state_5_status: Veeg om toe te voegen aan selectie en laat los om door te gaan
     state_6_status: Selecteer een element uit de lijst
+    state_7_status: ""
     warning:
       no_active_part: U moet eerst met de muis over een onderdeel gaan
   smart_draw:
@@ -2209,14 +2212,27 @@ tool:
     action_0_state_11_status: Klik om het doorsnedevlak toe te voegen
     action_0_state_12_status: Klik op een doorsnedevlak om het te verwijderen
     action_0_state_2_status: Klik om het uitrekken te bevestigen of voer een afstand in
+    action_1: ""
+    action_1_status: ""
+    action_1_state_0_status: ""
+    action_1_state_1_status: ""
+    action_option_group_thickness: Dikte
     action_option_group_stretch_measure_type: Meten
     action_option_group_axes: Assen
+    action_option_group_paneling_joint_type: ""
+    action_option_group_paneling_direction: Richting
     action_option_group_options: Opties
+    action_option_thickness_thickness: Dikte
+    action_option_thickness_thickness_status: ""
     action_option_stretch_measure_type_outside_status: Aan de buitenzijde meten
     action_option_stretch_measure_type_offset_status: Het verschil meten
     action_option_axes_active_status: Verplaatsen langs de actieve assen
     action_option_axes_context_status: Verplaatsen langs de assen van de groep of component die het stuk bevat
     action_option_axes_entity_status: Verplaatsen langs de assen van het stuk
+    action_option_paneling_joint_type_flat_status: ""
+    action_option_paneling_joint_type_miter_status: ""
+    action_option_paneling_direction_inward_status: ""
+    action_option_paneling_direction_outward_status: ""
     action_option_options_centred_status: Centraal plaatsen op gestrekte elementen
     action_option_options_make_unique_status: Rekbare elementen uniek maken
     error:

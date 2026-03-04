@@ -2079,6 +2079,7 @@ tool:
     middle_point: Środkowy punkt
     third_point: Punkt trzeci
     vcb_length: Długość
+    vcb_thickness: Grubość
     vcb_size: Cytaty
     vcb_radius: Promień
     vcb_diameter: Średnica
@@ -2086,6 +2087,7 @@ tool:
     error:
       no_direction: Proszę wskazać kierunek myszką
       invalid_length: "Długość {{ value }} jest nieprawidłowa"
+      invalid_thickness: ""
       invalid_multiplicator: "Mnożnik {{ value }} jest nieprawidłowa"
       invalid_divider: "Iloraz {{ value }} jest nieprawidłowa"
       invalid_offset: "Przesunięcie {{ value }} jest nieprawidłowa"
@@ -2108,6 +2110,7 @@ tool:
     state_4_status: ""
     state_5_status: ""
     state_6_status: Wybierz element z listy
+    state_7_status: ""
     warning:
       no_active_part: ""
   smart_draw:
@@ -2203,14 +2206,27 @@ tool:
     action_0_state_11_status: ""
     action_0_state_12_status: ""
     action_0_state_2_status: ""
+    action_1: ""
+    action_1_status: ""
+    action_1_state_0_status: ""
+    action_1_state_1_status: ""
+    action_option_group_thickness: Grubość
     action_option_group_stretch_measure_type: Pomiary
     action_option_group_axes: Osie
+    action_option_group_paneling_joint_type: ""
+    action_option_group_paneling_direction: Kierunek
     action_option_group_options: Opcje
+    action_option_thickness_thickness: Grubość
+    action_option_thickness_thickness_status: ""
     action_option_stretch_measure_type_outside_status: Pomiar zewnętrzny
     action_option_stretch_measure_type_offset_status: Zmierz różnice
     action_option_axes_active_status: Manipuluj wzdłuż aktywnych osi
     action_option_axes_context_status: Manipuluj wzdłuż osi grupy lub komponentu zawierającego element
     action_option_axes_entity_status: Manipuluj wzdłuż osi elementu
+    action_option_paneling_joint_type_flat_status: ""
+    action_option_paneling_joint_type_miter_status: ""
+    action_option_paneling_direction_inward_status: ""
+    action_option_paneling_direction_outward_status: ""
     action_option_options_centred_status: ""
     action_option_options_make_unique_status: ""
     error:

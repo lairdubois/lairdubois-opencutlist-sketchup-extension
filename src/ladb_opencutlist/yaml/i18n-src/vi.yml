@@ -2085,6 +2085,7 @@ tool:
     middle_point: Điểm giữa
     third_point: Điểm một phần ba
     vcb_length: Chiều dài
+    vcb_thickness: Độ dày
     vcb_size: Kích thước
     vcb_radius: Bán kính
     vcb_diameter: Đường kính
@@ -2092,6 +2093,7 @@ tool:
     error:
       no_direction: Vui lòng chỉ ra hướng bằng chuột của bạn
       invalid_length: "Chiều dài {{ value }} không hợp lệ"
+      invalid_thickness: ""
       invalid_multiplicator: "Yếu tố {{ value }} không hợp lệ"
       invalid_divider: "Số chia {{ value }} không hợp lệ"
       invalid_offset: "Độ lệch {{ value }} không hợp lệ"
@@ -2114,6 +2116,7 @@ tool:
     state_4_status: "Kéo chuột vào một mảnh ghép giống hệt có cùng mảnh ghép cha để thêm nó vào vùng chọn, sau đó thả chuột để tiếp tục."
     state_5_status: Vuốt để thêm vào vùng chọn và thả ra để tiếp tục
     state_6_status: Chọn một phần tử từ danh sách
+    state_7_status: ""
     warning:
       no_active_part: Trước tiên bạn phải di chuột qua một bộ phận
   smart_draw:
@@ -2209,14 +2212,27 @@ tool:
     action_0_state_11_status: Nhấp chuột để thêm mặt phẳng cắt
     action_0_state_12_status: Nhấp chuột vào mặt phẳng cắt để xóa nó.
     action_0_state_2_status: Nhấp chuột để xác nhận động tác kéo dài hoặc nhập khoảng cách.
+    action_1: ""
+    action_1_status: ""
+    action_1_state_0_status: ""
+    action_1_state_1_status: ""
+    action_option_group_thickness: Độ dày
     action_option_group_stretch_measure_type: Đo lường
     action_option_group_axes: Trục
+    action_option_group_paneling_joint_type: ""
+    action_option_group_paneling_direction: Hướng
     action_option_group_options: Tùy chọn
+    action_option_thickness_thickness: Độ dày
+    action_option_thickness_thickness_status: ""
     action_option_stretch_measure_type_outside_status: Đo lường bên ngoài
     action_option_stretch_measure_type_offset_status: Đo lường sự khác biệt
     action_option_axes_active_status: Thao tác dọc theo các trục đang hoạt động
     action_option_axes_context_status: Thao tác dọc theo các trục của nhóm hoặc thành phần chứa bộ phận
     action_option_axes_entity_status: Thao tác dọc theo trục bộ phận
+    action_option_paneling_joint_type_flat_status: ""
+    action_option_paneling_joint_type_miter_status: ""
+    action_option_paneling_direction_inward_status: ""
+    action_option_paneling_direction_outward_status: ""
     action_option_options_centred_status: Tập trung vào các yếu tố bị kéo dài
     action_option_options_make_unique_status: Làm cho các phần tử kéo dài trở nên độc lập
     error:

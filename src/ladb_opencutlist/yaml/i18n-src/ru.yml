@@ -2085,6 +2085,7 @@ tool:
     middle_point: Средняя точка
     third_point: Сторонняя точка
     vcb_length: Длина
+    vcb_thickness: Толщина
     vcb_size: Размеры
     vcb_radius: Радиус
     vcb_diameter: Диаметр
@@ -2092,6 +2093,7 @@ tool:
     error:
       no_direction: "Пожалуйста, укажите направление с помощью курсора мыши"
       invalid_length: "Длина {{ value }} недопустима"
+      invalid_thickness: ""
       invalid_multiplicator: "Множитель {{ value }} недопустим"
       invalid_divider: "Дробление {{ value }} недопустимо"
       invalid_offset: "Смещение {{ value }} недопустимо"
@@ -2210,14 +2212,27 @@ tool:
     action_0_state_11_status: "Нажмите, чтобы добавить схему распила"
     action_0_state_12_status: "Нажмите на схему распила, чтобы удалить ее"
     action_0_state_2_status: "Кликните, чтобы подтвердить растяжение, или введите расстояние"
+    action_1: ""
+    action_1_status: ""
+    action_1_state_0_status: ""
+    action_1_state_1_status: ""
+    action_option_group_thickness: Толщина
     action_option_group_stretch_measure_type: Отсчет
     action_option_group_axes: Оси
+    action_option_group_paneling_joint_type: ""
+    action_option_group_paneling_direction: Измерение
     action_option_group_options: Опции
+    action_option_thickness_thickness: Толщина
+    action_option_thickness_thickness_status: ""
     action_option_stretch_measure_type_outside_status: Внешнее измерение
     action_option_stretch_measure_type_offset_status: Измерить размеры
     action_option_axes_active_status: Перемещение по активным осям
     action_option_axes_context_status: "Перемещение по осям группы или компонента, содержащего деталь"
     action_option_axes_entity_status: Перемещение по осям детали
+    action_option_paneling_joint_type_flat_status: ""
+    action_option_paneling_joint_type_miter_status: ""
+    action_option_paneling_direction_inward_status: ""
+    action_option_paneling_direction_outward_status: ""
     action_option_options_centred_status: Центрировать по растянутым элементам
     action_option_options_make_unique_status: Сделать растянутые элементы уникальными
     error:
