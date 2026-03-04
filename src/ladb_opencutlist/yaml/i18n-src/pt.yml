@@ -2079,6 +2079,7 @@ tool:
     middle_point: Ponto médio
     third_point: Ponto teceiro
     vcb_length: Comprimento
+    vcb_thickness: Espessura
     vcb_size: Cotações
     vcb_radius: Raio
     vcb_diameter: Diâmetro
@@ -2086,6 +2087,7 @@ tool:
     error:
       no_direction: Indique uma direção com o mouse
       invalid_length: "O comprimento {{ value }} é inválido"
+      invalid_thickness: ""
       invalid_multiplicator: "O multiplicador {{ value }} é inválido"
       invalid_divider: "O divisor {{ value }} é inválido"
       invalid_offset: "O deslocamento {{ value }} é inválido"
@@ -2108,6 +2110,7 @@ tool:
     state_4_status: Arraste uma peça idêntica com o mesmo pai para adicioná-la à seleção e solte para continuar
     state_5_status: Deslize para adicionar à seleção e solte para continuar
     state_6_status: Selecione um item da lista
+    state_7_status: ""
     warning:
       no_active_part: "Primeiro, você deve passar o mouse sobre uma peça"
   smart_draw:
@@ -2203,14 +2206,27 @@ tool:
     action_0_state_11_status: Clique para adicionar o plano de corte
     action_0_state_12_status: Clique em um plano de corte para excluí-lo
     action_0_state_2_status: Clique para confirmar o estiramento ou insira uma distância
+    action_1: ""
+    action_1_status: ""
+    action_1_state_0_status: ""
+    action_1_state_1_status: ""
+    action_option_group_thickness: Espessura
     action_option_group_stretch_measure_type: Medida
     action_option_group_axes: Eixos
+    action_option_group_paneling_joint_type: ""
+    action_option_group_paneling_direction: Direção
     action_option_group_options: Opções
+    action_option_thickness_thickness: Espessura
+    action_option_thickness_thickness_status: ""
     action_option_stretch_measure_type_outside_status: Medida externa
     action_option_stretch_measure_type_offset_status: Medir a diferença
     action_option_axes_active_status: Manipular ao longo dos eixos ativos
     action_option_axes_context_status: Manipular ao longo dos eixos do grupo ou componente que contém a peça
     action_option_axes_entity_status: Manipular ao longo dos eixos da peça
+    action_option_paneling_joint_type_flat_status: ""
+    action_option_paneling_joint_type_miter_status: ""
+    action_option_paneling_direction_inward_status: ""
+    action_option_paneling_direction_outward_status: ""
     action_option_options_centred_status: Centrar em elementos esticados
     action_option_options_make_unique_status: Tornar elementos esticados únicos
     error:

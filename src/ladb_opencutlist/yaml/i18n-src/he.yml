@@ -116,6 +116,7 @@ core:
       smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
+      smart_join: ""
       smart_export: $t(core.toolbar.command.smart_export)
       reset_dialog_position: אפס את מיקום החלון
   toolbar:
@@ -128,6 +129,7 @@ core:
       smart_reshape: עדכון חלקים
       smart_paint: צביעת חלקים
       smart_axes: כוון חלקים
+      smart_join: ""
       smart_export: יצוא חלקים
   messagebox:
     dir_override: |
@@ -471,11 +473,11 @@ tab:
         *OpenCutList יספור 2 חתיכות בעובי 19 מ"מ במקום חתיכה אחת בעובי 38 מ"מ.*
       cut_options: $t(tab.materials.edit_material.cut_options)
       length_increase: $t(tab.materials.edit_material.length_increase)
-      length_increase_help: ""
+      length_increase_help: ""  # TODO: singular version of tab.materials.edit_material.length_increase
       width_increase: $t(tab.materials.edit_material.width_increase)
-      width_increase_help: ""
+      width_increase_help: "" # TODO: singular version of tab.materials.edit_material.width_increase
       thickness_increase: $t(tab.materials.edit_material.thickness_increase)
-      thickness_increase_help: ""
+      thickness_increase_help: "" # TODO: singular version of tab.materials.edit_material.thickness_increase
       description: תיאור
       description_help: |
         *התיאור* מאפשר לך לספק מידע מותאם אישית על כל הגדרת חלק.
@@ -1067,6 +1069,7 @@ tab:
       option_irregular_allowed_rotations_0: אין
       option_irregular_allowed_rotations_90: צעד של 90°
       option_irregular_allowed_rotations_180: צעד של 180°
+      option_irregular_allowed_rotations_free: ""
       option_irregular_allow_mirroring: המראה מותרת
       option_irregular_allow_mirroring_help: |
         קובע האם מותר להציב את המראת החלק.
@@ -2006,6 +2009,7 @@ tool:
     middle_point: ""
     third_point: ""
     vcb_length: אורך
+    vcb_thickness: עובי
     vcb_size: ""
     vcb_radius: ""
     vcb_diameter: ""
@@ -2013,6 +2017,7 @@ tool:
     error:
       no_direction: ""
       invalid_length: ""
+      invalid_thickness: ""
       invalid_multiplicator: ""
       invalid_divider: ""
       invalid_offset: ""
@@ -2024,6 +2029,8 @@ tool:
       zero_division: ""
       lt_min_distance: ""
       gt_max_distance: ""
+      locked_part: ""
+      selection_contains_locked_entities: ""
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2033,6 +2040,7 @@ tool:
     state_4_status: ""
     state_5_status: ""
     state_6_status: ""
+    state_7_status: ""
     warning:
       no_active_part: ""
   smart_draw:
@@ -2073,6 +2081,10 @@ tool:
     action_option_options_pull_centered: ""
     action_option_options_pull_centered_status: ""
     action_option_options_pull_locked_status: ""
+    action_option_options_draw_in: ""
+    action_option_options_draw_in_0: ""
+    action_option_options_draw_in_1: ""
+    action_option_options_draw_in_status: ""
     action_option_options_ask_name: ""
     action_option_options_ask_name_status: ""
     action_measure_locked_status: ""
@@ -2105,9 +2117,6 @@ tool:
     action_option_copy_measure_type_outside_status: ""
     action_option_copy_measure_type_centered_status: ""
     action_option_copy_measure_type_inside_status: ""
-    action_option_move_measure_type_outside_status: ""
-    action_option_move_measure_type_centered_status: ""
-    action_option_move_measure_type_inside_status: ""
     action_option_axes_active_status: ""
     action_option_axes_context_status: ""
     action_option_axes_entity_status: ""
@@ -2127,14 +2136,27 @@ tool:
     action_0_state_11_status: ""
     action_0_state_12_status: ""
     action_0_state_2_status: ""
+    action_1: ""
+    action_1_status: ""
+    action_1_state_0_status: ""
+    action_1_state_1_status: ""
+    action_option_group_thickness: עובי
     action_option_group_stretch_measure_type: ""
     action_option_group_axes: צירים
+    action_option_group_paneling_joint_type: ""
+    action_option_group_paneling_direction: כיוון
     action_option_group_options: אפשרויות
+    action_option_thickness_thickness: עובי
+    action_option_thickness_thickness_status: ""
     action_option_stretch_measure_type_outside_status: ""
     action_option_stretch_measure_type_offset_status: ""
     action_option_axes_active_status: ""
     action_option_axes_context_status: ""
     action_option_axes_entity_status: ""
+    action_option_paneling_joint_type_flat_status: ""
+    action_option_paneling_joint_type_miter_status: ""
+    action_option_paneling_direction_inward_status: ""
+    action_option_paneling_direction_outward_status: ""
     action_option_options_centred_status: ""
     action_option_options_make_unique_status: ""
     error:
@@ -2212,6 +2234,9 @@ tool:
     error:
       not_part: אובייקט היעד אינו חלק (רכיב)
       not_orientable: סוג החלק אינו מאפשר לכוון אותו
+  smart_join:
+    title: ""
+    action_0: "" # TODO: It's currently just for dev purposes
   smart_export:
     title: ייצוא
     action_0: ייצא חלק 3D

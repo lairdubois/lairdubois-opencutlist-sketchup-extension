@@ -2079,6 +2079,7 @@ tool:
     middle_point: Punto medio
     third_point: Punto a tercios
     vcb_length: Longitud
+    vcb_thickness: Grosor
     vcb_size: Cotizaciones
     vcb_radius: Radio
     vcb_diameter: Diámetro
@@ -2086,6 +2087,7 @@ tool:
     error:
       no_direction: Indique una dirección con el ratón
       invalid_length: "Longitud {{ value }} no es válida"
+      invalid_thickness: ""
       invalid_multiplicator: "Factor {{ value }} no es válido"
       invalid_divider: "Divisor {{ value }} no es válido"
       invalid_offset: "Desplazamiento {{ value }} no es válido"
@@ -2108,6 +2110,7 @@ tool:
     state_4_status: "Arrastra a una pieza idéntica con el mismo padre para añadirla a la selección y, a continuación, suelta para continuar"
     state_5_status: Desliza el dedo para añadir a la selección y suelta para continuar
     state_6_status: Seleccione un elemento de la lista
+    state_7_status: ""
     warning:
       no_active_part: Primero debes pasar el cursor sobre una pieza
   smart_draw:
@@ -2203,14 +2206,27 @@ tool:
     action_0_state_11_status: Haga clic para añadir el plano de corte
     action_0_state_12_status: Haga clic en un plano de corte para eliminarlo
     action_0_state_2_status: Haga clic para validar el estiramiento o introduzca una distancia
+    action_1: ""
+    action_1_status: ""
+    action_1_state_0_status: ""
+    action_1_state_1_status: ""
+    action_option_group_thickness: Grosor
     action_option_group_stretch_measure_type: Medida
     action_option_group_axes: Ejes
+    action_option_group_paneling_joint_type: ""
+    action_option_group_paneling_direction: Dirección
     action_option_group_options: Opciones
+    action_option_thickness_thickness: Grosor
+    action_option_thickness_thickness_status: ""
     action_option_stretch_measure_type_outside_status: Medir por el exterior
     action_option_stretch_measure_type_offset_status: Medir la diferencia
     action_option_axes_active_status: Cambiar la longitud de los ejes activos
     action_option_axes_context_status: Modificar la longitud de los ejes del grupo o componente que contienen la pieza
     action_option_axes_entity_status: Modificar la longitud de los ejes de la pieza
+    action_option_paneling_joint_type_flat_status: ""
+    action_option_paneling_joint_type_miter_status: ""
+    action_option_paneling_direction_inward_status: ""
+    action_option_paneling_direction_outward_status: ""
     action_option_options_centred_status: Centrar en los elementos estirados
     action_option_options_make_unique_status: Hacer únicos los elementos estirados
     error:

@@ -2212,9 +2212,9 @@ tool:
     action_0_state_11_status: "Klicken Sie, um die Schnittebene hinzuzufügen"
     action_0_state_12_status: "cken Sie auf eine Schnittebene, um sie zu löschen"
     action_0_state_2_status: "Klicken Sie, um die Dehnung zu bestätigen, oder geben Sie einen Abstand ein"
-    action_1: Panneauter
+    action_1: Panellieren
     action_1_status: Erstellen einer Teilereihe aus einem geschlossenen Volumenkörper
-    action_1_state_0_status: Klicken Sie auf einen geschlossenen Körper, um die Referenzgeometrie zu definieren
+    action_1_state_0_status: "Klicken Sie auf einen geschlossenen Körper, um die Referenzgeometrie zu definieren"
     action_1_state_1_status: Wählen Sie die zu extrudierenden Flächen aus
     action_option_group_thickness: Dicke
     action_option_group_stretch_measure_type: Maß
@@ -2229,8 +2229,8 @@ tool:
     action_option_axes_active_status: Manipulieren entlang der aktiven Achsen
     action_option_axes_context_status: "Manipulieren entlang der Achsen der Gruppe oder Komponente, die das Teil enthält"
     action_option_axes_entity_status: Manipulieren entlang der Achsen des Teils
-    action_option_paneling_joint_type_flat_status: Stumpf
-    action_option_paneling_joint_type_miter_status: Auf Gehrung
+    action_option_paneling_joint_type_flat_status: Stumpf verbinden
+    action_option_paneling_joint_type_miter_status: Auf Gehrung verbinden
     action_option_paneling_direction_inward_status: Nach innen
     action_option_paneling_direction_outward_status: Nach aussen
     action_option_options_centred_status: Auf die gestreckten Elemente zentrieren

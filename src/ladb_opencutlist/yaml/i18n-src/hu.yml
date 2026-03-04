@@ -2079,6 +2079,7 @@ tool:
     middle_point: Középpont
     third_point: Egyharmad rész
     vcb_length: Hosszúság
+    vcb_thickness: Vastagság
     vcb_size: Méretek
     vcb_radius: Sugár
     vcb_diameter: Átmérő
@@ -2086,6 +2087,7 @@ tool:
     error:
       no_direction: Jelöljön ki egy irányt az egérrel
       invalid_length: "A(z) {{ value }} hossz nem használható"
+      invalid_thickness: ""
       invalid_multiplicator: "A(z) {{ value }} szorzó nem használható"
       invalid_divider: "A(z) {{ value }} osztó nem használható"
       invalid_offset: "A(z) {{ value }} eltolás nem használható"
@@ -2108,6 +2110,7 @@ tool:
     state_4_status: ""
     state_5_status: ""
     state_6_status: ""
+    state_7_status: ""
     warning:
       no_active_part: ""
   smart_draw:
@@ -2203,14 +2206,27 @@ tool:
     action_0_state_11_status: Kattintson a metszősík hozzáadásához
     action_0_state_12_status: Kattintson egy metszősíkra a törléséhez
     action_0_state_2_status: "Kattintson a nyújtás véglegesítéséhez, vagy írjon be egy távolságot"
+    action_1: ""
+    action_1_status: ""
+    action_1_state_0_status: ""
+    action_1_state_1_status: ""
+    action_option_group_thickness: Vastagság
     action_option_group_stretch_measure_type: Mérés
     action_option_group_axes: Tengelyek
+    action_option_group_paneling_joint_type: ""
+    action_option_group_paneling_direction: Irány
     action_option_group_options: Beállítások
+    action_option_thickness_thickness: Vastagság
+    action_option_thickness_thickness_status: ""
     action_option_stretch_measure_type_outside_status: Külső mérés
     action_option_stretch_measure_type_offset_status: A különbség mérése
     action_option_axes_active_status: Kezelés az aktív tengelyek mentén
     action_option_axes_context_status: "Kezelés annak a csoportnak vagy komponensnek a tengelyei mentén, amely tartalmazza az alkatrészt"
     action_option_axes_entity_status: Kezelés az alkatrész tengelyei mentén
+    action_option_paneling_joint_type_flat_status: ""
+    action_option_paneling_joint_type_miter_status: ""
+    action_option_paneling_direction_inward_status: ""
+    action_option_paneling_direction_outward_status: ""
     action_option_options_centred_status: ""
     action_option_options_make_unique_status: ""
     error:

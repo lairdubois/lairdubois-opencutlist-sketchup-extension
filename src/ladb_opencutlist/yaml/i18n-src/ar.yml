@@ -2085,6 +2085,7 @@ tool:
     middle_point: المنتصف
     third_point: نقطة في ثلث المسافة
     vcb_length: الطول
+    vcb_thickness: السُمك
     vcb_size: الأبعاد
     vcb_radius: نصف القطر
     vcb_diameter: القطر
@@ -2092,6 +2093,7 @@ tool:
     error:
       no_direction: يرجى تحديد اتجاه باستخدام الفأرة
       invalid_length: "الطول {{ value }} غير صالح"
+      invalid_thickness: ""
       invalid_multiplicator: "المعامل {{ value }} غير صالح"
       invalid_divider: "القاسم {{ value }} غير صالح"
       invalid_offset: "الإزاحة {{ value }} غير صالحة"
@@ -2114,6 +2116,7 @@ tool:
     state_4_status: اسحب على قِطعة مماثلة ضمن نفس المتبوع لإضافتها إلى التحديد، ثم أفلت للمواصلة
     state_5_status: مرر للإضافة إلى التحديد و أفلت للمواصلة
     state_6_status: حدد عنصرا من القائمة
+    state_7_status: ""
     warning:
       no_active_part: أولا عليك التمرير فوق قِطعة ما
   smart_draw:
@@ -2209,14 +2212,27 @@ tool:
     action_0_state_11_status: انقر لإضافة المستوي القاطع
     action_0_state_12_status: انقر على مستوٍ قاطعٍ لحذفه
     action_0_state_2_status: انقر لتأكيد التمديد أو أدخل مسافة معينة
+    action_1: ""
+    action_1_status: ""
+    action_1_state_0_status: ""
+    action_1_state_1_status: ""
+    action_option_group_thickness: السُمك
     action_option_group_stretch_measure_type: قياس
     action_option_group_axes: المحاور
+    action_option_group_paneling_joint_type: ""
+    action_option_group_paneling_direction: الاتجاه
     action_option_group_options: الخيارات
+    action_option_thickness_thickness: السُمك
+    action_option_thickness_thickness_status: ""
     action_option_stretch_measure_type_outside_status: القياس من الخارج
     action_option_stretch_measure_type_offset_status: قِس الفرق
     action_option_axes_active_status: المعالجة على طول المحاور النشطة
     action_option_axes_context_status: المعالجة على طول محاور المجموعة أو العنصر الذي يحتوي على القِطعة
     action_option_axes_entity_status: المعالجة على طول محاور القطعة
+    action_option_paneling_joint_type_flat_status: ""
+    action_option_paneling_joint_type_miter_status: ""
+    action_option_paneling_direction_inward_status: ""
+    action_option_paneling_direction_outward_status: ""
     action_option_options_centred_status: توسيط العناصر الممددة
     action_option_options_make_unique_status: اجعل العناصر الممددة فريدة من نوعها
     error:
