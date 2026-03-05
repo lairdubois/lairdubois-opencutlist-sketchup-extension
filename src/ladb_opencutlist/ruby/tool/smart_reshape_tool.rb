@@ -3128,6 +3128,7 @@ module Ladb::OpenCutList
 
         @tool.hide_validation
 
+        _purge_definitions
         _clear_definitions_factory
 
         # Abord operation (restore entities state)
@@ -3464,11 +3465,11 @@ module Ladb::OpenCutList
     end
 
     def _get_faces_joint_type_miter?(face_manipulator_1, face_manipulator_2)
-      return false unless @selected_face_manipulators.include?(face_manipulator_1) && @selected_face_manipulators.include?(face_manipulator_2)
+      return false unless face_manipulator_1 == face_manipulator_2 || @selected_face_manipulators.include?(face_manipulator_1) && @selected_face_manipulators.include?(face_manipulator_2)
       shared_edge = (face_manipulator_1.face.edges & face_manipulator_2.face.edges).first
       return _get_joint_type_miter?(shared_edge) unless shared_edge.nil?  # Faces shared one edge
       shared_vertex = (face_manipulator_1.face.vertices & face_manipulator_2.face.vertices).first
-      return _get_joint_type_miter?(shared_vertex.edges.first) unless shared_vertex.nil?  # Faces shared one vertex : use joint type of the first vertex edge
+      return _get_joint_type_miter?(shared_vertex.edges.first) unless shared_vertex.nil?  # Faces shared one vertex: use joint type of the first vertex edge
       false  # Faces shared nothing
     end
 
