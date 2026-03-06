@@ -2958,6 +2958,7 @@ module Ladb::OpenCutList
 
     def stop
       _purge_definitions
+      _clear_definitions_factory
       if @selected_face_manipulators.any?
 
         # Hide tool validation
@@ -2975,6 +2976,8 @@ module Ladb::OpenCutList
         Sketchup.active_model.abort_operation
 
       end
+      _clear_selected
+      _clear_edge_joint_types
       super
     end
 
@@ -3113,9 +3116,7 @@ module Ladb::OpenCutList
     def onToolUserText(tool, text, view)
       return true if super
 
-      if _read_thickness(tool, text, view)
-        return true
-      end
+      return true if _read_thickness(tool, text, view)
 
       false
     end
@@ -3432,7 +3433,7 @@ module Ladb::OpenCutList
 
     def _erase_drawings
       if @drawing_def.is_a?(DrawingDef)
-        _get_active_entities.erase_entities(@drawing_def.face_manipulators.map { |fm| fm.face } + @drawing_def.edge_manipulators.map { |em| em.edge })
+        _get_active_entities.erase_entities(@drawing_def.edge_manipulators.map { |em| em.edge })
         @drawing_def = nil
       end
     end
@@ -3519,13 +3520,17 @@ module Ladb::OpenCutList
 
     def _purge_definitions
       _get_definitions_factory.each_value do |definition|
-        next if definition.count_used_instances > 0
+        next if definition.deleted? || definition.count_used_instances > 0
         Sketchup.active_model.definitions.remove(definition)
       end
     end
 
     def _clear_computed
-      _get_active_entities.erase_entities(_get_definitions_factory.values.flat_map { |definition| definition.instances })
+      _get_active_entities.erase_entities(
+        _get_definitions_factory.values
+                                .select { |definition| !definition.deleted? }
+                                .flat_map { |definition| definition.instances }
+      )
     end
 
     def _intersect_planes(planes, ref_plane, ref_centroid)
