@@ -435,7 +435,7 @@
 
       # Returns an array like [ { :unit => STRING_UNIT, :val => FLOAT }, { :unit => STRING_UNIT, :val => FLOAT , :dim => [ LENGTH or SIZE, ... ]}, ... ]
 
-      # Setup return array with the default value first
+      # Set up return array with the default value first
       std_uvd = [ { unit: nil, :val => 0.0 } ]
 
       if std_vd.is_a?(Array)
