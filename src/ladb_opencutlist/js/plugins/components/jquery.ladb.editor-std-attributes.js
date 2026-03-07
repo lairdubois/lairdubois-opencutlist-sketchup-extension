@@ -313,7 +313,7 @@
                         has0 = true;
                     }
                 } else if (stdAttribute.val != null && stdAttribute.val.length > 0 && stdAttribute.dim.length > 0) {
-                    stdAttribute.dim = stdAttribute.dim.replace(/\d+\.\d+/g, m => parseFloat(m).toFixed(10));   // Use round(10) as a workaround against the SU 2026 to_f precision change
+                    stdAttribute.dim = stdAttribute.dim.replace(/\d+\.\d+/g, m => Number(parseFloat(m).toFixed(10)));   // Use round(10) as a workaround against the SU 2026 to_f precision change
                     this.stdAttributes.push(stdAttribute);
                 }
             }
