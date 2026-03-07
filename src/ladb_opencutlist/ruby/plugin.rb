@@ -1662,10 +1662,10 @@ module Ladb::OpenCutList
         next unless string_length.is_a?(String)
         if string_length.index('x')
           # Convert string "size" to inch float array
-          float_lengths[key] = string_length.split('x').map { |v| DimensionUtils.d_to_ifloats(v).to_l.to_f.round(15) }  # Use round(15) as a workaround against the SU 2026 to_f precision change
+          float_lengths[key] = string_length.split('x').map { |v| DimensionUtils.d_to_ifloats(v).to_l.to_f.round(10) }  # Use round(10) as a workaround against the SU 2026 to_f precision change
         else
           # Convert string length to inch float
-          float_lengths[key] = DimensionUtils.d_to_ifloats(string_length).to_l.to_f.round(15) # Use round(15) as a workaround against the SU 2026 to_f precision change
+          float_lengths[key] = DimensionUtils.d_to_ifloats(string_length).to_l.to_f.round(10) # Use round(10) as a workaround against the SU 2026 to_f precision change
         end
       end
       float_lengths
