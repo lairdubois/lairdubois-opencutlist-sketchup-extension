@@ -2212,9 +2212,9 @@ tool:
     action_0_state_11_status: "Нажмите, чтобы добавить схему распила"
     action_0_state_12_status: "Нажмите на схему распила, чтобы удалить ее"
     action_0_state_2_status: "Кликните, чтобы подтвердить растяжение, или введите расстояние"
-    action_1: Производитель панелей
+    action_1: Установить указатели
     action_1_status: Создать серию деталей из замкнутого твердого тела
-    action_1_state_0_status: "Кликние замкнутое твердое тело, чтобы установить вспомогательную геометрию"
+    action_1_state_0_status: "Кликните замкнутое тело, чтобы задать вспомогательную геометрию"
     action_1_state_1_status: Выберите грани для выдавливания
     action_option_group_thickness: Толщина
     action_option_group_stretch_measure_type: Отсчет
@@ -2225,7 +2225,7 @@ tool:
     action_option_thickness_thickness: Толщина
     action_option_thickness_thickness_status: Определить толщину панелей
     action_option_stretch_measure_type_outside_status: Внешнее измерение
-    action_option_stretch_measure_type_offset_status: Измерить размеры
+    action_option_stretch_measure_type_offset_status: Измерить разницу
     action_option_axes_active_status: Перемещение по активным осям
     action_option_axes_context_status: "Перемещение по осям группы или компонента, содержащего деталь"
     action_option_axes_entity_status: Перемещение по осям детали
@@ -2312,7 +2312,7 @@ tool:
       not_orientable: Тип этой детали не позволяет сориентировать ее по осям
   smart_join:
     title: Сборка
-    action_0: Жим-Жим # TODO: It's currently just for dev purposes
+    action_0: Точный контакт # TODO: It's currently just for dev purposes
   smart_export:
     title: Экспорт
     action_0: Экспорт 3D-детали
