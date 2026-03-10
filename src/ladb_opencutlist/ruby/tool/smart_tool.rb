@@ -526,15 +526,14 @@ module Ladb::OpenCutList
     end
 
     def create_2d(layer = 0)
-      k_layer = @layers_2d[layer]
-      if k_layer.nil?
+      @layers_2d[layer] ||= begin
         k_layer = @layers_2d[layer] = Kuix::Panel.new
         k_layer.layout_data = Kuix::StaticLayoutData.new(0, 0, 1.0, 1.0)
         k_layer.layout = Kuix::StaticLayout.new
         k_layer.hittable = false
         @canvas.append(k_layer)
+        k_layer
       end
-      k_layer
     end
 
     def append_2d(entity, layer = 0)
@@ -566,12 +565,11 @@ module Ladb::OpenCutList
     end
 
     def create_3d(layer = 0)
-      k_layer = @layers_3d[layer]
-      if k_layer.nil?
-        k_layer = @layers_3d[layer] = Kuix::Group.new
+      @layers_3d[layer] ||= begin
+        k_layer = Kuix::Group.new
         @overlay_layer.append(k_layer)
+        k_layer
       end
-      k_layer
     end
 
     def append_3d(entity, layer = 0)
@@ -4275,6 +4273,39 @@ module Ladb::OpenCutList
 
     def inspect
       self.class.inspect  # Simplify exception display
+    end
+
+  end
+
+  # -----
+
+  class SmartSelection
+
+    include Enumerable
+
+    def initialize(paths_or_selection)
+      if paths_or_selection.is_a?(Sketchup::Selection)
+        active_path = paths_or_selection.model.active_path.to_a
+        @paths = paths_or_selection.map { |drawing_element| active_path + [ drawing_element ] }
+      else
+        @paths = paths
+      end
+    end
+
+    def add(*paths)
+      @paths |= paths
+    end
+
+    def remove(*paths)
+      @paths.reject! { |p| paths.include?(p) }
+    end
+
+    def clear
+      @paths.clear
+    end
+
+    def each(&block)
+      @paths.each(&block)
     end
 
   end

@@ -324,7 +324,7 @@ module Ladb::OpenCutList
     def onToolResume(tool, view)
 
       # If resume from SmartHandleTool
-      if @previous_action_handler.is_a?(SmartHandleActionHandler) || @previous_action_handler.is_a?(SmartReshapePanelingActionHandler)  # TODO find a better way to detect previous action handler
+      if @previous_action_handler && @previous_action_handler.tool.respond_to?(:callback_action_handler)
 
         # Remove floating tools
         _remove_floating_tools
