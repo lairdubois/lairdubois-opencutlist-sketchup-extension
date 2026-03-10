@@ -32,11 +32,11 @@ module Ladb::OpenCutList
     ACTION_OPTION_AXES_CONTEXT = 'context'
     ACTION_OPTION_AXES_ENTITY = 'entity'
 
-    ACTION_OPTION_BOX_DIRECTION_INWARD = 'inward'
-    ACTION_OPTION_BOX_DIRECTION_OUTWARD = 'outward'
+    ACTION_OPTION_PANELING_DIRECTION_INWARD = 'inward'
+    ACTION_OPTION_PANELING_DIRECTION_OUTWARD = 'outward'
 
-    ACTION_OPTION_BOX_JOINT_TYPE_FLAT = 'flat'
-    ACTION_OPTION_BOX_JOINT_TYPE_MITER = 'miter'
+    ACTION_OPTION_PANELING_JOINT_TYPE_FLAT = 'flat'
+    ACTION_OPTION_PANELING_JOINT_TYPE_MITER = 'miter'
 
     ACTION_OPTION_OPTIONS_CENTRED = 'centred'
     ACTION_OPTION_OPTIONS_MAKE_UNIQUE = 'make_unique'
@@ -54,8 +54,8 @@ module Ladb::OpenCutList
         :action => ACTION_PANELING,
         :options => {
           ACTION_OPTION_THICKNESS => [ ACTION_OPTION_THICKNESS_THICKNESS ],
-          ACTION_OPTION_PANELING_DIRECTION => [ ACTION_OPTION_BOX_DIRECTION_INWARD, ACTION_OPTION_BOX_DIRECTION_OUTWARD ],
-          ACTION_OPTION_PANELING_JOINT_TYPE => [ ACTION_OPTION_BOX_JOINT_TYPE_FLAT, ACTION_OPTION_BOX_JOINT_TYPE_MITER ]
+          ACTION_OPTION_PANELING_DIRECTION => [ ACTION_OPTION_PANELING_DIRECTION_INWARD, ACTION_OPTION_PANELING_DIRECTION_OUTWARD ],
+          ACTION_OPTION_PANELING_JOINT_TYPE => [ ACTION_OPTION_PANELING_JOINT_TYPE_FLAT, ACTION_OPTION_PANELING_JOINT_TYPE_MITER ]
         }
       }
     ].freeze
@@ -177,16 +177,16 @@ module Ladb::OpenCutList
         end
       when ACTION_OPTION_PANELING_DIRECTION
         case option
-        when ACTION_OPTION_BOX_DIRECTION_INWARD
+        when ACTION_OPTION_PANELING_DIRECTION_INWARD
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.125,0.125L0.875,0.125L0.875,0.875 M0.625,0.375L0.375,0.625 M0.375,0.375L0.375,0.625L0.625,0.625'))
-        when ACTION_OPTION_BOX_DIRECTION_OUTWARD
+        when ACTION_OPTION_PANELING_DIRECTION_OUTWARD
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.375L0.625,0.375L0.625,1 M0.75,0.25L1,0 M1,0.25L1,0L0.75,0'))
         end
       when ACTION_OPTION_PANELING_JOINT_TYPE
         case option
-        when ACTION_OPTION_BOX_JOINT_TYPE_FLAT
+        when ACTION_OPTION_PANELING_JOINT_TYPE_FLAT
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M1,0L1,1L0.625,1L0.625,0.375 M1,0L0,0L0,0.375L0.625,0.375L0.625,0'))
-        when ACTION_OPTION_BOX_JOINT_TYPE_MITER
+        when ACTION_OPTION_PANELING_JOINT_TYPE_MITER
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0L0,0.375L0.625,0.375L1,0L0,0 M1,0L1,1L0.625,1L0.625,0.375'))
         end
       when ACTION_OPTION_OPTIONS
@@ -236,346 +236,17 @@ module Ladb::OpenCutList
 
   # -----
 
-  class SmartReshapeActionHandler < SmartSelectActionHandler
+  class SmartReshapeStretchActionHandler < SmartSelectActionHandler
 
     include UserTextHelper
 
-    STATE_RESHAPE_START = 1
-    STATE_RESHAPE = 2
-
-    LAYER_3D_RESHAPE_PREVIEW = 10
-
-    attr_reader :picked_handle_start_point,
-                :picked_handle_end_point
-
-    def initialize(action, tool, previous_action_handler = nil)
-      super
-
-      @mouse_ip = SmartInputPoint.new(tool)
-
-      @mouse_down_point = nil
-      @mouse_snap_point = nil
-
-      @picked_reshape_start_point = nil
-      @picked_reshape_end_point = nil
-
-      # Create 3D layers
-      tool.create_3d(LAYER_3D_RESHAPE_PREVIEW)
-      tool.create_3d(LAYER_3D_PART_TWINS_PREVIEW)
-      tool.create_3d(LAYER_3D_PART_PREVIEW)
-
-    end
-
-    # -- STATE --
-
-    def get_state_cursor(state)
-      super
-    end
-
-    def get_state_picker(state)
-      super
-    end
-
-    def get_state_status(state)
-      super
-    end
-
-    def get_state_vcb_label(state)
-      super
-    end
-
-    # -----
-
-    def onToolCancel(tool, reason, view)
-      super
-
-      if @tool.callback_action_handler.nil?
-
-        case @state
-
-        when STATE_RESHAPE
-          set_state(STATE_RESHAPE_START)
-          _refresh
-          return true
-
-        when STATE_RESHAPE_START
-          @picked_shape_start_point = nil
-          _unhide_instance
-          _unhide_twin_instances
-        end
-
-        _reset
-        _refresh
-
-      else
-        # stop
-        Sketchup.active_model.tools.pop_tool
-      end
-
-      true
-    end
-
-    def onToolMouseMove(tool, flags, x, y, view)
-      super
-
-      return true if x < 0 || y < 0
-
-      case @state
-
-      when STATE_RESHAPE_START
-
-        @mouse_snap_point = nil
-
-        @tool.clear_all_2d
-        @tool.clear_3d([LAYER_3D_RESHAPE_PREVIEW ])
-
-        _snap_reshape_start(flags, x, y, view)
-        _preview_reshape_start(view)
-
-      when STATE_RESHAPE
-
-        @mouse_snap_point = nil
-        @mouse_ip.pick(view, x, y)
-
-        @tool.clear_all_2d
-        @tool.clear_3d(LAYER_3D_RESHAPE_PREVIEW)
-
-        _snap_reshape(flags, x, y, view)
-        _preview_reshape(view)
-
-      end
-
-      view.tooltip = @mouse_ip.tooltip
-      view.invalidate
-
-      false
-    end
-
-    def onToolMouseLeave(tool, view)
-      return true if super
-      @tool.clear_all_2d
-      @mouse_ip.clear
-      view.tooltip = ''
-    end
-
-    def onToolLButtonUp(tool, flags, x, y, view)
-
-      @mouse_down_point = nil
-
-      case @state
-
-      when STATE_RESHAPE_START
-        @picked_reshape_start_point = @mouse_snap_point
-        set_state(STATE_RESHAPE)
-        _refresh
-
-      when STATE_RESHAPE
-        @picked_reshape_end_point = @mouse_snap_point
-        _reshape_entity
-        _restart
-
-      end
-
-      super
-    end
-
-    def onToolUserText(tool, text, view)
-      return true if super
-
-      case @state
-
-      when STATE_RESHAPE
-        if _read_reshape(tool, text, view)
-          _restart
-          return true
-        end
-
-      end
-
-      false
-    end
-
-    def onStateChanged(old_state, new_state)
-      super
-
-      case old_state
-
-      when STATE_RESHAPE, STATE_RESHAPE_START
-        Sketchup.active_model.selection.clear
-
-      end
-
-      case new_state
-
-      when STATE_RESHAPE, STATE_RESHAPE_START
-        unless has_active_part?
-          Sketchup.active_model.selection.clear
-          Sketchup.active_model.selection.add(get_active_selection_instances)
-        end
-        @tool.clear_all_2d
-
-      end
-
-    end
-
-    def onSelected
-      super
-    end
-
-    # -----
-
-    def draw(view)
-      super
-      @mouse_ip.draw(view) if @mouse_ip.valid?
-    end
-
-    def enableVCB?
-      true
-    end
-
-    # -----
-
-    protected
-
-    def _reset
-      @mouse_ip.clear
-      @mouse_snap_point = nil
-      @picked_reshape_start_point = nil
-      @picked_reshape_end_point = nil
-      super
-    end
-
-    def _restart
-      if @tool.callback_action_handler.nil?
-        super
-      else
-        @tool.callback_action_handler.previous_action_handler = self
-        Sketchup.active_model.tools.pop_tool if active?
-      end
-    end
-
-    # -----
-
-    def _allows_tree_selection?
-      true
-    end
-
-    def _clear_selection_on_start?
-      true
-    end
-
-    # -----
-
-    def _can_activate_locked?
-      false
-    end
-
-    # -----
-
-    def _preview_part(part_entity_path, part, layer = 0, highlighted = false)
-      super
-      if part && fetch_state == STATE_SELECT
-
-        # Show part infos
-        @tool.show_tooltip([ "##{_get_active_part_name}", _get_active_part_material_name, '-', _get_active_part_size, _get_active_part_icons ])
-
-      else
-
-        @tool.remove_tooltip
-
-      end
-    end
-
-    # -----
-
-    def _snap_reshape_start(flags, x, y, view)
-
-      @mouse_snap_point = @mouse_ip.position if @mouse_snap_point.nil?
-
-    end
-
-    def _snap_reshape(flags, x, y, view)
-
-      @mouse_snap_point = @mouse_ip.position if @mouse_snap_point.nil?
-
-    end
-
-    def _preview_reshape_start(view)
-    end
-
-    def _preview_reshape(view)
-    end
-
-    def _read_reshape(tool, text, view)
-      false
-    end
-
-    # -----
-
-    def _fetch_option_stretch_measure_type
-      @tool.fetch_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_STRETCH_MEASURE_TYPE)
-    end
-
-    def _fetch_option_stretch_measure_type_outside?
-      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_STRETCH_MEASURE_TYPE, SmartReshapeTool::ACTION_OPTION_STRETCH_MEASURE_TYPE_OUTSIDE)
-    end
-
-    def _fetch_option_stretch_measure_type_offset?
-      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_STRETCH_MEASURE_TYPE, SmartReshapeTool::ACTION_OPTION_STRETCH_MEASURE_TYPE_OFFSET)
-    end
-
-    def _fetch_option_axes
-      @tool.fetch_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_AXES)
-    end
-
-    def _fetch_option_options_centred?
-      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_CENTRED)
-    end
-
-    def _fetch_option_options_make_unique?
-      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_MAKE_UNIQUE)
-    end
-
-    # -----
-
-    def _reshape_entity
-    end
-
-    # -----
-
-    def _get_edit_transformation
-      case _fetch_option_axes
-
-      when SmartReshapeTool::ACTION_OPTION_AXES_CONTEXT
-        t = _get_global_context_transformation(nil)
-        return t unless t.nil?
-
-      when SmartReshapeTool::ACTION_OPTION_AXES_ENTITY
-        t = _get_global_instance_transformation(nil)
-        return t unless t.nil?
-
-      end
-      super
-    end
-
-    def _get_drawing_def_parameters
-      {
-        ignore_surfaces: true,
-        ignore_faces: false,
-        ignore_edges: false,
-        ignore_soft_edges: false,
-        ignore_clines: true,
-      }
-    end
-
-  end
-
-  class SmartReshapeStretchActionHandler < SmartReshapeActionHandler
-
-    STATE_RESHAPE_CUTTER_MOVE = 10
-    STATE_RESHAPE_CUTTER_ADD = 11
-    STATE_RESHAPE_CUTTER_REMOVE = 12
-
+    STATE_STRETCH_START = 1
+    STATE_STRETCH = 2
+    STATE_STRETCH_CUTTER_MOVE = 10
+    STATE_STRETCH_CUTTER_ADD = 11
+    STATE_STRETCH_CUTTER_REMOVE = 12
+
+    LAYER_3D_STRETCH_PREVIEW = 10
     LAYER_3D_GRIPS_PREVIEW = 100
     LAYER_3D_CUTTERS_PREVIEW = 200
 
@@ -590,6 +261,14 @@ module Ladb::OpenCutList
     def initialize(tool, previous_action_handler = nil)
       super(SmartReshapeTool::ACTION_STRETCH, tool, previous_action_handler)
 
+      @mouse_ip = SmartInputPoint.new(tool)
+
+      @mouse_down_point = nil
+      @mouse_snap_point = nil
+
+      @picked_stretch_start_point = nil
+      @picked_stretch_end_point = nil
+
       @picked_axis = nil
       @picked_grip_index = -1
 
@@ -601,6 +280,11 @@ module Ladb::OpenCutList
       @locked_axis = nil
 
       @extern_instances_ref_positions = {}
+
+      # Create 3D layers
+      tool.create_3d(LAYER_3D_STRETCH_PREVIEW)
+      tool.create_3d(LAYER_3D_PART_TWINS_PREVIEW)
+      tool.create_3d(LAYER_3D_PART_PREVIEW)
 
     end
 
@@ -629,7 +313,7 @@ module Ladb::OpenCutList
     def get_state_cursor(state)
 
       case state
-      when STATE_SELECT, STATE_RESHAPE_START, STATE_RESHAPE
+      when STATE_SELECT, STATE_STRETCH_START, STATE_STRETCH
         return SmartCursorManager.cursor_select_stretch
       end
 
@@ -644,14 +328,14 @@ module Ladb::OpenCutList
         return super +
                ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_option_options_make_unique_status") + '.'
 
-      when STATE_RESHAPE_START
+      when STATE_STRETCH_START
         return super if @picked_axis.nil?
         return super +
                ' ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_0_state_1a_status") + '.' +
                ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_0_state_1b_status") + '.' +
                ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_0_state_1c_status") + '.'
 
-      when STATE_RESHAPE
+      when STATE_STRETCH
         return super +
                ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_option_options_centred_status") + '.' +
                ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_option_options_make_unique_status") + '.'
@@ -665,7 +349,7 @@ module Ladb::OpenCutList
 
       case state
 
-      when STATE_RESHAPE
+      when STATE_STRETCH
         return PLUGIN.get_i18n_string("tool.default.vcb_distance")
 
       end
@@ -677,19 +361,154 @@ module Ladb::OpenCutList
 
     def onToolSuspend(tool, view)
       super
-      _unhide_instances if @state == STATE_RESHAPE
+      _unhide_instances if @state == STATE_STRETCH
     end
 
     def onToolResume(tool, view)
       super
-      _hide_instances if @state == STATE_RESHAPE
+      _hide_instances if @state == STATE_STRETCH
+    end
+
+    def onToolCancel(tool, reason, view)
+      super
+
+      if @tool.callback_action_handler.nil?
+
+        case @state
+
+        when STATE_STRETCH
+          set_state(STATE_STRETCH_START)
+          _refresh
+          return true
+
+        when STATE_STRETCH_START
+          @picked_shape_start_point = nil
+          _unhide_instance
+          _unhide_twin_instances
+        end
+
+        _reset
+        _refresh
+
+      else
+        # stop
+        Sketchup.active_model.tools.pop_tool
+      end
+
+      true
+    end
+
+    def onToolMouseMove(tool, flags, x, y, view)
+      check_super = true
+      case @state
+
+      when STATE_STRETCH_START
+        @tool.clear_3d([ LAYER_3D_PART_PREVIEW, LAYER_3D_CUTTERS_PREVIEW, LAYER_3D_GRIPS_PREVIEW ])
+        check_super = @mouse_down_point.nil?
+
+      end
+
+      if check_super
+        super
+
+        return true if x < 0 || y < 0
+
+        case @state
+
+        when STATE_STRETCH_START
+
+          @mouse_snap_point = nil
+
+          @tool.clear_all_2d
+          @tool.clear_3d([LAYER_3D_STRETCH_PREVIEW ])
+
+          _snap_stretch_start(flags, x, y, view)
+          _preview_stretch_start(view)
+
+        when STATE_STRETCH
+
+          @mouse_snap_point = nil
+          @mouse_ip.pick(view, x, y)
+
+          @tool.clear_all_2d
+          @tool.clear_3d(LAYER_3D_STRETCH_PREVIEW)
+
+          _snap_stretch(flags, x, y, view)
+          _preview_stretch(view)
+
+        end
+
+        view.tooltip = @mouse_ip.tooltip
+        view.invalidate
+
+      end
+
+      case @state
+
+      when STATE_STRETCH_START
+        unless @mouse_down_point.nil? || @picked_grip_index.nil?
+          if Geom::Point3d.new(x, y).distance(@mouse_down_point) > 20  # Drag handled only if the distance is > 20px
+
+            drawing_def = _get_drawing_def
+            et = _get_edit_transformation
+            eb = _get_drawing_def_edit_bounds(drawing_def, et)
+            keb = Kuix::Bounds3d.new.copy!(eb)
+
+            @picked_stretch_start_point = keb.face_center(@picked_grip_index).to_p.transform(et)
+            @picked_stretch_start_opposite_point = keb.face_center(Kuix::Bounds3d.face_opposite(@picked_grip_index)).to_p.transform(et)
+
+            @mouse_down_point = nil
+            set_state(STATE_STRETCH) if _assert_valid_cutters
+          end
+        end
+
+      when STATE_STRETCH_CUTTER_MOVE
+
+        @mouse_snap_point = nil
+
+        @tool.clear_all_2d
+        @tool.clear_3d([LAYER_3D_CUTTERS_PREVIEW ])
+
+        _snap_stretch_cutter_move(flags, x, y, view)
+        _preview_stretch_cutter_move(view)
+
+      when STATE_STRETCH_CUTTER_ADD
+
+        @mouse_snap_point = nil
+
+        @tool.clear_all_2d
+        @tool.clear_3d(LAYER_3D_CUTTERS_PREVIEW)
+
+        _snap_stretch_cutter_add(flags, x, y, view)
+        _preview_stretch_cutter_add(view)
+
+      when STATE_STRETCH_CUTTER_REMOVE
+
+        @mouse_snap_point = nil
+
+        @tool.clear_all_2d
+        @tool.clear_3d(LAYER_3D_CUTTERS_PREVIEW)
+
+        _snap_stretch_cutter_remove(flags, x, y, view)
+        _preview_stretch_cutter_remove(view)
+
+      end
+
+      false
+    end
+
+    def onToolMouseLeave(tool, view)
+      return true if super
+      @tool.clear_all_2d
+      @mouse_ip.clear
+      view.tooltip = ''
     end
 
     def onToolLButtonDown(tool, flags, x, y, view)
 
       case @state
 
-      when STATE_RESHAPE_START
+      when STATE_STRETCH_START
         if @picked_cutter_index
 
           drawing_def = _get_drawing_def
@@ -710,7 +529,7 @@ module Ladb::OpenCutList
             @picked_cutter_start_point = Geom.intersect_line_plane([min, direction], plane)
           end
 
-          set_state(STATE_RESHAPE_CUTTER_MOVE)
+          set_state(STATE_STRETCH_CUTTER_MOVE)
           _refresh
           return true
         end
@@ -724,7 +543,7 @@ module Ladb::OpenCutList
 
         return true
 
-      when STATE_RESHAPE_CUTTER_ADD, STATE_RESHAPE_CUTTER_REMOVE
+      when STATE_STRETCH_CUTTER_ADD, STATE_STRETCH_CUTTER_REMOVE
         return true
 
       end
@@ -736,7 +555,7 @@ module Ladb::OpenCutList
 
       case @state
 
-      when STATE_RESHAPE_START
+      when STATE_STRETCH_START
         if @picked_grip_index
 
           drawing_def = _get_drawing_def
@@ -744,11 +563,11 @@ module Ladb::OpenCutList
           eb = _get_drawing_def_edit_bounds(drawing_def, et)
           keb = Kuix::Bounds3d.new.copy!(eb)
 
-          @picked_reshape_start_point = keb.face_center(@picked_grip_index).to_p.transform(et)
-          @picked_reshape_start_opposite_point = keb.face_center(Kuix::Bounds3d.face_opposite(@picked_grip_index)).to_p.transform(et)
+          @picked_stretch_start_point = keb.face_center(@picked_grip_index).to_p.transform(et)
+          @picked_stretch_start_opposite_point = keb.face_center(Kuix::Bounds3d.face_opposite(@picked_grip_index)).to_p.transform(et)
           @mouse_down_point = nil
 
-          set_state(STATE_RESHAPE) if _assert_valid_cutters
+          set_state(STATE_STRETCH) if _assert_valid_cutters
           _refresh
           return true
         end
@@ -758,16 +577,16 @@ module Ladb::OpenCutList
           return true
         end
 
-      when STATE_RESHAPE_CUTTER_MOVE
+      when STATE_STRETCH_CUTTER_MOVE
         if @picked_cutter_index
           _store_cutters
           _load_cutters # Reload to sanitize
-          set_state(STATE_RESHAPE_START)
+          set_state(STATE_STRETCH_START)
           _refresh
           return true
         end
 
-      when STATE_RESHAPE_CUTTER_ADD
+      when STATE_STRETCH_CUTTER_ADD
         if @snap_ratio
           @cutters[@picked_axis] << @snap_ratio
           @snap_ratio = nil
@@ -777,7 +596,7 @@ module Ladb::OpenCutList
         end
         return true
 
-      when STATE_RESHAPE_CUTTER_REMOVE
+      when STATE_STRETCH_CUTTER_REMOVE
         if @picked_cutter_index
           @cutters[@picked_axis].delete_at(@picked_cutter_index)
           @picked_cutter_index = nil
@@ -789,73 +608,23 @@ module Ladb::OpenCutList
 
       end
 
+      @mouse_down_point = nil
+
+      case @state
+
+      when STATE_STRETCH_START
+        @picked_stretch_start_point = @mouse_snap_point
+        set_state(STATE_STRETCH)
+        _refresh
+
+      when STATE_STRETCH
+        @picked_stretch_end_point = @mouse_snap_point
+        _stretch_entity
+        _restart
+
+      end
+
       super
-    end
-
-    def onToolMouseMove(tool, flags, x, y, view)
-      check_super = true
-      case @state
-
-      when STATE_RESHAPE_START
-        @tool.clear_3d([LAYER_3D_PART_PREVIEW, LAYER_3D_CUTTERS_PREVIEW, LAYER_3D_GRIPS_PREVIEW ])
-        check_super = @mouse_down_point.nil?
-
-      end
-
-      return true if check_super && super
-
-      case @state
-
-      when STATE_RESHAPE_START
-        unless @mouse_down_point.nil? || @picked_grip_index.nil?
-          if Geom::Point3d.new(x, y).distance(@mouse_down_point) > 20  # Drag handled only if the distance is > 20px
-
-            drawing_def = _get_drawing_def
-            et = _get_edit_transformation
-            eb = _get_drawing_def_edit_bounds(drawing_def, et)
-            keb = Kuix::Bounds3d.new.copy!(eb)
-
-            @picked_reshape_start_point = keb.face_center(@picked_grip_index).to_p.transform(et)
-            @picked_reshape_start_opposite_point = keb.face_center(Kuix::Bounds3d.face_opposite(@picked_grip_index)).to_p.transform(et)
-
-            @mouse_down_point = nil
-            set_state(STATE_RESHAPE) if _assert_valid_cutters
-          end
-        end
-
-      when STATE_RESHAPE_CUTTER_MOVE
-
-        @mouse_snap_point = nil
-
-        @tool.clear_all_2d
-        @tool.clear_3d([LAYER_3D_CUTTERS_PREVIEW ])
-
-        _snap_reshape_cutter_move(flags, x, y, view)
-        _preview_reshape_cutter_move(view)
-
-      when STATE_RESHAPE_CUTTER_ADD
-
-        @mouse_snap_point = nil
-
-        @tool.clear_all_2d
-        @tool.clear_3d(LAYER_3D_CUTTERS_PREVIEW)
-
-        _snap_reshape_cutter_add(flags, x, y, view)
-        _preview_reshape_cutter_add(view)
-
-      when STATE_RESHAPE_CUTTER_REMOVE
-
-        @mouse_snap_point = nil
-
-        @tool.clear_all_2d
-        @tool.clear_3d(LAYER_3D_CUTTERS_PREVIEW)
-
-        _snap_reshape_cutter_remove(flags, x, y, view)
-        _preview_reshape_cutter_remove(view)
-
-      end
-
-      false
     end
 
     def onToolKeyDown(tool, key, repeat, flags, view)
@@ -863,7 +632,7 @@ module Ladb::OpenCutList
 
       case @state
 
-      when STATE_RESHAPE_START
+      when STATE_STRETCH_START
         if key == VK_RIGHT
           if @locked_axis == X_AXIS
             @locked_axis = nil
@@ -898,12 +667,12 @@ module Ladb::OpenCutList
         end
         unless @picked_axis.nil?
           if tool.is_key_ctrl_or_option?(key)
-            set_state(STATE_RESHAPE_CUTTER_ADD)
+            set_state(STATE_STRETCH_CUTTER_ADD)
             _refresh
             return true
           end
           if tool.is_key_alt_or_command?(key)
-            set_state(STATE_RESHAPE_CUTTER_REMOVE)
+            set_state(STATE_STRETCH_CUTTER_REMOVE)
             _refresh
             return true
           end
@@ -917,7 +686,7 @@ module Ladb::OpenCutList
     def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
       return true if super
 
-      if tool.is_key_alt_or_command?(key) && is_quick && (@state == STATE_SELECT || @state == STATE_RESHAPE)
+      if tool.is_key_alt_or_command?(key) && is_quick && (@state == STATE_SELECT || @state == STATE_STRETCH)
         @tool.store_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_MAKE_UNIQUE, !_fetch_option_options_make_unique?, true)
         _refresh
         return true
@@ -925,20 +694,20 @@ module Ladb::OpenCutList
 
       case @state
 
-      when STATE_RESHAPE_CUTTER_ADD, STATE_RESHAPE_CUTTER_REMOVE
+      when STATE_STRETCH_CUTTER_ADD, STATE_STRETCH_CUTTER_REMOVE
         if tool.is_key_ctrl_or_option?(key)
           @snap_ratio = nil
-          set_state(STATE_RESHAPE_START)
+          set_state(STATE_STRETCH_START)
           _refresh
           return true
         end
         if tool.is_key_alt_or_command?(key)
-          set_state(STATE_RESHAPE_START)
+          set_state(STATE_STRETCH_START)
           _refresh
           return true
         end
 
-      when STATE_RESHAPE
+      when STATE_STRETCH
         if tool.is_key_ctrl_or_option?(key) && is_quick
           @tool.store_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_CENTRED, !_fetch_option_options_centred?, true)
           _refresh
@@ -950,10 +719,26 @@ module Ladb::OpenCutList
       false
     end
 
+    def onToolUserText(tool, text, view)
+      return true if super
+
+      case @state
+
+      when STATE_STRETCH
+        if _read_stretch(tool, text, view)
+          _restart
+          return true
+        end
+
+      end
+
+      false
+    end
+
     def onToolActionOptionStored(tool, action, option_group, option)
 
-      if option_group == SmartReshapeTool::ACTION_OPTION_AXES && @state > STATE_RESHAPE_START
-        set_state(STATE_RESHAPE_START)
+      if option_group == SmartReshapeTool::ACTION_OPTION_AXES && @state > STATE_STRETCH_START
+        set_state(STATE_STRETCH_START)
         _refresh
       end
 
@@ -962,24 +747,42 @@ module Ladb::OpenCutList
     def onStateChanged(old_state, new_state)
       super
 
+      case old_state
+
+      when STATE_STRETCH, STATE_STRETCH_START
+        Sketchup.active_model.selection.clear
+
+      end
+
+      case new_state
+
+      when STATE_STRETCH, STATE_STRETCH_START
+        unless has_active_part?
+          Sketchup.active_model.selection.clear
+          Sketchup.active_model.selection.add(get_active_selection_instances)
+        end
+        @tool.clear_all_2d
+
+      end
+
       if has_active_selection?
 
         case new_state
 
-        when STATE_RESHAPE_START
+        when STATE_STRETCH_START
           @tool.clear_all_2d
           @tool.clear_3d([LAYER_3D_PART_PREVIEW, LAYER_3D_PART_TWINS_PREVIEW ])  # Remove part preview
           _unhide_instances
 
-        when STATE_RESHAPE_CUTTER_MOVE
+        when STATE_STRETCH_CUTTER_MOVE
           @tool.clear_3d(LAYER_3D_GRIPS_PREVIEW)
           _unhide_instances
 
-        when STATE_RESHAPE_CUTTER_ADD, STATE_RESHAPE_CUTTER_REMOVE
+        when STATE_STRETCH_CUTTER_ADD, STATE_STRETCH_CUTTER_REMOVE
           @tool.clear_3d(LAYER_3D_GRIPS_PREVIEW)
           _unhide_instances
 
-        when STATE_RESHAPE
+        when STATE_STRETCH
           @tool.clear_3d([LAYER_3D_GRIPS_PREVIEW, LAYER_3D_CUTTERS_PREVIEW ])
           _get_split_def    # Compute a new split_def
           _hide_instances
@@ -996,7 +799,7 @@ module Ladb::OpenCutList
       _reset_drawing_def
       _load_cutters
 
-      set_state(STATE_RESHAPE_START)
+      set_state(STATE_STRETCH_START)
 
       _refresh
 
@@ -1004,16 +807,40 @@ module Ladb::OpenCutList
 
     # -----
 
+    def draw(view)
+      super
+      @mouse_ip.draw(view) if @mouse_ip.valid?
+    end
+
+    def enableVCB?
+      true
+    end
+
+    # -----
+
     protected
 
     def _reset
-      @picked_reshape_start_opposite_point = nil
+      @mouse_ip.clear
+      @mouse_snap_point = nil
+      @picked_stretch_start_point = nil
+      @picked_stretch_end_point = nil
+      @picked_stretch_start_opposite_point = nil
       @split_def = nil
       @picked_axis = nil
       @picked_grip_index = nil
       @picked_cutter_index = nil
       @extern_instances_ref_positions = {}
       super
+    end
+
+    def _restart
+      if @tool.callback_action_handler.nil?
+        super
+      else
+        @tool.callback_action_handler.previous_action_handler = self
+        Sketchup.active_model.tools.pop_tool if active?
+      end
     end
 
     # -----
@@ -1030,10 +857,38 @@ module Ladb::OpenCutList
       true
     end
 
+    def _allows_tree_selection?
+      true
+    end
+
+    def _clear_selection_on_start?
+      true
+    end
+
+    # -----
+
+    def _can_activate_locked?
+      false
+    end
+
     # -----
 
     def _preview_part_box?
       true
+    end
+
+    def _preview_part(part_entity_path, part, layer = 0, highlighted = false)
+      super
+      if part && fetch_state == STATE_SELECT
+
+        # Show part infos
+        @tool.show_tooltip([ "##{_get_active_part_name}", _get_active_part_material_name, '-', _get_active_part_size, _get_active_part_icons ])
+
+      else
+
+        @tool.remove_tooltip
+
+      end
     end
 
     # -----
@@ -1045,7 +900,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _snap_reshape_start(flags, x, y, view)
+    def _snap_stretch_start(flags, x, y, view)
 
       @picked_grip_index = nil
       @picked_cutter_index = nil
@@ -1120,10 +975,11 @@ module Ladb::OpenCutList
 
       end
 
-      super
+      @mouse_snap_point = @mouse_ip.position if @mouse_snap_point.nil?
+
     end
 
-    def _snap_reshape_cutter_move(flags, x, y, view)
+    def _snap_stretch_cutter_move(flags, x, y, view)
 
       drawing_def = _get_drawing_def
       et = _get_edit_transformation
@@ -1160,7 +1016,7 @@ module Ladb::OpenCutList
 
     end
 
-    def _snap_reshape_cutter_add(flags, x, y, view)
+    def _snap_stretch_cutter_add(flags, x, y, view)
 
       @snap_ratio = nil
       @picked_cutter_index = nil
@@ -1214,7 +1070,7 @@ module Ladb::OpenCutList
 
     end
 
-    def _snap_reshape_cutter_remove(flags, x, y, view)
+    def _snap_stretch_cutter_remove(flags, x, y, view)
 
       @picked_cutter_index = nil
 
@@ -1272,12 +1128,12 @@ module Ladb::OpenCutList
 
     end
 
-    def _snap_reshape(flags, x, y, view)
+    def _snap_stretch(flags, x, y, view)
 
       ph = view.pick_helper(x, y, 40)
-      if ph.test_point(@picked_reshape_start_point)
+      if ph.test_point(@picked_stretch_start_point)
 
-        @mouse_snap_point = @picked_reshape_start_point
+        @mouse_snap_point = @picked_stretch_start_point
         @mouse_ip.clear
 
       else
@@ -1287,18 +1143,18 @@ module Ladb::OpenCutList
 
         if @mouse_ip.degrees_of_freedom > 2 ||
            @mouse_ip.instance_path.empty? && @mouse_ip.degrees_of_freedom > 1 ||
-           @mouse_ip.position.on_plane?([ @picked_reshape_start_opposite_point, direction ])
+           @mouse_ip.position.on_plane?([@picked_stretch_start_opposite_point, direction ])
            @mouse_ip.face && @mouse_ip.face == @mouse_ip.instance_path.leaf && @mouse_ip.vertex.nil? && @mouse_ip.edge.nil? && !@mouse_ip.face.normal.transform(@mouse_ip.transformation).parallel?(direction) ||
            @mouse_ip.edge && @mouse_ip.degrees_of_freedom == 1 && !@mouse_ip.edge.start.position.vector_to(@mouse_ip.edge.end.position).transform(@mouse_ip.transformation).perpendicular?(direction)
 
-          picked_point, _ = Geom::closest_points([ @picked_reshape_start_point, direction ], view.pickray(x, y))
+          picked_point, _ = Geom::closest_points([@picked_stretch_start_point, direction ], view.pickray(x, y))
           @mouse_snap_point = picked_point
           @mouse_ip.clear
 
         else
 
           # Force picked point to be projected to shape the last picked point normal line
-          @mouse_snap_point = @mouse_ip.position.project_to_line([ @picked_reshape_start_point, direction ])
+          @mouse_snap_point = @mouse_ip.position.project_to_line([@picked_stretch_start_point, direction ])
 
         end
 
@@ -1340,8 +1196,8 @@ module Ladb::OpenCutList
           section.origin.z += ratio * keb.depth if @picked_axis == Z_AXIS
 
           is_picked_section = @picked_cutter_index == index
-          is_add = @state == STATE_RESHAPE_CUTTER_ADD && @snap_ratio && index == ratios.length - 1
-          is_remove = ratio == 0 || ratio == 1 || @state == STATE_RESHAPE_CUTTER_REMOVE && is_picked_section
+          is_add = @state == STATE_STRETCH_CUTTER_ADD && @snap_ratio && index == ratios.length - 1
+          is_remove = ratio == 0 || ratio == 1 || @state == STATE_STRETCH_CUTTER_REMOVE && is_picked_section
           is_highligted = is_picked_section && !is_remove
 
           section_color = color
@@ -1393,7 +1249,7 @@ module Ladb::OpenCutList
         k_edge.color = color
         k_edge.on_top = true
         k_edge.transformation = et
-        @tool.append_3d(k_edge, LAYER_3D_RESHAPE_PREVIEW)
+        @tool.append_3d(k_edge, LAYER_3D_STRETCH_PREVIEW)
 
         k_points = _create_floating_points(
           points: [ p1, p2 ],
@@ -1403,7 +1259,7 @@ module Ladb::OpenCutList
           size: 2
         )
         k_points.transformation = et
-        @tool.append_3d(k_points, LAYER_3D_RESHAPE_PREVIEW)
+        @tool.append_3d(k_points, LAYER_3D_STRETCH_PREVIEW)
 
         if @picked_grip_index
 
@@ -1415,16 +1271,14 @@ module Ladb::OpenCutList
             size: 2
           )
           k_points.transformation = et
-          @tool.append_3d(k_points, LAYER_3D_RESHAPE_PREVIEW)
+          @tool.append_3d(k_points, LAYER_3D_STRETCH_PREVIEW)
 
         end
 
       end
     end
 
-    def _preview_reshape_start(view)
-      super
-
+    def _preview_stretch_start(view)
       return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
 
       et = _get_edit_transformation
@@ -1475,20 +1329,20 @@ module Ladb::OpenCutList
 
     end
 
-    def _preview_reshape_cutter_move(view)
+    def _preview_stretch_cutter_move(view)
       _preview_active_cutters(view)
     end
 
-    def _preview_reshape_cutter_add(view)
+    def _preview_stretch_cutter_add(view)
       _preview_active_cutters(view)
     end
 
-    def _preview_reshape_cutter_remove(view)
+    def _preview_stretch_cutter_remove(view)
       _preview_active_cutters(view)
     end
 
-    def _preview_reshape(view)
-      return super if (stretch_def = _get_stretch_def(@picked_reshape_start_point, @mouse_snap_point)).nil?
+    def _preview_stretch(view)
+      return false if (stretch_def = _get_stretch_def(@picked_stretch_start_point, @mouse_snap_point)).nil?
 
       split_def, emv, edvs, lps, lpe = stretch_def.values_at(:split_def, :emv,:edvs, :lps, :lpe)
       et, container_defs = split_def.values_at(:et, :container_defs)
@@ -1517,7 +1371,7 @@ module Ladb::OpenCutList
           k_segments.color = color
           k_segments.line_width = 1.5
           k_segments.transformation = et
-          @tool.append_3d(k_segments, LAYER_3D_RESHAPE_PREVIEW)
+          @tool.append_3d(k_segments, LAYER_3D_STRETCH_PREVIEW)
         end
 
         # Render clines
@@ -1536,7 +1390,7 @@ module Ladb::OpenCutList
           k_segments.color = color
           k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
           k_segments.transformation = et
-          @tool.append_3d(k_segments, LAYER_3D_RESHAPE_PREVIEW)
+          @tool.append_3d(k_segments, LAYER_3D_STRETCH_PREVIEW)
         end
 
         # Render snaps
@@ -1555,7 +1409,7 @@ module Ladb::OpenCutList
             size: 2
           )
           k_points.transformation = et
-          @tool.append_3d(k_points, LAYER_3D_RESHAPE_PREVIEW)
+          @tool.append_3d(k_points, LAYER_3D_STRETCH_PREVIEW)
         end
 
         container_def.children.each { |container_def| fn_preview_container.call(container_def, color) }
@@ -1666,17 +1520,17 @@ module Ladb::OpenCutList
       k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
       k_edge.color = ColorUtils.color_translucent(color, 60)
       k_edge.on_top = true
-      @tool.append_3d(k_edge, LAYER_3D_RESHAPE_PREVIEW)
+      @tool.append_3d(k_edge, LAYER_3D_STRETCH_PREVIEW)
 
       k_edge = Kuix::EdgeMotif3d.new
       k_edge.start.copy!(lps)
       k_edge.end.copy!(lpe)
       k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
       k_edge.color = color
-      @tool.append_3d(k_edge, LAYER_3D_RESHAPE_PREVIEW)
+      @tool.append_3d(k_edge, LAYER_3D_STRETCH_PREVIEW)
 
-      @tool.append_3d(_create_floating_points(points: [ lps, lpe ], style: Kuix::POINT_STYLE_CIRCLE, fill_color: Kuix::COLOR_WHITE, stroke_color: color, size: 2), LAYER_3D_RESHAPE_PREVIEW)
-      @tool.append_3d(_create_floating_points(points: @picked_reshape_start_point, style: Kuix::POINT_STYLE_CIRCLE, stroke_color: nil, fill_color: color, size: 2), LAYER_3D_RESHAPE_PREVIEW)
+      @tool.append_3d(_create_floating_points(points: [ lps, lpe ], style: Kuix::POINT_STYLE_CIRCLE, fill_color: Kuix::COLOR_WHITE, stroke_color: color, size: 2), LAYER_3D_STRETCH_PREVIEW)
+      @tool.append_3d(_create_floating_points(points: @picked_stretch_start_point, style: Kuix::POINT_STYLE_CIRCLE, stroke_color: nil, fill_color: color, size: 2), LAYER_3D_STRETCH_PREVIEW)
 
       # Preview distance
 
@@ -1698,8 +1552,8 @@ module Ladb::OpenCutList
 
     end
 
-    def _read_reshape(tool, text, view)
-      return super if (stretch_def = _get_stretch_def(@picked_reshape_start_point, @mouse_snap_point)).nil?
+    def _read_stretch(tool, text, view)
+      return false if (stretch_def = _get_stretch_def(@picked_stretch_start_point, @mouse_snap_point)).nil?
 
       split_def, factor, esv, lps, lpe = stretch_def.values_at(:split_def, :factor, :esv, :lps, :lpe)
       et, epmin, epmax, max_compression_distance, reversed = split_def.values_at(:et, :epmin, :epmax, :max_compression_distance, :reversed)
@@ -1727,9 +1581,9 @@ module Ladb::OpenCutList
         compression_distance = real_distance.abs
         max_compression_distance = max_compression_distance / factor
       end
-      end_point = @picked_reshape_start_point.offset(v, real_distance)
+      end_point = @picked_stretch_start_point.offset(v, real_distance)
 
-      return false if (stretch_def = _get_stretch_def(@picked_reshape_start_point, end_point)).nil?
+      return false if (stretch_def = _get_stretch_def(@picked_stretch_start_point, end_point)).nil?
       esv, _ = stretch_def.values_at(:esv)
 
       # Error if max distance exceeded
@@ -1743,15 +1597,56 @@ module Ladb::OpenCutList
         return false
       end
 
-      @picked_reshape_end_point = end_point
+      @picked_stretch_end_point = end_point
 
-      _reshape_entity
+      _stretch_entity
       Sketchup.set_status_text('', SB_VCB_VALUE)
 
       true
     end
 
     # -----
+
+    def _fetch_option_stretch_measure_type
+      @tool.fetch_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_STRETCH_MEASURE_TYPE)
+    end
+
+    def _fetch_option_stretch_measure_type_outside?
+      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_STRETCH_MEASURE_TYPE, SmartReshapeTool::ACTION_OPTION_STRETCH_MEASURE_TYPE_OUTSIDE)
+    end
+
+    def _fetch_option_stretch_measure_type_offset?
+      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_STRETCH_MEASURE_TYPE, SmartReshapeTool::ACTION_OPTION_STRETCH_MEASURE_TYPE_OFFSET)
+    end
+
+    def _fetch_option_axes
+      @tool.fetch_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_AXES)
+    end
+
+    def _fetch_option_options_centred?
+      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_CENTRED)
+    end
+
+    def _fetch_option_options_make_unique?
+      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_MAKE_UNIQUE)
+    end
+
+    # -----
+
+    def _get_edit_transformation
+      case _fetch_option_axes
+
+      when SmartReshapeTool::ACTION_OPTION_AXES_CONTEXT
+        t = _get_global_context_transformation(nil)
+        return t unless t.nil?
+
+      when SmartReshapeTool::ACTION_OPTION_AXES_ENTITY
+        t = _get_global_instance_transformation(nil)
+        return t unless t.nil?
+
+      end
+      super
+    end
 
     def _get_drawing_def_parameters
       {
@@ -1772,12 +1667,8 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _reshape_entity
-      _stretch_entity
-    end
-
     def _stretch_entity
-      return if (stretch_def = _get_stretch_def(@picked_reshape_start_point, @picked_reshape_end_point)).nil?
+      return if (stretch_def = _get_stretch_def(@picked_stretch_start_point, @picked_stretch_end_point)).nil?
 
       split_def, emv, esv, edvs, lpe = stretch_def.values_at(:split_def, :emv, :esv, :edvs, :lpe)
       et, eps, evpspe, reversed, section_defs, container_defs = split_def.values_at(:et, :eps, :evpspe, :reversed, :section_defs, :container_defs)
@@ -1812,8 +1703,6 @@ module Ladb::OpenCutList
           # Process extern instances
           if !make_unique_o && count_used_instances > count_stretched_instances
 
-            # puts "-- Extern instances exist"
-
             # -- Extern instances exist
 
             # Extract definition instances
@@ -1823,8 +1712,6 @@ module Ladb::OpenCutList
             stretched_instances = container_defs.map(&:container)
 
             if count_used_instances > count_instances
-
-              # puts "--- deep find"
 
               active_selection_path = get_active_selection_path
               active_selection_path_size = active_selection_path.size
@@ -1841,14 +1728,9 @@ module Ladb::OpenCutList
               unlocked_extern_instance_paths = extern_instance_paths.reject { |path| path.any?(&:locked?) }
               unlocked_extern_instances = unlocked_extern_instance_paths.map! { |path| path.last }
 
-              # puts "stretched_instances = #{stretched_instances}"
-              # puts "unlocked_extern_instances = #{unlocked_extern_instances}"
-
               make_unique_e = unlocked_extern_instances.size < extern_instance_paths.size
 
             else
-
-              # puts "--- simple find"
 
               extern_instances = definition_instances.difference(stretched_instances)
               unlocked_extern_instances = extern_instances.reject(&:locked?)
@@ -1864,8 +1746,6 @@ module Ladb::OpenCutList
             end
 
           else
-
-            # puts "-- No extern instances"
 
             # -- No extern instances
 
@@ -2139,6 +2019,24 @@ module Ladb::OpenCutList
                   target_position = ref_position
                   target_position = target_position.offset(stretched_definition_def.ddv.transform(t)) if stretched_definition_def.ddv.valid?
                   current_position = ORIGIN.transform(t)
+
+                  # k_edge = Kuix::EdgeMotif3d.new
+                  # k_edge.start.copy!(current_position)
+                  # k_edge.end.copy!(target_position)
+                  # k_edge.color = Kuix::COLOR_CYAN
+                  # k_edge.line_width = 2
+                  # k_edge.end_arrow = true
+                  # k_edge.on_top = true
+                  # @tool.append_3d(k_edge, 100)
+                  #
+                  # k_edge = Kuix::EdgeMotif3d.new
+                  # k_edge.start.copy!(current_position)
+                  # k_edge.end.copy!(current_position.offset(stretched_definition_def.ddv))
+                  # k_edge.color = Kuix::COLOR_MAGENTA
+                  # k_edge.line_width = 2
+                  # k_edge.end_arrow = true
+                  # k_edge.on_top = true
+                  # @tool.append_3d(k_edge, 100)
 
                   v = current_position.vector_to(target_position)
 
@@ -3396,11 +3294,11 @@ module Ladb::OpenCutList
     end
 
     def _fetch_option_paneling_direction_inward?
-      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_PANELING_DIRECTION, SmartReshapeTool::ACTION_OPTION_BOX_DIRECTION_INWARD)
+      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_PANELING_DIRECTION, SmartReshapeTool::ACTION_OPTION_PANELING_DIRECTION_INWARD)
     end
 
     def _fetch_option_paneling_direction_outward?
-      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_PANELING_DIRECTION, SmartReshapeTool::ACTION_OPTION_BOX_DIRECTION_OUTWARD)
+      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_PANELING_DIRECTION, SmartReshapeTool::ACTION_OPTION_PANELING_DIRECTION_OUTWARD)
     end
 
     def _fetch_option_paneling_join_type
@@ -3408,11 +3306,11 @@ module Ladb::OpenCutList
     end
 
     def _fetch_option_paneling_join_type_flat?
-      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_PANELING_JOINT_TYPE, SmartReshapeTool::ACTION_OPTION_BOX_JOINT_TYPE_FLAT)
+      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_PANELING_JOINT_TYPE, SmartReshapeTool::ACTION_OPTION_PANELING_JOINT_TYPE_FLAT)
     end
 
     def _fetch_option_paneling_join_type_miter?
-      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_PANELING_JOINT_TYPE, SmartReshapeTool::ACTION_OPTION_BOX_JOINT_TYPE_MITER)
+      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_PANELING_JOINT_TYPE, SmartReshapeTool::ACTION_OPTION_PANELING_JOINT_TYPE_MITER)
     end
 
     # -----
@@ -3462,7 +3360,7 @@ module Ladb::OpenCutList
     end
 
     def _get_joint_type_miter?(edge)
-      _get_joint_type(edge) == SmartReshapeTool::ACTION_OPTION_BOX_JOINT_TYPE_MITER
+      _get_joint_type(edge) == SmartReshapeTool::ACTION_OPTION_PANELING_JOINT_TYPE_MITER
     end
 
     def _get_faces_joint_type_miter?(face_manipulator_1, face_manipulator_2)
@@ -3476,10 +3374,10 @@ module Ladb::OpenCutList
 
     def _toggle_edge_joint_type(edge)
       case _get_joint_type(edge)
-      when SmartReshapeTool::ACTION_OPTION_BOX_JOINT_TYPE_FLAT
-        @edge_joint_types[edge] = SmartReshapeTool::ACTION_OPTION_BOX_JOINT_TYPE_MITER
-      when SmartReshapeTool::ACTION_OPTION_BOX_JOINT_TYPE_MITER
-        @edge_joint_types[edge] = SmartReshapeTool::ACTION_OPTION_BOX_JOINT_TYPE_FLAT
+      when SmartReshapeTool::ACTION_OPTION_PANELING_JOINT_TYPE_FLAT
+        @edge_joint_types[edge] = SmartReshapeTool::ACTION_OPTION_PANELING_JOINT_TYPE_MITER
+      when SmartReshapeTool::ACTION_OPTION_PANELING_JOINT_TYPE_MITER
+        @edge_joint_types[edge] = SmartReshapeTool::ACTION_OPTION_PANELING_JOINT_TYPE_FLAT
       else
         @edge_joint_types[edge] = _fetch_option_paneling_join_type
       end
