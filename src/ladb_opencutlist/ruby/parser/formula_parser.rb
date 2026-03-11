@@ -28,6 +28,7 @@ module Ladb::OpenCutList
 
     WHITE_LIST_CONST = %w[
       Math
+      Date DateTime Time
     ]
 
     TYPE_IDENT = 0
