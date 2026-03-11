@@ -2178,8 +2178,8 @@ module Ladb::OpenCutList
       return @global_context_transformation unless @global_context_transformation.nil?
       @global_context_transformation = default
       if @active_selection_path.is_a?(Array) &&
-         !(model = Sketchup.active_model).nil? &&
-         (!(active_path = model.active_path).is_a?(Array) || active_path.last != @active_selection_path.last)
+         (model = Sketchup.active_model).is_a?(Sketchup::Model) &&
+         ((active_path = model.active_path.to_a).empty? || active_path.last != @active_selection_path.last)
         @global_context_transformation = PathUtils.get_transformation(@active_selection_path, IDENTITY)
       end
       @global_context_transformation
@@ -2190,8 +2190,8 @@ module Ladb::OpenCutList
       @global_instance_transformation = default
       if @active_selection_instances.is_a?(Array) && @active_selection_instances.one?
         if @active_selection_path.is_a?(Array) &&
-           !(model = Sketchup.active_model).nil? &&
-           (!(active_path = model.active_path).is_a?(Array) || active_path.last != @active_selection_instances.first)
+           (model = Sketchup.active_model).is_a?(Sketchup::Model) &&
+           ((active_path = model.active_path.to_a).empty? || active_path.last != @active_selection_instances.first)
           @global_instance_transformation = PathUtils.get_transformation(@active_selection_path + [ @active_selection_instances.first ], IDENTITY)
         end
       else
@@ -4306,6 +4306,11 @@ module Ladb::OpenCutList
 
     def each(&block)
       @paths.each(&block)
+    end
+
+    def sync
+      Sketchup.active_model.selection.clear
+      Sketchup.active_model.selection.add(@paths)
     end
 
   end

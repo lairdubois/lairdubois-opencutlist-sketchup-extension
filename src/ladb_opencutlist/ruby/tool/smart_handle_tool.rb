@@ -1469,9 +1469,9 @@ module Ladb::OpenCutList
 
       @locked_normal = nil
 
-      @operator_x = '*'
+      @operator_x = '/'
       @number_x = 1
-      @operator_y = '*'
+      @operator_y = '/'
       @number_y = 1
 
     end
