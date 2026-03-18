@@ -993,7 +993,7 @@ tab:
         unplaced_parts_plural: "**{{ count }} parts** are too large to fit."
       warning:
         is_part_selection: This cutting diagram is limited to **selected parts**.
-        cutting_dimensions: This cutting diagramm uses the **raw** dimensions of the parts.
+        cutting_dimensions: This cutting diagram uses the **raw** dimensions of the parts.
         cutting_dimensions_increase_1d: "These raw dimensions have been configured on the material '{{ material_name }}': length oversize (**{{ length_increase }}**)."
         cutting_dimensions_increase_2d: "These raw dimensions have been configured on the material '{{ material_name }}': length oversize (**{{ length_increase }}**) and width oversize (**{{ width_increase }}**)."
         cutting_dimensions_edge_decrement: Dimensions reduced by the thickness of the edge banding. <i class='ladb-opencutlist-icon-edge-decremented'></i>
@@ -1248,7 +1248,7 @@ tab:
         unusable_part: Part too large
       warning:
         is_part_selection: This cutting diagram is limited to **selected parts**.
-        cutting_dimensions: This cutting diagramm uses the **raw** dimensions of the parts.
+        cutting_dimensions: This cutting diagram uses the **raw** dimensions of the parts.
         cutting_dimensions_increase_1d: "These raw dimensions have been configured on the material '{{ material_name }}': length oversize (**{{ length_increase }}**)."
         cutting_dimensions_increase_2d: "These raw dimensions have been configured on the material '{{ material_name }}': length oversize (**{{ length_increase }}**) and width oversize (**{{ width_increase }}**)."
         cutting_dimensions_edge_decrement: Dimensions reduced by the thickness of the edge banding. <i class='ladb-opencutlist-icon-edge-decremented'></i>
