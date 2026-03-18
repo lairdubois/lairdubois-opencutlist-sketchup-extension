@@ -2837,19 +2837,23 @@ module Ladb::OpenCutList
       return if (model = Sketchup.active_model).nil?
       selection = model.selection
 
-      if selection.any? && @tool.callback_action_handler
-        if (container = selection.first).is_a?(Sketchup::Group) || container.is_a?(Sketchup::ComponentInstance)
+      if selection.any?
+
+        if @tool.callback_action_handler &&
+           ((container = selection.first).is_a?(Sketchup::Group) || container.is_a?(Sketchup::ComponentInstance))
           @drawing_def = CommonDrawingDecompositionWorker
-                           .new([ Sketchup::InstancePath.new(model.active_path.to_a + [ container ]) ],
+                           .new([Sketchup::InstancePath.new(model.active_path.to_a + [container])],
                                 ignore_faces: false,
                                 ignore_edges: false
                            )
                            .run
           if @drawing_def.is_a?(DrawingDef)
             set_state(STATE_PANELING)
-            selection.clear
           end
         end
+
+        selection.clear
+
       end
 
     end
