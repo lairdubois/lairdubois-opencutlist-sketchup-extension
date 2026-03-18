@@ -2,6 +2,16 @@ module Ladb::OpenCutList
 
   class ImporterOpenWorker
 
+        def initialize(
+
+                   path: nil
+
+    )
+
+      @path = path
+
+    end
+
     # -----
 
     def run
@@ -15,7 +25,7 @@ module Ladb::OpenCutList
       }
 
       # Ask for open file path
-      path = UI.openpanel(PLUGIN.get_i18n_string('tab.importer.load.title'), '', "CSV|*.csv|TSV|*.tsv||")
+      path = @path.is_a?(String) ? @path : UI.openpanel(PLUGIN.get_i18n_string('tab.importer.load.title'), '', "CSV|*.csv|TSV|*.tsv||")
       if path
 
         filename = File.basename(path)

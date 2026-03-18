@@ -9,8 +9,8 @@ module Ladb::OpenCutList
     def setup_commands
 
       # Setup opencutlist dialog actions
-      PLUGIN.register_command("importer_open") do
-        open_command
+      PLUGIN.register_command("importer_open") do |settings|
+        open_command(settings)
       end
       PLUGIN.register_command("importer_load") do |settings|
         load_command(settings)
@@ -25,11 +25,11 @@ module Ladb::OpenCutList
 
     # -- Commands --
 
-    def open_command
+    def open_command(settings)
       require_relative '../worker/importer/importer_open_worker'
 
       # Setup worker
-      worker = ImporterOpenWorker.new
+      worker = ImporterOpenWorker.new(**settings)
 
       # Run !
       worker.run

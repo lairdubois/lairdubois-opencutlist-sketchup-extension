@@ -24,12 +24,10 @@
 
     LadbTabImporter.DEFAULTS = {};
 
-    LadbTabImporter.prototype.openCSV = function () {
+    LadbTabImporter.prototype.openCSV = function (path = null) {
         const that = this;
 
-        rubyCallCommand('importer_open', null, function (response) {
-
-            let i;
+        rubyCallCommand('importer_open', { path: path }, function (response) {
 
             if (response.errors.length > 0) {
 
@@ -371,6 +369,17 @@
     };
 
     // Init /////
+
+    LadbTabImporter.prototype.registerCommands = function () {
+        LadbAbstractTab.prototype.registerCommands.call(this);
+
+        const that = this;
+
+        this.registerCommand('load', function (parameters) {
+            that.openCSV(parameters.path);
+        });
+
+    };
 
     LadbTabImporter.prototype.bind = function () {
         LadbAbstractTab.prototype.bind.call(this);

@@ -1337,7 +1337,7 @@ module Ladb::OpenCutList
 
       return unless projection_def.is_a?(DrawingProjectionDef)
 
-      projection_def.layer_defs.sort_by { |v| [v.type_paths? ? 1 : 0, -v.depth ] }.each do |layer_def| # Path's layers always on top
+      projection_def.layer_defs.sort_by { |v| [ v.type_paths? ? 1 : 0, -v.depth ] }.each do |layer_def| # Path's layers always on top
         _dxf_write_projection_layer_def_geometry(file, layer_def,
                                                  smoothing: smoothing,
                                                  transformation: transformation,

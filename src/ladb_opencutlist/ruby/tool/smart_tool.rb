@@ -403,7 +403,6 @@ module Ladb::OpenCutList
         # -- NOTIFICATION
 
         @notification_panel = Kuix::Panel.new
-        # @notification_panel.layout_data = Kuix::StaticLayoutData.new(0.5, 1.0, -1, -1, Kuix::Anchor.new(Kuix::Anchor::BOTTOM))
         @notification_panel.layout = Kuix::InlineLayout.new(false, unit)
         @notification_panel.margin.bottom = unit * 2
         @notification_panel.visible = false

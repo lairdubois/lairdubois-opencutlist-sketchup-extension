@@ -27,6 +27,8 @@ module Ladb::OpenCutList
   require_relative 'tool/smart_axes_tool'
   require_relative 'tool/smart_join_tool'
   require_relative 'tool/smart_export_tool'
+  require_relative 'importer/csv_importer'
+  require_relative 'importer/bxf2_importer'
 
   attr_reader :app_observer
 
@@ -899,27 +901,11 @@ module Ladb::OpenCutList
 
       end
 
-      # cmd = UI::Command.new(get_i18n_string('core.toolbar.command.smart_axes') + '_2') {
-      #   if Sketchup.active_model && _assert_not_zzz
-      #     if Sketchup.active_model.tools.respond_to?(:active_tool) && Sketchup.active_model.tools.active_tool.is_a?(SmartAxesToolNew)
-      #       Sketchup.active_model.select_tool(nil)
-      #     else
-      #       Sketchup.active_model.select_tool(SmartAxesToolNew.new)
-      #     end
-      #     Sketchup.focus if Sketchup.respond_to?(:focus)
-      #   end
-      # }
-      # cmd.small_icon = '../img/icon-dialog-72x72.png'
-      # cmd.large_icon = '../img/icon-dialog-114x114.png'
-      # cmd.tooltip = get_i18n_string('core.toolbar.command.smart_axes')
-      # cmd.status_bar_text = get_i18n_string('core.toolbar.command.smart_axes')
-      # cmd.menu_text = get_i18n_string('core.toolbar.command.smart_axes')
-      # cmd.set_validation_proc {
-      #   Sketchup.active_model.tools.respond_to?(:active_tool) && Sketchup.active_model.tools.active_tool.is_a?(SmartAxesToolNew) ? MF_CHECKED : MF_UNCHECKED
-      # }
-      # toolbar = toolbar.add_item(cmd)
-
       toolbar.restore
+
+      # Setup Importers
+      Sketchup.register_importer(CsvImporter.new)
+      Sketchup.register_importer(Bxf2Importer.new) if IS_DEV && !IS_RBZ
 
     end
 
