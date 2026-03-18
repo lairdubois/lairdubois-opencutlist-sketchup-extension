@@ -1729,14 +1729,14 @@ namespace Packy {
             const BinPos copies_min = j.value("copies_min", static_cast<BinPos>(0));
 
             if (/*shape.is_rectangle() && */fake_trimming_y_ > 0) {
-                auto[min, max] = shape.compute_min_max();
+                auto aabb = shape.compute_min_max();
 
                 // TODO find a best way to enlarge the shape
 
-                auto x = min.x;
-                auto y = min.y;
-                auto width = max.x - min.x;
-                auto height = max.y - min.y + fake_trimming_y_ * 2;
+                auto x = aabb.x_min;
+                auto y = aabb.y_min;
+                auto width = aabb.x_max - aabb.x_min;
+                auto height = aabb.y_max - aabb.y_max + fake_trimming_y_ * 2;
 
                 Shape fake_shape;
                 ShapeElement element_1;
@@ -1905,11 +1905,11 @@ namespace Packy {
                     for (const auto& item_shape : item_type.shapes) {
 
                         // Compute min max
-                        auto shape_min_max = item_shape.shape_orig.compute_min_max();
-                        if (shape_min_max.first.x < min_max.first.x) min_max.first.x = shape_min_max.first.x;
-                        if (shape_min_max.first.y < min_max.first.y) min_max.first.y = shape_min_max.first.y;
-                        if (shape_min_max.second.x > min_max.second.x) min_max.second.x = shape_min_max.second.x;
-                        if (shape_min_max.second.y > min_max.second.y) min_max.second.y = shape_min_max.second.y;
+                        auto aabb = item_shape.shape_orig.compute_min_max();
+                        if (aabb.x_min < min_max.first.x) min_max.first.x = aabb.x_min;
+                        if (aabb.y_min < min_max.first.y) min_max.first.y = aabb.y_min;
+                        if (aabb.x_max > min_max.second.x) min_max.second.x = aabb.x_max;
+                        if (aabb.y_max > min_max.second.y) min_max.second.y = aabb.y_max;
 
                         shape::AreaDbl area = item_shape.shape_orig.shape.compute_area();
                         for (const auto& hole : item_shape.shape_orig.holes) {
@@ -1929,7 +1929,11 @@ namespace Packy {
                     largest_item_shape = item_type.shapes.front();
 
                     // Compute min max
-                    min_max = largest_item_shape.shape_orig.compute_min_max();
+                    auto aabb = largest_item_shape.shape_orig.compute_min_max();
+                    min_max = {
+                        { aabb.x_min, aabb.y_min },
+                        { aabb.x_max, aabb.y_max }
+                    };
 
                 }
 
