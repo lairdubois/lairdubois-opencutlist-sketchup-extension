@@ -1736,7 +1736,7 @@ tab:
       invalid_image_file: Imagine invalidă
     obsolete_base: "Pentru a rămâne sincronizat, trebuie să reîmprospătați lista de materiale."
   outliner:
-    label: Structură (Outliner)
+    label: Structură
     title: Structură Arbore
     list: Structura Arbore a Entităților
     nodes: Instanțe

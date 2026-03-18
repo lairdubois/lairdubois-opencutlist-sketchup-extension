@@ -15,7 +15,7 @@ default:
   stop: Stop
   validate: Apply
   confirm: Confirm
-  ok: Ok
+  ok: OK
   open: Open
   see: See
   close: Close
@@ -27,7 +27,7 @@ default:
   export: Export
   import: Import
   load: Load
-  preview: Overview
+  preview: Preview
   options: Options
   caution: Caution
   remove: Remove
@@ -50,7 +50,7 @@ default:
   automatic: Automatic
   empty_filename: Untitled.skp
   help: Help
-  error: Darn!
+  error: Oops!
   warning: Caution
   tip: Tip
   good: Good
@@ -91,7 +91,7 @@ default:
   file: File
   file_plural: Files
   stroke_color: Line color
-  fill_color: Fill Color
+  fill_color: Fill color
   length: Length
   width: Width
   thickness: Thickness
