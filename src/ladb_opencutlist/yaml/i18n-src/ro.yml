@@ -1,0 +1,2348 @@
+# this label must be in your language
+_label: Romanian
+# the disabled message will be displayed when the language is not fully translated
+_disabled_msg: |
+  Această limbă nu a fost încă **tradusă complet**.
+
+  Pentru a ajuta la finalizarea traducerii, vă rugăm să consultați [Documentația OpenCutList](https://docs.opencutlist.org/for-translators/general).
+# the reload message will be displayed when a user switches to this language
+_reload_msg: "Pentru a reflecta toate modificările, trebuie să **închideți** și să **redeschideți** fereastra OpenCutList."
+_description: "Generator de liste de debitare și diagrame de tăiere pentru tâmplari. Sursă deschisă (Open Source), finanțat prin donații și ușor de utilizat ;)"
+default:
+  minimize: Minimizează
+  maximize: Maximizează
+  cancel: Anulează
+  stop: Oprește
+  validate: Aplică
+  confirm: Confirmă
+  ok: Ok
+  open: Deschide
+  see: Vezi
+  close: Închide
+  clear: Șterge
+  refresh: Actualizează
+  generate: Generează
+  regenerate: Regenerează
+  print: Printează
+  export: Exportă
+  import: Importă
+  load: Încarcă
+  preview: Previzualizare
+  options: Opțiuni
+  caution: Atenție
+  remove: Elimină
+  remove_all: Elimină tot
+  delete: Șterge
+  create: Creează
+  duplicate: Duplică
+  ignore: Ignoră
+  download: Descarcă
+  upgrade: Actualizează
+  copy: Copiază
+  select_all: Selectează tot
+  unselect_all: Deselectează tot
+  draw: Desenează
+  estimate: Estimează
+  rename: Redenumește
+  next: Următorul
+  "yes": Da
+  "no": Nu
+  automatic: Automat
+  empty_filename: Făra_titlu.skp
+  help: Ajutor
+  error: Eroare!
+  warning: Atenție
+  tip: Sfat
+  good: Bine
+  bad: Rău
+  by: de
+  # date format in use for language
+  date_format: "d/m/Y H:i"
+  # short date format in use for language
+  date_format_short: d/m/Y
+  decimal: Zecimal
+  fractional: Fracționar
+  unit_0: Inci (Inch)
+  unit_1: Picior (Foot)
+  unit_2: Milimetri
+  unit_3: Centimetri
+  unit_4: Metri
+  unit_5: Iard (Yard)
+  unit_mass_0: Kilogram
+  unit_mass_1: Livră (Pound)
+  unit_angle_0: Grade
+  instance_single: element
+  instance_plural: elemente
+  part_single: piesă
+  part_plural: piese
+  cut_single: tăietură
+  cut_plural: tăieturi
+  thickness_layer_single: strat
+  thickness_layer_plural: straturi
+  setup_model_units: Configurează unitățile modelului
+  load_more: Încarcă mai mult
+  reset_to_app_defaults: Restabilește setările inițiale
+  constrain_key: Shift
+  copy_key_win: Ctrl
+  copy_key_mac: Option
+  alt_key_win: Alt
+  alt_key_mac: Command
+  tab_key: Tab
+  file: Fișier
+  file_plural: Fișiere
+  stroke_color: Culoare linie
+  fill_color: Culoare umplere
+  length: Lungime
+  width: Lățime
+  thickness: Grosime
+  height: Înălțime
+  deprecated: Învechit
+core:
+  menu:
+    submenu: OpenCutList
+    item:
+      generate_cutlist:  Generează Lista de Piese
+      edit_part_properties: $t(tab.cutlist.edit_part_properties)
+      edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
+      edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
+      edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
+      edit_part_instance: Editează Instanța
+      edit_parent_part_instance: Modifică grupul/componenta ce conține instanța
+      hide_part_instance: Ascunde Instanța
+      unhide_part_instance: Arată Instanța
+      edit_part_instance_properties: Editează Proprietățile Instanței
+      smart_draw: $t(core.toolbar.command.smart_draw)
+      smart_handle: $t(core.toolbar.command.smart_handle)
+      smart_reshape: $t(core.toolbar.command.smart_reshape)
+      smart_paint: $t(core.toolbar.command.smart_paint)
+      smart_axes: $t(core.toolbar.command.smart_axes)
+      smart_join: $t(core.toolbar.command.smart_join)
+      smart_export: $t(core.toolbar.command.smart_export)
+      reset_dialog_position: Resetează Poziția Ferestrei
+  toolbar:
+    name: OpenCutList
+    tools: Instrumente
+    command:
+      dialog: OpenCutList
+      smart_draw: Desenează Piese
+      smart_handle: Gestionează Piese
+      smart_reshape: Remodelează Piese
+      smart_paint: Vopsește Piese
+      smart_axes: Orientează Piese
+      smart_join: Asamblare
+      smart_export: Exportă Piese
+  messagebox:
+    dir_override: |
+      « {{ target }} » există deja. Doriți să îl înlocuiți?
+
+      Un folder cu același nume este deja prezent în folderul {{ parent }}. Dacă îl înlocuiți, conținutul original va fi pierdut.
+  savepanel:
+    export_to_file: "Exportă în fișier {{ file_format }}"
+  dialog:
+    title: OpenCutList de L'Air du Bois
+  leftbar:
+    more: Mai multe
+    more_docs: Doc.
+    more_reviews: Recenzii
+    more_plans: Planuri
+    more_extensions: Extensii
+    more_update: Actualizare
+  bottombar:
+    report_a_bug: Raportează o eroare
+  warning:
+    dev: |
+      Utilizați o versiune de **dezvoltare** a *OpenCutList*.
+      Această versiune este disponibilă doar pentru testare.
+      Nu este recomandată utilizarea ei în producție.
+
+      Pentru a raporta o eroare: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
+    not_available_in_context: Indisponibil în acest context
+  error:
+    exception: "Eroare: **{{ error }}**"
+    forbidden: "Neautorizat: **{{ error }}**"
+    extern: "Eroare externă: **{{ error }}**"
+    feature_unavailable: "Această funcție necesită SketchUp {{ version }} sau o versiune ulterioară"
+    failed_export_to: |
+      A apărut o eroare la exportul către *{{ path }}*.
+      **{{ error }}**
+    unsupported_file_format: "Format de fișier nesuportat: **{{ format }}**"
+  success:
+    exported_to: "Export reușit către {{ path }}."
+    copied_to_clipboard: Copiat în clipboard
+  event:
+    model_change: Modelul activ a fost modificat.
+    options_change: Opțiunile din model au fost modificate.
+    material_change: Cel puțin un material a fost modificat.
+    selection_change: Selecția din modelul activ a fost modificată.
+    layers_change: Etichetele (tag-urile) din modelul activ au fost modificate.
+    drawing_change: Designul modelului activ a fost modificat.
+  upgrade:
+    unavailable: Nu s-a putut afla care este ultima versiune a *OpenCutList*.
+    available: |
+      O versiune mai nouă de *OpenCutList* este disponibilă.
+      Actualizați pentru a obține cele mai noi funcționalități!
+    up_to_date: |
+      Aveți deja cea mai recentă versiune a *OpenCutList*.
+
+      *Luați în considerare o sponsorizare a acestui proiect pentru a ne ajuta să adăugăm și mai multe funcționalități!*
+    downloading: Descărcare în curs
+    changelog: "Ce este nou?"
+    ignore_update: Ignoră această actualizare
+    download_rescue: "Probleme la descărcare?"
+    manual_download: Descărcare manuală
+    zzz: "În prezent mă odihnesc după actualizare. Pentru a mă trezi, trebuie să reporniți SketchUp."
+    success: |
+      Actualizarea OpenCutList s-a finalizat!
+
+      REPORNIȚI SKETCHUP pentru a activa modificările.
+    error:
+      download: Eroare în timpul descărcării arhivei.
+      unzip: Eroare în timpul dezarhivării.
+  preset:
+    label: Presetări
+    manage: Gestionează Presetări
+    save_to: Salvează ca
+    restore_from: Restaurează din
+    app_defaults: Setări din fabrică
+    user_defaults: Setări implicite
+    new: Presetare nouă
+    new_prompt: |
+      *Crearea unei presetări personalizate vă permite să păstrați setările curente ale formularului la nivel global, astfel încât să le puteți refolosi ulterior în toate șabloanele.*
+
+      Introduceți numele presetării:
+    delete_confirm_title: Ștergere
+    delete_confirm: "Sunteți sigur că doriți să ștergeți presetarea **\"{{ name }}\"**?"
+    override_confirm_title: Actualizare
+    override_confirm: "Confirmați actualizarea presetării **\"{{ name }}\"** cu parametrii formularului?"
+    new_success: "Presetarea **\"{{ name }}\"** a fost creată"
+    override_success: "Presetarea **\"{{ name }}\"** a fost actualizată"
+    restore_success: "Formularul a fost completat cu presetarea **\"{{ name }}\"**"
+    delete_success: "Presetarea **\"{{ name }}\"** a fost ștearsă"
+    tooltip:
+      save_to: "Actualizați presetarea '{{ name }}'"
+      delete: "Ștergeți presetarea '{{ name }}'"
+    dictionary:
+      component_textinput_color: Paletă de Culori
+      cutlist_cuttingdiagram1d_options: $t(default.deprecated)
+      cutlist_cuttingdiagram1d_write_options: $t(default.deprecated)
+      cutlist_cuttingdiagram2d_options: $t(default.deprecated)
+      cutlist_cuttingdiagram2d_write_options: $t(default.deprecated)
+      cutlist_packing_options: $t(tab.cutlist.label) / $t(tab.cutlist.packing.title) 2D
+      cutlist_packing_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.packing.write.title) 2D
+      cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
+      cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
+      cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
+      cutlist_layout_single_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title) ($t(default.part_single))
+      cutlist_options: $t(tab.cutlist.label) / $t(default.options)
+      cutlist_report_options: $t(default.deprecated)
+      cutlist_estimate_options: $t(tab.cutlist.label) / $t(tab.cutlist.estimate.title)
+      cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
+      cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
+      importer_import_options: $t(tab.importer.label) / $t(default.import)
+      importer_load_options: $t(tab.importer.label) / $t(default.open)
+      materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
+      materials_options: $t(tab.materials.label) / $t(default.options)
+      outliner_options: $t(tab.outliner.label) / $t(default.options)
+      settings_model: $t(tab.settings.label) / Model
+      tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
+      tool_smart_handle_options: $t(core.toolbar.command.smart_handle)
+      tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
+      tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
+      tool_smart_export_options: $t(core.toolbar.command.smart_export)
+  progress:
+    please_wait: Calculez o lume a păcii
+  component:
+    textinput:
+      reset: Resetează această valoare
+    textinput_color:
+      store: Salvează culoarea
+      remove: Elimină culoarea
+    textinput_code:
+      snippets: Exemple de formule
+      help: Tastați **@** pentru a obține o listă de variabile.
+    textinput_size:
+      quantity: Cant.
+    three_viewer:
+      view: "Vedere {{ view }}"
+      view_isometric: Izometrică
+      view_top: Sus
+      view_bottom: Jos
+      view_front: Față
+      view_back: Spate
+      view_left: Stânga
+      view_right: Dreapta
+      zoom: "Scara {{ zoom }}"
+      explode_factor: Amplitudinea vederii explodate
+      toggle_box_helper: Arată/Ascunde Caseta de încadrare
+      toggle_box_dimensions_helper: Arată/Ascunde Dimensiunile
+      toggle_axes_helper: Arată/Ascunde Axele
+  docs:
+    error:
+      failed_to_load: |
+        Nu s-a putut deschide documentația.
+        Verificați dacă sunteți conectat la internet.
+tab:
+  cutlist:
+    label: Piese
+    title: Lista de Piese
+    help: |
+      Selectați piesele care vor fi folosite pentru lista de piese din scena curentă și faceți clic pe **Generează**.
+      Dacă nu este selectată nicio componentă, vor fi luate în considerare toate componentele vizibile din scenă.
+    is_selection: Doar selecția
+    select_part: Selectează piesa
+    select_part_plural: Selectează piese
+    material_undefined: Fără material
+    not_available_std_width: Lățime nedefinită
+    not_available_std_thickness: Grosime nedefinită
+    not_available_std_section: Profil Nedefinit
+    highlight_part: Evidențiază piesa în model
+    highlight_parts: Evidențiază piesele în model
+    edit_part_properties: Editează Proprietățile Piesei
+    edit_part_axes_properties: Editează proprietățile (axele) piesei
+    edit_part_edges_properties: Editează proprietățile (canturile) piesei
+    edit_part_faces_properties: Editează proprietățile (fețele) piesei
+    part_drawing_type_1: Vedere de Sus 2D
+    part_drawing_type_2: Vedere de Jos 2D
+    part_drawing_type_3: Vedere Laterală Stânga 2D
+    part_drawing_type_4: Vedere Laterală Dreapta 2D
+    part_drawing_type_5: Vedere Frontală 2D
+    part_drawing_type_6: Vedere Spate 2D
+    part_drawing_type_7: 3D
+    tooltip:
+      show_hide_block: Arată / Ascunde grupul
+      show_hide_blocks: Arată / Ascunde toate grupurile
+      scroll_to_block: Derulează la grup
+      not_available_std_width: "Lățimea *{{ std_dimension_real }}* nu este definită în lățimile standard ale materialului '{{ material_name }}'"
+      not_available_std_thickness: "Grosimea *{{ std_dimension_real }}* nu este definită în grosimile standard ale materialului '{{ material_name }}'"
+      not_available_std_section: "Profilul *{{ std_dimension_real }}* nu este definit în profilele standard ale materialului '{{ material_name }}'"
+      add_std_width_to_material: |
+        Adaugă lățimea *{{ std_dimension }}*
+        la materialul '{{ material_name }}'
+      add_std_thickness_to_material: |
+        Adaugă grosimea *{{ std_dimension }}*
+        la materialul '{{ material_name }}'
+      add_std_section_to_material: |
+        Adaugă secțiunea transversală *{{ std_dimension }}*
+        la materialul '{{ material_name }}'
+      rounded_std_width: |
+        Lățimea *{{ std_dimension }}* este rotunjită de precizia unităților modelului.
+        Lățimea reală: *{{ std_dimension_real }}*
+        ---
+        $t(tab.cutlist.tooltip.rounded_std_footer)
+      rounded_std_thickness: |
+        Grosimea *{{ std_dimension }}* este rotunjită de precizia unităților modelului.
+        Grosimea reală: *{{ std_dimension_real }}*
+        ---
+        $t(tab.cutlist.tooltip.rounded_std_footer)
+      rounded_std_section: |
+        Secțiunea transversală *{{ std_dimension }}* este rotunjită de precizia unităților modelului.
+        Secțiunea reală: *{{ std_dimension_real }}*
+        ---
+        $t(tab.cutlist.tooltip.rounded_std_footer)
+      rounded_std_footer: Ajustați precizia în *Model Info* sau verificați dimensiunile pieselor din acest grup.
+      highlight_part: $t(tab.cutlist.highlight_part)
+      highlight_parts: $t(tab.cutlist.highlight_parts)
+      edit_part_properties: $t(tab.cutlist.edit_part_properties)
+      edit_parts_properties: Editează proprietățile grupului de piese
+      edit_material: $t(tab.cutlist.menu.edit_material)
+      folding_part: Desfășoară / Pliază
+      material_origin_1: Materialul considerat pentru această piesă este definit pe instanțele sale
+      material_origin_2: Materialul considerat pentru această piesă este moștenit de la unul dintre elementele sale părinte
+      material_origin_3: Materialul considerat pentru această piesă este extras din unul dintre elementele sale copil
+      orientation_locked_on_axis: Orientarea acestei piese este blocată pe axele sale
+      number_saved: Numărul piesei este salvat
+      number_hidden: "Numărul '{{ number }}' salvat pe această piesă nu poate fi utilizat deoarece a fost deja atribuit"
+      number_generated: Numărul piesei este generat automat
+      resized: Această piesă a fost redimensionată în raport cu definiția componentei sale
+      flipped: Această piesă este în oglindă în raport cu definiția componentei sale
+      symmetrical: Detectarea pieselor în oglindă este dezactivată pentru această piesă
+      ignore_grain_direction: Orientarea fibrei este ignorată pentru această piesă
+      auto_oriented: Această piesă a fost reorientată automat
+      oko_label_filter: "Include / Exclude această etichetă"
+      add_label_filter: "Filtrează după '{{ label }}'"
+      remove_label_filter: "Elimină filtrarea după '{{ label }}'"
+      add_edge_material_name_filter: "Filtrează după '{{ material_name }}'"
+      remove_edge_material_name_filter: "Elimină filtrarea după '{{ material_name }}'"
+      add_veneer_material_name_filter: "Filtrează după '{{ material_name }}'"
+      remove_veneer_material_name_filter: "Elimină filtrarea după '{{ material_name }}'"
+      not_aligned_on_axes: "Atenție, s-ar putea ca această piesă să nu fie aliniată corect pe axele sale"
+      instance_count_by_part: "Această piesă este numărată în pachete de **{{ count }}** elemente."
+      unused_instance_count: "Rețineți că **{{ count }}** element din ultimul pachet nu va fi folosit."
+      unused_instance_count_plural: "Rețineți că **{{ count }}** elemente din ultimul pachet nu vor fi folosite."
+      used_instance_count: "**{{ count }}** element din {{ total }} folosit"
+      used_instance_count_plural: "**{{ count }}** elemente din {{ total }} folosite"
+      thickness_layer_count: "Piesa finală este alcătuită din **{{ count }}** straturi în grosime"
+      thickness_layered: "Cantitatea de aici reprezintă numărul de bucăți ce trebuie tăiate pentru a obține toate straturile."
+      thickness_layered_equation: "**{{ count }}** *piesă* x **{{ layerCount }}** *straturi* = **{{ cuttingPartCount }}**"
+      thickness_layered_equation_plural: "**{{ count }}** *piese* x **{{ layerCount }}** *straturi* = **{{ cuttingPartCount }}**"
+      multiple_content_layers: "Atenție, această piesă este compusă din sub-piese prezente în {{ count }} etichete (tag-uri) diferite:<br>{{ layers }}"
+      children_warnings: "Atenție, există {{ count }} alertă în piesele grupate"
+      children_warnings_plural: "Atenție, există {{ count }} alerte în piesele grupate"
+      children_size_increase: "Această dimensiune este supradimensionată pentru {{ count }} piese grupate"
+      invalid_final_area: "Atenție, această arie cumulabilă nu a putut fi calculată deoarece {{ count }} piesă (din {{ total }}) are o arie nevalidă"
+      invalid_final_area_plural: "Atenție, această arie cumulabilă nu a putut fi calculată deoarece {{ count }} piese (din {{ total }}) au o arie nevalidă"
+      is_dynamic_attributes_name: Denumirea acestei piese este extrasă din atributul 'Name' al componentei dinamice
+      has_edges: "Această piesă conține {{ count }} aplicare de cant"
+      has_edges_plural: "Această piesă conține {{ count }} aplicări de cant"
+      has_faces: "Această piesă conține {{ count }} față furniruită"
+      has_faces_plural: "Această piesă conține {{ count }} fețe furniruite"
+      size_increased_0: |
+        Mărită cu supradimensionarea pentru Material
+        ({{ increase_1 }})
+      size_increased_1: |
+        Mărită cu supradimensionarea pentru Piesă
+        ({{ increase_2 }})
+      size_increased_2: |
+        Mărită cu supradimensionările pentru Material și Piesă
+        ({{ increase_1 }} + {{ increase_2 }})
+      edge_decremented: "Redus cu grosimea cantului ({{ decrement }})"
+      edge_ymin: Lungime Cant 1
+      edge_ymax: Lungime Cant 2
+      edge_xmin: Lățime Cant 1
+      edge_xmax: Lățime Cant 2
+      face_zmin: Spate
+      face_zmax: Față
+      dblclick_to_copy_all_edges: Dublu-clic aici pentru a duplica această valoare pe celelalte muchii
+      dblclick_to_copy_all_faces: Dublu-clic aici pentru a duplica această valoare pe cealaltă față
+      dblclick_to_sort_axes: Dublu-clic aici pentru a reordona automat axele conform dimensiunilor piesei
+      part_axes: Axele interne ale piesei
+      select_unselect_all_parts: Selectează / Deselectează toate piesele din grup
+      select_parts_in_cutlist: Selectează piesa în Lista de Piese
+      select_parts_in_cutlist_plural: "Selectează {{ count }} piese în Lista de Piese"
+      setup_group_cuttingdiagram: "Configurează diagrama de tăiere pentru '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
+      setup_group_packing: "Configurează diagrama de tăiere pentru '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
+      open_part_url: Deschide URL-ul piesei
+    menu:
+      show_all_groups: Arată toate grupurile
+      hide_all_other_groups: Ascunde toate celelalte grupuri
+      numbers_save: Salvează numerele pieselor
+      numbers_reset: Resetează numerele pieselor
+      highlight_parts: $t(tab.cutlist.highlight_parts)
+      labels_parts: Printează etichetele
+      write_2d: Proiecție 2D
+      write_3d: Geometrie 3D
+      write_2d_parts: Exportă proiecții 2D ale pieselor
+      write_3d_parts: Exportă geometria 3D a pieselor
+      group_write_2d_parts: Exportă proiecția 2D a pieselor din grup
+      group_write_3d_parts: Exportă geometria 3D a pieselor din grup
+      group_layout_parts: Desenează prezentarea pieselor din grup
+      group_numbers_save: Salvează numerele pieselor din acest grup
+      group_numbers_reset: Reinițializează numerele pieselor din acest grup
+      group_cuttingdiagram: Diagramă de tăiere
+      group_packing: Diagramă de tăiere
+      group_labels: Printează etichetele pieselor din grup
+      group_export: Exportă grupul
+      group_estimate: Estimează grupul
+      edit_material: "Editează materialul '{{ material_name }}'"
+      expand_all: Desfășoară toate rândurile
+      collapse_all: Pliază toate rândurile
+      reset_prices: Resetează prețurile tuturor pieselor
+      reset_prices_confirm: |
+        Sunteți pe cale să resetați prețurile tuturor pieselor din modelul dvs.
+        Această acțiune este definitivă. **Toate prețurile vor fi resetate la zero.**
+        Confirmați pentru a continua.
+      reset_prices_success: Prețurile tuturor pieselor au fost resetate.
+    edit_part:
+      title: "Proprietățile Piesei '{{ name }}'"
+      title_multiple: Proprietățile Grupului de Piese
+      multiple_alert: "Proprietăți partajate pentru un grup de {{ part_count }} piese."
+      general: General
+      extra_help: "Lista de proprietăți specifice tipului de material \"**$t(tab.materials.type_{{ material_type }})**\"."
+      edges: Canturi
+      faces: Fețe
+      name: Denumire
+      material: Material
+      cumulable: Cumulabil
+      cumulable_help: |
+        Dacă această opțiune este selectată, **lungimea** sau **lățimea** va fi considerată **lungime unitară** sau **lățime unitară** multiplicată cu cantitatea la sortarea listei de piese.
+      cumulable_0: Necumulabil
+      cumulable_1: Cumulabil pe lungime
+      cumulable_2: Cumulabil pe lățime
+      instance_count_by_part: Împachetare / Ambalare
+      instance_count_by_part_help: |
+        Permite piesei să fie considerată ca un *pachet* de unul sau mai multe *elemente*.
+        Cantitatea asociată piesei din lista de piese va reprezenta prin urmare numărul de pachete întregi necesare pentru a obține numărul de elemente efectiv prezente în model.
+
+        *Exemplu: Pentru a număra doar 1 piesă pentru o pereche de glisiere de sertar:
+        Împachetare = 2 unități / piesă*
+      instance_count_by_part_1: 1 unitate pe piesă
+      instance_count_by_part_2: 2 unități pe piesă
+      mass: Greutate
+      mass_help: Greutatea piesei va fi folosită la generarea unei **Estimări**.
+      price: Preț
+      price_help: Prețul piesei va fi folosit la generarea unei **Estimări**.
+      thickness_layer_count: Nr. de Straturi
+      thickness_layer_count_help: |
+        Definiți aici numărul de straturi care împart piesa desenată pe grosimea ei.
+
+        *Exemplu:* Dacă aveți o piesă desenată cu o grosime de *38mm* și doriți să o realizați prin lipirea a două panouri de *19mm* împreună, introduceți **2** în acest câmp.
+        *OpenCutList va număra atunci 2 piese de 19mm grosime în loc de 1 piesă de 38mm.*
+      cut_options: $t(tab.materials.edit_material.cut_options)
+      length_increase: $t(tab.materials.edit_material.length_increase)
+      length_increase_help: Supradimensionarea lungimii finite pentru a stabili **raw length**.  # TODO: singular version of tab.materials.edit_material.length_increase
+      width_increase: $t(tab.materials.edit_material.width_increase)
+      width_increase_help: Supradimensionarea lățimii finite pentru a stabili **raw width**. # TODO: singular version of tab.materials.edit_material.width_increase
+      thickness_increase: $t(tab.materials.edit_material.thickness_increase)
+      thickness_increase_help: Supradimensionarea grosimii finite pentru a stabili **raw thickness**. # TODO: singular version of tab.materials.edit_material.thickness_increase
+      description: Descriere
+      description_help: |
+        *Descrierea* oferă o informație personalizată pentru definiția fiecărei piese.
+      url: URL
+      url_help: |
+        *URL*-ul oferă un link personalizat către o pagină externă pe definiția fiecărei piese.
+      tags: Etichete (Badges)
+      tags_help: |
+        *Etichetele* sunt cuvinte cheie personalizate care pot fi adăugate la definiția fiecărei piese.
+        Puteți adăuga câte etichete doriți.
+        Ulterior veți putea filtra piesele vizibile din Lista de Piese în funcție de aceste etichete.
+      tags_multiple_info: Doar etichetele comune sunt afișate
+      orientation: Orientare
+      orientation_locked_on_axis: Blochează orientarea pe axe
+      orientation_locked_on_axis_help: |
+        Dacă această opțiune este selectată, opțiunea *Orientarea automată a pieselor* nu va avea efect asupra acestei piese.
+
+        Astfel, în sistemul de coordonate local:
+        - *lungimea* este pe axa <span style='color:red'>roșie</span>,
+        - *lățimea* pe axa <span style='color:green'>verde</span> și
+        - *grosimea* pe axa <span style='color:blue'>albastră</span>
+      symmetrical: Dezactivează detectarea pieselor în oglindă pentru această piesă
+      symmetrical_help: |
+        Dacă această opțiune este selectată, detectarea unei *piese în oglindă* nu va avea efect asupra acestei piese.
+      ignore_grain_direction: Ignoră direcția fibrei pentru această piesă
+      ignore_grain_direction_help: |
+        Dacă această opțiune este selectată, orientarea fibrei materialului va fi ignorată pentru această piesă.
+      axes: Axe
+      axes_help: Reordonați dimensiunile pentru a se potrivi cu culorile dorite ale axelor în piesa dvs.
+      axes_tip: |
+        Rețineți că, dacă opțiunea *Orientarea automată a pieselor* nu este activă sau piesa este *blocată pe axele sale* atunci:
+         - **lungimea** este citită pe axa <strong style='color:red'>roșie</strong>,
+         - **lățimea** pe axa <strong style='color:green'>verde</strong> și
+         - **grosimea** pe axa <strong style='color:blue'>albastră</strong>
+      axes_origin_position_none: Nu schimba originea
+      axes_origin_position_min: Plasează originea la un colț
+      axes_origin_position_center: Plasează originea în centru
+      axes_origin_position_front_min: Plasează originea la un colț din față
+      axes_origin_position_front_center: Plasează originea în centrul feței frontale
+      over_length: Pe lungime
+      over_width: Pe lățime
+      edge_disabled_help: Această aplicare de cant nu este configurabilă deoarece nu a fost detectată nicio față purtătoare de material pe această muchie a piesei din model.
+      face_disabled_help: Această suprafață nu este configurabilă deoarece nu a fost detectată nicio față purtătoare de material pe această față a piesei din model.
+      multiple_values: Valori multiple
+      loading_preview: Se încarcă previzualizarea
+    option:
+      auto_orient: Orientarea automată a pieselor
+      auto_orient_help: |
+        Dacă această opțiune este selectată, cele trei dimensiuni ale pieselor sunt sortate astfel încât cea mai mare să reprezinte *lungimea* și cea mai mică *grosimea*.
+
+        Altfel,
+         - *lungimea* este citită pe axa <span style='color:red'>roșie</span>,
+         - *lățimea* pe axa <span style='color:green'>verde</span> și
+         - *grosimea* pe axa <span style='color:blue'>albastră</span>
+      flipped_detection: Detectarea pieselor în oglindă
+      flipped_detection_help: |
+        Dacă această opțiune este selectată, piesele în oglindă vor fi detectate și afișate ca piese distincte.
+      smart_material: Atribuire *inteligentă* a materialului
+      smart_material_help: "Dacă această opțiune este selectată, pieselor fără material definit li se poate atribui materialul unuia dintre părinții sau copiii lor."
+      dynamic_attributes_name: Folosește atributul *Name* din componentele dinamice
+      dynamic_attributes_name_help: |
+        Dacă această opțiune este selectată, denumirea pieselor va fi extrasă din atributul *Name*, dacă este definit.
+
+        <i class='ladb-opencutlist-icon-warning'></i> Instanțele de piese cu aceeași definiție a componentei vor fi separate dacă atributul *Name* nu are aceeași valoare.
+      part_number_with_letters: Folosește litere pentru enumerarea pieselor
+      part_number_with_letters_help: "Dacă această opțiune este selectată, piesele sunt enumerate folosind litere (A, B, C, ... Z, AA, AB, ...)."
+      part_number_sequence_by_group: Resetează enumerarea pieselor pentru fiecare grup
+      part_number_sequence_by_group_help: "Dacă această opțiune este selectată, enumerarea pieselor se resetează la 1 (sau A) pentru fiecare grup (listă de piese cu același tip de material și grosime)."
+      part_folding: Grupează piese similare
+      part_folding_help: |
+        Dacă această opțiune este activată, piesele din **Lemn Masiv, Panouri sau Profile (Dimensional)**, având aceleași **dimensiuni brute**, aceleași **etichete** și aceeași **suprafață finită** *(dacă afișarea acestei suprafețe nu este ascunsă)* vor fi grupate pe același rând în *lista de piese*.
+
+        Piesele vor fi în continuare considerate diferite în scopul etichetării și al diagramei de tăiere.
+      hide_entity_names: Ascunde numele instanțelor
+      hide_entity_names_help: "Dacă această opțiune este selectată, **numele instanțelor** pieselor nu vor fi afișate."
+      hide_descriptions: Ascunde descrierile
+      hide_descriptions_help: "Dacă această opțiune este selectată, **descrierile** plasate pe piese nu vor fi afișate."
+      hide_tags: Ascunde etichetele (badges)
+      hide_tags_help: "Dacă această opțiune este selectată, **etichetele** pieselor nu vor fi afișate."
+      hide_cutting_dimensions: Ascunde dimensiunile brute
+      hide_cutting_dimensions_help: "Dacă această opțiune este selectată, dimensiunile **brute** ale pieselor nu vor fi afișate."
+      hide_bbox_dimensions: Ascunde dimensiunile finite
+      hide_bbox_dimensions_help: "Dacă această opțiune este selectată, dimensiunile **finite** ale pieselor nu vor fi afișate."
+      hide_final_areas: Ascunde aria reală a pieselor de tip *Panouri*
+      hide_final_areas_help: "Dacă această opțiune este selectată, **ariile reale** ale pieselor de tip *Panouri* nu vor fi afișate."
+      hide_edges: Ascunde coloanele de cant
+      hide_edges_help: "Dacă această opțiune este selectată, **coloanele pentru aplicarea cantului** la piesele de tip *Panouri* nu vor fi afișate."
+      hide_faces: Ascunde coloanele de fețe
+      hide_faces_help: "Dacă această opțiune este selectată, **coloanele pentru fețe** la piesele de tip *Panouri* nu vor fi afișate."
+      hide_material_colors: Ascunde culorile materialelor
+      hide_material_colors_help: "Dacă această opțiune este selectată, culorile materialelor nu vor fi afișate."
+      minimize_on_highlight: Minimizează după *'$t(tab.cutlist.highlight_part)...'*
+      minimize_on_highlight_help: "Dacă această opțiune este selectată, fereastra OpenCutList va fi minimizată când funcția *'$t(tab.cutlist.highlight_part)'* este utilizată."
+      general: General
+      sorting: Sortare
+      group_order_strategy: Sortare Grupuri
+      group_order_strategy_help: |
+        Reorganizați plăcile pentru a defini ordinea de sortare în cadrul fiecărui grup.
+        Proprietățile pot fi sortate în ordine <i class="ladb-opencutlist-icon-sort-asc"></i> *crescătoare* sau <i class="ladb-opencutlist-icon-sort-desc"></i> *descrescătoare*.
+      part_order_strategy: Sortare Piese
+      part_order_strategy_help: |
+        Reorganizați plăcile pentru a defini ordinea de sortare în cadrul fiecărui grup de piese.
+        Proprietățile pot fi sortate în ordine <i class="ladb-opencutlist-icon-sort-asc"></i> *crescătoare* sau <i class="ladb-opencutlist-icon-sort-desc"></i> *descrescătoare*.
+      dimension_column_order_strategy: Ordinea Dimensiunilor
+      dimension_column_order_strategy_help: |
+        Rearanjați următoarele proprietăți pentru a defini ordinea de afișare a coloanelor cu dimensiuni.
+      property_material_type: Tip material
+      property_material_name: Nume material
+      property_std_width: Lățime standard
+      property_std_thickness: Grosime standard
+      property_thickness: Grosime
+      property_length: Lungime
+      property_width: Lățime
+      property_name: Denumire
+      property_count: Cantitate
+      property_edge_pattern: Număr de canturi aplicate
+      property_tags: Etichete (Badges)
+      property_thickness_layer_count: Număr de straturi
+      tags: Etichete (Badges)
+      tags_help: Listă personalizată de etichete în fereastra de proprietăți a piesei.
+      tags_placeholder: Adaugă o etichetă
+    list:
+      filters: Filtre
+      filters_warning_0: "Acest filtru ascunde toate piesele!"
+      filters_warning: "Acest filtru afișează doar **{{ count }}** piesă dintr-un total de {{ total }}."
+      filters_warning_plural: "Acest filtru afișează doar **{{ count }}** piese dintr-un total de {{ total }}."
+      edge_material_names_filter: Filtrează după materialul cantului
+      veneer_material_names_filter: Filtrează după materialul furnirului
+      tags_filter: Filtrează după etichete
+      dimensions_help: Dimensiuni explicate
+      summary: Rezumat
+      material_type: Tip
+      material_thickness: Material / Grosime
+      part_count: Cantitate
+      area: Arie
+      area_short: Arie
+      volume: Volum
+      number: Nr.
+      name: Denumire
+      count: Cant.
+      cutting: Brut
+      bbox: Finit
+      final: Real
+      total_cutting: Σ Brut
+      total_final: Σ Real
+      length: Lungime
+      length_short: L
+      width: Lățime
+      width_short: l
+      thickness: Grosime
+      thickness_short: G
+      edges: Canturi
+      faces: Fețe
+    export:
+      title: Export
+      info_0: |
+        Această funcție vă permite să exportați date din *Lista de Piese* în clipboard sau într-un fișier [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) sau [XLSX](https://en.wikipedia.org/wiki/Office_Open_XML).
+      customize_help: |
+        Reordonați, Ascundeți, Adăugați, Eliminați sau Selectați o coloană din listă pentru a personaliza **titlul** ei și **formula** care va genera valorile pentru fiecare rând exportat.
+      add_column: Adaugă o coloană
+      add_native_columns: Adaugă o coloană nativă
+      duplicate_column: $t(default.duplicate)
+      remove_column: $t(default.remove)
+      remove_all_columns: $t(default.remove_all)
+      columns: Coloane
+      column_title: Titlu
+      column_title_help: |
+        Câmpul **Titlu** vă permite să personalizați titlul coloanei.
+      column_formula: Formulă
+      column_formula_help: |
+        Câmpul **Formulă** vă permite să scrieți cod *Ruby* pentru a personaliza valoarea coloanei.
+      options: Opțiuni de Export
+      options_customize: Personalizare
+      option_source: Sursă
+      option_source_summary: $t(tab.cutlist.list.summary)
+      option_source_cutlist: Lista de Piese
+      option_source_instances_list: Lista Instanțelor
+      option_format: Format
+      option_csv_col_sep: Separator
+      option_csv_col_sep_tab: Tabulator
+      option_csv_col_sep_comma: Virgulă
+      option_csv_col_sep_semicolon: Punct și virgulă
+      option_csv_encoding: Codificare
+      copy_all: Antet + Valori
+      copy_values: Doar valori
+      number: Nr.
+      path: Cale
+      instance_name: Instanță
+      name: Denumire
+      total_cutting_length: Lungime totală - brut
+      total_cutting_area: Arie totală - brut
+      total_cutting_volume: Volum total - brut
+      total_final_area: Arie totală - finit
+      cutting_length: Lungime - brut
+      cutting_width: Lățime - brut
+      cutting_thickness: Grosime - brut
+      edge_cutting_length: Lungime canturi - brut
+      edge_cutting_width: Lățime canturi - brut
+      bbox_length: Lungime
+      bbox_width: Lățime
+      bbox_thickness: Grosime
+      final_area: Arie - finit
+      count: Cantitate
+      part_count: Număr de Piese
+      material: Material
+      material_type: Tip material
+      material_name: Nume material
+      material_description: Descriere material
+      material_url: URL material
+      material_std_dimension: Dimensiuni standard
+      entity_names: Nume instanțe
+      description: Descriere
+      url: URL
+      tags: Etichete (Badges)
+      edge_ymin: Lungime cant 1
+      edge_ymax: Lungime cant 2
+      edge_xmin: Lățime cant 1
+      edge_xmax: Lățime cant 2
+      face_zmin: Spate
+      face_zmax: Față
+      layer: Etichetă (Tag)
+      layers: Etichete (Tags)
+      batch: Lot
+      bin: Placă/Panou
+      component_definition: Definiția componentei
+      component_instance: Instanța componentei
+      component_instances: Instanțe ale componentei
+      filename: Nume fișier
+      model_name: Nume model
+      model_description: Descriere model
+      page_name: Nume scenă
+      page_description: Descriere scenă
+      placeholder:
+        no_column_title: Introduceți un titlu
+        no_column_formula_native: "Valoare nativă coloană '{{ col_name }}'"
+        no_column_formula: Introduceți o formulă
+      warning:
+        is_group_selection: Piesele conținute în **grupurile ascunse** din Lista de Piese nu vor fi exportate.
+        is_part_selection: Exportul este limitat la **piesele selectate**.
+    estimate:
+      title: Estimare
+      info_0: |
+        Generați o estimare a **greutății** și **costului** pentru **materialele brute** necesare producerii pieselor din *Lista de Piese*.
+      options_general: General
+      total: Total
+      total_used: Folosit
+      total_unused: Nefolosit
+      total_mass: Σ Greutate
+      total_cost: Σ Cost
+      total_count: Cant.
+      total_instance_count: Σ Unități
+      total_volume: Σ Volum
+      total_area: Σ Arie
+      total_length: Σ Lungime
+      type_1: $t(tab.materials.type_1)
+      type_2: $t(tab.materials.type_2)
+      type_3: $t(tab.materials.type_3)
+      type_4: $t(tab.materials.type_4)
+      type_5: $t(tab.materials.type_5)
+      type_6: $t(tab.materials.type_6)
+      type_-1: $t(default.cut_plural)
+      tooltip:
+        incompatible_unit: Unitate incompatibilă cu opțiunile de estimare a materialului
+        multiplier_coefficient: Coeficient
+      error:
+        no_typed_material_parts: "Nicio piesă cu un tip de material definit (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** sau **$t(tab.materials.type_5)**) nu a fost furnizată pentru a genera estimarea."
+        entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erori**."
+        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erori**."
+      warning:
+        is_group_selection: Piesele conținute în **grupurile ascunse** din Lista de Piese nu vor fi luate în calcul.
+        is_part_selection: Estimarea este limitată la **piesele selectate**.
+      tip:
+        not_enough_data: |
+          Pentru ca această estimare să fie calculată corect:
+          - materialele folosite trebuie să aibă cel puțin o densitate și un preț.
+          - accesoriile folosite trebuie să aibă cel puțin o greutate și un preț.
+    cuttingdiagram:
+      title: Diagramă de tăiere
+      start_msg: Optimizarea rulează
+      end_msg: Optimizare finalizată
+      options_material: Material
+      options_config: Configurație
+      options_display: Afișare
+      option_bar_folding_dimensional: Grupează Scânduri Similare
+      option_bar_folding_edge: Grupează Canturi Similare
+      option_bar_folding_0: Nu
+      option_bar_folding_1: Da
+      option_bar_folding_help: Grupează scândurile sau canturile care conțin aceleași piese și tăieturi.
+      option_sheet_folding_good: Grupează Panouri Similare
+      option_sheet_folding_veneer: Grupează Furnirele Similare
+      option_sheet_folding_0: Nu
+      option_sheet_folding_1: Da
+      option_sheet_folding_help: Grupează panourile sau foile de furnir care au aceleași piese și tăieturi.
+      option_hide_part_list: Lista de Piese
+      option_hide_part_list_1d_dimensional_0: Afișat pentru fiecare scândură
+      option_hide_part_list_1d_edge_0: Afișat pentru fiecare cant
+      option_hide_part_list_2d_good_0: Afișat pentru fiecare panou
+      option_hide_part_list_2d_veneer_0: Afișat pentru fiecare furnir
+      option_hide_part_list_1: Ascuns
+      option_hide_part_list_1d_help: Afișează sau ascunde lista de piese pentru fiecare scândură sau cant.
+      option_hide_part_list_2d_help: Afișează sau ascunde lista de piese pentru fiecare panou sau furnir.
+      option_use_names: Identificarea Pieselor
+      option_use_names_0: Folosește numărul
+      option_use_names_1: Folosește denumirea
+      option_use_names_help: Alegeți între **număr** și **denumire** pentru a identifica piesele pe diagrama de tăiere.
+      option_origin_corner: Poziția Originii
+      option_origin_corner_1d_0: Din stânga
+      option_origin_corner_1d_1: Din dreapta
+      option_origin_corner_2d_0: Colțul stânga sus
+      option_origin_corner_2d_1: Colțul stânga jos
+      option_origin_corner_2d_2: Colțul dreapta sus
+      option_origin_corner_2d_3: Colțul dreapta jos
+      option_origin_corner_1d_help: Determină locația originii sistemului de coordonate pentru afișarea Profilelor (Dimensional) sau canturilor.
+      option_origin_corner_2d_help: Determină locația originii sistemului de coordonate pentru afișarea pieselor pe panouri.
+      option_full_width_diagram: Afișare Lățime Completă
+      option_full_width_diagram_0: Nu
+      option_full_width_diagram_1: Da
+      option_full_width_diagram_help: "Dacă această opțiune este selectată, diagramele de tăiere sunt afișate folosind lățimea disponibilă. Altfel, lățimea lor este definită de un factor de scară în funcție de toate diagramele."
+      option_wrap_length: Lungime Încadrare Scândură
+      option_wrap_length_help: Lungimea maximă după care o scândură sau un cant va fi încadrat pe mai multe linii.
+      option_hide_cross: Resturi (Căderi)
+      option_hide_cross_0: Dimensiuni și Cruce
+      option_hide_cross_1: Doar Dimensiuni
+      option_hide_cross_help: Arată sau ascunde crucea care indică piesele definite ca resturi pe diagramă.
+      option_highlight_primary_cuts: Tăieturi Principale
+      option_highlight_primary_cuts_0: Doar la trecerea cursorului
+      option_highlight_primary_cuts_1: Mereu vizibil
+      option_highlight_primary_cuts_help: Vă permite să evidențiați mereu tăieturile principale.
+      option_hide_edges_preview: Afișarea Canturilor
+      option_hide_edges_preview_0: Afișat în diagrama de tăiere
+      option_hide_edges_preview_1: Ascuns în diagrama de tăiere
+      option_hide_edges_preview_help: Arată sau ascunde cantul pentru fiecare piesă în diagrama de tăiere.
+      option_part_drawing_type: Forma Pieselor
+      option_part_drawing_type_0: Ascuns
+      option_part_drawing_type_1: Afișare față frontală
+      option_part_drawing_type_2: Afișare față spate
+      option_part_drawing_type_help: |
+        Arată sau ascunde forma reală a pieselor și prelucrarea lor pe diagramă.
+
+        *Această opțiune trebuie să fie activată pentru ca formele să poată fi exportate.*
+      option_saw_kerf: Grosimea Pânzei
+      option_saw_kerf_help: Lățimea materialului îndepărtat prin tăierea cu pânza de ferăstrău.
+      option_spacing: Spațiere
+      option_spacing_help: Spațierea minimă între piese.
+      option_trimming: Tivire (Curățare margini)
+      option_trimming_help_1d: Cantitatea de material la fiecare capăt al scândurii sau cantului care va fi tratată ca deșeu.
+      option_trimming_help_2d: Cantitatea de material din jurul panoului brut care va fi tratată ca deșeu.
+      option_optimization: Nivel de Optimizare
+      option_optimization_help: "Nivelul de optimizare definește numărul de posibilități calculate și, prin urmare, și timpul de calcul."
+      option_optimization_0: Mediu
+      option_optimization_1: Avansat
+      option_stacking: Direcție Preferată
+      option_stacking_help: Direcția de stivuire pentru piesele cu o lungime sau lățime comună.
+      option_stacking_0: Fără preferință
+      option_stacking_1: Pe lungime
+      option_stacking_2: Pe lățime
+      option_stacking_3: Toate posibilitățile
+      option_keep: Dimensiunea minimă a resturilor
+      option_keep_help: Resturile care sunt mai mari decât lungimea și lățimea minimă sunt marcate **de păstrat**.
+      option_std_bar_dimensional: Profil Standard
+      option_std_bar_edge: Cant Standard
+      option_std_bar_help: |
+        Selectați scândura sau cantul standard, care va fi duplicat pentru a conține toate piesele.
+        Această listă este definită în câmpul **$t(tab.materials.edit_material.std_lengths)** al materialului.
+        Editați materialul '{{ material_name }}' pentru a actualiza această listă.
+      option_std_bar_add: Adaugă o dimensiune
+      option_std_bar_none: Niciuna
+      option_scrap_bar_dimensional_lengths: Resturi de Scânduri
+      option_scrap_bar_edge_lengths: Resturi de Cant
+      option_scrap_bar_lengths_placeholder: lungime x cantitate ; ...
+      option_scrap_bar_lengths_help: |
+        Listați toate scândurile sau canturile rămase ca resturi care vor fi luate în considerare primele în diagrama de tăiere.
+        Formatul așteptat: **L**x**C**, unde **L** este *lungimea* restului și **C** cantitatea.
+        Cantitatea este opțională.
+        *Mărimile fără unități sunt considerate a fi în unitățile modelului.*
+      option_std_sheet_good: Panou Standard
+      option_std_sheet_veneer: Furnir Standard
+      option_std_sheet_help: |
+        Selectați panoul sau foaia de furnir standard, care va fi duplicată pentru a calcula cea mai bună așezare posibilă.
+        Această listă este definită de câmpul **$t(tab.materials.edit_material.std_sizes)** al materialului.
+        Editați materialul '{{ material_name }}' pentru a completa această listă.
+      option_std_sheet_add: Adaugă o dimensiune
+      option_std_sheet_none: Niciunul
+      option_scrap_sheet_good_sizes: Resturi de Panou
+      option_scrap_sheet_veneer_sizes: Resturi de Furnir
+      option_scrap_sheet_sizes_placeholder: lungime x lățime x cantitate ; ...
+      option_scrap_sheet_sizes_help: |
+        Listați toate panourile sau furnirul rămas ca resturi pentru a fi luate în considerare primele în diagrama de tăiere.
+        Formatul așteptat: **L**x**l**x**C**, unde **L** și **l** reprezintă *lungimea* și *lățimea* panoului, iar **C** cantitatea.
+        Cantitatea este opțională.
+        *Mărimile fără unități sunt considerate a fi în unitățile modelului.*
+      tooltip:
+        scroll_to_block_1d: Derulează la prima scândură sau primului cant
+        scroll_to_block_2d: Derulează la primul panou
+        copy_leftovers_to_clipboard: Copiază resturile în clipboard
+      list:
+        unplaced_parts: Piese neplasate
+        summary: Rezumat
+        count: Cant.
+        bar: Profil (Dimensional)
+        sheet: Panou
+        length: Lungime
+        width: Lățime
+        total_length: Σ Lungime
+        total_area: Σ Arie
+        total_part_count: "# Piese"
+        total_used: Total folosit
+        trimming: Tivire
+        stats: Statistici
+        total_cut_count: Numărul de Tăieturi
+        total_cut_length: Lungimea Tăieturilor
+        overall_efficiency: Eficiența Globală
+        efficiency: Eficiență
+        leftover: Resturi
+        leftover_to_keep: Rest de păstrat
+        leftover_to_keep_plural: Resturi de păstrat
+        leftover_to_throw_away: Rest de aruncat
+        cut: Tăietură
+        cut_plural: Tăieturi
+        cut_trimming: Tăietură de curățare (tivire)
+        cut_bounding: Tăietură principală (nivel 1)
+        cut_bounding_plural: Tăieturi principale (nivel 1)
+        cut_internal_through: Tăietură principală (nivel 2)
+        cut_internal_through_plural: Tăieturi principale (nivel 2)
+        cut_none: Niciuna
+        bar_dimensional_type_0: Profil Standard
+        bar_dimensional_type_1: Rest Profil
+        bar_edge_type_0: Cant Standard
+        bar_edge_type_1: Rest Cant
+        sheet_good_type_0: Panou Standard
+        sheet_good_type_1: Rest Panou
+        sheet_veneer_type_0: Furnir Standard
+        sheet_veneer_type_1: Rest Furnir
+        unused: Nefolosit
+        parts: "{{ count }} piesă"
+        parts_plural: "{{ count }} piese"
+        settings: Setări
+      write:
+        title: Export Diagramă de Tăiere
+        info_0: |
+          Acest modul vă permite să exportați **geometria** *diagramei de tăiere* ca o listă de fișiere în format [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) sau [DXF](https://en.wikipedia.org/wiki/AutoCAD_DXF).
+        option_file_format: $t(tab.cutlist.write.option_file_format)
+        option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
+        option_dxf_structure: Structură DXF
+        option_dxf_structure_1: Straturi (Layers)
+        option_dxf_structure_2: Straturi + Blocuri
+        option_dxf_structure_help: |
+          Selectează structura fișierului DXF.
+
+          - Structura **Straturi (Layers)** desenează toate liniile plan, diferențiind între diverse tipuri de linii folosind doar straturile. *Această structură oferă o compatibilitate mai mare cu software-uri terțe.*
+          - Structura **Straturi + Blocuri** creează un bloc per piesă și inserează aceste blocuri de câte ori sunt repetate piesele. *Această structură oferă mai multă flexibilitate pentru editarea fișierului.*
+        option_unit: $t(tab.cutlist.write.option_unit)
+        option_unit_help: $t(tab.cutlist.write.option_unit_help)
+        option_smoothing: $t(tab.cutlist.write.option_smoothing)
+        option_smoothing_0: $t(tab.cutlist.write.option_smoothing_0)
+        option_smoothing_1: $t(tab.cutlist.write.option_smoothing_1)
+        option_smoothing_help: $t(tab.cutlist.write.option_smoothing_help)
+        option_merge_holes: $t(tab.cutlist.write.option_merge_holes)
+        option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
+        option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
+        option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
+        option_include_paths: $t(tab.cutlist.write.option_include_paths)
+        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
+        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
+        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
+        option_sheet_good: Panouri (Plăci)
+        option_sheet_good_help: |
+          Activează exportul panourilor și selecția culorilor.
+        option_sheet_veneer: Furnir
+        option_sheet_veneer_help: |
+          Activează exportul foilor de furnir și selecția culorilor.
+        option_bar_dimensional: Profil (Dimensional)
+        option_bar_dimensional_help: |
+          Activează exportul Profilelor și selecția culorilor.
+        option_bar_band: Cant
+        option_bar_band_help: |
+          Activează exportul canturilor și selecția culorilor.
+        option_parts: Piese
+        option_parts_help: |
+          Activează exportul pieselor și selecția culorilor.
+        option_parts_holes: Găuriri
+        option_parts_holes_help: |
+          Selectează culoarea găurilor.
+        option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
+        option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
+        option_texts: Identificatori
+        option_texts_help: |
+          Activează exportul textelor de identificare a pieselor și selecția culorilor.
+        option_leftovers: Resturi (Căderi)
+        option_leftovers_help: |
+          Activează exportul resturilor și selecția culorilor.
+        option_cuts: Tăieturi
+        option_cuts_help: |
+          Selectează dacă tăieturile sunt desenate și alege culoarea lor.
+        warning:
+          is_sheet_selection: "**Panourile ascunse** nu vor fi exportate."
+      error:
+        no_bar_dimensional: Scândura standard nu este configurată corect și nu este disponibil niciun rest.
+        no_bar_edge: Cantul standard nu este configurat corect și nu este disponibil niciun rest.
+        parameters: Parametrii sunt incorecți. Dimensiunea de tivire este mai mare de 25% din cea mai lungă scândură sau cant.
+        no_parts: Nicio piesă.
+        no_sheet: Panoul standard nu este configurat corect și nu este disponibil niciun rest.
+        no_placement_possible_1d: "Nicio plasare posibilă (scândură standard prea mică, dimensiune de tivire prea mare, grosime pânză prea mare, ...)."
+        no_placement_possible_2d: "Nicio plasare posibilă (panou standard prea mic, dimensiune de tivire prea mare, grosime pânză prea mare, ...)."
+        bad_error: "Eroare algoritm. Vă rugăm să contactați dezvoltatorii, deoarece acesta este un caz interesant."
+        unplaced_parts: "**1 piesă** este prea mare pentru a încăpea."
+        unplaced_parts_plural: "**{{ count }} piese** sunt prea mari pentru a încăpea."
+      warning:
+        is_part_selection: Această diagramă de tăiere este limitată la **piesele selectate**.
+        cutting_dimensions: Această diagramă de tăiere folosește dimensiunile **brute** ale pieselor.
+        cutting_dimensions_increase_1d: "Aceste dimensiuni brute au fost configurate pe materialul '{{ material_name }}': supradimensiune lungime (**{{ length_increase }}**)."
+        cutting_dimensions_increase_2d: "Aceste dimensiuni brute au fost configurate pe materialul '{{ material_name }}': supradimensiune lungime (**{{ length_increase }}**) și supradimensiune lățime (**{{ width_increase }}**)."
+        cutting_dimensions_edge_decrement: Dimensiuni reduse cu grosimea aplicării de cant. <i class='ladb-opencutlist-icon-edge-decremented'></i>
+    packing:
+      title: Diagramă de Tăiere
+      option_problem_type: Tip
+      option_problem_type_rectangle: Dreptunghi
+      option_problem_type_rectangleguillotine: Ghilotină
+      option_problem_type_onedimensional: Liniar (1D)
+      option_problem_type_irregular: Nesting (Neregulat)
+      options_material: Material
+      options_config: Configurație
+      options_display: Afișare
+      options_tuning: Ajustaj (Tuning)
+      option_std_bin_1d_dimensional: Dimensiuni Standard
+      option_std_bin_1d_edge: Canturi Standard
+      option_std_bin_1d_help: |
+        Selectați dimensiunile scândurii sau cantului standard, care va fi duplicat pentru a conține toate piesele.
+
+        Această listă este definită în câmpul **$t(tab.materials.edit_material.std_lengths)** al materialului.
+
+        *Editați materialul '{{ material_name }}' pentru a actualiza această listă.*
+      option_std_bin_1d_add: Adaugă o dimensiune
+      option_std_bin_1d_none: Niciuna
+      option_scrap_bin_1d_dimensional_sizes: Resturi de Scânduri
+      option_scrap_bin_1d_edge_sizes: Resturi de Cant
+      option_scrap_bin_1d_sizes_placeholder: lungime x cantitate ; ...
+      option_scrap_bin_1d_sizes_help: |
+        Listați toate scândurile sau canturile rămase ca resturi care vor fi luate în considerare pentru diagrama de tăiere.
+
+        *Mărimile fără unități sunt considerate a fi în unitățile modelului.*
+      option_scrap_bin_1d_none: Niciuna
+      option_std_bin_2d_sheet_good: Panouri Standard
+      option_std_bin_2d_veneer: Furnir Standard
+      option_std_bin_2d_help: |
+        Selectați dimensiunile panoului sau foii de furnir standard, care va fi duplicat pentru a calcula cea mai bună așezare posibilă.
+
+        Această listă este definită în câmpul **$t(tab.materials.edit_material.std_sizes)** al materialului.
+
+        *Editați materialul '{{ material_name }}' pentru a actualiza această listă.*
+      option_std_bin_2d_add: Adaugă o dimensiune
+      option_std_bin_2d_none: Niciunul
+      option_scrap_bin_2d_sheet_good_sizes: Resturi de Panou
+      option_scrap_bin_2d_veneer_sizes: Resturi de Furnir
+      option_scrap_bin_2d_sizes_placeholder: lungime x lățime x cantitate ; ...
+      option_scrap_bin_2d_sizes_help: |
+        Listați toate panourile sau furnirul rămas ca resturi pentru a fi luate în considerare în diagrama de tăiere.
+
+        *Mărimile fără unități sunt considerate a fi în unitățile modelului.*
+      option_scrap_bin_2d_none: Niciunul
+      option_optimization_mode: Mod de Optimizare
+      option_optimization_mode_help: |
+        Setează modul de optimizare, cu sau fără limită de timp.
+      option_objective: Obiectiv
+      option_objective_help: |
+        Setează obiectivul de împachetare (aranjare).
+      option_rectangleguillotine_cut_type: Tip Tăietură
+      option_rectangleguillotine_cut_type_help: |
+        Setează tipul tăieturii.
+      option_rectangleguillotine_cut_type_non_exact: Inexact
+      option_rectangleguillotine_cut_type_exact: Exact
+      option_rectangleguillotine_cut_type_homogenous: Omogen
+      option_rectangleguillotine_number_of_stages: Număr de Etape (Tăieri)
+      option_rectangleguillotine_number_of_stages_help: |
+        Setează numărul maxim de etape de tăiere.
+      option_rectangleguillotine_first_stage_orientation: Orientarea primei tăieturi
+      option_rectangleguillotine_first_stage_orientation_help: |
+        Setează direcția primei tăieturi.
+      option_rectangleguillotine_first_stage_orientation_horizontal: Orizontal
+      option_rectangleguillotine_first_stage_orientation_vertical: Vertical
+      option_rectangleguillotine_first_stage_orientation_any: Oricare
+      option_rectangleguillotine_keep: Dimensiunea Minimă a Resturilor
+      option_rectangleguillotine_keep_help: Resturile care sunt mai mari decât lungimea și lățimea minimă sunt marcate **de păstrat**.
+      option_irregular_allowed_rotations: Rotații Permise
+      option_irregular_allowed_rotations_help: |
+        Setează rotațiile permise pentru plasarea pieselor.
+
+        *Materialele cu fibră pot fi rotite doar la 0 și 180°.*
+      option_irregular_allowed_rotations_0: Niciuna
+      option_irregular_allowed_rotations_90: Pași de 90°
+      option_irregular_allowed_rotations_180: Pași de 180°
+      option_irregular_allowed_rotations_free: Liberă (experimental)
+      option_irregular_allow_mirroring: Oglindire Permisă
+      option_irregular_allow_mirroring_help: |
+        Definește dacă piesa are voie să fie oglindită pentru a fi plasată.
+      option_irregular_allow_mirroring_0: $t(default.no)
+      option_irregular_allow_mirroring_1: $t(default.yes)
+      option_spacing: Spațiere
+      option_spacing_help: |
+        Spațierea minimă între fiecare piesă.
+        Această valoare poate corespunde lățimii pânzei sau frezei tăietoare.
+      option_trimming: Tivire (Curățare margini)
+      option_trimming_1d_help: Marginea de curățare la fiecare capăt al scândurii sau cantului care va fi tratată ca deșeu.
+      option_trimming_2d_help: Marginea de curățare în jurul panoului brut sau foii de furnir care va fi tratată ca deșeu.
+      option_items_formula: Formulă
+      option_items_formula_help: |
+        Vă permite să scrieți cod *Ruby* pentru a personaliza textul de identificare al piesei în diagramă.
+      option_bin_folding_1d_dimensional: Grupează Scânduri Similare
+      option_bin_folding_1d_edge: Grupează Canturi Similare
+      option_bin_folding_2d_sheet_good: Grupează Panouri Similare
+      option_bin_folding_2d_veneer: Grupează Furnirele Similare
+      option_bin_folding_0: $t(default.no)
+      option_bin_folding_1: $t(default.yes)
+      option_bin_folding_1d_help: |
+        Grupează scândurile sau canturile care conțin aceleași piese și tăieturi.
+      option_bin_folding_2d_help: |
+        Grupează panourile sau foile de furnir care au aceleași piese și tăieturi.
+      option_bin_folding_warning: |
+        *Această opțiune va fi dezactivată dacă utilizați proprietăți de instanță în formula de personalizare a textului de identificare.*
+      option_hide_part_list: Lista de Piese
+      option_hide_part_list_1d_dimensional_0: Afișat pentru fiecare scândură
+      option_hide_part_list_1d_edge_0: Afișat pentru fiecare cant
+      option_hide_part_list_2d_sheet_good_0: Afișat pentru fiecare panou
+      option_hide_part_list_2d_veneer_0: Afișat pentru fiecare furnir
+      option_hide_part_list_1: Ascuns
+      option_hide_part_list_1d_help: Afișează sau ascunde lista de piese pentru fiecare scândură sau cant.
+      option_hide_part_list_2d_help: Afișează sau ascunde lista de piese pentru fiecare panou sau furnir.
+      option_part_drawing_type: Forma Pieselor
+      option_part_drawing_type_0: Ascuns
+      option_part_drawing_type_1: Afișare față frontală
+      option_part_drawing_type_2: Afișare față spate
+      option_part_drawing_type_help: |
+        Arată sau ascunde forma reală a pieselor și prelucrarea lor pe diagramă.
+
+        *Această opțiune trebuie să fie activată pentru ca formele să poată fi exportate.*
+      option_colorization: Vopsește Piese
+      option_colorization_0: $t(default.no)
+      option_colorization_1: $t(default.yes) - Pe ecran
+      option_colorization_2: $t(default.yes) - Pe ecran și la Printare
+      option_colorization_help: |
+        Definește dacă este folosită o culoare aleatorie pentru a distinge piesele în diagramă.
+      option_origin_corner: Poziția Originii
+      option_origin_corner_0: Colțul stânga sus
+      option_origin_corner_1: Colțul stânga jos
+      option_origin_corner_2: Colțul dreapta sus
+      option_origin_corner_3: Colțul dreapta jos
+      option_origin_corner_help: "Determină locația originii sistemului de coordonate pentru afișarea pieselor pe panouri, foi de furnir, profilelor sau canturi."
+      option_highlight_primary_cuts: Tăieturi Principale
+      option_highlight_primary_cuts_0: Doar la trecerea cursorului
+      option_highlight_primary_cuts_1: Mereu vizibil
+      option_highlight_primary_cuts_help: Vă permite să evidențiați mereu tăieturile principale.
+      option_hide_edges_preview: Afișarea Canturilor
+      option_hide_edges_preview_0: Afișat în diagrama de tăiere
+      option_hide_edges_preview_1: Ascuns în diagrama de tăiere
+      option_hide_edges_preview_help: Arată sau ascunde afișarea vizuală a aplicărilor de cant pentru fiecare piesă în diagrama de tăiere.
+      option_zoom_threshold: Prag de mărire (Zoom)
+      option_zoom_threshold_help: |
+        Vă permite să setați lățimea diagramei sub care diagramele sunt mărite automat.
+
+        *Mărirea va fi calculată în funcție de cea mai lată diagramă*.
+      option_time_limit: Limită de timp
+      option_time_limit_help: |
+        Fixează limita de timp pentru calcul
+      tooltip:
+        scroll_to_block_1d: Derulează la prima scândură sau primului cant
+        scroll_to_block_2d: Derulează la primul panou sau furnir
+      list:
+        summary: Rezumat
+        cached: Încărcat din memoria cache
+        trimming: Tivire
+        settings: Setări
+        stats: Statistici
+        time: Timp
+        total_efficiency: Eficiență Totală
+        total_fill_rate: Rată de umplere
+        total_cut_count: Numărul de Tăieturi
+        total_cut_length: Lungimea Tăieturilor
+        efficiency: Eficiență
+        count: Cant.
+        length: Lungime
+        width: Lățime
+        total_length: Σ Lungime
+        total_area: Σ Arie
+        total_cost: Σ Cost
+        total_part_count: "# Piese"
+        total_used: Total folosit
+        bin_1d_dimensional: Profil
+        bin_1d_dimensional_type_0: Profil Standard
+        bin_1d_dimensional_type_1: Rest Profil
+        bin_1d_edge: Cant
+        bin_1d_edge_type_0: Cant Standard
+        bin_1d_edge_type_1: Rest Cant
+        bin_2d_sheet_good: Panou
+        bin_2d_sheet_good_type_0: Panou Standard
+        bin_2d_sheet_good_type_1: Rest Panou
+        bin_2d_veneer: Furnir
+        bin_2d_veneer_type_0: Furnir Standard
+        bin_2d_veneer_type_1: Rest Furnir
+        unused: Nefolosit
+        unplaced_parts: Piesă Neplasată
+        unplaced_parts_plural: Piese Neplasate
+        parts: Piesă
+        parts_plural: Piese
+        leftovers: Rest (Cădere)
+        leftovers_plural: Resturi
+        leftovers_to_keep: Rest de păstrat
+        leftovers_to_keep_plural: Resturi de Păstrat
+        cut: Tăietură
+        cut_plural: Tăieturi
+        cut_trimming: Tăietură de curățare (tivire)
+        cut_primary: Tăietură principală
+        cut_primary_plural: Tăieturi Principale
+        cut_none: Niciuna
+        cut_depth: "Nivel {{ depth }}"
+      write:
+        title: Exportă Diagramă de Tăiere
+        info_0: |
+          Acest modul vă permite să exportați **geometria** *diagramei de tăiere* ca o listă de fișiere în format [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) sau [DXF](https://en.wikipedia.org/wiki/AutoCAD_DXF).
+        option_bin_sheet_good: Panou
+        option_bin_sheet_good_help: |
+          Activează exportul panourilor și selecția culorilor.
+        option_bin_veneer: Furnir
+        option_bin_veneer_help: |
+          Activează exportul foilor de furnir și selecția culorilor.
+        option_bin_dimensional: Cherestea
+        option_bin_dimensional_help: |
+          Activează exportul cherestelei și selecția culorilor.
+        option_bin_edge: Cant
+        option_bin_edge_help: |
+          Activează exportul canturilor și selecția culorilor.
+        option_parts: Piese
+        option_parts_help: |
+          Activează exportul pieselor și selecția culorilor.
+        option_parts_depths: $t(tab.cutlist.write.option_parts_depths)
+        option_parts_depths_help: $t(tab.cutlist.write.option_parts_depths_help)
+        option_parts_holes: $t(tab.cutlist.write.option_parts_holes)
+        option_parts_holes_help: $t(tab.cutlist.write.option_parts_holes_help)
+        option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
+        option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
+        option_texts: Identificatori
+        option_texts_help: |
+          Activează exportul textelor de identificare a pieselor și selecția culorilor.
+        option_leftovers: Resturi (Căderi)
+        option_leftovers_help: |
+          Activează exportul resturilor și selecția culorilor.
+        option_cuts: Tăieturi
+        option_cuts_help: |
+          Activează exportul tăieturilor și selecția culorilor.
+        warning:
+          is_bin_selection: "**Elementele ascunse** nu vor fi exportate."
+        error:
+          overflow_gt_spacing: |
+            Excesul ({{ overflow }}) trebuie să fie mai mic sau egal cu spațierea ({{ spacing }}) configurată în această diagramă de tăiere.
+      error:
+        no_part: Nicio piesă.
+        no_bin_1d: Nicio scândură sau cant standard nu a fost selectat și nu au fost disponibile resturi.
+        no_bin_2d: Niciun panou sau furnir standard nu a fost selectat și nu au fost disponibile resturi.
+        invalid_part_shapes: "Forma piesei '{{ name }}' este invalidă."
+        no_solution: Nu s-a găsit nicio soluție pentru a plasa **toate piesele** în materialul disponibil.
+        unplaced_parts: "**1 piesă** nu a putut fi plasată."
+        unplaced_parts_plural: "**{{ count }} piese** nu au putut fi plasate."
+        unusable_part: Piesă prea mare
+      warning:
+        is_part_selection: Această diagramă de tăiere este limitată la **piesele selectate**.
+        cutting_dimensions: Această diagramă de tăiere folosește dimensiunile **brute** ale pieselor.
+        cutting_dimensions_increase_1d: "Aceste dimensiuni brute au fost configurate pe materialul '{{ material_name }}': supradimensiune lungime (**{{ length_increase }}**)."
+        cutting_dimensions_increase_2d: "Aceste dimensiuni brute au fost configurate pe materialul '{{ material_name }}': supradimensiune lungime (**{{ length_increase }}**) și supradimensiune lățime (**{{ width_increase }}**)."
+        cutting_dimensions_edge_decrement: Dimensiuni reduse cu grosimea aplicării de cant. <i class='ladb-opencutlist-icon-edge-decremented'></i>
+    labels:
+      title: Etichete
+      options_layout: Aranjament (Layout)
+      options_settings: Configurație
+      options_part_order_strategy: Sortare
+      options_offset: Decalaj (Offset)
+      size: Dimensiunea reală a etichetei
+      add_element: Adaugă element
+      duplicate_element: $t(default.duplicate)
+      remove_element: $t(default.remove)
+      remove_all_elements: $t(default.remove_all)
+      part_order_strategy_help: |
+        Reorganizați plăcile pentru a defini ordinea de sortare a etichetelor.
+        Proprietățile pot fi sortate în ordine <i class="ladb-opencutlist-icon-sort-asc"></i> *crescătoare* sau <i class="ladb-opencutlist-icon-sort-desc"></i> *descrescătoare*.
+      offset_help: |
+        *Decalajul* definește poziția **primei etichete** care va fi imprimată pe **prima pagină**.
+        Selectați caseta care corespunde alegerii dumneavoastră.
+      option_page: Dimensiune Hârtie
+      option_page_format: Format
+      option_page_format_portrait: Portret
+      option_page_format_landscape: Peisaj (Landscape)
+      option_page_format_custom: Personalizat
+      option_page_width: Lățime
+      option_page_height: Înălțime
+      option_margin: Margini
+      option_margin_top: Sus
+      option_margin_right: Dreapta
+      option_margin_bottom: Jos
+      option_margin_left: Stânga
+      option_spacing: Mărime Spațiu (Gap)
+      option_spacing_h: Orizontal
+      option_spacing_v: Vertical
+      option_grid: Etichete pe Pagină
+      option_col_count: Coloane
+      option_row_count: Rânduri
+      option_cutting_marks: Marcaje de Tăiere
+      option_cutting_marks_0: Niciunul
+      option_cutting_marks_1: Imprimat
+      option_formula: Nume câmp
+      option_size: Mărime
+      option_custom_formula: Formulă
+      option_anchor: Ancoră
+      option_anchor_start: Început - Jos
+      option_anchor_middle: Mijloc - Jos
+      option_anchor_end: Sfârșit - Jos
+      option_anchor_start_top: Început - Sus
+      option_anchor_middle_top: Mijloc - Sus
+      option_anchor_end_top: Sfârșit - Sus
+      option_color: Culoare
+      formula:
+        custom: Formulă
+        custom_qr_code: Cod QR
+        part_number: Număr
+        part_name: Denumire
+        part_description: Descriere
+        part_entity_named_path: Cale instanță
+        part_entity_name: Nume instanță
+        part_bin: Placă/Panou
+        part_cutting_size: Dimensiuni brute
+        part_cutting_length: Lungime - brut
+        part_cutting_width: Lățime - brut
+        part_cutting_thickness: Grosime - brut
+        part_edge_cutting_size: Dimensiuni cant
+        part_edge_cutting_length: Lungime canturi - brut
+        part_edge_cutting_width: Lățime canturi - brut
+        part_size: Dimensiune
+        part_length: Lungime
+        part_width: Lățime
+        part_thickness: Grosime
+        part_tags: Etichete (Badges)
+        part_batch: Lot
+        part_edge_ymin: Lungime cant 1
+        part_edge_ymax: Lungime cant 2
+        part_edge_xmin: Lățime cant 1
+        part_edge_xmax: Lățime cant 2
+        part_face_zmin: Spate furnir
+        part_face_zmax: Față furnir
+        thumbnail_proportional_drawing: Miniatură (Vedere Frontală)
+        thumbnail_proportional_drawing_bottom: Miniatură (Vedere Spate)
+        thumbnail_proportional: Miniatură proporțională
+        thumbnail_square: Miniatură pătrată
+        group_material: Material / Dimensiune
+        group_material_name: Nume material
+        group_std_dimension: Dimensiuni standard
+        filename: Nume fișier
+        model_name: Nume model
+        page_name: Nume scenă
+        length_unit: Unitate
+        generated_at: Data și ora
+      error:
+        invalid_size: Parametrii de configurare introduși nu permit setarea unei dimensiuni valide a etichetei.
+      warning:
+        is_group_selection: Piesele conținute în **grupurile ascunse** din Lista de Piese nu vor avea etichete.
+        is_part_selection: Aceste etichete sunt limitate la **piesele selectate**.
+    layout:
+      title: Desen
+      to_layout: Export către Layout
+      options_layout: Aranjament (Layout)
+      options_settings: Configurație
+      option_parts: Piese
+      option_parts_colored: Culoare
+      option_parts_colored_0: Fără culoare
+      option_parts_colored_1: Culoarea materialului
+      option_parts_colored_help: Selectează aspectul pieselor.
+      option_parts_opacity: Opacitate
+      option_parts_opacity_0: Transparent
+      option_parts_opacity_1: Opac
+      option_parts_opacity_help: Selectează opacitatea pieselor.
+      option_pins: Etichete
+      option_pins_hidden: Afișare
+      option_pins_hidden_0: Cu etichete
+      option_pins_hidden_1: Fără etichete
+      option_pins_hidden_help: Arată sau ascunde etichetele piesei cu număr sau denumire.
+      option_pins_colored: Culoare
+      option_pins_colored_0: Fără culoare
+      option_pins_colored_1: Culoarea piesei
+      option_pins_colored_help: Selectează culoarea etichetelor.
+      option_pins_formula: Formulă
+      option_pins_formula_help: Vă permite să scrieți cod *Ruby* pentru a personaliza textul etichetei.
+      option_pins_length: Lungime
+      option_pins_length_0: Fără linie indicatoare
+      option_pins_length_1: Scurtă
+      option_pins_length_2: Medie
+      option_pins_length_3: Lungă
+      option_pins_length_help: Selectează lungimea liniei indicatoare.
+      option_pins_direction: Orientare
+      option_pins_direction_0: De-a lungul axei Roșii
+      option_pins_direction_1: De-a lungul axei Verzi
+      option_pins_direction_2: De-a lungul axei Albastre
+      option_pins_direction_3: Spre centrul grupului părinte
+      option_pins_direction_4: Spre centrul selecției
+      option_pins_direction_help: Selectează direcția liniilor indicatoare spre etichete pentru o mai bună vizibilitate.
+      option_page: Dimensiune Hârtie
+      option_page_format: Format
+      option_page_format_portrait: Portret
+      option_page_format_landscape: Peisaj (Landscape)
+      option_page_format_custom: Personalizat
+      option_page_width: Lățime
+      option_page_height: Înălțime
+      option_page_header: Antet
+      option_page_header_0: Fără antet
+      option_page_header_1: Cu antet
+      option_page_header_help: |
+        Selectează dacă pagina de imprimat conține un antet cu numele documentului, descrierea sa și data.
+        Fără un antet, desenul de ansamblu ocupă toată pagina.
+      option_camera: Cameră
+      option_camera_view: Vedere
+      option_camera_view_custom: Personalizat
+      option_camera_zoom: Scară
+      option_camera_zoom_auto: Automat
+      option_camera_zoom_custom: Personalizat
+      option_camera_target: Poziție
+      option_camera_target_auto: Automat
+      option_camera_target_custom: Personalizat
+      option_explode: Vedere Explodată
+      error:
+        no_part: Nu există nicio piesă de desenat.
+        failed_to_save_as_skp: Nu s-a putut scrie fișierul SKP pentru a fi trimis la Layout.
+        failed_to_layout: |
+          Eroare la scrierea fișierului Layout: *{{ error }}*
+
+          **Asigurați-vă că fișierul nu este deschis în Layout.**
+      warning:
+        is_group_selection: Piesele conținute în **grupurile ascunse** din Lista de Piese nu vor fi desenate.
+        is_part_selection: Acest desen de prezentare generală este limitat la **piesele selectate**.
+      message:
+        adding_new_page: |
+          Doriți să adăugați o pagină nouă?
+        incompatible_page_format: |
+          Fișierul destinație nu este configurat cu același format de hârtie.
+
+          Citit: {{ old_page_format }}
+          Exportat: {{ new_page_format }}
+
+          Toate paginile vor fi șterse.
+        changing_units: |
+          Fișierul destinație nu are aceeași unitate implicită.
+
+          Citit: {{ old_units }}
+          Exportat: {{ new_units }}
+
+          Doriți să folosiți noile unități?
+        changing_precision: |
+          Fișierul destinație nu are aceeași precizie implicită.
+
+          Citit: {{ old_precision }}
+          Exportat: {{ new_precision }}
+
+          Doriți să folosiți noua precizie?
+    write:
+      title: Export Piese
+      info_2d: |
+        Acest modul vă permite să exportați **proiecția** 2D a pieselor ca fișiere în format [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) sau [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
+      info_3d: |
+        Acest modul vă permite să exportați **geometria 3D** a pieselor ca fișiere în format [STL](https://wikipedia.org/wiki/STL_(file_format)) sau [OBJ](https://wikipedia.org/wiki/Wavefront_.obj_file).
+      option_file_format: Format
+      option_file_format_help: |
+        Selectează formatul fișierului exportat.
+      option_dxf_structure: Structură DXF
+      option_dxf_structure_1: Straturi (Layers)
+      option_dxf_structure_2: Straturi + Blocuri
+      option_dxf_structure_help: |
+        Selectează structura fișierului DXF.
+
+        - Structura **Straturi (Layers)** desenează toate liniile plan, diferențiind între diverse tipuri de linii folosind doar straturile. *Această structură oferă o compatibilitate mai mare cu software-uri terțe.*
+        - Structura **Straturi + Blocuri** creează un bloc per piesă și inserează aceste blocuri de câte ori sunt repetate piesele. *Această structură oferă mai multă flexibilitate pentru editarea fișierului.*
+      option_unit: Unitate
+      option_unit_help: |
+        Selectează unitatea folosită în fișierul exportat.
+      option_use_count: Cantitate
+      option_use_count_0: Un fișier per piesă
+      option_use_count_1: Un fișier per instanță de piesă
+      option_use_count_help: |
+        Selectează dacă se ia în considerare numărul de instanțe al unei piese.
+      option_part_drawing_type: Proiecție
+      option_part_drawing_type_help: |
+        Selectează vederea de exportat.
+      option_faces: Fețe
+      option_faces_0: Folosește doar fața țintă
+      option_faces_1: Folosește toate fețele piesei
+      option_faces_help: |
+        Vă permite să alegeți dacă căutarea formei piesei trebuie realizată pe toate fețele sale sau doar pe fața selectată.
+      option_anchor: Punct de ancorare
+      option_anchor_0: Automat
+      option_anchor_1: Proiectează originea piesei
+      option_anchor_help: |
+        **Automat**
+        Colțul din stânga jos al casetei de încadrare a geometriei exportate este folosit ca punct de ancorare.
+
+        **Proiectează originea piesei**
+        Activează proiecția originii axei piesei ca punct de ancorare.
+      option_switch_yz: Axa Verticală
+      option_switch_yz_0: Z vertical
+      option_switch_yz_1: Y vertical
+      option_switch_yz_help: |
+        Interschimbă axele Y și Z pentru a defini axa verticală a piesei.
+      option_smoothing: Netezire (Smoothing)
+      option_smoothing_0: $t(default.no)
+      option_smoothing_1: Cercuri și arcuri netede (Experimental)
+      option_smoothing_help: |
+        Activează detectarea cercurilor și arcelor.
+
+        *Această opțiune nu detectează alte tipuri de curbe.*
+      option_merge_holes: Mod de Fuzionare
+      option_merge_holes_0: De bază
+      option_merge_holes_1: Contur + Găuri + Exces
+      option_merge_holes_help: |
+        **De bază**
+        Forma piesei este exportată cu proiecția fiecărei fețe pe un strat corespunzător adâncimii sale.
+
+        **Contur + Găuri + Exces**
+        Activează separarea conturului exterior al pieselor de găurile lor, precum și calculul excesului suprafețelor care mărginesc conturul și cavitățile.
+      option_merge_holes_overflow: Exces (Overflow)
+      option_merge_holes_overflow_help: |
+        Setează excesul (overflow) care va fi aplicată suprafețelor care mărginesc contururile și găurile.
+      option_include_paths: Trasee (Căi)
+      option_include_paths_0: $t(default.no)
+      option_include_paths_1: Folosește muchiile neasociate cu o față
+      option_include_paths_help: |
+        Activează utilizarea muchiilor neasociate cu o față și conținute în piesă, pentru a le exporta ca un traseu (cale).
+      option_parts: Piese
+      option_parts_help: |
+        Selectează culoarea pieselor.
+      option_parts_depths: Cavități
+      option_parts_depths_help: |
+        Vă permite să alegeți culoarea cavităților piesei.
+
+        *În mod implicit, culoarea utilizată este un gradient proporțional cu adâncimea cavității, între culoarea pieselor și cea a găurilor.*
+      option_parts_holes: Găuriri
+      option_parts_holes_help: |
+        Selectează culoarea găurilor.
+      option_parts_paths: Trasee
+      option_parts_paths_help: |
+        Vă permite să alegeți culorile traseelor.
+
+        *Culoarea de umplere va fi folosită doar pentru traseele închise.*
+      error:
+        no_part: Nicio piesă de exportat.
+      warning:
+        is_group_selection: Piesele conținute în **grupurile ascunse** din Lista de Piese nu vor fi exportate.
+        is_part_selection: Exportul este limitat la **piesele selectate**.
+    snippet:
+      hello: Salut
+      number: Număr
+      name: Denumire
+      number_and_name: Număr și Denumire
+      number_without_hardware: Număr (fără accesorii/feronerie)
+      size: Dimensiune
+      area: Arie
+      volume: Volum
+    error:
+      no_model: Niciun model nu este deschis. Va trebui să-mi oferiți mai multe informații ;)
+      no_entities: Modelul dvs. este gol. Va trebui să-mi oferiți mai multe informații ;)
+      no_component_in_selection: Nicio instanță a unei componente vizibile nu a fost detectată în selecția dvs.
+      no_component_in_model: Nicio instanță a unei componente vizibile nu a fost detectată în scena dvs.
+      unknow_part: Piesa selectată nu există în Lista de Piese.
+      obsolete_cutlist: "Imposibil, lista de piese este învechită. Vă rugăm să o regenerați."
+    warning:
+      is_entity_selection: Au fost luate în considerare doar elementele selectate din modelul dvs.
+      no_typed_materials_in_model: "Modelul dvs. nu folosește niciun material definit (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** sau **$t(tab.materials.type_5)**)."
+      no_typed_materials_in_selection: "Selecția dvs. nu folosește niciun material definit (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** sau **$t(tab.materials.type_5)**)."
+      export_empty: Exportul dvs. nu conține nicio piesă.
+    success:
+      part_selected: "{{ count }} piesă selectată în Lista de Piese."
+      part_selected_plural: "{{ count }} piese selectate în Lista de Piese."
+    tip:
+      no_component: |
+        Piesele care vor fi incluse în *lista de piese* trebuie să fie instanțe ale unei **componente**.
+        Dacă folosiți doar grupuri, convertiți-le în componente.
+        Utilizarea componentelor face posibilă replicarea pieselor identice fără a le duplica.
+      no_typed_materials: "Aplicați un material pieselor care vor fi incluse în lista de piese și definiți proprietățile acestui material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** sau **$t(tab.materials.type_5)**) în fila <i class=\"ladb-opencutlist-icon-materials\"></i> **Materiale**."
+    obsolete_base: "Pentru a rămâne sincronizat, trebuie să actualizați lista de piese."
+  materials:
+    label: Materiale
+    title: Materiale
+    type_0: Nedefinit
+    type_1: Lemn Masiv
+    type_2: Plăci (Panouri)
+    type_3: Profile (Dimensional)
+    type_4: Cant
+    type_5: Feronerie
+    type_6: Furnir
+    tooltip:
+      type_0: Tip material '$t(tab.materials.type_0)'
+      type_1: Tip material '$t(tab.materials.type_1)'
+      type_2: Tip material '$t(tab.materials.type_2)'
+      type_3: Tip material '$t(tab.materials.type_3)'
+      type_4: Tip material '$t(tab.materials.type_4)'
+      type_5: Tip material '$t(tab.materials.type_5)'
+      type_6: Tip material '$t(tab.materials.type_6)'
+      grained_0: $t(tab.materials.edit_material.grained_0)
+      grained_1: $t(tab.materials.edit_material.grained_1)
+      grain_direction: Orientarea fibrei
+      raw_estimated_0: Estimat după volumul util
+      colorized: Această nuanță va fi aplicată texturii atunci când este randată în model
+      texture_load: Încarcă o imagine nouă
+      texture_export: Exportă imaginea
+      texture_clear: Elimină textura
+      edit: "Editează proprietățile pentru '{{ name }}'"
+      set_current: "Colorează piesele cu '{{ name }}'"
+      open_url: Deschide URL material
+      import_from_skm: Importă material (.skm)
+    menu:
+      purge_unused: Purgează materialele nefolosite
+      reset_prices: Resetează prețurile tuturor materialelor
+      reset_prices_confirm: |
+        Sunteți pe cale să resetați prețurile tuturor materialelor din modelul dvs.
+        Această acțiune este definitivă. **Toate prețurile vor fi resetate la zero.**
+        Confirmați pentru a continua.
+      reset_prices_success: Prețurile tuturor materialelor au fost resetate.
+    new_material:
+      title: Creează Material Nou
+      name: Nume
+      name_warning: Nume invalid
+      color: Culoare
+      color_warning: Culoare invalidă
+      type: Tip
+    edit_material:
+      title: "Proprietățile Materialului '{{ name }}'"
+      general: General
+      texture: Textură
+      no_texture: Fără textură
+      name: Nume
+      type: Tip
+      description: Descriere
+      url: URL
+      formats: Formate
+      cut_options: Parametri de Tăiere
+      estimate_options: Opțiuni de Estimare
+      attributes: Atribute
+      thickness: Grosime
+      thickness_help: |
+        Grosimea finită a materialului.
+
+        *Dacă nu este specificată nicio unitate, se va aplica unitatea modelului.*
+      length_increase: Supradimensionare Lungime
+      length_increase_help: Supradimensionarea lungimii pentru a defini **lungimea brută**.
+      width_increase: Supradimensionare Lățime
+      width_increase_help: Supradimensionarea lățimii pentru a defini **lățimea brută**.
+      thickness_increase: Supradimensionare Grosime
+      thickness_increase_help: Supradimensionarea grosimii pentru a defini **grosimea brută**.
+      std_lengths: Lungimi Standard
+      std_lengths_help: |
+        Lungimile standard disponibile pentru acest material.
+
+        *Dacă nu este specificată nicio unitate, se va aplica unitatea modelului.*
+      std_widths: Lățimi Standard
+      std_widths_help: |
+        Lățimile standard disponibile pentru acest material.
+
+        *Dacă nu este specificată nicio unitate, se va aplica unitatea modelului.*
+      std_thicknesses: Grosimi Standard
+      std_thicknesses_help: |
+        Grosimi **brute** standard disponibile pentru acest material.
+
+        *Dacă nu este specificată nicio unitate, se va aplica unitatea modelului.*
+      std_sections: Secțiuni Transversale Standard
+      std_sections_help: |
+        Secțiunile transversale standard disponibile pentru acest material.
+
+        *Dacă nu este specificată nicio unitate, se va aplica unitatea modelului.*
+      std_sizes: Dimensiuni Standard
+      std_sizes_help: |
+        Dimensiunile standard disponibile pentru acest material.
+
+        *Dacă nu este specificată nicio unitate, se va aplica unitatea modelului.*
+      grained: Orientarea Fibrei
+      grained_help: Selectează orientarea fibrei în raport cu lungimea panoului.
+      grained_0: Fără fibră
+      grained_1: Fibra urmărește lungimea
+      edge_decremented: Reduce Dimensiunile
+      edge_decremented_help: Vă permite să indicați dacă dimensiunile pieselor trebuie reduse cu grosimea cantului.
+      edge_decremented_0: Fără Reducere
+      edge_decremented_1: Reduce cu Grosimea Cantului
+      raw_estimated: Volum Utilizat
+      raw_estimated_help: |
+        Definește volumul folosit pentru estimarea greutății și costului total al pieselor realizate din acest material.
+
+        **Volum util**
+        Volumul total va fi suma volumelor utile ale pieselor, ceea ce reprezintă caseta de încadrare inclusiv adaosurile.
+
+        **Volumul de materie primă necesar**
+        Volumul total va fi suma volumelor panourilor, foilor, scândurilor sau canturilor după tăiere.
+      raw_estimated_0: Volum util
+      raw_estimated_1: Volum de materie primă necesar
+      multiplier_coefficient: Coeficient
+      multiplier_coefficient_help: Folosit pentru a indica coeficientul de multiplicare aplicat volumului brut.
+      std_attributes_dim_placeholder: Selectați o dimensiune
+      std_volumic_masses: Densitate
+      std_volumic_masses_help: "Permite setarea densității pentru toate dimensiunile, precum și pentru fiecare dimensiune standard de material."
+      std_prices: Preț
+      std_prices_help: "Vă permite să definiți prețul pentru toate dimensiunile, precum și pentru fiecare dimensiune standard a materialului."
+      std_cut_prices: Preț de Tăiere Standard
+      std_cut_prices_help: |
+        Vă permite să definiți prețul de tăiere al materialului.
+
+        *Această valoare afectează doar tăieturile drepte.*
+      texture_width: Lățime
+      texture_height: Înălțime
+      export_to_skm: Exportă (.skm)
+    texture_load:
+      title: Încarcă imagine
+    texture_export:
+      title: Exportă imagine
+    import_from_skm:
+      title: Importă fișier .skm
+      ask_replace: |
+        Un material "{{ name }}" există deja.
+        Doriți să-l înlocuiți cu cel pe care îl importați?
+
+        $t(default.yes) = Înlocuiește materialul existent cu cel importat
+        $t(default.no) = Păstrează ambele materiale
+        $t(default.cancel) = Anulează operațiunea
+    export_to_skm:
+      title: Exportă ca fișier .skm
+    option:
+      minimize_on_smart_paint: Reduce după *'Colorează piesele cu...'*
+      minimize_on_smart_paint_help: "Dacă această opțiune este selectată, fereastra OpenCutList va fi minimizată la utilizarea funcției *'Colorează piesele cu...'*."
+      general: General
+      material_order_strategy: Sortare Materiale
+      material_order_strategy_help: |
+        Rearanjați următoarele proprietăți pentru a defini strategia de sortare pentru materialele din listă.
+        Proprietățile pot fi sortate în ordine <i class="ladb-opencutlist-icon-sort-asc"></i> *crescătoare* sau <i class="ladb-opencutlist-icon-sort-desc"></i> *descrescătoare*.
+      property_type: Tip
+      property_name: Nume
+    delete:
+      message: |
+        Sunteți pe cale să ștergeți materialul **{{ material_name }}** din modelul dvs.
+        Confirmați pentru a continua.
+    duplicate:
+      message: |
+        Alegeți numele noului material copiat din **{{ material_name }}**.
+    error:
+      no_model: Niciun model nu este deschis. Va trebui să-mi oferiți mai multe informații ;)
+      no_materials: Modelul dvs. nu conține niciun material.
+      material_not_found: Niciun material găsit.
+      no_texture: Materialul nu are textură.
+      failed_import_skm_file: "A apărut o eroare la importul din fișierul .skm. **{{ error }}**"
+      failed_export_skm_file: "A apărut o eroare la exportul către fișierul .skm. **{{ error }}**"
+      failed_deleting_material: "A apărut o eroare la ștergerea materialului. **{{ error }}**"
+      failed_duplicating_material: "A apărut o eroare la duplicarea materialului. **{{ error }}**"
+      invalid_image_file: Imagine invalidă
+    obsolete_base: "Pentru a rămâne sincronizat, trebuie să reîmprospătați lista de materiale."
+  outliner:
+    label: Structură (Outliner)
+    title: Structură Arbore
+    list: Structura Arbore a Entităților
+    nodes: Instanțe
+    toggle_hidden: Instanțe ascunse
+    type_0: Model
+    type_1: Grup
+    type_2: Componentă
+    type_3: Piesă
+    tooltip:
+      hide_node: Ascunde
+      unhide_node: Arată
+      locked_node: Blocat
+      is_active_node: Instanță activă în model
+      set_active_node: Editează în model
+      edit_node_properties: Editează proprietățile
+      select_active_nodes: Selectează / Deselectează toate instanțele active
+      select_node: Selectează
+      unselect_node: Deselectează
+      open_node_url: Deschide URL piesă
+    edit_node:
+      title_model: "Proprietățile modelului"
+      title_instance: "Proprietățile instanței **{{ name }}**"
+      title_instance_multiple: "Proprietățile grupului de instanțe"
+      multiple_alert: "Proprietăți comune ale grupului de {{ node_count }} instanțe."
+      general: General
+      name: Nume
+      instance_name: Instanță
+      material: Material
+      definition_name: Definiție
+      description: Descriere
+      url: URL
+      tags: Etichete (Badges)
+      layer_name: Etichetă (Tag)
+      snapto: Atașează
+      snapto_none: Fără
+      snapto_0: Oricare
+      snapto_1: Orizontal
+      snapto_2: Vertical
+      snapto_3: Oblic
+      cuts_opening: Decupează spațiu
+      always_face_camera: Orientat mereu spre cameră
+      shadows_face_sun: Umbritre
+      no_scale_mask: Scalare și Întindere
+      no_scale_mask_0: Scalabil pe axa roșie (X)
+      no_scale_mask_1: Scalabil pe axa verde (Y)
+      no_scale_mask_2: Scalabil pe axa albastră (Z)
+      no_scale_mask_3: Scalabil în planul roșu/albastru (X+Z)
+      no_scale_mask_4: Scalabil în planul verde/albastru (Y+Z)
+      no_scale_mask_5: Scalabil în planul roșu/verde (X+Y)
+      no_scale_mask_6: Scalabil din colțuri (XYZ)
+      explode: Descompune (Explode)
+      explode_message: "Confirmați descompunerea piesei **{{ name }}**?"
+      erase: Șterge
+      erase_message: "Confirmați ștergerea piesei **{{ name }}**?"
+    deep_make_unique:
+      title: Fă Unic
+    deep_rename_parts:
+      title: Redenumește Piese
+      info_0: |
+        Această funcție vă permite să redenumiți piesele prezente în setul selectat, aplicând formula de mai jos fiecărei instanțe.
+      formula: Formulă
+      old_name: Nume original
+      new_name: Nume nou
+      count: Cant.
+    create_container:
+      title_group: "Creează Grup"
+      title_component: "Creează Componentă"
+    option:
+      general: General
+      show_hidden_instances: Arată instanțele ascunse
+      show_hidden_instances_help: "Dacă această opțiune este selectată, instanțele ascunse în model vor fi afișate în structura arborelui."
+      hide_descriptions: Ascunde descrierile
+      hide_descriptions_help: "Dacă această opțiune este selectată, **descrierile** plasate pe piese nu vor fi afișate."
+      hide_tags: Ascunde etichetele
+      hide_tags_help: "Dacă această opțiune este selectată, **etichetele** pieselor nu vor fi afișate."
+      minimize_on_set_active: Minimizează după '$t(tab.outliner.tooltip.set_active_node)'
+      minimize_on_set_active_help: "Dacă această opțiune este selectată, fereastra OpenCutList va fi minimizată când funcția *'$t(tab.outliner.tooltip.set_active_node)'* este utilizată."
+    snippet:
+      name_size: Denumire - Dimensiune
+    error:
+      no_model: Niciun model nu este deschis. Va trebui să-mi oferiți mai multe informații ;)
+      no_entities: Modelul dvs. este gol!
+      node_not_found: Nodul nu a fost găsit
+      entity_not_found: Instanța nu a fost găsită
+      invalid_target: Instanța vizată nu suportă această operațiune
+      obsolete_outliner: "Imposibil, structura generată este învechită. Vă rugăm să o regenerați."
+    tip:
+      no_node: |
+        Modelul dvs. nu conține nicio instanță care să fie afișată aici.
+        O instanță este un **grup** sau o **componentă** din scenă.
+    obsolete_base: "Pentru a rămâne sincronizat, trebuie să reîmprospătați structura."
+  importer:
+    label: Import
+    title: Importă Piese
+    help: |
+      Această pagină vă permite să importați piese (definite de o casetă dreptunghiulară de încadrare) în modelul dvs. dintr-un fișier [CSV](https://en.wikipedia.org/wiki/Comma-separated_values).
+      Apoi, veți putea utiliza funcțiile *OpenCutList* pentru piesele care au fost generate de un alt software decât *SketchUp*.
+      Faceți clic pe butonul **Deschide fișier CSV** pentru a începe.
+    open_csv: Deschide fișier CSV
+    import_to_model: Importă în model
+    load:
+      title: Încărcare Fișier CSV
+      info_0: |
+        Selectați opțiunile necesare pentru a citi fișierul:
+        **{{ filename }}**.
+      info_1: |
+        *Unitatea configurată în model este: **{{ unit }}**.
+        Această unitate va fi folosită pentru dimensiunile fără o unitate specificată*.
+      options: Opțiuni de Încărcare
+      option_col_sep: Separator
+      option_col_sep_tab: Tabulator
+      option_col_sep_comma: Virgulă
+      option_col_sep_semicolon: Punct și virgulă
+      option_first_line_headers: Rând de Antet
+      option_first_line_headers_0: Date
+      option_first_line_headers_1: Titluri de Coloane
+    import:
+      title: Importă Piese în Model
+      info_0: |
+        Sunteți pe cale să importați **{{ count }} piesă** în model.
+        Această piesă va fi plasată într-un grup la originea scenei principale.
+      info_0_plural: |
+        Sunteți pe cale să importați **{{ count }} piese** în model.
+        Aceste piese vor fi stivuite într-un grup pornind de la originea scenei principale.
+      info_1: Faceți clic pe **Importă** pentru a confirma acțiunea.
+      options: |
+        Modelul conține deja *piese*, *definiții* sau *materiale*.
+        Selectați opțiunile de import dorite.
+      option_remove_all_?: "Selectați pasul următor:"
+      option_remove_all_false: Adaugă piesele la cele existente
+      option_remove_all_true: Înlocuiește elementele existente
+      option_keep_definitions_settings: Păstrează setările definițiilor
+      option_keep_materials_settings: Păstrează setările materialelor
+    column:
+      unused: Nefolosit
+      mandatory: Câmpuri obligatorii
+      optional: Câmpuri opționale
+      name: Denumire
+      count: Cantitate
+      bbox_length: Lungime
+      bbox_width: Lățime
+      bbox_thickness: Grosime
+      material: Material
+      tags: Etichete
+    tooltip:
+      errors: Această piesă nu va fi importată deoarece a produs următoarele erori
+      warnings: "Această piesă va fi importată, dar a produs următoarele avertismente"
+    error:
+      no_model: Niciun model nu este deschis. Este imposibil să importați piese în gol ;)
+      file_not_found: "Fișier negăsit : **{{ filename }}**"
+      bad_extension: "Fișierul *{{ filename }}* nu are extensia **.CSV** sau **.TSV**."
+      failed_to_load_csv_file: |
+        Nu s-a putut încărca fișierul CSV: **{{ error }}**
+        *Verificați dacă ați selectat separatorul de câmp corespunzător.*
+      empty_file: Fișierul pare gol sau nu poate fi citit corect.
+      no_importable_part: Nicio piesă nu poate fi importată. Atribuiți câmpurile obligatorii coloanelor corespunzătoare.
+      invalid_name: Denumire invalidă
+      invalid_length: Lungime invalidă
+      invalid_width: Lățime invalidă
+      invalid_thickness: Grosime invalidă
+      failed_to_import: Importul a eșuat.
+    warning:
+      invalid_count: Cantitate invalidă
+      invalid_material: Material invalid
+    success:
+      imported_title: Import finalizat
+      imported_body: "{{ count }} piesă importată cu succes!"
+      imported_body_plural: "{{ count }} piese importate cu succes!"
+    obsolete_base: "Pentru a rămâne sincronizat, trebuie să reîncărcați fișierul CSV."
+  tutorials:
+    label: Tutoriale
+    title: Tutoriale
+    help: |
+      Găsiți aici o listă neexhaustivă de videoclipuri realizate de comunitate privind utilizarea *OpenCutList*.
+    submit: Trimite un videoclip
+    submit_info: |
+      Ați realizat un videoclip care prezintă utilizarea **OpenCutList** și doriți să apară aici?
+      Anunțați-ne scriindu-ne la **opencutlist@lairdubois.fr**!
+
+      *Videoclipul trebuie să fie public și găzduit pe YouTube.*
+    error:
+      fail_to_load_list: Nu s-a putut încărca lista de videoclipuri.
+  news:
+    label: Noutăți
+    title: Noutăți
+    help: |
+      Cele mai recente noutăți despre *OpenCutList*.
+    comment: Comentariu
+    error:
+      fail_to_load_list: Nu s-a putut încărca lista de noutăți.
+  forum:
+    label: Forum
+    title: Forum
+    help: |
+      Acest forum vă permite să faceți schimb de idei cu comunitatea de utilizatori și cu echipa *OpenCutList*.
+    create_conversation: Începe o conversație
+    reply: Răspunde
+    tags: Etichete
+    redirection: |
+      Veți fi redirecționat către platforma **Open Collective** care găzduiește acest forum de discuții.
+      Pentru a *începe conversații* sau a *răspunde*, va trebui să vă creați un cont și să vă autentificați.
+      *Este gratuit, fără obligații, și tot ce aveți nevoie este o simplă adresă de e-mail.*
+
+      Aplicați pentru a continua.
+    error:
+      fail_to_load_list: Nu s-a putut încărca lista de subiecte.
+  sponsor:
+    label: Sponsorizează
+    title: Susținere
+    description: |
+      **OpenCutList** este un software *Open Source* susținut de utilizatorii săi prin intermediul platformei <a href="https://opencollective.com/" target="_blank">Open Collective</a>.
+      Susțineți acest proiect făcând o contribuție financiară!
+    contribute: Contribuie
+    backers: "{{ count }} susținător financiar"
+    backers_plural: "{{ count }} susținători financiari"
+    ad: "OpenCutList nu este gratuit"
+    objective: Obiectiv
+    objective_slogan: "OpenCutList suntem noi toți"
+    objective_title:
+      default: Obiective
+      cuttingdiagram_export: Finanțarea exporturilor de diagrame de tăiere
+    objective_details:
+      default: |
+        Îmbunătățirea continuă a *OpenCutList* este importantă pentru noi și proiectul continuă să aibă nevoie de ajutorul dvs. pentru următoarea sa actualizare!
+      cuttingdiagram_export: |
+        Este important pentru noi ca *OpenCutList* să poată fi adaptat așteptărilor foarte diferite ale utilizatorilor pentru funcția de *diagramă de tăiere*.
+        Pentru a extinde și mai mult posibilitățile, am dori să activăm exportul diagramelor în format **SVG** și **DXF**.
+        Oferindu-ne mijloacele de a lucra la aceste exporturi, ne oferiți oportunitatea de a vă ajuta să obțineți la maximum ce-i mai bun din *OpenCutList*.
+    objective_crowdfunding: |
+      Dezvoltarea noilor funcționalități se va realiza prin **Strângere de fonduri (Fundraising)** și va începe atunci când **Obiectivul Financiar** va fi atins.
+    objective_thanks: |
+      Vă mulțumim pentru contribuție!
+    objective_funded_progress: "finanțat în proporție de {{ progress }}%"
+  settings:
+    label: Preferințe
+    title: Preferințe
+    global_settings: Preferințe Globale
+    language: Limbă
+    language_auto: Automat
+    font_size: Dimensiune Font
+    font_size_auto: $t(default.automatic)
+    font_size_normal: Normal
+    font_size_small: Mic
+    font_size_tiny: Foarte Mic
+    print_margin: Margini de Printare
+    print_margin_normal: Normal
+    print_margin_small: Înguste
+    table_row_size: Înălțimea rândurilor din tabel
+    table_row_size_normal: Normal
+    table_row_size_compact: Compact
+    size_and_position: Dimensiunea și Poziția Ferestrei
+    model_settings: Preferințe Model
+    length_unit: Unitate de Lungime
+    length_format: Format
+    length_format_0: $t(default.decimal)
+    length_format_1: Arhitectural
+    length_format_2: Ingineresc
+    length_format_3: $t(default.fractional)
+    length_precision: Precizie
+    suppress_units_display: Afișează unitatea de lungime pentru fiecare valoare
+    mass_unit: Unitate de Greutate
+    mass_precision: Precizie
+    currency_symbol: Simbol Valutar
+    currency_precision: Precizie
+    presets:
+      export_global_presets: Exportă presetări
+      export_global_presets_help: |
+        Această caracteristică vă permite să exportați presetările într-un fișier **.json**.
+        Selectați presetările pe care doriți să le exportați.
+      export_global_presets_success: Presetările au fost exportate cu succes.
+      import_global_presets: Importă presetări
+      import_global_presets_help: |
+        Selectați presetările din fișierul **.json** pe care doriți să le importați.
+        Rețineți că, dacă o presetare cu un nume identic există deja, aceasta va fi înlocuită de versiunea importată.
+      import_global_presets_success: |
+        Presetările *OpenCutList* au fost importate cu succes.
+        Pentru a reflecta modificările, trebuie să **închideți** și să **redeschideți** fereastra OpenCutList.
+      dump_global_presets: Salvează presetările
+      dump_model_presets: Salvează setările modelului
+      reset_global_presets: Resetează presetările
+      reset_global_presets_confirm: |
+        Sunteți pe cale să resetați toate presetările *OpenCutList* salvate.
+        Această acțiune este definitivă. **Toate presetările vor fi pierdute.**
+        Confirmați pentru a continua.
+      reset_global_presets_success: |
+        Presetările *OpenCutList* au fost resetate.
+        Pentru a reflecta modificările, trebuie să **închideți** și să **redeschideți** fereastra OpenCutList.
+      reset_model_presets: Resetează setările modelului
+      reset_model_presets_confirm: |
+        Sunteți pe cale să resetați toate setările *OpenCutList* pentru modelul curent.
+        Această acțiune este definitivă. **Toate setările vor fi restabilite la valorile lor implicite.**
+        Confirmați pentru a continua.
+      reset_model_presets_success: |
+        Setările *OpenCutList* pentru modelul curent au fost resetate.
+        Pentru a reflecta modificările, trebuie să **închideți** și să **redeschideți** fereastra OpenCutList.
+      error:
+        no_preset_to_export: Nicio presetare de exportat.
+        no_preset_to_import: Nicio presetare de importat.
+        failed_to_import: "Eroare la importul Presetărilor: **{{ error }}**."
+        failed_to_import_invalid_hexdigest: Acest fișier a fost modificat. Nu poate fi importat.
+        failed_to_import_bad_file_format: Format fișier invalid.
+  about:
+    label: Despre
+    title: Despre
+    version: Versiune
+    credits: Credite Tehnice
+    credits_authors: |
+      *OpenCutList* este dezvoltat de [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) și [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Vedeți toți [contribuitorii](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+    credits_translations: Traduceri
+    credits_translators: |
+      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*Engleză*, *Germană*)
+      - Gildas Boureau (*Documentație Franceză*)
+      - Vladimir Badulya (*Rusă*)
+      - Pierluigi Colombo, Massimo Risca (*Italiană*)
+      - Nayton Sanches Barbosa, corectat și revizuit de Carlos Maciel ELT, Henny Silva Ferreira (*Portugheză*)
+      - Raquel Caballero Guillén, Leonardo Romero Giménez (*Spaniolă*)
+      - [Radek Rýznar](https://onlinesketchup.cz) (*Cehă*)
+      - [Jarek Ostaszewski †](https://www.domidrewno.pl), Greg Gregosky, Damian B, Florian Laniecki, [Hubert Przybyłek](https://www.drvo.pl/), Mateusz Szczepaniak (*Poloneză*)
+      - Sergey Isupov (*Ebraică*), interfața RTL nu este încă suportată
+      - Soul Issam (*Arabă*), interfața RTL nu este încă suportată
+      - Nguyen Ngoc Tan (*Vietnameză*)
+      - Andriy Toporivsky, Kostyantyn Shcherbey (*Ucraineană*)
+      - [刘涛](https://www.liutao91.cn), Martin Pan Chiu Ng (*Chineză simplificată*)
+      - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*Olandeză*)
+      - Zoltán Nagy, Roland Kovács (*Maghiară*)
+      - Milan Divovic (*Sârbă*)
+    credits_description: |
+      Dezvoltarea acestei extensii este legată de proiectul platformei de sharing [L'Air du Bois](https://www.lairdubois.fr).
+      Această extensie este de asemenea *Open Source* și este disponibilă sub licența [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) pe [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
+    credits_runtime: Mediu de rulare (Runtime)
+    credits_development: Mediu de dezvoltare
+    credits_vendors: |
+      Aventura nu ar fi fost posibilă fără munca autorilor următoarelor componente *Open Source*:
+    credits_thanks: |
+      Mulțumiri speciale se îndreaptă către:
+      - [JetBrains](https://www.jetbrains.com) pentru susținerea acestui proiect prin programul lor [Free Open Source License](https://www.jetbrains.com/buy/opensource/).
+      - [Transifex](https://www.transifex.com) pentru susținerea proiectelor de tip Open Source.
+      - [GitBook](https://www.gitbook.com) pentru susținerea proiectelor de tip Open Source.
+tool:
+  default:
+    transparency: Transparență
+    zoom_extents: Încadrare completă (Zoom Extents)
+    toggle_depth: Piese de fundal
+    more: Mai multe
+    end_point: Punct final
+    middle_point: Punct de mijloc
+    third_point: Punct la o treime
+    vcb_length: Lungime
+    vcb_thickness: Grosime
+    vcb_size: Dimensiuni
+    vcb_radius: Rază
+    vcb_diameter: Diametru
+    vcb_distance: Distanță
+    error:
+      no_direction: Vă rugăm să indicați o direcție cu mouse-ul
+      invalid_length: "Lungimea {{ value }} este invalidă"
+      invalid_thickness: "Grosime invalidă"
+      invalid_multiplicator: "Factorul {{ value }} este invalid"
+      invalid_divider: "Divizorul {{ value }} este invalid"
+      invalid_offset: "Decalajul {{ value }} este invalid"
+      invalid_segment_count: "Numărul de segmente {{ value }} este invalid. Trebuie să fie între 3 și 999."
+      syntax_error: "Eroare de sintaxă: {{ error }}"
+      unexpected_close_parenthesis: "Paranteză de închidere neașteptată"
+      missing_close_parenthesis: "Paranteză de închidere lipsă"
+      missing_operand: "Operand lipsă"
+      zero_division: "Împărțire la zero"
+      lt_min_distance: "Distanța {{ value1 }} este mai mică decât distanța minimă de {{ value2 }}"
+      gt_max_distance: "Distanța {{ value1 }} este mai mare decât distanța maximă de {{ value2 }}"
+      locked_part: Piesă blocată
+      selection_contains_locked_entities: Selecția conține elemente blocate
+  highlight:
+    transparency: $t(tool.default.transparency)
+    zoom_extents: $t(tool.default.zoom_extents)
+  smart_select:
+    state_0_status: Faceți clic pe o piesă pentru a o selecta
+    state_0_to_6_status: Selectați un element părinte
+    state_4_status: "Trageți peste o piesă identică cu același părinte pentru a o adăuga la selecție, apoi eliberați pentru a continua"
+    state_5_status: Glisați pentru a adăuga la selecție și eliberați pentru a continua
+    state_6_status: Selectați un element din listă
+    state_7_status: Faceți clic pe o piesă pentru a o adăuga sau a o decupa din selecție
+    warning:
+      no_active_part: Mai întâi trebuie să treceți cu mouse-ul peste o piesă
+  smart_draw:
+    title: Desenează
+    action_0: Desenează Dreptunghi
+    action_0_status: Desenează un volum pe o formă dreptunghiulară
+    action_0_state_0_status: Faceți clic pentru a seta primul punct al dreptunghiului
+    action_0_state_1_status: "Faceți clic pentru a defini colțul opus sau introduceți lungimea, lățimea"
+    action_1: Desenează Cerc
+    action_1_state_0_status: Faceți clic pentru a seta centrul cercului
+    action_1_status: Desenează un volum pe o formă circulară
+    action_1_state_1_radius_status: Faceți clic pentru a seta raza sau introduceți distanța
+    action_1_state_1_diameter_status: Faceți clic pentru a seta diametrul sau introduceți distanța
+    action_2: Desenează Poligon
+    action_2_state_0_status: Faceți clic pentru a seta primul punct al poligonului
+    action_2_status: Desenează un volum pe o formă poligonală
+    action_2_state_1_status: Faceți clic pentru a defini un punct nou sau introduceți distanța
+    action_x_state_2_status: Faceți clic pentru a seta elevația (înălțimea) sau introduceți distanța
+    action_option_group_offset: Decalaj
+    action_option_group_segments: Segmente
+    action_option_group_options: Opțiuni
+    action_option_offset_shape_offset: Decalaj
+    action_option_offset_shape_offset_status: Aplică un decalaj liniei formei
+    action_option_segments_segment_count: Număr de Segmente
+    action_option_segments_segment_count_status: Definește numărul de segmente ale unui cerc
+    action_option_options_construction: Linii de Construcție
+    action_option_options_construction_status: Desenează ca linii de construcție
+    action_option_options_rectangle_centered: Dreptunghi Centrat
+    action_option_options_rectangle_centered_status: Centrează dreptunghiul pe primul punct
+    action_option_options_smoothing: Netezire
+    action_option_options_smoothing_status: Netezește curbele
+    action_option_options_measure_from_vertex_status: Măsoară relativ la cel mai apropiat vârf
+    action_option_options_measure_from_diameter: Măsoară
+    action_option_options_measure_from_diameter_status: Măsoară cercul după diametrul său
+    action_option_options_measure_from_radius_status: Măsoară cercul după raza sa
+    action_option_options_measure_reversed: Măsurare Inversată
+    action_option_options_measure_reversed_status: Inversează măsurătoarea
+    action_option_options_pull_centered: Extrudare Centrată
+    action_option_options_pull_centered_status: Extrudare simetrică față de primul punct
+    action_option_options_pull_locked_status: Fixează extrudara pe o axă
+    action_option_options_draw_in: Desenează în
+    action_option_options_draw_in_0: Desenează în elementul activ
+    action_option_options_draw_in_1: Desenează în obiectul părinte al piesei vizate de primul punct
+    action_option_options_draw_in_status: Desenează în obiectul părinte al piesei vizate de primul punct
+    action_option_options_ask_name: Denumirea pieselor
+    action_option_options_ask_name_status: Introduceți manual numele pieselor
+    action_measure_locked_status: Blochează pe ultima măsurătoare
+    action_toggle_move_copy_status: Comută între copiere/mutare
+    action_change_move_anchor_status: Schimbă punctul de ancorare
+    success:
+      part_created: "Piesă nouă creată: {{ name }}"
+  smart_handle:
+    title: Gestionează
+    action_0: Selectează
+    action_0_status: Selectează o piesă
+    action_1: Copiază de-a lungul liniei
+    action_1_status: Copiază o piesă de-a lungul unei axe
+    action_1_state_2_status: Faceți clic pentru a plasa copia piesei sau introduceți o distanță
+    action_2: Copiază de-a lungul grilei
+    action_2_status: Copiază o piesă de-a lungul unei grile
+    action_2_state_2_status: Faceți clic pentru a plasa copiile piesei sau introduceți două distanțe
+    action_3: Mută
+    action_3_status: Mută o piesă de-a lungul unei axe
+    action_3_state_1_status: Faceți clic pentru a stabili primul punct de măsurare
+    action_3_state_2_status: Faceți clic pentru a plasa piesa sau introduceți o distanță
+    action_4: Distribuie
+    action_4_status: Distribuie o piesă de-a lungul unei axe
+    action_4_state_1_status: Faceți clic pentru a seta primul punct de măsurare
+    action_4_state_2_status: Faceți clic pentru a seta al doilea punct de măsurare sau introduceți o distanță
+    action_option_group_copy_measure_type: Măsurare
+    action_option_group_move_measure_type: Măsurare
+    action_option_group_axes: Axe
+    action_option_group_options: Opțiuni
+    action_option_copy_measure_type_outside_status: Măsurătoare externă
+    action_option_copy_measure_type_centered_status: Măsurătoare centrală
+    action_option_copy_measure_type_inside_status: Măsurătoare luată între piese
+    action_option_axes_active_status: Manipulează de-a lungul axelor active
+    action_option_axes_context_status: Manipulează de-a lungul axelor grupului sau componentei care conține piesa
+    action_option_axes_entity_status: Manipulează de-a lungul axelor piesei
+    action_option_options_mirror_status: Copiere simetrică
+    action_toggle_raytest_status: Proiecție pe punctul următor
+    warning:
+      copies_disable_mirror: Copiile multiple dezactivează opțiunea '$t(tool.smart_handle.action_option_options_mirror_status)'
+  smart_reshape:
+    title: Remodelează
+    action_0: Întinde
+    action_0_status: Întinde o piesă
+    action_0_state_1_status: Faceți clic pe un mâner pentru a întinde
+    action_0_state_1a_status: Faceți clic pe un plan de secțiune pentru a-l muta
+    action_0_state_1b_status: Adaugă un plan de secțiune
+    action_0_state_1c_status: Șterge un plan de secțiune
+    action_0_state_10_status: Trageți planul de secțiune pentru a-l muta
+    action_0_state_11_status: Faceți clic pentru a adăuga planul de secțiune
+    action_0_state_12_status: Faceți clic pe un plan de secțiune pentru a-l șterge
+    action_0_state_2_status: Faceți clic pentru a confirma întinderea sau introduceți o distanță
+    action_1: Creare panouri
+    action_1_status: Creează o serie de piese dintr-un corp solid
+    action_1_state_0_status: Faceți clic pe un corp solid pentru a defini geometria de referință
+    action_1_state_1_status: Selectați fețele pentru extrudare
+    action_option_group_thickness: Grosime
+    action_option_group_stretch_measure_type: Măsurare
+    action_option_group_axes: Axe
+    action_option_group_paneling_joint_type: Îmbinare
+    action_option_group_paneling_direction: Orientare
+    action_option_group_options: Opțiuni
+    action_option_thickness_thickness: Grosime
+    action_option_thickness_thickness_status: Definește grosimea panourilor
+    action_option_stretch_measure_type_outside_status: Măsurătoare externă
+    action_option_stretch_measure_type_offset_status: Măsoară diferența
+    action_option_axes_active_status: Manipulează de-a lungul axelor active
+    action_option_axes_context_status: Manipulează de-a lungul axelor grupului sau componentei care conține piesa
+    action_option_axes_entity_status: Manipulează de-a lungul axelor piesei
+    action_option_paneling_joint_type_flat_status: Îmbinare dreaptă
+    action_option_paneling_joint_type_miter_status: Îmbinare la unghi (45°)
+    action_option_paneling_direction_inward_status: Direcție spre interior
+    action_option_paneling_direction_outward_status: Direcție spre exterior
+    action_option_options_centred_status: Centrează pe elementele întinse
+    action_option_options_make_unique_status: Face elementele întinse unice
+    error:
+      curve_intersect: Unul dintre planele de secțiune intersectează o curbă neîntensibilă
+  smart_paint:
+    title: Vopsește
+    default_material: Fără material
+    filters: Filtre
+    filter_0: Fără tip
+    filter_1: $t(tab.materials.type_1)
+    filter_2: $t(tab.materials.type_2)
+    filter_3: $t(tab.materials.type_3)
+    filter_4: $t(tab.materials.type_4)
+    filter_5: $t(tab.materials.type_5)
+    filter_6: $t(tab.materials.type_6)
+    action_0: Vopsește Piese
+    action_0_status: Faceți clic pe o piesă pentru a aplica materialul instanței sale
+    action_1: Vopsește Canturi
+    action_1_status: Faceți clic pe muchia unui panou pentru a aplica materialul '$t(tab.materials.type_4)'
+    action_2: Vopsește Fețe
+    action_2_status: Faceți clic pe fața unui panou pentru a aplica materialul '$t(tab.materials.type_6)'
+    action_3: Preia eșantion
+    action_3_status: Faceți clic pe o față pentru a prelua eșantionul de material
+    action_4: Curăță
+    action_4_status: Faceți clic pe o piesă pentru a elimina toate materialele din definiția sa și din toate instanțele sale
+    action_option_group_instances: Număr de instanțe
+    action_option_group_edges: Număr de aplicări de cant
+    action_option_group_faces: Număr de fețe
+    action_option_instances_0_status: Colorează doar instanța piesei țintă
+    action_option_instances_1_status: Colorează toate instanțele piesei țintă
+    action_option_edges_0_status: Colorează doar muchia țintă
+    action_option_edges_1_status: Colorează muchia țintă și muchia opusă a piesei
+    action_option_edges_2_status: Colorează cele 4 muchii ale piesei țintă
+    action_option_faces_0_status: Colorează doar fața țintă
+    action_option_faces_1_status: Colorează cele 2 fețe ale piesei țintă
+    edges: "{{ count }} cant"
+    edges_plural: "{{ count }} canturi"
+    edge_ymin: Lungime 1
+    edge_ymax: Lungime 2
+    edge_xmin: Lățime 1
+    edge_xmax: Lățime 2
+    faces: "{{ count }} față"
+    faces_plural: "{{ count }} fețe"
+    face_zmin: Spate
+    face_zmax: Față
+    warning:
+      no_material: Fără material
+      no_material_type: "Fără material de tipul '{{ type }}'"
+    error:
+      not_part: Obiectul vizat nu este o piesă (componentă)
+      not_edge: Fața vizată nu este o muchie a panoului
+      not_face: Fața vizată nu este o față a panoului
+      wrong_material_type: "Piesa vizată trebuie să fie de tipul '{{ type }}'"
+  smart_axes:
+    title: Orientează
+    action_0: Rotește (Flip)
+    action_0_status: Faceți clic pe o piesă pentru a o roti de-a lungul uneia dintre dimensiunile ei
+    action_1: Interschimbă Lungime ↔ Lățime
+    action_1_status: Faceți clic pe o piesă pentru a-i interschimba Lungimea cu Lățimea
+    action_2: Interschimbă Față ↔ Spate
+    action_2_status: Faceți clic pe o piesă pentru a interschimba Fața cu Spatele
+    action_3: Adaptează Axele
+    action_3_status: Vizați o față a unei piese și faceți clic pe o muchie pentru a-i adapta axele
+    action_4: Mută Originea
+    action_4_status: Vizați o față a unei piese și faceți clic pe un punct pentru a plasa originea acolo
+    action_option_group_direction: Direcție
+    action_option_direction_0: L
+    action_option_direction_1: l
+    action_option_direction_2: G
+    action_option_direction_0_status: Răstoarnă piesa pe lungime
+    action_option_direction_1_status: Răstoarnă piesa pe lățime
+    action_option_direction_2_status: Răstoarnă piesa pe grosime
+    warning:
+      more_entities: "{{ count_used }} instanțe care folosesc aceeași definiție vor fi modificate"
+    error:
+      not_part: Obiectul vizat nu este o piesă (componentă)
+      not_orientable: Tipul acestei piese nu permite orientarea ei
+  smart_join:
+    title: Asamblare
+    action_0: Atingere # TODO: It's currently just for dev purposes
+  smart_export:
+    title: Exportă
+    action_0: Exportă Piesă 3D
+    action_0_status: Faceți clic pe o piesă
+    action_1: Exportă Piesă 2D
+    action_1_status: Faceți clic pe fața unei piese
+    action_2: Exportă Față
+    action_2_status: Faceți clic pe o față
+    action_3: Exportă Traseu
+    action_3_status: Faceți clic pe o muchie
+    action_option_group_file_format: Format
+    action_option_group_unit: Unitate
+    action_option_group_faces: Fețe
+    action_option_group_options: Opțiuni
+    action_option_file_format_dxf_status: Exportă în fișier DXF
+    action_option_file_format_stl_status: Exportă în fișier STL
+    action_option_file_format_obj_status: Exportă în fișier OBJ
+    action_option_file_format_svg_status: Exportă în fișier SVG
+    action_option_unit_0_status: $t(default.unit_0)
+    action_option_unit_1_status: $t(default.unit_1)
+    action_option_unit_2_status: $t(default.unit_2)
+    action_option_unit_3_status: $t(default.unit_3)
+    action_option_unit_4_status: $t(default.unit_4)
+    action_option_faces_0_status: $t(tab.cutlist.write.option_faces_0)
+    action_option_faces_1_status: $t(tab.cutlist.write.option_faces_1)
+    action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
+    action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
+    action_option_options_merge_holes_status: Izolează găurile de trecere și fuzionează adâncimile pentru fiecare cavitate
+    action_option_options_include_paths_status: Exportă muchiile care nu fac parte din față conținute în piesă ca un traseu
+    error:
+      not_part: Această față nu aparține unei piese (componente)
+      not_flat_face: Această suprafață nu este plană
+      incompatible_active_path: Traseul activ nu permite exportul acestei piese
