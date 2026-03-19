@@ -50,6 +50,8 @@ module Ladb
         ex.description = 'Generator listy cięć i diagramów cięcia dla stolarzy. Open Source, finansowany społecznościowo i łatwy w użyciu ;)'
       when 'pt'
         ex.description = 'Lista de Peças e Gerador de Plano de Corte de chapas e barras para marceneiros, carpinteiros e serralheiros. Código aberto, crowdfunded e fácil de usar ;)'
+      when 'ro'
+        ex.description = 'Generator de liste de debitare și diagrame de tăiere pentru tâmplari. Sursă deschisă (Open Source), finanțat prin donații și ușor de utilizat ;)'
       when 'ru'
         ex.description = 'Плагин расчета карт раскроя для деревообработчиков и не только. Открытый исходный код, краундфандинг и простота использования ;)'
       when 'sr'

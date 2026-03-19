@@ -426,7 +426,7 @@ module Ladb::OpenCutList
       bounds.add(triangles) if triangles.any?
 
       if instance_paths.nil?
-        instance_paths = part.def.instance_infos.values.map { |instance_info| instance_info.path }
+        instance_paths = part.def.instance_infos.values.map(&:path)
         update_only = false
       else
         update_only = true
@@ -1741,7 +1741,7 @@ module Ladb::OpenCutList
         end
 
         # Try to retrieve current index
-        active_index = picked_part_entity_paths.map { |path| path.last }.index(@active_part_entity_path.last)
+        active_index = picked_part_entity_paths.map(&:last).index(@active_part_entity_path.last)
         if active_index
 
           # Compute the new index
@@ -2824,7 +2824,7 @@ module Ladb::OpenCutList
     end
 
     def _get_twin_instances
-      return @active_part_twins_entity_paths.map { |path| path.last } if @active_part_twins_entity_paths.is_a?(Array)
+      return @active_part_twins_entity_paths.map(:last) if @active_part_twins_entity_paths.is_a?(Array)
       nil
     end
 
@@ -3424,7 +3424,7 @@ module Ladb::OpenCutList
         end
 
         # Try to retrieve the current index
-        active_index = picked_part_entity_paths.map { |path| path.last }.index(get_active_part_entity_path.last)
+        active_index = picked_part_entity_paths.map(&:last).index(get_active_part_entity_path.last)
         if active_index
 
           # Compute the new index

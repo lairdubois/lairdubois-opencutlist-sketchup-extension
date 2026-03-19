@@ -26,7 +26,7 @@ module Ladb::OpenCutList
 
       @root_node = _def.root_node_def.nil? ? nil : _def.root_node_def.get_hashable
 
-      @available_materials = _def.available_material_defs.values.map { |material_def| material_def.get_hashable }.sort_by { |v| [MaterialAttributes.type_order(v.type), v.display_name.downcase ] }
+      @available_materials = _def.available_material_defs.values.map(&:get_hashable).sort_by { |v| [MaterialAttributes.type_order(v.type), v.display_name.downcase ] }
       @available_layers = _def.available_layer_defs.values.map { |layer_def| {
         :name => layer_def.layer.name,
         :path => layer_def.folder_defs.map { |folder_def| folder_def.layer_folder.name },
