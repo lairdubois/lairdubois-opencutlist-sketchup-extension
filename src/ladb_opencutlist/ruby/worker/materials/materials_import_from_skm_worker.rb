@@ -65,7 +65,7 @@ module Ladb::OpenCutList
             # Try to extract material data
             Zip::File.open(path, create: false) do |zipfile|
 
-              require "rexml/document"
+              require 'rexml/document'
 
               xml = zipfile.read('document.xml')
 

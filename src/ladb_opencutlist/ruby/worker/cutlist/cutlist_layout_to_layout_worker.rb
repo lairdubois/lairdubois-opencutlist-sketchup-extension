@@ -408,7 +408,7 @@ module Ladb::OpenCutList
 
             Zip::File.open(layout_path, create: false) do |zipfile|
 
-              require "rexml/document"
+              require 'rexml/document'
 
               style_manager_filename = 'styleManager.xml'
               xml = zipfile.read(style_manager_filename)
