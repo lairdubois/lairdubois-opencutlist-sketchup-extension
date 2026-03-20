@@ -124,7 +124,7 @@ module Ladb::OpenCutList
 
         # _process_article_links(group.entities, function_unit, depth + 1)
         _process_part_links(group.entities, function_unit, depth + 1)
-        # _process_component_links(group.entities, function_unit, depth + 1)
+        _process_component_links(group.entities, function_unit, depth + 1)
 
       end
 
@@ -184,7 +184,6 @@ module Ladb::OpenCutList
                                                                  end
 
         instance = entities.add_instance(definition, component_link.transformations.to_t * Geom::Transformation.axes(ORIGIN, X_AXIS, Z_AXIS.reverse, Y_AXIS))
-        instance.material = 'RED'
         instance.layer = Sketchup.active_model.layers.add('Hardware')
 
       end
@@ -229,36 +228,16 @@ module Ladb::OpenCutList
 
         end
 
-        # puts "#{'-'.rjust(depth + 1)} #{component.machining_group_links.count} machining_group_links"
-        # component.machining_group_links.each do |machining_group_link|
-        #   puts "#{' '.rjust(depth + 2)} machining_group_link: ref=#{machining_group_link.reference_id}"
-        #   puts "#{' '.rjust(depth + 2)} ↳ machining_group: #{machining_group_link.machining_group}"
-        #
-        #   machining_group = machining_group_link.machining_group
-        #
-        #   puts "#{'-'.rjust(depth + 3)} #{machining_group.machining_links.count} machining_links"
-        #   component.machining_links.each do |machining_link|
-        #     puts "#{' '.rjust(depth + 4)} machining_link: ref=#{machining_link.reference_id}"
-        #     puts "#{' '.rjust(depth + 4)} ↳ machining_link: #{machining_link.machining}"
-        #
-        #     machining = machining_link.machining
-        #
-        #     _draw_machining(entities, machining, component_link.transformations.to_t * machining_link.transformations.to_t)
-        #
-        #   end
-        #
-        # end
-        #
-        # puts "#{'-'.rjust(depth + 1)} #{component.machining_links.count} machining_links"
-        # component.machining_links.each do |machining_link|
-        #   puts "#{' '.rjust(depth + 2)} machining_link: ref=#{machining_link.reference_id}"
-        #   puts "#{' '.rjust(depth + 2)} ↳ machining_link: #{machining_link.machining}"
-        #
-        #   machining = machining_link.machining
-        #
-        #   _draw_machining(entities, machining, component_link.transformations.to_t * machining_link.transformations.to_t)
-        #
-        # end
+        puts "#{'-'.rjust(depth)} #{inherited_machining.machining_link_references.count} machining_link_references"
+        inherited_machining.machining_link_references.each do |machining_link_reference|
+          puts "#{' '.rjust(depth + 2)} machining_link_reference: ref=#{machining_link_reference.reference_id}"
+
+          machining_link = component.related_machining_links.find { |link| link.id == machining_link_reference.reference_id }
+          machining = machining_link.machining
+
+          _draw_machining(entities, machining, component_link.transformations.to_t * machining_link.transformations.to_t)
+
+        end
 
       end
 
