@@ -114,7 +114,6 @@ module Ladb::OpenCutList
                                                        end
 
         instance = entities.add_instance(definition, part_link.transformations.to_t)
-        instance.layer = Sketchup.active_model.layers.add('Part')
         instance.material = (@materials_factory ||= {})['part'] ||= begin
                                                                       m = Sketchup.active_model.materials['PANEL']
                                                                       if m.nil?
@@ -174,7 +173,8 @@ module Ladb::OpenCutList
                                                                    if definition.nil?
                                                                      begin
                                                                        base_path = File.dirname(File.expand_path(@file_path))
-                                                                       file_path = File.join(base_path, "cadData", "#{component_name}.dae")
+                                                                       file_name = "#{component_name}.dae"
+                                                                       file_path = File.join(base_path, "cadData", file_name)
                                                                        definition = Sketchup.active_model.definitions.import(file_path, {
                                                                          validate_dae: true,
                                                                          merge_coplanar_faces: true
@@ -194,7 +194,7 @@ module Ladb::OpenCutList
                                                                  end
 
         instance = entities.add_instance(definition, component_link.transformations.to_t * Geom::Transformation.axes(ORIGIN, X_AXIS, Z_AXIS.reverse, Y_AXIS))
-        instance.layer = Sketchup.active_model.layers.add('Hardware')
+        instance.layer = Sketchup.active_model.layers.add('OCL_HARDWARE')
         instance.material = (@materials_factory ||= {})['Hardware'] ||= begin
                                                                           m = Sketchup.active_model.materials['HARDWARE']
                                                                           if m.nil?
@@ -323,7 +323,7 @@ module Ladb::OpenCutList
 
       group = entities.add_group
       group.transformation = transformation
-      group.layer = Sketchup.active_model.layers.add('Machining')
+      group.layer = Sketchup.active_model.layers.add('OCL_MACHINING')
       group.material = (@materials_factory ||= {})['Machining'] ||= begin
                                                                       m = Sketchup.active_model.materials['MACHINING']
                                                                       if m.nil?
@@ -437,9 +437,16 @@ module Ladb::OpenCutList
 
         group.name = 'MACHINING-CHAMFER'
 
-        # TODO
+        pts0 = [
+          ORIGIN,
+          ORIGIN.offset(bxf_machining.distance1_orientation.to_v, bxf_machining.distance1.to_l),
+          ORIGIN.offset(bxf_machining.distance2_orientation.to_v, bxf_machining.distance1.to_l)
+        ]
+        pts1 = pts0.map { |pt| pt.offset(bxf_machining.length_orientation.to_v, bxf_machining.length.to_l)}
 
-        puts 'TODO: BxfMachiningChamfer'
+        group.entities.add_face(pts0)
+        group.entities.add_face(pts1)
+        pts0.zip(pts1).each { |pt0, pt1| group.entities.add_edges(pt0, pt1).each(&:find_faces) }
 
       end
 

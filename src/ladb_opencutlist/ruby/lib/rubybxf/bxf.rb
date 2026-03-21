@@ -2387,6 +2387,8 @@ module Ladb::OpenCutList
       attr_reader :distance1,
                   :distance2,
                   :length,
+                  :distance1_orientation,
+                  :distance2_orientation,
                   :length_orientation
 
       def initialize(model)
@@ -2395,6 +2397,8 @@ module Ladb::OpenCutList
         @distance1 = BxfLength.new(model)
         @distance2 = BxfLength.new(model)
         @length = BxfLength.new(model)
+        @distance1_orientation = BxfVector3d.new(model)
+        @distance2_orientation = BxfVector3d.new(model)
         @length_orientation = BxfVector3d.new(model)
 
       end
@@ -2409,6 +2413,12 @@ module Ladb::OpenCutList
 
         length_attr = chamfer_elm.attributes['length']
         self.length.read(length_attr) if length_attr
+
+        distance1_orientation_attr = chamfer_elm.attributes['distance1Orientation']
+        self.distance1_orientation.read(distance1_orientation_attr) if distance1_orientation_attr
+
+        distance2_orientation_attr = chamfer_elm.attributes['distance2Orientation']
+        self.distance2_orientation.read(distance2_orientation_attr) if distance2_orientation_attr
 
         length_orientation_attr = chamfer_elm.attributes['lengthOrientation']
         self.length_orientation.read(length_orientation_attr) if length_orientation_attr
