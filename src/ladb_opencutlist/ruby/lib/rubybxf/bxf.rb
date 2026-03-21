@@ -279,8 +279,8 @@ module Ladb::OpenCutList
       def initialize(model)
         super
 
-        @meter = 0.001
-        @name = 'mm'
+        @meter = 1.0
+        @name = 'meter'
 
       end
 
@@ -342,10 +342,12 @@ module Ladb::OpenCutList
 
       attr_accessor :value
 
-      def initialize(model)
-        super
+      def initialize(model, default = nil)
+        super(model)
 
         @value = 0.0
+
+        read(default) if default.is_a?(String)
 
       end
 
@@ -366,10 +368,12 @@ module Ladb::OpenCutList
 
       attr_accessor :value
 
-      def initialize(model)
-        super
+      def initialize(model, default = nil)
+        super(model)
 
         @value = 0.0
+
+        read(default) if default.is_a?(String)
 
       end
 
@@ -390,11 +394,13 @@ module Ladb::OpenCutList
 
       attr_reader :x, :y
 
-      def initialize(model)
-        super
+      def initialize(model, default = nil)
+        super(model)
 
         @x = BxfLength.new(model)
         @y = BxfLength.new(model)
+
+        read(default) if default.is_a?(String)
 
       end
 
@@ -418,12 +424,14 @@ module Ladb::OpenCutList
 
       attr_reader :x, :y, :z
 
-      def initialize(model)
-        super
+      def initialize(model, default = nil)
+        super(model)
 
         @x = BxfLength.new(model)
         @y = BxfLength.new(model)
         @z = BxfLength.new(model)
+
+        read(default) if default.is_a?(String)
 
       end
 
@@ -448,12 +456,14 @@ module Ladb::OpenCutList
 
       attr_reader :x, :y, :z
 
-      def initialize(model)
-        super
+      def initialize(model, default = nil)
+        super(model)
 
         @x = BxfLength.new(model)
         @y = BxfLength.new(model)
         @z = BxfLength.new(model)
+
+        read(default) if default.is_a?(String)
 
       end
 
@@ -480,12 +490,14 @@ module Ladb::OpenCutList
                   :width,
                   :thickness
 
-      def initialize(model)
-        super
+      def initialize(model, default = nil)
+        super(model)
 
         @length = BxfLength.new(model)
         @width = BxfLength.new(model)
         @thickness = BxfLength.new(model)
+
+        read(default) if default.is_a?(String)
 
       end
 
@@ -675,7 +687,7 @@ module Ladb::OpenCutList
         super
 
         @center = BxfPoint3d.new(model)
-        @vector = BxfVector3d.new(model)
+        @vector = BxfVector3d.new(model, '0 1 0')
         @angle = BxfAngle.new(model)
 
       end
@@ -2155,7 +2167,7 @@ module Ladb::OpenCutList
 
         @radius = BxfLength.new(model)
         @depth = BxfLength.new(model)
-        @depth_orientation = BxfVector3d.new(model)
+        @depth_orientation = BxfVector3d.new(model, '0 0 -1')
 
       end
 
@@ -2219,7 +2231,7 @@ module Ladb::OpenCutList
 
         @radius = BxfLength.new(model)
         @depth = BxfLength.new(model)
-        @depth_orientation = BxfVector3d.new(model)
+        @depth_orientation = BxfVector3d.new(model, '0 0 -1')
         @length = BxfLength.new(model)
         @length_orientation = BxfVector3d.new(model)
 
@@ -2260,7 +2272,7 @@ module Ladb::OpenCutList
 
         @radius = BxfLength.new(model)
         @depth = BxfLength.new(model)
-        @depth_orientation = BxfVector3d.new(model)
+        @depth_orientation = BxfVector3d.new(model, '0 0 -1')
         @length = BxfLength.new(model)
         @length_orientation = BxfVector3d.new(model)
 
@@ -2301,7 +2313,7 @@ module Ladb::OpenCutList
 
         @radius = BxfLength.new(model)
         @depth = BxfLength.new(model)
-        @depth_orientation = BxfVector3d.new(model)
+        @depth_orientation = BxfVector3d.new(model, '0 0 -1')
         @length = BxfLength.new(model)
         @length_orientation = BxfVector3d.new(model)
 

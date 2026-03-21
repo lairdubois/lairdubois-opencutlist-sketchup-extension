@@ -39,14 +39,13 @@ module Ladb::OpenCutList
         bxf_model = Bxf::BxfModel.load(file_path)
         bxf_model.scene.nodes.each do |node|
 
-          group = model.active_entities.add_group
-          group.transformation = Geom::Transformation.axes(ORIGIN, X_AXIS, Z_AXIS, Y_AXIS.reverse)
+          entities = model.active_entities
+          transformation = Geom::Transformation.axes(ORIGIN, X_AXIS, Z_AXIS, Y_AXIS.reverse) * node.transformations.to_t
 
-          _process_cabinet_links(node.cabinet_links, group.entities)
-          _process_container_links(node.container_links, group.entities)
-          _process_function_unit_links(node.function_unit_links, group.entities)
-
-          group.explode
+          _process_cabinet_group_links(node.cabinet_group_links, entities, transformation)
+          _process_cabinet_links(node.cabinet_links, entities, transformation)
+          _process_container_links(node.container_links, entities, transformation)
+          _process_function_unit_links(node.function_unit_links, entities, transformation)
 
         end
 
@@ -57,13 +56,28 @@ module Ladb::OpenCutList
       end
 
       Sketchup.active_model.commit_operation
-
       Sketchup::Importer::ImportSuccess
     end
 
     private
 
-    def _process_cabinet_links(cabinet_links, entities)
+    def _process_cabinet_group_links(cabinet_group_links, entities, transformation = IDENTITY)
+
+      cabinet_group_links.each do |cabinet_group_link|
+
+        cabinet_group = cabinet_group_link.cabinet_group
+
+        group = entities.add_group
+        group.name = cabinet_group_link.description if cabinet_group_link.description
+        group.transformation = transformation * cabinet_group_link.transformations.to_t
+
+        _process_cabinet_links(cabinet_group.cabinet_links, group.entities)
+
+      end
+
+    end
+
+    def _process_cabinet_links(cabinet_links, entities, transformation = IDENTITY)
 
       cabinet_links.each do |cabinet_link|
 
@@ -71,10 +85,11 @@ module Ladb::OpenCutList
 
         group = entities.add_group
         group.name = cabinet_link.description if cabinet_link.description
+        group.transformation = transformation * cabinet_link.transformations.to_t
 
         _process_part_links(cabinet.part_links, group.entities)
-        _process_function_unit_links(cabinet.function_unit_links, group.entities)
         _process_container_links(cabinet.container_links, group.entities)
+        _process_function_unit_links(cabinet.function_unit_links, group.entities)
 
       end
 
@@ -120,10 +135,10 @@ module Ladb::OpenCutList
 
     end
 
-    def _process_container_links(container_links, entities)
+    def _process_container_links(container_links, entities, transformation = IDENTITY)
 
       container_links.each do |container_link|
-        _process_function_unit_links(container_link.container.function_unit_links, entities, container_link.transformations.to_t)
+        _process_function_unit_links(container_link.container.function_unit_links, entities, transformation * container_link.transformations.to_t)
       end
 
     end
@@ -154,7 +169,7 @@ module Ladb::OpenCutList
         article = component.article
 
         definition = (@components_factory ||= {})[component] ||= begin
-                                                                   component_name = "#{article.article_number}_#{component.component_number}"
+                                                                   component_name = "#{"#{article.article_number}_" if article}#{component.component_number}"
                                                                    definition = Sketchup.active_model.definitions[component_name]
                                                                    if definition.nil?
                                                                      begin
@@ -173,7 +188,7 @@ module Ladb::OpenCutList
                                                                          [10.mm, 10.mm, 10.mm]
                                                                        ))
                                                                      end
-                                                                     definition.description = article.description if article.description
+                                                                     definition.description = article.description if article && article.description
                                                                    end
                                                                    definition
                                                                  end
