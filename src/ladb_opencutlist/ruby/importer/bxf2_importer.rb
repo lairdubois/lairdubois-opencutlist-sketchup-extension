@@ -1,6 +1,7 @@
 module Ladb::OpenCutList
 
   require_relative '../lib/rubybxf/bxf'
+  require_relative '../model/attributes/material_attributes'
 
   class Bxf2Importer < Sketchup::Importer
 
@@ -22,6 +23,10 @@ module Ladb::OpenCutList
 
     def load_file(file_path, status)
 
+      @materials_factory = nil
+      @parts_factory = nil
+      @components_factory = nil
+
       @file_path = file_path
 
       SKETCHUP_CONSOLE.clear
@@ -35,12 +40,13 @@ module Ladb::OpenCutList
         bxf_model.scene.nodes.each do |node|
 
           group = model.active_entities.add_group
-          group.name = node.description ? node.description : node.class.name
           group.transformation = Geom::Transformation.axes(ORIGIN, X_AXIS, Z_AXIS, Y_AXIS.reverse)
 
-          _process_cabinet_links(group.entities, node.cabinet_links)
-          _process_container_links(group.entities, node.container_links)
-          _process_function_unit_links(group.entities, node.function_unit_links)
+          _process_cabinet_links(node.cabinet_links, group.entities)
+          _process_container_links(node.container_links, group.entities)
+          _process_function_unit_links(node.function_unit_links, group.entities)
+
+          group.explode
 
         end
 
@@ -57,7 +63,7 @@ module Ladb::OpenCutList
 
     private
 
-    def _process_cabinet_links(entities, cabinet_links, depth = 0)
+    def _process_cabinet_links(cabinet_links, entities)
 
       cabinet_links.each do |cabinet_link|
 
@@ -66,15 +72,15 @@ module Ladb::OpenCutList
         group = entities.add_group
         group.name = cabinet_link.description if cabinet_link.description
 
-        _process_part_links(group.entities, cabinet.part_links, depth + 1)
-        _process_function_unit_links(group.entities, cabinet.function_unit_links, depth + 1)
-        _process_container_links(group.entities, cabinet.container_links, depth + 1)
+        _process_part_links(cabinet.part_links, group.entities)
+        _process_function_unit_links(cabinet.function_unit_links, group.entities)
+        _process_container_links(cabinet.container_links, group.entities)
 
       end
 
     end
 
-    def _process_part_links(entities, part_links, depth = 0)
+    def _process_part_links(part_links, entities)
 
       part_links.each do |part_link|
 
@@ -94,50 +100,53 @@ module Ladb::OpenCutList
 
         instance = entities.add_instance(definition, part_link.transformations.to_t)
         instance.layer = Sketchup.active_model.layers.add('Part')
+        instance.material = (@materials_factory ||= {})['part'] ||= begin
+                                                                      m = Sketchup.active_model.materials['PANEL']
+                                                                      if m.nil?
+                                                                        m = Sketchup.active_model.materials.add('PANEL')
+                                                                        m.color = 'white'
+                                                                        ma = MaterialAttributes.new(m)
+                                                                        ma.type = MaterialAttributes::TYPE_SHEET_GOOD
+                                                                        ma.write_to_attributes
+                                                                      end
+                                                                      m
+                                                                    end
 
-        _process_inherited_machinings(definition.entities, part.inherited_machinings, depth + 1)
-        _process_machining_group_links(definition.entities, part.machining_group_links, IDENTITY, depth + 1)
-        _process_machining_links(definition.entities, part.machining_links, IDENTITY, depth + 1)
+        _process_inherited_machinings(part.inherited_machinings, definition.entities)
+        _process_machining_group_links(part.machining_group_links, definition.entities, IDENTITY)
+        _process_machining_links(part.machining_links, definition.entities, IDENTITY)
 
       end
 
     end
 
-    def _process_function_unit_links(entities, function_unit_links, depth = 0)
+    def _process_container_links(container_links, entities)
+
+      container_links.each do |container_link|
+        _process_function_unit_links(container_link.container.function_unit_links, entities, container_link.transformations.to_t)
+      end
+
+    end
+
+    def _process_function_unit_links(function_unit_links, entities, transformation = IDENTITY)
 
       function_unit_links.each do |function_unit_link|
 
         function_unit = function_unit_link.function_unit
 
         group = entities.add_group
-        group.name = function_unit.description ? function_unit.description : function_unit.class.name
-        group.transformation = function_unit_link.transformations.to_t
+        group.name = function_unit.description if function_unit.description
+        group.transformation = transformation * function_unit_link.transformations.to_t
 
-        # _process_article_links(group.entities, function_unit.article_links, depth + 1)
-        _process_part_links(group.entities, function_unit.part_links, depth + 1)
-        _process_component_links(group.entities, function_unit.component_links, depth + 1)
-
-      end
-
-    end
-
-    def _process_container_links(entities, container_links, depth = 0)
-
-      container_links.each do |container_link|
-
-        container = container_link.container
-
-        group = entities.add_group
-        group.name = container.description ? container.description : container.class.name
-        group.transformation = container_link.transformations.to_t
-
-        _process_function_unit_links(group.entities, container.function_unit_links, depth + 1)
+        # _process_article_links(function_unit.article_links, group.entities)
+        _process_part_links(function_unit.part_links, group.entities)
+        _process_component_links(function_unit.component_links, group.entities)
 
       end
 
     end
 
-    def _process_component_links(entities, component_links, depth = 0)
+    def _process_component_links(component_links, entities)
 
       component_links.each do |component_link|
 
@@ -171,20 +180,33 @@ module Ladb::OpenCutList
 
         instance = entities.add_instance(definition, component_link.transformations.to_t * Geom::Transformation.axes(ORIGIN, X_AXIS, Z_AXIS.reverse, Y_AXIS))
         instance.layer = Sketchup.active_model.layers.add('Hardware')
-        instance.material = 'WHITE'
+        instance.material = (@materials_factory ||= {})['Hardware'] ||= begin
+                                                                          m = Sketchup.active_model.materials['HARDWARE']
+                                                                          if m.nil?
+                                                                            m = Sketchup.active_model.materials.add('HARDWARE')
+                                                                            m.color = 'white'
+                                                                            ma = MaterialAttributes.new(m)
+                                                                            ma.type = MaterialAttributes::TYPE_HARDWARE
+                                                                            ma.write_to_attributes
+                                                                          end
+                                                                          m
+                                                                        end
+
+        _process_machining_group_links(component.machining_group_links, definition.entities)
+        _process_machining_links(component.machining_links, definition.entities)
 
       end
 
     end
 
-    def _process_article_links(entities, article_links, depth = 0)
+    def _process_article_links(article_links, entities)
 
       article_links.each do |article_link|
       end
 
     end
 
-    def _process_inherited_machinings(entities, inherited_machinings, depth = 0)
+    def _process_inherited_machinings(inherited_machinings, entities)
 
       inherited_machinings.each do |inherited_machining|
 
@@ -192,16 +214,16 @@ module Ladb::OpenCutList
         component = component_link.component
 
         machining_group_links = inherited_machining.machining_group_link_references.map { |reference| component.related_machining_group_links.find { |link| link.id == reference.reference_id } }
-        _process_machining_group_links(entities, machining_group_links, component_link.transformations.to_t, depth + 1)
+        _process_machining_group_links(machining_group_links, entities, component_link.transformations.to_t)
 
         machining_links = inherited_machining.machining_link_references.map { |reference| component.related_machining_links.find { |link| link.id == reference.reference_id } }
-        _process_machining_links(entities, machining_links, component_link.transformations.to_t, depth + 1)
+        _process_machining_links(machining_links, entities, component_link.transformations.to_t)
 
       end
 
     end
 
-    def _process_machining_group_links(entities, machining_group_links, transformation = IDENTITY, depth = 0)
+    def _process_machining_group_links(machining_group_links, entities, transformation = IDENTITY)
 
       machining_group_links.each do |machining_group_link|
 
@@ -245,7 +267,7 @@ module Ladb::OpenCutList
 
     end
 
-    def _process_machining_links(entities, machining_links, transformation = IDENTITY, depth = 0)
+    def _process_machining_links(machining_links, entities, transformation = IDENTITY)
 
       machining_links.each do |machining_link|
         _draw_machining(entities, machining_link.machining, transformation * machining_link.transformations.to_t)
@@ -276,18 +298,25 @@ module Ladb::OpenCutList
 
     def _draw_cylinder(entities, bxf_cylinder)
 
-      edges = entities.add_circle(ORIGIN, Z_AXIS, bxf_cylinder.radius.to_l)
-      face, _ = edges.first.find_faces
-      face.pushpull(-bxf_cylinder.z_value.to_l)
+      edges = entities.add_circle(ORIGIN, Z_AXIS, bxf_cylinder.radius.to_l, 16)
+      edges.first.find_faces
+      group.entities.grep(Sketchup::Face).first.pushpull(bxf_cylinder.z_value.to_l)
 
     end
 
     def _draw_machining(entities, bxf_machining, transformation = IDENTITY)
 
       group = entities.add_group
-      group.material = 'BLUE'
       group.transformation = transformation
       group.layer = Sketchup.active_model.layers.add('Machining')
+      group.material = (@materials_factory ||= {})['Machining'] ||= begin
+                                                                      m = Sketchup.active_model.materials['MACHINING']
+                                                                      if m.nil?
+                                                                        m = Sketchup.active_model.materials.add('MACHINING')
+                                                                        m.color = 'blue'
+                                                                      end
+                                                                      m
+                                                                    end
 
       if bxf_machining.is_a?(Bxf::BxfMachiningCut)
 
@@ -301,7 +330,7 @@ module Ladb::OpenCutList
 
         group.name = 'MACHINING-DRILLING'
 
-        edges = group.entities.add_circle(ORIGIN, bxf_machining.depth_orientation.to_v, bxf_machining.radius.to_l, 12)
+        edges = group.entities.add_circle(ORIGIN, bxf_machining.depth_orientation.to_v, bxf_machining.radius.to_l, 16)
         edges.first.find_faces
         group.entities.grep(Sketchup::Face).first.pushpull(bxf_machining.depth.to_l)
 
