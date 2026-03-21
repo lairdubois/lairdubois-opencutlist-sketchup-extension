@@ -1957,7 +1957,7 @@ module Ladb::OpenCutList
         machining_groups_elm.elements.each do |elm|
           case elm.name
           when 'machiningGroup'
-            machining_group = BxfMachiningGroup.new(model).read(elm)
+            machining_group = BxfMachiningGroup.create(model, elm)
             self[machining_group.id] = machining_group
           end
         end if machining_groups_elm
@@ -1985,6 +1985,16 @@ module Ladb::OpenCutList
 
       end
 
+      def self.create(model, elm)
+        type = elm.attributes['xsi:type']
+        case type
+        when 'GridMachining'
+          BxfGridMachining.new(model).read(elm)
+        else
+          BxfMachiningGroup.new(model).read(elm)
+        end
+      end
+
       def read(machining_group_elm)
 
         self.model_key = machining_group_elm.attributes['modelKey']
@@ -1996,6 +2006,40 @@ module Ladb::OpenCutList
             self.machining_links << BxfMachiningLink.new(model).read(elm)
           end
         end if machining_links_elm
+
+        super
+      end
+
+    end
+
+    class BxfGridMachining < BxfMachiningGroup
+
+      attr_accessor :column_count,
+                    :column_distance,
+                    :row_count,
+                    :row_distance
+
+      def initialize(model)
+        super
+
+        @column_count = 1
+        @column_distance = BxfLength.new(model)
+        @row_count = 1
+        @row_distance = BxfLength.new(model)
+
+      end
+
+      def read(machining_group_elm)
+
+        self.column_count = machining_group_elm.attributes['columnCount'].to_i
+
+        column_distance_elm = machining_group_elm.attributes['columnDistance']
+        self.column_distance.read(column_distance_elm) if column_distance_elm
+
+        self.row_count = machining_group_elm.attributes['rowCount'].to_i
+
+        row_distance_elm = machining_group_elm.attributes['rowDistance']
+        self.row_distance.read(row_distance_elm) if row_distance_elm
 
         super
       end
