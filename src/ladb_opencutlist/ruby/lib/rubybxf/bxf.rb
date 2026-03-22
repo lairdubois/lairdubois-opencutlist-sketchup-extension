@@ -895,9 +895,9 @@ module Ladb::OpenCutList
 
       end
 
-      def read(face_reference_elm)
+      def read(edge_reference_elm)
 
-        radius_attr = face_reference_elm.attribute['radius']
+        radius_attr = edge_reference_elm.attributes['radius']
         self.radius.read(radius_attr) if radius_attr
 
         super

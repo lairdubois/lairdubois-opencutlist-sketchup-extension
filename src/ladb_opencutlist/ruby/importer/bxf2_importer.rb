@@ -262,9 +262,7 @@ module Ladb::OpenCutList
               y = row_index * row_distance
               t1 = Geom::Transformation.translation(Geom::Vector3d.new(x, y, 0))
 
-              machining_group.machining_links.each do |machining_link|
-                _draw_machining(entities, machining_link.machining, t0 * machining_link.transformations.to_t * t1)
-              end
+              _process_machining_links(machining_group.machining_links, entities, t0 * t1)
 
             end
 
@@ -272,9 +270,7 @@ module Ladb::OpenCutList
 
         else
 
-          machining_group.machining_links.each do |machining_link|
-            _draw_machining(entities, machining_link.machining, transformation * machining_group_link.transformations.to_t * machining_link.transformations.to_t)
-          end
+          _process_machining_links(machining_group.machining_links, entities, transformation * machining_group_link.transformations.to_t)
 
         end
 
@@ -366,15 +362,11 @@ module Ladb::OpenCutList
         width_v = length_v.cross(depth_v)
 
         bounds = Geom::BoundingBox.new
-        bounds.add(ORIGIN
-                     .offset(width_v, bxf_machining.radius.to_l)
-        )
-        bounds.add(ORIGIN
-                     .offset(width_v, -bxf_machining.radius.to_l)
-                     .offset(length_v, bxf_machining.length.to_l)
-        )
-        bounds.add(ORIGIN
-                     .offset(depth_v, bxf_machining.depth.to_l)
+        bounds.add(
+          ORIGIN.offset(width_v, -bxf_machining.radius.to_l), # P0
+          ORIGIN.offset(width_v, bxf_machining.radius.to_l)
+                .offset(depth_v, bxf_machining.depth.to_l)
+                .offset(length_v, bxf_machining.length.to_l)  # P2+Z
         )
 
         _draw_box(group.entities, bounds)
@@ -388,15 +380,11 @@ module Ladb::OpenCutList
         width_v = length_v.cross(depth_v)
 
         bounds = Geom::BoundingBox.new
-        bounds.add(ORIGIN
-                     .offset(width_v, bxf_machining.radius.to_l)
-        )
-        bounds.add(ORIGIN
-                     .offset(width_v, -bxf_machining.radius.to_l)
-                     .offset(length_v, bxf_machining.length.to_l)
-        )
-        bounds.add(ORIGIN
-                     .offset(depth_v, bxf_machining.depth.to_l)
+        bounds.add(
+          ORIGIN.offset(width_v, -bxf_machining.radius.to_l), # P0
+          ORIGIN.offset(width_v, bxf_machining.radius.to_l)
+                .offset(depth_v, bxf_machining.depth.to_l)
+                .offset(length_v, bxf_machining.length.to_l)  # P2+Z
         )
 
         _draw_box(group.entities, bounds)
@@ -410,18 +398,14 @@ module Ladb::OpenCutList
         width_v = length_v.cross(depth_v)
 
         bounds = Geom::BoundingBox.new
-        bounds.add(ORIGIN
-                     .offset(width_v, bxf_machining.radius.to_l)
-        )
-        bounds.add(ORIGIN
-                     .offset(width_v, -bxf_machining.radius.to_l)
-                     .offset(length_v, bxf_machining.length.to_l)
-        )
-        bounds.add(ORIGIN
-                     .offset(depth_v, bxf_machining.depth.to_l)
+        bounds.add(
+          ORIGIN.offset(width_v, -bxf_machining.radius.to_l), # P0
+          ORIGIN.offset(width_v, bxf_machining.radius.to_l)
+                .offset(depth_v, bxf_machining.depth.to_l)
+                .offset(length_v, bxf_machining.length.to_l)  # P2+Z
         )
 
-        puts 'TODO: BxfMachiningRoundedGroove'
+        _draw_box(group.entities, bounds)
 
       elsif bxf_machining.is_a?(Bxf::BxfMachiningGlue)
 
@@ -434,15 +418,11 @@ module Ladb::OpenCutList
         radius = bxf_machining.width.to_l / 2
 
         bounds = Geom::BoundingBox.new
-        bounds.add(ORIGIN
-                     .offset(width_v, radius)
-        )
-        bounds.add(ORIGIN
-                     .offset(width_v, -radius)
-                     .offset(length_v, bxf_machining.length.to_l)
-        )
-        bounds.add(ORIGIN
-                     .offset(thickness_v, bxf_machining.thickness.to_l)
+        bounds.add(
+          ORIGIN.offset(width_v, -radius), # P0
+          ORIGIN.offset(width_v, radius)
+                .offset(thickness_v, bxf_machining.thickness.to_l)
+                .offset(length_v, bxf_machining.length.to_l)  # P2+Z
         )
 
         _draw_box(group.entities, bounds)
@@ -451,12 +431,15 @@ module Ladb::OpenCutList
 
         group.name = 'MACHINING-CHAMFER'
 
+        length_v = bxf_machining.length_orientation.to_v
+        length = bxf_machining.length.to_l
+
         pts0 = [
           ORIGIN,
           ORIGIN.offset(bxf_machining.distance1_orientation.to_v, bxf_machining.distance1.to_l),
           ORIGIN.offset(bxf_machining.distance2_orientation.to_v, bxf_machining.distance1.to_l)
         ]
-        pts1 = pts0.map { |pt| pt.offset(bxf_machining.length_orientation.to_v, bxf_machining.length.to_l)}
+        pts1 = pts0.map { |pt| pt.offset(length_v, length) }
 
         group.entities.add_face(pts0)
         group.entities.add_face(pts1)
