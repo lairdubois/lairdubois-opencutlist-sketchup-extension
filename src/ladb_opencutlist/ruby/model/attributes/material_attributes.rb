@@ -16,6 +16,7 @@
     TYPE_EDGE = 4
     TYPE_HARDWARE = 5
     TYPE_VENEER = 6
+    TYPE_MACHINING = 7
 
     DEFAULTS_DICTIONARY = 'materials_material_attributes'.freeze
 
@@ -65,7 +66,7 @@
     def self.valid_type(type)
       if type
         i_type = type.to_i
-        if i_type < TYPE_UNKNOWN || i_type > TYPE_VENEER
+        if i_type < TYPE_UNKNOWN || i_type > TYPE_MACHINING
           return TYPE_UNKNOWN
         end
         i_type
@@ -124,6 +125,8 @@
           6
         when TYPE_VENEER
           5
+        when TYPE_MACHINING
+          7
         else
           99
       end
@@ -143,6 +146,8 @@
         'hardware'
       when TYPE_VENEER
         'veneer'
+      when TYPE_MACHINING
+        'machining'
       else
         'unknow'
       end

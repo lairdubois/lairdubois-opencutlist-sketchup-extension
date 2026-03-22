@@ -12,6 +12,7 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added SHIFT + (+/-) shortcuts in Smart Handle Tools to change copies during preview
   * Added CSV importer in File menu
   * Added BXF2 (Blum eXchange File) importer in File menu
+  * Added Machining material type
   * Improved Smart Draw Tool with sheared pull
   * Improved Smart Draw Tool with the "draw in" option
   * Improved Packing algorithms
@@ -19,6 +20,10 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
+### 2026-03-21
+ * Added Machining material type
+ * Improved BXF2 importer (WIP)
+ * Updated NL translations
 ### 2026-03-21
  * Added BXF2 importer (WIP)
 ### 2026-03-19

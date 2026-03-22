@@ -324,7 +324,10 @@ module Ladb::OpenCutList
                                                                       m = Sketchup.active_model.materials['MACHINING']
                                                                       if m.nil?
                                                                         m = Sketchup.active_model.materials.add('MACHINING')
-                                                                        m.color = 'blue'
+                                                                        m.color = '#0068ff'
+                                                                        ma = MaterialAttributes.new(m)
+                                                                        ma.type = MaterialAttributes::TYPE_MACHINING
+                                                                        ma.write_to_attributes
                                                                       end
                                                                       m
                                                                     end

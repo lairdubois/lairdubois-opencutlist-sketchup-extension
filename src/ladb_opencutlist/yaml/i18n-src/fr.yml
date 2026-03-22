@@ -744,6 +744,7 @@ tab:
       type_4: $t(tab.materials.type_4)
       type_5: $t(tab.materials.type_5)
       type_6: $t(tab.materials.type_6)
+      type_7: $t(tab.materials.type_7)
       type_-1: $t(default.cut_plural)
       tooltip:
         incompatible_unit: Unité incompatible avec les options d'estimation de la matière
@@ -1574,6 +1575,7 @@ tab:
     type_4: Bande de chant
     type_5: Accessoire
     type_6: Feuille de placage
+    type_7: Usinage
     tooltip:
       type_0: Type de matière '$t(tab.materials.type_0)'
       type_1: Type de matière '$t(tab.materials.type_1)'
@@ -1582,6 +1584,7 @@ tab:
       type_4: Type de matière '$t(tab.materials.type_4)'
       type_5: Type de matière '$t(tab.materials.type_5)'
       type_6: Type de matière '$t(tab.materials.type_6)'
+      type_7: Type de matière '$t(tab.materials.type_7)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Direction du fil
@@ -2248,6 +2251,7 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
+    filter_7: $t(tab.materials.type_7)
     action_0: Colorier pièces
     action_0_status: Cliquez sur une pièce pour appliquer une matière à son instance
     action_1: Colorier chants

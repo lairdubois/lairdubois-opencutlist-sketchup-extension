@@ -135,5 +135,23 @@
     "std_volumic_masses": [],
     "std_prices": [],
     "std_cut_prices": []
+  },
+  "7": {  /* TYPE_MACHINING */
+    "thickness": "",
+    "length_increase": "",
+    "width_increase": "",
+    "thickness_increase": "",
+    "std_sections": "",
+    "std_lengths": "",
+    "std_widths": "",
+    "std_thicknesses": "",
+    "std_sizes": "",
+    "grained": false,
+    "edge_decremented": false,
+    "raw_estimated": true,
+    "multiplier_coefficient": 1.0,
+    "std_volumic_masses": [],
+    "std_prices": [],
+    "std_cut_prices": []
   }
 }
