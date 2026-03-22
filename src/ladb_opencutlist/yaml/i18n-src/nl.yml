@@ -116,7 +116,7 @@ core:
       smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
-      smart_join: ""
+      smart_join: $t(core.toolbar.command.smart_join)
       smart_export: $t(core.toolbar.command.smart_export)
       reset_dialog_position: Raampositie opnieuw instellen
   toolbar:
@@ -129,7 +129,7 @@ core:
       smart_reshape: Onderdelen aanpassen
       smart_paint: Kleur de onderdelen
       smart_axes: Oriënt Onderdelen
-      smart_join: ""
+      smart_join: Onderdelen samenvoegen
       smart_export: Onderdelen exporteren
   messagebox:
     dir_override: |
@@ -1075,7 +1075,7 @@ tab:
       option_irregular_allowed_rotations_0: Geen
       option_irregular_allowed_rotations_90: Stappen van 90°
       option_irregular_allowed_rotations_180: Stappen van 180°
-      option_irregular_allowed_rotations_free: ""
+      option_irregular_allowed_rotations_free: Vrij (Experimenteel)
       option_irregular_allow_mirroring: Spiegel toegestaan
       option_irregular_allow_mirroring_help: |
         Bepaalt of het spiegelen van het stuk is toegestaan voor de plaatsing.
@@ -1770,23 +1770,23 @@ tab:
       url: URL
       tags: Badges
       layer_name: Tag
-      snapto: ""
+      snapto: Verbinding
       snapto_none: Geen
       snapto_0: Elke
       snapto_1: Horizontaal
       snapto_2: Verticaal
-      snapto_3: ""
-      cuts_opening: ""
-      always_face_camera: ""
-      shadows_face_sun: ""
-      no_scale_mask: ""
-      no_scale_mask_0: ""
-      no_scale_mask_1: ""
-      no_scale_mask_2: ""
-      no_scale_mask_3: ""
-      no_scale_mask_4: ""
-      no_scale_mask_5: ""
-      no_scale_mask_6: ""
+      snapto_3: Schuin
+      cuts_opening: Opening uitsnijden
+      always_face_camera: Altijd naar de camera gericht
+      shadows_face_sun: Schaduw aan de zonzijde
+      no_scale_mask: Schalen en uitrekken
+      no_scale_mask_0: Vervormbaar langs de rode as (X)
+      no_scale_mask_1: Vervormbaar langs de groene as (Y)
+      no_scale_mask_2: Vervormbaar langs de blauwe as (Z)
+      no_scale_mask_3: Vervormbaar op het rood/blauwe vlak (X+Z)
+      no_scale_mask_4: Vervormbaar op het groen/blauwe vlak (Y+Z)
+      no_scale_mask_5: Vervormbaar op het rood/groene vlak (X+Y)
+      no_scale_mask_6: Vervormbaar vanuit de hoeken (XYZ)
       explode: Uitbarsten/ splitsing
       explode_message: "Bevestigt u dat **{{ name }}** wordt uitgeklapt?"
       erase: Leeg maken
@@ -1815,7 +1815,7 @@ tab:
       minimize_on_set_active: Samenvouwen na '$t(tab.outliner.tooltip.set_active_node)'
       minimize_on_set_active_help: "Als deze optie is ingeschakeld, wordt het OpenCutList-venster samengevouwen wanneer de functie *'$t(tab.outliner.tooltip.set_active_node)'* wordt gebruikt."
     snippet:
-      name_size: ""
+      name_size: Benaming - Afmeting
     error:
       no_model: Er is geen enkel model open. U moet me wat meer informatie geven ;)
       no_entities: Je model is leeg!
@@ -2093,7 +2093,7 @@ tool:
     error:
       no_direction: Geef een richting aan met de cursor
       invalid_length: "De lengte {{ value }} is ongeldig"
-      invalid_thickness: ""
+      invalid_thickness: "De dikte {{ value }} is ongeldig"
       invalid_multiplicator: "De vermenigvuldigingsfactor {{ value }} is ongeldig"
       invalid_divider: "De deler {{ value }} is ongeldig"
       invalid_offset: "De verschuiving {{ value }} is ongeldig"
@@ -2105,8 +2105,8 @@ tool:
       zero_division: "Deling door nul"
       lt_min_distance: "De afstand {{ value1 }} is kleiner dan de minimale afstand van {{ value2 }}"
       gt_max_distance: "De afstand {{ value1 }} is groter dan de maximale afstand van {{ value2 }}"
-      locked_part: ""
-      selection_contains_locked_entities: ""
+      locked_part: Dit onderdeel is vergrendeld
+      selection_contains_locked_entities: De selectie bevat vergrendelde onderdelen
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2116,7 +2116,7 @@ tool:
     state_4_status: Sleep naar een identiek onderdeel met dezelfde bovenliggende component om het aan de selectie toe te voegen en laat vervolgens los om door te gaan
     state_5_status: Veeg om toe te voegen aan selectie en laat los om door te gaan
     state_6_status: Selecteer een element uit de lijst
-    state_7_status: ""
+    state_7_status: Klik op een onderdeel om het aan de selectie toe te voegen of eruit te verwijderen
     warning:
       no_active_part: U moet eerst met de muis over een onderdeel gaan
   smart_draw:
@@ -2157,10 +2157,10 @@ tool:
     action_option_options_pull_centered: Gecentreerde hoogte
     action_option_options_pull_centered_status: De hoogte centreren op het eerste punt
     action_option_options_pull_locked_status: Hoogte vergrendelen op een as
-    action_option_options_draw_in: ""
-    action_option_options_draw_in_0: ""
-    action_option_options_draw_in_1: ""
-    action_option_options_draw_in_status: ""
+    action_option_options_draw_in: Tekenen in
+    action_option_options_draw_in_0: Tekenen in het actieve element
+    action_option_options_draw_in_1: Tekenen in het bovenliggende element van het eerste punt
+    action_option_options_draw_in_status: Tekenen in het bovenliggende element van het onderdeel van het eerste punt
     action_option_options_ask_name: Naamgeving van de stukken
     action_option_options_ask_name_status: De naam van de stukken handmatig invoeren
     action_measure_locked_status: Vergrendelen op de laatste meting
@@ -2212,27 +2212,27 @@ tool:
     action_0_state_11_status: Klik om het doorsnedevlak toe te voegen
     action_0_state_12_status: Klik op een doorsnedevlak om het te verwijderen
     action_0_state_2_status: Klik om het uitrekken te bevestigen of voer een afstand in
-    action_1: ""
-    action_1_status: ""
-    action_1_state_0_status: ""
-    action_1_state_1_status: ""
+    action_1: Opdelen in panelen
+    action_1_status: Een reeks onderdelen maken vanuit een gesloten volume
+    action_1_state_0_status: Klik op een gesloten volume om de referentiegeometrie te bepalen
+    action_1_state_1_status: Selecteer de vlakken om te extruderen
     action_option_group_thickness: Dikte
     action_option_group_stretch_measure_type: Meten
     action_option_group_axes: Assen
-    action_option_group_paneling_joint_type: ""
+    action_option_group_paneling_joint_type: Samenstelling
     action_option_group_paneling_direction: Richting
     action_option_group_options: Opties
     action_option_thickness_thickness: Dikte
-    action_option_thickness_thickness_status: ""
+    action_option_thickness_thickness_status: Bepaalt de dikte van de panelen
     action_option_stretch_measure_type_outside_status: Aan de buitenzijde meten
     action_option_stretch_measure_type_offset_status: Het verschil meten
     action_option_axes_active_status: Verplaatsen langs de actieve assen
     action_option_axes_context_status: Verplaatsen langs de assen van de groep of component die het stuk bevat
     action_option_axes_entity_status: Verplaatsen langs de assen van het stuk
-    action_option_paneling_joint_type_flat_status: ""
-    action_option_paneling_joint_type_miter_status: ""
-    action_option_paneling_direction_inward_status: ""
-    action_option_paneling_direction_outward_status: ""
+    action_option_paneling_joint_type_flat_status: Vlakke verbinding
+    action_option_paneling_joint_type_miter_status: Verstek
+    action_option_paneling_direction_inward_status: Binnen
+    action_option_paneling_direction_outward_status: Buiten
     action_option_options_centred_status: Centraal plaatsen op gestrekte elementen
     action_option_options_make_unique_status: Rekbare elementen uniek maken
     error:
@@ -2311,8 +2311,8 @@ tool:
       not_part: Het beoogde object is geen onderdeel (component)
       not_orientable: Het type van dit onderdeel maakt het niet mogelijk om het te oriënteren
   smart_join:
-    title: ""
-    action_0: "" # TODO: It's currently just for dev purposes
+    title: Samenvoegen
+    action_0: Aansluitend tegen elkaar # TODO: It's currently just for dev purposes
   smart_export:
     title: Exporteren
     action_0: Exporteer een 3D-onderdeel
