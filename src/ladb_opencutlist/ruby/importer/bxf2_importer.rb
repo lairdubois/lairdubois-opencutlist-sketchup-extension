@@ -361,20 +361,20 @@ module Ladb::OpenCutList
 
         group.name = 'MACHINING-RABBET'
 
-        x_axis = bxf_machining.length_orientation.to_v
-        z_axis = bxf_machining.depth_orientation.to_v
-        y_axis = x_axis.cross(z_axis)
+        length_v = bxf_machining.length_orientation.to_v
+        depth_v = bxf_machining.depth_orientation.to_v
+        width_v = length_v.cross(depth_v)
 
         bounds = Geom::BoundingBox.new
         bounds.add(ORIGIN
-                     .offset(y_axis, bxf_machining.radius.to_l)
+                     .offset(width_v, bxf_machining.radius.to_l)
         )
         bounds.add(ORIGIN
-                     .offset(y_axis, -bxf_machining.radius.to_l)
-                     .offset(x_axis, bxf_machining.length.to_l)
+                     .offset(width_v, -bxf_machining.radius.to_l)
+                     .offset(length_v, bxf_machining.length.to_l)
         )
         bounds.add(ORIGIN
-                     .offset(z_axis, bxf_machining.depth.to_l)
+                     .offset(depth_v, bxf_machining.depth.to_l)
         )
 
         _draw_box(group.entities, bounds)
@@ -383,20 +383,20 @@ module Ladb::OpenCutList
 
         group.name = 'MACHINING-GROOVE'
 
-        x_axis = bxf_machining.length_orientation.to_v
-        z_axis = bxf_machining.depth_orientation.to_v
-        y_axis = x_axis.cross(z_axis)
+        length_v = bxf_machining.length_orientation.to_v
+        depth_v = bxf_machining.depth_orientation.to_v
+        width_v = length_v.cross(depth_v)
 
         bounds = Geom::BoundingBox.new
         bounds.add(ORIGIN
-                     .offset(y_axis, bxf_machining.radius.to_l)
+                     .offset(width_v, bxf_machining.radius.to_l)
         )
         bounds.add(ORIGIN
-                     .offset(y_axis, -bxf_machining.radius.to_l)
-                     .offset(x_axis, bxf_machining.length.to_l)
+                     .offset(width_v, -bxf_machining.radius.to_l)
+                     .offset(length_v, bxf_machining.length.to_l)
         )
         bounds.add(ORIGIN
-                     .offset(z_axis, bxf_machining.depth.to_l)
+                     .offset(depth_v, bxf_machining.depth.to_l)
         )
 
         _draw_box(group.entities, bounds)
@@ -405,7 +405,21 @@ module Ladb::OpenCutList
 
         group.name = 'MACHINING-ROUNDED-GROOVE'
 
-        # TODO
+        length_v = bxf_machining.length_orientation.to_v
+        depth_v = bxf_machining.depth_orientation.to_v
+        width_v = length_v.cross(depth_v)
+
+        bounds = Geom::BoundingBox.new
+        bounds.add(ORIGIN
+                     .offset(width_v, bxf_machining.radius.to_l)
+        )
+        bounds.add(ORIGIN
+                     .offset(width_v, -bxf_machining.radius.to_l)
+                     .offset(length_v, bxf_machining.length.to_l)
+        )
+        bounds.add(ORIGIN
+                     .offset(depth_v, bxf_machining.depth.to_l)
+        )
 
         puts 'TODO: BxfMachiningRoundedGroove'
 
@@ -413,22 +427,22 @@ module Ladb::OpenCutList
 
         group.name = 'MACHINING-GLUE'
 
-        x_axis = bxf_machining.length_orientation.to_v
-        z_axis = bxf_machining.thickness_orientation.to_v
-        y_axis = x_axis.cross(z_axis)
+        length_v = bxf_machining.length_orientation.to_v
+        thickness_v = bxf_machining.thickness_orientation.to_v
+        width_v = length_v.cross(thickness_v)
 
         radius = bxf_machining.width.to_l / 2
 
         bounds = Geom::BoundingBox.new
         bounds.add(ORIGIN
-                     .offset(y_axis, radius)
+                     .offset(width_v, radius)
         )
         bounds.add(ORIGIN
-                     .offset(y_axis, -radius)
-                     .offset(x_axis, bxf_machining.length.to_l)
+                     .offset(width_v, -radius)
+                     .offset(length_v, bxf_machining.length.to_l)
         )
         bounds.add(ORIGIN
-                     .offset(z_axis, bxf_machining.thickness.to_l)
+                     .offset(thickness_v, bxf_machining.thickness.to_l)
         )
 
         _draw_box(group.entities, bounds)

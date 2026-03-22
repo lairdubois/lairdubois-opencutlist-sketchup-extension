@@ -379,7 +379,7 @@ module Ladb::OpenCutList
 
       def read(str)
 
-        self.value = str.to_f
+        self.value = str.strip.to_f
 
         super
       end
@@ -406,7 +406,7 @@ module Ladb::OpenCutList
 
       def read(str)
 
-        x, y = str.split(' ')
+        x, y = str.strip.split(/\s+/)
 
         self.x.read(x) if x
         self.y.read(y) if y
@@ -437,7 +437,7 @@ module Ladb::OpenCutList
 
       def read(str)
 
-        x, y, z = str.split(' ')
+        x, y, z = str.strip.split(/\s+/)
 
         self.x.read(x) if x
         self.y.read(y) if y
@@ -469,7 +469,7 @@ module Ladb::OpenCutList
 
       def read(str)
 
-        x, y, z = str.split(' ')
+        x, y, z = str.strip.split(/\s+/)
 
         self.x.read(x) if x
         self.y.read(y) if y
@@ -503,7 +503,7 @@ module Ladb::OpenCutList
 
       def read(elm)
 
-        length, width, thickness = elm.text.split(' ')
+        length, width, thickness = elm.text.strip.split(/\s+/)
 
         self.length.read(length) if length
         self.width.read(width) if width
@@ -559,12 +559,9 @@ module Ladb::OpenCutList
 
       def read(parameters_elm)
 
-        parameters_elm.elements.each do |elm|
-          case elm.name
-          when 'parameter'
-            @parameters << BxfParameter.new(model).read(elm)
-          end
-        end if parameters_elm
+        parameters_elm.elements.each('parameter') do |elm|
+          @parameters << BxfParameter.new(model).read(elm)
+        end
 
         super
       end
@@ -624,8 +621,7 @@ module Ladb::OpenCutList
 
       def read(transformations_elm)
 
-        transformations_elm.elements.each do |elm|
-          next unless elm.name == 'transformation'
+        transformations_elm.elements.each('transformation') do |elm|
           if elm.attributes['translation']
             @transformations << BxfTransformationTranslation.new(model).read(elm)
           elsif elm.attributes['rotation']
@@ -699,7 +695,7 @@ module Ladb::OpenCutList
 
         rotation_attr = transformation_elm.attributes['rotation']
         self.vector.read(rotation_attr) if rotation_attr
-        self.angle.read(rotation_attr.split(' ').last) if rotation_attr
+        self.angle.read(rotation_attr.strip.split(/\s+/).last) if rotation_attr
 
         super
       end
@@ -779,11 +775,9 @@ module Ladb::OpenCutList
 
       def read(prism_elm)
 
-        base_points_elm = prism_elm.elements['basePoints']
-        base_points_elm.elements.each do |elm|
-          next unless elm.name == 'basePoint'
+        prism_elm.elements.each('basePoints/basePoint') do |elm|
           self.base_points << BxfPoint2d.new(model).read(elm)
-        end if base_points_elm
+        end
 
         z_value_elm = prism_elm.elements['zValue']
         self.z_value.read(z_value_elm) if z_value_elm
@@ -890,6 +884,27 @@ module Ladb::OpenCutList
 
     end
 
+    class BxfRoundedEdge < BxfEdgeReference
+
+      attr_reader :radius
+
+      def initialize(model)
+        super
+
+        @radius = BxfLength.new(model)
+
+      end
+
+      def read(face_reference_elm)
+
+        radius_attr = face_reference_elm.attribute['radius']
+        self.radius.read(radius_attr) if radius_attr
+
+        super
+      end
+
+    end
+
     class BxfFaceReference < BxfGeometricReference
 
       attr_reader :main_edge,
@@ -916,26 +931,6 @@ module Ladb::OpenCutList
 
     end
 
-    class BxfRoundedEdge < BxfObject
-
-      attr_reader :radius
-
-      def initialize(model)
-        super
-
-        @radius = BxfLength.new(model)
-
-      end
-
-      def read(face_reference_elm)
-
-        radius_attr = face_reference_elm.attribute['radius']
-        self.radius.read(radius_attr) if radius_attr
-
-        super
-      end
-
-    end
 
     # --
 
@@ -1036,8 +1031,7 @@ module Ladb::OpenCutList
 
       def read(nodes_elm)
 
-        nodes_elm.elements.each do |elm|
-          next unless elm.name == 'node'
+        nodes_elm.elements.each('node') do |elm|
           @nodes << BxfNode.new(model).read(elm)
         end
 
@@ -1080,45 +1074,25 @@ module Ladb::OpenCutList
         transform_elm = node_elm.elements['transformations']
         self.transformations.read(transform_elm) if transform_elm
 
-        cabinet_group_links_elm = node_elm.elements['cabinetGroupLinks']
-        cabinet_group_links_elm.elements.each do |elm|
-          case elm.name
-          when 'cabinetGroupLink'
-            self.cabinet_group_links << BxfCabinetGroupLink.new(model).read(elm)
-          end
-        end if cabinet_group_links_elm
+        node_elm.elements.each('cabinetGroupLinks/cabinetGroupLink') do |elm|
+          self.cabinet_group_links << BxfCabinetGroupLink.new(model).read(elm)
+        end
 
-        cabinet_links_elm = node_elm.elements['cabinetLinks']
-        cabinet_links_elm.elements.each do |elm|
-          case elm.name
-          when 'cabinetLink'
-            self.cabinet_links << BxfCabinetLink.new(model).read(elm)
-          end
-        end if cabinet_links_elm
+        node_elm.elements.each('cabinetLinks/cabinetLink') do |elm|
+          self.cabinet_links << BxfCabinetLink.new(model).read(elm)
+        end
 
-        container_links_elm = node_elm.elements['containerLinks']
-        container_links_elm.elements.each do |elm|
-          case elm.name
-          when 'containerLink'
-            self.container_links << BxfContainerLink.new(model).read(elm)
-          end
-        end if container_links_elm
+        node_elm.elements.each('containerLinks/containerLink') do |elm|
+          self.container_links << BxfContainerLink.new(model).read(elm)
+        end
 
-        function_unit_links_elm = node_elm.elements['functionUnitLinks']
-        function_unit_links_elm.elements.each do |elm|
-          case elm.name
-          when 'functionUnitLink'
-            self.function_unit_links << BxfFunctionUnitLink.new(model).read(elm)
-          end
-        end if function_unit_links_elm
+        node_elm.elements.each('functionUnitLinks/functionUnitLink') do |elm|
+          self.function_unit_links << BxfFunctionUnitLink.new(model).read(elm)
+        end
 
-        links_elm = node_elm.elements['links']
-        links_elm.elements.each do |elm|
-          case elm.name
-          when 'link'
-            self.links << BxfTransformableObjectLink.new(model).read(elm)
-          end
-        end if links_elm
+        node_elm.elements.each('links/link') do |elm|
+          self.links << BxfTransformableObjectLink.new(model).read(elm)
+        end
 
         nodes_elm = node_elm.elements['nodes']
         self.nodes.read(nodes_elm) if nodes_elm
@@ -1210,13 +1184,10 @@ module Ladb::OpenCutList
 
       def read(cabinet_groups_elm)
 
-        cabinet_groups_elm.elements.each do |elm|
-          case elm.name
-          when 'cabinetGroup'
-            cabinet_group = BxfCabinetGroup.new(model).read(elm)
-            self[cabinet_group.id] = cabinet_group
-          end
-        end if cabinet_groups_elm
+        cabinet_groups_elm.elements.each('cabinetGroup') do |elm|
+          cabinet_group = BxfCabinetGroup.new(model).read(elm)
+          self[cabinet_group.id] = cabinet_group
+        end
 
         super
       end
@@ -1240,12 +1211,9 @@ module Ladb::OpenCutList
 
       def read(cabinet_groups_elm)
 
-        cabinet_groups_elm.elements.each do |elm|
-          case elm.name
-          when 'cabinetLink'
-            self.cabinet_links << BxfCabinetLink.new(model).read(elm)
-          end
-        end if cabinet_groups_elm
+        cabinet_groups_elm.elements.each('cabinetLink') do |elm|
+          self.cabinet_links << BxfCabinetLink.new(model).read(elm)
+        end
 
         super
       end
@@ -1272,13 +1240,10 @@ module Ladb::OpenCutList
 
       def read(cabinets_elm)
 
-        cabinets_elm.elements.each do |elm|
-          case elm.name
-          when 'cabinet'
-            cabinet = BxfCabinet.new(model).read(elm)
-            self[cabinet.id] = cabinet
-          end
-        end if cabinets_elm
+        cabinets_elm.elements.each('cabinet') do |elm|
+          cabinet = BxfCabinet.new(model).read(elm)
+          self[cabinet.id] = cabinet
+        end
 
         super
       end
@@ -1311,29 +1276,17 @@ module Ladb::OpenCutList
 
         self.model_key = cabinets_elm.attributes['modelKey']
 
-        part_links_elm = cabinets_elm.elements['partLinks']
-        part_links_elm.elements.each do |elm|
-          case elm.name
-          when 'partLink'
-            self.part_links << BxfPartLink.new(model).read(elm)
-          end
-        end if part_links_elm
+        cabinets_elm.elements.each('partLinks/partLink') do |elm|
+          self.part_links << BxfPartLink.new(model).read(elm)
+        end
 
-        function_unit_links = cabinets_elm.elements['functionUnitLinks']
-        function_unit_links.elements.each do |elm|
-          case elm.name
-          when 'functionUnitLink'
-            self.part_links << BxfFunctionUnitLink.new(model).read(elm)
-          end
-        end if function_unit_links
+        cabinets_elm.elements.each('functionUnitLinks/functionUnitLink') do |elm|
+          self.part_links << BxfFunctionUnitLink.new(model).read(elm)
+        end
 
-        container_links_elm = cabinets_elm.elements['containerLinks']
-        container_links_elm.elements.each do |elm|
-          case elm.name
-          when 'containerLink'
-            self.container_links << BxfContainerLink.new(model).read(elm)
-          end
-        end if container_links_elm
+        cabinets_elm.elements.each('containerLinks/containerLink') do |elm|
+          self.container_links << BxfContainerLink.new(model).read(elm)
+        end
 
         super
       end
@@ -1380,12 +1333,9 @@ module Ladb::OpenCutList
 
       def read(containers_elm)
 
-        containers_elm.elements.each do |elm|
-          case elm.name
-          when 'container'
-            container = BxfContainer.new(model).read(elm)
-            self[container.id] = container
-          end
+        containers_elm.elements.each('container') do |elm|
+          container = BxfContainer.new(model).read(elm)
+          self[container.id] = container
         end if containers_elm
 
         super
@@ -1420,13 +1370,9 @@ module Ladb::OpenCutList
         boundary_elm = container_elm.elements['boundary']
         self.boundary = BxfGeometry.create(model, boundary_elm) if boundary_elm
 
-        function_unit_links_elm = container_elm.elements['functionUnitLinks']
-        function_unit_links_elm.elements.each do |elm|
-          case elm.name
-          when 'functionUnitLink'
-            self.function_unit_links << BxfFunctionUnitLink.new(model).read(elm)
-          end
-        end if function_unit_links_elm
+        container_elm.elements.each('functionUnitLinks/functionUnitLink') do |elm|
+          self.function_unit_links << BxfFunctionUnitLink.new(model).read(elm)
+        end
 
         super
       end
@@ -1465,12 +1411,9 @@ module Ladb::OpenCutList
 
       def read(parts_elm)
 
-        parts_elm.elements.each do |elm|
-          case elm.name
-          when 'part'
-            part = BxfPart.new(model).read(elm)
-            self[part.id] = part
-          end
+        parts_elm.elements.each('part') do |elm|
+          part = BxfPart.new(model).read(elm)
+          self[part.id] = part
         end if parts_elm
 
         super
@@ -1515,29 +1458,17 @@ module Ladb::OpenCutList
         geometry_elm = part_elm.elements['geometry']
         self.geometry = BxfGeometry.create(model, geometry_elm) if geometry_elm
 
-        inherited_machinings_elm = part_elm.elements['inheritedMachinings']
-        inherited_machinings_elm.elements.each do |elm|
-          case elm.name
-          when 'inheritedMachining'
-            self.inherited_machinings << BxfInheritedMachining.new(model).read(elm)
-          end
-        end if inherited_machinings_elm
+        part_elm.elements.each('inheritedMachinings/inheritedMachining') do |elm|
+          self.inherited_machinings << BxfInheritedMachining.new(model).read(elm)
+        end
 
-        machining_group_links_elm = part_elm.elements['machiningGroupLinks']
-        machining_group_links_elm.elements.each do |elm|
-          case elm.name
-          when 'machiningGroupLink'
-            self.machining_group_links << BxfMachiningGroupLink.new(model).read(elm)
-          end
-        end if machining_group_links_elm
+        part_elm.elements.each('machiningGroupLinks/machiningGroupLink') do |elm|
+          self.machining_group_links << BxfMachiningGroupLink.new(model).read(elm)
+        end
 
-        machining_links_elm = part_elm.elements['machiningLinks']
-        machining_links_elm.elements.each do |elm|
-          case elm.name
-          when 'machiningLink'
-            self.machining_links << BxfMachiningLink.new(model).read(elm)
-          end
-        end if machining_links_elm
+        part_elm.elements.each('machiningLinks/machiningLink') do |elm|
+          self.machining_links << BxfMachiningLink.new(model).read(elm)
+        end
 
         drawing_detail_elm = part_elm.elements['drawingDetail']
         self.drawing_detail.read(drawing_detail_elm) if drawing_detail_elm
@@ -1582,13 +1513,10 @@ module Ladb::OpenCutList
 
       def read(function_units_elm)
 
-        function_units_elm.elements.each do |elm|
-          case elm.name
-          when 'functionUnit'
-            function_unit = BxfFunctionUnit.new(model).read(elm)
-            self[function_unit.id] = function_unit
-          end
-        end if function_units_elm
+        function_units_elm.elements.each('functionUnit') do |elm|
+          function_unit = BxfFunctionUnit.new(model).read(elm)
+          self[function_unit.id] = function_unit
+        end
 
         super
       end
@@ -1621,29 +1549,17 @@ module Ladb::OpenCutList
 
         self.model_key = function_unit_elm.attributes['modelKey']
 
-        article_links_elm = function_unit_elm.elements['articleLinks']
-        article_links_elm.elements.each do |elm|
-          case elm.name
-          when 'articleLink'
-            self.article_links << BxfArticleLink.new(model).read(elm)
-          end
-        end if article_links_elm
+        function_unit_elm.elements.each('articleLinks/articleLink') do |elm|
+          self.article_links << BxfArticleLink.new(model).read(elm)
+        end
 
-        part_links_elm = function_unit_elm.elements['partLinks']
-        part_links_elm.elements.each do |elm|
-          case elm.name
-          when 'partLink'
-            self.part_links << BxfPartLink.new(model).read(elm)
-          end
-        end if part_links_elm
+        function_unit_elm.elements.each('partLinks/partLink') do |elm|
+          self.part_links << BxfPartLink.new(model).read(elm)
+        end
 
-        component_links_elm = function_unit_elm.elements['componentLinks']
-        component_links_elm.elements.each do |elm|
-          case elm.name
-          when 'componentLink'
-            self.component_links << BxfComponentLink.new(model).read(elm)
-          end
-        end if component_links_elm
+        function_unit_elm.elements.each('componentLinks/componentLink') do |elm|
+          self.component_links << BxfComponentLink.new(model).read(elm)
+        end
 
         super
       end
@@ -1682,13 +1598,10 @@ module Ladb::OpenCutList
 
       def read(articles_elm)
 
-        articles_elm.elements.each do |elm|
-          case elm.name
-          when 'article'
-            article = BxfArticle.new(model).read(elm)
-            self[article.id] = article
-          end
-        end if articles_elm
+        articles_elm.elements.each('article') do |elm|
+          article = BxfArticle.new(model).read(elm)
+          self[article.id] = article
+        end
 
         super
       end
@@ -1717,7 +1630,7 @@ module Ladb::OpenCutList
         @article_number = nil
         @total_quantity = 0
 
-        @component_numbers = BxfComponentNumbers.new(model)
+        @component_numbers = [] # Array<String>
 
       end
 
@@ -1730,8 +1643,9 @@ module Ladb::OpenCutList
         self.article_number = article_elm.attributes['articleNumber']
         self.total_quantity = article_elm.attributes['totalQuantity'].to_i
 
-        component_numbers_elm = article_elm.elements['componentNumbers']
-        self.component_numbers.read(component_numbers_elm) if component_numbers_elm
+        article_elm.elements.each('componentNumbers/componentNumber') do |elm|
+          self.component_numbers << elm.text
+        end
 
         super
       end
@@ -1790,13 +1704,10 @@ module Ladb::OpenCutList
 
       def read(components_elm)
 
-        components_elm.elements.each do |elm|
-          case elm.name
-          when 'component'
-            component = BxfComponent.new(model).read(elm)
-            self[component.id] = component
-          end
-        end if components_elm
+        components_elm.elements.each('component') do |elm|
+          component = BxfComponent.new(model).read(elm)
+          self[component.id] = component
+        end
 
         super
       end
@@ -1835,37 +1746,21 @@ module Ladb::OpenCutList
         self.model_key = component_elm.attributes['modelKey']
         self.component_number = component_elm.attributes['componentNumber']
 
-        machining_group_links_elm = component_elm.elements['machiningGroupLinks']
-        machining_group_links_elm.elements.each do |elm|
-          case elm.name
-          when 'machiningGroupLink'
-            self.machining_group_links << BxfMachiningGroupLink.new(model).read(elm)
-          end
-        end if machining_group_links_elm
+        component_elm.elements.each('machiningGroupLinks.machiningGroupLink') do |elm|
+          self.machining_group_links << BxfMachiningGroupLink.new(model).read(elm)
+        end
 
-        machining_links_elm = component_elm.elements['machiningLinks']
-        machining_links_elm.elements.each do |elm|
-          case elm.name
-          when 'machiningLink'
-            self.machining_links << BxfMachiningLink.new(model).read(elm)
-          end
-        end if machining_links_elm
+        component_elm.elements.each('machiningLinks/machiningLink') do |elm|
+          self.machining_links << BxfMachiningLink.new(model).read(elm)
+        end
 
-        related_machining_group_links_elm = component_elm.elements['relatedMachiningGroupLinks']
-        related_machining_group_links_elm.elements.each do |elm|
-          case elm.name
-          when 'machiningGroupLink'
-            self.related_machining_group_links << BxfMachiningGroupLink.new(model).read(elm)
-          end
-        end if related_machining_group_links_elm
+        component_elm.elements.each('relatedMachiningGroupLinks/machiningGroupLink') do |elm|
+          self.related_machining_group_links << BxfMachiningGroupLink.new(model).read(elm)
+        end
 
-        related_machining_links_elm = component_elm.elements['relatedMachiningLinks']
-        related_machining_links_elm.elements.each do |elm|
-          case elm.name
-          when 'machiningLink'
-            self.related_machining_links << BxfMachiningLink.new(model).read(elm)
-          end
-        end if related_machining_links_elm
+        component_elm.elements.each('relatedMachiningLinks/machiningLink') do |elm|
+          self.related_machining_links << BxfMachiningLink.new(model).read(elm)
+        end
 
         super
       end
@@ -1882,36 +1777,6 @@ module Ladb::OpenCutList
 
       def component
         model.library.components[self.reference_id]
-      end
-
-    end
-
-
-    class BxfComponentNumbers < BxfObject
-
-      include Enumerable
-
-      def initialize(model)
-        super
-
-        @component_numbers = [] # Array<String>
-
-      end
-
-      def read(component_numbers_elm)
-
-        component_numbers_elm.elements.each do |elm|
-          case elm.name
-          when 'componentNumber'
-            @component_numbers << elm.text
-          end
-        end if component_numbers_elm
-
-        super
-      end
-
-      def each(&block)
-        @component_numbers.each(&block)
       end
 
     end
@@ -1987,13 +1852,10 @@ module Ladb::OpenCutList
 
       def read(machining_groups_elm)
 
-        machining_groups_elm.elements.each do |elm|
-          case elm.name
-          when 'machiningGroup'
-            machining_group = BxfMachiningGroup.create(model, elm)
-            self[machining_group.id] = machining_group
-          end
-        end if machining_groups_elm
+        machining_groups_elm.elements.each('machiningGroup') do |elm|
+          machining_group = BxfMachiningGroup.create(model, elm)
+          self[machining_group.id] = machining_group
+        end
 
         super
       end
@@ -2032,13 +1894,9 @@ module Ladb::OpenCutList
 
         self.model_key = machining_group_elm.attributes['modelKey']
 
-        machining_links_elm = machining_group_elm.elements['machiningLinks']
-        machining_links_elm.elements.each do |elm|
-          case elm.name
-          when 'machiningLink'
-            self.machining_links << BxfMachiningLink.new(model).read(elm)
-          end
-        end if machining_links_elm
+        machining_group_elm.elements.each('machiningLinks/machiningLink') do |elm|
+          self.machining_links << BxfMachiningLink.new(model).read(elm)
+        end
 
         super
       end
@@ -2099,13 +1957,10 @@ module Ladb::OpenCutList
 
       def read(machinings_elm)
 
-        machinings_elm.elements.each do |elm|
-          case elm.name
-          when 'machining'
-            machining = BxfMachining.create(model, elm)
-            self[machining.id] = machining
-          end
-        end if machinings_elm
+        machinings_elm.elements.each('machining') do |elm|
+          machining = BxfMachining.create(model, elm)
+          self[machining.id] = machining
+        end
 
         super
       end
@@ -2360,13 +2215,9 @@ module Ladb::OpenCutList
         length_orientation_attr = rounded_groove_elm.attributes['lengthOrientation']
         self.length_orientation.read(length_orientation_attr) if length_orientation_attr
 
-        rounded_edges_elm = rounded_groove_elm.elements['roundedEdges']
-        rounded_edges_elm.elements.each do |elm|
-          case elm.name
-          when 'roundedEdge'
-            self.rounded_edges << BxfRoundedEdge.new(model).read(elm)
-          end
-        end if rounded_edges_elm
+        rounded_groove_elm.elements.each('roundedEdges/edge') do |elm|
+          self.rounded_edges << BxfRoundedEdge.new(model).read(elm)
+        end
 
         super
       end
@@ -2481,21 +2332,13 @@ module Ladb::OpenCutList
         component_link_elm = inherited_machining_elm.elements['componentLink']
         self.component_link.read(component_link_elm) if component_link_elm
 
-        machining_group_link_references_elm = inherited_machining_elm.elements['machiningGroupLinkReferences']
-        machining_group_link_references_elm.elements.each do |elm|
-          case elm.name
-          when 'machiningGroupLinkReference'
-            self.machining_group_link_references << BxfMachiningGroupLinkReference.new(model).read(elm)
-          end
-        end if machining_group_link_references_elm
+        inherited_machining_elm.elements.each('machiningGroupLinkReferences/machiningGroupLinkReference') do |elm|
+          self.machining_group_link_references << BxfMachiningGroupLinkReference.new(model).read(elm)
+        end
 
-        machining_link_references_elm = inherited_machining_elm.elements['machiningLinkReferences']
-        machining_link_references_elm.elements.each do |elm|
-          case elm.name
-          when 'machiningLinkReference'
-            self.machining_link_references << BxfMachiningLinkReference.new(model).read(elm)
-          end
-        end if machining_link_references_elm
+        inherited_machining_elm.elements.each('machiningLinkReferences/machiningLinkReference') do |elm|
+          self.machining_link_references << BxfMachiningLinkReference.new(model).read(elm)
+        end
 
         super
       end
