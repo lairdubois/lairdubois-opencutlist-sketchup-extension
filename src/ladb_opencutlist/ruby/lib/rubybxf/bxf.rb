@@ -916,6 +916,27 @@ module Ladb::OpenCutList
 
     end
 
+    class BxfRoundedEdge < BxfObject
+
+      attr_reader :radius
+
+      def initialize(model)
+        super
+
+        @radius = BxfLength.new(model)
+
+      end
+
+      def read(face_reference_elm)
+
+        radius_attr = face_reference_elm.attribute['radius']
+        self.radius.read(radius_attr) if radius_attr
+
+        super
+      end
+
+    end
+
     # --
 
     class BxfDrawingDetail < BxfModelable
@@ -2306,7 +2327,8 @@ module Ladb::OpenCutList
                   :depth,
                   :length,
                   :depth_orientation,
-                  :length_orientation
+                  :length_orientation,
+                  :rounded_edges
 
       def initialize(model)
         super(model, TYPE_ROUNDED_GROOVE)
@@ -2316,6 +2338,8 @@ module Ladb::OpenCutList
         @depth_orientation = BxfVector3d.new(model, '0 0 -1')
         @length = BxfLength.new(model)
         @length_orientation = BxfVector3d.new(model)
+
+        @rounded_edges = [] # Array<BxfRoundedEdge>
 
       end
 
@@ -2335,6 +2359,14 @@ module Ladb::OpenCutList
 
         length_orientation_attr = rounded_groove_elm.attributes['lengthOrientation']
         self.length_orientation.read(length_orientation_attr) if length_orientation_attr
+
+        rounded_edges_elm = rounded_groove_elm.elements['roundedEdges']
+        rounded_edges_elm.elements.each do |elm|
+          case elm.name
+          when 'roundedEdge'
+            self.rounded_edges << BxfRoundedEdge.new(model).read(elm)
+          end
+        end if rounded_edges_elm
 
         super
       end
