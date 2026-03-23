@@ -335,8 +335,15 @@ module Ladb::OpenCutList
 
     def _draw_cylinder(entities, bxf_cylinder)
 
-      btm_edges = entities.add_circle(ORIGIN, Z_AXIS, bxf_cylinder.radius.to_l, 16)
-      top_edges = entities.add_circle(ORIGIN.offset(Z_AXIS, bxf_cylinder.z_value.to_l), Z_AXIS, bxf_cylinder.radius.to_l, 16)
+      radius = bxf_cylinder.radius.to_l
+      z_value = bxf_cylinder.z_value.to_l
+
+      segments = (2 * Math::PI / (2 * Math.asin(2.mm / (radius * 2)))).ceil
+      segments = [ [ segments, 6 ].max, 24 ].min
+      segments += 1 if segments.odd?
+
+      btm_edges = entities.add_circle(ORIGIN, Z_AXIS, radius, segments)
+      top_edges = entities.add_circle(ORIGIN.offset(Z_AXIS, z_value), Z_AXIS, radius, segments)
 
       btm_edges.zip(top_edges).each do |btm_edge, top_edge|
         entities
@@ -345,7 +352,7 @@ module Ladb::OpenCutList
       end
 
       btm_edges.each(&:find_faces)
-      top_edges.each(&:find_faces)
+      top_edges.first.find_faces
 
     end
 
@@ -378,9 +385,29 @@ module Ladb::OpenCutList
 
         group.name = 'MACHINING-DRILLING'
 
-        edges = group.entities.add_circle(ORIGIN, bxf_machining.depth_orientation.to_v, bxf_machining.radius.to_l, 16)
-        edges.first.find_faces
-        group.entities.grep(Sketchup::Face).first.pushpull(bxf_machining.depth.to_l)
+        radius = bxf_machining.radius.to_l
+        depth = bxf_machining.depth.to_l
+
+        depth_v = bxf_machining.depth_orientation.to_v
+
+        segments = (2 * Math::PI / (2 * Math.asin(2.mm / (radius * 2)))).ceil
+        segments = [ [ segments, 6 ].max, 16 ].min
+        segments += 1 if segments.odd?
+
+        btm_edges = group.entities.add_circle(ORIGIN, depth_v, radius, segments)
+        top_edges = group.entities.add_circle(ORIGIN.offset(depth_v, depth), depth_v, radius, segments)
+
+        group.entities.add_face(btm_edges)
+        group.entities.add_face(top_edges)
+
+        btm_edges.zip(top_edges).each do |btm_edge, top_edge|
+          group.entities
+            .add_edges(btm_edge.start.position, top_edge.start.position)
+            .each { |edge|
+              edge.smooth = edge.soft = true
+              edge.find_faces
+            }
+        end
 
       elsif bxf_machining.is_a?(Bxf::BxfMachiningRounding)
 
@@ -394,16 +421,20 @@ module Ladb::OpenCutList
 
         group.name = 'MACHINING-RABBET'
 
+        radius = bxf_machining.radius.to_l
+        length = bxf_machining.length.to_l
+        depth = bxf_machining.depth.to_l
+
         length_v = bxf_machining.length_orientation.to_v
         depth_v = bxf_machining.depth_orientation.to_v
         width_v = length_v.cross(depth_v)
 
         bounds = Geom::BoundingBox.new
         bounds.add(
-          ORIGIN.offset(width_v, -bxf_machining.radius.to_l), # P0
-          ORIGIN.offset(width_v, bxf_machining.radius.to_l)
-                .offset(depth_v, bxf_machining.depth.to_l)
-                .offset(length_v, bxf_machining.length.to_l)  # P2+Z
+          ORIGIN.offset(width_v, -radius), # P0
+          ORIGIN.offset(width_v, radius)
+                .offset(depth_v, depth)
+                .offset(length_v, length)  # P2+Z
         )
 
         _draw_box(group.entities, bounds)
