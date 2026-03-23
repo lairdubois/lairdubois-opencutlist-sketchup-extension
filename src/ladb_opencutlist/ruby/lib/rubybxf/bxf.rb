@@ -317,8 +317,7 @@ module Ladb::OpenCutList
 
       def read(unit_elm)
 
-        name_attr = unit_elm.attributes['name']
-        self.name = name_attr.to_f if name_attr
+        self.name = unit_elm.text
 
         super
       end
@@ -353,7 +352,7 @@ module Ladb::OpenCutList
 
       def read(str)
 
-        self.value = str.to_f
+        self.value = str.strip.to_f
 
         super
       end
@@ -514,8 +513,10 @@ module Ladb::OpenCutList
 
       def to_b
         bounds = Geom::BoundingBox.new
-        bounds.add(ORIGIN)
-        bounds.add(Geom::Point3d.new(self.length.to_l, self.width.to_l, self.thickness.to_l))
+        bounds.add(
+          ORIGIN,
+          Geom::Point3d.new(self.length.to_l, self.width.to_l, self.thickness.to_l)
+        )
         bounds
       end
 
@@ -590,7 +591,8 @@ module Ladb::OpenCutList
         self.name = parameter_elm.attributes['name']
 
         value_elm = parameter_elm.elements['value']
-        case value_elm.attributes['xsi:type']
+        type = value_elm.attributes['xsi:type']
+        case type
         when 'xs:string'
           self.value = value_elm.text
         when 'xs:int'
@@ -598,7 +600,7 @@ module Ladb::OpenCutList
         when 'xs:boolean'
           self.value = value_elm.text == 'true'
         else
-          raise "Unsupported parameter value type: #{value_elm.attributes['xsi:type']}"
+          raise "Unsupported parameter value type: #{type}"
         end if value_elm
 
         super
@@ -645,6 +647,10 @@ module Ladb::OpenCutList
     end
 
     class BxfTransformation < BxfModelable
+
+      def to_t
+        IDENTITY
+      end
 
     end
 
@@ -694,8 +700,10 @@ module Ladb::OpenCutList
         self.center.read(center_attr) if center_attr
 
         rotation_attr = transformation_elm.attributes['rotation']
-        self.vector.read(rotation_attr) if rotation_attr
-        self.angle.read(rotation_attr.strip.split(/\s+/).last) if rotation_attr
+        if rotation_attr
+          self.vector.read(rotation_attr)
+          self.angle.read(rotation_attr.strip.split(/\s+/).last)
+        end
 
         super
       end
@@ -775,12 +783,12 @@ module Ladb::OpenCutList
 
       def read(prism_elm)
 
-        prism_elm.elements.each('basePoints/basePoint') do |elm|
-          self.base_points << BxfPoint2d.new(model).read(elm)
+        prism_elm.elements.each('basePoints/point') do |elm|
+          self.base_points << BxfPoint2d.new(model).read(elm.text)
         end
 
         z_value_elm = prism_elm.elements['zValue']
-        self.z_value.read(z_value_elm) if z_value_elm
+        self.z_value.read(z_value_elm.text) if z_value_elm
 
         super
       end
@@ -793,7 +801,7 @@ module Ladb::OpenCutList
                   :z_value
 
       def initialize(model)
-        super(model, TYPE_DRILLING)
+        super(model, TYPE_CYLINDER)
 
         @radius = BxfLength.new(model)
         @z_value = BxfLength.new(model)
@@ -802,11 +810,11 @@ module Ladb::OpenCutList
 
       def read(cylinder_elm)
 
-        radius_attr = cylinder_elm.elements['radius']
-        self.radius.read(radius_attr) if radius_attr
+        radius_elm = cylinder_elm.elements['radius']
+        self.radius.read(radius_elm.text) if radius_elm
 
         z_value_elm = cylinder_elm.elements['zValue']
-        self.z_value.read(z_value_elm) if z_value_elm
+        self.z_value.read(z_value_elm.text) if z_value_elm
 
         super
       end
@@ -818,7 +826,8 @@ module Ladb::OpenCutList
     class BxfGeometricReference < BxfModelable
 
       def self.create(model, elm)
-        case elm.attributes['xsi:type']
+        type = elm.attributes['xsi:type']
+        case type
         when 'PointReference'
           BxfPointReference.new(model).read(elm)
         when 'EdgeReference'
@@ -826,7 +835,7 @@ module Ladb::OpenCutList
         when 'FaceReference'
           BxfFaceReference.new(model).read(elm)
         else
-          raise "Unknown geometric reference type '#{elm.name}'"
+          raise "Unknown geometric reference type '#{type}'"
         end
       end
 
@@ -847,11 +856,8 @@ module Ladb::OpenCutList
 
       def read(point_reference_elm)
 
-        index_attr = point_reference_elm.attributes['index']
-        self.index = index_attr.to_i if index_attr
-
-        add_z_value_attr = point_reference_elm.attributes['addZValue']
-        self.add_z_value = add_z_value_attr == 'true' if add_z_value_attr
+        self.index = point_reference_elm.attributes['index'].to_i
+        self.add_z_value = point_reference_elm.attributes['addZValue'] == 'true'
 
         super
       end
@@ -1026,7 +1032,9 @@ module Ladb::OpenCutList
 
       def initialize(model)
         super
+
         @nodes = [] # Array<BxfNode>
+
       end
 
       def read(nodes_elm)
@@ -1071,8 +1079,8 @@ module Ladb::OpenCutList
 
       def read(node_elm)
 
-        transform_elm = node_elm.elements['transformations']
-        self.transformations.read(transform_elm) if transform_elm
+        transformations_elm = node_elm.elements['transformations']
+        self.transformations.read(transformations_elm) if transformations_elm
 
         node_elm.elements.each('cabinetGroupLinks/cabinetGroupLink') do |elm|
           self.cabinet_group_links << BxfCabinetGroupLink.new(model).read(elm)
@@ -1336,7 +1344,7 @@ module Ladb::OpenCutList
         containers_elm.elements.each('container') do |elm|
           container = BxfContainer.new(model).read(elm)
           self[container.id] = container
-        end if containers_elm
+        end
 
         super
       end
@@ -1357,7 +1365,7 @@ module Ladb::OpenCutList
         super
 
         @model_key = nil
-        @boundary = nil # BxfGeometricParameters
+        @boundary = nil # BxfGeometry
 
         @function_unit_links = [] # Array<BxfFunctionUnitLink>
 
@@ -1414,7 +1422,7 @@ module Ladb::OpenCutList
         parts_elm.elements.each('part') do |elm|
           part = BxfPart.new(model).read(elm)
           self[part.id] = part
-        end if parts_elm
+        end
 
         super
       end
@@ -1618,7 +1626,6 @@ module Ladb::OpenCutList
                     :item_number,
                     :article_number,
                     :total_quantity
-
       attr_reader   :material,
                     :component_numbers
 
@@ -1722,7 +1729,6 @@ module Ladb::OpenCutList
 
       attr_accessor :model_key,
                     :component_number
-
       attr_reader   :machining_group_links,
                     :machining_links,
                     :related_machining_group_links,

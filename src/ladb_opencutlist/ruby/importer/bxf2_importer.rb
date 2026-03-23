@@ -109,7 +109,13 @@ module Ladb::OpenCutList
 
         definition = (@parts_factory ||= {})[part] ||= begin
                                                          definition = Sketchup.active_model.definitions.add(part_name)
-                                                         _draw_box(definition.entities, part.geometry.extent.to_b)
+                                                         if part.geometry.is_a?(Bxf::BxfGeometryBox)
+                                                           _draw_box(definition.entities, part.geometry.extent.to_b)
+                                                         elsif part.geometry.is_a?(Bxf::BxfGeometryPrism)
+                                                           _draw_prism(definition.entities, part.geometry)
+                                                         elsif part.geometry.is_a?(Bxf::BxfGeometryCylinder)
+                                                           _draw_cylinder(definition.entities, part.geometry)
+                                                         end
                                                          definition
                                                        end
 
@@ -244,6 +250,8 @@ module Ladb::OpenCutList
 
         machining_group = machining_group_link.machining_group
 
+        group = entities.add_group
+
         if machining_group.is_a?(Bxf::BxfGridMachining)
 
           column_count = machining_group.column_count
@@ -262,7 +270,7 @@ module Ladb::OpenCutList
               y = row_index * row_distance
               t1 = Geom::Transformation.translation(Geom::Vector3d.new(x, y, 0))
 
-              _process_machining_links(machining_group.machining_links, entities, t0 * t1)
+              _process_machining_links(machining_group.machining_links, group.entities, t0 * t1)
 
             end
 
@@ -270,7 +278,7 @@ module Ladb::OpenCutList
 
         else
 
-          _process_machining_links(machining_group.machining_links, entities, transformation * machining_group_link.transformations.to_t)
+          _process_machining_links(machining_group.machining_links, group.entities, transformation * machining_group_link.transformations.to_t)
 
         end
 
@@ -302,16 +310,33 @@ module Ladb::OpenCutList
 
     def _draw_prism(entities, bxf_prism)
 
-      face = entities.add_face(bxf_prism.base_points.map(&:to_p))
-      face.pushpull(-bxf_prism.z_value.to_l)
+      btm_pts = bxf_prism.base_points.map(&:to_p)
+      top_pts = bxf_prism.base_points.map { |p| p.to_p.offset(Z_AXIS, bxf_prism.z_value.to_l) }
+
+      entities.add_face(btm_pts)
+      entities.add_face(top_pts)
+
+      btm_pts.zip(top_pts).each do |btm_pt, top_pt|
+        entities
+          .add_edges(btm_pt, top_pt)
+          .each { |edge| edge.find_faces }
+      end
 
     end
 
     def _draw_cylinder(entities, bxf_cylinder)
 
-      edges = entities.add_circle(ORIGIN, Z_AXIS, bxf_cylinder.radius.to_l, 16)
-      edges.first.find_faces
-      group.entities.grep(Sketchup::Face).first.pushpull(bxf_cylinder.z_value.to_l)
+      btm_edges = entities.add_circle(ORIGIN, Z_AXIS, bxf_cylinder.radius.to_l, 16)
+      top_edges = entities.add_circle(ORIGIN.offset(Z_AXIS, bxf_cylinder.z_value.to_l), Z_AXIS, bxf_cylinder.radius.to_l, 16)
+
+      btm_edges.zip(top_edges).each do |btm_edge, top_edge|
+        entities
+          .add_edges(btm_edge.start.position, top_edge.start.position)
+          .each { |edge| edge.smooth = edge.soft = true }
+      end
+
+      btm_edges.each(&:find_faces)
+      top_edges.each(&:find_faces)
 
     end
 
