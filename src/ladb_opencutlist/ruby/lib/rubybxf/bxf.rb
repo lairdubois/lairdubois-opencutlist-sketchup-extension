@@ -597,6 +597,8 @@ module Ladb::OpenCutList
           self.value = value_elm.text
         when 'xs:int'
           self.value = value_elm.text.to_i
+        when 'xs:double'
+          self.value = value_elm.text.to_f
         when 'xs:boolean'
           self.value = value_elm.text == 'true'
         else
