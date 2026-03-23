@@ -191,6 +191,11 @@ module Ladb::OpenCutList
       super && (@layer_def.nil? ? true : @layer_def.computed_visible?)
     end
 
+    def description
+      return '' unless valid?
+      @entity.definition.description
+    end
+
     # -----
 
     def is2d?
@@ -251,11 +256,6 @@ module Ladb::OpenCutList
     def definition_name
       return '' unless valid?
       @entity.definition.name
-    end
-
-    def description
-      return '' unless valid?
-      @entity.definition.description
     end
 
     def live_component?

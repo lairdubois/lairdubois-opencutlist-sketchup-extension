@@ -602,7 +602,8 @@ module Ladb::OpenCutList
         when 'xs:boolean'
           self.value = value_elm.text == 'true'
         else
-          raise "Unsupported parameter value type: #{type}"
+          puts "Unsupported parameter value type: #{type}"
+          self.value = value_elm.text
         end if value_elm
 
         super

@@ -160,10 +160,9 @@ module Ladb::OpenCutList
         function_unit = function_unit_link.function_unit
 
         group = entities.add_group
-        group.name = function_unit.description if function_unit.description
+        group.definition.description = function_unit.description if function_unit.description
         group.transformation = transformation * function_unit_link.transformations.to_t
 
-        # _process_article_links(function_unit.article_links, group.entities)
         _process_part_links(function_unit.part_links, group.entities)
         _process_component_links(function_unit.component_links, group.entities)
 
@@ -173,57 +172,72 @@ module Ladb::OpenCutList
 
     def _process_component_links(component_links, entities)
 
-      component_links.each do |component_link|
+      component_links
+        .group_by { |component_link| component_link.component.article }
+        .each do |article, component_links|
 
-        component = component_link.component
-        article = component.article
+        if article
 
-        definition = (@components_factory ||= {})[component] ||= begin
-                                                                   component_name = "#{"#{article.article_number}_" if article}#{component.component_number}"
-                                                                   definition = Sketchup.active_model.definitions[component_name]
-                                                                   if definition.nil?
-                                                                     begin
-                                                                       base_path = File.dirname(File.expand_path(@file_path))
-                                                                       file_name = "#{component_name}.dae"
-                                                                       file_path = File.join(base_path, "cadData", file_name)
-                                                                       definition = Sketchup.active_model.definitions.import(file_path, {
-                                                                         validate_dae: true,
-                                                                         merge_coplanar_faces: true
-                                                                       })
-                                                                       definition.name = component_name
-                                                                     rescue Exception => e
-                                                                       puts "Error loading component: #{file_path} #{e.message}"
-                                                                       definition = Sketchup.active_model.definitions.add(component_name)
-                                                                       _draw_box(definition.entities, Geom::BoundingBox.new.add(
-                                                                         [-10.mm, -10.mm, -10.mm],
-                                                                         [10.mm, 10.mm, 10.mm]
-                                                                       ))
+          group = entities.add_group
+          group.name = article.article_number if article.article_number
+          group.definition.description = article.description if article.description
+
+          component_entities = group.entities
+
+        else
+
+          component_entities = entities
+
+        end
+
+        component_links.each do |component_link|
+
+          component = component_link.component
+
+          definition = (@components_factory ||= {})[component] ||= begin
+                                                                     component_name = "#{"#{article.article_number}_" if article}#{component.component_number}"
+                                                                     definition = Sketchup.active_model.definitions[component_name]
+                                                                     if definition.nil?
+                                                                       begin
+                                                                         base_path = File.dirname(File.expand_path(@file_path))
+                                                                         file_name = "#{component_name}.dae"
+                                                                         file_path = File.join(base_path, "cadData", file_name)
+                                                                         definition = Sketchup.active_model.definitions.import(file_path, {
+                                                                           validate_dae: true,
+                                                                           merge_coplanar_faces: true
+                                                                         })
+                                                                         definition.name = component_name
+                                                                       rescue Exception => e
+                                                                         puts "Error loading component: #{file_path} #{e.message}"
+                                                                         definition = Sketchup.active_model.definitions.add(component_name)
+                                                                         _draw_box(definition.entities, Geom::BoundingBox.new.add(
+                                                                           [-10.mm, -10.mm, -10.mm],
+                                                                           [10.mm, 10.mm, 10.mm]
+                                                                         ))
+                                                                       end
+                                                                       definition.description = component.description if component.description
                                                                      end
-                                                                     if article && article.description
-                                                                       definition.description = article.description
-                                                                     elsif component.description
-                                                                       definition.description = component.description
-                                                                     end
+                                                                     definition
                                                                    end
-                                                                   definition
-                                                                 end
 
-        instance = entities.add_instance(definition, component_link.transformations.to_t * Geom::Transformation.axes(ORIGIN, X_AXIS, Z_AXIS.reverse, Y_AXIS))
-        instance.layer = Sketchup.active_model.layers.add('OCL_HARDWARE')
-        instance.material = (@materials_factory ||= {})['Hardware'] ||= begin
-                                                                          m = Sketchup.active_model.materials['HARDWARE']
-                                                                          if m.nil?
-                                                                            m = Sketchup.active_model.materials.add('HARDWARE')
-                                                                            m.color = 'white'
-                                                                            ma = MaterialAttributes.new(m)
-                                                                            ma.type = MaterialAttributes::TYPE_HARDWARE
-                                                                            ma.write_to_attributes
+          instance = component_entities.add_instance(definition, component_link.transformations.to_t * Geom::Transformation.axes(ORIGIN, X_AXIS, Z_AXIS.reverse, Y_AXIS))
+          instance.layer = Sketchup.active_model.layers.add('OCL_HARDWARE')
+          instance.material = (@materials_factory ||= {})['Hardware'] ||= begin
+                                                                            m = Sketchup.active_model.materials['HARDWARE']
+                                                                            if m.nil?
+                                                                              m = Sketchup.active_model.materials.add('HARDWARE')
+                                                                              m.color = 'white'
+                                                                              ma = MaterialAttributes.new(m)
+                                                                              ma.type = MaterialAttributes::TYPE_HARDWARE
+                                                                              ma.write_to_attributes
+                                                                            end
+                                                                            m
                                                                           end
-                                                                          m
-                                                                        end
 
-        _process_machining_group_links(component.machining_group_links, definition.entities)
-        _process_machining_links(component.machining_links, definition.entities)
+          _process_machining_group_links(component.machining_group_links, definition.entities)
+          _process_machining_links(component.machining_links, definition.entities)
+
+        end
 
       end
 
