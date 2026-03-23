@@ -905,7 +905,7 @@ module Ladb::OpenCutList
 
       # Setup Importers
       Sketchup.register_importer(CsvImporter.new)
-      Sketchup.register_importer(Bxf2Importer.new) if IS_DEV && !IS_RBZ
+      Sketchup.register_importer(Bxf2Importer.new)
 
     end
 
