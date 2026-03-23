@@ -108,7 +108,10 @@ module Ladb::OpenCutList
         part_name = 'PART' if part_name.nil? || part_name.empty?
 
         definition = (@parts_factory ||= {})[part] ||= begin
+
                                                          definition = Sketchup.active_model.definitions.add(part_name)
+
+                                                         # Draw geometry
                                                          if part.geometry.is_a?(Bxf::BxfGeometryBox)
                                                            _draw_box(definition.entities, part.geometry.extent.to_b)
                                                          elsif part.geometry.is_a?(Bxf::BxfGeometryPrism)
@@ -116,6 +119,12 @@ module Ladb::OpenCutList
                                                          elsif part.geometry.is_a?(Bxf::BxfGeometryCylinder)
                                                            _draw_cylinder(definition.entities, part.geometry)
                                                          end
+
+                                                         # Process machinings
+                                                         _process_inherited_machinings(part.inherited_machinings, definition.entities)
+                                                         _process_machining_group_links(part.machining_group_links, definition.entities, IDENTITY)
+                                                         _process_machining_links(part.machining_links, definition.entities, IDENTITY)
+
                                                          definition
                                                        end
 
@@ -131,10 +140,6 @@ module Ladb::OpenCutList
                                                                       end
                                                                       m
                                                                     end
-
-        _process_inherited_machinings(part.inherited_machinings, definition.entities)
-        _process_machining_group_links(part.machining_group_links, definition.entities, IDENTITY)
-        _process_machining_links(part.machining_links, definition.entities, IDENTITY)
 
       end
 
@@ -194,7 +199,11 @@ module Ladb::OpenCutList
                                                                          [10.mm, 10.mm, 10.mm]
                                                                        ))
                                                                      end
-                                                                     definition.description = article.description if article && article.description
+                                                                     if article && article.description
+                                                                       definition.description = article.description
+                                                                     elsif component.description
+                                                                       definition.description = component.description
+                                                                     end
                                                                    end
                                                                    definition
                                                                  end

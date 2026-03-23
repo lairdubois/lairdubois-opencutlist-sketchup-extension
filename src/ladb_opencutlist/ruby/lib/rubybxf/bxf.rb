@@ -1219,7 +1219,7 @@ module Ladb::OpenCutList
 
       def read(cabinet_groups_elm)
 
-        cabinet_groups_elm.elements.each('cabinetLink') do |elm|
+        cabinet_groups_elm.elements.each('cabinetLinks/cabinetLink') do |elm|
           self.cabinet_links << BxfCabinetLink.new(model).read(elm)
         end
 
