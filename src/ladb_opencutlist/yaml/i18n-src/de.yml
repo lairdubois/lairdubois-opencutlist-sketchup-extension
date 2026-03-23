@@ -744,6 +744,7 @@ tab:
       type_4: $t(tab.materials.type_4)
       type_5: $t(tab.materials.type_5)
       type_6: $t(tab.materials.type_6)
+      type_7: $t(tab.materials.type_7)
       type_-1: $t(default.cut_plural)
       tooltip:
         incompatible_unit: Einheit nicht kompatibel mit den Kalkulationsoptionen des Materials
@@ -1574,6 +1575,7 @@ tab:
     type_4: Kantenband
     type_5: Zubehör
     type_6: Furnier
+    type_7: Bearbeitung
     tooltip:
       type_0: Materialtyp '$t(tab.materials.type_0)'
       type_1: Materialtyp '$t(tab.materials.type_1)'
@@ -1582,6 +1584,7 @@ tab:
       type_4: Materialtyp '$t(tab.materials.type_4)'
       type_5: Materialtyp '$t(tab.materials.type_5)'
       type_6: Materialtyp '$t(tab.materials.type_6)'
+      type_7: Materialtyp '$t(tab.materials.type_7)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Faserrichtung
@@ -2248,6 +2251,7 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
+    filter_7: $t(tab.materials.type_7)
     action_0: Teile bemalen
     action_0_status: "Klicken Sie auf ein Teil, um die Instanz einzufärben"
     action_1: Kanten bemalen
