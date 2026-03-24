@@ -171,7 +171,7 @@ module Ladb::OpenCutList
         function_unit_group.definition.description = function_unit.description if function_unit.description
         function_unit_group.transformation = transformation * function_unit_link.transformations.to_t
 
-        entities_stacks = {}
+        article_entities_stacks = {}
         function_unit.article_links.each do |article_link|
 
           article = article_link.article
@@ -183,7 +183,7 @@ module Ladb::OpenCutList
             article_group.definition.description = article.description if article.description
 
             article.component_numbers.each do |component_number|
-              (entities_stacks[component_number] ||= []) << article_group.entities
+              (article_entities_stacks[component_number] ||= []) << article_group.entities
             end
 
           end
@@ -191,13 +191,13 @@ module Ladb::OpenCutList
         end
 
         _process_part_links(function_unit.part_links, function_unit_group.entities)
-        _process_component_links(function_unit.component_links, function_unit_group.entities, entities_stacks)
+        _process_component_links(function_unit.component_links, function_unit_group.entities, article_entities_stacks)
 
       end
 
     end
 
-    def _process_component_links(component_links, entities, entities_stacks = {})
+    def _process_component_links(component_links, entities, article_entities_stacks = {})
 
       component_links.each do |component_link|
 
@@ -205,8 +205,8 @@ module Ladb::OpenCutList
         article = component.article
 
         # Try to retrieve the entities from the stack of entities for the related article that is currently being processed
-        if (stack = entities_stacks[component.component_number]) && (article_entities = stack.pop)
-          entities_stacks.delete(component.component_number) if stack.empty?
+        if (stack = article_entities_stacks[component.component_number]) && (article_entities = stack.pop)
+          article_entities_stacks.delete(component.component_number) if stack.empty?
           component_entities = article_entities
         else
           component_entities = entities
