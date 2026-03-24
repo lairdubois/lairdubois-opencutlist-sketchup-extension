@@ -2039,6 +2039,20 @@ module Ladb::OpenCutList
 
       end
 
+      def read(machining_elm)
+
+        orientation_elm = machining_elm.attributes['orientation']
+        self.orientation.read(orientation_elm) if orientation_elm
+
+        original_size_elm = machining_elm.attributes['originalSize']
+        self.original_size.read(original_size_elm) if original_size_elm
+
+        final_size_elm = machining_elm.attributes['finalSize']
+        self.final_size.read(final_size_elm) if final_size_elm
+
+        super
+      end
+
     end
 
     class BxfMachiningDrilling < BxfMachining

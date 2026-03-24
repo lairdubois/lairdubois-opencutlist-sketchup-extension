@@ -5,6 +5,9 @@ module Ladb::OpenCutList
 
   class Bxf2Importer < Sketchup::Importer
 
+    NODE_UP_TRANSFORM = Geom::Transformation.axes(ORIGIN, X_AXIS, Z_AXIS, Y_AXIS.reverse)
+    COMPONENT_UP_TRANSFORM = Geom::Transformation.axes(ORIGIN, X_AXIS, Z_AXIS.reverse, Y_AXIS)
+
     def description
       "OpenCutList BXF2 (*.bxf2)"
     end
@@ -40,7 +43,7 @@ module Ladb::OpenCutList
         bxf_model.scene.nodes.each do |node|
 
           entities = model.active_entities
-          transformation = Geom::Transformation.axes(ORIGIN, X_AXIS, Z_AXIS, Y_AXIS.reverse) * node.transformations.to_t
+          transformation = NODE_UP_TRANSFORM * node.transformations.to_t
 
           _process_cabinet_group_links(node.cabinet_group_links, entities, transformation)
           _process_cabinet_links(node.cabinet_links, entities, transformation)
@@ -122,8 +125,8 @@ module Ladb::OpenCutList
 
                                                          # Process machinings
                                                          _process_inherited_machinings(part.inherited_machinings, definition.entities)
-                                                         _process_machining_group_links(part.machining_group_links, definition.entities, IDENTITY)
-                                                         _process_machining_links(part.machining_links, definition.entities, IDENTITY)
+                                                         _process_machining_group_links(part.machining_group_links, definition.entities)
+                                                         _process_machining_links(part.machining_links, definition.entities)
 
                                                          definition
                                                        end
@@ -132,11 +135,14 @@ module Ladb::OpenCutList
         instance.material = (@materials_factory ||= {})['part'] ||= begin
                                                                       m = Sketchup.active_model.materials['PANEL']
                                                                       if m.nil?
+
+                                                                        # Create a new TYPE_SHEET_GOOD material for the part
                                                                         m = Sketchup.active_model.materials.add('PANEL')
                                                                         m.color = 'white'
                                                                         ma = MaterialAttributes.new(m)
                                                                         ma.type = MaterialAttributes::TYPE_SHEET_GOOD
                                                                         ma.write_to_attributes
+
                                                                       end
                                                                       m
                                                                     end
@@ -160,6 +166,7 @@ module Ladb::OpenCutList
         function_unit = function_unit_link.function_unit
 
         group = entities.add_group
+        group.name = "#{("A"..).lazy.first(function_unit_link.zone.column + 1).last}/#{function_unit_link.zone.row + 1}"
         group.definition.description = function_unit.description if function_unit.description
         group.transformation = transformation * function_unit_link.transformations.to_t
 
@@ -195,10 +202,13 @@ module Ladb::OpenCutList
           component = component_link.component
 
           definition = (@components_factory ||= {})[component] ||= begin
+
                                                                      component_name = "#{"#{article.article_number}_" if article}#{component.component_number}"
                                                                      definition = Sketchup.active_model.definitions[component_name]
                                                                      if definition.nil?
                                                                        begin
+
+                                                                         # Lod component from local DAE file
                                                                          base_path = File.dirname(File.expand_path(@file_path))
                                                                          file_name = "#{component_name}.dae"
                                                                          file_path = File.join(base_path, "cadData", file_name)
@@ -207,35 +217,68 @@ module Ladb::OpenCutList
                                                                            merge_coplanar_faces: true
                                                                          })
                                                                          definition.name = component_name
+
                                                                        rescue Exception => e
+
                                                                          puts "Error loading component: #{file_path} #{e.message}"
+
+                                                                         # Create a box instead of the component
                                                                          definition = Sketchup.active_model.definitions.add(component_name)
                                                                          _draw_box(definition.entities, Geom::BoundingBox.new.add(
                                                                            [-10.mm, -10.mm, -10.mm],
                                                                            [10.mm, 10.mm, 10.mm]
                                                                          ))
+
                                                                        end
+
+                                                                       # Process machinings
+                                                                       _process_machining_group_links(component.machining_group_links, definition.entities)
+                                                                       _process_machining_links(component.machining_links, definition.entities)
+
+                                                                       # Set description if available
                                                                        definition.description = component.description if component.description
+
                                                                      end
+
                                                                      definition
                                                                    end
 
-          instance = component_entities.add_instance(definition, component_link.transformations.to_t * Geom::Transformation.axes(ORIGIN, X_AXIS, Z_AXIS.reverse, Y_AXIS))
+          t = component_link.transformations.to_t
+
+          # Special case for "Cut" machining that is applyed as scale transformation on the instance
+          if (cut_machining_link = component.machining_links.find { |link| link.machining.is_a?(Bxf::BxfMachiningCut) })
+
+            cut_machining = cut_machining_link.machining
+
+            orientation_v = cut_machining.orientation.to_v.normalize!
+            original_size = cut_machining.original_size.to_l
+            final_size = cut_machining.final_size.to_l
+
+            factor = (original_size - final_size) / original_size
+            scale_x = 1.0 - (orientation_v.x * factor).abs
+            scale_y = 1.0 - (orientation_v.y * factor).abs
+            scale_z = 1.0 - (orientation_v.z * factor).abs
+
+            t *= cut_machining_link.transformations.to_t * Geom::Transformation.scaling(scale_x, scale_y, scale_z)
+
+          end
+
+          instance = component_entities.add_instance(definition, t * COMPONENT_UP_TRANSFORM)
           instance.layer = Sketchup.active_model.layers.add('OCL_HARDWARE')
           instance.material = (@materials_factory ||= {})['Hardware'] ||= begin
                                                                             m = Sketchup.active_model.materials['HARDWARE']
                                                                             if m.nil?
+
+                                                                              # Create a new TYPE_HARWARE material for the component
                                                                               m = Sketchup.active_model.materials.add('HARDWARE')
                                                                               m.color = 'white'
                                                                               ma = MaterialAttributes.new(m)
                                                                               ma.type = MaterialAttributes::TYPE_HARDWARE
                                                                               ma.write_to_attributes
+
                                                                             end
                                                                             m
                                                                           end
-
-          _process_machining_group_links(component.machining_group_links, definition.entities)
-          _process_machining_links(component.machining_links, definition.entities)
 
         end
 
@@ -293,7 +336,8 @@ module Ladb::OpenCutList
               y = row_index * row_distance
               t1 = Geom::Transformation.translation(Geom::Vector3d.new(x, y, 0))
 
-              _process_machining_links(machining_group.machining_links, group.entities, t0 * t1)
+              _process_machining_links(machining_group.machining_links, group.entities, t0 * t1
+              )
 
             end
 
@@ -301,7 +345,8 @@ module Ladb::OpenCutList
 
         else
 
-          _process_machining_links(machining_group.machining_links, group.entities, transformation * machining_group_link.transformations.to_t)
+          _process_machining_links(machining_group.machining_links, group.entities, transformation * machining_group_link.transformations.to_t
+          )
 
         end
 
@@ -378,24 +423,19 @@ module Ladb::OpenCutList
       group.material = (@materials_factory ||= {})['Machining'] ||= begin
                                                                       m = Sketchup.active_model.materials['MACHINING']
                                                                       if m.nil?
+
+                                                                        # Create a new TYPE_MACHINING material for the machining
                                                                         m = Sketchup.active_model.materials.add('MACHINING')
                                                                         m.color = '#0068ff'
                                                                         ma = MaterialAttributes.new(m)
                                                                         ma.type = MaterialAttributes::TYPE_MACHINING
                                                                         ma.write_to_attributes
+
                                                                       end
                                                                       m
                                                                     end
 
-      if bxf_machining.is_a?(Bxf::BxfMachiningCut)
-
-        group.name = 'MACHINING-CUT'
-
-        # TODO
-
-        puts "TODO: BxfMachiningCut"
-
-      elsif bxf_machining.is_a?(Bxf::BxfMachiningDrilling)
+      if bxf_machining.is_a?(Bxf::BxfMachiningDrilling)
 
         group.name = 'MACHINING-DRILLING'
 
