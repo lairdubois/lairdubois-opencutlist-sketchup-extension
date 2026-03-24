@@ -166,122 +166,130 @@ module Ladb::OpenCutList
 
         function_unit = function_unit_link.function_unit
 
-        group = entities.add_group
-        group.name = "#{("A"..).lazy.first(function_unit_link.zone.column + 1).last}/#{function_unit_link.zone.row + 1}"
-        group.definition.description = function_unit.description if function_unit.description
-        group.transformation = transformation * function_unit_link.transformations.to_t
+        function_unit_group = entities.add_group
+        function_unit_group.name = "#{("A"..).lazy.first(function_unit_link.zone.column + 1).last}/#{function_unit_link.zone.row + 1}"
+        function_unit_group.definition.description = function_unit.description if function_unit.description
+        function_unit_group.transformation = transformation * function_unit_link.transformations.to_t
 
-        _process_part_links(function_unit.part_links, group.entities)
-        _process_component_links(function_unit.component_links, group.entities)
+        entities_stacks = {}
+        function_unit.article_links.each do |article_link|
+
+          article = article_link.article
+
+          article_link.quantity.times do
+
+            article_group = function_unit_group.entities.add_group
+            article_group.name = article.article_number if article.article_number
+            article_group.definition.description = article.description if article.description
+
+            article.component_numbers.each do |component_number|
+              (entities_stacks[component_number] ||= []) << article_group.entities
+            end
+
+          end
+
+        end
+
+        _process_part_links(function_unit.part_links, function_unit_group.entities)
+        _process_component_links(function_unit.component_links, function_unit_group.entities, entities_stacks)
 
       end
 
     end
 
-    def _process_component_links(component_links, entities)
+    def _process_component_links(component_links, entities, entities_stacks = {})
 
-      component_links
-        .group_by { |component_link| component_link.component.article }
-        .each do |article, component_links|
+      component_links.each do |component_link|
 
-        if article
+        component = component_link.component
+        article = component.article
 
-          group = entities.add_group
-          group.name = article.article_number if article.article_number
-          group.definition.description = article.description if article.description
-
-          component_entities = group.entities
-
+        # Try to retrieve the entities from the stack of entities for the related article that is currently being processed
+        if (stack = entities_stacks[component.component_number]) && (article_entities = stack.pop)
+          entities_stacks.delete(component.component_number) if stack.empty?
+          component_entities = article_entities
         else
-
           component_entities = entities
-
         end
 
-        component_links.each do |component_link|
+        definition = (@components_factory ||= {})[component] ||= begin
 
-          component = component_link.component
+                                                                   component_name = "#{"#{article.article_number}_" if article}#{component.component_number}"
+                                                                   definition = Sketchup.active_model.definitions[component_name]
+                                                                   if definition.nil?
+                                                                     begin
 
-          definition = (@components_factory ||= {})[component] ||= begin
+                                                                       # Lod component from local DAE file
+                                                                       base_path = File.dirname(File.expand_path(@file_path))
+                                                                       file_name = "#{component_name}.dae"
+                                                                       file_path = File.join(base_path, "cadData", file_name)
+                                                                       definition = Sketchup.active_model.definitions.import(file_path, {
+                                                                         validate_dae: true,
+                                                                         merge_coplanar_faces: true
+                                                                       })
+                                                                       definition.name = component_name
 
-                                                                     component_name = "#{"#{article.article_number}_" if article}#{component.component_number}"
-                                                                     definition = Sketchup.active_model.definitions[component_name]
-                                                                     if definition.nil?
-                                                                       begin
+                                                                     rescue Exception => e
 
-                                                                         # Lod component from local DAE file
-                                                                         base_path = File.dirname(File.expand_path(@file_path))
-                                                                         file_name = "#{component_name}.dae"
-                                                                         file_path = File.join(base_path, "cadData", file_name)
-                                                                         definition = Sketchup.active_model.definitions.import(file_path, {
-                                                                           validate_dae: true,
-                                                                           merge_coplanar_faces: true
-                                                                         })
-                                                                         definition.name = component_name
+                                                                       puts "Error loading component: #{file_path} #{e.message}"
 
-                                                                       rescue Exception => e
-
-                                                                         puts "Error loading component: #{file_path} #{e.message}"
-
-                                                                         # Create a box instead of the component
-                                                                         definition = Sketchup.active_model.definitions.add(component_name)
-                                                                         _draw_box(definition.entities, Geom::BoundingBox.new.add(
-                                                                           [-10.mm, -10.mm, -10.mm],
-                                                                           [10.mm, 10.mm, 10.mm]
-                                                                         ))
-
-                                                                       end
-
-                                                                       # Process machinings
-                                                                       _process_machining_group_links(component.machining_group_links, definition.entities)
-                                                                       _process_machining_links(component.machining_links, definition.entities)
-
-                                                                       # Set description if available
-                                                                       definition.description = component.description if component.description
+                                                                       # Create a box instead of the component
+                                                                       definition = Sketchup.active_model.definitions.add(component_name)
+                                                                       _draw_box(definition.entities, Geom::BoundingBox.new.add(
+                                                                         [-10.mm, -10.mm, -10.mm],
+                                                                         [10.mm, 10.mm, 10.mm]
+                                                                       ))
 
                                                                      end
 
-                                                                     definition
+                                                                     # Process machinings
+                                                                     _process_machining_group_links(component.machining_group_links, definition.entities)
+                                                                     _process_machining_links(component.machining_links, definition.entities)
+
+                                                                     # Set description if available
+                                                                     definition.description = component.description if component.description
+
                                                                    end
 
-          t = component_link.transformations.to_t
+                                                                   definition
+                                                                 end
 
-          # Special case for "Cut" machining that is applyed as scale transformation on the instance
-          if (cut_machining_link = component.machining_links.find { |link| link.machining.is_a?(Bxf::BxfMachiningCut) })
+        t = component_link.transformations.to_t
 
-            cut_machining = cut_machining_link.machining
+        # Special case for "Cut" machining that is applyed as scale transformation on the instance
+        if (cut_machining_link = component.machining_links.find { |link| link.machining.is_a?(Bxf::BxfMachiningCut) })
 
-            orientation_v = cut_machining.orientation.to_v.normalize!
-            original_size = cut_machining.original_size.to_l
-            final_size = cut_machining.final_size.to_l
+          cut_machining = cut_machining_link.machining
 
-            factor = (original_size - final_size) / original_size
-            scale_x = 1.0 - (orientation_v.x * factor).abs
-            scale_y = 1.0 - (orientation_v.y * factor).abs
-            scale_z = 1.0 - (orientation_v.z * factor).abs
+          orientation_v = cut_machining.orientation.to_v.normalize!
+          original_size = cut_machining.original_size.to_l
+          final_size = cut_machining.final_size.to_l
 
-            t *= cut_machining_link.transformations.to_t * Geom::Transformation.scaling(scale_x, scale_y, scale_z)
+          factor = (original_size - final_size) / original_size
+          scale_x = 1.0 - (orientation_v.x * factor).abs
+          scale_y = 1.0 - (orientation_v.y * factor).abs
+          scale_z = 1.0 - (orientation_v.z * factor).abs
 
-          end
-
-          instance = component_entities.add_instance(definition, t * COMPONENT_UP_TRANSFORM)
-          instance.layer = Sketchup.active_model.layers.add('OCL_HARDWARE')
-          instance.material = (@materials_factory ||= {})['Hardware'] ||= begin
-                                                                            m = Sketchup.active_model.materials['HARDWARE']
-                                                                            if m.nil?
-
-                                                                              # Create a new TYPE_HARWARE material for the component
-                                                                              m = Sketchup.active_model.materials.add('HARDWARE')
-                                                                              m.color = 'white'
-                                                                              ma = MaterialAttributes.new(m)
-                                                                              ma.type = MaterialAttributes::TYPE_HARDWARE
-                                                                              ma.write_to_attributes
-
-                                                                            end
-                                                                            m
-                                                                          end
+          t *= cut_machining_link.transformations.to_t * Geom::Transformation.scaling(scale_x, scale_y, scale_z)
 
         end
+
+        instance = component_entities.add_instance(definition, t * COMPONENT_UP_TRANSFORM)
+        instance.layer = Sketchup.active_model.layers.add('OCL_HARDWARE')
+        instance.material = (@materials_factory ||= {})['Hardware'] ||= begin
+                                                                          m = Sketchup.active_model.materials['HARDWARE']
+                                                                          if m.nil?
+
+                                                                            # Create a new TYPE_HARWARE material for the component
+                                                                            m = Sketchup.active_model.materials.add('HARDWARE')
+                                                                            m.color = 'white'
+                                                                            ma = MaterialAttributes.new(m)
+                                                                            ma.type = MaterialAttributes::TYPE_HARDWARE
+                                                                            ma.write_to_attributes
+
+                                                                          end
+                                                                          m
+                                                                        end
 
       end
 
@@ -411,10 +419,10 @@ module Ladb::OpenCutList
       radius = bxf_cylinder.radius.to_l
       z_value = bxf_cylinder.z_value.to_l
 
-      segments = _num_segments_by_radius(radius)
+      num_segments = _num_segments_by_radius(radius)
 
-      btm_edges = entities.add_circle(ORIGIN, Z_AXIS, radius, segments)
-      top_edges = entities.add_circle(ORIGIN.offset(Z_AXIS, z_value), Z_AXIS, radius, segments)
+      btm_edges = entities.add_circle(ORIGIN, Z_AXIS, radius, num_segments)
+      top_edges = entities.add_circle(ORIGIN.offset(Z_AXIS, z_value), Z_AXIS, radius, num_segments)
 
       btm_edges.zip(top_edges).each do |btm_edge, top_edge|
         entities
@@ -495,7 +503,7 @@ module Ladb::OpenCutList
         top_vertices = top_edge1.curve.vertices
 
         group.entities.add_face(btn_vertices.map(&:position) + [ ORIGIN ])
-        group.entities.add_face(top_vertices.map(&:position) + [ ORIGIN.offset(length_v, length) ])
+        group.entities.add_face(top_vertices.map(&:position) + [ ORIGIN.offset(length_v, length) ]).reverse!
         group.entities.add_edges(ORIGIN, ORIGIN.offset(length_v, length))
 
         last_index = btn_vertices.size - 1
@@ -505,7 +513,6 @@ module Ladb::OpenCutList
           group.entities
                .add_edges(btm_vertex.position, top_vertex.position)
                .each { |edge|
-                 puts index
                  edge.smooth = edge.soft = smooth_soft
                  edge.find_faces
                }

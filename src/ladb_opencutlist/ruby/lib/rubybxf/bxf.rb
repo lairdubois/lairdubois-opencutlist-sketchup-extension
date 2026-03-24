@@ -1775,7 +1775,7 @@ module Ladb::OpenCutList
       end
 
       def article
-        id, article = model.library.articles.find { |id, article| article.component_numbers.include?(self.component_number) }
+        id, article = model.library.articles.find { |id, article| self.component_number && article.component_numbers.include?(self.component_number) }
         article
       end
 
