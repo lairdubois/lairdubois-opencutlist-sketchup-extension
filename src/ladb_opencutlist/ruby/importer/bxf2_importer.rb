@@ -1,6 +1,7 @@
 module Ladb::OpenCutList
 
   require_relative '../lib/rubybxf/bxf'
+  require_relative '../lib/geometrix/geometrix'
   require_relative '../model/attributes/material_attributes'
 
   class Bxf2Importer < Sketchup::Importer
@@ -364,6 +365,19 @@ module Ladb::OpenCutList
 
     # -- Drawing --
 
+    def _num_segments_by_radius(radius,
+                                min_num_segments: 6,
+                                max_num_segments: 24,
+                                max_segment_length: 2.mm,
+                                arc_length: Geometrix::TWO_PI
+    )
+      segments = (arc_length / (2 * Math.asin(max_segment_length / (radius * 2))))
+                   .ceil
+                   .clamp(min_num_segments, max_num_segments)
+      segments += 1 if segments.odd?
+      segments
+    end
+
     def _draw_box(entities, bounds)
 
       kb = Kuix::Bounds3d.new.copy!(bounds)
@@ -397,9 +411,7 @@ module Ladb::OpenCutList
       radius = bxf_cylinder.radius.to_l
       z_value = bxf_cylinder.z_value.to_l
 
-      segments = (2 * Math::PI / (2 * Math.asin(2.mm / (radius * 2)))).ceil
-      segments = [ [ segments, 6 ].max, 24 ].min
-      segments += 1 if segments.odd?
+      segments = _num_segments_by_radius(radius)
 
       btm_edges = entities.add_circle(ORIGIN, Z_AXIS, radius, segments)
       top_edges = entities.add_circle(ORIGIN.offset(Z_AXIS, z_value), Z_AXIS, radius, segments)
@@ -444,12 +456,10 @@ module Ladb::OpenCutList
 
         depth_v = bxf_machining.depth_orientation.to_v
 
-        segments = (2 * Math::PI / (2 * Math.asin(2.mm / (radius * 2)))).ceil
-        segments = [ [ segments, 6 ].max, 16 ].min
-        segments += 1 if segments.odd?
+        num_segments = _num_segments_by_radius(radius, max_num_segments: 12)
 
-        btm_edges = group.entities.add_circle(ORIGIN, depth_v, radius, segments)
-        top_edges = group.entities.add_circle(ORIGIN.offset(depth_v, depth), depth_v, radius, segments)
+        btm_edges = group.entities.add_circle(ORIGIN, depth_v, radius, num_segments)
+        top_edges = group.entities.add_circle(ORIGIN.offset(depth_v, depth), depth_v, radius, num_segments)
 
         group.entities.add_face(btm_edges)
         group.entities.add_face(top_edges)
@@ -467,9 +477,39 @@ module Ladb::OpenCutList
 
         group.name = 'MACHINING-ROUNDING'
 
-        # TODO
+        radius = bxf_machining.radius.to_l
+        length = bxf_machining.length.to_l
 
-        puts "TODO: BxfMachiningRounding"
+        length_v = bxf_machining.length_orientation.to_v
+
+        num_segments = _num_segments_by_radius(radius, max_num_segments: 12, arc_length: Geometrix::HALF_PI)
+
+        arc_origin = ORIGIN
+                       .offset(X_AXIS, -radius)
+                       .offset(Z_AXIS, radius)
+
+        btm_edge1, _ = group.entities.add_arc(arc_origin, X_AXIS, length_v, radius, 0, Geometrix::HALF_PI, num_segments)
+        top_edge1, _ = group.entities.add_arc(arc_origin.offset(length_v, length), X_AXIS, length_v, radius, 0, Geometrix::HALF_PI, num_segments)
+
+        btn_vertices = btm_edge1.curve.vertices
+        top_vertices = top_edge1.curve.vertices
+
+        group.entities.add_face(btn_vertices.map(&:position) + [ ORIGIN ])
+        group.entities.add_face(top_vertices.map(&:position) + [ ORIGIN.offset(length_v, length) ])
+        group.entities.add_edges(ORIGIN, ORIGIN.offset(length_v, length))
+
+        last_index = btn_vertices.size - 1
+        btn_vertices.each_with_index do |btm_vertex, index|
+          top_vertex = top_vertices[index]
+          smooth_soft = index > 0 && index < last_index
+          group.entities
+               .add_edges(btm_vertex.position, top_vertex.position)
+               .each { |edge|
+                 puts index
+                 edge.smooth = edge.soft = smooth_soft
+                 edge.find_faces
+               }
+        end
 
       elsif bxf_machining.is_a?(Bxf::BxfMachiningRabbet)
 
