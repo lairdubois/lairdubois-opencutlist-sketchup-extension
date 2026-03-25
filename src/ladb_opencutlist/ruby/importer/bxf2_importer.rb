@@ -361,9 +361,9 @@ module Ladb::OpenCutList
                                 min_num_segments: 8,
                                 max_num_segments: 24,
                                 max_segment_length: 2.mm,
-                                arc_length: Geometrix::TWO_PI
+                                arc_angle: Geometrix::TWO_PI
     )
-      segments = (arc_length / (2 * Math.asin(max_segment_length / (radius * 2))))
+      segments = (arc_angle / (2 * Math.asin(max_segment_length / (radius * 2))))
                    .ceil
                    .clamp(min_num_segments, max_num_segments)
       segments += 1 if segments.odd?
@@ -467,7 +467,7 @@ module Ladb::OpenCutList
 
           length_v = bxf_machining.length_orientation.to_v
 
-          num_segments = _num_segments_by_radius(radius, max_num_segments: 12, arc_length: Geometrix::HALF_PI)
+          num_segments = _num_segments_by_radius(radius, min_num_segments: 4, max_num_segments: 12, arc_angle: Geometrix::HALF_PI)
 
           arc_origin = ORIGIN
                          .offset(X_AXIS, -radius)
