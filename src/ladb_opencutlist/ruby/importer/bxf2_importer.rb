@@ -336,6 +336,7 @@ module Ladb::OpenCutList
         machining_group = machining_group_link.machining_group
 
         group = entities.add_group
+        group.name = machining_group.model_key if machining_group.model_key
 
         if machining_group.is_a?(Bxf::BxfGridMachining)
 
