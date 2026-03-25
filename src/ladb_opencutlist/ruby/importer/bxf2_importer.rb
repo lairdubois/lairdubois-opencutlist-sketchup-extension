@@ -27,10 +27,7 @@ module Ladb::OpenCutList
 
     def load_file(file_path, status)
 
-      @materials_factory = nil
-      @parts_factory = nil
-      @components_factory = nil
-      @machining_factory = nil
+      _clear_factories
 
       @file_path = file_path
 
@@ -39,32 +36,42 @@ module Ladb::OpenCutList
       model = Sketchup.active_model
       model.start_operation('Import BXF2', false)
 
-      begin
+        begin
 
-        bxf_model = Bxf::BxfModel.load(file_path)
-        bxf_model.scene.nodes.each do |node|
+          bxf_model = Bxf::BxfModel.load(file_path)
+          bxf_model.scene.nodes.each do |node|
 
-          entities = model.active_entities
-          transformation = NODE_UP_TRANSFORM * node.transformations.to_t
+            entities = model.active_entities
+            transformation = NODE_UP_TRANSFORM * node.transformations.to_t
 
-          _process_cabinet_group_links(node.cabinet_group_links, entities, transformation)
-          _process_cabinet_links(node.cabinet_links, entities, transformation)
-          _process_container_links(node.container_links, entities, transformation)
-          _process_function_unit_links(node.function_unit_links, entities, transformation)
+            _process_cabinet_group_links(node.cabinet_group_links, entities, transformation)
+            _process_cabinet_links(node.cabinet_links, entities, transformation)
+            _process_container_links(node.container_links, entities, transformation)
+            _process_function_unit_links(node.function_unit_links, entities, transformation)
 
+          end
+
+        rescue Exception => e
+          PLUGIN.dump_exception(e)
+          Sketchup.active_model.abort_operation
+          return Sketchup::Importer::ImportFail
+        ensure
+          _clear_factories
         end
 
-      rescue Exception => e
-        PLUGIN.dump_exception(e)
-        Sketchup.active_model.abort_operation
-        return Sketchup::Importer::ImportFail
-      end
+      model.commit_operation
 
-      Sketchup.active_model.commit_operation
       Sketchup::Importer::ImportSuccess
     end
 
     private
+
+    def _clear_factories
+      @materials_factory = nil
+      @parts_factory = nil
+      @components_factory = nil
+      @machining_factory = nil
+    end
 
     def _process_cabinet_group_links(cabinet_group_links, entities, transformation = IDENTITY)
 
@@ -438,13 +445,28 @@ module Ladb::OpenCutList
 
     def _draw_machining(entities, bxf_machining, transformation = IDENTITY)
 
-      if (definition = (@machining_factory ||= {})[bxf_machining]).nil?
+      if (ref_group = (@machining_factory ||= {})[bxf_machining]).nil?
 
         group = entities.add_group
         group.transformation = transformation
+        group.layer = Sketchup.active_model.layers.add('OCL_MACHINING')
+        group.material = (@materials_factory ||= {})['Machining'] ||= begin
+                                                                        m = Sketchup.active_model.materials['MACHINING']
+                                                                        if m.nil?
 
-        # Keep group definition
-        @machining_factory[bxf_machining] = group.definition
+                                                                          # Create a new TYPE_MACHINING material for the machining
+                                                                          m = Sketchup.active_model.materials.add('MACHINING')
+                                                                          m.color = '#0068ff'
+                                                                          ma = MaterialAttributes.new(m)
+                                                                          ma.type = MaterialAttributes::TYPE_MACHINING
+                                                                          ma.write_to_attributes
+
+                                                                        end
+                                                                        m
+                                                                      end
+
+        # Keep group as reference
+        @machining_factory[bxf_machining] = group
 
         # Draw content
         if bxf_machining.is_a?(Bxf::BxfMachiningDrilling)
@@ -609,24 +631,11 @@ module Ladb::OpenCutList
         end
 
       else
-        group = entities.add_instance(definition, transformation)
+        group = entities.add_instance(ref_group.definition, transformation)
+        group.name = ref_group.name
+        group.layer = ref_group.layer
+        group.material = ref_group.material
       end
-
-      group.layer = Sketchup.active_model.layers.add('OCL_MACHINING')
-      group.material = (@materials_factory ||= {})['Machining'] ||= begin
-                                                                      m = Sketchup.active_model.materials['MACHINING']
-                                                                      if m.nil?
-
-                                                                        # Create a new TYPE_MACHINING material for the machining
-                                                                        m = Sketchup.active_model.materials.add('MACHINING')
-                                                                        m.color = '#0068ff'
-                                                                        ma = MaterialAttributes.new(m)
-                                                                        ma.type = MaterialAttributes::TYPE_MACHINING
-                                                                        ma.write_to_attributes
-
-                                                                      end
-                                                                      m
-                                                                    end
 
     end
 
