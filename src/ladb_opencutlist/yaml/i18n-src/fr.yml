@@ -1076,7 +1076,7 @@ tab:
       option_irregular_allowed_rotations_0: Aucune
       option_irregular_allowed_rotations_90: Pas de 90°
       option_irregular_allowed_rotations_180: Pas de 180°
-      option_irregular_allowed_rotations_free: Libre (Expérimental)
+      option_irregular_allowed_rotations_free: Libre
       option_irregular_allow_mirroring: Mirroir autorisé
       option_irregular_allow_mirroring_help: |
         Définit si le mirroir de la pièce est autorisée pour le placement.
@@ -1145,6 +1145,13 @@ tab:
         Permet de définir la largeur de diagramme en dessous de laquelle les diagrammes sont automatiquement agrandis.
 
         *L'agrandissement sera calculé sur le diagramme le plus large*.
+      option_use_pre_process: Prétraitement
+      option_use_pre_process_0: Aucun
+      option_use_pre_process_1: Exclure les pièces trop grandes
+      option_use_pre_process_help: |
+        Permet d'activer ou désactiver le prétraitement des pièces afin d'exclure les pièces trop grandes pour être placées dans les panneaux, feuilles, barres ou bandes.
+        
+        *L'activation de cette option peut alonger le temps de calcul.*
       option_time_limit: Limite de temps
       option_time_limit_help: |
         Fixe le temps impartit au calcul

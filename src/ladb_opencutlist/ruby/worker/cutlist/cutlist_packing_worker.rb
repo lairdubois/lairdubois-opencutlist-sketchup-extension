@@ -237,6 +237,7 @@ module Ladb::OpenCutList
                    trimming: '10mm',
                    time_limit: 0,
                    verbosity_level: 0,
+                   use_pre_process: false,
                    use_tree_search: true,
                    use_sequential_single_knapsack: true,
                    use_sequential_value_correction: true,
@@ -288,6 +289,7 @@ module Ladb::OpenCutList
       @trimming = DimensionUtils.str_to_ifloat(DimensionUtils.str_add_units(trimming)).to_l.to_f
       @time_limit = Plugin::IS_RBZ ? 300 : [ 0 , time_limit.to_i ].max # Only dev from src uses custom time limit
       @verbosity_level = verbosity_level.to_i
+      @use_pre_process = use_pre_process
       @use_tree_search = use_tree_search
       @use_sequential_single_knapsack = use_sequential_single_knapsack
       @use_sequential_value_correction = use_sequential_value_correction
@@ -586,6 +588,7 @@ module Ladb::OpenCutList
                                @optimization_mode
                              end,
           verbosity_level: @verbosity_level,
+          use_pre_process: @use_pre_process,
           use_tree_search: @use_tree_search,
           use_sequential_single_knapsack: @use_sequential_single_knapsack,
           use_sequential_value_correction: @use_sequential_value_correction,
