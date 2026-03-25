@@ -117,7 +117,7 @@ module Ladb::OpenCutList
 
         part_name = part_link.description
         part_name = part.description if part_name.nil? || part_name.empty?
-        part_name = 'PART' if part_name.nil? || part_name.empty?
+        part_name = PLUGIN.get_i18n_string('default.part_single').capitalize if part_name.nil? || part_name.empty?
 
         definition = (@parts_factory ||= {})[part] ||= begin
 
@@ -141,20 +141,7 @@ module Ladb::OpenCutList
                                                        end
 
         instance = entities.add_instance(definition, part_link.transformations.to_t)
-        instance.material = (@materials_factory ||= {})['part'] ||= begin
-                                                                      m = Sketchup.active_model.materials['PANEL']
-                                                                      if m.nil?
-
-                                                                        # Create a new TYPE_SHEET_GOOD material for the part
-                                                                        m = Sketchup.active_model.materials.add('PANEL')
-                                                                        m.color = 'white'
-                                                                        ma = MaterialAttributes.new(m)
-                                                                        ma.type = MaterialAttributes::TYPE_SHEET_GOOD
-                                                                        ma.write_to_attributes
-
-                                                                      end
-                                                                      m
-                                                                    end
+        instance.material = _get_part_material
 
       end
 
@@ -286,20 +273,7 @@ module Ladb::OpenCutList
 
         instance = component_entities.add_instance(definition, t * COMPONENT_UP_TRANSFORM)
         instance.layer = Sketchup.active_model.layers.add('OCL_HARDWARE')
-        instance.material = (@materials_factory ||= {})['Hardware'] ||= begin
-                                                                          m = Sketchup.active_model.materials['HARDWARE']
-                                                                          if m.nil?
-
-                                                                            # Create a new TYPE_HARWARE material for the component
-                                                                            m = Sketchup.active_model.materials.add('HARDWARE')
-                                                                            m.color = 'white'
-                                                                            ma = MaterialAttributes.new(m)
-                                                                            ma.type = MaterialAttributes::TYPE_HARDWARE
-                                                                            ma.write_to_attributes
-
-                                                                          end
-                                                                          m
-                                                                        end
+        instance.material = _get_hardware_material
 
       end
 
@@ -337,6 +311,7 @@ module Ladb::OpenCutList
 
         group = entities.add_group
         group.name = machining_group.model_key if machining_group.model_key
+        group.material = _get_machining_material
 
         if machining_group.is_a?(Bxf::BxfGridMachining)
 
@@ -451,20 +426,7 @@ module Ladb::OpenCutList
         group = entities.add_group
         group.transformation = transformation
         group.layer = Sketchup.active_model.layers.add('OCL_MACHINING')
-        group.material = (@materials_factory ||= {})['Machining'] ||= begin
-                                                                        m = Sketchup.active_model.materials['MACHINING']
-                                                                        if m.nil?
-
-                                                                          # Create a new TYPE_MACHINING material for the machining
-                                                                          m = Sketchup.active_model.materials.add('MACHINING')
-                                                                          m.color = '#0068ff'
-                                                                          ma = MaterialAttributes.new(m)
-                                                                          ma.type = MaterialAttributes::TYPE_MACHINING
-                                                                          ma.write_to_attributes
-
-                                                                        end
-                                                                        m
-                                                                      end
+        group.material = _get_machining_material
 
         # Keep group as reference
         @machining_factory[bxf_machining] = group
@@ -638,6 +600,54 @@ module Ladb::OpenCutList
         group.material = ref_group.material
       end
 
+    end
+
+
+    # -- Materials --
+
+    def _get_part_material
+      material = Sketchup.active_model.materials['PANEL']
+      if material.nil?
+
+        # Create a new TYPE_SHEET_GOOD material for the part
+        material = Sketchup.active_model.materials.add('PANEL')
+        material.color = 'white'
+        ma = MaterialAttributes.new(material)
+        ma.type = MaterialAttributes::TYPE_SHEET_GOOD
+        ma.write_to_attributes
+
+      end
+      material
+    end
+
+    def _get_machining_material
+      material = Sketchup.active_model.materials['MACHINING']
+      if material.nil?
+
+        # Create a new TYPE_MACHINING material for the machining
+        material = Sketchup.active_model.materials.add('MACHINING')
+        material.color = '#0068ff'
+        ma = MaterialAttributes.new(material)
+        ma.type = MaterialAttributes::TYPE_MACHINING
+        ma.write_to_attributes
+
+      end
+      material
+    end
+
+    def _get_hardware_material
+      material = Sketchup.active_model.materials['HARDWARE']
+      if material.nil?
+
+        # Create a new TYPE_HARWARE material for the component
+        material = Sketchup.active_model.materials.add('HARDWARE')
+        material.color = 'white'
+        ma = MaterialAttributes.new(material)
+        ma.type = MaterialAttributes::TYPE_HARDWARE
+        ma.write_to_attributes
+
+      end
+      material
     end
 
   end
