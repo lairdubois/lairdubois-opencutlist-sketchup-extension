@@ -30,6 +30,7 @@ module Ladb::OpenCutList
       @materials_factory = nil
       @parts_factory = nil
       @components_factory = nil
+      @machining_factory = nil
 
       @file_path = file_path
 
@@ -205,8 +206,8 @@ module Ladb::OpenCutList
         article = component.article
 
         # Try to retrieve the entities from the stack of entities for the related article that is currently being processed
-        if (stack = article_entities_stacks[component.component_number]) && (article_entities = stack.pop)
-          article_entities_stacks.delete(component.component_number) if stack.empty?
+        if (stack = article_entities_stacks[component.component_number]) && (article_entities = stack.first)
+          stack.rotate!(1)
           component_entities = article_entities
         else
           component_entities = entities
@@ -219,10 +220,12 @@ module Ladb::OpenCutList
                                                                    if definition.nil?
                                                                      begin
 
-                                                                       # Lod component from local DAE file
+                                                                       # Load component from local DAE file
                                                                        base_path = File.dirname(File.expand_path(@file_path))
                                                                        file_name = "#{component_name}.dae"
                                                                        file_path = File.join(base_path, "cadData", file_name)
+                                                                       file_path = File.join(base_path, "cadData", " #{file_name}") unless File.exist?(file_path) # Workaround for configurator bug with space on some files
+
                                                                        definition = Sketchup.active_model.definitions.import(file_path, {
                                                                          validate_dae: true,
                                                                          merge_coplanar_faces: true
@@ -345,8 +348,7 @@ module Ladb::OpenCutList
               y = row_index * row_distance
               t1 = Geom::Transformation.translation(Geom::Vector3d.new(x, y, 0))
 
-              _process_machining_links(machining_group.machining_links, group.entities, t0 * t1
-              )
+              _process_machining_links(machining_group.machining_links, group.entities, t0 * t1)
 
             end
 
@@ -354,8 +356,7 @@ module Ladb::OpenCutList
 
         else
 
-          _process_machining_links(machining_group.machining_links, group.entities, transformation * machining_group_link.transformations.to_t
-          )
+          _process_machining_links(machining_group.machining_links, group.entities, transformation * machining_group_link.transformations.to_t)
 
         end
 
@@ -374,7 +375,7 @@ module Ladb::OpenCutList
     # -- Drawing --
 
     def _num_segments_by_radius(radius,
-                                min_num_segments: 6,
+                                min_num_segments: 8,
                                 max_num_segments: 24,
                                 max_segment_length: 2.mm,
                                 arc_length: Geometrix::TWO_PI
@@ -437,8 +438,180 @@ module Ladb::OpenCutList
 
     def _draw_machining(entities, bxf_machining, transformation = IDENTITY)
 
-      group = entities.add_group
-      group.transformation = transformation
+      if (definition = (@machining_factory ||= {})[bxf_machining]).nil?
+
+        group = entities.add_group
+        group.transformation = transformation
+
+        # Keep group definition
+        @machining_factory[bxf_machining] = group.definition
+
+        # Draw content
+        if bxf_machining.is_a?(Bxf::BxfMachiningDrilling)
+
+          group.name = 'MACHINING-DRILLING'
+
+          radius = bxf_machining.radius.to_l
+          depth = bxf_machining.depth.to_l
+
+          depth_v = bxf_machining.depth_orientation.to_v
+
+          num_segments = _num_segments_by_radius(radius, max_num_segments: 12)
+
+          btm_edges = group.entities.add_circle(ORIGIN, depth_v, radius, num_segments)
+          top_edges = group.entities.add_circle(ORIGIN.offset(depth_v, depth), depth_v, radius, num_segments)
+
+          group.entities.add_face(btm_edges)
+          group.entities.add_face(top_edges)
+
+          btm_edges.zip(top_edges).each do |btm_edge, top_edge|
+            group.entities
+                 .add_edges(btm_edge.start.position, top_edge.start.position)
+                 .each { |edge|
+                   edge.smooth = edge.soft = true
+                   edge.find_faces
+                 }
+          end
+
+        elsif bxf_machining.is_a?(Bxf::BxfMachiningRounding)
+
+          group.name = 'MACHINING-ROUNDING'
+
+          radius = bxf_machining.radius.to_l
+          length = bxf_machining.length.to_l
+
+          length_v = bxf_machining.length_orientation.to_v
+
+          num_segments = _num_segments_by_radius(radius, max_num_segments: 12, arc_length: Geometrix::HALF_PI)
+
+          arc_origin = ORIGIN
+                         .offset(X_AXIS, -radius)
+                         .offset(Z_AXIS, radius)
+
+          btm_edge1, _ = group.entities.add_arc(arc_origin, X_AXIS, length_v, radius, 0, Geometrix::HALF_PI, num_segments)
+          top_edge1, _ = group.entities.add_arc(arc_origin.offset(length_v, length), X_AXIS, length_v, radius, 0, Geometrix::HALF_PI, num_segments)
+
+          btn_vertices = btm_edge1.curve.vertices
+          top_vertices = top_edge1.curve.vertices
+
+          group.entities.add_face(btn_vertices.map(&:position) + [ ORIGIN ])
+          group.entities.add_face(top_vertices.map(&:position) + [ ORIGIN.offset(length_v, length) ]).reverse!
+          group.entities.add_edges(ORIGIN, ORIGIN.offset(length_v, length))
+
+          last_index = btn_vertices.size - 1
+          btn_vertices.each_with_index do |btm_vertex, index|
+            top_vertex = top_vertices[index]
+            smooth_soft = index > 0 && index < last_index
+            group.entities
+                 .add_edges(btm_vertex.position, top_vertex.position)
+                 .each { |edge|
+                   edge.smooth = edge.soft = smooth_soft
+                   edge.find_faces
+                 }
+          end
+
+        elsif bxf_machining.is_a?(Bxf::BxfMachiningRabbet)
+
+          group.name = 'MACHINING-RABBET'
+
+          radius = bxf_machining.radius.to_l
+          length = bxf_machining.length.to_l
+          depth = bxf_machining.depth.to_l
+
+          length_v = bxf_machining.length_orientation.to_v
+          depth_v = bxf_machining.depth_orientation.to_v
+          width_v = length_v.cross(depth_v)
+
+          bounds = Geom::BoundingBox.new
+          bounds.add(
+            ORIGIN.offset(width_v, -radius), # P0
+            ORIGIN.offset(width_v, radius)
+                  .offset(depth_v, depth)
+                  .offset(length_v, length)  # P2+Z
+          )
+
+          _draw_box(group.entities, bounds)
+
+        elsif bxf_machining.is_a?(Bxf::BxfMachiningGroove)
+
+          group.name = 'MACHINING-GROOVE'
+
+          length_v = bxf_machining.length_orientation.to_v
+          depth_v = bxf_machining.depth_orientation.to_v
+          width_v = length_v.cross(depth_v)
+
+          bounds = Geom::BoundingBox.new
+          bounds.add(
+            ORIGIN.offset(width_v, -bxf_machining.radius.to_l), # P0
+            ORIGIN.offset(width_v, bxf_machining.radius.to_l)
+                  .offset(depth_v, bxf_machining.depth.to_l)
+                  .offset(length_v, bxf_machining.length.to_l)  # P2+Z
+          )
+
+          _draw_box(group.entities, bounds)
+
+        elsif bxf_machining.is_a?(Bxf::BxfMachiningRoundedGroove)
+
+          group.name = 'MACHINING-ROUNDED-GROOVE'
+
+          length_v = bxf_machining.length_orientation.to_v
+          depth_v = bxf_machining.depth_orientation.to_v
+          width_v = length_v.cross(depth_v)
+
+          bounds = Geom::BoundingBox.new
+          bounds.add(
+            ORIGIN.offset(width_v, -bxf_machining.radius.to_l), # P0
+            ORIGIN.offset(width_v, bxf_machining.radius.to_l)
+                  .offset(depth_v, bxf_machining.depth.to_l)
+                  .offset(length_v, bxf_machining.length.to_l)  # P2+Z
+          )
+
+          _draw_box(group.entities, bounds)
+
+        elsif bxf_machining.is_a?(Bxf::BxfMachiningGlue)
+
+          group.name = 'MACHINING-GLUE'
+
+          length_v = bxf_machining.length_orientation.to_v
+          thickness_v = bxf_machining.thickness_orientation.to_v
+          width_v = length_v.cross(thickness_v)
+
+          radius = bxf_machining.width.to_l / 2
+
+          bounds = Geom::BoundingBox.new
+          bounds.add(
+            ORIGIN.offset(width_v, -radius), # P0
+            ORIGIN.offset(width_v, radius)
+                  .offset(thickness_v, bxf_machining.thickness.to_l)
+                  .offset(length_v, bxf_machining.length.to_l)  # P2+Z
+          )
+
+          _draw_box(group.entities, bounds)
+
+        elsif bxf_machining.is_a?(Bxf::BxfMachiningChamfer)
+
+          group.name = 'MACHINING-CHAMFER'
+
+          length_v = bxf_machining.length_orientation.to_v
+          length = bxf_machining.length.to_l
+
+          pts0 = [
+            ORIGIN,
+            ORIGIN.offset(bxf_machining.distance1_orientation.to_v, bxf_machining.distance1.to_l),
+            ORIGIN.offset(bxf_machining.distance2_orientation.to_v, bxf_machining.distance1.to_l)
+          ]
+          pts1 = pts0.map { |pt| pt.offset(length_v, length) }
+
+          group.entities.add_face(pts0)
+          group.entities.add_face(pts1)
+          pts0.zip(pts1).each { |pt0, pt1| group.entities.add_edges(pt0, pt1).each(&:find_faces) }
+
+        end
+
+      else
+        group = entities.add_instance(definition, transformation)
+      end
+
       group.layer = Sketchup.active_model.layers.add('OCL_MACHINING')
       group.material = (@materials_factory ||= {})['Machining'] ||= begin
                                                                       m = Sketchup.active_model.materials['MACHINING']
@@ -454,167 +627,6 @@ module Ladb::OpenCutList
                                                                       end
                                                                       m
                                                                     end
-
-      if bxf_machining.is_a?(Bxf::BxfMachiningDrilling)
-
-        group.name = 'MACHINING-DRILLING'
-
-        radius = bxf_machining.radius.to_l
-        depth = bxf_machining.depth.to_l
-
-        depth_v = bxf_machining.depth_orientation.to_v
-
-        num_segments = _num_segments_by_radius(radius, max_num_segments: 12)
-
-        btm_edges = group.entities.add_circle(ORIGIN, depth_v, radius, num_segments)
-        top_edges = group.entities.add_circle(ORIGIN.offset(depth_v, depth), depth_v, radius, num_segments)
-
-        group.entities.add_face(btm_edges)
-        group.entities.add_face(top_edges)
-
-        btm_edges.zip(top_edges).each do |btm_edge, top_edge|
-          group.entities
-            .add_edges(btm_edge.start.position, top_edge.start.position)
-            .each { |edge|
-              edge.smooth = edge.soft = true
-              edge.find_faces
-            }
-        end
-
-      elsif bxf_machining.is_a?(Bxf::BxfMachiningRounding)
-
-        group.name = 'MACHINING-ROUNDING'
-
-        radius = bxf_machining.radius.to_l
-        length = bxf_machining.length.to_l
-
-        length_v = bxf_machining.length_orientation.to_v
-
-        num_segments = _num_segments_by_radius(radius, max_num_segments: 12, arc_length: Geometrix::HALF_PI)
-
-        arc_origin = ORIGIN
-                       .offset(X_AXIS, -radius)
-                       .offset(Z_AXIS, radius)
-
-        btm_edge1, _ = group.entities.add_arc(arc_origin, X_AXIS, length_v, radius, 0, Geometrix::HALF_PI, num_segments)
-        top_edge1, _ = group.entities.add_arc(arc_origin.offset(length_v, length), X_AXIS, length_v, radius, 0, Geometrix::HALF_PI, num_segments)
-
-        btn_vertices = btm_edge1.curve.vertices
-        top_vertices = top_edge1.curve.vertices
-
-        group.entities.add_face(btn_vertices.map(&:position) + [ ORIGIN ])
-        group.entities.add_face(top_vertices.map(&:position) + [ ORIGIN.offset(length_v, length) ]).reverse!
-        group.entities.add_edges(ORIGIN, ORIGIN.offset(length_v, length))
-
-        last_index = btn_vertices.size - 1
-        btn_vertices.each_with_index do |btm_vertex, index|
-          top_vertex = top_vertices[index]
-          smooth_soft = index > 0 && index < last_index
-          group.entities
-               .add_edges(btm_vertex.position, top_vertex.position)
-               .each { |edge|
-                 edge.smooth = edge.soft = smooth_soft
-                 edge.find_faces
-               }
-        end
-
-      elsif bxf_machining.is_a?(Bxf::BxfMachiningRabbet)
-
-        group.name = 'MACHINING-RABBET'
-
-        radius = bxf_machining.radius.to_l
-        length = bxf_machining.length.to_l
-        depth = bxf_machining.depth.to_l
-
-        length_v = bxf_machining.length_orientation.to_v
-        depth_v = bxf_machining.depth_orientation.to_v
-        width_v = length_v.cross(depth_v)
-
-        bounds = Geom::BoundingBox.new
-        bounds.add(
-          ORIGIN.offset(width_v, -radius), # P0
-          ORIGIN.offset(width_v, radius)
-                .offset(depth_v, depth)
-                .offset(length_v, length)  # P2+Z
-        )
-
-        _draw_box(group.entities, bounds)
-
-      elsif bxf_machining.is_a?(Bxf::BxfMachiningGroove)
-
-        group.name = 'MACHINING-GROOVE'
-
-        length_v = bxf_machining.length_orientation.to_v
-        depth_v = bxf_machining.depth_orientation.to_v
-        width_v = length_v.cross(depth_v)
-
-        bounds = Geom::BoundingBox.new
-        bounds.add(
-          ORIGIN.offset(width_v, -bxf_machining.radius.to_l), # P0
-          ORIGIN.offset(width_v, bxf_machining.radius.to_l)
-                .offset(depth_v, bxf_machining.depth.to_l)
-                .offset(length_v, bxf_machining.length.to_l)  # P2+Z
-        )
-
-        _draw_box(group.entities, bounds)
-
-      elsif bxf_machining.is_a?(Bxf::BxfMachiningRoundedGroove)
-
-        group.name = 'MACHINING-ROUNDED-GROOVE'
-
-        length_v = bxf_machining.length_orientation.to_v
-        depth_v = bxf_machining.depth_orientation.to_v
-        width_v = length_v.cross(depth_v)
-
-        bounds = Geom::BoundingBox.new
-        bounds.add(
-          ORIGIN.offset(width_v, -bxf_machining.radius.to_l), # P0
-          ORIGIN.offset(width_v, bxf_machining.radius.to_l)
-                .offset(depth_v, bxf_machining.depth.to_l)
-                .offset(length_v, bxf_machining.length.to_l)  # P2+Z
-        )
-
-        _draw_box(group.entities, bounds)
-
-      elsif bxf_machining.is_a?(Bxf::BxfMachiningGlue)
-
-        group.name = 'MACHINING-GLUE'
-
-        length_v = bxf_machining.length_orientation.to_v
-        thickness_v = bxf_machining.thickness_orientation.to_v
-        width_v = length_v.cross(thickness_v)
-
-        radius = bxf_machining.width.to_l / 2
-
-        bounds = Geom::BoundingBox.new
-        bounds.add(
-          ORIGIN.offset(width_v, -radius), # P0
-          ORIGIN.offset(width_v, radius)
-                .offset(thickness_v, bxf_machining.thickness.to_l)
-                .offset(length_v, bxf_machining.length.to_l)  # P2+Z
-        )
-
-        _draw_box(group.entities, bounds)
-
-      elsif bxf_machining.is_a?(Bxf::BxfMachiningChamfer)
-
-        group.name = 'MACHINING-CHAMFER'
-
-        length_v = bxf_machining.length_orientation.to_v
-        length = bxf_machining.length.to_l
-
-        pts0 = [
-          ORIGIN,
-          ORIGIN.offset(bxf_machining.distance1_orientation.to_v, bxf_machining.distance1.to_l),
-          ORIGIN.offset(bxf_machining.distance2_orientation.to_v, bxf_machining.distance1.to_l)
-        ]
-        pts1 = pts0.map { |pt| pt.offset(length_v, length) }
-
-        group.entities.add_face(pts0)
-        group.entities.add_face(pts1)
-        pts0.zip(pts1).each { |pt0, pt1| group.entities.add_edges(pt0, pt1).each(&:find_faces) }
-
-      end
 
     end
 
