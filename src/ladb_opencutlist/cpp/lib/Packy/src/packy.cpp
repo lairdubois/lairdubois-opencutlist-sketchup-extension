@@ -103,7 +103,7 @@ DLL_EXPORTS char* c_optimize_advance(
         if (status == std::future_status::ready) {
             if (run.optimize_cancelled && run.last_send_solution_pos == 0) {
 
-                // Run is cancelled, notify it in the returned output
+                // Run is canceled, notify it in the returned output
                 str_output_ = json{
                     {"cancelled", true},
                     {"run_id", run_id}
