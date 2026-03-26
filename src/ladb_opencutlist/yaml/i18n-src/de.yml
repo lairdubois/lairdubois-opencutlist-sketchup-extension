@@ -1145,6 +1145,13 @@ tab:
         Ermöglicht die Festlegung der Diagrammbreite, unterhalb derer Diagramme automatisch vergrößert werden.
 
         *Die Vergrößerung wird anhand des breitesten Diagramms berechnet*.
+      option_use_pre_process: Vorverarbeitung
+      option_use_pre_process_0: Keine
+      option_use_pre_process_1: Zu große Teile ausschließen
+      option_use_pre_process_help: |
+        Ermöglicht das Aktivieren oder Deaktivieren der Vorverarbeitung von Teilen, um Teile auszuschließen, die zu groß sind, um in Platten, Furnierblätter, Stangen oder Bänder eingefügt zu werden.
+
+        *Die Aktivierung dieser Option kann die Berechnungszeit verlängern.*
       option_time_limit: Zeitbegrenzung
       option_time_limit_help: |
         Legt die Zeit für die Berechnung fest
