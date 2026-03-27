@@ -2324,6 +2324,7 @@ tool:
   smart_join:
     title: Assemble
     action_0: Touch-Touch # TODO: It's currently just for dev purposes
+    action_0_status: TBD # TODO
   smart_export:
     title: Export
     action_0: Export 3D Part
