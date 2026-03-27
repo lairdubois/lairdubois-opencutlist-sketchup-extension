@@ -1150,7 +1150,7 @@ tab:
       option_use_pre_process_1: Exclure les pièces trop grandes
       option_use_pre_process_help: |
         Permet d'activer ou désactiver le prétraitement des pièces afin d'exclure les pièces trop grandes pour être placées dans les panneaux, feuilles, barres ou bandes.
-        
+
         *L'activation de cette option peut alonger le temps de calcul.*
       option_time_limit: Limite de temps
       option_time_limit_help: |
@@ -2324,6 +2324,7 @@ tool:
   smart_join:
     title: Assembler
     action_0: Touch-Touch # TODO: It's currently just for dev purposes
+    action_0_status: TBD # TODO
   smart_export:
     title: Exporter
     action_0: Exporter une pièce 3D

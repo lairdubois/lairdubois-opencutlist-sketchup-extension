@@ -2324,6 +2324,7 @@ tool:
   smart_join:
     title: Zusammenstellen
     action_0: Touch-Touch # TODO: It's currently just for dev purposes
+    action_0_status: TBD # TODO
   smart_export:
     title: Exportieren
     action_0: 3D Teil exportieren
