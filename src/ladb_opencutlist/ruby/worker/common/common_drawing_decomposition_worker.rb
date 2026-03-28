@@ -4,6 +4,7 @@ module Ladb::OpenCutList
   require_relative '../../helper/layer_visibility_helper'
   require_relative '../../utils/path_utils'
   require_relative '../../utils/transformation_utils'
+  require_relative '../../lib/geometrix/geometrix'
   require_relative '../../manipulator/face_manipulator'
   require_relative '../../manipulator/edge_manipulator'
   require_relative '../../manipulator/surface_manipulator'
@@ -253,7 +254,7 @@ module Ladb::OpenCutList
           }
         when FACE_VALIDATOR_EXPOSED
           face_validator = lambda { |face_manipulator|
-            !face_manipulator.perpendicular?(drawing_def.input_plane_manipulator) && drawing_def.input_plane_manipulator.angle_between(face_manipulator) < Math::PI / 2.0
+            !face_manipulator.perpendicular?(drawing_def.input_plane_manipulator) && drawing_def.input_plane_manipulator.angle_between(face_manipulator) < Geometrix::HALF_PI
           }
         end
       end

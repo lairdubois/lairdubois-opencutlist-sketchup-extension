@@ -2614,9 +2614,9 @@
                 const $inputZoomThreshold = $('#ladb_input_zoom_threshold', $modal);
                 const $selectObjective = $('#ladb_select_objective', $modal);
                 const $selectOptimizationMode = $('#ladb_select_optimization_mode', $modal);
-                const $selectUsePreProcess = $('#ladb_select_use_pre_process', $modal);
                 const $inputTimeLimit = $('#ladb_input_time_limit', $modal);
                 const $selectVerbosityLevel = $('#ladb_select_verbosity_level', $modal);
+                const $inputUsePreProcess = $('#ladb_input_use_pre_process', $modal);
                 const $inputUseTreeSearch = $('#ladb_input_use_tree_search', $modal);
                 const $inputUseSequentialSingleKnapsack = $('#ladb_input_use_sequential_single_knapsack', $modal);
                 const $inputUseSequentialValueCorrection = $('#ladb_input_use_sequential_value_correction', $modal);
@@ -2666,7 +2666,7 @@
                     options.zoom_threshold = $inputZoomThreshold.val();
                     options.time_limit = that.toInt($inputTimeLimit.val());
                     options.verbosity_level = that.toInt($selectVerbosityLevel.val());
-                    options.use_pre_process = $selectUsePreProcess.val() === '1';
+                    options.use_pre_process = $inputUsePreProcess.is(':checked');
                     options.use_tree_search = $inputUseTreeSearch.is(':checked');
                     options.use_sequential_single_knapsack = $inputUseSequentialSingleKnapsack.is(':checked');
                     options.use_sequential_value_correction = $inputUseSequentialValueCorrection.is(':checked');
@@ -2699,7 +2699,7 @@
                     $inputZoomThreshold.val(options.zoom_threshold);
                     $inputTimeLimit.val(options.time_limit);
                     $selectVerbosityLevel.selectpicker('val', options.verbosity_level);
-                    $selectUsePreProcess.selectpicker('val', options.use_pre_process ? '1' : '0');
+                    $inputUsePreProcess.prop('checked',options.use_pre_process);
                     $inputUseTreeSearch.prop('checked',options.use_tree_search);
                     $inputUseSequentialSingleKnapsack.prop('checked',options.use_sequential_single_knapsack);
                     $inputUseSequentialValueCorrection.prop('checked',options.use_sequential_value_correction);
@@ -3348,7 +3348,6 @@
                 $inputZoomThreshold.ladbTextinputDimension();
                 $selectObjective.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectOptimizationMode.selectpicker(SELECT_PICKER_OPTIONS)
-                $selectUsePreProcess.selectpicker(SELECT_PICKER_OPTIONS)
                 $inputTimeLimit.ladbTextinputText();
                 $selectVerbosityLevel.selectpicker(SELECT_PICKER_OPTIONS);
 
