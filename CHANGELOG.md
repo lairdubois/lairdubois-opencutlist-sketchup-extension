@@ -20,8 +20,9 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
-### 2026-03-xx
- * Improved Legacy SketchUp compatibility (bxf2_importer)
+### 2026-03-28
+ * Updated PackingSolver dependency
+ * Removed bxf2 importer for SketchUp < 2021.1
 ### 2026-03-25
  * Updated PackingSolver dependency
  * Improved BXF importer
