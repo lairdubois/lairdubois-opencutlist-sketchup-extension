@@ -1145,13 +1145,6 @@ tab:
         Allows you to set the diagram width below which diagrams are automatically enlarged.
 
         *The enlargement will be calculated based on the widest diagram*.
-      option_use_pre_process: Preprocessing
-      option_use_pre_process_0: None
-      option_use_pre_process_1: Exclude parts that are too large
-      option_use_pre_process_help: |
-        Enables or disables part preprocessing to exclude parts that are too large to fit within panels, veneer sheets, bars, or edge bandings.
-
-        *Enabling this option may increase calculation time.*
       option_time_limit: Time limit
       option_time_limit_help: |
         Fix time limit to computation
