@@ -27,8 +27,6 @@ module Ladb::OpenCutList
   require_relative 'tool/smart_axes_tool'
   require_relative 'tool/smart_join_tool'
   require_relative 'tool/smart_export_tool'
-  require_relative 'importer/csv_importer'
-  require_relative 'importer/bxf2_importer'
 
   attr_reader :app_observer
 
@@ -904,8 +902,13 @@ module Ladb::OpenCutList
       toolbar.restore
 
       # Setup Importers
+      require_relative 'importer/csv_importer'
       Sketchup.register_importer(CsvImporter.new)
-      Sketchup.register_importer(Bxf2Importer.new)
+
+      if Sketchup.version_number >= 2110000000  # DefinitionList.import is available since SU 2021.1
+        require_relative 'importer/bxf2_importer'
+        Sketchup.register_importer(Bxf2Importer.new)
+      end
 
     end
 
