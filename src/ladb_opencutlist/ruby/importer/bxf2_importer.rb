@@ -162,7 +162,7 @@ module Ladb::OpenCutList
         function_unit = function_unit_link.function_unit
 
         function_unit_group = entities.add_group
-        function_unit_group.name = "#{("A"..).lazy.first(function_unit_link.zone.column + 1).last}/#{function_unit_link.zone.row + 1}"
+        function_unit_group.name = "#{('A'..'Z').take(function_unit_link.zone.column + 1).last}/#{function_unit_link.zone.row + 1}"
         function_unit_group.definition.description = function_unit.description if function_unit.description
         function_unit_group.transformation = transformation * function_unit_link.transformations.to_t
 
@@ -176,6 +176,7 @@ module Ladb::OpenCutList
             article_group = function_unit_group.entities.add_group
             article_group.name = article.article_number if article.article_number
             article_group.definition.description = article.description if article.description
+            article_group.material = _get_hardware_material
 
             article.component_numbers.each do |component_number|
               (article_entities_stacks[component_number] ||= []) << article_group.entities
@@ -391,9 +392,8 @@ module Ladb::OpenCutList
       entities.add_face(top_pts)
 
       btm_pts.zip(top_pts).each do |btm_pt, top_pt|
-        entities
-          .add_edges(btm_pt, top_pt)
-          .each { |edge| edge.find_faces }
+        edge = entities.add_line(btm_pt, top_pt)
+        edge.find_faces if edge
       end
 
     end
@@ -409,9 +409,8 @@ module Ladb::OpenCutList
       top_edges = entities.add_circle(ORIGIN.offset(Z_AXIS, z_value), Z_AXIS, radius, num_segments)
 
       btm_edges.zip(top_edges).each do |btm_edge, top_edge|
-        entities
-          .add_edges(btm_edge.start.position, top_edge.start.position)
-          .each { |edge| edge.smooth = edge.soft = true }
+        edge = entities.add_line(btm_edge.start.position, top_edge.start.position)
+        edge.smooth = edge.soft = true if edge
       end
 
       btm_edges.each(&:find_faces)
@@ -450,12 +449,11 @@ module Ladb::OpenCutList
           group.entities.add_face(top_edges)
 
           btm_edges.zip(top_edges).each do |btm_edge, top_edge|
-            group.entities
-                 .add_edges(btm_edge.start.position, top_edge.start.position)
-                 .each { |edge|
-                   edge.smooth = edge.soft = true
-                   edge.find_faces
-                 }
+            edge = group.entities.add_line(btm_edge.start.position, top_edge.start.position)
+            if edge
+              edge.smooth = edge.soft = true
+              edge.find_faces
+            end
           end
 
         elsif bxf_machining.is_a?(Bxf::BxfMachiningRounding)
@@ -481,18 +479,17 @@ module Ladb::OpenCutList
 
           group.entities.add_face(btn_vertices.map(&:position) + [ ORIGIN ])
           group.entities.add_face(top_vertices.map(&:position) + [ ORIGIN.offset(length_v, length) ]).reverse!
-          group.entities.add_edges(ORIGIN, ORIGIN.offset(length_v, length))
+          group.entities.add_line(ORIGIN, ORIGIN.offset(length_v, length))
 
           last_index = btn_vertices.size - 1
           btn_vertices.each_with_index do |btm_vertex, index|
             top_vertex = top_vertices[index]
             smooth_soft = index > 0 && index < last_index
-            group.entities
-                 .add_edges(btm_vertex.position, top_vertex.position)
-                 .each { |edge|
-                   edge.smooth = edge.soft = smooth_soft
-                   edge.find_faces
-                 }
+            edge = group.entities.add_line(btm_vertex.position, top_vertex.position)
+            if edge
+              edge.smooth = edge.soft = smooth_soft
+              edge.find_faces
+            end
           end
 
         elsif bxf_machining.is_a?(Bxf::BxfMachiningRabbet)
