@@ -2824,7 +2824,7 @@ module Ladb::OpenCutList
     end
 
     def _get_twin_instances
-      return @active_part_twins_entity_paths.map(:last) if @active_part_twins_entity_paths.is_a?(Array)
+      return @active_part_twins_entity_paths.map(&:last) if @active_part_twins_entity_paths.is_a?(Array)
       nil
     end
 
