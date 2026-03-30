@@ -299,7 +299,7 @@ module Ladb::OpenCutList
         }
       end
 
-      _populate_manipulators(drawing_def, entities, ttai, face_validator, edge_validator, container_validator)
+      _populate_manipulators(drawing_def, entities, ttai, nil, face_validator, edge_validator, container_validator)
 
       # STEP 3 : Customize origin
 
@@ -341,18 +341,18 @@ module Ladb::OpenCutList
       [ x_axis, y_axis, z_axis, input_line_manipulator ]
     end
 
-    def _populate_manipulators(drawing_container_def, entities, transformation = IDENTITY, face_validator = nil, edge_validator = nil, container_validator = nil)
+    def _populate_manipulators(drawing_container_def, entities, transformation = IDENTITY, material = nil, face_validator = nil, edge_validator = nil, container_validator = nil)
       entities.each do |entity|
         next unless entity.visible? && _layer_visible?(entity.layer)
         if entity.is_a?(Sketchup::Face)
           next if @ignore_faces
-          manipulator = FaceManipulator.new(entity, transformation)
+          manipulator = FaceManipulator.new(entity, transformation, material)
           if face_validator.nil? || face_validator.call(manipulator)
             unless @ignore_surfaces
               if manipulator.belongs_to_a_surface?
                 surface_manipulator = _get_surface_manipulator_by_face(drawing_container_def, entity, transformation)
                 if surface_manipulator.nil?
-                  surface_manipulator = SurfaceManipulator.new(transformation).populate_from_face(entity)
+                  surface_manipulator = SurfaceManipulator.new(transformation, material).populate_from_face(entity)
                   drawing_container_def.surface_manipulators << surface_manipulator
                 end
                 manipulator.surface_manipulator = surface_manipulator
@@ -362,25 +362,25 @@ module Ladb::OpenCutList
           end
         elsif entity.is_a?(Sketchup::Edge)
           next if @ignore_edges || entity.soft? && @ignore_soft_edges
-          manipulator = EdgeManipulator.new(entity, transformation)
+          manipulator = EdgeManipulator.new(entity, transformation, material)
           if edge_validator.nil? || edge_validator.call(manipulator)
             if entity.curve.nil? || entity.curve.edges.length < 2  # Exclude curves that contain only one edge.
               drawing_container_def.edge_manipulators << manipulator
             else
               curve_manipulator = _get_curve_manipulator_by_edge(drawing_container_def, entity, transformation)
               if curve_manipulator.nil?
-                curve_manipulator = CurveManipulator.new(entity.curve, transformation)
+                curve_manipulator = CurveManipulator.new(entity.curve, transformation, material)
                 drawing_container_def.curve_manipulators << curve_manipulator
               end
             end
           end
         elsif entity.is_a?(Sketchup::ConstructionLine)
           next if @ignore_clines || entity.start.nil? # Exclude infinite Clines
-          manipulator = ClineManipulator.new(entity, transformation)
+          manipulator = ClineManipulator.new(entity, transformation, material)
           drawing_container_def.cline_manipulators << manipulator
         elsif Object.const_defined?('Sketchup::Snap') && entity.is_a?(Sketchup::Snap)
           next if @ignore_snaps
-          manipulator = SnapManipulator.new(entity, transformation)
+          manipulator = SnapManipulator.new(entity, transformation, material)
           drawing_container_def.snap_manipulators << manipulator
         elsif entity.respond_to?(:definition)
           if container_validator.nil? || container_validator.call(entity)
@@ -390,7 +390,7 @@ module Ladb::OpenCutList
               child_drawing_container_def = DrawingContainerDef.new(entity, transformation)
               drawing_container_def.container_defs << child_drawing_container_def
             end
-            _populate_manipulators(child_drawing_container_def, entity.definition.entities, transformation * entity.transformation, face_validator, edge_validator, container_validator)
+            _populate_manipulators(child_drawing_container_def, entity.definition.entities, transformation * entity.transformation, entity.material, face_validator, edge_validator, container_validator)
           end
         end
       end

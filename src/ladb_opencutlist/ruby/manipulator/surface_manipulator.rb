@@ -9,7 +9,7 @@ module Ladb::OpenCutList
 
     attr_reader :faces
 
-    def initialize(transformation = IDENTITY)
+    def initialize(transformation = IDENTITY, material = nil)
       super
       @faces = Set.new
     end

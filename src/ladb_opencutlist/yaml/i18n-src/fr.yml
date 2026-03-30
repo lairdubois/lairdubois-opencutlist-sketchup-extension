@@ -2219,6 +2219,8 @@ tool:
     action_1_status: Créer une série de pièces à partir d'un solide fermé
     action_1_state_0_status: Cliquez sur un solide fermé pour définir la géométrie de référence
     action_1_state_1_status: Sélectionnez les faces à extruder
+    action_2: CSG
+    action_2_status: Vers l'infini et au delà
     action_option_group_thickness: Epaisseur
     action_option_group_stretch_measure_type: Mesure
     action_option_group_axes: Axes

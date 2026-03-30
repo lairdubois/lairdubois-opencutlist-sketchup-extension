@@ -15,6 +15,7 @@ module Ladb::OpenCutList
 
     ACTION_STRETCH = 0
     ACTION_PANELING = 1
+    ACTION_CSG = 2
 
     ACTION_OPTION_THICKNESS = 'thickness'
     ACTION_OPTION_STRETCH_MEASURE_TYPE = 'stretch_measure_type'
@@ -57,6 +58,9 @@ module Ladb::OpenCutList
           ACTION_OPTION_PANELING_DIRECTION => [ ACTION_OPTION_PANELING_DIRECTION_INWARD, ACTION_OPTION_PANELING_DIRECTION_OUTWARD ],
           ACTION_OPTION_PANELING_JOINT_TYPE => [ ACTION_OPTION_PANELING_JOINT_TYPE_FLAT, ACTION_OPTION_PANELING_JOINT_TYPE_MITER ]
         }
+      },
+      {
+        :action => ACTION_CSG,
       }
     ].freeze
 
@@ -213,6 +217,8 @@ module Ladb::OpenCutList
         set_action_handler(SmartReshapeStretchActionHandler.new(self, fetch_action_handler))
       when ACTION_PANELING
         set_action_handler(SmartReshapePanelingActionHandler.new(self, fetch_action_handler))
+      when ACTION_CSG
+        set_action_handler(SmartReshapeCSGActionHandler.new(self, fetch_action_handler))
       end
 
       super
@@ -3176,7 +3182,7 @@ module Ladb::OpenCutList
 
     def _preview_select
 
-      @tool.clear_3d([LAYER_3D_PANELING_PREVIEW ])
+      @tool.clear_3d([ LAYER_3D_PANELING_PREVIEW ])
 
       return unless @drawing_def.is_a?(DrawingDef)
 
@@ -3614,6 +3620,330 @@ module Ladb::OpenCutList
         @tool.hide_validation
       end
 
+    end
+
+  end
+
+  class SmartReshapeCSGActionHandler < SmartActionHandler
+
+    STATE_SELECT_SRC = 0
+    STATE_SELECT_CUT = 1
+
+    LAYER_3D_SRC_PREVIEW = 10
+    LAYER_3D_CUT_PREVIEW = 20
+
+    def initialize(tool, previous_action_handler = nil)
+      super(SmartReshapeTool::ACTION_CSG, tool, previous_action_handler)
+
+      @src_drawing_def = nil
+      @cut_drawing_def = nil
+
+    end
+
+    # -----
+
+    def get_state_cursor(state)
+
+      case state
+      when STATE_SELECT_SRC, STATE_SELECT_CUT
+        return SmartCursorManager.cursor_select
+      end
+
+      super
+    end
+
+    def get_state_picker(state)
+
+      case state
+      when STATE_SELECT_SRC, STATE_SELECT_CUT
+        return SmartPicker.new(tool: @tool, observer: self, pick_point: false)
+      end
+
+      super
+    end
+
+    # -----
+
+    def onToolCancel(tool, reason, view)
+      super
+
+      if @tool.callback_action_handler.nil?
+
+        case @state
+
+        when STATE_SELECT_SRC
+          _reset
+
+        when STATE_SELECT_CUT
+          set_state(STATE_SELECT_SRC)
+
+        end
+        _refresh
+
+      else
+        _reset
+        stop
+        Sketchup.active_model.tools.pop_tool
+      end
+
+    end
+
+    def onToolLButtonUp(tool, flags, x, y, view)
+
+      case @state
+
+      when STATE_SELECT_SRC
+        if @src_drawing_def.nil?
+          UI.beep
+        else
+          set_state(STATE_SELECT_CUT)
+          return true
+        end
+
+      when STATE_SELECT_CUT
+        if @cut_drawing_def.nil?
+          UI.beep
+        else
+          _operate
+          return true
+        end
+
+      end
+
+    end
+
+    def onPickerChanged(picker, view)
+
+      case @state
+
+      when STATE_SELECT_SRC
+        @src_drawing_def = nil
+        _snap_select_src(picker, view)
+        _preview_select_src
+
+      when STATE_SELECT_CUT
+        @cut_drawing_def = nil
+        _snap_select_cut(picker, view)
+        _preview_select_cut
+
+      end
+
+      super
+    end
+
+    # -----
+
+    def _snap_select_src(picker, view)
+      return unless (picked_face = picker.picked_face).is_a?(Sketchup::Face)
+      return unless (picked_face_path = picker.picked_face_path).is_a?(Array)
+
+      container = picked_face_path[-2]
+      container_transformation = PathUtils.get_transformation(picked_face_path[0..-2], IDENTITY)
+
+      all_connected = picked_face.all_connected
+
+      @src_drawing_def = DrawingDef.new(container)
+      @src_drawing_def.face_manipulators.concat(all_connected
+                                                  .grep(Sketchup::Face)
+                                                  .map { |face| FaceManipulator.new(face, container_transformation) })
+
+    end
+
+    def _snap_select_cut(picker, view)
+      return unless (picked_face = picker.picked_face).is_a?(Sketchup::Face)
+      return unless (picked_face_path = picker.picked_face_path).is_a?(Array)
+
+      container = picked_face_path[-2]
+      container_transformation = PathUtils.get_transformation(picked_face_path[0..-2], IDENTITY)
+
+      all_connected = picked_face.all_connected
+
+      @cut_drawing_def = DrawingDef.new(container)
+      @cut_drawing_def.face_manipulators.concat(all_connected
+                                                  .grep(Sketchup::Face)
+                                                  .map { |face| FaceManipulator.new(face, container_transformation) })
+
+    end
+
+    def _preview_select_src
+
+      @tool.clear_3d([ LAYER_3D_SRC_PREVIEW ])
+
+      return unless @src_drawing_def.is_a?(DrawingDef)
+
+      k_mesh = Kuix::Mesh.new
+      k_mesh.add_triangles(@src_drawing_def.face_manipulators.map { |fm| fm.triangles }.flatten(1))
+      k_mesh.background_color = ColorUtils.color_translucent(Kuix::COLOR_GREEN, 0.3)
+      k_mesh.transformation = @src_drawing_def.transformation
+      @tool.append_3d(k_mesh, LAYER_3D_SRC_PREVIEW)
+
+    end
+
+    def _preview_select_cut
+
+      @tool.clear_3d([ LAYER_3D_CUT_PREVIEW ])
+
+      return unless @cut_drawing_def.is_a?(DrawingDef)
+
+      k_mesh = Kuix::Mesh.new
+      k_mesh.add_triangles(@cut_drawing_def.face_manipulators.map { |fm| fm.triangles }.flatten(1))
+      k_mesh.background_color = ColorUtils.color_translucent(Kuix::COLOR_RED, 0.3)
+      k_mesh.transformation = @cut_drawing_def.transformation
+      @tool.append_3d(k_mesh, LAYER_3D_CUT_PREVIEW)
+
+    end
+
+    def _operate
+
+      require_relative '../lib/fiddle/meshy/meshy'
+
+      fn = lambda { |fm, vertex_index_map, vertices, face_indices, face_sizes|
+
+        if fm.has_inner_loops?
+
+          # Export triangulated face
+
+          mesh = fm.mesh
+          polygons = mesh.polygons
+          polygons.each do |polygon|
+
+            face_vertex_indices = []
+
+            polygon.each do |vertex_index|
+
+              pt = mesh.point_at(vertex_index.abs)
+
+              key = [ pt.x, pt.y, pt.z ]
+
+              unless vertex_index_map.key?(key)
+                vertex_index_map[key] = vertices.length / 3
+                vertices.concat([ pt.x.to_f, pt.y.to_f, pt.z.to_f ])
+              end
+
+              face_vertex_indices << vertex_index_map[key]
+
+            end
+
+            face_indices.concat(face_vertex_indices)
+            face_sizes << face_vertex_indices.length
+
+          end
+
+        else
+
+          # Export n-gon face
+
+          face_vertex_indices = []
+
+          points = fm.outer_loop_manipulator.points
+          points.each do |pt|
+
+            key = [ pt.x, pt.y, pt.z ]
+
+            unless vertex_index_map.key?(key)
+              vertex_index_map[key] = vertices.length / 3
+              vertices.concat([ pt.x.to_f, pt.y.to_f, pt.z.to_f ])
+            end
+
+            face_vertex_indices << vertex_index_map[key]
+
+          end
+
+          face_indices.concat(face_vertex_indices)
+          face_sizes << face_vertex_indices.length
+
+        end
+
+      }
+
+      vertices = []
+      face_indices = []
+      face_sizes = []
+
+      vertex_index_map = {}
+
+      @src_drawing_def.face_manipulators.each do |fm|
+        fn.call(fm, vertex_index_map, vertices, face_indices, face_sizes)
+      end
+
+      src_mesh = {
+        vertices: vertices,
+        face_indices: face_indices,
+        face_sizes: face_sizes,
+        num_vertices: vertices.size / 3,
+        num_faces: face_sizes.size
+      }
+
+      vertices = []
+      face_indices = []
+      face_sizes = []
+
+      vertex_index_map = {}
+
+      @cut_drawing_def.face_manipulators.each do |fm|
+        fn.call(fm, vertex_index_map, vertices, face_indices, face_sizes)
+      end
+
+      cut_mesh = {
+        vertices: vertices,
+        face_indices: face_indices,
+        face_sizes: face_sizes,
+        num_vertices: vertices.size / 3,
+        num_faces: face_sizes.size
+      }
+
+      input = {
+        problem_type: 'debug',
+        src_mesh: src_mesh,
+        cut_mesh: cut_mesh
+      }
+
+      # Write input to a JSON file in the bin directory for debug purpose
+      File.write(File.join(Fiddle::Meshy.lib_dir, 'input.json'), JSON.pretty_generate(input))
+
+      # Operate the meshes
+      output = Fiddle::Meshy.operate(input)
+
+      # Write output to a JSON file in the bin directory for debug purpose
+      File.write(File.join(Fiddle::Meshy.lib_dir, 'output.json'), JSON.pretty_generate(output))
+
+      if output['error']
+
+        @tool.notify_errors([ [ 'core.error.exception', { error: output['error'] } ] ])
+
+      else
+
+        model = Sketchup.active_model
+        model.start_operation('CSG', true)
+
+          t = IDENTITY
+          v = Geom::Vector3d.new(@src_drawing_def.bounds.width + @cut_drawing_def.bounds.width, 0, 0)
+
+          output['fragments'].each { |fragment|
+
+            mesh = Geom::PolygonMesh.new(fragment['num_vertices'], fragment['num_faces'])
+
+            points = fragment['vertices'].each_slice(3).map { |coords| Geom::Point3d.new(coords) }
+
+            fragment['face_sizes'].each do |face_size|
+              indices = fragment['face_indices'].shift(face_size)
+              mesh.add_polygon(indices.map { |index| points[index] })
+            end
+
+            group = Sketchup.active_model.entities.add_group
+            group.name = "type_#{fragment['type']}"
+            group.entities.fill_from_mesh(mesh, true, Geom::PolygonMesh::NO_SMOOTH_OR_HIDE)
+            group.transformation = t
+
+            t *= Geom::Transformation.translation(v)
+
+          } if output['fragments'].is_a?(Array)
+
+        model.commit_operation
+
+      end
+
+      _restart
     end
 
   end

@@ -1,15 +1,18 @@
 module Ladb::OpenCutList
 
   require_relative '../../lib/fiddle/clippy/clippy'
+  require_relative '../../lib/fiddle/meshy/meshy'
   require_relative '../../lib/geometrix/geometrix'
   require_relative '../../lib/kuix/kuix'
   require_relative '../../model/drawing/drawing_def'
   require_relative '../../model/drawing/drawing_projection_def'
   require_relative '../../helper/layer0_caching_helper'
+  require_relative '../../helper/material_attributes_caching_helper'
 
   class CommonDrawingProjectionWorker
 
     include Layer0CachingHelper
+    include MaterialAttributesCachingHelper
 
     MINIMAL_PATH_AREA = 1e-6
 
@@ -55,15 +58,19 @@ module Ladb::OpenCutList
       bounds = Geom::BoundingBox.new
 
       face_manipulators = []
+      machining_face_manipulators = []
       edge_manipulators = []
       curve_manipulators = []
 
       @drawing_def.face_manipulators.each do |face_manipulator|
-        # TODO Sketchup perpendicular? function may be too lazy
-        # next unless !face_manipulator.normal.perpendicular?(Z_AXIS) && face_manipulator.normal.angle_between(Z_AXIS) < Geometrix::HALF_PI  # Filter only exposed faces
-        next unless (face_manipulator.normal.angle_between(Z_AXIS) - Geometrix::HALF_PI).round(4) < 0  # Filter only exposed faces
-        face_manipulators << face_manipulator
-        faces_bounds.add(face_manipulator.outer_loop_manipulator.points)
+        next unless (face_manipulator.normal.angle_between(Z_AXIS) - Geometrix::HALF_PI).round(4) < 0  # Filter only exposed --> Not faces Sketchup perpendicular? function may be too lazy
+        material_attribute = _get_material_attributes(face_manipulator.material)
+        if material_attribute.type == MaterialAttributes::TYPE_MACHINING
+          machining_face_manipulators << face_manipulator
+        else
+          face_manipulators << face_manipulator
+          faces_bounds.add(face_manipulator.outer_loop_manipulator.points)
+        end
       end
       @drawing_def.edge_manipulators.each do |edge_manipulator|
         next unless edge_manipulator.direction.perpendicular?(Z_AXIS)

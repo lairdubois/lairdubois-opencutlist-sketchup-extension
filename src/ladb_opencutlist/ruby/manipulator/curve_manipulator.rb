@@ -6,9 +6,9 @@ module Ladb::OpenCutList
 
     attr_reader :curve
 
-    def initialize(curve, transformation = IDENTITY)
-      super(transformation)
+    def initialize(curve, transformation = IDENTITY, material = nil)
       raise "curve must be a Sketchup::Curve." unless curve.is_a?(Sketchup::Curve)
+      super(transformation, material)
       @curve = curve
     end
 
@@ -57,7 +57,7 @@ module Ladb::OpenCutList
     # -----
 
     def plane_manipulator
-      @plane_manipulator ||= PlaneManipulator.new(Geom.fit_plane_to_points(points), IDENTITY)
+      @plane_manipulator ||= PlaneManipulator.new(Geom.fit_plane_to_points(points), IDENTITY, @material)
     end
 
     # -----

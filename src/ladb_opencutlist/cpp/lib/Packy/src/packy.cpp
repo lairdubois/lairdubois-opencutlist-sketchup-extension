@@ -38,7 +38,7 @@ DLL_EXPORTS char* c_optimize_start(
 
     // Define run future
     run.optimize_future = std::async(std::launch::async, [s_input, &run]() {
-        json j_ouput = json{
+        json j_output = json{
             {"run_id", run.id}
         };
 
@@ -62,18 +62,18 @@ DLL_EXPORTS char* c_optimize_start(
             run.last_send_solution_pos = 0;
 
             // Run!
-            j_ouput["solution"] = solver.optimize();
+            j_output["solution"] = solver.optimize();
 
         } catch (const std::exception& e) {
-            j_ouput["error"] = e.what();
+            j_output["error"] = e.what();
         } catch (...) {
-            j_ouput["error"] = "Unknown Error";
+            j_output["error"] = "Unknown Error";
         }
 
         // Reset solver ptr
         run.solver_ptr = nullptr;
 
-        return std::move(j_ouput);
+        return std::move(j_output);
     }).share();
 
     str_output_ = json{

@@ -6,9 +6,9 @@ module Ladb::OpenCutList
 
     attr_reader :cline
 
-    def initialize(cline, transformation = IDENTITY)
-      super([ cline.position, cline.direction ], transformation)
+    def initialize(cline, transformation = IDENTITY, material = nil)
       raise "cline must be a Sketchup::ConstructionLine." unless cline.is_a?(Sketchup::ConstructionLine)
+      super([ cline.position, cline.direction ], transformation, material)
       @cline = cline
     end
 
