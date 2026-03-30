@@ -129,7 +129,7 @@ core:
       smart_reshape: Rimodellare le parti
       smart_paint: Colorare parti
       smart_axes: Orienta gli elementi
-      smart_join: ""
+      smart_join: Assemblaggio Elementi
       smart_export: Esporta elementi
   messagebox:
     dir_override: |
@@ -289,7 +289,7 @@ tab:
       Seleziona le parti della scena corrente da includere nella distinta e clicca sul bottone **Genera**
       Se non si seleziona alcuna parte, tutti i componenti visibili della scena saranno inclusi nella distinta.
     is_selection: Solo gli elementi selezionati
-    select_part: Seleziona una elemento
+    select_part: Seleziona un elemento
     select_part_plural: Seleziona elementi
     material_undefined: Nessun materiale definito
     not_available_std_width: Larghezza non specificata
@@ -1075,7 +1075,7 @@ tab:
       option_irregular_allowed_rotations_0: Nessuna
       option_irregular_allowed_rotations_90: Passi di 90°
       option_irregular_allowed_rotations_180: Passi di 180°
-      option_irregular_allowed_rotations_free: ""
+      option_irregular_allowed_rotations_free: Libero (sperimentale)
       option_irregular_allow_mirroring: Specchiatura consentita
       option_irregular_allow_mirroring_help: |
         Definisce se la specchiatura nel posizionamento degli elementi sia consentita.
@@ -2093,7 +2093,7 @@ tool:
     error:
       no_direction: Indicate una direzione con il mouse
       invalid_length: "La lunghezza {{ value }} non è valida"
-      invalid_thickness: ""
+      invalid_thickness: "Lo spessore {{ value }} non è valido"
       invalid_multiplicator: "Il moltiplicatore {{ value }} non è valido"
       invalid_divider: "Il divisore {{ value }} non è valido"
       invalid_offset: "L'offset {{ value }} non è valido"
@@ -2105,8 +2105,8 @@ tool:
       zero_division: "Divisione per zero"
       lt_min_distance: "La distanza {{ value1 }} è inferiore alla distanza minima {{ value2 }}"
       gt_max_distance: "La distanza {{ value1 }} è superiore alla distanza massima di {{ value2 }}"
-      locked_part: ""
-      selection_contains_locked_entities: ""
+      locked_part: Questo elemento è bloccato
+      selection_contains_locked_entities: La selezione contiene elementi bloccati
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2116,7 +2116,7 @@ tool:
     state_4_status: "Trascina su un elemento identico con lo stesso genitore per aggiungerlo alla selezione, quindi rilascia per continuare"
     state_5_status: Scorri per aggiungere alla selezione e rilascia per continuare
     state_6_status: Selezionare un elemento dall'elenco
-    state_7_status: ""
+    state_7_status: Clicca su un elemento per aggiungerlo o eliminarlo dalla selezione
     warning:
       no_active_part: Devi prima passare con il mouse su una parte
   smart_draw:
@@ -2213,26 +2213,26 @@ tool:
     action_0_state_12_status: Clicca su un piano di taglio per eliminarlo
     action_0_state_2_status: Clicca per confermare l'allungamento o inserisci una distanza
     action_1: ""
-    action_1_status: ""
-    action_1_state_0_status: ""
-    action_1_state_1_status: ""
+    action_1_status: Crea una serie di elementi a partire da un solido chiuso
+    action_1_state_0_status: Seleziona un solido chiuso per definire la geometria di base
+    action_1_state_1_status: Seleziona le facce da estrudere
     action_option_group_thickness: Spessore
     action_option_group_stretch_measure_type: Misura
     action_option_group_axes: Assi
-    action_option_group_paneling_joint_type: ""
+    action_option_group_paneling_joint_type: Giunzione
     action_option_group_paneling_direction: Direzione
     action_option_group_options: Opzioni
     action_option_thickness_thickness: Spessore
-    action_option_thickness_thickness_status: ""
+    action_option_thickness_thickness_status: Stabilisce lo spessore dei pannelli
     action_option_stretch_measure_type_outside_status: Misura esterna
     action_option_stretch_measure_type_offset_status: Misura la differenza
     action_option_axes_active_status: Sposta lungo l'asse attivo
     action_option_axes_context_status: Modificare lungo gli assi del gruppo o del componente contenente il pezzo
     action_option_axes_entity_status: Modifica su un asse dell'elemento
-    action_option_paneling_joint_type_flat_status: ""
-    action_option_paneling_joint_type_miter_status: ""
-    action_option_paneling_direction_inward_status: ""
-    action_option_paneling_direction_outward_status: ""
+    action_option_paneling_joint_type_flat_status: Giunzione piana
+    action_option_paneling_joint_type_miter_status: Giunzione ad angolo
+    action_option_paneling_direction_inward_status: Verso l'interno
+    action_option_paneling_direction_outward_status: Verso l'esterno
     action_option_options_centred_status: Centrare sugli elementi allungati
     action_option_options_make_unique_status: Rendere unici gli elementi allungati
     error:

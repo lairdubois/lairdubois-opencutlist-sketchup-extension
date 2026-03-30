@@ -116,7 +116,7 @@ core:
       smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
-      smart_join: ""
+      smart_join: $t(core.toolbar.command.smart_join)
       smart_export: $t(core.toolbar.command.smart_export)
       reset_dialog_position: Đặt lại vị trí cửa sổ
   toolbar:
@@ -129,7 +129,7 @@ core:
       smart_reshape: Định hình lại các bộ phận
       smart_paint: Tô màu các bộ phận
       smart_axes: Định hướng các bộ phận
-      smart_join: ""
+      smart_join: Lắp ráp các bộ phận
       smart_export: Xuất các bộ phận
   messagebox:
     dir_override: |
@@ -1075,7 +1075,7 @@ tab:
       option_irregular_allowed_rotations_0: Không có
       option_irregular_allowed_rotations_90: Các bước 90°
       option_irregular_allowed_rotations_180: Các bước 180°
-      option_irregular_allowed_rotations_free: ""
+      option_irregular_allowed_rotations_free: Miễn phí (Thử nghiệm)
       option_irregular_allow_mirroring: Cho phép đối xứng
       option_irregular_allow_mirroring_help: |
         Xác định xem việc đối xứng bộ phận có được phép để đặt hay không.
@@ -1770,23 +1770,23 @@ tab:
       url: URL
       tags: Nhãn hiệu
       layer_name: Thẻ
-      snapto: ""
+      snapto: Liên kết
       snapto_none: Không có
       snapto_0: Bất kỳ
       snapto_1: Nằm ngang
       snapto_2: Thẳng đứng
-      snapto_3: ""
-      cuts_opening: ""
-      always_face_camera: ""
-      shadows_face_sun: ""
-      no_scale_mask: ""
-      no_scale_mask_0: ""
-      no_scale_mask_1: ""
-      no_scale_mask_2: ""
-      no_scale_mask_3: ""
-      no_scale_mask_4: ""
-      no_scale_mask_5: ""
-      no_scale_mask_6: ""
+      snapto_3: Nghiêng
+      cuts_opening: Cắt bỏ phần mở
+      always_face_camera: Luôn hướng mặt về phía máy ảnh.
+      shadows_face_sun: Bóng đổ hướng về phía mặt trời
+      no_scale_mask: Thu phóng và kéo giãn
+      no_scale_mask_0: Có thể kéo giãn dọc theo trục màu đỏ (X)
+      no_scale_mask_1: Có thể kéo giãn dọc theo trục màu xanh lá cây (Y)
+      no_scale_mask_2: Có thể kéo giãn dọc theo trục màu xanh (Z)
+      no_scale_mask_3: Có thể kéo giãn trên mặt phẳng đỏ/xanh (X+Z)
+      no_scale_mask_4: Có thể kéo giãn trên mặt phẳng xanh lá cây/xanh dương (Y+Z)
+      no_scale_mask_5: Có thể kéo giãn trên mặt phẳng đỏ/xanh lá (X+Y)
+      no_scale_mask_6: Có thể kéo giãn từ các góc (XYZ)
       explode: Phân tách
       explode_message: "Bạn có xác nhận việc tách của **{{ name }}**?"
       erase: Trống
@@ -1815,7 +1815,7 @@ tab:
       minimize_on_set_active: Thu nhỏ sau '$t(tab.outliner.tooltip.set_active_node)'
       minimize_on_set_active_help: "Nếu tùy chọn này được chọn, cửa sổ OpenCutList sẽ được thu nhỏ khi hàm *'$t(tab.outliner.tooltip.set_active_node)'* được sử dụng."
     snippet:
-      name_size: ""
+      name_size: Ký hiệu - Kích thước
     error:
       no_model: Không có mô hình nào được mở. Bạn sẽ cần phải cung cấp cho tôi thêm thông tin;)
       no_entities: Mô hình của bạn trống!
@@ -2093,7 +2093,7 @@ tool:
     error:
       no_direction: Vui lòng chỉ ra hướng bằng chuột của bạn
       invalid_length: "Chiều dài {{ value }} không hợp lệ"
-      invalid_thickness: ""
+      invalid_thickness: "Độ dày {{ value }} không hợp lệ"
       invalid_multiplicator: "Yếu tố {{ value }} không hợp lệ"
       invalid_divider: "Số chia {{ value }} không hợp lệ"
       invalid_offset: "Độ lệch {{ value }} không hợp lệ"
@@ -2105,8 +2105,8 @@ tool:
       zero_division: "Chia cho số 0"
       lt_min_distance: "Khoảng cách {{ value1 }} nhỏ hơn khoảng cách tối thiểu {{ value2 }}"
       gt_max_distance: "Khoảng cách {{ value1 }} lớn hơn khoảng cách tối đa của {{ value2 }}"
-      locked_part: ""
-      selection_contains_locked_entities: ""
+      locked_part: Bộ phận này bị khóa
+      selection_contains_locked_entities: Lựa chọn này chứa các thực thể bị khóa.
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2116,7 +2116,7 @@ tool:
     state_4_status: "Kéo chuột vào một mảnh ghép giống hệt có cùng mảnh ghép cha để thêm nó vào vùng chọn, sau đó thả chuột để tiếp tục."
     state_5_status: Vuốt để thêm vào vùng chọn và thả ra để tiếp tục
     state_6_status: Chọn một phần tử từ danh sách
-    state_7_status: ""
+    state_7_status: Nhấp chuột vào một phần để thêm hoặc bớt phần đó khỏi vùng chọn.
     warning:
       no_active_part: Trước tiên bạn phải di chuột qua một bộ phận
   smart_draw:
@@ -2157,10 +2157,10 @@ tool:
     action_option_options_pull_centered: Độ cao trung tâm
     action_option_options_pull_centered_status: Độ cao trung tâm tại điểm đầu tiên
     action_option_options_pull_locked_status: Khóa độ cao trên một trục
-    action_option_options_draw_in: ""
-    action_option_options_draw_in_0: ""
-    action_option_options_draw_in_1: ""
-    action_option_options_draw_in_status: ""
+    action_option_options_draw_in: Vẽ vào
+    action_option_options_draw_in_0: Vẽ phần tử đang hoạt động
+    action_option_options_draw_in_1: Vẽ phần tử cha của bộ phận thuộc điểm đầu tiên
+    action_option_options_draw_in_status: Vẽ phần tử cha của phần tử được nhắm mục tiêu bởi điểm đầu tiên.
     action_option_options_ask_name: Đặt tên bộ phận
     action_option_options_ask_name_status: Nhập tên bộ phận theo cách thủ công
     action_measure_locked_status: Khóa ở phép đo cuối cùng
@@ -2212,27 +2212,27 @@ tool:
     action_0_state_11_status: Nhấp chuột để thêm mặt phẳng cắt
     action_0_state_12_status: Nhấp chuột vào mặt phẳng cắt để xóa nó.
     action_0_state_2_status: Nhấp chuột để xác nhận động tác kéo dài hoặc nhập khoảng cách.
-    action_1: ""
-    action_1_status: ""
-    action_1_state_0_status: ""
-    action_1_state_1_status: ""
+    action_1: Tấm ốp
+    action_1_status: Tạo một loạt các chi tiết từ một khối rắn kín.
+    action_1_state_0_status: Nhấp chuột vào một khối rắn kín để xác định hình học tham chiếu.
+    action_1_state_1_status: Chọn các mặt cần đùn
     action_option_group_thickness: Độ dày
     action_option_group_stretch_measure_type: Đo lường
     action_option_group_axes: Trục
-    action_option_group_paneling_joint_type: ""
+    action_option_group_paneling_joint_type: Nối
     action_option_group_paneling_direction: Hướng
     action_option_group_options: Tùy chọn
     action_option_thickness_thickness: Độ dày
-    action_option_thickness_thickness_status: ""
+    action_option_thickness_thickness_status: Xác định độ dày của các tấm.
     action_option_stretch_measure_type_outside_status: Đo lường bên ngoài
     action_option_stretch_measure_type_offset_status: Đo lường sự khác biệt
     action_option_axes_active_status: Thao tác dọc theo các trục đang hoạt động
     action_option_axes_context_status: Thao tác dọc theo các trục của nhóm hoặc thành phần chứa bộ phận
     action_option_axes_entity_status: Thao tác dọc theo trục bộ phận
-    action_option_paneling_joint_type_flat_status: ""
-    action_option_paneling_joint_type_miter_status: ""
-    action_option_paneling_direction_inward_status: ""
-    action_option_paneling_direction_outward_status: ""
+    action_option_paneling_joint_type_flat_status: Khớp nối phẳng
+    action_option_paneling_joint_type_miter_status: Khớp nối vát
+    action_option_paneling_direction_inward_status: Hướng vào bên trong
+    action_option_paneling_direction_outward_status: Hướng ra ngoài
     action_option_options_centred_status: Tập trung vào các yếu tố bị kéo dài
     action_option_options_make_unique_status: Làm cho các phần tử kéo dài trở nên độc lập
     error:
@@ -2311,8 +2311,8 @@ tool:
       not_part: Đối tượng mục tiêu không phải là đối tượng của bộ phận (component)
       not_orientable: Loại bộ phận này không cho phép định hướng nó
   smart_join:
-    title: ""
-    action_0: "" # TODO: It's currently just for dev purposes
+    title: Lắp ráp
+    action_0: Chạm-Chạm # TODO: It's currently just for dev purposes
   smart_export:
     title: Xuất
     action_0: Xuất 3D bộ phận
