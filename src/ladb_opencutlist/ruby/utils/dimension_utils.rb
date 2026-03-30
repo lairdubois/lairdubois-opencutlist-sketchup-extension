@@ -171,7 +171,9 @@
     # Check if given length value is rounded by model precision
     def self.rounded_by_model_precision?(f)
       precision = ocl_length_precision
-      f.to_l.to_s.to_l.to_f.round(precision) != f.to_l.to_f.round(precision)
+      a = f.to_l.to_s.to_l.to_f
+      b = f.to_l.to_f
+      (a - b).abs > 10 ** -precision
     end
 
     # -----
