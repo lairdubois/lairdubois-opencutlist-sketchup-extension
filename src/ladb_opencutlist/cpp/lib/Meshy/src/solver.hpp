@@ -1,9 +1,11 @@
 #pragma once
 
 #include <mcut/mcut.h>
+#include <manifold/manifold.h>
 #include <nlohmann/json.hpp>
 
 #include <iostream>
+#include <sstream>
 
 #define my_assert(cond)                          \
     if(!(cond)) {                                \
@@ -14,20 +16,22 @@ using namespace nlohmann;
 
 namespace Meshy {
 
-    enum class ProblemType
+    enum class SolverType
     {
-        Debug,
+        MCut,
+        Manifold,
     };
 
     inline std::istream& operator>>(
             std::istream& in,
-            ProblemType& problem_type)
+            SolverType& solver_type)
     {
         std::string token;
         in >> token;
-        if (token == "debug"
-                || token == "D") {
-            problem_type = ProblemType::Debug;
+        if (token == "mcut") {
+            solver_type = SolverType::MCut;
+        } else if (token == "manifold") {
+            solver_type = SolverType::Manifold;
         } else  {
             in.setstate(std::ios_base::failbit);
         }
@@ -36,11 +40,61 @@ namespace Meshy {
 
     inline std::ostream& operator<<(
             std::ostream &os,
-            ProblemType problem_type)
+            SolverType solver_type)
     {
-        switch (problem_type) {
-            case ProblemType::Debug: {
-                os << "debug";
+        switch (solver_type) {
+            case SolverType::MCut: {
+                os << "mcut";
+                break;
+            }
+            case SolverType::Manifold: {
+                os << "manifold";
+                break;
+            }
+        }
+        return os;
+    }
+
+    enum class Operation
+    {
+        Union,
+        Substraction,
+        Intersection,
+    };
+
+    inline std::istream& operator>>(
+            std::istream& in,
+            Operation& operation)
+    {
+        std::string token;
+        in >> token;
+        if (token == "union") {
+            operation = Operation::Union;
+        } else if (token == "substraction") {
+            operation = Operation::Substraction;
+        } else if (token == "intersection") {
+            operation = Operation::Intersection;
+        } else  {
+            in.setstate(std::ios_base::failbit);
+        }
+        return in;
+    }
+
+    inline std::ostream& operator<<(
+            std::ostream &os,
+            Operation operation)
+    {
+        switch (operation) {
+            case Operation::Union: {
+                os << "union";
+                break;
+            }
+            case Operation::Substraction: {
+                os << "substraction";
+                break;
+            }
+            case Operation::Intersection: {
+                os << "intersection";
                 break;
             }
         }
@@ -65,13 +119,39 @@ namespace Meshy {
         /** Destructor. */
         virtual ~Solver() = default;
 
+        virtual void read(
+            basic_json<>& j
+        ) {
+
+            if (j.contains("operation")) {
+                std::stringstream ss(j.value("operation", "union"));
+                ss >> operation_;
+            }
+
+        };
+
+        virtual json operate() = 0;
+
+    protected:
+
+        Operation operation_ = Operation::Union;
+
+    };
+
+    typedef std::shared_ptr<Solver> SolverPtr;
+
+    class MCutSolver : public Solver {
+
+    public:
+
         /*
          * Read:
          */
 
         void read(
             basic_json<>& j
-        ) {
+        ) override {
+            Solver::read(j);
 
             if (j.contains("src_mesh")) {
                 read_mesh(j["src_mesh"], src_mesh_);
@@ -135,21 +215,6 @@ namespace Meshy {
             }
         }
 
-        virtual json operate() = 0;
-
-    protected:
-
-        Mesh src_mesh_;
-        Mesh cut_mesh_;
-
-    };
-
-    typedef std::shared_ptr<Solver> SolverPtr;
-
-    class DebugSolver : public Solver {
-
-    public:
-
         /*
          * Operate:
          */
@@ -170,7 +235,7 @@ namespace Meshy {
             status = mcDispatch(
                 context,
                 MC_DISPATCH_VERTEX_ARRAY_DOUBLE
-                // | MC_DISPATCH_ENFORCE_GENERAL_POSITION
+                | MC_DISPATCH_ENFORCE_GENERAL_POSITION
                 | MC_DISPATCH_INCLUDE_INTERSECTION_TYPE,
 
                 src_mesh_.vertices.data(),
@@ -292,6 +357,139 @@ namespace Meshy {
 
             return std::move(j);
         }
+
+    private:
+
+        Mesh src_mesh_;
+        Mesh cut_mesh_;
+
+    };
+
+    class ManifoldSolver : public Solver {
+
+    public:
+
+        void read(
+            basic_json<>& j
+        ) override {
+            Solver::read(j);
+
+            if (j.contains("src_mesh")) {
+                read_mesh(j["src_mesh"], src_mesh_);
+            }
+
+            if (j.contains("cut_mesh")) {
+                read_mesh(j["cut_mesh"], cut_mesh_);
+            }
+        }
+
+        json operate() override {
+            json j;
+
+            // --- construction des deux Manifold ---
+
+            manifold::Manifold src_manifold(src_mesh_);
+            manifold::Manifold cut_manifold(cut_mesh_);
+
+            // vérification de validité
+            if (src_manifold.Status() != manifold::Manifold::Error::NoError) {
+                throw std::runtime_error("src_mesh n'est pas un manifold valide");
+            }
+            if (cut_manifold.Status() != manifold::Manifold::Error::NoError) {
+                throw std::runtime_error("cut_mesh n'est pas un manifold valide");
+            }
+
+            // --- opération booléenne ---
+            manifold::Manifold result;
+            switch (operation_) {
+                case Operation::Union:
+                    result = src_manifold + cut_manifold;
+                    break;
+                case Operation::Substraction:
+                    result = src_manifold - cut_manifold;
+                    break;
+                case Operation::Intersection:
+                    result = src_manifold ^ cut_manifold;
+                    break;
+            }
+
+            if (result.Status() != manifold::Manifold::Error::NoError) {
+                throw std::runtime_error("L'opération a échouée");
+            }
+
+            result = result.AsOriginal();
+
+            double tolerence = result.GetTolerance() * 10.0;
+            result = result.Simplify(tolerence);
+
+            // --- export ---
+            manifold::MeshGL64 result_mesh = result.GetMeshGL64();
+
+            json output;
+            output["status"] = "ok";
+            write_mesh(output["fragments"].emplace_back(), result_mesh);
+
+            return std::move(output);
+        }
+
+        static void read_mesh(
+            const basic_json<>& j,
+            manifold::MeshGL64& mesh
+        ) {
+
+            // -- sommets --
+            const auto& verts = j.at("vertices");
+            if (verts.size() % 3 != 0) {
+                throw std::runtime_error("'vertices' doit contenir un multiple de 3 valeurs");
+            }
+
+            mesh.vertProperties.resize(verts.size());
+            for (std::size_t i = 0; i < verts.size(); ++i) {
+                mesh.vertProperties[i] = verts[i].get<double>();
+            }
+
+            mesh.numProp = 3; // x, y, z
+
+            // -- triangles --
+            const auto& tris = j.at("face_indices");
+            if (tris.size() % 3 != 0) {
+                throw std::runtime_error("'face_indices' doit contenir un multiple de 3 indices");
+            }
+
+            mesh.triVerts.resize(tris.size());
+            for (std::size_t i = 0; i < tris.size(); ++i) {
+                mesh.triVerts[i] = tris[i].get<uint32_t>();
+            }
+
+        }
+
+        static void write_mesh(
+            basic_json<>& j,
+            const manifold::MeshGL64& mesh
+        ) {
+
+            // Vertices
+            j["vertices"] = json::array();
+            for (auto v : mesh.vertProperties) {
+                j["vertices"].push_back(v);
+            }
+
+            // Triangles
+            j["face_indices"] = json::array();
+            for (uint32_t idx : mesh.triVerts) {
+                j["face_indices"].push_back(idx);
+            }
+
+            j["num_vertices"] = mesh.vertProperties.size() / mesh.numProp;
+            j["num_faces"] = mesh.triVerts.size() / 3;
+
+        }
+
+    private:
+
+        manifold::MeshGL64 src_mesh_;
+        manifold::MeshGL64 cut_mesh_;
+
 
     };
 

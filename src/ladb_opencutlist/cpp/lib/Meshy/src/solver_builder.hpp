@@ -3,7 +3,6 @@
 #include "solver.hpp"
 
 #include <fstream>
-#include <sstream>
 
 using namespace nlohmann;
 
@@ -36,14 +35,16 @@ namespace Meshy {
             json j;
             is >> j;
 
-            if (j.contains("problem_type")) {
+            if (j.contains("solver_type")) {
 
-                ProblemType problem_type;
-                std::stringstream ss(j.value("problem_type", ""));
-                ss >> problem_type;
+                SolverType solver_type;
+                std::stringstream ss(j.value("solver_type", ""));
+                ss >> solver_type;
 
-                if (problem_type == ProblemType::Debug) {
-                    solver_ptr_ = std::make_shared<DebugSolver>();
+                if (solver_type == SolverType::MCut) {
+                    solver_ptr_ = std::make_shared<MCutSolver>();
+                } else if (solver_type == SolverType::Manifold) {
+                    solver_ptr_ = std::make_shared<ManifoldSolver>();
                 } else {
                     throw std::runtime_error("Unavailable problem type \"" + ss.str() + "\".");
                 }
@@ -51,7 +52,7 @@ namespace Meshy {
                 (*solver_ptr_).read(j);
 
             } else {
-                throw std::invalid_argument("Missing \"problem_type\" parameter.");
+                throw std::invalid_argument("Missing \"solver_type\" parameter.");
             }
 
             return solver_ptr_;

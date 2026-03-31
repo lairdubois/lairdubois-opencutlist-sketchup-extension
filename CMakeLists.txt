@@ -60,5 +60,7 @@ message(STATUS "--------------- Mac configuration -------------")
 message(STATUS "CMAKE_OSX_ARCHITECTURES:        ${CMAKE_OSX_ARCHITECTURES}" )
 message(STATUS "CMAKE_OSX_DEPLOYMENT_TARGET:    ${CMAKE_OSX_DEPLOYMENT_TARGET}" )
 message(STATUS "---------------------------------------------------")
+message(STATUS "OCL_BUILD_MAIN:                 ${OCL_BUILD_MAIN}" )
+message(STATUS "---------------------------------------------------")
 
 add_subdirectory(src/ladb_opencutlist/cpp/lib)

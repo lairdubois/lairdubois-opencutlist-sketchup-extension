@@ -22,6 +22,7 @@ module Ladb::OpenCutList
     ACTION_OPTION_AXES = 'axes'
     ACTION_OPTION_PANELING_DIRECTION = 'paneling_direction'
     ACTION_OPTION_PANELING_JOINT_TYPE = 'paneling_joint_type'
+    ACTION_OPTION_CSG_OPERATION = 'csg_operation'
     ACTION_OPTION_OPTIONS = 'options'
 
     ACTION_OPTION_THICKNESS_THICKNESS = 'thickness'
@@ -38,6 +39,10 @@ module Ladb::OpenCutList
 
     ACTION_OPTION_PANELING_JOINT_TYPE_FLAT = 'flat'
     ACTION_OPTION_PANELING_JOINT_TYPE_MITER = 'miter'
+
+    ACTION_OPTION_CSG_OPERATION_UNION = 'union'
+    ACTION_OPTION_CSG_OPERATION_SUBSTRACTION = 'substraction'
+    ACTION_OPTION_CSG_OPERATION_INTERSECTION = 'intersection'
 
     ACTION_OPTION_OPTIONS_CENTRED = 'centred'
     ACTION_OPTION_OPTIONS_MAKE_UNIQUE = 'make_unique'
@@ -61,6 +66,9 @@ module Ladb::OpenCutList
       },
       {
         :action => ACTION_CSG,
+        :options => {
+          ACTION_OPTION_CSG_OPERATION => [ ACTION_OPTION_CSG_OPERATION_UNION, ACTION_OPTION_CSG_OPERATION_SUBSTRACTION, ACTION_OPTION_CSG_OPERATION_INTERSECTION ]
+        }
       }
     ].freeze
 
@@ -149,6 +157,9 @@ module Ladb::OpenCutList
       when ACTION_OPTION_PANELING_JOINT_TYPE
         return true
 
+      when ACTION_OPTION_CSG_OPERATION
+        return true
+
       end
 
       false
@@ -192,6 +203,15 @@ module Ladb::OpenCutList
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M1,0L1,1L0.625,1L0.625,0.375 M1,0L0,0L0,0.375L0.625,0.375L0.625,0'))
         when ACTION_OPTION_PANELING_JOINT_TYPE_MITER
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0L0,0.375L0.625,0.375L1,0L0,0 M1,0L1,1L0.625,1L0.625,0.375'))
+        end
+      when ACTION_OPTION_CSG_OPERATION
+        case option
+        when ACTION_OPTION_CSG_OPERATION_UNION
+          return Kuix::Label.new('U')
+        when ACTION_OPTION_CSG_OPERATION_SUBSTRACTION
+          return Kuix::Label.new('S')
+        when ACTION_OPTION_CSG_OPERATION_INTERSECTION
+          return Kuix::Label.new('I')
         end
       when ACTION_OPTION_OPTIONS
         case option
@@ -3793,13 +3813,21 @@ module Ladb::OpenCutList
 
     end
 
+    # -----
+
+    def _fetch_option_csg_operation
+      @tool.fetch_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_CSG_OPERATION)
+    end
+
+    # -----
+
     def _operate
 
       require_relative '../lib/fiddle/meshy/meshy'
 
-      fn = lambda { |fm, vertex_index_map, vertices, face_indices, face_sizes|
+      fn = lambda { |fm, vertex_index_map, vertices, face_indices, face_sizes, triangulated = true|
 
-        if fm.has_inner_loops?
+        if triangulated || fm.has_inner_loops?
 
           # Export triangulated face
 
@@ -3893,7 +3921,8 @@ module Ladb::OpenCutList
       }
 
       input = {
-        problem_type: 'debug',
+        solver_type: 'manifold',
+        operation: _fetch_option_csg_operation,
         src_mesh: src_mesh,
         cut_mesh: cut_mesh
       }
@@ -3916,8 +3945,8 @@ module Ladb::OpenCutList
         model = Sketchup.active_model
         model.start_operation('CSG', true)
 
-          t = IDENTITY
-          v = Geom::Vector3d.new(@src_drawing_def.bounds.width + @cut_drawing_def.bounds.width, 0, 0)
+          v = Geom::Vector3d.new([ @src_drawing_def.bounds.width, @cut_drawing_def.bounds.width ].max * 1.5, 0, 0)
+          t = Geom::Transformation.translation(v)
 
           output['fragments'].each { |fragment|
 
@@ -3925,9 +3954,15 @@ module Ladb::OpenCutList
 
             points = fragment['vertices'].each_slice(3).map { |coords| Geom::Point3d.new(coords) }
 
-            fragment['face_sizes'].each do |face_size|
-              indices = fragment['face_indices'].shift(face_size)
-              mesh.add_polygon(indices.map { |index| points[index] })
+            if fragment['face_sizes'].nil?
+              fragment['face_indices'].each_slice(3) do |indices|
+                mesh.add_polygon(indices.map { |index| points[index] })
+              end
+            else
+              fragment['face_sizes'].each do |face_size|
+                indices = fragment['face_indices'].shift(face_size)
+                mesh.add_polygon(indices.map { |index| points[index] })
+              end
             end
 
             group = Sketchup.active_model.entities.add_group

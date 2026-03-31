@@ -21,9 +21,9 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(json)
 
 # Fetch cutdigital/mcut.
-set(MCUT_BUILD_TUTORIALS OFF CACHE BOOL "" FORCE)
-set(MCUT_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-set(MCUT_BUILD_AS_SHARED_LIB OFF CACHE BOOL "" FORCE)
+set(MCUT_BUILD_TUTORIALS      OFF CACHE BOOL "" FORCE)
+set(MCUT_BUILD_TESTS          OFF CACHE BOOL "" FORCE)
+set(MCUT_BUILD_AS_SHARED_LIB  OFF CACHE BOOL "" FORCE)
 add_compile_definitions(LICENSE_NOTICE_ACKNOWLEDGED)
 FetchContent_Declare(
         mcut
@@ -34,3 +34,17 @@ FetchContent_Declare(
 #        SOURCE_DIR "${PROJECT_SOURCE_DIR}/../cutdigital-mcut/"
         EXCLUDE_FROM_ALL)
 FetchContent_MakeAvailable(mcut)
+
+# Fetch elalish/manifold.
+set(MANIFOLD_PYBIND         OFF CACHE BOOL "" FORCE)
+set(MANIFOLD_CBIND          OFF CACHE BOOL "" FORCE)
+set(MANIFOLD_TEST           OFF CACHE BOOL "" FORCE)
+set(MANIFOLD_EXPORT         OFF CACHE BOOL "" FORCE)
+set(MANIFOLD_CROSS_SECTION  OFF CACHE BOOL "" FORCE)
+FetchContent_Declare(
+        manifold
+        GIT_REPOSITORY https://github.com/elalish/manifold.git
+        GIT_TAG        v3.4.1
+        GIT_SHALLOW    TRUE
+        EXCLUDE_FROM_ALL)
+FetchContent_MakeAvailable(manifold)
