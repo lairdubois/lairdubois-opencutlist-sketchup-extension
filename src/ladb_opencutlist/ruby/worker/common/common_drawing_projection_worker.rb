@@ -63,11 +63,12 @@ module Ladb::OpenCutList
       curve_manipulators = []
 
       @drawing_def.face_manipulators.each do |face_manipulator|
-        next unless (face_manipulator.normal.angle_between(Z_AXIS) - Geometrix::HALF_PI).round(4) < 0  # Filter only exposed --> Not faces Sketchup perpendicular? function may be too lazy
         material_attribute = _get_material_attributes(face_manipulator.material)
         if material_attribute.type == MaterialAttributes::TYPE_MACHINING
+          next unless (face_manipulator.normal.angle_between(Z_AXIS) - Geometrix::HALF_PI).round(4).abs > 0  # Filter only non-exposed --> Do not use Sketchup perpendicular? function because it may be too lazy
           machining_face_manipulators << face_manipulator
         else
+          next unless (face_manipulator.normal.angle_between(Z_AXIS) - Geometrix::HALF_PI).round(4) < 0  # Filter only exposed --> Do not use Sketchup perpendicular? function because it may be too lazy
           face_manipulators << face_manipulator
           faces_bounds.add(face_manipulator.outer_loop_manipulator.points)
         end
@@ -106,9 +107,41 @@ module Ladb::OpenCutList
         end
         if face_manipulator.has_cuts_opening?
           # Face has cuts opening components glued to. So we extract its paths from mesh triangulation instead of loops.
-          f_paths = face_manipulator.triangles.each_slice(3).to_a.map { |points| Clippy.points_to_rpath(points) }
+          f_paths = face_manipulator.triangles.each_slice(3)
+                                    .to_a
+                                    .map! { |points| Clippy.points_to_rpath(points) }
         else
-          f_paths = face_manipulator.loop_manipulators.map { |loop_manipulator| loop_manipulator.points }.map { |points| Clippy.points_to_rpath(points) }
+          f_paths = face_manipulator.loop_manipulators
+                                    .map { |loop_manipulator| loop_manipulator.points }
+                                    .map! { |points| Clippy.points_to_rpath(points) }
+        end
+
+        pld = plds[(key = f_depth.round(3).to_s)]
+        if pld.nil?
+          plds[key] = PathsLayerDef.new(f_depth, f_paths, [], [], [], DrawingProjectionLayerDef::TYPE_DEFAULT)
+        else
+          pld.closed_paths.concat(f_paths) # Just concat, union will be call later in one unique call
+        end
+
+      end
+
+      # Extract machining faces loops
+      machining_face_manipulators.each do |face_manipulator|
+
+        if face_manipulator.surface_manipulator
+          f_depth = (z_max - face_manipulator.surface_manipulator.bounds.max.z) # Faces sharing the same "surface" are considered as a unique "box"
+        else
+          f_depth = (z_max - face_manipulator.bounds.max.z)
+        end
+        if face_manipulator.has_cuts_opening?
+          # Face has cuts opening components glued to. So we extract its paths from mesh triangulation instead of loops.
+          f_paths = face_manipulator.triangles.each_slice(3)
+                                    .to_a
+                                    .map! { |points| Clippy.points_to_rpath(points.reverse) }
+        else
+          f_paths = face_manipulator.loop_manipulators
+                                    .map { |loop_manipulator| loop_manipulator.points }
+                                    .map! { |points| Clippy.points_to_rpath(points.reverse) }
         end
 
         pld = plds[(key = f_depth.round(3).to_s)]
@@ -127,8 +160,7 @@ module Ladb::OpenCutList
         e_path = Clippy.points_to_rpath(edge_manipulator.points)
         e_su_layer = edge_manipulator.edge.layer == cached_layer0 ? nil : edge_manipulator.edge.layer
 
-        key = [ e_depth.round(3), e_su_layer ].compact.join('_')
-        pld = plds[key]
+        pld = plds[(key = [ e_depth.round(3), e_su_layer ].compact.join('_'))]
         if pld.nil?
           plds[key] = PathsLayerDef.new(e_depth, [], [ e_path ], [], [], DrawingProjectionLayerDef::TYPE_DEFAULT, e_su_layer)
         else

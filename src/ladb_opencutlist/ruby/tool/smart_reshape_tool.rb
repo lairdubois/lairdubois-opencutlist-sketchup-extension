@@ -41,7 +41,7 @@ module Ladb::OpenCutList
     ACTION_OPTION_PANELING_JOINT_TYPE_MITER = 'miter'
 
     ACTION_OPTION_CSG_OPERATION_UNION = 'union'
-    ACTION_OPTION_CSG_OPERATION_SUBSTRACTION = 'substraction'
+    ACTION_OPTION_CSG_OPERATION_SUBTRACTION = 'subtraction'
     ACTION_OPTION_CSG_OPERATION_INTERSECTION = 'intersection'
 
     ACTION_OPTION_OPTIONS_CENTRED = 'centred'
@@ -64,12 +64,12 @@ module Ladb::OpenCutList
           ACTION_OPTION_PANELING_JOINT_TYPE => [ ACTION_OPTION_PANELING_JOINT_TYPE_FLAT, ACTION_OPTION_PANELING_JOINT_TYPE_MITER ]
         }
       },
-      {
-        :action => ACTION_CSG,
-        :options => {
-          ACTION_OPTION_CSG_OPERATION => [ ACTION_OPTION_CSG_OPERATION_UNION, ACTION_OPTION_CSG_OPERATION_SUBSTRACTION, ACTION_OPTION_CSG_OPERATION_INTERSECTION ]
-        }
-      }
+      # {
+      #   :action => ACTION_CSG,
+      #   :options => {
+      #     ACTION_OPTION_CSG_OPERATION => [ACTION_OPTION_CSG_OPERATION_UNION, ACTION_OPTION_CSG_OPERATION_SUBTRACTION, ACTION_OPTION_CSG_OPERATION_INTERSECTION ]
+      #   }
+      # }
     ].freeze
 
     # -----
@@ -208,7 +208,7 @@ module Ladb::OpenCutList
         case option
         when ACTION_OPTION_CSG_OPERATION_UNION
           return Kuix::Label.new('U')
-        when ACTION_OPTION_CSG_OPERATION_SUBSTRACTION
+        when ACTION_OPTION_CSG_OPERATION_SUBTRACTION
           return Kuix::Label.new('S')
         when ACTION_OPTION_CSG_OPERATION_INTERSECTION
           return Kuix::Label.new('I')
@@ -3732,6 +3732,23 @@ module Ladb::OpenCutList
 
     end
 
+    def onStateChanged(old_state, new_state)
+
+      case new_state
+
+      when STATE_SELECT_SRC
+        @src_drawing_def = nil
+        @tool.clear_3d([ LAYER_3D_SRC_PREVIEW, LAYER_3D_CUT_PREVIEW ])
+
+      when STATE_SELECT_CUT
+        @cut_drawing_def = nil
+        @tool.clear_3d([ LAYER_3D_CUT_PREVIEW ])
+
+      end
+
+      super
+    end
+
     def onPickerChanged(picker, view)
 
       case @state
@@ -3749,6 +3766,17 @@ module Ladb::OpenCutList
       end
 
       super
+    end
+
+    # -----
+
+    protected
+
+    def _reset
+      @src_drawing_def = nil
+      @cut_drawing_def = nil
+      super
+      set_state(STATE_SELECT_SRC)
     end
 
     # -----
@@ -3825,7 +3853,9 @@ module Ladb::OpenCutList
 
       require_relative '../lib/fiddle/meshy/meshy'
 
-      fn = lambda { |fm, vertex_index_map, vertices, face_indices, face_sizes, triangulated = true|
+      fn = lambda { |fm, vertex_index_map, vertices, face_indices, face_sizes, face_ids, triangulated = true|
+
+        face = fm.face
 
         if triangulated || fm.has_inner_loops?
 
@@ -3854,6 +3884,7 @@ module Ladb::OpenCutList
 
             face_indices.concat(face_vertex_indices)
             face_sizes << face_vertex_indices.length
+            face_ids << face.persistent_id
 
           end
 
@@ -3879,6 +3910,7 @@ module Ladb::OpenCutList
 
           face_indices.concat(face_vertex_indices)
           face_sizes << face_vertex_indices.length
+          face_ids << face.persistent_id
 
         end
 
@@ -3887,17 +3919,19 @@ module Ladb::OpenCutList
       vertices = []
       face_indices = []
       face_sizes = []
+      face_ids = []
 
       vertex_index_map = {}
 
       @src_drawing_def.face_manipulators.each do |fm|
-        fn.call(fm, vertex_index_map, vertices, face_indices, face_sizes)
+        fn.call(fm, vertex_index_map, vertices, face_indices, face_sizes, face_ids)
       end
 
       src_mesh = {
         vertices: vertices,
         face_indices: face_indices,
         face_sizes: face_sizes,
+        face_ids: face_ids,
         num_vertices: vertices.size / 3,
         num_faces: face_sizes.size
       }
@@ -3905,17 +3939,19 @@ module Ladb::OpenCutList
       vertices = []
       face_indices = []
       face_sizes = []
+      face_ids = []
 
       vertex_index_map = {}
 
       @cut_drawing_def.face_manipulators.each do |fm|
-        fn.call(fm, vertex_index_map, vertices, face_indices, face_sizes)
+        fn.call(fm, vertex_index_map, vertices, face_indices, face_sizes, face_ids)
       end
 
       cut_mesh = {
         vertices: vertices,
         face_indices: face_indices,
         face_sizes: face_sizes,
+        face_ids: face_ids,
         num_vertices: vertices.size / 3,
         num_faces: face_sizes.size
       }
@@ -3923,8 +3959,8 @@ module Ladb::OpenCutList
       input = {
         solver_type: 'manifold',
         operation: _fetch_option_csg_operation,
-        src_mesh: src_mesh,
-        cut_mesh: cut_mesh
+        src_meshes: [ src_mesh ],
+        cut_meshes: [ cut_mesh ]
       }
 
       # Write input to a JSON file in the bin directory for debug purpose
@@ -3953,8 +3989,15 @@ module Ladb::OpenCutList
             mesh = Geom::PolygonMesh.new(fragment['num_vertices'], fragment['num_faces'])
 
             points = fragment['vertices'].each_slice(3).map { |coords| Geom::Point3d.new(coords) }
+            faces = {}
 
             if fragment['face_sizes'].nil?
+
+              face_ids = fragment['face_ids']
+              fragment['face_indices'].each_slice(3).with_index do |indices, i|
+                (faces[face_ids[i]] ||= []) << indices.map { |index| points[index] }
+              end
+
               fragment['face_indices'].each_slice(3) do |indices|
                 mesh.add_polygon(indices.map { |index| points[index] })
               end
@@ -3965,10 +4008,23 @@ module Ladb::OpenCutList
               end
             end
 
-            group = Sketchup.active_model.entities.add_group
-            group.name = "type_#{fragment['type']}"
-            group.entities.fill_from_mesh(mesh, true, Geom::PolygonMesh::NO_SMOOTH_OR_HIDE)
+            group = model.entities.add_group
+            if faces.any?
+              faces.each { |face_id, face_triangles|
+                mesh = Geom::PolygonMesh.new(face_triangles.size * 3, face_triangles.size)
+                face_triangles.each { |triangle|
+                  mesh.add_polygon(triangle)
+                }
+                group.entities.add_faces_from_mesh(mesh, Geom::PolygonMesh::NO_SMOOTH_OR_HIDE, 'PANO')
+              }
+            else
+              group.name = "type_#{fragment['type']}"
+              group.entities.fill_from_mesh(mesh, true, Geom::PolygonMesh::NO_SMOOTH_OR_HIDE)
+            end
             group.transformation = t
+
+            edges_to_erase = group.entities.grep(Sketchup::Edge).select { |edge| edge.faces.size == 2 && edge.faces[0].normal.parallel?(edge.faces[1].normal) }
+            group.entities.erase_entities(edges_to_erase) if edges_to_erase.any?
 
             t *= Geom::Transformation.translation(v)
 

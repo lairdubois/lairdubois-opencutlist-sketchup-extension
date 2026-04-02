@@ -405,16 +405,21 @@ module Ladb::OpenCutList
 
       num_segments = _num_segments_by_radius(radius)
 
-      btm_edges = entities.add_circle(ORIGIN, Z_AXIS, radius, num_segments)
-      top_edges = entities.add_circle(ORIGIN.offset(Z_AXIS, z_value), Z_AXIS, radius, num_segments)
+      b_edges = entities.add_circle(ORIGIN, Z_AXIS, radius, num_segments)
+      z_edges = entities.add_circle(ORIGIN.offset(Z_AXIS, z_value), Z_AXIS, radius, num_segments)
 
-      btm_edges.zip(top_edges).each do |btm_edge, top_edge|
-        edge = entities.add_line(btm_edge.start.position, top_edge.start.position)
-        edge.smooth = edge.soft = true if edge
+      b_face = group.entities.add_face(b_edges)
+      b_face.reverse! if b_face.normal.samedirection?(Z_AXIS)
+      z_face = group.entities.add_face(z_edges)
+      z_face.reverse! unless z_face.normal.samedirection?(Z_AXIS)
+
+      b_edges.zip(z_edges).each do |b_edge, z_edge|
+        edge = entities.add_line(b_edge.start.position, z_edge.start.position)
+        if edge
+          edge.smooth = edge.soft = true
+          edge.find_faces
+        end
       end
-
-      btm_edges.each(&:find_faces)
-      top_edges.first.find_faces
 
     end
 
@@ -442,14 +447,16 @@ module Ladb::OpenCutList
 
           num_segments = _num_segments_by_radius(radius, max_num_segments: 12)
 
-          btm_edges = group.entities.add_circle(ORIGIN, depth_v, radius, num_segments)
-          top_edges = group.entities.add_circle(ORIGIN.offset(depth_v, depth), depth_v, radius, num_segments)
+          b_edges = group.entities.add_circle(ORIGIN, depth_v, radius, num_segments)
+          z_edges = group.entities.add_circle(ORIGIN.offset(depth_v, depth), depth_v, radius, num_segments)
 
-          group.entities.add_face(btm_edges)
-          group.entities.add_face(top_edges)
+          b_face = group.entities.add_face(b_edges)
+          b_face.reverse! if b_face.normal.samedirection?(depth_v)
+          z_face = group.entities.add_face(z_edges)
+          z_face.reverse! unless z_face.normal.samedirection?(depth_v)
 
-          btm_edges.zip(top_edges).each do |btm_edge, top_edge|
-            edge = group.entities.add_line(btm_edge.start.position, top_edge.start.position)
+          b_edges.zip(z_edges).each do |b_edge, z_edge|
+            edge = group.entities.add_line(b_edge.start.position, z_edge.start.position)
             if edge
               edge.smooth = edge.soft = true
               edge.find_faces
