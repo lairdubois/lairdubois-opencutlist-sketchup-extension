@@ -946,6 +946,9 @@ module Ladb::OpenCutList
 
         if entity.is_a?(Sketchup::Group)
 
+          # Exclude machinings
+          return 0 if entity.material && _get_material_attributes(entity.material).type == MaterialAttributes::TYPE_MACHINING
+
           # Entity is a group -> check its children
           entity_path = path + [ entity ]
           entity.entities.each do |child_entity|
@@ -956,6 +959,9 @@ module Ladb::OpenCutList
 
           # Exclude special behavior components
           return 0 if entity.definition.behavior.always_face_camera?
+
+          # Exclude machinings
+          return 0 if entity.material && _get_material_attributes(entity.material).type == MaterialAttributes::TYPE_MACHINING
 
           # Entity is a component instance -> check its children
           entity_path = path + [ entity ]
@@ -999,7 +1005,7 @@ module Ladb::OpenCutList
 
     def _grab_main_faces_and_layers(definition_or_group, x_face_infos = [], y_face_infos = [], z_face_infos = [], content_layers = Set[], transformation = nil)
       definition_or_group.entities.each { |entity|
-        next if entity.is_a?(Sketchup::Edge)   # Minor Speed imrovement when there's a lot of edges
+        next if entity.is_a?(Sketchup::Edge)   # Minor Speed improvement when there are a lot of edges
         if entity.visible? && _layer_visible?(entity.layer)
           if entity.is_a?(Sketchup::Face)
             transformed_normal = transformation.nil? ? entity.normal : entity.normal.transform(transformation)
@@ -1012,8 +1018,10 @@ module Ladb::OpenCutList
             end
             content_layers.add(entity.layer)
           elsif entity.is_a?(Sketchup::Group)
+            next if entity.material && _get_material_attributes(entity.material).type == MaterialAttributes::TYPE_MACHINING
             _grab_main_faces_and_layers(entity, x_face_infos, y_face_infos, z_face_infos, content_layers.add(entity.layer), transformation ? transformation * entity.transformation : entity.transformation)
           elsif entity.is_a?(Sketchup::ComponentInstance) && entity.definition.behavior.cuts_opening?
+            next if entity.material && _get_material_attributes(entity.material).type == MaterialAttributes::TYPE_MACHINING
             _grab_main_faces_and_layers(entity.definition, x_face_infos, y_face_infos, z_face_infos, content_layers.add(entity.layer), transformation ? transformation * entity.transformation : entity.transformation)
           end
         end

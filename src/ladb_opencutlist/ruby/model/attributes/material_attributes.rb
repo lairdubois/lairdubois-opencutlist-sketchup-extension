@@ -66,9 +66,7 @@
     def self.valid_type(type)
       if type
         i_type = type.to_i
-        if i_type < TYPE_UNKNOWN || i_type > TYPE_MACHINING
-          return TYPE_UNKNOWN
-        end
+        return TYPE_UNKNOWN if i_type < TYPE_UNKNOWN || i_type > TYPE_MACHINING
         i_type
       else
         TYPE_UNKNOWN
@@ -163,7 +161,7 @@
       else
         return false
       end
-      type == TYPE_EDGE || type == TYPE_VENEER
+      type == TYPE_EDGE || type == TYPE_VENEER || type == TYPE_MACHINING
     end
 
     def self.is_1d?(value)

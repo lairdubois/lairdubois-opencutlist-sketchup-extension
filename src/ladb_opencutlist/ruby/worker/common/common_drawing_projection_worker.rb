@@ -140,7 +140,7 @@ module Ladb::OpenCutList
         e_su_layer = edge_manipulator.layer == cached_layer0 ? nil : edge_manipulator.layer
 
         key = [ e_depth.round(3), e_su_layer ].compact.join('_')
-        pld = plds[key] ||= PathsLayerDef.new(e_depth, DrawingProjectionLayerDef::TYPE_DEFAULT, e_su_layer)
+        pld = plds[key] ||= PathsLayerDef.new(e_depth, DrawingProjectionLayerDef::TYPE_DEFAULT, su_layer: e_su_layer)
         pld.open_paths.push(e_path)
 
       end
@@ -151,7 +151,7 @@ module Ladb::OpenCutList
         c_su_layer = curve_manipulator.layer == cached_layer0 ? nil : curve_manipulator.layer
 
         key = [ c_depth.round(3), c_su_layer ].compact.join('_')
-        pld = plds[key] ||= PathsLayerDef.new(c_depth, DrawingProjectionLayerDef::TYPE_DEFAULT, c_su_layer)
+        pld = plds[key] ||= PathsLayerDef.new(c_depth, DrawingProjectionLayerDef::TYPE_DEFAULT, su_layer: c_su_layer)
         pld.open_paths.push(c_path)
 
       end
@@ -159,9 +159,9 @@ module Ladb::OpenCutList
       # Sort on depth ASC
       splds = plds.values.sort_by { |layer_def| [ layer_def.depth.round(3), layer_def.su_layer.nil? ? 1 : 0 ] }
 
-      # Union paths on each layer
+      # Union paths + Diff with cutting paths on each layer
       splds.each do |layer_def|
-        layer_def.cutting_closed_paths, op = Clippy.execute_union(closed_subjects: layer_def.cutting_closed_paths) if layer_def.cutting_closed_paths.size > 1
+        # layer_def.cutting_closed_paths, op = Clippy.execute_union(closed_subjects: layer_def.cutting_closed_paths) if layer_def.cutting_closed_paths.size > 1
         layer_def.closed_paths, op = Clippy.execute_union(closed_subjects: layer_def.closed_paths) if layer_def.closed_paths.size > 1
         layer_def.closed_paths, op = Clippy.execute_difference(closed_subjects: layer_def.closed_paths, clips: layer_def.cutting_closed_paths) if layer_def.cutting_closed_paths.any?
       end
@@ -215,7 +215,7 @@ module Ladb::OpenCutList
         through_paths = Clippy.reverse_rpaths(Clippy.delete_rpaths_in(merged_paths, outer_paths))
 
         # Append "holes" layer def
-        splds << PathsLayerDef.new(max_depth, DrawingProjectionLayerDef::TYPE_HOLES, nil, through_paths)
+        splds << PathsLayerDef.new(max_depth, DrawingProjectionLayerDef::TYPE_HOLES, closed_paths: through_paths)
 
         # Difference with outer and upper to extract holes to propagate
         mask_paths, op = Clippy.execute_difference(closed_subjects: outer_paths, clips: upper_paths)
@@ -345,7 +345,7 @@ module Ladb::OpenCutList
         end
 
         # Insert "outer" layer (after upper_layer)
-        splds.insert(1, PathsLayerDef.new(max_depth, DrawingProjectionLayerDef::TYPE_OUTER, nil, outer_paths))
+        splds.insert(1, PathsLayerDef.new(max_depth, DrawingProjectionLayerDef::TYPE_OUTER, closed_paths: outer_paths))
 
       end
 
@@ -480,8 +480,8 @@ module Ladb::OpenCutList
     end
 
     PathsLayerDef = Struct.new(:depth, :type, :su_layer, :closed_paths, :open_paths, :cutting_closed_paths, :border_closed_paths, :border_open_paths) do
-      def initialize(depth, type, su_layer = nil, closed_paths = [], open_paths = [], cutting_closed_paths = [], border_closed_paths = [], border_open_paths = [])
-        super
+      def initialize(depth, type, su_layer: nil, closed_paths: [], open_paths: [], cutting_closed_paths: [], border_closed_paths: [], border_open_paths: [])
+        super(depth, type, su_layer, closed_paths, open_paths, cutting_closed_paths, border_closed_paths, border_open_paths)
       end
     end
     PathBorderDef = Struct.new(:segment_defs, :is_loop) do
