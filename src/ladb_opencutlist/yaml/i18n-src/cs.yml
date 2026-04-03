@@ -116,7 +116,7 @@ core:
       smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
-      smart_join: ""
+      smart_join: $t(core.toolbar.command.smart_join)
       smart_export: $t(core.toolbar.command.smart_export)
       reset_dialog_position: Resetujte polohu okna
   toolbar:
@@ -2093,7 +2093,7 @@ tool:
     error:
       no_direction: "Prosím, označte směr myší"
       invalid_length: "Délka {{ value }} je neplatná"
-      invalid_thickness: ""
+      invalid_thickness: "Tloušťka {{ value }} je neplatná"
       invalid_multiplicator: "Faktor {{ value }} je neplatný"
       invalid_divider: "Dělitel {{ value }} je neplatný"
       invalid_offset: "Offset {{ value }} je neplatný"
@@ -2160,7 +2160,7 @@ tool:
     action_option_options_draw_in: Kreslit v
     action_option_options_draw_in_0: Nakreslit aktivní prvek
     action_option_options_draw_in_1: Nakreslete nadřazený bod části prvního bodu
-    action_option_options_draw_in_status: "Nakreslete rodičovský objekt části, na kterou je zaměřen první bod."
+    action_option_options_draw_in_status: "Nakreslete rodičovský objekt části, na kterou je zaměřen první bod"
     action_option_options_ask_name: Pojmenování dílců
     action_option_options_ask_name_status: Ruční zadání názvů dílců
     action_measure_locked_status: Zamknout poslední měření
@@ -2212,27 +2212,27 @@ tool:
     action_0_state_11_status: Klikněte pro přidání řezacího plánu
     action_0_state_12_status: Kliknutím na řeznou rovinu ji odstraníte
     action_0_state_2_status: Kliknutím potvrďte roztažení nebo zadejte vzdálenost
-    action_1: ""
-    action_1_status: ""
-    action_1_state_0_status: ""
-    action_1_state_1_status: ""
+    action_1: Panelování
+    action_1_status: Vytvořte sérii dílců z uzavřeného tělesa
+    action_1_state_0_status: Kliknutím na uzavřené těleso definujete referenční geometrii
+    action_1_state_1_status: Vyberte plochy k vysunutí
     action_option_group_thickness: Tloušťka
     action_option_group_stretch_measure_type: Kopie dílce
     action_option_group_axes: Osy
-    action_option_group_paneling_joint_type: ""
+    action_option_group_paneling_joint_type: Spoj
     action_option_group_paneling_direction: Směr
     action_option_group_options: Nastavení
     action_option_thickness_thickness: Tloušťka
-    action_option_thickness_thickness_status: ""
+    action_option_thickness_thickness_status: Definuje tloušťku dílců
     action_option_stretch_measure_type_outside_status: Vzdálenost včetně dílce
     action_option_stretch_measure_type_offset_status: Rozdíl v měření
     action_option_axes_active_status: Manipulace podél os
     action_option_axes_context_status: Manipulovat podél os skupiny nebo dílců obsahující díl
     action_option_axes_entity_status: Manipulace podél os dílu
-    action_option_paneling_joint_type_flat_status: ""
-    action_option_paneling_joint_type_miter_status: ""
-    action_option_paneling_direction_inward_status: ""
-    action_option_paneling_direction_outward_status: ""
+    action_option_paneling_joint_type_flat_status: Plochý spoj
+    action_option_paneling_joint_type_miter_status: Pokosový spoj
+    action_option_paneling_direction_inward_status: Směr dovnitř
+    action_option_paneling_direction_outward_status: Směr ven
     action_option_options_centred_status: Vycentrovat na protáhlé prvky
     action_option_options_make_unique_status: Udělejte roztažené prvky jedinečnými
     error:
