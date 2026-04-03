@@ -1,6 +1,5 @@
 #pragma once
 
-#include <mcut/mcut.h>
 #include <manifold/manifold.h>
 #include <nlohmann/json.hpp>
 
@@ -93,14 +92,6 @@ namespace Meshy {
         }
         return os;
     }
-
-    struct Mesh {
-        std::vector<McDouble> vertices;
-        std::vector<McUint32> face_indices;
-        std::vector<McUint32> face_sizes;
-        McUint32              num_vertices = 0;
-        McUint32              num_faces    = 0;
-    };
 
     class Solver {
 
