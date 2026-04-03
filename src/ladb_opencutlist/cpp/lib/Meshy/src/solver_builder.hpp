@@ -41,9 +41,7 @@ namespace Meshy {
                 std::stringstream ss(j.value("solver_type", ""));
                 ss >> solver_type;
 
-                if (solver_type == SolverType::MCut) {
-                    solver_ptr_ = std::make_shared<MCutSolver>();
-                } else if (solver_type == SolverType::Manifold) {
+                if (solver_type == SolverType::Manifold) {
                     solver_ptr_ = std::make_shared<ManifoldSolver>();
                 } else {
                     throw std::runtime_error("Unavailable problem type \"" + ss.str() + "\".");

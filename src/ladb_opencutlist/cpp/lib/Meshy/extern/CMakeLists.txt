@@ -20,21 +20,6 @@ FetchContent_Declare(
         URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz)
 FetchContent_MakeAvailable(json)
 
-# Fetch cutdigital/mcut.
-set(MCUT_BUILD_TUTORIALS      OFF CACHE BOOL "" FORCE)
-set(MCUT_BUILD_TESTS          OFF CACHE BOOL "" FORCE)
-set(MCUT_BUILD_AS_SHARED_LIB  OFF CACHE BOOL "" FORCE)
-add_compile_definitions(LICENSE_NOTICE_ACKNOWLEDGED)
-FetchContent_Declare(
-        mcut
-#        GIT_REPOSITORY https://github.com/cutdigital/mcut.git
-#        GIT_TAG d424aec52454c22cd9d436907f28db3595e706e1
-        GIT_REPOSITORY https://github.com/lairdubois/cutdigital-mcut.git
-        GIT_TAG 6743a85e32b75c79a309666b19c430d15a5e69f7
-#        SOURCE_DIR "${PROJECT_SOURCE_DIR}/../cutdigital-mcut/"
-        EXCLUDE_FROM_ALL)
-FetchContent_MakeAvailable(mcut)
-
 # Fetch elalish/manifold.
 set(MANIFOLD_PYBIND         OFF CACHE BOOL "" FORCE)
 set(MANIFOLD_CBIND          OFF CACHE BOOL "" FORCE)
