@@ -6,9 +6,9 @@ module Ladb::OpenCutList
 
     attr_reader :vertex
 
-    def initialize(vertex, transformation = IDENTITY, material = nil)
+    def initialize(vertex, transformation = IDENTITY, material = nil, layer = nil)
       raise "vertex must be a Sketchup::Vertex." unless vertex.is_a?(Sketchup::Vertex)
-      super(transformation, material)
+      super(transformation, material, layer)
       @vertex = vertex
     end
 
@@ -37,11 +37,11 @@ module Ladb::OpenCutList
     # -----
 
     def edge_manipulators
-      @edge_manipulators ||= @vertex.edges.map { |edge| EdgeManipulator.new(edge, @transformation, material) }
+      @edge_manipulators ||= @vertex.edges.map { |edge| EdgeManipulator.new(edge, @transformation, material, layer) }
     end
 
     def face_manipulators
-      @face_manipulators ||= @vertex.faces.map { |face| FaceManipulator.new(face, @transformation, material) }
+      @face_manipulators ||= @vertex.faces.map { |face| FaceManipulator.new(face, @transformation, material, layer) }
     end
 
     # -----

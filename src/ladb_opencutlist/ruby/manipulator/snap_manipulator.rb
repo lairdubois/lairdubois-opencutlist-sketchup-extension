@@ -6,9 +6,9 @@ module Ladb::OpenCutList
 
     attr_reader :snap
 
-    def initialize(snap, transformation = IDENTITY, material = nil)
+    def initialize(snap, transformation = IDENTITY, material = nil, layer = nil)
       raise "snap must be a Sketchup::Snap." unless snap.is_a?(Sketchup::Snap)
-      super(transformation, material)
+      super(transformation, material, layer)
       @snap = snap
     end
 
@@ -25,6 +25,10 @@ module Ladb::OpenCutList
 
     def material
       @material ||= @snap.material
+    end
+
+    def layer
+      @layer ||= @snap.layer
     end
 
     def position

@@ -3,13 +3,16 @@ module Ladb::OpenCutList
   class Manipulator
 
     attr_reader :transformation,
-                :material
+                :material,
+                :layer
 
-    def initialize(transformation = IDENTITY, material = nil)
+    def initialize(transformation = IDENTITY, material = nil, layer = nil)
       raise "transformation must be a Geom::Transformation." unless transformation.is_a?(Geom::Transformation)
       @transformation = transformation
       raise "material must be a Sketchup::Material." unless material.nil? || material.is_a?(Sketchup::Material)
       @material = material
+      raise "layer must be a Sketchup::Layer." unless layer.nil? || layer.is_a?(Sketchup::Layer)
+      @layer = layer
     end
 
     # -----

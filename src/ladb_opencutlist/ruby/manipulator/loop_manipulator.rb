@@ -6,8 +6,8 @@ module Ladb::OpenCutList
 
     attr_reader :loop
 
-    def initialize(loop, transformation = IDENTITY, material = nil)
-      super(transformation, material)
+    def initialize(loop, transformation = IDENTITY, material = nil, layer = nil)
+      super(transformation, material, layer)
       raise "loop must be a Sketchup::Loop." unless loop.is_a?(Sketchup::Loop)
       @loop = loop
     end
@@ -50,11 +50,11 @@ module Ladb::OpenCutList
     # -----
 
     def edge_manipulators
-      @edge_manipulators ||= @loop.edges.map { |edge| EdgeManipulator.new(edge, @transformation, material) }
+      @edge_manipulators ||= @loop.edges.map { |edge| EdgeManipulator.new(edge, @transformation, material, layer) }
     end
 
     def vertex_manipulators
-      @vertex_manipulators ||= @loop.vertices.map { |vertex| VertexManipulator.new(vertex, @transformation, material) }
+      @vertex_manipulators ||= @loop.vertices.map { |vertex| VertexManipulator.new(vertex, @transformation, material, layer) }
     end
 
     # -----

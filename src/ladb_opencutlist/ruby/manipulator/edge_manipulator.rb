@@ -6,9 +6,9 @@ module Ladb::OpenCutList
 
     attr_reader :edge
 
-    def initialize(edge, transformation = IDENTITY, material = nil)
+    def initialize(edge, transformation = IDENTITY, material = nil, layer = nil)
       raise "edge must be a Sketchup::Edge." unless edge.is_a?(Sketchup::Edge)
-      super(edge.line, transformation, material)
+      super(edge.line, transformation, material, layer)
       @edge = edge
     end
 
@@ -36,9 +36,17 @@ module Ladb::OpenCutList
       @material ||= @edge.material
     end
 
+    def layer
+      @layer ||= @edge.layer
+    end
+
+    # -----
+
     def infinite?
       false
     end
+
+    # -----
 
     def points
       @points ||= begin
@@ -85,7 +93,7 @@ module Ladb::OpenCutList
     # -----
 
     def vertex_manipulators
-      @vertex_manipulators ||= @edge.vertices.map { |vertex| VertexManipulator.new(vertex, @transformation, material) }
+      @vertex_manipulators ||= @edge.vertices.map { |vertex| VertexManipulator.new(vertex, @transformation, material, layer) }
     end
 
     # -----

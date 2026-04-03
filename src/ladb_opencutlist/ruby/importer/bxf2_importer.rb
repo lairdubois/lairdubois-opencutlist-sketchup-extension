@@ -270,6 +270,11 @@ module Ladb::OpenCutList
 
           t *= cut_machining_link.transformations.to_t * Geom::Transformation.scaling(scale_x, scale_y, scale_z)
 
+        else
+
+          # Flag component for "no-scale"
+          definition.behavior.no_scale_mask = 127 # 1111111 (all disabld)
+
         end
 
         instance = component_entities.add_instance(definition, t * COMPONENT_UP_TRANSFORM)

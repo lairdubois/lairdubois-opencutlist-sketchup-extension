@@ -9,9 +9,9 @@ module Ladb::OpenCutList
     attr_reader :face
     attr_accessor :surface_manipulator
 
-    def initialize(face, transformation = IDENTITY, material = nil)
+    def initialize(face, transformation = IDENTITY, material = nil, layer = nil)
       raise "face must be a Sketchup::Face." unless face.is_a?(Sketchup::Face)
-      super(face.plane, transformation, material)
+      super(face.plane, transformation, material, layer)
       @face = face
       @surface_manipulator = nil
     end
@@ -43,6 +43,12 @@ module Ladb::OpenCutList
     def material
       @material ||= @face.material
     end
+
+    def layer
+      @layer ||= @face.layer
+    end
+
+    # -----
 
     def bounds
       outer_loop_manipulator.bounds
@@ -91,11 +97,11 @@ module Ladb::OpenCutList
     # -----
 
     def outer_loop_manipulator
-      @outer_loop_manipulator ||= LoopManipulator.new(@face.outer_loop, @transformation, material)
+      @outer_loop_manipulator ||= LoopManipulator.new(@face.outer_loop, @transformation, material, layer)
     end
 
     def loop_manipulators
-      @loop_manipulators ||= @face.loops.map { |loop| loop.outer? ? outer_loop_manipulator : LoopManipulator.new(loop, @transformation, material) }
+      @loop_manipulators ||= @face.loops.map { |loop| loop.outer? ? outer_loop_manipulator : LoopManipulator.new(loop, @transformation, material, layer) }
     end
 
     # -----
