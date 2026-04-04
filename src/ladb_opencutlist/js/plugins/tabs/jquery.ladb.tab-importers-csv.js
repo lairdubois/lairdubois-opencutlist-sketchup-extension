@@ -4,7 +4,7 @@
     // CLASS DEFINITION
     // ======================
 
-    const LadbTabImporter = function (element, options, dialog) {
+    const LadbTabImportersCsv = function (element, options, dialog) {
         LadbAbstractTab.call(this, element, options, dialog);
 
         this.loadOptions = null;
@@ -20,14 +20,14 @@
         this.$page = $('.ladb-page', this.$element);
 
     };
-    LadbTabImporter.prototype = Object.create(LadbAbstractTab.prototype);
+    LadbTabImportersCsv.prototype = Object.create(LadbAbstractTab.prototype);
 
-    LadbTabImporter.DEFAULTS = {};
+    LadbTabImportersCsv.DEFAULTS = {};
 
-    LadbTabImporter.prototype.openCSV = function (path = null) {
+    LadbTabImportersCsv.prototype.openCsv = function (path = null) {
         const that = this;
 
-        rubyCallCommand('importer_open', { path: path }, function (response) {
+        rubyCallCommand('importers_csv_open', { path: path }, function (response) {
 
             if (response.errors.length > 0) {
 
@@ -39,7 +39,7 @@
 
                 // Update page
                 that.$page.empty();
-                that.$page.append(Twig.twig({ ref: "tabs/importer/_list.twig" }).render({
+                that.$page.append(Twig.twig({ ref: "tabs/importers/csv/_list.twig" }).render({
                     errors: response.errors
                 }));
 
@@ -59,13 +59,13 @@
                 const lengthUnit = response.length_unit;
 
                 // Retrieve load options
-                rubyCallCommand('core_get_model_preset', { dictionary: 'importer_load_options' }, function (response) {
+                rubyCallCommand('core_get_model_preset', { dictionary: 'importers_csv_load_options' }, function (response) {
 
                     const loadOptions = response.preset;
                     loadOptions.path = path;
                     loadOptions.filename = filename;
 
-                    const $modal = that.appendModalInside('ladb_importer_modal_load', 'tabs/importer/_modal-load.twig', $.extend({ lengthUnit: lengthUnit }, loadOptions));
+                    const $modal = that.appendModalInside('ladb_importer_modal_load', 'tabs/importers/csv/_modal-load.twig', $.extend({ lengthUnit: lengthUnit }, loadOptions));
 
                     // Fetch UI elements
                     const $widgetPreset = $('.ladb-widget-preset', $modal);
@@ -86,7 +86,7 @@
 
                     $widgetPreset.ladbWidgetPreset({
                         dialog: that.dialog,
-                        dictionary: 'importer_load_options',
+                        dictionary: 'importers_csv_load_options',
                         fnFetchOptions: fnFetchOptions,
                         fnFillInputs: fnFillInputs
                     });
@@ -103,7 +103,7 @@
                         // Fetch options
                         fnFetchOptions(loadOptions);
 
-                        that.loadCSV(loadOptions);
+                        that.loadCsv(loadOptions);
 
                         // Hide modal
                         $modal.modal('hide');
@@ -120,13 +120,13 @@
         });
     };
 
-    LadbTabImporter.prototype.loadCSV = function (loadOptions) {
+    LadbTabImportersCsv.prototype.loadCsv = function (loadOptions) {
         const that = this;
 
         // Store options
-        rubyCallCommand('core_set_model_preset', { dictionary: 'importer_load_options', values: loadOptions });
+        rubyCallCommand('core_set_model_preset', { dictionary: 'importers_csv_load_options', values: loadOptions });
 
-        rubyCallCommand('importer_load', loadOptions, function (response) {
+        rubyCallCommand('importers_csv_load', loadOptions, function (response) {
 
             that.setObsolete(false);
 
@@ -150,7 +150,7 @@
 
                 // Update filename
                 that.$fileTabs.empty();
-                that.$fileTabs.append(Twig.twig({ ref: "tabs/importer/_file-tab.twig" }).render({
+                that.$fileTabs.append(Twig.twig({ ref: "tabs/importers/csv/_file-tab.twig" }).render({
                     filename: filename,
                     importablePartCount: importablePartCount,
                     lengthUnit: lengthUnit
@@ -161,7 +161,7 @@
 
                 // Update page
                 that.$page.empty();
-                that.$page.append(Twig.twig({ ref: "tabs/importer/_list.twig" }).render({
+                that.$page.append(Twig.twig({ ref: "tabs/importers/csv/_list.twig" }).render({
                     errors: errors,
                     warnings: warnings,
                     columns: columns,
@@ -188,7 +188,7 @@
                             if (mapping) {
                                 loadOptions.column_mapping[mapping] = column;
                             }
-                            that.loadCSV(loadOptions)
+                            that.loadCsv(loadOptions)
                         })
                         .selectpicker($.extend(SELECT_PICKER_OPTIONS, {
                             noneSelectedText: i18next.t('tab.import.column.unused')
@@ -218,17 +218,17 @@
 
     };
 
-    LadbTabImporter.prototype.importParts = function () {
+    LadbTabImportersCsv.prototype.importParts = function () {
         const that = this;
 
         // Retrieve load option options
-        rubyCallCommand('core_get_model_preset', { dictionary: 'importer_import_options' }, function (response) {
+        rubyCallCommand('core_get_model_preset', { dictionary: 'importers_csv_import_options' }, function (response) {
 
             const importOptions = response.preset;
 
             importOptions.remove_all = false;      // This option is not stored to force user to know the option status
 
-            const $modal = that.appendModalInside('ladb_importer_modal_import', 'tabs/importer/_modal-import.twig', $.extend({
+            const $modal = that.appendModalInside('ladb_importer_modal_import', 'tabs/importers/csv/_modal-import.twig', $.extend({
                 importablePartCount: that.importablePartCount,
                 model_is_empty: that.model_is_empty
             }, importOptions));
@@ -254,7 +254,7 @@
 
             $widgetPreset.ladbWidgetPreset({
                 dialog: that.dialog,
-                dictionary: 'importer_import_options',
+                dictionary: 'importers_csv_import_options',
                 fnFetchOptions: fnFetchOptions,
                 fnFillInputs: fnFillInputs
             });
@@ -281,9 +281,9 @@
                 fnFetchOptions(importOptions);
 
                 // Store options
-                rubyCallCommand('core_set_model_preset', { dictionary: 'importer_import_options', values: importOptions });
+                rubyCallCommand('core_set_model_preset', { dictionary: 'importers_csv_import_options', values: importOptions });
 
-                rubyCallCommand('importer_import', importOptions, function (response) {
+                rubyCallCommand('importers_csv_import', importOptions, function (response) {
 
                     if (response.errors.length > 0) {
                         that.dialog.notifyErrors(response.errors);
@@ -298,7 +298,7 @@
 
                         // Update page
                         that.$page.empty();
-                        that.$page.append(Twig.twig({ ref: "tabs/importer/_alert-success.twig" }).render({
+                        that.$page.append(Twig.twig({ ref: "tabs/importers/csv/_alert-success.twig" }).render({
                             importedPartCount: response.imported_part_count
                         }));
 
@@ -341,7 +341,7 @@
 
     // Internals /////
 
-    LadbTabImporter.prototype.showObsolete = function (messageI18nKey, forced) {
+    LadbTabImportersCsv.prototype.showObsolete = function (messageI18nKey, forced) {
         if (!this.isObsolete() || forced) {
 
             const that = this;
@@ -349,7 +349,7 @@
             // Set tab as obsolete
             this.setObsolete(true);
 
-            const $modal = this.appendModalInside('ladb_importer_modal_obsolete', 'tabs/importer/_modal-obsolete.twig', {
+            const $modal = this.appendModalInside('ladb_importer_modal_obsolete', 'tabs/importers/csv/_modal-obsolete.twig', {
                 messageI18nKey: messageI18nKey
             });
 
@@ -359,7 +359,7 @@
             // Bind buttons
             $btnLoad.on('click', function () {
                 $modal.modal('hide');
-                that.loadCSV(that.loadOptions);
+                that.loadCsv(that.loadOptions);
             });
 
             // Show modal
@@ -370,25 +370,25 @@
 
     // Init /////
 
-    LadbTabImporter.prototype.registerCommands = function () {
+    LadbTabImportersCsv.prototype.registerCommands = function () {
         LadbAbstractTab.prototype.registerCommands.call(this);
 
         const that = this;
 
         this.registerCommand('load', function (parameters) {
-            that.openCSV(parameters.path);
+            that.openCsv(parameters.path);
         });
 
     };
 
-    LadbTabImporter.prototype.bind = function () {
+    LadbTabImportersCsv.prototype.bind = function () {
         LadbAbstractTab.prototype.bind.call(this);
 
         const that = this;
 
         // Bind buttons
         this.$btnOpen.on('click', function () {
-            that.openCSV();
+            that.openCsv();
             this.blur();
         });
         this.$btnImport.on('click', function () {
@@ -415,11 +415,11 @@
             const $this = $(this);
             let data = $this.data('ladb.tab.plugin');
             if (!data) {
-                const options = $.extend({}, LadbTabImporter.DEFAULTS, $this.data(), typeof option === 'object' && option);
+                const options = $.extend({}, LadbTabImportersCsv.DEFAULTS, $this.data(), typeof option === 'object' && option);
                 if (undefined === options.dialog) {
                     throw 'dialog option is mandatory.';
                 }
-                $this.data('ladb.tab.plugin', (data = new LadbTabImporter(this, options, options.dialog)));
+                $this.data('ladb.tab.plugin', (data = new LadbTabImportersCsv(this, options, options.dialog)));
             }
             if (typeof option === 'string') {
                 data[option].apply(data, Array.isArray(params) ? params : [ params ])
@@ -429,17 +429,17 @@
         })
     }
 
-    const old = $.fn.ladbTabImporter;
+    const old = $.fn.ladbTabImportersCsv;
 
-    $.fn.ladbTabImporter = Plugin;
-    $.fn.ladbTabImporter.Constructor = LadbTabImporter;
+    $.fn.ladbTabImportersCsv = Plugin;
+    $.fn.ladbTabImportersCsv.Constructor = LadbTabImportersCsv;
 
 
     // NO CONFLICT
     // =================
 
-    $.fn.ladbTabImporter.noConflict = function () {
-        $.fn.ladbTabImporter = old;
+    $.fn.ladbTabImportersCsv.noConflict = function () {
+        $.fn.ladbTabImportersCsv = old;
         return this;
     }
 

@@ -1,0 +1,21 @@
+{% extends 'tabs/base-tab.twig' %}
+
+{% set slideClasses = 'ladb-overflow-x-auto' %}
+
+{% block headerInner %}
+    {{ parent() }}
+    <ul class="ladb-file-tabs nav nav-tabs no-print"></ul>
+{% endblock %}
+
+{% block headerToolsInner %}
+    <button id="ladb_btn_open" class="btn btn-primary">{{ 'tab.importers.bxf2.open_bxf2'|i18next }}...</button>
+    <button id="ladb_btn_import" class="btn btn-primary" style="display: none;"><i class="ladb-opencutlist-icon-plus"></i> {{ 'tab.importers.bxf2.import_to_model'|i18next }}...</button>
+    &nbsp;
+    <button class="btn btn-default" data-help-page="importer"><i class="ladb-opencutlist-icon-help"></i></button>
+{% endblock %}
+
+{% block containerInner %}
+    {% include 'tabs/importers/bxf2/_panel-help.twig' %}
+    {{ parent() }}
+    <div class="ladb-page ladb-importers-page"></div>
+{% endblock %}

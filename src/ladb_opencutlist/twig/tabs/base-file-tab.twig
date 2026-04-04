@@ -1,3 +1,3 @@
 {# set filename #}
 
-<li class="active"><div class="ladb-fake-tab">{% block inner %}<span class="ladb-fake-tab-name">{{ modelName ? modelName : (filename ? filename : 'default.empty_filename'|i18next) }}</span>{% endblock %}</div></li>
+<li class="active"><div class="ladb-fake-tab">{% block inner %}<span class="ladb-fake-tab-name">{{ modelName is not empty ? modelName : (filename ? filename : 'default.empty_filename'|i18next) }}</span>{% endblock %}</div></li>

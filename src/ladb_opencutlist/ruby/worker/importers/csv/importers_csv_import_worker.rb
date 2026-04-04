@@ -1,6 +1,6 @@
 module Ladb::OpenCutList
 
-  class ImporterImportWorker
+  class ImportersCsvImportWorker
 
     MATERIALS_PALETTE = %w(#4F78A7 #EF8E2C #DE545A #79B8B2 #5CA34D #ECCA48 #AE78A2 #FC9CA8 #9B755F #BAB0AC)
 
@@ -149,7 +149,7 @@ module Ladb::OpenCutList
       else
 
         # Opetation failed
-        response[:errors] << 'tab.importer.failed_to_import'
+        response[:errors] << 'tab.importer.default.failed_to_import'
 
       end
 

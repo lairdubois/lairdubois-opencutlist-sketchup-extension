@@ -60,9 +60,15 @@
                 sponsorAd: false
             },
             {
-                name: 'importer',
-                bar: 'leftbar',
-                icon: 'ladb-opencutlist-icon-import',
+                name: 'importers_csv',
+                bar: 'leftbar-import',
+                icon: 'ladb-opencutlist-icon-file',
+                sponsorAd: true
+            },
+            {
+                name: 'importers_bxf2',
+                bar: 'leftbar-import',
+                icon: 'ladb-opencutlist-icon-file',
                 sponsorAd: true
             },
             {
@@ -328,7 +334,7 @@
         if (!$tab) {
 
             // Render and append tab
-            this.$wrapperSlides.append(Twig.twig({ref: "tabs/" + tabName + "/tab.twig"}).render({
+            this.$wrapperSlides.append(Twig.twig({ref: "tabs/" + tabName.replace('_', '/') + "/tab.twig"}).render({
                 tabName: tabName,
                 capabilities: this.capabilities
             }));
@@ -337,7 +343,7 @@
             $tab = $('#ladb_tab_' + tabName, this.$wrapperSlides);
 
             // Initialize tab (with its jQuery plugin)
-            const jQueryPluginFn = 'ladbTab' + tabName.charAt(0).toUpperCase() + tabName.slice(1);
+            const jQueryPluginFn = 'ladbTab' + tabName.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join('');
             $tab[jQueryPluginFn]({
                 dialog: this,
                 initializedCallback: callback
@@ -604,6 +610,7 @@
         // Bind buttons
         $.each(this.$tabBtns, function (tabName, $tabBtn) {
             $tabBtn.on('click', function () {
+                if ( tabName !== 'sponsor')
                 that.selectTab(tabName);
             });
         });

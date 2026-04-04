@@ -40,6 +40,9 @@ i, span.ladb-opencutlist-icon:before {
 }
 
 
+.ladb-opencutlist-icon-file:before {
+    content: "\e9c6";
+}
 .ladb-opencutlist-icon-always-face-camera:before {
     content: "\e9c2";
 }

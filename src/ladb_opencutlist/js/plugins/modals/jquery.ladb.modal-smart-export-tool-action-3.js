@@ -99,14 +99,14 @@
     function Plugin(option, params) {
         return this.each(function () {
             const $this = $(this);
-            let data = $this.data('ladb.tab.plugin');
+            let data = $this.data('ladb.modal.plugin');
             const options = $.extend({}, LadbModalSmartExportToolAction3.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
                 if (undefined === options.dialog) {
                     throw 'dialog option is mandatory.';
                 }
-                $this.data('ladb.tab.plugin', (data = new LadbModalSmartExportToolAction3(this, options, options.dialog)));
+                $this.data('ladb.modal.plugin', (data = new LadbModalSmartExportToolAction3(this, options, options.dialog)));
             }
             if (typeof option === 'string') {
                 data[option].apply(data, Array.isArray(params) ? params : [ params ])

@@ -1,0 +1,62 @@
+{% extends 'core/_modal.twig' %}
+
+{% set id = 'ladb_importer_modal_import' %}
+{% set title = 'tab.importers.bxf2.import.title'|i18next %}
+
+{% block headerToolsInner %}
+    {% include 'components/_widget-preset.twig' %}
+    <button class="btn btn-default btn-xs" data-help-page="importer.import"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
+{% endblock %}
+
+{% block bodyInner %}
+    <div class="row">
+        <div class="col-xs-push-1 col-xs-10">{{ 'tab.importers.bxf2.import.info_0'|i18next({ 'count':cabinetCount }) }}</div>
+        <div class="col-xs-push-1 col-xs-10">{{ 'tab.importers.bxf2.import.info_1'|i18next }}</div>
+    </div>
+    <hr>
+    <div class="form form-horizontal">
+        <div class="form-group">
+            <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.importers.bxf2.import.option_part_material_name_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+            <label class="control-label col-xs-4">{{ 'tab.importers.bxf2.import.option_part_material_name'|i18next }}</label>
+            <div class="col-xs-6">
+                <input type="text" class="form-control" id="ladb_importer_import_input_part_material_name">
+            </div>
+        </div>
+        <hr>
+        <div class="form-group">
+            <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.importers.bxf2.import.option_machining_material_name_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+            <label class="control-label col-xs-4">{{ 'tab.importers.bxf2.import.option_machining_material_name'|i18next }}</label>
+            <div class="col-xs-6">
+                <input type="text" class="form-control" id="ladb_importer_import_input_machining_material_name">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.importers.bxf2.import.option_machining_layer_name_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+            <label class="control-label col-xs-4">{{ 'tab.importers.bxf2.import.option_machining_layer_name'|i18next }}</label>
+            <div class="col-xs-6">
+                <input type="text" class="form-control" id="ladb_importer_import_input_machining_layer_name">
+            </div>
+        </div>
+        <hr>
+        <div class="form-group">
+            <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.importers.bxf2.import.option_hardware_material_name_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+            <label class="control-label col-xs-4">{{ 'tab.importers.bxf2.import.option_hardware_material_name'|i18next }}</label>
+            <div class="col-xs-6">
+                <input type="text" class="form-control" id="ladb_importer_import_input_hardware_material_name">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.importers.bxf2.import.option_hardware_layer_name_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+            <label class="control-label col-xs-4">{{ 'tab.importers.bxf2.import.option_hardware_layer_name'|i18next }}</label>
+            <div class="col-xs-6">
+                <input type="text" class="form-control" id="ladb_importer_import_input_hardware_layer_name">
+            </div>
+        </div>
+    </div>
+    <p class="help-block text-center">{{ 'tab.importers.bxf2.import.info_2'|i18next }}</p>
+{% endblock %}
+
+{% block footerRightInner %}
+    <button class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
+    <button class="btn btn-primary" id="ladb_importer_import">{{ 'default.import'|i18next }}</button>
+{% endblock %}

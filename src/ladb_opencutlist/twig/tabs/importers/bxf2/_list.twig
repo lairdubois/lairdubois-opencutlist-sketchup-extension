@@ -1,0 +1,23 @@
+{# set errors #}
+{# set warnings #}
+{# set parts #}
+
+{% include 'core/_alert-errors.twig' %}
+{% include 'core/_alert-warnings.twig' %}
+
+{% if model %}
+    <div>Auteur: <strong>{{ model.author }}</strong></div>
+    <div>Date: <strong>{{ model.date }}</strong></div>
+    <h3>{{ model.cabinets|length }} caissons</h3>
+    <ul>
+        {% for cabinet in model.cabinets %}
+            <li>{{ cabinet.description }}</li>
+        {% endfor %}
+    </ul>
+    <h3>Liste des articles</h3>
+    <ul>
+        {% for article in model.articles %}
+            <li><strong>{{ article.total_quantity }}</strong> x {{ article.description }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}

@@ -12,11 +12,6 @@ module Ladb::OpenCutList
   require_relative 'constants'
   require_relative 'observer/app_observer'
   require_relative 'observer/plugin_observer'
-  require_relative 'controller/materials_controller'
-  require_relative 'controller/cutlist_controller'
-  require_relative 'controller/outliner_controller'
-  require_relative 'controller/importer_controller'
-  require_relative 'controller/settings_controller'
   require_relative 'utils/dimension_utils'
   require_relative 'utils/path_utils'
   require_relative 'utils/hash_utils'
@@ -927,10 +922,17 @@ module Ladb::OpenCutList
 
         # -- Controllers --
 
+        require_relative 'controller/materials_controller'
+        require_relative 'controller/cutlist_controller'
+        require_relative 'controller/outliner_controller'
+        require_relative 'controller/importers_controller'
+        require_relative 'controller/settings_controller'
+
         @controllers.push(MaterialsController.new)
         @controllers.push(CutlistController.new)
         @controllers.push(OutlinerController.new)
-        @controllers.push(ImporterController.new)
+        @controllers.push(ImportersCsvController.new)
+        @controllers.push(ImportersBxf2Controller.new)
         @controllers.push(SettingsController.new)
 
         # -- Commands --

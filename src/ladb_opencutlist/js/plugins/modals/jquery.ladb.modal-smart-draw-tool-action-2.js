@@ -19,11 +19,11 @@
 
         const that = this;
 
-        const dictonary = 'tool_smart_draw_options';
+        const dictionary = 'tool_smart_draw_options';
         const section = 'action_2';
 
         // Retrieve options
-        rubyCallCommand('core_get_global_preset', { dictionary: dictonary, section: section }, function (response) {
+        rubyCallCommand('core_get_global_preset', { dictionary: dictionary, section: section }, function (response) {
 
             const options = response.preset;
 
@@ -56,8 +56,8 @@
 
             $widgetPreset.ladbWidgetPreset({
                 dialog: that.dialog,
-                dictionary: 'tool_smart_draw_options',
-                section: 'action_0',
+                dictionary: dictionary,
+                section: section,
                 fnFetchOptions: fnFetchOptions,
                 fnFillInputs: fnFillInputs
             });
@@ -78,7 +78,7 @@
 
                 // Store options
                 rubyCallCommand('core_set_global_preset', {
-                    dictionary: dictonary,
+                    dictionary: dictionary,
                     values: options,
                     section: section,
                     fire_event: true
@@ -107,14 +107,14 @@
     function Plugin(option, params) {
         return this.each(function () {
             const $this = $(this);
-            let data = $this.data('ladb.tab.plugin');
+            let data = $this.data('ladb.modal.plugin');
             const options = $.extend({}, LadbModalSmartDrawToolAction2.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
                 if (undefined === options.dialog) {
                     throw 'dialog option is mandatory.';
                 }
-                $this.data('ladb.tab.plugin', (data = new LadbModalSmartDrawToolAction2(this, options, options.dialog)));
+                $this.data('ladb.modal.plugin', (data = new LadbModalSmartDrawToolAction2(this, options, options.dialog)));
             }
             if (typeof option === 'string') {
                 data[option].apply(data, Array.isArray(params) ? params : [ params ])

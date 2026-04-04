@@ -21,7 +21,7 @@ module Ladb::OpenCutList
     end
 
     def load_file(file_path, status)
-      PLUGIN.execute_tabs_dialog_command_on_tab('importer', 'load', { path: file_path }.to_json)
+      PLUGIN.execute_tabs_dialog_command_on_tab('importers_csv', 'load', { path: file_path }.to_json)
       Sketchup::Importer::ImportSuccess
     end
 

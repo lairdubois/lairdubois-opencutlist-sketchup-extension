@@ -141,6 +141,7 @@ core:
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
+    import: Importer
     more: Plus
     more_docs: Docs
     more_reviews: Avis
@@ -1909,6 +1910,123 @@ tab:
       imported_body: "{{ count }} pièce importée avec succès !"
       imported_body_plural: "{{ count }} pièces importées avec succès !"
     obsolete_base: "Pour rester synchronisé, vous devez recharger le fichier CSV."
+  importers:
+    default:
+      error:
+        no_model: Aucun modèle n'est ouvert. Il est impossible d'importer dans le néant ;)
+        file_not_found: "Fichier introuvable : **{{ filename }}**"
+        bad_extension: "Le fichier *{{ filename }}* n'a pas l'extension requise (**{{ extensions }}**)."
+        failed_to_import: L'importation a échouée.
+      success:
+        imported_title: Importation terminée
+    csv:
+      label: CSV
+      title: Importer des pièces
+      help: |
+        Cette page vous permet d'importer une série de pièces capables (de forme parallélépipédique) dans votre modèle depuis un fichier [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
+        Vous pourrez ainsi utiliser la puissance de la fiche de débit d'*OpenCutList* en générant vos pièces avec un autre logiciel que *SketchUp*.
+        
+        Cliquez sur le bouton **Ouvrir un fichier CSV** pour démarrer.
+      open_csv: Ouvrir un fichier CSV
+      import_to_model: Importer dans le modèle
+      load:
+        title: Chargement d'un fichier CSV
+        info_0: |
+          Choisissez les options nécessaires à la bonne lecture du fichier :
+          **{{ filename }}**.
+        info_1: |
+          *L'unité configurée dans le modèle est : **{{ unit }}**.
+          Cette unité sera utilisée pour les dimensions dont l'unité n'est pas précisée*.
+        options: Options de chargement
+        option_col_sep: Séparateur
+        option_col_sep_tab: Tabulation
+        option_col_sep_comma: Virgule
+        option_col_sep_semicolon: Point virgule
+        option_first_line_headers: Première ligne
+        option_first_line_headers_0: Données
+        option_first_line_headers_1: Titres de colonne
+      import:
+        title: Importation des pièces dans le modèle
+        info_0: |
+          Vous êtes sur le point d'importer **{{ count }} pièce** dans le modèle.
+          Cette pièce va être placée sur la scène principale, à l'origine.
+        info_0_plural: |
+          Vous êtes sur le point d'importer **{{ count }} pièces** dans le modèle.
+          Ces pièces vont être empilées sur la scène principale depuis l'origine.
+        info_1: Cliquez sur **Importer** pour confirmer l'action.
+        options: |
+          Le modèle contient déjà des *pièces*, des *définitions* ou des *matières*.
+          Choisissez les options d'importation qui correspondent à votre besoin.
+        option_remove_all_?: "Que faire ?"
+        option_remove_all_false: Ajouter les pièces à l'existant
+        option_remove_all_true: Effacer tout !
+        option_keep_definitions_settings: Conserver les paramètres sur les définitions
+        option_keep_materials_settings: Conserver les paramètres sur les matières
+      column:
+        unused: Non utilisé
+        mandatory: Champs obligatoires
+        optional: Champs facultatifs
+        name: Désignation
+        count: Quantité
+        bbox_length: Longueur capable
+        bbox_width: Largeur capable
+        bbox_thickness: Épaisseur capable
+        material: Matière
+        tags: Badges
+      tooltip:
+        errors: Cette pièce ne sera pas importée car elle contient les erreurs suivantes
+        warnings: Cette pièce sera importée mais elle contient les avertissements suivants
+      error:
+        failed_to_load_csv_file: |
+          Impossible de charger le fichier CSV : **{{ error }}**
+          *Vérifiez que vous avez choisi le bon séparateur de données.*
+        empty_file: Le fichier semble vide ou ne peut pas être correctement lu.
+        no_importable_part: Aucune pièce ne peut être importée. Attribuez les champs obligatoires sur les colonnes correspondantes.
+        invalid_name: Pas de désignation valide
+        invalid_length: Pas de longueur valide
+        invalid_width: Pas de largeur valide
+        invalid_thickness: Pas d'épaisseur valide
+      warning:
+        invalid_count: Pas de quantité valide
+        invalid_material: Pas de matière valide
+      success:
+        imported_body: "{{ count }} pièce importée avec succès !"
+        imported_body_plural: "{{ count }} pièces importées avec succès !"
+      obsolete_base: "Pour rester synchronisé, vous devez recharger le fichier CSV."
+    bxf2:
+      label: BXF2
+      title: Importer une configuration Blum
+      help: |
+        Cette page vous permet d'importer une configuration [Blum](https://www.blum.com) dans votre modèle depuis un fichier BXF2.
+        
+        Cliquez sur le bouton **Ouvrir un fichier BXF2** pour démarrer.
+      open_bxf2: Ouvrir un fichier BXF2
+      import_to_model: Importer dans le modèle
+      load:
+        title: Chargement d'un fichier BXF2
+      import:
+        title: Importation de la configuration dans le modèle
+        info_0: |
+          Vous êtes sur le point d'importer une configuration de **{{ count }} caisson** dans le modèle.
+        info_0_plural: |
+          Vous êtes sur le point d'importer une configuration de **{{ count }} caissons** dans le modèle.
+        info_1: Cette configuration va être placée sur la scène principale, à l'origine.
+        info_2: |
+          Personnalisez les options.
+          Cliquez sur **Importer** pour confirmer l'action.
+        option_part_material_name: Matière des pièces
+        option_part_material_name_help: Matière des pièces
+        option_machining_material_name: Matière des usinages
+        option_machining_material_name_help: Matière des usinages
+        option_machining_layer_name: Balise des usinages
+        option_machining_layer_name_help: Balise des usinages
+        option_hardware_material_name: Matière des accessoires
+        option_hardware_material_name_help: Matière des accessoires
+        option_hardware_layer_name: Balise des accessoires
+        option_hardware_layer_name_help: Balise des accessoires
+      error:
+        failed_to_load_bxf2_file: |
+          Impossible de charger le fichier BXF2 : **{{ error }}**
   tutorials:
     label: Tutoriels
     title: Tutoriels
@@ -2354,3 +2472,4 @@ tool:
       not_part: Cette face ne fait pas partie d'une pièce (composant)
       not_flat_face: Cette surface n'est pas plane
       incompatible_active_path: Le chemin actif ne permet pas d'exporter cette pièce
+
