@@ -2015,6 +2015,8 @@ tab:
           Cliquez sur **Importer** pour confirmer l'action.
         option_part_material_name: Matière des pièces
         option_part_material_name_help: Matière des pièces
+        option_front_part_layer_name: Balise des façades
+        option_front_part_layer_name_help: Balise des façades
         option_machining_material_name: Matière des usinages
         option_machining_material_name_help: Matière des usinages
         option_machining_layer_name: Balise des usinages

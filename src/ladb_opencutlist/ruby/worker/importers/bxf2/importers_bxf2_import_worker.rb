@@ -14,6 +14,7 @@ module Ladb::OpenCutList
                    file_path,
 
                    part_material_name: nil,
+                   front_part_layer_name: nil,
 
                    machining_material_name: nil,
                    machining_layer_name: nil,
@@ -27,6 +28,7 @@ module Ladb::OpenCutList
       @file_path = file_path
 
       @part_material_name = part_material_name
+      @front_part_layer_name = front_part_layer_name
 
       @machining_material_name = machining_material_name
       @machining_layer_name = machining_layer_name
@@ -154,6 +156,7 @@ module Ladb::OpenCutList
                                                        end
 
         instance = entities.add_instance(definition, part_link.transformations.to_t)
+        instance.layer = _get_front_part_layer if part.model_key.start_with?('H-FRON')
         instance.material = _get_part_material
 
       end
@@ -627,7 +630,7 @@ module Ladb::OpenCutList
     # -- Materials --
 
     def _get_part_material
-      return nil if @part_material_name.nil? || @part_material_name.empty?
+      return nil unless @part_material_name.is_a?(String) && !@part_material_name.empty?
       material = Sketchup.active_model.materials[@part_material_name]
       if material.nil?
 
@@ -643,7 +646,7 @@ module Ladb::OpenCutList
     end
 
     def _get_machining_material
-      return nil if @machining_material_name.nil? || @machining_material_name.empty?
+      return nil unless @machining_material_name.is_a?(String) && !@machining_material_name.empty?
       material = Sketchup.active_model.materials[@machining_material_name]
       if material.nil?
 
@@ -659,7 +662,7 @@ module Ladb::OpenCutList
     end
 
     def _get_hardware_material
-      return nil if @hardware_material_name.nil? || @hardware_material_name.empty?
+      return nil unless @hardware_material_name.is_a?(String) && !@hardware_material_name.empty?
       material = Sketchup.active_model.materials[@hardware_material_name]
       if material.nil?
 
@@ -676,8 +679,20 @@ module Ladb::OpenCutList
 
     # -- Layers --
 
+    def _get_front_part_layer
+      return nil unless @front_part_layer_name.is_a?(String) && !@front_part_layer_name.empty?
+      layer = Sketchup.active_model.layers[@front_part_layer_name]
+      if layer.nil?
+
+        layer = Sketchup.active_model.layers.add(@front_part_layer_name)
+        layer.color = '#05d6a0'
+
+      end
+      layer
+    end
+
     def _get_machining_layer
-      return nil if @machining_layer_name.nil? || @machining_layer_name.empty?
+      return nil unless @machining_layer_name.is_a?(String) && !@machining_layer_name.empty?
       layer = Sketchup.active_model.layers[@machining_layer_name]
       if layer.nil?
 
@@ -689,7 +704,7 @@ module Ladb::OpenCutList
     end
 
     def _get_hardware_layer
-      return nil if @hardware_layer_name.nil? || @hardware_layer_name.empty?
+      return nil unless @hardware_layer_name.is_a?(String) && !@hardware_layer_name.empty?
       layer = Sketchup.active_model.layers[@hardware_layer_name]
       if layer.nil?
 

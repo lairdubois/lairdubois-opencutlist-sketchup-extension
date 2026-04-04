@@ -1,8 +1,14 @@
 module Ladb::OpenCutList
 
   require_relative '../../../lib/rubybxf/bxf'
+  require_relative '../../../helper/layer0_caching_helper'
+  require_relative '../../../helper/material_attributes_caching_helper'
+  require_relative '../../../utils/color_utils'
 
   class ImportersBxf2LoadWorker
+
+    include Layer0CachingHelper
+    include MaterialAttributesCachingHelper
 
     def initialize(
 
@@ -24,11 +30,9 @@ module Ladb::OpenCutList
       return { :errors => [ 'tab.importers.default.error.no_model' ] } unless model
 
       response = {
-          :warnings => [],
           :errors => [],
           :path => @path,
-          :filename => @filename,
-          :length_unit => DimensionUtils.length_unit,
+          :filename => @filename
       }
 
       begin
@@ -46,10 +50,31 @@ module Ladb::OpenCutList
           } },
         }
 
+        response[:available_layers] = model.layers.select { |layer| layer != cached_layer0 }.map { |layer| {
+          :name => layer.name,
+          :path => if layer.respond_to?(:folder) && layer.folder
+                     folders = []
+                     folder = layer.folder
+                     while folder
+                       folders.unshift(folder.name)
+                       folder = folder.folder
+                     end
+                     folders
+                   else
+                     []
+                   end,
+          :color => ColorUtils.color_to_hex(layer.color),
+        } }
+
+        response[:available_materials] = model.materials.map { |material| {
+          :type => _get_material_attributes(material).type,
+          :name => material.name,
+          :color => ColorUtils.color_to_hex(material.color),
+        } }
+
       rescue Exception => e
         PLUGIN.dump_exception(e)
-        response[:errors] << [ 'tab.importers.bxf2.error.failed_to_load_bxf2_file', { :error => e.message } ]
-        return response
+        return { errors: [ [ 'tab.importers.bxf2.error.failed_to_load_bxf2_file', { :error => e.message } ] ] }
       end
 
       [ response, bxf_model, @path ]
