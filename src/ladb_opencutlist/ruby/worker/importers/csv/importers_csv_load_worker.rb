@@ -244,9 +244,7 @@ module Ladb::OpenCutList
           end
 
         rescue => e
-          puts e.message
-          puts e.backtrace
-          response[:errors] << [ 'tab.importers.csv.error.failed_to_load_csv_file', { :error => e.message } ]
+          return { :errors => [ [ 'tab.importers.csv.error.failed_to_load_csv_file', { :error => e.message } ] ] }
         end
 
       end

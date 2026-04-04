@@ -24,9 +24,6 @@
 
         rubyCallCommand('importers_csv_open', { path: path }, function (response) {
 
-            if (response.errors.length > 0) {
-                that.dialog.notifyErrors(response.errors);
-            }
             if (response.path) {
 
                 const path = response.path;
@@ -90,6 +87,8 @@
 
                 });
 
+            } else if (response.errors.length > 0) {
+                that.dialog.notifyErrors(response.errors);
             }
 
         });
@@ -107,9 +106,7 @@
 
             let i;
 
-            if (response.errors && response.errors.length > 0) {
-                that.dialog.notifyErrors(response.errors);
-            } else if (response.path) {
+            if (response.path) {
 
                 const errors = response.errors;
                 const warnings = response.warnings;
@@ -184,6 +181,8 @@
                 // Manage buttons
                 $btnImport.prop( "disabled", importablePartCount === 0);
 
+            } else if (response.errors && response.errors.length > 0) {
+                that.dialog.notifyErrors(response.errors);
             }
 
         });

@@ -2003,19 +2003,6 @@ tab:
         Cliquez sur le bouton **Ouvrir un fichier BXF2** pour démarrer.
       load:
         title: Chargement d'un fichier BXF2
-        author: Auteur
-        date: Date
-        cabinet:
-          list: Liste des caissons
-          description: Nom
-          width: Largeur
-          height: Hauteur
-          depth: Profondeur
-        article:
-          list: Liste des articles
-          total_quantity: Qte.
-          article_number: Ref.
-          description: Description
       import:
         title: Importation de la configuration dans le modèle
         info_0: |
@@ -2036,6 +2023,20 @@ tab:
         option_hardware_material_name_help: Matière des accessoires
         option_hardware_layer_name: Balise des accessoires
         option_hardware_layer_name_help: Balise des accessoires
+      model:
+        author: Auteur
+        date: Date
+      cabinet:
+        list: Liste des meubles
+        description: Nom
+        width: Largeur
+        height: Hauteur
+        depth: Profondeur
+      article:
+        list: Liste des articles
+        total_quantity: Qte.
+        article_number: Ref.
+        description: Description
       error:
         failed_to_load_bxf2_file: |
           Impossible de charger le fichier BXF2 : **{{ error }}**

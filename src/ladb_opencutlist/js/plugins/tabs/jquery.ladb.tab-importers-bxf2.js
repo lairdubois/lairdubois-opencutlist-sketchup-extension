@@ -24,11 +24,10 @@
 
         rubyCallCommand('importers_bxf2_open', { path: path }, function (response) {
 
-            if (response.errors.length > 0) {
-                that.dialog.notifyErrors(response.errors);
-            }
             if (response.path) {
                 that.loadBxf2({ path: response.path, filename: response.filename });
+            } else if (response.errors.length > 0) {
+                that.dialog.notifyErrors(response.errors);
             }
 
         });
@@ -52,8 +51,6 @@
                 const $slide = that.pushNewSlide('ladb_importers_bxf2_slide_load', 'tabs/importers/bxf2/_slide-load.twig', $.extend({
                     out: out,
                     filename: response.filename,
-                    errors: response.errors,
-                    warnings: response.warnings,
                     model: response.model,
                 }));
 
