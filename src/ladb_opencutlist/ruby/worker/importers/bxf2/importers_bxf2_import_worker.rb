@@ -41,7 +41,7 @@ module Ladb::OpenCutList
     def run
 
       model = Sketchup.active_model
-      return { :errors => [ 'tab.importer.default.error.no_model' ] } unless model
+      return { :errors => [ 'tab.importers.default.error.no_model' ] } unless model
 
       model = Sketchup.active_model
       model.start_operation('Import BXF2', false)
@@ -63,7 +63,7 @@ module Ladb::OpenCutList
         rescue Exception => e
           PLUGIN.dump_exception(e)
           Sketchup.active_model.abort_operation
-          return { :errors => [ 'tab.importer.default.error.no_model' ] }
+          return { :errors => [ 'tab.importers.default.error.no_model' ] }
         ensure
           _clear_factories
         end

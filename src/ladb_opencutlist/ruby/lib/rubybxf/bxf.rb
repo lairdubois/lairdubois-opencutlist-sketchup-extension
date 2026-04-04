@@ -554,14 +554,23 @@ module Ladb::OpenCutList
       def initialize(model)
         super
 
-        @parameters = []
+        @parameters = {}
 
+      end
+
+      def [](name)
+        @parameters[name]
+      end
+
+      def []=(name, parameter)
+        @parameters[name] = parameter
       end
 
       def read(parameters_elm)
 
         parameters_elm.elements.each('parameter') do |elm|
-          @parameters << BxfParameter.new(model).read(elm)
+          parameter = BxfParameter.new(model).read(elm)
+          self[parameter.name] = parameter
         end
 
         super

@@ -10,12 +10,7 @@
         this.loadOptions = null;
 
         this.$header = $('.ladb-header', this.$element);
-        this.$fileTabs = $('.ladb-file-tabs', this.$header);
         this.$btnOpen = $('#ladb_btn_open', this.$header);
-        this.$btnImport = $('#ladb_btn_import', this.$header);
-
-        this.$panelHelp = $('.ladb-panel-help', this.$element);
-        this.$page = $('.ladb-page', this.$element);
 
         this.model = null;
 
@@ -30,96 +25,50 @@
         rubyCallCommand('importers_bxf2_open', { path: path }, function (response) {
 
             if (response.errors.length > 0) {
-
-                // Update filename
-                that.$fileTabs.empty();
-
-                // Hide help panel
-                that.$panelHelp.hide();
-
-                // Update page
-                that.$page.empty();
-                that.$page.append(Twig.twig({ ref: "tabs/importers/bxf2/_list.twig" }).render({
-                    errors: response.errors
-                }));
-
-                // Manage buttons
-                that.$btnOpen.removeClass('btn-default');
-                that.$btnOpen.addClass('btn-primary');
-                that.$btnImport.hide();
-
-                // Stick header
-                that.stickSlideHeader(that.$rootSlide);
-
+                that.dialog.notifyErrors(response.errors);
             }
             if (response.path) {
-
-                // Update page
-                that.$page.empty();
-
                 that.loadBxf2({ path: response.path, filename: response.filename });
-
             }
 
         });
     };
 
-    LadbTabImportersBxf2.prototype.loadBxf2 = function (loadOptions) {
+    LadbTabImportersBxf2.prototype.loadBxf2 = function (loadOptions, out = true) {
         const that = this;
 
         rubyCallCommand('importers_bxf2_load', loadOptions, function (response) {
 
+            that.setObsolete(false);
+
             if (response.errors.length > 0) {
-
-                // Update filename
-                that.$fileTabs.empty();
-
-                // Hide help panel
-                that.$panelHelp.hide();
-
-                // Update page
-                that.$page.empty();
-                that.$page.append(Twig.twig({ ref: "tabs/importers/bxf2/_list.twig" }).render({
-                    errors: response.errors
-                }));
-
-                // Manage buttons
-                that.$btnOpen.removeClass('btn-default');
-                that.$btnOpen.addClass('btn-primary');
-                that.$btnImport.hide();
-
-                // Stick header
-                that.stickSlideHeader(that.$rootSlide);
-
+                that.dialog.notifyErrors(response.errors);
             } else {
 
-                const errors = response.errors;
-                const warnings = response.warnings;
-                const filename = response.filename;
-
+                // Keep useful data
+                that.loadOptions = loadOptions;
                 that.model = response.model;
 
-                // Update filename
-                that.$fileTabs.empty();
-                that.$fileTabs.append(Twig.twig({ ref: "tabs/importers/bxf2/_file-tab.twig" }).render({
-                    filename: filename,
-                }));
-
-                // Hide help panel
-                that.$panelHelp.hide();
-
-                // Update page
-                that.$page.empty();
-                that.$page.append(Twig.twig({ ref: "tabs/importers/bxf2/_list.twig" }).render({
-                    errors: errors,
-                    warnings: warnings,
+                const $slide = that.pushNewSlide('ladb_importers_bxf2_slide_load', 'tabs/importers/bxf2/_slide-load.twig', $.extend({
+                    out: out,
+                    filename: response.filename,
+                    errors: response.errors,
+                    warnings: response.warnings,
                     model: response.model,
                 }));
 
-                // Manage buttons
-                that.$btnOpen.removeClass('btn-primary');
-                that.$btnOpen.addClass('btn-default');
-                that.$btnImport.show();
+                // Fetch UI elements
+                const $btnImport = $('#ladb_btn_import', $slide);
+                const $btnClose = $('#ladb_btn_close', $slide);
+
+                // Bind buttons
+                $btnImport.on('click', function () {
+                    that.importBxf2();
+                    this.blur();
+                });
+                $btnClose.on('click', function () {
+                    that.close();
+                });
 
             }
 
@@ -169,13 +118,13 @@
                 fnFetchOptions: fnFetchOptions,
                 fnFillInputs: fnFillInputs
             });
-
-            // Bind inputs
             $inputPartMaterialName.ladbTextinputText();
             $inputMachiningMaterialName.ladbTextinputText();
             $inputMachiningLayerName.ladbTextinputText();
             $inputHardwareMaterialName.ladbTextinputText();
             $inputHardwareLayerName.ladbTextinputText();
+
+            fnFillInputs(importOptions);
 
             // Bind buttons
             $btnImport.on('click', function () {
@@ -192,32 +141,10 @@
                         that.dialog.notifyErrors(response.errors);
                     } else {
 
-                        // Update filename
-                        that.$fileTabs.empty();
+                        that.dialog.notifySuccess(i18next.t('tab.importers.default.success.imported_title'));
 
-                        // Unstick header
-                        that.unstickSlideHeader(that.$rootSlide);
-
-                        // Update page
-                        that.$page.empty();
-                        that.$page.append(Twig.twig({ ref: "tabs/importers/bxf2/_alert-success.twig" }).render({
-                        }));
-
-                        // Bind buttons
-                        $('#ladb_importer_success_btn_see', that.$page).on('click', function() {
-                            this.blur();
-                            that.dialog.minimize();
-                            rubyCallCommand('core_zoom_extents')
-                        });
-                        $('#ladb_importer_success_btn_cutlist', that.$page).on('click', function() {
-                            this.blur();
-                            that.dialog.executeCommandOnTab('cutlist', 'generate_cutlist');
-                        });
-
-                        // Manage buttons
-                        that.$btnOpen.removeClass('btn-default');
-                        that.$btnOpen.addClass('btn-primary');
-                        that.$btnImport.hide();
+                        // Close
+                        that.close();
 
                     }
 
@@ -235,6 +162,19 @@
 
     };
 
+    LadbTabImportersBxf2.prototype.close = function () {
+        if (this.loadOptions) {
+
+            // Close slide
+            this.popSlide();
+
+            // Cleanup keeped data
+            this.loadOptions = null;
+            this.model = null;
+
+        }
+    }
+
     // Internals /////
 
     LadbTabImportersBxf2.prototype.showObsolete = function (messageI18nKey, forced) {
@@ -245,7 +185,7 @@
             // Set tab as obsolete
             this.setObsolete(true);
 
-            const $modal = this.appendModalInside('ladb_importer_modal_obsolete', 'tabs/importer-bxf2/_modal-obsolete.twig', {
+            const $modal = this.appendModalInside('ladb_importer_modal_obsolete', 'tabs/importers/bxf2/_modal-obsolete.twig', {
                 messageI18nKey: messageI18nKey
             });
 
@@ -285,10 +225,6 @@
         // Bind buttons
         this.$btnOpen.on('click', function () {
             that.openBxf2();
-            this.blur();
-        });
-        this.$btnImport.on('click', function () {
-            that.importBxf2();
             this.blur();
         });
 

@@ -1912,6 +1912,8 @@ tab:
     obsolete_base: "Pour rester synchronisé, vous devez recharger le fichier CSV."
   importers:
     default:
+      open_file: Ouvrir un fichier {{ extension }}
+      import_to_model: Importer dans le modèle
       error:
         no_model: Aucun modèle n'est ouvert. Il est impossible d'importer dans le néant ;)
         file_not_found: "Fichier introuvable : **{{ filename }}**"
@@ -1927,8 +1929,6 @@ tab:
         Vous pourrez ainsi utiliser la puissance de la fiche de débit d'*OpenCutList* en générant vos pièces avec un autre logiciel que *SketchUp*.
         
         Cliquez sur le bouton **Ouvrir un fichier CSV** pour démarrer.
-      open_csv: Ouvrir un fichier CSV
-      import_to_model: Importer dans le modèle
       load:
         title: Chargement d'un fichier CSV
         info_0: |
@@ -1997,13 +1997,25 @@ tab:
       label: BXF2
       title: Importer une configuration Blum
       help: |
-        Cette page vous permet d'importer une configuration [Blum](https://www.blum.com) dans votre modèle depuis un fichier BXF2.
+        Cette page vous permet d'importer une configuration dans votre modèle depuis un fichier BXF2.
+        Les fichiers BXF2 peuvent être crées depuis le [Configurateur de Meubles](https://www.blum.com/fr/fr/services/planning-construction-product-selection/cabinet-configurator/) de [Blum](https://www.blum.com).
         
         Cliquez sur le bouton **Ouvrir un fichier BXF2** pour démarrer.
-      open_bxf2: Ouvrir un fichier BXF2
-      import_to_model: Importer dans le modèle
       load:
         title: Chargement d'un fichier BXF2
+        author: Auteur
+        date: Date
+        cabinet:
+          list: Liste des caissons
+          description: Nom
+          width: Largeur
+          height: Hauteur
+          depth: Profondeur
+        article:
+          list: Liste des articles
+          total_quantity: Qte.
+          article_number: Ref.
+          description: Description
       import:
         title: Importation de la configuration dans le modèle
         info_0: |
@@ -2027,6 +2039,7 @@ tab:
       error:
         failed_to_load_bxf2_file: |
           Impossible de charger le fichier BXF2 : **{{ error }}**
+      obsolete_base: "Pour rester synchronisé, vous devez recharger le fichier BXF2."
   tutorials:
     label: Tutoriels
     title: Tutoriels

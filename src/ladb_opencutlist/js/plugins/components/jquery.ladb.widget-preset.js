@@ -115,7 +115,7 @@
                     section: that.options.section,
                 }, function (response) {
                     that.options.fnFillInputs(response.defaults);
-                    that.dialog.notifySuccess(i18next.t('core.preset.restore_success', {name: name ? name : i18next.t('core.preset.app_defaults')}));
+                    that.dialog.notifySuccess(i18next.t('core.preset.restore_success', { name: name ? name : i18next.t('core.preset.app_defaults') }));
                 });
             });
             $('.ladb-widget-preset-btn-restore-user-defaults', that.$dropdown).on('click', function () {

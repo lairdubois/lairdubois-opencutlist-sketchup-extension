@@ -68,7 +68,7 @@ module Ladb::OpenCutList
     def run
 
       model = Sketchup.active_model
-      return { :errors => [ 'tab.importer.default.error.no_model' ] } unless model
+      return { :errors => [ 'tab.importers.default.error.no_model' ] } unless model
 
       # Clear previously generated parts
       @parts = nil
@@ -207,24 +207,24 @@ module Ladb::OpenCutList
 
             # Errors
             if part[:name].nil?
-              part[:errors] << 'tab.importer.csv.error.invalid_name'
+              part[:errors] << 'tab.importers.csv.error.invalid_name'
             end
             if part[:length].nil?
-              part[:errors] << 'tab.importer.csv.error.invalid_length'
+              part[:errors] << 'tab.importers.csv.error.invalid_length'
             end
             if part[:width].nil?
-              part[:errors] << 'tab.importer.csv.error.invalid_width'
+              part[:errors] << 'tab.importers.csv.error.invalid_width'
             end
             if part[:thickness].nil?
-              part[:errors] << 'tab.importer.csv.error.invalid_thickness'
+              part[:errors] << 'tab.importers.csv.error.invalid_thickness'
             end
 
             # Warnings
             if part[:count].nil?
-              part[:warnings] << 'tab.importer.csv.warning.invalid_count'
+              part[:warnings] << 'tab.importers.csv.warning.invalid_count'
             end
             if part[:material].nil?
-              part[:warnings] << 'tab.importer.csv.warning.invalid_material'
+              part[:warnings] << 'tab.importers.csv.warning.invalid_material'
             end
 
             # Add part to list
@@ -237,16 +237,16 @@ module Ladb::OpenCutList
 
           if response[:importable_part_count] == 0
             if response[:parts].length == 0
-              response[:errors] << 'tab.importer.csv.error.empty_file'
+              response[:errors] << 'tab.importers.csv.error.empty_file'
             else
-              response[:errors] << 'tab.importer.csv.error.no_importable_part'
+              response[:errors] << 'tab.importers.csv.error.no_importable_part'
             end
           end
 
         rescue => e
           puts e.message
           puts e.backtrace
-          response[:errors] << [ 'tab.importer.csv.error.failed_to_load_csv_file', { :error => e.message } ]
+          response[:errors] << [ 'tab.importers.csv.error.failed_to_load_csv_file', { :error => e.message } ]
         end
 
       end

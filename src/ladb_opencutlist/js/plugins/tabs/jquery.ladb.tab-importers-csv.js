@@ -12,12 +12,7 @@
         this.model_is_empty = false;
 
         this.$header = $('.ladb-header', this.$element);
-        this.$fileTabs = $('.ladb-file-tabs', this.$header);
         this.$btnOpen = $('#ladb_btn_open', this.$header);
-        this.$btnImport = $('#ladb_btn_import', this.$header);
-
-        this.$panelHelp = $('.ladb-panel-help', this.$element);
-        this.$page = $('.ladb-page', this.$element);
 
     };
     LadbTabImportersCsv.prototype = Object.create(LadbAbstractTab.prototype);
@@ -30,27 +25,7 @@
         rubyCallCommand('importers_csv_open', { path: path }, function (response) {
 
             if (response.errors.length > 0) {
-
-                // Update filename
-                that.$fileTabs.empty();
-
-                // Hide help panel
-                that.$panelHelp.hide();
-
-                // Update page
-                that.$page.empty();
-                that.$page.append(Twig.twig({ ref: "tabs/importers/csv/_list.twig" }).render({
-                    errors: response.errors
-                }));
-
-                // Manage buttons
-                that.$btnOpen.removeClass('btn-default');
-                that.$btnOpen.addClass('btn-primary');
-                that.$btnImport.hide();
-
-                // Stick header
-                that.stickSlideHeader(that.$rootSlide);
-
+                that.dialog.notifyErrors(response.errors);
             }
             if (response.path) {
 
@@ -92,10 +67,10 @@
                     });
 
                     // Bind select
-                    $selectColSep.val(loadOptions.col_sep);
                     $selectColSep.selectpicker(SELECT_PICKER_OPTIONS);
-                    $selectFirstLineHeaders.val(loadOptions.first_line_headers ? '1' : '0');
                     $selectFirstLineHeaders.selectpicker(SELECT_PICKER_OPTIONS);
+
+                    fnFillInputs(loadOptions);
 
                     // Bind buttons
                     $btnLoad.on('click', function () {
@@ -120,7 +95,7 @@
         });
     };
 
-    LadbTabImportersCsv.prototype.loadCsv = function (loadOptions) {
+    LadbTabImportersCsv.prototype.loadCsv = function (loadOptions, out = true) {
         const that = this;
 
         // Store options
@@ -132,7 +107,9 @@
 
             let i;
 
-            if (response.path) {
+            if (response.errors && response.errors.length > 0) {
+                that.dialog.notifyErrors(response.errors);
+            } else if (response.path) {
 
                 const errors = response.errors;
                 const warnings = response.warnings;
@@ -140,28 +117,18 @@
                 const columns = response.columns;
                 const parts = response.parts;
                 const importablePartCount = response.importable_part_count;
-                const model_is_empty = response.model_is_empty;
+                const modelIsEmpty = response.model_is_empty;
                 const lengthUnit = response.length_unit;
 
                 // Keep useful data
                 that.loadOptions = loadOptions;
                 that.importablePartCount = importablePartCount;
-                that.model_is_empty = model_is_empty;
+                that.model_is_empty = modelIsEmpty;
 
-                // Update filename
-                that.$fileTabs.empty();
-                that.$fileTabs.append(Twig.twig({ ref: "tabs/importers/csv/_file-tab.twig" }).render({
+                const $slide = that.pushNewSlide('ladb_importers_csv_slide_load', 'tabs/importers/csv/_slide-load.twig', $.extend({
+                    out: out,
                     filename: filename,
-                    importablePartCount: importablePartCount,
-                    lengthUnit: lengthUnit
-                }));
-
-                // Hide help panel
-                that.$panelHelp.hide();
-
-                // Update page
-                that.$page.empty();
-                that.$page.append(Twig.twig({ ref: "tabs/importers/csv/_list.twig" }).render({
+                    lengthUnit: lengthUnit,
                     errors: errors,
                     warnings: warnings,
                     columns: columns,
@@ -169,12 +136,18 @@
                     importablePartCount: importablePartCount
                 }));
 
+                // Fetch UI elements
+                const $btnImport = $('#ladb_btn_import', $slide);
+                const $btnClose = $('#ladb_btn_close', $slide);
+                const $header = $('.ladb-header', $slide);
+                const $page = $('.ladb-page', $slide);
+
                 // Setup tooltips
-                that.dialog.setupTooltips(that.$page);
+                that.dialog.setupTooltips($slide);
 
                 // Apply column mapping
                 for (i = 0; i < columns.length; i++) {
-                    const $select = $('#ladb_select_column_' + i, that.$page);
+                    const $select = $('#ladb_select_column_' + i, $page);
                     $select
                         .val(columns[i].mapping)
                         .on('changed.bs.select', function(e, clickedIndex, isSelected, previousValue) {
@@ -188,7 +161,7 @@
                             if (mapping) {
                                 loadOptions.column_mapping[mapping] = column;
                             }
-                            that.loadCsv(loadOptions)
+                            that.loadCsv(loadOptions, false)
                         })
                         .selectpicker($.extend(SELECT_PICKER_OPTIONS, {
                             noneSelectedText: i18next.t('tab.import.column.unused')
@@ -196,22 +169,21 @@
                 }
 
                 // Bind buttons
-                $('.ladb-btn-setup-model-units', that.$header).on('click', function() {
+                $btnImport.on('click', function () {
+                    that.importParts();
+                    this.blur();
+                });
+                $btnClose.on('click', function () {
+                    that.close();
+                });
+                $('.ladb-btn-setup-model-units', $header).on('click', function() {
                     $(this).blur();
                     that.dialog.executeCommandOnTab('settings', 'highlight_panel', { panel:'model' });
                 });
 
                 // Manage buttons
-                that.$btnOpen.removeClass('btn-primary');
-                that.$btnOpen.addClass('btn-default');
-                that.$btnImport.show();
-                that.$btnImport.prop( "disabled", importablePartCount === 0);
+                $btnImport.prop( "disabled", importablePartCount === 0);
 
-                // Stick header
-                that.stickSlideHeader(that.$rootSlide);
-
-            } else if (response.errors && response.errors.length > 0) {
-                that.dialog.notifyErrors(response.errors);
             }
 
         });
@@ -259,9 +231,6 @@
                 fnFillInputs: fnFillInputs
             });
 
-            $inputKeepDefinitionsSettings.prop('checked', importOptions.keep_definitions_settings);
-            $inputKeepMaterialsSettings.prop('checked', importOptions.keep_materials_settings);
-
             // Bind select
             $selectRemoveAll
                 .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
@@ -273,6 +242,8 @@
                     }
                 })
                 .selectpicker(SELECT_PICKER_OPTIONS);
+
+            fnFillInputs(importOptions);
 
             // Bind buttons
             $btnImport.on('click', function () {
@@ -290,39 +261,18 @@
                     }
                     if (response.imported_part_count) {
 
-                        // Update filename
-                        that.$fileTabs.empty();
+                        that.dialog.notifySuccess(i18next.t('tab.importers.default.success.imported_title'), [
+                            Noty.button(i18next.t('default.see'), 'btn btn-default', function () {
+                                that.dialog.minimize();
+                                rubyCallCommand('core_zoom_extents')
+                            }),
+                            Noty.button(i18next.t('tab.cutlist.title'), 'btn btn-default', function () {
+                                that.dialog.executeCommandOnTab('cutlist', 'generate_cutlist');
+                            }),
+                        ]);
 
-                        // Unstick header
-                        that.unstickSlideHeader(that.$rootSlide);
-
-                        // Update page
-                        that.$page.empty();
-                        that.$page.append(Twig.twig({ ref: "tabs/importers/csv/_alert-success.twig" }).render({
-                            importedPartCount: response.imported_part_count
-                        }));
-
-                        // Bind buttons
-                        $('#ladb_importer_success_btn_see', that.$page).on('click', function() {
-                            this.blur();
-                            that.dialog.minimize();
-                            rubyCallCommand('core_zoom_extents')
-                        });
-                        $('#ladb_importer_success_btn_cutlist', that.$page).on('click', function() {
-                            this.blur();
-                            that.dialog.executeCommandOnTab('cutlist', 'generate_cutlist');
-                        });
-
-                        // Manage buttons
-                        that.$btnOpen.removeClass('btn-default');
-                        that.$btnOpen.addClass('btn-primary');
-                        that.$btnImport.hide();
-
-                        // Cleanup keeped data
-                        that.loadOptions = null;
-                        that.importablePartCount = 0;
-                        that.model_is_empty = false;
-
+                        // Close
+                        that.close();
                     }
 
                 });
@@ -338,6 +288,20 @@
         });
 
     };
+
+    LadbTabImportersCsv.prototype.close = function () {
+        if (this.loadOptions) {
+
+            // Close slide
+            this.popSlide();
+
+            // Cleanup keeped data
+            this.loadOptions = null;
+            this.importablePartCount = 0;
+            this.model_is_empty = false;
+
+        }
+    }
 
     // Internals /////
 
@@ -389,10 +353,6 @@
         // Bind buttons
         this.$btnOpen.on('click', function () {
             that.openCsv();
-            this.blur();
-        });
-        this.$btnImport.on('click', function () {
-            that.importParts();
             this.blur();
         });
 

@@ -1,0 +1,82 @@
+{% extends 'tabs/base-slide.twig' %}
+
+{% set id = 'ladb_importers_bxf2_slide_load' %}
+
+{% block headerInner %}
+    {{ parent() }}
+    <ul class="ladb-file-tabs nav nav-tabs no-print">
+        {% include 'tabs/base-file-tab.twig' %}
+    </ul>
+{% endblock %}
+
+{% block headerHeadingInner %}
+    {{ 'tab.importers.bxf2.title'|i18next}}
+{% endblock %}
+
+{% block headerToolsInner %}
+    <button id="ladb_btn_import" class="btn btn-primary"><i class="ladb-opencutlist-icon-plus"></i> {{ 'tab.importers.default.import_to_model'|i18next }}...</button>
+    &nbsp;
+    <button class="btn btn-default" data-help-page="cutlist.export"><i class="ladb-opencutlist-icon-help"></i></button>
+    &nbsp;
+    <button id="ladb_btn_close" class="btn btn-default"><i class="ladb-opencutlist-icon-close"></i> {{ 'default.close'|i18next }}</button>
+{% endblock %}
+
+{% block containerInner %}
+    {{ parent() }}
+    <div class="ladb-page">
+
+        {% include 'core/_alert-errors.twig' %}
+        {% include 'core/_alert-warnings.twig' %}
+
+        {% if model %}
+            <div>{{ 'tab.importers.bxf2.load.author'|i18next }}: <strong>{{ model.author }}</strong></div>
+            <div>{{ 'tab.importers.bxf2.load.date'|i18next }}: <strong>{{ model.date }}</strong></div>
+            <br>
+            <table class="table table-bordered ladb-cutlist-group ladb-group-type-2">
+                <thead>
+                <tr class="table-heading">
+                    <td class="text-middle" colspan="4"><div class="ladb-heading">{% include 'tabs/materials/_material-type-icon.twig' with { 'type':2, 'filled':true } %} {{ 'tab.importers.bxf2.load.cabinet.list'|i18next }}</div></td>
+                </tr>
+                <tr class="table-column-heading">
+                    <td width="55%">{{ 'tab.importers.bxf2.load.cabinet.description'|i18next }}</td>
+                    <td width="15%">{{ 'tab.importers.bxf2.load.cabinet.width'|i18next }}</td>
+                    <td width="15%">{{ 'tab.importers.bxf2.load.cabinet.height'|i18next }}</td>
+                    <td width="15%">{{ 'tab.importers.bxf2.load.cabinet.depth'|i18next }}</td>
+                </tr>
+                </thead>
+                <tbody>
+                {% for cabinet in model.cabinets %}
+                    <tr class="ladb-cutlist-row">
+                        <td>{{ cabinet.description }}</td>
+                        <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ cabinet.width }}</td>
+                        <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ cabinet.height }}</td>
+                        <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ cabinet.depth }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <table class="table table-bordered ladb-cutlist-group ladb-group-type-5">
+                <thead>
+                <tr class="table-heading">
+                    <td class="text-middle" colspan="3"><div class="ladb-heading">{% include 'tabs/materials/_material-type-icon.twig' with { 'type':5, 'filled':true } %} {{ 'tab.importers.bxf2.load.article.list'|i18next }}</div></td>
+                </tr>
+                <tr class="table-column-heading">
+                    <td>{{ 'tab.importers.bxf2.load.article.total_quantity'|i18next }}</td>
+                    <td>{{ 'tab.importers.bxf2.load.article.article_number'|i18next }}</td>
+                    <td>{{ 'tab.importers.bxf2.load.article.description'|i18next }}</td>
+                </tr>
+                </thead>
+                <tbody>
+                {% for article in model.articles %}
+                    <tr class="ladb-cutlist-row">
+                        <td class="ladb-cutlist-value">{{ article.total_quantity }}</td>
+                        <td class="ladb-cutlist-value">{{ article.article_number }}</td>
+                        <td>{{ article.description }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+
+    </div>
+{% endblock %}

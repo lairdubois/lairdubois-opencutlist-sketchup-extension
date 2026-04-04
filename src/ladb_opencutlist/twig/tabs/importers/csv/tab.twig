@@ -2,20 +2,18 @@
 
 {% set slideClasses = 'ladb-overflow-x-auto' %}
 
-{% block headerInner %}
-    {{ parent() }}
-    <ul class="ladb-file-tabs nav nav-tabs no-print"></ul>
-{% endblock %}
-
 {% block headerToolsInner %}
-    <button id="ladb_btn_open" class="btn btn-primary">{{ 'tab.importers.csv.open_csv'|i18next }}...</button>
-    <button id="ladb_btn_import" class="btn btn-primary" style="display: none;"><i class="ladb-opencutlist-icon-plus"></i> {{ 'tab.importers.csv.import_to_model'|i18next }}...</button>
+    <button id="ladb_btn_open" class="btn btn-primary">{{ 'tab.importers.default.open_file'|i18next({ 'extension':'CSV' }) }}...</button>
     &nbsp;
     <button class="btn btn-default" data-help-page="importer"><i class="ladb-opencutlist-icon-help"></i></button>
 {% endblock %}
 
 {% block containerInner %}
-    {% include 'tabs/importers/csv/_panel-help.twig' %}
+    {% embed 'core/_panel-help.twig' %}
+        {% block bodyInner %}
+            <p>{{ 'tab.importers.csv.help'|i18next }}</p>
+        {% endblock %}
+    {% endembed %}
     {{ parent() }}
     <div class="ladb-page ladb-importers-page"></div>
 {% endblock %}

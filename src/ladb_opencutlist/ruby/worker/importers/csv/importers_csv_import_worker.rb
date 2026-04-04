@@ -25,7 +25,7 @@ module Ladb::OpenCutList
     def run
 
       model = Sketchup.active_model
-      return { :errors => [ 'tab.importer.error.no_model' ] } unless model
+      return { :errors => [ 'tab.importers.error.no_model' ] } unless model
 
       response = {
           :errors => [],
@@ -149,7 +149,7 @@ module Ladb::OpenCutList
       else
 
         # Opetation failed
-        response[:errors] << 'tab.importer.default.failed_to_import'
+        response[:errors] << 'tab.importers.default.failed_to_import'
 
       end
 
