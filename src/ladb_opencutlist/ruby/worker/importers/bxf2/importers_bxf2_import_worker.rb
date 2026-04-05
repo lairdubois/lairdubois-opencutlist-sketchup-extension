@@ -9,11 +9,16 @@ module Ladb::OpenCutList
     COMPONENT_UP_TRANSFORM = Geom::Transformation.axes(ORIGIN, X_AXIS, Z_AXIS.reverse, Y_AXIS)
 
     BLUM_COLOR = Sketchup::Color.new('#ff671f').freeze
+    WOOD_MATERIAL_COLOR = Sketchup::Color.new(209, 197, 173).freeze
+    ALUMINIUM_MATERIAL_COLOR = Sketchup::Color.new(204, 204, 204).freeze
+    GLASS_MATERIAL_COLOR = Sketchup::Color.new(196, 232, 254, 0.5).freeze
 
     def initialize(bxf_model,
                    file_path,
 
-                   part_material_name: nil,
+                   part_wood_material_name: nil,
+                   part_aluminium_material_name: nil,
+                   part_glass_material_name: nil,
                    front_part_layer_name: nil,
 
                    machining_material_name: nil,
@@ -27,7 +32,9 @@ module Ladb::OpenCutList
       @bxf_model = bxf_model
       @file_path = file_path
 
-      @part_material_name = part_material_name
+      @part_wood_material_name = part_wood_material_name
+      @part_aluminium_material_name = part_aluminium_material_name
+      @part_glass_material_name = part_glass_material_name
       @front_part_layer_name = front_part_layer_name
 
       @machining_material_name = machining_material_name
@@ -65,7 +72,7 @@ module Ladb::OpenCutList
         rescue Exception => e
           PLUGIN.dump_exception(e)
           Sketchup.active_model.abort_operation
-          return { :errors => [ 'tab.importers.default.error.no_model' ] }
+          return { errors: [ [ 'tab.importers.bxf2.error.failed_to_load_bxf2_file', { :error => e.message } ] ] }
         ensure
           _clear_factories
         end
@@ -157,7 +164,7 @@ module Ladb::OpenCutList
 
         instance = entities.add_instance(definition, part_link.transformations.to_t)
         instance.layer = _get_front_part_layer if part.model_key.start_with?('H-FRON')
-        instance.material = _get_part_material
+        instance.material = _get_part_material(part.material)
 
       end
 
@@ -395,12 +402,9 @@ module Ladb::OpenCutList
     def _draw_box(entities, bounds)
 
       kb = Kuix::Bounds3d.new.copy!(bounds)
-      entities.add_face(kb.get_quad(Kuix::Bounds3d::RIGHT))
-      entities.add_face(kb.get_quad(Kuix::Bounds3d::TOP))
-      entities.add_face(kb.get_quad(Kuix::Bounds3d::BACK))
-      entities.add_face(kb.get_quad(Kuix::Bounds3d::LEFT))
-      entities.add_face(kb.get_quad(Kuix::Bounds3d::BOTTOM))
-      entities.add_face(kb.get_quad(Kuix::Bounds3d::FRONT))
+      kb.get_quads.each_slice(4) do |quad|
+        entities.add_face(quad)
+      end
 
     end
 
@@ -629,14 +633,30 @@ module Ladb::OpenCutList
 
     # -- Materials --
 
-    def _get_part_material
-      return nil unless @part_material_name.is_a?(String) && !@part_material_name.empty?
-      material = Sketchup.active_model.materials[@part_material_name]
+    def _get_part_material(bxf_material)
+      return nil unless bxf_material.is_a?(Bxf::BxfMaterial)
+      case bxf_material.name
+      when 'wood'
+        name = @part_wood_material_name
+        color = WOOD_MATERIAL_COLOR
+      when 'aluminium'
+        name = @part_aluminium_material_name
+        color = ALUMINIUM_MATERIAL_COLOR
+      when 'glass'
+        name = @part_glass_material_name
+        color = GLASS_MATERIAL_COLOR
+      else
+        name = nil
+        color = nil
+      end
+      return nil unless name.is_a?(String) && !name.empty?
+      material = Sketchup.active_model.materials[name]
       if material.nil?
 
         # Create a new TYPE_SHEET_GOOD material for the part
-        material = Sketchup.active_model.materials.add(@part_material_name)
-        material.color = 'white'
+        material = Sketchup.active_model.materials.add(name)
+        material.color = color
+        material.alpha = color.alpha / 255.0  if color
         ma = MaterialAttributes.new(material)
         ma.type = MaterialAttributes::TYPE_SHEET_GOOD
         ma.write_to_attributes

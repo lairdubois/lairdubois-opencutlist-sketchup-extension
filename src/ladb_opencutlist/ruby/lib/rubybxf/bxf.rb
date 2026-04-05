@@ -1,6 +1,7 @@
 module Ladb::OpenCutList
 
   require 'rexml/document'
+  require 'date'
 
   module Bxf
 
@@ -52,7 +53,7 @@ module Ladb::OpenCutList
           self.version = version_elm.text if version_elm
 
           date_elm = head_elm.elements['date']
-          self.date = date_elm.text if date_elm
+          self.date = Date.parse(date_elm.text) if date_elm
 
           author_elm = head_elm.elements['author']
           self.author = author_elm.text if author_elm
@@ -980,28 +981,46 @@ module Ladb::OpenCutList
 
     class BxfMaterial < BxfModelable
 
-      TYPE_WOOD = 'WoodMaterial'
-      TYPE_ALUMINUIM = 'AluminiumMaterial'
-      TYPE_GLASS = 'GlassMaterial'
-
-      attr_accessor :type,
-                    :name
-      attr_reader   :grain_direction
+      attr_accessor :name
 
       def initialize(model)
         super
 
-        @type = nil
         @name = nil
+
+      end
+
+      def self.create(model, elm)
+        type = elm.attributes['xsi:type']
+        case type
+        when 'WoodMaterial'
+          BxfWoodMaterial.new(model).read(elm)
+        else
+          BxfMaterial.new(model).read(elm)
+        end
+      end
+
+      def read(material_elm)
+
+        self.name = material_elm.attributes['name']
+
+        super
+      end
+
+    end
+
+    class BxfWoodMaterial < BxfMaterial
+
+      attr_reader   :grain_direction
+
+      def initialize(model)
+        super
 
         @grain_direction = BxfVector3d.new(model)
 
       end
 
       def read(material_elm)
-
-        self.type = material_elm.attributes['type']
-        self.name = material_elm.attributes['name']
 
         grain_direction_attr = material_elm.attributes['grainDirection']
         self.grain_direction.read(grain_direction_attr) if grain_direction_attr
@@ -1448,12 +1467,12 @@ module Ladb::OpenCutList
     class BxfPart < BxfReferenceableObject
 
       attr_accessor :model_key,
-                    :geometry
+                    :geometry,
+                    :material
       attr_reader   :inherited_machinings,
                     :machining_group_links,
                     :machining_links,
-                    :drawing_detail,
-                    :material
+                    :drawing_detail
 
       def initialize(model)
         super
@@ -1467,7 +1486,7 @@ module Ladb::OpenCutList
         @machining_links = []         # Array<BxfMachiningLink>
 
         @drawing_detail = BxfDrawingDetail.new(model)
-        @material = BxfMaterial.new(model)
+        @material = nil
 
       end
 
@@ -1494,7 +1513,7 @@ module Ladb::OpenCutList
         self.drawing_detail.read(drawing_detail_elm) if drawing_detail_elm
 
         material_elm = part_elm.elements['material']
-        self.material.read(material_elm) if material_elm
+        self.material = BxfMaterial.create(model, material_elm) if material_elm
 
         super
       end

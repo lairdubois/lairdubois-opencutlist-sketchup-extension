@@ -1,6 +1,8 @@
 {
   "0": {
-    "part_material_name": null,
+    "part_wood_material_name": null,
+    "part_aluminium_material_name": null,
+    "part_glass_material_name": null,
     "front_part_layer_name": null,
     "machining_material_name": null,
     "machining_layer_name": null,

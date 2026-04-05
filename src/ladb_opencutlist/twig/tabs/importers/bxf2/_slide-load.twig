@@ -27,7 +27,7 @@
 
         {% if model %}
             <div>{{ 'tab.importers.bxf2.model.author'|i18next }}: <strong>{{ model.author }}</strong></div>
-            <div>{{ 'tab.importers.bxf2.model.date'|i18next }}: <strong>{{ model.date }}</strong></div>
+            <div>{{ 'tab.importers.bxf2.model.date'|i18next }}: <strong>{{ model.date|date(('default.date_format_short'|i18next)) }}</strong></div>
             <br>
             <table class="table table-bordered ladb-cutlist-group ladb-group-type-2">
                 <thead>

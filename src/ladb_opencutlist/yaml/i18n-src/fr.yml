@@ -2013,8 +2013,12 @@ tab:
         info_2: |
           Personnalisez les options.
           Cliquez sur **Importer** pour confirmer l'action.
-        option_part_material_name: Matière des pièces
-        option_part_material_name_help: Matière des pièces
+        option_part_wood_material_name: Matière des pièces end bois
+        option_part_wood_material_name_help: Matière des pièces en bois
+        option_part_aluminium_material_name: Matière des pièces en aluminium
+        option_part_aluminium_material_name_help: Matière des pièces en aluminium
+        option_part_glass_material_name: Matière des pièces en verre
+        option_part_glass_material_name_help: Matière des pièces en verre
         option_front_part_layer_name: Balise des façades
         option_front_part_layer_name_help: Balise des façades
         option_machining_material_name: Matière des usinages

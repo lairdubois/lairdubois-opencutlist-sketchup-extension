@@ -90,7 +90,9 @@
 
             // Fetch UI elements
             const $widgetPreset = $('.ladb-widget-preset', $modal);
-            const $inputPartMaterialName = $('#ladb_importer_import_input_part_material_name', $modal);
+            const $inputPartWoodMaterialName = $('#ladb_importer_import_input_part_wood_material_name', $modal);
+            const $inputPartAluminiumMaterialName = $('#ladb_importer_import_input_part_aluminium_material_name', $modal);
+            const $inputPartGlassMaterialName = $('#ladb_importer_import_input_part_glass_material_name', $modal);
             const $inputFrontPartLayerName = $('#ladb_importer_import_input_front_part_layer_name', $modal);
             const $inputMachiningMaterialName = $('#ladb_importer_import_input_machining_material_name', $modal);
             const $inputMachiningLayerName = $('#ladb_importer_import_input_machining_layer_name', $modal);
@@ -100,7 +102,9 @@
 
             // Define useful functions
             const fnFetchOptions = function (options) {
-                options.part_material_name = $inputPartMaterialName.val();
+                options.part_wood_material_name = $inputPartWoodMaterialName.val();
+                options.part_aluminium_material_name = $inputPartAluminiumMaterialName.val();
+                options.part_glass_material_name = $inputPartGlassMaterialName.val();
                 options.front_part_layer_name = $inputFrontPartLayerName.val();
                 options.machining_material_name = $inputMachiningMaterialName.val();
                 options.machining_layer_name = $inputMachiningLayerName.val();
@@ -108,7 +112,9 @@
                 options.hardware_layer_name = $inputHardwareLayerName.val();
             };
             const fnFillInputs = function (options) {
-                $inputPartMaterialName.val(options.part_material_name);
+                $inputPartWoodMaterialName.val(options.part_wood_material_name);
+                $inputPartAluminiumMaterialName.val(options.part_aluminium_material_name);
+                $inputPartGlassMaterialName.val(options.part_glass_material_name);
                 $inputFrontPartLayerName.val(options.front_part_layer_name);
                 $inputMachiningMaterialName.val(options.machining_material_name);
                 $inputMachiningLayerName.val(options.machining_layer_name);
@@ -154,7 +160,9 @@
                 fnFetchOptions: fnFetchOptions,
                 fnFillInputs: fnFillInputs
             });
-            $inputPartMaterialName.ladbTextinputText(fnMaterialTextinputOptions(2));
+            $inputPartWoodMaterialName.ladbTextinputText(fnMaterialTextinputOptions(2));
+            $inputPartAluminiumMaterialName.ladbTextinputText(fnMaterialTextinputOptions(2));
+            $inputPartGlassMaterialName.ladbTextinputText(fnMaterialTextinputOptions(2));
             $inputFrontPartLayerName.ladbTextinputText(TEXTINPUT_LAYERS_OPTIONS);
             $inputMachiningMaterialName.ladbTextinputText(fnMaterialTextinputOptions(7));
             $inputMachiningLayerName.ladbTextinputText(TEXTINPUT_LAYERS_OPTIONS);
@@ -172,18 +180,28 @@
                 // Store options
                 rubyCallCommand('core_set_model_preset', { dictionary: 'importers_bxf2_import_options', values: importOptions });
 
-                rubyCallCommand('importers_bxf2_import', importOptions, function (response) {
+                window.requestAnimationFrame(function () {
 
-                    if (response.errors.length > 0) {
-                        that.dialog.notifyErrors(response.errors);
-                    } else {
+                    // Start progress feedback
+                    that.dialog.startProgress(1);
 
-                        that.dialog.notifySuccess(i18next.t('tab.importers.default.success.imported_title'));
+                    rubyCallCommand('importers_bxf2_import', importOptions, function (response) {
 
-                        // Close
-                        that.close();
+                        if (response.errors.length > 0) {
+                            that.dialog.notifyErrors(response.errors);
+                        } else {
 
-                    }
+                            that.dialog.notifySuccess(i18next.t('tab.importers.default.success.imported_title'));
+
+                            // Close
+                            that.close();
+
+                        }
+
+                        // Finish progress feedback
+                        that.dialog.finishProgress();
+
+                    });
 
                 });
 
@@ -570,26 +588,36 @@
                 // Store options
                 rubyCallCommand('core_set_model_preset', { dictionary: 'importers_csv_import_options', values: importOptions });
 
-                rubyCallCommand('importers_csv_import', importOptions, function (response) {
+                window.requestAnimationFrame(function () {
 
-                    if (response.errors.length > 0) {
-                        that.dialog.notifyErrors(response.errors);
-                    }
-                    if (response.imported_part_count) {
+                    // Start progress feedback
+                    that.dialog.startProgress(1);
 
-                        that.dialog.notifySuccess(i18next.t('tab.importers.default.success.imported_title'), [
-                            Noty.button(i18next.t('default.see'), 'btn btn-default', function () {
-                                that.dialog.minimize();
-                                rubyCallCommand('core_zoom_extents')
-                            }),
-                            Noty.button(i18next.t('tab.cutlist.title'), 'btn btn-default', function () {
-                                that.dialog.executeCommandOnTab('cutlist', 'generate_cutlist');
-                            }),
-                        ]);
+                    rubyCallCommand('importers_csv_import', importOptions, function (response) {
 
-                        // Close
-                        that.close();
-                    }
+                        if (response.errors.length > 0) {
+                            that.dialog.notifyErrors(response.errors);
+                        }
+                        if (response.imported_part_count) {
+
+                            that.dialog.notifySuccess(i18next.t('tab.importers.default.success.imported_title'), [
+                                Noty.button(i18next.t('default.see'), 'btn btn-default', function () {
+                                    that.dialog.minimize();
+                                    rubyCallCommand('core_zoom_extents')
+                                }),
+                                Noty.button(i18next.t('tab.cutlist.title'), 'btn btn-default', function () {
+                                    that.dialog.executeCommandOnTab('cutlist', 'generate_cutlist');
+                                }),
+                            ]);
+
+                            // Close
+                            that.close();
+                        }
+
+                        // Finish progress feedback
+                        that.dialog.finishProgress();
+
+                    });
 
                 });
 

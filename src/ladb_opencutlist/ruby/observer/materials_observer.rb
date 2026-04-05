@@ -10,6 +10,8 @@ module Ladb::OpenCutList
     def onMaterialAdd(materials, material)
       # puts "onMaterialAdd: #{material}"
 
+      return if material.deleted? # Prevent event after aborted operation
+
       # Trigger event to JS
       PLUGIN.trigger_event(ON_MATERIAL_ADD, { :material_name => material.name })
 
@@ -26,7 +28,7 @@ module Ladb::OpenCutList
     def onMaterialChange(materials, material)
       # puts "onMaterialChange: #{material}"
 
-      return if material.deleted?
+      return if material.deleted? # Prevent event after aborted operation
 
       # Trigger event to JS
       PLUGIN.trigger_event(ON_MATERIAL_CHANGE, { :material_name => material.name })

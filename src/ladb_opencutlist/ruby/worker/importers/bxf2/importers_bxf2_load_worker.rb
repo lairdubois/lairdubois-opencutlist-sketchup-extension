@@ -47,7 +47,7 @@ module Ladb::OpenCutList
             :total_quantity => article.total_quantity,
             :article_number => article.article_number,
             :description => article.description,
-          } },
+          } }.sort_by { |v| v[:description] },
         }
 
         response[:available_layers] = model.layers.select { |layer| layer != cached_layer0 }.map { |layer| {
