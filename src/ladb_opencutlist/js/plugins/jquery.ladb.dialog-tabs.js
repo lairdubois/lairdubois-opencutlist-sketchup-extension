@@ -610,7 +610,6 @@
         // Bind buttons
         $.each(this.$tabBtns, function (tabName, $tabBtn) {
             $tabBtn.on('click', function () {
-                if ( tabName !== 'sponsor')
                 that.selectTab(tabName);
             });
         });
