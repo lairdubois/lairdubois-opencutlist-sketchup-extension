@@ -141,6 +141,7 @@ core:
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
+    import: Importálás
     more: Továbbiak
     more_docs: Dokumentáció
     more_reviews: Értékelések
@@ -738,6 +739,7 @@ tab:
       type_4: $t(tab.materials.type_4)
       type_5: $t(tab.materials.type_5)
       type_6: $t(tab.materials.type_6)
+      type_7: ""
       type_-1: $t(default.cut_plural)
       tooltip:
         incompatible_unit: Nem kompatibilis mértékegység az anyagbecslési beállításokkal
@@ -1568,6 +1570,7 @@ tab:
     type_4: Élzáró
     type_5: Vasalat
     type_6: Furnér
+    type_7: ""
     tooltip:
       type_0: "Anyagtípus: $t(tab.materials.type_0)"
       type_1: "Anyagtípus: $t(tab.materials.type_1)"
@@ -1576,6 +1579,7 @@ tab:
       type_4: "Anyagtípus: $t(tab.materials.type_4)"
       type_5: "Anyagtípus: $t(tab.materials.type_5)"
       type_6: "Anyagtípus: $t(tab.materials.type_6)"
+      type_7: ""
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Száliránya
@@ -1900,6 +1904,130 @@ tab:
       imported_body: "{{ count }} alkatrész sikeresen importálva!"
       imported_body_plural: "{{ count }} alkatrész sikeresen importálva!"
     obsolete_base: "A friss adatokhoz újra be kell töltenie a CSV fájlt."
+  importers:
+    default:
+      open_file: ""
+      import_to_model: Importálás a modellbe
+      error:
+        no_model: ""
+        file_not_found: "Fájl nem található: **{{ filename }}**"
+        bad_extension: ""
+        failed_to_import: ""
+      success:
+        imported_title: Importálás kész
+    csv:
+      label: ""
+      title: Alkatrészek importálása
+      help: |
+      load:
+        title: CSV fájl feltöltése
+        info_0: |
+          Válassza ki a fájl olvasásához szükséges beállításokat:
+          **{{ filename }}**.
+        info_1: |
+          *A modellben beállított mértékegység: **{{ unit }}**.
+          Ez a mértékegység lesz használva azoknál a méreteknél, ahol nincs megadva mértékegység*.
+        options: Betöltési beállítások
+        option_col_sep: Elválasztó
+        option_col_sep_tab: Tabulátor
+        option_col_sep_comma: Vessző
+        option_col_sep_semicolon: Pontosvessző
+        option_first_line_headers: Első sor
+        option_first_line_headers_0: Adat
+        option_first_line_headers_1: Oszlopcímek
+      import:
+        title: Alkatrészek importálása a modellbe
+        info_0: |
+          **{{ count }} alkatrész** fog importálni a modellbe.
+          Ez az alkatrész egy csoportba kerül a fő jelenet origójában.
+        info_0_plural: |
+          **{{ count }} alkatrész** fog importálni a modellbe.
+          Ezek az alkatrészek egymásra halmozva egy csoportba kerülnek a fő jelenet origójától kezdve.
+        info_1: Kattintson az **Importálás** gombra a megerősítéshez.
+        options: |
+          A modell már tartalmaz *alkatrészeket*, *definíciókat* vagy *anyagokat*.
+          Válassza ki a megfelelő importálási beállításokat.
+        option_remove_all_?: "Válassza ki a következő lépést:"
+        option_remove_all_false: Hozzáadás a meglévőkhöz
+        option_remove_all_true: Meglévők törlése!
+        option_keep_definitions_settings: Definíció beállítások megtartása
+        option_keep_materials_settings: Anyag beállítások megtartása
+      column:
+        unused: Nem használt
+        mandatory: Kötelező mezők
+        optional: Opcionális mezők
+        name: Megnevezés
+        count: Mennyiség
+        bbox_length: Hosszúság
+        bbox_width: Szélesség
+        bbox_thickness: Vastagság
+        material: Anyag
+        tags: Címkék
+      tooltip:
+        errors: Ez az alkatrész nem lesz importálva a következő hibák miatt
+        warnings: "Ez az alkatrész importálva lesz, de a következő figyelmeztetéseket generálta"
+      error:
+        failed_to_load_csv_file: |
+          Nem sikerült betölteni a CSV fájlt: **{{ error }}**
+          *Ellenőrizze, hogy a megfelelő mezőelválasztót választotta-e ki.*
+        empty_file: A fájl üresnek tűnik vagy nem olvasható megfelelően.
+        no_importable_part: Nem importálható egyetlen alkatrész sem. Rendelje hozzá a kötelező mezőket a megfelelő oszlopokhoz.
+        invalid_name: Érvénytelen megnevezés
+        invalid_length: Érvénytelen hosszúság
+        invalid_width: Érvénytelen szélesség
+        invalid_thickness: Érvénytelen vastagság
+      warning:
+        invalid_count: Érvénytelen mennyiség
+        invalid_material: Érvénytelen anyag
+      success:
+        imported_body: "{{ count }} alkatrész sikeresen importálva!"
+        imported_body_plural: "{{ count }} alkatrész sikeresen importálva!"
+      obsolete_base: "A friss adatokhoz újra be kell töltenie a CSV fájlt."
+    bxf2:
+      label: ""
+      title: ""
+      help: |
+      load:
+        title: ""
+      import:
+        title: ""
+        info_0: |
+        info_0_plural: |
+        info_1: ""
+        info_2: |
+        option_part_wood_material_name: ""
+        option_part_wood_material_name_help: ""
+        option_part_aluminium_material_name: ""
+        option_part_aluminium_material_name_help: ""
+        option_part_glass_material_name: ""
+        option_part_glass_material_name_help: ""
+        option_front_part_layer_name: ""
+        option_front_part_layer_name_help: ""
+        option_machining_material_name: ""
+        option_machining_material_name_help: ""
+        option_machining_layer_name: ""
+        option_machining_layer_name_help: ""
+        option_hardware_material_name: ""
+        option_hardware_material_name_help: ""
+        option_hardware_layer_name: ""
+        option_hardware_layer_name_help: ""
+      model:
+        author: ""
+        date: ""
+      cabinet:
+        list: ""
+        description: Név
+        width: Szélesség
+        height: Magasság
+        depth: ""
+      article:
+        list: ""
+        total_quantity: Menny.
+        article_number: ""
+        description: Leírás
+      error:
+        failed_to_load_bxf2_file: |
+      obsolete_base: ""
   tutorials:
     label: Oktatóanyagok
     title: Oktatóanyagok
@@ -2210,11 +2338,15 @@ tool:
     action_1_status: ""
     action_1_state_0_status: ""
     action_1_state_1_status: ""
+    # CSG = Constructive Solid Geometry
+    action_2: ""
+    action_2_status: ""
     action_option_group_thickness: Vastagság
     action_option_group_stretch_measure_type: Mérés
     action_option_group_axes: Tengelyek
     action_option_group_paneling_joint_type: ""
     action_option_group_paneling_direction: Irány
+    action_option_group_csg_operation: ""
     action_option_group_options: Beállítások
     action_option_thickness_thickness: Vastagság
     action_option_thickness_thickness_status: ""
@@ -2242,6 +2374,7 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
+    filter_7: ""
     action_0: Alkatrészek színezése
     action_0_status: Kattintson egy alkatrészre annak példányának festéséhez
     action_1: Élek festése
@@ -2307,6 +2440,7 @@ tool:
   smart_join:
     title: ""
     action_0: "" # TODO: It's currently just for dev purposes
+    action_0_status: "" # TODO
   smart_export:
     title: Exportálás
     action_0: 3D alkatrész exportálása

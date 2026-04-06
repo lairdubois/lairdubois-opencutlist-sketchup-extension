@@ -141,6 +141,7 @@ core:
   dialog:
     title: OpenCutList מאת L'Air du Bois
   leftbar:
+    import: ייבוא
     more: עוד
     more_docs: מסמכים
     more_reviews: ביקורות
@@ -738,6 +739,7 @@ tab:
       type_4: $t(tab.materials.type_4)
       type_5: $t(tab.materials.type_5)
       type_6: $t(tab.materials.type_6)
+      type_7: ""
       type_-1: $t(default.cut_plural)
       tooltip:
         incompatible_unit: היחידה לא תואמת לאפשרויות תחשיב החומר
@@ -1530,6 +1532,7 @@ tab:
     type_4: קאנט
     type_5: אבזר
     type_6: לוח פורניר
+    type_7: ""
     tooltip:
       type_0: סוג החומר '$t(tab.materials.type_0)'
       type_1: סוג החומר '$t(tab.materials.type_1)'
@@ -1538,6 +1541,7 @@ tab:
       type_4: סוג החומר '$t(tab.materials.type_4)'
       type_5: סוג החומר '$t(tab.materials.type_5)'
       type_6: סוג החומר '$t(tab.materials.type_6)'
+      type_7: ""
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: כיוון סיבים
@@ -1834,6 +1838,130 @@ tab:
       imported_body: "{{ count }} חלק מיובא בהצלחה!"
       imported_body_plural: "{{ count }} חלקים מיובאים בהצלחה!"
     obsolete_base: "כדי לתמוך בסנכרון, עליך לטעון מחדש את הקובץ CSV."
+  importers:
+    default:
+      open_file: ""
+      import_to_model: ייבוא למודל
+      error:
+        no_model: ""
+        file_not_found: "הקובץ לא נמצא : **{{ filename }}**"
+        bad_extension: ""
+        failed_to_import: ""
+      success:
+        imported_title: הייבוא ​​הושלם
+    csv:
+      label: ""
+      title: ייבוא חלקים
+      help: |
+      load:
+        title: טען קובץ CSV
+        info_0: |
+          בחר באפשרויות הדרושות לקריאה נכונה של הקובץ:
+          **{{ filename }}**.
+        info_1: |
+          *היחידה שהוגדרה במודל היא: **{{ unit }}**.
+          היחידה תשמש למידות שעבורן לא מוגדרות יחידות*.
+        options: אפשרויות טעינה
+        option_col_sep: מפריד
+        option_col_sep_tab: טבלר
+        option_col_sep_comma: פסיק
+        option_col_sep_semicolon: נקודה פסיק
+        option_first_line_headers: כותרת שורה
+        option_first_line_headers_0: נתונים
+        option_first_line_headers_1: כותרות עמודות
+      import:
+        title: ייבוא ​​חלקים למודל
+        info_0: |
+          אתם עומדים לייבא **{{ count }}** חלק למודל.
+          החלק יוצב בראשית הצירים של הסצנה.
+        info_0_plural: |
+          אתם עומדים לייבא **{{ count }}** חלקים למודל.
+          החלקים יוצבו בראשית הצירים של הסצנה.
+        info_1: לחץ על **ייבוא** כדי לאשר את הפעולה.
+        options: |
+          המודל כבר מכיל *חלקים*, *הגדרות* או *חומרים*.
+          בחר באפשרויות ייבוא הנדרשות​​.
+        option_remove_all_?: "מה לעשות?"
+        option_remove_all_false: הוסף חלקים לקיימים
+        option_remove_all_true: לאפס הכל !
+        option_keep_definitions_settings: שמור פרמטרים בהגדרות
+        option_keep_materials_settings: שמור הגדרות החומרים
+      column:
+        unused: לא בשימוש
+        mandatory: שדות חובה
+        optional: שדות נוספים
+        name: תיאור
+        count: כמות
+        bbox_length: אורך חיתוך
+        bbox_width: רוחב חיתוך
+        bbox_thickness: עובי זמין
+        material: חומר
+        tags: תגים
+      tooltip:
+        errors: החלק לא יובא מכיוון שהוא מכיל את השגיאות הבאות
+        warnings: החלק יובא אך הוא מכיל את האזהרות הבאות
+      error:
+        failed_to_load_csv_file: |
+          טעינת קובץ CSV נכשלה: **{{ error }}**
+          *בדוק שבחרת במפריד הנתונים הנכון.*
+        empty_file: נראה שהקובץ ריק או בפורמט לא קריא.
+        no_importable_part: לא ניתן לייבא חלקים. הקצה את השדות הנדרשים בעמודות המתאימות.
+        invalid_name: תיאור לא תקין
+        invalid_length: אורך לא תקין
+        invalid_width: רוחב לא תקין
+        invalid_thickness: עובי לא תקין
+      warning:
+        invalid_count: כמות לא תקינה
+        invalid_material: חומר לא תקין
+      success:
+        imported_body: "{{ count }} חלק מיובא בהצלחה!"
+        imported_body_plural: "{{ count }} חלקים מיובאים בהצלחה!"
+      obsolete_base: "כדי לתמוך בסנכרון, עליך לטעון מחדש את הקובץ CSV."
+    bxf2:
+      label: ""
+      title: ""
+      help: |
+      load:
+        title: ""
+      import:
+        title: ""
+        info_0: |
+        info_0_plural: |
+        info_1: ""
+        info_2: |
+        option_part_wood_material_name: ""
+        option_part_wood_material_name_help: ""
+        option_part_aluminium_material_name: ""
+        option_part_aluminium_material_name_help: ""
+        option_part_glass_material_name: ""
+        option_part_glass_material_name_help: ""
+        option_front_part_layer_name: ""
+        option_front_part_layer_name_help: ""
+        option_machining_material_name: ""
+        option_machining_material_name_help: ""
+        option_machining_layer_name: ""
+        option_machining_layer_name_help: ""
+        option_hardware_material_name: ""
+        option_hardware_material_name_help: ""
+        option_hardware_layer_name: ""
+        option_hardware_layer_name_help: ""
+      model:
+        author: ""
+        date: ""
+      cabinet:
+        list: ""
+        description: תיאור
+        width: רוחב
+        height: גובה
+        depth: ""
+      article:
+        list: ""
+        total_quantity: כמות
+        article_number: ""
+        description: תיאור
+      error:
+        failed_to_load_bxf2_file: |
+      obsolete_base: ""
   tutorials:
     label: הוראות
     title: הוראות
@@ -2140,11 +2268,15 @@ tool:
     action_1_status: ""
     action_1_state_0_status: ""
     action_1_state_1_status: ""
+    # CSG = Constructive Solid Geometry
+    action_2: ""
+    action_2_status: ""
     action_option_group_thickness: עובי
     action_option_group_stretch_measure_type: ""
     action_option_group_axes: צירים
     action_option_group_paneling_joint_type: ""
     action_option_group_paneling_direction: כיוון
+    action_option_group_csg_operation: ""
     action_option_group_options: אפשרויות
     action_option_thickness_thickness: עובי
     action_option_thickness_thickness_status: ""
@@ -2172,6 +2304,7 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
+    filter_7: ""
     action_0: צביעת חלקים
     action_0_status: לחץ על חלק כדי לצבוע את הפריטים שלו
     action_1: צבע חלק
@@ -2237,6 +2370,7 @@ tool:
   smart_join:
     title: ""
     action_0: "" # TODO: It's currently just for dev purposes
+    action_0_status: "" # TODO
   smart_export:
     title: ייצוא
     action_0: ייצא חלק 3D

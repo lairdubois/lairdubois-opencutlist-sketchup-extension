@@ -141,6 +141,7 @@ core:
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
+    import: استيراد
     more: المزيد
     more_docs: مستندات
     more_reviews: ملاحظات
@@ -744,6 +745,7 @@ tab:
       type_4: $t(tab.materials.type_4)
       type_5: $t(tab.materials.type_5)
       type_6: $t(tab.materials.type_6)
+      type_7: ""
       type_-1: $t(default.cut_plural)
       tooltip:
         incompatible_unit: الوحدة غير متوافقة مع خيارات تثمين الخامة
@@ -1574,6 +1576,7 @@ tab:
     type_4: شريط حاشية
     type_5: عتاد
     type_6: قشرة الخشب
+    type_7: ""
     tooltip:
       type_0: "'$t(tab.materials.type_0)' نوع الخامة"
       type_1: "'$t(tab.materials.type_1)' نوع الخامة"
@@ -1582,6 +1585,7 @@ tab:
       type_4: "'$t(tab.materials.type_4)' نوع الخامة"
       type_5: "'$t(tab.materials.type_5)' نوع الخامة"
       type_6: "'$t(tab.materials.type_6)' نوع الخامة"
+      type_7: ""
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: اتجاه تعرّق الألياف
@@ -1906,6 +1910,130 @@ tab:
       imported_body: "{{ count }} قطعة قد استوردت بنجاح!"
       imported_body_plural: "{{ count }} قِطع / قطعة قد استوردت بنجاح!"
     obsolete_base: "CSV لتبقى في وضع المزامنة ، يجب عليك إعادة تحميل ملف الـ "
+  importers:
+    default:
+      open_file: ""
+      import_to_model: استيراد إلى النموذج
+      error:
+        no_model: ""
+        file_not_found: "الملف غير موجود : **{{ filename }}**"
+        bad_extension: ""
+        failed_to_import: ""
+      success:
+        imported_title: تم الاستيراد
+    csv:
+      label: ""
+      title: استيراد القطع
+      help: |
+      load:
+        title: "CSV تحميل ملف "
+        info_0: |
+          اختر الخصائص اللازمة لقراءة الملف:
+           **{{ filename }}** بشكل صحيح.
+        info_1: |
+          *الوحدة في النموذج هي : **{{ unit }}**.
+          ستستعمل هذه الأخيرة في الأبعاد التي بدون وحدة*.
+        options: خيارات التحميل
+        option_col_sep: فاصل
+        option_col_sep_tab: أداة تنظيم الجداول
+        option_col_sep_comma: فاصلة
+        option_col_sep_semicolon: فاصة منقوطة
+        option_first_line_headers: السطر الأول
+        option_first_line_headers_0: البيانات
+        option_first_line_headers_1: عناوين العمود
+      import:
+        title: استيراد قطع إلى النموذج
+        info_0: |
+          أنت مقبل على استيراد **{{ count }} قطعة** إلى النموذج.
+          ستوضع هذه القطعة في مبدإ المشهد الرئيسي.
+        info_0_plural: |
+          أنت مقبل على استيراد **{{ count }} قِطع / قطعة** إلى النموذج.
+          ستُرصّ هذه القِطع انطلاقا من مبدإ المشهد الرئيسي.
+        info_1: اضغط على **استيراد** لتأكيد الإجراء.
+        options: |
+          يحتوى النموذج حاليا على *قِطع* أو *تعريفات* أو *خامات*.
+          اختر خيارات الاستيراد التي تناسب احتياجاتك.
+        option_remove_all_?: "ما التالي؟"
+        option_remove_all_false: إضافة القِطع إلى ما هو موجود
+        option_remove_all_true: احذف كل شيء !
+        option_keep_definitions_settings: احتفظ بإعدادات التعريفات
+        option_keep_materials_settings: احتفظ بإعدادات الخامات
+      column:
+        unused: غير مستعمل
+        mandatory: حقول إلزامية
+        optional: حقول اختيارية
+        name: التسمية
+        count: العدد
+        bbox_length: الطول
+        bbox_width: العرض
+        bbox_thickness: السُّمك
+        material: الخامة
+        tags: الوسوم
+      tooltip:
+        errors: لن تُستورد هذه القطعة لأنها تحتوي على الأخطاء التالية
+        warnings: ستستورد هذه القطعة و لكنها تحتوي على التحذيرات التالية
+      error:
+        failed_to_load_csv_file: |
+          تعذر تحميل ملف الـ CSV : هناك **{{ error }}**
+          *تحقق من اختيارك لفاصل البيانات الصحيح.*
+        empty_file: يبدو أن الملف فارغ أو لا يمكن قراءته.
+        no_importable_part: لا يمكن استيراد أي قطعة. عيّن الحقول الإلزامية في الأعمدة المقابلة.
+        invalid_name: وصف غير صالح
+        invalid_length: طول غير صالح
+        invalid_width: عرض غير صالح
+        invalid_thickness: سُمك غير صالح
+      warning:
+        invalid_count: عدد غير صالح
+        invalid_material: خامة غير صالحة
+      success:
+        imported_body: "{{ count }} قطعة قد استوردت بنجاح!"
+        imported_body_plural: "{{ count }} قِطع / قطعة قد استوردت بنجاح!"
+      obsolete_base: "CSV لتبقى في وضع المزامنة ، يجب عليك إعادة تحميل ملف الـ "
+    bxf2:
+      label: ""
+      title: ""
+      help: |
+      load:
+        title: ""
+      import:
+        title: ""
+        info_0: |
+        info_0_plural: |
+        info_1: ""
+        info_2: |
+        option_part_wood_material_name: ""
+        option_part_wood_material_name_help: ""
+        option_part_aluminium_material_name: ""
+        option_part_aluminium_material_name_help: ""
+        option_part_glass_material_name: ""
+        option_part_glass_material_name_help: ""
+        option_front_part_layer_name: ""
+        option_front_part_layer_name_help: ""
+        option_machining_material_name: ""
+        option_machining_material_name_help: ""
+        option_machining_layer_name: ""
+        option_machining_layer_name_help: ""
+        option_hardware_material_name: ""
+        option_hardware_material_name_help: ""
+        option_hardware_layer_name: ""
+        option_hardware_layer_name_help: ""
+      model:
+        author: ""
+        date: ""
+      cabinet:
+        list: ""
+        description: الإسم
+        width: العرض
+        height: الارتفاع
+        depth: ""
+      article:
+        list: ""
+        total_quantity: العدد
+        article_number: ""
+        description: تعليق وصفيّ
+      error:
+        failed_to_load_bxf2_file: |
+      obsolete_base: ""
   tutorials:
     label: شروحات توضيحية
     title: شروحات توضيحية
@@ -2216,11 +2344,15 @@ tool:
     action_1_status: ""
     action_1_state_0_status: ""
     action_1_state_1_status: ""
+    # CSG = Constructive Solid Geometry
+    action_2: ""
+    action_2_status: ""
     action_option_group_thickness: السُمك
     action_option_group_stretch_measure_type: قياس
     action_option_group_axes: المحاور
     action_option_group_paneling_joint_type: ""
     action_option_group_paneling_direction: الاتجاه
+    action_option_group_csg_operation: ""
     action_option_group_options: الخيارات
     action_option_thickness_thickness: السُمك
     action_option_thickness_thickness_status: ""
@@ -2248,6 +2380,7 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
+    filter_7: ""
     action_0: لوِّن قِطعًا بأكملها
     action_0_status: انقر على قِطعة معينة لتطبق لونا على مثيلتها
     action_1: صباغة قطعةٍ
@@ -2313,6 +2446,7 @@ tool:
   smart_join:
     title: ""
     action_0: "" # TODO: It's currently just for dev purposes
+    action_0_status: "" # TODO
   smart_export:
     title: تصدير
     action_0: صدّر قِطعة ثلاثية البعد
