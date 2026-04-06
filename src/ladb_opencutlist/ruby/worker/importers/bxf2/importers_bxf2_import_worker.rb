@@ -402,7 +402,7 @@ module Ladb::OpenCutList
     def _draw_box(entities, bounds)
 
       kb = Kuix::Bounds3d.new.copy!(bounds)
-      kb.get_quads.each_slice(4) do |quad|
+      kb.get_sliced_quads.each do |quad|
         entities.add_face(quad)
       end
 

@@ -420,15 +420,20 @@ module Ladb::OpenCutList::Kuix
       end
     end
 
-    def get_quads
+    def get_sliced_quads
       quads = []
-      quads.concat(get_quad(LEFT)) if height > 0 && depth > 0
-      quads.concat(get_quad(RIGHT)) if width > 0 && height > 0 && depth > 0
-      quads.concat(get_quad(FRONT)) if width > 0 && depth > 0
-      quads.concat(get_quad(BACK)) if width > 0 && height > 0 && depth > 0
-      quads.concat(get_quad(BOTTOM)) if width > 0 && height > 0
-      quads.concat(get_quad(TOP)) if width > 0 && height > 0 && depth > 0
+      # Keep this order, it's important for the face normals when drawing.
+      quads << get_quad(RIGHT) if width > 0 && height > 0 && depth > 0
+      quads << get_quad(TOP) if width > 0 && height > 0 && depth > 0
+      quads << get_quad(BACK) if width > 0 && height > 0 && depth > 0
+      quads << get_quad(LEFT) if height > 0 && depth > 0
+      quads << get_quad(BOTTOM) if width > 0 && height > 0
+      quads << get_quad(FRONT) if width > 0 && depth > 0
       quads
+    end
+
+    def get_quads
+      get_sliced_quads.flatten!
     end
 
     # --

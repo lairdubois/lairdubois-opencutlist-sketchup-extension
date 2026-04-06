@@ -52,27 +52,29 @@
                 {% endfor %}
                 </tbody>
             </table>
-            <table class="table table-bordered ladb-cutlist-group ladb-group-type-5">
-                <thead>
-                <tr class="table-heading">
-                    <td class="text-middle" colspan="3"><div class="ladb-heading">{% include 'tabs/materials/_material-type-icon.twig' with { 'type':5, 'filled':true } %} {{ 'tab.importers.bxf2.article.list'|i18next }}</div></td>
-                </tr>
-                <tr class="table-column-heading">
-                    <td>{{ 'tab.importers.bxf2.article.total_quantity'|i18next }}</td>
-                    <td>{{ 'tab.importers.bxf2.article.article_number'|i18next }}</td>
-                    <td>{{ 'tab.importers.bxf2.article.description'|i18next }}</td>
-                </tr>
-                </thead>
-                <tbody>
-                {% for article in model.articles %}
-                    <tr class="ladb-cutlist-row">
-                        <td class="ladb-cutlist-value">{{ article.total_quantity }}</td>
-                        <td class="ladb-cutlist-value">{{ article.article_number }}</td>
-                        <td>{{ article.description }}</td>
+            {% if model.articles|length > 0 %}
+                <table class="table table-bordered ladb-cutlist-group ladb-group-type-5">
+                    <thead>
+                    <tr class="table-heading">
+                        <td class="text-middle" colspan="3"><div class="ladb-heading">{% include 'tabs/materials/_material-type-icon.twig' with { 'type':5, 'filled':true } %} {{ 'tab.importers.bxf2.article.list'|i18next }}</div></td>
                     </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+                    <tr class="table-column-heading">
+                        <td>{{ 'tab.importers.bxf2.article.total_quantity'|i18next }}</td>
+                        <td>{{ 'tab.importers.bxf2.article.article_number'|i18next }}</td>
+                        <td>{{ 'tab.importers.bxf2.article.description'|i18next }}</td>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for article in model.articles %}
+                        <tr class="ladb-cutlist-row">
+                            <td class="ladb-cutlist-value">{{ article.total_quantity }}</td>
+                            <td class="ladb-cutlist-value">{{ article.article_number }}</td>
+                            <td>{{ article.description }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
         {% endif %}
 
     </div>
