@@ -141,6 +141,7 @@ core:
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
+    import: Importieren
     more: Mehr
     more_docs: Doku
     more_reviews: Meinungen
@@ -744,6 +745,7 @@ tab:
       type_4: $t(tab.materials.type_4)
       type_5: $t(tab.materials.type_5)
       type_6: $t(tab.materials.type_6)
+      type_7: $t(tab.materials.type_7)
       type_-1: $t(default.cut_plural)
       tooltip:
         incompatible_unit: Einheit nicht kompatibel mit den Kalkulationsoptionen des Materials
@@ -1075,7 +1077,7 @@ tab:
       option_irregular_allowed_rotations_0: Keine
       option_irregular_allowed_rotations_90: 90° Schritt
       option_irregular_allowed_rotations_180: 180° Schritt
-      option_irregular_allowed_rotations_free: Frei (experimentell)
+      option_irregular_allowed_rotations_free: Frei
       option_irregular_allow_mirroring: Spiegeln erlaubt
       option_irregular_allow_mirroring_help: |
         Bestimmt of eine Spiegelung des Teils zur Platzierung erlaubt ist.
@@ -1574,6 +1576,7 @@ tab:
     type_4: Kantenband
     type_5: Zubehör
     type_6: Furnier
+    type_7: Bearbeitung
     tooltip:
       type_0: Materialtyp '$t(tab.materials.type_0)'
       type_1: Materialtyp '$t(tab.materials.type_1)'
@@ -1582,6 +1585,7 @@ tab:
       type_4: Materialtyp '$t(tab.materials.type_4)'
       type_5: Materialtyp '$t(tab.materials.type_5)'
       type_6: Materialtyp '$t(tab.materials.type_6)'
+      type_7: Materialtyp '$t(tab.materials.type_7)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Faserrichtung
@@ -1906,6 +1910,143 @@ tab:
       imported_body: "{{ count }} Teil erfolgreich importiert!"
       imported_body_plural: "{{ count }} Teile erfolgreich importiert!"
     obsolete_base: "Um synchron zu bleiben, müssen Sie die CSV-Datei neu laden."
+  importers:
+    default:
+      open_file: "Datei mit Erweiterung {{ extension }} öffnen"
+      import_to_model: Ins Modell importieren
+      error:
+        no_model: Kein Modell ist offen. Teile können nicht ins Leere importiert werden ;)
+        file_not_found: "Datei nicht gefunden: **{{ filename }}**"
+        bad_extension: "Die Datei *{{ filename }}* hat nicht die erforderliche Dateiendung (**{{ extensions }}**)."
+        failed_to_import: Der Import ist fehlgeschlagen.
+      success:
+        imported_title: Importieren abgeschlossen
+    csv:
+      label: CSV
+      title: Teile importieren
+      help: |
+        An dieser Stelle können Sie Teile, als rechteckige Volumen (quaderförmig), aus einer [CSV](https://de.wikipedia.org/wiki/Comma-separated_values) Datei in Ihr Modell importieren.
+        Sie können damit die Holzliste von *OpenCutList* verwenden, die Teile jedoch mit einer anderen Software als *SketchUp* generieren.
+
+        Klicken Sie auf **CSV-Datei öffnen** zum Starten.
+      load:
+        title: Laden einer CSV-Datei
+        info_0: |
+          Wählen Sie die Optionen aus, die zum korrekten Lesen der Datei erforderlich sind:
+          **{{ filename }}**.
+        info_1: |
+          *Die Einheit des Modells ist: **{{ unit }}**.
+          Diese Einheit wird für Dimensionen verwendet, bei denen die Einheit nicht angegeben ist*.
+        options: Optionen zum Laden
+        option_col_sep: Trennzeichen
+        option_col_sep_tab: Tabulator
+        option_col_sep_comma: Komma
+        option_col_sep_semicolon: Semikolon
+        option_first_line_headers: Erste Zeile
+        option_first_line_headers_0: Daten
+        option_first_line_headers_1: Spaltenüberschriften
+      import:
+        title: Teile ins Modell importieren
+        info_0: |
+          Sie sind dabei **{{ count }} Teil** in das Modell zu importieren.
+          Dieses Teil wird in einer Gruppe im Ursprung der Hauptszene platziert.
+        info_0_plural: |
+          Sie sind dabei **{{ count }} Teile** in das Modell zu importieren.
+          Diese Teile werden in einer Gruppe im Ursprung der Hauptszene platziert.
+        info_1: "Klicken Sie auf **Importieren**, um den Vorgang zu bestätigen."
+        options: |
+          Das Modell enthält schon *Teile*, *Definitionen* oder *Materialien*.
+          Wählen Sie aus den Ladeoptionen.
+        option_remove_all_?: "Was tun?"
+        option_remove_all_false: Teile zu bestehenden hinzufügen
+        option_remove_all_true: Alles löschen!
+        option_keep_definitions_settings: Einstellungen zu Definitionen beibehalten
+        option_keep_materials_settings: Materialparameter beibehalten
+      column:
+        unused: Nicht verwendet
+        mandatory: Pflichtspalten
+        optional: Optionale Spalten
+        name: Bezeichnung
+        count: Anzahl
+        bbox_length: Länge
+        bbox_width: Breite
+        bbox_thickness: Dicke
+        material: Material
+        tags: Badges
+      tooltip:
+        errors: "Dieses Teil wird nicht importiert, weil es folgende Fehler enthält"
+        warnings: "Dieses Teil wird importiert, aber es enthält folgende Fehler"
+      error:
+        failed_to_load_csv_file: |
+          Die CSV-Datei kann nicht geladen werden : **{{ error }}**
+          *Prüfen Sie, ob Sie das korrekte Datentrennzeichen gewählt haben.*
+        empty_file: Die Datei scheint leer zu sein oder konnte nicht richtig gelesen werden.
+        no_importable_part: Es können keine Teile importiert werden. Ordnen Sie die gewünschten Felder den entsprechenden Spalten zu.
+        invalid_name: Ungültige Bezeichnung
+        invalid_length: Ungültige Länge
+        invalid_width: Ungültige Breite
+        invalid_thickness: Ungültige Dicke
+      warning:
+        invalid_count: Ungültige Stückzahl
+        invalid_material: Ungültiges Material
+      success:
+        imported_body: "{{ count }} Teil erfolgreich importiert!"
+        imported_body_plural: "{{ count }} Teile erfolgreich importiert!"
+      obsolete_base: "Um synchron zu bleiben, müssen Sie die CSV-Datei neu laden."
+    bxf2:
+      label: BXF2
+      title: Blum Konfiguration importieren
+      help: |
+        Auf dieser Seite können Sie eine Konfiguration aus einer BXF2-Datei in Ihr Modell importieren.
+        BXF2-Dateien können über den [Möbelkonfigurator](https://e-services.blum.com/main/) von [Blum](https://www.blum.com) erstellt werden .
+
+        Klicken Sie auf die Schaltfläche **BXF2-Datei öffnen**, um zu beginnen.
+      load:
+        title: Laden einer BXF2-Datei
+      import:
+        title: Konfiguration ins Modell importieren
+        info_0: |
+          Sie sind dabei, eine Konfiguration mit **{{ count }}** Schrank in die Vorlage zu importieren.
+        info_0_plural: |
+          Sie sind dabei, eine Konfiguration mit **{{ count }}** Schränken in die Vorlage zu importieren.
+        info_1: Diese Konfiguration wird in der Hauptszene am Ursprung platziert.
+        info_2: |
+          Passen Sie die Optionen an.
+          Klicken Sie auf **Importieren**, um den Vorgang zu bestätigen.
+        option_part_wood_material_name: Material der Holzteile
+        option_part_wood_material_name_help: Hilfe - Material der Holzteile
+        option_part_aluminium_material_name: Material der Aluminiumteile
+        option_part_aluminium_material_name_help: Hilfe - Material der Aluminiumteile
+        option_part_glass_material_name: Material der Glasteile
+        option_part_glass_material_name_help: Hilfe - Material der Glasteile
+        option_front_part_layer_name: Tags der Vorderseiten
+        option_front_part_layer_name_help: Hilfe - Tags der Vorderseiten
+        option_machining_material_name: Material der Bearbeitungen
+        option_machining_material_name_help: Hilfe - Material der Bearbeitungen
+        option_machining_layer_name: Tags der Bearbeitungen
+        option_machining_layer_name_help: Hilfe - Tags der Bearbeitungen
+        option_hardware_material_name: Material der Zubehöre
+        option_hardware_material_name_help: Hilfe - Material der Zubehöre
+        option_hardware_layer_name: Tags der Zubehöre
+        option_hardware_layer_name_help: Hilfe - Tags der Zubehöre
+      model:
+        author: Autor
+        date: Datum
+      cabinet:
+        list: Liste der Möbel
+        description: Name
+        width: Breite
+        height: Höhe
+        depth: Tiefe
+      article:
+        list: Liste der Artikel
+        total_quantity: Anz.
+        article_number: Ref.
+        description: Beschreibung
+      error:
+        failed_to_load_bxf2_file: |
+          Die BXF2-Datei konnte nicht geladen werden: **{{ error }}**
+      obsolete_base: "Um synchron zu bleiben, müssen Sie die BXF2-Datei neu laden."
   tutorials:
     label: Tutorials
     title: Tutorials
@@ -2216,11 +2357,15 @@ tool:
     action_1_status: Erstellen einer Teilereihe aus einem geschlossenen Volumenkörper
     action_1_state_0_status: "Klicken Sie auf einen geschlossenen Körper, um die Referenzgeometrie zu definieren"
     action_1_state_1_status: Wählen Sie die zu extrudierenden Flächen aus
+    # CSG = Constructive Solid Geometry
+    action_2: CSG
+    action_2_status: Bis ans Ende der Welt
     action_option_group_thickness: Dicke
     action_option_group_stretch_measure_type: Maß
     action_option_group_axes: Achsen
     action_option_group_paneling_joint_type: Verbindung
     action_option_group_paneling_direction: Richtung
+    action_option_group_csg_operation: Operation
     action_option_group_options: Optionen
     action_option_thickness_thickness: Dicke
     action_option_thickness_thickness_status: Definiert die Dicke der Platten
@@ -2248,6 +2393,7 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
+    filter_7: $t(tab.materials.type_7)
     action_0: Teile bemalen
     action_0_status: "Klicken Sie auf ein Teil, um die Instanz einzufärben"
     action_1: Kanten bemalen
@@ -2313,6 +2459,7 @@ tool:
   smart_join:
     title: Zusammenstellen
     action_0: Touch-Touch # TODO: It's currently just for dev purposes
+    action_0_status: TBD # TODO
   smart_export:
     title: Exportieren
     action_0: 3D Teil exportieren
