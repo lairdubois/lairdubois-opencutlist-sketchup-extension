@@ -1998,7 +1998,7 @@ tab:
       title: Blum Konfiguration importieren
       help: |
         Auf dieser Seite können Sie eine Konfiguration aus einer BXF2-Datei in Ihr Modell importieren.
-        BXF2-Dateien können über den [Möbelkonfigurator](https://e-services.blum.com/main/) von [Blum](https://www.blum.com) erstellt werden .
+        BXF2-Dateien können über den [Korpuskonfigurator](https://e-services.blum.com/) von [Blum](https://www.blum.com) erstellt werden .
 
         Klicken Sie auf die Schaltfläche **BXF2-Datei öffnen**, um zu beginnen.
       load:
@@ -2006,9 +2006,9 @@ tab:
       import:
         title: Konfiguration ins Modell importieren
         info_0: |
-          Sie sind dabei, eine Konfiguration mit **{{ count }}** Schrank in die Vorlage zu importieren.
+          Sie sind dabei, eine Konfiguration mit **{{ count }}** Korpus in die Vorlage zu importieren.
         info_0_plural: |
-          Sie sind dabei, eine Konfiguration mit **{{ count }}** Schränken in die Vorlage zu importieren.
+          Sie sind dabei, eine Konfiguration mit **{{ count }}** Korpusen in die Vorlage zu importieren.
         info_1: Diese Konfiguration wird in der Hauptszene am Ursprung platziert.
         info_2: |
           Passen Sie die Optionen an.

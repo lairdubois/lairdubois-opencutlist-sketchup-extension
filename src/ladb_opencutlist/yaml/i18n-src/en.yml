@@ -1998,7 +1998,7 @@ tab:
       title: Import a Blum configuration
       help: |
         This page allows you to import a configuration into your model from a BXF2 file.
-        BXF2 files can be created using the [Cabinet Configurator](https://e-services.blum.com/main/) from [Blum](https://www.blum.com) .
+        BXF2 files can be created using the [Cabinet Configurator](https://e-services.blum.com/) from [Blum](https://www.blum.com) .
 
         Click the **Open a BXF2 file** button to get started.
       load:
