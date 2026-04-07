@@ -1927,7 +1927,7 @@ tab:
       help: |
         Cette page vous permet d'importer une série de pièces capables (de forme parallélépipédique) dans votre modèle depuis un fichier [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
         Vous pourrez ainsi utiliser la puissance de la fiche de débit d'*OpenCutList* en générant vos pièces avec un autre logiciel que *SketchUp*.
-        
+
         Cliquez sur le bouton **Ouvrir un fichier CSV** pour démarrer.
       load:
         title: Chargement d'un fichier CSV
@@ -1999,7 +1999,7 @@ tab:
       help: |
         Cette page vous permet d'importer une configuration dans votre modèle depuis un fichier BXF2.
         Les fichiers BXF2 peuvent être crées depuis le [Configurateur de Meubles](https://www.blum.com/fr/fr/services/planning-construction-product-selection/cabinet-configurator/) de [Blum](https://www.blum.com).
-        
+
         Cliquez sur le bouton **Ouvrir un fichier BXF2** pour démarrer.
       load:
         title: Chargement d'un fichier BXF2
@@ -2013,22 +2013,22 @@ tab:
         info_2: |
           Personnalisez les options.
           Cliquez sur **Importer** pour confirmer l'action.
-        option_part_wood_material_name: Matière des pièces end bois
-        option_part_wood_material_name_help: Matière des pièces en bois
+        option_part_wood_material_name: Matière des pièces en bois
+        option_part_wood_material_name_help: Aide - Matière des pièces en bois
         option_part_aluminium_material_name: Matière des pièces en aluminium
-        option_part_aluminium_material_name_help: Matière des pièces en aluminium
+        option_part_aluminium_material_name_help: Aide - Matière des pièces en aluminium
         option_part_glass_material_name: Matière des pièces en verre
-        option_part_glass_material_name_help: Matière des pièces en verre
+        option_part_glass_material_name_help: Aide - Matière des pièces en verre
         option_front_part_layer_name: Balise des façades
-        option_front_part_layer_name_help: Balise des façades
+        option_front_part_layer_name_help: Aide - Balise des façades
         option_machining_material_name: Matière des usinages
-        option_machining_material_name_help: Matière des usinages
+        option_machining_material_name_help: Aide - Matière des usinages
         option_machining_layer_name: Balise des usinages
-        option_machining_layer_name_help: Balise des usinages
+        option_machining_layer_name_help: Aide - Balise des usinages
         option_hardware_material_name: Matière des accessoires
-        option_hardware_material_name_help: Matière des accessoires
+        option_hardware_material_name_help: Aide - Matière des accessoires
         option_hardware_layer_name: Balise des accessoires
-        option_hardware_layer_name_help: Balise des accessoires
+        option_hardware_layer_name_help: Aide - Balise des accessoires
       model:
         author: Auteur
         date: Date
@@ -2357,6 +2357,7 @@ tool:
     action_1_status: Créer une série de pièces à partir d'un solide fermé
     action_1_state_0_status: Cliquez sur un solide fermé pour définir la géométrie de référence
     action_1_state_1_status: Sélectionnez les faces à extruder
+    # CSG = Constructive Solid Geometry
     action_2: CSG
     action_2_status: Vers l'infini et au delà
     action_option_group_thickness: Epaisseur
@@ -2492,4 +2493,3 @@ tool:
       not_part: Cette face ne fait pas partie d'une pièce (composant)
       not_flat_face: Cette surface n'est pas plane
       incompatible_active_path: Le chemin actif ne permet pas d'exporter cette pièce
-

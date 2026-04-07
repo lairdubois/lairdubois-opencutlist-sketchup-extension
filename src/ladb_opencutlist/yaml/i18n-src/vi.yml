@@ -141,6 +141,7 @@ core:
   dialog:
     title: OpenCutList tạo bởi L'Air du Bois
   leftbar:
+    import: Nhập
     more: Nhiều hơn
     more_docs: Tài liệu.
     more_reviews: Nhận xét
@@ -744,6 +745,7 @@ tab:
       type_4: $t(tab.materials.type_4)
       type_5: $t(tab.materials.type_5)
       type_6: $t(tab.materials.type_6)
+      type_7: ""
       type_-1: $t(default.cut_plural)
       tooltip:
         incompatible_unit: Đơn vị không tương thích với các tùy chọn ước tính vật liệu
@@ -1075,7 +1077,7 @@ tab:
       option_irregular_allowed_rotations_0: Không có
       option_irregular_allowed_rotations_90: Các bước 90°
       option_irregular_allowed_rotations_180: Các bước 180°
-      option_irregular_allowed_rotations_free: Miễn phí (Thử nghiệm)
+      option_irregular_allowed_rotations_free: ""
       option_irregular_allow_mirroring: Cho phép đối xứng
       option_irregular_allow_mirroring_help: |
         Xác định xem việc đối xứng bộ phận có được phép để đặt hay không.
@@ -1574,6 +1576,7 @@ tab:
     type_4: Dải cạnh
     type_5: Phụ kiện
     type_6: Veneer
+    type_7: ""
     tooltip:
       type_0: Vật liệu loại '$t(tab.materials.type_0)'
       type_1: Vật liệu loại '$t(tab.materials.type_1)'
@@ -1582,6 +1585,7 @@ tab:
       type_4: Vật liệu loại '$t(tab.materials.type_4)'
       type_5: Vật liệu loại '$t(tab.materials.type_5)'
       type_6: Vật liệu loại '$t(tab.materials.type_6)'
+      type_7: ""
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Hướng thớ gỗ
@@ -1906,6 +1910,130 @@ tab:
       imported_body: "{{ count }} bộ phận đã được nhập thành công!"
       imported_body_plural: "{{ count }} bộ phận đã được nhập thành công!"
     obsolete_base: "Để duy trì đồng bộ hóa, bạn phải tải lại tệp CSV."
+  importers:
+    default:
+      open_file: ""
+      import_to_model: Nhập vào mô hình
+      error:
+        no_model: ""
+        file_not_found: "Tệp tìm thấy tệp: **{{ filename }}**"
+        bad_extension: ""
+        failed_to_import: ""
+      success:
+        imported_title: Nhập xong
+    csv:
+      label: ""
+      title: Nhập các bộ phận
+      help: |
+      load:
+        title: Đang tải tệp CSV
+        info_0: |
+          Chọn các tùy chọn cần thiết để đọc đúng tệp:
+          **{{ filename }}**.
+        info_1: |
+          *Đơn vị được định cấu hình trong mô hình là: **{{ unit }}**.
+          Đơn vị này sẽ được sử dụng cho các kích thước không được chỉ định đơn vị*.
+        options: Đang tải tùy chọn
+        option_col_sep: Dấu phân cách
+        option_col_sep_tab: Người lập
+        option_col_sep_comma: Dấu phẩy
+        option_col_sep_semicolon: Dấu chấm phẩy
+        option_first_line_headers: Dòng tiêu đề
+        option_first_line_headers_0: Dữ liệu
+        option_first_line_headers_1: Tiêu đề cột
+      import:
+        title: Nhập các bộ phận vào mô hình
+        info_0: |
+          Bạn sắp nhập **{{ count }} bộ phận** vào mô hình.
+          Phần này sẽ được đặt trong một nhóm ở gốc tọa độ của cảnh chính.
+        info_0_plural: |
+          Bạn sắp nhập **{{ count }} bộ phận** vào mô hình.
+          Phần này sẽ được đặt trong một nhóm ở gốc tọa độ của cảnh chính.
+        info_1: Click **Nhập** để xác nhận hành động.
+        options: |
+          Mô hình đã chứa *bộ phận*, *định nghĩa* hoặc *vật liệu*.
+          Chọn các tùy chọn nhập bạn cần.
+        option_remove_all_?: "Tiếp theo là gì?"
+        option_remove_all_false: Thêm vào các bộ phận hiện có
+        option_remove_all_true: Xóa hiện có!
+        option_keep_definitions_settings: Giữ cài đặt định nghĩa
+        option_keep_materials_settings: Giữ cài đặt vật liệu
+      column:
+        unused: Chưa sử dụng
+        mandatory: Các trường bắt buộc
+        optional: Trường tùy chọn
+        name: Tên gọi
+        count: Số lượng
+        bbox_length: Chiều dài
+        bbox_width: Chiều rộng
+        bbox_thickness: Độ dày
+        material: Vật liệu
+        tags: Nhãn hiệu
+      tooltip:
+        errors: Phần này sẽ không được nhập vì nó tạo ra các lỗi
+        warnings: Phần này sẽ được nhập nhưng nó tạo ra các cảnh báo
+      error:
+        failed_to_load_csv_file: |
+          Không thể tải tệp CSV: **{{ error }}**
+          *Xác minh rằng bạn đã chọn dấu tách trường thích hợp.*
+        empty_file: Tệp có vẻ trống hoặc không thể hiểu được.
+        no_importable_part: Không có bộ phận nào có thể được nhập. Gán các trường bắt buộc vào các cột tương ứng.
+        invalid_name: Đối tượng không hợp lệ
+        invalid_length: Chiều dài không hợp lệ
+        invalid_width: Chiều rộng không hợp lệ
+        invalid_thickness: Độ dày không hợp lệ
+      warning:
+        invalid_count: Số lượng không hợp lệ
+        invalid_material: Vật liệu không hợp lệ
+      success:
+        imported_body: "{{ count }} bộ phận đã được nhập thành công!"
+        imported_body_plural: "{{ count }} bộ phận đã được nhập thành công!"
+      obsolete_base: "Để duy trì đồng bộ hóa, bạn phải tải lại tệp CSV."
+    bxf2:
+      label: ""
+      title: ""
+      help: |
+      load:
+        title: ""
+      import:
+        title: ""
+        info_0: |
+        info_0_plural: |
+        info_1: ""
+        info_2: |
+        option_part_wood_material_name: ""
+        option_part_wood_material_name_help: ""
+        option_part_aluminium_material_name: ""
+        option_part_aluminium_material_name_help: ""
+        option_part_glass_material_name: ""
+        option_part_glass_material_name_help: ""
+        option_front_part_layer_name: ""
+        option_front_part_layer_name_help: ""
+        option_machining_material_name: ""
+        option_machining_material_name_help: ""
+        option_machining_layer_name: ""
+        option_machining_layer_name_help: ""
+        option_hardware_material_name: ""
+        option_hardware_material_name_help: ""
+        option_hardware_layer_name: ""
+        option_hardware_layer_name_help: ""
+      model:
+        author: ""
+        date: ""
+      cabinet:
+        list: ""
+        description: Tên
+        width: Chiều rộng
+        height: Chiều cao
+        depth: ""
+      article:
+        list: ""
+        total_quantity: Số lượng
+        article_number: ""
+        description: Mô tả
+      error:
+        failed_to_load_bxf2_file: |
+      obsolete_base: ""
   tutorials:
     label: Hướng dẫn
     title: Hướng dẫn
@@ -2216,11 +2344,15 @@ tool:
     action_1_status: Tạo một loạt các chi tiết từ một khối rắn kín.
     action_1_state_0_status: Nhấp chuột vào một khối rắn kín để xác định hình học tham chiếu.
     action_1_state_1_status: Chọn các mặt cần đùn
+    # CSG = Constructive Solid Geometry
+    action_2: ""
+    action_2_status: ""
     action_option_group_thickness: Độ dày
     action_option_group_stretch_measure_type: Đo lường
     action_option_group_axes: Trục
     action_option_group_paneling_joint_type: Nối
     action_option_group_paneling_direction: Hướng
+    action_option_group_csg_operation: ""
     action_option_group_options: Tùy chọn
     action_option_thickness_thickness: Độ dày
     action_option_thickness_thickness_status: Xác định độ dày của các tấm.
@@ -2248,6 +2380,7 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
+    filter_7: ""
     action_0: Sơn các bộ phận
     action_0_status: Nhấp vào một bộ phận để áp dụng vật liệu vào đối tượng
     action_1: Sơn các cạnh
@@ -2313,6 +2446,7 @@ tool:
   smart_join:
     title: Lắp ráp
     action_0: Chạm-Chạm # TODO: It's currently just for dev purposes
+    action_0_status: "" # TODO
   smart_export:
     title: Xuất
     action_0: Xuất 3D bộ phận

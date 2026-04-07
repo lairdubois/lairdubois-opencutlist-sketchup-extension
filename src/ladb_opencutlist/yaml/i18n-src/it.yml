@@ -141,6 +141,7 @@ core:
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
+    import: Importa
     more: Altro
     more_docs: Doc.
     more_reviews: Recensioni
@@ -744,6 +745,7 @@ tab:
       type_4: $t(tab.materials.type_4)
       type_5: $t(tab.materials.type_5)
       type_6: $t(tab.materials.type_6)
+      type_7: ""
       type_-1: $t(default.cut_plural)
       tooltip:
         incompatible_unit: Unità incompatibile con le opzioni di stima del materiale
@@ -1075,7 +1077,7 @@ tab:
       option_irregular_allowed_rotations_0: Nessuna
       option_irregular_allowed_rotations_90: Passi di 90°
       option_irregular_allowed_rotations_180: Passi di 180°
-      option_irregular_allowed_rotations_free: Libero (sperimentale)
+      option_irregular_allowed_rotations_free: ""
       option_irregular_allow_mirroring: Specchiatura consentita
       option_irregular_allow_mirroring_help: |
         Definisce se la specchiatura nel posizionamento degli elementi sia consentita.
@@ -1574,6 +1576,7 @@ tab:
     type_4: Bordatura
     type_5: Accessori
     type_6: Impiallacciatura
+    type_7: ""
     tooltip:
       type_0: Tipo di materiale '$t(tab.materials.type_0)'
       type_1: Tipo di materiale '$t(tab.materials.type_1)'
@@ -1582,6 +1585,7 @@ tab:
       type_4: Tipo di materiale '$t(tab.materials.type_4)'
       type_5: Tipo di materiale '$t(tab.materials.type_5)'
       type_6: Tipo di materiale '$t(tab.materials.type_6)'
+      type_7: ""
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Direzione della venatura
@@ -1906,6 +1910,130 @@ tab:
       imported_body: "L'importazione di {{ count }} parte è riuscita!"
       imported_body_plural: "L'importazione di {{ count }} parti è riuscita!"
     obsolete_base: "Ricaricare il file CSV per sincronizzare il modello."
+  importers:
+    default:
+      open_file: ""
+      import_to_model: Importa nel modello
+      error:
+        no_model: ""
+        file_not_found: "File mancante : **{{ filename }}**"
+        bad_extension: ""
+        failed_to_import: Il processo di importazione è fallito.
+      success:
+        imported_title: Importazione eseguita
+    csv:
+      label: ""
+      title: Importa Parti
+      help: |
+      load:
+        title: Caricamento del file CSV
+        info_0: |
+          Scegliere le opzioni necessarie per la lettura corretta del file:
+          **{{ filename }}**.
+        info_1: |
+          *L' unità di misura configurata nel modello è: **{{ unit }}**.
+          Questa verrà utilizzata per le dimensioni senza unità di misura*.
+        options: Opzioni di caricamento
+        option_col_sep: Separatore
+        option_col_sep_tab: Tabulatore
+        option_col_sep_comma: Virgola
+        option_col_sep_semicolon: Punto e virgola
+        option_first_line_headers: Riga di intestazione
+        option_first_line_headers_0: Dati
+        option_first_line_headers_1: Titolo colonne
+      import:
+        title: Importa le parti nel modello
+        info_0: |
+          Sto importando **{{ count }} parte** nel modello.
+          Questa parte verrà posizionata all'origine della scena principale.
+        info_0_plural: |
+          Sto importando **{{ count }} parti** nel modello.
+          Queste parti verranno sovrapposte partendo dall'origine della scena principale.
+        info_1: Seleziona **Importa** per confermare.
+        options: |
+          Il modello contiene già *parti*, *definizioni* o *materiali*.
+          Seleziona quali opzioni considerare.
+        option_remove_all_?: "Qual'è il prossimo?"
+        option_remove_all_false: Aggiungi le parti a quelle esistenti
+        option_remove_all_true: Elimina le esistenti!
+        option_keep_definitions_settings: Mantieni le definizioni
+        option_keep_materials_settings: Mantieni i materiali
+      column:
+        unused: Non utilizzato
+        mandatory: Campo obbligatorio
+        optional: Campi facoltativi
+        name: Designazione
+        count: Quantità
+        bbox_length: Lunghezza
+        bbox_width: Larghezza
+        bbox_thickness: Spessore
+        material: Materiale
+        tags: Tags
+      tooltip:
+        errors: Questa parte non verrà importata a causa dei seguenti errori
+        warnings: Questa parte verrà importata con i seguenti avvertimenti
+      error:
+        failed_to_load_csv_file: |
+          Errore durante il caricamento del file CSV : **{{ error }}**
+          *Verifica di aver selezionato il separatore corretto.*
+        empty_file: Il file sembra vuoto o non può essere importato correttamente.
+        no_importable_part: Nessuna parte può essere importata. Assegnare i campi obbligatori alle colonne corrispondenti.
+        invalid_name: Designazione invalida
+        invalid_length: Lunghezza invalida
+        invalid_width: Larghezza invalida
+        invalid_thickness: Spessore invalido
+      warning:
+        invalid_count: Conteggio invalido
+        invalid_material: Materiale invalido
+      success:
+        imported_body: "L'importazione di {{ count }} parte è riuscita!"
+        imported_body_plural: "L'importazione di {{ count }} parti è riuscita!"
+      obsolete_base: "Ricaricare il file CSV per sincronizzare il modello."
+    bxf2:
+      label: ""
+      title: ""
+      help: |
+      load:
+        title: ""
+      import:
+        title: ""
+        info_0: |
+        info_0_plural: |
+        info_1: ""
+        info_2: |
+        option_part_wood_material_name: ""
+        option_part_wood_material_name_help: ""
+        option_part_aluminium_material_name: ""
+        option_part_aluminium_material_name_help: ""
+        option_part_glass_material_name: ""
+        option_part_glass_material_name_help: ""
+        option_front_part_layer_name: ""
+        option_front_part_layer_name_help: ""
+        option_machining_material_name: ""
+        option_machining_material_name_help: ""
+        option_machining_layer_name: ""
+        option_machining_layer_name_help: ""
+        option_hardware_material_name: ""
+        option_hardware_material_name_help: ""
+        option_hardware_layer_name: ""
+        option_hardware_layer_name_help: ""
+      model:
+        author: ""
+        date: ""
+      cabinet:
+        list: ""
+        description: Descrizione
+        width: Larghezza
+        height: Altezza
+        depth: ""
+      article:
+        list: ""
+        total_quantity: Qtà
+        article_number: ""
+        description: Descrizione
+      error:
+        failed_to_load_bxf2_file: |
+      obsolete_base: ""
   tutorials:
     label: Lezioni
     title: Lezioni
@@ -2216,11 +2344,15 @@ tool:
     action_1_status: Crea una serie di elementi a partire da un solido chiuso
     action_1_state_0_status: Seleziona un solido chiuso per definire la geometria di base
     action_1_state_1_status: Seleziona le facce da estrudere
+    # CSG = Constructive Solid Geometry
+    action_2: ""
+    action_2_status: ""
     action_option_group_thickness: Spessore
     action_option_group_stretch_measure_type: Misura
     action_option_group_axes: Assi
     action_option_group_paneling_joint_type: Giunzione
     action_option_group_paneling_direction: Direzione
+    action_option_group_csg_operation: ""
     action_option_group_options: Opzioni
     action_option_thickness_thickness: Spessore
     action_option_thickness_thickness_status: Stabilisce lo spessore dei pannelli
@@ -2248,6 +2380,7 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
+    filter_7: ""
     action_0: Colorare parti
     action_0_status: Seleziona un elemento a cui applicare il materiale
     action_1: Assegna il materiale all'elemento
@@ -2313,6 +2446,7 @@ tool:
   smart_join:
     title: ""
     action_0: Touch-Touch # TODO: It's currently just for dev purposes
+    action_0_status: "" # TODO
   smart_export:
     title: Esporta
     action_0: Esporta un elemento 3D

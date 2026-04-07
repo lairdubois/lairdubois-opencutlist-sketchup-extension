@@ -141,6 +141,7 @@ core:
   dialog:
     title: OpenCutList por L'Air du Bois
   leftbar:
+    import: Importar
     more: Más
     more_docs: Documentos
     more_reviews: Advertencias
@@ -738,6 +739,7 @@ tab:
       type_4: $t(tab.materials.type_4)
       type_5: $t(tab.materials.type_5)
       type_6: $t(tab.materials.type_6)
+      type_7: ""
       type_-1: $t(default.cut_plural)
       tooltip:
         incompatible_unit: Unidad incompatible con las opciones de estimación de la materia
@@ -1568,6 +1570,7 @@ tab:
     type_4: Canto
     type_5: Accesorio
     type_6: Chapa de madera
+    type_7: ""
     tooltip:
       type_0: Tipo de material '$t(tab.materials.type_0)'
       type_1: Tipo de material '$t(tab.materials.type_1)'
@@ -1576,6 +1579,7 @@ tab:
       type_4: Tipo de material '$t(tab.materials.type_4)'
       type_5: Tipo de material '$t(tab.materials.type_5)'
       type_6: Tipo de material '$t(tab.materials.type_6)'
+      type_7: ""
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Dirección de fibra
@@ -1900,6 +1904,130 @@ tab:
       imported_body: "{{ count }} La pieza se importo correctamente!"
       imported_body_plural: "{{ count }} ¡Las piezas se importaron con éxito!"
     obsolete_base: "Para permanecer sincronizado, debe volver a cargar el fichero CSV."
+  importers:
+    default:
+      open_file: ""
+      import_to_model: Importar al modelo
+      error:
+        no_model: ""
+        file_not_found: "Fichero no encontrado: **{{ filename }}**"
+        bad_extension: ""
+        failed_to_import: Falló el proceso de importación.
+      success:
+        imported_title: Importación realizada
+    csv:
+      label: ""
+      title: Importar partes
+      help: |
+      load:
+        title: Cargando archivo CSV
+        info_0: |
+          Elija las opciones necesarias para leer correctamente el archivo:
+          **{{ filename }}**.
+        info_1: |
+          *La unidad configurada en la plantilla es: **{{ unit }}**.
+          Esta unidad se utilizará para dimensiones para las que no se especifica la unidad*.
+        options: Opciones de carga
+        option_col_sep: Separador
+        option_col_sep_tab: Tabulador
+        option_col_sep_comma: Coma
+        option_col_sep_semicolon: Punto y coma
+        option_first_line_headers: Línea de cabecera
+        option_first_line_headers_0: Datos
+        option_first_line_headers_1: Títulos de columna
+      import:
+        title: Importar piezas al modelo
+        info_0: |
+          Estás a punto de importar **{{ count }} partes** en el modelo.
+          Esta parte se colocará en el origen de la escena principal.
+        info_0_plural: |
+          Estás a punto de importar **{{ count }} partes** en el modelo.
+          Estas partes se apilarán comenzando en el origen de la escena principal.
+        info_1: Haga clic en **Importar** para confirmar la acción.
+        options: |
+          El modelo ya contiene *partes*, *definiciones* o *materiales*.
+          Seleccione las opciones de importación que necesite.
+        option_remove_all_?: "¿Qué sigue?"
+        option_remove_all_false: Agregue partes al existente
+        option_remove_all_true: ¡Eliminar existente!
+        option_keep_definitions_settings: Mantener la configuración de definición
+        option_keep_materials_settings: Mantener la configuración del material
+      column:
+        unused: No usado
+        mandatory: Campos obligatorios
+        optional: Campos opcionales
+        name: Designación
+        count: Cantidad
+        bbox_length: Longitud
+        bbox_width: Anchura
+        bbox_thickness: Espesor
+        material: Material
+        tags: Etiquetas
+      tooltip:
+        errors: Esta pieza no se importará porque produjo los siguientes errores
+        warnings: Esta parte se importará pero produjo las siguientes advertencias
+      error:
+        failed_to_load_csv_file: |
+          No se puede cargar el archivo CSV: **{{ error }}**
+          *Verifique que haya seleccionado el separador de campo correcto.*
+        empty_file: El fichero parece vacío o no se pudo interpretar.
+        no_importable_part: No se puede importar ninguna pieza. Asigne los campos obligatorios a las columnas correspondientes.
+        invalid_name: Designación inválida
+        invalid_length: Longitud inválida
+        invalid_width: Ancho inválido
+        invalid_thickness: Espesor no válido
+      warning:
+        invalid_count: Recuento inválido
+        invalid_material: Material inválido
+      success:
+        imported_body: "{{ count }} La pieza se importo correctamente!"
+        imported_body_plural: "{{ count }} ¡Las piezas se importaron con éxito!"
+      obsolete_base: "Para permanecer sincronizado, debe volver a cargar el fichero CSV."
+    bxf2:
+      label: ""
+      title: ""
+      help: |
+      load:
+        title: ""
+      import:
+        title: ""
+        info_0: |
+        info_0_plural: |
+        info_1: ""
+        info_2: |
+        option_part_wood_material_name: ""
+        option_part_wood_material_name_help: ""
+        option_part_aluminium_material_name: ""
+        option_part_aluminium_material_name_help: ""
+        option_part_glass_material_name: ""
+        option_part_glass_material_name_help: ""
+        option_front_part_layer_name: ""
+        option_front_part_layer_name_help: ""
+        option_machining_material_name: ""
+        option_machining_material_name_help: ""
+        option_machining_layer_name: ""
+        option_machining_layer_name_help: ""
+        option_hardware_material_name: ""
+        option_hardware_material_name_help: ""
+        option_hardware_layer_name: ""
+        option_hardware_layer_name_help: ""
+      model:
+        author: ""
+        date: ""
+      cabinet:
+        list: ""
+        description: Nombre
+        width: Anchura
+        height: Altura
+        depth: ""
+      article:
+        list: ""
+        total_quantity: Cant.
+        article_number: ""
+        description: Descripción
+      error:
+        failed_to_load_bxf2_file: |
+      obsolete_base: ""
   tutorials:
     label: Tutoriales
     title: Tutoriales
@@ -2210,11 +2338,15 @@ tool:
     action_1_status: ""
     action_1_state_0_status: ""
     action_1_state_1_status: ""
+    # CSG = Constructive Solid Geometry
+    action_2: ""
+    action_2_status: ""
     action_option_group_thickness: Grosor
     action_option_group_stretch_measure_type: Medida
     action_option_group_axes: Ejes
     action_option_group_paneling_joint_type: ""
     action_option_group_paneling_direction: Dirección
+    action_option_group_csg_operation: ""
     action_option_group_options: Opciones
     action_option_thickness_thickness: Grosor
     action_option_thickness_thickness_status: ""
@@ -2242,6 +2374,7 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
+    filter_7: ""
     action_0: Colorear piezas
     action_0_status: Haga clic en una pieza para aplicar un material a su instancia
     action_1: Colorear cantos
@@ -2307,6 +2440,7 @@ tool:
   smart_join:
     title: ""
     action_0: "" # TODO: It's currently just for dev purposes
+    action_0_status: "" # TODO
   smart_export:
     title: Exportar
     action_0: Exportar una pieza 3D

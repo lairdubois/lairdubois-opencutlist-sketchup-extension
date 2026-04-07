@@ -141,6 +141,7 @@ core:
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
+    import: Import
     more: Více
     more_docs: Dok.
     more_reviews: Recenze
@@ -744,6 +745,7 @@ tab:
       type_4: $t(tab.materials.type_4)
       type_5: $t(tab.materials.type_5)
       type_6: $t(tab.materials.type_6)
+      type_7: ""
       type_-1: $t(default.cut_plural)
       tooltip:
         incompatible_unit: Nekompatibilní jednotky s možnostmi odhadu materiálu
@@ -1075,7 +1077,7 @@ tab:
       option_irregular_allowed_rotations_0: Ne
       option_irregular_allowed_rotations_90: Kroky po 90°
       option_irregular_allowed_rotations_180: Kroky po 180°
-      option_irregular_allowed_rotations_free: Zdarma (experimentální)
+      option_irregular_allowed_rotations_free: ""
       option_irregular_allow_mirroring: Zrcadlení povoleno
       option_irregular_allow_mirroring_help: |
         Definuje, zda je pro umístění povoleno zrcadlení dílce.
@@ -1574,6 +1576,7 @@ tab:
     type_4: Hrana
     type_5: Kování
     type_6: Dýha
+    type_7: ""
     tooltip:
       type_0: Typ materiálu '$t(tab.materials.type_0)'
       type_1: Typ materiálu '$t(tab.materials.type_1)'
@@ -1582,6 +1585,7 @@ tab:
       type_4: Typ materiálu '$t(tab.materials.type_4)'
       type_5: Typ materiálu '$t(tab.materials.type_5)'
       type_6: Typ materiálu '$t(tab.materials.type_6)'
+      type_7: ""
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Směr let
@@ -1906,6 +1910,130 @@ tab:
       imported_body: "Část {{ count }} byla úspěšně importována!"
       imported_body_plural: "{{ count }} dílů bylo úspěšně importováno!"
     obsolete_base: "Chcete-li zůstat v synchronizaci, musíte znovu načíst soubor CSV."
+  importers:
+    default:
+      open_file: ""
+      import_to_model: Import do modelu
+      error:
+        no_model: ""
+        file_not_found: "Soubor nebyl nalezen: **{{ filename }}**"
+        bad_extension: ""
+        failed_to_import: ""
+      success:
+        imported_title: Import hotový
+    csv:
+      label: ""
+      title: Importovat dílce
+      help: |
+      load:
+        title: Načítání souboru CSV
+        info_0: |
+          Vyberte možnosti nezbytné pro správné načtení souboru:
+          **{{ filename }}**.
+        info_1: |
+          *Jednotky konfigurované v modelu: **{{ unit }}**.
+          Tyto jednotky budou použity pro rozměry, kde nejsou nastavené*.
+        options: Možnosti načítání
+        option_col_sep: Oddělovač
+        option_col_sep_tab: Tabulátor
+        option_col_sep_comma: Čárka
+        option_col_sep_semicolon: Středník
+        option_first_line_headers: Záhlaví
+        option_first_line_headers_0: Data
+        option_first_line_headers_1: Názvy sloupců
+      import:
+        title: Importujte součásti do modelu
+        info_0: |
+          Chystáte se importovat **{{ count }} dílce** do modelu.
+          Tyto dílce budou umístěny na počátek hlavní scény.
+        info_0_plural: |
+          Chystáte se importovat **{{ count }} součást** do modelu.
+          Tato součást budou umístěna na počátek hlavní scény.
+        info_1: Kliknutím na **Importovat** akci potvrďte.
+        options: |
+          Model již obsahuje *dílce*, *definice* nebo *materiály*.
+          Vyberte požadované možnosti importu.
+        option_remove_all_?: "Co dál?"
+        option_remove_all_false: Přidejte součásti k existujícím
+        option_remove_all_true: Odebrat existující!
+        option_keep_definitions_settings: Ponechat definované nastavení
+        option_keep_materials_settings: Ponechat nastavení materiálu
+      column:
+        unused: Nepoužitý
+        mandatory: Povinná pole
+        optional: Nepovinná pole
+        name: Označení
+        count: Počet
+        bbox_length: Délka
+        bbox_width: Šířka
+        bbox_thickness: Tloušťka
+        material: Materiál
+        tags: Znaky
+      tooltip:
+        errors: "Tato část nebude importována, protože způsobila následující chyby"
+        warnings: "Tato část bude importována, ale pouze s tímto varováním"
+      error:
+        failed_to_load_csv_file: |
+          Nelze načíst soubor CSV: **{{ error }}**
+          *Ověřte, že jste vybrali správný oddělovač polí.*
+        empty_file: Soubor se zdá být prázdný nebo jej nelze interpretovat.
+        no_importable_part: Nelze importovat žádnou část. Přiřaďte povinná pole k odpovídajícím sloupcům.
+        invalid_name: Neplatné označení
+        invalid_length: Neplatná délka
+        invalid_width: Neplatná šířka
+        invalid_thickness: Neplatná tloušťka
+      warning:
+        invalid_count: Neplatné množství
+        invalid_material: Neplatný materiál
+      success:
+        imported_body: "Část {{ count }} byla úspěšně importována!"
+        imported_body_plural: "{{ count }} dílů bylo úspěšně importováno!"
+      obsolete_base: "Chcete-li zůstat v synchronizaci, musíte znovu načíst soubor CSV."
+    bxf2:
+      label: ""
+      title: ""
+      help: |
+      load:
+        title: ""
+      import:
+        title: ""
+        info_0: |
+        info_0_plural: |
+        info_1: ""
+        info_2: |
+        option_part_wood_material_name: ""
+        option_part_wood_material_name_help: ""
+        option_part_aluminium_material_name: ""
+        option_part_aluminium_material_name_help: ""
+        option_part_glass_material_name: ""
+        option_part_glass_material_name_help: ""
+        option_front_part_layer_name: ""
+        option_front_part_layer_name_help: ""
+        option_machining_material_name: ""
+        option_machining_material_name_help: ""
+        option_machining_layer_name: ""
+        option_machining_layer_name_help: ""
+        option_hardware_material_name: ""
+        option_hardware_material_name_help: ""
+        option_hardware_layer_name: ""
+        option_hardware_layer_name_help: ""
+      model:
+        author: ""
+        date: ""
+      cabinet:
+        list: ""
+        description: Název
+        width: Šířka
+        height: Výška
+        depth: ""
+      article:
+        list: ""
+        total_quantity: Množství
+        article_number: ""
+        description: Popis
+      error:
+        failed_to_load_bxf2_file: |
+      obsolete_base: ""
   tutorials:
     label: Návody
     title: Návody
@@ -2216,11 +2344,15 @@ tool:
     action_1_status: Vytvořte sérii dílců z uzavřeného tělesa
     action_1_state_0_status: Kliknutím na uzavřené těleso definujete referenční geometrii
     action_1_state_1_status: Vyberte plochy k vysunutí
+    # CSG = Constructive Solid Geometry
+    action_2: ""
+    action_2_status: ""
     action_option_group_thickness: Tloušťka
     action_option_group_stretch_measure_type: Kopie dílce
     action_option_group_axes: Osy
     action_option_group_paneling_joint_type: Spoj
     action_option_group_paneling_direction: Směr
+    action_option_group_csg_operation: ""
     action_option_group_options: Nastavení
     action_option_thickness_thickness: Tloušťka
     action_option_thickness_thickness_status: Definuje tloušťku dílců
@@ -2248,6 +2380,7 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
+    filter_7: ""
     action_0: Materiál dílů
     action_0_status: Kliknutím na díl přiřadíme materiál
     action_1: Materiál hran
@@ -2313,6 +2446,7 @@ tool:
   smart_join:
     title: Sestavit
     action_0: Dotek dotek # TODO: It's currently just for dev purposes
+    action_0_status: "" # TODO
   smart_export:
     title: Export
     action_0: Export 3D dílu

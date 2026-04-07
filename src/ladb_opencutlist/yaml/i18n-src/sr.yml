@@ -141,6 +141,7 @@ core:
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
+    import: Uvezi
     more: Više
     more_docs: Dokumenti
     more_reviews: Recenzije
@@ -738,6 +739,7 @@ tab:
       type_4: $t(tab.materials.type_4)
       type_5: $t(tab.materials.type_5)
       type_6: $t(tab.materials.type_6)
+      type_7: ""
       type_-1: $t(default.cut_plural)
       tooltip:
         incompatible_unit: Jedinica nije kompatibilna sa opcijama za procenu materijala
@@ -1565,6 +1567,7 @@ tab:
     type_4: Kantovanje
     type_5: Dodaci
     type_6: Furnirski list
+    type_7: ""
     tooltip:
       type_0: Tip materijala $t(tab.materials.type_0)
       type_1: Tip materijala $t(tab.materials.type_1)
@@ -1573,6 +1576,7 @@ tab:
       type_4: Tip materijala $t(tab.materials.type_4)
       type_5: Tip materijala $t(tab.materials.type_5)
       type_6: Tip materijala '$t(tab.materials.type_6)'
+      type_7: ""
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Smer teksture
@@ -1896,6 +1900,130 @@ tab:
       imported_body: "{{ count }} deo uspešno uvezen !"
       imported_body_plural: "{{ count }} delova uspešno uvezeno !"
     obsolete_base: "Da bi ste ostali sinhronizovani, morate ponovo učitati CSV fajl."
+  importers:
+    default:
+      open_file: ""
+      import_to_model: Uvezi u model
+      error:
+        no_model: ""
+        file_not_found: "Datoteka nije pronađena: **{{ filename }}**"
+        bad_extension: ""
+        failed_to_import: ""
+      success:
+        imported_title: Uvoz završen
+    csv:
+      label: ""
+      title: Uvezi delove
+      help: |
+      load:
+        title: Učitavanje CSV fajla
+        info_0: |
+          Odaberite opcije potrebne za ispravno čitanje datoteke:
+          **{{ filename }}**.
+        info_1: |
+          *Jedinica konfigurisana u modelu je: **{{ unit }}**.
+          Ova jedinica će se koristiti za dimenzije za koje jedinica nije navedena *.
+        options: Učitavanje opcija
+        option_col_sep: Separator
+        option_col_sep_tab: Tabulator
+        option_col_sep_comma: Zarez
+        option_col_sep_semicolon: Tačka-zarez
+        option_first_line_headers: Zaglavlje
+        option_first_line_headers_0: Podaci
+        option_first_line_headers_1: Naslovi kolona
+      import:
+        title: Uvezi delove u model
+        info_0: |
+          Uvozite **{{ count }} komad** u model.
+          Ovaj komad biće postavljen na glavnu scenu, u koordinatnom početku.
+        info_0_plural: |
+          Uvozite **{{ count }} komada** u model.
+          Ovi komadi biće poređani jedan na drugi na glavnoj sceni, počevši od koordinatnog početka.
+        info_1: Kliknite **Uvezi** da biste potvrdili radnju.
+        options: |
+          Model već sadrži *delove*, *definicije* ili *materijale*.
+          Odaberite opcije uvoza koje su vam potrebne.
+        option_remove_all_?: "Šta dalje?"
+        option_remove_all_false: Dodajte delove postojećim
+        option_remove_all_true: Uklonite postojeće!
+        option_keep_definitions_settings: Zadrži podešavanja
+        option_keep_materials_settings: Zadrži podešavanja materijala
+      column:
+        unused: Neiskorišteno
+        mandatory: Obavezna polja
+        optional: Opciona polja
+        name: Naziv
+        count: Količina
+        bbox_length: Upotrebljiva dužina
+        bbox_width: Upotrebljiva širina
+        bbox_thickness: Upotrebljiva debljina
+        material: Materijal
+        tags: Oznake
+      tooltip:
+        errors: Ovaj komad neće biti uvezen jer sadrži sledeće greške
+        warnings: "Ovaj komad će biti uvezen, ali sadrži sledeća upozorenja"
+      error:
+        failed_to_load_csv_file: |
+          Nije moguće učitati CSV datoteku: **{{ error }}**
+          *Proverite da li ste odabrali ispravan separator polja.*
+        empty_file: Datoteka izgleda prazna ili je nije moguće interpretirati.
+        no_importable_part: Nijedan deo se ne može uvesti. Dodelite obavezna polja odgovarajućim kolonama.
+        invalid_name: Pogrešan opis
+        invalid_length: Pogrešna dužina
+        invalid_width: Pogrešna širina
+        invalid_thickness: Pogrešna debljina
+      warning:
+        invalid_count: Neispravan broj
+        invalid_material: Nesipravan materijal
+      success:
+        imported_body: "{{ count }} deo uspešno uvezen !"
+        imported_body_plural: "{{ count }} delova uspešno uvezeno !"
+      obsolete_base: "Da bi ste ostali sinhronizovani, morate ponovo učitati CSV fajl."
+    bxf2:
+      label: ""
+      title: ""
+      help: |
+      load:
+        title: ""
+      import:
+        title: ""
+        info_0: |
+        info_0_plural: |
+        info_1: ""
+        info_2: |
+        option_part_wood_material_name: ""
+        option_part_wood_material_name_help: ""
+        option_part_aluminium_material_name: ""
+        option_part_aluminium_material_name_help: ""
+        option_part_glass_material_name: ""
+        option_part_glass_material_name_help: ""
+        option_front_part_layer_name: ""
+        option_front_part_layer_name_help: ""
+        option_machining_material_name: ""
+        option_machining_material_name_help: ""
+        option_machining_layer_name: ""
+        option_machining_layer_name_help: ""
+        option_hardware_material_name: ""
+        option_hardware_material_name_help: ""
+        option_hardware_layer_name: ""
+        option_hardware_layer_name_help: ""
+      model:
+        author: ""
+        date: ""
+      cabinet:
+        list: ""
+        description: Naziv
+        width: Širina
+        height: Visina
+        depth: ""
+      article:
+        list: ""
+        total_quantity: Količina
+        article_number: ""
+        description: Opis
+      error:
+        failed_to_load_bxf2_file: |
+      obsolete_base: ""
   tutorials:
     label: Uputstvo
     title: Uputstvo
@@ -2206,11 +2334,15 @@ tool:
     action_1_status: ""
     action_1_state_0_status: ""
     action_1_state_1_status: ""
+    # CSG = Constructive Solid Geometry
+    action_2: ""
+    action_2_status: ""
     action_option_group_thickness: Debljina
     action_option_group_stretch_measure_type: Merenje
     action_option_group_axes: Ose
     action_option_group_paneling_joint_type: ""
     action_option_group_paneling_direction: Pravac
+    action_option_group_csg_operation: ""
     action_option_group_options: Opcije
     action_option_thickness_thickness: Debljina
     action_option_thickness_thickness_status: ""
@@ -2238,6 +2370,7 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
+    filter_7: ""
     action_0: Obojiti komponente
     action_0_status: Kliknite na komad za primenu materijala na instancu
     action_1: Oboj kantove
@@ -2303,6 +2436,7 @@ tool:
   smart_join:
     title: ""
     action_0: "" # TODO: It's currently just for dev purposes
+    action_0_status: "" # TODO
   smart_export:
     title: Izvoz
     action_0: Izvezi 3D element

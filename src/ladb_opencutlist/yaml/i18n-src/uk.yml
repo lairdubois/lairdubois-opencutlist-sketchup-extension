@@ -141,6 +141,7 @@ core:
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
+    import: Імпорт
     more: Ще
     more_docs: Документація
     more_reviews: Огляди
@@ -744,6 +745,7 @@ tab:
       type_4: $t(tab.materials.type_4)
       type_5: $t(tab.materials.type_5)
       type_6: $t(tab.materials.type_6)
+      type_7: ""
       type_-1: $t(default.cut_plural)
       tooltip:
         incompatible_unit: Одиниця несумісна з параметрами оцінки матеріалу
@@ -1075,7 +1077,7 @@ tab:
       option_irregular_allowed_rotations_0: Ні
       option_irregular_allowed_rotations_90: Крок 90°
       option_irregular_allowed_rotations_180: Крок 180°
-      option_irregular_allowed_rotations_free: Вільний (експериментальний)
+      option_irregular_allowed_rotations_free: ""
       option_irregular_allow_mirroring: Дозволити відзеркалювання
       option_irregular_allow_mirroring_help: |
         Визначає, чи дозволено відзеркалювання деталі деталі.
@@ -1574,6 +1576,7 @@ tab:
     type_4: Крайооблицювальний
     type_5: Фурнітура
     type_6: Лист шпону
+    type_7: ""
     tooltip:
       type_0: Тип матеріалу '$t(tab.materials.type_0)'
       type_1: Тип матеріалу '$t(tab.materials.type_1)'
@@ -1582,6 +1585,7 @@ tab:
       type_4: Тип матеріалу '$t(tab.materials.type_4)'
       type_5: Тип матеріалу '$t(tab.materials.type_5)'
       type_6: Тип матеріалу '$t(tab.materials.type_6)'
+      type_7: ""
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Напрямок фактури
@@ -1906,6 +1910,130 @@ tab:
       imported_body: "{{ count }} деталь успішно імпортовано!"
       imported_body_plural: "{{ count }} деталей успішно імпортовано!"
     obsolete_base: "Щоб зберегти синхронізацію, ви повинні перезавантажити файл CSV."
+  importers:
+    default:
+      open_file: ""
+      import_to_model: Імпорт в модель
+      error:
+        no_model: ""
+        file_not_found: "Файл не знайдено: **{{ filename }}**"
+        bad_extension: ""
+        failed_to_import: ""
+      success:
+        imported_title: Імпорт завершено
+    csv:
+      label: ""
+      title: Імпорт деталей
+      help: |
+      load:
+        title: Завантажити файл CSV
+        info_0: |
+          Виберіть параметри, необхідні для правильного читання файлу:
+          **{{ filename }}**.
+        info_1: |
+          *Одиниця виміру, налаштована в шаблоні: **{{ unit }}**.
+          Ця одиниця буде використана для розмірів, одиниця яких не вказана*.
+        options: Параметри завантаження
+        option_col_sep: Роздільник
+        option_col_sep_tab: Табулятор
+        option_col_sep_comma: Кома
+        option_col_sep_semicolon: Крапка з комою
+        option_first_line_headers: Заголовок рядка
+        option_first_line_headers_0: Дані
+        option_first_line_headers_1: Заголовки стовпців
+      import:
+        title: Імпорт деталей у модель
+        info_0: |
+          Ви збираєтеся імпортувати **{{ count }} деталь** у модель.
+          Цю деталь буде розміщено на головній сцені.
+        info_0_plural: |
+          Ви збираєтеся імпортувати **{{ count }} деталей** у модель.
+          Ці деталі будуть розміщені на головній сцені.
+        info_1: Натисніть **Імпорт** для підтвердження дії.
+        options: |
+          Модель вже містить *деталі*, *визначення* або *матеріали*.
+          Виберіть параметри імпорту, які відповідають вашим потребам.
+        option_remove_all_?: "Що робити?"
+        option_remove_all_false: Додати деталі до існуючих
+        option_remove_all_true: Відмінити все!
+        option_keep_definitions_settings: Зберегти налаштування визначень
+        option_keep_materials_settings: Зберегти налаштування матеріалів
+      column:
+        unused: Невикористаний
+        mandatory: Обов'язкові поля
+        optional: Необов'язкові поля
+        name: Позначення
+        count: Кількість
+        bbox_length: Довжина - фактична
+        bbox_width: Ширина - фактична
+        bbox_thickness: Товщина
+        material: Матеріал
+        tags: Мітки
+      tooltip:
+        errors: "Ця деталь не буде імпортована, оскільки містить помилки"
+        warnings: "Ця деталь буде імпортована, але вона містить наступні попередження"
+      error:
+        failed_to_load_csv_file: |
+          Не вдається завантажити файл CSV: **{{ error }}**
+          *Перевірте, чи вибрали ви правильний роздільник даних.*
+        empty_file: "Файл, здається, порожній або його неможливо прочитати правильно."
+        no_importable_part: Жодні деталі не можна імпортувати. Призначте обов'язкові поля у відповідних стовпцях.
+        invalid_name: Недійсне позначення
+        invalid_length: Недійсна довжина
+        invalid_width: Недійсна ширина
+        invalid_thickness: Недійсна товщина
+      warning:
+        invalid_count: Недійсна кількість
+        invalid_material: Недійсний матеріал
+      success:
+        imported_body: "{{ count }} деталь успішно імпортовано!"
+        imported_body_plural: "{{ count }} деталей успішно імпортовано!"
+      obsolete_base: "Щоб зберегти синхронізацію, ви повинні перезавантажити файл CSV."
+    bxf2:
+      label: ""
+      title: ""
+      help: |
+      load:
+        title: ""
+      import:
+        title: ""
+        info_0: |
+        info_0_plural: |
+        info_1: ""
+        info_2: |
+        option_part_wood_material_name: ""
+        option_part_wood_material_name_help: ""
+        option_part_aluminium_material_name: ""
+        option_part_aluminium_material_name_help: ""
+        option_part_glass_material_name: ""
+        option_part_glass_material_name_help: ""
+        option_front_part_layer_name: ""
+        option_front_part_layer_name_help: ""
+        option_machining_material_name: ""
+        option_machining_material_name_help: ""
+        option_machining_layer_name: ""
+        option_machining_layer_name_help: ""
+        option_hardware_material_name: ""
+        option_hardware_material_name_help: ""
+        option_hardware_layer_name: ""
+        option_hardware_layer_name_help: ""
+      model:
+        author: ""
+        date: ""
+      cabinet:
+        list: ""
+        description: Ім’я
+        width: Ширина
+        height: Висота
+        depth: ""
+      article:
+        list: ""
+        total_quantity: К-ть
+        article_number: ""
+        description: Опис
+      error:
+        failed_to_load_bxf2_file: |
+      obsolete_base: ""
   tutorials:
     label: Навчальні матеріали
     title: Навчальні матеріали
@@ -2216,11 +2344,15 @@ tool:
     action_1_status: Створіть серію деталей із замкнутого тіла
     action_1_state_0_status: "Клацніть замкнуте тіло, щоб визначити еталонну геометрію"
     action_1_state_1_status: Виберіть грані для екструдування
+    # CSG = Constructive Solid Geometry
+    action_2: ""
+    action_2_status: ""
     action_option_group_thickness: Товщина
     action_option_group_stretch_measure_type: Вимірювання
     action_option_group_axes: Осі
     action_option_group_paneling_joint_type: Збірка
     action_option_group_paneling_direction: Напрямок
+    action_option_group_csg_operation: ""
     action_option_group_options: Опції
     action_option_thickness_thickness: Товщина
     action_option_thickness_thickness_status: Визначте товщину панелей
@@ -2248,6 +2380,7 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
+    filter_7: ""
     action_0: Покриття деталей
     action_0_status: "Натисніть на деталь, щоб застосувати матеріал до її екземпляра"
     action_1: Покриття торців
@@ -2313,6 +2446,7 @@ tool:
   smart_join:
     title: Збірка
     action_0: Дотик-Дотик # TODO: It's currently just for dev purposes
+    action_0_status: "" # TODO
   smart_export:
     title: Експорт
     action_0: Експортувати деталь 3D

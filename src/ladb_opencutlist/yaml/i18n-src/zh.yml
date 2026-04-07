@@ -141,6 +141,7 @@ core:
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
+    import: 导入
     more: 更多
     more_docs: 文档
     more_reviews: 评论
@@ -738,6 +739,7 @@ tab:
       type_4: $t(tab.materials.type_4)
       type_5: $t(tab.materials.type_5)
       type_6: $t(tab.materials.type_6)
+      type_7: ""
       type_-1: $t(default.cut_plural)
       tooltip:
         incompatible_unit: 与材料估算选项不兼容的单位
@@ -1565,6 +1567,7 @@ tab:
     type_4: 封边
     type_5: 五金
     type_6: 木皮
+    type_7: ""
     tooltip:
       type_0: 材质类型 '$t(tab.materials.type_0)'
       type_1: 材质类型 '$t(tab.materials.type_1)'
@@ -1573,6 +1576,7 @@ tab:
       type_4: 材质类型 '$t(tab.materials.type_4)'
       type_5: 材质类型 '$t(tab.materials.type_5)'
       type_6: 材质类型 '$t(tab.materials.type_6)'
+      type_7: ""
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: 纹理方向
@@ -1896,6 +1900,130 @@ tab:
       imported_body: "{{ count }} 部件已成功导入!"
       imported_body_plural: "{{ count }} 部件已成功导入!"
     obsolete_base: "要保持同步, 您必须重新加载 CSV 文件."
+  importers:
+    default:
+      open_file: ""
+      import_to_model: 导入到模型中
+      error:
+        no_model: ""
+        file_not_found: "文件未找到 : **{{ filename }}**"
+        bad_extension: ""
+        failed_to_import: ""
+      success:
+        imported_title: 导入完成
+    csv:
+      label: ""
+      title: 导入部件
+      help: |
+      load:
+        title: 加载 CSV 文件
+        info_0: |
+          选择正确读取文件所需的选项:
+          **{{ filename }}**.
+        info_1: |
+          *模型中设置的单位为: **{{ unit }}**.
+          这个单位将用于未指定单位的尺寸*.
+        options: 加载选项
+        option_col_sep: 分隔符
+        option_col_sep_tab: 制表符
+        option_col_sep_comma: 逗号
+        option_col_sep_semicolon: 分号
+        option_first_line_headers: 标题行
+        option_first_line_headers_0: 数据
+        option_first_line_headers_1: 列标题
+      import:
+        title: 导入部件到模型中
+        info_0: |
+          您即将导入 **{{ count }} 部件** 到模型中.
+          这个部件将放置在主场景原点的一个组中.
+        info_0_plural: |
+          您即将导入 **{{ count }} 个部件** 到模型中.
+          这些部件将堆叠在一个组中, 从主场景的原点开始.
+        info_1: 点击 **导入** 以确认操作.
+        options: |
+          模型已包含 *部件*, *定义* 或 *材质*.
+          请选择您需要的导入选项.
+        option_remove_all_?: "下一步怎么办?"
+        option_remove_all_false: 添加到现有的部件
+        option_remove_all_true: 删除现有的!
+        option_keep_definitions_settings: 保留定义设置
+        option_keep_materials_settings: 保留材料设置
+      column:
+        unused: 未使用
+        mandatory: 必填字段
+        optional: 可选字段
+        name: 名称
+        count: 数量
+        bbox_length: 长度
+        bbox_width: 宽度
+        bbox_thickness: 厚度
+        material: 材质
+        tags: 标签
+      tooltip:
+        errors: "此部件将不会被导入, 因为它产生了以下错误"
+        warnings: "此部件将被导入, 但产生了以下警告"
+      error:
+        failed_to_load_csv_file: |
+          无法加载 CSV 文件: **{{ error }}**
+          *请验证您是否已选择了适当的字段分隔符.*
+        empty_file: 文件似乎为空或无法解释.
+        no_importable_part: "无法导入任何部件, 请将必填字段分配给相应的列."
+        invalid_name: 无效的名称
+        invalid_length: 长度无效
+        invalid_width: 宽度无效
+        invalid_thickness: 厚度无效
+      warning:
+        invalid_count: 计数无效
+        invalid_material: 材质无效
+      success:
+        imported_body: "{{ count }} 部件已成功导入!"
+        imported_body_plural: "{{ count }} 部件已成功导入!"
+      obsolete_base: "要保持同步, 您必须重新加载 CSV 文件."
+    bxf2:
+      label: ""
+      title: ""
+      help: |
+      load:
+        title: ""
+      import:
+        title: ""
+        info_0: |
+        info_0_plural: |
+        info_1: ""
+        info_2: |
+        option_part_wood_material_name: ""
+        option_part_wood_material_name_help: ""
+        option_part_aluminium_material_name: ""
+        option_part_aluminium_material_name_help: ""
+        option_part_glass_material_name: ""
+        option_part_glass_material_name_help: ""
+        option_front_part_layer_name: ""
+        option_front_part_layer_name_help: ""
+        option_machining_material_name: ""
+        option_machining_material_name_help: ""
+        option_machining_layer_name: ""
+        option_machining_layer_name_help: ""
+        option_hardware_material_name: ""
+        option_hardware_material_name_help: ""
+        option_hardware_layer_name: ""
+        option_hardware_layer_name_help: ""
+      model:
+        author: ""
+        date: ""
+      cabinet:
+        list: ""
+        description: 名称
+        width: 阔度
+        height: 高度
+        depth: ""
+      article:
+        list: ""
+        total_quantity: 数量
+        article_number: ""
+        description: 描述
+      error:
+        failed_to_load_bxf2_file: |
+      obsolete_base: ""
   tutorials:
     label: 教程
     title: 教程
@@ -2206,11 +2334,15 @@ tool:
     action_1_status: ""
     action_1_state_0_status: ""
     action_1_state_1_status: ""
+    # CSG = Constructive Solid Geometry
+    action_2: ""
+    action_2_status: ""
     action_option_group_thickness: 厚度
     action_option_group_stretch_measure_type: 测量
     action_option_group_axes: 坐标轴
     action_option_group_paneling_joint_type: ""
     action_option_group_paneling_direction: 方向
+    action_option_group_csg_operation: ""
     action_option_group_options: 选项
     action_option_thickness_thickness: 厚度
     action_option_thickness_thickness_status: ""
@@ -2238,6 +2370,7 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
+    filter_7: ""
     action_0: 绘制部件
     action_0_status: 点击一个部件以绘制其实例
     action_1: 绘制边缘
@@ -2303,6 +2436,7 @@ tool:
   smart_join:
     title: ""
     action_0: "" # TODO: It's currently just for dev purposes
+    action_0_status: "" # TODO
   smart_export:
     title: 导出
     action_0: 导出3D模型

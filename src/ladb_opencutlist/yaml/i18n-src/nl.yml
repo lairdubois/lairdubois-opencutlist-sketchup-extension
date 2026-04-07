@@ -141,6 +141,7 @@ core:
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
+    import: Importeren
     more: Meer
     more_docs: Doc.
     more_reviews: Recensies
@@ -744,6 +745,7 @@ tab:
       type_4: $t(tab.materials.type_4)
       type_5: $t(tab.materials.type_5)
       type_6: $t(tab.materials.type_6)
+      type_7: ""
       type_-1: $t(default.cut_plural)
       tooltip:
         incompatible_unit: Eenheid incompatibel met materiaalschattingsopties
@@ -1075,7 +1077,7 @@ tab:
       option_irregular_allowed_rotations_0: Geen
       option_irregular_allowed_rotations_90: Stappen van 90°
       option_irregular_allowed_rotations_180: Stappen van 180°
-      option_irregular_allowed_rotations_free: Vrij (Experimenteel)
+      option_irregular_allowed_rotations_free: ""
       option_irregular_allow_mirroring: Spiegel toegestaan
       option_irregular_allow_mirroring_help: |
         Bepaalt of het spiegelen van het stuk is toegestaan voor de plaatsing.
@@ -1574,6 +1576,7 @@ tab:
     type_4: Kantenband
     type_5: Accessoire
     type_6: Fineer
+    type_7: ""
     tooltip:
       type_0: Materiaal type '$t(tab.materials.type_0)'
       type_1: Materiaal type '$t(tab.materials.type_1)'
@@ -1582,6 +1585,7 @@ tab:
       type_4: Materiaal type '$t(tab.materials.type_4)'
       type_5: Materiaal type '$t(tab.materials.type_5)'
       type_6: Materiaal type '$t(tab.materials.type_6)'
+      type_7: ""
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Nerf richting
@@ -1906,6 +1910,130 @@ tab:
       imported_body: "{{ count }} deel succesvol geïmporteerd!"
       imported_body_plural: "{{ count }} onderdelen succesvol geïmporteerd!"
     obsolete_base: "Om gesynchroniseerd te blijven, moet u het CSV-bestand opnieuw laden."
+  importers:
+    default:
+      open_file: ""
+      import_to_model: Importeer in het model
+      error:
+        no_model: ""
+        file_not_found: "Bestand niet gevonden: **{{ filename }}**"
+        bad_extension: ""
+        failed_to_import: ""
+      success:
+        imported_title: Import voltooid
+    csv:
+      label: ""
+      title: Onderdelen importeren
+      help: |
+      load:
+        title: CSV bestand laden
+        info_0: |
+          Kies de noodzakelijke opties om het bestand correct te lezen:
+          **{{ filename }}**.
+        info_1: |
+          *De eenheid geconfigureerd in het model is: **{{ unit }}**.
+          Deze eenheid zal gebruikt worden voor de afmetingen waarvan geen eenheid is opgegeven*.
+        options: Laad opties
+        option_col_sep: Scheidingsteken
+        option_col_sep_tab: TAB-teken
+        option_col_sep_comma: Komma
+        option_col_sep_semicolon: Punt komma
+        option_first_line_headers: Eerste lijn
+        option_first_line_headers_0: Gegevens
+        option_first_line_headers_1: Kolom titels
+      import:
+        title: Importeer onderdelen in het model
+        info_0: |
+          U staat op het punt om **{{ count }} onderdeel** te importeren in het model.
+          Dit onderdeel zal in de hoofdscène op de oorsprong geplaatst worden.
+        info_0_plural: |
+          U staat op het punt om **{{ count }} onderdelen** te importeren in het model.
+          Deze onderdelen zullen in de hoofdscène gestapeld op de oorsprong geplaatst worden.
+        info_1: Klik op **Import** om door te gaan..
+        options: |
+          Dit model bevat reeds *onderdelen*, *definities* of *materialen*.
+          Kies de gewenste importeer opties..
+        option_remove_all_?: "Wat nu?"
+        option_remove_all_false: Voeg onderdelen toe aan bestaande
+        option_remove_all_true: Alles vrij!
+        option_keep_definitions_settings: Bewaar instellingen voor definities
+        option_keep_materials_settings: Materiaalparameters behouden
+      column:
+        unused: Niet gebruikt
+        mandatory: Verplichte kolommen
+        optional: Optionele kolommen
+        name: Beschrijving
+        count: Hoeveelheid
+        bbox_length: Lengte
+        bbox_width: Breedte
+        bbox_thickness: Dikte
+        material: Materiaal
+        tags: Badges
+      tooltip:
+        errors: Dit deel wordt niet geïmporteerd omdat het de volgende fouten bevat
+        warnings: "Dit deel is geïmporteerd, maar het bevat de volgende fouten"
+      error:
+        failed_to_load_csv_file: |
+          Het CSV-bestand kan niet worden geladen: **{{ error }}**
+          *Controleer of u het juiste gegevensscheidingsteken hebt gekozen.*
+        empty_file: Het bestand lijkt leeg te zijn of kon niet correct worden gelezen.
+        no_importable_part: Er kunnen geen onderdelen worden ingevoerd. Wijs de gewenste velden toe aan de overeenkomstige kolommen.
+        invalid_name: Ongeldige beschrijving
+        invalid_length: Ongeldige lengte
+        invalid_width: Ongeldige breedte
+        invalid_thickness: Ongeldige dikte
+      warning:
+        invalid_count: Ongeldig aantal stuks
+        invalid_material: Ongeldig materiaal
+      success:
+        imported_body: "{{ count }} deel succesvol geïmporteerd!"
+        imported_body_plural: "{{ count }} onderdelen succesvol geïmporteerd!"
+      obsolete_base: "Om gesynchroniseerd te blijven, moet u het CSV-bestand opnieuw laden."
+    bxf2:
+      label: ""
+      title: ""
+      help: |
+      load:
+        title: ""
+      import:
+        title: ""
+        info_0: |
+        info_0_plural: |
+        info_1: ""
+        info_2: |
+        option_part_wood_material_name: ""
+        option_part_wood_material_name_help: ""
+        option_part_aluminium_material_name: ""
+        option_part_aluminium_material_name_help: ""
+        option_part_glass_material_name: ""
+        option_part_glass_material_name_help: ""
+        option_front_part_layer_name: ""
+        option_front_part_layer_name_help: ""
+        option_machining_material_name: ""
+        option_machining_material_name_help: ""
+        option_machining_layer_name: ""
+        option_machining_layer_name_help: ""
+        option_hardware_material_name: ""
+        option_hardware_material_name_help: ""
+        option_hardware_layer_name: ""
+        option_hardware_layer_name_help: ""
+      model:
+        author: ""
+        date: ""
+      cabinet:
+        list: ""
+        description: Beschrijving
+        width: Breedte
+        height: Hoogte
+        depth: ""
+      article:
+        list: ""
+        total_quantity: Aant.
+        article_number: ""
+        description: Beschrijving
+      error:
+        failed_to_load_bxf2_file: |
+      obsolete_base: ""
   tutorials:
     label: Tutorials
     title: Tutorials
@@ -2216,11 +2344,15 @@ tool:
     action_1_status: Een reeks onderdelen maken vanuit een gesloten volume
     action_1_state_0_status: Klik op een gesloten volume om de referentiegeometrie te bepalen
     action_1_state_1_status: Selecteer de vlakken om te extruderen
+    # CSG = Constructive Solid Geometry
+    action_2: ""
+    action_2_status: ""
     action_option_group_thickness: Dikte
     action_option_group_stretch_measure_type: Meten
     action_option_group_axes: Assen
     action_option_group_paneling_joint_type: Samenstelling
     action_option_group_paneling_direction: Richting
+    action_option_group_csg_operation: ""
     action_option_group_options: Opties
     action_option_thickness_thickness: Dikte
     action_option_thickness_thickness_status: Bepaalt de dikte van de panelen
@@ -2248,6 +2380,7 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
+    filter_7: ""
     action_0: Kleur stukken
     action_0_status: Klik op een onderdeel om een materiaal op zijn exemplaar toe te passen
     action_1: Kleur het object
@@ -2313,6 +2446,7 @@ tool:
   smart_join:
     title: Samenvoegen
     action_0: Aansluitend tegen elkaar # TODO: It's currently just for dev purposes
+    action_0_status: "" # TODO
   smart_export:
     title: Exporteren
     action_0: Exporteer een 3D-onderdeel
