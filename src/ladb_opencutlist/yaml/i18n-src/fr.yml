@@ -1998,7 +1998,7 @@ tab:
       title: Importer une configuration Blum
       help: |
         Cette page vous permet d'importer une configuration dans votre modèle depuis un fichier BXF2.
-        Les fichiers BXF2 peuvent être crées depuis le [Configurateur de Meubles](https://www.blum.com/fr/fr/services/planning-construction-product-selection/cabinet-configurator/) de [Blum](https://www.blum.com).
+        Les fichiers BXF2 peuvent être crées depuis le [Configurateur de Meubles](https://e-services.blum.com/) de [Blum](https://www.blum.com).
 
         Cliquez sur le bouton **Ouvrir un fichier BXF2** pour démarrer.
       load:

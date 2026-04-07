@@ -4,7 +4,7 @@
             <div class="media">
                 <div class="media-left">
                     {% set isGuest = member.account.name == 'Guest' %}
-                    <img src="{% if isGuest %}../img/opencollective-icon.svg{% else %}{{ member.account.imageUrl }}{% endif %}" width="128" height="128"{% if isGuest %} style="background-color: #E8F3FE; padding: 20px;"{% endif %}>
+                    <img src="{% if isGuest %}../img/icon-opencollective.svg{% else %}{{ member.account.imageUrl }}{% endif %}" width="128" height="128"{% if isGuest %} style="background-color: #E8F3FE; padding: 20px;"{% endif %}>
                 </div>
                 <div class="media-body">
                     <div class="ladb-sponsor-member-name">{{ member.account.name }}</div>

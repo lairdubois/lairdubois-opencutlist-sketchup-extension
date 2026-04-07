@@ -1628,7 +1628,8 @@ module Ladb::OpenCutList
 
     def zoom_extents_command
       unless (model = Sketchup.active_model).nil?
-        model.active_view.zoom_extents
+        require_relative './utils/view_utils'
+        ViewUtils.zoom_active_entities(model.active_view)
       end
     end
 
