@@ -49,10 +49,11 @@ module Ladb::OpenCutList
 
     def run
 
+      return { :errors => [ 'tab.importers.default.error.no_data' ] } unless @bxf_model.is_a?(Bxf::BxfModel)
+
       model = Sketchup.active_model
       return { :errors => [ 'tab.importers.default.error.no_model' ] } unless model
 
-      model = Sketchup.active_model
       model.start_operation('Import BXF2', false)
 
         begin
@@ -71,7 +72,7 @@ module Ladb::OpenCutList
 
         rescue Exception => e
           PLUGIN.dump_exception(e)
-          Sketchup.active_model.abort_operation
+          model.abort_operation
           return { errors: [ [ 'tab.importers.bxf2.error.failed_to_load_bxf2_file', { :error => e.message } ] ] }
         ensure
           _clear_factories
@@ -733,6 +734,19 @@ module Ladb::OpenCutList
 
       end
       layer
+    end
+
+  end
+
+  require_relative '../../../lib/kuix/kuix'
+
+  class ImportersBxf2PartTool < Kuix::KuixTool
+
+    def onLButtonUp(flags, x, y, view)
+      super
+
+      puts "onLButtonUp #{x}, #{y}"
+
     end
 
   end

@@ -1915,6 +1915,7 @@ tab:
       open_file: Ouvrir un fichier {{ extension }}
       import_to_model: Importer dans le modèle
       error:
+        no_data: Aucune donnée à importer.
         no_model: Aucun modèle n'est ouvert. Il est impossible d'importer dans le néant ;)
         file_not_found: "Fichier introuvable : **{{ filename }}**"
         bad_extension: "Le fichier *{{ filename }}* n'a pas l'extension requise (**{{ extensions }}**)."

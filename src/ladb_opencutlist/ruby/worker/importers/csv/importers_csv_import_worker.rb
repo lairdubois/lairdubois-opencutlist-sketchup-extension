@@ -24,8 +24,10 @@ module Ladb::OpenCutList
 
     def run
 
+      return { :errors => [ 'tab.importers.default.error.no_data' ] } unless @parts.is_a?(Array)
+
       model = Sketchup.active_model
-      return { :errors => [ 'tab.importers.error.no_model' ] } unless model
+      return { :errors => [ 'tab.importers.default.error.no_model' ] } unless model
 
       response = {
           :errors => [],
