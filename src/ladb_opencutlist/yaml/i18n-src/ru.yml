@@ -745,7 +745,7 @@ tab:
       type_4: $t(tab.materials.type_4)
       type_5: $t(tab.materials.type_5)
       type_6: $t(tab.materials.type_6)
-      type_7: ""
+      type_7: $t(tab.materials.type_7)
       type_-1: $t(default.cut_plural)
       tooltip:
         incompatible_unit: Единица несовместима с вариантами расчета материала
@@ -1077,7 +1077,7 @@ tab:
       option_irregular_allowed_rotations_0: Нет
       option_irregular_allowed_rotations_90: Шаг 90°
       option_irregular_allowed_rotations_180: Шаг 180°
-      option_irregular_allowed_rotations_free: ""
+      option_irregular_allowed_rotations_free: Произвольный
       option_irregular_allow_mirroring: Разрешить отражение
       option_irregular_allow_mirroring_help: |
         Определяет, разрешено ли зеркальное отражение детали.
@@ -1576,7 +1576,7 @@ tab:
     type_4: Кромочный
     type_5: Фурнитура
     type_6: Лист шпона
-    type_7: ""
+    type_7: Мехобработка
     tooltip:
       type_0: Тип материала '$t(tab.materials.type_0)'
       type_1: Тип материала '$t(tab.materials.type_1)'
@@ -1585,7 +1585,7 @@ tab:
       type_4: Тип материала '$t(tab.materials.type_4)'
       type_5: Тип материала '$t(tab.materials.type_5)'
       type_6: Тип материала '$t(tab.materials.type_6)'
-      type_7: ""
+      type_7: Тип материала '$t(tab.materials.type_7)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Направление волокон
@@ -1912,19 +1912,23 @@ tab:
     obsolete_base: "Чтобы сохранить синхронизацию, вы должны перезагрузить CSV файл."
   importers:
     default:
-      open_file: ""
+      open_file: "Открыть файл {{ extension }}"
       import_to_model: Импорт в модель
       error:
-        no_model: ""
+        no_model: Ни один проект модели не открыт. Импорт из пустоты невозможен ;)
         file_not_found: "Файл не найден : **{{ filename }}**"
-        bad_extension: ""
+        bad_extension: "Файл *{{ filename }}* не имеет требуемого разрешения (**{{ extensions }}**)."
         failed_to_import: Процесс импорта не удался.
       success:
         imported_title: Импорт завершен
     csv:
-      label: ""
+      label: CSV
       title: Импорт деталей
       help: |
+        Этот раздел поможет вам импортировать детали (только в форме параллелепипеда) из [CSV](https://ru.wikipedia.org/wiki/CSV) файла в модель.
+        Затем вы можете использовать возможности *OpenCutList* для работы с импортированными деталями в *SketchUp*.
+
+        Кликните по клавише **Открыть CSV файл** для начала импорта.
       load:
         title: Загрузить CSV файл
         info_0: |
@@ -1990,50 +1994,59 @@ tab:
         imported_body_plural: "{{ count }} деталей успешно импортированы!"
       obsolete_base: "Чтобы сохранить синхронизацию, вы должны перезагрузить CSV файл."
     bxf2:
-      label: ""
-      title: ""
+      label: BXF2
+      title: Импортировать конфигурацию Blum
       help: |
+        На этой странице вы можете импортировать конфигурацию в свой шаблон из файла BXF2.
+        Файлы BXF2 могут быть созданы [Конфигуратором мебели](https://e-services.blum.com/) из [Blum](https://www.blum.com).
+
+        Нажмите кнопку **Открыть файл BXF2**, чтобы начать.
       load:
-        title: ""
+        title: Загрузка файла BXF2
       import:
-        title: ""
+        title: Импорт конфигурации в шаблон
         info_0: |
+          Вы собираетесь импортировать конфигурацию из **{{ count }} корпуса** в шаблон.
         info_0_plural: |
-        info_1: ""
+          Вы собираетесь импортировать конфигурацию из **{{ count }} корпусов** в шаблон.
+        info_1: "Эта конфигурация будет размещена на главной сцене, в начале координат."
         info_2: |
-        option_part_wood_material_name: ""
-        option_part_wood_material_name_help: ""
-        option_part_aluminium_material_name: ""
-        option_part_aluminium_material_name_help: ""
-        option_part_glass_material_name: ""
-        option_part_glass_material_name_help: ""
-        option_front_part_layer_name: ""
-        option_front_part_layer_name_help: ""
-        option_machining_material_name: ""
-        option_machining_material_name_help: ""
-        option_machining_layer_name: ""
-        option_machining_layer_name_help: ""
-        option_hardware_material_name: ""
-        option_hardware_material_name_help: ""
-        option_hardware_layer_name: ""
-        option_hardware_layer_name_help: ""
+          Тонкая настройка параметров.
+          Нажмите **Импорт**, чтобы подтвердить действие.
+        option_part_wood_material_name: Тип дерева детали
+        option_part_wood_material_name_help: Справка - Тип дерева детали
+        option_part_aluminium_material_name: Тип алюминиевого профиля/панели
+        option_part_aluminium_material_name_help: Справка - Тип алюминиевого профиля/панели
+        option_part_glass_material_name: Тип стекла
+        option_part_glass_material_name_help: Справка - Тип стекла
+        option_front_part_layer_name: Маркировка фасадов
+        option_front_part_layer_name_help: Справка - Маркировка фасадов
+        option_machining_material_name: Слой обработки
+        option_machining_material_name_help: Справка - Слой обработки
+        option_machining_layer_name: Метка операций
+        option_machining_layer_name_help: Справка - Метка операции
+        option_hardware_material_name: Материалы принадлежностей
+        option_hardware_material_name_help: Справка - Материалы принадлежностей
+        option_hardware_layer_name: Тег аксессуаров
+        option_hardware_layer_name_help: Справка - Тег аксессуары
       model:
-        author: ""
-        date: ""
+        author: Автор
+        date: Дата
       cabinet:
-        list: ""
+        list: Список мебели
         description: Определение
         width: Ширина
         height: Высота
-        depth: ""
+        depth: Глубина
       article:
-        list: ""
+        list: Список статей
         total_quantity: К-во
-        article_number: ""
+        article_number: Ссылка
         description: Описание
       error:
         failed_to_load_bxf2_file: |
-      obsolete_base: ""
+          Невозможно загрузить файл BXF2 : **{{ error }}**
+      obsolete_base: "Для синхронизации данных необходимо перезагрузить файл BXF2."
   tutorials:
     label: Инструкции
     title: Инструкции
@@ -2345,14 +2358,14 @@ tool:
     action_1_state_0_status: "Кликните замкнутое тело, чтобы задать вспомогательную геометрию"
     action_1_state_1_status: Выберите грани для выдавливания
     # CSG = Constructive Solid Geometry
-    action_2: ""
-    action_2_status: ""
+    action_2: CSG
+    action_2_status: Бесконечность не предел!
     action_option_group_thickness: Толщина
     action_option_group_stretch_measure_type: Отсчет
     action_option_group_axes: Оси
     action_option_group_paneling_joint_type: Сборка
     action_option_group_paneling_direction: Измерение
-    action_option_group_csg_operation: ""
+    action_option_group_csg_operation: Операция
     action_option_group_options: Опции
     action_option_thickness_thickness: Толщина
     action_option_thickness_thickness_status: Определить толщину панелей
@@ -2380,7 +2393,7 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    filter_7: ""
+    filter_7: $t(tab.materials.type_7)
     action_0: Раскраска деталей
     action_0_status: "Кликните на цветном окошке материала, которые есть внизу окна, затем кликните по детали которой требуется придать свойство выбранного материала"
     action_1: Раскраска торцов
@@ -2446,7 +2459,7 @@ tool:
   smart_join:
     title: Сборка
     action_0: Точный контакт # TODO: It's currently just for dev purposes
-    action_0_status: "" # TODO
+    action_0_status: TBD # TODO
   smart_export:
     title: Экспорт
     action_0: Экспорт 3D-детали
