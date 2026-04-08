@@ -129,7 +129,7 @@ module Ladb::OpenCutList
         # Determine if the tool is deactiveted when the user undo last action
         @quit_on_undo = quit_on_undo
 
-        # Cursors stack
+        # Cursor stack
         @cursors = [ get_default_cursor ]
 
         # Internals

@@ -5,7 +5,7 @@ module Ladb::OpenCutList
 
   class ImportersBxf2ImportWorker
 
-    NODE_UP_TRANSFORM = Geom::Transformation.axes(ORIGIN, X_AXIS, Z_AXIS, Y_AXIS.reverse)
+    NODE_UP_TRANSFORM = Geom::Transformation.rotation(ORIGIN, X_AXIS, 90.degrees)
     COMPONENT_UP_TRANSFORM = Geom::Transformation.axes(ORIGIN, X_AXIS, Z_AXIS.reverse, Y_AXIS)
 
     BLUM_COLOR = Sketchup::Color.new('#ff671f').freeze
@@ -13,8 +13,9 @@ module Ladb::OpenCutList
     ALUMINIUM_MATERIAL_COLOR = Sketchup::Color.new(204, 204, 204).freeze
     GLASS_MATERIAL_COLOR = Sketchup::Color.new(196, 232, 254, 0.5).freeze
 
+    attr_reader :bxf_model
+
     def initialize(bxf_model,
-                   file_path,
 
                    part_wood_material_name: nil,
                    part_aluminium_material_name: nil,
@@ -30,7 +31,6 @@ module Ladb::OpenCutList
     )
 
       @bxf_model = bxf_model
-      @file_path = file_path
 
       @part_wood_material_name = part_wood_material_name
       @part_aluminium_material_name = part_aluminium_material_name
@@ -54,31 +54,30 @@ module Ladb::OpenCutList
       model = Sketchup.active_model
       return { :errors => [ 'tab.importers.default.error.no_model' ] } unless model
 
-      model.start_operation('Import BXF2', false)
+      model.tools.push_tool(ImportersBxf2PlaceTool.new(@bxf_model) { |cancelled, transformation = IDENTITY|
+        if cancelled
 
-        begin
+          # Invoke dialog callback
+          PLUGIN.execute_tabs_dialog_command_on_tab('importers_bxf2', 'import_callback', { cancelled: true }.to_json, nil, false)
 
-          @bxf_model.scene.nodes.each do |node|
+        else
 
-            entities = model.active_entities
-            transformation = NODE_UP_TRANSFORM * node.transformations.to_t
+          # Process importation
+          _import_at(transformation) do |cancelled, errors|
 
-            _process_cabinet_group_links(node.cabinet_group_links, entities, transformation)
-            _process_cabinet_links(node.cabinet_links, entities, transformation)
-            _process_container_links(node.container_links, entities, transformation)
-            _process_function_unit_links(node.function_unit_links, entities, transformation)
+            # Pop place tool
+            model.tools.pop_tool
+
+            # Invoke dialog callback
+            PLUGIN.execute_tabs_dialog_command_on_tab('importers_bxf2', 'import_callback', { errors: errors }.to_json, nil, !cancelled)
 
           end
 
-        rescue Exception => e
-          PLUGIN.dump_exception(e)
-          model.abort_operation
-          return { errors: [ [ 'tab.importers.bxf2.error.failed_to_load_bxf2_file', { :error => e.message } ] ] }
-        ensure
-          _clear_factories
         end
+      })
 
-      model.commit_operation
+      # Give focus to SketchUp main window
+      Sketchup.focus if Sketchup.respond_to?(:focus)
 
       {
         :errors => []
@@ -88,6 +87,43 @@ module Ladb::OpenCutList
     # -----
 
     private
+
+    def _import_at(transformation, &callback)
+
+      model = Sketchup.active_model
+      model.start_operation('Import BXF2', false)
+
+        begin
+
+          entities = model.active_entities
+
+          @bxf_model.scene.nodes.each do |node|
+
+            t = transformation * node.transformations.to_t
+
+            _process_cabinet_group_links(node.cabinet_group_links, entities, t)
+            _process_cabinet_links(node.cabinet_links, entities, t)
+            _process_container_links(node.container_links, entities, t)
+            _process_function_unit_links(node.function_unit_links, entities, t)
+
+          end
+
+        rescue Exception => e
+          PLUGIN.dump_exception(e)
+          model.abort_operation
+          callback.call(true, [ [ 'core.error.exception', { :error => e.message } ] ]) if callback
+          return
+        ensure
+          _clear_factories
+        end
+
+      model.commit_operation
+
+      callback.call(false, []) if callback
+
+    end
+
+    # -----
 
     def _clear_factories
       @materials_factory = nil
@@ -244,10 +280,11 @@ module Ladb::OpenCutList
                                                                      begin
 
                                                                        # Load component from local DAE file
-                                                                       base_path = File.dirname(File.expand_path(@file_path))
+                                                                       base_path = File.dirname(File.expand_path(@bxf_model.path.to_s))
+                                                                       cad_data_path = File.join(base_path, "cadData")
                                                                        file_name = "#{component_name}.dae"
-                                                                       file_path = File.join(base_path, "cadData", file_name)
-                                                                       file_path = File.join(base_path, "cadData", " #{file_name}") unless File.exist?(file_path) # Workaround for configurator bug with space on some files
+                                                                       file_path = File.join(cad_data_path, file_name)
+                                                                       file_path = File.join(cad_data_path, " #{file_name}") unless File.exist?(file_path) # Workaround for configurator bug with space on some files
 
                                                                        definition = Sketchup.active_model.definitions.import(file_path, {
                                                                          validate_dae: true,
@@ -415,8 +452,10 @@ module Ladb::OpenCutList
 
     def _draw_prism(entities, bxf_prism)
 
+      z_value = bxf_cylinder.z_value.to_l
+
       btm_pts = bxf_prism.base_points.map(&:to_p)
-      top_pts = bxf_prism.base_points.map { |p| p.to_p.offset(Z_AXIS, bxf_prism.z_value.to_l) }
+      top_pts = bxf_prism.base_points.map { |p| p.to_p.offset(Z_AXIS, z_value) }
 
       entities.add_face(btm_pts)
       entities.add_face(top_pts)
@@ -644,15 +683,19 @@ module Ladb::OpenCutList
       when 'wood'
         name = @part_wood_material_name
         color = WOOD_MATERIAL_COLOR
+        grained = bxf_material.is_a?(Bxf::BxfWoodMaterial) && bxf_material.grain_direction.to_v.valid?   # Not implemented yet in Blum configurators
       when 'aluminium'
         name = @part_aluminium_material_name
         color = ALUMINIUM_MATERIAL_COLOR
+        grained = false
       when 'glass'
         name = @part_glass_material_name
         color = GLASS_MATERIAL_COLOR
+        grained = false
       else
         name = nil
         color = nil
+        grained = false
       end
       return nil unless name.is_a?(String) && !name.empty?
       material = Sketchup.active_model.materials[name]
@@ -664,6 +707,7 @@ module Ladb::OpenCutList
         material.alpha = color.alpha / 255.0  if color
 
         ma = MaterialAttributes.new(material, false, MaterialAttributes::TYPE_SHEET_GOOD)
+        ma.grained = grained
         ma.write_to_attributes
 
       end
@@ -742,14 +786,150 @@ module Ladb::OpenCutList
 
   end
 
-  require_relative '../../../lib/kuix/kuix'
+  require_relative '../../../tool/smart_tool'
 
-  class ImportersBxf2PartTool < Kuix::KuixTool
+  class ImportersBxf2PlaceTool < SmartTool
 
-    def onLButtonUp(flags, x, y, view)
+    ACTION_PLACE = 0
+
+    ACTIONS = [
+      {
+        :action => ACTION_PLACE,
+      }
+    ].freeze
+
+    attr_reader :bxf_model, :callback
+
+    def initialize(bxf_model, &callback)
+      super()
+
+      @bxf_model = bxf_model
+      @callback = callback
+
+    end
+
+    def get_stripped_name
+      'importers_bxf2'
+    end
+
+    # -- Actions --
+
+    def get_action_defs
+      ACTIONS
+    end
+
+    # -- Events --
+
+    def onActionChanged(action)
+
+      case action
+      when ACTION_PLACE
+        set_action_handler(ImportersBxf2PlaceActionHandler.new(self))
+
+      end
+
       super
+    end
 
-      puts "onLButtonUp #{x}, #{y}"
+    def onViewChanged(view)
+      super
+      refresh
+    end
+
+    def onTransactionUndo(model)
+      super
+      refresh
+    end
+
+  end
+
+  class ImportersBxf2PlaceActionHandler < SmartActionHandler
+
+    def initialize(tool)
+      super(ImportersBxf2PlaceTool::ACTION_PLACE, tool)
+
+      @mouse_ip = SmartInputPoint.new(tool)
+
+      @box_bounds = tool.bxf_model.bounds
+
+    end
+
+    # -- STATE --
+
+    def get_state_status(state)
+      PLUGIN.get_i18n_string("tool.smart_#{@tool.get_stripped_name}.action_#{@action}_status") + '.'
+    end
+
+    # -----
+
+    def onToolCancel(tool, reason, view)
+      super
+      tool.callback.call(true, nil)
+    end
+
+    def onToolMouseMove(tool, flags, x, y, view)
+      return true if super
+
+      @mouse_ip.pick(view, x, y)
+
+      tool.clear_all_3d
+
+      _preview(view)
+
+      view.tooltip = @mouse_ip.tooltip
+      view.invalidate
+
+    end
+
+    def onToolMouseLeave(tool, view)
+      tool.clear_all_3d
+      @mouse_ip.clear
+      view.tooltip = ''
+      super
+    end
+
+    def onToolLButtonUp(tool, flags, x, y, view)
+      t = _get_transformation
+      tool.callback.call(false, t * Geom::Transformation.translation(@mouse_ip.position.transform(t.inverse)))
+    end
+
+    # -----
+
+    def draw(view)
+      super
+      @mouse_ip.draw(view) if @mouse_ip.valid?
+    end
+
+    # -----
+
+    private
+
+    def _get_transformation
+      Geom::Transformation.axes(ORIGIN.transform(_get_edit_transformation), _get_active_x_axis, _get_active_y_axis, _get_active_z_axis) * ImportersBxf2ImportWorker::NODE_UP_TRANSFORM
+    end
+
+    def _preview(view)
+
+      t = _get_transformation
+      ti = t.inverse
+
+      p = @mouse_ip.position.transform(ti)
+
+      k_box = Kuix::BoxMotif3d.new
+      k_box.bounds.copy!(@box_bounds)
+      k_box.bounds.origin.copy!(p)
+      k_box.line_width = 1.0
+      k_box.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+      k_box.color = Kuix::COLOR_BLACK
+      k_box.transformation = t
+      @tool.append_3d(k_box)
+
+      k_box = Kuix::BoxFillMotif3d.new
+      k_box.bounds.copy!(@box_bounds)
+      k_box.bounds.origin.copy!(p)
+      k_box.color = ColorUtils.color_translucent(ImportersBxf2ImportWorker::BLUM_COLOR, 0.3)
+      k_box.transformation = t
+      @tool.append_3d(k_box)
 
     end
 

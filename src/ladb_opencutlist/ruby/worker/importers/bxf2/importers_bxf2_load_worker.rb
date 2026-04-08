@@ -77,7 +77,7 @@ module Ladb::OpenCutList
         return { errors: [ [ 'tab.importers.bxf2.error.failed_to_load_bxf2_file', { :error => e.message } ] ] }
       end
 
-      [ response, bxf_model, @path ]
+      [ response, bxf_model ]
     end
 
     # -----

@@ -380,6 +380,9 @@
             return;
         }
 
+        // Close all Noty
+        Noty.closeAll();
+
         let $tab = this.$tabs[tabName];
         let isFreshTab = false;
         if (tabName !== this.activeTabName) {
@@ -436,9 +439,6 @@
             }
 
         }
-
-        // Close all Noty
-        Noty.closeAll();
 
         // Trigger event
         if ($tab) {

@@ -7,7 +7,8 @@ module Ladb::OpenCutList
 
     class BxfModel
 
-      attr_accessor :version,
+      attr_accessor :path,
+                    :version,
                     :date,
                     :author,
                     :copyright,
@@ -21,6 +22,8 @@ module Ladb::OpenCutList
                     :library
 
       def initialize
+
+        @path = nil
 
         @version = nil
         @date = nil
@@ -41,7 +44,12 @@ module Ladb::OpenCutList
       def self.load(file_path)
         doc = REXML::Document.new(File.open(file_path))
         bxf_elm = doc.elements['bxf']
-        return BxfModel.new.read(bxf_elm) if bxf_elm
+        model = nil
+        if bxf_elm
+          model = BxfModel.new.read(bxf_elm)
+          model.path = file_path
+        end
+        model
       end
 
       def read(bxf_elm)
@@ -87,6 +95,10 @@ module Ladb::OpenCutList
         self
       end
 
+      def bounds
+        self.scene.bounds
+      end
+
     end
 
     class BxfModelable
@@ -99,6 +111,10 @@ module Ladb::OpenCutList
 
       def read(data)
         self
+      end
+
+      def bounds
+        Geom::BoundingBox.new
       end
 
       def inspect
@@ -779,6 +795,10 @@ module Ladb::OpenCutList
         super
       end
 
+      def bounds
+        @extent.to_b
+      end
+
     end
 
     class BxfGeometryPrism < BxfGeometry
@@ -806,6 +826,11 @@ module Ladb::OpenCutList
         super
       end
 
+      def bounds
+        z_value = self.z_value.to_l
+        super.add(self.base_points.map(&:to_p).concat(self.base_points.map(&:to_p.offset(Z_AXIS, z_value))))
+      end
+
     end
 
     class BxfGeometryCylinder < BxfGeometry
@@ -830,6 +855,16 @@ module Ladb::OpenCutList
         self.z_value.read(z_value_elm.text) if z_value_elm
 
         super
+      end
+
+      def bounds
+        radius = self.radius.to_l
+        z_value = self.z_value.to_l
+        super.add(
+          ORIGIN.offset(X_AXIS + Y_AXIS, -radius) ,
+          ORIGIN.offset(X_AXIS + Y_AXIS, radius) ,
+          ORIGIN.offset(Z_AXIS, z_value)
+        )
       end
 
     end
@@ -1055,6 +1090,10 @@ module Ladb::OpenCutList
         super
       end
 
+      def bounds
+        self.nodes.bounds
+      end
+
     end
 
     class BxfNodes < BxfModelable
@@ -1079,6 +1118,10 @@ module Ladb::OpenCutList
 
       def each(&block)
         @nodes.each(&block)
+      end
+
+      def bounds
+        super.add(@nodes.map(&:bounds))
       end
 
     end
@@ -1137,6 +1180,12 @@ module Ladb::OpenCutList
         self.nodes.read(nodes_elm) if nodes_elm
 
         super
+      end
+
+      def bounds
+        b = super.add(self.cabinet_group_links.map(&:bounds) + self.cabinet_links.map(&:bounds) + self.container_links.map(&:bounds) + self.function_unit_links.map(&:bounds) + self.nodes.map(&:bounds))
+        t = self.transformations.to_t
+        Geom::BoundingBox.new.add(b.min.transform(t), b.max.transform(t))
       end
 
     end
@@ -1235,6 +1284,10 @@ module Ladb::OpenCutList
         @cabinet_groups.each(&block)
       end
 
+      def bounds
+        super.add(@cabinet_groups.map(&:bounds))
+      end
+
     end
 
     class BxfCabinetGroup < BxfReferenceableObject
@@ -1255,6 +1308,10 @@ module Ladb::OpenCutList
         end
 
         super
+      end
+
+      def bounds
+        super.add(self.cabinet_links.map(&:bounds))
       end
 
     end
@@ -1289,6 +1346,10 @@ module Ladb::OpenCutList
 
       def each(&block)
         @cabinets.each(&block)
+      end
+
+      def bounds
+        super.add(@cabinets.map(&:bounds))
       end
 
     end
@@ -1330,6 +1391,10 @@ module Ladb::OpenCutList
         super
       end
 
+      def bounds
+        super.add(self.part_links.map(&:bounds) + self.container_links.map(&:bounds))
+      end
+
     end
 
 
@@ -1339,12 +1404,30 @@ module Ladb::OpenCutList
         model.library.cabinet_groups[self.reference_id]
       end
 
+      def bounds
+        if (cabinet_group = self.cabinet_group)
+          b = cabinet_group.bounds
+          t = self.transformations.to_t
+          return super.add(b.min.transform(t), b.max.transform(t))
+        end
+        super
+      end
+
     end
 
     class BxfCabinetLink < BxfTransformableObjectLink
 
       def cabinet
         model.library.cabinets[self.reference_id]
+      end
+
+      def bounds
+        if (cabinet = self.cabinet)
+          b = cabinet.bounds
+          t = self.transformations.to_t
+          return super.add(b.min.transform(t), b.max.transform(t))
+        end
+        super
       end
 
     end
@@ -1384,6 +1467,10 @@ module Ladb::OpenCutList
         @containers.each(&block)
       end
 
+      def bounds
+        super.add(@containers.map(&:bounds))
+      end
+
     end
 
     class BxfContainer < BxfReferenceableObject
@@ -1416,6 +1503,11 @@ module Ladb::OpenCutList
         super
       end
 
+      def bounds
+        return self.boundary.bounds if self.boundary
+        super
+      end
+
     end
 
 
@@ -1423,6 +1515,15 @@ module Ladb::OpenCutList
 
       def container
         model.library.containers[self.reference_id]
+      end
+
+      def bounds
+        if (container = self.container)
+          b = container.bounds
+          t = self.transformations.to_t
+          return super.add(b.min.transform(t), b.max.transform(t))
+        end
+        super
       end
 
     end
@@ -1460,6 +1561,10 @@ module Ladb::OpenCutList
 
       def each(&block)
         @parts.each(&block)
+      end
+
+      def bounds
+        super.add(@parts.map(&:bounds))
       end
 
     end
@@ -1518,6 +1623,11 @@ module Ladb::OpenCutList
         super
       end
 
+      def bounds
+        return self.geometry.bounds if self.geometry
+        super
+      end
+
     end
 
 
@@ -1525,6 +1635,15 @@ module Ladb::OpenCutList
 
       def part
         model.library.parts[self.reference_id]
+      end
+
+      def bounds
+        if (part = self.part)
+          b = part.bounds
+          t = self.transformations.to_t
+          return super.add(b.min.transform(t), b.max.transform(t))
+        end
+        super
       end
 
     end
@@ -1562,6 +1681,10 @@ module Ladb::OpenCutList
 
       def each(&block)
         @function_units.each(&block)
+      end
+
+      def bounds
+        super.add(@function_units.map(&:bounds))
       end
 
     end
@@ -1603,6 +1726,10 @@ module Ladb::OpenCutList
         super
       end
 
+      def bounds
+        super.add(self.part_links.map(&:bounds))
+      end
+
     end
 
 
@@ -1610,6 +1737,15 @@ module Ladb::OpenCutList
 
       def function_unit
         model.library.function_units[self.reference_id]
+      end
+
+      def bounds
+        if (function_unit = self.function_unit)
+          b = function_unit.bounds
+          t = self.transformations.to_t
+          return super.add(b.min.transform(t), b.max.transform(t))
+        end
+        super
       end
 
     end

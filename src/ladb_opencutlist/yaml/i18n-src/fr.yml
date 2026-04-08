@@ -2494,3 +2494,7 @@ tool:
       not_part: Cette face ne fait pas partie d'une pièce (composant)
       not_flat_face: Cette surface n'est pas plane
       incompatible_active_path: Le chemin actif ne permet pas d'exporter cette pièce
+  smart_importers_bxf2:
+    title: Importer
+    action_0: $t(tab.importers.bxf2.title)
+    action_0_status: Placez la configuration

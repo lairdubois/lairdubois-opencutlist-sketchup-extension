@@ -94,7 +94,7 @@ module Ladb::OpenCutList
     DOCS_URL = 'https://www.lairdubois.fr/opencutlist/docs'
     DOCS_DEV_URL = 'https://www.lairdubois.fr/opencutlist/docs-dev'
 
-    TABS_STRIPPED_NAMES = %w[materials cutlist outliner importer]
+    TABS_STRIPPED_NAMES = %w[materials cutlist outliner importers_csv importers_bxf2]
     if IS_RBZ
       SMART_TOOLS_STRIPPED_NAMES = %w[draw handle reshape paint axes export]
     else
@@ -299,7 +299,7 @@ module Ladb::OpenCutList
       section = section.to_s unless section.is_a?(String)
       cache_key = "#{dictionary}_#{section}"
 
-      unless @app_defaults_cache && @app_defaults_cache.has_key?(cache_key)
+      unless @app_defaults_cache && @app_defaults_cache.key?(cache_key)
 
         file_path = File.join(PLUGIN_DIR, 'json', 'defaults', "#{dictionary}.json")
         begin
@@ -313,14 +313,18 @@ module Ladb::OpenCutList
         model_unit_is_metric = DimensionUtils.model_unit_is_metric
 
         defaults = {}
-        if data.has_key?(section)
+        if data.key?(section)
           data = data[section]
           data.each do |key, value|
             if value.is_a?(Hash)
-              if model_unit_is_metric
-                value = value['metric'] if value.has_key?('metric')
+              if value.key?('i18n')
+                value = get_i18n_string(value['i18n'])
               else
-                value = value['imperial'] if value.has_key?('imperial')
+                if model_unit_is_metric
+                  value = value['metric'] if value.key?('metric')
+                else
+                  value = value['imperial'] if value.key?('imperial')
+                end
               end
             end
             defaults.store(key, value)
@@ -344,7 +348,7 @@ module Ladb::OpenCutList
 
     def set_attribute(entity, key, value, dictionary = ATTRIBUTE_DICTIONARY)
       if value.is_a?(Hash) || value.is_a?(Array)
-        # Encode hash or array to json (because attribute don't support hashs)
+        # Encode hash or array to json (because attribute doesn't support hashs)
         value = value.to_json
       end
       entity.set_attribute(dictionary, key, value)
@@ -387,9 +391,9 @@ module Ladb::OpenCutList
         processed_values = {}
         values.keys.each do |key|
 
-          storage = storages.has_key?(key) ? storages[key] : PRESETS_STORAGE_ALL
+          storage = storages.key?(key) ? storages[key] : PRESETS_STORAGE_ALL
 
-          if app_defaults.has_key?(key) && # Only if exists in app defaults
+          if app_defaults.key?(key) && # Only if exists in app defaults
               (storage == PRESETS_STORAGE_ALL ||
               (is_global && storage == PRESETS_STORAGE_GLOBAL_ONLY) ||
               (!is_global && storage == PRESETS_STORAGE_MODEL_ONLY))
@@ -426,7 +430,7 @@ module Ladb::OpenCutList
       contains_default_values = false
       if default_values
         default_values.keys.each do |key|
-          if values.has_key?(key)
+          if values.key?(key)
 
             cleaners = get_app_defaults(dictionary, '_cleaners', false)
             case cleaners[key]
@@ -447,7 +451,7 @@ module Ladb::OpenCutList
 
                     # Remove old properties
                     h_custom_properties.each { |property, sorter|
-                      next unless h_default_properties.has_key?(property) && !sorter.nil?
+                      next unless h_default_properties.key?(property) && !sorter.nil?
                       sorters.push(sorter)
                       h_default_properties.delete(property)
                     }
@@ -511,8 +515,8 @@ module Ladb::OpenCutList
       read_global_presets if @global_presets_cache.nil?
 
       # Create the preset tree if it doesn't exist
-      @global_presets_cache[dictionary] = {} unless @global_presets_cache.has_key?(dictionary)
-      @global_presets_cache[dictionary][section] = {} unless @global_presets_cache[dictionary].has_key?(section)
+      @global_presets_cache[dictionary] = {} unless @global_presets_cache.key?(dictionary)
+      @global_presets_cache[dictionary][section] = {} unless @global_presets_cache[dictionary].key?(section)
 
       if values.nil?
 
@@ -560,7 +564,7 @@ module Ladb::OpenCutList
       else
         default_values = get_global_preset(dictionary, nil, section)
       end
-      if @global_presets_cache.has_key?(dictionary) && @global_presets_cache[dictionary].has_key?(section) && @global_presets_cache[dictionary][section].has_key?(name)
+      if @global_presets_cache.key?(dictionary) && @global_presets_cache[dictionary].key?(section) && @global_presets_cache[dictionary][section].key?(name)
 
         # Preset exists, synchronize returned values with default_values data and structure
         values, contains_default_values = _merge_preset_values_with_defaults(dictionary, @global_presets_cache[dictionary][section][name], default_values)
@@ -582,7 +586,7 @@ module Ladb::OpenCutList
 
     def list_global_preset_sections(dictionary)
       read_global_presets if @global_presets_cache.nil?
-      return @global_presets_cache[dictionary].keys.sort if @global_presets_cache.has_key?(dictionary)
+      return @global_presets_cache[dictionary].keys.sort if @global_presets_cache.key?(dictionary)
       []
     end
 
@@ -590,7 +594,7 @@ module Ladb::OpenCutList
       section = '0' if section.nil?
       section = section.to_s unless section.is_a?(String)
       read_global_presets if @global_presets_cache.nil?
-      return @global_presets_cache[dictionary][section].keys.select { |k, v| k != PRESETS_DEFAULT_NAME }.sort if @global_presets_cache.has_key?(dictionary) && @global_presets_cache[dictionary].has_key?(section)
+      return @global_presets_cache[dictionary][section].keys.select { |k, v| k != PRESETS_DEFAULT_NAME }.sort if @global_presets_cache.key?(dictionary) && @global_presets_cache[dictionary].key?(section)
       []
     end
 
@@ -641,8 +645,8 @@ module Ladb::OpenCutList
       read_model_presets if @model_presets_cache.nil?
 
       # Create the preset tree if it doesn't exist
-      @model_presets_cache[dictionary] = {} unless @model_presets_cache.has_key?(dictionary)
-      @model_presets_cache[dictionary][section] = {} unless @model_presets_cache[dictionary].has_key?(section)
+      @model_presets_cache[dictionary] = {} unless @model_presets_cache.key?(dictionary)
+      @model_presets_cache[dictionary][section] = {} unless @model_presets_cache[dictionary].key?(section)
 
       if values.nil?
 
@@ -679,7 +683,7 @@ module Ladb::OpenCutList
       read_model_presets if @model_presets_cache.nil?
 
       default_values = get_global_preset(dictionary, nil, app_defaults_section)
-      if @model_presets_cache.has_key?(dictionary) && @model_presets_cache[dictionary].has_key?(section)
+      if @model_presets_cache.key?(dictionary) && @model_presets_cache[dictionary].key?(section)
 
         # Preset exists, synchronize returned values with default_values data and structure
         values, contains_default_values = _merge_preset_values_with_defaults(dictionary, @model_presets_cache[dictionary][section], default_values)
@@ -701,7 +705,7 @@ module Ladb::OpenCutList
 
     def list_model_preset_sections(dictionary)
       read_model_presets if @model_presets_cache.nil?
-      return @model_presets_cache[dictionary].keys.sort if @model_presets_cache.has_key?(dictionary)
+      return @model_presets_cache[dictionary].keys.sort if @model_presets_cache.key?(dictionary)
       []
     end
 
@@ -791,7 +795,7 @@ module Ladb::OpenCutList
       menu = UI.menu
       submenu = menu.add_submenu(get_i18n_string('core.menu.submenu'))
       TABS_STRIPPED_NAMES.each do |stripped_name|
-        submenu.add_item(get_i18n_string("tab.#{stripped_name}.title")) {
+        submenu.add_item(get_i18n_string("tab.#{stripped_name.gsub('_', '.')}.title")) {
           show_tabs_dialog(stripped_name) if _assert_not_zzz
         }
       end
@@ -1212,13 +1216,13 @@ module Ladb::OpenCutList
       write_default(SETTINGS_KEY_DIALOG_PRINT_MARGIN, print_margin) if persist
     end
 
-    def execute_tabs_dialog_command_on_tab(tab_name, command, parameters = nil, callback = nil)
+    def execute_tabs_dialog_command_on_tab(tab_name, command, parameters = nil, callback = nil, keep_tab_in_background = false)
 
       show_tabs_dialog(nil, true) do
         # parameters and callback must be formatted as JS code
         if tab_name and command
-          @tabs_dialog.bring_to_front
-          @tabs_dialog.execute_script("$('body').ladbDialogTabs('executeCommandOnTab', [ '#{tab_name}', '#{command}', #{parameters}, #{callback} ]);")
+          @tabs_dialog.bring_to_front unless keep_tab_in_background
+          @tabs_dialog.execute_script("$('body').ladbDialogTabs('executeCommandOnTab', [ '#{tab_name}', '#{command}', #{parameters}, #{callback}, #{keep_tab_in_background} ]);")
         end
       end
 

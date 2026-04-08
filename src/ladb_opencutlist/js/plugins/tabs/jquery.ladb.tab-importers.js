@@ -190,12 +190,7 @@
                         if (response.errors.length > 0) {
                             that.dialog.notifyErrors(response.errors);
                         } else {
-
-                            that.dialog.notifySuccess(i18next.t('tab.importers.default.success.imported_title'));
-
-                            // Close
-                            that.close();
-
+                            that.dialog.minimize();
                         }
 
                         // Finish progress feedback
@@ -270,6 +265,15 @@
 
         this.registerCommand('load', function (parameters) {
             that.openBxf2(parameters.path);
+        });
+        this.registerCommand('import_callback', function (parameters) {
+            if (!parameters.cancelled) {
+                if (Array.isArray(parameters.errors) && parameters.errors.length > 0) {
+                    that.dialog.notifyErrors(parameters.errors);
+                } else {
+                    that.close();
+                }
+            }
         });
 
     };
