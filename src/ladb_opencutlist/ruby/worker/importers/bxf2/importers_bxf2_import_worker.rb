@@ -155,6 +155,10 @@ module Ladb::OpenCutList
                                                            _draw_cylinder(definition.entities, part.geometry)
                                                          end
 
+                                                         da = DefinitionAttributes.new(definition)
+                                                         da.orientation_locked_on_axis = true
+                                                         da.write_to_attributes
+
                                                          # Process machinings
                                                          _process_inherited_machinings(part.inherited_machinings, definition.entities)
                                                          _process_machining_group_links(part.machining_group_links, definition.entities)
@@ -658,8 +662,8 @@ module Ladb::OpenCutList
         material = Sketchup.active_model.materials.add(name)
         material.color = color
         material.alpha = color.alpha / 255.0  if color
-        ma = MaterialAttributes.new(material)
-        ma.type = MaterialAttributes::TYPE_SHEET_GOOD
+
+        ma = MaterialAttributes.new(material, false, MaterialAttributes::TYPE_SHEET_GOOD)
         ma.write_to_attributes
 
       end

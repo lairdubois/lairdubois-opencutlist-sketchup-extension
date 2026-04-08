@@ -33,9 +33,9 @@
     @@cached_uuids = {}
     @@used_uuids = []
 
-    def initialize(material, force_unique_uuid = false)
+    def initialize(material, force_unique_uuid = false, defaults_type = nil)
       @material = material
-      read_from_attributes(force_unique_uuid)
+      read_from_attributes(force_unique_uuid, defaults_type)
     end
 
     # -----
@@ -495,7 +495,7 @@
 
     # -----
 
-    def read_from_attributes(force_unique_uuid = false)
+    def read_from_attributes(force_unique_uuid = false, defaults_type = nil)
       if @material
 
         # Try to retrieve uuid from cached UUIDs
@@ -512,9 +512,9 @@
           end
         end
 
-        defaults = PLUGIN.get_app_defaults(DEFAULTS_DICTIONARY, @type)
+        defaults = PLUGIN.get_global_preset(DEFAULTS_DICTIONARY, defaults_type, defaults_type)
 
-        @type = MaterialAttributes.valid_type(PLUGIN.get_attribute(@material, 'type', TYPE_UNKNOWN))
+        @type = MaterialAttributes.valid_type(PLUGIN.get_attribute(@material, 'type', defaults_type))
         @description = PLUGIN.get_attribute(@material, 'description', nil)
         @url = PLUGIN.get_attribute(@material, 'url', nil)
         @thickness = PLUGIN.get_attribute(@material, 'thickness', defaults['thickness'])
