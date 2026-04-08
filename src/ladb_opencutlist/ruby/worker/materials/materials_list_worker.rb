@@ -45,6 +45,7 @@ module Ladb::OpenCutList
           :edge_material_count => 0,
           :hardware_material_count => 0,
           :veneer_material_count => 0,
+          :machining_material_count => 0,
           :untyped_material_count => 0,
           :materials => []
       }
@@ -110,6 +111,8 @@ module Ladb::OpenCutList
             response[:hardware_material_count] += 1
           when MaterialAttributes::TYPE_VENEER
             response[:veneer_material_count] += 1
+          when MaterialAttributes::TYPE_MACHINING
+            response[:machining_material_count] += 1
           else
             response[:untyped_material_count] += 1
           end
@@ -133,6 +136,7 @@ module Ladb::OpenCutList
         response[:edge_material_count],
         response[:hardware_material_count],
         response[:veneer_material_count],
+        response[:machining_material_count],
         response[:untyped_material_count]
       ].select { |v| v > 0 }.length > 1
 
