@@ -20,6 +20,9 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
+### 2026-03-08
+ * Improved BXF2 importer by adding an interactive placement tool
+ * Updated translations
 ### 2026-03-07
  * Added BXF2 importer UI
 ### 2026-03-03

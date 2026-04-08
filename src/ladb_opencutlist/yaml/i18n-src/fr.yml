@@ -2010,7 +2010,7 @@ tab:
           Vous êtes sur le point d'importer une configuration de **{{ count }} caisson** dans le modèle.
         info_0_plural: |
           Vous êtes sur le point d'importer une configuration de **{{ count }} caissons** dans le modèle.
-        info_1: Cette configuration va être placée sur la scène principale, à l'origine.
+        info_1: Vous allez avoir le choix de définir son emplacement dans la modèle actif.
         info_2: |
           Personnalisez les options.
           Cliquez sur **Importer** pour confirmer l'action.
