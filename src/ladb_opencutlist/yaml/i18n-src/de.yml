@@ -1915,6 +1915,7 @@ tab:
       open_file: "Datei mit Erweiterung {{ extension }} öffnen"
       import_to_model: Ins Modell importieren
       error:
+        no_data: Keine Daten zu importieren.
         no_model: Kein Modell ist offen. Teile können nicht ins Leere importiert werden ;)
         file_not_found: "Datei nicht gefunden: **{{ filename }}**"
         bad_extension: "Die Datei *{{ filename }}* hat nicht die erforderliche Dateiendung (**{{ extensions }}**)."

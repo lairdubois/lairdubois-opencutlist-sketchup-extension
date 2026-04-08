@@ -1915,6 +1915,7 @@ tab:
       open_file: "Open a file {{ extension }}"
       import_to_model: Import into model
       error:
+        no_data: No data to import.
         no_model: No model is open. It is impossible to import parts into the void ;)
         file_not_found: "File not found : **{{ filename }}**"
         bad_extension: "The file *{{ filename }}* does not have the required extension (**{{ extensions }}**)."
