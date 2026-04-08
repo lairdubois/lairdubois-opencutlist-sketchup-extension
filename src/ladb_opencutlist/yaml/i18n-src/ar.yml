@@ -116,7 +116,7 @@ core:
       smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
-      smart_join: ""
+      smart_join: $t(core.toolbar.command.smart_join)
       smart_export: $t(core.toolbar.command.smart_export)
       reset_dialog_position: أعد تعيين موضع النافذة
   toolbar:
@@ -129,7 +129,7 @@ core:
       smart_reshape: إعادة تشكيل القِطع
       smart_paint: اصبغ القِطع
       smart_axes: وجِّه القطع
-      smart_join: ""
+      smart_join: تجميع القِطع
       smart_export: صدّر القِطع
   messagebox:
     dir_override: |
@@ -745,7 +745,7 @@ tab:
       type_4: $t(tab.materials.type_4)
       type_5: $t(tab.materials.type_5)
       type_6: $t(tab.materials.type_6)
-      type_7: ""
+      type_7: $t(tab.materials.type_7)
       type_-1: $t(default.cut_plural)
       tooltip:
         incompatible_unit: الوحدة غير متوافقة مع خيارات تثمين الخامة
@@ -1077,7 +1077,7 @@ tab:
       option_irregular_allowed_rotations_0: لا شيء
       option_irregular_allowed_rotations_90: خطوة 90°
       option_irregular_allowed_rotations_180: خطوة 180°
-      option_irregular_allowed_rotations_free: ""
+      option_irregular_allowed_rotations_free: حر
       option_irregular_allow_mirroring: الانعكاس مسموح
       option_irregular_allow_mirroring_help: |
         يحدد ما إذا كان تطبيق الانعكاس على القطعة مسموحًا أثناء وضعها
@@ -1576,7 +1576,7 @@ tab:
     type_4: شريط حاشية
     type_5: عتاد
     type_6: قشرة الخشب
-    type_7: ""
+    type_7: التشغيل
     tooltip:
       type_0: "'$t(tab.materials.type_0)' نوع الخامة"
       type_1: "'$t(tab.materials.type_1)' نوع الخامة"
@@ -1585,7 +1585,7 @@ tab:
       type_4: "'$t(tab.materials.type_4)' نوع الخامة"
       type_5: "'$t(tab.materials.type_5)' نوع الخامة"
       type_6: "'$t(tab.materials.type_6)' نوع الخامة"
-      type_7: ""
+      type_7: نوع الخامة '$t(tab.materials.type_7)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: اتجاه تعرّق الألياف
@@ -1912,19 +1912,24 @@ tab:
     obsolete_base: "CSV لتبقى في وضع المزامنة ، يجب عليك إعادة تحميل ملف الـ "
   importers:
     default:
-      open_file: ""
+      open_file: "افتح ملفا {{ extension }}"
       import_to_model: استيراد إلى النموذج
       error:
-        no_model: ""
+        no_data: ""
+        no_model: لا يوجد نموذج مفتوح. يستحيل استيراد القِطع في العدم ;)
         file_not_found: "الملف غير موجود : **{{ filename }}**"
-        bad_extension: ""
-        failed_to_import: ""
+        bad_extension: "الملف *{{ filename }}* لا يحتوي على الامتداد (**{{ extensions }}**) المطلوب"
+        failed_to_import: فشل الاستيراد
       success:
         imported_title: تم الاستيراد
     csv:
-      label: ""
+      label: CSV
       title: استيراد القطع
       help: |
+        تسمح لك هذه الصفحة باستيراد قطع (محددة بمربع إحاطة) إلى نموذجك عبر ملف [CSV](https://ar.wikipedia.org/wiki/%D9%82%D9%8A%D9%85_%D9%85%D9%81%D8%B5%D9%88%D9%84%D8%A9_%D8%A8%D9%81%D9%88%D8%A7%D8%B5%D9%84)
+        يمكنك عندها الاستفادة من ميزات *OpenCutList*من أجل القطع التي جرى إنشاؤها ببرنامج آخر غير *SketchUp*.
+
+        اضغط على الزر **فتح ملف CSV** للبدء.
       load:
         title: "CSV تحميل ملف "
         info_0: |
@@ -1990,50 +1995,59 @@ tab:
         imported_body_plural: "{{ count }} قِطع / قطعة قد استوردت بنجاح!"
       obsolete_base: "CSV لتبقى في وضع المزامنة ، يجب عليك إعادة تحميل ملف الـ "
     bxf2:
-      label: ""
-      title: ""
-      help: |
+      label: BXF2
+      title: استورد إعدادات Blum بلوم
+      help: |+
+        تسمح لك هذه الصفحة باستيراد توصيفات الإعدادات عبر ملف BXF2 إلى نموذجك 
+        يمكن إنشاء ملفات BXF2 باستعمال [Cabinet Configurator](https://e-services.blum.com/) الخاص ببلوم [Blum](https://www.blum.com)
+        انقر على **فتح ملف BXF2** للبدء.
+
       load:
-        title: ""
+        title: "BXF2 تحميل ملف "
       import:
-        title: ""
+        title: استيراد الإعداد إلى النموذج
         info_0: |
+          أنت مقبل على استيراد إعداد من أجل **{{ count }} خزانة** داخل النموذج
         info_0_plural: |
-        info_1: ""
+          أنت مقبل على استيراد إعداد من أجل **{{ count }} خزانة / خزائن** داخل النموذج
+        info_1: سيوضع هذا الإعداد داخل المشهد الرئيسي ، في نقطة المبدإ
         info_2: |
-        option_part_wood_material_name: ""
-        option_part_wood_material_name_help: ""
-        option_part_aluminium_material_name: ""
-        option_part_aluminium_material_name_help: ""
-        option_part_glass_material_name: ""
-        option_part_glass_material_name_help: ""
-        option_front_part_layer_name: ""
-        option_front_part_layer_name_help: ""
-        option_machining_material_name: ""
-        option_machining_material_name_help: ""
-        option_machining_layer_name: ""
-        option_machining_layer_name_help: ""
-        option_hardware_material_name: ""
-        option_hardware_material_name_help: ""
-        option_hardware_layer_name: ""
-        option_hardware_layer_name_help: ""
+          خصص الخيارات
+          انقر على **استيراد** لتأكيد العمل
+        option_part_wood_material_name: خامة القِطع الخشبية
+        option_part_wood_material_name_help: مساعدة - خامة القِطع الخشبية
+        option_part_aluminium_material_name: خامة قِطع الألمنيوم
+        option_part_aluminium_material_name_help: مساعدة - خامة قِطع الألمنيوم
+        option_part_glass_material_name: خامة القِطع الزجاجية
+        option_part_glass_material_name_help: مساعدة - خامة القِطع الزجاجية
+        option_front_part_layer_name: وسوم الواجهات
+        option_front_part_layer_name_help: مساعدة - وسوم الواجهات
+        option_machining_material_name: خامة التشغيلات
+        option_machining_material_name_help: مساعدة - خامة التشغيلات
+        option_machining_layer_name: وسوم التشغيلات
+        option_machining_layer_name_help: مساعدة - وسوم التشغيلات
+        option_hardware_material_name: خامة الأكسسوارات
+        option_hardware_material_name_help: مساعدة - خامة الأكسسوارات
+        option_hardware_layer_name: وسوم الأكسسوارات
+        option_hardware_layer_name_help: مساعدة - وسوم الأكسسوارات
       model:
-        author: ""
-        date: ""
+        author: المؤلف
+        date: التاريخ
       cabinet:
-        list: ""
+        list: قائمة الأثاث
         description: الإسم
         width: العرض
         height: الارتفاع
-        depth: ""
+        depth: العمق
       article:
-        list: ""
+        list: قائمة المواضيع
         total_quantity: العدد
-        article_number: ""
+        article_number: المرجع
         description: تعليق وصفيّ
       error:
         failed_to_load_bxf2_file: |
-      obsolete_base: ""
+          يستحيل رفع ملف BXF2 لأن: **{{ error }}**
+      obsolete_base: " عليك إعادة رفع ملف BXF2 للبقاء في وضع المزامنة"
   tutorials:
     label: شروحات توضيحية
     title: شروحات توضيحية
@@ -2221,7 +2235,7 @@ tool:
     error:
       no_direction: يرجى تحديد اتجاه باستخدام الفأرة
       invalid_length: "الطول {{ value }} غير صالح"
-      invalid_thickness: ""
+      invalid_thickness: "السمك {{ value }} غير صالح"
       invalid_multiplicator: "المعامل {{ value }} غير صالح"
       invalid_divider: "القاسم {{ value }} غير صالح"
       invalid_offset: "الإزاحة {{ value }} غير صالحة"
@@ -2233,8 +2247,8 @@ tool:
       zero_division: "القسمة على الصفر"
       lt_min_distance: "المسافة {{ value1 }} أقل من المسافة الدنيا البالغة {{ value2 }}"
       gt_max_distance: "المسافة {{ value1 }} أكبر من المسافة القصوى {{ value2 }}"
-      locked_part: ""
-      selection_contains_locked_entities: ""
+      locked_part: هذه القِطعة مقفلة
+      selection_contains_locked_entities: يحتوي التحديد على كيانات مقفلة
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2244,7 +2258,7 @@ tool:
     state_4_status: اسحب على قِطعة مماثلة ضمن نفس المتبوع لإضافتها إلى التحديد، ثم أفلت للمواصلة
     state_5_status: مرر للإضافة إلى التحديد و أفلت للمواصلة
     state_6_status: حدد عنصرا من القائمة
-    state_7_status: ""
+    state_7_status: اضغط على قِطعة لإضافتها أو إزالتها من التحديد
     warning:
       no_active_part: أولا عليك التمرير فوق قِطعة ما
   smart_draw:
@@ -2285,10 +2299,10 @@ tool:
     action_option_options_pull_centered: ارتفاع انطلاقا من المركز
     action_option_options_pull_centered_status: توسيط الارتفاع على النقطة الأولى
     action_option_options_pull_locked_status: قفل الارتفاع على محور واحد
-    action_option_options_draw_in: ""
-    action_option_options_draw_in_0: ""
-    action_option_options_draw_in_1: ""
-    action_option_options_draw_in_status: ""
+    action_option_options_draw_in: الرسم داخل نطاق
+    action_option_options_draw_in_0: الرسم داخل العنصر النشط
+    action_option_options_draw_in_1: الرسم داخل العنصر "الأب" للقٍطعة التابعة للنقطة الأولى
+    action_option_options_draw_in_status: الرسم داخل العنصر "الأب" للقِطعة المستهدفة بواسطة النقطة الأولى
     action_option_options_ask_name: تسمية القِطع
     action_option_options_ask_name_status: إدخال تسمية القِطع يدويًا
     action_measure_locked_status: قفل على آخر قياس
@@ -2340,31 +2354,31 @@ tool:
     action_0_state_11_status: انقر لإضافة المستوي القاطع
     action_0_state_12_status: انقر على مستوٍ قاطعٍ لحذفه
     action_0_state_2_status: انقر لتأكيد التمديد أو أدخل مسافة معينة
-    action_1: ""
-    action_1_status: ""
-    action_1_state_0_status: ""
-    action_1_state_1_status: ""
+    action_1: تركيب الألواح
+    action_1_status: إنشاء مجموعة قِطع انطلاقا من مجسم مصمت مغلق
+    action_1_state_0_status: انقر فوق مجسم مصمت مغلق لتحديد الهندسة المرجعية
+    action_1_state_1_status: حدد الوجوه التي ستمدد
     # CSG = Constructive Solid Geometry
-    action_2: ""
-    action_2_status: ""
+    action_2: الهندسة الفراغية التشكيلية
+    action_2_status: إلى اللانهائية و ما بعدها
     action_option_group_thickness: السُمك
     action_option_group_stretch_measure_type: قياس
     action_option_group_axes: المحاور
-    action_option_group_paneling_joint_type: ""
+    action_option_group_paneling_joint_type: وصلة
     action_option_group_paneling_direction: الاتجاه
-    action_option_group_csg_operation: ""
+    action_option_group_csg_operation: عملية
     action_option_group_options: الخيارات
     action_option_thickness_thickness: السُمك
-    action_option_thickness_thickness_status: ""
+    action_option_thickness_thickness_status: يحدد سمك الألواح
     action_option_stretch_measure_type_outside_status: القياس من الخارج
     action_option_stretch_measure_type_offset_status: قِس الفرق
     action_option_axes_active_status: المعالجة على طول المحاور النشطة
     action_option_axes_context_status: المعالجة على طول محاور المجموعة أو العنصر الذي يحتوي على القِطعة
     action_option_axes_entity_status: المعالجة على طول محاور القطعة
-    action_option_paneling_joint_type_flat_status: ""
-    action_option_paneling_joint_type_miter_status: ""
-    action_option_paneling_direction_inward_status: ""
-    action_option_paneling_direction_outward_status: ""
+    action_option_paneling_joint_type_flat_status: وصلة طرفية
+    action_option_paneling_joint_type_miter_status: وصلة مشطوبة
+    action_option_paneling_direction_inward_status: باتجاه الداخل
+    action_option_paneling_direction_outward_status: باتجاه الخارج
     action_option_options_centred_status: توسيط العناصر الممددة
     action_option_options_make_unique_status: اجعل العناصر الممددة فريدة من نوعها
     error:
@@ -2380,7 +2394,7 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    filter_7: ""
+    filter_7: $t(tab.materials.type_7)
     action_0: لوِّن قِطعًا بأكملها
     action_0_status: انقر على قِطعة معينة لتطبق لونا على مثيلتها
     action_1: صباغة قطعةٍ
@@ -2444,9 +2458,9 @@ tool:
       not_part: المجسم المستهدف ليس قِطعة (عنصر)
       not_orientable: نوع هذه القِطعة لا يسمح بتوجيهها
   smart_join:
-    title: ""
-    action_0: "" # TODO: It's currently just for dev purposes
-    action_0_status: "" # TODO
+    title: تجميع
+    action_0: لمس-لمس # TODO: It's currently just for dev purposes
+    action_0_status: للإنجاز # TODO
   smart_export:
     title: تصدير
     action_0: صدّر قِطعة ثلاثية البعد
