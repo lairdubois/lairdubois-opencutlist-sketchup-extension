@@ -5,7 +5,17 @@ module Ladb::OpenCutList
 
   module Bxf
 
+    module BxfBoundable
+
+      def bounds
+        Geom::BoundingBox.new
+      end
+
+    end
+
     class BxfModel
+
+      include BxfBoundable
 
       attr_accessor :path,
                     :version,
@@ -111,10 +121,6 @@ module Ladb::OpenCutList
 
       def read(data)
         self
-      end
-
-      def bounds
-        Geom::BoundingBox.new
       end
 
       def inspect
@@ -1069,6 +1075,8 @@ module Ladb::OpenCutList
 
     class BxfScene < BxfModelable
 
+      include BxfBoundable
+
       attr_reader :nodes
 
       def initialize(model)
@@ -1098,6 +1106,7 @@ module Ladb::OpenCutList
 
     class BxfNodes < BxfModelable
 
+      include BxfBoundable
       include Enumerable
 
       def initialize(model)
@@ -1121,12 +1130,16 @@ module Ladb::OpenCutList
       end
 
       def bounds
-        super.add(@nodes.map(&:bounds))
+        b = super
+        if @nodes.any? && (bbs = @nodes.map(&:bounds).select(&:valid?)).any? then b.add(bbs) end
+        b
       end
 
     end
 
     class BxfNode < BxfObject
+
+      include BxfBoundable
 
       attr_reader   :transformations,
                     :cabinet_group_links,
@@ -1183,9 +1196,15 @@ module Ladb::OpenCutList
       end
 
       def bounds
-        b = super.add(self.cabinet_group_links.map(&:bounds) + self.cabinet_links.map(&:bounds) + self.container_links.map(&:bounds) + self.function_unit_links.map(&:bounds) + self.nodes.map(&:bounds))
+        b = super
+        if self.cabinet_group_links.any? && (bbs = self.cabinet_group_links.map(&:bounds).select(&:valid?)).any? then b.add(bbs) end
+        if self.cabinet_links.any? && (bbs = self.cabinet_links.map(&:bounds).select(&:valid?)).any? then b.add(bbs) end
+        if self.container_links.any? && (bbs = self.container_links.map(&:bounds).select(&:valid?)).any? then b.add(bbs) end
+        if self.function_unit_links.any? && (bbs = self.function_unit_links.map(&:bounds).select(&:valid?)).any? then b.add(bbs) end
+        if self.nodes.any? && (bbs = self.nodes.map(&:bounds).select(&:valid?)).any? then b.add(bbs) end
         t = self.transformations.to_t
-        Geom::BoundingBox.new.add(b.min.transform(t), b.max.transform(t))
+        b = Geom::BoundingBox.new.add(b.min.transform(t), b.max.transform(t))
+        b
       end
 
     end
@@ -1284,13 +1303,11 @@ module Ladb::OpenCutList
         @cabinet_groups.each(&block)
       end
 
-      def bounds
-        super.add(@cabinet_groups.map(&:bounds))
-      end
-
     end
 
     class BxfCabinetGroup < BxfReferenceableObject
+
+      include BxfBoundable
 
       attr_reader :cabinet_links
 
@@ -1311,7 +1328,9 @@ module Ladb::OpenCutList
       end
 
       def bounds
-        super.add(self.cabinet_links.map(&:bounds))
+        b = super
+        if self.cabinet_links.any? && (bbs = self.cabinet_links.map(&:bounds).select(&:valid?)).any? then b.add(bbs) end
+        b
       end
 
     end
@@ -1348,13 +1367,11 @@ module Ladb::OpenCutList
         @cabinets.each(&block)
       end
 
-      def bounds
-        super.add(@cabinets.map(&:bounds))
-      end
-
     end
 
     class BxfCabinet < BxfReferenceableObject
+
+      include BxfBoundable
 
       attr_accessor :model_key
       attr_reader   :part_links,
@@ -1381,7 +1398,7 @@ module Ladb::OpenCutList
         end
 
         cabinets_elm.elements.each('functionUnitLinks/functionUnitLink') do |elm|
-          self.part_links << BxfFunctionUnitLink.new(model).read(elm)
+          self.function_unit_links << BxfFunctionUnitLink.new(model).read(elm)
         end
 
         cabinets_elm.elements.each('containerLinks/containerLink') do |elm|
@@ -1392,13 +1409,19 @@ module Ladb::OpenCutList
       end
 
       def bounds
-        super.add(self.part_links.map(&:bounds) + self.container_links.map(&:bounds))
+        b = super
+        if self.part_links.any? && (bbs = self.part_links.map(&:bounds).select(&:valid?)).any? then b.add(bbs) end
+        if self.function_unit_links.any? && (bbs = self.function_unit_links.map(&:bounds).select(&:valid?)).any? then b.add(bbs) end
+        if self.container_links.any? && (bbs = self.container_links.map(&:bounds).select(&:valid?)).any? then b.add(bbs) end
+        b
       end
 
     end
 
 
     class BxfCabinetGroupLink < BxfTransformableObjectLink
+
+      include BxfBoundable
 
       def cabinet_group
         model.library.cabinet_groups[self.reference_id]
@@ -1417,13 +1440,14 @@ module Ladb::OpenCutList
 
     class BxfCabinetLink < BxfTransformableObjectLink
 
+      include BxfBoundable
+
       def cabinet
         model.library.cabinets[self.reference_id]
       end
 
       def bounds
-        if (cabinet = self.cabinet)
-          b = cabinet.bounds
+        if (cabinet = self.cabinet) && (b = cabinet.bounds).valid?
           t = self.transformations.to_t
           return super.add(b.min.transform(t), b.max.transform(t))
         end
@@ -1467,13 +1491,11 @@ module Ladb::OpenCutList
         @containers.each(&block)
       end
 
-      def bounds
-        super.add(@containers.map(&:bounds))
-      end
-
     end
 
     class BxfContainer < BxfReferenceableObject
+
+      include BxfBoundable
 
       attr_accessor :model_key,
                     :boundary
@@ -1504,8 +1526,10 @@ module Ladb::OpenCutList
       end
 
       def bounds
-        return self.boundary.bounds if self.boundary
-        super
+        b = super
+        if self.function_unit_links.any? && (bbs = self.function_unit_links.map(&:bounds).select(&:valid?)).any? then b.add(bbs) end
+        b.add(self.boundary.bounds) if self.boundary
+        b
       end
 
     end
@@ -1513,13 +1537,14 @@ module Ladb::OpenCutList
 
     class BxfContainerLink < BxfZoneLink
 
+      include BxfBoundable
+
       def container
         model.library.containers[self.reference_id]
       end
 
       def bounds
-        if (container = self.container)
-          b = container.bounds
+        if (container = self.container) && (b = container.bounds).valid?
           t = self.transformations.to_t
           return super.add(b.min.transform(t), b.max.transform(t))
         end
@@ -1563,13 +1588,11 @@ module Ladb::OpenCutList
         @parts.each(&block)
       end
 
-      def bounds
-        super.add(@parts.map(&:bounds))
-      end
-
     end
 
     class BxfPart < BxfReferenceableObject
+
+      include BxfBoundable
 
       attr_accessor :model_key,
                     :geometry,
@@ -1633,13 +1656,14 @@ module Ladb::OpenCutList
 
     class BxfPartLink < BxfZoneLink
 
+      include BxfBoundable
+
       def part
         model.library.parts[self.reference_id]
       end
 
       def bounds
-        if (part = self.part)
-          b = part.bounds
+        if (part = self.part) && (b = part.bounds).valid?
           t = self.transformations.to_t
           return super.add(b.min.transform(t), b.max.transform(t))
         end
@@ -1683,13 +1707,11 @@ module Ladb::OpenCutList
         @function_units.each(&block)
       end
 
-      def bounds
-        super.add(@function_units.map(&:bounds))
-      end
-
     end
 
     class BxfFunctionUnit < BxfReferenceableObject
+
+      include BxfBoundable
 
       attr_accessor :model_key
       attr_reader   :article_links,
@@ -1727,7 +1749,9 @@ module Ladb::OpenCutList
       end
 
       def bounds
-        super.add(self.part_links.map(&:bounds))
+        b = super
+        if self.part_links.any? && (bbs = self.part_links.map(&:bounds).select(&:valid?)).any? then b.add(bbs) end
+        b
       end
 
     end
@@ -1735,13 +1759,14 @@ module Ladb::OpenCutList
 
     class BxfFunctionUnitLink < BxfZoneLink
 
+      include BxfBoundable
+
       def function_unit
         model.library.function_units[self.reference_id]
       end
 
       def bounds
-        if (function_unit = self.function_unit)
-          b = function_unit.bounds
+        if (function_unit = self.function_unit) && (b = function_unit.bounds).valid?
           t = self.transformations.to_t
           return super.add(b.min.transform(t), b.max.transform(t))
         end

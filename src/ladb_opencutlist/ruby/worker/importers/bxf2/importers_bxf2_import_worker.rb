@@ -54,8 +54,11 @@ module Ladb::OpenCutList
       model = Sketchup.active_model
       return { :errors => [ 'tab.importers.default.error.no_model' ] } unless model
 
-      model.tools.push_tool(ImportersBxf2PlaceTool.new(@bxf_model) { |cancelled, transformation = IDENTITY|
+      model.select_tool(ImportersBxf2PlaceTool.new(@bxf_model) { |cancelled, transformation = IDENTITY|
         if cancelled
+
+          # Deactivate tool
+          model.select_tool(nil)
 
           # Invoke dialog callback
           PLUGIN.execute_tabs_dialog_command_on_tab('importers_bxf2', 'import_callback', { cancelled: true }.to_json, nil, false)
@@ -65,8 +68,8 @@ module Ladb::OpenCutList
           # Process importation
           _import_at(transformation) do |cancelled, errors|
 
-            # Pop place tool
-            model.tools.pop_tool
+            # Deactivate tool
+            model.select_tool(nil)
 
             # Invoke dialog callback
             PLUGIN.execute_tabs_dialog_command_on_tab('importers_bxf2', 'import_callback', { errors: errors }.to_json, nil, !cancelled)
@@ -214,7 +217,11 @@ module Ladb::OpenCutList
     def _process_container_links(container_links, entities, transformation = IDENTITY)
 
       container_links.each do |container_link|
-        _process_function_unit_links(container_link.container.function_unit_links, entities, transformation * container_link.transformations.to_t)
+
+        container = container_link.container
+
+        _process_function_unit_links(container.function_unit_links, entities, transformation * container_link.transformations.to_t)
+
       end
 
     end
@@ -917,7 +924,7 @@ module Ladb::OpenCutList
 
       k_box = Kuix::BoxMotif3d.new
       k_box.bounds.copy!(@box_bounds)
-      k_box.bounds.origin.copy!(p)
+      k_box.bounds.translate!(*p)
       k_box.line_width = 1.0
       k_box.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
       k_box.color = Kuix::COLOR_BLACK
@@ -926,7 +933,7 @@ module Ladb::OpenCutList
 
       k_box = Kuix::BoxFillMotif3d.new
       k_box.bounds.copy!(@box_bounds)
-      k_box.bounds.origin.copy!(p)
+      k_box.bounds.origin.translate!(*p)
       k_box.color = ColorUtils.color_translucent(ImportersBxf2ImportWorker::BLUM_COLOR, 0.3)
       k_box.transformation = t
       @tool.append_3d(k_box)
