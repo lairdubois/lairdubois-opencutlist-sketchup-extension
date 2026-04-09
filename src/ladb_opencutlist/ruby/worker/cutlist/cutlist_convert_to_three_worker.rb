@@ -297,7 +297,7 @@ module Ladb::OpenCutList
               point = vertex.position
               point.transform!(transformation) unless transformation.nil?
 
-              # Inspired from LDraw specification : https://www.ldraw.org/article/218.html#lt5
+              # Inspired from LDraw specification: https://www.ldraw.org/article/218.html#lt5
               controls = soft_controls0.empty? ? soft_controls0 : soft_controls1
               2.times do
                 controls << point.x.to_f
@@ -442,7 +442,7 @@ module Ladb::OpenCutList
       [4, 5, 6].each{ |i| m[i] /= scaling[1] } unless scaling[1] == 0.0
       [8, 9,10].each{ |i| m[i] /= scaling[2] } unless scaling[2] == 0.0
       m[15] = 1.0
-      # Verify orientation, if necessary invert it.
+      # Verify orientation, if necessary, invert it.
       tmp_z_axis = Geom::Vector3d.new(m[0], m[1], m[2]).cross(Geom::Vector3d.new(m[4], m[5], m[6]))
       if tmp_z_axis.dot( Geom::Vector3d.new(m[8], m[9], m[10]) ) < 0
         scaling[0] *= -1
@@ -460,7 +460,7 @@ module Ladb::OpenCutList
       s1 = Math.sin(theta1)
       c1 = Math.cos(theta1)
       theta3 = Math.atan2(s1*m[8] - c1*m[4], c1*m[5] - s1*m[9])
-      rotation = [-theta1, -theta2, -theta3]
+      rotation = [ -theta1, -theta2, -theta3 ]
 
       [ translation, scaling, rotation ]
     end

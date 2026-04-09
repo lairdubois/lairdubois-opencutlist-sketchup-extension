@@ -182,7 +182,7 @@ module Ladb::OpenCutList
 
             end
 
-            # Manage origin if position exist
+            # Manage origin if position exists
             if part_data.axes_origin_position
 
               # Compute definition bounds
