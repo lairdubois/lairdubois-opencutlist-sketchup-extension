@@ -106,7 +106,7 @@ module Ladb::OpenCutList
       if @active_entity && @active_path
 
         # An active entity and its path is defined => use it
-        _fetch_useful_instance_infos(@active_entity, @active_path, @auto_orient)
+        _fetch_useful_instance_infos(@active_entity, @active_path, @auto_orient, {}, {})
 
       else
 
@@ -127,8 +127,10 @@ module Ladb::OpenCutList
         end
 
         # Fetch component instances in given entities
+        face_bounds_cache = {}
+        face_count_cache = {}
         entities.each do |entity|
-          _fetch_useful_instance_infos(entity, path, @auto_orient)
+          _fetch_useful_instance_infos(entity, path, @auto_orient, face_bounds_cache, face_count_cache)
         end
 
       end
@@ -939,54 +941,65 @@ module Ladb::OpenCutList
 
     # -- Components utils --
 
-    def _fetch_useful_instance_infos(entity, path, auto_orient, face_bounds_cache = {})
+    def _fetch_useful_instance_infos(entity, path, auto_orient, face_bounds_cache = {}, face_count_cache = {})
       return 0 if entity.is_a?(Sketchup::Edge)   # Minor Speed improvement when there are a lot of edges
       face_count = 0
       if entity.visible? && _layer_visible?(entity.layer, path.empty?)
+        if entity.respond_to?(:definition)
 
-        if entity.is_a?(Sketchup::Group)
-
-          # Exclude machinings
-          return 0 if entity.material && _get_material_attributes(entity.material).type == MaterialAttributes::TYPE_MACHINING
-
-          # Entity is a group -> check its children
-          entity_path = path + [ entity ]
-          entity.entities.each do |child_entity|
-            face_count += _fetch_useful_instance_infos(child_entity, entity_path, auto_orient, face_bounds_cache)
-          end
-
-        elsif entity.is_a?(Sketchup::ComponentInstance)
+          definition = entity.definition
+          behavior = definition.behavior
 
           # Exclude special behavior components
-          return 0 if entity.definition.behavior.always_face_camera?
+          return 0 if behavior.always_face_camera?
 
-          # Exclude machinings
-          return 0 if entity.material && _get_material_attributes(entity.material).type == MaterialAttributes::TYPE_MACHINING
+          material = entity.material
+          material_attributes = _get_material_attributes(material)
 
-          # Entity is a component instance -> check its children
+          # Exclude machining entities
+          return 0 if material_attributes.type == MaterialAttributes::TYPE_MACHINING
+
           entity_path = path + [ entity ]
-          entity.definition.entities.each do |child_entity|
-            face_count += _fetch_useful_instance_infos(child_entity, entity_path, auto_orient, face_bounds_cache)
+
+          if face_count_cache.key?(definition)
+            face_count += face_count_cache[definition]
+          else
+            # Check entity's children
+            definition.entities.each do |child_entity|
+              face_count += _fetch_useful_instance_infos(child_entity, entity_path, auto_orient, face_bounds_cache, face_count_cache)
+            end
           end
 
-          # Treat cuts_opening behavior component instances as simple group
-          return face_count if entity.definition.behavior.cuts_opening?
+          unless definition.group?
 
-          # Consider the component instance only if it contains faces
-          if face_count > 0
+            # Treat cuts_opening behavior component instances as simple group
+            return face_count if behavior.cuts_opening?
 
-            bounds = face_bounds_cache[entity.definition] ||= _compute_faces_bounds(entity.definition)
-            unless bounds.empty? || [ bounds.width, bounds.height, bounds.depth ].min == 0   # Exclude empty or flat bounds
+            # Consider the component instance only if it contains faces
+            if face_count > 0
 
-              # Create the instance info
-              instance_info = InstanceInfo.new(entity_path)
-              instance_info.size = Size3d.create_from_bounds(bounds, instance_info.scale, auto_orient && !_get_definition_attributes(entity.definition).orientation_locked_on_axis)
-              instance_info.definition_bounds = bounds
+              bounds = face_bounds_cache[definition] ||= _compute_faces_bounds(definition)
+              if bounds.width == 0 || bounds.height == 0 || bounds.depth == 0   # Exclude empty or flat bounds
 
-              # Add instance info to cache
-              _store_instance_info(instance_info)
+                # Excluded instance => Keep face count to 0 for this definition
+                face_count_cache[definition] ||= 0
 
-              return 0
+              else
+
+                # Keep face count for this definition
+                face_count_cache[definition] ||= face_count
+
+                # Create the instance info
+                instance_info = InstanceInfo.new(entity_path)
+                instance_info.size = Size3d.create_from_bounds(bounds, instance_info.scale, auto_orient && !_get_definition_attributes(definition).orientation_locked_on_axis)
+                instance_info.definition_bounds = bounds
+
+                # Add instance info to cache
+                _store_instance_info(instance_info)
+
+                return 0
+              end
+
             end
 
           end
