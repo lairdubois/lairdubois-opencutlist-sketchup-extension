@@ -11,7 +11,7 @@ module Ladb::OpenCutList
     include HashableHelper
 
     attr_reader :id, :virtual, :number, :saved_number,
-                :name, :description, :url,
+                :name, :name_source, :description, :url,
                 :length, :width, :thickness,
                 :count,
                 :cutting_length, :cutting_width, :cutting_thickness,
@@ -34,6 +34,7 @@ module Ladb::OpenCutList
       @number = _def.number
       @saved_number = _def.saved_number
       @name = _def.name
+      @name_source = _def.name_source
       @description = _def.description
       @url = _def.url
       @length = _def.size.length.to_s
@@ -84,8 +85,10 @@ module Ladb::OpenCutList
 
       @entity_names = _def.entity_names.sort_by { |k, v| [ k ] }
       @final_area = _def.final_area == 0 ? nil : DimensionUtils.format_to_readable_area(_def.final_area)
-      @l_ratio = _def.size.length / [_def.size.length, _def.size.width].max
-      @w_ratio = _def.size.width / [_def.size.length, _def.size.width].max
+      @l_ratio = _def.size.length / [ _def.size.length, _def.size.width ].max
+      @l_ratio = 1 if @l_ratio.nan?
+      @w_ratio = _def.size.width / [ _def.size.length, _def.size.width ].max
+      @w_ratio = 1 if @w_ratio.nan?
 
     end
 
@@ -120,7 +123,7 @@ module Ladb::OpenCutList
 
       # Folder part takes first child number
       if @children.empty?
-        @name = child_part.name + ', ...'
+        @name = child_part.name + ', ...' if @name_source != InstanceInfo::NAME_SOURCE_INSTANCE
         @number = child_part.number.to_s + '+'
         @saved_number = child_part.saved_number.to_s + '+' if child_part.saved_number
       end

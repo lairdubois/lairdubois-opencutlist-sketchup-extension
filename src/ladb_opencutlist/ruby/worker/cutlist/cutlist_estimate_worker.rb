@@ -609,7 +609,7 @@ module Ladb::OpenCutList
         estimate_entry_part_def = @item_def_class.new(estimate_entry_def, cutlist_part)
         estimate_entry_def.part_defs << estimate_entry_part_def
 
-        definition_attributes = @worker._get_definition_attributes(cutlist_part.def.definition_id)
+        definition_attributes = @worker._get_definition_attributes(cutlist_part.def.get_one_instance_info.definition)
 
         total_instance_count = cutlist_part.def.instance_count_by_part * cutlist_part.def.count
         total_used_instance_count = cutlist_part.def.instance_count_by_part * cutlist_part.def.count - cutlist_part.def.unused_instance_count
@@ -657,13 +657,13 @@ module Ladb::OpenCutList
 
       @cutlist_group.parts.each do |cutlist_part|
 
-        if cutlist_part.is_a?(FolderPart)
-          cutlist_part.children.each { |cutlist_child_part|
-            fn_compute_hardware_part.call(cutlist_child_part, estimate_entry_def)
-          }
-        else
+        # if cutlist_part.is_a?(FolderPart)
+        #   cutlist_part.children.each { |cutlist_child_part|
+        #     fn_compute_hardware_part.call(cutlist_child_part, estimate_entry_def)
+        #   }
+        # else
           fn_compute_hardware_part.call(cutlist_part, estimate_entry_def)
-        end
+        # end
 
       end
 

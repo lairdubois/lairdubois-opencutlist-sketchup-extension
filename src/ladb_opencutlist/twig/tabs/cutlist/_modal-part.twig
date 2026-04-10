@@ -43,12 +43,12 @@
             <div class="form form-horizontal">
                 {% if not multiple and not part.virtual %}
                     <div class="form-group">
-                        {% if part.is_dynamic_attributes_name %}
-                            <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.warning'|i18next }}" data-content="{{ 'tab.cutlist.tooltip.is_dynamic_attributes_name'|i18next }}"><i class="ladb-opencutlist-icon-dynamic-component"></i></a></div>
+                        {% if part.name_source != 0 %}
+                            <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.warning'|i18next }}" data-content="{{ ('tab.cutlist.tooltip.is_'~(part.name_source == 1 ? 'instance' : 'dynamic_attributes')~'_name')|i18next }}"><i class="ladb-opencutlist-icon-{{ part.name_source == 1 ? 'instance' : 'dynamic' }}-component"></i></a></div>
                         {% endif %}
                         <label class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.name'|i18next }}</label>
                         <div class="col-xs-7">
-                            <input type="text" class="form-control" id="ladb_cutlist_part_input_name" value="{{ part.name|escape }}{% if part.is_dynamic_attributes_name %} <{{ part.definition_id }}>{% endif %}"{% if part.is_dynamic_attributes_name %} disabled{% endif %} autofocus>
+                            <input type="text" class="form-control" id="ladb_cutlist_part_input_name" value="{{ part.name|escape }}{% if part.name_source != 0 %} <{{ part.definition_id }}>{% endif %}"{% if part.name_source != 0 %} disabled{% endif %} autofocus>
                         </div>
                     </div>
                 {% endif %}

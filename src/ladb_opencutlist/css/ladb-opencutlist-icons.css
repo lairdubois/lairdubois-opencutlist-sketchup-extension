@@ -553,6 +553,9 @@ i, span.ladb-opencutlist-icon:before {
 .ladb-opencutlist-icon-component:before {
     content: "\e9a4";
 }
+.ladb-opencutlist-icon-instance-component:before {
+    content: "\e9c7";
+}
 .ladb-opencutlist-icon-dynamic-component:before {
     content: "\e969";
 }

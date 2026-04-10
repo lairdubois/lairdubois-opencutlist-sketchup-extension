@@ -2,6 +2,7 @@ module Ladb::OpenCutList
 
   require 'digest'
   require_relative '../data_container'
+  require_relative 'instance_info'
 
   class PartDef < DataContainer
 
@@ -10,7 +11,7 @@ module Ladb::OpenCutList
 
     VENEERS_Z = [ :zmin, :zmax ]
 
-    attr_accessor :id, :definition_id, :number, :saved_number, :name, :is_dynamic_attributes_name, :description, :url, :count,
+    attr_accessor :id, :definition_id, :number, :saved_number, :name, :name_source, :description, :url, :count,
                   :cutting_size, :size, :scale, :flipped,
                   :material_name, :material_origins,
                   :tags,
@@ -20,7 +21,7 @@ module Ladb::OpenCutList
                   :face_count, :face_pattern, :face_entity_ids, :face_decrements, :face_texture_angles, :face_thickness_decrement, :face_decremented,
                   :auto_oriented, :not_aligned_on_axes, :unused_instance_count, :content_layers, :final_area,
                   :children_warning_count
-    attr_reader :id, :virtual, :edge_material_names, :edge_material_colors, :edge_std_dimensions, :edge_errors, :face_material_names, :face_material_colors, :face_std_dimensions, :face_errors, :entity_ids, :entity_serialized_paths, :entity_names, :children, :instance_infos, :edge_materials, :edge_group_defs, :veneer_materials, :veneer_group_defs,
+    attr_reader :id, :virtual, :is_dynamic_attributes_name, :edge_material_names, :edge_material_colors, :edge_std_dimensions, :edge_errors, :face_material_names, :face_material_colors, :face_std_dimensions, :face_errors, :entity_ids, :entity_serialized_paths, :entity_names, :children, :instance_infos, :edge_materials, :edge_group_defs, :veneer_materials, :veneer_group_defs,
                 :drawing_defs, :projection_defs
 
     def initialize(id, virtual = false)
@@ -30,7 +31,7 @@ module Ladb::OpenCutList
       @number = nil
       @saved_number = nil
       @name = ''
-      @is_dynamic_attributes_name = false
+      @name_source = InstanceInfo::NAME_SOURCE_DEFINITION
       @description = ''
       @url = ''
       @count = 0
@@ -115,10 +116,8 @@ module Ladb::OpenCutList
 
       # Uses name for dynamic components to separate instances with the same definition, but different name
       entity_id = definition_attributes.uuid.nil? ? definition.entityID : definition_attributes.uuid
-      if dynamic_attributes_name
-        name, is_dynamic_attributes_name = instance_info.read_name(dynamic_attributes_name)
-        entity_id = "#{entity_id}|#{name}" if is_dynamic_attributes_name
-      end
+      name, name_source = instance_info.read_name(dynamic_attributes_name)
+      entity_id = "#{entity_id}|#{name}" if name_source != InstanceInfo::NAME_SOURCE_DEFINITION
 
       # Include scale in part_id to separate instances with the same definition, but different scale
       Digest::MD5.hexdigest("#{group_id}|#{entity_id}|#{DimensionUtils.to_ocl_precision_f(instance_info.size.length).to_s}|#{DimensionUtils.to_ocl_precision_f(instance_info.size.width).to_s}|#{DimensionUtils.to_ocl_precision_f(instance_info.size.thickness).to_s}|#{flipped_detection && (definition_attributes.symmetrical ? false : instance_info.flipped)}")
@@ -222,6 +221,20 @@ module Ladb::OpenCutList
 
     def merge_instance_infos(instance_infos)
       @instance_infos.merge!(instance_infos)
+    end
+
+    # ---
+
+    def is_definition_name
+      @name_source == InstanceInfo::NAME_SOURCE_DEFINITION
+    end
+
+    def is_instance_name
+      @name_source == InstanceInfo::NAME_SOURCE_INSTANCE
+    end
+
+    def is_dynamic_attributes_name
+      @name_source == InstanceInfo::NAME_SOURCE_DYNAMIC_ATTRIBUTE
     end
 
     # ---

@@ -9,7 +9,7 @@ module Ladb::OpenCutList
 
     attr_reader :thickness, :axes
 
-    def initialize(length = 0, width = 0, thickness = 0, axes = DEFAULT_AXES)
+    def initialize(length = 0.0, width = 0.0, thickness = 0.0, axes = DEFAULT_AXES)
       if length.is_a?(String)    # String representation of a size "LxLxL"
         s_length, s_width, s_thickness = StringUtils.split_dxdxd(length)
         length = s_length.to_l

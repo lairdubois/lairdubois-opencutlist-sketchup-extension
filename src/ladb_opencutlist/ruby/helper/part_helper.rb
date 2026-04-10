@@ -1,11 +1,17 @@
 module Ladb::OpenCutList
 
+  require_relative '../helper/material_attributes_caching_helper'
   require_relative '../worker/cutlist/cutlist_generate_worker'
 
   module PartHelper
 
+    include MaterialAttributesCachingHelper
+
     def _get_part_entity_path_from_path(path)
-      part_index = path.rindex { |entity| entity.is_a?(Sketchup::ComponentInstance) && !(behavior = entity.definition.behavior).cuts_opening? && !behavior.always_face_camera? }
+      part_index = path.rindex { |entity|
+        entity.is_a?(Sketchup::ComponentInstance) && !(behavior = entity.definition.behavior).cuts_opening? && !behavior.always_face_camera? ||
+          _get_material_attributes(entity.material).type == MaterialAttributes::TYPE_HARDWARE
+      }
       return path[0..part_index] unless part_index.nil?
       path
     end

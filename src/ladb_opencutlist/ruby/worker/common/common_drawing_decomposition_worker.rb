@@ -2,6 +2,7 @@ module Ladb::OpenCutList
 
   require_relative '../../constants'
   require_relative '../../helper/layer_visibility_helper'
+  require_relative '../../helper/material_attributes_caching_helper'
   require_relative '../../utils/path_utils'
   require_relative '../../utils/transformation_utils'
   require_relative '../../lib/geometrix/geometrix'
@@ -15,6 +16,7 @@ module Ladb::OpenCutList
   class CommonDrawingDecompositionWorker
 
     include LayerVisibilityHelper
+    include MaterialAttributesCachingHelper
 
     ORIGIN_POSITION_DEFAULT = 0 # = Drawing Element Origin
     ORIGIN_POSITION_FACES_BOUNDS_MIN = 1
@@ -289,7 +291,7 @@ module Ladb::OpenCutList
         }
       when CONTAINER_VALIDATOR_PART
         container_validator = lambda { |container|
-          !container.is_a?(Sketchup::ComponentInstance) ||
+          !container.is_a?(Sketchup::ComponentInstance) && _get_material_attributes(container.material).type != MaterialAttributes::TYPE_HARDWARE ||
            container.definition.behavior.cuts_opening? ||
            container.definition.behavior.always_face_camera?
         }

@@ -255,9 +255,9 @@ module Ladb::OpenCutList
       @id = _def.cutlist_part.id
       @name = _def.cutlist_part.name
       @url = _def.cutlist_part.url
-      @unused_instance_count = _def.cutlist_part.unused_instance_count
-      @instance_count_by_part = _def.cutlist_part.instance_count_by_part
-      @flipped = _def.cutlist_part.flipped
+      @unused_instance_count = _def.cutlist_part.def.unused_instance_count
+      @instance_count_by_part = _def.cutlist_part.def.instance_count_by_part
+      @flipped = _def.cutlist_part.def.flipped
       @count = _def.cutlist_part.count
 
       @mass = _def.mass.nil? || _def.mass[:val] == 0 ? nil : UnitUtils.format_readable(_def.mass[:val], _def.mass[:unit], 3)

@@ -13,7 +13,7 @@ module Ladb::OpenCutList
         :virtual,
         :definition_id,
         :name,
-        :is_dynamic_attributes_name,
+        :name_source,
         :material_name,
         :cumulable,
         :instance_count_by_part,
@@ -54,7 +54,7 @@ module Ladb::OpenCutList
           part_data.fetch('virtual'),
           _unescape_string(part_data.fetch('definition_id')),
           _unescape_string(part_data.fetch('name')),
-          part_data.fetch('is_dynamic_attributes_name'),
+          part_data.fetch('name_source'),
           part_data.fetch('material_name'),
           DefinitionAttributes.valid_cumulable(part_data.fetch('cumulable')),
           part_data.fetch('instance_count_by_part'),
@@ -113,7 +113,7 @@ module Ladb::OpenCutList
           if definition
 
             # Update definition's name
-            if definition.name != part_data.name && !part_data.is_dynamic_attributes_name
+            if definition.name != part_data.name && part_data.name_source == InstanceInfo::NAME_SOURCE_DEFINITION
               definition.name = part_data.name
             end
 

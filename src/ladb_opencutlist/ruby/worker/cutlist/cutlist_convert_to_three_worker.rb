@@ -2,6 +2,7 @@ module Ladb::OpenCutList
 
   require_relative '../../helper/layer_visibility_helper'
   require_relative '../../helper/hashable_helper'
+  require_relative '../../helper/material_attributes_caching_helper'
   require_relative '../../utils/axis_utils'
   require_relative '../../model/attributes/material_attributes'
   require_relative '../../model/formula/formula_data'
@@ -10,6 +11,7 @@ module Ladb::OpenCutList
   class CutlistConvertToThreeWorker
 
     include LayerVisibilityHelper
+    include MaterialAttributesCachingHelper
 
     def initialize(parts,
 
@@ -53,8 +55,11 @@ module Ladb::OpenCutList
 
           part.def.instance_infos.each do |serialized_path, instance_info|
 
+            material = materials[part.material_name]
+            material_attributes = _get_material_attributes(material)
+
             # Populate part definitions
-            _create_three_part_def(three_model_def, part, instance_info.entity.definition, materials[part.material_name])
+            _create_three_part_def(three_model_def, part, instance_info.entity.definition, material, material_attributes.type == MaterialAttributes::TYPE_HARDWARE)
 
             # Create the three part instance def
             three_part_instance_def = ThreePartInstanceDef.new
@@ -106,8 +111,11 @@ module Ladb::OpenCutList
           # Extract first instance
           instance_info = part.def.get_one_instance_info
 
+          material = materials[part.material_name]
+          material_attributes = _get_material_attributes(material)
+
           # Populate part definitions
-          _create_three_part_def(three_model_def, part, instance_info.entity.definition, materials[part.material_name])
+          _create_three_part_def(three_model_def, part, instance_info.entity.definition, material, material_attributes.type == MaterialAttributes::TYPE_HARDWARE)
 
           mt = Geom::Transformation.new
           if part.auto_oriented && part.group.material_type != MaterialAttributes::TYPE_HARDWARE
@@ -179,7 +187,7 @@ module Ladb::OpenCutList
       CommonEvalFormulaWorker.new(formula: formula, data: data).run
     end
 
-    def _create_three_part_def(three_model_def, part, definition, material)
+    def _create_three_part_def(three_model_def, part, definition, material, grab_sub_components = false)
 
       three_part_def = three_model_def.part_defs.fetch(part.id, nil)
       if three_part_def.nil?
@@ -191,7 +199,7 @@ module Ladb::OpenCutList
         three_part_def.soft_edge_vertices,
         three_part_def.soft_edge_controls0,
         three_part_def.soft_edge_controls1,
-        three_part_def.soft_edge_directions = _grab_entities_vertices_and_colors(definition.entities, material)
+        three_part_def.soft_edge_directions = _grab_entities_vertices_and_colors(definition.entities, material, grab_sub_components)
         three_part_def.color = _to_three_color(material)
 
         three_model_def.part_defs.store(part.id, three_part_def)
@@ -199,7 +207,7 @@ module Ladb::OpenCutList
 
     end
 
-    def _grab_entities_vertices_and_colors(entities, material, transformation = nil)
+    def _grab_entities_vertices_and_colors(entities, material, grab_sub_components = false, transformation = IDENTITY)
       face_vertices = []
       face_colors = []
       hard_edge_vertices = []
@@ -222,17 +230,9 @@ module Ladb::OpenCutList
           soft_edge_controls0.concat(sec0)
           soft_edge_controls1.concat(sec1)
           soft_edge_directions.concat(dir)
-        elsif entity.is_a?(Sketchup::Group)
-          fv, fc, hev, sev, sec0, sec1, dir = _grab_entities_vertices_and_colors(entity.entities, entity.material.nil? ? material : entity.material, TransformationUtils::multiply(transformation, entity.transformation))
-          face_vertices.concat(fv)
-          face_colors.concat(fc)
-          hard_edge_vertices.concat(hev)
-          soft_edge_vertices.concat(sev)
-          soft_edge_controls0.concat(sec0)
-          soft_edge_controls1.concat(sec1)
-          soft_edge_directions.concat(dir)
-        elsif entity.is_a?(Sketchup::ComponentInstance) && entity.definition.behavior.cuts_opening?
-          fv, fc, hev, sev, sec0, sec1, dir = _grab_entities_vertices_and_colors(entity.definition.entities, entity.material.nil? ? material : entity.material, TransformationUtils::multiply(transformation, entity.transformation))
+        elsif entity.respond_to?(:definition)
+          next if !(definition = entity.definition).group? && !definition.behavior.cuts_opening? && !grab_sub_components || definition.behavior.always_face_camera?
+          fv, fc, hev, sev, sec0, sec1, dir = _grab_entities_vertices_and_colors(entity.definition.entities, entity.material.nil? ? material : entity.material, grab_sub_components, transformation * entity.transformation)
           face_vertices.concat(fv)
           face_colors.concat(fc)
           hard_edge_vertices.concat(hev)
@@ -404,7 +404,7 @@ module Ladb::OpenCutList
       puts "#{'+'.rjust(level, '-')}#{three_object_def.class.to_s} #{three_object_def.name} #{(three_object_def.is_a?(ThreePartInstanceDef) ? three_object_def.id.to_s : '')}"
       if three_object_def.is_a?(ThreeModelDef)
         three_object_def.part_defs.each do |id, part_def|
-          puts "@ #{id} - (#{part_def.number}) #{part_def.name}"
+          puts "@ #{id} - face_vertices.size=#{part_def.face_vertices.size}"
         end
       end
       if three_object_def.is_a?(ThreeGroupDef)
@@ -473,7 +473,7 @@ module Ladb::OpenCutList
 
     include HashableHelper
 
-    attr_accessor :face_vertices, :face_colors, :hard_edge_vertices, :soft_edge_vertices, :soft_edge_controls0, :soft_edge_controls1, :soft_edge_directions, :text, :color
+    attr_accessor :face_vertices, :face_colors, :hard_edge_vertices, :soft_edge_vertices, :soft_edge_controls0, :soft_edge_controls1, :soft_edge_directions, :color
 
     def initialize
       @face_vertices = []
