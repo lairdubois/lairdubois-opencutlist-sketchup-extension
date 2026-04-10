@@ -1318,13 +1318,6 @@ namespace Packy {
             return std::move(rectangleguillotine::optimize(instance, parameters_));
         }
 
-        json post_process(
-            const rectangleguillotine::Output& output
-            ) override {
-
-            return std::move(TypedSolver::post_process(output));
-        }
-
         void populate_best_solution_bin(
             basic_json<>& j_bin,
             const BinPos bin_pos,

@@ -75,6 +75,15 @@ module Ladb::OpenCutList::Fiddle
     def self.optimize_advance(run_id = 0)
       _load_lib
       output = JSON.parse(c_optimize_advance(run_id).to_s)
+
+      # Workaround for https://github.com/fontanf/packingsolver/issues/114
+      if (bins = output.dig('solution', 'bins'))
+        output['solution']['bins'] = bins
+                                       .group_by(&:itself)
+                                       .map { |bin, same_bins| bin['copies'] *= same_bins.size; bin }
+      end
+      # Workaround for https://github.com/fontanf/packingsolver/issues/114
+
       if !@running_input_md5.nil? && !output['running'] && !output['cancelled'] && !output['error']
         @cached_outputs[@running_input_md5] = output
         @running_input_md5 = nil
