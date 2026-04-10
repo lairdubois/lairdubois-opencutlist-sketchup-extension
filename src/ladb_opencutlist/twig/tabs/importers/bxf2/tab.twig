@@ -1,7 +1,7 @@
 {% extends 'tabs/base-tab.twig' %}
 
 {% block headerToolsInner %}
-    <button id="ladb_btn_open" class="btn btn-primary">{{ 'tab.importers.default.open_file'|i18next({ 'extension':'BXF2' }) }}...</button>
+    <button id="ladb_btn_open" class="btn btn-primary"><i class="ladb-opencutlist-icon-arrow-down"></i><span class="hidden-xs"> {{ 'tab.importers.default.open_file'|i18next({ 'extension':'BXF2' }) }}...</span></button>
     &nbsp;
     <button class="btn btn-default" data-help-page="importers.bxf2"><i class="ladb-opencutlist-icon-help"></i></button>
 {% endblock %}

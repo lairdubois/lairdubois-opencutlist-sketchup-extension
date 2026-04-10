@@ -14,12 +14,12 @@
 {% endblock %}
 
 {% block headerToolsInner %}
-    <button id="ladb_btn_labels" class="btn btn-primary"><i class="ladb-opencutlist-icon-refresh"></i> {{ 'tab.cutlist.labels.title'|i18next }}...</button>
-    <button id="ladb_btn_print" class="btn btn-default"><i class="ladb-opencutlist-icon-print"></i> {{ 'default.print'|i18next }}</button>
+    <button id="ladb_btn_labels" class="btn btn-primary"><i class="ladb-opencutlist-icon-refresh"></i><span class="hidden-xs"> {{ 'tab.cutlist.labels.title'|i18next }}...</span></button>
+    <button id="ladb_btn_print" class="btn btn-default"><i class="ladb-opencutlist-icon-print"></i><span class="hidden-sm hidden-xs"> {{ 'default.print'|i18next }}</span></button>
     &nbsp;
     <button class="btn btn-default" data-help-page="cutlist.labels"><i class="ladb-opencutlist-icon-help"></i></button>
     &nbsp;
-    <button id="ladb_btn_close" class="btn btn-default"><i class="ladb-opencutlist-icon-close"></i> {{ 'default.close'|i18next }}</button>
+    <button id="ladb_btn_close" class="btn btn-default"><i class="ladb-opencutlist-icon-close"></i><span class="hidden-xs"> {{ 'default.close'|i18next }}</span></button>
 {% endblock %}
 
 {% set labelWidth = (page_width - margin_left - margin_right - spacing_v * (col_count - 1)) / col_count %}

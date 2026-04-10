@@ -14,11 +14,11 @@
 {% endblock %}
 
 {% block headerToolsInner %}
-    <button id="ladb_btn_import" class="btn btn-primary"><i class="ladb-opencutlist-icon-plus"></i> {{ 'tab.importers.default.import_to_model'|i18next }}...</button>
+    <button id="ladb_btn_import" class="btn btn-primary"><i class="ladb-opencutlist-icon-plus"></i><span class="hidden-xs"> {{ 'tab.importers.default.import_to_model'|i18next }}...</span></button>
     &nbsp;
     <button class="btn btn-default" data-help-page="importers.bxf2"><i class="ladb-opencutlist-icon-help"></i></button>
     &nbsp;
-    <button id="ladb_btn_close" class="btn btn-default"><i class="ladb-opencutlist-icon-close"></i> {{ 'default.close'|i18next }}</button>
+    <button id="ladb_btn_close" class="btn btn-default"><i class="ladb-opencutlist-icon-close"></i><span class="hidden-xs"> {{ 'default.close'|i18next }}</span></button>
 {% endblock %}
 
 {% block containerInner %}

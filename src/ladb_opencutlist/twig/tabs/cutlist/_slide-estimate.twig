@@ -61,8 +61,8 @@
 {% endblock %}
 
 {% block headerToolsInner %}
-    <button id="ladb_btn_estimate" class="btn btn-primary"><i class="ladb-opencutlist-icon-refresh"></i> {{ 'default.estimate'|i18next }}...</button>
-    <button id="ladb_btn_print" class="btn btn-default"><i class="ladb-opencutlist-icon-print"></i> {{ 'default.print'|i18next }}</button>
+    <button id="ladb_btn_estimate" class="btn btn-primary"><i class="ladb-opencutlist-icon-refresh"></i><span class="hidden-xs"> {{ 'default.estimate'|i18next }}...</span></button>
+    <button id="ladb_btn_print" class="btn btn-default"><i class="ladb-opencutlist-icon-print"></i><span class="hidden-sm hidden-xs"> {{ 'default.print'|i18next }}</span></button>
     &nbsp;
     <button class="btn btn-default" data-help-page="cutlist.report"><i class="ladb-opencutlist-icon-help"></i></button>
     <div class="btn-group">
@@ -75,7 +75,7 @@
         </ul>
     </div>
     &nbsp;
-    <button id="ladb_btn_close" class="btn btn-default"><i class="ladb-opencutlist-icon-close"></i> {{ 'default.close'|i18next }}</button>
+    <button id="ladb_btn_close" class="btn btn-default"><i class="ladb-opencutlist-icon-close"></i><span class="hidden-xs"> {{ 'default.close'|i18next }}</span></button>
 {% endblock %}
 
 {% block containerInner %}
