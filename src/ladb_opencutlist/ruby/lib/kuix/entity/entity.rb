@@ -103,6 +103,16 @@ module Ladb::OpenCutList::Kuix
       @children.size
     end
 
+    def prev_sibling
+      return nil if @parent.nil?
+      @parent.children[@parent.children.index(self) - 1]
+    end
+
+    def next_sibling
+      return nil if @parent.nil?
+      @parent.children[(@parent.children.index(self) + 1) % @parent.num_children]
+    end
+
     # -- LAYOUT --
 
     def valid?
