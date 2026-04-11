@@ -284,15 +284,16 @@ module Ladb::OpenCutList
                                                                    component_name = "#{"#{article.article_number}_" if article}#{component.component_number}"
                                                                    definition = Sketchup.active_model.definitions[component_name]
                                                                    if definition.nil?
+
+                                                                     base_path = File.dirname(File.expand_path(@bxf_model.path.to_s))
+                                                                     cad_data_path = File.join(base_path, "cadData")
+                                                                     file_name = "#{component_name}.dae"
+                                                                     file_path = File.join(cad_data_path, file_name)
+                                                                     file_path = File.join(cad_data_path, " #{file_name}") unless File.exist?(file_path) # Workaround for configurator bug with space on some files
+
                                                                      begin
 
                                                                        # Load component from local DAE file
-                                                                       base_path = File.dirname(File.expand_path(@bxf_model.path.to_s))
-                                                                       cad_data_path = File.join(base_path, "cadData")
-                                                                       file_name = "#{component_name}.dae"
-                                                                       file_path = File.join(cad_data_path, file_name)
-                                                                       file_path = File.join(cad_data_path, " #{file_name}") unless File.exist?(file_path) # Workaround for configurator bug with space on some files
-
                                                                        definition = Sketchup.active_model.definitions.import(file_path, {
                                                                          validate_dae: true,
                                                                          merge_coplanar_faces: true
@@ -663,7 +664,7 @@ module Ladb::OpenCutList
           pts0 = [
             ORIGIN,
             ORIGIN.offset(bxf_machining.distance1_orientation.to_v, bxf_machining.distance1.to_l),
-            ORIGIN.offset(bxf_machining.distance2_orientation.to_v, bxf_machining.distance1.to_l)
+            ORIGIN.offset(bxf_machining.distance2_orientation.to_v, bxf_machining.distance2.to_l)
           ]
           pts1 = pts0.map { |pt| pt.offset(length_v, length) }
 
