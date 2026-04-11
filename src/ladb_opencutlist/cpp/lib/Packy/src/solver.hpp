@@ -5,18 +5,22 @@
 #include "packingsolver/rectangle/instance_builder.hpp"
 #include "packingsolver/rectangle/instance.hpp"
 #include "packingsolver/rectangle/optimize.hpp"
+#include "packingsolver/rectangle/post_process.hpp"
 
 #include "packingsolver/rectangleguillotine/instance_builder.hpp"
 #include "packingsolver/rectangleguillotine/instance.hpp"
 #include "packingsolver/rectangleguillotine/optimize.hpp"
+#include "packingsolver/rectangleguillotine/post_process.hpp"
 
 #include "packingsolver/onedimensional/instance_builder.hpp"
 #include "packingsolver/onedimensional/instance.hpp"
 #include "packingsolver/onedimensional/optimize.hpp"
+#include "packingsolver/onedimensional/post_process.hpp"
 
 #include "packingsolver/irregular/instance_builder.hpp"
 #include "packingsolver/irregular/instance.hpp"
 #include "packingsolver/irregular/optimize.hpp"
+#include "packingsolver/irregular/post_process.hpp"
 
 #include "shape/labeling.hpp"
 #include "shape/clean.hpp"
@@ -484,9 +488,17 @@ namespace Packy {
         ) {
 
             json j;
-            write_best_solution(j, output, true);
+
+            const auto solution = post_process_solution(output.solution_pool.best());
+            write_solution(j, solution, output.time, true);
 
             return std::move(j);
+        }
+
+        virtual Solution post_process_solution(
+            const Solution& solution
+        ) {
+            return solution;
         }
 
         /*
@@ -620,7 +632,7 @@ namespace Packy {
             ) {
                 std::lock_guard<std::mutex> lock(solutions_mutex_);
                 json j_solution;
-                write_best_solution(j_solution, dynamic_cast<const Output&>(output), false);
+                write_solution(j_solution, dynamic_cast<const Output&>(output).solution_pool.best(), output.time, false);
                 solutions_.push_back(j_solution);
             };
 
@@ -711,17 +723,17 @@ namespace Packy {
          * Write
          */
 
-        virtual void write_best_solution(
+        virtual void write_solution(
             json& j,
-            const Output& output,
+            const Solution& solution,
+            const double time,
             const bool final
         ) {
 
-            const auto& solution = output.solution_pool.best();
             const auto& instance = solution.instance();
             auto& builder = usable_builder_.used() ? usable_builder_ : orig_builder_;
 
-            j["time"] = output.time;
+            j["time"] = time;
 
             j["full_waste"] = to_area_dbl(solution.full_waste());
             j["full_efficiency"] = solution.number_of_bins() > 0 ? 1 - solution.full_waste_percentage() : 0.0;
@@ -1032,6 +1044,12 @@ namespace Packy {
             return std::move(rectangle::optimize(instance, parameters_));
         }
 
+        rectangle::Solution post_process_solution(
+            const rectangle::Solution& solution
+        ) override {
+            return rectangle::group_identical_bins(solution).solution_pool.best();
+        }
+
         void populate_best_solution_bin(
             basic_json<>& j_bin,
             const BinPos bin_pos,
@@ -1316,6 +1334,12 @@ namespace Packy {
             const rectangleguillotine::Instance& instance
         ) override {
             return std::move(rectangleguillotine::optimize(instance, parameters_));
+        }
+
+        rectangleguillotine::Solution post_process_solution(
+            const rectangleguillotine::Solution& solution
+        ) override {
+            return rectangleguillotine::group_identical_bins(solution).solution_pool.best();
         }
 
         void populate_best_solution_bin(
@@ -1614,6 +1638,12 @@ namespace Packy {
             const onedimensional::Instance& instance
         ) override {
             return std::move(onedimensional::optimize(instance, parameters_));
+        }
+
+        onedimensional::Solution post_process_solution(
+            const onedimensional::Solution& solution
+        ) override {
+            return onedimensional::group_identical_bins(solution).solution_pool.best();
         }
 
         void populate_best_solution_bin(
@@ -1915,6 +1945,12 @@ namespace Packy {
             const irregular::Instance& instance
         ) override {
             return std::move(irregular::optimize(instance, parameters_));
+        }
+
+        irregular::Solution post_process_solution(
+            const irregular::Solution& solution
+        ) override {
+            return irregular::group_identical_bins(solution).solution_pool.best();
         }
 
         void populate_best_solution_bin(
