@@ -23,7 +23,7 @@ module Ladb::OpenCutList
             face_bounds.add(min, max)
             bounds.add(face_bounds)
           elsif entity.respond_to?(:definition)
-            next if entity.material && ((ma = _get_material_attributes(entity.material)).type == MaterialAttributes::TYPE_MACHINING || ma.type == MaterialAttributes::TYPE_HARDWARE)
+            next if entity.material && ((ma = _get_material_attributes(entity.material)).type == MaterialAttributes::TYPE_MACHINING || ma.type == MaterialAttributes::TYPE_HARDWARE) && !entity.name.strip.empty?
             next if !(definition = entity.definition).group? && !definition.behavior.cuts_opening?
             bounds.add(_compute_faces_bounds(entity.definition, transformation * entity.transformation))
           end

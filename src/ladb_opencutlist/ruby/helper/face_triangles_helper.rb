@@ -10,22 +10,22 @@ module Ladb::OpenCutList
     include LayerVisibilityHelper
     include MaterialAttributesCachingHelper
 
-    def _compute_children_faces_triangles(entities, transformation = nil, filtered_faces = nil)
+    def _compute_children_faces_triangles(entities, transformation: IDENTITY, filtered_faces: nil, grab_sub_components: false)
       triangles = []
-      entities.each { |entity|
+      entities.each do |entity|
         next if entity.is_a?(Sketchup::Edge)   # Minor Speed improvement when there are a lot of edges
         if entity.visible? && _layer_visible?(entity.layer)
           if entity.is_a?(Sketchup::Face)
             triangles.concat(_compute_face_triangles(entity, transformation)) if filtered_faces.nil? || filtered_faces.include?(entity)
           elsif entity.respond_to?(:definition)
-            material = entity.material
-            material_attributes = _get_material_attributes(material)
-            next if material_attributes.type == MaterialAttributes::TYPE_MACHINING || material_attributes.type == MaterialAttributes::TYPE_HARDWARE
-            next if !(definition = entity.definition).group? && !definition.behavior.cuts_opening?
-            triangles.concat(_compute_children_faces_triangles(definition.entities, TransformationUtils::multiply(transformation, entity.transformation), filtered_faces))
+            ma = _get_material_attributes(entity.material)
+            next if ma.type == MaterialAttributes::TYPE_MACHINING || ma.type == MaterialAttributes::TYPE_HARDWARE && !entity.name.strip.empty?
+            definition = entity.definition
+            next if !grab_sub_components && !definition.group? && !definition.behavior.cuts_opening?
+            triangles.concat(_compute_children_faces_triangles(definition.entities, transformation: transformation * entity.transformation, filtered_faces: filtered_faces, grab_sub_components: grab_sub_components))
           end
         end
-      }
+      end
       triangles
     end
 

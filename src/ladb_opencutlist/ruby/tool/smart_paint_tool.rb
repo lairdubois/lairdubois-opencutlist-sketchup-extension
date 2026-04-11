@@ -708,14 +708,14 @@ module Ladb::OpenCutList
       return true if super
       if key == VK_LEFT
         button = _get_selected_material_button
-        if button && button.previous && button.previous.is_a?(Kuix::Button)
-          button.previous.fire(:click, flags)
+        if button && (prev_sibling = button.prev_sibling).is_a?(Kuix::Button)
+          prev_sibling.fire(:click, flags)
           return true
         end
       elsif key == VK_RIGHT
         button = _get_selected_material_button
-        if button && button.next && button.next.is_a?(Kuix::Button)
-          button.next.fire(:click, flags)
+        if button && (next_sibling = button.next_sibling).is_a?(Kuix::Button)
+          next_sibling.fire(:click, flags)
           return true
         end
       elsif is_key_alt_or_command?(key)
@@ -919,7 +919,7 @@ module Ladb::OpenCutList
               instance_paths = []
               _instances_to_paths(instances, instance_paths, model.active_entities, model.active_path.to_a)
 
-              triangles = _compute_children_faces_triangles(active_instance.definition.entities, nil, faces)
+              triangles = _compute_children_faces_triangles(active_instance.definition.entities, filtered_faces: faces)
 
               instance_paths.each do |path|
 
@@ -1003,7 +1003,7 @@ module Ladb::OpenCutList
               instance_paths = []
               _instances_to_paths(instances, instance_paths, model.active_entities, model.active_path.to_a)
 
-              triangles = _compute_children_faces_triangles(active_instance.definition.entities, nil, faces)
+              triangles = _compute_children_faces_triangles(active_instance.definition.entities, filtered_faces: faces)
 
               instance_paths.each do |path|
 

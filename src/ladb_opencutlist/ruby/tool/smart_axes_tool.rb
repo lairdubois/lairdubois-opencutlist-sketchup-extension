@@ -759,7 +759,7 @@ module Ladb::OpenCutList
         end
 
         bounds = Geom::BoundingBox.new
-        bounds.add(_compute_children_faces_triangles(instance_info.entity.definition.entities, t.inverse))
+        bounds.add(_compute_children_faces_triangles(instance_info.entity.definition.entities, transformation: t.inverse))
 
         # Action Front arrow
         k_arrow = Kuix::ArrowFillMotif3d.new

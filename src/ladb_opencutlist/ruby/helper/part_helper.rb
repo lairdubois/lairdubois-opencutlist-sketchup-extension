@@ -10,7 +10,7 @@ module Ladb::OpenCutList
     def _get_part_entity_path_from_path(path)
       part_index = path.rindex { |entity|
         entity.is_a?(Sketchup::ComponentInstance) && !(behavior = entity.definition.behavior).cuts_opening? && !behavior.always_face_camera? ||
-          _get_material_attributes(entity.material).type == MaterialAttributes::TYPE_HARDWARE
+          _get_material_attributes(entity.material).type == MaterialAttributes::TYPE_HARDWARE && !entity.name.strip.empty?
       }
       return path[0..part_index] unless part_index.nil?
       path

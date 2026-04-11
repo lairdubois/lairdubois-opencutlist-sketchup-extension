@@ -382,6 +382,7 @@ tab:
       children_size_increase: "Cette dimension est majorée par une surcote pour {{ count }} des pièces regroupées"
       invalid_final_area: "Attention, cette surface cumulée n'a pas pu être calculée parce que {{ count }} pièce (sur {{ total }}) a une surface finie invalide"
       invalid_final_area_plural: "Attention, cette surface cumulée n'a pas pu être calculée parce que {{ count }} pièces (sur {{ total }}) ont une surface finie invalide"
+      is_instance_name: La désignation de cette pièce est extraite du nom d'instance du groupe
       is_dynamic_attributes_name: La désignation de cette pièce est extraite de l'attribut 'Name' du composant dynamique
       has_edges: "Cette pièce contient {{ count }} chant plaqué"
       has_edges_plural: "Cette pièce contient {{ count }} chants plaqués"

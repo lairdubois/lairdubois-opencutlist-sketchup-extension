@@ -6,6 +6,7 @@ module Ladb::OpenCutList
   require_relative '../helper/face_triangles_helper'
   require_relative '../helper/sanitizer_helper'
   require_relative '../helper/part_helper'
+  require_relative '../helper/material_attributes_caching_helper'
   require_relative '../utils/dimension_utils'
   require_relative '../utils/hash_utils'
   require_relative '../utils/view_utils'
@@ -24,6 +25,7 @@ module Ladb::OpenCutList
     include SanitizerHelper
     include PartHelper
     include CutlistObserverHelper
+    include MaterialAttributesCachingHelper
 
     MESSAGE_TYPE_DEFAULT = 0
     MESSAGE_TYPE_ERROR = 1
@@ -421,7 +423,8 @@ module Ladb::OpenCutList
     def setup_highlighted_part_helper(part, instance_paths = nil)
 
       definition = part.def.get_one_instance_info.definition
-      triangles = _compute_children_faces_triangles(definition.entities)
+      material_attributes = _get_material_attributes(part.def.material_name)
+      triangles = _compute_children_faces_triangles(definition.entities, grab_sub_components: material_attributes.type == MaterialAttributes::TYPE_HARDWARE)
       bounds = Geom::BoundingBox.new
       bounds.add(triangles) if triangles.any?
 

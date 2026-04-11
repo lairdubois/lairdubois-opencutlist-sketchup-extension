@@ -286,17 +286,19 @@ module Ladb::OpenCutList
       container_validator = nil
       case @container_validator
       when CONTAINER_VALIDATOR_NONE
-        container_validator = lambda { |container|
+        container_validator = lambda { |container, depth|
           false
         }
       when CONTAINER_VALIDATOR_PART
-        container_validator = lambda { |container|
-          !container.is_a?(Sketchup::ComponentInstance) && _get_material_attributes(container.material).type != MaterialAttributes::TYPE_HARDWARE ||
-           container.definition.behavior.cuts_opening? ||
-           container.definition.behavior.always_face_camera?
+        container_validator = lambda { |container, depth|
+          ma = _get_material_attributes(container.material)
+          return false if depth != 0 && ma.type == MaterialAttributes::TYPE_HARDWARE && !container.name.strip.empty?
+          return true if container.definition.behavior.cuts_opening? || container.definition.behavior.always_face_camera?
+          return false if container.is_a?(Sketchup::ComponentInstance)
+          true
         }
       when CONTAINER_VALIDATOR_NO_SCALE
-        container_validator = lambda { |container|
+        container_validator = lambda { |container, depth|
           container.definition.behavior.no_scale_mask? != 127
         }
       end
@@ -343,7 +345,7 @@ module Ladb::OpenCutList
       [ x_axis, y_axis, z_axis, input_line_manipulator ]
     end
 
-    def _populate_manipulators(drawing_container_def, entities, transformation = IDENTITY, material = nil, layer = nil, face_validator = nil, edge_validator = nil, container_validator = nil)
+    def _populate_manipulators(drawing_container_def, entities, transformation = IDENTITY, material = nil, layer = nil, face_validator = nil, edge_validator = nil, container_validator = nil, depth = 0)
       entities.each do |entity|
         next unless entity.visible? && _layer_visible?(entity.layer)
         if entity.is_a?(Sketchup::Face)
@@ -385,14 +387,14 @@ module Ladb::OpenCutList
           manipulator = SnapManipulator.new(entity, transformation, material, layer)
           drawing_container_def.snap_manipulators << manipulator
         elsif entity.respond_to?(:definition)
-          if container_validator.nil? || container_validator.call(entity)
+          if container_validator.nil? || container_validator.call(entity, depth + 1)
             if @flatten
               child_drawing_container_def = drawing_container_def
             else
               child_drawing_container_def = DrawingContainerDef.new(entity, transformation)
               drawing_container_def.container_defs << child_drawing_container_def
             end
-            _populate_manipulators(child_drawing_container_def, entity.definition.entities, transformation * entity.transformation, entity.material, entity.layer, face_validator, edge_validator, container_validator)
+            _populate_manipulators(child_drawing_container_def, entity.definition.entities, transformation * entity.transformation, entity.material, entity.layer, face_validator, edge_validator, container_validator, depth + 1)
           end
         end
       end

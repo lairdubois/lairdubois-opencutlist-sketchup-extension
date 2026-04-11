@@ -786,77 +786,83 @@ module Ladb::OpenCutList
         cutlist.add_group(group)
 
         # Folding
-        if @part_folding
+        if group_def.material_attributes.type == MaterialAttributes::TYPE_HARDWARE
 
-          if group_def.material_attributes.type == MaterialAttributes::TYPE_HARDWARE
+          part_defs = []
+          group_def.part_defs.values
+                   .group_by { |part_def|
+                     [ part_def.name,
+                       part_def.mass,
+                       part_def.price,
+                       part_def.url,
+                       (@hide_descriptions || part_def.description),
+                       (@hide_tags || part_def.tags),
+                     ]
+                   }
+                   .each do |name, child_part_defs|
 
-            part_defs = []
-            group_def.part_defs.values
-                     .group_by { |part_def|
-                       da = _get_definition_attributes(part_def.definition)
-                       [ part_def.name, da.mass, da.price ]
-                     }
-                     .each do |name, child_part_defs|
+            first_child_part_def = child_part_defs.first
 
-              first_child_part_def = child_part_defs.first
+            if child_part_defs.one?
+              part_defs.push(first_child_part_def)
+            else
 
-              if child_part_defs.one?
-                part_defs.push(first_child_part_def)
-              else
+              folder_part_def = PartDef.new(first_child_part_def.id + '_folder', first_child_part_def.virtual)
+              folder_part_def.name = first_child_part_def.name
+              folder_part_def.name_source = first_child_part_def.name_source
+              folder_part_def.description = first_child_part_def.description
+              folder_part_def.cutting_size = first_child_part_def.cutting_size
+              folder_part_def.size = first_child_part_def.size
+              folder_part_def.material_name = first_child_part_def.material_name
+              folder_part_def.cumulable = first_child_part_def.cumulable
+              folder_part_def.instance_count_by_part = first_child_part_def.instance_count_by_part
+              folder_part_def.mass = first_child_part_def.mass
+              folder_part_def.price = first_child_part_def.price
+              folder_part_def.url = first_child_part_def.url
+              folder_part_def.tags = first_child_part_def.tags
+              folder_part_def.ignore_grain_direction = first_child_part_def.ignore_grain_direction
+              folder_part_def.length_increase = first_child_part_def.length_increase
+              folder_part_def.length_increased = first_child_part_def.length_increased
+              folder_part_def.width_increase = first_child_part_def.width_increase
+              folder_part_def.width_increased = first_child_part_def.width_increased
+              folder_part_def.thickness_increase = first_child_part_def.thickness_increase
+              folder_part_def.thickness_increased = first_child_part_def.thickness_increased
+              folder_part_def.edge_count = first_child_part_def.edge_count
+              folder_part_def.edge_pattern = first_child_part_def.edge_pattern
+              folder_part_def.edge_materials.merge!(first_child_part_def.edge_materials)
+              folder_part_def.edge_material_names.merge!(first_child_part_def.edge_material_names)
+              folder_part_def.edge_material_colors.merge!(first_child_part_def.edge_material_colors)
+              folder_part_def.edge_std_dimensions.merge!(first_child_part_def.edge_std_dimensions)
+              folder_part_def.edge_group_defs.merge!(first_child_part_def.edge_group_defs)
+              folder_part_def.edge_length_decrement = first_child_part_def.edge_length_decrement
+              folder_part_def.edge_width_decrement = first_child_part_def.edge_width_decrement
+              folder_part_def.face_count = first_child_part_def.face_count
+              folder_part_def.face_pattern = first_child_part_def.face_pattern
+              folder_part_def.face_material_names.merge!(first_child_part_def.face_material_names)
+              folder_part_def.face_std_dimensions.merge!(first_child_part_def.face_std_dimensions)
+              folder_part_def.veneer_group_defs.merge!(first_child_part_def.veneer_group_defs)
+              folder_part_def.face_thickness_decrement = first_child_part_def.face_thickness_decrement
+              folder_part_def.final_area = first_child_part_def.final_area
 
-                folder_part_def = PartDef.new(first_child_part_def.id + '_folder', first_child_part_def.virtual)
-                folder_part_def.name = first_child_part_def.name
-                folder_part_def.name_source = first_child_part_def.name_source
-                folder_part_def.description = first_child_part_def.description
-                folder_part_def.cutting_size = first_child_part_def.cutting_size
-                folder_part_def.size = first_child_part_def.size
-                folder_part_def.material_name = first_child_part_def.material_name
-                folder_part_def.cumulable = first_child_part_def.cumulable
-                folder_part_def.instance_count_by_part = first_child_part_def.instance_count_by_part
-                folder_part_def.mass = first_child_part_def.mass
-                folder_part_def.price = first_child_part_def.price
-                folder_part_def.tags = first_child_part_def.tags
-                folder_part_def.ignore_grain_direction = first_child_part_def.ignore_grain_direction
-                folder_part_def.length_increase = first_child_part_def.length_increase
-                folder_part_def.length_increased = first_child_part_def.length_increased
-                folder_part_def.width_increase = first_child_part_def.width_increase
-                folder_part_def.width_increased = first_child_part_def.width_increased
-                folder_part_def.thickness_increase = first_child_part_def.thickness_increase
-                folder_part_def.thickness_increased = first_child_part_def.thickness_increased
-                folder_part_def.edge_count = first_child_part_def.edge_count
-                folder_part_def.edge_pattern = first_child_part_def.edge_pattern
-                folder_part_def.edge_materials.merge!(first_child_part_def.edge_materials)
-                folder_part_def.edge_material_names.merge!(first_child_part_def.edge_material_names)
-                folder_part_def.edge_material_colors.merge!(first_child_part_def.edge_material_colors)
-                folder_part_def.edge_std_dimensions.merge!(first_child_part_def.edge_std_dimensions)
-                folder_part_def.edge_group_defs.merge!(first_child_part_def.edge_group_defs)
-                folder_part_def.edge_length_decrement = first_child_part_def.edge_length_decrement
-                folder_part_def.edge_width_decrement = first_child_part_def.edge_width_decrement
-                folder_part_def.face_count = first_child_part_def.face_count
-                folder_part_def.face_pattern = first_child_part_def.face_pattern
-                folder_part_def.face_material_names.merge!(first_child_part_def.face_material_names)
-                folder_part_def.face_std_dimensions.merge!(first_child_part_def.face_std_dimensions)
-                folder_part_def.veneer_group_defs.merge!(first_child_part_def.veneer_group_defs)
-                folder_part_def.face_thickness_decrement = first_child_part_def.face_thickness_decrement
-                folder_part_def.final_area = first_child_part_def.final_area
-
-                child_part_defs.each do |part_def|
-                  folder_part_def.children.push(part_def)
-                  folder_part_def.merge_instance_infos(part_def.instance_infos)
-                  folder_part_def.count += part_def.count
-                  folder_part_def.merge_entity_names(part_def.entity_names)
-                  folder_part_def.children_warning_count += 1 if part_def.not_aligned_on_axes
-                  folder_part_def.children_warning_count += 1 if part_def.multiple_content_layers
-                  folder_part_def.children_warning_count += 1 if part_def.unused_instance_count > 0
-                end
-
-                part_defs.push(folder_part_def)
-
+              child_part_defs.each do |part_def|
+                folder_part_def.children.push(part_def)
+                folder_part_def.merge_instance_infos(part_def.instance_infos)
+                folder_part_def.count += part_def.count
+                folder_part_def.merge_entity_names(part_def.entity_names)
+                folder_part_def.children_warning_count += 1 if part_def.not_aligned_on_axes
+                folder_part_def.children_warning_count += 1 if part_def.multiple_content_layers
+                folder_part_def.children_warning_count += 1 if part_def.unused_instance_count > 0
               end
+
+              part_defs.push(folder_part_def)
 
             end
 
-          else
+          end
+
+        else
+
+          if @part_folding
 
             part_defs = []
             group_def.part_defs.values.sort_by { |v| [ v.size.thickness, v.size.length, v.size.width, v.tags, v.final_area.nil? ? 0 : v.final_area, v.cumulable, v.definition_id ] }.each do |part_def|
@@ -886,6 +892,7 @@ module Ladb::OpenCutList
                   folder_part_def.instance_count_by_part = first_child_part_def.instance_count_by_part
                   folder_part_def.mass = first_child_part_def.mass
                   folder_part_def.price = first_child_part_def.price
+                  folder_part_def.url = first_child_part_def.url
                   folder_part_def.tags = first_child_part_def.tags
                   folder_part_def.ignore_grain_direction = first_child_part_def.ignore_grain_direction
                   folder_part_def.length_increase = first_child_part_def.length_increase
@@ -932,10 +939,10 @@ module Ladb::OpenCutList
               end
             end
 
+          else
+            part_defs = group_def.part_defs.values
           end
 
-        else
-          part_defs = group_def.part_defs.values
         end
 
         # Sort and browse parts
@@ -1048,7 +1055,7 @@ module Ladb::OpenCutList
             _store_instance_info(instance_info)
 
             return 0
-          end if material_attributes.type == MaterialAttributes::TYPE_HARDWARE
+          end if material_attributes.type == MaterialAttributes::TYPE_HARDWARE && (!definition.group? || !entity.name.strip.empty?)
 
           # Check entity's children
           definition.entities.each do |child_entity|

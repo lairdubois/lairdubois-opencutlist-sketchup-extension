@@ -123,7 +123,7 @@ module Ladb::OpenCutList
 
       # Folder part takes first child number
       if @children.empty?
-        @name = child_part.name + ', ...' if @name_source != InstanceInfo::NAME_SOURCE_INSTANCE
+        @name = child_part.name + ', ...' if @name_source == InstanceInfo::NAME_SOURCE_DEFINITION
         @number = child_part.number.to_s + '+'
         @saved_number = child_part.saved_number.to_s + '+' if child_part.saved_number
       end
