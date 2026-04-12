@@ -49,8 +49,9 @@ module Ladb::OpenCutList
 
         d_nps = {} # Definition => NodeDefs, Parts
         fn_populate_dn = lambda { |node_def|
-          if node_def.type == OutlinerNodeModelDef::TYPE_PART && !node_def.entity.deleted?
+          if node_def.type == OutlinerNodeDef::TYPE_PART && !node_def.entity.deleted?
             unless (part = _generate_part_from_path(node_def.path)).nil?
+              next if part.def.name_source != InstanceInfo::NAME_SOURCE_DEFINITION
               (d_nps[node_def.entity.definition] ||= []) << [ node_def, part ]
             end
           end

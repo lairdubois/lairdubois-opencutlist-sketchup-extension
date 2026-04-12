@@ -52,6 +52,7 @@ module Ladb::OpenCutList
       # Generate node tree
       outliner_def.root_node_def = w.run(:create_node_def, { entity: model })
 
+      w.run(:compute_types, { node_def: outliner_def.root_node_def })
       w.run(:compute_active_path)
       w.run(:compute_selection)
 

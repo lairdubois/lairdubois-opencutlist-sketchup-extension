@@ -25,18 +25,13 @@ module Ladb::OpenCutList
       worker = CutlistGenerateWorker.new(**HashUtils.symbolize_keys(PLUGIN.get_model_preset('cutlist_options')).merge({ active_entity: entity, active_path: path[0...-1] }))
       cutlist = worker.run
 
-      part = nil
       cutlist.groups.each do |group|
-        group.parts.each do |p|
-          if p.def.definition_id == entity.definition.name
-            part = p
-            break
-          end
-          end
-        break unless part.nil?
+        if (part = group.parts.find { |part| part.def.definition_id == entity.definition.name })
+          return part
         end
+      end
 
-      part
+      nil
     end
 
   end

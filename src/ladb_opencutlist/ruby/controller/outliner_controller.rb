@@ -339,8 +339,6 @@ module Ladb::OpenCutList
 
         definition.instances.each do |instance|
 
-          face_bounds_cache = {}
-
           node_defs = @outliner_def.get_node_defs_by_entity_id(instance.entityID)
           if node_defs
 
@@ -351,8 +349,10 @@ module Ladb::OpenCutList
 
               @worker.run(:destroy_node_def, { node_def: node_def })
 
-              node_def = @worker.run(:create_node_def, { entity: instance, path: parent_node_def.path, face_bounds_cache: face_bounds_cache })
+              node_def = @worker.run(:create_node_def, { entity: instance, path: parent_node_def.path })
               node_def.expanded = expanded
+
+              @worker.run(:compute_types, { node_def: node_def })
 
               parent_node_def.add_child(node_def)
               parent_node_def.invalidate
@@ -380,7 +380,6 @@ module Ladb::OpenCutList
       if entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance)
 
         need_to_compute_selection = false
-        face_bounds_cache = {}
 
         parent = entity.parent
         parent_instances = parent.is_a?(Sketchup::ComponentDefinition) ? parent.instances : [ parent ]
@@ -390,13 +389,14 @@ module Ladb::OpenCutList
           unless (node_defs = @outliner_def.get_node_defs_by_entity_id(entity_id)).nil?
             node_defs.each do |node_def|
 
-              unless (child_node_def = @worker.run(:create_node_def, { entity: entity, path: node_def.path, face_bounds_cache: face_bounds_cache })).nil?
+              unless (child_node_def = @worker.run(:create_node_def, { entity: entity, path: node_def.path })).nil?
 
                 need_to_compute_selection = true if Sketchup.active_model.selection.include?(entity)
 
                 node_def.add_child(child_node_def)
                 node_def.invalidate
                 @worker.run(:sort_children_node_defs, { children: node_def.children })
+                @worker.run(:compute_types, { node_def: node_def })
 
                 child_node_def.expanded = child_node_def.expandable?
 
@@ -437,6 +437,7 @@ module Ladb::OpenCutList
             node_def.invalidate(propagation)
 
             @worker.run(:sort_children_node_defs, { children: node_def.parent.children }) if node_def.parent
+            @worker.run(:compute_types, { node_def: node_def }) if node_def
 
           end
         end
@@ -448,6 +449,7 @@ module Ladb::OpenCutList
             node_defs.each do |node_def|
               node_def.invalidate
               @worker.run(:sort_children_node_defs, { children: node_def.parent.children }) if node_def.parent
+              @worker.run(:compute_types, { node_def: node_def }) if node_def
             end
           end
         end

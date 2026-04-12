@@ -10,7 +10,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :id, :depth, :type,
+    attr_reader :id, :depth, :native_type, :type,
                 :name, :default_name,
                 :locked, :computed_locked, :visible, :computed_visible, :expanded, :expandable, :child_active, :active, :selected,
                 :children
@@ -20,6 +20,7 @@ module Ladb::OpenCutList
 
       @id = _def.id
       @depth = _def.depth
+      @native_type = _def.native_type
       @type = _def.type
 
       @name = _def.name

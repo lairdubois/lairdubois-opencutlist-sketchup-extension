@@ -248,7 +248,7 @@
                         return false;
                     })
                     .on('contextmenu', function (e) {
-                        if (node.type > 0) {    // > TYPE_MODEL
+                        if (node.native_type > 0) {    // > TYPE_MODEL
                             $editedRow = $row;
                             fnMouseEnter();
                             let items = [];

@@ -153,13 +153,76 @@ module Ladb::OpenCutList
       model.selection
               .select { |entity| entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance) }
               .flat_map { |entity| @outliner_def.get_node_defs_by_entity_id(entity.entityID) }
-              .compact
               .each do |node_def|
+
+        next if node_def.nil?
 
         node_def.selected = true
         node_def.invalidate
         @outliner_def.selected_node_defs << node_def
 
+      end
+
+    end
+
+    def compute_types(node_def:)
+
+      fn_traverse = lambda do |node_def, transformation = IDENTITY|
+
+        # Exclude special behavior components
+        return if node_def.always_face_camera?
+
+        material_type = node_def.material_def ? node_def.material_def.material_attributes.type : MaterialAttributes::TYPE_UNKNOWN
+
+        # Machining Type
+        return if material_type == MaterialAttributes::TYPE_MACHINING
+
+        t = transformation * node_def.entity.transformation
+
+        # Hardware Type
+        begin
+
+          node_def.type = OutlinerNodeDef::TYPE_PART
+
+          return
+        end if material_type == MaterialAttributes::TYPE_HARDWARE && (!node_def.entity.definition.group? || !node_def.entity.name.strip.empty?)
+
+        points = node_def.faces.flat_map { |face| face.outer_loop.vertices.map { |vertex| t * vertex.position} }
+        node_def.children.each do |child_node_def|
+          child_points = fn_traverse.call(child_node_def, t)
+          points += child_points if child_points
+        end
+
+        unless node_def.entity.definition.group?
+
+          # Treat cuts_opening behavior component instances as simple group
+          return points if node_def.cuts_opening?
+
+          if points.any?
+
+            bounds = Geom::BoundingBox.new.add(points)
+            if bounds.width != 0 && bounds.height != 0 && bounds.depth != 0   # Exclude empty or flat bounds
+
+              node_def.type = OutlinerNodeDef::TYPE_PART
+
+              return
+            end
+
+          end
+
+        end
+
+        points
+      end
+
+      if node_def.native_type == OutlinerNodeDef::TYPE_MODEL
+        node_def.children.each do |child_node_def|
+          node_def.type = node_def.native_type
+          fn_traverse.call(child_node_def)
+        end
+      else
+        node_def.type = node_def.native_type
+        fn_traverse.call(node_def)
       end
 
     end
@@ -191,9 +254,10 @@ module Ladb::OpenCutList
       false
     end
 
-    def create_node_def(entity:, path: [], face_bounds_cache: {})
-      node_def = nil
-      if entity.is_a?(Sketchup::Group)
+    def create_node_def(entity:, path: [])
+      case entity
+
+      when Sketchup::Group
 
         path += [ entity ]
 
@@ -204,21 +268,25 @@ module Ladb::OpenCutList
 
         @outliner_def.add_node_def(node_def)
 
-        create_children_node_defs(node_def: node_def, entities: entity.entities, path: path, face_bounds_cache: face_bounds_cache)
+        create_children_node_defs(node_def: node_def, entities: entity.entities, path: path)
 
-      elsif entity.is_a?(Sketchup::ComponentInstance)
+        return node_def
+
+      when Sketchup::ComponentInstance
 
         path += [ entity ]
 
-        node_def = OutlinerNodeComponentDef.new(path) if node_def.nil?
+        node_def = OutlinerNodeComponentDef.new(path)
         node_def.material_def = @outliner_def.available_material_defs[entity.material]
         node_def.layer_def = @outliner_def.available_layer_defs[entity.layer]
 
         @outliner_def.add_node_def(node_def)
 
-        create_children_node_defs(node_def: node_def, entities: entity.definition.entities, path: path, face_bounds_cache: face_bounds_cache) unless node_def.live_component?
+        create_children_node_defs(node_def: node_def, entities: entity.definition.entities, path: path) unless node_def.live_component?
 
-      elsif entity.is_a?(Sketchup::Model)
+        return node_def
+
+      when Sketchup::Model
 
         dir, filename = File.split(entity.path)
         filename = PLUGIN.get_i18n_string('default.empty_filename') if filename.empty?
@@ -229,11 +297,12 @@ module Ladb::OpenCutList
 
         @outliner_def.add_node_def(node_def)
 
-        create_children_node_defs(node_def: node_def, entities: entity.entities, path: path, face_bounds_cache: face_bounds_cache)
+        create_children_node_defs(node_def: node_def, entities: entity.entities, path: path)
+
+        return node_def
 
       end
-
-      node_def
+      nil
     end
 
     def destroy_node_def(node_def:)
@@ -250,13 +319,21 @@ module Ladb::OpenCutList
 
     end
 
-    def create_children_node_defs(node_def:, entities:, path: [], face_bounds_cache: {})
+    def create_children_node_defs(node_def:, entities:, path: [])
+      node_def.faces.clear
       entities.each do |child_entity|
-        next unless child_entity.is_a?(Sketchup::Group) || child_entity.is_a?(Sketchup::ComponentInstance)
+        case child_entity
 
-        child_node_def = create_node_def(entity: child_entity, path: path, face_bounds_cache: face_bounds_cache)
-        node_def.add_child(child_node_def) if child_node_def
+        when Sketchup::Face
 
+          node_def.faces << child_entity
+
+        when Sketchup::Group, Sketchup::ComponentInstance
+
+          child_node_def = create_node_def(entity: child_entity, path: path)
+          node_def.add_child(child_node_def) if child_node_def
+
+        end
       end
       sort_children_node_defs(children: node_def.children)
     end

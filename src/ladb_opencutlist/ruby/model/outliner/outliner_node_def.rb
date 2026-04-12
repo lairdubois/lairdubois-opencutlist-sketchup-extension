@@ -8,17 +8,27 @@ module Ladb::OpenCutList
 
   class OutlinerNodeDef < DataContainer
 
-    TYPE_MODEL     = 0
-    TYPE_GROUP     = 1
-    TYPE_COMPONENT = 2
-    TYPE_PART      = 3
+    TYPE_MODEL          = 0
+    TYPE_GROUP          = 1
+    TYPE_COMPONENT      = 2
+    TYPE_PART           = 3
 
     PROPAGATION_SELF     = 1 << 1
     PROPAGATION_PARENT   = 1 << 2
     PROPAGATION_CHILDREN = 1 << 3
 
-    attr_accessor :default_name, :expanded, :child_active, :active, :selected, :parent
-    attr_reader :path, :id, :depth, :entity, :entity_id, :children
+    attr_accessor :type,
+                  :default_name,
+                  :expanded,
+                  :child_active, :active,
+                  :selected,
+                  :parent
+    attr_reader :path,
+                :id,
+                :depth,
+                :entity, :entity_id,
+                :children,
+                :faces
 
     # -----
 
@@ -38,6 +48,8 @@ module Ladb::OpenCutList
       @id = OutlinerNodeDef::generate_node_id(path)
       @depth = @path.length
 
+      @type = native_type
+
       @default_name = nil
       @expanded = false
       @child_active = false
@@ -47,10 +59,16 @@ module Ladb::OpenCutList
       @parent = nil
       @children = []
 
+      @faces = []
+
+    end
+
+    def native_type
+      -1
     end
 
     def type
-      raise NotImplementedError
+      @type
     end
 
     def name
@@ -130,7 +148,7 @@ module Ladb::OpenCutList
 
   class OutlinerNodeModelDef < OutlinerNodeDef
 
-    def type
+    def native_type
       TYPE_MODEL
     end
 
@@ -149,7 +167,9 @@ module Ladb::OpenCutList
 
   class OutlinerNodeGroupDef < OutlinerNodeDef
 
-    attr_accessor :material_def, :layer_def
+    attr_accessor :material_def,
+                  :layer_def
+    attr_reader   :faces
 
     def initialize(path = [])
       super
@@ -159,8 +179,13 @@ module Ladb::OpenCutList
 
     end
 
-    def type
+    def native_type
       TYPE_GROUP
+    end
+
+    def material_type
+      return @material_def.material_attributes.type if @material_def
+      MaterialAttributes::TYPE_UNKNOWN
     end
 
     def material_def=(material_def)
@@ -238,14 +263,7 @@ module Ladb::OpenCutList
 
   class OutlinerNodeComponentDef < OutlinerNodeGroupDef
 
-    def type
-      unless @entity.definition.behavior.cuts_opening? || @entity.definition.behavior.always_face_camera?
-        # TODO: Check face bounds only
-        if @entity.definition.entities.find { |e| e.is_a?(Sketchup::Face) } &&  # Contains at least one face
-           !(bounds = @entity.definition.bounds).empty? && [ bounds.width, bounds.height, bounds.depth ].min > 0    # Exclude empty or flat bounds
-          return TYPE_PART
-        end
-      end
+    def native_type
       TYPE_COMPONENT
     end
 
