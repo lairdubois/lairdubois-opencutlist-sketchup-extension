@@ -2010,7 +2010,7 @@ tab:
           Sie sind dabei, eine Konfiguration mit **{{ count }}** Korpus in die Vorlage zu importieren.
         info_0_plural: |
           Sie sind dabei, eine Konfiguration mit **{{ count }}** Korpusen in die Vorlage zu importieren.
-        info_1: Diese Konfiguration wird in der Hauptszene am Ursprung platziert.
+        info_1: "Sie können nun festlegen, wo sie im aktiven Modell platziert werden soll."
         info_2: |
           Passen Sie die Optionen an.
           Klicken Sie auf **Importieren**, um den Vorgang zu bestätigen.
@@ -2494,3 +2494,7 @@ tool:
       not_part: Diese Fläche gehört nicht zu einem Teil (Komponente)
       not_flat_face: Diese Fläche ist nicht eben
       incompatible_active_path: "Der aktive Pfad ermöglicht es nicht, dieses Teil zu exportieren"
+  smart_importers_bxf2:
+    title: Importieren
+    action_0: $t(tab.importers.bxf2.title)
+    action_0_status: Konfiguration platzieren
