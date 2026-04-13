@@ -40,6 +40,9 @@ module Ladb::OpenCutList
     CONTAINER_VALIDATOR_PART = 2
     CONTAINER_VALIDATOR_NO_SCALE = 3
 
+    # Backward compatibility
+    SketchupSnapClass = Object.const_defined?('Sketchup::Snap') ? Sketchup::Snap : nil
+
     def initialize(ipaths,
 
                    input_local_x_axis: X_AXIS,
@@ -348,7 +351,8 @@ module Ladb::OpenCutList
     def _populate_manipulators(drawing_container_def, entities, transformation = IDENTITY, material = nil, layer = nil, face_validator = nil, edge_validator = nil, container_validator = nil, depth = 0)
       entities.each do |entity|
         next unless entity.visible? && _layer_visible?(entity.layer)
-        if entity.is_a?(Sketchup::Face)
+        case entity
+        when Sketchup::Face
           next if @ignore_faces
           manipulator = FaceManipulator.new(entity, transformation, material, layer)
           if face_validator.nil? || face_validator.call(manipulator)
@@ -364,7 +368,7 @@ module Ladb::OpenCutList
             end
             drawing_container_def.face_manipulators << manipulator
           end
-        elsif entity.is_a?(Sketchup::Edge)
+        when Sketchup::Edge
           next if @ignore_edges || entity.soft? && @ignore_soft_edges
           manipulator = EdgeManipulator.new(entity, transformation, material, layer)
           if edge_validator.nil? || edge_validator.call(manipulator)
@@ -378,15 +382,7 @@ module Ladb::OpenCutList
               end
             end
           end
-        elsif entity.is_a?(Sketchup::ConstructionLine)
-          next if @ignore_clines || entity.start.nil? # Exclude infinite Clines
-          manipulator = ClineManipulator.new(entity, transformation, material, layer)
-          drawing_container_def.cline_manipulators << manipulator
-        elsif Object.const_defined?('Sketchup::Snap') && entity.is_a?(Sketchup::Snap)
-          next if @ignore_snaps
-          manipulator = SnapManipulator.new(entity, transformation, material, layer)
-          drawing_container_def.snap_manipulators << manipulator
-        elsif entity.respond_to?(:definition)
+        when Sketchup::Group, Sketchup::ComponentInstance
           if container_validator.nil? || container_validator.call(entity, depth + 1)
             if @flatten
               child_drawing_container_def = drawing_container_def
@@ -396,6 +392,14 @@ module Ladb::OpenCutList
             end
             _populate_manipulators(child_drawing_container_def, entity.definition.entities, transformation * entity.transformation, entity.material, entity.layer, face_validator, edge_validator, container_validator, depth + 1)
           end
+        when Sketchup::ConstructionLine
+          next if @ignore_clines || entity.start.nil? # Exclude infinite Clines
+          manipulator = ClineManipulator.new(entity, transformation, material, layer)
+          drawing_container_def.cline_manipulators << manipulator
+        when SketchupSnapClass
+          next if @ignore_snaps
+          manipulator = SnapManipulator.new(entity, transformation, material, layer)
+          drawing_container_def.snap_manipulators << manipulator
         end
       end
     end

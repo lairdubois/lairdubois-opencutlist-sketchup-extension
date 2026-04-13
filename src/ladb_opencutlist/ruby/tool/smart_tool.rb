@@ -2132,7 +2132,7 @@ module Ladb::OpenCutList
     end
 
     def _can_activate_selection?(path, instances)
-      _can_activate_locked? || (path.nil? || path.none?(&:locked?)) && (instances.nil? || instances.none?(&:locked?))
+      _can_activate_locked? || (path.nil? || path.none? { |i| i.respond_to?(:locked?) && i.locked? }) && (instances.nil? || instances.none? { |i| i.respond_to?(:locked?) && i.locked? })
     end
 
     def _get_cant_activate_selection_error_key(path, instances)
@@ -3380,7 +3380,7 @@ module Ladb::OpenCutList
     def _select_from_model_selection
       return if (model = Sketchup.active_model).nil?
       selection = model.selection
-      if (instances = selection.select { |entity| entity.respond_to?(:transformation) }).any?
+      if (instances = selection.select { |entity| entity.respond_to?(:transformation) && entity.respond_to?(:move!) }).any?
         instances = instances[0,1] unless _allows_multiple_selections?
         if (first_entity_path = DrawingelementUtils.get_drawingelement_path(instances.first)).is_a?(Array) && first_entity_path.any?
 

@@ -1026,7 +1026,8 @@ module Ladb::OpenCutList
       return 0 if entity.is_a?(Sketchup::Edge)   # Minor Speed improvement when there are a lot of edges
       face_count = 0
       if entity.visible? && _layer_visible?(entity.layer, path.empty?)
-        if entity.respond_to?(:definition)
+        case entity
+        when Sketchup::Group, Sketchup::ComponentInstance
 
           definition = entity.definition
           behavior = definition.behavior
@@ -1088,7 +1089,7 @@ module Ladb::OpenCutList
 
           end
 
-        elsif entity.is_a?(Sketchup::Face)
+        when Sketchup::Face
 
           # Entity is a face -> return 1
           return 1

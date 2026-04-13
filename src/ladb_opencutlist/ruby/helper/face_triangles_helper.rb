@@ -15,9 +15,10 @@ module Ladb::OpenCutList
       entities.each do |entity|
         next if entity.is_a?(Sketchup::Edge)   # Minor Speed improvement when there are a lot of edges
         if entity.visible? && _layer_visible?(entity.layer)
-          if entity.is_a?(Sketchup::Face)
+          case entity
+          when Sketchup::Face
             triangles.concat(_compute_face_triangles(entity, transformation)) if filtered_faces.nil? || filtered_faces.include?(entity)
-          elsif entity.respond_to?(:definition)
+          when Sketchup::Group, Sketchup::ComponentInstance
             ma = _get_material_attributes(entity.material)
             next if ma.type == MaterialAttributes::TYPE_MACHINING || ma.type == MaterialAttributes::TYPE_HARDWARE && !entity.name.strip.empty?
             definition = entity.definition

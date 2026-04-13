@@ -15,14 +15,15 @@ module Ladb::OpenCutList
       definition_or_group.entities.each { |entity|
         next if entity.is_a?(Sketchup::Edge)   # Minor Speed improvement when there are a lot of edges
         if entity.visible? && _layer_visible?(entity.layer)
-          if entity.is_a?(Sketchup::Face)
+          case entity
+          when Sketchup::Face
             face_bounds = entity.bounds
             min = face_bounds.min.transform(transformation)
             max = face_bounds.max.transform(transformation)
             face_bounds = Geom::BoundingBox.new
             face_bounds.add(min, max)
             bounds.add(face_bounds)
-          elsif entity.respond_to?(:definition)
+          when Sketchup::ComponentInstance
             next if entity.material && ((ma = _get_material_attributes(entity.material)).type == MaterialAttributes::TYPE_MACHINING || ma.type == MaterialAttributes::TYPE_HARDWARE) && !entity.name.strip.empty?
             next if !(definition = entity.definition).group? && !definition.behavior.cuts_opening?
             bounds.add(_compute_faces_bounds(entity.definition, transformation * entity.transformation))
