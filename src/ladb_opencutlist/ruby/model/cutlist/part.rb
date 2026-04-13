@@ -11,15 +11,16 @@ module Ladb::OpenCutList
     include HashableHelper
 
     attr_reader :id, :virtual, :number, :saved_number,
-                :name, :name_source, :description, :url,
+                :name, :name_source,
+                :description, :url,
                 :length, :width, :thickness,
+                :cutting_length, :cutting_width, :cutting_thickness, :edge_cutting_length, :edge_cutting_width,
                 :count,
-                :cutting_length, :cutting_width, :cutting_thickness,
-                :edge_cutting_length, :edge_cutting_width,
                 :material_name,
                 :tags,
                 :cumulable, :cumulative_cutting_length, :cumulative_cutting_width,
-                :instance_count_by_part, :mass, :price, :thickness_layer_count, :ignore_grain_direction,
+                :instance_count_by_part, :unused_instance_count,
+                :mass, :price, :thickness_layer_count, :ignore_grain_direction,
                 :length_increase, :length_increased, :width_increase, :width_increased, :height_increase, :height_increased,
                 :edge_count, :edge_pattern, :edge_material_names, :edge_material_colors, :edge_std_dimensions, :edge_decrements,
                 :face_count, :face_pattern, :face_material_names, :face_material_colors, :face_texture_angles, :face_std_dimensions, :face_decrements,
@@ -33,19 +34,23 @@ module Ladb::OpenCutList
       @virtual = _def.virtual
       @number = _def.number
       @saved_number = _def.saved_number
+
       @name = _def.name
       @name_source = _def.name_source
+
       @description = _def.description
       @url = _def.url
+
       @length = _def.size.length.to_s
       @width = _def.size.width.to_s
       @thickness = _def.size.thickness.to_s
-      @count = _def.count
       @cutting_length = _def.cutting_length.to_s
       @cutting_width = _def.cutting_width.to_s
       @cutting_thickness = _def.cutting_size.thickness.to_s
       @edge_cutting_length = _def.edge_cutting_length.to_s
       @edge_cutting_width = _def.edge_cutting_width.to_s
+
+      @count = _def.count
 
       @material_name = _def.material_name
 
@@ -56,6 +61,8 @@ module Ladb::OpenCutList
       @cumulative_cutting_width = _def.cumulative_cutting_width.to_s
 
       @instance_count_by_part = _def.instance_count_by_part
+      @unused_instance_count = _def.unused_instance_count
+
       @mass = _def.mass
       @price = _def.price
       @thickness_layer_count = _def.thickness_layer_count
@@ -113,6 +120,8 @@ module Ladb::OpenCutList
       @children_warning_count = part_def.children_warning_count
       @children = []
 
+      @is_folder = true
+
     end
 
     # ---
@@ -135,42 +144,44 @@ module Ladb::OpenCutList
 
   class Part < AbstractPart
 
-    attr_reader :definition_id, :is_dynamic_attributes_name,
+    attr_reader :definition_id,
+                :is_dynamic_attributes_name, :is_instance_name,
                 :resized, :flipped, :axes_flipped,
                 :material_origins, :orientation_locked_on_axis,
                 :symmetrical,
                 :entity_ids, :entity_serialized_paths,
-                :auto_oriented, :not_aligned_on_axes, :unused_instance_count, :content_layers, :multiple_content_layers, :edge_entity_ids, :face_entity_ids, :axes_to_values, :axes_to_dimensions, :dimensions_to_axes
+                :auto_oriented, :not_aligned_on_axes, :content_layers, :multiple_content_layers, :edge_entity_ids, :face_entity_ids, :axes_to_values, :axes_to_dimensions, :dimensions_to_axes
 
-    def initialize(part_def, group, part_number)
-      super(part_def, group)
+    def initialize(_def, _group, part_number)
+      super(_def, _group)
 
-      @definition_id = part_def.definition_id
-      @number = part_def.number ? part_def.number : part_number
-      @is_dynamic_attributes_name = part_def.is_dynamic_attributes_name
+      @definition_id = _def.definition_id
+      @number = _def.number ? _def.number : part_number
 
-      @resized = !part_def.scale.identity?
-      @flipped = part_def.flipped
-      @axes_flipped = part_def.size.axes_flipped?
+      @is_dynamic_attributes_name = _def.is_dynamic_attributes_name
+      @is_instance_name = _def.is_instance_name
 
-      @material_origins = part_def.material_origins
+      @resized = !_def.scale.identity?
+      @flipped = _def.flipped
+      @axes_flipped = _def.size.axes_flipped?
 
-      @orientation_locked_on_axis = part_def.orientation_locked_on_axis
-      @symmetrical = part_def.symmetrical
+      @material_origins = _def.material_origins
 
-      @entity_ids = part_def.entity_ids
-      @entity_serialized_paths = part_def.entity_serialized_paths
+      @orientation_locked_on_axis = _def.orientation_locked_on_axis
+      @symmetrical = _def.symmetrical
 
-      @auto_oriented = part_def.auto_oriented
-      @not_aligned_on_axes = part_def.not_aligned_on_axes
-      @unused_instance_count = part_def.unused_instance_count
-      @content_layers = part_def.content_layers.map { |v| Sketchup.version_number >= 2000000000 ? v.display_name : v.name }.sort
-      @multiple_content_layers = part_def.multiple_content_layers
-      @edge_entity_ids = part_def.edge_entity_ids
-      @face_entity_ids = part_def.face_entity_ids
-      @axes_to_values = part_def.size.axes_to_values
-      @axes_to_dimensions = part_def.size.axes_to_dimensions
-      @dimensions_to_axes = part_def.size.dimensions_to_axes
+      @entity_ids = _def.entity_ids
+      @entity_serialized_paths = _def.entity_serialized_paths
+
+      @auto_oriented = _def.auto_oriented
+      @not_aligned_on_axes = _def.not_aligned_on_axes
+      @content_layers = _def.content_layers.map { |v| Sketchup.version_number >= 2000000000 ? v.display_name : v.name }.sort
+      @multiple_content_layers = _def.multiple_content_layers
+      @edge_entity_ids = _def.edge_entity_ids
+      @face_entity_ids = _def.face_entity_ids
+      @axes_to_values = _def.size.axes_to_values
+      @axes_to_dimensions = _def.size.axes_to_dimensions
+      @dimensions_to_axes = _def.size.dimensions_to_axes
 
     end
 
@@ -185,10 +196,12 @@ module Ladb::OpenCutList
 
   class ChildPart < Part
 
-    def initialize(part_def, group, part_number, folder_part)
-      super(part_def, group, part_number)
+    def initialize(_def, _group, part_number, folder_part)
+      super(_def, _group, part_number)
 
       @_folder_part = folder_part
+
+      @is_child = true
 
     end
 

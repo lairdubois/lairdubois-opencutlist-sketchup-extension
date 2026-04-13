@@ -44,6 +44,14 @@ module Ladb::OpenCutList
       o.class == self.class && o.length == @length && o.width == @width
     end
 
+    def eql?(o)
+      self == o
+    end
+
+    def hash
+      @length.hash ^ @width.hash
+    end
+
   end
 
 end

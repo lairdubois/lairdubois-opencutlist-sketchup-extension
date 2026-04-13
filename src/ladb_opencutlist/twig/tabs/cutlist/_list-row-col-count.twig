@@ -1,4 +1,4 @@
-{% if part.instance_count_by_part > 1 %}
+{% if part.instance_count_by_part > 1 and not part.is_child %}
     {% set tt = 'tab.cutlist.tooltip.used_instance_count'|i18next({ 'count':(part.instance_count_by_part * part.count - part.unused_instance_count), 'total':(part.instance_count_by_part * part.count) }) %}
 {% elseif part.thickness_layer_count > 1 %}
     {% set tt = ('tab.cutlist.tooltip.thickness_layered'|i18next)~'<br>'~('tab.cutlist.tooltip.thickness_layered_equation'|i18next({ 'count':(part.count / part.thickness_layer_count), 'layerCount':part.thickness_layer_count, 'cuttingPartCount':part.count })) %}

@@ -129,4 +129,8 @@ module Ladb::OpenCutList
 
   end
 
+  def hash
+    super.hash ^ @thickness.hash
+  end
+
 end

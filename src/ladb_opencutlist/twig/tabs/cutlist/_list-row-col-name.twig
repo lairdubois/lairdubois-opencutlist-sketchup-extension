@@ -1,7 +1,13 @@
 <td>
     <div class="ladb-minitools ladb-minitools-right">
         {% if part.ignore_grain_direction and group.material_type == 2 and group.material_grained %}<a href="#" class="ladb-tool-info no-print" data-tab="axes" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.ignore_grain_direction'|i18next }}"><i class="ladb-opencutlist-icon-grained-0"></i></a>{% endif %}
-        {% if part.children %}
+        {% if part.is_dynamic_attributes_name %}<a href="#" class="ladb-tool-info no-print" data-tab="infos_warnings" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.is_dynamic_attributes_name'|i18next }} : <{{ part.definition_id }}>"><i class="ladb-opencutlist-icon-dynamic-component"></i></a>{% endif %}
+        {% if part.is_instance_name %}<a href="#" class="ladb-tool-info no-print" data-tab="infos_warnings" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.is_instance_name'|i18next }} : <{{ part.definition_id }}>"><i class="ladb-opencutlist-icon-instance-component"></i></a>{% endif %}
+        {% if not part.is_child %}
+            {% if part.unused_instance_count > 0 %}<a href="#" class="ladb-tool-warning no-print" data-tab="infos_warnings" data-toggle="tooltip" data-html="true" title="{{ 'tab.cutlist.tooltip.unused_instance_count'|i18next({ 'count':part.unused_instance_count }) }}"><i class="ladb-opencutlist-icon-missing-instance-count"></i></a>{% endif %}
+            {% if part.instance_count_by_part > 1 %}<a href="#" class="ladb-tool-info no-print" data-tab="extra" data-toggle="tooltip" data-html="true" title="{{ 'tab.cutlist.tooltip.instance_count_by_part'|i18next({ 'count':part.instance_count_by_part }) }}"><i class="ladb-opencutlist-icon-instance-count-by-part"></i></a>{% endif %}
+        {% endif %}
+        {% if part.is_folder %}
             {% if part.children_warning_count > 0 %}<a class="ladb-tool-warning no-print" data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.children_warnings')|i18next({ 'count':part.children_warning_count }) }}"><i class="ladb-opencutlist-icon-warning"></i></a>{% endif %}
             {% if showCuttingDimensions or showBoxDimensions %}
                 {% if part.edge_count > 0 %}<a href="#" class="ladb-tool-info" data-tab="edges" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.has_edges'|i18next({ 'count':part.edge_count }) }}"><i class="ladb-opencutlist-icon-edge-{{ part.edge_pattern }}"></i></a>{% endif %}
@@ -10,10 +16,6 @@
         {% else %}
             {% if part.not_aligned_on_axes %}<a href="#" class="ladb-tool-warning no-print" data-tab="infos_warnings" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.not_aligned_on_axes'|i18next }}"><i class="ladb-opencutlist-icon-not-aligned-on-axes"></i></a>{% endif %}
             {% if part.multiple_content_layers %}<a href="#" class="ladb-tool-warning no-print" data-tab="infos_warnings" data-toggle="tooltip" data-html="true" title="{{ 'tab.cutlist.tooltip.multiple_content_layers'|i18next({ 'count':(part.content_layers|length), 'layers':(part.content_layers|join(', ')) }) }}"><i class="ladb-opencutlist-icon-multiple-layers"></i></a>{% endif %}
-            {% if part.unused_instance_count > 0 %}<a href="#" class="ladb-tool-warning no-print" data-tab="infos_warnings" data-toggle="tooltip" data-html="true" title="{{ 'tab.cutlist.tooltip.unused_instance_count'|i18next({ 'count':part.unused_instance_count }) }}"><i class="ladb-opencutlist-icon-missing-instance-count"></i></a>{% endif %}
-            {% if part.instance_count_by_part > 1 %}<a href="#" class="ladb-tool-info no-print" data-tab="infos_warnings" data-toggle="tooltip" data-html="true" title="{{ 'tab.cutlist.tooltip.instance_count_by_part'|i18next({ 'count':part.instance_count_by_part }) }}"><i class="ladb-opencutlist-icon-instance-count-by-part"></i></a>{% endif %}
-            {% if part.name_source == 2 %}<a href="#" class="ladb-tool-info no-print" data-tab="infos_warnings" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.is_dynamic_attributes_name'|i18next }} : <{{ part.definition_id }}>"><i class="ladb-opencutlist-icon-dynamic-component"></i></a>{% endif %}
-            {% if part.name_source == 1 %}<a href="#" class="ladb-tool-info no-print" data-tab="infos_warnings" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.is_instance_name'|i18next }} : <{{ part.definition_id }}>"><i class="ladb-opencutlist-icon-instance-component"></i></a>{% endif %}
             {% if part.thickness_layer_count > 1 %}<a href="#" class="ladb-tool-info" data-tab="extra" data-toggle="tooltip" data-html="true" title="{{ 'tab.cutlist.tooltip.thickness_layer_count'|i18next({ 'count':part.thickness_layer_count }) }}"><i class="ladb-opencutlist-icon-thickness-layers"></i></a>{% endif %}
             {% if part.flipped %}<a href="#" class="ladb-tool-info" data-tab="axes" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.flipped'|i18next }}"><i class="ladb-opencutlist-icon-flipped"></i></a>{% endif %}
             {% if part.symmetrical %}<a href="#" class="ladb-tool-info no-print" data-tab="axes" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.symmetrical'|i18next }}"><i class="ladb-opencutlist-icon-symmetrical"></i></a>{% endif %}
@@ -29,11 +31,11 @@
         {% set showHighlight = group.material_type != 4 and group.material_type != 6 %} {# 4 = TYPE_EDGE, 6 = TYPE_VENEER #}
         {% set showEdit = true or (group.material_type != 4 and group.material_type != 6) %}   {# 4 = TYPE_EDGE, 6 = TYPE_VENEER #}
         {% set showSelect = not isChild %}
-        {% if part.children or showHighlight or showEdit or showSelect %}
+        {% if part.is_folder or showHighlight or showEdit or showSelect %}
             <span class="ladb-separator no-print"></span>
         {% endif %}
         {% if part.url is not empty %}<a href="{{ part.url|escape }}" class="ladb-btn-open-part-url no-print" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.open_part_url'|i18next }}"><i class="ladb-opencutlist-icon-link"></i></a>{% endif %}
-        {% if part.children %}
+        {% if part.is_folder %}
             <a href="#" class="ladb-btn-folding-toggle-row ladb-click-tool no-print" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.folding_part'|i18next }}"><i class="ladb-opencutlist-icon-arrow-down"></i></a>
             {% if showHighlight %}
                 <a href="#" class="ladb-btn-highlight-part no-print" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.highlight_parts'|i18next }}"><i class="ladb-opencutlist-icon-magnifier-multiple"></i></a>

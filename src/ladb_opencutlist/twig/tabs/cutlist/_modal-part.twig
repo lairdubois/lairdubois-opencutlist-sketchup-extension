@@ -488,6 +488,14 @@
                             </div>
                         </div>
                     {% endif %}
+                    {% if part.is_instance_name %}
+                        <div class="media">
+                            <div class="media-left"><i class="ladb-opencutlist-icon-instance-component ladb-opencutlist-icon-lg ladb-color-info"></i></div>
+                            <div class="media-body">
+                                {{ 'tab.cutlist.tooltip.is_instance_name'|i18next }}
+                            </div>
+                        </div>
+                    {% endif %}
                     {% if part.auto_oriented %}
                         <div class="media">
                             <div class="media-left"><i class="ladb-opencutlist-icon-auto-oriented ladb-opencutlist-icon-lg ladb-color-info"></i></div>
@@ -536,7 +544,6 @@
                             </div>
                         </div>
                     {% endif %}
-
                 </div>
                 {% if has_warnings %}
                     <div class="col-sm-offset-1 col-sm-10">
