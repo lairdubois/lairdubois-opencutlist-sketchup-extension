@@ -21,6 +21,8 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
+### 2026-03-13
+ * Added cut length for rectangle and irregular cutting diagram types
 ### 2026-03-12
  * Added a new Hadware material type logic to be able to flag as hardware any group or component
 ### 2026-03-10

@@ -5,13 +5,23 @@ module Ladb::OpenCutList
 
   class GroupDef < DataContainer
 
-    attr_accessor :material, :material_attributes, :part_count, :std_available, :std_dimension_stipped_name, :std_dimension, :std_dimension_real, :std_dimension_rounded, :std_width, :std_thickness, :max_number, :total_cutting_length, :total_cutting_area, :total_cutting_volume, :total_final_area, :invalid_final_area_part_count, :show_cutting_dimensions, :show_edges, :edge_decremented, :show_faces, :face_decremented
-    attr_reader :id, :part_defs
+    attr_accessor :material, :material_attributes,
+                  :std_available, :std_dimension_stipped_name, :std_dimension, :std_dimension_real, :std_dimension_rounded, :std_width, :std_thickness,
+                  :part_count,
+                  :max_number,
+                  :total_cutting_length, :total_cutting_area, :total_cutting_volume, :total_final_area,
+                  :invalid_final_area_part_count,
+                  :show_cutting_dimensions, :show_edges, :edge_decremented, :show_faces,
+                  :face_decremented
+    attr_reader :id,
+                :part_defs
 
     def initialize(id)
       @id = id
+
       @material = nil
       @material_attributes = nil
+
       @std_available = true
       @std_dimension_stipped_name = ''
       @std_dimension = ''
@@ -19,19 +29,26 @@ module Ladb::OpenCutList
       @std_dimension_rounded = false
       @std_width = 0
       @std_thickness = 0
+
       @max_number = nil
+
       @part_count = 0
       @part_defs = {}
+
       @total_cutting_length = 0
       @total_cutting_area = 0
       @total_cutting_volume = 0
       @total_final_area = 0
+
       @invalid_final_area_part_count = 0
+
       @show_cutting_dimensions = false
       @show_edges = false
       @edge_decremented = false
       @show_faces = false
+
       @face_decremented = false
+
     end
 
     # -----

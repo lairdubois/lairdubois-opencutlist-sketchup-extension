@@ -1,6 +1,5 @@
 module Ladb::OpenCutList
 
-  require_relative '../../helper/material_attributes_caching_helper'
   require_relative '../../helper/definition_attributes_caching_helper'
   require_relative '../../helper/estimation_helper'
   require_relative '../../model/attributes/material_attributes'
@@ -11,7 +10,6 @@ module Ladb::OpenCutList
 
   class CutlistEstimateWorker
 
-    include MaterialAttributesCachingHelper
     include DefinitionAttributesCachingHelper
 
     attr_reader :cutlist, :estimate_def
@@ -55,12 +53,12 @@ module Ladb::OpenCutList
         parts = @cutlist.get_parts(@part_ids)
         return { :errors => [ 'tab.cutlist.error.no_part' ] } if parts.empty?
 
-        @parts_by_group = parts.group_by { |part| part.group }
+        @parts_by_group = parts.group_by(&:group)
 
         # Create runs
         @parts_by_group.each do |group, parts|
           next if group.material_type == MaterialAttributes::TYPE_UNKNOWN
-          @runs << _create_run(group, parts.map { |part| part.id })
+          @runs << _create_run(group, parts.map(&:id))
         end
 
         return {
@@ -157,7 +155,7 @@ module Ladb::OpenCutList
 
     def _create_run(cutlist_group, part_ids = nil)
 
-      material_attributes = _get_material_attributes(cutlist_group.material_name)
+      material_attributes = cutlist_group.def.material_attributes
 
       case material_attributes.type
 
@@ -657,13 +655,7 @@ module Ladb::OpenCutList
 
       @cutlist_group.parts.each do |cutlist_part|
 
-        # if cutlist_part.is_a?(FolderPart)
-        #   cutlist_part.children.each { |cutlist_child_part|
-        #     fn_compute_hardware_part.call(cutlist_child_part, estimate_entry_def)
-        #   }
-        # else
-          fn_compute_hardware_part.call(cutlist_part, estimate_entry_def)
-        # end
+        fn_compute_hardware_part.call(cutlist_part, estimate_entry_def)
 
       end
 

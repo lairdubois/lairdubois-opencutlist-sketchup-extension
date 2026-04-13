@@ -1073,6 +1073,8 @@ namespace Packy {
             j_bin["waste"] = to_area_dbl(bin_space - items_space);
             j_bin["efficiency"] = static_cast<double>(items_space) / bin_space;
 
+            Length cut_length = 0;
+
             // Add x_max and y_max attributes to the last bin
             if (bin_pos == solution.number_of_different_bins() - 1) {
                 j_bin["x_max"] = to_length_dbl(fake_trimming_ + solution.x_max() - fake_spacing_);
@@ -1101,9 +1103,14 @@ namespace Packy {
                     });
                 }
 
+                cut_length += (item_type.rect.x - fake_spacing_ + item_type.rect.y - fake_spacing_) * 2;
+
             }
 
             j_bin["number_of_items"] = j_items.size();
+            j_bin["number_of_leftovers"] = 0;
+            j_bin["number_of_cuts"] = j_items.size();
+            j_bin["cut_length"] = to_length_dbl(cut_length);
 
         }
 
@@ -1976,6 +1983,9 @@ namespace Packy {
             j_bin["waste"] = to_area_dbl(bin_space - items_space);
             j_bin["efficiency"] = items_space / bin_space;
 
+            int number_of_cuts = 0;
+            LengthDbl cut_length = 0;
+
             // Add x_min, x_max and y_min, y_max attributes to the last bin
             if (bin_pos == solution.number_of_different_bins() - 1) {
                 j_bin["x_min"] = to_length_dbl(solution.x_min());
@@ -1987,6 +1997,7 @@ namespace Packy {
             basic_json<>& j_items = j_bin["items"] = json::array();
             for (const auto& item: bin.items) {
 
+                const ItemType& item_type = solution.instance().item_type(item.item_type_id);
                 ItemTypeMeta& item_type_meta = builder.item_type_meta(item.item_type_id);
 
                 j_items.emplace_back(json{
@@ -1997,11 +2008,21 @@ namespace Packy {
                     {"mirror", item.mirror}
                 });
 
+                for (const auto& item_shape : item_type.shapes) {
+                    number_of_cuts += 1;
+                    cut_length += item_shape.shape_orig.shape.compute_length();
+                    for (const auto& hole : item_shape.shape_orig.holes) {
+                        number_of_cuts += 1;
+                        cut_length += hole.compute_length();
+                    }
+                }
+
             }
 
             j_bin["number_of_items"] = j_items.size();
             j_bin["number_of_leftovers"] = 0;
-            j_bin["number_of_cuts"] = 0;
+            j_bin["number_of_cuts"] = number_of_cuts;
+            j_bin["cut_length"] = to_length_dbl(cut_length);
 
         }
 
