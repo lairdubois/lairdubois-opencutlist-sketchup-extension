@@ -3449,7 +3449,7 @@ module Ladb::OpenCutList
     def _purge_definitions
       _get_definitions_factory.each_value do |definition|
         next if definition.deleted? || definition.count_used_instances > 0
-        Sketchup.active_model.definitions.remove(definition)
+        Sketchup.active_model.definitions.remove(definition) if Sketchup.active_model.definitions.respond_to?(:remove)  # SketchUp 2018+
       end
     end
 
@@ -3624,9 +3624,8 @@ module Ladb::OpenCutList
 
         t = Geom::Transformation.axes(sfm.centroid, x_axis, y_axis, z_axis)
 
+        definition.entities.transform_entities(t.inverse, definition.entities.to_a) # Inverted both lines failed on old version of SketchUp
         active_entities.add_instance(definition, t)
-        definition.entities.transform_entities(t.inverse, definition.entities.to_a)
-
 
         # Flag face as extruded
         extruded_face_manipulators << sfm
