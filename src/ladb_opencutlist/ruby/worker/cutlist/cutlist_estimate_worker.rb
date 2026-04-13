@@ -597,10 +597,12 @@ module Ladb::OpenCutList
 
     def _create_entry_defs
 
+      cutlist_parts = @worker.cutlist.get_parts(@part_ids)
+
       estimate_group_def = _get_group_def
 
       estimate_entry_def = @entry_def_class.new(estimate_group_def, @cutlist_group)
-      estimate_entry_def.total_count = @cutlist_group.def.part_count
+      estimate_entry_def.total_count = cutlist_parts.inject(0) { |sum, part| sum + part.def.count }
 
       fn_compute_hardware_part = lambda do |cutlist_part, estimate_entry_def|
 
@@ -653,7 +655,7 @@ module Ladb::OpenCutList
 
       end
 
-      @cutlist_group.parts.each do |cutlist_part|
+      cutlist_parts.each do |cutlist_part|
 
         fn_compute_hardware_part.call(cutlist_part, estimate_entry_def)
 
