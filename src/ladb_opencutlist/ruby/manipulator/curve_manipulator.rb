@@ -8,7 +8,7 @@ module Ladb::OpenCutList
 
     def initialize(curve, transformation = IDENTITY, material = nil, layer = nil)
       raise "curve must be a Sketchup::Curve." unless curve.is_a?(Sketchup::Curve)
-      super(transformation, material, layer)
+      super(transformation, _combine_material(curve.edges.first.material, material), _combine_layer(curve.edges.first.layer, layer))
       @curve = curve
     end
 
@@ -20,12 +20,6 @@ module Ladb::OpenCutList
       @bounds = nil
       @segments = nil
       @plane_manipulator = nil
-    end
-
-    # -----
-
-    def layer
-      @layer ||= @curve.edges.first.layer
     end
 
     # -----

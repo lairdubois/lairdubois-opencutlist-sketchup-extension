@@ -294,9 +294,11 @@ module Ladb::OpenCutList
         }
       when CONTAINER_VALIDATOR_PART
         container_validator = lambda { |container, depth|
+          return false if container.definition.behavior.always_face_camera?
           ma = _get_material_attributes(container.material)
+          return true if ma.type == MaterialAttributes::TYPE_MACHINING
           return false if depth != 0 && ma.type == MaterialAttributes::TYPE_HARDWARE && !container.name.strip.empty?
-          return true if container.definition.behavior.cuts_opening? || container.definition.behavior.always_face_camera?
+          return true if container.definition.behavior.cuts_opening?
           return false if container.is_a?(Sketchup::ComponentInstance)
           true
         }
@@ -402,6 +404,15 @@ module Ladb::OpenCutList
           drawing_container_def.snap_manipulators << manipulator
         end
       end
+    end
+
+    def _compute_material(entity, material = nil)
+      entity.material || material
+    end
+
+    def _compute_layer(entity, layer = cached_layer0)
+      return layer if (entity_layer = entity.layer) == cached_layer0
+      entity_layer
     end
 
     def _get_surface_manipulator_by_face(drawing_container_def, face, transformation)

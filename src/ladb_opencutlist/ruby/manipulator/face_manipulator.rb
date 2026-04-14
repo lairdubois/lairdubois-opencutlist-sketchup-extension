@@ -11,7 +11,7 @@ module Ladb::OpenCutList
 
     def initialize(face, transformation = IDENTITY, material = nil, layer = nil)
       raise "face must be a Sketchup::Face." unless face.is_a?(Sketchup::Face)
-      super(face.plane, transformation, material, layer)
+      super(face.plane, transformation, _combine_material(face.material, material), _combine_layer(face.layer, layer))
       @face = face
       @surface_manipulator = nil
     end
@@ -36,16 +36,6 @@ module Ladb::OpenCutList
 
     def belongs_to_a_surface?
       @face.edges.index { |edge| edge.soft? }
-    end
-
-    # -----
-
-    def material
-      @material ||= @face.material
-    end
-
-    def layer
-      @layer ||= @face.layer
     end
 
     # -----

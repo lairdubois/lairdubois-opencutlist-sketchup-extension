@@ -1,6 +1,10 @@
 module Ladb::OpenCutList
 
+  require_relative '../helper/layer0_caching_helper'
+
   class Manipulator
+
+    include Layer0CachingHelper
 
     attr_reader :transformation,
                 :material,
@@ -42,6 +46,18 @@ module Ladb::OpenCutList
     def ==(other)
       return false unless other.is_a?(Manipulator)
       (@transformation * other.transformation.inverse).identity?
+    end
+
+    # -----
+
+    protected
+
+    def _combine_material(material, parent_material)
+      material || parent_material
+    end
+
+    def _combine_layer(layer, parent_layer)
+      layer == cached_layer0 ? parent_layer : layer
     end
 
   end

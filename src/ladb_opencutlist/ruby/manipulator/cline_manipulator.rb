@@ -8,7 +8,7 @@ module Ladb::OpenCutList
 
     def initialize(cline, transformation = IDENTITY, material = nil, layer = nil)
       raise "cline must be a Sketchup::ConstructionLine." unless cline.is_a?(Sketchup::ConstructionLine)
-      super([ cline.position, cline.direction ], transformation, material, layer)
+      super([ cline.position, cline.direction ], transformation, _combine_material(cline.material, material), _combine_layer(cline.layer, layer))
       @cline = cline
     end
 
@@ -21,16 +21,6 @@ module Ladb::OpenCutList
       @middle_point = nil
       @third_points = nil
       @points = nil
-    end
-    
-    # -----
-
-    def material
-      @material ||= @cline.material
-    end
-
-    def layer
-      @layer ||= @cline.layer
     end
 
     # -----

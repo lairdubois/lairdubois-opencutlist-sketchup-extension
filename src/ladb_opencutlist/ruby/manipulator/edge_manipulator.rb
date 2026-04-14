@@ -8,7 +8,7 @@ module Ladb::OpenCutList
 
     def initialize(edge, transformation = IDENTITY, material = nil, layer = nil)
       raise "edge must be a Sketchup::Edge." unless edge.is_a?(Sketchup::Edge)
-      super(edge.line, transformation, material, layer)
+      super(edge.line, transformation, _combine_material(edge.material, material), _combine_layer(edge.layer, layer))
       @edge = edge
     end
 
@@ -28,16 +28,6 @@ module Ladb::OpenCutList
     def ==(other)
       return false unless other.is_a?(EdgeManipulator)
       @edge == other.edge && super
-    end
-
-    # -----
-
-    def material
-      @material ||= @edge.material
-    end
-
-    def layer
-      @layer ||= @edge.layer
     end
 
     # -----

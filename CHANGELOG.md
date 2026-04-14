@@ -24,6 +24,7 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 ### 2026-04-xx
  * Fixed Estimate hardware group with selection
  * Fixed Paneling tool's wrong geometry position on old SketchUp versions
+ * Improved geometry processing
 ### 2026-04-13
  * Added cut length for rectangle and irregular cutting diagram types
 ### 2026-04-12

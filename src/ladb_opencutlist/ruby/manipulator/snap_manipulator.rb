@@ -8,7 +8,7 @@ module Ladb::OpenCutList
 
     def initialize(snap, transformation = IDENTITY, material = nil, layer = nil)
       raise "snap must be a Sketchup::Snap." unless snap.is_a?(Sketchup::Snap)
-      super(transformation, material, layer)
+      super(transformation, _combine_material(snap.material, material), _combine_layer(snap.layer, layer))
       @snap = snap
     end
 
@@ -22,14 +22,6 @@ module Ladb::OpenCutList
     end
     
     # -----
-
-    def material
-      @material ||= @snap.material
-    end
-
-    def layer
-      @layer ||= @snap.layer
-    end
 
     def position
       @position ||= @snap.position.transform(@transformation)

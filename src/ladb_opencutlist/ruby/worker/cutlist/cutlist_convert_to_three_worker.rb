@@ -115,7 +115,7 @@ module Ladb::OpenCutList
           material_attributes = _get_material_attributes(material)
 
           # Populate part definitions
-          _create_three_part_def(three_model_def, part, instance_info.entity.definition, material, material_attributes.type == MaterialAttributes::TYPE_HARDWARE)
+          _create_three_part_def(three_model_def, part, instance_info.entity.definition, material, false)
 
           mt = Geom::Transformation.new
           if part.auto_oriented && part.group.material_type != MaterialAttributes::TYPE_HARDWARE
@@ -218,21 +218,23 @@ module Ladb::OpenCutList
       entities.each do |entity|
 
         next unless entity.visible? && _layer_visible?(entity.layer)
-
-        if entity.is_a?(Sketchup::Face)
+        case entity
+        when Sketchup::Face
           fv, fc = _grab_face_vertices_and_colors(entity, material, transformation)
           face_vertices.concat(fv)
           face_colors.concat(fc)
-        elsif entity.is_a?(Sketchup::Edge)
+        when Sketchup::Edge
           hev, sev, sec0, sec1, dir = _grab_edge_vertices_and_controls(entity, transformation)
           hard_edge_vertices.concat(hev)
           soft_edge_vertices.concat(sev)
           soft_edge_controls0.concat(sec0)
           soft_edge_controls1.concat(sec1)
           soft_edge_directions.concat(dir)
-        elsif entity.respond_to?(:definition)
-          next if !(definition = entity.definition).group? && !definition.behavior.cuts_opening? && !grab_sub_components || definition.behavior.always_face_camera?
-          fv, fc, hev, sev, sec0, sec1, dir = _grab_entities_vertices_and_colors(entity.definition.entities, entity.material.nil? ? material : entity.material, grab_sub_components, transformation * entity.transformation)
+        when Sketchup::Group, Sketchup::ComponentInstance
+          next if (definition = entity.definition).behavior.always_face_camera?
+          m = entity.material || material
+          next unless grab_sub_components || definition.group? || definition.behavior.cuts_opening? || _get_material_attributes(m).type == MaterialAttributes::TYPE_MACHINING
+          fv, fc, hev, sev, sec0, sec1, dir = _grab_entities_vertices_and_colors(entity.definition.entities, m, grab_sub_components, transformation * entity.transformation)
           face_vertices.concat(fv)
           face_colors.concat(fc)
           hard_edge_vertices.concat(hev)

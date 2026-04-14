@@ -3083,6 +3083,10 @@ module Ladb::OpenCutList
           _refresh
           return true
         end
+        if tool.is_key_shift?(key) && is_quick
+          p = _fetch_option_measure_reversed? ? @picked_points.first : @picked_points.last
+          Sketchup.active_model.active_entities.add_cline(p, p.vector_to(@mouse_snap_point))
+        end
 
       end
 
