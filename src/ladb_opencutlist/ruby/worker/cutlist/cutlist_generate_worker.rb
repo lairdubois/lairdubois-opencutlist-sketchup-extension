@@ -191,7 +191,7 @@ module Ladb::OpenCutList
         # Name filter
         unless @names_filter.nil? || @names_filter.empty?
           part_name, part_name_source = instance_info.read_name(@dynamic_attributes_name)
-          unless part_name.match?(Regexp.new(@names_filter))
+          unless part_name.match?(Regexp.new(@names_filter, Regexp::IGNORECASE))
             cutlist.ignored_instance_count += 1
             next
           end
