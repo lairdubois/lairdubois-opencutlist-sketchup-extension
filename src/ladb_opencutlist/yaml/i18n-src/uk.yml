@@ -382,6 +382,7 @@ tab:
       children_size_increase: "Цей розмір збільшується на розмір {{ count }} згрупованих деталей"
       invalid_final_area: "Увага, цю загальну площу неможливо обчислити, оскільки {{ count }} деталь (із {{ total }}) має некоректну площу"
       invalid_final_area_plural: "Увага, цю загальну площу неможливо обчислити, оскільки {{ count }} деталей (із {{ total }}) мають некоректну площу"
+      is_instance_name: ""
       is_dynamic_attributes_name: Позначення цієї деталі взято з атрибуту 'Name' динамічного компонента
       has_edges: "Ця деталь містить {{ count }} крайку"
       has_edges_plural: "Ця деталь містить {{ count }} крайки"
@@ -613,6 +614,7 @@ tab:
       filters_warning_plural: "Ця фільтрація відображає лише **{{ count }}** деталей із загальної кількості {{ total }}."
       edge_material_names_filter: Фільтр по матеріалу крайок
       veneer_material_names_filter: Фільтр по матеріалу шпона
+      names_filter: ""
       tags_filter: Фільтр по Міткам
       dimensions_help: Ілюстрація розмірів
       summary: Звіт
@@ -2044,6 +2046,7 @@ tab:
         total_quantity: К-ть
         article_number: Ref.
         description: Опис
+        material: Матеріал
       error:
         failed_to_load_bxf2_file: |
           Не вдалося завантажити файл BXF2: **{{ error }}**
