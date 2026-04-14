@@ -64,7 +64,7 @@ module Ladb::OpenCutList
           part_data.fetch('length_increase'),
           part_data.fetch('width_increase'),
           part_data.fetch('thickness_increase'),
-          part_data.fetch('description'),
+          _unescape_string(part_data.fetch('description')),
           part_data.fetch('url'),
           DefinitionAttributes.valid_tags(part_data.fetch('tags')),
           part_data.fetch('orientation_locked_on_axis'),
