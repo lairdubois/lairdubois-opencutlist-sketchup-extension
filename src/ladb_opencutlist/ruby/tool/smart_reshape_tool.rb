@@ -1758,7 +1758,7 @@ module Ladb::OpenCutList
 
             else
 
-              extern_instances = definition_instances.difference(stretched_instances)
+              extern_instances = definition_instances - stretched_instances
               unlocked_extern_instances = extern_instances.reject(&:locked?)
               if unlocked_extern_instances.any?
                 _instances_to_paths(unlocked_extern_instances, (extern_instance_paths = []), model.entities)
