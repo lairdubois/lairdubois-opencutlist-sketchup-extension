@@ -24,8 +24,8 @@ module Ladb::OpenCutList
         current_face.edges.each do |edge|
           next unless edge.soft?
           @faces.add(current_face)
-          @material ||= _compute_material(current_face.material, @material)
-          @layer ||= _compute_layer(current_face.layer, @layer)
+          @material ||= _combine_material(current_face.material, @material)
+          @layer ||= _combine_layer(current_face.layer, @layer)
           edge.faces.each do |f|
             next if f == current_face
             next unless f.visible? && _layer_visible?(f.layer)

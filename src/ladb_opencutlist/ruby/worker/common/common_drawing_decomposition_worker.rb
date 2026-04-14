@@ -406,15 +406,6 @@ module Ladb::OpenCutList
       end
     end
 
-    def _compute_material(entity, material = nil)
-      entity.material || material
-    end
-
-    def _compute_layer(entity, layer = cached_layer0)
-      return layer if (entity_layer = entity.layer) == cached_layer0
-      entity_layer
-    end
-
     def _get_surface_manipulator_by_face(drawing_container_def, face, transformation)
       drawing_container_def.surface_manipulators.each do |surface_manipulator|
         next unless surface_manipulator.transformation.equal?(transformation) # Check if same context
