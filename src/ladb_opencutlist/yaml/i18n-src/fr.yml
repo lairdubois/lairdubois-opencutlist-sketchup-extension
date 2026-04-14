@@ -614,6 +614,7 @@ tab:
       filters_warning_plural: "Ce filtrage n'affiche que **{{ count }}** pièces sur un total de {{ total }}."
       edge_material_names_filter: Matières de chant à filtrer
       veneer_material_names_filter: Matières de placage à filtrer
+      names_filter: Désignations à filtrer
       tags_filter: Badges à filtrer
       dimensions_help: Comprendre les dimensions
       summary: Récapitulatif

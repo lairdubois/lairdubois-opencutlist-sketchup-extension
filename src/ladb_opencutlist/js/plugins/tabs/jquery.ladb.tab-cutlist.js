@@ -15,6 +15,7 @@
         LadbAbstractTab.call(this, element, options, dialog);
 
         this.generateFilters = {
+          names_filter: '',
           tags_filter: [],
           edge_material_names_filter: [],
           veneer_material_names_filter: []
@@ -240,6 +241,15 @@
                 let editedPartRow = null;
 
                 // Useful function
+                const fnGenerateWithNamesFilter = function () {
+                    that.generateFilters.names_filter = $('#ladb_cutlist_names_filter', that.$page).val();
+                    that.generateCutlist(function () {
+                        const $input = $('#ladb_cutlist_names_filter', that.$page);
+                        const len = $input.val().length;
+                        $input.focus();
+                        $input[0].setSelectionRange(len, len);
+                    });
+                };
                 const fnGenerateWithTagsFilter = function () {
                     const tokenList = $('#ladb_cutlist_tags_filter', that.$page).tokenfield('getTokensList');
                     that.generateFilters.tags_filter = tokenList.length === 0 ? [] : tokenList.split(';');
@@ -265,6 +275,11 @@
                 };
 
                 // Bind inputs
+                $('#ladb_cutlist_names_filter', that.$page)
+                    .on('change', function () {
+                        fnGenerateWithNamesFilter();
+                    })
+                ;
                 $('#ladb_cutlist_tags_filter', that.$page)
                     .on('tokenfield:createtoken', function (e) {
 
@@ -400,6 +415,11 @@
                 $('.ladb-btn-setup-model-units', that.$header).on('click', function() {
                     $(this).blur();
                     that.dialog.executeCommandOnTab('settings', 'highlight_panel', { panel:'model' });
+                });
+                $('#ladb_cutlist_btn_names_filter_clear', that.$page).on('click', function () {
+                    $(this).blur();
+                    that.generateFilters.names_filter = '';
+                    that.generateCutlist();
                 });
                 $('#ladb_cutlist_btn_tags_filter_clear', that.$page).on('click', function () {
                     $(this).blur();

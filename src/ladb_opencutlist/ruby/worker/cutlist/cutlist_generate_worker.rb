@@ -44,6 +44,7 @@ module Ladb::OpenCutList
                    hide_tags: false,
                    hide_final_areas: true,
 
+                   names_filter: '',
                    tags_filter: [],
                    edge_material_names_filter: [],
                    veneer_material_names_filter: [],
@@ -78,6 +79,7 @@ module Ladb::OpenCutList
       @hide_tags = hide_tags
       @hide_final_areas = hide_final_areas
 
+      @names_filter = names_filter
       @tags_filter = tags_filter
       @edge_material_names_filter = edge_material_names_filter
       @veneer_material_names_filter = veneer_material_names_filter
@@ -186,6 +188,15 @@ module Ladb::OpenCutList
         # Populate used tags
         cutlist.add_used_tags(definition_attributes.tags)
 
+        # Name filter
+        unless @names_filter.nil? || @names_filter.empty?
+          part_name, part_name_source = instance_info.read_name(@dynamic_attributes_name)
+          unless part_name.match?(Regexp.new(@names_filter))
+            cutlist.ignored_instance_count += 1
+            next
+          end
+        end
+
         # Tags filter
         unless @tags_filter.empty?
           ok_tags = []
@@ -222,36 +233,36 @@ module Ladb::OpenCutList
 
         # Sanitize definition attributes according to material type
         case material_attributes.type
-          when MaterialAttributes::TYPE_UNKNOWN
-            definition_attributes.instance_count_by_part = 1
-            definition_attributes.cumulable = DefinitionAttributes::CUMULABLE_NONE
-            definition_attributes.thickness_layer_count = 1
-            definition_attributes.length_increase = 0
-            definition_attributes.width_increase = 0
-            definition_attributes.thickness_increase = 0
-          when MaterialAttributes::TYPE_SOLID_WOOD
-            definition_attributes.instance_count_by_part = 1
-            definition_attributes.mass = ''
-            definition_attributes.price = ''
-            definition_attributes.thickness_layer_count = 1
-          when MaterialAttributes::TYPE_SHEET_GOOD
-            definition_attributes.instance_count_by_part = 1
-            definition_attributes.mass = ''
-            definition_attributes.price = ''
-            definition_attributes.thickness_increase = 0
-          when MaterialAttributes::TYPE_DIMENSIONAL
-            definition_attributes.instance_count_by_part = 1
-            definition_attributes.mass = ''
-            definition_attributes.price = ''
-            definition_attributes.width_increase = 0
-            definition_attributes.thickness_increase = 0
-            definition_attributes.thickness_layer_count = 1
-          when MaterialAttributes::TYPE_HARDWARE
-            definition_attributes.cumulable = DefinitionAttributes::CUMULABLE_NONE
-            definition_attributes.thickness_layer_count = 1
-            definition_attributes.length_increase = 0
-            definition_attributes.width_increase = 0
-            definition_attributes.thickness_increase = 0
+        when MaterialAttributes::TYPE_UNKNOWN
+          definition_attributes.instance_count_by_part = 1
+          definition_attributes.cumulable = DefinitionAttributes::CUMULABLE_NONE
+          definition_attributes.thickness_layer_count = 1
+          definition_attributes.length_increase = 0
+          definition_attributes.width_increase = 0
+          definition_attributes.thickness_increase = 0
+        when MaterialAttributes::TYPE_SOLID_WOOD
+          definition_attributes.instance_count_by_part = 1
+          definition_attributes.mass = ''
+          definition_attributes.price = ''
+          definition_attributes.thickness_layer_count = 1
+        when MaterialAttributes::TYPE_SHEET_GOOD
+          definition_attributes.instance_count_by_part = 1
+          definition_attributes.mass = ''
+          definition_attributes.price = ''
+          definition_attributes.thickness_increase = 0
+        when MaterialAttributes::TYPE_DIMENSIONAL
+          definition_attributes.instance_count_by_part = 1
+          definition_attributes.mass = ''
+          definition_attributes.price = ''
+          definition_attributes.width_increase = 0
+          definition_attributes.thickness_increase = 0
+          definition_attributes.thickness_layer_count = 1
+        when MaterialAttributes::TYPE_HARDWARE
+          definition_attributes.cumulable = DefinitionAttributes::CUMULABLE_NONE
+          definition_attributes.thickness_layer_count = 1
+          definition_attributes.length_increase = 0
+          definition_attributes.width_increase = 0
+          definition_attributes.thickness_increase = 0
         end
 
         # Compute face infos
