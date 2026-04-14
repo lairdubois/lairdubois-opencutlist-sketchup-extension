@@ -2045,6 +2045,7 @@ tab:
         total_quantity: Qte.
         article_number: Ref.
         description: Description
+        material: Matière
       error:
         failed_to_load_bxf2_file: |
           Impossible de charger le fichier BXF2 : **{{ error }}**

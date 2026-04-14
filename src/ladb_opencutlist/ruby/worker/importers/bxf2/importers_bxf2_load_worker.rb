@@ -45,8 +45,9 @@ module Ladb::OpenCutList
           :cabinets => _process_scene(bxf_model.scene, []),
           :articles => bxf_model.library.articles.map { |id, article| {
             :total_quantity => article.total_quantity,
-            :article_number => article.article_number,
-            :description => article.description,
+            :article_number => article.article_number.to_s,
+            :description => article.description.to_s,
+            :material => article.material.to_s,
           } }.sort_by { |v| v[:description] },
         }
 
