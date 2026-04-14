@@ -8,6 +8,9 @@ module Ladb::OpenCutList
     NODE_UP_TRANSFORM = Geom::Transformation.rotation(ORIGIN, X_AXIS, 90.degrees)
     COMPONENT_UP_TRANSFORM = Geom::Transformation.axes(ORIGIN, X_AXIS, Z_AXIS.reverse, Y_AXIS)
 
+    PART_FRONT_BACK_SWAP_TRANSFORM = Geom::Transformation.axes(ORIGIN, X_AXIS, Y_AXIS.reverse, Z_AXIS.reverse)
+    PART_FRONT_BACK_SWAP_TRANSFORM_INVERSE = PART_FRONT_BACK_SWAP_TRANSFORM.inverse
+
     BLUM_COLOR = Sketchup::Color.new('#ff671f').freeze
     WOOD_MATERIAL_COLOR = Sketchup::Color.new(209, 197, 173).freeze
     ALUMINIUM_MATERIAL_COLOR = Sketchup::Color.new(204, 204, 204).freeze
@@ -203,10 +206,13 @@ module Ladb::OpenCutList
                                                          _process_machining_group_links(part.machining_group_links, definition.entities)
                                                          _process_machining_links(part.machining_links, definition.entities)
 
+                                                         # Transform definition's entities
+                                                         definition.entities.transform_entities(PART_FRONT_BACK_SWAP_TRANSFORM_INVERSE, definition.entities.to_a)
+
                                                          definition
                                                        end
 
-        instance = entities.add_instance(definition, part_link.transformations.to_t)
+        instance = entities.add_instance(definition, part_link.transformations.to_t * PART_FRONT_BACK_SWAP_TRANSFORM)
         instance.layer = _get_front_part_layer if part.model_key.start_with?('H-FRON')
         instance.material = _get_part_material(part.material)
 

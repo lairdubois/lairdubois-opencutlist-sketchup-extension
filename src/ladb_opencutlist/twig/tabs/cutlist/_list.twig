@@ -6,7 +6,7 @@
 {% include 'core/_alert-warnings.twig' %}
 {% include 'core/_alert-tips.twig' %}
 
-{% if true or usedEdgeMaterialDisplayNames is not empty or usedVeneerMaterialDisplayNames is not empty or usedTags is not empty or ignoredInstanceCount > 0 %}
+{% if groups|length > 0 %}
 
     {% set groupFiltersHidden = 'filters' in generateOptions.hidden_group_ids or (generateFilters.names_filter is empty and generateFilters.edge_material_names_filter is empty and generateFilters.veneer_material_names_filter is empty and generateFilters.tags_filter is empty) %}
 
@@ -122,9 +122,6 @@
         {% endif %}
         </tbody>
     </table>
-{% endif %}
-
-{% if groups|length > 0 %}
 
     {% set groupSummaryHidden = 'summary' in generateOptions.hidden_group_ids %}
 

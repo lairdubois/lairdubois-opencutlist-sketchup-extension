@@ -1,3 +1,11 @@
+# frozen_string_literal: true
+
+# Rubybxf
+#
+# A lightweight Ruby module for reading and writing bxf2 files.
+#
+# @author Boris Beaulant (2026)
+#
 module Ladb::OpenCutList
 
   require 'rexml/document'
