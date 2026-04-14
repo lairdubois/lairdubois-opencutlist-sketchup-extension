@@ -21,21 +21,21 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
-### 2026-03-xx
+### 2026-04-xx
  * Fixed Estimate hardware group with selection
  * Fixed Paneling tool's wrong geometry position on old SketchUp versions
-### 2026-03-13
+### 2026-04-13
  * Added cut length for rectangle and irregular cutting diagram types
-### 2026-03-12
+### 2026-04-12
  * Added a new Hadware material type logic to be able to flag as hardware any group or component
-### 2026-03-10
+### 2026-04-10
  * Added a workaround to bin folding bug in PackingSolver
-### 2026-03-08
+### 2026-04-08
  * Improved BXF2 importer by adding an interactive placement tool
  * Updated translations
-### 2026-03-07
+### 2026-04-07
  * Added BXF2 importer UI
-### 2026-03-03
+### 2026-04-03
  * Updated PackingSolver dependency
  * Fixed Smart Tool twins selection
  * Added minimal support for the Machining material type
