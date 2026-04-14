@@ -115,7 +115,7 @@ module Ladb::OpenCutList
           material_attributes = _get_material_attributes(material)
 
           # Populate part definitions
-          _create_three_part_def(three_model_def, part, instance_info.entity.definition, material, false)
+          _create_three_part_def(three_model_def, part, instance_info.entity.definition, material, material_attributes.type == MaterialAttributes::TYPE_HARDWARE)
 
           mt = Geom::Transformation.new
           if part.auto_oriented && part.group.material_type != MaterialAttributes::TYPE_HARDWARE
