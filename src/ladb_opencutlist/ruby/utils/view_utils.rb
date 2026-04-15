@@ -5,7 +5,11 @@ module Ladb::OpenCutList
     def self.zoom_active_entities(view, factor = 1.5)
       view.zoom_extents
       camera = view.camera
-      camera.set(camera.target.offset(camera.direction.reverse, camera.target.distance(camera.eye) * factor), camera.target, camera.up)
+      camera.set(
+        camera.target.offset(camera.direction.reverse, camera.target.distance(camera.eye) * factor),
+        camera.target,
+        camera.up
+      )
     end
 
   end
