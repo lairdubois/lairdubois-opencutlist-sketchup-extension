@@ -2908,6 +2908,13 @@ module Ladb::OpenCutList
 
     # -----
 
+    def stop
+      _erase_clines
+      super
+    end
+
+    # -----
+
     def get_state_status(state)
 
       case state
@@ -3085,13 +3092,22 @@ module Ladb::OpenCutList
         end
         if tool.is_key_shift?(key) && is_quick
           p = _fetch_option_measure_reversed? ? @picked_points.first : @picked_points.last
-          Sketchup.active_model.active_entities.add_cline(p, p.vector_to(@mouse_snap_point))
+          _create_cline(p, p.vector_to(@mouse_snap_point))
         end
 
       end
 
       super
     end
+
+    def onStateChanged(old_state, new_state)
+      super
+
+      _erase_clines if old_state == STATE_SHAPE
+
+    end
+
+    # -----
 
     protected
 
@@ -3756,6 +3772,18 @@ module Ladb::OpenCutList
         miter_limit: 100.0
       ).map { |o_path| Fiddle::Clippy.rpath_to_points(o_path, points[0].z) }
        .delete_if { |o_points| o_points.size < 3 }  # Remove flat polygons
+    end
+
+    # -----
+
+    def _create_cline(position, direction)
+      (@clines ||= []) << Sketchup.active_model.active_entities.add_cline(position, direction)
+    end
+
+    def _erase_clines
+      return unless @clines.is_a?(Array)
+      Sketchup.active_model.active_entities.erase_entities(@clines)
+      @clines.clear
     end
 
   end

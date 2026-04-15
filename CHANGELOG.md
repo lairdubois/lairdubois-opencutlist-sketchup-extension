@@ -24,6 +24,7 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ### 2026-04-xx
  * Improved BXF2 importer backward compatibility and warnings
+ * Added cline drop feature to Polygon Smart Draw Tool
 ### 2026-04-15
  * Added Cutlist part names filter 
  * Fixed backward compatibility for Stretch Tool
