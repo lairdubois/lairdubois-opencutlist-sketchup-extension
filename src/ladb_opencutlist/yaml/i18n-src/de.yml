@@ -382,7 +382,8 @@ tab:
       children_size_increase: "Diese Dimension enthält ein Übermaß für {{ count }} der gruppierten Teile"
       invalid_final_area: "Achtung, diese summierbare Fläche konnte nicht berechnet werden, weil {{ count }} Teil (von {{ total }}) eine ungültige Fläche hat"
       invalid_final_area_plural: "Achtung, diese summierbare Fläche konnte nicht berechnet werden, weil {{ count }} Teile (von {{ total }}) eine ungültige Fläche haben"
-      is_dynamic_attributes_name: Die Bezeichnung dieses Teils wird aus dem Attribut 'Name' der dynamischen Komponente extrahiert
+      is_instance_name: Die Bezeichnung dieses Teils leitet sich vom Instanznamen der Gruppe ab
+      is_dynamic_attributes_name: Die Bezeichnung dieses Teils leitet sich vom Attribut 'Name' der dynamischen Komponente ab
       has_edges: "Dieses Teil enthält {{ count }} Kantenband"
       has_edges_plural: "Dieses Teil enthält {{ count }} Kantenbänder"
       has_faces: "Dieses Teil enthält {{ count }} furnierte Fläche"
@@ -613,7 +614,8 @@ tab:
       filters_warning_plural: "Dieser Filter zeigt **{{ count }}** Teile von insgesamt {{ total }} Teilen an."
       edge_material_names_filter: Zu filternde Kantenmaterialien
       veneer_material_names_filter: Zu filternde Furniere
-      tags_filter: Filtern nach Badges
+      names_filter: Zu filternde Bezeichnungen
+      tags_filter: Zu filternde Badges
       dimensions_help: Erklärung zu den Dimensionen
       summary: Übersicht
       material_type: Typ
@@ -2044,6 +2046,7 @@ tab:
         total_quantity: Anz.
         article_number: Ref.
         description: Beschreibung
+        material: Material
       error:
         failed_to_load_bxf2_file: |
           Die BXF2-Datei konnte nicht geladen werden: **{{ error }}**
