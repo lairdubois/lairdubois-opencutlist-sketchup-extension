@@ -29,7 +29,14 @@
                         <i class="ladb-opencutlist-icon-name" style="font-size: 150%; line-height: 32px;"></i>
                     </div>
                     <div class="media-body">
-                        <input type="text" class="form-control" id="ladb_cutlist_names_filter" value="{{ generateFilters.names_filter }}" placeholder="{{ 'tab.cutlist.list.names_filter'|i18next }}">
+                        <div class="no-print">
+                            <input type="text" class="form-control" id="ladb_cutlist_names_filter" value="{{ generateFilters.names_filter }}" placeholder="{{ 'tab.cutlist.list.names_filter'|i18next }}">
+                        </div>
+                        <div class="no-screen">
+                            <ul class="ladb-cutlist-tags-filters-printable">
+                                <li>{{ generateFilters.names_filter }}</li>
+                            </ul>
+                        </div>
                     </div>
                     <div class="media-right no-print">
                         <button class="btn btn-default" id="ladb_cutlist_btn_names_filter_clear">{{ 'default.clear'|i18next }}</button>

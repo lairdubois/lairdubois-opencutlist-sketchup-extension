@@ -2033,7 +2033,7 @@ module Ladb::OpenCutList
           stretched_definition_defs.each do |definition, stretched_definition_def|
 
             if stretched_definition_def.containers.any?
-              extern_instances = definition.instances.difference(stretched_definition_def.containers)
+              extern_instances = definition.instances - stretched_definition_def.containers
               if extern_instances.any?
 
                 extern_instances.each do |extern_instance|
