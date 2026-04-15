@@ -8,6 +8,7 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
   * Added Smart Stretch Tool
   * Added Smart Paneling Tool
+  * Added Cutlist part names filter
   * Added RO translations
   * Added SHIFT + (+/-) shortcuts in Smart Handle Tools to change copies during preview
   * Added CSV importer in File menu
@@ -21,8 +22,10 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
+### 2026-04-xx
+ * Improved BXF2 importer backward compatibility and warnings
 ### 2026-04-15
- * Added cutlist part names filter 
+ * Added Cutlist part names filter 
  * Fixed backward compatibility for Stretch Tool
  * Fixed Estimate hardware group with selection
  * Fixed Paneling tool's wrong geometry position on old SketchUp versions
