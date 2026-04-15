@@ -31,9 +31,12 @@ module Ladb::OpenCutList
 
       response = {
           :errors => [],
+          :warnings => [],
           :path => @path,
           :filename => @filename
       }
+
+      response[:warnings] << 'tab.importers.bxf2.warning.partial_support' unless Sketchup.version_number >= 2110000000
 
       begin
 

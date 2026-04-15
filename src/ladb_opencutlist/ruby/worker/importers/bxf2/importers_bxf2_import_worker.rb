@@ -287,8 +287,9 @@ module Ladb::OpenCutList
 
         definition = (@components_factory ||= {})[component] ||= begin
 
+                                                                   definitions = Sketchup.active_model.definitions
                                                                    component_name = "#{"#{article.article_number}_" if article}#{component.component_number}"
-                                                                   definition = Sketchup.active_model.definitions[component_name]
+                                                                   definition = definitions[component_name]
                                                                    if definition.nil?
 
                                                                      base_path = File.dirname(File.expand_path(@bxf_model.path.to_s))
@@ -297,26 +298,35 @@ module Ladb::OpenCutList
                                                                      file_path = File.join(cad_data_path, file_name)
                                                                      file_path = File.join(cad_data_path, " #{file_name}") unless File.exist?(file_path) # Workaround for configurator bug with space on some files
 
-                                                                     begin
+                                                                     fn_create_fake_component = lambda do
 
-                                                                       # Load component from local DAE file
-                                                                       definition = Sketchup.active_model.definitions.import(file_path, {
-                                                                         validate_dae: true,
-                                                                         merge_coplanar_faces: true
-                                                                       })
-                                                                       definition.name = component_name
-
-                                                                     rescue Exception => e
-
-                                                                       puts "Error loading component: #{file_path} #{e.message}"
-
-                                                                       # Create a box instead of the component
-                                                                       definition = Sketchup.active_model.definitions.add(component_name)
+                                                                       # Create a simple box instead of the component
+                                                                       definition = definitions.add(component_name)
                                                                        _draw_box(definition.entities, Geom::BoundingBox.new.add(
                                                                          [-10.mm, -10.mm, -10.mm],
                                                                          [10.mm, 10.mm, 10.mm]
                                                                        ))
 
+                                                                     end
+
+                                                                     if definitions.respond_to?(:import)  # Backward compatibility with prior to SketchUp 2021.1
+                                                                       begin
+
+                                                                         # Load component from local DAE file
+                                                                         definition = definitions.import(file_path, {
+                                                                           validate_dae: true,
+                                                                           merge_coplanar_faces: true
+                                                                         })
+                                                                         definition.name = component_name
+
+                                                                       rescue Exception => e
+
+                                                                         puts "Error loading component: #{file_path} #{e.message}"
+                                                                         fn_create_fake_component.call
+
+                                                                       end
+                                                                     else
+                                                                       fn_create_fake_component.call
                                                                      end
 
                                                                      # Process machinings
@@ -450,7 +460,10 @@ module Ladb::OpenCutList
     )
       segments = (arc_angle / (2 * Math.asin(max_segment_length / (radius * 2))))
                    .ceil
-                   .clamp(min_num_segments, max_num_segments)
+
+      # Compat Ruby 2.2 (no Numeric#clamp)
+      segments = [[segments, min_num_segments].max, max_num_segments].min
+
       segments += 1 if segments.odd?
       segments
     end

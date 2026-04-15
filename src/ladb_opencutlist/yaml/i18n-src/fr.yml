@@ -2050,6 +2050,10 @@ tab:
       error:
         failed_to_load_bxf2_file: |
           Impossible de charger le fichier BXF2 : **{{ error }}**
+      warning:
+        partial_support: |
+          Vous devez disposer de **SketchUp 2021.1** ou une version ultérieure pour bénéficier de toutes les fonctionnalités.
+          Les géométries 3D des pièces de quincaillerie **ne pourront pas être importées**.
       obsolete_base: "Pour rester synchronisé, vous devez recharger le fichier BXF2."
   tutorials:
     label: Tutoriels

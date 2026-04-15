@@ -904,10 +904,8 @@ module Ladb::OpenCutList
       require_relative 'importer/csv_importer'
       Sketchup.register_importer(CsvImporter.new)
 
-      if Sketchup.version_number >= 2110000000  # DefinitionList.import is available since SU 2021.1
-        require_relative 'importer/bxf2_importer'
-        Sketchup.register_importer(Bxf2Importer.new)
-      end
+      require_relative 'importer/bxf2_importer'
+      Sketchup.register_importer(Bxf2Importer.new)
 
     end
 

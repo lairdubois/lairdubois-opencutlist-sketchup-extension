@@ -56,6 +56,7 @@
                     out: out,
                     filename: response.filename,
                     model: response.model,
+                    warnings: response.warnings,
                 }));
 
                 // Fetch UI elements
