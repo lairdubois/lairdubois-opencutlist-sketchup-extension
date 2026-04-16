@@ -2043,7 +2043,7 @@ module Ladb::OpenCutList
                   ref_position = @extern_instances_ref_positions[extern_instance] ||= ORIGIN.transform(t)
 
                   target_position = ref_position
-                  target_position = target_position.offset(stretched_definition_def.ddv.transform(t)) if stretched_definition_def.ddv.valid?
+                  target_position = target_position.offset(stretched_definition_def.ddv.transform(t)) if !stretched_definition_def.ddv.nil? && stretched_definition_def.ddv.valid?
                   current_position = ORIGIN.transform(t)
 
                   # k_edge = Kuix::EdgeMotif3d.new
