@@ -346,6 +346,8 @@ module Ladb::OpenCutList
       @_dxf_current_id.to_s(16).upcase
     end
 
+    # ID
+
     def _dxf_sanitize_identifier(name)
       name
         .to_s
@@ -360,6 +362,12 @@ module Ladb::OpenCutList
         )
         .gsub(/[\s<>\/\\“:;?*|=‘.]/, '_')
         .upcase
+    end
+
+    # Value
+
+    def _dxf_value(value)
+      value.to_f.round(4)
     end
 
     # -----
@@ -430,16 +438,16 @@ module Ladb::OpenCutList
                                 20, 0.0,
                                 30, 0.0)
         _dxf_write_header_value(file, '$INSUNITS', 70, _dxf_convert_unit(su_unit))
-        _dxf_write_header_value(file, '$EXTMIN', 10, min.x.to_f,
-                                20, min.y.to_f,
-                                30, min.z.to_f)
-        _dxf_write_header_value(file, '$EXTMAX', 10, max.x.to_f,
-                                20, max.y.to_f,
-                                30, max.z.to_f)
-        _dxf_write_header_value(file, '$LIMMIN', 10, min.x.to_f,
-                                20, min.y.to_f)
-        _dxf_write_header_value(file, '$LIMMAX', 10, max.x.to_f,
-                                20, max.y.to_f)
+        _dxf_write_header_value(file, '$EXTMIN', 10, _dxf_value(min.x),
+                                20, _dxf_value(min.y),
+                                30, _dxf_value(min.z))
+        _dxf_write_header_value(file, '$EXTMAX', 10, _dxf_value(max.x),
+                                20, _dxf_value(max.y),
+                                30, _dxf_value(max.z))
+        _dxf_write_header_value(file, '$LIMMIN', 10, _dxf_value(min.x),
+                                20, _dxf_value(min.y))
+        _dxf_write_header_value(file, '$LIMMAX', 10, _dxf_value(max.x),
+                                20, _dxf_value(max.y))
         _dxf_write_header_value(file, '$ORTHOMODE', 70, 0)
         _dxf_write_header_value(file, '$REGENMODE', 70, 1)
         _dxf_write_header_value(file, '$FILLMODE', 70, 1)
@@ -653,12 +661,12 @@ module Ladb::OpenCutList
           _dxf_write_sub_classes(file, [ 'AcDbSymbolTableRecord', 'AcDbViewportTableRecord' ])
           _dxf_write(file, 2, '*ACTIVE')
           _dxf_write(file, 70, 0)
-          _dxf_write(file, 10, vport_min.x.to_f)
-          _dxf_write(file, 20, vport_min.y.to_f)
-          _dxf_write(file, 11, vport_max.x.to_f)
-          _dxf_write(file, 21, vport_max.y.to_f)
-          _dxf_write(file, 12, vport_center.x.to_f)
-          _dxf_write(file, 22, vport_center.y.to_f)
+          _dxf_write(file, 10, _dxf_value(vport_min.x))
+          _dxf_write(file, 20, _dxf_value(vport_min.y))
+          _dxf_write(file, 11, _dxf_value(vport_max.x))
+          _dxf_write(file, 21, _dxf_value(vport_max.y))
+          _dxf_write(file, 12, _dxf_value(vport_center.x))
+          _dxf_write(file, 22, _dxf_value(vport_center.y))
           _dxf_write(file, 13, 0.0)
           _dxf_write(file, 23, 0.0)
           _dxf_write(file, 14, 0.5)
@@ -1027,6 +1035,10 @@ module Ladb::OpenCutList
 
       # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-FCEF5726-53AE-4C43-B4EA-C84EB8686A66
 
+      x = _dxf_value(x)
+      y = _dxf_value(y)
+      z = _dxf_value(z)
+
       _dxf_write(file, 0, 'POINT')
       _dxf_write_id(file)
       _dxf_write_owner_id(file, @_dxf_model_space_id)
@@ -1042,6 +1054,13 @@ module Ladb::OpenCutList
     def _dxf_write_line(file, x1, y1, z1, x2, y2, z2, layer = '0')
 
       # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-FCEF5726-53AE-4C43-B4EA-C84EB8686A66
+
+      x1 = _dxf_value(x1)
+      y1 = _dxf_value(y1)
+      z1 = _dxf_value(z1)
+      x2 = _dxf_value(x2)
+      y2 = _dxf_value(y2)
+      z2 = _dxf_value(z2)
 
       _dxf_write(file, 0, 'LINE')
       _dxf_write_id(file)
@@ -1061,6 +1080,11 @@ module Ladb::OpenCutList
     def _dxf_write_arc(file, cx, cy, cz, r, as = 0, ae = Geometrix::TWO_PI, layer = '0')
 
       # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-0B14D8F1-0EBA-44BF-9108-57D8CE614BC8
+
+      cx = _dxf_value(cx)
+      cy = _dxf_value(cy)
+      cz = _dxf_value(cz)
+      r = _dxf_value(r)
 
       _dxf_write(file, 0, 'ARC')
       _dxf_write_id(file)
@@ -1085,6 +1109,11 @@ module Ladb::OpenCutList
 
       # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-8663262B-222C-414D-B133-4A8506A27C18
 
+      cx = _dxf_value(cx)
+      cy = _dxf_value(cy)
+      cz = _dxf_value(cz)
+      r = _dxf_value(r)
+
       _dxf_write(file, 0, 'CIRCLE')
       _dxf_write_id(file)
       _dxf_write_owner_id(file, @_dxf_model_space_id)
@@ -1105,6 +1134,12 @@ module Ladb::OpenCutList
       if as > ae && ae < 0
         ae = ae + Geometrix::TWO_PI  # Force end angle to be greater than start angle. Some DXF readers prefer that.
       end
+
+      cx = _dxf_value(cx)
+      cy = _dxf_value(cy)
+      cz = _dxf_value(cz)
+      vx = _dxf_value(vx)
+      vy = _dxf_value(vy)
 
       _dxf_write(file, 0, 'ELLIPSE')
       _dxf_write_id(file)
@@ -1143,9 +1178,13 @@ module Ladb::OpenCutList
 
       vertices.each do |vertex|
 
-        _dxf_write(file, 10, vertex.x)
-        _dxf_write(file, 20, vertex.y)
-        _dxf_write(file, 42, vertex.bulge)
+        x = _dxf_value(vertex.x)
+        y = _dxf_value(vertex.y)
+        bulge = _dxf_value(vertex.bulge)
+
+        _dxf_write(file, 10, x)
+        _dxf_write(file, 20, y)
+        _dxf_write(file, 42, bulge)
 
       end
 
@@ -1167,8 +1206,11 @@ module Ladb::OpenCutList
 
       points.each do |point|
 
-        _dxf_write(file, 10, point.x.to_f)
-        _dxf_write(file, 20, point.y.to_f)
+        x = _dxf_value(point.x)
+        y = _dxf_value(point.y)
+
+        _dxf_write(file, 10, x)
+        _dxf_write(file, 20, y)
 
       end
 
@@ -1191,6 +1233,12 @@ module Ladb::OpenCutList
 
       # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-62E5383D-8A14-47B4-BFC4-35824CAE8363
 
+      x = _dxf_value(x)
+      y = _dxf_value(y)
+      z = _dxf_value(z)
+      height = _dxf_value(height)
+      text = text.to_s
+
       _dxf_write(file, 0, 'TEXT')
       _dxf_write_id(file)
       _dxf_write_sub_classes(file, [ 'AcDbEntity' ])
@@ -1201,7 +1249,7 @@ module Ladb::OpenCutList
       _dxf_write(file, 30, z)
       _dxf_write(file, 40, height)
       _dxf_write(file, 50, ar)
-      _dxf_write(file, 1, text.to_s)
+      _dxf_write(file, 1, text)
       _dxf_write(file, 72, halign)
       _dxf_write(file, 11, x)
       _dxf_write(file, 21, y)
@@ -1212,6 +1260,7 @@ module Ladb::OpenCutList
     end
 
     def _dxf_write_label(file, rx, ry, rz, rw, rh, text, tw, th, tx = 0, ty = 0, angle = 0, layer = nil)
+
       text = text.to_s
       return unless text.length > 0
 
@@ -1362,7 +1411,7 @@ module Ladb::OpenCutList
 
       flipped = TransformationUtils.flipped?(transformation)
 
-      z = -Geom::Vector3d.new(layer_def.depth, 0, 0).transform(transformation).length.to_f
+      z = -Geom::Vector3d.new(layer_def.depth, 0, 0).transform(transformation).length
 
       layer_def.poly_defs.each do |poly_def|
 
@@ -1376,9 +1425,9 @@ module Ladb::OpenCutList
             center = portion.ellipse_def.center.transform(transformation)
             radius = Geom::Vector3d.new(portion.ellipse_def.xradius, 0, 0).transform(transformation).length
 
-            cx = center.x.to_f
-            cy = center.y.to_f
-            r = radius.to_f
+            cx = center.x
+            cy = center.y
+            r = radius
 
             _dxf_write_circle(file, cx, cy, z, r, layer)
 
@@ -1390,10 +1439,10 @@ module Ladb::OpenCutList
             center = portion.ellipse_def.center.transform(transformation)
             xaxis = portion.ellipse_def.xaxis.transform(transformation)
 
-            cx = center.x.to_f
-            cy = center.y.to_f
-            vx = xaxis.x.to_f
-            vy = xaxis.y.to_f
+            cx = center.x
+            cy = center.y
+            vx = xaxis.x
+            vy = xaxis.y
             vr = portion.ellipse_def.yradius / portion.ellipse_def.xradius
             as = 0.0
             ae = 2.0 * Math::PI
@@ -1409,8 +1458,8 @@ module Ladb::OpenCutList
 
               start_point = portion.start_point.transform(transformation)
 
-              x = start_point.x.to_f
-              y = start_point.y.to_f
+              x = start_point.x
+              y = start_point.y
 
               if portion.is_a?(Geometrix::ArcCurvePortionDef)
 
@@ -1469,8 +1518,8 @@ module Ladb::OpenCutList
                       vertices << DxfVertexDef.new(x, y, bulge)
 
                       # Prepare for the next vertex
-                      x = apx_end_point.x.to_f
-                      y = apx_end_point.y.to_f
+                      x = apx_end_point.x
+                      y = apx_end_point.y
 
                     end
 
@@ -1492,8 +1541,8 @@ module Ladb::OpenCutList
 
               end_point = poly_def.curve_def.portions.last.end_point.transform(transformation)
 
-              x = end_point.x.to_f
-              y = end_point.y.to_f
+              x = end_point.x
+              y = end_point.y
 
               vertices << DxfVertexDef.new(x, y, 0)
 
@@ -1506,7 +1555,7 @@ module Ladb::OpenCutList
         else
 
           # Extract loop points from vertices (quicker)
-          _dxf_write_polyline(file, poly_def.points.map { |point| point.transform(transformation) }.map { |point| DxfVertexDef.new(point.x.to_f, point.y.to_f, 0) }, z, poly_def.curve_def.closed?, layer)
+          _dxf_write_polyline(file, poly_def.points.map { |point| point.transform(transformation) }.map { |point| DxfVertexDef.new(point.x, point.y, 0) }, z, poly_def.curve_def.closed?, layer)
 
         end
 
