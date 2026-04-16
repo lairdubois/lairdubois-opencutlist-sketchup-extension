@@ -1023,7 +1023,7 @@ module Ladb::OpenCutList
 
     # -- BASE GEOMETRY
 
-    def _dxf_write_point(file, x, y, layer = '0')
+    def _dxf_write_point(file, x, y, z, layer = '0')
 
       # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-FCEF5726-53AE-4C43-B4EA-C84EB8686A66
 
@@ -1035,11 +1035,11 @@ module Ladb::OpenCutList
       _dxf_write_sub_classes(file, [ 'AcDbPoint' ])
       _dxf_write(file, 10, x)
       _dxf_write(file, 20, y)
-      _dxf_write(file, 30, 0.0)
+      _dxf_write(file, 30, z)
 
     end
 
-    def _dxf_write_line(file, x1, y1, x2, y2, layer = '0')
+    def _dxf_write_line(file, x1, y1, z1, x2, y2, z2, layer = '0')
 
       # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-FCEF5726-53AE-4C43-B4EA-C84EB8686A66
 
@@ -1051,14 +1051,14 @@ module Ladb::OpenCutList
       _dxf_write_sub_classes(file, [ 'AcDbLine' ])
       _dxf_write(file, 10, x1)
       _dxf_write(file, 20, y1)
-      _dxf_write(file, 30, 0.0)
+      _dxf_write(file, 30, z1)
       _dxf_write(file, 11, x2)
       _dxf_write(file, 21, y2)
-      _dxf_write(file, 31, 0.0)
+      _dxf_write(file, 31, z2)
 
     end
 
-    def _dxf_write_arc(file, cx, cy, r, as = 0, ae = Geometrix::TWO_PI, layer = '0')
+    def _dxf_write_arc(file, cx, cy, cz, r, as = 0, ae = Geometrix::TWO_PI, layer = '0')
 
       # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-0B14D8F1-0EBA-44BF-9108-57D8CE614BC8
 
@@ -1070,7 +1070,7 @@ module Ladb::OpenCutList
       _dxf_write_sub_classes(file, [ 'AcDbCircle' ])
       _dxf_write(file, 10, cx)
       _dxf_write(file, 20, cy)
-      _dxf_write(file, 30, 0.0)
+      _dxf_write(file, 30, cz)
       _dxf_write(file, 40, r)
       _dxf_write_sub_classes(file, [ 'AcDbArc' ])
       _dxf_write(file, 50, as)
@@ -1081,7 +1081,7 @@ module Ladb::OpenCutList
 
     end
 
-    def _dxf_write_circle(file, cx, cy, r, layer = '0')
+    def _dxf_write_circle(file, cx, cy, cz, r, layer = '0')
 
       # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-8663262B-222C-414D-B133-4A8506A27C18
 
@@ -1093,12 +1093,12 @@ module Ladb::OpenCutList
       _dxf_write_sub_classes(file, [ 'AcDbCircle' ])
       _dxf_write(file, 10, cx)
       _dxf_write(file, 20, cy)
-      _dxf_write(file, 30, 0.0)
+      _dxf_write(file, 30, cz)
       _dxf_write(file, 40, r)
 
     end
 
-    def _dxf_write_ellipse(file, cx, cy, vx, vy, vr, as = 0, ae = Geometrix::TWO_PI, layer = '0')
+    def _dxf_write_ellipse(file, cx, cy, cz, vx, vy, vr, as = 0, ae = Geometrix::TWO_PI, layer = '0')
 
       # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-107CB04F-AD4D-4D2F-8EC9-AC90888063AB
 
@@ -1114,7 +1114,7 @@ module Ladb::OpenCutList
       _dxf_write_sub_classes(file, [ 'AcDbEllipse' ])
       _dxf_write(file, 10, cx)
       _dxf_write(file, 20, cy)
-      _dxf_write(file, 30, 0.0)
+      _dxf_write(file, 30, cz)
       _dxf_write(file, 11, vx)
       _dxf_write(file, 21, vy)
       _dxf_write(file, 31, 0.0)
@@ -1127,7 +1127,7 @@ module Ladb::OpenCutList
 
     end
 
-    def _dxf_write_polyline(file, vertices, closed = false, layer = '0')  # vertices = Array of DxfVertexDef
+    def _dxf_write_polyline(file, vertices, elevation = 0.0, closed = false, layer = '0')  # vertices = Array of DxfVertexDef
 
       # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-748FC305-F3F2-4F74-825A-61F04D757A50
 
@@ -1139,6 +1139,7 @@ module Ladb::OpenCutList
       _dxf_write_sub_classes(file, [ 'AcDbPolyline' ])
       _dxf_write(file, 90, vertices.length) # Vertex count
       _dxf_write(file, 70, closed ? 1 : 0) # 1 = Closed
+      _dxf_write(file, 38, elevation)
 
       vertices.each do |vertex|
 
@@ -1150,7 +1151,7 @@ module Ladb::OpenCutList
 
     end
 
-    def _dxf_write_polygon(file, points, layer = '0')
+    def _dxf_write_polygon(file, points, elevation = 0.0, layer = '0')
 
       # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-748FC305-F3F2-4F74-825A-61F04D757A50
 
@@ -1162,6 +1163,7 @@ module Ladb::OpenCutList
       _dxf_write_sub_classes(file, [ 'AcDbPolyline' ])
       _dxf_write(file, 90, points.length) # Vertex count
       _dxf_write(file, 70, 1) # 1 = Closed
+      _dxf_write(file, 38, elevation)
 
       points.each do |point|
 
@@ -1172,7 +1174,7 @@ module Ladb::OpenCutList
 
     end
 
-    def _dxf_write_rect(file, x, y, width, height, layer = '0')
+    def _dxf_write_rect(file, x, y, elevation, width, height, layer = '0')
 
       points = [
         Geom::Point3d.new(x, y),
@@ -1181,11 +1183,11 @@ module Ladb::OpenCutList
         Geom::Point3d.new(x, y + height),
       ]
 
-      _dxf_write_polygon(file, points, layer)
+      _dxf_write_polygon(file, points, elevation, layer)
 
     end
 
-    def _dxf_write_text(file, x, y, height, text, ar = 0, halign = DXF_TEXT_HALIGN_LEFT, valign = DXF_TEXT_VALIGN_BASE_LINE, layer = '0')
+    def _dxf_write_text(file, x, y, z, height, text, ar = 0, halign = DXF_TEXT_HALIGN_LEFT, valign = DXF_TEXT_VALIGN_BASE_LINE, layer = '0')
 
       # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-62E5383D-8A14-47B4-BFC4-35824CAE8363
 
@@ -1196,7 +1198,7 @@ module Ladb::OpenCutList
       _dxf_write_sub_classes(file, [ 'AcDbText' ])
       _dxf_write(file, 10, x)
       _dxf_write(file, 20, y)
-      _dxf_write(file, 30, 0.0)
+      _dxf_write(file, 30, z)
       _dxf_write(file, 40, height)
       _dxf_write(file, 50, ar)
       _dxf_write(file, 1, text.to_s)
@@ -1209,16 +1211,17 @@ module Ladb::OpenCutList
 
     end
 
-    def _dxf_write_label(file, rx, ry, rw, rh, text, tw, th, tx = 0, ty = 0, angle = 0, layer = nil)
+    def _dxf_write_label(file, rx, ry, rz, rw, rh, text, tw, th, tx = 0, ty = 0, angle = 0, layer = nil)
       text = text.to_s
       return unless text.length > 0
 
       tx = rx + rw / 2.0 + tx
       ty = ry + rh / 2.0 + ty
+      tz = rz
       theight = [ 60.0, th / 2, tw / text.length ].min
       angle = angle % 180
 
-      _dxf_write_text(file, tx , ty, theight, text, angle, DXF_TEXT_HALIGN_CENTER, DXF_TEXT_VALIGN_MIDDLE, layer)
+      _dxf_write_text(file, tx , ty, tz, theight, text, angle, DXF_TEXT_HALIGN_CENTER, DXF_TEXT_VALIGN_MIDDLE, layer)
 
     end
 
@@ -1359,6 +1362,8 @@ module Ladb::OpenCutList
 
       flipped = TransformationUtils.flipped?(transformation)
 
+      z = -Geom::Vector3d.new(layer_def.depth, 0, 0).transform(transformation).length.to_f
+
       layer_def.poly_defs.each do |poly_def|
 
         if smoothing && poly_def.curve_def
@@ -1375,7 +1380,7 @@ module Ladb::OpenCutList
             cy = center.y.to_f
             r = radius.to_f
 
-            _dxf_write_circle(file, cx, cy, r, layer)
+            _dxf_write_circle(file, cx, cy, z, r, layer)
 
           elsif poly_def.curve_def.ellipse?
 
@@ -1393,7 +1398,7 @@ module Ladb::OpenCutList
             as = 0.0
             ae = 2.0 * Math::PI
 
-            _dxf_write_ellipse(file, cx, cy, vx, vy, vr, as, ae, layer)
+            _dxf_write_ellipse(file, cx, cy, z, vx, vy, vr, as, ae, layer)
 
           else
 
@@ -1494,14 +1499,14 @@ module Ladb::OpenCutList
 
             end
 
-            _dxf_write_polyline(file, vertices, poly_def.curve_def.closed?, layer)
+            _dxf_write_polyline(file, vertices, z, poly_def.curve_def.closed?, layer)
 
           end
 
         else
 
           # Extract loop points from vertices (quicker)
-          _dxf_write_polyline(file, poly_def.points.map { |point| point.transform(transformation) }.map { |point| DxfVertexDef.new(point.x.to_f, point.y.to_f, 0) }, poly_def.curve_def.closed?, layer)
+          _dxf_write_polyline(file, poly_def.points.map { |point| point.transform(transformation) }.map { |point| DxfVertexDef.new(point.x.to_f, point.y.to_f, 0) }, z, poly_def.curve_def.closed?, layer)
 
         end
 

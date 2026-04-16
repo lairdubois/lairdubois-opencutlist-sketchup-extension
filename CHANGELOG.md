@@ -25,6 +25,7 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 ### 2026-04-xx
  * Updated PackingSolver dependency
  * Fixed a 'nil' bug in the Smart Stretch Tool when stretching inside a duplicated component
+ * Added Z value to DXF export to correspond to the layer depth
 ### 2026-04-15
  * Added cline drop feature to Polygon Smart Draw Tool
  * Added Cutlist part names filter 

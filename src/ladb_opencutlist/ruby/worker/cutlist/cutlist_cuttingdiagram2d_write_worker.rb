@@ -423,14 +423,14 @@ module Ladb::OpenCutList
                                                 transformation: transformation,
                                                 unit_transformation: unit_transformation,
                                                 layer: LAYER_PART) do
-                  _dxf_write_label(file, 0, 0, width, height, @use_names ? part.name : part.number, width, height, 0, 0, part.rotated ? 90 : 0, LAYER_TEXT) unless @texts_hidden
+                  _dxf_write_label(file, 0, 0, 0, width, height, @use_names ? part.name : part.number, width, height, 0, 0, part.rotated ? 90 : 0, LAYER_TEXT) unless @texts_hidden
                 end
 
               else
 
                 _dxf_write_section_blocks_block(file, fn_part_block_name.call(part), @_dxf_model_space_id) do
-                  _dxf_write_rect(file, 0, 0, width, height, LAYER_PART)
-                  _dxf_write_label(file, 0, 0, width, height, @use_names ? part.name : part.number, width, height, 0, 0, part.rotated ? 90 : 0, LAYER_TEXT) unless @texts_hidden
+                  _dxf_write_rect(file, 0, 0, 0, width, height, LAYER_PART)
+                  _dxf_write_label(file, 0, 0, 0, width, height, @use_names ? part.name : part.number, width, height, 0, 0, part.rotated ? 90 : 0, LAYER_TEXT) unless @texts_hidden
                 end
 
               end
@@ -444,7 +444,7 @@ module Ladb::OpenCutList
       _dxf_write_section_entities(file) do
 
         unless @sheet_hidden
-          _dxf_write_rect(file, 0, 0, sheet_width, sheet_height, LAYER_SHEET)
+          _dxf_write_rect(file, 0, 0, 0, sheet_width, sheet_height, LAYER_SHEET)
         end
 
         unless @parts_hidden
@@ -503,11 +503,11 @@ module Ladb::OpenCutList
 
               else
 
-                _dxf_write_rect(file, x, y, width, height, LAYER_PART)
+                _dxf_write_rect(file, x, y, 0, width, height, LAYER_PART)
 
               end
 
-              _dxf_write_label(file, x, y, width, height, @use_names ? part.name : part.number, width, height, 0, 0, part.rotated ? 90 : 0, LAYER_TEXT) unless @texts_hidden
+              _dxf_write_label(file, x, y, 0, width, height, @use_names ? part.name : part.number, width, height, 0, 0, part.rotated ? 90 : 0, LAYER_TEXT) unless @texts_hidden
 
             end
 
@@ -531,7 +531,7 @@ module Ladb::OpenCutList
             width = size.x.to_f
             height = size.y.to_f
 
-            _dxf_write_rect(file, x, y, width, height, LAYER_LEFTOVER)
+            _dxf_write_rect(file, x, y, 0, width, height, LAYER_LEFTOVER)
 
           end
         end
@@ -553,7 +553,7 @@ module Ladb::OpenCutList
             x2 = position2.x.to_f
             y2 = position2.y.to_f
 
-            _dxf_write_line(file, x1, y1, x2, y2, LAYER_CUT)
+            _dxf_write_line(file, x1, y1, 0, x2, y2, 0, LAYER_CUT)
 
           end
         end

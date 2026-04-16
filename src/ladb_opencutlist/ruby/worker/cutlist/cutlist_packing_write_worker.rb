@@ -404,7 +404,7 @@ module Ladb::OpenCutList
       is_1d = options_def.problem_type == Packy::PROBLEM_TYPE_ONEDIMENSIONAL
 
       unit_factor = _dxf_get_unit_factor(@unit)
-      unit_transformation = Geom::Transformation.scaling(ORIGIN, unit_factor, unit_factor, 1.0)
+      unit_transformation = Geom::Transformation.scaling(ORIGIN, unit_factor, unit_factor, unit_factor)
 
       bin_type_def = bin_def.bin_type_def
 
@@ -487,10 +487,12 @@ module Ladb::OpenCutList
 
               part_length = part_def.edge_cutting_length
               part_width = part_def.edge_cutting_width
+              part_thickness = part_def.cutting_size.thickness
 
               position = Geom::Point3d.new(
                 -item_length / 2,
-                -item_width / 2
+                -item_width / 2,
+                -part_thickness
               ).transform(unit_transformation)
               size = Geom::Point3d.new(
                 item_length,
@@ -517,16 +519,16 @@ module Ladb::OpenCutList
                                                 transformation: transformation,
                                                 unit_transformation: unit_transformation,
                                                 layer: LAYER_PART) do
-                  _dxf_write_rect(file, position.x, position.y, size.x, size.y, LAYER_CUT) unless @cuts_hidden || options_def.problem_type != Packy::PROBLEM_TYPE_RECTANGLE && (options_def.problem_type != Packy::PROBLEM_TYPE_IRREGULAR || !item_type_def.boxed)
-                  _dxf_write_label(file, position.x, position.y, size.x, size.y, text, size_.x, size_.y, position_.x, position_.y, 0, LAYER_TEXT) unless @texts_hidden
+                  _dxf_write_rect(file, position.x, position.y, position.z, 0, size.x, size.y, LAYER_CUT) unless @cuts_hidden || options_def.problem_type != Packy::PROBLEM_TYPE_RECTANGLE && (options_def.problem_type != Packy::PROBLEM_TYPE_IRREGULAR || !item_type_def.boxed)
+                  _dxf_write_label(file, position.x, position.y, 0, size.x, size.y, text, size_.x, size_.y, position_.x, position_.y, 0, LAYER_TEXT) unless @texts_hidden
                 end
 
               else
 
                 _dxf_write_section_blocks_block(file, fn_part_block_name.call(part), @_dxf_model_space_id) do
-                  _dxf_write_rect(file, position.x, position.y, size.x, size.y, LAYER_PART)
-                  _dxf_write_rect(file, position.x, position.y, size.x, size.y, LAYER_CUT) unless @cuts_hidden || options_def.problem_type != Packy::PROBLEM_TYPE_RECTANGLE && (options_def.problem_type != Packy::PROBLEM_TYPE_IRREGULAR || !item_type_def.boxed)
-                  _dxf_write_label(file, position.x, position.y, size.x, size.y, text, size_.y, position_.x, position_.y, 0, LAYER_TEXT) unless @texts_hidden
+                  _dxf_write_rect(file, position.x, position.y, position.z, size.x, size.y, LAYER_PART)
+                  _dxf_write_rect(file, position.x, position.y, position.z, size.x, size.y, LAYER_CUT) unless @cuts_hidden || options_def.problem_type != Packy::PROBLEM_TYPE_RECTANGLE && (options_def.problem_type != Packy::PROBLEM_TYPE_IRREGULAR || !item_type_def.boxed)
+                  _dxf_write_label(file, position.x, position.y, 0, size.x, size.y, text, size_.y, position_.x, position_.y, 0, LAYER_TEXT) unless @texts_hidden
                 end
 
               end
@@ -540,7 +542,7 @@ module Ladb::OpenCutList
       _dxf_write_section_entities(file) do
 
         unless @bin_hidden
-          _dxf_write_rect(file, 0, 0, bin_size.x, bin_size.y, LAYER_BIN)
+          _dxf_write_rect(file, 0, 0, 0, bin_size.x, bin_size.y, LAYER_BIN)
         end
 
         unless @parts_hidden
@@ -565,12 +567,13 @@ module Ladb::OpenCutList
             item_rect_height = bounds.height.to_f
             item_rect_x = _compute_x_with_origin_corner(options_def.problem_type, options_def.origin_corner, item_x + bounds.min.x, item_rect_width, bin_length)
             item_rect_y = _compute_y_with_origin_corner(options_def.problem_type, options_def.origin_corner, item_y + bounds.min.y, item_rect_height, bin_width)
+            item_rect_z = -part_def.cutting_size.thickness
 
             if @dxf_structure == DXF_STRUCTURE_LAYER_AND_BLOCK
 
               position = Geom::Point3d.new(
                 item_rect_x + item_rect_width / 2,
-                item_rect_y + item_rect_height / 2
+                item_rect_y + item_rect_height / 2,
               ).transform(unit_transformation)
 
               _dxf_write_insert(file, fn_part_block_name.call(part), position.x, position.y, 0, item_def.mirror ? -1.0 : 1.0, 1.0, 1.0, item_def.angle, LAYER_PART)
@@ -582,7 +585,8 @@ module Ladb::OpenCutList
 
               position = Geom::Point3d.new(
                 item_rect_x,
-                item_rect_y
+                item_rect_y,
+                item_rect_z
               ).transform(unit_transformation)
               size = Geom::Point3d.new(
                 item_rect_width,
@@ -616,12 +620,12 @@ module Ladb::OpenCutList
 
               else
 
-                _dxf_write_rect(file, position.x, position.y, size.x, size.y, LAYER_PART)
+                _dxf_write_rect(file, position.x, position.y, position.z, size.x, size.y, LAYER_PART)
 
               end
 
-              _dxf_write_rect(file, position.x, position.y, size.x, size.y, LAYER_CUT) unless @cuts_hidden || options_def.problem_type != Packy::PROBLEM_TYPE_RECTANGLE && (options_def.problem_type != Packy::PROBLEM_TYPE_IRREGULAR || !item_type_def.boxed)
-              _dxf_write_label(file, position.x, position.y, size.x, size.y, text, size_.x, size_.y, position_.x, position_.y, item_def.angle, LAYER_TEXT) unless @texts_hidden
+              _dxf_write_rect(file, position.x, position.y, position.z, size.x, size.y, LAYER_CUT) unless @cuts_hidden || options_def.problem_type != Packy::PROBLEM_TYPE_RECTANGLE && (options_def.problem_type != Packy::PROBLEM_TYPE_IRREGULAR || !item_type_def.boxed)
+              _dxf_write_label(file, position.x, position.y, 0, size.x, size.y, text, size_.x, size_.y, position_.x, position_.y, item_def.angle, LAYER_TEXT) unless @texts_hidden
 
             end
 
@@ -645,7 +649,7 @@ module Ladb::OpenCutList
               leftover_rect_height
             ).transform(unit_transformation)
 
-            _dxf_write_rect(file, position.x, position.y, size.x, size.y, LAYER_LEFTOVER)
+            _dxf_write_rect(file, position.x, position.y, 0, size.x, size.y, LAYER_LEFTOVER)
 
           end
         end
@@ -682,7 +686,7 @@ module Ladb::OpenCutList
               cut_rect_y + (cut_def.vertical? ? cut_def.length : 0)
             ).transform(unit_transformation)
 
-            _dxf_write_line(file, position1.x, position1.y, position2.x, position2.y, LAYER_CUT)
+            _dxf_write_line(file, position1.x, position1.y, 0, position2.x, position2.y, 0, LAYER_CUT)
 
           end
         end
