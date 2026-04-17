@@ -2050,6 +2050,10 @@ tab:
       error:
         failed_to_load_bxf2_file: |
           Die BXF2-Datei konnte nicht geladen werden: **{{ error }}**
+      warning:
+        partial_support: |
+          Sie benötigen **SketchUp 2021.1** oder eine neuere Version, um alle Funktionen nutzen zu können.
+          Die 3D-Geometrien der Beschlagteile **können nicht importiert werden**.
       obsolete_base: "Um synchron zu bleiben, müssen Sie die BXF2-Datei neu laden."
   tutorials:
     label: Tutorials

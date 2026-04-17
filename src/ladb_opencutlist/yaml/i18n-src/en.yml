@@ -2050,6 +2050,10 @@ tab:
       error:
         failed_to_load_bxf2_file: |
           Impossible to load BXF2 file: **{{ error }}**
+      warning:
+        partial_support: |
+          You need **SketchUp 2021.1** or a later version to use all features.
+          The 3D geometries of the fittings **cannot be imported**.
       obsolete_base: "To stay in sync, you need to reload the BXF2 file."
   tutorials:
     label: Tutorials
