@@ -543,8 +543,7 @@ module Ladb::OpenCutList
             item_types << {
               copies: part.count,
               shapes: shapes,
-              allowed_rotations: AVAILABLE_ROTATIONS.fetch(@irregular_allowed_rotations, []),
-              allow_mirroring: @irregular_allow_mirroring
+              allowed_rotations: AVAILABLE_ROTATIONS.fetch(@irregular_allowed_rotations, []).map { |ar| ar.merge({ mirror: @irregular_allow_mirroring }) },
             }
 
           else
