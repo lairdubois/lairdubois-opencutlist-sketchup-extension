@@ -1820,26 +1820,22 @@ namespace Packy {
             const Profit profit = j.value("profit", static_cast<Profit>(-1));
             const ItemPos copies = j.value("copies", static_cast<ItemPos>(1));
 
-            // Read allowed rotations. (Angles are read in degrees)
-            std::vector<std::pair<Angle, Angle>> allowed_rotations;
-            if (j.contains("allowed_rotations")) {
-                for (auto& j_item: j["allowed_rotations"].items()) {
-                    auto& j_angles = j_item.value();
-                    Angle angle_start = j_angles.value("start", static_cast<Angle>(0));
-                    Angle angle_end = j_angles.value("end", angle_start);
-                    allowed_rotations.emplace_back(angle_start, angle_end);
-                }
-            }
-
             ItemTypeId item_type_id = builder.instance_builder().add_item_type(
                     item_shapes,
                     profit,
-                    copies,
-                    allowed_rotations
+                    copies
             );
 
-            const bool allow_mirroring = j.value("allow_mirroring", false);
-            builder.instance_builder().set_item_type_allow_mirroring(item_type_id, allow_mirroring);
+            // Read allowed rotations + mirror. (Angles are read in degrees)
+            if (j.contains("allowed_rotations")) {
+                for (auto& j_item: j["allowed_rotations"].items()) {
+                    auto& j_angles = j_item.value();
+                    const Angle start_angle = j_angles.value("start", static_cast<Angle>(0));
+                    const Angle end_angle = j_angles.value("end", start_angle);
+                    const bool mirror = j.value("mirror", false);
+                    builder.instance_builder().add_item_type_allowed_rotation(item_type_id, start_angle, end_angle, mirror);
+                }
+            }
 
             return item_type_id;
         }
