@@ -1878,7 +1878,7 @@ module Ladb::OpenCutList
         # Keep stretched definitions (and their instances) to avoid stretching the same definition twice
         stretched_definition_defs = {}
 
-        # Defined a sorting order to be sure that farthest edges are moved first
+        # A sorting order is defined to ensure that the furthest edges are moved first
         sorting_order = (esv.valid? && esv.samedirection?(evpspe)) ? -1 : 1
 
         container_defs.each do |container_def|
@@ -1987,7 +1987,7 @@ module Ladb::OpenCutList
 
             # Flag definition as stretched + keep edv converted to definition space
             ddv = container_edv
-            ddv = ddv + emv if container_def.depth <= 1 && get_active_selection_instances.include?(container_def.container) # Apply move translation (if the centred option is enabled)
+            ddv = ddv + emv if container_def.depth <= 1 && get_active_selection_instances.include?(container_def.container) # Apply "move" translation (if the centred option is enabled)
             ddv = ddv.transform(container_def.container_transformation.inverse) if container_def.depth > 0
             stretched_definition_defs[container_def.definition] = StretchedDefinitionDef.new(ddv)
 
@@ -2007,7 +2007,7 @@ module Ladb::OpenCutList
           # Subtract parent container move
           unless container_def.parent.nil? || container_def.parent.section_def.nil?
             edv -= edvs[container_def.parent.section_def]
-            edv.reverse! if container_def.parent.section_def == container_def.section_def if edv.valid?
+            edv.reverse! if container_def.parent.section_def == container_def.section_def && edv.valid?
           end
 
           # Apply move translation (if the centred option is enabled)
@@ -2544,7 +2544,7 @@ module Ladb::OpenCutList
       et, eps, max_compression_distance, section_defs, reversed = split_def.values_at(:et, :eps, :max_compression_distance, :section_defs, :reversed)
       eti = et.inverse
 
-      v = ps.vector_to(pe)     # Move vector in global space
+      v = ps.vector_to(pe)     # "Move" vector in global space
       ev = v.transform(eti)
 
       factor = _fetch_option_options_centred? ? 2.0 : 1.0
@@ -2565,8 +2565,8 @@ module Ladb::OpenCutList
         sv = v
       end
 
-      emv = mv.transform(eti)   # Move vector in edit space
-      esv = sv.transform(eti)   # Stretch vector in edit space
+      emv = mv.transform(eti)   # "Move" vector in edit space
+      esv = sv.transform(eti)   # "Stretch" vector in edit space
 
       # Compute move vectors for each section
       edvs = section_defs.map { |section_def|
@@ -3296,6 +3296,11 @@ module Ladb::OpenCutList
     end
 
     def _read_thickness(tool, text, view)
+
+      # Keep it "compatible" with the way to enter offset in Samrt Draw Tool.
+      if (match = /^(.+)x$/i.match(text))
+        text = match[1]
+      end
 
       thickness = _read_user_text_length(tool, text)
       return true if thickness.nil?
