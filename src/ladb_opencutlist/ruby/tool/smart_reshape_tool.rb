@@ -656,7 +656,7 @@ module Ladb::OpenCutList
     def onToolKeyDown(tool, key, repeat, flags, view)
       return true if super
 
-      if tool.is_key_alt_or_command?(key)
+      if tool.is_key_alt_or_command?(key) && (@state == STATE_SELECT || @state == STATE_STRETCH)
         return true # Block default behavior for the ALT key on Windows
       end
 
@@ -1467,7 +1467,7 @@ module Ladb::OpenCutList
       #   k_edge.line_width = 2
       #   k_edge.on_top = true
       #   k_edge.transformation = rt * it
-      #   @tool.append_3d(k_edge, LAYER_3D_RESHAPE_PREVIEW)
+      #   @tool.append_3d(k_edge, LAYER_3D_STRETCH_PREVIEW)
       #
       # end
       # _hide_instances
@@ -1493,20 +1493,20 @@ module Ladb::OpenCutList
       # rs.each do |pmin, pmax, pl|
       #   k_points = _create_floating_points(points: [pmin, pmax], stroke_color: Kuix::COLOR_BLACK)
       #   k_points.transformation = et
-      #   @tool.append_3d(k_points, LAYER_3D_RESHAPE_PREVIEW)
+      #   @tool.append_3d(k_points, LAYER_3D_STRETCH_PREVIEW)
       #   k_points = _create_floating_points(points: pl, stroke_color: Kuix::COLOR_YELLOW)
       #   k_points.transformation = et
-      #   @tool.append_3d(k_points, LAYER_3D_RESHAPE_PREVIEW)
+      #   @tool.append_3d(k_points, LAYER_3D_STRETCH_PREVIEW)
       # end
       # k_points = _create_floating_points(points: epo, fill_color: Kuix::COLOR_YELLOW)
       # k_points.transformation = et
-      # @tool.append_3d(k_points, LAYER_3D_RESHAPE_PREVIEW)
+      # @tool.append_3d(k_points, LAYER_3D_STRETCH_PREVIEW)
       # k_points = _create_floating_points(points: epomax, fill_color: Kuix::COLOR_MAGENTA)
       # k_points.transformation = et
-      # @tool.append_3d(k_points, LAYER_3D_RESHAPE_PREVIEW)
+      # @tool.append_3d(k_points, LAYER_3D_STRETCH_PREVIEW)
       # k_points = _create_floating_points(points: ORIGIN, style: Kuix::POINT_STYLE_DIAMOND, fill_color: Kuix::COLOR_CYAN, stroke_color: Kuix::COLOR_BLACK)
       # k_points.transformation = et
-      # @tool.append_3d(k_points, LAYER_3D_RESHAPE_PREVIEW)
+      # @tool.append_3d(k_points, LAYER_3D_STRETCH_PREVIEW)
 
 
       # colors = [ Kuix::COLOR_CYAN, Kuix::COLOR_MAGENTA, Kuix::COLOR_YELLOW ]
@@ -1524,7 +1524,7 @@ module Ladb::OpenCutList
       #   #   k_box.line_wi dth = 2
       #   #   k_box.color = colors[section_def.index % colors.length]
       #   #   k_box.transformation = et
-      #   #   @tool.append_3d(k_box, LAYER_3D_RESHAPE_PREVIEW)
+      #   #   @tool.append_3d(k_box, LAYER_3D_STRETCH_PREVIEW)
       #   # end
       #
       #   if section_def.bounds.valid?
@@ -1535,7 +1535,7 @@ module Ladb::OpenCutList
       #     k_box.line_width = 2
       #     k_box.color = colors[section_def.index % colors.length]
       #     k_box.transformation = et
-      #     @tool.append_3d(k_box, LAYER_3D_RESHAPE_PREVIEW)
+      #     @tool.append_3d(k_box, LAYER_3D_STRETCH_PREVIEW)
       #   end
       #
       # end

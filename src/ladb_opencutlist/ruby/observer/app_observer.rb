@@ -87,6 +87,8 @@ module Ladb::OpenCutList
     def onActivateModel(model)
       # puts "onActivateModel: #{model}"
 
+      return if model.nil? # Prevent event fired sometimes with nil model
+
       # Clear model presets cache
       PLUGIN.clear_model_presets_cache
 
