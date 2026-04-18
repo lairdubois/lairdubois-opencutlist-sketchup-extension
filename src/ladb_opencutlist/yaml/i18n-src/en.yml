@@ -2016,22 +2016,33 @@ tab:
         info_2: |
           Customize the options.
           Click **Import** to confirm the action.
-        option_part_wood_material_name: Material of wooden parts
-        option_part_wood_material_name_help: Help - Material of wooden parts
-        option_part_aluminium_material_name: Material of aluminum parts
-        option_part_aluminium_material_name_help: Help - Material of aluminum parts
-        option_part_glass_material_name: Material of glass parts
-        option_part_glass_material_name_help: Help - Material of glass parts
-        option_front_part_layer_name: Tags of the fronts
-        option_front_part_layer_name_help: Help - Tags of the fronts
-        option_machining_material_name: Material of machinings
-        option_machining_material_name_help: Help - Material of machinings
-        option_machining_layer_name: Tags of machinings
-        option_machining_layer_name_help: Help - Tags of machinings
-        option_hardware_material_name: Material of accessories
-        option_hardware_material_name_help: Help - Material of accessories
-        option_hardware_layer_name: Tags of accessories
-        option_hardware_layer_name_help: Help - Tags of accessories
+        materials: Materials
+        layers: Tags
+        option_parts_formula: Formula
+        option_parts_formula_help: The formula allows you to customize the name of the imported parts.
+        option_part_wood_material_name: Wood
+        option_part_wood_material_name_help: Material to be applied to **wooden** parts.
+        option_part_aluminium_material_name: Aluminum
+        option_part_aluminium_material_name_help: Material to be applied to **aluminium** parts.
+        option_part_glass_material_name: Glass
+        option_part_glass_material_name_help: Material to be applied to **glass** parts.
+        option_front_part_layer_name: Fronts
+        option_front_part_layer_name_help: Tag to be applied to front parts.
+        option_machining_material_name: Machinings
+        option_machining_material_name_help: Material to be applied to **machinings**.
+        option_machining_layer_name: Machinings
+        option_machining_layer_name_help: Tag to be applied to machinings.
+        option_hardware_material_name: Hardwares
+        option_hardware_material_name_help: Material to be applied to **hardwares**.
+        option_hardware_layer_name: Hardwares
+        option_hardware_layer_name_help: Tag to be applied to hardwares
+        option_no_material_help: "*Leave this field blank to avoid applying any material.*."
+        option_default_material_help: "*A default material will be created if this field is empty.*."
+        option_no_layer_help: "*Leave this field empty to avoid applying a tag*."
+        formula:
+          part: Part
+          project: Project
+          cabinet: Cabinet
       model:
         author: Author
         date: Date
