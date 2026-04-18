@@ -22,9 +22,10 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
-### 2026-04-xx
+### 2026-04-18
  * Updated PackingSolver dependency
  * Updated translations
+ * Fixed issue [#956](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/issues/956)
  * Improved Smart Stretch Tool ALT behavior on Windows
 ### 2026-04-16
  * Updated PackingSolver dependency
