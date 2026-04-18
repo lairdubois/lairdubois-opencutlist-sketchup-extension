@@ -2035,9 +2035,9 @@ tab:
         option_hardware_material_name: Accessoires
         option_hardware_material_name_help: Matière à appliquer aux **accessoires**.
         option_hardware_layer_name: Accessoires
-        option_hardware_layer_name_help: Balise a appliquer aux accessoires.
+        option_hardware_layer_name_help: Balise à appliquer aux accessoires.
         option_no_material_help: "*Laissez ce champ vide pour ne pas appliquer de matière*."
-        option_default_material_help: "*Une matière par défaut sera crée si ce champ est vide*."
+        option_default_material_help: "*Une matière par défaut sera créée si ce champ est vide*."
         option_no_layer_help: "*Laissez ce champ vide pour ne pas appliquer de balise*."
         formula:
           part: Pièce

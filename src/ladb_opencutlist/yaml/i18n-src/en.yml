@@ -2035,10 +2035,10 @@ tab:
         option_hardware_material_name: Hardwares
         option_hardware_material_name_help: Material to be applied to **hardwares**.
         option_hardware_layer_name: Hardwares
-        option_hardware_layer_name_help: Tag to be applied to hardwares
-        option_no_material_help: "*Leave this field blank to avoid applying any material.*."
-        option_default_material_help: "*A default material will be created if this field is empty.*."
-        option_no_layer_help: "*Leave this field empty to avoid applying a tag*."
+        option_hardware_layer_name_help: Tag to be applied to hardwares.
+        option_no_material_help: "*Leave this field blank to prevent the application of any material*."
+        option_default_material_help: "*If this field is left empty, a default material will be created*."
+        option_no_layer_help: "*Leave this field blank to prevent the application of any tag*."
         formula:
           part: Part
           project: Project
@@ -2047,7 +2047,7 @@ tab:
         author: Author
         date: Date
       cabinet:
-        list: List of furniture
+        list: List of cabinets
         description: Name
         width: Width
         height: Height
