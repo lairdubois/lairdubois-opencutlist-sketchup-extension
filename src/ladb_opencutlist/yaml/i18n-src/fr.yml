@@ -2016,22 +2016,33 @@ tab:
         info_2: |
           Personnalisez les options.
           Cliquez sur **Importer** pour confirmer l'action.
-        option_part_wood_material_name: Matière des pièces en bois
-        option_part_wood_material_name_help: Aide - Matière des pièces en bois
-        option_part_aluminium_material_name: Matière des pièces en aluminium
-        option_part_aluminium_material_name_help: Aide - Matière des pièces en aluminium
-        option_part_glass_material_name: Matière des pièces en verre
-        option_part_glass_material_name_help: Aide - Matière des pièces en verre
-        option_front_part_layer_name: Balise des façades
-        option_front_part_layer_name_help: Aide - Balise des façades
-        option_machining_material_name: Matière des usinages
-        option_machining_material_name_help: Aide - Matière des usinages
-        option_machining_layer_name: Balise des usinages
-        option_machining_layer_name_help: Aide - Balise des usinages
-        option_hardware_material_name: Matière des accessoires
-        option_hardware_material_name_help: Aide - Matière des accessoires
-        option_hardware_layer_name: Balise des accessoires
-        option_hardware_layer_name_help: Aide - Balise des accessoires
+        materials: Matières
+        layers: Balises
+        option_parts_formula: Formule
+        option_parts_formula_help: La formule vous permet de personnaliser le nom des pièces importées.
+        option_part_wood_material_name: Bois
+        option_part_wood_material_name_help: Matière à appliquer aux pièces en **bois**.
+        option_part_aluminium_material_name: Aluminium
+        option_part_aluminium_material_name_help: Matière à appliquer aux pièces en **aluminium**.
+        option_part_glass_material_name: Verre
+        option_part_glass_material_name_help: Matière à appliquer aux pièces en **verre**.
+        option_front_part_layer_name: Façades
+        option_front_part_layer_name_help: Balise à appliquer aux pièces de façade.
+        option_machining_material_name: Usinages
+        option_machining_material_name_help: Matière à appliquer aux **usinages**.
+        option_machining_layer_name: Usinages
+        option_machining_layer_name_help: Balise à appliquer aux usinages.
+        option_hardware_material_name: Accessoires
+        option_hardware_material_name_help: Matière à appliquer aux **accessoires**.
+        option_hardware_layer_name: Accessoires
+        option_hardware_layer_name_help: Balise a appliquer aux accessoires.
+        option_no_material_help: "*Laissez ce champ vide pour ne pas appliquer de matière*."
+        option_default_material_help: "*Une matière par défaut sera crée si ce champ est vide*."
+        option_no_layer_help: "*Laissez ce champ vide pour ne pas appliquer de balise*."
+        formula:
+          part: Pièce
+          project: Projet
+          cabinet: Meuble
       model:
         author: Auteur
         date: Date

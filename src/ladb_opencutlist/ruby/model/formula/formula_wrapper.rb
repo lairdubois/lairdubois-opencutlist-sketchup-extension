@@ -8,7 +8,7 @@ module Ladb::OpenCutList
   class FormulaWrapper < DataContainer
 
     def export
-      ''
+      to_s
     end
 
     def to_str

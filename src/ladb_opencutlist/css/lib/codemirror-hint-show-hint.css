@@ -104,6 +104,18 @@
   content: "I";
   background: #555;
 }
+.CodeMirror-hint-bxf_part:before {
+  content: "p";
+  background: #ff671f;
+}
+.CodeMirror-hint-bxf_cabinet:before {
+  content: "C";
+  background: #ff671f;
+}
+.CodeMirror-hint-bxf_project:before {
+  content: "P";
+  background: #ff671f;
+}
 
 li.CodeMirror-hint-active {
   background: #eee;

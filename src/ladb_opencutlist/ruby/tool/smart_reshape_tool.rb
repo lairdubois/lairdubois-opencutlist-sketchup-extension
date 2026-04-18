@@ -2186,7 +2186,7 @@ module Ladb::OpenCutList
 
       det = drawing_def.transformation.inverse * et
 
-      # Compute a new drawing_def that include subparts
+      # Compute a new drawing_def that include all content
       return nil unless (drawing_def = CommonDrawingDecompositionWorker.new(_get_drawing_def_ipaths, **(_get_drawing_def_parameters.merge(
         container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_ALL,
         ignore_snaps: false,
@@ -2203,7 +2203,7 @@ module Ladb::OpenCutList
       epe = keb.face_center(grip_index_e).to_p
       evpspe = eps.vector_to(epe)
 
-      reversed = !evpspe.samedirection?(@picked_axis)
+      reversed = evpspe.valid? && !evpspe.samedirection?(@picked_axis)
 
       epmin = reversed ? epe : eps
       epmax = reversed ? eps : epe
@@ -2212,7 +2212,6 @@ module Ladb::OpenCutList
 
       v_s = {}  # Vertex => DrawingContainerDef => SectionDef
 
-      reversed = evpspe.valid? && !evpspe.samedirection?(@picked_axis)
       xyz_method = _get_xyz_method
 
       ratios = @cutters[@picked_axis].sort

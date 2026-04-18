@@ -91,6 +91,7 @@
 
             // Fetch UI elements
             const $widgetPreset = $('.ladb-widget-preset', $modal);
+            const $textareaPartsFormula = $('#ladb_importer_import_textarea_parts_formula', $modal);
             const $inputPartWoodMaterialName = $('#ladb_importer_import_input_part_wood_material_name', $modal);
             const $inputPartAluminiumMaterialName = $('#ladb_importer_import_input_part_aluminium_material_name', $modal);
             const $inputPartGlassMaterialName = $('#ladb_importer_import_input_part_glass_material_name', $modal);
@@ -103,6 +104,7 @@
 
             // Define useful functions
             const fnFetchOptions = function (options) {
+                options.parts_formula = $textareaPartsFormula.val();
                 options.part_wood_material_name = $inputPartWoodMaterialName.val();
                 options.part_aluminium_material_name = $inputPartAluminiumMaterialName.val();
                 options.part_glass_material_name = $inputPartGlassMaterialName.val();
@@ -113,6 +115,7 @@
                 options.hardware_layer_name = $inputHardwareLayerName.val();
             };
             const fnFillInputs = function (options) {
+                $textareaPartsFormula.ladbTextinputCode('val', [ typeof options.parts_formula == 'string' ? options.parts_formula : '' ]);
                 $inputPartWoodMaterialName.val(options.part_wood_material_name);
                 $inputPartAluminiumMaterialName.val(options.part_aluminium_material_name);
                 $inputPartGlassMaterialName.val(options.part_glass_material_name);
@@ -122,6 +125,20 @@
                 $inputHardwareMaterialName.val(options.hardware_material_name);
                 $inputHardwareLayerName.val(options.hardware_layer_name);
             };
+            const fnConvertToVariableDefs = function (vars) {
+
+                // Generate variableDefs for formula editor
+                const variableDefs = [];
+                for (let i = 0; i < vars.length; i++) {
+                    variableDefs.push({
+                        text: vars[i].name,
+                        displayText: i18next.t('tab.importers.bxf2.import.formula.' + vars[i].name),
+                        type: vars[i].type
+                    });
+                }
+
+                return variableDefs;
+            }
             const fnMaterialTextinputOptions = function (type) {
                 return {
                     autocomplete: {
@@ -160,6 +177,17 @@
                 dictionary: 'importers_bxf2_import_options',
                 fnFetchOptions: fnFetchOptions,
                 fnFillInputs: fnFillInputs
+            });
+            $textareaPartsFormula.ladbTextinputCode({
+                variableDefs: fnConvertToVariableDefs([
+                    { name: 'part', type: 'bxf_part' },
+                    { name: 'cabinet', type: 'bxf_cabinet' },
+                    { name: 'project', type: 'bxf_project' },
+                ]),
+                snippetDefs: [
+                    { name: i18next.t('tab.importers.bxf2.import.formula.cabinet') + '.' + i18next.t('tab.importers.bxf2.import.formula.part') , value: '@cabinet + "." + @part' },
+                    { name: i18next.t('tab.importers.bxf2.import.formula.project') + '.' + i18next.t('tab.importers.bxf2.import.formula.part') , value: '@project + "." + @part' },
+                ]
             });
             $inputPartWoodMaterialName.ladbTextinputText(fnMaterialTextinputOptions(2));
             $inputPartAluminiumMaterialName.ladbTextinputText(fnMaterialTextinputOptions(2));
