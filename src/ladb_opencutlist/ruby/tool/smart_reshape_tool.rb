@@ -1885,6 +1885,9 @@ module Ladb::OpenCutList
         # A sorting order is defined to ensure that the furthest edges are moved first
         sorting_order = (esv.valid? && esv.samedirection?(evpspe)) ? -1 : 1
 
+        # Precompute the inverse of the active selection path transformation (invariant within the loop)
+        active_selection_path_ti = PathUtils.get_transformation(get_active_selection_path, IDENTITY).inverse
+
         container_defs.each do |container_def|
 
           next if container_def.model?
@@ -2019,7 +2022,7 @@ module Ladb::OpenCutList
 
           target_position = container_def.ref_position
           target_position = target_position.offset(edv.transform(if container_def.depth == 0
-                                                                   PathUtils.get_transformation(get_active_selection_path, IDENTITY).inverse * container_def.transformation
+                                                                   active_selection_path_ti * container_def.transformation
                                                                  else
                                                                    container_def.transformation.inverse
                                                                  end)) if edv.valid?
@@ -2042,7 +2045,7 @@ module Ladb::OpenCutList
 
                 extern_instances.each do |extern_instance|
 
-                  t = extern_instance.transformation * det
+                  t = det * extern_instance.transformation
 
                   ref_position = @extern_instances_ref_positions[extern_instance] ||= ORIGIN.transform(t)
 
