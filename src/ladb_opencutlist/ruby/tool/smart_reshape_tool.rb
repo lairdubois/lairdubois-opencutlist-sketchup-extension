@@ -535,7 +535,7 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_STRETCH_START
-        if @picked_cutter_index
+        unless @picked_cutter_index.nil?
 
           drawing_def = _get_drawing_def
           et = _get_edit_transformation
@@ -560,7 +560,7 @@ module Ladb::OpenCutList
           return true
         end
 
-        if @picked_grip_index
+        unless @picked_grip_index.nil?
 
           @mouse_down_point = Geom::Point3d.new(x, y,)
 
@@ -582,7 +582,7 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_STRETCH_START
-        if @picked_grip_index
+        unless @picked_grip_index.nil?
 
           drawing_def = _get_drawing_def
           et = _get_edit_transformation
@@ -597,14 +597,14 @@ module Ladb::OpenCutList
           _refresh
           return true
         end
-        unless @picked_cutter_index
+        if @picked_cutter_index.nil?
           _reset
           _refresh
           return true
         end
 
       when STATE_STRETCH_CUTTER_MOVE
-        if @picked_cutter_index
+        unless @picked_cutter_index.nil?
           _store_cutters
           _load_cutters # Reload to sanitize
           set_state(STATE_STRETCH_START)
@@ -623,7 +623,7 @@ module Ladb::OpenCutList
         return true
 
       when STATE_STRETCH_CUTTER_REMOVE
-        if @picked_cutter_index
+        unless @picked_cutter_index.nil?
           @cutters[@picked_axis].delete_at(@picked_cutter_index)
           @picked_cutter_index = nil
           _store_cutters
@@ -1291,7 +1291,7 @@ module Ladb::OpenCutList
         k_points.transformation = et
         @tool.append_3d(k_points, LAYER_3D_STRETCH_PREVIEW)
 
-        if @picked_grip_index
+        unless @picked_grip_index.nil?
 
           k_points = _create_floating_points(
             points: keb.face_center(@picked_grip_index).to_p,
@@ -1521,7 +1521,7 @@ module Ladb::OpenCutList
       #   #   k_box.bounds.copy!(section_def.bounds)
       #   #   k_box.bounds.translate!(*dv.to_a) if dv.valid?
       #   #   k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-      #   #   k_box.line_wi dth = 2
+      #   #   k_box.line_width = 2
       #   #   k_box.color = colors[section_def.index % colors.length]
       #   #   k_box.transformation = et
       #   #   @tool.append_3d(k_box, LAYER_3D_STRETCH_PREVIEW)
@@ -1701,7 +1701,7 @@ module Ladb::OpenCutList
       return if (stretch_def = _get_stretch_def(@picked_stretch_start_point, @picked_stretch_end_point)).nil?
 
       split_def, emv, esv, edvs, lpe = stretch_def.values_at(:split_def, :emv, :esv, :edvs, :lpe)
-      et, eps, evpspe, reversed, section_defs, container_defs = split_def.values_at(:et, :eps, :evpspe, :reversed, :section_defs, :container_defs)
+      et, det, eps, evpspe, reversed, section_defs, container_defs = split_def.values_at(:et, :det, :eps, :evpspe, :reversed, :section_defs, :container_defs)
 
       _unhide_instances
 
@@ -1920,7 +1920,7 @@ module Ladb::OpenCutList
 
               v = current_position0.vector_to(target_position0)
 
-              entities.transform_entities(Geom::Transformation.translation(v), edge_defs.map { |edge_def| edge_def.edge }) if v.valid?
+              entities.transform_entities(Geom::Transformation.translation(v), edge_defs.map(&:edge)) if v.valid?
 
             end
 
@@ -1985,7 +1985,7 @@ module Ladb::OpenCutList
 
               v = current_position0.vector_to(target_position0)
 
-              entities.transform_entities(Geom::Transformation.translation(v), snap_defs.map { |snap_def| snap_def.snap }) if v.valid?
+              entities.transform_entities(Geom::Transformation.translation(v), snap_defs.map(&:snap)) if v.valid?
 
             end
 
@@ -2042,7 +2042,7 @@ module Ladb::OpenCutList
 
                 extern_instances.each do |extern_instance|
 
-                  t = extern_instance.transformation
+                  t = extern_instance.transformation * det
 
                   ref_position = @extern_instances_ref_positions[extern_instance] ||= ORIGIN.transform(t)
 
@@ -2141,7 +2141,7 @@ module Ladb::OpenCutList
       fn_valid_cutters = lambda { |cutters, xyz|
         if cutters.is_a?(Hash) &&
            cutters[xyz].is_a?(Array) &&
-           (valid_cutters = cutters[xyz].map { |v| v.to_f }.select { |v| v > 0 && v < 1.0 }).any?
+           (valid_cutters = cutters[xyz].map(&:to_f).select { |v| v > 0 && v < 1.0 }).any?
           valid_cutters
         else
           [ 0.5 ]
@@ -2185,6 +2185,7 @@ module Ladb::OpenCutList
       keb = Kuix::Bounds3d.new.copy!(eb)
 
       det = drawing_def.transformation.inverse * et
+      deti = det.inverse
 
       # Compute a new drawing_def that include all content
       return nil unless (drawing_def = CommonDrawingDecompositionWorker.new(_get_drawing_def_ipaths, **(_get_drawing_def_parameters.merge(
@@ -2228,12 +2229,10 @@ module Ladb::OpenCutList
       }
 
       fn_store_vertex_section_def = lambda { |vertex, drawing_container_def, section_def|
-        v_s[vertex] ||= {}
-        v_s[vertex][drawing_container_def] = section_def
+        (v_s[vertex] ||= {})[drawing_container_def] = section_def
       }
       fn_fetch_vertex_section_def = lambda { |vertex, drawing_container_def|
-        v_s[vertex] ||= {}
-        v_s[vertex][drawing_container_def]
+        (v_s[vertex] ||= {})[drawing_container_def]
       }
 
       fn_analyse = lambda do |drawing_container_def, parent_section_def = nil, depth = 0|
@@ -2287,7 +2286,7 @@ module Ladb::OpenCutList
             section_def = section_defs.find { |section_def| section_def.contains_bounds?(drawing_container_def.bounds, xyz_method) }
             if section_def.nil?
 
-              container_origin = ORIGIN.transform(drawing_container_def.is_root? ? IDENTITY : drawing_container_def.transformation * drawing_container_def.container.transformation)
+              container_origin = ORIGIN.transform(drawing_container_def.is_root? ? deti : drawing_container_def.transformation * drawing_container_def.container.transformation)
               min_max = [ drawing_container_def.bounds.min, drawing_container_def.bounds.max ].min_by { |point| (point.send(xyz_method) - container_origin.send(xyz_method)).abs }
 
               # Default container section_def is where the bounds extreme is the nearest origin
@@ -2301,6 +2300,7 @@ module Ladb::OpenCutList
               # k_box = Kuix::BoxMotif3d.new
               # k_box.bounds.copy!(drawing_container_def.bounds)
               # k_box.color = color
+              # k_box.transformation = et
               # @tool.append_3d(k_box, LAYER_3D_PART_PREVIEW)
               #
               # k_points = _create_floating_points(
@@ -2308,6 +2308,7 @@ module Ladb::OpenCutList
               #   fill_color: color,
               #   size: [ 6, 4, 2, 1 ][depth % 4]
               # )
+              # k_points.transformation = et
               # @tool.append_3d(k_points, LAYER_3D_PART_PREVIEW)
 
 
@@ -2527,6 +2528,7 @@ module Ladb::OpenCutList
       @split_def = {
         drawing_def: drawing_def,
         et: et,
+        det: det,
         eb: eb,   # Expressed in 'Edit' space
         epmin: epmin,
         epmax: epmax,
@@ -2574,7 +2576,7 @@ module Ladb::OpenCutList
       # Compute move vectors for each section
       edvs = section_defs.map { |section_def|
         edv = Geom::Vector3d.new(esv)
-        edv.length = edv.length * section_def.index / (section_defs.length - 1) if esv.valid?
+        edv.length = edv.length * section_def.index / (section_defs.length - 1) if esv.valid? && section_defs.length > 1
         [ section_def, edv ]
       }.to_h
 
@@ -3210,7 +3212,7 @@ module Ladb::OpenCutList
       return unless @drawing_def.is_a?(DrawingDef)
 
       k_mesh = Kuix::Mesh.new
-      k_mesh.add_triangles(@drawing_def.face_manipulators.map { |fm| fm.triangles }.flatten(1))
+      k_mesh.add_triangles(@drawing_def.face_manipulators.flat_map(&:triangles))
       k_mesh.background_color = ColorUtils.color_translucent(Kuix::COLOR_BLUE, 0.3) #Sketchup::Color.new(254, 222, 11, 200)
       k_mesh.transformation = @drawing_def.transformation
       @tool.append_3d(k_mesh, LAYER_3D_PANELING_PREVIEW)
@@ -3369,7 +3371,7 @@ module Ladb::OpenCutList
 
     def _erase_drawings
       if @drawing_def.is_a?(DrawingDef)
-        _get_active_entities.erase_entities(@drawing_def.edge_manipulators.map { |em| em.edge })
+        _get_active_entities.erase_entities(@drawing_def.edge_manipulators.map(&:edge))
         @drawing_def = nil
       end
     end
@@ -3827,7 +3829,7 @@ module Ladb::OpenCutList
       return unless @src_drawing_def.is_a?(DrawingDef)
 
       k_mesh = Kuix::Mesh.new
-      k_mesh.add_triangles(@src_drawing_def.face_manipulators.map { |fm| fm.triangles }.flatten(1))
+      k_mesh.add_triangles(@src_drawing_def.face_manipulators.flat_map(&:triangles))
       k_mesh.background_color = ColorUtils.color_translucent(Kuix::COLOR_GREEN, 0.3)
       k_mesh.transformation = @src_drawing_def.transformation
       @tool.append_3d(k_mesh, LAYER_3D_SRC_PREVIEW)
@@ -3841,7 +3843,7 @@ module Ladb::OpenCutList
       return unless @cut_drawing_def.is_a?(DrawingDef)
 
       k_mesh = Kuix::Mesh.new
-      k_mesh.add_triangles(@cut_drawing_def.face_manipulators.map { |fm| fm.triangles }.flatten(1))
+      k_mesh.add_triangles(@cut_drawing_def.face_manipulators.flat_map(&:triangles))
       k_mesh.background_color = ColorUtils.color_translucent(Kuix::COLOR_RED, 0.3)
       k_mesh.transformation = @cut_drawing_def.transformation
       @tool.append_3d(k_mesh, LAYER_3D_CUT_PREVIEW)
