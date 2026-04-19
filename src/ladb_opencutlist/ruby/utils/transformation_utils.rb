@@ -269,6 +269,126 @@ module Ladb::OpenCutList
       end
     end
 
+    # Decomposes a Geom::Transformation into translation, scaling, and Euler rotation angles.
+    # Correctly handles:
+    #   - non-uniform scaling
+    #   - uniform scale factor stored in m[15]
+    #   - mirror/reflection (detected via cross-product, sign assigned to X axis by convention)
+    #
+    # Returns: [ translation, scaling, rotation ]
+    #   translation - [tx, ty, tz] in model units (inches)
+    #   scaling     - [sx, sy, sz] (negative component indicates a mirror)
+    #   rotation    - [rx, ry, rz] in radians (Euler XYZ intrinsic)
+    #
+    # Rotation extraction source:
+    #   "Extracting Euler Angles from a Rotation Matrix", Mike Day, Insomniac Games
+    #   http://www.insomniacgames.com/mike-day-extracting-euler-angles-from-a-rotation-matrix/
+    def self.decompose(transformation)
+      m = transformation.to_a.clone
+
+      # --- Translation ---
+      # Stored directly in elements [12, 13, 14] (last column, column-major layout)
+      translation = m.values_at(12, 13, 14)
+
+      # --- Scaling ---
+      # m[15] holds a global uniform scale factor (often 1.0, but not always).
+      # The per-axis scale is the norm of each column of the 3x3 sub-matrix,
+      # multiplied by m[15] to account for the uniform factor.
+      scaling    = Array.new(3)
+      scaling[0] = m[15] * Math.sqrt(m[0]**2 + m[1]**2 + m[2]**2)
+      scaling[1] = m[15] * Math.sqrt(m[4]**2 + m[5]**2 + m[6]**2)
+      scaling[2] = m[15] * Math.sqrt(m[8]**2 + m[9]**2 + m[10]**2)
+
+      # Normalise each column by its scale so the remaining 3x3 is a pure rotation matrix
+      [0, 1, 2].each  { |i| m[i]    /= scaling[0] } unless scaling[0] == 0.0
+      [4, 5, 6].each  { |i| m[i]    /= scaling[1] } unless scaling[1] == 0.0
+      [8, 9, 10].each { |i| m[i]    /= scaling[2] } unless scaling[2] == 0.0
+      m[15] = 1.0  # reset the uniform factor now that it has been absorbed
+
+      # --- Mirror detection ---
+      # For a proper rotation matrix, X cross Y must point in the same direction as Z.
+      # If the dot product is negative, the basis is left-handed: a mirror is present.
+      # By convention we assign the negative sign to the X axis (flip column 0).
+      x_axis    = Geom::Vector3d.new(m[0], m[1], m[2])
+      y_axis    = Geom::Vector3d.new(m[4], m[5], m[6])
+      z_axis    = Geom::Vector3d.new(m[8], m[9], m[10])
+      z_rebuilt = x_axis.cross(y_axis)
+
+      if z_rebuilt.dot(z_axis) < 0
+        scaling[0] = -scaling[0]   # mirror detected — negate X scale by convention
+        m[0], m[1], m[2] = -m[0], -m[1], -m[2]  # flip X column to restore right-hand basis
+      end
+
+      # --- Rotation (Euler XYZ intrinsic, in radians) ---
+      # After removing scale and mirror, m is a pure rotation matrix.
+      # Layout (column-major → row-major reading):
+      #   m[0]  m[4]  m[8]
+      #   m[1]  m[5]  m[9]
+      #   m[2]  m[6]  m[10]
+      theta1 = Math.atan2(m[6], m[10])                        # rotation around X
+      c2     = Math.sqrt(m[0]**2 + m[1]**2)
+      theta2 = Math.atan2(-m[2], c2)                          # rotation around Y
+      s1     = Math.sin(theta1)
+      c1     = Math.cos(theta1)
+      theta3 = Math.atan2(s1 * m[8] - c1 * m[4],
+                          c1 * m[5] - s1 * m[9])             # rotation around Z
+
+      # Negate angles: SketchUp's right-hand convention requires this sign flip
+      rotation = [ theta1, theta2, theta3 ]
+
+      [ translation, scaling, rotation ]
+    end
+
+    # Displays a Geom::Transformation in a human-readable format in the Ruby Console.
+    # Usage: TransformationHelper.print_transform(my_transformation)
+    #
+    # Parameters:
+    #   t         - Geom::Transformation to display
+    #   label     - optional title shown above the output (default: "Transformation")
+    #   precision - number of decimal places for all numeric values (default: 3)
+    def self.print(t, label: "Transformation", precision: 3)
+      fmt     = ->(v) { "%*.*f" % [8, precision, v] }
+      fmt_lng = ->(v) { "%*.*f" % [8, precision, v.to_l.to_mm] }
+      fmt_deg = ->(r) { "%*.2f°" % [8, r.radians] }
+
+      # Raw matrix display (column-major → row-major for readability)
+      m    = t.to_a
+      rows = Array.new(4) { |r| Array.new(4) { |c| m[c * 4 + r] } }
+
+      # Each value is formatted as "%*.*f" % [8, precision, v], so its width is:
+      # max(8, precision + integer_digits + 1_dot) — but we fix field width to 8.
+      # A row contains: 3 rotation values separated by "  " + " | " + 1 translation + " |"
+      col_width  = [8, precision + 5].max   # at least 8 chars per value
+      row_width  = col_width * 3 + 2 * 2    # 3 values + 2 separators of 2 spaces
+      total_width = row_width + 3 + col_width + 2  # " │ " + translation + " │"
+
+      puts "\n#{label}"
+      puts "  ┌" + "─" * total_width + "┐"
+      rows[0..2].each do |row|
+        rotation_part = row[0..2].map { |v| fmt.(v) }.join("  ")
+        puts "  │ #{rotation_part} │ #{fmt_lng.(row[3])} │"
+      end
+      puts "  └" + "─" * total_width + "┘"
+      puts "  " + "─" * (total_width + 2)
+
+      translation, scaling, rotation = decompose(t)
+
+      tx, ty, tz = translation
+      puts "  Translation : x=#{fmt_lng.(tx)}  y=#{fmt_lng.(ty)}  z=#{fmt_lng.(tz)}"
+
+      sx, sy, sz = scaling
+      mirror = sx < 0 || sy < 0 || sz < 0
+      puts "  Scale       : x=#{fmt.(sx)}  y=#{fmt.(sy)}  z=#{fmt.(sz)}"
+      puts "  Mirror      : #{mirror ? "yes (X axis by convention)" : "no"}"
+
+      rx, ry, rz = rotation
+      puts "  Rotation    : x=#{fmt_deg.(rx)}  y=#{fmt_deg.(ry)}  z=#{fmt_deg.(rz)}"
+
+      puts "  Identity    : #{t.identity? ? "yes" : "no"}"
+      puts ""
+      nil
+    end
+
   end
 
 end

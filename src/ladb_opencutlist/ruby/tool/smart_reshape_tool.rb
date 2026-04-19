@@ -1892,9 +1892,9 @@ module Ladb::OpenCutList
 
           next if container_def.model?
 
+          entities = container_def.entities
           container = container_def.container
           container_edv = edvs[container_def.section_def]
-          entities = container_def.entities
 
           # Stretch definition edges only once
           unless stretched_definition_defs.has_key?(container_def.definition)
@@ -1994,7 +1994,7 @@ module Ladb::OpenCutList
 
             # Flag definition as stretched + keep edv converted to definition space
             ddv = container_edv
-            ddv = ddv + emv if container_def.depth <= 1 && get_active_selection_instances.include?(container_def.container) # Apply "move" translation (if the centred option is enabled)
+            ddv += emv if container_def.depth <= 1 && get_active_selection_instances.include?(container_def.container) # Apply "move" translation (if the centred option is enabled)
             ddv = ddv.transform(container_def.container_transformation.inverse) if container_def.depth > 0
             stretched_definition_defs[container_def.definition] = StretchedDefinitionDef.new(ddv)
 
@@ -2018,7 +2018,7 @@ module Ladb::OpenCutList
           end
 
           # Apply move translation (if the centred option is enabled)
-          edv = edv + emv if container_def.depth <= 1 && get_active_selection_instances.include?(container_def.container)
+          edv += emv if container_def.depth <= 1 && get_active_selection_instances.include?(container_def.container)
 
           target_position = container_def.ref_position
           target_position = target_position.offset(edv.transform(if container_def.depth == 0
@@ -2034,6 +2034,9 @@ module Ladb::OpenCutList
 
         end
 
+        # require_relative '../utils/transformation_utils'
+        # TransformationUtils.print(det, label: 'det =')
+
         # Apply back translation on extern instances if needed
         unless make_unique_o
 
@@ -2045,12 +2048,12 @@ module Ladb::OpenCutList
 
                 extern_instances.each do |extern_instance|
 
-                  t = det * extern_instance.transformation
+                  t = extern_instance.transformation
 
                   ref_position = @extern_instances_ref_positions[extern_instance] ||= ORIGIN.transform(t)
 
                   target_position = ref_position
-                  target_position = target_position.offset(stretched_definition_def.ddv.transform(t)) if !stretched_definition_def.ddv.nil? && stretched_definition_def.ddv.valid?
+                  target_position = target_position.offset(stretched_definition_def.ddv.transform(det * t)) if !stretched_definition_def.ddv.nil? && stretched_definition_def.ddv.valid?
                   current_position = ORIGIN.transform(t)
 
                   # k_edge = Kuix::EdgeMotif3d.new
@@ -2512,7 +2515,7 @@ module Ladb::OpenCutList
       el = [ eps, evpspe ]
       sd = section_defs
       sd = sd.reverse if reversed
-      vsd = sd.select { |section_def| section_def.bounds.valid? }
+      vsd = sd.select { |section_def| section_def.bounds.valid? && !section_def.bounds.empty? }
       if vsd.one?
         # TODO : Improve this case where there's only one section
         drawing_size = drawing_def.bounds.min.project_to_line(el).transform(et).distance(drawing_def.bounds.max.project_to_line(el).transform(et))
@@ -2520,13 +2523,13 @@ module Ladb::OpenCutList
         min_distance = drawing_size - section_size
       else
         min_distance = vsd
-         .each_cons(2).map { |section_def0, section_def1|
+          .each_cons(2).map { |section_def0, section_def1|
             section_def0.bounds.max.project_to_line(el).transform(et).distance(section_def1.bounds.min.project_to_line(el).transform(et))
           }
-         .min
+          .min
         min_distance = 0 if min_distance.nil?
       end
-      max_compression_distance = [ (min_distance * (section_defs.size - 1)) - 1.mm, 0 ].max # Keep 1mm to avoid geometry merge problems
+      max_compression_distance = [ (min_distance * (vsd.size - 1)) - 1.mm, 0 ].max # Keep 1mm to avoid geometry merge problems
 
       @split_def = {
         drawing_def: drawing_def,
@@ -2825,8 +2828,8 @@ module Ladb::OpenCutList
     end
 
     StretchedDefinitionDef = Struct.new(
-    :ddv,
-    :containers
+      :ddv,
+      :containers
     ) do
 
       def initialize(
