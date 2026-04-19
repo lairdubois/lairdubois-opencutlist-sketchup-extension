@@ -1703,6 +1703,10 @@ module Ladb::OpenCutList
       split_def, emv, esv, edvs, lpe = stretch_def.values_at(:split_def, :emv, :esv, :edvs, :lpe)
       et, det, eps, evpspe, reversed, section_defs, container_defs = split_def.values_at(:et, :det, :eps, :evpspe, :reversed, :section_defs, :container_defs)
 
+      # require_relative '../utils/transformation_utils'
+      # TransformationUtils.print(et, label: 'et =')
+      # TransformationUtils.print(det, label: 'det =')
+
       _unhide_instances
 
       # Prepare uniqueness data
@@ -1994,8 +1998,14 @@ module Ladb::OpenCutList
 
             # Flag definition as stretched + keep edv converted to definition space
             ddv = container_edv
-            ddv += emv if container_def.depth <= 1 && get_active_selection_instances.include?(container_def.container) # Apply "move" translation (if the centred option is enabled)
-            ddv = ddv.transform(container_def.container_transformation.inverse) if container_def.depth > 0
+            unless ddv.nil?
+              ddv += emv if container_def.depth <= 1 && get_active_selection_instances.include?(container_def.container) # Apply "move" translation (if the centred option is enabled)
+              if container_def.depth > 0
+                ddv = ddv.transform((container_def.transformation * container_def.container_transformation).inverse)
+              else
+                ddv = ddv.transform(det)
+              end
+            end
             stretched_definition_defs[container_def.definition] = StretchedDefinitionDef.new(ddv)
 
           end
@@ -2034,9 +2044,6 @@ module Ladb::OpenCutList
 
         end
 
-        # require_relative '../utils/transformation_utils'
-        # TransformationUtils.print(det, label: 'det =')
-
         # Apply back translation on extern instances if needed
         unless make_unique_o
 
@@ -2052,8 +2059,10 @@ module Ladb::OpenCutList
 
                   ref_position = @extern_instances_ref_positions[extern_instance] ||= ORIGIN.transform(t)
 
+                  # puts "stretched_definition_def.ddv = #{stretched_definition_def.ddv}"
+
                   target_position = ref_position
-                  target_position = target_position.offset(stretched_definition_def.ddv.transform(det * t)) if !stretched_definition_def.ddv.nil? && stretched_definition_def.ddv.valid?
+                  target_position = target_position.offset(stretched_definition_def.ddv.transform(t)) if !stretched_definition_def.ddv.nil? && stretched_definition_def.ddv.valid?
                   current_position = ORIGIN.transform(t)
 
                   # k_edge = Kuix::EdgeMotif3d.new
