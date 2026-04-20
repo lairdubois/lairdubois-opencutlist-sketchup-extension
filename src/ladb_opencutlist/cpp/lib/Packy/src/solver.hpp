@@ -293,7 +293,6 @@ namespace Packy {
                         if (stop_requested.load(std::memory_order_relaxed)) return;
 
                         try {
-                            auto& item_type = orig_instance.item_type(item_type_id);
 
                             // Init a validator instance builder
                             InstanceBuilder validator_builder;
@@ -301,7 +300,8 @@ namespace Packy {
                             validator_builder.set_parameters(orig_instance.parameters());
 
                             // Copy item type (with only 1 copy)
-                            validator_builder.add_item_type(item_type, item_type.profit, 1);
+                            const auto& item_type = orig_instance.item_type(item_type_id);
+                            validator_builder.add_item_type(orig_instance, item_type_id, item_type.profit, 1);
 
                             // Copy bin types (with only 1 copy)
                             for (BinTypeId bin_type_id = 0;
@@ -312,7 +312,7 @@ namespace Packy {
                                 if (stop_requested.load(std::memory_order_relaxed)) return;
 
                                 const auto& bin_type = orig_instance.bin_type(bin_type_id);
-                                validator_builder.add_bin_type(bin_type, 1);
+                                validator_builder.add_bin_type(orig_instance, bin_type_id, 1);
 
                             }
 
@@ -440,7 +440,7 @@ namespace Packy {
                     auto& item_type = orig_instance.item_type(orig_item_type_id);
                     auto& item_type_meta = orig_builder_.item_type_meta(orig_item_type_id);
                     item_type_meta.usable_item_type_id = usable_item_type_id;
-                    usable_builder_.instance_builder().add_item_type(item_type, item_type.profit, item_type_meta.copies);
+                    usable_builder_.instance_builder().add_item_type(orig_instance, orig_item_type_id, item_type.profit, item_type_meta.copies);
                     usable_builder_.set_item_type_meta(usable_item_type_id, item_type_meta);
                 }
 
@@ -452,7 +452,7 @@ namespace Packy {
                     const auto& bin_type = orig_instance.bin_type(bin_type_id);
                     const auto& bin_type_meta = orig_builder_.bin_type_meta(bin_type_id);
                     BinPos copies = bin_type_meta.copies == -1 && usable_item_type_ids.empty() ? 1 : bin_type_meta.copies;  // Retrieve copies from bin_typ_meta to keep -1 = infinite and force copies to 1 if no item types
-                    usable_builder_.instance_builder().add_bin_type(bin_type, copies, bin_type.copies_min);
+                    usable_builder_.instance_builder().add_bin_type(orig_instance, bin_type_id, copies, bin_type.copies_min);
                     usable_builder_.set_bin_type_meta(bin_type_id, bin_type_meta);
                 }
 
