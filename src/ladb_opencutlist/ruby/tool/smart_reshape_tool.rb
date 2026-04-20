@@ -2315,7 +2315,7 @@ module Ladb::OpenCutList
               # k_box = Kuix::BoxMotif3d.new
               # k_box.bounds.copy!(drawing_container_def.bounds)
               # k_box.color = color
-              # k_box.transformation = et
+              # k_box.transformation = det
               # @tool.append_3d(k_box, LAYER_3D_PART_PREVIEW)
               #
               # k_points = _create_floating_points(
@@ -2323,7 +2323,7 @@ module Ladb::OpenCutList
               #   fill_color: color,
               #   size: [ 6, 4, 2, 1 ][depth % 4]
               # )
-              # k_points.transformation = et
+              # k_points.transformation = det
               # @tool.append_3d(k_points, LAYER_3D_PART_PREVIEW)
 
 

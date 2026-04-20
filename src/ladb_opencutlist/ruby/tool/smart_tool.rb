@@ -3060,9 +3060,6 @@ module Ladb::OpenCutList
 
       end
 
-      view.tooltip = @mouse_ip.tooltip unless @mouse_ip.nil?  # TODO @mouse_ip should not be used there
-      view.invalidate
-
       false
     end
 
