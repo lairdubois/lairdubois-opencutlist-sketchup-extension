@@ -18,5 +18,5 @@ source_group("Sources" FILES ${LIBRARY_SOURCES})
 add_library(Clipper2Utils ${LIBRARY_HEADERS} ${LIBRARY_SOURCES})
 
 target_include_directories(Clipper2Utils PUBLIC include)
-target_link_libraries(Clipper2Utils PUBLIC Clipper2)
+target_link_libraries(Clipper2Utils PRIVATE Clipper2)
 
