@@ -392,7 +392,7 @@ module Ladb::OpenCutList
               child_drawing_container_def = DrawingContainerDef.new(entity, transformation)
               drawing_container_def.container_defs << child_drawing_container_def
             end
-            _populate_manipulators(child_drawing_container_def, entity.definition.entities, transformation * entity.transformation, entity.material, entity.layer, face_validator, edge_validator, container_validator, depth + 1)
+            _populate_manipulators(child_drawing_container_def, entity.definition.entities, transformation * entity.transformation, entity.material || material, entity.layer, face_validator, edge_validator, container_validator, depth + 1)
           end
         when Sketchup::ConstructionLine
           next if @ignore_clines || entity.start.nil? # Exclude infinite Clines
