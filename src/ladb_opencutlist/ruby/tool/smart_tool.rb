@@ -1603,9 +1603,7 @@ module Ladb::OpenCutList
     def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
       return true if super
       if (key == VK_UP || key == VK_DOWN) && _can_pick_deeper?
-        if @active_part_entity_path
-          _pick_deeper(key == VK_UP ? 1 : -1)
-        end
+        _pick_deeper(key == VK_UP ? 1 : -1) if @active_part_entity_path
         return true
       end
       false
@@ -3199,19 +3197,19 @@ module Ladb::OpenCutList
 
       case @state
 
-      when STATE_SELECT
+      when STATE_SELECT, STATE_SELECT_MULTIPLE, STATE_SELECT_SIBLINGS
         if (key == VK_UP || key == VK_DOWN) && _can_pick_deeper?
-          _pick_deeper(key == VK_UP ? 1 : -1) if has_active_part?
+          _pick_deeper(key == VK_UP ? 1 : -1)
           return true
         end
-
-      when STATE_SELECT_MULTIPLE
-        if tool.is_key_shift?(key)
-          _reset_active_part
-          _select_from_model_selection
-          Sketchup.active_model.selection.clear if _clear_selection_on_start?
-          set_state(STATE_SELECT) unless has_active_selection?
-          return true
+        if @state == STATE_SELECT_MULTIPLE
+          if tool.is_key_shift?(key)
+            _reset_active_part
+            _select_from_model_selection
+            Sketchup.active_model.selection.clear if _clear_selection_on_start?
+            set_state(STATE_SELECT) unless has_active_selection?
+            return true
+          end
         end
 
       when STATE_SELECT_TREE
@@ -4134,7 +4132,7 @@ module Ladb::OpenCutList
       picked_axes_line = nil
       picked_axes_path = nil
 
-      # First stage : pick "context" (aperture = 0)
+      # First stage: pick "context" (aperture = 0)
 
       if !context_locked && (@pick_context_by_face && picked_face.nil? || @pick_context_by_edge && picked_edge.nil?)
         @pick_helper.do_pick(@pick_position.x, @pick_position.y)
