@@ -377,7 +377,7 @@ module Ladb::OpenCutList
         else
 
           # Flag component for "no-scale"
-          definition.behavior.no_scale_mask = 127 # 1111111 (all disabld)
+          definition.behavior.no_scale_mask = 0b1111111 # 0b1111111 = 127 (all disabld)
 
         end
 
