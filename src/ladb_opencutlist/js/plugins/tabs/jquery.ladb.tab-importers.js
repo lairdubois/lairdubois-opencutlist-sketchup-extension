@@ -9,6 +9,8 @@
 
         this.loadOptions = null;
 
+        this.lastImportOptionsTab = null;
+
         this.$header = $('.ladb-header', this.$element);
         this.$btnOpen = $('#ladb_btn_open', this.$header);
 
@@ -87,9 +89,11 @@
 
             const $modal = that.appendModalInside('ladb_importer_modal_import', 'tabs/importers/bxf2/_modal-import.twig', $.extend({
                 cabinetCount: that.model.cabinets.length,
+                tab: that.lastImportOptionsTab == null ? 'materials' : that.lastImportOptionsTab,
             }, importOptions));
 
             // Fetch UI elements
+            const $tabs = $('a[data-toggle="tab"]', $modal);
             const $widgetPreset = $('.ladb-widget-preset', $modal);
             const $textareaPartsFormula = $('#ladb_importer_import_textarea_parts_formula', $modal);
             const $inputPartWoodMaterialName = $('#ladb_importer_import_input_part_wood_material_name', $modal);
@@ -199,6 +203,11 @@
             $inputHardwareLayerName.ladbTextinputText(TEXTINPUT_LAYERS_OPTIONS);
 
             fnFillInputs(importOptions);
+
+            // Bind tabs
+            $tabs.on('shown.bs.tab', function (e) {
+                that.lastImportOptionsTab = $(e.target).attr('href').substring('#tab_import_options_'.length);
+            });
 
             // Bind buttons
             $btnImport.on('click', function () {
