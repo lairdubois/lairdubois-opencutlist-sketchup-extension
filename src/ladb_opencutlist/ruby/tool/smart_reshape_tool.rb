@@ -3643,7 +3643,7 @@ module Ladb::OpenCutList
 
         # 5. Adapt part axes
 
-        z_axis = outward ? sfm.normal : sfm.normal.reverse
+        z_axis = sfm.normal # Front face is always outside
         x_axis = EdgeManipulator.new(sfm.longest_outer_edge, sfm.transformation).direction
         y_axis = z_axis.cross(x_axis).normalize!
 
