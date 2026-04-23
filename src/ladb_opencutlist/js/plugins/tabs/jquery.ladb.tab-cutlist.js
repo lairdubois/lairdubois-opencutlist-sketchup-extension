@@ -3393,14 +3393,14 @@
                     $('#' + $btn.data('collapse-id'))
                         .on('shown.bs.collapse', function () {
                             $('i', $btn)
-                                .removeClass('ladb-opencutlist-icon-plus')
-                                .addClass('ladb-opencutlist-icon-minus')
+                                .removeClass('ladb-opencutlist-icon-arrow-down')
+                                .addClass('ladb-opencutlist-icon-arrow-up')
                             ;
                         })
                         .on('hidden.bs.collapse', function () {
                             $('i', $btn)
-                                .addClass('ladb-opencutlist-icon-plus')
-                                .removeClass('ladb-opencutlist-icon-minus')
+                                .addClass('ladb-opencutlist-icon-arrow-down')
+                                .removeClass('ladb-opencutlist-icon-arrow-up')
                             ;
                         })
                     ;

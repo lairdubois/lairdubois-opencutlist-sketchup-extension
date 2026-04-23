@@ -4,10 +4,33 @@
 
 .modal {
 
+  .modal-dialog {
+    max-height: calc(100vh - 100px);
+    margin: 30px auto;
+    display: flex;
+    flex-direction: column;
+
+    .modal-content {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+
+      .modal-body {
+        padding-bottom: 23px;
+        overflow-y: scroll;
+        flex-grow: 1;
+      }
+
+    }
+
+  }
+
   &.modal-full {
     display: block;
 
     > .modal-dialog {
+      max-height: revert;
       margin: 0;
       height: 100%;
       width: 100%;
@@ -20,9 +43,10 @@
         flex-direction: column;
 
         > .modal-body {
+          padding-bottom: revert;
           max-height: none;
-          flex-grow: 1;
           overflow-y: auto;
+          flex-grow: 1;
         }
 
       }
@@ -78,14 +102,16 @@
   .modal-footer-collapse-handle {
     position: absolute;
     left: 50%;
-    bottom: -14px;
     margin-left: -15px;
 
     > button {
       border: 1px solid #e5e5e5;
-      border-radius: 50%;
-      padding: 5px 9px;
+      border-bottom: none;
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;
+      padding: 2px 20px;
       color: #aaa;
+      background-color: #f9f9f9;
     }
 
   }

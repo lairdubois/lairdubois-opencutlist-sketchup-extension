@@ -45,8 +45,8 @@ gulp.task('css_minify', function () {
                 'letter-spacing',
                 'width', 'min-width',
                 'height', 'min-height',
-                'padding',// 'padding-top', 'padding-right', 'padding-bottom', 'padding-left',
-                'margin',// 'margin-top', 'margin-right', 'margin-bottom', 'margin-left',
+                'padding', 'padding-top', 'padding-right', 'padding-bottom', 'padding-left',
+                'margin', 'margin-top', 'margin-right', 'margin-bottom', 'margin-left',
                 'top', 'right', 'bottom', 'left',
                 'border-width',
                 'gap'
