@@ -1263,7 +1263,7 @@ module Ladb::OpenCutList
       _dxf_write(file, 72, halign)
       _dxf_write(file, 11, x)
       _dxf_write(file, 21, y)
-      _dxf_write(file, 31, 0.0)
+      _dxf_write(file, 31, z)
       _dxf_write_sub_classes(file, [ 'AcDbText' ])
       _dxf_write(file, 73, valign)
 
@@ -1271,7 +1271,7 @@ module Ladb::OpenCutList
 
     def _dxf_write_label(file, rx, ry, rz, rw, rh, text, tw, th, tx = 0, ty = 0, angle = 0, layer = nil)
 
-      text = text.to_s
+      text = _dxf_sanitize_text(text)
       return unless text.length > 0
 
       tx = rx + rw / 2.0 + tx
