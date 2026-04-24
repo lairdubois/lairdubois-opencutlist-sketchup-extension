@@ -350,8 +350,14 @@ module Ladb::OpenCutList
 
     def _dxf_sanitize_identifier(name)
       _dxf_text_to_ascii(name)
+        .gsub(/[\n]+/, '')  # Remove new lines
         .gsub(/[\s<>\/\\“:;?*|=‘.]/, '_')
         .upcase
+    end
+
+    def _dxf_sanitize_text(text)
+      _dxf_text_to_ascii(text)
+        .gsub(/[\n]+/, '')  # Remove new lines
     end
 
     def _dxf_text_to_ascii(text)
@@ -1241,7 +1247,7 @@ module Ladb::OpenCutList
       y = _dxf_value(y)
       z = _dxf_value(z)
       height = _dxf_value(height)
-      text = _dxf_text_to_ascii(text)
+      text = _dxf_sanitize_text(text)
 
       _dxf_write(file, 0, 'TEXT')
       _dxf_write_id(file)
