@@ -441,8 +441,8 @@
                     });
 
                     // Bind select
-                    $selectColSep.selectpicker(SELECT_PICKER_OPTIONS);
-                    $selectFirstLineHeaders.selectpicker(SELECT_PICKER_OPTIONS);
+                    $selectColSep.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+                    $selectFirstLineHeaders.selectpicker(SELECT_PICKER_TABS_OPTIONS);
 
                     fnFillInputs(loadOptions);
 
@@ -537,7 +537,7 @@
                             }
                             that.loadCsv(loadOptions, false)
                         })
-                        .selectpicker($.extend(SELECT_PICKER_OPTIONS, {
+                        .selectpicker($.extend(SELECT_PICKER_TABS_OPTIONS, {
                             noneSelectedText: i18next.t('tab.import.column.unused')
                         }));
                 }
@@ -617,7 +617,7 @@
                         $inputKeepDefinitionsSettings.closest('.form-group').hide();
                     }
                 })
-                .selectpicker(SELECT_PICKER_OPTIONS);
+                .selectpicker(SELECT_PICKER_TABS_OPTIONS);
 
             fnFillInputs(importOptions);
 

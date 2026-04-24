@@ -53,8 +53,8 @@
                 fnFillInputs: fnFillInputs
             });
             $inputThickness.ladbTextinputDimension();
-            $selectPanelingDirection.selectpicker(SELECT_PICKER_OPTIONS);
-            $selectPanelingJointType.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectPanelingDirection.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
+            $selectPanelingJointType.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
 
             fnFillInputs(options);
 

@@ -65,11 +65,11 @@
                 fnFillInputs: fnFillInputs
             });
             $selectFileFormat
-                .selectpicker(SELECT_PICKER_OPTIONS)
+                .selectpicker(SELECT_PICKER_MODAL_OPTIONS)
                 .on('changed.bs.select', fnUpdateFieldsVisibility)
             ;
-            $selectUnit.selectpicker(SELECT_PICKER_OPTIONS);
-            $selectSmoothing.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectUnit.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
+            $selectSmoothing.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
             $inputPartsStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
             $inputPartsFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
 

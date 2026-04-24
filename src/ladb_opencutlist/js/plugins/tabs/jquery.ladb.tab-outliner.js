@@ -831,7 +831,7 @@
                     $selectMaterialName.val(editedNode.material === MULTIPLE_VALUE ? MULTIPLE_VALUE : editedNode.material.name);
                 }
                 $selectMaterialName
-                    .selectpicker(SELECT_PICKER_OPTIONS)
+                    .selectpicker(SELECT_PICKER_TABS_OPTIONS)
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                         fnNewCheck($(this));
                     });
@@ -839,7 +839,7 @@
                     $selectSnapto.val(editedNode.snapto === MULTIPLE_VALUE ? MULTIPLE_VALUE : editedNode.snapto);
                 }
                 $selectSnapto
-                    .selectpicker(SELECT_PICKER_OPTIONS)
+                    .selectpicker(SELECT_PICKER_TABS_OPTIONS)
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                         fnUpdateBehaviorFields();
                     });

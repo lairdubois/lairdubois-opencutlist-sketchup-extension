@@ -5,14 +5,19 @@ const EXTENSION_BUILD = '202604220713';   // /!\ Auto-generated line, do not edi
 
 // UI /////
 
-const SELECT_PICKER_OPTIONS = {
+const SELECT_PICKER_BASE_OPTIONS = {
     size: 10,
     iconBase: 'ladb-opencutlist-icon',
     tickIcon: 'ladb-opencutlist-icon-tick',
     showTick: true,
+};
+const SELECT_PICKER_TABS_OPTIONS = Object.assign({
     dropupAuto: true,
     container: 'body'
-};
+}, SELECT_PICKER_BASE_OPTIONS);
+const SELECT_PICKER_MODAL_OPTIONS = Object.assign({
+    dropupAuto: false,
+}, SELECT_PICKER_BASE_OPTIONS);
 
 const TOKENFIELD_OPTIONS = {
     delimiter: ';',

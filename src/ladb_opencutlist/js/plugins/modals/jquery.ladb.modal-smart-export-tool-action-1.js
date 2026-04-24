@@ -111,20 +111,20 @@
                 fnFillInputs: fnFillInputs
             });
             $selectFileFormat
-                .selectpicker(SELECT_PICKER_OPTIONS)
+                .selectpicker(SELECT_PICKER_MODAL_OPTIONS)
                 .on('changed.bs.select', fnUpdateFieldsVisibility)
             ;
-            $selectUnit.selectpicker(SELECT_PICKER_OPTIONS);
-            $selectFaces.selectpicker(SELECT_PICKER_OPTIONS);
-            $selectAnchor.selectpicker(SELECT_PICKER_OPTIONS);
-            $selectSmoothing.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectUnit.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
+            $selectFaces.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
+            $selectAnchor.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
+            $selectSmoothing.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
             $selectMergeHoles
-                .selectpicker(SELECT_PICKER_OPTIONS)
+                .selectpicker(SELECT_PICKER_MODAL_OPTIONS)
                 .on('changed.bs.select', fnUpdateFieldsVisibility)
             ;
             $inputMergeHolesOverflow.ladbTextinputDimension();
             $selectIncludePaths
-                .selectpicker(SELECT_PICKER_OPTIONS)
+                .selectpicker(SELECT_PICKER_MODAL_OPTIONS)
                 .on('changed.bs.select', fnUpdateFieldsVisibility)
             ;
             $inputPartsStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);

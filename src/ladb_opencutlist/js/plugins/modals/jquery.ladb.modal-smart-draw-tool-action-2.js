@@ -62,11 +62,11 @@
                 fnFillInputs: fnFillInputs
             });
             $inputShapeOffset.ladbTextinputDimension();
-            $selectConstrution.selectpicker(SELECT_PICKER_OPTIONS);
-            $selectMeasureReversed.selectpicker(SELECT_PICKER_OPTIONS);
-            $selectPullCentered.selectpicker(SELECT_PICKER_OPTIONS);
-            $selectDrawIn.selectpicker(SELECT_PICKER_OPTIONS);
-            $selectAskName.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectConstrution.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
+            $selectMeasureReversed.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
+            $selectPullCentered.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
+            $selectDrawIn.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
+            $selectAskName.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
 
             fnFillInputs(options);
 

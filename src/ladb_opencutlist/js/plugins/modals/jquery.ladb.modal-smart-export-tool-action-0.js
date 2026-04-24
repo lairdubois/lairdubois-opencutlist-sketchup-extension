@@ -55,10 +55,10 @@
                 fnFetchOptions: fnFetchOptions,
                 fnFillInputs: fnFillInputs
             });
-            $selectFileFormat.selectpicker(SELECT_PICKER_OPTIONS);
-            $selectUnit.selectpicker(SELECT_PICKER_OPTIONS);
-            $selectAnchor.selectpicker(SELECT_PICKER_OPTIONS);
-            $selectSwitchYZ.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectFileFormat.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
+            $selectUnit.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
+            $selectAnchor.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
+            $selectSwitchYZ.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
 
             fnFillInputs(options);
 

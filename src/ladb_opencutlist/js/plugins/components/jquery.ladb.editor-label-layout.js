@@ -503,7 +503,7 @@
         // Bind
         $selectFormula
             .val(elementDef.formula)
-            .selectpicker(SELECT_PICKER_OPTIONS)
+            .selectpicker(SELECT_PICKER_TABS_OPTIONS)
             .on('change', function () {
                 elementDef.formula = $(this).val();
                 if (elementDef.formula.startsWith('custom') && elementDef.custom_formula == null) {
@@ -515,7 +515,7 @@
         ;
         $selectSize
             .val(elementDef.size)
-            .selectpicker(SELECT_PICKER_OPTIONS)
+            .selectpicker(SELECT_PICKER_TABS_OPTIONS)
             .on('change', function () {
                 elementDef.size = $(this).val();
                 that.appendFormula(svgContentGroup, elementDef);
@@ -582,7 +582,7 @@
         ;
         $selectAnchor
             .val(elementDef.anchor)
-            .selectpicker(SELECT_PICKER_OPTIONS)
+            .selectpicker(SELECT_PICKER_TABS_OPTIONS)
             .on('change', function () {
                 elementDef.anchor = $(this).val();
                 that.appendFormula(svgContentGroup, elementDef);

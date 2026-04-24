@@ -995,13 +995,13 @@
                 fnFillInputs: fnFillInputs
             });
             $selectFormat
-                .selectpicker(SELECT_PICKER_OPTIONS)
+                .selectpicker(SELECT_PICKER_TABS_OPTIONS)
                 .on('changed.bs.select', function () {
                     fnUpdateFieldsVisibility();
                 })
             ;
-            $selectCsvColSep.selectpicker(SELECT_PICKER_OPTIONS);
-            $selectCsvEncoding.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectCsvColSep.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+            $selectCsvEncoding.selectpicker(SELECT_PICKER_TABS_OPTIONS);
             $editorSummary.ladbEditorExport({
                 dialog: that.dialog,
                 vars: [
@@ -1835,18 +1835,18 @@
                 fnFetchOptions: fnFetchOptions,
                 fnFillInputs: fnFillInputs
             });
-            $selectPageFormat.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectPageFormat.selectpicker(SELECT_PICKER_TABS_OPTIONS);
             $inputPageWidth.ladbTextinputDimension({
                 resetValue: '210mm'
             });
             $inputPageHeight.ladbTextinputDimension({
                 resetValue: '297mm'
             });
-            $selectPageHeader.selectpicker(SELECT_PICKER_OPTIONS);
-            $selectPartsColored.selectpicker(SELECT_PICKER_OPTIONS);
-            $selectPartsOpacity.selectpicker(SELECT_PICKER_OPTIONS);
-            $selectPinsHidden.selectpicker(SELECT_PICKER_OPTIONS);
-            $selectPinsColored.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectPageHeader.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+            $selectPartsColored.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+            $selectPartsOpacity.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+            $selectPinsHidden.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+            $selectPinsColored.selectpicker(SELECT_PICKER_TABS_OPTIONS);
             $textareaPinsFormula.ladbTextinputCode({
                 variableDefs: fnConvertToVariableDefs([
                     { name: 'number', type: 'string' },
@@ -1892,11 +1892,11 @@
                     { name: i18next.t('tab.cutlist.snippet.number_without_hardware'), value: "@number unless @material_type.is_hardware?" },
                 ]
             });
-            $selectPinsLength.selectpicker(SELECT_PICKER_OPTIONS);
-            $selectPinsDirection.selectpicker(SELECT_PICKER_OPTIONS);
-            $selectCameraView.selectpicker(SELECT_PICKER_OPTIONS);
-            $selectCameraZoom.selectpicker(SELECT_PICKER_OPTIONS);
-            $selectCameraTarget.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectPinsLength.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+            $selectPinsDirection.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+            $selectCameraView.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+            $selectCameraZoom.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+            $selectCameraTarget.selectpicker(SELECT_PICKER_TABS_OPTIONS);
             $inputExplodeFactor.slider(SLIDER_OPTIONS);
 
             fnFillInputs(layoutOptions);
@@ -2383,24 +2383,24 @@
                     fnFetchOptions: fnFetchOptions,
                     fnFillInputs: fnFillInputs
                 });
-                $selectPartDrawingType.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectPartDrawingType.selectpicker(SELECT_PICKER_TABS_OPTIONS);
                 $selectFileFormat
-                    .selectpicker(SELECT_PICKER_OPTIONS)
+                    .selectpicker(SELECT_PICKER_TABS_OPTIONS)
                     .on('changed.bs.select', function () {
                         fnUpdateButtonLabel();
                         fnUpdateFieldsVisibility();
                     })
                 ;
-                $selectUnit.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectUnit.selectpicker(SELECT_PICKER_TABS_OPTIONS);
                 $selectUseCount
-                    .selectpicker(SELECT_PICKER_OPTIONS)
+                    .selectpicker(SELECT_PICKER_TABS_OPTIONS)
                     .on('changed.bs.select', fnUpdateButtonLabel)
                 ;
-                $selectAnchor.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectSmoothing.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectMergeHoles.selectpicker(SELECT_PICKER_OPTIONS).on('changed.bs.select', fnUpdateFieldsVisibility);
+                $selectAnchor.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+                $selectSmoothing.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+                $selectMergeHoles.selectpicker(SELECT_PICKER_TABS_OPTIONS).on('changed.bs.select', fnUpdateFieldsVisibility);
                 $inputMergeHolesOverflow.ladbTextinputDimension();
-                $selectIncludePaths.selectpicker(SELECT_PICKER_OPTIONS).on('changed.bs.select', fnUpdateFieldsVisibility);
+                $selectIncludePaths.selectpicker(SELECT_PICKER_TABS_OPTIONS).on('changed.bs.select', fnUpdateFieldsVisibility);
                 $inputPartsStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                 $inputPartsFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                 $inputPartsHolesStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
@@ -2513,19 +2513,19 @@
                     fnFillInputs: fnFillInputs
                 });
                 $selectFileFormat
-                    .selectpicker(SELECT_PICKER_OPTIONS)
+                    .selectpicker(SELECT_PICKER_TABS_OPTIONS)
                     .on('changed.bs.select', function () {
                         fnUpdateButtonLabel();
                         fnUpdateFieldsVisibility();
                     })
                 ;
-                $selectUnit.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectUnit.selectpicker(SELECT_PICKER_TABS_OPTIONS);
                 $selectUseCount
-                    .selectpicker(SELECT_PICKER_OPTIONS)
+                    .selectpicker(SELECT_PICKER_TABS_OPTIONS)
                     .on('changed.bs.select', fnUpdateButtonLabel)
                 ;
-                $selectAnchor.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectSwitchYZ.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectAnchor.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+                $selectSwitchYZ.selectpicker(SELECT_PICKER_TABS_OPTIONS);
 
                 fnFillInputs(write3dOptions);
 
@@ -2994,19 +2994,19 @@
                                         fnFillInputs: fnFillInputs
                                     });
                                     $selectFileFormat
-                                        .selectpicker(SELECT_PICKER_OPTIONS)
+                                        .selectpicker(SELECT_PICKER_TABS_OPTIONS)
                                         .on('changed.bs.select', function () {
                                             const fileCount = solution.bins.length - hiddenBinIndices.length;
                                             $('#ladb_btn_export_file_format', $btnExport).html($(this).val().toUpperCase() + ' <small>( ' + fileCount + ' ' + i18next.t('default.file', {count: fileCount}).toLowerCase() + ' )</small>');
                                             fnUpdateFieldsVisibility();
                                         })
                                     ;
-                                    $selectDxfStructure.selectpicker(SELECT_PICKER_OPTIONS);
-                                    $selectUnit.selectpicker(SELECT_PICKER_OPTIONS);
-                                    $selectSmoothing.selectpicker(SELECT_PICKER_OPTIONS);
-                                    $selectMergeHoles.selectpicker(SELECT_PICKER_OPTIONS).on('change', fnUpdateFieldsVisibility);
+                                    $selectDxfStructure.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+                                    $selectUnit.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+                                    $selectSmoothing.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+                                    $selectMergeHoles.selectpicker(SELECT_PICKER_TABS_OPTIONS).on('change', fnUpdateFieldsVisibility);
                                     $inputMergeHolesOverflow.ladbTextinputDimension();
-                                    $selectIncludePaths.selectpicker(SELECT_PICKER_OPTIONS).on('change', fnUpdateFieldsVisibility);
+                                    $selectIncludePaths.selectpicker(SELECT_PICKER_TABS_OPTIONS).on('change', fnUpdateFieldsVisibility);
                                     $inputBinStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                     $inputBinFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                     $inputPartsStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
@@ -3299,9 +3299,9 @@
                     })
                     .ladbEditorSizes('setSizes', group.material_is_1d ? packingOptions.scrap_bin_1d_sizes : packingOptions.scrap_bin_2d_sizes)
                 ;
-                $selectRectangleguillotineFirstStageOrientation.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectRectangleguillotineCutType.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectRectangleguillotineNumberOfStages.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectRectangleguillotineFirstStageOrientation.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+                $selectRectangleguillotineCutType.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+                $selectRectangleguillotineNumberOfStages.selectpicker(SELECT_PICKER_TABS_OPTIONS);
                 $inputRectangleguillotineKeepSize.ladbTextinputSize({
                     resetValue: '',
                     d1Placeholder: i18next.t('default.length'),
@@ -3310,8 +3310,8 @@
                     qHidden: true,
                     dSeparatorLabel: 'x'
                 });
-                $selectIrregularAllowedRotations.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectIrregularAllowMirroring.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectIrregularAllowedRotations.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+                $selectIrregularAllowMirroring.selectpicker(SELECT_PICKER_TABS_OPTIONS);
                 $inputSpacing.ladbTextinputDimension();
                 $inputTrimming.ladbTextinputDimension();
                 $textareaItemsFormula.ladbTextinputCode({
@@ -3358,18 +3358,18 @@
                         { name: i18next.t('tab.cutlist.snippet.volume'), value: '@bbox_length * @bbox_width * @bbox_thickness' },
                     ]
                 });
-                $selectOriginCorner.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectBinFolding.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectHidePartList.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectPartDrawingType.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectColorization.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectHighlightPrimaryCuts.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectHideEdgesPreview.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectOriginCorner.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+                $selectBinFolding.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+                $selectHidePartList.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+                $selectPartDrawingType.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+                $selectColorization.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+                $selectHighlightPrimaryCuts.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+                $selectHideEdgesPreview.selectpicker(SELECT_PICKER_TABS_OPTIONS);
                 $inputZoomThreshold.ladbTextinputDimension();
-                $selectObjective.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectOptimizationMode.selectpicker(SELECT_PICKER_OPTIONS)
+                $selectObjective.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+                $selectOptimizationMode.selectpicker(SELECT_PICKER_TABS_OPTIONS)
                 $inputTimeLimit.ladbTextinputText();
-                $selectVerbosityLevel.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectVerbosityLevel.selectpicker(SELECT_PICKER_TABS_OPTIONS);
 
                 fnFillInputs(packingOptions);
 
@@ -3631,7 +3631,7 @@
                 partId: partIds[0],
                 hideMaterialColors: that.generateOptions.hide_material_colors
             });
-            $selectPageFormat.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectPageFormat.selectpicker(SELECT_PICKER_TABS_OPTIONS);
             $inputPageWidth.ladbTextinputDimension();
             $inputPageHeight.ladbTextinputDimension();
             $inputMarginTop.ladbTextinputDimension();
@@ -3646,7 +3646,7 @@
             $inputRowCount.ladbTextinputNumberWithUnit({
                 resetValue: '1'
             });
-            $selectCuttingMarks.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectCuttingMarks.selectpicker(SELECT_PICKER_TABS_OPTIONS);
             $editorLabelOffset.ladbEditorLabelOffset();
 
             fnFillInputs(labelsOptions);
@@ -4562,20 +4562,20 @@
             // Bind select
             $selectMaterialName.val(editedPart.material_name);
             $selectMaterialName
-                .selectpicker(SELECT_PICKER_OPTIONS)
+                .selectpicker(SELECT_PICKER_TABS_OPTIONS)
                 .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                     fnNewCheck($(this));
                 });
             $selectCumulable.val(editedPart.cumulable);
-            $selectCumulable.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectCumulable.selectpicker(SELECT_PICKER_TABS_OPTIONS);
             $selectPartAxesOriginPosition
-                .selectpicker(SELECT_PICKER_OPTIONS)
+                .selectpicker(SELECT_PICKER_TABS_OPTIONS)
                 .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                     fnComputeAxesOrder();
                 });
             $selectEdgeYmin.val(editedPart.edge_material_names.ymin);
             $selectEdgeYmin
-                .selectpicker(SELECT_PICKER_OPTIONS)
+                .selectpicker(SELECT_PICKER_TABS_OPTIONS)
                 .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                     if (!fnNewCheck($(this), 4 /* TYPE_EDGE */)) {
                         fnUpdateEdgesPreview();
@@ -4583,7 +4583,7 @@
                 });
             $selectEdgeYmax.val(editedPart.edge_material_names.ymax);
             $selectEdgeYmax
-                .selectpicker(SELECT_PICKER_OPTIONS)
+                .selectpicker(SELECT_PICKER_TABS_OPTIONS)
                 .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                     if (!fnNewCheck($(this), 4 /* TYPE_EDGE */)) {
                         fnUpdateEdgesPreview();
@@ -4591,7 +4591,7 @@
                 });
             $selectEdgeXmin.val(editedPart.edge_material_names.xmin);
             $selectEdgeXmin
-                .selectpicker(SELECT_PICKER_OPTIONS)
+                .selectpicker(SELECT_PICKER_TABS_OPTIONS)
                 .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                     if (!fnNewCheck($(this), 4 /* TYPE_EDGE */)) {
                         fnUpdateEdgesPreview();
@@ -4599,7 +4599,7 @@
                 });
             $selectEdgeXmax.val(editedPart.edge_material_names.xmax);
             $selectEdgeXmax
-                .selectpicker(SELECT_PICKER_OPTIONS)
+                .selectpicker(SELECT_PICKER_TABS_OPTIONS)
                 .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                     if (!fnNewCheck($(this), 4 /* TYPE_EDGE */)) {
                         fnUpdateEdgesPreview();
@@ -4607,7 +4607,7 @@
                 });
             $selectFaceZmin.val(editedPart.face_material_names.zmin);
             $selectFaceZmin
-                .selectpicker(SELECT_PICKER_OPTIONS)
+                .selectpicker(SELECT_PICKER_TABS_OPTIONS)
                 .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                     if (!fnNewCheck($(this), 6 /* TYPE_VENEER */)) {
                         fnUpdateFacesPreview();
@@ -4615,7 +4615,7 @@
                 });
             $selectFaceZmax.val(editedPart.face_material_names.zmax);
             $selectFaceZmax
-                .selectpicker(SELECT_PICKER_OPTIONS)
+                .selectpicker(SELECT_PICKER_TABS_OPTIONS)
                 .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                     if (!fnNewCheck($(this), 6 /* TYPE_VENEER */)) {
                         fnUpdateFacesPreview();
@@ -5150,19 +5150,19 @@
                         }
                     }
                 }
-                $inputStdBar.selectpicker(SELECT_PICKER_OPTIONS);
+                $inputStdBar.selectpicker(SELECT_PICKER_TABS_OPTIONS);
                 $inputScrapBarLengths.ladbTextinputTokenfield({ format: 'dxq' });
                 $inputScrapBarLengths.ladbTextinputTokenfield('setTokens', cuttingdiagram1dOptions.scrap_bar_lengths);
                 $inputSawKerf.ladbTextinputDimension();
                 $inputTrimming.ladbTextinputDimension();
-                $selectBarFolding.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectHidePartList.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectUseNames.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectFullWidthDiagram.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectHideCross.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectOriginCorner.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectBarFolding.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+                $selectHidePartList.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+                $selectUseNames.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+                $selectFullWidthDiagram.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+                $selectHideCross.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+                $selectOriginCorner.selectpicker(SELECT_PICKER_TABS_OPTIONS);
                 $inputWrapLength.ladbTextinputDimension();
-                $selectPartDrawingType.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectPartDrawingType.selectpicker(SELECT_PICKER_TABS_OPTIONS);
 
                 fnFillInputs(cuttingdiagram1dOptions);
 
@@ -5379,18 +5379,18 @@
                                                     fnFillInputs: fnFillInputs
                                                 });
                                                 $selectFileFormat
-                                                    .selectpicker(SELECT_PICKER_OPTIONS)
+                                                    .selectpicker(SELECT_PICKER_TABS_OPTIONS)
                                                     .on('changed.bs.select', function () {
                                                         const fileCount = barCount - hiddenBarIndices.length;
                                                         $('#ladb_btn_export_file_format', $btnExport).html($(this).val().toUpperCase() + ' <small>( ' + fileCount + ' ' + i18next.t('default.file', { count: fileCount }).toLowerCase() + ' )</small>');
                                                         fnUpdateFieldsVisibility();
                                                     })
                                                 ;
-                                                $selectDxfStructure.selectpicker(SELECT_PICKER_OPTIONS);
-                                                $selectUnit.selectpicker(SELECT_PICKER_OPTIONS);
-                                                $selectSmoothing.selectpicker(SELECT_PICKER_OPTIONS);
-                                                $selectMergeHoles.selectpicker(SELECT_PICKER_OPTIONS).on('change', fnUpdateFieldsVisibility);
-                                                $selectIncludePaths.selectpicker(SELECT_PICKER_OPTIONS).on('change', fnUpdateFieldsVisibility);
+                                                $selectDxfStructure.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+                                                $selectUnit.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+                                                $selectSmoothing.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+                                                $selectMergeHoles.selectpicker(SELECT_PICKER_TABS_OPTIONS).on('change', fnUpdateFieldsVisibility);
+                                                $selectIncludePaths.selectpicker(SELECT_PICKER_TABS_OPTIONS).on('change', fnUpdateFieldsVisibility);
                                                 $inputBarStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                                 $inputBarFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                                 $inputPartsStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
@@ -5715,24 +5715,24 @@
                         }
                     }
                 }
-                $inputStdSheet.selectpicker(SELECT_PICKER_OPTIONS);
+                $inputStdSheet.selectpicker(SELECT_PICKER_TABS_OPTIONS);
                 $inputScrapSheetSizes.ladbTextinputTokenfield({ format: 'dxdxq' });
                 $inputScrapSheetSizes.ladbTextinputTokenfield('setTokens', cuttingdiagram2dOptions.scrap_sheet_sizes);
                 $inputSawKerf.ladbTextinputDimension();
                 $inputTrimming.ladbTextinputDimension();
-                $selectOptimization.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectStacking.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectOptimization.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+                $selectStacking.selectpicker(SELECT_PICKER_TABS_OPTIONS);
                 $inputKeepLength.ladbTextinputDimension();
                 $inputKeepWidth.ladbTextinputDimension();
-                $selectSheetFolding.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectHidePartList.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectUseNames.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectFullWidthDiagram.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectHideCross.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectOriginCorner.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectHighlightPrimaryCuts.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectHideEdgesPreview.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectPartDrawingType.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectSheetFolding.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+                $selectHidePartList.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+                $selectUseNames.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+                $selectFullWidthDiagram.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+                $selectHideCross.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+                $selectOriginCorner.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+                $selectHighlightPrimaryCuts.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+                $selectHideEdgesPreview.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+                $selectPartDrawingType.selectpicker(SELECT_PICKER_TABS_OPTIONS);
 
                 fnFillInputs(cuttingdiagram2dOptions);
 
@@ -5949,18 +5949,18 @@
                                                     fnFillInputs: fnFillInputs
                                                 });
                                                 $selectFileFormat
-                                                    .selectpicker(SELECT_PICKER_OPTIONS)
+                                                    .selectpicker(SELECT_PICKER_TABS_OPTIONS)
                                                     .on('changed.bs.select', function () {
                                                         const fileCount = sheetCount - hiddenSheetIndices.length;
                                                         $('#ladb_btn_export_file_format', $btnExport).html($(this).val().toUpperCase() + ' <small>( ' + fileCount + ' ' + i18next.t('default.file', { count: fileCount }).toLowerCase() + ' )</small>');
                                                         fnUpdateFieldsVisibility();
                                                     })
                                                 ;
-                                                $selectDxfStructure.selectpicker(SELECT_PICKER_OPTIONS);
-                                                $selectUnit.selectpicker(SELECT_PICKER_OPTIONS);
-                                                $selectSmoothing.selectpicker(SELECT_PICKER_OPTIONS);
-                                                $selectMergeHoles.selectpicker(SELECT_PICKER_OPTIONS).on('change', fnUpdateFieldsVisibility);
-                                                $selectIncludePaths.selectpicker(SELECT_PICKER_OPTIONS).on('change', fnUpdateFieldsVisibility);
+                                                $selectDxfStructure.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+                                                $selectUnit.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+                                                $selectSmoothing.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+                                                $selectMergeHoles.selectpicker(SELECT_PICKER_TABS_OPTIONS).on('change', fnUpdateFieldsVisibility);
+                                                $selectIncludePaths.selectpicker(SELECT_PICKER_TABS_OPTIONS).on('change', fnUpdateFieldsVisibility);
                                                 $inputSheetStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                                 $inputSheetFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                                 $inputPartsStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);

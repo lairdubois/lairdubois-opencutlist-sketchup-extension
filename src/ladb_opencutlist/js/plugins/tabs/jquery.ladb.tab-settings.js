@@ -285,10 +285,10 @@
             $selectPrintMargin.selectpicker('val', that.dialog.capabilities.tabs_dialog_print_margin);
         }
 
-        $selectLanguage.selectpicker($.extend({}, SELECT_PICKER_OPTIONS, { container: null, size: that.dialog.capabilities.languages.length + 1 }));
-        $selectFontSize.selectpicker(SELECT_PICKER_OPTIONS);
-        $selectTableRowSize.selectpicker(SELECT_PICKER_OPTIONS);
-        $selectPrintMargin.selectpicker(SELECT_PICKER_OPTIONS);
+        $selectLanguage.selectpicker($.extend({}, SELECT_PICKER_TABS_OPTIONS, { container: null, size: that.dialog.capabilities.languages.length + 1 }));
+        $selectFontSize.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+        $selectTableRowSize.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+        $selectPrintMargin.selectpicker(SELECT_PICKER_TABS_OPTIONS);
 
         fnGlobalFillInputs();
 
@@ -496,12 +496,12 @@
                 fnSaveOptions();
             }
         });
-        $selectLengthUnit.selectpicker(SELECT_PICKER_OPTIONS);
-        $selectLengthFormat.selectpicker(SELECT_PICKER_OPTIONS);
-        $selectLengthPrecision.selectpicker(SELECT_PICKER_OPTIONS);
-        $selectMassUnit.selectpicker(SELECT_PICKER_OPTIONS);
-        $selectMassPrecision.selectpicker(SELECT_PICKER_OPTIONS);
-        $selectCurrencyPrecision.selectpicker(SELECT_PICKER_OPTIONS);
+        $selectLengthUnit.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+        $selectLengthFormat.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+        $selectLengthPrecision.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+        $selectMassUnit.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+        $selectMassPrecision.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+        $selectCurrencyPrecision.selectpicker(SELECT_PICKER_TABS_OPTIONS);
 
         fnRetrieveModelOptions();
 

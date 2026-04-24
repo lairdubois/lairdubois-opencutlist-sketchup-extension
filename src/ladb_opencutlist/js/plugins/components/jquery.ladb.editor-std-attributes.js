@@ -90,7 +90,7 @@
 
         // Bind
         $select
-            .selectpicker(SELECT_PICKER_OPTIONS)
+            .selectpicker(SELECT_PICKER_TABS_OPTIONS)
             .selectpicker('val', stdAttribute.dim)
         ;
         $select

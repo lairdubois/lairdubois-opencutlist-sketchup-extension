@@ -1102,11 +1102,11 @@
                 $widgetPreset.ladbWidgetPreset('restoreFromPreset', [ null, true ]);
 
             })
-            .selectpicker(SELECT_PICKER_OPTIONS)
+            .selectpicker(SELECT_PICKER_TABS_OPTIONS)
         ;
-        $selectGrained.selectpicker(SELECT_PICKER_OPTIONS);
-        $selectEdgeDecremented.selectpicker(SELECT_PICKER_OPTIONS);
-        $selectRawEstimated.selectpicker(SELECT_PICKER_OPTIONS);
+        $selectGrained.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+        $selectEdgeDecremented.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+        $selectRawEstimated.selectpicker(SELECT_PICKER_TABS_OPTIONS);
 
         // Bind inputs
         $inputName
