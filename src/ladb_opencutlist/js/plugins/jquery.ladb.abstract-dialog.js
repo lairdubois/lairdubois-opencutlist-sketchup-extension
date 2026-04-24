@@ -235,20 +235,21 @@ LadbAbstractDialog.prototype.appendModal = function (id, twigFile, renderParams)
 
     // Bind modal
     this._$modal
-        .on('hidden.bs.modal', function () {
-            $(this)
-                .data('bs.modal', null)
-                .remove();
-            that._$modal = null;
+        .on('shown.bs.modal', function () {
             $('input[autofocus]', that._$modal).first().focus();
             that.setupTooltips(that._$modal);
             that.setupPopovers(that._$modal);
         })
         .on('hidden.bs.modal', function () {
+            $('select', that._$modal)
+                .selectpicker('destroy');
+            $(this)
+                .data('bs.modal', null)
+                .remove();
+            that._$modal = null;
             that.hideTooltips();
             that.hidePopovers();
         })
-
     ;
 
     // Append modal

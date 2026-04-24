@@ -262,6 +262,8 @@ LadbAbstractTab.prototype.appendModalInside = function (id, twigFile, renderPara
             that.dialog.setupPopovers(that._$modal);
         })
         .on('hidden.bs.modal', function () {
+            $('select', that._$modal)
+                .selectpicker('destroy');
             $(this)
                 .data('bs.modal', null)
                 .remove();

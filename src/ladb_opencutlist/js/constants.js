@@ -10,7 +10,8 @@ const SELECT_PICKER_OPTIONS = {
     iconBase: 'ladb-opencutlist-icon',
     tickIcon: 'ladb-opencutlist-icon-tick',
     showTick: true,
-    dropupAuto: false
+    dropupAuto: true,
+    container: 'body'
 };
 
 const TOKENFIELD_OPTIONS = {
