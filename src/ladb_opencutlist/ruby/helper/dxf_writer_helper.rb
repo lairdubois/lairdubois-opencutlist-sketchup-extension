@@ -349,7 +349,13 @@ module Ladb::OpenCutList
     # ID
 
     def _dxf_sanitize_identifier(name)
-      name
+      _dxf_text_to_ascii(name)
+        .gsub(/[\s<>\/\\“:;?*|=‘.]/, '_')
+        .upcase
+    end
+
+    def _dxf_text_to_ascii(text)
+      text
         .to_s
         .tr(
           "ÀÁÂÃÄÅàáâãäåĀāĂăĄąÇçĆćĈĉĊċČčÐðĎďĐđÈÉÊËèéêëĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħÌÍÎÏìíîïĨĩĪīĬĭĮįİıĴĵĶķĸĹĺĻļĽľĿŀŁłÑñŃńŅņŇňŉŊŋÒÓÔÕÖØòóôõöøŌōŎŏŐőŔŕŖŗŘřŚśŜŝŞşŠšſŢţŤťŦŧÙÚÛÜùúûüŨũŪūŬŭŮůŰűŲųŴŵÝýÿŶŷŸŹźŻżŽž",
@@ -360,8 +366,6 @@ module Ladb::OpenCutList
           :replace           => '',        # Use a blank for those replacements
           :universal_newline => true       # Always break lines with \n
         )
-        .gsub(/[\s<>\/\\“:;?*|=‘.]/, '_')
-        .upcase
     end
 
     # Value
@@ -1237,7 +1241,7 @@ module Ladb::OpenCutList
       y = _dxf_value(y)
       z = _dxf_value(z)
       height = _dxf_value(height)
-      text = text.to_s
+      text = _dxf_text_to_ascii(text)
 
       _dxf_write(file, 0, 'TEXT')
       _dxf_write_id(file)
