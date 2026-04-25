@@ -2013,9 +2013,6 @@ tab:
         info_0_plural: |
           Sie sind dabei, eine Konfiguration mit **{{ count }}** Korpusen in die Vorlage zu importieren.
         info_1: "Sie können nun festlegen, wo sie im aktiven Modell platziert werden soll."
-        info_2: |
-          Passen Sie die Optionen an.
-          Klicken Sie auf **Importieren**, um den Vorgang zu bestätigen.
         materials: Materialien
         layers: Tags
         option_parts_formula: Formel
@@ -2037,7 +2034,7 @@ tab:
         option_hardware_layer_name: Zubehöre
         option_hardware_layer_name_help: Tag für Zubehöre.
         option_no_material_help: "*Lassen Sie dieses Feld leer, wenn Sie kein Material auftragen möchten*."
-        option_default_material_help: "*Wenn dieses Feld leer ist, wird ein Standardmaterial angelegt*."
+        option_default_material_help: "*Wenn dieses Feld leer ist, wird ein Standardmaterial erstellt*."
         option_no_layer_help: "*Lassen Sie dieses Feld leer, um kein Tag einzufügen*."
         formula:
           part: Teil
