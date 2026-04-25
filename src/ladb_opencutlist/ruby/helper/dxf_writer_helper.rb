@@ -346,7 +346,7 @@ module Ladb::OpenCutList
       @_dxf_current_id.to_s(16).upcase
     end
 
-    # ID
+    # ID / Text
 
     def _dxf_sanitize_identifier(name)
       _dxf_text_to_ascii(name)
@@ -374,12 +374,6 @@ module Ladb::OpenCutList
         )
     end
 
-    # Value
-
-    def _dxf_value(value)
-      value.to_f.round(4)
-    end
-
     # -----
 
     def _dxf_write(file, code, value)
@@ -387,7 +381,7 @@ module Ladb::OpenCutList
       if value.is_a?(Integer)
         file.puts(value.to_s.rjust(code >= 90 && code <= 99 ? 9 : 6))
       elsif value.is_a?(Float)
-        value = value.round(11)
+        value = value.round(6)  # Round to 6 by convention in AutoCAD
         value = 0.0 if value == 0 # Avoid -0.0
         file.puts(value.to_s)
       else
@@ -448,16 +442,16 @@ module Ladb::OpenCutList
                                 20, 0.0,
                                 30, 0.0)
         _dxf_write_header_value(file, '$INSUNITS', 70, _dxf_convert_unit(su_unit))
-        _dxf_write_header_value(file, '$EXTMIN', 10, _dxf_value(min.x),
-                                20, _dxf_value(min.y),
-                                30, _dxf_value(min.z))
-        _dxf_write_header_value(file, '$EXTMAX', 10, _dxf_value(max.x),
-                                20, _dxf_value(max.y),
-                                30, _dxf_value(max.z))
-        _dxf_write_header_value(file, '$LIMMIN', 10, _dxf_value(min.x),
-                                20, _dxf_value(min.y))
-        _dxf_write_header_value(file, '$LIMMAX', 10, _dxf_value(max.x),
-                                20, _dxf_value(max.y))
+        _dxf_write_header_value(file, '$EXTMIN', 10, min.x,
+                                20, min.y,
+                                30, min.z)
+        _dxf_write_header_value(file, '$EXTMAX', 10, max.x,
+                                20, max.y,
+                                30, max.z)
+        _dxf_write_header_value(file, '$LIMMIN', 10, min.x,
+                                20, min.y)
+        _dxf_write_header_value(file, '$LIMMAX', 10, max.x,
+                                20, max.y)
         _dxf_write_header_value(file, '$ORTHOMODE', 70, 0)
         _dxf_write_header_value(file, '$REGENMODE', 70, 1)
         _dxf_write_header_value(file, '$FILLMODE', 70, 1)
@@ -612,12 +606,12 @@ module Ladb::OpenCutList
                                 20, 0.0,
                                 30, 0.0)
         _dxf_write_header_value(file, '$PLIMCHECK', 70, 0)
-        _dxf_write_header_value(file, '$PEXTMIN', 10, '1.000000000000000E+20',
-                                20, '1.000000000000000E+20',
-                                30, '1.000000000000000E+20')
-        _dxf_write_header_value(file, '$PEXTMAX', 10, '-1.000000000000000E+20',
-                                20, '-1.000000000000000E+20',
-                                30, '-1.000000000000000E+20')
+        _dxf_write_header_value(file, '$PEXTMIN', 10, min.x,
+                                20, min.y,
+                                30, min.z)
+        _dxf_write_header_value(file, '$PEXTMAX', 10, max.x,
+                                20, max.y,
+                                30, max.z)
         _dxf_write_header_value(file, '$PLIMMIN', 10, 0.0,
                                 20, 0.0)
         _dxf_write_header_value(file, '$PLIMMAX', 10, 12.0,
@@ -671,12 +665,12 @@ module Ladb::OpenCutList
           _dxf_write_sub_classes(file, [ 'AcDbSymbolTableRecord', 'AcDbViewportTableRecord' ])
           _dxf_write(file, 2, '*ACTIVE')
           _dxf_write(file, 70, 0)
-          _dxf_write(file, 10, _dxf_value(vport_min.x))
-          _dxf_write(file, 20, _dxf_value(vport_min.y))
-          _dxf_write(file, 11, _dxf_value(vport_max.x))
-          _dxf_write(file, 21, _dxf_value(vport_max.y))
-          _dxf_write(file, 12, _dxf_value(vport_center.x))
-          _dxf_write(file, 22, _dxf_value(vport_center.y))
+          _dxf_write(file, 10, vport_min.x)
+          _dxf_write(file, 20, vport_min.y)
+          _dxf_write(file, 11, vport_max.x)
+          _dxf_write(file, 21, vport_max.y)
+          _dxf_write(file, 12, vport_center.x)
+          _dxf_write(file, 22, vport_center.y)
           _dxf_write(file, 13, 0.0)
           _dxf_write(file, 23, 0.0)
           _dxf_write(file, 14, 0.5)
@@ -1045,9 +1039,9 @@ module Ladb::OpenCutList
 
       # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-FCEF5726-53AE-4C43-B4EA-C84EB8686A66
 
-      x = _dxf_value(x)
-      y = _dxf_value(y)
-      z = _dxf_value(z)
+      x = x
+      y = y
+      z = z
 
       _dxf_write(file, 0, 'POINT')
       _dxf_write_id(file)
@@ -1065,12 +1059,12 @@ module Ladb::OpenCutList
 
       # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-FCEF5726-53AE-4C43-B4EA-C84EB8686A66
 
-      x1 = _dxf_value(x1)
-      y1 = _dxf_value(y1)
-      z1 = _dxf_value(z1)
-      x2 = _dxf_value(x2)
-      y2 = _dxf_value(y2)
-      z2 = _dxf_value(z2)
+      x1 = x1
+      y1 = y1
+      z1 = z1
+      x2 = x2
+      y2 = y2
+      z2 = z2
 
       _dxf_write(file, 0, 'LINE')
       _dxf_write_id(file)
@@ -1091,10 +1085,10 @@ module Ladb::OpenCutList
 
       # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-0B14D8F1-0EBA-44BF-9108-57D8CE614BC8
 
-      cx = _dxf_value(cx)
-      cy = _dxf_value(cy)
-      cz = _dxf_value(cz)
-      r = _dxf_value(r)
+      cx = cx
+      cy = cy
+      cz = cz
+      r = r
 
       _dxf_write(file, 0, 'ARC')
       _dxf_write_id(file)
@@ -1119,10 +1113,10 @@ module Ladb::OpenCutList
 
       # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-8663262B-222C-414D-B133-4A8506A27C18
 
-      cx = _dxf_value(cx)
-      cy = _dxf_value(cy)
-      cz = _dxf_value(cz)
-      r = _dxf_value(r)
+      cx = cx
+      cy = cy
+      cz = cz
+      r = r
 
       _dxf_write(file, 0, 'CIRCLE')
       _dxf_write_id(file)
@@ -1145,11 +1139,11 @@ module Ladb::OpenCutList
         ae = ae + Geometrix::TWO_PI  # Force end angle to be greater than start angle. Some DXF readers prefer that.
       end
 
-      cx = _dxf_value(cx)
-      cy = _dxf_value(cy)
-      cz = _dxf_value(cz)
-      vx = _dxf_value(vx)
-      vy = _dxf_value(vy)
+      cx = cx
+      cy = cy
+      cz = cz
+      vx = vx
+      vy = vy
 
       _dxf_write(file, 0, 'ELLIPSE')
       _dxf_write_id(file)
@@ -1188,9 +1182,9 @@ module Ladb::OpenCutList
 
       vertices.each do |vertex|
 
-        x = _dxf_value(vertex.x)
-        y = _dxf_value(vertex.y)
-        bulge = _dxf_value(vertex.bulge)
+        x = vertex.x
+        y = vertex.y
+        bulge = vertex.bulge
 
         _dxf_write(file, 10, x)
         _dxf_write(file, 20, y)
@@ -1216,8 +1210,8 @@ module Ladb::OpenCutList
 
       points.each do |point|
 
-        x = _dxf_value(point.x)
-        y = _dxf_value(point.y)
+        x = point.x
+        y = point.y
 
         _dxf_write(file, 10, x)
         _dxf_write(file, 20, y)
@@ -1243,10 +1237,10 @@ module Ladb::OpenCutList
 
       # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-62E5383D-8A14-47B4-BFC4-35824CAE8363
 
-      x = _dxf_value(x)
-      y = _dxf_value(y)
-      z = _dxf_value(z)
-      height = _dxf_value(height)
+      x = x
+      y = y
+      z = z
+      height = height
       text = _dxf_sanitize_text(text)
 
       _dxf_write(file, 0, 'TEXT')
