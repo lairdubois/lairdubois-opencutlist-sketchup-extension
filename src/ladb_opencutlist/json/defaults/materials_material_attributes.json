@@ -93,7 +93,7 @@
     "std_thicknesses": "",
     "std_sizes": "",
     "grained": false,
-    "edge_decremented": true,
+    "edge_decremented": false,
     "raw_estimated": true,
     "multiplier_coefficient": 1.0,
     "std_volumic_masses": [],
