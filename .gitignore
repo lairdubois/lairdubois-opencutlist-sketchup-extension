@@ -18,3 +18,4 @@
 /build/package-lock.json
 /Gemfile.lock
 /cmake-*
+/tools/python/*.dxf
