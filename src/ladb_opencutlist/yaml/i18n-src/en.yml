@@ -763,7 +763,7 @@ tab:
         not_enough_data: |
           For this estimate to be calculated correctly:
           - the used materials must have at least a density and a price.
-          - the used accessories must have at least a weight and a price.
+          - the used fittings must have at least a weight and a price.
     cuttingdiagram:
       title: Cutting Diagram
       start_msg: Optimization running
@@ -1542,12 +1542,12 @@ tab:
       number: Number
       name: Designation
       number_and_name: Number and Designation
-      number_without_hardware: Number (without accessories)
+      number_without_hardware: Number (without fittings)
       size: Dimension
       area: Area
       volume: Volume
     error:
-      no_model: No model is open. You will need to give me more information ;)
+      no_model: No model is open. You will need to provide me with more information ;)
       no_entities: Your model is empty. You will need to give me more information ;)
       no_component_in_selection: No instance of a visible component was detected in your selection.
       no_component_in_model: No instance of a visible component was detected in your scene.
@@ -1731,7 +1731,7 @@ tab:
       message: |
         Choose the name of the new material copied from **{{ material_name }}**.
     error:
-      no_model: No model is open. You will have to give me more information ;)
+      no_model: No model is open. You will need to provide me with more information ;)
       no_materials: Your model does not contain any material.
       material_not_found: No material found.
       no_texture: The material has no texture.
@@ -1823,7 +1823,7 @@ tab:
     snippet:
       name_size: Designation - Size
     error:
-      no_model: No model is open. You will have to give me more information ;)
+      no_model: No model is open. You will need to provide me with more information ;)
       no_entities: Your model is empty!
       node_not_found: Node not found
       entity_not_found: Instance not found
@@ -2013,29 +2013,26 @@ tab:
         info_0_plural: |
           You are about to import a configuration of **{{ count }} cabinets** into the model.
         info_1: You will be able to choose where to place it in the active model.
-        info_2: |
-          Customize the options.
-          Click **Import** to confirm the action.
         materials: Materials
         layers: Tags
         option_parts_formula: Formula
         option_parts_formula_help: The formula allows you to customize the name of the imported parts.
         option_part_wood_material_name: Wood
         option_part_wood_material_name_help: Material to be applied to **wooden** parts.
-        option_part_aluminium_material_name: Aluminum
+        option_part_aluminium_material_name: Aluminium
         option_part_aluminium_material_name_help: Material to be applied to **aluminium** parts.
         option_part_glass_material_name: Glass
         option_part_glass_material_name_help: Material to be applied to **glass** parts.
         option_front_part_layer_name: Fronts
         option_front_part_layer_name_help: Tag to be applied to front parts.
-        option_machining_material_name: Machinings
-        option_machining_material_name_help: Material to be applied to **machinings**.
-        option_machining_layer_name: Machinings
-        option_machining_layer_name_help: Tag to be applied to machinings.
-        option_hardware_material_name: Hardwares
-        option_hardware_material_name_help: Material to be applied to **hardwares**.
-        option_hardware_layer_name: Hardwares
-        option_hardware_layer_name_help: Tag to be applied to hardwares.
+        option_machining_material_name: Machining
+        option_machining_material_name_help: Material to be applied to **machining**.
+        option_machining_layer_name: Machining
+        option_machining_layer_name_help: Tag to be applied to machining.
+        option_hardware_material_name: Fittings
+        option_hardware_material_name_help: Material to be applied to **fittings**.
+        option_hardware_layer_name: Fittings
+        option_hardware_layer_name_help: Tag to be applied to fittings.
         option_no_material_help: "*Leave this field blank to prevent the application of any material*."
         option_default_material_help: "*If this field is left empty, a default material will be created*."
         option_no_layer_help: "*Leave this field blank to prevent the application of any tag*."
