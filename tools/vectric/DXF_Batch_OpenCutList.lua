@@ -74,62 +74,67 @@ g_rotate_90 = false
 g_sheet_rename_ids = {}
 g_sheet_rename_names = {}
 g_enable_sheet_rename = true
-g_custom_suffix = ""
+g_custom_sheet_prefix = ""
 
 -- sheet format options
 g_sheet_format_mode = SHEET_FORMAT_MODE_CUSTOM
 
 -- ---------------------------------------------------------
--- Helper: Extract folder prefix (First 2 words)
+-- Helper: trim whitespace
 -- ---------------------------------------------------------
-function GetFolderPrefix(path)
-    local folder_name = path:match("([^\\/]+)$") or ""
-    local first_space = folder_name:find(" ")
-    if first_space then
-        local second_space = folder_name:find(" ", first_space + 1)
-        if second_space then
-            return folder_name:sub(1, second_space - 1)
-        end
-    end
-    return folder_name
+function TrimString(str)
+    if str == nil then return "" end
+    return (str:gsub("^%s+", ""):gsub("%s+$", ""))
 end
 
 -- ---------------------------------------------------------
--- Helper: get base folder name from a path
+-- Helper: split string
 -- ---------------------------------------------------------
-function BaseFolderName(path)
-    local trimmed = path or ""
-    trimmed = trimmed:gsub("[/\\]+$", "")
-    local name = trimmed:match("([^\\/]+)$") or ""
-    return name
+function SplitString(str, sep)
+    if str == nil then return {} end
+    if sep == nil then return { str } end
+    sep = sep:gsub("([%.%+%-%*%?%[%]%^%$%(%)%%])", "%%%1")
+    local result = {}
+    for part in str:gmatch("(.-)" .. sep) do
+        table.insert(result, part)
+    end
+    local last = str:match(".*" .. sep .. "(.*)")
+    if last then table.insert(result, last) end
+    return result
 end
 
 -- ---------------------------------------------------------
--- Helper: sanitize and build sheet name (Auto + Manual)
+-- Helper: build bounds from width/height
 -- ---------------------------------------------------------
-function BuildSheetName(folder_path, suffix, count, enable_rename)
-    local name = ""
+function BuildBounds(width, height)
+    local bounds = Box2D()
+    bounds:Merge(Point2D(0, 0))
+    bounds:Merge(Point2D(width, height))
+    return bounds
+end
 
-    if not enable_rename then
-        name = BaseFolderName(folder_path)
-    else
-        if suffix ~= "" then
-            name = suffix
-        else
-            name = GetFolderPrefix(folder_path)
-        end
+-- ---------------------------------------------------------
+-- Helper: build sheet name from prefix + suffix
+-- ---------------------------------------------------------
+function BuildSheetName(count)
+
+    local data = {}
+
+    -- Prefix
+    if (g_enable_sheet_rename) then
+        local prefix = TrimString(g_custom_sheet_prefix)
+        prefix = prefix:gsub("%s+", "_")
+        if prefix ~= "" then table.insert(data, prefix) end
     end
 
-    -- Updated suffix format to _01
-    name = name .. "_" .. string.format("%02d", count)
+    -- Suffix
+    local suffix = string.format("%03d", count)
+    if suffix ~= "" then table.insert(data, suffix) end
 
-    name = name:gsub("[^%w%-%_ ]", " ")
-    name = name:gsub("%s+", " ")
-    name = name:gsub("^%s+", ""):gsub("%s+$", "")
+    -- Join prefix + suffix with "_"
+    local name = table.concat(data, "_")
 
-    if name == "" then
-        name = "DXF"
-    end
+    if name == "" then name = "DXF" end
     return name
 end
 
@@ -156,26 +161,6 @@ function SetSheetNameSafe(sheet_manager, sheet_id, name)
         sheet_manager:SetActiveSheetName(name)
         return
     end
-end
-
--- ---------------------------------------------------------
--- Helper: trim whitespace
--- ---------------------------------------------------------
-function TrimString(text)
-    if text == nil then
-        return ""
-    end
-    return (text:gsub("^%s+", ""):gsub("%s+$", ""))
-end
-
--- ---------------------------------------------------------
--- Helper: build bounds from width/height
--- ---------------------------------------------------------
-function BuildBounds(width, height)
-    local bounds = Box2D()
-    bounds:Merge(Point2D(0, 0))
-    bounds:Merge(Point2D(width, height))
-    return bounds
 end
 
 -- ---------------------------------------------------------
@@ -291,7 +276,7 @@ function GetUserChoices(job, script_path)
     g_output_log_file = registry:GetBool("OutputLogFile", g_output_log_file)
     g_rotate_90 = registry:GetBool("Rotate90", g_rotate_90)
     g_enable_sheet_rename = registry:GetBool("EnableSheetRename", g_enable_sheet_rename)
-    g_custom_suffix = registry:GetString("CustomSuffix", g_custom_suffix)
+    g_custom_sheet_prefix = registry:GetString("CustomSheetPrefix", g_custom_sheet_prefix)
     g_sheet_format_mode = registry:GetString("SheetFormatMode", g_sheet_format_mode)
     g_default_job_width = registry:GetDouble("DefaultJobWidth", g_default_job_width)
     g_default_job_height = registry:GetDouble("DefaultJobHeight", g_default_job_height)
@@ -316,7 +301,7 @@ function GetUserChoices(job, script_path)
     dialog:AddCheckBox("CreateLogFileCheck", g_output_log_file)
     dialog:AddCheckBox("Rotate90Check", g_rotate_90)
     dialog:AddCheckBox("EnableSheetRenameCheck", g_enable_sheet_rename)
-    dialog:AddTextField("CustomSuffixEdit", g_custom_suffix)
+    dialog:AddTextField("CustomSheetPrefixEdit", g_custom_sheet_prefix)
     dialog:AddRadioGroup("SheetFormatGroup", (g_sheet_format_mode == SHEET_FORMAT_MODE_AUTO_DETECT_IMPORTED_SIZE) and 2 or 1)
     dialog:AddDoubleField("DrawingWidth", g_default_job_width)
     dialog:AddDoubleField("DrawingHeight", g_default_job_height)
@@ -341,7 +326,7 @@ function GetUserChoices(job, script_path)
     end
 
     g_base_directory = dialog:GetTextField("DirNameEdit")
-    g_custom_suffix = dialog:GetTextField("CustomSuffixEdit")
+    g_custom_sheet_prefix = dialog:GetTextField("CustomSheetPrefixEdit")
     g_process_sub_dirs = dialog:GetCheckBox("ProcessSubDirsCheck")
     g_output_log_file = dialog:GetCheckBox("CreateLogFileCheck")
     g_rotate_90 = dialog:GetCheckBox("Rotate90Check")
@@ -367,7 +352,7 @@ function GetUserChoices(job, script_path)
     end
 
     registry:SetString("BaseDirectory", g_base_directory)
-    registry:SetString("CustomSuffix", g_custom_suffix)
+    registry:SetString("CustomSheetPrefix", g_custom_sheet_prefix)
     registry:SetBool("ProcessSubDirs", g_process_sub_dirs)
     registry:SetBool("OutputLogFile", g_output_log_file)
     registry:SetBool("Rotate90", g_rotate_90)
@@ -434,7 +419,7 @@ function ImportDxfFile(job, file_path, file_dir)
     end
 
     -- Record for renaming
-    local sheet_name = BuildSheetName(file_dir, g_custom_suffix, g_import_count + 1, g_enable_sheet_rename)
+    local sheet_name = BuildSheetName(g_import_count + 1)
     g_sheet_rename_ids[g_import_count + 1] = sheet_manager.ActiveSheetId
     g_sheet_rename_names[g_import_count + 1] = sheet_name
 
@@ -602,13 +587,11 @@ input[type="text"] { border: 1px solid #7a7a7a; padding: 2px; }
       <input type="checkbox" name="EnableSheetRenameCheck" id="EnableSheetRenameCheck"> 
       <span class="style1">Rename sheets after import</span><br>
       <div style="margin: 8px 0 8px 20px;">
-        <span style="font-size: 12px;">Custom Sheet Name (Optional) : </span>
-        <input name="CustomSuffixEdit" type="text" id="CustomSuffixEdit" size="25">
+        <span style="font-size: 12px;">Custom Sheet Prefix (Optional) : </span>
+        <input name="CustomSheetPrefixEdit" type="text" id="CustomSheetPrefixEdit" size="25">
       </div>
 	 <p style="font-size: 11px; color: #666; margin: 5px 0 10px 20px; font-style: italic; line-height: 14px;">
-        &bull; Unchecked + Empty Custom Sheet Name: Full folder name.<br>
-        &bull; Checked + Empty Custom Sheet Name: First 2 words of folder.<br>
-        &bull; Checked + Custom Sheet Name: Uses custom text only.
+        &bull; PREFIX_001
       </p>
     </td>
   </tr>
