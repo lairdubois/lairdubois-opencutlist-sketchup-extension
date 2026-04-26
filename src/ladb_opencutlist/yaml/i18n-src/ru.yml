@@ -614,7 +614,7 @@ tab:
       filters_warning_plural: "Данный фильтр отображает только **{{ count }}** детали из общего {{ total }}."
       edge_material_names_filter: Фильтр по материалу кромок
       veneer_material_names_filter: Фильтр материалов шпона
-      names_filter: ""
+      names_filter: Фильтр наименований
       tags_filter: Сортировка меток
       dimensions_help: Иллюстрация размеров
       summary: Спецификация
@@ -1917,7 +1917,7 @@ tab:
       open_file: "Открыть файл {{ extension }}"
       import_to_model: Импорт в модель
       error:
-        no_data: Данные для импорта отсутствуют
+        no_data: Данные для импорта отсутствуют.
         no_model: Ни один проект модели не открыт. Импорт из пустоты невозможен ;)
         file_not_found: "Файл не найден : **{{ filename }}**"
         bad_extension: "Файл *{{ filename }}* не имеет требуемого разрешения (**{{ extensions }}**)."
@@ -2012,26 +2012,34 @@ tab:
           Вы собираетесь импортировать конфигурацию из **{{ count }} корпуса** в шаблон.
         info_0_plural: |
           Вы собираетесь импортировать конфигурацию из **{{ count }} корпусов** в шаблон.
-        info_1: Выберите место для размещения конфигурации в модели
-        info_2: |
-          Тонкая настройка параметров.
-          Нажмите **Импорт**, чтобы подтвердить действие.
-        option_part_wood_material_name: Тип дерева детали
-        option_part_wood_material_name_help: Справка - Тип дерева детали
-        option_part_aluminium_material_name: Тип алюминиевого профиля/панели
-        option_part_aluminium_material_name_help: Справка - Тип алюминиевого профиля/панели
-        option_part_glass_material_name: Тип стекла
-        option_part_glass_material_name_help: Справка - Тип стекла
-        option_front_part_layer_name: Маркировка фасадов
-        option_front_part_layer_name_help: Справка - Маркировка фасадов
-        option_machining_material_name: Слой обработки
-        option_machining_material_name_help: Справка - Слой обработки
-        option_machining_layer_name: Метка операций
-        option_machining_layer_name_help: Справка - Метка операции
-        option_hardware_material_name: Материалы принадлежностей
-        option_hardware_material_name_help: Справка - Материалы принадлежностей
-        option_hardware_layer_name: Тег аксессуаров
-        option_hardware_layer_name_help: Справка - Тег аксессуары
+        info_1: Выберите место для размещения конфигурации в модели.
+        materials: Материалы
+        layers: Маяки
+        option_parts_formula: Формула
+        option_parts_formula_help: Данная формула позволяет вам корректировать имена импортируемых деталей.
+        option_part_wood_material_name: Порода древесины
+        option_part_wood_material_name_help: Материал деталей из дерева **Порода древесины**.
+        option_part_aluminium_material_name: Аллюминий
+        option_part_aluminium_material_name_help: "Материал, применяемый к деталям из **Аллюминий**."
+        option_part_glass_material_name: Стекло
+        option_part_glass_material_name_help: "Материал, применяемый к деталям из **Стекла**."
+        option_front_part_layer_name: Фасады
+        option_front_part_layer_name_help: "Маркер (тег), применяемый к деталям фасадов."
+        option_machining_material_name: Обработка
+        option_machining_material_name_help: "Материал, требующий **Обработки**."
+        option_machining_layer_name: Обработка
+        option_machining_layer_name_help: "Маркер, применяемый к обработкам."
+        option_hardware_material_name: Комплектующие
+        option_hardware_material_name_help: "Материал, применяемый к **Комплектующим**."
+        option_hardware_layer_name: Комплектующие
+        option_hardware_layer_name_help: "Маркер, применяемый к комплектующим."
+        option_no_material_help: "*Оставьте это поле пустым, чтобы не назначать материал*."
+        option_default_material_help: "*Если это поле останется пустым, будет создан материал по умолчанию*."
+        option_no_layer_help: "*Оставьте это поле пустым, чтобы не применять маркер (тег)*."
+        formula:
+          part: Деталь
+          project: Проект
+          cabinet: Изделие
       model:
         author: Автор
         date: Дата
@@ -2050,6 +2058,10 @@ tab:
       error:
         failed_to_load_bxf2_file: |
           Невозможно загрузить файл BXF2 : **{{ error }}**
+      warning:
+        partial_support: |
+          Для доступа ко всем функциям вам необходимо использовать **SketchUp 2021.1** или более позднюю версию.
+          3D-геометрия фурнитуры **не может быть импортирована**.
       obsolete_base: "Для синхронизации данных необходимо перезагрузить файл BXF2."
   tutorials:
     label: Инструкции
