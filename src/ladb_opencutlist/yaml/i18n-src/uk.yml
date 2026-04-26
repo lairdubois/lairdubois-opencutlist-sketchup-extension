@@ -382,7 +382,7 @@ tab:
       children_size_increase: "Цей розмір збільшується на розмір {{ count }} згрупованих деталей"
       invalid_final_area: "Увага, цю загальну площу неможливо обчислити, оскільки {{ count }} деталь (із {{ total }}) має некоректну площу"
       invalid_final_area_plural: "Увага, цю загальну площу неможливо обчислити, оскільки {{ count }} деталей (із {{ total }}) мають некоректну площу"
-      is_instance_name: ""
+      is_instance_name: Позначення цієї деталі взято від назви екземпляру групи
       is_dynamic_attributes_name: Позначення цієї деталі взято з атрибуту 'Name' динамічного компонента
       has_edges: "Ця деталь містить {{ count }} крайку"
       has_edges_plural: "Ця деталь містить {{ count }} крайки"
@@ -614,7 +614,7 @@ tab:
       filters_warning_plural: "Ця фільтрація відображає лише **{{ count }}** деталей із загальної кількості {{ total }}."
       edge_material_names_filter: Фільтр по матеріалу крайок
       veneer_material_names_filter: Фільтр по матеріалу шпона
-      names_filter: ""
+      names_filter: Позначення для фільтрації
       tags_filter: Фільтр по Міткам
       dimensions_help: Ілюстрація розмірів
       summary: Звіт
@@ -2013,25 +2013,33 @@ tab:
         info_0_plural: |
           Ви збираєтеся імпортувати конфігурацію з **{{ count }} ящиків** у модель.
         info_1: Ви матимете можливість встановити його розташування в активній моделі.
-        info_2: |
-          Налаштуйте параметри.
-          Натисніть **Імпортувати**, щоб підтвердити дію.
-        option_part_wood_material_name: Матеріали дерев'яних деталей
-        option_part_wood_material_name_help: Довідка - Матеріал дерев'яних деталей
-        option_part_aluminium_material_name: Матеріал алюмінієвих деталей
-        option_part_aluminium_material_name_help: Довідка - Матеріал алюмінієвих деталей
-        option_part_glass_material_name: Матеріал скляних деталей
-        option_part_glass_material_name_help: Довідка - Матеріал скляних деталей
-        option_front_part_layer_name: Розмітка фасаду
-        option_front_part_layer_name_help: Довідка - Розмітка фасаду
-        option_machining_material_name: Матеріал обробки
-        option_machining_material_name_help: Довідка - Матеріал обробки
-        option_machining_layer_name: Тег обробки
-        option_machining_layer_name_help: Довідка - Тег обробки
-        option_hardware_material_name: Матеріал фурнітури
-        option_hardware_material_name_help: Довідка - Матеріал фурнітури
-        option_hardware_layer_name: Бірка для фурнітури
-        option_hardware_layer_name_help: Довідка - Бірка для фурнітури
+        materials: Матеріали
+        layers: Теги
+        option_parts_formula: Формула
+        option_parts_formula_help: Формула дозволяє налаштувати назву імпортованих деталей.
+        option_part_wood_material_name: Дерево
+        option_part_wood_material_name_help: Матеріал для нанесення на **дерев’яні** деталі.
+        option_part_aluminium_material_name: Алюміній
+        option_part_aluminium_material_name_help: Матеріал для **алюмінієвих** деталей.
+        option_part_glass_material_name: Скло
+        option_part_glass_material_name_help: Матеріал для **скляних** деталей.
+        option_front_part_layer_name: Фасади
+        option_front_part_layer_name_help: Тег для нанесення на деталі фасаду.
+        option_machining_material_name: Обробка
+        option_machining_material_name_help: Матеріал для **механічної обробки**.
+        option_machining_layer_name: Обробка
+        option_machining_layer_name_help: Тег для застосування до обробки.
+        option_hardware_material_name: Фурнітура
+        option_hardware_material_name_help: Матеріал для **фурнітури**.
+        option_hardware_layer_name: Фурнітура
+        option_hardware_layer_name_help: Тег для застосування до фурнітури.
+        option_no_material_help: "*Залиште це поле порожнім, щоб не застосовувати матеріал*."
+        option_default_material_help: "*Якщо це поле порожнє, буде створено матеріал за замовчуванням*."
+        option_no_layer_help: "* Сервіс тимчасово недоступний"
+        formula:
+          part: Деталь
+          project: Проєкт
+          cabinet: Меблі
       model:
         author: Автор
         date: Дата
@@ -2050,6 +2058,10 @@ tab:
       error:
         failed_to_load_bxf2_file: |
           Не вдалося завантажити файл BXF2: **{{ error }}**
+      warning:
+        partial_support: |
+          Ви повинні мати **SketchUp 2021.1** або новішу версію, щоб користуватися всіма функціями.
+          3D-геометрії фурнітури **не можна імпортувати**.
       obsolete_base: "Щоб підтримувати синхронізацію, потрібно перезавантажити файл BXF2."
   tutorials:
     label: Навчальні матеріали
