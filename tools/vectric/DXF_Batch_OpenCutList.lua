@@ -44,13 +44,6 @@ local g_author = "EVEB"
 -- -----------  Directory to process and file filter --------------------
 g_base_directory = ""
 g_file_filter = "*.dxf"
-g_process_sub_dirs = true
-
--- ------------ Log File Data -------------------------------------------
-g_output_log_file = true
-g_log_file_name = "dxf_filelist.txt"
-g_log_file_path = ""
-g_log_file = nil
 
 --  --------------- settings for default job ----------------------------
 
@@ -73,7 +66,6 @@ g_rotate_90 = false
 -- sheet rename queue (after import)
 g_sheet_rename_ids = {}
 g_sheet_rename_names = {}
-g_enable_sheet_rename = true
 g_custom_sheet_prefix = ""
 
 -- sheet format options
@@ -121,11 +113,9 @@ function BuildSheetName(count)
     local data = {}
 
     -- Prefix
-    if (g_enable_sheet_rename) then
-        local prefix = TrimString(g_custom_sheet_prefix)
-        prefix = prefix:gsub("%s+", "_")
-        if prefix ~= "" then table.insert(data, prefix) end
-    end
+    local prefix = TrimString(g_custom_sheet_prefix)
+    prefix = prefix:gsub("%s+", "_")
+    if prefix ~= "" then table.insert(data, prefix) end
 
     -- Suffix
     local suffix = string.format("%03d", count)
@@ -272,10 +262,7 @@ end
 function GetUserChoices(job, script_path)
     local registry = Registry("DxfFileProcessor")
     g_base_directory = registry:GetString("BaseDirectory", g_base_directory)
-    g_process_sub_dirs = registry:GetBool("ProcessSubDirs", g_process_sub_dirs)
-    g_output_log_file = registry:GetBool("OutputLogFile", g_output_log_file)
     g_rotate_90 = registry:GetBool("Rotate90", g_rotate_90)
-    g_enable_sheet_rename = registry:GetBool("EnableSheetRename", g_enable_sheet_rename)
     g_custom_sheet_prefix = registry:GetString("CustomSheetPrefix", g_custom_sheet_prefix)
     g_sheet_format_mode = registry:GetString("SheetFormatMode", g_sheet_format_mode)
     g_default_job_width = registry:GetDouble("DefaultJobWidth", g_default_job_width)
@@ -288,7 +275,7 @@ function GetUserChoices(job, script_path)
     local in_mm = job.Exists and job.InMM or g_default_job_in_mm
 
     local final_html = g_DialogHtml:gsub("{{VERSION}}", g_version):gsub("{{AUTHOR}}", g_author)
-    local dialog = HTML_Dialog(true, final_html, 615, 700, "DXF Batch Processor " .. g_version)
+    local dialog = HTML_Dialog(true, final_html, 615, 700, "OpenCutList DXF Batch Processor " .. g_version)
 
     local units_text = g_default_job_in_mm and "mm" or "inches"
     for i = 1, 5 do
@@ -297,10 +284,7 @@ function GetUserChoices(job, script_path)
 
     dialog:AddTextField("DirNameEdit", g_base_directory)
     dialog:AddDirectoryPicker("DirChooseButton", "DirNameEdit", true)
-    dialog:AddCheckBox("ProcessSubDirsCheck", g_process_sub_dirs)
-    dialog:AddCheckBox("CreateLogFileCheck", g_output_log_file)
     dialog:AddCheckBox("Rotate90Check", g_rotate_90)
-    dialog:AddCheckBox("EnableSheetRenameCheck", g_enable_sheet_rename)
     dialog:AddTextField("CustomSheetPrefixEdit", g_custom_sheet_prefix)
     dialog:AddRadioGroup("SheetFormatGroup", (g_sheet_format_mode == SHEET_FORMAT_MODE_AUTO_DETECT_IMPORTED_SIZE) and 2 or 1)
     dialog:AddDoubleField("DrawingWidth", g_default_job_width)
@@ -327,10 +311,7 @@ function GetUserChoices(job, script_path)
 
     g_base_directory = dialog:GetTextField("DirNameEdit")
     g_custom_sheet_prefix = dialog:GetTextField("CustomSheetPrefixEdit")
-    g_process_sub_dirs = dialog:GetCheckBox("ProcessSubDirsCheck")
-    g_output_log_file = dialog:GetCheckBox("CreateLogFileCheck")
     g_rotate_90 = dialog:GetCheckBox("Rotate90Check")
-    g_enable_sheet_rename = dialog:GetCheckBox("EnableSheetRenameCheck")
     g_sheet_format_mode = (dialog:GetRadioIndex("SheetFormatGroup") == 2) and SHEET_FORMAT_MODE_AUTO_DETECT_IMPORTED_SIZE or SHEET_FORMAT_MODE_CUSTOM
 
     if not job.Exists then
@@ -353,10 +334,7 @@ function GetUserChoices(job, script_path)
 
     registry:SetString("BaseDirectory", g_base_directory)
     registry:SetString("CustomSheetPrefix", g_custom_sheet_prefix)
-    registry:SetBool("ProcessSubDirs", g_process_sub_dirs)
-    registry:SetBool("OutputLogFile", g_output_log_file)
     registry:SetBool("Rotate90", g_rotate_90)
-    registry:SetBool("EnableSheetRename", g_enable_sheet_rename)
     registry:SetString("SheetFormatMode", g_sheet_format_mode)
 
     return true
@@ -365,7 +343,7 @@ end
 -- ---------------------------------------------------------
 -- Helper: create a Vectric job
 -- ---------------------------------------------------------
-function CreateJob(job_name, width, height, thickness, in_mm, job_origin, z_on_surface)
+function CreateJob(job_name, width, height, thickness, in_mm, job_origin, origin_on_surface)
     local job_bounds = Box2D()
     local blc = Point2D(0, 0)
     local trc = Point2D(width, height)
@@ -390,7 +368,7 @@ function CreateJob(job_name, width, height, thickness, in_mm, job_origin, z_on_s
     job_bounds:Merge(blc)
     job_bounds:Merge(trc)
 
-    return CreateNewJob(job_name, job_bounds, thickness, in_mm, z_on_surface)
+    return CreateNewJob(job_name, job_bounds, thickness, in_mm, origin_on_surface)
 end
 
 -- ---------------------------------------------------------
@@ -464,7 +442,7 @@ function main(script_path)
     -- Collecting all files
     local file_list = {}
     local reader = DirectoryReader()
-    reader:BuildDirectoryList(g_base_directory, g_process_sub_dirs)
+    reader:BuildDirectoryList(g_base_directory, false)
 
     for i = 1, reader:NumberOfDirs() do
         local sub = DirectoryReader()
@@ -537,127 +515,208 @@ g_DialogHtml = [[
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<title>DXF Batch Processor</title>
-<style type="text/css">
-html { overflow: auto; }
-body { background-color: #efefef; font-family: Arial, Helvetica, sans-serif; font-size: 13px; margin: 15px; }
-h1 { color: #2E2E30; font-size: 19px; margin-bottom: 5px; }
-p { margin-top: 0; color: #111; font-size: 14px; }
-hr { border: 0; border-top: 1px solid #999; margin: 10px 0; }
-/* REMOVAL OF WIDTH 100% TO LOCK TO THE LEFT */
-table.main-table { width: auto; border-collapse: collapse; }
-td { padding: 3px 0; vertical-align: middle; }
-input[type="text"] { border: 1px solid #7a7a7a; padding: 2px; }
-.FormButton { font-weight: bold; width: 100%; padding: 4px; cursor: pointer; }
-.DirectoryPicker { font-family: Arial, Helvetica, sans-serif; font-size: 13px; }
-.style1 { font-size: 13px; }
-/* FIXED WIDTH FOR THE LEFT COLUMN */
-.label-col { width: 250px; white-space: nowrap; padding-right: 10px; }
-</style>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <title>DXF Batch Processor</title>
+    <style type="text/css">
+        /*html { overflow: auto; }*/
+        /*body { background-color: #efefef; font-family: Arial, Helvetica, sans-serif; font-size: 13px; margin: 15px; }*/
+        h1 { color: #2E2E30; font-size: 19px; margin-bottom: 5px; }
+        p { margin-top: 0; color: #111; font-size: 14px; }
+        hr { border: 0; border-top: 1px solid #999; margin: 10px 0; }
+        /* REMOVAL OF WIDTH 100% TO LOCK TO THE LEFT */
+        table.main-table { width: 100%; border-collapse: collapse; }
+        td { padding: 3px 0; vertical-align: middle; }
+        input[type="text"] { border: 1px solid #7a7a7a; padding: 2px; }
+        /*.FormButton { font-weight: bold; width: 100%; padding: 4px; cursor: pointer; }*/
+        .DirectoryPicker { font-family: Arial, Helvetica, sans-serif; font-size: 13px; }
+        .style1 { font-size: 13px; }
+        /* FIXED WIDTH FOR THE LEFT COLUMN */
+        .label-col { width: 250px; white-space: nowrap; padding-right: 10px; font-weight: bold; }
+
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            height: 100%;
+            overflow: hidden;
+            background: #ffffff;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #000000;
+        }
+
+        #wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        #header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: #efefef;
+            border-bottom: 1px solid #cccccc;
+            z-index: 10;
+        }
+        #header-inner {
+            padding: 0 32px;
+            height: 64px;
+            line-height: 64px;
+        }
+
+        #content {
+            position: absolute;
+            top: 64px;
+            bottom: 44px;
+            left: 0;
+            right: 0;
+            overflow-x: hidden;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        #footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 44px;
+            background: #efefef;
+            border-top: 1px solid #cccccc;
+            z-index: 10;
+        }
+        #footer-inner {
+            padding: 0 10px;
+            height: 44px;
+            line-height: 44px;
+            letter-spacing: 1px;
+            text-align: right;
+        }
+
+        .FormButton {
+            border: 1px solid #cccccc;
+            display: inline-block;
+            width: revert;
+            padding: 4px 20px;
+            cursor: pointer;
+            background-color: #ffffff;
+        }
+        .FormButtonPrimary {
+            border-color: #de7200;
+            background-color: #ff7700;
+            color: #ffffff;
+        }
+        input[type="text"] {
+            border: 1px solid #cccccc;
+            padding: 4px;
+        }
+
+
+    </style>
 </head>
 <body>
-<table border="0" cellspacing="0" class="main-table">
-  <tr>
-    <td colspan="2">
-      <h1>DXF Batch Processor OpenCutlist Edition by {{AUTHOR}} {{VERSION}}</h1>
-      <p>This gadget loads all the DXF files from a specified directory and lays them out in a grid.</p>
-      <hr>
-    </td>
-  </tr>
-  <tr><td colspan="2" class="DirectoryPicker">Directory to process:</td></tr>
-  <tr>
-    <td height="35" colspan="2">
-      <input name="DirNameEdit" type="text" id="DirNameEdit" size="55" maxlength="128">
-      &nbsp;&nbsp;
-      <input type="button" name="DirChooseButton" id="DirChooseButton" value="Choose ..." class="DirectoryPicker">
-    </td>
-  </tr>
-  <tr>
-    <td colspan="2" style="padding: 10px 0;">
-      <input type="checkbox" name="ProcessSubDirsCheck" id="ProcessSubDirsCheck"> <span class="style1">Process sub directories</span> &nbsp;&nbsp;&nbsp;
-      <input type="checkbox" name="CreateLogFileCheck" id="CreateLogFileCheck"> <span class="style1">Create log file</span> &nbsp;&nbsp;&nbsp;
-      <input type="checkbox" name="Rotate90Check" id="Rotate90Check"> <span class="style1">Rotate 90 degrees</span>
-    </td>
-  </tr>
-  <tr><td colspan="2"><hr></td></tr>
-  <tr><td colspan="2" style="padding-top:10px;"><strong>Sheet Name Control</strong></td></tr>
-  <tr>
-    <td colspan="2">
-      <input type="checkbox" name="EnableSheetRenameCheck" id="EnableSheetRenameCheck"> 
-      <span class="style1">Rename sheets after import</span><br>
-      <div style="margin: 8px 0 8px 20px;">
-        <span style="font-size: 12px;">Custom Sheet Prefix (Optional) : </span>
-        <input name="CustomSheetPrefixEdit" type="text" id="CustomSheetPrefixEdit" size="25">
-      </div>
-	 <p style="font-size: 11px; color: #666; margin: 5px 0 10px 20px; font-style: italic; line-height: 14px;">
-        &bull; PREFIX_001
-      </p>
-    </td>
-  </tr>
-  <tr><td colspan="2"><hr></td></tr>
-  <tr><td colspan="2" style="padding-top:10px;"><strong>Sheet Format</strong></td></tr>
-  <tr>
-    <td colspan="2">
-      <table border="0">
-        <tr>
-          <td width="25"><input type="radio" name="SheetFormatGroup"></td>
-          <td class="style1">Custom sheet size</td>
-          <td width="25" style="padding-left:15px;"><input type="radio" name="SheetFormatGroup"></td>
-          <td class="style1">Auto-detect from imported DXF size</td>
-        </tr>
-      </table>
-    </td>
-  </tr>
-  <tr>
-    <td class="style1 label-col">Drawing Width (X)</td>
-    <td><input name="DrawingWidth" type="text" id="DrawingWidth" size="8"> <span class="style1">mm</span></td>
-  </tr>
-  <tr>
-    <td class="style1 label-col">Drawing Height (Y)</td>
-    <td><input name="DrawingHeight" type="text" id="DrawingHeight" size="8"> <span class="style1">mm</span></td>
-  </tr>
-  <tr>
-    <td class="style1 label-col">Drawing Thickness (Z)</td>
-    <td><input name="DrawingThickness" type="text" id="DrawingThickness" size="8"> <span class="style1">mm</span></td>
-  </tr>
-  <tr>
-    <td class="style1 label-col">Units</td>
-    <td class="style1">
-      <input type="radio" name="DrawingUnitsGroup"> inches &nbsp;&nbsp;
-      <input type="radio" name="DrawingUnitsGroup"> mm
-    </td>
-  </tr>
-  <tr>
-    <td style="padding-top:10px;" class="style1 label-col"><strong>XY Drawing Origin</strong></td>
-    <td>
-      <table width="140" border="0" style="margin: 10px 0;">
-        <tr><td align="center"><input type="radio" name="DrawingOrigin"></td><td align="center">--</td><td align="center"><input type="radio" name="DrawingOrigin"></td></tr>
-        <tr><td align="center">|</td><td align="center"><input type="radio" name="DrawingOrigin"></td><td align="center">|</td></tr>
-        <tr><td align="center"><input type="radio" name="DrawingOrigin"></td><td align="center">--</td><td align="center"><input type="radio" name="DrawingOrigin"></td></tr>
-      </table>
-    </td>
-  </tr>
-  <tr>
-    <td class="style1 label-col"><strong>Z Origin</strong></td>
-    <td class="style1">
-      <input type="radio" name="MaterialZOrigin"> Surface &nbsp;&nbsp;
-      <input type="radio" name="MaterialZOrigin"> Base
-    </td>
-  </tr>
-  <tr><td colspan="2"><hr></td></tr>
-  <tr>
-    <td colspan="2">
-      <table border="0" width="100%">
-        <tr>
-          <td width="240"><input name="ButtonOK" type="button" class="FormButton" id="ButtonOK" value="OK"></td>
-          <td width="20">&nbsp;</td>
-          <td width="240"><input name="ButtonCancel" type="button" class="FormButton" id="ButtonCancel" value="Cancel"></td>
-        </tr>
-      </table>
-    </td>
-  </tr>
-</table>
+<div id="wrapper">
+    <div id="header">
+        <div id="header-inner">
+            <h1>OpenCutList DXF Batch Processor <small>by {{AUTHOR}} {{VERSION}}</small></h1>
+        </div>
+    </div>
+    <div id="content">
+        <div id="content-inner">
+            <table border="0" cellspacing="0" class="main-table">
+                <tr>
+                    <td colspan="2">This gadget loads all the DXF files from a specified directory and lays them out in a grid.</td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="DirectoryPicker">Directory to process</td>
+                </tr>
+                <tr>
+                    <td height="35" colspan="2">
+                        <input name="DirNameEdit" type="text" id="DirNameEdit" size="55" maxlength="128">
+                        &nbsp;&nbsp;
+                        <input type="button" name="DirChooseButton" id="DirChooseButton" value="Browse ..." class="FormButton DirectoryPicker">
+                    </td>
+                </tr>
+                <tr><td colspan="2"><hr></td></tr>
+                <tr>
+                    <td class="style1 label-col">Units</td>
+                    <td class="style1">
+                        <input type="radio" name="DrawingUnitsGroup"> Millimeters
+                        <input type="radio" name="DrawingUnitsGroup"> Inches &nbsp;&nbsp;
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span class="style1 label-col">Sheet Name Prefix (Optional)</span>
+                    </td>
+                    <td>
+                        <input name="CustomSheetPrefixEdit" type="text" id="CustomSheetPrefixEdit" size="25"> <span class="style1" style="color: #999;">_001</span>
+                    </td>
+                </tr>
+                <tr><td colspan="2"><hr></td></tr>
+                <tr><td colspan="2" style="padding-top:10px;"><strong>Sheet Format</strong></td></tr>
+                <tr>
+                    <td colspan="2">
+                        <table border="0">
+                            <tr>
+                                <td width="25"><input type="radio" name="SheetFormatGroup"></td>
+                                <td class="style1">Custom sheet size</td>
+                                <td width="25" style="padding-left:15px;"><input type="radio" name="SheetFormatGroup"></td>
+                                <td class="style1">Auto-detect from imported DXF size</td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="style1 label-col">Drawing Width (X)</td>
+                    <td><input name="DrawingWidth" type="text" id="DrawingWidth" size="8"> <span class="style1">mm</span></td>
+                </tr>
+                <tr>
+                    <td class="style1 label-col">Drawing Height (Y)</td>
+                    <td><input name="DrawingHeight" type="text" id="DrawingHeight" size="8"> <span class="style1">mm</span></td>
+                </tr>
+                <tr>
+                    <td class="style1 label-col">Drawing Thickness (Z)</td>
+                    <td><input name="DrawingThickness" type="text" id="DrawingThickness" size="8"> <span class="style1">mm</span></td>
+                </tr>
+                <tr>
+                    <td class="style1 label-col">Rotate 90 degrees</td>
+                    <td style="padding: 10px 0;">
+                        <input type="checkbox" name="Rotate90Check" id="Rotate90Check">
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding-top:10px;" class="style1 label-col"><strong>XY Drawing Origin</strong></td>
+                    <td>
+                        <table width="140" border="0" style="margin: 10px 0;">
+                            <tr><td align="center"><input type="radio" name="DrawingOrigin"></td><td align="center">--</td><td align="center"><input type="radio" name="DrawingOrigin"></td></tr>
+                            <tr><td align="center">|</td><td align="center"><input type="radio" name="DrawingOrigin"></td><td align="center">|</td></tr>
+                            <tr><td align="center"><input type="radio" name="DrawingOrigin"></td><td align="center">--</td><td align="center"><input type="radio" name="DrawingOrigin"></td></tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="style1 label-col"><strong>Z Origin</strong></td>
+                    <td class="style1">
+                        <input type="radio" name="MaterialZOrigin"> Surface &nbsp;&nbsp;
+                        <input type="radio" name="MaterialZOrigin"> Base
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div id="footer">
+        <div id="footer-inner">
+            <input name="ButtonCancel" type="button" class="FormButton" id="ButtonCancel" value="Cancel">
+            <input name="ButtonOK" type="button" class="FormButton FormButtonPrimary" id="ButtonOK" value="OK">
+        </div>
+    </div>
+</div>
 </body>
 </html>
 ]]
