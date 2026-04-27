@@ -433,6 +433,8 @@ module Ladb::OpenCutList
 
     def _dxf_write_section_header(file, su_unit, min = Geom::Point3d.new, max = Geom::Point3d.new(1000.0, 1000.0, 1000.0))
 
+      # https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-A85E8E67-27CD-4C59-BE61-4DC9FADBE74A
+
       _dxf_write_section(file, 'HEADER') do
 
         _dxf_write_header_value(file, '$ACADVER', 1, 'AC1014')
