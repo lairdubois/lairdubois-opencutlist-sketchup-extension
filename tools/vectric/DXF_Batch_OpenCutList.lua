@@ -639,7 +639,7 @@ g_DialogHtml = [[
                     <td height="35" colspan="2">
                         <input name="DirNameEdit" type="text" id="DirNameEdit" size="55" maxlength="128">
                         &nbsp;&nbsp;
-                        <input type="button" name="DirChooseButton" id="DirChooseButton" value="Browse ..." class="FormButton DirectoryPicker">
+                        <input type="button" name="DirChooseButton" id="DirChooseButton" value="Browse ..." class="DirectoryPicker">
                     </td>
                 </tr>
                 <tr><td colspan="2"><hr></td></tr>
