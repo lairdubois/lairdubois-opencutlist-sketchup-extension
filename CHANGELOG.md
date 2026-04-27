@@ -22,7 +22,7 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
-### 2026-04-xx
+### 2026-04-27
  * Updated PackingSolver dependency
  * Updated translations
 ### 2026-04-25
