@@ -545,6 +545,16 @@ g_DialogHtml = [[
             background: #ffffff;
             font-family: Arial, Helvetica, sans-serif;
             color: #000000;
+
+            scrollbar-face-color: #eeeeee;
+            scrollbar-track-color: #ffffff;
+            scrollbar-arrow-color: #eeeeee;
+            scrollbar-shadow-color: #ffffff;
+            scrollbar-highlight-color: #ffffff;
+            scrollbar-3dlight-color: #eeeeee;
+            scrollbar-darkshadow-color: #ffffff;
+            scrollbar-base-color: #eeeeee;
+
         }
 
         #wrapper {
@@ -559,8 +569,8 @@ g_DialogHtml = [[
             left: 0;
             right: 0;
             height: 64px;
-            background: #efefef;
-            border-bottom: 1px solid #cccccc;
+            background: #f9f9f9;
+            border-bottom: 1px solid #e5e5e5;
             z-index: 10;
         }
         #header-inner {
@@ -585,15 +595,15 @@ g_DialogHtml = [[
             bottom: 0;
             left: 0;
             right: 0;
-            height: 44px;
-            background: #efefef;
-            border-top: 1px solid #cccccc;
+            height: 54px;
+            background: #f9f9f9;
+            border-top: 1px solid #e5e5e5;
             z-index: 10;
         }
         #footer-inner {
             padding: 0 10px;
-            height: 44px;
-            line-height: 44px;
+            height: 54px;
+            line-height: 54px;
             letter-spacing: 1px;
             text-align: right;
         }
@@ -602,7 +612,7 @@ g_DialogHtml = [[
             border: 1px solid #cccccc;
             display: inline-block;
             width: revert;
-            padding: 4px 20px;
+            padding: 6px 20px;
             cursor: pointer;
             background-color: #ffffff;
         }
@@ -613,9 +623,15 @@ g_DialogHtml = [[
         }
         input[type="text"] {
             border: 1px solid #cccccc;
-            padding: 4px;
+            padding: 6px 12px;
         }
 
+        .DirectoryPicker {
+            border: 1px solid #cccccc;
+            padding: 6px 20px;
+            cursor: pointer;
+            background-color: #ffffff;
+        }
 
     </style>
 </head>
@@ -633,7 +649,7 @@ g_DialogHtml = [[
                     <td colspan="2">This gadget loads all the DXF files from a specified directory and lays them out in a grid.</td>
                 </tr>
                 <tr>
-                    <td colspan="2" class="DirectoryPicker">Directory to process</td>
+                    <td colspan="2">Directory to process</td>
                 </tr>
                 <tr>
                     <td height="35" colspan="2">
