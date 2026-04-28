@@ -22,6 +22,9 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
+### 2026-04-28
+ * Updated DXF writer to include thickness in $EXTMIN property
+ * Updated Vectric gadget
 ### 2026-04-27
  * Updated PackingSolver dependency
  * Updated translations

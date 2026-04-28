@@ -172,7 +172,9 @@ function GetDxfSizeFromFile(file_path)
         return nil, nil
     end
 
-    local extmin_x, extmin_y, extmax_x, extmax_y, target, pending_code
+    local extmin_x, extmin_y, extmin_z
+    local extmax_x, extmax_y, extmax_z
+    local target
 
     while true do
         local code_line = file:read("*line")
@@ -195,7 +197,7 @@ function GetDxfSizeFromFile(file_path)
             else
                 target = nil
             end
-        elseif target ~= nil and (code == 10 or code == 20) then
+        elseif target ~= nil and (code == 10 or code == 20 or code == 30) then
             local numeric_value = tonumber(value)
             if numeric_value ~= nil then
                 if target == "EXTMIN" then
@@ -203,16 +205,20 @@ function GetDxfSizeFromFile(file_path)
                         extmin_x = numeric_value
                     elseif code == 20 then
                         extmin_y = numeric_value
+                    elseif code == 30 then
+                        extmin_z = numeric_value
                     end
                 elseif target == "EXTMAX" then
                     if code == 10 then
                         extmax_x = numeric_value
                     elseif code == 20 then
                         extmax_y = numeric_value
+                    elseif code == 30 then
+                        extmax_z = numeric_value
                     end
                 end
             end
-            if extmin_x and extmin_y and extmax_x and extmax_y then
+            if extmin_x and extmin_y and extmin_z and extmax_x and extmax_y and extmax_z then
                 break
             end
         end
@@ -225,21 +231,27 @@ function GetDxfSizeFromFile(file_path)
 
     local width = math.abs(extmax_x - extmin_x)
     local height = math.abs(extmax_y - extmin_y)
-    return RotationAwareSize(width, height)
+    local thickness = math.abs(extmax_z - extmin_z)
+    width, height = RotationAwareSize(width, height)
+
+    return width, height, thickness
 end
 
 -- ---------------------------------------------------------
 -- Helper: compute sheet size according to the format mode
 -- ---------------------------------------------------------
 function GetSheetSizeFromFile(file_path)
-    local width, height = g_default_job_width, g_default_job_height
+    local width, height, thickness = g_default_job_width, g_default_job_height, g_default_job_thickness
     if g_sheet_format_mode == SHEET_FORMAT_MODE_AUTO_DETECT_IMPORTED_SIZE then
-        local detected_width, detected_height = GetDxfSizeFromFile(file_path)
-        if detected_width then
+        local detected_width, detected_height, detected_thickness = GetDxfSizeFromFile(file_path)
+        if detected_width > 0 and detected_height > 0 then
             width, height = detected_width, detected_height
         end
+        if detected_thickness > 0 then
+            thickness = detected_thickness
+        end
     end
-    return width, height
+    return width, height, thickness
 end
 
 -- ---------------------------------------------------------
@@ -290,7 +302,7 @@ function GetUserChoices(job, script_path)
     dialog:AddDoubleField("DrawingWidth", g_default_job_width)
     dialog:AddDoubleField("DrawingHeight", g_default_job_height)
     dialog:AddDoubleField("DrawingThickness", g_default_job_thickness)
-    dialog:AddRadioGroup("DrawingUnitsGroup", in_mm and 2 or 1)
+    dialog:AddRadioGroup("DrawingUnitsGroup", in_mm and 1 or 2)
 
     local origin_idx = 4
     if g_default_job_origin == JOB_ORIGIN_TLC then
@@ -318,7 +330,7 @@ function GetUserChoices(job, script_path)
         g_default_job_width = dialog:GetDoubleField("DrawingWidth")
         g_default_job_height = dialog:GetDoubleField("DrawingHeight")
         g_default_job_thickness = dialog:GetDoubleField("DrawingThickness")
-        g_default_job_in_mm = (dialog:GetRadioIndex("DrawingUnitsGroup") == 2)
+        g_default_job_in_mm = (dialog:GetRadioIndex("DrawingUnitsGroup") == 1)
         local xy_idx = dialog:GetRadioIndex("DrawingOrigin")
         local origins = { JOB_ORIGIN_TLC, JOB_ORIGIN_TRC, JOB_ORIGIN_CENTER, JOB_ORIGIN_BLC, JOB_ORIGIN_BRC }
         g_default_job_origin = origins[xy_idx] or JOB_ORIGIN_BLC
@@ -378,7 +390,7 @@ function ImportDxfFile(job, file_path, file_dir)
     local sheet_manager = job.SheetManager
 
     -- Local measurement for current file
-    local width, height = GetSheetSizeFromFile(file_path)
+    local width, height, _ = GetSheetSizeFromFile(file_path)
 
     -- If not the first file (g_import_count > 0)
     if g_import_count > 0 then
@@ -467,7 +479,7 @@ function main(script_path)
     end)
 
     -- Measuring the FIRST file to create the Job
-    local w1, h1 = GetSheetSizeFromFile(file_list[1].path)
+    local w1, h1, t1 = GetSheetSizeFromFile(file_list[1].path)
 
     -- Extracting the selected folder name
     local folder_name = "DXF_Import"
@@ -479,7 +491,7 @@ function main(script_path)
     -- Creating the Job (Sheet 1)
     if not job.Exists then
         -- Replacing g_default_job_name with folder_name
-        if not CreateJob(folder_name, w1, h1, g_default_job_thickness, g_default_job_in_mm, g_default_job_origin, g_default_z_on_surface) then
+        if not CreateJob(folder_name, w1, h1, t1, g_default_job_in_mm, g_default_job_origin, g_default_z_on_surface) then
             return false
         end
         job = VectricJob()
@@ -663,7 +675,7 @@ g_DialogHtml = [[
                     <td class="style1 label-col">Units</td>
                     <td class="style1">
                         <input type="radio" name="DrawingUnitsGroup"> Millimeters
-                        <input type="radio" name="DrawingUnitsGroup"> Inches &nbsp;&nbsp;
+                        <input type="radio" name="DrawingUnitsGroup"> Inches
                     </td>
                 </tr>
                 <tr>
