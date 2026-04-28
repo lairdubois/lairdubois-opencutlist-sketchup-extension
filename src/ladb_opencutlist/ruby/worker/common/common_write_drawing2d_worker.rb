@@ -207,10 +207,18 @@ module Ladb::OpenCutList
     def _write_to_dxf_file(file, projection_def)
 
       unit_factor = _dxf_get_unit_factor(@unit)
-      unit_transformation = Geom::Transformation.scaling(ORIGIN, unit_factor, unit_factor, 1.0)
+      unit_transformation = Geom::Transformation.scaling(ORIGIN, unit_factor, unit_factor, unit_factor)
 
-      min = projection_def.bounds.min.transform(unit_transformation)
-      max = projection_def.bounds.max.transform(unit_transformation)
+      min = Geom::Point3d.new(
+        projection_def.bounds.min.x,
+        projection_def.bounds.min.y,
+        -projection_def.max_depth
+      ).transform!(unit_transformation)
+      max = Geom::Point3d.new(
+        projection_def.bounds.max.x,
+        projection_def.bounds.max.y,
+        0
+      ).transform!(unit_transformation)
 
       layer_defs = []
       layer_defs.concat(_dxf_get_projection_def_depth_layer_defs(projection_def,

@@ -413,10 +413,10 @@ module Ladb::OpenCutList
 
       bin_size = Geom::Point3d.new(
         bin_type_def.length,
-        bin_type_def.width
+        bin_type_def.width,
       ).transform(unit_transformation)
 
-      min = Geom::Point3d.new
+      min = Geom::Point3d.new(0, 0, -packing_def.group.def.std_thickness).transform(unit_transformation)
       max = Geom::Point3d.new(bin_size.x, bin_size.y)
 
       layer_defs = []
