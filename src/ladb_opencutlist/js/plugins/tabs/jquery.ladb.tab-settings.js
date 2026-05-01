@@ -426,11 +426,11 @@
         };
         const fnAdaptLengthPrecisionToFormat = function () {
             if (modelLengthFormat === 0 /* DECIMAL */ || modelLengthFormat === 2 /* ENGINEERING */) {
-                $('.length-unit-decimal', that.$element).show();
-                $('.length-unit-fractional', that.$element).hide();
+                $('.length-unit-decimal').show();
+                $('.length-unit-fractional').hide();
             } else {
-                $('.length-unit-decimal', that.$element).hide();
-                $('.length-unit-fractional', that.$element).show();
+                $('.length-unit-decimal').hide();
+                $('.length-unit-fractional').show();
             }
         }
         const fnFillLengthSettings = function(settings) {

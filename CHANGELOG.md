@@ -22,6 +22,8 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
+### 2026-05-01
+ * Fixed issue [#963](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/issues/963)
 ### 2026-04-28
  * Updated DXF writer to include thickness in $EXTMIN property
  * Updated Vectric gadget
