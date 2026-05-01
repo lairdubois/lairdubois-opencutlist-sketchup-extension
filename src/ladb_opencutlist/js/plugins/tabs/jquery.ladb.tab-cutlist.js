@@ -245,9 +245,11 @@
                     that.generateFilters.names_filter = $('#ladb_cutlist_names_filter', that.$page).val();
                     that.generateCutlist(function () {
                         const $input = $('#ladb_cutlist_names_filter', that.$page);
-                        const len = $input.val().length;
-                        $input.focus();
-                        $input[0].setSelectionRange(len, len);
+                        if ($input.val()) {
+                            const len = $input.val().length;
+                            $input.focus();
+                            $input[0].setSelectionRange(len, len);
+                        }
                     });
                 };
                 const fnGenerateWithTagsFilter = function () {
@@ -4806,8 +4808,6 @@
                     }
 
                 }
-
-                console.log(editedParts);
 
                 rubyCallCommand('cutlist_part_update', { auto_orient: that.generateOptions.auto_orient, parts_data: editedParts }, function (response) {
 
