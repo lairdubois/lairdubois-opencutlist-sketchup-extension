@@ -400,6 +400,11 @@ module Ladb::OpenCutList
       @value.get_attribute('dynamic_attributes', key.to_s.downcase) # DC attribute names are always stored lower case.
     end
 
+    def +(value)
+      return to_s + value if value.is_a?(StringFormulaWrapper) || value.is_a?(String)
+      raise ArgumentError, "Cannot add #{value.class} to #{self.class}"
+    end
+
     def to_s
       return '' if @value.nil?
       self.name
@@ -529,6 +534,11 @@ module Ladb::OpenCutList
       @value.get_attribute('dynamic_attributes', key)
     end
 
+    def +(value)
+      return to_s + value if value.is_a?(StringFormulaWrapper) || value.is_a?(String)
+      raise ArgumentError, "Cannot add #{value.class} to #{self.class}"
+    end
+
     def to_s
       return '' if @value.nil?
       self.name
@@ -654,6 +664,11 @@ module Ladb::OpenCutList
 
     def get_dc_attribute(key)
       @value.get_attribute('dynamic_attributes', key)
+    end
+
+    def +(value)
+      return to_s + value if value.is_a?(StringFormulaWrapper) || value.is_a?(String)
+      raise ArgumentError, "Cannot add #{value.class} to #{self.class}"
     end
 
     def to_s
