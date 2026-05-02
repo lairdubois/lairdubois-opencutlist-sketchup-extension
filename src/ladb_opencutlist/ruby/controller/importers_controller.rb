@@ -26,6 +26,9 @@ module Ladb::OpenCutList
       PLUGIN.register_command("importers_bxf2_import") do |settings|
         bxf2_import_command(settings)
       end
+      PLUGIN.register_command("importers_bxf2_cabinet_link_update") do |settings|
+        bxf2_cabinet_link_update_command(settings)
+      end
 
     end
 
@@ -60,6 +63,16 @@ module Ladb::OpenCutList
 
       # Setup worker
       worker = ImportersBxf2ImportWorker.new(@bxf_model, **settings)
+
+      # Run !
+      worker.run
+    end
+
+    def bxf2_cabinet_link_update_command(settings)
+      require_relative '../worker/importers/bxf2/importers_bxf2_cabinet_link_update_worker'
+
+      # Setup worker
+      worker = ImportersBxf2CabinetLinkUpdateWorker.new(@bxf_model, **settings)
 
       # Run !
       worker.run

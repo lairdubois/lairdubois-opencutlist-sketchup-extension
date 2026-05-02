@@ -330,7 +330,8 @@ LadbAbstractDialog.prototype.prompt = function (title, text, value, callback, op
     });
 
     options = $.extend({
-        emptyValueAllowed: false
+        emptyValueAllowed: false,
+        selected: false
     }, options);
 
     // Fetch UI elements
@@ -366,7 +367,12 @@ LadbAbstractDialog.prototype.prompt = function (title, text, value, callback, op
 
     // Bring focus to input
     $input.focus();
-    $input[0].selectionStart = $input[0].selectionEnd = $input.val().trim().length;
+    if (options.selected) {
+        $input[0].selectionStart = 0;
+        $input[0].selectionEnd = $input.val().trim().length;
+    } else {
+        $input[0].selectionStart = $input[0].selectionEnd = $input.val().trim().length;
+    }
 
 };
 

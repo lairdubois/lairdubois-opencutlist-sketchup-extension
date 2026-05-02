@@ -25,6 +25,7 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 ### 2026-05-02
  * Improved cutlist tags filters
  * Added BXF2 importer formula preview
+ * Added BXF2 importer rename cabinet feature
 ### 2026-05-01
  * Fixed issue [#963](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/issues/963)
  * Fixed cutlist filters

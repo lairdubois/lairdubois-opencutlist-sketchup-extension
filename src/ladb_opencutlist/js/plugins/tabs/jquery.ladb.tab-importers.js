@@ -73,6 +73,28 @@
                 $btnClose.on('click', function () {
                     that.close();
                 });
+                $('.ladb-btn-edit-cabinet', $slide).on('click', function () {
+                    const objectId = $(this).data('object-id');
+                    const cabinet = that.model.cabinets.find(function (cabinet) { return cabinet.object_id === objectId; });
+                    const $row = $(this).closest('tr.ladb-cutlist-row');
+                    const $span = $('.ladb-cabinet-description', $row)
+                    that.dialog.prompt(i18next.t('default.rename'), i18next.t('tab.importers.bxf2.cabinet.description'), cabinet.description, function (value) {
+
+                        rubyCallCommand('importers_bxf2_cabinet_link_update', { object_id: objectId, description: value }, function (response) {
+
+                            if (response.errors) {
+                                that.dialog.notifyErrors(response.errors);
+                            } else {
+                                cabinet.description = value;
+                                $span.replaceWith(Twig.twig({ ref: 'tabs/importers/bxf2/_list-cabinet-description-value.twig' }).render({ cabinet: cabinet }));
+                            }
+
+                        });
+
+                    }, { selected: true });
+                });
+
+                that.dialog.setupTooltips();
 
             }
 

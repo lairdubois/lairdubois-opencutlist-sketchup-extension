@@ -99,6 +99,7 @@ module Ladb::OpenCutList
     end
 
     def _process_node(bxf_node, cabinets)
+      _process_cabinet_group_links(bxf_node.cabinet_group_links, cabinets)
       _process_cabinet_links(bxf_node.cabinet_links, cabinets)
       _process_nodes(bxf_node.nodes, cabinets)
       cabinets
@@ -116,6 +117,7 @@ module Ladb::OpenCutList
       bxf_cabinet_links.each do |bxf_cabinet_link|
         bxf_parameters = bxf_cabinet_link.parameters
         cabinets << {
+          :object_id => bxf_cabinet_link.object_id,
           :description => bxf_cabinet_link.description,
           :width => _get_parameter_length(bxf_parameters['outerwidth']),
           :height => _get_parameter_length(bxf_parameters['height']),
