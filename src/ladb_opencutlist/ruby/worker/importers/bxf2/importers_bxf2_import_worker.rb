@@ -32,7 +32,9 @@ module Ladb::OpenCutList
                    machining_layer_name: nil,
 
                    hardware_material_name: nil,
-                   hardware_layer_name: nil
+                   hardware_layer_name: nil,
+
+                   dry_run: false
 
     )
 
@@ -50,6 +52,8 @@ module Ladb::OpenCutList
       @hardware_material_name = hardware_material_name.is_a?(String) && !hardware_material_name.empty? ? hardware_material_name : PLUGIN.get_i18n_string('tab.materials.type_5')
       @hardware_layer_name = hardware_layer_name
 
+      @dry_run = dry_run
+
     end
 
     # -----
@@ -61,33 +65,59 @@ module Ladb::OpenCutList
       model = Sketchup.active_model
       return { :errors => [ 'tab.importers.default.error.no_model' ] } unless model
 
-      model.select_tool(ImportersBxf2PlaceTool.new(@bxf_model) { |cancelled, transformation = IDENTITY|
-        if cancelled
+      if @dry_run
 
-          # Deactivate tool
-          model.select_tool(nil)
+        @part_names_data = {}
 
-          # Invoke dialog callback
-          PLUGIN.execute_tabs_dialog_command_on_tab('importers_bxf2', 'import_callback', { cancelled: true }.to_json, nil, false)
+        begin
 
-        else
+          _process_model(nil)
 
-          # Process importation
-          _import_at(transformation) do |cancelled, errors|
+          preview = @part_names_data.to_a
+                            .map { |_, names| [ names.first.first, names.first.last, names.size ] }
+                            .sort_by! { |old, new| [ new.nil? || new.empty? ? 1 : 0, old ] }
+
+          return {
+            :preview => preview
+          }
+
+        rescue ImportersBxf2FormulaError => e
+          return { :errors => [ { :error => e.message, :error_type => e.error_type } ] }
+        rescue Exception => e
+          return { :errors => [ e.message ] }
+        end
+
+      else
+
+        model.select_tool(ImportersBxf2PlaceTool.new(@bxf_model) { |cancelled, transformation = IDENTITY|
+          if cancelled
 
             # Deactivate tool
             model.select_tool(nil)
 
             # Invoke dialog callback
-            PLUGIN.execute_tabs_dialog_command_on_tab('importers_bxf2', 'import_callback', { errors: errors }.to_json, nil, !cancelled)
+            PLUGIN.execute_tabs_dialog_command_on_tab('importers_bxf2', 'import_callback', { cancelled: true }.to_json, nil, false)
+
+          else
+
+            # Process importation
+            _import_at(transformation) do |cancelled, errors|
+
+              # Deactivate tool
+              model.select_tool(nil)
+
+              # Invoke dialog callback
+              PLUGIN.execute_tabs_dialog_command_on_tab('importers_bxf2', 'import_callback', { errors: errors }.to_json, nil, !cancelled)
+
+            end
 
           end
+        })
 
-        end
-      })
+        # Give focus to SketchUp main window
+        Sketchup.focus if Sketchup.respond_to?(:focus)
 
-      # Give focus to SketchUp main window
-      Sketchup.focus if Sketchup.respond_to?(:focus)
+      end
 
       {
         :errors => []
@@ -105,19 +135,7 @@ module Ladb::OpenCutList
 
         begin
 
-          entities = model.active_entities
-
-          @bxf_model.scene.nodes.each do |node|
-
-            t = transformation * node.transformations.to_t
-            project_wrapper = ImportersBxf2NodeFormulaWrapper.new(node)
-
-            _process_cabinet_group_links(node.cabinet_group_links, entities, transformation: t, project_wrapper: project_wrapper)
-            _process_cabinet_links(node.cabinet_links, entities, transformation: t, project_wrapper: project_wrapper)
-            _process_container_links(node.container_links, entities, transformation: t, project_wrapper: project_wrapper)
-            _process_function_unit_links(node.function_unit_links, entities, transformation: t, project_wrapper: project_wrapper)
-
-          end
+          _process_model(model.active_entities, transformation: transformation)
 
         rescue Exception => e
           PLUGIN.dump_exception(e)
@@ -143,17 +161,38 @@ module Ladb::OpenCutList
       @machining_factory = nil
     end
 
+    def _process_model(entities, transformation: IDENTITY)
+
+      @bxf_model.scene.nodes.each do |node|
+
+        t = transformation * node.transformations.to_t
+        project_wrapper = ImportersBxf2NodeFormulaWrapper.new(node)
+
+        _process_cabinet_group_links(node.cabinet_group_links, entities, transformation: t, project_wrapper: project_wrapper)
+        _process_cabinet_links(node.cabinet_links, entities, transformation: t, project_wrapper: project_wrapper)
+        _process_container_links(node.container_links, entities, transformation: t, project_wrapper: project_wrapper)
+        _process_function_unit_links(node.function_unit_links, entities, transformation: t, project_wrapper: project_wrapper)
+
+      end
+
+    end
+
     def _process_cabinet_group_links(cabinet_group_links, entities, transformation: IDENTITY, project_wrapper: nil)
 
       cabinet_group_links.each do |cabinet_group_link|
 
         cabinet_group = cabinet_group_link.cabinet_group
 
-        group = entities.add_group
-        group.name = cabinet_group_link.description if cabinet_group_link.description
-        group.transformation = transformation * cabinet_group_link.transformations.to_t
+        if @dry_run
+          cabinet_group_links_entities = nil
+        else
+          cabinet_group_links_group = entities.add_group
+          cabinet_group_links_group.name = cabinet_group_link.description if cabinet_group_link.description
+          cabinet_group_links_group.transformation = transformation * cabinet_group_link.transformations.to_t
+          cabinet_group_links_entities = cabinet_group_links_group.entities
+        end
 
-        _process_cabinet_links(cabinet_group.cabinet_links, group.entities, project_wrapper: project_wrapper)
+        _process_cabinet_links(cabinet_group.cabinet_links, cabinet_group_links_entities, project_wrapper: project_wrapper)
 
       end
 
@@ -166,13 +205,18 @@ module Ladb::OpenCutList
         cabinet = cabinet_link.cabinet
         cabinet_link_wrapper = ImportersBxf2CabinetLinkFormulaWrapper.new(cabinet_link)
 
-        group = entities.add_group
-        group.name = cabinet_link.description if cabinet_link.description
-        group.transformation = transformation * cabinet_link.transformations.to_t
+        if @dry_run
+          cabinet_links_entities = nil
+        else
+          cabinet_links_group = entities.add_group
+          cabinet_links_group.name = cabinet_link.description if cabinet_link.description
+          cabinet_links_group.transformation = transformation * cabinet_link.transformations.to_t
+          cabinet_links_entities = cabinet_links_group.entities
+        end
 
-        _process_part_links(cabinet.part_links, group.entities, project_wrapper: project_wrapper, cabinet_link_wrapper: cabinet_link_wrapper)
-        _process_container_links(cabinet.container_links, group.entities, project_wrapper: project_wrapper, cabinet_link_wrapper: cabinet_link_wrapper)
-        _process_function_unit_links(cabinet.function_unit_links, group.entities, project_wrapper: project_wrapper, cabinet_link_wrapper: cabinet_link_wrapper)
+        _process_part_links(cabinet.part_links, cabinet_links_entities, project_wrapper: project_wrapper, cabinet_link_wrapper: cabinet_link_wrapper)
+        _process_container_links(cabinet.container_links, cabinet_links_entities, project_wrapper: project_wrapper, cabinet_link_wrapper: cabinet_link_wrapper)
+        _process_function_unit_links(cabinet.function_unit_links, cabinet_links_entities, project_wrapper: project_wrapper, cabinet_link_wrapper: cabinet_link_wrapper)
 
       end
 
@@ -186,49 +230,63 @@ module Ladb::OpenCutList
 
         next if part.nil? || part.geometry.nil?
 
+        part_link_wrapper = ImportersBxf2PartLinkFormulaWrapper.new(part_link)
+
         formula = @parts_formula.is_a?(String) && !@parts_formula.empty? ? @parts_formula : '@part'
         data = ImportersBxf2PartData.new(
 
-          part: ImportersBxf2PartLinkFormulaWrapper.new(part_link),
+          part: part_link_wrapper,
           project: project_wrapper,
           cabinet: cabinet_link_wrapper
 
         )
         part_name = CommonEvalFormulaWorker.new(formula: formula, data: data).run
-        raise part_name[:error] if part_name.is_a?(Hash) && part_name[:error]
-        part_name = PLUGIN.get_i18n_string('default.part_single').capitalize if part_name.nil? || part_name.strip.empty?
+        raise ImportersBxf2FormulaError.new(part_name[:error], part_name[:error_type]) if part_name.is_a?(Hash) && part_name[:error]
 
-        definition = (@parts_factory ||= {})[[part, part_name]] ||= begin
+        if @dry_run
 
-                                                                      definition = Sketchup.active_model.definitions.add(part_name)
+          old_name = part_link_wrapper.to_s
+          new_name = part_name == old_name ? nil : part_name
 
-                                                                      # Draw geometry
-                                                                      if part.geometry.is_a?(Bxf::BxfGeometryBox)
-                                                                        _draw_box(definition.entities, part.geometry.extent.to_b)
-                                                                      elsif part.geometry.is_a?(Bxf::BxfGeometryPrism)
-                                                                        _draw_prism(definition.entities, part.geometry)
-                                                                      elsif part.geometry.is_a?(Bxf::BxfGeometryCylinder)
-                                                                        _draw_cylinder(definition.entities, part.geometry)
-                                                                      end
+          (@part_names_data[[ part, part_name ]] ||= []) << [ old_name, new_name ]
 
-                                                                      da = DefinitionAttributes.new(definition)
-                                                                      da.orientation_locked_on_axis = true
-                                                                      da.write_to_attributes
+        else
 
-                                                                      # Process machinings
-                                                                      _process_inherited_machinings(part.inherited_machinings, definition.entities)
-                                                                      _process_machining_group_links(part.machining_group_links, definition.entities)
-                                                                      _process_machining_links(part.machining_links, definition.entities)
+          part_name = PLUGIN.get_i18n_string('default.part_single').capitalize if part_name.nil? || part_name.strip.empty?
 
-                                                                      # Transform definition's entities
-                                                                      definition.entities.transform_entities(PART_FRONT_BACK_SWAP_TRANSFORM_INVERSE, definition.entities.to_a)
+          definition = (@parts_factory ||= {})[[ part, part_name ]] ||= begin
 
-                                                                      definition
-                                                                    end
+                                                                          definition = Sketchup.active_model.definitions.add(part_name)
 
-        instance = entities.add_instance(definition, part_link.transformations.to_t * PART_FRONT_BACK_SWAP_TRANSFORM)
-        instance.layer = _get_front_part_layer if part.model_key.start_with?('H-FRON')
-        instance.material = _get_part_material(part.material)
+                                                                          # Draw geometry
+                                                                          if part.geometry.is_a?(Bxf::BxfGeometryBox)
+                                                                            _draw_box(definition.entities, part.geometry.extent.to_b)
+                                                                          elsif part.geometry.is_a?(Bxf::BxfGeometryPrism)
+                                                                            _draw_prism(definition.entities, part.geometry)
+                                                                          elsif part.geometry.is_a?(Bxf::BxfGeometryCylinder)
+                                                                            _draw_cylinder(definition.entities, part.geometry)
+                                                                          end
+
+                                                                          da = DefinitionAttributes.new(definition)
+                                                                          da.orientation_locked_on_axis = true
+                                                                          da.write_to_attributes
+
+                                                                          # Process machinings
+                                                                          _process_inherited_machinings(part.inherited_machinings, definition.entities)
+                                                                          _process_machining_group_links(part.machining_group_links, definition.entities)
+                                                                          _process_machining_links(part.machining_links, definition.entities)
+
+                                                                          # Transform definition's entities
+                                                                          definition.entities.transform_entities(PART_FRONT_BACK_SWAP_TRANSFORM_INVERSE, definition.entities.to_a)
+
+                                                                          definition
+                                                                        end
+
+          instance = entities.add_instance(definition, part_link.transformations.to_t * PART_FRONT_BACK_SWAP_TRANSFORM)
+          instance.layer = _get_front_part_layer if part.model_key.start_with?('H-FRON')
+          instance.material = _get_part_material(part.material)
+
+        end
 
       end
 
@@ -252,33 +310,44 @@ module Ladb::OpenCutList
 
         function_unit = function_unit_link.function_unit
 
-        function_unit_group = entities.add_group
-        function_unit_group.name = "#{('A'..'Z').take(function_unit_link.zone.column + 1).last}/#{function_unit_link.zone.row + 1}"
-        function_unit_group.definition.description = function_unit.description if function_unit.description
-        function_unit_group.transformation = transformation * function_unit_link.transformations.to_t
+        if @dry_run
+          function_unit_entities = nil
+        else
+          function_unit_group = entities.add_group
+          function_unit_group.name = "#{('A'..'Z').take(function_unit_link.zone.column + 1).last}/#{function_unit_link.zone.row + 1}"
+          function_unit_group.definition.description = function_unit.description if function_unit.description
+          function_unit_group.transformation = transformation * function_unit_link.transformations.to_t
+          function_unit_entities = function_unit_group.entities
+        end
 
-        article_entities_stacks = {}
-        function_unit.article_links.each do |article_link|
+        _process_part_links(function_unit.part_links, function_unit_entities, project_wrapper: project_wrapper, cabinet_link_wrapper: cabinet_link_wrapper)
 
-          article = article_link.article
+        unless @dry_run
 
-          article_link.quantity.times do
+          article_entities_stacks = {}
+          function_unit.article_links.each do |article_link|
 
-            article_group = function_unit_group.entities.add_group
-            article_group.name = article.article_number if article.article_number
-            article_group.definition.description = article.description if article.description
-            article_group.material = _get_hardware_material
+            article = article_link.article
 
-            article.component_numbers.each do |component_number|
-              (article_entities_stacks[component_number] ||= []) << article_group.entities
+            article_link.quantity.times do
+
+              article_group = function_unit_entities.add_group
+              article_group.name = article.article_number if article.article_number
+              article_group.definition.description = article.description if article.description
+              article_group.material = _get_hardware_material
+              article_entities = article_group.entities
+
+              article.component_numbers.each do |component_number|
+                (article_entities_stacks[component_number] ||= []) << article_entities
+              end
+
             end
 
           end
 
-        end
+          _process_component_links(function_unit.component_links, function_unit_entities, article_entities_stacks)
 
-        _process_part_links(function_unit.part_links, function_unit_group.entities, project_wrapper: project_wrapper, cabinet_link_wrapper: cabinet_link_wrapper)
-        _process_component_links(function_unit.component_links, function_unit_group.entities, article_entities_stacks)
+        end
 
       end
 
@@ -419,9 +488,10 @@ module Ladb::OpenCutList
 
         machining_group = machining_group_link.machining_group
 
-        group = entities.add_group
-        group.name = machining_group.model_key if machining_group.model_key
-        group.material = _get_machining_material
+        machining_group_links_group = entities.add_group
+        machining_group_links_group.name = machining_group.model_key if machining_group.model_key
+        machining_group_links_group.material = _get_machining_material
+        machining_group_links_entities = machining_group_links_group.entities
 
         if machining_group.is_a?(Bxf::BxfGridMachining)
 
@@ -441,7 +511,7 @@ module Ladb::OpenCutList
               y = row_index * row_distance
               t1 = Geom::Transformation.translation(Geom::Vector3d.new(x, y, 0))
 
-              _process_machining_links(machining_group.machining_links, group.entities, transformation: t0 * t1)
+              _process_machining_links(machining_group.machining_links, machining_group_links_entities, transformation: t0 * t1)
 
             end
 
@@ -449,7 +519,7 @@ module Ladb::OpenCutList
 
         else
 
-          _process_machining_links(machining_group.machining_links, group.entities, transformation: transformation * machining_group_link.transformations.to_t)
+          _process_machining_links(machining_group.machining_links, machining_group_links_entities, transformation: transformation * machining_group_link.transformations.to_t)
 
         end
 
@@ -884,6 +954,10 @@ module Ladb::OpenCutList
       super
     end
 
+    def cabinet
+      @bxf_object.cabinet
+    end
+
     def width
       width = _get_parameter_length(@bxf_object.parameters['outerwidth'])
       LengthFormulaWrapper.new(width ? width : 0)
@@ -915,6 +989,10 @@ module Ladb::OpenCutList
       if (part = self.part).is_a?(Bxf::BxfPart)
         part.model_key.to_s
       end
+    end
+
+    def front?
+      model_key.to_s.start_with?('H-FRON')
     end
 
   end
@@ -1082,6 +1160,17 @@ module Ladb::OpenCutList
       k_box.transformation = t
       @tool.append_3d(k_box)
 
+    end
+
+  end
+
+  class ImportersBxf2FormulaError < StandardError
+
+    attr_reader :error_type
+
+    def initialize(message, error_type = nil)
+      super(message)
+      @error_type = error_type
     end
 
   end

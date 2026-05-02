@@ -2036,6 +2036,9 @@ tab:
         option_no_material_help: "*Laissez ce champ vide pour ne pas appliquer de matière*."
         option_default_material_help: "*Une matière par défaut sera créée si ce champ est vide*."
         option_no_layer_help: "*Laissez ce champ vide pour ne pas appliquer de balise*."
+        old_name: Nom d'origine
+        new_name: Nouveau nom
+        count: Nb.
         formula:
           part: Pièce
           project: Projet

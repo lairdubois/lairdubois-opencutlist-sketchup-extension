@@ -89,7 +89,7 @@
 
             const $modal = that.appendModalInside('ladb_importer_modal_import', 'tabs/importers/bxf2/_modal-import.twig', $.extend({
                 cabinetCount: that.model.cabinets.length,
-                tab: that.lastImportOptionsTab == null ? 'materials' : that.lastImportOptionsTab,
+                tab: that.lastImportOptionsTab == null ? 'formula' : that.lastImportOptionsTab,
             }, importOptions));
 
             // Fetch UI elements
@@ -104,6 +104,10 @@
             const $inputMachiningLayerName = $('#ladb_importer_import_input_machining_layer_name', $modal);
             const $inputHardwareMaterialName = $('#ladb_importer_import_input_hardware_material_name', $modal);
             const $inputHardwareLayerName = $('#ladb_importer_import_input_hardware_layer_name', $modal);
+            const $panelPreview = $('#ladb_panel_preview', $modal);
+            const $panelPreviewContent = $('#ladb_panel_preview_content', $modal);
+            const $panelPreviewContentTbody = $('tbody', $panelPreviewContent);
+            const $panelPreviewErrors = $('#ladb_panel_preview_errors', $modal);
             const $btnImport = $('#ladb_importer_import', $modal);
 
             // Define useful functions
@@ -182,17 +186,67 @@
                 fnFetchOptions: fnFetchOptions,
                 fnFillInputs: fnFillInputs
             });
-            $textareaPartsFormula.ladbTextinputCode({
-                variableDefs: fnConvertToVariableDefs([
-                    { name: 'part', type: 'bxf_part' },
-                    { name: 'cabinet', type: 'bxf_cabinet' },
-                    { name: 'project', type: 'bxf_project' },
-                ]),
-                snippetDefs: [
-                    { name: i18next.t('tab.importers.bxf2.import.formula.cabinet') + '.' + i18next.t('tab.importers.bxf2.import.formula.part') , value: '@cabinet + "." + @part' },
-                    { name: i18next.t('tab.importers.bxf2.import.formula.project') + '.' + i18next.t('tab.importers.bxf2.import.formula.part') , value: '@project + "." + @part' },
-                ]
-            });
+            $textareaPartsFormula
+                .ladbTextinputCode({
+                    variableDefs: fnConvertToVariableDefs([
+                        { name: 'part', type: 'bxf_part' },
+                        { name: 'cabinet', type: 'bxf_cabinet' },
+                        { name: 'project', type: 'bxf_project' },
+                    ]),
+                    snippetDefs: [
+                        { name: i18next.t('tab.importers.bxf2.import.formula.cabinet') + '.' + i18next.t('tab.importers.bxf2.import.formula.part') , value: '@cabinet + "." + @part' },
+                        { name: i18next.t('tab.importers.bxf2.import.formula.project') + '.' + i18next.t('tab.importers.bxf2.import.formula.part') , value: '@project + "." + @part' },
+                    ]
+                })
+                .on('change', function () {
+
+                    // Fetch options
+                    fnFetchOptions(importOptions);
+
+                    rubyCallCommand('importers_bxf2_import', $.extend({
+                        dry_run: true
+                    }, importOptions), function (response) {
+
+                        if (response.errors) {
+                            $panelPreview
+                                .show()
+                                .addClass('panel-danger')
+                                .removeClass('panel-default')
+                            ;
+                            $panelPreviewContent.hide();
+                            $panelPreviewErrors
+                                .empty()
+                                .show()
+                            ;
+                            $.each(response.errors, function (index, error) {
+                                $panelPreviewErrors.append($('<div>').html(i18next.t('core.error.' + error.error_type, error)));
+                            });
+                        } else if (response.preview) {
+                            $panelPreview
+                                .show()
+                                .addClass('panel-default')
+                                .removeClass('panel-danger')
+                            ;
+                            $panelPreviewErrors.hide();
+                            $panelPreviewContent.show();
+                            $panelPreviewContentTbody.empty();
+                            $.each(response.preview, function (index, row) {
+                                $panelPreviewContentTbody.append(Twig.twig({
+                                    data: '<tr><td class="ladb-muted" width="50%">{{ old_name }}</td><td{% if new_name is empty %} class="ladb-muted"{% endif %}>{{ new_name ? new_name : old_name }}</td><td>{{ count }}</td></td></div>'
+                                }).render({
+                                    old_name: row[0],
+                                    new_name: row[1],
+                                    count: row[2],
+                                }));
+                            });
+                        } else {
+                            $panelPreview.hide();
+                        }
+
+                    });
+
+                })
+            ;
             $inputPartWoodMaterialName.ladbTextinputText(fnMaterialTextinputOptions(2));
             $inputPartAluminiumMaterialName.ladbTextinputText(fnMaterialTextinputOptions(2));
             $inputPartGlassMaterialName.ladbTextinputText(fnMaterialTextinputOptions(2));

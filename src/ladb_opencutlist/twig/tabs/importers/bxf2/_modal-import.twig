@@ -11,9 +11,9 @@
 {% block headerInner %}
     {{ parent() }}
     <ul class="nav nav-tabs nav-justified" role="tablist">
+        <li role="presentation"{% if tab == 'formula' %} class="active"{% endif %}><a href="#tab_import_options_formula" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-formula"></i> {{ 'tab.importers.bxf2.import.option_parts_formula'|i18next }}</a></li>
         <li role="presentation"{% if tab == 'materials' %} class="active"{% endif %}><a href="#tab_import_options_materials" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-materials"></i> {{ 'tab.importers.bxf2.import.materials'|i18next }}</a></li>
         <li role="presentation"{% if tab == 'layers' %} class="active"{% endif %}><a href="#tab_import_options_layers" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-layer"></i> {{ 'tab.importers.bxf2.import.layers'|i18next }}</a></li>
-        <li role="presentation"{% if tab == 'formula' %} class="active"{% endif %}><a href="#tab_import_options_formula" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-formula"></i> {{ 'tab.importers.bxf2.import.option_parts_formula'|i18next }}</a></li>
     </ul>
 {% endblock %}
 
@@ -24,6 +24,33 @@
     </div>
     <hr>
     <div class="tab-content">
+        <div role="tabpanel" class="tab-pane{% if tab == 'formula' %} active{% endif %}" id="tab_import_options_formula">
+            <div class="form row">
+                <div class="form-group">
+                    <label class="control-label col-xs-offset-1 col-xs-11">{{ 'tab.importers.bxf2.import.option_parts_formula'|i18next }} <small style="font-weight: normal;">(Ruby)</small></label>
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.importers.bxf2.import.option_parts_formula_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <div class="col-xs-offset-1 col-xs-10">
+                        <textarea id="ladb_importer_import_textarea_parts_formula" class="form-control" placeholder="{{ 'tab.importers.bxf2.import.formula.part'|i18next }}"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-sm-push-1 col-sm-10" style="margin-top: 20px;">
+                    <div id="ladb_panel_preview" class="panel ladb-panel-preview" style="display: none;">
+                        <div class="panel-heading">{{ 'default.preview'|i18next }}</div>
+                        <div class="panel-body">
+                            <div id="ladb_panel_preview_content" class="ladb-panel-preview-content">
+                                <table class="table table-condensed">
+                                    <thead><tr><th>{{ 'tab.importers.bxf2.import.old_name'|i18next }}</th><th>{{ 'tab.importers.bxf2.import.new_name'|i18next }}</th><th>{{ 'tab.importers.bxf2.import.count'|i18next }}</th></tr></thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                            <div id="ladb_panel_preview_errors" class="ladb-panel-preview-errors"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div role="tabpanel" class="tab-pane{% if tab == 'materials' %} active{% endif %}" id="tab_import_options_materials">
             <div class="form form-horizontal">
                 <div class="form-group">
@@ -84,17 +111,6 @@
                     <label class="control-label col-xs-3">{{ 'tab.importers.bxf2.import.option_hardware_layer_name'|i18next }}</label>
                     <div class="col-xs-7">
                         <input type="text" class="form-control" id="ladb_importer_import_input_hardware_layer_name">
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div role="tabpanel" class="tab-pane{% if tab == 'formula' %} active{% endif %}" id="tab_import_options_formula">
-            <div class="form row">
-                <div class="form-group">
-                    <label class="control-label col-xs-offset-1 col-xs-11">{{ 'tab.importers.bxf2.import.option_parts_formula'|i18next }} <small style="font-weight: normal;">(Ruby)</small></label>
-                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.importers.bxf2.import.option_parts_formula_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                    <div class="col-xs-offset-1 col-xs-10">
-                        <textarea id="ladb_importer_import_textarea_parts_formula" class="form-control" placeholder="{{ 'tab.importers.bxf2.import.formula.part'|i18next }}"></textarea>
                     </div>
                 </div>
             </div>
