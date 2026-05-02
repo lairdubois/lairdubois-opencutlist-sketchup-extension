@@ -88,9 +88,13 @@ module Ladb::OpenCutList
 
     # -----
 
-    def has_tags(tags)
-      return false if tags.empty?
-      (tags - @tags).empty?
+    def has_all_tags?(tags)
+      return true if tags.empty?
+      (tags & @tags).size == tags.size
+    end
+
+    def has_any_tags?(tags)
+      (tags & @tags).any?
     end
 
     # -----

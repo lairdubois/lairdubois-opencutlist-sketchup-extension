@@ -81,6 +81,10 @@ module Ladb::OpenCutList
 
       @names_filter = names_filter
       @tags_filter = tags_filter
+      @ok_tags_filter, @ko_tags_filter = @tags_filter.map { |v| (m = /^([+-])(.*)/.match(v)) && [ m[1], m[2] ] }
+                                                     .compact
+                                                     .partition { |sign, _| sign == '+' }
+                                                     .map { |a| a.map(&:last) }
       @edge_material_names_filter = edge_material_names_filter
       @veneer_material_names_filter = veneer_material_names_filter
 
@@ -199,14 +203,7 @@ module Ladb::OpenCutList
 
         # Tags filter
         unless @tags_filter.empty?
-          ok_tags = []
-          ko_tags = []
-          @tags_filter.each do |value|
-            m = /([+-])(.*)/.match(value)
-            ok_tags << m[2] if m && m[1] == '+'
-            ko_tags << m[2] if m && m[1] == '-'
-          end
-          if !ok_tags.empty? && !definition_attributes.has_tags(ok_tags) || !ko_tags.empty? && definition_attributes.has_tags(ko_tags)
+          if !@ok_tags_filter.empty? && !definition_attributes.has_all_tags?(@ok_tags_filter) || !@ko_tags_filter.empty? && definition_attributes.has_any_tags?(@ko_tags_filter)
             cutlist.ignored_instance_count += 1
             next
           end
