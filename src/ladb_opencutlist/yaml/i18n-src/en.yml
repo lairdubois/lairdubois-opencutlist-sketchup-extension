@@ -2036,6 +2036,9 @@ tab:
         option_no_material_help: "*Leave this field blank to prevent the application of any material*."
         option_default_material_help: "*If this field is left empty, a default material will be created*."
         option_no_layer_help: "*Leave this field blank to prevent the application of any tag*."
+        old_name: Original name
+        new_name: New name
+        count: Qty.
         formula:
           part: Part
           project: Project

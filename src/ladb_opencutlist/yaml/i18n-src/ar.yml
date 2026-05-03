@@ -382,6 +382,7 @@ tab:
       children_size_increase: "جرى تمديد هذا البعد لـ {{ count }} قِطعٍ / قِطعةً مجموعة"
       invalid_final_area: "تنبيه، لا يمكن حساب هذه المساحة الإجمالية لأن {{ count }} قطعة (من أصل {{ total }}) بها مساحة غير صالحة"
       invalid_final_area_plural: "تنبيه، لا يمكن حساب هذه المساحة الإجمالية لأن {{ count }} قطعة/ قِطع (من أصل {{ total }}) بها مساحة غير صالحة"
+      is_instance_name: وصف هذه القِطعة مستخرج من اسم مثيل المجموعة
       is_dynamic_attributes_name: وصف هذه القطعة مأخوذ من 'Name' الخاص بالعنصر الديناميكي
       has_edges: "تحتوي هذه القطعة على {{ count }} حاشية"
       has_edges_plural: "تحتوي هذه القطعة على {{ count }} حواشٍ"
@@ -613,6 +614,7 @@ tab:
       filters_warning_plural: "يعرض هذا المُرَشِّح فقط **{{ count }}** قِطع/قطعة من مجموع {{ total }}."
       edge_material_names_filter: تصفية وفق خامة الحواشي
       veneer_material_names_filter: ترشيح وفقا لخامة قشرة الخشب
+      names_filter: تصفية بالتسميات
       tags_filter: تصفية بالوسوم
       dimensions_help: فهم الأبعاد
       summary: ملخص
@@ -2011,25 +2013,33 @@ tab:
         info_0_plural: |
           أنت مقبل على استيراد إعداد من أجل **{{ count }} خزانة / خزائن** داخل النموذج
         info_1: ستتمكن من اختيار موضعها في النموذج النشط
-        info_2: |
-          خصص الخيارات
-          انقر على **استيراد** لتأكيد العمل
-        option_part_wood_material_name: خامة القِطع الخشبية
-        option_part_wood_material_name_help: مساعدة - خامة القِطع الخشبية
-        option_part_aluminium_material_name: خامة قِطع الألمنيوم
-        option_part_aluminium_material_name_help: مساعدة - خامة قِطع الألمنيوم
-        option_part_glass_material_name: خامة القِطع الزجاجية
-        option_part_glass_material_name_help: مساعدة - خامة القِطع الزجاجية
-        option_front_part_layer_name: وسوم الواجهات
-        option_front_part_layer_name_help: مساعدة - وسوم الواجهات
-        option_machining_material_name: خامة التشغيلات
-        option_machining_material_name_help: مساعدة - خامة التشغيلات
-        option_machining_layer_name: وسوم التشغيلات
-        option_machining_layer_name_help: مساعدة - وسوم التشغيلات
-        option_hardware_material_name: خامة الأكسسوارات
-        option_hardware_material_name_help: مساعدة - خامة الأكسسوارات
-        option_hardware_layer_name: وسوم الأكسسوارات
-        option_hardware_layer_name_help: مساعدة - وسوم الأكسسوارات
+        materials: الخامات
+        layers: وسوم
+        option_parts_formula: الصيغة
+        option_parts_formula_help: تتيح لك المعادلة تخصيص أسماء القِطع المستوردة
+        option_part_wood_material_name: خشب
+        option_part_wood_material_name_help: الخامة التي ستطبق على القِطع **الخشبية**
+        option_part_aluminium_material_name: ألمنيوم
+        option_part_aluminium_material_name_help: الخامة التي ستطبق على قطع **الألمنيوم**
+        option_part_glass_material_name: زجاج
+        option_part_glass_material_name_help: الخامة التي ستطبق على القِطع **الزجاجية**
+        option_front_part_layer_name: الواجهات
+        option_front_part_layer_name_help: الوسم الذي سيطبق على لقِطع الواجهة
+        option_machining_material_name: التشغيل
+        option_machining_material_name_help: الخامة التي ستطبق على عمليات **التشغيل**
+        option_machining_layer_name: التشغيل
+        option_machining_layer_name_help: الوسم الذي سيطبق على عمليات التشغيل
+        option_hardware_material_name: العتاد
+        option_hardware_material_name_help: الخامة التي ستطبق على قِطع **العتاد**
+        option_hardware_layer_name: العتاد
+        option_hardware_layer_name_help: الوسم الذي سيطبق على العتاد
+        option_no_material_help: "*اترك هذا الحقل فارغا لتجنب تطبيق أي خامة*"
+        option_default_material_help: "*إن تُرك هذا الحقل فارغا، فيستم إنشاء خامة افتراضية*"
+        option_no_layer_help: "*اترك هذا الحقل فارغا لتجنب تطبيق أي وسم*"
+        formula:
+          part: القِطعة
+          project: مشروع
+          cabinet: خزانة
       model:
         author: المؤلف
         date: التاريخ
@@ -2044,9 +2054,14 @@ tab:
         total_quantity: العدد
         article_number: المرجع
         description: تعليق وصفيّ
+        material: الخامة
       error:
         failed_to_load_bxf2_file: |
           يستحيل رفع ملف BXF2 لأن: **{{ error }}**
+      warning:
+        partial_support: |
+          تحتاج إلى **SketchUp 2021.1** أو نسخة أحدث للاستفادة من كل الخصائص
+          **لا يمكن استيراد** الهندسة ثلاثية الأبعـ3Dـاد لقطع العتاد 
       obsolete_base: " عليك إعادة رفع ملف BXF2 للبقاء في وضع المزامنة"
   tutorials:
     label: شروحات توضيحية

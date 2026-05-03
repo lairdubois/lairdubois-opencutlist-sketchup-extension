@@ -2036,6 +2036,9 @@ tab:
         option_no_material_help: "*Lassen Sie dieses Feld leer, wenn Sie kein Material auftragen möchten*."
         option_default_material_help: "*Wenn dieses Feld leer ist, wird ein Standardmaterial erstellt*."
         option_no_layer_help: "*Lassen Sie dieses Feld leer, um kein Tag einzufügen*."
+        old_name: Ursprünglicher Name
+        new_name: Neuer Name
+        count: Anz.
         formula:
           part: Teil
           project: Projekt
