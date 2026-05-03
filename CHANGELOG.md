@@ -22,6 +22,8 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
+### 2026-05-03
+ * Added BXF2 importer `zone`, `zon_column`, `zone_row` and `function_unit` properties to `@part` variable
 ### 2026-05-02
  * Improved cutlist tags filters
  * Added BXF2 importer formula preview

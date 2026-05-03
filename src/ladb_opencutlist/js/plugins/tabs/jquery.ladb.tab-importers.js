@@ -212,8 +212,8 @@
                 .ladbTextinputCode({
                     variableDefs: fnConvertToVariableDefs([
                         { name: 'part', type: 'bxf_part' },
-                        { name: 'cabinet', type: 'bxf_cabinet' },
                         { name: 'project', type: 'bxf_project' },
+                        { name: 'cabinet', type: 'bxf_cabinet' }
                     ]),
                     snippetDefs: [
                         { name: i18next.t('tab.importers.bxf2.import.formula.cabinet') + '.' + i18next.t('tab.importers.bxf2.import.formula.part') , value: '@cabinet + "." + @part' },

@@ -561,8 +561,8 @@ module Ladb::OpenCutList
       def initialize(model)
         super
 
-        @row = 0
-        @column = 0
+        @row = -1
+        @column = -1
 
       end
 
@@ -572,6 +572,10 @@ module Ladb::OpenCutList
         self.column = zone_elm.attributes['column'].to_i
 
         super
+      end
+
+      def valid?
+        row >= 0 && column >= 0
       end
 
     end

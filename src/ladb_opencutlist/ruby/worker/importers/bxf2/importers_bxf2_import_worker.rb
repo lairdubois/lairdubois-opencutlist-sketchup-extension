@@ -222,7 +222,7 @@ module Ladb::OpenCutList
 
     end
 
-    def _process_part_links(part_links, entities, project_wrapper: nil, cabinet_link_wrapper: nil)
+    def _process_part_links(part_links, entities, project_wrapper: nil, cabinet_link_wrapper: nil, function_unit_wrapper: nil)
 
       part_links.each do |part_link|
 
@@ -230,7 +230,7 @@ module Ladb::OpenCutList
 
         next if part.nil? || part.geometry.nil?
 
-        part_link_wrapper = ImportersBxf2PartLinkFormulaWrapper.new(part_link)
+        part_link_wrapper = ImportersBxf2PartLinkFormulaWrapper.new(part_link, function_unit_wrapper)
 
         formula = @parts_formula.is_a?(String) && !@parts_formula.empty? ? @parts_formula : '@part'
         data = ImportersBxf2PartData.new(
@@ -320,7 +320,9 @@ module Ladb::OpenCutList
           function_unit_entities = function_unit_group.entities
         end
 
-        _process_part_links(function_unit.part_links, function_unit_entities, project_wrapper: project_wrapper, cabinet_link_wrapper: cabinet_link_wrapper)
+        function_unit_wrapper = ImportersBxf2FunctionUnitLinkFormulaWrapper.new(function_unit_link)
+
+        _process_part_links(function_unit.part_links, function_unit_entities, project_wrapper: project_wrapper, cabinet_link_wrapper: cabinet_link_wrapper, function_unit_wrapper: function_unit_wrapper)
 
         unless @dry_run
 
@@ -925,6 +927,11 @@ module Ladb::OpenCutList
 
     protected
 
+    def _get_parameter_integer(bxf_parameter)
+      return nil unless bxf_parameter.is_a?(Bxf::BxfParameter)
+      bxf_parameter.value.to_i
+    end
+
     def _get_parameter_length(bxf_parameter)
       return nil unless bxf_parameter.is_a?(Bxf::BxfParameter)
       Bxf::BxfLength.new(bxf_parameter.model)
@@ -940,10 +947,42 @@ module Ladb::OpenCutList
       super
     end
 
-    def +(value)
-      if value.is_a?(String)
-        self.to_s + value
+  end
+
+  class ImportersBxf2ZonableFormulaWrapper < ImportersBxf2FormulaWrapper
+
+    def initialize(bxf_node)
+      super
+    end
+
+    def zone_column
+      if @bxf_object.respond_to?(:zone) && @bxf_object.zone.is_a?(Bxf::BxfZone) && @bxf_object.zone.valid?
+        # Extracted from <zone> tag
+        return "#{('A'..'Z').take(@bxf_object.zone.column + 1).last}"
+      else
+        if (zone = _get_parameter_integer(@bxf_object.parameters['zone']))
+          # Extracted from <parameter> tag
+          return "#{('A'..'Z').take(zone).last}"
+        end
       end
+      nil
+    end
+
+    def zone_row
+      if @bxf_object.respond_to?(:zone) && @bxf_object.zone.is_a?(Bxf::BxfZone) && @bxf_object.zone.valid?
+        # Extracted from <zone> tag
+        return "#{@bxf_object.zone.row + 1}"
+      else
+        if (zone_position = _get_parameter_integer(@bxf_object.parameters['zonePosition']))
+          # Extracted from <parameter> tag
+          return "#{zone_position}"
+        end
+      end
+      nil
+    end
+
+    def zone
+      [ zone_column, zone_row ].compact.join('/')
     end
 
   end
@@ -952,10 +991,6 @@ module Ladb::OpenCutList
 
     def initialize(bxf_cabinet_link)
       super
-    end
-
-    def cabinet
-      @bxf_object.cabinet
     end
 
     def width
@@ -975,24 +1010,38 @@ module Ladb::OpenCutList
 
   end
 
-  class ImportersBxf2PartLinkFormulaWrapper < ImportersBxf2FormulaWrapper
+  class ImportersBxf2PartLinkFormulaWrapper < ImportersBxf2ZonableFormulaWrapper
 
-    def initialize(bxf_part_link)
-      super
-    end
-
-    def part
-      @bxf_object.part
+    def initialize(bxf_part_link, function_unit_wrapper)
+      super(bxf_part_link)
+      @function_unit_wrapper = function_unit_wrapper
     end
 
     def model_key
-      if (part = self.part).is_a?(Bxf::BxfPart)
+      if (part = @bxf_object.part).is_a?(Bxf::BxfPart)
         part.model_key.to_s
       end
     end
 
     def front?
       model_key.to_s.start_with?('H-FRON')
+    end
+
+    def function_unit
+      @function_unit_wrapper
+    end
+
+  end
+
+  class ImportersBxf2FunctionUnitLinkFormulaWrapper < ImportersBxf2ZonableFormulaWrapper
+
+    def initialize(bxf_function_unit_link)
+      super
+    end
+
+    def to_s
+      return '' if @bxf_object.nil?
+      zone
     end
 
   end
