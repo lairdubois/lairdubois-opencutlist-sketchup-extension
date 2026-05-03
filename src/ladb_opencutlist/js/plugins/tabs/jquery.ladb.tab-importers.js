@@ -65,6 +65,13 @@
                 const $btnImport = $('#ladb_btn_import', $slide);
                 const $btnClose = $('#ladb_btn_close', $slide);
 
+                // Bind rows
+                $('.ladb-cutlist-row', $slide).on('click', function () {
+                    $(this).blur();
+                    $('.ladb-click-tool', $(this)).first().click();
+                    return false;
+                });
+
                 // Bind buttons
                 $btnImport.on('click', function () {
                     that.importBxf2();
@@ -74,6 +81,7 @@
                     that.close();
                 });
                 $('.ladb-btn-edit-cabinet', $slide).on('click', function () {
+                    $(this).blur();
                     const objectId = $(this).data('object-id');
                     const cabinet = that.model.cabinets.find(function (cabinet) { return cabinet.object_id === objectId; });
                     const $row = $(this).closest('tr.ladb-cutlist-row');
@@ -92,6 +100,7 @@
                         });
 
                     }, { selected: true });
+                    return false;
                 });
 
                 that.dialog.setupTooltips();

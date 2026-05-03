@@ -48,8 +48,8 @@
                 </thead>
                 <tbody>
                 {% for cabinet in model.cabinets %}
-                    <tr class="ladb-cutlist-row">
-                        <td>{% include 'tabs/importers/bxf2/_list-cabinet-description-value.twig' %}<div class="ladb-minitools ladb-minitools-right"><a href="#" class="ladb-btn-edit-cabinet" data-object-id="{{ cabinet.object_id }}" data-toggle="tooltip" title="{{ 'default.rename'|i18next }}"><i class="ladb-opencutlist-icon-edit"></i></a></div></td>
+                    <tr class="ladb-cutlist-row ladb-minitools-holder">
+                        <td>{% include 'tabs/importers/bxf2/_list-cabinet-description-value.twig' %}<div class="ladb-minitools ladb-minitools-right"><a href="#" class="ladb-btn-edit-cabinet ladb-click-tool" data-object-id="{{ cabinet.object_id }}" data-toggle="tooltip" title="{{ 'default.rename'|i18next }}"><i class="ladb-opencutlist-icon-edit"></i></a></div></td>
                         <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ cabinet.width }}</td>
                         <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ cabinet.height }}</td>
                         <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ cabinet.depth }}</td>
