@@ -955,34 +955,27 @@ module Ladb::OpenCutList
       super
     end
 
-    def zone_column
+    def zone
+      column = nil
+      row = nil
       if @bxf_object.respond_to?(:zone) && @bxf_object.zone.is_a?(Bxf::BxfZone) && @bxf_object.zone.valid?
         # Extracted from <zone> tag
-        return "#{('A'..'Z').take(@bxf_object.zone.column + 1).last}"
+        column = "#{('A'..'Z').take(@bxf_object.zone.column + 1).last}"
+        row = "#{@bxf_object.zone.row + 1}"
       else
         if (zone = _get_parameter_integer(@bxf_object.parameters['zone']))
           # Extracted from <parameter> tag
-          return "#{('A'..'Z').take(zone).last}"
+          column = "#{('A'..'Z').take(zone).last}"
         end
-      end
-      nil
-    end
-
-    def zone_row
-      if @bxf_object.respond_to?(:zone) && @bxf_object.zone.is_a?(Bxf::BxfZone) && @bxf_object.zone.valid?
-        # Extracted from <zone> tag
-        return "#{@bxf_object.zone.row + 1}"
-      else
         if (zone_position = _get_parameter_integer(@bxf_object.parameters['zonePosition']))
           # Extracted from <parameter> tag
-          return "#{zone_position}"
+          row = "#{zone_position}"
         end
       end
+      if column && row
+        return ImportersBxf2ZoneFormulaWrapper.new(column, row)
+      end
       nil
-    end
-
-    def zone
-      [ zone_column, zone_row ].compact.join('/')
     end
 
   end
@@ -1041,7 +1034,29 @@ module Ladb::OpenCutList
 
     def to_s
       return '' if @bxf_object.nil?
-      zone
+      zone.to_s
+    end
+
+  end
+
+  class ImportersBxf2ZoneFormulaWrapper < FormulaWrapper
+
+    def initialize(column, row)
+      super()
+      @column = column
+      @row = row
+    end
+
+    def column
+      @column
+    end
+
+    def row
+      @row
+    end
+
+    def to_s
+      "#{@column}/#{@row}"
     end
 
   end
