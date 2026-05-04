@@ -2036,6 +2036,9 @@ tab:
         option_no_material_help: "*اترك هذا الحقل فارغا لتجنب تطبيق أي خامة*"
         option_default_material_help: "*إن تُرك هذا الحقل فارغا، فيستم إنشاء خامة افتراضية*"
         option_no_layer_help: "*اترك هذا الحقل فارغا لتجنب تطبيق أي وسم*"
+        old_name: الاسم الأصلي
+        new_name: الاسم الجديد
+        count: العدد
         formula:
           part: القِطعة
           project: مشروع

@@ -2036,6 +2036,9 @@ tab:
         option_no_material_help: "*Залиште це поле порожнім, щоб не застосовувати матеріал*."
         option_default_material_help: "*Якщо це поле порожнє, буде створено матеріал за замовчуванням*."
         option_no_layer_help: "*Сервіс тимчасово недоступний*."
+        old_name: Оригінальна назва
+        new_name: Нове ім'я
+        count: Примітка
         formula:
           part: Деталь
           project: Проєкт
