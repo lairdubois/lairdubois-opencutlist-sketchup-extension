@@ -11,8 +11,16 @@
   line-height: 20px;
   min-height: 34px;
 }
+.CodeMirror {
+  height: auto;
+  max-height: 300px;
+}
+.CodeMirror-scroll {
+  overflow-y: auto !important;
+  max-height: 300px;
+}
 .CodeMirror-empty {
-  min-height: 34px;
+  min-height: 32px;
   color: #999;
 }
 

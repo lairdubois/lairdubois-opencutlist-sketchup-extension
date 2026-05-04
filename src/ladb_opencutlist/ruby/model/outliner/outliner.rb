@@ -26,12 +26,17 @@ module Ladb::OpenCutList
 
       @root_node = _def.root_node_def.nil? ? nil : _def.root_node_def.get_hashable
 
-      @available_materials = _def.available_material_defs.values.map(&:get_hashable).sort_by { |v| [MaterialAttributes.type_order(v.type), v.display_name.downcase ] }
-      @available_layers = _def.available_layer_defs.values.map { |layer_def| {
-        :name => layer_def.layer.name,
-        :path => layer_def.folder_defs.map { |folder_def| folder_def.layer_folder.name },
-        :color => ColorUtils.color_to_hex(layer_def.layer.color)
-      } }
+      @available_materials = _def.available_material_defs.values
+                                 .select { |material_def| !material_def.material.deleted? }
+                                 .map(&:get_hashable)
+                                 .sort_by { |v| [MaterialAttributes.type_order(v.type), v.display_name.downcase] }
+      @available_layers = _def.available_layer_defs.values
+                              .select { |layer_def| !layer_def.layer.deleted? }
+                              .map { |layer_def| {
+                                :name => layer_def.layer.name,
+                                :path => layer_def.folder_defs.map { |folder_def| folder_def.layer_folder.name },
+                                :color => ColorUtils.color_to_hex(layer_def.layer.color)
+                              } }
 
     end
 
