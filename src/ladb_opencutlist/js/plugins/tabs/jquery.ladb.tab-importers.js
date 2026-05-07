@@ -147,10 +147,10 @@
                 options.part_wood_material_name = $inputPartWoodMaterialName.val();
                 options.part_aluminium_material_name = $inputPartAluminiumMaterialName.val();
                 options.part_glass_material_name = $inputPartGlassMaterialName.val();
-                options.front_part_layer_name = $inputFrontPartLayerName.val();
                 options.machining_material_name = $inputMachiningMaterialName.val();
-                options.machining_layer_name = $inputMachiningLayerName.val();
                 options.hardware_material_name = $inputHardwareMaterialName.val();
+                options.front_part_layer_name = $inputFrontPartLayerName.val();
+                options.machining_layer_name = $inputMachiningLayerName.val();
                 options.hardware_layer_name = $inputHardwareLayerName.val();
             };
             const fnFillInputs = function (options) {
@@ -158,10 +158,10 @@
                 $inputPartWoodMaterialName.val(options.part_wood_material_name);
                 $inputPartAluminiumMaterialName.val(options.part_aluminium_material_name);
                 $inputPartGlassMaterialName.val(options.part_glass_material_name);
-                $inputFrontPartLayerName.val(options.front_part_layer_name);
                 $inputMachiningMaterialName.val(options.machining_material_name);
-                $inputMachiningLayerName.val(options.machining_layer_name);
                 $inputHardwareMaterialName.val(options.hardware_material_name);
+                $inputFrontPartLayerName.val(options.front_part_layer_name);
+                $inputMachiningLayerName.val(options.machining_layer_name);
                 $inputHardwareLayerName.val(options.hardware_layer_name);
             };
             const fnConvertToVariableDefs = function (vars) {
@@ -281,10 +281,10 @@
             $inputPartWoodMaterialName.ladbTextinputText(fnMaterialTextinputOptions(2));
             $inputPartAluminiumMaterialName.ladbTextinputText(fnMaterialTextinputOptions(2));
             $inputPartGlassMaterialName.ladbTextinputText(fnMaterialTextinputOptions(2));
-            $inputFrontPartLayerName.ladbTextinputText(TEXTINPUT_LAYERS_OPTIONS);
             $inputMachiningMaterialName.ladbTextinputText(fnMaterialTextinputOptions(7));
-            $inputMachiningLayerName.ladbTextinputText(TEXTINPUT_LAYERS_OPTIONS);
             $inputHardwareMaterialName.ladbTextinputText(fnMaterialTextinputOptions(5));
+            $inputFrontPartLayerName.ladbTextinputText(TEXTINPUT_LAYERS_OPTIONS);
+            $inputMachiningLayerName.ladbTextinputText(TEXTINPUT_LAYERS_OPTIONS);
             $inputHardwareLayerName.ladbTextinputText(TEXTINPUT_LAYERS_OPTIONS);
 
             fnFillInputs(importOptions);
