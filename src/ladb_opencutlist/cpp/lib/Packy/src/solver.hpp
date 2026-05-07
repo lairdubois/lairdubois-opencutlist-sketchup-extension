@@ -1860,7 +1860,7 @@ namespace Packy {
                 auto x = aabb.x_min;
                 auto y = aabb.y_min;
                 auto width = aabb.x_max - aabb.x_min;
-                auto height = aabb.y_max - aabb.y_max + fake_trimming_y_ * 2;
+                auto height = aabb.y_max - aabb.y_min + fake_trimming_y_ * 2;
 
                 Shape fake_shape;
                 ShapeElement element_1;
