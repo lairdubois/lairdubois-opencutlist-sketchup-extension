@@ -22,6 +22,12 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
+### 2026-05-xx
+ * Fixed BXF2 importer form fill from presets
+ * Updated PackingSolver dependency
+### 2026-05-04
+ * Improved textinput code by adding max-height
+ * Updated translations
 ### 2026-05-03
  * Added BXF2 importer `zone`, `zon_column`, `zone_row` and `function_unit` properties to `@part` variable
 ### 2026-05-02

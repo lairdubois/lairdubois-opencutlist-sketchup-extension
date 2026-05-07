@@ -141,8 +141,11 @@
             const $panelPreviewErrors = $('#ladb_panel_preview_errors', $modal);
             const $btnImport = $('#ladb_importer_import', $modal);
 
+            let filled = false;
+
             // Define useful functions
             const fnFetchOptions = function (options) {
+                if (!filled) return;
                 options.parts_formula = $textareaPartsFormula.val();
                 options.part_wood_material_name = $inputPartWoodMaterialName.val();
                 options.part_aluminium_material_name = $inputPartAluminiumMaterialName.val();
@@ -163,6 +166,7 @@
                 $inputFrontPartLayerName.val(options.front_part_layer_name);
                 $inputMachiningLayerName.val(options.machining_layer_name);
                 $inputHardwareLayerName.val(options.hardware_layer_name);
+                filled = true;
             };
             const fnConvertToVariableDefs = function (vars) {
 
