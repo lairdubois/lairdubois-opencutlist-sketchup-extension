@@ -1776,14 +1776,20 @@ module Ladb::OpenCutList
 
       unit = @tool.get_unit
 
+      model = Sketchup.active_model
+      tools = model.tools
+      instance_path = (@active_container_path.is_a?(Array) ? @active_container_path : model.active_path.to_a) + [ _get_instance ]
+      selection = SmartSelection.new([ instance_path ])
+
       tool_defs = [
         {
           tooltip_key: "tool.smart_handle.action_#{SmartHandleTool::ACTION_COPY_LINE}",
           path: 'M0,0.667L0.333,0.667L0.333,1L0,1L0,0.667 M0.667,0L1,0L1,0.333L0.667,0.333L0.667,0 M0.417,0.583L0.583,0.417',
           block: lambda {
-            Sketchup.active_model.tools.push_tool(SmartHandleTool.new(
+            tools.push_tool(SmartHandleTool.new(
               current_action: SmartHandleTool::ACTION_COPY_LINE,
-              callback_action_handler: callback_action_handler
+              callback_action_handler: callback_action_handler,
+              startup_selection: selection
             ))
           }
         },
@@ -1791,9 +1797,10 @@ module Ladb::OpenCutList
           tooltip_key: "tool.smart_handle.action_#{SmartHandleTool::ACTION_COPY_GRID}",
           path: 'M0.333,0.667L0,0.667L0,1L0.333,1L0.333,0.667 M1,0.667L0.667,0.667L0.667,1L1,1L1,0.667 M0.333,0L0,0L0,0.333L0.333,0.333L0.333,0 M1,0L0.667,0L0.667,0.333L1,0.333L1,0 M0.167,0.417L0.167,0.583 M0.417,0.833L0.583,0.833',
           block: lambda {
-            Sketchup.active_model.tools.push_tool(SmartHandleTool.new(
+            tools.push_tool(SmartHandleTool.new(
               current_action: SmartHandleTool::ACTION_COPY_GRID,
-              callback_action_handler: callback_action_handler
+              callback_action_handler: callback_action_handler,
+              startup_selection: selection
             ))
           }
         },
@@ -1801,9 +1808,10 @@ module Ladb::OpenCutList
           tooltip_key: "tool.smart_handle.action_#{SmartHandleTool::ACTION_MOVE_LINE}",
           path: 'M0.666,0L1,0L1,0.334L0.666,0.334L0.666,0M0.083,0.917L0.583,0.417',
           block: lambda {
-            Sketchup.active_model.tools.push_tool(SmartHandleTool.new(
+            tools.push_tool(SmartHandleTool.new(
               current_action: SmartHandleTool::ACTION_MOVE_LINE,
-              callback_action_handler: callback_action_handler
+              callback_action_handler: callback_action_handler,
+              startup_selection: selection
             ))
           }
         },
@@ -1811,9 +1819,10 @@ module Ladb::OpenCutList
           tooltip_key: "tool.smart_handle.action_#{SmartHandleTool::ACTION_DISTRIBUTE}",
           path: 'M0.333,0.333L0.667,0.333L0.667,0.667L0.333,0.667L0.333,0.333 M0.083,0.917L0.25,0.75 M0.75,0.25L0.917,0.083',
           block: lambda {
-            Sketchup.active_model.tools.push_tool(SmartHandleTool.new(
+            tools.push_tool(SmartHandleTool.new(
               current_action: SmartHandleTool::ACTION_DISTRIBUTE,
-              callback_action_handler: callback_action_handler
+              callback_action_handler: callback_action_handler,
+              startup_selection: selection
             ))
           }
         },
@@ -1821,9 +1830,10 @@ module Ladb::OpenCutList
           tooltip_key: "tool.smart_reshape.action_#{SmartReshapeTool::ACTION_PANELING}",
           path: 'M0,0L0,0.375L0.625,0.375L1,0L0,0 M1,0L1,1L0.625,1L0.625,0.375',
           block: lambda {
-            Sketchup.active_model.tools.push_tool(SmartReshapeTool.new(
+            tools.push_tool(SmartReshapeTool.new(
               current_action: SmartReshapeTool::ACTION_PANELING,
-              callback_action_handler: callback_action_handler
+              callback_action_handler: callback_action_handler,
+              startup_selection: selection
             ))
           }
         }
@@ -1846,12 +1856,12 @@ module Ladb::OpenCutList
         k_btn.set_style_attribute(:border_color, SmartTool::COLOR_BRAND_LIGHT)
         k_btn.set_style_attribute(:border_color, SmartTool::COLOR_BRAND, :hover)
         k_btn.on(:enter) do
-          Sketchup.active_model.selection.clear
-          Sketchup.active_model.selection.add(_get_instance)
+          # Sketchup.active_model.selection.clear
+          # Sketchup.active_model.selection.add(_get_instance)
           @tool.show_message(PLUGIN.get_i18n_string(tool_def[:tooltip_key]))
         end
         k_btn.on(:leave) do
-          Sketchup.active_model.selection.clear
+          # Sketchup.active_model.selection.clear
           @tool.hide_message
         end
         k_btn.on(:click) do

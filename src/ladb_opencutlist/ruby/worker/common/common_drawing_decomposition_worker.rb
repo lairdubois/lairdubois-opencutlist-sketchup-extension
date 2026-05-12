@@ -5,6 +5,7 @@ module Ladb::OpenCutList
   require_relative '../../helper/material_attributes_caching_helper'
   require_relative '../../utils/path_utils'
   require_relative '../../utils/transformation_utils'
+  require_relative '../../utils/array_utils'
   require_relative '../../lib/geometrix/geometrix'
   require_relative '../../manipulator/face_manipulator'
   require_relative '../../manipulator/edge_manipulator'
@@ -136,11 +137,11 @@ module Ladb::OpenCutList
 
       else
 
-        paths = @ipaths.map { |ipath| ipath.to_a }
+        paths = @ipaths.map(&:to_a)
 
-        container_path = paths.first[0...-1]
+        container_path = ArrayUtils.common_prefix(*paths)
         container = container_path.empty? ? model : container_path.last
-        entities = paths.map { |path| path.last }
+        entities = paths.map(&:last)
 
         # Compute transformation to the last common element
         transformation = origin_transformation = Sketchup::InstancePath.new(container_path).transformation
@@ -150,11 +151,13 @@ module Ladb::OpenCutList
       # Adapt local axes if model.active_path is container_path
       if model.active_path == container_path
 
+        edit_transform = model.edit_transform
+
         origin_transformation *= Geom::Transformation.axes(
-          ORIGIN.transform(model.edit_transform),
-          X_AXIS.transform(model.edit_transform).normalize!,
-          Y_AXIS.transform(model.edit_transform).normalize!,
-          Z_AXIS.transform(model.edit_transform).normalize!
+          ORIGIN.transform(edit_transform),
+          X_AXIS.transform(edit_transform).normalize!,
+          Y_AXIS.transform(edit_transform).normalize!,
+          Z_AXIS.transform(edit_transform).normalize!
         )
 
         @input_local_x_axis = @input_local_x_axis.transform(origin_transformation).normalize!

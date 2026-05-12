@@ -71,11 +71,13 @@ module Ladb::OpenCutList
     # -----
 
     attr_reader :callback_action_handler
+    attr_accessor :startup_selection
 
-    def initialize(current_action: nil, callback_action_handler: nil)
+    def initialize(current_action: nil, callback_action_handler: nil, startup_selection: nil)
       super(current_action: current_action)
 
       @callback_action_handler = callback_action_handler
+      @startup_selection = startup_selection
 
     end
 

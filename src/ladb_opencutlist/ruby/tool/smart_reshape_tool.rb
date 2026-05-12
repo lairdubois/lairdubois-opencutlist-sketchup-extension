@@ -67,7 +67,7 @@ module Ladb::OpenCutList
       # {
       #   :action => ACTION_CSG,
       #   :options => {
-      #     ACTION_OPTION_CSG_OPERATION => [ACTION_OPTION_CSG_OPERATION_UNION, ACTION_OPTION_CSG_OPERATION_SUBTRACTION, ACTION_OPTION_CSG_OPERATION_INTERSECTION ]
+      #     ACTION_OPTION_CSG_OPERATION => [ ACTION_OPTION_CSG_OPERATION_UNION, ACTION_OPTION_CSG_OPERATION_SUBTRACTION, ACTION_OPTION_CSG_OPERATION_INTERSECTION ]
       #   }
       # }
     ].freeze
@@ -75,11 +75,13 @@ module Ladb::OpenCutList
     # -----
 
     attr_reader :callback_action_handler
+    attr_accessor :startup_selection
 
-    def initialize(current_action: nil, callback_action_handler: nil)
+    def initialize(current_action: nil, callback_action_handler: nil, startup_selection: nil)
       super(current_action: current_action)
 
       @callback_action_handler = callback_action_handler
+      @startup_selection = startup_selection
 
     end
 
@@ -1706,6 +1708,7 @@ module Ladb::OpenCutList
       # require_relative '../utils/transformation_utils'
       # TransformationUtils.print(et, label: 'et =')
       # TransformationUtils.print(det, label: 'det =')
+      # TransformationUtils.print(drawing_def.transformation, label: 'drawing_def.transformation =')
 
       _unhide_instances
 
@@ -1890,7 +1893,10 @@ module Ladb::OpenCutList
         sorting_order = (esv.valid? && esv.samedirection?(evpspe)) ? -1 : 1
 
         # Precompute the inverse of the active selection path transformation (invariant within the loop)
-        active_selection_path_ti = PathUtils.get_transformation(get_active_selection_path, IDENTITY).inverse
+        active_selection_path_t = PathUtils.get_transformation(get_active_selection_path, IDENTITY)
+        active_selection_path_ti = active_selection_path_t.inverse
+
+        # TransformationUtils.print(active_selection_path_ti, label: 'active_selection_path_ti =')
 
         container_defs.each do |container_def|
 
@@ -2003,7 +2009,8 @@ module Ladb::OpenCutList
               if container_def.depth > 0
                 ddv = ddv.transform((container_def.transformation * container_def.container_transformation).inverse)
               else
-                ddv = ddv.transform(det)
+                # ddv = ddv.transform(det)
+                ddv = ddv.transform(container_def.container_transformation.inverse * container_def.transformation * active_selection_path_t)
               end
             end
             stretched_definition_defs[container_def.definition] = StretchedDefinitionDef.new(ddv)
@@ -2883,23 +2890,32 @@ module Ladb::OpenCutList
       return if (model = Sketchup.active_model).nil?
       selection = model.selection
 
-      if selection.any?
+      container_path = nil
+      container = nil
 
-        if @tool.callback_action_handler &&
-           ((container = selection.first).is_a?(Sketchup::Group) || container.is_a?(Sketchup::ComponentInstance))
-          @drawing_def = CommonDrawingDecompositionWorker
-                           .new([Sketchup::InstancePath.new(model.active_path.to_a + [container])],
-                                ignore_faces: false,
-                                ignore_edges: false
-                           )
-                           .run
-          if @drawing_def.is_a?(DrawingDef)
-            set_state(STATE_PANELING)
-          end
+      if @tool.startup_selection.is_a?(SmartSelection)
+
+        container_path = @tool.startup_selection.path
+        container = @tool.startup_selection.instances.first
+
+      elsif selection.any?
+
+        if (container = selection.first).is_a?(Sketchup::Group) || container.is_a?(Sketchup::ComponentInstance)
+          container_path = model.active_path.to_a
         end
 
         selection.clear
 
+      end
+
+      unless container_path.nil? || container.nil?
+        @drawing_def = CommonDrawingDecompositionWorker
+                         .new([ Sketchup::InstancePath.new(container_path + [ container ]) ],
+                              ignore_faces: false,
+                              ignore_edges: false
+                         )
+                         .run
+        set_state(STATE_PANELING) if @drawing_def.is_a?(DrawingDef)
       end
 
     end

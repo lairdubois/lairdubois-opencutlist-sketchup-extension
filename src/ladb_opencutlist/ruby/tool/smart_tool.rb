@@ -2894,7 +2894,7 @@ module Ladb::OpenCutList
     STATE_SELECT_MULTIPLE = 7
     STATE_SELECT_RECT = 5
     STATE_SELECT_TREE = 6
-    STATE_SELECT_SIBLINGS = 4
+    STATE_SELECT_TWINS = 4
 
     LAYER_2D_FLOATING_TOOLS = 10
 
@@ -2952,6 +2952,10 @@ module Ladb::OpenCutList
 
         end
 
+      elsif @tool.respond_to?(:startup_selection) && @tool.startup_selection.is_a?(SmartSelection)
+
+        _select_from_smart_selection(@tool.startup_selection)
+
       else
 
         _select_from_model_selection
@@ -2981,7 +2985,7 @@ module Ladb::OpenCutList
       when STATE_SELECT_RECT
         return SmartCursorManager.cursor_select_rect
 
-      when STATE_SELECT_SIBLINGS
+      when STATE_SELECT_TWINS
         return SmartCursorManager.cursor_select_part_plus
       end
 
@@ -2991,7 +2995,7 @@ module Ladb::OpenCutList
     def get_state_picker(state)
 
       case state
-      when STATE_SELECT, STATE_SELECT_MULTIPLE, STATE_SELECT_SIBLINGS
+      when STATE_SELECT, STATE_SELECT_MULTIPLE, STATE_SELECT_TWINS
         return SmartPicker.new(tool: @tool, observer: self, pick_point: false, lockable: false)
       end
 
@@ -3006,7 +3010,7 @@ module Ladb::OpenCutList
         return PLUGIN.get_i18n_string("tool.smart_select.state_0_status") +
                ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_select.state_0_to_6_status") + '.'
 
-      when STATE_SELECT_MULTIPLE, STATE_SELECT_RECT, STATE_SELECT_TREE, STATE_SELECT_SIBLINGS
+      when STATE_SELECT_MULTIPLE, STATE_SELECT_RECT, STATE_SELECT_TREE, STATE_SELECT_TWINS
         return PLUGIN.get_i18n_string("tool.smart_select.state_#{state}_status") + '.'
 
       end
@@ -3025,7 +3029,7 @@ module Ladb::OpenCutList
 
       case @state
 
-      when STATE_SELECT_SIBLINGS, STATE_SELECT_RECT
+      when STATE_SELECT_TWINS, STATE_SELECT_RECT
         @mouse_down_point_2d = nil
         @mouse_move_point_2d = nil
 
@@ -3067,7 +3071,7 @@ module Ladb::OpenCutList
 
       when STATE_SELECT
         if has_active_part? && _pick_part_twins?
-          set_state(STATE_SELECT_SIBLINGS)
+          set_state(STATE_SELECT_TWINS)
           return true
         else
           @mouse_down_point_2d = Geom::Point3d.new(x, y)
@@ -3084,7 +3088,7 @@ module Ladb::OpenCutList
 
       case @state
 
-      when STATE_SELECT, STATE_SELECT_SIBLINGS
+      when STATE_SELECT, STATE_SELECT_TWINS
         @mouse_down_point_2d = nil
         @mouse_move_point_2d = nil
         unless has_active_part?
@@ -3097,10 +3101,15 @@ module Ladb::OpenCutList
       when STATE_SELECT_MULTIPLE
         if (instances = get_active_selection_instances).is_a?(Array) && instances.any?
           selection = Sketchup.active_model.selection
+
           removed_instances = instances.select { |instance| selection.include?(instance) }
           selection.remove(removed_instances)
+          @multiple_smart_selection.remove(*removed_instances.map { |instance| get_active_selection_path + [ instance ] })
+
           added_instances = instances.difference(removed_instances)
           selection.add(added_instances)
+          @multiple_smart_selection.add(*added_instances.map { |instance| get_active_selection_path + [ instance ] })
+
           return true
         end
 
@@ -3197,7 +3206,7 @@ module Ladb::OpenCutList
 
       case @state
 
-      when STATE_SELECT, STATE_SELECT_MULTIPLE, STATE_SELECT_SIBLINGS
+      when STATE_SELECT, STATE_SELECT_MULTIPLE, STATE_SELECT_TWINS
         if (key == VK_UP || key == VK_DOWN) && _can_pick_deeper?
           _pick_deeper(key == VK_UP ? 1 : -1)
           return true
@@ -3205,7 +3214,7 @@ module Ladb::OpenCutList
         if @state == STATE_SELECT_MULTIPLE
           if tool.is_key_shift?(key)
             _reset_active_part
-            _select_from_model_selection
+            _select_from_smart_selection(@multiple_smart_selection)
             Sketchup.active_model.selection.clear if _clear_selection_on_start?
             set_state(STATE_SELECT) unless has_active_selection?
             return true
@@ -3232,7 +3241,7 @@ module Ladb::OpenCutList
       when STATE_SELECT, STATE_SELECT_MULTIPLE
         _pick_part(picker, view)
 
-      when STATE_SELECT_SIBLINGS
+      when STATE_SELECT_TWINS
         _pick_part_twin(picker, view)
 
       end
@@ -3334,6 +3343,13 @@ module Ladb::OpenCutList
 
       end
 
+      if new_state == STATE_SELECT_MULTIPLE
+        @multiple_smart_selection = SmartSelection.new
+      end
+      if old_state == STATE_SELECT_MULTIPLE
+        @multiple_smart_selection = nil
+      end
+
     end
 
     def onSelected
@@ -3371,6 +3387,17 @@ module Ladb::OpenCutList
     end
 
     # -----
+
+    def _select_from_smart_selection(smart_selection)
+
+      path = smart_selection.path
+      instances = smart_selection.instances
+
+      _set_active_selection(path, instances)
+
+      onSelected if has_active_selection?
+
+    end
 
     def _select_from_model_selection
       return if (model = Sketchup.active_model).nil?
@@ -4280,12 +4307,13 @@ module Ladb::OpenCutList
 
     include Enumerable
 
-    def initialize(paths_or_selection)
+    def initialize(paths_or_selection = nil)
       if paths_or_selection.is_a?(Sketchup::Selection)
         active_path = paths_or_selection.model.active_path.to_a
         @paths = paths_or_selection.map { |drawing_element| active_path + [ drawing_element ] }
       else
-        @paths = paths
+        @paths = []
+        add(*paths_or_selection) if paths_or_selection.is_a?(Array)
       end
     end
 
@@ -4303,6 +4331,17 @@ module Ladb::OpenCutList
 
     def each(&block)
       @paths.each(&block)
+    end
+
+    def path
+      return [] unless @paths.is_a?(Array)
+      return @paths.first[0...-1] if @paths.one?
+      ArrayUtils.common_prefix(*@paths)
+    end
+
+    def instances
+      return [] unless @paths.is_a?(Array)
+      @paths.map(&:last)
     end
 
     def sync
