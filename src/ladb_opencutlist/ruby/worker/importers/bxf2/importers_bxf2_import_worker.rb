@@ -648,39 +648,44 @@ module Ladb::OpenCutList
 
         elsif bxf_machining.is_a?(Bxf::BxfMachiningRounding)
 
-          group.name = 'MACHINING-ROUNDING'
+          # TODO : Currently invalid in the input BXF2 file
 
-          radius = bxf_machining.radius.to_l
-          length = bxf_machining.length.to_l
-
-          length_v = bxf_machining.length_orientation.to_v
-
-          num_segments = _num_segments_by_radius(radius, min_num_segments: 4, max_num_segments: 12, arc_angle: Geometrix::HALF_PI)
-
-          arc_origin = ORIGIN
-                         .offset(X_AXIS, -radius)
-                         .offset(Z_AXIS, radius)
-
-          btm_edge1, _ = group.entities.add_arc(arc_origin, X_AXIS, length_v, radius, 0, Geometrix::HALF_PI, num_segments)
-          top_edge1, _ = group.entities.add_arc(arc_origin.offset(length_v, length), X_AXIS, length_v, radius, 0, Geometrix::HALF_PI, num_segments)
-
-          btn_vertices = btm_edge1.curve.vertices
-          top_vertices = top_edge1.curve.vertices
-
-          group.entities.add_face(btn_vertices.map(&:position) + [ ORIGIN ])
-          group.entities.add_face(top_vertices.map(&:position) + [ ORIGIN.offset(length_v, length) ]).reverse!
-          group.entities.add_line(ORIGIN, ORIGIN.offset(length_v, length))
-
-          last_index = btn_vertices.size - 1
-          btn_vertices.each_with_index do |btm_vertex, index|
-            top_vertex = top_vertices[index]
-            smooth_soft = index > 0 && index < last_index
-            edge = group.entities.add_line(btm_vertex.position, top_vertex.position)
-            if edge
-              edge.smooth = edge.soft = smooth_soft
-              edge.find_faces
-            end
-          end
+          # group.name = 'MACHINING-ROUNDING'
+          #
+          # radius = bxf_machining.radius.to_l
+          # length = bxf_machining.length.to_l
+          #
+          # length_v = bxf_machining.length_orientation.to_v
+          #
+          # num_segments = _num_segments_by_radius(radius, min_num_segments: 4, max_num_segments: 12, arc_angle: Geometrix::HALF_PI)
+          #
+          # btm_arc_origin = ORIGIN
+          #                    .offset(X_AXIS, -radius)
+          #                    .offset(Z_AXIS, -radius)
+          # top_arc_origin = btm_arc_origin.offset(length_v, length)
+          # btm_corner = ORIGIN
+          # top_corner = ORIGIN.offset(length_v, length)
+          #
+          # btm_edge1, _ = group.entities.add_arc(btm_arc_origin, X_AXIS, length_v, radius, -Geometrix::HALF_PI, 0, num_segments)
+          # top_edge1, _ = group.entities.add_arc(top_arc_origin, X_AXIS, length_v, radius, -Geometrix::HALF_PI, 0, num_segments)
+          #
+          # btn_vertices = btm_edge1.curve.vertices
+          # top_vertices = top_edge1.curve.vertices
+          #
+          # group.entities.add_face(btn_vertices.map(&:position) + [ btm_corner ])
+          # group.entities.add_face(top_vertices.map(&:position) + [ top_corner ]).reverse!
+          # group.entities.add_line(btm_corner, top_corner)
+          #
+          # last_index = btn_vertices.size - 1
+          # btn_vertices.each_with_index do |btm_vertex, index|
+          #   top_vertex = top_vertices[index]
+          #   smooth_soft = index > 0 && index < last_index
+          #   edge = group.entities.add_line(btm_vertex.position, top_vertex.position)
+          #   if edge
+          #     edge.smooth = edge.soft = smooth_soft
+          #     edge.find_faces
+          #   end
+          # end
 
         elsif bxf_machining.is_a?(Bxf::BxfMachiningRabbet)
 
@@ -723,6 +728,8 @@ module Ladb::OpenCutList
           _draw_box(group.entities, bounds)
 
         elsif bxf_machining.is_a?(Bxf::BxfMachiningRoundedGroove)
+
+          # TODO : Create a real rounded groove
 
           group.name = 'MACHINING-ROUNDED-GROOVE'
 
