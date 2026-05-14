@@ -3348,6 +3348,19 @@ module Ladb::OpenCutList
 
       end
 
+      if new_state == STATE_SELECT_TWINS
+        @picker.set_fn_face_filter(lambda { |picked_face_path|
+          if (active_instance = _get_active_part_entity) && active_instance.respond_to?(:definition)
+            active_definition = active_instance.definition
+            return picked_face_path.reverse_each.any? { |i| i.respond_to?(:definition) && i.definition == active_definition }
+          end
+          true
+        }) unless @picker.nil?
+      end
+      if old_state == STATE_SELECT_TWINS
+        @picker.set_fn_face_filter(nil) unless @picker.nil?
+      end
+
       if new_state == STATE_SELECT_MULTIPLE
         @multiple_smart_selection = SmartSelection.new
       end
@@ -4073,6 +4086,9 @@ module Ladb::OpenCutList
 
       @lockable = lockable
 
+      @fn_face_filter = nil
+      @fn_edge_filter = nil
+
       @picked_face = nil
       @picked_face_path = nil
       @picked_edge = nil
@@ -4085,6 +4101,24 @@ module Ladb::OpenCutList
       @picked_axes_line = nil
       @picked_axes_path = nil
 
+    end
+
+    # --
+
+    def set_fn_face_filter(fn_face_filter)
+      if fn_face_filter.is_a?(Proc)
+        @fn_face_filter = fn_face_filter
+      else
+        @fn_face_filter = nil
+      end
+    end
+
+    def set_fn_edge_filter(fn_edge_filter)
+      if fn_edge_filter.is_a?(Proc)
+        @fn_edge_filter = fn_edge_filter
+      else
+        @fn_edge_filter = nil
+      end
     end
 
     # --
@@ -4184,13 +4218,13 @@ module Ladb::OpenCutList
           if @pick_context_by_face && @pick_helper.leaf_at(index).is_a?(Sketchup::Face)
             picked_face = @pick_helper.leaf_at(index)
             picked_face_path = active_path + @pick_helper.path_at(index)
-            break
+            break if @fn_face_filter.nil? || @fn_face_filter.call(picked_face_path)
           end
 
           if @pick_context_by_edge && @pick_helper.leaf_at(index).is_a?(Sketchup::Edge)
             picked_edge = @pick_helper.leaf_at(index)
             picked_edge_path = active_path + @pick_helper.path_at(index)
-            break
+            break if @fn_edge_filter.nil? || @fn_edge_filter.call(picked_edge_path)
           end
 
         end
