@@ -3349,13 +3349,12 @@ module Ladb::OpenCutList
       end
 
       if new_state == STATE_SELECT_TWINS
-        @picker.set_fn_face_filter(lambda { |picked_face_path|
-          if (active_instance = _get_active_part_entity) && active_instance.respond_to?(:definition)
-            active_definition = active_instance.definition
-            return picked_face_path.reverse_each.any? { |i| i.respond_to?(:definition) && i.definition == active_definition }
-          end
-          true
-        }) unless @picker.nil?
+        if (active_instance = _get_active_part_entity) && active_instance.respond_to?(:definition)
+          active_definition = active_instance.definition
+          @picker.set_fn_face_filter(lambda { |relative_path|
+              relative_path.reverse_each.any? { |i| i.respond_to?(:definition) && i.definition == active_definition }
+          }) unless @picker.nil?
+        end
       end
       if old_state == STATE_SELECT_TWINS
         @picker.set_fn_face_filter(nil) unless @picker.nil?
@@ -4216,15 +4215,19 @@ module Ladb::OpenCutList
         @pick_helper.count.times do |index|
 
           if @pick_context_by_face && @pick_helper.leaf_at(index).is_a?(Sketchup::Face)
-            picked_face = @pick_helper.leaf_at(index)
-            picked_face_path = active_path + @pick_helper.path_at(index)
-            break if @fn_face_filter.nil? || @fn_face_filter.call(picked_face_path)
+            if @fn_face_filter.nil? || @fn_face_filter.call(@pick_helper.path_at(index))
+              picked_face = @pick_helper.leaf_at(index)
+              picked_face_path = active_path + @pick_helper.path_at(index)
+              break
+            end
           end
 
           if @pick_context_by_edge && @pick_helper.leaf_at(index).is_a?(Sketchup::Edge)
-            picked_edge = @pick_helper.leaf_at(index)
-            picked_edge_path = active_path + @pick_helper.path_at(index)
-            break if @fn_edge_filter.nil? || @fn_edge_filter.call(picked_edge_path)
+            if @fn_edge_filter.nil? || @fn_edge_filter.call(@pick_helper.path_at(index))
+              picked_edge = @pick_helper.leaf_at(index)
+              picked_edge_path = active_path + @pick_helper.path_at(index)
+              break
+            end
           end
 
         end
