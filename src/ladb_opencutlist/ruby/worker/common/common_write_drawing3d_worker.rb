@@ -3,7 +3,7 @@ module Ladb::OpenCutList
   require_relative '../../constants'
   require_relative '../../helper/stl_writer_helper'
   require_relative '../../helper/obj_writer_helper'
-  require_relative '../../utils/file_sanitizer_utils'
+  require_relative '../../utils/file_path_utils'
   require_relative '../../model/drawing/drawing_def'
 
   class CommonWriteDrawing3dWorker

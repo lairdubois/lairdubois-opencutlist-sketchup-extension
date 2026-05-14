@@ -247,7 +247,8 @@ module Ladb::OpenCutList
     end
 
     def _can_activate_part?(part_entity_path, part)
-      super && (_can_activate_hardware? || (!part.is_a?(Part) || part.group.material_type != MaterialAttributes::TYPE_HARDWARE))
+      return [ false, 'tool.smart_axes.error.not_orientable' ] unless (_can_activate_hardware? || (!part.is_a?(Part) || part.group.material_type != MaterialAttributes::TYPE_HARDWARE))
+      super
     end
 
     def _can_activate_hardware?
@@ -256,11 +257,6 @@ module Ladb::OpenCutList
 
     def _can_activate_locked?
       false
-    end
-
-    def _get_cant_activate_part_error_key(part)
-      return super if _can_activate_hardware?
-      'tool.smart_axes.error.not_orientable'
     end
 
     # -----

@@ -1,7 +1,7 @@
 module Ladb::OpenCutList
 
   require 'securerandom'
-  require_relative '../../utils/file_sanitizer_utils'
+  require_relative '../../utils/file_path_utils'
 
   class MaterialsImportFromSkmWorker
 

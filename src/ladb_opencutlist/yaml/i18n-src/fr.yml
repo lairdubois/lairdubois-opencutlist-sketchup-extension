@@ -2266,6 +2266,7 @@ tool:
       lt_min_distance: La distance {{ value1 }} est inférieure à la distance minimale de {{ value2 }}
       gt_max_distance: La distance {{ value1 }} est supérieure à la distance maximale de {{ value2 }}
       locked_part: Cette pièce est verrouillée
+      not_sibling_part: Cette pièce n'est pas dans le même groupe ou composant que le reste de la sélection
       selection_contains_locked_entities: La sélection contient des entités verrouillées
   highlight:
     transparency: $t(tool.default.transparency)

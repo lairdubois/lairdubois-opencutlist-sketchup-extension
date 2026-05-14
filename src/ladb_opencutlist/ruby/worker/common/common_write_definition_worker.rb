@@ -1,6 +1,6 @@
 module Ladb::OpenCutList
 
-  require_relative '../../utils/file_sanitizer_utils'
+  require_relative '../../utils/file_path_utils'
 
   class CommonWriteDefinitionWorker
 

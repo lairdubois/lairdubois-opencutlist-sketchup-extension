@@ -6,7 +6,7 @@ module Ladb::OpenCutList
   require_relative '../../helper/svg_writer_helper'
   require_relative '../../helper/part_drawing_helper'
   require_relative '../../utils/color_utils'
-  require_relative '../../utils/file_sanitizer_utils'
+  require_relative '../../utils/file_path_utils'
 
   class CutlistPackingWriteWorker < AbstractCutlistPackingWorker
 

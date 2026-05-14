@@ -4,7 +4,7 @@ module Ladb::OpenCutList
   require_relative '../../model/attributes/material_attributes'
   require_relative '../../model/formula/formula_data'
   require_relative '../../worker/common/common_eval_formula_worker'
-  require_relative '../../utils/file_sanitizer_utils'
+  require_relative '../../utils/file_path_utils'
 
   class CutlistExportWorker
 

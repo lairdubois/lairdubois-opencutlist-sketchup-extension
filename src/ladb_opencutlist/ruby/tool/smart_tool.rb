@@ -10,7 +10,7 @@ module Ladb::OpenCutList
   require_relative '../utils/hash_utils'
   require_relative '../utils/view_utils'
   require_relative '../utils/drawingelement_utils'
-  require_relative '../utils/file_sanitizer_utils'
+  require_relative '../utils/file_path_utils'
   require_relative '../model/geom/size3d'
   require_relative '../model/cutlist/cutlist'
   require_relative '../manipulator/face_manipulator'
@@ -2466,7 +2466,14 @@ module Ladb::OpenCutList
         if (picked_part_entity_path = _get_part_entity_path_from_path(picker.picked_face_path)).is_a?(Array)
           _make_unique_groups_in_path(picked_part_entity_path)
           if (picked_part = _generate_part_from_path(picked_part_entity_path)).is_a?(Part)
-            _set_active_part(picked_part_entity_path, picked_part)
+            can_activate, error_key = _can_activate_part?(picked_part_entity_path, picked_part)
+            if can_activate
+              _set_active_part(picked_part_entity_path, picked_part)
+            else
+              _reset_active_part
+              @tool.show_tooltip(PLUGIN.get_i18n_string(error_key), SmartTool::MESSAGE_TYPE_ERROR) if error_key.is_a?(String)
+              @tool.push_cursor(SmartCursorManager.cursor_select_error)
+            end
             return
           end
         end
@@ -2485,12 +2492,11 @@ module Ladb::OpenCutList
           return if picked_part_entity_path == @active_part_entity_path                   # Abandon if part seems to be the active one
           return if picked_part_entity_path[0...-1] != @active_part_entity_path[0...-1]   # Abandon if part does not have the same ancestors
           if (picked_part = _generate_part_from_path(picked_part_entity_path)).is_a?(Part)
-            if _can_activate_part?(picked_part_entity_path, picked_part)
+            can_activate, error_key = _can_activate_part?(picked_part_entity_path, picked_part)
+            if can_activate
               _add_part_twin(picked_part_entity_path, picked_part) if picked_part.id == @active_part.id
             else
-              if (error_key = _get_cant_activate_part_error_key(picked_part)).is_a?(String)
-                @tool.show_tooltip(PLUGIN.get_i18n_string(error_key), SmartTool::MESSAGE_TYPE_ERROR)
-              end
+              @tool.show_tooltip(PLUGIN.get_i18n_string(error_key), SmartTool::MESSAGE_TYPE_ERROR) if error_key.is_a?(String)
               @tool.push_cursor(SmartCursorManager.cursor_select_error)
               return
             end
@@ -2672,7 +2678,7 @@ module Ladb::OpenCutList
 
           k_mesh = Kuix::Mesh.new
           k_mesh.add_triangles(triangles)
-          k_mesh.background_color = highlighted ? COLOR_PART_HIGHLIGHTED : COLOR_PART
+          k_mesh.background_color = highlighted ? COLOR_INSTANCE_HIGHLIGHTED : COLOR_INSTANCE
           k_mesh.transformation = t
           @tool.append_3d(k_mesh, layer)
 
@@ -2684,11 +2690,8 @@ module Ladb::OpenCutList
     # --
 
     def _can_activate_part?(part_entity_path, part)
-      _can_activate_locked? || part.nil? || part_entity_path.nil? || part_entity_path.none?(&:locked?)
-    end
-
-    def _get_cant_activate_part_error_key(part)
-      'tool.default.error.locked_part'
+      return [ false, 'tool.default.error.locked_part' ] unless _can_activate_locked? || part.nil? || part_entity_path.nil? || part_entity_path.none?(&:locked?)
+      [ true, nil ]
     end
 
     def _refresh_active_part(highlighted = false)
@@ -2700,7 +2703,8 @@ module Ladb::OpenCutList
     end
 
     def _set_active_part(part_entity_path, part, highlighted = false, silent = false)
-      if _can_activate_part?(part_entity_path, part)
+      can_activate, error_key = _can_activate_part?(part_entity_path, part)
+      if can_activate
 
         if @active_part_entity_path != part_entity_path || part.nil?
           @tool.remove_tooltip
@@ -2713,9 +2717,7 @@ module Ladb::OpenCutList
         part = nil
 
         unless silent
-          if (error_key = _get_cant_activate_part_error_key(part)).is_a?(String)
-            @tool.show_tooltip(PLUGIN.get_i18n_string(error_key), SmartTool::MESSAGE_TYPE_ERROR)
-          end
+          @tool.show_tooltip(PLUGIN.get_i18n_string(error_key), SmartTool::MESSAGE_TYPE_ERROR) if error_key.is_a?(String)
           @tool.push_cursor(SmartCursorManager.cursor_select_error)
         end
 
@@ -3237,7 +3239,10 @@ module Ladb::OpenCutList
 
       case @state
 
-      when STATE_SELECT, STATE_SELECT_MULTIPLE
+      when STATE_SELECT
+        _pick_part(picker, view)
+
+      when STATE_SELECT_MULTIPLE
         _pick_part(picker, view)
 
       when STATE_SELECT_TWINS
@@ -3426,6 +3431,17 @@ module Ladb::OpenCutList
     end
 
     # -----
+
+    def _can_activate_part?(part_entity_path, part)
+      if !part_entity_path.nil? &&
+         @state == STATE_SELECT_MULTIPLE &&
+         @multiple_smart_selection.is_a?(SmartSelection) &&
+         !@multiple_smart_selection.empty? &&
+         @multiple_smart_selection.path != part_entity_path[0...-1]
+        return [ false, 'tool.default.error.not_sibling_part' ]
+      end
+      super
+    end
 
     def _can_pick_deeper?
       !@picker.nil? && has_active_part?
@@ -4326,6 +4342,10 @@ module Ladb::OpenCutList
 
     def clear
       @paths.clear
+    end
+
+    def empty?
+      @paths.empty?
     end
 
     def each(&block)

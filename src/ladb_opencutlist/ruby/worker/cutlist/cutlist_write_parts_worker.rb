@@ -1,7 +1,7 @@
 module Ladb::OpenCutList
 
   require_relative '../../helper/part_drawing_helper'
-  require_relative '../../utils/file_sanitizer_utils'
+  require_relative '../../utils/file_path_utils'
   require_relative '../common/common_write_definition_worker'
   require_relative '../common/common_write_drawing2d_worker'
   require_relative '../common/common_write_drawing3d_worker'
