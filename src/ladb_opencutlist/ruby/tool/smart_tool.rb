@@ -3193,9 +3193,13 @@ module Ladb::OpenCutList
             tool.notify_warnings([ 'tool.smart_select.warning.no_active_part' ])
           end
           return true
-        elsif tool.is_key_shift?(key) && _allows_multiple_selections?
-          set_state(STATE_SELECT_MULTIPLE)
-          return true
+        elsif tool.is_key_shift?(key)
+          if _allows_multiple_selections?
+            set_state(STATE_SELECT_MULTIPLE)
+            return true
+          else
+            UI.beep
+          end
         end
 
       end
@@ -3239,10 +3243,7 @@ module Ladb::OpenCutList
 
       case @state
 
-      when STATE_SELECT
-        _pick_part(picker, view)
-
-      when STATE_SELECT_MULTIPLE
+      when STATE_SELECT, STATE_SELECT_MULTIPLE
         _pick_part(picker, view)
 
       when STATE_SELECT_TWINS
@@ -4365,7 +4366,7 @@ module Ladb::OpenCutList
 
     def sync
       Sketchup.active_model.selection.clear
-      Sketchup.active_model.selection.add(@paths)
+      Sketchup.active_model.selection.add(*@paths)
     end
 
   end

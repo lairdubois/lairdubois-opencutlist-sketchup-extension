@@ -905,6 +905,10 @@ module Ladb::OpenCutList
 
     # -----
 
+    def _preview_all_instances?
+      !_fetch_option_options_make_unique?
+    end
+
     def _preview_part_box?
       true
     end
