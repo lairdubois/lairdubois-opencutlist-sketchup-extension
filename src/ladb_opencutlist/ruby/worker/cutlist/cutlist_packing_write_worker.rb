@@ -2,15 +2,14 @@ module Ladb::OpenCutList
 
   require_relative 'cutlist_packing_worker'
   require_relative '../../constants'
-  require_relative '../../helper/sanitizer_helper'
   require_relative '../../helper/dxf_writer_helper'
   require_relative '../../helper/svg_writer_helper'
   require_relative '../../helper/part_drawing_helper'
   require_relative '../../utils/color_utils'
+  require_relative '../../utils/file_sanitizer_utils'
 
   class CutlistPackingWriteWorker < AbstractCutlistPackingWorker
 
-    include SanitizerHelper
     include DxfWriterHelper
     include SvgWriterHelper
     include PartDrawingHelper
@@ -108,7 +107,7 @@ module Ladb::OpenCutList
 
         packing_def = @packing.def
         group = packing_def.group
-        folder_name = _sanitize_filename("#{group.material_display_name} - #{group.std_dimension}")
+        folder_name = FilePathUtils.sanitize_folder_name("#{group.material_display_name} - #{group.std_dimension}")
         folder_path = File.join(dir, folder_name)
 
         begin

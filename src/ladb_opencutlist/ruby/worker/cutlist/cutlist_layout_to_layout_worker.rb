@@ -1,13 +1,12 @@
 module Ladb::OpenCutList
 
   require_relative '../../helper/layer_visibility_helper'
-  require_relative '../../helper/sanitizer_helper'
   require_relative '../../utils/dimension_utils'
+  require_relative '../../utils/file_sanitizer_utils'
 
   class CutlistLayoutToLayoutWorker
 
     include LayerVisibilityHelper
-    include SanitizerHelper
 
     def initialize(cutlist,
 
@@ -90,7 +89,7 @@ module Ladb::OpenCutList
       doc_name = "#{@cutlist.model_name.empty? ? File.basename(@cutlist.filename, '.skp') : @cutlist.model_name}#{page_name.empty? ? '' : " - #{page_name}"}#{@cutlist.model_active_path.nil? || @cutlist.model_active_path.empty? ? '' : " - #{@cutlist.model_active_path.join('/')}"}#{target_group && target_group.material_type != MaterialAttributes::TYPE_UNKNOWN ? " - #{target_group.material_name} #{target_group.std_dimension}" : ''}"
 
       # Ask for layout file path
-      layout_path = UI.savepanel(PLUGIN.get_i18n_string('tab.cutlist.export.title'), @cutlist.dir, "#{_sanitize_filename(doc_name)}.layout")
+      layout_path = UI.savepanel(PLUGIN.get_i18n_string('tab.cutlist.export.title'), @cutlist.dir, FilePathUtils.sanitize_file_name("#{doc_name}.layout"))
       if layout_path
 
         # Force "layout" file extension

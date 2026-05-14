@@ -1,11 +1,9 @@
 module Ladb::OpenCutList
 
   require_relative '../../lib/fiddle/imagy/imagy'
-  require_relative '../../helper/sanitizer_helper'
+  require_relative '../../utils/file_sanitizer_utils'
 
   class MaterialsExportTextureWorker
-
-    include SanitizerHelper
 
     def initialize(
 
@@ -31,7 +29,7 @@ module Ladb::OpenCutList
       return { :errors => [ 'tab.materials.error.no_texture' ] } if material.texture.nil?
 
       # Ask for the writing file path
-      path = UI.savepanel(PLUGIN.get_i18n_string('tab.materials.texture_export.title'), '', _sanitize_filename(@name) + '.jpg')
+      path = UI.savepanel(PLUGIN.get_i18n_string('tab.materials.texture_export.title'), '', FilePathUtils.sanitize_file_name("#{@name}.jpg"))
       if path
 
         extname = File.extname(path).downcase

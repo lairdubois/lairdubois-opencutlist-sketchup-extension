@@ -4,11 +4,9 @@ module Ladb::OpenCutList
   require_relative '../../model/attributes/material_attributes'
   require_relative '../../model/formula/formula_data'
   require_relative '../../worker/common/common_eval_formula_worker'
-  require_relative '../../helper/sanitizer_helper'
+  require_relative '../../utils/file_sanitizer_utils'
 
   class CutlistExportWorker
-
-    include SanitizerHelper
 
     EXPORT_OPTION_SOURCE_SUMMARY = 0
     EXPORT_OPTION_SOURCE_CUTLIST = 1
@@ -231,7 +229,7 @@ module Ladb::OpenCutList
         group_name += " - #{group.std_dimension}" unless group.std_dimension.empty?
         filename += " - #{group_name}"
       end
-      _sanitize_filename(filename)
+      FilePathUtils.sanitize_file_name(filename)
     end
 
     def _compute_rows(parts_by_group)

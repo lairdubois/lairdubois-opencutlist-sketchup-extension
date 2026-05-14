@@ -3,7 +3,7 @@ module Ladb::OpenCutList
   require_relative '../../constants'
   require_relative '../../helper/stl_writer_helper'
   require_relative '../../helper/obj_writer_helper'
-  require_relative '../../helper/sanitizer_helper'
+  require_relative '../../utils/file_sanitizer_utils'
   require_relative '../../model/drawing/drawing_def'
 
   class CommonWriteDrawing3dWorker
@@ -11,7 +11,6 @@ module Ladb::OpenCutList
     include StlWriterHelper
     include ObjWriterHelper
     include DxfWriterHelper
-    include SanitizerHelper
 
     LAYER_PART = 'OCL_PART'.freeze
 
@@ -31,7 +30,7 @@ module Ladb::OpenCutList
       @drawing_def = drawing_def
 
       @folder_path = folder_path
-      @file_name = _sanitize_filename(file_name)
+      @file_name = FilePathUtils.sanitize_file_name(file_name)
       @file_format = file_format
 
       @unit = unit

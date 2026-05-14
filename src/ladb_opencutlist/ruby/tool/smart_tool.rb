@@ -4,13 +4,13 @@ module Ladb::OpenCutList
   require_relative '../lib/kuix/kuix'
   require_relative '../helper/layer_visibility_helper'
   require_relative '../helper/face_triangles_helper'
-  require_relative '../helper/sanitizer_helper'
   require_relative '../helper/part_helper'
   require_relative '../helper/material_attributes_caching_helper'
   require_relative '../utils/dimension_utils'
   require_relative '../utils/hash_utils'
   require_relative '../utils/view_utils'
   require_relative '../utils/drawingelement_utils'
+  require_relative '../utils/file_sanitizer_utils'
   require_relative '../model/geom/size3d'
   require_relative '../model/cutlist/cutlist'
   require_relative '../manipulator/face_manipulator'
@@ -22,7 +22,6 @@ module Ladb::OpenCutList
 
     include LayerVisibilityHelper
     include FaceTrianglesHelper
-    include SanitizerHelper
     include PartHelper
     include CutlistObserverHelper
     include MaterialAttributesCachingHelper
@@ -1689,7 +1688,7 @@ module Ladb::OpenCutList
 
     def _get_active_part_name(sanitize_for_filename = false)
       return nil unless @active_part.is_a?(Part)
-      "#{@active_part.saved_number && @active_part.number == @active_part.saved_number ? "#{@active_part.number} - " : ''}#{sanitize_for_filename ? _sanitize_filename(@active_part.name) : @active_part.name}"
+      "#{@active_part.saved_number && @active_part.number == @active_part.saved_number ? "#{@active_part.number} - " : ''}#{sanitize_for_filename ? FilePathUtils.sanitize_file_name(@active_part.name) : @active_part.name}"
     end
 
     def _get_active_part_size
@@ -2759,7 +2758,7 @@ module Ladb::OpenCutList
 
     def _get_active_part_name(sanitize_for_filename = false)
       return nil unless @active_part.is_a?(Part)
-      "#{@active_part.saved_number && @active_part.number == @active_part.saved_number ? "#{@active_part.number} - " : ''}#{sanitize_for_filename ? _sanitize_filename(@active_part.name) : @active_part.name}"
+      "#{@active_part.saved_number && @active_part.number == @active_part.saved_number ? "#{@active_part.number} - " : ''}#{sanitize_for_filename ? FilePathUtils.sanitize_file_name(@active_part.name) : @active_part.name}"
     end
 
     def _get_active_part_size

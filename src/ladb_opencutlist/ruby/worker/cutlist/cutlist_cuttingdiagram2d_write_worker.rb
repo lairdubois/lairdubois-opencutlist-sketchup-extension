@@ -1,17 +1,16 @@
 module Ladb::OpenCutList
 
   require_relative '../../constants'
-  require_relative '../../helper/sanitizer_helper'
   require_relative '../../helper/dxf_writer_helper'
   require_relative '../../helper/svg_writer_helper'
   require_relative '../../helper/part_drawing_helper'
   require_relative '../../helper/pixel_converter_helper'
   require_relative '../../utils/color_utils'
+  require_relative '../../utils/file_sanitizer_utils'
   require_relative '../../worker/common/common_drawing_projection_worker'
 
   class CutlistCuttingdiagram2dWriteWorker
 
-    include SanitizerHelper
     include DxfWriterHelper
     include SvgWriterHelper
     include PartDrawingHelper
@@ -111,7 +110,7 @@ module Ladb::OpenCutList
       if dir
 
         group = @cuttingdiagram2d.def.group
-        folder_name = _sanitize_filename("#{group.material_display_name} - #{group.std_dimension}")
+        folder_name = FilePathUtils.sanitize_folder_name("#{group.material_display_name} - #{group.std_dimension}")
         folder_path = File.join(dir, folder_name)
 
         begin

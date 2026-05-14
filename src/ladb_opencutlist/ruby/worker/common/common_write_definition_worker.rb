@@ -1,10 +1,8 @@
 module Ladb::OpenCutList
 
-  require_relative '../../helper/sanitizer_helper'
+  require_relative '../../utils/file_sanitizer_utils'
 
   class CommonWriteDefinitionWorker
-
-    include SanitizerHelper
 
     def initialize(definition,
 
@@ -16,7 +14,7 @@ module Ladb::OpenCutList
       @definition = definition
 
       @folder_path = folder_path
-      @file_name = _sanitize_filename(file_name)
+      @file_name = FilePathUtils.sanitize_file_name(file_name)
 
     end
 

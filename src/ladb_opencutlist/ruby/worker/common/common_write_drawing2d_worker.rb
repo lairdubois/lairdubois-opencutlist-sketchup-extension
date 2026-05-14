@@ -3,8 +3,8 @@ module Ladb::OpenCutList
   require_relative '../../constants'
   require_relative '../../helper/dxf_writer_helper'
   require_relative '../../helper/svg_writer_helper'
-  require_relative '../../helper/sanitizer_helper'
   require_relative '../../utils/color_utils'
+  require_relative '../../utils/file_sanitizer_utils'
   require_relative '../../model/drawing/drawing_def'
   require_relative '../../worker/common/common_drawing_projection_worker'
 
@@ -12,7 +12,6 @@ module Ladb::OpenCutList
 
     include DxfWriterHelper
     include SvgWriterHelper
-    include SanitizerHelper
 
     LAYER_PART = 'OCL_PART'.freeze
     LAYER_ANCHOR = 'OCL_ANCHOR'.freeze
@@ -46,7 +45,7 @@ module Ladb::OpenCutList
       @drawing_def = drawing_def
 
       @folder_path = folder_path
-      @file_name = _sanitize_filename(file_name)
+      @file_name = FilePathUtils.sanitize_file_name(file_name)
       @file_format = file_format
 
       @unit = unit
