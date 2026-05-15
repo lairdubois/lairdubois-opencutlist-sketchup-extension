@@ -955,7 +955,7 @@ module Ladb::OpenCutList
       px_trimming = _to_px(@trimming)
       px_spacing = _to_px(@spacing)
 
-      is_1d = @group.material_is_1d
+      is_1d = @group.material_is_1d || @problem_type == Packy::PROBLEM_TYPE_ONEDIMENSIONAL
       is_2d = !is_1d
       is_irregular = @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
       is_cut_bg = px_spacing >= 5 && !light
