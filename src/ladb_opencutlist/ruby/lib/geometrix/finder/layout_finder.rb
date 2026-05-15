@@ -7,9 +7,10 @@ module Ladb::OpenCutList::Geometrix
     def self.find_layout_debug
       Sketchup.active_model.active_entities.group_by(&:layer)
               .each do |layer, entities|
+        next if layer.name == 'layer0'
         puts "----"
         puts "#{layer.name}"
-        puts find_layout(entities.map { |e| BoxDef.new(e.bounds.min.x, e.bounds.min.y, e.bounds.width, e.bounds.height, name: e.name) }).inspect
+        puts find_layout(entities.map { |e| BoxDef.new(e.bounds.min.x, e.bounds.min.y, e.bounds.width, e.bounds.height, id: e.name) }).inspect
         puts "----"
       end
       nil
@@ -151,14 +152,14 @@ module Ladb::OpenCutList::Geometrix
 
   class BoxDef
 
-    attr_reader :name, :x, :y, :width, :height
+    attr_reader :id, :x, :y, :width, :height
 
-    def initialize(x, y, width, height, name: nil)
+    def initialize(x, y, width, height, id: nil)
       @x = x
       @y = y
       @width = width
       @height = height
-      @name = name
+      @id = id
     end
 
     def x_max
@@ -170,7 +171,7 @@ module Ladb::OpenCutList::Geometrix
     end
 
     def inspect
-      @name.to_s
+      @id.to_s
     end
 
   end
