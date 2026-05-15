@@ -22,6 +22,8 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
+### 2026-05-xx
+ * Fixed packing 1D detection
 ### 2026-05-14
  * Fixed BXF2 importer form fill from presets
  * Improved Smart Tool selection
