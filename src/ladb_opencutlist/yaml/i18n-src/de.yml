@@ -2266,6 +2266,7 @@ tool:
       lt_min_distance: "Der Abstand {{ value1 }} ist kleiner als der Mindestabstand von {{ value2 }}"
       gt_max_distance: "Der Abstand {{ value1 }} ist größer als der Maximalabstand von {{ value2 }}"
       locked_part: Dieses Teil ist gesperrt
+      not_sibling_part: Dieses Teil gehört nicht zur gleichen Gruppe oder Komponente wie der Rest der Auswahl
       selection_contains_locked_entities: Die Auswahl enthält gesperrte Entitäten
   highlight:
     transparency: $t(tool.default.transparency)
