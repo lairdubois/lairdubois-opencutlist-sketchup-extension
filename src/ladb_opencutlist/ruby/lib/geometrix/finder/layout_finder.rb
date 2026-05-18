@@ -32,7 +32,7 @@ module Ladb::OpenCutList::Geometrix
     # +---+--------------+
     #
     # Input: BoxDefs (x, y = bottom-left corner (y upwards), width, height = dimensions)
-    # Output: LayoutDef (direction = AXIS, nodes = [ "A", [ ["B", "C"], "D" ] ])
+    # Output: LayoutDef (direction = Y_AXIS, nodes = [ "A", [ ["B", "C"], "D" ] ])
     #
     # @param [Array<BoxDef>] boxes
     #
@@ -49,14 +49,12 @@ module Ladb::OpenCutList::Geometrix
 
     def self._split_into_rows(boxes)
       n = boxes.size
-      parent = _make_uf(n)
+      parent = _create_uf(n)
 
       boxes.each_with_index do |bi, i|
         boxes.each_with_index do |bj, j|
           next if i >= j
-          if _intervals_overlap?(bi.y, bi.y_max, bj.y, bj.y_max)
-            _uf_union(parent, i, j)
-          end
+          _uf_union(parent, i, j) if _intervals_overlap?(bi.y, bi.y_max, bj.y, bj.y_max)
         end
       end
 
@@ -67,14 +65,12 @@ module Ladb::OpenCutList::Geometrix
 
     def self._split_into_columns(boxes)
       n = boxes.size
-      parent = _make_uf(n)
+      parent = _create_uf(n)
 
       boxes.each_with_index do |bi, i|
         boxes.each_with_index do |bj, j|
           next if i >= j
-          if _intervals_overlap?(bi.x, bi.x_max, bj.x, bj.x_max)
-            _uf_union(parent, i, j)
-          end
+          _uf_union(parent, i, j) if _intervals_overlap?(bi.x, bi.x_max, bj.x, bj.x_max)
         end
       end
 
@@ -121,12 +117,12 @@ module Ladb::OpenCutList::Geometrix
     # Returns true if two intervals [ a0, a1 ] et [ b0, b1 ] overlap
     # at least `threshold` * min(a1 - a0, b1 - b0)
     def self._intervals_overlap?(a0, a1, b0, b1, threshold: OVERLAP_THRESHOLD)
-      overlap = [a1, b1].min - [a0, b0].max
-      min_len = [a1 - a0, b1 - b0].min
+      overlap = [ a1, b1 ].min - [ a0, b0 ].max
+      min_len = [ a1 - a0, b1 - b0 ].min
       overlap > threshold * min_len
     end
 
-    def self._make_uf(n)
+    def self._create_uf(n)
       Array.new(n) { |i| i }
     end
 
