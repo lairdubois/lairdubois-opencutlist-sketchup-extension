@@ -755,6 +755,7 @@
                 const $inputName = $('#ladb_outliner_node_input_name', $modal);
                 const $selectMaterialName = $('#ladb_outliner_node_select_material_name', $modal);
                 const $inputIsGrainGroup = $('#ladb_outliner_node_input_is_grain_group', $modal);
+                const $fromGroupIsGrainItem = $('#ladb_outliner_node_form_group_is_grain_item', $modal);
                 const $inputIsGrainItem = $('#ladb_outliner_node_input_is_grain_item', $modal);
                 const $inputDefinitionName = $('#ladb_outliner_node_input_definition_name', $modal);
                 const $inputLayerName = $('#ladb_outliner_node_input_layer_name', $modal);
@@ -789,6 +790,15 @@
                     if (is2d) $inputAlwaysFaceCamera.prop('checked', false);
                     $inputShadowsFaceSun.prop('disabled', is2d || !isAlwaysFaceCamera);
                     if (is2d || !isAlwaysFaceCamera) $inputShadowsFaceSun.prop('checked', false);
+                }
+                const fnUpdateGrainFields = function() {
+                    const material_name = $selectMaterialName.val();
+                    const material = Object.values(that.availableMaterials).find(material => material.name === material_name);
+                    if (material && material.grained && (material.type === 2 || material.type === 3)) {
+                        $fromGroupIsGrainItem.show();
+                    } else {
+                        $fromGroupIsGrainItem.hide();
+                    }
                 }
 
                 // Bind tabs
@@ -847,6 +857,7 @@
                     .selectpicker(SELECT_PICKER_TABS_OPTIONS)
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                         fnNewCheck($(this));
+                        fnUpdateGrainFields();
                     });
                 if (editedNode.is2d) {
                     $selectSnapto.val(editedNode.snapto === MULTIPLE_VALUE ? MULTIPLE_VALUE : editedNode.snapto);
@@ -858,6 +869,7 @@
                     });
 
                 fnUpdateBehaviorFields();
+                fnUpdateGrainFields();
 
                 // Bind buttons
                 $btnsModalFooterCollapseHandle.on('click', function () {

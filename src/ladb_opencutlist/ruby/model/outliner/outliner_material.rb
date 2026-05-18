@@ -10,7 +10,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :name, :display_name, :type, :color
+    attr_reader :name, :display_name, :type, :color, :grained
 
     def initialize(_def)
       @_def = _def
@@ -19,6 +19,7 @@ module Ladb::OpenCutList
       @display_name = _def.material.display_name
       @type = _def.material_attributes.type
       @color = ColorUtils.color_to_hex(_def.material.color)
+      @grained = _def.material_attributes.grained
 
     end
 
