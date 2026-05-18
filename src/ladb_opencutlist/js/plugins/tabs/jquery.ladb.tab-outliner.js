@@ -663,6 +663,17 @@
                 if (JSON.stringify(editedNode.material) !== JSON.stringify(editedNodes[i].material)) {
                     editedNode.material = MULTIPLE_VALUE;
                 }
+                if (editedNode.type !== 0) {   // 0 = TYPE_MODEL
+                    if (editedNode.is_grain_group !== editedNodes[i].is_grain_group) {
+                        editedNode.is_grain_group = MULTIPLE_VALUE
+                    }
+                    if (editedNode.is_grain_item !== editedNodes[i].is_grain_item) {
+                        editedNode.is_grain_item = MULTIPLE_VALUE
+                    }
+                } else {
+                    delete editedNode.is_grain_group;
+                    delete editedNode.is_grain_item;
+                }
                 if (editedNode.type === 2 && editedNodes[i].type === 2 || editedNode.type === 3 && editedNodes[i].type === 3) {   // 2 = TYPE_COMPONENT, 3 = TYPE_PART
                     if (editedNode.definition_name !== editedNodes[i].definition_name) {
                         delete editedNode.definition_name;
@@ -743,6 +754,8 @@
                 const $tabs = $('.modal-header a[data-toggle="tab"]', $modal);
                 const $inputName = $('#ladb_outliner_node_input_name', $modal);
                 const $selectMaterialName = $('#ladb_outliner_node_select_material_name', $modal);
+                const $inputIsGrainGroup = $('#ladb_outliner_node_input_is_grain_group', $modal);
+                const $inputIsGrainItem = $('#ladb_outliner_node_input_is_grain_item', $modal);
                 const $inputDefinitionName = $('#ladb_outliner_node_input_definition_name', $modal);
                 const $inputLayerName = $('#ladb_outliner_node_input_layer_name', $modal);
                 const $inputDescription = $('#ladb_outliner_node_input_description', $modal);
@@ -894,6 +907,12 @@
                             } else {
                                 nodeData.material_name = editedNodes[i].material_name;
                             }
+                        }
+                        if ($inputIsGrainGroup.length > 0) {
+                            nodeData.is_grain_group = $inputIsGrainGroup.is(':checked');
+                        }
+                        if ($inputIsGrainItem.length > 0) {
+                            nodeData.is_grain_item = $inputIsGrainItem.is(':checked');
                         }
                         if ($inputDefinitionName.length > 0) {
                             if(!$inputDefinitionName.ladbTextinputText('isMultiple')) {

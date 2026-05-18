@@ -4,6 +4,7 @@ module Ladb::OpenCutList
   require_relative '../../helper/def_helper'
   require_relative '../../helper/hashable_helper'
   require_relative '../attributes/definition_attributes'
+  require_relative '../attributes/instance_attributes'
 
   class OutlinerNode < DataContainer
 
@@ -59,14 +60,21 @@ module Ladb::OpenCutList
 
   class OutlinerNodeGroup < OutlinerNode
 
-    attr_reader :material, :layer, :description,
+    attr_reader :layer, :material,
+                :is_grain_group, :is_grain_item,
+                :description,
                 :is2d, :snapto, :cuts_opening, :always_face_camera, :shadows_face_sun, :no_scale_mask
 
     def initialize(_def)
       super
 
-      @material = _def.material_def ? _def.material_def.get_hashable : nil
       @layer = _def.layer_def ? _def.layer_def.get_hashable : nil
+      @material = _def.material_def ? _def.material_def.get_hashable : nil
+
+      instance_attributes = InstanceAttributes.new(_def.entity)
+      @is_grain_group = instance_attributes.is_grain_group
+      @is_grain_item = instance_attributes.is_grain_item
+
       @description = _def.description
 
       @is2d = _def.is2d?

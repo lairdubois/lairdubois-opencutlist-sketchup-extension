@@ -167,8 +167,9 @@ module Ladb::OpenCutList
 
   class OutlinerNodeGroupDef < OutlinerNodeDef
 
-    attr_accessor :material_def,
-                  :layer_def
+    attr_accessor :layer_def,
+                  :material_def
+
     attr_reader   :faces
 
     def initialize(path = [])
@@ -183,6 +184,13 @@ module Ladb::OpenCutList
       TYPE_GROUP
     end
 
+    def layer_def=(layer_def)
+      return if @layer_def === layer_def
+      @layer_def.remove_used_by_node_def(self) unless @layer_def.nil?
+      @layer_def = layer_def
+      @layer_def.add_used_by_node_def(self) unless @layer_def.nil?
+    end
+
     def material_type
       return @material_def.material_attributes.type if @material_def
       MaterialAttributes::TYPE_UNKNOWN
@@ -193,13 +201,6 @@ module Ladb::OpenCutList
       @material_def.remove_used_by_node_def(self) unless @material_def.nil?
       @material_def = material_def
       @material_def.add_used_by_node_def(self) unless @material_def.nil?
-    end
-
-    def layer_def=(layer_def)
-      return if @layer_def === layer_def
-      @layer_def.remove_used_by_node_def(self) unless @layer_def.nil?
-      @layer_def = layer_def
-      @layer_def.add_used_by_node_def(self) unless @layer_def.nil?
     end
 
     def locked?
@@ -215,6 +216,8 @@ module Ladb::OpenCutList
     def computed_visible?
       super && (@layer_def.nil? ? true : @layer_def.computed_visible?)
     end
+
+    # -----
 
     def description
       return '' unless valid?

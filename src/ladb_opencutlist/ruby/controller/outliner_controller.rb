@@ -369,6 +369,26 @@ module Ladb::OpenCutList
 
     end
 
+    def onComponentPropertiesChanged(definitions, definition)
+      # puts "onComponentPropertiesChanged: #{definition}"
+
+      return unless @worker
+      return if definition.deleted?
+
+      definition.instances.each do |instance|
+        unless (node_defs = @outliner_def.get_node_defs_by_entity_id(instance.entityID)).nil?
+          node_defs.each do |node_def|
+            node_def.invalidate
+            @worker.run(:sort_children_node_defs, { children: node_def.parent.children }) if node_def.parent
+            @worker.run(:compute_types, { node_def: node_def }) if node_def
+          end
+        end
+      end
+
+      trigger_boo if @outliner_def.invalidated?
+
+    end
+
     # Entities Observer
 
     def onElementAdded(entities, entity)
@@ -444,30 +464,38 @@ module Ladb::OpenCutList
 
       elsif entity.is_a?(Sketchup::ComponentDefinition)
 
-        entity.instances.each do |instance|
-          unless (node_defs = @outliner_def.get_node_defs_by_entity_id(instance.entityID)).nil?
-            node_defs.each do |node_def|
-              node_def.invalidate
-              @worker.run(:sort_children_node_defs, { children: node_def.parent.children }) if node_def.parent
-              @worker.run(:compute_types, { node_def: node_def }) if node_def
-            end
-          end
-        end
+        # May not occurs since SU 2026.2
 
       elsif entity.is_a?(Sketchup::AttributeDictionary)
 
-        if entity.parent.is_a?(Sketchup::Entity) && entity.parent.parent.is_a?(Sketchup::ComponentDefinition)
-          if entity.name == Plugin::ATTRIBUTE_DICTIONARY || entity.name == Plugin::SU_ATTRIBUTE_DICTIONARY
+        if entity.parent.is_a?(Sketchup::Entity)
 
-            entity.parent.parent.instances.each do |instance|
+          case entity.parent.parent
+          when Sketchup::Group, Sketchup::ComponentInstance
+            if entity.name == Plugin::ATTRIBUTE_DICTIONARY
+
+              instance = entity.parent.parent
               unless (node_defs = @outliner_def.get_node_defs_by_entity_id(instance.entityID)).nil?
                 node_defs.each do |node_def|
                   node_def.invalidate
                 end
               end
-            end
 
+            end
+          when Sketchup::ComponentDefinition
+            if entity.name == Plugin::ATTRIBUTE_DICTIONARY || entity.name == Plugin::SU_ATTRIBUTE_DICTIONARY
+
+              entity.parent.parent.instances.each do |instance|
+                unless (node_defs = @outliner_def.get_node_defs_by_entity_id(instance.entityID)).nil?
+                  node_defs.each do |node_def|
+                    node_def.invalidate
+                  end
+                end
+              end
+
+            end
           end
+
         end
 
       elsif entity.is_a?(Sketchup::Behavior)

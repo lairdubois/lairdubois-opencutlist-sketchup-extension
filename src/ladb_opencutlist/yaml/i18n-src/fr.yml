@@ -1771,6 +1771,15 @@ tab:
       name: Nom
       instance_name: Instance
       material: Matière
+      is_grain_group: Définir comme **Groupe de continuité de fil**
+      is_grain_group_help: En activant cette option, cette instance pourra être considérée comme un **Groupe de continuité de fil** pour les pièces qu'elle contient qui auraient la *Continuité de fil* active.
+      is_grain_item: Activer la **Continuité de fil** pour cette instance
+      is_grain_item_help: |
+        En activant cette option, cette instance pourra être considérée comme une pièce calepinée en **Continuité de fil** avec ses voisines partageant:
+        - le même *Groupe de continuité de fil*
+        - la même Orientation
+        - la même Matière avec fil
+        - la même Epaisseur
       definition_name: Définition
       description: Description
       url: URL

@@ -5,14 +5,98 @@ module Ladb::OpenCutList::Geometrix
     OVERLAP_THRESHOLD = 0.5
 
     def self.find_layout_debug
-      Sketchup.active_model.active_entities.group_by(&:layer)
-              .each do |layer, entities|
-        next if layer.name == 'layer0'
+
+      require_relative '../../../utils/transformation_utils'
+
+      grain_groups = {}
+
+      fn_explore = lambda { |container, grain_group_container = nil, transformation = IDENTITY, path = []|
+
+        case container
+        when Sketchup::Model
+          entities = container.active_entities
+        when Sketchup::Group
+          entities = container.entities
+        when Sketchup::ComponentInstance
+          entities = container.definition.entities
+        else
+          return
+        end
+
+        instance_attributes = Ladb::OpenCutList::InstanceAttributes.new(container)
+
+        grain_group_container = container if instance_attributes.is_grain_group
+
+        if entities.none? { |e| e.respond_to?(:definition) }
+
+          return unless instance_attributes.is_grain_item
+
+          grain_group = grain_groups[grain_group_container] ||= []
+          grain_group << [ container, transformation, path ]
+
+        else
+
+          transformation *= container.transformation if container.respond_to?(:transformation)
+          path += [ container ]
+
+          entities.each { |e|
+            fn_explore.call(e, grain_group_container, transformation, path)
+          }
+
+        end
+
+      }
+
+      fn_explore.call(Sketchup.active_model)
+
+      grain_groups.each do |grain_group_container, items|
         puts "----"
-        puts "#{layer.name}"
-        puts find_layout(entities.map { |e| BoxDef.new(e.bounds.min.x, e.bounds.min.y, e.bounds.width, e.bounds.height, id: e.name) }).inspect
+        puts "#{grain_group_container.respond_to?(:name) ? grain_group_container.name : 'Global'}"
+        puts " "
+        items.group_by { |e, transformation, path|
+          t = transformation * e.transformation
+          x_axis = X_AXIS.transform(t).normalize
+          y_axis = Y_AXIS.transform(t).normalize
+          z_axis = Z_AXIS.transform(t).normalize
+          [
+            x_axis.to_a.map { |v| v.round(3) },
+            y_axis.to_a.map { |v| v.round(3) },
+            z_axis.to_a.map { |v| v.round(3) }
+          ]
+        }.each do |axes, items|
+          puts "-> #{axes}"
+          puts find_layout(items.map { |e, transformation, path|
+
+            t = transformation * e.transformation
+            x_axis = X_AXIS.transform(t)
+            y_axis = Y_AXIS.transform(t)
+            z_axis = Z_AXIS.transform(t)
+            at = Geom::Transformation.axes(ORIGIN, x_axis, y_axis, z_axis)
+            ati = at.inverse
+
+            # Ladb::OpenCutList::TransformationUtils.print(at)
+
+            bounds = Geom::BoundingBox.new
+            bounds.add(e.definition.entities.grep(Sketchup::Face).flat_map { |face| face.outer_loop.vertices.map(&:position) })
+
+            min = bounds.min
+            max = bounds.max
+            v = min.vector_to(max)
+
+            position = min.transform(t).transform(ati)
+            position.z = 0
+            vx = Geom::Vector3d.new(v.x, 0, 0).transform(ati)
+            vy = Geom::Vector3d.new(0, v.y, 0).transform(ati)
+
+            # Sketchup.active_model.active_entities.add_line(position, position + [ vx.length, vy.length ])
+
+            BoxDef.new(position.x, position.y, vx.length, vy.length, id: path.map { |e| e.name.empty? ? nil : e.name }.compact.push(e.name).join('/'))
+
+          }).inspect
+        end
         puts "----"
       end
+
       nil
     end
 

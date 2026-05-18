@@ -42,6 +42,26 @@
                         </div>
                     </div>
                 {% endif %}
+                {% if node.is_grain_group is defined and (node.type == 1 or node.type == 2) %} {# 1 = TYPE_GROUP, 2 = TYPE_COMPONENT #}
+                    <div class="form-group">
+                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.outliner.edit_node.is_grain_group_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                        <div class="col-xs-offset-3 col-xs-8 col-sm-7 checkbox">
+                            <label>
+                                <input type="checkbox" id="ladb_outliner_node_input_is_grain_group"{% if node.is_grain_group %} checked{% endif %}>{{ 'tab.outliner.edit_node.is_grain_group'|i18next }}
+                            </label>
+                        </div>
+                    </div>
+                {% endif %}
+                {% if node.is_grain_item is defined and node.type == 3 %} {# 3 = TYPE_PART #}
+                    <div class="form-group">
+                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.outliner.edit_node.is_grain_item_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                        <div class="col-xs-offset-3 col-xs-8 col-sm-7 checkbox">
+                            <label>
+                                <input type="checkbox" id="ladb_outliner_node_input_is_grain_item"{% if node.is_grain_item %} checked{% endif %}>{{ 'tab.outliner.edit_node.is_grain_item'|i18next }}
+                            </label>
+                        </div>
+                    </div>
+                {% endif %}
                 {% if node.definition_name is defined %}
                     <hr>
                     <div class="form-group">
