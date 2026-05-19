@@ -746,6 +746,7 @@ module Ladb::OpenCutList
         if group_def.material_attributes.grained &&
            (group_def.material_attributes.type == MaterialAttributes::TYPE_SHEET_GOOD || group_def.material_attributes.type == MaterialAttributes::TYPE_DIMENSIONAL) &&
            !part_def.ignore_grain_direction &&
+           part_def.thickness_layer_count == 1 &&
            _get_instance_attributes(instance_info.entity).is_grain_item
 
           grain_group_entity = instance_info.path.reverse_each.find { |entity| _get_instance_attributes(entity).is_grain_group }
@@ -1037,7 +1038,9 @@ module Ladb::OpenCutList
 
             item_defs.each do |item_def|
 
-              grain_item = GrainItem.new(item_def)
+              part, _ = group.get_parts([ item_def.part_def.id ])
+
+              grain_item = GrainItem.new(item_def, part)
               grain_group.add_item(grain_item)
 
             end

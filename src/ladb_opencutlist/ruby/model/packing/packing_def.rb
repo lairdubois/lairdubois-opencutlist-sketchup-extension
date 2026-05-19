@@ -344,6 +344,22 @@ module Ladb::OpenCutList
 
   end
 
+  class PackingCompositeItemTypeDef < PackingItemTypeDef
+
+    def initialize(length:, width:)
+      super(
+        length: length,
+        width: width,
+        count: 1,
+        part: nil,
+        projection_def: nil,
+        color: nil,
+        boxed: true
+      )
+    end
+
+  end
+
   # -----
 
   class PackingItemDef < DataContainer

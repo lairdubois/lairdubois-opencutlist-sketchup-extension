@@ -493,6 +493,113 @@ module Ladb::OpenCutList
 
         item_types = []
 
+        # Add items from grain groups
+        group.grain_groups.each do |grain_group|
+
+          # Finding grain group layout
+          layout_def = Geometrix::LayoutFinder.find_layout(grain_group.items.map { |grain_item|
+
+            grain_item_def = grain_item.def
+            part_def = grain_item_def.part_def
+            instance_info = grain_item_def.instance_info
+            size = part_def.size
+            bounds = instance_info.definition_bounds
+
+            t = instance_info.transformation
+            x_axis = size.oriented_axis(X_AXIS).transform(t)
+            y_axis = size.oriented_axis(Y_AXIS).transform(t)
+            z_axis = size.oriented_axis(Z_AXIS).transform(t)
+            at = Geom::Transformation.axes(ORIGIN, x_axis, y_axis, z_axis)
+            ati = at.inverse
+
+            min = bounds.min
+
+            position = min.transform(t).transform(ati)
+            position.z = 0
+
+            # Use final size for layout detection to avoid overlapping
+            Geometrix::BoxDef.new(position.x, position.y, size.length, size.width, data: grain_item)
+          })
+
+          # Oversize boxes
+          Geometrix::LayoutFinder.iterate_on_box_defs(layout_def) do |box_def|
+            grain_item = box_def.data
+            grain_item_def = grain_item.def
+            part_def = grain_item_def.part_def
+            box_def.width = part_def.cutting_length
+            box_def.height = part_def.cutting_width
+          end
+
+          # Layout boxes
+          total_length, total_width, box_defs = Geometrix::LayoutFinder.layout(layout_def, spacing: @spacing)
+
+          if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
+
+            shapes = [{
+                        type: 'rectangle',
+                        width: _to_packy_length(total_length),
+                        height: _to_packy_length(total_width),
+                      }]
+
+            item_types << {
+              copies: 1,
+              shapes: shapes,
+              allowed_rotations: AVAILABLE_ROTATIONS.fetch(@irregular_allowed_rotations, []).map { |ar| ar.merge({ mirror: @irregular_allow_mirroring }) },
+            }
+
+          else
+
+            item_types << {
+              copies: 1,
+              width: _to_packy_length(total_length),
+              height: _to_packy_length(total_width),
+              oriented: true
+            }
+
+          end
+
+          @item_type_defs << PackingItemTypeDef.new(
+            length: total_length,
+            width: total_width,
+            count: 1,
+            part: box_defs.first.data.part,
+            projection_def: nil,
+            color: nil,
+            boxed: true
+          )
+
+          grain_group.items.each do |grain_item|
+            grain_item_def = grain_item.def
+            part = grain_item.part
+            instance_info = grain_item_def.instance_info
+
+            ((@gg ||= {})[part] ||= []) << instance_info
+
+          end
+
+          # output_group = Sketchup.active_model.active_entities.add_group
+          # output_group.material = 'green'
+          # box_defs.each_with_index do |box_def, i|
+          #
+          #   box_group = output_group.entities.add_group
+          #   box_group.entities.add_face(
+          #     [ box_def.x, box_def.y ],
+          #     [ box_def.x + box_def.width, box_def.y ],
+          #     [ box_def.x + box_def.width, box_def.y + box_def.height ],
+          #     [ box_def.x, box_def.y + box_def.height ]
+          #   )
+          #
+          # end
+          # box_group = output_group.entities.add_group
+          # box_group.entities.add_face(
+          #   [ 0, 0 ],
+          #   [ total_length, 0 ],
+          #   [ total_length, total_width ],
+          #   [ 0, total_width ]
+          # )
+
+        end
+
         # Add items from parts
         parts.flat_map { |part| part.instance_of?(FolderPart) ? part.children : part }.each do |part|
 

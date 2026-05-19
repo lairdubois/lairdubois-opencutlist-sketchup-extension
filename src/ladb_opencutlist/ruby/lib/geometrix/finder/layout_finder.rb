@@ -96,7 +96,7 @@ module Ladb::OpenCutList::Geometrix
 
           puts layout_def.inspect
 
-          boxes = layout(layout_def, spacing: spacing)
+          w, h, boxes = layout(layout_def, spacing: spacing)
 
           puts "Boxes: #{boxes.size}"
 
@@ -106,7 +106,7 @@ module Ladb::OpenCutList::Geometrix
             puts "#{i}: #{box.x}, #{box.y}, #{box.width}, #{box.height}"
 
             box_group = main_group.entities.add_group
-            box_group.name = box.id
+            box_group.name = box.data.to_s
             box_group.entities.add_face(
               [ box.x, box.y ],
               [ box.x + box.width, box.y ],
@@ -144,21 +144,40 @@ module Ladb::OpenCutList::Geometrix
     # Input: BoxDefs (x, y = bottom-left corner (y upwards), width, height = dimensions)
     # Output: LayoutDef (direction = :row, nodes = [ "A", [ ["B", "C"], "D" ] ])
     #
-    # @param [Array<BoxDef>] boxes
+    # @param [Array<BoxDef>] box_defs
     #
     # @return [LayoutDef]
     #
-    def self.find_layout(boxes)
-      nodes, direction = _build_node(boxes)
+    def self.find_layout(box_defs)
+      nodes, direction = _build_node(box_defs)
       return LayoutDef.new(nodes, direction)
     end
 
+    # Iterate on the BoxDefs of a layout.
+    #
+    # @param [LayoutDef] layout_def
+    #
+    # @yield [BoxDef]
+    #
+    def self.iterate_on_box_defs(layout_def, &block)
+      _iterate_on_nodes(layout_def.nodes, &block)
+    end
+
+    # Arrange boxes in a grid.
+    # The grid is defined by the layout_def.
+    #
+    # @param [LayoutDef] layout_def
+    # @param [Float] origin_x
+    # @param [Float] origin_y
+    # @param [Float] spacing
+    #
+    # @return [preferred_width, preferred_height, Array<BoxDef>]
+    #
     def self.layout(layout_def, origin_x: 0, origin_y: 0, spacing: 0)
       return [] unless layout_def.is_a?(LayoutDef)
 
       preferred_width, preferred_height = _compute_preferred_size(layout_def.nodes, direction: layout_def.direction, spacing: spacing)
-
-      _build_boxes(
+      box_defs = _build_box_defs(
         layout_def.nodes,
         origin_x: origin_x,
         origin_y: origin_y,
@@ -167,62 +186,63 @@ module Ladb::OpenCutList::Geometrix
         direction: layout_def.direction,
         spacing: spacing
       )
+
+      [ preferred_width, preferred_height, box_defs ]
     end
 
     # -----
-
 
     private
 
     # -- Find utils
 
-    def self._split_into_rows(boxes)
-      n = boxes.size
+    def self._split_into_rows(box_defs)
+      n = box_defs.size
       parent = _create_uf(n)
 
-      boxes.each_with_index do |bi, i|
-        boxes.each_with_index do |bj, j|
+      box_defs.each_with_index do |bi, i|
+        box_defs.each_with_index do |bj, j|
           next if i >= j
           _uf_union(parent, i, j) if _intervals_overlap?(bi.y, bi.y_max, bj.y, bj.y_max)
         end
       end
 
-      rows = _uf_groups(parent, boxes)
+      rows = _uf_groups(parent, box_defs)
       # Sort rows from top to bottom
       rows.sort_by { |row| -row.map(&:y_max).max }
     end
 
-    def self._split_into_columns(boxes)
-      n = boxes.size
+    def self._split_into_columns(box_defs)
+      n = box_defs.size
       parent = _create_uf(n)
 
-      boxes.each_with_index do |bi, i|
-        boxes.each_with_index do |bj, j|
+      box_defs.each_with_index do |bi, i|
+        box_defs.each_with_index do |bj, j|
           next if i >= j
           _uf_union(parent, i, j) if _intervals_overlap?(bi.x, bi.x_max, bj.x, bj.x_max)
         end
       end
 
-      cols = _uf_groups(parent, boxes)
+      cols = _uf_groups(parent, box_defs)
       # Sort columns from left to right
       cols.sort_by { |col| col.map(&:x).min }
     end
 
-    def self._build_node(boxes, depth = 0)
+    def self._build_node(box_defs, depth = 0)
 
       direction = :col
 
       # Split into lines
-      rows = _split_into_rows(boxes)
+      rows = _split_into_rows(box_defs)
 
       if rows.one?
 
         # Only one line: Split into columns
-        cols = _split_into_columns(boxes)
+        cols = _split_into_columns(box_defs)
 
         if cols.one?
           # Impossible to split further: return boxes
-          nodes = boxes.one? ? boxes.first : boxes
+          nodes = box_defs.one? ? box_defs.first : box_defs
         else
 
           direction = :row
@@ -271,6 +291,18 @@ module Ladb::OpenCutList::Geometrix
       groups.values
     end
 
+    # -- Iterate utils
+
+    def self._iterate_on_nodes(node, &block)
+      if node.is_a?(BoxDef)
+        block.call(node)
+      elsif node.is_a?(Array)
+        node.each { |child| _iterate_on_nodes(child, &block) }
+      else
+        raise "Invalide node : #{node.inspect}"
+      end
+    end
+
     # -- Layout utils
 
     def self._compute_preferred_size(node, direction: :col, spacing: 0)
@@ -289,9 +321,9 @@ module Ladb::OpenCutList::Geometrix
       end
     end
 
-    def self._build_boxes(node, origin_x:, origin_y:, available_width:, available_height:, direction: :col, spacing: 0, boxes: [])
+    def self._build_box_defs(node, origin_x:, origin_y:, available_width:, available_height:, direction: :col, spacing: 0, box_defs: [])
       if node.is_a?(BoxDef)
-        boxes << BoxDef.new(origin_x, origin_y + available_height - node.height, node.width, node.height, data: node.data)
+        box_defs << BoxDef.new(origin_x, origin_y + available_height - node.height, node.width, node.height, data: node.data)
 
       elsif node.is_a?(Array)
         child_direction = (direction == :col) ? :row : :col
@@ -302,14 +334,14 @@ module Ladb::OpenCutList::Geometrix
           node.each_with_index do |child, i|
             _, child_h = preferred_sizes[i]
             cursor_y -= child_h
-            _build_boxes(child,
-                         origin_x: origin_x,
-                         origin_y: cursor_y,
-                         available_width: available_width,
-                         available_height: child_h,
-                         direction: child_direction,
-                         spacing: spacing,
-                         boxes: boxes
+            _build_box_defs(child,
+                            origin_x: origin_x,
+                            origin_y: cursor_y,
+                            available_width: available_width,
+                            available_height: child_h,
+                            direction: child_direction,
+                            spacing: spacing,
+                            box_defs: box_defs
             )
             cursor_y -= spacing
           end
@@ -317,21 +349,21 @@ module Ladb::OpenCutList::Geometrix
           cursor_x = origin_x
           node.each_with_index do |child, i|
             child_w, _ = preferred_sizes[i]
-            _build_boxes(child,
-                         origin_x: cursor_x,
-                         origin_y: origin_y,
-                         available_width: child_w,
-                         available_height: available_height,
-                         direction: child_direction,
-                         spacing: spacing,
-                         boxes: boxes
+            _build_box_defs(child,
+                            origin_x: cursor_x,
+                            origin_y: origin_y,
+                            available_width: child_w,
+                            available_height: available_height,
+                            direction: child_direction,
+                            spacing: spacing,
+                            box_defs: box_defs
             )
             cursor_x += child_w + spacing
           end
         end
       end
 
-      boxes
+      box_defs
     end
 
   end
@@ -340,10 +372,10 @@ module Ladb::OpenCutList::Geometrix
 
   class BoxDef
 
-    attr_reader :x, :y, :width, :height,
-                :data
+    attr_accessor :x, :y, :width, :height,
+                  :data
 
-    def initialize(x, y, width, height, data: nil)
+    def initialize(x = 0, y = 0, width = 0, height = 0, data: nil)
       @x = x
       @y = y
       @width = width
