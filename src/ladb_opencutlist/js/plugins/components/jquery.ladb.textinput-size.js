@@ -75,6 +75,10 @@
         return LadbTextinputAbstract.prototype.val.call(this, value);
     };
 
+    LadbTextinputSize.prototype.createLeftToolsContainer = function () {
+        // Override for no left tools
+    };
+
     LadbTextinputSize.prototype.appendRightTools = function ($toolsContainer) {
         if (this.options.feederCallback) {
 
