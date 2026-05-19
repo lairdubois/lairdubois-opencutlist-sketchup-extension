@@ -4,7 +4,7 @@ module Ladb::OpenCutList::Geometrix
 
     OVERLAP_THRESHOLD = 0.5
 
-    def self.find_layout_debug
+    def self.find_layout_debug(spacing = 0)
 
       require_relative '../../../utils/transformation_utils'
 
@@ -65,7 +65,7 @@ module Ladb::OpenCutList::Geometrix
           ]
         }.each do |axes, items|
           puts "-> #{axes}"
-          puts find_layout(items.map { |e, transformation, path|
+          layout_def = find_layout(items.map { |e, transformation, path|
 
             t = transformation * e.transformation
             x_axis = X_AXIS.transform(t)
@@ -90,9 +90,32 @@ module Ladb::OpenCutList::Geometrix
 
             # Sketchup.active_model.active_entities.add_line(position, position + [ vx.length, vy.length ])
 
-            BoxDef.new(position.x, position.y, vx.length, vy.length, id: path.map { |e| e.name.empty? ? nil : e.name }.compact.push(e.name).join('/'))
+            BoxDef.new(position.x, position.y, vx.length, vy.length, id: (path + [e]).map { |e| e.name.empty? ? nil : e.name }.compact.join('/'))
 
-          }).inspect
+          })
+
+          puts layout_def.inspect
+
+          boxes = layout(layout_def, spacing: spacing)
+
+          puts "Boxes: #{boxes.size}"
+
+          main_group = Sketchup.active_model.active_entities.add_group
+
+          boxes.each_with_index do |box, i|
+            puts "#{i}: #{box.x}, #{box.y}, #{box.width}, #{box.height}"
+
+            box_group = main_group.entities.add_group
+            box_group.name = box.id
+            box_group.entities.add_face(
+              [ box.x, box.y ],
+              [ box.x + box.width, box.y ],
+              [ box.x + box.width, box.y + box.height ],
+              [ box.x, box.y + box.height ]
+            )
+
+          end
+
         end
         puts "----"
       end
@@ -104,19 +127,22 @@ module Ladb::OpenCutList::Geometrix
     #
     # Strategy: First, the ROWS (overlapping horizontal bands Y) are detected.
     # Then, within each row, the boxes are sorted from top to bottom.
-    # If a "row" contains columns of different sizes,
-    # they are recursively grouped.
+    # If a "row" contains columns of different sizes, they are recursively grouped.
     #
+    # Y
+    # ^
+    # |
     # +------------------+
     # |        A         |
     # +---+--------------+
     # | B |              |
     # +---+       D      +
     # | C |              |
-    # +---+--------------+
+    # +---+--------------+--> X
+    #
     #
     # Input: BoxDefs (x, y = bottom-left corner (y upwards), width, height = dimensions)
-    # Output: LayoutDef (direction = Y_AXIS, nodes = [ "A", [ ["B", "C"], "D" ] ])
+    # Output: LayoutDef (direction = :row, nodes = [ "A", [ ["B", "C"], "D" ] ])
     #
     # @param [Array<BoxDef>] boxes
     #
@@ -127,9 +153,28 @@ module Ladb::OpenCutList::Geometrix
       return LayoutDef.new(nodes, direction)
     end
 
+    def self.layout(layout_def, origin_x: 0, origin_y: 0, spacing: 0)
+      return [] unless layout_def.is_a?(LayoutDef)
+
+      preferred_width, preferred_height = _compute_preferred_size(layout_def.nodes, direction: layout_def.direction, spacing: spacing)
+
+      _build_boxes(
+        layout_def.nodes,
+        origin_x: origin_x,
+        origin_y: origin_y,
+        available_width: preferred_width,
+        available_height: preferred_height,
+        direction: layout_def.direction,
+        spacing: spacing
+      )
+    end
+
     # -----
 
+
     private
+
+    # -- Find utils
 
     def self._split_into_rows(boxes)
       n = boxes.size
@@ -165,7 +210,7 @@ module Ladb::OpenCutList::Geometrix
 
     def self._build_node(boxes, depth = 0)
 
-      direction = Y_AXIS
+      direction = :col
 
       # Split into lines
       rows = _split_into_rows(boxes)
@@ -180,7 +225,7 @@ module Ladb::OpenCutList::Geometrix
           nodes = boxes.one? ? boxes.first : boxes
         else
 
-          direction = X_AXIS
+          direction = :row
 
           # Recursion on each column
           col_nodes = cols.map { |col| nodes, _ = _build_node(col, depth + 1); nodes }
@@ -226,6 +271,69 @@ module Ladb::OpenCutList::Geometrix
       groups.values
     end
 
+    # -- Layout utils
+
+    def self._compute_preferred_size(node, direction: :col, spacing: 0)
+      if node.is_a?(BoxDef)
+        [ node.width, node.height ]
+      elsif node.is_a?(Array)
+        child_direction = (direction == :col) ? :row : :col
+        preferred_sizes = node.map { |child| _compute_preferred_size(child, direction: child_direction, spacing: spacing) }
+        if direction == :col
+          [ preferred_sizes.map(&:first).max, preferred_sizes.map(&:last).sum + spacing * (node.size - 1) ]
+        else
+          [ preferred_sizes.map(&:first).sum + spacing * (node.size - 1), preferred_sizes.map(&:last).max ]
+        end
+      else
+        raise "Invalide node : #{node.inspect}"
+      end
+    end
+
+    def self._build_boxes(node, origin_x:, origin_y:, available_width:, available_height:, direction: :col, spacing: 0, boxes: [])
+      if node.is_a?(BoxDef)
+        boxes << BoxDef.new(origin_x, origin_y + available_height - node.height, node.width, node.height, id: node.id)
+
+      elsif node.is_a?(Array)
+        child_direction = (direction == :col) ? :row : :col
+        preferred_sizes = node.map { |child| _compute_preferred_size(child, direction: child_direction, spacing: spacing) }
+
+        if direction == :col
+          cursor_y = origin_y + available_height
+          node.each_with_index do |child, i|
+            _, child_h = preferred_sizes[i]
+            cursor_y -= child_h
+            _build_boxes(child,
+                         origin_x: origin_x,
+                         origin_y: cursor_y,
+                         available_width: available_width,
+                         available_height: child_h,
+                         direction: child_direction,
+                         spacing: spacing,
+                         boxes: boxes
+            )
+            cursor_y -= spacing
+          end
+        else
+          cursor_x = origin_x
+          node.each_with_index do |child, i|
+            child_w, _ = preferred_sizes[i]
+            _build_boxes(child,
+                         origin_x: cursor_x,
+                         origin_y: origin_y,
+                         available_width: child_w,
+                         available_height: available_height,
+                         direction: child_direction,
+                         spacing: spacing,
+                         boxes: boxes
+            )
+            cursor_x += child_w + spacing
+          end
+        end
+      end
+
+      boxes
+    end
+
   end
 
   # -----
@@ -257,6 +365,9 @@ module Ladb::OpenCutList::Geometrix
   end
 
   class LayoutDef
+
+    attr_reader :nodes,
+                :direction
 
     def initialize(nodes, direction)
       @nodes = nodes
