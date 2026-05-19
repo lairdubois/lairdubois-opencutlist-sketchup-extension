@@ -1151,6 +1151,11 @@ tab:
       option_time_limit: Limite de temps
       option_time_limit_help: |
         Fixe le temps impartit au calcul
+      grain_groups:
+        title: "{{ count }} groupe de continuité de fil"
+        title_plural: "{{ count }} groupes de continuité de fil"
+        name: Nom
+        item_count: Σ Pièces
       tooltip:
         scroll_to_block_1d: Défiler vers la première barre ou bande
         scroll_to_block_2d: Défiler vers le premier panneau ou feuille

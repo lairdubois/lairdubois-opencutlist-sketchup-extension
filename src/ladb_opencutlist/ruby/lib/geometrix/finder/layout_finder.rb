@@ -90,7 +90,7 @@ module Ladb::OpenCutList::Geometrix
 
             # Sketchup.active_model.active_entities.add_line(position, position + [ vx.length, vy.length ])
 
-            BoxDef.new(position.x, position.y, vx.length, vy.length, id: (path + [e]).map { |e| e.name.empty? ? nil : e.name }.compact.join('/'))
+            BoxDef.new(position.x, position.y, vx.length, vy.length, data: (path + [e]).map { |e| e.name.empty? ? nil : e.name }.compact.join('/'))
 
           })
 
@@ -291,7 +291,7 @@ module Ladb::OpenCutList::Geometrix
 
     def self._build_boxes(node, origin_x:, origin_y:, available_width:, available_height:, direction: :col, spacing: 0, boxes: [])
       if node.is_a?(BoxDef)
-        boxes << BoxDef.new(origin_x, origin_y + available_height - node.height, node.width, node.height, id: node.id)
+        boxes << BoxDef.new(origin_x, origin_y + available_height - node.height, node.width, node.height, data: node.data)
 
       elsif node.is_a?(Array)
         child_direction = (direction == :col) ? :row : :col
@@ -340,14 +340,15 @@ module Ladb::OpenCutList::Geometrix
 
   class BoxDef
 
-    attr_reader :id, :x, :y, :width, :height
+    attr_reader :x, :y, :width, :height,
+                :data
 
-    def initialize(x, y, width, height, id: nil)
+    def initialize(x, y, width, height, data: nil)
       @x = x
       @y = y
       @width = width
       @height = height
-      @id = id
+      @data = data
     end
 
     def x_max
@@ -359,7 +360,7 @@ module Ladb::OpenCutList::Geometrix
     end
 
     def inspect
-      @id.to_s
+      @data.inspect
     end
 
   end

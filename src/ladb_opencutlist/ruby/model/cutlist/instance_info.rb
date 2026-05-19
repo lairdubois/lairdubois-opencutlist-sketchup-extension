@@ -25,10 +25,10 @@ module Ladb::OpenCutList
     def read_name(try_from_dynamic_attributes = false)
       if try_from_dynamic_attributes
         name = entity.get_attribute('dynamic_attributes', 'name', nil)
-        return [name, NAME_SOURCE_DYNAMIC_ATTRIBUTE ] unless name.nil?
+        return [ name, NAME_SOURCE_DYNAMIC_ATTRIBUTE ] unless name.nil?
       end
-      return [entity.name, NAME_SOURCE_INSTANCE ] if entity.definition.group?
-      [entity.definition.name, NAME_SOURCE_DEFINITION ]
+      return [ entity.name, NAME_SOURCE_INSTANCE ] if entity.definition.group?
+      [ entity.definition.name, NAME_SOURCE_DEFINITION ]
     end
 
     # -----

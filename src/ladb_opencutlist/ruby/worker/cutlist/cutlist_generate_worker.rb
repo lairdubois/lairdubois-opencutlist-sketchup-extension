@@ -6,6 +6,7 @@ module Ladb::OpenCutList
   require_relative '../../helper/definition_attributes_caching_helper'
   require_relative '../../model/attributes/material_attributes'
   require_relative '../../model/attributes/definition_attributes'
+  require_relative '../../model/attributes/instance_attributes'
   require_relative '../../model/geom/size3d'
   require_relative '../../model/cutlist/cutlist'
   require_relative '../../model/cutlist/face_info'
@@ -15,7 +16,12 @@ module Ladb::OpenCutList
   require_relative '../../model/cutlist/group'
   require_relative '../../model/cutlist/part_def'
   require_relative '../../model/cutlist/part'
+  require_relative '../../model/cutlist/grain_group'
+  require_relative '../../model/cutlist/grain_group_def'
+  require_relative '../../model/cutlist/grain_item'
+  require_relative '../../model/cutlist/grain_item_def'
   require_relative '../../utils/transformation_utils'
+  require_relative '../../lib/geometrix/finder/layout_finder'
 
   class CutlistGenerateWorker
 
@@ -23,6 +29,7 @@ module Ladb::OpenCutList
     include LayerVisibilityHelper
     include MaterialAttributesCachingHelper
     include DefinitionAttributesCachingHelper
+    include InstanceAttributesCachingHelper
 
     MATERIAL_ORIGIN_UNKNOWN = 0
     MATERIAL_ORIGIN_OWNED = 1
@@ -734,6 +741,25 @@ module Ladb::OpenCutList
         end
         group_def.part_count += definition_attributes.thickness_layer_count
 
+        # Populate grain groups (if needed)
+
+        if group_def.material_attributes.grained &&
+           (group_def.material_attributes.type == MaterialAttributes::TYPE_SHEET_GOOD || group_def.material_attributes.type == MaterialAttributes::TYPE_DIMENSIONAL) &&
+           !part_def.ignore_grain_direction &&
+           _get_instance_attributes(instance_info.entity).is_grain_item
+
+          grain_group_entity = instance_info.path.reverse_each.find { |entity| _get_instance_attributes(entity).is_grain_group }
+          grain_group_entity = model if grain_group_entity.nil?
+
+          grain_group_def = group_def.get_grain_group_def(grain_group_entity)
+          if grain_group_def.nil?
+            grain_group_def = GrainGroupDef.new(grain_group_entity)
+            group_def.store_grain_group_def(grain_group_def)
+          end
+          grain_group_def.item_defs << GrainItemDef.new(instance_info, part_def)
+
+        end
+
       end
 
       # Warnings & tips
@@ -786,7 +812,8 @@ module Ladb::OpenCutList
           part_defs = []
           group_def.part_defs.values
                    .group_by { |part_def|
-                     [ part_def.name,
+                     [
+                       part_def.name,
                        part_def.name_source,
                        part_def.instance_count_by_part,
                        part_def.mass,
@@ -984,6 +1011,39 @@ module Ladb::OpenCutList
           end
 
           group.add_part(part)
+        end
+
+        # Split Grain groups (if needed)
+        group_def.grain_group_defs.each do |_, grain_group_def|
+
+          # Groups items by orientation
+          splitted_item_defs = grain_group_def.item_defs
+                                             .group_by { |item_def|
+                                               size = item_def.part_def.size
+                                               t = item_def.instance_info.transformation
+                                               [
+                                                 size.oriented_axis(X_AXIS).transform(t).to_a.map { |v| v.round(3) },
+                                                 size.oriented_axis(Y_AXIS).transform(t).to_a.map { |v| v.round(3) },
+                                                 size.oriented_axis(Z_AXIS).transform(t).to_a.map { |v| v.round(3) }
+                                               ]
+                                             }
+
+          splitted_item_defs.each_with_index do |data, index|
+
+            _, item_defs = data
+
+            grain_group = GrainGroup.new(grain_group_def, index, splitted_item_defs.size)
+            group.add_grain_group(grain_group)
+
+            item_defs.each do |item_def|
+
+              grain_item = GrainItem.new(item_def)
+              grain_group.add_item(grain_item)
+
+            end
+
+          end
+
         end
 
       end

@@ -22,7 +22,8 @@ module Ladb::OpenCutList
                 :show_cutting_dimensions,
                 :show_edges, :edge_decremented,
                 :show_faces, :face_decremented,
-                :parts
+                :parts,
+                :grain_groups
 
     def initialize(_def, _cutlist)
       @_def = _def
@@ -75,6 +76,8 @@ module Ladb::OpenCutList
       @face_decremented = _def.face_decremented
 
       @parts = []
+      @grain_groups = []
+
     end
 
     # ---
@@ -103,6 +106,12 @@ module Ladb::OpenCutList
         end
       end
       parts
+    end
+
+    # Grain groups
+
+    def add_grain_group(grain_group)
+      @grain_groups.push(grain_group)
     end
 
   end

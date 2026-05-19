@@ -14,7 +14,8 @@ module Ladb::OpenCutList
                   :show_cutting_dimensions, :show_edges, :edge_decremented, :show_faces,
                   :face_decremented
     attr_reader :id,
-                :part_defs
+                :part_defs,
+                :grain_group_defs
 
     def initialize(id)
       @id = id
@@ -34,6 +35,8 @@ module Ladb::OpenCutList
 
       @part_count = 0
       @part_defs = {}
+
+      @grain_group_defs = {}
 
       @total_cutting_length = 0
       @total_cutting_area = 0
@@ -104,19 +107,21 @@ module Ladb::OpenCutList
     end
 
     def get_part_def(id)
-      if @part_defs.has_key?(id)
-        return @part_defs[id]
-      end
-      nil
+      @part_defs[id]
     end
 
     def include_number?(number)
-      @part_defs.each { |id, part_def|
-        if part_def.number == number
-          return true
-        end
-      }
-      false
+      @part_defs.any? { |id, part_def| part_def.number == number }
+    end
+
+    # -----
+
+    def store_grain_group_def(grain_group_def)
+      @grain_group_defs.store(grain_group_def.entity, grain_group_def)
+    end
+
+    def get_grain_group_def(entity)
+      @grain_group_defs[entity]
     end
 
     # -----
