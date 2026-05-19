@@ -357,7 +357,7 @@ tab:
       resized: Dieses Teil wurde gegenüber der ursprünglichen Definition redimensioniert
       flipped: Dieses Teil ist im Vergleich zur ursprünglichen Definition gespiegelt
       symmetrical: Die Erkennung gespiegelter Teile ist bei diesem Teil deaktiviert
-      ignore_grain_direction: Die Faserrichtung wird für dieses Teil nicht beachtet
+      ignore_grain_direction: Die Faserausrichtung wird für dieses Teil nicht beachtet
       auto_oriented: Dieses Teil wurde automatisch orientiert
       oko_label_filter: "Badge einschließen / ausschließen"
       add_label_filter: "Nach '{{ label }}' auswählen"
@@ -510,9 +510,9 @@ tab:
       symmetrical: Spiegelerkennung für dieses Teil deaktivieren
       symmetrical_help: |
         Wird dieses Kästchen aktiviert, hat die Erkennung von *Spiegelteilen* keine Auswirkung auf dieses Teil.
-      ignore_grain_direction: Faserrichtung für dieses Teil nicht beachten
+      ignore_grain_direction: Faserausrichtung für dieses Teil nicht beachten
       ignore_grain_direction_help: |
-        Wenn dieses Kästchen aktiviert ist, wird die Faserrichtung für dieses Teil ignoriert.
+        Wenn dieses Kästchen aktiviert ist, wird die Faserausrichtung für dieses Teil ignoriert.
       axes: Achsen
       axes_help: "Ordnen Sie die Abmessungen so an, dass sie mit den gewünschten Achsenfarben in Ihrem Teil übereinstimmen."
       axes_tip: |
@@ -1075,7 +1075,7 @@ tab:
       option_irregular_allowed_rotations_help: |
         Bestimmt die erlaubten Drehungen eines Teils.
 
-        *Materiale mit Faserrichtung erlauben nur 0 und 180° Drehungen.*
+        *Materiale mit Faserausrichtung erlauben nur 0 und 180° Drehungen.*
       option_irregular_allowed_rotations_0: Keine
       option_irregular_allowed_rotations_90: 90° Schritt
       option_irregular_allowed_rotations_180: 180° Schritt
@@ -1151,6 +1151,11 @@ tab:
       option_time_limit: Zeitbegrenzung
       option_time_limit_help: |
         Legt die Zeit für die Berechnung fest
+      grain_groups:
+        title: "{{ count }} Faserverlaufgruppe"
+        title_plural: "{{ count }} Faserverlaufgruppen"
+        name: Name
+        item_count: Σ Teile
       tooltip:
         scroll_to_block_1d: Zur ersten Stange oder Kantenband blättern
         scroll_to_block_2d: Zur ersten Platte oder Furnierblatt blättern
@@ -1590,7 +1595,7 @@ tab:
       type_7: Materialtyp '$t(tab.materials.type_7)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
-      grain_direction: Faserrichtung
+      grain_direction: Faserausrichtung
       raw_estimated_0: Geschätzt nach effektivem Volumen
       colorized: Dieser Farbton wird beim Rendern des Modells auf die Materialtextur angewendet
       texture_load: Neues Bild laden
@@ -1664,9 +1669,9 @@ tab:
         Standardmaße für dieses Material.
 
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
-      grained: Faserrichtung
+      grained: Faserausrichtung
       grained_help: Gibt die Ausrichtung der Faser in Bezug auf die Länge der Platte an.
-      grained_0: Keine Faserrichtung
+      grained_0: Keine Faserausrichtung
       grained_1: Faser in Längsrichtung
       edge_decremented: Reduzierung der Teile
       edge_decremented_help: "Gibt an, ob die Maße der Teile der Holzliste um die Materialstärke der Kantenbänder reduziert werden sollen."
@@ -1771,6 +1776,15 @@ tab:
       name: Bezeichnung
       instance_name: Instanz
       material: Material
+      is_grain_group: Als **Faserverlaufgruppe** definieren
+      is_grain_group_help: Wenn diese Option aktiviert ist, kann diese Instanz für die darin enthaltenen Elemente, bei denen die Option *Faserverlauf* aktiviert ist, als **Faserverlaufgruppe** betrachtet werden.
+      is_grain_item: "**Faserverlauf** für diese Instanz aktivieren"
+      is_grain_item_help: |
+        Wenn diese Option aktiviert ist, kann diese Instanz als ein Teil betrachtet werden, das mit seinen Nachbarn im **Faserverlauf** verbunden ist, die folgende Eigenschaften gemeinsam haben:
+        - dieselbe *Faserverlaufgruppe*
+        - dieselbe Ausrichtung
+        - denselben Werkstoff mit Faser
+        - dieselbe Dicke
       definition_name: Definition
       description: Beschreibung
       url: URL

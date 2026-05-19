@@ -1151,6 +1151,11 @@ tab:
       option_time_limit: Time limit
       option_time_limit_help: |
         Fix time limit to computation
+      grain_groups:
+        title: "{{ count }} grain continuity group"
+        title_plural: "{{ count }} grain continuity groups"
+        name: Name
+        item_count: Σ Parts
       tooltip:
         scroll_to_block_1d: Scroll to first board or edge banding
         scroll_to_block_2d: Scroll to first panel or veneer sheet
@@ -1771,6 +1776,15 @@ tab:
       name: Name
       instance_name: Instance
       material: Material
+      is_grain_group: Define as **Grain Continuity Group**
+      is_grain_group_help: If you enable this option, this instance will be treated as a **Grain Continuity Group** for the parts it contains that have *Grain Continuity* enabled.
+      is_grain_item: Enable **Grain Continuity** for this instance
+      is_grain_item_help: |
+        If you enable this option, this instance will be treated as a part with **Grain Continuity** relative to its neighbors that share:
+        - the same *Grain Continuity Group*
+        - the same Orientation
+        - the same Material with grain
+        - the same Thickness
       definition_name: Definition
       description: Description
       url: URL
