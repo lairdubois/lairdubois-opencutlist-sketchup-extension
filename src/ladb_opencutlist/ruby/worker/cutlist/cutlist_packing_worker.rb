@@ -558,14 +558,24 @@ module Ladb::OpenCutList
 
           end
 
-          @item_type_defs << PackingItemTypeDef.new(
+          @item_type_defs << PackingCompositeItemTypeDef.new(
             length: total_length,
             width: total_width,
-            count: 1,
-            part: box_defs.first.data.part,
-            projection_def: nil,
             color: nil,
-            boxed: true
+            item_type_defs: box_defs.map { |box_def|
+              grain_item = box_def.data
+              grain_item_def = grain_item.def
+              part = grain_item.part
+              PackingCompositeSubItemTypeDef.new(
+                x: box_def.x, y: box_def.y,
+                length: box_def.width, width: box_def.height,
+                part: part,
+                projection_def: _compute_part_projection_def(@part_drawing_type, part,
+                                                             compute_shell: true),
+                color: @colorization > COLORIZATION_NONE ? ColorUtils.color_lighten(ColorUtils.color_create("##{Digest::SHA1.hexdigest(part.number.to_s)[0..5]}"), 0.8) : nil,
+                instance_info: grain_item_def.instance_info
+              )
+            }
           )
 
           grain_group.items.each do |grain_item|
@@ -604,6 +614,10 @@ module Ladb::OpenCutList
         parts.flat_map { |part| part.instance_of?(FolderPart) ? part.children : part }.each do |part|
 
           count = part.count
+          count -= @gg[part].size if @gg && @gg.has_key?(part)
+
+          next if count <= 0
+
           projection_def = _compute_part_projection_def(@part_drawing_type, part,
                                                         compute_shell: true)
 
@@ -812,24 +826,35 @@ module Ladb::OpenCutList
 
       instance_metas_by_item_type_def = {}
       @item_type_defs.each do |item_type_def|
-        part_def = item_type_def.part.def
-        instance_infos = part_def.instance_infos.values.sort_by! { |instance_info| instance_info.entity.name }
-        instance_count = part_def.count / part_def.thickness_layer_count
-        instance_metas = []
-        position_in_batch = 0
-        instance_count.times do |i|
-          thickness_layer = 0
-          part_def.thickness_layer_count.times do
-            thickness_layer += 1
-            position_in_batch += 1
-            instance_metas << {
-              instance_info: instance_infos[i],
-              thickness_layer: thickness_layer,
-              position_in_batch: position_in_batch
-            }
+        case item_type_def
+        when PackingCompositeItemTypeDef
+          item_type_def.item_type_defs.each do |sub_item_type_def|
+            instance_metas_by_item_type_def[sub_item_type_def] = [{
+              instance_info: sub_item_type_def.instance_info,
+              thickness_layer: 0,
+              position_in_batch: 1
+            }]
           end
+        else
+          part_def = item_type_def.part.def
+          instance_infos = part_def.instance_infos.values.sort_by! { |instance_info| instance_info.entity.name }
+          instance_count = part_def.count / part_def.thickness_layer_count
+          instance_metas = []
+          position_in_batch = 0
+          instance_count.times do |i|
+            thickness_layer = 0
+            part_def.thickness_layer_count.times do
+              thickness_layer += 1
+              position_in_batch += 1
+              instance_metas << {
+                instance_info: instance_infos[i],
+                thickness_layer: thickness_layer,
+                position_in_batch: position_in_batch
+              }
+            end
+          end
+          instance_metas_by_item_type_def[item_type_def] = instance_metas
         end
-        instance_metas_by_item_type_def[item_type_def] = instance_metas
       end
 
       label_offsets_by_item_type_def = raw_solution['item_types_stats'].is_a?(Array) ? raw_solution['item_types_stats'].map { |raw_item_type_stats|
@@ -881,12 +906,20 @@ module Ladb::OpenCutList
               defs
             }.flatten(1).sort_by!{ |bin_type_stats| [ bin_type_stats.used ? 1 : 0, -bin_type_stats.bin_type_def.type, bin_type_stats.bin_type_def.length ]} : []
           ),
-          unused_part_info_defs: raw_solution['item_types_stats'].is_a?(Array) ? raw_solution['item_types_stats'].map { |raw_item_type_stats|
+          unused_part_info_defs: raw_solution['item_types_stats'].is_a?(Array) ? raw_solution['item_types_stats'].flat_map { |raw_item_type_stats|
             item_type_def = @item_type_defs[raw_item_type_stats['item_type_id']]
             unused_copies = raw_item_type_stats.fetch('unused_copies', 0)
             next if unused_copies == 0
             usable = raw_item_type_stats.fetch('usable', true)
-            PackingPartInfoDef.new(part: item_type_def.part, count: unused_copies, usable: usable)
+            case item_type_def
+            when PackingCompositeItemTypeDef
+              # TODO: handle composite item type
+              item_type_def.item_type_defs.group_by(&:part).map { |part, sub_item_type_defs|
+                PackingPartInfoDef.new(part: part, count: unused_copies * sub_item_type_defs.size, usable: usable)
+              }
+            else
+              PackingPartInfoDef.new(part: item_type_def.part, count: unused_copies, usable: usable)
+            end
           }.compact.sort_by! { |part_info_def| part_info_def._sorter } : [],
           bin_defs: raw_solution['bins'].flat_map { |raw_bin|
             bin_type_def = @bin_type_defs[raw_bin['bin_type_id']]
@@ -896,21 +929,40 @@ module Ladb::OpenCutList
                 bin_type_def: bin_type_def,
                 count: @bin_folding ? bin_copies : 1,
                 efficiency: raw_bin['efficiency'],
-                item_defs: raw_bin['items'].is_a?(Array) ? raw_bin['items'].map { |raw_item|
-                  item_type_def = @item_type_defs[raw_item['item_type_id']]
-                  label_offset = label_offsets_by_item_type_def[item_type_def]
-                  instance_metas = instance_metas_by_item_type_def[item_type_def].is_a?(Array) ? instance_metas_by_item_type_def[item_type_def].shift : nil
-                  PackingItemDef.new(
-                    item_type_def: item_type_def,
-                    instance_info: instance_metas[:instance_info],
-                    thickness_layer: instance_metas[:thickness_layer],
-                    position_in_batch: instance_metas[:position_in_batch],
-                    x: _from_packy_length(raw_item.fetch('x', 0)),
-                    y: _from_packy_length(raw_item.fetch('y', 0)),
-                    angle: raw_item.fetch('angle', 0),
-                    mirror: raw_item.fetch('mirror', false),
-                    label_offset: label_offset ? label_offset : Geom::Vector3d.new(0, 0)
-                  )
+                item_defs: raw_bin['items'].is_a?(Array) ? raw_bin['items'].flat_map { |raw_item|
+                  case (item_type_def = @item_type_defs[raw_item['item_type_id']])
+                  when PackingCompositeItemTypeDef
+                    x = _from_packy_length(raw_item.fetch('x', 0))
+                    y = _from_packy_length(raw_item.fetch('y', 0))
+                    item_type_def.item_type_defs.map do |sub_item_type_def|
+                      instance_metas = instance_metas_by_item_type_def[sub_item_type_def].is_a?(Array) ? instance_metas_by_item_type_def[sub_item_type_def].shift : nil
+                      PackingItemDef.new(
+                        item_type_def: sub_item_type_def,
+                        instance_info: instance_metas[:instance_info],
+                        thickness_layer: instance_metas[:thickness_layer],
+                        position_in_batch: instance_metas[:position_in_batch],
+                        x: x + sub_item_type_def.x,
+                        y: y + sub_item_type_def.y,
+                        angle: 0,
+                        mirror: false,
+                        label_offset: Geom::Vector3d.new(0, 0)
+                      )
+                    end
+                  else
+                    label_offset = label_offsets_by_item_type_def[item_type_def]
+                    instance_metas = instance_metas_by_item_type_def[item_type_def].is_a?(Array) ? instance_metas_by_item_type_def[item_type_def].shift : nil
+                    PackingItemDef.new(
+                      item_type_def: item_type_def,
+                      instance_info: instance_metas[:instance_info],
+                      thickness_layer: instance_metas[:thickness_layer],
+                      position_in_batch: instance_metas[:position_in_batch],
+                      x: _from_packy_length(raw_item.fetch('x', 0)),
+                      y: _from_packy_length(raw_item.fetch('y', 0)),
+                      angle: raw_item.fetch('angle', 0),
+                      mirror: raw_item.fetch('mirror', false),
+                      label_offset: label_offset ? label_offset : Geom::Vector3d.new(0, 0)
+                    )
+                  end
                 } : [],
                 leftover_defs: raw_bin['leftovers'].is_a?(Array) ? raw_bin['leftovers'].map { |raw_leftover|
                   PackingLeftoverDef.new(
@@ -932,11 +984,21 @@ module Ladb::OpenCutList
                 }.sort_by { |cut_def| [ cut_def.depth, cut_def.x, cut_def.y ] } : [],
                 part_info_defs: raw_bin['items'].is_a?(Array) ? raw_bin['items'].map { |raw_item|
                   @item_type_defs[raw_item['item_type_id']]
-                }.group_by { |i| i }.map { |item_type_def, v|
-                  PackingPartInfoDef.new(
-                    part: item_type_def.part,
-                    count: v.length
-                  )
+                }.group_by { |i| i }.flat_map { |item_type_def, v|
+                  case item_type_def
+                  when PackingCompositeItemTypeDef
+                    item_type_def.item_type_defs.map { |sub_item_type_def|
+                      PackingPartInfoDef.new(
+                        part: sub_item_type_def.part,
+                        count: 1
+                      )
+                    }
+                  else
+                    PackingPartInfoDef.new(
+                      part: item_type_def.part,
+                      count: v.length
+                    )
+                  end
                 }.sort_by { |part_info_def| part_info_def._sorter } : [],
                 number_of_items: raw_bin.fetch('number_of_items', 0),
                 number_of_leftovers: raw_bin.fetch('number_of_leftovers', 0),

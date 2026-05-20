@@ -15,7 +15,7 @@ module Ladb::OpenCutList
                   :cutting_size, :size, :scale, :flipped,
                   :material_name, :material_origins,
                   :tags,
-                  :cumulable, :instance_count_by_part, :mass, :price, :thickness_layer_count, :orientation_locked_on_axis, :symmetrical, :ignore_grain_direction,
+                  :cumulable, :instance_count_by_part, :mass, :price, :thickness_layer_count, :orientation_locked_on_axis, :symmetrical, :ignore_grain_direction, :follow_grain_direction,
                   :length_increase, :length_increased, :width_increase, :width_increased, :thickness_increase, :thickness_increased,
                   :edge_count, :edge_pattern, :edge_entity_ids, :edge_decrements, :edge_length_decrement, :edge_width_decrement, :edge_decremented,
                   :face_count, :face_pattern, :face_entity_ids, :face_decrements, :face_texture_angles, :face_thickness_decrement, :face_decremented,
@@ -54,6 +54,7 @@ module Ladb::OpenCutList
       @orientation_locked_on_axis = false
       @symmetrical = false
       @ignore_grain_direction = false
+      @follow_grain_direction = false
 
       @length_increase = 0
       @length_increased = false

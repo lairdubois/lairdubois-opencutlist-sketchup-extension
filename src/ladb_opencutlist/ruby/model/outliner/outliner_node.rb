@@ -61,7 +61,7 @@ module Ladb::OpenCutList
   class OutlinerNodeGroup < OutlinerNode
 
     attr_reader :layer, :material,
-                :is_grain_group, :is_grain_item,
+                :is_grain_group,
                 :description,
                 :is2d, :snapto, :cuts_opening, :always_face_camera, :shadows_face_sun, :no_scale_mask
 
@@ -73,7 +73,6 @@ module Ladb::OpenCutList
 
       instance_attributes = InstanceAttributes.new(_def.entity)
       @is_grain_group = instance_attributes.is_grain_group
-      @is_grain_item = instance_attributes.is_grain_item
 
       @description = _def.description
 

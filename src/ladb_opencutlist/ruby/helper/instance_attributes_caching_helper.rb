@@ -5,7 +5,7 @@ module Ladb::OpenCutList
   module InstanceAttributesCachingHelper
 
     def _get_instance_attributes(instance)
-      return nil if instance.nil?
+      return nil unless instance.is_a?(Sketchup::Entity)
       @instance_attributes_cache ||= {}
       @instance_attributes_cache[instance] ||= InstanceAttributes.new(instance)
     end

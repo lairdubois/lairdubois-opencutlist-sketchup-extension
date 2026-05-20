@@ -1,6 +1,7 @@
 <td>
     <div class="ladb-minitools ladb-minitools-right">
-        {% if part.ignore_grain_direction and group.material_type == 2 and group.material_grained %}<a href="#" class="ladb-tool-info no-print" data-tab="axes" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.ignore_grain_direction'|i18next }}"><i class="ladb-opencutlist-icon-grained-0"></i></a>{% endif %}
+        {% if part.ignore_grain_direction and group.material_type == 2 and group.material_grained %}<a href="#" class="ladb-tool-info no-print" data-tab="extra" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.ignore_grain_direction'|i18next }}"><i class="ladb-opencutlist-icon-grained-0"></i></a>{% endif %}
+        {% if part.follow_grain_direction and group.material_type == 2 and group.material_grained %}<a href="#" class="ladb-tool-info no-print" data-tab="extra" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.follow_grain_direction'|i18next }}"><i class="ladb-opencutlist-icon-grain-item"></i></a>{% endif %}
         {% if part.is_dynamic_attributes_name %}<a href="#" class="ladb-tool-info no-print" data-tab="infos_warnings" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.is_dynamic_attributes_name'|i18next }} : <{{ part.definition_id }}>"><i class="ladb-opencutlist-icon-dynamic-component"></i></a>{% endif %}
         {% if part.is_instance_name %}<a href="#" class="ladb-tool-info no-print" data-tab="infos_warnings" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.is_instance_name'|i18next }} : <{{ part.definition_id }}>"><i class="ladb-opencutlist-icon-instance-component"></i></a>{% endif %}
         {% if not part.is_child %}

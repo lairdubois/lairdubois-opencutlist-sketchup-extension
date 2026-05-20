@@ -29,7 +29,9 @@ module Ladb::OpenCutList::Geometrix
 
         if entities.none? { |e| e.respond_to?(:definition) }
 
-          return unless instance_attributes.is_grain_item
+          definition_attributes = Ladb::OpenCutList::DefinitionAttributes.new(container.definition)
+
+          return unless definition_attributes.follow_grain_direction
 
           grain_group = grain_groups[grain_group_container] ||= []
           grain_group << [ container, transformation, path ]

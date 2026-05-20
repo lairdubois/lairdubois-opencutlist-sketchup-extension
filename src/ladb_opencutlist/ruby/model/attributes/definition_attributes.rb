@@ -14,7 +14,7 @@ module Ladb::OpenCutList
                   :cumulable, :instance_count_by_part,
                   :mass, :price,
                   :length_increase, :width_increase, :thickness_increase,
-                  :symmetrical, :ignore_grain_direction, :orientation_locked_on_axis, :thickness_layer_count
+                  :symmetrical, :ignore_grain_direction, :follow_grain_direction, :orientation_locked_on_axis, :thickness_layer_count
     attr_reader :definition
 
     @@cached_uuids = {}
@@ -172,6 +172,7 @@ module Ladb::OpenCutList
         @thickness_increase = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'thickness_increase', '0')
         @symmetrical = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'symmetrical', false)
         @ignore_grain_direction = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'ignore_grain_direction', false)
+        @follow_grain_direction = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'follow_grain_direction', false)
         @orientation_locked_on_axis = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'orientation_locked_on_axis', false)
         @thickness_layer_count = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'thickness_layer_count', 1)
       end
@@ -197,6 +198,7 @@ module Ladb::OpenCutList
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'thickness_increase', DimensionUtils.str_add_units(@thickness_increase))
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'symmetrical', @symmetrical)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'ignore_grain_direction', @ignore_grain_direction)
+        @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'follow_grain_direction', @follow_grain_direction)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'orientation_locked_on_axis', @orientation_locked_on_axis)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'thickness_layer_count', @thickness_layer_count)
       end

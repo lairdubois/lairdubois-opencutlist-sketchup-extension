@@ -29,6 +29,7 @@ module Ladb::OpenCutList
         :orientation_locked_on_axis,
         :symmetrical,
         :ignore_grain_direction,
+        :follow_grain_direction,
         :axes_order,
         :axes_origin_position,
         :edge_material_names,
@@ -70,6 +71,7 @@ module Ladb::OpenCutList
           part_data.fetch('orientation_locked_on_axis'),
           part_data.fetch('symmetrical'),
           part_data.fetch('ignore_grain_direction'),
+          part_data.fetch('follow_grain_direction') && !part_data.fetch('ignore_grain_direction') && part_data.fetch('thickness_layer_count').to_i == 1,
           part_data.fetch('axes_order', nil),
           part_data.fetch('axes_origin_position', nil),
           part_data.fetch('edge_material_names'),
@@ -136,6 +138,7 @@ module Ladb::OpenCutList
                 part_data.orientation_locked_on_axis != definition_attributes.orientation_locked_on_axis ||
                 part_data.symmetrical != definition_attributes.symmetrical ||
                 part_data.ignore_grain_direction != definition_attributes.ignore_grain_direction ||
+                part_data.follow_grain_direction != definition_attributes.follow_grain_direction ||
                 part_data.tags != definition_attributes.tags
               definition_attributes.cumulable = part_data.cumulable
               definition_attributes.instance_count_by_part = part_data.instance_count_by_part
@@ -150,6 +153,7 @@ module Ladb::OpenCutList
               definition_attributes.orientation_locked_on_axis = part_data.orientation_locked_on_axis
               definition_attributes.symmetrical = part_data.symmetrical
               definition_attributes.ignore_grain_direction = part_data.ignore_grain_direction
+              definition_attributes.follow_grain_direction = part_data.follow_grain_direction
               definition_attributes.write_to_attributes
             end
 

@@ -344,18 +344,50 @@ module Ladb::OpenCutList
 
   end
 
-  class PackingCompositeItemTypeDef < PackingItemTypeDef
+  class PackingCompositeItemTypeDef < DataContainer
 
-    def initialize(length:, width:)
-      super(
-        length: length,
-        width: width,
-        count: 1,
-        part: nil,
-        projection_def: nil,
-        color: nil,
-        boxed: true
-      )
+    attr_reader :length, :width,
+                :color,
+                :item_type_defs
+
+    def initialize(length:, width:,
+                   color:,
+                   item_type_defs:)
+
+      @length = length
+      @width = width
+      @color = color
+
+      @item_type_defs = item_type_defs
+
+    end
+
+  end
+
+  class PackingCompositeSubItemTypeDef < PackingItemTypeDef
+
+    attr_reader :x, :y,
+                :instance_info
+
+    def initialize(x:, y:,
+                   length:, width:,
+                   part:,
+                   projection_def:,
+                   color:,
+                   instance_info:)
+
+      super(length: length, width: width,
+            count: 1,
+            part: part,
+            projection_def: projection_def,
+            color: color,
+            boxed: true)
+
+      @x = x
+      @y = y
+
+      @instance_info = instance_info
+
     end
 
   end

@@ -4146,14 +4146,20 @@
                 if (editedPart.instance_count_by_part !== editedParts[i].instance_count_by_part) {
                     editedPart.instance_count_by_part = MULTIPLE_VALUE;
                 }
+                if (editedPart.thickness_layer_count !== editedParts[i].thickness_layer_count) {
+                    editedPart.thickness_layer_count = MULTIPLE_VALUE;
+                }
+                if (editedPart.ignore_grain_direction !== editedParts[i].ignore_grain_direction) {
+                    editedPart.ignore_grain_direction = MULTIPLE_VALUE;
+                }
+                if (editedPart.follow_grain_direction !== editedParts[i].follow_grain_direction) {
+                    editedPart.follow_grain_direction = MULTIPLE_VALUE;
+                }
                 if (editedPart.mass !== editedParts[i].mass) {
                     editedPart.mass = MULTIPLE_VALUE;
                 }
                 if (editedPart.price !== editedParts[i].price) {
                     editedPart.price = MULTIPLE_VALUE;
-                }
-                if (editedPart.thickness_layer_count !== editedParts[i].thickness_layer_count) {
-                    editedPart.thickness_layer_count = MULTIPLE_VALUE;
                 }
                 if (editedPart.length_increase !== editedParts[i].length_increase) {
                     editedPart.length_increase = MULTIPLE_VALUE;
@@ -4232,7 +4238,6 @@
             const $inputMass = $('#ladb_cutlist_part_input_mass', $modal);
             const $inputPrice = $('#ladb_cutlist_part_input_price', $modal);
             const $inputThicknessLayerCount = $('#ladb_cutlist_part_input_thickness_layer_count', $modal);
-            const $sectionIncrease = $('#ladb_cutlist_part_section_increase', $modal);
             const $btnEditMaterial = $('.ladb-btn-edit-material', $modal);
             const $inputLengthIncrease = $('#ladb_cutlist_part_input_length_increase', $modal);
             const $inputWidthIncrease = $('#ladb_cutlist_part_input_width_increase', $modal);
@@ -4242,7 +4247,9 @@
             const $inputTags = $('#ladb_cutlist_part_input_tags', $modal);
             const $inputOrientationLockedOnAxis = $('#ladb_cutlist_part_input_orientation_locked_on_axis', $modal);
             const $inputSymmetrical = $('#ladb_cutlist_part_input_symmetrical', $modal);
-            const $inputIgnoreGrainDirection = $('#ladb_cutlist_part_input_ignore_grain_direction', $modal);
+            const $selectIgnoreGrainDirection = $('#ladb_cutlist_part_select_ignore_grain_direction', $modal);
+            const $selectFollowGrainDirection = $('#ladb_cutlist_part_select_follow_grain_direction', $modal);
+            const $formGroupFollowGrainDirection = $('#ladb_cutlist_part_form_group_follow_grain_direction', $modal);
             const $inputPartAxes = $('#ladb_cutlist_part_input_axes', $modal);
             const $sortableAxes = $('#ladb_sortable_axes', $modal);
             const $sortablePartAxes = $('#ladb_sortable_part_axes', $modal);
@@ -4284,6 +4291,15 @@
             let thumbnailLoaded = false;
 
             // Utils function
+            const fnUpdateFollowGrainDirectionFieldVisibility = function() {
+                const ignoreGrainDirection= $selectIgnoreGrainDirection.val() === '1';
+                const thicknessLayerCount = that.toInt($inputThicknessLayerCount.val());
+                if (ignoreGrainDirection || thicknessLayerCount !== 1) {
+                    $formGroupFollowGrainDirection.hide();
+                } else {
+                    $formGroupFollowGrainDirection.show();
+                }
+            }
             const fnComputeAxesOrder = function () {
                 const axes = [];
                 $sortablePartAxes.children('li').each(function () {
@@ -4523,9 +4539,13 @@
                     { $_p: that.currencySymbol + ' / ' + i18next.t('default.part_single') }
                 ]
             });
-            $inputThicknessLayerCount.ladbTextinputNumberWithUnit({
-                resetValue: '1'
-            });
+            $inputThicknessLayerCount
+                .ladbTextinputNumberWithUnit({
+                    resetValue: '1'
+                })
+                .on('change', function () {
+                    fnUpdateFollowGrainDirectionFieldVisibility();
+                });
             $inputLengthIncrease.ladbTextinputDimension();
             $inputWidthIncrease.ladbTextinputDimension();
             $inputThicknessIncrease.ladbTextinputDimension();
@@ -4570,6 +4590,14 @@
                 });
             $selectCumulable.val(editedPart.cumulable);
             $selectCumulable.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+            $selectIgnoreGrainDirection.val(editedPart.ignore_grain_direction === '-1' ? '-1' : editedPart.ignore_grain_direction ? '1' : '0');
+            $selectIgnoreGrainDirection
+                .selectpicker(SELECT_PICKER_TABS_OPTIONS)
+                .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+                    fnUpdateFollowGrainDirectionFieldVisibility();
+                });
+            $selectFollowGrainDirection.val(editedPart.follow_grain_direction === '-1' ? '-1' : editedPart.follow_grain_direction ? '1' : '0');
+            $selectFollowGrainDirection.selectpicker(SELECT_PICKER_TABS_OPTIONS);
             $selectPartAxesOriginPosition
                 .selectpicker(SELECT_PICKER_TABS_OPTIONS)
                 .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
@@ -4730,7 +4758,6 @@
 
                         editedParts[i].orientation_locked_on_axis = $inputOrientationLockedOnAxis.is(':checked');
                         editedParts[i].symmetrical = $inputSymmetrical.is(':checked');
-                        editedParts[i].ignore_grain_direction = $inputIgnoreGrainDirection.is(":checked");
                         editedParts[i].axes_order = $inputPartAxes.val().length > 0 ? $inputPartAxes.val().split(',') : [];
                         editedParts[i].axes_origin_position = $selectPartAxesOriginPosition.val();
 
@@ -4747,6 +4774,12 @@
                         }
                         if (!$inputInstanceCountByPart.ladbTextinputNumberWithUnit('isMultiple')) {
                             editedParts[i].instance_count_by_part = Math.max(1, $inputInstanceCountByPart.val() === '' ? 1 : that.toInt($inputInstanceCountByPart.val()));
+                        }
+                        if ($selectIgnoreGrainDirection.val() !== MULTIPLE_VALUE) {
+                            editedParts[i].ignore_grain_direction = $selectIgnoreGrainDirection.val() === '1';
+                        }
+                        if ($selectFollowGrainDirection.val() !== MULTIPLE_VALUE) {
+                            editedParts[i].follow_grain_direction = $selectFollowGrainDirection.val() === '1';
                         }
                         if (!$inputMass.ladbTextinputNumberWithUnit('isMultiple')) {
                             editedParts[i].mass = $inputMass.ladbTextinputNumberWithUnit('val');
@@ -4860,6 +4893,9 @@
                 }
 
             });
+
+            // Init follow grain direction field visibility
+            fnUpdateFollowGrainDirectionFieldVisibility();
 
             // Init edges preview
             fnUpdateEdgesPreview();

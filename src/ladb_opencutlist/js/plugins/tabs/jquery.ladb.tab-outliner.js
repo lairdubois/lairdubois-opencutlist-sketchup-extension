@@ -667,12 +667,8 @@
                     if (editedNode.is_grain_group !== editedNodes[i].is_grain_group) {
                         editedNode.is_grain_group = MULTIPLE_VALUE
                     }
-                    if (editedNode.is_grain_item !== editedNodes[i].is_grain_item) {
-                        editedNode.is_grain_item = MULTIPLE_VALUE
-                    }
                 } else {
                     delete editedNode.is_grain_group;
-                    delete editedNode.is_grain_item;
                 }
                 if (editedNode.type === 2 && editedNodes[i].type === 2 || editedNode.type === 3 && editedNodes[i].type === 3) {   // 2 = TYPE_COMPONENT, 3 = TYPE_PART
                     if (editedNode.definition_name !== editedNodes[i].definition_name) {
@@ -755,8 +751,6 @@
                 const $inputName = $('#ladb_outliner_node_input_name', $modal);
                 const $selectMaterialName = $('#ladb_outliner_node_select_material_name', $modal);
                 const $inputIsGrainGroup = $('#ladb_outliner_node_input_is_grain_group', $modal);
-                const $fromGroupIsGrainItem = $('#ladb_outliner_node_form_group_is_grain_item', $modal);
-                const $inputIsGrainItem = $('#ladb_outliner_node_input_is_grain_item', $modal);
                 const $inputDefinitionName = $('#ladb_outliner_node_input_definition_name', $modal);
                 const $inputLayerName = $('#ladb_outliner_node_input_layer_name', $modal);
                 const $inputDescription = $('#ladb_outliner_node_input_description', $modal);
@@ -790,15 +784,6 @@
                     if (is2d) $inputAlwaysFaceCamera.prop('checked', false);
                     $inputShadowsFaceSun.prop('disabled', is2d || !isAlwaysFaceCamera);
                     if (is2d || !isAlwaysFaceCamera) $inputShadowsFaceSun.prop('checked', false);
-                }
-                const fnUpdateGrainFields = function() {
-                    const material_name = $selectMaterialName.val();
-                    const material = Object.values(that.availableMaterials).find(material => material.name === material_name);
-                    if (material && material.grained && (material.type === 2 || material.type === 3)) {
-                        $fromGroupIsGrainItem.show();
-                    } else {
-                        $fromGroupIsGrainItem.hide();
-                    }
                 }
 
                 // Bind tabs
@@ -857,7 +842,6 @@
                     .selectpicker(SELECT_PICKER_TABS_OPTIONS)
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                         fnNewCheck($(this));
-                        fnUpdateGrainFields();
                     });
                 if (editedNode.is2d) {
                     $selectSnapto.val(editedNode.snapto === MULTIPLE_VALUE ? MULTIPLE_VALUE : editedNode.snapto);
@@ -869,7 +853,6 @@
                     });
 
                 fnUpdateBehaviorFields();
-                fnUpdateGrainFields();
 
                 // Bind buttons
                 $btnsModalFooterCollapseHandle.on('click', function () {
@@ -922,9 +905,6 @@
                         }
                         if ($inputIsGrainGroup.length > 0) {
                             nodeData.is_grain_group = $inputIsGrainGroup.is(':checked');
-                        }
-                        if ($inputIsGrainItem.length > 0) {
-                            nodeData.is_grain_item = $inputIsGrainItem.is(':checked');
                         }
                         if ($inputDefinitionName.length > 0) {
                             if(!$inputDefinitionName.ladbTextinputText('isMultiple')) {

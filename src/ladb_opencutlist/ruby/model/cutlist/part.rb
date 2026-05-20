@@ -20,7 +20,7 @@ module Ladb::OpenCutList
                 :tags,
                 :cumulable, :cumulative_cutting_length, :cumulative_cutting_width,
                 :instance_count_by_part, :unused_instance_count,
-                :mass, :price, :thickness_layer_count, :ignore_grain_direction,
+                :mass, :price, :thickness_layer_count, :ignore_grain_direction, :follow_grain_direction,
                 :length_increase, :length_increased, :width_increase, :width_increased, :height_increase, :height_increased,
                 :edge_count, :edge_pattern, :edge_material_names, :edge_material_colors, :edge_std_dimensions, :edge_decrements,
                 :face_count, :face_pattern, :face_material_names, :face_material_colors, :face_texture_angles, :face_std_dimensions, :face_decrements,
@@ -67,6 +67,7 @@ module Ladb::OpenCutList
       @price = _def.price
       @thickness_layer_count = _def.thickness_layer_count
       @ignore_grain_direction = _def.ignore_grain_direction
+      @follow_grain_direction = _def.follow_grain_direction
 
       @length_increase = _def.length_increase.to_s
       @length_increased = _def.length_increased

@@ -358,6 +358,7 @@ tab:
       flipped: Cette pièce est en miroir par rapport à sa définition
       symmetrical: La détection de pièce en miroir est désactivée sur cette pièce
       ignore_grain_direction: La direction du fil est ignorée sur cette pièce
+      follow_grain_direction: La détection de Continuité de fil est activée sur cette pièce
       auto_oriented: Cette pièce a été réorientée automatiquement
       oko_label_filter: "Inclure / Exclure ce badge"
       add_label_filter: "Filtrer sur '{{ label }}'"
@@ -510,9 +511,20 @@ tab:
       symmetrical: Désactiver la détection en miroir sur cette pièce
       symmetrical_help: |
         Si cette case est cochée, la détection de *pièce en miroir* ne sera pas appliquée sur cette pièce.
-      ignore_grain_direction: Ignorer la direction du fil
+      ignore_grain_direction: Fil
       ignore_grain_direction_help: |
-        Si cette case est cochée, la direction du fil est ignorée sur cette pièce.
+        Cette option permet d'ignorer, pour cette pièce, la direction du fil définie sur la matière.
+      ignore_grain_direction_0: Le fil suis la longueur
+      ignore_grain_direction_1: Ignorer la direction du fil
+      follow_grain_direction: Continuité de fil
+      follow_grain_direction_help: |
+        En activant cette option, les instances de cette pièce pourront être considérées comme des pièces calepinées en **Continuité de fil** avec leurs voisines partageant:
+        - le même *Groupe de continuité de fil*
+        - la même Orientation
+        - la même Matière avec fil
+        - la même Epaisseur
+      follow_grain_direction_0: $t(default.no)
+      follow_grain_direction_1: Détection de Continuité de fil activée
       axes: Axes
       axes_help: Réordonnez les dimensions pour les faire correspondre avec les couleurs d'axe désirées dans votre pièce.
       axes_tip: |
@@ -1778,13 +1790,6 @@ tab:
       material: Matière
       is_grain_group: Définir comme **Groupe de continuité de fil**
       is_grain_group_help: En activant cette option, cette instance pourra être considérée comme un **Groupe de continuité de fil** pour les pièces qu'elle contient qui auraient la *Continuité de fil* active.
-      is_grain_item: Activer la **Continuité de fil** pour cette instance
-      is_grain_item_help: |
-        En activant cette option, cette instance pourra être considérée comme une pièce calepinée en **Continuité de fil** avec ses voisines partageant:
-        - le même *Groupe de continuité de fil*
-        - la même Orientation
-        - la même Matière avec fil
-        - la même Epaisseur
       definition_name: Définition
       description: Description
       url: URL

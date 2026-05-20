@@ -550,6 +550,7 @@ module Ladb::OpenCutList
           part_def.orientation_locked_on_axis = definition_attributes.orientation_locked_on_axis
           part_def.symmetrical = definition_attributes.symmetrical
           part_def.ignore_grain_direction = definition_attributes.ignore_grain_direction
+          part_def.follow_grain_direction = definition_attributes.follow_grain_direction
           part_def.auto_oriented = size.auto_oriented?
 
           # Propose cutting dimensions display if the part is flagged as cumulable
@@ -744,11 +745,11 @@ module Ladb::OpenCutList
 
         # Populate grain groups (if needed)
 
-        if group_def.material_attributes.grained &&
-           (group_def.material_attributes.type == MaterialAttributes::TYPE_SHEET_GOOD || group_def.material_attributes.type == MaterialAttributes::TYPE_DIMENSIONAL) &&
+        if part_def.follow_grain_direction &&
            !part_def.ignore_grain_direction &&
-           part_def.thickness_layer_count == 1 &&
-           _get_instance_attributes(instance_info.entity).is_grain_item
+           part_def.thickness_layer_count == 1
+           group_def.material_attributes.grained &&
+           (group_def.material_attributes.type == MaterialAttributes::TYPE_SHEET_GOOD || group_def.material_attributes.type == MaterialAttributes::TYPE_DIMENSIONAL) &&
 
           grain_group_entity = instance_info.path.reverse_each.find { |entity| _get_instance_attributes(entity).is_grain_group }
           grain_group_entity = model if grain_group_entity.nil?
@@ -848,6 +849,7 @@ module Ladb::OpenCutList
               folder_part_def.url = first_child_part_def.url
               folder_part_def.tags = first_child_part_def.tags
               folder_part_def.ignore_grain_direction = first_child_part_def.ignore_grain_direction
+              folder_part_def.follow_grain_direction = first_child_part_def.follow_grain_direction
               folder_part_def.length_increase = first_child_part_def.length_increase
               folder_part_def.length_increased = first_child_part_def.length_increased
               folder_part_def.width_increase = first_child_part_def.width_increase
@@ -915,6 +917,7 @@ module Ladb::OpenCutList
                          part_def.face_material_names,
                          part_def.cumulable,
                          part_def.ignore_grain_direction,
+                         part_def.follow_grain_direction,
                        ]
                      }
                      .each do |_, child_part_defs|
@@ -939,6 +942,7 @@ module Ladb::OpenCutList
                 folder_part_def.url = first_child_part_def.url
                 folder_part_def.tags = first_child_part_def.tags
                 folder_part_def.ignore_grain_direction = first_child_part_def.ignore_grain_direction
+                folder_part_def.follow_grain_direction = first_child_part_def.follow_grain_direction
                 folder_part_def.length_increase = first_child_part_def.length_increase
                 folder_part_def.length_increased = first_child_part_def.length_increased
                 folder_part_def.width_increase = first_child_part_def.width_increase

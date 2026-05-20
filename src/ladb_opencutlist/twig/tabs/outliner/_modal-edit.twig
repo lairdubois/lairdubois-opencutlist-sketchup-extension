@@ -52,16 +52,6 @@
                         </div>
                     </div>
                 {% endif %}
-                {% if node.is_grain_item is defined and node.type == 3 %} {# 3 = TYPE_PART #}
-                    <div class="form-group" id="ladb_outliner_node_form_group_is_grain_item">
-                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.outliner.edit_node.is_grain_item_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                        <div class="col-xs-offset-3 col-xs-8 col-sm-7 checkbox">
-                            <label>
-                                <input type="checkbox" id="ladb_outliner_node_input_is_grain_item"{% if node.is_grain_item %} checked{% endif %}><i class="ladb-opencutlist-icon-grain-item"></i> {{ 'tab.outliner.edit_node.is_grain_item'|i18next }}
-                            </label>
-                        </div>
-                    </div>
-                {% endif %}
                 {% if node.definition_name is defined %}
                     <hr>
                     <div class="form-group">

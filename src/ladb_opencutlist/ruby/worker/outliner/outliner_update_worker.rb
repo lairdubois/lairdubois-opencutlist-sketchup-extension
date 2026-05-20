@@ -14,7 +14,6 @@ module Ladb::OpenCutList
       :layer_name,
       :material_name,
       :is_grain_group,
-      :is_grain_item,
       :definition_name,
       :description,
       :url,
@@ -44,7 +43,6 @@ module Ladb::OpenCutList
           fn_sanitize_string.call(node_data.fetch('layer_name', nil)),
           fn_sanitize_string.call(node_data.fetch('material_name', nil)),
           node_data.fetch('is_grain_group', false),
-          node_data.fetch('is_grain_item', false),
           fn_sanitize_string.call(node_data.fetch('definition_name', nil)),
           fn_sanitize_string.call(node_data.fetch('description', nil)),
           fn_sanitize_string.call(node_data.fetch('url', nil)),
@@ -95,10 +93,8 @@ module Ladb::OpenCutList
         end
 
         instance_attributes = InstanceAttributes.new(entity)
-        if node_data.is_grain_group != instance_attributes.is_grain_group ||
-           node_data.is_grain_item != instance_attributes.is_grain_item
+        if node_data.is_grain_group != instance_attributes.is_grain_group
           instance_attributes.is_grain_group = node_data.is_grain_group
-          instance_attributes.is_grain_item = node_data.is_grain_item
           instance_attributes.write_to_attributes
         end
 
