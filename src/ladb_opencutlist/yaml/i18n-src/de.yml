@@ -358,6 +358,7 @@ tab:
       flipped: Dieses Teil ist im Vergleich zur ursprünglichen Definition gespiegelt
       symmetrical: Die Erkennung gespiegelter Teile ist bei diesem Teil deaktiviert
       ignore_grain_direction: Die Faserausrichtung wird für dieses Teil nicht beachtet
+      follow_grain_direction: Die Faserausrichtung ist bei diesem Teil aktiviert
       auto_oriented: Dieses Teil wurde automatisch orientiert
       oko_label_filter: "Badge einschließen / ausschließen"
       add_label_filter: "Nach '{{ label }}' auswählen"
@@ -510,9 +511,20 @@ tab:
       symmetrical: Spiegelerkennung für dieses Teil deaktivieren
       symmetrical_help: |
         Wird dieses Kästchen aktiviert, hat die Erkennung von *Spiegelteilen* keine Auswirkung auf dieses Teil.
-      ignore_grain_direction: Faserausrichtung für dieses Teil nicht beachten
+      ignore_grain_direction: Faserausrichtung
       ignore_grain_direction_help: |
         Wenn dieses Kästchen aktiviert ist, wird die Faserausrichtung für dieses Teil ignoriert.
+      ignore_grain_direction_0: Die Faser verläuft in Längsrichtung
+      ignore_grain_direction_1: Faserausrichtung ignorieren
+      follow_grain_direction: Faserausrichtung
+      follow_grain_direction_help: |
+        Wenn diese Option aktiviert ist, werden die Instanzen dieses Teils als Teile betrachtet, die mit ihren Nachbarn, die folgende Eigenschaften teilen, in **Faserverlauf** angeordnet sind:
+        - dieselbe *Faserverlaufgruppe*
+        - dieselbe Ausrichtung
+        - denselben Werkstoff mit Faser
+        - dieselbe Dicke
+      follow_grain_direction_0: $t(default.no)
+      follow_grain_direction_1: Faserverlaufsprüfung aktiviert
       axes: Achsen
       axes_help: "Ordnen Sie die Abmessungen so an, dass sie mit den gewünschten Achsenfarben in Ihrem Teil übereinstimmen."
       axes_tip: |
@@ -1778,13 +1790,6 @@ tab:
       material: Material
       is_grain_group: Als **Faserverlaufgruppe** definieren
       is_grain_group_help: Wenn diese Option aktiviert ist, kann diese Instanz für die darin enthaltenen Elemente, bei denen die Option *Faserverlauf* aktiviert ist, als **Faserverlaufgruppe** betrachtet werden.
-      is_grain_item: "**Faserverlauf** für diese Instanz aktivieren"
-      is_grain_item_help: |
-        Wenn diese Option aktiviert ist, kann diese Instanz als ein Teil betrachtet werden, das mit seinen Nachbarn im **Faserverlauf** verbunden ist, die folgende Eigenschaften gemeinsam haben:
-        - dieselbe *Faserverlaufgruppe*
-        - dieselbe Ausrichtung
-        - denselben Werkstoff mit Faser
-        - dieselbe Dicke
       definition_name: Definition
       description: Beschreibung
       url: URL
