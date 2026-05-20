@@ -4,6 +4,7 @@ module Ladb::OpenCutList
   require_relative '../../helper/layer_visibility_helper'
   require_relative '../../helper/material_attributes_caching_helper'
   require_relative '../../helper/definition_attributes_caching_helper'
+  require_relative '../../helper/instance_attributes_caching_helper'
   require_relative '../../model/attributes/material_attributes'
   require_relative '../../model/attributes/definition_attributes'
   require_relative '../../model/attributes/instance_attributes'
@@ -1019,15 +1020,16 @@ module Ladb::OpenCutList
 
           # Groups items by orientation
           splitted_item_defs = grain_group_def.item_defs
-                                             .group_by { |item_def|
-                                               size = item_def.part_def.size
-                                               t = item_def.instance_info.transformation
-                                               [
-                                                 size.oriented_axis(X_AXIS).transform(t).to_a.map { |v| v.round(3) },
-                                                 size.oriented_axis(Y_AXIS).transform(t).to_a.map { |v| v.round(3) },
-                                                 size.oriented_axis(Z_AXIS).transform(t).to_a.map { |v| v.round(3) }
-                                               ]
-                                             }
+                                              .group_by { |item_def|
+                                                size = item_def.part_def.size
+                                                t = item_def.instance_info.transformation
+                                                [
+                                                  size.oriented_axis(X_AXIS).transform(t).to_a.map { |v| v.round(3) },
+                                                  size.oriented_axis(Y_AXIS).transform(t).to_a.map { |v| v.round(3) },
+                                                  size.oriented_axis(Z_AXIS).transform(t).to_a.map { |v| v.round(3) }
+                                                ]
+                                              }
+                                              .select { |_, item_defs| item_defs.size > 1 } # Exclude single item groups
 
           splitted_item_defs.each_with_index do |data, index|
 

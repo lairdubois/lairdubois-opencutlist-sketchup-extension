@@ -325,6 +325,9 @@ i, span.ladb-opencutlist-icon:before {
 .ladb-opencutlist-icon-grain-group:before {
     content: "\e9c9";
 }
+.ladb-opencutlist-icon-grain-item:before {
+    content: "\e9ca";
+}
 .ladb-opencutlist-icon-instance-count-by-part:before {
     content: "\e985";
 }
