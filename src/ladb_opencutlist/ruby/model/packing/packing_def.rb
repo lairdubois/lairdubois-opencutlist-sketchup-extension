@@ -352,13 +352,11 @@ module Ladb::OpenCutList
                 :item_type_defs
 
     def initialize(length:, width:,
-                   color:,
                    name:,
                    item_type_defs:)
 
       @length = length
       @width = width
-      @color = color
 
       @name = name
       @item_type_defs = item_type_defs

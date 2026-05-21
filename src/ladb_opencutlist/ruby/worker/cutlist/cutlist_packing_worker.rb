@@ -521,7 +521,7 @@ module Ladb::OpenCutList
             Geometrix::BoxDef.new(position.x, position.y, size.length, size.width, data: grain_item)
           })
 
-          # Oversize boxes
+          # Set boxes size to part cutting size
           Geometrix::LayoutFinder.iterate_on_box_defs(layout_def) do |box_def|
             grain_item = box_def.data
             grain_item_def = grain_item.def
@@ -561,7 +561,6 @@ module Ladb::OpenCutList
           @item_type_defs << PackingCompositeItemTypeDef.new(
             length: total_length,
             width: total_width,
-            color: nil,
             name: grain_group.name,
             item_type_defs: box_defs.map { |box_def|
               grain_item = box_def.data
@@ -573,7 +572,7 @@ module Ladb::OpenCutList
                 part: part,
                 projection_def: _compute_part_projection_def(@part_drawing_type, part,
                                                              compute_shell: true),
-                color: @colorization > COLORIZATION_NONE ? ColorUtils.color_lighten(ColorUtils.color_create("##{Digest::SHA1.hexdigest(part.number.to_s)[0..5]}"), 0.8) : nil,
+                color: _compute_color_from_part(part),
                 instance_info: grain_item_def.instance_info
               )
             }
@@ -587,27 +586,6 @@ module Ladb::OpenCutList
             ((@gg ||= {})[part] ||= []) << instance_info
 
           end
-
-          # output_group = Sketchup.active_model.active_entities.add_group
-          # output_group.material = 'green'
-          # box_defs.each_with_index do |box_def, i|
-          #
-          #   box_group = output_group.entities.add_group
-          #   box_group.entities.add_face(
-          #     [ box_def.x, box_def.y ],
-          #     [ box_def.x + box_def.width, box_def.y ],
-          #     [ box_def.x + box_def.width, box_def.y + box_def.height ],
-          #     [ box_def.x, box_def.y + box_def.height ]
-          #   )
-          #
-          # end
-          # box_group = output_group.entities.add_group
-          # box_group.entities.add_face(
-          #   [ 0, 0 ],
-          #   [ total_length, 0 ],
-          #   [ total_length, total_width ],
-          #   [ 0, total_width ]
-          # )
 
         end
 
@@ -663,7 +641,7 @@ module Ladb::OpenCutList
             return _create_packing(errors: [ [ [ 'tab.cutlist.packing.error.invalid_part_shapes' ], { :name => part.name } ] ]) if shapes.empty?
 
             item_types << {
-              copies: part.count,
+              copies: count,
               shapes: shapes,
               allowed_rotations: AVAILABLE_ROTATIONS.fetch(@irregular_allowed_rotations, []).map { |ar| ar.merge({ mirror: @irregular_allow_mirroring }) },
             }
@@ -689,7 +667,7 @@ module Ladb::OpenCutList
             count: count,
             part: part,
             projection_def: projection_def,
-            color: @colorization > COLORIZATION_NONE ? ColorUtils.color_lighten(ColorUtils.color_create("##{Digest::SHA1.hexdigest(part.number.to_s)[0..5]}"), 0.8) : nil,
+            color: _compute_color_from_part(part),
             boxed: boxed
           )
 
@@ -830,19 +808,25 @@ module Ladb::OpenCutList
         case item_type_def
         when PackingCompositeItemTypeDef
           item_type_def.item_type_defs.each do |sub_item_type_def|
+            part = item_type_def.part
+            gg_instance_infos = @gg.has_key?(part) ? @gg[part] : []
+            position_in_batch = gg_instance_infos.index(sub_item_type_def.instance_info) + 1
             instance_metas_by_item_type_def[sub_item_type_def] = [{
               instance_info: sub_item_type_def.instance_info,
-              thickness_layer: 0,
-              position_in_batch: 1
+              thickness_layer: 1,
+              position_in_batch: position_in_batch
             }]
           end
         else
-          part_def = item_type_def.part.def
-          instance_infos = part_def.instance_infos.values.sort_by! { |instance_info| instance_info.entity.name }
-          instance_count = part_def.count / part_def.thickness_layer_count
+          part = item_type_def.part
+          part_def = part.def
+          gg_instance_infos = @gg.has_key?(part) ? @gg[part] : []
+          instance_infos = part_def.instance_infos.values
+          instance_infos -= gg_instance_infos if gg_instance_infos.any?
+          instance_infos.sort_by! { |instance_info| instance_info.entity.name }
           instance_metas = []
-          position_in_batch = 0
-          instance_count.times do |i|
+          position_in_batch = gg_instance_infos.size
+          instance_infos.size.times do |i|
             thickness_layer = 0
             part_def.thickness_layer_count.times do
               thickness_layer += 1
@@ -1223,7 +1207,7 @@ module Ladb::OpenCutList
           end
         svg += '</g>'
 
-        # Capture current context
+        # Capture local binding
         ctx = binding
 
         bin_def.item_defs.each do |item_def|
@@ -1252,10 +1236,16 @@ module Ladb::OpenCutList
               unless light
 
                 px_name_w, px_name_h = _compute_text_size(text: item_type_def.name, size: px_composite_name_font_size_min)
+                px_name_w += px_composite_name_offset * 2
+                px_name_h += px_composite_name_offset * 2
+                px_name_x = _compute_x_with_origin_corner(@problem_type, @origin_corner, 0, px_name_w, px_item_rect_width)
+                px_name_y = -_compute_y_with_origin_corner(@problem_type, @origin_corner, 0, px_name_h, px_item_rect_height)
 
                 svg += "<rect class='item-composite-overlay' x='1' y='#{-px_item_rect_height + 1}' width='#{px_item_rect_width - 2}' height='#{px_item_rect_height - 2}' fill='none'/>"
-                svg += "<rect class='item-composite-name-outer' x='0' y='-#{px_name_h + px_composite_name_offset * 2}' width='#{px_name_w + px_composite_name_offset * 2}' height='#{px_name_h + px_composite_name_offset * 2}' fill='none'/>"
-                svg += "<text class='item-composite-name' x='#{px_composite_name_offset}' y='#{-px_composite_name_offset - 1}' font-size='#{px_composite_name_font_size_min}' fill='none'>#{item_type_def.name}</text>"
+                svg += "<g transform='translate(#{px_name_x} #{px_name_y})'>"
+                  svg += "<rect class='item-composite-name-outer' x='0' y='#{-px_name_h}' width='#{px_name_w}' height='#{px_name_h}' fill='none'/>"
+                  svg += "<text class='item-composite-name' x='#{px_composite_name_offset}' y='#{-px_composite_name_offset - 1}' font-size='#{px_composite_name_font_size_min}' fill='none'>#{item_type_def.name}</text>"
+                svg += '</g>'
 
               end
             svg += "</g>"
@@ -1540,6 +1530,10 @@ module Ladb::OpenCutList
 
     def _render_bin_min_max_tooltip(value, icon)
       "<div class=\"tt-data\"><i class=\"ladb-opencutlist-icon-#{icon}\"></i> #{CGI::escape_html(value.to_s)}</div>"
+    end
+
+    def _compute_color_from_part(part)
+      @colorization > COLORIZATION_NONE ? ColorUtils.color_lighten(ColorUtils.color_create("##{Digest::SHA1.hexdigest(part.number.to_s)[0..5]}"), 0.8) : nil
     end
 
     def _compute_text_size(text:, font: 'helvetica', size:, align: TextAlignLeft)
