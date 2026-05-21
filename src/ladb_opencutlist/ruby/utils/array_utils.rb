@@ -18,7 +18,7 @@ module Ladb::OpenCutList
     #   common_prefix()                       #=> []
     def self.common_prefix(*arrays)
       return [] if arrays.empty?
-      arrays[0].zip(*arrays[1..]).take_while { |group| group.uniq.length == 1 }.map(&:first)
+      arrays[0].zip(*arrays[1..-1]).take_while { |group| group.uniq.length == 1 }.map(&:first)
     end
 
   end
