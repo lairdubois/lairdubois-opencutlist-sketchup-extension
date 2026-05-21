@@ -514,7 +514,7 @@ tab:
       ignore_grain_direction: Fil
       ignore_grain_direction_help: |
         Cette option permet d'ignorer, pour cette pièce, la direction du fil définie sur la matière.
-      ignore_grain_direction_0: Le fil suis la longueur
+      ignore_grain_direction_0: Le fil suit la longueur
       ignore_grain_direction_1: Ignorer la direction du fil
       follow_grain_direction: Continuité de fil
       follow_grain_direction_help: |

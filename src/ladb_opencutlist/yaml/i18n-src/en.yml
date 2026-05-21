@@ -358,6 +358,7 @@ tab:
       flipped: This part is mirrored with respect to its component definition
       symmetrical: Mirrored part detection is disabled on this part
       ignore_grain_direction: Grain orientation is ignored on this part
+      follow_grain_direction: Grain Continuity detection is enabled on this part
       auto_oriented: This part has been automatically reoriented
       oko_label_filter: "Include / Exclude this badge"
       add_label_filter: "Filter on '{{ label }}'"
@@ -510,9 +511,20 @@ tab:
       symmetrical: Disable mirrored part detection on this part
       symmetrical_help: |
         If this option is selected, the detection of a *mirrored part* will have no effect on the part.
-      ignore_grain_direction: Ignore grain orientation on this part
+      ignore_grain_direction: Grain
       ignore_grain_direction_help: |
         If this option is selected, the grain orientation of the material will be ignored for this part.
+      ignore_grain_direction_0: Grain orientation follows length
+      ignore_grain_direction_1: Ignore grain orientation
+      follow_grain_direction: Grain Continuity
+      follow_grain_direction_help: |
+        By enabling this option, instances of this part will be treated as parts laid out in **Graint Continuity** with their neighbors that share:
+        - the same *Grain Continuity Group*
+        - the same Orientation
+        - the same Material with grain
+        - the same Thickness
+      follow_grain_direction_0: $t(default.no)
+      follow_grain_direction_1: Grain Continuity detection activated
       axes: Axes
       axes_help: Reorder the dimensions to match the desired axis colors in your part.
       axes_tip: |
@@ -1778,13 +1790,6 @@ tab:
       material: Material
       is_grain_group: Define as **Grain Continuity Group**
       is_grain_group_help: If you enable this option, this instance will be treated as a **Grain Continuity Group** for the parts it contains that have *Grain Continuity* enabled.
-      is_grain_item: Enable **Grain Continuity** for this instance
-      is_grain_item_help: |
-        If you enable this option, this instance will be treated as a part with **Grain Continuity** relative to its neighbors that share:
-        - the same *Grain Continuity Group*
-        - the same Orientation
-        - the same Material with grain
-        - the same Thickness
       definition_name: Definition
       description: Description
       url: URL
