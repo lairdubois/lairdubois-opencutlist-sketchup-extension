@@ -4,127 +4,6 @@ module Ladb::OpenCutList::Geometrix
 
     OVERLAP_THRESHOLD = 0.5
 
-    def self.find_layout_debug(spacing = 0)
-
-      require_relative '../../../utils/transformation_utils'
-
-      grain_groups = {}
-
-      fn_explore = lambda { |container, grain_group_container = nil, transformation = IDENTITY, path = []|
-
-        case container
-        when Sketchup::Model
-          entities = container.active_entities
-        when Sketchup::Group
-          entities = container.entities
-        when Sketchup::ComponentInstance
-          entities = container.definition.entities
-        else
-          return
-        end
-
-        instance_attributes = Ladb::OpenCutList::InstanceAttributes.new(container)
-
-        grain_group_container = container if instance_attributes.is_grain_group
-
-        if entities.none? { |e| e.respond_to?(:definition) }
-
-          definition_attributes = Ladb::OpenCutList::DefinitionAttributes.new(container.definition)
-
-          return unless definition_attributes.follow_grain_direction
-
-          grain_group = grain_groups[grain_group_container] ||= []
-          grain_group << [ container, transformation, path ]
-
-        else
-
-          transformation *= container.transformation if container.respond_to?(:transformation)
-          path += [ container ]
-
-          entities.each { |e|
-            fn_explore.call(e, grain_group_container, transformation, path)
-          }
-
-        end
-
-      }
-
-      fn_explore.call(Sketchup.active_model)
-
-      grain_groups.each do |grain_group_container, items|
-        puts "----"
-        puts "#{grain_group_container.respond_to?(:name) ? grain_group_container.name : 'Global'}"
-        puts " "
-        items.group_by { |e, transformation, path|
-          t = transformation * e.transformation
-          x_axis = X_AXIS.transform(t).normalize
-          y_axis = Y_AXIS.transform(t).normalize
-          z_axis = Z_AXIS.transform(t).normalize
-          [
-            x_axis.to_a.map { |v| v.round(3) },
-            y_axis.to_a.map { |v| v.round(3) },
-            z_axis.to_a.map { |v| v.round(3) }
-          ]
-        }.each do |axes, items|
-          puts "-> #{axes}"
-          layout_def = find_layout(items.map { |e, transformation, path|
-
-            t = transformation * e.transformation
-            x_axis = X_AXIS.transform(t)
-            y_axis = Y_AXIS.transform(t)
-            z_axis = Z_AXIS.transform(t)
-            at = Geom::Transformation.axes(ORIGIN, x_axis, y_axis, z_axis)
-            ati = at.inverse
-
-            # Ladb::OpenCutList::TransformationUtils.print(at)
-
-            bounds = Geom::BoundingBox.new
-            bounds.add(e.definition.entities.grep(Sketchup::Face).flat_map { |face| face.outer_loop.vertices.map(&:position) })
-
-            min = bounds.min
-            max = bounds.max
-            v = min.vector_to(max)
-
-            position = min.transform(t).transform(ati)
-            position.z = 0
-            vx = Geom::Vector3d.new(v.x, 0, 0).transform(ati)
-            vy = Geom::Vector3d.new(0, v.y, 0).transform(ati)
-
-            # Sketchup.active_model.active_entities.add_line(position, position + [ vx.length, vy.length ])
-
-            BoxDef.new(position.x, position.y, vx.length, vy.length, data: (path + [e]).map { |e| e.name.empty? ? nil : e.name }.compact.join('/'))
-
-          })
-
-          puts layout_def.inspect
-
-          w, h, boxes = layout(layout_def, spacing: spacing)
-
-          puts "Boxes: #{boxes.size}"
-
-          main_group = Sketchup.active_model.active_entities.add_group
-
-          boxes.each_with_index do |box, i|
-            puts "#{i}: #{box.x}, #{box.y}, #{box.width}, #{box.height}"
-
-            box_group = main_group.entities.add_group
-            box_group.name = box.data.to_s
-            box_group.entities.add_face(
-              [ box.x, box.y ],
-              [ box.x + box.width, box.y ],
-              [ box.x + box.width, box.y + box.height ],
-              [ box.x, box.y + box.height ]
-            )
-
-          end
-
-        end
-        puts "----"
-      end
-
-      nil
-    end
-
     # Detection of the layout of boxes in nested rows/columns.
     #
     # Strategy: First, the ROWS (overlapping horizontal bands Y) are detected.
@@ -314,9 +193,9 @@ module Ladb::OpenCutList::Geometrix
         child_direction = (direction == :col) ? :row : :col
         preferred_sizes = node.map { |child| _compute_preferred_size(child, direction: child_direction, spacing: spacing) }
         if direction == :col
-          [ preferred_sizes.map(&:first).max, preferred_sizes.map(&:last).sum + spacing * (node.size - 1) ]
+          [ preferred_sizes.map(&:first).max, preferred_sizes.map(&:last).inject(0) { |sum, height| sum + height } + spacing * (node.size - 1) ]
         else
-          [ preferred_sizes.map(&:first).sum + spacing * (node.size - 1), preferred_sizes.map(&:last).max ]
+          [ preferred_sizes.map(&:first).inject(0) { |sum, width| sum + width } + spacing * (node.size - 1), preferred_sizes.map(&:last).max ]
         end
       else
         raise "Invalide node : #{node.inspect}"
