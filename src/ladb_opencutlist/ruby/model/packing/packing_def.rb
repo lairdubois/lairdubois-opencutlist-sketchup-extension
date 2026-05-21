@@ -348,16 +348,19 @@ module Ladb::OpenCutList
 
     attr_reader :length, :width,
                 :color,
+                :name,
                 :item_type_defs
 
     def initialize(length:, width:,
                    color:,
+                   name:,
                    item_type_defs:)
 
       @length = length
       @width = width
       @color = color
 
+      @name = name
       @item_type_defs = item_type_defs
 
     end
@@ -422,7 +425,36 @@ module Ladb::OpenCutList
     # ---
 
     def create_item
-      Packingtem.new(self)
+      PackingItem.new(self)
+    end
+
+  end
+
+  class PackingCompositeItemDef < DataContainer
+
+    attr_reader :item_type_def,
+                :x, :y, :angle, :mirror,
+                :item_defs
+
+    def initialize(item_type_def:,
+                   x:, y:,
+                   item_defs:)
+
+      @item_type_def = item_type_def
+
+      @x = x
+      @y = y
+      @angle = 0
+      @mirror = false
+
+      @item_defs = item_defs
+
+    end
+
+    # ---
+
+    def create_item
+      PackingCompositeItem.new(self)
     end
 
   end
@@ -489,12 +521,16 @@ module Ladb::OpenCutList
 
   class PackingPartInfoDef < DataContainer
 
+    UNUSABLE_REASON_NONE = 0
+    UNUSABLE_REASON_PART_TOO_LARGE = 1
+    UNUSABLE_REASON_GRAIN_GROUP_TOO_LARGE = 2
+
     attr_reader :_sorter,
                 :part, :count,
-                :usable
+                :usable, :unusable_reason
 
     def initialize(part:, count:,
-                   usable: true)
+                   usable: true, unusable_reason: UNUSABLE_REASON_NONE)
 
       @_sorter = part.number.to_i > 0 ? part.number.to_i : part.number.rjust(4)  # Use a special "_sorter" property because number could be a letter. In this case, rjust it.
 
@@ -502,6 +538,7 @@ module Ladb::OpenCutList
       @count = count
 
       @usable = usable
+      @unusable_reason = unusable_reason
 
     end
 

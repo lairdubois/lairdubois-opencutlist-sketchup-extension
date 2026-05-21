@@ -1035,9 +1035,7 @@ module Ladb::OpenCutList
                                               }
                                               .select { |_, item_defs| item_defs.size > 1 } # Exclude single item groups
 
-          splitted_item_defs.each_with_index do |data, index|
-
-            _, item_defs = data
+          splitted_item_defs.each_with_index do |(_, item_defs), index|
 
             grain_group = GrainGroup.new(grain_group_def, index, splitted_item_defs.size)
             group.add_grain_group(grain_group)

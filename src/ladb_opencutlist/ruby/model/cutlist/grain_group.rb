@@ -10,6 +10,7 @@ module Ladb::OpenCutList
     include HashableHelper
 
     attr_reader :batch_index, :batch_count,
+                :name,
                 :items
 
     def initialize(_def, batch_index, batch_count)

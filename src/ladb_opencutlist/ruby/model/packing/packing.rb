@@ -233,7 +233,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class Packingtem < DataContainer
+  class PackingItem < DataContainer
 
     include DefHelper
     include HashableHelper
@@ -250,6 +250,26 @@ module Ladb::OpenCutList
       @mirror = _def.mirror
 
       @label_offset = _def.label_offset
+
+    end
+
+  end
+
+  class PackingCompositeItem < DataContainer
+
+    include DefHelper
+    include HashableHelper
+
+    attr_reader :x, :y
+                :items
+
+    def initialize(_def)
+      @_def = _def
+
+      @x = _def.x.to_s
+      @y = _def.y.to_s
+
+      @items = _def.item_defs.map(&:create_item)
 
     end
 
@@ -309,7 +329,7 @@ module Ladb::OpenCutList
     include HashableHelper
 
     attr_reader :part, :count,
-                :usable
+                :usable, :unusable_reason
 
     def initialize(_def)
       @_def = _def
@@ -318,6 +338,7 @@ module Ladb::OpenCutList
       @count = _def.count
 
       @usable = _def.usable
+      @unusable_reason = _def.unusable_reason
 
     end
 
