@@ -854,7 +854,7 @@ module Ladb::OpenCutList
         elsif is_action_paint_edges?
 
           if part.group.material_type != MaterialAttributes::TYPE_SHEET_GOOD
-            show_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.smart_paint.error.wrong_material_type', { :type => PLUGIN.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_SHEET_GOOD}") })}", MESSAGE_TYPE_ERROR)
+            show_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.default.error.wrong_material_type', { :type => PLUGIN.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_SHEET_GOOD}") })}", MESSAGE_TYPE_ERROR)
             push_cursor(SmartCursorManager.cursor_paint_error)
           else
 
@@ -946,7 +946,7 @@ module Ladb::OpenCutList
         elsif is_action_paint_faces?
 
           if part.group.material_type != MaterialAttributes::TYPE_SHEET_GOOD
-            show_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.smart_paint.error.wrong_material_type', { :type => PLUGIN.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_SHEET_GOOD}") })}", MESSAGE_TYPE_ERROR)
+            show_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.default.error.wrong_material_type', { :type => PLUGIN.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_SHEET_GOOD}") })}", MESSAGE_TYPE_ERROR)
             push_cursor(SmartCursorManager.cursor_paint_error)
           else
 

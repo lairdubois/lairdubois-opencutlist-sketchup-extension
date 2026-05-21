@@ -2288,6 +2288,8 @@ tool:
       locked_part: Cette pièce est verrouillée
       not_sibling_part: Cette pièce n'est pas dans le même groupe ou composant que le reste de la sélection
       selection_contains_locked_entities: La sélection contient des entités verrouillées
+      wrong_material_type: "La pièce ciblée doit être du type '{{ type }}'" # TODO : Moved from "tool.smart_paint.error.wrong_material_type"
+      not_grained: La pièce ciblée doit avoir du fil
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2471,7 +2473,7 @@ tool:
       not_part: L'objet ciblé n'est pas une pièce (composant)
       not_edge: La face ciblée n'est pas un chant de panneau
       not_face: La face ciblée n'est pas une face de panneau
-      wrong_material_type: "La pièce ciblée doit être du type '{{ type }}'"
+      wrong_material_type: "La pièce ciblée doit être du type '{{ type }}'" # TODO : to remove
   smart_axes:
     title: Orienter
     action_0: Retourner
@@ -2484,6 +2486,8 @@ tool:
     action_3_status: Ciblez une face d'une pièce et cliquez sur une arête pour y adapter ses axes
     action_4: Déplacer l'origine
     action_4_status: Ciblez une face d'une pièce et cliquez sur un point pour y placer son origine
+    action_5: Configurer la Continuité du fil
+    action_5_status: Cliquez sur une pièce pour activer ou désactiver la détection de Contiuité du fil
     action_option_group_direction: Direction
     action_option_direction_0: Lo
     action_option_direction_1: La

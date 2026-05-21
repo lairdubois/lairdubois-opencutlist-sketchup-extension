@@ -23,6 +23,7 @@ module Ladb::OpenCutList
     ACTION_SWAP_FRONT_BACK = 2
     ACTION_ADAPT_AXES = 3
     ACTION_MOVE_AXES = 4
+    ACTION_CONFIGURE_GRAIN = 5
 
     ACTION_OPTION_DIRECTION = 'direction'
 
@@ -48,6 +49,9 @@ module Ladb::OpenCutList
       },
       {
         :action => ACTION_MOVE_AXES
+      },
+      {
+        :action => ACTION_CONFIGURE_GRAIN
       }
     ].freeze
 
@@ -136,6 +140,8 @@ module Ladb::OpenCutList
         set_action_handler(SmartAxesAdaptAxesActionHandler.new(self))
       when ACTION_MOVE_AXES
         set_action_handler(SmartAxesMoveAxesActionHandler.new(self))
+      when ACTION_CONFIGURE_GRAIN
+        set_action_handler(SmartAxesConfigureGrainActionHandler.new(self))
 
       end
 
@@ -896,7 +902,7 @@ module Ladb::OpenCutList
 
     def get_state_status(state)
       super +
-        ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_0')
+        ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_5')
     end
 
     # -----
@@ -991,6 +997,85 @@ module Ladb::OpenCutList
 
     end
 
+
+  end
+
+  class SmartAxesConfigureGrainActionHandler < SmartAxesActionHandler
+
+    def initialize(tool, previous_action_handler = nil)
+      super(SmartAxesTool::ACTION_CONFIGURE_GRAIN, tool, previous_action_handler)
+    end
+
+    # -- STATE --
+
+    def get_state_cursor(state)
+      SmartCursorManager.cursor_select_axes
+    end
+
+    def get_state_picker(state)
+      SmartPicker.new(tool: @tool, observer: self)
+    end
+
+    def get_state_status(state)
+      super +
+        ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_0')
+    end
+
+    # ------
+
+    protected
+
+    def _preview_all_instances?
+      true
+    end
+
+    def _preview_part_arrows?
+      true
+    end
+
+    def _preview_part_box?
+      true
+    end
+
+    def _can_pick_deeper?
+      true
+    end
+
+    def _can_activate_part?(part_entity_path, part)
+      if part
+        if part.group.material_type != MaterialAttributes::TYPE_SHEET_GOOD
+          return [ false, 'tool.default.error.wrong_material_type', { :type => PLUGIN.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_SHEET_GOOD}") } ]
+        elsif part.ignore_grain_direction || !part.group.material_grained
+          return [ false, 'tool.default.error.not_grained' ]
+        end
+      end
+      super
+    end
+
+    # -----
+
+    def _do_action
+
+      part = get_active_part
+      instance_info = part.def.get_one_instance_info
+      definition = instance_info.definition
+      definition_attributes = DefinitionAttributes.new(definition)
+
+      model = Sketchup.active_model
+      model.start_operation('OCL Configure Grain', true, false, false)
+
+
+        definition_attributes.follow_grain_direction = !definition_attributes.follow_grain_direction
+        definition_attributes.write_to_attributes
+
+
+      # Commit model modification operation
+      model.commit_operation
+
+      # Fire event
+      PLUGIN.app_observer.model_observer.onDrawingChange
+
+    end
 
   end
 

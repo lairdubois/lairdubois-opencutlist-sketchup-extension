@@ -2466,12 +2466,12 @@ module Ladb::OpenCutList
         if (picked_part_entity_path = _get_part_entity_path_from_path(picker.picked_face_path)).is_a?(Array)
           _make_unique_groups_in_path(picked_part_entity_path)
           if (picked_part = _generate_part_from_path(picked_part_entity_path)).is_a?(Part)
-            can_activate, error_key = _can_activate_part?(picked_part_entity_path, picked_part)
+            can_activate, error_key, error_vars = _can_activate_part?(picked_part_entity_path, picked_part)
             if can_activate
               _set_active_part(picked_part_entity_path, picked_part)
             else
               _reset_active_part
-              @tool.show_tooltip(PLUGIN.get_i18n_string(error_key), SmartTool::MESSAGE_TYPE_ERROR) if error_key.is_a?(String)
+              @tool.show_tooltip(PLUGIN.get_i18n_string(error_key, error_vars), SmartTool::MESSAGE_TYPE_ERROR) if error_key.is_a?(String)
               @tool.push_cursor(SmartCursorManager.cursor_select_error)
             end
             return
@@ -2492,11 +2492,11 @@ module Ladb::OpenCutList
           return if picked_part_entity_path == @active_part_entity_path                   # Abandon if part seems to be the active one
           return if picked_part_entity_path[0...-1] != @active_part_entity_path[0...-1]   # Abandon if part does not have the same ancestors
           if (picked_part = _generate_part_from_path(picked_part_entity_path)).is_a?(Part)
-            can_activate, error_key = _can_activate_part?(picked_part_entity_path, picked_part)
+            can_activate, error_key, error_vars = _can_activate_part?(picked_part_entity_path, picked_part)
             if can_activate
               _add_part_twin(picked_part_entity_path, picked_part) if picked_part.id == @active_part.id
             else
-              @tool.show_tooltip(PLUGIN.get_i18n_string(error_key), SmartTool::MESSAGE_TYPE_ERROR) if error_key.is_a?(String)
+              @tool.show_tooltip(PLUGIN.get_i18n_string(error_key, error_vars), SmartTool::MESSAGE_TYPE_ERROR) if error_key.is_a?(String)
               @tool.push_cursor(SmartCursorManager.cursor_select_error)
               return
             end
@@ -2703,7 +2703,7 @@ module Ladb::OpenCutList
     end
 
     def _set_active_part(part_entity_path, part, highlighted = false, silent = false)
-      can_activate, error_key = _can_activate_part?(part_entity_path, part)
+      can_activate, error_key, error_vars = _can_activate_part?(part_entity_path, part)
       if can_activate
 
         if @active_part_entity_path != part_entity_path || part.nil?
@@ -2717,7 +2717,7 @@ module Ladb::OpenCutList
         part = nil
 
         unless silent
-          @tool.show_tooltip(PLUGIN.get_i18n_string(error_key), SmartTool::MESSAGE_TYPE_ERROR) if error_key.is_a?(String)
+          @tool.show_tooltip(PLUGIN.get_i18n_string(error_key, error_vars), SmartTool::MESSAGE_TYPE_ERROR) if error_key.is_a?(String)
           @tool.push_cursor(SmartCursorManager.cursor_select_error)
         end
 
@@ -2775,11 +2775,12 @@ module Ladb::OpenCutList
 
     def _get_active_part_icons
       return nil unless @active_part.is_a?(Part)
-      if @active_part.flipped || @active_part.resized || @active_part.auto_oriented
+      if @active_part.flipped || @active_part.resized || @active_part.auto_oriented || @active_part.follow_grain_direction
         icons = []
         icons << Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.5,0L0.5,0.2 M0.5,0.4L0.5,0.6 M0.5,0.8L0.5,1 M0,0.2L0.3,0.5L0,0.8L0,0.2 M1,0.2L0.7,0.5L1,0.8L1,0.2')) if @active_part.flipped
         icons << Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.6,0L0.4,0 M0.6,0.4L0.8,0.2L0.5,0.2 M0.8,0.2L0.8,0.5 M0.8,0L1,0L1,0.2 M1,0.4L1,0.6 M1,0.8L1,1L0.8,1 M0.2,0L0,0L0,0.2 M0,1L0,0.4L0.6,0.4L0.6,1L0,1')) if @active_part.resized
         icons << Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.642,0.349L0.642,0.752 M0.541,0.45L0.642,0.349L0.743,0.45 M0.292,0.954L0.642,0.752 M0.43,0.991L0.292,0.954L0.329,0.816 M0.991,0.954L0.642,0.752 M0.853,0.991L0.991,0.954L0.954,0.816 M0.477,0.001L0.584,0.091L0.494,0.198 M0.001,0.477L0.091,0.584L0.198,0.494 M0.091,0.584L0.108,0.456L0.157,0.338L0.235,0.235L0.338,0.157L0.456,0.108L0.584,0.091')) if @active_part.auto_oriented
+        icons << Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.417,0.1L0,0.1L0,0.9L0.417,0.9 M0,0.25L0.417,0.25 M0,0.417L0.417,0.417 M0,0.75L0.417,0.75 M0.583,0.1L1,0.1L1,0.9L0.583,0.9 M1,0.25L0.583,0.25 M1,0.417L0.583,0.417 M0.983,0.75L0.583,0.75')) if @active_part.follow_grain_direction
         return icons
       end
       nil
