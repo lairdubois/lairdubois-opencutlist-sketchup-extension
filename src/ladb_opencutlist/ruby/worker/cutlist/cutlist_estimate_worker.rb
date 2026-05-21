@@ -396,12 +396,24 @@ module Ladb::OpenCutList
           total_used_mass = 0
           total_used_cost = 0
           packing_bin.items.each do |packing_item|
-            item_type_def = packing_item.def.item_type_def
-            part_def = item_type_def.part.def
-            total_used_length += part_def.size.length * packing_bin.def.count
-            total_used_area += part_def.size.area * packing_bin.def.count
-            total_used_mass += part_def.size.volume * mass_per_inch3 * packing_bin.def.count
-            total_used_cost += part_def.size.volume * price_per_inch3 * packing_bin.def.count
+            case packing_item
+            when PackingCompositeItem
+              packing_item.items.each do |packing_sub_item|
+                item_type_def = packing_sub_item.def.item_type_def
+                part_def = item_type_def.part.def
+                total_used_length += part_def.size.length * packing_bin.def.count
+                total_used_area += part_def.size.area * packing_bin.def.count
+                total_used_mass += part_def.size.volume * mass_per_inch3 * packing_bin.def.count
+                total_used_cost += part_def.size.volume * price_per_inch3 * packing_bin.def.count
+              end
+            else
+              item_type_def = packing_item.def.item_type_def
+              part_def = item_type_def.part.def
+              total_used_length += part_def.size.length * packing_bin.def.count
+              total_used_area += part_def.size.area * packing_bin.def.count
+              total_used_mass += part_def.size.volume * mass_per_inch3 * packing_bin.def.count
+              total_used_cost += part_def.size.volume * price_per_inch3 * packing_bin.def.count
+            end
           end
 
           estimate_entry_bin_def.total_used_length += total_used_length if estimate_entry_bin_def.respond_to?(:total_used_length=)

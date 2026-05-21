@@ -260,7 +260,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :x, :y
+    attr_reader :x, :y,
                 :items
 
     def initialize(_def)

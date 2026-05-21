@@ -808,8 +808,8 @@ module Ladb::OpenCutList
         case item_type_def
         when PackingCompositeItemTypeDef
           item_type_def.item_type_defs.each do |sub_item_type_def|
-            part = item_type_def.part
-            gg_instance_infos = @gg.has_key?(part) ? @gg[part] : []
+            part = sub_item_type_def.part
+            gg_instance_infos = @gg && @gg.has_key?(part) ? @gg[part] : []
             position_in_batch = gg_instance_infos.index(sub_item_type_def.instance_info) + 1
             instance_metas_by_item_type_def[sub_item_type_def] = [{
               instance_info: sub_item_type_def.instance_info,
@@ -820,7 +820,7 @@ module Ladb::OpenCutList
         else
           part = item_type_def.part
           part_def = part.def
-          gg_instance_infos = @gg.has_key?(part) ? @gg[part] : []
+          gg_instance_infos = @gg && @gg.has_key?(part) ? @gg[part] : []
           instance_infos = part_def.instance_infos.values
           instance_infos -= gg_instance_infos if gg_instance_infos.any?
           instance_infos.sort_by! { |instance_info| instance_info.entity.name }
