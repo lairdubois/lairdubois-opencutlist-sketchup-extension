@@ -207,9 +207,10 @@ module Ladb::OpenCutList
       values.map { |value|
         if (match = value.strip.match(/^([^=]+)(=+)$/))
           v, equals = match[1, 2]
+          v = v.strip
           Array.new(equals.length + 1) { v }
         else
-          value
+          value.strip
         end
       }.flatten(1)
     end
