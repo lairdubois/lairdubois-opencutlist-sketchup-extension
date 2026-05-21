@@ -1266,7 +1266,8 @@ tab:
         no_solution: "Es wurde keine Lösung gefunden, um **alle Teile** in das verfügbare Material zu setzen."
         unplaced_parts: "**1 Teil** konnte nicht platziert werden."
         unplaced_parts_plural: "**{{ count }} Teile** konnten nicht platziert werden."
-        unusable_part: Teil ist zu gross
+        unusable_part_1: Teil ist zu gross
+        unusable_part_2: Faserverlaufgruppe ist zu gross
       warning:
         is_part_selection: Dieser Schnittplan beschränkt sich auf die **ausgewählten Teile**.
         cutting_dimensions: Dieser Schnittplan verwendet die **Rohmaße** der Teile.

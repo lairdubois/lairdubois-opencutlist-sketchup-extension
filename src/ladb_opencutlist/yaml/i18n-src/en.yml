@@ -1266,7 +1266,8 @@ tab:
         no_solution: No solution has been found to place **all parts** in the available material.
         unplaced_parts: "**1 part** could not be placed."
         unplaced_parts_plural: "**{{ count }} parts** could not be placed."
-        unusable_part: Part too large
+        unusable_part_1: Part too large
+        unusable_part_2: Grain continuity group too large
       warning:
         is_part_selection: This cutting diagram is limited to **selected parts**.
         cutting_dimensions: This cutting diagram uses the **raw** dimensions of the parts.

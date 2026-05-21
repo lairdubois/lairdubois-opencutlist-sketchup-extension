@@ -1266,7 +1266,6 @@ tab:
         no_solution: Aucune solution n'a été trouvée pour placer **toutes les pièces** dans la matière disponible.
         unplaced_parts: "**1 pièce** n'a pas pu être placée."
         unplaced_parts_plural: "**{{ count }} pièces** n'ont pas pu être placées."
-        unusable_part: Pièce trop grande  # TODO to remove
         unusable_part_1: Pièce trop grande
         unusable_part_2: Groupe de continuité de fil trop grand
       warning:
