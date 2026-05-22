@@ -1046,7 +1046,9 @@ module Ladb::OpenCutList
         if part.group.material_type != MaterialAttributes::TYPE_SHEET_GOOD
           return [ false, 'tool.default.error.wrong_material_type', { :type => PLUGIN.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_SHEET_GOOD}") } ]
         elsif part.ignore_grain_direction || !part.group.material_grained
-          return [ false, 'tool.default.error.not_grained' ]
+          return [ false, 'tool.smart_axes.error.not_grained' ]
+        elsif part.thickness_layer_count != 1
+          return [ false, 'tool.smart_axes.error.not_single_thickness_layer' ]
         end
       end
       super

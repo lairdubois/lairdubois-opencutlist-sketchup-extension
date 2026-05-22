@@ -2289,7 +2289,6 @@ tool:
       not_sibling_part: Cette pièce n'est pas dans le même groupe ou composant que le reste de la sélection
       selection_contains_locked_entities: La sélection contient des entités verrouillées
       wrong_material_type: "La pièce ciblée doit être du type '{{ type }}'" # TODO : Moved from "tool.smart_paint.error.wrong_material_type"
-      not_grained: La pièce ciblée doit avoir du fil
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2500,6 +2499,8 @@ tool:
     error:
       not_part: L'objet ciblé n'est pas une pièce (composant)
       not_orientable: Le type de cette pièce ne permet pas de l'orienter
+      not_grained: La pièce ciblée n'a pas de fil
+      not_single_thickness_layer: La pièce ciblée doit être composée d'une seule couche
   smart_join:
     title: Assembler
     action_0: Touch-Touch # TODO: It's currently just for dev purposes
