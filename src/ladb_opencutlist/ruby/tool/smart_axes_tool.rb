@@ -5,7 +5,8 @@ module Ladb::OpenCutList
   require_relative '../helper/layer_visibility_helper'
   require_relative '../helper/face_triangles_helper'
   require_relative '../helper/bounding_box_helper'
-  require_relative '../model/attributes/definition_attributes'
+  require_relative '../helper/definition_attributes_caching_helper'
+  require_relative '../helper/instance_attributes_caching_helper'
   require_relative '../model/geom/size3d'
   require_relative '../observer/model_observer'
   require_relative '../utils/axis_utils'
@@ -302,7 +303,7 @@ module Ladb::OpenCutList
 
     def _update_orientation_locked_on_axis(definition)
       if PLUGIN.get_model_preset('cutlist_options')['auto_orient']
-        definition_attributes = DefinitionAttributes.new(definition)
+        definition_attributes = _get_definition_attributes(definition)
         definition_attributes.orientation_locked_on_axis = true
         definition_attributes.write_to_attributes
       end
@@ -1002,6 +1003,11 @@ module Ladb::OpenCutList
 
   class SmartAxesConfigureGrainActionHandler < SmartAxesActionHandler
 
+    include DefinitionAttributesCachingHelper
+    include InstanceAttributesCachingHelper
+
+    STATE_TOGGLE_GRAIN_GROUP = 10
+
     def initialize(tool, previous_action_handler = nil)
       super(SmartAxesTool::ACTION_CONFIGURE_GRAIN, tool, previous_action_handler)
     end
@@ -1009,7 +1015,7 @@ module Ladb::OpenCutList
     # -- STATE --
 
     def get_state_cursor(state)
-      SmartCursorManager.cursor_select_axes
+      SmartCursorManager.cursor_select_grain
     end
 
     def get_state_picker(state)
@@ -1019,6 +1025,141 @@ module Ladb::OpenCutList
     def get_state_status(state)
       super +
         ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_0')
+    end
+
+    # -----
+
+    def onToolKeyDown(tool, key, repeat, flags, view)
+
+      case @state
+
+      when STATE_SELECT
+        if tool.is_key_ctrl_or_option?(key)
+          if has_active_part?
+            set_state(STATE_TOGGLE_GRAIN_GROUP)
+          else
+            tool.notify_warnings([ 'tool.smart_select.warning.no_active_part' ])
+          end
+          return true
+        end
+      end
+
+      super
+    end
+
+    def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
+
+      case @state
+
+      when STATE_TOGGLE_GRAIN_GROUP
+        if tool.is_key_ctrl_or_option?(key)
+          Sketchup.active_model.selection.clear
+          tool.clear_2d(LAYER_2D_FLOATING_TOOLS)
+          set_state(STATE_SELECT)
+          _refresh
+          return true
+        end
+
+      end
+
+      super
+    end
+
+    def onStateChanged(old_state, new_state)
+
+      if has_active_selection?
+
+        case new_state
+
+        when STATE_TOGGLE_GRAIN_GROUP
+
+          part = get_active_part
+          path = get_active_part_entity_path
+
+          @tool.clear_all_2d
+          @tool.clear_all_3d
+          _reset_active_part
+
+          k_dropup = SmartDropup.new(
+            @tool,
+            path.each_with_index.map { |entity, depth|
+
+              indent = depth
+              disabled = depth == path.size - 1
+
+              instance_attributes = _get_instance_attributes(entity)
+
+              text_color = disabled ? SmartTool::COLOR_BRAND_LIGHT : Kuix::COLOR_BLACK
+              text_defs = []
+              unless entity.name.empty?
+                text_defs << SmartDropup::SmartDropupTextDef.new(
+                  entity.name,
+                  text_color,
+                  true
+                )
+              end
+              unless entity.definition.group? && !entity.name.empty?
+                text_defs << SmartDropup::SmartDropupTextDef.new(
+                  entity.definition.group? ? PLUGIN.get_i18n_string('tab.outliner.type_1') : "<#{entity.definition.name}>",
+                  text_color
+                )
+              end
+
+              on_click = lambda { |k_btn|
+                if (k_tick_btn, _ = k_btn.children.grep(Kuix::Button))
+                  k_tick_btn.fire(:click)
+                end
+              }
+              on_tick_click = lambda { |k_tick_btn|
+
+                model = Sketchup.active_model
+                model.start_operation('OCL Toggle Grain Group', true, false, false)
+
+                  k_tick_btn.selected = instance_attributes.is_grain_group = !instance_attributes.is_grain_group
+                  instance_attributes.write_to_attributes
+
+                # Commit model modification operation
+                model.commit_operation
+
+                # Fire event
+                PLUGIN.app_observer.model_observer.onDrawingChange
+
+              }
+              on_enter = lambda { |k_btn|
+                if entity == path.last
+                  _preview_part(path, part)
+                else
+                  tool.clear_3d(LAYER_3D_PART_PREVIEW)
+                  Sketchup.active_model.selection.clear
+                  Sketchup.active_model.selection.add(entity)
+                end
+              }
+              on_leave = lambda { |k_btn|
+                tool.clear_3d(LAYER_3D_PART_PREVIEW)
+                Sketchup.active_model.selection.clear
+              }
+
+              SmartDropup::SmartDropupBtnDef.new(
+                text_defs,
+                on_click,
+                on_enter,
+                on_leave,
+                indent,
+                disabled,
+                SmartDropup::SmartDropupTickDef.new(
+                  instance_attributes.is_grain_group,
+                  on_tick_click
+                )
+              )
+            }
+          )
+          @tool.append_2d(k_dropup, LAYER_2D_FLOATING_TOOLS)
+
+        end
+
+      end
+
+      super
     end
 
     # ------
@@ -1056,15 +1197,63 @@ module Ladb::OpenCutList
 
     # -----
 
+    def _preview_action_draw
+      super
+      @tool.clear_2d(LAYER_2D_PART_PREVIEW)
+      if (active_path = get_active_selection_path)
+
+        grain_group_rindex = active_path.reverse.index { |entity| _get_instance_attributes(entity).is_grain_group }
+        if grain_group_rindex
+
+          container_path = grain_group_rindex == 0 ? active_path : active_path[0...-grain_group_rindex]
+          if container_path.any? && container_path != Sketchup.active_model.active_path
+
+            container = container_path.last
+            container_name = container.name.empty? ? "##{container.entityID}" : container.name
+            bounds = container.definition.bounds
+            t = PathUtils.get_transformation(container_path, IDENTITY)
+
+            k_box = Kuix::BoxMotif3d.new
+            k_box.bounds.copy!(bounds)
+            k_box.color = Kuix::COLOR_PURPLE
+            k_box.line_width = 1.5
+            k_box.line_stipple = Kuix::LINE_STIPPLE_SOLID
+            k_box.transformation = t
+            @tool.append_3d(k_box, LAYER_3D_PART_PREVIEW)
+
+            k_box = Kuix::BoxFillMotif3d.new
+            k_box.bounds.copy!(bounds)
+            k_box.color = ColorUtils.color_translucent(Kuix::COLOR_PURPLE, 0.05)
+            k_box.transformation = t
+            @tool.append_3d(k_box, LAYER_3D_PART_PREVIEW)
+
+            k_label = _create_floating_label(
+              snap_point: bounds.min.transform(t),
+              anchor_position: Kuix::Anchor::TOP_RIGHT,
+              text: container_name,
+              text_color: Kuix::COLOR_PURPLE,
+              border_color: Kuix::COLOR_PURPLE
+            )
+            @tool.append_2d(k_label, LAYER_2D_PART_PREVIEW)
+
+          end
+
+        end
+
+      end
+    end
+
+    # -----
+
     def _do_action
 
       part = get_active_part
       instance_info = part.def.get_one_instance_info
       definition = instance_info.definition
-      definition_attributes = DefinitionAttributes.new(definition)
+      definition_attributes = _get_definition_attributes(definition)
 
       model = Sketchup.active_model
-      model.start_operation('OCL Configure Grain', true, false, false)
+      model.start_operation('OCL Toggle Grain', true, false, false)
 
 
         definition_attributes.follow_grain_direction = !definition_attributes.follow_grain_direction

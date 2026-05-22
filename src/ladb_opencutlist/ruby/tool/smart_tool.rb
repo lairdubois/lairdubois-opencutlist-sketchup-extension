@@ -1994,6 +1994,7 @@ module Ladb::OpenCutList
 
     def _create_floating_label(
       snap_point:,
+      anchor_position: Kuix::Anchor::CENTER,
       text:,
       text_color: Kuix::COLOR_BLACK,
       border_color: Kuix::COLOR_BLACK
@@ -2003,7 +2004,7 @@ module Ladb::OpenCutList
 
       k_label = Kuix::Label.new
       k_label.text = text.to_s
-      k_label.layout_data = Kuix::StaticLayoutDataWithSnap.new(snap_point, -1, -1, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+      k_label.layout_data = Kuix::StaticLayoutDataWithSnap.new(snap_point, -1, -1, Kuix::Anchor.new(anchor_position))
       k_label.set_style_attribute(:color, text_color)
       k_label.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
       k_label.set_style_attribute(:border_color, border_color)
@@ -2321,6 +2322,8 @@ module Ladb::OpenCutList
 
     LAYER_3D_PART_PREVIEW = 0
     LAYER_3D_PART_TWINS_PREVIEW = 1
+
+    LAYER_2D_PART_PREVIEW = 0
 
     # -----
 
@@ -3290,7 +3293,7 @@ module Ladb::OpenCutList
             @tool,
             path.each_with_index.map { |entity, depth|
 
-              on_click = lambda {
+              on_click = lambda { |k_btn|
                 Sketchup.active_model.selection.clear
                 _reset_active_part
                 if entity == path.last
@@ -3300,7 +3303,7 @@ module Ladb::OpenCutList
                 end
                 onSelected
               }
-              on_enter = lambda {
+              on_enter = lambda { |k_btn|
                 if entity == path.last
                   _preview_part(path, part)
                 else
@@ -3309,7 +3312,7 @@ module Ladb::OpenCutList
                   Sketchup.active_model.selection.add(entity)
                 end
               }
-              on_leave = lambda {
+              on_leave = lambda { |k_btn|
                 tool.clear_3d(LAYER_3D_PART_PREVIEW)
                 Sketchup.active_model.selection.clear
               }
@@ -3607,6 +3610,10 @@ module Ladb::OpenCutList
       create_cursor('select-svg')
     end
 
+    def cursor_select_grain
+      create_cursor('select-grain')
+    end
+
 
     def cursor_move
       create_cursor('move', 16, 16)
@@ -3712,9 +3719,9 @@ module Ladb::OpenCutList
           k_btn.set_style_attribute(:border_color, Kuix::COLOR_WHITE)
           k_btn.set_style_attribute(:border_color, SmartTool::COLOR_BRAND, :hover)
           k_btn.disabled = btn_def.disabled
-          k_btn.on(:enter) { btn_def.on_enter.call } unless btn_def.on_enter.nil?
-          k_btn.on(:leave) { btn_def.on_leave.call } unless btn_def.on_leave.nil?
-          k_btn.on(:click) { btn_def.on_click.call } unless btn_def.on_click.nil?
+          k_btn.on(:enter) { btn_def.on_enter.call(k_btn) } unless btn_def.on_enter.nil?
+          k_btn.on(:leave) { btn_def.on_leave.call(k_btn) } unless btn_def.on_leave.nil?
+          k_btn.on(:click) { btn_def.on_click.call(k_btn) } unless btn_def.on_click.nil?
           self.append(k_btn)
 
             k_labels = Kuix::Panel.new
@@ -3734,25 +3741,23 @@ module Ladb::OpenCutList
 
               end
 
-            # k_select_btn = Kuix::Button.new
-            # k_select_btn.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
-            # k_select_btn.border.set_all!(unit * 0.5)
-            # k_select_btn.min_size.set_all!(unit * 3)
-            # k_select_btn.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
-            # k_select_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_LIGHT, :hover)
-            # k_select_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND, :active)
-            # k_select_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND, :selected)
-            # k_select_btn.set_style_attribute(:border_color, Kuix::COLOR_WHITE)
-            # k_select_btn.set_style_attribute(:border_color, SmartTool::COLOR_BRAND, :hover)
-            # k_select_btn.on(:click) do
-            #   k_select_btn.selected = !k_select_btn.selected?
-            #   if k_select_btn.selected?
-            #     Sketchup.active_model.selection.add(entity)
-            #   else
-            #     Sketchup.active_model.selection.remove(entity)
-            #   end
-            # end
-            # k_btn.append(k_select_btn)
+            unless btn_def.tick_def.nil?
+
+              k_tick_btn = Kuix::Button.new
+              k_tick_btn.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
+              k_tick_btn.border.set_all!(unit * 0.5)
+              k_tick_btn.min_size.set_all!(unit * 3)
+              k_tick_btn.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
+              k_tick_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_LIGHT, :hover)
+              k_tick_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND, :active)
+              k_tick_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND, :selected)
+              k_tick_btn.set_style_attribute(:border_color, Kuix::COLOR_WHITE)
+              k_tick_btn.set_style_attribute(:border_color, SmartTool::COLOR_BRAND, :hover)
+              k_tick_btn.selected = btn_def.tick_def.selected
+              k_tick_btn.on(:click) { btn_def.tick_def.on_click.call(k_tick_btn) } unless btn_def.tick_def.on_click.nil?
+              k_btn.append(k_tick_btn)
+
+            end
 
         end
 
@@ -3764,7 +3769,8 @@ module Ladb::OpenCutList
       :on_enter,
       :on_leave,
       :indent,
-      :disabled
+      :disabled,
+      :tick_def
     ) do
       def initialize(
         text_defs = [],
@@ -3772,7 +3778,8 @@ module Ladb::OpenCutList
         on_enter = nil,
         on_leave = nil,
         indent = 0,
-        disabled = false
+        disabled = false,
+        tick_def = nil
       )
         super
       end
@@ -3787,6 +3794,18 @@ module Ladb::OpenCutList
         text,
         color = Kuix::COLOR_BLACK,
         bold = false
+      )
+        super
+      end
+    end
+
+    SmartDropupTickDef = Struct.new(
+      :selected,
+      :on_click,
+    ) do
+      def initialize(
+        selected = false,
+        on_click = nil
       )
         super
       end

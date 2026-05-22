@@ -749,7 +749,7 @@ module Ladb::OpenCutList
            !part_def.ignore_grain_direction &&
            part_def.thickness_layer_count == 1
            group_def.material_attributes.grained &&
-           (group_def.material_attributes.type == MaterialAttributes::TYPE_SHEET_GOOD || group_def.material_attributes.type == MaterialAttributes::TYPE_DIMENSIONAL) &&
+           group_def.material_attributes.type == MaterialAttributes::TYPE_SHEET_GOOD &&
 
           grain_group_entity = instance_info.path.reverse_each.find { |entity| _get_instance_attributes(entity).is_grain_group }
           grain_group_entity = model if grain_group_entity.nil?
