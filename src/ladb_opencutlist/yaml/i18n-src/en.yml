@@ -1682,9 +1682,9 @@ tab:
         Standard sizes available for this material.
 
         *If no unit is specified, the model unit will be applied.*
-      grained: Grain Orientation
+      grained: Grain
       grained_help: Selects the grain orientation in relation to the length of the panel.
-      grained_0: No grain
+      grained_0: No grain orientation
       grained_1: Grain follows length
       edge_decremented: Reduce Dimensions
       edge_decremented_help: Allows you to indicate whether the dimensions of parts should be reduced by the thickness of the edge banding.
@@ -2288,6 +2288,7 @@ tool:
       locked_part: This part is locked
       not_sibling_part: This part is not in the same group or component as the rest of the selection
       selection_contains_locked_entities: The selection contains locked entities
+      wrong_material_type: "The target part must be of type '{{ type }}'"
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2471,7 +2472,6 @@ tool:
       not_part: The target object is not a part (component)
       not_edge: The target face is not a panel edge
       not_face: The target face is not a panel face
-      wrong_material_type: "The target part must be of type '{{ type }}'"
   smart_axes:
     title: Orient
     action_0: Flip
@@ -2484,6 +2484,8 @@ tool:
     action_3_status: Target a face of a part and click on an edge to adapt its axes
     action_4: Move Origin
     action_4_status: Target a face of a part and click on a point to place its origin there
+    action_5: Configure Grain Continuity
+    action_5_status: Click on a part to activate or deactivate detection of grain continuity
     action_option_group_direction: Direction
     action_option_direction_0: L
     action_option_direction_1: W
@@ -2494,8 +2496,10 @@ tool:
     warning:
       more_entities: "{{ count_used }} instances sharing the same definition will be modified"
     error:
-      not_part: The target object is not a part (component)
+      not_part: The targeted object is not a part (component)
       not_orientable: The type of this part does not allow orienting it
+      not_grained: The targeted part has no grain orientation
+      not_single_thickness_layer: The target part must consist of a single layer
   smart_join:
     title: Assemble
     action_0: Touch-Touch # TODO: It's currently just for dev purposes
