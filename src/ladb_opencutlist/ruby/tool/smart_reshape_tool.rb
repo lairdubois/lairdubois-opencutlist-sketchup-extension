@@ -2131,6 +2131,9 @@ module Ladb::OpenCutList
 
       model.commit_operation
 
+      # Fire event
+      PLUGIN.app_observer.model_observer.onDrawingChange
+
     end
 
     # -----

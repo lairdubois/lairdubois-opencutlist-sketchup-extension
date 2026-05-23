@@ -2536,6 +2536,14 @@ module Ladb::OpenCutList
       false
     end
 
+    def _get_active_part_preview_color(part, highlighted = false)
+      highlighted ? COLOR_PART_HIGHLIGHTED : COLOR_PART
+    end
+
+    def _get_instance_part_preview_color(part, highlighted = false)
+      highlighted ? COLOR_INSTANCE_HIGHLIGHTED : COLOR_INSTANCE
+    end
+
     def _preview_part(part_entity_path, part, layer = LAYER_3D_PART_PREVIEW, highlighted = false)
       @tool.clear_3d(layer)
       if part.is_a?(Part)
@@ -2625,11 +2633,7 @@ module Ladb::OpenCutList
 
             k_mesh = Kuix::Mesh.new
             k_mesh.add_triangles(triangles)
-            k_mesh.background_color = if highlighted
-                                        path == @active_part_entity_path ? COLOR_PART_HIGHLIGHTED : COLOR_INSTANCE_HIGHLIGHTED
-                                      else
-                                        path == @active_part_entity_path ? COLOR_PART : COLOR_INSTANCE
-                                      end
+            k_mesh.background_color = path == @active_part_entity_path ? _get_active_part_preview_color(part, highlighted) : _get_instance_part_preview_color(part, highlighted)
             k_mesh.transformation = t
             @tool.append_3d(k_mesh, layer)
 

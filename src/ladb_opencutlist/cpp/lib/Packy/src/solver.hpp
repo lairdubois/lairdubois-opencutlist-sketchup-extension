@@ -1390,6 +1390,7 @@ namespace Packy {
 
                     if (item_type.rect.w != node.r - node.l /* rotated */) {
                         j_items.push_back(json{
+                                {"depth",        node.d - 1},
                                 {"item_type_id", item_type_meta.orig_item_type_id},
                                 {"x",            to_length_dbl(node.r)},
                                 {"y",            to_length_dbl(node.b)},
@@ -1397,6 +1398,7 @@ namespace Packy {
                         });
                     } else {
                         j_items.push_back(json{
+                                {"depth",        node.d - 1},
                                 {"item_type_id", item_type_meta.orig_item_type_id},
                                 {"x",            to_length_dbl(node.l)},
                                 {"y",            to_length_dbl(node.b)},

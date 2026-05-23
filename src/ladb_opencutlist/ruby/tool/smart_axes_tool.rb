@@ -165,6 +165,8 @@ module Ladb::OpenCutList
 
   class SmartAxesActionHandler < SmartSelectActionHandler
 
+    include DefinitionAttributesCachingHelper
+
     LAYER_3D_ACTION_PREVIEW = 3
 
     COLOR_ACTION = Kuix::COLOR_MAGENTA
@@ -1003,10 +1005,12 @@ module Ladb::OpenCutList
 
   class SmartAxesConfigureGrainActionHandler < SmartAxesActionHandler
 
-    include DefinitionAttributesCachingHelper
     include InstanceAttributesCachingHelper
 
     STATE_TOGGLE_GRAIN_GROUP = 10
+
+    COLOR_PART_FOLLOW_GRAIN = Sketchup::Color.new(127, 0, 255, 200).freeze
+    COLOR_PART_FOLLOW_GRAIN_HIGHLIGHTED = Sketchup::Color.new(127, 0, 255, 255).freeze
 
     def initialize(tool, previous_action_handler = nil)
       super(SmartAxesTool::ACTION_CONFIGURE_GRAIN, tool, previous_action_handler)
@@ -1166,6 +1170,10 @@ module Ladb::OpenCutList
 
     protected
 
+    def _preview_part_axes?
+      true
+    end
+
     def _preview_all_instances?
       true
     end
@@ -1192,6 +1200,11 @@ module Ladb::OpenCutList
           return [ false, 'tool.smart_axes.error.not_single_thickness_layer' ]
         end
       end
+      super
+    end
+
+    def _get_active_part_preview_color(part, highlighted = false)
+      return highlighted ? COLOR_PART_FOLLOW_GRAIN_HIGHLIGHTED : COLOR_PART_FOLLOW_GRAIN if part.follow_grain_direction
       super
     end
 

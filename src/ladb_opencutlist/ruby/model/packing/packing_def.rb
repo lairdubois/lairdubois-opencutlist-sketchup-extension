@@ -170,9 +170,9 @@ module Ladb::OpenCutList
   class PackingSummaryBinTypeStatsDef < DataContainer
 
     attr_reader :bin_type_def, :count, :used,
-                :number_of_items,
                 :std_price,
                 :total_area, :total_length, :total_cost
+    attr_accessor :number_of_items
 
     def initialize(bin_type_def:, count:, used:,
                    number_of_items: 0)
@@ -245,10 +245,11 @@ module Ladb::OpenCutList
     attr_reader :bin_type_def,
                 :count, :efficiency,
                 :item_defs, :leftover_defs, :cut_defs, :part_info_defs,
-                :number_of_items, :number_of_leftovers, :number_of_leftovers_to_keep, :number_of_cuts,
-                :cut_length,
+                :number_of_leftovers, :number_of_leftovers_to_keep,
                 :x_min, :x_max, :y_min, :y_max
-    attr_accessor :cut_cost,
+    attr_accessor :number_of_items, :number_of_cuts,
+                  :cut_length,
+                  :cut_cost,
                   :svg, :light_svg
 
     def initialize(bin_type_def:,
@@ -349,11 +350,13 @@ module Ladb::OpenCutList
     attr_reader :length, :width,
                 :color,
                 :name,
-                :item_type_defs
+                :item_type_defs,
+                :gutter_defs
 
     def initialize(length:, width:,
                    name:,
-                   item_type_defs:)
+                   item_type_defs:,
+                   gutter_defs:)
 
       @length = length
       @width = width
@@ -361,16 +364,20 @@ module Ladb::OpenCutList
       @name = name
       @item_type_defs = item_type_defs
 
+      @gutter_defs = gutter_defs
+
     end
 
   end
 
   class PackingCompositeSubItemTypeDef < PackingItemTypeDef
 
-    attr_reader :x, :y,
+    attr_reader :depth,
+                :x, :y,
                 :instance_info
 
-    def initialize(x:, y:,
+    def initialize(depth:,
+                   x:, y:,
                    length:, width:,
                    part:,
                    projection_def:,
@@ -383,6 +390,8 @@ module Ladb::OpenCutList
             projection_def: projection_def,
             color: color,
             boxed: true)
+
+      @depth = depth
 
       @x = x
       @y = y
@@ -398,10 +407,12 @@ module Ladb::OpenCutList
   class PackingItemDef < DataContainer
 
     attr_reader :item_type_def, :instance_info, :thickness_layer, :position_in_batch,
+                :depth,
                 :x, :y, :angle, :mirror,
                 :label_offset
 
     def initialize(item_type_def:, instance_info:, thickness_layer:, position_in_batch:,
+                   depth:,
                    x:, y:, angle:, mirror:,
                    label_offset:)
 
@@ -409,6 +420,8 @@ module Ladb::OpenCutList
       @instance_info = instance_info
       @thickness_layer = thickness_layer
       @position_in_batch = position_in_batch
+
+      @depth = depth
 
       @x = x
       @y = y
@@ -431,14 +444,18 @@ module Ladb::OpenCutList
   class PackingCompositeItemDef < DataContainer
 
     attr_reader :item_type_def,
+                :depth,
                 :x, :y, :angle, :mirror,
                 :item_defs
 
     def initialize(item_type_def:,
+                   depth:,
                    x:, y:,
                    item_defs:)
 
       @item_type_def = item_type_def
+
+      @depth = depth
 
       @x = x
       @y = y

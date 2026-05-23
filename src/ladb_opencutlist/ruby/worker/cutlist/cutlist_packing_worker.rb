@@ -522,7 +522,7 @@ module Ladb::OpenCutList
           })
 
           # Set boxes size to part cutting size
-          Geometrix::LayoutFinder.iterate_on_box_defs(layout_def) do |box_def|
+          Geometrix::LayoutFinder.iterate_on_box_defs(layout_def) do |box_def, depth|
             grain_item = box_def.data
             grain_item_def = grain_item.def
             part_def = grain_item_def.part_def
@@ -531,7 +531,7 @@ module Ladb::OpenCutList
           end
 
           # Layout boxes
-          total_length, total_width, box_defs = Geometrix::LayoutFinder.layout(layout_def, spacing: @spacing)
+          total_length, total_width, box_defs, gutter_defs = Geometrix::LayoutFinder.layout(layout_def, spacing: @spacing)
 
           if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
 
@@ -567,6 +567,7 @@ module Ladb::OpenCutList
               grain_item_def = grain_item.def
               part = grain_item.part
               PackingCompositeSubItemTypeDef.new(
+                depth: box_def.depth,
                 x: box_def.x, y: box_def.y,
                 length: box_def.width, width: box_def.height,
                 part: part,
@@ -575,7 +576,8 @@ module Ladb::OpenCutList
                 color: _compute_color_from_part(part),
                 instance_info: grain_item_def.instance_info
               )
-            }
+            },
+            gutter_defs: gutter_defs
           )
 
           grain_group.items.each do |grain_item|
@@ -886,7 +888,7 @@ module Ladb::OpenCutList
               used_copies = raw_bin_type_stats.fetch('used_copies', 0)
               unused_copies = raw_bin_type_stats.fetch('unused_copies', 0)
               defs = []
-              defs << PackingSummaryBinTypeStatsDef.new(bin_type_def: bin_type_def, count: used_copies, used: true, number_of_items: raw_bin_type_stats.fetch('item_copies', 0)) if used_copies > 0
+              defs << PackingSummaryBinTypeStatsDef.new(bin_type_def: bin_type_def, count: used_copies, used: true, number_of_items: raw_bin_type_stats.fetch('item_copies', 0))
               defs << PackingSummaryBinTypeStatsDef.new(bin_type_def: bin_type_def, count: unused_copies, used: false) if unused_copies > 0 || unused_copies == -1
               defs
             }.flatten(1).sort_by!{ |bin_type_stats| [ bin_type_stats.used ? 1 : 0, -bin_type_stats.bin_type_def.type, bin_type_stats.bin_type_def.length ]} : []
@@ -927,8 +929,10 @@ module Ladb::OpenCutList
                   when PackingCompositeItemTypeDef
                     x = _from_packy_length(raw_item.fetch('x', 0))
                     y = _from_packy_length(raw_item.fetch('y', 0))
+                    depth = raw_item.fetch('depth', 0)
                     PackingCompositeItemDef.new(
                       item_type_def: item_type_def,
+                      depth: raw_item.fetch('depth', 0),
                       x: x,
                       y: y,
                       item_defs: item_type_def.item_type_defs.map { |sub_item_type_def|
@@ -938,6 +942,7 @@ module Ladb::OpenCutList
                           instance_info: instance_metas[:instance_info],
                           thickness_layer: instance_metas[:thickness_layer],
                           position_in_batch: instance_metas[:position_in_batch],
+                          depth: depth + sub_item_type_def.depth,
                           x: sub_item_type_def.x, # Relative to the composite item x
                           y: sub_item_type_def.y, # Relative to the composite item y
                           angle: 0,
@@ -954,6 +959,7 @@ module Ladb::OpenCutList
                       instance_info: instance_metas[:instance_info],
                       thickness_layer: instance_metas[:thickness_layer],
                       position_in_batch: instance_metas[:position_in_batch],
+                      depth: raw_item.fetch('depth', 0),
                       x: _from_packy_length(raw_item.fetch('x', 0)),
                       y: _from_packy_length(raw_item.fetch('y', 0)),
                       angle: raw_item.fetch('angle', 0),
@@ -1018,6 +1024,71 @@ module Ladb::OpenCutList
         ),
         cached: output[:cached].is_a?(TrueClass)
       )
+
+      # Post process if grain groups exist
+
+      if @gg
+
+        noi_btd = Hash.new(0)
+        packing_def.solution_def.bin_defs.each do |bin_def|
+
+          # Fixed number of items
+          bin_def.number_of_items = bin_def.item_defs.inject(0) { |sum, item_def|
+            case item_def
+            when PackingCompositeItemDef
+              sum + item_def.item_defs.size
+            else
+              sum + 1
+            end
+          }
+          noi_btd[bin_def.bin_type_def] += bin_def.number_of_items * bin_def.count
+
+          if @problem_type == Packy::PROBLEM_TYPE_RECTANGLEGUILLOTINE
+
+            # Add missing cuts
+            bin_def.item_defs.each do |item_def|
+              case item_def
+              when PackingCompositeItemDef
+
+                item_type_def = item_def.item_type_def
+
+                item_type_def.gutter_defs.each do |gutter_def|
+
+                  orientation = gutter_def.width == @spacing ? 'vertical' : 'horizontal'
+                  length = (orientation == 'vertical' ? gutter_def.height : gutter_def.width).to_l
+                  x = gutter_def.x.to_l
+                  y = gutter_def.y.to_l
+
+                  bin_def.cut_defs << PackingCutDef.new(
+                    depth: item_def.depth + gutter_def.depth,
+                    x: (item_def.x + _compute_x_with_origin_corner(@problem_type, @origin_corner, x, gutter_def.width, item_type_def.length)).to_l,
+                    y: (item_def.y + _compute_y_with_origin_corner(@problem_type, @origin_corner, y, gutter_def.height, item_type_def.width)).to_l,
+                    length: length,
+                    orientation: orientation
+                  )
+
+                  bin_def.number_of_cuts += 1
+                  bin_def.cut_length += length
+
+                end
+
+              else
+                next
+              end
+            end
+
+          end
+
+        end
+
+        # Propagate new number of items to bin type stats defs
+        noi_btd.each do |bin_type_def, number_of_items|
+          if (bin_type_stats_def = packing_def.solution_def.summary_def.bin_type_stats_defs.find { |bin_type_stats_def| bin_type_stats_def.bin_type_def == bin_type_def })
+            bin_type_stats_def.number_of_items = number_of_items
+          end
+        end
+
+      end
 
       # Computed values
 

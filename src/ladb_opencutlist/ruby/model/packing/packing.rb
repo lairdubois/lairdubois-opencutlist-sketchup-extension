@@ -238,11 +238,14 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :x, :y, :angle, :mirror,
+    attr_reader :depth,
+                :x, :y, :angle, :mirror,
                 :label_offset
 
     def initialize(_def)
       @_def = _def
+
+      @depth = _def.depth
 
       @x = _def.x.to_s
       @y = _def.y.to_s
@@ -260,11 +263,14 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :x, :y,
+    attr_reader :depth,
+                :x, :y,
                 :items
 
     def initialize(_def)
       @_def = _def
+
+      @depth = _def.depth
 
       @x = _def.x.to_s
       @y = _def.y.to_s
