@@ -517,11 +517,11 @@ module Ladb::OpenCutList
     end
 
     def vertical?
-      @orientation == 'vertical'
+      @orientation == :vertical
     end
 
     def horizontal?
-      @orientation == 'horizontal'
+      @orientation == :horizontal
     end
 
     # ---

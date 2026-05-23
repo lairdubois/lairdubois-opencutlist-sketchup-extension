@@ -1,7 +1,6 @@
 module Ladb::OpenCutList
 
   require_relative 'smart_tool'
-  require_relative 'smart_handle_tool'
   require_relative '../utils/color_utils'
   require_relative '../utils/path_utils'
 

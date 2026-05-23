@@ -2,7 +2,7 @@ module Ladb::OpenCutList::Geometrix
 
   module LayoutFinder
 
-    OVERLAP_THRESHOLD = 0.5
+    OVERLAP_THRESHOLD = 0.1
 
     # Detection of the layout of boxes in nested rows/columns.
     #

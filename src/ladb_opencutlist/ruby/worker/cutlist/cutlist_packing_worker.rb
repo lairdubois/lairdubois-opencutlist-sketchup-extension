@@ -985,7 +985,7 @@ module Ladb::OpenCutList
                     x: _from_packy_length(raw_cut.fetch('x', 0)),
                     y: _from_packy_length(raw_cut.fetch('y', 0)),
                     length: (raw_cut['length'] ? _from_packy_length(raw_cut['length']) : bin_type_def.width.to_l),
-                    orientation: raw_cut.fetch('orientation', 'vertical')
+                    orientation: raw_cut.fetch('orientation', :vertical).to_s.to_sym,
                   )
                 }.sort_by { |cut_def| [ cut_def.depth, cut_def.x, cut_def.y ] } : [],
                 part_info_defs: raw_bin['items'].is_a?(Array) ? raw_bin['items'].map { |raw_item|
@@ -1056,8 +1056,8 @@ module Ladb::OpenCutList
                 when Packy::PROBLEM_TYPE_RECTANGLEGUILLOTINE
                   item_type_def.gutter_defs.each do |gutter_def|
 
-                    orientation = gutter_def.width == @spacing ? 'vertical' : 'horizontal'
-                    length = (orientation == 'vertical' ? gutter_def.height : gutter_def.width).to_l
+                    orientation = gutter_def.width == @spacing ? :vertical : :horizontal
+                    length = (orientation == :vertical ? gutter_def.height : gutter_def.width).to_l
                     x = gutter_def.x.to_l
                     y = gutter_def.y.to_l
 
@@ -1386,7 +1386,7 @@ module Ladb::OpenCutList
             px_cut_length = _to_px(cut_def.length)
             px_cut_width = [ 1, px_spacing ].max
 
-            if cut_def.orientation == 'horizontal'
+            if cut_def.horizontal?
               px_cut_rect_width = px_cut_length
               px_cut_rect_height = px_cut_width
             else
