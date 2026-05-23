@@ -1012,6 +1012,9 @@ module Ladb::OpenCutList
     COLOR_PART_FOLLOW_GRAIN = Sketchup::Color.new(127, 0, 255, 200).freeze
     COLOR_PART_FOLLOW_GRAIN_HIGHLIGHTED = Sketchup::Color.new(127, 0, 255, 255).freeze
 
+    COLOR_PART_FOLLOW_GRAIN_INSTANCE = Sketchup::Color.new(127, 0, 255, 120).freeze
+    COLOR_PART_FOLLOW_GRAIN_INSTANCE_HIGHLIGHTED = Sketchup::Color.new(127, 0, 255, 175).freeze
+
     def initialize(tool, previous_action_handler = nil)
       super(SmartAxesTool::ACTION_CONFIGURE_GRAIN, tool, previous_action_handler)
     end
@@ -1205,6 +1208,11 @@ module Ladb::OpenCutList
 
     def _get_active_part_preview_color(part, highlighted = false)
       return highlighted ? COLOR_PART_FOLLOW_GRAIN_HIGHLIGHTED : COLOR_PART_FOLLOW_GRAIN if part.follow_grain_direction
+      super
+    end
+
+    def _get_instance_part_preview_color(part, highlighted = false)
+      return highlighted ? COLOR_PART_FOLLOW_GRAIN_INSTANCE_HIGHLIGHTED : COLOR_PART_FOLLOW_GRAIN_INSTANCE if part.follow_grain_direction
       super
     end
 

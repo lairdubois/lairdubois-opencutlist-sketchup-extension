@@ -526,7 +526,7 @@ module Ladb::OpenCutList
                                                 transformation: transformation,
                                                 unit_transformation: unit_transformation,
                                                 layer: LAYER_PART) do
-                  _dxf_write_rect(file, position.x, position.y, position.z, 0, size.x, size.y, LAYER_CUT) unless @cuts_hidden || options_def.problem_type != Packy::PROBLEM_TYPE_RECTANGLE && (options_def.problem_type != Packy::PROBLEM_TYPE_IRREGULAR || !item_type_def.boxed)
+                  _dxf_write_rect(file, position.x, position.y, position.z, size.x, size.y, LAYER_CUT) unless @cuts_hidden || options_def.problem_type != Packy::PROBLEM_TYPE_RECTANGLE && (options_def.problem_type != Packy::PROBLEM_TYPE_IRREGULAR || !item_type_def.boxed)
                   _dxf_write_label(file, position.x, position.y, 0, size.x, size.y, text, size_.x, size_.y, position_.x, position_.y, 0, LAYER_TEXT) unless @texts_hidden
                 end
 

@@ -494,7 +494,8 @@ module Ladb::OpenCutList
         item_types = []
 
         # Add items from grain groups
-        group.grain_groups.each do |grain_group|
+        unless @problem_type == Packy::PROBLEM_TYPE_ONEDIMENSIONAL
+          group.grain_groups.each do |grain_group|
 
           # Finding grain group layout
           layout_def = Geometrix::LayoutFinder.find_layout(grain_group.items.map { |grain_item|
@@ -589,6 +590,7 @@ module Ladb::OpenCutList
 
           end
 
+          end
         end
 
         # Add items from parts
@@ -1043,40 +1045,54 @@ module Ladb::OpenCutList
           }
           noi_btd[bin_def.bin_type_def] += bin_def.number_of_items * bin_def.count
 
-          if @problem_type == Packy::PROBLEM_TYPE_RECTANGLEGUILLOTINE
+          # Add missing cuts
+          bin_def.item_defs.each do |item_def|
+            case item_def
+            when PackingCompositeItemDef
 
-            # Add missing cuts
-            bin_def.item_defs.each do |item_def|
-              case item_def
-              when PackingCompositeItemDef
+              item_type_def = item_def.item_type_def
 
-                item_type_def = item_def.item_type_def
+              case @problem_type
+                when Packy::PROBLEM_TYPE_RECTANGLEGUILLOTINE
+                  item_type_def.gutter_defs.each do |gutter_def|
 
-                item_type_def.gutter_defs.each do |gutter_def|
+                    orientation = gutter_def.width == @spacing ? 'vertical' : 'horizontal'
+                    length = (orientation == 'vertical' ? gutter_def.height : gutter_def.width).to_l
+                    x = gutter_def.x.to_l
+                    y = gutter_def.y.to_l
 
-                  orientation = gutter_def.width == @spacing ? 'vertical' : 'horizontal'
-                  length = (orientation == 'vertical' ? gutter_def.height : gutter_def.width).to_l
-                  x = gutter_def.x.to_l
-                  y = gutter_def.y.to_l
+                    bin_def.cut_defs << PackingCutDef.new(
+                      depth: item_def.depth + gutter_def.depth,
+                      x: (item_def.x + _compute_x_with_origin_corner(@problem_type, @origin_corner, x, gutter_def.width, item_type_def.length)).to_l,
+                      y: (item_def.y + _compute_y_with_origin_corner(@problem_type, @origin_corner, y, gutter_def.height, item_type_def.width)).to_l,
+                      length: length,
+                      orientation: orientation
+                    )
 
-                  bin_def.cut_defs << PackingCutDef.new(
-                    depth: item_def.depth + gutter_def.depth,
-                    x: (item_def.x + _compute_x_with_origin_corner(@problem_type, @origin_corner, x, gutter_def.width, item_type_def.length)).to_l,
-                    y: (item_def.y + _compute_y_with_origin_corner(@problem_type, @origin_corner, y, gutter_def.height, item_type_def.width)).to_l,
-                    length: length,
-                    orientation: orientation
-                  )
+                    bin_def.number_of_cuts += 1
+                    bin_def.cut_length += length
+
+                  end
+
+              when Packy::PROBLEM_TYPE_RECTANGLE, Packy::PROBLEM_TYPE_IRREGULAR
+
+                bin_def.number_of_cuts -= 1
+                bin_def.cut_length -= (item_type_def.length + item_type_def.width) * 2
+
+                item_def.item_defs.each do |sub_item_def|
+
+                  sub_item_type_def = sub_item_def.item_type_def
 
                   bin_def.number_of_cuts += 1
-                  bin_def.cut_length += length
+                  bin_def.cut_length += (sub_item_type_def.length + sub_item_type_def.width) * 2
 
                 end
 
-              else
-                next
               end
-            end
 
+            else
+              next
+            end
           end
 
         end
