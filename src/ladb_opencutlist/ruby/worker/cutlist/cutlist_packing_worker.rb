@@ -1301,6 +1301,8 @@ module Ladb::OpenCutList
             px_item_rect_y = px_bin_width - _compute_y_with_origin_corner(@problem_type, @origin_corner, px_item_y + bounds.min.y.to_f, px_item_rect_height, px_bin_width)
 
             svg += "<g class='item-composite' transform='translate(#{px_item_rect_x} #{px_item_rect_y})'>"
+              svg += "<rect class='item-composite-outer' x='0' y='#{-px_item_rect_height}' width='#{px_item_rect_width}' height='#{px_item_rect_height}'/>" unless light
+
               item_def.item_defs.each do |sub_item_def|
                 svg += _render_item_def_svg(ctx, sub_item_def, true)
               end
