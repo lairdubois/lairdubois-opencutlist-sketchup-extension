@@ -3758,6 +3758,7 @@ module Ladb::OpenCutList
               k_tick_btn.set_style_attribute(:border_color, Kuix::COLOR_WHITE)
               k_tick_btn.set_style_attribute(:border_color, SmartTool::COLOR_BRAND, :hover)
               k_tick_btn.selected = btn_def.tick_def.selected
+              k_tick_btn.disabled = btn_def.disabled || btn_def.tick_def.disabled
               k_tick_btn.on(:click) { btn_def.tick_def.on_click.call(k_tick_btn) } unless btn_def.tick_def.on_click.nil?
               k_btn.append(k_tick_btn)
 
@@ -3806,10 +3807,12 @@ module Ladb::OpenCutList
     SmartDropupTickDef = Struct.new(
       :selected,
       :on_click,
+      :disabled,
     ) do
       def initialize(
         selected = false,
-        on_click = nil
+        on_click = nil,
+        disabled = false
       )
         super
       end

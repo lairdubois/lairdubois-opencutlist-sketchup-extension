@@ -1155,7 +1155,8 @@ module Ladb::OpenCutList
                 disabled,
                 SmartDropup::SmartDropupTickDef.new(
                   instance_attributes.is_grain_group,
-                  on_tick_click
+                  on_tick_click,
+                  disabled
                 )
               )
             }
@@ -1207,12 +1208,12 @@ module Ladb::OpenCutList
     end
 
     def _get_active_part_preview_color(part, highlighted = false)
-      return highlighted ? COLOR_PART_FOLLOW_GRAIN_HIGHLIGHTED : COLOR_PART_FOLLOW_GRAIN if part.follow_grain_direction
+      # return highlighted ? COLOR_PART_FOLLOW_GRAIN_HIGHLIGHTED : COLOR_PART_FOLLOW_GRAIN if part.follow_grain_direction
       super
     end
 
     def _get_instance_part_preview_color(part, highlighted = false)
-      return highlighted ? COLOR_PART_FOLLOW_GRAIN_INSTANCE_HIGHLIGHTED : COLOR_PART_FOLLOW_GRAIN_INSTANCE if part.follow_grain_direction
+      # return highlighted ? COLOR_PART_FOLLOW_GRAIN_INSTANCE_HIGHLIGHTED : COLOR_PART_FOLLOW_GRAIN_INSTANCE if part.follow_grain_direction
       super
     end
 

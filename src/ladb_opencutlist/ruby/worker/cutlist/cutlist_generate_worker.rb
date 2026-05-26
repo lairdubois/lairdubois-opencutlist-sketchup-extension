@@ -1028,9 +1028,9 @@ module Ladb::OpenCutList
                                                 size = item_def.part_def.size
                                                 t = item_def.instance_info.transformation
                                                 [
-                                                  size.oriented_axis(X_AXIS).transform(t).to_a.map { |v| v.round(3) },
-                                                  size.oriented_axis(Y_AXIS).transform(t).to_a.map { |v| v.round(3) },
-                                                  size.oriented_axis(Z_AXIS).transform(t).to_a.map { |v| v.round(3) }
+                                                  size.oriented_axis(X_AXIS).transform(t).to_a.map { |v| v.round(6) },
+                                                  size.oriented_axis(Y_AXIS).transform(t).to_a.map { |v| v.round(6) },
+                                                  size.oriented_axis(Z_AXIS).transform(t).to_a.map { |v| v.round(6) }
                                                 ]
                                               }
                                               .select { |_, item_defs| item_defs.size > 1 } # Exclude single item groups

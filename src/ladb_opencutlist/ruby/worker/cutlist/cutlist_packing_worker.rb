@@ -516,11 +516,25 @@ module Ladb::OpenCutList
             min = bounds.min
 
             position = min.transform(t).transform(ati)
+            # position.y = -size.width - position.y if part_def.flipped  # TODO find in what direction the part is flipped
             position.z = 0
 
             # Use final size for layout detection to avoid overlapping
             Geometrix::BoxDef.new(position.x, position.y, size.length, size.width, data: grain_item)
           })
+
+          # debug_group = Sketchup.active_model.active_entities.add_group
+          # Geometrix::LayoutFinder.iterate_on_box_defs(layout_def) do |box_def, depth|
+          #
+          #   group = debug_group.entities.add_group
+          #   group.entities.add_face([
+          #                             Geom::Point3d.new(box_def.x, box_def.y, 0),
+          #                             Geom::Point3d.new(box_def.x + box_def.width, box_def.y, 0),
+          #                             Geom::Point3d.new(box_def.x + box_def.width, box_def.y + box_def.height, 0),
+          #                             Geom::Point3d.new(box_def.x, box_def.y + box_def.height, 0)
+          #                           ])
+          #
+          # end
 
           # Set boxes size to part cutting size
           Geometrix::LayoutFinder.iterate_on_box_defs(layout_def) do |box_def, depth|
