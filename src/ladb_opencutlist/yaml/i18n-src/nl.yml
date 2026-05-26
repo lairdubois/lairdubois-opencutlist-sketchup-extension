@@ -382,6 +382,7 @@ tab:
       children_size_increase: "Deze afmeting wordt vergroot met een overmaat voor {{ count }} gegroepeerde onderdelen"
       invalid_final_area: "Let op, de oppervlakte kan niet worden berekend omdat {{ count }} deel (van {{ total }}) een ongeldige oppervakte heeft"
       invalid_final_area_plural: "Opgelet, Dit cumulatief oppervlak kan niet berekend worden omdat {{ count }} onderdelen (van {{ total }}) een ongeldig oppervlak hebben"
+      is_instance_name: De naam van dit onderdeel komt uit de instantienaam van de groep
       is_dynamic_attributes_name: De beschrijving van dit onderdeel wordt overgenomen van het attribuut 'Name' van het dynamisch component
       has_edges: "Dit onderdeel bevat {{ count }} randafwerking"
       has_edges_plural: "Dit onderdeel bevat {{ count }} randafwerkingen"
@@ -613,6 +614,7 @@ tab:
       filters_warning_plural: "Dit filter geeft slechts **{{ count }}** onderdelen weer op een totaal van {{ total }}."
       edge_material_names_filter: Te filteren lijst van kantenband materiaal
       veneer_material_names_filter: Te filteren lijst van fineer materiaal
+      names_filter: Te filteren benamingen
       tags_filter: Te filteren Badges
       dimensions_help: Afmetingen begrijpen
       summary: Overzicht
@@ -745,7 +747,7 @@ tab:
       type_4: $t(tab.materials.type_4)
       type_5: $t(tab.materials.type_5)
       type_6: $t(tab.materials.type_6)
-      type_7: ""
+      type_7: $t(tab.materials.type_7)
       type_-1: $t(default.cut_plural)
       tooltip:
         incompatible_unit: Eenheid incompatibel met materiaalschattingsopties
@@ -1077,7 +1079,7 @@ tab:
       option_irregular_allowed_rotations_0: Geen
       option_irregular_allowed_rotations_90: Stappen van 90°
       option_irregular_allowed_rotations_180: Stappen van 180°
-      option_irregular_allowed_rotations_free: ""
+      option_irregular_allowed_rotations_free: Vrij in te vullen
       option_irregular_allow_mirroring: Spiegel toegestaan
       option_irregular_allow_mirroring_help: |
         Bepaalt of het spiegelen van het stuk is toegestaan voor de plaatsing.
@@ -1576,7 +1578,7 @@ tab:
     type_4: Kantenband
     type_5: Accessoire
     type_6: Fineer
-    type_7: ""
+    type_7: Bewerkingen
     tooltip:
       type_0: Materiaal type '$t(tab.materials.type_0)'
       type_1: Materiaal type '$t(tab.materials.type_1)'
@@ -1585,7 +1587,7 @@ tab:
       type_4: Materiaal type '$t(tab.materials.type_4)'
       type_5: Materiaal type '$t(tab.materials.type_5)'
       type_6: Materiaal type '$t(tab.materials.type_6)'
-      type_7: ""
+      type_7: Materiaal type '$t(tab.materials.type_7)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Nerf richting
@@ -1912,19 +1914,24 @@ tab:
     obsolete_base: "Om gesynchroniseerd te blijven, moet u het CSV-bestand opnieuw laden."
   importers:
     default:
-      open_file: ""
+      open_file: "Een {{ extension }}-bestand openen"
       import_to_model: Importeer in het model
       error:
-        no_model: ""
+        no_data: Geen gegevens om te importeren.
+        no_model: Er is geen model geopend. Importeren in het niets is onmogelijk ;)
         file_not_found: "Bestand niet gevonden: **{{ filename }}**"
-        bad_extension: ""
-        failed_to_import: ""
+        bad_extension: "Het bestand *{{ filename }}* heeft niet de vereiste extensie (**{{ extensions }}**)."
+        failed_to_import: Het importeren is mislukt.
       success:
         imported_title: Import voltooid
     csv:
-      label: ""
+      label: komma-gescheiden waarden csv
       title: Onderdelen importeren
       help: |
+        Op deze pagina kunt u een reeks ruwe stukken of panelen (met rechthoekige vorm) in uw model importeren vanuit een [CSV](https://nl.wikipedia.org/wiki/Kommagescheiden_bestand) bestand
+        Zo kunt u de kracht van de zaaglijst van **OpenCutList** gebruiken, terwijl u uw onderdelen aanmaakt met een ander programma dan SketchUp.Klik op de knop.
+
+        **Een CSV-bestand openen** om te starten.
       load:
         title: CSV bestand laden
         info_0: |
@@ -1990,50 +1997,75 @@ tab:
         imported_body_plural: "{{ count }} onderdelen succesvol geïmporteerd!"
       obsolete_base: "Om gesynchroniseerd te blijven, moet u het CSV-bestand opnieuw laden."
     bxf2:
-      label: ""
-      title: ""
+      label: BXF2
+      title: Een Blum-configuratie importeren
       help: |
+        Op deze pagina kunt u een configuratie in uw model importeren vanuit een BXF2-bestand.
+        BXF2-bestanden kunnen aangemaakt worden via de [Meubelconfigurator](https://e-services.blum.com/) van [Blum](https://www.blum.com).
+
+        Klik op de knop **Een BXF2-bestand openen** om te starten.
       load:
-        title: ""
+        title: Een BXF2-bestand laden
       import:
-        title: ""
+        title: De configuratie importeren in het model
         info_0: |
+          U staat op het punt een configuratie van **{{ count }} kastromp** in het model te importeren.
         info_0_plural: |
-        info_1: ""
-        info_2: |
-        option_part_wood_material_name: ""
-        option_part_wood_material_name_help: ""
-        option_part_aluminium_material_name: ""
-        option_part_aluminium_material_name_help: ""
-        option_part_glass_material_name: ""
-        option_part_glass_material_name_help: ""
-        option_front_part_layer_name: ""
-        option_front_part_layer_name_help: ""
-        option_machining_material_name: ""
-        option_machining_material_name_help: ""
-        option_machining_layer_name: ""
-        option_machining_layer_name_help: ""
-        option_hardware_material_name: ""
-        option_hardware_material_name_help: ""
-        option_hardware_layer_name: ""
-        option_hardware_layer_name_help: ""
+          U staat op het punt een configuratie van **{{ count }} kastrompen** in het model te importeren.
+        info_1: U krijgt de mogelijkheid om de plaats ervan te bepalen in het actieve model.
+        materials: Materialen
+        layers: Tags
+        option_parts_formula: Formule
+        option_parts_formula_help: Met de formule kunt u de naam van de geïmporteerde onderdelen personaliseren.
+        option_part_wood_material_name: Hout
+        option_part_wood_material_name_help: Materiaal dat moet worden toegepast op de onderdelen in **hout**.
+        option_part_aluminium_material_name: Aluminium
+        option_part_aluminium_material_name_help: Materiaal dat moet worden toegepast op de onderdelen in **aluminium**.
+        option_part_glass_material_name: Glas
+        option_part_glass_material_name_help: Materiaal dat moet worden toegepast op de onderdelen in **glas**.
+        option_front_part_layer_name: Fronten
+        option_front_part_layer_name_help: Tag die moet worden toegepast op de frontonderdelen.
+        option_machining_material_name: Bewerkingen
+        option_machining_material_name_help: Materiaal dat moet worden toegepast op de **bewerkingen**.
+        option_machining_layer_name: Bewerkingen
+        option_machining_layer_name_help: Tag die moet worden toegepast op de bewerkingen.
+        option_hardware_material_name: Accessoires
+        option_hardware_material_name_help: Materiaal dat moet worden toegepast op de **accessoires**.
+        option_hardware_layer_name: Accessoires
+        option_hardware_layer_name_help: Tag die moet worden toegepast op de accessoires.
+        option_no_material_help: "*Laat dit veld leeg om geen materiaal toe te passen.*"
+        option_default_material_help: "*Er wordt een standaardmateriaal aangemaakt als dit veld leeg is*."
+        option_no_layer_help: "*Laat dit veld leeg om geen tag toe te passen.*"
+        old_name: Naam van oorsprong
+        new_name: Nieuwe naam
+        count: Aant.
+        formula:
+          part: Stuk
+          project: Project
+          cabinet: Meubel
       model:
-        author: ""
-        date: ""
+        author: Auteur
+        date: Datum
       cabinet:
-        list: ""
+        list: Lijst van meubels
         description: Beschrijving
         width: Breedte
         height: Hoogte
-        depth: ""
+        depth: Diepte
       article:
-        list: ""
+        list: Lijst van artikelen
         total_quantity: Aant.
-        article_number: ""
+        article_number: Ref.
         description: Beschrijving
+        material: Materiaal
       error:
         failed_to_load_bxf2_file: |
-      obsolete_base: ""
+          Kan het BXF2-bestand niet laden: **{{ error }}**
+      warning:
+        partial_support: |
+          U hebt **SketchUp 2021.1** of een latere versie nodig om alle functies te kunnen gebruiken.
+          De 3D-geometrieën van de beslagonderdelen **kunnen niet worden geïmporteerd**.
+      obsolete_base: "Om gesynchroniseerd te blijven, moet u het BXF2-bestand opnieuw laden."
   tutorials:
     label: Tutorials
     title: Tutorials
@@ -2234,6 +2266,7 @@ tool:
       lt_min_distance: "De afstand {{ value1 }} is kleiner dan de minimale afstand van {{ value2 }}"
       gt_max_distance: "De afstand {{ value1 }} is groter dan de maximale afstand van {{ value2 }}"
       locked_part: Dit onderdeel is vergrendeld
+      not_sibling_part: Dit onderdeel bevindt zich niet in dezelfde groep of component als de rest van de selectie
       selection_contains_locked_entities: De selectie bevat vergrendelde onderdelen
   highlight:
     transparency: $t(tool.default.transparency)
@@ -2345,14 +2378,14 @@ tool:
     action_1_state_0_status: Klik op een gesloten volume om de referentiegeometrie te bepalen
     action_1_state_1_status: Selecteer de vlakken om te extruderen
     # CSG = Constructive Solid Geometry
-    action_2: ""
-    action_2_status: ""
+    action_2: CSG
+    action_2_status: Naar het oneindige en verder
     action_option_group_thickness: Dikte
     action_option_group_stretch_measure_type: Meten
     action_option_group_axes: Assen
     action_option_group_paneling_joint_type: Samenstelling
     action_option_group_paneling_direction: Richting
-    action_option_group_csg_operation: ""
+    action_option_group_csg_operation: Bewerking
     action_option_group_options: Opties
     action_option_thickness_thickness: Dikte
     action_option_thickness_thickness_status: Bepaalt de dikte van de panelen
@@ -2380,7 +2413,7 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    filter_7: ""
+    filter_7: $t(tab.materials.type_7)
     action_0: Kleur stukken
     action_0_status: Klik op een onderdeel om een materiaal op zijn exemplaar toe te passen
     action_1: Kleur het object
@@ -2446,7 +2479,7 @@ tool:
   smart_join:
     title: Samenvoegen
     action_0: Aansluitend tegen elkaar # TODO: It's currently just for dev purposes
-    action_0_status: "" # TODO
+    action_0_status: TBD # TODO
   smart_export:
     title: Exporteren
     action_0: Exporteer een 3D-onderdeel
@@ -2480,3 +2513,7 @@ tool:
       not_part: Dit vlak maakt geen deel uit van een onderdeel (component)
       not_flat_face: Dit oppervlak is niet vlak
       incompatible_active_path: Het actieve pad staat niet toe om dit onderdeel te exporteren
+  smart_importers_bxf2:
+    title: Importeren
+    action_0: $t(tab.importers.bxf2.title)
+    action_0_status: Plaats de configuratie

@@ -2266,6 +2266,7 @@ tool:
       lt_min_distance: "Расстояние {{ value1 }} меньше минимального {{ value2 }}"
       gt_max_distance: "Расстояние {{ value1 }} превышает максимальное расстояние {{ value2 }}"
       locked_part: Эта деталь заблокирована
+      not_sibling_part: "Деталь не входит в ту же группу или компонент, что и остальное выделение"
       selection_contains_locked_entities: Выделение содержит заблокированные объекты
   highlight:
     transparency: $t(tool.default.transparency)

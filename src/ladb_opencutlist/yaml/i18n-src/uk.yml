@@ -2266,6 +2266,7 @@ tool:
       lt_min_distance: "Відстань {{ value1 }} менша за мінімальну відстань {{ value2 }}"
       gt_max_distance: "Відстань {{ value1 }} більша за максимальну відстань {{ value2 }}"
       locked_part: Ця деталь заблокована
+      not_sibling_part: "Ця деталь не входить до тієї ж групи чи компонента, що й решта виділеного"
       selection_contains_locked_entities: Вибір містить заблоковані функції
   highlight:
     transparency: $t(tool.default.transparency)
