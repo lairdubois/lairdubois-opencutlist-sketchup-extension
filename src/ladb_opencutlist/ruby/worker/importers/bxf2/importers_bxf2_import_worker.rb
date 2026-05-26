@@ -54,6 +54,10 @@ module Ladb::OpenCutList
 
       @dry_run = dry_run
 
+      # -- internals
+
+      @_cad_data_dir = nil
+
     end
 
     # -----
@@ -135,6 +139,33 @@ module Ladb::OpenCutList
 
         begin
 
+          # 1. Extract DAE files from zip (if needed) to the temporary directory
+          bxf_model_file_path = File.expand_path(@bxf_model.path)
+          if File.extname(bxf_model_file_path).downcase == '.zip'
+
+            temp_cad_dir = File.join(PLUGIN.temp_dir, 'importers_bxf2')
+            Dir.mkdir(temp_cad_dir) unless File.exist?(temp_cad_dir)
+
+            require_relative '../../../lib/rubyzip/zip'
+
+            Zip::File.open(@bxf_model.path) do |zip_file|
+              zip_file.each do |entry|
+
+                # Finding DAE files in zip archive
+                if File.extname(entry.name).downcase == '.dae'
+                  entry.extract(File.basename(entry.name), destination_directory: temp_cad_dir)
+                end
+
+              end
+            end
+
+            @_cad_data_dir = temp_cad_dir
+
+          else
+            @_cad_data_dir = File.join(File.dirname(bxf_model_file_path), 'cadData')
+          end
+
+          # 2. Process model
           _process_model(model.active_entities, transformation: transformation)
 
         rescue Exception => e
@@ -143,7 +174,15 @@ module Ladb::OpenCutList
           callback.call(true, [ [ 'core.error.exception', { :error => e.message } ] ]) if callback
           return
         ensure
+
+          # Clear factories
           _clear_factories
+
+          # Remove the temporary directory if defined and exists
+          if defined?(temp_cad_dir) && temp_cad_dir.is_a?(String) && !temp_cad_dir.empty? && File.exist?(temp_cad_dir)
+            FileUtils.remove_dir(temp_cad_dir, true) if Dir.exist?(temp_cad_dir)
+          end
+
         end
 
       model.commit_operation
@@ -378,8 +417,8 @@ module Ladb::OpenCutList
                                                                    definition = definitions[definition_name]
                                                                    if definition.nil?
 
-                                                                     base_path = File.dirname(File.expand_path(@bxf_model.path.to_s))
-                                                                     cad_data_path = File.join(base_path, "cadData")
+                                                                     # base_path = File.dirname(File.expand_path(@bxf_model.path.to_s))
+                                                                     cad_data_path = @_cad_data_dir
                                                                      file_name = "#{component_name}.dae"
                                                                      file_path = File.join(cad_data_path, file_name)
                                                                      file_path = File.join(cad_data_path, " #{file_name}") unless File.exist?(file_path) # Workaround for configurator bug with space on some files

@@ -36,7 +36,7 @@ module Ladb::OpenCutList
           response[:errors] << [ 'tab.importers.default.error.file_not_found', { :filename => filename } ]
           return response
         end
-        if extname.nil? || extname.downcase != '.bxf2'
+        if extname.nil? || (extname.downcase != '.bxf2' && extname.downcase != '.zip')
           response[:errors] << [ 'tab.importers.default.error.bad_extension', { :filename => filename, :extensions => 'BXF2' } ]
           return response
         end

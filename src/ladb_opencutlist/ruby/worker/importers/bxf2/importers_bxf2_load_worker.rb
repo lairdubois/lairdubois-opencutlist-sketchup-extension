@@ -40,7 +40,36 @@ module Ladb::OpenCutList
 
       begin
 
-        bxf_model = Bxf::BxfModel.load(@path)
+        file_extname = File.extname(@path)
+
+        bxf_model = nil
+
+        if file_extname.downcase == '.zip'
+
+          # Try to load from zip file
+          # BXF2 file must have the same name as the zip file
+
+          require_relative '../../../lib/rubyzip/zip'
+
+          Zip::File.open(@path) do |zip_file|
+            zip_file.each do |entry|
+
+              # Finding first BXF2 file in zip archive
+              if File.extname(entry.name).downcase == '.bxf2'
+                entry.get_input_stream do |stream|
+                  bxf_model = Bxf::BxfModel.load(stream.read)
+                  bxf_model.path = @path
+                end
+                break
+              end
+
+            end
+          end
+
+        end
+        if bxf_model.nil?
+          bxf_model = Bxf::BxfModel.load_from_file_path(@path)
+        end
 
         response[:model] = {
           :author => bxf_model.author,

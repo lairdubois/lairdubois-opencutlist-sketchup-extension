@@ -2,7 +2,7 @@
 
 # Rubybxf
 #
-# A lightweight Ruby module for reading and writing bxf2 files.
+# A lightweight Ruby module for reading bxf2 (Blum eXchange File) files.
 #
 # @author Boris Beaulant (2026)
 #
@@ -59,15 +59,17 @@ module Ladb::OpenCutList
 
       end
 
-      def self.load(file_path)
-        doc = REXML::Document.new(File.open(file_path))
-        bxf_elm = doc.elements['bxf']
-        model = nil
-        if bxf_elm
-          model = BxfModel.new.read(bxf_elm)
-          model.path = file_path
-        end
+      def self.load_from_file_path(file_path)
+        model = load(File.open(file_path).read)
+        model.path = file_path if model
         model
+      end
+
+      def self.load(xml_content)
+        doc = REXML::Document.new(xml_content)
+        bxf_elm = doc.elements['bxf']
+        return BxfModel.new.read(bxf_elm) if bxf_elm
+        nil
       end
 
       def read(bxf_elm)
