@@ -195,9 +195,9 @@ module Ladb::OpenCutList
     protected
 
     def _preview_join_start(view)
-      return if (neiborhood_def = _get_neighborhood_def(view)).nil?
+      return if (neighborhood_def = _get_neighborhood_def(view)).nil?
 
-      drawing_def, neighbor_defs = neiborhood_def.values_at(:drawing_def, :neighbor_defs)
+      drawing_def, neighbor_defs = neighborhood_def.values_at(:drawing_def, :neighbor_defs)
 
       neighbor_defs.each do |neighbor_def|
 
@@ -242,6 +242,7 @@ module Ladb::OpenCutList
         ignore_edges: true,
         ignore_soft_edges: true,
         ignore_clines: true,
+        container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART_WITHOUT_MACHININGS
       }
     end
 
@@ -252,7 +253,7 @@ module Ladb::OpenCutList
 
       return nil unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
 
-      neighbor_defs = []
+      h_neighbor_defs = {}
 
       kb = Kuix::Bounds3d.new
                          .copy!(drawing_def.bounds)
@@ -302,21 +303,7 @@ module Ladb::OpenCutList
         #
         # end
 
-        picked_part_entity_path = _get_part_entity_path_from_path(path)
-        if picked_part_entity_path != get_active_selection_path &&
-           (picked_drawing_def = CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new(picked_part_entity_path) ], **_get_drawing_def_parameters).run).is_a?(DrawingDef)
-
-          next unless picked_drawing_def.bounds.valid?
-
-          neighbor_defs << NeighborDef.new(picked_part_entity_path, picked_drawing_def)
-
-          # k_mesh = Kuix::Mesh.new
-          # k_mesh.add_triangles(picked_drawing_def.face_manipulators.flat_map { |face_manipulator| face_manipulator.triangles })
-          # k_mesh.background_color = ColorUtils.color_translucent(Kuix::COLOR_GREEN, 0.3)
-          # k_mesh.transformation = picked_drawing_def.transformation
-          # @tool.append_3d(k_mesh, 100)
-
-        end
+        _try_to_add_neighbor(path, h_neighbor_defs)
 
       end
 
@@ -328,12 +315,13 @@ module Ladb::OpenCutList
         p1 = kb.corner(corner).to_p.transform(drawing_def.transformation)
 
         v = p0.vector_to(p1)
+        dmax = v.length
         ray = [ p0.offset(v.reverse), v ]
 
         hit, path = view.model.raytest(ray)
         if hit
 
-          next if p0.distance(hit) > p0.distance(p1)
+          next if p0.distance(hit) > dmax
 
           # t = PathUtils.get_transformation(path)
 
@@ -361,22 +349,7 @@ module Ladb::OpenCutList
           #
           # end
 
-          picked_part_entity_path = _get_part_entity_path_from_path(path)
-          if picked_part_entity_path != get_active_selection_path &&
-             neighbor_defs.find { |neighbor_def| neighbor_def.path == picked_part_entity_path }.nil? &&
-             (picked_drawing_def = CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new(picked_part_entity_path) ], **_get_drawing_def_parameters).run).is_a?(DrawingDef)
-
-            next unless picked_drawing_def.bounds.valid?
-
-            neighbor_defs << NeighborDef.new(picked_part_entity_path, picked_drawing_def)
-
-            # k_mesh = Kuix::Mesh.new
-            # k_mesh.add_triangles(picked_drawing_def.face_manipulators.flat_map { |face_manipulator| face_manipulator.triangles })
-            # k_mesh.background_color = ColorUtils.color_translucent(Kuix::COLOR_YELLOW, 0.3)
-            # k_mesh.transformation = picked_drawing_def.transformation
-            # @tool.append_3d(k_mesh, 100)
-
-          end
+          _try_to_add_neighbor(path, h_neighbor_defs)
 
         end
 
@@ -387,27 +360,36 @@ module Ladb::OpenCutList
 
       # 3. Search touching faces
 
+      part_transformation = drawing_def.transformation
+      part_face_infos = drawing_def.face_manipulators.map do |fm|
+        {
+          face_manipulator: fm,
+          world_normal: fm.normal.transform(part_transformation),
+          world_position: fm.position.transform(part_transformation),
+        }
+      end
+
+      neighbor_defs = h_neighbor_defs.values
+
       neighbor_defs.each do |neighbor_def|
+
+        neighbor_transformation = neighbor_def.drawing_def.transformation
 
         # Iterate on neighbor faces
         neighbor_def.drawing_def.face_manipulators.each do |neighbor_face_manipulator|
 
+          neighbor_world_normal = neighbor_face_manipulator.normal.transform(neighbor_transformation)
+          neighbor_world_position = neighbor_face_manipulator.position.transform(neighbor_transformation)
+
           # Iterate on part faces
-          drawing_def.face_manipulators.each do |face_manipulator|
+          part_face_infos.each do |face_info|
 
-            # Compare planes
-            if face_manipulator.normal.transform(drawing_def.transformation).parallel?(neighbor_face_manipulator.normal.transform(neighbor_def.drawing_def.transformation)) &&
-               !face_manipulator.normal.transform(drawing_def.transformation).samedirection?(neighbor_face_manipulator.normal.transform(neighbor_def.drawing_def.transformation)) &&
-               face_manipulator.position.transform(drawing_def.transformation).distance_to_plane(
-                 [
-                   neighbor_face_manipulator.position.transform(neighbor_def.drawing_def.transformation),
-                   neighbor_face_manipulator.normal.transform(neighbor_def.drawing_def.transformation)
-                 ]) < 0.001
+            next unless face_info[:world_normal].parallel?(neighbor_world_normal)
+            next if face_info[:world_normal].samedirection?(neighbor_world_normal)
+            next unless face_info[:world_position].distance_to_plane([ neighbor_world_position, neighbor_world_normal ]) < 0.001
 
-              # Touching !
-              neighbor_def.touching_defs << NeighborTouchingDef.new(face_manipulator, neighbor_face_manipulator)
-
-            end
+            # Touching !
+            neighbor_def.touching_defs << NeighborTouchingDef.new(face_info[:face_manipulator], neighbor_face_manipulator)
 
           end
 
@@ -423,6 +405,26 @@ module Ladb::OpenCutList
         drawing_def: drawing_def,
         neighbor_defs: neighbor_defs
       }
+    end
+
+    def _try_to_add_neighbor(path, h_neighbor_defs)
+      picked_part_entity_path = _get_part_entity_path_from_path(path)
+      return nil if picked_part_entity_path.nil?
+      return nil if h_neighbor_defs.has_key?(picked_part_entity_path)
+      if picked_part_entity_path != get_active_selection_path &&
+         (picked_drawing_def = CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new(picked_part_entity_path) ], **_get_drawing_def_parameters).run).is_a?(DrawingDef)
+
+        return unless picked_drawing_def.bounds.valid?
+
+        h_neighbor_defs[picked_part_entity_path] = NeighborDef.new(picked_part_entity_path, picked_drawing_def)
+
+        # k_mesh = Kuix::Mesh.new
+        # k_mesh.add_triangles(picked_drawing_def.face_manipulators.flat_map { |face_manipulator| face_manipulator.triangles })
+        # k_mesh.background_color = ColorUtils.color_translucent(Kuix::COLOR_GREEN, 0.3)
+        # k_mesh.transformation = picked_drawing_def.transformation
+        # @tool.append_3d(k_mesh, 100)
+
+      end
     end
 
     NeighborDef = Struct.new(:path, :drawing_def, :touching_defs) do

@@ -1389,7 +1389,7 @@ module Ladb::OpenCutList
       fn_preview_container = lambda do |container_def, color|
 
         color = no_scale_color if container_def.container.respond_to?(:locked?) && container_def.container.locked? ||
-                                  container_def.container.respond_to?(:definition) && container_def.container.definition.behavior.no_scale_mask? == 127
+                                  container_def.container.respond_to?(:definition) && container_def.container.definition.behavior.no_scale_mask? == 0b1111111 # 0b1111111 = 127 (all disabld)
 
         # Render edges
 
@@ -2300,7 +2300,7 @@ module Ladb::OpenCutList
 
           # Check if the container is glued or always face camera to search the section according to its origin only
           elsif drawing_container_def.container.respond_to?(:glued_to) && drawing_container_def.container.glued_to ||
-                drawing_container_def.container.respond_to?(:definition) && (drawing_container_def.container.definition.behavior.always_face_camera? || drawing_container_def.container.definition.behavior.no_scale_mask? == 127)
+                drawing_container_def.container.respond_to?(:definition) && (drawing_container_def.container.definition.behavior.always_face_camera? || drawing_container_def.container.definition.behavior.no_scale_mask? == 0b1111111)   # 0b1111111 = 127 (all disabld)
 
             container_origin = ORIGIN.transform(drawing_container_def.transformation * drawing_container_def.container.transformation)
             section_def = section_defs.find { |section_def| section_def.contains_point?(container_origin, xyz_method) }

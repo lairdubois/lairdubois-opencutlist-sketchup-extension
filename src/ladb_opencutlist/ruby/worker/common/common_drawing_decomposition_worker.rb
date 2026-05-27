@@ -39,7 +39,8 @@ module Ladb::OpenCutList
     CONTAINER_VALIDATOR_ALL = 0
     CONTAINER_VALIDATOR_NONE = 1
     CONTAINER_VALIDATOR_PART = 2
-    CONTAINER_VALIDATOR_NO_SCALE = 3
+    CONTAINER_VALIDATOR_PART_WITHOUT_MACHININGS = 3
+    CONTAINER_VALIDATOR_NO_SCALE = 4
 
     # Backward compatibility
     SketchupSnapClass = Object.const_defined?('Sketchup::Snap') ? Sketchup::Snap : nil
@@ -221,10 +222,10 @@ module Ladb::OpenCutList
       else
 
         # Get transformed Z axis
-        z_axis = @input_local_z_axis.transform(transformation).normalize
+        z_axis = @input_local_z_axis.transform(transformation).normalize!
 
         # Use transformed Y axis to determine YZ plane and compute X as perpendicular to this plane
-        y_axis = @input_local_y_axis.transform(transformation).normalize
+        y_axis = @input_local_y_axis.transform(transformation).normalize!
         yz_plane = Geom.fit_plane_to_points(ORIGIN, Geom::Point3d.new(y_axis.to_a), Geom::Point3d.new(z_axis.to_a))
         x_axis = Geom::Vector3d.new(yz_plane[0..2])
 
@@ -305,9 +306,19 @@ module Ladb::OpenCutList
           return false if container.is_a?(Sketchup::ComponentInstance)
           true
         }
+      when CONTAINER_VALIDATOR_PART_WITHOUT_MACHININGS
+        container_validator = lambda { |container, depth|
+          return false if container.definition.behavior.always_face_camera?
+          ma = _get_material_attributes(container.material)
+          return false if ma.type == MaterialAttributes::TYPE_MACHINING
+          return false if depth != 0 && ma.type == MaterialAttributes::TYPE_HARDWARE && !container.name.strip.empty?
+          return true if container.definition.behavior.cuts_opening?
+          return false if container.is_a?(Sketchup::ComponentInstance)
+          true
+        }
       when CONTAINER_VALIDATOR_NO_SCALE
         container_validator = lambda { |container, depth|
-          container.definition.behavior.no_scale_mask? != 127
+          container.definition.behavior.no_scale_mask? != 0b1111111 # 0b1111111 = 127 (all disabld)
         }
       end
 
