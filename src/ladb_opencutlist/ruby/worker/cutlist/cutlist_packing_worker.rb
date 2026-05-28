@@ -497,112 +497,115 @@ module Ladb::OpenCutList
         unless @problem_type == Packy::PROBLEM_TYPE_ONEDIMENSIONAL
           group.grain_groups.each do |grain_group|
 
-          # Finding grain group layout
-          layout_def = Geometrix::LayoutFinder.find_layout(grain_group.items.map { |grain_item|
+            # Exclude grain groups with less than 2 items
+            next if grain_group.items.size < 2
 
-            grain_item_def = grain_item.def
-            part_def = grain_item_def.part_def
-            instance_info = grain_item_def.instance_info
-            size = part_def.size
-            bounds = instance_info.definition_bounds
+            # Finding grain group layout
+            layout_def = Geometrix::LayoutFinder.find_layout(grain_group.items.map { |grain_item|
 
-            t = instance_info.transformation
-            x_axis = size.oriented_axis(X_AXIS).transform(t)
-            y_axis = size.oriented_axis(Y_AXIS).transform(t)
-            z_axis = size.oriented_axis(Z_AXIS).transform(t)
-            at = Geom::Transformation.axes(ORIGIN, x_axis, y_axis, z_axis)
-            ati = at.inverse
+              grain_item_def = grain_item.def
+              part_def = grain_item_def.part_def
+              instance_info = grain_item_def.instance_info
+              size = part_def.size
+              bounds = instance_info.definition_bounds
 
-            min = bounds.min
+              t = instance_info.transformation
+              x_axis = size.oriented_axis(X_AXIS).transform(t)
+              y_axis = size.oriented_axis(Y_AXIS).transform(t)
+              z_axis = size.oriented_axis(Z_AXIS).transform(t)
+              at = Geom::Transformation.axes(ORIGIN, x_axis, y_axis, z_axis)
+              ati = at.inverse
 
-            position = min.transform(t).transform(ati)
-            # position.y = -size.width - position.y if part_def.flipped  # TODO find in what direction the part is flipped
-            position.z = 0
+              min = bounds.min
 
-            # Use final size for layout detection to avoid overlapping
-            Geometrix::BoxDef.new(position.x, position.y, size.length, size.width, data: grain_item)
-          })
+              position = min.transform(t).transform(ati)
+              # position.y = -size.width - position.y if part_def.flipped  # TODO find in what direction the part is flipped
+              position.z = 0
 
-          # debug_group = Sketchup.active_model.active_entities.add_group
-          # Geometrix::LayoutFinder.iterate_on_box_defs(layout_def) do |box_def, depth|
-          #
-          #   group = debug_group.entities.add_group
-          #   group.entities.add_face([
-          #                             Geom::Point3d.new(box_def.x, box_def.y, 0),
-          #                             Geom::Point3d.new(box_def.x + box_def.width, box_def.y, 0),
-          #                             Geom::Point3d.new(box_def.x + box_def.width, box_def.y + box_def.height, 0),
-          #                             Geom::Point3d.new(box_def.x, box_def.y + box_def.height, 0)
-          #                           ])
-          #
-          # end
+              # Use final size for layout detection to avoid overlapping
+              Geometrix::BoxDef.new(position.x, position.y, size.length, size.width, data: grain_item)
+            })
 
-          # Set boxes size to part cutting size
-          Geometrix::LayoutFinder.iterate_on_box_defs(layout_def) do |box_def, depth|
-            grain_item = box_def.data
-            grain_item_def = grain_item.def
-            part_def = grain_item_def.part_def
-            box_def.width = part_def.cutting_length
-            box_def.height = part_def.cutting_width
-          end
+            # debug_group = Sketchup.active_model.active_entities.add_group
+            # Geometrix::LayoutFinder.iterate_on_box_defs(layout_def) do |box_def, depth|
+            #
+            #   group = debug_group.entities.add_group
+            #   group.entities.add_face([
+            #                             Geom::Point3d.new(box_def.x, box_def.y, 0),
+            #                             Geom::Point3d.new(box_def.x + box_def.width, box_def.y, 0),
+            #                             Geom::Point3d.new(box_def.x + box_def.width, box_def.y + box_def.height, 0),
+            #                             Geom::Point3d.new(box_def.x, box_def.y + box_def.height, 0)
+            #                           ])
+            #
+            # end
 
-          # Layout boxes
-          total_length, total_width, box_defs, gutter_defs = Geometrix::LayoutFinder.layout(layout_def, spacing: @spacing)
-
-          if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
-
-            shapes = [{
-                        type: 'rectangle',
-                        width: _to_packy_length(total_length),
-                        height: _to_packy_length(total_width),
-                      }]
-
-            item_types << {
-              copies: 1,
-              shapes: shapes,
-              allowed_rotations: AVAILABLE_ROTATIONS.fetch(@irregular_allowed_rotations, []).map { |ar| ar.merge({ mirror: @irregular_allow_mirroring }) },
-            }
-
-          else
-
-            item_types << {
-              copies: 1,
-              width: _to_packy_length(total_length),
-              height: _to_packy_length(total_width),
-              oriented: true
-            }
-
-          end
-
-          @item_type_defs << PackingCompositeItemTypeDef.new(
-            length: total_length,
-            width: total_width,
-            name: grain_group.name,
-            item_type_defs: box_defs.map { |box_def|
+            # Set boxes size to part cutting size
+            Geometrix::LayoutFinder.iterate_on_box_defs(layout_def) do |box_def, depth|
               grain_item = box_def.data
               grain_item_def = grain_item.def
+              part_def = grain_item_def.part_def
+              box_def.width = part_def.cutting_length
+              box_def.height = part_def.cutting_width
+            end
+
+            # Layout boxes
+            total_length, total_width, box_defs, gutter_defs = Geometrix::LayoutFinder.layout(layout_def, spacing: @spacing)
+
+            if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
+
+              shapes = [{
+                          type: 'rectangle',
+                          width: _to_packy_length(total_length),
+                          height: _to_packy_length(total_width),
+                        }]
+
+              item_types << {
+                copies: 1,
+                shapes: shapes,
+                allowed_rotations: AVAILABLE_ROTATIONS.fetch(@irregular_allowed_rotations, []).map { |ar| ar.merge({ mirror: @irregular_allow_mirroring }) },
+              }
+
+            else
+
+              item_types << {
+                copies: 1,
+                width: _to_packy_length(total_length),
+                height: _to_packy_length(total_width),
+                oriented: true
+              }
+
+            end
+
+            @item_type_defs << PackingCompositeItemTypeDef.new(
+              length: total_length,
+              width: total_width,
+              name: grain_group.name,
+              item_type_defs: box_defs.map { |box_def|
+                grain_item = box_def.data
+                grain_item_def = grain_item.def
+                part = grain_item.part
+                PackingCompositeSubItemTypeDef.new(
+                  depth: box_def.depth,
+                  x: box_def.x, y: box_def.y,
+                  length: box_def.width, width: box_def.height,
+                  part: part,
+                  projection_def: _compute_part_projection_def(@part_drawing_type, part,
+                                                               compute_shell: true),
+                  color: _compute_color_from_part(part),
+                  instance_info: grain_item_def.instance_info
+                )
+              },
+              gutter_defs: gutter_defs
+            )
+
+            grain_group.items.each do |grain_item|
+              grain_item_def = grain_item.def
               part = grain_item.part
-              PackingCompositeSubItemTypeDef.new(
-                depth: box_def.depth,
-                x: box_def.x, y: box_def.y,
-                length: box_def.width, width: box_def.height,
-                part: part,
-                projection_def: _compute_part_projection_def(@part_drawing_type, part,
-                                                             compute_shell: true),
-                color: _compute_color_from_part(part),
-                instance_info: grain_item_def.instance_info
-              )
-            },
-            gutter_defs: gutter_defs
-          )
+              instance_info = grain_item_def.instance_info
 
-          grain_group.items.each do |grain_item|
-            grain_item_def = grain_item.def
-            part = grain_item.part
-            instance_info = grain_item_def.instance_info
+              ((@gg ||= {})[part] ||= []) << instance_info
 
-            ((@gg ||= {})[part] ||= []) << instance_info
-
-          end
+            end
 
           end
         end

@@ -13,9 +13,10 @@ module Ladb::OpenCutList
     end
 
     def name
-      return 'model' if @entity.is_a?(Sketchup::Model)
+      return PLUGIN.get_i18n_string('tab.outliner.type_0') if @entity.is_a?(Sketchup::Model)
       return @entity.name if @entity.respond_to?(:name) && !@entity.name.empty?
-      return "##{@entity.entityID}" if @entity.respond_to?(:entityID)
+      return "#{PLUGIN.get_i18n_string('tab.outliner.type_1')} ##{@entity.entityID}" if @entity.is_a?(Sketchup::Group)
+      return "<#{@entity.definition.name}>" if @entity.is_a?(Sketchup::ComponentInstance)
       ''
     end
 

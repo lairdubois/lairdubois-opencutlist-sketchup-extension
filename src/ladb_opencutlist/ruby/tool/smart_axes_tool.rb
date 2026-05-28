@@ -1232,7 +1232,7 @@ module Ladb::OpenCutList
           if container_path.any? && container_path != Sketchup.active_model.active_path
 
             container = container_path.last
-            container_name = container.name.empty? ? "##{container.entityID}" : container.name
+            grain_group_def = GrainGroupDef.new(container)
             bounds = container.definition.bounds
             t = PathUtils.get_transformation(container_path, IDENTITY)
 
@@ -1253,7 +1253,7 @@ module Ladb::OpenCutList
             k_label = _create_floating_label(
               snap_point: bounds.min.transform(t),
               anchor_position: Kuix::Anchor::TOP_RIGHT,
-              text: container_name,
+              text: grain_group_def.name,
               text_color: Kuix::COLOR_PURPLE,
               border_color: Kuix::COLOR_PURPLE
             )

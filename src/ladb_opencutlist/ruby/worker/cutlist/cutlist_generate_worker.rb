@@ -1023,21 +1023,20 @@ module Ladb::OpenCutList
         group_def.grain_group_defs.each do |_, grain_group_def|
 
           # Groups items by orientation
-          splitted_item_defs = grain_group_def.item_defs
-                                              .group_by { |item_def|
-                                                size = item_def.part_def.size
-                                                t = item_def.instance_info.transformation
-                                                [
-                                                  size.oriented_axis(X_AXIS).transform(t).to_a.map { |v| v.round(6) },
-                                                  size.oriented_axis(Y_AXIS).transform(t).to_a.map { |v| v.round(6) },
-                                                  size.oriented_axis(Z_AXIS).transform(t).to_a.map { |v| v.round(6) }
-                                                ]
-                                              }
-                                              .select { |_, item_defs| item_defs.size > 1 } # Exclude single item groups
+          split_item_defs = grain_group_def.item_defs
+                                           .group_by { |item_def|
+                                             size = item_def.part_def.size
+                                             t = item_def.instance_info.transformation
+                                             [
+                                               size.oriented_axis(X_AXIS).transform(t).to_a.map { |v| v.round(6) },
+                                               size.oriented_axis(Y_AXIS).transform(t).to_a.map { |v| v.round(6) },
+                                               size.oriented_axis(Z_AXIS).transform(t).to_a.map { |v| v.round(6) }
+                                             ]
+                                           }
 
-          splitted_item_defs.each_with_index do |(_, item_defs), index|
+          split_item_defs.each_with_index do |(_, item_defs), index|
 
-            grain_group = GrainGroup.new(grain_group_def, index, splitted_item_defs.size)
+            grain_group = GrainGroup.new(grain_group_def, index, split_item_defs.size)
             group.add_grain_group(grain_group)
 
             item_defs.each do |item_def|
@@ -1050,6 +1049,8 @@ module Ladb::OpenCutList
             end
 
           end
+
+          group.grain_groups.sort_by! { |grain_group| [ grain_group.items.size > 1 ? 0 : 1, grain_group.name ] }
 
         end
 

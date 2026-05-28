@@ -63,7 +63,7 @@
                     {% endif %}
                 </p>
             </div>
-            {% if group.grain_groups|length > 0 %}
+            {% if group.grain_groups not empty %}
                 <hr>
                 <div class="row">
                     <div class="col-xs-push-1 col-xs-10">
@@ -81,8 +81,8 @@
                                 </thead>
                                 <tbody>
                                 {% for grain_group in group.grain_groups %}
-                                    <tr>
-                                        <td>{{ grain_group.name }}</td>
+                                    <tr{% if grain_group.items|length < 2 %} class="text-muted" style="text-decoration: line-through;"{% endif %}>
+                                        <td>{{ grain_group.name|escape('html') }}</td>
                                         <td class="text-center">{{ grain_group.items|length }}</td>
                                     </tr>
                                 {% endfor %}
