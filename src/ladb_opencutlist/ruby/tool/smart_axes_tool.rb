@@ -1030,9 +1030,14 @@ module Ladb::OpenCutList
     end
 
     def get_state_status(state)
-      super +
-        ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_5_to_state_10_status')+
-        ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_0')
+      case state
+      when STATE_TOGGLE_GRAIN_GROUP
+        super
+      else
+        super +
+          ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_5_to_state_10_status')+
+          ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_0')
+      end
     end
 
     # -----
@@ -1220,9 +1225,13 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _preview_action_draw
+    def _preview_action_clean
       super
       @tool.clear_2d(LAYER_2D_PART_PREVIEW)
+    end
+
+    def _preview_action_draw
+      super
       if (active_path = get_active_selection_path)
 
         grain_group_rindex = active_path.reverse.index { |entity| _get_instance_attributes(entity).is_grain_group }
