@@ -279,6 +279,7 @@ module Ladb::OpenCutList
 
     DXF_LINE_TYPE_CONTINUOUS = 'CONTINUOUS'.freeze
     DXF_LINE_TYPE_DOT2 = 'DOT2'.freeze
+    DXF_LINE_TYPE_DASHED2 = 'DASHED2'.freeze
 
     def _dxf_get_unit_factor(su_unit)
 
@@ -759,7 +760,22 @@ module Ladb::OpenCutList
           _dxf_write(file, 49, -3.175)
           _dxf_write(file, 74, 0)
 
-          available_line_types = %w[CONTINUOUS DOT2]
+          _dxf_write(file, 0, 'LTYPE')
+          _dxf_write_id(file)
+          _dxf_write_owner_id(file, id)
+          _dxf_write_sub_classes(file, [ 'AcDbSymbolTableRecord', 'AcDbLinetypeTableRecord' ])
+          _dxf_write(file, 2, 'DASHED2')
+          _dxf_write(file, 70, 0)
+          _dxf_write(file, 3, 'Dashed (.5x) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _')
+          _dxf_write(file, 72, 65)
+          _dxf_write(file, 73, 2)
+          _dxf_write(file, 40, 9.524999999999999)
+          _dxf_write(file, 49, 6.35)
+          _dxf_write(file, 74, 0)
+          _dxf_write(file, 49, -3.175)
+          _dxf_write(file, 74, 0)
+
+          available_line_types = %w[CONTINUOUS DOT2 DASHED2]
 
         _dxf_write(file, 0, 'ENDTAB')
 

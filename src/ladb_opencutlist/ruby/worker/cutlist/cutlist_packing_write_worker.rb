@@ -427,7 +427,7 @@ module Ladb::OpenCutList
       layer_defs << DxfLayerDef.new(LAYER_BIN, @bin_stroke_color) unless @bin_hidden
       layer_defs << DxfLayerDef.new(LAYER_PART, @parts_stroke_color) unless @parts_hidden || @dxf_structure != DXF_STRUCTURE_LAYER_AND_BLOCK && @part_drawing_type != PART_DRAWING_TYPE_NONE
       layer_defs << DxfLayerDef.new(LAYER_LEFTOVER, @leftovers_stroke_color) unless @leftovers_hidden
-      layer_defs << DxfLayerDef.new(LAYER_CUT, @cuts_color, DXF_LINE_TYPE_DOT2) unless @cuts_hidden
+      layer_defs << DxfLayerDef.new(LAYER_CUT, @cuts_color, DXF_LINE_TYPE_DASHED2) unless @cuts_hidden
       layer_defs << DxfLayerDef.new(LAYER_TEXT, @texts_color) unless @parts_hidden || @texts_hidden
 
       item_defs = _get_flat_bin_item_defs(bin_def)
