@@ -400,7 +400,7 @@ module Ladb::OpenCutList::Kuix
 
   end
 
-  class CheveronMotif3d < Motif3d
+  class ChevronMotif3d < Motif3d
 
     def initialize(offset = 0.2, id = nil)
       super([[

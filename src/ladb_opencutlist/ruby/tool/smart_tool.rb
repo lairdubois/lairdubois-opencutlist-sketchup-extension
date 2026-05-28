@@ -478,21 +478,23 @@ module Ladb::OpenCutList
 
             if part.follow_grain_direction
 
-              k_arrow = Kuix::CheveronMotif3d.new
-              k_arrow.patterns_transformation = size.oriented_transformation
-              k_arrow.bounds.copy!(bounds)
-              k_arrow.color = arrow_color
-              k_arrow.line_width = arrow_line_width
-              k_arrow.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-              part_helper.append(k_arrow)
+              # Back chevron
+              k_chevron = Kuix::ChevronMotif3d.new
+              k_chevron.patterns_transformation = size.oriented_transformation
+              k_chevron.bounds.copy!(bounds)
+              k_chevron.color = arrow_color
+              k_chevron.line_width = arrow_line_width
+              k_chevron.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+              part_helper.append(k_chevron)
 
-              k_arrow = Kuix::CheveronMotif3d.new
-              k_arrow.patterns_transformation = size.oriented_transformation
-              k_arrow.patterns_transformation *= Geom::Transformation.translation(Z_AXIS)
-              k_arrow.bounds.copy!(bounds)
-              k_arrow.color = arrow_color
-              k_arrow.line_width = arrow_line_width
-              part_helper.append(k_arrow)
+              # Front chevron
+              k_chevron = Kuix::ChevronMotif3d.new
+              k_chevron.patterns_transformation = size.oriented_transformation
+              k_chevron.patterns_transformation *= Geom::Transformation.translation(Z_AXIS)
+              k_chevron.bounds.copy!(bounds)
+              k_chevron.color = arrow_color
+              k_chevron.line_width = arrow_line_width
+              part_helper.append(k_chevron)
 
             end
 
@@ -2627,14 +2629,25 @@ module Ladb::OpenCutList
 
             if part.follow_grain_direction
 
-              k_arrow = Kuix::CheveronMotif3d.new(0.2)
-              k_arrow.patterns_transformation = instance_info.size.oriented_transformation
-              k_arrow.patterns_transformation *= Geom::Transformation.translation(Z_AXIS)
-              k_arrow.bounds.copy!(eb)
-              k_arrow.color = arrow_color
-              k_arrow.line_width = 2
-              k_arrow.transformation = et
-              @tool.append_3d(k_arrow, layer)
+              # Back chevron
+              k_chevron = Kuix::ChevronMotif3d.new
+              k_chevron.patterns_transformation = instance_info.size.oriented_transformation
+              k_chevron.bounds.copy!(eb)
+              k_chevron.color = arrow_color
+              k_chevron.line_width = 2
+              k_chevron.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+              k_chevron.transformation = et
+              @tool.append_3d(k_chevron, layer)
+
+              # Front chevron
+              k_chevron = Kuix::ChevronMotif3d.new
+              k_chevron.patterns_transformation = instance_info.size.oriented_transformation
+              k_chevron.patterns_transformation *= Geom::Transformation.translation(Z_AXIS)
+              k_chevron.bounds.copy!(eb)
+              k_chevron.color = arrow_color
+              k_chevron.line_width = 2
+              k_chevron.transformation = et
+              @tool.append_3d(k_chevron, layer)
 
             end
 
