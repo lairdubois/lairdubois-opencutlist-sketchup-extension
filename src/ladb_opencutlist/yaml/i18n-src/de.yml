@@ -2486,6 +2486,8 @@ tool:
     action_4_status: "Zielen Sie auf die Fläche eines Teils und klicken Sie auf einen Punkt, um den Ursprung dort zu platzieren"
     action_5: Faserverlauf konfigurieren
     action_5_status: Klicken Sie auf ein Teil, um den Faserverlauf zu aktivieren oder zu deaktivieren
+    action_5_to_state_10_status: Faserverlaufgruppe konfigurieren
+    action_5_state_10_status: Klicken Sie auf ein Element in der Liste, um dessen Status als Faserverlaufgruppe zu ändern
     action_option_group_direction: Ausrichtung
     action_option_direction_0: L
     action_option_direction_1: B

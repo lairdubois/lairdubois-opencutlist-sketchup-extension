@@ -518,7 +518,7 @@ tab:
       ignore_grain_direction_1: Ignore grain orientation
       follow_grain_direction: Grain Continuity
       follow_grain_direction_help: |
-        By enabling this option, instances of this part will be treated as parts laid out in **Graint Continuity** with their neighbors that share:
+        By enabling this option, instances of this part will be treated as parts laid out in **Grain Continuity** with their neighbors that share:
         - the same *Grain Continuity Group*
         - the same Orientation
         - the same Material with grain
@@ -1267,7 +1267,7 @@ tab:
         unplaced_parts: "**1 part** could not be placed."
         unplaced_parts_plural: "**{{ count }} parts** could not be placed."
         unusable_part_1: Part too large
-        unusable_part_2: Grain continuity group too large
+        unusable_part_2: Grain Continuity Group too large
       warning:
         is_part_selection: This cutting diagram is limited to **selected parts**.
         cutting_dimensions: This cutting diagram uses the **raw** dimensions of the parts.
@@ -2486,6 +2486,8 @@ tool:
     action_4_status: Target a face of a part and click on a point to place its origin there
     action_5: Configure Grain Continuity
     action_5_status: Click on a part to activate or deactivate detection of grain continuity
+    action_5_to_state_10_status: Configure Grain Continuity Group
+    action_5_state_10_status: Click an item in the list to change its Grain Continuity Group status
     action_option_group_direction: Direction
     action_option_direction_0: L
     action_option_direction_1: W
