@@ -459,24 +459,42 @@ module Ladb::OpenCutList
           if part.group.material_type != MaterialAttributes::TYPE_HARDWARE
 
             # Back arrow
-            arrow = Kuix::ArrowMotif3d.new
-            arrow.patterns_transformation = size.oriented_transformation
-            arrow.bounds.origin.copy!(bounds.min)
-            arrow.bounds.size.copy!(bounds)
-            arrow.color = arrow_color
-            arrow.line_width = arrow_line_width
-            arrow.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-            part_helper.append(arrow)
+            k_arrow = Kuix::ArrowMotif3d.new
+            k_arrow.patterns_transformation = size.oriented_transformation
+            k_arrow.bounds.copy!(bounds)
+            k_arrow.color = arrow_color
+            k_arrow.line_width = arrow_line_width
+            k_arrow.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+            part_helper.append(k_arrow)
 
             # Front arrow
-            arrow = Kuix::ArrowMotif3d.new
-            arrow.patterns_transformation = size.oriented_transformation
-            arrow.patterns_transformation *= Geom::Transformation.translation(Z_AXIS)
-            arrow.bounds.origin.copy!(bounds.min)
-            arrow.bounds.size.copy!(bounds)
-            arrow.color = arrow_color
-            arrow.line_width = arrow_line_width
-            part_helper.append(arrow)
+            k_arrow = Kuix::ArrowMotif3d.new
+            k_arrow.patterns_transformation = size.oriented_transformation
+            k_arrow.patterns_transformation *= Geom::Transformation.translation(Z_AXIS)
+            k_arrow.bounds.copy!(bounds)
+            k_arrow.color = arrow_color
+            k_arrow.line_width = arrow_line_width
+            part_helper.append(k_arrow)
+
+            if part.follow_grain_direction
+
+              k_arrow = Kuix::CheveronMotif3d.new
+              k_arrow.patterns_transformation = size.oriented_transformation
+              k_arrow.bounds.copy!(bounds)
+              k_arrow.color = arrow_color
+              k_arrow.line_width = arrow_line_width
+              k_arrow.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+              part_helper.append(k_arrow)
+
+              k_arrow = Kuix::CheveronMotif3d.new
+              k_arrow.patterns_transformation = size.oriented_transformation
+              k_arrow.patterns_transformation *= Geom::Transformation.translation(Z_AXIS)
+              k_arrow.bounds.copy!(bounds)
+              k_arrow.color = arrow_color
+              k_arrow.line_width = arrow_line_width
+              part_helper.append(k_arrow)
+
+            end
 
           end
 
@@ -2606,6 +2624,19 @@ module Ladb::OpenCutList
             k_arrow.line_width = 2
             k_arrow.transformation = et
             @tool.append_3d(k_arrow, layer)
+
+            if part.follow_grain_direction
+
+              k_arrow = Kuix::CheveronMotif3d.new(0.2)
+              k_arrow.patterns_transformation = instance_info.size.oriented_transformation
+              k_arrow.patterns_transformation *= Geom::Transformation.translation(Z_AXIS)
+              k_arrow.bounds.copy!(eb)
+              k_arrow.color = arrow_color
+              k_arrow.line_width = 2
+              k_arrow.transformation = et
+              @tool.append_3d(k_arrow, layer)
+
+            end
 
           end
 

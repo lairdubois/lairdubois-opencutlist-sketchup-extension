@@ -400,6 +400,19 @@ module Ladb::OpenCutList::Kuix
 
   end
 
+  class CheveronMotif3d < Motif3d
+
+    def initialize(offset = 0.2, id = nil)
+      super([[
+
+               [   1/1.8  ,    offset , 0 ],
+               [ 1-offset ,     1/2.0 , 0 ],
+               [   1/1.8  ,  1-offset , 0 ],
+
+             ]], id)
+    end
+
+  end
   class ArrowMotif3d < Motif3d
 
     def initialize(offset = 0.1, id = nil)
