@@ -1035,9 +1035,12 @@ module Ladb::OpenCutList
                                              }
                                            }
 
-          split_item_defs.each_with_index do |(_, item_defs), index|
+          split_item_defs.each_with_index do |(axes, item_defs), index|
 
-            grain_group = GrainGroup.new(grain_group_def, index, split_item_defs.size)
+            x_axis = Geom::Vector3d.new(*axes[0])
+            z_axis = Geom::Vector3d.new(*axes[1])
+
+            grain_group = GrainGroup.new(grain_group_def, x_axis, z_axis, index, split_item_defs.size)
             group.add_grain_group(grain_group)
 
             item_defs.each do |item_def|

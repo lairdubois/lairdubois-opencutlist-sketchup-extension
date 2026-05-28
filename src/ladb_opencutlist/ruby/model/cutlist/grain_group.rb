@@ -13,8 +13,11 @@ module Ladb::OpenCutList
                 :name,
                 :items
 
-    def initialize(_def, batch_index, batch_count)
+    def initialize(_def, _x_axis, _z_axis, batch_index, batch_count)
       @_def = _def
+
+      @_x_axis = _x_axis
+      @_z_axis = _z_axis
 
       @batch_index = batch_index
       @batch_count = batch_count
@@ -24,6 +27,14 @@ module Ladb::OpenCutList
 
       @items = []
 
+    end
+
+    def x_axis
+      @_x_axis
+    end
+
+    def z_axis
+      @_z_axis
     end
 
     def add_item(item)

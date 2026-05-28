@@ -500,47 +500,39 @@ module Ladb::OpenCutList
             # Exclude grain groups with less than 2 items
             next if grain_group.items.size < 2
 
+            # Compute grain group axes transformation
+            x_axis = grain_group.x_axis
+            z_axis = grain_group.z_axis
+            y_axis = x_axis * z_axis
+            at = Geom::Transformation.axes(ORIGIN, x_axis, y_axis, z_axis)
+            ati = at.inverse
+
             # Finding grain group layout
             layout_def = Geometrix::LayoutFinder.find_layout(grain_group.items.map { |grain_item|
 
               grain_item_def = grain_item.def
-              part_def = grain_item_def.part_def
               instance_info = grain_item_def.instance_info
-              size = part_def.size
               bounds = instance_info.definition_bounds
 
               t = instance_info.transformation
-              x_axis = size.oriented_axis(X_AXIS).transform(t).normalize!
-              y_axis = size.oriented_axis(Y_AXIS).transform(t).normalize!
-              z_axis = size.oriented_axis(Z_AXIS).transform(t).normalize!
-              at = Geom::Transformation.axes(ORIGIN, x_axis, y_axis, z_axis)
-              ati = at.inverse
+              b = Geom::BoundingBox.new.add(
+                bounds.min.transform(t).transform(ati),
+                bounds.max.transform(t).transform(ati)
+              )
 
-              min = bounds.min
-
-              # puts "flipped = #{part_def.flipped}"
-              # puts "x_axis = #{x_axis}"
-              # puts "y_axis = #{y_axis}"
-              # puts "z_axis = #{z_axis}"
-
-              position = min.transform(t).transform(ati)
-              position.y = -size.width - position.y if part_def.flipped  # TODO find in what direction the part is flipped
-              position.z = 0
-
-              # Use final size for layout detection to avoid overlapping
-              Geometrix::BoxDef.new(position.x, position.y, size.length, size.width, data: grain_item)
+              Geometrix::BoxDef.new(b.min.x, b.min.y, b.width, b.height, data: grain_item)
             })
 
-            # debug_group = Sketchup.active_model.active_entities.add_group
+            # debug_g = Sketchup.active_model.active_entities.add_group
             # Geometrix::LayoutFinder.iterate_on_box_defs(layout_def) do |box_def, depth|
             #
-            #   group = debug_group.entities.add_group
-            #   group.entities.add_face([
-            #                             Geom::Point3d.new(box_def.x, box_def.y, 0),
-            #                             Geom::Point3d.new(box_def.x + box_def.width, box_def.y, 0),
-            #                             Geom::Point3d.new(box_def.x + box_def.width, box_def.y + box_def.height, 0),
-            #                             Geom::Point3d.new(box_def.x, box_def.y + box_def.height, 0)
-            #                           ])
+            #   g = debug_g.entities.add_group
+            #   g.entities.add_face([
+            #                         Geom::Point3d.new(box_def.x, box_def.y, 0),
+            #                         Geom::Point3d.new(box_def.x + box_def.width, box_def.y, 0),
+            #                         Geom::Point3d.new(box_def.x + box_def.width, box_def.y + box_def.height, 0),
+            #                         Geom::Point3d.new(box_def.x, box_def.y + box_def.height, 0)
+            #                       ])
             #
             # end
 
