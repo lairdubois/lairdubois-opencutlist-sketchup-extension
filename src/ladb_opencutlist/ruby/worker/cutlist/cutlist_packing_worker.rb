@@ -510,16 +510,21 @@ module Ladb::OpenCutList
               bounds = instance_info.definition_bounds
 
               t = instance_info.transformation
-              x_axis = size.oriented_axis(X_AXIS).transform(t)
-              y_axis = size.oriented_axis(Y_AXIS).transform(t)
-              z_axis = size.oriented_axis(Z_AXIS).transform(t)
+              x_axis = size.oriented_axis(X_AXIS).transform(t).normalize!
+              y_axis = size.oriented_axis(Y_AXIS).transform(t).normalize!
+              z_axis = size.oriented_axis(Z_AXIS).transform(t).normalize!
               at = Geom::Transformation.axes(ORIGIN, x_axis, y_axis, z_axis)
               ati = at.inverse
 
               min = bounds.min
 
+              # puts "flipped = #{part_def.flipped}"
+              # puts "x_axis = #{x_axis}"
+              # puts "y_axis = #{y_axis}"
+              # puts "z_axis = #{z_axis}"
+
               position = min.transform(t).transform(ati)
-              # position.y = -size.width - position.y if part_def.flipped  # TODO find in what direction the part is flipped
+              position.y = -size.width - position.y if part_def.flipped  # TODO find in what direction the part is flipped
               position.z = 0
 
               # Use final size for layout detection to avoid overlapping

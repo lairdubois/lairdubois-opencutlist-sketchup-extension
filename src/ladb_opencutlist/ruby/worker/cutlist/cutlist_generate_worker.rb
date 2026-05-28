@@ -1027,11 +1027,12 @@ module Ladb::OpenCutList
                                            .group_by { |item_def|
                                              size = item_def.part_def.size
                                              t = item_def.instance_info.transformation
-                                             [
-                                               size.oriented_axis(X_AXIS).transform(t).to_a.map { |v| v.round(6) },
-                                               size.oriented_axis(Y_AXIS).transform(t).to_a.map { |v| v.round(6) },
-                                               size.oriented_axis(Z_AXIS).transform(t).to_a.map { |v| v.round(6) }
-                                             ]
+                                             [ X_AXIS, Y_AXIS, Z_AXIS ].map { |axis|
+                                               size.oriented_axis(axis)           # Use autodetected axis orientation
+                                                   .transform(t)                  # Transform item axes to world space
+                                                   .normalize!                    # Allows scaled parts
+                                                   .to_a.map { |v| v.round(6) }   # Convert vector to array of 3 floats to be comparable
+                                             }
                                            }
 
           split_item_defs.each_with_index do |(_, item_defs), index|
