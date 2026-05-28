@@ -69,15 +69,17 @@ This project exists thanks to all the people who contribute.
 
 ### Financial Contributors
 
-Become a financial contributor and help us sustain our community. [[Contribute](https://opencollective.com/lairdubois-opencutlist-sketchup-extension/contribute)]
+[How to become a financial contributor](https://opencollective.com/lairdubois-opencutlist-sketchup-extension/contribute) and help us sustain our community.
+
+Thank you to all our supporters! 🙏
 
 #### Individuals
 
-<a href="https://opencollective.com/lairdubois-opencutlist-sketchup-extension"><img src="https://opencollective.com/lairdubois-opencutlist-sketchup-extension/individuals.svg?width=890"></a>
+[![OpenCutList Backers](https://opencollective.com/lairdubois-opencutlist-sketchup-extension/backers.svg?width=890&limit=100&button=false)](https://opencollective.com/lairdubois-opencutlist-sketchup-extension#backers) ... and many many more!
 
 #### Organizations
 
-Support this project with your organization. Your logo will show up here with a link to your website. [[Contribute](https://opencollective.com/lairdubois-opencutlist-sketchup-extension/contribute)]
+Support this project with your organization. Your logo will show up here with a link to your website.
 
 <a href="https://opencollective.com/lairdubois-opencutlist-sketchup-extension/organization/0/website"><img src="https://opencollective.com/lairdubois-opencutlist-sketchup-extension/organization/0/avatar.svg"></a>
 <a href="https://opencollective.com/lairdubois-opencutlist-sketchup-extension/organization/1/website"><img src="https://opencollective.com/lairdubois-opencutlist-sketchup-extension/organization/1/avatar.svg"></a>
