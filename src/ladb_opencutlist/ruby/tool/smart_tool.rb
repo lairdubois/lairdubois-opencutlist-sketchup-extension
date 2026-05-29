@@ -2439,7 +2439,7 @@ module Ladb::OpenCutList
         }
       else
         menu.add_item(PLUGIN.get_i18n_string('default.close')) {
-          quit
+          # Nothing
         }
       end
     end
@@ -3240,7 +3240,11 @@ module Ladb::OpenCutList
       when STATE_SELECT
         if tool.is_key_ctrl_or_option?(key) && _allows_tree_selection?
           if has_active_part?
-            set_state(STATE_SELECT_TREE)
+            if get_active_selection_path.empty?
+              tool.notify_warnings([ 'tool.smart_select.warning.no_parent_group' ])
+            else
+              set_state(STATE_SELECT_TREE)
+            end
           else
             tool.notify_warnings([ 'tool.smart_select.warning.no_active_part' ])
           end
