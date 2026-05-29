@@ -2302,7 +2302,7 @@ tool:
     state_7_status: Cliquez sur une pièce pour l'ajouter ou la soustraire à la sélection
     warning:
       no_active_part: Vous devez d'abord survoler une pièce
-      no_parent_group: La pièce sélectionnée est dans aucun groupe ou composant
+      no_parent_group: La pièce survolée n'a pas de groupe ou composant parent
   smart_draw:
     title: Dessiner
     action_0: Dessiner un Rectangle
