@@ -749,7 +749,7 @@ module Ladb::OpenCutList
            !part_def.ignore_grain_direction &&
            part_def.thickness_layer_count == 1
            group_def.material_attributes.grained &&
-           group_def.material_attributes.type == MaterialAttributes::TYPE_SHEET_GOOD &&
+           group_def.material_attributes.type == MaterialAttributes::TYPE_SHEET_GOOD
 
           grain_group_entity = instance_info.path.reverse_each.find { |entity| _get_instance_attributes(entity).is_grain_group }
           grain_group_entity = model if grain_group_entity.nil?
@@ -1027,18 +1027,22 @@ module Ladb::OpenCutList
                                            .group_by { |item_def|
                                              size = item_def.part_def.size
                                              t = item_def.instance_info.transformation
-                                             [ X_AXIS, Z_AXIS ].map { |axis|
+                                             x_axis, z_axis = [ X_AXIS, Z_AXIS ].map { |axis|
                                                size.oriented_axis(axis)           # Use autodetected axis orientation
                                                    .transform(t)                  # Transform item axes to world space
                                                    .normalize!                    # Allows scaled parts
-                                                   .to_a.map { |v| v.round(6) }   # Convert vector to array of 3 floats to be comparable
+                                                   .to_a.map { |v| v.round(6) }   # Convert vector to array of 3 rounded floats to be comparable
                                              }
+                                             plane = [ item_def.instance_info.definition_bounds.min.transform(t), z_axis ]  # Item floor plane
+                                             origin = ORIGIN.project_to_plane(plane)                                        # Common possible plane origin
+                                                            .to_a.map { |v| v.round(4) }                                    # Convert point to array of 3 rounded floats to be comparable
+                                             [ x_axis, z_axis, origin ]
                                            }
 
-          split_item_defs.each_with_index do |(axes, item_defs), index|
+          split_item_defs.each_with_index do |(xzo, item_defs), index|
 
-            x_axis = Geom::Vector3d.new(*axes[0])
-            z_axis = Geom::Vector3d.new(*axes[1])
+            x_axis = Geom::Vector3d.new(*xzo[0])
+            z_axis = Geom::Vector3d.new(*xzo[1])
 
             grain_group = GrainGroup.new(grain_group_def, x_axis, z_axis, index, split_item_defs.size)
             group.add_grain_group(grain_group)
