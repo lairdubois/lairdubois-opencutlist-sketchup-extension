@@ -523,18 +523,18 @@ module Ladb::OpenCutList
               Geometrix::BoxDef.new(b.min.x, b.min.y, b.width, b.height, data: grain_item)
             })
 
-            debug_g = Sketchup.active_model.active_entities.add_group
-            Geometrix::LayoutFinder.iterate_on_box_defs(layout_def) do |box_def, depth|
-
-              g = debug_g.entities.add_group
-              g.entities.add_face([
-                                    Geom::Point3d.new(box_def.x, box_def.y, 0),
-                                    Geom::Point3d.new(box_def.x + box_def.width, box_def.y, 0),
-                                    Geom::Point3d.new(box_def.x + box_def.width, box_def.y + box_def.height, 0),
-                                    Geom::Point3d.new(box_def.x, box_def.y + box_def.height, 0)
-                                  ])
-
-            end
+            # debug_g = Sketchup.active_model.active_entities.add_group
+            # Geometrix::LayoutFinder.iterate_on_box_defs(layout_def) do |box_def, depth|
+            #
+            #   g = debug_g.entities.add_group
+            #   g.entities.add_face([
+            #                         Geom::Point3d.new(box_def.x, box_def.y, 0),
+            #                         Geom::Point3d.new(box_def.x + box_def.width, box_def.y, 0),
+            #                         Geom::Point3d.new(box_def.x + box_def.width, box_def.y + box_def.height, 0),
+            #                         Geom::Point3d.new(box_def.x, box_def.y + box_def.height, 0)
+            #                       ])
+            #
+            # end
 
             # Set boxes size to part cutting size
             Geometrix::LayoutFinder.iterate_on_box_defs(layout_def) do |box_def, depth|
