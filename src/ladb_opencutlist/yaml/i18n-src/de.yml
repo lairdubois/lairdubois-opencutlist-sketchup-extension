@@ -191,7 +191,7 @@ core:
     ignore_update: Diese Aktualisierung überspringen
     download_rescue: "Probleme beim Herunterladen?"
     manual_download: Manuelles Herunterladen
-    zzz: "Ich ruhe mich nach meiner Aktualisierung aus. Um mich wieder in Topform zu bringen, müssen Sie SketchUp neu starten."
+    zzz: "Das Plugin wurde aktualisiert. Bitte starten Sie SketchUp neu, um die Änderungen zu aktivieren."
     success: |
       Die Aktualisierung von OpenCutList ist abgeschlossen!
 
@@ -357,8 +357,8 @@ tab:
       resized: Dieses Teil wurde gegenüber der ursprünglichen Definition redimensioniert
       flipped: Dieses Teil ist im Vergleich zur ursprünglichen Definition gespiegelt
       symmetrical: Die Erkennung gespiegelter Teile ist bei diesem Teil deaktiviert
-      ignore_grain_direction: Die Faserausrichtung wird für dieses Teil nicht beachtet
-      follow_grain_direction: Die Faserausrichtung ist bei diesem Teil aktiviert
+      ignore_grain_direction: Der Faserverlauf wird für dieses Teil nicht beachtet
+      follow_grain_direction: Die fortlaufende Maserungsprüfung ist bei diesem Teil aktiviert
       auto_oriented: Dieses Teil wurde automatisch orientiert
       oko_label_filter: "Badge einschließen / ausschließen"
       add_label_filter: "Nach '{{ label }}' auswählen"
@@ -403,8 +403,8 @@ tab:
       edge_ymax: Kantenband Länge 2
       edge_xmin: Kantenband Breite 1
       edge_xmax: Kantenband Breite 2
-      face_zmin: Rückseite
-      face_zmax: Vorderseite
+      face_zmin: Gegenseite
+      face_zmax: Ansichtsseite
       dblclick_to_copy_all_edges: "Doppelklicken Sie hier, um diesen Wert auf die übrigen Kanten zu übertragen"
       dblclick_to_copy_all_faces: "Doppelklicken Sie hier, um diesen Wert auf die andere Fläche zu übertragen"
       dblclick_to_sort_axes: "Doppelklicken Sie hier, um die Achsen automatisch entsprechend den Abmessungen des Teils neu anzuordnen"
@@ -511,20 +511,20 @@ tab:
       symmetrical: Spiegelerkennung für dieses Teil deaktivieren
       symmetrical_help: |
         Wird dieses Kästchen aktiviert, hat die Erkennung von *Spiegelteilen* keine Auswirkung auf dieses Teil.
-      ignore_grain_direction: Faserausrichtung
+      ignore_grain_direction: Faserverlauf
       ignore_grain_direction_help: |
-        Wenn dieses Kästchen aktiviert ist, wird die Faserausrichtung für dieses Teil ignoriert.
+        Wenn dieses Kästchen aktiviert ist, wird der Faserverlauf für dieses Bauteil ignoriert.
       ignore_grain_direction_0: Die Faser verläuft in Längsrichtung
-      ignore_grain_direction_1: Faserausrichtung ignorieren
-      follow_grain_direction: Faserausrichtung
+      ignore_grain_direction_1: Faserverlauf ignorieren
+      follow_grain_direction: Fortlaufende Maserung
       follow_grain_direction_help: |
-        Wenn diese Option aktiviert ist, werden die Instanzen dieses Teils als Teile betrachtet, die mit ihren Nachbarn, die folgende Eigenschaften teilen, in **Faserverlauf** angeordnet sind:
-        - dieselbe *Faserverlaufgruppe*
+        Wenn diese Option aktiviert ist, werden die Instanzen dieses Bauteils als Teile betrachtet, die mit ihren Nachbarn, die die folgenden Eigenschaften teilen, in **Fortlaufende Maserungruppe** angeordnet sind:
+        - dieselbe *Fortlaufende Maserungsgruppe*
         - dieselbe Ausrichtung
         - denselben Werkstoff mit Faser
         - dieselbe Dicke
       follow_grain_direction_0: $t(default.no)
-      follow_grain_direction_1: Faserverlaufsprüfung aktiviert
+      follow_grain_direction_1: Fortlaufende Maserung aktiviert
       axes: Achsen
       axes_help: "Ordnen Sie die Abmessungen so an, dass sie mit den gewünschten Achsenfarben in Ihrem Teil übereinstimmen."
       axes_tip: |
@@ -787,8 +787,8 @@ tab:
       option_bar_folding_edge: Gleiche Kantenbänder zusammenfassen
       option_bar_folding_0: Nein
       option_bar_folding_1: Ja
-      option_bar_folding_help: "Ermöglicht das Zusammenfassen von Stangen oder Kantenbänder, die dieselben Teile und Schnitte enthalten."
-      option_sheet_folding_good: Gleiche Platten zusammenfassen
+      option_bar_folding_help: "Ermöglicht das Zusammenfassen von Stangen oder Kantenbändern, die dieselben Teile und Schnitte enthalten."
+      option_sheet_folding_good: Gleiche Plattenzuschnitte zusammenfassen
       option_sheet_folding_veneer: Gleiche Furniere zusammenfassen
       option_sheet_folding_0: Nein
       option_sheet_folding_1: Ja
@@ -862,7 +862,7 @@ tab:
       option_std_bar_dimensional: Standard-Stange
       option_std_bar_edge: Standard-Kantenband
       option_std_bar_help: |
-        Wählen Sie hier die Standardstangenware oder das Standardkantenband, welche dupliziert werden um alle Teile zu enthalten.
+        Wählen Sie hier die Standard-Stangenware oder das Standard-Kantenband aus, das dupliziert wird, um alle Teile zu enthalten.
         Diese Liste wird durch das Feld **$t(tab.materials.edit_material.std_lengths)** des Materials definiert.
         Editieren Sie das Material '{{ material_name }}' um diese Liste zu aktualisieren.
       option_std_bar_add: Länge hinzufügen
@@ -1087,7 +1087,7 @@ tab:
       option_irregular_allowed_rotations_help: |
         Bestimmt die erlaubten Drehungen eines Teils.
 
-        *Materiale mit Faserausrichtung erlauben nur 0 und 180° Drehungen.*
+        *Materiale mit Faserverlauf erlauben nur 0 und 180° Drehungen.*
       option_irregular_allowed_rotations_0: Keine
       option_irregular_allowed_rotations_90: 90° Schritt
       option_irregular_allowed_rotations_180: 180° Schritt
@@ -1608,7 +1608,7 @@ tab:
       type_7: Materialtyp '$t(tab.materials.type_7)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
-      grain_direction: Faserausrichtung
+      grain_direction: Faserverlauf
       raw_estimated_0: Geschätzt nach effektivem Volumen
       colorized: Dieser Farbton wird beim Rendern des Modells auf die Materialtextur angewendet
       texture_load: Neues Bild laden
@@ -1682,10 +1682,10 @@ tab:
         Standardmaße für dieses Material.
 
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
-      grained: Faserausrichtung
+      grained: Faserverlauf
       grained_help: Gibt die Ausrichtung der Faser in Bezug auf die Länge der Platte an.
-      grained_0: Keine Faserausrichtung
-      grained_1: Faser in Längsrichtung
+      grained_0: Kein Faserverlauf
+      grained_1: Faserverlauf in Längsrichtung
       edge_decremented: Reduzierung der Teile
       edge_decremented_help: "Gibt an, ob die Maße der Teile der Holzliste um die Materialstärke der Kantenbänder reduziert werden sollen."
       edge_decremented_0: keine Reduzierung
@@ -2301,6 +2301,7 @@ tool:
     state_7_status: "Klicken Sie auf ein Teil, um es zur Auswahl hinzuzufügen oder daraus zu entfernen"
     warning:
       no_active_part: Sie müssen zunächst mit der Maus über ein Teil fahren
+      no_parent_group: Das überflogene Teil hat keine übergeordnete Gruppe oder Komponente
   smart_draw:
     title: Zeichnen
     action_0: Rechteck zeichnen
@@ -2500,7 +2501,7 @@ tool:
     error:
       not_part: Das Zielobjekt ist kein Teil (Komponente)
       not_orientable: Der Typ dieses Teils lässt keine Orientierung zu
-      not_grained: Das betreffende Teil hat keine Faserausrichtung
+      not_grained: Das betreffende Teil hat keinen Faserverlauf
       not_single_thickness_layer: Das Zielteil muss aus einer einzigen Schicht bestehen
   smart_join:
     title: Zusammenstellen
