@@ -1027,7 +1027,7 @@ module Ladb::OpenCutList
                                            .group_by { |item_def|
                                              size = item_def.part_def.size
                                              t = item_def.instance_info.transformation
-                                             [ X_AXIS, Y_AXIS, Z_AXIS ].map { |axis|
+                                             [ X_AXIS, Z_AXIS ].map { |axis|
                                                size.oriented_axis(axis)           # Use autodetected axis orientation
                                                    .transform(t)                  # Transform item axes to world space
                                                    .normalize!                    # Allows scaled parts
