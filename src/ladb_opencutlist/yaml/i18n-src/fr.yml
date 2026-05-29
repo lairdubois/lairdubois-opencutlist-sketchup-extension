@@ -2488,7 +2488,7 @@ tool:
     action_4_status: Ciblez une face d'une pièce et cliquez sur un point pour y placer son origine
     action_5: Configurer la Continuité du fil
     action_5_status: Cliquez sur une pièce pour activer ou désactiver la détection de Continuité du fil
-    action_5_to_state_10_status: Configurer le Groupe de continuité de fil
+    action_5_to_state_10_status: Choisir le Groupe de continuité de fil # TODO : the text has changed
     action_5_state_10_status: Cliquez sur un élément dans la liste pour modifier son statut de Groupe de continuité de fil
     action_option_group_direction: Direction
     action_option_direction_0: Lo

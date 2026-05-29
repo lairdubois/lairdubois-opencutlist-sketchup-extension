@@ -1257,11 +1257,16 @@ module Ladb::OpenCutList
             k_box.transformation = t
             @tool.append_3d(k_box, LAYER_3D_PART_PREVIEW)
 
-            k_box = Kuix::BoxFillMotif3d.new
-            k_box.bounds.copy!(bounds)
-            k_box.color = ColorUtils.color_translucent(Kuix::COLOR_PURPLE, 0.05)
-            k_box.transformation = t
-            @tool.append_3d(k_box, LAYER_3D_PART_PREVIEW)
+            # Fill only if there are no highlighted parts (else transparency hides highlight preview)
+            if @tool.highlighted_parts.nil?
+
+              k_box = Kuix::BoxFillMotif3d.new
+              k_box.bounds.copy!(bounds)
+              k_box.color = ColorUtils.color_translucent(Kuix::COLOR_PURPLE, 0.05)
+              k_box.transformation = t
+              @tool.append_3d(k_box, LAYER_3D_PART_PREVIEW)
+
+            end
 
             k_label = _create_floating_label(
               snap_point: bounds.min.transform(t),
