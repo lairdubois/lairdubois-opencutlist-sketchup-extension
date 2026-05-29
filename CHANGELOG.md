@@ -23,8 +23,6 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
-### 2026-05-xx
- * Improved grain detection by comparing part "location"
 ### 2026-05-29
  * Changed DXF OCL_CUT layer line type to DASHED2
  * Improved Grain Continuity tools
