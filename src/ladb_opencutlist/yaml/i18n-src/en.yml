@@ -524,7 +524,7 @@ tab:
         - the same Material with grain
         - the same Thickness
       follow_grain_direction_0: $t(default.no)
-      follow_grain_direction_1: Grain Continuity detection activated
+      follow_grain_direction_1: Detection activated
       axes: Axes
       axes_help: Reorder the dimensions to match the desired axis colors in your part.
       axes_tip: |
@@ -2301,6 +2301,7 @@ tool:
     state_7_status: Click on a part to add or subtract it from the selection
     warning:
       no_active_part: You must first hover over a part
+      no_parent_group: The part being inspected has no parent group or component
   smart_draw:
     title: Draw
     action_0: Draw Rectangle
