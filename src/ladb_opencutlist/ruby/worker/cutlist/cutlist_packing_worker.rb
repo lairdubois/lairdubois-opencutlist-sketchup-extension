@@ -963,7 +963,7 @@ module Ladb::OpenCutList
                           depth: depth + sub_item_type_def.depth,
                           x: sub_item_type_def.x, # Relative to the composite item x
                           y: sub_item_type_def.y, # Relative to the composite item y
-                          angle: 0,
+                          angle: sub_item_type_def.part.flipped ? 180 : 0,  # Flipped part can only be Y flipped. So added 180° rotation to the default X mirroring.
                           mirror: false,
                           label_offset: Geom::Vector3d.new(0, 0)
                         )
