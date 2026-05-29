@@ -573,6 +573,16 @@ module Ladb::OpenCutList
 
             end
 
+            # RTL if part drawing type is 2D BOTTOM
+            if @part_drawing_type == PART_DRAWING_TYPE_2D_BOTTOM
+              box_defs.each do |box_def|
+                box_def.x = total_length - box_def.x - box_def.width
+              end
+              gutter_defs.each do |gutter_def|
+                gutter_def.x = total_length - gutter_def.x - gutter_def.width
+              end
+            end
+
             @item_type_defs << PackingCompositeItemTypeDef.new(
               length: total_length,
               width: total_width,
@@ -583,7 +593,7 @@ module Ladb::OpenCutList
                 part = grain_item.part
                 PackingCompositeSubItemTypeDef.new(
                   depth: box_def.depth,
-                  x: @part_drawing_type == PART_DRAWING_TYPE_2D_BOTTOM ? total_length - box_def.x - box_def.width : box_def.x,  # "rtl" if part drawing type is 2D BOTTOM
+                  x: box_def.x,
                   y: box_def.y,
                   length: box_def.width,
                   width: box_def.height,
@@ -1551,12 +1561,19 @@ module Ladb::OpenCutList
 
           svg += "<text class='item-label' x='#{px_item_label_x}' y='#{-px_item_label_y}' font-size='#{label_font_size}' text-anchor='middle' dominant-baseline='central'#{"transform='rotate(#{-(item_def.angle % 180)} #{px_item_label_x} #{-px_item_label_y})'" unless item_def.angle % 180 == 0}>#{item_text}</text>"
 
-          unless is_irregular
+          unless is_irregular || item_def.angle % 90 != 0
 
-            dim_x = item_def.angle == 0 ? part_def.cutting_length : part_def.cutting_width
-            dim_y = item_def.angle == 0 ? part_def.cutting_width : part_def.cutting_length
-            is_cutting_dim_x = dim_x != (item_def.angle == 0 ? part_def.size.length : part_def.size.width)
-            is_cutting_dim_y = dim_y != (item_def.angle == 0 ? part_def.size.width : part_def.size.length)
+            if item_def.angle % 180 == 0
+              dim_x = part_def.cutting_length
+              dim_y = part_def.cutting_width
+              is_cutting_dim_x = dim_x != part_def.size.length
+              is_cutting_dim_y = dim_y != part_def.size.width
+            else
+              dim_x = part_def.cutting_width
+              dim_y = part_def.cutting_length
+              is_cutting_dim_x = dim_x != part_def.size.width
+              is_cutting_dim_y = dim_y != part_def.size.length
+            end
 
             dim_x_text = dim_x.to_s.gsub(/~ /, '')
             dim_y_text = dim_y.to_s.gsub(/~ /, '')

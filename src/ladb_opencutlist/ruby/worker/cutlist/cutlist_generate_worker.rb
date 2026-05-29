@@ -550,7 +550,7 @@ module Ladb::OpenCutList
           part_def.orientation_locked_on_axis = definition_attributes.orientation_locked_on_axis
           part_def.symmetrical = definition_attributes.symmetrical
           part_def.ignore_grain_direction = definition_attributes.ignore_grain_direction
-          part_def.follow_grain_direction = definition_attributes.follow_grain_direction
+          part_def.follow_grain_direction = definition_attributes.follow_grain_direction && !definition_attributes.ignore_grain_direction && material_attributes.grained
           part_def.auto_oriented = size.auto_oriented?
 
           # Propose cutting dimensions display if the part is flagged as cumulable
