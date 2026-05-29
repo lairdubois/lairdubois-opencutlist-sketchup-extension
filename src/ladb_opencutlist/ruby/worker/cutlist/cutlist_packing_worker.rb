@@ -1349,7 +1349,7 @@ module Ladb::OpenCutList
                 svg += "<rect class='item-composite-overlay' x='1' y='#{-px_item_rect_height + 1}' width='#{px_item_rect_width - 2}' height='#{px_item_rect_height - 2}' fill='none'/>"
                 svg += "<g transform='translate(#{px_name_x} #{px_name_y})'>"
                   svg += "<rect class='item-composite-name-outer' x='0' y='#{-px_name_h}' width='#{px_name_w}' height='#{px_name_h}' fill='none'/>"
-                  svg += "<text class='item-composite-name' x='#{px_composite_name_offset}' y='#{-px_composite_name_offset - 1}' font-size='#{px_composite_name_font_size_min}' fill='none'>#{item_type_def.name}</text>"
+                  svg += "<text class='item-composite-name' x='#{px_composite_name_offset}' y='#{-px_composite_name_offset - 1}' font-size='#{px_composite_name_font_size_min}' fill='none'>#{CGI.escapeHTML(item_type_def.name)}</text>"
                 svg += '</g>'
 
               end
