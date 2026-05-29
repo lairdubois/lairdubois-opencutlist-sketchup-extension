@@ -1049,7 +1049,11 @@ module Ladb::OpenCutList
       when STATE_SELECT
         if tool.is_key_ctrl_or_option?(key)
           if has_active_part?
-            set_state(STATE_TOGGLE_GRAIN_GROUP)
+            if get_active_selection_path.empty?
+              tool.notify_warnings([ 'tool.smart_select.warning.no_parent_group' ])
+            else
+              set_state(STATE_TOGGLE_GRAIN_GROUP)
+            end
           else
             tool.notify_warnings([ 'tool.smart_select.warning.no_active_part' ])
           end
