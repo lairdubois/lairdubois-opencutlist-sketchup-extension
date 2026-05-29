@@ -583,8 +583,10 @@ module Ladb::OpenCutList
                 part = grain_item.part
                 PackingCompositeSubItemTypeDef.new(
                   depth: box_def.depth,
-                  x: box_def.x, y: box_def.y,
-                  length: box_def.width, width: box_def.height,
+                  x: @part_drawing_type == PART_DRAWING_TYPE_2D_BOTTOM ? total_length - box_def.x - box_def.width : box_def.x,  # "rtl" if part drawing type is 2D BOTTOM
+                  y: box_def.y,
+                  length: box_def.width,
+                  width: box_def.height,
                   part: part,
                   projection_def: _compute_part_projection_def(@part_drawing_type, part,
                                                                compute_shell: true),
