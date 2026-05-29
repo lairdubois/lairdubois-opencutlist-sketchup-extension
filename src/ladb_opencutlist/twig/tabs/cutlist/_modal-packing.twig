@@ -64,34 +64,36 @@
                 </p>
             </div>
             {% if group.grain_groups|length > 0 %}
-                <hr>
-                <div class="row">
-                    <div class="col-xs-push-1 col-xs-10">
-                        <div class="panel panel-default" style="margin-bottom: 0;">
-                            <div class="panel-heading">
-                                <span style="font-size: 110%;"><i class="ladb-opencutlist-icon-grain-group"></i>&nbsp;&nbsp;{{ 'tab.cutlist.packing.grain_groups.title'|i18next({ 'count':group.grain_groups|length }) }}</span>
-                            </div>
-                            <div class="panel-body" style="padding: 0;">
-                                <table class="table table-stripped" style="margin-bottom: 0;">
-                                <thead>
-                                <tr>
-                                    <th>{{ 'tab.cutlist.packing.grain_groups.name'|i18next }}</th>
-                                    <th width="30%" class="text-center">{{ 'tab.cutlist.packing.grain_groups.item_count'|i18next }}</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {% for grain_group in group.grain_groups %}
-                                    <tr{% if grain_group.items|length < 2 %} class="text-muted" style="text-decoration: line-through;"{% endif %}>
-                                        <td>{{ grain_group.name|escape('html') }}</td>
-                                        <td class="text-center">{{ grain_group.items|length }}</td>
+                <section class="ladb-cutlist-packing-section-not-onedimensional">
+                    <hr>
+                    <div class="row">
+                        <div class="col-xs-push-1 col-xs-10">
+                            <div class="panel panel-default" style="margin-bottom: 0;">
+                                <div class="panel-heading">
+                                    <span style="font-size: 110%;"><i class="ladb-opencutlist-icon-grain-group"></i>&nbsp;&nbsp;{{ 'tab.cutlist.packing.grain_groups.title'|i18next({ 'count':group.grain_groups|length }) }}</span>
+                                </div>
+                                <div class="panel-body" style="padding: 0;">
+                                    <table class="table table-stripped" style="margin-bottom: 0;">
+                                    <thead>
+                                    <tr>
+                                        <th>{{ 'tab.cutlist.packing.grain_groups.name'|i18next }}</th>
+                                        <th width="30%" class="text-center">{{ 'tab.cutlist.packing.grain_groups.item_count'|i18next }}</th>
                                     </tr>
-                                {% endfor %}
-                                </tbody>
-                                </table>
+                                    </thead>
+                                    <tbody>
+                                    {% for grain_group in group.grain_groups %}
+                                        <tr{% if grain_group.items|length < 2 %} class="text-muted" style="text-decoration: line-through;"{% endif %}>
+                                            <td>{{ grain_group.name|escape('html') }}</td>
+                                            <td class="text-center">{{ grain_group.items|length }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </section>
             {% endif %}
         </div>
         <div role="tabpanel" class="tab-pane{% if tab == 'config' %} active{% endif %}" id="tab_packing_options_config">

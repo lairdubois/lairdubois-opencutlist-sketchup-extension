@@ -2613,6 +2613,7 @@
                 const $editorScrapBinSizes = $('#ladb_editor_scrap_bin_sizes', $modal);
                 const $btnsProblemType = $('label.btn-radio', $modal);
                 const $radiosProblemType = $('input[name=ladb_radios_problem_type]', $modal);
+                const $sectionNotOnedimensional = $('.ladb-cutlist-packing-section-not-onedimensional', $modal)
                 const $formGroupRectangleguillotine = $('.ladb-cutlist-packing-form-group-rectangleguillotine', $modal)
                 const $formGroupIrregular = $('.ladb-cutlist-packing-form-group-irregular', $modal)
                 const $formGroupNotIrregular = $('.ladb-cutlist-packing-form-group-not-irregular', $modal)
@@ -2747,9 +2748,11 @@
                     return variableDefs;
                 }
                 const fnUpdateFieldsVisibility = function () {
+                    const isOnedimensional = $radiosProblemType.filter(':checked').val() === 'onedimensional';
                     const isRectangleguillotine = $radiosProblemType.filter(':checked').val() === 'rectangleguillotine';
                     const isIrregular = $radiosProblemType.filter(':checked').val() === 'irregular';
                     const isDebug = that.dialog.capabilities.is_dev && !that.dialog.capabilities.is_rbz;
+                    if (isOnedimensional) $sectionNotOnedimensional.hide(); else $sectionNotOnedimensional.show();
                     if (isRectangleguillotine) $formGroupRectangleguillotine.show(); else $formGroupRectangleguillotine.hide();
                     if (isIrregular) $formGroupNotIrregular.hide(); else $formGroupNotIrregular.show();
                     if (isIrregular) $formGroupIrregular.show(); else $formGroupIrregular.hide();
