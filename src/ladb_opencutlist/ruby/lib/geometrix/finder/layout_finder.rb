@@ -40,7 +40,7 @@ module Ladb::OpenCutList::Geometrix
     #
     # @yield [BoxDef, depth]
     #
-    def self.iterate_on_box_defs(layout_def, &block)
+    def self.each_box_def(layout_def, &block)
       _iterate_on_nodes(layout_def.nodes, 0, &block)
     end
 

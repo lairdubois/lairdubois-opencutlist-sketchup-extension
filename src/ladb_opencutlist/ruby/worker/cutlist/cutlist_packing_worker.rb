@@ -537,7 +537,7 @@ module Ladb::OpenCutList
             # end
 
             # Set boxes size to part cutting size
-            Geometrix::LayoutFinder.iterate_on_box_defs(layout_def) do |box_def, depth|
+            Geometrix::LayoutFinder.each_box_def(layout_def) do |box_def, depth|
               grain_item = box_def.data
               grain_item_def = grain_item.def
               part_def = grain_item_def.part_def
