@@ -44,7 +44,7 @@ module Ladb::OpenCutList
 
       case action
       when ACTION_0
-        return SmartCursorManager.cursor_select
+        return SmartCursorManager.cursor_select_join
       end
 
       super
@@ -113,6 +113,10 @@ module Ladb::OpenCutList
     end
 
     # -- STATE --
+
+    def get_state_cursor(state)
+      SmartCursorManager.cursor_select_join
+    end
 
     def get_state_picker(state)
       SmartPicker.new(tool: @tool, observer: self, pick_point: true)

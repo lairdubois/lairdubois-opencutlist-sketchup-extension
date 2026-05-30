@@ -3666,6 +3666,10 @@ module Ladb::OpenCutList
       create_cursor('select-grain')
     end
 
+    def cursor_select_join
+      create_cursor('select-join')
+    end
+
 
     def cursor_move
       create_cursor('move', 16, 16)

@@ -94,8 +94,8 @@ module Ladb::OpenCutList
 
     def distance_to_edge(point)
       projected_point = point.project_to_line(line)
-      if start_point.vector_to(projected_point).samedirection?(direction) &&
-         start_point.distance(projected_point) <= length
+      if !(v = start_point.vector_to(projected_point)).valid? ||
+          v.samedirection?(direction) && start_point.distance(projected_point) <= length
         # The projected point is on the edge, so we can compute the distance directly.
         projected_point.distance(point)
       else
