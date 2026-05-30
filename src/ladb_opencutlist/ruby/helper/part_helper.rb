@@ -13,7 +13,7 @@ module Ladb::OpenCutList
           _get_material_attributes(entity.material).type == MaterialAttributes::TYPE_HARDWARE && entity.respond_to?(:name) && !entity.name.strip.empty?
       }
       return path[0..part_index] unless part_index.nil?
-      path
+      nil
     end
 
     def _generate_part_from_path(path)

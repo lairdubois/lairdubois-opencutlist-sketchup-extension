@@ -92,6 +92,18 @@ module Ladb::OpenCutList
       vertex_manipulators.min { |vm1, vm2| vm1.point.distance(point) <=> vm2.point.distance(point) }
     end
 
+    def distance_to_edge(point)
+      projected_point = point.project_to_line(line)
+      if start_point.vector_to(projected_point).samedirection?(direction) &&
+         start_point.distance(projected_point) <= length
+        # The projected point is on the edge, so we can compute the distance directly.
+        projected_point.distance(point)
+      else
+        # The projected point is not on the edge, so we need to compute the distance to the closest point on the edge.
+        [ point.distance(start_point), point.distance(end_point) ].min
+      end
+    end
+
     # -----
 
     def to_s

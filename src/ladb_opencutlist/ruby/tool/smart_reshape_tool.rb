@@ -1408,7 +1408,7 @@ module Ladb::OpenCutList
           k_segments.add_segments(container_def.edge_defs.flat_map { |edge_def|
             edge = edge_def.edge
             t = edge_def.transformation
-            ti = t.inverse
+            ti = edge_def.transformation_inverse
             [
               edge.start.position.offset(edvs[edge_def.start_section_def].transform(ti)).transform(t).offset(emv),
               edge.end.position.offset(edvs[edge_def.end_section_def].transform(ti)).transform(t).offset(emv)
@@ -1427,7 +1427,7 @@ module Ladb::OpenCutList
           k_segments.add_segments(container_def.cline_defs.flat_map { |cline_def|
             cline = cline_def.cline
             t = cline_def.transformation
-            ti = t.inverse
+            ti = cline_def.transformation_inverse
             [
               cline.start.offset(edvs[cline_def.start_section_def].transform(ti)).transform(t).offset(emv),
               cline.end.offset(edvs[cline_def.end_section_def].transform(ti)).transform(t).offset(emv)
@@ -1446,7 +1446,7 @@ module Ladb::OpenCutList
             points: container_def.snap_defs.map { |snap_def|
               snap = snap_def.snap
               t = snap_def.transformation
-              ti = t.inverse
+              ti = snap_def.transformation_inverse
               snap.position.offset(edvs[snap_def.section_def].transform(ti)).transform(t).offset(emv)
             },
             style: Kuix::POINT_STYLE_CIRCLE,
@@ -2810,6 +2810,10 @@ module Ladb::OpenCutList
         super
       end
 
+      def transformation_inverse
+        @transformation_inverse ||= transformation.inverse
+      end
+
     end
 
     SplitClineDef = Struct.new(
@@ -2836,6 +2840,10 @@ module Ladb::OpenCutList
         super
       end
 
+      def transformation_inverse
+        @transformation_inverse ||= transformation.inverse
+      end
+
     end
 
     SplitSnapDef = Struct.new(
@@ -2856,6 +2864,10 @@ module Ladb::OpenCutList
         entity_pos = -1
       )
         super
+      end
+
+      def transformation_inverse
+        @transformation_inverse ||= transformation.inverse
       end
 
     end

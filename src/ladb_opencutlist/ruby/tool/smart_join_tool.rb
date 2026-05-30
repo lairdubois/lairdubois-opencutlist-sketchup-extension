@@ -3,6 +3,7 @@ module Ladb::OpenCutList
   require_relative 'smart_tool'
   require_relative '../utils/color_utils'
   require_relative '../utils/path_utils'
+  require_relative '../lib/fiddle/clippy/clippy'
 
   class SmartJoinTool < SmartTool
 
@@ -89,79 +90,14 @@ module Ladb::OpenCutList
 
   end
 
-  class SmartJoinActionHandler < SmartSelectActionHandler
+  class SmartJoin0ActionHandler < SmartSelectActionHandler
+
+    LAYER_3D_ACTION_PREVIEW = 3
 
     STATE_JOIN_START = 1
     STATE_JOIN = 2
 
-    def initialize(action, tool, previous_action_handler = nil)
-      super
-
-    end
-
-    # -----
-
-    def onToolCancel(tool, reason, view)
-      super
-
-      case @state
-
-      when STATE_JOIN
-        set_state(STATE_JOIN_START)
-
-      end
-
-      _reset
-      _refresh
-
-      true
-    end
-
-    def onToolMouseMove(tool, flags, x, y, view)
-      return true if super
-
-      case @state
-
-      when STATE_JOIN_START
-        @tool.clear_3d(100)
-        _preview_join_start(view)
-
-      when STATE_JOIN
-        _preview_join(view)
-
-      end
-
-      view.invalidate
-
-      false
-    end
-
-    def onSelected
-      super
-
-      set_state(STATE_JOIN_START)
-      _refresh
-
-    end
-
-    def onStateChanged(old_state, new_state)
-      super
-
-      puts "STATE CHANGED #{old_state} -> #{new_state}"
-
-    end
-
-    # -----
-
-    def _preview_join_start(view)
-    end
-
-    def _preview_join(view)
-    end
-
-  end
-
-  class SmartJoin0ActionHandler < SmartJoinActionHandler
+    Clippy = Fiddle::Clippy
 
     def initialize(tool, previous_action_handler = nil)
       super(SmartJoinTool::ACTION_0, tool, previous_action_handler)
@@ -176,58 +112,166 @@ module Ladb::OpenCutList
 
     end
 
+    # -- STATE --
+
+    def get_state_picker(state)
+      SmartPicker.new(tool: @tool, observer: self, pick_point: true)
+    end
+
     # -----
 
-    def onStateChanged(old_state, new_state)
+    def onPickerChanged(picker, view)
       super
+      _preview_join(view)
+    end
 
-      case new_state
-
-      when STATE_JOIN_START
-        @neighborhood_def = nil
-
-      end
-
+    def onActivePartChanged(part_entity_path, part, highlighted = nil)
+      super
+      @neighborhood_def = nil
     end
 
     # -----
 
     protected
 
-    def _preview_join_start(view)
+    def _start_with_model_selection?
+      false
+    end
+
+    def _clear_selection_on_start?
+      true
+    end
+
+    # -----
+
+    def _preview_join(view)
+
+      @tool.clear_3d(LAYER_3D_ACTION_PREVIEW)
+
       return if (neighborhood_def = _get_neighborhood_def(view)).nil?
 
-      drawing_def, neighbor_defs = neighborhood_def.values_at(:drawing_def, :neighbor_defs)
+      face_manipulator = @picker.picked_plane_manipulator
+      if face_manipulator.is_a?(FaceManipulator)
 
-      neighbor_defs.each do |neighbor_def|
+        # Offset transformation to force arrow and mesh to be on top of part preview
+        ov = Geom::Vector3d.new(face_manipulator.normal)
+        ov.length = 0.01
+        ot = Geom::Transformation.translation(ov)
 
-        neighbor_def.touching_defs.each do |touching_def|
+        # Highlight picked face
+        k_mesh = Kuix::Mesh.new
+        k_mesh.add_triangles(face_manipulator.triangles)
+        k_mesh.background_color = Sketchup::Color.new(255, 0, 255, 0.2).blend(COLOR_PART, 0.5).freeze
+        k_mesh.transformation = ot
+        @tool.append_3d(k_mesh, LAYER_3D_ACTION_PREVIEW)
 
-          k_polyline = Kuix::Polyline.new
-          k_polyline.add_points(touching_def.face_manipulator.outer_loop_manipulator.points)
-          k_polyline.line_width = 2
-          k_polyline.color = Kuix::COLOR_MAGENTA
-          k_polyline.transformation = drawing_def.transformation
-          k_polyline.closed = true
-          k_polyline.on_top = true
-          @tool.append_3d(k_polyline, 100)
+      else
+        return
+      end
 
-          # k_polyline = Kuix::Polyline.new
-          # k_polyline.add_points(touching_def.neighbor_face_manipulator.outer_loop_manipulator.points)
-          # k_polyline.line_width = 2
-          # k_polyline.color = Kuix::COLOR_CYAN
-          # k_polyline.transformation = neighbor_def.drawing_def.transformation
-          # k_polyline.closed = true
-          # k_polyline.on_top = true
-          # @tool.append_3d(k_polyline, 100)
+      neighbor_defs = neighborhood_def[:neighbor_defs]
+
+      pt = @picker.picked_point
+
+      edge_manipulator = face_manipulator.loop_manipulators
+                                         .flat_map { |lm| lm.edge_manipulators }
+                                         .select { |em| neighbor_defs.any? { |nd| nd.touching_defs.any? { |td| td.face_manipulator.face != face_manipulator.face && td.face_manipulator.face.edges.include?(em.edge) } } }
+                                         .min { |em1, em2| em1.distance_to_edge(pt) <=> em2.distance_to_edge(pt) }
+
+      if edge_manipulator.is_a?(EdgeManipulator)
+
+        # Highlight picked segment
+        # k_segments = Kuix::Segments.new
+        # k_segments.add_segments(edge_manipulator.segment)
+        # k_segments.color = Kuix::COLOR_MAGENTA
+        # k_segments.line_width = 2
+        # k_segments.on_top = true
+        # @tool.append_3d(k_segments, LAYER_3D_ACTION_PREVIEW)
+
+        vertex_manipulator = edge_manipulator.vertex_manipulators.min { |vm1, vm2| pt.distance(vm1.point) <=> pt.distance(vm2.point) }
+
+        if vertex_manipulator.is_a?(VertexManipulator)
+
+          k_points = _create_floating_points(
+            points: vertex_manipulator.point,
+            style: Kuix::POINT_STYLE_SQUARE,
+          )
+          @tool.append_3d(k_points, LAYER_3D_ACTION_PREVIEW)
 
         end
 
-        k_mesh = Kuix::Mesh.new
-        k_mesh.add_triangles(neighbor_def.drawing_def.face_manipulators.flat_map { |face_manipulator| face_manipulator.triangles })
-        k_mesh.background_color = ColorUtils.color_translucent(Kuix::COLOR_GREEN, 0.3)
-        k_mesh.transformation = neighbor_def.drawing_def.transformation
-        @tool.append_3d(k_mesh, 100)
+      else
+        return
+      end
+
+      neighbor_defs.each do |neighbor_def|
+
+        neighbor_def.touching_defs
+                    .select { |touching_def|
+                        touching_def.touching_polys.any? &&
+                        touching_def.face_manipulator.face != face_manipulator.face &&
+                        touching_def.face_manipulator.face.edges.any? { |edge| edge == edge_manipulator.edge }
+                    }
+                    .each do |touching_def|
+
+          origin = vertex_manipulator.point
+          x_axis = edge_manipulator.direction
+          z_axis = touching_def.face_manipulator.normal
+          y_axis = z_axis * x_axis
+          at = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis)
+          ati = at.inverse
+
+          # k_axes = Kuix::AxesHelper.new
+          # k_axes.transformation = at
+          # @tool.append_3d(k_axes, LAYER_3D_ACTION_PREVIEW)
+
+          touching_def.touching_polys.each do |touching_poly|
+
+            k_polyline = Kuix::Polyline.new
+            k_polyline.add_points(touching_poly)
+            k_polyline.line_width = 2
+            k_polyline.color = Kuix::COLOR_MAGENTA
+            k_polyline.closed = true
+            k_polyline.on_top = true
+            @tool.append_3d(k_polyline, LAYER_3D_ACTION_PREVIEW)
+
+            touching_poly_2d = touching_poly.map { |point| point.transform(ati) }
+            touching_poly_bounds = Geom::BoundingBox.new.add(touching_poly_2d)
+            touching_poly_vx = touching_poly_bounds.min.project_to_line([ ORIGIN, X_AXIS ]).vector_to(touching_poly_bounds.max.project_to_line([ ORIGIN, X_AXIS ]))
+            touching_poly_vy = touching_poly_bounds.min.project_to_line([ ORIGIN, Y_AXIS ]).vector_to(touching_poly_bounds.max.project_to_line([ ORIGIN, Y_AXIS ]))
+            touching_poly_pts_2d = [ 1/3.0, 2/3.0 ].map! { |f| touching_poly_bounds.min.offset(touching_poly_vx, touching_poly_bounds.width * f).offset(touching_poly_vy, touching_poly_bounds.height * 0.5) }
+
+            # k_polyline = Kuix::Polyline.new
+            # k_polyline.add_points(touching_poly_2d)
+            # k_polyline.line_width = 2
+            # k_polyline.color = Kuix::COLOR_BLACK
+            # k_polyline.closed = true
+            # @tool.append_3d(k_polyline, LAYER_3D_ACTION_PREVIEW)
+            #
+            # k_points = _create_floating_points(
+            #   points: touching_poly_pts_2d,
+            #   style: Kuix::POINT_STYLE_PLUS,
+            # )
+            # @tool.append_3d(k_points, LAYER_3D_ACTION_PREVIEW)
+
+            touching_poly_pts_3d = touching_poly_pts_2d.map { |pt| pt.transform(at) }
+
+            k_points = _create_floating_points(
+              points: touching_poly_pts_3d,
+              style: Kuix::POINT_STYLE_PLUS,
+              stroke_color: Kuix::COLOR_MAGENTA
+              )
+            @tool.append_3d(k_points, LAYER_3D_ACTION_PREVIEW)
+
+          end
+
+          k_mesh = Kuix::Mesh.new
+          k_mesh.add_triangles(neighbor_def.drawing_def.face_manipulators.flat_map { |face_manipulator| face_manipulator.triangles })
+          k_mesh.background_color = ColorUtils.color_translucent(Kuix::COLOR_GREEN, 0.3)
+          k_mesh.transformation = neighbor_def.drawing_def.transformation
+          @tool.append_3d(k_mesh, LAYER_3D_ACTION_PREVIEW)
+
+        end
 
       end
 
@@ -255,7 +299,10 @@ module Ladb::OpenCutList
 
       h_neighbor_defs = {}
 
-      kb = Kuix::Bounds3d.new
+      kbd = Kuix::Bounds3d.new
+                         .copy!(drawing_def.bounds)
+                         .inflate_all!(-aperture / 2.0)
+      kbi = Kuix::Bounds3d.new
                          .copy!(drawing_def.bounds)
                          .inflate_all!(aperture)
 
@@ -274,7 +321,7 @@ module Ladb::OpenCutList
 
       # 1. Pick from the bounding box
 
-      num_picked = ph.boundingbox_pick(kb.to_b, Sketchup::PickHelper::PICK_CROSSING, drawing_def.transformation)
+      num_picked = ph.boundingbox_pick(kbi.to_b, Sketchup::PickHelper::PICK_CROSSING, drawing_def.transformation)
       num_picked.times do |index|
 
         path = ph.path_at(index)
@@ -290,7 +337,7 @@ module Ladb::OpenCutList
         #   k_edge.line_width = 3
         #   k_edge.color = Kuix::COLOR_MAGENTA
         #   k_edge.on_top = true
-        #   @tool.append_3d(k_edge, 100)
+        #   @tool.append_3d(k_edge, LAYER_3D_ACTION_PREVIEW)
         #
         # elsif path.last.is_a?(Sketchup::Face)
         #
@@ -299,7 +346,7 @@ module Ladb::OpenCutList
         #   k_mesh = Kuix::Mesh.new
         #   k_mesh.add_triangles(face_manipulator.triangles)
         #   k_mesh.background_color = ColorUtils.color_translucent(Kuix::COLOR_MAGENTA, 0.3)
-        #   @tool.append_3d(k_mesh, 100)
+        #   @tool.append_3d(k_mesh, LAYER_3D_ACTION_PREVIEW)
         #
         # end
 
@@ -311,8 +358,9 @@ module Ladb::OpenCutList
 
       8.times do |corner|
 
-        p0 = drawing_def.bounds.corner(corner).transform(drawing_def.transformation)
-        p1 = kb.corner(corner).to_p.transform(drawing_def.transformation)
+        # p0 = drawing_def.bounds.corner(corner).transform(drawing_def.transformation)
+        p0 = kbd.corner(corner).to_p.transform(drawing_def.transformation)
+        p1 = kbi.corner(corner).to_p.transform(drawing_def.transformation)
 
         v = p0.vector_to(p1)
         dmax = v.length
@@ -336,7 +384,7 @@ module Ladb::OpenCutList
           #   k_edge.line_width = 3
           #   k_edge.color = Kuix::COLOR_MAGENTA
           #   k_edge.on_top = true
-          #   @tool.append_3d(k_edge, 100)
+          #   @tool.append_3d(k_edge, LAYER_3D_ACTION_PREVIEW)
           #
           # elsif path.last.is_a?(Sketchup::Face)
           #
@@ -345,7 +393,7 @@ module Ladb::OpenCutList
           #   k_mesh = Kuix::Mesh.new
           #   k_mesh.add_triangles(face_manipulator.triangles)
           #   k_mesh.background_color = ColorUtils.color_translucent(Kuix::COLOR_MAGENTA, 0.3)
-          #   @tool.append_3d(k_mesh, 100)
+          #   @tool.append_3d(k_mesh, LAYER_3D_ACTION_PREVIEW)
           #
           # end
 
@@ -358,38 +406,45 @@ module Ladb::OpenCutList
       # Restore instance visibility
       _unhide_instance
 
+      # Transform the drawing def to the 'World' space
+      drawing_def.transform!(drawing_def.transformation.inverse)
+
       # 3. Search touching faces
 
-      part_transformation = drawing_def.transformation
-      part_face_infos = drawing_def.face_manipulators.map do |fm|
-        {
-          face_manipulator: fm,
-          world_normal: fm.normal.transform(part_transformation),
-          world_position: fm.position.transform(part_transformation),
-        }
-      end
+      neighbor_defs = h_neighbor_defs.values.each do |neighbor_def|
 
-      neighbor_defs = h_neighbor_defs.values
+        # Iterate on part faces
+        drawing_def.face_manipulators.each do |fm|
 
-      neighbor_defs.each do |neighbor_def|
+          # Iterate on neighbor faces
+          neighbor_def.drawing_def.face_manipulators.each do |nfm|
 
-        neighbor_transformation = neighbor_def.drawing_def.transformation
-
-        # Iterate on neighbor faces
-        neighbor_def.drawing_def.face_manipulators.each do |neighbor_face_manipulator|
-
-          neighbor_world_normal = neighbor_face_manipulator.normal.transform(neighbor_transformation)
-          neighbor_world_position = neighbor_face_manipulator.position.transform(neighbor_transformation)
-
-          # Iterate on part faces
-          part_face_infos.each do |face_info|
-
-            next unless face_info[:world_normal].parallel?(neighbor_world_normal)
-            next if face_info[:world_normal].samedirection?(neighbor_world_normal)
-            next unless face_info[:world_position].distance_to_plane([ neighbor_world_position, neighbor_world_normal ]) < 0.001
+            next unless fm.normal.parallel?(nfm.normal)
+            next if fm.normal.samedirection?(nfm.normal)
+            next unless fm.position.distance_to_plane([ nfm.position, nfm.normal ]) < 0.001
 
             # Touching !
-            neighbor_def.touching_defs << NeighborTouchingDef.new(face_info[:face_manipulator], neighbor_face_manipulator)
+
+            # Compute the transformation matrix to transform world space to touching 2D space
+            origin = fm.position
+            z_axis = fm.normal
+            x_axis = fm.outer_loop_manipulator.edge_manipulators.first.direction.normalize  # Use first edge direction as arbitrary x axis
+            y_axis = z_axis * x_axis
+            at = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis)
+            ati = at.inverse
+
+            # Compute part and neighbor touching intersections polygons
+            f_2d_paths = fm.loop_manipulators
+                                      .map { |loop_manipulator| loop_manipulator.points.map { |point| point.transform(ati) } }
+                                      .map! { |points| Clippy.points_to_rpath(points) }
+            nf_2d_paths = nfm.loop_manipulators
+                                      .map { |loop_manipulator| loop_manipulator.points.map { |point| point.transform(ati) } }
+                                      .map! { |points| Clippy.points_to_rpath(points) }
+
+            touching_2d_paths, op = Clippy.execute_intersection(closed_subjects: f_2d_paths, clips: nf_2d_paths)
+            touching_polys = touching_2d_paths.map { |path| Clippy.rpath_to_points(path, 0).map { |point| point.transform(at)} }
+
+            neighbor_def.touching_defs << NeighborTouchingDef.new(fm, nfm, touching_polys)
 
           end
 
@@ -411,28 +466,36 @@ module Ladb::OpenCutList
       picked_part_entity_path = _get_part_entity_path_from_path(path)
       return nil if picked_part_entity_path.nil?
       return nil if h_neighbor_defs.has_key?(picked_part_entity_path)
+      # TODO find a cleanest way to exclude part out of active path
       if picked_part_entity_path != get_active_selection_path &&
          (picked_drawing_def = CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new(picked_part_entity_path) ], **_get_drawing_def_parameters).run).is_a?(DrawingDef)
 
+        # Transform the drawing def to the 'World' space
+        picked_drawing_def.transform!(picked_drawing_def.transformation.inverse)
+
+        # Exclude invalid drawing defs
         return unless picked_drawing_def.bounds.valid?
 
+        # Store the new neighbor def
         h_neighbor_defs[picked_part_entity_path] = NeighborDef.new(picked_part_entity_path, picked_drawing_def)
 
         # k_mesh = Kuix::Mesh.new
         # k_mesh.add_triangles(picked_drawing_def.face_manipulators.flat_map { |face_manipulator| face_manipulator.triangles })
         # k_mesh.background_color = ColorUtils.color_translucent(Kuix::COLOR_GREEN, 0.3)
         # k_mesh.transformation = picked_drawing_def.transformation
-        # @tool.append_3d(k_mesh, 100)
+        # @tool.append_3d(k_mesh, LAYER_3D_ACTION_PREVIEW)
 
       end
     end
+
+    # Data Structs -----
 
     NeighborDef = Struct.new(:path, :drawing_def, :touching_defs) do
       def initialize(path, drawing_def, touching_defs = [])
         super(path, drawing_def, touching_defs)
       end
     end
-    NeighborTouchingDef = Struct.new(:face_manipulator, :neighbor_face_manipulator)
+    NeighborTouchingDef = Struct.new(:face_manipulator, :neighbor_face_manipulator, :touching_polys)
 
   end
 

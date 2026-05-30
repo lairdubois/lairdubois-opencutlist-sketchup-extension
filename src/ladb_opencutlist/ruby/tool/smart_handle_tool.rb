@@ -489,10 +489,6 @@ module Ladb::OpenCutList
       !@previous_action_handler.is_a?(self.class)
     end
 
-    def _start_with_callback_selection?
-      true
-    end
-
     def _allows_multiple_selections?
       true
     end

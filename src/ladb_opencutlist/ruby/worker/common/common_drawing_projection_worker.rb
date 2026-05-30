@@ -1,7 +1,6 @@
 module Ladb::OpenCutList
 
   require_relative '../../lib/fiddle/clippy/clippy'
-  require_relative '../../lib/fiddle/meshy/meshy'
   require_relative '../../lib/geometrix/geometrix'
   require_relative '../../lib/kuix/kuix'
   require_relative '../../model/drawing/drawing_def'
@@ -118,7 +117,7 @@ module Ladb::OpenCutList
                                     .map! { |points| Clippy.points_to_rpath(face_manipulator_def.machining? ? points.reverse : points) }
         else
           f_paths = face_manipulator.loop_manipulators
-                                    .map { |loop_manipulator| loop_manipulator.points }
+                                    .map(&:points)
                                     .map! { |points| Clippy.points_to_rpath(face_manipulator_def.machining? ? points.reverse : points) }
         end
 

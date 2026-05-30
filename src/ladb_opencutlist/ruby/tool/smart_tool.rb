@@ -3009,7 +3009,7 @@ module Ladb::OpenCutList
 
         _select_from_smart_selection(@tool.startup_selection)
 
-      else
+      elsif _start_with_model_selection?
 
         _select_from_model_selection
 
@@ -3443,8 +3443,8 @@ module Ladb::OpenCutList
       false
     end
 
-    def _start_with_callback_selection?
-      false
+    def _start_with_model_selection?
+      true
     end
 
     def _allows_multiple_selections?
