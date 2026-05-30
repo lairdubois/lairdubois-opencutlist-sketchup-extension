@@ -1259,6 +1259,16 @@ module Ladb::OpenCutList
           k_rectangle_fill.patterns_transformation = patterns_transformation
           @tool.append_3d(k_rectangle_fill, LAYER_3D_CUTTERS_PREVIEW)
 
+          k_point = _create_floating_points(
+            points: [ section.center.to_p ],
+            style: Kuix::POINT_STYLE_CIRCLE,
+            fill_color: section_color,
+            stroke_color: nil,
+            size: 1
+          )
+          k_point.transformation = et
+          @tool.append_3d(k_point, LAYER_3D_CUTTERS_PREVIEW)
+
         end
 
       end
