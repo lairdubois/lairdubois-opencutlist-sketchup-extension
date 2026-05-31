@@ -964,7 +964,7 @@ module Ladb::OpenCutList
                       x: x,
                       y: y,
                       item_defs: item_type_def.item_type_defs.map { |sub_item_type_def|
-                        instance_metas = instance_metas_by_item_type_def[sub_item_type_def].is_a?(Array) ? instance_metas_by_item_type_def[sub_item_type_def].shift : nil
+                        instance_metas = (instance_metas_by_item_type_def[sub_item_type_def].is_a?(Array) ? instance_metas_by_item_type_def[sub_item_type_def].shift : nil) || {}
                         PackingItemDef.new(
                           item_type_def: sub_item_type_def,
                           instance_info: instance_metas[:instance_info],
@@ -981,7 +981,7 @@ module Ladb::OpenCutList
                     )
                   else
                     label_offset = label_offsets_by_item_type_def[item_type_def]
-                    instance_metas = instance_metas_by_item_type_def[item_type_def].is_a?(Array) ? instance_metas_by_item_type_def[item_type_def].shift : nil
+                    instance_metas = (instance_metas_by_item_type_def[item_type_def].is_a?(Array) ? instance_metas_by_item_type_def[item_type_def].shift : nil) || {}
                     PackingItemDef.new(
                       item_type_def: item_type_def,
                       instance_info: instance_metas[:instance_info],
