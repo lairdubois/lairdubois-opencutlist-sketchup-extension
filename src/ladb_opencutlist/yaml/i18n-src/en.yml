@@ -482,11 +482,11 @@ tab:
         *OpenCutList will then count 2 parts of 19mm thickness instead of 1 part of 38mm.*
       cut_options: $t(tab.materials.edit_material.cut_options)
       length_increase: $t(tab.materials.edit_material.length_increase)
-      length_increase_help: Oversize applied to the finished length to define the **raw length**.  # TODO: singular version of tab.materials.edit_material.length_increase
+      length_increase_help: Oversize applied to the finished length of the part to define its **raw length**.  # TODO: singular version of tab.materials.edit_material.length_increase
       width_increase: $t(tab.materials.edit_material.width_increase)
-      width_increase_help: Oversize applied to the finished width to define the **raw width**. # TODO: singular version of tab.materials.edit_material.width_increase
+      width_increase_help: Oversize applied to the finished width of the part to define its **raw width**. # TODO: singular version of tab.materials.edit_material.width_increase
       thickness_increase: $t(tab.materials.edit_material.thickness_increase)
-      thickness_increase_help: Oversize applied to the thickness to define the **raw thickness**. # TODO: singular version of tab.materials.edit_material.thickness_increase
+      thickness_increase_help: Oversize applied to the thickness of the part to define its **raw thickness**. # TODO: singular version of tab.materials.edit_material.thickness_increase
       description: Description
       description_help: |
         The *Description* provides a personalized information on each part definition.
@@ -519,7 +519,7 @@ tab:
       follow_grain_direction: Grain Continuity
       follow_grain_direction_help: |
         By enabling this option, instances of this part will be treated as parts laid out in **Grain Continuity** with their neighbors that share:
-        - the same *Grain Continuity Group*
+        - the same *Grain Continuity group*
         - the same Orientation
         - the same Material with grain
         - the same Thickness
@@ -1164,8 +1164,8 @@ tab:
       option_time_limit_help: |
         Fix time limit to computation
       grain_groups:
-        title: "{{ count }} grain continuity group"
-        title_plural: "{{ count }} grain continuity groups"
+        title: "{{ count }} Grain Continuity group"
+        title_plural: "{{ count }} Grain Continuity groups"
         name: Name
         item_count: Σ Parts
       tooltip:
@@ -1267,7 +1267,7 @@ tab:
         unplaced_parts: "**1 part** could not be placed."
         unplaced_parts_plural: "**{{ count }} parts** could not be placed."
         unusable_part_1: Part too large
-        unusable_part_2: Grain Continuity Group too large
+        unusable_part_2: Grain Continuity group too large
       warning:
         is_part_selection: This cutting diagram is limited to **selected parts**.
         cutting_dimensions: This cutting diagram uses the **raw** dimensions of the parts.
@@ -1789,8 +1789,8 @@ tab:
       name: Name
       instance_name: Instance
       material: Material
-      is_grain_group: Define as **Grain Continuity Group**
-      is_grain_group_help: If you enable this option, this instance will be treated as a **Grain Continuity Group** for the parts it contains that have *Grain Continuity* enabled.
+      is_grain_group: Define as **Grain Continuity group**
+      is_grain_group_help: If you enable this option, this instance will be treated as a **Grain Continuity group** for the parts it contains that have *Grain Continuity* enabled.
       definition_name: Definition
       description: Description
       url: URL
@@ -2486,9 +2486,9 @@ tool:
     action_4: Move Origin
     action_4_status: Target a face of a part and click on a point to place its origin there
     action_5: Configure Grain Continuity
-    action_5_status: Click on a part to activate or deactivate detection of grain continuity
-    action_5_to_state_10_status: Configure Grain Continuity Group
-    action_5_state_10_status: Click an item in the list to change its Grain Continuity Group status
+    action_5_status: Click on a part to activate or deactivate the detection of grain continuity
+    action_5_to_state_10_status: Select Grain Continuity group
+    action_5_state_10_status: Click an item in the list to change its Grain Continuity group status
     action_option_group_direction: Direction
     action_option_direction_0: L
     action_option_direction_1: W
@@ -2507,6 +2507,12 @@ tool:
     title: Assemble
     action_0: Touch-Touch # TODO: It's currently just for dev purposes
     action_0_status: TBD # TODO
+    action_option_group_offset: Offset
+    action_option_group_spacing: Spacing
+    action_option_offset_start_offset: Start offset
+    action_option_offset_end_offset: End offset
+    action_option_spacing_min_spacing: Minimum spacing
+    action_option_spacing_max_spacing: Maximum spacing
   smart_export:
     title: Export
     action_0: Export 3D Part
