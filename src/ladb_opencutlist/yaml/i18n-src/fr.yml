@@ -2508,6 +2508,12 @@ tool:
     title: Assembler
     action_0: Touch-Touch # TODO: It's currently just for dev purposes
     action_0_status: TBD # TODO
+    action_option_group_offset: Décalage
+    action_option_group_spacing: Espacement
+    action_option_offset_start_offset: Décalage début
+    action_option_offset_end_offset: Décalage fin
+    action_option_spacing_min_spacing: Espacement min
+    action_option_spacing_max_spacing: Espacement max
   smart_export:
     title: Exporter
     action_0: Exporter une pièce 3D

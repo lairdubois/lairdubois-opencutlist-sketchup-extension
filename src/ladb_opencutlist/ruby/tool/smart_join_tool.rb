@@ -9,10 +9,22 @@ module Ladb::OpenCutList
 
     ACTION_0 = 0
 
+    ACTION_OPTION_OFFSET = 'offset'
+    ACTION_OPTION_SPACING = 'spacing'
+
+    ACTION_OPTION_OFFSET_START_OFFSET = 'start_offset'
+    ACTION_OPTION_OFFSET_END_OFFSET = 'end_offset'
+
+    ACTION_OPTION_SPACING_MIN_SPACING = 'min_spacing'
+    ACTION_OPTION_SPACING_MAX_SPACING = 'max_spacing'
+
     ACTIONS = [
       {
         :action => ACTION_0,
-        :options => {}
+        :options => {
+          ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_START_OFFSET, ACTION_OPTION_OFFSET_END_OFFSET ],
+          ACTION_OPTION_SPACING => [ ACTION_OPTION_SPACING_MIN_SPACING, ACTION_OPTION_SPACING_MAX_SPACING ],
+        }
       }
     ].freeze
 
@@ -55,12 +67,46 @@ module Ladb::OpenCutList
     end
 
     def get_action_option_toggle?(action, option_group, option)
+
+      case option_group
+      when ACTION_OPTION_OFFSET
+        case option
+        when ACTION_OPTION_OFFSET_START_OFFSET, ACTION_OPTION_OFFSET_END_OFFSET
+          return false
+        end
+      when ACTION_OPTION_SPACING
+        case option
+        when ACTION_OPTION_SPACING_MIN_SPACING, ACTION_OPTION_SPACING_MAX_SPACING
+          return false
+        end
+      end
+
       super
     end
 
     def get_action_option_btn_child(action, option_group, option)
+
+      case option_group
+
+      when ACTION_OPTION_OFFSET
+        case option
+        when ACTION_OPTION_OFFSET_START_OFFSET
+          return Kuix::Label.new(fetch_action_option_value(action, option_group, option).to_s)
+        when ACTION_OPTION_OFFSET_END_OFFSET
+          return Kuix::Label.new(fetch_action_option_value(action, option_group, option).to_s)
+        end
+      when ACTION_OPTION_SPACING
+        case option
+        when ACTION_OPTION_SPACING_MIN_SPACING
+          return Kuix::Label.new(fetch_action_option_value(action, option_group, option).to_s)
+        when ACTION_OPTION_SPACING_MAX_SPACING
+          return Kuix::Label.new(fetch_action_option_value(action, option_group, option).to_s)
+        end
+      end
+
       super
     end
+
 
     # -- Events --
 
@@ -104,13 +150,6 @@ module Ladb::OpenCutList
     end
 
     # -----
-
-    def start
-      super
-
-      puts "SmartJoin0ActionHandler START"
-
-    end
 
     # -- STATE --
 
@@ -202,6 +241,17 @@ module Ladb::OpenCutList
           )
           @tool.append_3d(k_points, LAYER_3D_ACTION_PREVIEW)
 
+          k_edge = Kuix::EdgeMotif3d.new
+          k_edge.start.copy!(pt)
+          k_edge.end.copy!(vertex_manipulator.point)
+          k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+          k_edge.line_width = 1
+          k_edge.color = Kuix::COLOR_DARK_GREY
+          k_edge.on_top = true
+          @tool.append_3d(k_edge, LAYER_3D_ACTION_PREVIEW)
+
+        else
+          return
         end
 
       else
@@ -220,6 +270,7 @@ module Ladb::OpenCutList
 
           origin = vertex_manipulator.point
           x_axis = edge_manipulator.direction
+          x_axis = x_axis.reverse if origin == edge_manipulator.end_point
           z_axis = touching_def.face_manipulator.normal
           y_axis = z_axis * x_axis
           at = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis)
@@ -243,7 +294,27 @@ module Ladb::OpenCutList
             touching_poly_bounds = Geom::BoundingBox.new.add(touching_poly_2d)
             touching_poly_vx = touching_poly_bounds.min.project_to_line([ ORIGIN, X_AXIS ]).vector_to(touching_poly_bounds.max.project_to_line([ ORIGIN, X_AXIS ]))
             touching_poly_vy = touching_poly_bounds.min.project_to_line([ ORIGIN, Y_AXIS ]).vector_to(touching_poly_bounds.max.project_to_line([ ORIGIN, Y_AXIS ]))
-            touching_poly_pts_2d = [ 1/3.0, 2/3.0 ].map! { |f| touching_poly_bounds.min.offset(touching_poly_vx, touching_poly_bounds.width * f).offset(touching_poly_vy, touching_poly_bounds.height * 0.5) }
+
+            touching_length = touching_poly_bounds.width
+
+            start_offset = _fetch_option_start_offset
+            end_offset = _fetch_option_end_offset
+            min_spacing = _fetch_option_min_spacing
+            max_spacing = _fetch_option_max_spacing
+
+            if touching_length > start_offset + end_offset
+              middle_length = touching_poly_bounds.width - start_offset - end_offset
+              nb = (middle_length / max_spacing).ceil
+              spacing = middle_length / nb
+              coords = []
+              coords << start_offset
+              coords += (0...nb).map { |i| start_offset + spacing * i }
+              coords << touching_poly_bounds.width - end_offset
+            else
+              coords = [ touching_poly_bounds.width / 2 ]
+            end
+
+            touching_poly_pts_2d = coords.map! { |l| touching_poly_bounds.min.offset(touching_poly_vx, l).offset(touching_poly_vy, touching_poly_bounds.height * 0.5) }
 
             # k_polyline = Kuix::Polyline.new
             # k_polyline.add_points(touching_poly_2d)
@@ -283,6 +354,24 @@ module Ladb::OpenCutList
 
     # -----
 
+    def _fetch_option_start_offset
+      @tool.fetch_action_option_length(@action, SmartJoinTool::ACTION_OPTION_OFFSET, SmartJoinTool::ACTION_OPTION_OFFSET_START_OFFSET)
+    end
+
+    def _fetch_option_end_offset
+      @tool.fetch_action_option_length(@action, SmartJoinTool::ACTION_OPTION_OFFSET, SmartJoinTool::ACTION_OPTION_OFFSET_END_OFFSET)
+    end
+
+    def _fetch_option_min_spacing
+      @tool.fetch_action_option_length(@action, SmartJoinTool::ACTION_OPTION_SPACING, SmartJoinTool::ACTION_OPTION_SPACING_MIN_SPACING)
+    end
+
+    def _fetch_option_max_spacing
+      @tool.fetch_action_option_length(@action, SmartJoinTool::ACTION_OPTION_SPACING, SmartJoinTool::ACTION_OPTION_SPACING_MAX_SPACING)
+    end
+
+    # -----
+
     def _get_drawing_def_parameters
       {
         ignore_surfaces: true,
@@ -305,13 +394,13 @@ module Ladb::OpenCutList
 
       kbd = Kuix::Bounds3d.new
                          .copy!(drawing_def.bounds)
-                         .inflate_all!(-aperture / 2.0)
+                         .inflate_all!(-aperture / 2.0) # Deflate of 1/2x aperture
       kbi = Kuix::Bounds3d.new
                          .copy!(drawing_def.bounds)
-                         .inflate_all!(aperture)
+                         .inflate_all!(aperture)        # Inflate of 1x aperture
 
       # k_box = Kuix::BoxMotif3d.new
-      # k_box.bounds.copy!(kb)
+      # k_box.bounds.copy!(kbi)
       # k_box.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
       # k_box.line_width = 1.5
       # k_box.color = Kuix::COLOR_RED
@@ -321,65 +410,20 @@ module Ladb::OpenCutList
       # Hide instance
       _hide_instance
 
-      ph = view.pick_helper
+      begin
 
-      # 1. Pick from the bounding box
+        ph = view.pick_helper
 
-      num_picked = ph.boundingbox_pick(kbi.to_b, Sketchup::PickHelper::PICK_CROSSING, drawing_def.transformation)
-      num_picked.times do |index|
+        # 1. Pick from the bounding box
 
-        path = ph.path_at(index)
+        num_picked = ph.boundingbox_pick(kbi.to_b, Sketchup::PickHelper::PICK_CROSSING, drawing_def.transformation)
+        num_picked.times do |index|
 
-        # if path.last.is_a?(Sketchup::Edge)
-        #
-        #   edge_manipulator = EdgeManipulator.new(path.last, ph.transformation_at(index))
-        #
-        #   k_edge = Kuix::EdgeMotif3d.new
-        #   k_edge.start.copy!(edge_manipulator.start_point)
-        #   k_edge.end.copy!(edge_manipulator.end_point)
-        #   k_edge.line_stipple = Kuix::LINE_STIPPLE_SOLID
-        #   k_edge.line_width = 3
-        #   k_edge.color = Kuix::COLOR_MAGENTA
-        #   k_edge.on_top = true
-        #   @tool.append_3d(k_edge, LAYER_3D_ACTION_PREVIEW)
-        #
-        # elsif path.last.is_a?(Sketchup::Face)
-        #
-        #   face_manipulator = FaceManipulator.new(path.last, ph.transformation_at(index))
-        #
-        #   k_mesh = Kuix::Mesh.new
-        #   k_mesh.add_triangles(face_manipulator.triangles)
-        #   k_mesh.background_color = ColorUtils.color_translucent(Kuix::COLOR_MAGENTA, 0.3)
-        #   @tool.append_3d(k_mesh, LAYER_3D_ACTION_PREVIEW)
-        #
-        # end
-
-        _try_to_add_neighbor(path, h_neighbor_defs)
-
-      end
-
-      # 2. Pick by 8 ray corners
-
-      8.times do |corner|
-
-        # p0 = drawing_def.bounds.corner(corner).transform(drawing_def.transformation)
-        p0 = kbd.corner(corner).to_p.transform(drawing_def.transformation)
-        p1 = kbi.corner(corner).to_p.transform(drawing_def.transformation)
-
-        v = p0.vector_to(p1)
-        dmax = v.length
-        ray = [ p0.offset(v.reverse), v ]
-
-        hit, path = view.model.raytest(ray)
-        if hit
-
-          next if p0.distance(hit) > dmax
-
-          # t = PathUtils.get_transformation(path)
+          path = ph.path_at(index)
 
           # if path.last.is_a?(Sketchup::Edge)
           #
-          #   edge_manipulator = EdgeManipulator.new(path.last, t)
+          #   edge_manipulator = EdgeManipulator.new(path.last, ph.transformation_at(index))
           #
           #   k_edge = Kuix::EdgeMotif3d.new
           #   k_edge.start.copy!(edge_manipulator.start_point)
@@ -392,7 +436,7 @@ module Ladb::OpenCutList
           #
           # elsif path.last.is_a?(Sketchup::Face)
           #
-          #   face_manipulator = FaceManipulator.new(path.last, t)
+          #   face_manipulator = FaceManipulator.new(path.last, ph.transformation_at(index))
           #
           #   k_mesh = Kuix::Mesh.new
           #   k_mesh.add_triangles(face_manipulator.triangles)
@@ -405,10 +449,61 @@ module Ladb::OpenCutList
 
         end
 
-      end
+        # 2. Pick by 8 ray corners
 
-      # Restore instance visibility
-      _unhide_instance
+        8.times do |corner|
+
+          # p0 = drawing_def.bounds.corner(corner).transform(drawing_def.transformation)
+          p0 = kbd.corner(corner).to_p.transform(drawing_def.transformation)
+          p1 = kbi.corner(corner).to_p.transform(drawing_def.transformation)
+
+          v = p0.vector_to(p1)
+          dmax = v.length
+          ray = [ p0.offset(v.reverse), v ]
+
+          hit_point, path = view.model.raytest(ray)
+          if hit_point
+
+            next if p0.distance(hit_point) > dmax
+
+            # t = PathUtils.get_transformation(path)
+
+            # if path.last.is_a?(Sketchup::Edge)
+            #
+            #   edge_manipulator = EdgeManipulator.new(path.last, t)
+            #
+            #   k_edge = Kuix::EdgeMotif3d.new
+            #   k_edge.start.copy!(edge_manipulator.start_point)
+            #   k_edge.end.copy!(edge_manipulator.end_point)
+            #   k_edge.line_stipple = Kuix::LINE_STIPPLE_SOLID
+            #   k_edge.line_width = 3
+            #   k_edge.color = Kuix::COLOR_MAGENTA
+            #   k_edge.on_top = true
+            #   @tool.append_3d(k_edge, LAYER_3D_ACTION_PREVIEW)
+            #
+            # elsif path.last.is_a?(Sketchup::Face)
+            #
+            #   face_manipulator = FaceManipulator.new(path.last, t)
+            #
+            #   k_mesh = Kuix::Mesh.new
+            #   k_mesh.add_triangles(face_manipulator.triangles)
+            #   k_mesh.background_color = ColorUtils.color_translucent(Kuix::COLOR_MAGENTA, 0.3)
+            #   @tool.append_3d(k_mesh, LAYER_3D_ACTION_PREVIEW)
+            #
+            # end
+
+            _try_to_add_neighbor(path, h_neighbor_defs)
+
+          end
+
+        end
+
+      ensure
+
+          # Restore instance visibility
+          _unhide_instance
+
+      end
 
       # Transform the drawing def to the 'World' space
       drawing_def.transform!(drawing_def.transformation.inverse)
@@ -468,9 +563,8 @@ module Ladb::OpenCutList
 
     def _try_to_add_neighbor(path, h_neighbor_defs)
       picked_part_entity_path = _get_part_entity_path_from_path(path)
-      return nil if picked_part_entity_path.nil?
-      return nil if h_neighbor_defs.has_key?(picked_part_entity_path)
-      # TODO find a cleanest way to exclude part out of active path
+      return nil if picked_part_entity_path.nil?                      # Exclude non-part entities
+      return nil if h_neighbor_defs.has_key?(picked_part_entity_path) # Exclude already picked part
       if picked_part_entity_path != get_active_selection_path &&
          (picked_drawing_def = CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new(picked_part_entity_path) ], **_get_drawing_def_parameters).run).is_a?(DrawingDef)
 

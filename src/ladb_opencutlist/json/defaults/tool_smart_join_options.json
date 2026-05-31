@@ -1,0 +1,8 @@
+{
+  "action_0": {  /* ACTION_0 */
+    "start_offset": { "metric": "60mm", "imperial": "1\"" },
+    "end_offset": { "metric": "60mm", "imperial": "1\"" },
+    "min_spacing": "0",
+    "max_spacing": { "metric": "300mm", "imperial": "11\"" }
+  }
+}
