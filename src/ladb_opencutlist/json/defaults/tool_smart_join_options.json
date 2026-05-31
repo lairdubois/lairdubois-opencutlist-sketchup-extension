@@ -1,4 +1,10 @@
 {
+  "_preprocessors": {
+    "start_offset": 1, /* PRESETS_PREPROCESSOR_D */
+    "end_offset": 1, /* PRESETS_PREPROCESSOR_D */
+    "min_spacing": 1, /* PRESETS_PREPROCESSOR_D */
+    "max_spacing": 1 /* PRESETS_PREPROCESSOR_D */
+  },
   "action_0": {  /* ACTION_0 */
     "start_offset": { "metric": "60mm", "imperial": "1\"" },
     "end_offset": { "metric": "60mm", "imperial": "1\"" },
