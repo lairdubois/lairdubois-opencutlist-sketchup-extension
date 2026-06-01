@@ -33,6 +33,7 @@
             const $inputEndOffset = $('#ladb_input_end_offset', that.$element);
             const $inputMinSpacing = $('#ladb_input_min_spacing', that.$element);
             const $inputMaxSpacing = $('#ladb_input_max_spacing', that.$element);
+            const $inputDepth = $('#ladb_input_depth', that.$element);
             const $btnValidate = $('#ladb_btn_validate', that.$element);
 
             const fnFetchOptions = function (options) {
@@ -40,12 +41,14 @@
                 options.end_offset = $inputEndOffset.val();
                 options.min_spacing = $inputMinSpacing.val();
                 options.max_spacing = $inputMaxSpacing.val();
+                options.depth = $inputDepth.val();
             };
             const fnFillInputs = function (options) {
                 $inputStartOffset.val(options.start_offset);
                 $inputEndOffset.val(options.end_offset);
                 $inputMinSpacing.val(options.min_spacing);
                 $inputMaxSpacing.val(options.max_spacing);
+                $inputDepth.val(options.depth);
             };
 
             $widgetPreset.ladbWidgetPreset({
@@ -59,6 +62,7 @@
             $inputEndOffset.ladbTextinputDimension();
             $inputMinSpacing.ladbTextinputDimension();
             $inputMaxSpacing.ladbTextinputDimension();
+            $inputDepth.ladbTextinputDimension();
 
             fnFillInputs(options);
 
@@ -93,6 +97,10 @@
                 else if (that.options.focused_field.option === 'max_spacing') {
                     $inputMaxSpacing.focus();
                     $inputMaxSpacing.select();
+                }
+                else if (that.options.focused_field.option === 'depth') {
+                    $inputDepth.focus();
+                    $inputDepth.select();
                 }
             }
 

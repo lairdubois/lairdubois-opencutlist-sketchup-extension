@@ -2507,12 +2507,11 @@ tool:
     title: Zusammenstellen
     action_0: Touch-Touch # TODO: It's currently just for dev purposes
     action_0_status: TBD # TODO
-    action_option_group_offset: Versatz
-    action_option_group_spacing: Abstand
-    action_option_offset_start_offset: Versatz am Anfang
-    action_option_offset_end_offset: Versatz am Ende
-    action_option_spacing_min_spacing: Mindestabstand
-    action_option_spacing_max_spacing: Höchstabstand
+    action_option_group_measures: Maßnahmen
+    action_option_measures_start_offset: Versatz am Anfang
+    action_option_measures_end_offset: Versatz am Ende
+    action_option_measures_min_spacing: Mindestabstand
+    action_option_measures_max_spacing: Höchstabstand
   smart_export:
     title: Exportieren
     action_0: 3D Teil exportieren

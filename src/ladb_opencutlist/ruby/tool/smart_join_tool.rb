@@ -9,21 +9,19 @@ module Ladb::OpenCutList
 
     ACTION_0 = 0
 
-    ACTION_OPTION_OFFSET = 'offset'
-    ACTION_OPTION_SPACING = 'spacing'
+    ACTION_OPTION_MEASURES = 'measures'
 
-    ACTION_OPTION_OFFSET_START_OFFSET = 'start_offset'
-    ACTION_OPTION_OFFSET_END_OFFSET = 'end_offset'
-
-    ACTION_OPTION_SPACING_MIN_SPACING = 'min_spacing'
-    ACTION_OPTION_SPACING_MAX_SPACING = 'max_spacing'
+    ACTION_OPTION_MEASURES_START_OFFSET = 'start_offset'
+    ACTION_OPTION_MEASURES_END_OFFSET = 'end_offset'
+    ACTION_OPTION_MEASURES_MIN_SPACING = 'min_spacing'
+    ACTION_OPTION_MEASURES_MAX_SPACING = 'max_spacing'
+    ACTION_OPTION_MEASURES_DEPTH = 'depth'
 
     ACTIONS = [
       {
         :action => ACTION_0,
         :options => {
-          ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_START_OFFSET, ACTION_OPTION_OFFSET_END_OFFSET ],
-          ACTION_OPTION_SPACING => [ ACTION_OPTION_SPACING_MIN_SPACING, ACTION_OPTION_SPACING_MAX_SPACING ],
+          ACTION_OPTION_MEASURES => [ ACTION_OPTION_MEASURES_START_OFFSET, ACTION_OPTION_MEASURES_END_OFFSET, ACTION_OPTION_MEASURES_MIN_SPACING, ACTION_OPTION_MEASURES_MAX_SPACING, ACTION_OPTION_MEASURES_DEPTH ],
         }
       }
     ].freeze
@@ -69,14 +67,11 @@ module Ladb::OpenCutList
     def get_action_option_toggle?(action, option_group, option)
 
       case option_group
-      when ACTION_OPTION_OFFSET
+      when ACTION_OPTION_MEASURES
         case option
-        when ACTION_OPTION_OFFSET_START_OFFSET, ACTION_OPTION_OFFSET_END_OFFSET
-          return false
-        end
-      when ACTION_OPTION_SPACING
-        case option
-        when ACTION_OPTION_SPACING_MIN_SPACING, ACTION_OPTION_SPACING_MAX_SPACING
+        when ACTION_OPTION_MEASURES_START_OFFSET, ACTION_OPTION_MEASURES_END_OFFSET,
+             ACTION_OPTION_MEASURES_MIN_SPACING, ACTION_OPTION_MEASURES_MAX_SPACING,
+             ACTION_OPTION_MEASURES_DEPTH
           return false
         end
       end
@@ -88,18 +83,17 @@ module Ladb::OpenCutList
 
       case option_group
 
-      when ACTION_OPTION_OFFSET
+      when ACTION_OPTION_MEASURES
         case option
-        when ACTION_OPTION_OFFSET_START_OFFSET
+        when ACTION_OPTION_MEASURES_START_OFFSET
           return Kuix::Label.new(fetch_action_option_value(action, option_group, option).to_s)
-        when ACTION_OPTION_OFFSET_END_OFFSET
+        when ACTION_OPTION_MEASURES_END_OFFSET
           return Kuix::Label.new(fetch_action_option_value(action, option_group, option).to_s)
-        end
-      when ACTION_OPTION_SPACING
-        case option
-        when ACTION_OPTION_SPACING_MIN_SPACING
+        when ACTION_OPTION_MEASURES_MIN_SPACING
           return Kuix::Label.new(fetch_action_option_value(action, option_group, option).to_s)
-        when ACTION_OPTION_SPACING_MAX_SPACING
+        when ACTION_OPTION_MEASURES_MAX_SPACING
+          return Kuix::Label.new(fetch_action_option_value(action, option_group, option).to_s)
+        when ACTION_OPTION_MEASURES_DEPTH
           return Kuix::Label.new(fetch_action_option_value(action, option_group, option).to_s)
         end
       end
@@ -376,19 +370,23 @@ module Ladb::OpenCutList
     # -----
 
     def _fetch_option_start_offset
-      @tool.fetch_action_option_length(@action, SmartJoinTool::ACTION_OPTION_OFFSET, SmartJoinTool::ACTION_OPTION_OFFSET_START_OFFSET)
+      @tool.fetch_action_option_length(@action, SmartJoinTool::ACTION_OPTION_MEASURES, SmartJoinTool::ACTION_OPTION_MEASURES_START_OFFSET)
     end
 
     def _fetch_option_end_offset
-      @tool.fetch_action_option_length(@action, SmartJoinTool::ACTION_OPTION_OFFSET, SmartJoinTool::ACTION_OPTION_OFFSET_END_OFFSET)
+      @tool.fetch_action_option_length(@action, SmartJoinTool::ACTION_OPTION_MEASURES, SmartJoinTool::ACTION_OPTION_MEASURES_END_OFFSET)
     end
 
     def _fetch_option_min_spacing
-      @tool.fetch_action_option_length(@action, SmartJoinTool::ACTION_OPTION_SPACING, SmartJoinTool::ACTION_OPTION_SPACING_MIN_SPACING)
+      @tool.fetch_action_option_length(@action, SmartJoinTool::ACTION_OPTION_MEASURES, SmartJoinTool::ACTION_OPTION_MEASURES_MIN_SPACING)
     end
 
     def _fetch_option_max_spacing
-      @tool.fetch_action_option_length(@action, SmartJoinTool::ACTION_OPTION_SPACING, SmartJoinTool::ACTION_OPTION_SPACING_MAX_SPACING)
+      @tool.fetch_action_option_length(@action, SmartJoinTool::ACTION_OPTION_MEASURES, SmartJoinTool::ACTION_OPTION_MEASURES_MAX_SPACING)
+    end
+
+    def _fetch_option_depth
+      @tool.fetch_action_option_length(@action, SmartJoinTool::ACTION_OPTION_MEASURES, SmartJoinTool::ACTION_OPTION_MEASURES_DEPTH)
     end
 
     # -----
@@ -598,12 +596,6 @@ module Ladb::OpenCutList
         # Store the new neighbor def
         h_neighbor_defs[picked_part_entity_path] = NeighborDef.new(picked_part_entity_path, picked_drawing_def)
 
-        # k_mesh = Kuix::Mesh.new
-        # k_mesh.add_triangles(picked_drawing_def.face_manipulators.flat_map { |face_manipulator| face_manipulator.triangles })
-        # k_mesh.background_color = ColorUtils.color_translucent(Kuix::COLOR_GREEN, 0.3)
-        # k_mesh.transformation = picked_drawing_def.transformation
-        # @tool.append_3d(k_mesh, LAYER_3D_ACTION_PREVIEW)
-
       end
     end
 
@@ -635,9 +627,12 @@ module Ladb::OpenCutList
           touching_def.touching_polys.each do |touching_poly|
 
             touching_poly_2d = touching_poly.map { |point| point.transform(ati) }
+
             touching_poly_bounds = Geom::BoundingBox.new.add(touching_poly_2d)
-            touching_poly_vx = touching_poly_bounds.min.project_to_line([ ORIGIN, X_AXIS ]).vector_to(touching_poly_bounds.max.project_to_line([ ORIGIN, X_AXIS ]))
-            touching_poly_vy = touching_poly_bounds.min.project_to_line([ ORIGIN, Y_AXIS ]).vector_to(touching_poly_bounds.max.project_to_line([ ORIGIN, Y_AXIS ]))
+            touching_vy = ORIGIN.vector_to([
+                                             touching_poly_bounds.min.project_to_line([ ORIGIN, Y_AXIS ]),
+                                             touching_poly_bounds.max.project_to_line([ ORIGIN, Y_AXIS ])
+                                           ].max { |point| point.distance(ORIGIN) })
 
             touching_length = touching_poly_bounds.width
 
@@ -645,26 +640,28 @@ module Ladb::OpenCutList
             end_offset = _fetch_option_end_offset
             min_spacing = _fetch_option_min_spacing
             max_spacing = _fetch_option_max_spacing
+            depth = _fetch_option_depth
 
             if touching_length > start_offset + min_spacing + end_offset
               middle_length = touching_poly_bounds.width - start_offset - end_offset
-              nb = (middle_length / max_spacing).ceil
-              spacing = middle_length / nb
+              spacing_count = max_spacing <= 0 ? 1 : (middle_length / max_spacing).ceil
+              spacing = middle_length / spacing_count
               if spacing < min_spacing
-                nb -= 1
-                spacing = middle_length / nb
+                spacing_count -= 1
+                spacing = middle_length / spacing_count
               end
-              coords = []
-              coords << start_offset
-              coords += (0...nb).map { |i| start_offset + spacing * i }
-              coords << touching_poly_bounds.width - end_offset
+              coords = (0...spacing_count + 1).map { |i| start_offset + spacing * i }
             elsif touching_length > min_spacing
               coords = [ touching_poly_bounds.width / 2 ]
             else
               coords = []
             end
 
-            touching_poly_pts_2d = coords.map! { |l| touching_poly_bounds.min.offset(touching_poly_vx, l).offset(touching_poly_vy, touching_poly_bounds.height * 0.5) }
+            next if coords.empty?
+
+            ly = depth == 0 ? touching_poly_bounds.height * 0.5 : depth
+
+            touching_poly_pts_2d = coords.map! { |lx| ORIGIN.offset(X_AXIS, touching_poly_bounds.min.x + lx).offset(touching_vy, ly) }
             touching_poly_pts_3d = touching_poly_pts_2d.map { |point| point.transform(at) }
 
             join_defs << JoinDef.new(touching_def, touching_poly, touching_poly_pts_3d)

@@ -2510,12 +2510,12 @@ tool:
     action_0: Touch-Touch 
      # TODO
     action_0_status: TBD
-    action_option_group_offset: Décalage
-    action_option_group_spacing: Espacement
-    action_option_offset_start_offset: Décalage début
-    action_option_offset_end_offset: Décalage fin
-    action_option_spacing_min_spacing: Espacement min
-    action_option_spacing_max_spacing: Espacement max
+    action_option_group_measures: Mesures
+    action_option_measures_start_offset: Décalage début
+    action_option_measures_end_offset: Décalage fin
+    action_option_measures_min_spacing: Espacement min
+    action_option_measures_max_spacing: Espacement max
+    action_option_measures_depth: Profondeur
   smart_export:
     title: Exporter
     action_0: Exporter une pièce 3D
