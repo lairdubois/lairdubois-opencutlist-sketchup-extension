@@ -348,8 +348,14 @@ module Ladb::OpenCutList
 
                 pt = point.transform(ti)
 
-                hardware_definition = Sketchup.active_model.definitions['cube']
-                instance_entities.add_instance(hardware_definition, Geom::Transformation.translation(pt) * at)
+                hardware_definition = _get_hardware_definition
+                hardware_instance = instance_entities.add_instance(hardware_definition, Geom::Transformation.translation(pt) * at)
+
+                if (material = model.materials['clamex']).nil?
+                  material = model.materials.add('clamex')
+                  material.color = Kuix::COLOR_BLACK
+                end
+                hardware_instance.material = material
 
               end
 
@@ -657,11 +663,13 @@ module Ladb::OpenCutList
               coords = []
             end
 
-            next if coords.empty?
-
             ly = depth == 0 ? touching_poly_bounds.height * 0.5 : depth
 
             touching_poly_pts_2d = coords.map! { |lx| ORIGIN.offset(X_AXIS, touching_poly_bounds.min.x + lx).offset(touching_vy, ly) }
+                                         .delete_if { |point| !Geom.point_in_polygon_2D(point, touching_poly_2d, true) }
+
+            next if coords.empty?
+
             touching_poly_pts_3d = touching_poly_pts_2d.map { |point| point.transform(at) }
 
             join_defs << JoinDef.new(touching_def, touching_poly, touching_poly_pts_3d)
@@ -677,6 +685,44 @@ module Ladb::OpenCutList
       {
         neighbor_join_defs: neighbor_join_defs
       }
+    end
+
+    def _get_hardware_definition
+      model = Sketchup.active_model
+      if (definition = model.definitions['clamex']).nil?
+        definition = model.definitions.add('clamex')
+
+        half_length = 32.0.mm
+        half_width  = 11.0.mm
+        tip_cut     = 1.5.mm
+        num_segs    = 12
+
+        pts = []
+
+        x_start = -half_length + tip_cut
+        x_end   =  half_length - tip_cut
+
+        (0..num_segs).each do |i|
+          t = i.to_f / num_segs
+          x = x_start + (x_end - x_start) * t
+          ratio = (x - (-half_length)) / (2 * half_length)  # 0 → 1
+          y = half_width * Math.sin(Math::PI * ratio)
+          pts << Geom::Point3d.new(x, 5.mm, y)
+        end
+
+        (0..num_segs).each do |i|
+          t = i.to_f / num_segs
+          x = x_end - (x_end - x_start) * t
+          ratio = (x - (-half_length)) / (2 * half_length)
+          y = -half_width * Math.sin(Math::PI * ratio)
+          pts << Geom::Point3d.new(x, 5.mm, y)
+        end
+
+        face = definition.entities.add_face(pts)
+        face.pushpull(-10.mm)
+
+      end
+      definition
     end
 
     # Data Structs -----
