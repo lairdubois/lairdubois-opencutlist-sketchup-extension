@@ -2505,8 +2505,8 @@ tool:
       not_single_thickness_layer: The target part must consist of a single layer
   smart_join:
     title: Assemble
-    action_0: Touch-Touch # TODO: It's currently just for dev purposes
-    action_0_status: TBD # TODO
+    action_0: Touch-Touch
+    action_0_status: TBD
     action_option_group_measures: Measures
     action_option_measures_start_offset: Start offset
     action_option_measures_end_offset: End offset
