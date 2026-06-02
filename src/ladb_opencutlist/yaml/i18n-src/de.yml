@@ -2505,13 +2505,14 @@ tool:
       not_single_thickness_layer: Das Zielteil muss aus einer einzigen Schicht bestehen
   smart_join:
     title: Zusammenstellen
-    action_0: Touch-Touch 
-    action_0_status: TBD
+    action_0: Platzieren 
+    action_0_status: Klicken Sie auf eine Seite eines Teils, um es mit den benachbarten Teilen zusammenzufügen
     action_option_group_measures: Maße
     action_option_measures_start_offset: Versatz am Anfang
     action_option_measures_end_offset: Versatz am Ende
     action_option_measures_min_spacing: Mindestabstand
     action_option_measures_max_spacing: Höchstabstand
+    action_option_measures_depth: Tiefe
   smart_export:
     title: Exportieren
     action_0: 3D Teil exportieren
