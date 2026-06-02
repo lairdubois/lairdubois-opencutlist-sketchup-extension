@@ -268,6 +268,20 @@ module Ladb::OpenCutList
 
                 options.each do |option|
 
+                  if (prefix = get_action_option_btn_prefix(action, option_group, option))
+                    if prefix.is_a?(Kuix::Label)
+                      prefix.text_size = unit * 3 * get_text_unit_factor if prefix.respond_to?(:text_size=)
+                      prefix.padding.set!(unit * 1.5, 0, unit, unit)
+                      prefix.min_size.height = unit * 5
+                    elsif prefix.is_a?(Kuix::Motif2d)
+                      prefix.margin.set!(unit, 0, unit, unit)
+                      prefix.min_size.set_all!(unit * 5)
+                      prefix.line_width = unit * 0.25
+                    end
+                    prefix.set_style_attribute(:color, Kuix::COLOR_DARK_GREY)
+                    actions_options_panel.append(prefix)
+                  end
+
                   btn = Kuix::Button.new
                   btn.layout = Kuix::GridLayout.new
                   btn.set_style_attribute(:background_color, Sketchup::Color.new(240, 240, 240))
@@ -306,11 +320,10 @@ module Ladb::OpenCutList
                   }
                   actions_options_panel.append(btn)
 
-                    child = get_action_option_btn_child(action, option_group, option)
-                    if child
+                    if (child = get_action_option_btn_child(action, option_group, option))
                       if child.is_a?(Kuix::Label)
                         child.text_size = unit * 3 * get_text_unit_factor if child.respond_to?(:text_size=)
-                        child.padding.set!(unit, unit * 2, unit, unit * 2)
+                        child.padding.set!(unit * 1.2, unit * 2, unit * 0.8, unit * 2)
                         child.min_size.height = unit * 4
                       elsif child.is_a?(Kuix::Motif2d)
                         child.margin.set_all!(unit)
@@ -321,6 +334,20 @@ module Ladb::OpenCutList
                       child.set_style_attribute(:color, Kuix::COLOR_WHITE, :active)
                       btn.append(child)
                     end
+
+                  if (suffix = get_action_option_btn_suffix(action, option_group, option))
+                    if suffix.is_a?(Kuix::Label)
+                      suffix.text_size = unit * 3 * get_text_unit_factor if suffix.respond_to?(:text_size=)
+                      suffix.padding.set!(unit, unit, unit, 0)
+                      suffix.min_size.height = unit * 5
+                    elsif suffix.is_a?(Kuix::Motif2d)
+                      suffix.margin.set!(unit, unit, unit, 0)
+                      suffix.min_size.set_all!(unit * 5)
+                      suffix.line_width = unit * 0.25
+                    end
+                    suffix.set_style_attribute(:color, Kuix::COLOR_DARK_GREY)
+                    actions_options_panel.append(suffix)
+                  end
 
                 end
 
@@ -1061,6 +1088,14 @@ module Ladb::OpenCutList
     end
 
     def get_action_option_btn_child(action, option_group, option)
+      nil
+    end
+
+    def get_action_option_btn_prefix(action, option_group, option)
+      nil
+    end
+
+    def get_action_option_btn_suffix(action, option_group, option)
       nil
     end
 

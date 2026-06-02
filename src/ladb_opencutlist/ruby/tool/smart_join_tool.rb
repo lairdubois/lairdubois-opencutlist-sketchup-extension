@@ -4,22 +4,25 @@ module Ladb::OpenCutList
   require_relative '../utils/color_utils'
   require_relative '../utils/path_utils'
   require_relative '../lib/fiddle/clippy/clippy'
+  require_relative '../helper/user_text_helper'
 
   class SmartJoinTool < SmartTool
 
     ACTION_0 = 0
 
-    ACTION_OPTION_ANCHORS = 'anchors'
-    ACTION_OPTION_ANCHORS_DEPTH = 'anchors_depth'
+    ACTION_OPTION_DEPTH = 'depth'
+    ACTION_OPTION_OFFSETS = 'offsets'
+    ACTION_OPTION_SPACINGS = 'spacings'
     ACTION_OPTION_GEOMETRY = 'geometry'
 
-    ACTION_OPTION_ANCHORS_START_OFFSET = 'start_offset'
-    ACTION_OPTION_ANCHORS_END_OFFSET = 'end_offset'
-    ACTION_OPTION_ANCHORS_MIN_SPACING = 'min_spacing'
-    ACTION_OPTION_ANCHORS_MAX_SPACING = 'max_spacing'
+    ACTION_OPTION_OFFSETS_START_OFFSET = 'start_offset'
+    ACTION_OPTION_OFFSETS_END_OFFSET = 'end_offset'
 
-    ACTION_OPTION_ANCHORS_DEPTH_CENTRED = 'depth_centred'
-    ACTION_OPTION_ANCHORS_DEPTH_DISTANCE = 'depth_distance'
+    ACTION_OPTION_SPACINGS_MIN_SPACING = 'min_spacing'
+    ACTION_OPTION_SPACINGS_MAX_SPACING = 'max_spacing'
+
+    ACTION_OPTION_DEPTH_CENTRED = 'depth_centred'
+    ACTION_OPTION_DEPTH_DISTANCE = 'depth_distance'
 
     ACTION_OPTION_GEOMETRY_HARDWARE_A = 'hardware_a'
     ACTION_OPTION_GEOMETRY_HARDWARE_B = 'hardware_b'
@@ -32,8 +35,9 @@ module Ladb::OpenCutList
       {
         :action => ACTION_0,
         :options => {
-          ACTION_OPTION_ANCHORS => [ ACTION_OPTION_ANCHORS_START_OFFSET, ACTION_OPTION_ANCHORS_END_OFFSET, ACTION_OPTION_ANCHORS_MIN_SPACING, ACTION_OPTION_ANCHORS_MAX_SPACING ],
-          ACTION_OPTION_ANCHORS_DEPTH => [ ACTION_OPTION_ANCHORS_DEPTH_CENTRED, ACTION_OPTION_ANCHORS_DEPTH_DISTANCE ],
+          ACTION_OPTION_DEPTH => [ ACTION_OPTION_DEPTH_CENTRED, ACTION_OPTION_DEPTH_DISTANCE ],
+          ACTION_OPTION_OFFSETS => [ ACTION_OPTION_OFFSETS_START_OFFSET, ACTION_OPTION_OFFSETS_END_OFFSET ],
+          ACTION_OPTION_SPACINGS => [ ACTION_OPTION_SPACINGS_MIN_SPACING, ACTION_OPTION_SPACINGS_MAX_SPACING ],
         }
       }
     ].freeze
@@ -79,17 +83,21 @@ module Ladb::OpenCutList
     def get_action_option_toggle?(action, option_group, option)
 
       case option_group
-      when ACTION_OPTION_ANCHORS
+      when ACTION_OPTION_DEPTH
         case option
-        when ACTION_OPTION_ANCHORS_START_OFFSET, ACTION_OPTION_ANCHORS_END_OFFSET,
-             ACTION_OPTION_ANCHORS_MIN_SPACING, ACTION_OPTION_ANCHORS_MAX_SPACING
+        when ACTION_OPTION_DEPTH_CENTRED
+          return true
+        when ACTION_OPTION_DEPTH_DISTANCE
           return false
         end
-      when ACTION_OPTION_ANCHORS_DEPTH
+      when ACTION_OPTION_OFFSETS
         case option
-        when ACTION_OPTION_ANCHORS_DEPTH_CENTRED
-          return true
-        when ACTION_OPTION_ANCHORS_DEPTH_DISTANCE
+        when ACTION_OPTION_OFFSETS_START_OFFSET, ACTION_OPTION_OFFSETS_END_OFFSET
+          return false
+        end
+      when ACTION_OPTION_SPACINGS
+        case option
+        when ACTION_OPTION_SPACINGS_MIN_SPACING, ACTION_OPTION_SPACINGS_MAX_SPACING
           return false
         end
       end
@@ -101,22 +109,21 @@ module Ladb::OpenCutList
 
       case option_group
 
-      when ACTION_OPTION_ANCHORS
+      when ACTION_OPTION_DEPTH
         case option
-        when ACTION_OPTION_ANCHORS_START_OFFSET
-          return Kuix::Label.new(fetch_action_option_value(action, option_group, option).to_s)
-        when ACTION_OPTION_ANCHORS_END_OFFSET
-          return Kuix::Label.new(fetch_action_option_value(action, option_group, option).to_s)
-        when ACTION_OPTION_ANCHORS_MIN_SPACING
-          return Kuix::Label.new(fetch_action_option_value(action, option_group, option).to_s)
-        when ACTION_OPTION_ANCHORS_MAX_SPACING
+        when ACTION_OPTION_DEPTH_CENTRED
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0L1,0 M0,1L1,1 M0.5,0L0.5,0.25 M0.5,0.75L0.5,1 M0.5,0.375L0.5,0.625 M0.625,0.5L0.375,0.5'))
+        when ACTION_OPTION_DEPTH_DISTANCE
           return Kuix::Label.new(fetch_action_option_value(action, option_group, option).to_s)
         end
-      when ACTION_OPTION_ANCHORS_DEPTH
+      when ACTION_OPTION_OFFSETS
         case option
-        when ACTION_OPTION_ANCHORS_DEPTH_CENTRED
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0L1,0 M0,1L1,1 M0.5,0L0.5,0.25 M0.5,0.75L0.5,1 M0.5,0.375L0.5,0.625 M0.625,0.5L0.375,0.5'))
-        when ACTION_OPTION_ANCHORS_DEPTH_DISTANCE
+        when ACTION_OPTION_OFFSETS_START_OFFSET, ACTION_OPTION_OFFSETS_END_OFFSET
+          return Kuix::Label.new(fetch_action_option_value(action, option_group, option).to_s)
+        end
+      when ACTION_OPTION_SPACINGS
+        case option
+        when ACTION_OPTION_SPACINGS_MIN_SPACING, ACTION_OPTION_SPACINGS_MAX_SPACING
           return Kuix::Label.new(fetch_action_option_value(action, option_group, option).to_s)
         end
       end
@@ -124,6 +131,28 @@ module Ladb::OpenCutList
       super
     end
 
+    def get_action_option_btn_prefix(action, option_group, option)
+
+      case option_group
+
+      when ACTION_OPTION_OFFSETS
+        case option
+        when ACTION_OPTION_OFFSETS_START_OFFSET
+          return Kuix::Label.new(PLUGIN.get_i18n_string('tool.smart_join.action_option_offsets_start_offset'))
+        when ACTION_OPTION_OFFSETS_END_OFFSET
+          return Kuix::Label.new(PLUGIN.get_i18n_string('tool.smart_join.action_option_offsets_end_offset'))
+        end
+      when ACTION_OPTION_SPACINGS
+        case option
+        when ACTION_OPTION_SPACINGS_MIN_SPACING
+          return Kuix::Label.new(PLUGIN.get_i18n_string('tool.smart_join.action_option_spacings_min_spacing'))
+        when ACTION_OPTION_SPACINGS_MAX_SPACING
+          return Kuix::Label.new(PLUGIN.get_i18n_string('tool.smart_join.action_option_spacings_max_spacing'))
+        end
+      end
+
+      super
+    end
 
     # -- Events --
 
@@ -155,6 +184,8 @@ module Ladb::OpenCutList
 
   class SmartJoin0ActionHandler < SmartSelectActionHandler
 
+    include UserTextHelper
+
     LAYER_3D_ACTION_PREVIEW = 3
 
     STATE_JOIN_START = 1
@@ -178,7 +209,19 @@ module Ladb::OpenCutList
       SmartPicker.new(tool: @tool, observer: self, pick_point: true)
     end
 
+    def get_state_vcb_label(state)
+      PLUGIN.get_i18n_string('tool.default.vcb_depth')
+    end
+
     # -----
+
+    def onToolUserText(tool, text, view)
+      return true if super
+
+      return true if _read_depth(tool, text, view)
+
+      false
+    end
 
     def onPickerChanged(picker, view)
       super
@@ -194,6 +237,12 @@ module Ladb::OpenCutList
     def onSelected
       _do_join(Sketchup.active_model.active_view)
       _restart
+    end
+
+    # -----
+
+    def enableVCB?
+      true
     end
 
     # -----
@@ -343,18 +392,14 @@ module Ladb::OpenCutList
             )
             @tool.append_3d(k_points, LAYER_3D_ACTION_PREVIEW)
 
-            unless join_def.anchor_points_3d.one?
-
-              k_edge = Kuix::EdgeMotif3d.new
-              k_edge.start.copy!(join_def.anchor_points_3d.first)
-              k_edge.end.copy!(join_def.anchor_points_3d.last)
-              k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-              k_edge.line_width = 1
-              k_edge.color = Kuix::COLOR_MAGENTA
-              k_edge.on_top = true
-              @tool.append_3d(k_edge, LAYER_3D_ACTION_PREVIEW)
-
-            end
+            k_edge = Kuix::EdgeMotif3d.new
+            k_edge.start.copy!(join_def.start_point_3d)
+            k_edge.end.copy!(join_def.end_point_3d)
+            k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+            k_edge.line_width = 1
+            k_edge.color = Kuix::COLOR_MAGENTA
+            k_edge.on_top = true
+            @tool.append_3d(k_edge, LAYER_3D_ACTION_PREVIEW)
 
           end
 
@@ -369,6 +414,27 @@ module Ladb::OpenCutList
 
 
     end
+
+    # -----
+
+    def _read_depth(tool, text, view)
+
+      depth = _read_user_text_length(tool, text)
+      return true if depth.nil?
+
+      if depth < 0
+        tool.notify_errors([[ 'tool.default.error.invalid_depth', { :value => depth } ]])
+        return true
+      end
+
+      @tool.store_action_option_value(@action, SmartJoinTool::ACTION_OPTION_DEPTH, SmartJoinTool::ACTION_OPTION_DEPTH_DISTANCE, depth.to_s, true)
+      Sketchup.set_status_text('', SB_VCB_VALUE)
+      _refresh
+
+      false
+    end
+
+    # -----
 
     def _do_join(view)
       return if (neighborhood_def = _get_neighborhood_def(view)).nil?
@@ -422,24 +488,24 @@ module Ladb::OpenCutList
                 if hardware_a_definition.is_a?(Sketchup::ComponentDefinition)
                   hardware_a_instance = instance_a_entities.add_instance(hardware_a_definition, Geom::Transformation.translation(pt_a) * at_a)
                   hardware_a_instance.material = hardware_material
-                  hardware_a_instance.glued_to = join_def.touching_def.face_manipulator.face
+                  hardware_a_instance.glued_to = join_def.touching_def.face_manipulator.face if hardware_a_definition.behavior.is2d?
                 end
                 if machining_a_definition.is_a?(Sketchup::ComponentDefinition)
                   machining_a_instance = instance_a_entities.add_instance(machining_a_definition, Geom::Transformation.translation(pt_a) * at_a)
                   machining_a_instance.material = machining_material
-                  machining_a_instance.glued_to = join_def.touching_def.face_manipulator.face
+                  machining_a_instance.glued_to = join_def.touching_def.face_manipulator.face if machining_a_definition.behavior.is2d?
                 end
 
                 # -- B --
                 if hardware_b_definition.is_a?(Sketchup::ComponentDefinition)
                   hardware_b_instance = instance_b_entities.add_instance(hardware_b_definition, Geom::Transformation.translation(pt_b) * at_b)
                   hardware_b_instance.material = hardware_material
-                  hardware_b_instance.glued_to = join_def.touching_def.neighbor_face_manipulator.face
+                  hardware_b_instance.glued_to = join_def.touching_def.neighbor_face_manipulator.face if hardware_b_definition.behavior.is2d?
                 end
                 if machining_b_definition.is_a?(Sketchup::ComponentDefinition)
                   machining_b_instance = instance_b_entities.add_instance(machining_b_definition, Geom::Transformation.translation(pt_b) * at_b)
                   machining_b_instance.material = machining_material
-                  machining_b_instance.glued_to = join_def.touching_def.neighbor_face_manipulator.face
+                  machining_b_instance.glued_to = join_def.touching_def.neighbor_face_manipulator.face if machining_b_definition.behavior.is2d?
                 end
 
               end
@@ -461,27 +527,27 @@ module Ladb::OpenCutList
     # -----
 
     def _fetch_option_start_offset
-      @tool.fetch_action_option_length(@action, SmartJoinTool::ACTION_OPTION_ANCHORS, SmartJoinTool::ACTION_OPTION_ANCHORS_START_OFFSET)
+      @tool.fetch_action_option_length(@action, SmartJoinTool::ACTION_OPTION_OFFSETS, SmartJoinTool::ACTION_OPTION_OFFSETS_START_OFFSET)
     end
 
     def _fetch_option_end_offset
-      @tool.fetch_action_option_length(@action, SmartJoinTool::ACTION_OPTION_ANCHORS, SmartJoinTool::ACTION_OPTION_ANCHORS_END_OFFSET)
+      @tool.fetch_action_option_length(@action, SmartJoinTool::ACTION_OPTION_OFFSETS, SmartJoinTool::ACTION_OPTION_OFFSETS_END_OFFSET)
     end
 
     def _fetch_option_min_spacing
-      @tool.fetch_action_option_length(@action, SmartJoinTool::ACTION_OPTION_ANCHORS, SmartJoinTool::ACTION_OPTION_ANCHORS_MIN_SPACING)
+      @tool.fetch_action_option_length(@action, SmartJoinTool::ACTION_OPTION_OFFSETS, SmartJoinTool::ACTION_OPTION_SPACINGS_MIN_SPACING)
     end
 
     def _fetch_option_max_spacing
-      @tool.fetch_action_option_length(@action, SmartJoinTool::ACTION_OPTION_ANCHORS, SmartJoinTool::ACTION_OPTION_ANCHORS_MAX_SPACING)
+      @tool.fetch_action_option_length(@action, SmartJoinTool::ACTION_OPTION_OFFSETS, SmartJoinTool::ACTION_OPTION_SPACINGS_MAX_SPACING)
     end
 
     def _fetch_option_depth_distance
-      @tool.fetch_action_option_length(@action, SmartJoinTool::ACTION_OPTION_ANCHORS_DEPTH, SmartJoinTool::ACTION_OPTION_ANCHORS_DEPTH_DISTANCE)
+      @tool.fetch_action_option_length(@action, SmartJoinTool::ACTION_OPTION_DEPTH, SmartJoinTool::ACTION_OPTION_DEPTH_DISTANCE)
     end
 
     def _fetch_option_depth_centred
-      @tool.fetch_action_option_boolean(@action, SmartJoinTool::ACTION_OPTION_ANCHORS_DEPTH, SmartJoinTool::ACTION_OPTION_ANCHORS_DEPTH_CENTRED)
+      @tool.fetch_action_option_boolean(@action, SmartJoinTool::ACTION_OPTION_DEPTH, SmartJoinTool::ACTION_OPTION_DEPTH_CENTRED)
     end
 
     def _fetch_option_hardware_a
@@ -764,16 +830,18 @@ module Ladb::OpenCutList
             if touching_length > start_offset + min_spacing + end_offset
               middle_length = touching_poly_bounds.width - start_offset - end_offset
               spacing_count = max_spacing <= 0 ? 1 : (middle_length / max_spacing).ceil
+              spacing_count = 2 if spacing_count < 2 && start_offset == 0 && end_offset == 0
               spacing = middle_length / spacing_count
               if spacing < min_spacing
                 spacing_count -= 1
                 spacing = middle_length / spacing_count
               end
-              coords = (0...spacing_count + 1).map { |i| start_offset + spacing * i }
-            elsif touching_length > min_spacing
-              coords = [ touching_poly_bounds.width / 2 ]
-            else
               coords = []
+              coords << start_offset if start_offset > 0
+              coords += (1...spacing_count).map { |i| start_offset + spacing * i }
+              coords << touching_poly_bounds.width - end_offset if end_offset > 0
+            else
+              coords = [ touching_poly_bounds.width / 2 ]
             end
 
             ly = if depth_centred
@@ -788,8 +856,10 @@ module Ladb::OpenCutList
             next if coords.empty?
 
             anchor_points_3d = anchor_points_2d.map { |point| point.transform(at) }
+            start_point_3d = ORIGIN.offset(X_AXIS, touching_poly_bounds.min.x + start_offset).offset(touching_vy, ly).transform(at)
+            end_point_3d = ORIGIN.offset(X_AXIS, touching_poly_bounds.min.x + touching_poly_bounds.width - end_offset).offset(touching_vy, ly).transform(at)
 
-            join_defs << JoinDef.new(touching_def, touching_poly, anchor_points_3d)
+            join_defs << JoinDef.new(touching_def, touching_poly, anchor_points_3d, start_point_3d, end_point_3d)
 
           end
 
@@ -875,7 +945,7 @@ module Ladb::OpenCutList
     end
 
     NeighborJoinDef = Struct.new(:neighbor_def, :join_defs, :x_axis, :y_axis, :z_axis)
-    JoinDef = Struct.new(:touching_def, :touching_poly, :anchor_points_3d)
+    JoinDef = Struct.new(:touching_def, :touching_poly, :anchor_points_3d, :start_point_3d, :end_point_3d)
 
 
   end

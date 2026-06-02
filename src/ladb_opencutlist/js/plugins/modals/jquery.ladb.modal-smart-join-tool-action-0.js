@@ -122,7 +122,7 @@
                     $inputMaxSpacing.focus();
                     $inputMaxSpacing.select();
                 }
-                else if (that.options.focused_field.option === 'depth') {
+                else if (that.options.focused_field.option === 'depth_distance') {
                     $inputDepthDistance.focus();
                     $inputDepthDistance.select();
                 }

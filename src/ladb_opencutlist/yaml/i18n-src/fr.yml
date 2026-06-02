@@ -2271,6 +2271,7 @@ tool:
     vcb_radius: Rayon
     vcb_diameter: Diamètre
     vcb_distance: Distance
+    vcb_depth: Profondeur
     error:
       no_direction: Veuillez indiquer une direction avec la souris
       invalid_length: "La longueur {{ value }} est invalide"
@@ -2278,6 +2279,7 @@ tool:
       invalid_multiplicator: "Le multiplicateur {{ value }} est invalide"
       invalid_divider: "Le diviseur {{ value }} est invalide"
       invalid_offset: "Le décalage {{ value }} est invalide"
+      invalid_depth: "La profondeur {{ value }} est invalide"
       invalid_segment_count: "Le nombre de segments {{ value }} est invalide. Il doit être compris entre 3 et 999."
       syntax_error: "Erreur de syntaxe : {{ error }}"
       unexpected_close_parenthesis: "Parenthèse fermante inattendue"
@@ -2509,20 +2511,23 @@ tool:
     title: Assembler
     action_0: Placer
     action_0_status: Cliquez sur la face d'une pièce pour l'assembler avec les pièces voisines
-    action_option_group_anchors: Ancrages
-    action_option_group_anchors_depth: Profondeur
-    action_option_anchors_start_offset: Décalage début
-    action_option_anchors_end_offset: Décalage fin
-    action_option_anchors_min_spacing: Espacement min
-    action_option_anchors_max_spacing: Espacement max
-    action_option_anchors_depth_distance: Profondeur
-    action_option_anchors_depth_centred: Profondeur centrée
+    action_option_group_depth: $t(tool.default.vcb_depth)
+    action_option_group_offsets: Décalages
+    action_option_group_spacings: Espacements
+    action_option_depth_distance: Profondeur
+    action_option_depth_centred: Profondeur centrée
+    action_option_offsets_start_offset: Début
+    action_option_offsets_end_offset: Fin
+    action_option_spacings_min_spacing: Min
+    action_option_spacings_max_spacing: Max
     action_option_hardware_a: Accessoire A
     action_option_hardware_b: Accessoire B
     action_option_machining_a: Usinage A
     action_option_machining_b: Usinage B
     action_option_hardware_material_name: Matière Accessoires
     action_option_machining_material_name: Matière Usinages
+    measures: Mesures
+    geometries: Géométries
     error:
       no_valid_join: Aucune surface de contact ne permet de satisfaire les contraintes d'assemblage
   smart_export:

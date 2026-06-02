@@ -3362,7 +3362,7 @@ module Ladb::OpenCutList
 
     def _read_thickness(tool, text, view)
 
-      # Keep it "compatible" with the way to enter offset in Samrt Draw Tool.
+      # Keep it "compatible" with the way to enter offset in Smart Draw Tool.
       if (match = /^(.+)x$/i.match(text))
         text = match[1]
       end

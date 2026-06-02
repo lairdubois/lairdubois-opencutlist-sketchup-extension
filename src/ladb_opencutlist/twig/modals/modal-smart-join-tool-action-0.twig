@@ -3,92 +3,114 @@
 {% set id = 'ladb_modal_'~modalName %}
 {% set title = ('tool.smart_join.action_'~action)|i18next %}
 
+{% set tab = 'measures' %}
+
+{% block headerInner %}
+    {{ parent() }}
+    <ul class="nav nav-tabs nav-justified" role="tablist">
+        <li role="presentation"{% if tab == 'measures' %} class="active"{% endif %}><a href="#tab_measures" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-size-length-width"></i> {{ 'tool.smart_join.measures'|i18next }}</a></li>
+        <li role="presentation"{% if tab == 'geometries' %} class="active"{% endif %}><a href="#tab_geometries" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-3d"></i> {{ 'tool.smart_join.geometries'|i18next }}</a></li>
+    </ul>
+{% endblock %}
+
 {% block headerToolsInner %}
     {% include 'components/_widget-preset.twig' %}
-    <button class="btn btn-default btn-xs" data-help-page="tool.smart-draw"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
+    <button class="btn btn-default btn-xs" data-help-page="tool.smart-join"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
 {% endblock %}
 
 {% block bodyInner %}
     <div class="tab-content">
-        <div class="form form-horizontal" style="margin-top: 15px;">
-            <div class="form-group">
-                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_join.action_option_anchors_start_offset_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                <label class="control-label col-xs-4">{{ 'tool.smart_join.action_option_anchors_start_offset'|i18next }}</label>
-                <div class="col-xs-7">
-                    <input type="text" class="form-control" id="ladb_input_start_offset">
+        <div role="tabpanel" class="tab-pane{% if tab == 'measures' %} active{% endif %}" id="tab_measures">
+            <div class="form form-horizontal" style="margin-top: 15px;">
+                <div class="form-group">
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_join.action_option_depth_distance_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <label class="control-label col-xs-4">{{ 'tool.smart_join.action_option_depth_distance'|i18next }}</label>
+                    <div class="col-xs-7">
+                        <input type="text" class="form-control" id="ladb_input_depth_distance">
+                    </div>
                 </div>
+                <hr>
+                <section>
+                    <h4>{{ 'tool.smart_join.action_option_group_offsets'|i18next }}</h4>
+                    <div class="form-group">
+                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_join.action_option_offsets_start_offset_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                        <label class="control-label col-xs-4">{{ 'tool.smart_join.action_option_offsets_start_offset'|i18next }}</label>
+                        <div class="col-xs-7">
+                            <input type="text" class="form-control" id="ladb_input_start_offset">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_join.action_option_offsets_start_offset_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                        <label class="control-label col-xs-4">{{ 'tool.smart_join.action_option_offsets_end_offset'|i18next }}</label>
+                        <div class="col-xs-7">
+                            <input type="text" class="form-control" id="ladb_input_end_offset">
+                        </div>
+                    </div>
+                </section>
+                <hr>
+                <section>
+                    <h4>{{ 'tool.smart_join.action_option_group_spacings'|i18next }}</h4>
+                    <div class="form-group">
+                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_join.action_option_spacings_min_spacing_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                        <label class="control-label col-xs-4">{{ 'tool.smart_join.action_option_spacings_min_spacing'|i18next }}</label>
+                        <div class="col-xs-7">
+                            <input type="text" class="form-control" id="ladb_input_min_spacing">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_join.action_option_spacings_max_spacing_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                        <label class="control-label col-xs-4">{{ 'tool.smart_join.action_option_spacings_max_spacing'|i18next }}</label>
+                        <div class="col-xs-7">
+                            <input type="text" class="form-control" id="ladb_input_max_spacing">
+                        </div>
+                    </div>
+                </section>
             </div>
-            <div class="form-group">
-                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_join.action_option_anchors_start_offset_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                <label class="control-label col-xs-4">{{ 'tool.smart_join.action_option_anchors_end_offset'|i18next }}</label>
-                <div class="col-xs-7">
-                    <input type="text" class="form-control" id="ladb_input_end_offset">
+        </div>
+        <div role="tabpanel" class="tab-pane{% if tab == 'geometries' %} active{% endif %}" id="tab_geometries">
+            <div class="form form-horizontal" style="margin-top: 15px;">
+                <div class="form-group">
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_join.action_option_hardware_a_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <label class="control-label col-xs-4">{{ 'tool.smart_join.action_option_hardware_a'|i18next }}</label>
+                    <div class="col-xs-7">
+                        <input type="text" class="form-control" id="ladb_input_hardware_a">
+                    </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_join.action_option_anchors_min_spacing_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                <label class="control-label col-xs-4">{{ 'tool.smart_join.action_option_anchors_min_spacing'|i18next }}</label>
-                <div class="col-xs-7">
-                    <input type="text" class="form-control" id="ladb_input_min_spacing">
+                <div class="form-group">
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_join.action_option_hardware_b_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <label class="control-label col-xs-4">{{ 'tool.smart_join.action_option_hardware_b'|i18next }}</label>
+                    <div class="col-xs-7">
+                        <input type="text" class="form-control" id="ladb_input_hardware_b">
+                    </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_join.action_option_anchors_max_spacing_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                <label class="control-label col-xs-4">{{ 'tool.smart_join.action_option_anchors_max_spacing'|i18next }}</label>
-                <div class="col-xs-7">
-                    <input type="text" class="form-control" id="ladb_input_max_spacing">
+                <div class="form-group">
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_join.action_option_machining_a_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <label class="control-label col-xs-4">{{ 'tool.smart_join.action_option_machining_a'|i18next }}</label>
+                    <div class="col-xs-7">
+                        <input type="text" class="form-control" id="ladb_input_machining_a">
+                    </div>
                 </div>
-            </div>
-            <hr>
-            <div class="form-group">
-                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_join.action_option_anchors_depth_distance_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                <label class="control-label col-xs-4">{{ 'tool.smart_join.action_option_anchors_depth_distance'|i18next }}</label>
-                <div class="col-xs-7">
-                    <input type="text" class="form-control" id="ladb_input_depth_distance">
+                <div class="form-group">
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_join.action_option_machining_b_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <label class="control-label col-xs-4">{{ 'tool.smart_join.action_option_machining_b'|i18next }}</label>
+                    <div class="col-xs-7">
+                        <input type="text" class="form-control" id="ladb_input_machining_b">
+                    </div>
                 </div>
-            </div>
-            <hr>
-            <div class="form-group">
-                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_join.action_option_hardware_a_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                <label class="control-label col-xs-4">{{ 'tool.smart_join.action_option_hardware_a'|i18next }}</label>
-                <div class="col-xs-7">
-                    <input type="text" class="form-control" id="ladb_input_hardware_a">
+                <hr>
+                <div class="form-group">
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_join.action_option_hardware_material_name_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <label class="control-label col-xs-4">{{ 'tool.smart_join.action_option_hardware_material_name'|i18next }}</label>
+                    <div class="col-xs-7">
+                        <input type="text" class="form-control" id="ladb_input_hardware_material_name">
+                    </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_join.action_option_hardware_b_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                <label class="control-label col-xs-4">{{ 'tool.smart_join.action_option_hardware_b'|i18next }}</label>
-                <div class="col-xs-7">
-                    <input type="text" class="form-control" id="ladb_input_hardware_b">
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_join.action_option_machining_a_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                <label class="control-label col-xs-4">{{ 'tool.smart_join.action_option_machining_a'|i18next }}</label>
-                <div class="col-xs-7">
-                    <input type="text" class="form-control" id="ladb_input_machining_a">
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_join.action_option_machining_b_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                <label class="control-label col-xs-4">{{ 'tool.smart_join.action_option_machining_b'|i18next }}</label>
-                <div class="col-xs-7">
-                    <input type="text" class="form-control" id="ladb_input_machining_b">
-                </div>
-            </div>
-            <hr>
-            <div class="form-group">
-                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_join.action_option_hardware_material_name_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                <label class="control-label col-xs-4">{{ 'tool.smart_join.action_option_hardware_material_name'|i18next }}</label>
-                <div class="col-xs-7">
-                    <input type="text" class="form-control" id="ladb_input_hardware_material_name">
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_join.action_option_machining_material_name_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                <label class="control-label col-xs-4">{{ 'tool.smart_join.action_option_machining_material_name'|i18next }}</label>
-                <div class="col-xs-7">
-                    <input type="text" class="form-control" id="ladb_input_machining_material_name">
+                <div class="form-group">
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_join.action_option_machining_material_name_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <label class="control-label col-xs-4">{{ 'tool.smart_join.action_option_machining_material_name'|i18next }}</label>
+                    <div class="col-xs-7">
+                        <input type="text" class="form-control" id="ladb_input_machining_material_name">
+                    </div>
                 </div>
             </div>
         </div>
