@@ -2506,7 +2506,7 @@ tool:
   smart_join:
     title: Assemble
     action_0: Touch-Touch
-    action_0_status: TBD
+    action_0_status: Click on a part to connect it to the adjacent parts
     action_option_group_measures: Measures
     action_option_measures_start_offset: Start offset
     action_option_measures_end_offset: End offset
