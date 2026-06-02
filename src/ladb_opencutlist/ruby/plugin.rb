@@ -95,7 +95,7 @@ module Ladb::OpenCutList
     DOCS_DEV_URL = 'https://www.lairdubois.fr/opencutlist/docs-dev'
 
     TABS_STRIPPED_NAMES = %w[materials cutlist outliner importers_csv importers_bxf2]
-    if IS_RBZ
+    if IS_RBZ || Sketchup.debug_mode?
       SMART_TOOLS_STRIPPED_NAMES = %w[draw handle reshape paint axes export]
     else
       SMART_TOOLS_STRIPPED_NAMES = %w[draw handle reshape paint axes join export]
