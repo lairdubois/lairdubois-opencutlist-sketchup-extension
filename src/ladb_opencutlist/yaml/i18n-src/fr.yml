@@ -2509,12 +2509,22 @@ tool:
     title: Assembler
     action_0: Placer
     action_0_status: Cliquez sur la face d'une pièce pour l'assembler avec les pièces voisines
-    action_option_group_measures: Mesures
-    action_option_measures_start_offset: Décalage début
-    action_option_measures_end_offset: Décalage fin
-    action_option_measures_min_spacing: Espacement min
-    action_option_measures_max_spacing: Espacement max
-    action_option_measures_depth: Profondeur
+    action_option_group_anchors: Ancrages
+    action_option_group_anchors_depth: Profondeur
+    action_option_anchors_start_offset: Décalage début
+    action_option_anchors_end_offset: Décalage fin
+    action_option_anchors_min_spacing: Espacement min
+    action_option_anchors_max_spacing: Espacement max
+    action_option_anchors_depth_distance: Profondeur
+    action_option_anchors_depth_centred: Profondeur centrée
+    action_option_hardware_a: Accessoire A
+    action_option_hardware_b: Accessoire B
+    action_option_machining_a: Usinage A
+    action_option_machining_b: Usinage B
+    action_option_hardware_material_name: Matière Accessoires
+    action_option_machining_material_name: Matière Usinages
+    error:
+      no_valid_join: Aucune surface de contact ne permet de satisfaire les contraintes d'assemblage
   smart_export:
     title: Exporter
     action_0: Exporter une pièce 3D

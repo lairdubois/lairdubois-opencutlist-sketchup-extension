@@ -33,7 +33,13 @@
             const $inputEndOffset = $('#ladb_input_end_offset', that.$element);
             const $inputMinSpacing = $('#ladb_input_min_spacing', that.$element);
             const $inputMaxSpacing = $('#ladb_input_max_spacing', that.$element);
-            const $inputDepth = $('#ladb_input_depth', that.$element);
+            const $inputDepthDistance = $('#ladb_input_depth_distance', that.$element);
+            const $inputHardwareA = $('#ladb_input_hardware_a', that.$element);
+            const $inputHardwareB = $('#ladb_input_hardware_b', that.$element);
+            const $inputMachiningA = $('#ladb_input_machining_a', that.$element);
+            const $inputMachiningB = $('#ladb_input_machining_b', that.$element);
+            const $inputHardwareMaterialName = $('#ladb_input_hardware_material_name', that.$element);
+            const $inputMachiningMaterialName = $('#ladb_input_machining_material_name', that.$element);
             const $btnValidate = $('#ladb_btn_validate', that.$element);
 
             const fnFetchOptions = function (options) {
@@ -41,14 +47,26 @@
                 options.end_offset = $inputEndOffset.val();
                 options.min_spacing = $inputMinSpacing.val();
                 options.max_spacing = $inputMaxSpacing.val();
-                options.depth = $inputDepth.val();
+                options.depth_distance = $inputDepthDistance.val();
+                options.hardware_a = $inputHardwareA.val();
+                options.hardware_b = $inputHardwareB.val();
+                options.machining_a = $inputMachiningA.val();
+                options.machining_b = $inputMachiningB.val();
+                options.hardware_material_name = $inputHardwareMaterialName.val();
+                options.machining_material_name = $inputMachiningMaterialName.val();
             };
             const fnFillInputs = function (options) {
                 $inputStartOffset.val(options.start_offset);
                 $inputEndOffset.val(options.end_offset);
                 $inputMinSpacing.val(options.min_spacing);
                 $inputMaxSpacing.val(options.max_spacing);
-                $inputDepth.val(options.depth);
+                $inputDepthDistance.val(options.depth_distance);
+                $inputHardwareA.val(options.hardware_a);
+                $inputHardwareB.val(options.hardware_b);
+                $inputMachiningA.val(options.machining_a);
+                $inputMachiningB.val(options.machining_b);
+                $inputHardwareMaterialName.val(options.hardware_material_name);
+                $inputMachiningMaterialName.val(options.machining_material_name);
             };
 
             $widgetPreset.ladbWidgetPreset({
@@ -62,7 +80,13 @@
             $inputEndOffset.ladbTextinputDimension();
             $inputMinSpacing.ladbTextinputDimension();
             $inputMaxSpacing.ladbTextinputDimension();
-            $inputDepth.ladbTextinputDimension();
+            $inputDepthDistance.ladbTextinputDimension();
+            $inputHardwareA.ladbTextinputText();
+            $inputHardwareB.ladbTextinputText();
+            $inputMachiningA.ladbTextinputText();
+            $inputMachiningB.ladbTextinputText();
+            $inputHardwareMaterialName.ladbTextinputText();
+            $inputMachiningMaterialName.ladbTextinputText();
 
             fnFillInputs(options);
 
@@ -99,8 +123,8 @@
                     $inputMaxSpacing.select();
                 }
                 else if (that.options.focused_field.option === 'depth') {
-                    $inputDepth.focus();
-                    $inputDepth.select();
+                    $inputDepthDistance.focus();
+                    $inputDepthDistance.select();
                 }
             }
 

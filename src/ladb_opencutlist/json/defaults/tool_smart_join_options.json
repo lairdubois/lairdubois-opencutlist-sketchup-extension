@@ -4,13 +4,20 @@
     "end_offset": 1, /* PRESETS_PREPROCESSOR_D */
     "min_spacing": 1, /* PRESETS_PREPROCESSOR_D */
     "max_spacing": 1, /* PRESETS_PREPROCESSOR_D */
-    "depth": 1 /* PRESETS_PREPROCESSOR_D */
+    "depth": 5 /* PRESETS_PREPROCESSOR_D_NEGATIVE_ALLOWED */
   },
   "action_0": {  /* ACTION_0 */
     "start_offset": { "metric": "60mm", "imperial": "1\"" },
     "end_offset": { "metric": "60mm", "imperial": "1\"" },
     "min_spacing": "0",
     "max_spacing": { "metric": "300mm", "imperial": "11\"" },
-    "depth": "0"
+    "depth_centred": false,
+    "depth_distance": "0",
+    "hardware_a": "",
+    "hardware_b": "",
+    "machining_a": "",
+    "machining_b": "",
+    "hardware_material_name": "",
+    "machining_material_name": ""
   }
 }
