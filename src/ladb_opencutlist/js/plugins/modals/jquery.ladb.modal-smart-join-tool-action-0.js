@@ -28,6 +28,7 @@
             const options = response.preset;
 
             // Fetch UI elements
+            const $tabs = $('a[data-toggle="tab"]', that.$element);
             const $widgetPreset = $('.ladb-widget-preset', that.$element);
             const $inputStartOffset = $('#ladb_input_start_offset', that.$element);
             const $inputEndOffset = $('#ladb_input_end_offset', that.$element);
@@ -81,12 +82,12 @@
             $inputMinSpacing.ladbTextinputDimension();
             $inputMaxSpacing.ladbTextinputDimension();
             $inputDepthDistance.ladbTextinputDimension();
-            $inputHardwareA.ladbTextinputText();
-            $inputHardwareB.ladbTextinputText();
-            $inputMachiningA.ladbTextinputText();
-            $inputMachiningB.ladbTextinputText();
-            $inputHardwareMaterialName.ladbTextinputText();
-            $inputMachiningMaterialName.ladbTextinputText();
+            $inputHardwareA.ladbTextinputFile();
+            $inputHardwareB.ladbTextinputFile();
+            $inputMachiningA.ladbTextinputFile();
+            $inputMachiningB.ladbTextinputFile();
+            $inputHardwareMaterialName.ladbTextinputFile();
+            $inputMachiningMaterialName.ladbTextinputFile();
 
             fnFillInputs(options);
 
@@ -103,6 +104,18 @@
                 that.dialog.hide();
 
             });
+
+            // Bond tab
+            $tabs.on('shown.bs.tab', function (e) {
+                if ($(e.target).attr('href') === '#tab_geometries') {
+                    $inputHardwareA.ladbTextinputFile('scrollToTheEnd');
+                    $inputHardwareB.ladbTextinputFile('scrollToTheEnd');
+                    $inputMachiningA.ladbTextinputFile('scrollToTheEnd');
+                    $inputMachiningB.ladbTextinputFile('scrollToTheEnd');
+                    $inputHardwareMaterialName.ladbTextinputFile('scrollToTheEnd');
+                    $inputMachiningMaterialName.ladbTextinputFile('scrollToTheEnd');
+                }
+            })
 
             // Focus
             if (that.options.focused_field) {

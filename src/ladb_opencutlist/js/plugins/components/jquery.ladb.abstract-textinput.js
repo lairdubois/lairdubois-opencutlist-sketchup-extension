@@ -52,6 +52,10 @@ LadbTextinputAbstract.prototype.isMultiple = function () {
     return this.$element.data('multiple') === true;
 };
 
+LadbTextinputAbstract.prototype.scrollToTheEnd = function () {
+    this.$element[0].scrollLeft = this.$element[0].scrollWidth
+};
+
 /////
 
 LadbTextinputAbstract.prototype.createLeftToolsContainer = function () {

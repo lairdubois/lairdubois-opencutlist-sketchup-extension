@@ -264,6 +264,8 @@ core:
     textinput_code:
       snippets: Exemples de formules
       help: Tapez **@** pour ouvrir la liste des variables de donnée.
+    textinput_file:
+      browse: Parcourir
     textinput_size:
       quantity: Qté
     three_viewer:
@@ -2515,7 +2517,7 @@ tool:
     action_0: Placer
     action_0_status: Placer des connecteurs pour assembler des pièces
     action_0_state_0_status: Cliquez sur la face de référence d'une pièce pour l'assembler avec les pièces voisines
-    action_option_group_depth: $t(tool.default.vcb_depth)
+    action_option_group_depth: Profondeur
     action_option_group_offsets: Décalages
     action_option_group_spacings: Espacements
     action_option_depth_distance: Profondeur

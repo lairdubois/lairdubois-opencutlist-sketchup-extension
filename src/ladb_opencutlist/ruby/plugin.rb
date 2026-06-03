@@ -1017,6 +1017,9 @@ module Ladb::OpenCutList
         register_command('core_copy_to_clipboard') do |params|
           copy_to_clipboard_command(**params)
         end
+        register_command('core_browse_file') do |params|
+          browse_file_command(**params)
+        end
         register_command('core_unload_c_lib') do |params|
           unload_c_lib_command(**params)
         end
@@ -1699,6 +1702,13 @@ module Ladb::OpenCutList
 
       {
         :success => success
+      }
+    end
+
+    def browse_file_command(title: '', file_path: '')
+      file_path = UI.openpanel(title, File.dirname(file_path), File.basename(file_path)).to_s
+      {
+        :file_path => file_path
       }
     end
 
