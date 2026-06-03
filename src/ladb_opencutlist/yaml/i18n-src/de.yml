@@ -2270,13 +2270,15 @@ tool:
     vcb_radius: Radius
     vcb_diameter: Durchmesser
     vcb_distance: Distanz
+    vcb_depth: Tiefe
     error:
       no_direction: Bitte mit der Maus eine Richtung angeben
       invalid_length: "Die Länge {{ value }} ist ungültig"
       invalid_thickness: "Die Dicke {{ value }} ist ungültig"
       invalid_multiplicator: "Der Faktor {{ value }} ist ungültig"
       invalid_divider: "Der Teiler {{ value }} ist ungültig"
-      invalid_offset: "Die Verschiebung {{ value }} ist ungültig"
+      invalid_offset: "Der Versatz {{ value }} ist ungültig"
+      invalid_depth: "Die Tiefe {{ value }} ist ungültig"
       invalid_segment_count: "Die Anzahl der Segmente {{ value }} ist ungültig. Sie muss zwischen 3 und 999 sein."
       syntax_error: "Syntaxfehler: {{ error }}"
       unexpected_close_parenthesis: "Unerwartete schließende Klammer"
@@ -2507,12 +2509,25 @@ tool:
     title: Zusammenstellen
     action_0: Platzieren 
     action_0_status: Klicken Sie auf eine Seite eines Teils, um es mit den benachbarten Teilen zusammenzufügen
-    action_option_group_measures: Maße
-    action_option_measures_start_offset: Versatz am Anfang
-    action_option_measures_end_offset: Versatz am Ende
-    action_option_measures_min_spacing: Mindestabstand
-    action_option_measures_max_spacing: Höchstabstand
-    action_option_measures_depth: Tiefe
+    action_option_group_depth: $t(tool.default.vcb_depth)
+    action_option_group_offsets: Versatze
+    action_option_group_spacings: Abstände
+    action_option_depth_distance: Tiefe
+    action_option_depth_centred: Eingemittete Tiefe
+    action_option_offsets_start_offset: Anfang
+    action_option_offsets_end_offset: Ende
+    action_option_spacings_min_spacing: Min
+    action_option_spacings_max_spacing: Max
+    action_option_hardware_a: Verbinder A
+    action_option_hardware_b: Verbinder B
+    action_option_machining_a: Bearbeitung A
+    action_option_machining_b: Bearbeitung B
+    action_option_hardware_material_name: Material Verbinder
+    action_option_machining_material_name: Material Bearbeitungen
+    measures: Maße
+    geometries: Geometrien
+    error:
+      no_valid_join: Es gibt keine Kontaktfläche, die die Anforderungen an die Verbindung erfüllt
   smart_export:
     title: Exportieren
     action_0: 3D Teil exportieren

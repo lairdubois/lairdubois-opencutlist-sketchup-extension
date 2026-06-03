@@ -2270,6 +2270,7 @@ tool:
     vcb_radius: Radius
     vcb_diameter: Diameter
     vcb_distance: Distance
+    vcb_depth: Depth
     error:
       no_direction: Please indicate a direction with your mouse
       invalid_length: "Length {{ value }} is invalid"
@@ -2277,6 +2278,7 @@ tool:
       invalid_multiplicator: "Factor {{ value }} is invalid"
       invalid_divider: "Divisor {{ value }} is invalid"
       invalid_offset: "Offset {{ value }} is invalid"
+      invalid_depth: "Depth {{ value }} is invalid"
       invalid_segment_count: "The number of segments {{ value }} is invalid. It must be between 3 and 999."
       syntax_error: "Syntax error: {{ error }}"
       unexpected_close_parenthesis: "Unexpected closing parenthesis"
@@ -2505,14 +2507,27 @@ tool:
       not_single_thickness_layer: The target part must consist of a single layer
   smart_join:
     title: Assemble
-    action_0: Touch-Touch
+    action_0: Place
     action_0_status: Click on a part to connect it to the adjacent parts
-    action_option_group_measures: Measures
-    action_option_measures_start_offset: Start offset
-    action_option_measures_end_offset: End offset
-    action_option_measures_min_spacing: Minimum spacing
-    action_option_measures_max_spacing: Maximum spacing
-    action_option_measures_depth: Depth
+    action_option_group_depth: $t(tool.default.vcb_depth)
+    action_option_group_offsets: Offsets
+    action_option_group_spacings: Spacings
+    action_option_depth_distance: Depth
+    action_option_depth_centred: Centered depth
+    action_option_offsets_start_offset: Start
+    action_option_offsets_end_offset: End
+    action_option_spacings_min_spacing: Min
+    action_option_spacings_max_spacing: Max
+    action_option_hardware_a: Connector A
+    action_option_hardware_b: Connector B
+    action_option_machining_a: Machining A
+    action_option_machining_b: Machining B
+    action_option_hardware_material_name: Material Connectors
+    action_option_machining_material_name: Material Machinings
+    measures: Measures
+    geometries: Geometries
+    error:
+      no_valid_join: There are no contact surfaces that meet the assembly requirements
   smart_export:
     title: Export
     action_0: Export 3D Part
