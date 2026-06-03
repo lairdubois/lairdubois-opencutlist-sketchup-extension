@@ -2533,6 +2533,8 @@ tool:
     geometries: Géométries
     error:
       no_valid_join: Aucune surface de contact ne permet de satisfaire les contraintes d'assemblage
+      failed_to_load_skp_file: |
+        Impossible de charger le fichier SKP : {{ file }}
   smart_export:
     title: Exporter
     action_0: Exporter une pièce 3D

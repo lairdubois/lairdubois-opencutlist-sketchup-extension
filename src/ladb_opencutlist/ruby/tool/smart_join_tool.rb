@@ -186,6 +186,7 @@ module Ladb::OpenCutList
 
     include UserTextHelper
 
+    LAYER_2D_ACTION_PREVIEW = 3
     LAYER_3D_ACTION_PREVIEW = 3
 
     STATE_JOIN_START = 1
@@ -315,6 +316,7 @@ module Ladb::OpenCutList
 
     def _preview_join(view)
 
+      @tool.clear_2d(LAYER_2D_ACTION_PREVIEW)
       @tool.clear_3d(LAYER_3D_ACTION_PREVIEW)
 
       return if (neighborhood_def = _get_neighborhood_def(view)).nil?
@@ -417,6 +419,21 @@ module Ladb::OpenCutList
             k_edge.color = Kuix::COLOR_MAGENTA
             k_edge.on_top = true
             @tool.append_3d(k_edge, LAYER_3D_ACTION_PREVIEW)
+
+            if join_def.anchor_points_3d.size > 1
+
+              p0 = join_def.anchor_points_3d[0]
+              p1 = join_def.anchor_points_3d[1]
+
+              k_label = _create_floating_label(
+                snap_point: join_def.start_point_3d.offset(p0.vector_to(Geom.linear_combination(0.5, p0, 0.5, p1).to_a)),
+                text: p0.distance(p1).to_s,
+                text_color: Kuix::COLOR_MAGENTA,
+                border_color: Kuix::COLOR_MAGENTA
+              )
+              @tool.append_2d(k_label, LAYER_3D_ACTION_PREVIEW)
+
+            end
 
             rot = join_def.reversed_y ? Geom::Transformation.rotation(ORIGIN, Z_AXIS, 180.degrees) : IDENTITY
 
@@ -940,7 +957,11 @@ module Ladb::OpenCutList
         if (extname = File.extname(ref)).downcase == '.skp'
           name = File.basename(ref, extname)
           definition = model.definitions[name]  # Try to get definition from DefinitionList first
-          definition = model.definitions.load(ref) if definition.nil?
+          begin
+            definition = model.definitions.load(ref.gsub('\\', '/')) if definition.nil?
+          rescue Exception => e
+            @tool.notify_errors([ [ 'tool.smart_join.error.failed_to_load_skp_file', { file: ref } ] ])
+          end
         else
           definition = model.definitions[ref]
         end
