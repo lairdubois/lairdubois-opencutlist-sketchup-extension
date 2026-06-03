@@ -8,6 +8,7 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
   * Added Smart Stretch Tool
   * Added Smart Paneling Tool
+  * Added Smart Join Tool (dev team only)
   * Added Grain Continuity support
   * Added Cutlist part names filter
   * Added RO translations
@@ -23,6 +24,10 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
+### 2026-06-03
+ * Improved Smart Join Tool by previewing hardware and machinings
+### 2026-06-02
+ * Added Smart Join Tool (dev team only)
 ### 2026-06-01
  * Improved skewed detection
 ### 2026-05-31

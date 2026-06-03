@@ -2523,12 +2523,12 @@ tool:
     action_option_offsets_end_offset: Fin
     action_option_spacings_min_spacing: Min
     action_option_spacings_max_spacing: Max
-    action_option_hardware_a: Accessoire A
-    action_option_hardware_b: Accessoire B
+    action_option_hardware_a: Connecteur A
+    action_option_hardware_b: Connecteur B
     action_option_machining_a: Usinage A
     action_option_machining_b: Usinage B
-    action_option_hardware_material_name: Matière Accessoires
-    action_option_machining_material_name: Matière Usinages
+    action_option_hardware_material_name: Matière des Connecteurs
+    action_option_machining_material_name: Matière des Usinages
     measures: Mesures
     geometries: Géométries
     error:

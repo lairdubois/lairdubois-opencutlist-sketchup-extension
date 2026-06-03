@@ -418,12 +418,14 @@ module Ladb::OpenCutList
             k_edge.on_top = true
             @tool.append_3d(k_edge, LAYER_3D_ACTION_PREVIEW)
 
+            rot = join_def.reversed_y ? Geom::Transformation.rotation(ORIGIN, Z_AXIS, 180.degrees) : IDENTITY
+
             join_def.anchor_points_3d.each do |point|
 
               pt_a = point.transform(ti_a)
               pt_b = point.transform(ti_b)
 
-              _preview_join_drawing_def(machining_a_drawing_def, ti_a.inverse * Geom::Transformation.translation(pt_a) * at_a, Kuix::COLOR_CYAN, 0.5) if machining_a_drawing_def
+              _preview_join_drawing_def(machining_a_drawing_def, ti_a.inverse * Geom::Transformation.translation(pt_a) * at_a * rot, Kuix::COLOR_CYAN, 0.5) if machining_a_drawing_def
               _preview_join_drawing_def(machining_b_drawing_def, ti_b.inverse * Geom::Transformation.translation(pt_b) * at_b, Kuix::COLOR_CYAN, 0.5) if machining_b_drawing_def
               _preview_join_drawing_def(hardware_a_drawing_def, ti_a.inverse * Geom::Transformation.translation(pt_a) * at_a, Kuix::COLOR_DARK_GREY, 1) if hardware_a_drawing_def
               _preview_join_drawing_def(hardware_b_drawing_def, ti_b.inverse * Geom::Transformation.translation(pt_b) * at_b, Kuix::COLOR_DARK_GREY, 1) if hardware_b_drawing_def
@@ -511,6 +513,8 @@ module Ladb::OpenCutList
 
             neighbor_join_def.join_defs.each do |join_def|
 
+              rot = join_def.reversed_y ? Geom::Transformation.rotation(ORIGIN, Z_AXIS, 180.degrees) : IDENTITY
+
               join_def.anchor_points_3d.each do |point|
 
                 pt_a = point.transform(ti_a)
@@ -518,24 +522,24 @@ module Ladb::OpenCutList
 
                 # -- A --
                 if hardware_a_definition.is_a?(Sketchup::ComponentDefinition)
-                  hardware_a_instance = instance_a_entities.add_instance(hardware_a_definition, Geom::Transformation.translation(pt_a) * at_a)
+                  hardware_a_instance = instance_a_entities.add_instance(hardware_a_definition, Geom::Transformation.translation(pt_a) * at_a * rot)
                   hardware_a_instance.material = hardware_material
                   hardware_a_instance.glued_to = join_def.touching_def.face_manipulator.face if hardware_a_definition.behavior.is2d?
                 end
                 if machining_a_definition.is_a?(Sketchup::ComponentDefinition)
-                  machining_a_instance = instance_a_entities.add_instance(machining_a_definition, Geom::Transformation.translation(pt_a) * at_a)
+                  machining_a_instance = instance_a_entities.add_instance(machining_a_definition, Geom::Transformation.translation(pt_a) * at_a * rot)
                   machining_a_instance.material = machining_material
                   machining_a_instance.glued_to = join_def.touching_def.face_manipulator.face if machining_a_definition.behavior.is2d?
                 end
 
                 # -- B --
                 if hardware_b_definition.is_a?(Sketchup::ComponentDefinition)
-                  hardware_b_instance = instance_b_entities.add_instance(hardware_b_definition, Geom::Transformation.translation(pt_b) * at_b)
+                  hardware_b_instance = instance_b_entities.add_instance(hardware_b_definition, Geom::Transformation.translation(pt_b) * at_b * rot)
                   hardware_b_instance.material = hardware_material
                   hardware_b_instance.glued_to = join_def.touching_def.neighbor_face_manipulator.face if hardware_b_definition.behavior.is2d?
                 end
                 if machining_b_definition.is_a?(Sketchup::ComponentDefinition)
-                  machining_b_instance = instance_b_entities.add_instance(machining_b_definition, Geom::Transformation.translation(pt_b) * at_b)
+                  machining_b_instance = instance_b_entities.add_instance(machining_b_definition, Geom::Transformation.translation(pt_b) * at_b * rot)
                   machining_b_instance.material = machining_material
                   machining_b_instance.glued_to = join_def.touching_def.neighbor_face_manipulator.face if machining_b_definition.behavior.is2d?
                 end
@@ -910,7 +914,7 @@ module Ladb::OpenCutList
             start_point_3d = ORIGIN.offset(X_AXIS, touching_poly_bounds.min.x + start_offset).offset(touching_vy, ly).transform(at)
             end_point_3d = ORIGIN.offset(X_AXIS, touching_poly_bounds.min.x + touching_poly_bounds.width - end_offset).offset(touching_vy, ly).transform(at)
 
-            join_defs << JoinDef.new(touching_def, touching_poly, anchor_points_3d, start_point_3d, end_point_3d)
+            join_defs << JoinDef.new(touching_def, touching_poly, anchor_points_3d, start_point_3d, end_point_3d, touching_vy.samedirection?(Y_AXIS))
 
           end
 
@@ -1014,7 +1018,7 @@ module Ladb::OpenCutList
     end
 
     NeighborJoinDef = Struct.new(:neighbor_def, :join_defs, :x_axis, :y_axis, :z_axis, :ti_b, :at_a, :at_b)
-    JoinDef = Struct.new(:touching_def, :touching_poly, :anchor_points_3d, :start_point_3d, :end_point_3d)
+    JoinDef = Struct.new(:touching_def, :touching_poly, :anchor_points_3d, :start_point_3d, :end_point_3d, :reversed_y)
 
 
   end
