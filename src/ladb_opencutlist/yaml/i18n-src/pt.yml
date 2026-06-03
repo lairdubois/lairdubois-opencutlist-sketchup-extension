@@ -116,7 +116,7 @@ core:
       smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
-      smart_join: ""
+      smart_join: $t(core.toolbar.command.smart_join)
       smart_export: $t(core.toolbar.command.smart_export)
       reset_dialog_position: Reinicializar a posição da janela
   toolbar:
@@ -382,6 +382,7 @@ tab:
       children_size_increase: "Esta dimensão foi aumentada por um superdimensionamento para {{ count }} peça agrupadas"
       invalid_final_area: "Cuidado, a somatória desta área não pôde ser calculada porque {{ count }} peça (de {{ total }}) tem uma área inválida"
       invalid_final_area_plural: "Cuidado, a somatória desta área não pôde ser calculada porque {{ count }} peças (de {{ total }}) têm uma área inválida"
+      is_instance_name: ""
       is_dynamic_attributes_name: Designação extraída do atributo 'Name' do componente dinâmico
       has_edges: "Esta peça contém {{ count }} fitas de borda"
       has_edges_plural: "Esta peça contém {{ count }} fitas de borda"
@@ -607,6 +608,7 @@ tab:
       filters_warning_plural: "Este filtro exibe apenas **{{ count }}** peças de um total de {{ total }}."
       edge_material_names_filter: Filtrar por material de fita de borda
       veneer_material_names_filter: Filtrar por laminado
+      names_filter: ""
       tags_filter: Filtrar por identificação da peça
       dimensions_help: Compreendendo as dimensões
       summary: Resumo
@@ -739,7 +741,7 @@ tab:
       type_4: $t(tab.materials.type_4)
       type_5: $t(tab.materials.type_5)
       type_6: $t(tab.materials.type_6)
-      type_7: ""
+      type_7: $t(tab.materials.type_7)
       type_-1: $t(default.cut_plural)
       tooltip:
         incompatible_unit: Unidade incompatível com as opções de orçamento de material
@@ -1909,6 +1911,7 @@ tab:
       open_file: ""
       import_to_model: Importar para o modelo
       error:
+        no_data: ""
         no_model: ""
         file_not_found: "Arquivo não encontrado : **{{ filename }}**"
         bad_extension: ""
@@ -1916,7 +1919,7 @@ tab:
       success:
         imported_title: Importação concluída
     csv:
-      label: ""
+      label: CSV
       title: Importar peças
       help: |
       load:
@@ -1984,7 +1987,7 @@ tab:
         imported_body_plural: "{{ count }} peças foram importadas com sucesso!"
       obsolete_base: "Para permanecer sincronizado, você deve recarregar o arquivo CSV."
     bxf2:
-      label: ""
+      label: BXF2
       title: ""
       help: |
       load:
@@ -1994,7 +1997,10 @@ tab:
         info_0: |
         info_0_plural: |
         info_1: ""
-        info_2: |
+        materials: Materiais
+        layers: Etiquetas
+        option_parts_formula: Fórmula
+        option_parts_formula_help: ""
         option_part_wood_material_name: ""
         option_part_wood_material_name_help: ""
         option_part_aluminium_material_name: ""
@@ -2011,6 +2017,16 @@ tab:
         option_hardware_material_name_help: ""
         option_hardware_layer_name: ""
         option_hardware_layer_name_help: ""
+        option_no_material_help: ""
+        option_default_material_help: ""
+        option_no_layer_help: ""
+        old_name: Nome original
+        new_name: Novo nome
+        count: Qtd.
+        formula:
+          part: Peça
+          project: ""
+          cabinet: ""
       model:
         author: ""
         date: ""
@@ -2025,8 +2041,11 @@ tab:
         total_quantity: Qtd.
         article_number: ""
         description: Descrição
+        material: Material
       error:
         failed_to_load_bxf2_file: |
+      warning:
+        partial_support: |
       obsolete_base: ""
   tutorials:
     label: Tutoriais
@@ -2228,6 +2247,7 @@ tool:
       lt_min_distance: "A distância {{ value1 }} é menor que a distância mínima de {{ value2 }}"
       gt_max_distance: "A distância {{ value1 }} é superior à distância máxima de {{ value2 }}"
       locked_part: ""
+      not_sibling_part: ""
       selection_contains_locked_entities: ""
   highlight:
     transparency: $t(tool.default.transparency)
@@ -2374,7 +2394,7 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    filter_7: ""
+    filter_7: $t(tab.materials.type_7)
     action_0: Pintar Peças
     action_0_status: Clique em uma peça para aplicar um material à sua instância
     action_1: Pintar Bordas
@@ -2474,3 +2494,7 @@ tool:
       not_part: Esta face não faz parte de uma peça (componente)
       not_flat_face: Esta superfície não é plana
       incompatible_active_path: O caminho ativo não permite exportar esta peça
+  smart_importers_bxf2:
+    title: Importar
+    action_0: $t(tab.importers.bxf2.title)
+    action_0_status: ""

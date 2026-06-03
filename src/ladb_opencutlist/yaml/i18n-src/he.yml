@@ -382,6 +382,7 @@ tab:
       children_size_increase: "המידה מוגדלת במידת יתר עבור {{ count }} חלקים מקובצים"
       invalid_final_area: "שים לב, לא ניתן לחשב שטח כולל מכיוון שחלק {{ count }} (מתוך {{ total }}) כולל שטח שגוי"
       invalid_final_area_plural: "שים לב, לא ניתן לחשב שטח כולל מכיוון של-{{ count }} חלקים (מתוך {{ total }}) יש שטח שגוי"
+      is_instance_name: ""
       is_dynamic_attributes_name: התיאור של החלק מופק מהתכונה 'Name' של הרכיב הדינמי
       has_edges: "החלק מכיל קאנט {{ count }}"
       has_edges_plural: "החלק מכיל {{ count }} קאנטים"
@@ -607,6 +608,7 @@ tab:
       filters_warning_plural: "הסינון מציג רק חלקים **{{ count }}** מתוך {{ total }}."
       edge_material_names_filter: סינון לפי חומר קאנט
       veneer_material_names_filter: סינון חומרי פורניר
+      names_filter: ""
       tags_filter: סנן לפי תגים
       dimensions_help: הבנת מידות
       summary: חישוב
@@ -1843,6 +1845,7 @@ tab:
       open_file: ""
       import_to_model: ייבוא למודל
       error:
+        no_data: ""
         no_model: ""
         file_not_found: "הקובץ לא נמצא : **{{ filename }}**"
         bad_extension: ""
@@ -1928,7 +1931,10 @@ tab:
         info_0: |
         info_0_plural: |
         info_1: ""
-        info_2: |
+        materials: חומרים
+        layers: תגים
+        option_parts_formula: נוסחה
+        option_parts_formula_help: ""
         option_part_wood_material_name: ""
         option_part_wood_material_name_help: ""
         option_part_aluminium_material_name: ""
@@ -1945,6 +1951,13 @@ tab:
         option_hardware_material_name_help: ""
         option_hardware_layer_name: ""
         option_hardware_layer_name_help: ""
+        option_no_material_help: ""
+        option_default_material_help: ""
+        option_no_layer_help: ""
+        formula:
+          part: חלק
+          project: ""
+          cabinet: ""
       model:
         author: ""
         date: ""
@@ -1959,8 +1972,11 @@ tab:
         total_quantity: כמות
         article_number: ""
         description: תיאור
+        material: חומר
       error:
         failed_to_load_bxf2_file: |
+      warning:
+        partial_support: |
       obsolete_base: ""
   tutorials:
     label: הוראות
@@ -2404,3 +2420,7 @@ tool:
       not_part: חזית הזאת אינה שייכת לחלק (רכיב)
       not_flat_face: משטח זה אינו שטוח
       incompatible_active_path: הנתיב הפעיל אינו מאפשר לייצא את החלק הזה
+  smart_importers_bxf2:
+    title: ייבוא
+    action_0: ""
+    action_0_status: ""

@@ -2266,6 +2266,7 @@ tool:
       lt_min_distance: "المسافة {{ value1 }} أقل من المسافة الدنيا البالغة {{ value2 }}"
       gt_max_distance: "المسافة {{ value1 }} أكبر من المسافة القصوى {{ value2 }}"
       locked_part: هذه القِطعة مقفلة
+      not_sibling_part: هذه القِطعة ليست في نفس عنصر أو مجموعة بقية التحديد
       selection_contains_locked_entities: يحتوي التحديد على كيانات مقفلة
   highlight:
     transparency: $t(tool.default.transparency)

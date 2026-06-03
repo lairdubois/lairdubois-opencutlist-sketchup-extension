@@ -141,6 +141,7 @@ core:
   dialog:
     title: OpenCutList de L'Air du Bois
   leftbar:
+    import: Import
     more: Mai multe
     more_docs: Doc.
     more_reviews: Recenzii
@@ -381,6 +382,7 @@ tab:
       children_size_increase: "Această dimensiune este supradimensionată pentru {{ count }} piese grupate"
       invalid_final_area: "Atenție, această arie cumulabilă nu a putut fi calculată deoarece {{ count }} piesă (din {{ total }}) are o arie nevalidă"
       invalid_final_area_plural: "Atenție, această arie cumulabilă nu a putut fi calculată deoarece {{ count }} piese (din {{ total }}) au o arie nevalidă"
+      is_instance_name: ""
       is_dynamic_attributes_name: Denumirea acestei piese este extrasă din atributul 'Name' al componentei dinamice
       has_edges: "Această piesă conține {{ count }} aplicare de cant"
       has_edges_plural: "Această piesă conține {{ count }} aplicări de cant"
@@ -612,6 +614,7 @@ tab:
       filters_warning_plural: "Acest filtru afișează doar **{{ count }}** piese dintr-un total de {{ total }}."
       edge_material_names_filter: Filtrează după materialul cantului
       veneer_material_names_filter: Filtrează după materialul furnirului
+      names_filter: ""
       tags_filter: Filtrează după etichete
       dimensions_help: Dimensiuni explicate
       summary: Rezumat
@@ -744,6 +747,7 @@ tab:
       type_4: $t(tab.materials.type_4)
       type_5: $t(tab.materials.type_5)
       type_6: $t(tab.materials.type_6)
+      type_7: $t(tab.materials.type_7)
       type_-1: $t(default.cut_plural)
       tooltip:
         incompatible_unit: Unitate incompatibilă cu opțiunile de estimare a materialului
@@ -1075,7 +1079,7 @@ tab:
       option_irregular_allowed_rotations_0: Niciuna
       option_irregular_allowed_rotations_90: Pași de 90°
       option_irregular_allowed_rotations_180: Pași de 180°
-      option_irregular_allowed_rotations_free: Liberă (experimental)
+      option_irregular_allowed_rotations_free: ""
       option_irregular_allow_mirroring: Oglindire Permisă
       option_irregular_allow_mirroring_help: |
         Definește dacă piesa are voie să fie oglindită pentru a fi plasată.
@@ -1574,6 +1578,7 @@ tab:
     type_4: Cant
     type_5: Feronerie
     type_6: Furnir
+    type_7: ""
     tooltip:
       type_0: Tip material '$t(tab.materials.type_0)'
       type_1: Tip material '$t(tab.materials.type_1)'
@@ -1582,6 +1587,7 @@ tab:
       type_4: Tip material '$t(tab.materials.type_4)'
       type_5: Tip material '$t(tab.materials.type_5)'
       type_6: Tip material '$t(tab.materials.type_6)'
+      type_7: ""
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Orientarea fibrei
@@ -1906,6 +1912,147 @@ tab:
       imported_body: "{{ count }} piesă importată cu succes!"
       imported_body_plural: "{{ count }} piese importate cu succes!"
     obsolete_base: "Pentru a rămâne sincronizat, trebuie să reîncărcați fișierul CSV."
+  importers:
+    default:
+      open_file: ""
+      import_to_model: Importă în model
+      error:
+        no_data: ""
+        no_model: ""
+        file_not_found: "Fișier negăsit : **{{ filename }}**"
+        bad_extension: ""
+        failed_to_import: ""
+      success:
+        imported_title: Import finalizat
+    csv:
+      label: CSV
+      title: Importă Piese
+      help: |
+      load:
+        title: Încărcare Fișier CSV
+        info_0: |
+          Selectați opțiunile necesare pentru a citi fișierul:
+          **{{ filename }}**.
+        info_1: |
+          *Unitatea configurată în model este: **{{ unit }}**.
+          Această unitate va fi folosită pentru dimensiunile fără o unitate specificată*.
+        options: Opțiuni de Încărcare
+        option_col_sep: Separator
+        option_col_sep_tab: Tabulator
+        option_col_sep_comma: Virgulă
+        option_col_sep_semicolon: Punct și virgulă
+        option_first_line_headers: Rând de Antet
+        option_first_line_headers_0: Date
+        option_first_line_headers_1: Titluri de Coloane
+      import:
+        title: Importă Piese în Model
+        info_0: |
+          Sunteți pe cale să importați **{{ count }} piesă** în model.
+          Această piesă va fi plasată într-un grup la originea scenei principale.
+        info_0_plural: |
+          Sunteți pe cale să importați **{{ count }} piese** în model.
+          Aceste piese vor fi stivuite într-un grup pornind de la originea scenei principale.
+        info_1: Faceți clic pe **Importă** pentru a confirma acțiunea.
+        options: |
+          Modelul conține deja *piese*, *definiții* sau *materiale*.
+          Selectați opțiunile de import dorite.
+        option_remove_all_?: "Selectați pasul următor:"
+        option_remove_all_false: Adaugă piesele la cele existente
+        option_remove_all_true: Înlocuiește elementele existente
+        option_keep_definitions_settings: Păstrează setările definițiilor
+        option_keep_materials_settings: Păstrează setările materialelor
+      column:
+        unused: Nefolosit
+        mandatory: Câmpuri obligatorii
+        optional: Câmpuri opționale
+        name: Denumire
+        count: Cantitate
+        bbox_length: Lungime
+        bbox_width: Lățime
+        bbox_thickness: Grosime
+        material: Material
+        tags: Etichete
+      tooltip:
+        errors: Această piesă nu va fi importată deoarece a produs următoarele erori
+        warnings: "Această piesă va fi importată, dar a produs următoarele avertismente"
+      error:
+        failed_to_load_csv_file: |
+          Nu s-a putut încărca fișierul CSV: **{{ error }}**
+          *Verificați dacă ați selectat separatorul de câmp corespunzător.*
+        empty_file: Fișierul pare gol sau nu poate fi citit corect.
+        no_importable_part: Nicio piesă nu poate fi importată. Atribuiți câmpurile obligatorii coloanelor corespunzătoare.
+        invalid_name: Denumire invalidă
+        invalid_length: Lungime invalidă
+        invalid_width: Lățime invalidă
+        invalid_thickness: Grosime invalidă
+      warning:
+        invalid_count: Cantitate invalidă
+        invalid_material: Material invalid
+      success:
+        imported_body: "{{ count }} piesă importată cu succes!"
+        imported_body_plural: "{{ count }} piese importate cu succes!"
+      obsolete_base: "Pentru a rămâne sincronizat, trebuie să reîncărcați fișierul CSV."
+    bxf2:
+      label: BXF2
+      title: ""
+      help: |
+      load:
+        title: ""
+      import:
+        title: ""
+        info_0: |
+        info_0_plural: |
+        info_1: ""
+        materials: Materiale
+        layers: Etichete (Tags)
+        option_parts_formula: Formulă
+        option_parts_formula_help: ""
+        option_part_wood_material_name: ""
+        option_part_wood_material_name_help: ""
+        option_part_aluminium_material_name: ""
+        option_part_aluminium_material_name_help: ""
+        option_part_glass_material_name: ""
+        option_part_glass_material_name_help: ""
+        option_front_part_layer_name: ""
+        option_front_part_layer_name_help: ""
+        option_machining_material_name: ""
+        option_machining_material_name_help: ""
+        option_machining_layer_name: ""
+        option_machining_layer_name_help: ""
+        option_hardware_material_name: ""
+        option_hardware_material_name_help: ""
+        option_hardware_layer_name: ""
+        option_hardware_layer_name_help: ""
+        option_no_material_help: ""
+        option_default_material_help: ""
+        option_no_layer_help: ""
+        old_name: Nume original
+        new_name: Nume nou
+        count: Cant.
+        formula:
+          part: Piesă
+          project: ""
+          cabinet: ""
+      model:
+        author: ""
+        date: ""
+      cabinet:
+        list: ""
+        description: Nume
+        width: Lățime
+        height: Înălțime
+        depth: ""
+      article:
+        list: ""
+        total_quantity: ""
+        article_number: ""
+        description: Descriere
+        material: Material
+      error:
+        failed_to_load_bxf2_file: |
+      warning:
+        partial_support: |
+      obsolete_base: ""
   tutorials:
     label: Tutoriale
     title: Tutoriale
@@ -2106,6 +2253,7 @@ tool:
       lt_min_distance: "Distanța {{ value1 }} este mai mică decât distanța minimă de {{ value2 }}"
       gt_max_distance: "Distanța {{ value1 }} este mai mare decât distanța maximă de {{ value2 }}"
       locked_part: Piesă blocată
+      not_sibling_part: ""
       selection_contains_locked_entities: Selecția conține elemente blocate
   highlight:
     transparency: $t(tool.default.transparency)
@@ -2216,11 +2364,15 @@ tool:
     action_1_status: Creează o serie de piese dintr-un corp solid
     action_1_state_0_status: Faceți clic pe un corp solid pentru a defini geometria de referință
     action_1_state_1_status: Selectați fețele pentru extrudare
+    # CSG = Constructive Solid Geometry
+    action_2: ""
+    action_2_status: ""
     action_option_group_thickness: Grosime
     action_option_group_stretch_measure_type: Măsurare
     action_option_group_axes: Axe
     action_option_group_paneling_joint_type: Îmbinare
     action_option_group_paneling_direction: Orientare
+    action_option_group_csg_operation: ""
     action_option_group_options: Opțiuni
     action_option_thickness_thickness: Grosime
     action_option_thickness_thickness_status: Definește grosimea panourilor
@@ -2248,6 +2400,7 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
+    filter_7: $t(tab.materials.type_7)
     action_0: Vopsește Piese
     action_0_status: Faceți clic pe o piesă pentru a aplica materialul instanței sale
     action_1: Vopsește Canturi
@@ -2313,6 +2466,7 @@ tool:
   smart_join:
     title: Asamblare
     action_0: Atingere # TODO: It's currently just for dev purposes
+    action_0_status: "" # TODO
   smart_export:
     title: Exportă
     action_0: Exportă Piesă 3D
@@ -2346,3 +2500,7 @@ tool:
       not_part: Această față nu aparține unei piese (componente)
       not_flat_face: Această suprafață nu este plană
       incompatible_active_path: Traseul activ nu permite exportul acestei piese
+  smart_importers_bxf2:
+    title: Import
+    action_0: $t(tab.importers.bxf2.title)
+    action_0_status: ""

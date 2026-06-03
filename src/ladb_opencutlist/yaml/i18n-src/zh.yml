@@ -382,6 +382,7 @@ tab:
       children_size_increase: "此尺寸增加了 {{ count }} 个分组部件的尺寸超差"
       invalid_final_area: "注意, 由于 {{ count }} 个部件 (共 {{ total }}) 存在无效面积, 因此无法计算此可求和面积"
       invalid_final_area_plural: "注意, 由于 {{ count }} 个部件 (共 {{ total }}) 存在无效面积, 因此无法计算此可求和面积"
+      is_instance_name: ""
       is_dynamic_attributes_name: 此部件的名称是从动态组件的属性 'Name' 中提取的
       has_edges: "此部件包含 {{ count }} 条封边"
       has_edges_plural: "此部件包含 {{ count }} 条封边"
@@ -607,6 +608,7 @@ tab:
       filters_warning_plural: "此筛选仅显示 **{{ total }}** 个部件中的 {{ count }} 个."
       edge_material_names_filter: 按封边材质筛选
       veneer_material_names_filter: 按贴面材质筛选
+      names_filter: ""
       tags_filter: 按标签筛选
       dimensions_help: 了解尺寸
       summary: 摘要
@@ -1905,6 +1907,7 @@ tab:
       open_file: ""
       import_to_model: 导入到模型中
       error:
+        no_data: ""
         no_model: ""
         file_not_found: "文件未找到 : **{{ filename }}**"
         bad_extension: ""
@@ -1990,7 +1993,10 @@ tab:
         info_0: |
         info_0_plural: |
         info_1: ""
-        info_2: |
+        materials: 材质
+        layers: 标签
+        option_parts_formula: 公式
+        option_parts_formula_help: ""
         option_part_wood_material_name: ""
         option_part_wood_material_name_help: ""
         option_part_aluminium_material_name: ""
@@ -2007,6 +2013,13 @@ tab:
         option_hardware_material_name_help: ""
         option_hardware_layer_name: ""
         option_hardware_layer_name_help: ""
+        option_no_material_help: ""
+        option_default_material_help: ""
+        option_no_layer_help: ""
+        formula:
+          part: 部件
+          project: ""
+          cabinet: ""
       model:
         author: ""
         date: ""
@@ -2021,8 +2034,11 @@ tab:
         total_quantity: 数量
         article_number: ""
         description: 描述
+        material: 材质
       error:
         failed_to_load_bxf2_file: |
+      warning:
+        partial_support: |
       obsolete_base: ""
   tutorials:
     label: 教程
@@ -2470,3 +2486,7 @@ tool:
       not_part: 这个面不是部件（组件）的一部分
       not_flat_face: 这个表面不是平的
       incompatible_active_path: 当前路径无法导出此部件
+  smart_importers_bxf2:
+    title: 导入
+    action_0: ""
+    action_0_status: ""

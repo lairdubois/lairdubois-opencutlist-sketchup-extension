@@ -116,7 +116,7 @@ core:
       smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
-      smart_join: ""
+      smart_join: $t(core.toolbar.command.smart_join)
       smart_export: $t(core.toolbar.command.smart_export)
       reset_dialog_position: Zresetuj położenie okna
   toolbar:
@@ -382,6 +382,7 @@ tab:
       children_size_increase: "Wymiar ten jest powiększony o naddatek dla {{ count }} zgrupowanych części"
       invalid_final_area: "Uwaga, nie można obliczyć tego sumarycznego obszaru, ponieważ część {{ count }} (z {{ total }}) ma nieprawidłowy obszar"
       invalid_final_area_plural: "Uwaga, nie można obliczyć tego sumarycznego obszaru, ponieważ {{ count }} części (z {{ total }}) mają nieprawidłowy obszar"
+      is_instance_name: ""
       is_dynamic_attributes_name: Oznaczenie tej części pochodzi z atrybutu 'Name' elementu dynamicznego
       has_edges: "Ten kawałek zawiera {{ count }} stronnie oklejoną krawędź"
       has_edges_plural: "Ten kawałek zawiera {{ count }} formirowane krawędzie"
@@ -607,6 +608,7 @@ tab:
       filters_warning_plural: "Ten filtr wyświetla tylko **{{ count }}** części z łącznej liczby {{ total }}."
       edge_material_names_filter: Filtruj według materiału do oklejania krawędzi
       veneer_material_names_filter: Filtruj według materiału okleiny (forniru)
+      names_filter: ""
       tags_filter: Filtruj według plakietek
       dimensions_help: Zrozumienie wymiarów
       summary: Podsumowanie
@@ -739,7 +741,7 @@ tab:
       type_4: $t(tab.materials.type_4)
       type_5: $t(tab.materials.type_5)
       type_6: $t(tab.materials.type_6)
-      type_7: ""
+      type_7: $t(tab.materials.type_7)
       type_-1: $t(default.cut_plural)
       tooltip:
         incompatible_unit: Jednostka niezgodna z opcjami szacowania materiału
@@ -1909,6 +1911,7 @@ tab:
       open_file: ""
       import_to_model: Importuj do modelu
       error:
+        no_data: ""
         no_model: ""
         file_not_found: "Nie znaleziono pliku: **{{ filename }}**"
         bad_extension: ""
@@ -1916,7 +1919,7 @@ tab:
       success:
         imported_title: Import zakończony
     csv:
-      label: ""
+      label: CSV
       title: Importuj części
       help: |
       load:
@@ -1984,7 +1987,7 @@ tab:
         imported_body_plural: "{{ count }} pomyślnie zaimportowane części!"
       obsolete_base: "Aby zachować synchronizację, musisz ponownie załadować plik CSV."
     bxf2:
-      label: ""
+      label: BXF2
       title: ""
       help: |
       load:
@@ -1994,7 +1997,10 @@ tab:
         info_0: |
         info_0_plural: |
         info_1: ""
-        info_2: |
+        materials: Materiały
+        layers: Etykiety
+        option_parts_formula: Wzór
+        option_parts_formula_help: ""
         option_part_wood_material_name: ""
         option_part_wood_material_name_help: ""
         option_part_aluminium_material_name: ""
@@ -2011,6 +2017,16 @@ tab:
         option_hardware_material_name_help: ""
         option_hardware_layer_name: ""
         option_hardware_layer_name_help: ""
+        option_no_material_help: ""
+        option_default_material_help: ""
+        option_no_layer_help: ""
+        old_name: Pierwotna nazwa
+        new_name: Nowa nazwa
+        count: Liczba
+        formula:
+          part: Część
+          project: ""
+          cabinet: ""
       model:
         author: ""
         date: ""
@@ -2025,8 +2041,11 @@ tab:
         total_quantity: Ilość
         article_number: ""
         description: Opis
+        material: Materiał
       error:
         failed_to_load_bxf2_file: |
+      warning:
+        partial_support: |
       obsolete_base: ""
   tutorials:
     label: Instrukcje
@@ -2228,6 +2247,7 @@ tool:
       lt_min_distance: "Odległość {{ value1 }} jest mniejsza niż minimalna odległość {{ value2 }}"
       gt_max_distance: "Odległość {{ value1 }} jest większa niż maksymalna odległość {{ value2 }}"
       locked_part: ""
+      not_sibling_part: ""
       selection_contains_locked_entities: ""
   highlight:
     transparency: $t(tool.default.transparency)
@@ -2374,7 +2394,7 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    filter_7: ""
+    filter_7: $t(tab.materials.type_7)
     action_0: Pokoloruj część
     action_0_status: "Kliknij część, aby pomalować jej instancję"
     action_1: Pokoloruj krawędź
@@ -2474,3 +2494,7 @@ tool:
       not_part: Ta ściana nie jest częścią części (komponentu)
       not_flat_face: Ta powierzchnia nie jest płaska
       incompatible_active_path: Aktywna ścieżka nie pozwala na eksport tej części
+  smart_importers_bxf2:
+    title: Importuj
+    action_0: $t(tab.importers.bxf2.title)
+    action_0_status: ""

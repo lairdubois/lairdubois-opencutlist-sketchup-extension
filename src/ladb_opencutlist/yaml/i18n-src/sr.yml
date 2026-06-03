@@ -382,6 +382,7 @@ tab:
       children_size_increase: "Ova dimenzija se uvećava za iznos za {{ count }} grupisanih delova"
       invalid_final_area: "Oprez, ovo sumirano polje nije moguće izračunati jer {{ count }} dio (od {{ total }}) ima pogrešno polje"
       invalid_final_area_plural: "Oprez, ovo sumirano područje nije moguće izračunati jer delovi {{ count }} (od {{ total }}) imaju pogrešno područje"
+      is_instance_name: ""
       is_dynamic_attributes_name: Opis ovog dela izdvojen je iz atributa 'Name' dinamičke komponente
       has_edges: "Ovaj deo sadrži {{ count }} kant trake"
       has_edges_plural: "Ovaj deo sadrži {{ count }} kantovanih ivica"
@@ -607,6 +608,7 @@ tab:
       filters_warning_plural: "Ovaj filter prikazuje samo **{{ count }}** deo od ukupno {{ total }}."
       edge_material_names_filter: Filtriraj prema materijalu za kant trake
       veneer_material_names_filter: Filtriranje materijala za furniranje
+      names_filter: ""
       tags_filter: Filtriraj po oznakama
       dimensions_help: Razumevanje dimenzija
       summary: Sažetak
@@ -739,7 +741,7 @@ tab:
       type_4: $t(tab.materials.type_4)
       type_5: $t(tab.materials.type_5)
       type_6: $t(tab.materials.type_6)
-      type_7: ""
+      type_7: $t(tab.materials.type_7)
       type_-1: $t(default.cut_plural)
       tooltip:
         incompatible_unit: Jedinica nije kompatibilna sa opcijama za procenu materijala
@@ -1905,6 +1907,7 @@ tab:
       open_file: ""
       import_to_model: Uvezi u model
       error:
+        no_data: ""
         no_model: ""
         file_not_found: "Datoteka nije pronađena: **{{ filename }}**"
         bad_extension: ""
@@ -1912,7 +1915,7 @@ tab:
       success:
         imported_title: Uvoz završen
     csv:
-      label: ""
+      label: CSV
       title: Uvezi delove
       help: |
       load:
@@ -1980,7 +1983,7 @@ tab:
         imported_body_plural: "{{ count }} delova uspešno uvezeno !"
       obsolete_base: "Da bi ste ostali sinhronizovani, morate ponovo učitati CSV fajl."
     bxf2:
-      label: ""
+      label: BXF2
       title: ""
       help: |
       load:
@@ -1990,7 +1993,10 @@ tab:
         info_0: |
         info_0_plural: |
         info_1: ""
-        info_2: |
+        materials: Materijali
+        layers: Oznake
+        option_parts_formula: Formula
+        option_parts_formula_help: ""
         option_part_wood_material_name: ""
         option_part_wood_material_name_help: ""
         option_part_aluminium_material_name: ""
@@ -2007,6 +2013,16 @@ tab:
         option_hardware_material_name_help: ""
         option_hardware_layer_name: ""
         option_hardware_layer_name_help: ""
+        option_no_material_help: ""
+        option_default_material_help: ""
+        option_no_layer_help: ""
+        old_name: ""
+        new_name: ""
+        count: ""
+        formula:
+          part: Komad
+          project: ""
+          cabinet: ""
       model:
         author: ""
         date: ""
@@ -2021,8 +2037,11 @@ tab:
         total_quantity: Količina
         article_number: ""
         description: Opis
+        material: Materijal
       error:
         failed_to_load_bxf2_file: |
+      warning:
+        partial_support: |
       obsolete_base: ""
   tutorials:
     label: Uputstvo
@@ -2224,6 +2243,7 @@ tool:
       lt_min_distance: "Rastojanje {{ value1 }} je manje od minimalnog rastojanja {{ value2 }}"
       gt_max_distance: ""
       locked_part: ""
+      not_sibling_part: ""
       selection_contains_locked_entities: ""
   highlight:
     transparency: $t(tool.default.transparency)
@@ -2370,7 +2390,7 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    filter_7: ""
+    filter_7: $t(tab.materials.type_7)
     action_0: Obojiti komponente
     action_0_status: Kliknite na komad za primenu materijala na instancu
     action_1: Oboj kantove
@@ -2470,3 +2490,7 @@ tool:
       not_part: Ova površina ne pripada nijednom delu (komponenti)
       not_flat_face: Površina nije ravna
       incompatible_active_path: Trenutna putanja ne podržava izvoz ovog dela
+  smart_importers_bxf2:
+    title: Uvezi
+    action_0: $t(tab.importers.bxf2.title)
+    action_0_status: ""
