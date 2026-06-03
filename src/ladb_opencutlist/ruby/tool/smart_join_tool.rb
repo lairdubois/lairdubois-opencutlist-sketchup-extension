@@ -210,6 +210,18 @@ module Ladb::OpenCutList
       SmartPicker.new(tool: @tool, observer: self, pick_point: true)
     end
 
+    def get_state_status(state)
+
+      case state
+
+      when STATE_SELECT
+        return @tool.get_action_status(@tool.fetch_action)
+
+      end
+
+      super
+    end
+
     def get_state_vcb_label(state)
       PLUGIN.get_i18n_string('tool.default.vcb_depth')
     end
@@ -420,20 +432,20 @@ module Ladb::OpenCutList
             k_edge.on_top = true
             @tool.append_3d(k_edge, LAYER_3D_ACTION_PREVIEW)
 
-            if join_def.anchor_points_3d.size > 1
-
-              p0 = join_def.anchor_points_3d[0]
-              p1 = join_def.anchor_points_3d[1]
-
-              k_label = _create_floating_label(
-                snap_point: join_def.start_point_3d.offset(p0.vector_to(Geom.linear_combination(0.5, p0, 0.5, p1).to_a)),
-                text: p0.distance(p1).to_s,
-                text_color: Kuix::COLOR_MAGENTA,
-                border_color: Kuix::COLOR_MAGENTA
-              )
-              @tool.append_2d(k_label, LAYER_3D_ACTION_PREVIEW)
-
-            end
+            # if join_def.anchor_points_3d.size > 1
+            #
+            #   p0 = join_def.anchor_points_3d[0]
+            #   p1 = join_def.anchor_points_3d[1]
+            #
+            #   k_label = _create_floating_label(
+            #     snap_point: join_def.start_point_3d.offset(p0.vector_to(Geom.linear_combination(0.5, p0, 0.5, p1).to_a)),
+            #     text: p0.distance(p1).to_s,
+            #     text_color: Kuix::COLOR_MAGENTA,
+            #     border_color: Kuix::COLOR_MAGENTA
+            #   )
+            #   @tool.append_2d(k_label, LAYER_3D_ACTION_PREVIEW)
+            #
+            # end
 
             rot = join_def.reversed_y ? Geom::Transformation.rotation(ORIGIN, Z_AXIS, 180.degrees) : IDENTITY
 
@@ -443,9 +455,9 @@ module Ladb::OpenCutList
               pt_b = point.transform(ti_b)
 
               _preview_join_drawing_def(machining_a_drawing_def, ti_a.inverse * Geom::Transformation.translation(pt_a) * at_a * rot, Kuix::COLOR_CYAN, 0.5) if machining_a_drawing_def
-              _preview_join_drawing_def(machining_b_drawing_def, ti_b.inverse * Geom::Transformation.translation(pt_b) * at_b, Kuix::COLOR_CYAN, 0.5) if machining_b_drawing_def
-              _preview_join_drawing_def(hardware_a_drawing_def, ti_a.inverse * Geom::Transformation.translation(pt_a) * at_a, Kuix::COLOR_DARK_GREY, 1) if hardware_a_drawing_def
-              _preview_join_drawing_def(hardware_b_drawing_def, ti_b.inverse * Geom::Transformation.translation(pt_b) * at_b, Kuix::COLOR_DARK_GREY, 1) if hardware_b_drawing_def
+              _preview_join_drawing_def(machining_b_drawing_def, ti_b.inverse * Geom::Transformation.translation(pt_b) * at_b * rot, Kuix::COLOR_CYAN, 0.5) if machining_b_drawing_def
+              _preview_join_drawing_def(hardware_a_drawing_def, ti_a.inverse * Geom::Transformation.translation(pt_a) * at_a * rot, Kuix::COLOR_DARK_GREY, 1) if hardware_a_drawing_def
+              _preview_join_drawing_def(hardware_b_drawing_def, ti_b.inverse * Geom::Transformation.translation(pt_b) * at_b * rot, Kuix::COLOR_DARK_GREY, 1) if hardware_b_drawing_def
 
             end
 
