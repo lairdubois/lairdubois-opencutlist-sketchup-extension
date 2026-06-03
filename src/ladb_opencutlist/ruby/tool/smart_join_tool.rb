@@ -211,15 +211,7 @@ module Ladb::OpenCutList
     end
 
     def get_state_status(state)
-
-      case state
-
-      when STATE_SELECT
-        return @tool.get_action_status(@tool.fetch_action)
-
-      end
-
-      super
+      PLUGIN.get_i18n_string("tool.smart_#{@tool.get_stripped_name}.action_#{@action}_state_#{state}_status") + '.'
     end
 
     def get_state_vcb_label(state)

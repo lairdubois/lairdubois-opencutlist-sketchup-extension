@@ -2513,7 +2513,8 @@ tool:
   smart_join:
     title: Assembler
     action_0: Placer
-    action_0_status: Cliquez sur la face de référence d'une pièce pour l'assembler avec les pièces voisines # TODO : changed
+    action_0_status: Placer des connecteurs pour assembler des pièces
+    action_0_state_0_status: Cliquez sur la face de référence d'une pièce pour l'assembler avec les pièces voisines
     action_option_group_depth: $t(tool.default.vcb_depth)
     action_option_group_offsets: Décalages
     action_option_group_spacings: Espacements
