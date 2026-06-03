@@ -1375,23 +1375,7 @@ module Ladb::OpenCutList
       @event_callback = PLUGIN.add_event_callback(PluginObserver::ON_GLOBAL_PRESET_CHANGED) do |params|
         dictionary, section = get_action_options_dictionary_and_section(fetch_action)
         if params[:dictionary] == dictionary && params[:section] == section
-          @actions_options_panels.each do |actions_options_panel|
-
-            action = actions_options_panel.data[:action]
-            next unless action == fetch_action
-
-            actions_options_panel.children.each do |b|
-              unless b.data.nil?
-                option_group = b.data[:option_group]
-                option = b.data[:option]
-                if b.is_a?(Kuix::Button)
-                  b.children.first.text = fetch_action_option_string(action, option_group, option) if !get_action_option_toggle?(action, option_group, option) && b.children.first.is_a?(Kuix::Label)
-                  b.selected = fetch_action_option_boolean(action, option_group, option)
-                end
-              end
-            end
-
-          end
+          onGlobalPresetChanged(dictionary, section)
         end
       end
 
@@ -1593,6 +1577,27 @@ module Ladb::OpenCutList
 
     def onActionOptionStored(action, option_group, option)
       @action_handler.onToolActionOptionStored(self, action, option_group, option) if !@action_handler.nil? && @action_handler.respond_to?(:onToolActionOptionStored)
+    end
+
+    def onGlobalPresetChanged(dictionary, section)
+      @actions_options_panels.each do |actions_options_panel|
+
+        action = actions_options_panel.data[:action]
+        next unless action == fetch_action
+
+        actions_options_panel.children.each do |b|
+          unless b.data.nil?
+            option_group = b.data[:option_group]
+            option = b.data[:option]
+            if b.is_a?(Kuix::Button)
+              b.children.first.text = fetch_action_option_string(action, option_group, option) if !get_action_option_toggle?(action, option_group, option) && b.children.first.is_a?(Kuix::Label)
+              b.selected = fetch_action_option_boolean(action, option_group, option)
+            end
+          end
+        end
+
+      end if @actions_options_panels
+      @action_handler.onToolGlobalPresetChanged(self, dictionary, section) if !@action_handler.nil? && @action_handler.respond_to?(:onToolGlobalPresetChanged)
     end
 
     def onValidationCancel

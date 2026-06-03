@@ -239,6 +239,11 @@ module Ladb::OpenCutList
       _restart
     end
 
+    def onToolGlobalPresetChanged(tool, dictionary, section)
+      @geometry_def = nil
+      _refresh
+    end
+
     # -----
 
     def enableVCB?
@@ -373,7 +378,19 @@ module Ladb::OpenCutList
 
         @tool.hide_message
 
+        ti_a = joinery_def[:ti_a]
+
+        geometry_def = _get_geometry_def
+        hardware_a_drawing_def = geometry_def[:hardware_a_drawing_def]
+        hardware_b_drawing_def = geometry_def[:hardware_b_drawing_def]
+        machining_a_drawing_def = geometry_def[:machining_a_drawing_def]
+        machining_b_drawing_def = geometry_def[:machining_b_drawing_def]
+
         neighbor_join_defs.each do |neighbor_join_def|
+
+          ti_b = neighbor_join_def.ti_b
+          at_a = neighbor_join_def.at_a
+          at_b = neighbor_join_def.at_b
 
           neighbor_join_def.join_defs.each do |join_def|
 
@@ -401,6 +418,18 @@ module Ladb::OpenCutList
             k_edge.on_top = true
             @tool.append_3d(k_edge, LAYER_3D_ACTION_PREVIEW)
 
+            join_def.anchor_points_3d.each do |point|
+
+              pt_a = point.transform(ti_a)
+              pt_b = point.transform(ti_b)
+
+              _preview_join_drawing_def(machining_a_drawing_def, ti_a.inverse * Geom::Transformation.translation(pt_a) * at_a, Kuix::COLOR_CYAN, 0.5) if machining_a_drawing_def
+              _preview_join_drawing_def(machining_b_drawing_def, ti_b.inverse * Geom::Transformation.translation(pt_b) * at_b, Kuix::COLOR_CYAN, 0.5) if machining_b_drawing_def
+              _preview_join_drawing_def(hardware_a_drawing_def, ti_a.inverse * Geom::Transformation.translation(pt_a) * at_a, Kuix::COLOR_DARK_GREY, 1) if hardware_a_drawing_def
+              _preview_join_drawing_def(hardware_b_drawing_def, ti_b.inverse * Geom::Transformation.translation(pt_b) * at_b, Kuix::COLOR_DARK_GREY, 1) if hardware_b_drawing_def
+
+            end
+
           end
 
           k_mesh = Kuix::Mesh.new
@@ -412,6 +441,20 @@ module Ladb::OpenCutList
 
       end
 
+    end
+
+    def _preview_join_drawing_def(drawing_def, transformation, color, line_width)
+
+      k_segments = Kuix::Segments.new
+      k_segments.add_segments(
+        drawing_def.edge_manipulators.flat_map(&:segment) +
+        drawing_def.curve_manipulators.flat_map(&:segments)
+      )
+      k_segments.color = color
+      k_segments.line_width = line_width
+      k_segments.transformation = transformation
+      k_segments.on_top = true
+      @tool.append_3d(k_segments, LAYER_3D_ACTION_PREVIEW)
 
     end
 
@@ -440,9 +483,10 @@ module Ladb::OpenCutList
       return if (neighborhood_def = _get_neighborhood_def(view)).nil?
       return if (joinery_def = _get_joinery_def(neighborhood_def)).nil?
 
+      ti_a, neighbor_join_defs = joinery_def.values_at(:ti_a, :neighbor_join_defs)
+
       instance_a = _get_active_part_entity
       instance_a_entities = instance_a.definition.entities
-      ti_a = (PathUtils.get_transformation(get_active_selection_path, IDENTITY) * instance_a.transformation).inverse
 
       geometry_def = _get_geometry_def
       hardware_a_definition = geometry_def[:hardware_a_definition]
@@ -453,29 +497,17 @@ module Ladb::OpenCutList
       machining_material = geometry_def[:machining_material]
 
       model = Sketchup.active_model
-      model.start_operation('Join', true)
+      model.start_operation('OCL Join', true)
 
         begin
 
-          joinery_def[:neighbor_join_defs].each do |neighbor_join_def|
+          neighbor_join_defs.each do |neighbor_join_def|
 
             instance_b = neighbor_join_def.neighbor_def.path.last
             instance_b_entities = instance_b.definition.entities
-            ti_b = PathUtils.get_transformation(neighbor_join_def.neighbor_def.path, IDENTITY).inverse
-
-            at_a = Geom::Transformation.axes(
-              ORIGIN,
-              neighbor_join_def.x_axis.transform(ti_a),
-              neighbor_join_def.y_axis.transform(ti_a),
-              neighbor_join_def.z_axis.transform(ti_a)
-            )
-
-            at_b = Geom::Transformation.axes(
-              ORIGIN,
-              neighbor_join_def.x_axis.transform(ti_b),
-              neighbor_join_def.y_axis.transform(ti_b),
-              neighbor_join_def.z_axis.transform(ti_b).reverse!
-            )
+            ti_b = neighbor_join_def.ti_b
+            at_a = neighbor_join_def.at_a
+            at_b = neighbor_join_def.at_b
 
             neighbor_join_def.join_defs.each do |join_def|
 
@@ -787,9 +819,14 @@ module Ladb::OpenCutList
     def _get_joinery_def(neighborhood_def)
       return nil if @face_manipulator.nil? || @edge_manipulator.nil? || @vertex_manipulator.nil?
 
+      instance_a = _get_active_part_entity
+      ti_a = (PathUtils.get_transformation(get_active_selection_path, IDENTITY) * instance_a.transformation).inverse
+
       neighbor_join_defs = []
 
       neighborhood_def[:neighbor_defs].each do |neighbor_def|
+
+        ti_b = PathUtils.get_transformation(neighbor_def.path, IDENTITY).inverse
 
         join_defs = []
 
@@ -808,6 +845,20 @@ module Ladb::OpenCutList
           y_axis = z_axis * x_axis
           at = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis)
           ati = at.inverse
+
+          at_a = Geom::Transformation.axes(
+            ORIGIN,
+            x_axis.transform(ti_a),
+            y_axis.transform(ti_a),
+            z_axis.transform(ti_a)
+          )
+
+          at_b = Geom::Transformation.axes(
+            ORIGIN,
+            x_axis.transform(ti_b),
+            y_axis.transform(ti_b),
+            z_axis.transform(ti_b).reverse!
+          )
 
           touching_def.touching_polys.each do |touching_poly|
 
@@ -863,13 +914,14 @@ module Ladb::OpenCutList
 
           end
 
-          neighbor_join_defs << NeighborJoinDef.new(neighbor_def, join_defs, x_axis, y_axis, z_axis) if join_defs.any?
+          neighbor_join_defs << NeighborJoinDef.new(neighbor_def, join_defs, x_axis, y_axis, z_axis, ti_b, at_a, at_b) if join_defs.any?
 
         end
 
       end
 
       {
+        ti_a: ti_a,
         neighbor_join_defs: neighbor_join_defs
       }
     end
@@ -878,54 +930,71 @@ module Ladb::OpenCutList
       return @geometry_def unless @geometry_def.nil?
 
       model = Sketchup.active_model
-      model.start_operation('OCL LOADING GEOMETRY', true)
 
-        fn_get_definition = lambda do |ref|
-          return nil if !ref.is_a?(String) || ref.strip.empty?
-          if (extname = File.extname(ref)).downcase == '.skp'
-            name = File.basename(ref, extname)
-            definition = model.definitions[name]  # Try to get definition from DefinitionList first
-            definition = model.definitions.load(ref) if definition.nil?
-          else
-            definition = model.definitions[ref]
-          end
-          definition
+      fn_get_definition = lambda do |ref|
+        return nil if !ref.is_a?(String) || ref.strip.empty?
+        if (extname = File.extname(ref)).downcase == '.skp'
+          name = File.basename(ref, extname)
+          definition = model.definitions[name]  # Try to get definition from DefinitionList first
+          definition = model.definitions.load(ref) if definition.nil?
+        else
+          definition = model.definitions[ref]
         end
+        definition
+      end
 
-        hardware_a_definition = fn_get_definition.call(_fetch_option_hardware_a)
-        hardware_b_definition = fn_get_definition.call(_fetch_option_hardware_b)
-        machining_a_definition = fn_get_definition.call(_fetch_option_machining_a)
-        machining_b_definition = fn_get_definition.call(_fetch_option_machining_b)
+      hardware_a_definition = fn_get_definition.call(_fetch_option_hardware_a)
+      hardware_b_definition = fn_get_definition.call(_fetch_option_hardware_b)
+      machining_a_definition = fn_get_definition.call(_fetch_option_machining_a)
+      machining_b_definition = fn_get_definition.call(_fetch_option_machining_b)
 
-        fn_get_material = lambda do |ref, default_color = nil, default_type = nil|
-          return nil if !ref.is_a?(String) || ref.strip.empty?
-          if File.extname(ref).downcase == '.skm'
-            material = model.materials.load(ref)
-          else
-            material = model.materials[ref]
-            if material.nil?
-              material = model.materials.add(ref)
-              material.color = default_color unless default_color.nil?
-              unless default_type.nil?
-                ma = MaterialAttributes.new(material)
-                ma.type = default_type
-                ma.write_to_attributes
-              end
+      fn_get_drawing_def = lambda do |definition|
+        return nil if definition.nil?
+        CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new([ definition ]) ],
+          ignore_surfaces: true,
+          ignore_faces: true,
+          ignore_edges: false,
+          ignore_soft_edges: false,
+          container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_ALL
+        ).run
+      end
+
+      hardware_a_drawing_def = fn_get_drawing_def.call(hardware_a_definition)
+      hardware_b_drawing_def = fn_get_drawing_def.call(hardware_b_definition)
+      machining_a_drawing_def = fn_get_drawing_def.call(machining_a_definition)
+      machining_b_drawing_def = fn_get_drawing_def.call(machining_b_definition)
+
+      fn_get_material = lambda do |ref, default_color = nil, default_type = nil|
+        return nil if !ref.is_a?(String) || ref.strip.empty?
+        if File.extname(ref).downcase == '.skm'
+          material = model.materials.load(ref)
+        else
+          material = model.materials[ref]
+          if material.nil?
+            material = model.materials.add(ref)
+            material.color = default_color unless default_color.nil?
+            unless default_type.nil?
+              ma = MaterialAttributes.new(material)
+              ma.type = default_type
+              ma.write_to_attributes
             end
           end
-          material
         end
+        material
+      end
 
-        hardware_material = fn_get_material.call(_fetch_option_hardware_material_name, Kuix::COLOR_BLACK, MaterialAttributes::TYPE_HARDWARE)
-        machining_material = fn_get_material.call(_fetch_option_machining_material_name, '#0068ff', MaterialAttributes::TYPE_MACHINING)
-
-      model.commit_operation
+      hardware_material = fn_get_material.call(_fetch_option_hardware_material_name, Kuix::COLOR_BLACK, MaterialAttributes::TYPE_HARDWARE)
+      machining_material = fn_get_material.call(_fetch_option_machining_material_name, '#0068ff', MaterialAttributes::TYPE_MACHINING)
 
       @geometry_def = {
         hardware_a_definition: hardware_a_definition,
         hardware_b_definition: hardware_b_definition,
         machining_a_definition: machining_a_definition,
         machining_b_definition: machining_b_definition,
+        hardware_a_drawing_def: hardware_a_drawing_def,
+        hardware_b_drawing_def: hardware_b_drawing_def,
+        machining_a_drawing_def: machining_a_drawing_def,
+        machining_b_drawing_def: machining_b_drawing_def,
         hardware_material: hardware_material,
         machining_material: machining_material
       }
@@ -944,7 +1013,7 @@ module Ladb::OpenCutList
       end
     end
 
-    NeighborJoinDef = Struct.new(:neighbor_def, :join_defs, :x_axis, :y_axis, :z_axis)
+    NeighborJoinDef = Struct.new(:neighbor_def, :join_defs, :x_axis, :y_axis, :z_axis, :ti_b, :at_a, :at_b)
     JoinDef = Struct.new(:touching_def, :touching_poly, :anchor_points_3d, :start_point_3d, :end_point_3d)
 
 
