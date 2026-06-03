@@ -8,7 +8,7 @@ module Ladb::OpenCutList
 
   class SmartJoinTool < SmartTool
 
-    ACTION_0 = 0
+    ACTION_PLACE = 0
 
     ACTION_OPTION_DEPTH = 'depth'
     ACTION_OPTION_OFFSETS = 'offsets'
@@ -33,7 +33,7 @@ module Ladb::OpenCutList
 
     ACTIONS = [
       {
-        :action => ACTION_0,
+        :action => ACTION_PLACE,
         :options => {
           ACTION_OPTION_DEPTH => [ ACTION_OPTION_DEPTH_CENTRED, ACTION_OPTION_DEPTH_DISTANCE ],
           ACTION_OPTION_OFFSETS => [ ACTION_OPTION_OFFSETS_START_OFFSET, ACTION_OPTION_OFFSETS_END_OFFSET ],
@@ -69,7 +69,7 @@ module Ladb::OpenCutList
     def get_action_cursor(action)
 
       case action
-      when ACTION_0
+      when ACTION_PLACE
         return SmartCursorManager.cursor_select_join
       end
 
@@ -163,8 +163,8 @@ module Ladb::OpenCutList
     def onActionChanged(action)
 
       case action
-      when ACTION_0
-        set_action_handler(SmartJoin0ActionHandler.new(self))
+      when ACTION_PLACE
+        set_action_handler(SmartJoinPlaceActionHandler.new(self))
       end
 
       super
@@ -182,20 +182,17 @@ module Ladb::OpenCutList
 
   end
 
-  class SmartJoin0ActionHandler < SmartSelectActionHandler
+  class SmartJoinPlaceActionHandler < SmartSelectActionHandler
 
     include UserTextHelper
 
     LAYER_2D_ACTION_PREVIEW = 3
     LAYER_3D_ACTION_PREVIEW = 3
 
-    STATE_JOIN_START = 1
-    STATE_JOIN = 2
-
     Clippy = Fiddle::Clippy
 
     def initialize(tool, previous_action_handler = nil)
-      super(SmartJoinTool::ACTION_0, tool, previous_action_handler)
+      super(SmartJoinTool::ACTION_PLACE, tool, previous_action_handler)
     end
 
     # -----
@@ -245,7 +242,7 @@ module Ladb::OpenCutList
     end
 
     def onToolGlobalPresetChanged(tool, dictionary, section)
-      @geometry_def = nil
+      @geometries_def = nil
       _refresh
     end
 
@@ -293,7 +290,7 @@ module Ladb::OpenCutList
         return
       end
 
-      neighbor_defs = neighborhood_def[:neighbor_defs]
+      neighbor_defs = neighborhood_def.neighbor_defs
 
       pt = @picker.picked_point
 
@@ -322,6 +319,7 @@ module Ladb::OpenCutList
 
       @tool.clear_2d(LAYER_2D_ACTION_PREVIEW)
       @tool.clear_3d(LAYER_3D_ACTION_PREVIEW)
+      @tool.hide_message
 
       return if (neighborhood_def = _get_neighborhood_def(view)).nil?
 
@@ -344,57 +342,31 @@ module Ladb::OpenCutList
       if @edge_manipulator.is_a?(EdgeManipulator)
 
         # Highlight picked segment
-        # k_segments = Kuix::Segments.new
-        # k_segments.add_segments(edge_manipulator.segment)
-        # k_segments.color = Kuix::COLOR_MAGENTA
-        # k_segments.line_width = 2
-        # k_segments.on_top = true
-        # @tool.append_3d(k_segments, LAYER_3D_ACTION_PREVIEW)
+        k_segments = Kuix::Segments.new
+        k_segments.add_segments(@edge_manipulator.segment)
+        k_segments.color = Kuix::COLOR_DARK_GREY
+        k_segments.line_width = 4
+        k_segments.on_top = true
+        @tool.append_3d(k_segments, LAYER_3D_ACTION_PREVIEW)
 
       end
 
-      if @vertex_manipulator.is_a?(VertexManipulator)
+      unless (joinery_def = _get_joinery_def(neighborhood_def)).nil?
 
-        k_points = _create_floating_points(
-          points: @vertex_manipulator.point,
-          style: Kuix::POINT_STYLE_SQUARE,
-        )
-        @tool.append_3d(k_points, LAYER_3D_ACTION_PREVIEW)
+        neighbor_join_defs = joinery_def.neighbor_join_defs
 
-        k_edge = Kuix::EdgeMotif3d.new
-        k_edge.start.copy!(@snap_point)
-        k_edge.end.copy!(@vertex_manipulator.point)
-        k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-        k_edge.line_width = 1
-        k_edge.color = Kuix::COLOR_DARK_GREY
-        k_edge.on_top = true
-        @tool.append_3d(k_edge, LAYER_3D_ACTION_PREVIEW)
+        ti_a = neighborhood_def.ti_a
 
-      end
+        geometries_def = _get_geometries_def
+        hardware_a = geometries_def.hardware_a
+        hardware_b = geometries_def.hardware_b
+        machining_a = geometries_def.machining_a
+        machining_b = geometries_def.machining_b
 
-      return if (joinery_def = _get_joinery_def(neighborhood_def)).nil?
-
-      neighbor_join_defs = joinery_def[:neighbor_join_defs]
-
-      if neighbor_join_defs.empty?
-
-        @tool.show_message(PLUGIN.get_i18n_string('tool.smart_join.error.no_valid_join'), SmartTool::MESSAGE_TYPE_ERROR)
-
-      else
-
-        @tool.hide_message
-
-        ti_a = joinery_def[:ti_a]
-
-        geometry_def = _get_geometry_def
-        hardware_a_drawing_def = geometry_def[:hardware_a_drawing_def]
-        hardware_b_drawing_def = geometry_def[:hardware_b_drawing_def]
-        machining_a_drawing_def = geometry_def[:machining_a_drawing_def]
-        machining_b_drawing_def = geometry_def[:machining_b_drawing_def]
-
+        no_valid_join = true
         neighbor_join_defs.each do |neighbor_join_def|
 
-          ti_b = neighbor_join_def.ti_b
+          ti_b = neighbor_join_def.neighbor_def.ti_b
           at_a = neighbor_join_def.at_a
           at_b = neighbor_join_def.at_b
 
@@ -403,6 +375,7 @@ module Ladb::OpenCutList
             k_polyline = Kuix::Polyline.new
             k_polyline.add_points(join_def.touching_poly)
             k_polyline.line_width = 2
+            k_polyline.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if join_def.anchor_points_3d.empty?
             k_polyline.color = Kuix::COLOR_MAGENTA
             k_polyline.closed = true
             k_polyline.on_top = true
@@ -415,14 +388,18 @@ module Ladb::OpenCutList
             )
             @tool.append_3d(k_points, LAYER_3D_ACTION_PREVIEW)
 
-            k_edge = Kuix::EdgeMotif3d.new
-            k_edge.start.copy!(join_def.start_point_3d)
-            k_edge.end.copy!(join_def.end_point_3d)
-            k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-            k_edge.line_width = 1
-            k_edge.color = Kuix::COLOR_MAGENTA
-            k_edge.on_top = true
-            @tool.append_3d(k_edge, LAYER_3D_ACTION_PREVIEW)
+            unless join_def.anchor_points_3d.empty?
+
+              k_edge = Kuix::EdgeMotif3d.new
+              k_edge.start.copy!(join_def.start_point_3d)
+              k_edge.end.copy!(join_def.end_point_3d)
+              k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+              k_edge.line_width = 1
+              k_edge.color = Kuix::COLOR_MAGENTA
+              k_edge.on_top = true
+              @tool.append_3d(k_edge, LAYER_3D_ACTION_PREVIEW)
+
+            end
 
             # if join_def.anchor_points_3d.size > 1
             #
@@ -446,12 +423,41 @@ module Ladb::OpenCutList
               pt_a = point.transform(ti_a)
               pt_b = point.transform(ti_b)
 
-              _preview_join_drawing_def(machining_a_drawing_def, ti_a.inverse * Geom::Transformation.translation(pt_a) * at_a * rot, Kuix::COLOR_CYAN, 0.5) if machining_a_drawing_def
-              _preview_join_drawing_def(machining_b_drawing_def, ti_b.inverse * Geom::Transformation.translation(pt_b) * at_b * rot, Kuix::COLOR_CYAN, 0.5) if machining_b_drawing_def
-              _preview_join_drawing_def(hardware_a_drawing_def, ti_a.inverse * Geom::Transformation.translation(pt_a) * at_a * rot, Kuix::COLOR_DARK_GREY, 1) if hardware_a_drawing_def
-              _preview_join_drawing_def(hardware_b_drawing_def, ti_b.inverse * Geom::Transformation.translation(pt_b) * at_b * rot, Kuix::COLOR_DARK_GREY, 1) if hardware_b_drawing_def
+              # -- Machinings --
+              #
+              _preview_join_drawing_def(
+                machining_a.drawing_def,
+                ti_a.inverse * Geom::Transformation.translation(pt_a) * at_a * rot,
+                Kuix::COLOR_CYAN,
+                0.5
+              ) if machining_a.drawing_def
+
+              _preview_join_drawing_def(
+                machining_b.drawing_def,
+                ti_b.inverse * Geom::Transformation.translation(pt_b) * at_b * rot,
+                Kuix::COLOR_CYAN,
+                0.5
+              ) if machining_b.drawing_def
+
+              # -- Hardware --
+
+              _preview_join_drawing_def(
+                hardware_a.drawing_def,
+                ti_a.inverse * Geom::Transformation.translation(pt_a) * at_a * rot,
+                Kuix::COLOR_DARK_GREY,
+                1
+              ) if hardware_a.drawing_def
+
+              _preview_join_drawing_def(
+                hardware_b.drawing_def,
+                ti_b.inverse * Geom::Transformation.translation(pt_b) * at_b * rot,
+                Kuix::COLOR_DARK_GREY,
+                1
+              ) if hardware_b.drawing_def
 
             end
+
+            no_valid_join = false if join_def.anchor_points_3d.any?
 
           end
 
@@ -461,6 +467,29 @@ module Ladb::OpenCutList
           @tool.append_3d(k_mesh, LAYER_3D_ACTION_PREVIEW)
 
         end
+
+        @tool.show_message(PLUGIN.get_i18n_string('tool.smart_join.error.no_valid_join'), SmartTool::MESSAGE_TYPE_ERROR) if no_valid_join
+
+      end
+
+      if @vertex_manipulator.is_a?(VertexManipulator)
+
+        k_points = _create_floating_points(
+          points: @vertex_manipulator.point,
+          style: Kuix::POINT_STYLE_CIRCLE,
+          fill_color: Kuix::COLOR_DARK_GREY,
+          stroke_color: Kuix::COLOR_WHITE,
+        )
+        @tool.append_3d(k_points, LAYER_3D_ACTION_PREVIEW)
+
+        k_edge = Kuix::EdgeMotif3d.new
+        k_edge.start.copy!(@snap_point)
+        k_edge.end.copy!(@vertex_manipulator.point)
+        k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+        k_edge.line_width = 1
+        k_edge.color = Kuix::COLOR_DARK_GREY
+        k_edge.on_top = true
+        @tool.append_3d(k_edge, LAYER_3D_ACTION_PREVIEW)
 
       end
 
@@ -506,18 +535,19 @@ module Ladb::OpenCutList
       return if (neighborhood_def = _get_neighborhood_def(view)).nil?
       return if (joinery_def = _get_joinery_def(neighborhood_def)).nil?
 
-      ti_a, neighbor_join_defs = joinery_def.values_at(:ti_a, :neighbor_join_defs)
+      ti_a = neighborhood_def.ti_a
+      neighbor_join_defs = joinery_def.neighbor_join_defs
 
-      instance_a = _get_active_part_entity
+      instance_a = neighborhood_def.instance_a
       instance_a_entities = instance_a.definition.entities
 
-      geometry_def = _get_geometry_def
-      hardware_a_definition = geometry_def[:hardware_a_definition]
-      hardware_b_definition = geometry_def[:hardware_b_definition]
-      machining_a_definition = geometry_def[:machining_a_definition]
-      machining_b_definition = geometry_def[:machining_b_definition]
-      hardware_material = geometry_def[:hardware_material]
-      machining_material = geometry_def[:machining_material]
+      geometries_def = _get_geometries_def
+      hardware_a = geometries_def.hardware_a
+      hardware_b = geometries_def.hardware_b
+      machining_a = geometries_def.machining_a
+      machining_b = geometries_def.machining_b
+      hardware_material = geometries_def.hardware_material
+      machining_material = geometries_def.machining_material
 
       model = Sketchup.active_model
       model.start_operation('OCL Join', true)
@@ -528,7 +558,7 @@ module Ladb::OpenCutList
 
             instance_b = neighbor_join_def.neighbor_def.path.last
             instance_b_entities = instance_b.definition.entities
-            ti_b = neighbor_join_def.ti_b
+            ti_b = neighbor_join_def.neighbor_def.ti_b
             at_a = neighbor_join_def.at_a
             at_b = neighbor_join_def.at_b
 
@@ -542,27 +572,27 @@ module Ladb::OpenCutList
                 pt_b = point.transform(ti_b)
 
                 # -- A --
-                if hardware_a_definition.is_a?(Sketchup::ComponentDefinition)
-                  hardware_a_instance = instance_a_entities.add_instance(hardware_a_definition, Geom::Transformation.translation(pt_a) * at_a * rot)
+                if hardware_a.definition.is_a?(Sketchup::ComponentDefinition)
+                  hardware_a_instance = instance_a_entities.add_instance(hardware_a.definition, Geom::Transformation.translation(pt_a) * at_a * rot)
                   hardware_a_instance.material = hardware_material
-                  hardware_a_instance.glued_to = join_def.touching_def.face_manipulator.face if hardware_a_definition.behavior.is2d?
+                  hardware_a_instance.glued_to = join_def.touching_def.face_manipulator.face if hardware_a.definition.behavior.is2d?
                 end
-                if machining_a_definition.is_a?(Sketchup::ComponentDefinition)
-                  machining_a_instance = instance_a_entities.add_instance(machining_a_definition, Geom::Transformation.translation(pt_a) * at_a * rot)
+                if machining_a.definition.is_a?(Sketchup::ComponentDefinition)
+                  machining_a_instance = instance_a_entities.add_instance(machining_a.definition, Geom::Transformation.translation(pt_a) * at_a * rot)
                   machining_a_instance.material = machining_material
-                  machining_a_instance.glued_to = join_def.touching_def.face_manipulator.face if machining_a_definition.behavior.is2d?
+                  machining_a_instance.glued_to = join_def.touching_def.face_manipulator.face if machining_a.definition.behavior.is2d?
                 end
 
                 # -- B --
-                if hardware_b_definition.is_a?(Sketchup::ComponentDefinition)
-                  hardware_b_instance = instance_b_entities.add_instance(hardware_b_definition, Geom::Transformation.translation(pt_b) * at_b * rot)
+                if hardware_b.definition.is_a?(Sketchup::ComponentDefinition)
+                  hardware_b_instance = instance_b_entities.add_instance(hardware_b.definition, Geom::Transformation.translation(pt_b) * at_b * rot)
                   hardware_b_instance.material = hardware_material
-                  hardware_b_instance.glued_to = join_def.touching_def.neighbor_face_manipulator.face if hardware_b_definition.behavior.is2d?
+                  hardware_b_instance.glued_to = join_def.touching_def.neighbor_face_manipulator.face if hardware_b.definition.behavior.is2d?
                 end
-                if machining_b_definition.is_a?(Sketchup::ComponentDefinition)
-                  machining_b_instance = instance_b_entities.add_instance(machining_b_definition, Geom::Transformation.translation(pt_b) * at_b * rot)
+                if machining_b.definition.is_a?(Sketchup::ComponentDefinition)
+                  machining_b_instance = instance_b_entities.add_instance(machining_b.definition, Geom::Transformation.translation(pt_b) * at_b * rot)
                   machining_b_instance.material = machining_material
-                  machining_b_instance.glued_to = join_def.touching_def.neighbor_face_manipulator.face if machining_b_definition.behavior.is2d?
+                  machining_b_instance.glued_to = join_def.touching_def.neighbor_face_manipulator.face if machining_b.definition.behavior.is2d?
                 end
 
               end
@@ -804,7 +834,7 @@ module Ladb::OpenCutList
             touching_2d_paths, op = Clippy.execute_intersection(closed_subjects: f_2d_paths, clips: nf_2d_paths)
             touching_polys = touching_2d_paths.map { |path| Clippy.rpath_to_points(path, 0).map { |point| point.transform(at)} }
 
-            neighbor_def.touching_defs << NeighborTouchingDef.new(fm, nfm, touching_polys)
+            neighbor_def.touching_defs << NeighborhoodTouchingDef.new(fm, nfm, touching_polys)
 
           end
 
@@ -816,10 +846,16 @@ module Ladb::OpenCutList
 
       neighbor_defs.delete_if { |neighbor_def| neighbor_def.touching_defs.empty? }
 
-      @neighborhood_def = {
-        drawing_def: drawing_def,
-        neighbor_defs: neighbor_defs
-      }
+      # 5. Keep useful data
+
+      instance_a = _get_active_part_entity
+      ti_a = (PathUtils.get_transformation(get_active_selection_path, IDENTITY) * instance_a.transformation).inverse
+
+      @neighborhood_def = NeighborhoodDef.new(
+        instance_a,
+        ti_a,
+        neighbor_defs
+      )
     end
 
     def _try_to_add_neighbor(path, h_neighbor_defs)
@@ -836,7 +872,7 @@ module Ladb::OpenCutList
         return unless picked_drawing_def.bounds.valid?
 
         # Store the new neighbor def
-        h_neighbor_defs[picked_part_entity_path] = NeighborDef.new(picked_part_entity_path, picked_drawing_def)
+        h_neighbor_defs[picked_part_entity_path] = NeighborhoodNeighborDef.new(picked_part_entity_path, picked_drawing_def)
 
       end
     end
@@ -844,14 +880,23 @@ module Ladb::OpenCutList
     def _get_joinery_def(neighborhood_def)
       return nil if @face_manipulator.nil? || @edge_manipulator.nil? || @vertex_manipulator.nil?
 
-      instance_a = _get_active_part_entity
-      ti_a = (PathUtils.get_transformation(get_active_selection_path, IDENTITY) * instance_a.transformation).inverse
+      ti_a = neighborhood_def.ti_a
+
+      start_offset = _fetch_option_start_offset
+      end_offset = _fetch_option_end_offset
+      min_spacing = _fetch_option_min_spacing
+      max_spacing = _fetch_option_max_spacing
+      depth_distance = _fetch_option_depth_distance
+      depth_centred = _fetch_option_depth_centred
+
+      geometry_def = _get_geometries_def
+      geometry_bounds = geometry_def.bounds
 
       neighbor_join_defs = []
 
-      neighborhood_def[:neighbor_defs].each do |neighbor_def|
+      neighborhood_def.neighbor_defs.each do |neighbor_def|
 
-        ti_b = PathUtils.get_transformation(neighbor_def.path, IDENTITY).inverse
+        ti_b = neighbor_def.ti_b
 
         join_defs = []
 
@@ -896,28 +941,26 @@ module Ladb::OpenCutList
 
             touching_length = touching_poly_bounds.width
 
-            start_offset = _fetch_option_start_offset
-            end_offset = _fetch_option_end_offset
-            min_spacing = _fetch_option_min_spacing
-            max_spacing = _fetch_option_max_spacing
-            depth_distance = _fetch_option_depth_distance
-            depth_centred = _fetch_option_depth_centred
-
-            if touching_length > start_offset + min_spacing + end_offset
-              middle_length = touching_poly_bounds.width - start_offset - end_offset
-              spacing_count = max_spacing <= 0 ? 1 : (middle_length / max_spacing).ceil
-              spacing_count = 2 if spacing_count < 2 && start_offset == 0 && end_offset == 0
-              spacing = middle_length / spacing_count
-              if spacing < min_spacing
-                spacing_count -= 1
-                spacing = middle_length / spacing_count
-              end
+            if touching_length < geometry_bounds.width
+              # Touching face is not large enough to contain at least one join
               coords = []
-              coords << start_offset if start_offset > 0
-              coords += (1...spacing_count).map { |i| start_offset + spacing * i }
-              coords << touching_poly_bounds.width - end_offset if end_offset > 0
             else
-              coords = [ touching_poly_bounds.width / 2 ]
+              if touching_length > start_offset + min_spacing + end_offset
+                middle_length = touching_poly_bounds.width - start_offset - end_offset
+                spacing_count = max_spacing <= 0 ? 1 : (middle_length / max_spacing).ceil
+                spacing_count = 2 if spacing_count < 2 && start_offset == 0 && end_offset == 0
+                spacing = middle_length / spacing_count
+                if spacing < min_spacing
+                  spacing_count -= 1
+                  spacing = middle_length / spacing_count
+                end
+                coords = []
+                coords << start_offset if start_offset > 0
+                coords += (1...spacing_count).map { |i| start_offset + spacing * i }
+                coords << touching_poly_bounds.width - end_offset if end_offset > 0
+              else
+                coords = [ touching_poly_bounds.width / 2 ]
+              end
             end
 
             ly = if depth_centred
@@ -929,30 +972,27 @@ module Ladb::OpenCutList
             anchor_points_2d = coords.map! { |lx| ORIGIN.offset(X_AXIS, touching_poly_bounds.min.x + lx).offset(touching_vy, ly) }
                                      .delete_if { |point| !Geom.point_in_polygon_2D(point, touching_poly_2d, true) }
 
-            next if coords.empty?
-
             anchor_points_3d = anchor_points_2d.map { |point| point.transform(at) }
-            start_point_3d = ORIGIN.offset(X_AXIS, touching_poly_bounds.min.x + start_offset).offset(touching_vy, ly).transform(at)
-            end_point_3d = ORIGIN.offset(X_AXIS, touching_poly_bounds.min.x + touching_poly_bounds.width - end_offset).offset(touching_vy, ly).transform(at)
+            start_point_3d = ORIGIN.offset(X_AXIS, touching_poly_bounds.min.x + (coords.size > 1 ? start_offset : 0)).offset(touching_vy, ly).transform(at)
+            end_point_3d = ORIGIN.offset(X_AXIS, touching_poly_bounds.min.x + touching_poly_bounds.width - (coords.size > 1 ? end_offset : 0)).offset(touching_vy, ly).transform(at)
 
-            join_defs << JoinDef.new(touching_def, touching_poly, anchor_points_3d, start_point_3d, end_point_3d, touching_vy.samedirection?(Y_AXIS))
+            join_defs << JoineryJoinDef.new(touching_def, touching_poly, anchor_points_3d, start_point_3d, end_point_3d, touching_vy.samedirection?(Y_AXIS))
 
           end
 
-          neighbor_join_defs << NeighborJoinDef.new(neighbor_def, join_defs, x_axis, y_axis, z_axis, ti_b, at_a, at_b) if join_defs.any?
+          neighbor_join_defs << JoineryNeighborJoinDef.new(neighbor_def, join_defs, x_axis, y_axis, z_axis, at_a, at_b) if join_defs.any?
 
         end
 
       end
 
-      {
-        ti_a: ti_a,
-        neighbor_join_defs: neighbor_join_defs
-      }
+      JoineryDef.new(
+        neighbor_join_defs
+      )
     end
 
-    def _get_geometry_def
-      return @geometry_def unless @geometry_def.nil?
+    def _get_geometries_def
+      return @geometries_def unless @geometries_def.nil?
 
       model = Sketchup.active_model
 
@@ -1015,36 +1055,46 @@ module Ladb::OpenCutList
       hardware_material = fn_get_material.call(_fetch_option_hardware_material_name, Kuix::COLOR_BLACK, MaterialAttributes::TYPE_HARDWARE)
       machining_material = fn_get_material.call(_fetch_option_machining_material_name, '#0068ff', MaterialAttributes::TYPE_MACHINING)
 
-      @geometry_def = {
-        hardware_a_definition: hardware_a_definition,
-        hardware_b_definition: hardware_b_definition,
-        machining_a_definition: machining_a_definition,
-        machining_b_definition: machining_b_definition,
-        hardware_a_drawing_def: hardware_a_drawing_def,
-        hardware_b_drawing_def: hardware_b_drawing_def,
-        machining_a_drawing_def: machining_a_drawing_def,
-        machining_b_drawing_def: machining_b_drawing_def,
-        hardware_material: hardware_material,
-        machining_material: machining_material
-      }
+      bounds = Geom::BoundingBox.new
+      bounds.add(hardware_a_drawing_def.bounds) unless hardware_a_drawing_def.nil?
+      bounds.add(hardware_b_drawing_def.bounds) unless hardware_b_drawing_def.nil?
+      bounds.add(machining_a_drawing_def.bounds) unless machining_a_drawing_def.nil?
+      bounds.add(machining_b_drawing_def.bounds) unless machining_b_drawing_def.nil?
+
+      @geometries_def = GeometriesDef.new(
+        GeometriesEntityDef.new(hardware_a_definition, hardware_a_drawing_def),
+        GeometriesEntityDef.new(hardware_b_definition, hardware_b_drawing_def),
+        GeometriesEntityDef.new(machining_a_definition, machining_a_drawing_def),
+        GeometriesEntityDef.new(machining_b_definition, machining_b_drawing_def),
+        hardware_material,
+        machining_material,
+        bounds,
+      )
     end
 
     # Data Structs -----
 
-    NeighborDef = Struct.new(:path, :drawing_def, :touching_defs) do
+    NeighborhoodDef = Struct.new(:instance_a, :ti_a, :neighbor_defs)
+    NeighborhoodNeighborDef = Struct.new(:path, :drawing_def, :touching_defs) do
       def initialize(path, drawing_def, touching_defs = [])
         super(path, drawing_def, touching_defs)
       end
+      def ti_b
+        @ti_b ||= PathUtils.get_transformation(path, IDENTITY).inverse
+      end
     end
-    NeighborTouchingDef = Struct.new(:face_manipulator, :neighbor_face_manipulator, :touching_polys) do
+    NeighborhoodTouchingDef = Struct.new(:face_manipulator, :neighbor_face_manipulator, :touching_polys) do
       def initialize(face_manipulator, neighbor_face_manipulator, touching_polys = [])
         super(face_manipulator, neighbor_face_manipulator, touching_polys)
       end
     end
 
-    NeighborJoinDef = Struct.new(:neighbor_def, :join_defs, :x_axis, :y_axis, :z_axis, :ti_b, :at_a, :at_b)
-    JoinDef = Struct.new(:touching_def, :touching_poly, :anchor_points_3d, :start_point_3d, :end_point_3d, :reversed_y)
+    JoineryDef = Struct.new(:neighbor_join_defs)
+    JoineryNeighborJoinDef = Struct.new(:neighbor_def, :join_defs, :x_axis, :y_axis, :z_axis, :at_a, :at_b)
+    JoineryJoinDef = Struct.new(:touching_def, :touching_poly, :anchor_points_3d, :start_point_3d, :end_point_3d, :reversed_y)
 
+    GeometriesDef = Struct.new(:hardware_a, :hardware_b, :machining_a, :machining_b, :hardware_material, :machining_material, :bounds)
+    GeometriesEntityDef = Struct.new(:definition, :drawing_def)
 
   end
 
