@@ -26,6 +26,7 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ### 2026-06-03
  * Improved Smart Join Tool by previewing hardware and machinings
+ * Improved Smart Join Tool by adding browse file textinput
 ### 2026-06-02
  * Added Smart Join Tool (dev team only)
 ### 2026-06-01
