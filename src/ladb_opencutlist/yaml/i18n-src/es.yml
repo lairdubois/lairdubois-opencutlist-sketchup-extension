@@ -116,7 +116,7 @@ core:
       smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
-      smart_join: ""
+      smart_join: $t(core.toolbar.command.smart_join)
       smart_export: $t(core.toolbar.command.smart_export)
       reset_dialog_position: Reiniciar la posición de la ventana
   toolbar:
@@ -129,7 +129,7 @@ core:
       smart_reshape: Remodelar piezas
       smart_paint: Colorear piezas
       smart_axes: Orientar piezas
-      smart_join: ""
+      smart_join: Unir piezas
       smart_export: Exportar piezas
   messagebox:
     dir_override: |
@@ -191,7 +191,7 @@ core:
     ignore_update: Omitir esta actualización
     download_rescue: "¿Problema con la descarga?"
     manual_download: Descarga manual
-    zzz: "Actualmente estoy descansando después de la actualización. Para activarme, debes reiniciar SketchUp."
+    zzz: "La extensión se ha actualizado. Por favor, reinicie SketchUp para aplicar los cambios."
     success: |
       ¡La actualización de OpenCutList ha finalizado!
 
@@ -357,7 +357,7 @@ tab:
       resized: Esta parte ha cambiado de tamaño con respecto a la definición de su componente
       flipped: Esta parte se refleja en comparación con la definición de su componente
       symmetrical: La detección de piezas reflejadas está desactivada en esta pieza
-      ignore_grain_direction: La dirección de la fibra se ignora en esta parte
+      ignore_grain_direction: Se ignora la orientación de la veta en esta pieza
       auto_oriented: Esta parte se ha reorientado automáticamente
       oko_label_filter: "Incluir / Excluir esta etiqueta"
       add_label_filter: "Filtrar por '{{ label }}'"
@@ -382,6 +382,7 @@ tab:
       children_size_increase: "Esta dimensión se incrementa en un tamaño grande para {{ count }} partes agrupadas"
       invalid_final_area: "Atención, esta área sumable no se pudo calcular porque {{ count }} parte (de {{ total }}) tiene un área no válida"
       invalid_final_area_plural: "Precaución, esta área sumable no se pudo calcular porque {{ count }} partes (de {{ total }}) tienen un área no válida"
+      is_instance_name: ""
       is_dynamic_attributes_name: La designación de esta parte se extrae del atributo 'Name' del componente dinámico
       has_edges: "Esta parte contiene {{ count }} tiras de los cantos"
       has_edges_plural: "Esta parte contiene {{ count }} tiras de los cantos"
@@ -503,9 +504,9 @@ tab:
       symmetrical: Deshabilitar la detección de espejos en esta parte
       symmetrical_help: |
         Si esta casilla está marcada, la detección de *parte reflejada* no se aplicará a esta parte.
-      ignore_grain_direction: Ignora la dirección de la fibra
+      ignore_grain_direction: Ignora la orientación de la veta en esta pieza
       ignore_grain_direction_help: |
-        Si esta casilla está marcada, la dirección de la fibra se ignora en esta parte.
+        Si se selecciona esta opción, se ignorará la orientación de la veta del material para esta pieza.
       axes: Ejes
       axes_help: Organice las dimensiones para que coincidan con los colores de los ejes de su pieza.
       axes_tip: |
@@ -607,6 +608,7 @@ tab:
       filters_warning_plural: "Este filtro solo muestra **{{ count }}** partes de un total de {{ total }}."
       edge_material_names_filter: Material de borde de cantos a filtrar
       veneer_material_names_filter: Material de chapa de madera a filtrar
+      names_filter: ""
       tags_filter: Filtrar por etiquetas
       dimensions_help: Ilustración de las dimensiones
       summary: Resumen
@@ -739,7 +741,7 @@ tab:
       type_4: $t(tab.materials.type_4)
       type_5: $t(tab.materials.type_5)
       type_6: $t(tab.materials.type_6)
-      type_7: ""
+      type_7: $t(tab.materials.type_7)
       type_-1: $t(default.cut_plural)
       tooltip:
         incompatible_unit: Unidad incompatible con las opciones de estimación de la materia
@@ -1579,10 +1581,10 @@ tab:
       type_4: Tipo de material '$t(tab.materials.type_4)'
       type_5: Tipo de material '$t(tab.materials.type_5)'
       type_6: Tipo de material '$t(tab.materials.type_6)'
-      type_7: ""
+      type_7: Tipo de material '$t(tab.materials.type_7)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
-      grain_direction: Dirección de fibra
+      grain_direction: Orientación de la veta
       raw_estimated_0: Estimado por el volumen debitado útil
       colorized: Este tono se aplicará a la textura de este material cuando se renderice en el modelo
       texture_load: Carga una nueva imagen
@@ -1656,10 +1658,10 @@ tab:
         Disponibles tamaños estándar para este material.
 
         *Si no hay ninguna unidad especificada se aplicarán las unidades del modelo.*
-      grained: Dirección de fibra
-      grained_help: Configura la dirección de la fibra del material en relación con la longitud del tablero.
-      grained_0: Sin fibra
-      grained_1: La fibra sigue la longitud
+      grained: Veta de la madera
+      grained_help: Selecciona la orientación de la veta en relación con la longitud del tablero.
+      grained_0: Sin veta
+      grained_1: La veta sigue la longitud
       edge_decremented: Reducir
       edge_decremented_help: Indica si las dimensiones de las piezas deben reducirse por el grosor de las tiras del canto.
       edge_decremented_0: Sin reducción
@@ -1909,6 +1911,7 @@ tab:
       open_file: ""
       import_to_model: Importar al modelo
       error:
+        no_data: ""
         no_model: ""
         file_not_found: "Fichero no encontrado: **{{ filename }}**"
         bad_extension: ""
@@ -1916,7 +1919,7 @@ tab:
       success:
         imported_title: Importación realizada
     csv:
-      label: ""
+      label: CSV
       title: Importar partes
       help: |
       load:
@@ -1984,7 +1987,7 @@ tab:
         imported_body_plural: "{{ count }} ¡Las piezas se importaron con éxito!"
       obsolete_base: "Para permanecer sincronizado, debe volver a cargar el fichero CSV."
     bxf2:
-      label: ""
+      label: BXF2
       title: ""
       help: |
       load:
@@ -1994,7 +1997,10 @@ tab:
         info_0: |
         info_0_plural: |
         info_1: ""
-        info_2: |
+        materials: Materiales
+        layers: Etiquetas
+        option_parts_formula: Fórmula
+        option_parts_formula_help: ""
         option_part_wood_material_name: ""
         option_part_wood_material_name_help: ""
         option_part_aluminium_material_name: ""
@@ -2011,6 +2017,16 @@ tab:
         option_hardware_material_name_help: ""
         option_hardware_layer_name: ""
         option_hardware_layer_name_help: ""
+        option_no_material_help: ""
+        option_default_material_help: ""
+        option_no_layer_help: ""
+        old_name: Nombre original
+        new_name: Nuevo nombre
+        count: Cant.
+        formula:
+          part: Pieza
+          project: ""
+          cabinet: ""
       model:
         author: ""
         date: ""
@@ -2025,8 +2041,11 @@ tab:
         total_quantity: Cant.
         article_number: ""
         description: Descripción
+        material: Material
       error:
         failed_to_load_bxf2_file: |
+      warning:
+        partial_support: |
       obsolete_base: ""
   tutorials:
     label: Tutoriales
@@ -2228,6 +2247,7 @@ tool:
       lt_min_distance: "La distancia {{ value1 }} es inferior al valor mínimo de {{ value2 }}"
       gt_max_distance: "La distancia {{ value1 }} es superior a la distancia máxima de {{ value2 }}"
       locked_part: ""
+      not_sibling_part: ""
       selection_contains_locked_entities: ""
   highlight:
     transparency: $t(tool.default.transparency)
@@ -2374,7 +2394,7 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    filter_7: ""
+    filter_7: $t(tab.materials.type_7)
     action_0: Colorear piezas
     action_0_status: Haga clic en una pieza para aplicar un material a su instancia
     action_1: Colorear cantos
@@ -2474,3 +2494,7 @@ tool:
       not_part: Esta cara no forma parte de una pieza (componente)
       not_flat_face: Esta superficie no es plana
       incompatible_active_path: El camino activo no permite exportar esta pieza
+  smart_importers_bxf2:
+    title: Importar
+    action_0: $t(tab.importers.bxf2.title)
+    action_0_status: ""

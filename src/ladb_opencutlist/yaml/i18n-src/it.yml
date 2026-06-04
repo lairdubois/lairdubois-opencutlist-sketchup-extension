@@ -191,7 +191,7 @@ core:
     ignore_update: Ignorare questo aggiornamento
     download_rescue: "Problemi di trasferimento?"
     manual_download: Trasferimento manuale
-    zzz: "Al momento mi sto riposando dopo l'aggiornamento. Per svegliarmi, è necessario riavviare SketchUp."
+    zzz: "L'estensione è stata aggiornata. Riavvia SketchUp per applicare le modifiche."
     success: |
       L'aggiornamento di OpenCutList è terminato!
 
@@ -382,6 +382,7 @@ tab:
       children_size_increase: "Questa dimensione è stata aumentata con un maggiorazione in {{ count }} parti raggruppate"
       invalid_final_area: "Attenzione, l'area non può essere calcolata perché {{ count }} parte (di {{ total }}) ha l'area invalida"
       invalid_final_area_plural: "Attenzione, l'area non può essere calcolata perché {{ count }} parti (di {{ total }}) hanno l'area invalida"
+      is_instance_name: ""
       is_dynamic_attributes_name: La designazione usa l'attributo 'Name' del componente dinamico
       has_edges: "Questa parte contiene {{ count }} lati bordati"
       has_edges_plural: "Questa parte contiene {{ count }} lati bordati"
@@ -613,6 +614,7 @@ tab:
       filters_warning_plural: "Questo filtro mostra solo **{{ count }}** parti su un totale di {{ total }}."
       edge_material_names_filter: Filtro su materiale delle bordature
       veneer_material_names_filter: Filtro sul materiale da impiallacciatura
+      names_filter: ""
       tags_filter: Filtro sui tags
       dimensions_help: Schema delle dimensioni
       summary: Sommario
@@ -745,7 +747,7 @@ tab:
       type_4: $t(tab.materials.type_4)
       type_5: $t(tab.materials.type_5)
       type_6: $t(tab.materials.type_6)
-      type_7: ""
+      type_7: $t(tab.materials.type_7)
       type_-1: $t(default.cut_plural)
       tooltip:
         incompatible_unit: Unità incompatibile con le opzioni di stima del materiale
@@ -1915,6 +1917,7 @@ tab:
       open_file: ""
       import_to_model: Importa nel modello
       error:
+        no_data: ""
         no_model: ""
         file_not_found: "File mancante : **{{ filename }}**"
         bad_extension: ""
@@ -1922,7 +1925,7 @@ tab:
       success:
         imported_title: Importazione eseguita
     csv:
-      label: ""
+      label: CSV
       title: Importa Parti
       help: |
       load:
@@ -1990,7 +1993,7 @@ tab:
         imported_body_plural: "L'importazione di {{ count }} parti è riuscita!"
       obsolete_base: "Ricaricare il file CSV per sincronizzare il modello."
     bxf2:
-      label: ""
+      label: BXF2
       title: ""
       help: |
       load:
@@ -2000,7 +2003,10 @@ tab:
         info_0: |
         info_0_plural: |
         info_1: ""
-        info_2: |
+        materials: Materiali
+        layers: Tag
+        option_parts_formula: Formula
+        option_parts_formula_help: ""
         option_part_wood_material_name: ""
         option_part_wood_material_name_help: ""
         option_part_aluminium_material_name: ""
@@ -2017,6 +2023,16 @@ tab:
         option_hardware_material_name_help: ""
         option_hardware_layer_name: ""
         option_hardware_layer_name_help: ""
+        option_no_material_help: ""
+        option_default_material_help: ""
+        option_no_layer_help: ""
+        old_name: Nome originale
+        new_name: Nuovo nome
+        count: Qtà
+        formula:
+          part: Elemento
+          project: ""
+          cabinet: ""
       model:
         author: ""
         date: ""
@@ -2031,8 +2047,11 @@ tab:
         total_quantity: Qtà
         article_number: ""
         description: Descrizione
+        material: Materiale
       error:
         failed_to_load_bxf2_file: |
+      warning:
+        partial_support: |
       obsolete_base: ""
   tutorials:
     label: Lezioni
@@ -2234,6 +2253,7 @@ tool:
       lt_min_distance: "La distanza {{ value1 }} è inferiore alla distanza minima {{ value2 }}"
       gt_max_distance: "La distanza {{ value1 }} è superiore alla distanza massima di {{ value2 }}"
       locked_part: Questo elemento è bloccato
+      not_sibling_part: ""
       selection_contains_locked_entities: La selezione contiene elementi bloccati
   highlight:
     transparency: $t(tool.default.transparency)
@@ -2380,7 +2400,7 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    filter_7: ""
+    filter_7: $t(tab.materials.type_7)
     action_0: Colorare parti
     action_0_status: Seleziona un elemento a cui applicare il materiale
     action_1: Assegna il materiale all'elemento
@@ -2480,3 +2500,7 @@ tool:
       not_part: Questa faccia non appartiene ad un elemento (componente)
       not_flat_face: Superficie non planare
       incompatible_active_path: Il percorso attivo non consente di esportare questo pezzo
+  smart_importers_bxf2:
+    title: Importa
+    action_0: $t(tab.importers.bxf2.title)
+    action_0_status: ""

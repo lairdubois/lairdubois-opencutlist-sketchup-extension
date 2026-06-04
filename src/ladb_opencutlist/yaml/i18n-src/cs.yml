@@ -382,6 +382,7 @@ tab:
       children_size_increase: "Tento rozměr je zvětšen o nadmíru pro {{ count }} seskupené dílce"
       invalid_final_area: "Pozor, tuto část nelze vypočítat, protože {{ count }} dílec (z {{ total }}) má neplatnou oblast"
       invalid_final_area_plural: "Pozor, tuto část nelze vypočítat, protože {{ count }} dílce (z {{ total }}) mají neplatnou oblast"
+      is_instance_name: ""
       is_dynamic_attributes_name: Označení této části se extrahován z atributu 'Name' dynamické komponenty
       has_edges: "Tento dílec obsahuje {{ count }} hranování"
       has_edges_plural: "Tento dílec obsahuje {{ count }} hranování"
@@ -613,6 +614,7 @@ tab:
       filters_warning_plural: "Tento filtr zobrazí pouze **{{ count }}** skupiny z celkového počtu {{ total }}."
       edge_material_names_filter: Filtrujte podle hran
       veneer_material_names_filter: Filtrujte podle dýhovaného materiálu
+      names_filter: ""
       tags_filter: Filtrovat podle znaků
       dimensions_help: Správné rozměry
       summary: Shrnutí
@@ -745,7 +747,7 @@ tab:
       type_4: $t(tab.materials.type_4)
       type_5: $t(tab.materials.type_5)
       type_6: $t(tab.materials.type_6)
-      type_7: ""
+      type_7: $t(tab.materials.type_7)
       type_-1: $t(default.cut_plural)
       tooltip:
         incompatible_unit: Nekompatibilní jednotky s možnostmi odhadu materiálu
@@ -1915,6 +1917,7 @@ tab:
       open_file: ""
       import_to_model: Import do modelu
       error:
+        no_data: ""
         no_model: ""
         file_not_found: "Soubor nebyl nalezen: **{{ filename }}**"
         bad_extension: ""
@@ -1922,7 +1925,7 @@ tab:
       success:
         imported_title: Import hotový
     csv:
-      label: ""
+      label: CSV
       title: Importovat dílce
       help: |
       load:
@@ -1990,7 +1993,7 @@ tab:
         imported_body_plural: "{{ count }} dílů bylo úspěšně importováno!"
       obsolete_base: "Chcete-li zůstat v synchronizaci, musíte znovu načíst soubor CSV."
     bxf2:
-      label: ""
+      label: BXF2
       title: ""
       help: |
       load:
@@ -2000,7 +2003,10 @@ tab:
         info_0: |
         info_0_plural: |
         info_1: ""
-        info_2: |
+        materials: Materiály
+        layers: Štítky
+        option_parts_formula: Vzorec
+        option_parts_formula_help: ""
         option_part_wood_material_name: ""
         option_part_wood_material_name_help: ""
         option_part_aluminium_material_name: ""
@@ -2017,6 +2023,16 @@ tab:
         option_hardware_material_name_help: ""
         option_hardware_layer_name: ""
         option_hardware_layer_name_help: ""
+        option_no_material_help: ""
+        option_default_material_help: ""
+        option_no_layer_help: ""
+        old_name: Původní název
+        new_name: Nový název
+        count: Počet
+        formula:
+          part: Díl
+          project: ""
+          cabinet: ""
       model:
         author: ""
         date: ""
@@ -2031,8 +2047,11 @@ tab:
         total_quantity: Množství
         article_number: ""
         description: Popis
+        material: Materiál
       error:
         failed_to_load_bxf2_file: |
+      warning:
+        partial_support: |
       obsolete_base: ""
   tutorials:
     label: Návody
@@ -2234,6 +2253,7 @@ tool:
       lt_min_distance: "Vzdálenost {{ value1 }} je menší než minimální vzdálenost {{ value2 }}"
       gt_max_distance: "Vzdálenost {{ value1 }} je větší než maximální vzdálenost {{ value2 }}"
       locked_part: Tato část je uzamčena
+      not_sibling_part: ""
       selection_contains_locked_entities: Výběr obsahuje uzamčené entity
   highlight:
     transparency: $t(tool.default.transparency)
@@ -2380,7 +2400,7 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    filter_7: ""
+    filter_7: $t(tab.materials.type_7)
     action_0: Materiál dílů
     action_0_status: Kliknutím na díl přiřadíme materiál
     action_1: Materiál hran
@@ -2480,3 +2500,7 @@ tool:
       not_part: Tato plocha nepatří k dílu (komponentě)
       not_flat_face: Tento povrch není rovný
       incompatible_active_path: Aktivní cesta neumožňuje export tohoto dílu
+  smart_importers_bxf2:
+    title: Import
+    action_0: $t(tab.importers.bxf2.title)
+    action_0_status: ""

@@ -244,11 +244,14 @@ core:
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       outliner_options: $t(tab.outliner.label) / $t(default.options)
+      outliner_deep_rename_parts_options: $t(tab.outliner.label) / $t(tab.outliner.deep_rename_parts.title)
       settings_model: $t(tab.settings.label) / Model
       tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
       tool_smart_handle_options: $t(core.toolbar.command.smart_handle)
+      tool_smart_reshape_options: $t(core.toolbar.command.smart_reshape)
       tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
       tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
+      tool_smart_join_options: $t(core.toolbar.command.smart_join)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
   progress:
     please_wait: Calculating a world of peace
@@ -261,6 +264,8 @@ core:
     textinput_code:
       snippets: Formula examples
       help: Type **@** to get a list of variables.
+    textinput_file:
+      browse: Browse
     textinput_size:
       quantity: Qty.
     three_viewer:
@@ -2508,8 +2513,9 @@ tool:
   smart_join:
     title: Assemble
     action_0: Place
-    action_0_status: Click on a part to connect it to the adjacent parts
-    action_option_group_depth: $t(tool.default.vcb_depth)
+    action_0_status: Place connectors to assemble parts
+    action_0_state_0_status: Click on a part's reference face to assemble it with adjacent parts
+    action_option_group_depth: Depth
     action_option_group_offsets: Offsets
     action_option_group_spacings: Spacings
     action_option_depth_distance: Depth
@@ -2528,6 +2534,8 @@ tool:
     geometries: Geometries
     error:
       no_valid_join: There are no contact surfaces that meet the assembly requirements
+      failed_to_load_skp_file: |
+        Failed to load SKP file : {{ file }}
   smart_export:
     title: Export
     action_0: Export 3D Part

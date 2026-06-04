@@ -382,6 +382,7 @@ tab:
       children_size_increase: "Kích thước này được tăng thêm bởi kích thước quá khổ cho {{ count }} nhóm bộ phận"
       invalid_final_area: "Chú ý, không thể tính tổng diện tích này vì {{ count }} bộ phận (của {{ total }}) có diện tích không hợp lệ"
       invalid_final_area_plural: "Chú ý, không thể tính tổng diện tích này vì {{ count }} bộ phận (của {{ total }}) có diện tích không hợp lệ"
+      is_instance_name: ""
       is_dynamic_attributes_name: Tên gọi của bộ phận này được trích xuất từ ​​​​thuộc tính 'Name' của dynamic component
       has_edges: "Bộ phận này chứa {{ count }} dải cạnh"
       has_edges_plural: "Bộ phận này chứa {{ count }} dải cạnh"
@@ -613,6 +614,7 @@ tab:
       filters_warning_plural: "Bộ lọc này chỉ hiển thị **{{ count }}** bộ phận trong tổng số của {{ total }}."
       edge_material_names_filter: Lọc theo dải cạnh vật liệu
       veneer_material_names_filter: Lọc theo vật liệu Veneer
+      names_filter: ""
       tags_filter: Lọc theo Nhãn hiệu
       dimensions_help: Hiểu về kích thước
       summary: Bảng tóm tắt
@@ -745,7 +747,7 @@ tab:
       type_4: $t(tab.materials.type_4)
       type_5: $t(tab.materials.type_5)
       type_6: $t(tab.materials.type_6)
-      type_7: ""
+      type_7: $t(tab.materials.type_7)
       type_-1: $t(default.cut_plural)
       tooltip:
         incompatible_unit: Đơn vị không tương thích với các tùy chọn ước tính vật liệu
@@ -1915,6 +1917,7 @@ tab:
       open_file: ""
       import_to_model: Nhập vào mô hình
       error:
+        no_data: ""
         no_model: ""
         file_not_found: "Tệp tìm thấy tệp: **{{ filename }}**"
         bad_extension: ""
@@ -2000,7 +2003,10 @@ tab:
         info_0: |
         info_0_plural: |
         info_1: ""
-        info_2: |
+        materials: Vật liệu
+        layers: Thẻ
+        option_parts_formula: Công thức
+        option_parts_formula_help: ""
         option_part_wood_material_name: ""
         option_part_wood_material_name_help: ""
         option_part_aluminium_material_name: ""
@@ -2017,6 +2023,16 @@ tab:
         option_hardware_material_name_help: ""
         option_hardware_layer_name: ""
         option_hardware_layer_name_help: ""
+        option_no_material_help: ""
+        option_default_material_help: ""
+        option_no_layer_help: ""
+        old_name: Tên gốc
+        new_name: Tên mới
+        count: Số lượng
+        formula:
+          part: Bộ phận
+          project: ""
+          cabinet: ""
       model:
         author: ""
         date: ""
@@ -2031,8 +2047,11 @@ tab:
         total_quantity: Số lượng
         article_number: ""
         description: Mô tả
+        material: Vật liệu
       error:
         failed_to_load_bxf2_file: |
+      warning:
+        partial_support: |
       obsolete_base: ""
   tutorials:
     label: Hướng dẫn
@@ -2234,6 +2253,7 @@ tool:
       lt_min_distance: "Khoảng cách {{ value1 }} nhỏ hơn khoảng cách tối thiểu {{ value2 }}"
       gt_max_distance: "Khoảng cách {{ value1 }} lớn hơn khoảng cách tối đa của {{ value2 }}"
       locked_part: Bộ phận này bị khóa
+      not_sibling_part: ""
       selection_contains_locked_entities: Lựa chọn này chứa các thực thể bị khóa.
   highlight:
     transparency: $t(tool.default.transparency)
@@ -2380,7 +2400,7 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    filter_7: ""
+    filter_7: $t(tab.materials.type_7)
     action_0: Sơn các bộ phận
     action_0_status: Nhấp vào một bộ phận để áp dụng vật liệu vào đối tượng
     action_1: Sơn các cạnh
@@ -2480,3 +2500,7 @@ tool:
       not_part: Bề mặt này không phải là một phần của một bộ phận (component)
       not_flat_face: Bề mặt này không phẳng
       incompatible_active_path: Đường dẫn đang hoạt động không cho phép xuất bộ phận này
+  smart_importers_bxf2:
+    title: Nhập
+    action_0: $t(tab.importers.bxf2.title)
+    action_0_status: ""

@@ -382,6 +382,7 @@ tab:
       children_size_increase: "Ez a méret megnövelt {{ count }} csoportosított alkatrésznél"
       invalid_final_area: "Figyelem, ezt az összesített területet nem lehetett kiszámítani, mert {{ count }} alkatrésznek ({{ total }}-ból) érvénytelen a területe"
       invalid_final_area_plural: "Figyelem, ezt az összesített területet nem lehetett kiszámítani, mert {{ count }} alkatrésznek ({{ total }}-ból) érvénytelen a területe"
+      is_instance_name: ""
       is_dynamic_attributes_name: Az alkatrész megnevezése a dinamikus komponens 'Name' attribútumából származik
       has_edges: "Ez az alkatrész {{ count }} élzárt"
       has_edges_plural: "Ez az alkatrész {{ count }} élzárt"
@@ -607,6 +608,7 @@ tab:
       filters_warning_plural: "Ez a szűrő csak **{{ count }}** alkatrészt jelenít meg a {{ total }} összesből."
       edge_material_names_filter: Szűrés élzáró anyag szerint
       veneer_material_names_filter: Szűrés furnér anyag szerint
+      names_filter: ""
       tags_filter: Szűrés címkék szerint
       dimensions_help: Méretek magyarázata
       summary: Összesítés
@@ -1909,6 +1911,7 @@ tab:
       open_file: ""
       import_to_model: Importálás a modellbe
       error:
+        no_data: ""
         no_model: ""
         file_not_found: "Fájl nem található: **{{ filename }}**"
         bad_extension: ""
@@ -1994,7 +1997,10 @@ tab:
         info_0: |
         info_0_plural: |
         info_1: ""
-        info_2: |
+        materials: Anyagok
+        layers: Címkék
+        option_parts_formula: Képlet
+        option_parts_formula_help: ""
         option_part_wood_material_name: ""
         option_part_wood_material_name_help: ""
         option_part_aluminium_material_name: ""
@@ -2011,6 +2017,16 @@ tab:
         option_hardware_material_name_help: ""
         option_hardware_layer_name: ""
         option_hardware_layer_name_help: ""
+        option_no_material_help: ""
+        option_default_material_help: ""
+        option_no_layer_help: ""
+        old_name: Eredeti név
+        new_name: Új név
+        count: Db.
+        formula:
+          part: Alkatrész
+          project: ""
+          cabinet: ""
       model:
         author: ""
         date: ""
@@ -2025,8 +2041,11 @@ tab:
         total_quantity: Menny.
         article_number: ""
         description: Leírás
+        material: Anyag
       error:
         failed_to_load_bxf2_file: |
+      warning:
+        partial_support: |
       obsolete_base: ""
   tutorials:
     label: Oktatóanyagok
@@ -2474,3 +2493,7 @@ tool:
       not_part: Ez a felület nem tartozik alkatrészhez (komponenshez)
       not_flat_face: Ez a felület nem sík
       incompatible_active_path: Az aktív útvonal nem teszi lehetővé ennek az alkatrésznek az exportálását
+  smart_importers_bxf2:
+    title: Importálás
+    action_0: ""
+    action_0_status: ""

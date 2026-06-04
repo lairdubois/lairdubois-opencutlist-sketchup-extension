@@ -129,7 +129,7 @@ core:
       smart_reshape: Teile umgestalten
       smart_paint: Teile einfärben
       smart_axes: Teile orientieren
-      smart_join: Teile zusammenstellen
+      smart_join: Teile zusammfügen
       smart_export: Teile exportieren
   messagebox:
     dir_override: |
@@ -244,10 +244,13 @@ core:
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       outliner_options: $t(tab.outliner.label) / $t(default.options)
+      outliner_deep_rename_parts_options: $t(tab.outliner.label) / $t(tab.outliner.deep_rename_parts.title)
       settings_model: $t(tab.settings.label) / Modell
       tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
       tool_smart_handle_options: $t(core.toolbar.command.smart_handle)
+      tool_smart_reshape_options: $t(core.toolbar.command.smart_reshape)
       tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
+      tool_smart_join_options: $t(core.toolbar.command.smart_join)
       tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
   progress:
@@ -261,6 +264,8 @@ core:
     textinput_code:
       snippets: Beispielformeln
       help: "Drücken Sie **@**, um die Liste der Datenvariablen zu öffnen."
+    textinput_file:
+      browse: Durchsuchen
     textinput_size:
       quantity: Anz.
     three_viewer:
@@ -2506,11 +2511,12 @@ tool:
       not_grained: Das betreffende Teil hat keinen Faserverlauf
       not_single_thickness_layer: Das Zielteil muss aus einer einzigen Schicht bestehen
   smart_join:
-    title: Zusammenstellen
+    title: Zusammenfügen
     action_0: Platzieren 
-    action_0_status: Klicken Sie auf eine Seite eines Teils, um es mit den benachbarten Teilen zusammenzufügen
-    action_option_group_depth: $t(tool.default.vcb_depth)
-    action_option_group_offsets: Versatze
+    action_0_status: Verbindungselemente zum Zusammenfügen von Teilen anbringen
+    action_0_state_0_status: Klicken Sie auf eine Seite eines Teils, um es mit den benachbarten Teilen zusammenzufügen
+    action_option_group_depth: Tiefe
+    action_option_group_offsets: Versätze
     action_option_group_spacings: Abstände
     action_option_depth_distance: Tiefe
     action_option_depth_centred: Eingemittete Tiefe
@@ -2528,6 +2534,8 @@ tool:
     geometries: Geometrien
     error:
       no_valid_join: Es gibt keine Kontaktfläche, die die Anforderungen an die Verbindung erfüllt
+      failed_to_load_skp_file: |
+        Die SKP-Datei {{ file }} kann nicht geladen werden
   smart_export:
     title: Exportieren
     action_0: 3D Teil exportieren
