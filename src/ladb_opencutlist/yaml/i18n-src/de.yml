@@ -2276,6 +2276,7 @@ tool:
     vcb_diameter: Durchmesser
     vcb_distance: Distanz
     vcb_depth: Tiefe
+    vcb_height: Höhe
     error:
       no_direction: Bitte mit der Maus eine Richtung angeben
       invalid_length: "Die Länge {{ value }} ist ungültig"
@@ -2284,6 +2285,7 @@ tool:
       invalid_divider: "Der Teiler {{ value }} ist ungültig"
       invalid_offset: "Der Versatz {{ value }} ist ungültig"
       invalid_depth: "Die Tiefe {{ value }} ist ungültig"
+      invalid_height: "Die Höhe {{ value }} ist ungültig"
       invalid_segment_count: "Die Anzahl der Segmente {{ value }} ist ungültig. Sie muss zwischen 3 und 999 sein."
       syntax_error: "Syntaxfehler: {{ error }}"
       unexpected_close_parenthesis: "Unerwartete schließende Klammer"
@@ -2427,7 +2429,7 @@ tool:
     action_option_paneling_joint_type_miter_status: Auf Gehrung verbinden
     action_option_paneling_direction_inward_status: Nach innen
     action_option_paneling_direction_outward_status: Nach aussen
-    action_option_options_centred_status: Auf die gestreckten Elemente zentrieren
+    action_option_options_centered_status: Auf die gestreckten Elemente zentrieren
     action_option_options_make_unique_status: Gestreckte Elemente einzigartig machen
     error:
       curve_intersect: Eine der Schnittebenen verläuft durch eine nicht dehnbare Kurve
@@ -2515,11 +2517,11 @@ tool:
     action_0: Platzieren 
     action_0_status: Verbindungselemente zum Zusammenfügen von Teilen anbringen
     action_0_state_0_status: Klicken Sie auf eine Seite eines Teils, um es mit den benachbarten Teilen zusammenzufügen
-    action_option_group_depth: Tiefe
+    action_option_group_height: Höhe
     action_option_group_offsets: Versätze
     action_option_group_spacings: Abstände
-    action_option_depth_distance: Tiefe
-    action_option_depth_centred: Eingemittete Tiefe
+    action_option_height_distance: Höhe
+    action_option_height_centered: Höhe zentriert
     action_option_offsets_start_offset: Anfang
     action_option_offsets_end_offset: Ende
     action_option_spacings_min_spacing: Min
