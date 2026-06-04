@@ -229,7 +229,8 @@ module Ladb::OpenCutList
     end
 
     def get_state_status(state)
-      PLUGIN.get_i18n_string("tool.smart_#{@tool.get_stripped_name}.action_#{@action}_state_#{state}_status") + '.'
+      PLUGIN.get_i18n_string("tool.smart_#{@tool.get_stripped_name}.action_#{@action}_state_#{state}_status") + '.' +
+        ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_join.action_option_options_make_unique_status") + '.'
     end
 
     def get_state_vcb_label(state)
@@ -237,6 +238,17 @@ module Ladb::OpenCutList
     end
 
     # -----
+    def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
+      return true if super
+
+      if tool.is_key_alt_or_command?(key) && is_quick && (@state == STATE_SELECT || @state == STATE_STRETCH)
+        @tool.store_action_option_value(@action, SmartJoinTool::ACTION_OPTION_OPTIONS, SmartJoinTool::ACTION_OPTION_OPTIONS_MAKE_UNIQUE, !_fetch_option_make_unique?, true)
+        _refresh
+        return true
+      end
+
+      false
+    end
 
     def onToolUserText(tool, text, view)
       return true if super
@@ -595,7 +607,7 @@ module Ladb::OpenCutList
 
         begin
 
-          if (make_unique = _fetch_option_make_unique)
+          if (make_unique = _fetch_option_make_unique?)
 
             # Make unique Part A (if necessary)
 
@@ -734,11 +746,11 @@ module Ladb::OpenCutList
       @tool.fetch_action_option_length(@action, SmartJoinTool::ACTION_OPTION_HEIGHT, SmartJoinTool::ACTION_OPTION_HEIGHT_DISTANCE)
     end
 
-    def _fetch_option_height_centered
+    def _fetch_option_height_centered?
       @tool.fetch_action_option_boolean(@action, SmartJoinTool::ACTION_OPTION_HEIGHT, SmartJoinTool::ACTION_OPTION_HEIGHT_CENTERED)
     end
 
-    def _fetch_option_make_unique
+    def _fetch_option_make_unique?
       @tool.fetch_action_option_boolean(@action, SmartJoinTool::ACTION_OPTION_OPTIONS, SmartJoinTool::ACTION_OPTION_OPTIONS_MAKE_UNIQUE)
     end
 
@@ -942,7 +954,7 @@ module Ladb::OpenCutList
       min_spacing = _fetch_option_min_spacing
       max_spacing = _fetch_option_max_spacing
       height_distance = _fetch_option_height_distance
-      height_centered = _fetch_option_height_centered
+      height_centered = _fetch_option_height_centered?
 
       geometry_def = _get_geometries_def
       geometry_bounds = geometry_def.bounds

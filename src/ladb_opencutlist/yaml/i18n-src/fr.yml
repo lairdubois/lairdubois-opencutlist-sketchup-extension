@@ -2529,6 +2529,7 @@ tool:
     action_option_offsets_end_offset: Fin
     action_option_spacings_min_spacing: Min
     action_option_spacings_max_spacing: Max
+    action_option_options_make_unique_status: Rendre unique les pièces assemblées
     action_option_hardware_a: Connecteur A
     action_option_hardware_b: Connecteur B
     action_option_machining_a: Usinage A
