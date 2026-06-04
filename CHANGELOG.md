@@ -24,6 +24,8 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
+### 2026-06-04
+ * Optimized Smart Join Tool code
 ### 2026-06-03
  * Improved Smart Join Tool by previewing hardware and machinings
  * Improved Smart Join Tool by adding browse file textinput

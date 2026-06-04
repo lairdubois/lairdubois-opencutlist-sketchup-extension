@@ -10,7 +10,7 @@ module Ladb::OpenCutList
 
     ACTION_PLACE = 0
 
-    ACTION_OPTION_DEPTH = 'depth'
+    ACTION_OPTION_HEIGHT = 'height'
     ACTION_OPTION_OFFSETS = 'offsets'
     ACTION_OPTION_SPACINGS = 'spacings'
     ACTION_OPTION_GEOMETRY = 'geometry'
@@ -21,8 +21,8 @@ module Ladb::OpenCutList
     ACTION_OPTION_SPACINGS_MIN_SPACING = 'min_spacing'
     ACTION_OPTION_SPACINGS_MAX_SPACING = 'max_spacing'
 
-    ACTION_OPTION_DEPTH_CENTRED = 'depth_centred'
-    ACTION_OPTION_DEPTH_DISTANCE = 'depth_distance'
+    ACTION_OPTION_HEIGHT_CENTRED = 'height_centred'
+    ACTION_OPTION_HEIGHT_DISTANCE = 'height_distance'
 
     ACTION_OPTION_GEOMETRY_HARDWARE_A = 'hardware_a'
     ACTION_OPTION_GEOMETRY_HARDWARE_B = 'hardware_b'
@@ -35,7 +35,7 @@ module Ladb::OpenCutList
       {
         :action => ACTION_PLACE,
         :options => {
-          ACTION_OPTION_DEPTH => [ ACTION_OPTION_DEPTH_CENTRED, ACTION_OPTION_DEPTH_DISTANCE ],
+          ACTION_OPTION_HEIGHT => [ ACTION_OPTION_HEIGHT_CENTRED, ACTION_OPTION_HEIGHT_DISTANCE ],
           ACTION_OPTION_OFFSETS => [ ACTION_OPTION_OFFSETS_START_OFFSET, ACTION_OPTION_OFFSETS_END_OFFSET ],
           ACTION_OPTION_SPACINGS => [ ACTION_OPTION_SPACINGS_MIN_SPACING, ACTION_OPTION_SPACINGS_MAX_SPACING ],
         }
@@ -83,11 +83,11 @@ module Ladb::OpenCutList
     def get_action_option_toggle?(action, option_group, option)
 
       case option_group
-      when ACTION_OPTION_DEPTH
+      when ACTION_OPTION_HEIGHT
         case option
-        when ACTION_OPTION_DEPTH_CENTRED
+        when ACTION_OPTION_HEIGHT_CENTRED
           return true
-        when ACTION_OPTION_DEPTH_DISTANCE
+        when ACTION_OPTION_HEIGHT_DISTANCE
           return false
         end
       when ACTION_OPTION_OFFSETS
@@ -109,11 +109,11 @@ module Ladb::OpenCutList
 
       case option_group
 
-      when ACTION_OPTION_DEPTH
+      when ACTION_OPTION_HEIGHT
         case option
-        when ACTION_OPTION_DEPTH_CENTRED
+        when ACTION_OPTION_HEIGHT_CENTRED
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0L1,0 M0,1L1,1 M0.5,0L0.5,0.25 M0.5,0.75L0.5,1 M0.5,0.375L0.5,0.625 M0.625,0.5L0.375,0.5'))
-        when ACTION_OPTION_DEPTH_DISTANCE
+        when ACTION_OPTION_HEIGHT_DISTANCE
           return Kuix::Label.new(fetch_action_option_value(action, option_group, option).to_s)
         end
       when ACTION_OPTION_OFFSETS
@@ -186,8 +186,13 @@ module Ladb::OpenCutList
 
     include UserTextHelper
 
-    LAYER_2D_ACTION_PREVIEW = 3
-    LAYER_3D_ACTION_PREVIEW = 3
+    LAYER_2D_JOIN_PREVIEW = 3
+
+    LAYER_3D_JOIN_PREVIEW = 3
+    LAYER_3D_SNAP_POINT_PREVIEW = 4
+
+    COLOR_REF_FACE = Sketchup::Color.new(255, 0, 255, 0.1).blend(COLOR_PART, 0.2).freeze
+    COLOR_REF_EDGE = ColorUtils.color_darken(COLOR_REF_FACE, 0.3).freeze
 
     Clippy = Fiddle::Clippy
 
@@ -212,7 +217,7 @@ module Ladb::OpenCutList
     end
 
     def get_state_vcb_label(state)
-      PLUGIN.get_i18n_string('tool.default.vcb_depth')
+      PLUGIN.get_i18n_string('tool.default.vcb_height')
     end
 
     # -----
@@ -220,15 +225,17 @@ module Ladb::OpenCutList
     def onToolUserText(tool, text, view)
       return true if super
 
-      return true if _read_depth(tool, text, view)
+      return true if _read_height(tool, text, view)
 
       false
     end
 
     def onPickerChanged(picker, view)
       super
-      _snap_join(view)
-      _preview_join(view)
+      if _snap_join(view)
+        _preview_join(view)
+      end
+      _preview_snap_point
     end
 
     def onActivePartChanged(part_entity_path, part, highlighted = nil)
@@ -279,46 +286,53 @@ module Ladb::OpenCutList
 
     def _snap_join(view)
 
-      return if (neighborhood_def = _get_neighborhood_def(view)).nil?
+      face_manipulator = @picker.picked_plane_manipulator
+      if face_manipulator.is_a?(FaceManipulator) &&
+         (neighborhood_def = _get_neighborhood_def(view)).is_a?(NeighborhoodDef)
 
-      @face_manipulator = @picker.picked_plane_manipulator
-      unless @face_manipulator.is_a?(FaceManipulator)
-        @snap_point = nil
-        @face_manipulator = nil
-        @edge_manipulator = nil
-        @vertex_manipulator = nil
-        return
-      end
+        neighbor_defs = neighborhood_def.neighbor_defs
 
-      neighbor_defs = neighborhood_def.neighbor_defs
+        pt = @picker.picked_point
 
-      pt = @picker.picked_point
-
-      @edge_manipulator = @face_manipulator.loop_manipulators
+        edge_manipulator = face_manipulator.loop_manipulators
                                            .flat_map { |lm| lm.edge_manipulators }
-                                           .select { |em| neighbor_defs.any? { |nd| nd.touching_defs.any? { |td| td.face_manipulator.face != @face_manipulator.face && td.face_manipulator.face.edges.include?(em.edge) } } }
-                                           .min { |em1, em2| em1.distance_to_edge(pt) <=> em2.distance_to_edge(pt) }
+                                           .select { |em| neighbor_defs.any? { |nd| nd.touching_defs.any? { |td| td.face_manipulator.face != face_manipulator.face && td.face_manipulator.face.edges.include?(em.edge) } } }
+                                           .min { |em1, em2| em1.distance_to(pt) <=> em2.distance_to(pt) }
 
-      if @edge_manipulator.is_a?(EdgeManipulator)
+        if edge_manipulator.is_a?(EdgeManipulator)
 
-        @vertex_manipulator = @edge_manipulator.nearest_vertex_manipulator_to(pt)
+          vertex_manipulator = edge_manipulator.nearest_vertex_manipulator_to(pt)
+          snap_point = pt
+
+        else
+
+          vertex_manipulator = nil
+          snap_point = nil
+
+        end
 
       else
-        @snap_point = nil
-        @face_manipulator = nil
-        @edge_manipulator = nil
-        @vertex_manipulator = nil
-        return
+
+        edge_manipulator = nil
+        vertex_manipulator = nil
+        snap_point = nil
+
       end
 
-      @snap_point = pt
+      base_changed = @face_manipulator != face_manipulator || @edge_manipulator != edge_manipulator || @vertex_manipulator != vertex_manipulator
 
+      @face_manipulator = face_manipulator
+      @edge_manipulator = edge_manipulator
+      @vertex_manipulator = vertex_manipulator
+      @snap_point = snap_point
+
+      base_changed
     end
 
     def _preview_join(view)
 
-      @tool.clear_2d(LAYER_2D_ACTION_PREVIEW)
-      @tool.clear_3d(LAYER_3D_ACTION_PREVIEW)
+      # @tool.clear_2d(LAYER_2D_JOIN_PREVIEW)
+      @tool.clear_3d(LAYER_3D_JOIN_PREVIEW)
       @tool.hide_message
 
       return if (neighborhood_def = _get_neighborhood_def(view)).nil?
@@ -333,9 +347,9 @@ module Ladb::OpenCutList
         # Highlight picked face
         k_mesh = Kuix::Mesh.new
         k_mesh.add_triangles(@face_manipulator.triangles)
-        k_mesh.background_color = Sketchup::Color.new(255, 0, 255, 0.2).blend(COLOR_PART, 0.5).freeze
+        k_mesh.background_color = COLOR_REF_FACE
         k_mesh.transformation = ot
-        @tool.append_3d(k_mesh, LAYER_3D_ACTION_PREVIEW)
+        @tool.append_3d(k_mesh, LAYER_3D_JOIN_PREVIEW)
 
       end
 
@@ -344,10 +358,11 @@ module Ladb::OpenCutList
         # Highlight picked segment
         k_segments = Kuix::Segments.new
         k_segments.add_segments(@edge_manipulator.segment)
-        k_segments.color = Kuix::COLOR_DARK_GREY
-        k_segments.line_width = 4
+        k_segments.color = COLOR_REF_EDGE
+        k_segments.line_width = 3
+        # k_segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
         k_segments.on_top = true
-        @tool.append_3d(k_segments, LAYER_3D_ACTION_PREVIEW)
+        @tool.append_3d(k_segments, LAYER_3D_JOIN_PREVIEW)
 
       end
 
@@ -379,14 +394,14 @@ module Ladb::OpenCutList
             k_polyline.color = Kuix::COLOR_MAGENTA
             k_polyline.closed = true
             k_polyline.on_top = true
-            @tool.append_3d(k_polyline, LAYER_3D_ACTION_PREVIEW)
+            @tool.append_3d(k_polyline, LAYER_3D_JOIN_PREVIEW)
 
             k_points = _create_floating_points(
               points: join_def.anchor_points_3d,
               style: Kuix::POINT_STYLE_PLUS,
               stroke_color: Kuix::COLOR_MAGENTA
             )
-            @tool.append_3d(k_points, LAYER_3D_ACTION_PREVIEW)
+            @tool.append_3d(k_points, LAYER_3D_JOIN_PREVIEW)
 
             unless join_def.anchor_points_3d.empty?
 
@@ -397,7 +412,7 @@ module Ladb::OpenCutList
               k_edge.line_width = 1
               k_edge.color = Kuix::COLOR_MAGENTA
               k_edge.on_top = true
-              @tool.append_3d(k_edge, LAYER_3D_ACTION_PREVIEW)
+              @tool.append_3d(k_edge, LAYER_3D_JOIN_PREVIEW)
 
             end
 
@@ -464,7 +479,7 @@ module Ladb::OpenCutList
           k_mesh = Kuix::Mesh.new
           k_mesh.add_triangles(neighbor_join_def.neighbor_def.drawing_def.face_manipulators.flat_map(&:triangles))
           k_mesh.background_color = ColorUtils.color_translucent(Kuix::COLOR_GREEN, 0.3)
-          @tool.append_3d(k_mesh, LAYER_3D_ACTION_PREVIEW)
+          @tool.append_3d(k_mesh, LAYER_3D_JOIN_PREVIEW)
 
         end
 
@@ -477,10 +492,20 @@ module Ladb::OpenCutList
         k_points = _create_floating_points(
           points: @vertex_manipulator.point,
           style: Kuix::POINT_STYLE_CIRCLE,
-          fill_color: Kuix::COLOR_DARK_GREY,
+          fill_color: Kuix::COLOR_MAGENTA,
           stroke_color: Kuix::COLOR_WHITE,
         )
-        @tool.append_3d(k_points, LAYER_3D_ACTION_PREVIEW)
+        @tool.append_3d(k_points, LAYER_3D_JOIN_PREVIEW)
+
+      end
+
+    end
+
+    def _preview_snap_point
+
+      @tool.clear_3d(LAYER_3D_SNAP_POINT_PREVIEW)
+
+      if @snap_point.is_a?(Geom::Point3d)
 
         k_edge = Kuix::EdgeMotif3d.new
         k_edge.start.copy!(@snap_point)
@@ -489,7 +514,7 @@ module Ladb::OpenCutList
         k_edge.line_width = 1
         k_edge.color = Kuix::COLOR_DARK_GREY
         k_edge.on_top = true
-        @tool.append_3d(k_edge, LAYER_3D_ACTION_PREVIEW)
+        @tool.append_3d(k_edge, LAYER_3D_SNAP_POINT_PREVIEW)
 
       end
 
@@ -506,23 +531,23 @@ module Ladb::OpenCutList
       k_segments.line_width = line_width
       k_segments.transformation = transformation
       k_segments.on_top = true
-      @tool.append_3d(k_segments, LAYER_3D_ACTION_PREVIEW)
+      @tool.append_3d(k_segments, LAYER_3D_JOIN_PREVIEW)
 
     end
 
     # -----
 
-    def _read_depth(tool, text, view)
+    def _read_height(tool, text, view)
 
-      depth = _read_user_text_length(tool, text)
-      return true if depth.nil?
+      height = _read_user_text_length(tool, text)
+      return true if height.nil?
 
-      if depth < 0
-        tool.notify_errors([[ 'tool.default.error.invalid_depth', { :value => depth } ]])
+      if height < 0
+        tool.notify_errors([[ 'tool.default.error.invalid_height', { :value => height } ]])
         return true
       end
 
-      @tool.store_action_option_value(@action, SmartJoinTool::ACTION_OPTION_DEPTH, SmartJoinTool::ACTION_OPTION_DEPTH_DISTANCE, depth.to_s, true)
+      @tool.store_action_option_value(@action, SmartJoinTool::ACTION_OPTION_HEIGHT, SmartJoinTool::ACTION_OPTION_HEIGHT_DISTANCE, height.to_s, true)
       Sketchup.set_status_text('', SB_VCB_VALUE)
       _refresh
 
@@ -629,12 +654,12 @@ module Ladb::OpenCutList
       @tool.fetch_action_option_length(@action, SmartJoinTool::ACTION_OPTION_OFFSETS, SmartJoinTool::ACTION_OPTION_SPACINGS_MAX_SPACING)
     end
 
-    def _fetch_option_depth_distance
-      @tool.fetch_action_option_length(@action, SmartJoinTool::ACTION_OPTION_DEPTH, SmartJoinTool::ACTION_OPTION_DEPTH_DISTANCE)
+    def _fetch_option_height_distance
+      @tool.fetch_action_option_length(@action, SmartJoinTool::ACTION_OPTION_HEIGHT, SmartJoinTool::ACTION_OPTION_HEIGHT_DISTANCE)
     end
 
-    def _fetch_option_depth_centred
-      @tool.fetch_action_option_boolean(@action, SmartJoinTool::ACTION_OPTION_DEPTH, SmartJoinTool::ACTION_OPTION_DEPTH_CENTRED)
+    def _fetch_option_height_centred
+      @tool.fetch_action_option_boolean(@action, SmartJoinTool::ACTION_OPTION_HEIGHT, SmartJoinTool::ACTION_OPTION_HEIGHT_CENTRED)
     end
 
     def _fetch_option_hardware_a
@@ -886,8 +911,8 @@ module Ladb::OpenCutList
       end_offset = _fetch_option_end_offset
       min_spacing = _fetch_option_min_spacing
       max_spacing = _fetch_option_max_spacing
-      depth_distance = _fetch_option_depth_distance
-      depth_centred = _fetch_option_depth_centred
+      height_distance = _fetch_option_height_distance
+      height_centred = _fetch_option_height_centred
 
       geometry_def = _get_geometries_def
       geometry_bounds = geometry_def.bounds
@@ -963,10 +988,10 @@ module Ladb::OpenCutList
               end
             end
 
-            ly = if depth_centred
+            ly = if height_centred
                    touching_vy.length - touching_poly_bounds.height * 0.5
                  else
-                   depth_distance
+                   height_distance
                  end
 
             anchor_points_2d = coords.map! { |lx| ORIGIN.offset(X_AXIS, touching_poly_bounds.min.x + lx).offset(touching_vy, ly) }

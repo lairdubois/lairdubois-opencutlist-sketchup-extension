@@ -2277,6 +2277,7 @@ tool:
     vcb_diameter: Diamètre
     vcb_distance: Distance
     vcb_depth: Profondeur
+    vcb_height: Hauteur
     error:
       no_direction: Veuillez indiquer une direction avec la souris
       invalid_length: "La longueur {{ value }} est invalide"
@@ -2285,6 +2286,7 @@ tool:
       invalid_divider: "Le diviseur {{ value }} est invalide"
       invalid_offset: "Le décalage {{ value }} est invalide"
       invalid_depth: "La profondeur {{ value }} est invalide"
+      invalid_height: "La hauteur {{ value }} est invalide"
       invalid_segment_count: "Le nombre de segments {{ value }} est invalide. Il doit être compris entre 3 et 999."
       syntax_error: "Erreur de syntaxe : {{ error }}"
       unexpected_close_parenthesis: "Parenthèse fermante inattendue"
@@ -2514,14 +2516,14 @@ tool:
   # TODO: It's currently just for dev purposes
   smart_join:
     title: Assembler
-    action_0: Placer
+    action_0: Placer des connecteurs
     action_0_status: Placer des connecteurs pour assembler des pièces
     action_0_state_0_status: Cliquez sur la face de référence d'une pièce pour l'assembler avec les pièces voisines
-    action_option_group_depth: Profondeur
+    action_option_group_height: Hauteur
     action_option_group_offsets: Décalages
     action_option_group_spacings: Espacements
-    action_option_depth_distance: Profondeur
-    action_option_depth_centred: Profondeur centrée
+    action_option_height_distance: Hauteur
+    action_option_height_centred: Hauteur centrée
     action_option_offsets_start_offset: Début
     action_option_offsets_end_offset: Fin
     action_option_spacings_min_spacing: Min

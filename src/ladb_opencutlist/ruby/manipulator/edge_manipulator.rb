@@ -92,7 +92,7 @@ module Ladb::OpenCutList
       vertex_manipulators.min { |vm1, vm2| vm1.point.distance(point) <=> vm2.point.distance(point) }
     end
 
-    def distance_to_edge(point)
+    def distance_to(point)
       projected_point = point.project_to_line(line)
       if !(v = start_point.vector_to(projected_point)).valid? ||
           v.samedirection?(direction) && start_point.distance(projected_point) <= length

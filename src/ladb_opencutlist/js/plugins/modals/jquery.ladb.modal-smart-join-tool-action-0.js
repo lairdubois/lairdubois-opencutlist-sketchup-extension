@@ -34,7 +34,7 @@
             const $inputEndOffset = $('#ladb_input_end_offset', that.$element);
             const $inputMinSpacing = $('#ladb_input_min_spacing', that.$element);
             const $inputMaxSpacing = $('#ladb_input_max_spacing', that.$element);
-            const $inputDepthDistance = $('#ladb_input_depth_distance', that.$element);
+            const $inputHeightDistance = $('#ladb_input_height_distance', that.$element);
             const $inputHardwareA = $('#ladb_input_hardware_a', that.$element);
             const $inputHardwareB = $('#ladb_input_hardware_b', that.$element);
             const $inputMachiningA = $('#ladb_input_machining_a', that.$element);
@@ -48,7 +48,7 @@
                 options.end_offset = $inputEndOffset.val();
                 options.min_spacing = $inputMinSpacing.val();
                 options.max_spacing = $inputMaxSpacing.val();
-                options.depth_distance = $inputDepthDistance.val();
+                options.height_distance = $inputHeightDistance.val();
                 options.hardware_a = $inputHardwareA.val();
                 options.hardware_b = $inputHardwareB.val();
                 options.machining_a = $inputMachiningA.val();
@@ -61,7 +61,7 @@
                 $inputEndOffset.val(options.end_offset);
                 $inputMinSpacing.val(options.min_spacing);
                 $inputMaxSpacing.val(options.max_spacing);
-                $inputDepthDistance.val(options.depth_distance);
+                $inputHeightDistance.val(options.height_distance);
                 $inputHardwareA.val(options.hardware_a);
                 $inputHardwareB.val(options.hardware_b);
                 $inputMachiningA.val(options.machining_a);
@@ -81,7 +81,7 @@
             $inputEndOffset.ladbTextinputDimension();
             $inputMinSpacing.ladbTextinputDimension();
             $inputMaxSpacing.ladbTextinputDimension();
-            $inputDepthDistance.ladbTextinputDimension();
+            $inputHeightDistance.ladbTextinputDimension();
             $inputHardwareA.ladbTextinputFile();
             $inputHardwareB.ladbTextinputFile();
             $inputMachiningA.ladbTextinputFile();
@@ -135,9 +135,9 @@
                     $inputMaxSpacing.focus();
                     $inputMaxSpacing.select();
                 }
-                else if (that.options.focused_field.option === 'depth_distance') {
-                    $inputDepthDistance.focus();
-                    $inputDepthDistance.select();
+                else if (that.options.focused_field.option === 'height_distance') {
+                    $inputHeightDistance.focus();
+                    $inputHeightDistance.select();
                 }
             }
 
