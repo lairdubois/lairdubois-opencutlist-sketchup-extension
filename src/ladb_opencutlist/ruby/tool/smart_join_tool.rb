@@ -193,6 +193,8 @@ module Ladb::OpenCutList
 
     COLOR_REF_FACE = Sketchup::Color.new(255, 0, 255, 0.1).blend(COLOR_PART, 0.2).freeze
     COLOR_REF_EDGE = ColorUtils.color_darken(COLOR_REF_FACE, 0.3).freeze
+    COLOR_DEFAULT_HARDWARE_MATERIAL = Sketchup::Color.new('#999999').freeze
+    COLOR_DEFAULT_MACHINING_MATERIAL = Sketchup::Color.new('#0068ff').freeze
 
     Clippy = Fiddle::Clippy
 
@@ -1077,8 +1079,8 @@ module Ladb::OpenCutList
         material
       end
 
-      hardware_material = fn_get_material.call(_fetch_option_hardware_material_name, Kuix::COLOR_BLACK, MaterialAttributes::TYPE_HARDWARE)
-      machining_material = fn_get_material.call(_fetch_option_machining_material_name, '#0068ff', MaterialAttributes::TYPE_MACHINING)
+      hardware_material = fn_get_material.call(_fetch_option_hardware_material_name, COLOR_DEFAULT_HARDWARE_MATERIAL, MaterialAttributes::TYPE_HARDWARE)
+      machining_material = fn_get_material.call(_fetch_option_machining_material_name, COLOR_DEFAULT_MACHINING_MATERIAL, MaterialAttributes::TYPE_MACHINING)
 
       bounds = Geom::BoundingBox.new
       bounds.add(hardware_a_drawing_def.bounds) unless hardware_a_drawing_def.nil?
