@@ -21,7 +21,7 @@ module Ladb::OpenCutList
     ACTION_OPTION_SPACINGS_MIN_SPACING = 'min_spacing'
     ACTION_OPTION_SPACINGS_MAX_SPACING = 'max_spacing'
 
-    ACTION_OPTION_HEIGHT_CENTRED = 'height_centred'
+    ACTION_OPTION_HEIGHT_CENTERED = 'height_centered'
     ACTION_OPTION_HEIGHT_DISTANCE = 'height_distance'
 
     ACTION_OPTION_GEOMETRY_HARDWARE_A = 'hardware_a'
@@ -35,7 +35,7 @@ module Ladb::OpenCutList
       {
         :action => ACTION_PLACE,
         :options => {
-          ACTION_OPTION_HEIGHT => [ ACTION_OPTION_HEIGHT_CENTRED, ACTION_OPTION_HEIGHT_DISTANCE ],
+          ACTION_OPTION_HEIGHT => [ ACTION_OPTION_HEIGHT_CENTERED, ACTION_OPTION_HEIGHT_DISTANCE ],
           ACTION_OPTION_OFFSETS => [ ACTION_OPTION_OFFSETS_START_OFFSET, ACTION_OPTION_OFFSETS_END_OFFSET ],
           ACTION_OPTION_SPACINGS => [ ACTION_OPTION_SPACINGS_MIN_SPACING, ACTION_OPTION_SPACINGS_MAX_SPACING ],
         }
@@ -85,7 +85,7 @@ module Ladb::OpenCutList
       case option_group
       when ACTION_OPTION_HEIGHT
         case option
-        when ACTION_OPTION_HEIGHT_CENTRED
+        when ACTION_OPTION_HEIGHT_CENTERED
           return true
         when ACTION_OPTION_HEIGHT_DISTANCE
           return false
@@ -111,7 +111,7 @@ module Ladb::OpenCutList
 
       when ACTION_OPTION_HEIGHT
         case option
-        when ACTION_OPTION_HEIGHT_CENTRED
+        when ACTION_OPTION_HEIGHT_CENTERED
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0L1,0 M0,1L1,1 M0.5,0L0.5,0.25 M0.5,0.75L0.5,1 M0.5,0.375L0.5,0.625 M0.625,0.5L0.375,0.5'))
         when ACTION_OPTION_HEIGHT_DISTANCE
           return Kuix::Label.new(fetch_action_option_value(action, option_group, option).to_s)
@@ -658,8 +658,8 @@ module Ladb::OpenCutList
       @tool.fetch_action_option_length(@action, SmartJoinTool::ACTION_OPTION_HEIGHT, SmartJoinTool::ACTION_OPTION_HEIGHT_DISTANCE)
     end
 
-    def _fetch_option_height_centred
-      @tool.fetch_action_option_boolean(@action, SmartJoinTool::ACTION_OPTION_HEIGHT, SmartJoinTool::ACTION_OPTION_HEIGHT_CENTRED)
+    def _fetch_option_height_centered
+      @tool.fetch_action_option_boolean(@action, SmartJoinTool::ACTION_OPTION_HEIGHT, SmartJoinTool::ACTION_OPTION_HEIGHT_CENTERED)
     end
 
     def _fetch_option_hardware_a
@@ -912,7 +912,7 @@ module Ladb::OpenCutList
       min_spacing = _fetch_option_min_spacing
       max_spacing = _fetch_option_max_spacing
       height_distance = _fetch_option_height_distance
-      height_centred = _fetch_option_height_centred
+      height_centered = _fetch_option_height_centered
 
       geometry_def = _get_geometries_def
       geometry_bounds = geometry_def.bounds
@@ -988,7 +988,7 @@ module Ladb::OpenCutList
               end
             end
 
-            ly = if height_centred
+            ly = if height_centered
                    touching_vy.length - touching_poly_bounds.height * 0.5
                  else
                    height_distance

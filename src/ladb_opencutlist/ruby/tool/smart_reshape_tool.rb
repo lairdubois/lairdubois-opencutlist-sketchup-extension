@@ -44,7 +44,7 @@ module Ladb::OpenCutList
     ACTION_OPTION_CSG_OPERATION_SUBTRACTION = 'subtraction'
     ACTION_OPTION_CSG_OPERATION_INTERSECTION = 'intersection'
 
-    ACTION_OPTION_OPTIONS_CENTRED = 'centred'
+    ACTION_OPTION_OPTIONS_CENTERED = 'centered'
     ACTION_OPTION_OPTIONS_MAKE_UNIQUE = 'make_unique'
 
     ACTIONS = [
@@ -53,7 +53,7 @@ module Ladb::OpenCutList
         :options => {
           ACTION_OPTION_STRETCH_MEASURE_TYPE => [ ACTION_OPTION_STRETCH_MEASURE_TYPE_OUTSIDE, ACTION_OPTION_STRETCH_MEASURE_TYPE_OFFSET ],
           ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_CONTEXT, ACTION_OPTION_AXES_ENTITY ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CENTRED, ACTION_OPTION_OPTIONS_MAKE_UNIQUE ]
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CENTERED, ACTION_OPTION_OPTIONS_MAKE_UNIQUE ]
         }
       },
       {
@@ -217,7 +217,7 @@ module Ladb::OpenCutList
         end
       when ACTION_OPTION_OPTIONS
         case option
-        when ACTION_OPTION_OPTIONS_CENTRED
+        when ACTION_OPTION_OPTIONS_CENTERED
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1L0.667,1L1,0.667L1,0L0.333,0L0,0.333L0,1 M0,0.333L0.667,0.333L0.667,1 M0.667,0.333L1,0 M0.333,0.5L0.333,0.833 M0.167,0.667L0.5,0.667'))
         when ACTION_OPTION_OPTIONS_MAKE_UNIQUE
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.167,0.167L0.167,0.833 M0.417,0.167L0.417,0.833 M0,0.333L0.583,0.333 M0,0.667L0.583,0.667 M0.75,0.333L1,0.167L1,0.833'))
@@ -365,7 +365,7 @@ module Ladb::OpenCutList
 
       when STATE_STRETCH
         return super +
-               ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_option_options_centred_status") + '.' +
+               ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_option_options_centered_status") + '.' +
                ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_option_options_make_unique_status") + '.'
 
       end
@@ -741,7 +741,7 @@ module Ladb::OpenCutList
 
       when STATE_STRETCH
         if tool.is_key_ctrl_or_option?(key) && is_quick
-          @tool.store_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_CENTRED, !_fetch_option_options_centred?, true)
+          @tool.store_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_CENTERED, !_fetch_option_options_centered?, true)
           _refresh
           return true
         end
@@ -1669,8 +1669,8 @@ module Ladb::OpenCutList
       @tool.fetch_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_AXES)
     end
 
-    def _fetch_option_options_centred?
-      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_CENTRED)
+    def _fetch_option_options_centered?
+      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_CENTERED)
     end
 
     def _fetch_option_options_make_unique?
@@ -2019,7 +2019,7 @@ module Ladb::OpenCutList
             # Flag definition as stretched + keep edv converted to definition space
             ddv = container_edv
             unless ddv.nil?
-              ddv += emv if container_def.depth <= 1 && get_active_selection_instances.include?(container_def.container) # Apply "move" translation (if the centred option is enabled)
+              ddv += emv if container_def.depth <= 1 && get_active_selection_instances.include?(container_def.container) # Apply "move" translation (if the centered option is enabled)
               if container_def.depth > 0
                 ddv = ddv.transform((container_def.transformation * container_def.container_transformation).inverse)
               else
@@ -2048,7 +2048,7 @@ module Ladb::OpenCutList
             edv.reverse! if container_def.parent.section_def == container_def.section_def && edv.valid?
           end
 
-          # Apply move translation (if the centred option is enabled)
+          # Apply move translation (if the centered option is enabled)
           edv += emv if container_def.depth <= 1 && get_active_selection_instances.include?(container_def.container)
 
           target_position = container_def.ref_position
@@ -2591,7 +2591,7 @@ module Ladb::OpenCutList
       v = ps.vector_to(pe)     # "Move" vector in global space
       ev = v.transform(eti)
 
-      factor = _fetch_option_options_centred? ? 2.0 : 1.0
+      factor = _fetch_option_options_centered? ? 2.0 : 1.0
 
       # Limit move to max compression distance
       compressed = ev.valid? && (reversed ? ev.samedirection?(@picked_axis) : !ev.samedirection?(@picked_axis))

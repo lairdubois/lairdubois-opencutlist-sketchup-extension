@@ -1092,7 +1092,7 @@ module Ladb::OpenCutList
     def _preview_pull(view)
       return if (pull_def = _get_pull_def).nil?
 
-      t, psb, pst, ps, p1, centred, sheared, bt, tt = pull_def.values_at(:t, :psb, :pst, :ps, :p1, :centred, :sheared, :bt, :tt)
+      t, psb, pst, ps, p1, centered, sheared, bt, tt = pull_def.values_at(:t, :psb, :pst, :ps, :p1, :centered, :sheared, :bt, :tt)
 
       measure = psb.distance(pst)
 
@@ -1182,7 +1182,7 @@ module Ladb::OpenCutList
         k_edge.transformation = t
         @tool.append_3d(k_edge, LAYER_3D_DRAW_PREVIEW)
 
-      elsif centred
+      elsif centered
 
         # Draw the first picked point
         k_point = _create_floating_points(
@@ -1627,7 +1627,7 @@ module Ladb::OpenCutList
     def _get_pull_def
       return nil unless @picked_shape_start_point.is_a?(Geom::Point3d) && @picked_shape_end_point.is_a?(Geom::Point3d)
 
-      centred = _fetch_option_pull_centered?
+      centered = _fetch_option_pull_centered?
 
       t = _get_transformation(@picked_shape_start_point)
       ti = t.inverse
@@ -1639,7 +1639,7 @@ module Ladb::OpenCutList
 
       v = pe.vector_to(pp)
 
-      psb = centred ? ps.offset(v.reverse) : ps   # point start bottom
+      psb = centered ? ps.offset(v.reverse) : ps   # point start bottom
       pst = ps.offset(v)                          # point start top
 
       sheared = false
@@ -1649,8 +1649,8 @@ module Ladb::OpenCutList
         unless p3.nil?
 
           offset = p3.vector_to(pe)
-          p1 = centred ? ps.offset(offset) : ps
-          p2 = centred ? pe.offset(offset) : pe
+          p1 = centered ? ps.offset(offset) : ps
+          p2 = centered ? pe.offset(offset) : pe
 
           sheared = true
 
@@ -1663,7 +1663,7 @@ module Ladb::OpenCutList
         p2 = pe
         p3 = pp
 
-        if centred
+        if centered
           offset = pp.vector_to(pe)
           p1 = p1.offset(offset)
           p2 = p2.offset(offset)
@@ -1684,7 +1684,7 @@ module Ladb::OpenCutList
         p1: p1,
         p2: p2,
         p3: p3,
-        centred: centred,
+        centered: centered,
         sheared: sheared,
         bt: bt,
         tt: tt,
@@ -2394,19 +2394,19 @@ module Ladb::OpenCutList
         p1 = @picked_shape_start_point.transform(ti)
         p2 = @mouse_snap_point.transform(ti)
 
-        rectangle_centred = _fetch_option_rectangle_centered?
+        rectangle_centered = _fetch_option_rectangle_centered?
 
         base_length = p2.x - p1.x
-        base_length *= 2 if rectangle_centred
+        base_length *= 2 if rectangle_centered
         length = _read_user_text_length(tool, d1, base_length)
         return true if length.nil?
-        length = length / 2 if rectangle_centred
+        length = length / 2 if rectangle_centered
 
         base_width = p2.y - p1.y
-        base_width *= 2 if rectangle_centred
+        base_width *= 2 if rectangle_centered
         width = _read_user_text_length(tool, d2, base_width)
         return true if width.nil?
-        width = width / 2 if rectangle_centred
+        width = width / 2 if rectangle_centered
 
         @picked_shape_end_point = Geom::Point3d.new(p1.x + length, p1.y + width, p1.z).transform(t)
 

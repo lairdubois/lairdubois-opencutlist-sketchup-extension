@@ -5,7 +5,7 @@
   "action_0": { /* ACTION_STRETCH */
     "stretch_measure_type": "outside",
     "axes": "entity",
-    "centred": false,
+    "centered": false,
     "make_unique": true
   },
   "action_1": { /* ACTION_PANELING */
