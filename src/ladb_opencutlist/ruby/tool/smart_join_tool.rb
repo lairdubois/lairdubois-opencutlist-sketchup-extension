@@ -13,6 +13,7 @@ module Ladb::OpenCutList
     ACTION_OPTION_HEIGHT = 'height'
     ACTION_OPTION_OFFSETS = 'offsets'
     ACTION_OPTION_SPACINGS = 'spacings'
+    ACTION_OPTION_OPTIONS = 'options'
     ACTION_OPTION_GEOMETRY = 'geometry'
 
     ACTION_OPTION_OFFSETS_START_OFFSET = 'start_offset'
@@ -23,6 +24,8 @@ module Ladb::OpenCutList
 
     ACTION_OPTION_HEIGHT_CENTERED = 'height_centered'
     ACTION_OPTION_HEIGHT_DISTANCE = 'height_distance'
+
+    ACTION_OPTION_OPTIONS_MAKE_UNIQUE = 'make_unique'
 
     ACTION_OPTION_GEOMETRY_HARDWARE_A = 'hardware_a'
     ACTION_OPTION_GEOMETRY_HARDWARE_B = 'hardware_b'
@@ -38,6 +41,7 @@ module Ladb::OpenCutList
           ACTION_OPTION_HEIGHT => [ ACTION_OPTION_HEIGHT_CENTERED, ACTION_OPTION_HEIGHT_DISTANCE ],
           ACTION_OPTION_OFFSETS => [ ACTION_OPTION_OFFSETS_START_OFFSET, ACTION_OPTION_OFFSETS_END_OFFSET ],
           ACTION_OPTION_SPACINGS => [ ACTION_OPTION_SPACINGS_MIN_SPACING, ACTION_OPTION_SPACINGS_MAX_SPACING ],
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_MAKE_UNIQUE ],
         }
       }
     ].freeze
@@ -100,6 +104,11 @@ module Ladb::OpenCutList
         when ACTION_OPTION_SPACINGS_MIN_SPACING, ACTION_OPTION_SPACINGS_MAX_SPACING
           return false
         end
+      when ACTION_OPTION_OPTIONS
+        case option
+        when ACTION_OPTION_OPTIONS_MAKE_UNIQUE
+          return true
+        end
       end
 
       super
@@ -125,6 +134,11 @@ module Ladb::OpenCutList
         case option
         when ACTION_OPTION_SPACINGS_MIN_SPACING, ACTION_OPTION_SPACINGS_MAX_SPACING
           return Kuix::Label.new(fetch_action_option_value(action, option_group, option).to_s)
+        end
+      when ACTION_OPTION_OPTIONS
+        case option
+        when ACTION_OPTION_OPTIONS_MAKE_UNIQUE
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.167,0.167L0.167,0.833 M0.417,0.167L0.417,0.833 M0,0.333L0.583,0.333 M0,0.667L0.583,0.667 M0.75,0.333L1,0.167L1,0.833'))
         end
       end
 
@@ -321,19 +335,19 @@ module Ladb::OpenCutList
 
       end
 
-      base_changed = @face_manipulator != face_manipulator || @edge_manipulator != edge_manipulator || @vertex_manipulator != vertex_manipulator
+      # Check if the base context has changed since last snap iteration
+      context_changed = @face_manipulator != face_manipulator || @edge_manipulator != edge_manipulator || @vertex_manipulator != vertex_manipulator
 
       @face_manipulator = face_manipulator
       @edge_manipulator = edge_manipulator
       @vertex_manipulator = vertex_manipulator
       @snap_point = snap_point
 
-      base_changed
+      context_changed
     end
 
     def _preview_join(view)
 
-      # @tool.clear_2d(LAYER_2D_JOIN_PREVIEW)
       @tool.clear_3d(LAYER_3D_JOIN_PREVIEW)
       @tool.hide_message
 
@@ -341,7 +355,7 @@ module Ladb::OpenCutList
 
       if @face_manipulator.is_a?(FaceManipulator)
 
-        # Offset transformation to force arrow and mesh to be on top of part preview
+        # Offset transformation to force mesh to be on top of part preview
         ov = Geom::Vector3d.new(@face_manipulator.normal)
         ov.length = 0.01
         ot = Geom::Transformation.translation(ov)
@@ -362,7 +376,6 @@ module Ladb::OpenCutList
         k_segments.add_segments(@edge_manipulator.segment)
         k_segments.color = COLOR_REF_EDGE
         k_segments.line_width = 3
-        # k_segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
         k_segments.on_top = true
         @tool.append_3d(k_segments, LAYER_3D_JOIN_PREVIEW)
 
@@ -582,19 +595,75 @@ module Ladb::OpenCutList
 
         begin
 
+          if (make_unique = _fetch_option_make_unique)
+
+            # Make unique Part A (if necessary)
+
+            u_instance_a = instance_a.make_unique
+            u_definition_a = u_instance_a.definition
+            if u_definition_a != definition_a
+
+              u_entities_a = u_definition_a.entities
+
+              neighbor_join_defs.each do |neighbor_join_def|
+                face = neighbor_join_def.touching_def.face_manipulator.face
+                if face.parent == definition_a
+                  face_index = entities_a.to_a.index(face)
+                  u_face = u_entities_a[face_index]
+                  if u_face
+                    neighbor_join_def.touching_def.face_manipulator = FaceManipulator.new(u_face, neighbor_join_def.touching_def.face_manipulator.transformation)
+                    break
+                  end
+                end
+              end
+
+              definition_a = u_definition_a
+              entities_a = u_entities_a
+
+            end
+
+          end
+
           neighbor_join_defs.each do |neighbor_join_def|
 
             instance_b = neighbor_join_def.neighbor_def.instance_b
             definition_b = instance_b.definition
             entities_b = definition_b.entities
+
+            if make_unique
+
+              # Make unique Part B (if necessary)
+
+              u_instance_b = instance_b.make_unique
+              u_definition_b = u_instance_b.definition
+              if u_definition_b != definition_b
+
+                u_entities_b = u_definition_b.entities
+
+                neighbor_face = neighbor_join_def.touching_def.neighbor_face_manipulator.face
+                if neighbor_face.parent == definition_b
+                  neighbor_face_index = entities_b.to_a.index(neighbor_face)
+                  u_neighbor_face = u_entities_b[neighbor_face_index]
+                  if u_neighbor_face
+                    neighbor_join_def.touching_def.neighbor_face_manipulator = FaceManipulator.new(u_neighbor_face, neighbor_join_def.touching_def.neighbor_face_manipulator.transformation)
+                  end
+                end
+
+                definition_b = u_definition_b
+                entities_b = u_entities_b
+
+              end
+
+            end
+
             ti_b = neighbor_join_def.neighbor_def.ti_b
             at_a = neighbor_join_def.at_a
             at_b = neighbor_join_def.at_b
 
-            neighbor_join_def.join_defs.each do |join_def|
+            face_a = neighbor_join_def.touching_def.face_manipulator.face
+            face_b = neighbor_join_def.touching_def.neighbor_face_manipulator.face
 
-              face_a = join_def.touching_def.face_manipulator.face
-              face_b = join_def.touching_def.neighbor_face_manipulator.face
+            neighbor_join_def.join_defs.each do |join_def|
 
               rot = join_def.reversed_y ? Geom::Transformation.rotation(ORIGIN, Z_AXIS, 180.degrees) : IDENTITY
 
@@ -669,6 +738,10 @@ module Ladb::OpenCutList
       @tool.fetch_action_option_boolean(@action, SmartJoinTool::ACTION_OPTION_HEIGHT, SmartJoinTool::ACTION_OPTION_HEIGHT_CENTERED)
     end
 
+    def _fetch_option_make_unique
+      @tool.fetch_action_option_boolean(@action, SmartJoinTool::ACTION_OPTION_OPTIONS, SmartJoinTool::ACTION_OPTION_OPTIONS_MAKE_UNIQUE)
+    end
+
     def _fetch_option_hardware_a
       @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_HARDWARE_A)
     end
@@ -737,6 +810,27 @@ module Ladb::OpenCutList
 
         ph = view.pick_helper
 
+        fn_try_to_add_neighbor = lambda do |path|
+
+          picked_part_entity_path = _get_part_entity_path_from_path(path)
+          return nil if picked_part_entity_path.nil?                      # Exclude non-part entities
+          return nil if h_neighbor_defs.has_key?(picked_part_entity_path) # Exclude already picked part
+          if picked_part_entity_path != get_active_selection_path &&
+             (picked_drawing_def = CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new(picked_part_entity_path) ], **_get_drawing_def_parameters).run).is_a?(DrawingDef)
+
+            # Exclude invalid drawing defs
+            return unless picked_drawing_def.bounds.valid?
+
+            # Transform the drawing def to the 'World' space
+            picked_drawing_def.transform!(picked_drawing_def.transformation.inverse)
+
+            # Store the new neighbor def
+            h_neighbor_defs[picked_part_entity_path] = NeighborhoodNeighborDef.new(picked_part_entity_path, picked_drawing_def, [])
+
+          end
+
+        end
+
         # 1. Pick from the bounding box
 
         num_picked = ph.boundingbox_pick(kbi.to_b, Sketchup::PickHelper::PICK_CROSSING, drawing_def.transformation)
@@ -744,31 +838,7 @@ module Ladb::OpenCutList
 
           path = ph.path_at(index)
 
-          # if path.last.is_a?(Sketchup::Edge)
-          #
-          #   edge_manipulator = EdgeManipulator.new(path.last, ph.transformation_at(index))
-          #
-          #   k_edge = Kuix::EdgeMotif3d.new
-          #   k_edge.start.copy!(edge_manipulator.start_point)
-          #   k_edge.end.copy!(edge_manipulator.end_point)
-          #   k_edge.line_stipple = Kuix::LINE_STIPPLE_SOLID
-          #   k_edge.line_width = 3
-          #   k_edge.color = Kuix::COLOR_MAGENTA
-          #   k_edge.on_top = true
-          #   @tool.append_3d(k_edge, LAYER_3D_ACTION_PREVIEW)
-          #
-          # elsif path.last.is_a?(Sketchup::Face)
-          #
-          #   face_manipulator = FaceManipulator.new(path.last, ph.transformation_at(index))
-          #
-          #   k_mesh = Kuix::Mesh.new
-          #   k_mesh.add_triangles(face_manipulator.triangles)
-          #   k_mesh.background_color = ColorUtils.color_translucent(Kuix::COLOR_MAGENTA, 0.3)
-          #   @tool.append_3d(k_mesh, LAYER_3D_ACTION_PREVIEW)
-          #
-          # end
-
-          _try_to_add_neighbor(path, h_neighbor_defs)
+          fn_try_to_add_neighbor.call(path)
 
         end
 
@@ -776,7 +846,6 @@ module Ladb::OpenCutList
 
         8.times do |corner|
 
-          # p0 = drawing_def.bounds.corner(corner).transform(drawing_def.transformation)
           p0 = kbd.corner(corner).to_p.transform(drawing_def.transformation)
           p1 = kbi.corner(corner).to_p.transform(drawing_def.transformation)
 
@@ -789,33 +858,7 @@ module Ladb::OpenCutList
 
             next if p0.distance(hit_point) > dmax
 
-            # t = PathUtils.get_transformation(path)
-
-            # if path.last.is_a?(Sketchup::Edge)
-            #
-            #   edge_manipulator = EdgeManipulator.new(path.last, t)
-            #
-            #   k_edge = Kuix::EdgeMotif3d.new
-            #   k_edge.start.copy!(edge_manipulator.start_point)
-            #   k_edge.end.copy!(edge_manipulator.end_point)
-            #   k_edge.line_stipple = Kuix::LINE_STIPPLE_SOLID
-            #   k_edge.line_width = 3
-            #   k_edge.color = Kuix::COLOR_MAGENTA
-            #   k_edge.on_top = true
-            #   @tool.append_3d(k_edge, LAYER_3D_ACTION_PREVIEW)
-            #
-            # elsif path.last.is_a?(Sketchup::Face)
-            #
-            #   face_manipulator = FaceManipulator.new(path.last, t)
-            #
-            #   k_mesh = Kuix::Mesh.new
-            #   k_mesh.add_triangles(face_manipulator.triangles)
-            #   k_mesh.background_color = ColorUtils.color_translucent(Kuix::COLOR_MAGENTA, 0.3)
-            #   @tool.append_3d(k_mesh, LAYER_3D_ACTION_PREVIEW)
-            #
-            # end
-
-            _try_to_add_neighbor(path, h_neighbor_defs)
+            fn_try_to_add_neighbor.call(path)
 
           end
 
@@ -838,7 +881,7 @@ module Ladb::OpenCutList
         # Iterate on part faces
         drawing_def.face_manipulators.each do |fm|
 
-          # Iterate on neighbor faces
+          # Iterate on neighbor part faces
           neighbor_def.drawing_def.face_manipulators.each do |nfm|
 
             next unless fm.normal.parallel?(nfm.normal)
@@ -850,7 +893,7 @@ module Ladb::OpenCutList
             # Compute the transformation matrix to transform world space to touching 2D space
             origin = fm.position
             z_axis = fm.normal
-            x_axis = fm.outer_loop_manipulator.edge_manipulators.first.direction.normalize  # Use first edge direction as arbitrary x axis
+            x_axis = fm.outer_loop_manipulator.edge_manipulators.first.direction.normalize  # Use first outer loop edge direction as arbitrary x axis
             y_axis = z_axis * x_axis
             at = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis)
             ati = at.inverse
@@ -887,25 +930,6 @@ module Ladb::OpenCutList
         drawing_def,
         neighbor_defs
       )
-    end
-
-    def _try_to_add_neighbor(path, h_neighbor_defs)
-      picked_part_entity_path = _get_part_entity_path_from_path(path)
-      return nil if picked_part_entity_path.nil?                      # Exclude non-part entities
-      return nil if h_neighbor_defs.has_key?(picked_part_entity_path) # Exclude already picked part
-      if picked_part_entity_path != get_active_selection_path &&
-         (picked_drawing_def = CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new(picked_part_entity_path) ], **_get_drawing_def_parameters).run).is_a?(DrawingDef)
-
-        # Transform the drawing def to the 'World' space
-        picked_drawing_def.transform!(picked_drawing_def.transformation.inverse)
-
-        # Exclude invalid drawing defs
-        return unless picked_drawing_def.bounds.valid?
-
-        # Store the new neighbor def
-        h_neighbor_defs[picked_part_entity_path] = NeighborhoodNeighborDef.new(picked_part_entity_path, picked_drawing_def, [])
-
-      end
     end
 
     def _get_joinery_def(neighborhood_def)
@@ -993,7 +1017,7 @@ module Ladb::OpenCutList
             start_point_3d = ORIGIN.offset(X_AXIS, touching_poly_bounds.min.x + (coords.size > 1 ? start_offset : 0)).offset(touching_vy, ly).transform(at)
             end_point_3d = ORIGIN.offset(X_AXIS, touching_poly_bounds.min.x + touching_poly_bounds.width - (coords.size > 1 ? end_offset : 0)).offset(touching_vy, ly).transform(at)
 
-            join_defs << JoineryJoinDef.new(touching_def, touching_poly, anchor_points_3d, start_point_3d, end_point_3d, touching_vy.samedirection?(Y_AXIS))
+            join_defs << JoineryJoinDef.new(touching_poly, anchor_points_3d, start_point_3d, end_point_3d, touching_vy.samedirection?(Y_AXIS))
 
           end
 
@@ -1013,7 +1037,7 @@ module Ladb::OpenCutList
               z_axis.transform(ti_b).reverse!
             )
 
-            neighbor_join_defs << JoineryNeighborJoinDef.new(neighbor_def, join_defs, x_axis, y_axis, z_axis, at_a, at_b)
+            neighbor_join_defs << JoineryNeighborJoinDef.new(neighbor_def, touching_def, join_defs, x_axis, y_axis, z_axis, at_a, at_b)
 
           end
 
@@ -1128,8 +1152,8 @@ module Ladb::OpenCutList
     NeighborhoodTouchingDef = Struct.new(:face_manipulator, :neighbor_face_manipulator, :touching_polys)
 
     JoineryDef = Struct.new(:neighbor_join_defs)
-    JoineryNeighborJoinDef = Struct.new(:neighbor_def, :join_defs, :x_axis, :y_axis, :z_axis, :at_a, :at_b)
-    JoineryJoinDef = Struct.new(:touching_def, :touching_poly, :anchor_points_3d, :start_point_3d, :end_point_3d, :reversed_y)
+    JoineryNeighborJoinDef = Struct.new(:neighbor_def, :touching_def, :join_defs, :x_axis, :y_axis, :z_axis, :at_a, :at_b)
+    JoineryJoinDef = Struct.new(:touching_poly, :anchor_points_3d, :start_point_3d, :end_point_3d, :reversed_y)
 
     GeometriesDef = Struct.new(:hardware_a, :hardware_b, :machining_a, :machining_b, :hardware_material, :machining_material, :bounds)
     GeometriesEntityDef = Struct.new(:definition, :drawing_def)

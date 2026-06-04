@@ -2522,6 +2522,7 @@ tool:
     action_option_group_height: Hauteur
     action_option_group_offsets: Décalages
     action_option_group_spacings: Espacements
+    action_option_group_options: Options
     action_option_height_distance: Hauteur
     action_option_height_centered: Hauteur centrée
     action_option_offsets_start_offset: Début

@@ -13,6 +13,7 @@
     "end_offset": "0",
     "min_spacing": "0",
     "max_spacing": { "metric": "300mm", "imperial": "12\"" },
+    "make_unique": false,
     "hardware_a": "",
     "hardware_b": "",
     "machining_a": "",
