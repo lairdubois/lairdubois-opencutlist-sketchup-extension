@@ -2276,6 +2276,7 @@ tool:
     vcb_diameter: Diameter
     vcb_distance: Distance
     vcb_depth: Depth
+    vcb_height: Height
     error:
       no_direction: Please indicate a direction with your mouse
       invalid_length: "Length {{ value }} is invalid"
@@ -2284,6 +2285,7 @@ tool:
       invalid_divider: "Divisor {{ value }} is invalid"
       invalid_offset: "Offset {{ value }} is invalid"
       invalid_depth: "Depth {{ value }} is invalid"
+      invalid_height: "Height {{ value }} is invalid"
       invalid_segment_count: "The number of segments {{ value }} is invalid. It must be between 3 and 999."
       syntax_error: "Syntax error: {{ error }}"
       unexpected_close_parenthesis: "Unexpected closing parenthesis"
@@ -2427,7 +2429,7 @@ tool:
     action_option_paneling_joint_type_miter_status: Mitre joint
     action_option_paneling_direction_inward_status: Inward direction
     action_option_paneling_direction_outward_status: Outward direction
-    action_option_options_centred_status: Center on stretched elements
+    action_option_options_centered_status: Center on stretched elements
     action_option_options_make_unique_status: Make stretched elements unique
     error:
       curve_intersect: One of the cutting planes crosses a non-stretchable curve
@@ -2515,11 +2517,11 @@ tool:
     action_0: Place
     action_0_status: Place connectors to assemble parts
     action_0_state_0_status: Click on a part's reference face to assemble it with adjacent parts
-    action_option_group_depth: Depth
+    action_option_group_height: Height
     action_option_group_offsets: Offsets
     action_option_group_spacings: Spacings
-    action_option_depth_distance: Depth
-    action_option_depth_centred: Centered depth
+    action_option_height_distance: Height
+    action_option_height_centered: Height centered
     action_option_offsets_start_offset: Start
     action_option_offsets_end_offset: End
     action_option_spacings_min_spacing: Min
