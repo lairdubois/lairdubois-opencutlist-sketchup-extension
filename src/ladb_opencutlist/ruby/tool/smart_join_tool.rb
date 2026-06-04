@@ -232,6 +232,11 @@ module Ladb::OpenCutList
       false
     end
 
+    def onToolGlobalPresetChanged(tool, dictionary, section)
+      @geometries_def = nil
+      _refresh
+    end
+
     def onPickerChanged(picker, view)
       super
       if _snap_join(view)
@@ -248,11 +253,6 @@ module Ladb::OpenCutList
     def onSelected
       _do_join(Sketchup.active_model.active_view)
       _restart
-    end
-
-    def onToolGlobalPresetChanged(tool, dictionary, section)
-      @geometries_def = nil
-      _refresh
     end
 
     # -----
@@ -441,7 +441,7 @@ module Ladb::OpenCutList
               pt_b = point.transform(ti_b)
 
               # -- Machinings --
-              #
+
               _preview_join_drawing_def(
                 machining_a.drawing_def,
                 ti_a.inverse * Geom::Transformation.translation(pt_a) * at_a * rot,
@@ -566,7 +566,8 @@ module Ladb::OpenCutList
       neighbor_join_defs = joinery_def.neighbor_join_defs
 
       instance_a = neighborhood_def.instance_a
-      instance_a_entities = instance_a.definition.entities
+      definition_a = instance_a.definition
+      entities_a = definition_a.entities
 
       geometries_def = _get_geometries_def
       hardware_a = geometries_def.hardware_a
@@ -583,13 +584,17 @@ module Ladb::OpenCutList
 
           neighbor_join_defs.each do |neighbor_join_def|
 
-            instance_b = neighbor_join_def.neighbor_def.path.last
-            instance_b_entities = instance_b.definition.entities
+            instance_b = neighbor_join_def.neighbor_def.instance_b
+            definition_b = instance_b.definition
+            entities_b = definition_b.entities
             ti_b = neighbor_join_def.neighbor_def.ti_b
             at_a = neighbor_join_def.at_a
             at_b = neighbor_join_def.at_b
 
             neighbor_join_def.join_defs.each do |join_def|
+
+              face_a = join_def.touching_def.face_manipulator.face
+              face_b = join_def.touching_def.neighbor_face_manipulator.face
 
               rot = join_def.reversed_y ? Geom::Transformation.rotation(ORIGIN, Z_AXIS, 180.degrees) : IDENTITY
 
@@ -600,26 +605,26 @@ module Ladb::OpenCutList
 
                 # -- A --
                 if hardware_a.definition.is_a?(Sketchup::ComponentDefinition)
-                  hardware_a_instance = instance_a_entities.add_instance(hardware_a.definition, Geom::Transformation.translation(pt_a) * at_a * rot)
+                  hardware_a_instance = entities_a.add_instance(hardware_a.definition, Geom::Transformation.translation(pt_a) * at_a * rot)
                   hardware_a_instance.material = hardware_material
-                  hardware_a_instance.glued_to = join_def.touching_def.face_manipulator.face if hardware_a.definition.behavior.is2d?
+                  hardware_a_instance.glued_to = face_a if hardware_a.definition.behavior.is2d? && face_a.parent == definition_a
                 end
                 if machining_a.definition.is_a?(Sketchup::ComponentDefinition)
-                  machining_a_instance = instance_a_entities.add_instance(machining_a.definition, Geom::Transformation.translation(pt_a) * at_a * rot)
+                  machining_a_instance = entities_a.add_instance(machining_a.definition, Geom::Transformation.translation(pt_a) * at_a * rot)
                   machining_a_instance.material = machining_material
-                  machining_a_instance.glued_to = join_def.touching_def.face_manipulator.face if machining_a.definition.behavior.is2d?
+                  machining_a_instance.glued_to = face_a if machining_a.definition.behavior.is2d? && face_a.parent == definition_a
                 end
 
                 # -- B --
                 if hardware_b.definition.is_a?(Sketchup::ComponentDefinition)
-                  hardware_b_instance = instance_b_entities.add_instance(hardware_b.definition, Geom::Transformation.translation(pt_b) * at_b * rot)
+                  hardware_b_instance = entities_b.add_instance(hardware_b.definition, Geom::Transformation.translation(pt_b) * at_b * rot)
                   hardware_b_instance.material = hardware_material
-                  hardware_b_instance.glued_to = join_def.touching_def.neighbor_face_manipulator.face if hardware_b.definition.behavior.is2d?
+                  hardware_b_instance.glued_to = face_b if hardware_b.definition.behavior.is2d? && face_b.parent == definition_b
                 end
                 if machining_b.definition.is_a?(Sketchup::ComponentDefinition)
-                  machining_b_instance = instance_b_entities.add_instance(machining_b.definition, Geom::Transformation.translation(pt_b) * at_b * rot)
+                  machining_b_instance = entities_b.add_instance(machining_b.definition, Geom::Transformation.translation(pt_b) * at_b * rot)
                   machining_b_instance.material = machining_material
-                  machining_b_instance.glued_to = join_def.touching_def.neighbor_face_manipulator.face if machining_b.definition.behavior.is2d?
+                  machining_b_instance.glued_to = face_b if machining_b.definition.behavior.is2d? && face_b.parent == definition_b
                 end
 
               end
@@ -852,11 +857,11 @@ module Ladb::OpenCutList
 
             # Compute part and neighbor touching intersections polygons
             f_2d_paths = fm.loop_manipulators
-                                      .map { |loop_manipulator| loop_manipulator.points.map { |point| point.transform(ati) } }
-                                      .map! { |points| Clippy.points_to_rpath(points) }
+                           .map { |loop_manipulator| loop_manipulator.points.map { |point| point.transform(ati) } }
+                           .map! { |points| Clippy.points_to_rpath(points) }
             nf_2d_paths = nfm.loop_manipulators
-                                      .map { |loop_manipulator| loop_manipulator.points.map { |point| point.transform(ati) } }
-                                      .map! { |points| Clippy.points_to_rpath(points) }
+                             .map { |loop_manipulator| loop_manipulator.points.map { |point| point.transform(ati) } }
+                             .map! { |points| Clippy.points_to_rpath(points) }
 
             touching_2d_paths, op = Clippy.execute_intersection(closed_subjects: f_2d_paths, clips: nf_2d_paths)
             touching_polys = touching_2d_paths.map { |path| Clippy.rpath_to_points(path, 0).map { |point| point.transform(at)} }
@@ -875,12 +880,11 @@ module Ladb::OpenCutList
 
       # 5. Keep useful data
 
-      instance_a = _get_active_part_entity
-      ti_a = (PathUtils.get_transformation(get_active_selection_path, IDENTITY) * instance_a.transformation).inverse
+      path = get_active_part_entity_path
 
       @neighborhood_def = NeighborhoodDef.new(
-        instance_a,
-        ti_a,
+        path,
+        drawing_def,
         neighbor_defs
       )
     end
@@ -899,7 +903,7 @@ module Ladb::OpenCutList
         return unless picked_drawing_def.bounds.valid?
 
         # Store the new neighbor def
-        h_neighbor_defs[picked_part_entity_path] = NeighborhoodNeighborDef.new(picked_part_entity_path, picked_drawing_def)
+        h_neighbor_defs[picked_part_entity_path] = NeighborhoodNeighborDef.new(picked_part_entity_path, picked_drawing_def, [])
 
       end
     end
@@ -942,20 +946,6 @@ module Ladb::OpenCutList
           y_axis = z_axis * x_axis
           at = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis)
           ati = at.inverse
-
-          at_a = Geom::Transformation.axes(
-            ORIGIN,
-            x_axis.transform(ti_a),
-            y_axis.transform(ti_a),
-            z_axis.transform(ti_a)
-          )
-
-          at_b = Geom::Transformation.axes(
-            ORIGIN,
-            x_axis.transform(ti_b),
-            y_axis.transform(ti_b),
-            z_axis.transform(ti_b).reverse!
-          )
 
           touching_def.touching_polys.each do |touching_poly|
 
@@ -1007,7 +997,25 @@ module Ladb::OpenCutList
 
           end
 
-          neighbor_join_defs << JoineryNeighborJoinDef.new(neighbor_def, join_defs, x_axis, y_axis, z_axis, at_a, at_b) if join_defs.any?
+          if join_defs.any?
+
+            at_a = Geom::Transformation.axes(
+              ORIGIN,
+              x_axis.transform(ti_a),
+              y_axis.transform(ti_a),
+              z_axis.transform(ti_a)
+            )
+
+            at_b = Geom::Transformation.axes(
+              ORIGIN,
+              x_axis.transform(ti_b),
+              y_axis.transform(ti_b),
+              z_axis.transform(ti_b).reverse!
+            )
+
+            neighbor_join_defs << JoineryNeighborJoinDef.new(neighbor_def, join_defs, x_axis, y_axis, z_axis, at_a, at_b)
+
+          end
 
         end
 
@@ -1101,20 +1109,23 @@ module Ladb::OpenCutList
 
     # Data Structs -----
 
-    NeighborhoodDef = Struct.new(:instance_a, :ti_a, :neighbor_defs)
+    NeighborhoodDef = Struct.new(:path, :drawing_def, :neighbor_defs) do
+      def instance_a
+        path.last
+      end
+      def ti_a
+        @ti_a ||= PathUtils.get_transformation(path, IDENTITY).inverse
+      end
+    end
     NeighborhoodNeighborDef = Struct.new(:path, :drawing_def, :touching_defs) do
-      def initialize(path, drawing_def, touching_defs = [])
-        super(path, drawing_def, touching_defs)
+      def instance_b
+        path.last
       end
       def ti_b
         @ti_b ||= PathUtils.get_transformation(path, IDENTITY).inverse
       end
     end
-    NeighborhoodTouchingDef = Struct.new(:face_manipulator, :neighbor_face_manipulator, :touching_polys) do
-      def initialize(face_manipulator, neighbor_face_manipulator, touching_polys = [])
-        super(face_manipulator, neighbor_face_manipulator, touching_polys)
-      end
-    end
+    NeighborhoodTouchingDef = Struct.new(:face_manipulator, :neighbor_face_manipulator, :touching_polys)
 
     JoineryDef = Struct.new(:neighbor_join_defs)
     JoineryNeighborJoinDef = Struct.new(:neighbor_def, :join_defs, :x_axis, :y_axis, :z_axis, :at_a, :at_b)

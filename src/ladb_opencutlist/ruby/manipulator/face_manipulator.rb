@@ -35,7 +35,7 @@ module Ladb::OpenCutList
     end
 
     def belongs_to_a_surface?
-      @face.edges.index { |edge| edge.soft? }
+      @face.edges.any?(&:soft?)
     end
 
     # -----
