@@ -210,6 +210,8 @@ module Ladb::OpenCutList
     COLOR_DEFAULT_HARDWARE_MATERIAL = Sketchup::Color.new('#999999').freeze
     COLOR_DEFAULT_MACHINING_MATERIAL = Sketchup::Color.new('#0068ff').freeze
 
+    TRANSFORMATION_ROTATION_Z_180 = Geom::Transformation.rotation(ORIGIN, Z_AXIS, 180.degrees).freeze
+
     Clippy = Fiddle::Clippy
 
     def initialize(tool, previous_action_handler = nil)
@@ -397,6 +399,7 @@ module Ladb::OpenCutList
 
         neighbor_join_defs = joinery_def.neighbor_join_defs
 
+        t_a = neighborhood_def.t_a
         ti_a = neighborhood_def.ti_a
 
         geometries_def = _get_geometries_def
@@ -408,6 +411,7 @@ module Ladb::OpenCutList
         no_valid_join = true
         neighbor_join_defs.each do |neighbor_join_def|
 
+          t_b = neighbor_join_def.neighbor_def.t_b
           ti_b = neighbor_join_def.neighbor_def.ti_b
           at_a = neighbor_join_def.at_a
           at_b = neighbor_join_def.at_b
@@ -443,22 +447,7 @@ module Ladb::OpenCutList
 
             end
 
-            # if join_def.anchor_points_3d.size > 1
-            #
-            #   p0 = join_def.anchor_points_3d[0]
-            #   p1 = join_def.anchor_points_3d[1]
-            #
-            #   k_label = _create_floating_label(
-            #     snap_point: join_def.start_point_3d.offset(p0.vector_to(Geom.linear_combination(0.5, p0, 0.5, p1).to_a)),
-            #     text: p0.distance(p1).to_s,
-            #     text_color: Kuix::COLOR_MAGENTA,
-            #     border_color: Kuix::COLOR_MAGENTA
-            #   )
-            #   @tool.append_2d(k_label, LAYER_3D_ACTION_PREVIEW)
-            #
-            # end
-
-            rot = join_def.reversed_y ? Geom::Transformation.rotation(ORIGIN, Z_AXIS, 180.degrees) : IDENTITY
+            rot = join_def.reversed_y ? TRANSFORMATION_ROTATION_Z_180 : IDENTITY
 
             join_def.anchor_points_3d.each do |point|
 
@@ -469,14 +458,14 @@ module Ladb::OpenCutList
 
               _preview_join_drawing_def(
                 machining_a.drawing_def,
-                ti_a.inverse * Geom::Transformation.translation(pt_a) * at_a * rot,
+                t_a * Geom::Transformation.translation(pt_a) * at_a * rot,
                 Kuix::COLOR_CYAN,
                 0.5
               ) if machining_a.drawing_def
 
               _preview_join_drawing_def(
                 machining_b.drawing_def,
-                ti_b.inverse * Geom::Transformation.translation(pt_b) * at_b * rot,
+                t_b * Geom::Transformation.translation(pt_b) * at_b * rot,
                 Kuix::COLOR_CYAN,
                 0.5
               ) if machining_b.drawing_def
@@ -485,14 +474,14 @@ module Ladb::OpenCutList
 
               _preview_join_drawing_def(
                 hardware_a.drawing_def,
-                ti_a.inverse * Geom::Transformation.translation(pt_a) * at_a * rot,
+                t_a * Geom::Transformation.translation(pt_a) * at_a * rot,
                 Kuix::COLOR_DARK_GREY,
                 1
               ) if hardware_a.drawing_def
 
               _preview_join_drawing_def(
                 hardware_b.drawing_def,
-                ti_b.inverse * Geom::Transformation.translation(pt_b) * at_b * rot,
+                t_b * Geom::Transformation.translation(pt_b) * at_b * rot,
                 Kuix::COLOR_DARK_GREY,
                 1
               ) if hardware_b.drawing_def
@@ -1149,16 +1138,22 @@ module Ladb::OpenCutList
       def instance_a
         path.last
       end
+      def t_a
+        @t_a ||= PathUtils.get_transformation(path, IDENTITY)
+      end
       def ti_a
-        @ti_a ||= PathUtils.get_transformation(path, IDENTITY).inverse
+        @ti_a ||= t_a.inverse
       end
     end
     NeighborhoodNeighborDef = Struct.new(:path, :drawing_def, :touching_defs) do
       def instance_b
         path.last
       end
+      def t_b
+        @t_b ||= PathUtils.get_transformation(path, IDENTITY)
+      end
       def ti_b
-        @ti_b ||= PathUtils.get_transformation(path, IDENTITY).inverse
+        @ti_b ||= t_b.inverse
       end
     end
     NeighborhoodTouchingDef = Struct.new(:face_manipulator, :neighbor_face_manipulator, :touching_polys)
