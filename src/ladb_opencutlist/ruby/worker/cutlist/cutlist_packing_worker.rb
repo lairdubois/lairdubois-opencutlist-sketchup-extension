@@ -345,6 +345,7 @@ module Ladb::OpenCutList
 
         return _create_packing(errors: [ 'default.error' ]) unless @_run_id.nil?
         return _create_packing(errors: [ 'default.error' ]) unless @cutlist
+        return _create_packing(errors: [ 'tab.cutlist.error.obsolete_cutlist' ]) if @cutlist.obsolete?
 
         model = Sketchup.active_model
         return _create_packing(errors: [ 'default.error' ]) unless model
