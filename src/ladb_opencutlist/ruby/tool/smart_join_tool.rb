@@ -1052,12 +1052,7 @@ module Ladb::OpenCutList
     end
 
     def _get_geometries_def
-      if @geometries_def.is_a?(GeometriesDef) && @geometries_def.valid?
-        puts "from cache !"
-        return @geometries_def
-      end
-
-      puts "load :("
+      return @geometries_def if @geometries_def.is_a?(GeometriesDef) && @geometries_def.valid?
 
       model = Sketchup.active_model
 
