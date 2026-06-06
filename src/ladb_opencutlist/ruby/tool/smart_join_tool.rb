@@ -1052,7 +1052,12 @@ module Ladb::OpenCutList
     end
 
     def _get_geometries_def
-      return @geometries_def unless @geometries_def.nil?
+      if @geometries_def.is_a?(GeometriesDef) && @geometries_def.valid?
+        puts "from cache !"
+        return @geometries_def
+      end
+
+      puts "load :("
 
       model = Sketchup.active_model
 
@@ -1162,8 +1167,21 @@ module Ladb::OpenCutList
     JoineryNeighborJoinDef = Struct.new(:neighbor_def, :touching_def, :join_defs, :x_axis, :y_axis, :z_axis, :at_a, :at_b)
     JoineryJoinDef = Struct.new(:touching_poly, :anchor_points_3d, :start_point_3d, :end_point_3d, :reversed_y)
 
-    GeometriesDef = Struct.new(:hardware_a, :hardware_b, :machining_a, :machining_b, :hardware_material, :machining_material, :bounds)
-    GeometriesEntityDef = Struct.new(:definition, :drawing_def)
+    GeometriesDef = Struct.new(:hardware_a, :hardware_b, :machining_a, :machining_b, :hardware_material, :machining_material, :bounds) do
+      def valid?
+        hardware_a.valid? &&
+        hardware_b.valid? &&
+        machining_a.valid? &&
+        machining_b.valid? &&
+        (hardware_material.nil? || hardware_material.valid?) &&
+        (machining_material.nil? || machining_material.valid?)
+      end
+    end
+    GeometriesEntityDef = Struct.new(:definition, :drawing_def) do
+      def valid?
+        definition.nil? || definition.valid?
+      end
+    end
 
   end
 
