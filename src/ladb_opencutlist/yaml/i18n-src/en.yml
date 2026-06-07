@@ -2520,12 +2520,14 @@ tool:
     action_option_group_height: Height
     action_option_group_offsets: Offsets
     action_option_group_spacings: Spacings
+    action_option_group_options: Options
     action_option_height_distance: Height
     action_option_height_centered: Height centered
     action_option_offsets_start_offset: Start
     action_option_offsets_end_offset: End
     action_option_spacings_min_spacing: Min
     action_option_spacings_max_spacing: Max
+    action_option_options_make_unique_status: Make assembled parts unique
     action_option_hardware_a: Connector A
     action_option_hardware_b: Connector B
     action_option_machining_a: Machining A
