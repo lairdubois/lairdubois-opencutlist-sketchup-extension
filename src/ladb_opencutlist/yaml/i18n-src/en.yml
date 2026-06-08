@@ -2517,6 +2517,9 @@ tool:
     action_0: Place
     action_0_status: Place connectors to assemble parts
     action_0_state_0_status: Click on a part's reference face to assemble it with adjacent parts
+    action_1: Erase connectors
+    action_1_status: Erase connectors used to assemble parts
+    action_1_state_0_status: Click on a part's reference face to remove the connectors it shares with neighboring parts
     action_option_group_height: Height
     action_option_group_offsets: Offsets
     action_option_group_spacings: Spacings
@@ -2540,6 +2543,10 @@ tool:
       no_valid_join: There are no contact surfaces that meet the assembly requirements
       failed_to_load_skp_file: |
         Failed to load SKP file : {{ file }}
+    warning:
+      no_connector_to_remove: No connector to erase
+      x_connectors_to_remove: "{{ count }} connector to erase"
+      x_connectors_to_remove_plural: "{{ count }} connectors to erase"
   smart_export:
     title: Export
     action_0: Export 3D Part
