@@ -2517,6 +2517,9 @@ tool:
     action_0: Platzieren 
     action_0_status: Verbindungselemente zum Zusammenfügen von Teilen anbringen
     action_0_state_0_status: Klicken Sie auf eine Seite eines Teils, um es mit den benachbarten Teilen zusammenzufügen
+    action_1: Verbinder löschen
+    action_1_status: Verbindungselemente von Teilen löschen
+    action_1_state_0_status: Klicken Sie auf die Referenzfläche eines Teils, um die Verbinder zu löschen, die es mit benachbarten Teilen teilt
     action_option_group_height: Höhe
     action_option_group_offsets: Versätze
     action_option_group_spacings: Abstände
@@ -2540,6 +2543,10 @@ tool:
       no_valid_join: Es gibt keine Kontaktfläche, die die Anforderungen an die Verbindung erfüllt
       failed_to_load_skp_file: |
         Die SKP-Datei {{ file }} kann nicht geladen werden
+    warning:
+      no_connector_to_remove: Kein Verbinder zum Löschen
+      x_connectors_to_remove: "{{ count }} Verbinder zum Löschen"
+      x_connectors_to_remove_plural: "{{ count }} Verbinder zum Löschen"
   smart_export:
     title: Exportieren
     action_0: 3D Teil exportieren
