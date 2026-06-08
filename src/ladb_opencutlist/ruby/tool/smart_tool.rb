@@ -3295,8 +3295,6 @@ module Ladb::OpenCutList
           if _allows_multiple_selections?
             set_state(STATE_SELECT_MULTIPLE)
             return true
-          else
-            UI.beep
           end
         end
 
@@ -4479,6 +4477,22 @@ module Ladb::OpenCutList
       # Fire change event
       @observer.onPickerChanged(self, @view) if changed
 
+    end
+
+    # -----
+
+    def invalidate
+      @picked_face = nil
+      @picked_face_path = nil
+      @picked_edge = nil
+      @picked_edge_path = nil
+      @picked_point = nil
+      @picked_point_path = nil
+      @picked_cline = nil
+      @picked_cline_path = nil
+      @picked_axes = nil
+      @picked_axes_line = nil
+      @picked_axes_path = nil
     end
 
     # -----

@@ -289,6 +289,15 @@ module Ladb::OpenCutList
       @neighborhood_def = nil
     end
 
+    def _refresh
+      @snap_point = nil
+      @snap_face_manipulator = nil
+      @snap_edge_manipulator = nil
+      @snap_vertex_manipulator = nil
+      @picker.invalidate if @picker.is_a?(SmartPicker)
+      super
+    end
+
     # -----
 
     def _start_with_model_selection?
@@ -609,7 +618,7 @@ module Ladb::OpenCutList
 
     def get_state_status(state)
       super +
-        ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_join.action_1_status") + '.'
+        ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_join.action_1") + '.'
     end
 
     def get_state_vcb_label(state)
@@ -1289,7 +1298,7 @@ module Ladb::OpenCutList
     def onToolKeyDown(tool, key, repeat, flags, view)
 
       if tool.is_key_shift?(key)
-        onPickerChanged(@picker, @picker.view)
+        _refresh
         return true
       end
 
@@ -1300,9 +1309,11 @@ module Ladb::OpenCutList
       return true if super
 
       if tool.is_key_shift?(key)
-        onPickerChanged(@picker, @picker.view)
+        _refresh
+        return true
       end
 
+      false
     end
 
     def onSelected
