@@ -3335,6 +3335,7 @@ module Ladb::OpenCutList
 
       end
 
+      false
     end
 
     def onPickerChanged(picker, view)

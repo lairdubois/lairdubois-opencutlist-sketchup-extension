@@ -253,7 +253,7 @@ module Ladb::OpenCutList
     end
 
     def get_state_picker(state)
-      SmartPicker.new(tool: @tool, observer: self, pick_point: true, drawable: false)
+      SmartPicker.new(tool: @tool, observer: self, pick_point: true, drawable: false, lockable: false)
     end
 
     # -----
@@ -609,7 +609,7 @@ module Ladb::OpenCutList
 
     def get_state_status(state)
       super +
-        ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_join.action_option_options_make_unique_status") + '.'
+        ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_join.action_1_status") + '.'
     end
 
     def get_state_vcb_label(state)
@@ -617,18 +617,6 @@ module Ladb::OpenCutList
     end
 
     # -----
-
-    def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
-      return true if super
-
-      if tool.is_key_alt_or_command?(key) && is_quick && @state == STATE_SELECT
-        @tool.store_action_option_value(@action, SmartJoinTool::ACTION_OPTION_OPTIONS, SmartJoinTool::ACTION_OPTION_OPTIONS_MAKE_UNIQUE, !_fetch_option_make_unique?, true)
-        _refresh
-        return true
-      end
-
-      false
-    end
 
     def onToolUserText(tool, text, view)
       return true if super
@@ -790,8 +778,6 @@ module Ladb::OpenCutList
     def _preview_snap_point
 
       @tool.clear_3d(LAYER_3D_SNAP_POINT_PREVIEW)
-
-      return unless @snap_point.is_a?(Geom::Point3d)
 
       if @snap_point.is_a?(Geom::Point3d)
 
@@ -1294,10 +1280,30 @@ module Ladb::OpenCutList
     end
 
     def get_state_status(state)
-      super
+      super +
+        ' | ' + PLUGIN.get_i18n_string("default.constrain_key") + ' = ' + PLUGIN.get_i18n_string("tool.smart_join.action_1_only_one_status") + '.'
     end
 
     # -----
+
+    def onToolKeyDown(tool, key, repeat, flags, view)
+
+      if tool.is_key_shift?(key)
+        onPickerChanged(@picker, @picker.view)
+        return true
+      end
+
+      super
+    end
+
+    def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
+      return true if super
+
+      if tool.is_key_shift?(key)
+        onPickerChanged(@picker, @picker.view)
+      end
+
+    end
 
     def onSelected
       _remove_connectors
@@ -1310,12 +1316,66 @@ module Ladb::OpenCutList
 
     # -----
 
+    def _snap_join(view)
+      context_changed = super
+
+      if @tool.is_key_shift_down? &&
+         @snap_point.is_a?(Geom::Point3d) &&
+         (neighborhodd_def = _get_neighborhood_def) &&
+         (joinery_def = _get_remove_joinery_def(neighborhodd_def))
+
+        snap_anchor = _get_anchors(joinery_def).min { |p1, p2| @snap_point.distance(p1) <=> @snap_point.distance(p2) }
+
+      else
+        snap_anchor = nil
+      end
+
+      context_changed = context_changed || @snap_anchor != snap_anchor
+
+      @snap_anchor = snap_anchor
+
+      context_changed
+    end
+
     def _preview_join_context(neighborhood_def)
       super
 
       count = 0
 
       unless (joinery_def = _get_remove_joinery_def(neighborhood_def)).nil?
+
+        fn_preview_grouped_glued_instances = lambda do |anchor_coords, glued_instances, transformation|
+          anchor = Geom::Point3d.new(anchor_coords)
+          next unless _is_snap_anchor?(anchor)
+
+          glued_instances.each do |glued_instance|
+
+            k_box = Kuix::BoxFillMotif3d.new
+            k_box.bounds.copy!(glued_instance.definition.bounds)
+            k_box.line_width = 2
+            k_box.color = ColorUtils.color_translucent(Kuix::COLOR_RED, 0.3)
+            k_box.on_top = true
+            k_box.transformation = transformation * glued_instance.transformation
+            @tool.append_3d(k_box, LAYER_3D_JOIN_PREVIEW)
+
+            k_box = Kuix::BoxMotif3d.new
+            k_box.bounds.copy!(glued_instance.definition.bounds)
+            k_box.line_width = 2
+            k_box.color = Kuix::COLOR_RED
+            k_box.on_top = true
+            k_box.transformation = transformation * glued_instance.transformation
+            @tool.append_3d(k_box, LAYER_3D_JOIN_PREVIEW)
+
+          end
+
+          k_point = _create_floating_points(
+            points: anchor,
+            style: Kuix::POINT_STYLE_PLUS,
+            stroke_color: Kuix::COLOR_BLACK,
+            )
+          @tool.append_3d(k_point, LAYER_3D_JOIN_PREVIEW)
+
+        end
 
         neighbor_join_defs = joinery_def.neighbor_join_defs
         neighbor_join_defs.each do |neighbor_join_def|
@@ -1331,14 +1391,11 @@ module Ladb::OpenCutList
             k_polyline.on_top = true
             @tool.append_3d(k_polyline, LAYER_3D_JOIN_PREVIEW)
 
-            join_def.grouped_glued_instances_a.each do |coords, glued_instances_a|
-              _preview_glued_instances(Geom::Point3d.new(coords), glued_instances_a, join_def.touching_def.face_manipulator.transformation)
-              count += 1
+            join_def.grouped_glued_instances_a.each do |anchor_coords, glued_instances|
+              fn_preview_grouped_glued_instances.call(anchor_coords, glued_instances, join_def.touching_def.face_manipulator.transformation)
             end
-
-            join_def.grouped_glued_instances_b.each do |coords, glued_instance_b|
-              _preview_glued_instances(Geom::Point3d.new(coords), glued_instance_b, join_def.touching_def.neighbor_face_manipulator.transformation)
-              count += 1
+            join_def.grouped_glued_instances_b.each do |anchor_coords, glued_instances|
+              fn_preview_grouped_glued_instances.call(anchor_coords, glued_instances, join_def.touching_def.neighbor_face_manipulator.transformation)
             end
 
           end
@@ -1350,6 +1407,8 @@ module Ladb::OpenCutList
 
         end
 
+        count = @snap_anchor.is_a?(Geom::Point3d) ? 1 : _get_anchors(joinery_def).size
+
       end
 
       if count > 0
@@ -1360,36 +1419,38 @@ module Ladb::OpenCutList
 
     end
 
-    def _preview_glued_instances(anchor, glued_instances, transformation)
+    def _preview_snap_point
 
-      glued_instances.each do |glued_instance|
+      @tool.clear_3d(LAYER_3D_SNAP_POINT_PREVIEW)
 
-        k_box = Kuix::BoxFillMotif3d.new
-        k_box.bounds.copy!(glued_instance.definition.bounds)
-        k_box.line_width = 2
-        k_box.color = ColorUtils.color_translucent(Kuix::COLOR_RED, 0.3)
-        k_box.on_top = true
-        k_box.transformation = transformation * glued_instance.transformation
-        @tool.append_3d(k_box, LAYER_3D_JOIN_PREVIEW)
+      if @snap_point.is_a?(Geom::Point3d) && @snap_anchor.is_a?(Geom::Point3d)
 
-        k_box = Kuix::BoxMotif3d.new
-        k_box.bounds.copy!(glued_instance.definition.bounds)
-        k_box.line_width = 2
-        k_box.color = Kuix::COLOR_RED
-        k_box.on_top = true
-        k_box.transformation = transformation * glued_instance.transformation
-        @tool.append_3d(k_box, LAYER_3D_JOIN_PREVIEW)
+        k_edge = Kuix::EdgeMotif3d.new
+        k_edge.start.copy!(@snap_point)
+        k_edge.end.copy!(@snap_anchor)
+        k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+        k_edge.line_width = 1
+        k_edge.color = Kuix::COLOR_DARK_GREY
+        k_edge.on_top = true
+        @tool.append_3d(k_edge, LAYER_3D_SNAP_POINT_PREVIEW)
 
       end
 
-      k_point = _create_floating_points(
-        points: anchor,
-        style: Kuix::POINT_STYLE_PLUS,
-        stroke_color: Kuix::COLOR_RED,
-      )
-      k_point.transformation = transformation
-      @tool.append_3d(k_point, LAYER_3D_JOIN_PREVIEW)
+    end
 
+    # -----
+
+    def _get_anchors(joinery_def)
+      joinery_def.neighbor_join_defs
+                 .flat_map { |neighbor_join_def| neighbor_join_def.join_defs }
+                 .flat_map { |join_defs| (join_defs.grouped_glued_instances_a.keys + join_defs.grouped_glued_instances_b.keys) }
+                 .map! { |coords| coords.map! { |coord| coord.round(6) }}
+                 .uniq
+                 .map { |coords| Geom::Point3d.new(coords) }
+    end
+
+    def _is_snap_anchor?(anchor)
+      !@snap_anchor.is_a?(Geom::Point3d) || @snap_anchor.distance(anchor).round(3) == 0
     end
 
     # -----
@@ -1401,7 +1462,8 @@ module Ladb::OpenCutList
       model = Sketchup.active_model
       model.start_operation('OCL Remove Join', true)
 
-      fn_remove_glued_instances = lambda do |glued_instances|
+      fn_remove_glued_instances = lambda do |anchor_coords, glued_instances|
+        next unless _is_snap_anchor?(Geom::Point3d.new(anchor_coords))
         glued_instances.each do |glued_instance|
           next if glued_instance.deleted?
           glued_instance.erase!
@@ -1414,11 +1476,11 @@ module Ladb::OpenCutList
 
             neighbor_join_def.join_defs.each do |join_def|
 
-              join_def.grouped_glued_instances_a.each do |coords, glued_instances_a|
-                fn_remove_glued_instances.call(glued_instances_a)
+              join_def.grouped_glued_instances_a.each do |anchor_coords, glued_instances_a|
+                fn_remove_glued_instances.call(anchor_coords, glued_instances_a)
               end
-              join_def.grouped_glued_instances_b.each do |coords, glued_instances_b|
-                fn_remove_glued_instances.call(glued_instances_b)
+              join_def.grouped_glued_instances_b.each do |anchor_coords, glued_instances_b|
+                fn_remove_glued_instances.call(anchor_coords, glued_instances_b)
               end
 
             end
@@ -1450,11 +1512,9 @@ module Ladb::OpenCutList
           poly_2d = touching_poly.map { |point| point.transform(fm_ti) }
 
           # Select only glued instances that intersect with the touching poly
-          # And group thme by anchor point
+          # And group them by anchor point coords
           return glued_instances.select { |glued_instance| Geom.point_in_polygon_2D(ORIGIN.transform(glued_instance.transformation), poly_2d, true) }
-                                .group_by { |glued_instance|
-            ORIGIN.transform(glued_instance.transformation).to_a
-          }
+                                .group_by { |glued_instance| ORIGIN.transform(fm.transformation * glued_instance.transformation).to_a }  # Anchor point coords Array<Geom::Point3d>
 
         end
         {}
