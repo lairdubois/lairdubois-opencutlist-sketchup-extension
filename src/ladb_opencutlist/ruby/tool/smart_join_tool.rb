@@ -863,7 +863,7 @@ module Ladb::OpenCutList
 
         begin
 
-          if (make_unique = _fetch_option_make_unique?)
+          if (make_unique = _fetch_option_make_unique?) && (!hardware_a.empty? || !machining_a.empty?)
 
             # Make unique Part A (if necessary)
 
@@ -897,7 +897,7 @@ module Ladb::OpenCutList
             definition_b = instance_b.definition
             entities_b = definition_b.entities
 
-            if make_unique
+            if make_unique && (!hardware_b.empty? || !machining_b.empty?)
 
               # Make unique Part B (if necessary)
 
@@ -1267,6 +1267,9 @@ module Ladb::OpenCutList
       end
     end
     GeometriesEntityDef = Struct.new(:definition, :drawing_def) do
+      def empty?
+        definition.nil? || !valid?
+      end
       def valid?
         definition.nil? || definition.valid?
       end
