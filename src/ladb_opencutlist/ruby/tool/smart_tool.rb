@@ -3159,6 +3159,7 @@ module Ladb::OpenCutList
     end
 
     def onToolLButtonDown(tool, flags, x, y, view)
+      super
 
       case @state
 
@@ -3176,6 +3177,7 @@ module Ladb::OpenCutList
     end
 
     def onToolLButtonUp(tool, flags, x, y, view)
+      super
 
       @mouse_down_point = nil
 
@@ -3710,6 +3712,14 @@ module Ladb::OpenCutList
       create_cursor('select-join')
     end
 
+    def cursor_select_join_plus
+      create_cursor('select-join-plus')
+    end
+
+    def cursor_select_join_minus
+      create_cursor('select-join-minus')
+    end
+
 
     def cursor_move
       create_cursor('move', 16, 16)
@@ -4164,6 +4174,7 @@ module Ladb::OpenCutList
   class SmartPicker
 
     attr_reader :tool
+    attr_reader :view
     attr_reader :pick_position
     attr_reader :picked_face, :picked_face_path
     attr_reader :picked_point, :picked_point_path
@@ -4182,7 +4193,9 @@ module Ladb::OpenCutList
                    pick_clines: false,
                    pick_axes: false,
 
-                   lockable: true
+                   lockable: true,
+
+                   drawable: true
 
     )
 
@@ -4218,6 +4231,8 @@ module Ladb::OpenCutList
       @picked_axes = nil
       @picked_axes_line = nil
       @picked_axes_path = nil
+
+      @drawable = drawable
 
     end
 
@@ -4304,7 +4319,7 @@ module Ladb::OpenCutList
     # -- UI --
 
     def draw(view)
-      @pick_ip.draw(view) if !@pick_ip.nil? && @pick_ip.valid?
+      @pick_ip.draw(view) if @drawable && !@pick_ip.nil? && @pick_ip.valid?
     end
 
     # -- Pick --

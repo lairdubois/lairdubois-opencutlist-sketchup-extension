@@ -2516,9 +2516,11 @@ tool:
   # TODO: It's currently just for dev purposes
   smart_join:
     title: Assembler
-    action_0: Placer des connecteurs
-    action_0_status: Placer des connecteurs pour assembler des pièces
+    action_0: Ajouter des connecteurs
+    action_0_status: Ajouter des connecteurs pour assembler des pièces
     action_0_state_0_status: Cliquez sur la face de référence d'une pièce pour l'assembler avec les pièces voisines
+    action_1: Effacer des connecteurs
+    action_1_status: Effacer des connecteurs d'assemblage des pièces
     action_option_group_height: Hauteur
     action_option_group_offsets: Décalages
     action_option_group_spacings: Espacements
