@@ -1313,6 +1313,8 @@ module Ladb::OpenCutList
     def _preview_join_context(neighborhood_def)
       super
 
+      count = 0
+
       unless (joinery_def = _get_remove_joinery_def(neighborhood_def)).nil?
 
         neighbor_join_defs = joinery_def.neighbor_join_defs
@@ -1329,44 +1331,14 @@ module Ladb::OpenCutList
             k_polyline.on_top = true
             @tool.append_3d(k_polyline, LAYER_3D_JOIN_PREVIEW)
 
-            join_def.glued_instances_a.each do |glued_instance_a|
-
-              k_box = Kuix::BoxFillMotif3d.new
-              k_box.bounds.copy!(glued_instance_a.definition.bounds)
-              k_box.line_width = 2
-              k_box.color = ColorUtils.color_translucent(Kuix::COLOR_RED, 0.3)
-              k_box.on_top = true
-              k_box.transformation = join_def.touching_def.face_manipulator.transformation * glued_instance_a.transformation
-              @tool.append_3d(k_box, LAYER_3D_JOIN_PREVIEW)
-
-              k_box = Kuix::BoxMotif3d.new
-              k_box.bounds.copy!(glued_instance_a.definition.bounds)
-              k_box.line_width = 2
-              k_box.color = Kuix::COLOR_RED
-              k_box.on_top = true
-              k_box.transformation = join_def.touching_def.face_manipulator.transformation * glued_instance_a.transformation
-              @tool.append_3d(k_box, LAYER_3D_JOIN_PREVIEW)
-
+            join_def.grouped_glued_instances_a.each do |coords, glued_instances_a|
+              _preview_glued_instances(Geom::Point3d.new(coords), glued_instances_a, join_def.touching_def.face_manipulator.transformation)
+              count += 1
             end
 
-            join_def.glued_instances_b.each do |glued_instance_b|
-
-              k_box = Kuix::BoxFillMotif3d.new
-              k_box.bounds.copy!(glued_instance_b.definition.bounds)
-              k_box.line_width = 2
-              k_box.color = ColorUtils.color_translucent(Kuix::COLOR_RED, 0.3)
-              k_box.on_top = true
-              k_box.transformation = join_def.touching_def.neighbor_face_manipulator.transformation * glued_instance_b.transformation
-              @tool.append_3d(k_box, LAYER_3D_JOIN_PREVIEW)
-
-              k_box = Kuix::BoxMotif3d.new
-              k_box.bounds.copy!(glued_instance_b.definition.bounds)
-              k_box.line_width = 2
-              k_box.color = Kuix::COLOR_RED
-              k_box.on_top = true
-              k_box.transformation = join_def.touching_def.neighbor_face_manipulator.transformation * glued_instance_b.transformation
-              @tool.append_3d(k_box, LAYER_3D_JOIN_PREVIEW)
-
+            join_def.grouped_glued_instances_b.each do |coords, glued_instance_b|
+              _preview_glued_instances(Geom::Point3d.new(coords), glued_instance_b, join_def.touching_def.neighbor_face_manipulator.transformation)
+              count += 1
             end
 
           end
@@ -1380,6 +1352,44 @@ module Ladb::OpenCutList
 
       end
 
+      if count > 0
+        @tool.show_message(PLUGIN.get_i18n_string('tool.smart_join.warning.x_connectors_to_remove', { :count => count }), SmartTool::MESSAGE_TYPE_WARNING)
+      else
+        @tool.show_message(PLUGIN.get_i18n_string('tool.smart_join.warning.no_connector_to_remove'), SmartTool::MESSAGE_TYPE_WARNING)
+      end
+
+    end
+
+    def _preview_glued_instances(anchor, glued_instances, transformation)
+
+      glued_instances.each do |glued_instance|
+
+        k_box = Kuix::BoxFillMotif3d.new
+        k_box.bounds.copy!(glued_instance.definition.bounds)
+        k_box.line_width = 2
+        k_box.color = ColorUtils.color_translucent(Kuix::COLOR_RED, 0.3)
+        k_box.on_top = true
+        k_box.transformation = transformation * glued_instance.transformation
+        @tool.append_3d(k_box, LAYER_3D_JOIN_PREVIEW)
+
+        k_box = Kuix::BoxMotif3d.new
+        k_box.bounds.copy!(glued_instance.definition.bounds)
+        k_box.line_width = 2
+        k_box.color = Kuix::COLOR_RED
+        k_box.on_top = true
+        k_box.transformation = transformation * glued_instance.transformation
+        @tool.append_3d(k_box, LAYER_3D_JOIN_PREVIEW)
+
+      end
+
+      k_point = _create_floating_points(
+        points: anchor,
+        style: Kuix::POINT_STYLE_PLUS,
+        stroke_color: Kuix::COLOR_RED,
+      )
+      k_point.transformation = transformation
+      @tool.append_3d(k_point, LAYER_3D_JOIN_PREVIEW)
+
     end
 
     # -----
@@ -1391,19 +1401,24 @@ module Ladb::OpenCutList
       model = Sketchup.active_model
       model.start_operation('OCL Remove Join', true)
 
+      fn_remove_glued_instances = lambda do |glued_instances|
+        glued_instances.each do |glued_instance|
+          next if glued_instance.deleted?
+          glued_instance.erase!
+        end
+      end
+
         begin
 
           joinery_def.neighbor_join_defs.each do |neighbor_join_def|
 
             neighbor_join_def.join_defs.each do |join_def|
 
-              join_def.glued_instances_a.each do |glued_instance_a|
-                next if glued_instance_a.deleted?
-                glued_instance_a.erase!
+              join_def.grouped_glued_instances_a.each do |coords, glued_instances_a|
+                fn_remove_glued_instances.call(glued_instances_a)
               end
-              join_def.glued_instances_b.each do |glued_instance_b|
-                next if glued_instance_b.deleted?
-                glued_instance_b.erase!
+              join_def.grouped_glued_instances_b.each do |coords, glued_instances_b|
+                fn_remove_glued_instances.call(glued_instances_b)
               end
 
             end
@@ -1427,7 +1442,7 @@ module Ladb::OpenCutList
 
       neighbor_join_defs = []
 
-      fn_get_glued_instances = lambda do |fm, touching_poly|
+      fn_get_grouped_glued_instances = lambda do |fm, touching_poly|
         glued_instances = fm.face.get_glued_instances
         if glued_instances.any?
 
@@ -1435,10 +1450,14 @@ module Ladb::OpenCutList
           poly_2d = touching_poly.map { |point| point.transform(fm_ti) }
 
           # Select only glued instances that intersect with the touching poly
+          # And group thme by anchor point
           return glued_instances.select { |glued_instance| Geom.point_in_polygon_2D(ORIGIN.transform(glued_instance.transformation), poly_2d, true) }
+                                .group_by { |glued_instance|
+            ORIGIN.transform(glued_instance.transformation).to_a
+          }
 
         end
-        glued_instances
+        {}
       end
 
       neighborhood_def.neighbor_defs.each do |neighbor_def|
@@ -1457,10 +1476,10 @@ module Ladb::OpenCutList
             fm_a = touching_def.face_manipulator
             fm_b = touching_def.neighbor_face_manipulator
 
-            glued_instances_a = fn_get_glued_instances.call(fm_a, touching_poly)
-            glued_instances_b = fn_get_glued_instances.call(fm_b, touching_poly)
+            grouped_glued_instances_a = fn_get_grouped_glued_instances.call(fm_a, touching_poly)
+            grouped_glued_instances_b = fn_get_grouped_glued_instances.call(fm_b, touching_poly)
 
-            join_defs << RemoveJoineryJoinDef.new(touching_poly, touching_def, glued_instances_a, glued_instances_b)
+            join_defs << RemoveJoineryJoinDef.new(touching_poly, touching_def, grouped_glued_instances_a, grouped_glued_instances_b)
 
           end
 
@@ -1479,7 +1498,7 @@ module Ladb::OpenCutList
 
     RemoveJoineryDef = Struct.new(:neighbor_join_defs)
     RemoveJoineryNeighborJoinDef = Struct.new(:neighbor_def, :join_defs)
-    RemoveJoineryJoinDef = Struct.new(:touching_poly, :touching_def, :glued_instances_a, :glued_instances_b)
+    RemoveJoineryJoinDef = Struct.new(:touching_poly, :touching_def, :grouped_glued_instances_a, :grouped_glued_instances_b)
 
   end
 

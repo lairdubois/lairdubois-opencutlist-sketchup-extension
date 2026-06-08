@@ -2518,9 +2518,10 @@ tool:
     title: Assembler
     action_0: Ajouter des connecteurs
     action_0_status: Ajouter des connecteurs pour assembler des pièces
-    action_0_state_0_status: Cliquez sur la face de référence d'une pièce pour l'assembler avec les pièces voisines
+    action_0_state_0_status: Cliquez sur la face de référence d'une pièce pour ajouter des connecteurs avec les pièces voisines
     action_1: Effacer des connecteurs
     action_1_status: Effacer des connecteurs d'assemblage des pièces
+    action_1_state_0_status: Cliquez sur la face de référence d'une pièce pour effacer les connecteurs qu'elle partage avec les pièces voisines
     action_option_group_height: Hauteur
     action_option_group_offsets: Décalages
     action_option_group_spacings: Espacements
@@ -2544,6 +2545,10 @@ tool:
       no_valid_join: Aucune surface de contact ne permet de satisfaire les contraintes d'assemblage
       failed_to_load_skp_file: |
         Impossible de charger le fichier SKP : {{ file }}
+    warning:
+      no_connector_to_remove: Aucun connecteur à effacer
+      x_connectors_to_remove: "{{ count }} connecteur à effacer"
+      x_connectors_to_remove_plural: "{{ count }} connecteurs à effacer"
   smart_export:
     title: Exporter
     action_0: Exporter une pièce 3D
