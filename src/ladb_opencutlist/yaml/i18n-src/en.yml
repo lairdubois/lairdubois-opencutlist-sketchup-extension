@@ -2514,12 +2514,13 @@ tool:
       not_single_thickness_layer: The target part must consist of a single layer
   smart_join:
     title: Assemble
-    action_0: Place
-    action_0_status: Place connectors to assemble parts
+    action_0: Add connectors
+    action_0_status: Add connectors to assemble parts
     action_0_state_0_status: Click on a part's reference face to assemble it with adjacent parts
-    action_1: Erase connectors
-    action_1_status: Erase connectors used to assemble parts
-    action_1_state_0_status: Click on a part's reference face to remove the connectors it shares with neighboring parts
+    action_1: Delete connectors
+    action_1_status: Delete connectors used to assemble parts
+    action_1_state_0_status: Click on a part's reference face to delete the connectors it shares with neighboring parts
+    action_1_only_one_status: Limit to a single connector
     action_option_group_height: Height
     action_option_group_offsets: Offsets
     action_option_group_spacings: Spacings
@@ -2541,6 +2542,8 @@ tool:
     geometries: Geometries
     error:
       no_valid_join: There are no contact surfaces that meet the assembly requirements
+      occupied_anchors: "{{ count }} connector that conflicts with existing connectors"
+      occupied_anchors_plural: "{{ count }} connector that conflict with existing connectors"
       failed_to_load_skp_file: |
         Failed to load SKP file : {{ file }}
     warning:

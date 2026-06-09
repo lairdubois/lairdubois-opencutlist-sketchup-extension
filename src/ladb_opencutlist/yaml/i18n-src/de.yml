@@ -2514,12 +2514,13 @@ tool:
       not_single_thickness_layer: Das Zielteil muss aus einer einzigen Schicht bestehen
   smart_join:
     title: Zusammenfügen
-    action_0: Platzieren 
+    action_0: Verbinder hinzufügen 
     action_0_status: Verbindungselemente zum Zusammenfügen von Teilen anbringen
     action_0_state_0_status: Klicken Sie auf eine Seite eines Teils, um es mit den benachbarten Teilen zusammenzufügen
     action_1: Verbinder löschen
     action_1_status: Verbindungselemente von Teilen löschen
     action_1_state_0_status: Klicken Sie auf die Referenzfläche eines Teils, um die Verbinder zu löschen, die es mit benachbarten Teilen teilt
+    action_1_only_one_status: Auf ein Verbindungselement beschränken
     action_option_group_height: Höhe
     action_option_group_offsets: Versätze
     action_option_group_spacings: Abstände
@@ -2541,6 +2542,8 @@ tool:
     geometries: Geometrien
     error:
       no_valid_join: Es gibt keine Kontaktfläche, die die Anforderungen an die Verbindung erfüllt
+      occupied_anchors: "{{ count }} Verbinder, dessen Position mit der von vorhandenen Verbindungselementen kollidiert"
+      occupied_anchors_plural: "{{ count }} Verbinder, deren Position mit der von vorhandenen Verbindungselementen kollidiert"
       failed_to_load_skp_file: |
         Die SKP-Datei {{ file }} kann nicht geladen werden
     warning:
