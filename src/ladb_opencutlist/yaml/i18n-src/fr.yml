@@ -2516,11 +2516,11 @@ tool:
   # TODO: It's currently just for dev purposes
   smart_join:
     title: Assembler
-    action_0: Ajouter des connecteurs # TODO changed
-    action_0_status: Ajouter des connecteurs pour assembler des pièces # TODO changed
+    action_0: Ajouter des connecteurs
+    action_0_status: Ajouter des connecteurs pour assembler des pièces
     action_0_state_0_status: Cliquez sur la face de référence d'une pièce pour ajouter des connecteurs avec les pièces voisines
     action_1: Effacer des connecteurs
-    action_1_status: Effacer des connecteurs d'assemblage de pièces  # TODO changed
+    action_1_status: Effacer des connecteurs d'assemblage de pièces
     action_1_state_0_status: Cliquez sur la face de référence d'une pièce pour effacer les connecteurs qu'elle partage avec les pièces voisines
     action_1_only_one_status: Limiter à un seul connecteur
     action_option_group_height: Hauteur
