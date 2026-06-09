@@ -450,9 +450,9 @@ module Ladb::OpenCutList
         fn_try_to_add_neighbor = lambda do |path|
 
           picked_part_entity_path = _get_part_entity_path_from_path(path)
-          return nil if picked_part_entity_path.nil?                                      # Exclude non-part entities
-          return nil if h_neighbor_defs.has_key?(picked_part_entity_path)                 # Exclude already picked part
-          return nil unless ArrayUtils.start_with?(picked_part_entity_path, active_path)  # Exclude out of active path parts
+          return nil if picked_part_entity_path.nil?                                            # Exclude non-part entities
+          return nil if h_neighbor_defs.has_key?(picked_part_entity_path)                       # Exclude already picked part
+          return nil unless ArrayUtils.array_start_with?(picked_part_entity_path, active_path)  # Exclude out of active path parts
           if picked_part_entity_path != get_active_selection_path &&
              (picked_drawing_def = CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new(picked_part_entity_path) ], **_get_drawing_def_parameters).run).is_a?(DrawingDef)
 
@@ -570,6 +570,21 @@ module Ladb::OpenCutList
       )
     end
 
+    def _get_grouped_glued_instances(face_manipulator, touching_poly)
+      if (glued_instances = face_manipulator.face.get_glued_instances).any?
+
+        fm_ti = face_manipulator.transformation.inverse
+        poly_2d = touching_poly.map { |point| point.transform(fm_ti) }
+
+        # Selects only the glued instances whose anchor point is within the touching poly.
+        # And group them by anchor point coords
+        return glued_instances.select { |glued_instance| Geom.point_in_polygon_2D(ORIGIN.transform(glued_instance.transformation), poly_2d, true) }
+                              .group_by { |glued_instance| ORIGIN.transform(face_manipulator.transformation * glued_instance.transformation).to_a }  # Anchor point coords Array<Geom::Point3d>
+
+      end
+      {}
+    end
+
     # Data Structs -----
 
     NeighborhoodDef = Struct.new(:path, :drawing_def, :neighbor_defs) do
@@ -678,6 +693,7 @@ module Ladb::OpenCutList
         machining_b = geometries_def.machining_b
 
         no_valid_join = true
+        occupied_anchor_count = 0
         neighbor_join_defs.each do |neighbor_join_def|
 
           t_b = neighbor_join_def.neighbor_def.t_b
@@ -704,6 +720,13 @@ module Ladb::OpenCutList
             )
             @tool.append_3d(k_points, LAYER_3D_JOIN_PREVIEW)
 
+            k_points = _create_floating_points(
+              points: join_def.occupied_anchor_points_3d,
+              style: Kuix::POINT_STYLE_CROSS,
+              stroke_color: Kuix::COLOR_RED
+            )
+            @tool.append_3d(k_points, LAYER_3D_JOIN_PREVIEW)
+
             unless join_def.anchor_points_3d.empty?
 
               k_edge = Kuix::EdgeMotif3d.new
@@ -717,8 +740,6 @@ module Ladb::OpenCutList
 
             end
 
-            rot = join_def.reversed_y ? TRANSFORMATION_ROTATION_Z_180 : IDENTITY
-
             join_def.anchor_points_3d.each do |point|
 
               pt_a = point.transform(ti_a)
@@ -728,14 +749,14 @@ module Ladb::OpenCutList
 
               _preview_join_drawing_def(
                 machining_a.drawing_def,
-                t_a * Geom::Transformation.translation(pt_a) * at_a * rot,
+                t_a * Geom::Transformation.translation(pt_a) * at_a,
                 Kuix::COLOR_CYAN,
                 0.5
               ) if machining_a.drawing_def
 
               _preview_join_drawing_def(
                 machining_b.drawing_def,
-                t_b * Geom::Transformation.translation(pt_b) * at_b * rot,
+                t_b * Geom::Transformation.translation(pt_b) * at_b,
                 Kuix::COLOR_CYAN,
                 0.5
               ) if machining_b.drawing_def
@@ -744,14 +765,14 @@ module Ladb::OpenCutList
 
               _preview_join_drawing_def(
                 hardware_a.drawing_def,
-                t_a * Geom::Transformation.translation(pt_a) * at_a * rot,
+                t_a * Geom::Transformation.translation(pt_a) * at_a,
                 Kuix::COLOR_DARK_GREY,
                 1
               ) if hardware_a.drawing_def
 
               _preview_join_drawing_def(
                 hardware_b.drawing_def,
-                t_b * Geom::Transformation.translation(pt_b) * at_b * rot,
+                t_b * Geom::Transformation.translation(pt_b) * at_b,
                 Kuix::COLOR_DARK_GREY,
                 1
               ) if hardware_b.drawing_def
@@ -759,6 +780,7 @@ module Ladb::OpenCutList
             end
 
             no_valid_join = false if join_def.anchor_points_3d.any?
+            occupied_anchor_count += join_def.occupied_anchor_points_3d.length
 
           end
 
@@ -769,7 +791,11 @@ module Ladb::OpenCutList
 
         end
 
-        @tool.show_message(PLUGIN.get_i18n_string('tool.smart_join.error.no_valid_join'), SmartTool::MESSAGE_TYPE_ERROR) if no_valid_join
+        if occupied_anchor_count > 0
+          @tool.show_message(PLUGIN.get_i18n_string('tool.smart_join.error.occupied_anchors', { :count => occupied_anchor_count }), SmartTool::MESSAGE_TYPE_ERROR)
+        else
+          @tool.show_message(PLUGIN.get_i18n_string('tool.smart_join.error.no_valid_join'), SmartTool::MESSAGE_TYPE_ERROR) if no_valid_join
+        end
 
       end
 
@@ -861,11 +887,11 @@ module Ladb::OpenCutList
       hardware_material = geometries_def.hardware_material
       machining_material = geometries_def.machining_material
 
-      fn_add_instance = lambda do |definition, material, face, entities, dti, pt, at, rot|
+      fn_add_instance = lambda do |definition, material, face, entities, dti, pt, at|
         if definition.is_a?(Sketchup::ComponentDefinition)
           definition.behavior.no_scale_mask = 0b1111111 # No scale in all direction
           definition.behavior.is2d = true               # Force 2D behavior to ba able to glue to face
-          instance = entities.add_instance(definition, dti * Geom::Transformation.translation(pt) * at * rot)
+          instance = entities.add_instance(definition, dti * Geom::Transformation.translation(pt) * at)
           instance.material = material
           instance.glued_to = face
         end
@@ -954,20 +980,18 @@ module Ladb::OpenCutList
               dti_a = (ti_a * fm_a.transformation).inverse
               dti_b = (ti_b * fm_b.transformation).inverse
 
-              rot = join_def.reversed_y ? Geom::Transformation.rotation(ORIGIN, Z_AXIS, 180.degrees) : IDENTITY
-
               join_def.anchor_points_3d.each do |point|
 
                 pt_a = point.transform(ti_a)
                 pt_b = point.transform(ti_b)
 
                 # -- A --
-                fn_add_instance.call(hardware_a.definition, hardware_material, face_a, entities_a, dti_a, pt_a, at_a, rot)
-                fn_add_instance.call(machining_a.definition, machining_material, face_a, entities_a, dti_a, pt_a, at_a, rot)
+                fn_add_instance.call(hardware_a.definition, hardware_material, face_a, entities_a, dti_a, pt_a, at_a)
+                fn_add_instance.call(machining_a.definition, machining_material, face_a, entities_a, dti_a, pt_a, at_a)
 
                 # -- B --
-                fn_add_instance.call(hardware_b.definition, hardware_material, face_b, entities_b, dti_b, pt_b, at_b, rot)
-                fn_add_instance.call(machining_b.definition, machining_material, face_b, entities_b, dti_b, pt_b, at_b, rot)
+                fn_add_instance.call(hardware_b.definition, hardware_material, face_b, entities_b, dti_b, pt_b, at_b)
+                fn_add_instance.call(machining_b.definition, machining_material, face_b, entities_b, dti_b, pt_b, at_b)
 
               end
 
@@ -1044,6 +1068,7 @@ module Ladb::OpenCutList
     def _get_add_joinery_def(neighborhood_def)
       return nil if @snap_face_manipulator.nil? || @snap_edge_manipulator.nil? || @snap_vertex_manipulator.nil?
 
+      t_a = neighborhood_def.t_a
       ti_a = neighborhood_def.ti_a
 
       start_offset = _fetch_option_start_offset
@@ -1056,10 +1081,56 @@ module Ladb::OpenCutList
       geometry_def = _get_geometries_def
       geometry_bounds = geometry_def.bounds
 
+      fn_is_geometry_intersect_glued_instances = lambda do |anchor_point, glued_instances, fm, t, ti, at|
+        glued_instances.any? { |glued_instance|
+
+          fm_t = fm.transformation
+          fm_ti = fm_t.inverse
+
+          b_t = glued_instance.transformation
+          min = glued_instance.definition.bounds.min.transform(b_t)
+          max = glued_instance.definition.bounds.max.transform(b_t)
+          glued_instance_bounds = Geom::BoundingBox.new.add(min, max)
+
+          b_t = fm_ti * t * Geom::Transformation.translation(anchor_point.transform(ti)) * at
+          min = geometry_bounds.min.transform(b_t)
+          max = geometry_bounds.max.transform(b_t)
+          new_instance_bounds = Geom::BoundingBox.new.add(min, max)
+
+          glued_instance_bounds.intersect(new_instance_bounds).valid?
+
+          # k_polyline = Kuix::Polyline.new
+          # k_polyline.add_points(fm.outer_loop_manipulator.points.map { |pt| pt.transform(fm_ti) })
+          # k_polyline.line_width = 2
+          # k_polyline.color = Kuix::COLOR_WHITE
+          # k_polyline.closed = true
+          # @tool.append_3d(k_polyline, LAYER_3D_JOIN_PREVIEW)
+          #
+          # k_box = Kuix::BoxMotif3d.new
+          # k_box.bounds.copy!(glued_instance_bounds)
+          # k_box.color = Kuix::COLOR_YELLOW
+          # @tool.append_3d(k_box, LAYER_3D_JOIN_PREVIEW)
+          #
+          # k_box = Kuix::BoxMotif3d.new
+          # k_box.bounds.copy!(new_instance_bounds)
+          # k_box.color = Kuix::COLOR_RED
+          # @tool.append_3d(k_box, LAYER_3D_JOIN_PREVIEW)
+          #
+          # k_point = _create_floating_points(
+          #   points: anchor_point.transform(fm_ti),
+          #   stroke_color: Kuix::COLOR_CYAN,
+          #   style: Kuix::POINT_STYLE_PLUS,
+          # )
+          # @tool.append_3d(k_point, LAYER_3D_JOIN_PREVIEW)
+
+        }
+      end
+
       neighbor_join_defs = []
 
       neighborhood_def.neighbor_defs.each do |neighbor_def|
 
+        t_b = neighbor_def.t_b
         ti_b = neighbor_def.ti_b
 
         join_defs = []
@@ -1122,8 +1193,9 @@ module Ladb::OpenCutList
                                      .delete_if { |point| !Geom.point_in_polygon_2D(point, touching_poly_2d, true) }
 
             anchor_points_3d = anchor_points_2d.map { |point| point.transform(at) }
-            start_point_3d = ORIGIN.offset(X_AXIS, touching_poly_bounds.min.x + (coords.size > 1 ? start_offset : 0)).offset!(touching_vy, ly).transform!(at)
-            end_point_3d = ORIGIN.offset(X_AXIS, touching_poly_bounds.min.x + touching_poly_bounds.width - (coords.size > 1 ? end_offset : 0)).offset!(touching_vy, ly).transform!(at)
+
+            grouped_glued_instances_a = _get_grouped_glued_instances(touching_def.face_manipulator, touching_poly)
+            grouped_glued_instances_b = _get_grouped_glued_instances(touching_def.neighbor_face_manipulator, touching_poly)
 
             at_a = Geom::Transformation.axes(
               ORIGIN,
@@ -1139,12 +1211,28 @@ module Ladb::OpenCutList
               z_axis.transform(ti_b).reverse!
             )
 
+            if touching_vy.samedirection?(Y_AXIS)
+              at_a *= TRANSFORMATION_ROTATION_Z_180
+              at_b *= TRANSFORMATION_ROTATION_Z_180
+            end
+
+            occupied_anchor_points_3d = []
+            anchor_points_3d.delete_if do |point|
+              occupied = grouped_glued_instances_a.any? { |_, glued_instances| fn_is_geometry_intersect_glued_instances.call(point, glued_instances, touching_def.face_manipulator, t_a, ti_a, at_a) } ||
+                         grouped_glued_instances_b.any? { |_, glued_instances| fn_is_geometry_intersect_glued_instances.call(point, glued_instances, touching_def.neighbor_face_manipulator, t_b, ti_b, at_b)  }
+              occupied_anchor_points_3d << point if occupied
+              occupied
+            end
+
+            start_point_3d = ORIGIN.offset(X_AXIS, touching_poly_bounds.min.x + (anchor_points_3d.length > 1 ? start_offset : 0)).offset!(touching_vy, ly).transform!(at)
+            end_point_3d = ORIGIN.offset(X_AXIS, touching_poly_bounds.min.x + touching_poly_bounds.width - (anchor_points_3d.length > 1 ? end_offset : 0)).offset!(touching_vy, ly).transform!(at)
+
             join_defs << AddJoineryJoinDef.new(touching_poly,
                                                touching_def,
                                                anchor_points_3d,
+                                               occupied_anchor_points_3d,
                                                start_point_3d,
                                                end_point_3d,
-                                               touching_vy.samedirection?(Y_AXIS),
                                                at_a,
                                                at_b
             )
@@ -1247,7 +1335,7 @@ module Ladb::OpenCutList
 
     AddJoineryDef = Struct.new(:neighbor_join_defs)
     AddJoineryNeighborJoinDef = Struct.new(:neighbor_def, :join_defs)
-    AddJoineryJoinDef = Struct.new(:touching_poly, :touching_def, :anchor_points_3d, :start_point_3d, :end_point_3d, :reversed_y, :at_a, :at_b)
+    AddJoineryJoinDef = Struct.new(:touching_poly, :touching_def, :anchor_points_3d, :occupied_anchor_points_3d, :start_point_3d, :end_point_3d, :at_a, :at_b)
 
     GeometriesDef = Struct.new(:hardware_a, :hardware_b, :machining_a, :machining_b, :hardware_material, :machining_material, :bounds) do
       def valid?
@@ -1511,22 +1599,6 @@ module Ladb::OpenCutList
 
       neighbor_join_defs = []
 
-      fn_get_grouped_glued_instances = lambda do |fm, touching_poly|
-        glued_instances = fm.face.get_glued_instances
-        if glued_instances.any?
-
-          fm_ti = fm.transformation.inverse
-          poly_2d = touching_poly.map { |point| point.transform(fm_ti) }
-
-          # Select only glued instances that intersect with the touching poly
-          # And group them by anchor point coords
-          return glued_instances.select { |glued_instance| Geom.point_in_polygon_2D(ORIGIN.transform(glued_instance.transformation), poly_2d, true) }
-                                .group_by { |glued_instance| ORIGIN.transform(fm.transformation * glued_instance.transformation).to_a }  # Anchor point coords Array<Geom::Point3d>
-
-        end
-        {}
-      end
-
       neighborhood_def.neighbor_defs.each do |neighbor_def|
 
         join_defs = []
@@ -1540,11 +1612,8 @@ module Ladb::OpenCutList
 
           touching_def.touching_polys.each do |touching_poly|
 
-            fm_a = touching_def.face_manipulator
-            fm_b = touching_def.neighbor_face_manipulator
-
-            grouped_glued_instances_a = fn_get_grouped_glued_instances.call(fm_a, touching_poly)
-            grouped_glued_instances_b = fn_get_grouped_glued_instances.call(fm_b, touching_poly)
+            grouped_glued_instances_a = _get_grouped_glued_instances(touching_def.face_manipulator, touching_poly)
+            grouped_glued_instances_b = _get_grouped_glued_instances(touching_def.neighbor_face_manipulator, touching_poly)
 
             join_defs << RemoveJoineryJoinDef.new(touching_poly, touching_def, grouped_glued_instances_a, grouped_glued_instances_b)
 

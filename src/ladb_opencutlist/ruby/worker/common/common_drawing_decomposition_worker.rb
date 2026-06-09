@@ -140,7 +140,7 @@ module Ladb::OpenCutList
 
         paths = @ipaths.map(&:to_a)
 
-        container_path = ArrayUtils.common_prefix(*paths)
+        container_path = ArrayUtils.array_common_prefix(*paths)
         container = container_path.empty? ? model : container_path.last
         entities = paths.map(&:last)
 

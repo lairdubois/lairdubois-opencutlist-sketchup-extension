@@ -2544,6 +2544,8 @@ tool:
     geometries: Géométries
     error:
       no_valid_join: Aucune surface de contact ne permet de satisfaire les contraintes d'assemblage
+      occupied_anchors: "{{ count }} connecteurs en conflit de position avec des connecteurs existants"
+      occupied_anchors_plural: "{{ count }} connecteurs en conflit de position avec des connecteurs existants"
       failed_to_load_skp_file: |
         Impossible de charger le fichier SKP : {{ file }}
     warning:

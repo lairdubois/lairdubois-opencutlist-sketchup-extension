@@ -4542,7 +4542,7 @@ module Ladb::OpenCutList
     def path
       return [] unless @paths.is_a?(Array)
       return @paths.first[0...-1] if @paths.one?
-      ArrayUtils.common_prefix(*@paths)
+      ArrayUtils.array_common_prefix(*@paths)
     end
 
     def instances

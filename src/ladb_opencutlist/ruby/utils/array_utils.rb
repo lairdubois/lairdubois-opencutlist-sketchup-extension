@@ -17,7 +17,7 @@ module Ladb::OpenCutList
     #   common_prefix([1, 2, 3], [4, 5, 6])   #=> []
     #   common_prefix([1, 2], [1, 2, 3])      #=> [1, 2]
     #   common_prefix()                       #=> []
-    def self.common_prefix(*arrays)
+    def self.array_common_prefix(*arrays)
       return [] if arrays.empty?
       arrays[0].zip(*arrays[1..-1]).take_while { |group| group.uniq.length == 1 }.map(&:first)
     end
@@ -36,7 +36,7 @@ module Ladb::OpenCutList
     #   [1, 2, 3, 4].start_with?([1, 3])    #=> false
     #   [1, 2].start_with?([1, 2, 3])       #=> false
     #   [].start_with?([1])                 #=> false
-    def self.start_with?(array, prefix)
+    def self.array_start_with?(array, prefix)
       return false if prefix.length > array.length
       prefix.each_with_index do |elem, i|
         return false if array[i] != elem
