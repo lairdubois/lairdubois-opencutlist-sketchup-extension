@@ -95,8 +95,21 @@
                 // Prevent default behavior
                 e.preventDefault();
 
-                if (that.$modal) {
-                    const $btnValidate = $('.btn-validate-modal', that.$modal).first();
+                // Try to retrieve the current top modal (1. from global dialog modal, 2. from inner modal, 3. form dialog itself)
+                let $modal = null;
+                if (that._$modal) {
+                    $modal = that._$modal;
+                } else {
+                    const jQueryPlugin = that.$modal.data('ladb.modal.plugin');
+                    if (jQueryPlugin) {
+                        $modal = jQueryPlugin._$modal;
+                    } else {
+                        $modal = that.$modal;
+                    }
+                }
+
+                if ($modal) {
+                    const $btnValidate = $('.btn-validate-modal', $modal).first();
                     if ($btnValidate && $btnValidate.is(':enabled')) {
                         $btnValidate.click();
                     }
