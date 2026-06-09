@@ -442,14 +442,17 @@ module Ladb::OpenCutList
 
       begin
 
+        active_path = Sketchup.active_model.active_path.to_a
+
         view = @picker.view
         ph = view.pick_helper
 
         fn_try_to_add_neighbor = lambda do |path|
 
           picked_part_entity_path = _get_part_entity_path_from_path(path)
-          return nil if picked_part_entity_path.nil?                      # Exclude non-part entities
-          return nil if h_neighbor_defs.has_key?(picked_part_entity_path) # Exclude already picked part
+          return nil if picked_part_entity_path.nil?                                      # Exclude non-part entities
+          return nil if h_neighbor_defs.has_key?(picked_part_entity_path)                 # Exclude already picked part
+          return nil unless ArrayUtils.start_with?(picked_part_entity_path, active_path)  # Exclude out of active path parts
           if picked_part_entity_path != get_active_selection_path &&
              (picked_drawing_def = CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new(picked_part_entity_path) ], **_get_drawing_def_parameters).run).is_a?(DrawingDef)
 
@@ -858,6 +861,16 @@ module Ladb::OpenCutList
       hardware_material = geometries_def.hardware_material
       machining_material = geometries_def.machining_material
 
+      fn_add_instance = lambda do |definition, material, face, entities, dti, pt, at, rot|
+        if definition.is_a?(Sketchup::ComponentDefinition)
+          definition.behavior.no_scale_mask = 0b1111111 # No scale in all direction
+          definition.behavior.is2d = true               # Force 2D behavior to ba able to glue to face
+          instance = entities.add_instance(definition, dti * Geom::Transformation.translation(pt) * at * rot)
+          instance.material = material
+          instance.glued_to = face
+        end
+      end
+
       model = Sketchup.active_model
       model.start_operation('OCL Add Join', true)
 
@@ -949,32 +962,12 @@ module Ladb::OpenCutList
                 pt_b = point.transform(ti_b)
 
                 # -- A --
-                if hardware_a.definition.is_a?(Sketchup::ComponentDefinition)
-                  hardware_a_instance = entities_a.add_instance(hardware_a.definition, dti_a * Geom::Transformation.translation(pt_a) * at_a * rot)
-                  hardware_a_instance.material = hardware_material
-                  hardware_a.definition.behavior.is2d = true unless hardware_a.definition.behavior.is2d?
-                  hardware_a_instance.glued_to = face_a
-                end
-                if machining_a.definition.is_a?(Sketchup::ComponentDefinition)
-                  machining_a_instance = entities_a.add_instance(machining_a.definition, dti_a * Geom::Transformation.translation(pt_a) * at_a * rot)
-                  machining_a_instance.material = machining_material
-                  machining_a.definition.behavior.is2d = true unless machining_a.definition.behavior.is2d?
-                  machining_a_instance.glued_to = face_a
-                end
+                fn_add_instance.call(hardware_a.definition, hardware_material, face_a, entities_a, dti_a, pt_a, at_a, rot)
+                fn_add_instance.call(machining_a.definition, machining_material, face_a, entities_a, dti_a, pt_a, at_a, rot)
 
                 # -- B --
-                if hardware_b.definition.is_a?(Sketchup::ComponentDefinition)
-                  hardware_b_instance = entities_b.add_instance(hardware_b.definition, dti_b * Geom::Transformation.translation(pt_b) * at_b * rot)
-                  hardware_b_instance.material = hardware_material
-                  hardware_b.definition.behavior.is2d = true unless hardware_b.definition.behavior.is2d?
-                  hardware_b_instance.glued_to = face_b
-                end
-                if machining_b.definition.is_a?(Sketchup::ComponentDefinition)
-                  machining_b_instance = entities_b.add_instance(machining_b.definition, dti_b * Geom::Transformation.translation(pt_b) * at_b * rot)
-                  machining_b_instance.material = machining_material
-                  machining_b.definition.behavior.is2d = true unless machining_b.definition.behavior.is2d?
-                  machining_b_instance.glued_to = face_b
-                end
+                fn_add_instance.call(hardware_b.definition, hardware_material, face_b, entities_b, dti_b, pt_b, at_b, rot)
+                fn_add_instance.call(machining_b.definition, machining_material, face_b, entities_b, dti_b, pt_b, at_b, rot)
 
               end
 
