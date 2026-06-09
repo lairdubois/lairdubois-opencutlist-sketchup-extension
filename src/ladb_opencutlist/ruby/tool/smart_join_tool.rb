@@ -265,8 +265,8 @@ module Ladb::OpenCutList
 
     def onPickerChanged(picker, view)
       super
-      if _snap_join(view)
-        _preview_join(view)
+      if _snap_join
+        _preview_join
       end
       _preview_snap_point
     end
@@ -316,7 +316,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _snap_join(view)
+    def _snap_join
 
       face_manipulator = @picker.picked_plane_manipulator
       if face_manipulator.is_a?(FaceManipulator) &&
@@ -362,7 +362,7 @@ module Ladb::OpenCutList
       context_changed
     end
 
-    def _preview_join(view)
+    def _preview_join
 
       @tool.clear_3d(LAYER_3D_JOIN_PREVIEW)
       @tool.hide_message
@@ -432,7 +432,6 @@ module Ladb::OpenCutList
 
       kbd = Kuix::Bounds3d.new
                           .copy!(drawing_def.bounds)
-                          .inflate_all!(-aperture / 2.0) # Deflate of 1/2x aperture
       kbi = Kuix::Bounds3d.new
                           .copy!(drawing_def.bounds)
                           .inflate_all!(aperture)        # Inflate of 1x aperture
@@ -442,9 +441,10 @@ module Ladb::OpenCutList
 
       begin
 
-        active_path = Sketchup.active_model.active_path.to_a
+        model = Sketchup.active_model
+        active_path = model.active_path.to_a
+        view = model.active_view
 
-        view = @picker.view
         ph = view.pick_helper
 
         fn_try_to_add_neighbor = lambda do |path|
@@ -645,6 +645,27 @@ module Ladb::OpenCutList
 
     # -----
 
+    def onToolKeyDown(tool, key, repeat, flags, view)
+
+      if tool.is_key_shift?(key)
+        _refresh
+        return true
+      end
+
+      super
+    end
+
+    def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
+      return true if super
+
+      if tool.is_key_shift?(key)
+        _refresh
+        return true
+      end
+
+      false
+    end
+
     def onToolUserText(tool, text, view)
       return true if super
 
@@ -679,7 +700,7 @@ module Ladb::OpenCutList
     def _preview_join_context(neighborhood_def)
       super
 
-      unless (joinery_def = _get_add_joinery_def(neighborhood_def)).nil?
+      unless (joinery_def = _get_add_joinery_def(neighborhood_def, @tool.is_key_shift_down?)).nil?
 
         neighbor_join_defs = joinery_def.neighbor_join_defs
 
@@ -870,7 +891,7 @@ module Ladb::OpenCutList
 
     def _add_connectors
       return if (neighborhood_def = _get_neighborhood_def).nil?
-      return if (joinery_def = _get_add_joinery_def(neighborhood_def)).nil?
+      return if (joinery_def = _get_add_joinery_def(neighborhood_def, @tool.is_key_shift_down?)).nil?
 
       ti_a = neighborhood_def.ti_a
       neighbor_join_defs = joinery_def.neighbor_join_defs
@@ -1065,7 +1086,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _get_add_joinery_def(neighborhood_def)
+    def _get_add_joinery_def(neighborhood_def, single = false)
       return nil if @snap_face_manipulator.nil? || @snap_edge_manipulator.nil? || @snap_vertex_manipulator.nil?
 
       t_a = neighborhood_def.t_a
@@ -1098,31 +1119,6 @@ module Ladb::OpenCutList
           new_instance_bounds = Geom::BoundingBox.new.add(min, max)
 
           glued_instance_bounds.intersect(new_instance_bounds).valid?
-
-          # k_polyline = Kuix::Polyline.new
-          # k_polyline.add_points(fm.outer_loop_manipulator.points.map { |pt| pt.transform(fm_ti) })
-          # k_polyline.line_width = 2
-          # k_polyline.color = Kuix::COLOR_WHITE
-          # k_polyline.closed = true
-          # @tool.append_3d(k_polyline, LAYER_3D_JOIN_PREVIEW)
-          #
-          # k_box = Kuix::BoxMotif3d.new
-          # k_box.bounds.copy!(glued_instance_bounds)
-          # k_box.color = Kuix::COLOR_YELLOW
-          # @tool.append_3d(k_box, LAYER_3D_JOIN_PREVIEW)
-          #
-          # k_box = Kuix::BoxMotif3d.new
-          # k_box.bounds.copy!(new_instance_bounds)
-          # k_box.color = Kuix::COLOR_RED
-          # @tool.append_3d(k_box, LAYER_3D_JOIN_PREVIEW)
-          #
-          # k_point = _create_floating_points(
-          #   points: anchor_point.transform(fm_ti),
-          #   stroke_color: Kuix::COLOR_CYAN,
-          #   style: Kuix::POINT_STYLE_PLUS,
-          # )
-          # @tool.append_3d(k_point, LAYER_3D_JOIN_PREVIEW)
-
         }
       end
 
@@ -1165,7 +1161,9 @@ module Ladb::OpenCutList
               # Touching face is not large enough to contain at least one join
               coords = []
             else
-              if touching_length > start_offset + min_spacing + end_offset
+              if single
+                coords = [ touching_poly_bounds.width / 3 ]
+              elsif touching_length > start_offset + min_spacing + end_offset
                 middle_length = touching_poly_bounds.width - start_offset - end_offset
                 spacing_count = max_spacing <= 0 ? 1 : (middle_length / max_spacing).ceil
                 spacing_count = 2 if spacing_count < 2 && start_offset == 0 && end_offset == 0
@@ -1409,9 +1407,14 @@ module Ladb::OpenCutList
 
     protected
 
+    def _reset
+      super
+      @snap_anchor = nil
+    end
+
     # -----
 
-    def _snap_join(view)
+    def _snap_join
       context_changed = super
 
       if @tool.is_key_shift_down? &&
