@@ -2552,6 +2552,7 @@ tool:
       no_connector_to_remove: Aucun connecteur à effacer
       x_connectors_to_remove: "{{ count }} connecteur à effacer"
       x_connectors_to_remove_plural: "{{ count }} connecteurs à effacer"
+      different_file_name: Le nom du fichier SKP ({{ file_name }}) est différent du nom de la définition qu'il contient ({{ definition_name }})
   smart_export:
     title: Exporter
     action_0: Exporter une pièce 3D

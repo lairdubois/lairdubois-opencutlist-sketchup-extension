@@ -77,8 +77,8 @@ module Ladb::OpenCutList::Kuix
     # --
 
     def get_preferred_size(prefered_width)
-      if !Sketchup.active_model.nil? && Sketchup.active_model.active_view.respond_to?(:text_bounds) # SU 2020+
-        text_bounds = Sketchup.active_model.active_view.text_bounds(ORIGIN, @text, @text_options)
+      if !(model = Sketchup.active_model).nil? && (view = model.active_view).respond_to?(:text_bounds) # SU 2020+
+        text_bounds = view.text_bounds(ORIGIN, @text, @text_options)
         @min_size.set!(
           text_bounds.width,
           text_bounds.height

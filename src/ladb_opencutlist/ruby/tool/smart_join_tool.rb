@@ -423,18 +423,15 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _get_neighborhood_def(aperture = 1.mm)
+    def _get_neighborhood_def(aperture = 1.mm, epsilon = 0.001)
       return @neighborhood_def unless @neighborhood_def.nil?
 
       return nil unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
 
       h_neighbor_defs = {}
 
-      kbd = Kuix::Bounds3d.new
-                          .copy!(drawing_def.bounds)
-      kbi = Kuix::Bounds3d.new
-                          .copy!(drawing_def.bounds)
-                          .inflate_all!(aperture)        # Inflate of 1x aperture
+      kbd = Kuix::Bounds3d.new.copy!(drawing_def.bounds)
+      kbi = Kuix::Bounds3d.new.copy!(drawing_def.bounds).inflate_all!(aperture)
 
       # Hide instance
       _hide_instance
@@ -514,7 +511,8 @@ module Ladb::OpenCutList
 
       # 3. Search touching faces
 
-      neighbor_defs = h_neighbor_defs.values.each do |neighbor_def|
+      neighbor_defs = h_neighbor_defs.values
+      neighbor_defs.select! do |neighbor_def|
 
         # Iterate on part faces
         drawing_def.face_manipulators.each do |fm|
@@ -524,7 +522,7 @@ module Ladb::OpenCutList
 
             next unless fm.normal.parallel?(nfm.normal)
             next if fm.normal.samedirection?(nfm.normal)
-            next unless fm.position.distance_to_plane([ nfm.position, nfm.normal ]) < 0.001
+            next unless fm.position.distance_to_plane([ nfm.position, nfm.normal ]) < epsilon
 
             # Touching !
 
@@ -553,13 +551,10 @@ module Ladb::OpenCutList
 
         end
 
+        neighbor_def.touching_defs.any?
       end
 
-      # 4. Remove not touching neighbors
-
-      neighbor_defs.delete_if { |neighbor_def| neighbor_def.touching_defs.empty? }
-
-      # 5. Keep useful data
+      # 4. Keep useful data
 
       path = get_active_part_entity_path
 
@@ -645,27 +640,6 @@ module Ladb::OpenCutList
 
     # -----
 
-    def onToolKeyDown(tool, key, repeat, flags, view)
-
-      if tool.is_key_shift?(key)
-        _refresh
-        return true
-      end
-
-      super
-    end
-
-    def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
-      return true if super
-
-      if tool.is_key_shift?(key)
-        _refresh
-        return true
-      end
-
-      false
-    end
-
     def onToolUserText(tool, text, view)
       return true if super
 
@@ -700,7 +674,7 @@ module Ladb::OpenCutList
     def _preview_join_context(neighborhood_def)
       super
 
-      unless (joinery_def = _get_add_joinery_def(neighborhood_def, @tool.is_key_shift_down?)).nil?
+      unless (joinery_def = _get_add_joinery_def(neighborhood_def)).nil?
 
         neighbor_join_defs = joinery_def.neighbor_join_defs
 
@@ -891,7 +865,7 @@ module Ladb::OpenCutList
 
     def _add_connectors
       return if (neighborhood_def = _get_neighborhood_def).nil?
-      return if (joinery_def = _get_add_joinery_def(neighborhood_def, @tool.is_key_shift_down?)).nil?
+      return if (joinery_def = _get_add_joinery_def(neighborhood_def)).nil?
 
       ti_a = neighborhood_def.ti_a
       neighbor_join_defs = joinery_def.neighbor_join_defs
@@ -1086,7 +1060,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _get_add_joinery_def(neighborhood_def, single = false)
+    def _get_add_joinery_def(neighborhood_def)
       return nil if @snap_face_manipulator.nil? || @snap_edge_manipulator.nil? || @snap_vertex_manipulator.nil?
 
       t_a = neighborhood_def.t_a
@@ -1161,9 +1135,7 @@ module Ladb::OpenCutList
               # Touching face is not large enough to contain at least one join
               coords = []
             else
-              if single
-                coords = [ touching_poly_bounds.width / 3 ]
-              elsif touching_length > start_offset + min_spacing + end_offset
+              if touching_length > start_offset + min_spacing + end_offset
                 middle_length = touching_poly_bounds.width - start_offset - end_offset
                 spacing_count = max_spacing <= 0 ? 1 : (middle_length / max_spacing).ceil
                 spacing_count = 2 if spacing_count < 2 && start_offset == 0 && end_offset == 0
@@ -1258,10 +1230,15 @@ module Ladb::OpenCutList
         if (extname = File.extname(ref)).downcase == '.skp'
           name = File.basename(ref, extname)
           definition = model.definitions[name]  # Try to get definition from DefinitionList first
-          begin
-            definition = model.definitions.load(ref.gsub('\\', '/')) if definition.nil?
-          rescue Exception => e
-            @tool.notify_errors([ [ 'tool.smart_join.error.failed_to_load_skp_file', { file: ref } ] ])
+          if definition.nil?
+            begin
+              definition = model.definitions.load(ref.gsub('\\', '/'))
+              if definition && definition.name != name
+                @tool.notify_warnings([ [ 'tool.smart_join.warning.different_file_name', { file_name: name, definition_name: definition.name } ] ])
+              end
+            rescue Exception => e
+              @tool.notify_errors([ [ 'tool.smart_join.error.failed_to_load_skp_file', { file: ref } ] ])
+            end
           end
         else
           definition = model.definitions[ref]
