@@ -2550,6 +2550,7 @@ tool:
       no_connector_to_remove: No connector to erase
       x_connectors_to_remove: "{{ count }} connector to erase"
       x_connectors_to_remove_plural: "{{ count }} connectors to erase"
+      different_file_name: The name of the SKP file ({{ file_name }}) is different from the name of the definition it contains ({{ definition_name }})
   smart_export:
     title: Export
     action_0: Export 3D Part
