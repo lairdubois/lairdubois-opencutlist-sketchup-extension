@@ -101,7 +101,7 @@
                     $modal = that._$modal;
                 } else {
                     const jQueryPlugin = that.$modal.data('ladb.modal.plugin');
-                    if (jQueryPlugin) {
+                    if (jQueryPlugin && jQueryPlugin._$modal) {
                         $modal = jQueryPlugin._$modal;
                     } else {
                         $modal = that.$modal;
