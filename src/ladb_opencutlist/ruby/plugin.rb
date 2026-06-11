@@ -43,6 +43,7 @@ module Ladb::OpenCutList
     PRESETS_PREPROCESSOR_NONE = 0
     PRESETS_PREPROCESSOR_D = 1                   # 1D dimension
     PRESETS_PREPROCESSOR_D_NEGATIVE_ALLOWED = 5  # 1D dimension (negative value allowed)
+    PRESETS_PREPROCESSOR_DIVIDER_OR_D = 6        # "/divider" or 1D dimension
     PRESETS_PREPROCESSOR_DXQ = 2                 # 1D dimension with quantity
     PRESETS_PREPROCESSOR_DXD = 3                 # 2D dimension
     PRESETS_PREPROCESSOR_DXDXQ = 4               # 2D dimension with quantity
@@ -403,6 +404,12 @@ module Ladb::OpenCutList
               processed_values[key] = DimensionUtils.d_add_units(values[key])
             when PRESETS_PREPROCESSOR_D_NEGATIVE_ALLOWED
               processed_values[key] = DimensionUtils.d_add_units(values[key], true)
+            when PRESETS_PREPROCESSOR_DIVIDER_OR_D
+              if values[key].is_a?(String) && (value = values[key].strip).match(/^\/(\d+(?:[.,]\d+)?)$/)
+                processed_values[key] = value.gsub(/[.,]/, DimensionUtils.decimal_separator)
+              else
+                processed_values[key] = DimensionUtils.d_add_units(values[key])
+              end
             when PRESETS_PREPROCESSOR_DXQ
               processed_values[key] = DimensionUtils.dxq_add_units(values[key])
             when PRESETS_PREPROCESSOR_DXD

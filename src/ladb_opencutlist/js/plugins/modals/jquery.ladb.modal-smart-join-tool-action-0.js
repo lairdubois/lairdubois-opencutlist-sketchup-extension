@@ -30,11 +30,11 @@
             // Fetch UI elements
             const $tabs = $('a[data-toggle="tab"]', that.$element);
             const $widgetPreset = $('.ladb-widget-preset', that.$element);
+            const $inputHeight = $('#ladb_input_height', that.$element);
             const $inputStartOffset = $('#ladb_input_start_offset', that.$element);
             const $inputEndOffset = $('#ladb_input_end_offset', that.$element);
             const $inputMinSpacing = $('#ladb_input_min_spacing', that.$element);
             const $inputMaxSpacing = $('#ladb_input_max_spacing', that.$element);
-            const $inputHeightDistance = $('#ladb_input_height_distance', that.$element);
             const $inputHardwareA = $('#ladb_input_hardware_a', that.$element);
             const $inputHardwareB = $('#ladb_input_hardware_b', that.$element);
             const $inputMachiningA = $('#ladb_input_machining_a', that.$element);
@@ -44,11 +44,11 @@
             const $btnValidate = $('#ladb_btn_validate', that.$element);
 
             const fnFetchOptions = function (options) {
+                options.height = $inputHeight.val();
                 options.start_offset = $inputStartOffset.val();
                 options.end_offset = $inputEndOffset.val();
                 options.min_spacing = $inputMinSpacing.val();
                 options.max_spacing = $inputMaxSpacing.val();
-                options.height_distance = $inputHeightDistance.val();
                 options.hardware_a = $inputHardwareA.val();
                 options.hardware_b = $inputHardwareB.val();
                 options.machining_a = $inputMachiningA.val();
@@ -57,11 +57,11 @@
                 options.machining_material_name = $inputMachiningMaterialName.val();
             };
             const fnFillInputs = function (options) {
+                $inputHeight.val(options.height);
                 $inputStartOffset.val(options.start_offset);
                 $inputEndOffset.val(options.end_offset);
                 $inputMinSpacing.val(options.min_spacing);
                 $inputMaxSpacing.val(options.max_spacing);
-                $inputHeightDistance.val(options.height_distance);
                 $inputHardwareA.val(options.hardware_a);
                 $inputHardwareB.val(options.hardware_b);
                 $inputMachiningA.val(options.machining_a);
@@ -81,7 +81,7 @@
             $inputEndOffset.ladbTextinputDimension();
             $inputMinSpacing.ladbTextinputDimension();
             $inputMaxSpacing.ladbTextinputDimension();
-            $inputHeightDistance.ladbTextinputDimension();
+            $inputHeight.ladbTextinputDimension();
             $inputHardwareA.ladbTextinputFile();
             $inputHardwareB.ladbTextinputFile();
             $inputMachiningA.ladbTextinputFile();
@@ -119,7 +119,11 @@
 
             // Focus
             if (that.options.focused_field) {
-                if (that.options.focused_field.option === 'start_offset') {
+                if (that.options.focused_field.option === 'height') {
+                    $inputHeight.focus();
+                    $inputHeight.select();
+                }
+                else if (that.options.focused_field.option === 'start_offset') {
                     $inputStartOffset.focus();
                     $inputStartOffset.select();
                 }
@@ -134,10 +138,6 @@
                 else if (that.options.focused_field.option === 'max_spacing') {
                     $inputMaxSpacing.focus();
                     $inputMaxSpacing.select();
-                }
-                else if (that.options.focused_field.option === 'height_distance') {
-                    $inputHeightDistance.focus();
-                    $inputHeightDistance.select();
                 }
             }
 

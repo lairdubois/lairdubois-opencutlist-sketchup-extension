@@ -2527,8 +2527,7 @@ tool:
     action_option_group_offsets: Décalages
     action_option_group_spacings: Espacements
     action_option_group_options: Options
-    action_option_height_distance: Hauteur
-    action_option_height_centered: Hauteur centrée
+    action_option_height: Hauteur
     action_option_offsets_start_offset: Début
     action_option_offsets_end_offset: Fin
     action_option_spacings_min_spacing: Min
@@ -2543,6 +2542,7 @@ tool:
     measures: Mesures
     geometries: Géométries
     error:
+      not_assemblable: Ce type de pièce ne peut pas être assemblé
       no_valid_join: Aucune surface de contact ne permet de satisfaire les contraintes d'assemblage
       occupied_anchors: "{{ count }} connecteurs en conflit de position avec des connecteurs existants"
       occupied_anchors_plural: "{{ count }} connecteurs en conflit de position avec des connecteurs existants"

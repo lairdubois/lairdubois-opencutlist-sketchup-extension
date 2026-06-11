@@ -24,6 +24,8 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
+### 2026-06-11
+ * Improved Smart Join Tool by adding heigh and max_spacing divider
 ### 2026-06-09
  * Improved Smart Join Tool by adding an occupied space check
 ### 2026-06-08

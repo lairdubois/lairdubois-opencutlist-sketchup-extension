@@ -1161,6 +1161,16 @@ module Ladb::OpenCutList
       DimensionUtils.str_to_ifloat(fetch_action_option_value(action, option_group, option).to_s, true).to_l
     end
 
+    def fetch_action_option_factor_or_length(action, option_group, option)
+      value = fetch_action_option_value(action, option_group, option).to_s
+      if value.start_with?('/') && (divider = value[1..-1].gsub(',', '.').to_f) != 0
+        return 1 / divider
+      elsif value.start_with?('*')
+        return value[1..-1].gsub(',', '.').to_f
+      end
+      DimensionUtils.str_to_ifloat(value, true).to_l
+    end
+
     def get_startup_action
       fetch_action.nil? ? get_action_defs.first[:action] : fetch_action
     end

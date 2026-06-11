@@ -23,9 +23,6 @@ module Ladb::OpenCutList
     ACTION_OPTION_SPACINGS_MIN_SPACING = 'min_spacing'
     ACTION_OPTION_SPACINGS_MAX_SPACING = 'max_spacing'
 
-    ACTION_OPTION_HEIGHT_CENTERED = 'height_centered'
-    ACTION_OPTION_HEIGHT_DISTANCE = 'height_distance'
-
     ACTION_OPTION_OPTIONS_MAKE_UNIQUE = 'make_unique'
 
     ACTION_OPTION_GEOMETRY_HARDWARE_A = 'hardware_a'
@@ -39,7 +36,7 @@ module Ladb::OpenCutList
       {
         :action => ACTION_ADD_CONNECTORS,
         :options => {
-          ACTION_OPTION_HEIGHT => [ ACTION_OPTION_HEIGHT_CENTERED, ACTION_OPTION_HEIGHT_DISTANCE ],
+          ACTION_OPTION_HEIGHT => [ ACTION_OPTION_HEIGHT ],
           ACTION_OPTION_OFFSETS => [ ACTION_OPTION_OFFSETS_START_OFFSET, ACTION_OPTION_OFFSETS_END_OFFSET ],
           ACTION_OPTION_SPACINGS => [ ACTION_OPTION_SPACINGS_MIN_SPACING, ACTION_OPTION_SPACINGS_MAX_SPACING ],
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_MAKE_UNIQUE ],
@@ -99,9 +96,7 @@ module Ladb::OpenCutList
       case option_group
       when ACTION_OPTION_HEIGHT
         case option
-        when ACTION_OPTION_HEIGHT_CENTERED
-          return true
-        when ACTION_OPTION_HEIGHT_DISTANCE
+        when ACTION_OPTION_HEIGHT
           return false
         end
       when ACTION_OPTION_OFFSETS
@@ -130,9 +125,7 @@ module Ladb::OpenCutList
 
       when ACTION_OPTION_HEIGHT
         case option
-        when ACTION_OPTION_HEIGHT_CENTERED
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0L1,0 M0,1L1,1 M0.5,0L0.5,0.25 M0.5,0.75L0.5,1 M0.5,0.375L0.5,0.625 M0.625,0.5L0.375,0.5'))
-        when ACTION_OPTION_HEIGHT_DISTANCE
+        when ACTION_OPTION_HEIGHT
           return Kuix::Label.new(fetch_action_option_value(action, option_group, option).to_s)
         end
       when ACTION_OPTION_OFFSETS
@@ -211,7 +204,7 @@ module Ladb::OpenCutList
       when ACTION_ADD_CONNECTORS
         set_action_handler(SmartJoinAddConnectorsActionHandler.new(self))
       when ACTION_REMOVE_CONNECTORS
-        set_action_handler(SmartJointRemoveConnectorsActionHandler.new(self))
+        set_action_handler(SmartJoinRemoveConnectorsActionHandler.new(self))
       end
 
       super
@@ -312,6 +305,13 @@ module Ladb::OpenCutList
 
     def _preview_all_instances?
       true
+    end
+
+    # -----
+
+    def _can_activate_part?(part_entity_path, part)
+      return [ false, 'tool.smart_join.error.not_assemblable' ] unless (!part.is_a?(Part) || part.group.material_type != MaterialAttributes::TYPE_HARDWARE)
+      super
     end
 
     # -----
@@ -449,9 +449,9 @@ module Ladb::OpenCutList
           picked_part_entity_path = _get_part_entity_path_from_path(path)
           return nil if picked_part_entity_path.nil?                                            # Exclude non-part entities
           return nil if h_neighbor_defs.has_key?(picked_part_entity_path)                       # Exclude already picked part
+          return nil if picked_part_entity_path == get_active_selection_path                    # Exclude selected part
           return nil unless ArrayUtils.array_start_with?(picked_part_entity_path, active_path)  # Exclude out of active path parts
-          if picked_part_entity_path != get_active_selection_path &&
-             (picked_drawing_def = CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new(picked_part_entity_path) ], **_get_drawing_def_parameters).run).is_a?(DrawingDef)
+          if (picked_drawing_def = CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new(picked_part_entity_path) ], **_get_drawing_def_parameters).run).is_a?(DrawingDef)
 
             # Exclude invalid drawing defs
             return unless picked_drawing_def.bounds.valid?
@@ -488,7 +488,7 @@ module Ladb::OpenCutList
           dmax = v.length
           ray = [ p0.offset(v.reverse), v ]
 
-          hit_point, path = view.model.raytest(ray)
+          hit_point, path = model.raytest(ray)
           if hit_point
 
             next if p0.distance(hit_point) > dmax
@@ -526,7 +526,7 @@ module Ladb::OpenCutList
 
             # Touching !
 
-            # Compute the transformation matrix to transform world space to touching 2D space
+            # Compute the transformation to transform world space to touching 2D space
             origin = fm.position
             z_axis = fm.normal
             x_axis = fm.outer_loop_manipulator.edge_manipulators.first.direction.normalize  # Use first outer loop edge direction as arbitrary x axis
@@ -703,7 +703,7 @@ module Ladb::OpenCutList
             k_polyline.add_points(join_def.touching_poly)
             k_polyline.line_width = 2
             k_polyline.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if join_def.anchor_points_3d.empty?
-            k_polyline.color = Kuix::COLOR_MAGENTA
+            k_polyline.color = join_def.anchor_points_3d.empty? ? Kuix::COLOR_DARK_GREY : Kuix::COLOR_MAGENTA
             k_polyline.closed = true
             k_polyline.on_top = true
             @tool.append_3d(k_polyline, LAYER_3D_JOIN_PREVIEW)
@@ -718,7 +718,8 @@ module Ladb::OpenCutList
             k_points = _create_floating_points(
               points: join_def.occupied_anchor_points_3d,
               style: Kuix::POINT_STYLE_CROSS,
-              stroke_color: Kuix::COLOR_RED
+              stroke_color: Kuix::COLOR_RED,
+              stroke_width: 2
             )
             @tool.append_3d(k_points, LAYER_3D_JOIN_PREVIEW)
 
@@ -846,15 +847,31 @@ module Ladb::OpenCutList
 
     def _read_height(tool, text, view)
 
-      height = _read_user_text_length(tool, text)
-      return true if height.nil?
+      if text.start_with?('/')
 
-      if height < 0
-        tool.notify_errors([[ 'tool.default.error.invalid_height', { :value => height } ]])
-        return true
+        divider = text[1..-1].gsub(',', '.').to_f
+        if divider <= 0
+          tool.notify_errors([[ 'tool.default.error.invalid_height', { :value => text } ]])
+          return true
+        end
+        divider = divider.to_i if divider.to_i == divider
+        height = "/#{divider.to_s.sub('.', DimensionUtils.decimal_separator)}"
+
+      else
+
+        height = _read_user_text_length(tool, text)
+        return true if height.nil?
+
+        if height < 0
+          tool.notify_errors([[ 'tool.default.error.invalid_height', { :value => height } ]])
+          return true
+        end
+
+        height = DimensionUtils.d_add_units(height.to_s)
+
       end
 
-      @tool.store_action_option_value(@action, SmartJoinTool::ACTION_OPTION_HEIGHT, SmartJoinTool::ACTION_OPTION_HEIGHT_DISTANCE, height.to_s, true)
+      @tool.store_action_option_value(@action, SmartJoinTool::ACTION_OPTION_HEIGHT, SmartJoinTool::ACTION_OPTION_HEIGHT, height.to_s, true)
       Sketchup.set_status_text('', SB_VCB_VALUE)
       _refresh
 
@@ -1019,15 +1036,11 @@ module Ladb::OpenCutList
     end
 
     def _fetch_option_max_spacing
-      @tool.fetch_action_option_length(@action, SmartJoinTool::ACTION_OPTION_OFFSETS, SmartJoinTool::ACTION_OPTION_SPACINGS_MAX_SPACING)
+      @tool.fetch_action_option_factor_or_length(@action, SmartJoinTool::ACTION_OPTION_OFFSETS, SmartJoinTool::ACTION_OPTION_SPACINGS_MAX_SPACING)
     end
 
-    def _fetch_option_height_distance
-      @tool.fetch_action_option_length(@action, SmartJoinTool::ACTION_OPTION_HEIGHT, SmartJoinTool::ACTION_OPTION_HEIGHT_DISTANCE)
-    end
-
-    def _fetch_option_height_centered?
-      @tool.fetch_action_option_boolean(@action, SmartJoinTool::ACTION_OPTION_HEIGHT, SmartJoinTool::ACTION_OPTION_HEIGHT_CENTERED)
+    def _fetch_option_height
+      @tool.fetch_action_option_factor_or_length(@action, SmartJoinTool::ACTION_OPTION_HEIGHT, SmartJoinTool::ACTION_OPTION_HEIGHT)
     end
 
     def _fetch_option_make_unique?
@@ -1070,8 +1083,7 @@ module Ladb::OpenCutList
       end_offset = _fetch_option_end_offset
       min_spacing = _fetch_option_min_spacing
       max_spacing = _fetch_option_max_spacing
-      height_distance = _fetch_option_height_distance
-      height_centered = _fetch_option_height_centered?
+      height = _fetch_option_height
 
       geometry_def = _get_geometries_def
       geometry_bounds = geometry_def.bounds
@@ -1137,7 +1149,8 @@ module Ladb::OpenCutList
             else
               if touching_length > start_offset + min_spacing + end_offset
                 middle_length = touching_poly_bounds.width - start_offset - end_offset
-                spacing_count = max_spacing <= 0 ? 1 : (middle_length / max_spacing).ceil
+                max_spacing_length = max_spacing.is_a?(Float) ? touching_length * max_spacing : max_spacing
+                spacing_count = max_spacing_length <= 0 ? 1 : (middle_length / max_spacing_length).ceil
                 spacing_count = 2 if spacing_count < 2 && start_offset == 0 && end_offset == 0
                 spacing = middle_length / spacing_count
                 if spacing < min_spacing
@@ -1153,10 +1166,10 @@ module Ladb::OpenCutList
               end
             end
 
-            ly = if height_centered
-                   touching_vy.length - touching_poly_bounds.height * 0.5
+            ly = if height.is_a?(Float)
+                   touching_poly_bounds.height * height
                  else
-                   height_distance
+                   height
                  end
 
             anchor_points_2d = coords.map! { |lx| ORIGIN.offset(X_AXIS, touching_poly_bounds.min.x + lx).offset(touching_vy, ly) }
@@ -1333,7 +1346,7 @@ module Ladb::OpenCutList
 
   end
 
-  class SmartJointRemoveConnectorsActionHandler < SmartJoinConnectorsActionHandler
+  class SmartJoinRemoveConnectorsActionHandler < SmartJoinConnectorsActionHandler
 
     def initialize(tool, previous_action_handler = nil)
       super(SmartJoinTool::ACTION_REMOVE_CONNECTORS, tool, previous_action_handler)

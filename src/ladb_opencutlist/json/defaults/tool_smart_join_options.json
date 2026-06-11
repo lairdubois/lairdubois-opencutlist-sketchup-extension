@@ -3,12 +3,11 @@
     "start_offset": 1, /* PRESETS_PREPROCESSOR_D */
     "end_offset": 1, /* PRESETS_PREPROCESSOR_D */
     "min_spacing": 1, /* PRESETS_PREPROCESSOR_D */
-    "max_spacing": 1, /* PRESETS_PREPROCESSOR_D */
-    "height_distance": 1 /* PRESETS_PREPROCESSOR_D */
+    "max_spacing": 6, /* PRESETS_PREPROCESSOR_DIVIDER_OR_D */
+    "height": 6 /* PRESETS_PREPROCESSOR_DIVIDER_OR_D */
   },
   "action_0": {  /* ACTION_PLACE */
-    "height_centered": true,
-    "height_distance": "0",
+    "height": "/2",
     "start_offset": "0",
     "end_offset": "0",
     "min_spacing": "0",
