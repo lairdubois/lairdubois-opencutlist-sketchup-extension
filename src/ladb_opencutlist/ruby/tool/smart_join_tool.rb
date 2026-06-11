@@ -1149,7 +1149,7 @@ module Ladb::OpenCutList
             else
               if touching_length > start_offset + min_spacing + end_offset
                 middle_length = touching_poly_bounds.width - start_offset - end_offset
-                max_spacing_length = max_spacing.is_a?(Float) ? touching_length * max_spacing : max_spacing
+                max_spacing_length = max_spacing.is_a?(Length) ? max_spacing : touching_length * max_spacing
                 spacing_count = max_spacing_length <= 0 ? 1 : (middle_length / max_spacing_length).ceil
                 spacing_count = 2 if spacing_count < 2 && start_offset == 0 && end_offset == 0
                 spacing = middle_length / spacing_count
@@ -1166,10 +1166,10 @@ module Ladb::OpenCutList
               end
             end
 
-            ly = if height.is_a?(Float)
-                   touching_poly_bounds.height * height
-                 else
+            ly = if height.is_a?(Length)
                    height
+                 else
+                   touching_poly_bounds.height * height
                  end
 
             anchor_points_2d = coords.map! { |lx| ORIGIN.offset(X_AXIS, touching_poly_bounds.min.x + lx).offset(touching_vy, ly) }
