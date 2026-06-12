@@ -1023,12 +1023,16 @@ module Ladb::OpenCutList
 
     # -----
 
+    def _fetch_option_height
+      @tool.fetch_action_option_factor_or_length(@action, SmartJoinTool::ACTION_OPTION_HEIGHT, SmartJoinTool::ACTION_OPTION_HEIGHT)
+    end
+
     def _fetch_option_start_offset
-      @tool.fetch_action_option_length(@action, SmartJoinTool::ACTION_OPTION_OFFSETS, SmartJoinTool::ACTION_OPTION_OFFSETS_START_OFFSET)
+      @tool.fetch_action_option_factor_or_length(@action, SmartJoinTool::ACTION_OPTION_OFFSETS, SmartJoinTool::ACTION_OPTION_OFFSETS_START_OFFSET)
     end
 
     def _fetch_option_end_offset
-      @tool.fetch_action_option_length(@action, SmartJoinTool::ACTION_OPTION_OFFSETS, SmartJoinTool::ACTION_OPTION_OFFSETS_END_OFFSET)
+      @tool.fetch_action_option_factor_or_length(@action, SmartJoinTool::ACTION_OPTION_OFFSETS, SmartJoinTool::ACTION_OPTION_OFFSETS_END_OFFSET)
     end
 
     def _fetch_option_min_spacing
@@ -1037,10 +1041,6 @@ module Ladb::OpenCutList
 
     def _fetch_option_max_spacing
       @tool.fetch_action_option_factor_or_length(@action, SmartJoinTool::ACTION_OPTION_OFFSETS, SmartJoinTool::ACTION_OPTION_SPACINGS_MAX_SPACING)
-    end
-
-    def _fetch_option_height
-      @tool.fetch_action_option_factor_or_length(@action, SmartJoinTool::ACTION_OPTION_HEIGHT, SmartJoinTool::ACTION_OPTION_HEIGHT)
     end
 
     def _fetch_option_make_unique?
@@ -1142,27 +1142,32 @@ module Ladb::OpenCutList
                                            ].max { |p1, p2| ORIGIN.distance(p1) <=> ORIGIN.distance(p2) })
 
             touching_length = touching_poly_bounds.width
+            start_offset_length = start_offset.is_a?(Length) ? start_offset : touching_length * start_offset
+            start_offset_length = 0 if start_offset_length < geometry_bounds.width / 2
+            end_offset_length = end_offset.is_a?(Length) ? end_offset : touching_length * end_offset
+            end_offset_length = 0 if end_offset_length < geometry_bounds.width / 2
+            min_spacing_length = [ min_spacing, geometry_bounds.width ].max
 
             if touching_length < geometry_bounds.width
               # Touching face is not large enough to contain at least one join
               coords = []
             else
-              if touching_length > start_offset + min_spacing + end_offset
-                middle_length = touching_poly_bounds.width - start_offset - end_offset
-                max_spacing_length = max_spacing.is_a?(Length) ? max_spacing : touching_length * max_spacing
+              if touching_length > start_offset_length + min_spacing_length + end_offset_length
+                middle_length = touching_length - start_offset_length - end_offset_length
+                max_spacing_length = max_spacing.is_a?(Length) ? max_spacing : middle_length * max_spacing
                 spacing_count = max_spacing_length <= 0 ? 1 : (middle_length / max_spacing_length).ceil
-                spacing_count = 2 if spacing_count < 2 && start_offset == 0 && end_offset == 0
+                spacing_count = 2 if spacing_count < 2 && start_offset_length == 0 && end_offset_length == 0
                 spacing = middle_length / spacing_count
-                if spacing < min_spacing
-                  spacing_count -= 1
+                if spacing < min_spacing_length
+                  spacing_count = [ (middle_length / min_spacing_length).floor, 1 ].max
                   spacing = middle_length / spacing_count
                 end
                 coords = []
-                coords << start_offset if start_offset > 0
-                coords += (1...spacing_count).map { |i| start_offset + spacing * i }
-                coords << touching_poly_bounds.width - end_offset if end_offset > 0
+                coords << start_offset_length if start_offset_length > 0
+                coords += (1...spacing_count).map { |i| start_offset_length + spacing * i }
+                coords << touching_length - end_offset_length if end_offset_length > 0
               else
-                coords = [ touching_poly_bounds.width / 2 ]
+                coords = [ touching_length / 2 ]
               end
             end
 

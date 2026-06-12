@@ -1,7 +1,7 @@
 {
   "_preprocessors": {
-    "start_offset": 1, /* PRESETS_PREPROCESSOR_D */
-    "end_offset": 1, /* PRESETS_PREPROCESSOR_D */
+    "start_offset": 6, /* PRESETS_PREPROCESSOR_DIVIDER_OR_D */
+    "end_offset": 6, /* PRESETS_PREPROCESSOR_DIVIDER_OR_D */
     "min_spacing": 1, /* PRESETS_PREPROCESSOR_D */
     "max_spacing": 6, /* PRESETS_PREPROCESSOR_DIVIDER_OR_D */
     "height": 6 /* PRESETS_PREPROCESSOR_DIVIDER_OR_D */
