@@ -40,7 +40,7 @@ module Ladb::OpenCutList
 
       node_defs = node_def.get_valid_unlocked_selection_siblings
 
-      entities = node_defs.map { |node_def| node_def.entity }
+      entities = node_defs.map(&:entity)
       instance = group = entity.parent.entities.add_group(entities)
 
       group.name = group.definition.name = @name unless @name.nil?
