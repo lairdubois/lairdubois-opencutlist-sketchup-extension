@@ -4,23 +4,23 @@
     // CLASS DEFINITION
     // ======================
 
-    const LadbModalSmartJoinToolAction0 = function (element, options, dialog) {
+    const LadbModalSmartJoinToolAction2 = function (element, options, dialog) {
         LadbAbstractModal.call(this, element, options, dialog);
 
     };
-    LadbModalSmartJoinToolAction0.prototype = Object.create(LadbAbstractModal.prototype);
+    LadbModalSmartJoinToolAction2.prototype = Object.create(LadbAbstractModal.prototype);
 
-    LadbModalSmartJoinToolAction0.DEFAULTS = {};
+    LadbModalSmartJoinToolAction2.DEFAULTS = {};
 
     // Init ///
 
-    LadbModalSmartJoinToolAction0.prototype.init = function () {
+    LadbModalSmartJoinToolAction2.prototype.init = function () {
         LadbAbstractModal.prototype.init.call(this);
 
         const that = this;
 
         const dictionary = 'tool_smart_join_options';
-        const section = 'action_0';
+        const section = 'action_2';
 
         // Retrieve options
         rubyCallCommand('core_get_global_preset', { dictionary: dictionary, section: section }, function (response) {
@@ -30,7 +30,6 @@
             // Fetch UI elements
             const $tabs = $('a[data-toggle="tab"]', that.$element);
             const $widgetPreset = $('.ladb-widget-preset', that.$element);
-            const $inputHeight = $('#ladb_input_height', that.$element);
             const $inputStartOffset = $('#ladb_input_start_offset', that.$element);
             const $inputEndOffset = $('#ladb_input_end_offset', that.$element);
             const $inputMinSpacing = $('#ladb_input_min_spacing', that.$element);
@@ -44,7 +43,6 @@
             const $btnValidate = $('#ladb_btn_validate', that.$element);
 
             const fnFetchOptions = function (options) {
-                options.height = $inputHeight.val();
                 options.start_offset = $inputStartOffset.val();
                 options.end_offset = $inputEndOffset.val();
                 options.min_spacing = $inputMinSpacing.val();
@@ -57,7 +55,6 @@
                 options.machining_material_name = $inputMachiningMaterialName.val();
             };
             const fnFillInputs = function (options) {
-                $inputHeight.val(options.height);
                 $inputStartOffset.val(options.start_offset);
                 $inputEndOffset.val(options.end_offset);
                 $inputMinSpacing.val(options.min_spacing);
@@ -77,7 +74,6 @@
                 fnFetchOptions: fnFetchOptions,
                 fnFillInputs: fnFillInputs
             });
-            $inputHeight.ladbTextinputDimension();
             $inputStartOffset.ladbTextinputDimension();
             $inputEndOffset.ladbTextinputDimension();
             $inputMinSpacing.ladbTextinputDimension();
@@ -119,11 +115,7 @@
 
             // Focus
             if (that.options.focused_field) {
-                if (that.options.focused_field.option === 'height') {
-                    $inputHeight.focus();
-                    $inputHeight.select();
-                }
-                else if (that.options.focused_field.option === 'start_offset') {
+                if (that.options.focused_field.option === 'start_offset') {
                     $inputStartOffset.focus();
                     $inputStartOffset.select();
                 }
@@ -152,13 +144,13 @@
         return this.each(function () {
             const $this = $(this);
             let data = $this.data('ladb.modal.plugin');
-            const options = $.extend({}, LadbModalSmartJoinToolAction0.DEFAULTS, $this.data(), typeof option === 'object' && option);
+            const options = $.extend({}, LadbModalSmartJoinToolAction2.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
                 if (undefined === options.dialog) {
                     throw 'dialog option is mandatory.';
                 }
-                $this.data('ladb.modal.plugin', (data = new LadbModalSmartJoinToolAction0(this, options, options.dialog)));
+                $this.data('ladb.modal.plugin', (data = new LadbModalSmartJoinToolAction2(this, options, options.dialog)));
             }
             if (typeof option === 'string') {
                 data[option].apply(data, Array.isArray(params) ? params : [ params ])
@@ -168,17 +160,17 @@
         })
     }
 
-    const old = $.fn.ladbModalSmartJoinToolAction0;
+    const old = $.fn.ladbModalSmartJoinToolAction2;
 
-    $.fn.ladbModalSmartJoinToolAction0 = Plugin;
-    $.fn.ladbModalSmartJoinToolAction0.Constructor = LadbModalSmartJoinToolAction0;
+    $.fn.ladbModalSmartJoinToolAction2 = Plugin;
+    $.fn.ladbModalSmartJoinToolAction2.Constructor = LadbModalSmartJoinToolAction2;
 
 
     // NO CONFLICT
     // =================
 
-    $.fn.ladbModalSmartJoinToolAction0.noConflict = function () {
-        $.fn.ladbModalSmartJoinToolAction0 = old;
+    $.fn.ladbModalSmartJoinToolAction2.noConflict = function () {
+        $.fn.ladbModalSmartJoinToolAction2 = old;
         return this;
     }
 
