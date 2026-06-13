@@ -211,8 +211,8 @@ namespace Meshy {
 
             result = result.AsOriginal();
 
-            double tolerence = result.GetTolerance();
-            result = result.Simplify(tolerence);
+            double tolerance = result.GetTolerance();
+            result = result.Simplify(tolerance);
 
             // --- export ---
             manifold::MeshGL64 result_mesh = result.GetMeshGL64();
