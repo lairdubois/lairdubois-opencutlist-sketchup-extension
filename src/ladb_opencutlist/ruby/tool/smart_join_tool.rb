@@ -906,7 +906,7 @@ module Ladb::OpenCutList
         if definition.is_a?(Sketchup::ComponentDefinition)
           definition.behavior.no_scale_mask = 0b1111111 # No scale in all direction
           definition.behavior.is2d = true               # Force 2D behavior to ba able to glue to face
-          instance = entities.add_instance(definition, dti * Geom::Transformation.translation(pt.project_to_plane(face.plane)) * at)
+          instance = entities.add_instance(definition, dti * Geom::Transformation.translation(pt) * at)
           instance.material = material
           instance.glued_to = face
         end
@@ -997,8 +997,8 @@ module Ladb::OpenCutList
 
               join_def.anchor_points_3d.each do |point|
 
-                pt_a = point.transform(ti_a)
-                pt_b = point.transform(ti_b)
+                pt_a = point.transform(ti_a).project_to_plane(face_a.plane)
+                pt_b = point.transform(ti_b).project_to_plane(face_b.plane)
 
                 # -- A --
                 fn_add_instance.call(hardware_a.definition, hardware_material, face_a, entities_a, dti_a, pt_a, at_a)
