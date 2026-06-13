@@ -423,10 +423,13 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _get_neighborhood_def(aperture = 1.mm, epsilon = 0.001)
+    def _get_neighborhood_def(tolerance = 0.001.mm, aperture = 1.mm)
       return @neighborhood_def unless @neighborhood_def.nil?
 
       return nil unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
+
+      # Aperture must be greater or equal to tolerance
+      aperture = tolerance if tolerance > aperture
 
       h_neighbor_defs = {}
 
@@ -522,7 +525,7 @@ module Ladb::OpenCutList
 
             next unless fm.normal.parallel?(nfm.normal)
             next if fm.normal.samedirection?(nfm.normal)
-            next unless fm.position.distance_to_plane([ nfm.position, nfm.normal ]) < epsilon
+            next unless fm.position.distance_to_plane([ nfm.position, nfm.normal ]) < tolerance
 
             # Touching !
 
@@ -903,7 +906,7 @@ module Ladb::OpenCutList
         if definition.is_a?(Sketchup::ComponentDefinition)
           definition.behavior.no_scale_mask = 0b1111111 # No scale in all direction
           definition.behavior.is2d = true               # Force 2D behavior to ba able to glue to face
-          instance = entities.add_instance(definition, dti * Geom::Transformation.translation(pt) * at)
+          instance = entities.add_instance(definition, dti * Geom::Transformation.translation(pt.project_to_plane(face.plane)) * at)
           instance.material = material
           instance.glued_to = face
         end
