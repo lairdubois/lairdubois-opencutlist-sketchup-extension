@@ -53,7 +53,7 @@ module Ladb::OpenCutList
         :options => {
           ACTION_OPTION_OFFSETS => [ ACTION_OPTION_OFFSETS_START_OFFSET, ACTION_OPTION_OFFSETS_END_OFFSET ],
           ACTION_OPTION_SPACINGS => [ ACTION_OPTION_SPACINGS_MIN_SPACING, ACTION_OPTION_SPACINGS_MAX_SPACING ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_OPPOSITE ],
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_OPPOSITE, ACTION_OPTION_OPTIONS_MAKE_UNIQUE ],
         }
       },
       {
@@ -494,6 +494,16 @@ module Ladb::OpenCutList
 
         glued_instance_bounds.intersect(new_instance_bounds).valid?
       }
+    end
+
+    def _add_glued_instance(definition, material, face, entities, dti, pt, at)
+      if definition.is_a?(Sketchup::ComponentDefinition)
+        definition.behavior.no_scale_mask = 0b1111111 # No scale in all direction
+        definition.behavior.is2d = true               # Force 2D behavior to ba able to glue to face
+        instance = entities.add_instance(definition, dti * Geom::Transformation.translation(pt) * at)
+        instance.material = material
+        instance.glued_to = face
+      end
     end
 
     # Data Structs -----
@@ -1138,16 +1148,6 @@ module Ladb::OpenCutList
       hardware_material = geometries_def.hardware_material
       machining_material = geometries_def.machining_material
 
-      fn_add_instance = lambda do |definition, material, face, entities, dti, pt, at|
-        if definition.is_a?(Sketchup::ComponentDefinition)
-          definition.behavior.no_scale_mask = 0b1111111 # No scale in all direction
-          definition.behavior.is2d = true               # Force 2D behavior to ba able to glue to face
-          instance = entities.add_instance(definition, dti * Geom::Transformation.translation(pt) * at)
-          instance.material = material
-          instance.glued_to = face
-        end
-      end
-
       model = Sketchup.active_model
       model.start_operation('OCL Add Connectors', true)
 
@@ -1237,12 +1237,12 @@ module Ladb::OpenCutList
                 pt_b = point.transform(ti_b).project_to_plane(face_b.plane)
 
                 # -- A --
-                fn_add_instance.call(hardware_a.definition, hardware_material, face_a, entities_a, dti_a, pt_a, at_a)
-                fn_add_instance.call(machining_a.definition, machining_material, face_a, entities_a, dti_a, pt_a, at_a)
+                _add_glued_instance(hardware_a.definition, hardware_material, face_a, entities_a, dti_a, pt_a, at_a)
+                _add_glued_instance(machining_a.definition, machining_material, face_a, entities_a, dti_a, pt_a, at_a)
 
                 # -- B --
-                fn_add_instance.call(hardware_b.definition, hardware_material, face_b, entities_b, dti_b, pt_b, at_b)
-                fn_add_instance.call(machining_b.definition, machining_material, face_b, entities_b, dti_b, pt_b, at_b)
+                _add_glued_instance(hardware_b.definition, hardware_material, face_b, entities_b, dti_b, pt_b, at_b)
+                _add_glued_instance(machining_b.definition, machining_material, face_b, entities_b, dti_b, pt_b, at_b)
 
               end
 
@@ -2086,6 +2086,12 @@ module Ladb::OpenCutList
 
     # -----
 
+    def _preview_all_instances?
+      !_fetch_option_make_unique?
+    end
+
+    # -----
+
     def _snap_ref_point_b(picker)
       return false if (neighborhood_def = _get_neighborhood_def).nil?
 
@@ -2259,11 +2265,16 @@ module Ladb::OpenCutList
       return if (neighborhood_def = _get_neighborhood_def).nil?
       return if (joinery_def = _get_add_joinery_def(neighborhood_def)).nil?
 
-      ti_a = neighborhood_def.ti_a
+      neighbor_def = neighborhood_def.neighbor_def
+      line_def = neighbor_def.line_def
 
       instance_a = neighborhood_def.instance_a
       definition_a = instance_a.definition
       entities_a = definition_a.entities
+
+      instance_b = neighbor_def.instance_b
+      definition_b = instance_b.definition
+      entities_b = definition_b.entities
 
       geometries_def = _get_geometries_def
       hardware_a = geometries_def.hardware_a
@@ -2273,58 +2284,99 @@ module Ladb::OpenCutList
       hardware_material = geometries_def.hardware_material
       machining_material = geometries_def.machining_material
 
-      fn_add_instance = lambda do |definition, material, face, entities, dti, pt, at|
-        if definition.is_a?(Sketchup::ComponentDefinition)
-          definition.behavior.no_scale_mask = 0b1111111 # No scale in all direction
-          definition.behavior.is2d = true               # Force 2D behavior to ba able to glue to face
-          instance = entities.add_instance(definition, dti * Geom::Transformation.translation(pt) * at)
-          instance.material = material
-          instance.glued_to = face
-        end
-      end
-
       model = Sketchup.active_model
       model.start_operation('OCL Add Fittings', true)
 
-      begin
+        begin
 
-        ti_b = neighborhood_def.neighbor_def.ti_b
+          if _fetch_option_make_unique?
 
-        at_a = joinery_def.at_a
-        at_b = joinery_def.at_b
+            if !hardware_a.empty? || !machining_a.empty?
 
-        fm_a = neighborhood_def.neighbor_def.line_def.face_manipulator
-        fm_b = neighborhood_def.neighbor_def.line_def.neighbor_face_manipulator
+              # Make unique Part A (if necessary)
 
-        face_a = fm_a.face
-        face_b = fm_b.face
+              u_instance_a = instance_a.make_unique
+              u_definition_a = u_instance_a.definition
+              if u_definition_a != definition_a
 
-        entities_a = face_a.parent.entities
-        entities_b = face_b.parent.entities
+                u_entities_a = u_definition_a.entities
 
-        dti_a = (ti_a * fm_a.transformation).inverse
-        dti_b = (ti_b * fm_b.transformation).inverse
+                face = line_def.face_manipulator.face
+                if face.parent == definition_a
+                  face_index = entities_a.to_a.index(face)
+                  u_face = u_entities_a[face_index]
+                  if u_face
+                    line_def.face_manipulator = FaceManipulator.new(u_face, line_def.face_manipulator.transformation)
+                  end
+                end
 
-        joinery_def.join_def.anchor_points_3d.each do |point|
+              end
 
-          pt_a = point.transform(ti_a).project_to_plane(face_a.plane)
-          pt_b = point.transform(ti_b).project_to_plane(face_b.plane)
+            end
 
-          # -- A --
-          fn_add_instance.call(hardware_a.definition, hardware_material, face_a, entities_a, dti_a, pt_a, at_a)
-          fn_add_instance.call(machining_a.definition, machining_material, face_a, entities_a, dti_a, pt_a, at_a)
+            if !hardware_b.empty? || !machining_b.empty?
 
-          # -- B --
-          fn_add_instance.call(hardware_b.definition, hardware_material, face_b, entities_b, dti_b, pt_b, at_b)
-          fn_add_instance.call(machining_b.definition, machining_material, face_b, entities_b, dti_b, pt_b, at_b)
+              # Make unique Part B (if necessary)
 
+              u_instance_b = instance_b.make_unique
+              u_definition_b = u_instance_b.definition
+              if u_definition_b != definition_b
+
+                u_entities_b = u_definition_b.entities
+
+                neighbor_face = line_def.neighbor_face_manipulator.face
+                if neighbor_face.parent == definition_b
+                  neighbor_face_index = entities_b.to_a.index(neighbor_face)
+                  u_neighbor_face = u_entities_b[neighbor_face_index]
+                  if u_neighbor_face
+                    line_def.neighbor_face_manipulator = FaceManipulator.new(u_neighbor_face, line_def.neighbor_face_manipulator.transformation)
+                  end
+                end
+
+              end
+
+            end
+
+          end
+
+          ti_a = neighborhood_def.ti_a
+          ti_b = neighbor_def.ti_b
+
+          at_a = joinery_def.at_a
+          at_b = joinery_def.at_b
+
+          fm_a = line_def.face_manipulator
+          fm_b = line_def.neighbor_face_manipulator
+
+          face_a = fm_a.face
+          face_b = fm_b.face
+
+          entities_a = face_a.parent.entities
+          entities_b = face_b.parent.entities
+
+          dti_a = (ti_a * fm_a.transformation).inverse
+          dti_b = (ti_b * fm_b.transformation).inverse
+
+          joinery_def.join_def.anchor_points_3d.each do |point|
+
+            pt_a = point.transform(ti_a).project_to_plane(face_a.plane)
+            pt_b = point.transform(ti_b).project_to_plane(face_b.plane)
+
+            # -- A --
+            _add_glued_instance(hardware_a.definition, hardware_material, face_a, entities_a, dti_a, pt_a, at_a)
+            _add_glued_instance(machining_a.definition, machining_material, face_a, entities_a, dti_a, pt_a, at_a)
+
+            # -- B --
+            _add_glued_instance(hardware_b.definition, hardware_material, face_b, entities_b, dti_b, pt_b, at_b)
+            _add_glued_instance(machining_b.definition, machining_material, face_b, entities_b, dti_b, pt_b, at_b)
+
+          end
+
+        rescue Exception => e
+          PLUGIN.dump_exception(e)
+          model.abort_operation
+          return
         end
-
-      rescue Exception => e
-        PLUGIN.dump_exception(e)
-        model.abort_operation
-        return
-      end
 
       model.commit_operation
 

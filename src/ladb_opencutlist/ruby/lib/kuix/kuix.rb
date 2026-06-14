@@ -276,16 +276,16 @@ module Ladb::OpenCutList
         @key_down_times[key].is_a?(Time)
       end
 
-      def is_key_shift_down?
-        is_key_down?(CONSTRAIN_MODIFIER_KEY)
+      def is_key_shift_down?(flags = 0)
+        is_key_down?(CONSTRAIN_MODIFIER_KEY) || flags & CONSTRAIN_MODIFIER_KEY == CONSTRAIN_MODIFIER_KEY
       end
 
-      def is_key_alt_or_command_down?
-        is_key_down?(ALT_MODIFIER_KEY)
+      def is_key_alt_or_command_down?(flags = 0)
+        is_key_down?(ALT_MODIFIER_KEY) || flags & ALT_MODIFIER_KEY == ALT_MODIFIER_KEY
       end
 
-      def is_key_ctrl_or_option_down?
-        is_key_down?(COPY_MODIFIER_KEY)
+      def is_key_ctrl_or_option_down?(flags = 0)
+        is_key_down?(COPY_MODIFIER_KEY) || flags & COPY_MODIFIER_KEY == COPY_MODIFIER_KEY
       end
 
       # -- Events --
