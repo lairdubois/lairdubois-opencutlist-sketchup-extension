@@ -553,7 +553,7 @@ module Ladb::OpenCutList
 
     def onActivePartChanged(part_entity_path, part, highlighted = nil)
       super
-      @neighborhood_def = nil
+      _reset_neighborhood_def
     end
 
     # -----
@@ -566,6 +566,10 @@ module Ladb::OpenCutList
       @snap_face_manipulator = nil
       @snap_edge_manipulator = nil
       @snap_vertex_manipulator = nil
+      _reset_neighborhood_def
+    end
+
+    def _reset_neighborhood_def
       @neighborhood_def = nil
     end
 
@@ -1474,8 +1478,8 @@ module Ladb::OpenCutList
 
       if @tool.is_key_shift_down? &&
          @snap_point.is_a?(Geom::Point3d) &&
-         (neighborhodd_def = _get_neighborhood_def) &&
-         (joinery_def = _get_remove_joinery_def(neighborhodd_def))
+         (neighborhood_def = _get_neighborhood_def) &&
+         (joinery_def = _get_remove_joinery_def(neighborhood_def))
 
         snap_anchor = _get_anchors(joinery_def).min { |p1, p2| @snap_point.distance(p1) <=> @snap_point.distance(p2) }
 
@@ -1483,11 +1487,7 @@ module Ladb::OpenCutList
         snap_anchor = nil
       end
 
-      context_changed = context_changed || @snap_anchor != snap_anchor
-
-      @snap_anchor = snap_anchor
-
-      context_changed
+      (context_changed || @snap_anchor != snap_anchor).tap { @snap_anchor = snap_anchor }
     end
 
     def _preview_join_context(neighborhood_def)
@@ -1756,7 +1756,7 @@ module Ladb::OpenCutList
         @tool.clear_3d(LAYER_3D_SNAP_POINT_PREVIEW)
         @tool.hide_message
         if _snap_ref_face_a(picker)
-          @neighborhood_def = nil
+          _reset_neighborhood_def
         end
         _preview_ref_face_a(picker)
         return true
@@ -1766,7 +1766,10 @@ module Ladb::OpenCutList
         @tool.clear_3d(LAYER_3D_SNAP_POINT_PREVIEW)
         @tool.hide_message
         if _snap_ref_face_b(picker)
-          @neighborhood_def = nil
+          _reset_neighborhood_def
+        end
+        if _snap_ref_point_b(picker)
+          _reset_joinery_def
         end
         _preview_ref_face_a
         _preview_ref_face_b(picker)
@@ -1778,7 +1781,7 @@ module Ladb::OpenCutList
 
     def onActivePartChanged(part_entity_path, part, highlighted = nil)
       super
-      @neighborhood_def = nil
+      _reset_neighborhood_def
     end
 
     # -----
@@ -1790,6 +1793,16 @@ module Ladb::OpenCutList
       @snap_point = nil
       @snap_face_manipulator_a = nil
       @snap_face_manipulator_b = nil
+      _reset_neighborhood_def
+    end
+
+    def _reset_neighborhood_def
+      @neighborhood_def = nil
+      _reset_joinery_def
+    end
+
+    def _reset_joinery_def
+      @joinery_def = nil
     end
 
     def _refresh
@@ -1823,12 +1836,14 @@ module Ladb::OpenCutList
         face_manipulator = nil
       end
 
-      context_changed = self.instance_variable_get(var_name) != face_manipulator
+      (self.instance_variable_get(var_name) != face_manipulator).tap do
+        @snap_point = snap_point
+        self.instance_variable_set(var_name, face_manipulator)
+      end
+    end
 
-      @snap_point = snap_point
-      self.instance_variable_set(var_name, face_manipulator)
-
-      context_changed
+    def _snap_ref_point_b(picker)
+      false
     end
 
     def _preview_ref_face_a(picker = nil)
@@ -2071,20 +2086,14 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _snap_ref_face_b(picker = nil)
-      context_changed = super
-
-      return context_changed if (neighborhood_def = _get_neighborhood_def).nil?
+    def _snap_ref_point_b(picker)
+      return false if (neighborhood_def = _get_neighborhood_def).nil?
 
       line_def = neighborhood_def.neighbor_def.line_def
 
       snap_start_point = [ line_def.start_point, line_def.end_point ].min { |p1, p2| p1.distance(picker.picked_point) <=> p2.distance(picker.picked_point) }
 
-      context_changed = context_changed || @snap_start_point != snap_start_point
-
-      @snap_start_point = snap_start_point
-
-      context_changed
+      (@snap_start_point != snap_start_point).tap { @snap_start_point = snap_start_point }
     end
 
     def _preview_join
@@ -2307,6 +2316,8 @@ module Ladb::OpenCutList
     # -----
 
     def _get_add_joinery_def(neighborhood_def)
+      return @joinery_def unless @joinery_def.nil?
+
       return nil if neighborhood_def.neighbor_def.nil?
 
       neighbor_def = neighborhood_def.neighbor_def
@@ -2392,7 +2403,7 @@ module Ladb::OpenCutList
       start_point_3d = ps.offset(v, anchor_points_3d.length > 1 ? start_offset_length : 0)
       end_point_3d = pe.offset(v.reverse, anchor_points_3d.length > 1 ? end_offset_length : 0)
 
-      AddJoineryDef.new(
+      @joinery_def = AddJoineryDef.new(
         at_a,
         at_b,
         AddJoineryJoinDef.new(
@@ -2491,13 +2502,12 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _snap_ref_face_b(picker = nil)
-      context_changed = super
+    def _snap_ref_point_b(picker = nil)
 
       if @tool.is_key_shift_down? &&
          @snap_point.is_a?(Geom::Point3d) &&
-         (neighborhodd_def = _get_neighborhood_def) &&
-         (joinery_def = _get_remove_joinery_def(neighborhodd_def))
+         (neighborhood_def = _get_neighborhood_def) &&
+         (joinery_def = _get_remove_joinery_def(neighborhood_def))
 
         snap_anchor = _get_anchors(joinery_def).min { |p1, p2| @snap_point.distance(p1) <=> @snap_point.distance(p2) }
 
@@ -2505,11 +2515,7 @@ module Ladb::OpenCutList
         snap_anchor = nil
       end
 
-      context_changed = context_changed || @snap_anchor != snap_anchor
-
-      @snap_anchor = snap_anchor
-
-      context_changed
+      (@snap_anchor != snap_anchor).tap { @snap_anchor = snap_anchor }
     end
 
     def _preview_join
