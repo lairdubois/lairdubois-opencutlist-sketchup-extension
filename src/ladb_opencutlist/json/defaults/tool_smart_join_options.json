@@ -20,7 +20,7 @@
     "hardware_material_name": "",
     "machining_material_name": ""
   },
-  "action_2": {  /* ACTION_ADD_LINKS */
+  "action_2": {  /* ACTION_ADD_FITTINGS */
     "start_offset": "0",
     "end_offset": "0",
     "min_spacing": "0",
@@ -33,5 +33,8 @@
     "machining_b": "",
     "hardware_material_name": "",
     "machining_material_name": ""
+  },
+  "action_3": {  /* ACTION_REMOVE_FITTINGS */
+    "opposite": false
   }
 }

@@ -2525,10 +2525,13 @@ tool:
     action_1_only_one_status: Limiter à un seul connecteur
     action_2: Ajouter des raccords
     action_2_status: Ajouter des raccords pour assembler des pièces
-    action_2_state_0_status: Cliquez sur la face de référence d'une pièce pour ajouter des raccords avec une pièce voisine
+    action_2_state_0_status: Cliquez sur la face de référence d'une pièce A pour ajouter des raccords avec une pièce voisine
+    action_2_state_1_status: Cliquez sur la face de référence d'une pièce B pour ajouter des raccords avec la pièce A
     action_3: Effacer des raccords
     action_3_status: Effacer des raccords d'assemblage de pièces
-    action_3_state_0_status: Cliquez sur la face de référence d'une pièce pour effacer les raccords qu'elle partage avec une pièce voisine
+    action_3_state_0_status: Cliquez sur la face de référence d'une pièce A pour effacer les raccords qu'elle partage avec une pièce voisine
+    action_3_state_1_status: Cliquez sur la face de référence d'une pièce B pour effacer les raccords qu'elle partage avec la pièce A
+    action_3_only_one_status: Limiter à un seul raccord
     action_option_group_height: Hauteur
     action_option_group_offsets: Décalages
     action_option_group_spacings: Espacements

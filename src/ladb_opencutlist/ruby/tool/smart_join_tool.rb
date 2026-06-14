@@ -57,7 +57,10 @@ module Ladb::OpenCutList
         }
       },
       {
-        :action => ACTION_REMOVE_FITTINGS
+        :action => ACTION_REMOVE_FITTINGS,
+        :options => {
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_OPPOSITE ],
+        }
       }
     ].freeze
 
@@ -198,7 +201,12 @@ module Ladb::OpenCutList
     def onKeyDown(key, repeat, flags, view)
       return true if super
       if is_key_alt_or_command?(key)
-        push_action(ACTION_REMOVE_CONNECTORS) unless fetch_action == ACTION_REMOVE_CONNECTORS
+        case fetch_action
+        when ACTION_ADD_CONNECTORS
+          push_action(ACTION_REMOVE_CONNECTORS)
+        when ACTION_ADD_FITTINGS
+          push_action(ACTION_REMOVE_FITTINGS)
+        end
         return true
       end
       false
@@ -254,6 +262,9 @@ module Ladb::OpenCutList
     COLOR_REF_FACE_A = Sketchup::Color.new(255, 0, 255, 0.1).blend(COLOR_PART, 0.2).freeze
     COLOR_REF_FACE_B = Sketchup::Color.new(255, 0, 255, 0.1).blend(COLOR_NEIGHBOR, 0.2).freeze
     COLOR_REF_EDGE_A = ColorUtils.color_darken(COLOR_REF_FACE_A, 0.3).freeze
+
+    LAYER_3D_JOIN_PREVIEW = 3
+    LAYER_3D_SNAP_POINT_PREVIEW = 4
 
     # -----
 
@@ -443,6 +454,21 @@ module Ladb::OpenCutList
       @_active_path ||= Sketchup.active_model.active_path.to_a
     end
 
+    def _get_grouped_glued_instances(face_manipulator, poly_3d)
+      if (glued_instances = face_manipulator.face.get_glued_instances).any?
+
+        fm_ti = face_manipulator.transformation.inverse
+        poly_2d = poly_3d.map { |point| point.transform(fm_ti) }
+
+        # Selects only the glued instances whose anchor point is on the segment.
+        # And group them by anchor point coords
+        return glued_instances.select { |glued_instance| Geom.point_in_polygon_2D(ORIGIN.transform(glued_instance.transformation), poly_2d, true) }
+                              .group_by { |glued_instance| ORIGIN.transform(face_manipulator.transformation * glued_instance.transformation).to_a }  # Anchor point coords Array<Geom::Point3d>
+
+      end
+      {}
+    end
+
     # Data Structs -----
 
     GeometriesDef = Struct.new(:hardware_a, :hardware_b, :machining_a, :machining_b, :hardware_material, :machining_material, :bounds) do
@@ -469,9 +495,6 @@ module Ladb::OpenCutList
   # -- Connectors --
 
   class SmartJoinConnectorsActionHandler < SmartJoinActionHandler
-
-    LAYER_3D_JOIN_PREVIEW = 3
-    LAYER_3D_SNAP_POINT_PREVIEW = 4
 
     Clippy = Fiddle::Clippy
 
@@ -771,21 +794,6 @@ module Ladb::OpenCutList
         drawing_def,
         neighbor_defs
       )
-    end
-
-    def _get_grouped_glued_instances(face_manipulator, touching_poly)
-      if (glued_instances = face_manipulator.face.get_glued_instances).any?
-
-        fm_ti = face_manipulator.transformation.inverse
-        poly_2d = touching_poly.map { |point| point.transform(fm_ti) }
-
-        # Selects only the glued instances whose anchor point is within the touching poly.
-        # And group them by anchor point coords
-        return glued_instances.select { |glued_instance| Geom.point_in_polygon_2D(ORIGIN.transform(glued_instance.transformation), poly_2d, true) }
-                              .group_by { |glued_instance| ORIGIN.transform(face_manipulator.transformation * glued_instance.transformation).to_a }  # Anchor point coords Array<Geom::Point3d>
-
-      end
-      {}
     end
 
     # Data Structs -----
@@ -1589,7 +1597,7 @@ module Ladb::OpenCutList
                  .flat_map { |join_defs| (join_defs.grouped_glued_instances_a.keys + join_defs.grouped_glued_instances_b.keys) }
                  .map! { |coords| coords.map! { |coord| coord.round(6) }}
                  .uniq
-                 .map { |coords| Geom::Point3d.new(coords) }
+                 .map! { |coords| Geom::Point3d.new(coords) }
     end
 
     def _is_snap_anchor?(anchor)
@@ -1603,7 +1611,7 @@ module Ladb::OpenCutList
       return if (joinery_def = _get_remove_joinery_def(neighborhood_def)).nil?
 
       model = Sketchup.active_model
-      model.start_operation('OCL Remove Join', true)
+      model.start_operation('OCL Remove Connectors', true)
 
       fn_remove_glued_instances = lambda do |anchor_coords, glued_instances|
         next unless _is_snap_anchor?(Geom::Point3d.new(anchor_coords))
@@ -1708,9 +1716,164 @@ module Ladb::OpenCutList
       SmartPicker.new(tool: @tool, observer: self, pick_point: true, drawable: false, lockable: false)
     end
 
+    def get_state_cursor(state)
+      case state
+      when STATE_SELECT
+        return SmartCursorManager.cursor_select_a
+      end
+      super
+    end
+
+    # -----
+
+    def onToolCancel(tool, reason, view)
+      super
+
+      case @state
+
+      when STATE_SELECT_B
+        _reset
+
+      end
+      _refresh
+
+    end
+
+    def onSelected
+      set_state(STATE_SELECT_B)
+      _refresh
+    end
+
+    def onPickerChanged(picker, view)
+
+      @tool.clear_3d(LAYER_3D_JOIN_PREVIEW)
+      @tool.clear_3d(LAYER_3D_SNAP_POINT_PREVIEW)
+
+      case @state
+
+      when STATE_SELECT
+        super
+        _snap_a(picker)
+        _preview_a(picker)
+        return true
+
+      when STATE_SELECT_B
+        _snap_b(picker)
+        _preview_a
+        _preview_b(picker)
+        _preview_join
+        return true
+
+      end
+    end
+
     # -----
 
     protected
+
+    def _reset
+      super
+      @snap_point = nil
+      @snap_face_manipulator_a = nil
+      @snap_face_manipulator_b = nil
+    end
+
+    def _refresh
+      @picker.invalidate if @picker.is_a?(SmartPicker)
+      super
+    end
+
+    # -----
+
+    def _snap_a(picker)
+      _snap_ref_face(picker, :@snap_face_manipulator_a)
+    end
+
+    def _snap_b(picker)
+      _snap_ref_face(picker, :@snap_face_manipulator_b)
+    end
+
+    def _snap_ref_face(picker, var_name)
+
+      face_manipulator = picker.picked_plane_manipulator
+      if face_manipulator.is_a?(FaceManipulator)
+
+        if _fetch_option_opposite?
+          snap_point, face_manipulator = _pick_opposite_face_at(picker.picked_point, face_manipulator)
+        else
+          snap_point = picker.picked_point
+        end
+
+        @snap_point = snap_point
+        self.instance_variable_set(var_name, face_manipulator)
+
+      else
+        @snap_point = nil
+        self.instance_variable_set(var_name, nil)
+      end
+
+    end
+
+    def _preview_a(picker = nil)
+      _preview_ref_face(picker, @snap_face_manipulator_a, COLOR_REF_FACE_A)
+    end
+
+    def _preview_b(picker = nil)
+      _preview_ref_face(picker, @snap_face_manipulator_b, COLOR_REF_FACE_B)
+    end
+
+    def _preview_ref_face(picker, face_manipulator, color)
+
+      if face_manipulator.is_a?(FaceManipulator)
+
+        # Offset transformation to force mesh to be on top of part preview
+        ov = Geom::Vector3d.new(face_manipulator.normal)
+        ov.length = 0.01
+        ot = Geom::Transformation.translation(ov)
+
+        k_mesh = Kuix::Mesh.new
+        k_mesh.add_triangles(face_manipulator.triangles)
+        k_mesh.background_color = color
+        k_mesh.transformation = ot
+        @tool.append_3d(k_mesh, LAYER_3D_JOIN_PREVIEW)
+
+        if @snap_point && picker && @snap_point != picker.picked_point
+
+          k_point = _create_floating_points(
+            points: @snap_point,
+            style: Kuix::POINT_STYLE_DIAMOND,
+            fill_color: color,
+            stroke_color: Kuix::COLOR_DARK_GREY,
+            stroke_width: 1,
+            )
+          @tool.append_3d(k_point, LAYER_3D_JOIN_PREVIEW)
+
+          k_edge = Kuix::EdgeMotif3d.new
+          k_edge.start.copy!(picker.picked_point)
+          k_edge.end.copy!(@snap_point)
+          k_edge.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+          k_edge.line_width = 1
+          k_edge.color = Kuix::COLOR_DARK_GREY
+          k_edge.on_top = true
+          @tool.append_3d(k_edge, LAYER_3D_JOIN_PREVIEW)
+
+          k_polyline = Kuix::Polyline.new
+          k_polyline.add_points(face_manipulator.outer_loop_manipulator.points)
+          k_polyline.line_width = 1
+          k_polyline.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+          k_polyline.color = Kuix::COLOR_DARK_GREY
+          k_polyline.closed = true
+          k_polyline.on_top = true
+          @tool.append_3d(k_polyline, LAYER_3D_JOIN_PREVIEW)
+
+        end
+
+      end
+
+    end
+
+    def _preview_join
+    end
 
     # -----
 
@@ -1726,6 +1889,78 @@ module Ladb::OpenCutList
 
       end
       [ point, face_manipulator ]
+    end
+
+    # ------
+
+    def _get_neighborhood_def(tolerance = 0.001)
+      return nil unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
+      return nil unless @snap_face_manipulator_a.is_a?(FaceManipulator) && @snap_face_manipulator_b.is_a?(FaceManipulator)
+
+      neighbor_def = nil
+
+      picked_part_entity_path = _get_part_entity_path_from_path(@picker.picked_face_path)
+      return nil if picked_part_entity_path.nil?                                                  # Exclude non-part entities
+      return nil if picked_part_entity_path == get_active_selection_path                          # Exclude selected part
+      return nil unless ArrayUtils.array_start_with?(picked_part_entity_path, _get_active_path)   # Exclude out of active path parts
+      if (picked_drawing_def = CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new(picked_part_entity_path) ], **_get_drawing_def_parameters).run).is_a?(DrawingDef)
+
+        # Exclude invalid drawing defs
+        return nil unless picked_drawing_def.bounds.valid?
+
+        # Transform the drawing def to the 'World' space
+        picked_drawing_def.transform!(picked_drawing_def.transformation.inverse)
+
+        # --
+
+        if (line = Geom.intersect_plane_plane(@snap_face_manipulator_a.plane, @snap_face_manipulator_b.plane))
+
+          line_manipulator = LineManipulator.new(line)
+
+          pos_a = @snap_face_manipulator_a.outer_loop_manipulator
+                                          .points
+                                          .map { |point| p = point.project_to_line(line); [ (p - line_manipulator.position) % line_manipulator.direction, p ] }
+                                          .sort_by! { |pos, _| pos }
+          pos_b = @snap_face_manipulator_b.outer_loop_manipulator
+                                          .points
+                                          .map { |point| p = point.project_to_line(line); [ (p - line_manipulator.position) % line_manipulator.direction, p ] }
+                                          .sort_by! { |pos, _| pos }
+
+          # Compute bounds intersection
+
+          pos_s, point_s = [ pos_a.first, pos_b.first ].max { |(pos1, _), (pos2, _)| pos1 <=> pos2 }
+          pos_e, point_e = [ pos_a.last, pos_b.last ].min { |(pos1, _), (pos2, _)| pos1 <=> pos2 }
+
+          return nil if pos_s > pos_e || point_s.distance(point_e).to_f < tolerance # No intersection
+
+          neighbor_def = NeighborhoodNeighborDef.new(
+            picked_part_entity_path,
+            picked_drawing_def,
+            NeighborhoodLineDef.new(
+              @snap_face_manipulator_a,
+              @snap_face_manipulator_b,
+              line_manipulator,
+              point_s,
+              point_e
+            )
+          )
+
+        end
+
+      end
+
+      # Transform the drawing def to the 'World' space
+      drawing_def.transform!(drawing_def.transformation.inverse)
+
+      # Keep useful data
+
+      path = get_active_part_entity_path
+
+      @neighborhood_def = NeighborhoodDef.new(
+        path,
+        drawing_def,
+        neighbor_def
+      )
     end
 
     # Data Structs -----
@@ -1767,28 +2002,14 @@ module Ladb::OpenCutList
     # -- STATE --
 
     def get_state_cursor(state)
-      case @state
-      when STATE_SELECT
-        SmartCursorManager.cursor_pin_1
+      case state
       when STATE_SELECT_B
-        SmartCursorManager.cursor_select_join_plus
+        return SmartCursorManager.cursor_select_join_plus
       end
+      super
     end
 
     # -----
-
-    def onToolCancel(tool, reason, view)
-      super
-
-      case @state
-
-      when STATE_SELECT_B
-        _reset
-
-      end
-      _refresh
-
-    end
 
     def onToolLButtonUp(tool, flags, x, y, view)
 
@@ -1805,193 +2026,15 @@ module Ladb::OpenCutList
       super
     end
 
-    def onSelected
-      set_state(STATE_SELECT_B)
-      _refresh
-    end
-
-    def onPickerChanged(picker, view)
-
-      @tool.clear_3d(100)
-
-      case @state
-
-      when STATE_SELECT
-        _snap_a(picker)
-        _preview_a(picker)
-        super
-        return true
-
-      when STATE_SELECT_B
-        _snap_b(picker)
-        _preview_join
-        _preview_b(picker)
-        _preview_a
-        return true
-
-      end
-    end
-
     # -----
 
     protected
 
-    def _reset
-      super
-      @snap_point = nil
-      @snap_face_manipulator_a = nil
-      @snap_face_manipulator_b = nil
-    end
-
     # -----
-
-    def _snap_a(picker)
-
-      face_manipulator_a = picker.picked_plane_manipulator
-      if face_manipulator_a.is_a?(FaceManipulator)
-
-        if _fetch_option_opposite?
-          snap_point, face_manipulator_a = _pick_opposite_face_at(picker.picked_point, face_manipulator_a)
-        else
-          snap_point = nil
-        end
-
-        @snap_point = snap_point
-        @snap_face_manipulator_a = face_manipulator_a
-
-      else
-        @snap_point = nil
-        @snap_face_manipulator_a = nil
-      end
-
-    end
-
-    def _snap_b(picker)
-
-      face_manipulator_b = picker.picked_plane_manipulator
-      if face_manipulator_b.is_a?(FaceManipulator)
-
-        if _fetch_option_opposite?
-          snap_point, face_manipulator_b = _pick_opposite_face_at(picker.picked_point, face_manipulator_b)
-        else
-          snap_point = nil
-        end
-
-        @snap_point = snap_point
-        @snap_face_manipulator_b = face_manipulator_b
-
-      else
-        @snap_point = nil
-        @snap_face_manipulator_b = nil
-      end
-
-    end
-
-    def _preview_a(picker = nil)
-
-      if @snap_face_manipulator_a.is_a?(FaceManipulator)
-
-        # Offset transformation to force mesh to be on top of part preview
-        ov = Geom::Vector3d.new(@snap_face_manipulator_a.normal)
-        ov.length = 0.01
-        ot = Geom::Transformation.translation(ov)
-
-        k_mesh = Kuix::Mesh.new
-        k_mesh.add_triangles(@snap_face_manipulator_a.triangles)
-        k_mesh.background_color = COLOR_REF_FACE_A
-        k_mesh.transformation = ot
-        @tool.append_3d(k_mesh, 100)
-
-      end
-
-      # -- Opposite?
-
-      if @snap_point && picker && @snap_point != picker.picked_point
-
-        k_point = _create_floating_points(
-          points: @snap_point,
-          style: Kuix::POINT_STYLE_DIAMOND,
-          stroke_color: Kuix::COLOR_DARK_GREY,
-          stroke_width: 1,
-          )
-        @tool.append_3d(k_point, 100)
-
-        k_edge = Kuix::EdgeMotif3d.new
-        k_edge.start.copy!(picker.picked_point)
-        k_edge.end.copy!(@snap_point)
-        k_edge.line_stipple = Kuix::LINE_STIPPLE_DOTTED
-        k_edge.line_width = 1
-        k_edge.color = Kuix::COLOR_DARK_GREY
-        k_edge.on_top = true
-        @tool.append_3d(k_edge, 100)
-
-        k_polyline = Kuix::Polyline.new
-        k_polyline.add_points(@snap_face_manipulator_a.outer_loop_manipulator.points)
-        k_polyline.line_width = 1
-        k_polyline.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-        k_polyline.color = Kuix::COLOR_DARK_GREY
-        k_polyline.closed = true
-        k_polyline.on_top = true
-        @tool.append_3d(k_polyline, 100)
-
-      end
-
-    end
-
-    def _preview_b(picker)
-
-      if @snap_face_manipulator_b.is_a?(FaceManipulator)
-
-        # Offset transformation to force mesh to be on top of part preview
-        ov = Geom::Vector3d.new(@snap_face_manipulator_b.normal)
-        ov.length = 0.01
-        ot = Geom::Transformation.translation(ov)
-
-        k_mesh = Kuix::Mesh.new
-        k_mesh.add_triangles(@snap_face_manipulator_b.triangles)
-        k_mesh.background_color = COLOR_REF_FACE_B
-        k_mesh.transformation = ot
-        @tool.append_3d(k_mesh, 100)
-
-      end
-
-      # -- Opposite?
-
-      if @snap_point && picker && @snap_point != picker.picked_point
-
-        k_point = _create_floating_points(
-          points: @snap_point,
-          style: Kuix::POINT_STYLE_DIAMOND,
-          stroke_color: Kuix::COLOR_DARK_GREY,
-          stroke_width: 1,
-          )
-        @tool.append_3d(k_point, 100)
-
-        k_edge = Kuix::EdgeMotif3d.new
-        k_edge.start.copy!(picker.picked_point)
-        k_edge.end.copy!(@snap_point)
-        k_edge.line_stipple = Kuix::LINE_STIPPLE_DOTTED
-        k_edge.line_width = 1
-        k_edge.color = Kuix::COLOR_DARK_GREY
-        k_edge.on_top = true
-        @tool.append_3d(k_edge, 100)
-
-        k_polyline = Kuix::Polyline.new
-        k_polyline.add_points(@snap_face_manipulator_b.outer_loop_manipulator.points)
-        k_polyline.line_width = 1
-        k_polyline.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-        k_polyline.color = Kuix::COLOR_DARK_GREY
-        k_polyline.closed = true
-        k_polyline.on_top = true
-        @tool.append_3d(k_polyline, 100)
-
-      end
-
-    end
 
     def _preview_join
       return if (neighborhood_def = _get_neighborhood_def).nil?
-      return if (joinery_def = _get_joinery_def(neighborhood_def)).nil?
+      return if (joinery_def = _get_add_joinery_def(neighborhood_def)).nil?
 
       geometries_def = _get_geometries_def
       hardware_a = geometries_def.hardware_a
@@ -2002,7 +2045,7 @@ module Ladb::OpenCutList
       k_mesh = Kuix::Mesh.new
       k_mesh.add_triangles(neighborhood_def.neighbor_def.drawing_def.face_manipulators.flat_map(&:triangles))
       k_mesh.background_color = COLOR_NEIGHBOR
-      @tool.append_3d(k_mesh, 100)
+      @tool.append_3d(k_mesh, LAYER_3D_JOIN_PREVIEW)
 
       unless joinery_def.anchor_points_3d.empty?
 
@@ -2013,14 +2056,14 @@ module Ladb::OpenCutList
         k_edge.line_width = 1.5
         k_edge.color = Kuix::COLOR_MAGENTA
         k_edge.on_top = true
-        @tool.append_3d(k_edge, 100)
+        @tool.append_3d(k_edge, LAYER_3D_JOIN_PREVIEW)
 
         k_points = _create_floating_points(
           points: joinery_def.anchor_points_3d,
           style: Kuix::POINT_STYLE_PLUS,
           stroke_color: Kuix::COLOR_MAGENTA
         )
-        @tool.append_3d(k_points, 100)
+        @tool.append_3d(k_points, LAYER_3D_JOIN_PREVIEW)
 
       end
 
@@ -2035,7 +2078,7 @@ module Ladb::OpenCutList
         k_segments.line_width = line_width
         k_segments.transformation = transformation
         k_segments.on_top = true
-        @tool.append_3d(k_segments, 100)
+        @tool.append_3d(k_segments, LAYER_3D_JOIN_PREVIEW)
 
       end
 
@@ -2092,7 +2135,7 @@ module Ladb::OpenCutList
 
     def _add_fittings
       return if (neighborhood_def = _get_neighborhood_def).nil?
-      return if (joinery_def = _get_joinery_def(neighborhood_def)).nil?
+      return if (joinery_def = _get_add_joinery_def(neighborhood_def)).nil?
 
       ti_a = neighborhood_def.ti_a
 
@@ -2171,7 +2214,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _get_joinery_def(neighborhood_def)
+    def _get_add_joinery_def(neighborhood_def)
       return nil if neighborhood_def.neighbor_def.nil?
 
       neighbor_def = neighborhood_def.neighbor_def
@@ -2221,7 +2264,6 @@ module Ladb::OpenCutList
         end
       end
 
-      # origin = line_def.start_point
       x_axis = line_def.line_manipulator.direction
 
       z_axis_a = line_def.face_manipulator.normal
@@ -2241,7 +2283,7 @@ module Ladb::OpenCutList
         ORIGIN,
         x_axis.transform(ti_b),
         y_axis_b.transform(ti_b),
-        z_axis_b.transform(ti_b).reverse!
+        z_axis_b.transform(ti_b)
       )
 
       anchor_points_3d = coords.map { |lx| line_def.start_point.offset(v, lx) }
@@ -2250,78 +2292,6 @@ module Ladb::OpenCutList
         anchor_points_3d,
         at_a,
         at_b
-      )
-    end
-
-    # ------
-
-    def _get_neighborhood_def(tolerance = 0.001)
-      return nil unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
-      return nil unless @snap_face_manipulator_a.is_a?(FaceManipulator) && @snap_face_manipulator_b.is_a?(FaceManipulator)
-
-      neighbor_def = nil
-
-      picked_part_entity_path = _get_part_entity_path_from_path(@picker.picked_face_path)
-      return nil if picked_part_entity_path.nil?                                                  # Exclude non-part entities
-      return nil if picked_part_entity_path == get_active_selection_path                          # Exclude selected part
-      return nil unless ArrayUtils.array_start_with?(picked_part_entity_path, _get_active_path)   # Exclude out of active path parts
-      if (picked_drawing_def = CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new(picked_part_entity_path) ], **_get_drawing_def_parameters).run).is_a?(DrawingDef)
-
-        # Exclude invalid drawing defs
-        return nil unless picked_drawing_def.bounds.valid?
-
-        # Transform the drawing def to the 'World' space
-        picked_drawing_def.transform!(picked_drawing_def.transformation.inverse)
-
-        # --
-
-        if (line = Geom.intersect_plane_plane(@snap_face_manipulator_a.plane, @snap_face_manipulator_b.plane))
-
-          line_manipulator = LineManipulator.new(line)
-
-          pos_a = @snap_face_manipulator_a.outer_loop_manipulator
-                                          .points
-                                          .map { |point| p = point.project_to_line(line); [ (p - line_manipulator.position) % line_manipulator.direction, p ] }
-                                          .sort_by! { |pos, _| pos }
-          pos_b = @snap_face_manipulator_b.outer_loop_manipulator
-                                          .points
-                                          .map { |point| p = point.project_to_line(line); [ (p - line_manipulator.position) % line_manipulator.direction, p ] }
-                                          .sort_by! { |pos, _| pos }
-
-          # Compute bounds intersection
-
-          pos_s, point_s = [ pos_a.first, pos_b.first ].max { |(pos1, _), (pos2, _)| pos1 <=> pos2 }
-          pos_e, point_e = [ pos_a.last, pos_b.last ].min { |(pos1, _), (pos2, _)| pos1 <=> pos2 }
-
-          return nil if pos_s > pos_e || point_s.distance(point_e).to_f < tolerance # No intersection
-
-          neighbor_def = NeighborhoodNeighborDef.new(
-            picked_part_entity_path,
-            picked_drawing_def,
-            NeighborhoodLineDef.new(
-              @snap_face_manipulator_a,
-              @snap_face_manipulator_b,
-              line_manipulator,
-              point_s,
-              point_e
-            )
-          )
-
-        end
-
-      end
-
-      # Transform the drawing def to the 'World' space
-      drawing_def.transform!(drawing_def.transformation.inverse)
-
-      # Keep useful data
-
-      path = get_active_part_entity_path
-
-      @neighborhood_def = NeighborhoodDef.new(
-        path,
-        drawing_def,
-        neighbor_def
       )
     end
 
@@ -2342,8 +2312,228 @@ module Ladb::OpenCutList
     # -- STATE --
 
     def get_state_cursor(state)
-      SmartCursorManager.cursor_select_join_minus
+      case state
+      when STATE_SELECT_B
+        return SmartCursorManager.cursor_select_join_minus
+      end
+      super
     end
+
+    def get_state_status(state)
+      case state
+      when STATE_SELECT_B
+        super +
+          ' | ' + PLUGIN.get_i18n_string("default.constrain_key") + ' = ' + PLUGIN.get_i18n_string("tool.smart_join.action_3_only_one_status") + '.'
+      else
+        super
+      end
+    end
+
+    # -----
+
+    def onToolLButtonUp(tool, flags, x, y, view)
+
+      case @state
+
+      when STATE_SELECT_B
+        _remove_fittings
+        if @tool.is_key_shift_down?
+          _refresh
+        else
+          _restart
+        end
+
+        return true
+
+      end
+
+      super
+    end
+
+    def onToolKeyDown(tool, key, repeat, flags, view)
+
+      if tool.is_key_shift?(key)
+        _refresh
+        return true
+      end
+
+      super
+    end
+
+    def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
+      return true if super
+
+      if tool.is_key_shift?(key)
+        _refresh
+        return true
+      end
+
+      false
+    end
+
+    # -----
+
+    protected
+
+    def _reset
+      super
+      @snap_anchor = nil
+    end
+
+    # -----
+
+    def _snap_b(picker = nil)
+      context_changed = super
+
+      if @tool.is_key_shift_down? &&
+         @snap_point.is_a?(Geom::Point3d) &&
+         (neighborhodd_def = _get_neighborhood_def) &&
+         (joinery_def = _get_remove_joinery_def(neighborhodd_def))
+
+        snap_anchor = _get_anchors(joinery_def).min { |p1, p2| @snap_point.distance(p1) <=> @snap_point.distance(p2) }
+
+      else
+        snap_anchor = nil
+      end
+
+      context_changed = context_changed || @snap_anchor != snap_anchor
+
+      @snap_anchor = snap_anchor
+
+      context_changed
+    end
+
+    def _preview_join
+      return if (neighborhood_def = _get_neighborhood_def).nil?
+      return if (joinery_def = _get_remove_joinery_def(neighborhood_def)).nil?
+
+      line_def = neighborhood_def.neighbor_def.line_def
+
+      fn_preview_grouped_glued_instances = lambda do |anchor_coords, glued_instances, transformation|
+        anchor = Geom::Point3d.new(anchor_coords)
+        next unless _is_snap_anchor?(anchor)
+
+        glued_instances.each do |glued_instance|
+
+          k_box = Kuix::BoxFillMotif3d.new
+          k_box.bounds.copy!(glued_instance.definition.bounds)
+          k_box.line_width = 2
+          k_box.color = ColorUtils.color_translucent(Kuix::COLOR_RED, 0.3)
+          k_box.on_top = true
+          k_box.transformation = transformation * glued_instance.transformation
+          @tool.append_3d(k_box, LAYER_3D_JOIN_PREVIEW)
+
+          k_box = Kuix::BoxMotif3d.new
+          k_box.bounds.copy!(glued_instance.definition.bounds)
+          k_box.line_width = 2
+          k_box.color = Kuix::COLOR_RED
+          k_box.on_top = true
+          k_box.transformation = transformation * glued_instance.transformation
+          @tool.append_3d(k_box, LAYER_3D_JOIN_PREVIEW)
+
+        end
+
+        k_point = _create_floating_points(
+          points: anchor,
+          style: Kuix::POINT_STYLE_PLUS,
+          stroke_color: Kuix::COLOR_BLACK,
+          )
+        @tool.append_3d(k_point, LAYER_3D_JOIN_PREVIEW)
+
+      end
+
+      joinery_def.grouped_glued_instances_a.each do |anchor_coords, glued_instances|
+        fn_preview_grouped_glued_instances.call(anchor_coords, glued_instances, line_def.face_manipulator.transformation)
+      end
+      joinery_def.grouped_glued_instances_b.each do |anchor_coords, glued_instances|
+        fn_preview_grouped_glued_instances.call(anchor_coords, glued_instances, line_def.neighbor_face_manipulator.transformation)
+      end
+
+      if @snap_point.is_a?(Geom::Point3d) && @snap_anchor.is_a?(Geom::Point3d)
+
+        k_edge = Kuix::EdgeMotif3d.new
+        k_edge.start.copy!(@snap_point)
+        k_edge.end.copy!(@snap_anchor)
+        k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+        k_edge.line_width = 1
+        k_edge.color = Kuix::COLOR_DARK_GREY
+        k_edge.on_top = true
+        @tool.append_3d(k_edge, LAYER_3D_SNAP_POINT_PREVIEW)
+
+      end
+
+    end
+
+    # -----
+
+    def _remove_fittings
+      return if (neighborhood_def = _get_neighborhood_def).nil?
+      return if (joinery_def = _get_remove_joinery_def(neighborhood_def)).nil?
+
+      model = Sketchup.active_model
+      model.start_operation('OCL Remove Fittings', true)
+
+        fn_remove_glued_instances = lambda do |anchor_coords, glued_instances|
+          next unless _is_snap_anchor?(Geom::Point3d.new(anchor_coords))
+          glued_instances.each do |glued_instance|
+            next if glued_instance.deleted?
+            glued_instance.erase!
+          end
+        end
+
+        begin
+
+          joinery_def.grouped_glued_instances_a.each do |anchor_coords, glued_instances_a|
+            fn_remove_glued_instances.call(anchor_coords, glued_instances_a)
+          end
+          joinery_def.grouped_glued_instances_b.each do |anchor_coords, glued_instances_b|
+            fn_remove_glued_instances.call(anchor_coords, glued_instances_b)
+          end
+
+        rescue Exception => e
+          PLUGIN.dump_exception(e)
+          model.abort_operation
+          return
+        end
+
+      model.commit_operation
+
+    end
+
+    # -----
+
+    def _get_anchors(joinery_def)
+      (joinery_def.grouped_glued_instances_a.keys + joinery_def.grouped_glued_instances_b.keys).map! { |coords| coords.map! { |coord| coord.round(6) } }
+                                                                                               .uniq
+                                                                                               .map! { |coords| Geom::Point3d.new(coords) }
+    end
+
+    def _is_snap_anchor?(anchor)
+      !@snap_anchor.is_a?(Geom::Point3d) || @snap_anchor.distance(anchor).round(3) == 0
+    end
+
+    # -----
+
+    def _get_remove_joinery_def(neighborhood_def)
+      return nil if neighborhood_def.neighbor_def.nil?
+
+      neighbor_def = neighborhood_def.neighbor_def
+      line_def = neighbor_def.line_def
+
+      poly = [ line_def.start_point, line_def.start_point, line_def.end_point ]
+
+      grouped_glued_instances_a = _get_grouped_glued_instances(line_def.face_manipulator, poly)
+      grouped_glued_instances_b = _get_grouped_glued_instances(line_def.neighbor_face_manipulator, poly)
+
+      RemoveJoineryDef.new(
+        grouped_glued_instances_a,
+        grouped_glued_instances_b
+      )
+    end
+
+    # Data Structs -----
+
+    RemoveJoineryDef = Struct.new(:grouped_glued_instances_a, :grouped_glued_instances_b)
 
   end
 
