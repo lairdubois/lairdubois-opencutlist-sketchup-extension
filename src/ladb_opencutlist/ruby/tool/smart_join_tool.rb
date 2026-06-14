@@ -1028,8 +1028,8 @@ module Ladb::OpenCutList
 
         if occupied_anchor_count > 0
           @tool.show_message(PLUGIN.get_i18n_string('tool.smart_join.error.occupied_anchors', { :count => occupied_anchor_count }), SmartTool::MESSAGE_TYPE_ERROR)
-        else
-          @tool.show_message(PLUGIN.get_i18n_string('tool.smart_join.error.no_valid_join'), SmartTool::MESSAGE_TYPE_ERROR) if no_valid_join
+        elsif no_valid_join
+          @tool.show_message(PLUGIN.get_i18n_string('tool.smart_join.error.no_valid_join'), SmartTool::MESSAGE_TYPE_ERROR)
         end
 
       end
@@ -2234,6 +2234,23 @@ module Ladb::OpenCutList
 
       end
 
+      k_points = _create_floating_points(
+        points: join_def.occupied_anchor_points_3d,
+        style: Kuix::POINT_STYLE_CROSS,
+        stroke_color: Kuix::COLOR_RED,
+        stroke_width: 2
+      )
+      @tool.append_3d(k_points, LAYER_3D_JOIN_PREVIEW)
+
+      no_valid_join = join_def.anchor_points_3d.empty?
+      occupied_anchor_count = join_def.occupied_anchor_points_3d.length
+
+      if occupied_anchor_count > 0
+        @tool.show_message(PLUGIN.get_i18n_string('tool.smart_join.error.occupied_anchors', { :count => occupied_anchor_count }), SmartTool::MESSAGE_TYPE_ERROR)
+      elsif no_valid_join
+        @tool.show_message(PLUGIN.get_i18n_string('tool.smart_join.error.no_valid_join'), SmartTool::MESSAGE_TYPE_ERROR)
+      end
+
     end
 
     # -----
@@ -2323,7 +2340,9 @@ module Ladb::OpenCutList
       neighbor_def = neighborhood_def.neighbor_def
       line_def = neighbor_def.line_def
 
+      t_a = neighborhood_def.t_a
       ti_a = neighborhood_def.ti_a
+      t_b = neighbor_def.t_b
       ti_b = neighbor_def.ti_b
 
       start_offset = _fetch_option_start_offset
@@ -2400,6 +2419,19 @@ module Ladb::OpenCutList
 
       anchor_points_3d = coords.map { |lx| ps.offset(v, lx) }
 
+      poly_3d = [ line_def.start_point, line_def.start_point, line_def.end_point ] # Fake flat poly by doubbleling start point
+
+      grouped_glued_instances_a = _get_grouped_glued_instances(line_def.face_manipulator, poly_3d)
+      grouped_glued_instances_b = _get_grouped_glued_instances(line_def.neighbor_face_manipulator, poly_3d)
+
+      occupied_anchor_points_3d = []
+      anchor_points_3d.delete_if do |point|
+        occupied = grouped_glued_instances_a.any? { |_, glued_instances| _is_geometries_intersect_glued_instances?(geometries_bounds, point, glued_instances, line_def.face_manipulator, t_a, ti_a, at_a) } ||
+                   grouped_glued_instances_b.any? { |_, glued_instances| _is_geometries_intersect_glued_instances?(geometries_bounds, point, glued_instances, line_def.neighbor_face_manipulator, t_b, ti_b, at_b)  }
+        occupied_anchor_points_3d << point if occupied
+        occupied
+      end
+
       start_point_3d = ps.offset(v, anchor_points_3d.length > 1 ? start_offset_length : 0)
       end_point_3d = pe.offset(v.reverse, anchor_points_3d.length > 1 ? end_offset_length : 0)
 
@@ -2408,6 +2440,7 @@ module Ladb::OpenCutList
         at_b,
         AddJoineryJoinDef.new(
           anchor_points_3d,
+          occupied_anchor_points_3d,
           start_point_3d,
           end_point_3d
         )
@@ -2417,7 +2450,7 @@ module Ladb::OpenCutList
     # Data Structs -----
 
     AddJoineryDef = Struct.new(:at_a, :at_b, :join_def)
-    AddJoineryJoinDef = Struct.new(:anchor_points_3d, :start_point_3d, :end_point_3d)
+    AddJoineryJoinDef = Struct.new(:anchor_points_3d, :occupied_anchor_points_3d, :start_point_3d, :end_point_3d)
 
   end
 
