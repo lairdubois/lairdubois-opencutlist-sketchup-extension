@@ -2521,26 +2521,41 @@ tool:
     action_1_status: Delete connectors used to assemble parts
     action_1_state_0_status: Click on a part's reference face to delete the connectors it shares with neighboring parts
     action_1_only_one_status: Limit to a single connector
+    action_2: Add fittings
+    action_2_status: Ajouter fittings to join parts
+    action_2_state_0_status: Click on the reference face of part A to add fittings to a neighboring part
+    action_2_state_1_status: Click on the reference face of part B to add fittings to the part A
+    action_3: Delete fittings
+    action_3_status: Delete fittings used to join parts
+    action_3_state_0_status: Click on the reference face of part A to erase the fittings it shares with a neighboring part
+    action_3_state_1_status: Click on the reference face of part B to delete the fittings it shares with part A
+    action_3_only_one_status: Limit to a single fitting
     action_option_group_height: Height
     action_option_group_offsets: Offsets
-    action_option_group_spacings: Spacings
+    action_option_group_spacings: Center distances
     action_option_group_options: Options
-    action_option_height_distance: Height
-    action_option_height_centered: Height centered
+    action_option_height: Height
     action_option_offsets_start_offset: Start
     action_option_offsets_end_offset: End
     action_option_spacings_min_spacing: Min
     action_option_spacings_max_spacing: Max
     action_option_options_make_unique_status: Make assembled parts unique
-    action_option_hardware_a: Connector A
-    action_option_hardware_b: Connector B
+    action_option_hardware_connector_a: Connector A
+    action_option_hardware_connector_b: Connector B
+    action_option_hardware_fitting_a: Fitting A
+    action_option_hardware_fitting_b: Fitting B
     action_option_machining_a: Machining A
     action_option_machining_b: Machining B
-    action_option_hardware_material_name: Material Connectors
-    action_option_machining_material_name: Material Machinings
+    action_option_hardware_connector_material_name: Connector Material
+    action_option_hardware_fitting_material_name: Fitting Material
+    action_option_machining_material_name: Machining Material
+    action_option_hardware_connector_layer_name: Connector Tag
+    action_option_hardware_fitting_layer_name: Fitting Tag
+    action_option_machining_layer_name: Machining Tag
     measures: Measures
     geometries: Geometries
     error:
+      not_assemblable: This type of part cannot be assembled
       no_valid_join: There are no contact surfaces that meet the assembly requirements
       occupied_anchors: "{{ count }} connector that conflicts with existing connectors"
       occupied_anchors_plural: "{{ count }} connector that conflict with existing connectors"
@@ -2550,6 +2565,9 @@ tool:
       no_connector_to_remove: No connector to erase
       x_connectors_to_remove: "{{ count }} connector to erase"
       x_connectors_to_remove_plural: "{{ count }} connectors to erase"
+      no_fitting_to_remove: No fitting to erase
+      x_fittings_to_remove: "{{ count }} fitting to erase"
+      x_fittings_to_remove_plural: "{{ count }} fittings to erase"
       different_file_name: The name of the SKP file ({{ file_name }}) is different from the name of the definition it contains ({{ definition_name }})
   smart_export:
     title: Export

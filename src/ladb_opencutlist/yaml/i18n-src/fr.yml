@@ -2534,7 +2534,7 @@ tool:
     action_3_only_one_status: Limiter à un seul raccord
     action_option_group_height: Hauteur
     action_option_group_offsets: Décalages
-    action_option_group_spacings: Entraxes  # TODO: Changed
+    action_option_group_spacings: Entraxes
     action_option_group_options: Options
     action_option_height: Hauteur
     action_option_offsets_start_offset: Début

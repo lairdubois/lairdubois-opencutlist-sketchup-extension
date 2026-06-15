@@ -2521,26 +2521,41 @@ tool:
     action_1_status: Verbindungselemente von Teilen löschen
     action_1_state_0_status: Klicken Sie auf die Referenzfläche eines Teils, um die Verbinder zu löschen, die es mit benachbarten Teilen teilt
     action_1_only_one_status: Auf ein Verbindungselement beschränken
+    action_2: Bechläge hinzufungen
+    action_2_status: Beschläge zum Verbinden von Teilen hinzufügen
+    action_2_state_0_status: Klicken Sie auf die Referenzfläche eines Teils A, um einen Beschläge zu einem benachbarten Teil hinzuzufügen
+    action_2_state_1_status: Klicken Sie auf die Referenzfläche eines Teils B, um Beschläge zu Teil A hinzuzufügen
+    action_3: Beschläge löschen
+    action_3_status: Beschlägen zwischen Bauteilen löschen
+    action_3_state_0_status: Klicken Sie auf die Referenzfläche eines Teils A, um die Beschläge zu löschen, die es mit einem benachbarten Teil teilt
+    action_3_state_1_status: Klicken Sie auf die Referenzfläche eines Teils B, um die Beschläge zu löschen, die es mit Teil A teilt
+    action_3_only_one_status: Auf einen Beschlag beschränken
     action_option_group_height: Höhe
     action_option_group_offsets: Versätze
-    action_option_group_spacings: Abstände
+    action_option_group_spacings: Achsabstände
     action_option_group_options: Optionen
-    action_option_height_distance: Höhe
-    action_option_height_centered: Höhe zentriert
+    action_option_height: Höhe
     action_option_offsets_start_offset: Anfang
     action_option_offsets_end_offset: Ende
     action_option_spacings_min_spacing: Min
     action_option_spacings_max_spacing: Max
     action_option_options_make_unique_status: Verbundene Elemente einzigartig machen
-    action_option_hardware_a: Verbinder A
-    action_option_hardware_b: Verbinder B
+    action_option_hardware_connector_a: Verbinder A
+    action_option_hardware_connector_b: Verbinder B
+    action_option_hardware_fitting_a: Beschlag A
+    action_option_hardware_fitting_b: Beschlag B
     action_option_machining_a: Bearbeitung A
     action_option_machining_b: Bearbeitung B
-    action_option_hardware_material_name: Material Verbinder
+    action_option_hardware_connector_material_name: Material Verbinder
+    action_option_hardware_fitting_material_name: Material Beschläge
     action_option_machining_material_name: Material Bearbeitungen
+    action_option_hardware_connector_layer_name: Tag der Verbinder
+    action_option_hardware_fitting_layer_name: Tag der Beschläge
+    action_option_machining_layer_name: Tag der Bearbeitungen
     measures: Maße
     geometries: Geometrien
     error:
+      not_assemblable: Dieser Teiletyp kann nicht zusammengefügt werden
       no_valid_join: Es gibt keine Kontaktfläche, die die Anforderungen an die Verbindung erfüllt
       occupied_anchors: "{{ count }} Verbinder, dessen Position mit der von vorhandenen Verbindungselementen kollidiert"
       occupied_anchors_plural: "{{ count }} Verbinder, deren Position mit der von vorhandenen Verbindungselementen kollidiert"
@@ -2550,6 +2565,9 @@ tool:
       no_connector_to_remove: Kein Verbinder zum Löschen
       x_connectors_to_remove: "{{ count }} Verbinder zum Löschen"
       x_connectors_to_remove_plural: "{{ count }} Verbinder zum Löschen"
+      no_fitting_to_remove: Kein Beschlag zum Löschen
+      x_fittings_to_remove: "{{ count }} Beschlag zum Löschen"
+      x_fittings_to_remove_plural: "{{ count }} Beschläge zum Löschen"
       different_file_name: Der Name der SKP-Datei ({{ file_name }}) unterscheidet sich vom Namen der darin enthaltenen Definition ({{ definition_name }})
   smart_export:
     title: Exportieren
