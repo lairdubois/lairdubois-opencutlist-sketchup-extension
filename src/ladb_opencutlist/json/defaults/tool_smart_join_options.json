@@ -13,12 +13,14 @@
     "min_spacing": "0",
     "max_spacing": { "metric": "300mm", "imperial": "12\"" },
     "make_unique": true,
-    "hardware_a": "",
-    "hardware_b": "",
-    "machining_a": "",
-    "machining_b": "",
-    "hardware_material_name": "",
-    "machining_material_name": ""
+    "hardware_a": null,
+    "hardware_b": null,
+    "machining_a": null,
+    "machining_b": null,
+    "hardware_material_name": null,
+    "machining_material_name": null,
+    "hardware_layer_name": null,
+    "machining_layer_name": null
   },
   "action_2": {  /* ACTION_ADD_FITTINGS */
     "start_offset": "0",
@@ -27,12 +29,14 @@
     "max_spacing": { "metric": "300mm", "imperial": "12\"" },
     "opposite": false,
     "make_unique": true,
-    "hardware_a": "",
-    "hardware_b": "",
-    "machining_a": "",
-    "machining_b": "",
-    "hardware_material_name": "",
-    "machining_material_name": ""
+    "hardware_a": null,
+    "hardware_b": null,
+    "machining_a": null,
+    "machining_b": null,
+    "hardware_material_name": null,
+    "machining_material_name": null,
+    "hardware_layer_name": null,
+    "machining_layer_name": null
   },
   "action_3": {  /* ACTION_REMOVE_FITTINGS */
     "opposite": false

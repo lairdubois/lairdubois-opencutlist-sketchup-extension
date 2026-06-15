@@ -41,6 +41,8 @@
             const $inputMachiningB = $('#ladb_input_machining_b', that.$element);
             const $inputHardwareMaterialName = $('#ladb_input_hardware_material_name', that.$element);
             const $inputMachiningMaterialName = $('#ladb_input_machining_material_name', that.$element);
+            const $inputHardwareLayerName = $('#ladb_input_hardware_layer_name', that.$element);
+            const $inputMachiningLayerName = $('#ladb_input_machining_layer_name', that.$element);
             const $btnValidate = $('#ladb_btn_validate', that.$element);
 
             const fnFetchOptions = function (options) {
@@ -55,6 +57,8 @@
                 options.machining_b = $inputMachiningB.val();
                 options.hardware_material_name = $inputHardwareMaterialName.val();
                 options.machining_material_name = $inputMachiningMaterialName.val();
+                options.hardware_layer_name = $inputHardwareLayerName.val();
+                options.machining_layer_name = $inputMachiningLayerName.val();
             };
             const fnFillInputs = function (options) {
                 $inputHeight.val(options.height);
@@ -68,6 +72,8 @@
                 $inputMachiningB.val(options.machining_b);
                 $inputHardwareMaterialName.val(options.hardware_material_name);
                 $inputMachiningMaterialName.val(options.machining_material_name);
+                $inputHardwareLayerName.val(options.hardware_layer_name);
+                $inputMachiningLayerName.val(options.machining_layer_name);
             };
 
             $widgetPreset.ladbWidgetPreset({
@@ -88,6 +94,8 @@
             $inputMachiningB.ladbTextinputFile();
             $inputHardwareMaterialName.ladbTextinputFile();
             $inputMachiningMaterialName.ladbTextinputFile();
+            $inputHardwareLayerName.ladbTextinputText();
+            $inputMachiningLayerName.ladbTextinputText();
 
             fnFillInputs(options);
 

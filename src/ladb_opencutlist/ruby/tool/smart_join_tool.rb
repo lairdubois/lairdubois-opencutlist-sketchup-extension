@@ -34,6 +34,8 @@ module Ladb::OpenCutList
     ACTION_OPTION_GEOMETRY_MACHINING_B = 'machining_b'
     ACTION_OPTION_GEOMETRY_HARDWARE_MATERIAL_NAME = 'hardware_material_name'
     ACTION_OPTION_GEOMETRY_MACHINING_MATERIAL_NAME = 'machining_material_name'
+    ACTION_OPTION_GEOMETRY_HARDWARE_LAYER_NAME = 'hardware_layer_name'
+    ACTION_OPTION_GEOMETRY_MACHINING_LAYER_NAME = 'machining_layer_name'
 
     ACTIONS = [
       {
@@ -367,6 +369,14 @@ module Ladb::OpenCutList
       @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_MACHINING_MATERIAL_NAME)
     end
 
+    def _fetch_option_hardware_layer_name
+      @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_HARDWARE_LAYER_NAME)
+    end
+
+    def _fetch_option_machining_layer_name
+      @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_MACHINING_LAYER_NAME)
+    end
+
     # -----
 
     def _get_geometries_def
@@ -438,6 +448,18 @@ module Ladb::OpenCutList
       hardware_material = fn_get_material.call(_fetch_option_hardware_material_name, COLOR_DEFAULT_HARDWARE_MATERIAL, MaterialAttributes::TYPE_HARDWARE)
       machining_material = fn_get_material.call(_fetch_option_machining_material_name, COLOR_DEFAULT_MACHINING_MATERIAL, MaterialAttributes::TYPE_MACHINING)
 
+      fn_get_layer = lambda do |ref|
+        return nil if !ref.is_a?(String) || ref.strip.empty?
+        layer = model.layers[ref]
+        if layer.nil?
+          layer = model.layers.add(ref)
+        end
+        layer
+      end
+
+      hardware_layer = fn_get_layer.call(_fetch_option_hardware_layer_name)
+      machining_layer = fn_get_layer.call(_fetch_option_machining_layer_name)
+
       bounds = Geom::BoundingBox.new
       bounds.add(hardware_a_drawing_def.bounds) unless hardware_a_drawing_def.nil?
       bounds.add(hardware_b_drawing_def.bounds) unless hardware_b_drawing_def.nil?
@@ -451,6 +473,8 @@ module Ladb::OpenCutList
         GeometriesEntityDef.new(machining_b_definition, machining_b_drawing_def),
         hardware_material,
         machining_material,
+        hardware_layer,
+        machining_layer,
         bounds,
         )
     end
@@ -496,26 +520,29 @@ module Ladb::OpenCutList
       }
     end
 
-    def _add_glued_instance(definition, material, face, entities, dti, pt, at)
+    def _add_glued_instance(definition, material, layer, face, entities, dti, pt, at)
       if definition.is_a?(Sketchup::ComponentDefinition)
         definition.behavior.no_scale_mask = 0b1111111 # No scale in all direction
         definition.behavior.is2d = true               # Force 2D behavior to ba able to glue to face
         instance = entities.add_instance(definition, dti * Geom::Transformation.translation(pt) * at)
-        instance.material = material
+        instance.material = material if material.is_a?(Sketchup::Material)
+        instance.layer = layer if layer.is_a?(Sketchup::Layer)
         instance.glued_to = face
       end
     end
 
     # Data Structs -----
 
-    GeometriesDef = Struct.new(:hardware_a, :hardware_b, :machining_a, :machining_b, :hardware_material, :machining_material, :bounds) do
+    GeometriesDef = Struct.new(:hardware_a, :hardware_b, :machining_a, :machining_b, :hardware_material, :machining_material, :hardware_layer, :machining_layer, :bounds) do
       def valid?
         hardware_a.valid? &&
           hardware_b.valid? &&
           machining_a.valid? &&
           machining_b.valid? &&
           (hardware_material.nil? || hardware_material.valid?) &&
-          (machining_material.nil? || machining_material.valid?)
+          (machining_material.nil? || machining_material.valid?) &&
+          (hardware_layer.nil? || hardware_layer.valid?) &&
+          (machining_layer.nil? || machining_layer.valid?)
       end
     end
     GeometriesEntityDef = Struct.new(:definition, :drawing_def) do
@@ -1147,6 +1174,8 @@ module Ladb::OpenCutList
       machining_b = geometries_def.machining_b
       hardware_material = geometries_def.hardware_material
       machining_material = geometries_def.machining_material
+      hardware_layer = geometries_def.hardware_layer
+      machining_layer = geometries_def.machining_layer
 
       model = Sketchup.active_model
       model.start_operation('OCL Add Connectors', true)
@@ -1237,12 +1266,12 @@ module Ladb::OpenCutList
                 pt_b = point.transform(ti_b).project_to_plane(face_b.plane)
 
                 # -- A --
-                _add_glued_instance(hardware_a.definition, hardware_material, face_a, entities_a, dti_a, pt_a, at_a)
-                _add_glued_instance(machining_a.definition, machining_material, face_a, entities_a, dti_a, pt_a, at_a)
+                _add_glued_instance(hardware_a.definition, hardware_material, hardware_layer, face_a, entities_a, dti_a, pt_a, at_a)
+                _add_glued_instance(machining_a.definition, machining_material, machining_layer, face_a, entities_a, dti_a, pt_a, at_a)
 
                 # -- B --
-                _add_glued_instance(hardware_b.definition, hardware_material, face_b, entities_b, dti_b, pt_b, at_b)
-                _add_glued_instance(machining_b.definition, machining_material, face_b, entities_b, dti_b, pt_b, at_b)
+                _add_glued_instance(hardware_b.definition, hardware_material, hardware_layer, face_b, entities_b, dti_b, pt_b, at_b)
+                _add_glued_instance(machining_b.definition, machining_material, machining_layer, face_b, entities_b, dti_b, pt_b, at_b)
 
               end
 
@@ -2283,6 +2312,8 @@ module Ladb::OpenCutList
       machining_b = geometries_def.machining_b
       hardware_material = geometries_def.hardware_material
       machining_material = geometries_def.machining_material
+      hardware_layer = geometries_def.hardware_layer
+      machining_layer = geometries_def.machining_layer
 
       model = Sketchup.active_model
       model.start_operation('OCL Add Fittings', true)
@@ -2363,12 +2394,12 @@ module Ladb::OpenCutList
             pt_b = point.transform(ti_b).project_to_plane(face_b.plane)
 
             # -- A --
-            _add_glued_instance(hardware_a.definition, hardware_material, face_a, entities_a, dti_a, pt_a, at_a)
-            _add_glued_instance(machining_a.definition, machining_material, face_a, entities_a, dti_a, pt_a, at_a)
+            _add_glued_instance(hardware_a.definition, hardware_material, hardware_layer, face_a, entities_a, dti_a, pt_a, at_a)
+            _add_glued_instance(machining_a.definition, machining_material, machining_layer, face_a, entities_a, dti_a, pt_a, at_a)
 
             # -- B --
-            _add_glued_instance(hardware_b.definition, hardware_material, face_b, entities_b, dti_b, pt_b, at_b)
-            _add_glued_instance(machining_b.definition, machining_material, face_b, entities_b, dti_b, pt_b, at_b)
+            _add_glued_instance(hardware_b.definition, hardware_material, hardware_layer, face_b, entities_b, dti_b, pt_b, at_b)
+            _add_glued_instance(machining_b.definition, machining_material, machining_layer, face_b, entities_b, dti_b, pt_b, at_b)
 
           end
 

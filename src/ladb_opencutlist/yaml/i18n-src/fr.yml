@@ -2551,6 +2551,9 @@ tool:
     action_option_hardware_connector_material_name: Matière des Connecteurs
     action_option_hardware_fitting_material_name: Matière des Raccords
     action_option_machining_material_name: Matière des Usinages
+    action_option_hardware_connector_layer_name: Balise des Connecteurs
+    action_option_hardware_fitting_layer_name: Balise des Raccords
+    action_option_machining_layer_name: Balise des Usinages
     measures: Mesures
     geometries: Géométries
     error:
