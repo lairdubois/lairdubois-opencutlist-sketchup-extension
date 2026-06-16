@@ -10,7 +10,8 @@
         this.dialog = dialog;
 
         this.$dropdown = $('ul', this.$element);
-        this.$btn = $('button', this.$element);
+
+        this.names = null;
 
     };
 
@@ -19,6 +20,40 @@
         section: null,
         fnFetchOptions: null,
         fnFillInputs: null
+    };
+
+    LadbWidgetPreset.prototype.renamePreset = function (name, noNotification) {
+        const that = this;
+        rubyCallCommand('core_get_global_preset', {
+            dictionary: that.options.dictionary,
+            section: that.options.section,
+            name: name
+        }, function (response) {
+            that.dialog.prompt(i18next.t('core.preset.rename_prompt_title'), i18next.t('core.preset.rename_prompt', { name: name }), name, function (newName) {
+                if (Array.isArray(that.names) && that.names.includes(newName)) {
+                    that.dialog.notifyErrors([ i18next.t('core.preset.new_error', { name: newName }) ]);
+                } else {
+                    rubyCallCommand('core_set_global_preset', {
+                        dictionary: that.options.dictionary,
+                        section: that.options.section,
+                        values: response.preset,
+                        name: newName
+                    }, function () {
+                        rubyCallCommand('core_set_global_preset', {
+                            dictionary: that.options.dictionary,
+                            section: that.options.section,
+                            values: null,
+                            name: name
+                        }, function () {
+                            if (!noNotification) {
+                                that.dialog.notifySuccess(i18next.t('core.preset.rename_success', { name: name, new_name: newName }));
+                            }
+                            that.refresh();
+                        });
+                    });
+                }
+            });
+        });
     };
 
     LadbWidgetPreset.prototype.deletePreset = function (name, noNotification) {
@@ -45,6 +80,11 @@
 
     LadbWidgetPreset.prototype.saveToPreset = function (name, isNew, noNotification) {
         const that = this;
+
+        if (isNew && Array.isArray(this.names) && this.names.includes(name)) {
+            this.dialog.notifyErrors([ i18next.t('core.preset.new_error', { name: name }) ]);
+            return;
+        }
 
         const fnDoSave = function () {
             const values = {};
@@ -97,6 +137,8 @@
 
         rubyCallCommand('core_list_global_preset_names', { dictionary: this.options.dictionary, section: this.options.section }, function (response) {
 
+            that.names = response.names;
+
             // Replace dropdown content
             that.$dropdown
                 .empty()
@@ -133,6 +175,9 @@
                 });
                 $('.ladb-widget-preset-btn-save', $item).on('click', function () {
                     that.saveToPreset(name);
+                });
+                $('.ladb-widget-preset-btn-rename', $item).on('click', function () {
+                    that.renamePreset(name);
                 });
                 $('.ladb-widget-preset-btn-delete', $item).on('click', function () {
                     that.deletePreset(name);

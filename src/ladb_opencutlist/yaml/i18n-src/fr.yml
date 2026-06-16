@@ -211,16 +211,21 @@ core:
       *La création d'un préréglage personnalisé vous permet de conserver les paramètres actuels du formulaire de façon globale afin de pouvoir les réutiliser ensuite dans tous vos modèles.*
 
       Saisissez le nom du préréglage :
+    rename_prompt_title: Renommage
+    rename_prompt: "Entrez le nouveau nom du préréglage **\"{{ name }}\"**"
     delete_confirm_title: Suppression
     delete_confirm: "Confirmez-vous la suppression du préréglage **\"{{ name }}\"** ?"
     override_confirm_title: Actualisation
     override_confirm: "Confirmez-vous l'actualisation du préréglage **\"{{ name }}\"** avec les paramètres du formulaire ?"
+    new_error: "Impossible, un préréglage **\"{{ name }}\"** existe déjà"
     new_success: "Préréglage **\"{{ name }}\"** créé"
     override_success: "Préréglage **\"{{ name }}\"** actualisé"
     restore_success: "Le formulaire a été rempli avec le préréglage **\"{{ name }}\"**"
+    rename_success: "Préréglage **\"{{ name }}\"** renommé en **\"{{ new_name }}\"**"
     delete_success: "Préréglage **\"{{ name }}\"** supprimé"
     tooltip:
       save_to: "Actualiser le préréglage '{{ name }}'"
+      rename: "Renommer le préréglage '{{ name }}'"
       delete: "Supprimer le préréglage '{{ name }}'"
     dictionary:
       component_textinput_color: Palette de couleurs
