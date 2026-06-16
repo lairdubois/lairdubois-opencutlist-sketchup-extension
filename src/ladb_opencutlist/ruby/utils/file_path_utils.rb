@@ -20,33 +20,69 @@ module Ladb::OpenCutList
 
     # Sanitizes a file name while preserving its extension
     def self.sanitize_file_name(name, replacement: "_")
+      return nil unless name.is_a?(String)
+
       ext = File.extname(name)
       base = File.basename(name, ext)
 
-      # Sanitize base name and extension separately
+      # Sanitize base name
       base = _sanitize_segment(base, replacement: replacement)
-      ext = ext.gsub(FORBIDDEN_CHARS_STRICT, replacement).strip
 
-      # Reassemble and truncate to max length
-      "#{base}#{ext}"[0..MAX_LENGTH - 1]
+      # Sanitize extension (remove the leading dot, sanitize, then re-add if not empty)
+      if ext && !ext.empty?
+        ext_without_dot = ext[1..-1] # Remove leading dot
+        ext_sanitized = ext_without_dot.gsub(FORBIDDEN_CHARS_STRICT, replacement).strip
+        ext = ext_sanitized.empty? ? "" : ".#{ext_sanitized}"
+      else
+        ext = ""
+      end
+
+      # Reassemble
+      full_name = "#{base}#{ext}"
+
+      # Truncate to max length, ensuring we don't split multibyte characters
+      if full_name.length > MAX_LENGTH
+        full_name = full_name[0...MAX_LENGTH]
+        # Ensure valid UTF-8 by removing potentially broken trailing bytes
+        full_name = full_name.scrub("")
+      end
+
+      full_name
     end
 
     # Sanitizes a full file path by sanitizing each segment individually,
     # while preserving the path separator (Unix or Windows)
     def self.sanitize_file_path(path, replacement: "_")
-      dir  = File.dirname(path)
-      file = File.basename(path)
+      return nil unless path.is_a?(String)
+
+      # Preserve Windows drive letter if present
+      drive = ""
+      normalized_path = path
+      if path =~ /\A([a-zA-Z]:)(.*)/
+        drive = $1
+        normalized_path = $2
+      end
+
+      dir  = File.dirname(normalized_path)
+      file = File.basename(normalized_path)
 
       # Sanitize each folder segment individually
-      sanitized_dir = dir
-                        .split(File::SEPARATOR)
-                        .map { |folder| folder.empty? ? folder : _sanitize_segment(folder, replacement: replacement) }
-                        .join(File::SEPARATOR)
+      sanitized_dir = dir.split(File::SEPARATOR)
+                         .map { |folder| folder.empty? ? folder : _sanitize_segment(folder, replacement: replacement) }
+                         .join(File::SEPARATOR)
 
       # Sanitize the file name
       sanitized_file = sanitize_file_name(file, replacement: replacement)
 
-      File.join(sanitized_dir, sanitized_file)
+      # Reconstruct the path
+      result = if sanitized_file.is_a?(String) && !sanitized_file.empty?
+                 File.join(sanitized_dir, sanitized_file)
+               else
+                 sanitized_dir
+               end
+
+      # Re-add Windows drive letter if it was present
+      drive.empty? ? result : "#{drive}#{result}"
     end
 
     # -----
