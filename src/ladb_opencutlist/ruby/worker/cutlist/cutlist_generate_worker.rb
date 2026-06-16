@@ -1143,7 +1143,7 @@ module Ladb::OpenCutList
             _store_instance_info(instance_info)
 
             return 0
-          end if material_attributes.type == MaterialAttributes::TYPE_HARDWARE && (!definition.group? || !entity.name.strip.empty?)
+          end if material_attributes.type == MaterialAttributes::TYPE_HARDWARE && (!definition.group? || !entity.name.strip.empty?) && !behavior.cuts_opening?
 
           # Check entity's children
           definition.entities.each do |child_entity|
