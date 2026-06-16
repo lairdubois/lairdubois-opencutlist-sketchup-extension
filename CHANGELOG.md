@@ -26,6 +26,7 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ### 2026-06-16
  * Fixed SKM Material import exception
+ * Updated translations
 ### 2026-06-15
  * Improved draft support for fittings in the Smart Join Tool
 ### 2026-06-14
