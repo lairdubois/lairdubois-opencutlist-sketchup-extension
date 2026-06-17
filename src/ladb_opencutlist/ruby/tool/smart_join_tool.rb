@@ -317,6 +317,39 @@ module Ladb::OpenCutList
 
     # -----
 
+    def _read_measure(tool, text, option_group, option, error_key, length_only: false)
+
+      if !length_only && text.start_with?('/')
+
+        divider = text[1..-1].gsub(',', '.').to_f
+        if divider <= 0
+          tool.notify_errors([[ error_key, { :value => text } ]])
+          return true
+        end
+        divider = divider.to_i if divider.to_i == divider
+        measure = "/#{divider.to_s.sub('.', DimensionUtils.decimal_separator)}"
+
+      else
+
+        measure = _read_user_text_length(tool, text)
+        return true if measure.nil?
+
+        if measure < 0
+          tool.notify_errors([[ error_key, { :value => measure } ]])
+          return true
+        end
+
+        measure = DimensionUtils.d_add_units(measure.to_s)
+
+      end
+
+      @tool.store_action_option_value(@action, option_group, option, measure.to_s, true)
+
+      false
+    end
+
+    # -----
+
     def _fetch_option_height
       @tool.fetch_action_option_factor_or_length(@action, SmartJoinTool::ACTION_OPTION_HEIGHT, SmartJoinTool::ACTION_OPTION_HEIGHT)
     end
@@ -910,16 +943,12 @@ module Ladb::OpenCutList
         ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_join.action_1") + '.'
     end
 
-    def get_state_vcb_label(state)
-      PLUGIN.get_i18n_string('tool.default.vcb_height')
-    end
-
     # -----
 
     def onToolUserText(tool, text, view)
       return true if super
 
-      return true if _read_height(tool, text, view)
+      return true if _read_measures(tool, text, view)
 
       false
     end
@@ -1121,37 +1150,32 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _read_height(tool, text, view)
+    def _read_measures(tool, text, view)
 
-      if text.start_with?('/')
+      height, start_offset, end_offset, min_spacing, max_spacing = _split_user_text(text)
 
-        divider = text[1..-1].gsub(',', '.').to_f
-        if divider <= 0
-          tool.notify_errors([[ 'tool.default.error.invalid_height', { :value => text } ]])
-          return true
-        end
-        divider = divider.to_i if divider.to_i == divider
-        height = "/#{divider.to_s.sub('.', DimensionUtils.decimal_separator)}"
-
-      else
-
-        height = _read_user_text_length(tool, text)
-        return true if height.nil?
-
-        if height < 0
-          tool.notify_errors([[ 'tool.default.error.invalid_height', { :value => height } ]])
-          return true
-        end
-
-        height = DimensionUtils.d_add_units(height.to_s)
-
+      if height.is_a?(String) && !height.empty?
+        return true if _read_measure(tool, height, SmartJoinTool::ACTION_OPTION_HEIGHT, SmartJoinTool::ACTION_OPTION_HEIGHT, 'tool.smart_join.error.invalid_height')
       end
 
-      @tool.store_action_option_value(@action, SmartJoinTool::ACTION_OPTION_HEIGHT, SmartJoinTool::ACTION_OPTION_HEIGHT, height.to_s, true)
+      if start_offset.is_a?(String) && !start_offset.empty?
+        return true if _read_measure(tool, start_offset, SmartJoinTool::ACTION_OPTION_OFFSETS, SmartJoinTool::ACTION_OPTION_OFFSETS_START_OFFSET, 'tool.smart_join.error.invalid_start_offset')
+      end
+      if end_offset.is_a?(String) && !end_offset.empty?
+        return true if _read_measure(tool, end_offset, SmartJoinTool::ACTION_OPTION_OFFSETS, SmartJoinTool::ACTION_OPTION_OFFSETS_END_OFFSET, 'tool.smart_join.error.invalid_end_offset')
+      end
+
+      if min_spacing.is_a?(String) && !min_spacing.empty?
+        return true if _read_measure(tool, min_spacing, SmartJoinTool::ACTION_OPTION_SPACINGS, SmartJoinTool::ACTION_OPTION_SPACINGS_MIN_SPACING, 'tool.smart_join.error.invalid_min_spacing', length_only: true)
+      end
+      if max_spacing.is_a?(String) && !max_spacing.empty?
+        return true if _read_measure(tool, max_spacing, SmartJoinTool::ACTION_OPTION_SPACINGS, SmartJoinTool::ACTION_OPTION_SPACINGS_MAX_SPACING, 'tool.smart_join.error.invalid_max_spacing')
+      end
+
       Sketchup.set_status_text('', SB_VCB_VALUE)
       _refresh
 
-      false
+      true
     end
 
     # -----
@@ -1834,6 +1858,8 @@ module Ladb::OpenCutList
     end
 
     def _refresh
+      @snap_point = nil
+      @snap_face_manipulator_b = nil
       @picker.invalidate if @picker.is_a?(SmartPicker)
       super
     end
@@ -2095,6 +2121,8 @@ module Ladb::OpenCutList
 
   class SmartJoinAddFittingsActionHandler < SmartJoinFittingsActionHandler
 
+    include UserTextHelper
+
     def initialize(tool, previous_action_handler = nil)
       super(SmartJoinTool::ACTION_ADD_FITTINGS, tool, previous_action_handler)
     end
@@ -2113,6 +2141,14 @@ module Ladb::OpenCutList
 
     # -----
 
+    def onToolUserText(tool, text, view)
+      return true if super
+
+      return true if _read_measures(tool, text, view)
+
+      false
+    end
+
     def onToolLButtonUp(tool, flags, x, y, view)
 
       case @state
@@ -2126,6 +2162,12 @@ module Ladb::OpenCutList
       end
 
       super
+    end
+
+    # -----
+
+    def enableVCB?
+      true
     end
 
     # -----
@@ -2312,6 +2354,32 @@ module Ladb::OpenCutList
         @tool.show_message(PLUGIN.get_i18n_string('tool.smart_join.error.no_valid_join'), SmartTool::MESSAGE_TYPE_ERROR)
       end
 
+    end
+
+    # -----
+
+    def _read_measures(tool, text, view)
+
+      start_offset, end_offset, min_spacing, max_spacing = _split_user_text(text)
+
+      if start_offset.is_a?(String) && !start_offset.empty?
+        return true if _read_measure(tool, start_offset, SmartJoinTool::ACTION_OPTION_OFFSETS, SmartJoinTool::ACTION_OPTION_OFFSETS_START_OFFSET, 'tool.smart_join.error.invalid_start_offset')
+      end
+      if end_offset.is_a?(String) && !end_offset.empty?
+        return true if _read_measure(tool, end_offset, SmartJoinTool::ACTION_OPTION_OFFSETS, SmartJoinTool::ACTION_OPTION_OFFSETS_END_OFFSET, 'tool.smart_join.error.invalid_end_offset')
+      end
+
+      if min_spacing.is_a?(String) && !min_spacing.empty?
+        return true if _read_measure(tool, min_spacing, SmartJoinTool::ACTION_OPTION_SPACINGS, SmartJoinTool::ACTION_OPTION_SPACINGS_MIN_SPACING, 'tool.smart_join.error.invalid_min_spacing', length_only: true)
+      end
+      if max_spacing.is_a?(String) && !max_spacing.empty?
+        return true if _read_measure(tool, max_spacing, SmartJoinTool::ACTION_OPTION_SPACINGS, SmartJoinTool::ACTION_OPTION_SPACINGS_MAX_SPACING, 'tool.smart_join.error.invalid_max_spacing')
+      end
+
+      Sketchup.set_status_text('', SB_VCB_VALUE)
+      _refresh
+
+      true
     end
 
     # -----
