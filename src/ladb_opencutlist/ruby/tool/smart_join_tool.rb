@@ -261,8 +261,8 @@ module Ladb::OpenCutList
 
     COLOR_NEIGHBOR = ColorUtils.color_translucent(Kuix::COLOR_GREEN, 0.3)
 
-    COLOR_REF_FACE_A = Sketchup::Color.new(255, 0, 255, 0.1).blend(COLOR_PART, 0.2).freeze
-    COLOR_REF_FACE_B = Sketchup::Color.new(255, 0, 255, 0.1).blend(COLOR_NEIGHBOR, 0.2).freeze
+    COLOR_REF_FACE_A = Kuix::COLOR_MAGENTA.blend(COLOR_PART, 0.2).freeze
+    COLOR_REF_FACE_B = Kuix::COLOR_MAGENTA.blend(COLOR_NEIGHBOR, 0.2).freeze
     COLOR_REF_EDGE_A = ColorUtils.color_darken(COLOR_REF_FACE_A, 0.3).freeze
 
     LAYER_3D_JOIN_PREVIEW = 3
@@ -1801,8 +1801,7 @@ module Ladb::OpenCutList
           _reset_joinery_def
         end
         _preview_ref_face_a
-        _preview_ref_face_b(picker)
-        _preview_join
+        _preview_join(picker)
         return true
 
       end
@@ -1886,12 +1885,17 @@ module Ladb::OpenCutList
     def _preview_ref_face(picker, face_manipulator, color)
       if face_manipulator.is_a?(FaceManipulator)
 
-        darken_color = ColorUtils.color_darken(color, 0.3)
+        darken_color = ColorUtils.color_darken(color, 0.4)
+
+        arrow_length = Sketchup.active_model.active_view.pixels_to_model(60, face_manipulator.centroid)
+        arrow_size = 15
 
         # Offset transformation to force mesh to be on top of part preview
         ov = Geom::Vector3d.new(face_manipulator.normal)
         ov.length = 0.01
         ot = Geom::Transformation.translation(ov)
+
+        # --
 
         # Colorize face
         k_mesh = Kuix::Mesh.new
@@ -1900,18 +1904,46 @@ module Ladb::OpenCutList
         k_mesh.transformation = ot
         @tool.append_3d(k_mesh, LAYER_3D_JOIN_PREVIEW)
 
-        # Draw face normal
+        # --
+
+        # Draw face normal arrow
         k_edge = Kuix::EdgeMotif3d.new
         k_edge.start.copy!(face_manipulator.centroid)
-        k_edge.end.copy!(face_manipulator.centroid.offset(face_manipulator.normal, 3))
+        k_edge.end.copy!(face_manipulator.centroid.offset(face_manipulator.normal, arrow_length))
         k_edge.line_width = 2
         k_edge.end_arrow = true
-        k_edge.arrow_size = 5
+        k_edge.arrow_size = arrow_size
+        k_edge.color = darken_color
+        k_edge.on_top = false
+        @tool.append_3d(k_edge, LAYER_3D_JOIN_PREVIEW)
+
+        # Draw face normal arrow (dashed)
+        k_edge = Kuix::EdgeMotif3d.new
+        k_edge.start.copy!(face_manipulator.centroid)
+        k_edge.end.copy!(face_manipulator.centroid.offset(face_manipulator.normal, arrow_length))
+        k_edge.line_width = 1.5
+        k_edge.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+        k_edge.end_arrow = true
+        k_edge.arrow_size = arrow_size
         k_edge.color = darken_color
         k_edge.on_top = true
         @tool.append_3d(k_edge, LAYER_3D_JOIN_PREVIEW)
 
-        # Draw opposite (if needed)
+        # --
+
+        # Draw face outer edges
+        k_polyline = Kuix::Polyline.new
+        k_polyline.add_points(face_manipulator.outer_loop_manipulator.points)
+        k_polyline.line_width = 1
+        k_polyline.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+        k_polyline.color = darken_color
+        k_polyline.closed = true
+        k_polyline.on_top = true
+        @tool.append_3d(k_polyline, LAYER_3D_JOIN_PREVIEW)
+
+        # --
+
+        # Draw "opposite" point (if possible)
         if @snap_point && picker && @snap_point != picker.picked_point
 
           k_point = _create_floating_points(
@@ -1932,21 +1964,13 @@ module Ladb::OpenCutList
           k_edge.on_top = true
           @tool.append_3d(k_edge, LAYER_3D_JOIN_PREVIEW)
 
-          k_polyline = Kuix::Polyline.new
-          k_polyline.add_points(face_manipulator.outer_loop_manipulator.points)
-          k_polyline.line_width = 1
-          k_polyline.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-          k_polyline.color = darken_color
-          k_polyline.closed = true
-          k_polyline.on_top = true
-          @tool.append_3d(k_polyline, LAYER_3D_JOIN_PREVIEW)
-
         end
 
       end
     end
 
-    def _preview_join
+    def _preview_join(picker)
+      _preview_ref_face_b(picker)
     end
 
     # -----
@@ -1975,7 +1999,7 @@ module Ladb::OpenCutList
 
       picked_part_entity_path = _get_part_entity_path_from_path(@picker.picked_face_path)
       return nil if picked_part_entity_path.nil?                                                  # Exclude non-part entities
-      return nil if picked_part_entity_path == get_active_selection_path                          # Exclude selected part
+      return nil if picked_part_entity_path == get_active_part_entity_path                        # Exclude selected part
       return nil unless ArrayUtils.array_start_with?(picked_part_entity_path, _get_active_path)   # Exclude out of active path parts
       if (picked_drawing_def = CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new(picked_part_entity_path) ], **_get_drawing_def_parameters).run).is_a?(DrawingDef)
 
@@ -2131,9 +2155,11 @@ module Ladb::OpenCutList
       (@snap_start_point != snap_start_point).tap { @snap_start_point = snap_start_point }
     end
 
-    def _preview_join
+    def _preview_join(picker)
       return if (neighborhood_def = _get_neighborhood_def).nil?
       return if (joinery_def = _get_add_joinery_def(neighborhood_def)).nil?
+
+      super
 
       # Highlight part B
       k_mesh = Kuix::Mesh.new
@@ -2634,9 +2660,11 @@ module Ladb::OpenCutList
       (@snap_anchor != snap_anchor).tap { @snap_anchor = snap_anchor }
     end
 
-    def _preview_join
+    def _preview_join(picker)
       return if (neighborhood_def = _get_neighborhood_def).nil?
       return if (joinery_def = _get_remove_joinery_def(neighborhood_def)).nil?
+
+      super
 
       line_def = neighborhood_def.neighbor_def.line_def
 
