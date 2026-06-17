@@ -211,16 +211,21 @@ core:
       *The creation of a custom preset allows you to retain the current form settings globally, so that you can reuse them in all your templates later.*
 
       Enter preset name:
+    rename_prompt_title: Rename
+    rename_prompt: "Enter the new name of the preset **\"{{ name }}\"**"
     delete_confirm_title: Deletion
     delete_confirm: "Are you sure you want to delete the preset **\"{{ name }}\"**?"
     override_confirm_title: Update
     override_confirm: "Do you confirm preset **\"{{ name }}\"** update with the form parameters?"
+    new_error: "Impossible, a preset **\"{{ name }}\"** already exists"
     new_success: "Preset **\"{{ name }}\"** created"
     override_success: "Preset **\"{{ name }}\"** updated"
     restore_success: "The form has been filled with the preset **\"{{ name }}\"**"
+    rename_success: "Preset **\"{{ name }}\"** renamed to **\"{{ new_name }}\"**"
     delete_success: "Preset **\"{{ name }}\"** deleted"
     tooltip:
       save_to: "Update preset '{{ name }}'"
+      rename: "Rename preset '{{ name }}'"
       delete: "Delete preset '{{ name }}'"
     dictionary:
       component_textinput_color: Color Palette
