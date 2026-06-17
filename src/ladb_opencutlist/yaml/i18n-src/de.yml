@@ -211,16 +211,21 @@ core:
       *Durch das Erstellen einer benutzerdefinierten Voreinstellung können Sie die aktuellen Formulareinstellungen global beibehalten, damit Sie diese in allen Ihren Modellen wiederverwenden können.*
 
       Geben Sie den Namen der Voreinstellung ein:
+    rename_prompt_title: Umbenennung
+    rename_prompt: "Geben Sie den neuen Namen der Voreinstellung **\"{{ name }}\"** ein"
     delete_confirm_title: Löschung
     delete_confirm: "Möchten Sie die Voreinstellung **\"{{ name }}\"** wirklich löschen?"
     override_confirm_title: Aktualisierung
     override_confirm: "Bestätigen Sie die Aktualisierung der Voreinstellung **\"{{ name }}\"** mit den Formularparametern?"
+    new_error: "Unmöglich, eine Voreinstellung mit dem Namen **\"{{ name }}\"** existiert bereits"
     new_success: "Voreinstellung **\"{{ name }}\"** erstellt"
     override_success: "Voreinstellung **\"{{ name }}\"** aktualisiert"
     restore_success: "Das Formular wurde mit der Voreinstellung **\"{{ name }}\"** ausgefüllt"
+    rename_success: "Voreinstallung **\"{{ name }}\"** in **\"{{ new_name }}\"** umbenannt"
     delete_success: "Voreinstellung **\"{{ name }}\"** gelöscht"
     tooltip:
       save_to: "Voreinstellung '{{ name }}' aktualisieren"
+      rename: "Voreinstallung '{{ name }}' umbenennen"
       delete: "Voreinstellung '{{ name }}' löschen"
     dictionary:
       component_textinput_color: Farbpalette
