@@ -3,11 +3,14 @@ module Ladb::OpenCutList::Kuix
   class Mesh < Entity3d
 
     attr_accessor :background_color
+    attr_accessor :on_top
 
     def initialize(id = nil)
       super(id)
 
       @background_color = nil
+      @on_top = false
+
       @triangles = [] # Array<Geom::Point3d>
       @quads = [] # Array<Geom::Point3d>
 
@@ -44,14 +47,25 @@ module Ladb::OpenCutList::Kuix
     # -- RENDER --
 
     def paint_content(graphics)
-      graphics.draw_triangles(
-        points: @_triangle_points,
-        fill_color: @background_color
-      ) unless @_triangle_points.empty?
-      graphics.draw_quads(
-        points: @_quad_points,
-        fill_color: @background_color
-      ) unless @_quad_points.empty?
+      if @on_top
+        begin
+          graphics.set_drawing_color(@background_color) if @background_color.is_a?(Sketchup::Color)
+          graphics.view.draw2d(GL_TRIANGLES, @_triangle_points.map { |point| graphics.view.screen_coords(point) })
+        end unless @_triangle_points.empty?
+        begin
+          graphics.set_drawing_color(@background_color) if @background_color.is_a?(Sketchup::Color)
+          graphics.view.draw2d(GL_QUADS, @_quad_points.map { |point| graphics.view.screen_coords(point) })
+        end unless @_quad_points.empty?
+      else
+        graphics.draw_triangles(
+          points: @_triangle_points,
+          fill_color: @background_color
+        ) unless @_triangle_points.empty?
+        graphics.draw_quads(
+          points: @_quad_points,
+          fill_color: @background_color
+        ) unless @_quad_points.empty?
+      end
       super
     end
 
