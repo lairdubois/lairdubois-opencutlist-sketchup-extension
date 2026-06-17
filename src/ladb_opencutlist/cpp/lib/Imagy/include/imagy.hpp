@@ -1,9 +1,5 @@
 #pragma once
 
-#include <cstddef>
-#include <cstdint>
-#include <cstdbool>
-
 constexpr auto IMAGY_VERSION = "1.0.0";
 
 #ifdef __cplusplus

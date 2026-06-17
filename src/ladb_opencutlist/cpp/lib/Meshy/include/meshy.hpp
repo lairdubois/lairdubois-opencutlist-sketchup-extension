@@ -1,3 +1,5 @@
+#pragma once
+
 constexpr auto MESHY_VERSION = "1.0.0";
 
 #ifdef __cplusplus

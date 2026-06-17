@@ -1,6 +1,4 @@
-#include <cstddef>
-#include <cstdint>
-#include <cstdbool>
+#pragma once
 
 #include "clipper2/clipper.wrapper.hpp"
 

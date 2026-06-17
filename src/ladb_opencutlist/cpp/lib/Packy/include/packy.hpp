@@ -1,4 +1,6 @@
-constexpr auto PACKY_VERSION = "1.0.0";
+#pragma once
+
+constexpr auto PACKY_VERSION = "8.0.0";
 
 #ifdef __cplusplus
 extern "C" {

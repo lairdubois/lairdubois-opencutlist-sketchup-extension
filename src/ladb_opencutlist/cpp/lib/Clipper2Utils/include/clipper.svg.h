@@ -9,7 +9,6 @@
 #ifndef svglib_h
 #define svglib_h
 
-#include <cstdlib>
 #include <string>
 #include "clipper2/clipper.h"
 
