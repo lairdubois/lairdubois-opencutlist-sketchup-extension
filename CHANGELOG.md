@@ -24,6 +24,9 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
+### 2026-06-17
+ * Added preset rename feature
+ * Updated translations
 ### 2026-06-16
  * Fixed SKM Material import exception
  * Updated translations
