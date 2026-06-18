@@ -2559,8 +2559,8 @@ tool:
     geometries: Géométries
     error:
       invalid_height: "La hauteur {{ value }} est invalide"
-      invalid_start_offset: "Le décalage début {{ value }} est invalide"
-      invalid_end_offset: "Le décalage fin {{ value }} est invalide"
+      invalid_start_offset: "Le décalage de début {{ value }} est invalide"
+      invalid_end_offset: "Le décalage de fin {{ value }} est invalide"
       invalid_min_spacing: "L'entraxe min {{ value }} est invalide"
       invalid_max_spacing: "L'entraxe max {{ value }} est invalide"
       not_assemblable: Ce type de pièce ne peut pas être assemblé

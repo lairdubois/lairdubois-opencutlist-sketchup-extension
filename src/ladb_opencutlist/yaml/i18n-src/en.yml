@@ -2280,8 +2280,6 @@ tool:
     vcb_radius: Radius
     vcb_diameter: Diameter
     vcb_distance: Distance
-    vcb_depth: Depth
-    vcb_height: Height
     error:
       no_direction: Please indicate a direction with your mouse
       invalid_length: "Length {{ value }} is invalid"
@@ -2289,8 +2287,6 @@ tool:
       invalid_multiplicator: "Factor {{ value }} is invalid"
       invalid_divider: "Divisor {{ value }} is invalid"
       invalid_offset: "Offset {{ value }} is invalid"
-      invalid_depth: "Depth {{ value }} is invalid"
-      invalid_height: "Height {{ value }} is invalid"
       invalid_segment_count: "The number of segments {{ value }} is invalid. It must be between 3 and 999."
       syntax_error: "Syntax error: {{ error }}"
       unexpected_close_parenthesis: "Unexpected closing parenthesis"
@@ -2537,7 +2533,7 @@ tool:
     action_3_only_one_status: Limit to a single fitting
     action_option_group_height: Height
     action_option_group_offsets: Offsets
-    action_option_group_spacings: Center distances
+    action_option_group_spacings: Spacing
     action_option_group_options: Options
     action_option_height: Height
     action_option_offsets_start_offset: Start
@@ -2560,6 +2556,11 @@ tool:
     measures: Measures
     geometries: Geometries
     error:
+      invalid_height: "Height {{ value }} is invalid"
+      invalid_start_offset: "Start offset {{ value }} is invalid"
+      invalid_end_offset: "End offset {{ value }} is invalid"
+      invalid_min_spacing: "Minimum spacing of {{ value }} is invalid"
+      invalid_max_spacing: "Maximum spacing of {{ value }} is invalid"
       not_assemblable: This type of part cannot be assembled
       no_valid_join: There are no contact surfaces that meet the assembly requirements
       occupied_anchors: "{{ count }} connector that conflicts with existing connectors"

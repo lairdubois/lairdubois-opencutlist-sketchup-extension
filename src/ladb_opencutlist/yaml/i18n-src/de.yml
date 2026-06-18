@@ -2280,8 +2280,6 @@ tool:
     vcb_radius: Radius
     vcb_diameter: Durchmesser
     vcb_distance: Distanz
-    vcb_depth: Tiefe
-    vcb_height: Höhe
     error:
       no_direction: Bitte mit der Maus eine Richtung angeben
       invalid_length: "Die Länge {{ value }} ist ungültig"
@@ -2289,8 +2287,6 @@ tool:
       invalid_multiplicator: "Der Faktor {{ value }} ist ungültig"
       invalid_divider: "Der Teiler {{ value }} ist ungültig"
       invalid_offset: "Der Versatz {{ value }} ist ungültig"
-      invalid_depth: "Die Tiefe {{ value }} ist ungültig"
-      invalid_height: "Die Höhe {{ value }} ist ungültig"
       invalid_segment_count: "Die Anzahl der Segmente {{ value }} ist ungültig. Sie muss zwischen 3 und 999 sein."
       syntax_error: "Syntaxfehler: {{ error }}"
       unexpected_close_parenthesis: "Unerwartete schließende Klammer"
@@ -2560,6 +2556,11 @@ tool:
     measures: Maße
     geometries: Geometrien
     error:
+      invalid_height: "Die Höhe {{ value }} ist ungültig"
+      invalid_start_offset: "Der Versatz zu Beginn {{ value }} ist ungültig"
+      invalid_end_offset: "Der Endversatz {{ value }} ist ungültig"
+      invalid_min_spacing: "Der minimale Achsabstand {{ value }} ist ungültig"
+      invalid_max_spacing: "Der maximale Achsabstand {{ value }} ist ungültig"
       not_assemblable: Dieser Teiletyp kann nicht zusammengefügt werden
       no_valid_join: Es gibt keine Kontaktfläche, die die Anforderungen an die Verbindung erfüllt
       occupied_anchors: "{{ count }} Verbinder, dessen Position mit der von vorhandenen Verbindungselementen kollidiert"
