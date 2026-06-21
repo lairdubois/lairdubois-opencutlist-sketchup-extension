@@ -611,16 +611,16 @@ namespace Packy {
             }
 
             if (j.contains("not_anytime_tree_search_queue_size")) {
-                parameters_.not_anytime_tree_search_queue_size = j["not_anytime_tree_search_queue_size"].get<Counter>();
+                parameters_.not_anytime_tree_search_queue_size = j["not_anytime_tree_search_queue_size"].get<NodeId>();
             }
-            if (j.contains("not_anytime_sequential_single_knapsack_subproblem_queue_size")) {
-                parameters_.not_anytime_sequential_single_knapsack_subproblem_queue_size = j["not_anytime_sequential_single_knapsack_subproblem_queue_size"].get<Counter>();
+            if (j.contains("not_anytime_sequential_single_knapsack_subproblem_tree_search_queue_size")) {
+                parameters_.not_anytime_sequential_single_knapsack_subproblem_tree_search_queue_size = j["not_anytime_sequential_single_knapsack_subproblem_tree_search_queue_size"].get<NodeId>();
             }
             if (j.contains("not_anytime_sequential_value_correction_number_of_iterations")) {
                 parameters_.not_anytime_sequential_value_correction_number_of_iterations = j["not_anytime_sequential_value_correction_number_of_iterations"].get<Counter>();
             }
-            if (j.contains("not_anytime_dichotomic_search_subproblem_queue_size")) {
-                parameters_.not_anytime_dichotomic_search_subproblem_queue_size = j["not_anytime_dichotomic_search_subproblem_queue_size"].get<Counter>();
+            if (j.contains("not_anytime_dichotomic_search_subproblem_tree_search_queue_size")) {
+                parameters_.not_anytime_dichotomic_search_subproblem_tree_search_queue_size = j["not_anytime_dichotomic_search_subproblem_tree_search_queue_size"].get<NodeId>();
             }
 
             if (j.contains("maximum_size_of_the_solution_pool")) {
@@ -904,11 +904,11 @@ namespace Packy {
         ) override {
             TypedSolver::read_parameters(j);
 
-            if (j.contains("sequential_value_correction_subproblem_queue_size")) {
-                parameters_.sequential_value_correction_subproblem_queue_size = j["sequential_value_correction_subproblem_queue_size"].get<NodeId>();
+            if (j.contains("sequential_value_correction_subproblem_tree_search_queue_size")) {
+                parameters_.sequential_value_correction_subproblem_tree_search_queue_size = j["sequential_value_correction_subproblem_tree_search_queue_size"].get<NodeId>();
             }
-            if (j.contains("column_generation_subproblem_queue_size")) {
-                parameters_.column_generation_subproblem_queue_size = j["column_generation_subproblem_queue_size"].get<NodeId>();
+            if (j.contains("column_generation_subproblem_tree_search_queue_size")) {
+                parameters_.column_generation_subproblem_tree_search_queue_size = j["column_generation_subproblem_tree_search_queue_size"].get<NodeId>();
             }
 
         }
@@ -1146,10 +1146,6 @@ namespace Packy {
         ) override {
 
             using namespace rectangleguillotine;
-
-            if (j.contains("use_column_generation_2")) {
-                parameters_.use_column_generation_2 = j["use_column_generation_2"].get<bool>();
-            }
 
             if (j.contains("number_of_stages")) {
                 builder.instance_builder().set_number_of_stages(j["number_of_stages"].get<Counter>());
@@ -1562,11 +1558,11 @@ namespace Packy {
         ) override {
             TypedSolver::read_parameters(j);
 
-            if (j.contains("sequential_value_correction_subproblem_queue_size")) {
-                parameters_.sequential_value_correction_subproblem_queue_size = j["sequential_value_correction_subproblem_queue_size"].get<NodeId>();
+            if (j.contains("sequential_value_correction_subproblem_tree_search_queue_size")) {
+                parameters_.sequential_value_correction_subproblem_tree_search_queue_size = j["sequential_value_correction_subproblem_tree_search_queue_size"].get<NodeId>();
             }
-            if (j.contains("column_generation_subproblem_queue_size")) {
-                parameters_.column_generation_subproblem_queue_size = j["column_generation_subproblem_queue_size"].get<NodeId>();
+            if (j.contains("column_generation_subproblem_tree_search_queue_size")) {
+                parameters_.column_generation_subproblem_tree_search_queue_size = j["column_generation_subproblem_tree_search_queue_size"].get<NodeId>();
             }
 
         }
@@ -1756,11 +1752,11 @@ namespace Packy {
                 parameters_.maximum_approximation_ratio_factor = j["maximum_approximation_ratio_factor"].get<double>();
             }
 
-            if (j.contains("sequential_value_correction_subproblem_queue_size")) {
-                parameters_.sequential_value_correction_subproblem_queue_size = j["sequential_value_correction_subproblem_queue_size"].get<NodeId>();
+            if (j.contains("sequential_value_correction_subproblem_tree_search_queue_size")) {
+                parameters_.sequential_value_correction_subproblem_tree_search_queue_size = j["sequential_value_correction_subproblem_tree_search_queue_size"].get<NodeId>();
             }
-            if (j.contains("column_generation_subproblem_queue_size")) {
-                parameters_.column_generation_subproblem_queue_size = j["column_generation_subproblem_queue_size"].get<NodeId>();
+            if (j.contains("column_generation_subproblem_tree_search_queue_size")) {
+                parameters_.column_generation_subproblem_tree_search_queue_size = j["column_generation_subproblem_tree_search_queue_size"].get<NodeId>();
             }
             if (j.contains("not_anytime_maximum_approximation_ratio")) {
                 parameters_.not_anytime_maximum_approximation_ratio = j["not_anytime_maximum_approximation_ratio"].get<double>();
