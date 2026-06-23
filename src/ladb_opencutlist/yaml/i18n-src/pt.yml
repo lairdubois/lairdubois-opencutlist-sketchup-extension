@@ -129,7 +129,7 @@ core:
       smart_reshape: Remodelar peças
       smart_paint: Pintar Peças
       smart_axes: Orientação das Peças
-      smart_join: ""
+      smart_join: Montar peças
       smart_export: Exportar as Peças
   messagebox:
     dir_override: |
@@ -382,15 +382,21 @@ tab:
       children_size_increase: "Esta dimensão foi aumentada por um superdimensionamento para {{ count }} peça agrupadas"
       invalid_final_area: "Cuidado, a somatória desta área não pôde ser calculada porque {{ count }} peça (de {{ total }}) tem uma área inválida"
       invalid_final_area_plural: "Cuidado, a somatória desta área não pôde ser calculada porque {{ count }} peças (de {{ total }}) têm uma área inválida"
-      is_instance_name: ""
+      is_instance_name: A designação desta peça é extraída do nome da instância do grupo
       is_dynamic_attributes_name: Designação extraída do atributo 'Name' do componente dinâmico
       has_edges: "Esta peça contém {{ count }} fitas de borda"
       has_edges_plural: "Esta peça contém {{ count }} fitas de borda"
       has_faces: "Esta peça contém {{ count }} superfície laminada"
       has_faces_plural: "Esta peça contém {{ count }} superfícies laminadas"
       size_increased_0: |
+        Acrescido da sobremedida do material
+        ({{ increase_1 }})
       size_increased_1: |
+        Acrescido da sobremedida da peça
+        ({{ increase_2 }})
       size_increased_2: |
+        Acrescido da sobremedida do material e da peça
+        ({{ increase_1 }} + {{ increase_2 }})
       edge_decremented: "Reduzido pela espessura das fitas da borda ({{ decrement }})"
       edge_ymin: Comprimento da borda 1
       edge_ymax: Comprimento da borda 2
@@ -475,11 +481,11 @@ tab:
         *OpenCutList contará então 2 peças de 19mm de espessura ao invés de 1 peça de 38mm de espessura*
       cut_options: $t(tab.materials.edit_material.cut_options)
       length_increase: $t(tab.materials.edit_material.length_increase)
-      length_increase_help: ""  # TODO: singular version of tab.materials.edit_material.length_increase
+      length_increase_help: Sobremedida aplicada ao comprimento útil da peça para definir seu **comprimento de corte**.  # TODO: singular version of tab.materials.edit_material.length_increase
       width_increase: $t(tab.materials.edit_material.width_increase)
-      width_increase_help: "" # TODO: singular version of tab.materials.edit_material.width_increase
+      width_increase_help: Sobremedida aplicada à largura útil da peça para definir sua **largura de corte**. # TODO: singular version of tab.materials.edit_material.width_increase
       thickness_increase: $t(tab.materials.edit_material.thickness_increase)
-      thickness_increase_help: "" # TODO: singular version of tab.materials.edit_material.thickness_increase
+      thickness_increase_help: Sobremedida aplicada à espessura útil da peça para definir sua **espessura de corte**. # TODO: singular version of tab.materials.edit_material.thickness_increase
       description: Descrição
       description_help: |
         A *Descrição* permite que você forneça informações personalizadas sobre cada definição de peça.
@@ -608,7 +614,7 @@ tab:
       filters_warning_plural: "Este filtro exibe apenas **{{ count }}** peças de um total de {{ total }}."
       edge_material_names_filter: Filtrar por material de fita de borda
       veneer_material_names_filter: Filtrar por laminado
-      names_filter: ""
+      names_filter: Designações a filtrar
       tags_filter: Filtrar por identificação da peça
       dimensions_help: Compreendendo as dimensões
       summary: Resumo
@@ -1073,7 +1079,7 @@ tab:
       option_irregular_allowed_rotations_0: Nenhum
       option_irregular_allowed_rotations_90: Passo de 90°
       option_irregular_allowed_rotations_180: Passo de 180°
-      option_irregular_allowed_rotations_free: ""
+      option_irregular_allowed_rotations_free: Livre
       option_irregular_allow_mirroring: Espelhamento permitido
       option_irregular_allow_mirroring_help: |
         Define se o espelhamento da peça é permitido para o posicionamento.
@@ -1139,9 +1145,9 @@ tab:
       option_hide_edges_preview_help: Permite exibir ou ocultar a visualização das fitas de borda de cada peça no plano de corte.
       option_zoom_threshold: Limite de zoom
       option_zoom_threshold_help: |
-        Permite definir a largura do diagrama abaixo da qual os diagramas são automaticamente ampliados.
+        Permite definir a largura do plano abaixo da qual os planos são ampliados automaticamente.
 
-        *A ampliação será calculada com base no diagrama mais largo*.
+        *A ampliação será calculada com base no plano mais largo*.
       option_time_limit: Limite de tempo
       option_time_limit_help: |
         Define o tempo limite para o cálculo
@@ -1572,7 +1578,7 @@ tab:
     type_4: Fita de borda
     type_5: Acessório
     type_6: Laminado
-    type_7: ""
+    type_7: Usinagem
     tooltip:
       type_0: Tipo de material '$t(tab.materials.type_0)'
       type_1: Tipo de material '$t(tab.materials.type_1)'
@@ -1581,7 +1587,7 @@ tab:
       type_4: Tipo de material '$t(tab.materials.type_4)'
       type_5: Tipo de material '$t(tab.materials.type_5)'
       type_6: Tipo de material '$t(tab.materials.type_6)'
-      type_7: ""
+      type_7: Tipo de material '$t(tab.materials.type_7)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Direção dos veios
@@ -1770,27 +1776,27 @@ tab:
       url: URL
       tags: Identificação
       layer_name: Etiqueta
-      snapto: ""
+      snapto: Junção
       snapto_none: Nenhum
       snapto_0: Qualquer
       snapto_1: Horizontal
       snapto_2: Vertical
-      snapto_3: ""
-      cuts_opening: ""
-      always_face_camera: ""
-      shadows_face_sun: ""
-      no_scale_mask: ""
-      no_scale_mask_0: ""
-      no_scale_mask_1: ""
-      no_scale_mask_2: ""
-      no_scale_mask_3: ""
-      no_scale_mask_4: ""
-      no_scale_mask_5: ""
-      no_scale_mask_6: ""
+      snapto_3: Inclinada
+      cuts_opening: Recortar a abertura
+      always_face_camera: Sempre voltar-se para a câmera
+      shadows_face_sun: Sombra voltada para o sol
+      no_scale_mask: Escala e Esticamento
+      no_scale_mask_0: Deformável ao longo do eixo vermelho (X)
+      no_scale_mask_1: Deformável ao longo do eixo verde (Y)
+      no_scale_mask_2: Deformável ao longo do eixo azul (Z)
+      no_scale_mask_3: Deformável no plano vermelho/azul (X+Z)
+      no_scale_mask_4: Deformável no plano verde/azul (Y+Z)
+      no_scale_mask_5: Deformável no plano vermelho/verde (X+Y)
+      no_scale_mask_6: Deformável a partir dos cantos (XYZ)
       explode: Explodir
       explode_message: "Confirma a separação de **{{ name }}**?"
       erase: Apagar
-      erase_message: "Confirma a eliminação de **{{ name }}**?"
+      erase_message: "Confirma a eliminação de **{{ name }}** ?"
     deep_make_unique:
       title: Tornar único
     deep_rename_parts:
@@ -1815,7 +1821,7 @@ tab:
       minimize_on_set_active: Recolher após '$t(tab.outliner.tooltip.set_active_node)'
       minimize_on_set_active_help: "Se esta opção estiver ativada, a janela do OpenCutList será recolhida quando a função *'$t(tab.outliner.tooltip.set_active_node)'* for utilizada."
     snippet:
-      name_size: ""
+      name_size: Nome - Tamanho
     error:
       no_model: Nenhum modelo está aberto. Você precisará me fornecer mais informações;)
       no_entities: O modelo está vazio!
@@ -1908,13 +1914,13 @@ tab:
     obsolete_base: "Para permanecer sincronizado, você deve recarregar o arquivo CSV."
   importers:
     default:
-      open_file: ""
+      open_file: "Abrir um arquivo {{ extension }}"
       import_to_model: Importar para o modelo
       error:
-        no_data: ""
-        no_model: ""
+        no_data: Nenhum dado para importar.
+        no_model: Nenhum modelo está aberto. É impossível importar para o vazio ;)
         file_not_found: "Arquivo não encontrado : **{{ filename }}**"
-        bad_extension: ""
+        bad_extension: "O arquivo *{{ filename }}* não tem a extensão exigida (**{{ extensions }}**)."
         failed_to_import: O processo de importação falhou.
       success:
         imported_title: Importação concluída
@@ -1922,6 +1928,10 @@ tab:
       label: CSV
       title: Importar peças
       help: |
+        Esta página permite importar uma série de peças úteis (de formato paralelipípedo) para o seu modelo a partir de um arquivo [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
+        Assim, você poderá usar o poder da lista de corte do *OpenCutList* gerando suas peças em outro software que não seja o *SketchUp*.
+
+        Clique no botão **Abrir um arquivo CSV** para iniciar.
       load:
         title: Carregando arquivo CSV
         info_0: |
@@ -1935,23 +1945,23 @@ tab:
         option_col_sep_tab: Tabulador
         option_col_sep_comma: Vírgula
         option_col_sep_semicolon: Ponto e vírgula
-        option_first_line_headers: Linha de Cabeçalho
+        option_first_line_headers: Linha de cabeçalho
         option_first_line_headers_0: Dados
-        option_first_line_headers_1: Títulos de Coluna
+        option_first_line_headers_1: Títulos de coluna
       import:
         title: Importar peças para o modelo
         info_0: |
-          ocê está prestes a importar **{{ count }} peça** para o modelo.
+          Você está prestes a importar **{{ count }} peça** para o modelo.
           Esta parte será colocada na origem da cena principal.
         info_0_plural: |
-          You are about to import **{{ count }} peças** para o model.
-          Estas peças serão empilhadas a partir da origem da cena principal.
+          Você está prestes a importar **{{ count }} peças** para o modelo.
+          Estas peças serão empilhadas na cena principal a partir da origem.
         info_1: Clique em **Importar** para confirmar a ação.
         options: |
           O modelo já contém *peças*, *definições* ou *materiais*.
-          Selecione as opções de importação que você precisa.
-        option_remove_all_?: "O que vem a seguir?"
-        option_remove_all_false: Adicionar peças a peças existentes
+          Escolha as opções de importação que correspondem às suas necessidades.
+        option_remove_all_?: "O que fazer?"
+        option_remove_all_false: Adicionar as peças ao existente
         option_remove_all_true: Remover existente!
         option_keep_definitions_settings: Manter configurações de definição
         option_keep_materials_settings: Manter configurações de material
@@ -1967,13 +1977,13 @@ tab:
         material: Material
         tags: Identificação
       tooltip:
-        errors: Esta parte não será importada porque produziu os seguintes erros
-        warnings: "Esta parte será importada, mas produziu os seguintes avisos"
+        errors: Esta peça não será importada devido aos seguintes erros
+        warnings: "Esta peça será importada, mas contém os seguintes avisos"
       error:
         failed_to_load_csv_file: |
           Incapaz de carregar o arquivo CSV: **{{ error }}**
           *Verifique se você selecionou o separador de campo correto.*
-        empty_file: O arquivo parece vazio ou não pode ser interpretado.
+        empty_file: O arquivo parece estar vazio ou não pode ser lido corretamente.
         no_importable_part: Nenhuma peça pode ser importada. Atribua os campos obrigatórios às colunas correspondentes.
         invalid_name: Designação inválida
         invalid_length: Comprimento inválido
@@ -1988,65 +1998,74 @@ tab:
       obsolete_base: "Para permanecer sincronizado, você deve recarregar o arquivo CSV."
     bxf2:
       label: BXF2
-      title: ""
+      title: Importar uma configuração Blum
       help: |
+        Esta página permite importar uma configuração para o seu modelo a partir de um arquivo BXF2.
+        Os arquivos BXF2 podem ser criados no [Configurador de Móveis](https://e-services.blum.com/) da [Blum](https://www.blum.com).
+
+        Clique no botão **Abrir um arquivo BXF2** para iniciar.
       load:
-        title: ""
+        title: Carregando um arquivo BXF2
       import:
-        title: ""
+        title: Importação da configuração para o modelo
         info_0: |
+          Você está prestes a importar uma configuração de **{{ count }} módulo** para o modelo.
         info_0_plural: |
-        info_1: ""
+          Você está prestes a importar uma configuração de **{{ count }} módulos** para o modelo.
+        info_1: Você poderá escolher definir sua localização no modelo ativo.
         materials: Materiais
         layers: Etiquetas
         option_parts_formula: Fórmula
-        option_parts_formula_help: ""
-        option_part_wood_material_name: ""
-        option_part_wood_material_name_help: ""
-        option_part_aluminium_material_name: ""
-        option_part_aluminium_material_name_help: ""
-        option_part_glass_material_name: ""
-        option_part_glass_material_name_help: ""
-        option_front_part_layer_name: ""
-        option_front_part_layer_name_help: ""
-        option_machining_material_name: ""
-        option_machining_material_name_help: ""
-        option_machining_layer_name: ""
-        option_machining_layer_name_help: ""
-        option_hardware_material_name: ""
-        option_hardware_material_name_help: ""
-        option_hardware_layer_name: ""
-        option_hardware_layer_name_help: ""
-        option_no_material_help: ""
-        option_default_material_help: ""
-        option_no_layer_help: ""
+        option_parts_formula_help: A fórmula permite personalizar o nome das peças importadas.
+        option_part_wood_material_name: Madeira
+        option_part_wood_material_name_help: Material a aplicar às peças de **madeira**.
+        option_part_aluminium_material_name: Alumínio
+        option_part_aluminium_material_name_help: Material a aplicar às peças de **alumínio**.
+        option_part_glass_material_name: Vidro
+        option_part_glass_material_name_help: Material a aplicar às peças de **vidro**.
+        option_front_part_layer_name: Frentes
+        option_front_part_layer_name_help: Etiqueta a aplicar às peças de frente.
+        option_machining_material_name: Usinagens
+        option_machining_material_name_help: Material a aplicar às **usinagens**.
+        option_machining_layer_name: Usinagens
+        option_machining_layer_name_help: Etiqueta a aplicar às usinagens.
+        option_hardware_material_name: Acessórios
+        option_hardware_material_name_help: Material a aplicar aos **acessórios**.
+        option_hardware_layer_name: Acessórios
+        option_hardware_layer_name_help: Etiqueta a aplicar aos acessórios.
+        option_no_material_help: "*Deixe este campo vazio para não aplicar nenhum material*."
+        option_default_material_help: "*Um material padrão será criado se este campo estiver vazio*."
+        option_no_layer_help: "*Deixe este campo vazio para não aplicar nenhuma etiqueta*."
         old_name: Nome original
         new_name: Novo nome
         count: Qtd.
         formula:
           part: Peça
-          project: ""
-          cabinet: ""
+          project: Projeto
+          cabinet: Móvel
       model:
-        author: ""
-        date: ""
+        author: Autor
+        date: Data
       cabinet:
-        list: ""
+        list: Lista de móveis
         description: Nome
         width: Largura
         height: Altura
-        depth: ""
+        depth: Profundidade
       article:
-        list: ""
+        list: Lista de itens
         total_quantity: Qtd.
-        article_number: ""
+        article_number: Ref.
         description: Descrição
         material: Material
       error:
         failed_to_load_bxf2_file: |
+          Não foi possível carregar o arquivo BXF2: **{{ error }}**
       warning:
         partial_support: |
-      obsolete_base: ""
+          Você deve ter o **SketchUp 2021.1** ou uma versão posterior para aproveitar todos os recursos.
+          As geometrias 3D das ferragens **não poderão ser importadas**.
+      obsolete_base: "Para manter a sincronização, você deve recarregar o arquivo BXF2."
   tutorials:
     label: Tutoriais
     title: Tutoriais
@@ -2234,7 +2253,7 @@ tool:
     error:
       no_direction: Indique uma direção com o mouse
       invalid_length: "O comprimento {{ value }} é inválido"
-      invalid_thickness: ""
+      invalid_thickness: "A espessura {{ value }} é inválida"
       invalid_multiplicator: "O multiplicador {{ value }} é inválido"
       invalid_divider: "O divisor {{ value }} é inválido"
       invalid_offset: "O deslocamento {{ value }} é inválido"
@@ -2246,9 +2265,9 @@ tool:
       zero_division: "Divisão por zero"
       lt_min_distance: "A distância {{ value1 }} é menor que a distância mínima de {{ value2 }}"
       gt_max_distance: "A distância {{ value1 }} é superior à distância máxima de {{ value2 }}"
-      locked_part: ""
-      not_sibling_part: ""
-      selection_contains_locked_entities: ""
+      locked_part: Esta peça está bloqueada
+      not_sibling_part: Esta peça não está no mesmo grupo ou componente que o restante da seleção
+      selection_contains_locked_entities: A seleção contém entidades bloqueadas
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2258,7 +2277,7 @@ tool:
     state_4_status: Arraste uma peça idêntica com o mesmo pai para adicioná-la à seleção e solte para continuar
     state_5_status: Deslize para adicionar à seleção e solte para continuar
     state_6_status: Selecione um item da lista
-    state_7_status: ""
+    state_7_status: Clique em uma peça para adicioná-la ou removê-la da seleção
     warning:
       no_active_part: "Primeiro, você deve passar o mouse sobre uma peça"
   smart_draw:
@@ -2299,10 +2318,10 @@ tool:
     action_option_options_pull_centered: Elevação Centralizada
     action_option_options_pull_centered_status: Centralizar a elevação no primeiro ponto
     action_option_options_pull_locked_status: Bloquear a elevação em um eixo
-    action_option_options_draw_in: ""
-    action_option_options_draw_in_0: ""
-    action_option_options_draw_in_1: ""
-    action_option_options_draw_in_status: ""
+    action_option_options_draw_in: Desenhar em
+    action_option_options_draw_in_0: Desenhar no elemento ativo
+    action_option_options_draw_in_1: Desenhar no objeto pai da peça do primeiro ponto
+    action_option_options_draw_in_status: Desenhar no objeto pai da peça alvo do primeiro ponto
     action_option_options_ask_name: Nomeação das Peças
     action_option_options_ask_name_status: Inserir manualmente o nome das peças
     action_measure_locked_status: Bloquear na última medida
@@ -2325,7 +2344,7 @@ tool:
     action_3_state_1_status: Clique para definir o primeiro ponto de medição
     action_3_state_2_status: Clique para posicionar a peça ou insira uma distância
     action_4: Distribuir
-    action_4_status: Dividir uma peça ao longo de um eixo
+    action_4_status: Distribuir uma peça ao longo de um eixo
     action_4_state_1_status: Clique para definir o primeiro ponto de medição
     action_4_state_2_status: Clique para definir o segundo ponto de medição ou insira uma distância
     action_option_group_copy_measure_type: Medida
@@ -2339,7 +2358,7 @@ tool:
     action_option_axes_context_status: Manipular ao longo dos eixos do grupo ou componente que contém a peça
     action_option_axes_entity_status: Manipular ao longo dos eixos da peça
     action_option_options_mirror_status: Copiar em simetria
-    action_toggle_raytest_status: ""
+    action_toggle_raytest_status: Projetar no próximo ponto
     warning:
       copies_disable_mirror: A cópia múltipla desativa a opção '$t(tool.smart_handle.action_option_options_mirror_status)'
   smart_reshape:
@@ -2347,38 +2366,38 @@ tool:
     action_0: Esticar
     action_0_status: Esticar uma parte
     action_0_state_1_status: Clique em uma alça para esticar
-    action_0_state_1a_status: Clique em um plano de corte para movê-lo
-    action_0_state_1b_status: Adicionar um plano de corte
-    action_0_state_1c_status: Apagar um plano de corte
-    action_0_state_10_status: Arraste o plano de corte para movê-lo
-    action_0_state_11_status: Clique para adicionar o plano de corte
-    action_0_state_12_status: Clique em um plano de corte para excluí-lo
+    action_0_state_1a_status: Clique em um plano de divisão para movê-lo
+    action_0_state_1b_status: Adicionar plano de divisão
+    action_0_state_1c_status: Apagar um plano de divisão
+    action_0_state_10_status: Arraste o plano de divisão para movê-lo
+    action_0_state_11_status: Clique para adicionar o plano de divisão
+    action_0_state_12_status: Clique em um plano de divisão para excluí-lo
     action_0_state_2_status: Clique para confirmar o estiramento ou insira uma distância
-    action_1: ""
-    action_1_status: ""
-    action_1_state_0_status: ""
-    action_1_state_1_status: ""
+    action_1: Painelar
+    action_1_status: Criar uma série de peças a partir de um sólido fechado
+    action_1_state_0_status: Clique em um sólido fechado para definir a geometria de referência
+    action_1_state_1_status: Selecione as faces para extrudar
     # CSG = Constructive Solid Geometry
-    action_2: ""
-    action_2_status: ""
+    action_2: CSG
+    action_2_status: Ao infinito e além
     action_option_group_thickness: Espessura
     action_option_group_stretch_measure_type: Medida
     action_option_group_axes: Eixos
-    action_option_group_paneling_joint_type: ""
+    action_option_group_paneling_joint_type: Montagem
     action_option_group_paneling_direction: Direção
-    action_option_group_csg_operation: ""
+    action_option_group_csg_operation: Operação
     action_option_group_options: Opções
     action_option_thickness_thickness: Espessura
-    action_option_thickness_thickness_status: ""
+    action_option_thickness_thickness_status: Define a espessura das chapas
     action_option_stretch_measure_type_outside_status: Medida externa
     action_option_stretch_measure_type_offset_status: Medir a diferença
     action_option_axes_active_status: Manipular ao longo dos eixos ativos
     action_option_axes_context_status: Manipular ao longo dos eixos do grupo ou componente que contém a peça
     action_option_axes_entity_status: Manipular ao longo dos eixos da peça
-    action_option_paneling_joint_type_flat_status: ""
-    action_option_paneling_joint_type_miter_status: ""
-    action_option_paneling_direction_inward_status: ""
-    action_option_paneling_direction_outward_status: ""
+    action_option_paneling_joint_type_flat_status: Junta de topo
+    action_option_paneling_joint_type_miter_status: Corte em meia-esquadria
+    action_option_paneling_direction_inward_status: Interna
+    action_option_paneling_direction_outward_status: Externa
     action_option_options_centred_status: Centrar em elementos esticados
     action_option_options_make_unique_status: Tornar elementos esticados únicos
     error:
@@ -2458,9 +2477,9 @@ tool:
       not_part: O objeto de destino não é uma peça (componente)
       not_orientable: O tipo desta peça não permite que a orientação seja modificada
   smart_join:
-    title: ""
-    action_0: "" # TODO: It's currently just for dev purposes
-    action_0_status: "" # TODO
+    title: Montar
+    action_0: Toque-Toque # TODO: It's currently just for dev purposes
+    action_0_status: TBD # TODO
   smart_export:
     title: Exportar
     action_0: Exportar uma Peça 3D
@@ -2497,4 +2516,4 @@ tool:
   smart_importers_bxf2:
     title: Importar
     action_0: $t(tab.importers.bxf2.title)
-    action_0_status: ""
+    action_0_status: Insira a configuração
