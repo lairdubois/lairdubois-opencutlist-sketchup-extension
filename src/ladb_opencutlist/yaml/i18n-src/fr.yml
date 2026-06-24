@@ -2519,7 +2519,7 @@ tool:
     title: Assembler
     action_0: Ajouter des connecteurs
     action_0_status: Ajouter des connecteurs pour assembler des pièces
-    action_0_state_0_status: Cliquez sur la face de référence d'une pièce pour ajouter des connecteurs avec les pièces voisines
+    action_0_state_0_status: Cliquez sur la face de référence d'une pièce pour ajouter des connecteurs avec les pièces voisines en contact # TODO: changed
     action_1: Effacer des connecteurs
     action_1_status: Effacer des connecteurs d'assemblage de pièces
     action_1_state_0_status: Cliquez sur la face de référence d'une pièce pour effacer les connecteurs qu'elle partage avec les pièces voisines
@@ -2542,6 +2542,7 @@ tool:
     action_option_offsets_end_offset: Fin
     action_option_spacings_min_spacing: Min
     action_option_spacings_max_spacing: Max
+    action_option_options_opposite_status: Capturer la face opposée
     action_option_options_make_unique_status: Rendre unique les pièces assemblées
     action_option_hardware_connector_a: Connecteur A
     action_option_hardware_connector_b: Connecteur B

@@ -639,7 +639,7 @@ module Ladb::OpenCutList
 
     def onPickerChanged(picker, view)
       super
-      if _snap_join
+      if _pick_join
         _preview_join
       end
       _preview_snap_point
@@ -656,10 +656,10 @@ module Ladb::OpenCutList
 
     def _reset
       super
-      @snap_point = nil
-      @snap_face_manipulator = nil
-      @snap_edge_manipulator = nil
-      @snap_vertex_manipulator = nil
+      @mouse_snap_point = nil
+      @active_face_manipulator_a = nil
+      @active_edge_manipulator_a = nil
+      @active_vertex_manipulator_a = nil
       _reset_neighborhood_def
     end
 
@@ -668,17 +668,17 @@ module Ladb::OpenCutList
     end
 
     def _refresh
-      @snap_point = nil
-      @snap_face_manipulator = nil
-      @snap_edge_manipulator = nil
-      @snap_vertex_manipulator = nil
+      @mouse_snap_point = nil
+      @active_face_manipulator_a = nil
+      @active_edge_manipulator_a = nil
+      @active_vertex_manipulator_a = nil
       @picker.invalidate if @picker.is_a?(SmartPicker)
       super
     end
 
     # -----
 
-    def _snap_join
+    def _pick_join
 
       face_manipulator = @picker.picked_plane_manipulator
       if face_manipulator.is_a?(FaceManipulator) &&
@@ -714,12 +714,12 @@ module Ladb::OpenCutList
       end
 
       # Check if the base context has changed since last snap iteration
-      context_changed = @snap_face_manipulator != face_manipulator || @snap_edge_manipulator != edge_manipulator || @snap_vertex_manipulator != vertex_manipulator
+      context_changed = @active_face_manipulator_a != face_manipulator || @active_edge_manipulator_a != edge_manipulator || @active_vertex_manipulator_a != vertex_manipulator
 
-      @snap_face_manipulator = face_manipulator
-      @snap_edge_manipulator = edge_manipulator
-      @snap_vertex_manipulator = vertex_manipulator
-      @snap_point = snap_point
+      @active_face_manipulator_a = face_manipulator
+      @active_edge_manipulator_a = edge_manipulator
+      @active_vertex_manipulator_a = vertex_manipulator
+      @mouse_snap_point = snap_point
 
       context_changed
     end
@@ -737,27 +737,27 @@ module Ladb::OpenCutList
 
     def _preview_join_context(neighborhood_def)
 
-      if @snap_face_manipulator.is_a?(FaceManipulator)
+      if @active_face_manipulator_a.is_a?(FaceManipulator)
 
         # Offset transformation to force mesh to be on top of part preview
-        ov = Geom::Vector3d.new(@snap_face_manipulator.normal)
+        ov = Geom::Vector3d.new(@active_face_manipulator_a.normal)
         ov.length = 0.01
         ot = Geom::Transformation.translation(ov)
 
         # Highlight picked face
         k_mesh = Kuix::Mesh.new
-        k_mesh.add_triangles(@snap_face_manipulator.triangles)
+        k_mesh.add_triangles(@active_face_manipulator_a.triangles)
         k_mesh.background_color = COLOR_REF_FACE_A
         k_mesh.transformation = ot
         @tool.append_3d(k_mesh, LAYER_3D_JOIN_PREVIEW)
 
       end
 
-      if @snap_edge_manipulator.is_a?(EdgeManipulator)
+      if @active_edge_manipulator_a.is_a?(EdgeManipulator)
 
         # Highlight picked segment
         k_segments = Kuix::Segments.new
-        k_segments.add_segments(@snap_edge_manipulator.segment)
+        k_segments.add_segments(@active_edge_manipulator_a.segment)
         k_segments.color = COLOR_REF_EDGE_A
         k_segments.line_width = 3
         k_segments.on_top = true
@@ -1026,6 +1026,11 @@ module Ladb::OpenCutList
         occupied_anchor_count = 0
         neighbor_join_defs.each do |neighbor_join_def|
 
+          k_mesh = Kuix::Mesh.new
+          k_mesh.add_triangles(neighbor_join_def.neighbor_def.drawing_def.face_manipulators.flat_map(&:triangles))
+          k_mesh.background_color = COLOR_PART_B
+          @tool.append_3d(k_mesh, LAYER_3D_JOIN_PREVIEW)
+
           t_b = neighbor_join_def.neighbor_def.t_b
           ti_b = neighbor_join_def.neighbor_def.ti_b
 
@@ -1115,11 +1120,6 @@ module Ladb::OpenCutList
 
           end
 
-          k_mesh = Kuix::Mesh.new
-          k_mesh.add_triangles(neighbor_join_def.neighbor_def.drawing_def.face_manipulators.flat_map(&:triangles))
-          k_mesh.background_color = COLOR_PART_B
-          @tool.append_3d(k_mesh, LAYER_3D_JOIN_PREVIEW)
-
         end
 
         if occupied_anchor_count > 0
@@ -1130,10 +1130,10 @@ module Ladb::OpenCutList
 
       end
 
-      if @snap_vertex_manipulator.is_a?(VertexManipulator)
+      if @active_vertex_manipulator_a.is_a?(VertexManipulator)
 
         k_points = _create_floating_points(
-          points: @snap_vertex_manipulator.point,
+          points: @active_vertex_manipulator_a.point,
           style: Kuix::POINT_STYLE_CIRCLE,
           fill_color: Kuix::COLOR_MAGENTA,
           stroke_color: Kuix::COLOR_WHITE,
@@ -1148,11 +1148,11 @@ module Ladb::OpenCutList
 
       @tool.clear_3d(LAYER_3D_SNAP_POINT_PREVIEW)
 
-      if @snap_point.is_a?(Geom::Point3d)
+      if @mouse_snap_point.is_a?(Geom::Point3d)
 
         k_edge = Kuix::EdgeMotif3d.new
-        k_edge.start.copy!(@snap_point)
-        k_edge.end.copy!(@snap_vertex_manipulator.point)
+        k_edge.start.copy!(@mouse_snap_point)
+        k_edge.end.copy!(@active_vertex_manipulator_a.point)
         k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
         k_edge.line_width = 1
         k_edge.color = Kuix::COLOR_DARK_GREY
@@ -1346,7 +1346,7 @@ module Ladb::OpenCutList
     # -----
 
     def _get_add_joinery_def(neighborhood_def)
-      return nil if @snap_face_manipulator.nil? || @snap_edge_manipulator.nil? || @snap_vertex_manipulator.nil?
+      return nil if @active_face_manipulator_a.nil? || @active_edge_manipulator_a.nil? || @active_vertex_manipulator_a.nil?
 
       t_a = neighborhood_def.t_a
       ti_a = neighborhood_def.ti_a
@@ -1371,14 +1371,14 @@ module Ladb::OpenCutList
 
         neighbor_def.touching_defs
                     .select { |touching_def|
-                      touching_def.face_manipulator.face != @snap_face_manipulator.face &&
-                      touching_def.face_manipulator.face.edges.any? { |edge| edge == @snap_edge_manipulator.edge }
+                      touching_def.face_manipulator.face != @active_face_manipulator_a.face &&
+                      touching_def.face_manipulator.face.edges.any? { |edge| edge == @active_edge_manipulator_a.edge }
                     }
                     .each do |touching_def|
 
-          origin = @snap_vertex_manipulator.point
-          x_axis = @snap_edge_manipulator.direction
-          x_axis = x_axis.reverse if origin == @snap_edge_manipulator.end_point
+          origin = @active_vertex_manipulator_a.point
+          x_axis = @active_edge_manipulator_a.direction
+          x_axis = x_axis.reverse if origin == @active_edge_manipulator_a.end_point
           z_axis = touching_def.face_manipulator.normal
           y_axis = z_axis * x_axis
           at = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis)
@@ -1561,15 +1561,15 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _snap_join
+    def _pick_join
       context_changed = super
 
       if @tool.is_key_shift_down? &&
-         @snap_point.is_a?(Geom::Point3d) &&
+         @mouse_snap_point.is_a?(Geom::Point3d) &&
          (neighborhood_def = _get_neighborhood_def) &&
          (joinery_def = _get_remove_joinery_def(neighborhood_def))
 
-        snap_anchor = _get_anchors(joinery_def).min { |p1, p2| @snap_point.distance(p1) <=> @snap_point.distance(p2) }
+        snap_anchor = _get_anchors(joinery_def).min { |p1, p2| @mouse_snap_point.distance(p1) <=> @mouse_snap_point.distance(p2) }
 
       else
         snap_anchor = nil
@@ -1664,10 +1664,10 @@ module Ladb::OpenCutList
 
       @tool.clear_3d(LAYER_3D_SNAP_POINT_PREVIEW)
 
-      if @snap_point.is_a?(Geom::Point3d) && @snap_anchor.is_a?(Geom::Point3d)
+      if @mouse_snap_point.is_a?(Geom::Point3d) && @snap_anchor.is_a?(Geom::Point3d)
 
         k_edge = Kuix::EdgeMotif3d.new
-        k_edge.start.copy!(@snap_point)
+        k_edge.start.copy!(@mouse_snap_point)
         k_edge.end.copy!(@snap_anchor)
         k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
         k_edge.line_width = 1
@@ -1741,7 +1741,7 @@ module Ladb::OpenCutList
     # -----
 
     def _get_remove_joinery_def(neighborhood_def)
-      return nil if @snap_face_manipulator.nil? || @snap_edge_manipulator.nil? || @snap_vertex_manipulator.nil?
+      return nil if @active_face_manipulator_a.nil? || @active_edge_manipulator_a.nil? || @active_vertex_manipulator_a.nil?
 
       neighbor_join_defs = []
 
@@ -1751,8 +1751,8 @@ module Ladb::OpenCutList
 
         neighbor_def.touching_defs
                     .select { |touching_def|
-                      touching_def.face_manipulator.face != @snap_face_manipulator.face &&
-                      touching_def.face_manipulator.face.edges.any? { |edge| edge == @snap_edge_manipulator.edge }
+                      touching_def.face_manipulator.face != @active_face_manipulator_a.face &&
+                      touching_def.face_manipulator.face.edges.any? { |edge| edge == @active_edge_manipulator_a.edge }
                     }
                     .each do |touching_def|
 
@@ -1807,7 +1807,8 @@ module Ladb::OpenCutList
     # -- STATE --
 
     def get_state_status(state)
-      PLUGIN.get_i18n_string("tool.smart_#{@tool.get_stripped_name}.action_#{@action}_state_#{state}_status") + '.'
+      PLUGIN.get_i18n_string("tool.smart_#{@tool.get_stripped_name}.action_#{@action}_state_#{state}_status") + '.' +
+        ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_join.action_option_options_opposite_status") + '.'
     end
 
     def get_state_picker(state)
@@ -1914,7 +1915,7 @@ module Ladb::OpenCutList
       super
       _reset_active_part_a
       _reset_active_part_b
-      @snap_point = nil
+      @mouse_snap_point = nil
       _reset_neighborhood_def
       set_state(STATE_SELECT_A)
     end
@@ -1943,7 +1944,7 @@ module Ladb::OpenCutList
     def _refresh
       _reset_active_part
       _reset_active_part_b
-      @snap_point = nil
+      @mouse_snap_point = nil
       @picker.invalidate if @picker.is_a?(SmartPicker)
       super
     end
@@ -1996,7 +1997,7 @@ module Ladb::OpenCutList
       end
 
       (self.instance_variable_get(var_name) != face_manipulator).tap do
-        @snap_point = snap_point
+        @mouse_snap_point = snap_point
         self.instance_variable_set(var_name, face_manipulator)
       end
     end
@@ -2075,10 +2076,10 @@ module Ladb::OpenCutList
         # --
 
         # Draw "opposite" point (if possible)
-        if @snap_point && picker && @snap_point != picker.picked_point
+        if @mouse_snap_point && picker && @mouse_snap_point != picker.picked_point
 
           k_point = _create_floating_points(
-            points: @snap_point,
+            points: @mouse_snap_point,
             style: Kuix::POINT_STYLE_DIAMOND,
             fill_color: color,
             stroke_color: Kuix::COLOR_DARK_GREY,
@@ -2088,7 +2089,7 @@ module Ladb::OpenCutList
 
           k_edge = Kuix::EdgeMotif3d.new
           k_edge.start.copy!(picker.picked_point)
-          k_edge.end.copy!(@snap_point)
+          k_edge.end.copy!(@mouse_snap_point)
           k_edge.line_stipple = Kuix::LINE_STIPPLE_DOTTED
           k_edge.line_width = 1
           k_edge.color = Kuix::COLOR_DARK_GREY
@@ -2107,8 +2108,11 @@ module Ladb::OpenCutList
     # -----
 
     def _pick_opposite_face_at(point, face_manipulator)
-      ray = [ point, face_manipulator.normal.reverse ]
-      hit_point, hit_path = Sketchup.active_model.raytest(ray, true)
+      model = Sketchup.active_model
+      view = model.active_view
+      face_point = Geom.intersect_line_plane([ view.camera.eye, view.camera.eye.vector_to(point) ], face_manipulator.plane)
+      point = face_point if face_point.is_a?(Geom::Point3d) # Point may be out of the face plane, so override it if we have found a best candidate.
+      hit_point, hit_path = model.raytest([ point, face_manipulator.normal.reverse ], true)
       if hit_point &&
          (face = hit_path.last).is_a?(Sketchup::Face) &&
          face.parent == face_manipulator.face.parent &&
@@ -2126,6 +2130,7 @@ module Ladb::OpenCutList
       return @neighborhood_def unless @neighborhood_def.nil?
 
       return nil unless _has_active_part_a? && _has_active_part_b?
+      return nil if @active_part_entity_path_a == @active_part_entity_path_b
       return nil unless @active_face_manipulator_a.is_a?(FaceManipulator) && @active_face_manipulator_b.is_a?(FaceManipulator)
 
       if (line = Geom.intersect_plane_plane(@active_face_manipulator_a.plane, @active_face_manipulator_b.plane))
@@ -2217,6 +2222,11 @@ module Ladb::OpenCutList
         return SmartCursorManager.cursor_select_join_plus
       end
       super
+    end
+
+    def get_state_status(state)
+      super +
+        ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_join.action_3") + '.'
     end
 
     # -----
@@ -2814,11 +2824,11 @@ module Ladb::OpenCutList
     def _snap_ref_point_b(picker = nil)
 
       if @tool.is_key_shift_down? &&
-         @snap_point.is_a?(Geom::Point3d) &&
+         @mouse_snap_point.is_a?(Geom::Point3d) &&
          (neighborhood_def = _get_neighborhood_def) &&
          (joinery_def = _get_remove_joinery_def(neighborhood_def))
 
-        snap_anchor = _get_anchors(joinery_def).min { |p1, p2| @snap_point.distance(p1) <=> @snap_point.distance(p2) }
+        snap_anchor = _get_anchors(joinery_def).min { |p1, p2| @mouse_snap_point.distance(p1) <=> @mouse_snap_point.distance(p2) }
 
       else
         snap_anchor = nil
@@ -2884,10 +2894,10 @@ module Ladb::OpenCutList
         @tool.show_message(PLUGIN.get_i18n_string('tool.smart_join.warning.no_fitting_to_remove'), SmartTool::MESSAGE_TYPE_WARNING)
       end
 
-      if @snap_point.is_a?(Geom::Point3d) && @snap_anchor.is_a?(Geom::Point3d)
+      if @mouse_snap_point.is_a?(Geom::Point3d) && @snap_anchor.is_a?(Geom::Point3d)
 
         k_edge = Kuix::EdgeMotif3d.new
-        k_edge.start.copy!(@snap_point)
+        k_edge.start.copy!(@mouse_snap_point)
         k_edge.end.copy!(@snap_anchor)
         k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
         k_edge.line_width = 1
