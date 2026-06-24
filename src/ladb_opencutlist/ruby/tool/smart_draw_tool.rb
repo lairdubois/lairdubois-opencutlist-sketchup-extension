@@ -106,6 +106,19 @@ module Ladb::OpenCutList
       true
     end
 
+    def get_action_option_sync_actions(action, option_group, option)
+
+      case option_group
+      when ACTION_OPTION_OPTIONS
+        case option
+        when ACTION_OPTION_OPTIONS_CONSTRUCTION
+          return [ ACTION_DRAW_RECTANGLE, ACTION_DRAW_CIRCLE, ACTION_DRAW_POLYGON ]
+        end
+      end
+
+      super
+    end
+
     def get_action_option_toggle?(action, option_group, option)
 
       case option_group
@@ -503,7 +516,7 @@ module Ladb::OpenCutList
       if key <= 128
         key_char = key.chr
         if key_char == 'X' && @tool.is_key_shift_down?
-          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_CONSTRUCTION, !_fetch_option_construction?, true)
+          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_CONSTRUCTION, !_fetch_option_construction?, fire_event: true)
           _refresh
           return true
         end
@@ -642,7 +655,7 @@ module Ladb::OpenCutList
           return true
         end
         if tool.is_key_alt_or_command?(key) && is_quick
-          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_FROM_VERTEX, !_fetch_option_measure_from_vertex?, true)
+          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_FROM_VERTEX, !_fetch_option_measure_from_vertex?, fire_event: true)
           Sketchup.set_status_text('', SB_VCB_VALUE)
           @previous_action_handler = nil
           _remove_floating_tools
@@ -660,7 +673,7 @@ module Ladb::OpenCutList
           return true
         end
         if tool.is_key_ctrl_or_option?(key)
-          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_PULL_CENTRED, !_fetch_option_pull_centered?, true) if is_quick
+          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_PULL_CENTRED, !_fetch_option_pull_centered?, fire_event: true) if is_quick
           _refresh
           return true
         end
@@ -703,7 +716,7 @@ module Ladb::OpenCutList
       _remove_floating_tools
 
       # Disable measure from vertex option
-      @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_FROM_VERTEX, false, true)
+      @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_FROM_VERTEX, false, fire_event: true)
 
     end
 
@@ -1226,7 +1239,7 @@ module Ladb::OpenCutList
 
         begin
           offset = value.to_l
-          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OFFSET, SmartDrawTool::ACTION_OPTION_OFFSET_SHAPE_OFFSET, offset.to_s, true)
+          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OFFSET, SmartDrawTool::ACTION_OPTION_OFFSET_SHAPE_OFFSET, offset.to_s, fire_event: true)
           Sketchup.set_status_text('', SB_VCB_VALUE)
           _refresh
         rescue ArgumentError
@@ -1938,7 +1951,7 @@ module Ladb::OpenCutList
 
       when STATE_SHAPE
         if tool.is_key_ctrl_or_option?(key) && is_quick
-          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED, !_fetch_option_rectangle_centered?, true)
+          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED, !_fetch_option_rectangle_centered?, fire_event: true)
           _refresh
           return true
         end
@@ -2592,7 +2605,7 @@ module Ladb::OpenCutList
           return true
         end
         if tool.is_key_ctrl_or_option?(key) && is_quick
-          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_FROM_DIAMETER, !_fetch_option_measure_from_diameter?, true)
+          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_FROM_DIAMETER, !_fetch_option_measure_from_diameter?, fire_event: true)
           Sketchup.set_status_text(get_state_status(fetch_state), SB_PROMPT)
           Sketchup.set_status_text(get_state_vcb_label(fetch_state), SB_VCB_LABEL)
           _refresh
@@ -2808,7 +2821,7 @@ module Ladb::OpenCutList
           return true
         end
 
-        @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_SEGMENTS, SmartDrawTool::ACTION_OPTION_SEGMENTS_SEGMENT_COUNT, segment_count, true)
+        @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_SEGMENTS, SmartDrawTool::ACTION_OPTION_SEGMENTS_SEGMENT_COUNT, segment_count, fire_event: true)
         Sketchup.set_status_text('', SB_VCB_VALUE)
         _refresh
 
@@ -3090,7 +3103,7 @@ module Ladb::OpenCutList
 
       when STATE_SHAPE
         if tool.is_key_ctrl_or_option?(key) && is_quick
-          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_REVERSED, !_fetch_option_measure_reversed?, true)
+          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_REVERSED, !_fetch_option_measure_reversed?, fire_event: true)
           Sketchup.set_status_text(get_state_status(fetch_state), SB_PROMPT)
           Sketchup.set_status_text(get_state_vcb_label(fetch_state), SB_VCB_LABEL)
           if view.inference_locked?

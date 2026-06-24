@@ -105,6 +105,16 @@ module Ladb::OpenCutList
       false
     end
 
+    def get_action_option_sync_actions(action, option_group, option)
+
+      case option_group
+      when ACTION_OPTION_AXES
+        return [ ACTION_COPY_LINE, ACTION_COPY_GRID, ACTION_MOVE_LINE, ACTION_DISTRIBUTE ]
+      end
+
+      super
+    end
+
     def get_action_option_toggle?(action, option_group, option)
       true
     end
@@ -361,7 +371,7 @@ module Ladb::OpenCutList
       return true if super
 
       if tool.is_key_alt_or_command?(key) && is_quick
-        @tool.store_action_option_value(@action, SmartHandleTool::ACTION_OPTION_OPTIONS, SmartHandleTool::ACTION_OPTION_OPTIONS_MIRROR, !_fetch_option_mirror?, true)
+        @tool.store_action_option_value(@action, SmartHandleTool::ACTION_OPTION_OPTIONS, SmartHandleTool::ACTION_OPTION_OPTIONS_MIRROR, !_fetch_option_mirror?, fire_event: true)
         _refresh
         return true
       end

@@ -112,6 +112,19 @@ module Ladb::OpenCutList
       super
     end
 
+    def get_action_option_sync_actions(action, option_group, option)
+
+      case option_group
+      when ACTION_OPTION_OPTIONS
+        case option
+        when ACTION_OPTION_OPTIONS_OPPOSITE
+          return [ ACTION_ADD_FITTINGS, ACTION_REMOVE_FITTINGS ]
+        end
+      end
+
+      super
+    end
+
     def get_action_option_toggle?(action, option_group, option)
 
       case option_group
@@ -354,7 +367,7 @@ module Ladb::OpenCutList
 
       end
 
-      @tool.store_action_option_value(@action, option_group, option, measure.to_s, true)
+      @tool.store_action_option_value(@action, option_group, option, measure.to_s, fire_event: true)
 
       false
     end
@@ -2234,6 +2247,16 @@ module Ladb::OpenCutList
       super
     end
 
+    def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
+
+      if tool.is_key_ctrl_or_option?(key)
+        @tool.store_action_option_value(@action, SmartJoinTool::ACTION_OPTION_OPTIONS, SmartJoinTool::ACTION_OPTION_OPTIONS_OPPOSITE, !_fetch_option_opposite?, fire_event: true)
+        return true
+      end
+
+      false
+    end
+
     # -----
 
     def enableVCB?
@@ -2762,6 +2785,10 @@ module Ladb::OpenCutList
 
       if tool.is_key_shift?(key)
         _refresh
+        return true
+      end
+      if tool.is_key_ctrl_or_option?(key)
+        @tool.store_action_option_value(@action, SmartJoinTool::ACTION_OPTION_OPTIONS, SmartJoinTool::ACTION_OPTION_OPTIONS_OPPOSITE, !_fetch_option_opposite?, fire_event: true)
         return true
       end
 

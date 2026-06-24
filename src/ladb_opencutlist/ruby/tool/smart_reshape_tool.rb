@@ -719,7 +719,7 @@ module Ladb::OpenCutList
       return true if super
 
       if tool.is_key_alt_or_command?(key) && is_quick && (@state == STATE_SELECT || @state == STATE_STRETCH)
-        @tool.store_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_MAKE_UNIQUE, !_fetch_option_options_make_unique?, true)
+        @tool.store_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_MAKE_UNIQUE, !_fetch_option_options_make_unique?, fire_event: true)
         _refresh
         return true
       end
@@ -741,7 +741,7 @@ module Ladb::OpenCutList
 
       when STATE_STRETCH
         if tool.is_key_ctrl_or_option?(key) && is_quick
-          @tool.store_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_CENTERED, !_fetch_option_options_centered?, true)
+          @tool.store_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_CENTERED, !_fetch_option_options_centered?, fire_event: true)
           _refresh
           return true
         end
@@ -3375,7 +3375,7 @@ module Ladb::OpenCutList
         return true
       end
 
-      @tool.store_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_THICKNESS, SmartReshapeTool::ACTION_OPTION_THICKNESS_THICKNESS, thickness.to_s, true)
+      @tool.store_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_THICKNESS, SmartReshapeTool::ACTION_OPTION_THICKNESS_THICKNESS, thickness.to_s, fire_event: true)
       Sketchup.set_status_text('', SB_VCB_VALUE)
       _compute
       _refresh

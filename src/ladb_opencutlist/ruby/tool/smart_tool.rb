@@ -301,12 +301,11 @@ module Ladb::OpenCutList
                           end
                         end
                         button.selected = true
-                        store_action_option_value(action, option_group, option)
+                        store_action_option_value(action, option_group, option, fire_event: true)
                         refresh
-                        # set_root_action(fetch_action) # TODO find a better solution to update current Axes Tool
                       else
                         button.selected = !button.selected?
-                        store_action_option_value(action, option_group, option, button.selected?)
+                        store_action_option_value(action, option_group, option, button.selected?, fire_event: true)
                       end
                     else
                       PLUGIN.show_modal_dialog("smart_#{get_stripped_name}_tool_action_#{action}", { :action => action, :focused_field => { :option_group => option_group, :option => option } })
@@ -1083,6 +1082,10 @@ module Ladb::OpenCutList
       false
     end
 
+    def get_action_option_sync_actions(action, option_group, option)
+      []
+    end
+
     def get_action_option_toggle?(action, option_group, option)
       true
     end
@@ -1111,7 +1114,7 @@ module Ladb::OpenCutList
       @current_action
     end
 
-    def store_action_option_value(action, option_group, option, value = nil, fire_event = false)
+    def store_action_option_value(action, option_group, option, value = nil, fire_event: false, synchronize: true)
       dictionary, section = get_action_options_dictionary_and_section(action)
       preset = PLUGIN.get_global_preset(dictionary, nil, section)
       if get_action_option_group_unique?(action, option_group)
@@ -1124,6 +1127,11 @@ module Ladb::OpenCutList
       if changed
         PLUGIN.set_global_preset(dictionary, preset, nil, section, fire_event)
         onActionOptionStored(action, option_group, option)
+      end
+      if synchronize
+        (get_action_option_sync_actions(action, option_group, option).to_a - [ action ]).each do |sync_action|
+          store_action_option_value(sync_action, option_group, option, value, fire_event: fire_event, synchronize: false)
+        end
       end
     end
 
@@ -1383,9 +1391,11 @@ module Ladb::OpenCutList
 
       # Add event callbacks
       @event_callback = PLUGIN.add_event_callback(PluginObserver::ON_GLOBAL_PRESET_CHANGED) do |params|
-        dictionary, section = get_action_options_dictionary_and_section(fetch_action)
-        if params[:dictionary] == dictionary && params[:section] == section
-          onGlobalPresetChanged(dictionary, section)
+        get_action_defs.each do |action_def|
+          dictionary, section = get_action_options_dictionary_and_section(action_def[:action])
+          if params[:dictionary] == dictionary && params[:section] == section
+            onGlobalPresetChanged(dictionary, section)
+          end
         end
       end
 
@@ -1593,7 +1603,6 @@ module Ladb::OpenCutList
       @actions_options_panels.each do |actions_options_panel|
 
         action = actions_options_panel.data[:action]
-        next unless action == fetch_action
 
         actions_options_panel.children.each do |b|
           unless b.data.nil?
