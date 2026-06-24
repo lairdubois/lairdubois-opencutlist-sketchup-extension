@@ -109,9 +109,14 @@ module Ladb::OpenCutList
     def get_action_option_sync_actions(action, option_group, option)
 
       case option_group
+      when ACTION_OPTION_OFFSET
+        case option
+        when ACTION_OPTION_OFFSET_SHAPE_OFFSET
+          return [ ACTION_DRAW_RECTANGLE, ACTION_DRAW_CIRCLE, ACTION_DRAW_POLYGON ]
+        end
       when ACTION_OPTION_OPTIONS
         case option
-        when ACTION_OPTION_OPTIONS_CONSTRUCTION
+        when ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_DRAW_IN
           return [ ACTION_DRAW_RECTANGLE, ACTION_DRAW_CIRCLE, ACTION_DRAW_POLYGON ]
         end
       end
