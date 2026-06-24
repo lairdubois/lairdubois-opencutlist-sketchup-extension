@@ -254,21 +254,32 @@ module Ladb::OpenCutList
 
   end
 
-  class SmartJoinActionHandler < SmartSelectActionHandler
+  class SmartJoinActionHandler < SmartActionHandler
+
+    include SmartActionHandlerPartHelper
 
     COLOR_DEFAULT_HARDWARE_MATERIAL = Sketchup::Color.new('#999999').freeze
     COLOR_DEFAULT_MACHINING_MATERIAL = Sketchup::Color.new('#0068ff').freeze
 
-    COLOR_NEIGHBOR = ColorUtils.color_translucent(Kuix::COLOR_GREEN, 0.3)
+    COLOR_PART_A = COLOR_PART
+    COLOR_PART_B = ColorUtils.color_translucent(Kuix::COLOR_GREEN, 0.3)
 
-    COLOR_REF_FACE_A = Kuix::COLOR_MAGENTA.blend(COLOR_PART, 0.2).freeze
-    COLOR_REF_FACE_B = Kuix::COLOR_MAGENTA.blend(COLOR_NEIGHBOR, 0.2).freeze
+    COLOR_REF_FACE_A = Kuix::COLOR_MAGENTA.blend(COLOR_PART_A, 0.2).freeze
+    COLOR_REF_FACE_B = Kuix::COLOR_MAGENTA.blend(COLOR_PART_B, 0.2).freeze
     COLOR_REF_EDGE_A = ColorUtils.color_darken(COLOR_REF_FACE_A, 0.3).freeze
 
     LAYER_3D_JOIN_PREVIEW = 3
     LAYER_3D_SNAP_POINT_PREVIEW = 4
 
+    LAYER_3D_PART_A_PREVIEW = 10
+    LAYER_3D_PART_B_PREVIEW = 20
+
     # -----
+
+    def onPickerChanged(picker, view)
+      _pick_part(picker, view)
+      super
+    end
 
     def onToolGlobalPresetChanged(tool, dictionary, section)
       @geometries_def = nil
@@ -298,7 +309,7 @@ module Ladb::OpenCutList
     # -----
 
     def _can_activate_part?(part_entity_path, part)
-      return [ false, 'tool.smart_join.error.not_assemblable' ] unless (!part.is_a?(Part) || part.group.material_type != MaterialAttributes::TYPE_HARDWARE)
+      return [ false, 'tool.smart_join.error.not_assemblable' ] if part.is_a?(Part) && part.group.material_type == MaterialAttributes::TYPE_HARDWARE
       super
     end
 
@@ -945,17 +956,23 @@ module Ladb::OpenCutList
 
     # -----
 
+    def onToolLButtonUp(tool, flags, x, y, view)
+
+      if has_active_part?
+        _add_connectors
+        _restart
+        return true
+      end
+
+      super
+    end
+
     def onToolUserText(tool, text, view)
       return true if super
 
       return true if _read_measures(tool, text, view)
 
       false
-    end
-
-    def onSelected
-      _add_connectors
-      _restart
     end
 
     # -----
@@ -1087,7 +1104,7 @@ module Ladb::OpenCutList
 
           k_mesh = Kuix::Mesh.new
           k_mesh.add_triangles(neighbor_join_def.neighbor_def.drawing_def.face_manipulators.flat_map(&:triangles))
-          k_mesh.background_color = COLOR_NEIGHBOR
+          k_mesh.background_color = COLOR_PART_B
           @tool.append_3d(k_mesh, LAYER_3D_JOIN_PREVIEW)
 
         end
@@ -1489,18 +1506,18 @@ module Ladb::OpenCutList
 
     # -----
 
-    def onToolKeyDown(tool, key, repeat, flags, view)
+    def onToolLButtonUp(tool, flags, x, y, view)
 
-      if tool.is_key_shift?(key)
-        _refresh
+      if has_active_part?
+        _remove_connectors
+        _restart
         return true
       end
 
       super
     end
 
-    def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
-      return true if super
+    def onToolKeyDown(tool, key, repeat, flags, view)
 
       if tool.is_key_shift?(key)
         _refresh
@@ -1510,9 +1527,14 @@ module Ladb::OpenCutList
       false
     end
 
-    def onSelected
-      _remove_connectors
-      _restart
+    def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
+
+      if tool.is_key_shift?(key)
+        _refresh
+        return true
+      end
+
+      false
     end
 
     # -----
@@ -1608,7 +1630,7 @@ module Ladb::OpenCutList
 
           k_mesh = Kuix::Mesh.new
           k_mesh.add_triangles(neighbor_join_def.neighbor_def.drawing_def.face_manipulators.flat_map(&:triangles))
-          k_mesh.background_color = COLOR_NEIGHBOR
+          k_mesh.background_color = COLOR_PART_B
           @tool.append_3d(k_mesh, LAYER_3D_JOIN_PREVIEW)
 
         end
@@ -1753,10 +1775,18 @@ module Ladb::OpenCutList
 
   class SmartJoinFittingsActionHandler < SmartJoinActionHandler
 
+    STATE_SELECT_A = 0
     STATE_SELECT_B = 1
 
     def initialize(action, tool, previous_action_handler = nil)
       super
+
+      @active_part_entity_path_a = nil
+      @active_part_entity_path_b = nil
+
+      @active_part_a = nil
+      @active_part_b = nil
+
     end
 
     # -----
@@ -1773,7 +1803,7 @@ module Ladb::OpenCutList
 
     def get_state_cursor(state)
       case state
-      when STATE_SELECT
+      when STATE_SELECT_A
         return SmartCursorManager.cursor_select_a
       end
       super
@@ -1794,21 +1824,32 @@ module Ladb::OpenCutList
 
     end
 
-    def onSelected
-      set_state(STATE_SELECT_B)
-      _refresh
-    end
-
-    def onPickerChanged(picker, view)
+    def onToolLButtonUp(tool, flags, x, y, view)
 
       case @state
 
-      when STATE_SELECT
-        super
+      when STATE_SELECT_A
+        if _has_active_part_a?
+          set_state(STATE_SELECT_B)
+          _refresh
+        end
+        return true
+
+      end
+
+      false
+    end
+
+    def onPickerChanged(picker, view)
+      super
+
+      case @state
+
+      when STATE_SELECT_A
         @tool.clear_3d(LAYER_3D_JOIN_PREVIEW)
         @tool.clear_3d(LAYER_3D_SNAP_POINT_PREVIEW)
         @tool.hide_message
-        if _snap_ref_face_a(picker)
+        if _pick_ref_face_a(picker)
           _reset_neighborhood_def
         end
         _preview_ref_face_a(picker)
@@ -1818,7 +1859,7 @@ module Ladb::OpenCutList
         @tool.clear_3d(LAYER_3D_JOIN_PREVIEW)
         @tool.clear_3d(LAYER_3D_SNAP_POINT_PREVIEW)
         @tool.hide_message
-        if _snap_ref_face_b(picker)
+        if _pick_ref_face_b(picker)
           _reset_neighborhood_def
         end
         if _snap_ref_point_b(picker)
@@ -1831,8 +1872,24 @@ module Ladb::OpenCutList
       end
     end
 
-    def onActivePartChanged(part_entity_path, part, highlighted = nil)
-      super
+    def onActivePartChanged(part_entity_path, part, highlighted = false)
+
+      case @state
+
+      when STATE_SELECT_A
+        _preview_part(part_entity_path, part, LAYER_3D_PART_A_PREVIEW, highlighted)
+        @active_part_entity_path_a = part_entity_path
+        @active_part_a = part
+        @active_face_manipulator_a = nil
+
+      when STATE_SELECT_B
+        _preview_part(part_entity_path, part, LAYER_3D_PART_B_PREVIEW, highlighted)
+        @active_part_entity_path_b = part_entity_path
+        @active_part_b = part
+        @active_face_manipulator_b = nil
+
+      end
+
       _reset_neighborhood_def
     end
 
@@ -1842,10 +1899,23 @@ module Ladb::OpenCutList
 
     def _reset
       super
+      _reset_active_part_a
+      _reset_active_part_b
       @snap_point = nil
-      @snap_face_manipulator_a = nil
-      @snap_face_manipulator_b = nil
       _reset_neighborhood_def
+      set_state(STATE_SELECT_A)
+    end
+
+    def _reset_active_part_a
+      @active_part_entity_path_a = nil
+      @active_part_a = nil
+      @active_face_manipulator_a = nil
+    end
+
+    def _reset_active_part_b
+      @active_part_entity_path_b = nil
+      @active_part_b = nil
+      @active_face_manipulator_b = nil
     end
 
     def _reset_neighborhood_def
@@ -1858,25 +1928,47 @@ module Ladb::OpenCutList
     end
 
     def _refresh
+      _reset_active_part
+      _reset_active_part_b
       @snap_point = nil
-      @snap_face_manipulator_b = nil
       @picker.invalidate if @picker.is_a?(SmartPicker)
       super
     end
 
     # -----
 
-    def _snap_ref_face_a(picker)
-      _snap_ref_face(picker, :@snap_face_manipulator_a)
+    def _get_active_part_preview_color(part, highlighted = false)
+      case @state
+      when STATE_SELECT_A
+        COLOR_PART_A
+      when STATE_SELECT_B
+        COLOR_PART_B
+      end
     end
 
-    def _snap_ref_face_b(picker)
-      _snap_ref_face(picker, :@snap_face_manipulator_b)
+    # -----
+
+    def _has_active_part_a?
+      @active_part_a.is_a?(Part)
     end
 
-    def _snap_ref_face(picker, var_name)
+    def _has_active_part_b?
+      @active_part_b.is_a?(Part)
+    end
 
-      face_manipulator = picker.picked_plane_manipulator
+    # -----
+
+    def _pick_ref_face_a(picker)
+      _pick_ref_face(picker, :_has_active_part_a?, :@active_face_manipulator_a)
+    end
+
+    def _pick_ref_face_b(picker)
+      _pick_ref_face(picker, :_has_active_part_b?, :@active_face_manipulator_b)
+    end
+
+    def _pick_ref_face(picker, check_method_name, var_name)
+
+      face_manipulator = self.send(check_method_name) ? picker.picked_plane_manipulator : nil
       if face_manipulator.is_a?(FaceManipulator)
 
         if _fetch_option_opposite?
@@ -1901,11 +1993,11 @@ module Ladb::OpenCutList
     end
 
     def _preview_ref_face_a(picker = nil)
-      _preview_ref_face(picker, @snap_face_manipulator_a, COLOR_REF_FACE_A)
+      _preview_ref_face(picker, @active_face_manipulator_a, COLOR_REF_FACE_A)
     end
 
     def _preview_ref_face_b(picker = nil)
-      _preview_ref_face(picker, @snap_face_manipulator_b, COLOR_REF_FACE_B)
+      _preview_ref_face(picker, @active_face_manipulator_b, COLOR_REF_FACE_B)
     end
 
     def _preview_ref_face(picker, face_manipulator, color)
@@ -2020,80 +2112,55 @@ module Ladb::OpenCutList
     def _get_neighborhood_def(tolerance = 0.001)
       return @neighborhood_def unless @neighborhood_def.nil?
 
-      return nil unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
-      return nil unless @snap_face_manipulator_a.is_a?(FaceManipulator) && @snap_face_manipulator_b.is_a?(FaceManipulator)
+      return nil unless _has_active_part_a? && _has_active_part_b?
+      return nil unless @active_face_manipulator_a.is_a?(FaceManipulator) && @active_face_manipulator_b.is_a?(FaceManipulator)
 
-      picked_part_entity_path = _get_part_entity_path_from_path(@picker.picked_face_path)
-      return nil if picked_part_entity_path.nil?                                                  # Exclude non-part entities
-      return nil if picked_part_entity_path == get_active_part_entity_path                        # Exclude selected part
-      return nil unless ArrayUtils.array_start_with?(picked_part_entity_path, _get_active_path)   # Exclude out of active path parts
-      if (picked_drawing_def = CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new(picked_part_entity_path) ], **_get_drawing_def_parameters).run).is_a?(DrawingDef)
+      if (line = Geom.intersect_plane_plane(@active_face_manipulator_a.plane, @active_face_manipulator_b.plane))
 
-        # Exclude invalid drawing defs
-        return nil unless picked_drawing_def.bounds.valid?
+        line_manipulator = LineManipulator.new(line)
 
-        # Transform the drawing def to the 'World' space
-        picked_drawing_def.transform!(picked_drawing_def.transformation.inverse)
+        pos_a = @active_face_manipulator_a.outer_loop_manipulator
+                                        .points
+                                        .map { |point| p = point.project_to_line(line); [ (p - line_manipulator.position) % line_manipulator.direction, p ] }
+                                        .sort_by! { |pos, _| pos }
+        pos_b = @active_face_manipulator_b.outer_loop_manipulator
+                                        .points
+                                        .map { |point| p = point.project_to_line(line); [ (p - line_manipulator.position) % line_manipulator.direction, p ] }
+                                        .sort_by! { |pos, _| pos }
 
-        # --
+        # Compute bounds intersection
 
-        if (line = Geom.intersect_plane_plane(@snap_face_manipulator_a.plane, @snap_face_manipulator_b.plane))
+        pos_s, point_s = [ pos_a.first, pos_b.first ].max { |(pos1, _), (pos2, _)| pos1 <=> pos2 }
+        pos_e, point_e = [ pos_a.last, pos_b.last ].min { |(pos1, _), (pos2, _)| pos1 <=> pos2 }
 
-          line_manipulator = LineManipulator.new(line)
+        return nil if pos_s > pos_e || point_s.distance(point_e).to_f < tolerance # No intersection
 
-          pos_a = @snap_face_manipulator_a.outer_loop_manipulator
-                                          .points
-                                          .map { |point| p = point.project_to_line(line); [ (p - line_manipulator.position) % line_manipulator.direction, p ] }
-                                          .sort_by! { |pos, _| pos }
-          pos_b = @snap_face_manipulator_b.outer_loop_manipulator
-                                          .points
-                                          .map { |point| p = point.project_to_line(line); [ (p - line_manipulator.position) % line_manipulator.direction, p ] }
-                                          .sort_by! { |pos, _| pos }
-
-          # Compute bounds intersection
-
-          pos_s, point_s = [ pos_a.first, pos_b.first ].max { |(pos1, _), (pos2, _)| pos1 <=> pos2 }
-          pos_e, point_e = [ pos_a.last, pos_b.last ].min { |(pos1, _), (pos2, _)| pos1 <=> pos2 }
-
-          return nil if pos_s > pos_e || point_s.distance(point_e).to_f < tolerance # No intersection
-
-          neighbor_def = NeighborhoodNeighborDef.new(
-            picked_part_entity_path,
-            picked_drawing_def,
-            NeighborhoodLineDef.new(
-              @snap_face_manipulator_a,
-              @snap_face_manipulator_b,
-              line_manipulator,
-              point_s,
-              point_e
-            )
+        neighbor_def = NeighborhoodNeighborDef.new(
+          @active_part_entity_path_b,
+          NeighborhoodLineDef.new(
+            @active_face_manipulator_a,
+            @active_face_manipulator_b,
+            line_manipulator,
+            point_s,
+            point_e
           )
-
-        else
-          return nil
-        end
+        )
 
       else
         return nil
       end
 
-      # Transform the drawing def to the 'World' space
-      drawing_def.transform!(drawing_def.transformation.inverse)
-
       # Keep useful data
 
-      path = get_active_part_entity_path
-
       @neighborhood_def = NeighborhoodDef.new(
-        path,
-        drawing_def,
+        @active_part_entity_path_a,
         neighbor_def
       )
     end
 
     # Data Structs -----
 
-    NeighborhoodDef = Struct.new(:path, :drawing_def, :neighbor_def) do
+    NeighborhoodDef = Struct.new(:path, :neighbor_def) do
       def instance_a
         path.last
       end
@@ -2104,7 +2171,7 @@ module Ladb::OpenCutList
         @ti_a ||= t_a.inverse
       end
     end
-    NeighborhoodNeighborDef = Struct.new(:path, :drawing_def, :line_def) do
+    NeighborhoodNeighborDef = Struct.new(:path, :line_def) do
       def instance_b
         path.last
       end
@@ -2154,9 +2221,12 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_SELECT_B
-        _add_fittings
-        _restart
-
+        if _has_active_part_b?
+          _add_fittings
+          _restart
+        else
+          UI.beep
+        end
         return true
 
       end
@@ -2194,6 +2264,7 @@ module Ladb::OpenCutList
 
       snap_start_point = [ line_def.start_point, line_def.end_point ].min { |p1, p2| p1.distance(picker.picked_point) <=> p2.distance(picker.picked_point) }
 
+      # Returns true if changed
       (@snap_start_point != snap_start_point).tap { @snap_start_point = snap_start_point }
     end
 
@@ -2202,12 +2273,6 @@ module Ladb::OpenCutList
       return if (joinery_def = _get_add_joinery_def(neighborhood_def)).nil?
 
       super
-
-      # Highlight part B
-      k_mesh = Kuix::Mesh.new
-      k_mesh.add_triangles(neighborhood_def.neighbor_def.drawing_def.face_manipulators.flat_map(&:triangles))
-      k_mesh.background_color = COLOR_NEIGHBOR
-      @tool.append_3d(k_mesh, LAYER_3D_JOIN_PREVIEW)
 
       # Preview line
 
@@ -2666,13 +2731,16 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_SELECT_B
-        _remove_fittings
-        if @tool.is_key_shift_down?
-          _refresh
+        if _has_active_part_b?
+          _remove_fittings
+          if @tool.is_key_shift_down?
+            _refresh
+          else
+            _restart
+          end
         else
-          _restart
+          UI.beep
         end
-
         return true
 
       end
@@ -2687,11 +2755,10 @@ module Ladb::OpenCutList
         return true
       end
 
-      super
+      false
     end
 
     def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
-      return true if super
 
       if tool.is_key_shift?(key)
         _refresh
@@ -2710,6 +2777,11 @@ module Ladb::OpenCutList
       @snap_anchor = nil
     end
 
+    def _refresh
+      @snap_anchor = nil
+      super
+    end
+
     # -----
 
     def _snap_ref_point_b(picker = nil)
@@ -2725,6 +2797,7 @@ module Ladb::OpenCutList
         snap_anchor = nil
       end
 
+      # Returns true if changed
       (@snap_anchor != snap_anchor).tap { @snap_anchor = snap_anchor }
     end
 
@@ -2735,12 +2808,6 @@ module Ladb::OpenCutList
       super
 
       line_def = neighborhood_def.neighbor_def.line_def
-
-      # Highlight part B
-      k_mesh = Kuix::Mesh.new
-      k_mesh.add_triangles(neighborhood_def.neighbor_def.drawing_def.face_manipulators.flat_map(&:triangles))
-      k_mesh.background_color = COLOR_NEIGHBOR
-      @tool.append_3d(k_mesh, LAYER_3D_JOIN_PREVIEW)
 
       fn_preview_grouped_glued_instances = lambda do |anchor_coords, glued_instances, transformation|
         anchor = Geom::Point3d.new(anchor_coords)
