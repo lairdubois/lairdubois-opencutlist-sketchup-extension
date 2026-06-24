@@ -272,7 +272,7 @@ module Ladb::OpenCutList
                 }
 
                 vertex_defs = path.each_slice(2).to_a.map { |x, y| PathVertexDef.new(x, y, fn_compute_point_in_defs.call(x, y)) }
-                segment_defs = (vertex_defs + [ vertex_defs.first ]).each_cons(2).to_a.map { |start_vertex_def, end_vertex_def|
+                segment_defs = (vertex_defs + [ vertex_defs.first ]).each_cons(2).to_a.map! { |start_vertex_def, end_vertex_def|
                   if start_vertex_def.is_on? && end_vertex_def.is_on?
 
                     if fn_mid_point_on_borders.call(start_vertex_def.x, start_vertex_def.y, end_vertex_def.x, end_vertex_def.y)
@@ -485,7 +485,7 @@ module Ladb::OpenCutList
     end
     PathBorderDef = Struct.new(:segment_defs, :is_loop) do
       def path
-        segment_defs.map { |segment_def|
+        @path ||= segment_defs.map { |segment_def|
           next unless segment_def.is_start_gate || segment_def.is_border
           [ segment_def.end_vertex_def.x, segment_def.end_vertex_def.y ]
         }.compact.flatten(1)
@@ -494,7 +494,7 @@ module Ladb::OpenCutList
     PathSegmentDef = Struct.new(:start_vertex_def, :end_vertex_def, :is_start_gate, :is_end_gate, :is_border)
     PathVertexDef = Struct.new(:x, :y, :in_defs) do
       def is_on?
-        in_defs.select { |in_def| in_def.is_on }.any?
+        @is_on ||= in_defs.select { |in_def| in_def.is_on }.any?
       end
     end
     PathVertexInDef = Struct.new(:is_on, :path)
