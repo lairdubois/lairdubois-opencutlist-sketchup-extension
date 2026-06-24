@@ -279,13 +279,27 @@ module Ladb::OpenCutList
 
     COLOR_REF_FACE_A = Kuix::COLOR_MAGENTA.blend(COLOR_PART_A, 0.2).freeze
     COLOR_REF_FACE_B = Kuix::COLOR_MAGENTA.blend(COLOR_PART_B, 0.2).freeze
-    COLOR_REF_EDGE_A = ColorUtils.color_darken(COLOR_REF_FACE_A, 0.3).freeze
+    COLOR_REF_DARKEN_A = ColorUtils.color_darken(COLOR_REF_FACE_A, 0.4).freeze
+    COLOR_REF_DARKEN_B = ColorUtils.color_darken(COLOR_REF_FACE_B, 0.4).freeze
 
     LAYER_3D_JOIN_PREVIEW = 3
     LAYER_3D_SNAP_POINT_PREVIEW = 4
 
     LAYER_3D_PART_A_PREVIEW = 10
     LAYER_3D_PART_B_PREVIEW = 20
+
+    # -----
+
+    def initialize(action, tool, previous_action_handler = nil)
+      super
+
+      # Create 3D layers
+      tool.create_3d(LAYER_3D_PART_A_PREVIEW)
+      tool.create_3d(LAYER_3D_PART_B_PREVIEW)
+      tool.create_3d(LAYER_3D_JOIN_PREVIEW)
+      tool.create_3d(LAYER_3D_SNAP_POINT_PREVIEW)
+
+    end
 
     # -----
 
@@ -645,8 +659,8 @@ module Ladb::OpenCutList
       _preview_snap_point
     end
 
-    def onActivePartChanged(part_entity_path, part, highlighted = nil)
-      super
+    def onActivePartChanged(part_entity_path, part, highlighted = false)
+      _preview_part(part_entity_path, part, LAYER_3D_PART_A_PREVIEW, highlighted)
       _reset_neighborhood_def
     end
 
@@ -657,10 +671,14 @@ module Ladb::OpenCutList
     def _reset
       super
       @mouse_snap_point = nil
+      _reset_active_part_a
+      _reset_neighborhood_def
+    end
+
+    def _reset_active_part_a
       @active_face_manipulator_a = nil
       @active_edge_manipulator_a = nil
       @active_vertex_manipulator_a = nil
-      _reset_neighborhood_def
     end
 
     def _reset_neighborhood_def
@@ -669,9 +687,7 @@ module Ladb::OpenCutList
 
     def _refresh
       @mouse_snap_point = nil
-      @active_face_manipulator_a = nil
-      @active_edge_manipulator_a = nil
-      @active_vertex_manipulator_a = nil
+      _reset_active_part_a
       @picker.invalidate if @picker.is_a?(SmartPicker)
       super
     end
@@ -713,7 +729,7 @@ module Ladb::OpenCutList
 
       end
 
-      # Check if the base context has changed since last snap iteration
+      # Check if the base context has changed since last pick iteration
       context_changed = @active_face_manipulator_a != face_manipulator || @active_edge_manipulator_a != edge_manipulator || @active_vertex_manipulator_a != vertex_manipulator
 
       @active_face_manipulator_a = face_manipulator
@@ -726,6 +742,7 @@ module Ladb::OpenCutList
 
     def _preview_join
 
+      @tool.clear_3d(LAYER_3D_PART_B_PREVIEW)
       @tool.clear_3d(LAYER_3D_JOIN_PREVIEW)
       @tool.hide_message
 
@@ -758,7 +775,7 @@ module Ladb::OpenCutList
         # Highlight picked segment
         k_segments = Kuix::Segments.new
         k_segments.add_segments(@active_edge_manipulator_a.segment)
-        k_segments.color = COLOR_REF_EDGE_A
+        k_segments.color = COLOR_REF_DARKEN_A
         k_segments.line_width = 3
         k_segments.on_top = true
         @tool.append_3d(k_segments, LAYER_3D_JOIN_PREVIEW)
@@ -1029,7 +1046,7 @@ module Ladb::OpenCutList
           k_mesh = Kuix::Mesh.new
           k_mesh.add_triangles(neighbor_join_def.neighbor_def.drawing_def.face_manipulators.flat_map(&:triangles))
           k_mesh.background_color = COLOR_PART_B
-          @tool.append_3d(k_mesh, LAYER_3D_JOIN_PREVIEW)
+          @tool.append_3d(k_mesh, LAYER_3D_PART_B_PREVIEW)
 
           t_b = neighbor_join_def.neighbor_def.t_b
           ti_b = neighbor_join_def.neighbor_def.ti_b
@@ -1861,7 +1878,6 @@ module Ladb::OpenCutList
 
       when STATE_SELECT_A
         @tool.clear_3d(LAYER_3D_JOIN_PREVIEW)
-        @tool.clear_3d(LAYER_3D_SNAP_POINT_PREVIEW)
         @tool.hide_message
         if _pick_ref_face_a(picker)
           _reset_neighborhood_def
@@ -1913,9 +1929,9 @@ module Ladb::OpenCutList
 
     def _reset
       super
+      @mouse_snap_point = nil
       _reset_active_part_a
       _reset_active_part_b
-      @mouse_snap_point = nil
       _reset_neighborhood_def
       set_state(STATE_SELECT_A)
     end
@@ -2007,17 +2023,15 @@ module Ladb::OpenCutList
     end
 
     def _preview_ref_face_a(picker = nil)
-      _preview_ref_face(picker, @active_face_manipulator_a, COLOR_REF_FACE_A)
+      _preview_ref_face(picker, @active_face_manipulator_a, COLOR_REF_FACE_A, COLOR_REF_DARKEN_A)
     end
 
     def _preview_ref_face_b(picker = nil)
-      _preview_ref_face(picker, @active_face_manipulator_b, COLOR_REF_FACE_B)
+      _preview_ref_face(picker, @active_face_manipulator_b, COLOR_REF_FACE_B, COLOR_REF_DARKEN_B)
     end
 
-    def _preview_ref_face(picker, face_manipulator, color)
+    def _preview_ref_face(picker, face_manipulator, color, darken_color)
       if face_manipulator.is_a?(FaceManipulator)
-
-        darken_color = ColorUtils.color_darken(color, 0.4)
 
         arrow_length = Sketchup.active_model.active_view.pixels_to_model(60, face_manipulator.centroid)
         arrow_size = 15
