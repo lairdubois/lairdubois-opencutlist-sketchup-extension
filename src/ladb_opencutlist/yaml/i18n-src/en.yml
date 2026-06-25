@@ -2523,7 +2523,7 @@ tool:
     action_1_state_0_status: Click on a part's reference face to delete the connectors it shares with neighboring parts
     action_1_only_one_status: Limit to a single connector
     action_2: Add fittings
-    action_2_status: Ajouter fittings to join parts
+    action_2_status: Add fittings to join parts
     action_2_state_0_status: Click on the reference face of part A to add fittings to a neighboring part
     action_2_state_1_status: Click on the reference face of part B to add fittings to the part A
     action_3: Delete fittings
@@ -2540,6 +2540,7 @@ tool:
     action_option_offsets_end_offset: End
     action_option_spacings_min_spacing: Min
     action_option_spacings_max_spacing: Max
+    action_option_options_opposite_status: Capture the opposite side
     action_option_options_make_unique_status: Make assembled parts unique
     action_option_hardware_connector_a: Connector A
     action_option_hardware_connector_b: Connector B

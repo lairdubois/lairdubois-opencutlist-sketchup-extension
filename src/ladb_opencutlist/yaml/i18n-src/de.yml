@@ -2540,6 +2540,7 @@ tool:
     action_option_offsets_end_offset: Ende
     action_option_spacings_min_spacing: Min
     action_option_spacings_max_spacing: Max
+    action_option_options_opposite_status: Gegenüberliegende Seite erfassen
     action_option_options_make_unique_status: Verbundene Elemente einzigartig machen
     action_option_hardware_connector_a: Verbinder A
     action_option_hardware_connector_b: Verbinder B
