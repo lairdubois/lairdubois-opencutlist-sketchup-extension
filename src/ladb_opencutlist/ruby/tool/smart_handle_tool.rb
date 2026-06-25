@@ -108,8 +108,15 @@ module Ladb::OpenCutList
     def get_action_option_sync_actions(action, option_group, option)
 
       case option_group
+      when ACTION_OPTION_COPY_MEASURE_TYPE
+        return [ ACTION_COPY_LINE, ACTION_COPY_GRID ] unless action == ACTION_DISTRIBUTE
       when ACTION_OPTION_AXES
         return [ ACTION_COPY_LINE, ACTION_COPY_GRID, ACTION_MOVE_LINE, ACTION_DISTRIBUTE ]
+      when ACTION_OPTION_OPTIONS
+        case option
+        when ACTION_OPTION_OPTIONS_MIRROR
+          return [ ACTION_COPY_LINE, ACTION_COPY_GRID ]
+        end
       end
 
       super

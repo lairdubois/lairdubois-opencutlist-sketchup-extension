@@ -179,6 +179,21 @@ module Ladb::OpenCutList
       super
     end
 
+    def get_action_option_sync_actions(action, option_group, option)
+
+      case option_group
+      when ACTION_OPTION_FILE_FORMAT
+        return [ ACTION_EXPORT_PART_2D, ACTION_EXPORT_FACE, ACTION_EXPORT_PATHS ]
+      when ACTION_OPTION_OPTIONS
+        case option
+        when ACTION_OPTION_OPTIONS_SMOOTHING
+          return [ ACTION_EXPORT_PART_2D, ACTION_EXPORT_FACE, ACTION_EXPORT_PATHS ]
+        end
+      end
+
+      super
+    end
+
     def get_action_option_group_unique?(action, option_group)
 
       case option_group

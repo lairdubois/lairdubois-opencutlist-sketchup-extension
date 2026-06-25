@@ -462,7 +462,7 @@ module Ladb::OpenCutList
           definition = model.definitions[name]  # Try to get definition from DefinitionList first
           if definition.nil?
             begin
-              definition = model.definitions.load(ref.gsub('\\', '/'))
+              definition = Sketchup.version_number >= 2100000000 ? model.definitions.load(ref.gsub('\\', '/'), allow_newer: true) : model.definitions.load(ref.gsub('\\', '/'))
               if definition && definition.name != name
                 @tool.notify_warnings([ [ 'tool.smart_join.warning.different_file_name', { file_name: name, definition_name: definition.name } ] ])
               end

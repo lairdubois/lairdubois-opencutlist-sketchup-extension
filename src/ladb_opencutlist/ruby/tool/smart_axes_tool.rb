@@ -1123,7 +1123,7 @@ module Ladb::OpenCutList
               end
 
               on_click = lambda { |k_btn|
-                if (k_tick_btn, _ = k_btn.children.grep(Kuix::Button))
+                if (k_tick_btn = k_btn.children.find { |child| child.is_a?(Kuix::Button) })
                   k_tick_btn.fire(:click)
                 end
               }
