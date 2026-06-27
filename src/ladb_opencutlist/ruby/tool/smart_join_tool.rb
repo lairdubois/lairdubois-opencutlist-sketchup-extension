@@ -454,82 +454,85 @@ module Ladb::OpenCutList
       return @geometries_def if @geometries_def.is_a?(GeometriesDef) && @geometries_def.valid?
 
       model = Sketchup.active_model
+      model.start_operation('OCL Loading Geometry', true)
 
-      fn_get_definition = lambda do |ref|
-        return nil if !ref.is_a?(String) || ref.strip.empty?
-        if (extname = File.extname(ref)).downcase == '.skp'
-          name = File.basename(ref, extname)
-          definition = model.definitions[name]  # Try to get definition from DefinitionList first
-          if definition.nil?
-            begin
-              definition = Sketchup.version_number >= 2100000000 ? model.definitions.load(ref.gsub('\\', '/'), allow_newer: true) : model.definitions.load(ref.gsub('\\', '/'))
-              if definition && definition.name != name
-                @tool.notify_warnings([ [ 'tool.smart_join.warning.different_file_name', { file_name: name, definition_name: definition.name } ] ])
+        fn_get_definition = lambda do |ref|
+          return nil if !ref.is_a?(String) || ref.strip.empty?
+          if (extname = File.extname(ref)).downcase == '.skp'
+            name = File.basename(ref, extname)
+            definition = model.definitions[name]  # Try to get definition from DefinitionList first
+            if definition.nil?
+              begin
+                definition = Sketchup.version_number >= 2100000000 ? model.definitions.load(ref.gsub('\\', '/'), allow_newer: true) : model.definitions.load(ref.gsub('\\', '/'))
+                if definition && definition.name != name
+                  @tool.notify_warnings([ [ 'tool.smart_join.warning.different_file_name', { file_name: name, definition_name: definition.name } ] ])
+                end
+              rescue Exception => e
+                @tool.notify_errors([ [ 'tool.smart_join.error.failed_to_load_skp_file', { file: ref } ] ])
               end
-            rescue Exception => e
-              @tool.notify_errors([ [ 'tool.smart_join.error.failed_to_load_skp_file', { file: ref } ] ])
+            end
+          else
+            definition = model.definitions[ref]
+          end
+          definition
+        end
+
+        hardware_a_definition = fn_get_definition.call(_fetch_option_hardware_a)
+        hardware_b_definition = fn_get_definition.call(_fetch_option_hardware_b)
+        machining_a_definition = fn_get_definition.call(_fetch_option_machining_a)
+        machining_b_definition = fn_get_definition.call(_fetch_option_machining_b)
+
+        fn_get_drawing_def = lambda do |definition|
+          return nil if definition.nil?
+          CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new([ definition ]) ],
+                                               ignore_surfaces: true,
+                                               ignore_faces: true,
+                                               ignore_edges: false,
+                                               ignore_soft_edges: false,
+                                               container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_ALL
+          ).run
+        end
+
+        hardware_a_drawing_def = fn_get_drawing_def.call(hardware_a_definition)
+        hardware_b_drawing_def = fn_get_drawing_def.call(hardware_b_definition)
+        machining_a_drawing_def = fn_get_drawing_def.call(machining_a_definition)
+        machining_b_drawing_def = fn_get_drawing_def.call(machining_b_definition)
+
+        fn_get_material = lambda do |ref, default_color = nil, default_type = nil|
+          return nil if !ref.is_a?(String) || ref.strip.empty?
+          if File.extname(ref).downcase == '.skm'
+            material = model.materials.load(ref)
+          else
+            material = model.materials[ref]
+            if material.nil?
+              material = model.materials.add(ref)
+              material.color = default_color unless default_color.nil?
+              unless default_type.nil?
+                ma = MaterialAttributes.new(material)
+                ma.type = default_type
+                ma.write_to_attributes
+              end
             end
           end
-        else
-          definition = model.definitions[ref]
+          material
         end
-        definition
-      end
 
-      hardware_a_definition = fn_get_definition.call(_fetch_option_hardware_a)
-      hardware_b_definition = fn_get_definition.call(_fetch_option_hardware_b)
-      machining_a_definition = fn_get_definition.call(_fetch_option_machining_a)
-      machining_b_definition = fn_get_definition.call(_fetch_option_machining_b)
+        hardware_material = fn_get_material.call(_fetch_option_hardware_material_name, COLOR_DEFAULT_HARDWARE_MATERIAL, MaterialAttributes::TYPE_HARDWARE)
+        machining_material = fn_get_material.call(_fetch_option_machining_material_name, COLOR_DEFAULT_MACHINING_MATERIAL, MaterialAttributes::TYPE_MACHINING)
 
-      fn_get_drawing_def = lambda do |definition|
-        return nil if definition.nil?
-        CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new([ definition ]) ],
-                                             ignore_surfaces: true,
-                                             ignore_faces: true,
-                                             ignore_edges: false,
-                                             ignore_soft_edges: false,
-                                             container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_ALL
-        ).run
-      end
-
-      hardware_a_drawing_def = fn_get_drawing_def.call(hardware_a_definition)
-      hardware_b_drawing_def = fn_get_drawing_def.call(hardware_b_definition)
-      machining_a_drawing_def = fn_get_drawing_def.call(machining_a_definition)
-      machining_b_drawing_def = fn_get_drawing_def.call(machining_b_definition)
-
-      fn_get_material = lambda do |ref, default_color = nil, default_type = nil|
-        return nil if !ref.is_a?(String) || ref.strip.empty?
-        if File.extname(ref).downcase == '.skm'
-          material = model.materials.load(ref)
-        else
-          material = model.materials[ref]
-          if material.nil?
-            material = model.materials.add(ref)
-            material.color = default_color unless default_color.nil?
-            unless default_type.nil?
-              ma = MaterialAttributes.new(material)
-              ma.type = default_type
-              ma.write_to_attributes
-            end
+        fn_get_layer = lambda do |ref|
+          return nil if !ref.is_a?(String) || ref.strip.empty?
+          layer = model.layers[ref]
+          if layer.nil?
+            layer = model.layers.add(ref)
           end
+          layer
         end
-        material
-      end
 
-      hardware_material = fn_get_material.call(_fetch_option_hardware_material_name, COLOR_DEFAULT_HARDWARE_MATERIAL, MaterialAttributes::TYPE_HARDWARE)
-      machining_material = fn_get_material.call(_fetch_option_machining_material_name, COLOR_DEFAULT_MACHINING_MATERIAL, MaterialAttributes::TYPE_MACHINING)
+        hardware_layer = fn_get_layer.call(_fetch_option_hardware_layer_name)
+        machining_layer = fn_get_layer.call(_fetch_option_machining_layer_name)
 
-      fn_get_layer = lambda do |ref|
-        return nil if !ref.is_a?(String) || ref.strip.empty?
-        layer = model.layers[ref]
-        if layer.nil?
-          layer = model.layers.add(ref)
-        end
-        layer
-      end
-
-      hardware_layer = fn_get_layer.call(_fetch_option_hardware_layer_name)
-      machining_layer = fn_get_layer.call(_fetch_option_machining_layer_name)
+      model.commit_operation
 
       bounds = Geom::BoundingBox.new
       bounds.add(hardware_a_drawing_def.bounds) unless hardware_a_drawing_def.nil?
@@ -547,7 +550,7 @@ module Ladb::OpenCutList
         hardware_layer,
         machining_layer,
         bounds,
-        )
+      )
     end
 
     # -- UTILS --
