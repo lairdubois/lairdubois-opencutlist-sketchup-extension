@@ -4,6 +4,7 @@
 #include <cstring>
 #include <fstream>
 #include <iomanip>
+#include <iostream>
 
 using namespace Skpy;
 
@@ -37,6 +38,7 @@ json SkpHeaderReader::run(
         if (reader.parse()) {
             return json{
                     { "version_string", reader.version_string() },
+                    { "version_major",  reader.version_major()  },
                     { "version_number", reader.version_number() },
                     { "version_label",  reader.version_label()  },
                 };
@@ -61,8 +63,9 @@ uint64_t SkpHeaderReader::compute_version_number(const std::string& version_stri
     if (std::getline(ss, token, '.') && !token.empty()) major = std::stoull(token);
     if (std::getline(ss, token, '.') && !token.empty()) minor = std::stoull(token);
     if (std::getline(ss, token, '.') && !token.empty()) build = std::stoull(token);
-    if (major < 16)
+    if (major < 16) {
         return major * 1000000ULL + minor * 1000ULL + build;
+    }
     return major * 100000000ULL + minor * 10000000ULL + build;
 }
 
@@ -73,8 +76,6 @@ uint64_t SkpHeaderReader::compute_version_number(const std::string& version_stri
 const char SkpHeaderReader::kLegacyMagic[SkpHeaderReader::kMagicLen] = {
     'S','k','e','t','c','h','U','p',' ','M','o','d','e','l'
 };
-
-const uint8_t SkpHeaderReader::kZipMagic[4] = { 0x50, 0x4B, 0x03, 0x04 };
 
 // ---------------------------------------------------------------------------
 // Major version → SketchUp label mapping
@@ -108,7 +109,9 @@ SkpHeaderReader::SkpHeaderReader(std::string filepath)
 // ---------------------------------------------------------------------------
 
 std::optional<std::string> SkpHeaderReader::read_mfc_utf16_string(
-        const std::vector<uint8_t>& buf, size_t& offset) {
+        const std::vector<uint8_t>& buf,
+        size_t& offset
+) {
 
     // MFC prefix: FF FE FF <length>
     if (offset + 4 > buf.size()) return std::nullopt;
@@ -156,7 +159,7 @@ bool SkpHeaderReader::parse() {
 
     std::ifstream f(filepath_, std::ios::binary);
     if (!f) {
-        result_.error_message = "Impossible d'ouvrir : " + filepath_;
+        result_.error_message = "Failed to open : " + filepath_;
         return false;
     }
 
@@ -165,35 +168,21 @@ bool SkpHeaderReader::parse() {
     raw_header_.resize(static_cast<size_t>(f.gcount()));
 
     if (raw_header_.size() < 4) {
-        result_.error_message = "Fichier trop court.";
+        result_.error_message = "File is too short.";
         return false;
     }
 
-    if (std::memcmp(raw_header_.data(), kZipMagic, 4) == 0) {
-        result_.format = Format::Zip;
-        return parse_zip();
-    } else {
-        result_.format = Format::Legacy;
-        return parse_legacy();
-    }
-}
+    // Expected header layout:
+    //   [FF FE FF 0E] "SketchUp Model" UTF-16 LE   (4 + 28 = 32 bytes)
+    //   [FF FE FF 0A] "{26.2.242}"     UTF-16 LE   (4 + 20 = 24 bytes)
+    //   "VFF" ...
 
-// ---------------------------------------------------------------------------
-// parse_legacy()
-//
-// Expected header layout:
-//   [FF FE FF 0E] "SketchUp Model" UTF-16 LE   (4 + 28 = 32 bytes)
-//   [FF FE FF 0A] "{26.2.242}"     UTF-16 LE   (4 + 20 = 24 bytes)
-//   "VFF" ...
-// ---------------------------------------------------------------------------
-
-bool SkpHeaderReader::parse_legacy() {
     size_t offset = 0;
 
-    // 1. Read the first MFC field: must be "SketchUp Model"
+    // 1. Read the first field: must be "SketchUp Model"
     auto field1 = read_mfc_utf16_string(raw_header_, offset);
     if (!field1) {
-        result_.error_message = "MFC prefix not found.";
+        result_.error_message = "Prefix not found.";
         return false;
     }
     if (*field1 != std::string(kLegacyMagic, kMagicLen)) {
@@ -201,83 +190,34 @@ bool SkpHeaderReader::parse_legacy() {
         return false;
     }
 
-    // 2. Read the second MFC field: version in the form "{M.m.p}"
+    // 2. Read the second field: version in the form "{M.m.p}"
     auto field2 = read_mfc_utf16_string(raw_header_, offset);
     if (!field2 || field2->size() < 3) {
-        result_.error_message = "MFC version field not found.";
+        result_.error_message = "Version field not found.";
         return false;
     }
 
     // Strip braces: "{26.2.242}" → "26.2.242"
-    std::string version_str = *field2;
-    if (version_str.front() == '{') version_str.erase(0, 1);
-    if (version_str.back()  == '}') version_str.pop_back();
+    std::string version_string = *field2;
+    if (version_string.front() == '{') version_string.erase(0, 1);
+    if (version_string.back()  == '}') version_string.pop_back();
 
     // Extract the major version (before the first '.')
     uint32_t major = 0;
     try {
-        major = static_cast<uint32_t>(std::stoul(version_str));
+        major = static_cast<uint32_t>(std::stoul(version_string));
+    } catch (const std::exception& e) {
+        result_.error_message = "Major version can't be parsed : " + version_string;
+        return false;
     } catch (...) {
-        result_.error_message = "Major version can't be parsed : " + version_str;
+        result_.error_message = "Major version can't be parsed : " + version_string;
         return false;
     }
 
-    result_.success         = true;
-    result_.version_string  = version_str;
-    result_.version_number  = compute_version_number(version_str);
-    result_.label           = resolve_label(major);
-    return true;
-}
-
-// ---------------------------------------------------------------------------
-// parse_zip() — searches for "formatVersion" in the first 256 KB
-// ---------------------------------------------------------------------------
-
-bool SkpHeaderReader::parse_zip() {
-    std::ifstream f(filepath_, std::ios::binary);
-    if (!f) {
-        result_.error_message = "Impossible de rouvrir le fichier.";
-        return false;
-    }
-
-    std::vector<char> buf(kZipChunk);
-    f.seekg(0);
-    f.read(buf.data(), static_cast<std::streamsize>(kZipChunk));
-    buf.resize(static_cast<size_t>(f.gcount()));
-
-    const std::string content(buf.begin(), buf.end());
-    const std::string needle = "\"formatVersion\"";
-    auto pos = content.find(needle);
-
-    if (pos == std::string::npos) {
-        result_.success        = true;
-        result_.version_string  = "unknown";
-        result_.label           = "SketchUp 2021 ou or newer (formatVersion not found)";
-        result_.version_number  = 0;
-        return true;
-    }
-
-    size_t cursor = pos + needle.size();
-    while (cursor < content.size() && !std::isdigit(static_cast<unsigned char>(content[cursor])))
-        ++cursor;
-
-    std::string num_str;
-    while (cursor < content.size() && std::isdigit(static_cast<unsigned char>(content[cursor])))
-        num_str += content[cursor++];
-
-    if (num_str.empty()) {
-        result_.success        = true;
-        result_.version_string  = "unknown";
-        result_.label           = "SketchUp 2021+ (formatVersion can't be parsed)";
-        result_.version_number  = 0;
-        return true;
-    }
-
-    uint32_t major         = static_cast<uint32_t>(std::stoul(num_str));
-    result_.success        = true;
-    result_.version_string  = num_str;
-    result_.label           = resolve_label(major);
-    result_.version_number  = compute_version_number(num_str);
+    result_.version_major   = major;
+    result_.version_number  = compute_version_number(version_string);
+    result_.version_string  = version_string;
+    result_.version_label   = resolve_label(major);
     return true;
 }
 

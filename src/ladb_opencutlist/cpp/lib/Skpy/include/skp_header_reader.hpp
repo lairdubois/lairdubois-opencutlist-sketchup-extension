@@ -1,28 +1,5 @@
 #pragma once
 
-/**
- * SkpHeaderReader.h
- *
- * Utility class for detecting the SketchUp version of a .skp file.
- * Handles both formats:
- *   - Legacy (MFC / SketchUp ≤ 2020): proprietary MFC binary
- *     Header structure:
- *       FF FE FF 0E  → UTF-16 LE BOM + MFC prefix (length = 14)
- *       "SketchUp Model" in UTF-16 LE (28 bytes)
- *       FF FE FF 0A  → MFC prefix for next field (length = 10)
- *       "{26.2.242}" in UTF-16 LE  ← SketchUp version
- *       "VFF"        → internal container magic
- *
- *   - New (ZIP / SketchUp ≥ 2021): ZIP container with model.json
- *
- * Usage:
- *   SkpHeaderReader reader("my_file.skp");
- *   if (reader.parse()) {
- *       std::cout << reader.version_string() << "\n"; // "26.2.242"
- *       std::cout << reader.version_label()  << "\n"; // "SketchUp 2026"
- *   }
- */
-
 #include <cstdint>
 #include <map>
 #include <optional>
@@ -38,20 +15,12 @@ namespace Skpy {
 
     class SkpHeaderReader {
     public:
-        // Detected SKP file format
-        enum class Format {
-            Unknown,
-            Legacy,  // MFC binary (SketchUp ≤ 2020)
-            Zip,     // ZIP container (SketchUp ≥ 2021)
-        };
-
         // Result of a parse attempt
         struct Result {
-            bool        success        = false;
-            Format      format         = Format::Unknown;
-            std::string version_string;   // e.g. "26.2.242" (MFC) or "21" (ZIP)
-            std::string label;            // e.g. "SketchUp 2026"
-            uint64_t    version_number = 0; // e.g. 2600224200  (matches Sketchup.version_number)
+            uint32_t    version_major  = 0; // e.g. 26
+            uint64_t    version_number = 0; // e.g. 2620000242 (matches Sketchup.version_number)
+            std::string version_string;     // e.g. "26.2.242"
+            std::string version_label;      // e.g. "SketchUp 2026"
             std::string error_message;
         };
 
@@ -60,17 +29,18 @@ namespace Skpy {
         // Runs detection. Returns false if the file is unreadable or unrecognized.
         bool parse();
 
-        // Reads a .skp file named by j_input["filepath"] and returns a JSON result
-        // with "version_label", "version_string", "version_number" on success or "error" on failure.
+        // Parse the JSON input (from a file path or a stream) and read the .skp file
+        // whose path is given by the "filepath" key.
+        // On success: { "version_major": 26, "version_number": 2620000242, "version_string": "26.2.242", "version_label": "SketchUp 2026" }
+        // On failure: { "error": "<message>" }
         static json run(const std::string& filepath);
         static json run(std::istream& is);
 
         // Accessors (valid only after a successful parse())
-        bool        is_valid()        const { return result_.success; }
-        Format      format()          const { return result_.format; }
-        std::string version_string()  const { return result_.version_string; }
-        std::string version_label()   const { return result_.label; }
+        uint32_t    version_major()   const { return result_.version_major; }
         uint64_t    version_number()  const { return result_.version_number; }
+        std::string version_string()  const { return result_.version_string; }
+        std::string version_label()   const { return result_.version_label; }
         std::string error_message()   const { return result_.error_message; }
         const Result& result()        const { return result_; }
 
@@ -83,10 +53,8 @@ namespace Skpy {
     private:
         static constexpr size_t kMagicLen   = 14;         // "SketchUp Model"
         static constexpr size_t kHeaderSize = 128;        // bytes read upfront
-        static constexpr size_t kZipChunk  = 256 * 1024;
 
-        static const char    kLegacyMagic[kMagicLen];
-        static const uint8_t kZipMagic[4];
+        static const char kLegacyMagic[kMagicLen];
 
         std::string          filepath_;
         std::vector<uint8_t> raw_header_;
@@ -109,7 +77,6 @@ namespace Skpy {
         static uint64_t compute_version_number(const std::string& version_string);
 
         bool parse_legacy();
-        bool parse_zip();
     };
 
 }

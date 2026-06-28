@@ -22,6 +22,10 @@ DLL_EXPORTS char* c_get_skp_version_info(const char* s_input) {
         j_output = json{
             { "error", std::string(e.what()) }
         };
+    } catch (...) {
+        j_output = json{
+            { "error", "Unknown error" }
+        };
     }
     str_output_ = j_output.dump();
     return const_cast<char*>(str_output_.c_str());
