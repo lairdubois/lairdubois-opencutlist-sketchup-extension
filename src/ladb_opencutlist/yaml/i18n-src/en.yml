@@ -2568,6 +2568,8 @@ tool:
       occupied_anchors_plural: "{{ count }} connector that conflict with existing connectors"
       failed_to_load_skp_file: |
         Failed to load SKP file : {{ file }}
+      unsupported_skp_version: |
+        The SKP file was created with a newer version of SketchUp: {{ version }}
     warning:
       no_connector_to_remove: No connector to erase
       x_connectors_to_remove: "{{ count }} connector to erase"

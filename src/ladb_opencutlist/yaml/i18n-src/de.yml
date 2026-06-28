@@ -2568,6 +2568,8 @@ tool:
       occupied_anchors_plural: "{{ count }} Verbinder, deren Position mit der von vorhandenen Verbindungselementen kollidiert"
       failed_to_load_skp_file: |
         Die SKP-Datei {{ file }} kann nicht geladen werden
+      unsupported_skp_version: |
+        Die SKP-Datei wurde mit einer neueren Version von SketchUp erstellt: {{ version }}
     warning:
       no_connector_to_remove: Kein Verbinder zum Löschen
       x_connectors_to_remove: "{{ count }} Verbinder zum Löschen"
