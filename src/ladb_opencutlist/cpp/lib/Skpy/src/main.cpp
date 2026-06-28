@@ -1,12 +1,11 @@
+#include <fstream>
 #include <iostream>
 
-#include <nlohmann/json.hpp>
+#include "skp_header_reader.hpp"
+
 #include <boost/program_options.hpp>
 
-#include "solver_builder.hpp"
-
-using namespace Meshy;
-using namespace nlohmann;
+using namespace Skpy;
 
 namespace po = boost::program_options;
 
@@ -16,8 +15,8 @@ int main(int argc, char* argv[]) {
     desc.add_options()
         ("help,h", "Produce help message")
 
-        ("input,i", po::value<std::string>(), "Input path (default: input.json)")
-        ("output,o", po::value<std::string>(), "Output path (default: stdout)")
+        ("input,i", po::value<std::string>(), "Input JSON file path (default: input.json)")
+        ("output,o", po::value<std::string>(), "Output JSON file path (default: stdout)")
     ;
 
     po::variables_map vm;
@@ -33,21 +32,16 @@ int main(int argc, char* argv[]) {
         return EXIT_FAILURE;
     }
 
-    std::string input_path = (vm.count("input"))? vm["input"].as<std::string>() : "input.json";
+    std::string input_path = vm.count("input") ? vm["input"].as<std::string>() : "input.json";
 
-    SolverBuilder solver_builder;
-    Solver& solver = (*solver_builder.build(input_path));
+    json j_output = SkpHeaderReader::run(input_path);
 
-    json j_output = solver.operate();
-
-    std::string output_path = (vm.count("output"))? vm["output"].as<std::string>() : "";
+    std::string output_path = vm.count("output") ? vm["output"].as<std::string>() : "";
     if (output_path.empty() || output_path == "stdout") {
         std::cout << j_output.dump(1, ' ') << std::endl;
     } else {
-        std::ofstream ofs;
-        ofs.open(output_path);
+        std::ofstream ofs(output_path);
         ofs << j_output.dump(1, ' ');
-        ofs.close();
     }
 
     return EXIT_SUCCESS;

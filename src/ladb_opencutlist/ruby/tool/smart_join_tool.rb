@@ -4,6 +4,7 @@ module Ladb::OpenCutList
   require_relative '../utils/color_utils'
   require_relative '../utils/path_utils'
   require_relative '../lib/fiddle/clippy/clippy'
+  require_relative '../lib/fiddle/skpy/skpy'
   require_relative '../helper/user_text_helper'
 
   class SmartJoinTool < SmartTool
@@ -269,6 +270,8 @@ module Ladb::OpenCutList
 
   class SmartJoinActionHandler < SmartActionHandler
 
+    Skpy = Fiddle::Skpy
+
     include SmartActionHandlerPartHelper
 
     COLOR_DEFAULT_HARDWARE_MATERIAL = Sketchup::Color.new('#999999').freeze
@@ -463,10 +466,26 @@ module Ladb::OpenCutList
             definition = model.definitions[name]  # Try to get definition from DefinitionList first
             if definition.nil?
               begin
+
+                if Sketchup.version_number < 2100000000
+                  skp_version_info = Skpy.get_skp_version_info({ filepath: ref })
+                  if skp_version_info['error']
+                    raise skp_version_info['error']
+                  end
+                  if skp_version_info['version_number'] > Sketchup.version_number
+                    @tool.notify_errors([
+                                          [ 'tool.smart_join.error.failed_to_load_skp_file', { file: ref } ],
+                                          [ 'tool.smart_join.error.unsupported_skp_version', { version: skp_version_info['version_label'] } ]
+                                        ])
+                    return nil
+                  end
+                end
+
                 definition = Sketchup.version_number >= 2100000000 ? model.definitions.load(ref.gsub('\\', '/'), allow_newer: true) : model.definitions.load(ref.gsub('\\', '/'))
                 if definition && definition.name != name
                   @tool.notify_warnings([ [ 'tool.smart_join.warning.different_file_name', { file_name: name, definition_name: definition.name } ] ])
                 end
+
               rescue Exception => e
                 @tool.notify_errors([ [ 'tool.smart_join.error.failed_to_load_skp_file', { file: ref } ] ])
               end
