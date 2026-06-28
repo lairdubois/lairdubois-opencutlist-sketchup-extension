@@ -2398,7 +2398,7 @@ tool:
     action_option_paneling_joint_type_miter_status: Corte em meia-esquadria
     action_option_paneling_direction_inward_status: Interna
     action_option_paneling_direction_outward_status: Externa
-    action_option_options_centred_status: Centrar em elementos esticados
+    action_option_options_centred_status: Centralizar em elementos esticados
     action_option_options_make_unique_status: Tornar elementos esticados únicos
     error:
       curve_intersect: Um dos planos de corte cruza uma curva não extensível
