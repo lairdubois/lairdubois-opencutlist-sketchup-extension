@@ -19,3 +19,5 @@
 /Gemfile.lock
 /cmake-*
 /tools/python/*.dxf
+CLAUDE.md
+.claude
