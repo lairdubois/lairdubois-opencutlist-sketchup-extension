@@ -1342,7 +1342,7 @@ namespace Packy {
         rectangleguillotine::Solution post_process_solution(
             const rectangleguillotine::Solution& solution
         ) override {
-            return rectangleguillotine::group_identical_bins(solution).solution_pool.best();
+            return rectangleguillotine::sort_subplates(rectangleguillotine::group_identical_bins(solution).solution_pool.best(), 0);
         }
 
         void populate_best_solution_bin(
