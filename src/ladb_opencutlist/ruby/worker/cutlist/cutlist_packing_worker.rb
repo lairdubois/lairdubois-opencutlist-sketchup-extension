@@ -737,7 +737,8 @@ module Ladb::OpenCutList
             cut_type: @rectangleguillotine_cut_type,
             cut_thickness: _to_packy_length(@spacing),
             number_of_stages: @rectangleguillotine_number_of_stages,
-            first_stage_orientation: @rectangleguillotine_first_stage_orientation
+            first_stage_orientation: @rectangleguillotine_first_stage_orientation,
+            sort_subplates_criteria: %w[d l2 l1]
           }
           instance_parameters.merge!({ keep_width: _to_packy_length(@rectangleguillotine_keep_length) }) unless @rectangleguillotine_keep_length.nil?
           instance_parameters.merge!({ keep_height: _to_packy_length(@rectangleguillotine_keep_width) }) unless @rectangleguillotine_keep_width.nil?
