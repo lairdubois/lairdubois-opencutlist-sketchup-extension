@@ -29,6 +29,7 @@
 #include <thread>
 #include <future>
 #include <algorithm>
+#include <cctype>
 #include <exception>
 #include <sstream>
 #include <atomic>
@@ -1184,6 +1185,26 @@ namespace Packy {
                 builder.instance_builder().set_cut_thickness(read_length(j, "cut_thickness"));
             }
 
+            if (j.contains("sort_subplates_criteria") && j["sort_subplates_criteria"].is_array()) {
+                sort_subplates_criteria_.clear();
+                for (auto& j_sort_subplates_criterion: j["sort_subplates_criteria"].items()) {
+                    if (!j_sort_subplates_criterion.value().is_string()) {
+                        continue;
+                    }
+                    auto s_criterion = j_sort_subplates_criterion.value().get<std::string>();
+                    std::transform(s_criterion.begin(), s_criterion.end(), s_criterion.begin(), [](unsigned char c) { return std::tolower(c); });
+                    if (s_criterion == "length1" || s_criterion == "l1") {
+                        sort_subplates_criteria_.emplace_back(SortSubplatesCriterion::Length1);
+                    } else if (s_criterion == "length2" || s_criterion == "l2") {
+                        sort_subplates_criteria_.emplace_back(SortSubplatesCriterion::Length2);
+                    } else if (s_criterion == "waste" || s_criterion == "w") {
+                        sort_subplates_criteria_.emplace_back(SortSubplatesCriterion::Waste);
+                    } else if (s_criterion == "density" || s_criterion == "d") {
+                        sort_subplates_criteria_.emplace_back(SortSubplatesCriterion::Density);
+                    }
+                }
+            }
+
             if (j.contains("keep_width")) {
                 keep_width_ = read_length(j, "keep_width");
             }
@@ -1342,7 +1363,18 @@ namespace Packy {
         rectangleguillotine::Solution post_process_solution(
             const rectangleguillotine::Solution& solution
         ) override {
-            return rectangleguillotine::sort_subplates(rectangleguillotine::group_identical_bins(solution).solution_pool.best(), 0);
+
+            using namespace rectangleguillotine;
+
+            Solution grouped_solution = group_identical_bins(solution).solution_pool.best();
+
+            if (!sort_subplates_criteria_.empty()) {
+                Solution sorted_solution = sort_subplates(grouped_solution, sort_subplates_criteria_);
+                if (sorted_solution.feasible()) {
+                    return sorted_solution;
+                }
+            }
+            return grouped_solution;
         }
 
         void populate_best_solution_bin(
@@ -1539,6 +1571,12 @@ namespace Packy {
         }
 
     private:
+
+        std::vector<rectangleguillotine::SortSubplatesCriterion> sort_subplates_criteria_ = {
+            rectangleguillotine::SortSubplatesCriterion::Density,
+            rectangleguillotine::SortSubplatesCriterion::Length2,
+            rectangleguillotine::SortSubplatesCriterion::Length1
+        };
 
         Length keep_width_ = std::numeric_limits<Length>::max();
         Length keep_height_ = std::numeric_limits<Length>::max();
