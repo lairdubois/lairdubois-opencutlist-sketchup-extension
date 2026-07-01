@@ -919,6 +919,14 @@ namespace Packy {
                 TypedBuilder<rectangle::InstanceBuilder>& builder
         ) override {
 
+            if (j.contains("leftover_mode")) {
+                std::stringstream leftover_mode_ss;
+                leftover_mode_ss << std::string(j["leftover_mode"]);
+                rectangle::LeftoverMode leftover_mode;
+                leftover_mode_ss >> leftover_mode;
+                builder.instance_builder().set_leftover_mode(leftover_mode);
+            }
+
             if (j.contains("fake_trimming")) {
                 fake_trimming_ = read_length(j, "fake_trimming", 0);
             }
@@ -1819,6 +1827,13 @@ namespace Packy {
 
             if (j.contains("item_item_minimum_spacing")) {
                 builder.instance_builder().set_item_item_minimum_spacing(j["item_item_minimum_spacing"].get<irregular::LengthDbl>());
+            }
+            if (j.contains("leftover_mode")) {
+                std::stringstream leftover_mode_ss;
+                leftover_mode_ss << std::string(j["leftover_mode"]);
+                irregular::LeftoverMode leftover_mode;
+                leftover_mode_ss >> leftover_mode;
+                builder.instance_builder().set_leftover_mode(leftover_mode);
             }
 
             if (j.contains("fake_trimming_y")) {
