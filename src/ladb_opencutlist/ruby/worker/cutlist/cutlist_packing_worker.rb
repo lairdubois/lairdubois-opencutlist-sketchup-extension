@@ -260,10 +260,14 @@ module Ladb::OpenCutList
                    rectangleguillotine_cut_type: Packy::RECTANGLEGUILLOTINE_CUT_TYPE_NON_EXACT,
                    rectangleguillotine_number_of_stages: 3,
                    rectangleguillotine_first_stage_orientation: 'horizontal',
+                   rectangleguillotine_sort_subplates_criteria: 'd,l2,l1',
                    rectangleguillotine_keep_size: '',
+
+                   rectangle_leftover_mode: nil,
 
                    irregular_allowed_rotations: '0',
                    irregular_allow_mirroring: false,
+                   irregular_leftover_mode: nil,
 
                    hide_material_colors: false,
 
@@ -320,10 +324,14 @@ module Ladb::OpenCutList
       @rectangleguillotine_cut_type = rectangleguillotine_cut_type
       @rectangleguillotine_number_of_stages = [ [ 2, rectangleguillotine_number_of_stages.to_i ].max, 3 ].min
       @rectangleguillotine_first_stage_orientation = rectangleguillotine_first_stage_orientation
+      @rectangleguillotine_sort_subplates_criteria = rectangleguillotine_sort_subplates_criteria.to_s.split(',').map { |s| s.strip.to_s }.compact
       @rectangleguillotine_keep_length, @rectangleguillotine_keep_width = DimensionUtils.dxd_to_ifloats(rectangleguillotine_keep_size).split(DimensionUtils::DXD_SEPARATOR).compact.map { |s| s.strip.to_l.to_f }
+
+      @rectangle_leftover_mode = rectangle_leftover_mode.to_s
 
       @irregular_allowed_rotations = irregular_allowed_rotations.to_s
       @irregular_allow_mirroring = irregular_allow_mirroring
+      @irregular_leftover_mode = irregular_leftover_mode.to_s
 
       @hide_material_colors = hide_material_colors
 
@@ -732,14 +740,15 @@ module Ladb::OpenCutList
             fake_trimming: _to_packy_length(@trimming),
             fake_spacing: _to_packy_length(@spacing),
           }
+          instance_parameters.merge!({ leftover_mode: @rectangle_leftover_mode }) unless @problem_type == Packy::PROBLEM_TYPE_RECTANGLE && @rectangle_leftover_mode.empty?
         elsif @problem_type == Packy::PROBLEM_TYPE_RECTANGLEGUILLOTINE
           instance_parameters = {
             cut_type: @rectangleguillotine_cut_type,
             cut_thickness: _to_packy_length(@spacing),
             number_of_stages: @rectangleguillotine_number_of_stages,
-            first_stage_orientation: @rectangleguillotine_first_stage_orientation,
-            sort_subplates_criteria: %w[d l2 l1]
+            first_stage_orientation: @rectangleguillotine_first_stage_orientation
           }
+          instance_parameters.merge!({ sort_subplates_criteria: @rectangleguillotine_sort_subplates_criteria }) unless @rectangleguillotine_sort_subplates_criteria.empty?
           instance_parameters.merge!({ keep_width: _to_packy_length(@rectangleguillotine_keep_length) }) unless @rectangleguillotine_keep_length.nil?
           instance_parameters.merge!({ keep_height: _to_packy_length(@rectangleguillotine_keep_width) }) unless @rectangleguillotine_keep_width.nil?
         elsif @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
@@ -748,6 +757,7 @@ module Ladb::OpenCutList
             item_item_minimum_spacing: _to_packy_length(@spacing),
             fake_trimming_y: @group.material_is_1d ? _to_packy_length(@trimming) : 0
           }
+          instance_parameters.merge!({ leftover_mode: @irregular_leftover_mode }) unless @irregular_leftover_mode.empty?
         end
         parameters.merge!({ instance_path: File.join(Packy.lib_dir, "instance#{'.json' if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR}") }) if @write_instance
         parameters.merge!({ certificate_path: File.join(Packy.lib_dir, "certificate.json") }) if @write_certificate

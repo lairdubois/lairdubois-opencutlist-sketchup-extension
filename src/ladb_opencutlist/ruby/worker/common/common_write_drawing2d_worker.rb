@@ -24,6 +24,8 @@ module Ladb::OpenCutList
                    file_name: 'FACE',
                    file_format: nil,
 
+                   dxf_depth_to_z: true,
+
                    unit: nil,
                    anchor: false,
                    smoothing: false,
@@ -47,6 +49,8 @@ module Ladb::OpenCutList
       @folder_path = folder_path
       @file_name = FilePathUtils.sanitize_file_name(file_name)
       @file_format = file_format
+
+      @dxf_depth_to_z = dxf_depth_to_z
 
       @unit = unit
       @anchor = anchor
@@ -211,7 +215,7 @@ module Ladb::OpenCutList
       min = Geom::Point3d.new(
         projection_def.bounds.min.x,
         projection_def.bounds.min.y,
-        -projection_def.max_depth
+        @dxf_depth_to_z ? -projection_def.max_depth : 0
       ).transform!(unit_transformation)
       max = Geom::Point3d.new(
         projection_def.bounds.max.x,
@@ -239,6 +243,7 @@ module Ladb::OpenCutList
                                            smoothing: @smoothing,
                                            transformation: unit_transformation,
                                            unit_transformation: unit_transformation,
+                                           depth_to_z: @dxf_depth_to_z,
                                            layer: LAYER_PART)
 
       end

@@ -1384,6 +1384,7 @@ module Ladb::OpenCutList
                                         smoothing: false,
                                         transformation: IDENTITY,
                                         unit_transformation: IDENTITY,
+                                        depth_to_z: true,
                                         layer: '0')
 
       require_relative '../model/drawing/drawing_projection_def'
@@ -1395,6 +1396,7 @@ module Ladb::OpenCutList
                                            smoothing: smoothing,
                                            transformation: transformation,
                                            unit_transformation: unit_transformation,
+                                           depth_to_z: depth_to_z,
                                            layer: layer)
         yield if block_given?
       end
@@ -1405,6 +1407,7 @@ module Ladb::OpenCutList
                                            smoothing: false,
                                            transformation: IDENTITY,
                                            unit_transformation: IDENTITY,
+                                           depth_to_z: true,
                                            layer: '0')
 
       require_relative '../model/drawing/drawing_projection_def'
@@ -1415,6 +1418,7 @@ module Ladb::OpenCutList
         _dxf_write_projection_layer_def_geometry(file, layer_def,
                                                  smoothing: smoothing,
                                                  transformation: transformation,
+                                                 depth_to_z: depth_to_z,
                                                  layer: _dxf_get_projection_layer_def_identifier(layer_def, unit_transformation, layer))
       end
 
@@ -1423,6 +1427,7 @@ module Ladb::OpenCutList
     def _dxf_write_projection_layer_def_geometry(file, layer_def,
                                                  smoothing: false,
                                                  transformation: IDENTITY,
+                                                 depth_to_z: true,
                                                  layer: '0')
 
       require_relative '../model/drawing/drawing_projection_def'
@@ -1433,7 +1438,11 @@ module Ladb::OpenCutList
 
       flipped = TransformationUtils.flipped?(transformation)
 
-      z = -Geom::Vector3d.new(layer_def.depth, 0, 0).transform(transformation).length
+      if depth_to_z
+        z = -Geom::Vector3d.new(layer_def.depth, 0, 0).transform(transformation).length
+      else
+        z = 0
+      end
 
       layer_def.poly_defs.each do |poly_def|
 

@@ -925,6 +925,7 @@ module Ladb::OpenCutList
           file_name = _get_active_part_name(true)
           file_name += " - #{PLUGIN.get_i18n_string("core.component.three_viewer.view_#{@active_drawing_def.input_view}").upcase}" unless @active_drawing_def.nil? || @active_drawing_def.input_view.nil?
           file_format = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_FILE_FORMAT)
+          dxf_depth_to_z = fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'dxf_depth_to_z')
           unit = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_UNIT)
           anchor = fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR)
           smoothing = fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
@@ -942,6 +943,7 @@ module Ladb::OpenCutList
           worker = CommonWriteDrawing2dWorker.new(@active_drawing_def,
                                                   file_name: file_name,
                                                   file_format: file_format,
+                                                  dxf_depth_to_z: dxf_depth_to_z,
                                                   unit: unit,
                                                   anchor: anchor,
                                                   smoothing: smoothing,

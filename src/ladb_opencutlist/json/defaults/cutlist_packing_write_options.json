@@ -5,6 +5,7 @@
   "0": {
     "file_format": "svg",
     "dxf_structure": 1, /* DXF_STRUCTURE_LAYER */
+    "dxf_depth_to_z": true,
     "unit": { "metric": 2 /* Length::Millimeter */, "imperial": 0 /* Length::Inches */ },
     "smoothing": false,
     "merge_holes": false,

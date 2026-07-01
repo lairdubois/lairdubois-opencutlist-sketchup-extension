@@ -1091,8 +1091,19 @@ tab:
       option_rectangleguillotine_first_stage_orientation_horizontal: Horizontale
       option_rectangleguillotine_first_stage_orientation_vertical: Verticale
       option_rectangleguillotine_first_stage_orientation_any: Quelconque
+      option_rectangleguillotine_sort_subplates_criteria: Tri des niveaux
+      option_rectangleguillotine_sort_subplates_criteria_help: |
+        Défini les critères de tri des pièces sur chaque niveau.
+      option_rectangleguillotine_sort_subplates_criteria_dl2l1: D L2 L1
+      option_rectangleguillotine_sort_subplates_criteria_l1l2: L1 L2
       option_rectangleguillotine_keep: Taille minimale des chutes
       option_rectangleguillotine_keep_help: Les chutes ayant les deux dimensions supérieures à la taille minimale seront marquées **à conserver**.
+      option_rectangle_leftover_mode: Etalement des pièces
+      option_rectangle_leftover_mode_help: |
+        Défini la direction d'étalement des pièces sur le dernier panneau non plein.
+      option_rectangle_leftover_mode_area: Auto
+      option_rectangle_leftover_mode_x: Sur la largeur du panneau
+      option_rectangle_leftover_mode_y: Sur la longueur du panneau
       option_irregular_allowed_rotations: Rotations autorisées
       option_irregular_allowed_rotations_help: |
         Définit le pas des angles de rotation possibles de la pièce pour son placement.
@@ -1107,6 +1118,12 @@ tab:
         Définit si le mirroir de la pièce est autorisée pour le placement.
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
+      option_irregular_leftover_mode: Etalement des pièces
+      option_irregular_leftover_mode_help: |
+        Défini la direction d'étalement des pièces sur le dernier panneau non plein.
+      option_irregular_leftover_mode_bottom_left: Auto
+      option_irregular_leftover_mode_left: Sur la largeur du panneau
+      option_irregular_leftover_mode_bottom: Sur la longueur du panneau
       option_spacing: Espacement
       option_spacing_help: |
         Espacement minimal entre chaque pièce.
@@ -1491,6 +1508,13 @@ tab:
 
         - la structure **Calques** dessine tous les tracés à plat en distinguant les différents types de trait uniquement par des calques. *Cette structure offre une meilleure compatibilité avec les logiciels tiers.*
         - La structure **Calques + Blocs** crée un bloc par pièce et insère ces blocs autant de fois que les pièces sont répétées. *Cette structure offre plus de flexibilité pour modifier le fichier.*
+      option_dxf_depth_to_z: Profondeurs en Z
+      option_dxf_depth_to_z_0: $t(default.no)
+      option_dxf_depth_to_z_1: Répartir les profondeurs de calques sur Z
+      option_dxf_depth_to_z_help: |
+        Permet d'activer la répartition des calques sur l'axe Z suivant leur profondeur.
+        
+        Désactivez cette pour exporter un DXF en 2D uniquement.
       option_unit: Unité
       option_unit_help: |
         Permet de choisir l'unité utilisée dans le fichier exporté.

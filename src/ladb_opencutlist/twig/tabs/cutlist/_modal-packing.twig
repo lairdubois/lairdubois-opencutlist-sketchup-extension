@@ -146,11 +146,33 @@
                     </div>
                 </div>
                 <div class="form-group ladb-cutlist-packing-form-group-rectangleguillotine">
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.packing.option_rectangleguillotine_sort_subplates_criteria_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <label class="control-label col-xs-5">{{ 'tab.cutlist.packing.option_rectangleguillotine_sort_subplates_criteria'|i18next }}</label>
+                    <div class="col-xs-6">
+                        <select class="form-control" id="ladb_select_rectangleguillotine_sort_subplates_criteria">
+                            <option value="d,l2,l1">{{ 'tab.cutlist.packing.option_rectangleguillotine_sort_subplates_criteria_dl2l1'|i18next }}</option>
+                            <option value="l1,l2">{{ 'tab.cutlist.packing.option_rectangleguillotine_sort_subplates_criteria_l1l2'|i18next }}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group ladb-cutlist-packing-form-group-rectangleguillotine">
                     <hr>
                     <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.packing.option_rectangleguillotine_keep_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                     <label class="control-label col-xs-5">{{ 'tab.cutlist.packing.option_rectangleguillotine_keep'|i18next }}</label>
                     <div class="col-xs-6">
                         <input type="text" class="form-control" id="ladb_input_rectangleguillotine_keep_size">
+                    </div>
+                </div>
+                <div class="form-group ladb-cutlist-packing-form-group-rectangle">
+                    <hr>
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.packing.option_rectangle_leftover_mode_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <label class="control-label col-xs-5">{{ 'tab.cutlist.packing.option_rectangle_leftover_mode'|i18next }}</label>
+                    <div class="col-xs-6">
+                        <select class="form-control" id="ladb_select_rectangle_leftover_mode">
+                            <option value="a">{{ 'tab.cutlist.packing.option_rectangle_leftover_mode_area'|i18next }}</option>
+                            <option value="x">{{ 'tab.cutlist.packing.option_rectangle_leftover_mode_x'|i18next }}</option>
+                            <option value="y">{{ 'tab.cutlist.packing.option_rectangle_leftover_mode_y'|i18next }}</option>
+                        </select>
                     </div>
                 </div>
                 <div class="form-group ladb-cutlist-packing-form-group-irregular">
@@ -173,6 +195,17 @@
                         <select class="form-control" id="ladb_select_irregular_allow_mirroring">
                             <option value="0">{{ 'tab.cutlist.packing.option_irregular_allow_mirroring_0'|i18next }}</option>
                             <option value="1">{{ 'tab.cutlist.packing.option_irregular_allow_mirroring_1'|i18next }}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group ladb-cutlist-packing-form-group-irregular">
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.packing.option_irregular_leftover_mode_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <label class="control-label col-xs-5">{{ 'tab.cutlist.packing.option_irregular_leftover_mode'|i18next }}</label>
+                    <div class="col-xs-6">
+                        <select class="form-control" id="ladb_select_irregular_leftover_mode">
+                            <option value="bl">{{ 'tab.cutlist.packing.option_irregular_leftover_mode_bottom_left'|i18next }}</option>
+                            <option value="l">{{ 'tab.cutlist.packing.option_irregular_leftover_mode_left'|i18next }}</option>
+                            <option value="b">{{ 'tab.cutlist.packing.option_irregular_leftover_mode_bottom'|i18next }}</option>
                         </select>
                     </div>
                 </div>

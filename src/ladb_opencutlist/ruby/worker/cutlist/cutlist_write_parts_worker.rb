@@ -14,6 +14,7 @@ module Ladb::OpenCutList
 
                    part_ids: ,
                    file_format: ,
+                   dxf_depth_to_z: true,
                    part_drawing_type: PART_DRAWING_TYPE_2D_TOP,
 
                    unit: Length::Millimeter,
@@ -40,6 +41,7 @@ module Ladb::OpenCutList
 
       @part_ids = part_ids
       @file_format = file_format
+      @dxf_depth_to_z = dxf_depth_to_z
       @part_drawing_type = part_drawing_type.to_i
 
       @unit = unit
@@ -142,6 +144,7 @@ module Ladb::OpenCutList
                                                         folder_path: folder_path,
                                                         file_name: file_name,
                                                         file_format: @file_format,
+                                                        dxf_depth_to_z: @dxf_depth_to_z,
                                                         unit: @unit,
                                                         anchor: @anchor,
                                                         smoothing: @smoothing,

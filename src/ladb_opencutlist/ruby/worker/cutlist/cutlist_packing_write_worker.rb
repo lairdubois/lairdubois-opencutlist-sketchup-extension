@@ -26,6 +26,7 @@ module Ladb::OpenCutList
 
                    file_format: FILE_FORMAT_SVG,
                    dxf_structure: DXF_STRUCTURE_LAYER,
+                   dxf_depth_to_z: true,
                    unit: Length::Millimeter,
                    smoothing: false,
                    merge_holes: false,
@@ -62,6 +63,7 @@ module Ladb::OpenCutList
 
       @file_format = file_format
       @dxf_structure = dxf_structure.to_i
+      @dxf_depth_to_z = dxf_depth_to_z
       @unit = unit
       @smoothing = smoothing
       @merge_holes = merge_holes
@@ -525,6 +527,7 @@ module Ladb::OpenCutList
                                                 smoothing: @smoothing,
                                                 transformation: transformation,
                                                 unit_transformation: unit_transformation,
+                                                depth_to_z: @dxf_depth_to_z,
                                                 layer: LAYER_PART) do
                   _dxf_write_rect(file, position.x, position.y, position.z, size.x, size.y, LAYER_CUT) unless @cuts_hidden || options_def.problem_type != Packy::PROBLEM_TYPE_RECTANGLE && (options_def.problem_type != Packy::PROBLEM_TYPE_IRREGULAR || !item_type_def.boxed)
                   _dxf_write_label(file, position.x, position.y, 0, size.x, size.y, text, size_.x, size_.y, position_.x, position_.y, 0, LAYER_TEXT) unless @texts_hidden
@@ -628,6 +631,7 @@ module Ladb::OpenCutList
                                                    smoothing: @smoothing,
                                                    transformation: transformation,
                                                    unit_transformation: unit_transformation,
+                                                   depth_to_z: @dxf_depth_to_z,
                                                    layer: LAYER_PART)
 
               else

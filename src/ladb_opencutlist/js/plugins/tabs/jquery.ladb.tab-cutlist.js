@@ -2299,7 +2299,9 @@
                 // Fetch UI elements
                 const $widgetPreset = $('.ladb-widget-preset', $modal);
                 const $selectPartDrawingType = $('#ladb_select_part_drawing_type', $modal);
+                const $formGroupDxf = $('.ladb-form-group-dxf', $modal);
                 const $selectFileFormat = $('#ladb_select_file_format', $modal);
+                const $selectDxfDepthToZ = $('#ladb_select_dxf_depth_to_z', $modal);
                 const $selectUnit = $('#ladb_select_unit', $modal);
                 const $selectUseCount = $('#ladb_select_use_count', $modal);
                 const $selectAnchor = $('#ladb_select_anchor', $modal);
@@ -2323,6 +2325,7 @@
                 const fnFetchOptions = function (options) {
                     options.part_drawing_type = $selectPartDrawingType.val();
                     options.file_format = $selectFileFormat.val();
+                    options.dxf_depth_to_z = $selectDxfDepthToZ.val() === '1';
                     options.unit = that.toInt($selectUnit.val());
                     options.use_count = $selectUseCount.val() === '1';
                     options.anchor = $selectAnchor.val() === '1';
@@ -2342,6 +2345,7 @@
                 const fnFillInputs = function (options) {
                     $selectPartDrawingType.selectpicker('val', options.part_drawing_type);
                     $selectFileFormat.selectpicker('val', options.file_format);
+                    $selectDxfDepthToZ.selectpicker('val', options.dxf_depth_to_z ? '1' : '0');
                     $selectUnit.selectpicker('val', options.unit);
                     $selectUseCount.selectpicker('val', options.use_count ? '1' : '0');
                     $selectAnchor.selectpicker('val', options.anchor ? '1' : '0');
@@ -2363,6 +2367,7 @@
                     const isDxf = $selectFileFormat.val() === 'dxf';
                     const isMergeHoles = $selectMergeHoles.val() === '1';
                     const isIncludePaths = $selectIncludePaths.val() === '1';
+                    if (isDxf) $formGroupDxf.show(); else $formGroupDxf.hide();
                     if (isMergeHoles) $formGroupMergeHolesOverflow.show(); else $formGroupMergeHolesOverflow.hide();
                     $inputPartsFillColor.ladbTextinputColor(isDxf ? 'disable' : 'enable');
                     $inputPartsDepthsFillColor.ladbTextinputColor(isDxf ? 'disable' : 'enable');
@@ -2393,6 +2398,7 @@
                         fnUpdateFieldsVisibility();
                     })
                 ;
+                $selectDxfDepthToZ.selectpicker(SELECT_PICKER_TABS_OPTIONS);
                 $selectUnit.selectpicker(SELECT_PICKER_TABS_OPTIONS);
                 $selectUseCount
                     .selectpicker(SELECT_PICKER_TABS_OPTIONS)
@@ -2615,15 +2621,19 @@
                 const $radiosProblemType = $('input[name=ladb_radios_problem_type]', $modal);
                 const $sectionNotOnedimensional = $('.ladb-cutlist-packing-section-not-onedimensional', $modal)
                 const $formGroupRectangleguillotine = $('.ladb-cutlist-packing-form-group-rectangleguillotine', $modal)
+                const $formGroupRectangle = $('.ladb-cutlist-packing-form-group-rectangle', $modal)
                 const $formGroupIrregular = $('.ladb-cutlist-packing-form-group-irregular', $modal)
                 const $formGroupNotIrregular = $('.ladb-cutlist-packing-form-group-not-irregular', $modal)
                 const $formGroupDebug = $('.ladb-cutlist-packing-form-group-debug', $modal)
                 const $selectRectangleguillotineFirstStageOrientation = $('#ladb_select_rectangleguillotine_first_stage_orientation', $modal);
                 const $selectRectangleguillotineCutType = $('#ladb_select_rectangleguillotine_cut_type', $modal);
                 const $selectRectangleguillotineNumberOfStages = $('#ladb_select_rectangleguillotine_number_of_stages', $modal);
+                const $selectRectangleguillotineSortSubplatesCriteria = $('#ladb_select_rectangleguillotine_sort_subplates_criteria', $modal);
                 const $inputRectangleguillotineKeepSize = $('#ladb_input_rectangleguillotine_keep_size', $modal);
+                const $selectRectangleLeftoverMode = $('#ladb_select_rectangle_leftover_mode', $modal);
                 const $selectIrregularAllowedRotations = $('#ladb_select_irregular_allowed_rotations', $modal);
                 const $selectIrregularAllowMirroring = $('#ladb_select_irregular_allow_mirroring', $modal);
+                const $selectIrregularLeftoverMode = $('#ladb_select_irregular_leftover_mode', $modal);
                 const $inputSpacing = $('#ladb_input_spacing', $modal);
                 const $inputTrimming = $('#ladb_input_trimming', $modal);
                 const $textareaItemsFormula = $('#ladb_textarea_items_formula', $modal);
@@ -2673,9 +2683,12 @@
                     options.rectangleguillotine_first_stage_orientation = $selectRectangleguillotineFirstStageOrientation.val();
                     options.rectangleguillotine_cut_type = $selectRectangleguillotineCutType.val();
                     options.rectangleguillotine_number_of_stages = that.toInt($selectRectangleguillotineNumberOfStages.val());
+                    options.rectangleguillotine_sort_subplates_criteria = $selectRectangleguillotineSortSubplatesCriteria.val();
                     options.rectangleguillotine_keep_size = $inputRectangleguillotineKeepSize.val();
+                    options.rectangle_leftover_mode = $selectRectangleLeftoverMode.val();
                     options.irregular_allowed_rotations = $selectIrregularAllowedRotations.val();
                     options.irregular_allow_mirroring = $selectIrregularAllowMirroring.val() === '1';
+                    options.irregular_leftover_mode = $selectIrregularLeftoverMode.val();
                     options.spacing = $inputSpacing.val();
                     options.trimming = $inputTrimming.val();
                     options.items_formula = $textareaItemsFormula.val();
@@ -2706,9 +2719,12 @@
                     $selectRectangleguillotineFirstStageOrientation.selectpicker('val', options.rectangleguillotine_first_stage_orientation);
                     $selectRectangleguillotineCutType.selectpicker('val', options.rectangleguillotine_cut_type);
                     $selectRectangleguillotineNumberOfStages.selectpicker('val', options.rectangleguillotine_number_of_stages);
+                    $selectRectangleguillotineSortSubplatesCriteria.selectpicker('val', options.rectangleguillotine_sort_subplates_criteria);
                     $inputRectangleguillotineKeepSize.ladbTextinputSize('val', options.rectangleguillotine_keep_size);
+                    $selectRectangleLeftoverMode.selectpicker('val', options.rectangle_leftover_mode);
                     $selectIrregularAllowedRotations.selectpicker('val', fnValidIrregularAllowedRotations(options.irregular_allowed_rotations));
                     $selectIrregularAllowMirroring.selectpicker('val', options.irregular_allow_mirroring ? '1' : '0');
+                    $selectIrregularLeftoverMode.selectpicker('val', options.irregular_leftover_mode);
                     $inputSpacing.val(options.spacing);
                     $inputTrimming.val(options.trimming);
                     $textareaItemsFormula.ladbTextinputCode('val', [ typeof options.items_formula == 'string' ? options.items_formula : '' ]);
@@ -2750,10 +2766,12 @@
                 const fnUpdateFieldsVisibility = function () {
                     const isOnedimensional = $radiosProblemType.filter(':checked').val() === 'onedimensional';
                     const isRectangleguillotine = $radiosProblemType.filter(':checked').val() === 'rectangleguillotine';
+                    const isRectangle = $radiosProblemType.filter(':checked').val() === 'rectangle';
                     const isIrregular = $radiosProblemType.filter(':checked').val() === 'irregular';
                     const isDebug = that.dialog.capabilities.is_dev && !that.dialog.capabilities.is_rbz;
                     if (isOnedimensional) $sectionNotOnedimensional.hide(); else $sectionNotOnedimensional.show();
                     if (isRectangleguillotine) $formGroupRectangleguillotine.show(); else $formGroupRectangleguillotine.hide();
+                    if (isRectangle) $formGroupRectangle.show(); else $formGroupRectangle.hide();
                     if (isIrregular) $formGroupNotIrregular.hide(); else $formGroupNotIrregular.show();
                     if (isIrregular) $formGroupIrregular.show(); else $formGroupIrregular.hide();
                     if (isDebug) $formGroupDebug.show(); else $formGroupDebug.hide();
@@ -2870,8 +2888,9 @@
                                     // Fetch UI elements
                                     const $widgetPreset = $('.ladb-widget-preset', $modal);
                                     const $selectFileFormat = $('#ladb_select_file_format', $modal);
-                                    const $formGroupDxfStructure = $('#ladb_form_group_dxf_structure', $modal);
+                                    const $formGroupDxf = $('.ladb-form-group-dxf', $modal);
                                     const $selectDxfStructure = $('#ladb_select_dxf_structure', $modal);
+                                    const $selectDxfDepthToZ = $('#ladb_select_dxf_depth_to_z', $modal);
                                     const $selectUnit = $('#ladb_select_unit', $modal);
                                     const $selectSmoothing = $('#ladb_select_smoothing', $modal);
                                     const $selectMergeHoles = $('#ladb_select_merge_holes', $modal);
@@ -2906,6 +2925,7 @@
                                     const fnFetchOptions = function (options) {
                                         options.file_format = $selectFileFormat.val();
                                         options.dxf_structure = that.toInt($selectDxfStructure.val());
+                                        options.dxf_depth_to_z = $selectDxfDepthToZ.val() === '1';
                                         options.unit = that.toInt($selectUnit.val());
                                         options.smoothing = $selectSmoothing.val() === '1';
                                         options.merge_holes = $selectMergeHoles.val() === '1';
@@ -2934,6 +2954,7 @@
                                     const fnFillInputs = function (options) {
                                         $selectFileFormat.selectpicker('val', options.file_format);
                                         $selectDxfStructure.selectpicker('val', options.dxf_structure);
+                                        $selectDxfDepthToZ.selectpicker('val', options.dxf_depth_to_z ? '1' : '0');
                                         $selectUnit.selectpicker('val', options.unit);
                                         $selectSmoothing.selectpicker('val', options.smoothing ? '1' : '0');
                                         $selectMergeHoles.selectpicker('val', options.merge_holes ? '1' : '0');
@@ -2969,7 +2990,7 @@
                                         const isTextsHidden = !$inputTextsHidden.is(':checked');
                                         const isLeftoversHidden = !$inputLeftoversHidden.is(':checked');
                                         const isCutsHidden = !$inputCutsHidden.is(':checked');
-                                        if (isDxf) $formGroupDxfStructure.show(); else $formGroupDxfStructure.hide();
+                                        if (isDxf) $formGroupDxf.show(); else $formGroupDxf.hide();
                                         if (isMergeHoles) $formGroupMergeHolesOverflow.show(); else $formGroupMergeHolesOverflow.hide();
                                         $inputBinStrokeColor.ladbTextinputColor(isSheetHidden ? 'disable' : 'enable');
                                         $inputBinFillColor.ladbTextinputColor(isSheetHidden || isDxf ? 'disable' : 'enable');
@@ -3007,6 +3028,7 @@
                                         })
                                     ;
                                     $selectDxfStructure.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+                                    $selectDxfDepthToZ.selectpicker(SELECT_PICKER_TABS_OPTIONS);
                                     $selectUnit.selectpicker(SELECT_PICKER_TABS_OPTIONS);
                                     $selectSmoothing.selectpicker(SELECT_PICKER_TABS_OPTIONS);
                                     $selectMergeHoles.selectpicker(SELECT_PICKER_TABS_OPTIONS).on('change', fnUpdateFieldsVisibility);
@@ -3307,6 +3329,7 @@
                 $selectRectangleguillotineFirstStageOrientation.selectpicker(SELECT_PICKER_TABS_OPTIONS);
                 $selectRectangleguillotineCutType.selectpicker(SELECT_PICKER_TABS_OPTIONS);
                 $selectRectangleguillotineNumberOfStages.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+                $selectRectangleguillotineSortSubplatesCriteria.selectpicker(SELECT_PICKER_TABS_OPTIONS);
                 $inputRectangleguillotineKeepSize.ladbTextinputSize({
                     resetValue: '',
                     d1Placeholder: i18next.t('default.length'),
@@ -3315,8 +3338,10 @@
                     qHidden: true,
                     dSeparatorLabel: 'x'
                 });
+                $selectRectangleLeftoverMode.selectpicker(SELECT_PICKER_TABS_OPTIONS);
                 $selectIrregularAllowedRotations.selectpicker(SELECT_PICKER_TABS_OPTIONS);
                 $selectIrregularAllowMirroring.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+                $selectIrregularLeftoverMode.selectpicker(SELECT_PICKER_TABS_OPTIONS);
                 $inputSpacing.ladbTextinputDimension();
                 $inputTrimming.ladbTextinputDimension();
                 $textareaItemsFormula.ladbTextinputCode({
@@ -5306,6 +5331,7 @@
                                                 const $selectFileFormat = $('#ladb_select_file_format', $modal);
                                                 const $formGroupDxfStructure = $('#ladb_form_group_dxf_structure', $modal);
                                                 const $selectDxfStructure = $('#ladb_select_dxf_structure', $modal);
+                                                const $selectDxfDepthToZ = $('#ladb_select_dxf_depth_to_z', $modal);
                                                 const $selectUnit = $('#ladb_select_unit', $modal);
                                                 const $selectSmoothing = $('#ladb_select_smoothing', $modal);
                                                 const $selectMergeHoles = $('#ladb_select_merge_holes', $modal);
@@ -5335,6 +5361,7 @@
                                                 const fnFetchOptions = function (options) {
                                                     options.file_format = $selectFileFormat.val();
                                                     options.dxf_structure = that.toInt($selectDxfStructure.val());
+                                                    options.dxf_depth_to_z = $selectDxfDepthToZ.val() ? '1' : '0';
                                                     options.unit = that.toInt($selectUnit.val());
                                                     options.smoothing = $selectSmoothing.val() === '1';
                                                     options.merge_holes = $selectMergeHoles.val() === '1';
@@ -5360,6 +5387,7 @@
                                                 const fnFillInputs = function (options) {
                                                     $selectFileFormat.selectpicker('val', options.file_format);
                                                     $selectDxfStructure.selectpicker('val', options.dxf_structure);
+                                                    $selectDxfDepthToZ.selectpicker('val', options.dxf_depth_to_z ? '1' : '0');
                                                     $selectUnit.selectpicker('val', options.unit);
                                                     $selectSmoothing.selectpicker('val', options.smoothing ? '1' : '0');
                                                     $selectMergeHoles.selectpicker('val', options.merge_holes ? '1' : '0');
@@ -5426,6 +5454,7 @@
                                                     })
                                                 ;
                                                 $selectDxfStructure.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+                                                $selectDxfDepthToZ.selectpicker(SELECT_PICKER_TABS_OPTIONS);
                                                 $selectUnit.selectpicker(SELECT_PICKER_TABS_OPTIONS);
                                                 $selectSmoothing.selectpicker(SELECT_PICKER_TABS_OPTIONS);
                                                 $selectMergeHoles.selectpicker(SELECT_PICKER_TABS_OPTIONS).on('change', fnUpdateFieldsVisibility);
@@ -5874,8 +5903,9 @@
                                                 // Fetch UI elements
                                                 const $widgetPreset = $('.ladb-widget-preset', $modal);
                                                 const $selectFileFormat = $('#ladb_select_file_format', $modal);
-                                                const $formGroupDxfStructure = $('#ladb_form_group_dxf_structure', $modal);
+                                                const $formGroupDxf = $('.ladb-form-group-dxf', $modal);
                                                 const $selectDxfStructure = $('#ladb_select_dxf_structure', $modal);
+                                                const $selectDxfDepthToZ = $('#ladb_select_dxf_depth_to_z', $modal);
                                                 const $selectUnit = $('#ladb_select_unit', $modal);
                                                 const $selectSmoothing = $('#ladb_select_smoothing', $modal);
                                                 const $selectMergeHoles = $('#ladb_select_merge_holes', $modal);
@@ -5905,6 +5935,7 @@
                                                 const fnFetchOptions = function (options) {
                                                     options.file_format = $selectFileFormat.val();
                                                     options.dxf_structure = that.toInt($selectDxfStructure.val());
+                                                    options.dxf_depth_to_z = $selectDxfDepthToZ.val() === '1';
                                                     options.unit = that.toInt($selectUnit.val());
                                                     options.smoothing = $selectSmoothing.val() === '1';
                                                     options.merge_holes = $selectMergeHoles.val() === '1';
@@ -5930,6 +5961,7 @@
                                                 const fnFillInputs = function (options) {
                                                     $selectFileFormat.selectpicker('val', options.file_format);
                                                     $selectDxfStructure.selectpicker('val', options.dxf_structure);
+                                                    $selectDxfDepthToZ.selectpicker('val', options.dxf_depth_to_z ? '1' : '0');
                                                     $selectUnit.selectpicker('val', options.unit);
                                                     $selectSmoothing.selectpicker('val', options.smoothing ? '1' : '0');
                                                     $selectMergeHoles.selectpicker('val', options.merge_holes ? '1' : '0');
@@ -5962,7 +5994,7 @@
                                                     const isTextsHidden = !$inputTextsHidden.is(':checked');
                                                     const isLeftoversHidden = !$inputLeftoversHidden.is(':checked');
                                                     const isCutsHidden = !$inputCutsHidden.is(':checked');
-                                                    if (isDxf) $formGroupDxfStructure.show(); else $formGroupDxfStructure.hide();
+                                                    if (isDxf) $formGroupDxf.show(); else $formGroupDxf.hide();
                                                     $inputSheetStrokeColor.ladbTextinputColor(isSheetHidden ? 'disable' : 'enable');
                                                     $inputSheetFillColor.ladbTextinputColor(isSheetHidden || isDxf ? 'disable' : 'enable');
                                                     $inputPartsStrokeColor.ladbTextinputColor(isPartsHidden ? 'disable' : 'enable');
@@ -5996,6 +6028,7 @@
                                                     })
                                                 ;
                                                 $selectDxfStructure.selectpicker(SELECT_PICKER_TABS_OPTIONS);
+                                                $selectDxfDepthToZ.selectpicker(SELECT_PICKER_TABS_OPTIONS);
                                                 $selectUnit.selectpicker(SELECT_PICKER_TABS_OPTIONS);
                                                 $selectSmoothing.selectpicker(SELECT_PICKER_TABS_OPTIONS);
                                                 $selectMergeHoles.selectpicker(SELECT_PICKER_TABS_OPTIONS).on('change', fnUpdateFieldsVisibility);
