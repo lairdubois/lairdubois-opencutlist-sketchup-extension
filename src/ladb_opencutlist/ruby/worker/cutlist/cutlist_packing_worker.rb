@@ -730,7 +730,7 @@ module Ladb::OpenCutList
         if @problem_type == Packy::PROBLEM_TYPE_RECTANGLE || @problem_type == Packy::PROBLEM_TYPE_ONEDIMENSIONAL
           instance_parameters = {
             fake_trimming: _to_packy_length(@trimming),
-            fake_spacing: _to_packy_length(@spacing)
+            fake_spacing: _to_packy_length(@spacing),
           }
         elsif @problem_type == Packy::PROBLEM_TYPE_RECTANGLEGUILLOTINE
           instance_parameters = {
@@ -918,7 +918,7 @@ module Ladb::OpenCutList
               used_copies = raw_bin_type_stats.fetch('used_copies', 0)
               unused_copies = raw_bin_type_stats.fetch('unused_copies', 0)
               defs = []
-              defs << PackingSummaryBinTypeStatsDef.new(bin_type_def: bin_type_def, count: used_copies, used: true, number_of_items: raw_bin_type_stats.fetch('item_copies', 0))
+              defs << PackingSummaryBinTypeStatsDef.new(bin_type_def: bin_type_def, count: used_copies, used: true, number_of_items: raw_bin_type_stats.fetch('item_copies', 0)) if used_copies > 0
               defs << PackingSummaryBinTypeStatsDef.new(bin_type_def: bin_type_def, count: unused_copies, used: false) if unused_copies > 0 || unused_copies == -1
               defs
             }.flatten(1).sort_by!{ |bin_type_stats| [ bin_type_stats.used ? 1 : 0, -bin_type_stats.bin_type_def.type, bin_type_stats.bin_type_def.length ]} : []
