@@ -1091,8 +1091,19 @@ tab:
       option_rectangleguillotine_first_stage_orientation_horizontal: Horizontal
       option_rectangleguillotine_first_stage_orientation_vertical: Vertical
       option_rectangleguillotine_first_stage_orientation_any: Any
+      option_rectangleguillotine_sort_subplates_criteria: Level sorting
+      option_rectangleguillotine_sort_subplates_criteria_help: |
+        Defines the criteria for sorting parts at each level.
+      option_rectangleguillotine_sort_subplates_criteria_dl2l1: D L2 L1
+      option_rectangleguillotine_sort_subplates_criteria_l1l2: L1 L2
       option_rectangleguillotine_keep: Minimal Size of Off-cuts
       option_rectangleguillotine_keep_help: Leftovers that are larger than the minimum length and width are marked **to be kept**.
+      option_rectangle_leftover_mode: Layout of parts
+      option_rectangle_leftover_mode_help: |
+        Defines the direction in which parts are spread across the last partially filled panel.
+      option_rectangle_leftover_mode_area: Auto
+      option_rectangle_leftover_mode_x: Across the width of the panel
+      option_rectangle_leftover_mode_y: Across the length of the panel
       option_irregular_allowed_rotations: Allowed Rotations
       option_irregular_allowed_rotations_help: |
         Sets the allowed rotations for part placing.
@@ -1107,6 +1118,13 @@ tab:
         Defines if mirroring the part is allowed for placement.
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
+      option_irregular_leftover_mode: Layout of parts
+      option_irregular_leftover_mode_help: |
+        Defines the direction in which parts are spread across the last partially filled panel.
+      option_irregular_leftover_mode_bottom_left: Auto
+      option_irregular_leftover_mode_left: Across the width of the panel
+      option_irregular_leftover_mode_bottom: Across the length of the panel
+
       option_spacing: Spacing
       option_spacing_help: |
         Minimum spacing between each part.
@@ -1490,6 +1508,13 @@ tab:
 
         - The **Layers** structure draws all lines flat, distinguishing between different line types using layers only. *This structure offers greater compatibility with third-party software.*
         - The **Layers + Blocks** structure creates one block per part and inserts these blocks as many times as the parts are repeated. *This structure offers more flexibility for editing the file.*
+      option_dxf_depth_to_z: Depths in Z
+      option_dxf_depth_to_z_0: $t(default.no)
+      option_dxf_depth_to_z_1: Distribute layer depths along the Z-axis
+      option_dxf_depth_to_z_help: |
+        Enables the distribution of layers along the Z-axis based on their depth.
+        
+        Disable this option to export as 2D DXF only.
       option_unit: Unit
       option_unit_help: |
         Selects the unit used in the exported file.
