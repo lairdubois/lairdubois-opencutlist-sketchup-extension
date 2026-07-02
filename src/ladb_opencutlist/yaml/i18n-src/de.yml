@@ -1087,15 +1087,26 @@ tab:
         Legt die maximale Anzahl der Schnittstufen fest.
       option_rectangleguillotine_first_stage_orientation: Erster Schnitt
       option_rectangleguillotine_first_stage_orientation_help: |
-        Bestimmt die Richtung des ersten Schnittes.
+        Legt die Richtung des ersten Schnittes fest.
       option_rectangleguillotine_first_stage_orientation_horizontal: Horizontal
       option_rectangleguillotine_first_stage_orientation_vertical: Vertikal
       option_rectangleguillotine_first_stage_orientation_any: Beliebig
+      option_rectangleguillotine_sort_subplates_criteria: Sortierung der Stufen
+      option_rectangleguillotine_sort_subplates_criteria_help: |
+        Legt die Sortierkriterien für die Teile auf jeder Stufe fest.
+      option_rectangleguillotine_sort_subplates_criteria_dl2l1: D L2 L1
+      option_rectangleguillotine_sort_subplates_criteria_l1l2: L1 L2
       option_rectangleguillotine_keep: Mindestgröße der Verschnitte
       option_rectangleguillotine_keep_help: "Verschnitte, die größer als die Mindestlänge und -breite sind, werden mit **zur Aufbewahrung** gekennzeichnet."
+      option_rectangle_leftover_mode: Anordnung der Teile
+      option_rectangle_leftover_mode_help: |
+        Legt die Auslegungsrichtung der Teile auf der letzten nicht vollständig ausgefüllten Platte fest.
+      option_rectangle_leftover_mode_area: Auto
+      option_rectangle_leftover_mode_x: Über die Breite der Platte
+      option_rectangle_leftover_mode_y: Über die Länge der Platte
       option_irregular_allowed_rotations: Drehungen
       option_irregular_allowed_rotations_help: |
-        Bestimmt die erlaubten Drehungen eines Teils.
+        Legt die erlaubten Drehungen eines Teils fest.
 
         *Materiale mit Faserverlauf erlauben nur 0 und 180° Drehungen.*
       option_irregular_allowed_rotations_0: Keine
@@ -1107,6 +1118,12 @@ tab:
         Bestimmt of eine Spiegelung des Teils zur Platzierung erlaubt ist.
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
+      option_irregular_leftover_mode: Anordnung der Teile
+      option_irregular_leftover_mode_help: |
+        Legt die Auslegungsrichtung der Teile auf der letzten nicht vollständig ausgefüllten Platte fest.
+      option_irregular_leftover_mode_bottom_left: Auto
+      option_irregular_leftover_mode_left: Über die Breite der Platte
+      option_irregular_leftover_mode_bottom: Über die Länge der Platte
       option_spacing: Abstand
       option_spacing_help: |
         Mindestabstand zwischen den einzelnen Teilen.
@@ -1490,6 +1507,13 @@ tab:
 
         - Die Struktur **Layers** zeichnet alle Linien flach und unterscheidet zwischen verschiedenen Linientypen nur durch Layers. *Diese Struktur bietet eine bessere Kompatibilität mit Software von Drittanbietern.*
         - Die Struktur **Layers + Blöcke** erstellt einen Block pro Teil und fügt diese Blöcke so oft ein, wie die Teile wiederholt werden. *Diese Struktur bietet mehr Flexibilität beim Bearbeiten der Datei.*
+      option_dxf_depth_to_z: Tiefen in Z
+      option_dxf_depth_to_z_0: $t(default.no)
+      option_dxf_depth_to_z_1: Ebenentiefen auf Z verteilen
+      option_dxf_depth_to_z_help: |
+        Ermöglicht die Verteilung der Ebenen entlang der Z-Achse entsprechend ihrer Tiefe.
+        
+        Deaktivieren Sie diese Option, um eine reine 2D-DXF-Datei zu exportieren.
       option_unit: Einheit
       option_unit_help: |
         Auswahl der in der exportierten Datei verwendeten Einheit.

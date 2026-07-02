@@ -1093,14 +1093,14 @@ tab:
       option_rectangleguillotine_first_stage_orientation_any: Quelconque
       option_rectangleguillotine_sort_subplates_criteria: Tri des niveaux
       option_rectangleguillotine_sort_subplates_criteria_help: |
-        Défini les critères de tri des pièces sur chaque niveau.
+        Définit les critères de tri des pièces sur chaque niveau.
       option_rectangleguillotine_sort_subplates_criteria_dl2l1: D L2 L1
       option_rectangleguillotine_sort_subplates_criteria_l1l2: L1 L2
       option_rectangleguillotine_keep: Taille minimale des chutes
       option_rectangleguillotine_keep_help: Les chutes ayant les deux dimensions supérieures à la taille minimale seront marquées **à conserver**.
       option_rectangle_leftover_mode: Etalement des pièces
       option_rectangle_leftover_mode_help: |
-        Défini la direction d'étalement des pièces sur le dernier panneau non plein.
+        Définit la direction d'étalement des pièces sur le dernier panneau non plein.
       option_rectangle_leftover_mode_area: Auto
       option_rectangle_leftover_mode_x: Sur la largeur du panneau
       option_rectangle_leftover_mode_y: Sur la longueur du panneau
@@ -1120,7 +1120,7 @@ tab:
       option_irregular_allow_mirroring_1: $t(default.yes)
       option_irregular_leftover_mode: Etalement des pièces
       option_irregular_leftover_mode_help: |
-        Défini la direction d'étalement des pièces sur le dernier panneau non plein.
+        Définit la direction d'étalement des pièces sur le dernier panneau non plein.
       option_irregular_leftover_mode_bottom_left: Auto
       option_irregular_leftover_mode_left: Sur la largeur du panneau
       option_irregular_leftover_mode_bottom: Sur la longueur du panneau
@@ -2445,7 +2445,7 @@ tool:
     action_option_group_csg_operation: Operation
     action_option_group_options: Options
     action_option_thickness_thickness: Epaisseur
-    action_option_thickness_thickness_status: Défini l'épaisseur des panneaux
+    action_option_thickness_thickness_status: Définit l'épaisseur des panneaux
     action_option_stretch_measure_type_outside_status: Mesurer à l'extérieur
     action_option_stretch_measure_type_offset_status: Mesurer la différence
     action_option_axes_active_status: Manipuler le long des axes actifs
