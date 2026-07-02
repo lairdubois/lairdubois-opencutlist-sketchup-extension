@@ -25,7 +25,7 @@
     "rectangleguillotine_cut_type": "non-exact",
     "rectangleguillotine_number_of_stages": 3,
     "rectangleguillotine_first_stage_orientation": "any",
-    "rectangleguillotine_sort_subplates_criteria": "d,l2,l1",
+    "rectangleguillotine_sort_subplates_criteria": "l1,l2",
     "rectangleguillotine_keep_size": "",
     "rectangle_leftover_mode": "a",
     "irregular_allowed_rotations": "0",

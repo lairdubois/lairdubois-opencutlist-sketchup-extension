@@ -1094,11 +1094,11 @@ tab:
       option_rectangleguillotine_sort_subplates_criteria: Tri des niveaux
       option_rectangleguillotine_sort_subplates_criteria_help: |
         Définit les critères de tri des pièces sur chaque niveau.
-      option_rectangleguillotine_sort_subplates_criteria_dl2l1: D L2 L1
-      option_rectangleguillotine_sort_subplates_criteria_l1l2: L1 L2
+      option_rectangleguillotine_sort_subplates_criteria_l1l2: Par taille décroissante  # TODO : changed
+      option_rectangleguillotine_sort_subplates_criteria_dl2l1: Par densité décroissante  # TODO : changed
       option_rectangleguillotine_keep: Taille minimale des chutes
       option_rectangleguillotine_keep_help: Les chutes ayant les deux dimensions supérieures à la taille minimale seront marquées **à conserver**.
-      option_rectangle_leftover_mode: Etalement des pièces
+      option_rectangle_leftover_mode: Direction d'étalement # TODO : changed
       option_rectangle_leftover_mode_help: |
         Définit la direction d'étalement des pièces sur le dernier panneau non plein.
       option_rectangle_leftover_mode_area: Auto
@@ -1118,7 +1118,7 @@ tab:
         Définit si le mirroir de la pièce est autorisée pour le placement.
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
-      option_irregular_leftover_mode: Etalement des pièces
+      option_irregular_leftover_mode: Direction d'étalement # TODO : changed
       option_irregular_leftover_mode_help: |
         Définit la direction d'étalement des pièces sur le dernier panneau non plein.
       option_irregular_leftover_mode_bottom_left: Auto
@@ -1510,7 +1510,7 @@ tab:
         - La structure **Calques + Blocs** crée un bloc par pièce et insère ces blocs autant de fois que les pièces sont répétées. *Cette structure offre plus de flexibilité pour modifier le fichier.*
       option_dxf_depth_to_z: Profondeurs en Z
       option_dxf_depth_to_z_0: $t(default.no)
-      option_dxf_depth_to_z_1: Répartir les profondeurs de calques sur Z
+      option_dxf_depth_to_z_1: Répartir les profondeurs des calques sur Z
       option_dxf_depth_to_z_help: |
         Permet d'activer la répartition des calques sur l'axe Z suivant leur profondeur.
         
