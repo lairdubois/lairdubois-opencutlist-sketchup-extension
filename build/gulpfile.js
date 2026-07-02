@@ -250,7 +250,11 @@ gulp.task('i18n_dialogs_compile', function () {
 // Create the .rbz archive
 gulp.task('rbz_create', function () {
     var blob = [
-        'src/**/!(.DS_store|*.less|*.twig|!(*.min).css)',
+        'src/**',
+        '!src/**/.*',                   // Exclude hidden files (.DS_Store, ...)
+        '!src/**/*.less',
+        '!src/**/*.twig',
+        '!src/**/!(*.min).css',         // Exclude not minified .css files
         '!src/**/less/**',
         '!src/**/twig/**',
         '!src/**/cpp/**',
@@ -263,9 +267,10 @@ gulp.task('rbz_create', function () {
         // Exclude zz debug languages in prod environment
         blob.push('!src/**/yaml/i18n/zz*.yml');
     }
-    return gulp.src(blob, { cwd: '../'})
+    // encoding: false is required since gulp 5 to avoid corrupting binary files (.dylib, .dll, images, fonts)
+    return gulp.src(blob, { cwd: '../', encoding: false })
         .pipe(zip('ladb_opencutlist.rbz'))
-        .pipe(gulp.dest('../dist'));
+        .pipe(gulp.dest('../dist', { encoding: false }));
 });
 
 // Version
