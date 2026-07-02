@@ -492,11 +492,11 @@ tab:
         *OpenCutList zählt dann 2 Teile mit 19mm Dicke statt 1 Teil mit 38mm Dicke.*
       cut_options: $t(tab.materials.edit_material.cut_options)
       length_increase: $t(tab.materials.edit_material.length_increase)
-      length_increase_help: Übermaß welches das **Längenrohmaß** des Teils vergrössert.  # TODO: singular version of tab.materials.edit_material.length_increase
+      length_increase_help: Übermaß welches das **Längenrohmaß** des Teils vergrössert.
       width_increase: $t(tab.materials.edit_material.width_increase)
-      width_increase_help: Übermaß welches das **Breitenrohmaß** des Teils vergrössert. # TODO: singular version of tab.materials.edit_material.width_increase
+      width_increase_help: Übermaß welches das **Breitenrohmaß** des Teils vergrössert.
       thickness_increase: $t(tab.materials.edit_material.thickness_increase)
-      thickness_increase_help: Übermaß welches das **Dickerohmaß** des Teils vergrössert. # TODO: singular version of tab.materials.edit_material.thickness_increase
+      thickness_increase_help: Übermaß welches das **Dickerohmaß** des Teils vergrössert.
       description: Beschreibung
       description_help: |
         Die *Beschreibung* ermöglicht es Ihnen, benutzerdefinierte Informationen zu jeder Teildefinition anzugeben.
@@ -1094,13 +1094,13 @@ tab:
       option_rectangleguillotine_sort_subplates_criteria: Sortierung der Stufen
       option_rectangleguillotine_sort_subplates_criteria_help: |
         Legt die Sortierkriterien für die Teile auf jeder Stufe fest.
-      option_rectangleguillotine_sort_subplates_criteria_dl2l1: D L2 L1
-      option_rectangleguillotine_sort_subplates_criteria_l1l2: L1 L2
+      option_rectangleguillotine_sort_subplates_criteria_l1l2: Nach absteigender Größe
+      option_rectangleguillotine_sort_subplates_criteria_dl2l1: Nach absteigender Dichte
       option_rectangleguillotine_keep: Mindestgröße der Verschnitte
       option_rectangleguillotine_keep_help: "Verschnitte, die größer als die Mindestlänge und -breite sind, werden mit **zur Aufbewahrung** gekennzeichnet."
-      option_rectangle_leftover_mode: Anordnung der Teile
+      option_rectangle_leftover_mode: Ausbreitungsrichtung der Teile
       option_rectangle_leftover_mode_help: |
-        Legt die Auslegungsrichtung der Teile auf der letzten nicht vollständig ausgefüllten Platte fest.
+        Legt die Ausbreitungsrichtung der Teile auf der letzten nicht vollständig ausgefüllten Platte fest.
       option_rectangle_leftover_mode_area: Auto
       option_rectangle_leftover_mode_x: Über die Breite der Platte
       option_rectangle_leftover_mode_y: Über die Länge der Platte
@@ -1118,9 +1118,9 @@ tab:
         Bestimmt of eine Spiegelung des Teils zur Platzierung erlaubt ist.
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
-      option_irregular_leftover_mode: Anordnung der Teile
+      option_irregular_leftover_mode: Ausbreitungsrichtung der Teile
       option_irregular_leftover_mode_help: |
-        Legt die Auslegungsrichtung der Teile auf der letzten nicht vollständig ausgefüllten Platte fest.
+        Legt die Ausbreitungsrichtung der Teile auf der letzten nicht vollständig ausgefüllten Platte fest.
       option_irregular_leftover_mode_bottom_left: Auto
       option_irregular_leftover_mode_left: Über die Breite der Platte
       option_irregular_leftover_mode_bottom: Über die Länge der Platte
@@ -1686,11 +1686,11 @@ tab:
 
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
       length_increase: Längenzumaß
-      length_increase_help: Übermaß welches das **Längenrohmaß** vergrössert.
+      length_increase_help: Übermaß welches das **Längenrohmaß** der Teile vergrössert.
       width_increase: Breitenzumaß
-      width_increase_help: Übermaß welches das **Breitenrohmaß** vergrössert.
+      width_increase_help: Übermaß welches das **Breitenrohmaß** der Teile vergrössert.
       thickness_increase: Dickenzumaß
-      thickness_increase_help: Übermaß welches das **Dickerohmaß** vergrössert.
+      thickness_increase_help: Übermaß welches das **Dickerohmaß** der Teile vergrössert.
       std_lengths: Standardlängen
       std_lengths_help: |
         Standardlängen für dieses Material.
@@ -2541,7 +2541,7 @@ tool:
     title: Zusammenfügen
     action_0: Verbinder hinzufügen 
     action_0_status: Verbindungselemente zum Zusammenfügen von Teilen anbringen
-    action_0_state_0_status: Klicken Sie auf eine Seite eines Teils, um es mit den benachbarten Teilen zusammenzufügen
+    action_0_state_0_status: Klicken Sie auf die Referenzfläche eines Teils, um Verbindungen zu benachbarten Teilen hinzuzufügen, die sich in Kontakt befinden
     action_1: Verbinder löschen
     action_1_status: Verbindungselemente von Teilen löschen
     action_1_state_0_status: Klicken Sie auf die Referenzfläche eines Teils, um die Verbinder zu löschen, die es mit benachbarten Teilen teilt

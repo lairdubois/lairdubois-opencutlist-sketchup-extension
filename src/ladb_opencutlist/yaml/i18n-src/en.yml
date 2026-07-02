@@ -492,11 +492,11 @@ tab:
         *OpenCutList will then count 2 parts of 19mm thickness instead of 1 part of 38mm.*
       cut_options: $t(tab.materials.edit_material.cut_options)
       length_increase: $t(tab.materials.edit_material.length_increase)
-      length_increase_help: Oversize applied to the finished length of the part to define its **raw length**.  # TODO: singular version of tab.materials.edit_material.length_increase
+      length_increase_help: Oversize applied to the finished length of the part to define its **raw length**.
       width_increase: $t(tab.materials.edit_material.width_increase)
-      width_increase_help: Oversize applied to the finished width of the part to define its **raw width**. # TODO: singular version of tab.materials.edit_material.width_increase
+      width_increase_help: Oversize applied to the finished width of the part to define its **raw width**.
       thickness_increase: $t(tab.materials.edit_material.thickness_increase)
-      thickness_increase_help: Oversize applied to the thickness of the part to define its **raw thickness**. # TODO: singular version of tab.materials.edit_material.thickness_increase
+      thickness_increase_help: Oversize applied to the thickness of the part to define its **raw thickness**.
       description: Description
       description_help: |
         The *Description* provides a personalized information on each part definition.
@@ -1091,14 +1091,14 @@ tab:
       option_rectangleguillotine_first_stage_orientation_horizontal: Horizontal
       option_rectangleguillotine_first_stage_orientation_vertical: Vertical
       option_rectangleguillotine_first_stage_orientation_any: Any
-      option_rectangleguillotine_sort_subplates_criteria: Level sorting
+      option_rectangleguillotine_sort_subplates_criteria: Sorting Stages
       option_rectangleguillotine_sort_subplates_criteria_help: |
         Defines the criteria for sorting parts at each level.
-      option_rectangleguillotine_sort_subplates_criteria_dl2l1: D L2 L1
-      option_rectangleguillotine_sort_subplates_criteria_l1l2: L1 L2
+      option_rectangleguillotine_sort_subplates_criteria_l1l2: By decreasing size
+      option_rectangleguillotine_sort_subplates_criteria_dl2l1: By decreasing density
       option_rectangleguillotine_keep: Minimal Size of Off-cuts
       option_rectangleguillotine_keep_help: Leftovers that are larger than the minimum length and width are marked **to be kept**.
-      option_rectangle_leftover_mode: Layout of parts
+      option_rectangle_leftover_mode: Spread Direction
       option_rectangle_leftover_mode_help: |
         Defines the direction in which parts are spread across the last partially filled panel.
       option_rectangle_leftover_mode_area: Auto
@@ -1687,11 +1687,11 @@ tab:
 
         *If no unit is specified, the model unit will be applied.*
       length_increase: Length Oversize
-      length_increase_help: Oversize applied to the finished length to define the **raw length**.
+      length_increase_help: Oversize applied to the finished length of the parts to define their **raw length**.
       width_increase: Width Oversize
-      width_increase_help: Oversize applied to the finished width to define the **raw width**.
+      width_increase_help: Oversize applied to the finished width of the parts to define their **raw width**.
       thickness_increase: Thickness Oversize
-      thickness_increase_help: Oversize applied to the finished thickness to define the **raw thickness**.
+      thickness_increase_help: Oversize applied to the finished thickness of the parts to define their **raw thickness**.
       std_lengths: Standard Lengths
       std_lengths_help: |
         Standard lengths available for this material.
@@ -2542,7 +2542,7 @@ tool:
     title: Assemble
     action_0: Add connectors
     action_0_status: Add connectors to assemble parts
-    action_0_state_0_status: Click on a part's reference face to assemble it with adjacent parts
+    action_0_state_0_status: Click on a part's reference face to add connectors to adjacent parts that are in contact
     action_1: Delete connectors
     action_1_status: Delete connectors used to assemble parts
     action_1_state_0_status: Click on a part's reference face to delete the connectors it shares with neighboring parts
