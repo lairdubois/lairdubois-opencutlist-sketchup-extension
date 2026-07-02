@@ -74,9 +74,8 @@ namespace Skpy {
         // Computes the version number matching Sketchup.version_number:
         //   major < 16:  major * 1_000_000   + minor * 1_000  + build
         //   major >= 16: major * 100_000_000 + minor * 10_000_000 + build
-        static uint64_t compute_version_number(const std::string& version_string);
-
-        bool parse_legacy();
+        // Returns std::nullopt if any component is not a valid number.
+        static std::optional<uint64_t> compute_version_number(const std::string& version_string);
     };
 
 }

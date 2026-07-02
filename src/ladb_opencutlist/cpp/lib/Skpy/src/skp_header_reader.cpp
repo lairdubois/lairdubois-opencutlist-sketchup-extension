@@ -56,13 +56,33 @@ json SkpHeaderReader::run(
 // compute_version_number()
 // ---------------------------------------------------------------------------
 
-uint64_t SkpHeaderReader::compute_version_number(const std::string& version_string) {
+std::optional<uint64_t> SkpHeaderReader::compute_version_number(const std::string& version_string) {
     uint64_t major = 0, minor = 0, build = 0;
     std::istringstream ss(version_string);
     std::string token;
-    if (std::getline(ss, token, '.') && !token.empty()) major = std::stoull(token);
-    if (std::getline(ss, token, '.') && !token.empty()) minor = std::stoull(token);
-    if (std::getline(ss, token, '.') && !token.empty()) build = std::stoull(token);
+    auto to_number = [](const std::string& s) -> std::optional<uint64_t> {
+        if (s.empty() || s.find_first_not_of("0123456789") != std::string::npos) return std::nullopt;
+        try {
+            return std::stoull(s);
+        } catch (...) {
+            return std::nullopt;   // out of range
+        }
+    };
+    if (std::getline(ss, token, '.')) {
+        auto v = to_number(token);
+        if (!v) return std::nullopt;
+        major = *v;
+    }
+    if (std::getline(ss, token, '.')) {
+        auto v = to_number(token);
+        if (!v) return std::nullopt;
+        minor = *v;
+    }
+    if (std::getline(ss, token, '.')) {
+        auto v = to_number(token);
+        if (!v) return std::nullopt;
+        build = *v;
+    }
     if (major < 16) {
         return major * 1000000ULL + minor * 1000ULL + build;
     }
@@ -206,16 +226,19 @@ bool SkpHeaderReader::parse() {
     uint32_t major = 0;
     try {
         major = static_cast<uint32_t>(std::stoul(version_string));
-    } catch (const std::exception& e) {
-        result_.error_message = "Major version can't be parsed : " + version_string;
-        return false;
     } catch (...) {
         result_.error_message = "Major version can't be parsed : " + version_string;
         return false;
     }
 
+    auto version_number = compute_version_number(version_string);
+    if (!version_number) {
+        result_.error_message = "Version can't be parsed : " + version_string;
+        return false;
+    }
+
     result_.version_major   = major;
-    result_.version_number  = compute_version_number(version_string);
+    result_.version_number  = *version_number;
     result_.version_string  = version_string;
     result_.version_label   = resolve_label(major);
     return true;
