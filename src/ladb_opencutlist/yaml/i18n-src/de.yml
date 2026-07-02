@@ -492,11 +492,11 @@ tab:
         *OpenCutList zählt dann 2 Teile mit 19mm Dicke statt 1 Teil mit 38mm Dicke.*
       cut_options: $t(tab.materials.edit_material.cut_options)
       length_increase: $t(tab.materials.edit_material.length_increase)
-      length_increase_help: Übermaß welches das **Längenrohmaß** des Teils vergrössert.
+      length_increase_help: $t(tab.materials.edit_material.length_increase_help)
       width_increase: $t(tab.materials.edit_material.width_increase)
-      width_increase_help: Übermaß welches das **Breitenrohmaß** des Teils vergrössert.
+      width_increase_help: $t(tab.materials.edit_material.width_increase_help)
       thickness_increase: $t(tab.materials.edit_material.thickness_increase)
-      thickness_increase_help: Übermaß welches das **Dickerohmaß** des Teils vergrössert.
+      thickness_increase_help: $t(tab.materials.edit_material.thickness_increase_help)
       description: Beschreibung
       description_help: |
         Die *Beschreibung* ermöglicht es Ihnen, benutzerdefinierte Informationen zu jeder Teildefinition anzugeben.
@@ -1686,11 +1686,14 @@ tab:
 
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
       length_increase: Längenzumaß
-      length_increase_help: Übermaß welches das **Längenrohmaß** der Teile vergrössert.
+      length_increase_help: Übermaß welches das **Längenrohmaß** des Teils vergrössert.
+      length_increase_help_plural: Übermaß welches das **Längenrohmaß** der Teile vergrössert.
       width_increase: Breitenzumaß
-      width_increase_help: Übermaß welches das **Breitenrohmaß** der Teile vergrössert.
+      width_increase_help: Übermaß welches das **Breitenrohmaß** des Teils vergrössert.
+      width_increase_help_plural: Übermaß welches das **Breitenrohmaß** der Teile vergrössert.
       thickness_increase: Dickenzumaß
-      thickness_increase_help: Übermaß welches das **Dickerohmaß** der Teile vergrössert.
+      thickness_increase_help: Übermaß welches das **Dickerohmaß** des Teils vergrössert.
+      thickness_increase_help_plural: Übermaß welches das **Dickerohmaß** der Teile vergrössert.
       std_lengths: Standardlängen
       std_lengths_help: |
         Standardlängen für dieses Material.
