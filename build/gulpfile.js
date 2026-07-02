@@ -11,13 +11,14 @@ var less = require('gulp-less');
 var replace = require('gulp-replace');
 var rename = require("gulp-rename");
 var touch = require('gulp-touch-custom');
-var glob = require('glob');
+var globSync = require('glob').globSync;
 var yaml = require('js-yaml');
 var path = require('path');
 var cleanCSS = require('gulp-clean-css');
 var uglify = require('gulp-uglify');
-var pxtorem = require('gulp-pxtorem');
-var run = require('gulp-run');
+var postcss = require('gulp-postcss');
+var pxtorem = require('postcss-pxtorem');
+var spawn = require('child_process').spawn;
 
 var knownOptions = {
     string: 'env',
@@ -39,7 +40,7 @@ gulp.task('css_minify', function () {
     return gulp.src('../src/ladb_opencutlist/css/**/!(*.min).css')
         .pipe(cleanCSS())
         .pipe(rename({ suffix: '.min' }))
-        .pipe(pxtorem({ minPixelValue: 1, propList: [
+        .pipe(postcss([ pxtorem({ minPixelValue: 1, propList: [
             'font', 'font-size',
                 'line-height',
                 'letter-spacing',
@@ -50,7 +51,7 @@ gulp.task('css_minify', function () {
                 'top', 'right', 'bottom', 'left',
                 'border-width',
                 'gap'
-            ] }))
+            ] }) ]))
         .pipe(gulp.dest('../src/ladb_opencutlist/css'));
 });
 
@@ -117,7 +118,7 @@ gulp.task('i18n_compile', function () {
     // Clean previously generated i18n js files
     del.sync('../src/ladb_opencutlist/js/i18n/*', { force: true });
 
-    glob.sync(yamlSrcPath + '*.yml').forEach(function (ymlFile) {
+    globSync(yamlSrcPath + '*.yml').sort().forEach(function (ymlFile) {    // .sort() because glob >= 9 no longer sorts results
         const contents = fs.readFileSync(ymlFile);
         const ymlDocument = yaml.load(contents);
         const language = path.basename(ymlFile, '.yml');
@@ -333,26 +334,40 @@ gulp.task('default', gulp.series('build'));
 
 var cmakeBuildDir = 'cmake-build';
 
+function runCommand(command) {
+    return new Promise(function (resolve, reject) {
+        var child = spawn(command, { shell: true, stdio: 'inherit' });
+        child.on('error', reject);
+        child.on('exit', function (code) {
+            if (code === 0) {
+                resolve();
+            } else {
+                reject(new Error("Command '" + command + "' exited with code " + code));
+            }
+        });
+    });
+}
+
 gulp.task('c_libs_clean', function () {
-    return run('cmake --build ' + cmakeBuildDir + ' --target clean', { verbosity: 3 }).exec();
+    return runCommand('cmake --build ' + cmakeBuildDir + ' --target clean');
 });
 
 gulp.task('c_libs_prepare', function () {
 
     var config = options.config ? options.config : 'Release';
 
-    return run('cmake -S .. -B ' + cmakeBuildDir + ' -DCMAKE_BUILD_TYPE=' + config + ' --fresh', { verbosity: 3 }).exec();
+    return runCommand('cmake -S .. -B ' + cmakeBuildDir + ' -DCMAKE_BUILD_TYPE=' + config + ' --fresh');
 });
 
 gulp.task('c_libs_build', function () {
 
     var config = options.config ? options.config : 'Release';
 
-    return run('cmake --build ' + cmakeBuildDir + ' --config ' + config + ' --parallel', { verbosity: 3 }).exec();
+    return runCommand('cmake --build ' + cmakeBuildDir + ' --config ' + config + ' --parallel');
 });
 
 gulp.task('c_libs_install', function () {
-    return run('cmake --install ' + cmakeBuildDir, { verbosity: 3 }).exec();
+    return runCommand('cmake --install ' + cmakeBuildDir);
 });
 
 gulp.task('c_libs_build_install', gulp.series('c_libs_build', 'c_libs_install'));
