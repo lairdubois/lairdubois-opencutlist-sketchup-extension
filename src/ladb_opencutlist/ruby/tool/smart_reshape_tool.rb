@@ -9,6 +9,7 @@ module Ladb::OpenCutList
   require_relative '../manipulator/plane_manipulator'
   require_relative '../manipulator/cline_manipulator'
   require_relative '../helper/user_text_helper'
+  require_relative '../helper/solid_boolean_helper'
   require_relative '../worker/common/common_drawing_decomposition_worker'
 
   class SmartReshapeTool < SmartTool
@@ -3715,6 +3716,8 @@ module Ladb::OpenCutList
 
   class SmartReshapeCSGActionHandler < SmartActionHandler
 
+    include SolidBooleanHelper
+
     STATE_SELECT_SRC = 0
     STATE_SELECT_CUT = 1
 
@@ -3844,6 +3847,7 @@ module Ladb::OpenCutList
     def _reset
       @src_drawing_def = nil
       @cut_drawing_def = nil
+      @src_container_transformation = nil
       super
       set_state(STATE_SELECT_SRC)
     end
@@ -3863,6 +3867,7 @@ module Ladb::OpenCutList
       @src_drawing_def.face_manipulators.concat(all_connected
                                                   .grep(Sketchup::Face)
                                                   .map { |face| FaceManipulator.new(face, container_transformation) })
+      @src_container_transformation = container_transformation
 
     end
 
@@ -3920,186 +3925,60 @@ module Ladb::OpenCutList
 
     def _operate
 
-      require_relative '../lib/fiddle/meshy/meshy'
+      src_mesh_def = SolidMeshDef.from_drawing_def(@src_drawing_def)
+      cut_mesh_def = SolidMeshDef.from_drawing_def(@cut_drawing_def)
 
-      fn = lambda { |fm, vertex_index_map, vertices, face_indices, face_sizes, face_ids, triangulated = true|
-
-        face = fm.face
-
-        if triangulated || fm.has_inner_loops?
-
-          # Export triangulated face
-
-          mesh = fm.mesh
-          polygons = mesh.polygons
-          polygons.each do |polygon|
-
-            face_vertex_indices = []
-
-            polygon.each do |vertex_index|
-
-              pt = mesh.point_at(vertex_index.abs)
-
-              key = [ pt.x, pt.y, pt.z ]
-
-              unless vertex_index_map.key?(key)
-                vertex_index_map[key] = vertices.length / 3
-                vertices.concat([ pt.x.to_f, pt.y.to_f, pt.z.to_f ])
-              end
-
-              face_vertex_indices << vertex_index_map[key]
-
-            end
-
-            face_indices.concat(face_vertex_indices)
-            face_sizes << face_vertex_indices.length
-            face_ids << face.persistent_id
-
-          end
-
-        else
-
-          # Export n-gon face
-
-          face_vertex_indices = []
-
-          points = fm.outer_loop_manipulator.points
-          points.each do |pt|
-
-            key = [ pt.x, pt.y, pt.z ]
-
-            unless vertex_index_map.key?(key)
-              vertex_index_map[key] = vertices.length / 3
-              vertices.concat([ pt.x.to_f, pt.y.to_f, pt.z.to_f ])
-            end
-
-            face_vertex_indices << vertex_index_map[key]
-
-          end
-
-          face_indices.concat(face_vertex_indices)
-          face_sizes << face_vertex_indices.length
-          face_ids << face.persistent_id
-
-        end
-
-      }
-
-      vertices = []
-      face_indices = []
-      face_sizes = []
-      face_ids = []
-
-      vertex_index_map = {}
-
-      @src_drawing_def.face_manipulators.each do |fm|
-        fn.call(fm, vertex_index_map, vertices, face_indices, face_sizes, face_ids)
-      end
-
-      src_mesh = {
-        vertices: vertices,
-        face_indices: face_indices,
-        face_sizes: face_sizes,
-        face_ids: face_ids,
-        num_vertices: vertices.size / 3,
-        num_faces: face_sizes.size
-      }
-
-      vertices = []
-      face_indices = []
-      face_sizes = []
-      face_ids = []
-
-      vertex_index_map = {}
-
-      @cut_drawing_def.face_manipulators.each do |fm|
-        fn.call(fm, vertex_index_map, vertices, face_indices, face_sizes, face_ids)
-      end
-
-      cut_mesh = {
-        vertices: vertices,
-        face_indices: face_indices,
-        face_sizes: face_sizes,
-        face_ids: face_ids,
-        num_vertices: vertices.size / 3,
-        num_faces: face_sizes.size
-      }
-
-      input = {
-        solver_type: 'manifold',
-        operation: _fetch_option_csg_operation,
-        src_meshes: [ src_mesh ],
-        cut_meshes: [ cut_mesh ]
-      }
-
-      # Write input to a JSON file in the bin directory for debug purpose
-      File.write(File.join(Fiddle::Meshy.lib_dir, 'input.json'), JSON.pretty_generate(input))
-
-      # Operate the meshes
-      output = Fiddle::Meshy.operate(input)
-
-      # Write output to a JSON file in the bin directory for debug purpose
-      File.write(File.join(Fiddle::Meshy.lib_dir, 'output.json'), JSON.pretty_generate(output))
-
-      if output['error']
-
-        @tool.notify_errors([ [ 'core.error.exception', { error: output['error'] } ] ])
-
-      else
+      result_def = _solid_boolean_compute(_fetch_option_csg_operation, [ src_mesh_def ], [ cut_mesh_def ])
+      if result_def.success?
 
         model = Sketchup.active_model
         model.start_operation('CSG', true)
+        begin
 
-          v = Geom::Vector3d.new([ @src_drawing_def.bounds.width, @cut_drawing_def.bounds.width ].max * 1.5, 0, 0)
-          t = Geom::Transformation.translation(v)
+          src_container = @src_drawing_def.container
+          cut_container = @cut_drawing_def.container
 
-          output['fragments'].each { |fragment|
-
-            mesh = Geom::PolygonMesh.new(fragment['num_vertices'], fragment['num_faces'])
-
-            points = fragment['vertices'].each_slice(3).map { |coords| Geom::Point3d.new(coords) }
-            faces = {}
-
-            if fragment['face_sizes'].nil?
-
-              face_ids = fragment['face_ids']
-              fragment['face_indices'].each_slice(3).with_index do |indices, i|
-                (faces[face_ids[i]] ||= []) << indices.map { |index| points[index] }
-              end
-
-              fragment['face_indices'].each_slice(3) do |indices|
-                mesh.add_polygon(indices.map { |index| points[index] })
-              end
+          # Consume cut geometry. When src and cut share the same container, the
+          # source rebuild below wipes the cut solid as well.
+          unless !src_container.nil? && cut_container == src_container
+            if cut_container.is_a?(Sketchup::Group) || cut_container.is_a?(Sketchup::ComponentInstance)
+              cut_container.erase! unless cut_container.deleted?
             else
-              fragment['face_sizes'].each do |face_size|
-                indices = fragment['face_indices'].shift(face_size)
-                mesh.add_polygon(indices.map { |index| points[index] })
-              end
+              faces = @cut_drawing_def.face_manipulators.map(&:face).reject(&:deleted?)
+              edges = faces.flat_map(&:edges).uniq.reject(&:deleted?)
+              model.entities.erase_entities(faces + edges)
             end
+          end
 
-            group = model.entities.add_group
-            if faces.any?
-              faces.each { |face_id, face_triangles|
-                mesh = Geom::PolygonMesh.new(face_triangles.size * 3, face_triangles.size)
-                face_triangles.each { |triangle|
-                  mesh.add_polygon(triangle)
-                }
-                group.entities.add_faces_from_mesh(mesh, Geom::PolygonMesh::NO_SMOOTH_OR_HIDE, 'PANO')
-              }
-            else
-              group.name = "type_#{fragment['type']}"
-              group.entities.fill_from_mesh(mesh, true, Geom::PolygonMesh::NO_SMOOTH_OR_HIDE)
-            end
-            group.transformation = t
+          if src_container.is_a?(Sketchup::Group) || src_container.is_a?(Sketchup::ComponentInstance)
 
-            edges_to_erase = group.entities.grep(Sketchup::Edge).select { |edge| edge.faces.size == 2 && edge.faces[0].normal.parallel?(edge.faces[1].normal) }
-            group.entities.erase_entities(edges_to_erase) if edges_to_erase.any?
+            # Rebuild the result inside the source entity to preserve its identity
+            # (name, attributes, material, layer, transformation, persistent id).
+            src_container.make_unique if src_container.definition.instances.length > 1
+            entities = src_container.definition.entities
+            entities.clear!
+            _solid_fragments_to_geometry(result_def.fragment_defs, entities, transformation: @src_container_transformation.inverse)
 
-            t *= Geom::Transformation.translation(v)
+          else
 
-          } if output['fragments'].is_a?(Array)
+            # Lose geometry at the model root: replace it in place.
+            faces = @src_drawing_def.face_manipulators.map(&:face).reject(&:deleted?)
+            edges = faces.flat_map(&:edges).uniq.reject(&:deleted?)
+            model.entities.erase_entities(faces + edges)
+            _solid_fragments_to_geometry(result_def.fragment_defs, model.entities)
 
-        model.commit_operation
+          end
+
+          model.commit_operation
+
+        rescue => e
+          model.abort_operation
+          @tool.notify_errors([[ 'core.error.exception', { :error => e.message } ]])
+        end
+
+      else
+
+        @tool.notify_errors(result_def.errors)
 
       end
 

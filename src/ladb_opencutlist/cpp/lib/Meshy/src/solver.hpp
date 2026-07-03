@@ -6,11 +6,6 @@
 #include <iostream>
 #include <sstream>
 
-#define my_assert(cond)                          \
-    if(!(cond)) {                                \
-        throw std::runtime_error("MCUT error");  \
-    }
-
 using namespace nlohmann;
 
 namespace Meshy {
@@ -209,10 +204,12 @@ namespace Meshy {
                 throw std::runtime_error("L'opération a échouée");
             }
 
-            result = result.AsOriginal();
-
-            double tolerance = result.GetTolerance();
-            result = result.Simplify(tolerance);
+            // Collapse degenerate leftovers (slivers thinner than the tolerance
+            // inherited from the input meshes). Unlike AsOriginal(), Simplify()
+            // maintains the mesh relation, so input face provenance (faceID) that
+            // the Ruby side uses to restore materials and merge triangles back
+            // into faces is preserved. Do NOT call AsOriginal() here.
+            result = result.Simplify();
 
             // --- export ---
             manifold::MeshGL64 result_mesh = result.GetMeshGL64();
@@ -252,8 +249,15 @@ namespace Meshy {
                 mesh.triVerts[i] = tris[i].get<uint32_t>();
             }
 
+            // Tolerance
+            // Geometric features smaller than this are considered coincident : lets the
+            // boolean absorb near-coplanar faces instead of leaving sliver residues.
+            if (j.contains("tolerance")) {
+                mesh.tolerance = j.at("tolerance").get<double>();
+            }
+
             // FaceIds
-            if (!j.contains("face_ids")) {
+            if (j.contains("face_ids")) {
                 const auto& ids = j.at("face_ids");
 
                 mesh.faceID.resize(ids.size());
