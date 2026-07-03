@@ -443,11 +443,16 @@ module Ladb::OpenCutList
 
         model = Sketchup.active_model
         model.start_operation('OCL Part Flip', true, false, false)
+        begin
 
-        _get_active_part_entity.transformation *= t
+          _get_active_part_entity.transformation *= t
 
-        # Commit model modification operation
-        model.commit_operation
+          model.commit_operation
+
+        rescue Exception => e
+          PLUGIN.dump_exception(e)
+          model.abort_operation
+        end
 
         # Fire event
         PLUGIN.app_observer.model_observer.onDrawingChange
@@ -534,6 +539,7 @@ module Ladb::OpenCutList
 
       model = Sketchup.active_model
       model.start_operation('OCL Change Axes', true, false, false)
+      begin
 
         # Transform definition's entities
         entities = definition.entities
@@ -547,8 +553,12 @@ module Ladb::OpenCutList
         # Update definition attributes
         _update_orientation_locked_on_axis(definition)
 
-      # Commit model modification operation
-      model.commit_operation
+        model.commit_operation
+
+      rescue Exception => e
+        PLUGIN.dump_exception(e)
+        model.abort_operation
+      end
 
       # Fire event
       PLUGIN.app_observer.model_observer.onDrawingChange
@@ -637,6 +647,7 @@ module Ladb::OpenCutList
 
       model = Sketchup.active_model
       model.start_operation('OCL Change Axes', true, false, false)
+      begin
 
         # Transform definition's entities
         entities = definition.entities
@@ -650,8 +661,12 @@ module Ladb::OpenCutList
         # Update definition attributes
         _update_orientation_locked_on_axis(definition)
 
-      # Commit model modification operation
-      model.commit_operation
+        model.commit_operation
+
+      rescue Exception => e
+        PLUGIN.dump_exception(e)
+        model.abort_operation
+      end
 
       # Fire event
       PLUGIN.app_observer.model_observer.onDrawingChange
@@ -842,6 +857,7 @@ module Ladb::OpenCutList
 
       model = Sketchup.active_model
       model.start_operation('OCL Change Axes', true, false, false)
+      begin
 
         # Transform definition's entities
         entities = definition.entities
@@ -855,8 +871,12 @@ module Ladb::OpenCutList
         # Update definition attributes
         _update_orientation_locked_on_axis(definition)
 
-      # Commit model modification operation
-      model.commit_operation
+        model.commit_operation
+
+      rescue Exception => e
+        PLUGIN.dump_exception(e)
+        model.abort_operation
+      end
 
       # Fire event
       PLUGIN.app_observer.model_observer.onDrawingChange
@@ -979,6 +999,7 @@ module Ladb::OpenCutList
 
       model = Sketchup.active_model
       model.start_operation('OCL Change Axes', true, false, false)
+      begin
 
         # Transform definition's entities
         entities = definition.entities
@@ -992,8 +1013,12 @@ module Ladb::OpenCutList
         # Update definition attributes
         _update_orientation_locked_on_axis(definition)
 
-      # Commit model modification operation
-      model.commit_operation
+        model.commit_operation
+
+      rescue Exception => e
+        PLUGIN.dump_exception(e)
+        model.abort_operation
+      end
 
       # Fire event
       PLUGIN.app_observer.model_observer.onDrawingChange
@@ -1131,12 +1156,17 @@ module Ladb::OpenCutList
 
                 model = Sketchup.active_model
                 model.start_operation('OCL Toggle Grain Group', true, false, false)
+                begin
 
                   k_tick_btn.selected = instance_attributes.is_grain_group = !instance_attributes.is_grain_group
                   instance_attributes.write_to_attributes
 
-                # Commit model modification operation
-                model.commit_operation
+                  model.commit_operation
+
+                rescue Exception => e
+                  PLUGIN.dump_exception(e)
+                  model.abort_operation
+                end
 
                 # Fire event
                 PLUGIN.app_observer.model_observer.onDrawingChange
@@ -1295,14 +1325,17 @@ module Ladb::OpenCutList
 
       model = Sketchup.active_model
       model.start_operation('OCL Toggle Grain', true, false, false)
-
+      begin
 
         definition_attributes.follow_grain_direction = !definition_attributes.follow_grain_direction
         definition_attributes.write_to_attributes
 
+        model.commit_operation
 
-      # Commit model modification operation
-      model.commit_operation
+      rescue Exception => e
+        PLUGIN.dump_exception(e)
+        model.abort_operation
+      end
 
       # Fire event
       PLUGIN.app_observer.model_observer.onDrawingChange

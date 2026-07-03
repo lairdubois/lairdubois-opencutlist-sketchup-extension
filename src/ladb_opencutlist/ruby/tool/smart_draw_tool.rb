@@ -1479,7 +1479,7 @@ module Ladb::OpenCutList
 
       model = Sketchup.active_model
       model.start_operation('OCL Create Part', true, false, !active?)
-
+      begin
 
         if @active_container_path.is_a?(Array) && @active_container_path.any? &&
            (active_container = @active_container_path.last) && active_container.respond_to?(:definition)
@@ -1629,8 +1629,12 @@ module Ladb::OpenCutList
 
       end
 
+        model.commit_operation
 
-      model.commit_operation
+      rescue Exception => e
+        PLUGIN.dump_exception(e)
+        model.abort_operation
+      end
 
       # Keep definition
       @definition = instance.definition

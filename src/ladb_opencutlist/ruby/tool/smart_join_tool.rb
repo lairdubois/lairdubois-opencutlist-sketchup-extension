@@ -458,6 +458,7 @@ module Ladb::OpenCutList
 
       model = Sketchup.active_model
       model.start_operation('OCL Loading Geometry', true)
+      begin
 
         fn_get_definition = lambda do |ref|
           return nil if !ref.is_a?(String) || ref.strip.empty?
@@ -551,7 +552,13 @@ module Ladb::OpenCutList
         hardware_layer = fn_get_layer.call(_fetch_option_hardware_layer_name)
         machining_layer = fn_get_layer.call(_fetch_option_machining_layer_name)
 
-      model.commit_operation
+        model.commit_operation
+
+      rescue Exception => e
+        PLUGIN.dump_exception(e)
+        model.abort_operation
+        return nil
+      end
 
       bounds = Geom::BoundingBox.new
       bounds.add(hardware_a_drawing_def.bounds) unless hardware_a_drawing_def.nil?
@@ -1272,113 +1279,111 @@ module Ladb::OpenCutList
 
       model = Sketchup.active_model
       model.start_operation('OCL Add Connectors', true)
+      begin
 
-        begin
+        if (make_unique = _fetch_option_make_unique?) && (!hardware_a.empty? || !machining_a.empty?)
 
-          if (make_unique = _fetch_option_make_unique?) && (!hardware_a.empty? || !machining_a.empty?)
+          # Make unique Part A (if necessary)
 
-            # Make unique Part A (if necessary)
+          u_instance_a = instance_a.make_unique
+          u_definition_a = u_instance_a.definition
+          if u_definition_a != definition_a
 
-            u_instance_a = instance_a.make_unique
-            u_definition_a = u_instance_a.definition
-            if u_definition_a != definition_a
+            u_entities_a = u_definition_a.entities
 
-              u_entities_a = u_definition_a.entities
-
-              neighbor_join_defs.each do |neighbor_join_def|
-                neighbor_join_def.join_defs.each do |join_def|
-                  face = join_def.touching_def.face_manipulator.face
-                  if face.parent == definition_a
-                    face_index = entities_a.to_a.index(face)
-                    u_face = u_entities_a[face_index]
-                    if u_face
-                      join_def.touching_def.face_manipulator = FaceManipulator.new(u_face, join_def.touching_def.face_manipulator.transformation)
-                      break
-                    end
+            neighbor_join_defs.each do |neighbor_join_def|
+              neighbor_join_def.join_defs.each do |join_def|
+                face = join_def.touching_def.face_manipulator.face
+                if face.parent == definition_a
+                  face_index = entities_a.to_a.index(face)
+                  u_face = u_entities_a[face_index]
+                  if u_face
+                    join_def.touching_def.face_manipulator = FaceManipulator.new(u_face, join_def.touching_def.face_manipulator.transformation)
+                    break
                   end
                 end
               end
-
             end
 
           end
 
-          neighbor_join_defs.each do |neighbor_join_def|
-
-            instance_b = neighbor_join_def.neighbor_def.instance_b
-            definition_b = instance_b.definition
-            entities_b = definition_b.entities
-
-            if make_unique && (!hardware_b.empty? || !machining_b.empty?)
-
-              # Make unique Part B (if necessary)
-
-              u_instance_b = instance_b.make_unique
-              u_definition_b = u_instance_b.definition
-              if u_definition_b != definition_b
-
-                u_entities_b = u_definition_b.entities
-
-                neighbor_join_def.join_defs.each do |join_def|
-                  neighbor_face = join_def.touching_def.neighbor_face_manipulator.face
-                  if neighbor_face.parent == definition_b
-                    neighbor_face_index = entities_b.to_a.index(neighbor_face)
-                    u_neighbor_face = u_entities_b[neighbor_face_index]
-                    if u_neighbor_face
-                      join_def.touching_def.neighbor_face_manipulator = FaceManipulator.new(u_neighbor_face, join_def.touching_def.neighbor_face_manipulator.transformation)
-                    end
-                  end
-                end
-
-              end
-
-            end
-
-            ti_b = neighbor_join_def.neighbor_def.ti_b
-
-            neighbor_join_def.join_defs.each do |join_def|
-
-              at_a = join_def.at_a
-              at_b = join_def.at_b
-
-              fm_a = join_def.touching_def.face_manipulator
-              fm_b = join_def.touching_def.neighbor_face_manipulator
-
-              face_a = fm_a.face
-              face_b = fm_b.face
-
-              entities_a = face_a.parent.entities
-              entities_b = face_b.parent.entities
-
-              dti_a = (ti_a * fm_a.transformation).inverse
-              dti_b = (ti_b * fm_b.transformation).inverse
-
-              join_def.anchor_points_3d.each do |point|
-
-                pt_a = point.transform(ti_a).project_to_plane(face_a.plane)
-                pt_b = point.transform(ti_b).project_to_plane(face_b.plane)
-
-                # -- A --
-                _add_glued_instance(hardware_a.definition, hardware_material, hardware_layer, face_a, entities_a, dti_a, pt_a, at_a)
-                _add_glued_instance(machining_a.definition, machining_material, machining_layer, face_a, entities_a, dti_a, pt_a, at_a)
-
-                # -- B --
-                _add_glued_instance(hardware_b.definition, hardware_material, hardware_layer, face_b, entities_b, dti_b, pt_b, at_b)
-                _add_glued_instance(machining_b.definition, machining_material, machining_layer, face_b, entities_b, dti_b, pt_b, at_b)
-
-              end
-
-            end
-
-          end
-
-        rescue Exception => e
-          PLUGIN.dump_exception(e)
-          model.abort_operation
-          return
         end
 
-      model.commit_operation
+        neighbor_join_defs.each do |neighbor_join_def|
+
+          instance_b = neighbor_join_def.neighbor_def.instance_b
+          definition_b = instance_b.definition
+          entities_b = definition_b.entities
+
+          if make_unique && (!hardware_b.empty? || !machining_b.empty?)
+
+            # Make unique Part B (if necessary)
+
+            u_instance_b = instance_b.make_unique
+            u_definition_b = u_instance_b.definition
+            if u_definition_b != definition_b
+
+              u_entities_b = u_definition_b.entities
+
+              neighbor_join_def.join_defs.each do |join_def|
+                neighbor_face = join_def.touching_def.neighbor_face_manipulator.face
+                if neighbor_face.parent == definition_b
+                  neighbor_face_index = entities_b.to_a.index(neighbor_face)
+                  u_neighbor_face = u_entities_b[neighbor_face_index]
+                  if u_neighbor_face
+                    join_def.touching_def.neighbor_face_manipulator = FaceManipulator.new(u_neighbor_face, join_def.touching_def.neighbor_face_manipulator.transformation)
+                  end
+                end
+              end
+
+            end
+
+          end
+
+          ti_b = neighbor_join_def.neighbor_def.ti_b
+
+          neighbor_join_def.join_defs.each do |join_def|
+
+            at_a = join_def.at_a
+            at_b = join_def.at_b
+
+            fm_a = join_def.touching_def.face_manipulator
+            fm_b = join_def.touching_def.neighbor_face_manipulator
+
+            face_a = fm_a.face
+            face_b = fm_b.face
+
+            entities_a = face_a.parent.entities
+            entities_b = face_b.parent.entities
+
+            dti_a = (ti_a * fm_a.transformation).inverse
+            dti_b = (ti_b * fm_b.transformation).inverse
+
+            join_def.anchor_points_3d.each do |point|
+
+              pt_a = point.transform(ti_a).project_to_plane(face_a.plane)
+              pt_b = point.transform(ti_b).project_to_plane(face_b.plane)
+
+              # -- A --
+              _add_glued_instance(hardware_a.definition, hardware_material, hardware_layer, face_a, entities_a, dti_a, pt_a, at_a)
+              _add_glued_instance(machining_a.definition, machining_material, machining_layer, face_a, entities_a, dti_a, pt_a, at_a)
+
+              # -- B --
+              _add_glued_instance(hardware_b.definition, hardware_material, hardware_layer, face_b, entities_b, dti_b, pt_b, at_b)
+              _add_glued_instance(machining_b.definition, machining_material, machining_layer, face_b, entities_b, dti_b, pt_b, at_b)
+
+            end
+
+          end
+
+        end
+
+        model.commit_operation
+
+      rescue Exception => e
+        PLUGIN.dump_exception(e)
+        model.abort_operation
+      end
 
     end
 
@@ -1741,39 +1746,37 @@ module Ladb::OpenCutList
 
       model = Sketchup.active_model
       model.start_operation('OCL Remove Connectors', true)
+      begin
 
-      fn_remove_glued_instances = lambda do |anchor_coords, glued_instances|
-        next unless _is_snap_anchor?(Geom::Point3d.new(anchor_coords))
-        glued_instances.each do |glued_instance|
-          next if glued_instance.deleted?
-          glued_instance.erase!
+        fn_remove_glued_instances = lambda do |anchor_coords, glued_instances|
+          next unless _is_snap_anchor?(Geom::Point3d.new(anchor_coords))
+          glued_instances.each do |glued_instance|
+            next if glued_instance.deleted?
+            glued_instance.erase!
+          end
         end
-      end
 
-        begin
+        joinery_def.neighbor_join_defs.each do |neighbor_join_def|
 
-          joinery_def.neighbor_join_defs.each do |neighbor_join_def|
+          neighbor_join_def.join_defs.each do |join_def|
 
-            neighbor_join_def.join_defs.each do |join_def|
-
-              join_def.grouped_glued_instances_a.each do |anchor_coords, glued_instances_a|
-                fn_remove_glued_instances.call(anchor_coords, glued_instances_a)
-              end
-              join_def.grouped_glued_instances_b.each do |anchor_coords, glued_instances_b|
-                fn_remove_glued_instances.call(anchor_coords, glued_instances_b)
-              end
-
+            join_def.grouped_glued_instances_a.each do |anchor_coords, glued_instances_a|
+              fn_remove_glued_instances.call(anchor_coords, glued_instances_a)
+            end
+            join_def.grouped_glued_instances_b.each do |anchor_coords, glued_instances_b|
+              fn_remove_glued_instances.call(anchor_coords, glued_instances_b)
             end
 
           end
 
-          rescue Exception => e
-          PLUGIN.dump_exception(e)
-          model.abort_operation
-          return
         end
 
-      model.commit_operation
+        model.commit_operation
+
+      rescue Exception => e
+        PLUGIN.dump_exception(e)
+        model.abort_operation
+      end
 
     end
 
@@ -2545,99 +2548,97 @@ module Ladb::OpenCutList
 
       model = Sketchup.active_model
       model.start_operation('OCL Add Fittings', true)
+      begin
 
-        begin
+        if _fetch_option_make_unique?
 
-          if _fetch_option_make_unique?
+          if !hardware_a.empty? || !machining_a.empty?
 
-            if !hardware_a.empty? || !machining_a.empty?
+            # Make unique Part A (if necessary)
 
-              # Make unique Part A (if necessary)
+            u_instance_a = instance_a.make_unique
+            u_definition_a = u_instance_a.definition
+            if u_definition_a != definition_a
 
-              u_instance_a = instance_a.make_unique
-              u_definition_a = u_instance_a.definition
-              if u_definition_a != definition_a
+              u_entities_a = u_definition_a.entities
 
-                u_entities_a = u_definition_a.entities
-
-                face = line_def.face_manipulator.face
-                if face.parent == definition_a
-                  face_index = entities_a.to_a.index(face)
-                  u_face = u_entities_a[face_index]
-                  if u_face
-                    line_def.face_manipulator = FaceManipulator.new(u_face, line_def.face_manipulator.transformation)
-                  end
+              face = line_def.face_manipulator.face
+              if face.parent == definition_a
+                face_index = entities_a.to_a.index(face)
+                u_face = u_entities_a[face_index]
+                if u_face
+                  line_def.face_manipulator = FaceManipulator.new(u_face, line_def.face_manipulator.transformation)
                 end
-
-              end
-
-            end
-
-            if !hardware_b.empty? || !machining_b.empty?
-
-              # Make unique Part B (if necessary)
-
-              u_instance_b = instance_b.make_unique
-              u_definition_b = u_instance_b.definition
-              if u_definition_b != definition_b
-
-                u_entities_b = u_definition_b.entities
-
-                neighbor_face = line_def.neighbor_face_manipulator.face
-                if neighbor_face.parent == definition_b
-                  neighbor_face_index = entities_b.to_a.index(neighbor_face)
-                  u_neighbor_face = u_entities_b[neighbor_face_index]
-                  if u_neighbor_face
-                    line_def.neighbor_face_manipulator = FaceManipulator.new(u_neighbor_face, line_def.neighbor_face_manipulator.transformation)
-                  end
-                end
-
               end
 
             end
 
           end
 
-          ti_a = neighborhood_def.ti_a
-          ti_b = neighbor_def.ti_b
+          if !hardware_b.empty? || !machining_b.empty?
 
-          at_a = joinery_def.at_a
-          at_b = joinery_def.at_b
+            # Make unique Part B (if necessary)
 
-          fm_a = line_def.face_manipulator
-          fm_b = line_def.neighbor_face_manipulator
+            u_instance_b = instance_b.make_unique
+            u_definition_b = u_instance_b.definition
+            if u_definition_b != definition_b
 
-          face_a = fm_a.face
-          face_b = fm_b.face
+              u_entities_b = u_definition_b.entities
 
-          entities_a = face_a.parent.entities
-          entities_b = face_b.parent.entities
+              neighbor_face = line_def.neighbor_face_manipulator.face
+              if neighbor_face.parent == definition_b
+                neighbor_face_index = entities_b.to_a.index(neighbor_face)
+                u_neighbor_face = u_entities_b[neighbor_face_index]
+                if u_neighbor_face
+                  line_def.neighbor_face_manipulator = FaceManipulator.new(u_neighbor_face, line_def.neighbor_face_manipulator.transformation)
+                end
+              end
 
-          dti_a = (ti_a * fm_a.transformation).inverse
-          dti_b = (ti_b * fm_b.transformation).inverse
-
-          joinery_def.join_def.anchor_points_3d.each do |point|
-
-            pt_a = point.transform(ti_a).project_to_plane(face_a.plane)
-            pt_b = point.transform(ti_b).project_to_plane(face_b.plane)
-
-            # -- A --
-            _add_glued_instance(hardware_a.definition, hardware_material, hardware_layer, face_a, entities_a, dti_a, pt_a, at_a)
-            _add_glued_instance(machining_a.definition, machining_material, machining_layer, face_a, entities_a, dti_a, pt_a, at_a)
-
-            # -- B --
-            _add_glued_instance(hardware_b.definition, hardware_material, hardware_layer, face_b, entities_b, dti_b, pt_b, at_b)
-            _add_glued_instance(machining_b.definition, machining_material, machining_layer, face_b, entities_b, dti_b, pt_b, at_b)
+            end
 
           end
 
-        rescue Exception => e
-          PLUGIN.dump_exception(e)
-          model.abort_operation
-          return
         end
 
-      model.commit_operation
+        ti_a = neighborhood_def.ti_a
+        ti_b = neighbor_def.ti_b
+
+        at_a = joinery_def.at_a
+        at_b = joinery_def.at_b
+
+        fm_a = line_def.face_manipulator
+        fm_b = line_def.neighbor_face_manipulator
+
+        face_a = fm_a.face
+        face_b = fm_b.face
+
+        entities_a = face_a.parent.entities
+        entities_b = face_b.parent.entities
+
+        dti_a = (ti_a * fm_a.transformation).inverse
+        dti_b = (ti_b * fm_b.transformation).inverse
+
+        joinery_def.join_def.anchor_points_3d.each do |point|
+
+          pt_a = point.transform(ti_a).project_to_plane(face_a.plane)
+          pt_b = point.transform(ti_b).project_to_plane(face_b.plane)
+
+          # -- A --
+          _add_glued_instance(hardware_a.definition, hardware_material, hardware_layer, face_a, entities_a, dti_a, pt_a, at_a)
+          _add_glued_instance(machining_a.definition, machining_material, machining_layer, face_a, entities_a, dti_a, pt_a, at_a)
+
+          # -- B --
+          _add_glued_instance(hardware_b.definition, hardware_material, hardware_layer, face_b, entities_b, dti_b, pt_b, at_b)
+          _add_glued_instance(machining_b.definition, machining_material, machining_layer, face_b, entities_b, dti_b, pt_b, at_b)
+
+        end
+
+        model.commit_operation
+
+      rescue Exception => e
+        PLUGIN.dump_exception(e)
+        model.abort_operation
+      end
 
     end
 
@@ -2953,6 +2954,7 @@ module Ladb::OpenCutList
 
       model = Sketchup.active_model
       model.start_operation('OCL Remove Fittings', true)
+      begin
 
         fn_remove_glued_instances = lambda do |anchor_coords, glued_instances|
           next unless _is_snap_anchor?(Geom::Point3d.new(anchor_coords))
@@ -2962,22 +2964,20 @@ module Ladb::OpenCutList
           end
         end
 
-        begin
 
-          joinery_def.grouped_glued_instances_a.each do |anchor_coords, glued_instances_a|
-            fn_remove_glued_instances.call(anchor_coords, glued_instances_a)
-          end
-          joinery_def.grouped_glued_instances_b.each do |anchor_coords, glued_instances_b|
-            fn_remove_glued_instances.call(anchor_coords, glued_instances_b)
-          end
-
-        rescue Exception => e
-          PLUGIN.dump_exception(e)
-          model.abort_operation
-          return
+        joinery_def.grouped_glued_instances_a.each do |anchor_coords, glued_instances_a|
+          fn_remove_glued_instances.call(anchor_coords, glued_instances_a)
+        end
+        joinery_def.grouped_glued_instances_b.each do |anchor_coords, glued_instances_b|
+          fn_remove_glued_instances.call(anchor_coords, glued_instances_b)
         end
 
-      model.commit_operation
+        model.commit_operation
+
+      rescue Exception => e
+        PLUGIN.dump_exception(e)
+        model.abort_operation
+      end
 
     end
 

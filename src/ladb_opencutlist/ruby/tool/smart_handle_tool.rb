@@ -1300,6 +1300,7 @@ module Ladb::OpenCutList
 
       model = Sketchup.active_model
       model.start_operation('OCL Copy Part', true, false, !active?)
+      begin
 
         if operator == '/'
           ux = mv.x / number
@@ -1350,7 +1351,12 @@ module Ladb::OpenCutList
         @operator = operator
         @number = number
 
-      model.commit_operation
+        model.commit_operation
+
+      rescue Exception => e
+        PLUGIN.dump_exception(e)
+        model.abort_operation
+      end
 
     end
 
@@ -1937,6 +1943,7 @@ module Ladb::OpenCutList
 
       model = Sketchup.active_model
       model.start_operation('OCL Copy Part', true, false, !active?)
+      begin
 
         if operator_x == '/'
           ux = mv_2d.x / number_x
@@ -2009,7 +2016,12 @@ module Ladb::OpenCutList
         @operator_y = operator_y
         @number_y = number_y
 
-      model.commit_operation
+        model.commit_operation
+
+      rescue Exception => e
+        PLUGIN.dump_exception(e)
+        model.abort_operation
+      end
 
     end
 
@@ -2535,6 +2547,7 @@ module Ladb::OpenCutList
 
       model = Sketchup.active_model
       model.start_operation('OCL Move Part', true, false, !active?)
+      begin
 
         src_instances = get_active_selection_instances
         src_instances.each do |src_instance|
@@ -2546,7 +2559,12 @@ module Ladb::OpenCutList
 
         end
 
-      model.commit_operation
+        model.commit_operation
+
+      rescue Exception => e
+        PLUGIN.dump_exception(e)
+        model.abort_operation
+      end
 
     end
 
@@ -3209,7 +3227,7 @@ module Ladb::OpenCutList
 
       model = Sketchup.active_model
       model.start_operation('OCL Distribute Part', true, false, !active?)
-
+      begin
 
         src_instances = get_active_selection_instances
 
@@ -3252,7 +3270,12 @@ module Ladb::OpenCutList
         @number = number
         @spacings = spacings
 
-      model.commit_operation
+        model.commit_operation
+
+      rescue Exception => e
+        PLUGIN.dump_exception(e)
+        model.abort_operation
+      end
 
     end
 
