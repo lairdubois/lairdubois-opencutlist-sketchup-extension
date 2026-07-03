@@ -1,6 +1,10 @@
 # Enable FetchContent.
 include(FetchContent)
 
+if(POLICY CMP0135)
+  cmake_policy(SET CMP0135 NEW)
+endif()
+
 Set(FETCHCONTENT_QUIET FALSE)
 
 # Fetch boost.
