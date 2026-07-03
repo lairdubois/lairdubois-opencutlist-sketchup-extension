@@ -5,7 +5,7 @@ module Ladb::OpenCutList
   require_relative '../../manipulator/face_manipulator'
 
   # Group of source faces connected together by soft edges.
-  # Instances carry no data : only their identity is used to restore edge softness after a boolean operation.
+  # Instances carry no data: only their identity is used to restore edge softness after a boolean operation.
   class SolidSurfaceInfoDef < DataContainer
   end
 
@@ -27,13 +27,13 @@ module Ladb::OpenCutList
   # Intermediate representation of a solid, expressed in WORLD coordinates,
   # decoupled from SketchUp entities (which may be erased afterwards).
   #
-  # The geometry is always triangulated : the Meshy native lib only accepts triangles.
-  # @face_ids holds one entry per triangle : the index of the corresponding SolidFaceInfoDef
+  # The geometry is always triangulated: the Meshy native lib only accepts triangles.
+  # @face_ids holds one entry per triangle: the index of the corresponding SolidFaceInfoDef
   # in @face_info_defs. This provenance is propagated by Manifold through the boolean
   # operation and drives materials, layers and coplanar merging on reconstruction.
   class SolidMeshDef < DataContainer
 
-    # SketchUp merge tolerance (1/1000 inch) : geometry closer than this cannot exist
+    # SketchUp merge tolerance (1/1000 inch): geometry closer than this cannot exist
     # as separate entities in SketchUp, so Manifold may treat it as coincident.
     # Absorbs near-coplanar faces that would otherwise leave sliver residues.
     TOLERANCE = 0.001
@@ -58,7 +58,7 @@ module Ladb::OpenCutList
       from_face_manipulators(drawing_def.face_manipulators)
     end
 
-    # transformation : parent -> world transformation of the entity
+    # transformation: parent -> world transformation of the entity
     def self.from_entity(entity, transformation: IDENTITY)
       return nil unless entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance)
       inner_transformation = transformation * entity.transformation
@@ -97,7 +97,7 @@ module Ladb::OpenCutList
       volume / 6.0
     end
 
-    # Returns a list of i18n error tuples. Empty if the mesh is a valid closed solid.
+    # Returns a list of i18n error tuples. Empty if the mesh is a valid-closed solid.
     def validation_errors
       return [ [ 'core.solid.error.empty' ] ] if empty?
 
@@ -186,7 +186,7 @@ module Ladb::OpenCutList
       (nx == 1.0 && ny == 0.0 && nz == 0.0) || (nx == 0.0 && ny == 1.0 && nz == 0.0) || (nx == 0.0 && ny == 0.0 && nz == 1.0)
     end
 
-    # Builds a deduplicated plane set from all the given meshes : planes that are
+    # Builds a deduplicated plane set from all the given meshes: planes that are
     # identical within tolerance are represented once, by the instance backed by the
     # largest triangle. Snapping EVERY vertex of EVERY operand onto this canonical
     # set makes each face exactly planar and faces meant to be coplanar between
@@ -210,7 +210,7 @@ module Ladb::OpenCutList
     def snap_to_planes!(planes, tolerance = TOLERANCE)
       return if planes.empty? || empty?
 
-      # Project onto non-axis planes first and exact-axis planes last : axis planes are
+      # Project onto non-axis planes first and exact-axis planes last: axis planes are
       # orthogonal to each other, so late axis projections do not disturb one another
       # and the vertex ends EXACTLY on every nearby axis plane (the only exactness
       # achievable in doubles, and the one coplanarity snapping relies on). A tilted
@@ -321,7 +321,7 @@ module Ladb::OpenCutList
 
       end
 
-      # Manifold interprets winding as defining solidity : make sure normals point outward
+      # Manifold interprets winding as defining solidity: make sure normals point outward
       _flip! if volume < 0
 
     end

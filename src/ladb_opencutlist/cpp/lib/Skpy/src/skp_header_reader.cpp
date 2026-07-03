@@ -93,7 +93,7 @@ std::optional<uint64_t> SkpHeaderReader::compute_version_number(const std::strin
 // Static constants
 // ---------------------------------------------------------------------------
 
-const char SkpHeaderReader::kLegacyMagic[SkpHeaderReader::kMagicLen] = {
+const char SkpHeaderReader::LEGACY_MAGIC[SkpHeaderReader::MAGIC_LEN] = {
     'S','k','e','t','c','h','U','p',' ','M','o','d','e','l'
 };
 
@@ -183,8 +183,8 @@ bool SkpHeaderReader::parse() {
         return false;
     }
 
-    raw_header_.assign(kHeaderSize, 0);
-    f.read(reinterpret_cast<char*>(raw_header_.data()), kHeaderSize);
+    raw_header_.assign(HEADER_SIZE, 0);
+    f.read(reinterpret_cast<char*>(raw_header_.data()), HEADER_SIZE);
     raw_header_.resize(static_cast<size_t>(f.gcount()));
 
     if (raw_header_.size() < 4) {
@@ -205,7 +205,7 @@ bool SkpHeaderReader::parse() {
         result_.error_message = "Prefix not found.";
         return false;
     }
-    if (*field1 != std::string(kLegacyMagic, kMagicLen)) {
+    if (*field1 != std::string(LEGACY_MAGIC, MAGIC_LEN)) {
         result_.error_message = "Magic 'SketchUp Model' not found. Read : '" + *field1 + "'";
         return false;
     }

@@ -14,7 +14,9 @@ using json = nlohmann::json;
 namespace Skpy {
 
     class SkpHeaderReader {
+
     public:
+
         // Result of a parse attempt
         struct Result {
             uint32_t    version_major  = 0; // e.g. 26
@@ -51,10 +53,11 @@ namespace Skpy {
         static const std::map<uint32_t, std::string>& version_map();
 
     private:
-        static constexpr size_t kMagicLen   = 14;         // "SketchUp Model"
-        static constexpr size_t kHeaderSize = 128;        // bytes read upfront
 
-        static const char kLegacyMagic[kMagicLen];
+        static constexpr size_t MAGIC_LEN   = 14;         // "SketchUp Model"
+        static constexpr size_t HEADER_SIZE = 128;        // bytes read upfront
+
+        static const char LEGACY_MAGIC[MAGIC_LEN];
 
         std::string          filepath_;
         std::vector<uint8_t> raw_header_;
