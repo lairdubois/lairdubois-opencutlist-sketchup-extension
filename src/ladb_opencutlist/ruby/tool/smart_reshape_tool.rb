@@ -1777,23 +1777,23 @@ module Ladb::OpenCutList
                 stretched_instances.include?(path[active_selection_path_size])
               }
 
-              unlocked_extern_instance_paths = extern_instance_paths.reject { |path| path.any?(&:locked?) }
-              unlocked_extern_instances = unlocked_extern_instance_paths.map! { |path| path.last }
+              # An instance is locked if AT LEAST ONE of its paths is locked: re-pointing it to the
+              # stretched definition would also alter its occurrences under locked ancestors.
+              locked_extern_instances = extern_instance_paths.select { |path| path.any?(&:locked?) }.map! { |path| path.last }
+              unlocked_extern_instances = extern_instance_paths.map { |path| path.last }.uniq - locked_extern_instances
 
-              make_unique_e = unlocked_extern_instances.size < extern_instance_paths.size
+              make_unique_e = locked_extern_instances.any?
 
             else
 
               extern_instances = definition_instances - stretched_instances
-              unlocked_extern_instances = extern_instances.reject(&:locked?)
-              if unlocked_extern_instances.any?
-                _instances_to_paths(unlocked_extern_instances, (extern_instance_paths = []), model.entities)
-                unlocked_extern_instances = extern_instance_paths.reject { |path| path.any?(&:locked?) }
-                                                                 .map! { |path| path.last }
-                make_unique_e = unlocked_extern_instances.size < extern_instances.size
-              else
-                make_unique_e = false
-              end
+              _instances_to_paths(extern_instances, (extern_instance_paths = []), model.entities)
+              locked_extern_instances = extern_instance_paths.select { |path| path.any?(&:locked?) }.map! { |path| path.last }
+              unlocked_extern_instances = extern_instances - locked_extern_instances
+
+              # The Ruby API does not enforce locks: without make unique, locked extern instances
+              # would be silently deformed and back translated.
+              make_unique_e = locked_extern_instances.any?
 
             end
 
@@ -2302,15 +2302,18 @@ module Ladb::OpenCutList
 
             operation = OPERATION_SPLIT
 
-          # Check if the container is locked
+          # Check if the container is locked. Locked containers are never deformed (no SPLIT),
+          # but they are translated with the section containing their origin: the lock protects
+          # the container's shape, not its position within the stretched assembly.
           elsif drawing_container_def.container.respond_to?(:locked?) && drawing_container_def.container.locked?
 
-            # TODO how to handle locked containers ?
-
-            container_origin = ORIGIN.transform(drawing_container_def.transformation)
+            container_origin = ORIGIN.transform(drawing_container_def.transformation * drawing_container_def.container.transformation)
             section_def = section_defs.find { |section_def| section_def.contains_point?(container_origin, xyz_method) }
 
-            # Container bounds are not considered in this case
+            # Add the container bounds to the section bounds so the locked container is taken into
+            # account by the max compression distance. If it straddles a cutter, the section
+            # oversize check rejects the cutter layout instead of silently translating it.
+            section_def.bounds.add(drawing_container_def.bounds) if !section_def.nil? && drawing_container_def.bounds.valid?
 
             operation = OPERATION_MOVE
 
