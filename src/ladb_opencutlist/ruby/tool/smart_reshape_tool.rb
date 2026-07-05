@@ -2024,8 +2024,13 @@ module Ladb::OpenCutList
               if container_def.depth > 0
                 ddv = ddv.transform((container_def.transformation * container_def.container_transformation).inverse)
               else
-                # ddv = ddv.transform(det)
-                ddv = ddv.transform(container_def.container_transformation.inverse * container_def.transformation * active_selection_path_t)
+                # Root container: unlike children, its SplitContainerDef transformation is 'et' (edit -> world),
+                # not a local -> edit map. The edit -> definition conversion must be composed from the live
+                # path transformations: (path * container).inverse * et. Do NOT use 'det' here: the drawing_def
+                # root transformation is orthonormalized by the decomposition worker (mirror stripped), so 'det'
+                # carries a stray reflection for mirrored instances, while this composition stays consistent
+                # with the edge moves whatever the rotation or mirror of the instance and its path.
+                ddv = ddv.transform((active_selection_path_t * container_def.container_transformation).inverse * et)
               end
             end
             stretched_definition_defs[container_def.definition] = StretchedDefinitionDef.new(ddv)
@@ -2731,7 +2736,7 @@ module Ladb::OpenCutList
       def compute_md5(axis)
         @md5 ||= begin
           data = []
-          data << container.definition.object_id if container.respond_to?(:definition)
+          data << container.definition.persistent_id if container.respond_to?(:definition)
 
           unless parent.nil?
             if (local_axis = axis.transform((transformation * container.transformation).inverse)).valid?
@@ -2743,27 +2748,39 @@ module Ladb::OpenCutList
           if operation == OPERATION_SPLIT
             data << edge_defs.map { |edge_def|
               [
-                edge_def.edge.object_id,
+                edge_def.edge.persistent_id,
                 (section_def.index - edge_def.start_section_def.index).abs, # Use "delta" to be able to unify flipped elements
                 (section_def.index - edge_def.end_section_def.index).abs
               ]
             } if edge_defs.any?
             data << cline_defs.map { |cline_def|
               [
-                cline_def.cline.object_id,
+                cline_def.cline.persistent_id,
                 (section_def.index - cline_def.start_section_def.index).abs, # Use "delta" to be able to unify flipped elements
                 (section_def.index - cline_def.end_section_def.index).abs
               ]
             } if cline_defs.any?
             data << snap_defs.map { |snap_def|
               [
-                snap_def.snap.object_id,
+                snap_def.snap.persistent_id,
                 (section_def.index - snap_def.section_def.index).abs, # Use "delta" to be able to unify flipped elements
               ]
             } if snap_defs.any?
           end
 
-          data << children.map { |container_def| container_def.compute_md5(axis) }
+          # Children md5 alone carries no positional info. Under a SPLIT container, each child is translated
+          # according to its own section, so two instances whose children fall in sections with different
+          # "deltas" (relative to the container's anchor section) deform differently and must not share
+          # their definition. This can't be caught by the edge deltas above when the container has no
+          # direct edges (e.g. a component made only of sub-components).
+          data << children.map { |container_def|
+            [
+              container_def.compute_md5(axis),
+              if operation == OPERATION_SPLIT && !section_def.nil? && !container_def.section_def.nil?
+                (section_def.index - container_def.section_def.index).abs # Use "delta" to be able to unify flipped elements
+              end
+            ]
+          }
 
           Digest::MD5.hexdigest(Marshal.dump(data))
         end

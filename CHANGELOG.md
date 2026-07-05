@@ -17,6 +17,7 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added BXF2 (Blum eXchange File) importer in File menu + OpenCutList dialog
   * Added a new Hadware material type logic to be able to flag as hardware any group or component
   * Added Machining material type
+  * Added depth to Z option on DXF export
   * Improved Smart Draw Tool with sheared pull
   * Improved Smart Draw Tool with the "draw in" option
   * Improved Packing algorithms
@@ -24,6 +25,9 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
+### 2026-07-xx
+ * Updated PackingSolver dependency
+ * Fixed issue [#956](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/issues/956)
 ### 2026-07-02
  * Added depth to Z option on DXF export
  * Added layout direction option on Rectangle and Nesting Cutting Diagram types
