@@ -914,6 +914,16 @@ module Ladb::OpenCutList
       true
     end
 
+    def _get_path_part_preview_color(path, part, highlighted = false)
+      # Occurrences reachable through a locked path won't follow the stretch
+      # (isolate context + make unique routines): preview them grey.
+      if path != @active_part_entity_path &&
+         path.is_a?(Array) && path.any? { |entity| entity.respond_to?(:locked?) && entity.locked? }
+        return highlighted ? COLOR_LOCKED_INSTANCE_HIGHLIGHTED : COLOR_LOCKED_INSTANCE
+      end
+      super
+    end
+
     def _preview_part(part_entity_path, part, layer = 0, highlighted = false)
       super
       if part && fetch_state == STATE_SELECT
@@ -1714,16 +1724,66 @@ module Ladb::OpenCutList
 
     # -----
 
+    # Returns the 0-based index in the active selection path of the first ancestor to make unique
+    # when the edited context (the last path element's definition) is also visible through a locked
+    # occurrence path, or nil if the context is safe. Occurrence paths that share the context
+    # without any lock are left shared: the stretch is expected to propagate to them.
+    def _locked_aliased_context_level
+      path = get_active_selection_path
+      return nil if !path.is_a?(Array) || path.empty?
+      return nil unless (context = path.last).respond_to?(:definition)
+
+      _instances_to_paths(context.definition.instances, (occurrence_paths = []), Sketchup.active_model.entities)
+
+      level = nil
+      occurrence_paths.each do |occurrence_path|
+        next if occurrence_path == path ||
+                occurrence_path.none? { |instance| instance.respond_to?(:locked?) && instance.locked? }
+        divergence = 0
+        divergence += 1 while divergence < occurrence_path.size && divergence < path.size && occurrence_path[divergence] == path[divergence]
+        level = level.nil? ? divergence : [ level, divergence ].min
+      end
+      level
+    end
+
+    # Make the active selection path unique from 'level' down to its last element so that the
+    # stretch edits a context that no locked occurrence can see (SketchUp locks are not enforced
+    # by the Ruby API), then remap the active selection and the split_def containers to the
+    # copies. make_unique preserves the entity order, so copies are retrieved by index.
+    def _isolate_locked_aliased_context(level)
+      path = get_active_selection_path
+      instances = get_active_selection_instances
+
+      child_positions = path.each_cons(2).map { |parent, child| parent.definition.entities.to_a.index(child) }
+      instance_positions = instances.map { |instance| path.last.definition.entities.to_a.index(instance) }
+
+      new_path = path.take(level)
+      current = path[level]
+      (level...path.size).each do |j|
+        current.make_unique if current.definition.count_used_instances > 1
+        new_path << current
+        current = current.definition.entities[child_positions[j]] if j < path.size - 1
+      end
+
+      new_instances = instance_positions.map { |position| new_path.last.definition.entities[position] }
+
+      mapping = instances.zip(new_instances).to_h
+      if (split_def = _get_split_def).is_a?(Hash)
+        split_def[:container_defs].each do |container_def|
+          container_def.container = mapping[container_def.container] if mapping.key?(container_def.container)
+        end
+      end
+
+      _set_active_selection(new_path, new_instances, true)
+    end
+
+    # -----
+
     def _stretch_entity
       return if (stretch_def = _get_stretch_def(@picked_stretch_start_point, @picked_stretch_end_point)).nil?
 
       split_def, emv, esv, edvs, lpe = stretch_def.values_at(:split_def, :emv, :esv, :edvs, :lpe)
-      et, det, eps, evpspe, reversed, section_defs, container_defs = split_def.values_at(:et, :det, :eps, :evpspe, :reversed, :section_defs, :container_defs)
-
-      # require_relative '../utils/transformation_utils'
-      # TransformationUtils.print(et, label: 'et =')
-      # TransformationUtils.print(det, label: 'det =')
-      # TransformationUtils.print(drawing_def.transformation, label: 'drawing_def.transformation =')
+      et, eps, evpspe, reversed, section_defs, container_defs = split_def.values_at(:et, :eps, :evpspe, :reversed, :section_defs, :container_defs)
 
       _unhide_instances
 
@@ -1736,6 +1796,15 @@ module Ladb::OpenCutList
 
       model = Sketchup.active_model
       model.start_operation('OCL Stretch', true, true, !active?)
+
+        # Isolate context routine
+        # -----------------------
+
+        # If the edited context is visible through a locked occurrence path, make the selection
+        # path unique first so the stretch cannot alter what the lock protects.
+        unless (locked_aliased_level = _locked_aliased_context_level).nil?
+          _isolate_locked_aliased_context(locked_aliased_level)
+        end
 
         # Make Unique routine
         # -------------------
@@ -1910,8 +1979,6 @@ module Ladb::OpenCutList
         # Precompute the inverse of the active selection path transformation (invariant within the loop)
         active_selection_path_t = PathUtils.get_transformation(get_active_selection_path, IDENTITY)
         active_selection_path_ti = active_selection_path_t.inverse
-
-        # TransformationUtils.print(active_selection_path_ti, label: 'active_selection_path_ti =')
 
         container_defs.each do |container_def|
 
