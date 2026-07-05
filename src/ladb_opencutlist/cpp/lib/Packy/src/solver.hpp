@@ -1180,6 +1180,9 @@ namespace Packy {
             if (j.contains("minimum_distance_2_cuts")) {
                 builder.instance_builder().set_minimum_distance_2_cuts(read_length(j, "minimum_distance_2_cuts"));
             }
+            if (j.contains("maximum_distance_2_cuts")) {
+                builder.instance_builder().set_maximum_distance_2_cuts(read_length(j, "maximum_distance_2_cuts"));
+            }
             if (j.contains("minimum_waste_length")) {
                 builder.instance_builder().set_minimum_waste_length(read_length(j, "minimum_waste_length"));
             }
