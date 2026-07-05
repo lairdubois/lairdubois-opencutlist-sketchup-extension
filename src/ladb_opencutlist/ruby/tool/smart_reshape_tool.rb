@@ -1180,7 +1180,7 @@ module Ladb::OpenCutList
 
         if @mouse_ip.degrees_of_freedom > 2 ||
            @mouse_ip.instance_path.empty? && @mouse_ip.degrees_of_freedom > 1 ||
-           @mouse_ip.position.on_plane?([@picked_stretch_start_opposite_point, direction ])
+           @mouse_ip.position.on_plane?([@picked_stretch_start_opposite_point, direction ]) ||
            @mouse_ip.face && @mouse_ip.face == @mouse_ip.instance_path.leaf && @mouse_ip.vertex.nil? && @mouse_ip.edge.nil? && !@mouse_ip.face.normal.transform(@mouse_ip.transformation).parallel?(direction) ||
            @mouse_ip.edge && @mouse_ip.degrees_of_freedom == 1 && !@mouse_ip.edge.start.position.vector_to(@mouse_ip.edge.end.position).transform(@mouse_ip.transformation).perpendicular?(direction)
 
@@ -2495,7 +2495,7 @@ module Ladb::OpenCutList
           )
 
           if parent_section_def.nil? &&
-             start_section_def == end_section_def &&
+             start_section_def == end_section_def
             start_section_def.bounds.add(cm.points)  # Add to content bbox
           end
 
