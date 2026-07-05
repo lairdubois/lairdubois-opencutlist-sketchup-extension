@@ -1143,6 +1143,22 @@ namespace Packy {
         ) override {
             TypedSolver::read_parameters(j);
 
+            if (j.contains("use_column_generation_strips")) {
+                parameters_.use_column_generation_strips = j["use_column_generation_strips"].get<bool>();
+            }
+            if (j.contains("use_sequential_strips_onedimensional")) {
+                parameters_.use_sequential_strips_onedimensional = j["use_sequential_strips_onedimensional"].get<bool>();
+            }
+            if (j.contains("use_dynamic_programming_infinite_copies_array")) {
+                parameters_.use_dynamic_programming_infinite_copies_array = j["use_dynamic_programming_infinite_copies_array"].get<bool>();
+            }
+            if (j.contains("use_tree_search_maximal_spaces")) {
+                parameters_.use_tree_search_maximal_spaces = j["use_tree_search_maximal_spaces"].get<bool>();
+            }
+            if (j.contains("use_labeling")) {
+                parameters_.use_labeling = j["use_labeling"].get<bool>();
+            }
+
             if (j.contains("json_search_tree_path")) {
                 parameters_.json_search_tree_path = j["json_search_tree_path"].get<std::string>();
             }
