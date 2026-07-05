@@ -1186,6 +1186,9 @@ namespace Packy {
             if (j.contains("minimum_waste_length")) {
                 builder.instance_builder().set_minimum_waste_length(read_length(j, "minimum_waste_length"));
             }
+            if (j.contains("maximum_number_1_cuts")) {
+                builder.instance_builder().set_maximum_number_1_cuts(j["maximum_number_1_cuts"].get<bool>());
+            }
             if (j.contains("maximum_number_2_cuts")) {
                 builder.instance_builder().set_maximum_number_2_cuts(j["maximum_number_2_cuts"].get<bool>());
             }
