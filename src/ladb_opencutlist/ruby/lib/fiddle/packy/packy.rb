@@ -20,6 +20,7 @@ module Ladb::OpenCutList::Fiddle
     OBJECTIVE_AUTO = 'auto'.freeze
     OBJECTIVE_BIN_PACKING = 'bin-packing'.freeze
     OBJECTIVE_BIN_PACKING_WITH_LEFTOVERS = 'bin-packing-with-leftovers'.freeze
+    OBJECTIVE_BIN_PACKING_CUTTING_COST = 'bin-packing-cutting-cost'.freeze
     OBJECTIVE_VARIABLE_SIZED_BIN_PACKING = 'variable-sized-bin-packing'.freeze
     OBJECTIVE_KNAPSACK = 'knapsack'.freeze
 

@@ -1214,6 +1214,20 @@ namespace Packy {
             if (j.contains("cut_thickness")) {
                 builder.instance_builder().set_cut_thickness(read_length(j, "cut_thickness"));
             }
+            if (j.contains("fixed_cutting_costs") && j["fixed_cutting_costs"].is_array()) {
+                Counter stage_id = 0;
+                for (auto& j_fixed_cutting_cost: j["fixed_cutting_costs"].items()) {
+                    builder.instance_builder().set_fixed_cutting_cost(stage_id, j_fixed_cutting_cost.value().get<Profit>());
+                    ++stage_id;
+                }
+            }
+            if (j.contains("variable_cutting_costs") && j["variable_cutting_costs"].is_array()) {
+                Counter stage_id = 0;
+                for (auto& j_variable_cutting_cost: j["variable_cutting_costs"].items()) {
+                    builder.instance_builder().set_variable_cutting_cost(stage_id, j_variable_cutting_cost.value().get<Profit>());
+                    ++stage_id;
+                }
+            }
 
             if (j.contains("sort_subplates_criteria") && j["sort_subplates_criteria"].is_array()) {
                 sort_subplates_criteria_.clear();

@@ -2775,6 +2775,9 @@
                     if (isIrregular) $formGroupNotIrregular.hide(); else $formGroupNotIrregular.show();
                     if (isIrregular) $formGroupIrregular.show(); else $formGroupIrregular.hide();
                     if (isDebug) $formGroupDebug.show(); else $formGroupDebug.hide();
+                    $('option[value=bin-packing-cutting-cost]', $selectObjective).prop('disabled', !isRectangleguillotine);
+                    if ($selectObjective.val() === null) $selectObjective.selectpicker('val', 'auto');
+                    $selectObjective.selectpicker('refresh');
                     $('option[value=0]', $selectPartDrawingType).prop('disabled', isIrregular);
                     if ($selectPartDrawingType.val() === null) $selectPartDrawingType.selectpicker('val', 1);   // PART_DRAWING_TYPE_2D_TOP
                     $selectPartDrawingType.selectpicker('refresh');

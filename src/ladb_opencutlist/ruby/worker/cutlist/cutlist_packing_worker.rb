@@ -748,6 +748,10 @@ module Ladb::OpenCutList
             number_of_stages: @rectangleguillotine_number_of_stages,
             first_stage_orientation: @rectangleguillotine_first_stage_orientation
           }
+          instance_parameters.merge!({
+                                       fixed_cutting_costs: Array.new(@rectangleguillotine_number_of_stages + 2) { |stage| stage * 2 },
+                                       variable_cutting_costs: Array.new(@rectangleguillotine_number_of_stages + 2) { |stage| stage * 2 }
+                                     }) if @objective == Packy::OBJECTIVE_BIN_PACKING_CUTTING_COST
           instance_parameters.merge!({ sort_subplates_criteria: @rectangleguillotine_sort_subplates_criteria }) unless @rectangleguillotine_sort_subplates_criteria.empty?
           instance_parameters.merge!({ keep_width: _to_packy_length(@rectangleguillotine_keep_length) }) unless @rectangleguillotine_keep_length.nil?
           instance_parameters.merge!({ keep_height: _to_packy_length(@rectangleguillotine_keep_width) }) unless @rectangleguillotine_keep_width.nil?
