@@ -94,6 +94,8 @@
             {% set value = entry.entity_named_path %}
         {% elseif key == 'entity_name' %}
             {% set value = entry.entity_name %}
+        {% elseif key == 'entity_persistent_id' %}
+            {% set value = entry.entity_persistent_id %}
         {% elseif key == 'bin' %}
             {% set value = entry.bin %}
         {% elseif key == 'cutting_size' %}

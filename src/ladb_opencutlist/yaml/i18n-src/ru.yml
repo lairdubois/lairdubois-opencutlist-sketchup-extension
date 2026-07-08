@@ -1290,6 +1290,7 @@ tab:
         part_description: Описание
         part_entity_named_path: Путь к объекту
         part_entity_name: Имя экземпляра
+        part_entity_persistent_id: Persistent ID экземпляра
         part_bin: Грубый размер
         part_cutting_size: Размеры элемента
         part_cutting_length: Длина элемента

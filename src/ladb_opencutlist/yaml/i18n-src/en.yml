@@ -1290,6 +1290,7 @@ tab:
         part_description: Description
         part_entity_named_path: Instance path
         part_entity_name: Instance name
+        part_entity_persistent_id: Instance persistent ID
         part_bin: Bin
         part_cutting_size: Rough dimensions
         part_cutting_length: Length - raw

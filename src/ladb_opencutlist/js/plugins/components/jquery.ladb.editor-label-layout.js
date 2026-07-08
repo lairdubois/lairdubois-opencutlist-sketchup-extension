@@ -528,6 +528,7 @@
                     { name: 'number', type: 'string' },
                     { name: 'path', type: 'path' },
                     { name: 'instance_name', type: 'string' },
+                    { name: 'entity_persistent_id', type: 'integer' },
                     { name: 'name', type: 'string' },
                     { name: 'cutting_length', type: 'length' },
                     { name: 'cutting_width', type: 'length' },
