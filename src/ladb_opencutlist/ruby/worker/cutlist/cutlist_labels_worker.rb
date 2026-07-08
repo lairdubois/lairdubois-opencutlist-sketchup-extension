@@ -113,9 +113,20 @@ module Ladb::OpenCutList
 
     def _shift_bin(part_id)
       return nil unless @bin_defs.is_a?(Hash)
-      bins = @bin_defs[part_id]
+      bins = @bin_defs[part_id] || @bin_defs[part_id.to_s]
       return nil unless bins.is_a?(Array) && !bins.empty?
       bins.shift
+    end
+
+    def _bin_value(bin, key)
+      return nil unless bin.is_a?(Hash)
+      bin[key] || bin[key.to_s]
+    end
+
+    def _source_material_size(bin, part)
+      source_material_size = _bin_value(bin, :source_material_size)
+      return source_material_size unless source_material_size.nil? || source_material_size.empty?
+      part.group.def.std_dimension
     end
 
     def _evaluate_text(formula, data)
@@ -128,9 +139,11 @@ module Ladb::OpenCutList
       entry = LabelEntry.new(part)
       entry.entity_named_path = entity_named_path
       entry.entity_name = part.def.thickness_layer_count > 1 ? "#{entity_name} // #{thickness_layer}" : entity_name
+      entry.entity_persistent_id = entity.respond_to?(:persistent_id) ? entity.persistent_id : nil
       entry.thickness_layer = thickness_layer
       entry.position_in_batch = position_in_batch
-      entry.bin = bin
+      entry.bin = bin.is_a?(Hash) ? _bin_value(bin, :index) : bin
+      entry.source_material_size = _source_material_size(bin, part)
 
       @layout.each do |element_def|
 
@@ -141,6 +154,7 @@ module Ladb::OpenCutList
             number: StringFormulaWrapper.new(part.number),
             path: PathFormulaWrapper.new(entity_path[0...-1]),
             instance_name: StringFormulaWrapper.new(entity_name),
+            entity_persistent_id: entity.respond_to?(:persistent_id) ? IntegerFormulaWrapper.new(entity.persistent_id) : nil,
             name: StringFormulaWrapper.new(part.name),
             cutting_length: LengthFormulaWrapper.new(part.def.cutting_length),
             cutting_width: LengthFormulaWrapper.new(part.def.cutting_width),
@@ -167,7 +181,8 @@ module Ladb::OpenCutList
             component_instance: ComponentInstanceFormulaWrapper.new(entity, entity_path),
 
             batch: BatchFormulaWrapper.new(position_in_batch, part.count),
-            bin: IntegerFormulaWrapper.new(bin),
+            bin: IntegerFormulaWrapper.new(entry.bin),
+            source_material_size: StringFormulaWrapper.new(entry.source_material_size),
 
             filename: StringFormulaWrapper.new(@cutlist.filename),
             model_name: StringFormulaWrapper.new(@cutlist.model_name),
@@ -221,6 +236,7 @@ module Ladb::OpenCutList
       number:,
       path:,
       instance_name:,
+      entity_persistent_id:,
       name:,
       cutting_length:,
       cutting_width:,
@@ -248,6 +264,7 @@ module Ladb::OpenCutList
 
       batch:,
       bin:,
+      source_material_size:,
 
       filename:,
       model_name:,
@@ -260,6 +277,7 @@ module Ladb::OpenCutList
       @number =  number
       @path = path
       @instance_name = instance_name
+      @entity_persistent_id = entity_persistent_id
       @name = name
       @cutting_length = cutting_length
       @cutting_width = cutting_width
@@ -291,6 +309,7 @@ module Ladb::OpenCutList
 
       @batch = batch
       @bin = bin
+      @source_material_size = source_material_size
 
       @filename = filename
       @model_name = model_name

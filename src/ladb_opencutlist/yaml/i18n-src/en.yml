@@ -654,6 +654,7 @@ tab:
       number: No.
       path: Path
       instance_name: Instance
+      entity_persistent_id: Instance persistent ID
       name: Designation
       total_cutting_length: Length total - raw
       total_cutting_area: Area total - raw
@@ -690,6 +691,7 @@ tab:
       layers: Tags
       batch: Batch
       bin: Bin
+      source_material_size: Source material size
       component_definition: Component definition
       component_instance: Component instance
       component_instances: Component instances
@@ -1290,7 +1292,9 @@ tab:
         part_description: Description
         part_entity_named_path: Instance path
         part_entity_name: Instance name
+        part_entity_persistent_id: Instance persistent ID
         part_bin: Bin
+        part_source_material_size: Source material size
         part_cutting_size: Rough dimensions
         part_cutting_length: Length - raw
         part_cutting_width: Width - raw

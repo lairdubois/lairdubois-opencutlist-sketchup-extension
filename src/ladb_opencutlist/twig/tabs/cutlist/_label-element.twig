@@ -94,8 +94,12 @@
             {% set value = entry.entity_named_path %}
         {% elseif key == 'entity_name' %}
             {% set value = entry.entity_name %}
+        {% elseif key == 'entity_persistent_id' %}
+            {% set value = entry.entity_persistent_id %}
         {% elseif key == 'bin' %}
             {% set value = entry.bin %}
+        {% elseif key == 'source_material_size' %}
+            {% set value = entry.source_material_size %}
         {% elseif key == 'cutting_size' %}
             {% set value = entry.part.cutting_length~' x '~entry.part.cutting_width %}
         {% elseif key == 'edge_cutting_size' %}
