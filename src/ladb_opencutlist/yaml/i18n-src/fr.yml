@@ -654,6 +654,7 @@ tab:
       number: N°
       path: Chemin
       instance_name: Instance
+      entity_persistent_id: ID persistant d'instance
       name: Désignation
       total_cutting_length: Longueur cumul débit
       total_cutting_area: Surface cumul débit
@@ -690,6 +691,7 @@ tab:
       layers: Balises
       batch: Lot
       bin: Conteneur
+      source_material_size: Dimensions de la matière source
       component_definition: Définition du composant
       component_instance: Instance du composant
       component_instances: Instances du composant
@@ -1292,6 +1294,7 @@ tab:
         part_entity_name: Nom d'instance
         part_entity_persistent_id: ID persistant d'instance
         part_bin: Conteneur
+        part_source_material_size: Dimensions de la matière source
         part_cutting_size: Taille de débit
         part_cutting_length: Longueur de débit
         part_cutting_width: Largeur de débit

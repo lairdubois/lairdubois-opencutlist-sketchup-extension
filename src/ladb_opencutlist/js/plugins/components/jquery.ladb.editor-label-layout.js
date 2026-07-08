@@ -558,6 +558,7 @@
                     { name: 'component_instance', type: 'component_instance' },
                     { name: 'batch', type: 'batch' },
                     { name: 'bin', type: 'integer' },
+                    { name: 'source_material_size', type: 'string' },
                     { name: 'filename', type: 'string' },
                     { name: 'model_name', type: 'string' },
                     { name: 'model_description', type: 'string' },

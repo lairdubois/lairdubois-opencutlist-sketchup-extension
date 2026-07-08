@@ -3045,6 +3045,7 @@
                                 let binDefs = {};
                                 let binIndex = 0;
                                 $.each(response.solution.bins, function () {
+                                    const bin = this;
                                     for (let i = 0; i < this.count; i++) {
                                         binIndex++;
                                         $.each(this.part_infos, function (v) {
@@ -3052,7 +3053,10 @@
                                                 if (!binDefs[this.part.id]) {
                                                     binDefs[this.part.id] = [];
                                                 }
-                                                binDefs[this.part.id].push(binIndex);
+                                                binDefs[this.part.id].push({
+                                                    index: binIndex,
+                                                    source_material_size: bin.length && bin.width ? `${bin.length} x ${bin.width}` : bin.length || bin.width
+                                                });
                                             }
                                         });
                                     }
@@ -5389,13 +5393,17 @@
                                             let binDefs = {};
                                             let barIndex = 0;
                                             $.each(response.bars, function () {
+                                                const bar = this;
                                                 for (let i = 0 ; i < this.count; i++) {
                                                     barIndex++;
                                                     $.each(this.parts, function () {
                                                         if (!binDefs[this.id]) {
                                                             binDefs[this.id] = [];
                                                         }
-                                                        binDefs[this.id].push(barIndex);
+                                                        binDefs[this.id].push({
+                                                            index: barIndex,
+                                                            source_material_size: bar.length && bar.width ? `${bar.length} x ${bar.width}` : bar.length || bar.width
+                                                        });
                                                     });
                                                 }
                                             });
@@ -5959,13 +5967,17 @@
                                             let binDefs = {};
                                             let binIndex = 0;
                                             $.each(response.sheets, function () {
+                                                const sheet = this;
                                                 for (let i = 0 ; i < this.count; i++) {
                                                     binIndex++;
                                                     $.each(this.parts, function () {
                                                         if (!binDefs[this.id]) {
                                                             binDefs[this.id] = [];
                                                         }
-                                                        binDefs[this.id].push(binIndex);
+                                                        binDefs[this.id].push({
+                                                            index: binIndex,
+                                                            source_material_size: sheet.length && sheet.width ? `${sheet.length} x ${sheet.width}` : sheet.length || sheet.width
+                                                        });
                                                     });
                                                 }
                                             });

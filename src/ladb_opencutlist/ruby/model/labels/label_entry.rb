@@ -7,7 +7,7 @@ module Ladb::OpenCutList
 
     include HashableHelper
 
-    attr_accessor :entity_named_path, :entity_name, :entity_persistent_id, :thickness_layer, :position_in_batch, :bin
+    attr_accessor :entity_named_path, :entity_name, :entity_persistent_id, :thickness_layer, :position_in_batch, :bin, :source_material_size
     attr_reader :part, :group_id, :custom_values
 
     def initialize(part)
