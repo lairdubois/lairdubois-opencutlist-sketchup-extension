@@ -1,5 +1,7 @@
 #pragma once
 
+#include "preprocessor.hpp"
+
 #include <manifold/manifold.h>
 #include <nlohmann/json.hpp>
 
@@ -134,6 +136,14 @@ namespace Meshy {
         ) override {
             Solver::read(j);
 
+            if (j.contains("validate")) {
+                validate_ = j.at("validate").get<bool>();
+            }
+
+            if (j.contains("tolerance")) {
+                tolerance_ = j.at("tolerance").get<double>();
+            }
+
             if (j.contains("src_meshes")) {
                 for (auto& j_item: j["src_meshes"].items()) {
                     auto& j_item_value = j_item.value();
@@ -153,13 +163,98 @@ namespace Meshy {
         json operate() override {
             json j;
 
+            // Validation : structured errors, one at most per mesh, src meshes first.
+
+            if (validate_) {
+                json j_errors = json::array();
+                auto fn_append_errors = [&j_errors](const manifold::MeshGL64& mesh) {
+                    for (const auto& error : validate_mesh(mesh)) {
+                        json j_error;
+                        j_error["code"] = error.code;
+                        if (error.count > 0) {
+                            j_error["count"] = error.count;
+                        }
+                        j_errors.push_back(j_error);
+                    }
+                };
+                for (auto& mesh : src_meshes_) fn_append_errors(mesh);
+                for (auto& mesh : cut_meshes_) fn_append_errors(mesh);
+                if (!j_errors.empty()) {
+                    json output;
+                    output["errors"] = j_errors;
+                    return output;
+                }
+            }
+
+            // Manifold interprets winding as defining solidity : make sure normals point outward.
+
+            for (auto& mesh : src_meshes_) ensure_outward_winding(mesh);
+            for (auto& mesh : cut_meshes_) ensure_outward_winding(mesh);
+
+            // Snap every vertex of every operand onto a canonical plane set built from all
+            // their faces : each face becomes exactly planar, and faces meant to be coplanar
+            // (or edges/vertices meant to lie on a face of the other operand) become exactly
+            // so. Otherwise, the boolean would leave epsilon-thin residues (closed cavities,
+            // slivers) between nearly coincident geometry.
+
+            std::vector<manifold::MeshGL64*> all_meshes;
+            for (auto& mesh : src_meshes_) all_meshes.push_back(&mesh);
+            for (auto& mesh : cut_meshes_) all_meshes.push_back(&mesh);
+
+            const std::vector<Plane> planes = canonical_planes(all_meshes, tolerance_);
+            for (auto* mesh : all_meshes) snap_to_planes(*mesh, planes, tolerance_);
+
+            // Exact coplanarity is only achievable in doubles on the exact-axis planes :
+            // on a tilted plane, snapped vertices keep ~1e-15 inconsistent residues that
+            // Manifold's exact arithmetic resolves into epsilon-thin residues (closed
+            // pockets under the surviving face). So when a tilted plane hosts both a src
+            // face and a cut face, nudge the cut vertices lying on it along the plane
+            // normal : toward the src exterior for subtraction / intersection (the cut
+            // cleanly swallows or stops at the src face), toward the src interior for
+            // union (the operands clearly overlap and the seam becomes a robust
+            // transversal intersection). Then re-snap the cut onto the axis planes the
+            // nudge may have dragged it off.
+
+            if (!cut_meshes_.empty()) {
+                bool nudged = false;
+                for (const auto& plane : planes) {
+                    if (is_axis_plane(plane)) continue;
+                    double src_sign = 0.0;
+                    for (auto& mesh : src_meshes_) {
+                        src_sign = outward_sign_on_plane(mesh, plane, tolerance_);
+                        if (src_sign != 0.0) break;
+                    }
+                    if (src_sign == 0.0) continue;
+                    bool cut_on_plane = false;
+                    for (auto& mesh : cut_meshes_) {
+                        if (outward_sign_on_plane(mesh, plane, tolerance_) != 0.0) {
+                            cut_on_plane = true;
+                            break;
+                        }
+                    }
+                    if (!cut_on_plane) continue;
+                    const double offset = (operation_ == Operation::Union ? -src_sign : src_sign) * SHARED_PLANE_OFFSET;
+                    for (auto& mesh : cut_meshes_) offset_vertices_near_plane(mesh, plane, offset, tolerance_);
+                    nudged = true;
+                }
+                if (nudged) {
+                    std::vector<Plane> axis_planes;
+                    for (const auto& plane : planes) {
+                        if (is_axis_plane(plane)) axis_planes.push_back(plane);
+                    }
+                    if (!axis_planes.empty()) {
+                        for (auto& mesh : cut_meshes_) snap_to_planes(mesh, axis_planes, tolerance_);
+                    }
+                }
+            }
+
             // Build Manifolds
 
             std::vector<manifold::Manifold> src_manifolds;
             for (auto& mesh : src_meshes_) {
                 manifold::Manifold& manifold = src_manifolds.emplace_back(mesh);
                 if (manifold.Status() != manifold::Manifold::Error::NoError) {
-                    throw std::runtime_error("mesh n'est pas un manifold valide");
+                    throw std::runtime_error("Mesh is not a valid manifold");
                 }
             }
 
@@ -167,7 +262,7 @@ namespace Meshy {
             for (auto& mesh : cut_meshes_) {
                 manifold::Manifold& manifold = cut_manifolds.emplace_back(mesh);
                 if (manifold.Status() != manifold::Manifold::Error::NoError) {
-                    throw std::runtime_error("mesh n'est pas un manifold valide");
+                    throw std::runtime_error("Mesh is not a valid manifold");
                 }
             }
 
@@ -221,7 +316,7 @@ namespace Meshy {
             }
 
             if (result.Status() != manifold::Manifold::Error::NoError) {
-                throw std::runtime_error("L'opération a échouée");
+                throw std::runtime_error("Boolean operation failed");
             }
 
             // Collapse degenerate leftovers (slivers thinner than the tolerance
@@ -317,6 +412,15 @@ namespace Meshy {
         }
 
     private:
+
+        // Skip mesh validation when the caller guarantees closed, consistently
+        // oriented operands.
+        bool validate_ = true;
+
+        // SketchUp merge tolerance (1/1000 inch) : geometry closer than this cannot
+        // exist as separate entities in SketchUp. Drives plane canonicalization,
+        // snapping and nudging.
+        double tolerance_ = 0.001;
 
         std::vector<manifold::MeshGL64> src_meshes_;
         std::vector<manifold::MeshGL64> cut_meshes_;

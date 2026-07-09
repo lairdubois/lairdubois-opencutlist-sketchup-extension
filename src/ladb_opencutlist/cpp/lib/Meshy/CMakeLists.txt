@@ -17,6 +17,7 @@ endif()
 # Library headers
 set(LIBRARY_HEADERS
         include/meshy.hpp
+        src/preprocessor.hpp
         src/solver.hpp
         src/solver_builder.hpp
 )

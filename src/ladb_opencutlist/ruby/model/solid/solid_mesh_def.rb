@@ -31,6 +31,9 @@ module Ladb::OpenCutList
   # @face_ids holds one entry per triangle: the index of the corresponding SolidFaceInfoDef
   # in @face_info_defs. This provenance is propagated by Manifold through the boolean
   # operation and drives materials, layers and coplanar merging on reconstruction.
+  #
+  # Meshes are sent RAW to Meshy : validation, winding correction, plane
+  # canonicalization, snapping and nudging all run natively in the lib.
   class SolidMeshDef < DataContainer
 
     # SketchUp merge tolerance (1/1000 inch): geometry closer than this cannot exist
@@ -85,199 +88,6 @@ module Ladb::OpenCutList
       @vertices.length / 3
     end
 
-    # Signed volume (positive if triangles are consistently wound with outward normals)
-    def volume
-      volume = 0.0
-      @face_indices.each_slice(3) do |i0, i1, i2|
-        x0, y0, z0 = @vertices[i0 * 3], @vertices[i0 * 3 + 1], @vertices[i0 * 3 + 2]
-        x1, y1, z1 = @vertices[i1 * 3], @vertices[i1 * 3 + 1], @vertices[i1 * 3 + 2]
-        x2, y2, z2 = @vertices[i2 * 3], @vertices[i2 * 3 + 1], @vertices[i2 * 3 + 2]
-        volume += x0 * (y1 * z2 - y2 * z1) - y0 * (x1 * z2 - x2 * z1) + z0 * (x1 * y2 - x2 * y1)
-      end
-      volume / 6.0
-    end
-
-    # Returns a list of i18n error tuples. Empty if the mesh is a valid-closed solid.
-    def validation_errors
-      return [ [ 'core.solid.error.empty' ] ] if empty?
-
-      # A watertight, consistently oriented triangle mesh has every directed edge
-      # appearing exactly once, paired with its reverse.
-      directed_edges = {}
-      @face_indices.each_slice(3) do |i0, i1, i2|
-        [ [ i0, i1 ], [ i1, i2 ], [ i2, i0 ] ].each do |edge|
-          directed_edges[edge] = (directed_edges[edge] || 0) + 1
-        end
-      end
-
-      duplicated_count = directed_edges.count { |edge, count| count > 1 }
-      return [ [ 'core.solid.error.non_manifold_edges', { :count => duplicated_count } ] ] if duplicated_count > 0
-
-      open_count = directed_edges.count { |edge, _| !directed_edges.key?(edge.reverse) }
-      return [ [ 'core.solid.error.open_edges', { :count => open_count } ] ] if open_count > 0
-
-      []
-    end
-
-    def manifold?
-      validation_errors.empty?
-    end
-
-    # -----
-
-    # Returns [ [ area2, [ nx, ny, nz, d ] ], ... ] : one plane per original face
-    # (with n·p = d), computed from the largest triangle of the face for numerical
-    # stability, weighted by that triangle's squared area.
-    # The normal is canonically oriented (first significant component positive) so
-    # that opposite-facing coplanar faces yield comparable planes.
-    def weighted_face_planes
-      best = {}
-      @face_indices.each_slice(3).with_index do |(i0, i1, i2), triangle_index|
-
-        x0, y0, z0 = @vertices[i0 * 3], @vertices[i0 * 3 + 1], @vertices[i0 * 3 + 2]
-        x1, y1, z1 = @vertices[i1 * 3], @vertices[i1 * 3 + 1], @vertices[i1 * 3 + 2]
-        x2, y2, z2 = @vertices[i2 * 3], @vertices[i2 * 3 + 1], @vertices[i2 * 3 + 2]
-
-        nx = (y1 - y0) * (z2 - z0) - (z1 - z0) * (y2 - y0)
-        ny = (z1 - z0) * (x2 - x0) - (x1 - x0) * (z2 - z0)
-        nz = (x1 - x0) * (y2 - y0) - (y1 - y0) * (x2 - x0)
-        area2 = nx * nx + ny * ny + nz * nz
-        next if area2 == 0.0
-
-        face_index = @face_ids[triangle_index]
-        next if best.key?(face_index) && best[face_index][0] >= area2
-
-        length = Math.sqrt(area2)
-        nx /= length
-        ny /= length
-        nz /= length
-        if nx < -1e-9 || (nx.abs <= 1e-9 && (ny < -1e-9 || (ny.abs <= 1e-9 && nz < 0)))
-          nx, ny, nz = -nx, -ny, -nz
-        end
-
-        # Snap near-axis normals to the exact axis direction. Projection onto an exact
-        # axis plane assigns the exact same coordinate (d) to every projected vertex of
-        # every operand, achieving true exact coplanarity. A projection onto a plane
-        # tilted by ~1e-16 (numerical noise of the source triangle) would leave ~1e-15
-        # off-plane rounding residues, which Manifold's exact arithmetic still sees as
-        # crossing surfaces, producing epsilon-thin residues.
-        if ny.abs <= 1e-9 && nz.abs <= 1e-9
-          nx, ny, nz = 1.0, 0.0, 0.0
-        elsif nx.abs <= 1e-9 && nz.abs <= 1e-9
-          nx, ny, nz = 0.0, 1.0, 0.0
-        elsif nx.abs <= 1e-9 && ny.abs <= 1e-9
-          nx, ny, nz = 0.0, 0.0, 1.0
-        end
-
-        best[face_index] = [ area2, [ nx, ny, nz, nx * x0 + ny * y0 + nz * z0 ] ]
-
-      end
-      best.values
-    end
-
-    def face_planes
-      weighted_face_planes.map { |_, plane| plane }
-    end
-
-    # True if the plane is one of the exact axis-aligned planes produced by
-    # weighted_face_planes' normal quantization.
-    def self.axis_plane?(plane)
-      nx, ny, nz, _ = plane
-      (nx == 1.0 && ny == 0.0 && nz == 0.0) || (nx == 0.0 && ny == 1.0 && nz == 0.0) || (nx == 0.0 && ny == 0.0 && nz == 1.0)
-    end
-
-    # Builds a deduplicated plane set from all the given meshes: planes that are
-    # identical within tolerance are represented once, by the instance backed by the
-    # largest triangle. Snapping EVERY vertex of EVERY operand onto this canonical
-    # set makes each face exactly planar and faces meant to be coplanar between
-    # operands exactly coplanar.
-    def self.canonical_planes(mesh_defs, tolerance: TOLERANCE)
-      canonical = []
-      mesh_defs.flat_map(&:weighted_face_planes).sort_by { |area2, _| -area2 }.each do |_, plane|
-        nx, ny, nz, d = plane
-        merged = canonical.any? { |cx, cy, cz, cd| nx * cx + ny * cy + nz * cz > 1.0 - 1e-8 && (d - cd).abs <= tolerance }
-        canonical << plane unless merged
-      end
-      canonical
-    end
-
-    # Projects every vertex closer than tolerance to one of the given planes onto it,
-    # so that faces meant to be coplanar with the other operand become EXACTLY coplanar.
-    # Without this, boolean operations leave epsilon-thin residues (closed cavities,
-    # slivers) between nearly coincident faces.
-    # Iterated a few times so that vertices near several planes (shared edges, corners)
-    # converge to the planes intersection.
-    def snap_to_planes!(planes, tolerance = TOLERANCE)
-      return if planes.empty? || empty?
-
-      # Project onto non-axis planes first and exact-axis planes last: axis planes are
-      # orthogonal to each other, so late axis projections do not disturb one another
-      # and the vertex ends EXACTLY on every nearby axis plane (the only exactness
-      # achievable in doubles, and the one coplanarity snapping relies on). A tilted
-      # plane projected last would drag the vertex ~1e-14 off the axis planes.
-      non_axis_planes, axis_planes = planes.partition { |plane| !SolidMeshDef.axis_plane?(plane) }
-      planes = non_axis_planes + axis_planes
-
-      (0...vertex_count).each do |vertex_index|
-        x = @vertices[vertex_index * 3]
-        y = @vertices[vertex_index * 3 + 1]
-        z = @vertices[vertex_index * 3 + 2]
-        3.times do
-          planes.each do |nx, ny, nz, d|
-            dist = x * nx + y * ny + z * nz - d
-            next if dist == 0.0 || dist.abs > tolerance
-            x -= dist * nx
-            y -= dist * ny
-            z -= dist * nz
-          end
-        end
-        @vertices[vertex_index * 3] = x
-        @vertices[vertex_index * 3 + 1] = y
-        @vertices[vertex_index * 3 + 2] = z
-      end
-      nil
-    end
-
-    # If the mesh has at least one triangle lying on the given plane (its three
-    # vertices within tolerance), returns +1.0 / -1.0 : the sign of the outward
-    # normal of those triangles against the plane normal (area weighted).
-    # Returns nil if no triangle lies on the plane.
-    def outward_sign_on_plane(plane, tolerance = TOLERANCE)
-      pnx, pny, pnz, pd = plane
-      distances = (0...vertex_count).map { |vertex_index|
-        @vertices[vertex_index * 3] * pnx + @vertices[vertex_index * 3 + 1] * pny + @vertices[vertex_index * 3 + 2] * pnz - pd
-      }
-      sum = 0.0
-      @face_indices.each_slice(3) do |i0, i1, i2|
-        next unless distances[i0].abs <= tolerance && distances[i1].abs <= tolerance && distances[i2].abs <= tolerance
-        x0, y0, z0 = @vertices[i0 * 3], @vertices[i0 * 3 + 1], @vertices[i0 * 3 + 2]
-        x1, y1, z1 = @vertices[i1 * 3], @vertices[i1 * 3 + 1], @vertices[i1 * 3 + 2]
-        x2, y2, z2 = @vertices[i2 * 3], @vertices[i2 * 3 + 1], @vertices[i2 * 3 + 2]
-        nx = (y1 - y0) * (z2 - z0) - (z1 - z0) * (y2 - y0)
-        ny = (z1 - z0) * (x2 - x0) - (x1 - x0) * (z2 - z0)
-        nz = (x1 - x0) * (y2 - y0) - (y1 - y0) * (x2 - x0)
-        sum += nx * pnx + ny * pny + nz * pnz
-      end
-      return nil if sum == 0.0
-      sum > 0.0 ? 1.0 : -1.0
-    end
-
-    # Translates every vertex lying within tolerance of the plane by offset along
-    # the plane normal (offset may be negative).
-    def offset_vertices_near_plane!(plane, offset, tolerance = TOLERANCE)
-      nx, ny, nz, d = plane
-      (0...vertex_count).each do |vertex_index|
-        x = @vertices[vertex_index * 3]
-        y = @vertices[vertex_index * 3 + 1]
-        z = @vertices[vertex_index * 3 + 2]
-        next if (x * nx + y * ny + z * nz - d).abs > tolerance
-        @vertices[vertex_index * 3] = x + nx * offset
-        @vertices[vertex_index * 3 + 1] = y + ny * offset
-        @vertices[vertex_index * 3 + 2] = z + nz * offset
-      end
-      nil
-    end
-
     # -----
 
     # Serialization to the mesh format expected by Fiddle::Meshy.operate.
@@ -321,9 +131,6 @@ module Ladb::OpenCutList
 
       end
 
-      # Manifold interprets winding as defining solidity: make sure normals point outward
-      _flip! if volume < 0
-
     end
 
     # -----
@@ -339,13 +146,6 @@ module Ladb::OpenCutList
         @vertices.concat(key)
       end
       index
-    end
-
-    def _flip!
-      @face_indices.each_slice(3).with_index do |(i0, i1, i2), triangle_index|
-        @face_indices[triangle_index * 3 + 1] = i2
-        @face_indices[triangle_index * 3 + 2] = i1
-      end
     end
 
     # Flood fill over soft edges to group faces belonging to the same curved surface.

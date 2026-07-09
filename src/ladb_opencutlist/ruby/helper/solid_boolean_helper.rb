@@ -3,8 +3,14 @@ module Ladb::OpenCutList
   require_relative '../lib/fiddle/meshy/meshy'
   require_relative '../model/solid/solid_mesh_def'
   require_relative '../model/solid/solid_boolean_result_def'
+  require_relative '../utils/transformation_utils'
 
   # Boolean operations on solids, powered by the Meshy native lib (Manifold).
+  #
+  # The whole geometric pipeline (validation, winding, plane canonicalization,
+  # snapping, tilted-shared-plane nudging, boolean) runs in Meshy : the Ruby side
+  # only extracts meshes from SketchUp entities, carries the face metadata registry
+  # (materials, layers, surfaces) and rebuilds the resulting geometry.
   #
   # Three levels of API :
   # - mesh level        : _solid_boolean_compute        (pure computation, no model write)
@@ -16,11 +22,6 @@ module Ladb::OpenCutList
     OPERATION_SUBTRACTION = 'subtraction'.freeze
     OPERATION_INTERSECTION = 'intersection'.freeze
 
-    # Offset applied to cut vertices lying on a tilted plane shared with a src face :
-    # far above snapping residues (~1e-14), far below SketchUp tolerance (1e-3),
-    # so the perturbation is invisible in the rebuilt geometry.
-    SHARED_PLANE_OFFSET = 1e-6
-
     # Runs the boolean operation on SolidMeshDef lists.
     # Returns a SolidBooleanResultDef. No entity is read or written.
     def _solid_boolean_compute(operation, src_mesh_defs, cut_mesh_defs, validate: true)
@@ -29,49 +30,6 @@ module Ladb::OpenCutList
       cut_mesh_defs = Array(cut_mesh_defs)
 
       result_def = SolidBooleanResultDef.new
-
-      if validate
-        (src_mesh_defs + cut_mesh_defs).each do |mesh_def|
-          result_def.errors.concat(mesh_def.validation_errors)
-        end
-        return result_def unless result_def.success?
-      end
-
-      # Snap every vertex of every operand onto a canonical plane set built from all
-      # their faces: each face becomes exactly planar, and faces meant to be coplanar
-      # (or edges/vertices meant to lie on a face of the other operand) become exactly
-      # so. Otherwise, the boolean would leave epsilon-thin residues (closed cavities,
-      # slivers) between nearly coincident geometry.
-      all_mesh_defs = src_mesh_defs + cut_mesh_defs
-      canonical_planes = SolidMeshDef.canonical_planes(all_mesh_defs)
-      all_mesh_defs.each { |mesh_def| mesh_def.snap_to_planes!(canonical_planes) }
-
-      # Exact coplanarity is only achievable in doubles on the exact-axis planes :
-      # on a tilted plane, snapped vertices keep ~1e-15 inconsistent residues that
-      # Manifold's exact arithmetic resolves into epsilon-thin residues (closed
-      # pockets under the surviving face). So when a tilted plane hosts both a src
-      # face and a cut face, nudge the cut vertices lying on it along the plane
-      # normal : toward the src exterior for subtraction / intersection (the cut
-      # cleanly swallows or stops at the src face), toward the src interior for
-      # union (the operands clearly overlap and the seam becomes a robust
-      # transversal intersection). Then re-snap the cut onto the axis planes the
-      # nudge may have dragged it off.
-      unless cut_mesh_defs.empty?
-        nudged = false
-        canonical_planes.each do |plane|
-          next if SolidMeshDef.axis_plane?(plane)
-          src_sign = src_mesh_defs.map { |mesh_def| mesh_def.outward_sign_on_plane(plane) }.compact.first
-          next if src_sign.nil?
-          next unless cut_mesh_defs.any? { |mesh_def| mesh_def.outward_sign_on_plane(plane) }
-          offset = (operation == OPERATION_UNION ? -src_sign : src_sign) * SHARED_PLANE_OFFSET
-          cut_mesh_defs.each { |mesh_def| mesh_def.offset_vertices_near_plane!(plane, offset) }
-          nudged = true
-        end
-        if nudged
-          axis_planes = canonical_planes.select { |plane| SolidMeshDef.axis_plane?(plane) }
-          cut_mesh_defs.each { |mesh_def| mesh_def.snap_to_planes!(axis_planes) } unless axis_planes.empty?
-        end
-      end
 
       # Merge all face info registries into a single one, offsetting ids accordingly,
       # so that fragment face ids can be resolved whatever input mesh they come from.
@@ -85,11 +43,13 @@ module Ladb::OpenCutList
       input = {
         :solver_type => 'manifold',
         :operation => operation,
+        :validate => validate,
+        :tolerance => SolidMeshDef::TOLERANCE,
         :src_meshes => src_mesh_defs.map(&fn_serialize),
         :cut_meshes => cut_mesh_defs.map(&fn_serialize)
       }
 
-      # Debug : entrée réellement envoyée (donc APRÈS snapping)
+      # Debug : entrée réellement envoyée (meshes bruts, AVANT le snapping fait dans Meshy)
       # File.write(File.join(Fiddle::Meshy.lib_dir, 'input.json'), JSON.pretty_generate(input))
 
       output = Fiddle::Meshy.operate(input)
@@ -99,6 +59,14 @@ module Ladb::OpenCutList
 
       if output['error']
         result_def.errors << [ 'core.error.exception', { :error => output['error'] } ]
+      elsif output['errors'].is_a?(Array)
+        output['errors'].each do |error|
+          if error['count']
+            result_def.errors << [ "core.solid.error.#{error['code']}", { :count => error['count'] } ]
+          else
+            result_def.errors << [ "core.solid.error.#{error['code']}" ]
+          end
+        end
       elsif output['fragments'].is_a?(Array)
         output['fragments'].each do |fragment|
           fragment_def = SolidFragmentDef.new(fragment['vertices'], fragment['face_indices'], fragment['face_ids'], face_info_defs)
@@ -194,6 +162,10 @@ module Ladb::OpenCutList
 
       transformation = nil if transformation.nil? || transformation.identity?
 
+      # A mirror transformation (negative determinant) reverses the winding of the
+      # transformed triangles : re-reverse it so faces keep their outward orientation.
+      flipped = !transformation.nil? && TransformationUtils.flipped?(transformation)
+
       # Add faces one batch per original face: provenance is structural,
       # no geometric matching needed afterward.
       face_infos = {}
@@ -205,7 +177,11 @@ module Ladb::OpenCutList
         fragment_def.each_triangle_batch do |face_info_def, triangles|
 
           mesh = Geom::PolygonMesh.new(triangles.length * 3, triangles.length)
-          triangles.each { |points| mesh.add_polygon(transformation ? points.map { |point| point.transform(transformation) } : points) }
+          triangles.each do |points|
+            points = points.map { |point| point.transform(transformation) } unless transformation.nil?
+            points = points.reverse if flipped
+            mesh.add_polygon(points)
+          end
 
           material = preserve_materials && !face_info_def.nil? ? face_info_def.material : nil
           entities.add_faces_from_mesh(mesh, Geom::PolygonMesh::NO_SMOOTH_OR_HIDE, material)
