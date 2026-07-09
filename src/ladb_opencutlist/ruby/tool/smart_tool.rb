@@ -3753,6 +3753,10 @@ module Ladb::OpenCutList
       create_cursor('select-a')
     end
 
+    def cursor_select_b
+      create_cursor('select-b')
+    end
+
 
     def cursor_move
       create_cursor('move', 16, 16)

@@ -48,7 +48,7 @@ namespace Meshy {
             || (plane.nx == 0.0 && plane.ny == 0.0 && plane.nz == 1.0);
     }
 
-    // Returns at most one error. Empty if the mesh is a valid closed solid : a
+    // Returns at most one error. Empty if the mesh is a valid closed solid: a
     // watertight, consistently oriented triangle mesh has every directed edge
     // appearing exactly once, paired with its reverse.
     inline std::vector<ValidationError> validate_mesh(

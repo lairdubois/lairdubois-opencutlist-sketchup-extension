@@ -8,11 +8,13 @@ module Ladb::OpenCutList
 
     attr_reader :errors,            # Array of i18n tuples [ key, vars ] ; empty on success
                 :fragment_defs,     # Array<SolidFragmentDef>
+                :curve_info_defs,   # Array<SolidCurveInfoDef> collected from all operands
                 :created_entities   # Entities holding the result, filled by _solid_boolean_apply! (the rebuilt src entity)
 
     def initialize
       @errors = []
       @fragment_defs = []
+      @curve_info_defs = []
       @created_entities = []
     end
 

@@ -292,6 +292,13 @@ core:
       failed_to_load: |
         Impossible d'ouvrir la documentation.
         Vérifiez que vous êtes bien connecté à Internet.
+  solid:
+    error:
+      empty: Le solide ne contient aucune géométrie
+      non_manifold_edges: "Le solide contient {{ count }} arête non manifold"
+      non_manifold_edges_plural: "Le solide contient {{ count }} arêtes non manifold"
+      open_edges: "Le solide contient {{ count }} arête ouverte"
+      open_edges_plural: "Le solide contient {{ count }} arêtes ouvertes"
 tab:
   cutlist:
     label: Débit

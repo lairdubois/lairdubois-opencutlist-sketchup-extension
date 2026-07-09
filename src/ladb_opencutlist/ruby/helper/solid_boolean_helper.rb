@@ -8,7 +8,7 @@ module Ladb::OpenCutList
   # Boolean operations on solids, powered by the Meshy native lib (Manifold).
   #
   # The whole geometric pipeline (validation, winding, plane canonicalization,
-  # snapping, tilted-shared-plane nudging, boolean) runs in Meshy : the Ruby side
+  # snapping, tilted-shared-plane nudging, boolean) runs in Meshy: the Ruby side
   # only extracts meshes from SketchUp entities, carries the face metadata registry
   # (materials, layers, surfaces) and rebuilds the resulting geometry.
   #
@@ -30,6 +30,11 @@ module Ladb::OpenCutList
       cut_mesh_defs = Array(cut_mesh_defs)
 
       result_def = SolidBooleanResultDef.new
+
+      # Curves are not propagated through Manifold (provenance is per-triangle only):
+      # collect their world-coordinates segments here for geometric re-attribution
+      # at rebuild time.
+      (src_mesh_defs + cut_mesh_defs).each { |mesh_def| result_def.curve_info_defs.concat(mesh_def.curve_info_defs) }
 
       # Merge all face info registries into a single one, offsetting ids accordingly,
       # so that fragment face ids can be resolved whatever input mesh they come from.
@@ -105,7 +110,8 @@ module Ladb::OpenCutList
                               keep_cuts: false,
                               preserve_materials: true,
                               merge_coplanar: true,
-                              restore_soft_edges: true)
+                              restore_soft_edges: true,
+                              restore_curves: true)
 
       cut_entities = Array(cut_entities)
 
@@ -124,15 +130,18 @@ module Ladb::OpenCutList
         # Rebuild the result inside the source entity to preserve its identity
         src_entity.make_unique if src_entity.definition.instances.length > 1
         definition_entities = src_entity.definition.entities
-        definition_entities.clear!
-        _solid_fragments_to_geometry(
+        glued_instances = _solid_clear_preserving_glued!(definition_entities)
+        created_faces = _solid_fragments_to_geometry(
           result_def.fragment_defs,
           definition_entities,
           transformation: (src_transformation * src_entity.transformation).inverse,
+          curve_info_defs: result_def.curve_info_defs,
           preserve_materials: preserve_materials,
           merge_coplanar: merge_coplanar,
-          restore_soft_edges: restore_soft_edges
+          restore_soft_edges: restore_soft_edges,
+          restore_curves: restore_curves
         )
+        _solid_reglue_instances(glued_instances, created_faces)
         result_def.created_entities << src_entity
 
         cut_entities.each { |cut_entity| cut_entity.parent.entities.erase_entities(cut_entity) unless cut_entity.deleted? } unless keep_cuts
@@ -156,14 +165,16 @@ module Ladb::OpenCutList
     # Returns the Array<Sketchup::Face> created.
     def _solid_fragments_to_geometry(fragment_defs, entities,
                                      transformation: IDENTITY,
+                                     curve_info_defs: nil,
                                      preserve_materials: true,
                                      merge_coplanar: true,
-                                     restore_soft_edges: true)
+                                     restore_soft_edges: true,
+                                     restore_curves: true)
 
       transformation = nil if transformation.nil? || transformation.identity?
 
       # A mirror transformation (negative determinant) reverses the winding of the
-      # transformed triangles : re-reverse it so faces keep their outward orientation.
+      # transformed triangles: re-reverse it so faces keep their outward orientation.
       flipped = !transformation.nil? && TransformationUtils.flipped?(transformation)
 
       # Add faces one batch per original face: provenance is structural,
@@ -228,7 +239,154 @@ module Ladb::OpenCutList
         entities.erase_entities(edges_to_erase) if edges_to_erase.any?
       end
 
+      _solid_weld_curves(entities, face_infos, curve_info_defs, transformation: transformation) if restore_curves
+
       face_infos.keys.reject(&:deleted?)
+    end
+
+    # Restores curve welding on the rebuilt geometry :
+    # - pieces of original curves, re-attributed geometrically (an edge belongs to a
+    #   curve if its endpoints and midpoint all lie on the curve's source segments)
+    # - intersection seams: chains of new edges between two faces that do not belong
+    #   to the same original curved surface, as native solid tools produce.
+    # Requires Sketchup::Entities#weld (SketchUp >= 2020.1) : silently skipped below.
+    def _solid_weld_curves(entities, face_infos, curve_info_defs, transformation: nil)
+      return unless entities.respond_to?(:weld)
+
+      curve_info_defs = Array(curve_info_defs)
+
+      # Only edges entirely bounded by faces created by this rebuild: never touch
+      # pre-existing geometry.
+      new_edges = entities.grep(Sketchup::Edge).select { |edge|
+        !edge.deleted? && !edge.faces.empty? && edge.faces.all? { |face| face_infos.key?(face) }
+      }
+      return if new_edges.empty?
+
+      tolerance = SolidMeshDef::TOLERANCE
+
+      fn_distance_to_segment = lambda { |point, a, b|
+        v = a.vector_to(b)
+        c2 = v % v
+        return point.distance(a).to_f if c2 == 0.0
+        t = (a.vector_to(point) % v) / c2
+        t = 0.0 if t < 0.0
+        t = 1.0 if t > 1.0
+        point.distance(Geom.linear_combination(1.0 - t, a, t, b)).to_f
+      }
+      fn_on_segments = lambda { |point, segments|
+        segments.any? { |a, b| fn_distance_to_segment.call(point, a, b) <= tolerance }
+      }
+
+      # Welding is cosmetic : a failure must never abort the boolean operation.
+      fn_weld = lambda { |edges|
+        next if edges.length < 2
+        begin
+          entities.weld(edges)
+        rescue => e
+          # Ignored
+        end
+      }
+
+      # Original curve pieces. Segments are captured in world coordinates : bring
+      # them into the destination space (mirror is harmless on point pairs). Cut
+      # pieces end on intersection vertices that still lie ON the source segments,
+      # and Manifold may merge collinear sub-segments : each point is therefore
+      # tested against the whole segment set of the curve.
+      attributed_edges = {}
+      unless curve_info_defs.empty?
+        segment_sets = curve_info_defs.map { |curve_info_def|
+          transformation.nil? ? curve_info_def.segments : curve_info_def.segments.map { |a, b| [ a.transform(transformation), b.transform(transformation) ] }
+        }
+        edges_by_curve_index = {}
+        new_edges.each do |edge|
+          start_point = edge.start.position
+          end_point = edge.end.position
+          mid_point = Geom.linear_combination(0.5, start_point, 0.5, end_point)
+          segment_sets.each_with_index do |segments, index|
+            next unless fn_on_segments.call(start_point, segments) &&
+                        fn_on_segments.call(end_point, segments) &&
+                        fn_on_segments.call(mid_point, segments)
+            (edges_by_curve_index[index] ||= []) << edge
+            attributed_edges[edge] = true
+            break
+          end
+        end
+        edges_by_curve_index.each_value(&fn_weld)
+      end
+
+      # Intersection seams : group by the set of original surfaces involved so that
+      # a seam crossing several (possibly merged) planar faces stays one chain.
+      # Plane/plane intersections are straight lines : nothing to weld.
+      edges_by_seam_key = {}
+      new_edges.each do |edge|
+        next if attributed_edges.key?(edge)
+        faces = edge.faces
+        next unless faces.length == 2
+        face_info_def_0 = face_infos[faces[0]]
+        face_info_def_1 = face_infos[faces[1]]
+        next if face_info_def_0.nil? || face_info_def_1.nil?
+        surface_info_def_0 = face_info_def_0.surface_info_def
+        surface_info_def_1 = face_info_def_1.surface_info_def
+        next if surface_info_def_0.nil? && surface_info_def_1.nil?
+        next if !surface_info_def_0.nil? && surface_info_def_0.equal?(surface_info_def_1) # Interior of a surface (softened, not a seam)
+        seam_key = [ surface_info_def_0, surface_info_def_1 ].compact.map(&:object_id).sort
+        (edges_by_seam_key[seam_key] ||= []) << edge
+      end
+      edges_by_seam_key.each_value(&fn_weld)
+
+      nil
+    end
+
+    # Returns the component instances (and groups) glued to the given faces.
+    def _solid_glued_instances(faces)
+      instances = []
+      faces.each do |face|
+        next if face.deleted?
+        instances.concat(face.get_glued_instances.to_a)
+      end
+      instances.uniq
+    end
+
+    # Clears the given entities except the instances glued to its faces, and
+    # returns those instances, to be re-glued via _solid_reglue_instances once
+    # the geometry is rebuilt.
+    def _solid_clear_preserving_glued!(entities)
+      glued_instances = _solid_glued_instances(entities.grep(Sketchup::Face)) & entities.to_a
+      if glued_instances.empty?
+        entities.clear!
+      else
+        entities.erase_entities(entities.to_a - glued_instances)
+      end
+      glued_instances
+    end
+
+    # Re-glues the given instances onto the rebuilt faces : an instance is glued to
+    # the face whose plane carries the instance origin (the gluing plane) and whose
+    # boundary contains it. Instances whose host area was cut away stay unglued.
+    def _solid_reglue_instances(instances, faces)
+      return if instances.empty?
+
+      # The origin lies on the original gluing plane, but the rebuilt plane may
+      # have been snapped away by up to the tolerance.
+      tolerance = SolidMeshDef::TOLERANCE * 2
+
+      instances.each do |instance|
+        next if instance.deleted?
+        next unless instance.respond_to?(:glued_to=) # Sketchup::Group#glued_to= requires SketchUp >= 2021.1
+        origin = instance.transformation.origin
+        host_face = faces.find { |face|
+          next false if face.deleted?
+          next false unless origin.distance_to_plane(face.plane).to_f <= tolerance
+          [ Sketchup::Face::PointInside, Sketchup::Face::PointOnEdge, Sketchup::Face::PointOnVertex ].include?(face.classify_point(origin.project_to_plane(face.plane)))
+        }
+        next if host_face.nil?
+        begin
+          instance.glued_to = host_face
+        rescue => e
+          # Gluing is cosmetic : never fail the boolean operation for it
+        end
+      end
+      nil
     end
 
     # Rebuilds fragments as new groups (one per fragment) inside the given
@@ -238,9 +396,11 @@ module Ladb::OpenCutList
     # Returns the Array<Sketchup::Group> created.
     def _solid_fragments_to_entities(fragment_defs, entities,
                                      transformation: IDENTITY,
+                                     curve_info_defs: nil,
                                      preserve_materials: true,
                                      merge_coplanar: true,
-                                     restore_soft_edges: true)
+                                     restore_soft_edges: true,
+                                     restore_curves: true)
 
       groups = []
       fragment_defs.each do |fragment_def|
@@ -253,9 +413,11 @@ module Ladb::OpenCutList
           [ fragment_def ],
           group.entities,
           transformation: nil,
+          curve_info_defs: curve_info_defs,
           preserve_materials: preserve_materials,
           merge_coplanar: merge_coplanar,
-          restore_soft_edges: restore_soft_edges
+          restore_soft_edges: restore_soft_edges,
+          restore_curves: restore_curves
         )
 
         groups << group

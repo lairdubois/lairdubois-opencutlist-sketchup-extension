@@ -9,6 +9,20 @@ module Ladb::OpenCutList
   class SolidSurfaceInfoDef < DataContainer
   end
 
+  # Captures the segments (WORLD coordinates) of a source Sketchup::Curve, so that
+  # surviving pieces can be re-welded into a curve after the boolean operation.
+  # ArcCurve metadata (center, radius) is not restorable : pieces come back as
+  # plain curves, as SketchUp native solid tools do.
+  class SolidCurveInfoDef < DataContainer
+
+    attr_reader :segments   # Array<[ Geom::Point3d, Geom::Point3d ]>, one per source edge
+
+    def initialize
+      @segments = []
+    end
+
+  end
+
   # Captures everything needed to reconstruct a source face after the boolean operation,
   # while the original Sketchup::Face may have been erased.
   class SolidFaceInfoDef < DataContainer
@@ -32,7 +46,7 @@ module Ladb::OpenCutList
   # in @face_info_defs. This provenance is propagated by Manifold through the boolean
   # operation and drives materials, layers and coplanar merging on reconstruction.
   #
-  # Meshes are sent RAW to Meshy : validation, winding correction, plane
+  # Meshes are sent RAW to Meshy: validation, winding correction, plane
   # canonicalization, snapping and nudging all run natively in the lib.
   class SolidMeshDef < DataContainer
 
@@ -44,13 +58,15 @@ module Ladb::OpenCutList
     attr_reader :vertices,        # Array<Float> flat [ x, y, z, x, y, z, ... ]
                 :face_indices,    # Array<Integer> flat, 3 per triangle
                 :face_ids,        # Array<Integer> 1 per triangle -> index in @face_info_defs
-                :face_info_defs   # Array<SolidFaceInfoDef>
+                :face_info_defs,  # Array<SolidFaceInfoDef>
+                :curve_info_defs  # Array<SolidCurveInfoDef>
 
     def initialize
       @vertices = []
       @face_indices = []
       @face_ids = []
       @face_info_defs = []
+      @curve_info_defs = []
       @vertex_index_map = {}
     end
 
@@ -110,6 +126,9 @@ module Ladb::OpenCutList
 
       surface_info_defs = _compute_surface_info_defs(face_manipulators)
 
+      curve_info_defs_by_curve = {}
+      processed_curve_edge_ids = {}
+
       face_manipulators.each do |face_manipulator|
         face = face_manipulator.face
 
@@ -120,6 +139,25 @@ module Ladb::OpenCutList
           layer: face_manipulator.layer,
           surface_info_def: surface_info_defs[face]
         )
+
+        # Capture the segments of the curves bounding this face (single-edge curves
+        # carry no welding information : ignored).
+        face.edges.each do |edge|
+          curve = edge.curve
+          next if curve.nil? || curve.edges.length < 2
+          next if processed_curve_edge_ids.key?(edge.entityID)
+          processed_curve_edge_ids[edge.entityID] = true
+          curve_info_def = curve_info_defs_by_curve[curve]
+          if curve_info_def.nil?
+            curve_info_def = SolidCurveInfoDef.new
+            curve_info_defs_by_curve[curve] = curve_info_def
+            @curve_info_defs << curve_info_def
+          end
+          curve_info_def.segments << [
+            edge.start.position.transform(face_manipulator.transformation),
+            edge.end.position.transform(face_manipulator.transformation)
+          ]
+        end
 
         mesh = face_manipulator.mesh
         mesh.polygons.each do |polygon|

@@ -3824,8 +3824,10 @@ module Ladb::OpenCutList
     def get_state_cursor(state)
 
       case state
-      when STATE_SELECT_SRC, STATE_SELECT_CUT
-        return SmartCursorManager.cursor_select
+      when STATE_SELECT_SRC
+        return SmartCursorManager.cursor_select_a
+      when STATE_SELECT_CUT
+        return SmartCursorManager.cursor_select_b
       end
 
       super
@@ -4043,16 +4045,19 @@ module Ladb::OpenCutList
             # (name, attributes, material, layer, transformation, persistent id).
             src_container.make_unique if src_container.definition.instances.length > 1
             entities = src_container.definition.entities
-            entities.clear!
-            _solid_fragments_to_geometry(result_def.fragment_defs, entities, transformation: @src_container_transformation.inverse)
+            glued_instances = _solid_clear_preserving_glued!(entities)
+            created_faces = _solid_fragments_to_geometry(result_def.fragment_defs, entities, transformation: @src_container_transformation.inverse, curve_info_defs: result_def.curve_info_defs)
+            _solid_reglue_instances(glued_instances, created_faces)
 
           else
 
             # Lose geometry at the model root: replace it in place.
             faces = @src_drawing_def.face_manipulators.map(&:face).reject(&:deleted?)
             edges = faces.flat_map(&:edges).uniq.reject(&:deleted?)
+            glued_instances = _solid_glued_instances(faces)
             model.entities.erase_entities(faces + edges)
-            _solid_fragments_to_geometry(result_def.fragment_defs, model.entities)
+            created_faces = _solid_fragments_to_geometry(result_def.fragment_defs, model.entities, curve_info_defs: result_def.curve_info_defs)
+            _solid_reglue_instances(glued_instances, created_faces)
 
           end
 
