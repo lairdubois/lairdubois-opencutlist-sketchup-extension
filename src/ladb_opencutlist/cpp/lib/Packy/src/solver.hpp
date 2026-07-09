@@ -389,6 +389,10 @@ namespace Packy {
                     throw std::runtime_error(oss.str());
                 }
 
+                // Tasks complete in a non-deterministic order. Sort to keep item type order deterministic.
+                std::sort(usable_item_type_ids.begin(), usable_item_type_ids.end());
+                std::sort(unusable_item_type_ids.begin(), unusable_item_type_ids.end());
+
             } else {
 
                 // Just store all item ids as usable
@@ -460,11 +464,11 @@ namespace Packy {
                 // Tag usable builder as used
                 usable_builder_.set_used(true);
 
-                return std::move(usable_builder_.instance_builder().build());
+                return usable_builder_.instance_builder().build();
             }
 
             // Nothing to exclude returns 'orig_instance' directly
-            return std::move(orig_instance);
+            return orig_instance;
         }
 
         virtual Output pre_process_optimize(
@@ -493,7 +497,7 @@ namespace Packy {
             const auto solution = post_process_solution(output.solution_pool.best());
             write_solution(j, solution, output.time, true);
 
-            return std::move(j);
+            return j;
         }
 
         virtual Solution post_process_solution(
@@ -1044,13 +1048,13 @@ namespace Packy {
             const rectangle::Instance& instance,
             const rectangle::OptimizeParameters& parameters
         ) override {
-            return std::move(rectangle::optimize(instance, parameters));
+            return rectangle::optimize(instance, parameters);
         }
 
         rectangle::Output process(
             const rectangle::Instance& instance
         ) override {
-            return std::move(rectangle::optimize(instance, parameters_));
+            return rectangle::optimize(instance, parameters_);
         }
 
         rectangle::Solution post_process_solution(
@@ -1149,14 +1153,14 @@ namespace Packy {
             if (j.contains("use_sequential_strips_onedimensional")) {
                 parameters_.use_sequential_strips_onedimensional = j["use_sequential_strips_onedimensional"].get<bool>();
             }
-            if (j.contains("use_dynamic_programming_infinite_copies_array")) {
-                parameters_.use_dynamic_programming_infinite_copies_array = j["use_dynamic_programming_infinite_copies_array"].get<bool>();
+            if (j.contains("use_tree_search_hypergraph_infinite_copies")) {
+                parameters_.use_tree_search_hypergraph_infinite_copies = j["use_tree_search_hypergraph_infinite_copies"].get<bool>();
             }
             if (j.contains("use_tree_search_maximal_spaces")) {
                 parameters_.use_tree_search_maximal_spaces = j["use_tree_search_maximal_spaces"].get<bool>();
             }
-            if (j.contains("use_labeling")) {
-                parameters_.use_labeling = j["use_labeling"].get<bool>();
+            if (j.contains("use_tree_search_hypergraph")) {
+                parameters_.use_tree_search_hypergraph = j["use_tree_search_hypergraph"].get<bool>();
             }
 
             if (j.contains("json_search_tree_path")) {
@@ -1203,10 +1207,10 @@ namespace Packy {
                 builder.instance_builder().set_minimum_waste_length(read_length(j, "minimum_waste_length"));
             }
             if (j.contains("maximum_number_1_cuts")) {
-                builder.instance_builder().set_maximum_number_1_cuts(j["maximum_number_1_cuts"].get<bool>());
+                builder.instance_builder().set_maximum_number_1_cuts(j["maximum_number_1_cuts"].get<Counter>());
             }
             if (j.contains("maximum_number_2_cuts")) {
-                builder.instance_builder().set_maximum_number_2_cuts(j["maximum_number_2_cuts"].get<bool>());
+                builder.instance_builder().set_maximum_number_2_cuts(j["maximum_number_2_cuts"].get<Counter>());
             }
             if (j.contains("cut_through_defects")) {
                 builder.instance_builder().set_cut_through_defects(j["cut_through_defects"].get<bool>());
@@ -1217,14 +1221,14 @@ namespace Packy {
             if (j.contains("fixed_cutting_costs") && j["fixed_cutting_costs"].is_array()) {
                 Counter stage_id = 0;
                 for (auto& j_fixed_cutting_cost: j["fixed_cutting_costs"].items()) {
-                    builder.instance_builder().set_fixed_cutting_cost(stage_id, j_fixed_cutting_cost.value().get<Profit>());
+                    builder.instance_builder().set_fixed_cutting_cost(stage_id, j_fixed_cutting_cost.value().get<CuttingCost>());
                     ++stage_id;
                 }
             }
             if (j.contains("variable_cutting_costs") && j["variable_cutting_costs"].is_array()) {
                 Counter stage_id = 0;
                 for (auto& j_variable_cutting_cost: j["variable_cutting_costs"].items()) {
-                    builder.instance_builder().set_variable_cutting_cost(stage_id, j_variable_cutting_cost.value().get<Profit>());
+                    builder.instance_builder().set_variable_cutting_cost(stage_id, j_variable_cutting_cost.value().get<CuttingCost>());
                     ++stage_id;
                 }
             }
@@ -1266,7 +1270,7 @@ namespace Packy {
             Length width = read_length(j, "width", -1);
             Length height = read_length(j, "height", -1);
             const Profit profit = j.value("profit", static_cast<Profit>(-1));
-            const ItemPos copies = j.value("copies", static_cast<ItemPos>(-1));
+            const ItemPos copies = j.value("copies", static_cast<ItemPos>(1));
             const bool oriented = j.value("oriented", false);
             const StackId stack_id = j.value("stack_id", static_cast<StackId>(-1));
 
@@ -1395,13 +1399,13 @@ namespace Packy {
             const rectangleguillotine::Instance& instance,
             const rectangleguillotine::OptimizeParameters& parameters
         ) override {
-            return std::move(rectangleguillotine::optimize(instance, parameters));
+            return rectangleguillotine::optimize(instance, parameters);
         }
 
         rectangleguillotine::Output process(
             const rectangleguillotine::Instance& instance
         ) override {
-            return std::move(rectangleguillotine::optimize(instance, parameters_));
+            return rectangleguillotine::optimize(instance, parameters_);
         }
 
         rectangleguillotine::Solution post_process_solution(
@@ -1718,13 +1722,13 @@ namespace Packy {
             const onedimensional::Instance& instance,
             const onedimensional::OptimizeParameters& parameters
         ) override {
-            return std::move(onedimensional::optimize(instance, parameters));
+            return onedimensional::optimize(instance, parameters);
         }
 
         onedimensional::Output process(
             const onedimensional::Instance& instance
         ) override {
-            return std::move(onedimensional::optimize(instance, parameters_));
+            return onedimensional::optimize(instance, parameters_);
         }
 
         onedimensional::Solution post_process_solution(
@@ -1919,7 +1923,7 @@ namespace Packy {
                     auto& j_angles = j_item.value();
                     const Angle start_angle = j_angles.value("start", static_cast<Angle>(0));
                     const Angle end_angle = j_angles.value("end", start_angle);
-                    const bool mirror = j.value("mirror", false);
+                    const bool mirror = j_angles.value("mirror", false);
                     builder.instance_builder().add_item_type_allowed_rotation(item_type_id, start_angle, end_angle, mirror);
                 }
             }
@@ -2028,13 +2032,13 @@ namespace Packy {
             const irregular::Instance& instance,
             const irregular::OptimizeParameters& parameters
         ) override {
-            return std::move(irregular::optimize(instance, parameters));
+            return irregular::optimize(instance, parameters);
         }
 
         irregular::Output process(
             const irregular::Instance& instance
         ) override {
-            return std::move(irregular::optimize(instance, parameters_));
+            return irregular::optimize(instance, parameters_);
         }
 
         irregular::Solution post_process_solution(
@@ -2187,7 +2191,7 @@ namespace Packy {
 
     private:
 
-        irregular::LengthDbl fake_trimming_y_ = false;
+        irregular::LengthDbl fake_trimming_y_ = 0.0;
 
         bool label_offsets_ = false;
 
@@ -2208,7 +2212,7 @@ namespace Packy {
                 item_shapes.emplace_back(ItemShape{fixed_shape});
             }
 
-            return std::move(item_shapes);
+            return item_shapes;
         }
 
     };

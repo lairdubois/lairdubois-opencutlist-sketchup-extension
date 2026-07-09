@@ -3,12 +3,18 @@
 #include <manifold/manifold.h>
 #include <nlohmann/json.hpp>
 
-#include <iostream>
+#include <cstdint>
+#include <istream>
+#include <memory>
+#include <ostream>
 #include <sstream>
-
-using namespace nlohmann;
+#include <stdexcept>
+#include <string>
+#include <vector>
 
 namespace Meshy {
+
+    using json = nlohmann::json;
 
     enum class SolverType
     {
@@ -99,7 +105,7 @@ namespace Meshy {
         virtual ~Solver() = default;
 
         virtual void read(
-            basic_json<>& j
+            const json& j
         ) {
 
             if (j.contains("operation")) {
@@ -124,7 +130,7 @@ namespace Meshy {
     public:
 
         void read(
-            basic_json<>& j
+            const json& j
         ) override {
             Solver::read(j);
 
@@ -189,15 +195,29 @@ namespace Meshy {
                     result = src_result - cut_result;
                     break;
                 }
-                case Operation::Intersection:
-                    result = cut_manifolds[0];
-                    for (std::size_t i = 1; i < cut_manifolds.size(); ++i) {
-                        result ^= cut_manifolds[i];
+                case Operation::Intersection: {
+                    // The default-constructed manifold is empty and would absorb the
+                    // whole intersection: seed result with the first operand, whichever
+                    // list it comes from, so empty lists are harmless (result stays empty).
+                    bool first = true;
+                    for (auto& manifold : cut_manifolds) {
+                        if (first) {
+                            result = manifold;
+                            first = false;
+                        } else {
+                            result ^= manifold;
+                        }
                     }
                     for (auto& manifold : src_manifolds) {
-                        result ^= manifold;
+                        if (first) {
+                            result = manifold;
+                            first = false;
+                        } else {
+                            result ^= manifold;
+                        }
                     }
                     break;
+                }
             }
 
             if (result.Status() != manifold::Manifold::Error::NoError) {
@@ -217,11 +237,11 @@ namespace Meshy {
             json output;
             write_mesh(output["fragments"].emplace_back(), result_mesh);
 
-            return std::move(output);
+            return output;
         }
 
         static void read_mesh(
-            const basic_json<>& j,
+            const json& j,
             manifold::MeshGL64& mesh
         ) {
 
@@ -269,7 +289,7 @@ namespace Meshy {
         }
 
         static void write_mesh(
-            basic_json<>& j,
+            json& j,
             const manifold::MeshGL64& mesh
         ) {
 

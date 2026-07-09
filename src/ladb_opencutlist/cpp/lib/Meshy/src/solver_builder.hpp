@@ -4,8 +4,6 @@
 
 #include <fstream>
 
-using namespace nlohmann;
-
 namespace Meshy {
 
     class SolverBuilder {
