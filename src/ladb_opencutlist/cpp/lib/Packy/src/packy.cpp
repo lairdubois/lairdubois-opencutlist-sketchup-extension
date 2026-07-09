@@ -126,9 +126,9 @@ DLL_EXPORTS char* c_optimize_advance(
                 {"run_id", run_id}
             };
             if (run.solver_ptr != nullptr) {
-                size_t solutions_size = (*run.solver_ptr).solutions_size();
+                size_t solutions_size = (*run.solver_ptr).solutions_count();
                 if (solutions_size > run.last_send_solution_pos) {
-                    j_output["solution"] = (*run.solver_ptr).solutions_back();
+                    j_output["solution"] = (*run.solver_ptr).last_solution();
                     run.last_send_solution_pos = solutions_size;
                 }
             }

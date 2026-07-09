@@ -27,10 +27,11 @@
 
 #include <mutex>
 #include <thread>
-#include <future>
 #include <algorithm>
 #include <cctype>
+#include <cmath>
 #include <exception>
+#include <stdexcept>
 #include <sstream>
 #include <atomic>
 
@@ -58,7 +59,57 @@ namespace Packy {
         std::unordered_map<BinTypeId, ItemPos> item_copies_by_bin_type;
     };
 
-    using Solutions = std::vector<json>;
+    /**
+     * Thread safe replacement for std::stringstream, given to PackingSolver as a messages stream.
+     * PackingSolver writes to it from its own threads while 'write_solution' reads 'str()'.
+     */
+    class SynchronizedMessagesStream : public std::ostream {
+
+    public:
+
+        SynchronizedMessagesStream() : std::ostream(&buf_) {}
+
+        std::string str() {
+            return buf_.str();
+        }
+
+    private:
+
+        class Buf : public std::streambuf {
+
+        public:
+
+            std::string str() {
+                std::lock_guard<std::mutex> lock(mutex_);
+                return data_;
+            }
+
+        protected:
+
+            std::streamsize xsputn(const char* s, std::streamsize n) override {
+                std::lock_guard<std::mutex> lock(mutex_);
+                data_.append(s, static_cast<size_t>(n));
+                return n;
+            }
+
+            int_type overflow(int_type ch) override {
+                if (ch != traits_type::eof()) {
+                    std::lock_guard<std::mutex> lock(mutex_);
+                    data_.push_back(static_cast<char>(ch));
+                }
+                return ch;
+            }
+
+        private:
+
+            std::mutex mutex_;
+            std::string data_;
+
+        };
+
+        Buf buf_;
+
+    };
 
     class Solver {
 
@@ -82,8 +133,8 @@ namespace Packy {
          * Getters
          */
 
-        virtual size_t solutions_size() = 0;
-        virtual json solutions_back() = 0;
+        virtual size_t solutions_count() = 0;
+        virtual json last_solution() = 0;
 
         /*
          * Read:
@@ -124,7 +175,11 @@ namespace Packy {
         }
 
         ItemTypeMeta& item_type_meta(ItemTypeId item_type_id) {
-            return item_type_metas_[item_type_id];
+            auto it = item_type_metas_.find(item_type_id);
+            if (it == item_type_metas_.end()) {
+                throw std::invalid_argument("Unknown item_type_id=" + std::to_string(item_type_id));
+            }
+            return it->second;
         }
 
         BinTypeMetas& bin_type_metas() {
@@ -132,7 +187,11 @@ namespace Packy {
         }
 
         BinTypeMeta& bin_type_meta(BinTypeId bin_type_id) {
-            return bin_type_metas_[bin_type_id];
+            auto it = bin_type_metas_.find(bin_type_id);
+            if (it == bin_type_metas_.end()) {
+                throw std::invalid_argument("Unknown bin_type_id=" + std::to_string(bin_type_id));
+            }
+            return it->second;
         }
 
         /*
@@ -190,14 +249,14 @@ namespace Packy {
          * Getters
          */
 
-        size_t solutions_size() override {
+        size_t solutions_count() override {
             std::lock_guard<std::mutex> lock(solutions_mutex_);
-            return solutions_.size();
+            return solutions_count_;
         };
 
-        json solutions_back() override {
+        json last_solution() override {
             std::lock_guard<std::mutex> lock(solutions_mutex_);
-            return std::move(solutions_.back());
+            return last_solution_;
         };
 
         /*
@@ -241,15 +300,16 @@ namespace Packy {
         /** Parameters. */
         OptimizeParameters parameters_;
 
-        /** Solutions. */
-        Solutions solutions_;
+        /** Last solution found and count of solutions found so far ('solutions_count_' only grows). */
+        json last_solution_;
+        size_t solutions_count_ = 0;
 
-        /** TODO : find a better solution to prevent solution concurrency ? */
+        /** Protects 'last_solution_' and 'solutions_count_'. */
         std::mutex solutions_mutex_;
 
         /** Messages */
         bool messages_to_solution_ = false;
-        std::stringstream messages_stream_;
+        SynchronizedMessagesStream messages_stream_;
 
         /** Instance (native PackingSolver instance write) */
         std::string instance_path_;
@@ -262,6 +322,7 @@ namespace Packy {
          */
 
         virtual Instance pre_process() {
+
             // Build origin instance
             Instance orig_instance = orig_builder_.instance_builder().build();
 
@@ -285,99 +346,104 @@ namespace Packy {
                 std::mutex task_errors_mutex;
                 std::atomic_bool stop_requested(false);
 
-                std::vector<std::future<void>> futures;
-                futures.reserve(number_of_threads_for_pre_process_);
+                auto validate_item_type = [&](const ItemTypeId item_type_id) {
 
-                auto launch_validation = [&](const ItemTypeId item_type_id) {
-                    return std::async(std::launch::async, [&, item_type_id]() {
+                    try {
+
+                        // Init a validator instance builder
+                        InstanceBuilder validator_builder;
+                        validator_builder.set_objective(Objective::Knapsack);
+                        validator_builder.set_parameters(orig_instance.parameters());
+
+                        // Copy item type (with only 1 copy)
+                        const auto& item_type = orig_instance.item_type(item_type_id);
+                        validator_builder.add_item_type(orig_instance, item_type_id, item_type.profit, 1);
+
+                        // Copy bin types (with only 1 copy)
+                        for (BinTypeId bin_type_id = 0;
+                             bin_type_id < orig_instance.number_of_bin_types();
+                             ++bin_type_id
+                        ) {
+
+                            if (stop_requested.load(std::memory_order_relaxed)) return;
+
+                            const auto& bin_type = orig_instance.bin_type(bin_type_id);
+                            validator_builder.add_bin_type(orig_instance, bin_type_id, 1);
+
+                        }
 
                         if (stop_requested.load(std::memory_order_relaxed)) return;
 
-                        try {
+                        // Build validator instance
+                        const Instance& validator_instance = validator_builder.build();
 
-                            // Init a validator instance builder
-                            InstanceBuilder validator_builder;
-                            validator_builder.set_objective(Objective::Knapsack);
-                            validator_builder.set_parameters(orig_instance.parameters());
+                        OptimizeParameters validator_parameters;
+                        validator_parameters.timer = parameters_.timer;
+                        validator_parameters.linear_programming_solver_name = parameters_.linear_programming_solver_name;
+                        validator_parameters.optimization_mode = OptimizationMode::NotAnytimeSequential;
+                        validator_parameters.verbosity_level = 0;
 
-                            // Copy item type (with only 1 copy)
-                            const auto& item_type = orig_instance.item_type(item_type_id);
-                            validator_builder.add_item_type(orig_instance, item_type_id, item_type.profit, 1);
+                        // Compute output
+                        Output output = pre_process_optimize(validator_instance, validator_parameters);
 
-                            // Copy bin types (with only 1 copy)
-                            for (BinTypeId bin_type_id = 0;
-                                 bin_type_id < orig_instance.number_of_bin_types();
-                                 ++bin_type_id
-                            ) {
+                        if (stop_requested.load(std::memory_order_relaxed)) return;
 
-                                if (stop_requested.load(std::memory_order_relaxed)) return;
-
-                                const auto& bin_type = orig_instance.bin_type(bin_type_id);
-                                validator_builder.add_bin_type(orig_instance, bin_type_id, 1);
-
+                        {
+                            std::lock_guard<std::mutex> lock(usable_mutex);
+                            if (output.solution_pool.best().full()) {
+                                usable_item_type_ids.push_back(item_type_id);
+                            } else {
+                                unusable_item_type_ids.push_back(item_type_id);
                             }
-
-                            if (stop_requested.load(std::memory_order_relaxed)) return;
-
-                            // Build validator instance
-                            const Instance& validator_instance = validator_builder.build();
-
-                            OptimizeParameters validator_parameters;
-                            validator_parameters.timer = parameters_.timer;
-                            validator_parameters.linear_programming_solver_name = parameters_.linear_programming_solver_name;
-                            validator_parameters.optimization_mode = OptimizationMode::NotAnytimeSequential;
-                            validator_parameters.verbosity_level = 0;
-
-                            // Compute output
-                            Output output = pre_process_optimize(validator_instance, validator_parameters);
-
-                            if (stop_requested.load(std::memory_order_relaxed)) return;
-
-                            {
-                                std::lock_guard<std::mutex> lock(usable_mutex);
-                                if (output.solution_pool.best().full()) {
-                                    usable_item_type_ids.push_back(item_type_id);
-                                } else {
-                                    unusable_item_type_ids.push_back(item_type_id);
-                                }
-                            }
-
-                        } catch (const std::exception& e) {
-                            stop_requested.store(true, std::memory_order_relaxed);
-                            std::lock_guard<std::mutex> lock(task_errors_mutex);
-                            task_errors.emplace_back(
-                                "item_type_id=" + std::to_string(item_type_id) + ": " + e.what()
-                            );
-                        } catch (...) {
-                            stop_requested.store(true, std::memory_order_relaxed);
-                            std::lock_guard<std::mutex> lock(task_errors_mutex);
-                            task_errors.emplace_back(
-                                "item_type_id=" + std::to_string(item_type_id) + ": unknown exception"
-                            );
                         }
-                    });
+
+                    } catch (const std::exception& e) {
+                        stop_requested.store(true, std::memory_order_relaxed);
+                        std::lock_guard<std::mutex> lock(task_errors_mutex);
+                        task_errors.emplace_back(
+                            "item_type_id=" + std::to_string(item_type_id) + ": " + e.what()
+                        );
+                    } catch (...) {
+                        stop_requested.store(true, std::memory_order_relaxed);
+                        std::lock_guard<std::mutex> lock(task_errors_mutex);
+                        task_errors.emplace_back(
+                            "item_type_id=" + std::to_string(item_type_id) + ": unknown exception"
+                        );
+                    }
                 };
 
-                for (ItemTypeId item_type_id = 0;
-                     item_type_id < orig_instance.number_of_item_types();
-                     ++item_type_id
-                ) {
-                    if (stop_requested.load(std::memory_order_relaxed)) break;
+                /*
+                 * Each validation runs single threaded ('NotAnytimeSequential'). Workers pull
+                 * the next item type from a shared counter, so a slow item never stalls the others.
+                 * 'validate_item_type' catches every exception, letting none escape the worker threads.
+                 */
 
-                    futures.emplace_back(launch_validation(item_type_id));
+                const auto number_of_item_types = orig_instance.number_of_item_types();
+                std::atomic<ItemTypeId> next_item_type_id(0);
 
-                    if (futures.size() >= number_of_threads_for_pre_process_) {
-                        for (auto& future : futures) {
-                            future.get();
-                            if (stop_requested.load(std::memory_order_relaxed)) break;
-                        }
-                        futures.clear();
+                auto worker = [&]() {
+                    while (!stop_requested.load(std::memory_order_relaxed)) {
+                        const ItemTypeId item_type_id = next_item_type_id.fetch_add(1, std::memory_order_relaxed);
+                        if (item_type_id >= number_of_item_types) break;
+                        validate_item_type(item_type_id);
                     }
-                }
+                };
 
-                for (auto& future : futures) {
-                    future.get();
-                    if (stop_requested.load(std::memory_order_relaxed)) break;
+                const size_t number_of_workers = std::min(
+                    static_cast<size_t>(number_of_threads_for_pre_process_),
+                    static_cast<size_t>(number_of_item_types)
+                );
+
+                if (number_of_workers > 0) {
+                    std::vector<std::thread> worker_threads;
+                    worker_threads.reserve(number_of_workers - 1);
+                    for (size_t i = 1; i < number_of_workers; ++i) {
+                        worker_threads.emplace_back(worker);
+                    }
+                    worker();   // The calling thread is a worker too
+                    for (auto& worker_thread : worker_threads) {
+                        worker_thread.join();
+                    }
                 }
 
                 if (!task_errors.empty()) {
@@ -529,10 +595,8 @@ namespace Packy {
                 }
             }
             if (j.contains("length_truncate_precision")) {
-                length_truncate_precision_ = j.value("length_truncate_precision", 3);
-                if (length_truncate_precision_ < 0) {
-                    length_truncate_precision_ = 0;
-                }
+                // Clamp before the int8_t conversion. 15 = maximum significant decimal digits of a double.
+                length_truncate_precision_ = static_cast<int8_t>(std::clamp(j.value("length_truncate_precision", 3), 0, 15));
             }
 
             if (j.contains("use_pre_process")) {
@@ -585,17 +649,23 @@ namespace Packy {
             }
 
             if (j.contains("linear_programming_solver")) {
-                columngenerationsolver::SolverName linear_programming_solver_name;
+                columngenerationsolver::SolverName linear_programming_solver_name = columngenerationsolver::SolverName::Highs;
                 std::stringstream ss(j.value("linear_programming_solver", "highs"));
                 ss >> linear_programming_solver_name;
+                if (ss.fail()) {
+                    throw std::invalid_argument("Unknown linear_programming_solver=" + j.value("linear_programming_solver", ""));
+                }
                 parameters_.linear_programming_solver_name = linear_programming_solver_name;
             } else {
                 parameters_.linear_programming_solver_name = columngenerationsolver::SolverName::Highs;
             }
             if (j.contains("optimization_mode")) {
-                OptimizationMode optimization_mode;
+                OptimizationMode optimization_mode = OptimizationMode::NotAnytimeDeterministic;
                 std::stringstream ss(j.value("optimization_mode", "not-anytime-deterministic"));
                 ss >> optimization_mode;
+                if (ss.fail()) {
+                    throw std::invalid_argument("Unknown optimization_mode=" + j.value("optimization_mode", ""));
+                }
                 parameters_.optimization_mode = optimization_mode;
             }
 
@@ -635,10 +705,16 @@ namespace Packy {
             parameters_.new_solution_callback = [&](
                     const packingsolver::Output<Instance, Solution>& output
             ) {
-                std::lock_guard<std::mutex> lock(solutions_mutex_);
-                json j_solution;
-                write_solution(j_solution, dynamic_cast<const Output&>(output).solution_pool.best(), output.time, false);
-                solutions_.push_back(j_solution);
+                try {
+                    std::lock_guard<std::mutex> lock(solutions_mutex_);
+                    json j_solution;
+                    write_solution(j_solution, output.solution_pool.best(), output.time, false);
+                    last_solution_ = std::move(j_solution);
+                    ++solutions_count_;
+                } catch (...) {
+                    // Never let an exception escape into PackingSolver threads.
+                    // The final 'write_solution' will reraise it on the optimize thread where it is caught and reported.
+                }
             };
 
         };
@@ -649,9 +725,12 @@ namespace Packy {
         ) {
 
             if (j.contains("objective")) {
-                Objective objective;
+                Objective objective = Objective::Default;
                 std::stringstream ss(j.value("objective", "default"));
                 ss >> objective;
+                if (ss.fail()) {
+                    throw std::invalid_argument("Unknown objective=" + j.value("objective", ""));
+                }
                 builder.instance_builder().set_objective(objective);
             }
             if (j.contains("parameters")) {
@@ -713,7 +792,7 @@ namespace Packy {
                 bin_type_meta.copies = j_item_value.value("copies", static_cast<BinPos>(1));
                 bin_type_meta.width_dbl = j_item_value.value("width", static_cast<double>(0));
                 bin_type_meta.height_dbl = j_item_value.value("height", static_cast<double>(0));
-                orig_builder_.set_bin_type_meta(bin_type_id, bin_type_meta);
+                builder.set_bin_type_meta(bin_type_id, bin_type_meta);
 
             }
 
@@ -924,10 +1003,12 @@ namespace Packy {
         ) override {
 
             if (j.contains("leftover_mode")) {
-                std::stringstream leftover_mode_ss;
-                leftover_mode_ss << std::string(j["leftover_mode"]);
-                rectangle::LeftoverMode leftover_mode;
-                leftover_mode_ss >> leftover_mode;
+                rectangle::LeftoverMode leftover_mode = rectangle::LeftoverMode::Area;   // PackingSolver default
+                std::stringstream ss(j.value("leftover_mode", "area"));
+                ss >> leftover_mode;
+                if (ss.fail()) {
+                    throw std::invalid_argument("Unknown leftover_mode=" + j.value("leftover_mode", ""));
+                }
                 builder.instance_builder().set_leftover_mode(leftover_mode);
             }
 
@@ -985,8 +1066,18 @@ namespace Packy {
             const BinPos copies_min = j.value("copies_min", static_cast<BinPos>(0));
 
             if (fake_trimming_ > 0) {
-                if (width >= 0) width -= fake_trimming_ * 2;
-                if (height >= 0) height -= fake_trimming_ * 2;
+                if (width >= 0) {
+                    width -= fake_trimming_ * 2;
+                    if (width <= 0) {
+                        throw std::invalid_argument("Bin type width=" + std::to_string(j.value("width", 0.0)) + " is too small for trimming=" + std::to_string(to_length_dbl(fake_trimming_)));
+                    }
+                }
+                if (height >= 0) {
+                    height -= fake_trimming_ * 2;
+                    if (height <= 0) {
+                        throw std::invalid_argument("Bin type height=" + std::to_string(j.value("height", 0.0)) + " is too small for trimming=" + std::to_string(to_length_dbl(fake_trimming_)));
+                    }
+                }
             }
             if (fake_spacing_ > 0) {
                 if (width >= 0) width += fake_spacing_;
@@ -1084,7 +1175,7 @@ namespace Packy {
 
             j_bin["space"] = to_area_dbl(bin_space);
             j_bin["waste"] = to_area_dbl(bin_space - items_space);
-            j_bin["efficiency"] = static_cast<double>(items_space) / bin_space;
+            j_bin["efficiency"] = bin_space > 0 ? static_cast<double>(items_space) / static_cast<double>(bin_space) : 0.0;
 
             Length cut_length = 0;
 
@@ -1180,15 +1271,21 @@ namespace Packy {
                 builder.instance_builder().set_number_of_stages(j["number_of_stages"].get<Counter>());
             }
             if (j.contains("cut_type")) {
-                CutType cut_type;
+                CutType cut_type = CutType::NonExact;
                 std::stringstream ss(j.value("cut_type", "non-exact"));
                 ss >> cut_type;
+                if (ss.fail()) {
+                    throw std::invalid_argument("Unknown cut_type=" + j.value("cut_type", ""));
+                }
                 builder.instance_builder().set_cut_type(cut_type);
             }
             if (j.contains("first_stage_orientation")) {
-                CutOrientation first_stage_orientation;
+                CutOrientation first_stage_orientation = CutOrientation::Horizontal;
                 std::stringstream ss(j.value("first_stage_orientation", "horizontal"));
                 ss >> first_stage_orientation;
+                if (ss.fail()) {
+                    throw std::invalid_argument("Unknown first_stage_orientation=" + j.value("first_stage_orientation", ""));
+                }
                 builder.instance_builder().set_first_stage_orientation(first_stage_orientation);
             }
             if (j.contains("minimum_distance_1_cuts")) {
@@ -1317,6 +1414,9 @@ namespace Packy {
             if (j.contains("left_trim_type")) {
                 std::stringstream ss(j.value("left_trim_type", "hard"));
                 ss >> left_trim_type;
+                if (ss.fail()) {
+                    throw std::invalid_argument("Unknown left_trim_type=" + j.value("left_trim_type", ""));
+                }
             }
 
             Length right_trim = 0;
@@ -1327,6 +1427,9 @@ namespace Packy {
             if (j.contains("right_trim_type")) {
                 std::stringstream ss(j.value("right_trim_type", "soft"));
                 ss >> right_trim_type;
+                if (ss.fail()) {
+                    throw std::invalid_argument("Unknown right_trim_type=" + j.value("right_trim_type", ""));
+                }
             }
 
             Length bottom_trim = 0;
@@ -1337,6 +1440,9 @@ namespace Packy {
             if (j.contains("bottom_trim_type")) {
                 std::stringstream ss(j.value("bottom_trim_type", "hard"));
                 ss >> bottom_trim_type;
+                if (ss.fail()) {
+                    throw std::invalid_argument("Unknown bottom_trim_type=" + j.value("bottom_trim_type", ""));
+                }
             }
 
             Length top_trim = 0;
@@ -1347,6 +1453,9 @@ namespace Packy {
             if (j.contains("top_trim_type")) {
                 std::stringstream ss(j.value("top_trim_type", "soft"));
                 ss >> top_trim_type;
+                if (ss.fail()) {
+                    throw std::invalid_argument("Unknown top_trim_type=" + j.value("top_trim_type", ""));
+                }
             }
 
             builder.instance_builder().add_trims(
@@ -1448,7 +1557,7 @@ namespace Packy {
 
             j_bin["space"] = to_area_dbl(bin_space);
             j_bin["waste"] = to_area_dbl(bin_space - items_space);
-            j_bin["efficiency"] = static_cast<double>(items_space) / bin_space;
+            j_bin["efficiency"] = bin_space > 0 ? static_cast<double>(items_space) / static_cast<double>(bin_space) : 0.0;
 
             Length cut_length = 0;
             int32_t number_of_leftovers_to_keep = 0;
@@ -1700,7 +1809,12 @@ namespace Packy {
             const BinPos copies_min = j.value("copies_min", static_cast<BinPos>(0));
 
             if (fake_trimming_ > 0) {
-                if (width >= 0) width -= fake_trimming_ * 2;
+                if (width >= 0) {
+                    width -= fake_trimming_ * 2;
+                    if (width <= 0) {
+                        throw std::invalid_argument("Bin type width=" + std::to_string(j.value("width", 0.0)) + " is too small for trimming=" + std::to_string(to_length_dbl(fake_trimming_)));
+                    }
+                }
             }
             if (fake_spacing_ > 0) {
                 if (width >= 0) width += fake_spacing_;
@@ -1758,7 +1872,7 @@ namespace Packy {
 
             j_bin["space"] = to_length_dbl(bin_space);
             j_bin["waste"] = to_length_dbl(bin_space - items_space);
-            j_bin["efficiency"] = static_cast<double>(items_space) / bin_space;
+            j_bin["efficiency"] = bin_space > 0 ? static_cast<double>(items_space) / static_cast<double>(bin_space) : 0.0;
 
             // Items, Leftover & Cuts.
             basic_json<>& j_items = j_bin["items"] = json::array();
@@ -1869,10 +1983,12 @@ namespace Packy {
                 builder.instance_builder().set_item_item_minimum_spacing(j["item_item_minimum_spacing"].get<irregular::LengthDbl>());
             }
             if (j.contains("leftover_mode")) {
-                std::stringstream leftover_mode_ss;
-                leftover_mode_ss << std::string(j["leftover_mode"]);
-                irregular::LeftoverMode leftover_mode;
-                leftover_mode_ss >> leftover_mode;
+                irregular::LeftoverMode leftover_mode = irregular::LeftoverMode::BottomLeft;   // PackingSolver default
+                std::stringstream ss(j.value("leftover_mode", "bottom-left"));
+                ss >> leftover_mode;
+                if (ss.fail()) {
+                    throw std::invalid_argument("Unknown leftover_mode=" + j.value("leftover_mode", ""));
+                }
                 builder.instance_builder().set_leftover_mode(leftover_mode);
             }
 
@@ -1906,6 +2022,10 @@ namespace Packy {
                     item_shapes.push_back(item_shape);
                 }
 
+            }
+
+            if (item_shapes.empty()) {
+                throw std::invalid_argument("Item type has no valid shape (empty or degenerate geometry)");
             }
 
             const Profit profit = j.value("profit", static_cast<Profit>(-1));
@@ -2068,7 +2188,7 @@ namespace Packy {
 
             j_bin["space"] = to_area_dbl(bin_space);
             j_bin["waste"] = to_area_dbl(bin_space - items_space);
-            j_bin["efficiency"] = items_space / bin_space;
+            j_bin["efficiency"] = bin_space > 0 ? items_space / bin_space : 0.0;
 
             int number_of_cuts = 0;
             LengthDbl cut_length = 0;
@@ -2124,7 +2244,11 @@ namespace Packy {
 
                 auto item_type = solution.instance().item_type(item_type_id);
 
-                irregular::ItemShape largest_item_shape;
+                if (item_type.shapes.empty()) {
+                    return;     // No shape, no label offset ('read_item_type' normally rejects such items)
+                }
+
+                const irregular::ItemShape* largest_item_shape = &item_type.shapes.front();
                 std::pair<shape::Point, shape::Point> min_max;
 
                 if (item_type.shapes.size() > 1) {
@@ -2153,18 +2277,15 @@ namespace Packy {
 
                         if (area > max_area) {
                             max_area = area;
-                            largest_item_shape = item_shape;
+                            largest_item_shape = &item_shape;
                         }
 
                     }
 
                 } else {
 
-                    // Use the first item shape
-                    largest_item_shape = item_type.shapes.front();
-
-                    // Compute min max
-                    auto aabb = largest_item_shape.shape_orig.compute_min_max();
+                    // Compute min max of the single item shape
+                    auto aabb = largest_item_shape->shape_orig.compute_min_max();
                     min_max = {
                         { aabb.x_min, aabb.y_min },
                         { aabb.x_max, aabb.y_max }
@@ -2176,8 +2297,12 @@ namespace Packy {
                 auto item_length = min_max.second.x - min_max.first.x;
                 auto item_width = min_max.second.y - min_max.first.y;
 
+                if (!std::isfinite(item_length) || !std::isfinite(item_width)) {
+                    return;     // Degenerate geometry, the label offset would be NaN
+                }
+
                 // Find label position
-                shape::Point label_position = shape::find_label_position(largest_item_shape.shape_orig);
+                shape::Point label_position = shape::find_label_position(largest_item_shape->shape_orig);
 
                 // Write the label offset (relative to the item shapes center)
                 j_item_type_stats["label_offset"] = json{
