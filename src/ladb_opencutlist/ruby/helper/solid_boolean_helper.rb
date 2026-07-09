@@ -127,10 +127,12 @@ module Ladb::OpenCutList
       model.start_operation('OCL Solid Boolean', true)
       begin
 
-        # Rebuild the result inside the source entity to preserve its identity
+        # Rebuild the result inside the source entity to preserve its identity.
+        # Only the operand faces (and their own edges) are erased : other entities
+        # (nested instances, construction geometry, dimensions...) are preserved.
         src_entity.make_unique if src_entity.definition.instances.length > 1
         definition_entities = src_entity.definition.entities
-        glued_instances = _solid_clear_preserving_glued!(definition_entities)
+        glued_instances = _solid_erase_faces!(definition_entities, definition_entities.grep(Sketchup::Face))
         created_faces = _solid_fragments_to_geometry(
           result_def.fragment_defs,
           definition_entities,
@@ -287,10 +289,10 @@ module Ladb::OpenCutList
         end
       }
 
-      # Original curve pieces. Segments are captured in world coordinates : bring
+      # Original curve pieces. Segments are captured in world coordinates: bring
       # them into the destination space (mirror is harmless on point pairs). Cut
       # pieces end on intersection vertices that still lie ON the source segments,
-      # and Manifold may merge collinear sub-segments : each point is therefore
+      # and Manifold may merge collinear sub-segments: each point is therefore
       # tested against the whole segment set of the curve.
       attributed_edges = {}
       unless curve_info_defs.empty?
@@ -314,9 +316,9 @@ module Ladb::OpenCutList
         edges_by_curve_index.each_value(&fn_weld)
       end
 
-      # Intersection seams : group by the set of original surfaces involved so that
+      # Intersection seams: group by the set of original surfaces involved so that
       # a seam crossing several (possibly merged) planar faces stays one chain.
-      # Plane/plane intersections are straight lines : nothing to weld.
+      # Plane/plane intersections are straight lines: nothing to weld.
       edges_by_seam_key = {}
       new_edges.each do |edge|
         next if attributed_edges.key?(edge)
@@ -337,6 +339,34 @@ module Ladb::OpenCutList
       nil
     end
 
+    # Temporary dictionary used to track faces through make_unique: attributes
+    # survive the definition cloning, entity references do not.
+    TRACKING_DICTIONARY = 'ladb_opencutlist_csg'.freeze
+    TRACKING_FACE_KEY = 'operand'.freeze
+
+    # Makes entity unique if its definition is shared with other instances, and
+    # returns the given definition faces re-resolved in the (possibly cloned)
+    # definition. The original definition is left untouched.
+    def _solid_make_unique_tracking_faces!(entity, faces)
+      faces = faces.reject(&:deleted?)
+      return faces if entity.definition.instances.length <= 1
+
+      cloned_faces = []
+      faces.each { |face| face.set_attribute(TRACKING_DICTIONARY, TRACKING_FACE_KEY, true) }
+      begin
+        entity.make_unique
+        entity.definition.entities.grep(Sketchup::Face).each do |face|
+          next unless face.get_attribute(TRACKING_DICTIONARY, TRACKING_FACE_KEY)
+          face.delete_attribute(TRACKING_DICTIONARY)
+          cloned_faces << face
+        end
+      ensure
+        # Untag the original definition faces
+        faces.each { |face| face.delete_attribute(TRACKING_DICTIONARY) unless face.deleted? }
+      end
+      cloned_faces
+    end
+
     # Returns the component instances (and groups) glued to the given faces.
     def _solid_glued_instances(faces)
       instances = []
@@ -347,16 +377,24 @@ module Ladb::OpenCutList
       instances.uniq
     end
 
-    # Clears the given entities except the instances glued to its faces, and
-    # returns those instances, to be re-glued via _solid_reglue_instances once
-    # the geometry is rebuilt.
-    def _solid_clear_preserving_glued!(entities)
-      glued_instances = _solid_glued_instances(entities.grep(Sketchup::Face)) & entities.to_a
-      if glued_instances.empty?
-        entities.clear!
-      else
-        entities.erase_entities(entities.to_a - glued_instances)
-      end
+    # Erases the given faces and the edges that only bound them. Every other
+    # entity is preserved: nested instances and groups, construction geometry,
+    # dimensions, texts, standalone edges, faces not involved in the operation
+    # (and the edges they share with erased faces).
+    # Instances glued to the erased faces are preserved too and returned, to be
+    # re-glued via _solid_reglue_instances once the geometry is rebuilt.
+    def _solid_erase_faces!(entities, faces)
+      faces = faces.reject(&:deleted?)
+      return [] if faces.empty?
+
+      glued_instances = _solid_glued_instances(faces) & entities.to_a
+
+      face_set = {}
+      faces.each { |face| face_set[face] = true }
+      edges = faces.flat_map(&:edges).uniq.select { |edge| edge.faces.all? { |edge_face| face_set.key?(edge_face) } }
+
+      entities.erase_entities(faces + edges)
+
       glued_instances
     end
 

@@ -4028,14 +4028,12 @@ module Ladb::OpenCutList
           cut_container = @cut_drawing_def.container
 
           # Consume cut geometry. When src and cut share the same container, the
-          # source rebuild below wipes the cut solid as well.
+          # cut faces join the source erase set below instead.
           unless !src_container.nil? && cut_container == src_container
             if cut_container.is_a?(Sketchup::Group) || cut_container.is_a?(Sketchup::ComponentInstance)
               cut_container.erase! unless cut_container.deleted?
             else
-              faces = @cut_drawing_def.face_manipulators.map(&:face).reject(&:deleted?)
-              edges = faces.flat_map(&:edges).uniq.reject(&:deleted?)
-              model.entities.erase_entities(faces + edges)
+              _solid_erase_faces!(model.entities, @cut_drawing_def.face_manipulators.map(&:face))
             end
           end
 
@@ -4043,19 +4041,20 @@ module Ladb::OpenCutList
 
             # Rebuild the result inside the source entity to preserve its identity
             # (name, attributes, material, layer, transformation, persistent id).
-            src_container.make_unique if src_container.definition.instances.length > 1
+            # Only the operand faces are erased : make_unique clones the definition,
+            # so they are re-resolved through it by tracking.
+            src_faces = @src_drawing_def.face_manipulators.map(&:face)
+            src_faces += @cut_drawing_def.face_manipulators.map(&:face) if cut_container == src_container
+            src_faces = _solid_make_unique_tracking_faces!(src_container, src_faces)
             entities = src_container.definition.entities
-            glued_instances = _solid_clear_preserving_glued!(entities)
+            glued_instances = _solid_erase_faces!(entities, src_faces)
             created_faces = _solid_fragments_to_geometry(result_def.fragment_defs, entities, transformation: @src_container_transformation.inverse, curve_info_defs: result_def.curve_info_defs)
             _solid_reglue_instances(glued_instances, created_faces)
 
           else
 
             # Lose geometry at the model root: replace it in place.
-            faces = @src_drawing_def.face_manipulators.map(&:face).reject(&:deleted?)
-            edges = faces.flat_map(&:edges).uniq.reject(&:deleted?)
-            glued_instances = _solid_glued_instances(faces)
-            model.entities.erase_entities(faces + edges)
+            glued_instances = _solid_erase_faces!(model.entities, @src_drawing_def.face_manipulators.map(&:face))
             created_faces = _solid_fragments_to_geometry(result_def.fragment_defs, model.entities, curve_info_defs: result_def.curve_info_defs)
             _solid_reglue_instances(glued_instances, created_faces)
 
