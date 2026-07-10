@@ -1,3 +1,4 @@
+
 module Ladb::OpenCutList
 
   require_relative 'common_solid_boolean_worker'
@@ -20,6 +21,16 @@ module Ladb::OpenCutList
   #   preserved ; otherwise the root container of its first src drawing def
   #   (SolidFragmentDef#src_indices). Containers keep their identity (name,
   #   attributes, material, layer, transformation, persistent id),
+  # - preserves shared definitions : src root containers sharing a definition
+  #   before the operation keep sharing ONE definition after, when the
+  #   operation leaves them identical (same result in their own local space,
+  #   canonical signature comparison). When the definition has other,
+  #   non-operand instances, the identical srcs are reattached to the
+  #   representative's made-unique definition (ComponentInstance#definition=,
+  #   SketchUp >= 2022 ; otherwise distinct definitions, as before). Srcs whose
+  #   identical local cut environment is provable up front are additionally
+  #   excluded from the computation itself (one Manifold pass per placement,
+  #   see _plan_shared_computation),
   # - erases the containers left empty (consumed srcs and sub containers) and
   #   the cut containers (unless keep_cuts),
   # - leaves glued cuts-opening containers (virtual machinings) out of the
@@ -89,7 +100,19 @@ module Ladb::OpenCutList
       end
 
       result_def = @result_def
-      result_def = CommonSolidBooleanWorker.new(@src_drawing_defs, @cut_drawing_defs, operation: @operation, validate: @validate).run if result_def.nil?
+      if result_def.nil?
+        # Srcs provably identical to a representative (same definition, same
+        # local cut environment) are excluded from the computation : the shared
+        # definition planning attaches them to their representative's result.
+        # Not applicable in keep_srcs mode (every fragment is rebuilt) nor on a
+        # precomputed result_def (obtained from the full src list).
+        @precomputed_shared = @keep_srcs ? {} : _plan_shared_computation
+        @computed_src_drawing_defs = @src_drawing_defs.reject { |drawing_def| @precomputed_shared.key?(drawing_def) }
+        result_def = CommonSolidBooleanWorker.new(@computed_src_drawing_defs, @cut_drawing_defs, operation: @operation, validate: @validate).run
+      else
+        @precomputed_shared = {}
+        @computed_src_drawing_defs = @src_drawing_defs
+      end
       return result_def unless result_def.is_a?(SolidBooleanResultDef) && result_def.success?
 
       if (model = Sketchup.active_model).nil?
@@ -113,6 +136,35 @@ module Ladb::OpenCutList
 
         src_containers = @src_drawing_defs.map { |drawing_def| drawing_def.container }
 
+        # Register the src container nodes (rebuild targets, with their tree
+        # path) and attribute the fragments to them (face provenance, falling
+        # back to the root container of their first src drawing def when the
+        # provenance is ambiguous). Needed up front : the shared definition
+        # planning below compares the per-src attributed results.
+        src_node_owners = {}
+        src_node_paths = {}
+        fn_register_nodes = lambda { |container_def, drawing_def, path|
+          src_node_owners[container_def] = drawing_def
+          src_node_paths[container_def] = path
+          container_def.container_defs.each_with_index { |child_def, child_index| fn_register_nodes.call(child_def, drawing_def, path + [ child_index ]) }
+        }
+        @src_drawing_defs.each { |drawing_def| fn_register_nodes.call(drawing_def, drawing_def, []) }
+
+        fragments_by_target = {}
+        result_def.fragment_defs.each do |fragment_def|
+          target_container_def = _fragment_source_container_def(fragment_def, src_node_owners)
+          target_container_def = @computed_src_drawing_defs[fragment_def.src_indices.first || 0] if target_container_def.nil?
+          next if target_container_def.nil?
+          (fragments_by_target[target_container_def] ||= []) << fragment_def
+        end
+
+        # Plan the shared definition preservation : srcs sharing a definition
+        # and left identical by the operation are handled by a single pass on
+        # a representative, the others are dropped (and reattached in Case B).
+        shared_plan = _plan_shared_definitions(result_def, fragments_by_target, src_node_owners, src_node_paths)
+        dropped_drawing_defs = shared_plan[:dropped_drawing_defs]
+        effective_src_containers = @src_drawing_defs.reject { |drawing_def| dropped_drawing_defs.key?(drawing_def) }.map { |drawing_def| drawing_def.container }
+
         # Group the operand trees by root container : one erase pass per
         # container, so that faces coming from several drawing defs sharing the
         # same container are handled by a single make_unique cascade.
@@ -126,7 +178,7 @@ module Ladb::OpenCutList
           _append_container_def_to_node(drawing_def, fn_pass.call(drawing_def.container)[:root_node])
         }
 
-        @src_drawing_defs.each(&fn_add_tree)
+        @src_drawing_defs.each { |drawing_def| fn_add_tree.call(drawing_def) unless dropped_drawing_defs.key?(drawing_def) }
 
         # Cut consumption. A cut root container is erased wholesale, except when
         # it shares its container with a src (its faces join the pass), when its
@@ -140,7 +192,7 @@ module Ladb::OpenCutList
             if (container.is_a?(Sketchup::Group) || container.is_a?(Sketchup::ComponentInstance)) && !src_containers.include?(container)
               host_container = nil
               if container.parent.is_a?(Sketchup::ComponentDefinition)
-                host_container = src_containers.find { |src_container|
+                host_container = effective_src_containers.find { |src_container|
                   (src_container.is_a?(Sketchup::Group) || src_container.is_a?(Sketchup::ComponentInstance)) &&
                     !src_container.deleted? && src_container.definition == container.parent
                 }
@@ -176,7 +228,9 @@ module Ladb::OpenCutList
           passes.each do |container, pass|
             if container.is_a?(Sketchup::Group) || container.is_a?(Sketchup::ComponentInstance)
               next if container.deleted?
-              container.make_unique if container.definition.instances.length > 1
+              # Case A shared srcs : every instance displays the rebuilt
+              # definition, making it unique would break the sharing
+              container.make_unique if container.definition.instances.length > 1 && !shared_plan[:skip_make_unique_containers].key?(container)
               entities = container.definition.entities
               owner = container
             else
@@ -192,28 +246,21 @@ module Ladb::OpenCutList
           tagged_instances.each { |instance| instance.delete_attribute(TRACKING_DICTIONARY) unless instance.deleted? }
         end
 
-        # Rebuild each fragment inside the container node it comes from (face
-        # provenance), falling back to the root container of its first src
-        # drawing def when the node is ambiguous. Fragment geometry is in world
-        # coordinates.
-        src_node_owners = {}
-        fn_register_nodes = lambda { |container_def, drawing_def|
-          src_node_owners[container_def] = drawing_def
-          container_def.container_defs.each { |child_def| fn_register_nodes.call(child_def, drawing_def) }
-        }
-        @src_drawing_defs.each { |drawing_def| fn_register_nodes.call(drawing_def, drawing_def) }
-
-        fragments_by_target = {}
-        result_def.fragment_defs.each do |fragment_def|
-          target_container_def = _fragment_source_container_def(fragment_def, src_node_owners)
-          target_container_def = @src_drawing_defs[fragment_def.src_indices.first || 0] if target_container_def.nil?
-          next if target_container_def.nil?
-          (fragments_by_target[target_container_def] ||= []) << fragment_def
+        # Reattach the shared identical srcs to the representative definition
+        # (Case B : made unique by its erase pass, since other instances exist)
+        shared_plan[:reassignments].each do |instance, representative|
+          next if instance.deleted? || representative.deleted?
+          instance.definition = representative.definition
         end
 
+        # Rebuild each fragment inside the container node it comes from (face
+        # provenance, attributed up front). Fragment geometry is in world
+        # coordinates. Fragments of the dropped (shared) srcs are not rebuilt :
+        # their instances display the representative's rebuilt definition.
         created_faces_by_container = {}
         materialized_by_owner = {}
         fragments_by_target.each do |target_container_def, fragment_defs|
+          next if dropped_drawing_defs.key?(src_node_owners[target_container_def])
           owner, entities, transformation = _resolve_rebuild_target(target_container_def, src_node_owners, model)
           next if entities.nil?
           @materialized_container_defs = []
@@ -233,6 +280,15 @@ module Ladb::OpenCutList
             result_def.created_entities.concat(created_faces)
           else
             result_def.created_entities << owner unless result_def.created_entities.include?(owner)
+          end
+        end
+
+        # The other shared srcs display the representative's rebuilt definition
+        shared_plan[:shared_members].each do |representative, others|
+          next if representative.deleted? || !result_def.created_entities.include?(representative)
+          others.each do |container|
+            next if container.deleted? || result_def.created_entities.include?(container)
+            result_def.created_entities << container
           end
         end
 
@@ -418,6 +474,347 @@ module Ladb::OpenCutList
       result_def.created_entities << instance
 
       nil
+    end
+
+    # Plans the shared definition preservation : groups the src root containers
+    # by definition, compares their attributed results in their own local
+    # space (_shared_result_signature) and, per subset of identical results :
+    # - drops the non-representative drawing defs (single erase pass on the
+    #   representative, whose rebuilt definition is displayed by every member),
+    # - Case A, every live instance of the definition is a member : the
+    #   representative erase pass skips make_unique, the definition is rebuilt
+    #   in place for all,
+    # - Case B, other instances exist : the representative is made unique by
+    #   its erase pass, the other members are reattached to its new definition
+    #   (ComponentInstance#definition=, SketchUp >= 2022 : otherwise the subset
+    #   falls back to distinct definitions, as before).
+    # Srcs fused by the operation (multi src fragments) and srcs whose
+    # container is also a cut container never share.
+    def _plan_shared_definitions(result_def, fragments_by_target, src_node_owners, src_node_paths)
+
+      plan = { :dropped_drawing_defs => {}, :skip_make_unique_containers => {}, :reassignments => [], :shared_members => {} }
+
+      # Src root containers grouped by shared definition. A container picked
+      # twice as src disqualifies its group.
+      groups = {}
+      @src_drawing_defs.each do |drawing_def|
+        container = drawing_def.container
+        next unless container.is_a?(Sketchup::Group) || container.is_a?(Sketchup::ComponentInstance)
+        next if container.deleted?
+        (groups[container.definition] ||= []) << drawing_def
+      end
+      groups = groups.select { |definition, drawing_defs| drawing_defs.length > 1 && drawing_defs.map { |drawing_def| drawing_def.container }.uniq.length == drawing_defs.length }
+      return plan if groups.empty?
+
+      # Srcs fused together by the operation cannot share
+      unshareable = {}
+      result_def.fragment_defs.each do |fragment_def|
+        src_indices = fragment_def.src_indices
+        next if src_indices.nil? || src_indices.uniq.length < 2
+        src_indices.uniq.each do |src_index|
+          drawing_def = @computed_src_drawing_defs[src_index]
+          unshareable[drawing_def] = true unless drawing_def.nil?
+        end
+      end
+
+      cut_containers = @cut_drawing_defs.map { |cut_drawing_def| cut_drawing_def.container }
+
+      # Fragments attributed to each src root drawing def, with the tree path
+      # of their target node
+      fragment_paths_by_drawing_def = {}
+      fragments_by_target.each do |target_container_def, fragment_defs|
+        drawing_def = src_node_owners[target_container_def]
+        next if drawing_def.nil?
+        path = src_node_paths[target_container_def] || []
+        list = (fragment_paths_by_drawing_def[drawing_def] ||= [])
+        fragment_defs.each { |fragment_def| list << [ fragment_def, path ] }
+      end
+
+      groups.each do |definition, drawing_defs|
+
+        candidates = drawing_defs.reject { |drawing_def| unshareable.key?(drawing_def) || cut_containers.include?(drawing_def.container) }
+
+        # Partition the candidates by result signature : only subsets of 2+
+        # identical results can share. Srcs excluded from the computation
+        # (_plan_shared_computation) have no fragments to compare : they join
+        # their representative's subset, identical by construction.
+        by_signature = {}
+        candidates.each do |drawing_def|
+          next if @precomputed_shared.key?(drawing_def)
+          signature = _shared_result_signature(drawing_def, fragment_paths_by_drawing_def[drawing_def] || [])
+          (by_signature[signature] ||= []) << drawing_def
+        end
+
+        by_signature.each_value do |shared_drawing_defs|
+          candidates.each do |drawing_def|
+            representative_drawing_def = @precomputed_shared[drawing_def]
+            shared_drawing_defs << drawing_def if !representative_drawing_def.nil? && shared_drawing_defs.include?(representative_drawing_def)
+          end
+          next if shared_drawing_defs.length < 2
+          shared_containers = shared_drawing_defs.map { |drawing_def| drawing_def.container }
+
+          extra_instances = definition.instances.reject { |instance| instance.deleted? || shared_containers.include?(instance) }
+          if extra_instances.empty?
+            plan[:skip_make_unique_containers][shared_containers.first] = true
+          else
+            # Reattaching requires ComponentInstance#definition= (SketchUp >= 2022)
+            next unless shared_containers.all? { |shared_container| shared_container.respond_to?(:definition=) }
+            shared_containers[1..-1].each { |shared_container| plan[:reassignments] << [ shared_container, shared_containers.first ] }
+          end
+
+          shared_drawing_defs[1..-1].each { |drawing_def| plan[:dropped_drawing_defs][drawing_def] = true }
+          plan[:shared_members][shared_containers.first] = shared_containers[1..-1]
+        end
+
+      end
+
+      plan
+    end
+
+    # Canonical signature of the result attributed to the given src root
+    # drawing def, expressed in its own local space : two instances of the same
+    # definition with equal signatures rebuild to the same local content.
+    # Covers everything the rebuild consumes : target node path, quantized
+    # directed BOUNDARY edges per triangle batch (the interior tessellation
+    # diagonals cancel out in pairs, so the signature is independent of the
+    # triangulation Manifold chose ; winding corrected on mirror
+    # transformations), material, layer, virtual flag and surface partition
+    # (first-appearance indices over the sorted batches). Quantization may only
+    # produce false NEGATIVES (borderline rounding -> distinct definitions, as
+    # before).
+    def _shared_result_signature(drawing_def, fragment_paths)
+
+      transformation = (drawing_def.transformation * drawing_def.container_transformation).inverse
+      transformation = nil if transformation.identity?
+      flipped = !transformation.nil? && TransformationUtils.flipped?(transformation)
+      tolerance = SolidMeshDef::TOLERANCE
+
+      records = []
+      fragment_paths.each do |fragment_def, path|
+        path_key = path.join('.')
+        fragment_def.each_triangle_batch do |face_info_def, triangles|
+          material_id = face_info_def.nil? || face_info_def.material.nil? ? 0 : face_info_def.material.object_id
+          layer_id = face_info_def.nil? || face_info_def.layer.nil? ? 0 : face_info_def.layer.object_id
+          virtual = !face_info_def.nil? && face_info_def.virtual? ? 1 : 0
+          surface_info_def = face_info_def.nil? ? nil : face_info_def.surface_info_def
+
+          # Net directed edge counts : an interior diagonal is traversed once
+          # in each direction by its two triangles and cancels out, whatever
+          # the accumulation order.
+          edge_counts = {}
+          triangles.each do |points|
+            points = points.map { |point| point.transform(transformation) } unless transformation.nil?
+            points = points.reverse if flipped
+            quantized = points.map { |point| point.to_a.map { |v| (v / tolerance).round } }
+            [ [ 0, 1 ], [ 1, 2 ], [ 2, 0 ] ].each do |index_a, index_b|
+              a = quantized[index_a]
+              b = quantized[index_b]
+              reverse_count = edge_counts[[ b, a ]]
+              if !reverse_count.nil? && reverse_count > 0
+                edge_counts[[ b, a ]] = reverse_count - 1
+              else
+                edge_counts[[ a, b ]] = (edge_counts[[ a, b ]] || 0) + 1
+              end
+            end
+          end
+          boundary_keys = []
+          edge_counts.each { |(a, b), count| count.times { boundary_keys << "#{a.join(',')}>#{b.join(',')}" } }
+          boundary_keys.sort!
+
+          records << [ "#{path_key}|#{boundary_keys.join(';')}|#{material_id}|#{layer_id}|#{virtual}", surface_info_def ]
+        end
+      end
+
+      records.sort_by! { |key, _| key }
+      surface_indices = {}
+      records.map { |key, surface_info_def|
+        surface_index = surface_info_def.nil? ? -1 : (surface_indices[surface_info_def] ||= surface_indices.length)
+        "#{key}|#{surface_index}"
+      }.join("\n")
+    end
+
+    # Excludes from the boolean computation the srcs provably identical to a
+    # representative BEFORE computing anything : same definition, same root
+    # material and layer, isolated (tolerance inflated bounds) from every
+    # other src (no possible fusion), rigidly placed relative to the
+    # representative, and with the same relevant cuts (bounds overlap) in
+    # local space (_local_cut_signature). Boolean operations commute with
+    # rigid motions : the representative's result stands for every excluded
+    # src. The exclusions feed _plan_shared_definitions, which attaches the
+    # excluded srcs to their representative's shared subset — an excluded src
+    # has no fragments, so its representative MUST end up shareable : isolation
+    # guarantees it (never fused into a multi src fragment, never a cut).
+    # Returns { excluded drawing_def => representative drawing_def }.
+    def _plan_shared_computation
+
+      exclusions = {}
+      return exclusions if @src_drawing_defs.length < 2
+
+      # Src root containers grouped by shared definition, as in
+      # _plan_shared_definitions
+      groups = {}
+      @src_drawing_defs.each do |drawing_def|
+        container = drawing_def.container
+        next unless container.is_a?(Sketchup::Group) || container.is_a?(Sketchup::ComponentInstance)
+        next if container.deleted?
+        (groups[container.definition] ||= []) << drawing_def
+      end
+      groups = groups.select { |definition, drawing_defs| drawing_defs.length > 1 && drawing_defs.map { |drawing_def| drawing_def.container }.uniq.length == drawing_defs.length }
+      return exclusions if groups.empty?
+
+      margin = SolidMeshDef::TOLERANCE * 2
+      fn_world_bounds = lambda { |drawing_def|
+        bounds = Geom::BoundingBox.new
+        local_bounds = drawing_def.bounds
+        if local_bounds.valid?
+          (0..7).each { |corner_index| bounds.add(local_bounds.corner(corner_index).transform(drawing_def.transformation)) }
+        end
+        bounds
+      }
+      fn_overlap = lambda { |bounds_a, bounds_b|
+        bounds_a.valid? && bounds_b.valid? &&
+          bounds_a.min.x <= bounds_b.max.x + margin && bounds_b.min.x <= bounds_a.max.x + margin &&
+          bounds_a.min.y <= bounds_b.max.y + margin && bounds_b.min.y <= bounds_a.max.y + margin &&
+          bounds_a.min.z <= bounds_b.max.z + margin && bounds_b.min.z <= bounds_a.max.z + margin
+      }
+
+      src_bounds = {}
+      @src_drawing_defs.each { |drawing_def| src_bounds[drawing_def] = fn_world_bounds.call(drawing_def) }
+      cut_bounds = {}
+      @cut_drawing_defs.each { |drawing_def| cut_bounds[drawing_def] = fn_world_bounds.call(drawing_def) }
+
+      cut_containers = @cut_drawing_defs.map { |cut_drawing_def| cut_drawing_def.container }
+      cut_mesh_defs = {}
+
+      groups.each do |definition, drawing_defs|
+
+        candidates = drawing_defs.select { |drawing_def|
+          !cut_containers.include?(drawing_def.container) &&
+            @src_drawing_defs.none? { |other_drawing_def| !other_drawing_def.equal?(drawing_def) && fn_overlap.call(src_bounds[drawing_def], src_bounds[other_drawing_def]) }
+        }
+        next if candidates.length < 2
+
+        by_key = {}
+        candidates.each do |drawing_def|
+          relevant_cut_defs = @cut_drawing_defs.select { |cut_drawing_def| fn_overlap.call(src_bounds[drawing_def], cut_bounds[cut_drawing_def]) }
+          container = drawing_def.container
+          key = [
+            _local_cut_signature(drawing_def, relevant_cut_defs, cut_mesh_defs),
+            container.material.nil? ? 0 : container.material.object_id,
+            container.layer.nil? ? 0 : container.layer.object_id
+          ]
+          (by_key[key] ||= []) << drawing_def
+        end
+
+        by_key.each_value do |shared_drawing_defs|
+          next if shared_drawing_defs.length < 2
+          representative_drawing_def = shared_drawing_defs.first
+          shared_drawing_defs[1..-1].each do |drawing_def|
+            exclusions[drawing_def] = representative_drawing_def if _rigidly_related?(representative_drawing_def, drawing_def)
+          end
+        end
+
+      end
+
+      exclusions
+    end
+
+    # Canonical signature of the given cut drawing defs expressed in the given
+    # src drawing def local space, built on the SAME canonicalization as
+    # _shared_result_signature (quantized directed boundary edges per source
+    # face, material, layer, virtual flag, surface partition), plus the cut
+    # curve segments. Cut mesh defs are memoized in cut_mesh_defs (world
+    # coordinates, one tessellation per cut whatever the number of candidates).
+    def _local_cut_signature(drawing_def, cut_drawing_defs, cut_mesh_defs)
+
+      transformation = (drawing_def.transformation * drawing_def.container_transformation).inverse
+      transformation = nil if transformation.identity?
+      flipped = !transformation.nil? && TransformationUtils.flipped?(transformation)
+      tolerance = SolidMeshDef::TOLERANCE
+
+      records = []
+      curve_keys = []
+      cut_drawing_defs.each do |cut_drawing_def|
+
+        mesh_def = (cut_mesh_defs[cut_drawing_def] ||= SolidMeshDef.from_drawing_def(cut_drawing_def))
+        vertices = mesh_def.vertices
+        face_ids = mesh_def.face_ids
+        face_info_defs = mesh_def.face_info_defs
+
+        quantized_cache = {}
+        fn_quantized = lambda { |vertex_index|
+          quantized_cache[vertex_index] ||= begin
+            point = Geom::Point3d.new(vertices[vertex_index * 3], vertices[vertex_index * 3 + 1], vertices[vertex_index * 3 + 2])
+            point = point.transform(transformation) unless transformation.nil?
+            point.to_a.map { |v| (v / tolerance).round }
+          end
+        }
+
+        edge_counts_by_face_id = {}
+        mesh_def.face_indices.each_slice(3).with_index do |triangle_indices, triangle_index|
+          edge_counts = (edge_counts_by_face_id[face_ids[triangle_index]] ||= {})
+          quantized = triangle_indices.map { |vertex_index| fn_quantized.call(vertex_index) }
+          quantized = quantized.reverse if flipped
+          [ [ 0, 1 ], [ 1, 2 ], [ 2, 0 ] ].each do |index_a, index_b|
+            a = quantized[index_a]
+            b = quantized[index_b]
+            reverse_count = edge_counts[[ b, a ]]
+            if !reverse_count.nil? && reverse_count > 0
+              edge_counts[[ b, a ]] = reverse_count - 1
+            else
+              edge_counts[[ a, b ]] = (edge_counts[[ a, b ]] || 0) + 1
+            end
+          end
+        end
+
+        edge_counts_by_face_id.each do |face_id, edge_counts|
+          face_info_def = face_info_defs[face_id]
+          material_id = face_info_def.nil? || face_info_def.material.nil? ? 0 : face_info_def.material.object_id
+          layer_id = face_info_def.nil? || face_info_def.layer.nil? ? 0 : face_info_def.layer.object_id
+          virtual = !face_info_def.nil? && face_info_def.virtual? ? 1 : 0
+          surface_info_def = face_info_def.nil? ? nil : face_info_def.surface_info_def
+          boundary_keys = []
+          edge_counts.each { |(a, b), count| count.times { boundary_keys << "#{a.join(',')}>#{b.join(',')}" } }
+          boundary_keys.sort!
+          records << [ "#{boundary_keys.join(';')}|#{material_id}|#{layer_id}|#{virtual}", surface_info_def ]
+        end
+
+        mesh_def.curve_info_defs.each do |curve_info_def|
+          segment_keys = curve_info_def.segments.map { |segment_points|
+            segment_points.map { |point|
+              point = point.transform(transformation) unless transformation.nil?
+              point.to_a.map { |v| (v / tolerance).round }
+            }.sort.flatten.join(',')
+          }.sort
+          curve_keys << segment_keys.join(';')
+        end
+
+      end
+
+      records.sort_by! { |key, _| key }
+      surface_indices = {}
+      signature_lines = records.map { |key, surface_info_def|
+        surface_index = surface_info_def.nil? ? -1 : (surface_indices[surface_info_def] ||= surface_indices.length)
+        "#{key}|#{surface_index}"
+      }
+      signature_lines.concat(curve_keys.sort)
+      signature_lines.join("\n")
+    end
+
+    # True when drawing def b's root container placement is a rigid motion
+    # (rotation / translation / mirror : no scale, no shear) of a's : the only
+    # relative placements where a world-space boolean computation is
+    # guaranteed to produce the same local result for both.
+    def _rigidly_related?(drawing_def_a, drawing_def_b)
+      ta = drawing_def_a.transformation * drawing_def_a.container_transformation
+      tb = drawing_def_b.transformation * drawing_def_b.container_transformation
+      m = (tb * ta.inverse).to_a
+      return false if m[3].abs > 1e-9 || m[7].abs > 1e-9 || m[11].abs > 1e-9 || (m[15] - 1.0).abs > 1e-9
+      x = Geom::Vector3d.new(m[0], m[1], m[2])
+      y = Geom::Vector3d.new(m[4], m[5], m[6])
+      z = Geom::Vector3d.new(m[8], m[9], m[10])
+      (x.length - 1.0).abs <= 1e-6 && (y.length - 1.0).abs <= 1e-6 && (z.length - 1.0).abs <= 1e-6 &&
+        (x % y).abs <= 1e-6 && (y % z).abs <= 1e-6 && (z % x).abs <= 1e-6
     end
 
     # Merges the faces and sub container tree of the given DrawingContainerDef
