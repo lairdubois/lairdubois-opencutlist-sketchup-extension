@@ -29,12 +29,17 @@ module Ladb::OpenCutList
 
     attr_reader :face_id, :material, :layer, :surface_info_def, :container_def
 
-    def initialize(face_id, material: nil, layer: nil, surface_info_def: nil, container_def: nil)
+    def initialize(face_id, material: nil, layer: nil, surface_info_def: nil, container_def: nil, virtual: false)
       @face_id = face_id                      # Original face persistent_id (debug / traceability)
       @material = material                    # Sketchup::Material (inheritance already resolved)
       @layer = layer                          # Sketchup::Layer
       @surface_info_def = surface_info_def    # SolidSurfaceInfoDef or nil
       @container_def = container_def          # DrawingContainerDef node the source face belongs to (nil if unknown)
+      @virtual = virtual                      # Face of a glued cuts-opening container : closes the shell during the computation but is not rebuilt
+    end
+
+    def virtual?
+      @virtual
     end
 
   end
@@ -79,15 +84,29 @@ module Ladb::OpenCutList
     # expressed in the drawing def space : drawing_def.transformation is composed
     # so the mesh ends up in WORLD coordinates, the only space common to all
     # operands of a boolean operation.
+    #
+    # Glued cuts-opening containers (virtual machinings : SketchUp punches their
+    # opening in the host face tessellation) are marked virtual, subtree
+    # included : their faces close the shell for the computation but are not
+    # meant to be rebuilt, and their instances are not operands.
     def self.from_drawing_def(drawing_def)
       return nil unless drawing_def.is_a?(DrawingDef)
       mesh_def = new
-      fn_populate = lambda { |container_def|
-        mesh_def._populate(container_def.face_manipulators, drawing_def.transformation, container_def: container_def)
-        container_def.container_defs.each(&fn_populate)
+      fn_populate = lambda { |container_def, virtual|
+        mesh_def._populate(container_def.face_manipulators, drawing_def.transformation, container_def: container_def, virtual: virtual)
+        container_def.container_defs.each { |child_def| fn_populate.call(child_def, virtual || virtual_glued_container?(child_def.container)) }
       }
-      fn_populate.call(drawing_def)
+      fn_populate.call(drawing_def, false)
       mesh_def
+    end
+
+    # A glued cuts-opening container is a virtual machining : its geometry only
+    # closes the shell (whose host face tessellation is punched by SketchUp),
+    # the instance itself must survive the boolean operation, glued.
+    def self.virtual_glued_container?(container)
+      return false unless container.is_a?(Sketchup::ComponentInstance) || container.is_a?(Sketchup::Group)
+      return false unless container.respond_to?(:glued_to) && !container.glued_to.nil?
+      container.definition.behavior.cuts_opening?
     end
 
     # transformation : applied on top of each manipulator's own transformation
@@ -129,7 +148,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _populate(face_manipulators, transformation = IDENTITY, container_def: nil)
+    def _populate(face_manipulators, transformation = IDENTITY, container_def: nil, virtual: false)
 
       transformation = nil if transformation.nil? || transformation.identity?
 
@@ -152,30 +171,34 @@ module Ladb::OpenCutList
           material: face_manipulator.material,
           layer: face_manipulator.layer,
           surface_info_def: surface_info_defs[[ face, context_key ]],
-          container_def: container_def
+          container_def: container_def,
+          virtual: virtual
         )
+
+        composed_transformation = transformation.nil? ? face_manipulator.transformation : transformation * face_manipulator.transformation
 
         # Capture the segments of the curves bounding this face (single-edge curves
         # carry no welding information : ignored). Segments are stored in WORLD
-        # coordinates.
-        composed_transformation = transformation.nil? ? face_manipulator.transformation : transformation * face_manipulator.transformation
-        face.edges.each do |edge|
-          curve = edge.curve
-          next if curve.nil? || curve.edges.length < 2
-          edge_key = [ edge.entityID, context_key ]
-          next if processed_curve_edge_keys.key?(edge_key)
-          processed_curve_edge_keys[edge_key] = true
-          curve_key = [ curve, context_key ]
-          curve_info_def = curve_info_defs_by_key[curve_key]
-          if curve_info_def.nil?
-            curve_info_def = SolidCurveInfoDef.new
-            curve_info_defs_by_key[curve_key] = curve_info_def
-            @curve_info_defs << curve_info_def
+        # coordinates. Virtual geometry is not rebuilt : nothing to capture.
+        unless virtual
+          face.edges.each do |edge|
+            curve = edge.curve
+            next if curve.nil? || curve.edges.length < 2
+            edge_key = [ edge.entityID, context_key ]
+            next if processed_curve_edge_keys.key?(edge_key)
+            processed_curve_edge_keys[edge_key] = true
+            curve_key = [ curve, context_key ]
+            curve_info_def = curve_info_defs_by_key[curve_key]
+            if curve_info_def.nil?
+              curve_info_def = SolidCurveInfoDef.new
+              curve_info_defs_by_key[curve_key] = curve_info_def
+              @curve_info_defs << curve_info_def
+            end
+            curve_info_def.segments << [
+              edge.start.position.transform(composed_transformation),
+              edge.end.position.transform(composed_transformation)
+            ]
           end
-          curve_info_def.segments << [
-            edge.start.position.transform(composed_transformation),
-            edge.end.position.transform(composed_transformation)
-          ]
         end
 
         # A mirror transformation (negative determinant) reverses the winding of

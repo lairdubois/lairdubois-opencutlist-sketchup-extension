@@ -21,7 +21,13 @@ module Ladb::OpenCutList
   #   (SolidFragmentDef#src_indices). Containers keep their identity (name,
   #   attributes, material, layer, transformation, persistent id),
   # - erases the containers left empty (consumed srcs and sub containers) and
-  #   the cut containers (unless keep_cuts).
+  #   the cut containers (unless keep_cuts),
+  # - leaves glued cuts-opening containers (virtual machinings) out of the
+  #   operation : their geometry only closes the shell during the computation,
+  #   the instances are re-glued onto the rebuilt faces, and erased when their
+  #   host area was cut away ; a machining sliced by the operation is
+  #   materialized instead (its surviving geometry becomes real geometry and
+  #   its instance is erased).
   #
   # On failure nothing is modified. Rebuilt containers (or created faces when
   # the result lands at the model root) are available in result.created_entities.
@@ -84,9 +90,10 @@ module Ladb::OpenCutList
       begin
 
         @model = model
-        @resolved_instances = {}    # DrawingContainerDef -> (possibly cloned) instance resolved by the erase cascade
-        @glued_by_container = {}    # container instance (or nil for model root) -> instances to re-glue
-        @operand_instances = []     # resolved sub container instances, parents first
+        @resolved_instances = {}          # DrawingContainerDef -> (possibly cloned) instance resolved by the erase cascade
+        @glued_by_container = {}          # container instance (or nil for model root) -> instances to re-glue
+        @operand_instances = []           # resolved sub container instances, parents first
+        @materialized_container_defs = [] # virtual nodes materialized by the current rebuild call
 
         src_containers = @src_drawing_defs.map { |drawing_def| drawing_def.container }
 
@@ -189,9 +196,11 @@ module Ladb::OpenCutList
         end
 
         created_faces_by_container = {}
+        materialized_by_owner = {}
         fragments_by_target.each do |target_container_def, fragment_defs|
           owner, entities, transformation = _resolve_rebuild_target(target_container_def, src_node_owners)
           next if entities.nil?
+          @materialized_container_defs = []
           created_faces = _solid_fragments_to_geometry(
             fragment_defs,
             entities,
@@ -203,6 +212,7 @@ module Ladb::OpenCutList
             restore_curves: @restore_curves
           )
           (created_faces_by_container[owner] ||= []).concat(created_faces)
+          (materialized_by_owner[owner] ||= []).concat(@materialized_container_defs) unless @materialized_container_defs.empty?
           if owner.nil?
             result_def.created_entities.concat(created_faces)
           else
@@ -210,10 +220,43 @@ module Ladb::OpenCutList
           end
         end
 
+        # Erase the machinings materialized by the operation (sliced by the
+        # cut) : their surviving geometry is now real, re-gluing the instance
+        # would punch its full opening over it. Matched among the collected
+        # glued instances by definition and transformation, so make_unique
+        # clones are caught too. Excluded from re-gluing.
+        materialized_by_owner.each do |owner, container_defs|
+          glued_instances = @glued_by_container[owner]
+          next if glued_instances.nil?
+          container_defs.uniq.each do |container_def|
+            original = container_def.container
+            next if original.nil? || !original.respond_to?(:definition)
+            instance = glued_instances.find { |glued_instance|
+              !glued_instance.deleted? &&
+                glued_instance.definition == original.definition &&
+                glued_instance.transformation.to_a == original.transformation.to_a
+            }
+            next if instance.nil?
+            glued_instances.delete(instance)
+            instance.erase!
+          end
+        end
+
         # Re-glue the instances that were glued onto erased faces
         created_faces_by_container.each do |owner, created_faces|
           glued_instances = @glued_by_container[owner]
           _solid_reglue_instances(glued_instances, created_faces) unless glued_instances.nil?
+        end
+
+        # Erase the orphan virtual machinings : a cuts-opening instance whose
+        # host area was cut away (no face welcomed it back) is meaningless.
+        @glued_by_container.each_value do |glued_instances|
+          glued_instances.each do |instance|
+            next if instance.deleted?
+            next unless instance.definition.behavior.cuts_opening?
+            glued_to = begin; instance.glued_to; rescue; nil; end
+            instance.erase! if glued_to.nil?
+          end
         end
 
         # Erase the operand containers left empty (fully consumed solids) :
@@ -242,9 +285,12 @@ module Ladb::OpenCutList
 
     # Merges the faces and sub container tree of the given DrawingContainerDef
     # into the given node ({ :faces, :children, :erase_tokens }).
+    # Glued cuts-opening containers are not operands : their subtree is skipped,
+    # the instances survive the operation (re-glued or erased as orphans later).
     def _append_container_def_to_node(container_def, node)
       node[:faces].concat(container_def.face_manipulators.map(&:face)).uniq!
       container_def.container_defs.each do |child_def|
+        next if SolidMeshDef.virtual_glued_container?(child_def.container)
         child_node = { :container_def => child_def, :container => child_def.container, :faces => [], :children => [], :erase_tokens => [] }
         _append_container_def_to_node(child_def, child_node)
         node[:children] << child_node
@@ -328,6 +374,7 @@ module Ladb::OpenCutList
       face_ids.uniq.each do |face_id|
         face_info_def = fragment_def.face_info_defs[face_id]
         next if face_info_def.nil?
+        next if face_info_def.virtual?   # Virtual machining faces do not drive attribution
         container_def = face_info_def.container_def
         next if container_def.nil? || !src_node_owners.key?(container_def)   # Cut imprint faces do not drive attribution
         return nil if !source_container_def.nil? && !source_container_def.equal?(container_def)
@@ -394,7 +441,16 @@ module Ladb::OpenCutList
 
       fragment_defs.each do |fragment_def|
         next if fragment_def.empty?
+
+        # Virtual machining geometry (glued cuts-opening containers) is not
+        # rebuilt : the glued instance survives and punches its opening again.
+        # The holes it leaves in the host faces are filled back below. Nodes
+        # sliced by the operation are materialized instead : their geometry is
+        # rebuilt as-is and their instance erased by the caller.
+        fill_plan = _solid_virtual_fill_plan(fragment_def)
+
         fragment_def.each_triangle_batch do |face_info_def, triangles|
+          next if !fill_plan.nil? && !face_info_def.nil? && face_info_def.virtual? && fill_plan[:virtual_nodes].key?(face_info_def.container_def)
 
           mesh = Geom::PolygonMesh.new(triangles.length * 3, triangles.length)
           triangles.each do |points|
@@ -414,6 +470,29 @@ module Ladb::OpenCutList
           end
 
         end
+
+        next if fill_plan.nil?
+        @materialized_container_defs.concat(fill_plan[:materialized_nodes].keys) unless @materialized_container_defs.nil?
+        fill_plan[:loops].each do |points, face_info_def|
+          points = points.map { |point| point.transform(transformation) } unless transformation.nil?
+          begin
+            face = entities.add_face(points)
+          rescue => e
+            next # Unfillable seam : leave the hole rather than abort the operation
+          end
+          next if face.nil?
+          processed_face_ids[face.entityID] = true
+          face_infos[face] = face_info_def
+          if preserve_materials && !face_info_def.nil?
+            face.material = face_info_def.material unless face_info_def.material.nil?
+            face.layer = face_info_def.layer unless face_info_def.layer.nil?
+          end
+          # Orient like the adjacent rebuilt face so the coplanar merge below
+          # can absorb the fill into the host face
+          neighbor = face.edges.flat_map(&:faces).find { |other_face| !other_face.equal?(face) && face_infos.key?(other_face) }
+          face.reverse! if !neighbor.nil? && !face.normal.samedirection?(neighbor.normal)
+        end
+
       end
 
       if merge_coplanar || restore_soft_edges
@@ -451,6 +530,125 @@ module Ladb::OpenCutList
       _solid_weld_curves(entities, face_infos, curve_info_defs, transformation: transformation) if restore_curves
 
       face_infos.keys.reject(&:deleted?)
+    end
+
+    # Analyses the virtual geometry of a fragment (faces of glued cuts-opening
+    # containers, not meant to be rebuilt), one verdict PER virtual node so that
+    # an intact machining and a sliced one coexisting in the fragment are
+    # handled independently :
+    # - nil when the fragment holds no virtual face, otherwise
+    # - { :loops =>, :virtual_nodes =>, :materialized_nodes => } where
+    #   - virtual_nodes are the container defs whose seams with the real
+    #     triangles all chain into closed loops : their faces are skipped and
+    #     the holes they leave are filled by :loops ([ points, face_info_def ]
+    #     tuples, attributed to the adjacent real face info so the coplanar
+    #     merge absorbs them),
+    #   - materialized_nodes are the container defs whose seams do not close
+    #     (machining sliced by the operation) : their surviving geometry is
+    #     rebuilt as real geometry, and the caller erases their glued instance
+    #     (a standard machining cut in half is not a machining anymore).
+    def _solid_virtual_fill_plan(fragment_def)
+      face_ids = fragment_def.face_ids
+      return nil if face_ids.nil?
+
+      # Directed edges of real triangles (their winding orients the fill loops),
+      # undirected edge keys of virtual triangles, grouped by virtual node
+      real_edges = {}
+      virtual_edge_keys_by_node = {}
+      fragment_def.face_indices.each_slice(3).with_index do |triangle_indices, triangle_index|
+        face_info_def = fragment_def.face_info_defs[face_ids[triangle_index]]
+        i0, i1, i2 = triangle_indices
+        if !face_info_def.nil? && face_info_def.virtual?
+          virtual_edge_keys = (virtual_edge_keys_by_node[face_info_def.container_def] ||= {})
+          [ [ i0, i1 ], [ i1, i2 ], [ i2, i0 ] ].each { |a, b| virtual_edge_keys[a < b ? [ a, b ] : [ b, a ]] = true }
+        else
+          [ [ i0, i1 ], [ i1, i2 ], [ i2, i0 ] ].each { |a, b| real_edges[[ a, b ]] = face_info_def }
+        end
+      end
+      return nil if virtual_edge_keys_by_node.empty?
+
+      points = fragment_def.points
+      plan = { :loops => [], :virtual_nodes => {}, :materialized_nodes => {} }
+      virtual_edge_keys_by_node.each do |container_def, virtual_edge_keys|
+
+        # Seam edges of this node : real directed edges whose undirected key is
+        # also traversed by one of its virtual triangles
+        seam_next = {}
+        materialize = false
+        real_edges.each do |(a, b), face_info_def|
+          next unless virtual_edge_keys.key?(a < b ? [ a, b ] : [ b, a ])
+          if seam_next.key?(a)    # Non-manifold seam vertex
+            materialize = true
+            break
+          end
+          seam_next[a] = [ b, face_info_def ]
+        end
+        materialize = true if seam_next.empty?
+
+        # Chain the seams into loops ; any open chain materializes the node.
+        # A closed but NON-PLANAR loop does too : it means the operation sliced
+        # the machining (the seam spans the host plane AND the cut plane) and
+        # such a hole cannot be filled by a single face anyway.
+        loops = []
+        until materialize || seam_next.empty?
+          start_index = seam_next.each_key.first
+          loop_points = []
+          loop_face_info_def = nil
+          current_index = start_index
+          loop do
+            next_edge = seam_next.delete(current_index)
+            if next_edge.nil?   # Open chain
+              materialize = true
+              break
+            end
+            loop_points << points[current_index]
+            loop_face_info_def ||= next_edge[1]
+            current_index = next_edge[0]
+            break if current_index == start_index
+          end
+          break if materialize
+          if loop_points.length < 3 || !_solid_points_coplanar?(loop_points)
+            materialize = true
+            break
+          end
+          loops << [ loop_points, loop_face_info_def ]
+        end
+
+        if materialize
+          plan[:materialized_nodes][container_def] = true
+        else
+          plan[:virtual_nodes][container_def] = true
+          plan[:loops].concat(loops)
+        end
+
+      end
+
+      plan
+    end
+
+    # True when all the given points lie on a single plane (within the solid
+    # tolerance). Degenerate point sets (all collinear) are not coplanar.
+    def _solid_points_coplanar?(points)
+      origin = points[0]
+      first_vector = nil
+      normal = nil
+      points.each do |point|
+        vector = origin.vector_to(point)
+        next unless vector.valid?
+        if first_vector.nil?
+          first_vector = vector
+        else
+          cross = first_vector * vector
+          if cross.valid?
+            normal = cross
+            break
+          end
+        end
+      end
+      return false if normal.nil?
+      plane = [ origin, normal.normalize ]
+      tolerance = SolidMeshDef::TOLERANCE
+      points.all? { |point| point.distance_to_plane(plane).to_f <= tolerance }
     end
 
     # Restores curve welding on the rebuilt geometry :

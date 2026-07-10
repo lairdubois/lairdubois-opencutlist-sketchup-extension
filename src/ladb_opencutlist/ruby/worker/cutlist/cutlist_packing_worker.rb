@@ -759,7 +759,7 @@ module Ladb::OpenCutList
           parameters.merge!({ label_offsets: true })
           instance_parameters = {
             item_item_minimum_spacing: _to_packy_length(@spacing),
-            fake_trimming_y: @group.material_is_1d ? _to_packy_length(@trimming) : 0
+            fake_trimming_y: @group.material_is_1d ? _to_packy_length(@trimming) : 0.0
           }
           instance_parameters.merge!({ leftover_mode: @irregular_leftover_mode }) unless @irregular_leftover_mode.empty?
         end

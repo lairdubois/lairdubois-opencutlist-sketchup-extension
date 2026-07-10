@@ -103,6 +103,8 @@ module Ladb::OpenCutList
         return SmartCursorManager.cursor_select
       when ACTION_PANELING
         return SmartCursorManager.cursor_select
+      when ACTION_CSG
+        return SmartCursorManager.cursor_select
       end
 
       super
@@ -3814,8 +3816,8 @@ module Ladb::OpenCutList
     def initialize(tool, previous_action_handler = nil)
       super(SmartReshapeTool::ACTION_CSG, tool, previous_action_handler)
 
-      @src_drawing_def = nil
-      @cut_drawing_def = nil
+      @src_drawing_defs = []
+      @cut_drawing_defs = []
 
     end
 
@@ -3837,7 +3839,7 @@ module Ladb::OpenCutList
 
       case state
       when STATE_SELECT_SRC, STATE_SELECT_CUT
-        return SmartPicker.new(tool: @tool, observer: self, pick_point: false)
+        return SmartPicker.new(tool: @tool, observer: self, pick_point: false, lockable: false)
       end
 
       super
@@ -3874,25 +3876,41 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_SELECT_SRC
-        @src_drawing_def = _get_drawing_def
-        if @src_drawing_def.nil?
-          UI.beep
-        else
+        if (drawing_def = _get_drawing_def).is_a?(DrawingDef)
+          @src_drawing_defs << drawing_def
+          return true if tool.is_key_shift_down?
           set_state(STATE_SELECT_CUT)
-          return true
+        else
+          UI.beep
         end
+        return true
 
       when STATE_SELECT_CUT
-        @cut_drawing_def = _get_drawing_def
-        if @cut_drawing_def.nil?
-          UI.beep
-        else
+        if (drawing_def = _get_drawing_def).is_a?(DrawingDef)
+          @cut_drawing_defs << drawing_def
+          return true if tool.is_key_shift_down?
           _operate
-          return true
+        else
+          UI.beep
         end
+        return true
 
       end
 
+    end
+
+    def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
+      if tool.is_key_shift?(key)
+
+        case @state
+        when STATE_SELECT_SRC
+          set_state(STATE_SELECT_CUT) unless @src_drawing_defs.empty?
+        when STATE_SELECT_CUT
+          _operate unless @cut_drawing_defs.empty?
+
+        end
+
+      end
     end
 
     def onStateChanged(old_state, new_state)
@@ -3900,11 +3918,11 @@ module Ladb::OpenCutList
       case new_state
 
       when STATE_SELECT_SRC
-        @src_drawing_def = nil
+        @src_drawing_defs.clear
         @tool.clear_3d([ LAYER_3D_SRC_PREVIEW, LAYER_3D_CUT_PREVIEW ])
 
       when STATE_SELECT_CUT
-        @cut_drawing_def = nil
+        @cut_drawing_defs.clear
         @tool.clear_3d([ LAYER_3D_CUT_PREVIEW ])
 
       end
@@ -3936,8 +3954,8 @@ module Ladb::OpenCutList
     protected
 
     def _reset
-      @src_drawing_def = nil
-      @cut_drawing_def = nil
+      @src_drawing_defs.clear
+      @cut_drawing_defs.clear
       super
       set_state(STATE_SELECT_SRC)
     end
@@ -3980,10 +3998,9 @@ module Ladb::OpenCutList
     def _operate
 
       result_def = CommonSolidBooleanApplyWorker.new(
-        @src_drawing_def,
-        @cut_drawing_def,
-        operation: _fetch_option_csg_operation,
-        keep_cuts: true
+        @src_drawing_defs,
+        @cut_drawing_defs,
+        operation: _fetch_option_csg_operation
       ).run
       @tool.notify_errors(result_def.errors) unless result_def.success?
 
