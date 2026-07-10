@@ -4381,22 +4381,28 @@ module Ladb::OpenCutList
 
       # First stage: pick "context" (aperture = 0)
 
+      best_picked = nil
+
       if !context_locked && (@pick_context_by_face && picked_face.nil? || @pick_context_by_edge && picked_edge.nil?)
         @pick_helper.do_pick(@pick_position.x, @pick_position.y)
+        best_picked = @pick_helper.best_picked
         @pick_helper.count.times do |index|
 
+          path = @pick_helper.path_at(index)
+          next unless best_picked.nil? || path.include?(best_picked)
+
           if @pick_context_by_face && @pick_helper.leaf_at(index).is_a?(Sketchup::Face)
-            if @fn_face_filter.nil? || @fn_face_filter.call(@pick_helper.path_at(index))
+            if @fn_face_filter.nil? || @fn_face_filter.call(path)
               picked_face = @pick_helper.leaf_at(index)
-              picked_face_path = active_path + @pick_helper.path_at(index)
+              picked_face_path = active_path + path
               break
             end
           end
 
           if @pick_context_by_edge && @pick_helper.leaf_at(index).is_a?(Sketchup::Edge)
-            if @fn_edge_filter.nil? || @fn_edge_filter.call(@pick_helper.path_at(index))
+            if @fn_edge_filter.nil? || @fn_edge_filter.call(path)
               picked_edge = @pick_helper.leaf_at(index)
-              picked_edge_path = active_path + @pick_helper.path_at(index)
+              picked_edge_path = active_path + path
               break
             end
           end
@@ -4439,6 +4445,7 @@ module Ladb::OpenCutList
               unless context_locked
                 # External edges are considered only if context is locked
                 next if !@pick_helper.leaf_at(index).used_by?(picked_face) || (active_path + @pick_helper.path_at(index))[0...-1] != picked_face_path[0...-1]
+                next unless best_picked.nil? || @pick_helper.path_at(index).include?(best_picked)
               end
               picked_edge = @pick_helper.leaf_at(index)
               picked_edge_path = active_path + @pick_helper.path_at(index)
