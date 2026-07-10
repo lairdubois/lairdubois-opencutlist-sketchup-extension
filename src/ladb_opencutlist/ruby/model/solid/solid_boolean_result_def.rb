@@ -9,7 +9,7 @@ module Ladb::OpenCutList
     attr_reader :errors,            # Array of i18n tuples [ key, vars ] ; empty on success
                 :fragment_defs,     # Array<SolidFragmentDef>
                 :curve_info_defs,   # Array<SolidCurveInfoDef> collected from all operands
-                :created_entities   # Entities holding the result, filled by _solid_boolean_apply! (the rebuilt src entity)
+                :created_entities   # Entities holding the result, filled by the apply phase
 
     def initialize
       @errors = []
@@ -32,13 +32,15 @@ module Ladb::OpenCutList
     attr_reader :vertices,        # Array<Float> flat [ x, y, z, ... ]
                 :face_indices,    # Array<Integer> flat, 3 per triangle
                 :face_ids,        # Array<Integer> 1 per triangle -> index in @face_info_defs, or nil if no provenance
-                :face_info_defs   # Array<SolidFaceInfoDef> shared registry of the operation
+                :face_info_defs,  # Array<SolidFaceInfoDef> shared registry of the operation
+                :src_indices      # Array<Integer> indices (in the operation src list) of the sources this fragment comes from ; empty if unknown
 
-    def initialize(vertices, face_indices, face_ids, face_info_defs)
+    def initialize(vertices, face_indices, face_ids, face_info_defs, src_indices: [])
       @vertices = vertices
       @face_indices = face_indices
       @face_ids = face_ids.is_a?(Array) && face_ids.length == face_indices.length / 3 ? face_ids : nil
       @face_info_defs = face_info_defs
+      @src_indices = src_indices
     end
 
     # -----

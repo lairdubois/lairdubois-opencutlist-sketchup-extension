@@ -327,10 +327,15 @@ namespace Meshy {
             result = result.Simplify();
 
             // --- export ---
-            manifold::MeshGL64 result_mesh = result.GetMeshGL64();
-
+            
+            // One fragment per topologically disconnected body, so the caller can
+            // reattribute each of them to its source mesh through face provenance.
+            // Like Simplify(), Decompose() maintains the mesh relation (faceID).
             json output;
-            write_mesh(output["fragments"].emplace_back(), result_mesh);
+            output["fragments"] = json::array();
+            for (auto& part : result.Decompose()) {
+                write_mesh(output["fragments"].emplace_back(), part.GetMeshGL64());
+            }
 
             return output;
         }

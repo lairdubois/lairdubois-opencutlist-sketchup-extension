@@ -9,8 +9,8 @@ module Ladb::OpenCutList
   require_relative '../manipulator/plane_manipulator'
   require_relative '../manipulator/cline_manipulator'
   require_relative '../helper/user_text_helper'
-  require_relative '../helper/solid_boolean_helper'
   require_relative '../worker/common/common_drawing_decomposition_worker'
+  require_relative '../worker/common/common_solid_boolean_apply_worker'
 
   class SmartReshapeTool < SmartTool
 
@@ -3803,7 +3803,7 @@ module Ladb::OpenCutList
 
   class SmartReshapeCSGActionHandler < SmartActionHandler
 
-    include SolidBooleanHelper
+    include SmartActionHandlerPartHelper
 
     STATE_SELECT_SRC = 0
     STATE_SELECT_CUT = 1
@@ -3874,6 +3874,7 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_SELECT_SRC
+        @src_drawing_def = _get_drawing_def
         if @src_drawing_def.nil?
           UI.beep
         else
@@ -3882,6 +3883,7 @@ module Ladb::OpenCutList
         end
 
       when STATE_SELECT_CUT
+        @cut_drawing_def = _get_drawing_def
         if @cut_drawing_def.nil?
           UI.beep
         else
@@ -3911,22 +3913,22 @@ module Ladb::OpenCutList
     end
 
     def onPickerChanged(picker, view)
+      _pick_part(picker, view)
+      super
+    end
+
+    def onActivePartChanged(part_entity_path, part, highlighted = false)
 
       case @state
 
       when STATE_SELECT_SRC
-        @src_drawing_def = nil
-        _snap_select_src(picker, view)
-        _preview_select_src
+        _preview_part(part_entity_path, part, LAYER_3D_SRC_PREVIEW, highlighted)
 
       when STATE_SELECT_CUT
-        @cut_drawing_def = nil
-        _snap_select_cut(picker, view)
-        _preview_select_cut
+        _preview_part(part_entity_path, part, LAYER_3D_CUT_PREVIEW, highlighted)
 
       end
 
-      super
     end
 
     # -----
@@ -3936,72 +3938,35 @@ module Ladb::OpenCutList
     def _reset
       @src_drawing_def = nil
       @cut_drawing_def = nil
-      @src_container_transformation = nil
       super
       set_state(STATE_SELECT_SRC)
     end
 
     # -----
 
-    def _snap_select_src(picker, view)
-      return unless (picked_face = picker.picked_face).is_a?(Sketchup::Face)
-      return unless (picked_face_path = picker.picked_face_path).is_a?(Array)
-
-      container = picked_face_path[-2]
-      container_transformation = PathUtils.get_transformation(picked_face_path[0..-2], IDENTITY)
-
-      all_connected = picked_face.all_connected
-
-      @src_drawing_def = DrawingDef.new(container)
-      @src_drawing_def.face_manipulators.concat(all_connected
-                                                  .grep(Sketchup::Face)
-                                                  .map { |face| FaceManipulator.new(face, container_transformation) })
-      @src_container_transformation = container_transformation
-
+    def _get_active_part_preview_color(part, highlighted = false)
+      case @state
+      when STATE_SELECT_SRC
+        ColorUtils.color_translucent(Kuix::COLOR_GREEN, 0.3)
+      when STATE_SELECT_CUT
+        ColorUtils.color_translucent(Kuix::COLOR_RED, 0.3)
+      else
+        super
+      end
     end
 
-    def _snap_select_cut(picker, view)
-      return unless (picked_face = picker.picked_face).is_a?(Sketchup::Face)
-      return unless (picked_face_path = picker.picked_face_path).is_a?(Array)
+    # -----
 
-      container = picked_face_path[-2]
-      container_transformation = PathUtils.get_transformation(picked_face_path[0..-2], IDENTITY)
-
-      all_connected = picked_face.all_connected
-
-      @cut_drawing_def = DrawingDef.new(container)
-      @cut_drawing_def.face_manipulators.concat(all_connected
-                                                  .grep(Sketchup::Face)
-                                                  .map { |face| FaceManipulator.new(face, container_transformation) })
-
-    end
-
-    def _preview_select_src
-
-      @tool.clear_3d([ LAYER_3D_SRC_PREVIEW ])
-
-      return unless @src_drawing_def.is_a?(DrawingDef)
-
-      k_mesh = Kuix::Mesh.new
-      k_mesh.add_triangles(@src_drawing_def.face_manipulators.flat_map(&:triangles))
-      k_mesh.background_color = ColorUtils.color_translucent(Kuix::COLOR_GREEN, 0.3)
-      k_mesh.transformation = @src_drawing_def.transformation
-      @tool.append_3d(k_mesh, LAYER_3D_SRC_PREVIEW)
-
-    end
-
-    def _preview_select_cut
-
-      @tool.clear_3d([ LAYER_3D_CUT_PREVIEW ])
-
-      return unless @cut_drawing_def.is_a?(DrawingDef)
-
-      k_mesh = Kuix::Mesh.new
-      k_mesh.add_triangles(@cut_drawing_def.face_manipulators.flat_map(&:triangles))
-      k_mesh.background_color = ColorUtils.color_translucent(Kuix::COLOR_RED, 0.3)
-      k_mesh.transformation = @cut_drawing_def.transformation
-      @tool.append_3d(k_mesh, LAYER_3D_CUT_PREVIEW)
-
+    def _get_drawing_def_parameters
+      {
+        ignore_surfaces: true,
+        ignore_faces: false,
+        ignore_edges: true,
+        ignore_soft_edges: true,
+        ignore_clines: true,
+        container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART_WITHOUT_MACHININGS,
+        flatten: false
+      }
     end
 
     # -----
@@ -4014,64 +3979,13 @@ module Ladb::OpenCutList
 
     def _operate
 
-      src_mesh_def = SolidMeshDef.from_drawing_def(@src_drawing_def)
-      cut_mesh_def = SolidMeshDef.from_drawing_def(@cut_drawing_def)
-
-      result_def = _solid_boolean_compute(_fetch_option_csg_operation, [ src_mesh_def ], [ cut_mesh_def ])
-      if result_def.success?
-
-        model = Sketchup.active_model
-        model.start_operation('CSG', true)
-        begin
-
-          src_container = @src_drawing_def.container
-          cut_container = @cut_drawing_def.container
-
-          # Consume cut geometry. When src and cut share the same container, the
-          # cut faces join the source erase set below instead.
-          unless !src_container.nil? && cut_container == src_container
-            if cut_container.is_a?(Sketchup::Group) || cut_container.is_a?(Sketchup::ComponentInstance)
-              cut_container.erase! unless cut_container.deleted?
-            else
-              _solid_erase_faces!(model.entities, @cut_drawing_def.face_manipulators.map(&:face))
-            end
-          end
-
-          if src_container.is_a?(Sketchup::Group) || src_container.is_a?(Sketchup::ComponentInstance)
-
-            # Rebuild the result inside the source entity to preserve its identity
-            # (name, attributes, material, layer, transformation, persistent id).
-            # Only the operand faces are erased : make_unique clones the definition,
-            # so they are re-resolved through it by tracking.
-            src_faces = @src_drawing_def.face_manipulators.map(&:face)
-            src_faces += @cut_drawing_def.face_manipulators.map(&:face) if cut_container == src_container
-            src_faces = _solid_make_unique_tracking_faces!(src_container, src_faces)
-            entities = src_container.definition.entities
-            glued_instances = _solid_erase_faces!(entities, src_faces)
-            created_faces = _solid_fragments_to_geometry(result_def.fragment_defs, entities, transformation: @src_container_transformation.inverse, curve_info_defs: result_def.curve_info_defs)
-            _solid_reglue_instances(glued_instances, created_faces)
-
-          else
-
-            # Lose geometry at the model root: replace it in place.
-            glued_instances = _solid_erase_faces!(model.entities, @src_drawing_def.face_manipulators.map(&:face))
-            created_faces = _solid_fragments_to_geometry(result_def.fragment_defs, model.entities, curve_info_defs: result_def.curve_info_defs)
-            _solid_reglue_instances(glued_instances, created_faces)
-
-          end
-
-          model.commit_operation
-
-        rescue => e
-          model.abort_operation
-          @tool.notify_errors([[ 'core.error.exception', { :error => e.message } ]])
-        end
-
-      else
-
-        @tool.notify_errors(result_def.errors)
-
-      end
+      result_def = CommonSolidBooleanApplyWorker.new(
+        @src_drawing_def,
+        @cut_drawing_def,
+        operation: _fetch_option_csg_operation,
+        keep_cuts: true
+      ).run
+      @tool.notify_errors(result_def.errors) unless result_def.success?
 
       _restart
     end

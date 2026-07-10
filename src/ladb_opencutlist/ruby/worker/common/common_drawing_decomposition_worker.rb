@@ -241,6 +241,7 @@ module Ladb::OpenCutList
       ttai = tai * transformation
 
       drawing_def.transformation = ta
+      drawing_def.container_transformation = ttai
       drawing_def.input_plane_manipulator.transformation = tai * drawing_def.input_plane_manipulator.transformation unless drawing_def.input_plane_manipulator.nil?
       drawing_def.input_line_manipulator.transformation = tai * drawing_def.input_line_manipulator.transformation unless drawing_def.input_line_manipulator.nil?
 

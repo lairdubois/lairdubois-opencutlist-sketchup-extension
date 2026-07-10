@@ -179,9 +179,12 @@ module Ladb::OpenCutList
     INPUT_VIEW_BACK = 'back'.freeze
 
     attr_accessor :input_plane_manipulator, :input_line_manipulator, :input_view
+    attr_accessor :container_transformation   # container DEFINITION space -> drawing space (IDENTITY when container is nil / model root)
 
     def initialize(container, transformation = IDENTITY)
       super
+
+      @container_transformation = IDENTITY
 
       @input_plane_manipulator = nil
       @input_line_manipulator = nil
@@ -206,6 +209,8 @@ module Ladb::OpenCutList
       return false unless super(transformation)
 
       ti = transformation.inverse
+
+      @container_transformation = ti * @container_transformation
 
       @input_plane_manipulator.transformation = ti * @input_plane_manipulator.transformation unless @input_plane_manipulator.nil?
       @input_line_manipulator.transformation = ti * @input_line_manipulator.transformation unless @input_line_manipulator.nil?
