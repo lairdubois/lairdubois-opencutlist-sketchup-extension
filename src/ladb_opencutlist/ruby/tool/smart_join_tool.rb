@@ -689,7 +689,7 @@ module Ladb::OpenCutList
     end
 
     def onActivePartChanged(part_entity_path, part, highlighted = false)
-      _preview_part(part_entity_path, part, LAYER_3D_PART_A_PREVIEW, highlighted)
+      _preview_part(part_entity_path, part, LAYER_3D_PART_A_PREVIEW, highlighted: highlighted)
       _reset_neighborhood_def
     end
 
@@ -1932,13 +1932,13 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_SELECT_A
-        _preview_part(part_entity_path, part, LAYER_3D_PART_A_PREVIEW, highlighted)
+        _preview_part(part_entity_path, part, LAYER_3D_PART_A_PREVIEW, highlighted: highlighted)
         @active_part_entity_path_a = part_entity_path
         @active_part_a = part
         @active_face_manipulator_a = nil
 
       when STATE_SELECT_B
-        _preview_part(part_entity_path, part, LAYER_3D_PART_B_PREVIEW, highlighted)
+        _preview_part(part_entity_path, part, LAYER_3D_PART_B_PREVIEW, highlighted: highlighted)
         @active_part_entity_path_b = part_entity_path
         @active_part_b = part
         @active_face_manipulator_b = nil

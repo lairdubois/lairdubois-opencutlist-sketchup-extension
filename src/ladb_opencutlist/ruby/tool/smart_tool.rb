@@ -2410,19 +2410,19 @@ module Ladb::OpenCutList
     # -----
 
     def onToolLButtonDown(tool, flags, x, y, view)
-      _preview_part(@active_part_entity_path, @active_part, LAYER_3D_PART_PREVIEW, true) if @active_part_entity_path.is_a?(Array)
+      _preview_part(@active_part_entity_path, @active_part, LAYER_3D_PART_PREVIEW, highlighted: true) if @active_part_entity_path.is_a?(Array)
       _preview_part_twins(LAYER_3D_PART_TWINS_PREVIEW, true)
       false
     end
 
     def onToolLButtonUp(tool, flags, x, y, view)
-      _preview_part(@active_part_entity_path, @active_part, LAYER_3D_PART_PREVIEW, false) if @active_part_entity_path.is_a?(Array)
+      _preview_part(@active_part_entity_path, @active_part, LAYER_3D_PART_PREVIEW, highlighted: false) if @active_part_entity_path.is_a?(Array)
       _preview_part_twins(LAYER_3D_PART_TWINS_PREVIEW, false)
       false
     end
 
     def onActivePartChanged(part_entity_path, part, highlighted = false)
-      _preview_part(part_entity_path, part, LAYER_3D_PART_PREVIEW, highlighted)
+      _preview_part(part_entity_path, part, LAYER_3D_PART_PREVIEW, highlighted: highlighted)
       _preview_part_twins(LAYER_3D_PART_TWINS_PREVIEW, highlighted)
       false
     end
@@ -2634,8 +2634,8 @@ module Ladb::OpenCutList
       end
     end
 
-    def _preview_part(part_entity_path, part, layer = LAYER_3D_PART_PREVIEW, highlighted = false)
-      @tool.clear_3d(layer)
+    def _preview_part(part_entity_path, part, layer = LAYER_3D_PART_PREVIEW, highlighted: false, clear_before: true)
+      @tool.clear_3d(layer) if clear_before
       if part.is_a?(Part)
 
         instance_paths = []

@@ -926,7 +926,7 @@ module Ladb::OpenCutList
       super
     end
 
-    def _preview_part(part_entity_path, part, layer = 0, highlighted = false)
+    def _preview_part(part_entity_path, part, layer = 0, highlighted: false, clear_before: true)
       super
       if part && fetch_state == STATE_SELECT
 
@@ -3877,6 +3877,7 @@ module Ladb::OpenCutList
 
       when STATE_SELECT_SRC
         if (drawing_def = _get_drawing_def).is_a?(DrawingDef)
+          _preview_part(get_active_part_entity_path, get_active_part, LAYER_3D_SRC_PREVIEW, clear_before: false)
           @src_drawing_defs << drawing_def
           return true if tool.is_key_shift_down?
           set_state(STATE_SELECT_CUT)
@@ -3887,6 +3888,7 @@ module Ladb::OpenCutList
 
       when STATE_SELECT_CUT
         if (drawing_def = _get_drawing_def).is_a?(DrawingDef)
+          _preview_part(get_active_part_entity_path, get_active_part, LAYER_3D_CUT_PREVIEW, clear_before: false)
           @cut_drawing_defs << drawing_def
           return true if tool.is_key_shift_down?
           _operate
@@ -3904,13 +3906,21 @@ module Ladb::OpenCutList
 
         case @state
         when STATE_SELECT_SRC
-          set_state(STATE_SELECT_CUT) unless @src_drawing_defs.empty?
+          unless @src_drawing_defs.empty?
+            set_state(STATE_SELECT_CUT)
+            tool.clear_3d(LAYER_3D_CUT_PREVIEW)
+          end
+          return true
+
         when STATE_SELECT_CUT
           _operate unless @cut_drawing_defs.empty?
+          return true
 
         end
 
       end
+
+      false
     end
 
     def onStateChanged(old_state, new_state)
@@ -3940,10 +3950,10 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_SELECT_SRC
-        _preview_part(part_entity_path, part, LAYER_3D_SRC_PREVIEW, highlighted)
+        _preview_part(part_entity_path, part)
 
       when STATE_SELECT_CUT
-        _preview_part(part_entity_path, part, LAYER_3D_CUT_PREVIEW, highlighted)
+        _preview_part(part_entity_path, part)
 
       end
 

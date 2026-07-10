@@ -267,74 +267,76 @@ namespace Meshy {
             }
 
             // Boolean operations
+            //
+            // Subtraction and intersection are applied to EACH src independently
+            // (against the cuts combined) : srcs are never merged together, so
+            // touching or overlapping srcs keep their own identity and every
+            // result body is attributable to a single src. Union is the one
+            // operation whose purpose is to merge : it stays global.
 
-            manifold::Manifold result;
+            std::vector<manifold::Manifold> results;
             switch (operation_) {
-                case Operation::Union:
+                case Operation::Union: {
+                    manifold::Manifold result;
                     for (auto& manifold : cut_manifolds) {
                         result = result + manifold;
                     }
                     for (auto& manifold : src_manifolds) {
                         result = result + manifold;
                     }
+                    results.push_back(result);
                     break;
+                }
                 case Operation::Subtraction: {
                     manifold::Manifold cut_result;
                     for (auto& manifold : cut_manifolds) {
                         cut_result = cut_result + manifold;
                     }
-                    manifold::Manifold src_result;
                     for (auto& manifold : src_manifolds) {
-                        src_result = src_result + manifold;
+                        results.push_back(manifold - cut_result);
                     }
-                    result = src_result - cut_result;
                     break;
                 }
                 case Operation::Intersection: {
-                    // The default-constructed manifold is empty and would absorb the
-                    // whole intersection: seed result with the first operand, whichever
-                    // list it comes from, so empty lists are harmless (result stays empty).
-                    bool first = true;
+                    // The cuts are chained together first. The default-constructed
+                    // manifold is empty and would absorb the whole intersection :
+                    // keep track of whether a cut seeded it, so an empty cut list
+                    // leaves each src unchanged.
+                    manifold::Manifold cut_result;
+                    bool has_cut = false;
                     for (auto& manifold : cut_manifolds) {
-                        if (first) {
-                            result = manifold;
-                            first = false;
+                        if (has_cut) {
+                            cut_result ^= manifold;
                         } else {
-                            result ^= manifold;
+                            cut_result = manifold;
+                            has_cut = true;
                         }
                     }
                     for (auto& manifold : src_manifolds) {
-                        if (first) {
-                            result = manifold;
-                            first = false;
-                        } else {
-                            result ^= manifold;
-                        }
+                        results.push_back(has_cut ? manifold ^ cut_result : manifold);
                     }
                     break;
                 }
             }
 
-            if (result.Status() != manifold::Manifold::Error::NoError) {
-                throw std::runtime_error("Boolean operation failed");
-            }
+            // --- export ---
 
-            // Collapse degenerate leftovers (slivers thinner than the tolerance
-            // inherited from the input meshes). Unlike AsOriginal(), Simplify()
+            // One fragment per topologically disconnected body, so the caller can
+            // reattribute each of them to its source mesh through face provenance.
+            // Simplify() collapses degenerate leftovers (slivers thinner than the
+            // tolerance inherited from the input meshes) ; like Decompose(), it
             // maintains the mesh relation, so input face provenance (faceID) that
             // the Ruby side uses to restore materials and merge triangles back
             // into faces is preserved. Do NOT call AsOriginal() here.
-            result = result.Simplify();
-
-            // --- export ---
-            
-            // One fragment per topologically disconnected body, so the caller can
-            // reattribute each of them to its source mesh through face provenance.
-            // Like Simplify(), Decompose() maintains the mesh relation (faceID).
             json output;
             output["fragments"] = json::array();
-            for (auto& part : result.Decompose()) {
-                write_mesh(output["fragments"].emplace_back(), part.GetMeshGL64());
+            for (auto& result : results) {
+                if (result.Status() != manifold::Manifold::Error::NoError) {
+                    throw std::runtime_error("Boolean operation failed");
+                }
+                for (auto& part : result.Simplify().Decompose()) {
+                    write_mesh(output["fragments"].emplace_back(), part.GetMeshGL64());
+                }
             }
 
             return output;

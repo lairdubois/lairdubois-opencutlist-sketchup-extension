@@ -542,7 +542,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _preview_part(part_entity_path, part, layer = 0, highlighted = false)
+    def _preview_part(part_entity_path, part, layer = 0, highlighted: false, clear_before: true)
       super
       if part && fetch_state == STATE_SELECT
 

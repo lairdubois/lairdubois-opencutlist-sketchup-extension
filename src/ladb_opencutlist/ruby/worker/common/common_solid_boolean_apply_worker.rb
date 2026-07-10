@@ -71,6 +71,7 @@ module Ladb::OpenCutList
     # -----
 
     def run
+
       if @src_drawing_defs.empty? || !(@src_drawing_defs + @cut_drawing_defs).all? { |drawing_def| drawing_def.is_a?(DrawingDef) }
         result_def = SolidBooleanResultDef.new
         result_def.errors << [ 'default.error' ]
@@ -89,7 +90,6 @@ module Ladb::OpenCutList
       model.start_operation('OCL Solid Boolean', true)
       begin
 
-        @model = model
         @resolved_instances = {}          # DrawingContainerDef -> (possibly cloned) instance resolved by the erase cascade
         @glued_by_container = {}          # container instance (or nil for model root) -> instances to re-glue
         @operand_instances = []           # resolved sub container instances, parents first
@@ -198,7 +198,7 @@ module Ladb::OpenCutList
         created_faces_by_container = {}
         materialized_by_owner = {}
         fragments_by_target.each do |target_container_def, fragment_defs|
-          owner, entities, transformation = _resolve_rebuild_target(target_container_def, src_node_owners)
+          owner, entities, transformation = _resolve_rebuild_target(target_container_def, src_node_owners, model)
           next if entities.nil?
           @materialized_container_defs = []
           created_faces = _solid_fragments_to_geometry(
@@ -388,7 +388,7 @@ module Ladb::OpenCutList
     # Sub container nodes are resolved through the instances memoized by the
     # erase cascade (make_unique may have cloned the original ones) ; when the
     # instance is gone, the fragment falls back to the src root container.
-    def _resolve_rebuild_target(container_def, src_node_owners)
+    def _resolve_rebuild_target(container_def, src_node_owners, model)
       if container_def.is_a?(DrawingDef)
         drawing_def = container_def
         container = drawing_def.container
@@ -397,12 +397,12 @@ module Ladb::OpenCutList
           return [ nil, nil, nil ] if container.deleted?
           [ container, container.definition.entities, transformation ]
         else
-          [ nil, @model.entities, transformation ]
+          [ nil, model.entities, transformation ]
         end
       else
         instance = @resolved_instances[container_def]
         if instance.nil? || instance.deleted?
-          _resolve_rebuild_target(src_node_owners[container_def], src_node_owners)
+          _resolve_rebuild_target(src_node_owners[container_def], src_node_owners, model)
         else
           drawing_def = src_node_owners[container_def]
           [ instance, instance.definition.entities, (drawing_def.transformation * container_def.transformation * instance.transformation).inverse ]
