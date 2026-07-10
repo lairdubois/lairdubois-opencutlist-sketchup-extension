@@ -3757,6 +3757,30 @@ module Ladb::OpenCutList
       create_cursor('select-b')
     end
 
+    def cursor_select_unite_a
+      create_cursor('select-unite-a')
+    end
+
+    def cursor_select_unite_b
+      create_cursor('select-unite-b')
+    end
+
+    def cursor_select_subtract_a
+      create_cursor('select-subtract-a')
+    end
+
+    def cursor_select_subtract_b
+      create_cursor('select-subtract-b')
+    end
+
+    def cursor_select_intersect_a
+      create_cursor('select-intersect-a')
+    end
+
+    def cursor_select_intersect_b
+      create_cursor('select-intersect-b')
+    end
+
 
     def cursor_move
       create_cursor('move', 16, 16)

@@ -16,14 +16,15 @@ module Ladb::OpenCutList
 
     ACTION_STRETCH = 0
     ACTION_PANELING = 1
-    ACTION_CSG = 2
+    ACTION_SOLID_UNITE = 2
+    ACTION_SOLID_SUBTRACT = 3
+    ACTION_SOLID_INTERSECT = 4
 
     ACTION_OPTION_THICKNESS = 'thickness'
     ACTION_OPTION_STRETCH_MEASURE_TYPE = 'stretch_measure_type'
     ACTION_OPTION_AXES = 'axes'
     ACTION_OPTION_PANELING_DIRECTION = 'paneling_direction'
     ACTION_OPTION_PANELING_JOINT_TYPE = 'paneling_joint_type'
-    ACTION_OPTION_CSG_OPERATION = 'csg_operation'
     ACTION_OPTION_OPTIONS = 'options'
 
     ACTION_OPTION_THICKNESS_THICKNESS = 'thickness'
@@ -41,12 +42,10 @@ module Ladb::OpenCutList
     ACTION_OPTION_PANELING_JOINT_TYPE_FLAT = 'flat'
     ACTION_OPTION_PANELING_JOINT_TYPE_MITER = 'miter'
 
-    ACTION_OPTION_CSG_OPERATION_UNION = 'union'
-    ACTION_OPTION_CSG_OPERATION_SUBTRACTION = 'subtraction'
-    ACTION_OPTION_CSG_OPERATION_INTERSECTION = 'intersection'
-
     ACTION_OPTION_OPTIONS_CENTERED = 'centered'
     ACTION_OPTION_OPTIONS_MAKE_UNIQUE = 'make_unique'
+    ACTION_OPTION_OPTIONS_KEEP_A = 'keep_a'
+    ACTION_OPTION_OPTIONS_KEEP_B = 'keep_b'
 
     ACTIONS = [
       {
@@ -58,17 +57,29 @@ module Ladb::OpenCutList
         }
       },
       {
+        :action => ACTION_SOLID_UNITE,
+        :options => {
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_KEEP_A, ACTION_OPTION_OPTIONS_KEEP_B ]
+        }
+      },
+      {
+        :action => ACTION_SOLID_SUBTRACT,
+        :options => {
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_KEEP_A, ACTION_OPTION_OPTIONS_KEEP_B ]
+        }
+      },
+      {
+        :action => ACTION_SOLID_INTERSECT,
+        :options => {
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_KEEP_A, ACTION_OPTION_OPTIONS_KEEP_B ]
+        }
+      },
+      {
         :action => ACTION_PANELING,
         :options => {
           ACTION_OPTION_THICKNESS => [ ACTION_OPTION_THICKNESS_THICKNESS ],
           ACTION_OPTION_PANELING_DIRECTION => [ ACTION_OPTION_PANELING_DIRECTION_INWARD, ACTION_OPTION_PANELING_DIRECTION_OUTWARD ],
           ACTION_OPTION_PANELING_JOINT_TYPE => [ ACTION_OPTION_PANELING_JOINT_TYPE_FLAT, ACTION_OPTION_PANELING_JOINT_TYPE_MITER ]
-        }
-      },
-      {
-        :action => ACTION_CSG,
-        :options => {
-          ACTION_OPTION_CSG_OPERATION => [ ACTION_OPTION_CSG_OPERATION_UNION, ACTION_OPTION_CSG_OPERATION_SUBTRACTION, ACTION_OPTION_CSG_OPERATION_INTERSECTION ]
         }
       }
     ].freeze
@@ -103,7 +114,11 @@ module Ladb::OpenCutList
         return SmartCursorManager.cursor_select
       when ACTION_PANELING
         return SmartCursorManager.cursor_select
-      when ACTION_CSG
+      when ACTION_SOLID_UNITE
+        return SmartCursorManager.cursor_select
+      when ACTION_SOLID_SUBTRACT
+        return SmartCursorManager.cursor_select
+      when ACTION_SOLID_INTERSECT
         return SmartCursorManager.cursor_select
       end
 
@@ -118,6 +133,19 @@ module Ladb::OpenCutList
       end
 
       false
+    end
+
+    def get_action_option_sync_actions(action, option_group, option)
+
+      case option_group
+      when ACTION_OPTION_OPTIONS
+        case option
+        when ACTION_OPTION_OPTIONS_KEEP_A, ACTION_OPTION_OPTIONS_KEEP_B
+          return [ ACTION_SOLID_UNITE, ACTION_SOLID_SUBTRACT, ACTION_SOLID_INTERSECT ]
+        end
+      end
+
+      super
     end
 
     def get_action_option_toggle?(action, option_group, option)
@@ -160,9 +188,6 @@ module Ladb::OpenCutList
         return true
 
       when ACTION_OPTION_PANELING_JOINT_TYPE
-        return true
-
-      when ACTION_OPTION_CSG_OPERATION
         return true
 
       end
@@ -209,21 +234,16 @@ module Ladb::OpenCutList
         when ACTION_OPTION_PANELING_JOINT_TYPE_MITER
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0L0,0.375L0.625,0.375L1,0L0,0 M1,0L1,1L0.625,1L0.625,0.375'))
         end
-      when ACTION_OPTION_CSG_OPERATION
-        case option
-        when ACTION_OPTION_CSG_OPERATION_UNION
-          return Kuix::Label.new('U')
-        when ACTION_OPTION_CSG_OPERATION_SUBTRACTION
-          return Kuix::Label.new('S')
-        when ACTION_OPTION_CSG_OPERATION_INTERSECTION
-          return Kuix::Label.new('I')
-        end
       when ACTION_OPTION_OPTIONS
         case option
         when ACTION_OPTION_OPTIONS_CENTERED
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1L0.667,1L1,0.667L1,0L0.333,0L0,0.333L0,1 M0,0.333L0.667,0.333L0.667,1 M0.667,0.333L1,0 M0.333,0.5L0.333,0.833 M0.167,0.667L0.5,0.667'))
         when ACTION_OPTION_OPTIONS_MAKE_UNIQUE
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.167,0.167L0.167,0.833 M0.417,0.167L0.417,0.833 M0,0.333L0.583,0.333 M0,0.667L0.583,0.667 M0.75,0.333L1,0.167L1,0.833'))
+        when ACTION_OPTION_OPTIONS_KEEP_A
+          return Kuix::Label.new(PLUGIN.get_i18n_string("tool.smart_reshape.action_option_options_keep_a_status"))
+        when ACTION_OPTION_OPTIONS_KEEP_B
+          return Kuix::Label.new(PLUGIN.get_i18n_string("tool.smart_reshape.action_option_options_keep_b_status"))
         end
       end
 
@@ -242,8 +262,12 @@ module Ladb::OpenCutList
         set_action_handler(SmartReshapeStretchActionHandler.new(self, fetch_action_handler))
       when ACTION_PANELING
         set_action_handler(SmartReshapePanelingActionHandler.new(self, fetch_action_handler))
-      when ACTION_CSG
-        set_action_handler(SmartReshapeCSGActionHandler.new(self, fetch_action_handler))
+      when ACTION_SOLID_UNITE
+        set_action_handler(SmartReshapeSolidUniteActionHandler.new(self, fetch_action_handler))
+      when ACTION_SOLID_SUBTRACT
+        set_action_handler(SmartReshapeSolidSubtractActionHandler.new(self, fetch_action_handler))
+      when ACTION_SOLID_INTERSECT
+        set_action_handler(SmartReshapeSolidIntersectActionHandler.new(self, fetch_action_handler))
       end
 
       super
@@ -3803,7 +3827,7 @@ module Ladb::OpenCutList
 
   end
 
-  class SmartReshapeCSGActionHandler < SmartActionHandler
+  class SmartReshapeSolidActionHandler < SmartActionHandler
 
     include SmartActionHandlerPartHelper
 
@@ -3813,8 +3837,8 @@ module Ladb::OpenCutList
     LAYER_3D_SRC_PREVIEW = 10
     LAYER_3D_CUT_PREVIEW = 20
 
-    def initialize(tool, previous_action_handler = nil)
-      super(SmartReshapeTool::ACTION_CSG, tool, previous_action_handler)
+    def initialize(action, tool, previous_action_handler = nil)
+      super
 
       @src_drawing_defs = []
       @cut_drawing_defs = []
@@ -3879,7 +3903,7 @@ module Ladb::OpenCutList
         if (drawing_def = _get_drawing_def).is_a?(DrawingDef)
           _preview_part(get_active_part_entity_path, get_active_part, LAYER_3D_SRC_PREVIEW, clear_before: false)
           @src_drawing_defs << drawing_def
-          return true if tool.is_key_shift_down?
+          return true if _allows_multiple_selections? && tool.is_key_shift_down?
           set_state(STATE_SELECT_CUT)
         else
           UI.beep
@@ -3890,7 +3914,7 @@ module Ladb::OpenCutList
         if (drawing_def = _get_drawing_def).is_a?(DrawingDef)
           _preview_part(get_active_part_entity_path, get_active_part, LAYER_3D_CUT_PREVIEW, clear_before: false)
           @cut_drawing_defs << drawing_def
-          return true if tool.is_key_shift_down?
+          return true if _allows_multiple_selections? && tool.is_key_shift_down?
           _operate
         else
           UI.beep
@@ -3972,15 +3996,12 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _get_active_part_preview_color(part, highlighted = false)
-      case @state
-      when STATE_SELECT_SRC
-        ColorUtils.color_translucent(Kuix::COLOR_GREEN, 0.3)
-      when STATE_SELECT_CUT
-        ColorUtils.color_translucent(Kuix::COLOR_RED, 0.3)
-      else
-        super
-      end
+    def _get_solid_operation
+      # Implement in subclass
+    end
+
+    def _allows_multiple_selections?
+      true
     end
 
     # -----
@@ -3999,22 +4020,141 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _fetch_option_csg_operation
-      @tool.fetch_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_CSG_OPERATION)
+    def _fetch_option_options_keep_a?
+      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_KEEP_A)
+    end
+
+    def _fetch_option_options_keep_b?
+      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_KEEP_B)
     end
 
     # -----
 
-    def _operate
+    def _operate(operation = nil)
 
       result_def = CommonSolidBooleanApplyWorker.new(
         @src_drawing_defs,
         @cut_drawing_defs,
-        operation: _fetch_option_csg_operation
+        operation: operation,
+        keep_srcs: _fetch_option_options_keep_a?,
+        keep_cuts: _fetch_option_options_keep_b?
       ).run
       @tool.notify_errors(result_def.errors) unless result_def.success?
 
       _restart
+    end
+
+  end
+
+  class SmartReshapeSolidUniteActionHandler < SmartReshapeSolidActionHandler
+
+    def initialize(tool, previous_action_handler = nil)
+      super(SmartReshapeTool::ACTION_SOLID_UNITE, tool, previous_action_handler)
+    end
+
+    # -----
+
+    def get_state_cursor(state)
+
+      case state
+      when STATE_SELECT_SRC
+        return SmartCursorManager.cursor_select_unite_a
+      when STATE_SELECT_CUT
+        return SmartCursorManager.cursor_select_unite_b
+      end
+
+      super
+    end
+
+    protected
+
+    # -----
+
+    def _allows_multiple_selections?
+      @state == STATE_SELECT_CUT
+    end
+
+    # -----
+
+    def _operate(operation = nil)
+      super(Fiddle::Meshy::OPERATION_UNION)
+    end
+
+  end
+
+  class SmartReshapeSolidSubtractActionHandler < SmartReshapeSolidActionHandler
+
+    def initialize(tool, previous_action_handler = nil)
+      super(SmartReshapeTool::ACTION_SOLID_SUBTRACT, tool, previous_action_handler)
+    end
+
+    # -----
+
+    def get_state_cursor(state)
+
+      case state
+      when STATE_SELECT_SRC
+        return SmartCursorManager.cursor_select_subtract_a
+      when STATE_SELECT_CUT
+        return SmartCursorManager.cursor_select_subtract_b
+      end
+
+      super
+    end
+
+    protected
+
+    # -----
+
+    def _get_active_part_preview_color(part, highlighted = false)
+      case @state
+      when STATE_SELECT_CUT
+        ColorUtils.color_translucent(Kuix::COLOR_RED, 0.3)
+      else
+        super
+      end
+    end
+
+    # -----
+
+    def _operate(operation = nil)
+      super(Fiddle::Meshy::OPERATION_SUBTRACTION)
+    end
+
+  end
+
+  class SmartReshapeSolidIntersectActionHandler < SmartReshapeSolidActionHandler
+
+    def initialize(tool, previous_action_handler = nil)
+      super(SmartReshapeTool::ACTION_SOLID_INTERSECT, tool, previous_action_handler)
+    end
+
+    # -----
+
+    def get_state_cursor(state)
+
+      case state
+      when STATE_SELECT_SRC
+        return SmartCursorManager.cursor_select_intersect_a
+      when STATE_SELECT_CUT
+        return SmartCursorManager.cursor_select_intersect_b
+      end
+
+      super
+    end
+
+    protected
+
+    # -----
+
+    def _allows_multiple_selections?
+      @state == STATE_SELECT_CUT
+    end
+
+    # -----
+
+    def _operate(operation = nil)
+      super(Fiddle::Meshy::OPERATION_INTERSECTION)
     end
 
   end

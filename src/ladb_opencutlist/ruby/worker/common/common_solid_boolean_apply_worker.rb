@@ -29,6 +29,14 @@ module Ladb::OpenCutList
   #   materialized instead (its surviving geometry becomes real geometry and
   #   its instance is erased).
   #
+  # In keep_srcs mode the src containers are left untouched : the whole result
+  # is rebuilt inside a NEW component whose instance is added to the parent of
+  # the src[0] root container, at the same place, with the same name, material
+  # and layer. The sub container hierarchy is not recreated (flat geometry),
+  # except the virtual machinings, copied and re-glued onto the rebuilt faces.
+  # Cuts are consumed as usual (unless keep_cuts), except those living inside
+  # or sharing a src container : erasing them would modify the kept srcs.
+  #
   # On failure nothing is modified. Rebuilt containers (or created faces when
   # the result lands at the model root) are available in result.created_entities.
   class CommonSolidBooleanApplyWorker
@@ -45,6 +53,7 @@ module Ladb::OpenCutList
                    validate: true,
                    result_def: nil,
 
+                   keep_srcs: false,
                    keep_cuts: false,
                    preserve_materials: true,
                    merge_coplanar: true,
@@ -60,6 +69,7 @@ module Ladb::OpenCutList
       @validate = validate
       @result_def = result_def
 
+      @keep_srcs = keep_srcs
       @keep_cuts = keep_cuts
       @preserve_materials = preserve_materials
       @merge_coplanar = merge_coplanar
@@ -89,6 +99,12 @@ module Ladb::OpenCutList
 
       model.start_operation('OCL Solid Boolean', true)
       begin
+
+        if @keep_srcs
+          _apply_to_new_container(result_def, model)
+          model.commit_operation
+          return result_def
+        end
 
         @resolved_instances = {}          # DrawingContainerDef -> (possibly cloned) instance resolved by the erase cascade
         @glued_by_container = {}          # container instance (or nil for model root) -> instances to re-glue
@@ -282,6 +298,127 @@ module Ladb::OpenCutList
     end
 
     private
+
+    # Rebuilds the whole operation result inside a NEW component (keep_srcs
+    # mode), leaving the src containers untouched. The component definition is
+    # named after the src[0] root container, its instance is added to the same
+    # parent, at the same place, with the same name, material and layer. The
+    # sub container hierarchy is not recreated : the result is rebuilt as flat
+    # geometry, except the virtual machinings (glued cuts-opening instances),
+    # copied and re-glued onto the rebuilt faces — unless materialized by the
+    # operation (their surviving geometry is already rebuilt as real geometry)
+    # or orphaned (host area cut away : no face welcomes the copy back).
+    def _apply_to_new_container(result_def, model)
+
+      drawing_def = @src_drawing_defs.first
+      container = drawing_def.container
+      src_containers = @src_drawing_defs.map { |src_drawing_def| src_drawing_def.container }
+
+      # Consume the cuts. Cuts living inside (or sharing) a src container are
+      # left untouched : erasing them would modify the kept srcs.
+      unless @keep_cuts
+        @cut_drawing_defs.each do |cut_drawing_def|
+          cut_container = cut_drawing_def.container
+          if cut_container.is_a?(Sketchup::Group) || cut_container.is_a?(Sketchup::ComponentInstance)
+            next if cut_container.deleted? || src_containers.include?(cut_container)
+            next if cut_container.parent.is_a?(Sketchup::ComponentDefinition) && src_containers.any? { |src_container|
+              (src_container.is_a?(Sketchup::Group) || src_container.is_a?(Sketchup::ComponentInstance)) &&
+                !src_container.deleted? && src_container.definition == cut_container.parent
+            }
+            cut_container.erase!
+          else
+            # Model root cut : erase its root faces and its sub containers
+            _solid_erase_faces!(model.entities, cut_drawing_def.face_manipulators.map(&:face))
+            cut_drawing_def.container_defs.each do |child_def|
+              child_container = child_def.container
+              next if child_container.nil? || child_container.deleted?
+              next if SolidMeshDef.virtual_glued_container?(child_container)
+              child_container.erase!
+            end
+          end
+        end
+      end
+
+      if container.is_a?(Sketchup::Group) || container.is_a?(Sketchup::ComponentInstance)
+        parent_entities = container.parent.entities
+        instance_transformation = container.transformation
+        instance_name = container.name
+        definition_name = container.is_a?(Sketchup::ComponentInstance) ? container.definition.name : container.name
+        material = container.material
+        layer = container.layer
+      else
+        parent_entities = model.entities
+        instance_transformation = drawing_def.transformation * drawing_def.container_transformation
+        instance_name = nil
+        definition_name = nil
+        material = nil
+        layer = nil
+      end
+
+      # World -> new definition local space. The instance sits in the same
+      # slot as the src[0] container : the mapping is the same as a rebuild
+      # inside the src[0] definition itself.
+      transformation = (drawing_def.transformation * drawing_def.container_transformation).inverse
+
+      new_definition = model.definitions.add(definition_name.to_s) # Name collisions are suffixed by SketchUp
+
+      @materialized_container_defs = []
+      created_faces = _solid_fragments_to_geometry(
+        result_def.fragment_defs,
+        new_definition.entities,
+        transformation: transformation,
+        curve_info_defs: result_def.curve_info_defs,
+        preserve_materials: @preserve_materials,
+        merge_coplanar: @merge_coplanar,
+        restore_soft_edges: @restore_soft_edges,
+        restore_curves: @restore_curves
+      )
+
+      # Copy the virtual machinings of the src trees into the new component
+      copied_instances = []
+      fn_copy_virtual_containers = lambda { |parent_def, root_drawing_def|
+        parent_def.container_defs.each do |child_def|
+          child_container = child_def.container
+          next if child_container.nil? || child_container.deleted?
+          if SolidMeshDef.virtual_glued_container?(child_container)
+            next if @materialized_container_defs.include?(child_def)
+            copied_instance = new_definition.entities.add_instance(
+              child_container.definition,
+              transformation * root_drawing_def.transformation * child_def.transformation * child_container.transformation
+            )
+            copied_instance.name = child_container.name unless child_container.name.to_s.empty?
+            copied_instance.material = child_container.material
+            copied_instance.layer = child_container.layer
+            copied_instances << copied_instance
+          else
+            fn_copy_virtual_containers.call(child_def, root_drawing_def)
+          end
+        end
+      }
+      @src_drawing_defs.each { |src_drawing_def| fn_copy_virtual_containers.call(src_drawing_def, src_drawing_def) }
+
+      _solid_reglue_instances(copied_instances, created_faces)
+      copied_instances.each do |copied_instance|
+        next if copied_instance.deleted?
+        glued_to = begin; copied_instance.glued_to; rescue; nil; end
+        copied_instance.erase! if glued_to.nil?
+      end
+
+      if new_definition.entities.size == 0
+        # Empty result (e.g. subtraction consumed everything) : no container created
+        model.definitions.remove(new_definition) if model.definitions.respond_to?(:remove)
+        return
+      end
+
+      instance = parent_entities.add_instance(new_definition, instance_transformation)
+      instance.name = instance_name unless instance_name.nil? || instance_name.empty?
+      instance.material = material unless material.nil?
+      instance.layer = layer unless layer.nil?
+
+      result_def.created_entities << instance
+
+      nil
+    end
 
     # Merges the faces and sub container tree of the given DrawingContainerDef
     # into the given node ({ :faces, :children, :erase_tokens }).
@@ -685,10 +822,14 @@ module Ladb::OpenCutList
       }
 
       # Welding is cosmetic : a failure must never abort the boolean operation.
+      # Weld chains the given edges by connectivity : a group can produce
+      # several disconnected chains, and a chain of a single edge still becomes
+      # a 1-edge Curve. Explode those, a curve must hold at least 2 edges.
       fn_weld = lambda { |edges|
         next if edges.length < 2
         begin
-          entities.weld(edges)
+          curves = entities.weld(edges)
+          curves.each { |curve| curve.first_edge.explode_curve if !curve.deleted? && curve.count_edges < 2 }
         rescue => e
           # Ignored
         end
@@ -721,8 +862,12 @@ module Ladb::OpenCutList
         edges_by_curve_index.each_value(&fn_weld)
       end
 
-      # Intersection seams: group by the set of original surfaces involved so that
-      # a seam crossing several (possibly merged) planar faces stays one chain.
+      # Intersection seams: group by the pair of original surfaces involved.
+      # A planar face has no surface : its face info is its identity, so that
+      # the seams a curved surface shares with two DIFFERENT planar faces are
+      # never chained into a single (non-planar) curve — e.g. a notch cut into
+      # a cylinder : the arc (surface/wall) must not weld with the straight
+      # sides (surface/bottom) they touch at the notch corners.
       # Plane/plane intersections are straight lines: nothing to weld.
       edges_by_seam_key = {}
       new_edges.each do |edge|
@@ -736,7 +881,7 @@ module Ladb::OpenCutList
         surface_info_def_1 = face_info_def_1.surface_info_def
         next if surface_info_def_0.nil? && surface_info_def_1.nil?
         next if !surface_info_def_0.nil? && surface_info_def_0.equal?(surface_info_def_1) # Interior of a surface (softened, not a seam)
-        seam_key = [ surface_info_def_0, surface_info_def_1 ].compact.map(&:object_id).sort
+        seam_key = [ surface_info_def_0 || face_info_def_0, surface_info_def_1 || face_info_def_1 ].map(&:object_id).sort
         (edges_by_seam_key[seam_key] ||= []) << edge
       end
       edges_by_seam_key.each_value(&fn_weld)

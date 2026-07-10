@@ -13,7 +13,16 @@
     "paneling_direction": "inward",
     "paneling_joint_type": "flat"
   },
-  "action_2": { /* ACTION_CSG */
-    "csg_operation": "union"
+  "action_2": { /* ACTION_SOLID_UNITE */
+    "keep_a": false,
+    "keep_b": false
+  },
+  "action_3": { /* ACTION_SOLID_SUBTRACT */
+    "keep_a": false,
+    "keep_b": false
+  },
+  "action_4": { /* ACTION_SOLID_INTERSECT */
+    "keep_a": false,
+    "keep_b": false
   }
 }

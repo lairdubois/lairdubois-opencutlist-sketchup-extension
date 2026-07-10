@@ -2444,9 +2444,12 @@ tool:
     action_1_status: Créer une série de pièces à partir d'un solide fermé
     action_1_state_0_status: Cliquez sur un solide fermé pour définir la géométrie de référence
     action_1_state_1_status: Sélectionnez les faces à extruder
-    # CSG = Constructive Solid Geometry
-    action_2: CSG
+    action_2: Souder
     action_2_status: Vers l'infini et au delà
+    action_3: Découper
+    action_3_status: Vers l'infini et au delà
+    action_4: Intersecter
+    action_4_status: Vers l'infini et au delà
     action_option_group_thickness: Epaisseur
     action_option_group_stretch_measure_type: Mesure
     action_option_group_axes: Axes
@@ -2467,6 +2470,8 @@ tool:
     action_option_paneling_direction_outward_status: Extérieure
     action_option_options_centered_status: Centrer sur les éléments étirés
     action_option_options_make_unique_status: Rendre unique les éléments étirés
+    action_option_options_keep_a_status: Conserver A
+    action_option_options_keep_b_status: Conserver B
     error:
       curve_intersect: L'un des plans de coupe traverse une courbe non étirable
   smart_paint:

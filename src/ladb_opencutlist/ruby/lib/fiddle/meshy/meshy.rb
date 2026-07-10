@@ -5,6 +5,10 @@ module Ladb::OpenCutList::Fiddle
   module Meshy
     extend Wrapper
 
+    OPERATION_UNION = 'union'
+    OPERATION_SUBTRACTION = 'subtraction'
+    OPERATION_INTERSECTION = 'intersection'
+
     def self._lib_name
       'Meshy'
     end
