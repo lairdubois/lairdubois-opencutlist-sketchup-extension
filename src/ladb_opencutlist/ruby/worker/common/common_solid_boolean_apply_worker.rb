@@ -3,6 +3,7 @@ module Ladb::OpenCutList
   require_relative 'common_solid_boolean_worker'
   require_relative '../../model/drawing/drawing_def'
   require_relative '../../model/solid/solid_mesh_def'
+  require_relative '../../utils/lock_utils'
   require_relative '../../utils/transformation_utils'
 
   # Applies a solid boolean operation to the model, transactionally.
@@ -39,12 +40,24 @@ module Ladb::OpenCutList
   #   materialized instead (its surviving geometry becomes real geometry and
   #   its instance is erased).
   #
+  # SketchUp locks are NOT enforced by the Ruby API : the worker enforces
+  # them itself (shared semantic, see LockUtils). A locked src — root
+  # container locked or reachable through a
+  # locked occurrence path, or any locked operand sub container — fails the
+  # operation up front (except in keep_srcs mode, where srcs are untouched).
+  # A locked cut is consumed by the computation but kept in the model, as in
+  # keep_cuts. A definition displayed by a locked external instance is never
+  # rebuilt in place : the locked externals always keep their original
+  # geometry (see make_unique: false below and _plan_shared_definitions).
+  # Locked virtual machinings are not handled.
+  #
   # In make_unique: false mode the definitions shared with instances external
   # to the operation are NOT made unique : they are rebuilt in place, so every
   # instance — external ones included — displays the result. A definition
   # targeted by several operand instances with DIFFERENT results cannot be
   # rebuilt in place : those instances fall back to make_unique, as in the
-  # default mode.
+  # default mode. A definition displayed by a locked external instance falls
+  # back too : rebuilding it in place would bypass the lock.
   #
   # In keep_srcs mode the src containers are left untouched : the whole result
   # is rebuilt inside a NEW component whose instance is added to the parent of
@@ -104,6 +117,17 @@ module Ladb::OpenCutList
       if @src_drawing_defs.empty? || !(@src_drawing_defs + @cut_drawing_defs).all? { |drawing_def| drawing_def.is_a?(DrawingDef) }
         result_def = SolidBooleanResultDef.new
         result_def.errors << [ 'default.error' ]
+        return result_def
+      end
+
+      # Locked operands fail the operation before anything is computed : the
+      # operation rewrites their content and locks are not enforced by the
+      # API. Locked CUTS are not an error : their geometry feeds the
+      # computation but their container is kept, as in keep_cuts mode.
+      locked_names = _locked_operand_names
+      unless locked_names.empty?
+        result_def = SolidBooleanResultDef.new
+        result_def.errors << [ 'core.solid.error.locked_instances', { :list => locked_names.join(', ') } ]
         return result_def
       end
 
@@ -206,8 +230,13 @@ module Ladb::OpenCutList
                 }
               end
               if host_container.nil?
-                standalone_cut_containers << container
-              else
+                # A locked standalone cut (or one reachable through a locked
+                # occurrence path) is kept : erasing it would bypass the lock
+                standalone_cut_containers << container unless LockUtils.effectively_locked?(container)
+              elsif !container.locked?
+                # Same for a locked nested cut : never tagged for erase (its
+                # possible make_unique clone inherits the lock through the
+                # definition cloning)
                 (nested_cut_containers_by_pass[fn_pass.call(host_container)] ||= []) << container
               end
             else
@@ -239,8 +268,15 @@ module Ladb::OpenCutList
             end
           }
           passes.each_value { |pass| fn_count_children.call(pass[:root_node]) }
-          root_instances_by_definition.each { |definition, instances| @conflicting_root_definitions[definition] = true if instances.length > 1 }
-          all_instances_by_definition.each { |definition, instances| @conflicting_definitions[definition] = true if instances.length > 1 }
+          # A definition displayed by a locked external instance cannot be
+          # rebuilt in place either : the operand falls back to make_unique
+          # and the locked externals keep the original definition.
+          locked_cache = {}
+          fn_locked_extern = lambda { |definition, instances|
+            definition.instances.any? { |instance| !instance.deleted? && !instances.key?(instance) && LockUtils.effectively_locked?(instance, locked_cache) }
+          }
+          root_instances_by_definition.each { |definition, instances| @conflicting_root_definitions[definition] = true if instances.length > 1 || fn_locked_extern.call(definition, instances) }
+          all_instances_by_definition.each { |definition, instances| @conflicting_definitions[definition] = true if instances.length > 1 || fn_locked_extern.call(definition, instances) }
         end
 
         # Tag operand faces and sub container instances : attributes survive
@@ -372,12 +408,12 @@ module Ladb::OpenCutList
         # Erase the operand containers left empty (fully consumed solids) :
         # children first, so that a parent emptied by its children is caught too.
         @operand_instances.reverse_each do |instance|
-          next if instance.deleted?
+          next if instance.deleted? || instance.locked?
           instance.erase! if instance.definition.entities.size == 0
         end
         src_containers.uniq.each do |container|
           next unless container.is_a?(Sketchup::Group) || container.is_a?(Sketchup::ComponentInstance)
-          next if container.deleted?
+          next if container.deleted? || container.locked?
           container.erase! if container.definition.entities.size == 0
         end
 
@@ -419,6 +455,7 @@ module Ladb::OpenCutList
               (src_container.is_a?(Sketchup::Group) || src_container.is_a?(Sketchup::ComponentInstance)) &&
                 !src_container.deleted? && src_container.definition == cut_container.parent
             }
+            next if LockUtils.effectively_locked?(cut_container) # Locked cut : consumed by the computation but kept
             cut_container.erase!
           else
             # Model root cut : erase its root faces and its sub containers
@@ -427,6 +464,7 @@ module Ladb::OpenCutList
               child_container = child_def.container
               next if child_container.nil? || child_container.deleted?
               next if SolidMeshDef.virtual_glued_container?(child_container)
+              next if LockUtils.effectively_locked?(child_container) # Locked cut : consumed by the computation but kept
               child_container.erase!
             end
           end
@@ -599,11 +637,13 @@ module Ladb::OpenCutList
           extra_instances = definition.instances.reject { |instance| instance.deleted? || shared_containers.include?(instance) }
           if extra_instances.empty?
             plan[:skip_make_unique_containers][shared_containers.first] = true
-          elsif !@make_unique && shared_drawing_defs.length == drawing_defs.length
+          elsif !@make_unique && shared_drawing_defs.length == drawing_defs.length && extra_instances.none? { |instance| LockUtils.effectively_locked?(instance) }
             # make_unique: false and the subset covers every src of the
             # definition : single writer, the shared definition is rebuilt in
             # place and the extra (external) instances follow the result — no
             # make_unique, no reattachment (Case B collapses into Case A).
+            # Unless an extra instance is locked : it must keep the original
+            # definition, the subset keeps the Case B reattachment below.
             plan[:skip_make_unique_containers][shared_containers.first] = true
           else
             # Reattaching requires ComponentInstance#definition= (SketchUp >= 2022)
@@ -940,6 +980,47 @@ module Ladb::OpenCutList
       z = Geom::Vector3d.new(m[8], m[9], m[10])
       (x.length - 1.0).abs <= 1e-6 && (y.length - 1.0).abs <= 1e-6 && (z.length - 1.0).abs <= 1e-6 &&
         (x % y).abs <= 1e-6 && (y % z).abs <= 1e-6 && (z % x).abs <= 1e-6
+    end
+
+    # Names of the locked operand instances, refused up front : src root
+    # containers (locked or reachable through a locked occurrence path — the
+    # operation rewrites their definition) and their non-virtual sub
+    # containers (locked directly — their faces are erased). Virtual glued
+    # containers (machinings) are not operands. Empty in keep_srcs mode : the
+    # srcs are left untouched.
+    def _locked_operand_names
+      names = []
+      return names if @keep_srcs
+      fn_check_children = lambda { |container_def|
+        container_def.container_defs.each do |child_def|
+          child_container = child_def.container
+          next if child_container.nil? || child_container.deleted?
+          next if SolidMeshDef.virtual_glued_container?(child_container)
+          if child_container.locked?
+            names << _instance_display_name(child_container)
+          else
+            fn_check_children.call(child_def)
+          end
+        end
+      }
+      locked_cache = {}
+      @src_drawing_defs.each do |drawing_def|
+        container = drawing_def.container
+        next unless container.is_a?(Sketchup::Group) || container.is_a?(Sketchup::ComponentInstance)
+        next if container.deleted?
+        if LockUtils.effectively_locked?(container, locked_cache)
+          names << _instance_display_name(container)
+        else
+          fn_check_children.call(drawing_def)
+        end
+      end
+      names.uniq
+    end
+
+    def _instance_display_name(instance)
+      name = instance.name.to_s
+      name = instance.definition.name.to_s if name.empty? && instance.respond_to?(:definition)
+      name
     end
 
     # Merges the faces and sub container tree of the given DrawingContainerDef

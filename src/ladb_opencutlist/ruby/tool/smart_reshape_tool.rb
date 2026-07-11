@@ -9,6 +9,7 @@ module Ladb::OpenCutList
   require_relative '../manipulator/plane_manipulator'
   require_relative '../manipulator/cline_manipulator'
   require_relative '../helper/user_text_helper'
+  require_relative '../utils/lock_utils'
   require_relative '../worker/common/common_drawing_decomposition_worker'
   require_relative '../worker/common/common_solid_boolean_apply_worker'
 
@@ -945,8 +946,7 @@ module Ladb::OpenCutList
     def _get_path_part_preview_color(path, part, highlighted = false)
       # Occurrences reachable through a locked path won't follow the stretch
       # (isolate context + make unique routines): preview them grey.
-      if path != @active_part_entity_path &&
-         path.is_a?(Array) && path.any? { |entity| entity.respond_to?(:locked?) && entity.locked? }
+      if path != @active_part_entity_path && LockUtils.locked_path?(path)
         return highlighted ? COLOR_LOCKED_INSTANCE_HIGHLIGHTED : COLOR_LOCKED_INSTANCE
       end
       super
@@ -1437,7 +1437,7 @@ module Ladb::OpenCutList
 
       fn_preview_container = lambda do |container_def, color|
 
-        color = no_scale_color if container_def.container.respond_to?(:locked?) && container_def.container.locked? ||
+        color = no_scale_color if LockUtils.locked?(container_def.container) ||
                                   container_def.container.respond_to?(:definition) && container_def.container.definition.behavior.no_scale_mask? == 0b1111111 # 0b1111111 = 127 (all disabld)
 
         # Render edges
@@ -1766,7 +1766,7 @@ module Ladb::OpenCutList
       level = nil
       occurrence_paths.each do |occurrence_path|
         next if occurrence_path == path ||
-                occurrence_path.none? { |instance| instance.respond_to?(:locked?) && instance.locked? }
+                !LockUtils.locked_path?(occurrence_path)
         divergence = 0
         divergence += 1 while divergence < occurrence_path.size && divergence < path.size && occurrence_path[divergence] == path[divergence]
         level = level.nil? ? divergence : [ level, divergence ].min
@@ -1876,17 +1876,14 @@ module Ladb::OpenCutList
 
               # An instance is locked if AT LEAST ONE of its paths is locked: re-pointing it to the
               # stretched definition would also alter its occurrences under locked ancestors.
-              locked_extern_instances = extern_instance_paths.select { |path| path.any?(&:locked?) }.map! { |path| path.last }
+              locked_extern_instances = extern_instance_paths.select { |path| LockUtils.locked_path?(path) }.map! { |path| path.last }
               unlocked_extern_instances = extern_instance_paths.map { |path| path.last }.uniq - locked_extern_instances
 
               make_unique_e = locked_extern_instances.any?
 
             else
 
-              extern_instances = definition_instances - stretched_instances
-              _instances_to_paths(extern_instances, (extern_instance_paths = []), model.entities)
-              locked_extern_instances = extern_instance_paths.select { |path| path.any?(&:locked?) }.map! { |path| path.last }
-              unlocked_extern_instances = extern_instances - locked_extern_instances
+              locked_extern_instances, unlocked_extern_instances = LockUtils.partition_locked_extern_instances(definition, stretched_instances)
 
               # The Ruby API does not enforce locks: without make unique, locked extern instances
               # would be silently deformed and back translated.
@@ -2400,7 +2397,7 @@ module Ladb::OpenCutList
           # Check if the container is locked. Locked containers are never deformed (no SPLIT),
           # but they are translated with the section containing their origin: the lock protects
           # the container's shape, not its position within the stretched assembly.
-          elsif drawing_container_def.container.respond_to?(:locked?) && drawing_container_def.container.locked?
+          elsif LockUtils.locked?(drawing_container_def.container)
 
             container_origin = ORIGIN.transform(drawing_container_def.transformation * drawing_container_def.container.transformation)
             section_def = section_defs.find { |section_def| section_def.contains_point?(container_origin, xyz_method) }

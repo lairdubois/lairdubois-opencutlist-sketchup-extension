@@ -80,7 +80,6 @@ module Ladb::OpenCutList
       }
 
       input = {
-        :solver_type => 'manifold',
         :operation => @operation,
         :validate => @validate,
         :tolerance => SolidMeshDef::TOLERANCE,
