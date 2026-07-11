@@ -19,7 +19,6 @@ set(LIBRARY_HEADERS
         include/meshy.hpp
         src/preprocessor.hpp
         src/solver.hpp
-        src/solver_builder.hpp
 )
 source_group("Headers" FILES ${LIBRARY_HEADERS})
 
@@ -27,11 +26,13 @@ source_group("Headers" FILES ${LIBRARY_HEADERS})
 if(WIN32)
   set(LIBRARY_SOURCES
           src/meshy.cpp
+          src/solver.cpp
           src/dllmain.cpp
   )
 else()
   set(LIBRARY_SOURCES
           src/meshy.cpp
+          src/solver.cpp
   )
 endif()
 source_group("Sources" FILES ${LIBRARY_SOURCES})
@@ -52,7 +53,6 @@ if(WIN32)
 endif()
 
 target_include_directories(Meshy PUBLIC include)
-target_include_directories(Meshy PRIVATE ${MCUT_INCLUDE_DIR})
 target_link_libraries(Meshy PRIVATE manifold)
 target_link_libraries(Meshy PRIVATE nlohmann_json::nlohmann_json)
 target_compile_features(Meshy PRIVATE cxx_std_17)
@@ -66,7 +66,6 @@ if(OCL_BUILD_MAIN)
 
   add_executable(MeshyMain ${LIBRARY_HEADERS} ${LIBRARY_SOURCES} src/main.cpp)
   target_include_directories(MeshyMain PUBLIC include)
-  target_include_directories(MeshyMain PRIVATE ${MCUT_INCLUDE_DIR})
   target_link_libraries(MeshyMain PRIVATE manifold)
   target_link_libraries(MeshyMain PRIVATE nlohmann_json::nlohmann_json)
   target_link_libraries(MeshyMain PRIVATE Boost::program_options)

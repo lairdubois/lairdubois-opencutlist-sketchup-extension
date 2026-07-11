@@ -1,9 +1,10 @@
+#include <fstream>
 #include <iostream>
 
 #include <nlohmann/json.hpp>
 #include <boost/program_options.hpp>
 
-#include "solver_builder.hpp"
+#include "solver.hpp"
 
 using namespace Meshy;
 using namespace nlohmann;
@@ -35,8 +36,7 @@ int main(int argc, char* argv[]) {
 
     std::string input_path = (vm.count("input"))? vm["input"].as<std::string>() : "input.json";
 
-    SolverBuilder solver_builder;
-    Solver& solver = (*solver_builder.build(input_path));
+    Solver solver = Solver::build(input_path);
 
     json j_output = solver.operate();
 

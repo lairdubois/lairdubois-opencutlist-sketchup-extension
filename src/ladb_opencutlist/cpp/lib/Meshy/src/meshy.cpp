@@ -1,7 +1,13 @@
 #include "meshy.hpp"
-#include "solver_builder.hpp"
+#include "solver.hpp"
+
+#include <nlohmann/json.hpp>
+
+#include <sstream>
+#include <string>
 
 using namespace Meshy;
+using json = nlohmann::json;
 
 #ifdef __cplusplus
 extern "C" {
@@ -20,8 +26,7 @@ DLL_EXPORTS char* c_operate(
         std::stringstream is;
         is << s_input;
 
-        SolverBuilder solver_builder;
-        Solver& solver = (*solver_builder.build(is));
+        Solver solver = Solver::build(is);
 
         j_output = solver.operate();
 
