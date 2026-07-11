@@ -2445,11 +2445,17 @@ tool:
     action_1_state_0_status: Cliquez sur un solide fermé pour définir la géométrie de référence
     action_1_state_1_status: Sélectionnez les faces à extruder
     action_2: Souder
-    action_2_status: Vers l'infini et au delà
+    action_2_status: Souder plusieurs pièces en une seule
+    action_2_state_0_status: Sélectionnez la pièce A
+    action_2_state_1_status: Sélectionnez la pièce B
     action_3: Découper
-    action_3_status: Vers l'infini et au delà
+    action_3_status: Découper une pièce par une autre
+    action_3_state_0_status: Sélectionnez la pièce A
+    action_3_state_1_status: Sélectionnez la pièce B
     action_4: Intersecter
-    action_4_status: Vers l'infini et au delà
+    action_4_status: Créer une pièce correspondant à l'intersection de plusieurs pièces
+    action_4_state_0_status: Sélectionnez la pièce A
+    action_4_state_1_status: Sélectionnez la pièce B
     action_option_group_thickness: Epaisseur
     action_option_group_stretch_measure_type: Mesure
     action_option_group_axes: Axes

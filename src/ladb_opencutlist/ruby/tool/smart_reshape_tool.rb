@@ -3928,7 +3928,6 @@ module Ladb::OpenCutList
     end
 
     def onToolKeyDown(tool, key, repeat, flags, view)
-      return true if super
 
       if tool.is_key_alt_or_command?(key)
         return true # Block default behavior for the ALT key on Windows
