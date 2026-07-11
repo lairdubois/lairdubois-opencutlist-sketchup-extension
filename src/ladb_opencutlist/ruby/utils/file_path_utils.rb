@@ -85,6 +85,11 @@ module Ladb::OpenCutList
       drive.empty? ? result : "#{drive}#{result}"
     end
 
+    # Sanitizes a Windows-style path by replacing backslashes with forward slashes
+    def self.sanitize_fucking_windows_backslashes(path)
+      path.gsub(/\\/, '/')
+    end
+
     # -----
 
     private

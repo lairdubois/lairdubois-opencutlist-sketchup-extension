@@ -1,5 +1,7 @@
 module Ladb::OpenCutList
 
+  require_relative '../../utils/file_path_utils'
+
   class MaterialsExportToSkmWorker
 
     def initialize(
@@ -28,7 +30,7 @@ module Ladb::OpenCutList
       return { :errors => [ 'tab.materials.error.material_not_found' ] } unless material
 
       last_dir = PLUGIN.read_default(Plugin::SETTINGS_KEY_MATERIALS_LAST_DIR, nil)
-      if last_dir && File.directory?(last_dir) && File.exist?(last_dir)
+      if last_dir && File.exist?(last_dir) && File.directory?(last_dir)
         dir = last_dir
       else
 
@@ -55,7 +57,7 @@ module Ladb::OpenCutList
       if path
 
         # Save last dir
-        PLUGIN.write_default(Plugin::SETTINGS_KEY_MATERIALS_LAST_DIR, File.dirname(path))
+        PLUGIN.write_default(Plugin::SETTINGS_KEY_MATERIALS_LAST_DIR, FilePathUtils.sanitize_fucking_windows_backslashes(File.dirname(path)))
 
         # Force "skm" file extension
         path = path + '.skm' unless path.end_with?('.skm')

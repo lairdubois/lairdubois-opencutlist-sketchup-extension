@@ -52,7 +52,7 @@ module Ladb::OpenCutList
         end
 
         # Save last dir
-        PLUGIN.write_default(Plugin::SETTINGS_KEY_MATERIALS_LAST_DIR, File.dirname(path))
+        PLUGIN.write_default(Plugin::SETTINGS_KEY_MATERIALS_LAST_DIR, FilePathUtils.sanitize_fucking_windows_backslashes(File.dirname(path)))
 
         if Sketchup.version_number > 1800000000 # RubyZip is not compatible with SU 18-
 
