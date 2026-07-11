@@ -8,6 +8,7 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
   * Added Smart Stretch Tool
   * Added Smart Paneling Tool
+  * Added Boolean Tools
   * Added Smart Join Tool **(DEV team only)**
   * Added Grain Continuity support
   * Added Cutlist part names filter
@@ -25,6 +26,9 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
+### 2026-07-11
+ * Updated PackingSolver dependency
+ * Added Smart Boolean Tools (alpha state)
 ### 2026-07-06
  * Updated PackingSolver dependency
  * Added `BinPackingCuttingCost` objective for `RectangleGuillotine` problem types

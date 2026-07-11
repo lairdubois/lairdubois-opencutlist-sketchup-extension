@@ -148,6 +148,8 @@ module Ladb::OpenCutList
 
     # -----
 
+    private
+
     def _populate(face_manipulators, transformation = IDENTITY, container_def: nil, virtual: false)
 
       transformation = nil if transformation.nil? || transformation.identity?
@@ -225,8 +227,6 @@ module Ladb::OpenCutList
     end
 
     # -----
-
-    private
 
     # Welds vertices within TOLERANCE : the same world point reached through
     # two different transformation chains (e.g. a host face and the glued
