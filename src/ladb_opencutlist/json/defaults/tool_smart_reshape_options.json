@@ -15,14 +15,17 @@
   },
   "action_2": { /* ACTION_SOLID_UNITE */
     "keep_a": false,
-    "keep_b": false
+    "keep_b": false,
+    "make_unique": true
   },
   "action_3": { /* ACTION_SOLID_SUBTRACT */
     "keep_a": false,
-    "keep_b": false
+    "keep_b": false,
+    "make_unique": true
   },
   "action_4": { /* ACTION_SOLID_INTERSECT */
     "keep_a": false,
-    "keep_b": false
+    "keep_b": false,
+    "make_unique": true
   }
 }

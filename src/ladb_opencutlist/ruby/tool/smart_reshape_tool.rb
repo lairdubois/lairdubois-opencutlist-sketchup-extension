@@ -59,19 +59,19 @@ module Ladb::OpenCutList
       {
         :action => ACTION_SOLID_UNITE,
         :options => {
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_KEEP_A, ACTION_OPTION_OPTIONS_KEEP_B ]
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_KEEP_A, ACTION_OPTION_OPTIONS_KEEP_B, ACTION_OPTION_OPTIONS_MAKE_UNIQUE ]
         }
       },
       {
         :action => ACTION_SOLID_SUBTRACT,
         :options => {
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_KEEP_A, ACTION_OPTION_OPTIONS_KEEP_B ]
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_KEEP_A, ACTION_OPTION_OPTIONS_KEEP_B, ACTION_OPTION_OPTIONS_MAKE_UNIQUE ]
         }
       },
       {
         :action => ACTION_SOLID_INTERSECT,
         :options => {
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_KEEP_A, ACTION_OPTION_OPTIONS_KEEP_B ]
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_KEEP_A, ACTION_OPTION_OPTIONS_KEEP_B, ACTION_OPTION_OPTIONS_MAKE_UNIQUE ]
         }
       },
       {
@@ -4006,6 +4006,17 @@ module Ladb::OpenCutList
 
     # -----
 
+    def _get_active_part_preview_color(part, highlighted = false)
+      case @state
+      when STATE_SELECT_CUT
+        ColorUtils.color_translucent(COLOR_PART, 0.3)
+      else
+        super
+      end
+    end
+
+    # -----
+
     def _get_drawing_def_parameters
       {
         ignore_surfaces: true,
@@ -4028,6 +4039,10 @@ module Ladb::OpenCutList
       @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_KEEP_B)
     end
 
+    def _fetch_option_options_make_unique?
+      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_MAKE_UNIQUE)
+    end
+
     # -----
 
     def _operate(operation = nil)
@@ -4037,7 +4052,8 @@ module Ladb::OpenCutList
         @cut_drawing_defs,
         operation: operation,
         keep_srcs: _fetch_option_options_keep_a?,
-        keep_cuts: _fetch_option_options_keep_b?
+        keep_cuts: _fetch_option_options_keep_b?,
+        make_unique: _fetch_option_options_make_unique?
       ).run
       @tool.notify_errors(result_def.errors) unless result_def.success?
 

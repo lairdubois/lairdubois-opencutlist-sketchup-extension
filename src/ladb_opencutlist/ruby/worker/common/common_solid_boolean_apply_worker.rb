@@ -1,4 +1,3 @@
-
 module Ladb::OpenCutList
 
   require_relative 'common_solid_boolean_worker'
@@ -40,6 +39,13 @@ module Ladb::OpenCutList
   #   materialized instead (its surviving geometry becomes real geometry and
   #   its instance is erased).
   #
+  # In make_unique: false mode the definitions shared with instances external
+  # to the operation are NOT made unique : they are rebuilt in place, so every
+  # instance — external ones included — displays the result. A definition
+  # targeted by several operand instances with DIFFERENT results cannot be
+  # rebuilt in place : those instances fall back to make_unique, as in the
+  # default mode.
+  #
   # In keep_srcs mode the src containers are left untouched : the whole result
   # is rebuilt inside a NEW component whose instance is added to the parent of
   # the src[0] root container, at the same place, with the same name, material
@@ -66,6 +72,7 @@ module Ladb::OpenCutList
 
                    keep_srcs: false,
                    keep_cuts: false,
+                   make_unique: true,
                    preserve_materials: true,
                    merge_coplanar: true,
                    restore_soft_edges: true,
@@ -82,6 +89,7 @@ module Ladb::OpenCutList
 
       @keep_srcs = keep_srcs
       @keep_cuts = keep_cuts
+      @make_unique = make_unique
       @preserve_materials = preserve_materials
       @merge_coplanar = merge_coplanar
       @restore_soft_edges = restore_soft_edges
@@ -208,6 +216,33 @@ module Ladb::OpenCutList
           end
         end
 
+        # make_unique: false fallback planning. A definition written by several
+        # distinct operand instances holds several different results and cannot
+        # be rebuilt in place : root containers of such a definition keep the
+        # make_unique behavior (@conflicting_root_definitions, srcs sharing a
+        # definition with different result signatures), and a nested child
+        # conflicting with ANY other writer — sibling child nodes or an
+        # effective src root — is made unique too (@conflicting_definitions).
+        @conflicting_root_definitions = {}
+        @conflicting_definitions = {}
+        unless @make_unique
+          root_instances_by_definition = {}
+          all_instances_by_definition = {}
+          fn_count = lambda { |registry, instance|
+            (registry[instance.definition] ||= {})[instance] = true if (instance.is_a?(Sketchup::Group) || instance.is_a?(Sketchup::ComponentInstance)) && !instance.deleted?
+          }
+          effective_src_containers.each { |container| fn_count.call(root_instances_by_definition, container) ; fn_count.call(all_instances_by_definition, container) }
+          fn_count_children = lambda { |node|
+            node[:children].each do |child_node|
+              fn_count.call(all_instances_by_definition, child_node[:container]) unless child_node[:container].nil?
+              fn_count_children.call(child_node)
+            end
+          }
+          passes.each_value { |pass| fn_count_children.call(pass[:root_node]) }
+          root_instances_by_definition.each { |definition, instances| @conflicting_root_definitions[definition] = true if instances.length > 1 }
+          all_instances_by_definition.each { |definition, instances| @conflicting_definitions[definition] = true if instances.length > 1 }
+        end
+
         # Tag operand faces and sub container instances : attributes survive
         # make_unique cloning, entity references do not.
         tagged_faces = []
@@ -229,8 +264,11 @@ module Ladb::OpenCutList
             if container.is_a?(Sketchup::Group) || container.is_a?(Sketchup::ComponentInstance)
               next if container.deleted?
               # Case A shared srcs : every instance displays the rebuilt
-              # definition, making it unique would break the sharing
-              container.make_unique if container.definition.instances.length > 1 && !shared_plan[:skip_make_unique_containers].key?(container)
+              # definition, making it unique would break the sharing.
+              # make_unique: false : rebuilt in place (external instances
+              # follow), unless several srcs write different results to the
+              # definition (fallback to make_unique).
+              container.make_unique if container.definition.instances.length > 1 && !shared_plan[:skip_make_unique_containers].key?(container) && (@make_unique || @conflicting_root_definitions.key?(container.definition))
               entities = container.definition.entities
               owner = container
             else
@@ -488,6 +526,11 @@ module Ladb::OpenCutList
     #   its erase pass, the other members are reattached to its new definition
     #   (ComponentInstance#definition=, SketchUp >= 2022 : otherwise the subset
     #   falls back to distinct definitions, as before).
+    # In make_unique: false mode, a subset covering EVERY src of its definition
+    # is rebuilt in place whatever the extra instances (Case B collapses into
+    # Case A : externals follow the result, no reattachment). A partial subset
+    # keeps the Case B behavior : the definition holds several different
+    # results and cannot be shared with the external instances.
     # Srcs fused by the operation (multi src fragments) and srcs whose
     # container is also a cut container never share.
     def _plan_shared_definitions(result_def, fragments_by_target, src_node_owners, src_node_paths)
@@ -556,6 +599,12 @@ module Ladb::OpenCutList
           extra_instances = definition.instances.reject { |instance| instance.deleted? || shared_containers.include?(instance) }
           if extra_instances.empty?
             plan[:skip_make_unique_containers][shared_containers.first] = true
+          elsif !@make_unique && shared_drawing_defs.length == drawing_defs.length
+            # make_unique: false and the subset covers every src of the
+            # definition : single writer, the shared definition is rebuilt in
+            # place and the extra (external) instances follow the result — no
+            # make_unique, no reattachment (Case B collapses into Case A).
+            plan[:skip_make_unique_containers][shared_containers.first] = true
           else
             # Reattaching requires ComponentInstance#definition= (SketchUp >= 2022)
             next unless shared_containers.all? { |shared_container| shared_container.respond_to?(:definition=) }
@@ -571,13 +620,79 @@ module Ladb::OpenCutList
       plan
     end
 
+    # Exact plane key of a quantized coplanar triangle batch : gcd-reduced
+    # SIGNED integer normal + offset (signed : opposite facing coplanar faces
+    # never merge). nil when every triangle is degenerate after quantization.
+    def _quantized_plane_key(quantized_triangles)
+      quantized_triangles.each do |q0, q1, q2|
+        ux = q1[0] - q0[0] ; uy = q1[1] - q0[1] ; uz = q1[2] - q0[2]
+        vx = q2[0] - q0[0] ; vy = q2[1] - q0[1] ; vz = q2[2] - q0[2]
+        nx = uy * vz - uz * vy
+        ny = uz * vx - ux * vz
+        nz = ux * vy - uy * vx
+        next if nx == 0 && ny == 0 && nz == 0
+        gcd = nx.gcd(ny).gcd(nz)
+        return [ nx / gcd, ny / gcd, nz / gcd, (nx * q0[0] + ny * q0[1] + nz * q0[2]) / gcd ]
+      end
+      nil
+    end
+
+    # Canonical sorted keys of the given net directed boundary edges. Manifold
+    # may imprint T-vertices (collinear mid-edge vertices, placement dependent
+    # world-space intersections) differently on geometrically identical
+    # results : collinear chains are collapsed so that two identical local
+    # boundaries sign identically whatever the imprints. Coordinates are
+    # quantized integers : the collinearity test is exact. Vertices shared by
+    # several loops (2+ in/out edges) are conservatively kept.
+    def _canonical_boundary_keys(edge_counts)
+
+      edges = []
+      edge_counts.each { |(a, b), count| count.times { edges << [ a, b ] } }
+
+      fn_collinear_forward = lambda { |a, v, b|
+        d1x = v[0] - a[0] ; d1y = v[1] - a[1] ; d1z = v[2] - a[2]
+        d2x = b[0] - v[0] ; d2y = b[1] - v[1] ; d2z = b[2] - v[2]
+        d1y * d2z == d1z * d2y && d1z * d2x == d1x * d2z && d1x * d2y == d1y * d2x &&
+          d1x * d2x + d1y * d2y + d1z * d2z > 0
+      }
+
+      loop do
+        in_indices = {}
+        out_indices = {}
+        edges.each_with_index do |(a, b), index|
+          (in_indices[b] ||= []) << index
+          (out_indices[a] ||= []) << index
+        end
+        merged = false
+        in_indices.each do |vertex, incoming|
+          outgoing = out_indices[vertex]
+          next unless incoming.length == 1 && !outgoing.nil? && outgoing.length == 1
+          a = edges[incoming.first][0]
+          b = edges[outgoing.first][1]
+          next if a == vertex || b == vertex || a == b
+          next unless fn_collinear_forward.call(a, vertex, b)
+          edges.delete_at([ incoming.first, outgoing.first ].max)
+          edges.delete_at([ incoming.first, outgoing.first ].min)
+          edges << [ a, b ]
+          merged = true
+          break
+        end
+        break unless merged
+      end
+
+      edges.map { |a, b| "#{a.join(',')}>#{b.join(',')}" }.sort
+    end
+
     # Canonical signature of the result attributed to the given src root
     # drawing def, expressed in its own local space : two instances of the same
     # definition with equal signatures rebuild to the same local content.
     # Covers everything the rebuild consumes : target node path, quantized
-    # directed BOUNDARY edges per triangle batch (the interior tessellation
-    # diagonals cancel out in pairs, so the signature is independent of the
-    # triangulation Manifold chose ; winding corrected on mirror
+    # directed BOUNDARY edges per coplanar same-attribute batch group (the
+    # interior tessellation diagonals and coplanar batch seams cancel out in
+    # pairs, the collinear chains are collapsed — _canonical_boundary_keys —
+    # so the signature is independent of the triangulation and batch partition
+    # Manifold chose and of its placement dependent T-vertex imprints ;
+    # winding corrected on mirror
     # transformations), material, layer, virtual flag and surface partition
     # (first-appearance indices over the sorted batches). Quantization may only
     # produce false NEGATIVES (borderline rounding -> distinct definitions, as
@@ -589,7 +704,16 @@ module Ladb::OpenCutList
       flipped = !transformation.nil? && TransformationUtils.flipped?(transformation)
       tolerance = SolidMeshDef::TOLERANCE
 
-      records = []
+      # Net directed edge counts, accumulated per (path, plane, material,
+      # layer, virtual, surface) group : an interior diagonal — or, in
+      # merge_coplanar mode, a seam between two coplanar batches the rebuild
+      # will merge anyway — is traversed once in each direction and cancels
+      # out, whatever the accumulation order. Manifold partitions the result
+      # triangles by face provenance, which is placement dependent (cut
+      # imprint areas) : without the coplanar grouping, two geometrically
+      # identical results could sign differently.
+      batch_index = 0
+      grouped_edge_counts = {}
       fragment_paths.each do |fragment_def, path|
         path_key = path.join('.')
         fragment_def.each_triangle_batch do |face_info_def, triangles|
@@ -598,14 +722,17 @@ module Ladb::OpenCutList
           virtual = !face_info_def.nil? && face_info_def.virtual? ? 1 : 0
           surface_info_def = face_info_def.nil? ? nil : face_info_def.surface_info_def
 
-          # Net directed edge counts : an interior diagonal is traversed once
-          # in each direction by its two triangles and cancels out, whatever
-          # the accumulation order.
-          edge_counts = {}
-          triangles.each do |points|
+          quantized_triangles = triangles.map { |points|
             points = points.map { |point| point.transform(transformation) } unless transformation.nil?
             points = points.reverse if flipped
-            quantized = points.map { |point| point.to_a.map { |v| (v / tolerance).round } }
+            points.map { |point| point.to_a.map { |v| (v / tolerance).round } }
+          }
+
+          batch_index += 1
+          group_id = @merge_coplanar ? _quantized_plane_key(quantized_triangles) : batch_index
+          edge_counts = (grouped_edge_counts[[ path_key, group_id, material_id, layer_id, virtual, surface_info_def ]] ||= {})
+
+          quantized_triangles.each do |quantized|
             [ [ 0, 1 ], [ 1, 2 ], [ 2, 0 ] ].each do |index_a, index_b|
               a = quantized[index_a]
               b = quantized[index_b]
@@ -617,13 +744,13 @@ module Ladb::OpenCutList
               end
             end
           end
-          boundary_keys = []
-          edge_counts.each { |(a, b), count| count.times { boundary_keys << "#{a.join(',')}>#{b.join(',')}" } }
-          boundary_keys.sort!
 
-          records << [ "#{path_key}|#{boundary_keys.join(';')}|#{material_id}|#{layer_id}|#{virtual}", surface_info_def ]
         end
       end
+
+      records = grouped_edge_counts.map { |(path_key, _, material_id, layer_id, virtual, surface_info_def), edge_counts|
+        [ "#{path_key}|#{_canonical_boundary_keys(edge_counts).join(';')}|#{material_id}|#{layer_id}|#{virtual}", surface_info_def ]
+      }
 
       records.sort_by! { |key, _| key }
       surface_indices = {}
@@ -773,9 +900,7 @@ module Ladb::OpenCutList
           layer_id = face_info_def.nil? || face_info_def.layer.nil? ? 0 : face_info_def.layer.object_id
           virtual = !face_info_def.nil? && face_info_def.virtual? ? 1 : 0
           surface_info_def = face_info_def.nil? ? nil : face_info_def.surface_info_def
-          boundary_keys = []
-          edge_counts.each { |(a, b), count| count.times { boundary_keys << "#{a.join(',')}>#{b.join(',')}" } }
-          boundary_keys.sort!
+          boundary_keys = _canonical_boundary_keys(edge_counts)
           records << [ "#{boundary_keys.join(';')}|#{material_id}|#{layer_id}|#{virtual}", surface_info_def ]
         end
 
@@ -884,7 +1009,11 @@ module Ladb::OpenCutList
         child_instance = instances_by_token[child_node[:token]]
         next if child_instance.nil? || child_instance.deleted?
         child_instance.delete_attribute(TRACKING_DICTIONARY)
-        child_instance.make_unique if child_instance.definition.instances.length > 1
+        # make_unique: false : the shared child definition is rebuilt in place,
+        # unless another operand instance also writes it (fallback). The
+        # conflict map is keyed by definition : it holds through the possible
+        # parent cloning (make_unique is shallow, children keep their definition).
+        child_instance.make_unique if child_instance.definition.instances.length > 1 && (@make_unique || @conflicting_definitions.key?(child_instance.definition))
         @resolved_instances[child_node[:container_def]] = child_instance
         @operand_instances << child_instance
         _erase_node(child_instance.definition.entities, child_node, child_instance)
