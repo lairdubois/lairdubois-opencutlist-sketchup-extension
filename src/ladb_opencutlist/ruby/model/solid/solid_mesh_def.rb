@@ -93,7 +93,7 @@ module Ladb::OpenCutList
       return nil unless drawing_def.is_a?(DrawingDef)
       mesh_def = new
       fn_populate = lambda { |container_def, virtual|
-        mesh_def._populate(container_def.face_manipulators, drawing_def.transformation, container_def: container_def, virtual: virtual)
+        mesh_def.populate(container_def.face_manipulators, drawing_def.transformation, container_def: container_def, virtual: virtual)
         container_def.container_defs.each { |child_def| fn_populate.call(child_def, virtual || virtual_glued_container?(child_def.container)) }
       }
       fn_populate.call(drawing_def, false)
@@ -112,7 +112,7 @@ module Ladb::OpenCutList
     # transformation : applied on top of each manipulator's own transformation
     def self.from_face_manipulators(face_manipulators, transformation: IDENTITY)
       mesh_def = new
-      mesh_def._populate(face_manipulators, transformation)
+      mesh_def.populate(face_manipulators, transformation)
       mesh_def
     end
 
@@ -148,9 +148,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    private
-
-    def _populate(face_manipulators, transformation = IDENTITY, container_def: nil, virtual: false)
+    def populate(face_manipulators, transformation = IDENTITY, container_def: nil, virtual: false)
 
       transformation = nil if transformation.nil? || transformation.identity?
 
@@ -227,6 +225,8 @@ module Ladb::OpenCutList
     end
 
     # -----
+
+    private
 
     # Welds vertices within TOLERANCE : the same world point reached through
     # two different transformation chains (e.g. a host face and the glued
