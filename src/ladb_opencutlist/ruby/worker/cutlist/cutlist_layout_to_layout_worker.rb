@@ -405,6 +405,9 @@ module Ladb::OpenCutList
               }
             }
 
+            # For SketchUp 2019 compatibility
+            Zip.write_zip64_support = false
+
             Zip::File.open(layout_path, create: false) do |zipfile|
 
               require 'rexml/document'
