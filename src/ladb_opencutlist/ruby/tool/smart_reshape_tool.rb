@@ -142,6 +142,8 @@ module Ladb::OpenCutList
         case option
         when ACTION_OPTION_OPTIONS_KEEP_A, ACTION_OPTION_OPTIONS_KEEP_B
           return [ ACTION_SOLID_UNITE, ACTION_SOLID_SUBTRACT, ACTION_SOLID_INTERSECT ]
+        when ACTION_OPTION_OPTIONS_MAKE_UNIQUE
+          return [ ACTION_STRETCH, ACTION_SOLID_UNITE, ACTION_SOLID_SUBTRACT, ACTION_SOLID_INTERSECT ]
         end
       end
 
@@ -3925,7 +3927,24 @@ module Ladb::OpenCutList
 
     end
 
+    def onToolKeyDown(tool, key, repeat, flags, view)
+      return true if super
+
+      if tool.is_key_alt_or_command?(key)
+        return true # Block default behavior for the ALT key on Windows
+      end
+
+      false
+    end
+
     def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
+
+      if tool.is_key_alt_or_command?(key) && is_quick
+        @tool.store_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_MAKE_UNIQUE, !_fetch_option_options_make_unique?, fire_event: true)
+        _refresh
+        return true
+      end
+
       if tool.is_key_shift?(key)
 
         case @state

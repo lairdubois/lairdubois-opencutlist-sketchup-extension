@@ -1188,6 +1188,23 @@ module Ladb::OpenCutList
           end
         end
         entities.erase_entities(edges_to_erase) if edges_to_erase.any?
+
+        # Degenerate remnants : Manifold may emit a sliver triangle thinner
+        # than the SketchUp merge tolerance (e.g. bridging a corner and a
+        # nearby hole rim) ; SketchUp partially collapses it on creation and
+        # the merge cascade leaves it as a zero area face bounded by two
+        # coincident edges. A face with less than 3 edges is never a
+        # legitimate piece of the shell : erase it, with the edges bounding
+        # only such faces.
+        degenerate_faces = face_infos.keys.select { |face| !face.deleted? && face.edges.length < 3 }
+        unless degenerate_faces.empty?
+          degenerate_entities = []
+          degenerate_faces.each do |face|
+            degenerate_entities.concat(face.edges.select { |edge| edge.faces.all? { |edge_face| degenerate_faces.include?(edge_face) } })
+            degenerate_entities << face
+          end
+          entities.erase_entities(degenerate_entities)
+        end
       end
 
       _solid_weld_curves(entities, face_infos, curve_info_defs, transformation: transformation) if restore_curves

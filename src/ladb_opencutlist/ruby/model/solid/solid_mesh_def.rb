@@ -228,15 +228,50 @@ module Ladb::OpenCutList
 
     private
 
+    # Welds vertices within TOLERANCE : the same world point reached through
+    # two different transformation chains (e.g. a host face and the glued
+    # cuts-opening container punching it, each composing its own manipulator
+    # transformations) drifts by a few double ulps, and Meshy validates the
+    # shell topologically (per vertex INDEX) before any snapping — unwelded
+    # duplicates read as open edges. Vertices are hashed by tolerance grid
+    # cell ; the neighbor cells are scanned so that a pair straddling a cell
+    # boundary is welded too, with a real distance gate so that two vertices
+    # farther than TOLERANCE never weld.
     def _vertex_index(point)
-      key = point.to_a
-      index = @vertex_index_map[key]
+      coordinates = point.to_a
+      cell = coordinates.map { |v| (v / TOLERANCE).round }
+
+      index = @vertex_index_map[cell]
+      index = nil unless !index.nil? && _within_tolerance?(index, coordinates)
+      if index.nil?
+        (-1..1).each do |dx|
+          (-1..1).each do |dy|
+            (-1..1).each do |dz|
+              next if dx == 0 && dy == 0 && dz == 0
+              neighbor_index = @vertex_index_map[[ cell[0] + dx, cell[1] + dy, cell[2] + dz ]]
+              next if neighbor_index.nil? || !_within_tolerance?(neighbor_index, coordinates)
+              index = neighbor_index
+              break
+            end
+            break unless index.nil?
+          end
+          break unless index.nil?
+        end
+      end
+
       if index.nil?
         index = vertex_count
-        @vertex_index_map[key] = index
-        @vertices.concat(key)
+        @vertex_index_map[cell] = index
+        @vertices.concat(coordinates)
       end
       index
+    end
+
+    def _within_tolerance?(index, coordinates)
+      dx = @vertices[index * 3] - coordinates[0]
+      dy = @vertices[index * 3 + 1] - coordinates[1]
+      dz = @vertices[index * 3 + 2] - coordinates[2]
+      dx * dx + dy * dy + dz * dz <= TOLERANCE * TOLERANCE
     end
 
     # Flood fill over soft edges to group faces belonging to the same curved surface.
