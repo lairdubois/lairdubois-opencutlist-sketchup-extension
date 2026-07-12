@@ -590,7 +590,7 @@ module Ladb::OpenCutList
     end
 
     def clear_2d(layers = 0)
-      layers = [ layers ] if layers.is_a?(Integer)
+      layers = Array(layers)
       return unless layers.is_a?(Array)
       layers.each do |layer|
         k_layer = @layers_2d[layer]
@@ -603,7 +603,7 @@ module Ladb::OpenCutList
     end
 
     def set_2d_visibility(visible, layers = 0)
-      layers = [ layers ] if layers.is_a?(Integer)
+      layers = Array(layers)
       return unless layers.is_a?(Array)
       layers.each do |layer|
         k_layer = @layers_2d[layer]
@@ -626,7 +626,7 @@ module Ladb::OpenCutList
     end
 
     def clear_3d(layers = 0)
-      layers = [ layers ] if layers.is_a?(Integer)
+      layers = Array(layers)
       return unless layers.is_a?(Array)
       layers.each do |layer|
         k_layer = @layers_3d[layer]
@@ -639,7 +639,7 @@ module Ladb::OpenCutList
     end
 
     def set_3d_visibility(visible, layers = 0)
-      layers = [ layers ] if layers.is_a?(Integer)
+      layers = Array(layers)
       return unless layers.is_a?(Array)
       layers.each do |layer|
         k_layer = @layers_3d[layer]

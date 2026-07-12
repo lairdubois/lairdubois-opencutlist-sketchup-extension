@@ -3238,7 +3238,7 @@ module Ladb::OpenCutList
         _purge_definitions
         _clear_definitions_factory
 
-        # Abord operation (restore entities state)
+        # Abort operation (restore entities state)
         Sketchup.active_model.abort_operation
 
       end
@@ -3839,8 +3839,8 @@ module Ladb::OpenCutList
     def initialize(action, tool, previous_action_handler = nil)
       super
 
-      @src_drawing_defs = []
-      @cut_drawing_defs = []
+      @src_selection = Selection.new(LAYER_3D_SRC_PREVIEW)
+      @cut_selection = Selection.new(LAYER_3D_CUT_PREVIEW)
 
     end
 
@@ -3878,10 +3878,22 @@ module Ladb::OpenCutList
         case @state
 
         when STATE_SELECT_SRC
-          _reset
+          if @src_selection.items.any?
+            @src_selection.clear
+            tool.hide_validation
+            tool.clear_3d(LAYER_3D_SRC_PREVIEW)
+          else
+            _reset
+          end
 
         when STATE_SELECT_CUT
-          set_state(STATE_SELECT_SRC)
+          if @cut_selection.items.any?
+            @cut_selection.clear
+            tool.hide_validation
+            tool.clear_3d(LAYER_3D_CUT_PREVIEW)
+          else
+            set_state(STATE_SELECT_SRC)
+          end
 
         end
         _refresh
@@ -3894,28 +3906,33 @@ module Ladb::OpenCutList
 
     end
 
+
+    def onToolValidate(tool, view)
+
+      case @state
+
+      when STATE_SELECT_SRC
+        set_state(STATE_SELECT_CUT)
+
+      when STATE_SELECT_CUT
+        _operate
+
+      end
+
+    end
+
     def onToolLButtonUp(tool, flags, x, y, view)
 
       case @state
 
       when STATE_SELECT_SRC
-        if (drawing_def = _get_drawing_def).is_a?(DrawingDef)
-          _preview_part(get_active_part_entity_path, get_active_part, LAYER_3D_SRC_PREVIEW, clear_before: false)
-          @src_drawing_defs << drawing_def
-          return true if _allows_multiple_selections? && tool.is_key_shift_down?
-          set_state(STATE_SELECT_CUT)
-        else
+        unless _toggle_selection(tool, @src_selection) { set_state(STATE_SELECT_CUT) }
           UI.beep
         end
         return true
 
       when STATE_SELECT_CUT
-        if (drawing_def = _get_drawing_def).is_a?(DrawingDef)
-          _preview_part(get_active_part_entity_path, get_active_part, LAYER_3D_CUT_PREVIEW, clear_before: false)
-          @cut_drawing_defs << drawing_def
-          return true if _allows_multiple_selections? && tool.is_key_shift_down?
-          _operate
-        else
+        unless _toggle_selection(tool, @cut_selection) { _operate }
           UI.beep
         end
         return true
@@ -3941,24 +3958,6 @@ module Ladb::OpenCutList
         return true
       end
 
-      if tool.is_key_shift?(key)
-
-        case @state
-        when STATE_SELECT_SRC
-          unless @src_drawing_defs.empty?
-            set_state(STATE_SELECT_CUT)
-            tool.clear_3d(LAYER_3D_CUT_PREVIEW)
-          end
-          return true
-
-        when STATE_SELECT_CUT
-          _operate unless @cut_drawing_defs.empty?
-          return true
-
-        end
-
-      end
-
       false
     end
 
@@ -3967,11 +3966,13 @@ module Ladb::OpenCutList
       case new_state
 
       when STATE_SELECT_SRC
-        @src_drawing_defs.clear
+        @tool.hide_validation
+        @src_selection.clear
         @tool.clear_3d([ LAYER_3D_SRC_PREVIEW, LAYER_3D_CUT_PREVIEW ])
 
       when STATE_SELECT_CUT
-        @cut_drawing_defs.clear
+        @tool.hide_validation
+        @cut_selection.clear
         @tool.clear_3d([ LAYER_3D_CUT_PREVIEW ])
 
       end
@@ -4003,10 +4004,16 @@ module Ladb::OpenCutList
     protected
 
     def _reset
-      @src_drawing_defs.clear
-      @cut_drawing_defs.clear
+      @src_selection.clear
+      @cut_selection.clear
       super
       set_state(STATE_SELECT_SRC)
+    end
+
+    def _refresh
+      _reset_active_part
+      @picker.invalidate if @picker.is_a?(SmartPicker)
+      super
     end
 
     # -----
@@ -4019,6 +4026,10 @@ module Ladb::OpenCutList
       true
     end
 
+    def _preview_part_box?
+      true
+    end
+
     # -----
 
     def _get_active_part_preview_color(part, highlighted = false)
@@ -4028,6 +4039,10 @@ module Ladb::OpenCutList
       else
         super
       end
+    end
+
+    def _get_instance_part_preview_color(part, highlighted = false)
+      _get_active_part_preview_color(part, highlighted)
     end
 
     # -----
@@ -4060,11 +4075,36 @@ module Ladb::OpenCutList
 
     # -----
 
+    def _toggle_selection(tool, selection)
+      if (drawing_def = _get_drawing_def).is_a?(DrawingDef)
+        selection.toggle(get_active_part_entity_path, get_active_part, drawing_def)
+        _preview_selection(selection)
+        if _allows_multiple_selections? && (tool.is_key_shift_down? || selection.need_validation?)
+          if selection.items.empty?
+            tool.hide_validation
+          else
+            tool.show_validation
+          end
+          return true
+        end
+        yield
+        return true
+      end
+      false
+    end
+
+    def _preview_selection(selection)
+      @tool.clear_3d(selection.layer)
+      selection.items.each { |item| _preview_part(item.part_entity_path, item.part, selection.layer, clear_before: false) }
+    end
+
+    # -----
+
     def _operate(operation = nil)
 
       result_def = CommonSolidBooleanApplyWorker.new(
-        @src_drawing_defs,
-        @cut_drawing_defs,
+        @src_selection.items.map(&:drawing_def),
+        @cut_selection.items.map(&:drawing_def),
         operation: operation,
         keep_srcs: _fetch_option_options_keep_a?,
         keep_cuts: _fetch_option_options_keep_b?,
@@ -4074,6 +4114,41 @@ module Ladb::OpenCutList
 
       _restart
     end
+
+    # -----
+
+    Selection = Struct.new(:layer) do
+
+      def initialize(layer)
+        super
+        @items = []
+        @need_validation = false
+      end
+
+      def toggle(part_entity_path, part, drawing_def)
+        if (item = @items.find { |item| item.part_entity_path == part_entity_path })
+          @items.delete(item)
+        else
+          @items.push(SelectionItem.new(part_entity_path, part, drawing_def))
+          @need_validation = true if @items.size > 1
+        end
+      end
+
+      def clear
+        @items.clear
+        @need_validation = false
+      end
+
+      def items
+        @items
+      end
+
+      def need_validation?
+        @need_validation
+      end
+
+    end
+    SelectionItem = Struct.new(:part_entity_path, :part, :drawing_def)
 
   end
 
