@@ -107,6 +107,11 @@ module Ladb::OpenCutList
       plds = {}   # plds = Path Layer DefS
       plds[root_depth.to_s] = upper_layer_def
 
+      through_machining_paths = []  # Footprints of the through machinings (floor below the part
+                                    # bottom) : full height columns that pierce every layer, even
+                                    # a machining floor they cross (e.g. a through hole nested in a
+                                    # blind pocket). Kept apart : they pose no floor solid.
+
       # Extract faces loops
       face_manipulator_defs.each do |face_manipulator_def|
 
@@ -117,10 +122,14 @@ module Ladb::OpenCutList
         else
           f_depth = (z_max - face_manipulator.bounds.max.z)
         end
+        is_through_machining = false
         if face_manipulator_def.machining?
           if face_manipulator_def.face_type == FACE_TYPE_SOLID
-            next if f_depth.round(3) >= max_depth.round(3)  # Floor at or below the part bottom : through machining, no floor layer
-            next if f_depth.round(3) <= 0                   # Floor at or above the part top : the volume doesn't dig into the part
+            if f_depth.round(3) >= max_depth.round(3)
+              is_through_machining = true                   # Floor at or below the part bottom : through machining, no floor layer, kept as a piercing column
+            elsif f_depth.round(3) <= 0
+              next                                          # Floor at or above the part top : the volume doesn't dig into the part
+            end
           else
             next if f_depth.round(3) >= max_depth.round(3)  # Top at or below the part bottom : the volume doesn't dig into the part
             f_depth = 0.0 if f_depth < 0                    # Top above the part top : the machining enters the part through its upper face
@@ -143,6 +152,11 @@ module Ladb::OpenCutList
           f_paths = face_manipulator.loop_manipulators
                                     .map(&:points)
                                     .map! { |points| Clippy.points_to_rpath(f_reverse ? points.reverse : points) }
+        end
+
+        if is_through_machining
+          through_machining_paths.concat(f_paths) # Through machining : no floor solid, its footprint pierces every layer
+          next
         end
 
         key = f_depth.round(3).to_s
@@ -205,7 +219,12 @@ module Ladb::OpenCutList
       #   upper arm of a C shaped part) poses nothing in the void below it,
       # - a top also cuts every layer below on its "through" region — its
       #   opening not covered by any deeper machining floor, where the
-      #   machining does not stop inside the part.
+      #   machining does not stop inside the part. A through machining (floor
+      #   below the part bottom, kept apart in through_machining_paths) pierces
+      #   the whole part even where a deeper machining floor crosses it : its
+      #   column is re-added to the through region where a top above is open, so
+      #   a through hole nested in a blind pocket (a counterbore whose bore top
+      #   is merged with the pocket top) is not masked by the pocket floor.
 
       fn_rounded_depth = lambda { |layer_def| layer_def.depth.round(3) }
       fn_deeper_floor_layer_defs = lambda { |depth|
@@ -215,6 +234,7 @@ module Ladb::OpenCutList
       splds.each do |layer_def|
         layer_def.machining_closed_paths, op = Clippy.execute_union(closed_subjects: layer_def.machining_closed_paths) if layer_def.machining_closed_paths.size > 1
       end
+      through_machining_paths, op = Clippy.execute_union(closed_subjects: through_machining_paths) if through_machining_paths.size > 1
 
       top_records = []         # { :depth, :raw_paths, :open_paths } of the machining tops swept so far
       upper_through_paths = [] # Through cuts of the machining tops strictly above the current layer
@@ -289,6 +309,14 @@ module Ladb::OpenCutList
             through_paths, op = Clippy.execute_difference(closed_subjects: top_paths, clips: deeper_floor_paths)
           else
             through_paths = top_paths
+          end
+          # A through machining pierces the whole part, even a deeper machining
+          # floor it crosses : re-add its column where this layer's tops are open
+          # (a through hole nested in a blind pocket must not be masked by the
+          # pocket floor).
+          unless through_machining_paths.empty?
+            pierced_paths, op = Clippy.execute_intersection(closed_subjects: top_paths, clips: through_machining_paths)
+            through_paths += pierced_paths if pierced_paths.any?
           end
           upper_through_paths += through_paths
         end

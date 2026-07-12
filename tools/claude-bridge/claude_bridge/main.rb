@@ -98,6 +98,8 @@ module Ladb
         return _respond(client, 403, { ok: false, error: "Missing #{GUARD_HEADER} header" })
       end
 
+      _log("Request: #{method} #{path}")
+
       case [ method, path ]
 
       when [ 'GET', '/ping' ]
