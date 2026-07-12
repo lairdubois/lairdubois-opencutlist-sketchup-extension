@@ -3131,6 +3131,7 @@ module Ladb::OpenCutList
 
       when STATE_SELECT
         return PLUGIN.get_i18n_string("tool.smart_select.state_0_status") +
+               (_allows_multiple_selections? ? ' | ' + PLUGIN.get_i18n_string("default.constrain_key") + ' = ' + PLUGIN.get_i18n_string("tool.smart_select.state_0_to_7_status") + '.' : '') +
                (_allows_tree_selection? ? ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_select.state_0_to_6_status") + '.' : '')
 
       when STATE_SELECT_MULTIPLE, STATE_SELECT_RECT, STATE_SELECT_TREE, STATE_SELECT_TWINS

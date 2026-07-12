@@ -3868,6 +3868,11 @@ module Ladb::OpenCutList
       super
     end
 
+    def get_state_status(state)
+      return super +
+             (_allows_multiple_selections? ? ' | ' + PLUGIN.get_i18n_string("default.constrain_key") + ' = ' + PLUGIN.get_i18n_string("tool.smart_select.state_0_to_7_status") + '.' : '')
+    end
+
     # -----
 
     def onToolCancel(tool, reason, view)
@@ -4019,14 +4024,10 @@ module Ladb::OpenCutList
     # -----
 
     def _get_solid_operation
-      # Implement in subclass
+      # Implemented in subclass
     end
 
     def _allows_multiple_selections?
-      true
-    end
-
-    def _preview_part_box?
       true
     end
 
