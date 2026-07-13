@@ -292,6 +292,14 @@ core:
       failed_to_load: |
         Die Dokumentation kann nicht geöffnet werden.
         Vergewissern Sie sich, dass Sie mit dem Internet verbunden sind.
+  solid:
+    error:
+      empty: Der Körper enthält keine Geometrie.
+      non_manifold_edges: "Der Körper enthält {{ count }} nicht-mannigfaltige Kante"
+      non_manifold_edges_plural: "Der Körper enthält {{ count }} nicht-mannigfaltige Kanten"
+      open_edges: "Der Körper enthält {{ count }} offene Kante"
+      open_edges_plural: "Der Körper enthält {{ count }} offene Kanten"
+      locked_instances: "Der Vorgang kann eine gesperrte Instanz nicht ändern: {{ list }}"
 tab:
   cutlist:
     label: Holzliste
@@ -2332,6 +2340,7 @@ tool:
   smart_select:
     state_0_status: Teil auswählen
     state_0_to_6_status: Übergeordnetes Element auswählen
+    state_0_to_7_status: Mehrfachauswahl
     state_4_status: "Ziehen Sie ein identisches Teil mit demselben übergeordneten Teil, um es zur Auswahl hinzuzufügen, und lassen Sie es los, um fortzufahren"
     state_5_status: Zum Hinzufügen zur Auswahl ziehen und zum Fortfahren loslassen
     state_6_status: Wählen Sie einen Eintrag aus der Liste aus
@@ -2436,9 +2445,18 @@ tool:
     action_1_status: Erstellen einer Teilereihe aus einem geschlossenen Volumenkörper
     action_1_state_0_status: "Klicken Sie auf einen geschlossenen Körper, um die Referenzgeometrie zu definieren"
     action_1_state_1_status: Wählen Sie die zu extrudierenden Flächen aus
-    # CSG = Constructive Solid Geometry
-    action_2: CSG
-    action_2_status: Bis ans Ende der Welt
+    action_2: Schweißen
+    action_2_status: Mehrere Teile zu einem einzigen verschweißen
+    action_2_state_0_status: Wählen Sie Teil A aus
+    action_2_state_1_status: Wählen Sie Teil B aus
+    action_3: Ausschneiden
+    action_3_status: Ein Teil durch ein anderes ausschneiden
+    action_3_state_0_status: Wählen Sie Teil A aus
+    action_3_state_1_status: Wählen Sie Teil B aus
+    action_4: Verschneiden
+    action_4_status: Ein Teil erstellen, das der Schnittmenge mehrerer Teile entspricht
+    action_4_state_0_status: Wählen Sie Teil A aus
+    action_4_state_1_status: Wählen Sie Teil B aus
     action_option_group_thickness: Dicke
     action_option_group_stretch_measure_type: Maß
     action_option_group_axes: Achsen
@@ -2459,6 +2477,8 @@ tool:
     action_option_paneling_direction_outward_status: Nach aussen
     action_option_options_centered_status: Auf die gestreckten Elemente zentrieren
     action_option_options_make_unique_status: Gestreckte Elemente einzigartig machen
+    action_option_options_keep_a_status: A behalten
+    action_option_options_keep_b_status: B behalten
     error:
       curve_intersect: Eine der Schnittebenen verläuft durch eine nicht dehnbare Kurve
   smart_paint:

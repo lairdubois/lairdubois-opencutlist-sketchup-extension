@@ -292,6 +292,14 @@ core:
       failed_to_load: |
         Unable to open the documentation.
         Verify that you are online.
+  solid:
+    error:
+      empty: The solid contains no geometry
+      non_manifold_edges: "The solid contains {{ count }} non-manifold edge"
+      non_manifold_edges_plural: "The solid contains {{ count }} non-manifold edges"
+      open_edges: "The solid contains {{ count }} open edge"
+      open_edges_plural: "The solid contains {{ count }} open edges"
+      locked_instances: "The operation cannot modify a locked instance: {{ list }}"
 tab:
   cutlist:
     label: Parts
@@ -2333,6 +2341,7 @@ tool:
   smart_select:
     state_0_status: Click on a part to select it
     state_0_to_6_status: Select a parent element
+    state_0_to_7_status: Multiple selection
     state_4_status: "Drag onto an identical piece with the same parent to add it to the selection, then release to continue"
     state_5_status: Swipe to add to selection and release to continue
     state_6_status: Select an element from the list
@@ -2437,9 +2446,18 @@ tool:
     action_1_status: Create a series of parts from a closed solid
     action_1_state_0_status: Click on a closed solid to define the reference geometry
     action_1_state_1_status: Select the faces to extrude
-    # CSG = Constructive Solid Geometry
-    action_2: CSG
-    action_2_status: To infinity and beyond
+    action_2: Weld
+    action_2_status: Welding multiple pieces into a single piece
+    action_2_state_0_status: Select part A
+    action_2_state_1_status: Select part B
+    action_3: Cut out
+    action_3_status: Cutting one piece with another
+    action_3_state_0_status: Select part A
+    action_3_state_1_status: Select part B
+    action_4: Intersect
+    action_4_status: Créer une pièce correspondant à l'intersection de plusieurs pièces
+    action_4_state_0_status: Select part A
+    action_4_state_1_status: Select part B
     action_option_group_thickness: Thickness
     action_option_group_stretch_measure_type: Measure
     action_option_group_axes: Axes
@@ -2460,6 +2478,8 @@ tool:
     action_option_paneling_direction_outward_status: Outward direction
     action_option_options_centered_status: Center on stretched elements
     action_option_options_make_unique_status: Make stretched elements unique
+    action_option_options_keep_a_status: Keep A
+    action_option_options_keep_b_status: Keep B
     error:
       curve_intersect: One of the cutting planes crosses a non-stretchable curve
   smart_paint:
