@@ -988,6 +988,13 @@ namespace Packy {
         ) override {
             TypedSolver::read_parameters(j);
 
+            if (j.contains("use_tree_search_maximal_spaces")) {
+                parameters_.use_tree_search_maximal_spaces = j["use_tree_search_maximal_spaces"].get<bool>();
+            }
+            if (j.contains("use_benders_decomposition")) {
+                parameters_.use_benders_decomposition = j["use_benders_decomposition"].get<bool>();
+            }
+
             if (j.contains("sequential_value_correction_subproblem_tree_search_queue_size")) {
                 parameters_.sequential_value_correction_subproblem_tree_search_queue_size = j["sequential_value_correction_subproblem_tree_search_queue_size"].get<NodeId>();
             }

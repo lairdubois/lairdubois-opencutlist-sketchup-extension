@@ -2650,11 +2650,6 @@
                 const $inputTimeLimit = $('#ladb_input_time_limit', $modal);
                 const $selectVerbosityLevel = $('#ladb_select_verbosity_level', $modal);
                 const $inputUsePreProcess = $('#ladb_input_use_pre_process', $modal);
-                const $inputUseTreeSearch = $('#ladb_input_use_tree_search', $modal);
-                const $inputUseSequentialSingleKnapsack = $('#ladb_input_use_sequential_single_knapsack', $modal);
-                const $inputUseSequentialValueCorrection = $('#ladb_input_use_sequential_value_correction', $modal);
-                const $inputUseColumnGeneration = $('#ladb_input_use_column_generation', $modal);
-                const $inputUseDichotomicSearch = $('#ladb_input_use_dichotomic_search', $modal);
                 const $inputWriteInput = $('#ladb_input_write_input', $modal);
                 const $inputWriteInstance = $('#ladb_input_write_instance', $modal);
                 const $inputWriteCertificate = $('#ladb_input_write_certificate', $modal);
@@ -2703,11 +2698,6 @@
                     options.time_limit = that.toInt($inputTimeLimit.val());
                     options.verbosity_level = that.toInt($selectVerbosityLevel.val());
                     options.use_pre_process = $inputUsePreProcess.is(':checked');
-                    options.use_tree_search = $inputUseTreeSearch.is(':checked');
-                    options.use_sequential_single_knapsack = $inputUseSequentialSingleKnapsack.is(':checked');
-                    options.use_sequential_value_correction = $inputUseSequentialValueCorrection.is(':checked');
-                    options.use_column_generation = $inputUseColumnGeneration.is(':checked');
-                    options.use_dichotomic_search = $inputUseDichotomicSearch.is(':checked');
                     options.write_input = $inputWriteInput.is(':checked');
                     options.write_instance = $inputWriteInstance.is(':checked');
                     options.write_certificate = $inputWriteCertificate.is(':checked');
@@ -2739,11 +2729,6 @@
                     $inputTimeLimit.val(options.time_limit);
                     $selectVerbosityLevel.selectpicker('val', options.verbosity_level);
                     $inputUsePreProcess.prop('checked',options.use_pre_process);
-                    $inputUseTreeSearch.prop('checked',options.use_tree_search);
-                    $inputUseSequentialSingleKnapsack.prop('checked',options.use_sequential_single_knapsack);
-                    $inputUseSequentialValueCorrection.prop('checked',options.use_sequential_value_correction);
-                    $inputUseColumnGeneration.prop('checked',options.use_column_generation);
-                    $inputUseDichotomicSearch.prop('checked',options.use_dichotomic_search);
                     $inputWriteInput.prop('checked', options.write_input);
                     $inputWriteInstance.prop('checked', options.write_instance);
                     $inputWriteCertificate.prop('checked', options.write_certificate);

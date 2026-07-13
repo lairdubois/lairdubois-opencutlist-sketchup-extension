@@ -238,11 +238,6 @@ module Ladb::OpenCutList
                    time_limit: 0,
                    verbosity_level: 0,
                    use_pre_process: false,
-                   use_tree_search: true,
-                   use_sequential_single_knapsack: true,
-                   use_sequential_value_correction: true,
-                   use_column_generation: true,
-                   use_dichotomic_search: true,
                    write_input: false,
                    write_instance: false,
                    write_certificate: false,
@@ -294,11 +289,6 @@ module Ladb::OpenCutList
       @time_limit = Plugin::IS_RBZ ? 300 : [ 0 , time_limit.to_i ].max # Only dev from src uses custom time limit
       @verbosity_level = verbosity_level.to_i
       @use_pre_process = use_pre_process
-      @use_tree_search = use_tree_search
-      @use_sequential_single_knapsack = use_sequential_single_knapsack
-      @use_sequential_value_correction = use_sequential_value_correction
-      @use_column_generation = use_column_generation
-      @use_dichotomic_search = use_dichotomic_search
       @write_input = write_input
       @write_instance = write_instance
       @write_certificate = write_certificate
@@ -727,11 +717,6 @@ module Ladb::OpenCutList
                              end,
           verbosity_level: @verbosity_level,
           use_pre_process: @use_pre_process,
-          use_tree_search: @use_tree_search,
-          use_sequential_single_knapsack: @use_sequential_single_knapsack,
-          use_sequential_value_correction: @use_sequential_value_correction,
-          use_column_generation: @use_column_generation,
-          use_dichotomic_search: @use_dichotomic_search,
         }
         parameters.merge!({ time_limit: @time_limit }) if @time_limit > 0 # time_limit = 0 == not time limit
         instance_parameters = {}
