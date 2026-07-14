@@ -344,7 +344,7 @@ module Ladb::OpenCutList
     # -----
 
     def _preview_all_instances?
-      true
+      false
     end
 
     # -----
@@ -651,12 +651,12 @@ module Ladb::OpenCutList
 
     # Walks the contact graph from the given seed placements. Placements are
     # deduplicated by (definition, anchor). For each accepted placement, every
-    # instance of its owner definition is probed at the placement anchor for a
-    # touching neighbor part ; each found neighbor face is handed to the block as
-    # |neighbor_face_manipulator, mt, placement| - where 'mt' is the mating frame
-    # expressed in the neighbor face owner definition space - which returns the
-    # placement to enqueue, or nil to stop the walk on this branch. Returns the
-    # accepted placements, with their 'instance_transformations' filled.
+    # instance of its owner definition is handed to the block as
+    # |placement, world_frame, instance_path| - where 'world_frame' is the
+    # placement frame transported on this instance - which probes for a mating
+    # part and returns the placement to enqueue, or nil to stop the walk on this
+    # branch. Returns the accepted placements, with their
+    # 'instance_transformations' filled.
     def _walk_contact_graph(seeds, tolerance = 0.001.mm)
 
       model = Sketchup.active_model
@@ -687,19 +687,7 @@ module Ladb::OpenCutList
           t_i = Sketchup::InstancePath.new(instance_path).transformation
           placement.instance_transformations << t_i
 
-          wf_i = t_i * placement.transformation             # Placement 'world' frame on this instance
-          world_point = ORIGIN.transform(wf_i)
-          world_normal = Z_AXIS.transform(wf_i)             # Points from this part toward the neighbor
-          world_normal.normalize!
-
-          nfm = _find_touching_neighbor(world_point, world_normal, instance_path, tolerance)
-          next if nfm.nil?
-
-          # Mating frame : same world anchor, Z flipped (a <-> b relationship),
-          # expressed in the neighbor face-owner definition space.
-          mt_n = nfm.transformation.inverse * wf_i * TRANSFORMATION_FLIP_Z
-
-          n_placement = yield(nfm, mt_n, placement)
+          n_placement = yield(placement, t_i * placement.transformation, instance_path)
           queue << n_placement unless n_placement.nil?
 
         end
@@ -709,27 +697,21 @@ module Ladb::OpenCutList
       placements
     end
 
-    # Finds the part face touching at 'world_point', on the +'world_normal' side.
-    # The mating part lies just behind the contact plane, so a ray shot from
-    # slightly inside its material along +'world_normal' identifies it (the ray
-    # exits through one of its faces) without walking the model entities. Glued
-    # connectors sitting at the anchor (or protruding from the source part across
-    # the joint) may be hit first : they are resolved to their host part through
-    # 'glued_to', and the ray walks past the hits that don't lead to a touching
-    # face. Returns a 'world' space FaceManipulator (its transformation maps the
-    # neighbor definition to world) or nil.
-    def _find_touching_neighbor(world_point, world_normal, source_path, tolerance)
+    # Walks a ray through the model, resolving each hit to its host part (glued
+    # instances - connectors - are resolved through 'glued_to' ; the source part
+    # and already rejected parts are walked past), decomposes each candidate part
+    # to 'world' space and returns its first face manipulator accepted by the
+    # block, or nil.
+    def _raytest_part_face(ray_point, ray_vector, source_path, max_hits = 10)
 
       model = Sketchup.active_model
 
       source_serialized = PathUtils.serialize_path(source_path)
-
-      ray_point = world_point.offset(world_normal, tolerance * 10)
       tested = {}
 
-      10.times do
+      max_hits.times do
 
-        hit_point, hit_path = model.raytest([ ray_point, world_normal ])
+        hit_point, hit_path = model.raytest([ ray_point, ray_vector ])
         return nil if hit_path.nil?
 
         part_path = _get_part_entity_path_from_path(hit_path)
@@ -751,24 +733,100 @@ module Ladb::OpenCutList
             # Bring face manipulators to 'world' space (same normalization as _get_neighborhood_def)
             drawing_def.transform!(drawing_def.transformation.inverse)
 
-            nfm = drawing_def.face_manipulators.find do |fm|
-              fm.normal.parallel?(world_normal) &&
-                !fm.normal.samedirection?(world_normal) &&                                     # Opposite normal
-                world_point.distance_to_plane([ fm.position, fm.normal ]).to_f < tolerance &&  # Coplanar
-                _is_point_on_face?(fm, world_point)                                            # Under the anchor
-            end
-            return nfm unless nfm.nil?
+            fm = drawing_def.face_manipulators.find { |face_manipulator| yield(face_manipulator) }
+            return fm unless fm.nil?
 
           end
 
         end
 
         # Walk past this hit
-        ray_point = hit_point.offset(world_normal, tolerance * 10)
+        ray_point = hit_point.offset(ray_vector, 0.01.mm)
 
       end
 
       nil
+    end
+
+    # Deterministic fallback of the ray probes : finds the part face passing
+    # through 'world_point' accepted by the block, by walking the instance tree
+    # bounded by point containment (only the parts whose world bounds contain
+    # the point are candidates - the mate face passes through it). Used when a
+    # ray misses the mate because its face is shadowed by a coplanar face of
+    # another part (raytest reports a single arbitrary face per hit).
+    def _find_part_face_at(world_point, source_path, tolerance)
+
+      model = Sketchup.active_model
+
+      source_serialized = PathUtils.serialize_path(source_path)
+
+      point_bounds = Geom::BoundingBox.new
+      point_bounds.add(world_point.offset(Geom::Vector3d.new(-1, -1, -1), tolerance * 10))
+      point_bounds.add(world_point.offset(Geom::Vector3d.new(1, 1, 1), tolerance * 10))
+
+      candidate_paths = {}
+      fn_collect = lambda do |entities, path, transformation|
+        entities.each do |entity|
+          next unless entity.is_a?(Sketchup::ComponentInstance) || entity.is_a?(Sketchup::Group)
+          next unless entity.visible? && _layer_visible?(entity.layer, path.empty?)
+          t = transformation * entity.transformation
+          definition_bounds = entity.definition.bounds
+          entity_bounds = Geom::BoundingBox.new
+          (0..7).each { |i| entity_bounds.add(definition_bounds.corner(i).transform(t)) }
+          next unless entity_bounds.intersect(point_bounds).valid?
+          child_path = path + [ entity ]
+          if (part_path = _get_part_entity_path_from_path(child_path))
+
+            # Resolve glued instances (connectors) to the part they are glued in
+            while part_path.is_a?(Array) && part_path.length > 1 && part_path.last.respond_to?(:glued_to) && !part_path.last.glued_to.nil?
+              part_path = _get_part_entity_path_from_path(part_path[0...-1])
+            end
+
+            if part_path.is_a?(Array) && (serialized = PathUtils.serialize_path(part_path)) != source_serialized  # Exclude the source instance itself
+              candidate_paths[serialized] ||= part_path
+            end
+
+          end
+          fn_collect.call(entity.definition.entities, child_path, t)
+        end
+      end
+      fn_collect.call(model.entities, [], IDENTITY)
+
+      candidate_paths.each_value do |part_path|
+
+        drawing_def = CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new(part_path) ], **_get_drawing_def_parameters).run
+        next unless drawing_def.is_a?(DrawingDef)
+
+        # Bring face manipulators to 'world' space (same normalization as _get_neighborhood_def)
+        drawing_def.transform!(drawing_def.transformation.inverse)
+
+        fm = drawing_def.face_manipulators.find { |face_manipulator| yield(face_manipulator) }
+        return fm unless fm.nil?
+
+      end
+
+      nil
+    end
+
+    # Finds the part face touching at 'world_point', on the +'world_normal' side.
+    # The mating part lies just behind the contact plane, so a ray shot from
+    # slightly inside its material along +'world_normal' identifies it (the ray
+    # exits through one of its faces) without walking the model entities. When
+    # the exit face is shadowed by a coplanar face of the part behind (parts in
+    # a row), the ray misses the mate : a deterministic point-containment search
+    # takes over. Returns a 'world' space FaceManipulator (its transformation
+    # maps the neighbor definition to world) or nil.
+    def _find_touching_neighbor(world_point, world_normal, source_path, tolerance)
+
+      fn_accept = lambda do |fm|
+        fm.normal.parallel?(world_normal) &&
+          !fm.normal.samedirection?(world_normal) &&                                     # Opposite normal
+          world_point.distance_to_plane([ fm.position, fm.normal ]).to_f < tolerance &&  # Coplanar
+          _is_point_on_face?(fm, world_point)                                            # Under the anchor
+      end
+
+      nfm = _raytest_part_face(world_point.offset(world_normal, tolerance * 10), world_normal, source_path, &fn_accept)
+      nfm || _find_part_face_at(world_point, source_path, tolerance, &fn_accept)
     end
 
     def _is_point_on_face?(face_manipulator, world_point)
@@ -894,6 +952,25 @@ module Ladb::OpenCutList
     def _reset_neighborhood_def
       @neighborhood_def = nil
       @propagation_def = nil
+    end
+
+    # -- Propagation --
+
+    # Probes for the part mating the given connector world frame 'wf' : parts
+    # touch through the connector XY plane, so the mate lies just behind it,
+    # along +Z. Returns [ face_manipulator, mt ] - where 'mt' is the mating
+    # connector frame (Z flipped : at_a <-> at_b relationship) expressed in the
+    # mate face owner definition space - or nil.
+    def _find_mating_connector(wf, instance_path, tolerance = 0.001.mm)
+
+      world_point = ORIGIN.transform(wf)
+      world_normal = Z_AXIS.transform(wf)             # Points from this part toward the mate
+      world_normal.normalize!
+
+      nfm = _find_touching_neighbor(world_point, world_normal, instance_path, tolerance)
+      return nil if nfm.nil?
+
+      [ nfm, nfm.transformation.inverse * wf * TRANSFORMATION_FLIP_Z ]
     end
 
     def _refresh
@@ -1224,12 +1301,6 @@ module Ladb::OpenCutList
     # -----
 
     protected
-
-    # -----
-
-    def _preview_all_instances?
-      false
-    end
 
     # -----
 
@@ -1761,7 +1832,10 @@ module Ladb::OpenCutList
 
         # 2b. Walk the contact graph
 
-        placements = _walk_contact_graph(seeds) do |nfm, mt_n, placement|
+        placements = _walk_contact_graph(seeds) do |placement, wf, instance_path|
+
+          nfm, mt_n = _find_mating_connector(wf, instance_path)
+          next nil if nfm.nil?
 
           # Skip if the neighbor anchor is already physically occupied by a glued instance
           next nil if _get_glued_instances_at(nfm.face, mt_n, geometries_bounds).any?
@@ -2062,7 +2136,10 @@ module Ladb::OpenCutList
         end
       end
 
-      placements = _walk_contact_graph(seeds) do |nfm, mt_n, placement|
+      placements = _walk_contact_graph(seeds) do |placement, wf, instance_path|
+
+        nfm, mt_n = _find_mating_connector(wf, instance_path)
+        next nil if nfm.nil?
 
         # Only propagate onto anchors where a mating glued instance exists
         glued_instances = _get_glued_instances_at(nfm.face, mt_n, placement.glued_instances.first.definition.bounds)
@@ -2293,6 +2370,67 @@ module Ladb::OpenCutList
 
     def _reset_joinery_def
       @joinery_def = nil
+    end
+
+    # -- Propagation --
+
+    # Lateral step used to probe inside a face body from its axis edge
+    PROPAGATION_PROBE_LATERAL_OFFSET = 1.mm
+
+    # Characterizes the picked couple's dihedral relationship :
+    # - 'mate_transformation' maps a fitting frame to its mating frame (a
+    #   rotation around the shared X axis - the joint axis - by the dihedral
+    #   angle) ; apply its inverse to go the other way (b -> a)
+    # - 'side_a' / 'side_b' tell on which lateral side (+1 : +Y, -1 : -Y of
+    #   their frame) each face body extends from the axis
+    def _get_propagation_context(line_def)
+
+      x_axis = line_def.line_manipulator.direction
+
+      fm_a = line_def.face_manipulator
+      fm_b = line_def.neighbor_face_manipulator
+
+      z_axis_a = fm_a.normal
+      y_axis_a = z_axis_a * x_axis
+      z_axis_b = fm_b.normal
+      y_axis_b = z_axis_b * x_axis
+
+      point = line_def.start_point
+
+      [
+        Geom::Transformation.axes(ORIGIN, x_axis, y_axis_a, z_axis_a).inverse * Geom::Transformation.axes(ORIGIN, x_axis, y_axis_b, z_axis_b),
+        (fm_a.centroid - point) % y_axis_a >= 0 ? 1 : -1,
+        (fm_b.centroid - point) % y_axis_b >= 0 ? 1 : -1
+      ]
+    end
+
+    # Probes for the part mating the given expected fitting world frame 'wf' :
+    # the mate face lies on the frame XY plane (which contains the joint axis
+    # = X) with its material behind (-Z). The anchor sits on the face's axis
+    # edge, so the probe point is stepped laterally (side * +Y) into the face
+    # body. Returns [ face_manipulator, mt ] - where 'mt' is the mating fitting
+    # frame expressed in the mate face owner definition space - or nil.
+    def _find_mating_fitting(wf, side, instance_path, tolerance = 0.001.mm)
+
+      world_point = ORIGIN.transform(wf)
+      world_y = Y_AXIS.transform(wf)
+      world_y.normalize!
+      world_z = Z_AXIS.transform(wf)
+      world_z.normalize!
+
+      probe_point = world_point.offset(world_y, PROPAGATION_PROBE_LATERAL_OFFSET * side)
+
+      fn_accept = lambda do |fm|
+        fm.normal.samedirection?(world_z) &&                                             # Same normal (the fitting is glued ON the face)
+          world_point.distance_to_plane([ fm.position, fm.normal ]).to_f < tolerance &&  # Anchor on the face plane
+          _is_point_on_face?(fm, probe_point)                                            # Probe point within the face
+      end
+
+      nfm = _raytest_part_face(probe_point.offset(world_z, tolerance * 10), world_z.reverse, instance_path, &fn_accept)
+      nfm = _find_part_face_at(probe_point, instance_path, tolerance, &fn_accept) if nfm.nil?
+      return nil if nfm.nil?
+
+      [ nfm, nfm.transformation.inverse * wf ]
     end
 
     def _refresh
@@ -2636,12 +2774,6 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _preview_all_instances?
-      !_fetch_option_make_unique?
-    end
-
-    # -----
-
     def _snap_ref_point_b(picker)
       return false if (neighborhood_def = _get_neighborhood_def).nil?
 
@@ -2738,50 +2870,37 @@ module Ladb::OpenCutList
 
         end
 
-        t_a = neighborhood_def.t_a
-        ti_a = neighborhood_def.ti_a
-        t_b = neighborhood_def.neighbor_def.t_b
-        ti_b = neighborhood_def.neighbor_def.ti_b
+        # Preview the fittings : only the picked couple's placements when
+        # make_unique is true, every instance of the touched definitions otherwise.
+        _get_propagation_def(neighborhood_def, joinery_def).placements.each do |placement|
 
-        at_a = joinery_def.at_a
-        at_b = joinery_def.at_b
+          hardware = placement.role == :a ? hardware_a : hardware_b
+          machining = placement.role == :a ? machining_a : machining_b
 
-        join_def.anchor_points_3d.each do |point|
+          placement.instance_transformations.each do |instance_transformation|
 
-          pt_a = point.transform(ti_a)
-          pt_b = point.transform(ti_b)
+            t = instance_transformation * placement.transformation
+            picked = placement.picked?(instance_transformation)
 
-          # -- Machinings --
+            # -- Machinings --
 
-          fn_preview_join_drawing_def.call(
-            machining_a.drawing_def,
-            t_a * Geom::Transformation.translation(pt_a) * at_a,
-            Kuix::COLOR_CYAN,
-            0.5
-          ) if machining_a.drawing_def
+            fn_preview_join_drawing_def.call(
+              machining.drawing_def,
+              t,
+              picked ? COLOR_MACHINING : COLOR_MACHINING_PROPAGATED,
+              0.5
+            ) if machining.drawing_def
 
-          fn_preview_join_drawing_def.call(
-            machining_b.drawing_def,
-            t_b * Geom::Transformation.translation(pt_b) * at_b,
-            Kuix::COLOR_CYAN,
-            0.5
-          ) if machining_b.drawing_def
+            # -- Hardware --
 
-          # -- Hardware --
+            fn_preview_join_drawing_def.call(
+              hardware.drawing_def,
+              t,
+              picked ? COLOR_HARDWARE : COLOR_HARDWARE_PROPAGATED,
+              1
+            ) if hardware.drawing_def
 
-          fn_preview_join_drawing_def.call(
-            hardware_a.drawing_def,
-            t_a * Geom::Transformation.translation(pt_a) * at_a,
-            Kuix::COLOR_DARK_GREY,
-            1
-          ) if hardware_a.drawing_def
-
-          fn_preview_join_drawing_def.call(
-            hardware_b.drawing_def,
-            t_b * Geom::Transformation.translation(pt_b) * at_b,
-            Kuix::COLOR_DARK_GREY,
-            1
-          ) if hardware_b.drawing_def
+          end
 
         end
 
@@ -2913,36 +3032,16 @@ module Ladb::OpenCutList
 
         end
 
-        ti_a = neighborhood_def.ti_a
-        ti_b = neighbor_def.ti_b
+        # Add the fittings : only the picked couple's placements when make_unique
+        # is true, the whole contact graph (A -> B -> A' -> B' -> ...) otherwise.
+        _get_propagation_def(neighborhood_def, joinery_def).placements.each do |placement|
 
-        at_a = joinery_def.at_a
-        at_b = joinery_def.at_b
+          hardware = placement.role == :a ? hardware_a : hardware_b
+          machining = placement.role == :a ? machining_a : machining_b
+          entities = placement.entities
 
-        fm_a = line_def.face_manipulator
-        fm_b = line_def.neighbor_face_manipulator
-
-        face_a = fm_a.face
-        face_b = fm_b.face
-
-        entities_a = face_a.parent.entities
-        entities_b = face_b.parent.entities
-
-        dti_a = (ti_a * fm_a.transformation).inverse
-        dti_b = (ti_b * fm_b.transformation).inverse
-
-        joinery_def.join_def.anchor_points_3d.each do |point|
-
-          pt_a = point.transform(ti_a).project_to_plane(face_a.plane)
-          pt_b = point.transform(ti_b).project_to_plane(face_b.plane)
-
-          # -- A --
-          _add_glued_instance(hardware_a.definition, hardware_material, hardware_layer, face_a, entities_a, dti_a, pt_a, at_a)
-          _add_glued_instance(machining_a.definition, machining_material, machining_layer, face_a, entities_a, dti_a, pt_a, at_a)
-
-          # -- B --
-          _add_glued_instance(hardware_b.definition, hardware_material, hardware_layer, face_b, entities_b, dti_b, pt_b, at_b)
-          _add_glued_instance(machining_b.definition, machining_material, machining_layer, face_b, entities_b, dti_b, pt_b, at_b)
+          _add_glued_instance(hardware.definition, hardware_material, hardware_layer, placement.face, entities, placement.transformation, ORIGIN, IDENTITY)
+          _add_glued_instance(machining.definition, machining_material, machining_layer, placement.face, entities, placement.transformation, ORIGIN, IDENTITY)
 
         end
 
@@ -2953,6 +3052,102 @@ module Ladb::OpenCutList
         model.abort_operation
       end
 
+    end
+
+    # -- Propagation --
+
+    # Resolves the fitting placements to preview and to add.
+    #
+    # When make_unique is true, they are simply the picked couple's anchors.
+    # When make_unique is false, fittings are written directly into shared
+    # definitions, so they appear on every instance. Other instances of the same
+    # definition may form the same dihedral configuration with other parts, which
+    # must also receive the mating fitting : the contact graph walk adds one
+    # placement per (definition, anchor), alternating the A/B role and skipping
+    # anchors already occupied by a glued instance.
+    def _get_propagation_def(neighborhood_def, joinery_def)
+
+      signature = _get_propagation_signature(neighborhood_def, joinery_def)
+      return @propagation_def if @propagation_def.is_a?(PropagationDef) && @propagation_signature == signature
+
+      neighbor_def = neighborhood_def.neighbor_def
+      line_def = neighbor_def.line_def
+
+      geometries_def = _get_geometries_def
+      geometries_bounds = geometries_def.bounds
+
+      ti_a = neighborhood_def.ti_a
+      ti_b = neighbor_def.ti_b
+
+      fm_a = line_def.face_manipulator
+      fm_b = line_def.neighbor_face_manipulator
+      face_a = fm_a.face
+      face_b = fm_b.face
+
+      dti_a = (ti_a * fm_a.transformation).inverse
+      dti_b = (ti_b * fm_b.transformation).inverse
+
+      has_geometry_a = !geometries_def.hardware_a.empty? || !geometries_def.machining_a.empty?
+      has_geometry_b = !geometries_def.hardware_b.empty? || !geometries_def.machining_b.empty?
+
+      # 1. Seed with the picked couple's placements
+
+      seeds = []
+
+      joinery_def.join_def.anchor_points_3d.each do |point|
+
+        if has_geometry_a
+          pt_a = point.transform(ti_a).project_to_plane(face_a.plane)
+          seeds << PropagationPlacementDef.new(face_a.parent, face_a, dti_a * Geom::Transformation.translation(pt_a) * joinery_def.at_a, :a, [ fm_a.transformation ], fm_a.transformation)
+        end
+        if has_geometry_b
+          pt_b = point.transform(ti_b).project_to_plane(face_b.plane)
+          seeds << PropagationPlacementDef.new(face_b.parent, face_b, dti_b * Geom::Transformation.translation(pt_b) * joinery_def.at_b, :b, [ fm_b.transformation ], fm_b.transformation)
+        end
+
+      end
+
+      if _fetch_option_make_unique?
+
+        # 2a. No graph walk : the picked instances are made unique on add, so the
+        # fittings only target the picked couple.
+
+        placements = seeds
+
+      else
+
+        # 2b. Walk the contact graph
+
+        mate_transformation, side_a, side_b = _get_propagation_context(line_def)
+        mate_transformation_inverse = mate_transformation.inverse
+
+        placements = _walk_contact_graph(seeds) do |placement, wf, instance_path|
+
+          from_a = placement.role == :a
+          nfm, mt_n = _find_mating_fitting(wf * (from_a ? mate_transformation : mate_transformation_inverse), from_a ? side_b : side_a, instance_path)
+          next nil if nfm.nil?
+
+          # Skip if the neighbor anchor is already physically occupied by a glued instance
+          next nil if _get_glued_instances_at(nfm.face, mt_n, geometries_bounds).any?
+
+          PropagationPlacementDef.new(nfm.face.parent, nfm.face, mt_n, from_a ? :b : :a)
+        end
+
+      end
+
+      @propagation_signature = signature
+      @propagation_def = PropagationDef.new(placements)
+    end
+
+    # Lightweight fingerprint of the joinery inputs (picked couple + anchors).
+    # Definition ids are included so that making the picked instances unique (add
+    # with make_unique) discards the placements resolved during the preview.
+    def _get_propagation_signature(neighborhood_def, joinery_def)
+      instance_a = neighborhood_def.instance_a
+      instance_b = neighborhood_def.neighbor_def.instance_b
+      sig = [ instance_a.entityID, instance_a.definition.entityID, instance_b.entityID, instance_b.definition.entityID, _fetch_option_make_unique? ]
+      joinery_def.join_def.anchor_points_3d.each { |point| sig << point.to_a.map { |c| c.to_f.round(6) } }
+      sig
     end
 
     # -----
@@ -3194,49 +3389,56 @@ module Ladb::OpenCutList
 
       super
 
-      line_def = neighborhood_def.neighbor_def.line_def
+      # Preview the fittings to remove : red boxes on the picked couple,
+      # translucent ones on the placements propagated through the contact graph.
+      anchors = {}
+      _get_propagation_def(neighborhood_def, joinery_def).placements.each do |placement|
 
-      fn_preview_grouped_glued_instances = lambda do |anchor_coords, glued_instances, transformation|
-        anchor = Geom::Point3d.new(anchor_coords)
-        next unless _is_snap_anchor?(anchor)
+        placement.instance_transformations.each do |instance_transformation|
 
-        glued_instances.each do |glued_instance|
+          picked = placement.picked?(instance_transformation)
 
-          k_box = Kuix::BoxFillMotif3d.new
-          k_box.bounds.copy!(glued_instance.definition.bounds)
-          k_box.line_width = 2
-          k_box.color = ColorUtils.color_translucent(Kuix::COLOR_RED, 0.3)
-          k_box.on_top = true
-          k_box.transformation = transformation * glued_instance.transformation
-          @tool.append_3d(k_box, LAYER_3D_JOIN_PREVIEW)
+          placement.glued_instances.each do |glued_instance|
 
-          k_box = Kuix::BoxMotif3d.new
-          k_box.bounds.copy!(glued_instance.definition.bounds)
-          k_box.line_width = 2
-          k_box.color = Kuix::COLOR_RED
-          k_box.on_top = true
-          k_box.transformation = transformation * glued_instance.transformation
-          @tool.append_3d(k_box, LAYER_3D_JOIN_PREVIEW)
+            t = instance_transformation * glued_instance.transformation
+
+            k_box = Kuix::BoxFillMotif3d.new
+            k_box.bounds.copy!(glued_instance.definition.bounds)
+            k_box.line_width = 2
+            k_box.color = ColorUtils.color_translucent(Kuix::COLOR_RED, picked ? 0.3 : 0.15)
+            k_box.on_top = true
+            k_box.transformation = t
+            @tool.append_3d(k_box, LAYER_3D_JOIN_PREVIEW)
+
+            k_box = Kuix::BoxMotif3d.new
+            k_box.bounds.copy!(glued_instance.definition.bounds)
+            k_box.line_width = 2
+            k_box.color = picked ? Kuix::COLOR_RED : ColorUtils.color_translucent(Kuix::COLOR_RED, 0.5)
+            k_box.on_top = true
+            k_box.transformation = t
+            @tool.append_3d(k_box, LAYER_3D_JOIN_PREVIEW)
+
+          end
+
+          anchor = ORIGIN.transform(instance_transformation * placement.transformation)
+          anchors[anchor.to_a.map { |coord| coord.round(3) }] = true
+
+          if picked
+
+            k_point = _create_floating_points(
+              points: anchor,
+              style: Kuix::POINT_STYLE_PLUS,
+              stroke_color: Kuix::COLOR_BLACK,
+              )
+            @tool.append_3d(k_point, LAYER_3D_JOIN_PREVIEW)
+
+          end
 
         end
 
-        k_point = _create_floating_points(
-          points: anchor,
-          style: Kuix::POINT_STYLE_PLUS,
-          stroke_color: Kuix::COLOR_BLACK,
-          )
-        @tool.append_3d(k_point, LAYER_3D_JOIN_PREVIEW)
-
       end
 
-      joinery_def.grouped_glued_instances_a.each do |anchor_coords, glued_instances|
-        fn_preview_grouped_glued_instances.call(anchor_coords, glued_instances, line_def.face_manipulator.transformation)
-      end
-      joinery_def.grouped_glued_instances_b.each do |anchor_coords, glued_instances|
-        fn_preview_grouped_glued_instances.call(anchor_coords, glued_instances, line_def.neighbor_face_manipulator.transformation)
-      end
-
-      count = @snap_anchor.is_a?(Geom::Point3d) ? 1 : _get_anchors(joinery_def).size
+      count = anchors.length
 
       if count > 0
         @tool.show_message(PLUGIN.get_i18n_string('tool.smart_join.warning.x_fittings_to_remove', { :count => count }), SmartTool::MESSAGE_TYPE_WARNING)
@@ -3269,20 +3471,11 @@ module Ladb::OpenCutList
       model.start_operation('OCL Remove Fittings', true)
       begin
 
-        fn_remove_glued_instances = lambda do |anchor_coords, glued_instances|
-          next unless _is_snap_anchor?(Geom::Point3d.new(anchor_coords))
-          glued_instances.each do |glued_instance|
+        _get_propagation_def(neighborhood_def, joinery_def).placements.each do |placement|
+          placement.glued_instances.each do |glued_instance|
             next if glued_instance.deleted?
             glued_instance.erase!
           end
-        end
-
-
-        joinery_def.grouped_glued_instances_a.each do |anchor_coords, glued_instances_a|
-          fn_remove_glued_instances.call(anchor_coords, glued_instances_a)
-        end
-        joinery_def.grouped_glued_instances_b.each do |anchor_coords, glued_instances_b|
-          fn_remove_glued_instances.call(anchor_coords, glued_instances_b)
         end
 
         model.commit_operation
@@ -3292,6 +3485,67 @@ module Ladb::OpenCutList
         model.abort_operation
       end
 
+    end
+
+    # -- Propagation --
+
+    # Resolves the fitting placements to remove. Fittings live in shared
+    # definitions : erasing one removes it from every instance, so the mating
+    # fittings of the parts forming the same dihedral configuration with the
+    # other instances must be removed too, walking the contact graph
+    # (A -> B -> A' -> B' -> ...). The walk stops on branches where no glued
+    # instance exists at the anchor.
+    def _get_propagation_def(neighborhood_def, joinery_def)
+
+      signature = _get_propagation_signature(neighborhood_def, joinery_def)
+      return @propagation_def if @propagation_def.is_a?(PropagationDef) && @propagation_signature == signature
+
+      line_def = neighborhood_def.neighbor_def.line_def
+
+      seeds = []
+
+      # The glued instance transformation is the fitting frame in the face
+      # owner definition space (X axis along the joint axis)
+      fn_seed = lambda do |fm, grouped_glued_instances, role|
+        grouped_glued_instances.each do |anchor_coords, glued_instances|
+          next unless _is_snap_anchor?(Geom::Point3d.new(anchor_coords))
+          seeds << PropagationPlacementDef.new(fm.face.parent, fm.face, glued_instances.first.transformation, role, [ fm.transformation ], fm.transformation, glued_instances)
+        end
+      end
+
+      fn_seed.call(line_def.face_manipulator, joinery_def.grouped_glued_instances_a, :a)
+      fn_seed.call(line_def.neighbor_face_manipulator, joinery_def.grouped_glued_instances_b, :b)
+
+      mate_transformation, side_a, side_b = _get_propagation_context(line_def)
+      mate_transformation_inverse = mate_transformation.inverse
+
+      placements = _walk_contact_graph(seeds) do |placement, wf, instance_path|
+
+        from_a = placement.role == :a
+        nfm, mt_n = _find_mating_fitting(wf * (from_a ? mate_transformation : mate_transformation_inverse), from_a ? side_b : side_a, instance_path)
+        next nil if nfm.nil?
+
+        # Only propagate onto anchors where a mating glued instance exists
+        glued_instances = _get_glued_instances_at(nfm.face, mt_n, placement.glued_instances.first.definition.bounds)
+        next nil if glued_instances.empty?
+
+        PropagationPlacementDef.new(nfm.face.parent, nfm.face, mt_n, from_a ? :b : :a, nil, nil, glued_instances)
+      end
+
+      @propagation_signature = signature
+      @propagation_def = PropagationDef.new(placements)
+    end
+
+    # Lightweight fingerprint of the removal inputs (picked couple + glued
+    # anchors + snap anchor). Used to reuse the (heavy) propagation result while
+    # nothing relevant changed.
+    def _get_propagation_signature(neighborhood_def, joinery_def)
+      instance_a = neighborhood_def.instance_a
+      instance_b = neighborhood_def.neighbor_def.instance_b
+      sig = [ instance_a.entityID, instance_a.definition.entityID, instance_b.entityID, instance_b.definition.entityID, @snap_anchor ]
+      sig.concat(joinery_def.grouped_glued_instances_a.keys)
+      sig.concat(joinery_def.grouped_glued_instances_b.keys)
+      sig
     end
 
     # -----
