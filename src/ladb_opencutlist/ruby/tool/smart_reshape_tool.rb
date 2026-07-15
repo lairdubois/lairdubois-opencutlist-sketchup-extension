@@ -244,9 +244,9 @@ module Ladb::OpenCutList
         when ACTION_OPTION_OPTIONS_MAKE_UNIQUE
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.167,0.167L0.167,0.833 M0.417,0.167L0.417,0.833 M0,0.333L0.583,0.333 M0,0.667L0.583,0.667 M0.75,0.333L1,0.167L1,0.833'))
         when ACTION_OPTION_OPTIONS_KEEP_A
-          return Kuix::Label.new(PLUGIN.get_i18n_string("tool.smart_reshape.action_option_options_keep_a_status"))
+          return Kuix::Label.new(PLUGIN.get_i18n_string("tool.smart_reshape.action_option_options_keep_a"))
         when ACTION_OPTION_OPTIONS_KEEP_B
-          return Kuix::Label.new(PLUGIN.get_i18n_string("tool.smart_reshape.action_option_options_keep_b_status"))
+          return Kuix::Label.new(PLUGIN.get_i18n_string("tool.smart_reshape.action_option_options_keep_b"))
         end
       end
 
