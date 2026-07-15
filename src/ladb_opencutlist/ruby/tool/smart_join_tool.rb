@@ -285,10 +285,15 @@ module Ladb::OpenCutList
     COLOR_REF_DARKEN_A = ColorUtils.color_darken(COLOR_REF_FACE_A, 0.4).freeze
     COLOR_REF_DARKEN_B = ColorUtils.color_darken(COLOR_REF_FACE_B, 0.4).freeze
 
-    COLOR_HARDWARE = Kuix::COLOR_DARK_GREY
-    COLOR_HARDWARE_PROPAGATED = ColorUtils.color_translucent(COLOR_HARDWARE, 0.3)
-    COLOR_MACHINING = Kuix::COLOR_CYAN
-    COLOR_MACHINING_PROPAGATED = ColorUtils.color_translucent(COLOR_MACHINING, 0.3)
+    COLOR_HARDWARE_PREVIEW = Kuix::COLOR_DARK_GREY
+    COLOR_HARDWARE_PROPAGATED_PREVIEW = ColorUtils.color_translucent(COLOR_HARDWARE_PREVIEW, 0.3)
+    COLOR_MACHINING_PREVIEW = Kuix::COLOR_CYAN
+    COLOR_MACHINING_PROPAGATED_PREVIEW = ColorUtils.color_translucent(COLOR_MACHINING_PREVIEW, 0.3)
+
+    COLOR_REMOVE_STROKE_PREVIEW = Kuix::COLOR_RED
+    COLOR_REMOVE_STROKE_PROPAGATED_PREVIEW = ColorUtils.color_translucent(Kuix::COLOR_RED, 0.5)
+    COLOR_REMOVE_FILL_PREVIEW = ColorUtils.color_translucent(COLOR_REMOVE_STROKE_PREVIEW, 0.3)
+    COLOR_REMOVE_FILL_PROPAGATED_PREVIEW = ColorUtils.color_translucent(COLOR_REMOVE_STROKE_PREVIEW, 0.15)
 
     LAYER_3D_JOIN_PREVIEW = 3
     LAYER_3D_MACHINING_PREVIEW = 4
@@ -1398,7 +1403,7 @@ module Ladb::OpenCutList
             _preview_join_drawing_def(
               hardware.drawing_def,
               t,
-              picked ? COLOR_HARDWARE : COLOR_HARDWARE_PROPAGATED,
+              picked ? COLOR_HARDWARE_PREVIEW : COLOR_HARDWARE_PROPAGATED_PREVIEW,
               1,
               LAYER_3D_HARDWARE_PREVIEW,
             ) if hardware.drawing_def
@@ -1408,7 +1413,7 @@ module Ladb::OpenCutList
             _preview_join_drawing_def(
               machining.drawing_def,
               t,
-              picked ? COLOR_MACHINING : COLOR_MACHINING_PROPAGATED,
+              picked ? COLOR_MACHINING_PREVIEW : COLOR_MACHINING_PROPAGATED_PREVIEW,
               0.5,
               LAYER_3D_MACHINING_PREVIEW
             ) if machining.drawing_def
@@ -2010,7 +2015,7 @@ module Ladb::OpenCutList
               k_box = Kuix::BoxFillMotif3d.new
               k_box.bounds.copy!(glued_instance.definition.bounds)
               k_box.line_width = 2
-              k_box.color = ColorUtils.color_translucent(Kuix::COLOR_RED, picked ? 0.3 : 0.15)
+              k_box.color = picked ? COLOR_REMOVE_FILL_PREVIEW : COLOR_REMOVE_FILL_PROPAGATED_PREVIEW
               k_box.on_top = true
               k_box.transformation = t
               @tool.append_3d(k_box, LAYER_3D_JOIN_PREVIEW)
@@ -2018,7 +2023,7 @@ module Ladb::OpenCutList
               k_box = Kuix::BoxMotif3d.new
               k_box.bounds.copy!(glued_instance.definition.bounds)
               k_box.line_width = 2
-              k_box.color = picked ? Kuix::COLOR_RED : ColorUtils.color_translucent(Kuix::COLOR_RED, 0.5)
+              k_box.color = picked ? COLOR_REMOVE_STROKE_PREVIEW : COLOR_REMOVE_STROKE_PROPAGATED_PREVIEW
               k_box.on_top = true
               k_box.transformation = t
               @tool.append_3d(k_box, LAYER_3D_JOIN_PREVIEW)
@@ -2028,16 +2033,12 @@ module Ladb::OpenCutList
             anchor = ORIGIN.transform(instance_transformation * placement.transformation)
             anchors[anchor.to_a.map { |coord| coord.round(3) }] = true
 
-            if picked
-
-              k_point = _create_floating_points(
-                points: anchor,
-                style: Kuix::POINT_STYLE_PLUS,
-                stroke_color: Kuix::COLOR_BLACK,
-                )
-              @tool.append_3d(k_point, LAYER_3D_JOIN_PREVIEW)
-
-            end
+            k_point = _create_floating_points(
+              points: anchor,
+              style: Kuix::POINT_STYLE_PLUS,
+              stroke_color: Kuix::COLOR_BLACK,
+              )
+            @tool.append_3d(k_point, LAYER_3D_JOIN_PREVIEW)
 
           end
 
@@ -2896,7 +2897,7 @@ module Ladb::OpenCutList
             fn_preview_join_drawing_def.call(
               machining.drawing_def,
               t,
-              picked ? COLOR_MACHINING : COLOR_MACHINING_PROPAGATED,
+              picked ? COLOR_MACHINING_PREVIEW : COLOR_MACHINING_PROPAGATED_PREVIEW,
               0.5
             ) if machining.drawing_def
 
@@ -2905,7 +2906,7 @@ module Ladb::OpenCutList
             fn_preview_join_drawing_def.call(
               hardware.drawing_def,
               t,
-              picked ? COLOR_HARDWARE : COLOR_HARDWARE_PROPAGATED,
+              picked ? COLOR_HARDWARE_PREVIEW : COLOR_HARDWARE_PROPAGATED_PREVIEW,
               1
             ) if hardware.drawing_def
 
@@ -3414,7 +3415,7 @@ module Ladb::OpenCutList
             k_box = Kuix::BoxFillMotif3d.new
             k_box.bounds.copy!(glued_instance.definition.bounds)
             k_box.line_width = 2
-            k_box.color = ColorUtils.color_translucent(Kuix::COLOR_RED, picked ? 0.3 : 0.15)
+            k_box.color = picked ? COLOR_REMOVE_FILL_PREVIEW : COLOR_REMOVE_FILL_PROPAGATED_PREVIEW
             k_box.on_top = true
             k_box.transformation = t
             @tool.append_3d(k_box, LAYER_3D_JOIN_PREVIEW)
@@ -3422,7 +3423,7 @@ module Ladb::OpenCutList
             k_box = Kuix::BoxMotif3d.new
             k_box.bounds.copy!(glued_instance.definition.bounds)
             k_box.line_width = 2
-            k_box.color = picked ? Kuix::COLOR_RED : ColorUtils.color_translucent(Kuix::COLOR_RED, 0.5)
+            k_box.color = picked ? COLOR_REMOVE_STROKE_PREVIEW : COLOR_REMOVE_STROKE_PROPAGATED_PREVIEW
             k_box.on_top = true
             k_box.transformation = t
             @tool.append_3d(k_box, LAYER_3D_JOIN_PREVIEW)
@@ -3432,16 +3433,12 @@ module Ladb::OpenCutList
           anchor = ORIGIN.transform(instance_transformation * placement.transformation)
           anchors[anchor.to_a.map { |coord| coord.round(3) }] = true
 
-          if picked
-
-            k_point = _create_floating_points(
-              points: anchor,
-              style: Kuix::POINT_STYLE_PLUS,
-              stroke_color: Kuix::COLOR_BLACK,
-              )
-            @tool.append_3d(k_point, LAYER_3D_JOIN_PREVIEW)
-
-          end
+          k_point = _create_floating_points(
+            points: anchor,
+            style: Kuix::POINT_STYLE_PLUS,
+            stroke_color: Kuix::COLOR_BLACK,
+            )
+          @tool.append_3d(k_point, LAYER_3D_JOIN_PREVIEW)
 
         end
 
