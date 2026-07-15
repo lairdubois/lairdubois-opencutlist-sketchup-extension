@@ -362,6 +362,12 @@ namespace Meshy {
         // maintains the mesh relation, so input face provenance (faceID) that
         // the Ruby side uses to restore materials and merge triangles back
         // into faces is preserved. Do NOT call AsOriginal() here.
+        // Exactly coplanar face-to-face contact (axis planes, no nudge) resolves,
+        // for intersection, into closed zero-volume membranes that Simplify()
+        // keeps (their triangles are not degenerate). A body below the volume of
+        // a tolerance-sized cube cannot exist as a SketchUp solid : drop it.
+        const double min_volume = tolerance_ * tolerance_ * tolerance_;
+
         json output;
         output["fragments"] = json::array();
         for (auto& result : results) {
@@ -369,6 +375,7 @@ namespace Meshy {
                 throw std::runtime_error("Boolean operation failed");
             }
             for (auto& part : result.Simplify().Decompose()) {
+                if (part.Volume() <= min_volume) continue;
                 write_mesh(output["fragments"].emplace_back(), part.GetMeshGL64());
             }
         }
