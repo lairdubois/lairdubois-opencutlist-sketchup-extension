@@ -845,6 +845,15 @@ module Ladb::OpenCutList
       end
     end
 
+    # Returns the glued instances of 'face' anchored at the 'mt' origin (both
+    # expressed in the face owner definition space). Unlike the bounds
+    # intersection test, this works whatever the glued definitions' geometry
+    # footprint is (it can be offset from the anchor).
+    def _get_glued_instances_anchored_at(face, mt, tolerance = 0.001.mm)
+      anchor = ORIGIN.transform(mt)
+      face.get_glued_instances.select { |glued_instance| ORIGIN.transform(glued_instance.transformation).distance(anchor).to_f < tolerance }
+    end
+
     # Data Structs -----
 
     GeometriesDef = Struct.new(:hardware_a, :hardware_b, :machining_a, :machining_b, :hardware_material, :machining_material, :hardware_layer, :machining_layer, :bounds) do
@@ -2142,7 +2151,7 @@ module Ladb::OpenCutList
         next nil if nfm.nil?
 
         # Only propagate onto anchors where a mating glued instance exists
-        glued_instances = _get_glued_instances_at(nfm.face, mt_n, placement.glued_instances.first.definition.bounds)
+        glued_instances = _get_glued_instances_anchored_at(nfm.face, mt_n)
         next nil if glued_instances.empty?
 
         PropagationPlacementDef.new(nfm.face.parent, nfm.face, mt_n, placement.role == :a ? :b : :a, nil, nil, glued_instances)
@@ -3526,7 +3535,7 @@ module Ladb::OpenCutList
         next nil if nfm.nil?
 
         # Only propagate onto anchors where a mating glued instance exists
-        glued_instances = _get_glued_instances_at(nfm.face, mt_n, placement.glued_instances.first.definition.bounds)
+        glued_instances = _get_glued_instances_anchored_at(nfm.face, mt_n)
         next nil if glued_instances.empty?
 
         PropagationPlacementDef.new(nfm.face.parent, nfm.face, mt_n, from_a ? :b : :a, nil, nil, glued_instances)
