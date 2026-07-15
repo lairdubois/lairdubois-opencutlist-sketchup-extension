@@ -1547,26 +1547,44 @@ module Ladb::OpenCutList
     # Re-glues the given instances onto the rebuilt faces : an instance is glued to
     # the face whose plane is the instance gluing plane (its local XY plane : the
     # face normal is parallel to the instance Z axis and the plane carries the
-    # instance origin) and whose boundary contains the origin — the origin may sit
-    # on an edge shared with a perpendicular face, whose plane carries it too.
+    # instance anchor) and whose boundary contains the anchor. The anchor is the
+    # center of the instance cutting loop bounds (definition edges lying on the
+    # gluing plane), NOT the axes origin : the origin may sit away from the
+    # opening geometry (e.g. on the container border, shared with a perpendicular
+    # face) or even outside the boundary of a face the opening overlaps.
     # Instances whose host area was cut away stay unglued.
     def _solid_reglue_instances(instances, faces)
       return if instances.empty?
 
-      # The origin lies on the original gluing plane, but the rebuilt plane may
+      # The anchor lies on the original gluing plane, but the rebuilt plane may
       # have been snapped away by up to the tolerance.
       tolerance = SolidMeshDef::TOLERANCE * 2
+
+      # Local anchor point, memoized per definition. Falls back to the axes
+      # origin when the definition holds no edge on the gluing plane.
+      local_anchors = {}
+      fn_local_anchor = lambda { |definition|
+        local_anchors[definition] ||= begin
+          bounds = Geom::BoundingBox.new
+          definition.entities.grep(Sketchup::Edge).each do |edge|
+            points = [ edge.start.position, edge.end.position ]
+            next unless points.all? { |point| point.z.abs <= SolidMeshDef::TOLERANCE }
+            points.each { |point| bounds.add(point) }
+          end
+          bounds.valid? ? bounds.center : ORIGIN
+        end
+      }
 
       instances.each do |instance|
         next if instance.deleted?
         next unless instance.respond_to?(:glued_to=) # Sketchup::Group#glued_to= requires SketchUp >= 2021.1
-        origin = instance.transformation.origin
+        anchor = fn_local_anchor.call(instance.definition).transform(instance.transformation)
         zaxis = instance.transformation.zaxis
         host_face = faces.find { |face|
           next false if face.deleted?
           next false unless face.normal.parallel?(zaxis)
-          next false unless origin.distance_to_plane(face.plane).to_f <= tolerance
-          [ Sketchup::Face::PointInside, Sketchup::Face::PointOnEdge, Sketchup::Face::PointOnVertex ].include?(face.classify_point(origin.project_to_plane(face.plane)))
+          next false unless anchor.distance_to_plane(face.plane).to_f <= tolerance
+          [ Sketchup::Face::PointInside, Sketchup::Face::PointOnEdge, Sketchup::Face::PointOnVertex ].include?(face.classify_point(anchor.project_to_plane(face.plane)))
         }
         next if host_face.nil?
         begin
