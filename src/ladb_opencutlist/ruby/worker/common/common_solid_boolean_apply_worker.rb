@@ -1545,8 +1545,11 @@ module Ladb::OpenCutList
     end
 
     # Re-glues the given instances onto the rebuilt faces : an instance is glued to
-    # the face whose plane carries the instance origin (the gluing plane) and whose
-    # boundary contains it. Instances whose host area was cut away stay unglued.
+    # the face whose plane is the instance gluing plane (its local XY plane : the
+    # face normal is parallel to the instance Z axis and the plane carries the
+    # instance origin) and whose boundary contains the origin — the origin may sit
+    # on an edge shared with a perpendicular face, whose plane carries it too.
+    # Instances whose host area was cut away stay unglued.
     def _solid_reglue_instances(instances, faces)
       return if instances.empty?
 
@@ -1558,8 +1561,10 @@ module Ladb::OpenCutList
         next if instance.deleted?
         next unless instance.respond_to?(:glued_to=) # Sketchup::Group#glued_to= requires SketchUp >= 2021.1
         origin = instance.transformation.origin
+        zaxis = instance.transformation.zaxis
         host_face = faces.find { |face|
           next false if face.deleted?
+          next false unless face.normal.parallel?(zaxis)
           next false unless origin.distance_to_plane(face.plane).to_f <= tolerance
           [ Sketchup::Face::PointInside, Sketchup::Face::PointOnEdge, Sketchup::Face::PointOnVertex ].include?(face.classify_point(origin.project_to_plane(face.plane)))
         }
