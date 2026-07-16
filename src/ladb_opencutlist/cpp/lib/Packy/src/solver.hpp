@@ -352,7 +352,7 @@ namespace Packy {
 
                         // Init a validator instance builder
                         InstanceBuilder validator_builder;
-                        validator_builder.set_objective(Objective::Knapsack);
+                        validator_builder.set_objective(Objective::Feasibility);
                         validator_builder.set_parameters(orig_instance.parameters());
 
                         // Copy item type (with only 1 copy)
