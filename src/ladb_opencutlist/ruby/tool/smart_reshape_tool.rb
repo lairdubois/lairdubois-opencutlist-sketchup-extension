@@ -3262,6 +3262,42 @@ module Ladb::OpenCutList
           else
             tool.show_validation
           end
+
+          require_relative '../worker/common/common_find_cavities_worker'
+
+          result_def = CommonFindCavitiesWorker.new(selection.items.map(&:drawing_def)).run
+          if result_def.success?
+
+            colors = [ Kuix::COLOR_RED, Kuix::COLOR_GREEN, Kuix::COLOR_BLUE, Kuix::COLOR_YELLOW ]
+
+            puts "SUCCESS -> fragment = #{result_def.fragment_defs.size}"
+
+            @tool.clear_3d(5580)
+            result_def.fragment_defs.each_with_index do |fragment_def, index|
+
+              color = colors[index % colors.size]
+
+              fragment_def.each_triangle_batch do |_, triangles|
+
+                k_mesh = Kuix::Mesh.new
+                k_mesh.add_triangles(triangles.flatten)
+                k_mesh.background_color = ColorUtils.color_translucent(color, 0.3)
+                @tool.append_3d(k_mesh, 5580)
+
+              end
+
+              k_segments = Kuix::Segments.new
+              k_segments.add_segments(fragment_def.boundary_segments)
+              k_segments.color = color
+              k_segments.line_width = 2
+              k_segments.on_top = true
+              @tool.append_3d(k_segments, 5580)
+
+            end
+          else
+            @tool.notify_errors(result_def.errors)
+          end
+
           return true
         end
         yield
