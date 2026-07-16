@@ -39,6 +39,19 @@ module Ladb::OpenCutList
   #   opening connects the would-be cavity to the envelope boundary, and the
   #   single body carrying envelope faces is the outside world, dropped.
   #
+  # ENVELOPE REDUCTION (hull mode, reduce_envelope option) : when a panel is
+  # RECESSED behind an opening (e.g. shelves shallower than the sides), the
+  # compartments it separates communicate through the space in front of its
+  # edge and would come out as a single merged cavity. Such a panel is
+  # betrayed by its edge (chant) faces : they bound the cavity on a plane
+  # that, extended, crosses the cavity interior, with envelope cap beyond it.
+  # The envelope is then reduced by clipping it at each such plane (keeping
+  # the panel side) and the open cavities are recomputed : the caps recede
+  # to the most recessed panel edge — the whole connected group is reduced
+  # to the depth of its shallowest element — and each compartment comes out
+  # as its own cavity. The plane being unbounded, it may exceptionally clip
+  # an unrelated part of the assembly it happens to cross.
+  #
   # Panels may overlap each other freely (the boolean absorbs overlaps, no
   # exact joinery needed) and gaps below the SketchUp merge tolerance are
   # sealed by Meshy's plane canonicalization.
@@ -57,11 +70,20 @@ module Ladb::OpenCutList
     # (TOLERANCE scale) never merges an envelope face with a panel face.
     ENVELOPE_MARGIN = 1.0
 
+    # A cavity boundary face is an edge (chant) face of its panel when its
+    # normal departs from the panel dominant normal by more than 60°.
+    REDUCTION_CHANT_DOT = 0.5
+
+    # Minimum crossing depth, in inches, for a chant plane to trigger the
+    # envelope reduction : recesses within snapping noise are ignored.
+    REDUCTION_MIN_DEPTH = SolidMeshDef::TOLERANCE * 10
+
     def initialize(panel_drawing_defs,
 
                    envelope: ENVELOPE_HULL,
                    max_opening_planes: 2,
                    max_openness: 1.0,
+                   reduce_envelope: true,
                    validate: true
 
     )
@@ -71,6 +93,7 @@ module Ladb::OpenCutList
       @envelope = envelope
       @max_opening_planes = max_opening_planes
       @max_openness = max_openness
+      @reduce_envelope = reduce_envelope
       @validate = validate
 
     end
@@ -147,7 +170,8 @@ module Ladb::OpenCutList
       # by construction.
 
       fn_collect = lambda { |output, hermetic|
-        next unless output['fragments'].is_a?(Array)
+        collected = []
+        next collected unless output['fragments'].is_a?(Array)
         output['fragments'].each do |fragment|
           face_ids = fragment['face_ids']
           next unless face_ids.is_a?(Array) && !face_ids.empty?
@@ -174,8 +198,9 @@ module Ladb::OpenCutList
           # the outside world and concavity pockets face the envelope on many
           # planes
           next if !hermetic && fragment_def.opening_plane_count > @max_opening_planes
-          result_def.fragment_defs << fragment_def
+          collected << fragment_def
         end
+        collected
       }
 
       # Hermetic pass
@@ -187,7 +212,7 @@ module Ladb::OpenCutList
         :cut_meshes => panel_meshes
       )
       return result_def if _report_errors(direct_output, result_def)
-      fn_collect.call(direct_output, true)
+      result_def.fragment_defs.concat(fn_collect.call(direct_output, true))
 
       # Open pass (the bbox envelope only reveals hermetic cavities)
       if @envelope != ENVELOPE_BBOX
@@ -217,7 +242,45 @@ module Ladb::OpenCutList
             :cut_meshes => welded_meshes
           )
           return result_def if _report_errors(welded_output, result_def)
-          fn_collect.call(welded_output, false)
+          open_fragment_defs = fn_collect.call(welded_output, false)
+
+          # Envelope reduction : recessed panel edges detected on the open
+          # cavities clip the envelope, and the open cavities are recomputed
+          # against the reduced envelope — see the class doc.
+          if @reduce_envelope && !open_fragment_defs.empty?
+            reduction_planes = _detect_reduction_planes(open_fragment_defs, panel_id_ranges, _panel_dominant_normals(panel_meshes))
+            unless reduction_planes.empty?
+              reduction_output = Meshy.operate(
+                :operation => Meshy::OPERATION_INTERSECTION,
+                :validate => false,
+                :tolerance => SolidMeshDef::TOLERANCE,
+                :src_meshes => [ envelope_mesh ],
+                :cut_meshes => reduction_planes.map { |normal, d| _reduction_slab_mesh(normal, d, envelope_mesh) }
+              )
+              return result_def if _report_errors(reduction_output, result_def)
+              reduced_envelope_meshes = (reduction_output['fragments'] || []).map { |fragment|
+                {
+                  :vertices => fragment['vertices'],
+                  :face_indices => fragment['face_indices'],
+                  :face_ids => fragment['face_ids'],
+                  :tolerance => SolidMeshDef::TOLERANCE
+                }
+              }
+              unless reduced_envelope_meshes.empty?
+                reduced_output = Meshy.operate(
+                  :operation => Meshy::OPERATION_SUBTRACTION,
+                  :validate => false,
+                  :tolerance => SolidMeshDef::TOLERANCE,
+                  :src_meshes => reduced_envelope_meshes,
+                  :cut_meshes => welded_meshes
+                )
+                return result_def if _report_errors(reduced_output, result_def)
+                open_fragment_defs = fn_collect.call(reduced_output, false)
+              end
+            end
+          end
+
+          result_def.fragment_defs.concat(open_fragment_defs)
         end
       end
 
@@ -355,6 +418,163 @@ module Ladb::OpenCutList
         entry = panel_id_ranges.find { |id_range, _| id_range.cover?(face_id) }
         entry.nil? ? nil : entry.last
       }.compact.uniq.sort
+    end
+
+    # Area-weighted dominant face normal of each panel mesh ([ x, y, z ] unit
+    # vector, or nil when degenerate), used to tell a panel edge (chant) face
+    # from a main face. The two main faces of a board are opposite : normals
+    # are accumulated up to sign.
+    def _panel_dominant_normals(panel_meshes)
+      panel_meshes.map do |mesh|
+        vertices = mesh[:vertices]
+        area_by_direction = Hash.new(0.0)
+        mesh[:face_indices].each_slice(3) do |a, b, c|
+          normal, area2 = _triangle_normal(vertices, a, b, c)
+          next if normal.nil?
+          normal = normal.map { |v| -v } if normal[0] < 0 || (normal[0] == 0 && (normal[1] < 0 || (normal[1] == 0 && normal[2] < 0)))
+          key = normal.map { |v| (v * 1000).round }
+          area_by_direction[key] += area2
+        end
+        key = area_by_direction.max_by { |_, area2| area2 }&.first
+        key&.map { |v| v / 1000.0 }
+      end
+    end
+
+    # Unit normal ([ x, y, z ]) and doubled area of the given triangle, nil
+    # normal when degenerate.
+    def _triangle_normal(vertices, a, b, c)
+      ax, ay, az = vertices[a * 3], vertices[a * 3 + 1], vertices[a * 3 + 2]
+      bx, by, bz = vertices[b * 3], vertices[b * 3 + 1], vertices[b * 3 + 2]
+      cx, cy, cz = vertices[c * 3], vertices[c * 3 + 1], vertices[c * 3 + 2]
+      ux = bx - ax ; uy = by - ay ; uz = bz - az
+      vx = cx - ax ; vy = cy - ay ; vz = cz - az
+      nx = uy * vz - uz * vy
+      ny = uz * vx - ux * vz
+      nz = ux * vy - uy * vx
+      length = Math.sqrt(nx * nx + ny * ny + nz * nz)
+      return [ nil, 0.0 ] if length == 0
+      [ [ nx / length, ny / length, nz / length ], length ]
+    end
+
+    # Planes of the recessed panel edges bounding the given open cavities :
+    # each is a chant plane (fragment boundary face NOT on its panel dominant
+    # plane) that, extended, crosses the cavity interior with envelope cap
+    # area beyond it. Returns [ [ normal, d ], ... ] where the normal (unit
+    # [ x, y, z ], n.p = d on the plane) points toward the KEPT side — a
+    # cavity face lies on the panel, so its outward normal points into it.
+    def _detect_reduction_planes(fragment_defs, panel_id_ranges, dominant_normals)
+      planes = {}
+      fragment_defs.each do |fragment_def|
+        vertices = fragment_def.vertices
+        face_ids = fragment_def.face_ids
+        next if face_ids.nil?
+
+        # Chant plane candidates of this fragment
+        candidates = {}
+        fragment_def.face_indices.each_slice(3).with_index do |(a, b, c), triangle_index|
+          face_id = face_ids[triangle_index]
+          next if face_id == 0
+          mesh_position = panel_id_ranges.find_index { |id_range, _| id_range.cover?(face_id) }
+          next if mesh_position.nil?
+          dominant_normal = dominant_normals[mesh_position]
+          next if dominant_normal.nil?
+          normal, = _triangle_normal(vertices, a, b, c)
+          next if normal.nil?
+          dot = normal[0] * dominant_normal[0] + normal[1] * dominant_normal[1] + normal[2] * dominant_normal[2]
+          next if dot.abs >= REDUCTION_CHANT_DOT  # Main face plane, not a chant
+          d = normal[0] * vertices[a * 3] + normal[1] * vertices[a * 3 + 1] + normal[2] * vertices[a * 3 + 2]
+          key = normal.map { |v| (v * 1000).round } << (d / SolidMeshDef::TOLERANCE).round
+          candidates[key] ||= [ normal, d ]
+        end
+
+        candidates.each do |key, (normal, d)|
+          next if planes.key?(key)
+          # The cavity must extend on both sides of the extended plane —
+          # beyond the chant (removed side, negative distances) and behind
+          # it (kept side, where the panel and the compartments lie)
+          beyond = false
+          behind = false
+          vertices.each_slice(3) do |x, y, z|
+            distance = normal[0] * x + normal[1] * y + normal[2] * z - d
+            beyond ||= distance < -REDUCTION_MIN_DEPTH
+            behind ||= distance > REDUCTION_MIN_DEPTH
+            break if beyond && behind
+          end
+          next unless beyond && behind
+          # The removed side must carry envelope cap area : that is what
+          # makes the crossing an opening recess rather than an interior
+          # feature of the assembly
+          cap_beyond = fragment_def.face_indices.each_slice(3).with_index.any? { |(a, b, c), triangle_index|
+            next false unless face_ids[triangle_index] == 0
+            x = (vertices[a * 3] + vertices[b * 3] + vertices[c * 3]) / 3.0
+            y = (vertices[a * 3 + 1] + vertices[b * 3 + 1] + vertices[c * 3 + 1]) / 3.0
+            z = (vertices[a * 3 + 2] + vertices[b * 3 + 2] + vertices[c * 3 + 2]) / 3.0
+            normal[0] * x + normal[1] * y + normal[2] * z - d < -REDUCTION_MIN_DEPTH
+          }
+          next unless cap_beyond
+          planes[key] = [ normal, d ]
+        end
+
+      end
+      planes.values
+    end
+
+    # Box covering the envelope on the KEPT side of the given plane (unit
+    # normal, n.p = d), serialized like the envelope meshes (face id 0) :
+    # intersecting the envelope with these boxes clips it at the recessed
+    # panel edges.
+    def _reduction_slab_mesh(normal, d, envelope_mesh)
+
+      # Orthonormal basis completing the plane normal, seeded on the axis the
+      # normal is least aligned with
+      seed = [ [ 1.0, 0.0, 0.0 ], [ 0.0, 1.0, 0.0 ], [ 0.0, 0.0, 1.0 ] ][normal.map(&:abs).each_with_index.min.last]
+      u = [
+        normal[1] * seed[2] - normal[2] * seed[1],
+        normal[2] * seed[0] - normal[0] * seed[2],
+        normal[0] * seed[1] - normal[1] * seed[0]
+      ]
+      length = Math.sqrt(u[0] * u[0] + u[1] * u[1] + u[2] * u[2])
+      u = u.map { |v| v / length }
+      v = [
+        normal[1] * u[2] - normal[2] * u[1],
+        normal[2] * u[0] - normal[0] * u[2],
+        normal[0] * u[1] - normal[1] * u[0]
+      ]
+
+      # Envelope extent in that basis, inflated clear of the envelope planes
+      u0 = v0 = Float::INFINITY
+      u1 = v1 = n1 = -Float::INFINITY
+      envelope_mesh[:vertices].each_slice(3) do |x, y, z|
+        pu = u[0] * x + u[1] * y + u[2] * z
+        pv = v[0] * x + v[1] * y + v[2] * z
+        pn = normal[0] * x + normal[1] * y + normal[2] * z
+        u0 = pu if pu < u0 ; u1 = pu if pu > u1
+        v0 = pv if pv < v0 ; v1 = pv if pv > v1
+        n1 = pn if pn > n1
+      end
+      u0 -= ENVELOPE_MARGIN ; u1 += ENVELOPE_MARGIN
+      v0 -= ENVELOPE_MARGIN ; v1 += ENVELOPE_MARGIN
+      n1 += ENVELOPE_MARGIN
+
+      vertices = []
+      [ [ u0, v0, d ], [ u1, v0, d ], [ u1, v1, d ], [ u0, v1, d ],
+        [ u0, v0, n1 ], [ u1, v0, n1 ], [ u1, v1, n1 ], [ u0, v1, n1 ] ].each do |pu, pv, pn|
+        vertices << u[0] * pu + v[0] * pv + normal[0] * pn
+        vertices << u[1] * pu + v[1] * pv + normal[1] * pn
+        vertices << u[2] * pu + v[2] * pv + normal[2] * pn
+      end
+
+      _envelope_mesh_hash(
+        vertices,
+        [
+          0, 2, 1, 0, 3, 2,
+          4, 5, 6, 4, 6, 7,
+          0, 1, 5, 0, 5, 4,
+          2, 3, 7, 2, 7, 6,
+          1, 2, 6, 1, 6, 5,
+          3, 0, 4, 3, 4, 7
+        ]
+      )
     end
 
   end
