@@ -9,6 +9,7 @@ module Ladb::OpenCutList
   require_relative '../manipulator/plane_manipulator'
   require_relative '../manipulator/cline_manipulator'
   require_relative '../helper/user_text_helper'
+  require_relative '../helper/face_matcher_helper'
   require_relative '../utils/lock_utils'
   require_relative '../worker/common/common_drawing_decomposition_worker'
   require_relative '../worker/common/common_solid_boolean_apply_worker'
@@ -3444,6 +3445,7 @@ module Ladb::OpenCutList
   class SmartReshapePanelingActionHandler < SmartActionHandler
 
     include UserTextHelper
+    include FaceMatcherHelper
 
     STATE_SELECT = 0
     STATE_PANELING = 1
@@ -3592,7 +3594,7 @@ module Ladb::OpenCutList
 
     def onToolKeyDown(tool, key, repeat, flags, view)
 
-      if tool.is_key_shift?(key) && @hover_face_manipulators.any?
+      if (tool.is_key_shift?(key) || tool.is_key_ctrl_or_option_down?(key)) && @hover_face_manipulators.any?
         _refresh
       end
 
@@ -3600,7 +3602,7 @@ module Ladb::OpenCutList
 
     def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
 
-      if tool.is_key_shift?(key) && @hover_face_manipulators.any?
+      if (tool.is_key_shift?(key) || tool.is_key_ctrl_or_option_down?(key)) && @hover_face_manipulators.any?
         _refresh
       end
 
@@ -3791,6 +3793,16 @@ module Ladb::OpenCutList
       @drawing_def.face_manipulators.each do |fm|
         if ph.test_point(fm.centroid.transform(@drawing_def.transformation))
           @hover_face_manipulators << fm
+
+          if @tool.is_key_ctrl_or_option_down?
+
+            matching_face_manipulators = _find_matching_face_manipulators(fm, @drawing_def.face_manipulators, mirror: true)
+            matching_face_manipulators.each do |mfm|
+              @hover_face_manipulators << mfm
+            end
+
+          end
+
           break
         end
       end
@@ -3971,14 +3983,12 @@ module Ladb::OpenCutList
     def _hide_drawings
       if @drawing_def.is_a?(DrawingDef)
         @drawing_def.face_manipulators.each { |fm| fm.face.visible = false }
-        # @drawing_def.edge_manipulators.each { |em| em.edge.visible = false }
       end
     end
 
     def _unhide_drawings
       if @drawing_def.is_a?(DrawingDef)
         @drawing_def.face_manipulators.each { |fm| fm.face.visible = true }
-        # @drawing_def.edge_manipulators.each { |em| em.edge.visible = true }
       end
     end
 

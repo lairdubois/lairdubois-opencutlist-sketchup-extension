@@ -2,9 +2,12 @@ module Ladb::OpenCutList
 
   require_relative 'plane_manipulator'
   require_relative 'loop_manipulator'
+  require_relative '../helper/face_matcher_helper'
   require_relative '../lib/geometrix/finder/circle_finder'
 
   class FaceManipulator < PlaneManipulator
+
+    include FaceMatcherHelper
 
     attr_reader :face
     attr_accessor :surface_manipulator
@@ -27,6 +30,7 @@ module Ladb::OpenCutList
       @outer_loop_manipulator = nil
       @inner_loop_manipulators = nil
       @loop_manipulators = nil
+      @signatures = nil
     end
 
     # -----
@@ -100,6 +104,12 @@ module Ladb::OpenCutList
 
     def has_inner_loops?
       @face.loops.length > 1
+    end
+
+    def signature(mirror: true)
+      @signatures ||= {}
+      @signatures[mirror] = _face_signature(self, mirror: mirror) unless @signatures.key?(mirror)
+      @signatures[mirror]
     end
 
     # -----
