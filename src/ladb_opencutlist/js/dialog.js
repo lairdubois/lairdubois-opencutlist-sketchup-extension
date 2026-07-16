@@ -50,7 +50,7 @@ const eventCallbacks = {};
 function addEventCallback(event, callback) {
     if (typeof callback == 'function') {
         let events;
-        if ($.isArray(event)) {
+        if (Array.isArray(event)) {
             events = event;
         } else {
             events = [ event ];
@@ -68,7 +68,7 @@ function addEventCallback(event, callback) {
 
 function removeEventCallback(event, callback) {
     let events;
-    if ($.isArray(event)) {
+    if (Array.isArray(event)) {
         events = event;
     } else {
         events = [ event ];
