@@ -538,8 +538,9 @@ tab:
       follow_grain_direction_help: |
         Wenn diese Option aktiviert ist, werden die Instanzen dieses Bauteils als Teile betrachtet, die mit ihren Nachbarn, die die folgenden Eigenschaften teilen, in **Fortlaufende Maserungruppe** angeordnet sind:
         - dieselbe *Fortlaufende Maserungsgruppe*
+        - dieselbe Ebene
         - dieselbe Ausrichtung
-        - denselben Werkstoff mit Faser
+        - dasselbe Material mit Faser
         - dieselbe Dicke
       follow_grain_direction_0: $t(default.no)
       follow_grain_direction_1: Fortlaufende Maserung aktiviert
@@ -2476,9 +2477,11 @@ tool:
     action_option_paneling_direction_inward_status: Nach innen
     action_option_paneling_direction_outward_status: Nach aussen
     action_option_options_centered_status: Auf die gestreckten Elemente zentrieren
-    action_option_options_make_unique_status: Gestreckte Elemente einzigartig machen
-    action_option_options_keep_a_status: A behalten
-    action_option_options_keep_b_status: B behalten
+    action_option_options_make_unique_status: Überarbeitete Elemente einzigartig machen
+    action_option_options_keep_a: A behalten
+    action_option_options_keep_a_status: Die Instanzen A nach der Operation beibehalten und das Ergebnis in ein neues Teil einfügen
+    action_option_options_keep_b: B behalten
+    action_option_options_keep_b_status: Die Instanzen B nach der Operation beibehalten
     error:
       curve_intersect: Eine der Schnittebenen verläuft durch eine nicht dehnbare Kurve
   smart_paint:
