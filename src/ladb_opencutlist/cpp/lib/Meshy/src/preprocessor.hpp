@@ -205,8 +205,14 @@ namespace Meshy {
             all.insert(all.end(), planes.begin(), planes.end());
         }
 
+        // Ties are broken on the plane coefficients (not on input order), so the
+        // canonical set does not depend on the order the operands were given in.
         std::stable_sort(all.begin(), all.end(), [](const Plane& a, const Plane& b) {
-            return a.area2 > b.area2;
+            if (a.area2 != b.area2) return a.area2 > b.area2;
+            if (a.nx != b.nx) return a.nx < b.nx;
+            if (a.ny != b.ny) return a.ny < b.ny;
+            if (a.nz != b.nz) return a.nz < b.nz;
+            return a.d < b.d;
         });
 
         std::vector<Plane> canonical;

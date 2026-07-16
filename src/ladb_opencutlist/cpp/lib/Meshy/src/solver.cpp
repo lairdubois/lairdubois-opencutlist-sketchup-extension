@@ -106,31 +106,48 @@ namespace Meshy {
 
         }
 
-        void write_mesh(
+        // Writes one fragment from the shells of ONE body : its outer surface
+        // first, then the inner shells of its internal voids (inward wound),
+        // merged into a single indexed mesh so hollow bodies survive the JSON
+        // round-trip.
+        void write_fragment(
                 json& j,
-                const manifold::MeshGL64& mesh
+                const std::vector<manifold::MeshGL64>& meshes
         ) {
 
-            // Vertices
             j["vertices"] = json::array();
-            for (auto v : mesh.vertProperties) {
-                j["vertices"].push_back(v);
-            }
-
-            // Triangles
             j["face_indices"] = json::array();
-            for (uint32_t idx : mesh.triVerts) {
-                j["face_indices"].push_back(idx);
-            }
-
-            // FaceID
             j["face_ids"] = json::array();
-            for (uint32_t id : mesh.faceID) {
-                j["face_ids"].push_back(id);
+
+            std::size_t vertex_offset = 0;
+            std::size_t face_count = 0;
+            for (const auto& mesh : meshes) {
+
+                // Vertices
+                const std::size_t stride = mesh.numProp;
+                const std::size_t vertex_count = mesh.vertProperties.size() / stride;
+                for (std::size_t v = 0; v < vertex_count; ++v) {
+                    j["vertices"].push_back(mesh.vertProperties[v * stride]);
+                    j["vertices"].push_back(mesh.vertProperties[v * stride + 1]);
+                    j["vertices"].push_back(mesh.vertProperties[v * stride + 2]);
+                }
+
+                // Triangles
+                for (uint32_t idx : mesh.triVerts) {
+                    j["face_indices"].push_back(idx + vertex_offset);
+                }
+
+                // FaceID
+                for (uint32_t id : mesh.faceID) {
+                    j["face_ids"].push_back(id);
+                }
+
+                vertex_offset += vertex_count;
+                face_count += mesh.triVerts.size() / 3;
             }
 
-            j["num_vertices"] = mesh.vertProperties.size() / mesh.numProp;
-            j["num_faces"] = mesh.triVerts.size() / 3;
+            j["num_vertices"] = vertex_offset;
+            j["num_faces"] = face_count;
 
         }
 
@@ -241,35 +258,69 @@ namespace Meshy {
         // Exact coplanarity is only achievable in doubles on the exact-axis planes :
         // on a tilted plane, snapped vertices keep ~1e-15 inconsistent residues that
         // Manifold's exact arithmetic resolves into epsilon-thin residues (closed
-        // pockets under the surviving face). So when a tilted plane hosts both a src
-        // face and a cut face, nudge the cut vertices lying on it along the plane
-        // normal : toward the src exterior for subtraction / intersection (the cut
-        // cleanly swallows or stops at the src face), toward the src interior for
-        // union (the operands clearly overlap and the seam becomes a robust
-        // transversal intersection). Then re-snap the cut onto the axis planes the
-        // nudge may have dragged it off.
+        // pockets under the surviving face, sliver flaps along the seams). So every
+        // tilted plane shared by two operands that get booleaned together has the
+        // coincidence broken into a CLEAR transversal configuration by nudging
+        // vertices along the plane normal. Each nudged operand receives its own
+        // offset multiple ((rank + 1) x SHARED_PLANE_OFFSET), so no two operands
+        // stay tied with each other on the plane either — this is what makes the
+        // result independent of the operand order. Then the nudged meshes are
+        // re-snapped onto the axis planes the nudge may have dragged them off.
+        //
+        // - Union merges everything : every operand with a face on a shared tilted
+        //   plane is expanded across it along its own outward normal, so seams
+        //   become robust overlaps.
+        // - Subtraction / intersection : the cuts are chained together first, then
+        //   applied to each src. A plane shared with a src face keeps the historic
+        //   intent — all cuts are pushed toward the src exterior (the cut cleanly
+        //   swallows or stops at the src face). A plane shared between cuts only is
+        //   handled like the union case (their chaining is a union) — except for
+        //   intersection, whose cut chaining shrinks, so cuts contract instead.
 
-        if (!cut_meshes_.empty()) {
+        {
+            std::vector<manifold::MeshGL64*> nudge_pool;
+            if (operation_ == Operation::Union) {
+                nudge_pool = all_meshes;
+            } else {
+                for (auto& mesh : cut_meshes_) nudge_pool.push_back(&mesh);
+            }
+
             bool nudged = false;
             for (const auto& plane : planes) {
                 if (is_axis_plane(plane)) continue;
-                double src_sign = 0.0;
-                for (auto& mesh : src_meshes_) {
-                    src_sign = outward_sign_on_plane(mesh, plane, tolerance_);
-                    if (src_sign != 0.0) break;
+
+                std::vector<double> pool_signs(nudge_pool.size());
+                std::size_t faces_on_plane = 0;
+                for (std::size_t k = 0; k < nudge_pool.size(); ++k) {
+                    pool_signs[k] = outward_sign_on_plane(*nudge_pool[k], plane, tolerance_);
+                    if (pool_signs[k] != 0.0) ++faces_on_plane;
                 }
-                if (src_sign == 0.0) continue;
-                bool cut_on_plane = false;
-                for (auto& mesh : cut_meshes_) {
-                    if (outward_sign_on_plane(mesh, plane, tolerance_) != 0.0) {
-                        cut_on_plane = true;
-                        break;
+
+                double src_sign = 0.0;
+                if (operation_ != Operation::Union) {
+                    for (auto& mesh : src_meshes_) {
+                        src_sign = outward_sign_on_plane(mesh, plane, tolerance_);
+                        if (src_sign != 0.0) break;
                     }
                 }
-                if (!cut_on_plane) continue;
-                const double offset = (operation_ == Operation::Union ? -src_sign : src_sign) * SHARED_PLANE_OFFSET;
-                for (auto& mesh : cut_meshes_) offset_vertices_near_plane(mesh, plane, offset, tolerance_);
-                nudged = true;
+
+                if (src_sign != 0.0 && faces_on_plane > 0) {
+                    // src face on the plane : every cut (even one only touching the
+                    // plane through an edge or vertex) moves to the src exterior.
+                    for (std::size_t k = 0; k < nudge_pool.size(); ++k) {
+                        offset_vertices_near_plane(*nudge_pool[k], plane, src_sign * SHARED_PLANE_OFFSET * double(k + 1), tolerance_);
+                    }
+                    nudged = true;
+                } else if (faces_on_plane >= 2) {
+                    // plane shared between chained operands only : expand each face
+                    // across it (contract for intersection chaining).
+                    const double dir = (operation_ == Operation::Intersection ? -1.0 : 1.0);
+                    for (std::size_t k = 0; k < nudge_pool.size(); ++k) {
+                        if (pool_signs[k] == 0.0) continue;
+                        offset_vertices_near_plane(*nudge_pool[k], plane, dir * pool_signs[k] * SHARED_PLANE_OFFSET * double(k + 1), tolerance_);
+                    }
+                    nudged = true;
+                }
             }
             if (nudged) {
                 std::vector<Plane> axis_planes;
@@ -277,7 +328,7 @@ namespace Meshy {
                     if (is_axis_plane(plane)) axis_planes.push_back(plane);
                 }
                 if (!axis_planes.empty()) {
-                    for (auto& mesh : cut_meshes_) snap_to_planes(mesh, axis_planes, tolerance_);
+                    for (auto* mesh : nudge_pool) snap_to_planes(*mesh, axis_planes, tolerance_);
                 }
             }
         }
@@ -362,10 +413,16 @@ namespace Meshy {
         // maintains the mesh relation, so input face provenance (faceID) that
         // the Ruby side uses to restore materials and merge triangles back
         // into faces is preserved. Do NOT call AsOriginal() here.
+        // Decompose() is purely topological : the inner shell of a hollow body
+        // (a closed internal void) comes out as its own component, wound inward
+        // and thus of NEGATIVE volume. Each of them is reattached to the body
+        // whose bounding box contains it (the smallest such body when nested)
+        // and exported inside the same fragment, so hollow bodies survive the
+        // JSON round-trip instead of coming back filled.
         // Exactly coplanar face-to-face contact (axis planes, no nudge) resolves,
         // for intersection, into closed zero-volume membranes that Simplify()
-        // keeps (their triangles are not degenerate). A body below the volume of
-        // a tolerance-sized cube cannot exist as a SketchUp solid : drop it.
+        // keeps (their triangles are not degenerate). A body or a void below the
+        // volume of a tolerance-sized cube cannot exist in SketchUp : drop it.
         const double min_volume = tolerance_ * tolerance_ * tolerance_;
 
         json output;
@@ -374,9 +431,42 @@ namespace Meshy {
             if (result.Status() != manifold::Manifold::Error::NoError) {
                 throw std::runtime_error("Boolean operation failed");
             }
+
+            std::vector<manifold::Manifold> bodies;
+            std::vector<manifold::Manifold> voids;
             for (auto& part : result.Simplify().Decompose()) {
-                if (part.Volume() <= min_volume) continue;
-                write_mesh(output["fragments"].emplace_back(), part.GetMeshGL64());
+                const double volume = part.Volume();
+                if (volume > min_volume) {
+                    bodies.push_back(part);
+                } else if (volume < -min_volume) {
+                    voids.push_back(part);
+                }
+            }
+
+            std::vector<std::vector<manifold::MeshGL64>> fragment_meshes(bodies.size());
+            std::vector<manifold::Box> body_boxes;
+            std::vector<double> body_volumes;
+            body_boxes.reserve(bodies.size());
+            body_volumes.reserve(bodies.size());
+            for (std::size_t i = 0; i < bodies.size(); ++i) {
+                fragment_meshes[i].push_back(bodies[i].GetMeshGL64());
+                body_boxes.push_back(bodies[i].BoundingBox());
+                body_volumes.push_back(bodies[i].Volume());
+            }
+
+            for (auto& void_part : voids) {
+                const manifold::Box void_box = void_part.BoundingBox();
+                std::ptrdiff_t container = -1;
+                for (std::size_t i = 0; i < bodies.size(); ++i) {
+                    if (!body_boxes[i].Contains(void_box)) continue;
+                    if (container < 0 || body_volumes[i] < body_volumes[container]) container = i;
+                }
+                // An orphan void (no containing body) has nothing to hollow : dropped.
+                if (container >= 0) fragment_meshes[container].push_back(void_part.GetMeshGL64());
+            }
+
+            for (const auto& meshes : fragment_meshes) {
+                write_fragment(output["fragments"].emplace_back(), meshes);
             }
         }
 
