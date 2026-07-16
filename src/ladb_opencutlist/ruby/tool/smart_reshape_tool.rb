@@ -3001,6 +3001,446 @@ module Ladb::OpenCutList
 
   end
 
+  class SmartReshapeSolidActionHandler < SmartActionHandler
+
+    include SmartActionHandlerPartHelper
+
+    STATE_SELECT_SRC = 0
+    STATE_SELECT_CUT = 1
+
+    LAYER_3D_SRC_PREVIEW = 10
+    LAYER_3D_CUT_PREVIEW = 20
+
+    def initialize(action, tool, previous_action_handler = nil)
+      super
+
+      @src_selection = Selection.new(LAYER_3D_SRC_PREVIEW)
+      @cut_selection = Selection.new(LAYER_3D_CUT_PREVIEW)
+
+    end
+
+    # -----
+
+    def get_state_cursor(state)
+
+      case state
+      when STATE_SELECT_SRC
+        return SmartCursorManager.cursor_select_a
+      when STATE_SELECT_CUT
+        return SmartCursorManager.cursor_select_b
+      end
+
+      super
+    end
+
+    def get_state_picker(state)
+
+      case state
+      when STATE_SELECT_SRC, STATE_SELECT_CUT
+        return SmartPicker.new(tool: @tool, observer: self, pick_point: false, lockable: false)
+      end
+
+      super
+    end
+
+    def get_state_status(state)
+      return super +
+             (_allows_multiple_selections? ? ' | ' + PLUGIN.get_i18n_string("default.constrain_key") + ' = ' + PLUGIN.get_i18n_string("tool.smart_select.state_0_to_7_status") + '.' : '')
+    end
+
+    # -----
+
+    def onToolCancel(tool, reason, view)
+      super
+
+      if @tool.callback_action_handler.nil?
+
+        case @state
+
+        when STATE_SELECT_SRC
+          if @src_selection.items.any?
+            @src_selection.clear
+            tool.hide_validation
+            tool.clear_3d(LAYER_3D_SRC_PREVIEW)
+          else
+            _reset
+          end
+
+        when STATE_SELECT_CUT
+          if @cut_selection.items.any?
+            @cut_selection.clear
+            tool.hide_validation
+            tool.clear_3d(LAYER_3D_CUT_PREVIEW)
+          else
+            set_state(STATE_SELECT_SRC)
+          end
+
+        end
+        _refresh
+
+      else
+        _reset
+        stop
+        Sketchup.active_model.tools.pop_tool
+      end
+
+    end
+
+
+    def onToolValidate(tool, view)
+
+      case @state
+
+      when STATE_SELECT_SRC
+        set_state(STATE_SELECT_CUT)
+
+      when STATE_SELECT_CUT
+        _operate
+
+      end
+
+    end
+
+    def onToolLButtonUp(tool, flags, x, y, view)
+
+      case @state
+
+      when STATE_SELECT_SRC
+        unless _toggle_selection(tool, @src_selection) { set_state(STATE_SELECT_CUT) }
+          UI.beep
+        end
+        return true
+
+      when STATE_SELECT_CUT
+        unless _toggle_selection(tool, @cut_selection) { _operate }
+          UI.beep
+        end
+        return true
+
+      end
+
+    end
+
+    def onToolKeyDown(tool, key, repeat, flags, view)
+
+      if tool.is_key_alt_or_command?(key)
+        return true # Block default behavior for the ALT key on Windows
+      end
+
+      false
+    end
+
+    def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
+
+      if tool.is_key_alt_or_command?(key) && is_quick
+        @tool.store_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_MAKE_UNIQUE, !_fetch_option_options_make_unique?, fire_event: true)
+        _refresh
+        return true
+      end
+
+      false
+    end
+
+    def onStateChanged(old_state, new_state)
+
+      case new_state
+
+      when STATE_SELECT_SRC
+        @tool.hide_validation
+        @src_selection.clear
+        @tool.clear_3d([ LAYER_3D_SRC_PREVIEW, LAYER_3D_CUT_PREVIEW ])
+
+      when STATE_SELECT_CUT
+        @tool.hide_validation
+        @cut_selection.clear
+        @tool.clear_3d([ LAYER_3D_CUT_PREVIEW ])
+
+      end
+
+      super
+    end
+
+    def onPickerChanged(picker, view)
+      _pick_part(picker, view)
+      super
+    end
+
+    def onActivePartChanged(part_entity_path, part, highlighted = false)
+
+      case @state
+
+      when STATE_SELECT_SRC
+        _preview_part(part_entity_path, part)
+
+      when STATE_SELECT_CUT
+        _preview_part(part_entity_path, part)
+
+      end
+
+    end
+
+    # -----
+
+    protected
+
+    def _reset
+      @src_selection.clear
+      @cut_selection.clear
+      super
+      set_state(STATE_SELECT_SRC)
+    end
+
+    def _refresh
+      _reset_active_part
+      @picker.invalidate if @picker.is_a?(SmartPicker)
+      super
+    end
+
+    # -----
+
+    def _get_solid_operation
+      # Implemented in subclass
+    end
+
+    def _allows_multiple_selections?
+      true
+    end
+
+    # -----
+
+    def _get_active_part_preview_color(part, highlighted = false)
+      case @state
+      when STATE_SELECT_CUT
+        ColorUtils.color_translucent(COLOR_PART, 0.3)
+      else
+        super
+      end
+    end
+
+    def _get_instance_part_preview_color(part, highlighted = false)
+      _get_active_part_preview_color(part, highlighted)
+    end
+
+    # -----
+
+    def _get_drawing_def_parameters
+      {
+        ignore_surfaces: true,
+        ignore_faces: false,
+        ignore_edges: true,
+        ignore_soft_edges: true,
+        ignore_clines: true,
+        container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART_WITHOUT_MACHININGS,
+        flatten: false
+      }
+    end
+
+    # -----
+
+    def _fetch_option_options_keep_a?
+      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_KEEP_A)
+    end
+
+    def _fetch_option_options_keep_b?
+      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_KEEP_B)
+    end
+
+    def _fetch_option_options_make_unique?
+      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_MAKE_UNIQUE)
+    end
+
+    # -----
+
+    def _toggle_selection(tool, selection)
+      if (drawing_def = _get_drawing_def).is_a?(DrawingDef)
+        selection.toggle(get_active_part_entity_path, get_active_part, drawing_def)
+        _preview_selection(selection)
+        if _allows_multiple_selections? && (tool.is_key_shift_down? || selection.need_validation?)
+          if selection.items.empty?
+            tool.hide_validation
+          else
+            tool.show_validation
+          end
+          return true
+        end
+        yield
+        return true
+      end
+      false
+    end
+
+    def _preview_selection(selection)
+      @tool.clear_3d(selection.layer)
+      selection.items.each { |item| _preview_part(item.part_entity_path, item.part, selection.layer, clear_before: false) }
+    end
+
+    # -----
+
+    def _operate(operation = nil)
+
+      result_def = CommonSolidBooleanApplyWorker.new(
+        @src_selection.items.map(&:drawing_def),
+        @cut_selection.items.map(&:drawing_def),
+        operation: operation,
+        keep_srcs: _fetch_option_options_keep_a?,
+        keep_cuts: _fetch_option_options_keep_b?,
+        make_unique: _fetch_option_options_make_unique?
+      ).run
+      @tool.notify_errors(result_def.errors) unless result_def.success?
+
+      _restart
+    end
+
+    # -----
+
+    Selection = Struct.new(:layer) do
+
+      def initialize(layer)
+        super
+        @items = []
+        @need_validation = false
+      end
+
+      def toggle(part_entity_path, part, drawing_def)
+        if (item = @items.find { |item| item.part_entity_path == part_entity_path })
+          @items.delete(item)
+        else
+          @items.push(SelectionItem.new(part_entity_path, part, drawing_def))
+          @need_validation = true if @items.size > 1
+        end
+      end
+
+      def clear
+        @items.clear
+        @need_validation = false
+      end
+
+      def items
+        @items
+      end
+
+      def need_validation?
+        @need_validation
+      end
+
+    end
+    SelectionItem = Struct.new(:part_entity_path, :part, :drawing_def)
+
+  end
+
+  class SmartReshapeSolidUniteActionHandler < SmartReshapeSolidActionHandler
+
+    def initialize(tool, previous_action_handler = nil)
+      super(SmartReshapeTool::ACTION_SOLID_UNITE, tool, previous_action_handler)
+    end
+
+    # -----
+
+    def get_state_cursor(state)
+
+      case state
+      when STATE_SELECT_SRC
+        return SmartCursorManager.cursor_select_unite_a
+      when STATE_SELECT_CUT
+        return SmartCursorManager.cursor_select_unite_b
+      end
+
+      super
+    end
+
+    protected
+
+    # -----
+
+    def _allows_multiple_selections?
+      @state == STATE_SELECT_CUT
+    end
+
+    # -----
+
+    def _operate(operation = nil)
+      super(Fiddle::Meshy::OPERATION_UNION)
+    end
+
+  end
+
+  class SmartReshapeSolidSubtractActionHandler < SmartReshapeSolidActionHandler
+
+    def initialize(tool, previous_action_handler = nil)
+      super(SmartReshapeTool::ACTION_SOLID_SUBTRACT, tool, previous_action_handler)
+    end
+
+    # -----
+
+    def get_state_cursor(state)
+
+      case state
+      when STATE_SELECT_SRC
+        return SmartCursorManager.cursor_select_subtract_a
+      when STATE_SELECT_CUT
+        return SmartCursorManager.cursor_select_subtract_b
+      end
+
+      super
+    end
+
+    protected
+
+    # -----
+
+    def _get_active_part_preview_color(part, highlighted = false)
+      case @state
+      when STATE_SELECT_CUT
+        ColorUtils.color_translucent(Kuix::COLOR_RED, 0.3)
+      else
+        super
+      end
+    end
+
+    # -----
+
+    def _operate(operation = nil)
+      super(Fiddle::Meshy::OPERATION_SUBTRACTION)
+    end
+
+  end
+
+  class SmartReshapeSolidIntersectActionHandler < SmartReshapeSolidActionHandler
+
+    def initialize(tool, previous_action_handler = nil)
+      super(SmartReshapeTool::ACTION_SOLID_INTERSECT, tool, previous_action_handler)
+    end
+
+    # -----
+
+    def get_state_cursor(state)
+
+      case state
+      when STATE_SELECT_SRC
+        return SmartCursorManager.cursor_select_intersect_a
+      when STATE_SELECT_CUT
+        return SmartCursorManager.cursor_select_intersect_b
+      end
+
+      super
+    end
+
+    protected
+
+    # -----
+
+    def _allows_multiple_selections?
+      @state == STATE_SELECT_CUT
+    end
+
+    # -----
+
+    def _operate(operation = nil)
+      super(Fiddle::Meshy::OPERATION_INTERSECTION)
+    end
+
+  end
+
   class SmartReshapePanelingActionHandler < SmartActionHandler
 
     include UserTextHelper
@@ -3610,7 +4050,7 @@ module Ladb::OpenCutList
       return @drawing_def.container.definition.entities if @drawing_def && @drawing_def.container.respond_to?(:definition)
       Sketchup.active_model.active_entities
     end
-    
+
     def _get_definitions_factory
       @definitions_factory ||= {}
     end
@@ -3721,14 +4161,14 @@ module Ladb::OpenCutList
           # Ground points
 
           planes = vm.vertex.faces
-                       .map { |face| @drawing_def.face_manipulators.find { |fm| fm.face == face } }
-                       .map { |fm|
-                         if fm == sfm || (miter = _get_faces_joint_type_miter?(fm, sfm)) || !miter && !extruded_face_manipulators.include?(fm)
-                           fm.plane
-                         else
-                           [ fm.position.offset(fm.normal, thickness), fm.normal ]
-                         end
-                       }
+                     .map { |face| @drawing_def.face_manipulators.find { |fm| fm.face == face } }
+                     .map { |fm|
+                       if fm == sfm || (miter = _get_faces_joint_type_miter?(fm, sfm)) || !miter && !extruded_face_manipulators.include?(fm)
+                         fm.plane
+                       else
+                         [ fm.position.offset(fm.normal, thickness), fm.normal ]
+                       end
+                     }
 
           if (points = _intersect_planes(planes, gd_plane, gd_centroid)).any?
             vertex_gd_points[vm.vertex] = points
@@ -3740,14 +4180,14 @@ module Ladb::OpenCutList
             # Up points
 
             planes = vm.vertex.faces
-                         .map { |face| @drawing_def.face_manipulators.find { |fm| fm.face == face } }
-                         .map { |fm|
-                           if fm == sfm || !(miter = _get_faces_joint_type_miter?(fm, sfm)) && extruded_face_manipulators.include?(fm) || miter && @selected_face_manipulators.include?(fm)
-                             [ fm.position.offset(fm.normal, thickness), fm.normal ]
-                           else
-                             fm.plane
-                           end
-                         }
+                       .map { |face| @drawing_def.face_manipulators.find { |fm| fm.face == face } }
+                       .map { |fm|
+                         if fm == sfm || !(miter = _get_faces_joint_type_miter?(fm, sfm)) && extruded_face_manipulators.include?(fm) || miter && @selected_face_manipulators.include?(fm)
+                           [ fm.position.offset(fm.normal, thickness), fm.normal ]
+                         else
+                           fm.plane
+                         end
+                       }
 
             if (points = _intersect_planes(planes, up_plane, up_centroid)).any?
               vertex_th_points[vm.vertex] = points
@@ -3822,446 +4262,6 @@ module Ladb::OpenCutList
         @tool.hide_validation
       end
 
-    end
-
-  end
-
-  class SmartReshapeSolidActionHandler < SmartActionHandler
-
-    include SmartActionHandlerPartHelper
-
-    STATE_SELECT_SRC = 0
-    STATE_SELECT_CUT = 1
-
-    LAYER_3D_SRC_PREVIEW = 10
-    LAYER_3D_CUT_PREVIEW = 20
-
-    def initialize(action, tool, previous_action_handler = nil)
-      super
-
-      @src_selection = Selection.new(LAYER_3D_SRC_PREVIEW)
-      @cut_selection = Selection.new(LAYER_3D_CUT_PREVIEW)
-
-    end
-
-    # -----
-
-    def get_state_cursor(state)
-
-      case state
-      when STATE_SELECT_SRC
-        return SmartCursorManager.cursor_select_a
-      when STATE_SELECT_CUT
-        return SmartCursorManager.cursor_select_b
-      end
-
-      super
-    end
-
-    def get_state_picker(state)
-
-      case state
-      when STATE_SELECT_SRC, STATE_SELECT_CUT
-        return SmartPicker.new(tool: @tool, observer: self, pick_point: false, lockable: false)
-      end
-
-      super
-    end
-
-    def get_state_status(state)
-      return super +
-             (_allows_multiple_selections? ? ' | ' + PLUGIN.get_i18n_string("default.constrain_key") + ' = ' + PLUGIN.get_i18n_string("tool.smart_select.state_0_to_7_status") + '.' : '')
-    end
-
-    # -----
-
-    def onToolCancel(tool, reason, view)
-      super
-
-      if @tool.callback_action_handler.nil?
-
-        case @state
-
-        when STATE_SELECT_SRC
-          if @src_selection.items.any?
-            @src_selection.clear
-            tool.hide_validation
-            tool.clear_3d(LAYER_3D_SRC_PREVIEW)
-          else
-            _reset
-          end
-
-        when STATE_SELECT_CUT
-          if @cut_selection.items.any?
-            @cut_selection.clear
-            tool.hide_validation
-            tool.clear_3d(LAYER_3D_CUT_PREVIEW)
-          else
-            set_state(STATE_SELECT_SRC)
-          end
-
-        end
-        _refresh
-
-      else
-        _reset
-        stop
-        Sketchup.active_model.tools.pop_tool
-      end
-
-    end
-
-
-    def onToolValidate(tool, view)
-
-      case @state
-
-      when STATE_SELECT_SRC
-        set_state(STATE_SELECT_CUT)
-
-      when STATE_SELECT_CUT
-        _operate
-
-      end
-
-    end
-
-    def onToolLButtonUp(tool, flags, x, y, view)
-
-      case @state
-
-      when STATE_SELECT_SRC
-        unless _toggle_selection(tool, @src_selection) { set_state(STATE_SELECT_CUT) }
-          UI.beep
-        end
-        return true
-
-      when STATE_SELECT_CUT
-        unless _toggle_selection(tool, @cut_selection) { _operate }
-          UI.beep
-        end
-        return true
-
-      end
-
-    end
-
-    def onToolKeyDown(tool, key, repeat, flags, view)
-
-      if tool.is_key_alt_or_command?(key)
-        return true # Block default behavior for the ALT key on Windows
-      end
-
-      false
-    end
-
-    def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
-
-      if tool.is_key_alt_or_command?(key) && is_quick
-        @tool.store_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_MAKE_UNIQUE, !_fetch_option_options_make_unique?, fire_event: true)
-        _refresh
-        return true
-      end
-
-      false
-    end
-
-    def onStateChanged(old_state, new_state)
-
-      case new_state
-
-      when STATE_SELECT_SRC
-        @tool.hide_validation
-        @src_selection.clear
-        @tool.clear_3d([ LAYER_3D_SRC_PREVIEW, LAYER_3D_CUT_PREVIEW ])
-
-      when STATE_SELECT_CUT
-        @tool.hide_validation
-        @cut_selection.clear
-        @tool.clear_3d([ LAYER_3D_CUT_PREVIEW ])
-
-      end
-
-      super
-    end
-
-    def onPickerChanged(picker, view)
-      _pick_part(picker, view)
-      super
-    end
-
-    def onActivePartChanged(part_entity_path, part, highlighted = false)
-
-      case @state
-
-      when STATE_SELECT_SRC
-        _preview_part(part_entity_path, part)
-
-      when STATE_SELECT_CUT
-        _preview_part(part_entity_path, part)
-
-      end
-
-    end
-
-    # -----
-
-    protected
-
-    def _reset
-      @src_selection.clear
-      @cut_selection.clear
-      super
-      set_state(STATE_SELECT_SRC)
-    end
-
-    def _refresh
-      _reset_active_part
-      @picker.invalidate if @picker.is_a?(SmartPicker)
-      super
-    end
-
-    # -----
-
-    def _get_solid_operation
-      # Implemented in subclass
-    end
-
-    def _allows_multiple_selections?
-      true
-    end
-
-    # -----
-
-    def _get_active_part_preview_color(part, highlighted = false)
-      case @state
-      when STATE_SELECT_CUT
-        ColorUtils.color_translucent(COLOR_PART, 0.3)
-      else
-        super
-      end
-    end
-
-    def _get_instance_part_preview_color(part, highlighted = false)
-      _get_active_part_preview_color(part, highlighted)
-    end
-
-    # -----
-
-    def _get_drawing_def_parameters
-      {
-        ignore_surfaces: true,
-        ignore_faces: false,
-        ignore_edges: true,
-        ignore_soft_edges: true,
-        ignore_clines: true,
-        container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART_WITHOUT_MACHININGS,
-        flatten: false
-      }
-    end
-
-    # -----
-
-    def _fetch_option_options_keep_a?
-      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_KEEP_A)
-    end
-
-    def _fetch_option_options_keep_b?
-      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_KEEP_B)
-    end
-
-    def _fetch_option_options_make_unique?
-      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_MAKE_UNIQUE)
-    end
-
-    # -----
-
-    def _toggle_selection(tool, selection)
-      if (drawing_def = _get_drawing_def).is_a?(DrawingDef)
-        selection.toggle(get_active_part_entity_path, get_active_part, drawing_def)
-        _preview_selection(selection)
-        if _allows_multiple_selections? && (tool.is_key_shift_down? || selection.need_validation?)
-          if selection.items.empty?
-            tool.hide_validation
-          else
-            tool.show_validation
-          end
-          return true
-        end
-        yield
-        return true
-      end
-      false
-    end
-
-    def _preview_selection(selection)
-      @tool.clear_3d(selection.layer)
-      selection.items.each { |item| _preview_part(item.part_entity_path, item.part, selection.layer, clear_before: false) }
-    end
-
-    # -----
-
-    def _operate(operation = nil)
-
-      result_def = CommonSolidBooleanApplyWorker.new(
-        @src_selection.items.map(&:drawing_def),
-        @cut_selection.items.map(&:drawing_def),
-        operation: operation,
-        keep_srcs: _fetch_option_options_keep_a?,
-        keep_cuts: _fetch_option_options_keep_b?,
-        make_unique: _fetch_option_options_make_unique?
-      ).run
-      @tool.notify_errors(result_def.errors) unless result_def.success?
-
-      _restart
-    end
-
-    # -----
-
-    Selection = Struct.new(:layer) do
-
-      def initialize(layer)
-        super
-        @items = []
-        @need_validation = false
-      end
-
-      def toggle(part_entity_path, part, drawing_def)
-        if (item = @items.find { |item| item.part_entity_path == part_entity_path })
-          @items.delete(item)
-        else
-          @items.push(SelectionItem.new(part_entity_path, part, drawing_def))
-          @need_validation = true if @items.size > 1
-        end
-      end
-
-      def clear
-        @items.clear
-        @need_validation = false
-      end
-
-      def items
-        @items
-      end
-
-      def need_validation?
-        @need_validation
-      end
-
-    end
-    SelectionItem = Struct.new(:part_entity_path, :part, :drawing_def)
-
-  end
-
-  class SmartReshapeSolidUniteActionHandler < SmartReshapeSolidActionHandler
-
-    def initialize(tool, previous_action_handler = nil)
-      super(SmartReshapeTool::ACTION_SOLID_UNITE, tool, previous_action_handler)
-    end
-
-    # -----
-
-    def get_state_cursor(state)
-
-      case state
-      when STATE_SELECT_SRC
-        return SmartCursorManager.cursor_select_unite_a
-      when STATE_SELECT_CUT
-        return SmartCursorManager.cursor_select_unite_b
-      end
-
-      super
-    end
-
-    protected
-
-    # -----
-
-    def _allows_multiple_selections?
-      @state == STATE_SELECT_CUT
-    end
-
-    # -----
-
-    def _operate(operation = nil)
-      super(Fiddle::Meshy::OPERATION_UNION)
-    end
-
-  end
-
-  class SmartReshapeSolidSubtractActionHandler < SmartReshapeSolidActionHandler
-
-    def initialize(tool, previous_action_handler = nil)
-      super(SmartReshapeTool::ACTION_SOLID_SUBTRACT, tool, previous_action_handler)
-    end
-
-    # -----
-
-    def get_state_cursor(state)
-
-      case state
-      when STATE_SELECT_SRC
-        return SmartCursorManager.cursor_select_subtract_a
-      when STATE_SELECT_CUT
-        return SmartCursorManager.cursor_select_subtract_b
-      end
-
-      super
-    end
-
-    protected
-
-    # -----
-
-    def _get_active_part_preview_color(part, highlighted = false)
-      case @state
-      when STATE_SELECT_CUT
-        ColorUtils.color_translucent(Kuix::COLOR_RED, 0.3)
-      else
-        super
-      end
-    end
-
-    # -----
-
-    def _operate(operation = nil)
-      super(Fiddle::Meshy::OPERATION_SUBTRACTION)
-    end
-
-  end
-
-  class SmartReshapeSolidIntersectActionHandler < SmartReshapeSolidActionHandler
-
-    def initialize(tool, previous_action_handler = nil)
-      super(SmartReshapeTool::ACTION_SOLID_INTERSECT, tool, previous_action_handler)
-    end
-
-    # -----
-
-    def get_state_cursor(state)
-
-      case state
-      when STATE_SELECT_SRC
-        return SmartCursorManager.cursor_select_intersect_a
-      when STATE_SELECT_CUT
-        return SmartCursorManager.cursor_select_intersect_b
-      end
-
-      super
-    end
-
-    protected
-
-    # -----
-
-    def _allows_multiple_selections?
-      @state == STATE_SELECT_CUT
-    end
-
-    # -----
-
-    def _operate(operation = nil)
-      super(Fiddle::Meshy::OPERATION_INTERSECTION)
     end
 
   end
