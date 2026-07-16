@@ -12,14 +12,18 @@ module Ladb::OpenCutList
     TWO_PI = 2 * Math::PI
     FOUR_PI = 4 * Math::PI
 
+    SQRT2 = Math.sqrt(2)
+
     require_relative 'finder/border_finder'
-    require_relative 'finder/centroid_finder'
+    require_relative 'finder/point_finder'
     require_relative 'finder/circle_finder'
     require_relative 'finder/ellipse_finder'
     require_relative 'finder/curve_finder'
     require_relative 'finder/layout_finder'
 
     require_relative 'approximator/ellipse_approximator'
+
+    require_relative 'utils/distance_utils'
 
   end
 

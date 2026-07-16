@@ -23,7 +23,9 @@ module Ladb::OpenCutList
       @normal = nil
       @triangles = nil
       @centroid = nil
+      @pole_of_inaccessibility = nil
       @outer_loop_manipulator = nil
+      @inner_loop_manipulators = nil
       @loop_manipulators = nil
     end
 
@@ -55,7 +57,23 @@ module Ladb::OpenCutList
     end
 
     def centroid
-      @centroid ||= Geometrix::CentroidFinder.find_centroid(outer_loop_manipulator.points)
+      @centroid ||= Geometrix::PointFinder.find_centroid(outer_loop_manipulator.points)
+    end
+
+    def pole_of_inaccessibility
+      @pole_of_inaccessibility ||= begin
+
+        # find_pole_of_inaccessibility only considers X and Y point coordinates : project loops into the face's plane local space
+        t = Geom::Transformation.new(position, normal)
+        ti = t.inverse
+
+        pole = Geometrix::PointFinder.find_pole_of_inaccessibility(
+          outer_loop_manipulator.points.map { |point| point.transform(ti) },
+          inner_loop_manipulators.map { |loop_manipulator| loop_manipulator.points.map { |point| point.transform(ti) } }
+        )
+
+        pole.nil? ? nil : pole.transform(t)
+      end
     end
 
     def longest_outer_edge
@@ -90,8 +108,14 @@ module Ladb::OpenCutList
       @outer_loop_manipulator ||= LoopManipulator.new(@face.outer_loop, @transformation, material, layer)
     end
 
+    def inner_loop_manipulators
+      @inner_loop_manipulators ||= @face.loops
+                                        .reject { |loop| loop.outer? }
+                                        .map { |loop| LoopManipulator.new(loop, @transformation, material, layer) }
+    end
+
     def loop_manipulators
-      @loop_manipulators ||= @face.loops.map { |loop| loop.outer? ? outer_loop_manipulator : LoopManipulator.new(loop, @transformation, material, layer) }
+      @loop_manipulators ||= [ outer_loop_manipulator ] + inner_loop_manipulators
     end
 
     # -----

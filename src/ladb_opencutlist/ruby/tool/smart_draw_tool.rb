@@ -2,7 +2,6 @@ module Ladb::OpenCutList
 
   require_relative 'smart_tool'
   require_relative 'smart_handle_tool'
-  require_relative '../lib/geometrix/finder/centroid_finder'
   require_relative '../lib/geometrix/finder/circle_finder'
   require_relative '../lib/fiddle/clippy/clippy'
   require_relative '../manipulator/vertex_manipulator'
@@ -935,7 +934,7 @@ module Ladb::OpenCutList
             end
 
             # Compute face centroid
-            @mouse_snap_point = @mouse_snap_centroid = Geometrix::CentroidFinder.find_centroid(face_manipulator.outer_loop_manipulator.points)
+            @mouse_snap_point = @mouse_snap_centroid = face_manipulator.centroid
             unless @mouse_snap_point.nil?
               position = @mouse_snap_point
               @mouse_ip.clear
