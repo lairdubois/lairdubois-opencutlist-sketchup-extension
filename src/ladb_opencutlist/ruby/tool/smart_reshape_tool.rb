@@ -3288,7 +3288,7 @@ module Ladb::OpenCutList
           # require_relative '../worker/common/common_solid_find_cavities_worker'
           #
           # result_def = CommonSolidFindCavitiesWorker.new(selection.items.map(&:drawing_def),
-          #   max_opening_planes: 2
+          #   max_opening_planes: 3
           # ).run
           # if result_def.success?
           #
@@ -3311,7 +3311,7 @@ module Ladb::OpenCutList
           #     k_segments = Kuix::Segments.new
           #     k_segments.add_segments(fragment_def.boundary_segments)
           #     k_segments.color = color
-          #     k_segments.line_width = 2
+          #     k_segments.line_width = 1
           #     k_segments.on_top = true
           #     @tool.append_3d(k_segments, 5580)
           #

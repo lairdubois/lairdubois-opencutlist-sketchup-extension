@@ -587,7 +587,7 @@ module Ladb::OpenCutList
               end
             end
 
-            # if fetch_action_option_enabled(ACTION_EXPORT_FACE, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING) && projection_def.layer_defs.one?
+            # if fetch_action_option_boolean(ACTION_EXPORT_FACE, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING) && projection_def.layer_defs.one?
             #   layer_def = projection_def.layer_defs.first
             #   if layer_def.poly_defs.one?
             #     poly_def = layer_def.poly_defs.first
