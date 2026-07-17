@@ -2160,7 +2160,14 @@ module Ladb::OpenCutList
 
           v = current_position.vector_to(target_position)
 
-          container.transform!(Geom::Transformation.translation(v)) if v.valid?
+          if container.respond_to?(:glued_to) && container.glued_to
+            # Deforming the host face of a glued instance makes SketchUp rewrite its
+            # transformation in place to strip any mirror (det < 0). Re-impose the full
+            # reference transformation at the target position, even when v is zero.
+            container.transformation = Geom::Transformation.translation(container_def.ref_position.vector_to(target_position)) * container_def.ref_transformation
+          else
+            container.transform!(Geom::Transformation.translation(v)) if v.valid?
+          end
 
         end
 
@@ -2472,7 +2479,7 @@ module Ladb::OpenCutList
           drawing_container_def.container,
           drawing_container_def.transformation,
           depth,
-          drawing_container_def.container.respond_to?(:transformation) ? ORIGIN.transform(drawing_container_def.container.transformation) : nil,
+          drawing_container_def.container.respond_to?(:transformation) ? drawing_container_def.container.transformation : nil,
           section_def,
           operation
         )
@@ -2762,7 +2769,7 @@ module Ladb::OpenCutList
       :container,
       :transformation,
       :depth,
-      :ref_position,
+      :ref_transformation,
       :section_def,
       :operation,
       :entity_pos,
@@ -2777,7 +2784,7 @@ module Ladb::OpenCutList
         container,
         transformation,
         depth,
-        ref_position,
+        ref_transformation,
         section_def,
         operation,
         entity_pos = -1,
@@ -2818,6 +2825,11 @@ module Ladb::OpenCutList
 
       def model?
         container.is_a?(Sketchup::Model)
+      end
+
+      def ref_position
+        return nil if ref_transformation.nil?
+        ORIGIN.transform(ref_transformation)
       end
 
       def container_transformation
