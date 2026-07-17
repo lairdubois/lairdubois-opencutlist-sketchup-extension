@@ -58,7 +58,7 @@ module Ladb::OpenCutList
   #
   # Each cavity fragment carries the indices (in the panel drawing defs list)
   # of the panels whose faces bound it (SolidFragmentDef#src_indices).
-  class CommonFindCavitiesWorker
+  class CommonSolidFindCavitiesWorker
 
     Meshy = Fiddle::Meshy
 
@@ -72,7 +72,7 @@ module Ladb::OpenCutList
 
     # A cavity boundary face is an edge (chant) face of its panel when its
     # normal departs from the panel dominant normal by more than 60°.
-    REDUCTION_CHANT_DOT = 0.5
+    REDUCTION_EDGE_DOT = 0.5
 
     # Minimum crossing depth, in inches, for a chant plane to trigger the
     # envelope reduction : recesses within snapping noise are ignored.
@@ -481,7 +481,7 @@ module Ladb::OpenCutList
           normal, = _triangle_normal(vertices, a, b, c)
           next if normal.nil?
           dot = normal[0] * dominant_normal[0] + normal[1] * dominant_normal[1] + normal[2] * dominant_normal[2]
-          next if dot.abs >= REDUCTION_CHANT_DOT  # Main face plane, not a chant
+          next if dot.abs >= REDUCTION_EDGE_DOT  # Main face plane, not a chant
           d = normal[0] * vertices[a * 3] + normal[1] * vertices[a * 3 + 1] + normal[2] * vertices[a * 3 + 2]
           key = normal.map { |v| (v * 1000).round } << (d / SolidMeshDef::TOLERANCE).round
           candidates[key] ||= [ normal, d ]
