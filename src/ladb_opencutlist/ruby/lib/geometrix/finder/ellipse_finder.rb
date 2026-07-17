@@ -39,8 +39,17 @@ module Ladb::OpenCutList::Geometrix
         matrix_a = Matrix[*m_a]
         vector_b = Matrix[*v_b]
 
-        # Check if matrix is inversible
-        return nil if matrix_a.det.abs < Float::EPSILON  # TODO check if this "zero" value is not too low.
+        # Recenter the points on their centroid and compute their average distance to it (scale),
+        # needed below to normalize the coordinates before the singularity check. Bail out if all
+        # points coincide, since scale would then be 0 and unusable as a divisor.
+        mx = points.inject(0.0) { |sum, point| sum + point.x } / points.length
+        my = points.inject(0.0) { |sum, point| sum + point.y } / points.length
+        centered = points.map { |point| [ point.x - mx, point.y - my ] }
+        scale = centered.inject(0.0) { |sum, (nx, ny)| sum + Math.sqrt(nx**2 + ny**2) } / centered.length
+        return nil if scale == 0
+
+        m_a_normalized = centered.map { |(nx, ny)| nx /= scale ; ny /= scale ; [ nx**2, nx * ny, ny**2, nx, ny ] }
+        return nil if Matrix[*m_a_normalized].det.abs < 1e-9
 
         # Solve the system of equations to find the coefficients of the ellipse
         sol = matrix_a.inverse * vector_b
@@ -94,11 +103,7 @@ module Ladb::OpenCutList::Geometrix
               angle = THREE_QUARTER_PI
             end
           elsif qaqc > 0
-            # if qb >= 0
-              angle = 0.5 * Math.atan(b / (a - c))
-            # else
-            #   angle = 0.5 * Math.atan(b / (a - c)) + ONE_PI
-            # end
+            angle = 0.5 * Math.atan(b / (a - c))
           else
             angle = 0.5 * (Math.atan(b / (a - c)) + ONE_PI)
           end
