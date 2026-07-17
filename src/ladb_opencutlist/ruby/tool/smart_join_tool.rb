@@ -3,6 +3,7 @@ module Ladb::OpenCutList
   require_relative 'smart_tool'
   require_relative '../utils/color_utils'
   require_relative '../utils/path_utils'
+  require_relative '../utils/transformation_utils'
   require_relative '../lib/fiddle/clippy/clippy'
   require_relative '../lib/fiddle/skpy/skpy'
   require_relative '../helper/user_text_helper'
@@ -303,6 +304,7 @@ module Ladb::OpenCutList
     LAYER_3D_PART_A_PREVIEW = 10
     LAYER_3D_PART_B_PREVIEW = 20
 
+    TRANSFORMATION_FLIP_X = Geom::Transformation.axes(ORIGIN, X_AXIS.reverse, Y_AXIS, Z_AXIS).freeze
     TRANSFORMATION_FLIP_Z = Geom::Transformation.axes(ORIGIN, X_AXIS, Y_AXIS, Z_AXIS.reverse).freeze
 
     # -----
@@ -1851,10 +1853,18 @@ module Ladb::OpenCutList
           nfm, mt_n = _find_mating_connector(wf, instance_path)
           next nil if nfm.nil?
 
+          role_n = placement.role == :a ? :b : :a
+
+          # A frame transported through an instance whose mirror parity differs
+          # from the one its placement was resolved on carries an extra mirror.
+          # Restore the role handedness (world direct for :a, indirect for :b)
+          # by reversing X - the only axis whose sign is not meaningful.
+          mt_n *= TRANSFORMATION_FLIP_X if TransformationUtils.flipped?(nfm.transformation * mt_n) != (role_n == :b)
+
           # Skip if the neighbor anchor is already physically occupied by a glued instance
           next nil if _get_glued_instances_at(nfm.face, mt_n, geometries_bounds).any?
 
-          PropagationPlacementDef.new(nfm.face.parent, nfm.face, mt_n, placement.role == :a ? :b : :a)
+          PropagationPlacementDef.new(nfm.face.parent, nfm.face, mt_n, role_n)
         end
 
       end
@@ -3136,6 +3146,12 @@ module Ladb::OpenCutList
           from_a = placement.role == :a
           nfm, mt_n = _find_mating_fitting(wf * (from_a ? mate_transformation : mate_transformation_inverse), from_a ? side_b : side_a, instance_path)
           next nil if nfm.nil?
+
+          # A frame transported through an instance whose mirror parity differs
+          # from the one its placement was resolved on carries an extra mirror.
+          # Restore the handedness (world direct for both roles) by reversing X
+          # - the only axis whose sign is not meaningful.
+          mt_n *= TRANSFORMATION_FLIP_X if TransformationUtils.flipped?(nfm.transformation * mt_n)
 
           # Skip if the neighbor anchor is already physically occupied by a glued instance
           next nil if _get_glued_instances_at(nfm.face, mt_n, geometries_bounds).any?
