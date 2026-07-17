@@ -8,7 +8,7 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
   * Added Smart Stretch Tool
   * Added Smart Paneling Tool
-  * Added Boolean Tools
+  * Added Smart Boolean Tools
   * Added Smart Join Tool **(DEV team only)**
   * Added Grain Continuity support
   * Added Cutlist part names filter
@@ -26,6 +26,9 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
+### 2026-07-17
+ * Updated translations
+ * Improved Smart Boolean Tools robustness
 ### 2026-07-15
  * Improved Smart Boolean Tools
  * Improved Smart Join Tool with propagation detection **(DEV team only)**
