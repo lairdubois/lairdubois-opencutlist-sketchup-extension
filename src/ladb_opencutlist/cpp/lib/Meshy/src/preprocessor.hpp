@@ -129,8 +129,17 @@ namespace Meshy {
     // numerical stability, weighted by that triangle's squared area.
     // The normal is canonically oriented (first significant component positive) so
     // that opposite-facing coplanar faces yield comparable planes.
+    //
+    // Triangles whose minimum altitude is below the tolerance never seed a
+    // plane : geometry that thin cannot exist in SketchUp, so such a triangle
+    // is a boolean artifact of a previous operation (e.g. the micro step strip
+    // a staggered nudge leaves at a joint when its output is fed back in, as
+    // the cavity worker does), whose arbitrary normal would pollute the
+    // canonical plane set — and, the artifacts depending on the original
+    // operand order, leak that order into the result.
     inline std::vector<Plane> weighted_face_planes(
-            const manifold::MeshGL64& mesh
+            const manifold::MeshGL64& mesh,
+            double tolerance
     ) {
         const std::size_t stride = mesh.numProp;
 
@@ -149,6 +158,17 @@ namespace Meshy {
             double nz = (p1[0] - p0[0]) * (p2[1] - p0[1]) - (p1[1] - p0[1]) * (p2[0] - p0[0]);
             const double area2 = nx * nx + ny * ny + nz * nz;
             if (area2 == 0.0) continue;
+
+            // Minimum altitude = 2 * area / longest edge, squared : area2 is
+            // (2 * area)^2, so altitude^2 = area2 / longest_edge2.
+            double longest_edge2 = 0.0;
+            for (int e = 0; e < 3; ++e) {
+                const double* a = e == 0 ? p0 : (e == 1 ? p1 : p2);
+                const double* b = e == 0 ? p1 : (e == 1 ? p2 : p0);
+                const double ex = b[0] - a[0], ey = b[1] - a[1], ez = b[2] - a[2];
+                longest_edge2 = std::max(longest_edge2, ex * ex + ey * ey + ez * ez);
+            }
+            if (area2 < tolerance * tolerance * longest_edge2) continue;
 
             const uint64_t face_id = mesh.faceID.empty() ? triangle_index : mesh.faceID[triangle_index];
             const auto it = plane_index_by_face_id.find(face_id);
@@ -201,7 +221,7 @@ namespace Meshy {
     ) {
         std::vector<Plane> all;
         for (const auto* mesh : meshes) {
-            const std::vector<Plane> planes = weighted_face_planes(*mesh);
+            const std::vector<Plane> planes = weighted_face_planes(*mesh, tolerance);
             all.insert(all.end(), planes.begin(), planes.end());
         }
 
@@ -310,24 +330,79 @@ namespace Meshy {
         return sum > 0.0 ? 1.0 : -1.0;
     }
 
-    // Translates every vertex lying within tolerance of the plane by offset along
-    // the plane normal (offset may be negative).
-    inline void offset_vertices_near_plane(
+    // A nudge constraint is dropped when its normal leaves less than this
+    // squared residual against the span of the constraints already honored on
+    // the vertex (nearly dependent planes) : bounds the solve amplification to
+    // 1/sqrt(min) = 10, keeping the displacement orders of magnitude below the
+    // tolerance.
+    constexpr double NUDGE_CONDITION_MIN = 1e-2;
+
+    // Displaces the mesh vertices so that every vertex lying (within
+    // tolerance) on one or more of the target planes ends EXACTLY at the
+    // requested signed offset from EACH of them. The displacement is solved
+    // per vertex over all its planes simultaneously (incremental
+    // orthonormalization + forward substitution, planes taken in the given
+    // order — canonical order, largest faces first — and capped at 3
+    // independent constraints) : shifting sequentially along each plane
+    // normal, as a per-plane pass would, breaks the previously applied
+    // offsets at every corner where target planes meet — the later shift has
+    // a component along the earlier normal — and can land the vertex on the
+    // WRONG side of a plane it was meant to clear, leaving an epsilon
+    // crossing that the boolean turns into slivers, in a way that depends on
+    // the operand order.
+    inline void nudge_vertices_to_offset_planes(
             manifold::MeshGL64& mesh,
-            const Plane& plane,
-            double offset,
+            const std::vector<std::pair<const Plane*, double>>& plane_offsets,
             double tolerance
     ) {
+        if (plane_offsets.empty() || mesh.triVerts.empty()) return;
+
         const std::size_t stride = mesh.numProp;
         const std::size_t vertex_count = mesh.vertProperties.size() / stride;
         for (std::size_t v = 0; v < vertex_count; ++v) {
             double& x = mesh.vertProperties[v * stride];
             double& y = mesh.vertProperties[v * stride + 1];
             double& z = mesh.vertProperties[v * stride + 2];
-            if (std::abs(x * plane.nx + y * plane.ny + z * plane.nz - plane.d) > tolerance) continue;
-            x += plane.nx * offset;
-            y += plane.ny * offset;
-            z += plane.nz * offset;
+
+            // Orthonormal basis of the accepted constraint normals, and the
+            // displacement coefficients over it.
+            double e[3][3];
+            double a[3];
+            int count = 0;
+
+            for (const auto& [plane, offset] : plane_offsets) {
+                if (count == 3) break;
+                const double dist = x * plane->nx + y * plane->ny + z * plane->nz - plane->d;
+                if (std::abs(dist) > tolerance) continue;
+
+                // Component of the plane normal orthogonal to the accepted basis
+                double rx = plane->nx, ry = plane->ny, rz = plane->nz;
+                double proj[3];
+                for (int j = 0; j < count; ++j) {
+                    proj[j] = plane->nx * e[j][0] + plane->ny * e[j][1] + plane->nz * e[j][2];
+                    rx -= proj[j] * e[j][0];
+                    ry -= proj[j] * e[j][1];
+                    rz -= proj[j] * e[j][2];
+                }
+                const double r2 = rx * rx + ry * ry + rz * rz;
+                if (r2 < NUDGE_CONDITION_MIN) continue;
+                const double rl = std::sqrt(r2);
+
+                // n·δ = Σ proj[j]·a[j] + rl·a[count] must equal offset - dist
+                double partial = 0.0;
+                for (int j = 0; j < count; ++j) partial += proj[j] * a[j];
+                e[count][0] = rx / rl;
+                e[count][1] = ry / rl;
+                e[count][2] = rz / rl;
+                a[count] = (offset - dist - partial) / rl;
+                ++count;
+            }
+
+            for (int j = 0; j < count; ++j) {
+                x += a[j] * e[j][0];
+                y += a[j] * e[j][1];
+                z += a[j] * e[j][2];
+            }
         }
     }
 

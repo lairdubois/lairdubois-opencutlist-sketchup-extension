@@ -285,7 +285,11 @@ namespace Meshy {
                 for (auto& mesh : cut_meshes_) nudge_pool.push_back(&mesh);
             }
 
-            bool nudged = false;
+            // The offsets are first COLLECTED per operand, then applied in a
+            // single per-vertex simultaneous solve : a vertex at a corner
+            // where several nudged planes meet must honor all its offsets at
+            // once — see nudge_vertices_to_offset_planes.
+            std::vector<std::vector<std::pair<const Plane*, double>>> pool_offsets(nudge_pool.size());
             for (const auto& plane : planes) {
                 if (is_axis_plane(plane)) continue;
 
@@ -308,19 +312,23 @@ namespace Meshy {
                     // src face on the plane : every cut (even one only touching the
                     // plane through an edge or vertex) moves to the src exterior.
                     for (std::size_t k = 0; k < nudge_pool.size(); ++k) {
-                        offset_vertices_near_plane(*nudge_pool[k], plane, src_sign * SHARED_PLANE_OFFSET * double(k + 1), tolerance_);
+                        pool_offsets[k].emplace_back(&plane, src_sign * SHARED_PLANE_OFFSET * double(k + 1));
                     }
-                    nudged = true;
                 } else if (faces_on_plane >= 2) {
                     // plane shared between chained operands only : expand each face
                     // across it (contract for intersection chaining).
                     const double dir = (operation_ == Operation::Intersection ? -1.0 : 1.0);
                     for (std::size_t k = 0; k < nudge_pool.size(); ++k) {
                         if (pool_signs[k] == 0.0) continue;
-                        offset_vertices_near_plane(*nudge_pool[k], plane, dir * pool_signs[k] * SHARED_PLANE_OFFSET * double(k + 1), tolerance_);
+                        pool_offsets[k].emplace_back(&plane, dir * pool_signs[k] * SHARED_PLANE_OFFSET * double(k + 1));
                     }
-                    nudged = true;
                 }
+            }
+            bool nudged = false;
+            for (std::size_t k = 0; k < nudge_pool.size(); ++k) {
+                if (pool_offsets[k].empty()) continue;
+                nudge_vertices_to_offset_planes(*nudge_pool[k], pool_offsets[k], tolerance_);
+                nudged = true;
             }
             if (nudged) {
                 std::vector<Plane> axis_planes;
