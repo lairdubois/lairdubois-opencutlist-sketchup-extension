@@ -169,6 +169,7 @@ module Ladb::OpenCutList
 
       # Create output data structure
       drawing_def = DrawingDef.new(container)
+      drawing_def.container_path = container == model ? [] : container_path
 
       # STEP 1 : Determine output axes
 

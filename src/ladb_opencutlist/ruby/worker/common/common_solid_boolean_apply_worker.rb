@@ -31,6 +31,15 @@ module Ladb::OpenCutList
   #   identical local cut environment is provable up front are additionally
   #   excluded from the computation itself (one Manifold pass per placement,
   #   see _plan_shared_computation),
+  # - handles srcs picked through several OCCURRENCES of one shared container
+  #   instance (e.g. two CAISSON instances displaying the same SRC child
+  #   instance) : occurrences left identical by the operation are rebuilt once
+  #   in the shared definition (ancestor sharing fully preserved), occurrences
+  #   with different results are separated up front — every ancestor of their
+  #   occurrence path (DrawingDef#container_path) whose definition is
+  #   displayed elsewhere is made unique, top-down — so each occurrence hosts
+  #   its own result (see _plan_duplicate_occurrences!). Separating requires
+  #   the occurrence path : without it the operation fails as a whole,
   # - erases the containers left empty (consumed srcs and sub containers) and
   #   the cut containers (unless keep_cuts),
   # - leaves glued cuts-opening containers (virtual machinings) out of the
@@ -76,6 +85,7 @@ module Ladb::OpenCutList
     TRACKING_DICTIONARY = 'ladb_opencutlist_csg'.freeze
     TRACKING_FACE_KEY = 'operand'.freeze
     TRACKING_CONTAINER_KEY = 'container'.freeze
+    TRACKING_OCCURRENCE_KEY = 'occurrence'.freeze   # Own key : stale occurrence tokens must never collide with the erase pass tokens
 
     def initialize(src_drawing_defs, cut_drawing_defs,
 
@@ -165,14 +175,14 @@ module Ladb::OpenCutList
         @glued_by_container = {}          # container instance (or nil for model root) -> instances to re-glue
         @operand_instances = []           # resolved sub container instances, parents first
         @materialized_container_defs = [] # virtual nodes materialized by the current rebuild call
-
-        src_containers = @src_drawing_defs.map { |drawing_def| drawing_def.container }
+        @result_signatures = {}           # drawing_def -> memoized canonical result signature
 
         # Register the src container nodes (rebuild targets, with their tree
         # path) and attribute the fragments to them (face provenance, falling
         # back to the root container of their first src drawing def when the
-        # provenance is ambiguous). Needed up front : the shared definition
-        # planning below compares the per-src attributed results.
+        # provenance is ambiguous). Needed up front : the occurrence and
+        # shared definition plannings below compare the per-src attributed
+        # results.
         src_node_owners = {}
         src_node_paths = {}
         fn_register_nodes = lambda { |container_def, drawing_def, path|
@@ -190,11 +200,31 @@ module Ladb::OpenCutList
           (fragments_by_target[target_container_def] ||= []) << fragment_def
         end
 
+        # Fragments attributed to each src root drawing def, with the tree
+        # path of their target node
+        fragment_paths_by_drawing_def = {}
+        fragments_by_target.each do |target_container_def, fragment_defs|
+          drawing_def = src_node_owners[target_container_def]
+          next if drawing_def.nil?
+          path = src_node_paths[target_container_def] || []
+          list = (fragment_paths_by_drawing_def[drawing_def] ||= [])
+          fragment_defs.each { |fragment_def| list << [ fragment_def, path ] }
+        end
+
+        # Handle the srcs picked through several occurrences of ONE shared
+        # container instance : identical results are dropped (single rebuild
+        # in the shared definition, displayed by every occurrence), different
+        # results get their own branch (ancestor make_unique cascade) and
+        # behave as ordinary distinct srcs from here on.
+        occurrence_dropped_drawing_defs = _plan_duplicate_occurrences!(result_def, fragment_paths_by_drawing_def)
+
+        src_containers = @src_drawing_defs.map { |drawing_def| drawing_def.container }
+
         # Plan the shared definition preservation : srcs sharing a definition
         # and left identical by the operation are handled by a single pass on
         # a representative, the others are dropped (and reattached in Case B).
-        shared_plan = _plan_shared_definitions(result_def, fragments_by_target, src_node_owners, src_node_paths)
-        dropped_drawing_defs = shared_plan[:dropped_drawing_defs]
+        shared_plan = _plan_shared_definitions(result_def, fragment_paths_by_drawing_def, occurrence_dropped_drawing_defs)
+        dropped_drawing_defs = occurrence_dropped_drawing_defs.merge(shared_plan[:dropped_drawing_defs])
         effective_src_containers = @src_drawing_defs.reject { |drawing_def| dropped_drawing_defs.key?(drawing_def) }.map { |drawing_def| drawing_def.container }
 
         # Group the operand trees by root container : one erase pass per
@@ -552,6 +582,145 @@ module Ladb::OpenCutList
       nil
     end
 
+    # Handles the srcs targeting the SAME container instance through different
+    # occurrence paths (e.g. two CAISSON instances of one definition, each
+    # displaying its shared SRC child instance : the erase / rebuild machinery
+    # is keyed by container and would overlay every result inside the single
+    # definition). Per duplicated container :
+    # - occurrences whose attributed result is identical to the
+    #   representative's (canonical signature, local space) are dropped : the
+    #   representative's single rebuild displays in every occurrence and the
+    #   ancestor sharing is fully preserved,
+    # - occurrences with a DIFFERENT result are separated up front
+    #   (_separate_occurrence!) : the drawing def is remapped onto the leaf of
+    #   its own cloned branch and behaves as an ordinary distinct src from
+    #   here on — the erase pass make_unique splits the leaf definition as
+    #   usual, and in make_unique: false mode the several-writers conflict
+    #   fallback applies, as documented.
+    # Occurrences fused with another src by the operation (multi src
+    # fragments) are never dropped : their attributed signature does not
+    # cover the fused geometry, separation handles them structurally.
+    # Separation requires the occurrence path (DrawingDef#container_path) :
+    # a missing path raises, failing the operation as a whole (nothing is
+    # modified).
+    # Returns { dropped drawing_def => true }.
+    def _plan_duplicate_occurrences!(result_def, fragment_paths_by_drawing_def)
+
+      dropped = {}
+      return dropped if @src_drawing_defs.length < 2
+
+      groups = {}
+      @src_drawing_defs.each do |drawing_def|
+        container = drawing_def.container
+        next unless container.is_a?(Sketchup::Group) || container.is_a?(Sketchup::ComponentInstance)
+        next if container.deleted?
+        (groups[container] ||= []) << drawing_def
+      end
+      groups = groups.select { |container, drawing_defs| drawing_defs.length > 1 }
+      return dropped if groups.empty?
+
+      # Srcs fused together by the operation cannot be dropped by signature
+      unshareable = {}
+      result_def.fragment_defs.each do |fragment_def|
+        src_indices = fragment_def.src_indices
+        next if src_indices.nil? || src_indices.uniq.length < 2
+        src_indices.uniq.each do |src_index|
+          drawing_def = @computed_src_drawing_defs[src_index]
+          unshareable[drawing_def] = true unless drawing_def.nil?
+        end
+      end
+
+      cut_containers = @cut_drawing_defs.map { |cut_drawing_def| cut_drawing_def.container }
+
+      separations = []
+      groups.each do |container, drawing_defs|
+        next if cut_containers.include?(container)   # Src also picked as cut : exotic, legacy behavior
+        representative_drawing_def = drawing_defs.first
+        drawing_defs[1..-1].each do |drawing_def|
+          if !unshareable.key?(representative_drawing_def) && !unshareable.key?(drawing_def) &&
+             _result_signature(drawing_def, fragment_paths_by_drawing_def) == _result_signature(representative_drawing_def, fragment_paths_by_drawing_def)
+            dropped[drawing_def] = true
+          else
+            separations << drawing_def
+          end
+        end
+      end
+      return dropped if separations.empty?
+
+      # Validate every occurrence path before touching the model
+      separations.each do |drawing_def|
+        path = drawing_def.container_path
+        next if path.is_a?(Array) && path.length >= 2 && path.last.equal?(drawing_def.container)
+        raise "Unresolvable occurrence path : '#{_instance_display_name(drawing_def.container)}' is targeted through several occurrences"
+      end
+
+      # Tag EVERY separated path instance up front : a cascade may clone
+      # definitions a later cascade walks through, and only the tokens
+      # present before a cloning survive into the clones.
+      tagged_instances = []
+      begin
+        separations.each do |drawing_def|
+          drawing_def.container_path[1..-1].each { |instance| _tag_occurrence_instance(instance, tagged_instances) }
+        end
+        separations.each { |drawing_def| _separate_occurrence!(drawing_def, tagged_instances) }
+      ensure
+        tagged_instances.each { |instance| instance.delete_attribute(TRACKING_DICTIONARY) unless instance.deleted? }
+      end
+
+      dropped
+    end
+
+    # Separates the given src occurrence from the ancestor definitions shared
+    # along its occurrence path : every ancestor whose definition is displayed
+    # elsewhere is made unique, top-down. make_unique is shallow — each cloned
+    # definition still references the ORIGINAL child definitions — so the
+    # drawing def face references stay valid : only the instances along the
+    # path change identity, re-resolved level by level through the occurrence
+    # tracking tokens (attributes survive the cloning). The drawing def is
+    # remapped onto the separated branch (container and container_path) ; its
+    # world placement is unchanged (make_unique preserves the instance
+    # transformations), so its transformations keep mapping the fragments
+    # into the separated definition space.
+    def _separate_occurrence!(drawing_def, tagged_instances)
+
+      resolved_path = [ drawing_def.container_path.first ]
+      drawing_def.container_path[1..-1].each do |original_child|
+        resolved = resolved_path.last
+        raise "Unresolvable occurrence path : '#{_instance_display_name(drawing_def.container)}'" if resolved.deleted?
+        resolved.make_unique if resolved.definition.instances.length > 1
+        token = original_child.deleted? ? nil : original_child.get_attribute(TRACKING_DICTIONARY, TRACKING_OCCURRENCE_KEY)
+        child = token.nil? ? nil : resolved.definition.entities.find { |entity|
+          (entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance)) &&
+            entity.get_attribute(TRACKING_DICTIONARY, TRACKING_OCCURRENCE_KEY) == token
+        }
+        raise "Unresolvable occurrence path : '#{_instance_display_name(drawing_def.container)}'" if child.nil?
+        tagged_instances << child unless child.equal?(original_child)
+        resolved_path << child
+      end
+
+      drawing_def.container = resolved_path.last
+      drawing_def.container_path = resolved_path
+
+      nil
+    end
+
+    def _tag_occurrence_instance(instance, tagged_instances)
+      token = instance.get_attribute(TRACKING_DICTIONARY, TRACKING_OCCURRENCE_KEY)
+      if token.nil?
+        token = instance.persistent_id.to_s
+        instance.set_attribute(TRACKING_DICTIONARY, TRACKING_OCCURRENCE_KEY, token)
+        tagged_instances << instance
+      end
+      token
+    end
+
+    # Memoized canonical result signature of the given src root drawing def
+    # (see _shared_result_signature), shared by the occurrence and shared
+    # definition plannings.
+    def _result_signature(drawing_def, fragment_paths_by_drawing_def)
+      @result_signatures[drawing_def] ||= _shared_result_signature(drawing_def, fragment_paths_by_drawing_def[drawing_def] || [])
+    end
+
     # Plans the shared definition preservation : groups the src root containers
     # by definition, compares their attributed results in their own local
     # space (_shared_result_signature) and, per subset of identical results :
@@ -571,7 +740,10 @@ module Ladb::OpenCutList
     # results and cannot be shared with the external instances.
     # Srcs fused by the operation (multi src fragments) and srcs whose
     # container is also a cut container never share.
-    def _plan_shared_definitions(result_def, fragments_by_target, src_node_owners, src_node_paths)
+    # Occurrence-dropped srcs (duplicated occurrences of a shared container
+    # instance, see _plan_duplicate_occurrences!) are not planned here : they
+    # ride on their representative's container.
+    def _plan_shared_definitions(result_def, fragment_paths_by_drawing_def, occurrence_dropped_drawing_defs)
 
       plan = { :dropped_drawing_defs => {}, :skip_make_unique_containers => {}, :reassignments => [], :shared_members => {} }
 
@@ -579,6 +751,7 @@ module Ladb::OpenCutList
       # twice as src disqualifies its group.
       groups = {}
       @src_drawing_defs.each do |drawing_def|
+        next if occurrence_dropped_drawing_defs.key?(drawing_def)
         container = drawing_def.container
         next unless container.is_a?(Sketchup::Group) || container.is_a?(Sketchup::ComponentInstance)
         next if container.deleted?
@@ -600,17 +773,6 @@ module Ladb::OpenCutList
 
       cut_containers = @cut_drawing_defs.map { |cut_drawing_def| cut_drawing_def.container }
 
-      # Fragments attributed to each src root drawing def, with the tree path
-      # of their target node
-      fragment_paths_by_drawing_def = {}
-      fragments_by_target.each do |target_container_def, fragment_defs|
-        drawing_def = src_node_owners[target_container_def]
-        next if drawing_def.nil?
-        path = src_node_paths[target_container_def] || []
-        list = (fragment_paths_by_drawing_def[drawing_def] ||= [])
-        fragment_defs.each { |fragment_def| list << [ fragment_def, path ] }
-      end
-
       groups.each do |definition, drawing_defs|
 
         candidates = drawing_defs.reject { |drawing_def| unshareable.key?(drawing_def) || cut_containers.include?(drawing_def.container) }
@@ -622,7 +784,7 @@ module Ladb::OpenCutList
         by_signature = {}
         candidates.each do |drawing_def|
           next if @precomputed_shared.key?(drawing_def)
-          signature = _shared_result_signature(drawing_def, fragment_paths_by_drawing_def[drawing_def] || [])
+          signature = _result_signature(drawing_def, fragment_paths_by_drawing_def)
           (by_signature[signature] ||= []) << drawing_def
         end
 

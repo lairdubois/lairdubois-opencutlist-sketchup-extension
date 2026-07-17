@@ -180,11 +180,14 @@ module Ladb::OpenCutList
 
     attr_accessor :input_plane_manipulator, :input_line_manipulator, :input_view
     attr_accessor :container_transformation   # container DEFINITION space -> drawing space (IDENTITY when container is nil / model root)
+    attr_accessor :container_path             # Occurrence path of the container (Array of instances, model root first, container last ; [] when container is the model, nil when unknown)
+    attr_writer :container                    # The container (with its occurrence path) may be remapped onto another instance when an occurrence is separated from its shared ancestors (see CommonSolidBooleanApplyWorker)
 
     def initialize(container, transformation = IDENTITY)
       super
 
       @container_transformation = IDENTITY
+      @container_path = nil
 
       @input_plane_manipulator = nil
       @input_line_manipulator = nil
