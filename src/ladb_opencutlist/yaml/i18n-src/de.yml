@@ -255,8 +255,8 @@ core:
       tool_smart_handle_options: $t(core.toolbar.command.smart_handle)
       tool_smart_reshape_options: $t(core.toolbar.command.smart_reshape)
       tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
-      tool_smart_join_options: $t(core.toolbar.command.smart_join)
       tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
+      tool_smart_join_options: $t(core.toolbar.command.smart_join)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
   progress:
     please_wait: Berechnung einer Welt des Friedens
@@ -1192,6 +1192,7 @@ tab:
       option_hide_edges_preview_1: Im Schnittplan ausgeblendet
       option_hide_edges_preview_help: Ermöglicht das Ein- oder Ausblenden der visuellen Anzeige der Kantenbänder für jedes Teil im Schnittplan.
       option_zoom_threshold: Zoomschwelle
+      # TODO find a better explanation
       option_zoom_threshold_help: |
         Ermöglicht die Festlegung der Diagrammbreite, unterhalb derer Diagramme automatisch vergrößert werden.
 
@@ -1521,7 +1522,7 @@ tab:
       option_dxf_depth_to_z_1: Ebenentiefen auf Z verteilen
       option_dxf_depth_to_z_help: |
         Ermöglicht die Verteilung der Ebenen entlang der Z-Achse entsprechend ihrer Tiefe.
-        
+
         Deaktivieren Sie diese Option, um eine reine 2D-DXF-Datei zu exportieren.
       option_unit: Einheit
       option_unit_help: |
@@ -1836,7 +1837,7 @@ tab:
       instance_name: Instanz
       material: Material
       is_grain_group: Als **Faserverlaufgruppe** definieren
-      is_grain_group_help: Wenn diese Option aktiviert ist, kann diese Instanz für die darin enthaltenen Elemente, bei denen die Option *Faserverlauf* aktiviert ist, als **Faserverlaufgruppe** betrachtet werden.
+      is_grain_group_help: "Wenn diese Option aktiviert ist, kann diese Instanz für die darin enthaltenen Elemente, bei denen die Option *Faserverlauf* aktiviert ist, als **Faserverlaufgruppe** betrachtet werden."
       definition_name: Definition
       description: Beschreibung
       url: URL
@@ -2455,7 +2456,7 @@ tool:
     action_3_state_0_status: Wählen Sie Teil A aus
     action_3_state_1_status: Wählen Sie Teil B aus
     action_4: Verschneiden
-    action_4_status: Ein Teil erstellen, das der Schnittmenge mehrerer Teile entspricht
+    action_4_status: "Ein Teil erstellen, das der Schnittmenge mehrerer Teile entspricht"
     action_4_state_0_status: Wählen Sie Teil A aus
     action_4_state_1_status: Wählen Sie Teil B aus
     action_option_group_thickness: Dicke
@@ -2546,9 +2547,9 @@ tool:
     action_4: Ursprung verschieben
     action_4_status: "Zielen Sie auf die Fläche eines Teils und klicken Sie auf einen Punkt, um den Ursprung dort zu platzieren"
     action_5: Faserverlauf konfigurieren
-    action_5_status: Klicken Sie auf ein Teil, um den Faserverlauf zu aktivieren oder zu deaktivieren
+    action_5_status: "Klicken Sie auf ein Teil, um den Faserverlauf zu aktivieren oder zu deaktivieren"
     action_5_to_state_10_status: Faserverlaufgruppe auswählen
-    action_5_state_10_status: Klicken Sie auf ein Element in der Liste, um dessen Status als Faserverlaufgruppe zu ändern
+    action_5_state_10_status: "Klicken Sie auf ein Element in der Liste, um dessen Status als Faserverlaufgruppe zu ändern"
     action_option_group_direction: Ausrichtung
     action_option_direction_0: L
     action_option_direction_1: B
@@ -2563,23 +2564,24 @@ tool:
       not_orientable: Der Typ dieses Teils lässt keine Orientierung zu
       not_grained: Das betreffende Teil hat keinen Faserverlauf
       not_single_thickness_layer: Das Zielteil muss aus einer einzigen Schicht bestehen
+  # TODO: It's currently just for dev purposes
   smart_join:
     title: Zusammenfügen
-    action_0: Verbinder hinzufügen 
+    action_0: Verbinder hinzufügen
     action_0_status: Verbindungselemente zum Zusammenfügen von Teilen anbringen
-    action_0_state_0_status: Klicken Sie auf die Referenzfläche eines Teils, um Verbindungen zu benachbarten Teilen hinzuzufügen, die sich in Kontakt befinden
+    action_0_state_0_status: "Klicken Sie auf die Referenzfläche eines Teils, um Verbindungen zu benachbarten Teilen hinzuzufügen, die sich in Kontakt befinden"
     action_1: Verbinder löschen
     action_1_status: Verbindungselemente von Teilen löschen
-    action_1_state_0_status: Klicken Sie auf die Referenzfläche eines Teils, um die Verbinder zu löschen, die es mit benachbarten Teilen teilt
+    action_1_state_0_status: "Klicken Sie auf die Referenzfläche eines Teils, um die Verbinder zu löschen, die es mit benachbarten Teilen teilt"
     action_1_only_one_status: Auf ein Verbindungselement beschränken
     action_2: Bechläge hinzufungen
     action_2_status: Beschläge zum Verbinden von Teilen hinzufügen
-    action_2_state_0_status: Klicken Sie auf die Referenzfläche eines Teils A, um einen Beschläge zu einem benachbarten Teil hinzuzufügen
-    action_2_state_1_status: Klicken Sie auf die Referenzfläche eines Teils B, um Beschläge zu Teil A hinzuzufügen
+    action_2_state_0_status: "Klicken Sie auf die Referenzfläche eines Teils A, um einen Beschläge zu einem benachbarten Teil hinzuzufügen"
+    action_2_state_1_status: "Klicken Sie auf die Referenzfläche eines Teils B, um Beschläge zu Teil A hinzuzufügen"
     action_3: Beschläge löschen
     action_3_status: Beschlägen zwischen Bauteilen löschen
-    action_3_state_0_status: Klicken Sie auf die Referenzfläche eines Teils A, um die Beschläge zu löschen, die es mit einem benachbarten Teil teilt
-    action_3_state_1_status: Klicken Sie auf die Referenzfläche eines Teils B, um die Beschläge zu löschen, die es mit Teil A teilt
+    action_3_state_0_status: "Klicken Sie auf die Referenzfläche eines Teils A, um die Beschläge zu löschen, die es mit einem benachbarten Teil teilt"
+    action_3_state_1_status: "Klicken Sie auf die Referenzfläche eines Teils B, um die Beschläge zu löschen, die es mit Teil A teilt"
     action_3_only_one_status: Auf einen Beschlag beschränken
     action_option_group_height: Höhe
     action_option_group_offsets: Versätze
@@ -2613,7 +2615,7 @@ tool:
       invalid_min_spacing: "Der minimale Achsabstand {{ value }} ist ungültig"
       invalid_max_spacing: "Der maximale Achsabstand {{ value }} ist ungültig"
       not_assemblable: Dieser Teiletyp kann nicht zusammengefügt werden
-      no_valid_join: Es gibt keine Kontaktfläche, die die Anforderungen an die Verbindung erfüllt
+      no_valid_join: "Es gibt keine Kontaktfläche, die die Anforderungen an die Verbindung erfüllt"
       occupied_anchors: "{{ count }} Verbinder, dessen Position mit der von vorhandenen Verbindungselementen kollidiert"
       occupied_anchors_plural: "{{ count }} Verbinder, deren Position mit der von vorhandenen Verbindungselementen kollidiert"
       failed_to_load_skp_file: |
@@ -2627,7 +2629,7 @@ tool:
       no_fitting_to_remove: Kein Beschlag zum Löschen
       x_fittings_to_remove: "{{ count }} Beschlag zum Löschen"
       x_fittings_to_remove_plural: "{{ count }} Beschläge zum Löschen"
-      different_file_name: Der Name der SKP-Datei ({{ file_name }}) unterscheidet sich vom Namen der darin enthaltenen Definition ({{ definition_name }})
+      different_file_name: "Der Name der SKP-Datei ({{ file_name }}) unterscheidet sich vom Namen der darin enthaltenen Definition ({{ definition_name }})"
   smart_export:
     title: Exportieren
     action_0: 3D Teil exportieren

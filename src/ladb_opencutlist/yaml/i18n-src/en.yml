@@ -534,16 +534,16 @@ tab:
         If this option is selected, the grain orientation of the material will be ignored for this part.
       ignore_grain_direction_0: Grain orientation follows length
       ignore_grain_direction_1: Ignore grain orientation
-      follow_grain_direction: Grain Continuity
+      follow_grain_direction: Grain continuity
       follow_grain_direction_help: |
-        By enabling this option, instances of this part will be treated as parts laid out in **Grain Continuity** with their neighbors that share:
-        - the same *Grain Continuity group*
+        By enabling this option, instances of this part will be treated as parts laid out in **Grain continuity** with their neighbors that share:
+        - the same *Grain continuity group*
         - the same Plane
         - the same Orientation
         - the same Material with grain
         - the same Thickness
       follow_grain_direction_0: $t(default.no)
-      follow_grain_direction_1: Grain Continuity Detection activated
+      follow_grain_direction_1: Grain continuity detection activated
       axes: Axes
       axes_help: Reorder the dimensions to match the desired axis colors in your part.
       axes_tip: |
@@ -760,7 +760,7 @@ tab:
     estimate:
       title: Estimate
       info_0: |
-        Generate an estimate of the **weight** and **cost** of the **raw materials** needed to produce the parts on the *Parts List*.
+        This feature allows you to generate an estimate of the **weight** and **cost** of the **raw materials** needed to produce the parts in the *Parts List*.
       options_general: General
       total: Total
       total_used: Used
@@ -853,8 +853,8 @@ tab:
       option_hide_edges_preview_help: Shows or hides the visual display of the edge bandings for each part in the cutting diagram.
       option_part_drawing_type: Shape of Parts
       option_part_drawing_type_0: Hidden
-      option_part_drawing_type_1: Displaying front face
-      option_part_drawing_type_2: Displaying Backside
+      option_part_drawing_type_1: Displaying Front Face
+      option_part_drawing_type_2: Displaying Backside View
       option_part_drawing_type_help: |
         Shows or hides the actual shape of parts and their machining on the diagram.
 
@@ -1096,7 +1096,7 @@ tab:
         Sets the maximum number of cutting stages.
       option_rectangleguillotine_first_stage_orientation: First Cut Direction
       option_rectangleguillotine_first_stage_orientation_help: |
-        Sets the direction of the first cut.
+        Defines the direction of the first cut.
       option_rectangleguillotine_first_stage_orientation_horizontal: Horizontal
       option_rectangleguillotine_first_stage_orientation_vertical: Vertical
       option_rectangleguillotine_first_stage_orientation_any: Any
@@ -1127,13 +1127,12 @@ tab:
         Defines if mirroring the part is allowed for placement.
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
-      option_irregular_leftover_mode: Layout of parts
+      option_irregular_leftover_mode: Spread Direction
       option_irregular_leftover_mode_help: |
         Defines the direction in which parts are spread across the last partially filled panel.
       option_irregular_leftover_mode_bottom_left: Auto
       option_irregular_leftover_mode_left: Across the width of the panel
       option_irregular_leftover_mode_bottom: Across the length of the panel
-
       option_spacing: Spacing
       option_spacing_help: |
         Minimum spacing between each part.
@@ -1166,7 +1165,7 @@ tab:
       option_hide_part_list_2d_help: Display or hide the list of parts for each panel or veneer sheet.
       option_part_drawing_type: Shape of Parts
       option_part_drawing_type_0: Hidden
-      option_part_drawing_type_1: Displaying front face
+      option_part_drawing_type_1: Displaying Front Face
       option_part_drawing_type_2: Displaying Backside View
       option_part_drawing_type_help: |
         Shows or hides the actual shape of parts and their machining on the diagram.
@@ -1193,16 +1192,17 @@ tab:
       option_hide_edges_preview_1: Hidden in the cutting diagram
       option_hide_edges_preview_help: Shows or hides the visual display of the edge bandings for each part in the cutting diagram.
       option_zoom_threshold: Zoom threshold
+      # TODO find a better explanation
       option_zoom_threshold_help: |
         Allows you to set the diagram width below which diagrams are automatically enlarged.
 
         *The enlargement will be calculated based on the widest diagram*.
       option_time_limit: Time limit
       option_time_limit_help: |
-        Fix time limit to computation
+        Sets the time limit for the computation
       grain_groups:
-        title: "{{ count }} Grain Continuity group"
-        title_plural: "{{ count }} Grain Continuity groups"
+        title: "{{ count }} Grain continuity group"
+        title_plural: "{{ count }} Grain continuity groups"
         name: Name
         item_count: Σ Parts
       tooltip:
@@ -1300,13 +1300,13 @@ tab:
         no_bin_1d: No standard board or edge banding was selected and no off-cuts were available.
         no_bin_2d: No standard panel or veneer sheet was selected and no off-cuts were available.
         invalid_part_shapes: "The shape of part '{{ name }}' is invalid."
-        no_solution: No solution has been found to place **all parts** in the available material.
+        no_solution: No solution was found for placing **all parts** within the available material.
         unplaced_parts: "**1 part** could not be placed."
         unplaced_parts_plural: "**{{ count }} parts** could not be placed."
         unusable_part_1: Part too large
-        unusable_part_2: Grain Continuity group too large
+        unusable_part_2: Grain continuity group too large
       warning:
-        is_part_selection: This cutting diagram is limited to **selected parts**.
+        is_part_selection: This cutting diagram is limited to the **selected parts**.
         cutting_dimensions: This cutting diagram uses the **raw** dimensions of the parts.
         cutting_dimensions_increase_1d: "These raw dimensions have been configured on the material '{{ material_name }}': length oversize (**{{ length_increase }}**)."
         cutting_dimensions_increase_2d: "These raw dimensions have been configured on the material '{{ material_name }}': length oversize (**{{ length_increase }}**) and width oversize (**{{ width_increase }}**)."
@@ -1522,7 +1522,7 @@ tab:
       option_dxf_depth_to_z_1: Distribute layer depths along the Z-axis
       option_dxf_depth_to_z_help: |
         Enables the distribution of layers along the Z-axis based on their depth.
-        
+
         Disable this option to export as 2D DXF only.
       option_unit: Unit
       option_unit_help: |
@@ -1836,8 +1836,8 @@ tab:
       name: Name
       instance_name: Instance
       material: Material
-      is_grain_group: Define as **Grain Continuity group**
-      is_grain_group_help: If you enable this option, this instance will be treated as a **Grain Continuity group** for the parts it contains that have *Grain Continuity* enabled.
+      is_grain_group: Define as **Grain continuity group**
+      is_grain_group_help: "If you enable this option, this instance will be treated as a **Grain continuity group** for the parts it contains that have *Grain continuity* enabled."
       definition_name: Definition
       description: Description
       url: URL
@@ -1862,7 +1862,7 @@ tab:
       no_scale_mask_6: Stretchable from corners (XYZ)
       explode: Explode
       explode_message: "Do you confirm the breakup of **{{ name }}**?"
-      erase: Clear
+      erase: Delete
       erase_message: "Do you confirm the deletion of **{{ name }}**?"
     deep_make_unique:
       title: Make Unique
@@ -2100,9 +2100,9 @@ tab:
         option_hardware_material_name_help: Material to be applied to **fittings**.
         option_hardware_layer_name: Fittings
         option_hardware_layer_name_help: Tag to be applied to fittings.
-        option_no_material_help: "*Leave this field blank to prevent the application of any material*."
-        option_default_material_help: "*If this field is left empty, a default material will be created*."
-        option_no_layer_help: "*Leave this field blank to prevent the application of any tag*."
+        option_no_material_help: "*Leave this field blank to skip the application of material*."
+        option_default_material_help: "*If this field is left blank, a default material will be created*."
+        option_no_layer_help: "*Leave this field blank to skip the application of any tag*."
         old_name: Original name
         new_name: New name
         count: Qty.
@@ -2546,10 +2546,10 @@ tool:
     action_3_status: Target a face of a part and click on an edge to adapt its axes
     action_4: Move Origin
     action_4_status: Target a face of a part and click on a point to place its origin there
-    action_5: Configure Grain Continuity
+    action_5: Configure Grain continuity
     action_5_status: Click on a part to activate or deactivate the detection of grain continuity
-    action_5_to_state_10_status: Select Grain Continuity group
-    action_5_state_10_status: Click an item in the list to change its Grain Continuity group status
+    action_5_to_state_10_status: Select Grain continuity group
+    action_5_state_10_status: Click an item in the list to change its Grain continuity group status
     action_option_group_direction: Direction
     action_option_direction_0: L
     action_option_direction_1: W
@@ -2564,6 +2564,7 @@ tool:
       not_orientable: The type of this part does not allow orienting it
       not_grained: The targeted part has no grain orientation
       not_single_thickness_layer: The target part must consist of a single layer
+  # TODO: It's currently just for dev purposes
   smart_join:
     title: Assemble
     action_0: Add connectors
@@ -2628,7 +2629,7 @@ tool:
       no_fitting_to_remove: No fitting to erase
       x_fittings_to_remove: "{{ count }} fitting to erase"
       x_fittings_to_remove_plural: "{{ count }} fittings to erase"
-      different_file_name: The name of the SKP file ({{ file_name }}) is different from the name of the definition it contains ({{ definition_name }})
+      different_file_name: "The name of the SKP file ({{ file_name }}) is different from the name of the definition it contains ({{ definition_name }})"
   smart_export:
     title: Export
     action_0: Export 3D Part
