@@ -3263,9 +3263,11 @@ module Ladb::OpenCutList
             tool.show_validation
           end
 
-          # require_relative '../worker/common/common_find_cavities_worker'
+          # require_relative '../worker/common/common_solid_find_cavities_worker'
           #
-          # result_def = CommonSolidFindCavitiesWorker.new(selection.items.map(&:drawing_def)).run
+          # result_def = CommonSolidFindCavitiesWorker.new(selection.items.map(&:drawing_def),
+          #   max_opening_planes: 2
+          # ).run
           # if result_def.success?
           #
           #   colors = [ Kuix::COLOR_RED, Kuix::COLOR_GREEN, Kuix::COLOR_BLUE, Kuix::COLOR_YELLOW ]

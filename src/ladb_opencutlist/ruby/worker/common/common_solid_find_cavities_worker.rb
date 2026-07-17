@@ -70,13 +70,24 @@ module Ladb::OpenCutList
     # (TOLERANCE scale) never merges an envelope face with a panel face.
     ENVELOPE_MARGIN = 1.0
 
-    # A cavity boundary face is an edge (chant) face of its panel when its
+    # A cavity boundary face is an edge face of its panel when its
     # normal departs from the panel dominant normal by more than 60°.
     REDUCTION_EDGE_DOT = 0.5
 
-    # Minimum crossing depth, in inches, for a chant plane to trigger the
+    # Minimum crossing depth, in inches, for an edge plane to trigger the
     # envelope reduction : recesses within snapping noise are ignored.
     REDUCTION_MIN_DEPTH = SolidMeshDef::TOLERANCE * 10
+
+    # Minimum accumulated edge area, in square inches, for a plane to
+    # trigger the envelope reduction. A real edge strip spans the panel
+    # thickness across the cavity (square inches), while the degenerate
+    # sliver triangles the boolean may leave where a panel face is flush
+    # with the hull are many orders of magnitude below : without this
+    # filter, such a sliver — whose arbitrary normal rarely matches any
+    # panel plane — seeds a diagonal reduction plane that shreds the
+    # cavity. Slivers being nudge artifacts, they also leak the panel
+    # order into the result.
+    REDUCTION_MIN_AREA = REDUCTION_MIN_DEPTH * REDUCTION_MIN_DEPTH
 
     def initialize(panel_drawing_defs,
 
@@ -478,17 +489,21 @@ module Ladb::OpenCutList
           next if mesh_position.nil?
           dominant_normal = dominant_normals[mesh_position]
           next if dominant_normal.nil?
-          normal, = _triangle_normal(vertices, a, b, c)
+          normal, area2 = _triangle_normal(vertices, a, b, c)
           next if normal.nil?
           dot = normal[0] * dominant_normal[0] + normal[1] * dominant_normal[1] + normal[2] * dominant_normal[2]
           next if dot.abs >= REDUCTION_EDGE_DOT  # Main face plane, not a chant
           d = normal[0] * vertices[a * 3] + normal[1] * vertices[a * 3 + 1] + normal[2] * vertices[a * 3 + 2]
           key = normal.map { |v| (v * 1000).round } << (d / SolidMeshDef::TOLERANCE).round
-          candidates[key] ||= [ normal, d ]
+          candidate = candidates[key] ||= [ normal, d, 0.0 ]
+          candidate[2] += area2 / 2.0
         end
 
-        candidates.each do |key, (normal, d)|
+        candidates.each do |key, (normal, d, area)|
           next if planes.key?(key)
+          # Degenerate boolean sliver, not a chant strip — see
+          # REDUCTION_MIN_AREA
+          next if area < REDUCTION_MIN_AREA
           # The cavity must extend on both sides of the extended plane —
           # beyond the chant (removed side, negative distances) and behind
           # it (kept side, where the panel and the compartments lie)
