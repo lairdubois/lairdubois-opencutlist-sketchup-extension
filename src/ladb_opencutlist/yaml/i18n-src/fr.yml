@@ -1523,7 +1523,7 @@ tab:
       option_dxf_depth_to_z_help: |
         Permet d'activer la répartition des calques sur l'axe Z suivant leur profondeur.
         
-        Désactivez cette pour exporter un DXF en 2D uniquement.
+        Désactivez cette option pour exporter un DXF en 2D uniquement.
       option_unit: Unité
       option_unit_help: |
         Permet de choisir l'unité utilisée dans le fichier exporté.
