@@ -2616,7 +2616,7 @@ tool:
       invalid_max_spacing: "L'entraxe max {{ value }} est invalide"
       not_assemblable: Ce type de pièce ne peut pas être assemblé
       no_valid_join: Aucune surface de contact ne permet de satisfaire les contraintes d'assemblage
-      occupied_anchors: "{{ count }} connecteurs en conflit de position avec des connecteurs existants"
+      occupied_anchors: "{{ count }} connecteur en conflit de position avec des connecteurs existants"
       occupied_anchors_plural: "{{ count }} connecteurs en conflit de position avec des connecteurs existants"
       failed_to_load_skp_file: |
         Impossible de charger le fichier SKP : {{ file }}

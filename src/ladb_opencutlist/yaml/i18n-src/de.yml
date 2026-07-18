@@ -294,7 +294,7 @@ core:
         Vergewissern Sie sich, dass Sie mit dem Internet verbunden sind.
   solid:
     error:
-      empty: Der Körper enthält keine Geometrie.
+      empty: Der Körper enthält keine Geometrie
       non_manifold_edges: "Der Körper enthält {{ count }} nicht-mannigfaltige Kante"
       non_manifold_edges_plural: "Der Körper enthält {{ count }} nicht-mannigfaltige Kanten"
       open_edges: "Der Körper enthält {{ count }} offene Kante"
@@ -2616,7 +2616,7 @@ tool:
       invalid_max_spacing: "Der maximale Achsabstand {{ value }} ist ungültig"
       not_assemblable: Dieser Teiletyp kann nicht zusammengefügt werden
       no_valid_join: "Es gibt keine Kontaktfläche, die die Anforderungen an die Verbindung erfüllt"
-      occupied_anchors: "{{ count }} Verbinder, dessen Position mit der von vorhandenen Verbindungselementen kollidiert"
+      occupied_anchors: "{{ count }} Verbinder, deren Position mit der von vorhandenen Verbindungselementen kollidiert"
       occupied_anchors_plural: "{{ count }} Verbinder, deren Position mit der von vorhandenen Verbindungselementen kollidiert"
       failed_to_load_skp_file: |
         Die SKP-Datei {{ file }} kann nicht geladen werden
