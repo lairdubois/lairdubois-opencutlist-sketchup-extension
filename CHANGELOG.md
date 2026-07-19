@@ -26,9 +26,11 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
-### 2026-07-xx
+### 2026-07-19
  * Fixed Smart Boolean Tools targeting the same instance through several occurrences (shared ancestor definitions)
  * Fixed Smart Stretch flipped glued_to transformation calculation
+ * Updated translations
+ * Updated PackingSolver dependency
 ### 2026-07-17
  * Updated translations
  * Improved Smart Boolean Tools robustness
