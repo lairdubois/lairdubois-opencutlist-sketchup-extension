@@ -2366,6 +2366,7 @@ tool:
     action_2_status: Dessiner un volume sur la base d'une forme polygonale
     action_2_state_1_status: Cliquez pour définir un nouveau point ou entrez une distance
     action_x_state_2_status: Cliquez pour définir l'élévation ou entrez une distance
+    action_3: Dessiner un Séparateur
     action_option_group_offset: Décalage
     action_option_group_segments: Segments
     action_option_group_options: Options

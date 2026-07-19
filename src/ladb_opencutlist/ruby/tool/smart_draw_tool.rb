@@ -19,6 +19,7 @@ module Ladb::OpenCutList
     ACTION_DRAW_RECTANGLE = 0
     ACTION_DRAW_CIRCLE = 1
     ACTION_DRAW_POLYGON = 2
+    ACTION_DRAW_SEPARATOR = 3
 
     ACTION_OPTION_OFFSET = 'offset'
     ACTION_OPTION_SEGMENTS = 'segments'
@@ -60,7 +61,13 @@ module Ladb::OpenCutList
           ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_SHAPE_OFFSET ],
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_DRAW_IN, ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_PULL_CENTRED, ACTION_OPTION_OPTIONS_ASK_NAME ]
         }
-      }
+      },
+      # {
+      #   :action => ACTION_DRAW_SEPARATOR,
+      #   :options => {
+      #     ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_DRAW_IN, ACTION_OPTION_OPTIONS_ASK_NAME ]
+      #   }
+      # }
     ].freeze
 
     # -----
@@ -102,7 +109,7 @@ module Ladb::OpenCutList
     end
 
     def get_action_options_modal?(action)
-      true
+      action != ACTION_DRAW_SEPARATOR
     end
 
     def get_action_option_sync_actions(action, option_group, option)
@@ -116,7 +123,7 @@ module Ladb::OpenCutList
       when ACTION_OPTION_OPTIONS
         case option
         when ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_DRAW_IN, ACTION_OPTION_OPTIONS_ASK_NAME
-          return [ ACTION_DRAW_RECTANGLE, ACTION_DRAW_CIRCLE, ACTION_DRAW_POLYGON ]
+          return [ ACTION_DRAW_RECTANGLE, ACTION_DRAW_CIRCLE, ACTION_DRAW_POLYGON , ACTION_DRAW_SEPARATOR ]
         end
       end
 
@@ -198,6 +205,8 @@ module Ladb::OpenCutList
         set_action_handler(SmartDrawCircleActionHandler.new(self))
       when ACTION_DRAW_POLYGON
         set_action_handler(SmartDrawPolygonActionHandler.new(self))
+      when ACTION_DRAW_SEPARATOR
+        set_action_handler(SmartDrawSeparatorActionHandler.new(self))
       end
 
       super
@@ -218,6 +227,40 @@ module Ladb::OpenCutList
   # -----
 
   class SmartDrawActionHandler < SmartActionHandler
+
+    # -----
+
+    def onToolKeyDown(tool, key, repeat, flags, view)
+
+      if key <= 128
+        key_char = key.chr
+        if key_char == 'X' && @tool.is_key_shift_down?
+          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_CONSTRUCTION, !_fetch_option_construction?, fire_event: true)
+          _refresh
+          return true
+        end
+      end
+
+      false
+    end
+
+    # -----
+
+    def _fetch_option_construction?
+      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_CONSTRUCTION)
+    end
+
+    def _fetch_option_draw_in?
+      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_DRAW_IN)
+    end
+
+    def _fetch_option_ask_name?
+      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_ASK_NAME)
+    end
+
+  end
+
+  class SmartDrawShapeActionHandler < SmartDrawActionHandler
 
     include SmartActionHandlerPartHelper
     include UserTextHelper
@@ -516,15 +559,7 @@ module Ladb::OpenCutList
     end
 
     def onToolKeyDown(tool, key, repeat, flags, view)
-
-      if key <= 128
-        key_char = key.chr
-        if key_char == 'X' && @tool.is_key_shift_down?
-          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_CONSTRUCTION, !_fetch_option_construction?, fire_event: true)
-          _refresh
-          return true
-        end
-      end
+      return true if super
 
       case @state
 
@@ -1351,24 +1386,12 @@ module Ladb::OpenCutList
       @tool.fetch_action_option_length(@action, SmartDrawTool::ACTION_OPTION_OFFSET, SmartDrawTool::ACTION_OPTION_OFFSET_SHAPE_OFFSET)
     end
 
-    def _fetch_option_construction?
-      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_CONSTRUCTION)
-    end
-
-    def _fetch_option_draw_in?
-      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_DRAW_IN)
-    end
-
     def _fetch_option_measure_from_vertex?
       @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_FROM_VERTEX)
     end
 
     def _fetch_option_pull_centered?
       @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_PULL_CENTRED)
-    end
-
-    def _fetch_option_ask_name?
-      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_ASK_NAME)
     end
 
     # -----
@@ -1918,7 +1941,7 @@ module Ladb::OpenCutList
 
   end
 
-  class SmartDrawRectangleActionHandler < SmartDrawActionHandler
+  class SmartDrawRectangleActionHandler < SmartDrawShapeActionHandler
 
     def initialize(tool, previous_action_handler = nil)
       super(SmartDrawTool::ACTION_DRAW_RECTANGLE, tool, previous_action_handler)
@@ -2549,7 +2572,7 @@ module Ladb::OpenCutList
 
   end
 
-  class SmartDrawCircleActionHandler < SmartDrawActionHandler
+  class SmartDrawCircleActionHandler < SmartDrawShapeActionHandler
 
     @@last_radius_measure = 0
 
@@ -2926,7 +2949,7 @@ module Ladb::OpenCutList
 
   end
 
-  class SmartDrawPolygonActionHandler < SmartDrawActionHandler
+  class SmartDrawPolygonActionHandler < SmartDrawShapeActionHandler
 
     def initialize(tool, previous_action_handler = nil)
       super(SmartDrawTool::ACTION_DRAW_POLYGON, tool, previous_action_handler)
@@ -3815,6 +3838,124 @@ module Ladb::OpenCutList
       Sketchup.active_model.active_entities.erase_entities(@clines)
       @clines.clear
     end
+
+  end
+
+  class SmartDrawSeparatorActionHandler < SmartDrawActionHandler
+
+    include SmartActionHandlerPartHelper
+
+    STATE_START = 0
+
+    def initialize(tool, previous_action_handler = nil)
+      super(SmartDrawTool::ACTION_DRAW_SEPARATOR, tool, previous_action_handler)
+
+    end
+
+    # -----
+
+    def get_state_picker(state)
+
+      case state
+      when STATE_START
+        return SmartPicker.new(tool: @tool, observer: self, pick_point: false)
+      end
+
+      super
+    end
+
+    # -----
+
+    def onPickerChanged(picker, view)
+
+      case @state
+
+      when STATE_START
+        _pick_part(picker, view) if _fetch_option_draw_in?
+
+      end
+
+      super
+    end
+
+    def onActivePartChanged(part_entity_path, part, highlighted = false)
+
+      # Preview part's container
+      _preview_part(part_entity_path, part)
+
+      # Reset active container path
+      @active_container_path = nil
+
+      if part_entity_path.is_a?(Array) && part_entity_path.length > 1
+
+        container_path = part_entity_path[0...-1]
+        return true if container_path == Sketchup.active_model.active_path
+
+        @active_container_path = container_path
+
+        container = container_path.last
+        return true if container.nil?
+
+        worker = CutlistGenerateWorker.new(**HashUtils.symbolize_keys(PLUGIN.get_model_preset('cutlist_options')).merge({ active_entity: container, active_path: container_path[0...-1] }))
+        cutlist = worker.run
+
+        parts = cutlist.groups.flat_map { |group| group.get_parts }
+        drawing_defs = parts.flat_map { |part| part.def.instance_infos.values.map { |instance_info| CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new(instance_info.path) ]).run } }
+
+        require_relative '../worker/common/common_solid_find_cavities_worker'
+
+        result_def = CommonSolidFindCavitiesWorker.new(drawing_defs,
+          max_opening_planes: 3
+        ).run
+        if result_def.success?
+
+          colors = [ Kuix::COLOR_RED, Kuix::COLOR_GREEN, Kuix::COLOR_BLUE, Kuix::COLOR_YELLOW ]
+
+          @tool.clear_3d(5580)
+          result_def.fragment_defs.each_with_index do |fragment_def, index|
+
+            color = colors[index % colors.size]
+
+            # fragment_def.each_triangle_batch do |_, triangles|
+            #
+            #   k_mesh = Kuix::Mesh.new
+            #   k_mesh.add_triangles(triangles.flatten)
+            #   k_mesh.background_color = ColorUtils.color_translucent(color, 0.3)
+            #   @tool.append_3d(k_mesh, 5580)
+            #
+            # end
+
+            k_segments = Kuix::Segments.new
+            k_segments.add_segments(fragment_def.boundary_segments)
+            k_segments.color = color
+            k_segments.line_width = 1
+            k_segments.on_top = true
+            @tool.append_3d(k_segments, 5580)
+
+          end
+        else
+          @tool.notify_errors(result_def.errors)
+        end
+
+      else
+        @tool.clear_3d(5580)
+      end
+
+    end
+
+    # -----
+
+    protected
+
+    # -----
+
+    def _preview_part_mesh?
+      false
+    end
+
+    # def _preview_part_container?
+    #   true
+    # end
 
   end
 

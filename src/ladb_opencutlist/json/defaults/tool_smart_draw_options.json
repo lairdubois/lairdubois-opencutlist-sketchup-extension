@@ -30,5 +30,10 @@
     "pull_centered": false,
     "draw_in": false,
     "ask_name": false
+  },
+  "action_3": { /* ACTION_DRAW_SEPARATOR */
+    "construction": false,
+    "draw_in": false,
+    "ask_name": false
   }
 }
