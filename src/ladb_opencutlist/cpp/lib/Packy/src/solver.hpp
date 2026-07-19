@@ -282,7 +282,15 @@ namespace Packy {
          */
 
         json optimize() override {
-            return post_process(process(pre_process()));
+
+            auto instance = pre_process();
+
+            // Write the instance to a file for debug purpose with PackingSolver format
+            if (!instance_path_.empty()) {
+                instance.write(instance_path_);  // Export the instance to a file with PackingSolver 'write' method
+            }
+
+            return post_process(process(instance));
         }
 
     protected:
@@ -311,7 +319,7 @@ namespace Packy {
         bool messages_to_solution_ = false;
         SynchronizedMessagesStream messages_stream_;
 
-        /** Instance (native PackingSolver instance write) */
+        /** Instances (native PackingSolver instance write) */
         std::string instance_path_;
 
         /** Certificate (native PackingSolver solution write) */
@@ -326,18 +334,13 @@ namespace Packy {
             // Build origin instance
             Instance orig_instance = orig_builder_.instance_builder().build();
 
-            // Write the instance to a file for debug purpose with PackingSolver format
-            if (!instance_path_.empty()) {
-                orig_instance.write(instance_path_);  // Export the instance to a file with PackingSolver 'write' method
-            }
-
             std::vector<ItemTypeId> usable_item_type_ids;
             std::vector<ItemTypeId> unusable_item_type_ids;
 
             if (use_pre_process_) {
 
                 /*
-                 * Test each item with not anytime sequential knapsack to know if it can fit in at least one bins
+                 * Test each item with not anytime sequential feasibility to know if it can fit in at least one bin
                  */
 
                 std::mutex usable_mutex;
@@ -346,7 +349,7 @@ namespace Packy {
                 std::mutex task_errors_mutex;
                 std::atomic_bool stop_requested(false);
 
-                auto validate_item_type = [&](const ItemTypeId item_type_id) {
+                auto validate_item_type = [&](const ItemTypeId orig_item_type_id) {
 
                     try {
 
@@ -356,19 +359,19 @@ namespace Packy {
                         validator_builder.set_parameters(orig_instance.parameters());
 
                         // Copy item type (with only 1 copy)
-                        const auto& item_type = orig_instance.item_type(item_type_id);
-                        validator_builder.add_item_type(orig_instance, item_type_id, item_type.profit, 1);
+                        const auto validator_item_type_id = validator_builder.add_item_type(orig_instance, orig_item_type_id);
+                        validator_builder.set_item_type_copies(validator_item_type_id, 1);
 
                         // Copy bin types (with only 1 copy)
-                        for (BinTypeId bin_type_id = 0;
-                             bin_type_id < orig_instance.number_of_bin_types();
-                             ++bin_type_id
+                        for (BinTypeId orig_bin_type_id = 0;
+                             orig_bin_type_id < orig_instance.number_of_bin_types();
+                             ++orig_bin_type_id
                         ) {
 
                             if (stop_requested.load(std::memory_order_relaxed)) return;
 
-                            const auto& bin_type = orig_instance.bin_type(bin_type_id);
-                            validator_builder.add_bin_type(orig_instance, bin_type_id, 1);
+                            const auto validator_bin_type_id = validator_builder.add_bin_type(orig_instance, orig_bin_type_id);
+                            validator_builder.set_bin_type_copies(validator_bin_type_id, 1);
 
                         }
 
@@ -391,9 +394,9 @@ namespace Packy {
                         {
                             std::lock_guard<std::mutex> lock(usable_mutex);
                             if (output.solution_pool.best().full()) {
-                                usable_item_type_ids.push_back(item_type_id);
+                                usable_item_type_ids.push_back(orig_item_type_id);
                             } else {
-                                unusable_item_type_ids.push_back(item_type_id);
+                                unusable_item_type_ids.push_back(orig_item_type_id);
                             }
                         }
 
@@ -401,13 +404,13 @@ namespace Packy {
                         stop_requested.store(true, std::memory_order_relaxed);
                         std::lock_guard<std::mutex> lock(task_errors_mutex);
                         task_errors.emplace_back(
-                            "item_type_id=" + std::to_string(item_type_id) + ": " + e.what()
+                            "item_type_id=" + std::to_string(orig_item_type_id) + ": " + e.what()
                         );
                     } catch (...) {
                         stop_requested.store(true, std::memory_order_relaxed);
                         std::lock_guard<std::mutex> lock(task_errors_mutex);
                         task_errors.emplace_back(
-                            "item_type_id=" + std::to_string(item_type_id) + ": unknown exception"
+                            "item_type_id=" + std::to_string(orig_item_type_id) + ": unknown exception"
                         );
                     }
                 };
@@ -511,20 +514,21 @@ namespace Packy {
                     auto& item_type = orig_instance.item_type(orig_item_type_id);
                     auto& item_type_meta = orig_builder_.item_type_meta(orig_item_type_id);
                     item_type_meta.usable_item_type_id = usable_item_type_id;
-                    usable_builder_.instance_builder().add_item_type(orig_instance, orig_item_type_id, item_type.profit, item_type_meta.copies);
+                    usable_builder_.instance_builder().add_item_type(orig_instance, orig_item_type_id);
                     usable_builder_.set_item_type_meta(usable_item_type_id, item_type_meta);
                 }
 
                 // Copy bin types
-                for (BinTypeId bin_type_id = 0;
-                     bin_type_id < orig_instance.number_of_bin_types();
-                     ++bin_type_id
+                for (BinTypeId orig_bin_type_id = 0;
+                     orig_bin_type_id < orig_instance.number_of_bin_types();
+                     ++orig_bin_type_id
                 ) {
-                    const auto& bin_type = orig_instance.bin_type(bin_type_id);
-                    const auto& bin_type_meta = orig_builder_.bin_type_meta(bin_type_id);
+                    const auto& bin_type = orig_instance.bin_type(orig_bin_type_id);
+                    const auto& bin_type_meta = orig_builder_.bin_type_meta(orig_bin_type_id);
                     BinPos copies = bin_type_meta.copies == -1 && usable_item_type_ids.empty() ? 1 : bin_type_meta.copies;  // Retrieve copies from bin_typ_meta to keep -1 = infinite and force copies to 1 if no item types
-                    usable_builder_.instance_builder().add_bin_type(orig_instance, bin_type_id, copies, bin_type.copies_min);
-                    usable_builder_.set_bin_type_meta(bin_type_id, bin_type_meta);
+                    const auto bin_type_id = usable_builder_.instance_builder().add_bin_type(orig_instance, orig_bin_type_id);
+                    usable_builder_.instance_builder().set_bin_type_copies(bin_type_id, copies);
+                    usable_builder_.set_bin_type_meta(orig_bin_type_id, bin_type_meta);
                 }
 
                 // Tag usable builder as used
@@ -1045,18 +1049,10 @@ namespace Packy {
                 if (height >= 0) height += fake_spacing_;
             }
 
-            ItemTypeId item_type_id = builder.instance_builder().add_item_type(
-                    width,
-                    height,
-                    profit,
-                    copies,
-                    oriented
-            );
-
-            builder.instance_builder().set_item_type_group(
-                item_type_id,
-                group_id
-            );
+            ItemTypeId item_type_id = builder.instance_builder().add_item_type(width, height, oriented);
+            if (profit > 0) builder.instance_builder().set_item_type_profit(item_type_id, profit);
+            builder.instance_builder().set_item_type_copies(item_type_id, copies);
+            builder.instance_builder().set_item_type_group(item_type_id, group_id);
 
             return item_type_id;
         }
@@ -1091,13 +1087,10 @@ namespace Packy {
                 if (height >= 0) height += fake_spacing_;
             }
 
-            BinTypeId bin_type_id = builder.instance_builder().add_bin_type(
-                    width,
-                    height,
-                    cost,
-                    copies,
-                    copies_min
-            );
+            BinTypeId bin_type_id = builder.instance_builder().add_bin_type(width, height);
+            if (cost > 0) builder.instance_builder().set_bin_type_cost(bin_type_id, cost);
+            builder.instance_builder().set_bin_type_copies(bin_type_id, copies);
+            builder.instance_builder().set_bin_type_copies_min(bin_type_id, copies_min);
 
             // Defects
 
@@ -1378,14 +1371,9 @@ namespace Packy {
             const bool oriented = j.value("oriented", false);
             const StackId stack_id = j.value("stack_id", static_cast<StackId>(-1));
 
-            ItemTypeId item_type_id = builder.instance_builder().add_item_type(
-                    width,
-                    height,
-                    profit,
-                    copies,
-                    oriented,
-                    stack_id
-            );
+            ItemTypeId item_type_id = builder.instance_builder().add_item_type(width, height, oriented, stack_id);
+            if (profit > 0) builder.instance_builder().set_item_type_profit(item_type_id, profit);
+            builder.instance_builder().set_item_type_copies(item_type_id, copies);
 
             return item_type_id;
         }
@@ -1403,13 +1391,10 @@ namespace Packy {
             const BinPos copies = j.value("copies", static_cast<BinPos>(1));
             const BinPos copies_min = j.value("copies_min", static_cast<BinPos>(0));
 
-            BinTypeId bin_type_id = builder.instance_builder().add_bin_type(
-                    width,
-                    height,
-                    cost,
-                    copies,
-                    copies_min
-            );
+            BinTypeId bin_type_id = builder.instance_builder().add_bin_type(width, height);
+            if (cost > 0) builder.instance_builder().set_bin_type_cost(bin_type_id, cost);
+            builder.instance_builder().set_bin_type_copies(bin_type_id, copies);
+            builder.instance_builder().set_bin_type_copies_min(bin_type_id, copies_min);
 
             // Trims
 
@@ -1796,11 +1781,9 @@ namespace Packy {
                 if (width >= 0) width += fake_spacing_;
             }
 
-            ItemTypeId item_type_id = builder.instance_builder().add_item_type(
-                    width,
-                    profit,
-                    copies
-            );
+            ItemTypeId item_type_id = builder.instance_builder().add_item_type(width);
+            if (profit > 0) builder.instance_builder().set_item_type_profit(item_type_id, profit);
+            builder.instance_builder().set_item_type_copies(item_type_id, copies);
 
             return item_type_id;
         }
@@ -1827,12 +1810,10 @@ namespace Packy {
                 if (width >= 0) width += fake_spacing_;
             }
 
-            BinTypeId bin_type_id = builder.instance_builder().add_bin_type(
-                    width,
-                    cost,
-                    copies,
-                    copies_min
-            );
+            BinTypeId bin_type_id = builder.instance_builder().add_bin_type(width);
+            if (cost > 0) builder.instance_builder().set_bin_type_cost(bin_type_id, cost);
+            builder.instance_builder().set_bin_type_copies(bin_type_id, copies);
+            builder.instance_builder().set_bin_type_copies_min(bin_type_id, copies_min);
 
             return bin_type_id;
         }
@@ -2038,11 +2019,9 @@ namespace Packy {
             const Profit profit = j.value("profit", static_cast<Profit>(-1));
             const ItemPos copies = j.value("copies", static_cast<ItemPos>(1));
 
-            ItemTypeId item_type_id = builder.instance_builder().add_item_type(
-                    item_shapes,
-                    profit,
-                    copies
-            );
+            ItemTypeId item_type_id = builder.instance_builder().add_item_type(item_shapes);
+            if (profit > 0) builder.instance_builder().set_item_type_profit(item_type_id, profit);
+            builder.instance_builder().set_item_type_copies(item_type_id, copies);
 
             // Read allowed rotations + mirror. (Angles are read in degrees)
             if (j.contains("allowed_rotations")) {
@@ -2106,12 +2085,10 @@ namespace Packy {
 
             }
 
-            BinTypeId bin_type_id = builder.instance_builder().add_bin_type(
-                    shape,
-                    cost,
-                    copies,
-                    copies_min
-            );
+            BinTypeId bin_type_id = builder.instance_builder().add_bin_type(shape);
+            if (cost > 0) builder.instance_builder().set_bin_type_cost(bin_type_id, cost);
+            builder.instance_builder().set_bin_type_copies(bin_type_id, copies);
+            builder.instance_builder().set_bin_type_copies_min(bin_type_id, copies_min);
 
             // Trim
 
