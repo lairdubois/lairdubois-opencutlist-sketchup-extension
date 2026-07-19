@@ -1323,8 +1323,8 @@ tab:
       remove_element: $t(default.remove)
       remove_all_elements: $t(default.remove_all)
       part_order_strategy_help: |
-        Reorganize the tiles to define the sort order of labels.
-        Properties can be sorted in <i class="ladb-opencutlist-icon-sort-asc"></i> *increasing* or <i class="ladb-opencutlist-icon-sort-desc"></i> *decreasing* order.
+        Reorder the following properties to define the label sorting strategy.
+        Each property can be sorted in <i class="ladb-opencutlist-icon-sort-asc"></i> *increasing* or <i class="ladb-opencutlist-icon-sort-desc"></i> *decreasing* order.
       offset_help: |
         The *offset* defines the position of the **first label** to be printed on the **first page**.
         Select the box that corresponds to your choice.
@@ -1454,8 +1454,8 @@ tab:
       option_page_header_0: No header
       option_page_header_1: With header
       option_page_header_help: |
-        Selects whether the page to be printed contains a header with the name of the document, its description and the date.
-        Without a header, the overview drawing takes up the entire page.
+        Allows you to choose whether the page to be printed includes a header with the document name, description, date, unit, and scale.
+        Without a header, the full drawing will fill the entire page.
       option_camera: Camera
       option_camera_view: View
       option_camera_view_custom: Custom
@@ -1884,7 +1884,7 @@ tab:
       hide_descriptions: Hide descriptions
       hide_descriptions_help: "If this option is selected, the **descriptions** placed on the parts will not be displayed."
       hide_tags: Hide badges
-      hide_tags_help: "If this option is selected, **badges** of parts will not be displayed."
+      hide_tags_help: "If this option is enabled, the **badges** placed on the parts will not be displayed."
       minimize_on_set_active: Minimize after '$t(tab.outliner.tooltip.set_active_node)'
       minimize_on_set_active_help: "If this option is selected, the OpenCutList window will be minimized when the function *'$t(tab.outliner.tooltip.set_active_node)'* is used."
     snippet:
@@ -2002,7 +2002,7 @@ tab:
       load:
         title: CSV File Upload
         info_0: |
-          Select the options required to read the file:
+          Select the options required to properly read the file:
           **{{ filename }}**.
         info_1: |
           *The unit configured in the model is: **{{ unit }}**.
@@ -2343,7 +2343,7 @@ tool:
     state_0_status: Click on a part to select it
     state_0_to_6_status: Select a parent element
     state_0_to_7_status: Multiple selection
-    state_4_status: "Drag onto an identical piece with the same parent to add it to the selection, then release to continue"
+    state_4_status: Drag onto an identical piece with the same parent to add it to the selection and release to continue
     state_5_status: Swipe to add to selection and release to continue
     state_6_status: Select an element from the list
     state_7_status: Click on a part to add or subtract it from the selection
@@ -2616,8 +2616,8 @@ tool:
       invalid_max_spacing: "Maximum spacing of {{ value }} is invalid"
       not_assemblable: This type of part cannot be assembled
       no_valid_join: There are no contact surfaces that meet the assembly requirements
-      occupied_anchors: "{{ count }} connector that conflicts with existing connectors"
-      occupied_anchors_plural: "{{ count }} connector that conflict with existing connectors"
+      occupied_anchors: "{{ count }} connector is in a position conflict with existing connectors"
+      occupied_anchors_plural: "{{ count }} connectors are in a position conflict with existing connectors"
       failed_to_load_skp_file: |
         Failed to load the SKP file : {{ file }}
       unsupported_skp_version: |

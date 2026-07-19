@@ -211,16 +211,21 @@ core:
       *Створення користувацького пресета дозволяє зберегти поточні налаштування глобально, щоб згодом ви могли повторно використовувати їх у всіх своїх шаблонах.*
 
       Введіть назву пресета:
+    rename_prompt_title: Перейменування
+    rename_prompt: "Введіть нову назву **\"{{ name }}\"**"
     delete_confirm_title: Видалити
     delete_confirm: "Ви впевнені, що хочете видалити попередньо встановлений пресет **\"{{ name }}\"**?"
     override_confirm_title: Оновити
     override_confirm: "Чи підтверджуєте ви оновлення попередньо встановленого пресету **\"{{ name }}\"** з параметрами форми?"
+    new_error: "Неможливо, попереднє налаштування **\"{{ name }}\"** вже існує"
     new_success: "Пресет **\"{{ name }}\"** створено"
     override_success: "Пресет **\"{{ name }}\"** оновлено"
     restore_success: "Форма була заповнена пресетом **\"{{ name }}\"**"
+    rename_success: "Попереднє налаштування **\"{{ name }}\"** перейменовано на **\"{{ new_name }}\"**"
     delete_success: "Пресет **\"{{ name }}\"** видалено"
     tooltip:
       save_to: "Оновити пресет '{{ name }}'"
+      rename: "Перейменувати пресет '{{ name }}'"
       delete: "Видалити пресет '{{ name }}'"
     dictionary:
       component_textinput_color: Палітра кольорів
@@ -244,11 +249,14 @@ core:
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       outliner_options: $t(tab.outliner.label) / $t(default.options)
+      outliner_deep_rename_parts_options: $t(tab.outliner.label) / $t(tab.outliner.deep_rename_parts.title)
       settings_model: $t(tab.settings.label) / Модель
       tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
       tool_smart_handle_options: $t(core.toolbar.command.smart_handle)
+      tool_smart_reshape_options: $t(core.toolbar.command.smart_reshape)
       tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
       tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
+      tool_smart_join_options: $t(core.toolbar.command.smart_join)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
   progress:
     please_wait: Глобальний розрахунок
@@ -260,7 +268,9 @@ core:
       remove: Видалити цей колір
     textinput_code:
       snippets: Приклади формул
-      help: "Натисніть **@**, щоб відкрити введення змінних даних."
+      help: "Введіть **@**, щоб відкрити список змінних."
+    textinput_file:
+      browse: Переглянути
     textinput_size:
       quantity: Кількість
     three_viewer:
@@ -282,6 +292,14 @@ core:
       failed_to_load: |
         Неможливо відкрити документацію.
         Перевірте, чи підключені Ви до Інтернету.
+  solid:
+    error:
+      empty: Об'єкт не містить жодної геометрії
+      non_manifold_edges: "Об'єкт містить {{ count }} нерізноманітного краю"
+      non_manifold_edges_plural: "Об'єкт містить {{ count }} нерізноманітних ребер"
+      open_edges: "Об'єкт містить {{ count }} відкритий край"
+      open_edges_plural: "Об'єкт містить {{ count }} відкритих країв"
+      locked_instances: "Операція не може змінити заблокований екземпляр: {{ list }}"
 tab:
   cutlist:
     label: Звіт
@@ -358,6 +376,7 @@ tab:
       flipped: "Ця деталь є дзеркальним відображенням компонента, що є у моделі"
       symmetrical: Для цього елемента вимкнено опцію виявлення дзеркальної деталі
       ignore_grain_direction: Напрямок текстури цієї деталі ігнорується
+      follow_grain_direction: На цій деталі активовано визначення безперервності текстури
       auto_oriented: Ця деталь була автоматично переорієнтована
       oko_label_filter: "Включити / Виключити цей значок"
       add_label_filter: "Фільтрувати за '{{ label }}'"
@@ -481,11 +500,11 @@ tab:
         *Тоді OpenCutList зарахує 2 деталі товщиною 19мм замість 1 деталі 38мм.*
       cut_options: $t(tab.materials.edit_material.cut_options)
       length_increase: $t(tab.materials.edit_material.length_increase)
-      length_increase_help: "Припуск, застосований до готової довжини, щоб визначити **необроблену довжину**."  # TODO: singular version of tab.materials.edit_material.length_increase
+      length_increase_help: $t(tab.materials.edit_material.length_increase_help)
       width_increase: $t(tab.materials.edit_material.width_increase)
-      width_increase_help: "Припуск, застосований до готової ширини, щоб визначити **необроблену ширину**." # TODO: singular version of tab.materials.edit_material.width_increase
+      width_increase_help: $t(tab.materials.edit_material.width_increase_help)
       thickness_increase: $t(tab.materials.edit_material.thickness_increase)
-      thickness_increase_help: "Припуск, застосований до готової товщини, щоб визначити **необроблену товщину**." # TODO: singular version of tab.materials.edit_material.thickness_increase
+      thickness_increase_help: $t(tab.materials.edit_material.thickness_increase_help)
       description: Опис
       description_help: |
         *Опис* використовується для надання персоналізованої інформації щодо визначення кожної деталі.
@@ -510,9 +529,21 @@ tab:
       symmetrical: Вимкнути розпізнавання дзеркальних деталей
       symmetrical_help: |
         Якщо цей прапорець встановлено, виявлення *дзеркальної деталі* не буде застосовано до цієї деталі.
-      ignore_grain_direction: Не враховувати напрямок текстури
+      ignore_grain_direction: Напрямок текстури
       ignore_grain_direction_help: |
-        Якщо цей прапорець встановлено, напрямок текстури на деталі ігнорується.
+        Ця опція дозволяє ігнорувати для цієї деталі напрямок текстури, визначений на матеріалі.
+      ignore_grain_direction_0: По довжині
+      ignore_grain_direction_1: Не враховувати напрямок текстури
+      follow_grain_direction: Безперервність текстури
+      follow_grain_direction_help: |
+        Якщо ввімкнути цю опцію, екземпляри цієї деталі можна розглядати як частини, викладені в **Wire continuity** з їхніми сусідами, які спільно використовують:
+        - те саме *Група безперервності текстури*
+        - той же план
+        - та сама орієнтація
+        - той же матеріал з текстурою
+        - однакова товщина
+      follow_grain_direction_0: $t(default.no)
+      follow_grain_direction_1: Виявлення безперервності текстури активовано
       axes: Осі
       axes_help: "Встановіть розміри так, щоб вони відповідали кольорам осей вашої деталі."
       axes_tip: |
@@ -1069,8 +1100,19 @@ tab:
       option_rectangleguillotine_first_stage_orientation_horizontal: По горизонталі
       option_rectangleguillotine_first_stage_orientation_vertical: По вертикалі
       option_rectangleguillotine_first_stage_orientation_any: Будь-який
+      option_rectangleguillotine_sort_subplates_criteria: Рівні сортування
+      option_rectangleguillotine_sort_subplates_criteria_help: |
+        Визначає критерії для сортування деталей на кожному рівні.
+      option_rectangleguillotine_sort_subplates_criteria_l1l2: За зменшенням розміру
+      option_rectangleguillotine_sort_subplates_criteria_dl2l1: За рахунок зменшення щільності
       option_rectangleguillotine_keep: Розмір мінімальних залишків
       option_rectangleguillotine_keep_help: "Залишки, які мають обидва розміри більші за мінімальний розмір, будуть позначені **зберегти**."
+      option_rectangle_leftover_mode: Напрямок розміщення
+      option_rectangle_leftover_mode_help: |
+        Визначає напрямок розміщення деталей на останній несуцільній панелі.
+      option_rectangle_leftover_mode_area: Авто
+      option_rectangle_leftover_mode_x: По ширині панелі
+      option_rectangle_leftover_mode_y: По довжині панелі
       option_irregular_allowed_rotations: Дозволене обертання
       option_irregular_allowed_rotations_help: |
         Встановлює крок можливих кутів повороту деталі для її розміщення.
@@ -1085,6 +1127,12 @@ tab:
         Визначає, чи дозволено відзеркалювання деталі деталі.
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
+      option_irregular_leftover_mode: Напрямок поширення
+      option_irregular_leftover_mode_help: |
+        Визначає напрямок розміщення деталей на останній несуцільній панелі.
+      option_irregular_leftover_mode_bottom_left: Авто
+      option_irregular_leftover_mode_left: По ширині панелі
+      option_irregular_leftover_mode_bottom: По довжині панелі
       option_spacing: Ширина різу
       option_spacing_help: |
         Мінімальна відстань між кожною частиною.
@@ -1144,6 +1192,7 @@ tab:
       option_hide_edges_preview_1: Приховати на діаграмі
       option_hide_edges_preview_help: "Дозволяє відображати або приховувати візуальну індикацію крайок, які потрібно облицювати для кожної деталі діаграми."
       option_zoom_threshold: Поріг масштабування
+      # TODO find a better explanation
       option_zoom_threshold_help: |
         Дозволяє встановити ширину діаграми, нижче якої діаграми автоматично збільшуються.
 
@@ -1151,6 +1200,11 @@ tab:
       option_time_limit: Ліміт часу
       option_time_limit_help: |
         Встановлює час, дозволений для розрахунку
+      grain_groups:
+        title: "{{ count }} група безперервності текстури"
+        title_plural: "{{ count }} груп безперервності текстури"
+        name: Ім’я
+        item_count: Σ Деталей
       tooltip:
         scroll_to_block_1d: Прокрутка до першої дошки або крайки
         scroll_to_block_2d: Прокрутка до першої панелі або листа
@@ -1249,7 +1303,8 @@ tab:
         no_solution: Не було знайдено рішення для розміщення **всіх деталей** у доступному матеріалі.
         unplaced_parts: "**1 деталь** не могла бути розміщена."
         unplaced_parts_plural: "**{{ count }} деталей** не можуть бути розміщені."
-        unusable_part: Деталь занадто велика
+        unusable_part_1: Деталь занадто велика
+        unusable_part_2: Завелика група безперервності текстури
       warning:
         is_part_selection: Цей звіт обмежено **вибраними деталями**.
         cutting_dimensions: Ця карта розкрою відображає деталі з їх **пильними** розмірами.
@@ -1462,6 +1517,13 @@ tab:
 
         - Структура **Шари** малює всі лінії на площині, розрізняючи різні типи ліній лише за допомогою шарів. *Ця структура забезпечує кращу сумісність з програмним забезпеченням сторонніх виробників.*
         - Структура **Шари + Блоки** створює блок для кожної деталі і вставляє ці блоки стільки разів, скільки деталей повторюються. *Ця структура надає більшу гнучкість для зміни файлу.*
+      option_dxf_depth_to_z: Z глибини
+      option_dxf_depth_to_z_0: $t(default.no)
+      option_dxf_depth_to_z_1: Розподіліть глибину шару по Z
+      option_dxf_depth_to_z_help: |
+        Дозволяє активувати розподіл шарів по осі Z відповідно до їх глибини.
+
+        Вимкніть це, щоб експортувати DXF лише у 2D.
       option_unit: Одиниці
       option_unit_help: |
         Дозволяє вибрати одиницю, яка використовується у експортованому файлі.
@@ -1634,11 +1696,14 @@ tab:
 
         *Якщо одиниці не вказано, буде враховано одиницю моделі.*
       length_increase: Припуск по довжині
-      length_increase_help: Припуск додається до фактичної довжини для розрахунку **пильної довжини**.
+      length_increase_help: "Припуск, застосований до готової довжини, щоб визначити **необроблену довжину**."
+      length_increase_help_plural: Припуск додається до фактичної довжини для розрахунку **пильної довжини**.
       width_increase: Припуск по ширині
-      width_increase_help: Припуск до фактичної ширини для розрахунку **пильної ширини**.
+      width_increase_help: "Припуск, застосований до готової ширини, щоб визначити **необроблену ширину**."
+      width_increase_help_plural: Припуск до фактичної ширини для розрахунку **пильної ширини**.
       thickness_increase: Припуск по товщині
-      thickness_increase_help: Припуск до фактичної товщини для розрахунку **пильної товщини**.
+      thickness_increase_help: "Припуск, застосований до готової товщини, щоб визначити **необроблену товщину**."
+      thickness_increase_help_plural: Припуск до фактичної товщини для розрахунку **пильної товщини**.
       std_lengths: Стандартні довжини
       std_lengths_help: |
         Стандартна довжина, доступна для цього матеріалу.
@@ -1771,6 +1836,8 @@ tab:
       name: Ім’я
       instance_name: Екземпляр
       material: Матеріал
+      is_grain_group: Установити як **групу безперервності текстури**
+      is_grain_group_help: "Якщо ввімкнути цю опцію, цей екземпляр можна вважати **групою безперервності текстури** для деталей, які він містить, для яких активовано *безперервність текстури*."
       definition_name: Визначення
       description: Опис
       url: URL
@@ -2268,18 +2335,21 @@ tool:
       locked_part: Ця деталь заблокована
       not_sibling_part: "Ця деталь не входить до тієї ж групи чи компонента, що й решта виділеного"
       selection_contains_locked_entities: Вибір містить заблоковані функції
+      wrong_material_type: "Вказана деталь має бути типу '{{ type }}'"
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_select:
     state_0_status: "Натисніть на деталь, щоб вибрати її"
     state_0_to_6_status: Обрати батьківський елемент
+    state_0_to_7_status: Множинний вибір
     state_4_status: "Перетягніть ідентичну частину з тим самим батьківським елементом, щоб додати її до виділення, і відпустіть, щоб продовжити"
     state_5_status: "Перетягніть, щоб додати до вибору, і відпустіть, щоб продовжити"
     state_6_status: Обрати пункт зі списку
     state_7_status: "Клацніть на елемент, щоб додати його або видалити з вибору"
     warning:
       no_active_part: Спочатку потрібно навести курсор на деталь
+      no_parent_group: Наведена деталь не має батьківської групи чи компонента
   smart_draw:
     title: Створити
     action_0: Прямокутник
@@ -2377,9 +2447,18 @@ tool:
     action_1_status: Створіть серію деталей із замкнутого тіла
     action_1_state_0_status: "Клацніть замкнуте тіло, щоб визначити еталонну геометрію"
     action_1_state_1_status: Виберіть грані для екструдування
-    # CSG = Constructive Solid Geometry
-    action_2: CSG
-    action_2_status: До нескінченності
+    action_2: Об'єднати
+    action_2_status: Об'єднати кілька деталей в одну
+    action_2_state_0_status: Виберіть деталь А
+    action_2_state_1_status: Виберіть деталь B
+    action_3: Вирізати
+    action_3_status: Розріжте одну деталь іншою
+    action_3_state_0_status: Виберіть деталь А
+    action_3_state_1_status: Виберіть деталь B
+    action_4: Перетин
+    action_4_status: "Створіть деталь, що відповідає перетину кількох деталей"
+    action_4_state_0_status: Виберіть деталь А
+    action_4_state_1_status: Виберіть деталь B
     action_option_group_thickness: Товщина
     action_option_group_stretch_measure_type: Вимірювання
     action_option_group_axes: Осі
@@ -2388,7 +2467,7 @@ tool:
     action_option_group_csg_operation: Операція
     action_option_group_options: Опції
     action_option_thickness_thickness: Товщина
-    action_option_thickness_thickness_status: Визначте товщину панелей
+    action_option_thickness_thickness_status: Визначає товщину панелей
     action_option_stretch_measure_type_outside_status: Зовнішнє вимірювання
     action_option_stretch_measure_type_offset_status: Виміряти різницю
     action_option_axes_active_status: Переміщення вздовж активних осей
@@ -2398,8 +2477,12 @@ tool:
     action_option_paneling_joint_type_miter_status: Косий зріз
     action_option_paneling_direction_inward_status: В середині
     action_option_paneling_direction_outward_status: Ззовні
-    action_option_options_centred_status: Центрувати на розтягнутих елементах
-    action_option_options_make_unique_status: Зробити розтягнуті елементи унікальними
+    action_option_options_centered_status: Центрувати на розтягнутих елементах
+    action_option_options_make_unique_status: Зробіть оновлені елементи унікальними
+    action_option_options_keep_a: Консерватор А
+    action_option_options_keep_a_status: Збережіть екземпляри A після операції та помістіть результат у нову деталь
+    action_option_options_keep_b: Консерватор B
+    action_option_options_keep_b_status: Зберігає екземпляри B після операції
     error:
       curve_intersect: Одна з січних площин перетинає нерозтяжну криву
   smart_paint:
@@ -2451,7 +2534,6 @@ tool:
       not_part: "Об'єкт, на який наведено, не є деталлю (компонентом)"
       not_edge: Вказана грань не є торцем панелі
       not_face: Вказана грань не є площиною панелі
-      wrong_material_type: "Вказана деталь має бути типу '{{ type }}'"
   smart_axes:
     title: Орієнтація
     action_0: Скасувати
@@ -2464,6 +2546,10 @@ tool:
     action_3_status: "Наведіть на грань деталі та натисніть на ребро, щоб адаптувати осі"
     action_4: Змінити початок координат
     action_4_status: "Наведіть вказівник на грань деталі та клацніть на точці, щоб розташувати її початок координат"
+    action_5: Налаштувати безперервність текстури
+    action_5_status: "Натисніть на деталь, щоб увімкнути або вимкнути виявлення безперервності текстури"
+    action_5_to_state_10_status: Виберіть групу безперервності текстури
+    action_5_state_10_status: "Клацніть елемент у списку, щоб змінити його статус безперервності текстури"
     action_option_group_direction: Напрямок
     action_option_direction_0: Д
     action_option_direction_1: Ш
@@ -2476,10 +2562,74 @@ tool:
     error:
       not_part: "Об'єкт, на який наведено, не є деталлю (компонентом)"
       not_orientable: Тип цієї деталі не дозволяє її зорієнтувати
+      not_grained: Цільова деталь не має текстури
+      not_single_thickness_layer: Цільова деталь повинна складатися з одного шару
+  # TODO: It's currently just for dev purposes
   smart_join:
     title: Збірка
-    action_0: Дотик-Дотик # TODO: It's currently just for dev purposes
-    action_0_status: TBD # TODO
+    action_0: Додати кріплення
+    action_0_status: "Додайте кріплення, щоб з’єднати деталі"
+    action_0_state_0_status: "Клацніть опорну грань деталі, щоб додати кріплення з сусідніми деталями в контакті"
+    action_1: Видалити кріплення
+    action_1_status: Видалити кріплення деталей
+    action_1_state_0_status: "Клацніть опорну грань деталі, щоб видалити кріплення, які вона вона має спільні з сусідніми деталями"
+    action_1_only_one_status: Обмеження одним кріпленням
+    action_2: Додати кріплення
+    action_2_status: Додайте кріплення для з'єднання деталей
+    action_2_state_0_status: "Натисніть на еталонну грань деталі A, щоб додати кріплення до сусідньої деталі"
+    action_2_state_1_status: "Натисніть на еталонну сторону деталі B, щоб додати кріплення до деталі A"
+    action_3: Видалити кріплення
+    action_3_status: Видалити кріплення деталей
+    action_3_state_0_status: "Клацніть опорну грань деталі, щоб видалити кріплення, які вона вона має спільні з сусідніми деталями"
+    action_3_state_1_status: "Клацніть на контрольній грані деталі B, щоб видалити кріплення, спільні з деталлю A"
+    action_3_only_one_status: Обмежтеся одним кріпленням
+    action_option_group_height: Висота
+    action_option_group_offsets: Зміщення
+    action_option_group_spacings: Міжцентрові відстані
+    action_option_group_options: Опції
+    action_option_height: Висота
+    action_option_offsets_start_offset: Початок
+    action_option_offsets_end_offset: Кінець
+    action_option_spacings_min_spacing: Min
+    action_option_spacings_max_spacing: Max
+    action_option_options_opposite_status: Захопити протилежну сторону
+    action_option_options_make_unique_status: Зробіть зібрані елементи унікальними
+    action_option_hardware_connector_a: Кріплення А
+    action_option_hardware_connector_b: Кріплення B
+    action_option_hardware_fitting_a: З'єднання А
+    action_option_hardware_fitting_b: З'єднання B
+    action_option_machining_a: Обробка А
+    action_option_machining_b: Обробка B
+    action_option_hardware_connector_material_name: Матеріал кріплення
+    action_option_hardware_fitting_material_name: Матеріал з'єднання
+    action_option_machining_material_name: Матеріал обробки
+    action_option_hardware_connector_layer_name: Тег кріплення
+    action_option_hardware_fitting_layer_name: Тег з'єднання
+    action_option_machining_layer_name: Тег обробки
+    measures: Розміри
+    geometries: Креслення
+    error:
+      invalid_height: "Висота {{ value }} недійсна"
+      invalid_start_offset: "Початкове зміщення {{ value }} недійсне"
+      invalid_end_offset: "Кінцеве зміщення {{ value }} недійсне"
+      invalid_min_spacing: "Мінімальна міжцентрова відстань {{ value }} недійсна"
+      invalid_max_spacing: "Максимальна міжцентрова відстань {{ value }} недійсна"
+      not_assemblable: Цей тип деталі неможливо з'єднати
+      no_valid_join: Відсутність контактної поверхні не дозволяє задовольнити обмеження щодо з'єднання
+      occupied_anchors: "{{ count }} конектор у позиції конфліктує з існуючими кріпленнями"
+      occupied_anchors_plural: "{{ count }} кріплень у позиції конфліктують із наявними кріпленнями"
+      failed_to_load_skp_file: |
+        Не вдалося завантажити файл SKP: {{ file }}
+      unsupported_skp_version: |
+        Файл SKP створено за допомогою новішої версії SketchUp: {{ version }}
+    warning:
+      no_connector_to_remove: Немає кріплень для видалення
+      x_connectors_to_remove: "{{ count }} кріплень для видалення"
+      x_connectors_to_remove_plural: "{{ count }} кріплень для видалення"
+      no_fitting_to_remove: Немає з’єднань для видалення
+      x_fittings_to_remove: "{{ count }} з'єднань для видалення"
+      x_fittings_to_remove_plural: "{{ count }} з'єднань для видалення"
+      different_file_name: "Ім’я файлу SKP ({{ file_name }}) відрізняється від назви визначення, яке він містить ({{ definition_name }})"
   smart_export:
     title: Експорт
     action_0: Експортувати деталь 3D
