@@ -211,16 +211,21 @@ core:
       *A criação de uma predefinição personalizada permite que você mantenha as configurações atuais do formulário de modo global para que você possa reutilizá-las em todos os seus modelos posteriormente.*
 
       Digite o nome da predefinição
+    rename_prompt_title: Renomeação
+    rename_prompt: "Insira o novo nome da predefinição **\"{{ name }}\"**"
     delete_confirm_title: Remoção
     delete_confirm: "Tem certeza que você quer apagar as definições **\"{{ name }}\"**?"
     override_confirm_title: Atualizar
     override_confirm: "Confirma a atualização das definições **\"{{ name }}\"** com os parâmetros do formulário?"
+    new_error: "Impossível, uma predefinição **\"{{ name }}\"** já existe"
     new_success: "Predefinições **\"{{ name }}\"** criadas"
     override_success: "Predefinições **\"{{ name }}\"** atualizadas"
     restore_success: "O formulário foi preenchido com as definições **\"{{ name }}\"**"
+    rename_success: "Predefinição **\"{{ name }}\"** renomeada para **\"{{ new_name }}\"**"
     delete_success: "Predefinições **\"{{ name }}\"** apagadas"
     tooltip:
       save_to: "Atualizar as definições '{{ name }}'"
+      rename: "Renomear a predefinição '{{ name }}'"
       delete: "Apagar as definições '{{ name }}'"
     dictionary:
       component_textinput_color: Paleta de cores
@@ -244,11 +249,14 @@ core:
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       outliner_options: $t(tab.outliner.label) / $t(default.options)
+      outliner_deep_rename_parts_options: $t(tab.outliner.label) / $t(tab.outliner.deep_rename_parts.title)
       settings_model: $t(tab.settings.label) / Modelo
       tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
       tool_smart_handle_options: $t(core.toolbar.command.smart_handle)
+      tool_smart_reshape_options: $t(core.toolbar.command.smart_reshape)
       tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
       tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
+      tool_smart_join_options: $t(core.toolbar.command.smart_join)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
   progress:
     please_wait: Calculando... Por favor aguarde
@@ -261,6 +269,8 @@ core:
     textinput_code:
       snippets: Exemplos de fórmulas
       help: Digite **@** para obter uma lista de variáveis.
+    textinput_file:
+      browse: Procurar
     textinput_size:
       quantity: Qtd.
     three_viewer:
@@ -282,6 +292,14 @@ core:
       failed_to_load: |
         Não foi possível abrir a documentação.
         Certifique-se de que está conectado à internet.
+  solid:
+    error:
+      empty: O sólido não contém nenhuma geometria
+      non_manifold_edges: "O sólido contém {{ count }} aresta não-manifold"
+      non_manifold_edges_plural: "O sólido contém {{ count }} arestas não-manifold"
+      open_edges: "O sólido contém {{ count }} arestas abertas"
+      open_edges_plural: "O sólido contém {{ count }} arestas abertas"
+      locked_instances: "A operação não pode modificar uma instância bloqueada: {{ list }}"
 tab:
   cutlist:
     label: Peças
@@ -358,6 +376,7 @@ tab:
       flipped: Esta peça é espelhada em comparação com sua definição de componente
       symmetrical: A detecção de peças espelhadas está desativada nesta parte
       ignore_grain_direction: A direção dos veios é ignorada nesta peça
+      follow_grain_direction: A detecção de Continuidade do veio está ativada nesta peça
       auto_oriented: Esta peça foi reorientada automaticamente
       oko_label_filter: "Incluir/Excluir este selo"
       add_label_filter: "Filtrando em '{{ label }}'"
@@ -481,11 +500,11 @@ tab:
         *OpenCutList contará então 2 peças de 19mm de espessura ao invés de 1 peça de 38mm de espessura*
       cut_options: $t(tab.materials.edit_material.cut_options)
       length_increase: $t(tab.materials.edit_material.length_increase)
-      length_increase_help: Sobremedida aplicada ao comprimento útil da peça para definir seu **comprimento de corte**.  # TODO: singular version of tab.materials.edit_material.length_increase
+      length_increase_help: $t(tab.materials.edit_material.length_increase_help)
       width_increase: $t(tab.materials.edit_material.width_increase)
-      width_increase_help: Sobremedida aplicada à largura útil da peça para definir sua **largura de corte**. # TODO: singular version of tab.materials.edit_material.width_increase
+      width_increase_help: $t(tab.materials.edit_material.width_increase_help)
       thickness_increase: $t(tab.materials.edit_material.thickness_increase)
-      thickness_increase_help: Sobremedida aplicada à espessura útil da peça para definir sua **espessura de corte**. # TODO: singular version of tab.materials.edit_material.thickness_increase
+      thickness_increase_help: $t(tab.materials.edit_material.thickness_increase_help)
       description: Descrição
       description_help: |
         A *Descrição* permite que você forneça informações personalizadas sobre cada definição de peça.
@@ -510,9 +529,21 @@ tab:
       symmetrical: Desativar a detecção de peças espelhadas nesta parte
       symmetrical_help: |
         Se esta caixa estiver marcada, a detecção da *peça espelhada* não terá efeito nesta parte.
-      ignore_grain_direction: Ignorar a direção dos veios
+      ignore_grain_direction: Direção dos veios
       ignore_grain_direction_help: |
-        Se esta caixa estiver marcada, a direção dos veios é ignorada.
+        Esta opção permite ignorar, para esta peça, o sentido do veio definido no material.
+      ignore_grain_direction_0: Os veios seguem o comprimento
+      ignore_grain_direction_1: Ignorar a direção dos veios
+      follow_grain_direction: Continuidade do veio
+      follow_grain_direction_help: |
+        Ao ativar esta opção, as instâncias desta peça poderão ser consideradas como peças diagramadas em **Continuidade do veio** com suas vizinhas que compartilham:
+        - o mesmo *Grupo de continuidade do veio*
+        - o mesmo Plano
+        - a mesma Orientação
+        - o mesmo Material com veio
+        - a mesma Espessura
+      follow_grain_direction_0: $t(default.no)
+      follow_grain_direction_1: Detecção de Continuidade do veio ativada
       axes: Eixos
       axes_help: Organize as dimensões para que correspondam às cores dos eixos da sua peça.
       axes_tip: |
@@ -1069,8 +1100,19 @@ tab:
       option_rectangleguillotine_first_stage_orientation_horizontal: Horizontal
       option_rectangleguillotine_first_stage_orientation_vertical: Vertical
       option_rectangleguillotine_first_stage_orientation_any: Qualquer
+      option_rectangleguillotine_sort_subplates_criteria: Ordenação dos níveis
+      option_rectangleguillotine_sort_subplates_criteria_help: |
+        Define os critérios de ordenação das peças em cada nível.
+      option_rectangleguillotine_sort_subplates_criteria_l1l2: Por tamanho decrescente
+      option_rectangleguillotine_sort_subplates_criteria_dl2l1: Por densidade decrescente
       option_rectangleguillotine_keep: Tamanho mínimo das sobras
       option_rectangleguillotine_keep_help: Sobras com duas dimensões maiores que o tamanho mínimo serão marcados como **para guardar**.
+      option_rectangle_leftover_mode: Direção de distribuição
+      option_rectangle_leftover_mode_help: |
+        Define a direção de distribuição das peças na última chapa não preenchida.
+      option_rectangle_leftover_mode_area: Auto
+      option_rectangle_leftover_mode_x: Na largura da chapa
+      option_rectangle_leftover_mode_y: No comprimento da chapa
       option_irregular_allowed_rotations: Rotações permitidas
       option_irregular_allowed_rotations_help: |
         Define o passo dos ângulos de rotação possíveis da peça para o seu posicionamento.
@@ -1085,6 +1127,12 @@ tab:
         Define se o espelhamento da peça é permitido para o posicionamento.
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
+      option_irregular_leftover_mode: Direção de distribuição
+      option_irregular_leftover_mode_help: |
+        Define a direção de distribuição das peças na última chapa não preenchida.
+      option_irregular_leftover_mode_bottom_left: Auto
+      option_irregular_leftover_mode_left: Na largura da chapa
+      option_irregular_leftover_mode_bottom: No comprimento da chapa
       option_spacing: Espaçamento
       option_spacing_help: |
         Espaçamento mínimo entre cada peça.
@@ -1144,6 +1192,7 @@ tab:
       option_hide_edges_preview_1: Oculto no plano de corte
       option_hide_edges_preview_help: Permite exibir ou ocultar a visualização das fitas de borda de cada peça no plano de corte.
       option_zoom_threshold: Limite de zoom
+      # TODO find a better explanation
       option_zoom_threshold_help: |
         Permite definir a largura do plano abaixo da qual os planos são ampliados automaticamente.
 
@@ -1151,6 +1200,11 @@ tab:
       option_time_limit: Limite de tempo
       option_time_limit_help: |
         Define o tempo limite para o cálculo
+      grain_groups:
+        title: "{{ count }} grupo de continuidade do veio"
+        title_plural: "{{ count }} grupos de continuidade do veio"
+        name: Nome
+        item_count: Total de peças
       tooltip:
         scroll_to_block_1d: Ir até a primeira barra ou fita de borda
         scroll_to_block_2d: Rolar até a primeira chapa ou laminado
@@ -1249,7 +1303,8 @@ tab:
         no_solution: Nenhuma solução foi encontrada para colocar **todas as peças** no material disponível.
         unplaced_parts: "**1 peça** não pôde ser posicionada."
         unplaced_parts_plural: "**{{ count }} peças** não puderam ser posicionadas."
-        unusable_part: Peça muito grande
+        unusable_part_1: Peça muito grande
+        unusable_part_2: Grupo de continuidade do veio muito grande
       warning:
         is_part_selection: Este plano de corte é limitado a **peças selecionadas**.
         cutting_dimensions: Este layout mostra as peças em suas dimensões de **comprimento bruto**.
@@ -1462,6 +1517,13 @@ tab:
 
         - a estrutura **Layers** desenha todas as linhas planas, distinguindo os diferentes tipos de linhas apenas por camadas. *Essa estrutura oferece melhor compatibilidade com softwares de terceiros.*
         - A estrutura **Camadas + Blocos** cria um bloco por peça e insere esses blocos quantas vezes as peças forem repetidas. *Essa estrutura oferece mais flexibilidade para edição do arquivo.*
+      option_dxf_depth_to_z: Profundidades em Z
+      option_dxf_depth_to_z_0: $t(default.no)
+      option_dxf_depth_to_z_1: Distribuir as profundidades das camadas em Z
+      option_dxf_depth_to_z_help: |
+        Permite ativar a distribuição das camadas no eixo Z de acordo com sua profundidade.
+
+        Desative esta opção para exportar um DXF apenas em 2D.
       option_unit: Unidades
       option_unit_help: |
         Permite escolher a unidade usada no arquivo exportado.
@@ -1634,11 +1696,14 @@ tab:
 
         *Se nenhuma unidade for especificada, será aplicada a unidade do modelo.*
       length_increase: Superdimensionamento do comprimento
-      length_increase_help: Superdimensionamento aplicado ao comprimento para definir seu **comprimento de peça**.
+      length_increase_help: Sobremedida aplicada ao comprimento útil da peça para definir seu **comprimento de corte**.
+      length_increase_help_plural: Sobremedida aplicada ao comprimento útil das peças para definir seu **comprimento de corte**.
       width_increase: Superdimensionamento da largura
-      width_increase_help: Superdimensionamento aplicado à largura para definir sua **largura de peça**.
+      width_increase_help: Sobremedida aplicada à largura útil da peça para definir sua **largura de corte**.
+      width_increase_help_plural: Sobremedida aplicada à largura útil das peças para definir sua **largura de corte**.
       thickness_increase: Superdimensionamento da espessura
-      thickness_increase_help: Superdimensionamento aplicado à espessura para definir sua **espessura de peça**.
+      thickness_increase_help: Sobremedida aplicada à espessura útil da peça para definir sua **espessura de corte**.
+      thickness_increase_help_plural: Sobremedida aplicada à espessura útil das peças para definir sua **espessura de corte**.
       std_lengths: Comprimento Padrão
       std_lengths_help: |
         Comprimentos padrão disponíveis para este material.
@@ -1771,6 +1836,8 @@ tab:
       name: Nome
       instance_name: Instância
       material: Material
+      is_grain_group: Definir como **Grupo de continuidade do veio**
+      is_grain_group_help: "Ao ativar esta opção, esta instância poderá ser considerada como um **Grupo de continuidade do veio** para as peças que ela contém que tenham a *Continuidade do veio* ativa."
       definition_name: Definição
       description: Descrição
       url: URL
@@ -2268,18 +2335,21 @@ tool:
       locked_part: Esta peça está bloqueada
       not_sibling_part: Esta peça não está no mesmo grupo ou componente que o restante da seleção
       selection_contains_locked_entities: A seleção contém entidades bloqueadas
+      wrong_material_type: "A peça de destino deve ser do tipo '{{ type }}'"
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_select:
     state_0_status: Clique em uma peça para selecioná-la
     state_0_to_6_status: Selecionar um elemento pai
+    state_0_to_7_status: Seleção múltipla
     state_4_status: Arraste uma peça idêntica com o mesmo pai para adicioná-la à seleção e solte para continuar
     state_5_status: Deslize para adicionar à seleção e solte para continuar
     state_6_status: Selecione um item da lista
     state_7_status: Clique em uma peça para adicioná-la ou removê-la da seleção
     warning:
       no_active_part: "Primeiro, você deve passar o mouse sobre uma peça"
+      no_parent_group: A peça sob o cursor não possui um grupo ou componente pai
   smart_draw:
     title: Desenhar
     action_0: Desenhar um Retângulo
@@ -2377,9 +2447,18 @@ tool:
     action_1_status: Criar uma série de peças a partir de um sólido fechado
     action_1_state_0_status: Clique em um sólido fechado para definir a geometria de referência
     action_1_state_1_status: Selecione as faces para extrudar
-    # CSG = Constructive Solid Geometry
-    action_2: CSG
-    action_2_status: Ao infinito e além
+    action_2: Soldar
+    action_2_status: Soldar várias peças em uma só
+    action_2_state_0_status: Selecione a peça A
+    action_2_state_1_status: Selecione a peça B
+    action_3: Recortar
+    action_3_status: Recortar uma peça a partir de outra
+    action_3_state_0_status: Selecione a peça A
+    action_3_state_1_status: Selecione a peça B
+    action_4: Fazer interseção
+    action_4_status: Criar uma peça correspondente à interseção de várias peças
+    action_4_state_0_status: Selecione a peça A
+    action_4_state_1_status: Selecione a peça B
     action_option_group_thickness: Espessura
     action_option_group_stretch_measure_type: Medida
     action_option_group_axes: Eixos
@@ -2398,8 +2477,12 @@ tool:
     action_option_paneling_joint_type_miter_status: Corte em meia-esquadria
     action_option_paneling_direction_inward_status: Interna
     action_option_paneling_direction_outward_status: Externa
-    action_option_options_centred_status: Centralizar em elementos esticados
-    action_option_options_make_unique_status: Tornar elementos esticados únicos
+    action_option_options_centered_status: Centralizar em elementos esticados
+    action_option_options_make_unique_status: Tornar únicos os elementos remodelados
+    action_option_options_keep_a: Manter A
+    action_option_options_keep_a_status: Manter as instâncias A após a operação e colocar o resultado em uma nova peça
+    action_option_options_keep_b: Manter B
+    action_option_options_keep_b_status: Manter as instâncias B após a operação
     error:
       curve_intersect: Um dos planos de corte cruza uma curva não extensível
   smart_paint:
@@ -2451,7 +2534,6 @@ tool:
       not_part: O objeto de destino não é uma peça (componente)
       not_edge: A face selecionada não é a borda da peça
       not_face: A face selecionada não é a face da da peça
-      wrong_material_type: "A peça de destino deve ser do tipo '{{ type }}'"
   smart_axes:
     title: Orientação
     action_0: Inverter
@@ -2464,6 +2546,10 @@ tool:
     action_3_status: Selecione uma face de uma peça e clique numa aresta para adaptar os seus eixos
     action_4: Mover a origem
     action_4_status: Selecione uma face de uma peça e clique num ponto para aí colocar a sua origem
+    action_5: Configurar a Continuidade do veio
+    action_5_status: Clique em uma peça para ativar ou desativar a detecção de Continuidade do veio
+    action_5_to_state_10_status: Escolher o Grupo de continuidade do veio
+    action_5_state_10_status: Clique em um elemento da lista para modificar seu status de Grupo de continuidade do veio
     action_option_group_direction: Direção
     action_option_direction_0: C
     action_option_direction_1: L
@@ -2476,10 +2562,74 @@ tool:
     error:
       not_part: O objeto de destino não é uma peça (componente)
       not_orientable: O tipo desta peça não permite que a orientação seja modificada
+      not_grained: A peça de destino não possui veio
+      not_single_thickness_layer: A peça de destino deve ser composta por uma única camada
+  # TODO: It's currently just for dev purposes
   smart_join:
     title: Montar
-    action_0: Toque-Toque # TODO: It's currently just for dev purposes
-    action_0_status: TBD # TODO
+    action_0: Adicionar conectores
+    action_0_status: Adicionar conectores para montar as peças
+    action_0_state_0_status: Clique na face de referência de uma peça para adicionar conectores com as peças vizinhas em contato
+    action_1: Apagar conectores
+    action_1_status: Apagar conectores de montagem das peças
+    action_1_state_0_status: Clique na face de referência de uma peça para apagar os conectores que ela compartilha com as peças vizinhas
+    action_1_only_one_status: Limitar a um único conector
+    action_2: Adicionar conexões
+    action_2_status: Adicionar conexões para montar as peças
+    action_2_state_0_status: Clique na face de referência de uma peça A para adicionar conexões com uma peça vizinha
+    action_2_state_1_status: Clique na face de referência de uma peça B para adicionar conexões com a peça A
+    action_3: Apagar conexões
+    action_3_status: Apagar conexões de montagem das peças
+    action_3_state_0_status: Clique na face de referência de uma peça A para apagar os conexões que ela compartilha com uma peça vizinha
+    action_3_state_1_status: Clique na face de referência de uma peça B para apagar as conexões que ela compartilha com a peça A
+    action_3_only_one_status: Limitar a uma única conexão
+    action_option_group_height: Altura
+    action_option_group_offsets: Desvios
+    action_option_group_spacings: Distâncias entre eixos
+    action_option_group_options: Opções
+    action_option_height: Altura
+    action_option_offsets_start_offset: Início
+    action_option_offsets_end_offset: Fim
+    action_option_spacings_min_spacing: Mín
+    action_option_spacings_max_spacing: Máx
+    action_option_options_opposite_status: Capturar a face oposta
+    action_option_options_make_unique_status: Tornar únicas as peças montadas
+    action_option_hardware_connector_a: Conector A
+    action_option_hardware_connector_b: Conector B
+    action_option_hardware_fitting_a: Conexão A
+    action_option_hardware_fitting_b: Conexão B
+    action_option_machining_a: Usinagem A
+    action_option_machining_b: Usinagem B
+    action_option_hardware_connector_material_name: Material dos Conectores
+    action_option_hardware_fitting_material_name: Material das Conexões
+    action_option_machining_material_name: Material das Usinagens
+    action_option_hardware_connector_layer_name: Etiqueta dos Conectores
+    action_option_hardware_fitting_layer_name: Etiqueta das Conexões
+    action_option_machining_layer_name: Etiqueta das Usinagens
+    measures: Medidas
+    geometries: Geometrias
+    error:
+      invalid_height: "A altura {{ value }} é inválida"
+      invalid_start_offset: "O desvio de início {{ value }} é inválido"
+      invalid_end_offset: "O desvio de fim {{ value }} é inválido"
+      invalid_min_spacing: "A distância entre eixos mín {{ value }} é inválida"
+      invalid_max_spacing: "A distância entre eixos máx {{ value }} é inválida"
+      not_assemblable: Este tipo de peça não pode ser montado
+      no_valid_join: Nenhuma superfície de contato permite satisfazer as restrições de montagem
+      occupied_anchors: "{{ count }} conector em conflito de posição com conectores existentes"
+      occupied_anchors_plural: "{{ count }} conectores em conflito de posição com conectores existentes"
+      failed_to_load_skp_file: |
+        Não foi possível carregar o arquivo SKP : {{ file }}
+      unsupported_skp_version: |
+        O arquivo SKP foi criado com uma versão mais recente do SketchUp : {{ version }}
+    warning:
+      no_connector_to_remove: Nenhum conector para apagar
+      x_connectors_to_remove: "{{ count }} conector para apagar"
+      x_connectors_to_remove_plural: "{{ count }} conectores para apagar"
+      no_fitting_to_remove: Nenhuma conexão para apagar
+      x_fittings_to_remove: "{{ count }} conexão para apagar"
+      x_fittings_to_remove_plural: "{{ count }} conexões para apagar"
+      different_file_name: "O nome do arquivo SKP ({{ file_name }}) é diferente do nome da definição que ele contém ({{ definition_name }})"
   smart_export:
     title: Exportar
     action_0: Exportar uma Peça 3D
