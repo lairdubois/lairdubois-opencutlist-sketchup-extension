@@ -46,7 +46,7 @@ module Ladb::OpenCutList::Geometrix
         my = points.inject(0.0) { |sum, point| sum + point.y } / points.length
         centered = points.map { |point| [ point.x - mx, point.y - my ] }
         scale = centered.inject(0.0) { |sum, (nx, ny)| sum + Math.sqrt(nx**2 + ny**2) } / centered.length
-        return nil if scale == 0
+        return nil if scale < 1e-9
 
         m_a_normalized = centered.map { |(nx, ny)| nx /= scale ; ny /= scale ; [ nx**2, nx * ny, ny**2, nx, ny ] }
         return nil if Matrix[*m_a_normalized].det.abs < 1e-9
