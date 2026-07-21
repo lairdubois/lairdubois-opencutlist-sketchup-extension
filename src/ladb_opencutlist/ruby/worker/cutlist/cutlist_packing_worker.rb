@@ -717,6 +717,12 @@ module Ladb::OpenCutList
                              end,
           verbosity_level: @verbosity_level,
           use_pre_process: @use_pre_process,
+          # use_tree_search: true,
+          # use_sequential_single_knapsack: true,
+          # use_sequential_value_correction: false,
+          # use_dichotomic_search: true,
+          # use_tree_search_maximal_spaces: false,
+          # use_benders_decomposition: false,
         }
         parameters.merge!({ time_limit: @time_limit }) if @time_limit > 0 # time_limit = 0 == not time limit
         instance_parameters = {}
