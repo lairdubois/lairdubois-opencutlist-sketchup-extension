@@ -8,6 +8,7 @@
 #include <cstdint>
 #include <string>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
 namespace Meshy {
@@ -94,6 +95,291 @@ namespace Meshy {
         }
 
         return errors;
+    }
+
+    // A pinch (non-manifold edge or vertex) joins two or more manifold sheets
+    // at a set of measure zero (shared vertices only, no shared volume) : e.g.
+    // a picture-frame part whose ring width shrinks to exactly zero at one
+    // corner (touching itself there) is, apart from that single defect, one
+    // ordinary connected shell all the way around — NOT two disjoint shells
+    // touching at a point. So the fix cannot be "find disjoint components and
+    // duplicate what they share" : the two sides of the pinch are typically
+    // still connected to each other through the rest of the mesh. What must
+    // be duplicated is narrower and purely local : at the pinched EDGE, the
+    // faces fanned around it split into two or more locally-manifold sheets ;
+    // at the pinched VERTEX (which usually also anchors faces that never
+    // touch the pinched edge itself, e.g. the top/bottom faces of the frame,
+    // triangulated straight across both sides of the corner), the full ring
+    // of incident triangles splits into two or more "umbrellas" separated by
+    // the pinched edges. Each sheet / umbrella gets its own copy of the
+    // vertices it touches there ; coordinates are never changed.
+    //
+    // Manifold accepts the result : Impl::IsManifold()
+    // (manifold/src/properties.cpp) is a purely local, per-halfedge check
+    // with no global connectivity requirement, so one MeshGL64 buffer whose
+    // seams have been unzipped this way is valid input whether or not the
+    // resulting shells end up disjoint or still joined elsewhere (a
+    // picture-frame part stays ONE connected genus-1 shell after the fix,
+    // exactly as it should).
+    //
+    // Algorithm :
+    //  1. For every non-manifold edge (an undirected edge used by other than
+    //     one forward + one backward triangle occurrence), sort its incident
+    //     triangles angularly around the edge axis (by the position of each
+    //     triangle's third vertex). Complementary winding direction alone
+    //     is NOT enough to pick the pairing : for the common case of two
+    //     wedges touching (4 occurrences), winding simply alternates all the
+    //     way around regardless of which sectors are actually solid, so
+    //     BOTH ways of pairing angularly-adjacent occurrences pass a
+    //     direction-only test. What actually resolves it is which angular
+    //     sector, between two consecutive rays, is solid material : each
+    //     occurrence's outward face normal (consistently outward once
+    //     ensure_outward_winding has run) is perpendicular to its own ray
+    //     and necessarily points into whichever of its two neighboring
+    //     sectors is EMPTY, so it tells us, per ray, which side is solid.
+    //     Two angularly-adjacent rays are paired when both agree the sector
+    //     between them is solid ; solid and empty sectors strictly
+    //     alternate around a clean touch, so every ray ends up claimed by
+    //     exactly one pair. A genuine self-intersection (surfaces crossing,
+    //     not touching) has no self-consistent solid/empty alternation this
+    //     way and is refused rather than guessed at (verified directly, not
+    //     just by direction parity, which the symmetric case above shows
+    //     is not sufficient by itself).
+    //  2. For every vertex touched by at least one non-manifold edge, replay
+    //     that pairing (plus ordinary 1-forward/1-backward clean edges) as
+    //     adjacency between its incident triangles, and take connected
+    //     components : each component is one umbrella. A vertex with a
+    //     single umbrella needs no duplicate ; others get one extra vertex
+    //     (identical coordinates) per additional umbrella.
+    //  3. Remap every triangle corner to the duplicate of its umbrella.
+    //
+    // Returns false — mesh left untouched — when the defect isn't a clean
+    // touch this way : a genuinely open/leaky mesh (an edge used only once),
+    // an edge whose valence is odd, or incident triangles whose directions
+    // can't be paired into complementary sheets (an actual self-intersection,
+    // not a touch). The result is always re-validated before being accepted,
+    // so a bug in this function can only ever fall back to the original
+    // error, never emit a silently-wrong repair.
+    inline bool split_non_manifold_shells(
+            manifold::MeshGL64& mesh
+    ) {
+        const std::size_t tri_count = mesh.triVerts.size() / 3;
+        if (tri_count == 0) return true;
+
+        const std::size_t stride = mesh.numProp;
+        auto vertex_pos = [&](uint64_t v) {
+            return &mesh.vertProperties[v * stride];
+        };
+
+        auto edge_key = [](uint64_t a, uint64_t b) { return (a << 32) | b; };
+        auto undirected_key = [&](uint64_t a, uint64_t b) { return a < b ? edge_key(a, b) : edge_key(b, a); };
+
+        struct Occurrence { std::size_t triangle; uint64_t a, b; };
+        std::unordered_map<uint64_t, std::vector<Occurrence>> occurrences_by_edge;
+        occurrences_by_edge.reserve(tri_count * 3);
+        for (std::size_t t = 0; t < tri_count; ++t) {
+            const uint64_t v[3] = { mesh.triVerts[t * 3], mesh.triVerts[t * 3 + 1], mesh.triVerts[t * 3 + 2] };
+            for (int e = 0; e < 3; ++e) {
+                const uint64_t a = v[e], b = v[(e + 1) % 3];
+                occurrences_by_edge[undirected_key(a, b)].push_back({ t, a, b });
+            }
+        }
+
+        // Resolve every edge into the pairs of triangles that are genuinely
+        // adjacent across it (fan-adjacency). Clean edges pair trivially;
+        // non-manifold edges are resolved by angular sort around the edge
+        // axis. keyed by the SAME undirected key as occurrences_by_edge.
+        std::unordered_map<uint64_t, std::vector<std::pair<std::size_t, std::size_t>>> fan_pairs;
+        fan_pairs.reserve(occurrences_by_edge.size());
+
+        for (auto& entry : occurrences_by_edge) {
+            const uint64_t key = entry.first;
+            std::vector<Occurrence>& occs = entry.second; // Named ref, not a structured binding : lambdas below capture it by reference, which structured bindings cannot do until C++20.
+            if (occs.size() == 2 && occs[0].a != occs[1].a) {
+                fan_pairs[key].emplace_back(occs[0].triangle, occs[1].triangle);
+                continue;
+            }
+            if (occs.size() < 2 || occs.size() % 2 != 0) return false; // Open edge, or odd valence : not a clean touch.
+
+            const uint64_t a = occs[0].a, b = occs[0].b;
+            const double* pa = vertex_pos(a);
+            const double* pb = vertex_pos(b);
+            double d[3] = { pb[0] - pa[0], pb[1] - pa[1], pb[2] - pa[2] };
+            const double dlen = std::sqrt(d[0]*d[0] + d[1]*d[1] + d[2]*d[2]);
+            if (dlen == 0.0) return false;
+            for (double& c : d) c /= dlen;
+
+            // Per-occurrence radial vector (edge axis to the triangle's third
+            // vertex, direction component removed) and its angle in an
+            // arbitrary basis (e1, e2) perpendicular to the edge.
+            const std::size_t n = occs.size();
+            std::vector<double> radial(n * 3);
+            for (std::size_t i = 0; i < n; ++i) {
+                const uint64_t tv[3] = {
+                    mesh.triVerts[occs[i].triangle * 3],
+                    mesh.triVerts[occs[i].triangle * 3 + 1],
+                    mesh.triVerts[occs[i].triangle * 3 + 2]
+                };
+                uint64_t w = tv[0];
+                for (uint64_t cand : tv) { if (cand != a && cand != b) { w = cand; break; } }
+                const double* pw = vertex_pos(w);
+                double rw[3] = { pw[0] - pa[0], pw[1] - pa[1], pw[2] - pa[2] };
+                const double proj = rw[0]*d[0] + rw[1]*d[1] + rw[2]*d[2];
+                for (int c = 0; c < 3; ++c) radial[i*3 + c] = rw[c] - proj * d[c];
+            }
+
+            double e1[3] = { radial[0], radial[1], radial[2] };
+            double e1len = std::sqrt(e1[0]*e1[0] + e1[1]*e1[1] + e1[2]*e1[2]);
+            if (e1len == 0.0) return false; // Third vertex sits on the edge line : degenerate triangle.
+            for (double& c : e1) c /= e1len;
+            double e2[3] = { d[1]*e1[2] - d[2]*e1[1], d[2]*e1[0] - d[0]*e1[2], d[0]*e1[1] - d[1]*e1[0] };
+
+            std::vector<std::size_t> order(n);
+            std::vector<double> angle(n);
+            for (std::size_t i = 0; i < n; ++i) {
+                const double x = radial[i*3]*e1[0] + radial[i*3+1]*e1[1] + radial[i*3+2]*e1[2];
+                const double y = radial[i*3]*e2[0] + radial[i*3+1]*e2[1] + radial[i*3+2]*e2[2];
+                if (x == 0.0 && y == 0.0) return false; // Third vertex on the edge line.
+                angle[i] = std::atan2(y, x);
+                order[i] = i;
+            }
+            std::sort(order.begin(), order.end(), [&](std::size_t x, std::size_t y) { return angle[x] < angle[y]; });
+
+            // Direction-complementarity alone is ambiguous : for the common
+            // case of exactly two wedges of material touching along the edge
+            // (4 occurrences), BOTH ways of pairing angularly-adjacent
+            // occurrences satisfy it — winding direction simply alternates
+            // around the whole fan regardless of which sectors are actually
+            // solid. What resolves it is which angular sector, between two
+            // consecutive rays, is material : each occurrence's outward
+            // face normal (consistently outward once ensure_outward_winding
+            // has run) is perpendicular to its own ray and necessarily
+            // points into whichever of its two neighboring sectors is EMPTY
+            // — so it tells us, per ray, which side is solid. A sector is
+            // solid when both rays bounding it agree on that, and the two
+            // rays bounding a solid sector are exactly the pair that closes
+            // it into a manifold edge there. Sectors alternate solid/empty
+            // strictly by construction, so every ray ends up claimed by
+            // exactly one solid sector. A genuine self-intersection (surfaces
+            // crossing, not touching) has no self-consistent solid/empty
+            // alternation this way, so it is refused rather than guessed at
+            // — this is also what makes the resolution unambiguous where
+            // pure direction-parity was not.
+            std::vector<bool> solid_follows(n); // Sector strictly after this ray (CCW) is solid.
+            for (std::size_t i = 0; i < n; ++i) {
+                const std::size_t t = occs[i].triangle;
+                const double* p0 = vertex_pos(mesh.triVerts[t * 3]);
+                const double* p1 = vertex_pos(mesh.triVerts[t * 3 + 1]);
+                const double* p2 = vertex_pos(mesh.triVerts[t * 3 + 2]);
+                const double nx = (p1[1]-p0[1])*(p2[2]-p0[2]) - (p1[2]-p0[2])*(p2[1]-p0[1]);
+                const double ny = (p1[2]-p0[2])*(p2[0]-p0[0]) - (p1[0]-p0[0])*(p2[2]-p0[2]);
+                const double nz = (p1[0]-p0[0])*(p2[1]-p0[1]) - (p1[1]-p0[1])*(p2[0]-p0[0]);
+                const double nx1 = nx*e1[0] + ny*e1[1] + nz*e1[2];
+                const double ny1 = nx*e2[0] + ny*e2[1] + nz*e2[2];
+
+                const double rx = radial[i*3]*e1[0] + radial[i*3+1]*e1[1] + radial[i*3+2]*e1[2];
+                const double ry = radial[i*3]*e2[0] + radial[i*3+1]*e2[1] + radial[i*3+2]*e2[2];
+                const double rlen = std::sqrt(rx*rx + ry*ry);
+                const double cross_z = (rx/rlen) * ny1 - (ry/rlen) * nx1;
+                if (cross_z == 0.0) return false; // Normal parallel to the ray : degenerate.
+                solid_follows[i] = cross_z < 0.0;
+            }
+
+            std::vector<std::pair<std::size_t, std::size_t>> candidate;
+            for (std::size_t i = 0; i < n; ++i) {
+                const std::size_t cur = order[i];
+                const std::size_t nxt = order[(i + 1) % n];
+                const bool sector_solid_by_cur = solid_follows[cur];
+                const bool sector_solid_by_nxt = !solid_follows[nxt]; // nxt's "preceding" sector is this one.
+                if (sector_solid_by_cur != sector_solid_by_nxt) return false; // Inconsistent : not a clean touch.
+                if (!sector_solid_by_cur) continue; // Empty sector : the two rays are not adjacent across material.
+                if (occs[cur].a == occs[nxt].a) return false; // Defensive : must also be direction-complementary.
+                candidate.emplace_back(occs[cur].triangle, occs[nxt].triangle);
+            }
+            if (candidate.size() != n / 2) return false; // Every ray must be claimed by exactly one solid sector.
+
+            fan_pairs[key] = std::move(candidate);
+        }
+
+        // Vertex -> incident undirected edge keys, so each vertex's umbrella
+        // can be computed from the fan_pairs of just its own edges.
+        std::unordered_map<uint64_t, std::vector<uint64_t>> vertex_edges;
+        for (auto& [key, occs] : occurrences_by_edge) {
+            vertex_edges[occs[0].a].push_back(key);
+            vertex_edges[occs[0].b].push_back(key);
+        }
+
+        const std::size_t original_vertex_count = mesh.vertProperties.size() / stride;
+        std::vector<std::unordered_map<std::size_t, uint64_t>> remap_by_vertex(original_vertex_count);
+        // Only vertices touched by a resolved non-manifold edge can possibly need
+        // more than one umbrella; skip the rest.
+        std::vector<bool> needs_check(original_vertex_count, false);
+        for (auto& [key, occs] : occurrences_by_edge) {
+            if (occs.size() == 2 && occs[0].a != occs[1].a) continue;
+            needs_check[occs[0].a] = true;
+            needs_check[occs[0].b] = true;
+        }
+
+        for (uint64_t v = 0; v < original_vertex_count; ++v) {
+            if (!needs_check[v]) continue;
+            const auto vit = vertex_edges.find(v);
+            if (vit == vertex_edges.end()) continue;
+
+            // Local union-find over v's incident triangles.
+            std::unordered_map<std::size_t, std::size_t> local_index;
+            std::vector<std::size_t> triangles;
+            for (uint64_t key : vit->second) {
+                for (auto& [t1, t2] : fan_pairs[key]) {
+                    for (std::size_t t : { t1, t2 }) {
+                        if (local_index.try_emplace(t, triangles.size()).second) triangles.push_back(t);
+                    }
+                }
+            }
+            std::vector<std::size_t> parent(triangles.size());
+            for (std::size_t i = 0; i < parent.size(); ++i) parent[i] = i;
+            auto find = [&](std::size_t x) {
+                while (parent[x] != x) { parent[x] = parent[parent[x]]; x = parent[x]; }
+                return x;
+            };
+            for (uint64_t key : vit->second) {
+                for (auto& [t1, t2] : fan_pairs[key]) {
+                    const std::size_t x = find(local_index[t1]);
+                    const std::size_t y = find(local_index[t2]);
+                    if (x != y) parent[x] = y;
+                }
+            }
+
+            std::unordered_map<std::size_t, uint64_t> umbrella_vertex; // root -> assigned vertex index
+            auto& remap = remap_by_vertex[v];
+            for (std::size_t i = 0; i < triangles.size(); ++i) {
+                const std::size_t root = find(i);
+                const auto it = umbrella_vertex.find(root);
+                uint64_t assigned;
+                if (it == umbrella_vertex.end()) {
+                    assigned = umbrella_vertex.empty() ? v : mesh.vertProperties.size() / stride;
+                    if (assigned != v) {
+                        for (std::size_t p = 0; p < stride; ++p) {
+                            mesh.vertProperties.push_back(mesh.vertProperties[v * stride + p]);
+                        }
+                    }
+                    umbrella_vertex[root] = assigned;
+                } else {
+                    assigned = it->second;
+                }
+                remap[triangles[i]] = assigned;
+            }
+        }
+
+        for (std::size_t t = 0; t < tri_count; ++t) {
+            for (int k = 0; k < 3; ++k) {
+                const std::size_t v = mesh.triVerts[t * 3 + k];
+                if (v >= remap_by_vertex.size()) continue; // Never a duplicated original vertex.
+                const auto it = remap_by_vertex[v].find(t);
+                if (it != remap_by_vertex[v].end()) mesh.triVerts[t * 3 + k] = it->second;
+            }
+        }
+
+        return validate_mesh(mesh).empty();
     }
 
     // Signed volume (positive if triangles are consistently wound with outward normals).

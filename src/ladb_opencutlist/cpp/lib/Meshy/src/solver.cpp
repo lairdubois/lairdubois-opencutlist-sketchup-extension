@@ -217,8 +217,19 @@ namespace Meshy {
 
         if (validate_) {
             json j_errors = json::array();
-            auto fn_append_errors = [&j_errors](const manifold::MeshGL64& mesh) {
-                for (const auto& error : validate_mesh(mesh)) {
+            auto fn_append_errors = [&j_errors](manifold::MeshGL64& mesh) {
+                std::vector<ValidationError> errors = validate_mesh(mesh);
+                // A lone non_manifold_edges verdict may be a seam between two
+                // (or more) otherwise-manifold shells pinched together at a
+                // vertex or edge (zero-width contact, no geometry change
+                // needed) rather than a genuine defect : try to split it into
+                // several manifold shells within the same buffer before
+                // giving up on the mesh. See split_non_manifold_shells for
+                // what it does and does not handle.
+                if (errors.size() == 1 && errors[0].code == "non_manifold_edges" && split_non_manifold_shells(mesh)) {
+                    errors.clear();
+                }
+                for (const auto& error : errors) {
                     json j_error;
                     j_error["code"] = error.code;
                     if (error.count > 0) {
