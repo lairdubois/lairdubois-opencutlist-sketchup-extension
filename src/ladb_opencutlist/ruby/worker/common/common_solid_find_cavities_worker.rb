@@ -45,12 +45,18 @@ module Ladb::OpenCutList
   # edge and would come out as a single merged cavity. Such a panel is
   # betrayed by its edge (chant) faces : they bound the cavity on a plane
   # that, extended, crosses the cavity interior, with envelope cap beyond it.
-  # The envelope is then reduced by clipping it at each such plane (keeping
-  # the panel side) and the open cavities are recomputed : the caps recede
-  # to the most recessed panel edge — the whole connected group is reduced
-  # to the depth of its shallowest element — and each compartment comes out
-  # as its own cavity. The plane being unbounded, it may exceptionally clip
-  # an unrelated part of the assembly it happens to cross.
+  # A chant is only trusted when the SAME panel also bounds the cavity on
+  # BOTH its main faces (front and back — the two compartments it
+  # separates) : a panel exposing only one main face to the cavity is a
+  # perimeter wall whose chant is exposed by a concave/notched footprint,
+  # not a recess, and reducing there would clip away the real cavity
+  # instead of splitting it (see #_detect_reduction_planes). The envelope
+  # is then reduced by clipping it at each remaining plane (keeping the
+  # panel side) and the open cavities are recomputed : the caps recede to
+  # the most recessed panel edge — the whole connected group is reduced to
+  # the depth of its shallowest element — and each compartment comes out as
+  # its own cavity. The plane being unbounded, it may exceptionally clip an
+  # unrelated part of the assembly it happens to cross.
   #
   # Panels may overlap each other freely (the boolean absorbs overlaps, no
   # exact joinery needed) and gaps below the SketchUp merge tolerance are
@@ -480,7 +486,10 @@ module Ladb::OpenCutList
         face_ids = fragment_def.face_ids
         next if face_ids.nil?
 
-        # Chant plane candidates of this fragment
+        # Chant plane candidates of this fragment, and the plane offsets (in
+        # each panel's own dominant axis) where that same panel bounds the
+        # cavity on a MAIN face — front and back, when both are exposed
+        main_plane_keys_by_panel = Hash.new { |h, k| h[k] = {} }
         candidates = {}
         fragment_def.face_indices.each_slice(3).with_index do |(a, b, c), triangle_index|
           face_id = face_ids[triangle_index]
@@ -492,18 +501,30 @@ module Ladb::OpenCutList
           normal, area2 = _triangle_normal(vertices, a, b, c)
           next if normal.nil?
           dot = normal[0] * dominant_normal[0] + normal[1] * dominant_normal[1] + normal[2] * dominant_normal[2]
-          next if dot.abs >= REDUCTION_EDGE_DOT  # Main face plane, not a chant
+          if dot.abs >= REDUCTION_EDGE_DOT  # Main face plane, not a chant
+            ax, ay, az = vertices[a * 3], vertices[a * 3 + 1], vertices[a * 3 + 2]
+            offset = dominant_normal[0] * ax + dominant_normal[1] * ay + dominant_normal[2] * az
+            main_plane_keys_by_panel[mesh_position][(offset / SolidMeshDef::TOLERANCE).round] = true
+            next
+          end
           d = normal[0] * vertices[a * 3] + normal[1] * vertices[a * 3 + 1] + normal[2] * vertices[a * 3 + 2]
           key = normal.map { |v| (v * 1000).round } << (d / SolidMeshDef::TOLERANCE).round
-          candidate = candidates[key] ||= [ normal, d, 0.0 ]
+          candidate = candidates[key] ||= [ normal, d, 0.0, mesh_position ]
           candidate[2] += area2 / 2.0
         end
 
-        candidates.each do |key, (normal, d, area)|
+        candidates.each do |key, (normal, d, area, mesh_position)|
           next if planes.key?(key)
           # Degenerate boolean sliver, not a chant strip — see
           # REDUCTION_MIN_AREA
           next if area < REDUCTION_MIN_AREA
+          # A genuine recessed panel (e.g. a shallow shelf) is exposed to the
+          # cavity on BOTH its main faces — front and back, the two
+          # compartments it separates. A panel bounding the cavity on only
+          # one main face is a perimeter wall whose chant is exposed by a
+          # concave/notched footprint, not a recess : reducing the envelope
+          # there would clip away the real cavity instead of splitting it.
+          next if main_plane_keys_by_panel[mesh_position].size < 2
           # The cavity must extend on both sides of the extended plane —
           # beyond the chant (removed side, negative distances) and behind
           # it (kept side, where the panel and the compartments lie)

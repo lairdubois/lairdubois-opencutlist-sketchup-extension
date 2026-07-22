@@ -39,6 +39,8 @@ module Ladb::OpenCutList
     ACTION_OPTION_OPTIONS_PULL_CENTRED = 'pull_centered'
     ACTION_OPTION_OPTIONS_ASK_NAME = 'ask_name'
 
+    ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE = 'reduce_envelope'
+
     ACTIONS = [
       {
         :action => ACTION_DRAW_RECTANGLE,
@@ -65,7 +67,7 @@ module Ladb::OpenCutList
       # {
       #   :action => ACTION_DRAW_SEPARATOR,
       #   :options => {
-      #     ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_DRAW_IN, ACTION_OPTION_OPTIONS_ASK_NAME ]
+      #     ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_DRAW_IN, ACTION_OPTION_OPTIONS_ASK_NAME, ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE ]
       #   }
       # }
     ].freeze
@@ -180,6 +182,8 @@ module Ladb::OpenCutList
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1L0.667,1L1,0.667L1,0L0.333,0L0,0.333L0,1 M0,0.333L0.667,0.333L0.667,1 M0.667,0.333L1,0 M0.333,0.5L0.333,0.833 M0.167,0.667L0.5,0.667'))
         when ACTION_OPTION_OPTIONS_ASK_NAME
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.25L1,0.25L1,0.75L0,0.75L0,0.25 M0.438,0.313L0.438,0.688 M0.125,0.625L0.125,0.375L0.313,0.625L0.313,0.375'))
+        when ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE
+          return Kuix::Label.new('RE')
         end
       end
 
@@ -3905,7 +3909,8 @@ module Ladb::OpenCutList
         require_relative '../worker/common/common_solid_find_cavities_worker'
 
         result_def = CommonSolidFindCavitiesWorker.new(drawing_defs,
-          max_opening_planes: 3
+          max_opening_planes: 2,
+          reduce_envelope: _fetch_option_reduce_envelope?
         ).run
         if result_def.success?
 
@@ -3953,9 +3958,11 @@ module Ladb::OpenCutList
       false
     end
 
-    # def _preview_part_container?
-    #   true
-    # end
+    # -----
+
+    def _fetch_option_reduce_envelope?
+      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE)
+    end
 
   end
 

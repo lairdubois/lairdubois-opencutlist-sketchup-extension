@@ -34,6 +34,7 @@
   "action_3": { /* ACTION_DRAW_SEPARATOR */
     "construction": false,
     "draw_in": false,
-    "ask_name": false
+    "ask_name": false,
+    "reduce_envelope": false
   }
 }
