@@ -98,11 +98,34 @@ module Ladb::OpenCutList
     # edge shared by two triangles lying on the same signed quantized plane
     # is interior (traversed once in each direction, it cancels out), the
     # surviving edges draw the face contours. An edge between two planes is
-    # kept by each of them, as the two adjacent face contours overlap there.
-    # Returns a flat Array<Geom::Point3d> of segment point pairs, ready for
-    # Kuix::Segments#add_segments. Memoized.
+    # kept by each of them, as the two adjacent face contours overlap there,
+    # so it appears TWICE (once per plane, endpoints in reverse order) : fine
+    # for a solid wireframe, but see #unique_boundary_segments for a dashed
+    # one. Returns a flat Array<Geom::Point3d> of segment point pairs, ready
+    # for Kuix::Segments#add_segments. Memoized.
     def boundary_segments
-      @boundary_segments ||= begin
+      @boundary_segments ||= _flatten_edge_counts_by_plane(unique: false)
+    end
+
+    # Same net boundary as #boundary_segments, with each physical edge kept
+    # only once regardless of how many planes it borders between : the
+    # duplicate #boundary_segments keeps for an edge between two planes (same
+    # segment, endpoints reversed) makes a dash pattern restart from each end,
+    # which reads as a doubled or broken stipple. Returns a flat
+    # Array<Geom::Point3d> of segment point pairs, ready for
+    # Kuix::Segments#add_segments. Memoized.
+    def unique_boundary_segments
+      @unique_boundary_segments ||= _flatten_edge_counts_by_plane(unique: true)
+    end
+
+    private
+
+    # Net boundary edges of the fragment, grouped by signed quantized plane :
+    # for each plane, an edge traversed once in each direction by two of its
+    # triangles is interior and cancels out, the surviving edges draw that
+    # plane's face contour. Memoized.
+    def _edge_counts_by_plane
+      @edge_counts_by_plane ||= begin
 
         tolerance = SolidMeshDef::TOLERANCE
         quantized = @vertices.each_slice(3).map { |coordinates| coordinates.map { |v| (v / tolerance).round } }
@@ -130,17 +153,35 @@ module Ladb::OpenCutList
           end
         end
 
-        pts = points
-        segments = []
-        edge_counts_by_plane.each_value do |edge_counts|
-          edge_counts.each do |(index_a, index_b), count|
+        edge_counts_by_plane
+      end
+    end
+
+    # Turns #_edge_counts_by_plane into a flat Array<Geom::Point3d> of segment
+    # point pairs. unique: true keeps a single segment per unordered vertex
+    # pair, dropping the reversed duplicate an edge between two planes would
+    # otherwise contribute from its second plane.
+    def _flatten_edge_counts_by_plane(unique:)
+      pts = points
+      segments = []
+      seen = unique ? {} : nil
+      _edge_counts_by_plane.each_value do |edge_counts|
+        edge_counts.each do |(index_a, index_b), count|
+          next if count == 0
+          if unique
+            key = index_a < index_b ? [ index_a, index_b ] : [ index_b, index_a ]
+            next if seen[key]
+            seen[key] = true
+            segments << pts[index_a] << pts[index_b]
+          else
             count.times { segments << pts[index_a] << pts[index_b] }
           end
         end
-
-        segments
       end
+      segments
     end
+
+    public
 
     # Yields [ SolidFaceInfoDef or nil, Array of triangles (Array<Geom::Point3d>) ],
     # one batch per original face. Triangles without provenance are batched under nil.

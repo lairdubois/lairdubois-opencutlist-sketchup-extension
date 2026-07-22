@@ -3931,10 +3931,17 @@ module Ladb::OpenCutList
             # end
 
             k_segments = Kuix::Segments.new
-            k_segments.add_segments(fragment_def.boundary_segments)
+            k_segments.add_segments(fragment_def.unique_boundary_segments)
             k_segments.color = color
             k_segments.line_width = 1
+            k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
             k_segments.on_top = true
+            @tool.append_3d(k_segments, 5580)
+
+            k_segments = Kuix::Segments.new
+            k_segments.add_segments(fragment_def.boundary_segments)
+            k_segments.color = color
+            k_segments.line_width = 1.5
             @tool.append_3d(k_segments, 5580)
 
           end
