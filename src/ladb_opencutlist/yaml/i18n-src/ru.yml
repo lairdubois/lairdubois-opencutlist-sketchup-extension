@@ -211,16 +211,21 @@ core:
       *Создание пользовательского пресета позволяет вам сохранить текущие параметры, как готовый набор для повторного использования в качестве шаблона.*
 
       Задайте имя пресету:
+    rename_prompt_title: Переименование
+    rename_prompt: "Введите новое имя пресета **\"{{ name }}\"**"
     delete_confirm_title: Удалить
     delete_confirm: "Вы подтверждаете удаление пресета **\"{{ name }}\"** ?"
     override_confirm_title: Обновить
     override_confirm: "Подтверждаете ли вы обновление пресета **\"{{ name }}\"** с настройками формы?"
+    new_error: "Невозможно, пресет **\"{{ name }}\"** уже существует"
     new_success: "Пресет **\"{{ name }}\"** создан"
     override_success: "Пресет **\"{{ name }}\"** обновлен"
     restore_success: "Форма была заполнена пресетом **\"{{ name }}\"**"
+    rename_success: "Пресет **\"{{ name }}\"** переименован в **\"{{ new_name }}\"**"
     delete_success: "Пресет **\"{{ name }}\"** удален"
     tooltip:
       save_to: "Обновить пресет '{{ name }}'"
+      rename: "Переименовать пресет '{{ name }}'"
       delete: "Удалить пресет '{{ name }}'"
     dictionary:
       component_textinput_color: Цветовая палитра
@@ -244,11 +249,14 @@ core:
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       outliner_options: $t(tab.outliner.label) / $t(default.options)
+      outliner_deep_rename_parts_options: $t(tab.outliner.label) / $t(tab.outliner.deep_rename_parts.title)
       settings_model: $t(tab.settings.label) / Шаблон
       tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
       tool_smart_handle_options: $t(core.toolbar.command.smart_handle)
+      tool_smart_reshape_options: $t(core.toolbar.command.smart_reshape)
       tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
       tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
+      tool_smart_join_options: $t(core.toolbar.command.smart_join)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
   progress:
     please_wait: Глобальный расчет
@@ -260,7 +268,9 @@ core:
       remove: Забыть этот цвет
     textinput_code:
       snippets: Примеры формул
-      help: "Нажмите **@**, чтобы открыть ввод переменных данных."
+      help: Введите **@** чтобы открыть список переменных данных
+    textinput_file:
+      browse: Обзор
     textinput_size:
       quantity: Кол-во
     three_viewer:
@@ -282,6 +292,14 @@ core:
       failed_to_load: |
         Невозможно открыть документацию.
         Убедитесь, что есть подключение к Интернету.
+  solid:
+    error:
+      empty: Твердое тело не содержит геометрии
+      non_manifold_edges: "Твердое тело содержит {{ count }} некорректных ребра (лишние грани)"
+      non_manifold_edges_plural: "Твердое тело содержит {{ count }} некорректных рёбер (лишних граней)"
+      open_edges: "Твердое тело содержит {{ count }} незамкнутое ребро (дыру)"
+      open_edges_plural: "Твердое тело содержит {{ count }} незамкнутых ребра"
+      locked_instances: "Операция невозможна, так как элементы заблокированы: {{ list }}"
 tab:
   cutlist:
     label: Раскрой
@@ -358,6 +376,7 @@ tab:
       flipped: "Эта деталь является зеркальным отражением компонента, присутствующего в модели"
       symmetrical: Для этого элемента отключена опция обнаружения зеркальной детали
       ignore_grain_direction: Направление волокон фактуры этой детали игнорируется
+      follow_grain_direction: Для этой детали включен подбор текстуры
       auto_oriented: Эта деталь была автоматически переориентирована
       oko_label_filter: "Включить/выключить этот значок"
       add_label_filter: "Фильтровать по '{{ label }}'"
@@ -481,11 +500,11 @@ tab:
         *OpenCutList будет считать 2 детали толщиной 19 мм вместо 1 детали толщиной 38 мм.*
       cut_options: $t(tab.materials.edit_material.cut_options)
       length_increase: $t(tab.materials.edit_material.length_increase)
-      length_increase_help: "Припуск, добавляемый к габаритной длине детали для определения её **длины раскроя**."  # TODO: singular version of tab.materials.edit_material.length_increase
+      length_increase_help: $t(tab.materials.edit_material.length_increase_help)
       width_increase: $t(tab.materials.edit_material.width_increase)
-      width_increase_help: "Припуск, добавляемый к габаритной ширине детали для определения её **ширины раскроя**." # TODO: singular version of tab.materials.edit_material.width_increase
+      width_increase_help: $t(tab.materials.edit_material.width_increase_help)
       thickness_increase: $t(tab.materials.edit_material.thickness_increase)
-      thickness_increase_help: "Припуск, добавляемый к габаритной толщине детали для определения её **толщины раскроя**." # TODO: singular version of tab.materials.edit_material.thickness_increase
+      thickness_increase_help: $t(tab.materials.edit_material.thickness_increase_help)
       description: Описание
       description_help: |
         Параметр *Описание* дает возможность задать необходимую уточняющую информацию по детали.
@@ -510,9 +529,21 @@ tab:
       symmetrical: Отключить распознавание зеркальных деталей
       symmetrical_help: |
         Если флажок установлен, плагин не будет распознавать *зеркальные детали*. Это детали, созданные путем симметричного отражения базовой детали относительно чего-либо.
-      ignore_grain_direction: Игнорировать направление волокон фактуры
+      ignore_grain_direction: Направление волокон
       ignore_grain_direction_help: |
-        Если этот флажок установлен, карта раскроя будет сформирована без учета направления волокон на фактуре этой детали .
+        Эта функция отменяет учет направления текстуры материала для данной детали.
+      ignore_grain_direction_0: Вдоль волокон
+      ignore_grain_direction_1: Игнорировать направление волокон фактуры
+      follow_grain_direction: Подбор текстуры
+      follow_grain_direction_help: |
+        При включении этой опции копии детали будут раскраиваться с **Подбором текстуры** совместно с соседними деталями, имеющими одинаковые:
+        - *Группу подбора текстуры*
+        - Плоскость
+        - Ориентацию
+        - Материал с текстурой
+        - Толщину
+      follow_grain_direction_0: $t(default.no)
+      follow_grain_direction_1: Подбор текстуры включен
       axes: Оси
       axes_help: "Задайте размеры так, чтобы они соответствовали цветам осей вашей детали."
       axes_tip: |
@@ -1069,8 +1100,19 @@ tab:
       option_rectangleguillotine_first_stage_orientation_horizontal: По горизонтали
       option_rectangleguillotine_first_stage_orientation_vertical: По вертикали
       option_rectangleguillotine_first_stage_orientation_any: Любое
+      option_rectangleguillotine_sort_subplates_criteria: Сортировка по уровням
+      option_rectangleguillotine_sort_subplates_criteria_help: |
+        Задает параметры сортировки деталей внутри каждого уровня.
+      option_rectangleguillotine_sort_subplates_criteria_l1l2: По убыванию размера
+      option_rectangleguillotine_sort_subplates_criteria_dl2l1: По убыванию плотности
       option_rectangleguillotine_keep: Размер отходов
       option_rectangleguillotine_keep_help: "Обрезки с габаритами, превышающими их заданнные минимальные размеры, не будут считаться отходами от распила и получат маркировку **Сохранить**."
+      option_rectangle_leftover_mode: Направление заполнения
+      option_rectangle_leftover_mode_help: |
+        Задает направление раскладки деталей на последнем неполном листе.
+      option_rectangle_leftover_mode_area: Авто
+      option_rectangle_leftover_mode_x: По ширине листа
+      option_rectangle_leftover_mode_y: По длине листа
       option_irregular_allowed_rotations: Выбрать шаг вращения
       option_irregular_allowed_rotations_help: |
         Определяет возможный шаг углов поворота детали для ее размещения.
@@ -1085,6 +1127,12 @@ tab:
         Определяет, разрешено ли зеркальное отражение детали.
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
+      option_irregular_leftover_mode: Направление заполнения
+      option_irregular_leftover_mode_help: |
+        Задает направление раскладки деталей на последнем неполном листе.
+      option_irregular_leftover_mode_bottom_left: Авто
+      option_irregular_leftover_mode_left: По ширине листа
+      option_irregular_leftover_mode_bottom: По длине листа
       option_spacing: Ширина реза
       option_spacing_help: |
         Минимальное расстояние между каждой деталью.
@@ -1144,6 +1192,7 @@ tab:
       option_hide_edges_preview_1: Скрывать на диаграмме
       option_hide_edges_preview_help: "Позволяет отображать или скрывать визуальную индикацию краев поверхности, на которую необходимо нанести декоративное покрытие, для каждой детали на эскизе карты раскроя.."
       option_zoom_threshold: Порог масштабирования
+      # TODO find a better explanation
       option_zoom_threshold_help: |
         Позволяет задать ширину участка диаграммы, при которой диаграммы автоматически увеличиваются.
 
@@ -1151,6 +1200,11 @@ tab:
       option_time_limit: Ограничение по времени
       option_time_limit_help: |
         Устанавливает время, отведенное для расчета
+      grain_groups:
+        title: "{{ count }} группа подбора текстуры"
+        title_plural: "{{ count }} групп подбора текстуры"
+        name: Определение
+        item_count: Σ Деталей
       tooltip:
         scroll_to_block_1d: Прокрутка до первой доски или кромочной полосы
         scroll_to_block_2d: Прокрутка до первой панели или листа
@@ -1249,7 +1303,8 @@ tab:
         no_solution: Не возможно разместить **все детали** в доступном материале.
         unplaced_parts: "**1 деталь** не может быть размещена."
         unplaced_parts_plural: "**{{ count }} детали** не могут быть размещены."
-        unusable_part: Деталь слишком большая
+        unusable_part_1: Деталь слишком большая
+        unusable_part_2: Группа подбора текстуры слишком велика
       warning:
         is_part_selection: Данный раскрой ограничен **выделенными деталями**.
         cutting_dimensions: Эта карта раскроя отображает детали с их **пильными** размерами.
@@ -1462,6 +1517,13 @@ tab:
 
         - Структура **Слои** рисует все линии плоскими, распознавая различные типы линий только с помощью слоев. *Такая структура обеспечивает лучшую совместимость со сторонним программным обеспечением.*
         - Структура **Слои + Блоки** создает по одному блоку для каждой детали и вставляет эти блоки столько раз, сколько частей повторяются. *Такая структура обеспечивает большую гибкость при редактировании файла.*
+      option_dxf_depth_to_z: Глубина по Z
+      option_dxf_depth_to_z_0: $t(default.no)
+      option_dxf_depth_to_z_1: Распределить глубину слоев по оси Z
+      option_dxf_depth_to_z_help: |
+        Включает разнесение слоев по оси Z в зависимости от глубины.
+
+        Отключите для экспорта DXF строго в 2D.
       option_unit: Единицы
       option_unit_help: |
         Позволяет выбрать единицы измерения, используемые в экспортируемом файле.
@@ -1634,11 +1696,14 @@ tab:
 
         *Если единицы измерения не указаны, будет использована единица измерения модели проекта.*
       length_increase: Припуск к длине
-      length_increase_help: Припуск под подгонку прибавляется к фактической длине для расчета **пильной длины**.
+      length_increase_help: "Припуск, добавляемый к габаритной длине детали для определения её **длины раскроя**."
+      length_increase_help_plural: Припуск под подгонку прибавляется к фактической длине для расчета **пильной длины**.
       width_increase: Припуск к ширине
-      width_increase_help: Припуск под подгонку прибавляется к фактической ширине для расчета **пильной ширины**.
+      width_increase_help: "Припуск, добавляемый к габаритной ширине детали для определения её **ширины раскроя**."
+      width_increase_help_plural: Припуск под подгонку прибавляется к фактической ширине для расчета **пильной ширины**.
       thickness_increase: Припуск к толщине
-      thickness_increase_help: Припуск под подгонку к толщине прибавляется к фактической толщине для расчета **пильной толщины**.
+      thickness_increase_help: "Припуск, добавляемый к габаритной толщине детали для определения её **толщины раскроя**."
+      thickness_increase_help_plural: Припуск под подгонку к толщине прибавляется к фактической толщине для расчета **пильной толщины**.
       std_lengths: Стандартная длина
       std_lengths_help: |
         Для этого материала доступны стандартные длины.
@@ -1771,6 +1836,8 @@ tab:
       name: Определение
       instance_name: Экземпляр
       material: Материал
+      is_grain_group: Задать как **Группу подбора текстуры**
+      is_grain_group_help: "Если эта опция включена, данный компонент автоматически станет **Группой подбора текстуры** для всех входящих в него деталей, у которых включен **Подбор текстуры**."
       definition_name: Содержание
       description: Описание
       url: URL
@@ -2268,18 +2335,21 @@ tool:
       locked_part: Эта деталь заблокирована
       not_sibling_part: "Деталь не входит в ту же группу или компонент, что и остальное выделение"
       selection_contains_locked_entities: Выделение содержит заблокированные объекты
+      wrong_material_type: "Целевая деталь должна быть типа '{{ type }}'"
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_select:
     state_0_status: "Кликните на деталь, чтобы выделить ее"
     state_0_to_6_status: Выбор родительского элемента
+    state_0_to_7_status: Выбор нескольких элементов
     state_4_status: "Перетащите идентичный элемент, имеющий того же родителя, чтобы добавить его в выделение, и отпустите, чтобы продолжить"
     state_5_status: "Проведите указателем мыши, чтобы добавить в выделение, и отпустите, чтобы продолжить"
     state_6_status: Выберите элемент из списка
     state_7_status: "Кликните элемент, чтобы добавить или убрать его из выделения"
     warning:
       no_active_part: Сначала вы должны выделить одну деталь
+      no_parent_group: У выбранной детали отсутствует родительская группа или компонент
   smart_draw:
     title: Моделировать
     action_0: Создать параллелепипед
@@ -2296,6 +2366,7 @@ tool:
     action_2_status: Построение объема на основе многоугольника
     action_2_state_1_status: "Кликните, чтобы задать новую точку или введите нужный размер"
     action_x_state_2_status: "Кликните, чтобы задать высоту или введите нужный размер"
+    action_3: Создать разделитель
     action_option_group_offset: Смещение
     action_option_group_segments: Сегменты
     action_option_group_options: Опции
@@ -2377,9 +2448,18 @@ tool:
     action_1_status: Создать серию деталей из замкнутого твердого тела
     action_1_state_0_status: "Кликните замкнутое тело, чтобы задать вспомогательную геометрию"
     action_1_state_1_status: Выберите грани для выдавливания
-    # CSG = Constructive Solid Geometry
-    action_2: CSG
-    action_2_status: Бесконечность не предел!
+    action_2: Объединить
+    action_2_status: Объединить несколько деталей в одну
+    action_2_state_0_status: Выберите деталь А
+    action_2_state_1_status: Выберите деталь B
+    action_3: Раскроить
+    action_3_status: Вычесть одну деталь из другой
+    action_3_state_0_status: Выберите деталь А
+    action_3_state_1_status: Выберите деталь B
+    action_4: Пересечь
+    action_4_status: Создать деталь на пересечении нескольких деталей
+    action_4_state_0_status: Выберите деталь А
+    action_4_state_1_status: Выберите деталь B
     action_option_group_thickness: Толщина
     action_option_group_stretch_measure_type: Отсчет
     action_option_group_axes: Оси
@@ -2388,7 +2468,7 @@ tool:
     action_option_group_csg_operation: Операция
     action_option_group_options: Опции
     action_option_thickness_thickness: Толщина
-    action_option_thickness_thickness_status: Определить толщину панелей
+    action_option_thickness_thickness_status: Настройка толщины панелей
     action_option_stretch_measure_type_outside_status: Внешнее измерение
     action_option_stretch_measure_type_offset_status: Измерить разницу
     action_option_axes_active_status: Перемещение по активным осям
@@ -2398,8 +2478,16 @@ tool:
     action_option_paneling_joint_type_miter_status: Резка под углом
     action_option_paneling_direction_inward_status: Внутри
     action_option_paneling_direction_outward_status: Снаружи
-    action_option_options_centred_status: Центрировать по растянутым элементам
-    action_option_options_make_unique_status: Сделать растянутые элементы уникальными
+    action_option_options_centered_status: Центрировать по растянутым элементам
+    action_option_options_make_unique_status: Сделать измененные детали уникальными
+    action_option_options_keep_a: Оставить деталь А
+    action_option_options_keep_a_status: Сохранять копии А после операции и поместить результат в новую деталь
+    action_option_options_keep_b: Оставить деталь B
+    action_option_options_keep_b_status: Сохранять экземпляры B после операции
+    action_option_options_remove_unused_definitions_status: ""
+    notify:
+      validate_a: ""
+      validate_b: ""
     error:
       curve_intersect: Одна из плоскостей разреза проходит через нерастяжимую кривую
   smart_paint:
@@ -2451,7 +2539,6 @@ tool:
       not_part: Целевой объект не является деталью (компонентом)
       not_edge: Целевая поверхность не является торцом панели
       not_face: Целевая поверхность не является лицевой
-      wrong_material_type: "Целевая деталь должна быть типа '{{ type }}'"
   smart_axes:
     title: Ориентация осей
     action_0: Отменить
@@ -2464,6 +2551,10 @@ tool:
     action_3_status: "Выберите грань детали и кликните по ней, чтобы изменить ее оси"
     action_4: Изменить начало координат
     action_4_status: Для перемещения начала координат выберите точку на детали и кликните по ней
+    action_5: Настройка подбора текстуры
+    action_5_status: Кликните по детали для включения или отключения подбора текстуры
+    action_5_to_state_10_status: Выбор группы подбора текстуры
+    action_5_state_10_status: Кликните по элементу в списке для изменения статуса группы подбора текстуры
     action_option_group_direction: Измерение
     action_option_direction_0: Дл
     action_option_direction_1: Шр
@@ -2476,10 +2567,74 @@ tool:
     error:
       not_part: Целевой объект не является частью (компонентом)
       not_orientable: Тип этой детали не позволяет сориентировать ее по осям
+      not_grained: Выбранная деталь не содержит текстуру
+      not_single_thickness_layer: Выбранная деталь должна состоять из одного слоя
+  # TODO: It's currently just for dev purposes
   smart_join:
     title: Сборка
-    action_0: Точный контакт # TODO: It's currently just for dev purposes
-    action_0_status: TBD # TODO
+    action_0: Добавить крепеж
+    action_0_status: Установить фурнитуру для сборки деталей
+    action_0_state_0_status: "Кликните на грань детали, которую необходимо оснастить крепежом"
+    action_1: Удалить крепеж
+    action_1_status: Удалить крепеж для соединения деталей
+    action_1_state_0_status: Кликните на грань детали для удаления крепежа
+    action_1_only_one_status: Ограничиться единичным крепежом
+    action_2: Добавить соединения
+    action_2_status: Добавить соединения для сборки деталей
+    action_2_state_0_status: "Кликните на грань детали А, чтобы добавить соединения с соседней деталью"
+    action_2_state_1_status: Кликните на грань детали B для создания узлов соединений с деталью А
+    action_3: Удалить соединения
+    action_3_status: Удалить соединения деталей
+    action_3_state_0_status: "Кликните на грань детали А, чтобы удалить соединения с соседней деталью"
+    action_3_state_1_status: "Кликните на грань детали B, чтобы удалить соединения с деталью А"
+    action_3_only_one_status: Ограничиться одним соединением
+    action_option_group_height: Высота
+    action_option_group_offsets: Припуски
+    action_option_group_spacings: Межосевое расстояние
+    action_option_group_options: Опции
+    action_option_height: Высота
+    action_option_offsets_start_offset: От начала
+    action_option_offsets_end_offset: По окончанию
+    action_option_spacings_min_spacing: Мин
+    action_option_spacings_max_spacing: Макс
+    action_option_options_opposite_status: Проецировать на обратную сторону
+    action_option_options_make_unique_status: Сделать соединенные детали уникальными
+    action_option_hardware_connector_a: Крепеж А
+    action_option_hardware_connector_b: Крепеж B
+    action_option_hardware_fitting_a: Соединение А
+    action_option_hardware_fitting_b: Соединение B
+    action_option_machining_a: Обработка А
+    action_option_machining_b: Обработка B
+    action_option_hardware_connector_material_name: Материал крепежа
+    action_option_hardware_fitting_material_name: Материал соединений
+    action_option_machining_material_name: Материал обработки
+    action_option_hardware_connector_layer_name: Тег крепежа
+    action_option_hardware_fitting_layer_name: Тег соединений
+    action_option_machining_layer_name: Тег обработки
+    measures: Измерения
+    geometries: Геометрия
+    error:
+      invalid_height: "Высота {{ value }} указана некорректно"
+      invalid_start_offset: "Начальный отступ {{ value }} указан некорректно"
+      invalid_end_offset: "Конечный отступ {{ value }} указан некорректно"
+      invalid_min_spacing: "Минимальное межосевое расстояние {{ value }} указано некорректно"
+      invalid_max_spacing: "Максимальное межосевое расстояние {{ value }} указано некорректно"
+      not_assemblable: Данный тип детали не предназначен для сборки
+      no_valid_join: Параметры стыковки деталей не позволяют установить крепеж
+      occupied_anchors: "{{ count }} крепеж совпадает по положению с уже существующим"
+      occupied_anchors_plural: "{{ count }} элементов крепежа совпадают по положению с уже существующими"
+      failed_to_load_skp_file: |
+        Не удалось загрузить файл SKP: {{ file }}
+      unsupported_skp_version: |
+        Этот файл SKP был создан в более поздней версии SketchUp: {{ version }}
+    warning:
+      no_connector_to_remove: Нет крепежа для удаления
+      x_connectors_to_remove: "{{ count }} крепеж для удаления"
+      x_connectors_to_remove_plural: "{{ count }} крепежей для удаления"
+      no_fitting_to_remove: Нет соединений для удаления
+      x_fittings_to_remove: "{{ count }} соединение для удаления"
+      x_fittings_to_remove_plural: "{{ count }} соединений для удаления"
+      different_file_name: "Имя файла SKP ({{ file_name }}) отличается от имени содержащегося в нём компонента ({{ definition_name }})"
   smart_export:
     title: Экспорт
     action_0: Экспорт 3D-детали

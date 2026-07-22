@@ -2366,6 +2366,7 @@ tool:
     action_2_status: Volumen auf der Basis einer polygonalen Form zeichnen
     action_2_state_1_status: "Klicken Sie, um einen neuen Punkt zu setzen, oder geben Sie eine Distanz ein"
     action_x_state_2_status: "Klicken Sie, um die Höhe festzulegen, oder geben Sie eine Distanz ein"
+    action_3: ""
     action_option_group_offset: Versatz
     action_option_group_segments: Segmente
     action_option_group_options: Optionen
@@ -2478,11 +2479,15 @@ tool:
     action_option_paneling_direction_inward_status: Nach innen
     action_option_paneling_direction_outward_status: Nach aussen
     action_option_options_centered_status: Auf die gestreckten Elemente zentrieren
-    action_option_options_make_unique_status: Überarbeitete Elemente einzigartig machen
+    action_option_options_make_unique_status: Umgestaltete Elemente einzigartig machen
     action_option_options_keep_a: A behalten
     action_option_options_keep_a_status: Die Instanzen A nach der Operation beibehalten und das Ergebnis in ein neues Teil einfügen
     action_option_options_keep_b: B behalten
     action_option_options_keep_b_status: Die Instanzen B nach der Operation beibehalten
+    action_option_options_remove_unused_definitions_status: Nach dem Vorgang nicht mehr verwendete Komponentendefinitionen löschen
+    notify:
+      validate_a: "Bestätigen Sie, um zur Auswahl von B zu gelangen"
+      validate_b: "Bestätigen Sie, um den Vorgang auszuführen"
     error:
       curve_intersect: Eine der Schnittebenen verläuft durch eine nicht dehnbare Kurve
   smart_paint:

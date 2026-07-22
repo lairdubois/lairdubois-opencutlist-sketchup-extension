@@ -2029,7 +2029,7 @@ tab:
           Select the desired import options.
         option_remove_all_?: "Select next step:"
         option_remove_all_false: Add parts to the existing
-        option_remove_all_true: Remove existing!
+        option_remove_all_true: Remove everything!
         option_keep_definitions_settings: Keep definition settings
         option_keep_materials_settings: Keep material settings
       column:
@@ -2366,11 +2366,12 @@ tool:
     action_2_status: Draw a volume based on a polygonal shape
     action_2_state_1_status: Click to define a new point or enter distance
     action_x_state_2_status: Click to set the elevation or enter distance
+    action_3: Draw Separator
     action_option_group_offset: Offset
     action_option_group_segments: Segments
     action_option_group_options: Options
     action_option_offset_shape_offset: Offset
-    action_option_offset_shape_offset_status: Apply an offset to the shape line
+    action_option_offset_shape_offset_status: Allows you to apply an offset to the outline of the drawn shape
     action_option_segments_segment_count: Number of Segments
     action_option_segments_segment_count_status: Allows you to set the number of segments in the circle
     action_option_options_construction: Construction Lines
@@ -2385,14 +2386,14 @@ tool:
     action_option_options_measure_from_radius_status: Measure the circle by its radius
     action_option_options_measure_reversed: Inverted Measure
     action_option_options_measure_reversed_status: Reverse the measurement
-    action_option_options_pull_centered: Elevation Centered
+    action_option_options_pull_centered: Elevation Centering
     action_option_options_pull_centered_status: Center the elevation on the first point
     action_option_options_pull_locked_status: Lock elevation on one axis
     action_option_options_draw_in: Draw in
     action_option_options_draw_in_0: Draw in the active element
     action_option_options_draw_in_1: Draw in the parent of the part of the first point
     action_option_options_draw_in_status: Draw in the parent of the part targeted by the first point
-    action_option_options_ask_name: Part naming
+    action_option_options_ask_name: Part Naming
     action_option_options_ask_name_status: Enter part names manually
     action_measure_locked_status: Lock on last measurement
     action_toggle_move_copy_status: Toggle between copy/move
@@ -2421,9 +2422,9 @@ tool:
     action_option_group_move_measure_type: Measure
     action_option_group_axes: Axes
     action_option_group_options: Options
-    action_option_copy_measure_type_outside_status: External measurement
-    action_option_copy_measure_type_centered_status: Measure from center to center
-    action_option_copy_measure_type_inside_status: Measurement taken between parts
+    action_option_copy_measure_type_outside_status: Edge-to-Edge measure
+    action_option_copy_measure_type_centered_status: Center-to-Center measure
+    action_option_copy_measure_type_inside_status: Inside-to-Inside measure
     action_option_axes_active_status: Manipulate along the active axes
     action_option_axes_context_status: Manipulate along the axes of the group or component containing the part
     action_option_axes_entity_status: Manipulate along the part's axes
@@ -2478,11 +2479,15 @@ tool:
     action_option_paneling_direction_inward_status: Inward direction
     action_option_paneling_direction_outward_status: Outward direction
     action_option_options_centered_status: Center on stretched elements
-    action_option_options_make_unique_status: Make stretched elements unique
+    action_option_options_make_unique_status: Make reshaped elements unique
     action_option_options_keep_a: Keep A
     action_option_options_keep_a_status: Keep the A instances after the operation and place the result in a new part
     action_option_options_keep_b: Keep B
     action_option_options_keep_b_status: Keep the B instances after the operation
+    action_option_options_remove_unused_definitions_status: Delete component definitions that are no longer in use after the operation
+    notify:
+      validate_a: Validate to proceed to the selection of B
+      validate_b: Validate to apply the operation
     error:
       curve_intersect: One of the cutting planes crosses a non-stretchable curve
   smart_paint:
