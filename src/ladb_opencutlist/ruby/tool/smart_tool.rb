@@ -984,6 +984,11 @@ module Ladb::OpenCutList
       end
     end
 
+    def clear_notifications
+      return unless @notification_panel
+      @notification_panel.children.each { |child| child.fire(:click) }
+    end
+
     def show_validation
       return if @validation_panel.visible?
 

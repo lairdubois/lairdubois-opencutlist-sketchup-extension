@@ -3145,15 +3145,15 @@ module Ladb::OpenCutList
 
     def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
 
-      # if tool.is_key_shift?(key) && _allows_multiple_selections?
-      #   if @state == STATE_SELECT_SRC && @src_selection.items.any?
-      #     tool.notify('Cliquez sur Valider pour passer à la sélection de B', SmartTool::MESSAGE_TYPE_DEFAULT)
-      #     return true
-      #   elsif @state == STATE_SELECT_CUT && @cut_selection.items.any?
-      #     tool.notify('Cliquez sur Valider pour appliquer l\'opération', SmartTool::MESSAGE_TYPE_DEFAULT)
-      #     return true
-      #   end
-      # end
+      if tool.is_key_shift?(key) && _allows_multiple_selections?
+        if @state == STATE_SELECT_SRC && @src_selection.items.any?
+          tool.notify(PLUGIN.get_i18n_string('tool.smart_reshape.notify.validate_a'))
+          return true
+        elsif @state == STATE_SELECT_CUT && @cut_selection.items.any?
+          tool.notify(PLUGIN.get_i18n_string('tool.smart_reshape.notify.validate_b'))
+          return true
+        end
+      end
 
       if tool.is_key_alt_or_command?(key) && is_quick
         @tool.store_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_MAKE_UNIQUE, !_fetch_option_options_make_unique?, fire_event: true)
@@ -3172,11 +3172,14 @@ module Ladb::OpenCutList
         @tool.hide_validation
         @src_selection.clear
         @tool.clear_3d([ LAYER_3D_SRC_PREVIEW, LAYER_3D_CUT_PREVIEW ])
+        @tool.clear_notifications
 
       when STATE_SELECT_CUT
         @tool.hide_validation
         @cut_selection.clear
         @tool.clear_3d([ LAYER_3D_CUT_PREVIEW ])
+        @tool.clear_notifications
+        _refresh
 
       end
 
@@ -3227,6 +3230,13 @@ module Ladb::OpenCutList
 
     def _allows_multiple_selections?
       true
+    end
+
+    # -----
+
+    def _can_activate_part?(part_entity_path, part)
+      return false if @state == STATE_SELECT_CUT && @src_selection.items.find { |item| item.part_entity_path == part_entity_path }
+      super
     end
 
     # -----
