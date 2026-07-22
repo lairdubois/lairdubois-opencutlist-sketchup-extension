@@ -48,6 +48,7 @@ module Ladb::OpenCutList
     ACTION_OPTION_OPTIONS_MAKE_UNIQUE = 'make_unique'
     ACTION_OPTION_OPTIONS_KEEP_A = 'keep_a'
     ACTION_OPTION_OPTIONS_KEEP_B = 'keep_b'
+    ACTION_OPTION_OPTIONS_REMOVE_UNUSED_DEFINITIONS = 'remove_unused_definitions'
 
     ACTIONS = [
       {
@@ -61,19 +62,19 @@ module Ladb::OpenCutList
       {
         :action => ACTION_SOLID_UNITE,
         :options => {
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_KEEP_A, ACTION_OPTION_OPTIONS_KEEP_B, ACTION_OPTION_OPTIONS_MAKE_UNIQUE ]
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_KEEP_A, ACTION_OPTION_OPTIONS_KEEP_B, ACTION_OPTION_OPTIONS_MAKE_UNIQUE, ACTION_OPTION_OPTIONS_REMOVE_UNUSED_DEFINITIONS ]
         }
       },
       {
         :action => ACTION_SOLID_SUBTRACT,
         :options => {
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_KEEP_A, ACTION_OPTION_OPTIONS_KEEP_B, ACTION_OPTION_OPTIONS_MAKE_UNIQUE ]
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_KEEP_A, ACTION_OPTION_OPTIONS_KEEP_B, ACTION_OPTION_OPTIONS_MAKE_UNIQUE, ACTION_OPTION_OPTIONS_REMOVE_UNUSED_DEFINITIONS ]
         }
       },
       {
         :action => ACTION_SOLID_INTERSECT,
         :options => {
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_KEEP_A, ACTION_OPTION_OPTIONS_KEEP_B, ACTION_OPTION_OPTIONS_MAKE_UNIQUE ]
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_KEEP_A, ACTION_OPTION_OPTIONS_KEEP_B, ACTION_OPTION_OPTIONS_MAKE_UNIQUE, ACTION_OPTION_OPTIONS_REMOVE_UNUSED_DEFINITIONS ]
         }
       },
       {
@@ -142,7 +143,7 @@ module Ladb::OpenCutList
       case option_group
       when ACTION_OPTION_OPTIONS
         case option
-        when ACTION_OPTION_OPTIONS_KEEP_A, ACTION_OPTION_OPTIONS_KEEP_B
+        when ACTION_OPTION_OPTIONS_KEEP_A, ACTION_OPTION_OPTIONS_KEEP_B, ACTION_OPTION_OPTIONS_REMOVE_UNUSED_DEFINITIONS
           return [ ACTION_SOLID_UNITE, ACTION_SOLID_SUBTRACT, ACTION_SOLID_INTERSECT ]
         when ACTION_OPTION_OPTIONS_MAKE_UNIQUE
           return [ ACTION_STRETCH, ACTION_SOLID_UNITE, ACTION_SOLID_SUBTRACT, ACTION_SOLID_INTERSECT ]
@@ -245,9 +246,11 @@ module Ladb::OpenCutList
         when ACTION_OPTION_OPTIONS_MAKE_UNIQUE
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.167,0.167L0.167,0.833 M0.417,0.167L0.417,0.833 M0,0.333L0.583,0.333 M0,0.667L0.583,0.667 M0.75,0.333L1,0.167L1,0.833'))
         when ACTION_OPTION_OPTIONS_KEEP_A
-          return Kuix::Label.new(PLUGIN.get_i18n_string("tool.smart_reshape.action_option_options_keep_a"))
+          return Kuix::Label.new(PLUGIN.get_i18n_string('tool.smart_reshape.action_option_options_keep_a'))
         when ACTION_OPTION_OPTIONS_KEEP_B
-          return Kuix::Label.new(PLUGIN.get_i18n_string("tool.smart_reshape.action_option_options_keep_b"))
+          return Kuix::Label.new(PLUGIN.get_i18n_string('tool.smart_reshape.action_option_options_keep_b'))
+        when ACTION_OPTION_OPTIONS_REMOVE_UNUSED_DEFINITIONS
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.75,0.625L0.25,0.625L0.25,0.75L0.75,0.75L0.75,0.625 M0.5,0.625L0.5,0 M0.25,0.75L0.188,1 M0.75,0.75L0.813,1 M0.375,0.75L0.345,1 M0.5,0.75L0.5,1 M0.625,0.75L0.655,1'))
         end
       end
 
@@ -3282,6 +3285,10 @@ module Ladb::OpenCutList
       @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_MAKE_UNIQUE)
     end
 
+    def _fetch_option_options_remove_unused_definitions?
+      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_REMOVE_UNUSED_DEFINITIONS)
+    end
+
     # -----
 
     def _toggle_selection(tool, selection)
@@ -3311,15 +3318,42 @@ module Ladb::OpenCutList
 
     def _operate(operation = nil)
 
-      result_def = CommonSolidBooleanApplyWorker.new(
-        @src_selection.items.map(&:drawing_def),
-        @cut_selection.items.map(&:drawing_def),
-        operation: operation,
-        keep_srcs: _fetch_option_options_keep_a?,
-        keep_cuts: _fetch_option_options_keep_b?,
-        make_unique: _fetch_option_options_make_unique?
-      ).run
-      @tool.notify_errors(result_def.errors) unless result_def.success?
+      model = Sketchup.active_model
+      model.start_operation('OCL Solid Operation', true)
+      begin
+
+        # Keep track of active definitions
+        if _fetch_option_options_remove_unused_definitions? && Sketchup.version_number >= 1800000000
+          selected_definitions = @src_selection.items.map { |item| item.part_entity_path.last.definition } + @cut_selection.items.map { |item| item.part_entity_path.last.definition }
+          selected_definitions.uniq!
+        end
+
+        # Apply boolean operations
+        result_def = CommonSolidBooleanApplyWorker.new(
+          @src_selection.items.map(&:drawing_def),
+          @cut_selection.items.map(&:drawing_def),
+          operation: operation,
+          keep_srcs: _fetch_option_options_keep_a?,
+          keep_cuts: _fetch_option_options_keep_b?,
+          make_unique: _fetch_option_options_make_unique?,
+          wrap_operation: false
+        ).run
+        @tool.notify_errors(result_def.errors) unless result_def.success?
+
+        # Clean up unused definitions if possible
+        if defined?(selected_definitions)
+          definitions = Sketchup.active_model.definitions
+          selected_definitions.each do |definition|
+            definitions.remove(definition) if definition.count_used_instances.zero?
+          end
+        end
+
+        model.commit_operation
+
+      rescue Exception => e
+        PLUGIN.dump_exception(e)
+        model.abort_operation
+      end
 
       _restart
     end

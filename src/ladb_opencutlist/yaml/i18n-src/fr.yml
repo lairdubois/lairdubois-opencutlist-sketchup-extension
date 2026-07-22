@@ -2484,6 +2484,7 @@ tool:
     action_option_options_keep_a_status: Conserver les instances A après l'opération et placer le résultat dans une nouvelle pièce
     action_option_options_keep_b: Conserver B
     action_option_options_keep_b_status: Conserver les instances B après l'opération
+    action_option_options_remove_unused_definitions_status: Effacer les définitions de composant qui ne sont plus utilisées après l'opération
     notify:
       validate_a: Validez pour passer à la sélection de B
       validate_b: Validez pour appliquer l'opération

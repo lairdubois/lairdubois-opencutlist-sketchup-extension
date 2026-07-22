@@ -6,7 +6,11 @@ module Ladb::OpenCutList
   require_relative '../../utils/lock_utils'
   require_relative '../../utils/transformation_utils'
 
-  # Applies a solid boolean operation to the model, transactionally.
+  # Applies a solid boolean operation to the model, transactionally (its own
+  # model.start_operation / commit_operation, unless wrap_operation: false —
+  # then the caller is expected to own an enclosing operation, e.g. to batch
+  # several applies into a single undo step ; on failure the caller must
+  # check result.success? and abort its own operation itself).
   #
   # Consumes the same DrawingDefs as CommonSolidBooleanWorker — single or
   # arrays, faces possibly spread over nested sub containers (drawing defs must
@@ -95,11 +99,14 @@ module Ladb::OpenCutList
 
                    keep_srcs: false,
                    keep_cuts: false,
+
                    make_unique: true,
                    preserve_materials: true,
                    merge_coplanar: true,
                    restore_soft_edges: true,
-                   restore_curves: true
+                   restore_curves: true,
+
+                   wrap_operation: true
 
     )
 
@@ -112,11 +119,14 @@ module Ladb::OpenCutList
 
       @keep_srcs = keep_srcs
       @keep_cuts = keep_cuts
+
       @make_unique = make_unique
       @preserve_materials = preserve_materials
       @merge_coplanar = merge_coplanar
       @restore_soft_edges = restore_soft_edges
       @restore_curves = restore_curves
+
+      @wrap_operation = wrap_operation
 
     end
 
@@ -162,12 +172,12 @@ module Ladb::OpenCutList
         return result_def
       end
 
-      model.start_operation('OCL Solid Boolean', true)
+      model.start_operation('OCL Solid Boolean', true) if @wrap_operation
       begin
 
         if @keep_srcs
           _apply_to_new_container(result_def, model)
-          model.commit_operation
+          model.commit_operation if @wrap_operation
           return result_def
         end
 
@@ -447,10 +457,10 @@ module Ladb::OpenCutList
           container.erase! if container.definition.entities.size == 0
         end
 
-        model.commit_operation
+        model.commit_operation if @wrap_operation
 
       rescue => e
-        model.abort_operation
+        model.abort_operation if @wrap_operation
         result_def.errors << [ 'core.error.exception', { :error => e.message } ]
       end
 
