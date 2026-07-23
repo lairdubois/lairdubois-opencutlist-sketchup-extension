@@ -2369,11 +2369,14 @@ tool:
     action_3: Малювання роздільника
     action_option_group_offset: Відступ
     action_option_group_segments: Сегменти
+    action_option_group_thickness: Товщина
     action_option_group_options: Опції
     action_option_offset_shape_offset: Зміщення
     action_option_offset_shape_offset_status: Дозволяє застосувати зсув до контуру намальованої фігури
     action_option_segments_segment_count: Кількість сегментів
     action_option_segments_segment_count_status: Дозволяє задати кількість сегментів в колі
+    action_option_thickness_thickness: Товщина
+    action_option_thickness_thickness_status: Визначає товщину панелей
     action_option_options_construction: Конструктивні особливості
     action_option_options_construction_status: Намалювати у вигляді будівельних ліній
     action_option_options_rectangle_centered: Прямокутник від центру

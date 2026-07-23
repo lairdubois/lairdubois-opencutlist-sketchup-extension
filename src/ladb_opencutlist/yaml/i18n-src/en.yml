@@ -2369,11 +2369,14 @@ tool:
     action_3: Draw Separator
     action_option_group_offset: Offset
     action_option_group_segments: Segments
+    action_option_group_thickness: Thickness
     action_option_group_options: Options
     action_option_offset_shape_offset: Offset
     action_option_offset_shape_offset_status: Allows you to apply an offset to the outline of the drawn shape
     action_option_segments_segment_count: Number of Segments
     action_option_segments_segment_count_status: Allows you to set the number of segments in the circle
+    action_option_thickness_thickness: Thickness
+    action_option_thickness_thickness_status: Defines the thickness of the panels
     action_option_options_construction: Construction Lines
     action_option_options_construction_status: Draw as construction lines
     action_option_options_rectangle_centered: Rectangle Centered
