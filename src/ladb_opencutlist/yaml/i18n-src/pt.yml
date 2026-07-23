@@ -2366,6 +2366,7 @@ tool:
     action_2_status: Desenhar um volume com base em uma forma poligonal
     action_2_state_1_status: Clique para definir um novo ponto ou insira uma distância
     action_x_state_2_status: Clique para definir a elevação ou insira uma distância
+    action_3: Inserir uma Divisão
     action_option_group_offset: Diferença
     action_option_group_segments: Segmentos
     action_option_group_options: Opções
@@ -2483,6 +2484,10 @@ tool:
     action_option_options_keep_a_status: Manter as instâncias A após a operação e colocar o resultado em uma nova peça
     action_option_options_keep_b: Manter B
     action_option_options_keep_b_status: Manter as instâncias B após a operação
+    action_option_options_remove_unused_definitions_status: Eliminar as definições de componentes que já não são utilizadas após a operação
+    notify:
+      validate_a: Confirme para avançar para a seleção de B
+      validate_b: Confirme para aplicar a operação
     error:
       curve_intersect: Um dos planos de corte cruza uma curva não extensível
   smart_paint:

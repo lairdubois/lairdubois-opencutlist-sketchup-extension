@@ -2484,10 +2484,10 @@ tool:
     action_option_options_keep_a_status: Сохранять копии А после операции и поместить результат в новую деталь
     action_option_options_keep_b: Оставить деталь B
     action_option_options_keep_b_status: Сохранять экземпляры B после операции
-    action_option_options_remove_unused_definitions_status: ""
+    action_option_options_remove_unused_definitions_status: Очистить неиспользуемые компоненты после выполнения операции
     notify:
-      validate_a: ""
-      validate_b: ""
+      validate_a: "Подтвердите, чтобы перейти к выбору B"
+      validate_b: "Подтвердите, чтобы применить операцию"
     error:
       curve_intersect: Одна из плоскостей разреза проходит через нерастяжимую кривую
   smart_paint:
