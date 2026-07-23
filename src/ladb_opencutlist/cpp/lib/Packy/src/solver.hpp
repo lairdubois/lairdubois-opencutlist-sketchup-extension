@@ -2314,10 +2314,10 @@ namespace Packy {
             ShapeWithHoles shape = ShapeWithHoles::from_json(j);
 
             // Fix self-intersections
-            const std::vector<ShapeWithHoles> fixed_shapes = fix_self_intersections(shape);
+            const MultiShapeWithHoles fixed_shapes = fix_self_intersections(shape);
             std::vector<ItemShape> item_shapes;
 
-            for (const auto& fixed_shape: fixed_shapes) {
+            for (const auto& fixed_shape: fixed_shapes.shapes_with_holes) {
                 item_shapes.emplace_back(ItemShape{fixed_shape});
             }
 
