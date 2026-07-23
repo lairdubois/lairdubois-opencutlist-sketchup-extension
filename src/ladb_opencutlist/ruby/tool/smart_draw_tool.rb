@@ -4113,6 +4113,19 @@ module Ladb::OpenCutList
       fragments = output['fragments'].select { |fragment| fragment['vertices'].is_a?(Array) && fragment['face_indices'].is_a?(Array) }
       return nil if fragments.empty?
 
+      # The slab ∩ cavity intersection can split into several disjoint
+      # fragments (e.g. a non-convex cavity clipping the oversized slab in
+      # more than one place) : only the one actually touched by the picked
+      # point is the separator the user meant to draw, so it's the only one
+      # kept - the rest would otherwise be built as extra, unwanted geometry
+      # in the same part.
+      if fragments.length > 1
+        touched_fragment = fragments.find do |fragment|
+          SolidFragmentDef.new(fragment['vertices'], fragment['face_indices'], fragment['face_ids'], []).contains_point?(picked_point)
+        end
+        fragments = [ touched_fragment ] unless touched_fragment.nil?
+      end
+
       { :point => picked_point, :normal => normal, :fragments => fragments, :container_path => cavities_def.container_path }
     end
 
@@ -4169,7 +4182,6 @@ module Ladb::OpenCutList
 
       @tool.store_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_THICKNESS, SmartReshapeTool::ACTION_OPTION_THICKNESS_THICKNESS, thickness.to_s, fire_event: true)
       Sketchup.set_status_text('', SB_VCB_VALUE)
-      _compute_separator(view)
       _refresh
 
       false

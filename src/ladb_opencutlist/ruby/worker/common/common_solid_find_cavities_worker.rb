@@ -40,26 +40,50 @@ module Ladb::OpenCutList
   #   single body carrying envelope faces is the outside world, dropped.
   #
   # ENVELOPE REDUCTION (hull mode, reduce_envelope option) : when a panel is
-  # RECESSED behind an opening (e.g. shelves shallower than the sides), the
+  # RECESSED behind an opening (e.g. shelves shallower than the sides, or a
+  # cabinet back set forward from the case's true rear edge), the
   # compartments it separates communicate through the space in front of its
   # edge and would come out as a single merged cavity. Such a panel is
   # betrayed by its edge (chant) faces : they bound the cavity on a plane
   # that, extended, crosses the cavity interior, with envelope cap beyond it.
-  # A chant is only trusted when the SAME panel also bounds the cavity on
-  # BOTH its main faces (front and back — the two compartments it
-  # separates) : a panel exposing only one main face to the cavity is a
-  # perimeter wall whose chant is exposed by a concave/notched footprint,
-  # not a recess, and reducing there would clip away the real cavity
-  # instead of splitting it. It is further trusted only when it is a SIDE
-  # face of its panel (perpendicular to the panel's WIDTH, running its full
-  # LENGTH — e.g. a shelf's recessed front edge) rather than an END face
-  # (perpendicular to its LENGTH, where the panel simply stops — e.g. the
+  # Chants merely lying on the same plane can be pure coincidence (e.g. a
+  # large contour panel and an unrelated divider's free tip landing on the
+  # same depth) : they are first split into sub-groups of chant triangles
+  # that physically TOUCH each other (share a vertex, transitively), not
+  # just coincide numerically — see #_reduction_group_components. A chant
+  # is trusted when, within ONE such touching sub-group, any of :
+  # - the SAME panel also bounds the cavity on BOTH its main faces (front
+  #   and back — the two compartments it separates, e.g. a recessed shelf) ;
+  # - SEVERAL DISTINCT panels make up the sub-group — that alone is strong
+  #   evidence of an intentional, uniformly receding assembly (e.g. a shelf
+  #   recessed together with the case's own top/bottom — a lone panel could
+  #   never pass the BOTH-main-faces test above, since a contour panel's
+  #   other main face faces outward, not another cavity) ;
+  # - failing both, the pocket a reduction there would carve out (the
+  #   envelope cap area beyond the plane) stays clear of the group's own
+  #   (u, v) silhouette — walled in by other panels on its lateral sides
+  #   rather than reaching the envelope's outer edge (e.g. a lone recessed
+  #   back panel, walled by the sides/top/bottom) — see
+  #   #_reduction_pocket_confined?.
+  # Failing all three, this sub-group's chant is exposed by a
+  # concave/notched footprint, not a recess, and reducing there would clip
+  # away the real cavity instead of splitting it. A chant is further
+  # trusted only when the sub-group's MERGED footprint (safe now that
+  # touching, not mere plane coincidence, backs the grouping) is a SIDE face
+  # (perpendicular to its WIDTH, running its full LENGTH — e.g. a shelf's
+  # recessed front edge) rather than an END face (perpendicular to its
+  # LENGTH, where the board simply stops — e.g. the
   # free tip of an L-shaped divider) : an END has no group-wide role, the
   # real panels already separate the compartments wherever the board
   # actually is, and extending its plane would clip an unrelated part of
   # the assembly it merely happens to cross (e.g. past another divider it
   # does not connect to) — see #_detect_reduction_planes /
-  # #_reduction_side_plane?. The envelope is then reduced by clipping it at
+  # #_reduction_side_plane?. Testing the sub-group's merged footprint rather
+  # than each panel's own — safe only because touching already rules out
+  # coincidence — lets a short member (e.g. a mullion shorter than the case
+  # is deep, in a non-rectangular assembly) be judged alongside what it
+  # actually connects to, instead of on its own possibly-misleading aspect
+  # ratio. The envelope is then reduced by clipping it at
   # each remaining (SIDE) plane (keeping the panel side) and the open
   # cavities are recomputed : the caps recede to the most recessed panel
   # edge — the whole connected group is reduced to the depth of its
@@ -272,7 +296,7 @@ module Ladb::OpenCutList
           # cavities clip the envelope, and the open cavities are recomputed
           # against the reduced envelope — see the class doc.
           if @reduce_envelope && !open_fragment_defs.empty?
-            reduction_planes = _detect_reduction_planes(open_fragment_defs, panel_id_ranges, panel_meshes, _panel_dominant_normals(panel_meshes))
+            reduction_planes = _detect_reduction_planes(open_fragment_defs, panel_id_ranges, panel_meshes, _panel_dominant_normals(panel_meshes), envelope_mesh)
             unless reduction_planes.empty?
               reduction_output = Meshy.operate(
                 :operation => Meshy::OPERATION_INTERSECTION,
@@ -479,7 +503,7 @@ module Ladb::OpenCutList
     # area beyond it. Returns [ [ normal, d ], ... ] where the normal (unit
     # [ x, y, z ], n.p = d on the plane) points toward the KEPT side — a
     # cavity face lies on the panel, so its outward normal points into it.
-    def _detect_reduction_planes(fragment_defs, panel_id_ranges, panel_meshes, dominant_normals)
+    def _detect_reduction_planes(fragment_defs, panel_id_ranges, panel_meshes, dominant_normals, envelope_mesh)
       planes = {}
       fragment_defs.each do |fragment_def|
         vertices = fragment_def.vertices
@@ -490,6 +514,7 @@ module Ladb::OpenCutList
         # each panel's own dominant axis) where that same panel bounds the
         # cavity on a MAIN face — front and back, when both are exposed
         main_plane_keys_by_panel = Hash.new { |h, k| h[k] = {} }
+        triangle_mesh_position = {}
         candidates = {}
         fragment_def.face_indices.each_slice(3).with_index do |(a, b, c), triangle_index|
           face_id = face_ids[triangle_index]
@@ -509,22 +534,17 @@ module Ladb::OpenCutList
           end
           d = normal[0] * vertices[a * 3] + normal[1] * vertices[a * 3 + 1] + normal[2] * vertices[a * 3 + 2]
           key = normal.map { |v| (v * 1000).round } << (d / SolidMeshDef::TOLERANCE).round
-          candidate = candidates[key] ||= [ normal, d, 0.0, mesh_position ]
+          candidate = candidates[key] ||= [ normal, d, 0.0, [] ]
           candidate[2] += area2 / 2.0
+          candidate[3] << triangle_index
+          triangle_mesh_position[triangle_index] = mesh_position
         end
 
-        candidates.each do |key, (normal, d, area, mesh_position)|
+        candidates.each do |key, (normal, d, area, triangle_indices)|
           next if planes.key?(key)
           # Degenerate boolean sliver, not a chant strip — see
           # REDUCTION_MIN_AREA
           next if area < REDUCTION_MIN_AREA
-          # A genuine recessed panel (e.g. a shallow shelf) is exposed to the
-          # cavity on BOTH its main faces — front and back, the two
-          # compartments it separates. A panel bounding the cavity on only
-          # one main face is a perimeter wall whose chant is exposed by a
-          # concave/notched footprint, not a recess : reducing the envelope
-          # there would clip away the real cavity instead of splitting it.
-          next if main_plane_keys_by_panel[mesh_position].size < 2
           # The cavity must extend on both sides of the extended plane —
           # beyond the chant (removed side, negative distances) and behind
           # it (kept side, where the panel and the compartments lie)
@@ -548,22 +568,127 @@ module Ladb::OpenCutList
             normal[0] * x + normal[1] * y + normal[2] * z - d < -REDUCTION_MIN_DEPTH
           }
           next unless cap_beyond
-          # A SIDE face (e.g. a shelf's recessed front edge, running the
-          # panel's full length) genuinely represents the depth every element
-          # in the connected group recedes to. An END face (e.g. an L-shaped
-          # divider's free tip, where the board simply stops) has no such
-          # role : the real panels already separate the compartments
-          # wherever the board actually is, and beyond its tip nothing
-          # justifies a cut — extending its plane would clip an unrelated
-          # part of the assembly it merely happens to cross (e.g. past
-          # another divider it does not connect to) — see
-          # #_reduction_side_plane?.
-          next unless _reduction_side_plane?(normal, panel_meshes[mesh_position])
+          # Several panels merely lying on the same (normal, d) plane can be
+          # pure coincidence (e.g. a large contour panel and an unrelated
+          # divider's free tip that happen to sit at the same depth) : a
+          # numeric match alone is not proof they belong to the same recess.
+          # Physical CONTACT is — see #_reduction_group_components. Only ONE
+          # touching sub-group needs to hold up on its own for the whole
+          # plane to be trusted (the eventual clip still applies to the full
+          # cross-section, unchanged — this only decides whether to trust
+          # the plane at all).
+          accepted = _reduction_group_components(triangle_indices, fragment_def).any? { |component|
+            mesh_positions = component.map { |triangle_index| triangle_mesh_position[triangle_index] }.uniq
+            # A genuine recessed panel (e.g. a shallow shelf) is exposed to
+            # the cavity on BOTH its main faces — front and back, the two
+            # compartments it separates ; a contour panel (side, top,
+            # bottom...) can never satisfy that on its own (its other main
+            # face faces outward, not another cavity). It is trusted
+            # instead when SEVERAL DISTINCT, TOUCHING panels share this
+            # exact plane (e.g. a shelf recessed together with the case's
+            # own top/bottom) ; or, failing that, when its pocket stays
+            # confined within the group's own silhouette — see
+            # #_reduction_pocket_confined?. Failing all three, this
+            # sub-group's chant is exposed by a concave/notched footprint,
+            # not a recess : reducing the envelope there would clip away
+            # the real cavity instead of splitting it.
+            both_main_faces = mesh_positions.any? { |mesh_position| main_plane_keys_by_panel[mesh_position].size >= 2 }
+            shared_by_group = mesh_positions.length >= 2
+            next false unless both_main_faces || shared_by_group || _reduction_pocket_confined?(normal, d, fragment_def, envelope_mesh)
+            # A SIDE face (e.g. a shelf's recessed front edge, running the
+            # panel's full length) genuinely represents the depth every
+            # element in the touching group recedes to. An END face (e.g.
+            # an L-shaped divider's free tip, where the board simply stops)
+            # has no such role : the real panels already separate the
+            # compartments wherever the board actually is, and beyond its
+            # tip nothing justifies a cut — extending its plane would clip
+            # an unrelated part of the assembly it merely happens to cross
+            # — see #_reduction_side_plane?. Tested on the sub-group's
+            # MERGED footprint (safe now that touching, not mere plane
+            # coincidence, backs the grouping) so a short member (e.g. a
+            # mullion shorter than the case is deep, in a non-rectangular
+            # assembly) is judged alongside what it actually connects to,
+            # not on its own possibly-misleading aspect ratio.
+            merged_mesh = { :vertices => mesh_positions.flat_map { |mesh_position| panel_meshes[mesh_position][:vertices] } }
+            _reduction_side_plane?(normal, merged_mesh)
+          }
+          next unless accepted
           planes[key] = [ normal, d ]
         end
 
       end
       planes.values
+    end
+
+    # Splits the given candidate plane's chant triangles into groups that
+    # physically TOUCH each other (share a vertex, transitively) rather than
+    # merely lying on the same (normal, d) plane — which can also happen by
+    # pure coincidence between panels that have nothing to do with each
+    # other (e.g. a large contour panel and an unrelated divider's free tip
+    # landing on the same depth). Vertex-sharing, not full edge-sharing : the
+    # two sides of a genuine joint are not guaranteed to be triangulated
+    # identically, so requiring a shared edge would be too strict. See
+    # #_detect_reduction_planes.
+    def _reduction_group_components(triangle_indices, fragment_def)
+      vertices = fragment_def.vertices
+      face_indices = fragment_def.face_indices
+
+      parent = {}
+      find = lambda { |i| parent[i] = find.call(parent[i]) unless parent[i] == i ; parent[i] }
+      union = lambda { |i, j| pi, pj = find.call(i), find.call(j) ; parent[pi] = pj if pi != pj }
+      triangle_indices.each { |triangle_index| parent[triangle_index] = triangle_index }
+
+      triangles_by_vertex = Hash.new { |h, k| h[k] = [] }
+      triangle_indices.each do |triangle_index|
+        a, b, c = face_indices[triangle_index * 3, 3]
+        [ a, b, c ].each do |vertex_index|
+          vertex_key = [ vertices[vertex_index * 3], vertices[vertex_index * 3 + 1], vertices[vertex_index * 3 + 2] ].map { |v| (v / SolidMeshDef::TOLERANCE).round }
+          triangles_by_vertex[vertex_key].each { |other| union.call(triangle_index, other) }
+          triangles_by_vertex[vertex_key] << triangle_index
+        end
+      end
+
+      triangle_indices.group_by { |triangle_index| find.call(triangle_index) }.values
+    end
+
+    # True when the given candidate plane's REMOVED pocket (the beyond-side
+    # envelope cap area a reduction there would carve out) stays clear of
+    # the group's own (u, v) silhouette (the envelope's own extent
+    # perpendicular to the candidate normal) — walled in by other panels on
+    # its lateral sides rather than reaching the envelope's outer edge.
+    # Reaching that edge means the "recess" is actually the assembly's true
+    # boundary there (a concave/notched footprint, open to the exterior),
+    # not a step the whole group recedes to together. This is a cheap
+    # bounding-box proxy, not an exact polygon containment test : for a
+    # non-rectangular (e.g. L-shaped) envelope, a pocket could stay within
+    # the overall bbox without being walled on its full perimeter — an
+    # acceptable trade-off given how close to rectangular real cabinets are
+    # in practice (see the class doc, ENVELOPE REDUCTION).
+    def _reduction_pocket_confined?(normal, d, fragment_def, envelope_mesh)
+      u, v = _reduction_plane_basis(normal)
+
+      envelope_u0, envelope_u1 = _mesh_extent(envelope_mesh, u)
+      envelope_v0, envelope_v1 = _mesh_extent(envelope_mesh, v)
+
+      vertices = fragment_def.vertices
+      face_ids = fragment_def.face_ids
+      cap_u0 = cap_v0 = Float::INFINITY
+      cap_u1 = cap_v1 = -Float::INFINITY
+      fragment_def.face_indices.each_slice(3).with_index do |(a, b, c), triangle_index|
+        next unless face_ids[triangle_index] == 0
+        [ a, b, c ].each do |vertex_index|
+          x, y, z = vertices[vertex_index * 3], vertices[vertex_index * 3 + 1], vertices[vertex_index * 3 + 2]
+          next unless normal[0] * x + normal[1] * y + normal[2] * z - d < -REDUCTION_MIN_DEPTH
+          pu = u[0] * x + u[1] * y + u[2] * z
+          pv = v[0] * x + v[1] * y + v[2] * z
+          cap_u0 = pu if pu < cap_u0 ; cap_u1 = pu if pu > cap_u1
+          cap_v0 = pv if pv < cap_v0 ; cap_v1 = pv if pv > cap_v1
+        end
+      end
+      return false if cap_u0 > cap_u1  # No beyond-side cap vertex at all
+
+      cap_u0 >= envelope_u0 + REDUCTION_MIN_DEPTH && cap_u1 <= envelope_u1 - REDUCTION_MIN_DEPTH &&
+        cap_v0 >= envelope_v0 + REDUCTION_MIN_DEPTH && cap_v1 <= envelope_v1 - REDUCTION_MIN_DEPTH
     end
 
     # Orthonormal basis [ u, v ] completing the given unit normal, seeded on
