@@ -26,6 +26,9 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
+### 2026-07-23
+ * Added Smart Draw Separator **(DEV team only)**
+ * Updated PackingSolver dependency + fix [#1015](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/issues/1015)
 ### 2026-07-22
  * Improved Smart Boolean Tools robustness
  * Added Smart Boolean Tools "remove unused definitions" option

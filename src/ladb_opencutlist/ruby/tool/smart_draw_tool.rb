@@ -3891,6 +3891,13 @@ module Ladb::OpenCutList
     # cavity is open) ever clips the intersection - never the slab itself.
     SEPARATOR_SLAB_MARGIN = 1.0
 
+    # Below this dot-product gap, two candidates are considered equally
+    # (im)perpendicular to the cavity's opening : the opening criterion does
+    # not discriminate between them (e.g. the picked face's normal already
+    # equals the opening normal, so both in-plane candidates are exactly
+    # perpendicular to it), and the screen-based tie-break takes over.
+    SEPARATOR_NORMAL_OPENING_DOT_EPSILON = 1.0e-6
+
     def initialize(tool, previous_action_handler = nil)
       super(SmartDrawTool::ACTION_DRAW_SEPARATOR, tool, previous_action_handler)
 
@@ -4349,13 +4356,6 @@ module Ladb::OpenCutList
       candidates
     end
 
-    # Below this dot-product gap, two candidates are considered equally
-    # (im)perpendicular to the cavity's opening : the opening criterion does
-    # not discriminate between them (e.g. the picked face's normal already
-    # equals the opening normal, so both in-plane candidates are exactly
-    # perpendicular to it), and the screen-based tie-break takes over.
-    SEPARATOR_NORMAL_OPENING_DOT_EPSILON = 1.0e-6
-
     # The separator's normal : the candidate locked via VK_LEFT / VK_RIGHT
     # when set (see onToolKeyDown), otherwise the candidate that keeps a
     # CHANT (thin edge), not a whole main face, against the cavity's open
@@ -4575,6 +4575,8 @@ module Ladb::OpenCutList
 
     def _get_cavities_def
       return @cavities_def if @cavities_def.is_a?(CavitiesDef)
+
+      return nil if get_active_part.group.material_is_virtual || get_active_part.group.material_type == MaterialAttributes::TYPE_HARDWARE
 
       active_part_entity_path = get_active_part_entity_path
       if active_part_entity_path.is_a?(Array) && active_part_entity_path.length > 1
