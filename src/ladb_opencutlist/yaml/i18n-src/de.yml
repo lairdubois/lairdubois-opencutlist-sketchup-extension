@@ -2366,7 +2366,7 @@ tool:
     action_2_status: Volumen auf der Basis einer polygonalen Form zeichnen
     action_2_state_1_status: "Klicken Sie, um einen neuen Punkt zu setzen, oder geben Sie eine Distanz ein"
     action_x_state_2_status: "Klicken Sie, um die Höhe festzulegen, oder geben Sie eine Distanz ein"
-    action_3: ""
+    action_3: Einteilung einfügen
     action_option_group_offset: Versatz
     action_option_group_segments: Segmente
     action_option_group_options: Optionen

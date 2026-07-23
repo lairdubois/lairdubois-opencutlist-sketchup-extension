@@ -2366,7 +2366,7 @@ tool:
     action_2_status: Малювання об'єму на основі багатокутної форми
     action_2_state_1_status: "Натисніть, щоб встановити нову точку або ввести відстань"
     action_x_state_2_status: "Натисніть, щоб встановити висоту або ввести відстань"
-    action_3: ""
+    action_3: Малювання роздільника
     action_option_group_offset: Відступ
     action_option_group_segments: Сегменти
     action_option_group_options: Опції
@@ -2484,6 +2484,10 @@ tool:
     action_option_options_keep_a_status: Збережіть екземпляри A після операції та помістіть результат у нову деталь
     action_option_options_keep_b: Консерватор B
     action_option_options_keep_b_status: Зберігає екземпляри B після операції
+    action_option_options_remove_unused_definitions_status: "Очистити визначення компонентів, які більше не використовуються після роботи"
+    notify:
+      validate_a: "Перевірте, щоб перейти до вибору B"
+      validate_b: "Перевірте, щоб застосувати операцію"
     error:
       curve_intersect: Одна з січних площин перетинає нерозтяжну криву
   smart_paint:
