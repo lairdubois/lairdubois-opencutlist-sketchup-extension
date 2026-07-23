@@ -4086,7 +4086,7 @@ module Ladb::OpenCutList
       fragment_def ||= cavities_def.fragment_defs_for_point(picked_point).first
       return nil if fragment_def.nil?
 
-      normal = _get_separator_normal(picked_face_manipulator, view)
+      normal = _get_separator_normal(picked_face_manipulator, fragment_def, view)
       return nil if normal.nil?
 
       slab_mesh = _get_separator_slab_mesh(normal, picked_point.to_a, fragment_def, _fetch_option_thickness)
@@ -4349,11 +4349,24 @@ module Ladb::OpenCutList
       candidates
     end
 
+    # Below this dot-product gap, two candidates are considered equally
+    # (im)perpendicular to the cavity's opening : the opening criterion does
+    # not discriminate between them (e.g. the picked face's normal already
+    # equals the opening normal, so both in-plane candidates are exactly
+    # perpendicular to it), and the screen-based tie-break takes over.
+    SEPARATOR_NORMAL_OPENING_DOT_EPSILON = 1.0e-6
+
     # The separator's normal : the candidate locked via VK_LEFT / VK_RIGHT
-    # when set (see onToolKeyDown), otherwise whichever of the two in-plane
-    # candidates reads more horizontal in the current view - a live default
-    # that needs no extra click, and follows the camera as the user orbits.
-    def _get_separator_normal(picked_face_manipulator, view)
+    # when set (see onToolKeyDown), otherwise the candidate that keeps a
+    # CHANT (thin edge), not a whole main face, against the cavity's open
+    # side when there is one - a separator whose main face lands flush in
+    # the opening reads as a false front/back, not a shelf or a partition,
+    # which is essentially never the intent. When that criterion doesn't
+    # discriminate (hermetic cavity, no opening ; or both candidates equally
+    # (im)perpendicular to it), falls back to whichever candidate reads more
+    # horizontal in the current view - a live default that needs no extra
+    # click, and follows the camera as the user orbits.
+    def _get_separator_normal(picked_face_manipulator, fragment_def, view)
       candidates = _get_separator_normal_candidates(picked_face_manipulator)
       return nil if candidates.length < 2
 
@@ -4361,11 +4374,65 @@ module Ladb::OpenCutList
         return candidates[@locked_separator_normal_index].to_a
       end
 
+      if (opening_normal = _get_cavity_opening_normal(fragment_def)).is_a?(Array)
+        opening_vector = Geom::Vector3d.new(opening_normal)
+        dots = candidates.map { |axis| (axis % opening_vector).abs }
+        min_dot = dots.min
+        perpendicular_candidates = candidates.each_index.select { |index| dots[index] <= min_dot + SEPARATOR_NORMAL_OPENING_DOT_EPSILON }.map { |index| candidates[index] }
+        return perpendicular_candidates.first.to_a if perpendicular_candidates.length == 1
+        candidates = perpendicular_candidates
+      end
+
       camera = view.camera
       screen_right = camera.direction.cross(camera.up)
       return candidates.first.to_a unless screen_right.valid?
 
       candidates.max_by { |axis| (axis % screen_right).abs }.to_a
+    end
+
+    # Area-weighted dominant normal ([ x, y, z ] unit Float array) of the
+    # given cavity fragment's OPEN side - its cap triangles (reserved face id
+    # 0, the envelope ; see CommonSolidFindCavitiesWorker) rather than a real
+    # panel face. nil for a hermetic cavity (no cap at all) or a degenerate
+    # fragment. Folded up to sign (same trick as
+    # CommonSolidFindCavitiesWorker#_panel_dominant_normals) : only the AXIS
+    # matters here, and a through-cavity's two opposite caps must accumulate
+    # under the same key rather than canceling each other out.
+    def _get_cavity_opening_normal(fragment_def)
+      return nil unless fragment_def.is_a?(SolidCavityFragmentDef) && !fragment_def.closed?
+
+      vertices = fragment_def.vertices
+      face_ids = fragment_def.face_ids
+      return nil if face_ids.nil?
+
+      area_by_direction = Hash.new(0.0)
+      fragment_def.face_indices.each_slice(3).with_index do |(a, b, c), triangle_index|
+        next unless face_ids[triangle_index] == 0
+
+        ax, ay, az = vertices[a * 3], vertices[a * 3 + 1], vertices[a * 3 + 2]
+        bx, by, bz = vertices[b * 3], vertices[b * 3 + 1], vertices[b * 3 + 2]
+        cx, cy, cz = vertices[c * 3], vertices[c * 3 + 1], vertices[c * 3 + 2]
+        ux = bx - ax ; uy = by - ay ; uz = bz - az
+        vx = cx - ax ; vy = cy - ay ; vz = cz - az
+        nx = uy * vz - uz * vy
+        ny = uz * vx - ux * vz
+        nz = ux * vy - uy * vx
+        length = Math.sqrt(nx * nx + ny * ny + nz * nz)
+        next if length == 0
+
+        nx /= length ; ny /= length ; nz /= length
+        if nx < 0 || (nx == 0 && (ny < 0 || (ny == 0 && nz < 0)))
+          nx = -nx ; ny = -ny ; nz = -nz
+        end
+        key = [ (nx * 1000).round, (ny * 1000).round, (nz * 1000).round ]
+        area_by_direction[key] += length
+
+      end
+
+      key = area_by_direction.max_by { |_, area| area }&.first
+      return nil if key.nil?
+
+      key.map { |v| v / 1000.0 }
     end
 
     # Orthonormal basis [ u, v ] completing the given unit normal ([ x, y, z ]
