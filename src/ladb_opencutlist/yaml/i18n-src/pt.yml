@@ -2369,11 +2369,14 @@ tool:
     action_3: Inserir uma Divisão
     action_option_group_offset: Diferença
     action_option_group_segments: Segmentos
+    action_option_group_thickness: Espessura
     action_option_group_options: Opções
     action_option_offset_shape_offset: Diferença
     action_option_offset_shape_offset_status: Permite aplicar um deslocamento ao traçado da forma desenhada
     action_option_segments_segment_count: Número de Segmentos
     action_option_segments_segment_count_status: Permite definir o número de segmentos do círculo
+    action_option_thickness_thickness: Espessura
+    action_option_thickness_thickness_status: Define a espessura das chapas
     action_option_options_construction: Linhas de Construção
     action_option_options_construction_status: Desenhar com linhas de construção
     action_option_options_rectangle_centered: Retângulo Centralizado

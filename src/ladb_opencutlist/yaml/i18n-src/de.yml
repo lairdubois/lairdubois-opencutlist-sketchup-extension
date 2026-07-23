@@ -2369,11 +2369,14 @@ tool:
     action_3: Einteilung einfügen
     action_option_group_offset: Versatz
     action_option_group_segments: Segmente
+    action_option_group_thickness: Dicke
     action_option_group_options: Optionen
     action_option_offset_shape_offset: Versatz
     action_option_offset_shape_offset_status: "Ermöglicht es, einen Versatz auf die gezeichnete Form anzuwenden"
     action_option_segments_segment_count: Anzahl Segmente
     action_option_segments_segment_count_status: Ermöglicht das Festlegen der Anzahl der Kreissegmente
+    action_option_thickness_thickness: Dicke
+    action_option_thickness_thickness_status: Definiert die Dicke der Platten
     action_option_options_construction: Konstruktionslinien
     action_option_options_construction_status: Als Konstruktionslinien zeichnen
     action_option_options_rectangle_centered: Rechteck zentriert

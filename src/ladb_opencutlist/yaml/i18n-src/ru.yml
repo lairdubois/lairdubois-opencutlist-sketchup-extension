@@ -2369,11 +2369,14 @@ tool:
     action_3: Создать разделитель
     action_option_group_offset: Смещение
     action_option_group_segments: Сегменты
+    action_option_group_thickness: Толщина
     action_option_group_options: Опции
     action_option_offset_shape_offset: Смещение
     action_option_offset_shape_offset_status: Задает смещение линии контура проектируемой фигуры
     action_option_segments_segment_count: Количество сегментов
     action_option_segments_segment_count_status: Задает количества сегментов в проектируемой окружности
+    action_option_thickness_thickness: Толщина
+    action_option_thickness_thickness_status: Настройка толщины панелей
     action_option_options_construction: Конструкционные элементы
     action_option_options_construction_status: Моделирование каркасной основы
     action_option_options_rectangle_centered: Прямоугольник из центра
