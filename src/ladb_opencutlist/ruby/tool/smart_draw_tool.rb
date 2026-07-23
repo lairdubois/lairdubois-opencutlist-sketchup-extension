@@ -13,6 +13,11 @@ module Ladb::OpenCutList
   require_relative '../helper/part_helper'
   require_relative '../worker/common/common_drawing_decomposition_worker'
   require_relative '../utils/drawingelement_utils'
+  require_relative '../lib/fiddle/meshy/meshy'
+  require_relative '../model/solid/solid_mesh_def'
+  require_relative '../model/solid/solid_boolean_result_def'
+  require_relative '../utils/path_utils'
+  require_relative '../utils/transformation_utils'
 
   class SmartDrawTool < SmartTool
 
@@ -23,11 +28,14 @@ module Ladb::OpenCutList
 
     ACTION_OPTION_OFFSET = 'offset'
     ACTION_OPTION_SEGMENTS = 'segments'
+    ACTION_OPTION_THICKNESS = 'thickness'
     ACTION_OPTION_OPTIONS = 'options'
 
     ACTION_OPTION_OFFSET_SHAPE_OFFSET = 'shape_offset'
 
     ACTION_OPTION_SEGMENTS_SEGMENT_COUNT = 'segment_count'
+
+    ACTION_OPTION_THICKNESS_THICKNESS = 'thickness'
 
     ACTION_OPTION_OPTIONS_CONSTRUCTION = 'construction'
     ACTION_OPTION_OPTIONS_DRAW_IN = 'draw_in'
@@ -68,6 +76,7 @@ module Ladb::OpenCutList
       {
         :action => ACTION_DRAW_SEPARATOR,
         :options => {
+          ACTION_OPTION_THICKNESS => [ ACTION_OPTION_THICKNESS_THICKNESS ],
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_DRAW_IN, ACTION_OPTION_OPTIONS_MAX_OPENING_PLANES, ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, ACTION_OPTION_OPTIONS_ASK_NAME ]
         }
       }
@@ -146,6 +155,11 @@ module Ladb::OpenCutList
         when ACTION_OPTION_SEGMENTS_SEGMENT_COUNT
           return false
         end
+      when ACTION_OPTION_THICKNESS
+        case option
+        when ACTION_OPTION_THICKNESS_THICKNESS
+          return false
+        end
       when ACTION_OPTION_OPTIONS
         case option
         when ACTION_OPTION_OPTIONS_MAX_OPENING_PLANES
@@ -168,6 +182,11 @@ module Ladb::OpenCutList
       when ACTION_OPTION_SEGMENTS
         case option
         when ACTION_OPTION_SEGMENTS_SEGMENT_COUNT
+          return Kuix::Label.new(fetch_action_option_value(action, option_group, option).to_s)
+        end
+      when ACTION_OPTION_THICKNESS
+        case option
+        when ACTION_OPTION_THICKNESS_THICKNESS
           return Kuix::Label.new(fetch_action_option_value(action, option_group, option).to_s)
         end
       when ACTION_OPTION_OPTIONS
@@ -240,6 +259,8 @@ module Ladb::OpenCutList
 
   class SmartDrawActionHandler < SmartActionHandler
 
+    include UserTextHelper
+
     # -----
 
     def onToolKeyDown(tool, key, repeat, flags, view)
@@ -254,6 +275,12 @@ module Ladb::OpenCutList
       end
 
       false
+    end
+
+    # -----
+
+    def enableVCB?
+      true
     end
 
     # -----
@@ -275,7 +302,6 @@ module Ladb::OpenCutList
   class SmartDrawShapeActionHandler < SmartDrawActionHandler
 
     include SmartActionHandlerPartHelper
-    include UserTextHelper
     include PartHelper
 
     STATE_SHAPE_START = 0
@@ -807,10 +833,6 @@ module Ladb::OpenCutList
     def draw(view)
       super
       @mouse_ip.draw(view) if @mouse_ip.valid?
-    end
-
-    def enableVCB?
-      true
     end
 
     # -----
@@ -3861,6 +3883,17 @@ module Ladb::OpenCutList
 
     LAYER_3D_CAVITIES_PREVIEW = 100
     LAYER_3D_FACE_REF_PREVIEW = 200
+    LAYER_3D_SEPARATOR_PREVIEW = 300
+
+    # Provisional : fixed until the panel thickness becomes a real user
+    # option (material / std dimension), used both by the preview and the
+    # actual creation.
+    SEPARATOR_THICKNESS = 19.mm.to_f
+
+    # Keeps the slab sides well clear of the target cavity bounds, so only
+    # the cavity's own boundary (real panels, or the hull cap when the
+    # cavity is open) ever clips the intersection - never the slab itself.
+    SEPARATOR_SLAB_MARGIN = 1.0
 
     def initialize(tool, previous_action_handler = nil)
       super(SmartDrawTool::ACTION_DRAW_SEPARATOR, tool, previous_action_handler)
@@ -3879,7 +3912,60 @@ module Ladb::OpenCutList
       super
     end
 
+    def get_state_vcb_label(state)
+      PLUGIN.get_i18n_string("tool.default.vcb_thickness")
+    end
+
     # -----
+
+    def onToolLButtonUp(tool, flags, x, y, view)
+      super
+
+      case @state
+      when STATE_START
+        if _create_entity(view)
+          # The just-created separator is now real geometry in the model :
+          # the cached cavities (and the fragment it was clipped to) are
+          # stale, whatever the next separator picks must see it.
+          @cavities_def = nil
+          _refresh
+        else
+          UI.beep
+        end
+      end
+
+      true
+    end
+
+    def onToolKeyDown(tool, key, repeat, flags, view)
+      return true if super
+
+      case @state
+      when STATE_START
+
+        if key == VK_LEFT
+          @locked_separator_normal_index = @locked_separator_normal_index == 0 ? nil : 0
+          _refresh
+          return true
+        end
+        if key == VK_RIGHT
+          @locked_separator_normal_index = @locked_separator_normal_index == 1 ? nil : 1
+          _refresh
+          return true
+        end
+
+      end
+
+      false
+    end
+
+    def onToolUserText(tool, text, view)
+      return true if super
+
+      return true if _read_thickness(tool, text, view)
+
+      false
+    end
 
     def onPickerChanged(picker, view)
 
@@ -3887,6 +3973,7 @@ module Ladb::OpenCutList
 
       when STATE_START
         _pick_part(picker, view)
+        _preview_separator(view)
         _preview_face_ref
 
       end
@@ -3908,6 +3995,12 @@ module Ladb::OpenCutList
 
     def _reset
       @cavities_def = nil
+      @locked_separator_normal_index = nil
+      super
+    end
+
+    def _refresh
+      @picker.invalidate if @picker.is_a?(SmartPicker)
       super
     end
 
@@ -3931,9 +4024,9 @@ module Ladb::OpenCutList
         ft = picked_face_manipulator.transformation
         fo = ORIGIN.transform(ft)
 
-        k_axes = Kuix::AxesHelper.new
-        k_axes.transformation = Geom::Transformation.translation(fo.vector_to(@picker.picked_point)) * picked_face_manipulator.transformation
-        @tool.append_3d(k_axes, LAYER_3D_FACE_REF_PREVIEW)
+        # k_axes = Kuix::AxesHelper.new
+        # k_axes.transformation = Geom::Transformation.translation(fo.vector_to(@picker.picked_point)) * picked_face_manipulator.transformation
+        # @tool.append_3d(k_axes, LAYER_3D_FACE_REF_PREVIEW)
 
         if (cavities_def = _get_cavities_def).is_a?(CavitiesDef)
 
@@ -3972,6 +4065,381 @@ module Ladb::OpenCutList
         end
 
       end
+    end
+
+    # Computes the separator solid at the current pick : the intersection of
+    # a thick slab (through the picked point, normal to one of the picked
+    # face's transformation axes, perpendicular to the reference face) with
+    # the cavity fragment touched by the picked point. The slab is oversized
+    # in its own plane on purpose (see SEPARATOR_SLAB_MARGIN) : only the
+    # CAVITY boundary ever clips the result, so an open cavity (hull mode)
+    # clips flush with its cap, not with the slab's own edges.
+    # Returns { :point =>, :normal =>, :fragments => } (Meshy raw fragment
+    # hashes) or nil. Shared by the 3D preview and the actual creation, so
+    # what gets built is exactly what was last shown.
+    def _compute_separator(view)
+      return nil unless (picked_face_manipulator = @picker.picked_plane_manipulator).is_a?(PlaneManipulator)
+      return nil if (picked_point = @picker.picked_point).nil?
+      return nil unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef)
+
+      # Nudge the lookup point to the cavity side of the picked face : a
+      # point picked exactly on a boundary face is ambiguous between the
+      # cavities it separates (fragment_defs_for_point would return both).
+      inward_point = picked_point.offset(picked_face_manipulator.normal.reverse, SolidMeshDef::TOLERANCE * 10)
+      fragment_def = cavities_def.fragment_defs_for_point(inward_point).first
+      fragment_def ||= cavities_def.fragment_defs_for_point(picked_point).first
+      return nil if fragment_def.nil?
+
+      normal = _get_separator_normal(picked_face_manipulator, view)
+      return nil if normal.nil?
+
+      slab_mesh = _get_separator_slab_mesh(normal, picked_point.to_a, fragment_def, _fetch_option_thickness)
+      cavity_mesh = {
+        :vertices => fragment_def.vertices,
+        :face_indices => fragment_def.face_indices,
+        :face_ids => fragment_def.face_ids,
+        :tolerance => SolidMeshDef::TOLERANCE
+      }
+
+      output = Fiddle::Meshy.operate(
+        :operation => Fiddle::Meshy::OPERATION_INTERSECTION,
+        :validate => false, # Both operands are already valid (slab, and a fragment born of a validated computation)
+        :tolerance => SolidMeshDef::TOLERANCE,
+        :src_meshes => [ slab_mesh ],
+        :cut_meshes => [ cavity_mesh ]
+      )
+      return nil unless output.is_a?(Hash) && output['fragments'].is_a?(Array)
+
+      fragments = output['fragments'].select { |fragment| fragment['vertices'].is_a?(Array) && fragment['face_indices'].is_a?(Array) }
+      return nil if fragments.empty?
+
+      { :point => picked_point, :normal => normal, :fragments => fragments, :container_path => cavities_def.container_path }
+    end
+
+    def _preview_separator(view)
+      @tool.clear_3d(LAYER_3D_SEPARATOR_PREVIEW)
+
+      result = _compute_separator(view)
+      return if result.nil?
+
+      color = Kuix::COLOR_MAGENTA
+
+      result[:fragments].each do |fragment|
+
+        # face_info_defs is irrelevant here : the preview only needs the
+        # geometry (boundary_segments doesn't dereference it).
+        separator_fragment_def = SolidFragmentDef.new(fragment['vertices'], fragment['face_indices'], fragment['face_ids'], [])
+        next if separator_fragment_def.empty?
+
+        segments = separator_fragment_def.unique_boundary_segments
+
+        k_segments = Kuix::Segments.new
+        k_segments.add_segments(segments)
+        k_segments.color = color
+        k_segments.line_width = 1
+        k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+        k_segments.on_top = true
+        @tool.append_3d(k_segments, LAYER_3D_SEPARATOR_PREVIEW)
+
+        k_segments = Kuix::Segments.new
+        k_segments.add_segments(segments)
+        k_segments.color = color
+        k_segments.line_width = 1.5
+        @tool.append_3d(k_segments, LAYER_3D_SEPARATOR_PREVIEW)
+
+      end
+    end
+
+    # -----
+
+    def _read_thickness(tool, text, view)
+
+      # Keep it "compatible" with the way to enter offset in Smart Draw Tool.
+      if (match = /^(.+)x$/i.match(text))
+        text = match[1]
+      end
+
+      thickness = _read_user_text_length(tool, text)
+      return true if thickness.nil?
+
+      if thickness < 0
+        tool.notify_errors([[ 'tool.default.error.invalid_thickness', { :value => thickness } ]])
+        return true
+      end
+
+      @tool.store_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_THICKNESS, SmartReshapeTool::ACTION_OPTION_THICKNESS_THICKNESS, thickness.to_s, fire_event: true)
+      Sketchup.set_status_text('', SB_VCB_VALUE)
+      _compute_separator(view)
+      _refresh
+
+      false
+    end
+
+    # -----
+
+    # Rebuilds the separator fragments as real geometry inside the model,
+    # names and selects the resulting part - the same tail conventions
+    # (ask_name option / success notification) as the other draw handlers'
+    # _create_entity. Returns true on success, false when there is nothing
+    # valid to build (no pick, no cavity, degenerate intersection).
+    def _create_entity(view)
+      result = _compute_separator(view)
+      return false if result.nil?
+
+      point = result[:point]
+      normal = result[:normal]
+      u, v = _get_separator_plane_basis(normal)
+
+      # Local frame for the new part : Z = thickness axis (the chosen
+      # separator normal), X/Y = the slab's own in-plane basis. u, v, normal
+      # is right-handed by construction (_get_separator_plane_basis), so this
+      # transformation is a pure rotation - never a mirror.
+      world_transformation = Geom::Transformation.axes(point, Geom::Vector3d.new(u), Geom::Vector3d.new(v), Geom::Vector3d.new(normal))
+
+      container_path = result[:container_path]
+      if container_path.is_a?(Array) && container_path.any? && (container = container_path.last) && container.respond_to?(:definition)
+        active_entities = container.definition.entities
+        active_transformation = PathUtils.get_transformation(container_path, IDENTITY)
+      else
+        active_entities = Sketchup.active_model.entities
+        active_transformation = IDENTITY
+      end
+
+      model = Sketchup.active_model
+      model.start_operation('OCL Create Separator', true, false, !active?)
+      begin
+
+        definition = model.definitions.add(PLUGIN.get_i18n_string('default.part_single').capitalize)
+
+        created_faces = _build_separator_faces(definition.entities, result[:fragments], world_transformation)
+        if created_faces.empty?
+          model.definitions.remove(definition) if model.definitions.respond_to?(:remove)
+          model.abort_operation
+          return false
+        end
+
+        instance = active_entities.add_instance(definition, active_transformation.inverse * world_transformation)
+
+        if active?
+
+          fn_ask_name = lambda {
+            unless instance.nil? || instance.definition.nil? || instance.definition.deleted?
+              if (data = UI.inputbox([ PLUGIN.get_i18n_string('tab.cutlist.edit_part.name') ], [ instance.definition.name ], PLUGIN.get_i18n_string('default.rename')))
+                name = data.first
+                if name.empty?
+                  UI.beep
+                else
+                  instance.definition.name = name
+                end
+              end
+            end
+          }
+
+          if _fetch_option_ask_name?
+            fn_ask_name.call
+          else
+            @tool.notify_success(
+              PLUGIN.get_i18n_string("tool.smart_draw.success.part_created", { :name => definition.name }),
+              [
+                {
+                  :label => PLUGIN.get_i18n_string('default.rename'),
+                  :block => fn_ask_name,
+                }
+              ]
+            )
+          end
+
+        end
+
+        model.commit_operation
+
+      rescue Exception => e
+        PLUGIN.dump_exception(e)
+        model.abort_operation
+        return false
+      end
+
+      true
+    end
+
+    # Turns the raw Meshy fragments (world coordinates) into real, coplanar-
+    # merged Sketchup::Face geometry inside +entities+, expressed in the
+    # given transformation's local space. Deliberately simpler than
+    # CommonSolidBooleanApplyWorker#_solid_fragments_to_geometry : the whole
+    # definition is fresh (never touches pre-existing geometry) and carries
+    # a single new part, so there is no per-face material/layer/curve
+    # provenance to restore - any two coplanar adjacent faces merge
+    # unconditionally.
+    def _build_separator_faces(entities, fragments, world_transformation)
+      ti = world_transformation.inverse
+      flipped = TransformationUtils.flipped?(world_transformation)
+
+      fragments.each do |fragment|
+        vertices = fragment['vertices']
+        face_indices = fragment['face_indices']
+
+        points = vertices.each_slice(3).map { |x, y, z| Geom::Point3d.new(x, y, z).transform(ti) }
+
+        mesh = Geom::PolygonMesh.new(points.length, face_indices.length / 3)
+        face_indices.each_slice(3) do |a, b, c|
+          triangle = [ points[a], points[b], points[c] ]
+          triangle.reverse! if flipped
+          mesh.add_polygon(triangle)
+        end
+
+        entities.add_faces_from_mesh(mesh, Geom::PolygonMesh::NO_SMOOTH_OR_HIDE)
+      end
+
+      faces = entities.grep(Sketchup::Face)
+      return [] if faces.empty?
+
+      # Merge coplanar adjacent faces (native solid tools do the same) :
+      # erase only when SketchUp will actually merge the two faces (same
+      # oriented normal, truly coplanar within tolerance), otherwise erasing
+      # the edge would erase both faces and leave a hole.
+      edges_to_erase = []
+      entities.grep(Sketchup::Edge).each do |edge|
+        edge_faces = edge.faces
+        next unless edge_faces.length == 2
+        face_0, face_1 = edge_faces
+        next unless face_0.normal.samedirection?(face_1.normal) && face_1.outer_loop.vertices.all? { |vertex| vertex.position.on_plane?(face_0.plane) }
+        edges_to_erase << edge
+      end
+      entities.erase_entities(edges_to_erase) if edges_to_erase.any?
+
+      # Degenerate remnants : Manifold may emit a sliver triangle thinner
+      # than the SketchUp merge tolerance ; a face with less than 3 edges is
+      # never a legitimate piece of the shell.
+      degenerate_faces = faces.select { |face| !face.deleted? && face.edges.length < 3 }
+      unless degenerate_faces.empty?
+        degenerate_entities = []
+        degenerate_faces.each do |face|
+          degenerate_entities.concat(face.edges.select { |edge| edge.faces.all? { |edge_face| degenerate_faces.include?(edge_face) } })
+          degenerate_entities << face
+        end
+        entities.erase_entities(degenerate_entities)
+      end
+
+      faces.reject(&:deleted?)
+    end
+
+    # The two local axes of the picked face's container transformation lying
+    # in the face's plane - the axis most aligned with the face normal
+    # (perpendicular to the face, not usable as the separator's own normal)
+    # is excluded. Order is deterministic (transformation's x, y, z order),
+    # independent of the camera : this is what VK_LEFT / VK_RIGHT address by
+    # index in onToolKeyDown, so a lock keeps meaning the "first" or "second"
+    # axis whatever face ends up under the cursor next.
+    def _get_separator_normal_candidates(picked_face_manipulator)
+      t = picked_face_manipulator.transformation
+      candidates = [ t.xaxis, t.yaxis, t.zaxis ].map(&:normalize)
+
+      face_normal = picked_face_manipulator.normal
+      excluded_index = candidates.each_index.max_by { |index| (candidates[index] % face_normal).abs }
+      candidates.delete_at(excluded_index)
+
+      candidates
+    end
+
+    # The separator's normal : the candidate locked via VK_LEFT / VK_RIGHT
+    # when set (see onToolKeyDown), otherwise whichever of the two in-plane
+    # candidates reads more horizontal in the current view - a live default
+    # that needs no extra click, and follows the camera as the user orbits.
+    def _get_separator_normal(picked_face_manipulator, view)
+      candidates = _get_separator_normal_candidates(picked_face_manipulator)
+      return nil if candidates.length < 2
+
+      unless @locked_separator_normal_index.nil?
+        return candidates[@locked_separator_normal_index].to_a
+      end
+
+      camera = view.camera
+      screen_right = camera.direction.cross(camera.up)
+      return candidates.first.to_a unless screen_right.valid?
+
+      candidates.max_by { |axis| (axis % screen_right).abs }.to_a
+    end
+
+    # Orthonormal basis [ u, v ] completing the given unit normal ([ x, y, z ]
+    # Float array), seeded on the axis the normal is least aligned with. Pure
+    # Float arithmetic (no Geom:: classes) to match the fragment/mesh data,
+    # already extracted as flat Float arrays - see the "Length JSON gotcha"
+    # in SolidMeshDef.
+    def _get_separator_plane_basis(normal)
+      seed = [ [ 1.0, 0.0, 0.0 ], [ 0.0, 1.0, 0.0 ], [ 0.0, 0.0, 1.0 ] ][normal.map(&:abs).each_with_index.min.last]
+      u = [
+        normal[1] * seed[2] - normal[2] * seed[1],
+        normal[2] * seed[0] - normal[0] * seed[2],
+        normal[0] * seed[1] - normal[1] * seed[0]
+      ]
+      length = Math.sqrt(u[0] * u[0] + u[1] * u[1] + u[2] * u[2])
+      u = u.map { |v| v / length }
+      v = [
+        normal[1] * u[2] - normal[2] * u[1],
+        normal[2] * u[0] - normal[0] * u[2],
+        normal[0] * u[1] - normal[1] * u[0]
+      ]
+      [ u, v ]
+    end
+
+    # [ min, max ] of the given flat Float vertices array projected on the
+    # given axis.
+    def _get_separator_mesh_extent(vertices, axis)
+      min = Float::INFINITY
+      max = -Float::INFINITY
+      vertices.each_slice(3) do |x, y, z|
+        p = axis[0] * x + axis[1] * y + axis[2] * z
+        min = p if p < min
+        max = p if p > max
+      end
+      [ min, max ]
+    end
+
+    # Box centered on +point+, +thickness+ thick along +normal+, oversized in
+    # its own plane well beyond +fragment_def+'s bounds (SEPARATOR_SLAB_MARGIN)
+    # so that intersecting it with the cavity fragment clips exclusively on
+    # the cavity's own boundary - real panel faces, or the hull cap when the
+    # cavity is open. Serialized to the mesh format expected by
+    # Fiddle::Meshy.operate ; every triangle carries face id 0 (same
+    # reserved-id convention as CommonSolidFindCavitiesWorker's envelope -
+    # irrelevant here since only the geometry is used for the preview).
+    def _get_separator_slab_mesh(normal, point, fragment_def, thickness)
+      u, v = _get_separator_plane_basis(normal)
+
+      d = normal[0] * point[0] + normal[1] * point[1] + normal[2] * point[2]
+      d0 = d - thickness / 2.0
+      d1 = d + thickness / 2.0
+
+      u0, u1 = _get_separator_mesh_extent(fragment_def.vertices, u)
+      v0, v1 = _get_separator_mesh_extent(fragment_def.vertices, v)
+      u0 -= SEPARATOR_SLAB_MARGIN ; u1 += SEPARATOR_SLAB_MARGIN
+      v0 -= SEPARATOR_SLAB_MARGIN ; v1 += SEPARATOR_SLAB_MARGIN
+
+      vertices = []
+      [ [ u0, v0, d0 ], [ u1, v0, d0 ], [ u1, v1, d0 ], [ u0, v1, d0 ],
+        [ u0, v0, d1 ], [ u1, v0, d1 ], [ u1, v1, d1 ], [ u0, v1, d1 ] ].each do |pu, pv, pn|
+        vertices << u[0] * pu + v[0] * pv + normal[0] * pn
+        vertices << u[1] * pu + v[1] * pv + normal[1] * pn
+        vertices << u[2] * pu + v[2] * pv + normal[2] * pn
+      end
+
+      face_indices = [
+        0, 2, 1, 0, 3, 2,
+        4, 5, 6, 4, 6, 7,
+        0, 1, 5, 0, 5, 4,
+        2, 3, 7, 2, 7, 6,
+        1, 2, 6, 1, 6, 5,
+        3, 0, 4, 3, 4, 7
+      ]
+
+      {
+        :vertices => vertices,
+        :face_indices => face_indices,
+        :face_ids => Array.new(face_indices.length / 3, 0),
+        :num_vertices => vertices.length / 3,
+        :num_faces => face_indices.length / 3,
+        :tolerance => SolidMeshDef::TOLERANCE
+      }
     end
 
     def _preview_cavities
@@ -4015,6 +4483,10 @@ module Ladb::OpenCutList
     end
 
     # -----
+
+    def _fetch_option_thickness
+      @tool.fetch_action_option_length(@action, SmartReshapeTool::ACTION_OPTION_THICKNESS, SmartReshapeTool::ACTION_OPTION_THICKNESS_THICKNESS)
+    end
 
     def _fetch_option_max_opening_planes
       @tool.fetch_action_option_integer(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MAX_OPENING_PLANES)

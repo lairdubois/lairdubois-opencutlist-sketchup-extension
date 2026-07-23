@@ -2369,11 +2369,14 @@ tool:
     action_3: Dessiner un Séparateur
     action_option_group_offset: Décalage
     action_option_group_segments: Segments
+    action_option_group_thickness: Epaisseur
     action_option_group_options: Options
     action_option_offset_shape_offset: Décalage
     action_option_offset_shape_offset_status: Permet d'appliquer un décalage au tracé de la forme dessinée
     action_option_segments_segment_count: Nombre de segments
     action_option_segments_segment_count_status: Permet de définir le nombre de segments du cercle
+    action_option_thickness_thickness: Epaisseur
+    action_option_thickness_thickness_status: Définit l'épaisseur des panneaux
     action_option_options_construction: Traits de construction
     action_option_options_construction_status: Dessiner en traits de construction
     action_option_options_rectangle_centered: Rectangle centré

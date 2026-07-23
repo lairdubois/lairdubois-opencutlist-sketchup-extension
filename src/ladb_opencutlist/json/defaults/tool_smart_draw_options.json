@@ -1,6 +1,7 @@
 {
   "_preprocessors": {
-    "shape_offset": 5 /* PRESETS_PREPROCESSOR_D_NEGATIVE_ALLOWED */
+    "shape_offset": 5, /* PRESETS_PREPROCESSOR_D_NEGATIVE_ALLOWED */
+    "thickness": 1 /* PRESETS_PREPROCESSOR_D */
   },
   "action_0": { /* ACTION_DRAW_RECTANGLE */
     "shape_offset": "0",
@@ -32,6 +33,7 @@
     "ask_name": false
   },
   "action_3": { /* ACTION_DRAW_SEPARATOR */
+    "thickness": { "metric": "18mm", "imperial": "1/2\"" },
     "construction": false,
     "draw_in": false,
     "ask_name": false,
