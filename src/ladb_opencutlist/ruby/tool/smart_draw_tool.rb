@@ -4028,7 +4028,7 @@ module Ladb::OpenCutList
         # k_axes.transformation = Geom::Transformation.translation(fo.vector_to(@picker.picked_point)) * picked_face_manipulator.transformation
         # @tool.append_3d(k_axes, LAYER_3D_FACE_REF_PREVIEW)
 
-        if (cavities_def = _get_cavities_def).is_a?(CavitiesDef)
+        if (cavities_def = _get_cavities_def).is_a?(CavitiesDef) && cavities_def.valid?
 
           color = Kuix::COLOR_BLUE
 
@@ -4080,7 +4080,7 @@ module Ladb::OpenCutList
     def _compute_separator(view)
       return nil unless (picked_face_manipulator = @picker.picked_plane_manipulator).is_a?(PlaneManipulator)
       return nil if (picked_point = @picker.picked_point).nil?
-      return nil unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef)
+      return nil unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef) && cavities_def.valid?
 
       # Nudge the lookup point to the cavity side of the picked face : a
       # point picked exactly on a boundary face is ambiguous between the
@@ -4446,7 +4446,7 @@ module Ladb::OpenCutList
 
       @tool.clear_3d(LAYER_3D_CAVITIES_PREVIEW)
 
-      return unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef)
+      return unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef) && cavities_def.valid?
 
       colors = [ Kuix::COLOR_RED, Kuix::COLOR_GREEN, Kuix::COLOR_BLUE, Kuix::COLOR_YELLOW ]
 
@@ -4514,7 +4514,15 @@ module Ladb::OpenCutList
         cutlist = worker.run
 
         parts = cutlist.groups.flat_map { |group| group.get_parts }
-        drawing_defs = parts.flat_map { |part| part.def.instance_infos.values.map { |instance_info| CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new(instance_info.path) ]).run } }
+        drawing_defs = parts.flat_map { |part|
+          part.def.instance_infos.values.map { |instance_info|
+            CommonDrawingDecompositionWorker.new([Sketchup::InstancePath.new(instance_info.path)],
+                                                 ignore_surfaces: true,
+                                                 ignore_edges: true,
+                                                 container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART_WITHOUT_MACHININGS
+            ).run
+          }
+        }
 
         require_relative '../worker/common/common_solid_find_cavities_worker'
 
@@ -4522,11 +4530,10 @@ module Ladb::OpenCutList
                                                        max_opening_planes: _fetch_option_max_opening_planes,
                                                        reduce_envelope: _fetch_option_reduce_envelope?
         ).run
-        if result_def.success?
 
-          @cavities_def = CavitiesDef.new(container_path, result_def)
+        @cavities_def = CavitiesDef.new(container_path, result_def)
 
-        else
+        unless result_def.success?
           @tool.notify_errors(result_def.errors)
         end
 
@@ -4540,6 +4547,9 @@ module Ladb::OpenCutList
     # -----
 
     CavitiesDef = Struct.new(:container_path, :result_def) do
+      def valid?
+        result_def.is_a?(SolidBooleanResultDef) && result_def.success?
+      end
       def fragment_defs
         result_def.fragment_defs
       end
