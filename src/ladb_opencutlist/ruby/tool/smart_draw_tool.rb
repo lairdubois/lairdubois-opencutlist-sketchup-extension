@@ -4,6 +4,7 @@ module Ladb::OpenCutList
   require_relative 'smart_handle_tool'
   require_relative '../lib/geometrix/finder/circle_finder'
   require_relative '../lib/fiddle/clippy/clippy'
+  require_relative '../lib/fiddle/meshy/meshy'
   require_relative '../manipulator/vertex_manipulator'
   require_relative '../manipulator/edge_manipulator'
   require_relative '../manipulator/face_manipulator'
@@ -11,13 +12,13 @@ module Ladb::OpenCutList
   require_relative '../manipulator/cline_manipulator'
   require_relative '../helper/user_text_helper'
   require_relative '../helper/part_helper'
-  require_relative '../worker/common/common_drawing_decomposition_worker'
-  require_relative '../utils/drawingelement_utils'
-  require_relative '../lib/fiddle/meshy/meshy'
   require_relative '../model/solid/solid_mesh_def'
   require_relative '../model/solid/solid_boolean_result_def'
   require_relative '../utils/path_utils'
+  require_relative '../utils/drawingelement_utils'
   require_relative '../utils/transformation_utils'
+  require_relative '../worker/common/common_drawing_decomposition_worker'
+  require_relative '../worker/common/common_solid_find_cavities_worker'
 
   class SmartDrawTool < SmartTool
 
@@ -72,15 +73,15 @@ module Ladb::OpenCutList
           ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_SHAPE_OFFSET ],
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_DRAW_IN, ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_PULL_CENTRED, ACTION_OPTION_OPTIONS_ASK_NAME ]
         }
-      },
-      {
-        :action => ACTION_DRAW_SEPARATOR,
-        :options => {
-          ACTION_OPTION_THICKNESS => [ ACTION_OPTION_THICKNESS_THICKNESS ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_DRAW_IN, ACTION_OPTION_OPTIONS_MAX_OPENING_PLANES, ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, ACTION_OPTION_OPTIONS_ASK_NAME ]
-        }
       }
-    ].freeze
+    ]
+    ACTIONS << {
+      :action => ACTION_DRAW_SEPARATOR,
+      :options => {
+        ACTION_OPTION_THICKNESS => [ ACTION_OPTION_THICKNESS_THICKNESS ],
+        ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_DRAW_IN, ACTION_OPTION_OPTIONS_MAX_OPENING_PLANES, ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, ACTION_OPTION_OPTIONS_ASK_NAME ]
+      }
+    } if Sketchup.debug_mode?
 
     # -----
 
@@ -3885,11 +3886,6 @@ module Ladb::OpenCutList
     LAYER_3D_FACE_REF_PREVIEW = 200
     LAYER_3D_SEPARATOR_PREVIEW = 300
 
-    # Provisional : fixed until the panel thickness becomes a real user
-    # option (material / std dimension), used both by the preview and the
-    # actual creation.
-    SEPARATOR_THICKNESS = 19.mm.to_f
-
     # Keeps the slab sides well clear of the target cavity bounds, so only
     # the cavity's own boundary (real panels, or the hull cap when the
     # cavity is open) ever clips the intersection - never the slab itself.
@@ -4525,18 +4521,17 @@ module Ladb::OpenCutList
         worker = CutlistGenerateWorker.new(**HashUtils.symbolize_keys(PLUGIN.get_model_preset('cutlist_options')).merge({ active_entity: container, active_path: container_path[0...-1] }))
         cutlist = worker.run
 
-        parts = cutlist.groups.flat_map { |group| group.get_parts }
+        parts = cutlist.groups.reject { |group| group.material_is_virtual || group.material_type == MaterialAttributes::TYPE_HARDWARE}
+                       .flat_map { |group| group.get_parts }
         drawing_defs = parts.flat_map { |part|
           part.def.instance_infos.values.map { |instance_info|
-            CommonDrawingDecompositionWorker.new([Sketchup::InstancePath.new(instance_info.path)],
+            CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new(instance_info.path) ],
                                                  ignore_surfaces: true,
                                                  ignore_edges: true,
-                                                 container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART_WITHOUT_MACHININGS
+                                                 container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART_WITHOUT_MACHININGS_AND_CUTS_OPENING
             ).run
           }
         }
-
-        require_relative '../worker/common/common_solid_find_cavities_worker'
 
         result_def = CommonSolidFindCavitiesWorker.new(drawing_defs,
                                                        max_opening_planes: _fetch_option_max_opening_planes,

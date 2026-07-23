@@ -40,7 +40,8 @@ module Ladb::OpenCutList
     CONTAINER_VALIDATOR_NONE = 1
     CONTAINER_VALIDATOR_PART = 2
     CONTAINER_VALIDATOR_PART_WITHOUT_MACHININGS = 3
-    CONTAINER_VALIDATOR_NO_SCALE = 4
+    CONTAINER_VALIDATOR_PART_WITHOUT_MACHININGS_AND_CUTS_OPENING = 4
+    CONTAINER_VALIDATOR_NO_SCALE = 5
 
     # Backward compatibility
     SketchupSnapClass = Object.const_defined?('Sketchup::Snap') ? Sketchup::Snap : nil
@@ -315,6 +316,16 @@ module Ladb::OpenCutList
           return false if ma.type == MaterialAttributes::TYPE_MACHINING
           return false if depth != 0 && ma.type == MaterialAttributes::TYPE_HARDWARE && !container.name.strip.empty?
           return true if container.definition.behavior.cuts_opening?
+          return false if container.is_a?(Sketchup::ComponentInstance)
+          true
+        }
+      when CONTAINER_VALIDATOR_PART_WITHOUT_MACHININGS_AND_CUTS_OPENING
+        container_validator = lambda { |container, depth|
+          return false if container.definition.behavior.always_face_camera?
+          ma = _get_material_attributes(container.material)
+          return false if ma.type == MaterialAttributes::TYPE_MACHINING
+          return false if depth != 0 && ma.type == MaterialAttributes::TYPE_HARDWARE && !container.name.strip.empty?
+          return false if container.definition.behavior.cuts_opening?
           return false if container.is_a?(Sketchup::ComponentInstance)
           true
         }
