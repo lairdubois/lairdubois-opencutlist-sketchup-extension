@@ -22,6 +22,40 @@ module Ladb::OpenCutList
       @errors.empty?
     end
 
+    # Fragments bounded by the given ORIGINAL source face, addressed by its
+    # full occurrence path (Array of instances, model root first, face last -
+    # as returned by a SketchUp pick). The path's prefix is compared to the
+    # container_def's own occurrence path : only a root DrawingDef carries one
+    # (drawing_def.rb#container_path), which is exactly the container_def of
+    # any real panel face - the only nested containers are glued machining
+    # ones (virtual), which never match. Two instances of the same component
+    # share the same face persistent_id, so it alone cannot tell them apart.
+    # A face separating two fragments (e.g. a divider between two cavities)
+    # bounds both, hence an Array.
+    def fragment_defs_for_face(face_path)
+      return [] if face_path.nil? || face_path.empty?
+      face = face_path.last
+      return [] unless face.is_a?(Sketchup::Face)
+
+      persistent_id = face.persistent_id
+      container_path = face_path[0...-1]
+      fragment_defs.select do |fragment_def|
+        next false if fragment_def.face_ids.nil?
+        fragment_def.face_ids.uniq.any? do |id|
+          face_info_def = fragment_def.face_info_defs[id]
+          face_info_def && face_info_def.face_id == persistent_id &&
+            face_info_def.container_def.respond_to?(:container_path) && face_info_def.container_def.container_path == container_path
+        end
+      end
+    end
+
+    # Fragments that include the given point (WORLD coordinates), inside
+    # their volume or within +tolerance+ of their surface - see
+    # SolidFragmentDef#contains_point?.
+    def fragment_defs_for_point(point, tolerance: SolidMeshDef::TOLERANCE)
+      fragment_defs.select { |fragment_def| fragment_def.contains_point?(point, tolerance: tolerance) }
+    end
+
   end
 
   # One resulting solid body, in WORLD coordinates.
@@ -94,6 +128,32 @@ module Ladb::OpenCutList
       @centroid = det_sum == 0 ? nil : Geom::Point3d.new(x_sum / (4.0 * det_sum), y_sum / (4.0 * det_sum), z_sum / (4.0 * det_sum))
     end
 
+    # True when the given point (WORLD coordinates) lies within +tolerance+
+    # of the fragment's surface (touching) or strictly inside its volume.
+    # Touch test : point-to-triangle distance (Ericson, "Real-Time Collision
+    # Detection", closest point on triangle), the exact counterpart of the
+    # tolerance a Manifold boolean itself snaps to (SolidMeshDef::TOLERANCE).
+    # Inside test : generalized winding number (Jacobson et al.) - robust on
+    # this closed, consistently wound mesh (see #volume) without needing a
+    # ray direction and its degenerate grazing cases.
+    def contains_point?(point, tolerance: SolidMeshDef::TOLERANCE)
+      p = point.is_a?(Geom::Point3d) ? point.to_a : point
+      tolerance_sq = tolerance * tolerance
+
+      winding = 0.0
+      @face_indices.each_slice(3) do |ia, ib, ic|
+        a = [ @vertices[ia * 3], @vertices[ia * 3 + 1], @vertices[ia * 3 + 2] ]
+        b = [ @vertices[ib * 3], @vertices[ib * 3 + 1], @vertices[ib * 3 + 2] ]
+        c = [ @vertices[ic * 3], @vertices[ic * 3 + 1], @vertices[ic * 3 + 2] ]
+
+        return true if _sq_dist_point_triangle(p, a, b, c) <= tolerance_sq
+
+        winding += _triangle_solid_angle(p, a, b, c)
+      end
+
+      (winding / (4.0 * Math::PI)).abs > 0.5
+    end
+
     # Net boundary segments of the fragment, coplanar triangles merged : an
     # edge shared by two triangles lying on the same signed quantized plane
     # is interior (traversed once in each direction, it cancels out), the
@@ -119,6 +179,80 @@ module Ladb::OpenCutList
     end
 
     private
+
+    # Signed solid angle (steradians) subtended by triangle a-b-c as seen
+    # from p, via Van Oosterom & Strackee's formula. Summed over a closed,
+    # consistently wound mesh, this totals ±4π when p is inside, ~0 outside -
+    # see #contains_point?.
+    def _triangle_solid_angle(p, a, b, c)
+      ax, ay, az = a[0] - p[0], a[1] - p[1], a[2] - p[2]
+      bx, by, bz = b[0] - p[0], b[1] - p[1], b[2] - p[2]
+      cx, cy, cz = c[0] - p[0], c[1] - p[1], c[2] - p[2]
+
+      la = Math.sqrt(ax * ax + ay * ay + az * az)
+      lb = Math.sqrt(bx * bx + by * by + bz * bz)
+      lc = Math.sqrt(cx * cx + cy * cy + cz * cz)
+      return 0.0 if la == 0 || lb == 0 || lc == 0 # p coincides with a vertex : covered by the touch test
+
+      numerator = ax * (by * cz - bz * cy) + ay * (bz * cx - bx * cz) + az * (bx * cy - by * cx) # a . (b x c)
+      denominator = la * lb * lc + (ax * bx + ay * by + az * bz) * lc + (bx * cx + by * cy + bz * cz) * la + (cx * ax + cy * ay + cz * az) * lb
+      2.0 * Math.atan2(numerator, denominator)
+    end
+
+    # Squared distance from p to its closest point on triangle a-b-c
+    # (Ericson, "Real-Time Collision Detection", closest point on triangle by
+    # Voronoi region of the barycentric coordinates).
+    def _sq_dist_point_triangle(p, a, b, c)
+      ab = [ b[0] - a[0], b[1] - a[1], b[2] - a[2] ]
+      ac = [ c[0] - a[0], c[1] - a[1], c[2] - a[2] ]
+      ap = [ p[0] - a[0], p[1] - a[1], p[2] - a[2] ]
+      d1 = _dot3(ab, ap)
+      d2 = _dot3(ac, ap)
+      return _sq_dist3(p, a) if d1 <= 0 && d2 <= 0 # Vertex region a
+
+      bp = [ p[0] - b[0], p[1] - b[1], p[2] - b[2] ]
+      d3 = _dot3(ab, bp)
+      d4 = _dot3(ac, bp)
+      return _sq_dist3(p, b) if d3 >= 0 && d4 <= d3 # Vertex region b
+
+      vc = d1 * d4 - d3 * d2
+      if vc <= 0 && d1 >= 0 && d3 <= 0 # Edge region ab
+        v = d1 / (d1 - d3)
+        return _sq_dist3(p, [ a[0] + v * ab[0], a[1] + v * ab[1], a[2] + v * ab[2] ])
+      end
+
+      cp = [ p[0] - c[0], p[1] - c[1], p[2] - c[2] ]
+      d5 = _dot3(ab, cp)
+      d6 = _dot3(ac, cp)
+      return _sq_dist3(p, c) if d6 >= 0 && d5 <= d6 # Vertex region c
+
+      vb = d5 * d2 - d1 * d6
+      if vb <= 0 && d2 >= 0 && d6 <= 0 # Edge region ac
+        w = d2 / (d2 - d6)
+        return _sq_dist3(p, [ a[0] + w * ac[0], a[1] + w * ac[1], a[2] + w * ac[2] ])
+      end
+
+      va = d3 * d6 - d5 * d4
+      if va <= 0 && (d4 - d3) >= 0 && (d5 - d6) >= 0 # Edge region bc
+        w = (d4 - d3) / ((d4 - d3) + (d5 - d6))
+        return _sq_dist3(p, [ b[0] + w * (c[0] - b[0]), b[1] + w * (c[1] - b[1]), b[2] + w * (c[2] - b[2]) ])
+      end
+
+      # Face region : orthogonal projection onto the triangle plane
+      denom = 1.0 / (va + vb + vc)
+      v = vb * denom
+      w = vc * denom
+      _sq_dist3(p, [ a[0] + ab[0] * v + ac[0] * w, a[1] + ab[1] * v + ac[1] * w, a[2] + ab[2] * v + ac[2] * w ])
+    end
+
+    def _dot3(u, v)
+      u[0] * v[0] + u[1] * v[1] + u[2] * v[2]
+    end
+
+    def _sq_dist3(p, q)
+      dx = p[0] - q[0] ; dy = p[1] - q[1] ; dz = p[2] - q[2]
+      dx * dx + dy * dy + dz * dz
+    end
 
     # Net boundary edges of the fragment, grouped by signed quantized plane :
     # for each plane, an edge traversed once in each direction by two of its

@@ -39,6 +39,7 @@ module Ladb::OpenCutList
     ACTION_OPTION_OPTIONS_PULL_CENTRED = 'pull_centered'
     ACTION_OPTION_OPTIONS_ASK_NAME = 'ask_name'
 
+    ACTION_OPTION_OPTIONS_MAX_OPENING_PLANES = 'max_opening_planes'
     ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE = 'reduce_envelope'
 
     ACTIONS = [
@@ -64,12 +65,12 @@ module Ladb::OpenCutList
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_DRAW_IN, ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_PULL_CENTRED, ACTION_OPTION_OPTIONS_ASK_NAME ]
         }
       },
-      # {
-      #   :action => ACTION_DRAW_SEPARATOR,
-      #   :options => {
-      #     ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_DRAW_IN, ACTION_OPTION_OPTIONS_ASK_NAME, ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE ]
-      #   }
-      # }
+      {
+        :action => ACTION_DRAW_SEPARATOR,
+        :options => {
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_DRAW_IN, ACTION_OPTION_OPTIONS_MAX_OPENING_PLANES, ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, ACTION_OPTION_OPTIONS_ASK_NAME ]
+        }
+      }
     ].freeze
 
     # -----
@@ -145,6 +146,11 @@ module Ladb::OpenCutList
         when ACTION_OPTION_SEGMENTS_SEGMENT_COUNT
           return false
         end
+      when ACTION_OPTION_OPTIONS
+        case option
+        when ACTION_OPTION_OPTIONS_MAX_OPENING_PLANES
+          return false
+        end
       end
 
       super
@@ -182,8 +188,10 @@ module Ladb::OpenCutList
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1L0.667,1L1,0.667L1,0L0.333,0L0,0.333L0,1 M0,0.333L0.667,0.333L0.667,1 M0.667,0.333L1,0 M0.333,0.5L0.333,0.833 M0.167,0.667L0.5,0.667'))
         when ACTION_OPTION_OPTIONS_ASK_NAME
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.25L1,0.25L1,0.75L0,0.75L0,0.25 M0.438,0.313L0.438,0.688 M0.125,0.625L0.125,0.375L0.313,0.625L0.313,0.375'))
+        when ACTION_OPTION_OPTIONS_MAX_OPENING_PLANES
+          return Kuix::Label.new(fetch_action_option_value(action, option_group, option).to_s)
         when ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE
-          return Kuix::Label.new('RE')
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0L0,1L1,1L1,0L0,0 M0,0.625L0.625,0.625L0.625,0.375L0,0.375'))
         end
       end
 
@@ -3851,6 +3859,9 @@ module Ladb::OpenCutList
 
     STATE_START = 0
 
+    LAYER_3D_CAVITIES_PREVIEW = 100
+    LAYER_3D_FACE_REF_PREVIEW = 200
+
     def initialize(tool, previous_action_handler = nil)
       super(SmartDrawTool::ACTION_DRAW_SEPARATOR, tool, previous_action_handler)
 
@@ -3862,7 +3873,7 @@ module Ladb::OpenCutList
 
       case state
       when STATE_START
-        return SmartPicker.new(tool: @tool, observer: self, pick_point: false)
+        return SmartPicker.new(tool: @tool, observer: self, pick_point: true)
       end
 
       super
@@ -3875,7 +3886,8 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_START
-        _pick_part(picker, view) if _fetch_option_draw_in?
+        _pick_part(picker, view)
+        _preview_face_ref
 
       end
 
@@ -3883,22 +3895,148 @@ module Ladb::OpenCutList
     end
 
     def onActivePartChanged(part_entity_path, part, highlighted = false)
+      @cavities_def = nil
+      # _preview_cavities
+      false
+    end
 
-      # Preview part's container
-      _preview_part(part_entity_path, part)
+    # -----
 
-      # Reset active container path
-      @active_container_path = nil
+    protected
 
-      if part_entity_path.is_a?(Array) && part_entity_path.length > 1
+    # -----
 
-        container_path = part_entity_path[0...-1]
-        return true if container_path == Sketchup.active_model.active_path
+    def _reset
+      @cavities_def = nil
+      super
+    end
 
-        @active_container_path = container_path
+    # -----
+
+    def _preview_part_mesh?
+      false
+    end
+
+    # -----
+
+    def _preview_face_ref
+      @tool.clear_3d(LAYER_3D_FACE_REF_PREVIEW)
+      if (picked_face_manipulator = @picker.picked_plane_manipulator).is_a?(PlaneManipulator)
+
+        # k_mesh = Kuix::Mesh.new
+        # k_mesh.add_triangles(picked_face_manipulator.triangles)
+        # k_mesh.background_color = ColorUtils.color_translucent(Kuix::COLOR_BLUE, 0.3)
+        # @tool.append_3d(k_mesh, LAYER_3D_FACE_REF_PREVIEW)
+
+        ft = picked_face_manipulator.transformation
+        fo = ORIGIN.transform(ft)
+
+        k_axes = Kuix::AxesHelper.new
+        k_axes.transformation = Geom::Transformation.translation(fo.vector_to(@picker.picked_point)) * picked_face_manipulator.transformation
+        @tool.append_3d(k_axes, LAYER_3D_FACE_REF_PREVIEW)
+
+        if (cavities_def = _get_cavities_def).is_a?(CavitiesDef)
+
+          color = Kuix::COLOR_BLUE
+
+          active_fragment_defs = cavities_def.fragment_defs_for_point(@picker.picked_point)
+          active_fragment_defs.each do |fragment_def|
+
+            segments = fragment_def.unique_boundary_segments
+
+            k_segments = Kuix::Segments.new
+            k_segments.add_segments(segments)
+            k_segments.color = color
+            k_segments.line_width = 1
+            k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+            k_segments.on_top = true
+            @tool.append_3d(k_segments, LAYER_3D_FACE_REF_PREVIEW)
+
+            k_segments = Kuix::Segments.new
+            k_segments.add_segments(segments)
+            k_segments.color = color
+            k_segments.line_width = 1.5
+            @tool.append_3d(k_segments, LAYER_3D_FACE_REF_PREVIEW)
+
+            fragment_def.each_triangle_batch do |_, triangles|
+
+              k_mesh = Kuix::Mesh.new
+              k_mesh.add_triangles(triangles.flatten)
+              k_mesh.background_color = ColorUtils.color_translucent(color, 0.05)
+              @tool.append_3d(k_mesh, LAYER_3D_FACE_REF_PREVIEW)
+
+            end
+
+          end
+
+        end
+
+      end
+    end
+
+    def _preview_cavities
+
+      @tool.clear_3d(LAYER_3D_CAVITIES_PREVIEW)
+
+      return unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef)
+
+      colors = [ Kuix::COLOR_RED, Kuix::COLOR_GREEN, Kuix::COLOR_BLUE, Kuix::COLOR_YELLOW ]
+
+      cavities_def.fragment_defs.each_with_index do |fragment_def, index|
+
+        color = colors[index % colors.size]
+
+        # fragment_def.each_triangle_batch do |_, triangles|
+        #
+        #   k_mesh = Kuix::Mesh.new
+        #   k_mesh.add_triangles(triangles.flatten)
+        #   k_mesh.background_color = ColorUtils.color_translucent(color, 0.3)
+        #   @tool.append_3d(k_mesh, LAYER_3D_CAVITIES_PREVIEW)
+        #
+        # end
+
+        segments = fragment_def.unique_boundary_segments
+
+        k_segments = Kuix::Segments.new
+        k_segments.add_segments(segments)
+        k_segments.color = color
+        k_segments.line_width = 1
+        k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+        k_segments.on_top = true
+        @tool.append_3d(k_segments, LAYER_3D_CAVITIES_PREVIEW)
+
+        k_segments = Kuix::Segments.new
+        k_segments.add_segments(segments)
+        k_segments.color = color
+        k_segments.line_width = 1.5
+        @tool.append_3d(k_segments, LAYER_3D_CAVITIES_PREVIEW)
+
+      end
+    end
+
+    # -----
+
+    def _fetch_option_max_opening_planes
+      @tool.fetch_action_option_integer(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MAX_OPENING_PLANES)
+    end
+
+    def _fetch_option_reduce_envelope?
+      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE)
+    end
+
+    # -----
+
+    def _get_cavities_def
+      return @cavities_def if @cavities_def.is_a?(CavitiesDef)
+
+      active_part_entity_path = get_active_part_entity_path
+      if active_part_entity_path.is_a?(Array) && active_part_entity_path.length > 1
+
+        container_path = active_part_entity_path[0...-1]
+        return nil if container_path == Sketchup.active_model.active_path
 
         container = container_path.last
-        return true if container.nil?
+        return nil if container.nil?
 
         worker = CutlistGenerateWorker.new(**HashUtils.symbolize_keys(PLUGIN.get_model_preset('cutlist_options')).merge({ active_entity: container, active_path: container_path[0...-1] }))
         cutlist = worker.run
@@ -3909,66 +4047,33 @@ module Ladb::OpenCutList
         require_relative '../worker/common/common_solid_find_cavities_worker'
 
         result_def = CommonSolidFindCavitiesWorker.new(drawing_defs,
-          max_opening_planes: 2,
-          reduce_envelope: _fetch_option_reduce_envelope?
+                                                       max_opening_planes: _fetch_option_max_opening_planes,
+                                                       reduce_envelope: _fetch_option_reduce_envelope?
         ).run
         if result_def.success?
 
-          colors = [ Kuix::COLOR_RED, Kuix::COLOR_GREEN, Kuix::COLOR_BLUE, Kuix::COLOR_YELLOW ]
+          @cavities_def = CavitiesDef.new(container_path, result_def)
 
-          @tool.clear_3d(5580)
-          result_def.fragment_defs.each_with_index do |fragment_def, index|
-
-            color = colors[index % colors.size]
-
-            # fragment_def.each_triangle_batch do |_, triangles|
-            #
-            #   k_mesh = Kuix::Mesh.new
-            #   k_mesh.add_triangles(triangles.flatten)
-            #   k_mesh.background_color = ColorUtils.color_translucent(color, 0.3)
-            #   @tool.append_3d(k_mesh, 5580)
-            #
-            # end
-
-            k_segments = Kuix::Segments.new
-            k_segments.add_segments(fragment_def.unique_boundary_segments)
-            k_segments.color = color
-            k_segments.line_width = 1
-            k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-            k_segments.on_top = true
-            @tool.append_3d(k_segments, 5580)
-
-            k_segments = Kuix::Segments.new
-            k_segments.add_segments(fragment_def.boundary_segments)
-            k_segments.color = color
-            k_segments.line_width = 1.5
-            @tool.append_3d(k_segments, 5580)
-
-          end
         else
           @tool.notify_errors(result_def.errors)
         end
 
       else
-        @tool.clear_3d(5580)
+        return nil
       end
 
+      @cavities_def
     end
 
     # -----
 
-    protected
-
-    # -----
-
-    def _preview_part_mesh?
-      false
-    end
-
-    # -----
-
-    def _fetch_option_reduce_envelope?
-      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE)
+    CavitiesDef = Struct.new(:container_path, :result_def) do
+      def fragment_defs
+        result_def.fragment_defs
+      end
+      def fragment_defs_for_point(point)
+        result_def.fragment_defs_for_point(point)
+      end
     end
 
   end

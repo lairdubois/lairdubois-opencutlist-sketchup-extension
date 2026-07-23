@@ -50,13 +50,20 @@ module Ladb::OpenCutList
   # separates) : a panel exposing only one main face to the cavity is a
   # perimeter wall whose chant is exposed by a concave/notched footprint,
   # not a recess, and reducing there would clip away the real cavity
-  # instead of splitting it (see #_detect_reduction_planes). The envelope
-  # is then reduced by clipping it at each remaining plane (keeping the
-  # panel side) and the open cavities are recomputed : the caps recede to
-  # the most recessed panel edge — the whole connected group is reduced to
-  # the depth of its shallowest element — and each compartment comes out as
-  # its own cavity. The plane being unbounded, it may exceptionally clip an
-  # unrelated part of the assembly it happens to cross.
+  # instead of splitting it. It is further trusted only when it is a SIDE
+  # face of its panel (perpendicular to the panel's WIDTH, running its full
+  # LENGTH — e.g. a shelf's recessed front edge) rather than an END face
+  # (perpendicular to its LENGTH, where the panel simply stops — e.g. the
+  # free tip of an L-shaped divider) : an END has no group-wide role, the
+  # real panels already separate the compartments wherever the board
+  # actually is, and extending its plane would clip an unrelated part of
+  # the assembly it merely happens to cross (e.g. past another divider it
+  # does not connect to) — see #_detect_reduction_planes /
+  # #_reduction_side_plane?. The envelope is then reduced by clipping it at
+  # each remaining (SIDE) plane (keeping the panel side) and the open
+  # cavities are recomputed : the caps recede to the most recessed panel
+  # edge — the whole connected group is reduced to the depth of its
+  # shallowest element — and each compartment comes out as its own cavity.
   #
   # Panels may overlap each other freely (the boolean absorbs overlaps, no
   # exact joinery needed) and gaps below the SketchUp merge tolerance are
@@ -265,7 +272,7 @@ module Ladb::OpenCutList
           # cavities clip the envelope, and the open cavities are recomputed
           # against the reduced envelope — see the class doc.
           if @reduce_envelope && !open_fragment_defs.empty?
-            reduction_planes = _detect_reduction_planes(open_fragment_defs, panel_id_ranges, _panel_dominant_normals(panel_meshes))
+            reduction_planes = _detect_reduction_planes(open_fragment_defs, panel_id_ranges, panel_meshes, _panel_dominant_normals(panel_meshes))
             unless reduction_planes.empty?
               reduction_output = Meshy.operate(
                 :operation => Meshy::OPERATION_INTERSECTION,
@@ -275,14 +282,7 @@ module Ladb::OpenCutList
                 :cut_meshes => reduction_planes.map { |normal, d| _reduction_slab_mesh(normal, d, envelope_mesh) }
               )
               return result_def if _report_errors(reduction_output, result_def)
-              reduced_envelope_meshes = (reduction_output['fragments'] || []).map { |fragment|
-                {
-                  :vertices => fragment['vertices'],
-                  :face_indices => fragment['face_indices'],
-                  :face_ids => fragment['face_ids'],
-                  :tolerance => SolidMeshDef::TOLERANCE
-                }
-              }
+              reduced_envelope_meshes = (reduction_output['fragments'] || []).map { |fragment| _reduction_fragment_mesh(fragment) }
               unless reduced_envelope_meshes.empty?
                 reduced_output = Meshy.operate(
                   :operation => Meshy::OPERATION_SUBTRACTION,
@@ -479,7 +479,7 @@ module Ladb::OpenCutList
     # area beyond it. Returns [ [ normal, d ], ... ] where the normal (unit
     # [ x, y, z ], n.p = d on the plane) points toward the KEPT side — a
     # cavity face lies on the panel, so its outward normal points into it.
-    def _detect_reduction_planes(fragment_defs, panel_id_ranges, dominant_normals)
+    def _detect_reduction_planes(fragment_defs, panel_id_ranges, panel_meshes, dominant_normals)
       planes = {}
       fragment_defs.each do |fragment_def|
         vertices = fragment_def.vertices
@@ -548,6 +548,17 @@ module Ladb::OpenCutList
             normal[0] * x + normal[1] * y + normal[2] * z - d < -REDUCTION_MIN_DEPTH
           }
           next unless cap_beyond
+          # A SIDE face (e.g. a shelf's recessed front edge, running the
+          # panel's full length) genuinely represents the depth every element
+          # in the connected group recedes to. An END face (e.g. an L-shaped
+          # divider's free tip, where the board simply stops) has no such
+          # role : the real panels already separate the compartments
+          # wherever the board actually is, and beyond its tip nothing
+          # justifies a cut — extending its plane would clip an unrelated
+          # part of the assembly it merely happens to cross (e.g. past
+          # another divider it does not connect to) — see
+          # #_reduction_side_plane?.
+          next unless _reduction_side_plane?(normal, panel_meshes[mesh_position])
           planes[key] = [ normal, d ]
         end
 
@@ -555,14 +566,9 @@ module Ladb::OpenCutList
       planes.values
     end
 
-    # Box covering the envelope on the KEPT side of the given plane (unit
-    # normal, n.p = d), serialized like the envelope meshes (face id 0) :
-    # intersecting the envelope with these boxes clips it at the recessed
-    # panel edges.
-    def _reduction_slab_mesh(normal, d, envelope_mesh)
-
-      # Orthonormal basis completing the plane normal, seeded on the axis the
-      # normal is least aligned with
+    # Orthonormal basis [ u, v ] completing the given unit normal, seeded on
+    # the axis the normal is least aligned with.
+    def _reduction_plane_basis(normal)
       seed = [ [ 1.0, 0.0, 0.0 ], [ 0.0, 1.0, 0.0 ], [ 0.0, 0.0, 1.0 ] ][normal.map(&:abs).each_with_index.min.last]
       u = [
         normal[1] * seed[2] - normal[2] * seed[1],
@@ -576,18 +582,52 @@ module Ladb::OpenCutList
         normal[2] * u[0] - normal[0] * u[2],
         normal[0] * u[1] - normal[1] * u[0]
       ]
+      [ u, v ]
+    end
+
+    # [ min, max ] of the given mesh's vertices projected on the given axis.
+    def _mesh_extent(mesh, axis)
+      min = Float::INFINITY
+      max = -Float::INFINITY
+      mesh[:vertices].each_slice(3) do |x, y, z|
+        p = axis[0] * x + axis[1] * y + axis[2] * z
+        min = p if p < min
+        max = p if p > max
+      end
+      [ min, max ]
+    end
+
+    # A rectangular board has, besides its thickness (dominant normal), a
+    # LENGTH and a WIDTH — its two other real dimensions, unequal in
+    # practice. Its non-main (chant) faces are either an END (perpendicular
+    # to the length, at one of its two ends) or a SIDE (perpendicular to the
+    # width, running the board's full length) — told apart by comparing the
+    # panel's own extent along the given plane normal (large for an END, it
+    # runs the board's length) to its extent along the plane's other in-plane
+    # axis (large for a SIDE, the board's length lying IN the plane there).
+    # See the class doc (ENVELOPE REDUCTION) for why the distinction matters.
+    def _reduction_side_plane?(normal, panel_mesh)
+      u, v = _reduction_plane_basis(normal)
+      pn0, pn1 = _mesh_extent(panel_mesh, normal)
+      pu0, pu1 = _mesh_extent(panel_mesh, u)
+      pv0, pv1 = _mesh_extent(panel_mesh, v)
+      (pn1 - pn0) <= [ pu1 - pu0, pv1 - pv0 ].max
+    end
+
+    # Box covering the envelope on the KEPT side of the given plane (unit
+    # normal, n.p = d), serialized like the envelope meshes (face id 0) :
+    # intersecting the envelope with these boxes clips it at the recessed
+    # panel edges. Unbounded in the plane (full envelope extent) : only SIDE
+    # planes reach here (see #_reduction_side_plane?), and the whole
+    # connected group must recede together.
+    def _reduction_slab_mesh(normal, d, envelope_mesh)
+
+      u, v = _reduction_plane_basis(normal)
 
       # Envelope extent in that basis, inflated clear of the envelope planes
-      u0 = v0 = Float::INFINITY
-      u1 = v1 = n1 = -Float::INFINITY
-      envelope_mesh[:vertices].each_slice(3) do |x, y, z|
-        pu = u[0] * x + u[1] * y + u[2] * z
-        pv = v[0] * x + v[1] * y + v[2] * z
-        pn = normal[0] * x + normal[1] * y + normal[2] * z
-        u0 = pu if pu < u0 ; u1 = pu if pu > u1
-        v0 = pv if pv < v0 ; v1 = pv if pv > v1
-        n1 = pn if pn > n1
-      end
+      u0, u1 = _mesh_extent(envelope_mesh, u)
+      v0, v1 = _mesh_extent(envelope_mesh, v)
+      _, n1 = _mesh_extent(envelope_mesh, normal)
       u0 -= ENVELOPE_MARGIN ; u1 += ENVELOPE_MARGIN
       v0 -= ENVELOPE_MARGIN ; v1 += ENVELOPE_MARGIN
       n1 += ENVELOPE_MARGIN
@@ -611,6 +651,18 @@ module Ladb::OpenCutList
           3, 0, 4, 3, 4, 7
         ]
       )
+    end
+
+    # Meshy fragment, serialized back to the mesh format expected by
+    # Fiddle::Meshy.operate (e.g. to feed a fragment of one operation as an
+    # operand of the next).
+    def _reduction_fragment_mesh(fragment)
+      {
+        :vertices => fragment['vertices'],
+        :face_indices => fragment['face_indices'],
+        :face_ids => fragment['face_ids'],
+        :tolerance => SolidMeshDef::TOLERANCE
+      }
     end
 
   end

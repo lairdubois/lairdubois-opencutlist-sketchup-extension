@@ -35,6 +35,7 @@
     "construction": false,
     "draw_in": false,
     "ask_name": false,
+    "max_opening_planes": 2,
     "reduce_envelope": false
   }
 }

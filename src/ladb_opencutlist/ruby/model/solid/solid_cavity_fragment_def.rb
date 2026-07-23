@@ -22,19 +22,24 @@ module Ladb::OpenCutList
       @openness == 0.0
     end
 
-    # Fraction of the opening area that the counted opening planes must cover :
-    # dominant planes count, marginal ones do not. An opening whose rim is not
-    # flush (e.g. sides rising above an open top) is capped by one large plane
-    # plus thin rim strips on other planes — one opening, not three.
-    OPENING_PLANE_AREA_COVERAGE = 0.8
+    # Minimum share of the total opening area a plane must carry to count as
+    # an opening of its own. Below this, it is noise from a non-flush rim
+    # (e.g. sides rising slightly above an open top) : bounded by panel
+    # THICKNESS in one dimension, its area is orders of magnitude below a
+    # real opening's full 2D extent, so it stays comfortably under this
+    # share in practice — while even a small real opening (e.g. the one open
+    # side of a "C" shaped assembly, dwarfed by its two much bigger open
+    # ends) clears it.
+    OPENING_PLANE_MIN_AREA_SHARE = 0.05
 
-    # Number of distinct planes needed to cover OPENING_PLANE_AREA_COVERAGE of
-    # the envelope (face id 0) area, largest planes first : how many flat
-    # openings the cavity has. A real compartment opens on few of them — 0 when
-    # hermetic, 1 for an open front, 2 for a through tube — while the outside
-    # world and the concavity pockets of a non-convex assembly face the
-    # envelope on many comparable planes. Planes are told apart by the same
-    # signed quantized key as #boundary_segments. Memoized.
+    # Number of distinct planes carrying at least OPENING_PLANE_MIN_AREA_SHARE
+    # of the envelope (face id 0) area : how many flat openings the cavity
+    # has. A real compartment opens on few of them — 0 when hermetic, 1 for
+    # an open front, 2 for a through tube, 3 for a "C" shaped assembly open on
+    # one side — while the outside world and the concavity pockets of a
+    # non-convex assembly face the envelope on many comparable planes. Planes
+    # are told apart by the same signed quantized key as #boundary_segments.
+    # Memoized.
     def opening_plane_count
       return @opening_plane_count if defined?(@opening_plane_count)
 
@@ -64,16 +69,8 @@ module Ladb::OpenCutList
 
       end
 
-      target = area_by_plane.values.sum * OPENING_PLANE_AREA_COVERAGE
-      count = 0
-      covered = 0.0
-      area_by_plane.values.sort.reverse_each do |area|
-        break if covered >= target
-        covered += area
-        count += 1
-      end
-
-      @opening_plane_count = count
+      total = area_by_plane.values.sum
+      @opening_plane_count = total > 0 ? area_by_plane.values.count { |area| area >= total * OPENING_PLANE_MIN_AREA_SHARE } : 0
     end
 
   end

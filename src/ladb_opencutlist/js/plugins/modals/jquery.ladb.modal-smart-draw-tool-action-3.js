@@ -29,24 +29,36 @@
 
             // Fetch UI elements
             const $widgetPreset = $('.ladb-widget-preset', that.$element);
-            const $inputShapeOffset = $('#ladb_input_shape_offset', that.$element);
+            const $inputMaxOpeningPlanes = $('#ladb_input_max_opening_planes', that.$element);
+            const $selectConstrution = $('#ladb_select_construction', that.$element);
+            const $selectDrawIn = $('#ladb_select_draw_in', that.$element);
+            const $selectAskName = $('#ladb_select_ask_name', that.$element);
             const $btnValidate = $('#ladb_btn_validate', that.$element);
 
             const fnFetchOptions = function (options) {
-                options.shape_offset = $inputShapeOffset.val();
+                options.max_opening_planes = $inputMaxOpeningPlanes.val();
+                options.construction = $selectConstrution.val() === '1';
+                options.draw_in = $selectDrawIn.val() === '1';
+                options.ask_name = $selectAskName.val() === '1';
             };
             const fnFillInputs = function (options) {
-                $inputShapeOffset.val(options.shape_offset);
+                $inputMaxOpeningPlanes.val(options.max_opening_planes);
+                $selectConstrution.selectpicker('val', options.construction ? '1' : '0');
+                $selectDrawIn.selectpicker('val', options.draw_in ? '1' : '0');
+                $selectAskName.selectpicker('val', options.ask_name ? '1' : '0');
             };
 
             $widgetPreset.ladbWidgetPreset({
                 dialog: that.dialog,
                 dictionary: 'tool_smart_draw_options',
-                section: 'action_0',
+                section: 'action_3',
                 fnFetchOptions: fnFetchOptions,
                 fnFillInputs: fnFillInputs
             });
-            $inputShapeOffset.ladbTextinputDimension();
+            $inputMaxOpeningPlanes.ladbTextinputDimension();
+            $selectConstrution.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
+            $selectDrawIn.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
+            $selectAskName.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
 
             fnFillInputs(options);
 
@@ -71,9 +83,9 @@
 
             // Focus
             if (that.options.focused_field) {
-                if (that.options.focused_field.option === 'shape_offset') {
-                    $inputShapeOffset.focus();
-                    $inputShapeOffset.select();
+                if (that.options.focused_field.option === 'max_opening_planes') {
+                    $inputMaxOpeningPlanes.focus();
+                    $inputMaxOpeningPlanes.select();
                 }
             }
 

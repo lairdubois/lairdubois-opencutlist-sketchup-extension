@@ -1160,14 +1160,20 @@ module Ladb::OpenCutList
 
     def fetch_action_option_integer(action, option_group, option)
       fetch_action_option_value(action, option_group, option).to_i
+    rescue
+      0
     end
 
     def fetch_action_option_float(action, option_group, option)
       fetch_action_option_value(action, option_group, option).to_f
+    rescue
+      0.0
     end
 
     def fetch_action_option_string(action, option_group, option)
       fetch_action_option_value(action, option_group, option).to_s
+    rescue
+      ''
     end
 
     def fetch_action_option_length(action, option_group, option)

@@ -11,115 +11,119 @@
 {% block bodyInner %}
     <div class="tab-content">
         <div class="form form-horizontal" style="margin-top: 15px;">
-            {% block optionOffset %}
+            {% block formInner %}
+                {% block optionOffset %}
+                    <div class="form-group">
+                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_draw.action_option_offset_shape_offset_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                        <label class="control-label col-xs-4">{{ 'tool.smart_draw.action_option_offset_shape_offset'|i18next }}</label>
+                        <div class="col-xs-7">
+                            <input type="text" class="form-control" id="ladb_input_shape_offset">
+                        </div>
+                    </div>
+                {% endblock %}
+                {% block optionSegments %}
+                    <div class="form-group">
+                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_draw.action_option_segments_segment_count_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                        <label class="control-label col-xs-4">{{ 'tool.smart_draw.action_option_segments_segment_count'|i18next }}</label>
+                        <div class="col-xs-7">
+                            <input type="text" class="form-control" id="ladb_input_segment_count">
+                        </div>
+                    </div>
+                {% endblock %}
+                <hr>
+                {% block optionConstruction %}
+                    <div class="form-group">
+                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_draw.action_option_options_construction_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                        <label class="control-label col-xs-4">{{ 'tool.smart_draw.action_option_options_construction'|i18next }}</label>
+                        <div class="col-xs-7">
+                            <select class="form-control" id="ladb_select_construction">
+                                <option value="0" data-content={{ 'default.no'|i18next }}></option>
+                                <option value="1" data-content="{{ 'tool.smart_draw.action_option_options_construction_status'|i18next }}"></option>
+                            </select>
+                        </div>
+                    </div>
+                {% endblock %}
+                {% block optionOptionsRectangleCentered %}
+                    <div class="form-group">
+                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_draw.action_option_options_rectangle_centered_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                        <label class="control-label col-xs-4">{{ 'tool.smart_draw.action_option_options_rectangle_centered'|i18next }}</label>
+                        <div class="col-xs-7">
+                            <select class="form-control" id="ladb_select_rectangle_centered">
+                                <option value="0" data-content={{ 'default.no'|i18next }}></option>
+                                <option value="1" data-content="{{ 'tool.smart_draw.action_option_options_rectangle_centered_status'|i18next }}"></option>
+                            </select>
+                        </div>
+                    </div>
+                {% endblock %}
+                {% block optionOptionsSmoothing %}
+                    <div class="form-group">
+                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_draw.action_option_options_smoothing_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                        <label class="control-label col-xs-4">{{ 'tool.smart_draw.action_option_options_smoothing'|i18next }}</label>
+                        <div class="col-xs-7">
+                            <select class="form-control" id="ladb_select_smoothing">
+                                <option value="0" data-content={{ 'default.no'|i18next }}></option>
+                                <option value="1" data-content="{{ 'tool.smart_draw.action_option_options_smoothing_status'|i18next }}"></option>
+                            </select>
+                        </div>
+                    </div>
+                {% endblock %}
+                {% block optionOptionsMeasureFromDiameter %}
+                    <div class="form-group">
+                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_draw.action_option_options_measure_from_diameter_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                        <label class="control-label col-xs-4">{{ 'tool.smart_draw.action_option_options_measure_from_diameter'|i18next }}</label>
+                        <div class="col-xs-7">
+                            <select class="form-control" id="ladb_select_measure_from_diameter">
+                                <option value="0" data-content="{{ 'tool.smart_draw.action_option_options_measure_from_radius_status'|i18next }}"></option>
+                                <option value="1" data-content="{{ 'tool.smart_draw.action_option_options_measure_from_diameter_status'|i18next }}"></option>
+                            </select>
+                        </div>
+                    </div>
+                {% endblock %}
+                {% block optionOptionsMeasureFromFirst %}
+                    <div class="form-group">
+                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_draw.action_option_options_measure_reversed_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                        <label class="control-label col-xs-4">{{ 'tool.smart_draw.action_option_options_measure_reversed'|i18next }}</label>
+                        <div class="col-xs-7">
+                            <select class="form-control" id="ladb_select_measure_reversed">
+                                <option value="0" data-content="{{ 'default.no'|i18next }}"></option>
+                                <option value="1" data-content="{{ 'tool.smart_draw.action_option_options_measure_reversed_status'|i18next }}"></option>
+                            </select>
+                        </div>
+                    </div>
+                {% endblock %}
+                {% block optionOptionsOptionsPullCentred %}
+                    <div class="form-group">
+                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_draw.action_option_options_pull_centered_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                        <label class="control-label col-xs-4">{{ 'tool.smart_draw.action_option_options_pull_centered'|i18next }}</label>
+                        <div class="col-xs-7">
+                            <select class="form-control" id="ladb_select_pull_centered">
+                                <option value="0" data-content={{ 'default.no'|i18next }}></option>
+                                <option value="1" data-content="{{ 'tool.smart_draw.action_option_options_pull_centered_status'|i18next }}"></option>
+                            </select>
+                        </div>
+                    </div>
+                {% endblock %}
                 <div class="form-group">
-                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_draw.action_option_offset_shape_offset_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                    <label class="control-label col-xs-4">{{ 'tool.smart_draw.action_option_offset_shape_offset'|i18next }}</label>
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_draw.action_option_options_draw_in_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <label class="control-label col-xs-4">{{ 'tool.smart_draw.action_option_options_draw_in'|i18next }}</label>
                     <div class="col-xs-7">
-                        <input type="text" class="form-control" id="ladb_input_shape_offset">
+                        <select class="form-control" id="ladb_select_draw_in">
+                            <option value="0" data-content="{{ 'tool.smart_draw.action_option_options_draw_in_0'|i18next }}"></option>
+                            <option value="1" data-content="{{ 'tool.smart_draw.action_option_options_draw_in_1'|i18next }}"></option>
+                        </select>
                     </div>
                 </div>
-            {% endblock %}
-            {% block optionSegments %}
                 <div class="form-group">
-                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_draw.action_option_segments_segment_count_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                    <label class="control-label col-xs-4">{{ 'tool.smart_draw.action_option_segments_segment_count'|i18next }}</label>
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_draw.action_option_options_ask_name_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <label class="control-label col-xs-4">{{ 'tool.smart_draw.action_option_options_ask_name'|i18next }}</label>
                     <div class="col-xs-7">
-                        <input type="text" class="form-control" id="ladb_input_segment_count">
-                    </div>
-                </div>
-            {% endblock %}
-            <hr>
-            {% block optionConstruction %}
-                <div class="form-group">
-                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_draw.action_option_options_construction_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                    <label class="control-label col-xs-4">{{ 'tool.smart_draw.action_option_options_construction'|i18next }}</label>
-                    <div class="col-xs-7">
-                        <select class="form-control" id="ladb_select_construction">
-                            <option value="0" data-content={{ 'default.no'|i18next }}></option>
-                            <option value="1" data-content="{{ 'tool.smart_draw.action_option_options_construction_status'|i18next }}"></option>
+                        <select class="form-control" id="ladb_select_ask_name">
+                            <option value="0" data-content={{ 'default.automatic'|i18next }}></option>
+                            <option value="1" data-content="{{ 'tool.smart_draw.action_option_options_ask_name_status'|i18next }}"></option>
                         </select>
                     </div>
                 </div>
             {% endblock %}
-            {% block optionOptionsRectangleCentered %}
-                <div class="form-group">
-                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_draw.action_option_options_rectangle_centered_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                    <label class="control-label col-xs-4">{{ 'tool.smart_draw.action_option_options_rectangle_centered'|i18next }}</label>
-                    <div class="col-xs-7">
-                        <select class="form-control" id="ladb_select_rectangle_centered">
-                            <option value="0" data-content={{ 'default.no'|i18next }}></option>
-                            <option value="1" data-content="{{ 'tool.smart_draw.action_option_options_rectangle_centered_status'|i18next }}"></option>
-                        </select>
-                    </div>
-                </div>
-            {% endblock %}
-            {% block optionOptionsSmoothing %}
-                <div class="form-group">
-                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_draw.action_option_options_smoothing_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                    <label class="control-label col-xs-4">{{ 'tool.smart_draw.action_option_options_smoothing'|i18next }}</label>
-                    <div class="col-xs-7">
-                        <select class="form-control" id="ladb_select_smoothing">
-                            <option value="0" data-content={{ 'default.no'|i18next }}></option>
-                            <option value="1" data-content="{{ 'tool.smart_draw.action_option_options_smoothing_status'|i18next }}"></option>
-                        </select>
-                    </div>
-                </div>
-            {% endblock %}
-            {% block optionOptionsMeasureFromDiameter %}
-                <div class="form-group">
-                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_draw.action_option_options_measure_from_diameter_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                    <label class="control-label col-xs-4">{{ 'tool.smart_draw.action_option_options_measure_from_diameter'|i18next }}</label>
-                    <div class="col-xs-7">
-                        <select class="form-control" id="ladb_select_measure_from_diameter">
-                            <option value="0" data-content="{{ 'tool.smart_draw.action_option_options_measure_from_radius_status'|i18next }}"></option>
-                            <option value="1" data-content="{{ 'tool.smart_draw.action_option_options_measure_from_diameter_status'|i18next }}"></option>
-                        </select>
-                    </div>
-                </div>
-            {% endblock %}
-            {% block optionOptionsMeasureFromFirst %}
-                <div class="form-group">
-                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_draw.action_option_options_measure_reversed_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                    <label class="control-label col-xs-4">{{ 'tool.smart_draw.action_option_options_measure_reversed'|i18next }}</label>
-                    <div class="col-xs-7">
-                        <select class="form-control" id="ladb_select_measure_reversed">
-                            <option value="0" data-content="{{ 'default.no'|i18next }}"></option>
-                            <option value="1" data-content="{{ 'tool.smart_draw.action_option_options_measure_reversed_status'|i18next }}"></option>
-                        </select>
-                    </div>
-                </div>
-            {% endblock %}
-            <div class="form-group">
-                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_draw.action_option_options_pull_centered_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                <label class="control-label col-xs-4">{{ 'tool.smart_draw.action_option_options_pull_centered'|i18next }}</label>
-                <div class="col-xs-7">
-                    <select class="form-control" id="ladb_select_pull_centered">
-                        <option value="0" data-content={{ 'default.no'|i18next }}></option>
-                        <option value="1" data-content="{{ 'tool.smart_draw.action_option_options_pull_centered_status'|i18next }}"></option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_draw.action_option_options_draw_in_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                <label class="control-label col-xs-4">{{ 'tool.smart_draw.action_option_options_draw_in'|i18next }}</label>
-                <div class="col-xs-7">
-                    <select class="form-control" id="ladb_select_draw_in">
-                        <option value="0" data-content="{{ 'tool.smart_draw.action_option_options_draw_in_0'|i18next }}"></option>
-                        <option value="1" data-content="{{ 'tool.smart_draw.action_option_options_draw_in_1'|i18next }}"></option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_draw.action_option_options_ask_name_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                <label class="control-label col-xs-4">{{ 'tool.smart_draw.action_option_options_ask_name'|i18next }}</label>
-                <div class="col-xs-7">
-                    <select class="form-control" id="ladb_select_ask_name">
-                        <option value="0" data-content={{ 'default.automatic'|i18next }}></option>
-                        <option value="1" data-content="{{ 'tool.smart_draw.action_option_options_ask_name_status'|i18next }}"></option>
-                    </select>
-                </div>
-            </div>
         </div>
     </div>
 {% endblock %}
