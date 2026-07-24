@@ -48,6 +48,7 @@ module Ladb::OpenCutList
     ACTION_OPTION_OPTIONS_PULL_CENTRED = 'pull_centered'
     ACTION_OPTION_OPTIONS_ASK_NAME = 'ask_name'
 
+    ACTION_OPTION_OPTIONS_NORMAL_REVERSED = 'normal_reversed'
     ACTION_OPTION_OPTIONS_MAX_OPENING_PLANES = 'max_opening_planes'
     ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE = 'reduce_envelope'
 
@@ -79,7 +80,7 @@ module Ladb::OpenCutList
       :action => ACTION_DRAW_SEPARATOR,
       :options => {
         ACTION_OPTION_THICKNESS => [ ACTION_OPTION_THICKNESS_THICKNESS ],
-        ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_MAX_OPENING_PLANES, ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, ACTION_OPTION_OPTIONS_ASK_NAME ]
+        ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_NORMAL_REVERSED, ACTION_OPTION_OPTIONS_MAX_OPENING_PLANES, ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, ACTION_OPTION_OPTIONS_ASK_NAME ]
       }
     } if Sketchup.debug_mode?
 
@@ -136,7 +137,7 @@ module Ladb::OpenCutList
       when ACTION_OPTION_OPTIONS
         case option
         when ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_DRAW_IN, ACTION_OPTION_OPTIONS_ASK_NAME
-          return [ ACTION_DRAW_RECTANGLE, ACTION_DRAW_CIRCLE, ACTION_DRAW_POLYGON , ACTION_DRAW_SEPARATOR ]
+          return [ ACTION_DRAW_RECTANGLE, ACTION_DRAW_CIRCLE, ACTION_DRAW_POLYGON, ACTION_DRAW_SEPARATOR ]
         end
       end
 
@@ -208,6 +209,8 @@ module Ladb::OpenCutList
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1L0.667,1L1,0.667L1,0L0.333,0L0,0.333L0,1 M0,0.333L0.667,0.333L0.667,1 M0.667,0.333L1,0 M0.333,0.5L0.333,0.833 M0.167,0.667L0.5,0.667'))
         when ACTION_OPTION_OPTIONS_ASK_NAME
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.25L1,0.25L1,0.75L0,0.75L0,0.25 M0.438,0.313L0.438,0.688 M0.125,0.625L0.125,0.375L0.313,0.625L0.313,0.375'))
+        when ACTION_OPTION_OPTIONS_NORMAL_REVERSED
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.25,0L0,0L0,0.625L0.25,0.625L0.25,0 M1,1L1,0.75L0.375,0.75L0.375,1L1,1 M0.375,0.125L0.5,0.141L0.625,0.192L0.706,0.25L0.75,0.294L0.808,0.375L0.859,0.5L0.875,0.625 M0.5,0L0.375,0.125L0.5,0.25 M0.75,0.5L0.875,0.625L1,0.5'))
         when ACTION_OPTION_OPTIONS_MAX_OPENING_PLANES
           return Kuix::Label.new(fetch_action_option_value(action, option_group, option).to_s)
         when ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE
@@ -3940,26 +3943,20 @@ module Ladb::OpenCutList
       true
     end
 
-    def onToolKeyDown(tool, key, repeat, flags, view)
-      return true if super
+    def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
 
       case @state
-      when STATE_START
 
-        if key == VK_LEFT
-          @locked_separator_normal_index = @locked_separator_normal_index == 0 ? nil : 0
-          _refresh
-          return true
-        end
-        if key == VK_RIGHT
-          @locked_separator_normal_index = @locked_separator_normal_index == 1 ? nil : 1
+      when STATE_START
+        if tool.is_key_ctrl_or_option?(key) && is_quick
+          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_NORMAL_REVERSED, !_fetch_option_normal_reversed?, fire_event: true)
           _refresh
           return true
         end
 
       end
 
-      false
+      super
     end
 
     def onToolUserText(tool, text, view)
@@ -3998,7 +3995,6 @@ module Ladb::OpenCutList
 
     def _reset
       @cavities_def = nil
-      @locked_separator_normal_index = nil
       super
     end
 
@@ -4070,68 +4066,6 @@ module Ladb::OpenCutList
       end
     end
 
-    # Computes the separator solid at the current pick : the intersection of
-    # a thick slab (through the picked point, normal to one of the picked
-    # face's transformation axes, perpendicular to the reference face) with
-    # the cavity fragment touched by the picked point. The slab is oversized
-    # in its own plane on purpose (see SEPARATOR_SLAB_MARGIN) : only the
-    # CAVITY boundary ever clips the result, so an open cavity (hull mode)
-    # clips flush with its cap, not with the slab's own edges.
-    # Returns { :point =>, :normal =>, :fragments => } (Meshy raw fragment
-    # hashes) or nil. Shared by the 3D preview and the actual creation, so
-    # what gets built is exactly what was last shown.
-    def _compute_separator(view)
-      return nil unless (picked_face_manipulator = @picker.picked_plane_manipulator).is_a?(PlaneManipulator)
-      return nil if (picked_point = @picker.picked_point).nil?
-      return nil unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef) && cavities_def.valid?
-
-      # Nudge the lookup point to the cavity side of the picked face : a
-      # point picked exactly on a boundary face is ambiguous between the
-      # cavities it separates (fragment_defs_for_point would return both).
-      inward_point = picked_point.offset(picked_face_manipulator.normal.reverse, SolidMeshDef::TOLERANCE * 10)
-      fragment_def = cavities_def.fragment_defs_for_point(inward_point).first
-      fragment_def ||= cavities_def.fragment_defs_for_point(picked_point).first
-      return nil if fragment_def.nil?
-
-      normal = _get_separator_normal(picked_face_manipulator, fragment_def, view)
-      return nil if normal.nil?
-
-      slab_mesh = _get_separator_slab_mesh(normal, picked_point.to_a, fragment_def, _fetch_option_thickness)
-      cavity_mesh = {
-        :vertices => fragment_def.vertices,
-        :face_indices => fragment_def.face_indices,
-        :face_ids => fragment_def.face_ids,
-        :tolerance => SolidMeshDef::TOLERANCE
-      }
-
-      output = Fiddle::Meshy.operate(
-        :operation => Fiddle::Meshy::OPERATION_INTERSECTION,
-        :validate => false, # Both operands are already valid (slab, and a fragment born of a validated computation)
-        :tolerance => SolidMeshDef::TOLERANCE,
-        :src_meshes => [ slab_mesh ],
-        :cut_meshes => [ cavity_mesh ]
-      )
-      return nil unless output.is_a?(Hash) && output['fragments'].is_a?(Array)
-
-      fragments = output['fragments'].select { |fragment| fragment['vertices'].is_a?(Array) && fragment['face_indices'].is_a?(Array) }
-      return nil if fragments.empty?
-
-      # The slab ∩ cavity intersection can split into several disjoint
-      # fragments (e.g. a non-convex cavity clipping the oversized slab in
-      # more than one place) : only the one actually touched by the picked
-      # point is the separator the user meant to draw, so it's the only one
-      # kept - the rest would otherwise be built as extra, unwanted geometry
-      # in the same part.
-      if fragments.length > 1
-        touched_fragment = fragments.find do |fragment|
-          SolidFragmentDef.new(fragment['vertices'], fragment['face_indices'], fragment['face_ids'], []).contains_point?(picked_point)
-        end
-        fragments = [ touched_fragment ] unless touched_fragment.nil?
-      end
-
-      { :point => picked_point, :normal => normal, :fragments => fragments, :container_path => cavities_def.container_path }
-    end
-
     def _preview_separator(view)
       @tool.clear_3d(LAYER_3D_SEPARATOR_PREVIEW)
 
@@ -4166,6 +4100,46 @@ module Ladb::OpenCutList
       end
     end
 
+    def _preview_cavities
+
+      @tool.clear_3d(LAYER_3D_CAVITIES_PREVIEW)
+
+      return unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef) && cavities_def.valid?
+
+      colors = [ Kuix::COLOR_RED, Kuix::COLOR_GREEN, Kuix::COLOR_BLUE, Kuix::COLOR_YELLOW ]
+
+      cavities_def.fragment_defs.each_with_index do |fragment_def, index|
+
+        color = colors[index % colors.size]
+
+        # fragment_def.each_triangle_batch do |_, triangles|
+        #
+        #   k_mesh = Kuix::Mesh.new
+        #   k_mesh.add_triangles(triangles.flatten)
+        #   k_mesh.background_color = ColorUtils.color_translucent(color, 0.3)
+        #   @tool.append_3d(k_mesh, LAYER_3D_CAVITIES_PREVIEW)
+        #
+        # end
+
+        segments = fragment_def.unique_boundary_segments
+
+        k_segments = Kuix::Segments.new
+        k_segments.add_segments(segments)
+        k_segments.color = color
+        k_segments.line_width = 1
+        k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+        k_segments.on_top = true
+        @tool.append_3d(k_segments, LAYER_3D_CAVITIES_PREVIEW)
+
+        k_segments = Kuix::Segments.new
+        k_segments.add_segments(segments)
+        k_segments.color = color
+        k_segments.line_width = 1.5
+        @tool.append_3d(k_segments, LAYER_3D_CAVITIES_PREVIEW)
+
+      end
+    end
+
     # -----
 
     def _read_thickness(tool, text, view)
@@ -4192,14 +4166,80 @@ module Ladb::OpenCutList
 
     # -----
 
+    def _fetch_option_thickness
+      @tool.fetch_action_option_length(@action, SmartReshapeTool::ACTION_OPTION_THICKNESS, SmartReshapeTool::ACTION_OPTION_THICKNESS_THICKNESS)
+    end
+
+    def _fetch_option_normal_reversed?
+      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_NORMAL_REVERSED)
+    end
+
+    def _fetch_option_max_opening_planes
+      @tool.fetch_action_option_integer(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MAX_OPENING_PLANES)
+    end
+
+    def _fetch_option_reduce_envelope?
+      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE)
+    end
+
+    # -----
+
+    def _get_cavities_def
+      return @cavities_def if @cavities_def.is_a?(CavitiesDef)
+
+      return nil if get_active_part.group.material_is_virtual || get_active_part.group.material_type == MaterialAttributes::TYPE_HARDWARE
+
+      active_part_entity_path = get_active_part_entity_path
+      if active_part_entity_path.is_a?(Array) && active_part_entity_path.length > 1
+
+        container_path = active_part_entity_path[0...-1]
+        return nil if container_path == Sketchup.active_model.active_path
+
+        container = container_path.last
+        return nil if container.nil?
+
+        worker = CutlistGenerateWorker.new(**HashUtils.symbolize_keys(PLUGIN.get_model_preset('cutlist_options')).merge({ active_entity: container, active_path: container_path[0...-1] }))
+        cutlist = worker.run
+
+        parts = cutlist.groups.reject { |group| group.material_is_virtual || group.material_type == MaterialAttributes::TYPE_HARDWARE}
+                       .flat_map { |group| group.get_parts }
+        drawing_defs = parts.flat_map { |part|
+          part.def.instance_infos.values.map { |instance_info|
+            CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new(instance_info.path) ],
+                                                 ignore_surfaces: true,
+                                                 ignore_edges: true,
+                                                 container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART_WITHOUT_MACHININGS_AND_CUTS_OPENING
+            ).run
+          }
+        }
+
+        result_def = CommonSolidFindCavitiesWorker.new(drawing_defs,
+                                                       max_opening_planes: _fetch_option_max_opening_planes,
+                                                       reduce_envelope: _fetch_option_reduce_envelope?
+        ).run
+
+        @cavities_def = CavitiesDef.new(container_path, result_def)
+
+        unless result_def.success?
+          @tool.notify_errors(result_def.errors)
+        end
+
+      else
+        return nil
+      end
+
+      @cavities_def
+    end
+
+    # -----
+
     # Rebuilds the separator fragments as real geometry inside the model,
     # names and selects the resulting part - the same tail conventions
     # (ask_name option / success notification) as the other draw handlers'
     # _create_entity. Returns true on success, false when there is nothing
     # valid to build (no pick, no cavity, degenerate intersection).
     def _create_entity(view)
-      result = _compute_separator(view)
-      return false if result.nil?
+      return false if (result = _compute_separator(view)).nil?
 
       point = result[:point]
       normal = result[:normal]
@@ -4277,6 +4317,70 @@ module Ladb::OpenCutList
       true
     end
 
+    # -----
+
+    # Computes the separator solid at the current pick : the intersection of
+    # a thick slab (through the picked point, normal to one of the picked
+    # face's transformation axes, perpendicular to the reference face) with
+    # the cavity fragment touched by the picked point. The slab is oversized
+    # in its own plane on purpose (see SEPARATOR_SLAB_MARGIN) : only the
+    # CAVITY boundary ever clips the result, so an open cavity (hull mode)
+    # clips flush with its cap, not with the slab's own edges.
+    # Returns { :point =>, :normal =>, :fragments => } (Meshy raw fragment
+    # hashes) or nil. Shared by the 3D preview and the actual creation, so
+    # what gets built is exactly what was last shown.
+    def _compute_separator(view)
+      return nil unless (picked_face_manipulator = @picker.picked_plane_manipulator).is_a?(PlaneManipulator)
+      return nil if (picked_point = @picker.picked_point).nil?
+      return nil unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef) && cavities_def.valid?
+
+      # Nudge the lookup point to the cavity side of the picked face : a
+      # point picked exactly on a boundary face is ambiguous between the
+      # cavities it separates (fragment_defs_for_point would return both).
+      inward_point = picked_point.offset(picked_face_manipulator.normal.reverse, SolidMeshDef::TOLERANCE * 10)
+      fragment_def = cavities_def.fragment_defs_for_point(inward_point).first
+      fragment_def ||= cavities_def.fragment_defs_for_point(picked_point).first
+      return nil if fragment_def.nil?
+
+      normal = _get_separator_normal(picked_face_manipulator, fragment_def, view)
+      return nil if normal.nil?
+
+      slab_mesh = _get_separator_slab_mesh(normal, picked_point.to_a, fragment_def, _fetch_option_thickness)
+      cavity_mesh = {
+        :vertices => fragment_def.vertices,
+        :face_indices => fragment_def.face_indices,
+        :face_ids => fragment_def.face_ids,
+        :tolerance => SolidMeshDef::TOLERANCE
+      }
+
+      output = Fiddle::Meshy.operate(
+        :operation => Fiddle::Meshy::OPERATION_INTERSECTION,
+        :validate => false, # Both operands are already valid (slab, and a fragment born of a validated computation)
+        :tolerance => SolidMeshDef::TOLERANCE,
+        :src_meshes => [ slab_mesh ],
+        :cut_meshes => [ cavity_mesh ]
+      )
+      return nil unless output.is_a?(Hash) && output['fragments'].is_a?(Array)
+
+      fragments = output['fragments'].select { |fragment| fragment['vertices'].is_a?(Array) && fragment['face_indices'].is_a?(Array) }
+      return nil if fragments.empty?
+
+      # The slab ∩ cavity intersection can split into several disjoint
+      # fragments (e.g. a non-convex cavity clipping the oversized slab in
+      # more than one place) : only the one actually touched by the picked
+      # point is the separator the user meant to draw, so it's the only one
+      # kept - the rest would otherwise be built as extra, unwanted geometry
+      # in the same part.
+      if fragments.length > 1
+        touched_fragment = fragments.find do |fragment|
+          SolidFragmentDef.new(fragment['vertices'], fragment['face_indices'], fragment['face_ids'], []).contains_point?(picked_point)
+        end
+        fragments = [ touched_fragment ] unless touched_fragment.nil?
+      end
+
+      { :point => picked_point, :normal => normal, :fragments => fragments, :container_path => cavities_def.container_path }
+    end
+
     # Turns the raw Meshy fragments (world coordinates) into real, coplanar-
     # merged Sketchup::Face geometry inside +entities+, expressed in the
     # given transformation's local space. Deliberately simpler than
@@ -4342,9 +4446,7 @@ module Ladb::OpenCutList
     # in the face's plane - the axis most aligned with the face normal
     # (perpendicular to the face, not usable as the separator's own normal)
     # is excluded. Order is deterministic (transformation's x, y, z order),
-    # independent of the camera : this is what VK_LEFT / VK_RIGHT address by
-    # index in onToolKeyDown, so a lock keeps meaning the "first" or "second"
-    # axis whatever face ends up under the cursor next.
+    # independent of the camera.
     def _get_separator_normal_candidates(picked_face_manipulator)
       t = picked_face_manipulator.transformation
       candidates = [ t.xaxis, t.yaxis, t.zaxis ].map(&:normalize)
@@ -4356,38 +4458,37 @@ module Ladb::OpenCutList
       candidates
     end
 
-    # The separator's normal : the candidate locked via VK_LEFT / VK_RIGHT
-    # when set (see onToolKeyDown), otherwise the candidate that keeps a
-    # CHANT (thin edge), not a whole main face, against the cavity's open
-    # side when there is one - a separator whose main face lands flush in
-    # the opening reads as a false front/back, not a shelf or a partition,
-    # which is essentially never the intent. When that criterion doesn't
-    # discriminate (hermetic cavity, no opening ; or both candidates equally
-    # (im)perpendicular to it), falls back to whichever candidate reads more
-    # horizontal in the current view - a live default that needs no extra
-    # click, and follows the camera as the user orbits.
+    # The separator's normal : the candidate that keeps a CHANT (thin edge),
+    # not a whole main face, against the cavity's open side - a face landing
+    # flush in the opening reads as a false front/back, not a shelf or
+    # partition. Falls back to whichever candidate reads more horizontal in
+    # the current view when the opening criterion doesn't discriminate
+    # (hermetic cavity, or both candidates equally (im)perpendicular to it).
+    # The "normal reversed" option swaps this natural pick for its complement.
     def _get_separator_normal(picked_face_manipulator, fragment_def, view)
       candidates = _get_separator_normal_candidates(picked_face_manipulator)
       return nil if candidates.length < 2
 
-      unless @locked_separator_normal_index.nil?
-        return candidates[@locked_separator_normal_index].to_a
-      end
+      index = _get_separator_normal_candidate_index(candidates, fragment_def, view)
+      index = 1 - index if _fetch_option_normal_reversed?
 
+      candidates[index].to_a
+    end
+
+    def _get_separator_normal_candidate_index(candidates, fragment_def, view)
       if (opening_normal = _get_cavity_opening_normal(fragment_def)).is_a?(Array)
         opening_vector = Geom::Vector3d.new(opening_normal)
         dots = candidates.map { |axis| (axis % opening_vector).abs }
         min_dot = dots.min
-        perpendicular_candidates = candidates.each_index.select { |index| dots[index] <= min_dot + SEPARATOR_NORMAL_OPENING_DOT_EPSILON }.map { |index| candidates[index] }
-        return perpendicular_candidates.first.to_a if perpendicular_candidates.length == 1
-        candidates = perpendicular_candidates
+        perpendicular_indices = candidates.each_index.select { |index| dots[index] <= min_dot + SEPARATOR_NORMAL_OPENING_DOT_EPSILON }
+        return perpendicular_indices.first if perpendicular_indices.length == 1
       end
 
       camera = view.camera
       screen_right = camera.direction.cross(camera.up)
-      return candidates.first.to_a unless screen_right.valid?
+      return 0 unless screen_right.valid?
 
-      candidates.max_by { |axis| (axis % screen_right).abs }.to_a
+      candidates.each_index.max_by { |index| (candidates[index] % screen_right).abs } || 0
     end
 
     # Area-weighted dominant normal ([ x, y, z ] unit Float array) of the
@@ -4515,109 +4616,6 @@ module Ladb::OpenCutList
         :num_faces => face_indices.length / 3,
         :tolerance => SolidMeshDef::TOLERANCE
       }
-    end
-
-    def _preview_cavities
-
-      @tool.clear_3d(LAYER_3D_CAVITIES_PREVIEW)
-
-      return unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef) && cavities_def.valid?
-
-      colors = [ Kuix::COLOR_RED, Kuix::COLOR_GREEN, Kuix::COLOR_BLUE, Kuix::COLOR_YELLOW ]
-
-      cavities_def.fragment_defs.each_with_index do |fragment_def, index|
-
-        color = colors[index % colors.size]
-
-        # fragment_def.each_triangle_batch do |_, triangles|
-        #
-        #   k_mesh = Kuix::Mesh.new
-        #   k_mesh.add_triangles(triangles.flatten)
-        #   k_mesh.background_color = ColorUtils.color_translucent(color, 0.3)
-        #   @tool.append_3d(k_mesh, LAYER_3D_CAVITIES_PREVIEW)
-        #
-        # end
-
-        segments = fragment_def.unique_boundary_segments
-
-        k_segments = Kuix::Segments.new
-        k_segments.add_segments(segments)
-        k_segments.color = color
-        k_segments.line_width = 1
-        k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-        k_segments.on_top = true
-        @tool.append_3d(k_segments, LAYER_3D_CAVITIES_PREVIEW)
-
-        k_segments = Kuix::Segments.new
-        k_segments.add_segments(segments)
-        k_segments.color = color
-        k_segments.line_width = 1.5
-        @tool.append_3d(k_segments, LAYER_3D_CAVITIES_PREVIEW)
-
-      end
-    end
-
-    # -----
-
-    def _fetch_option_thickness
-      @tool.fetch_action_option_length(@action, SmartReshapeTool::ACTION_OPTION_THICKNESS, SmartReshapeTool::ACTION_OPTION_THICKNESS_THICKNESS)
-    end
-
-    def _fetch_option_max_opening_planes
-      @tool.fetch_action_option_integer(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MAX_OPENING_PLANES)
-    end
-
-    def _fetch_option_reduce_envelope?
-      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE)
-    end
-
-    # -----
-
-    def _get_cavities_def
-      return @cavities_def if @cavities_def.is_a?(CavitiesDef)
-
-      return nil if get_active_part.group.material_is_virtual || get_active_part.group.material_type == MaterialAttributes::TYPE_HARDWARE
-
-      active_part_entity_path = get_active_part_entity_path
-      if active_part_entity_path.is_a?(Array) && active_part_entity_path.length > 1
-
-        container_path = active_part_entity_path[0...-1]
-        return nil if container_path == Sketchup.active_model.active_path
-
-        container = container_path.last
-        return nil if container.nil?
-
-        worker = CutlistGenerateWorker.new(**HashUtils.symbolize_keys(PLUGIN.get_model_preset('cutlist_options')).merge({ active_entity: container, active_path: container_path[0...-1] }))
-        cutlist = worker.run
-
-        parts = cutlist.groups.reject { |group| group.material_is_virtual || group.material_type == MaterialAttributes::TYPE_HARDWARE}
-                       .flat_map { |group| group.get_parts }
-        drawing_defs = parts.flat_map { |part|
-          part.def.instance_infos.values.map { |instance_info|
-            CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new(instance_info.path) ],
-                                                 ignore_surfaces: true,
-                                                 ignore_edges: true,
-                                                 container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART_WITHOUT_MACHININGS_AND_CUTS_OPENING
-            ).run
-          }
-        }
-
-        result_def = CommonSolidFindCavitiesWorker.new(drawing_defs,
-                                                       max_opening_planes: _fetch_option_max_opening_planes,
-                                                       reduce_envelope: _fetch_option_reduce_envelope?
-        ).run
-
-        @cavities_def = CavitiesDef.new(container_path, result_def)
-
-        unless result_def.success?
-          @tool.notify_errors(result_def.errors)
-        end
-
-      else
-        return nil
-      end
-
-      @cavities_def
     end
 
     # -----
