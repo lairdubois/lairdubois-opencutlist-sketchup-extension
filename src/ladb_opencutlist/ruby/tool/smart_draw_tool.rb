@@ -80,7 +80,7 @@ module Ladb::OpenCutList
       :action => ACTION_DRAW_SEPARATOR,
       :options => {
         ACTION_OPTION_THICKNESS => [ ACTION_OPTION_THICKNESS_THICKNESS ],
-        ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_NORMAL_REVERSED, ACTION_OPTION_OPTIONS_MAX_OPENING_PLANES, ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, ACTION_OPTION_OPTIONS_ASK_NAME ]
+        ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_NORMAL_REVERSED, ACTION_OPTION_OPTIONS_MAX_OPENING_PLANES, ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, ACTION_OPTION_OPTIONS_ASK_NAME ]
       }
     } if Sketchup.debug_mode?
 
@@ -299,6 +299,65 @@ module Ladb::OpenCutList
 
     def _fetch_option_ask_name?
       @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_ASK_NAME)
+    end
+
+    # -----
+
+    # Orients the newly built +definition+'s own axes on its own geometry :
+    # Z on the normal of its largest face, X on the longest edge lying in
+    # that face (perpendicular to the normal) - so the part's axes read as
+    # "front/thickness" instead of whatever axes the pick happened to leave
+    # it in. Returns a transformation to apply to the definition's content
+    # (see callers), or IDENTITY when there is no face to orient on.
+    def _get_auto_orient_transformation(definition, transformation = IDENTITY)
+
+      # Sum areas of all faces that are "parallel"
+      a_defs = {}
+      definition.entities.each do |entity|
+        next unless entity.is_a?(Sketchup::Face)
+        normal = entity.normal
+        key = a_defs.keys.find { |k| k.parallel?(normal) }
+        if (a_def = a_defs[key]).nil?
+          a_def = { :area => 0, :face => entity }
+          a_defs[normal] = a_def
+        end
+        a_def[:area] += entity.area(transformation)
+      end
+      max_a_def = a_defs.values.max_by { |a_def| a_def[:area] }
+      unless max_a_def.nil?
+
+        face = max_a_def[:face]
+        normal = face.normal
+
+        # Sum lengths of all edges that are "parallel"
+        l_defs = {}
+        definition.entities.each do |entity|
+          next unless entity.is_a?(Sketchup::Edge)
+          _, direction = entity.line
+          next unless direction.perpendicular?(normal)
+          key = l_defs.keys.find { |k| k.parallel?(direction) }
+          if (l_def = l_defs[key]).nil?
+            l_def = { :length => 0, :edge => entity }
+            l_defs[direction] = l_def
+          end
+          l_def[:length] += entity.length(transformation)
+        end
+        max_l_def = l_defs.values.max_by { |l_def| l_def[:length] }
+        unless max_l_def.nil?
+
+          edge = max_l_def[:edge]
+          _, direction = edge.line
+
+          z_axis = normal.reverse  # Reverse the normal by presuming it points into the solid
+          x_axis = direction
+          y_axis = z_axis * x_axis
+
+          return Geom::Transformation.axes(ORIGIN, x_axis, y_axis, z_axis)
+        end
+
+      end
+
+      IDENTITY
     end
 
   end
@@ -1799,57 +1858,6 @@ module Ladb::OpenCutList
         ignore_soft_edges: true,
         ignore_clines: true
       ).run
-    end
-
-    def _get_auto_orient_transformation(definition, transformation = IDENTITY)
-
-      # Sum areas of all faces that are "parallel"
-      a_defs = {}
-      definition.entities.each do |entity|
-        next unless entity.is_a?(Sketchup::Face)
-        normal = entity.normal
-        key = a_defs.keys.find { |k| k.parallel?(normal) }
-        if (a_def = a_defs[key]).nil?
-          a_def = { :area => 0, :face => entity }
-          a_defs[normal] = a_def
-        end
-        a_def[:area] += entity.area(transformation)
-      end
-      max_a_def = a_defs.values.max_by { |a_def| a_def[:area] }
-      unless max_a_def.nil?
-
-        face = max_a_def[:face]
-        normal = face.normal
-
-        # Sum lengths of all edges that are "parallel"
-        l_defs = {}
-        definition.entities.each do |entity|
-          next unless entity.is_a?(Sketchup::Edge)
-          _, direction = entity.line
-          next unless direction.perpendicular?(normal)
-          key = l_defs.keys.find { |k| k.parallel?(direction) }
-          if (l_def = l_defs[key]).nil?
-            l_def = { :length => 0, :edge => entity }
-            l_defs[direction] = l_def
-          end
-          l_def[:length] += entity.length(transformation)
-        end
-        max_l_def = l_defs.values.max_by { |l_def| l_def[:length] }
-        unless max_l_def.nil?
-
-          edge = max_l_def[:edge]
-          _, direction = edge.line
-
-          z_axis = normal.reverse  # Reverse the normal by presuming it points into the solid
-          x_axis = direction
-          y_axis = z_axis * x_axis
-
-          return Geom::Transformation.axes(ORIGIN, x_axis, y_axis, z_axis)
-        end
-
-      end
-
-      IDENTITY
     end
 
     # --
@@ -4069,15 +4077,13 @@ module Ladb::OpenCutList
     def _preview_separator(view)
       @tool.clear_3d(LAYER_3D_SEPARATOR_PREVIEW)
 
-      result = _compute_separator(view)
-      return if result.nil?
+      return unless (separator_def = _compute_separator(view)).is_a?(SeparatorDef)
 
       color = Kuix::COLOR_MAGENTA
 
-      result[:fragments].each do |fragment|
+      separator_def.fragments.each do |fragment|
 
-        # face_info_defs is irrelevant here : the preview only needs the
-        # geometry (boundary_segments doesn't dereference it).
+        # face_info_defs is irrelevant here : the preview only needs the geometry (boundary_segments doesn't dereference it).
         separator_fragment_def = SolidFragmentDef.new(fragment['vertices'], fragment['face_indices'], fragment['face_ids'], [])
         next if separator_fragment_def.empty?
 
@@ -4091,11 +4097,15 @@ module Ladb::OpenCutList
         k_segments.on_top = true
         @tool.append_3d(k_segments, LAYER_3D_SEPARATOR_PREVIEW)
 
-        k_segments = Kuix::Segments.new
-        k_segments.add_segments(segments)
-        k_segments.color = color
-        k_segments.line_width = 1.5
-        @tool.append_3d(k_segments, LAYER_3D_SEPARATOR_PREVIEW)
+        unless _fetch_option_construction?
+
+          k_segments = Kuix::Segments.new
+          k_segments.add_segments(segments)
+          k_segments.color = color
+          k_segments.line_width = 1.5
+          @tool.append_3d(k_segments, LAYER_3D_SEPARATOR_PREVIEW)
+
+        end
 
       end
     end
@@ -4236,22 +4246,26 @@ module Ladb::OpenCutList
     # Rebuilds the separator fragments as real geometry inside the model,
     # names and selects the resulting part - the same tail conventions
     # (ask_name option / success notification) as the other draw handlers'
-    # _create_entity. Returns true on success, false when there is nothing
-    # valid to build (no pick, no cavity, degenerate intersection).
+    # _create_entity. When the construction option is on, only the outline
+    # is drawn (as clines, in a plain group) instead of a real solid part -
+    # same "construction, not a part" contract as the other draw handlers,
+    # so no naming / success notification happens in that case either.
+    # Returns true on success, false when there is nothing valid to build
+    # (no pick, no cavity, degenerate intersection).
     def _create_entity(view)
-      return false if (result = _compute_separator(view)).nil?
+      return false unless (separator_def = _compute_separator(view)).is_a?(SeparatorDef)
 
-      point = result[:point]
-      normal = result[:normal]
-      u, v = _get_separator_plane_basis(normal)
+      point = separator_def.point
+      normal_3f = separator_def.normal_3f
+      u, v = _get_separator_plane_basis(normal_3f)
 
       # Local frame for the new part : Z = thickness axis (the chosen
       # separator normal), X/Y = the slab's own in-plane basis. u, v, normal
       # is right-handed by construction (_get_separator_plane_basis), so this
       # transformation is a pure rotation - never a mirror.
-      world_transformation = Geom::Transformation.axes(point, Geom::Vector3d.new(u), Geom::Vector3d.new(v), Geom::Vector3d.new(normal))
+      world_transformation = Geom::Transformation.axes(point, Geom::Vector3d.new(u), Geom::Vector3d.new(v), Geom::Vector3d.new(normal_3f))
 
-      container_path = result[:container_path]
+      container_path = separator_def.container_path
       if container_path.is_a?(Array) && container_path.any? && (container = container_path.last) && container.respond_to?(:definition)
         active_entities = container.definition.entities
         active_transformation = PathUtils.get_transformation(container_path, IDENTITY)
@@ -4264,44 +4278,75 @@ module Ladb::OpenCutList
       model.start_operation('OCL Create Separator', true, false, !active?)
       begin
 
-        definition = model.definitions.add(PLUGIN.get_i18n_string('default.part_single').capitalize)
+        if _fetch_option_construction?
 
-        created_faces = _build_separator_faces(definition.entities, result[:fragments], world_transformation)
-        if created_faces.empty?
-          model.definitions.remove(definition) if model.definitions.respond_to?(:remove)
-          model.abort_operation
-          return false
-        end
+          group = active_entities.add_group
+          group.transformation = active_transformation.inverse * world_transformation
 
-        instance = active_entities.add_instance(definition, active_transformation.inverse * world_transformation)
+          created_faces = _build_separator_faces(group.entities, separator_def.fragments, world_transformation)
+          if created_faces.empty?
+            model.abort_operation
+            return false
+          end
 
-        if active?
+          edges = created_faces.flat_map(&:edges).uniq
+          edges.each { |edge| group.entities.add_cline(edge.start.position, edge.end.position) }
+          group.entities.erase_entities(created_faces + edges)
 
-          fn_ask_name = lambda {
-            unless instance.nil? || instance.definition.nil? || instance.definition.deleted?
-              if (data = UI.inputbox([ PLUGIN.get_i18n_string('tab.cutlist.edit_part.name') ], [ instance.definition.name ], PLUGIN.get_i18n_string('default.rename')))
-                name = data.first
-                if name.empty?
-                  UI.beep
-                else
-                  instance.definition.name = name
+        else
+
+          definition = model.definitions.add(PLUGIN.get_i18n_string('default.part_single').capitalize)
+
+          created_faces = _build_separator_faces(definition.entities, separator_def.fragments, world_transformation)
+          if created_faces.empty?
+            model.definitions.remove(definition) if model.definitions.respond_to?(:remove)
+            model.abort_operation
+            return false
+          end
+
+          tao = _get_auto_orient_transformation(definition, world_transformation)
+          unless tao.identity?
+
+            world_transformation = world_transformation * tao
+            taoi = tao.inverse
+
+            # Transform definition's entities
+            entities = definition.entities
+            entities.transform_entities(taoi, entities.to_a)
+
+          end
+
+          instance = active_entities.add_instance(definition, active_transformation.inverse * world_transformation)
+
+          if active?
+
+            fn_ask_name = lambda {
+              unless instance.nil? || instance.definition.nil? || instance.definition.deleted?
+                if (data = UI.inputbox([ PLUGIN.get_i18n_string('tab.cutlist.edit_part.name') ], [ instance.definition.name ], PLUGIN.get_i18n_string('default.rename')))
+                  name = data.first
+                  if name.empty?
+                    UI.beep
+                  else
+                    instance.definition.name = name
+                  end
                 end
               end
-            end
-          }
+            }
 
-          if _fetch_option_ask_name?
-            fn_ask_name.call
-          else
-            @tool.notify_success(
-              PLUGIN.get_i18n_string("tool.smart_draw.success.part_created", { :name => definition.name }),
-              [
-                {
-                  :label => PLUGIN.get_i18n_string('default.rename'),
-                  :block => fn_ask_name,
-                }
-              ]
-            )
+            if _fetch_option_ask_name?
+              fn_ask_name.call
+            else
+              @tool.notify_success(
+                PLUGIN.get_i18n_string("tool.smart_draw.success.part_created", { :name => definition.name }),
+                [
+                  {
+                    :label => PLUGIN.get_i18n_string('default.rename'),
+                    :block => fn_ask_name,
+                  }
+                ]
+              )
+            end
+
           end
 
         end
@@ -4342,10 +4387,10 @@ module Ladb::OpenCutList
       fragment_def ||= cavities_def.fragment_defs_for_point(picked_point).first
       return nil if fragment_def.nil?
 
-      normal = _get_separator_normal(picked_face_manipulator, fragment_def, view)
-      return nil if normal.nil?
+      normal_3f = _get_separator_normal_3f(picked_face_manipulator, fragment_def, view)
+      return nil if normal_3f.nil?
 
-      slab_mesh = _get_separator_slab_mesh(normal, picked_point.to_a, fragment_def, _fetch_option_thickness)
+      slab_mesh = _get_separator_slab_mesh(normal_3f, picked_point.to_a, fragment_def, _fetch_option_thickness)
       cavity_mesh = {
         :vertices => fragment_def.vertices,
         :face_indices => fragment_def.face_indices,
@@ -4378,7 +4423,7 @@ module Ladb::OpenCutList
         fragments = [ touched_fragment ] unless touched_fragment.nil?
       end
 
-      { :point => picked_point, :normal => normal, :fragments => fragments, :container_path => cavities_def.container_path }
+      SeparatorDef.new(picked_point, normal_3f, fragments, cavities_def.container_path)
     end
 
     # Turns the raw Meshy fragments (world coordinates) into real, coplanar-
@@ -4458,27 +4503,10 @@ module Ladb::OpenCutList
       candidates
     end
 
-    # The separator's normal : the candidate that keeps a CHANT (thin edge),
-    # not a whole main face, against the cavity's open side - a face landing
-    # flush in the opening reads as a false front/back, not a shelf or
-    # partition. Falls back to whichever candidate reads more horizontal in
-    # the current view when the opening criterion doesn't discriminate
-    # (hermetic cavity, or both candidates equally (im)perpendicular to it).
-    # The "normal reversed" option swaps this natural pick for its complement.
-    def _get_separator_normal(picked_face_manipulator, fragment_def, view)
-      candidates = _get_separator_normal_candidates(picked_face_manipulator)
-      return nil if candidates.length < 2
-
-      index = _get_separator_normal_candidate_index(candidates, fragment_def, view)
-      index = 1 - index if _fetch_option_normal_reversed?
-
-      candidates[index].to_a
-    end
-
     def _get_separator_normal_candidate_index(candidates, fragment_def, view)
-      if (opening_normal = _get_cavity_opening_normal(fragment_def)).is_a?(Array)
-        opening_vector = Geom::Vector3d.new(opening_normal)
-        dots = candidates.map { |axis| (axis % opening_vector).abs }
+      if (opening_normal_3f = _get_cavity_opening_normal_3f(fragment_def)).is_a?(Array)
+        opening_normal = Geom::Vector3d.new(opening_normal_3f)
+        dots = candidates.map { |axis| (axis % opening_normal).abs }
         min_dot = dots.min
         perpendicular_indices = candidates.each_index.select { |index| dots[index] <= min_dot + SEPARATOR_NORMAL_OPENING_DOT_EPSILON }
         return perpendicular_indices.first if perpendicular_indices.length == 1
@@ -4491,6 +4519,23 @@ module Ladb::OpenCutList
       candidates.each_index.max_by { |index| (candidates[index] % screen_right).abs } || 0
     end
 
+    # The separator's normal : the candidate that keeps a CHANT (thin edge),
+    # not a whole main face, against the cavity's open side - a face landing
+    # flush in the opening reads as a false front/back, not a shelf or
+    # partition. Falls back to whichever candidate reads more horizontal in
+    # the current view when the opening criterion doesn't discriminate
+    # (hermetic cavity, or both candidates equally (im)perpendicular to it).
+    # The "normal reversed" option swaps this natural pick for its complement.
+    def _get_separator_normal_3f(picked_face_manipulator, fragment_def, view)
+      candidates = _get_separator_normal_candidates(picked_face_manipulator)
+      return nil if candidates.length < 2
+
+      index = _get_separator_normal_candidate_index(candidates, fragment_def, view)
+      index = 1 - index if _fetch_option_normal_reversed?
+
+      candidates[index].to_a
+    end
+
     # Area-weighted dominant normal ([ x, y, z ] unit Float array) of the
     # given cavity fragment's OPEN side - its cap triangles (reserved face id
     # 0, the envelope ; see CommonSolidFindCavitiesWorker) rather than a real
@@ -4499,7 +4544,7 @@ module Ladb::OpenCutList
     # CommonSolidFindCavitiesWorker#_panel_dominant_normals) : only the AXIS
     # matters here, and a through-cavity's two opposite caps must accumulate
     # under the same key rather than canceling each other out.
-    def _get_cavity_opening_normal(fragment_def)
+    def _get_cavity_opening_normal_3f(fragment_def)
       return nil unless fragment_def.is_a?(SolidCavityFragmentDef) && !fragment_def.closed?
 
       vertices = fragment_def.vertices
@@ -4530,10 +4575,9 @@ module Ladb::OpenCutList
 
       end
 
-      key = area_by_direction.max_by { |_, area| area }&.first
-      return nil if key.nil?
-
-      key.map { |v| v / 1000.0 }
+      max_entry = area_by_direction.max_by { |_, area| area }
+      key = max_entry.nil? ? nil : max_entry.first
+      key.nil? ? nil : key.map { |v| v / 1000.0 }
     end
 
     # Orthonormal basis [ u, v ] completing the given unit normal ([ x, y, z ]
@@ -4579,10 +4623,10 @@ module Ladb::OpenCutList
     # Fiddle::Meshy.operate ; every triangle carries face id 0 (same
     # reserved-id convention as CommonSolidFindCavitiesWorker's envelope -
     # irrelevant here since only the geometry is used for the preview).
-    def _get_separator_slab_mesh(normal, point, fragment_def, thickness)
-      u, v = _get_separator_plane_basis(normal)
+    def _get_separator_slab_mesh(normal_3f, point_3f, fragment_def, thickness)
+      u, v = _get_separator_plane_basis(normal_3f)
 
-      d = normal[0] * point[0] + normal[1] * point[1] + normal[2] * point[2]
+      d = normal_3f[0] * point_3f[0] + normal_3f[1] * point_3f[1] + normal_3f[2] * point_3f[2]
       d0 = d - thickness / 2.0
       d1 = d + thickness / 2.0
 
@@ -4594,9 +4638,9 @@ module Ladb::OpenCutList
       vertices = []
       [ [ u0, v0, d0 ], [ u1, v0, d0 ], [ u1, v1, d0 ], [ u0, v1, d0 ],
         [ u0, v0, d1 ], [ u1, v0, d1 ], [ u1, v1, d1 ], [ u0, v1, d1 ] ].each do |pu, pv, pn|
-        vertices << u[0] * pu + v[0] * pv + normal[0] * pn
-        vertices << u[1] * pu + v[1] * pv + normal[1] * pn
-        vertices << u[2] * pu + v[2] * pv + normal[2] * pn
+        vertices << u[0] * pu + v[0] * pv + normal_3f[0] * pn
+        vertices << u[1] * pu + v[1] * pv + normal_3f[1] * pn
+        vertices << u[2] * pu + v[2] * pv + normal_3f[2] * pn
       end
 
       face_indices = [
@@ -4631,6 +4675,8 @@ module Ladb::OpenCutList
         result_def.fragment_defs_for_point(point)
       end
     end
+
+    SeparatorDef = Struct.new(:point, :normal_3f, :fragments, :container_path)
 
   end
 

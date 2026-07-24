@@ -476,8 +476,9 @@ module Ladb::OpenCutList
           key = normal.map { |v| (v * 1000).round }
           area_by_direction[key] += area2
         end
-        key = area_by_direction.max_by { |_, area2| area2 }&.first
-        key&.map { |v| v / 1000.0 }
+        max_entry = area_by_direction.max_by { |_, area2| area2 }
+        key = max_entry.nil? ? nil : max_entry.first
+        key.nil? ? nil : key.map { |v| v / 1000.0 }
       end
     end
 
