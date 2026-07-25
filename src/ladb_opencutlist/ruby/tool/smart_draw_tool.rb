@@ -49,7 +49,6 @@ module Ladb::OpenCutList
     ACTION_OPTION_OPTIONS_ASK_NAME = 'ask_name'
 
     ACTION_OPTION_OPTIONS_NORMAL_REVERSED = 'normal_reversed'
-    ACTION_OPTION_OPTIONS_MAX_OPENING_PLANES = 'max_opening_planes'
     ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE = 'reduce_envelope'
 
     ACTIONS = [
@@ -80,7 +79,7 @@ module Ladb::OpenCutList
       :action => ACTION_DRAW_SEPARATOR,
       :options => {
         ACTION_OPTION_THICKNESS => [ ACTION_OPTION_THICKNESS_THICKNESS ],
-        ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_NORMAL_REVERSED, ACTION_OPTION_OPTIONS_MAX_OPENING_PLANES, ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, ACTION_OPTION_OPTIONS_ASK_NAME ]
+        ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_NORMAL_REVERSED, ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, ACTION_OPTION_OPTIONS_ASK_NAME ]
       }
     } if Sketchup.debug_mode?
 
@@ -136,8 +135,10 @@ module Ladb::OpenCutList
         end
       when ACTION_OPTION_OPTIONS
         case option
-        when ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_DRAW_IN, ACTION_OPTION_OPTIONS_ASK_NAME
+        when ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_ASK_NAME
           return [ ACTION_DRAW_RECTANGLE, ACTION_DRAW_CIRCLE, ACTION_DRAW_POLYGON, ACTION_DRAW_SEPARATOR ]
+        when ACTION_OPTION_OPTIONS_DRAW_IN
+          return [ ACTION_DRAW_RECTANGLE, ACTION_DRAW_CIRCLE, ACTION_DRAW_POLYGON ]
         end
       end
 
@@ -160,11 +161,6 @@ module Ladb::OpenCutList
       when ACTION_OPTION_THICKNESS
         case option
         when ACTION_OPTION_THICKNESS_THICKNESS
-          return false
-        end
-      when ACTION_OPTION_OPTIONS
-        case option
-        when ACTION_OPTION_OPTIONS_MAX_OPENING_PLANES
           return false
         end
       end
@@ -211,8 +207,6 @@ module Ladb::OpenCutList
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.25L1,0.25L1,0.75L0,0.75L0,0.25 M0.438,0.313L0.438,0.688 M0.125,0.625L0.125,0.375L0.313,0.625L0.313,0.375'))
         when ACTION_OPTION_OPTIONS_NORMAL_REVERSED
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.25,0L0,0L0,0.625L0.25,0.625L0.25,0 M1,1L1,0.75L0.375,0.75L0.375,1L1,1 M0.375,0.125L0.5,0.141L0.625,0.192L0.706,0.25L0.75,0.294L0.808,0.375L0.859,0.5L0.875,0.625 M0.5,0L0.375,0.125L0.5,0.25 M0.75,0.5L0.875,0.625L1,0.5'))
-        when ACTION_OPTION_OPTIONS_MAX_OPENING_PLANES
-          return Kuix::Label.new(fetch_action_option_value(action, option_group, option).to_s)
         when ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0L0,1L1,1L1,0L0,0 M0,0.625L0.625,0.625L0.625,0.375L0,0.375'))
         end
@@ -3926,6 +3920,20 @@ module Ladb::OpenCutList
       super
     end
 
+    def get_state_status(state)
+
+      case state
+
+      when STATE_START
+        return super +
+               ' | ' + PLUGIN.get_i18n_string("default.constrain_key") + ' + X = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_construction_status') + '.' +
+               ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_normal_reversed_status') + '.' +
+               ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_reduce_envelope_status') + '.'
+      end
+
+      super
+    end
+
     def get_state_vcb_label(state)
       PLUGIN.get_i18n_string("tool.default.vcb_thickness")
     end
@@ -3958,6 +3966,11 @@ module Ladb::OpenCutList
       when STATE_START
         if tool.is_key_ctrl_or_option?(key) && is_quick
           @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_NORMAL_REVERSED, !_fetch_option_normal_reversed?, fire_event: true)
+          _refresh
+          return true
+        end
+        if tool.is_key_alt_or_command?(key) && is_quick
+          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, !_fetch_option_reduce_envelope?, fire_event: true)
           _refresh
           return true
         end
@@ -4184,10 +4197,6 @@ module Ladb::OpenCutList
       @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_NORMAL_REVERSED)
     end
 
-    def _fetch_option_max_opening_planes
-      @tool.fetch_action_option_integer(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MAX_OPENING_PLANES)
-    end
-
     def _fetch_option_reduce_envelope?
       @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE)
     end
@@ -4224,7 +4233,7 @@ module Ladb::OpenCutList
         }
 
         result_def = CommonSolidFindCavitiesWorker.new(drawing_defs,
-                                                       max_opening_planes: _fetch_option_max_opening_planes,
+                                                       max_opening_planes: 4,
                                                        reduce_envelope: _fetch_option_reduce_envelope?
         ).run
 

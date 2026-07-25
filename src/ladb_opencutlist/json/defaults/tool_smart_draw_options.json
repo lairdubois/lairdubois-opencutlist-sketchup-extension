@@ -35,10 +35,8 @@
   "action_3": { /* ACTION_DRAW_SEPARATOR */
     "thickness": { "metric": "18mm", "imperial": "1/2\"" },
     "construction": false,
-    "draw_in": false,
     "ask_name": false,
     "normal_reversed": false,
-    "max_opening_planes": 2,
     "reduce_envelope": false
   }
 }
