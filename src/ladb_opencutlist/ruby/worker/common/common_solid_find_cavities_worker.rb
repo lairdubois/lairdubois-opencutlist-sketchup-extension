@@ -85,11 +85,32 @@ module Ladb::OpenCutList
   # coincidence — lets a short member (e.g. a mullion shorter than the case
   # is deep, in a non-rectangular assembly) be judged alongside what it
   # actually connects to, instead of on its own possibly-misleading aspect
-  # ratio. The envelope is then reduced by clipping it at
-  # each remaining (SIDE) plane (keeping the panel side) and the open
-  # cavities are recomputed : the caps recede to the most recessed panel
+  # ratio. Each cavity is then clipped at the remaining (SIDE) planes IT
+  # exposed (keeping the panel side) : its caps recede to the recessed panel
   # edge — the whole connected group is reduced to the depth of its
   # shallowest element — and each compartment comes out as its own cavity.
+  #
+  # The clip is applied to the CAVITY, not to the shared envelope : a recessed
+  # panel is evidence about the cavity whose openings it bounds, and about no
+  # other. Reducing the envelope instead let a plane found in one compartment
+  # eat into every other compartment it happened to cross — a shelf recessed
+  # on one side of a divider stealing that depth from the cabinet's other
+  # side, which borders no recessed panel at all. Clipping the cavity yields
+  # the same volume — (reduced envelope − panels) restricted to that connected
+  # component — with the blast radius the evidence actually supports, and the
+  # sub-compartments a clip splits off simply come out as the fragments of
+  # that operation.
+  #
+  # A cavity is clipped at ONE plane per round, the LEAST receding one, and
+  # what the clip leaves goes back through the detection until no plane is
+  # found (REDUCTION_MAX_PASSES). Recesses of different depths regularly live
+  # in the SAME cavity — a case whose divider is recessed 50 mm, carrying a
+  # shelf recessed 100 mm on one side only, is a single cavity, since the
+  # space in front of the divider joins its two sides — and a clip is
+  # unbounded in its own plane, so applying both at once would recede the
+  # shelf-free side to 100 too. The shallowest recess is precisely the one
+  # that PARTITIONS : cutting at 50 splits the two sides apart, and the 100
+  # plane is then found on the side that actually carries the shelf.
   #
   # BEVELED EDGES (hull mode, reduce_envelope option) : an edge PROFILED at
   # an angle — a mitred front, a chamfer, a moulding — leaves the cavity
@@ -102,8 +123,8 @@ module Ladb::OpenCutList
   # lectern's front) is not caught, since the slant IS its own dominant
   # normal. Each opening is then receded to the FOOT of the bevels flaring
   # toward it (the deepest point where the flare starts, i.e. the last full
-  # cross section), by a plane perpendicular to that cap, clipping the
-  # envelope exactly like a recessed chant does — see #_detect_bevel_planes.
+  # cross section), by a plane perpendicular to that cap, clipping the cavity
+  # exactly like a recessed chant does — see #_detect_bevel_planes.
   # A profile with RIGHT angles (rebate, shoulder) exposes a plain chant
   # instead, already handled by the recess detection above.
   #
@@ -141,6 +162,28 @@ module Ladb::OpenCutList
     # rather than sitting on that discontinuity. The openings' caps recede by
     # the same amount in exchange, a few hundredths of a millimetre.
     ENVELOPE_HULL_EROSION = SolidMeshDef::TOLERANCE * 1.5
+
+    # Safety bound on the reduction rounds : a cavity is clipped at ONE plane
+    # per round and what survives goes back through the detection, so an
+    # assembly needs as many rounds as it nests recesses (a case whose divider
+    # is recessed, holding a shelf recessed deeper still, takes two) plus a
+    # last one to find nothing. Nesting that deep is not a thing in furniture,
+    # and each round can only shrink a cavity, so this merely caps a
+    # pathological input.
+    REDUCTION_MAX_PASSES = 8
+
+    # Clip plane erosion, in inches : how far past the detected plane the
+    # cavity is actually cut, toward the KEPT side. A reduction plane is read
+    # off the cavity's own faces, so it is EXACTLY coplanar with the chant (or
+    # the bevel foot) that produced it. Cutting right there leaves the chant
+    # face on the cut plane, facing the clip box's own face, and the boolean
+    # keeps that stand-off as a zero-volume flap hanging off the reduced
+    # cavity — the same coplanarity trap ENVELOPE_HULL_EROSION cures on the
+    # hull, and it stays out of the volume but pollutes the cavity bounds.
+    # Cutting a hair deeper puts the chant strictly on the removed side. The
+    # compartment loses that hair of depth in exchange, a few hundredths of a
+    # millimetre.
+    REDUCTION_CLIP_EROSION = SolidMeshDef::TOLERANCE * 1.5
 
     # A cavity boundary face is an edge (chant) face of its panel when its
     # normal departs from the panel dominant normal by more than 60°, and a
@@ -346,32 +389,47 @@ module Ladb::OpenCutList
           return result_def if _report_errors(welded_output, result_def)
           open_fragment_defs = fn_collect.call(welded_output, false)
 
-          # Envelope reduction : recessed panel edges detected on the open
-          # cavities clip the envelope, and the open cavities are recomputed
-          # against the reduced envelope — see the class doc.
+          # Envelope reduction : the recessed panel edges detected on an open
+          # cavity clip THAT cavity, shallowest recess first, the survivors
+          # going back through the detection — see the class doc.
           if @reduce_envelope && !open_fragment_defs.empty?
-            reduction_planes = _detect_reduction_planes(open_fragment_defs, panel_id_ranges, panel_meshes, _panel_dominant_normals(panel_meshes), envelope_mesh)
-            unless reduction_planes.empty?
-              reduction_output = Meshy.operate(
-                :operation => Meshy::OPERATION_INTERSECTION,
-                :validate => false,
-                :tolerance => SolidMeshDef::TOLERANCE,
-                :src_meshes => [ envelope_mesh ],
-                :cut_meshes => reduction_planes.map { |normal, d| _reduction_slab_mesh(normal, d, envelope_mesh) }
-              )
-              return result_def if _report_errors(reduction_output, result_def)
-              reduced_envelope_meshes = (reduction_output['fragments'] || []).map { |fragment| _reduction_fragment_mesh(fragment) }
-              unless reduced_envelope_meshes.empty?
-                reduced_output = Meshy.operate(
-                  :operation => Meshy::OPERATION_SUBTRACTION,
+            dominant_normals = _panel_dominant_normals(panel_meshes)
+            REDUCTION_MAX_PASSES.times do
+              reduction_planes_per_fragment = _detect_reduction_planes(open_fragment_defs, panel_id_ranges, panel_meshes, dominant_normals, envelope_mesh)
+              reduced_fragment_defs = []
+              clipped_any = false
+              open_fragment_defs.each_with_index do |fragment_def, index|
+                normal, d = _shallowest_reduction_plane(reduction_planes_per_fragment[index], fragment_def)
+                if normal.nil?
+                  reduced_fragment_defs << fragment_def
+                  next
+                end
+                reduction_output = Meshy.operate(
+                  :operation => Meshy::OPERATION_INTERSECTION,
                   :validate => false,
                   :tolerance => SolidMeshDef::TOLERANCE,
-                  :src_meshes => reduced_envelope_meshes,
-                  :cut_meshes => welded_meshes
+                  :src_meshes => [ _reduction_fragment_mesh(fragment_def) ],
+                  :cut_meshes => [ _reduction_slab_mesh(normal, d, envelope_mesh) ]
                 )
-                return result_def if _report_errors(reduced_output, result_def)
-                open_fragment_defs = fn_collect.call(reduced_output, false)
+                return result_def if _report_errors(reduction_output, result_def)
+                clipped = fn_collect.call(reduction_output, false)
+                if clipped.empty?
+                  # Nothing left of the cavity : the reduction has nothing to
+                  # say here, keep it as it came out of the subtraction rather
+                  # than losing it
+                  reduced_fragment_defs << fragment_def
+                else
+                  # In place, so the cavity order stays the panel order the
+                  # subtraction produced
+                  reduced_fragment_defs.concat(clipped)
+                  clipped_any = true
+                end
               end
+              open_fragment_defs = reduced_fragment_defs
+              # A clip strictly shrinks its cavity and takes away the very
+              # faces its plane was read from, so a round that clips nothing
+              # is the fixed point
+              break unless clipped_any
             end
           end
 
@@ -590,15 +648,20 @@ module Ladb::OpenCutList
     # Planes of the recessed panel edges bounding the given open cavities :
     # each is a chant plane (fragment boundary face NOT on its panel dominant
     # plane) that, extended, crosses the cavity interior with envelope cap
-    # area beyond it. Returns [ [ normal, d ], ... ] where the normal (unit
-    # [ x, y, z ], n.p = d on the plane) points toward the KEPT side — a
-    # cavity face lies on the panel, so its outward normal points into it.
+    # area beyond it. Returns ONE [ [ normal, d ], ... ] list PER given
+    # fragment def, in the same order, where the normal (unit [ x, y, z ],
+    # n.p = d on the plane) points toward the KEPT side — a cavity face lies
+    # on the panel, so its outward normal points into it.
+    #
+    # The lists are kept apart on purpose : a plane is evidence about the
+    # cavity that exposed it and about no other, so it only ever clips that
+    # one — see the class doc, ENVELOPE REDUCTION.
     def _detect_reduction_planes(fragment_defs, panel_id_ranges, panel_meshes, dominant_normals, envelope_mesh)
-      planes = {}
-      fragment_defs.each do |fragment_def|
+      fragment_defs.map do |fragment_def|
+        planes = {}
         vertices = fragment_def.vertices
         face_ids = fragment_def.face_ids
-        next if face_ids.nil?
+        next [] if face_ids.nil?
 
         # Chant plane candidates of this fragment, and the plane offsets (in
         # each panel's own dominant axis) where that same panel bounds the
@@ -700,7 +763,7 @@ module Ladb::OpenCutList
             # confined within the group's own silhouette — see
             # #_reduction_pocket_confined?. Failing all three, this
             # sub-group's chant is exposed by a concave/notched footprint,
-            # not a recess : reducing the envelope there would clip away
+            # not a recess : reducing there would clip away
             # the real cavity instead of splitting it.
             both_main_faces = mesh_positions.any? { |mesh_position| main_plane_keys_by_panel[mesh_position].size >= 2 }
             shared_by_group = mesh_positions.length >= 2
@@ -737,15 +800,79 @@ module Ladb::OpenCutList
           planes[key] ||= [ normal, d ]
         end
 
+        _merge_close_reduction_planes(planes.values)
       end
-      planes.values
+    end
+
+    # The given planes with the parallel ones closer than REDUCTION_MIN_DEPTH
+    # to each other merged into their DEEPEST member (the one keeping the
+    # least).
+    #
+    # Such a pair never describes two different recesses : anything that close
+    # is below the recess the detection is willing to act on at all. It does
+    # happen, though — the parts of a cabinet are commonly drawn against the
+    # cavities of the previous ones, and every cavity is receded by a hair
+    # (ENVELOPE_HULL_EROSION, REDUCTION_CLIP_EROSION), so a whole level of
+    # nesting can sit a few hundredths of a millimetre behind the one before
+    # it. Keeping only the shallowest would then cut EXACTLY on the faces of
+    # the other, leaving the boolean a zero-volume membrane over them — which
+    # bridges whatever that panel was separating, and the compartments it
+    # splits come back merged (the very thing the reduction is for). Keeping
+    # the deepest puts the cut clear of every panel of the group.
+    def _merge_close_reduction_planes(planes)
+      merged = []
+      planes.each do |normal, d|
+        twin = merged.find { |other_normal, other_d|
+          normal[0] * other_normal[0] + normal[1] * other_normal[1] + normal[2] * other_normal[2] > 0.9999 &&
+            (d - other_d).abs < REDUCTION_MIN_DEPTH
+        }
+        if twin.nil?
+          merged << [ normal, d ]
+        elsif d > twin[1]
+          twin[1] = d
+        end
+      end
+      merged
+    end
+
+    # The LEAST receding of the given planes for the given cavity — the one
+    # whose removed side is the thinnest slice of it — as [ normal, d ], or
+    # nil when there is none.
+    #
+    # Only that one is applied, and the pieces it leaves are detected again :
+    # the planes of one cavity are not necessarily about the same part of it,
+    # and a clip is unbounded in its own plane (see #_reduction_slab_mesh), so
+    # applying them together lets the deepest recess impose its depth on
+    # compartments that never saw it — a case whose divider is recessed 50,
+    # holding a shelf recessed 100 on one side only, is a single cavity (the
+    # space in front of the divider joins both sides) exposing both planes,
+    # and clipping it at both puts its far side at 100 too. Cutting at 50
+    # first splits that side off, and the 100 plane is then found on the side
+    # that actually carries the shelf — see the class doc.
+    def _shallowest_reduction_plane(planes, fragment_def)
+      return nil if planes.nil? || planes.empty?
+      shallowest = nil
+      shallowest_depth = nil
+      planes.each do |normal, d|
+        projection_min = nil
+        fragment_def.vertices.each_slice(3) do |x, y, z|
+          projection = normal[0] * x + normal[1] * y + normal[2] * z
+          projection_min = projection if projection_min.nil? || projection < projection_min
+        end
+        next if projection_min.nil?
+        depth = d - projection_min
+        next unless shallowest_depth.nil? || depth < shallowest_depth
+        shallowest = [ normal, d ]
+        shallowest_depth = depth
+      end
+      shallowest
     end
 
     # Planes receding the OPENINGS of the given cavity to the FOOT of the
     # beveled edges flaring toward them — see the class doc, BEVELED EDGES.
-    # Same [ [ normal, d ], ... ] contract as #_detect_reduction_planes (the
-    # normal points toward the KEPT side), so both feed the same envelope
-    # clipping.
+    # Same [ [ normal, d ], ... ] contract as one entry of
+    # #_detect_reduction_planes (the normal points toward the KEPT side), so
+    # both feed the same cavity clipping.
     #
     # +bevel_triangles+ are the fragment's tilted edge faces
     # ([ triangle index, normal, area ]), +cap_planes+ its envelope cap
@@ -932,13 +1059,18 @@ module Ladb::OpenCutList
 
     # Box covering the envelope on the KEPT side of the given plane (unit
     # normal, n.p = d), serialized like the envelope meshes (face id 0) :
-    # intersecting the envelope with these boxes clips it at the recessed
-    # panel edges. Unbounded in the plane (full envelope extent) : only SIDE
-    # planes reach here (see #_reduction_side_plane?), and the whole
-    # connected group must recede together.
+    # intersecting a cavity with these boxes clips it at the recessed panel
+    # edges, the new faces inheriting the cap id. Unbounded in the plane (full
+    # envelope extent, so any cavity is covered) : only SIDE planes reach here
+    # (see #_reduction_side_plane?), and the whole connected group must recede
+    # together.
     def _reduction_slab_mesh(normal, d, envelope_mesh)
 
       u, v = _reduction_plane_basis(normal)
+
+      # Cut a hair inside the kept side, clear of the very face this plane was
+      # read from — see REDUCTION_CLIP_EROSION
+      d += REDUCTION_CLIP_EROSION
 
       # Envelope extent in that basis, inflated clear of the envelope planes
       u0, u1 = _mesh_extent(envelope_mesh, u)
@@ -969,14 +1101,16 @@ module Ladb::OpenCutList
       )
     end
 
-    # Meshy fragment, serialized back to the mesh format expected by
-    # Fiddle::Meshy.operate (e.g. to feed a fragment of one operation as an
-    # operand of the next).
-    def _reduction_fragment_mesh(fragment)
+    # Cavity fragment, serialized back to the mesh format expected by
+    # Fiddle::Meshy.operate, so the cavity of one operation can be an operand
+    # of the next. Face ids are carried over : the clipped cavity still knows
+    # which panel bounds it where, and the slabs it is cut by bring in id 0
+    # (envelope cap) for the new faces, keeping #openness meaningful.
+    def _reduction_fragment_mesh(fragment_def)
       {
-        :vertices => fragment['vertices'],
-        :face_indices => fragment['face_indices'],
-        :face_ids => fragment['face_ids'],
+        :vertices => fragment_def.vertices,
+        :face_indices => fragment_def.face_indices,
+        :face_ids => fragment_def.face_ids,
         :tolerance => SolidMeshDef::TOLERANCE
       }
     end
