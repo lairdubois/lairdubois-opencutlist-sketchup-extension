@@ -29,22 +29,22 @@
 
             // Fetch UI elements
             const $widgetPreset = $('.ladb-widget-preset', that.$element);
-            const $inputMaxOpeningPlanes = $('#ladb_input_max_opening_planes', that.$element);
+            const $inputThickness = $('#ladb_input_thickness', that.$element);
             const $selectConstrution = $('#ladb_select_construction', that.$element);
-            const $selectDrawIn = $('#ladb_select_draw_in', that.$element);
+            const $selectMeasureReversed = $('#ladb_select_measure_reversed', that.$element);
             const $selectAskName = $('#ladb_select_ask_name', that.$element);
             const $btnValidate = $('#ladb_btn_validate', that.$element);
 
             const fnFetchOptions = function (options) {
-                options.max_opening_planes = $inputMaxOpeningPlanes.val();
+                options.thickness = $inputThickness.val();
                 options.construction = $selectConstrution.val() === '1';
-                options.draw_in = $selectDrawIn.val() === '1';
+                options.measure_reversed = $selectMeasureReversed.val() === '1';
                 options.ask_name = $selectAskName.val() === '1';
             };
             const fnFillInputs = function (options) {
-                $inputMaxOpeningPlanes.val(options.max_opening_planes);
+                $inputThickness.val(options.thickness);
                 $selectConstrution.selectpicker('val', options.construction ? '1' : '0');
-                $selectDrawIn.selectpicker('val', options.draw_in ? '1' : '0');
+                $selectMeasureReversed.selectpicker('val', options.measure_reversed ? '1' : '0');
                 $selectAskName.selectpicker('val', options.ask_name ? '1' : '0');
             };
 
@@ -55,9 +55,9 @@
                 fnFetchOptions: fnFetchOptions,
                 fnFillInputs: fnFillInputs
             });
-            $inputMaxOpeningPlanes.ladbTextinputDimension();
+            $inputThickness.ladbTextinputDimension();
             $selectConstrution.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
-            $selectDrawIn.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
+            $selectMeasureReversed.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
             $selectAskName.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
 
             fnFillInputs(options);
@@ -83,9 +83,9 @@
 
             // Focus
             if (that.options.focused_field) {
-                if (that.options.focused_field.option === 'max_opening_planes') {
-                    $inputMaxOpeningPlanes.focus();
-                    $inputMaxOpeningPlanes.select();
+                if (that.options.focused_field.option === 'thickness') {
+                    $inputThickness.focus();
+                    $inputThickness.select();
                 }
             }
 

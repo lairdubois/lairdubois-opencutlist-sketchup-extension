@@ -51,9 +51,8 @@ module Ladb::OpenCutList
     ACTION_OPTION_OPTIONS_MEASURE_FROM_DIAMETER = 'measure_from_diameter'
     ACTION_OPTION_OPTIONS_MEASURE_REVERSED = 'measure_reversed'
     ACTION_OPTION_OPTIONS_PULL_CENTRED = 'pull_centered'
-    ACTION_OPTION_OPTIONS_ASK_NAME = 'ask_name'
-
     ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE = 'reduce_envelope'
+    ACTION_OPTION_OPTIONS_ASK_NAME = 'ask_name'
 
     ACTIONS = [
       {
@@ -206,12 +205,12 @@ module Ladb::OpenCutList
         end
       when ACTION_OPTION_MEASURE_TYPE
         case option
-        when ACTION_OPTION_MEASURE_TYPE_INSIDE
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.15,0L0.15,1 M0.15,0.3L0.85,0.3L0.85,0.7L0.15,0.7L0.15,0.3'))
-        when ACTION_OPTION_MEASURE_TYPE_CENTERED
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.5,0L0.5,1 M0.15,0.3L0.85,0.3L0.85,0.7L0.15,0.7L0.15,0.3'))
         when ACTION_OPTION_MEASURE_TYPE_OUTSIDE
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.85,0L0.85,1 M0.15,0.3L0.85,0.3L0.85,0.7L0.15,0.7L0.15,0.3'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.655,0.917L0.655,0.583L0.989,0.583L0.989,0.917L0.655,0.917M0,0.25L1,0.25M0,0.083L0,0.417M1,0.083L1,0.417'))
+        when ACTION_OPTION_MEASURE_TYPE_CENTERED
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.655,0.917L0.655,0.583L0.989,0.583L0.989,0.917L0.655,0.917M0,0.25L0.833,0.25M0,0.083L0,0.417M0.833,0.083L0.833,0.417'))
+        when ACTION_OPTION_MEASURE_TYPE_INSIDE
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.655,0.917L0.655,0.583L0.989,0.583L0.989,0.917L0.655,0.917M0,0.25L0.667,0.25M0,0.083L0,0.417M0.667,0.083L0.667,0.417'))
         end
       when ACTION_OPTION_OPTIONS
         case option
@@ -3919,9 +3918,10 @@ module Ladb::OpenCutList
 
     STATE_START = 0
 
-    LAYER_3D_CAVITIES_PREVIEW = 100
-    LAYER_3D_FACE_REF_PREVIEW = 200
-    LAYER_3D_SEPARATOR_PREVIEW = 300
+    LAYER_3D_CAVITY_PREVIEW = 100
+    LAYER_3D_SEPARATOR_PREVIEW = 200
+
+    LAYER_2D_DISTANCE = 100
 
     # Keeps the slab sides well clear of the target cavity bounds, so only
     # the cavity's own boundary (real panels, or the hull cap when the
@@ -3935,10 +3935,13 @@ module Ladb::OpenCutList
     # perpendicular to it), and the screen-based tie-break takes over.
     SEPARATOR_NORMAL_OPENING_DOT_EPSILON = 1.0e-6
 
+    attr_reader :locked_normal
+
     def initialize(tool, previous_action_handler = nil)
       super(SmartDrawTool::ACTION_DRAW_SEPARATOR, tool, previous_action_handler)
 
-      @locked_normal = nil
+      @picked_point = nil
+      @locked_normal = previous_action_handler.is_a?(self.class) ? previous_action_handler.locked_normal : nil
 
     end
 
@@ -3969,7 +3972,7 @@ module Ladb::OpenCutList
     end
 
     def get_state_vcb_label(state)
-      PLUGIN.get_i18n_string("tool.default.vcb_thickness")
+      PLUGIN.get_i18n_string("tool.default.vcb_distance")
     end
 
     # -----
@@ -3979,7 +3982,7 @@ module Ladb::OpenCutList
 
       case @state
       when STATE_START
-        if _create_entity(view)
+        if _create_entity(@picked_point, view)
           # The just-created separator is now real geometry in the model :
           # the cached cavities (and the fragment it was clipped to) are
           # stale, whatever the next separator picks must see it.
@@ -4064,9 +4067,10 @@ module Ladb::OpenCutList
     end
 
     def onToolUserText(tool, text, view)
-      return true if super
+      # return true if super
 
       return true if _read_thickness(tool, text, view)
+      return true if _read_distance(tool, text, view)
 
       false
     end
@@ -4077,8 +4081,9 @@ module Ladb::OpenCutList
 
       when STATE_START
         _pick_part(picker, view)
+        @picked_point = picker.picked_point
         _preview_separator(view)
-        _preview_face_ref
+        _preview_cavity
 
       end
 
@@ -4087,7 +4092,6 @@ module Ladb::OpenCutList
 
     def onActivePartChanged(part_entity_path, part, highlighted = false)
       @cavities_def = nil
-      # _preview_cavities
       false
     end
 
@@ -4107,6 +4111,7 @@ module Ladb::OpenCutList
 
     def _reset
       @cavities_def = nil
+      @picked_point = nil
       @locked_normal = nil
       super
     end
@@ -4124,65 +4129,53 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _preview_face_ref
-      @tool.clear_3d(LAYER_3D_FACE_REF_PREVIEW)
-      if (picked_face_manipulator = @picker.picked_plane_manipulator).is_a?(PlaneManipulator)
+    def _preview_cavity
 
-        # k_mesh = Kuix::Mesh.new
-        # k_mesh.add_triangles(picked_face_manipulator.triangles)
-        # k_mesh.background_color = ColorUtils.color_translucent(Kuix::COLOR_BLUE, 0.3)
-        # @tool.append_3d(k_mesh, LAYER_3D_FACE_REF_PREVIEW)
+      @tool.clear_3d(LAYER_3D_CAVITY_PREVIEW)
 
-        ft = picked_face_manipulator.transformation
-        fo = ORIGIN.transform(ft)
+      return unless @picked_point.is_a?(Geom::Point3d)
+      return unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef) && cavities_def.valid?
 
-        # k_axes = Kuix::AxesHelper.new
-        # k_axes.transformation = Geom::Transformation.translation(fo.vector_to(@picker.picked_point)) * picked_face_manipulator.transformation
-        # @tool.append_3d(k_axes, LAYER_3D_FACE_REF_PREVIEW)
+      color = Kuix::COLOR_BLUE
 
-        if (cavities_def = _get_cavities_def).is_a?(CavitiesDef) && cavities_def.valid?
+      active_fragment_defs = cavities_def.fragment_defs_for_point(@picked_point)
+      active_fragment_defs.each do |fragment_def|
 
-          color = Kuix::COLOR_BLUE
+        segments = fragment_def.unique_boundary_segments
 
-          active_fragment_defs = cavities_def.fragment_defs_for_point(@picker.picked_point)
-          active_fragment_defs.each do |fragment_def|
+        k_segments = Kuix::Segments.new
+        k_segments.add_segments(segments)
+        k_segments.color = color
+        k_segments.line_width = 1
+        k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+        k_segments.on_top = true
+        @tool.append_3d(k_segments, LAYER_3D_CAVITY_PREVIEW)
 
-            segments = fragment_def.unique_boundary_segments
+        k_segments = Kuix::Segments.new
+        k_segments.add_segments(segments)
+        k_segments.color = color
+        k_segments.line_width = 1.5
+        @tool.append_3d(k_segments, LAYER_3D_CAVITY_PREVIEW)
 
-            k_segments = Kuix::Segments.new
-            k_segments.add_segments(segments)
-            k_segments.color = color
-            k_segments.line_width = 1
-            k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-            k_segments.on_top = true
-            @tool.append_3d(k_segments, LAYER_3D_FACE_REF_PREVIEW)
+        fragment_def.each_triangle_batch do |_, triangles|
 
-            k_segments = Kuix::Segments.new
-            k_segments.add_segments(segments)
-            k_segments.color = color
-            k_segments.line_width = 1.5
-            @tool.append_3d(k_segments, LAYER_3D_FACE_REF_PREVIEW)
-
-            fragment_def.each_triangle_batch do |_, triangles|
-
-              k_mesh = Kuix::Mesh.new
-              k_mesh.add_triangles(triangles.flatten)
-              k_mesh.background_color = ColorUtils.color_translucent(color, 0.05)
-              @tool.append_3d(k_mesh, LAYER_3D_FACE_REF_PREVIEW)
-
-            end
-
-          end
+          k_mesh = Kuix::Mesh.new
+          k_mesh.add_triangles(triangles.flatten)
+          k_mesh.background_color = ColorUtils.color_translucent(color, 0.05)
+          @tool.append_3d(k_mesh, LAYER_3D_CAVITY_PREVIEW)
 
         end
 
       end
+
     end
 
     def _preview_separator(view)
-      @tool.clear_3d(LAYER_3D_SEPARATOR_PREVIEW)
 
-      return unless (separator_def = _compute_separator(view)).is_a?(SeparatorDef)
+      @tool.clear_3d(LAYER_3D_SEPARATOR_PREVIEW)
+      @tool.clear_2d(LAYER_2D_DISTANCE)
+
+      return unless (separator_def = _compute_separator(@picked_point, view)).is_a?(SeparatorDef)
 
       color = _get_vector_color(@locked_normal, Kuix::COLOR_MAGENTA)
 
@@ -4213,55 +4206,87 @@ module Ladb::OpenCutList
         end
 
       end
+
+      _preview_separator_measure(separator_def, color)
     end
 
-    def _preview_cavities
+    # Live gap between the picked point and the cavity boundary "behind" it
+    # (n0, the low end of the cavity's own extent along the separator's
+    # normal - never n1, so wall_point -> point always points the same way
+    # as +normal) - purely informative for now, it does not (yet) drive the
+    # placement itself (see _get_separator_slab_mesh for what actually
+    # positions the slab).
+    def _preview_separator_measure(separator_def, color)
 
-      @tool.clear_3d(LAYER_3D_CAVITIES_PREVIEW)
+      distance = separator_def.distance
+      return unless distance > 0
 
-      return unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef) && cavities_def.valid?
+      point = separator_def.point
+      wall_point = separator_def.wall_point
+      # wall_point = point.offset(separator_def.normal, -distance)
 
-      colors = [ Kuix::COLOR_RED, Kuix::COLOR_GREEN, Kuix::COLOR_BLUE, Kuix::COLOR_YELLOW ]
+      # Preview line
 
-      cavities_def.fragment_defs.each_with_index do |fragment_def, index|
+      k_edge = Kuix::EdgeMotif3d.new
+      k_edge.start.copy!(wall_point)
+      k_edge.end.copy!(point)
+      k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+      k_edge.color = ColorUtils.color_translucent(color, 60)
+      k_edge.on_top = true
+      @tool.append_3d(k_edge, LAYER_3D_SEPARATOR_PREVIEW)
 
-        color = colors[index % colors.size]
+      k_edge = Kuix::EdgeMotif3d.new
+      k_edge.start.copy!(wall_point)
+      k_edge.end.copy!(point)
+      k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+      k_edge.color = color
+      @tool.append_3d(k_edge, LAYER_3D_SEPARATOR_PREVIEW)
 
-        # fragment_def.each_triangle_batch do |_, triangles|
-        #
-        #   k_mesh = Kuix::Mesh.new
-        #   k_mesh.add_triangles(triangles.flatten)
-        #   k_mesh.background_color = ColorUtils.color_translucent(color, 0.3)
-        #   @tool.append_3d(k_mesh, LAYER_3D_CAVITIES_PREVIEW)
-        #
-        # end
+      @tool.append_3d(_create_floating_points(points: [ wall_point, point ], style: Kuix::POINT_STYLE_CIRCLE, fill_color: Kuix::COLOR_WHITE, stroke_color: color, size: 2), LAYER_3D_SEPARATOR_PREVIEW)
 
-        segments = fragment_def.unique_boundary_segments
+      # Preview distance
 
-        k_segments = Kuix::Segments.new
-        k_segments.add_segments(segments)
-        k_segments.color = color
-        k_segments.line_width = 1
-        k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-        k_segments.on_top = true
-        @tool.append_3d(k_segments, LAYER_3D_CAVITIES_PREVIEW)
+      Sketchup.set_status_text(distance, SB_VCB_VALUE)
 
-        k_segments = Kuix::Segments.new
-        k_segments.add_segments(segments)
-        k_segments.color = color
-        k_segments.line_width = 1.5
-        @tool.append_3d(k_segments, LAYER_3D_CAVITIES_PREVIEW)
+      k_label = _create_floating_label(
+        snap_point: Geom.linear_combination(0.5, wall_point, 0.5, point),
+        text: distance.to_l.to_s,
+        text_color: color,
+        border_color: color
+      )
+      @tool.append_2d(k_label, LAYER_2D_DISTANCE)
 
-      end
     end
 
     # -----
+
+    def _read_distance(tool, text, view)
+      return false unless (separator_def = _compute_separator(@picked_point, view)).is_a?(SeparatorDef)
+
+      distance = _read_user_text_length(tool, text, separator_def.distance)
+      return true if distance.nil?
+
+      if distance < 0
+        tool.notify_errors([[ 'tool.default.error.invalid_distance', { :value => distance } ]])
+        return true
+      end
+
+      if _create_entity(separator_def.wall_point.offset(separator_def.normal, distance), view)
+        Sketchup.set_status_text('', SB_VCB_VALUE)
+        _restart
+        return true
+      end
+
+      false
+    end
 
     def _read_thickness(tool, text, view)
 
       # Keep it "compatible" with the way to enter offset in Smart Draw Tool.
       if (match = /^(.+)x$/i.match(text))
         text = match[1]
+      else
+        return false
       end
 
       thickness = _read_user_text_length(tool, text)
@@ -4276,7 +4301,7 @@ module Ladb::OpenCutList
       Sketchup.set_status_text('', SB_VCB_VALUE)
       _refresh
 
-      false
+      true
     end
 
     # -----
@@ -4306,7 +4331,7 @@ module Ladb::OpenCutList
     def _get_cavities_def
       return @cavities_def if @cavities_def.is_a?(CavitiesDef)
 
-      return nil if get_active_part.group.material_is_virtual || get_active_part.group.material_type == MaterialAttributes::TYPE_HARDWARE
+      return nil if !has_active_part? || get_active_part.group.material_is_virtual || get_active_part.group.material_type == MaterialAttributes::TYPE_HARDWARE
 
       active_part_entity_path = get_active_part_entity_path
       if active_part_entity_path.is_a?(Array) && active_part_entity_path.length > 1
@@ -4361,10 +4386,9 @@ module Ladb::OpenCutList
     # so no naming / success notification happens in that case either.
     # Returns true on success, false when there is nothing valid to build
     # (no pick, no cavity, degenerate intersection).
-    def _create_entity(view)
-      return false unless (separator_def = _compute_separator(view)).is_a?(SeparatorDef)
+    def _create_entity(point, view)
+      return false unless (separator_def = _compute_separator(point, view)).is_a?(SeparatorDef)
 
-      point = separator_def.point
       normal_3f = separator_def.normal_3f
       u, v = _get_separator_plane_basis(normal_3f)
 
@@ -4483,23 +4507,23 @@ module Ladb::OpenCutList
     # Returns { :point =>, :normal =>, :fragments => } (Meshy raw fragment
     # hashes) or nil. Shared by the 3D preview and the actual creation, so
     # what gets built is exactly what was last shown.
-    def _compute_separator(view)
+    def _compute_separator(point, view)
       return nil unless (picked_face_manipulator = @picker.picked_plane_manipulator).is_a?(PlaneManipulator)
-      return nil if (picked_point = @picker.picked_point).nil?
+      return nil unless point.is_a?(Geom::Point3d)
       return nil unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef) && cavities_def.valid?
 
       # Nudge the lookup point to the cavity side of the picked face : a
       # point picked exactly on a boundary face is ambiguous between the
       # cavities it separates (fragment_defs_for_point would return both).
-      inward_point = picked_point.offset(picked_face_manipulator.normal.reverse, SolidMeshDef::TOLERANCE * 10)
+      inward_point = point.offset(picked_face_manipulator.normal.reverse, SolidMeshDef::TOLERANCE * 10)
       fragment_def = cavities_def.fragment_defs_for_point(inward_point).first
-      fragment_def ||= cavities_def.fragment_defs_for_point(picked_point).first
+      fragment_def ||= cavities_def.fragment_defs_for_point(point).first
       return nil if fragment_def.nil?
 
       normal_3f = _get_separator_normal_3f(picked_face_manipulator, fragment_def, view)
       return nil if normal_3f.nil?
 
-      slab_mesh = _get_separator_slab_mesh(normal_3f, picked_point.to_a, fragment_def, _fetch_option_thickness)
+      slab_mesh = _get_separator_slab_mesh(normal_3f, point.to_a, fragment_def, _fetch_option_thickness)
       cavity_mesh = {
         :vertices => fragment_def.vertices,
         :face_indices => fragment_def.face_indices,
@@ -4527,12 +4551,19 @@ module Ladb::OpenCutList
       # in the same part.
       if fragments.length > 1
         touched_fragment = fragments.find do |fragment|
-          SolidFragmentDef.new(fragment['vertices'], fragment['face_indices'], fragment['face_ids'], []).contains_point?(picked_point)
+          SolidFragmentDef.new(fragment['vertices'], fragment['face_indices'], fragment['face_ids'], []).contains_point?(point)
         end
         fragments = [ touched_fragment ] unless touched_fragment.nil?
       end
 
-      SeparatorDef.new(picked_point, normal_3f, fragments, cavities_def.container_path)
+      # Gap between the picked point and the cavity boundary "behind" it
+      # (n0, the low end of the cavity's own extent along the normal - never
+      # n1, so it's always >= 0, measured the same way +normal points).
+      n0, _n1 = _get_separator_mesh_extent(fragment_def.vertices, normal_3f)
+      d = normal_3f[0] * point.x + normal_3f[1] * point.y + normal_3f[2] * point.z
+      distance = (d - n0).to_l
+
+      SeparatorDef.new(point, normal_3f, fragments, cavities_def.container_path, fragment_def, distance)
     end
 
     # Turns the raw Meshy fragments (world coordinates) into real, coplanar-
@@ -4832,7 +4863,14 @@ module Ladb::OpenCutList
       end
     end
 
-    SeparatorDef = Struct.new(:point, :normal_3f, :fragments, :container_path)
+    SeparatorDef = Struct.new(:point, :normal_3f, :fragments, :container_path, :fragment_def, :distance) do
+      def normal
+        @normal ||= Geom::Vector3d.new(normal_3f)
+      end
+      def wall_point
+        @wall_point ||= point.offset(normal, -distance)
+      end
+    end
 
   end
 

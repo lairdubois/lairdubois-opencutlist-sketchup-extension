@@ -2400,6 +2400,8 @@ tool:
     action_option_options_draw_in_0: Dessiner dans l'élément actif
     action_option_options_draw_in_1: Dessiner dans le parent de la pièce du premier point
     action_option_options_draw_in_status: Dessiner dans le parent de la pièce ciblée par le premier point
+    action_option_options_reduce_envelope: Pièces en retrait
+    action_option_options_reduce_envelope_status: Considérer les pièces en retrait
     action_option_options_ask_name: Nommage des pièces
     action_option_options_ask_name_status: Saisir manuellement le nom des pièces
     action_measure_locked_status: Verrouiller sur la dernière mesure
