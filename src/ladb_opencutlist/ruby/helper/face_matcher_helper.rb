@@ -55,6 +55,23 @@ module Ladb::OpenCutList
       nil
     end
 
+    # The rigid transformation superposing face_manipulator_b onto
+    # face_manipulator_a (both expressed in the same space), or nil when the
+    # two faces are not congruent : what it takes to place a copy of B's
+    # owner exactly where A is.
+    #
+    # With mirror: false, only a PROPER motion is ever returned - a mirrored
+    # superposition is rejected rather than answered with a flipping
+    # transformation, which would place a mirrored instance.
+    def _face_manipulators_alignment_transformation(face_manipulator_a, face_manipulator_b, mirror: true)
+      signature_a = face_manipulator_a.signature(mirror: mirror)
+      return nil if signature_a.nil?
+      return nil unless signature_a == face_manipulator_b.signature(mirror: mirror)
+      transformation = _face_variant_alignment_transformation(face_manipulator_a, face_manipulator_b, false)
+      return transformation unless transformation.nil?
+      mirror ? _face_variant_alignment_transformation(face_manipulator_a, face_manipulator_b, true) : nil
+    end
+
     # -- Signature (pre-filter) --
 
     # Orientation independent, hashable signature. Two congruent faces always
@@ -90,17 +107,22 @@ module Ladb::OpenCutList
 
     private
 
-    # Tests one superposition kind : mirrored = false tries to superpose B onto A
-    # as is (normals aligned), mirrored = true tries with B flipped over
-    # (reversed traversal, opposite normal).
     def _face_variant_congruent?(face_manipulator_a, face_manipulator_b, mirrored)
+      !_face_variant_alignment_transformation(face_manipulator_a, face_manipulator_b, mirrored).nil?
+    end
+
+    # Tests one superposition kind and returns the transformation that achieves
+    # it, or nil : mirrored = false tries to superpose B onto A as is (normals
+    # aligned), mirrored = true tries with B flipped over (reversed traversal,
+    # opposite normal).
+    def _face_variant_alignment_transformation(face_manipulator_a, face_manipulator_b, mirrored)
 
       points_a = face_manipulator_a.outer_loop_manipulator.points
-      return false if points_a.length < 3
+      return nil if points_a.length < 3
       sequence_a = _loop_sequence(points_a, face_manipulator_a.normal)
 
       points_b = face_manipulator_b.outer_loop_manipulator.points
-      return false unless points_b.length == points_a.length
+      return nil unless points_b.length == points_a.length
       normal_b = face_manipulator_b.normal
       if mirrored
         points_b = points_b.reverse
@@ -112,10 +134,10 @@ module Ladb::OpenCutList
         next unless _sequences_match?(sequence_a, sequence_b, offset)
         t = _alignment_transformation(points_a, face_manipulator_a.normal, points_b, normal_b, offset)
         next unless _points_superpose?(points_a, points_b, offset, t)
-        return true if _inner_loops_superpose?(face_manipulator_a, face_manipulator_b, t)
+        return t if _inner_loops_superpose?(face_manipulator_a, face_manipulator_b, t)
       end
 
-      false
+      nil
     end
 
     # Intrinsic description of a loop : for each vertex, the outgoing edge length

@@ -12,6 +12,7 @@ module Ladb::OpenCutList
   require_relative '../manipulator/cline_manipulator'
   require_relative '../helper/user_text_helper'
   require_relative '../helper/part_helper'
+  require_relative '../helper/face_matcher_helper'
   require_relative '../model/attributes/definition_attributes'
   require_relative '../model/solid/solid_mesh_def'
   require_relative '../model/solid/solid_boolean_result_def'
@@ -57,6 +58,7 @@ module Ladb::OpenCutList
     ACTION_OPTION_OPTIONS_MEASURE_REVERSED = 'measure_reversed'
     ACTION_OPTION_OPTIONS_PULL_CENTRED = 'pull_centered'
     ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE = 'reduce_envelope'
+    ACTION_OPTION_OPTIONS_REUSE_DEFINITION = 'reuse_definition'
     ACTION_OPTION_OPTIONS_ASK_NAME = 'ask_name'
 
     ACTIONS = [
@@ -89,7 +91,7 @@ module Ladb::OpenCutList
         ACTION_OPTION_MEASURE_TYPE => [ ACTION_OPTION_MEASURE_TYPE_INSIDE, ACTION_OPTION_MEASURE_TYPE_CENTERED, ACTION_OPTION_MEASURE_TYPE_OUTSIDE ],
         ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_CONTEXT ],
         ACTION_OPTION_THICKNESS => [ ACTION_OPTION_THICKNESS_THICKNESS ],
-        ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, ACTION_OPTION_OPTIONS_ASK_NAME ]
+        ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, ACTION_OPTION_OPTIONS_REUSE_DEFINITION, ACTION_OPTION_OPTIONS_ASK_NAME ]
       }
     } if Sketchup.debug_mode?
 
@@ -247,6 +249,8 @@ module Ladb::OpenCutList
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.25L1,0.25L1,0.75L0,0.75L0,0.25 M0.438,0.313L0.438,0.688 M0.125,0.625L0.125,0.375L0.313,0.625L0.313,0.375'))
         when ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0L0,1L1,1L1,0L0,0 M0,0.625L0.625,0.625L0.625,0.375L0,0.375'))
+        when ACTION_OPTION_OPTIONS_REUSE_DEFINITION
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.333L0.667,0.333L0.667,1L0,1L0,0.333 M0.333,0.333L0.333,0L1,0L1,0.667L0.667,0.667'))
         end
       end
 
@@ -3930,6 +3934,7 @@ module Ladb::OpenCutList
   class SmartDrawSeparatorActionHandler < SmartDrawActionHandler
 
     include SmartActionHandlerPartHelper
+    include FaceMatcherHelper
 
     STATE_START = 0
 
@@ -4325,6 +4330,10 @@ module Ladb::OpenCutList
       @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE)
     end
 
+    def _fetch_option_reuse_definition?
+      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_REUSE_DEFINITION)
+    end
+
     def _fetch_option_measure_type_inside?
       @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_MEASURE_TYPE, SmartDrawTool::ACTION_OPTION_MEASURE_TYPE_INSIDE)
     end
@@ -4399,22 +4408,38 @@ module Ladb::OpenCutList
             return false
           end
 
-          tao = _get_auto_orient_transformation(definition, world_transformation)
-          unless tao.identity?
+          reused_definition, reused_world_transformation = _find_reusable_definition(separator_def, created_faces, world_transformation)
 
-            world_transformation = world_transformation * tao
-            taoi = tao.inverse
+          if reused_definition.nil?
 
-            # Transform definition's entities
-            entities = definition.entities
-            entities.transform_entities(taoi, entities.to_a)
+            tao = _get_auto_orient_transformation(definition, world_transformation)
+            unless tao.identity?
+
+              world_transformation = world_transformation * tao
+              taoi = tao.inverse
+
+              # Transform definition's entities
+              entities = definition.entities
+              entities.transform_entities(taoi, entities.to_a)
+
+            end
+
+            instance = active_entities.add_instance(definition, active_transformation.inverse * world_transformation)
+
+            # Force UUID to be generated in the creation operation
+            DefinitionAttributes.new(definition).uuid
+
+          else
+
+            # The separator is one more occurrence of a part that is already
+            # there : the freshly built geometry is thrown away and the
+            # existing definition is instanced instead - see
+            # #_find_reusable_definition
+            model.definitions.remove(definition) if model.definitions.respond_to?(:remove)
+            definition = reused_definition
+            instance = active_entities.add_instance(definition, active_transformation.inverse * reused_world_transformation)
 
           end
-
-          instance = active_entities.add_instance(definition, active_transformation.inverse * world_transformation)
-
-          # Force UUID to be generated in the creation operation
-          DefinitionAttributes.new(definition).uuid
 
           if active?
 
@@ -4431,7 +4456,11 @@ module Ladb::OpenCutList
               end
             }
 
-            if _fetch_option_ask_name?
+            if reused_definition
+              # Renaming here would rename the part it was reused from too :
+              # only the plain notification makes sense
+              @tool.notify_success(PLUGIN.get_i18n_string("tool.smart_draw.success.part_reused", { :name => definition.name }))
+            elsif _fetch_option_ask_name?
               fn_ask_name.call
             else
               @tool.notify_success(
@@ -4458,6 +4487,184 @@ module Ladb::OpenCutList
       end
 
       true
+    end
+
+    # -----
+
+    # [ definition, WORLD transformation ] of an existing part the separator
+    # just built is one more occurrence of, or nil : the caller then throws
+    # its freshly built geometry away and instances that definition instead,
+    # so the two are ONE part in the cutlist rather than two identical ones.
+    # nil unless the reuse option is on.
+    #
+    # Two criteria, cheapest first :
+    #
+    # - the SHAPE. One of the candidate's faces must be congruent to the
+    #   separator's own main face - matched by FaceMatcherHelper's quantized
+    #   signature (hashable, so the whole pass is O(n)) then verified
+    #   geometrically - and superposable by a PROPER motion, never a mirrored
+    #   one, which would place a flipped instance. The transformation that
+    #   superposes them must then land the candidate's whole bounds on the
+    #   separator's own : that settles the thickness, and which way the
+    #   material goes from the matched face (aligning a part's top face onto
+    #   the separator's bottom one superposes the faces but not the solids).
+    #
+    # - the NEIGHBOURHOOD. The candidate must touch exactly the same part
+    #   instances the separator touches (see #_get_touching_part_ids). Same
+    #   shape in the same place is what makes it the SAME part repeated - a
+    #   second shelf between the very sides the first one already spans. Same
+    #   shape elsewhere is a coincidence (a divider cut like a shelf, an
+    #   identical shelf in a different compartment), and sharing a definition
+    #   there would silently link two parts the user means to keep apart :
+    #   editing one would edit the other.
+    def _find_reusable_definition(separator_def, created_faces, world_transformation)
+      return nil unless _fetch_option_reuse_definition?
+      return nil unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef)
+
+      drawing_defs = cavities_def.drawing_defs
+      return nil unless drawing_defs.is_a?(Array) && !drawing_defs.empty?
+
+      bounds = _get_separator_bounds(separator_def)
+      return nil if bounds.nil? || bounds.empty?
+
+      separator_manipulators = created_faces.map { |face| FaceManipulator.new(face, world_transformation) }
+      reference_manipulator = separator_manipulators.max_by { |face_manipulator| face_manipulator.face.area(face_manipulator.transformation) }
+      return nil if reference_manipulator.nil?
+
+      # [ occurrence path, instance, WORLD face manipulators, face planes ] of
+      # every part of the container, computed once : the neighbourhood of each
+      # candidate is read against the same set the separator's own is
+      part_defs = drawing_defs.map { |drawing_def|
+        path = drawing_def.container_path
+        next nil unless path.is_a?(Array) && !path.empty?
+        instance = path.last
+        next nil unless instance.respond_to?(:definition) && !instance.definition.nil?
+        face_manipulators = drawing_def.face_manipulators.map { |face_manipulator|
+          FaceManipulator.new(face_manipulator.face, drawing_def.transformation * face_manipulator.transformation)
+        }
+        [ path, instance, face_manipulators, _get_face_planes(face_manipulators) ]
+      }.compact
+
+      # A separator touching nothing has no neighbourhood to compare : no reuse
+      touching_part_ids = _get_touching_part_ids(_get_face_planes(separator_manipulators), part_defs)
+      return nil if touching_part_ids.empty?
+
+      part_defs.each do |path, instance, face_manipulators, face_planes|
+
+        instance_transformation = PathUtils.get_transformation(path, IDENTITY)
+
+        candidate_transformation = nil
+        face_manipulators.each do |face_manipulator|
+          transformation = _face_manipulators_alignment_transformation(reference_manipulator, face_manipulator, mirror: false)
+          next if transformation.nil?
+          transformation = transformation * instance_transformation
+          next unless _bounds_superpose?(_get_definition_bounds(instance.definition, transformation), bounds)
+          candidate_transformation = transformation
+          break
+        end
+        next if candidate_transformation.nil?
+
+        next unless _get_touching_part_ids(face_planes, part_defs, exclude_path: path) == touching_part_ids
+
+        return [ instance.definition, candidate_transformation ]
+      end
+
+      nil
+    end
+
+    # Identifiers of the parts the given faces are in CONTACT with : one of
+    # their faces must lie on the same plane as one of the part's, facing it,
+    # and the two must overlap there on a real area - the way one board meets
+    # another. Sorted, so two neighbourhoods compare with a plain ==.
+    #
+    # Faces rather than bounds : a bounding box test would be far cheaper, but
+    # it is only sound on an axis aligned assembly. Everything here is in
+    # WORLD coordinates, so a cabinet drawn at an angle - or merely nested in
+    # a rotated container - would see every box inflate around its part and
+    # invent neighbours, differently for each part, quietly turning the reuse
+    # off. A plane match is invariant by rotation.
+    def _get_touching_part_ids(face_planes, part_defs, exclude_path: nil)
+      part_defs.map { |path, _instance, _face_manipulators, other_face_planes|
+        next nil if path == exclude_path
+        next nil unless face_planes.any? { |face_plane|
+          other_face_planes.any? { |other_face_plane| _face_planes_touch?(face_plane, other_face_plane) }
+        }
+        path.map { |entity| entity.entityID }
+      }.compact.sort
+    end
+
+    # [ normal, offset, outer loop points ] per face, in WORLD coordinates -
+    # what #_face_planes_touch? needs, extracted once per part.
+    def _get_face_planes(face_manipulators)
+      face_manipulators.map { |face_manipulator|
+        points = face_manipulator.outer_loop_manipulator.points
+        next nil if points.length < 3
+        normal = face_manipulator.normal.to_a
+        origin = points.first.to_a
+        [ normal, normal[0] * origin[0] + normal[1] * origin[1] + normal[2] * origin[2], points ]
+      }.compact
+    end
+
+    # True when the two faces are in contact : they must FACE each other
+    # (opposite outward normals - two boards in contact each expose the face
+    # the other pushes against), lie on the same plane within the mesh
+    # tolerance, and overlap there on both axes of that plane. The overlap is
+    # measured on the outer loops' extents in the plane's own basis, so it
+    # follows the assembly's orientation ; it may read as a contact where two
+    # notched outlines only interleave, which merely gives up a reuse.
+    def _face_planes_touch?(face_plane, other_face_plane)
+      normal, offset, points = face_plane
+      other_normal, other_offset, other_points = other_face_plane
+
+      return false if normal[0] * other_normal[0] + normal[1] * other_normal[1] + normal[2] * other_normal[2] > -0.9999
+      return false if (offset + other_offset).abs > SolidMeshDef::TOLERANCE
+
+      u, v = _get_separator_plane_basis(normal)
+      [ u, v ].all? do |axis|
+        min = max = nil
+        points.each do |point|
+          projection = axis[0] * point.x.to_f + axis[1] * point.y.to_f + axis[2] * point.z.to_f
+          min = projection if min.nil? || projection < min
+          max = projection if max.nil? || projection > max
+        end
+        other_min = other_max = nil
+        other_points.each do |point|
+          projection = axis[0] * point.x.to_f + axis[1] * point.y.to_f + axis[2] * point.z.to_f
+          other_min = projection if other_min.nil? || projection < other_min
+          other_max = projection if other_max.nil? || projection > other_max
+        end
+        [ max, other_max ].min - [ min, other_min ].max > SolidMeshDef::TOLERANCE
+      end
+    end
+
+    # WORLD bounds of the given definition, placed by the given WORLD
+    # transformation. The transformed corners of a box are the corners of the
+    # transformed box, so this stays exact whatever the rotation.
+    def _get_definition_bounds(definition, transformation)
+      bounds = Geom::BoundingBox.new
+      definition_bounds = definition.bounds
+      8.times { |index| bounds.add(definition_bounds.corner(index).transform(transformation)) }
+      bounds
+    end
+
+    # WORLD bounds of the separator solid, read off the fragments it is about
+    # to be built from.
+    def _get_separator_bounds(separator_def)
+      bounds = Geom::BoundingBox.new
+      separator_def.fragments.each do |fragment|
+        vertices = fragment['vertices']
+        next unless vertices.is_a?(Array)
+        vertices.each_slice(3) { |x, y, z| bounds.add(Geom::Point3d.new(x, y, z)) }
+      end
+      bounds
+    end
+
+    def _bounds_superpose?(bounds, other_bounds)
+      return false if bounds.empty? || other_bounds.empty?
+      tolerance = SolidMeshDef::TOLERANCE
+      min = bounds.min.to_a ; max = bounds.max.to_a
+      other_min = other_bounds.min.to_a ; other_max = other_bounds.max.to_a
+      (0..2).all? { |axis| (min[axis] - other_min[axis]).abs <= tolerance && (max[axis] - other_max[axis]).abs <= tolerance }
     end
 
     # -----
@@ -4503,7 +4710,7 @@ module Ladb::OpenCutList
                                                        reduce_envelope: _fetch_option_reduce_envelope?
         ).run
 
-        @cavities_def = CavitiesDef.new(container_path, result_def)
+        @cavities_def = CavitiesDef.new(container_path, result_def, drawing_defs)
 
         unless result_def.success?
           @tool.notify_errors(result_def.errors)
@@ -4872,7 +5079,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    CavitiesDef = Struct.new(:container_path, :result_def) do
+    CavitiesDef = Struct.new(:container_path, :result_def, :drawing_defs) do
       def valid?
         result_def.is_a?(SolidBooleanResultDef) && result_def.success?
       end

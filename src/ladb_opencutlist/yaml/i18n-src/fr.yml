@@ -2405,6 +2405,8 @@ tool:
     action_option_options_draw_in_status: Dessiner dans le parent de la pièce ciblée par le premier point
     action_option_options_reduce_envelope: Pièces en retrait
     action_option_options_reduce_envelope_status: Considérer les pièces en retrait
+    action_option_options_reuse_definition: Réutiliser les pièces
+    action_option_options_reuse_definition_status: Réutiliser la pièce existante de même forme et de même voisinage plutôt que d'en créer une nouvelle
     action_option_options_ask_name: Nommage des pièces
     action_option_options_ask_name_status: Saisir manuellement le nom des pièces
     action_measure_locked_status: Verrouiller sur la dernière mesure
@@ -2412,6 +2414,7 @@ tool:
     action_change_move_anchor_status: Changer le point d'ancrage
     success:
       part_created: "Nouvelle pièce créée : {{ name }}"
+      part_reused: "Nouvelle occurrence de la pièce existante : {{ name }}"
   smart_handle:
     title: Manipuler
     action_0: Sélectionner

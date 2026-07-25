@@ -163,6 +163,12 @@ module Ladb::OpenCutList
     # the same amount in exchange, a few hundredths of a millimetre.
     ENVELOPE_HULL_EROSION = SolidMeshDef::TOLERANCE * 1.5
 
+    # Below this, the Gram determinant of the planes a vertex is being put
+    # back on is treated as singular — their normals are too close to tell
+    # apart, and the exact combination would blow up on the noise between
+    # them. See #_restore_plane_offset.
+    RESTORE_MIN_DETERMINANT = 1.0e-6
+
     # Safety bound on the reduction rounds : a cavity is clipped at ONE plane
     # per round and what survives goes back through the detection, so an
     # assembly needs as many rounds as it nests recesses (a case whose divider
@@ -247,6 +253,7 @@ module Ladb::OpenCutList
 
     def run
       result_def = SolidBooleanResultDef.new
+      @envelope_restore_planes = []
 
       if @panel_drawing_defs.empty? || !@panel_drawing_defs.all? { |drawing_def| drawing_def.is_a?(DrawingDef) }
         result_def.errors << [ 'default.error' ]
@@ -387,6 +394,9 @@ module Ladb::OpenCutList
             :cut_meshes => welded_meshes
           )
           return result_def if _report_errors(welded_output, result_def)
+          # Only the open cavities need it : a hermetic one is bounded by
+          # panels alone, it never touches the hull
+          _restore_envelope_vertices(welded_output['fragments'])
           open_fragment_defs = fn_collect.call(welded_output, false)
 
           # Envelope reduction : the recessed panel edges detected on an open
@@ -412,6 +422,7 @@ module Ladb::OpenCutList
                   :cut_meshes => [ _reduction_slab_mesh(normal, d, envelope_mesh) ]
                 )
                 return result_def if _report_errors(reduction_output, result_def)
+                _restore_clipped_vertices(reduction_output['fragments'], normal, d)
                 clipped = fn_collect.call(reduction_output, false)
                 if clipped.empty?
                   # Nothing left of the cavity : the reduction has nothing to
@@ -523,7 +534,33 @@ module Ladb::OpenCutList
         end
       }
 
-      _envelope_mesh_hash(_erode_hull_vertices(vertices, face_indices), face_indices)
+      eroded_vertices = _erode_hull_vertices(vertices, face_indices)
+      @envelope_restore_planes = _envelope_restore_planes(vertices, eroded_vertices, face_indices)
+
+      _envelope_mesh_hash(eroded_vertices, face_indices)
+    end
+
+    # [ normal, ERODED offset, ORIGINAL offset ] per distinct hull face, the
+    # two offsets read on the same triangle before and after the erosion —
+    # what #_restore_envelope_vertices needs to put a cavity's caps back where
+    # the panels really end. Empty when the hull was not eroded.
+    #
+    # Both offsets share one normal : the erosion being a uniform scale, it
+    # leaves every face parallel to itself.
+    def _envelope_restore_planes(vertices, eroded_vertices, face_indices)
+      return [] if eroded_vertices.equal?(vertices)
+
+      planes = {}
+      face_indices.each_slice(3) do |a, b, c|
+        normal, _area2 = _triangle_normal(eroded_vertices, a, b, c)
+        next if normal.nil?
+        d_eroded = normal[0] * eroded_vertices[a * 3] + normal[1] * eroded_vertices[a * 3 + 1] + normal[2] * eroded_vertices[a * 3 + 2]
+        key = normal.map { |v| (v * 1000).round } << (d_eroded / SolidMeshDef::TOLERANCE).round
+        next if planes.key?(key)
+        d_original = normal[0] * vertices[a * 3] + normal[1] * vertices[a * 3 + 1] + normal[2] * vertices[a * 3 + 2]
+        planes[key] = [ normal, d_eroded, d_original ]
+      end
+      planes.values
     end
 
     # Pulls every face of the given hull (flat vertices, triangle indices)
@@ -833,6 +870,152 @@ module Ladb::OpenCutList
         end
       end
       merged
+    end
+
+    # Moves the vertices the subtraction left on an ERODED hull face back onto
+    # the hull face as it was BUILT, undoing ENVELOPE_HULL_EROSION on the
+    # RESULT of the boolean — which has already run, and keeps all of the
+    # clearance it needed. Same doctrine as #_restore_clipped_vertices, and
+    # the same reason : a hull face passes exactly through the outermost panel
+    # points, so an un-eroded cap is exactly where the panels end, and a part
+    # drawn flush with the cavity gets the cabinet's true inner dimension
+    # instead of one erosion less at each end.
+    #
+    # A vertex may sit on several hull faces at once — the corner where two
+    # openings meet — and each of them wants it on its own restored plane :
+    # the correction is the combination that satisfies them all, found by
+    # solving the small system its normals make (see #_restore_plane_offset).
+    def _restore_envelope_vertices(fragments)
+      return if @envelope_restore_planes.nil? || @envelope_restore_planes.empty?
+      return unless fragments.is_a?(Array)
+
+      fragments.each do |fragment|
+        vertices = fragment['vertices']
+        next unless vertices.is_a?(Array)
+        index = 0
+        while index < vertices.length
+
+          x = vertices[index] ; y = vertices[index + 1] ; z = vertices[index + 2]
+          corrections = []
+          @envelope_restore_planes.each do |normal, d_eroded, d_original|
+            projection = normal[0] * x + normal[1] * y + normal[2] * z
+            next if (projection - d_eroded).abs > SolidMeshDef::TOLERANCE
+            corrections << [ normal, d_original - projection ]
+            # A non degenerate corner meets three faces at most
+            break if corrections.length == 3
+          end
+
+          unless corrections.empty?
+            offset = _restore_plane_offset(corrections)
+            vertices[index] += offset[0]
+            vertices[index + 1] += offset[1]
+            vertices[index + 2] += offset[2]
+          end
+
+          index += 3
+        end
+      end
+    end
+
+    # The smallest move putting a point back on all of the given restored
+    # planes at once : +corrections+ is [ unit normal, distance still to
+    # cover along it ], and the move is sought in the space the normals span
+    # (any component orthogonal to them would move the point along the faces
+    # for nothing). Solving the resulting Gram system by Cramer's rule.
+    #
+    # Near parallel normals make that system singular — two hull facets barely
+    # tilted against each other. Their corrections then say nearly the same
+    # thing, so the largest one alone is applied rather than a blown up
+    # combination of both.
+    def _restore_plane_offset(corrections)
+      normals = corrections.map { |normal, _distance| normal }
+      distances = corrections.map { |_normal, distance| distance }
+
+      coefficients = case normals.length
+                     when 1
+                       distances
+                     when 2
+                       _restore_solve_2(normals, distances)
+                     else
+                       _restore_solve_3(normals, distances)
+                     end
+      if coefficients.nil?
+        index = (0...distances.length).max_by { |i| distances[i].abs }
+        coefficients = Array.new(distances.length, 0.0)
+        coefficients[index] = distances[index]
+      end
+
+      offset = [ 0.0, 0.0, 0.0 ]
+      normals.each_with_index do |normal, index|
+        3.times { |axis| offset[axis] += coefficients[index] * normal[axis] }
+      end
+      offset
+    end
+
+    def _restore_solve_2(normals, distances)
+      cosine = normals[0][0] * normals[1][0] + normals[0][1] * normals[1][1] + normals[0][2] * normals[1][2]
+      determinant = 1.0 - cosine * cosine
+      return nil if determinant.abs < RESTORE_MIN_DETERMINANT
+      [
+        (distances[0] - cosine * distances[1]) / determinant,
+        (distances[1] - cosine * distances[0]) / determinant
+      ]
+    end
+
+    def _restore_solve_3(normals, distances)
+      gram = Array.new(3) { |i| Array.new(3) { |j| normals[i][0] * normals[j][0] + normals[i][1] * normals[j][1] + normals[i][2] * normals[j][2] } }
+      determinant = _restore_determinant_3(gram)
+      return nil if determinant.abs < RESTORE_MIN_DETERMINANT
+      (0..2).map { |column|
+        substituted = Array.new(3) { |i| Array.new(3) { |j| j == column ? distances[i] : gram[i][j] } }
+        _restore_determinant_3(substituted) / determinant
+      }
+    end
+
+    def _restore_determinant_3(m)
+      m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1]) -
+        m[0][1] * (m[1][0] * m[2][2] - m[1][2] * m[2][0]) +
+        m[0][2] * (m[1][0] * m[2][1] - m[1][1] * m[2][0])
+    end
+
+    # Moves the vertices a clip left ON its plane back onto the plane that was
+    # DETECTED, undoing REDUCTION_CLIP_EROSION on the RESULT of the boolean —
+    # which has already run, and keeps every bit of the clearance it needed.
+    #
+    # The erosion is a numerical device, and it must not show in the cavity :
+    # a cavity is what gets DRAWN in (see the Smart Draw separator tool), a
+    # part drawn flush with it lands a hair behind the recess that justified
+    # the clip, and its own edge is then a recess a hair deeper still. The
+    # next clip has to clear THAT one, so it recedes by another erosion, and
+    # every part drawn in the same compartment comes out a little smaller
+    # than the one before — three shelves in a row, three sizes, and nothing
+    # the user can do about it. Snapped back, a part drawn flush lands
+    # exactly on the recess plane, its edge merges with it (see
+    # #_merge_close_reduction_planes) and the next clip lands where the
+    # previous one did.
+    #
+    # Vertices are moved along the plane normal, so a face perpendicular to
+    # the clip - the walls of any compartment - simply gets that much longer.
+    # A face meeting the clip at an angle (a bevelled edge) ends up bent by
+    # the erosion, a few hundredths of a millimetre : below anything the
+    # cavity is used for.
+    def _restore_clipped_vertices(fragments, normal, d)
+      return unless fragments.is_a?(Array)
+      clip_d = d + REDUCTION_CLIP_EROSION
+      fragments.each do |fragment|
+        vertices = fragment['vertices']
+        next unless vertices.is_a?(Array)
+        index = 0
+        while index < vertices.length
+          distance = normal[0] * vertices[index] + normal[1] * vertices[index + 1] + normal[2] * vertices[index + 2] - clip_d
+          if distance.abs <= SolidMeshDef::TOLERANCE
+            vertices[index] -= normal[0] * REDUCTION_CLIP_EROSION
+            vertices[index + 1] -= normal[1] * REDUCTION_CLIP_EROSION
+            vertices[index + 2] -= normal[2] * REDUCTION_CLIP_EROSION
+          end
+          index += 3
+        end
+      end
     end
 
     # The LEAST receding of the given planes for the given cavity — the one

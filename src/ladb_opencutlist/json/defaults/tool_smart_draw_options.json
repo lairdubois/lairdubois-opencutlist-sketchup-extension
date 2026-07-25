@@ -40,6 +40,7 @@
     "normal_reversed": false,
     "measure_reversed": false,
     "reduce_envelope": false,
+    "reuse_definition": true,
     "ask_name": false
   }
 }
