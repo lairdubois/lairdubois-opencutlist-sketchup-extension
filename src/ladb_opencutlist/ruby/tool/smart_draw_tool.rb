@@ -12,6 +12,7 @@ module Ladb::OpenCutList
   require_relative '../manipulator/cline_manipulator'
   require_relative '../helper/user_text_helper'
   require_relative '../helper/part_helper'
+  require_relative '../model/attributes/definition_attributes'
   require_relative '../model/solid/solid_mesh_def'
   require_relative '../model/solid/solid_boolean_result_def'
   require_relative '../utils/path_utils'
@@ -4173,7 +4174,6 @@ module Ladb::OpenCutList
     def _preview_separator(view)
 
       @tool.clear_3d(LAYER_3D_SEPARATOR_PREVIEW)
-      @tool.clear_2d(LAYER_2D_DISTANCE)
 
       return unless (separator_def = _compute_separator(@picked_point, view)).is_a?(SeparatorDef)
 
@@ -4207,7 +4207,7 @@ module Ladb::OpenCutList
 
       end
 
-      _preview_separator_measure(separator_def, color)
+      _preview_separator_distance(separator_def, color)
     end
 
     # Live gap between the picked point and the cavity boundary "behind" it
@@ -4216,40 +4216,43 @@ module Ladb::OpenCutList
     # as +normal) - purely informative for now, it does not (yet) drive the
     # placement itself (see _get_separator_slab_mesh for what actually
     # positions the slab).
-    def _preview_separator_measure(separator_def, color)
+    def _preview_separator_distance(separator_def, color)
+
+      @tool.clear_2d(LAYER_2D_DISTANCE)
+
+      return unless separator_def.is_a?(SeparatorDef)
 
       distance = separator_def.distance
       return unless distance > 0
 
-      point = separator_def.point
-      wall_point = separator_def.wall_point
-      # wall_point = point.offset(separator_def.normal, -distance)
+      ps = separator_def.wall_point
+      pe = separator_def.point
 
       # Preview line
 
       k_edge = Kuix::EdgeMotif3d.new
-      k_edge.start.copy!(wall_point)
-      k_edge.end.copy!(point)
+      k_edge.start.copy!(ps)
+      k_edge.end.copy!(pe)
       k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
       k_edge.color = ColorUtils.color_translucent(color, 60)
       k_edge.on_top = true
       @tool.append_3d(k_edge, LAYER_3D_SEPARATOR_PREVIEW)
 
       k_edge = Kuix::EdgeMotif3d.new
-      k_edge.start.copy!(wall_point)
-      k_edge.end.copy!(point)
+      k_edge.start.copy!(ps)
+      k_edge.end.copy!(pe)
       k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
       k_edge.color = color
       @tool.append_3d(k_edge, LAYER_3D_SEPARATOR_PREVIEW)
 
-      @tool.append_3d(_create_floating_points(points: [ wall_point, point ], style: Kuix::POINT_STYLE_CIRCLE, fill_color: Kuix::COLOR_WHITE, stroke_color: color, size: 2), LAYER_3D_SEPARATOR_PREVIEW)
+      @tool.append_3d(_create_floating_points(points: [ ps, pe ], style: Kuix::POINT_STYLE_CIRCLE, fill_color: Kuix::COLOR_WHITE, stroke_color: color, size: 2), LAYER_3D_SEPARATOR_PREVIEW)
 
       # Preview distance
 
       Sketchup.set_status_text(distance, SB_VCB_VALUE)
 
       k_label = _create_floating_label(
-        snap_point: Geom.linear_combination(0.5, wall_point, 0.5, point),
+        snap_point: Geom.linear_combination(0.5, ps, 0.5, pe),
         text: distance.to_l.to_s,
         text_color: color,
         border_color: color
@@ -4328,55 +4331,6 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _get_cavities_def
-      return @cavities_def if @cavities_def.is_a?(CavitiesDef)
-
-      return nil if !has_active_part? || get_active_part.group.material_is_virtual || get_active_part.group.material_type == MaterialAttributes::TYPE_HARDWARE
-
-      active_part_entity_path = get_active_part_entity_path
-      if active_part_entity_path.is_a?(Array) && active_part_entity_path.length > 1
-
-        container_path = active_part_entity_path[0...-1]
-        return nil if container_path == Sketchup.active_model.active_path
-
-        container = container_path.last
-        return nil if container.nil?
-
-        worker = CutlistGenerateWorker.new(**HashUtils.symbolize_keys(PLUGIN.get_model_preset('cutlist_options')).merge({ active_entity: container, active_path: container_path[0...-1] }))
-        cutlist = worker.run
-
-        parts = cutlist.groups.reject { |group| group.material_is_virtual || group.material_type == MaterialAttributes::TYPE_HARDWARE}
-                       .flat_map { |group| group.get_parts }
-        drawing_defs = parts.flat_map { |part|
-          part.def.instance_infos.values.map { |instance_info|
-            CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new(instance_info.path) ],
-                                                 ignore_surfaces: true,
-                                                 ignore_edges: true,
-                                                 container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART_WITHOUT_MACHININGS_AND_CUTS_OPENING
-            ).run
-          }
-        }
-
-        result_def = CommonSolidFindCavitiesWorker.new(drawing_defs,
-                                                       max_opening_planes: 4,
-                                                       reduce_envelope: _fetch_option_reduce_envelope?
-        ).run
-
-        @cavities_def = CavitiesDef.new(container_path, result_def)
-
-        unless result_def.success?
-          @tool.notify_errors(result_def.errors)
-        end
-
-      else
-        return nil
-      end
-
-      @cavities_def
-    end
-
-    # -----
-
     # Rebuilds the separator fragments as real geometry inside the model,
     # names and selects the resulting part - the same tail conventions
     # (ask_name option / success notification) as the other draw handlers'
@@ -4451,6 +4405,9 @@ module Ladb::OpenCutList
 
           instance = active_entities.add_instance(definition, active_transformation.inverse * world_transformation)
 
+          # Force UUID to be generated in the creation operation
+          DefinitionAttributes.new(definition).uuid
+
           if active?
 
             fn_ask_name = lambda {
@@ -4493,6 +4450,55 @@ module Ladb::OpenCutList
       end
 
       true
+    end
+
+    # -----
+
+    def _get_cavities_def
+      return @cavities_def if @cavities_def.is_a?(CavitiesDef)
+
+      return nil if !has_active_part? || get_active_part.group.material_is_virtual || get_active_part.group.material_type == MaterialAttributes::TYPE_HARDWARE
+
+      active_part_entity_path = get_active_part_entity_path
+      if active_part_entity_path.is_a?(Array) && active_part_entity_path.length > 1
+
+        container_path = active_part_entity_path[0...-1]
+        return nil if container_path.empty?
+
+        container = container_path.last
+        return nil if container.nil?
+
+        worker = CutlistGenerateWorker.new(**HashUtils.symbolize_keys(PLUGIN.get_model_preset('cutlist_options')).merge({ active_entity: container, active_path: container_path[0...-1] }))
+        cutlist = worker.run
+
+        parts = cutlist.groups.reject { |group| group.material_is_virtual || group.material_type == MaterialAttributes::TYPE_HARDWARE}
+                       .flat_map { |group| group.get_parts }
+        drawing_defs = parts.flat_map { |part|
+          part.def.instance_infos.values.map { |instance_info|
+            CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new(instance_info.path) ],
+                                                 ignore_surfaces: true,
+                                                 ignore_edges: true,
+                                                 container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART_WITHOUT_MACHININGS_AND_CUTS_OPENING
+            ).run
+          }
+        }
+
+        result_def = CommonSolidFindCavitiesWorker.new(drawing_defs,
+                                                       max_opening_planes: 4,
+                                                       reduce_envelope: _fetch_option_reduce_envelope?
+        ).run
+
+        @cavities_def = CavitiesDef.new(container_path, result_def)
+
+        unless result_def.success?
+          @tool.notify_errors(result_def.errors)
+        end
+
+      else
+        return nil
+      end
+
+      @cavities_def
     end
 
     # -----
