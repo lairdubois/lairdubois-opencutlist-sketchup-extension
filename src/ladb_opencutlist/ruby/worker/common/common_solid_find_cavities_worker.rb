@@ -22,9 +22,11 @@ module Ladb::OpenCutList
   # envelope faces carry the reserved face id 0). Two envelope modes :
   #
   # - ENVELOPE_HULL (default) : the envelope is the convex hull of the
-  #   panels. The hull caps the openings flush with the panel edges, so the
-  #   cavities of an OPEN enclosure (e.g. a cabinet without its front) are
-  #   found too, closed by the caps. Open candidates are told apart by the
+  #   panels, eroded by a hair so that no hull face ends up coplanar with the
+  #   panel faces it was built on (see ENVELOPE_HULL_EROSION). The hull caps
+  #   the openings flush with the panel edges, so the cavities of an OPEN
+  #   enclosure (e.g. a cabinet without its front) are found too, closed by
+  #   the caps. Open candidates are told apart by the
   #   STRUCTURE of their caps : a real compartment opens on at most
   #   max_opening_planes DOMINANT cap planes (1 for an open front, 2 for a
   #   through tube — see SolidCavityFragmentDef#opening_plane_count), while
@@ -89,6 +91,22 @@ module Ladb::OpenCutList
   # edge — the whole connected group is reduced to the depth of its
   # shallowest element — and each compartment comes out as its own cavity.
   #
+  # BEVELED EDGES (hull mode, reduce_envelope option) : an edge PROFILED at
+  # an angle — a mitred front, a chamfer, a moulding — leaves the cavity
+  # FLARING outward over the profile's depth : the hull caps the opening on
+  # the panels' outermost points, and the profile faces themselves become the
+  # walls of a funnel that has nothing to do with the usable volume (a part
+  # drawn in there grows wings into it). Such a face is betrayed by its TILT :
+  # it is neither the panel's main face nor perpendicular to it — see
+  # REDUCTION_MAIN_DOT / REDUCTION_EDGE_DOT. A genuinely slanted panel (a
+  # lectern's front) is not caught, since the slant IS its own dominant
+  # normal. Each opening is then receded to the FOOT of the bevels flaring
+  # toward it (the deepest point where the flare starts, i.e. the last full
+  # cross section), by a plane perpendicular to that cap, clipping the
+  # envelope exactly like a recessed chant does — see #_detect_bevel_planes.
+  # A profile with RIGHT angles (rebate, shoulder) exposes a plain chant
+  # instead, already handled by the recess detection above.
+  #
   # Panels may overlap each other freely (the boolean absorbs overlaps, no
   # exact joinery needed) and gaps below the SketchUp merge tolerance are
   # sealed by Meshy's plane canonicalization.
@@ -107,9 +125,34 @@ module Ladb::OpenCutList
     # (TOLERANCE scale) never merges an envelope face with a panel face.
     ENVELOPE_MARGIN = 1.0
 
-    # A cavity boundary face is an edge face of its panel when its
-    # normal departs from the panel dominant normal by more than 60°.
+    # Hull envelope erosion, in inches. A hull face is very often EXACTLY
+    # coplanar with the panel faces it was built on — a flush back, a flat
+    # side, any convex part of the assembly. The subtraction then traps a
+    # wafer-thin sheet of "cavity" between the two, spread over the whole
+    # panel ring, which the cavity carries along as a flange (and which no
+    # smaller offset would cure : Meshy canonicalizes planes within the mesh
+    # tolerance, snapping them back together). Pulling every hull face just
+    # past that tolerance puts the envelope boundary strictly INSIDE the
+    # panel material there, so the ring is subtracted away for good — see
+    # #_erode_hull_vertices. Measured on a mitred case (a flush back, hull
+    # face exactly on the panel ends), the flange survives every erosion
+    # below one TOLERANCE and disappears from one TOLERANCE on — the
+    # canonicalization threshold — so the factor keeps a margin above it
+    # rather than sitting on that discontinuity. The openings' caps recede by
+    # the same amount in exchange, a few hundredths of a millimetre.
+    ENVELOPE_HULL_EROSION = SolidMeshDef::TOLERANCE * 1.5
+
+    # A cavity boundary face is an edge (chant) face of its panel when its
+    # normal departs from the panel dominant normal by more than 60°, and a
+    # main face when it departs by less than about 14°. In between, it is a
+    # BEVELED edge — still an edge of the board, but tilted (mitred front,
+    # chamfer, moulding facet) : see the class doc, BEVELED EDGES. Only the
+    # band that used to be read as a main face is diverted there : what
+    # already qualified as a chant keeps going down the recess path, where a
+    # bevel too shallow to leave that band is rejected anyway (a contour
+    # panel exposes a single main face to the cavity).
     REDUCTION_EDGE_DOT = 0.5
+    REDUCTION_MAIN_DOT = 0.97
 
     # Minimum crossing depth, in inches, for an edge plane to trigger the
     # envelope reduction : recesses within snapping noise are ignored.
@@ -125,6 +168,17 @@ module Ladb::OpenCutList
     # cavity. Slivers being nudge artifacts, they also leak the panel
     # order into the result.
     REDUCTION_MIN_AREA = REDUCTION_MIN_DEPTH * REDUCTION_MIN_DEPTH
+
+    # Minimum share of a cavity's total cap area for one cap plane to be
+    # treated as an OPENING a beveled edge may recede. A cavity leaking
+    # through an incidental hole — two edge profiles that do not mitre into
+    # each other leave one at every corner — faces the envelope there on a
+    # few square millimetres, orders of magnitude below its real openings ;
+    # letting such a facet recede would clip the envelope on a plane the
+    # assembly never justified, since the clip applies to the whole cross
+    # section. Same spirit as SolidCavityFragmentDef#opening_plane_count,
+    # which reads the openings off the DOMINANT cap planes.
+    REDUCTION_BEVEL_CAP_RATIO = 0.05
 
     def initialize(panel_drawing_defs,
 
@@ -411,7 +465,42 @@ module Ladb::OpenCutList
         end
       }
 
-      _envelope_mesh_hash(vertices, face_indices)
+      _envelope_mesh_hash(_erode_hull_vertices(vertices, face_indices), face_indices)
+    end
+
+    # Pulls every face of the given hull (flat vertices, triangle indices)
+    # inward by at least ENVELOPE_HULL_EROSION, by scaling its vertices
+    # toward their centroid — which lies inside the hull, being a convex
+    # combination of its own vertices. A uniform scale moves each face by an
+    # offset proportional to ITS distance to the centroid, so the ratio is
+    # set on the CLOSEST face : every face then recedes by at least the
+    # erosion, the farthest ones by proportionally more (a few tenths of a
+    # millimetre at worst, on an assembly far longer than it is wide).
+    # Returned unchanged when the hull is too flat for the erosion to remain
+    # a small perturbation — such an assembly encloses no cavity anyway.
+    def _erode_hull_vertices(vertices, face_indices)
+      count = vertices.length / 3
+      return vertices if count == 0
+
+      cx = cy = cz = 0.0
+      vertices.each_slice(3) { |x, y, z| cx += x ; cy += y ; cz += z }
+      cx /= count ; cy /= count ; cz /= count
+
+      distance_min = Float::INFINITY
+      face_indices.each_slice(3) do |a, b, c|
+        normal, _area2 = _triangle_normal(vertices, a, b, c)
+        next if normal.nil?
+        distance = (normal[0] * (vertices[a * 3] - cx) + normal[1] * (vertices[a * 3 + 1] - cy) + normal[2] * (vertices[a * 3 + 2] - cz)).abs
+        distance_min = distance if distance < distance_min
+      end
+      return vertices if distance_min == Float::INFINITY || distance_min < ENVELOPE_HULL_EROSION * 10
+
+      ratio = 1.0 - ENVELOPE_HULL_EROSION / distance_min
+      eroded = []
+      vertices.each_slice(3) do |x, y, z|
+        eroded << cx + (x - cx) * ratio << cy + (y - cy) * ratio << cz + (z - cz) * ratio
+      end
+      eroded
     end
 
     def _envelope_mesh_hash(vertices, face_indices)
@@ -517,20 +606,40 @@ module Ladb::OpenCutList
         main_plane_keys_by_panel = Hash.new { |h, k| h[k] = {} }
         triangle_mesh_position = {}
         candidates = {}
+        # The cavity's openings ([ normal, offset, area ] per envelope cap
+        # plane) and the tilted edge faces flaring toward them
+        # ([ triangle index, normal, area ]) — see #_detect_bevel_planes
+        cap_planes = {}
+        bevel_triangles = []
         fragment_def.face_indices.each_slice(3).with_index do |(a, b, c), triangle_index|
           face_id = face_ids[triangle_index]
-          next if face_id == 0
+          normal, area2 = _triangle_normal(vertices, a, b, c)
+          next if normal.nil?
+          if face_id == 0  # Envelope cap : an opening of the cavity
+            d = normal[0] * vertices[a * 3] + normal[1] * vertices[a * 3 + 1] + normal[2] * vertices[a * 3 + 2]
+            key = normal.map { |v| (v * 1000).round } << (d / SolidMeshDef::TOLERANCE).round
+            cap_plane = cap_planes[key] ||= [ normal, d, 0.0 ]
+            cap_plane[2] += area2 / 2.0
+            next
+          end
           mesh_position = panel_id_ranges.find_index { |id_range, _| id_range.cover?(face_id) }
           next if mesh_position.nil?
           dominant_normal = dominant_normals[mesh_position]
           next if dominant_normal.nil?
-          normal, area2 = _triangle_normal(vertices, a, b, c)
-          next if normal.nil?
           dot = normal[0] * dominant_normal[0] + normal[1] * dominant_normal[1] + normal[2] * dominant_normal[2]
-          if dot.abs >= REDUCTION_EDGE_DOT  # Main face plane, not a chant
+          if dot.abs >= REDUCTION_MAIN_DOT  # Main face plane, not an edge
             ax, ay, az = vertices[a * 3], vertices[a * 3 + 1], vertices[a * 3 + 2]
             offset = dominant_normal[0] * ax + dominant_normal[1] * ay + dominant_normal[2] * az
             main_plane_keys_by_panel[mesh_position][(offset / SolidMeshDef::TOLERANCE).round] = true
+            next
+          end
+          if dot.abs >= REDUCTION_EDGE_DOT  # Beveled edge face
+            # Deliberately NOT registered as a main plane above : a tilted
+            # face spans a whole range of offsets on the panel's dominant
+            # axis, so the single offset it would contribute is arbitrary —
+            # two of them would fake the "bounds the cavity on both its main
+            # faces" evidence a genuine recess must produce.
+            bevel_triangles << [ triangle_index, normal, area2 / 2.0 ]
             next
           end
           d = normal[0] * vertices[a * 3] + normal[1] * vertices[a * 3 + 1] + normal[2] * vertices[a * 3 + 2]
@@ -617,8 +726,89 @@ module Ladb::OpenCutList
           planes[key] = [ normal, d ]
         end
 
+        # Beveled edges : each opening recedes to the foot of the bevels
+        # flaring toward it — a criterion of its own, needing none of the
+        # evidence collected above. Those guards tell a recess from a
+        # concave/notched footprint, an ambiguity a flare simply does not
+        # have : a wall that widens as it reaches an opening is a profiled
+        # edge, whatever the assembly's footprint.
+        _detect_bevel_planes(fragment_def, bevel_triangles, cap_planes).each do |normal, d|
+          key = normal.map { |v| (v * 1000).round } << (d / SolidMeshDef::TOLERANCE).round
+          planes[key] ||= [ normal, d ]
+        end
+
       end
       planes.values
+    end
+
+    # Planes receding the OPENINGS of the given cavity to the FOOT of the
+    # beveled edges flaring toward them — see the class doc, BEVELED EDGES.
+    # Same [ [ normal, d ], ... ] contract as #_detect_reduction_planes (the
+    # normal points toward the KEPT side), so both feed the same envelope
+    # clipping.
+    #
+    # +bevel_triangles+ are the fragment's tilted edge faces
+    # ([ triangle index, normal, area ]), +cap_planes+ its envelope cap
+    # planes ([ normal, offset, area ], the normal pointing OUT of the
+    # cavity). A bevel has a say on an opening when it FLARES toward it (the
+    # cavity widens on the way out : the wall's outward normal leans back
+    # inside) and REACHES it — an edge profile elsewhere in the cavity (a
+    # chamfered shelf front, deep inside) says nothing about where that
+    # opening is. The whole flare recedes to its deepest foot : a group is
+    # only as usable as its most receded member, the same doctrine the
+    # recessed chants follow.
+    def _detect_bevel_planes(fragment_def, bevel_triangles, cap_planes)
+      return [] if bevel_triangles.empty?
+
+      vertices = fragment_def.vertices
+      face_indices = fragment_def.face_indices
+
+      fn_projection = lambda { |vertex_index, axis|
+        axis[0] * vertices[vertex_index * 3] + axis[1] * vertices[vertex_index * 3 + 1] + axis[2] * vertices[vertex_index * 3 + 2]
+      }
+
+      total_cap_area = cap_planes.inject(0.0) { |sum, (_key, cap_plane)| sum + cap_plane[2] }
+      return [] if total_cap_area <= 0
+
+      planes = []
+      cap_planes.each do |_key, (cap_normal, cap_d, cap_area)|
+        # Hull facet residue or incidental leak, not an opening
+        next if cap_area < REDUCTION_MIN_AREA || cap_area < total_cap_area * REDUCTION_BEVEL_CAP_RATIO
+
+        areas = {}
+        bevel_triangles.each do |triangle_index, normal, area|
+          next unless normal[0] * cap_normal[0] + normal[1] * cap_normal[1] + normal[2] * cap_normal[2] < 0
+          next unless face_indices[triangle_index * 3, 3].any? { |vertex_index| fn_projection.call(vertex_index, cap_normal) > cap_d - REDUCTION_MIN_DEPTH }
+          areas[triangle_index] = area
+        end
+        next if areas.empty?
+
+        # Where the flare starts, measured on the surviving TOUCHING groups
+        # only : a boolean sliver — the degenerate triangle a panel face
+        # flush with the hull leaves behind, whose normal is arbitrary and
+        # whose provenance may put it anywhere — would otherwise drag the
+        # foot to a depth nothing in the assembly justifies. Same
+        # REDUCTION_MIN_AREA doctrine as the chant candidates : a real
+        # profile strip runs the edge's full length, orders of magnitude
+        # above.
+        foot = Float::INFINITY
+        _reduction_group_components(areas.keys, fragment_def).each do |component|
+          next if component.inject(0.0) { |sum, triangle_index| sum + areas[triangle_index] } < REDUCTION_MIN_AREA
+          component.each do |triangle_index|
+            face_indices[triangle_index * 3, 3].each do |vertex_index|
+              projection = fn_projection.call(vertex_index, cap_normal)
+              foot = projection if projection < foot
+            end
+          end
+        end
+        next if foot == Float::INFINITY
+
+        # Flush profile (or noise) : nothing to recede
+        next if cap_d - foot < REDUCTION_MIN_DEPTH
+
+        planes << [ cap_normal.map { |v| -v }, -foot ]
+      end
+      planes
     end
 
     # Splits the given candidate plane's chant triangles into groups that
