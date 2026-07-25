@@ -3,6 +3,7 @@ module Ladb::OpenCutList
   require_relative 'common_solid_boolean_worker'
   require_relative '../../model/drawing/drawing_def'
   require_relative '../../model/solid/solid_mesh_def'
+  require_relative '../../model/solid/solid_boolean_result_def'
   require_relative '../../utils/lock_utils'
   require_relative '../../utils/transformation_utils'
 
@@ -832,19 +833,47 @@ module Ladb::OpenCutList
       plan
     end
 
-    # Exact plane key of a quantized coplanar triangle batch : gcd-reduced
-    # SIGNED integer normal + offset (signed : opposite facing coplanar faces
-    # never merge). nil when every triangle is degenerate after quantization.
-    def _quantized_plane_key(quantized_triangles)
-      quantized_triangles.each do |q0, q1, q2|
-        ux = q1[0] - q0[0] ; uy = q1[1] - q0[1] ; uz = q1[2] - q0[2]
-        vx = q2[0] - q0[0] ; vy = q2[1] - q0[1] ; vz = q2[2] - q0[2]
+    # Index, in the given registry, of the plane the given coplanar triangle
+    # batch (local space, winding already corrected) lies on — appended to it
+    # on first sight. nil when every triangle is degenerate, in which case all
+    # such batches share the nil group : nothing to merge there anyway.
+    #
+    # Planes are matched SIGNED (opposite facing coplanar faces never merge)
+    # and with a TOLERANCE, exactly as
+    # SolidFragmentDef#_each_triangle_plane — same reason : an exact key
+    # built on quantized vertices only identifies planes aligned with that
+    # grid, an OBLIQUE plane sees each of its batches land on a plane of its
+    # own, their common seam then survives in the signature and two
+    # geometrically identical results sign differently as soon as Manifold
+    # partitioned their batches differently. The plane is read from the
+    # FLOAT points, not from their quantized image : rounding tilts a plane
+    # by an amount that depends on the triangle size, which no fixed
+    # tolerance could absorb. The registry is per signature : indices need
+    # only be consistent within one, the group id itself never reaches the
+    # signature string.
+    def _coplanar_plane_index(planes, triangles)
+      min_area2 = SolidMeshDef::TOLERANCE * SolidMeshDef::TOLERANCE
+      min_dot = 1.0 - SolidFragmentDef::PLANE_NORMAL_TOLERANCE
+
+      triangles.each do |p0, p1, p2|
+        ax = p0.x.to_f ; ay = p0.y.to_f ; az = p0.z.to_f
+        ux = p1.x.to_f - ax ; uy = p1.y.to_f - ay ; uz = p1.z.to_f - az
+        vx = p2.x.to_f - ax ; vy = p2.y.to_f - ay ; vz = p2.z.to_f - az
         nx = uy * vz - uz * vy
         ny = uz * vx - ux * vz
         nz = ux * vy - uy * vx
-        next if nx == 0 && ny == 0 && nz == 0
-        gcd = nx.gcd(ny).gcd(nz)
-        return [ nx / gcd, ny / gcd, nz / gcd, (nx * q0[0] + ny * q0[1] + nz * q0[2]) / gcd ]
+        area2 = Math.sqrt(nx * nx + ny * ny + nz * nz)
+        next if area2 <= min_area2
+        nx /= area2 ; ny /= area2 ; nz /= area2
+        d = nx * ax + ny * ay + nz * az
+
+        plane_index = planes.index { |normal, plane_d|
+          normal[0] * nx + normal[1] * ny + normal[2] * nz >= min_dot && (plane_d - d).abs <= SolidMeshDef::TOLERANCE
+        }
+        return plane_index unless plane_index.nil?
+
+        planes << [ [ nx, ny, nz ], d ]
+        return planes.length - 1
       end
       nil
     end
@@ -899,12 +928,14 @@ module Ladb::OpenCutList
     # drawing def, expressed in its own local space : two instances of the same
     # definition with equal signatures rebuild to the same local content.
     # Covers everything the rebuild consumes : target node path, quantized
-    # directed BOUNDARY edges per coplanar same-attribute batch group (the
-    # interior tessellation diagonals and coplanar batch seams cancel out in
-    # pairs, the collinear chains are collapsed — _canonical_boundary_keys —
-    # so the signature is independent of the triangulation and batch partition
-    # Manifold chose and of its placement dependent T-vertex imprints ;
-    # winding corrected on mirror
+    # directed BOUNDARY edges per same-attribute batch group — coplanar
+    # batches share a group, their planes matched with a tolerance so that an
+    # oblique plane groups like an axis aligned one (_coplanar_plane_index)
+    # (the interior tessellation diagonals and coplanar batch seams cancel out
+    # in pairs, the collinear chains are collapsed — _canonical_boundary_keys
+    # — so the signature is independent of the triangulation and batch
+    # partition Manifold chose and of its placement dependent T-vertex
+    # imprints ; winding corrected on mirror
     # transformations), material, layer, virtual flag and surface partition
     # (first-appearance indices over the sorted batches). Quantization may only
     # produce false NEGATIVES (borderline rounding -> distinct definitions, as
@@ -925,6 +956,7 @@ module Ladb::OpenCutList
       # imprint areas) : without the coplanar grouping, two geometrically
       # identical results could sign differently.
       batch_index = 0
+      planes = []
       grouped_edge_counts = {}
       fragment_paths.each do |fragment_def, path|
         path_key = path.join('.')
@@ -934,14 +966,15 @@ module Ladb::OpenCutList
           virtual = !face_info_def.nil? && face_info_def.virtual? ? 1 : 0
           surface_info_def = face_info_def.nil? ? nil : face_info_def.surface_info_def
 
-          quantized_triangles = triangles.map { |points|
+          local_triangles = triangles.map { |points|
             points = points.map { |point| point.transform(transformation) } unless transformation.nil?
             points = points.reverse if flipped
-            points.map { |point| point.to_a.map { |v| (v / tolerance).round } }
+            points
           }
+          quantized_triangles = local_triangles.map { |points| points.map { |point| point.to_a.map { |v| (v / tolerance).round } } }
 
           batch_index += 1
-          group_id = @merge_coplanar ? _quantized_plane_key(quantized_triangles) : batch_index
+          group_id = @merge_coplanar ? _coplanar_plane_index(planes, local_triangles) : batch_index
           edge_counts = (grouped_edge_counts[[ path_key, group_id, material_id, layer_id, virtual, surface_info_def ]] ||= {})
 
           quantized_triangles.each do |quantized|

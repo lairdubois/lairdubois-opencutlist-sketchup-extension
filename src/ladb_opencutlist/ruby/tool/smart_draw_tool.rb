@@ -4174,6 +4174,7 @@ module Ladb::OpenCutList
     def _preview_separator(view)
 
       @tool.clear_3d(LAYER_3D_SEPARATOR_PREVIEW)
+      @tool.clear_2d(LAYER_2D_DISTANCE)
 
       return unless (separator_def = _compute_separator(@picked_point, view)).is_a?(SeparatorDef)
 
@@ -4200,27 +4201,12 @@ module Ladb::OpenCutList
           k_segments = Kuix::Segments.new
           k_segments.add_segments(segments)
           k_segments.color = color
-          k_segments.line_width = @locked_normal ? 3 : 1.5
+          k_segments.line_width = @locked_normal ? 2.5 : 1.5
           @tool.append_3d(k_segments, LAYER_3D_SEPARATOR_PREVIEW)
 
         end
 
       end
-
-      _preview_separator_distance(separator_def, color)
-    end
-
-    # Live gap between the picked point and the cavity boundary "behind" it
-    # (n0, the low end of the cavity's own extent along the separator's
-    # normal - never n1, so wall_point -> point always points the same way
-    # as +normal) - purely informative for now, it does not (yet) drive the
-    # placement itself (see _get_separator_slab_mesh for what actually
-    # positions the slab).
-    def _preview_separator_distance(separator_def, color)
-
-      @tool.clear_2d(LAYER_2D_DISTANCE)
-
-      return unless separator_def.is_a?(SeparatorDef)
 
       distance = separator_def.distance
       return unless distance > 0

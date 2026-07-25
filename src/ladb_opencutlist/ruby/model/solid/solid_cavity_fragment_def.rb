@@ -38,33 +38,20 @@ module Ladb::OpenCutList
     # an open front, 2 for a through tube, 3 for a "C" shaped assembly open on
     # one side — while the outside world and the concavity pockets of a
     # non-convex assembly face the envelope on many comparable planes. Planes
-    # are told apart by the same signed quantized key as #boundary_segments.
-    # Memoized.
+    # are told apart by the same tolerant matching as #boundary_segments
+    # (SolidFragmentDef#_each_triangle_plane) : an exact key would count one
+    # oblique opening as many planes and drop the cavity. Memoized.
     def opening_plane_count
       return @opening_plane_count if defined?(@opening_plane_count)
 
       area_by_plane = Hash.new(0.0)
       unless @face_ids.nil?
 
-        tolerance = SolidMeshDef::TOLERANCE
-        quantized = @vertices.each_slice(3).map { |coordinates| coordinates.map { |v| (v / tolerance).round } }
-        @face_indices.each_slice(3)
-                     .with_index do |(a, b, c), triangle_index|
+        _each_triangle_plane do |plane_index, triangle_index, _a, _b, _c, area2|
           next unless @face_ids[triangle_index] == 0
-
-          qa, qb, qc = quantized[a], quantized[b], quantized[c]
-          ux = qb[0] - qa[0] ; uy = qb[1] - qa[1] ; uz = qb[2] - qa[2]
-          vx = qc[0] - qa[0] ; vy = qc[1] - qa[1] ; vz = qc[2] - qa[2]
-          nx = uy * vz - uz * vy
-          ny = uz * vx - ux * vz
-          nz = ux * vy - uy * vx
-          next if nx == 0 && ny == 0 && nz == 0
-          gcd = nx.gcd(ny).gcd(nz)
-          plane_key = [ nx / gcd, ny / gcd, nz / gcd, (nx * qa[0] + ny * qa[1] + nz * qa[2]) / gcd ]
-          # Quantized cross product magnitude = twice the triangle area, in
-          # tolerance² units : exact enough for relative area comparison
-          area_by_plane[plane_key] += Math.sqrt(nx * nx + ny * ny + nz * nz)
-
+          # Doubled triangle area : the factor cancels out in the relative
+          # area comparison below
+          area_by_plane[plane_index] += area2
         end
 
       end

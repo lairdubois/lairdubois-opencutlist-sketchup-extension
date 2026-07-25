@@ -69,6 +69,20 @@ module Ladb::OpenCutList
                 :face_info_defs,  # Array<SolidFaceInfoDef> shared registry of the operation
                 :src_indices      # Array<Integer> indices (in the operation src list) of the sources this fragment comes from ; empty if unknown
 
+    # Two triangles lie on the SAME plane when their unit normals differ by
+    # less than this (dot >= 1 - PLANE_NORMAL_TOLERANCE, i.e. ~0.08°) and
+    # their signed offsets by less than SolidMeshDef::TOLERANCE - see
+    # #_each_triangle_plane. Coplanar triangles of a Manifold output agree far
+    # closer than that (their normals match to the last float digits), so this
+    # stays clear of merging planes that are genuinely distinct.
+    PLANE_NORMAL_TOLERANCE = 1e-6
+
+    # Bucketing quantum of the plane normal components : plane candidates are
+    # indexed by their coarsely rounded normal so the matching above stays
+    # local on a fragment carrying many distinct planes - see
+    # #_triangle_plane_index.
+    PLANE_BUCKET_QUANTUM = 0.01
+
     def initialize(vertices, face_indices, face_ids, face_info_defs, src_indices: [])
       @vertices = vertices
       @face_indices = face_indices
@@ -155,7 +169,8 @@ module Ladb::OpenCutList
     end
 
     # Net boundary segments of the fragment, coplanar triangles merged : an
-    # edge shared by two triangles lying on the same signed quantized plane
+    # edge shared by two triangles lying on the same plane (matched with
+    # tolerance, see #_each_triangle_plane)
     # is interior (traversed once in each direction, it cancels out), the
     # surviving edges draw the face contours. An edge between two planes is
     # kept by each of them, as the two adjacent face contours overlap there,
@@ -254,30 +269,92 @@ module Ladb::OpenCutList
       dx * dx + dy * dy + dz * dz
     end
 
-    # Net boundary edges of the fragment, grouped by signed quantized plane :
-    # for each plane, an edge traversed once in each direction by two of its
-    # triangles is interior and cancels out, the surviving edges draw that
-    # plane's face contour. Memoized.
+    # Yields [ plane index, triangle index, a, b, c, doubled area ] for each
+    # non degenerate triangle of the fragment, the plane index identifying
+    # the plane it lies on among the fragment's planes, discovered as they
+    # come. Two triangles share a plane index when their SIGNED plane matches
+    # within PLANE_NORMAL_TOLERANCE / SolidMeshDef::TOLERANCE - signed, so
+    # that two opposite coplanar faces (e.g. the two sides of a zero
+    # thickness membrane) stay distinct planes, as their contours are
+    # traversed in opposite directions.
+    #
+    # Matching within a tolerance, and not by an exact key : quantizing the
+    # vertices to the mesh tolerance and keying on the resulting exact
+    # integer normal only holds for a plane aligned with that grid. An
+    # OBLIQUE plane - anything in a rotated assembly - sees its rounded
+    # vertices leave the plane, every one of its triangles ends up on a plane
+    # of its own, and whatever the grouping serves (edge cancellation,
+    # per-plane area) breaks down : the tessellation shows through the
+    # merged contours (#boundary_segments) and one flat opening counts as
+    # many (SolidCavityFragmentDef#opening_plane_count).
+    def _each_triangle_plane
+      min_area2 = SolidMeshDef::TOLERANCE * SolidMeshDef::TOLERANCE
+
+      planes = []                   # [ [ normal, d ], ... ], index = plane index
+      plane_indices_by_bucket = {}  # coarse normal key -> Array of plane indices
+
+      @face_indices.each_slice(3).with_index do |(a, b, c), triangle_index|
+        ax, ay, az = @vertices[a * 3], @vertices[a * 3 + 1], @vertices[a * 3 + 2]
+        bx, by, bz = @vertices[b * 3], @vertices[b * 3 + 1], @vertices[b * 3 + 2]
+        cx, cy, cz = @vertices[c * 3], @vertices[c * 3 + 1], @vertices[c * 3 + 2]
+        ux = bx - ax ; uy = by - ay ; uz = bz - az
+        vx = cx - ax ; vy = cy - ay ; vz = cz - az
+        nx = uy * vz - uz * vy
+        ny = uz * vx - ux * vz
+        nz = ux * vy - uy * vx
+        area2 = Math.sqrt(nx * nx + ny * ny + nz * nz)
+        # A triangle thinner than the tolerance has no plane of its own worth
+        # trusting (its normal is pure numerical noise) : skipped
+        next if area2 <= min_area2
+        nx /= area2 ; ny /= area2 ; nz /= area2
+        d = nx * ax + ny * ay + nz * az
+
+        yield _triangle_plane_index(planes, plane_indices_by_bucket, nx, ny, nz, d), triangle_index, a, b, c, area2
+      end
+    end
+
+    # Index of the plane matching the given unit normal and signed offset in
+    # the given registry, appended to it (and indexed in its normal bucket)
+    # on first sight. The 26 neighbor buckets are probed too : two matching
+    # normals may well round to either side of a bucket boundary.
+    def _triangle_plane_index(planes, plane_indices_by_bucket, nx, ny, nz, d)
+      qx = (nx / PLANE_BUCKET_QUANTUM).round
+      qy = (ny / PLANE_BUCKET_QUANTUM).round
+      qz = (nz / PLANE_BUCKET_QUANTUM).round
+
+      min_dot = 1.0 - PLANE_NORMAL_TOLERANCE
+      tolerance = SolidMeshDef::TOLERANCE
+      (-1..1).each do |ox|
+        (-1..1).each do |oy|
+          (-1..1).each do |oz|
+            plane_indices = plane_indices_by_bucket[[ qx + ox, qy + oy, qz + oz ]]
+            next if plane_indices.nil?
+            plane_indices.each do |plane_index|
+              normal, plane_d = planes[plane_index]
+              next if normal[0] * nx + normal[1] * ny + normal[2] * nz < min_dot
+              next if (plane_d - d).abs > tolerance
+              return plane_index
+            end
+          end
+        end
+      end
+
+      planes << [ [ nx, ny, nz ], d ]
+      plane_index = planes.length - 1
+      (plane_indices_by_bucket[[ qx, qy, qz ]] ||= []) << plane_index
+      plane_index
+    end
+
+    # Net boundary edges of the fragment, grouped by plane : for each plane,
+    # an edge traversed once in each direction by two of its triangles is
+    # interior and cancels out, the surviving edges draw that plane's face
+    # contour. Memoized.
     def _edge_counts_by_plane
       @edge_counts_by_plane ||= begin
 
-        tolerance = SolidMeshDef::TOLERANCE
-        quantized = @vertices.each_slice(3).map { |coordinates| coordinates.map { |v| (v / tolerance).round } }
-
         edge_counts_by_plane = {}
-        @face_indices.each_slice(3) do |a, b, c|
-          qa, qb, qc = quantized[a], quantized[b], quantized[c]
-          ux = qb[0] - qa[0] ; uy = qb[1] - qa[1] ; uz = qb[2] - qa[2]
-          vx = qc[0] - qa[0] ; vy = qc[1] - qa[1] ; vz = qc[2] - qa[2]
-          nx = uy * vz - uz * vy
-          ny = uz * vx - ux * vz
-          nz = ux * vy - uy * vx
-          # A triangle thinner than the tolerance has no drawable contour of
-          # its own : skipped (its neighbors' overlapping edges cover it)
-          next if nx == 0 && ny == 0 && nz == 0
-          gcd = nx.gcd(ny).gcd(nz)
-          plane_key = [ nx / gcd, ny / gcd, nz / gcd, (nx * qa[0] + ny * qa[1] + nz * qa[2]) / gcd ]
-          edge_counts = (edge_counts_by_plane[plane_key] ||= Hash.new(0))
+        _each_triangle_plane do |plane_index, _triangle_index, a, b, c, _area2|
+          edge_counts = (edge_counts_by_plane[plane_index] ||= Hash.new(0))
           [ [ a, b ], [ b, c ], [ c, a ] ].each do |index_a, index_b|
             if edge_counts[[ index_b, index_a ]] > 0
               edge_counts[[ index_b, index_a ]] -= 1
