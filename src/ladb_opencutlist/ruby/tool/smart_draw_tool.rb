@@ -116,6 +116,8 @@ module Ladb::OpenCutList
           return SmartCursorManager.cursor_pencil_circle
       when ACTION_DRAW_POLYGON
           return SmartCursorManager.cursor_pencil_polygon
+      when ACTION_DRAW_SEPARATOR
+          return SmartCursorManager.cursor_pencil_separator
       end
 
       super
@@ -3906,6 +3908,8 @@ module Ladb::OpenCutList
     def initialize(tool, previous_action_handler = nil)
       super(SmartDrawTool::ACTION_DRAW_SEPARATOR, tool, previous_action_handler)
 
+      @locked_normal = nil
+
     end
 
     # -----
@@ -3959,6 +3963,54 @@ module Ladb::OpenCutList
       true
     end
 
+    def onToolKeyDown(tool, key, repeat, flags, view)
+      return true if super
+
+      case @state
+
+      when STATE_START
+
+        if key == VK_RIGHT
+          x_axis = _get_active_x_axis
+          if @locked_normal == x_axis
+            @locked_normal = nil
+          else
+            @locked_normal = x_axis
+          end
+          _refresh
+          return true
+        end
+        if key == VK_LEFT
+          y_axis = _get_active_y_axis
+          if @locked_normal == y_axis
+            @locked_normal = nil
+          else
+            @locked_normal = y_axis
+          end
+          _refresh
+          return true
+        end
+        if key == VK_UP
+          z_axis = _get_active_z_axis
+          if @locked_normal == z_axis
+            @locked_normal = nil
+          else
+            @locked_normal = z_axis
+          end
+          _refresh
+          return true
+        end
+        if key == VK_DOWN
+          @locked_normal = nil
+          _refresh
+          return true
+        end
+
+      end
+
+      false
+    end
+
     def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
 
       case @state
@@ -3971,13 +4023,14 @@ module Ladb::OpenCutList
         end
         if tool.is_key_alt_or_command?(key) && is_quick
           @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, !_fetch_option_reduce_envelope?, fire_event: true)
+          @cavities_def = nil
+          @locked_normal = nil
           _refresh
           return true
         end
 
       end
 
-      super
     end
 
     def onToolUserText(tool, text, view)
@@ -4016,6 +4069,7 @@ module Ladb::OpenCutList
 
     def _reset
       @cavities_def = nil
+      @locked_normal = nil
       super
     end
 
@@ -4092,7 +4146,7 @@ module Ladb::OpenCutList
 
       return unless (separator_def = _compute_separator(view)).is_a?(SeparatorDef)
 
-      color = Kuix::COLOR_MAGENTA
+      color = _get_vector_color(@locked_normal, Kuix::COLOR_MAGENTA)
 
       separator_def.fragments.each do |fragment|
 
@@ -4115,7 +4169,7 @@ module Ladb::OpenCutList
           k_segments = Kuix::Segments.new
           k_segments.add_segments(segments)
           k_segments.color = color
-          k_segments.line_width = 1.5
+          k_segments.line_width = @locked_normal ? 3 : 1.5
           @tool.append_3d(k_segments, LAYER_3D_SEPARATOR_PREVIEW)
 
         end
@@ -4536,6 +4590,17 @@ module Ladb::OpenCutList
     # (hermetic cavity, or both candidates equally (im)perpendicular to it).
     # The "normal reversed" option swaps this natural pick for its complement.
     def _get_separator_normal_3f(picked_face_manipulator, fragment_def, view)
+
+      # A locked axis (arrow keys) overrides the opening / camera heuristic
+      # entirely : the slab is built along that exact axis regardless of the
+      # picked face's own plane (the intersection math doesn't care where the
+      # normal comes from). The "normal reversed" option still flips it, for
+      # the same "which side is front" purpose it serves in the unlocked case.
+      if @locked_normal
+        normal = _fetch_option_normal_reversed? ? @locked_normal.reverse : @locked_normal
+        return normal.to_a
+      end
+
       candidates = _get_separator_normal_candidates(picked_face_manipulator)
       return nil if candidates.length < 2
 
