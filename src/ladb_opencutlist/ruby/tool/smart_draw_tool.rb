@@ -32,6 +32,7 @@ module Ladb::OpenCutList
     ACTION_OPTION_SEGMENTS = 'segments'
     ACTION_OPTION_THICKNESS = 'thickness'
     ACTION_OPTION_MEASURE_TYPE = 'measure_type'
+    ACTION_OPTION_AXES = 'axes'
     ACTION_OPTION_OPTIONS = 'options'
 
     ACTION_OPTION_OFFSET_SHAPE_OFFSET = 'shape_offset'
@@ -43,6 +44,9 @@ module Ladb::OpenCutList
     ACTION_OPTION_MEASURE_TYPE_INSIDE = 'inside'
     ACTION_OPTION_MEASURE_TYPE_CENTERED = 'centered'
     ACTION_OPTION_MEASURE_TYPE_OUTSIDE = 'outside'
+
+    ACTION_OPTION_AXES_ACTIVE = 'active'
+    ACTION_OPTION_AXES_CONTEXT = 'context'
 
     ACTION_OPTION_OPTIONS_CONSTRUCTION = 'construction'
     ACTION_OPTION_OPTIONS_DRAW_IN = 'draw_in'
@@ -83,6 +87,7 @@ module Ladb::OpenCutList
       :action => ACTION_DRAW_SEPARATOR,
       :options => {
         ACTION_OPTION_MEASURE_TYPE => [ ACTION_OPTION_MEASURE_TYPE_INSIDE, ACTION_OPTION_MEASURE_TYPE_CENTERED, ACTION_OPTION_MEASURE_TYPE_OUTSIDE ],
+        ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_CONTEXT ],
         ACTION_OPTION_THICKNESS => [ ACTION_OPTION_THICKNESS_THICKNESS ],
         ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, ACTION_OPTION_OPTIONS_ASK_NAME ]
       }
@@ -180,6 +185,8 @@ module Ladb::OpenCutList
       case option_group
       when ACTION_OPTION_MEASURE_TYPE
         return true
+      when ACTION_OPTION_AXES
+        return true
       end
 
       super
@@ -212,6 +219,13 @@ module Ladb::OpenCutList
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.655,0.917L0.655,0.583L0.989,0.583L0.989,0.917L0.655,0.917M0,0.25L0.833,0.25M0,0.083L0,0.417M0.833,0.083L0.833,0.417'))
         when ACTION_OPTION_MEASURE_TYPE_INSIDE
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.655,0.917L0.655,0.583L0.989,0.583L0.989,0.917L0.655,0.917M0,0.25L0.667,0.25M0,0.083L0,0.417M0.667,0.083L0.667,0.417'))
+        end
+      when ACTION_OPTION_AXES
+        case option
+        when ACTION_OPTION_AXES_ACTIVE
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.167,0L0.167,0.833L1,0.833 M0,0.167L0.167,0L0.333,0.167 M0.833,0.667L1,0.833L0.833,1'))
+        when ACTION_OPTION_AXES_CONTEXT
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.167,0L0.167,0.833L1,0.833 M0,0.167L0.167,0L0.333,0.167 M0.833,0.667L1,0.833L0.833,1 M0.5,0.083L0.5,0.5L0.917,0.5L0.917,0.083L0.5,0.083'))
         end
       when ACTION_OPTION_OPTIONS
         case option
@@ -4098,7 +4112,11 @@ module Ladb::OpenCutList
 
     def onToolActionOptionStored(tool, action, option_group, option)
 
-      if option_group == SmartDrawTool::ACTION_OPTION_MEASURE_TYPE
+      case option_group
+      when SmartDrawTool::ACTION_OPTION_MEASURE_TYPE
+        _refresh
+      when SmartDrawTool::ACTION_OPTION_AXES
+        @locked_normal = nil
         _refresh
       end
 
@@ -4315,6 +4333,10 @@ module Ladb::OpenCutList
       @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_MEASURE_TYPE, SmartDrawTool::ACTION_OPTION_MEASURE_TYPE_OUTSIDE)
     end
 
+    def _fetch_option_axes_context?
+      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_AXES, SmartDrawTool::ACTION_OPTION_AXES_CONTEXT)
+    end
+
     # -----
 
     # Rebuilds the separator fragments as real geometry inside the model,
@@ -4436,6 +4458,13 @@ module Ladb::OpenCutList
       end
 
       true
+    end
+
+    # -----
+
+    def _get_edit_transformation
+      return PathUtils.get_transformation(get_active_part_entity_path[0...-1], IDENTITY) if _fetch_option_axes_context?
+      super
     end
 
     # -----

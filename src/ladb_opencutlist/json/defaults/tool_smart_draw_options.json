@@ -35,6 +35,7 @@
   "action_3": { /* ACTION_DRAW_SEPARATOR */
     "thickness": { "metric": "18mm", "imperial": "1/2\"" },
     "measure_type": "centered",
+    "axes": "context",
     "construction": false,
     "normal_reversed": false,
     "measure_reversed": false,
