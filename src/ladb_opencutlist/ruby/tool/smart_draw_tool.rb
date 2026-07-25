@@ -30,6 +30,7 @@ module Ladb::OpenCutList
     ACTION_OPTION_OFFSET = 'offset'
     ACTION_OPTION_SEGMENTS = 'segments'
     ACTION_OPTION_THICKNESS = 'thickness'
+    ACTION_OPTION_MEASURE_TYPE = 'measure_type'
     ACTION_OPTION_OPTIONS = 'options'
 
     ACTION_OPTION_OFFSET_SHAPE_OFFSET = 'shape_offset'
@@ -37,6 +38,10 @@ module Ladb::OpenCutList
     ACTION_OPTION_SEGMENTS_SEGMENT_COUNT = 'segment_count'
 
     ACTION_OPTION_THICKNESS_THICKNESS = 'thickness'
+
+    ACTION_OPTION_MEASURE_TYPE_INSIDE = 'inside'
+    ACTION_OPTION_MEASURE_TYPE_CENTERED = 'centered'
+    ACTION_OPTION_MEASURE_TYPE_OUTSIDE = 'outside'
 
     ACTION_OPTION_OPTIONS_CONSTRUCTION = 'construction'
     ACTION_OPTION_OPTIONS_DRAW_IN = 'draw_in'
@@ -48,7 +53,6 @@ module Ladb::OpenCutList
     ACTION_OPTION_OPTIONS_PULL_CENTRED = 'pull_centered'
     ACTION_OPTION_OPTIONS_ASK_NAME = 'ask_name'
 
-    ACTION_OPTION_OPTIONS_NORMAL_REVERSED = 'normal_reversed'
     ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE = 'reduce_envelope'
 
     ACTIONS = [
@@ -78,8 +82,9 @@ module Ladb::OpenCutList
     ACTIONS << {
       :action => ACTION_DRAW_SEPARATOR,
       :options => {
+        ACTION_OPTION_MEASURE_TYPE => [ ACTION_OPTION_MEASURE_TYPE_INSIDE, ACTION_OPTION_MEASURE_TYPE_CENTERED, ACTION_OPTION_MEASURE_TYPE_OUTSIDE ],
         ACTION_OPTION_THICKNESS => [ ACTION_OPTION_THICKNESS_THICKNESS ],
-        ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_NORMAL_REVERSED, ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, ACTION_OPTION_OPTIONS_ASK_NAME ]
+        ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, ACTION_OPTION_OPTIONS_ASK_NAME ]
       }
     } if Sketchup.debug_mode?
 
@@ -170,6 +175,16 @@ module Ladb::OpenCutList
       super
     end
 
+    def get_action_option_group_unique?(action, option_group)
+
+      case option_group
+      when ACTION_OPTION_MEASURE_TYPE
+        return true
+      end
+
+      super
+    end
+
     def get_action_option_btn_child(action, option_group, option)
 
       case option_group
@@ -189,6 +204,15 @@ module Ladb::OpenCutList
         when ACTION_OPTION_THICKNESS_THICKNESS
           return Kuix::Label.new(fetch_action_option_value(action, option_group, option).to_s)
         end
+      when ACTION_OPTION_MEASURE_TYPE
+        case option
+        when ACTION_OPTION_MEASURE_TYPE_INSIDE
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.15,0L0.15,1 M0.15,0.3L0.85,0.3L0.85,0.7L0.15,0.7L0.15,0.3'))
+        when ACTION_OPTION_MEASURE_TYPE_CENTERED
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.5,0L0.5,1 M0.15,0.3L0.85,0.3L0.85,0.7L0.15,0.7L0.15,0.3'))
+        when ACTION_OPTION_MEASURE_TYPE_OUTSIDE
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.85,0L0.85,1 M0.15,0.3L0.85,0.3L0.85,0.7L0.15,0.7L0.15,0.3'))
+        end
       when ACTION_OPTION_OPTIONS
         case option
         when ACTION_OPTION_OPTIONS_CONSTRUCTION
@@ -207,8 +231,6 @@ module Ladb::OpenCutList
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1L0.667,1L1,0.667L1,0L0.333,0L0,0.333L0,1 M0,0.333L0.667,0.333L0.667,1 M0.667,0.333L1,0 M0.333,0.5L0.333,0.833 M0.167,0.667L0.5,0.667'))
         when ACTION_OPTION_OPTIONS_ASK_NAME
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.25L1,0.25L1,0.75L0,0.75L0,0.25 M0.438,0.313L0.438,0.688 M0.125,0.625L0.125,0.375L0.313,0.625L0.313,0.375'))
-        when ACTION_OPTION_OPTIONS_NORMAL_REVERSED
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.25,0L0,0L0,0.625L0.25,0.625L0.25,0 M1,1L1,0.75L0.375,0.75L0.375,1L1,1 M0.375,0.125L0.5,0.141L0.625,0.192L0.706,0.25L0.75,0.294L0.808,0.375L0.859,0.5L0.875,0.625 M0.5,0L0.375,0.125L0.5,0.25 M0.75,0.5L0.875,0.625L1,0.5'))
         when ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0L0,1L1,1L1,0L0,0 M0,0.625L0.625,0.625L0.625,0.375L0,0.375'))
         end
@@ -260,6 +282,14 @@ module Ladb::OpenCutList
   class SmartDrawActionHandler < SmartActionHandler
 
     include UserTextHelper
+
+    # -----
+
+    def stop
+      @tool.clear_all_3d
+      @tool.clear_all_2d
+      super
+    end
 
     # -----
 
@@ -3931,7 +3961,7 @@ module Ladb::OpenCutList
       when STATE_START
         return super +
                ' | ' + PLUGIN.get_i18n_string("default.constrain_key") + ' + X = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_construction_status') + '.' +
-               ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_normal_reversed_status') + '.' +
+               ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_measure_reversed_status') + '.' +
                ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_reduce_envelope_status') + '.'
       end
 
@@ -4017,7 +4047,7 @@ module Ladb::OpenCutList
 
       when STATE_START
         if tool.is_key_ctrl_or_option?(key) && is_quick
-          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_NORMAL_REVERSED, !_fetch_option_normal_reversed?, fire_event: true)
+          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_REVERSED, !_fetch_option_measure_reversed?, fire_event: true)
           _refresh
           return true
         end
@@ -4059,6 +4089,14 @@ module Ladb::OpenCutList
       @cavities_def = nil
       # _preview_cavities
       false
+    end
+
+    def onToolActionOptionStored(tool, action, option_group, option)
+
+      if option_group == SmartDrawTool::ACTION_OPTION_MEASURE_TYPE
+        _refresh
+      end
+
     end
 
     # -----
@@ -4247,12 +4285,20 @@ module Ladb::OpenCutList
       @tool.fetch_action_option_length(@action, SmartReshapeTool::ACTION_OPTION_THICKNESS, SmartReshapeTool::ACTION_OPTION_THICKNESS_THICKNESS)
     end
 
-    def _fetch_option_normal_reversed?
-      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_NORMAL_REVERSED)
+    def _fetch_option_measure_reversed?
+      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_REVERSED)
     end
 
     def _fetch_option_reduce_envelope?
       @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE)
+    end
+
+    def _fetch_option_measure_type_inside?
+      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_MEASURE_TYPE, SmartDrawTool::ACTION_OPTION_MEASURE_TYPE_INSIDE)
+    end
+
+    def _fetch_option_measure_type_outside?
+      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_MEASURE_TYPE, SmartDrawTool::ACTION_OPTION_MEASURE_TYPE_OUTSIDE)
     end
 
     # -----
@@ -4597,7 +4643,7 @@ module Ladb::OpenCutList
       # normal comes from). The "normal reversed" option still flips it, for
       # the same "which side is front" purpose it serves in the unlocked case.
       if @locked_normal
-        normal = _fetch_option_normal_reversed? ? @locked_normal.reverse : @locked_normal
+        normal = _fetch_option_measure_reversed? ? @locked_normal.reverse : @locked_normal
         return normal.to_a
       end
 
@@ -4605,9 +4651,11 @@ module Ladb::OpenCutList
       return nil if candidates.length < 2
 
       index = _get_separator_normal_candidate_index(candidates, fragment_def, view)
-      index = 1 - index if _fetch_option_normal_reversed?
 
-      candidates[index].to_a
+      candidate = candidates[index]
+      candidate = Geom::Vector3d.new(candidate).reverse! if _fetch_option_measure_reversed?
+
+      candidate.to_a
     end
 
     # Area-weighted dominant normal ([ x, y, z ] unit Float array) of the
@@ -4689,20 +4737,54 @@ module Ladb::OpenCutList
       [ min, max ]
     end
 
-    # Box centered on +point+, +thickness+ thick along +normal+, oversized in
-    # its own plane well beyond +fragment_def+'s bounds (SEPARATOR_SLAB_MARGIN)
-    # so that intersecting it with the cavity fragment clips exclusively on
-    # the cavity's own boundary - real panel faces, or the hull cap when the
-    # cavity is open. Serialized to the mesh format expected by
-    # Fiddle::Meshy.operate ; every triangle carries face id 0 (same
-    # reserved-id convention as CommonSolidFindCavitiesWorker's envelope -
-    # irrelevant here since only the geometry is used for the preview).
+    # Box positioned against +point+ along +normal+ - +point+ being the
+    # inside face, the outside face, or the center, per the "measure_type"
+    # option (clamped to +fragment_def+'s own extent on that axis - see
+    # below) - +thickness+ thick, and oversized in its own plane well beyond
+    # +fragment_def+'s bounds (SEPARATOR_SLAB_MARGIN) so that intersecting it
+    # with the cavity fragment clips exclusively on the cavity's own boundary
+    # - real panel faces, or the hull cap when the cavity is open. Serialized
+    # to the mesh format expected by Fiddle::Meshy.operate ; every triangle
+    # carries face id 0 (same reserved-id convention as
+    # CommonSolidFindCavitiesWorker's envelope - irrelevant here since only
+    # the geometry is used for the preview).
     def _get_separator_slab_mesh(normal_3f, point_3f, fragment_def, thickness)
       u, v = _get_separator_plane_basis(normal_3f)
 
       d = normal_3f[0] * point_3f[0] + normal_3f[1] * point_3f[1] + normal_3f[2] * point_3f[2]
-      d0 = d - thickness / 2.0
-      d1 = d + thickness / 2.0
+
+      if _fetch_option_measure_type_inside?
+        d0 = d
+        d1 = d + thickness
+      elsif _fetch_option_measure_type_outside?
+        d0 = d - thickness
+        d1 = d
+      else
+        d0 = d - thickness / 2.0
+        d1 = d + thickness / 2.0
+      end
+
+      # Unlike u/v, the normal axis gets no margin : it's the cavity's own
+      # extent that must contain the full slab, not the other way around. An
+      # interval landing past the cavity's bound on this axis would otherwise
+      # hand the boolean intersection a wish it can only grant by silently
+      # thinning the part below the requested thickness. Shifting [d0, d1]
+      # here - without resizing it - keeps the full thickness whenever the
+      # cavity is deep enough for it ; when it isn't, centering on the
+      # cavity's own extent is the best that can be done (the intersection
+      # will still thin the result to fit).
+      n0, n1 = _get_separator_mesh_extent(fragment_def.vertices, normal_3f)
+      if n1 - n0 >= thickness
+        shift = 0.0
+        shift = n0 - d0 if d0 < n0
+        shift = n1 - d1 if d1 > n1
+        d0 += shift
+        d1 += shift
+      else
+        mid = (n0 + n1) / 2.0
+        d0 = mid - thickness / 2.0
+        d1 = mid + thickness / 2.0
+      end
 
       u0, u1 = _get_separator_mesh_extent(fragment_def.vertices, u)
       v0, v1 = _get_separator_mesh_extent(fragment_def.vertices, v)

@@ -34,9 +34,11 @@
   },
   "action_3": { /* ACTION_DRAW_SEPARATOR */
     "thickness": { "metric": "18mm", "imperial": "1/2\"" },
+    "measure_type": "centered",
     "construction": false,
-    "ask_name": false,
     "normal_reversed": false,
-    "reduce_envelope": false
+    "measure_reversed": false,
+    "reduce_envelope": false,
+    "ask_name": false
   }
 }

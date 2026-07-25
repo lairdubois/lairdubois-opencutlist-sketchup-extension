@@ -2370,6 +2370,7 @@ tool:
     action_option_group_offset: Décalage
     action_option_group_segments: Segments
     action_option_group_thickness: Epaisseur
+    action_option_group_measure_type: Mesure
     action_option_group_options: Options
     action_option_offset_shape_offset: Décalage
     action_option_offset_shape_offset_status: Permet d'appliquer un décalage au tracé de la forme dessinée
@@ -2377,6 +2378,9 @@ tool:
     action_option_segments_segment_count_status: Permet de définir le nombre de segments du cercle
     action_option_thickness_thickness: Epaisseur
     action_option_thickness_thickness_status: Définit l'épaisseur des panneaux
+    action_option_measure_type_inside_status: Positionner l'épaisseur à l'intérieur du point piqué
+    action_option_measure_type_centered_status: Centrer l'épaisseur sur le point piqué
+    action_option_measure_type_outside_status: Positionner l'épaisseur à l'extérieur du point piqué
     action_option_options_construction: Traits de construction
     action_option_options_construction_status: Dessiner en traits de construction
     action_option_options_rectangle_centered: Rectangle centré
