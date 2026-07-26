@@ -2367,6 +2367,7 @@ tool:
     action_2_state_1_status: Cliquez pour définir un nouveau point ou entrez une distance
     action_x_state_2_status: Cliquez pour définir l'élévation ou entrez une distance
     action_3: Dessiner un Séparateur
+    action_3_state_0_status: Cliquez sur une paroie pour dessiner un séparateur
     action_option_group_offset: Décalage
     action_option_group_segments: Segments
     action_option_group_thickness: Epaisseur
