@@ -295,10 +295,15 @@ core:
   solid:
     error:
       empty: Der Körper enthält keine Geometrie
+      empty_named: "« {{ name }} » enthält keine Geometrie"
       non_manifold_edges: "Der Körper enthält {{ count }} nicht-mannigfaltige Kante"
       non_manifold_edges_plural: "Der Körper enthält {{ count }} nicht-mannigfaltige Kanten"
+      non_manifold_edges_named: "« {{ name }} » enthält {{ count }} nicht mannigfaltige-Kante"
+      non_manifold_edges_named_plural: "« {{ name }} » enthält {{ count }} nicht-mannigfaltige Kanten"
       open_edges: "Der Körper enthält {{ count }} offene Kante"
       open_edges_plural: "Der Körper enthält {{ count }} offene Kanten"
+      open_edges_named: "« {{ name }} » enthält {{ count }} offene Kante"
+      open_edges_named_plural: "« {{ name }} » enthält {{ count }} offene Kanten"
       locked_instances: "Der Vorgang kann eine gesperrte Instanz nicht ändern: {{ list }}"
 tab:
   cutlist:
@@ -2367,9 +2372,12 @@ tool:
     action_2_state_1_status: "Klicken Sie, um einen neuen Punkt zu setzen, oder geben Sie eine Distanz ein"
     action_x_state_2_status: "Klicken Sie, um die Höhe festzulegen, oder geben Sie eine Distanz ein"
     action_3: Einteilung einfügen
+    action_3_state_0_status: "Klicken Sie auf eine Wand, um eine Einteilung zu zeichnen"
     action_option_group_offset: Versatz
     action_option_group_segments: Segmente
     action_option_group_thickness: Dicke
+    action_option_group_axes: Achsen
+    action_option_group_measure_type: Maß
     action_option_group_options: Optionen
     action_option_offset_shape_offset: Versatz
     action_option_offset_shape_offset_status: "Ermöglicht es, einen Versatz auf die gezeichnete Form anzuwenden"
@@ -2377,6 +2385,11 @@ tool:
     action_option_segments_segment_count_status: Ermöglicht das Festlegen der Anzahl der Kreissegmente
     action_option_thickness_thickness: Dicke
     action_option_thickness_thickness_status: Definiert die Dicke der Platten
+    action_option_measure_type_inside_status: Dicke innerhalb des Zielpunkts positionieren
+    action_option_measure_type_centered_status: Dicke auf den Zielpunkt ausrichten
+    action_option_measure_type_outside_status: Dicke außerhalb des Zielpunkts positionieren
+    action_option_axes_active_status: Bearbeitung entlang der aktiven Achsen
+    action_option_axes_context_status: Bearbeitung entlang der Achsen der Gruppe oder der Wirtskomponente
     action_option_options_construction: Konstruktionslinien
     action_option_options_construction_status: Als Konstruktionslinien zeichnen
     action_option_options_rectangle_centered: Rechteck zentriert
@@ -2396,6 +2409,10 @@ tool:
     action_option_options_draw_in_0: Zeichnen im aktiven Element
     action_option_options_draw_in_1: Zeichnen im übergeordneten Teil des ersten Punktes
     action_option_options_draw_in_status: "Zeichnen im übergeordneten Element des Teils, auf das der erste Punkt bezieht"
+    action_option_options_reduce_envelope: Zurückgesetzte Teile
+    action_option_options_reduce_envelope_status: Zurückgesetzte Teil berücksichtigen
+    action_option_options_reuse_definition: Teile wiederverwenden
+    action_option_options_reuse_definition_status: "Das vorhandene Teil mit derselben Form und in derselben Umgebung wiederverwenden, anstatt ein neues zu erstellen"
     action_option_options_ask_name: Benennung der Teile
     action_option_options_ask_name_status: Namen der Teile manuell eingeben
     action_measure_locked_status: Auf die letzte Messung fixieren
@@ -2403,8 +2420,9 @@ tool:
     action_change_move_anchor_status: Ankerpunkt ändern
     success:
       part_created: "Neu erstelltes Teil: {{ name }}"
+      part_reused: "Neues Vorkommen des vorhandenen Teils: {{ name }}"
   smart_handle:
-    title: Handhaben
+    title: Bearbeiten
     action_0: Auswählen
     action_0_status: Teil auswählen
     action_1: Entlang Linie kopieren
@@ -2428,9 +2446,9 @@ tool:
     action_option_copy_measure_type_outside_status: Außenmessung
     action_option_copy_measure_type_centered_status: Messung von Mitte zu Mitte
     action_option_copy_measure_type_inside_status: Messung zwischen den Teilen
-    action_option_axes_active_status: Manipulieren entlang der aktiven Achsen
-    action_option_axes_context_status: "Manipulieren entlang der Achsen der Gruppe oder Komponente, die das Teil enthält"
-    action_option_axes_entity_status: Manipulieren entlang der Achsen des Teils
+    action_option_axes_active_status: Bearbeitung entlang der aktiven Achsen
+    action_option_axes_context_status: "Bearbeitung entlang der Achsen der Gruppe oder Komponente, die das Teil enthält"
+    action_option_axes_entity_status: Bearbeitung entlang der Achsen des Teils
     action_option_options_mirror_status: Symmetrisch kopieren
     action_toggle_raytest_status: Projektion auf den nächsten Punkt
     warning:
@@ -2474,9 +2492,9 @@ tool:
     action_option_thickness_thickness_status: Definiert die Dicke der Platten
     action_option_stretch_measure_type_outside_status: Außenmessung
     action_option_stretch_measure_type_offset_status: Differenzwert messen
-    action_option_axes_active_status: Manipulieren entlang der aktiven Achsen
-    action_option_axes_context_status: "Manipulieren entlang der Achsen der Gruppe oder Komponente, die das Teil enthält"
-    action_option_axes_entity_status: Manipulieren entlang der Achsen des Teils
+    action_option_axes_active_status: Bearbeitung entlang der aktiven Achsen
+    action_option_axes_context_status: "Bearbeitung entlang der Achsen der Gruppe oder Komponente, die das Teil enthält"
+    action_option_axes_entity_status: Bearbeitung entlang der Achsen des Teils
     action_option_paneling_joint_type_flat_status: Stumpf verbinden
     action_option_paneling_joint_type_miter_status: Auf Gehrung verbinden
     action_option_paneling_direction_inward_status: Nach innen
