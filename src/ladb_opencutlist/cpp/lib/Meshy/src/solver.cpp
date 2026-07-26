@@ -214,10 +214,16 @@ namespace Meshy {
     json Solver::operate() {
 
         // Validation : structured errors, one at most per mesh, src meshes first.
+        //
+        // Each error carries the OPERAND it was found on ("role" : "src" or
+        // "cut", "index" : position in that input list), so the caller can name
+        // the culprit rather than just the defect. Position in the error array
+        // could never say it : a valid mesh appends nothing, so the array is an
+        // arbitrary subset of the operands.
 
         if (validate_) {
             json j_errors = json::array();
-            auto fn_append_errors = [&j_errors](manifold::MeshGL64& mesh) {
+            auto fn_append_errors = [&j_errors](manifold::MeshGL64& mesh, const char* role, std::size_t index) {
                 std::vector<ValidationError> errors = validate_mesh(mesh);
                 // A lone non_manifold_edges verdict may be a seam between two
                 // (or more) otherwise-manifold shells pinched together at a
@@ -235,11 +241,13 @@ namespace Meshy {
                     if (error.count > 0) {
                         j_error["count"] = error.count;
                     }
+                    j_error["role"] = role;
+                    j_error["index"] = index;
                     j_errors.push_back(j_error);
                 }
             };
-            for (auto& mesh : src_meshes_) fn_append_errors(mesh);
-            for (auto& mesh : cut_meshes_) fn_append_errors(mesh);
+            for (std::size_t i = 0; i < src_meshes_.size(); ++i) fn_append_errors(src_meshes_[i], "src", i);
+            for (std::size_t i = 0; i < cut_meshes_.size(); ++i) fn_append_errors(cut_meshes_[i], "cut", i);
             if (!j_errors.empty()) {
                 json output;
                 output["errors"] = j_errors;

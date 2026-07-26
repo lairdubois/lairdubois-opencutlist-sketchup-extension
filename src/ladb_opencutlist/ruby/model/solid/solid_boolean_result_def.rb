@@ -6,13 +6,15 @@ module Ladb::OpenCutList
   # Result of a boolean operation : fragments on success, i18n error tuples otherwise.
   class SolidBooleanResultDef < DataContainer
 
-    attr_reader :errors,            # Array of i18n tuples [ key, vars ] ; empty on success
-                :fragment_defs,     # Array<SolidFragmentDef>
-                :curve_info_defs,   # Array<SolidCurveInfoDef> collected from all operands
-                :created_entities   # Entities holding the result, filled by the apply phase
+    attr_reader :errors,              # Array of i18n tuples [ key, vars ] ; empty on success
+                :error_drawing_defs,  # Array<DrawingDef> the operands held responsible for the errors, deduplicated ; empty when no error is attributable to one
+                :fragment_defs,       # Array<SolidFragmentDef>
+                :curve_info_defs,     # Array<SolidCurveInfoDef> collected from all operands
+                :created_entities     # Entities holding the result, filled by the apply phase
 
     def initialize
       @errors = []
+      @error_drawing_defs = []
       @fragment_defs = []
       @curve_info_defs = []
       @created_entities = []
@@ -20,6 +22,52 @@ module Ladb::OpenCutList
 
     def success?
       @errors.empty?
+    end
+
+    # Appends the errors of a raw Meshy output as i18n tuples : the native
+    # exception if any, otherwise the structured per-operand validation
+    # errors. Returns true when this result carries errors (including ones
+    # appended before this call).
+    #
+    # Each validation error names the operand it was found on - "role", the
+    # Meshy input list it belongs to ("src" or "cut"), and "index", its
+    # position in that list. The given block resolves that pair to the
+    # DrawingDef the operand was built from, or nil when it is not one (a
+    # computed operand such as the cavity worker's envelope, or an unvalidated
+    # pass whose lists no longer match the caller's drawing defs). A resolved
+    # culprit lands in #error_drawing_defs, and its name in the message.
+    #
+    # The operand identity cannot be read off the error's position in the
+    # array : a valid operand appends nothing, so the errors are an arbitrary
+    # subset of the inputs.
+    def append_meshy_errors(output)
+
+      if output['error']
+        @errors << [ 'core.error.exception', { :error => output['error'] } ]
+        return true
+      end
+
+      if output['errors'].is_a?(Array)
+        output['errors'].each do |error|
+
+          drawing_def = block_given? ? yield(error['role'], error['index']) : nil
+          @error_drawing_defs << drawing_def unless drawing_def.nil? || @error_drawing_defs.include?(drawing_def)
+
+          vars = {}
+          vars[:count] = error['count'] if error['count']
+          name = _operand_display_name(drawing_def)
+          vars[:name] = name unless name.nil?
+
+          # The _named variants say the same thing about a designated operand ;
+          # an operand with no name of its own (or none at all) keeps the plain
+          # message rather than pointing at an empty string
+          key = "core.solid.error.#{error['code']}#{name.nil? ? '' : '_named'}"
+          @errors << (vars.empty? ? [ key ] : [ key, vars ])
+
+        end
+      end
+
+      !@errors.empty?
     end
 
     # Fragments bounded by the given ORIGINAL source face, addressed by its
@@ -54,6 +102,24 @@ module Ladb::OpenCutList
     # SolidFragmentDef#contains_point?.
     def fragment_defs_for_point(point, tolerance: SolidMeshDef::TOLERANCE)
       fragment_defs.select { |fragment_def| fragment_def.contains_point?(point, tolerance: tolerance) }
+    end
+
+    # -----
+
+    private
+
+    # Name identifying the given operand in an error message - its instance
+    # name, falling back to its definition name - or nil when there is no
+    # nameable container behind it (no drawing def, the model root, a deleted
+    # instance, or an unnamed group).
+    def _operand_display_name(drawing_def)
+      return nil if drawing_def.nil? || !drawing_def.respond_to?(:container)
+      container = drawing_def.container
+      return nil unless container.is_a?(Sketchup::Group) || container.is_a?(Sketchup::ComponentInstance)
+      return nil if container.deleted?
+      name = container.name.to_s
+      name = container.definition.name.to_s if name.empty? && container.respond_to?(:definition)
+      name.empty? ? nil : name
     end
 
   end

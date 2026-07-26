@@ -4690,10 +4690,12 @@ module Ladb::OpenCutList
         container = container_path.last
         return nil if container.nil?
 
-        worker = CutlistGenerateWorker.new(**HashUtils.symbolize_keys(PLUGIN.get_model_preset('cutlist_options')).merge({ active_entity: container, active_path: container_path[0...-1] }))
-        cutlist = worker.run
+        cutlist = CutlistGenerateWorker.new(**HashUtils.symbolize_keys(PLUGIN.get_model_preset('cutlist_options'))
+                                                       .merge({ active_entity: container, active_path: container_path[0...-1] })
+        ).run
 
-        parts = cutlist.groups.reject { |group| group.material_is_virtual || group.material_type == MaterialAttributes::TYPE_HARDWARE}
+        parts = cutlist.groups
+                       .reject { |group| group.material_is_virtual || group.material_type == MaterialAttributes::TYPE_HARDWARE}
                        .flat_map { |group| group.get_parts }
         drawing_defs = parts.flat_map { |part|
           part.def.instance_infos.values.map { |instance_info|

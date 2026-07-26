@@ -401,7 +401,7 @@ module Ladb::OpenCutList
         :src_meshes => [ envelope_mesh ],
         :cut_meshes => panel_meshes
       )
-      return result_def if _report_errors(direct_output, result_def)
+      return result_def if _report_errors(direct_output, result_def, panel_id_ranges)
       result_def.fragment_defs.concat(fn_collect.call(direct_output, true))
 
       # Open pass (the bbox envelope only reveals hermetic cavities)
@@ -496,19 +496,20 @@ module Ladb::OpenCutList
     # Appends the given Meshy output errors (native exception or structured
     # per-mesh validation errors) to the result def as i18n tuples. Returns
     # true when the output carries errors.
-    def _report_errors(output, result_def)
-      if output['error']
-        result_def.errors << [ 'core.error.exception', { :error => output['error'] } ]
-      elsif output['errors'].is_a?(Array)
-        output['errors'].each do |error|
-          if error['count']
-            result_def.errors << [ "core.solid.error.#{error['code']}", { :count => error['count'] } ]
-          else
-            result_def.errors << [ "core.solid.error.#{error['code']}" ]
-          end
-        end
+    #
+    # +panel_id_ranges+ names the culprit panel of a validation error : the cut
+    # meshes of the validated pass are the panels, in that list's own order
+    # (empty mesh defs are skipped, so it is NOT the drawing def order — see
+    # #run), and the single src mesh is the computed envelope, which belongs to
+    # no drawing def. Left nil for the passes running with :validate => false,
+    # whose operands (welded shells, cavity fragments) are computed too : they
+    # can only ever report a native exception.
+    def _report_errors(output, result_def, panel_id_ranges = nil)
+      result_def.append_meshy_errors(output) do |role, index|
+        next nil if panel_id_ranges.nil? || role != 'cut' || !index.is_a?(Integer)
+        entry = panel_id_ranges[index]
+        entry.nil? ? nil : @panel_drawing_defs[entry.last]
       end
-      !result_def.errors.empty?
     end
 
     # Axis aligned envelope box enclosing every cut mesh, inflated by

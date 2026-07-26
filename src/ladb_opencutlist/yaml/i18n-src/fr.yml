@@ -295,10 +295,15 @@ core:
   solid:
     error:
       empty: Le solide ne contient aucune géométrie
+      empty_named: "« {{ name }} » ne contient aucune géométrie"
       non_manifold_edges: "Le solide contient {{ count }} arête non manifold"
       non_manifold_edges_plural: "Le solide contient {{ count }} arêtes non manifold"
+      non_manifold_edges_named: "« {{ name }} » contient {{ count }} arête non manifold"
+      non_manifold_edges_named_plural: "« {{ name }} » contient {{ count }} arêtes non manifold"
       open_edges: "Le solide contient {{ count }} arête ouverte"
       open_edges_plural: "Le solide contient {{ count }} arêtes ouvertes"
+      open_edges_named: "« {{ name }} » contient {{ count }} arête ouverte"
+      open_edges_named_plural: "« {{ name }} » contient {{ count }} arêtes ouvertes"
       locked_instances: "L'opération ne peut pas modifier une instance verrouillée : {{ list }}"
 tab:
   cutlist:

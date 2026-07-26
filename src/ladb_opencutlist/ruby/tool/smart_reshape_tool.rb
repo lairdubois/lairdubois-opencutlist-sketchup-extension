@@ -3318,6 +3318,8 @@ module Ladb::OpenCutList
 
     def _operate(operation = nil)
 
+      errors = nil
+
       model = Sketchup.active_model
       model.start_operation('OCL Solid Operation', true)
       begin
@@ -3338,24 +3340,34 @@ module Ladb::OpenCutList
           make_unique: _fetch_option_options_make_unique?,
           wrap_operation: false
         ).run
-        @tool.notify_errors(result_def.errors) unless result_def.success?
+        if result_def.success?
 
-        # Clean up unused definitions if possible
-        if defined?(selected_definitions)
-          definitions = Sketchup.active_model.definitions
-          selected_definitions.each do |definition|
-            definitions.remove(definition) if definition.count_used_instances.zero?
+          # Clean up unused definitions if possible
+          if defined?(selected_definitions)
+            definitions = Sketchup.active_model.definitions
+            selected_definitions.each do |definition|
+              definitions.remove(definition) if definition.count_used_instances.zero?
+            end
           end
-        end
 
-        model.commit_operation
+          model.commit_operation
+
+        else
+          errors = result_def.errors
+          model.abort_operation
+        end
 
       rescue Exception => e
         PLUGIN.dump_exception(e)
         model.abort_operation
       end
 
-      _restart
+      if errors.is_a?(Array) && errors.any?
+        _reset
+        @tool.notify_errors(errors)
+      else
+        _restart
+      end
     end
 
     # -----

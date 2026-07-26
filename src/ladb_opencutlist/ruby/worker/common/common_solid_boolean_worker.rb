@@ -95,17 +95,16 @@ module Ladb::OpenCutList
       # Debug : sortie brute de Manifold, AVANT reconstruction SketchUp
       # File.write(File.join(Meshy.lib_dir, 'output.json'), JSON.pretty_generate(output))
 
-      if output['error']
-        result_def.errors << [ 'core.error.exception', { :error => output['error'] } ]
-      elsif output['errors'].is_a?(Array)
-        output['errors'].each do |error|
-          if error['count']
-            result_def.errors << [ "core.solid.error.#{error['code']}", { :count => error['count'] } ]
-          else
-            result_def.errors << [ "core.solid.error.#{error['code']}" ]
-          end
-        end
-      elsif output['fragments'].is_a?(Array)
+      # A validation error names the operand it was found on : the src and cut
+      # mesh lists are serialized one for one from the drawing defs, in their
+      # own order, so the index maps straight back — see
+      # SolidBooleanResultDef#append_meshy_errors.
+      errored = result_def.append_meshy_errors(output) do |role, index|
+        next nil unless index.is_a?(Integer)
+        role == 'cut' ? @cut_drawing_defs[index] : (role == 'src' ? @src_drawing_defs[index] : nil)
+      end
+
+      if !errored && output['fragments'].is_a?(Array)
         output['fragments'].each do |fragment|
           fragment_def = SolidFragmentDef.new(
             fragment['vertices'], fragment['face_indices'], fragment['face_ids'], face_info_defs,
