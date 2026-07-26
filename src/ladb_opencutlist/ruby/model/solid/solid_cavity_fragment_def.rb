@@ -56,7 +56,7 @@ module Ladb::OpenCutList
 
       end
 
-      total = area_by_plane.values.sum
+      total = area_by_plane.values.inject(0.0) { |sum, area| sum + area }
       @opening_plane_count = total > 0 ? area_by_plane.values.count { |area| area >= total * OPENING_PLANE_MIN_AREA_SHARE } : 0
     end
 
@@ -109,7 +109,7 @@ module Ladb::OpenCutList
 
       end
 
-      total = area_by_plane.values.sum
+      total = area_by_plane.values.inject(0.0) { |sum, area| sum + area }
       normals = total > 0 ? area_by_plane.select { |_plane_index, area| area >= total * WALL_PLANE_MIN_AREA_SHARE }
                                         .keys.map { |plane_index| normal_by_plane[plane_index] } : []
       @walled_on_facing_planes = normals.combination(2).any? { |first, second|

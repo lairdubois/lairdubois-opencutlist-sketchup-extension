@@ -3343,7 +3343,7 @@ module Ladb::OpenCutList
         if result_def.success?
 
           # Clean up unused definitions if possible
-          if defined?(selected_definitions)
+          if defined?(selected_definitions) && selected_definitions.is_a?(Array)
             definitions = Sketchup.active_model.definitions
             selected_definitions.each do |definition|
               definitions.remove(definition) if definition.count_used_instances.zero?

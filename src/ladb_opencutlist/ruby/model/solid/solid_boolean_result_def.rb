@@ -179,11 +179,11 @@ module Ladb::OpenCutList
     # triangles. Meaningful on a closed, consistently wound fragment (always
     # true of Manifold output).
     def volume
-      @volume ||= @face_indices.each_slice(3).sum { |a, b, c|
+      @volume ||= @face_indices.each_slice(3).inject(0.0) { |sum, (a, b, c)|
         ax, ay, az = @vertices[a * 3], @vertices[a * 3 + 1], @vertices[a * 3 + 2]
         bx, by, bz = @vertices[b * 3], @vertices[b * 3 + 1], @vertices[b * 3 + 2]
         cx, cy, cz = @vertices[c * 3], @vertices[c * 3 + 1], @vertices[c * 3 + 2]
-        (ax * (by * cz - bz * cy) + ay * (bz * cx - bx * cz) + az * (bx * cy - by * cx)) / 6.0
+        sum + (ax * (by * cz - bz * cy) + ay * (bz * cx - bx * cz) + az * (bx * cy - by * cx)) / 6.0
       }.abs
     end
 
