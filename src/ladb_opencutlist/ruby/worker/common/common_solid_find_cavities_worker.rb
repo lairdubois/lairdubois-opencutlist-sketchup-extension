@@ -32,9 +32,14 @@ module Ladb::OpenCutList
   #   through tube — see SolidCavityFragmentDef#opening_plane_count), while
   #   the outside world and the concavity pockets a NON-convex assembly
   #   leaves between itself and its hull face the envelope on many comparable
-  #   planes and are filtered out. max_openness — the maximum fraction of the
-  #   candidate surface lying on the caps — remains as an optional secondary
-  #   cap (disabled by default).
+  #   planes and are filtered out. A cap structure alone does not always tell
+  #   them apart, though — a notched cabinet's L-shaped cavity and the pocket
+  #   its notch leaves OUTSIDE score the same on the caps — so a candidate
+  #   must also be ENCLOSED : walled on two opposing sides, which a
+  #   compartment is by definition and a pocket wrapping a corner is not (see
+  #   SolidCavityFragmentDef#walled_on_facing_planes?). max_openness — the
+  #   maximum fraction of the candidate surface lying on the caps — remains as
+  #   an optional secondary cap (disabled by default).
   #
   # - ENVELOPE_BBOX : the envelope is the panels world bounds inflated by
   #   ENVELOPE_MARGIN. Only hermetically closed cavities are found : any
@@ -85,10 +90,29 @@ module Ladb::OpenCutList
   # coincidence — lets a short member (e.g. a mullion shorter than the case
   # is deep, in a non-rectangular assembly) be judged alongside what it
   # actually connects to, instead of on its own possibly-misleading aspect
-  # ratio. Each cavity is then clipped at the remaining (SIDE) planes IT
-  # exposed (keeping the panel side) : its caps recede to the recessed panel
-  # edge — the whole connected group is reduced to the depth of its
-  # shallowest element — and each compartment comes out as its own cavity.
+  # ratio.
+  #
+  # That shape test is only a PROXY, though, for the question that actually
+  # decides : does this chant make an OPENING recede, or does it cut ACROSS
+  # the cavity ? Every candidate must answer the first — its plane has to be
+  # antiparallel to one of the cavity's own DOMINANT openings, that opening
+  # lying beyond it (see #_reduction_recedes_opening?) — and that is what a
+  # recess IS, whatever the board's proportions. It admits the divider set
+  # back from the front of a case deeper than it is high, whose recessed
+  # chant is perpendicular to its own longest dimension and which the shape
+  # test reads as an END ; and it rejects the lateral tip of a stub shelf,
+  # which the shape test reads as a SIDE as soon as the board is deeper than
+  # it is long, and whose plane would amputate everything beside the shelf
+  # instead of receding anything. The shape test then only has to arbitrate
+  # the weaker group- and pocket-based evidence, where the concave/notched
+  # footprint family lives : the panel bounding the cavity on BOTH main
+  # faces has already demonstrated it separates two compartments, and needs
+  # no proxy on top.
+  #
+  # Each cavity is then clipped at the remaining planes IT exposed (keeping
+  # the panel side) : its caps recede to the recessed panel edge — the whole
+  # connected group is reduced to the depth of its shallowest element — and
+  # each compartment comes out as its own cavity.
   #
   # The clip is applied to the CAVITY, not to the shared envelope : a recessed
   # panel is evidence about the cavity whose openings it bounds, and about no
@@ -217,6 +241,16 @@ module Ladb::OpenCutList
     # cavity. Slivers being nudge artifacts, they also leak the panel
     # order into the result.
     REDUCTION_MIN_AREA = REDUCTION_MIN_DEPTH * REDUCTION_MIN_DEPTH
+
+    # Maximum dot product between a reduction plane's normal and an opening
+    # cap's normal for that plane to be read as RECEDING that opening : the
+    # two must be ANTIPARALLEL — a cap normal points out of the cavity, a
+    # reduction normal toward the kept side — within about 8°. A recess read
+    # against a SLANTED opening (a lectern's front, any non-flush hull cap)
+    # falls outside the band and is not reduced at all : an assembly whose
+    # opening is not flat gives no plane to recede it to.
+    # See #_reduction_recedes_opening?.
+    REDUCTION_OPENING_DOT = -0.99
 
     # Minimum share of a cavity's total cap area for one cap plane to be
     # treated as an OPENING a beveled edge may recede. A cavity leaking
@@ -350,6 +384,10 @@ module Ladb::OpenCutList
           # the outside world and concavity pockets face the envelope on many
           # planes
           next if !hermetic && fragment_def.opening_plane_count > @max_opening_planes
+          # Enclosure filter : a compartment is walled on two opposing sides,
+          # a concavity pocket only wraps a corner of the assembly — see
+          # SolidCavityFragmentDef#walled_on_facing_planes?
+          next if !hermetic && !fragment_def.walled_on_facing_planes?
           collected << fragment_def
         end
         collected
@@ -767,17 +805,12 @@ module Ladb::OpenCutList
             break if beyond && behind
           end
           next unless beyond && behind
-          # The removed side must carry envelope cap area : that is what
-          # makes the crossing an opening recess rather than an interior
-          # feature of the assembly
-          cap_beyond = fragment_def.face_indices.each_slice(3).with_index.any? { |(a, b, c), triangle_index|
-            next false unless face_ids[triangle_index] == 0
-            x = (vertices[a * 3] + vertices[b * 3] + vertices[c * 3]) / 3.0
-            y = (vertices[a * 3 + 1] + vertices[b * 3 + 1] + vertices[c * 3 + 1]) / 3.0
-            z = (vertices[a * 3 + 2] + vertices[b * 3 + 2] + vertices[c * 3 + 2]) / 3.0
-            normal[0] * x + normal[1] * y + normal[2] * z - d < -REDUCTION_MIN_DEPTH
-          }
-          next unless cap_beyond
+          # The plane must make one of the cavity's own OPENINGS recede : that
+          # is what tells a recess from a chant that merely cuts ACROSS the
+          # cavity (a stub shelf's lateral tip, where the board just ends and
+          # nothing beyond it justifies a cut) — see
+          # #_reduction_recedes_opening?
+          next unless _reduction_recedes_opening?(normal, d, cap_planes)
           # Several panels merely lying on the same (normal, d) plane can be
           # pure coincidence (e.g. a large contour panel and an unrelated
           # divider's free tip that happen to sit at the same depth) : a
@@ -819,8 +852,18 @@ module Ladb::OpenCutList
             # mullion shorter than the case is deep, in a non-rectangular
             # assembly) is judged alongside what it actually connects to,
             # not on its own possibly-misleading aspect ratio.
+            #
+            # A shape test can only ever be a PROXY, though — it reads the
+            # board's length off its own bounds, and a board deeper than it is
+            # long has the two swapped. The panel that bounds the cavity on
+            # BOTH main faces needs none of it : it demonstrably separates two
+            # compartments, and the plane demonstrably recedes an opening
+            # (checked above), which is the whole definition of a recess. The
+            # shape test stays as the last line of defence for the weaker
+            # group- and pocket-based evidence, where the concave/notched
+            # footprint family lives.
             merged_mesh = { :vertices => mesh_positions.flat_map { |mesh_position| panel_meshes[mesh_position][:vertices] } }
-            _reduction_side_plane?(normal, merged_mesh)
+            both_main_faces || _reduction_side_plane?(normal, merged_mesh)
           }
           next unless accepted
           planes[key] = [ normal, d ]
@@ -1240,12 +1283,45 @@ module Ladb::OpenCutList
       (pn1 - pn0) <= [ pu1 - pu0, pv1 - pv0 ].max
     end
 
+    # Whether the given plane (unit normal pointing toward the KEPT side,
+    # n.p = d) makes one of the cavity's own OPENINGS recede : a cap plane
+    # (cap_planes, [ normal, offset, area ] per distinct plane) antiparallel
+    # to it (REDUCTION_OPENING_DOT), lying on the REMOVED side, and weighing
+    # at least REDUCTION_BEVEL_CAP_RATIO of the cavity's whole cap area.
+    # Required of every reduction plane — see the class doc.
+    #
+    # This is what a recess IS — a panel set back BEHIND an opening — read
+    # off the cavity itself rather than guessed from the panel's proportions,
+    # which #_reduction_side_plane? can only do as long as a board is longer
+    # along its opening than it is deep. It also subsumes the weaker test it
+    # replaced (SOME cap area beyond the plane, whatever its orientation),
+    # which a chant cutting across the cavity passes just by having the
+    # cavity's real opening somewhere off to its side. The minor caps are
+    # left out for the very reason #_detect_bevel_planes leaves them out : an
+    # incidental leak faces the envelope on a few square millimetres and
+    # would justify receding the whole cross section on a plane the assembly
+    # never asked for.
+    def _reduction_recedes_opening?(normal, d, cap_planes)
+      total_area = cap_planes.values.reduce(0.0) { |sum, cap_plane| sum + cap_plane[2] }
+      return false if total_area <= 0
+      cap_planes.values.any? { |cap_normal, cap_d, area|
+        next false if area / total_area < REDUCTION_BEVEL_CAP_RATIO
+        dot = normal[0] * cap_normal[0] + normal[1] * cap_normal[1] + normal[2] * cap_normal[2]
+        next false unless dot <= REDUCTION_OPENING_DOT
+        # The normals being antiparallel, the cap's own offset reads -cap_d on
+        # this plane's axis : the opening must sit beyond the plane, on the
+        # side the clip removes
+        -cap_d - d < -REDUCTION_MIN_DEPTH
+      }
+    end
+
     # Box covering the envelope on the KEPT side of the given plane (unit
     # normal, n.p = d), serialized like the envelope meshes (face id 0) :
     # intersecting a cavity with these boxes clips it at the recessed panel
     # edges, the new faces inheriting the cap id. Unbounded in the plane (full
-    # envelope extent, so any cavity is covered) : only SIDE planes reach here
-    # (see #_reduction_side_plane?), and the whole connected group must recede
+    # envelope extent, so any cavity is covered) : only planes that represent
+    # a group-wide depth reach here (see #_reduction_side_plane? /
+    # #_reduction_recedes_opening?), and the whole connected group must recede
     # together.
     def _reduction_slab_mesh(normal, d, envelope_mesh)
 

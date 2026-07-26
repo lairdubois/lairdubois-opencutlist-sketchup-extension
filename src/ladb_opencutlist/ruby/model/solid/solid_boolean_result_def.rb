@@ -287,6 +287,11 @@ module Ladb::OpenCutList
     # per-plane area) breaks down : the tessellation shows through the
     # merged contours (#boundary_segments) and one flat opening counts as
     # many (SolidCavityFragmentDef#opening_plane_count).
+    #
+    # The triangle's own unit normal is yielded last, after the doubled area :
+    # every triangle sharing a plane index agrees with it to
+    # PLANE_NORMAL_TOLERANCE (the matching is signed), so it doubles as the
+    # plane's normal — see SolidCavityFragmentDef#walled_on_facing_planes?.
     def _each_triangle_plane
       min_area2 = SolidMeshDef::TOLERANCE * SolidMeshDef::TOLERANCE
 
@@ -309,7 +314,7 @@ module Ladb::OpenCutList
         nx /= area2 ; ny /= area2 ; nz /= area2
         d = nx * ax + ny * ay + nz * az
 
-        yield _triangle_plane_index(planes, plane_indices_by_bucket, nx, ny, nz, d), triangle_index, a, b, c, area2
+        yield _triangle_plane_index(planes, plane_indices_by_bucket, nx, ny, nz, d), triangle_index, a, b, c, area2, nx, ny, nz
       end
     end
 

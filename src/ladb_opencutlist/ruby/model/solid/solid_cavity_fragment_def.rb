@@ -60,6 +60,63 @@ module Ladb::OpenCutList
       @opening_plane_count = total > 0 ? area_by_plane.values.count { |area| area >= total * OPENING_PLANE_MIN_AREA_SHARE } : 0
     end
 
+    # Minimum share of the total WALL area a panel plane must carry to be
+    # weighed as a wall of the cavity — same doctrine, and same value, as
+    # OPENING_PLANE_MIN_AREA_SHARE : below this it is an incidental strip (a
+    # panel's chant crossing the volume, a boolean sliver), and a pair of
+    # those is no evidence of anything.
+    WALL_PLANE_MIN_AREA_SHARE = 0.05
+
+    # Maximum dot product between two wall normals for them to count as
+    # FACING each other : antiparallel within about 45°, so a cavity between
+    # two panels still qualifies when one of them is tilted (a lectern's
+    # slanted top over its bottom).
+    FACING_WALL_MAX_DOT = -0.7
+
+    # Whether the cavity is WALLED ON TWO OPPOSING SIDES : whether some pair
+    # of its panel planes (face id != 0), each carrying at least
+    # WALL_PLANE_MIN_AREA_SHARE of the wall area, faces each other
+    # (FACING_WALL_MAX_DOT — the plane normals point out of the cavity, so two
+    # walls it lies BETWEEN point away from one another).
+    #
+    # This is what tells a compartment from the concavity POCKET a non-convex
+    # assembly leaves between itself and its hull. A compartment is enclosed :
+    # whatever else it opens onto, some panel is on one side of it and another
+    # panel opposite — two shelves with the volume sandwiched between them
+    # already qualify, and that is the thinnest enclosure the separator tool
+    # is asked to work in. A pocket merely WRAPS a corner of the assembly :
+    # its walls are the outer faces meeting at that corner, mutually
+    # perpendicular, and everything else about it is hull. Neither #openness
+    # nor #opening_plane_count separates the two — the L-shaped cavity of a
+    # notched cabinet and the pocket its notch leaves outside score the same
+    # on both (openness 0.52, and an opening count that follows how many
+    # sides happen to be open, 4 for a pair of bare shelves as much as for a
+    # pocket). Memoized.
+    def walled_on_facing_planes?
+      return @walled_on_facing_planes if defined?(@walled_on_facing_planes)
+
+      area_by_plane = Hash.new(0.0)
+      normal_by_plane = {}
+      unless @face_ids.nil?
+
+        _each_triangle_plane do |plane_index, triangle_index, _a, _b, _c, area2, nx, ny, nz|
+          next if @face_ids[triangle_index] == 0  # Envelope cap, not a wall
+          # Doubled triangle area : the factor cancels out in the relative
+          # area comparison below
+          area_by_plane[plane_index] += area2
+          normal_by_plane[plane_index] ||= [ nx, ny, nz ]
+        end
+
+      end
+
+      total = area_by_plane.values.sum
+      normals = total > 0 ? area_by_plane.select { |_plane_index, area| area >= total * WALL_PLANE_MIN_AREA_SHARE }
+                                        .keys.map { |plane_index| normal_by_plane[plane_index] } : []
+      @walled_on_facing_planes = normals.combination(2).any? { |first, second|
+        first[0] * second[0] + first[1] * second[1] + first[2] * second[2] <= FACING_WALL_MAX_DOT
+      }
+    end
+
   end
 
 end
