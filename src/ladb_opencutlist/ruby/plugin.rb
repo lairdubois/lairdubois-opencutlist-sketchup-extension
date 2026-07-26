@@ -10,6 +10,7 @@ module Ladb::OpenCutList
   require 'open-uri'
   require 'digest'
   require_relative 'constants'
+  require_relative 'server/local_http_server'
   require_relative 'observer/app_observer'
   require_relative 'observer/plugin_observer'
   require_relative 'utils/dimension_utils'
@@ -782,6 +783,14 @@ module Ladb::OpenCutList
       @app_observer ||= AppObserver.new
     end
 
+    def local_http_server
+      @local_http_server ||= LocalHttpServer.new
+    end
+
+    def stop_local_http_server
+      @local_http_server.stop unless @local_http_server.nil?
+    end
+
     # -----
 
     def setup
@@ -1077,7 +1086,12 @@ module Ladb::OpenCutList
       }
 
       # Setup dialog page
-      @tabs_dialog.set_file(File.join(PLUGIN_DIR, 'html', "dialog-tabs-#{language}.html"))
+      port = local_http_server.start
+      if port
+        @tabs_dialog.set_url("http://127.0.0.1:#{port}/html/dialog-tabs-#{language}.html")
+      else
+        @tabs_dialog.set_file(File.join(PLUGIN_DIR, 'html', "dialog-tabs-#{language}.html"))
+      end
 
       # Setup dialog actions
       @tabs_dialog.add_action_callback('ladb_opencutlist_setup_dialog_context') do |action_context, call_json|
@@ -1260,7 +1274,12 @@ module Ladb::OpenCutList
       }
 
       # Setup dialog page
-      @modal_dialog.set_file(File.join(PLUGIN_DIR, 'html', "dialog-modal-#{language}.html"))
+      port = local_http_server.start
+      if port
+        @modal_dialog.set_url("http://127.0.0.1:#{port}/html/dialog-modal-#{language}.html")
+      else
+        @modal_dialog.set_file(File.join(PLUGIN_DIR, 'html', "dialog-modal-#{language}.html"))
+      end
 
       # Setup dialog actions
       @modal_dialog.add_action_callback('ladb_opencutlist_setup_dialog_context') do |action_context, call_json|

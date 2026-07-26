@@ -28,6 +28,136 @@ var knownOptions = {
 var options = minimist(process.argv.slice(2), knownOptions);
 var isProd = options.env.toLowerCase() === 'prod';
 
+// Bundling -- concatenate the dialogs' vendor/app CSS+JS files into a
+// handful of files instead of loading ~70 of them individually (each one is
+// an extra request/response round-trip, even against the loopback HTTP
+// server used to serve the dialogs). Order matters (no module resolution,
+// just plain concatenation) and must match dialog-tabs.twig / dialog-modal.twig.
+var JS_BASE = '../src/ladb_opencutlist/js/';
+var JS_BUNDLES_DEST = '../src/ladb_opencutlist/js/bundles';
+var CSS_BASE = '../src/ladb_opencutlist/css/';
+
+function withBase(base, files) {
+    return files.map(function (file) { return base + file; });
+}
+
+var VENDOR_CSS_FILES = withBase(CSS_BASE, [
+    'lib/bootstrap.min.css',
+    'lib/bootstrap-select.min.css',
+    'lib/bootstrap-slider.min.css',
+    'lib/bootstrap-tokenfield.min.css',
+    'lib/codemirror.min.css',
+    'lib/codemirror-hint-show-hint.min.css',
+    'lib/noty.min.css',
+    'lib/jquery-ui.min.css',
+    'lib/jquery-ui.theme.min.css',
+]);
+
+// Shared by both dialogs (qrcode is only used by the tabs dialog, but it's
+// small enough to include here so both dialogs reuse the exact same bundle).
+var COMMON_JS_FILES = withBase(JS_BASE, [
+    'constants.js',
+    'polyfills.js',
+    'lib/jquery-3.7.1.min.js',
+    'lib/jquery-ui.min.js',
+    'lib/jquery.textcomplete.min.js',
+    'lib/bootstrap.min.js',
+    'lib/bootstrap-select.min.js',
+    'lib/bootstrap-slider.min.js',
+    'lib/bootstrap-tokenfield.min.js',
+    'lib/twig.min.js',
+    'lib/base64.min.js',
+    'lib/i18next.min.js',
+    'lib/noty.min.js',
+    'lib/codemirror.min.js',
+    'lib/codemirror-display-autorefresh.min.js',
+    'lib/codemirror-display-placeholder.min.js',
+    'lib/codemirror-edit-closebrackets.min.js',
+    'lib/codemirror-edit-matchbrackets.min.js',
+    'lib/codemirror-hint-show-hint.min.js',
+    'lib/codemirror-mode-ruby.min.js',
+    'lib/codemirror-mode-simple.min.js',
+    'lib/qrcode.min.js',
+]);
+var TABS_JS_FILES = withBase(JS_BASE, [
+    'plugins/components/jquery.ladb.bottombar.js',
+    'plugins/components/jquery.ladb.leftbar.js',
+    'plugins/components/jquery.ladb.abstract-textinput.js',
+    'plugins/components/jquery.ladb.textinput-area.js',
+    'plugins/components/jquery.ladb.textinput-code.js',
+    'plugins/components/jquery.ladb.textinput-color.js',
+    'plugins/components/jquery.ladb.textinput-dimension.js',
+    'plugins/components/jquery.ladb.textinput-file.js',
+    'plugins/components/jquery.ladb.textinput-number-with-unit.js',
+    'plugins/components/jquery.ladb.textinput-size.js',
+    'plugins/components/jquery.ladb.textinput-text.js',
+    'plugins/components/jquery.ladb.textinput-tokenfield.js',
+    'plugins/components/jquery.ladb.textinput-url.js',
+    'plugins/components/jquery.ladb.editor-export.js',
+    'plugins/components/jquery.ladb.editor-label-layout.js',
+    'plugins/components/jquery.ladb.editor-label-offset.js',
+    'plugins/components/jquery.ladb.editor-std-attributes.js',
+    'plugins/components/jquery.ladb.editor-sizes.js',
+    'plugins/components/jquery.ladb.three-viewer.js',
+    'plugins/components/jquery.ladb.widget-preset.js',
+    'plugins/jquery.ladb.abstract-dialog.js',
+    'plugins/jquery.ladb.dialog-tabs.js',
+    'plugins/tabs/jquery.ladb.abstract-tab.js',
+    'plugins/tabs/jquery.ladb.tab-materials.js',
+    'plugins/tabs/jquery.ladb.tab-cutlist.js',
+    'plugins/tabs/jquery.ladb.tab-outliner.js',
+    'plugins/tabs/jquery.ladb.tab-importers.js',
+    'plugins/tabs/jquery.ladb.tab-tutorials.js',
+    'plugins/tabs/jquery.ladb.tab-news.js',
+    'plugins/tabs/jquery.ladb.tab-forum.js',
+    'plugins/tabs/jquery.ladb.tab-sponsor.js',
+    'plugins/tabs/jquery.ladb.tab-settings.js',
+    'plugins/tabs/jquery.ladb.tab-about.js',
+    'templates/components-twig-templates.js',
+    'templates/core-twig-templates.js',
+    'templates/tabs-twig-templates.js',
+    'dialog.js',
+    'dialog-tabs.js',
+]);
+var MODAL_JS_FILES = withBase(JS_BASE, [
+    'plugins/components/jquery.ladb.leftbar.js',
+    'plugins/components/jquery.ladb.abstract-textinput.js',
+    'plugins/components/jquery.ladb.textinput-area.js',
+    'plugins/components/jquery.ladb.textinput-code.js',
+    'plugins/components/jquery.ladb.textinput-color.js',
+    'plugins/components/jquery.ladb.textinput-dimension.js',
+    'plugins/components/jquery.ladb.textinput-file.js',
+    'plugins/components/jquery.ladb.textinput-number-with-unit.js',
+    'plugins/components/jquery.ladb.textinput-text.js',
+    'plugins/components/jquery.ladb.textinput-tokenfield.js',
+    'plugins/components/jquery.ladb.textinput-url.js',
+    'plugins/components/jquery.ladb.editor-export.js',
+    'plugins/components/jquery.ladb.editor-label-layout.js',
+    'plugins/components/jquery.ladb.editor-label-offset.js',
+    'plugins/components/jquery.ladb.editor-std-attributes.js',
+    'plugins/components/jquery.ladb.three-viewer.js',
+    'plugins/components/jquery.ladb.widget-preset.js',
+    'plugins/jquery.ladb.abstract-dialog.js',
+    'plugins/jquery.ladb.dialog-modal.js',
+    'plugins/modals/jquery.ladb.abstract-modal.js',
+    'plugins/modals/jquery.ladb.modal-smart-draw-tool-action-0.js',
+    'plugins/modals/jquery.ladb.modal-smart-draw-tool-action-1.js',
+    'plugins/modals/jquery.ladb.modal-smart-draw-tool-action-2.js',
+    'plugins/modals/jquery.ladb.modal-smart-draw-tool-action-3.js',
+    'plugins/modals/jquery.ladb.modal-smart-reshape-tool-action-1.js',
+    'plugins/modals/jquery.ladb.modal-smart-join-tool-action-0.js',
+    'plugins/modals/jquery.ladb.modal-smart-join-tool-action-2.js',
+    'plugins/modals/jquery.ladb.modal-smart-export-tool-action-0.js',
+    'plugins/modals/jquery.ladb.modal-smart-export-tool-action-1.js',
+    'plugins/modals/jquery.ladb.modal-smart-export-tool-action-2.js',
+    'plugins/modals/jquery.ladb.modal-smart-export-tool-action-3.js',
+    'templates/components-twig-templates.js',
+    'templates/core-twig-templates.js',
+    'templates/modals-twig-templates.js',
+    'dialog.js',
+    'dialog-modal.js',
+]);
+
 // Convert less to .css files
 gulp.task('less_compile', function () {
     return gulp.src('../src/ladb_opencutlist/less/ladb-opencutlist.less')
@@ -92,6 +222,45 @@ gulp.task('twig_compile', function () {
         .pipe(concat('tabs-twig-templates.js'))
         .pipe(gulp.dest('../src/ladb_opencutlist/js/templates'));
 });
+
+// Concatenate vendor CSS files into one bundle
+gulp.task('css_bundle', function () {
+    return gulp.src(VENDOR_CSS_FILES)
+        .pipe(concat('vendor.min.css'))
+        .pipe(gulp.dest('../src/ladb_opencutlist/css'));
+});
+
+// Concatenate the vendor JS libs shared by both dialogs into one bundle
+gulp.task('js_bundle_common', function () {
+    return gulp.src(COMMON_JS_FILES)
+        .pipe(concat('common-bundle.js', { newLine: ';\n' }))
+        .pipe(gulp.dest(JS_BUNDLES_DEST));
+});
+
+// Concatenate the tabs dialog's app-level plugins + compiled twig templates +
+// bootstrap entry scripts (dialog.js/dialog-tabs.js only kick off async
+// initialization on $(document).ready, well after i18n has loaded regardless
+// of tag order, so they're safe to fold in here instead of a separate tail file)
+gulp.task('js_bundle_tabs', function () {
+    return gulp.src(TABS_JS_FILES)
+        .pipe(concat('tabs-bundle.js', { newLine: ';\n' }))
+        .pipe(gulp.dest(JS_BUNDLES_DEST));
+});
+
+// Concatenate the modal dialog's app-level plugins + compiled twig templates + bootstrap entry scripts
+gulp.task('js_bundle_modal', function () {
+    return gulp.src(MODAL_JS_FILES)
+        .pipe(concat('modal-bundle.js', { newLine: ';\n' }))
+        .pipe(gulp.dest(JS_BUNDLES_DEST));
+});
+
+gulp.task('bundle', gulp.series(
+    function cleanBundles(cb) {
+        del.sync(JS_BUNDLES_DEST + '/*', { force: true });
+        cb();
+    },
+    gulp.parallel('css_bundle', 'js_bundle_common', 'js_bundle_tabs', 'js_bundle_modal')
+));
 
 // Convert yaml i18n to .js files
 gulp.task('i18n_compile', function () {
@@ -256,14 +425,21 @@ gulp.task('rbz_create', function () {
         '!src/**/*.less',
         '!src/**/*.twig',
         '!src/**/!(*.min).css',         // Exclude not minified .css files
+        '!src/**/css/lib/**',
+        '!src/**/js/lib/**',
+        '!src/**/js/templates/**',       // Bundled into js/bundles/tabs-bundle.js and modal-bundle.js
+        '!src/**/js/plugins/**',         // Bundled into js/bundles/tabs-bundle.js and modal-bundle.js
+        '!src/**/js/constants.js',       // Bundled into js/bundles/common-bundle.js
+        '!src/**/js/polyfills.js',       // Bundled into js/bundles/common-bundle.js
+        '!src/**/js/dialog.js',          // Bundled into js/bundles/tabs-bundle.js and modal-bundle.js
+        '!src/**/js/dialog-tabs.js',     // Bundled into js/bundles/tabs-bundle.js
+        '!src/**/js/dialog-modal.js',    // Bundled into js/bundles/modal-bundle.js
         '!src/**/less/**',
         '!src/**/twig/**',
         '!src/**/cpp/**',
         '!src/**/bin/**/!(*.dylib|*.dll)',
         '!src/**/yaml/i18n-src/**',
     ];
-    // Exclude not minified .js libs
-    blob.push('!src/**/js/lib/!(*.min).js');
     if (isProd) {
         // Exclude zz debug languages in prod environment
         blob.push('!src/**/yaml/i18n/zz*.yml');
@@ -317,8 +493,8 @@ gulp.task('version', function () {
         .pipe(touch());
 });
 
-gulp.task('compile', gulp.series('less_compile', 'css_minify', 'js_minify', 'twig_compile', 'i18n_compile', 'i18n_dialogs_compile'));
-gulp.task('build', gulp.series('compile', 'version', 'rbz_create'));
+gulp.task('compile', gulp.series('less_compile', 'css_minify', 'js_minify', 'twig_compile', 'i18n_compile', 'bundle', 'i18n_dialogs_compile'));
+gulp.task('build', gulp.series('version', 'compile', 'rbz_create'));
 
 gulp.task('default', gulp.series('build'));
 

@@ -108,6 +108,9 @@ module Ladb::OpenCutList
 
     def onQuit
 
+      # Stop local HTTP server used to serve dialog assets
+      PLUGIN.stop_local_http_server
+
       # Trigger event to JS
       PLUGIN.trigger_event(ON_QUIT)
 
