@@ -60,7 +60,12 @@ LengthDbl distance_point_to_element(
 
     if (element.type == ShapeElementType::CircularArc) {
         LengthDbl radius = distance(element.center, element.start);
-        if (element.in_circular_arc_cone(point)) {
+        // Arc cone test: element.length(point) only depends on the direction
+        // of (point - center) - it is the arc length from the start to the
+        // radial projection of the point on the circle - so the point projects
+        // radially inside the arc iff that length does not exceed the arc's
+        // own length. (Full arcs always pass: the angle stays in [0, 2*pi).)
+        if (!strictly_greater(element.length(point), element.length())) {
             return std::abs(distance(point, element.center) - radius);
         }
     }
