@@ -4250,6 +4250,7 @@ module Ladb::OpenCutList
 
           planes = vm.vertex.faces
                      .map { |face| @drawing_def.face_manipulators.find { |fm| fm.face == face } }
+                     .compact
                      .map { |fm|
                        if fm == sfm || (miter = _get_faces_joint_type_miter?(fm, sfm)) || !miter && !extruded_face_manipulators.include?(fm)
                          fm.plane

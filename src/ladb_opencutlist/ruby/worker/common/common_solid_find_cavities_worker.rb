@@ -126,15 +126,35 @@ module Ladb::OpenCutList
   # that operation.
   #
   # A cavity is clipped at ONE plane per round, the LEAST receding one, and
-  # what the clip leaves goes back through the detection until no plane is
-  # found (REDUCTION_MAX_PASSES). Recesses of different depths regularly live
-  # in the SAME cavity — a case whose divider is recessed 50 mm, carrying a
-  # shelf recessed 100 mm on one side only, is a single cavity, since the
-  # space in front of the divider joins its two sides — and a clip is
-  # unbounded in its own plane, so applying both at once would recede the
-  # shelf-free side to 100 too. The shallowest recess is precisely the one
-  # that PARTITIONS : cutting at 50 splits the two sides apart, and the 100
-  # plane is then found on the side that actually carries the shelf.
+  # BOTH what the clip keeps and what it leaves go back through the
+  # detection until no plane is found (REDUCTION_MAX_PASSES) — see #run.
+  # Recesses of different depths regularly live in the SAME cavity — a case
+  # whose divider is recessed 50 mm, carrying a shelf recessed 100 mm on one
+  # side only, is a single cavity, since the space in front of the divider
+  # joins its two sides — and a clip is unbounded in its own plane, so
+  # applying both at once would recede the shelf-free side to 100 too. The
+  # shallowest recess is precisely the one that PARTITIONS : cutting at 50
+  # splits the two sides apart, and the 100 plane is then found on the side
+  # that actually carries the shelf.
+  #
+  # BOTH sides are re-examined because either can still hold a recess the
+  # round that produced it could not see : the KEPT side a NESTED one (the
+  # 100 mm shelf above, invisible until the 50 mm plane split the two sides
+  # apart), the side LEFT BEHIND a SIBLING one, living precisely on the side
+  # the clip just took away (e.g. two unconnected partitions recessed at
+  # either end of a cavity open top and bottom, the deeper one only
+  # reachable once the shallower has been cut).
+  #
+  # They are not evidence of the same weight, though. A KEPT side is
+  # CONFIRMED : the panel's own mass separates whatever it touches, so it is
+  # a compartment whatever it came off of, and it reaches the result as soon
+  # as no further plane splits it. A side LEFT BEHIND is only PROVISIONAL :
+  # most of the time it is the plain "extra depth" a door would still occupy
+  # in front of the recess, no compartment of its own. It earns its keep only
+  # through what a later round finds INSIDE it — the kept sides of any clip
+  # it turns out to hide being confirmed like any other — and one that
+  # reaches a round with no plane of its own is that plain flare after all,
+  # and is dropped.
   #
   # BEVELED EDGES (hull mode, reduce_envelope option) : an edge PROFILED at
   # an angle — a mitred front, a chamfer, a moulding — leaves the cavity
@@ -194,11 +214,13 @@ module Ladb::OpenCutList
     RESTORE_MIN_DETERMINANT = 1.0e-6
 
     # Safety bound on the reduction rounds : a cavity is clipped at ONE plane
-    # per round and what survives goes back through the detection, so an
-    # assembly needs as many rounds as it nests recesses (a case whose divider
-    # is recessed, holding a shelf recessed deeper still, takes two) plus a
-    # last one to find nothing. Nesting that deep is not a thing in furniture,
-    # and each round can only shrink a cavity, so this merely caps a
+    # per round and both sides go back through the detection (see #run), so
+    # an assembly needs one round per recess it exposes — whether NESTED (a
+    # divider recessed, holding a shelf recessed deeper still) or SIBLING (two
+    # unrelated recesses on either side of a cavity open at both ends, each
+    # only visible once the other's clip has been applied) — plus a last one
+    # to find nothing. Neither goes that deep in furniture, and each round
+    # can only shrink what is left to examine, so this merely caps a
     # pathological input.
     REDUCTION_MAX_PASSES = 8
 
@@ -440,46 +462,93 @@ module Ladb::OpenCutList
           # Envelope reduction : the recessed panel edges detected on an open
           # cavity clip THAT cavity, shallowest recess first, the survivors
           # going back through the detection — see the class doc.
+          #
+          # BOTH sides of a clip go back through the detection : the KEPT
+          # side because it may nest a deeper recess of its own (T07 : a
+          # divider recessed 50, carrying a shelf recessed 100 on one side
+          # only — the 100 plane only becomes visible once the 50 one has
+          # split the two sides apart), the BEYOND side because it may hide
+          # a SIBLING recess the shallowest clip could not see, that recess
+          # living precisely on the side just clipped away (T22 : two
+          # unconnected partitions recessed at either end of a cavity open
+          # top and bottom).
+          #
+          # They are not evidence of the same weight, though. A KEPT side is
+          # CONFIRMED : the panel's own mass separates whatever it touches,
+          # so it is a compartment whatever it came off of, and it goes to
+          # the result once no further plane splits it. A BEYOND side is only
+          # PROVISIONAL : most of the time it is the plain "extra depth" a
+          # door would still occupy in front of the recess, no compartment of
+          # its own. It earns its keep only through what a LATER round finds
+          # inside it — the kept sides of any clip it turns out to hide are
+          # confirmed like any other — and a provisional fragment reaching a
+          # round with no plane of its own is that plain flare after all, and
+          # is dropped.
           if @reduce_envelope && !open_fragment_defs.empty?
             dominant_normals = _panel_dominant_normals(panel_meshes)
+            confirmed_fragment_defs = []
+            # An untouched cavity is a cavity : the ones no reduction ever
+            # clips must reach the result, so they start out confirmed
+            active = open_fragment_defs.map { |fragment_def| [ fragment_def, false ] }
             REDUCTION_MAX_PASSES.times do
-              reduction_planes_per_fragment = _detect_reduction_planes(open_fragment_defs, panel_id_ranges, panel_meshes, dominant_normals, envelope_mesh)
-              reduced_fragment_defs = []
+              break if active.empty?
+              reduction_planes_per_fragment = _detect_reduction_planes(active.map { |fragment_def, _provisional| fragment_def }, panel_id_ranges, panel_meshes, dominant_normals, envelope_mesh)
+              next_active = []
               clipped_any = false
-              open_fragment_defs.each_with_index do |fragment_def, index|
+              active.each_with_index do |(fragment_def, provisional), index|
                 normal, d = _shallowest_reduction_plane(reduction_planes_per_fragment[index], fragment_def)
                 if normal.nil?
-                  reduced_fragment_defs << fragment_def
+                  # Nothing left to split : a confirmed fragment is a
+                  # finished compartment, a provisional one was the flare
+                  confirmed_fragment_defs << fragment_def unless provisional
                   next
                 end
-                reduction_output = Meshy.operate(
+                kept_output = Meshy.operate(
                   :operation => Meshy::OPERATION_INTERSECTION,
                   :validate => false,
                   :tolerance => SolidMeshDef::TOLERANCE,
                   :src_meshes => [ _reduction_fragment_mesh(fragment_def) ],
                   :cut_meshes => [ _reduction_slab_mesh(normal, d, envelope_mesh) ]
                 )
-                return result_def if _report_errors(reduction_output, result_def)
-                _restore_clipped_vertices(reduction_output['fragments'], normal, d)
-                clipped = fn_collect.call(reduction_output, false)
-                if clipped.empty?
-                  # Nothing left of the cavity : the reduction has nothing to
-                  # say here, keep it as it came out of the subtraction rather
-                  # than losing it
-                  reduced_fragment_defs << fragment_def
-                else
-                  # In place, so the cavity order stays the panel order the
-                  # subtraction produced
-                  reduced_fragment_defs.concat(clipped)
-                  clipped_any = true
+                return result_def if _report_errors(kept_output, result_def)
+                _restore_clipped_vertices(kept_output['fragments'], normal, d)
+                kept = fn_collect.call(kept_output, false)
+
+                if kept.empty?
+                  # Nothing on the kept side : the reduction has nothing to
+                  # say here, keep the fragment as it came in rather than
+                  # losing it
+                  confirmed_fragment_defs << fragment_def unless provisional
+                  next
                 end
+
+                clipped_any = true
+                # In place, so the cavity order stays the panel order the
+                # subtraction produced
+                kept.each { |kept_fragment_def| next_active << [ kept_fragment_def, false ] }
+
+                beyond_output = Meshy.operate(
+                  :operation => Meshy::OPERATION_SUBTRACTION,
+                  :validate => false,
+                  :tolerance => SolidMeshDef::TOLERANCE,
+                  :src_meshes => [ _reduction_fragment_mesh(fragment_def) ],
+                  :cut_meshes => [ _reduction_slab_mesh(normal, d, envelope_mesh) ]
+                )
+                return result_def if _report_errors(beyond_output, result_def)
+                _restore_clipped_vertices(beyond_output['fragments'], normal, d)
+                fn_collect.call(beyond_output, false).each { |beyond_fragment_def| next_active << [ beyond_fragment_def, true ] }
               end
-              open_fragment_defs = reduced_fragment_defs
+              active = next_active
               # A clip strictly shrinks its cavity and takes away the very
               # faces its plane was read from, so a round that clips nothing
               # is the fixed point
               break unless clipped_any
             end
+            # Whatever the pass bound cut short : a confirmed fragment is
+            # still a compartment, only one round short of proving it holds
+            # no deeper recess
+            active.each { |fragment_def, provisional| confirmed_fragment_defs << fragment_def unless provisional }
+            open_fragment_defs = confirmed_fragment_defs
           end
 
           result_def.fragment_defs.concat(open_fragment_defs)
