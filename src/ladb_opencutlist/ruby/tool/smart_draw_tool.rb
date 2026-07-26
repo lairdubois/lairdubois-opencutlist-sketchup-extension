@@ -3971,7 +3971,7 @@ module Ladb::OpenCutList
 
       case state
       when STATE_START
-        return SmartPicker.new(tool: @tool, observer: self, pick_point: true)
+        return SmartPicker.new(tool: @tool, observer: self, pick_point: true, lockable: true)
       end
 
       super
@@ -4069,6 +4069,10 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_START
+        if tool.is_key_shift?(key)
+          _refresh
+          return true
+        end
         if tool.is_key_ctrl_or_option?(key) && is_quick
           @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_REVERSED, !_fetch_option_measure_reversed?, fire_event: true)
           _refresh
@@ -4096,12 +4100,15 @@ module Ladb::OpenCutList
     end
 
     def onPickerChanged(picker, view)
-
       case @state
 
       when STATE_START
         _pick_part(picker, view)
-        @picked_point = picker.picked_point
+        if has_active_part? && picker.picked_plane_manipulator.is_a?(PlaneManipulator)
+          @picked_point = picker.picked_point.project_to_plane(picker.picked_plane_manipulator.plane)
+        else
+          @picked_point = nil
+        end
         _preview_separator(view)
         _preview_cavity
 

@@ -4271,7 +4271,6 @@ module Ladb::OpenCutList
                    pick_axes: false,
 
                    lockable: true,
-
                    drawable: true
 
     )
@@ -4293,6 +4292,7 @@ module Ladb::OpenCutList
       @pick_axes = pick_axes
 
       @lockable = lockable
+      @drawable = drawable
 
       @fn_face_filter = nil
       @fn_edge_filter = nil
@@ -4308,8 +4308,6 @@ module Ladb::OpenCutList
       @picked_axes = nil
       @picked_axes_line = nil
       @picked_axes_path = nil
-
-      @drawable = drawable
 
     end
 
