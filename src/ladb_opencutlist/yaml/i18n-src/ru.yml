@@ -295,10 +295,15 @@ core:
   solid:
     error:
       empty: Твердое тело не содержит геометрии
+      empty_named: "« {{ name }} » не содержит геометрии"
       non_manifold_edges: "Твердое тело содержит {{ count }} некорректных ребра (лишние грани)"
       non_manifold_edges_plural: "Твердое тело содержит {{ count }} некорректных рёбер (лишних граней)"
+      non_manifold_edges_named: "« {{ name }} » содержит {{ count }} некорректное ребро"
+      non_manifold_edges_named_plural: "« {{ name }} » содержит {{ count }} некорректные ребра"
       open_edges: "Твердое тело содержит {{ count }} незамкнутое ребро (дыру)"
       open_edges_plural: "Твердое тело содержит {{ count }} незамкнутых ребра"
+      open_edges_named: "« {{ name }} » содержит {{ count }} незамкнутое ребро"
+      open_edges_named_plural: "« {{ name }} » содержит {{ count }} незамкнутые ребра"
       locked_instances: "Операция невозможна, так как элементы заблокированы: {{ list }}"
 tab:
   cutlist:
@@ -2317,6 +2322,7 @@ tool:
     vcb_radius: Радиус
     vcb_diameter: Диаметр
     vcb_distance: Дистанция
+    vcb_spacings: Интервалы
     error:
       no_direction: "Пожалуйста, укажите направление с помощью курсора мыши"
       invalid_length: "Длина {{ value }} недопустима"
@@ -2367,9 +2373,14 @@ tool:
     action_2_state_1_status: "Кликните, чтобы задать новую точку или введите нужный размер"
     action_x_state_2_status: "Кликните, чтобы задать высоту или введите нужный размер"
     action_3: Создать разделитель
+    action_3_status: "Нарисовать разделитель в полости, образованной группой существующих деталей"
+    action_3_state_0_status: "Кликните по стенке, чтобы создать перегородку"
+    action_3_state_1_status: "Кликните по стенке, чтобы создать перегородки"
     action_option_group_offset: Смещение
     action_option_group_segments: Сегменты
     action_option_group_thickness: Толщина
+    action_option_group_axes: Оси
+    action_option_group_measure_type: Измерение
     action_option_group_options: Опции
     action_option_offset_shape_offset: Смещение
     action_option_offset_shape_offset_status: Задает смещение линии контура проектируемой фигуры
@@ -2377,6 +2388,11 @@ tool:
     action_option_segments_segment_count_status: Задает количества сегментов в проектируемой окружности
     action_option_thickness_thickness: Толщина
     action_option_thickness_thickness_status: Настройка толщины панелей
+    action_option_measure_type_inside_status: Задать толщину с внутренней стороны целевой точки
+    action_option_measure_type_centered_status: Задать толщину от центра целевой точки
+    action_option_measure_type_outside_status: Задать толщину с внешней стороны целевой точки
+    action_option_axes_active_status: Перемещение вдоль активных осей
+    action_option_axes_context_status: Перемещение вдоль осей родительской группы или компонента
     action_option_options_construction: Конструкционные элементы
     action_option_options_construction_status: Моделирование каркасной основы
     action_option_options_rectangle_centered: Прямоугольник из центра
@@ -2396,13 +2412,22 @@ tool:
     action_option_options_draw_in_0: Рисование в активном элементе
     action_option_options_draw_in_1: Нарисовать детали первой точки в родительском элементе
     action_option_options_draw_in_status: "Нарисовать в родительском элементе, на который указывает первая точка"
+    action_option_options_reduce_envelope: Детали с отступом
+    action_option_options_reduce_envelope_status: Учитывать детали с отступом
+    action_option_options_reuse_definition: Использовать детали повторно
+    action_option_options_reuse_definition_status: Повторно использовать существующую деталь аналогичной формы и расположения вместо создания новой
     action_option_options_ask_name: Задать имена деталям
     action_option_options_ask_name_status: Ввод названий деталей вручную
     action_measure_locked_status: Фиксация результатов последнего измерения
     action_toggle_move_copy_status: Переключение копировать/переместить
     action_change_move_anchor_status: Изменить точку привязки
+    error:
+      separator_number_overflow: "Не удалось разместить {{ number }} разделителей в этой полости"
     success:
       part_created: "Создание нового компонента: : {{ name }}"
+      part_created_plural: "{{ count }} новых создано деталей: {{ name }}"
+      part_reused: "Новый экземпляр существующей детали: {{ name }}"
+      part_reused_plural: "Создано {{ count }} новых экземпляров существующей детали: {{ name }}"
   smart_handle:
     title: Конструктор
     action_0: Выделить
