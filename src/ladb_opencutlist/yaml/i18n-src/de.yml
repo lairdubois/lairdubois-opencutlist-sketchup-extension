@@ -2322,6 +2322,7 @@ tool:
     vcb_radius: Radius
     vcb_diameter: Durchmesser
     vcb_distance: Distanz
+    vcb_spacings: Abstände
     error:
       no_direction: Bitte mit der Maus eine Richtung angeben
       invalid_length: "Die Länge {{ value }} ist ungültig"
@@ -2371,8 +2372,10 @@ tool:
     action_2_status: Volumen auf der Basis einer polygonalen Form zeichnen
     action_2_state_1_status: "Klicken Sie, um einen neuen Punkt zu setzen, oder geben Sie eine Distanz ein"
     action_x_state_2_status: "Klicken Sie, um die Höhe festzulegen, oder geben Sie eine Distanz ein"
-    action_3: Einteilung einfügen
-    action_3_state_0_status: "Klicken Sie auf eine Wand, um eine Einteilung zu zeichnen"
+    action_3: Trennwand zeichnen
+    action_3_status: "Eine Trennwand in einem Hohlraum zeichnen, der durch eine Gruppe vorhandener Teile gebildet wird"
+    action_3_state_0_status: "Klicken Sie auf eine Wand, um eine Trennwand zu zeichnen"
+    action_3_state_1_status: "Klicken Sie auf eine Wand, um Trennwände zu zeichnen"
     action_option_group_offset: Versatz
     action_option_group_segments: Segmente
     action_option_group_thickness: Dicke
@@ -2418,9 +2421,13 @@ tool:
     action_measure_locked_status: Auf die letzte Messung fixieren
     action_toggle_move_copy_status: Abwechselnd kopieren/verschieben
     action_change_move_anchor_status: Ankerpunkt ändern
+    error:
+      separator_number_overflow: "Es ist nicht möglich, {{ number }} Trennwände in diesem Hohlraum zu verteilen"
     success:
       part_created: "Neu erstelltes Teil: {{ name }}"
       part_reused: "Neues Vorkommen des vorhandenen Teils: {{ name }}"
+      parts_created: "{{ count }} neu erstellte Teile: {{ name }}"
+      parts_reused: "{{ count }} neue Vorkommen des bereits vorhandenen Teils: {{ name }}"
   smart_handle:
     title: Bearbeiten
     action_0: Auswählen
