@@ -2322,6 +2322,7 @@ tool:
     vcb_radius: Rayon
     vcb_diameter: Diamètre
     vcb_distance: Distance
+    vcb_spacings: Espacements
     error:
       no_direction: Veuillez indiquer une direction avec la souris
       invalid_length: "La longueur {{ value }} est invalide"
@@ -2419,9 +2420,13 @@ tool:
     action_measure_locked_status: Verrouiller sur la dernière mesure
     action_toggle_move_copy_status: Alterner entre copier/déplacer
     action_change_move_anchor_status: Changer le point d'ancrage
+    error:
+      separator_number_overflow: "Impossible de répartir {{ number }} séparateurs dans cette cavité"
     success:
       part_created: "Nouvelle pièce créée : {{ name }}"
       part_reused: "Nouvelle occurrence de la pièce existante : {{ name }}"
+      parts_created: "{{ count }} nouvelles pièces créées : {{ name }}"
+      parts_reused: "{{ count }} nouvelles occurrences de la pièce existante : {{ name }}"
   smart_handle:
     title: Manipuler
     action_0: Sélectionner

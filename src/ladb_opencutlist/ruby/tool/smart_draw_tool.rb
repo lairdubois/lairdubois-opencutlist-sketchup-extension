@@ -27,7 +27,7 @@ module Ladb::OpenCutList
     ACTION_DRAW_RECTANGLE = 0
     ACTION_DRAW_CIRCLE = 1
     ACTION_DRAW_POLYGON = 2
-    ACTION_DRAW_SEPARATOR = 3
+    ACTION_DRAW_DIVIDER = 3
 
     ACTION_OPTION_OFFSET = 'offset'
     ACTION_OPTION_SEGMENTS = 'segments'
@@ -86,7 +86,7 @@ module Ladb::OpenCutList
       }
     ]
     ACTIONS << {
-      :action => ACTION_DRAW_SEPARATOR,
+      :action => ACTION_DRAW_DIVIDER,
       :options => {
         ACTION_OPTION_MEASURE_TYPE => [ ACTION_OPTION_MEASURE_TYPE_INSIDE, ACTION_OPTION_MEASURE_TYPE_CENTERED, ACTION_OPTION_MEASURE_TYPE_OUTSIDE ],
         ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_CONTEXT ],
@@ -128,15 +128,15 @@ module Ladb::OpenCutList
           return SmartCursorManager.cursor_pencil_circle
       when ACTION_DRAW_POLYGON
           return SmartCursorManager.cursor_pencil_polygon
-      when ACTION_DRAW_SEPARATOR
-          return SmartCursorManager.cursor_pencil_separator
+      when ACTION_DRAW_DIVIDER
+          return SmartCursorManager.cursor_pencil_divider
       end
 
       super
     end
 
     def get_action_options_modal?(action)
-      action != ACTION_DRAW_SEPARATOR
+      action != ACTION_DRAW_DIVIDER
     end
 
     def get_action_option_sync_actions(action, option_group, option)
@@ -150,7 +150,7 @@ module Ladb::OpenCutList
       when ACTION_OPTION_OPTIONS
         case option
         when ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_ASK_NAME
-          return [ ACTION_DRAW_RECTANGLE, ACTION_DRAW_CIRCLE, ACTION_DRAW_POLYGON, ACTION_DRAW_SEPARATOR ]
+          return [ACTION_DRAW_RECTANGLE, ACTION_DRAW_CIRCLE, ACTION_DRAW_POLYGON, ACTION_DRAW_DIVIDER ]
         when ACTION_OPTION_OPTIONS_DRAW_IN
           return [ ACTION_DRAW_RECTANGLE, ACTION_DRAW_CIRCLE, ACTION_DRAW_POLYGON ]
         end
@@ -276,8 +276,8 @@ module Ladb::OpenCutList
         set_action_handler(SmartDrawCircleActionHandler.new(self))
       when ACTION_DRAW_POLYGON
         set_action_handler(SmartDrawPolygonActionHandler.new(self))
-      when ACTION_DRAW_SEPARATOR
-        set_action_handler(SmartDrawSeparatorActionHandler.new(self))
+      when ACTION_DRAW_DIVIDER
+        set_action_handler(SmartDrawDividerActionHandler.new(self))
       end
 
       super
@@ -3931,12 +3931,13 @@ module Ladb::OpenCutList
 
   end
 
-  class SmartDrawSeparatorActionHandler < SmartDrawActionHandler
+  class SmartDrawDividerActionHandler < SmartDrawActionHandler
 
     include SmartActionHandlerPartHelper
     include FaceMatcherHelper
 
-    STATE_START = 0
+    STATE_PLACE = 0
+    STATE_DISTRIBUTE = 1
 
     LAYER_3D_CAVITY_PREVIEW = 100
     LAYER_3D_SEPARATOR_PREVIEW = 200
@@ -3955,13 +3956,16 @@ module Ladb::OpenCutList
     # perpendicular to it), and the screen-based tie-break takes over.
     SEPARATOR_NORMAL_OPENING_DOT_EPSILON = 1.0e-6
 
-    attr_reader :locked_normal
+    attr_reader :locked_normal, :number, :spacings
 
     def initialize(tool, previous_action_handler = nil)
-      super(SmartDrawTool::ACTION_DRAW_SEPARATOR, tool, previous_action_handler)
+      super(SmartDrawTool::ACTION_DRAW_DIVIDER, tool, previous_action_handler)
+
+      @locked_normal = previous_action_handler.is_a?(self.class) ? previous_action_handler.locked_normal : nil
+      @number = previous_action_handler.is_a?(self.class) ? previous_action_handler.number : 0
+      @spacings = previous_action_handler.is_a?(self.class) ? previous_action_handler.spacings : []
 
       @picked_point = nil
-      @locked_normal = previous_action_handler.is_a?(self.class) ? previous_action_handler.locked_normal : nil
 
     end
 
@@ -3970,8 +3974,10 @@ module Ladb::OpenCutList
     def get_state_picker(state)
 
       case state
-      when STATE_START
+      when STATE_PLACE
         return SmartPicker.new(tool: @tool, observer: self, pick_point: true, lockable: true)
+      when STATE_DISTRIBUTE
+        return SmartPicker.new(tool: @tool, observer: self, pick_point: true, lockable: false)
       end
 
       super
@@ -3980,8 +3986,7 @@ module Ladb::OpenCutList
     def get_state_status(state)
 
       case state
-
-      when STATE_START
+      when STATE_PLACE, STATE_DISTRIBUTE
         return super +
                ' | ' + PLUGIN.get_i18n_string("default.constrain_key") + ' + X = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_construction_status') + '.' +
                ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_measure_reversed_status') + '.' +
@@ -3992,16 +3997,38 @@ module Ladb::OpenCutList
     end
 
     def get_state_vcb_label(state)
-      PLUGIN.get_i18n_string("tool.default.vcb_distance")
+
+      case state
+      when STATE_PLACE
+        return PLUGIN.get_i18n_string("tool.default.vcb_distance")
+      when STATE_DISTRIBUTE
+        return PLUGIN.get_i18n_string("tool.default.vcb_spacings")
+      end
+
+      super
     end
 
     # -----
+
+    def onToolCancel(tool, reason, view)
+
+      if @state == STATE_DISTRIBUTE
+        if @spacings.any?
+          _set_distribution(@number, [], tool, view)
+        else
+          _set_distribution(0, [], tool, view)
+        end
+        return true
+      end
+
+      super
+    end
 
     def onToolLButtonUp(tool, flags, x, y, view)
       super
 
       case @state
-      when STATE_START
+      when STATE_PLACE, STATE_DISTRIBUTE
         if _create_entity(@picked_point, view)
           # The just-created separator is now real geometry in the model :
           # the cached cavities (and the fragment it was clipped to) are
@@ -4021,7 +4048,18 @@ module Ladb::OpenCutList
 
       case @state
 
-      when STATE_START
+      when STATE_PLACE, STATE_DISTRIBUTE
+
+        if tool.is_key_shift_down?
+          if key == Kuix::VK_ADD
+            _set_distribution(@number + 1, @spacings, tool, view)
+            return true
+          end
+          if key == Kuix::VK_SUBTRACT
+            _set_distribution(@number - 1, @spacings, tool, view)
+            return true
+          end
+        end
 
         if key == VK_RIGHT
           x_axis = _get_active_x_axis
@@ -4068,7 +4106,7 @@ module Ladb::OpenCutList
 
       case @state
 
-      when STATE_START
+      when STATE_PLACE, STATE_DISTRIBUTE
         if tool.is_key_shift?(key)
           _refresh
           return true
@@ -4091,10 +4129,11 @@ module Ladb::OpenCutList
     end
 
     def onToolUserText(tool, text, view)
-      # return true if super
 
+      return true if _read_number(tool, text, view)
+      return true if _read_spacings(tool, text, view)
       return true if _read_thickness(tool, text, view)
-      return true if _read_distance(tool, text, view)
+      return true if @state == STATE_PLACE && _read_distance(tool, text, view)
 
       false
     end
@@ -4102,7 +4141,7 @@ module Ladb::OpenCutList
     def onPickerChanged(picker, view)
       case @state
 
-      when STATE_START
+      when STATE_PLACE, STATE_DISTRIBUTE
         _pick_part(picker, view)
         if has_active_part? && picker.picked_plane_manipulator.is_a?(PlaneManipulator)
           @picked_point = picker.picked_point.project_to_plane(picker.picked_plane_manipulator.plane)
@@ -4144,6 +4183,8 @@ module Ladb::OpenCutList
       @cavities_def = nil
       @picked_point = nil
       @locked_normal = nil
+      @number = 0
+      @spacings = []
       super
     end
 
@@ -4206,81 +4247,162 @@ module Ladb::OpenCutList
       @tool.clear_3d(LAYER_3D_SEPARATOR_PREVIEW)
       @tool.clear_2d(LAYER_2D_DISTANCE)
 
-      return unless (separator_def = _compute_separator(@picked_point, view)).is_a?(SeparatorDef)
+      return unless (separator_defs = _compute_separators(@picked_point, view)).is_a?(Array)
 
       color = _get_vector_color(@locked_normal, Kuix::COLOR_MAGENTA)
 
-      separator_def.fragments.each do |fragment|
+      separator_defs.each do |separator_def|
+        separator_def.fragments.each do |fragment|
 
-        # face_info_defs is irrelevant here : the preview only needs the geometry (boundary_segments doesn't dereference it).
-        separator_fragment_def = SolidFragmentDef.new(fragment['vertices'], fragment['face_indices'], fragment['face_ids'], [])
-        next if separator_fragment_def.empty?
+          # face_info_defs is irrelevant here : the preview only needs the geometry (boundary_segments doesn't dereference it).
+          separator_fragment_def = SolidFragmentDef.new(fragment['vertices'], fragment['face_indices'], fragment['face_ids'], [])
+          next if separator_fragment_def.empty?
 
-        segments = separator_fragment_def.unique_boundary_segments
-
-        k_segments = Kuix::Segments.new
-        k_segments.add_segments(segments)
-        k_segments.color = color
-        k_segments.line_width = 1
-        k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-        k_segments.on_top = true
-        @tool.append_3d(k_segments, LAYER_3D_SEPARATOR_PREVIEW)
-
-        unless _fetch_option_construction?
+          segments = separator_fragment_def.unique_boundary_segments
 
           k_segments = Kuix::Segments.new
           k_segments.add_segments(segments)
           k_segments.color = color
-          k_segments.line_width = @locked_normal ? 2.5 : 1.5
+          k_segments.line_width = 1
+          k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+          k_segments.on_top = true
           @tool.append_3d(k_segments, LAYER_3D_SEPARATOR_PREVIEW)
 
+          unless _fetch_option_construction?
+
+            k_segments = Kuix::Segments.new
+            k_segments.add_segments(segments)
+            k_segments.color = color
+            k_segments.line_width = @locked_normal ? 2.5 : 1.5
+            @tool.append_3d(k_segments, LAYER_3D_SEPARATOR_PREVIEW)
+
+          end
+
+        end
+      end
+
+      fn_preview_measure = lambda { |ps, pe, distance|
+
+        # Preview line
+
+        k_edge = Kuix::EdgeMotif3d.new
+        k_edge.start.copy!(ps)
+        k_edge.end.copy!(pe)
+        k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+        k_edge.color = ColorUtils.color_translucent(color, 60)
+        k_edge.on_top = true
+        @tool.append_3d(k_edge, LAYER_3D_SEPARATOR_PREVIEW)
+
+        k_edge = Kuix::EdgeMotif3d.new
+        k_edge.start.copy!(ps)
+        k_edge.end.copy!(pe)
+        k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+        k_edge.color = color
+        @tool.append_3d(k_edge, LAYER_3D_SEPARATOR_PREVIEW)
+
+        case @state
+        when STATE_PLACE
+          fill_color = Kuix::COLOR_WHITE
+          stroke_color = color
+          size = 2
+        when STATE_DISTRIBUTE
+          fill_color = color
+          stroke_color = nil
+          size = 1
+        end
+        @tool.append_3d(_create_floating_points(points: [ ps, pe ], style: Kuix::POINT_STYLE_CIRCLE, fill_color: fill_color, stroke_color: stroke_color, size: size), LAYER_3D_SEPARATOR_PREVIEW)
+
+        # Preview distance
+
+        k_label = _create_floating_label(
+          snap_point: Geom.linear_combination(0.5, ps, 0.5, pe),
+          text: distance.to_l.to_s,
+          text_color: color,
+          border_color: color
+        )
+        @tool.append_2d(k_label, LAYER_2D_DISTANCE)
+
+      }
+
+      # One measure per compartment : in free mode the single gap between the
+      # pick and the cavity's wall, in distributed mode the clear opening
+      # BEFORE each separator - plus the one the LAST separator closes on the
+      # cavity itself, which belongs to no separator's own measure.
+      separator_defs.each_with_index do |separator_def, index|
+
+        distance = separator_def.distance
+        if distance > 0
+          fn_preview_measure.call(separator_def.wall_point, separator_def.point, distance)
+          Sketchup.set_status_text(distance, SB_VCB_VALUE) if index == 0 && @state == STATE_PLACE
+        end
+
+        trailing_distance = separator_def.trailing_distance
+        if !trailing_distance.nil? && trailing_distance > 0
+          fn_preview_measure.call(separator_def.trailing_point, separator_def.trailing_wall_point, trailing_distance)
         end
 
       end
-
-      distance = separator_def.distance
-      return unless distance > 0
-
-      ps = separator_def.wall_point
-      pe = separator_def.point
-
-      # Preview line
-
-      k_edge = Kuix::EdgeMotif3d.new
-      k_edge.start.copy!(ps)
-      k_edge.end.copy!(pe)
-      k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-      k_edge.color = ColorUtils.color_translucent(color, 60)
-      k_edge.on_top = true
-      @tool.append_3d(k_edge, LAYER_3D_SEPARATOR_PREVIEW)
-
-      k_edge = Kuix::EdgeMotif3d.new
-      k_edge.start.copy!(ps)
-      k_edge.end.copy!(pe)
-      k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-      k_edge.color = color
-      @tool.append_3d(k_edge, LAYER_3D_SEPARATOR_PREVIEW)
-
-      @tool.append_3d(_create_floating_points(points: [ ps, pe ], style: Kuix::POINT_STYLE_CIRCLE, fill_color: Kuix::COLOR_WHITE, stroke_color: color, size: 2), LAYER_3D_SEPARATOR_PREVIEW)
-
-      # Preview distance
-
-      Sketchup.set_status_text(distance, SB_VCB_VALUE)
-
-      k_label = _create_floating_label(
-        snap_point: Geom.linear_combination(0.5, ps, 0.5, pe),
-        text: distance.to_l.to_s,
-        text_color: color,
-        border_color: color
-      )
-      @tool.append_2d(k_label, LAYER_2D_DISTANCE)
 
     end
 
     # -----
 
+    # "*n" (or "/n", meaning "split in n", so n - 1 separators) sets how many
+    # separators one pick draws - same VCB grammar as the Smart Handle
+    # "distribute" action. Unlike it, 0 is a legal count here : it is the free
+    # mode, where the pick alone places a single separator.
+    def _read_number(tool, text, view)
+      return false unless text.is_a?(String) && (match = text.match(/^([x*\/])(\d+)$/))
+
+      operator, value = match[1, 2]
+
+      number = value.to_i
+
+      if operator == '/' && number < 2
+        UI.beep
+        tool.notify_errors([ [ 'tool.default.error.invalid_divider', { :value => value } ] ])
+        return true
+      end
+
+      _set_distribution(operator == '/' ? number - 1 : number, @spacings, tool, view)
+      Sketchup.set_status_text('', SB_VCB_VALUE)
+
+      true
+    end
+
+    # A list of lengths - "100;200", regional list separator, "100=" repeating
+    # a value (see #_split_user_text) - PINS the clear openings of the current
+    # distribution instead of leaving them all equal. Same VCB grammar and
+    # same reading as the Smart Handle "distribute" action : the leading run
+    # pins from the near end of the cavity, the trailing run from the far end,
+    # an invalid or empty entry marking where the free middle begins - "100;"
+    # pins only the first opening, ";100" only the last. See
+    # #_get_separator_slab_intervals.
+    def _read_spacings(tool, text, view)
+
+      list = _split_user_text(text)
+      return false unless list.is_a?(Array) && list.size > 1
+
+      # An entry that is not a length at all is not an error here : it is how
+      # the user says "leave this one free"
+      spacings = list.map { |spacing|
+        length = _read_user_text_length(tool, spacing, -1)
+        length.nil? || length == -1 ? -1 : length.abs.to_l
+      }
+
+      number = [ @number, spacings.compact.size ].max
+
+      _set_distribution(number, spacings, tool, view)
+      Sketchup.set_status_text('', SB_VCB_VALUE)
+
+      true
+    end
+
     def _read_distance(tool, text, view)
-      return false unless (separator_def = _compute_separator(@picked_point, view)).is_a?(SeparatorDef)
+      # A typed distance places THE separator against the cavity's wall : in
+      # distributed mode the positions are computed, there is nothing to place.
+      return false unless @number == 0
+      return false unless (separator_def = _compute_separators(@picked_point, view).to_a.first).is_a?(SeparatorDef)
 
       distance = _read_user_text_length(tool, text, separator_def.distance)
       return true if distance.nil?
@@ -4365,46 +4487,67 @@ module Ladb::OpenCutList
     # Returns true on success, false when there is nothing valid to build
     # (no pick, no cavity, degenerate intersection).
     def _create_entity(point, view)
-      return false unless (separator_def = _compute_separator(point, view)).is_a?(SeparatorDef)
+      return false unless (separator_defs = _compute_separators(point, view)).is_a?(Array) && !separator_defs.empty?
 
-      normal_3f = separator_def.normal_3f
-      u, v = _get_separator_plane_basis(normal_3f)
-
-      # Local frame for the new part : Z = thickness axis (the chosen
-      # separator normal), X/Y = the slab's own in-plane basis. u, v, normal
-      # is right-handed by construction (_get_separator_plane_basis), so this
-      # transformation is a pure rotation - never a mirror.
-      world_transformation = Geom::Transformation.axes(point, Geom::Vector3d.new(u), Geom::Vector3d.new(v), Geom::Vector3d.new(normal_3f))
-
-      container_path = separator_def.container_path
+      container_path = separator_defs.first.container_path
       if container_path.is_a?(Array) && container_path.any? && (container = container_path.last) && container.respond_to?(:definition)
         active_entities = container.definition.entities
         active_transformation = PathUtils.get_transformation(container_path, IDENTITY)
       else
         active_entities = Sketchup.active_model.entities
         active_transformation = IDENTITY
+        container_path = []
       end
 
       model = Sketchup.active_model
       model.start_operation('OCL Create Separator', true, false, !active?)
       begin
 
-        if _fetch_option_construction?
+        # Definitions this batch actually BUILT - what the naming applies to
+        # (one when the separators share it, as many as separators when the
+        # reuse option is off), and the last one a separator turned out to be
+        # one more occurrence of.
+        created_definitions = []
+        reused_definition = nil
 
-          group = active_entities.add_group
-          group.transformation = active_transformation.inverse * world_transformation
+        # The separators of one batch, as candidates for the next ones :
+        # #_find_reusable_definition only knows the parts that were already
+        # there when the cavities were computed, so without this the second
+        # separator of a distribution would never recognize the first - the
+        # very part it is a repetition of. Same shape, same neighbourhood
+        # criteria as any other candidate : a cavity that is not prismatic
+        # along the normal clips them differently, and they stay distinct
+        # parts.
+        sibling_part_defs = []
 
-          created_faces = _build_separator_faces(group.entities, separator_def.fragments, world_transformation)
-          if created_faces.empty?
-            model.abort_operation
-            return false
+        separator_defs.each do |separator_def|
+
+          normal_3f = separator_def.normal_3f
+          u, v = _get_separator_plane_basis(normal_3f)
+
+          # Local frame for the new part : Z = thickness axis (the chosen
+          # separator normal), X/Y = the slab's own in-plane basis. u, v, normal
+          # is right-handed by construction (_get_separator_plane_basis), so this
+          # transformation is a pure rotation - never a mirror.
+          world_transformation = Geom::Transformation.axes(separator_def.point, Geom::Vector3d.new(u), Geom::Vector3d.new(v), Geom::Vector3d.new(normal_3f))
+
+          if _fetch_option_construction?
+
+            group = active_entities.add_group
+            group.transformation = active_transformation.inverse * world_transformation
+
+            created_faces = _build_separator_faces(group.entities, separator_def.fragments, world_transformation)
+            if created_faces.empty?
+              model.abort_operation
+              return false
+            end
+
+            edges = created_faces.flat_map(&:edges).uniq
+            edges.each { |edge| group.entities.add_cline(edge.start.position, edge.end.position) }
+            group.entities.erase_entities(created_faces + edges)
+
+            next
           end
-
-          edges = created_faces.flat_map(&:edges).uniq
-          edges.each { |edge| group.entities.add_cline(edge.start.position, edge.end.position) }
-          group.entities.erase_entities(created_faces + edges)
-
-        else
 
           definition = model.definitions.add(PLUGIN.get_i18n_string('default.part_single').capitalize)
 
@@ -4415,9 +4558,9 @@ module Ladb::OpenCutList
             return false
           end
 
-          reused_definition, reused_world_transformation = _find_reusable_definition(separator_def, created_faces, world_transformation)
+          candidate_definition, candidate_world_transformation = _find_reusable_definition(separator_def, created_faces, world_transformation, sibling_part_defs)
 
-          if reused_definition.nil?
+          if candidate_definition.nil?
 
             tao = _get_auto_orient_transformation(definition, world_transformation)
             unless tao.identity?
@@ -4436,6 +4579,8 @@ module Ladb::OpenCutList
             # Force UUID to be generated in the creation operation
             DefinitionAttributes.new(definition).uuid
 
+            created_definitions << definition
+
           else
 
             # The separator is one more occurrence of a part that is already
@@ -4443,44 +4588,55 @@ module Ladb::OpenCutList
             # existing definition is instanced instead - see
             # #_find_reusable_definition
             model.definitions.remove(definition) if model.definitions.respond_to?(:remove)
-            definition = reused_definition
-            instance = active_entities.add_instance(definition, active_transformation.inverse * reused_world_transformation)
+            definition = candidate_definition
+            world_transformation = candidate_world_transformation
+            instance = active_entities.add_instance(definition, active_transformation.inverse * world_transformation)
+
+            reused_definition = definition
 
           end
 
-          if active?
+          sibling_part_defs << _get_separator_part_def(container_path, instance, world_transformation) if _fetch_option_reuse_definition?
 
-            fn_ask_name = lambda {
-              unless instance.nil? || instance.definition.nil? || instance.definition.deleted?
-                if (data = UI.inputbox([ PLUGIN.get_i18n_string('tab.cutlist.edit_part.name') ], [ instance.definition.name ], PLUGIN.get_i18n_string('default.rename')))
-                  name = data.first
-                  if name.empty?
-                    UI.beep
-                  else
-                    instance.definition.name = name
-                  end
+        end
+
+        if active? && !_fetch_option_construction?
+
+          new_definition = created_definitions.first
+          count = separator_defs.length
+
+          fn_ask_name = lambda {
+            unless new_definition.nil? || new_definition.deleted?
+              if (data = UI.inputbox([ PLUGIN.get_i18n_string('tab.cutlist.edit_part.name') ], [ new_definition.name ], PLUGIN.get_i18n_string('default.rename')))
+                name = data.first
+                if name.empty?
+                  UI.beep
+                else
+                  # One name for the whole batch : with the reuse option off,
+                  # a distribution builds as many definitions as separators,
+                  # and they are all the part the user just named
+                  created_definitions.each { |created_definition| created_definition.name = name unless created_definition.deleted? }
                 end
               end
-            }
-
-            if reused_definition
-              # Renaming here would rename the part it was reused from too :
-              # only the plain notification makes sense
-              @tool.notify_success(PLUGIN.get_i18n_string("tool.smart_draw.success.part_reused", { :name => definition.name }))
-            elsif _fetch_option_ask_name?
-              fn_ask_name.call
-            else
-              @tool.notify_success(
-                PLUGIN.get_i18n_string("tool.smart_draw.success.part_created", { :name => definition.name }),
-                [
-                  {
-                    :label => PLUGIN.get_i18n_string('default.rename'),
-                    :block => fn_ask_name,
-                  }
-                ]
-              )
             end
+          }
 
+          if new_definition.nil?
+            # Renaming here would rename the part they were reused from too :
+            # only the plain notification makes sense
+            @tool.notify_success(PLUGIN.get_i18n_string("tool.smart_draw.success.#{count > 1 ? 'parts_reused' : 'part_reused'}", { :name => reused_definition.nil? ? '' : reused_definition.name, :count => count }))
+          elsif _fetch_option_ask_name?
+            fn_ask_name.call
+          else
+            @tool.notify_success(
+              PLUGIN.get_i18n_string("tool.smart_draw.success.#{count > 1 ? 'parts_created' : 'part_created'}", { :name => new_definition.name, :count => count }),
+              [
+                {
+                  :label => PLUGIN.get_i18n_string('default.rename'),
+                  :block => fn_ask_name,
+                }
+              ]
+            )
           end
 
         end
@@ -4497,6 +4653,45 @@ module Ladb::OpenCutList
     end
 
     # -----
+
+    # Applies a new distribution - how many separators, and which openings are
+    # pinned - then previews it, reporting the one thing the user cannot see
+    # coming : a layout whose separators no longer fit in the cavity they were
+    # asked for. It is still stored in that case - the pick may well land in a
+    # roomier cavity next.
+    def _set_distribution(number, spacings, tool, view)
+
+      @number = [ number, 0 ].max
+      @spacings = spacings
+
+      if @number > 0 && !(context = _compute_separator_context(@picked_point, view)).nil?
+        _cavities_def, fragment_def, normal_3f = context
+        n0, n1 = _get_separator_mesh_extent(fragment_def.vertices, normal_3f)
+        if _get_separator_slab_intervals(n0, n1, _fetch_option_thickness, @number, @spacings).nil?
+          UI.beep
+          tool.notify_errors([ [ 'tool.smart_draw.error.separator_number_overflow', { :number => @number } ] ])
+        end
+      end
+
+      if @number > 0
+        set_state(STATE_DISTRIBUTE) unless @state == STATE_DISTRIBUTE
+      else
+        set_state(STATE_PLACE) unless @state == STATE_PLACE
+      end
+      _refresh
+    end
+
+    # -----
+
+    # A freshly created separator, in the shape #_find_reusable_definition's
+    # candidate pool expects : [ occurrence path, instance, WORLD face
+    # manipulators, face planes ]. Read off the definition AFTER the auto
+    # orientation has moved its entities, so the manipulators land where the
+    # part really is.
+    def _get_separator_part_def(container_path, instance, world_transformation)
+      face_manipulators = instance.definition.entities.grep(Sketchup::Face).map { |face| FaceManipulator.new(face, world_transformation) }
+      [ container_path + [ instance ], instance, face_manipulators, _get_face_planes(face_manipulators) ]
+    end
 
     # [ definition, WORLD transformation ] of an existing part the separator
     # just built is one more occurrence of, or nil : the caller then throws
@@ -4524,7 +4719,14 @@ module Ladb::OpenCutList
     #   identical shelf in a different compartment), and sharing a definition
     #   there would silently link two parts the user means to keep apart :
     #   editing one would edit the other.
-    def _find_reusable_definition(separator_def, created_faces, world_transformation)
+    #
+    # +sibling_part_defs+ carries the separators the SAME batch has already
+    # created (see #_get_separator_part_def) : the cavities - hence the
+    # candidate pool below - were computed before any of them existed, so a
+    # distribution would otherwise never see its own separators as candidates
+    # for one another. They are examined last, so an eligible part that was
+    # already in the model still wins.
+    def _find_reusable_definition(separator_def, created_faces, world_transformation, sibling_part_defs = [])
       return nil unless _fetch_option_reuse_definition?
       return nil unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef)
 
@@ -4551,6 +4753,7 @@ module Ladb::OpenCutList
         }
         [ path, instance, face_manipulators, _get_face_planes(face_manipulators) ]
       }.compact
+      part_defs += sibling_part_defs
 
       # A separator touching nothing has no neighbourhood to compare : no reuse
       touching_part_ids = _get_touching_part_ids(_get_face_planes(separator_manipulators), part_defs)
@@ -4734,17 +4937,11 @@ module Ladb::OpenCutList
 
     # -----
 
-    # Computes the separator solid at the current pick : the intersection of
-    # a thick slab (through the picked point, normal to one of the picked
-    # face's transformation axes, perpendicular to the reference face) with
-    # the cavity fragment touched by the picked point. The slab is oversized
-    # in its own plane on purpose (see SEPARATOR_SLAB_MARGIN) : only the
-    # CAVITY boundary ever clips the result, so an open cavity (hull mode)
-    # clips flush with its cap, not with the slab's own edges.
-    # Returns { :point =>, :normal =>, :fragments => } (Meshy raw fragment
-    # hashes) or nil. Shared by the 3D preview and the actual creation, so
-    # what gets built is exactly what was last shown.
-    def _compute_separator(point, view)
+    # What the pick resolves to, before any slab is built :
+    # [ cavities_def, fragment_def, normal_3f ], or nil when the pick is not
+    # on a usable cavity. Split out of #_compute_separators so the count can
+    # be validated (see #_set_distribution) without paying for the booleans.
+    def _compute_separator_context(point, view)
       return nil unless (picked_face_manipulator = @picker.picked_plane_manipulator).is_a?(PlaneManipulator)
       return nil unless point.is_a?(Geom::Point3d)
       return nil unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef) && cavities_def.valid?
@@ -4760,7 +4957,138 @@ module Ladb::OpenCutList
       normal_3f = _get_separator_normal_3f(picked_face_manipulator, fragment_def, view)
       return nil if normal_3f.nil?
 
-      slab_mesh = _get_separator_slab_mesh(normal_3f, point.to_a, fragment_def, _fetch_option_thickness)
+      [ cavities_def, fragment_def, normal_3f ]
+    end
+
+    # [ [ d0, d1 ], ... ] the +number+ distributed separators span along the
+    # normal, ordered, inside the cavity's own [ +n0+, +n1+ ] extent.
+    #
+    # What is shared equally is the CLEAR OPENINGS, never the axis spacings -
+    # those would leave the openings unequal by one thickness as soon as the
+    # panels are not infinitely thin.
+    #
+    # +spacings+ PINS openings, from the ends inward : its leading run of
+    # valid lengths fixes the openings before the first separators, its
+    # trailing run - whatever follows an invalid or empty entry, so "100;"
+    # pins the first opening and ";100" the last - fixes the openings after
+    # the last ones. Only the separators LEFT IN THE MIDDLE share what
+    # remains, which is the whole cavity when the list is empty. Pins beyond
+    # the count are dropped : they have no separator to place.
+    #
+    # nil when the layout does not fit : a middle share with no room left, or
+    # pinned separators that overrun each other.
+    def _get_separator_slab_intervals(n0, n1, thickness, number, spacings)
+      return nil unless number > 0
+
+      fn_valid_spacing = lambda { |spacing| spacing.is_a?(Length) && spacing >= 0 }
+      start_spacings = spacings.take_while(&fn_valid_spacing)
+      end_spacings = start_spacings.size == spacings.size ? [] : spacings.reverse.take_while(&fn_valid_spacing)
+
+      if start_spacings.size > number
+        start_spacings = start_spacings.take(number)
+        end_spacings = []
+      elsif start_spacings.size + end_spacings.size > number
+        end_spacings = end_spacings.take(number - start_spacings.size)
+      end
+
+      # Pinned from the near end, in order
+      start_d = n0
+      start_intervals = start_spacings.map { |spacing|
+        d0 = start_d + spacing
+        start_d = d0 + thickness
+        [ d0, start_d ]
+      }
+
+      # Pinned from the far end : +end_spacings+ reads outermost first, so
+      # these come out in reverse
+      end_d = n1
+      end_intervals = end_spacings.map { |spacing|
+        d1 = end_d - spacing
+        end_d = d1 - thickness
+        [ end_d, d1 ]
+      }.reverse
+
+      middle_size = number - start_intervals.size - end_intervals.size
+      if middle_size > 0
+
+        opening = ((end_d - start_d) - middle_size * thickness) / (middle_size + 1.0)
+        return nil if opening <= SolidMeshDef::TOLERANCE
+
+        middle_intervals = (1..middle_size).map { |index|
+          d0 = start_d + index * (opening + thickness) - thickness
+          [ d0, d0 + thickness ]
+        }
+
+      else
+
+        # Nothing to share, but the two pinned runs must still not have walked
+        # past each other
+        return nil if end_d - start_d < -SolidMeshDef::TOLERANCE
+
+        middle_intervals = []
+
+      end
+
+      start_intervals + middle_intervals + end_intervals
+    end
+
+    # Computes the separator solids at the current pick : the intersection of
+    # a thick slab (normal to one of the picked face's transformation axes,
+    # perpendicular to the reference face) with the cavity fragment touched by
+    # the picked point. The slab is oversized in its own plane on purpose (see
+    # SEPARATOR_SLAB_MARGIN) : only the CAVITY boundary ever clips the result,
+    # so an open cavity (hull mode) clips flush with its cap, not with the
+    # slab's own edges.
+    #
+    # ONE slab through the picked point when the count is 0 - the free mode,
+    # where the pick is the position. Otherwise that many slabs distributed
+    # over the cavity's own extent along the normal - see
+    # #_get_separator_slab_intervals for how the openings are shared and
+    # pinned.
+    #
+    # Returns an Array of SeparatorDef - in the normal's own order, so the
+    # first is the one nearest the cavity's low end - or nil (no pick, no
+    # cavity, distribution that does not fit, degenerate intersection). Shared
+    # by the 3D preview and the actual creation, so what gets built is exactly
+    # what was last shown.
+    def _compute_separators(point, view)
+      return nil unless (context = _compute_separator_context(point, view)).is_a?(Array)
+      cavities_def, fragment_def, normal_3f = context
+
+      thickness = _fetch_option_thickness
+      n0, n1 = _get_separator_mesh_extent(fragment_def.vertices, normal_3f)
+      d = normal_3f[0] * point.x + normal_3f[1] * point.y + normal_3f[2] * point.z
+
+      # [ d0, d1, reference offset, distance to measure ] per slab, all
+      # expressed as offsets along the normal.
+      if @number > 0
+
+        intervals = _get_separator_slab_intervals(n0, n1, thickness, @number, @spacings)
+        return nil if intervals.nil?
+
+        # The measured distance is the clear opening BEFORE each separator,
+        # so the reference offset is its near face : the preview then draws
+        # exactly the compartment the distribution just created - the pinned
+        # value where there is one, the computed share elsewhere.
+        previous_d = n0
+        slabs = intervals.map { |d0, d1|
+          opening = d0 - previous_d
+          previous_d = d1
+          [ d0, d1, d0, opening ]
+        }
+
+      else
+
+        d0, d1 = _get_separator_slab_interval(d, thickness, n0, n1)
+
+        # Gap between the picked point and the cavity boundary "behind" it
+        # (n0, the low end of the cavity's own extent along the normal - never
+        # n1, so it's always >= 0, measured the same way +normal points).
+        slabs = [ [ d0, d1, d, d - n0 ] ]
+
+      end
+
+      normal = Geom::Vector3d.new(normal_3f)
       cavity_mesh = {
         :vertices => fragment_def.vertices,
         :face_indices => fragment_def.face_indices,
@@ -4768,39 +5096,56 @@ module Ladb::OpenCutList
         :tolerance => SolidMeshDef::TOLERANCE
       }
 
-      output = Fiddle::Meshy.operate(
-        :operation => Fiddle::Meshy::OPERATION_INTERSECTION,
-        :validate => false, # Both operands are already valid (slab, and a fragment born of a validated computation)
-        :tolerance => SolidMeshDef::TOLERANCE,
-        :src_meshes => [ slab_mesh ],
-        :cut_meshes => [ cavity_mesh ]
-      )
-      return nil unless output.is_a?(Hash) && output['fragments'].is_a?(Array)
+      separator_defs = []
+      slabs.each do |d0, d1, reference_d, distance|
 
-      fragments = output['fragments'].select { |fragment| fragment['vertices'].is_a?(Array) && fragment['face_indices'].is_a?(Array) }
-      return nil if fragments.empty?
+        output = Fiddle::Meshy.operate(
+          :operation => Fiddle::Meshy::OPERATION_INTERSECTION,
+          :validate => false, # Both operands are already valid (slab, and a fragment born of a validated computation)
+          :tolerance => SolidMeshDef::TOLERANCE,
+          :src_meshes => [ _get_separator_slab_mesh(normal_3f, d0, d1, fragment_def) ],
+          :cut_meshes => [ cavity_mesh ]
+        )
+        return nil unless output.is_a?(Hash) && output['fragments'].is_a?(Array)
 
-      # The slab ∩ cavity intersection can split into several disjoint
-      # fragments (e.g. a non-convex cavity clipping the oversized slab in
-      # more than one place) : only the one actually touched by the picked
-      # point is the separator the user meant to draw, so it's the only one
-      # kept - the rest would otherwise be built as extra, unwanted geometry
-      # in the same part.
-      if fragments.length > 1
-        touched_fragment = fragments.find do |fragment|
-          SolidFragmentDef.new(fragment['vertices'], fragment['face_indices'], fragment['face_ids'], []).contains_point?(point)
+        fragments = output['fragments'].select { |fragment| fragment['vertices'].is_a?(Array) && fragment['face_indices'].is_a?(Array) }
+        return nil if fragments.empty?
+
+        # The picked point, slid along the normal onto this slab's own
+        # reference plane : the pick itself only lies in the slab of the free
+        # mode. The slide stays inside the picked face (the separator normal
+        # is one of that face's own in-plane axes), so it keeps pointing at
+        # the compartment the user is aiming at.
+        reference_point = reference_d == d ? point : point.offset(normal, reference_d - d)
+
+        # The slab ∩ cavity intersection can split into several disjoint
+        # fragments (e.g. a non-convex cavity clipping the oversized slab in
+        # more than one place) : only the one actually touched by the picked
+        # point is the separator the user meant to draw, so it's the only one
+        # kept - the rest would otherwise be built as extra, unwanted geometry
+        # in the same part.
+        if fragments.length > 1
+          touched_fragment = fragments.find do |fragment|
+            SolidFragmentDef.new(fragment['vertices'], fragment['face_indices'], fragment['face_ids'], []).contains_point?(reference_point)
+          end
+          fragments = [ touched_fragment ] unless touched_fragment.nil?
         end
-        fragments = [ touched_fragment ] unless touched_fragment.nil?
+
+        separator_defs << SeparatorDef.new(reference_point, normal_3f, fragments, cavities_def.container_path, fragment_def, distance.to_l)
+
       end
 
-      # Gap between the picked point and the cavity boundary "behind" it
-      # (n0, the low end of the cavity's own extent along the normal - never
-      # n1, so it's always >= 0, measured the same way +normal points).
-      n0, _n1 = _get_separator_mesh_extent(fragment_def.vertices, normal_3f)
-      d = normal_3f[0] * point.x + normal_3f[1] * point.y + normal_3f[2] * point.z
-      distance = (d - n0).to_l
+      # A distribution of n separators makes n + 1 compartments, and each
+      # SeparatorDef only carries the one BEFORE it : the last one closes on
+      # the cavity itself, and would otherwise be the only compartment with
+      # no measure of its own.
+      if @number > 0 && !separator_defs.empty?
+        last_d1 = slabs.last[1]
+        separator_defs.last.trailing_point = last_d1 == d ? point : point.offset(normal, last_d1 - d)
+        separator_defs.last.trailing_distance = (n1 - last_d1).to_l
+      end
 
-      SeparatorDef.new(point, normal_3f, fragments, cavities_def.container_path, fragment_def, distance)
+      separator_defs
     end
 
     # Turns the raw Meshy fragments (world coordinates) into real, coplanar-
@@ -5005,21 +5350,25 @@ module Ladb::OpenCutList
       [ min, max ]
     end
 
-    # Box positioned against +point+ along +normal+ - +point+ being the
-    # inside face, the outside face, or the center, per the "measure_type"
-    # option (clamped to +fragment_def+'s own extent on that axis - see
-    # below) - +thickness+ thick, and oversized in its own plane well beyond
-    # +fragment_def+'s bounds (SEPARATOR_SLAB_MARGIN) so that intersecting it
-    # with the cavity fragment clips exclusively on the cavity's own boundary
-    # - real panel faces, or the hull cap when the cavity is open. Serialized
-    # to the mesh format expected by Fiddle::Meshy.operate ; every triangle
-    # carries face id 0 (same reserved-id convention as
-    # CommonSolidFindCavitiesWorker's envelope - irrelevant here since only
-    # the geometry is used for the preview).
-    def _get_separator_slab_mesh(normal_3f, point_3f, fragment_def, thickness)
-      u, v = _get_separator_plane_basis(normal_3f)
-
-      d = normal_3f[0] * point_3f[0] + normal_3f[1] * point_3f[1] + normal_3f[2] * point_3f[2]
+    # [ d0, d1 ] the slab of a FREELY placed separator spans along the normal :
+    # +d+ (the picked point's own offset) being its inside face, its outside
+    # face, or its center, per the "measure_type" option, then clamped to the
+    # cavity's own [ n0, n1 ] extent.
+    #
+    # Unlike u/v, the normal axis gets no margin : it's the cavity's own
+    # extent that must contain the full slab, not the other way around. An
+    # interval landing past the cavity's bound on this axis would otherwise
+    # hand the boolean intersection a wish it can only grant by silently
+    # thinning the part below the requested thickness. Shifting [d0, d1]
+    # here - without resizing it - keeps the full thickness whenever the
+    # cavity is deep enough for it ; when it isn't, centering on the
+    # cavity's own extent is the best that can be done (the intersection
+    # will still thin the result to fit).
+    #
+    # A distributed separator needs none of this : its interval is derived
+    # from [ n0, n1 ] to begin with (see #_compute_separators), so it is
+    # inside the cavity by construction.
+    def _get_separator_slab_interval(d, thickness, n0, n1)
 
       if _fetch_option_measure_type_inside?
         d0 = d
@@ -5032,16 +5381,6 @@ module Ladb::OpenCutList
         d1 = d + thickness / 2.0
       end
 
-      # Unlike u/v, the normal axis gets no margin : it's the cavity's own
-      # extent that must contain the full slab, not the other way around. An
-      # interval landing past the cavity's bound on this axis would otherwise
-      # hand the boolean intersection a wish it can only grant by silently
-      # thinning the part below the requested thickness. Shifting [d0, d1]
-      # here - without resizing it - keeps the full thickness whenever the
-      # cavity is deep enough for it ; when it isn't, centering on the
-      # cavity's own extent is the best that can be done (the intersection
-      # will still thin the result to fit).
-      n0, n1 = _get_separator_mesh_extent(fragment_def.vertices, normal_3f)
       if n1 - n0 >= thickness
         shift = 0.0
         shift = n0 - d0 if d0 < n0
@@ -5053,6 +5392,20 @@ module Ladb::OpenCutList
         d0 = mid - thickness / 2.0
         d1 = mid + thickness / 2.0
       end
+
+      [ d0, d1 ]
+    end
+
+    # Box spanning [ +d0+, +d1+ ] along +normal+, and oversized in its own
+    # plane well beyond +fragment_def+'s bounds (SEPARATOR_SLAB_MARGIN) so
+    # that intersecting it with the cavity fragment clips exclusively on the
+    # cavity's own boundary - real panel faces, or the hull cap when the
+    # cavity is open. Serialized to the mesh format expected by
+    # Fiddle::Meshy.operate ; every triangle carries face id 0 (same reserved-
+    # id convention as CommonSolidFindCavitiesWorker's envelope - irrelevant
+    # here since only the geometry is used for the preview).
+    def _get_separator_slab_mesh(normal_3f, d0, d1, fragment_def)
+      u, v = _get_separator_plane_basis(normal_3f)
 
       u0, u1 = _get_separator_mesh_extent(fragment_def.vertices, u)
       v0, v1 = _get_separator_mesh_extent(fragment_def.vertices, v)
@@ -5100,12 +5453,22 @@ module Ladb::OpenCutList
       end
     end
 
-    SeparatorDef = Struct.new(:point, :normal_3f, :fragments, :container_path, :fragment_def, :distance) do
+    # +distance+ is the clear opening BEFORE the separator, measured from
+    # +point+ (its near face) back to +wall_point+. +trailing_distance+ is the
+    # one AFTER it, measured from +trailing_point+ (its far face) on to
+    # +trailing_wall_point+ : only the LAST separator of a distribution
+    # carries it, since every other closing opening is the next separator's
+    # own +distance+.
+    SeparatorDef = Struct.new(:point, :normal_3f, :fragments, :container_path, :fragment_def, :distance, :trailing_point, :trailing_distance) do
       def normal
         @normal ||= Geom::Vector3d.new(normal_3f)
       end
       def wall_point
         @wall_point ||= point.offset(normal, -distance)
+      end
+      def trailing_wall_point
+        return nil if trailing_point.nil? || trailing_distance.nil?
+        @trailing_wall_point ||= trailing_point.offset(normal, trailing_distance)
       end
     end
 

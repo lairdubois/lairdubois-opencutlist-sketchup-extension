@@ -10,7 +10,7 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added Smart Paneling Tool
   * Added Smart Boolean Tools
   * Added Smart Join Tool **(DEV team only)**
-  * Added Smart Draw Separator Tool **(DEV team only)**
+  * Added Smart Draw Divider Tool **(DEV team only)**
   * Added Grain Continuity support
   * Added Cutlist part names filter
   * Added RO translations
@@ -27,13 +27,15 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
+### 2026-07-27
+ * Improved Smart Draw Divider **(DEV team only)**
 ### 2026-07-26
- * Improved Smart Draw Separator **(DEV team only)**
+ * Improved Smart Draw Divider **(DEV team only)**
  * Updated PackingSolver dependency
 ### 2026-07-25
- * Improved Smart Draw Separator **(DEV team only)**
+ * Improved Smart Draw Divider **(DEV team only)**
 ### 2026-07-23
- * Added Smart Draw Separator **(DEV team only)**
+ * Added Smart Draw Divider **(DEV team only)**
  * Updated PackingSolver dependency + fix [#1015](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/issues/1015)
 ### 2026-07-22
  * Improved Smart Boolean Tools robustness

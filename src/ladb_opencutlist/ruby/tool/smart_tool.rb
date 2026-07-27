@@ -3824,8 +3824,8 @@ module Ladb::OpenCutList
       create_cursor('pencil-polygon', 0, 31)
     end
 
-    def cursor_pencil_separator
-      create_cursor('pencil-separator', 0, 31)
+    def cursor_pencil_divider
+      create_cursor('pencil-divider', 0, 31)
     end
 
 
@@ -4297,6 +4297,8 @@ module Ladb::OpenCutList
       @fn_face_filter = nil
       @fn_edge_filter = nil
 
+      @invalidated = false
+
       @picked_face = nil
       @picked_face_path = nil
       @picked_edge = nil
@@ -4543,7 +4545,9 @@ module Ladb::OpenCutList
 
       end
 
-      changed = @picked_face_path != picked_face_path || @picked_point != picked_point || @picked_edge_path != picked_edge_path || @picked_cline_path != picked_cline_path || @picked_axes_path != picked_axes_path || @picked_axes_line != picked_axes_line
+      changed = @invalidated || @picked_face_path != picked_face_path || @picked_point != picked_point || @picked_edge_path != picked_edge_path || @picked_cline_path != picked_cline_path || @picked_axes_path != picked_axes_path || @picked_axes_line != picked_axes_line
+
+      @invalidated = false
 
       @picked_face = picked_face
       @picked_face_path = picked_face_path
@@ -4564,18 +4568,12 @@ module Ladb::OpenCutList
 
     # -----
 
+    # Force the next #do_pick to fire its change event, whatever it picks.
+    # The picked context (face, edge) is deliberately kept : SHIFT locks it and
+    # #do_pick feeds it back to itself, so dropping it here would not refresh
+    # the pick but lose it.
     def invalidate
-      @picked_face = nil
-      @picked_face_path = nil
-      @picked_edge = nil
-      @picked_edge_path = nil
-      @picked_point = nil
-      @picked_point_path = nil
-      @picked_cline = nil
-      @picked_cline_path = nil
-      @picked_axes = nil
-      @picked_axes_line = nil
-      @picked_axes_path = nil
+      @invalidated = true
     end
 
     # -----
