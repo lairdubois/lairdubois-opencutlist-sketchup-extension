@@ -2425,9 +2425,9 @@ tool:
       separator_number_overflow: "Impossible de répartir {{ number }} séparateurs dans cette cavité"
     success:
       part_created: "Nouvelle pièce créée : {{ name }}"
+      part_created_plural: "{{ count }} nouvelles pièces créées : {{ name }}"
       part_reused: "Nouvelle occurrence de la pièce existante : {{ name }}"
-      parts_created: "{{ count }} nouvelles pièces créées : {{ name }}"
-      parts_reused: "{{ count }} nouvelles occurrences de la pièce existante : {{ name }}"
+      part_reused_plural: "{{ count }} nouvelles occurrences de la pièce existante : {{ name }}"
   smart_handle:
     title: Manipuler
     action_0: Sélectionner

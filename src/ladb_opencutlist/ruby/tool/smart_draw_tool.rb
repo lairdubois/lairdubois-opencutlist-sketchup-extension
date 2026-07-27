@@ -4158,7 +4158,7 @@ module Ladb::OpenCutList
 
     def onActivePartChanged(part_entity_path, part, highlighted = false)
       @cavities_def = nil
-      false
+      super
     end
 
     def onToolActionOptionStored(tool, action, option_group, option)
@@ -4197,6 +4197,10 @@ module Ladb::OpenCutList
 
     def _preview_part_mesh?
       false
+    end
+
+    def _preview_part_container?
+      true
     end
 
     # -----
@@ -4622,14 +4626,13 @@ module Ladb::OpenCutList
           }
 
           if new_definition.nil?
-            # Renaming here would rename the part they were reused from too :
-            # only the plain notification makes sense
-            @tool.notify_success(PLUGIN.get_i18n_string("tool.smart_draw.success.#{count > 1 ? 'parts_reused' : 'part_reused'}", { :name => reused_definition.nil? ? '' : reused_definition.name, :count => count }))
+            # Renaming here would rename the part they were reused from too : only the plain notification makes sense
+            @tool.notify_success(PLUGIN.get_i18n_string("tool.smart_draw.success.part_reused", { :name => reused_definition.nil? ? '' : reused_definition.name, :count => count }))
           elsif _fetch_option_ask_name?
             fn_ask_name.call
           else
             @tool.notify_success(
-              PLUGIN.get_i18n_string("tool.smart_draw.success.#{count > 1 ? 'parts_created' : 'part_created'}", { :name => new_definition.name, :count => count }),
+              PLUGIN.get_i18n_string("tool.smart_draw.success.part_created", { :name => new_definition.name, :count => count }),
               [
                 {
                   :label => PLUGIN.get_i18n_string('default.rename'),
