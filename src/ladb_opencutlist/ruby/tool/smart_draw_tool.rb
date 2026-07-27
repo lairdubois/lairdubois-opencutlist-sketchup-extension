@@ -4390,7 +4390,7 @@ module Ladb::OpenCutList
         length.nil? || length == -1 ? -1 : length.abs.to_l
       }
 
-      number = [ @number, spacings.compact.size ].max
+      number = [ @number, spacings.select { |spacing| spacing > 0 }.size ].max
 
       _set_distribution(number, spacings, tool, view)
       Sketchup.set_status_text('', SB_VCB_VALUE)

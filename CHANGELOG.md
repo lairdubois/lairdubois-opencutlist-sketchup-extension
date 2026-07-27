@@ -29,6 +29,8 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ### 2026-07-27
  * Improved Smart Draw Divider **(DEV team only)**
+ * Updated translations
+ * Updated PackingSolver dependency
 ### 2026-07-26
  * Improved Smart Draw Divider **(DEV team only)**
  * Updated PackingSolver dependency
