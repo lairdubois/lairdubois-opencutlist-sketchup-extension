@@ -77,6 +77,12 @@ module Ladb::OpenCutList
     POINT_STYLE_CROSS = 6
     POINT_STYLE_STAR = 7
 
+    # Cull face constants
+
+    CULL_FACE_NONE = 0   # Draw all primitives (default)
+    CULL_FACE_BACK = 1   # Draw only camera facing primitives
+    CULL_FACE_FRONT = 2  # Draw only primitives facing away from the camera
+
     require_relative 'gl/graphics'
     require_relative 'gl/graphics2d'
     require_relative 'gl/graphics3d'

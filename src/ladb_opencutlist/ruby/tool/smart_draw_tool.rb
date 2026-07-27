@@ -4237,6 +4237,7 @@ module Ladb::OpenCutList
 
           k_mesh = Kuix::Mesh.new
           k_mesh.add_triangles(triangles.flatten)
+          k_mesh.cull_face = Kuix::CULL_FACE_BACK # The fragment is a closed volume : without culling its near and far walls would blend on the same pixels and the tint would darken where they overlap
           k_mesh.background_color = ColorUtils.color_translucent(color, 0.05)
           @tool.append_3d(k_mesh, LAYER_3D_CAVITY_PREVIEW)
 
