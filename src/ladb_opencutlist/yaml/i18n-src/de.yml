@@ -2425,9 +2425,9 @@ tool:
       separator_number_overflow: "Es ist nicht möglich, {{ number }} Trennwände in diesem Hohlraum zu verteilen"
     success:
       part_created: "Neu erstelltes Teil: {{ name }}"
+      part_created_plural: "{{ count }} neu erstellte Teile: {{ name }}"
       part_reused: "Neues Vorkommen des vorhandenen Teils: {{ name }}"
-      parts_created: "{{ count }} neu erstellte Teile: {{ name }}"
-      parts_reused: "{{ count }} neue Vorkommen des bereits vorhandenen Teils: {{ name }}"
+      part_reused_plural: "{{ count }} neue Vorkommen des vorhandenen Teils: {{ name }}"
   smart_handle:
     title: Bearbeiten
     action_0: Auswählen

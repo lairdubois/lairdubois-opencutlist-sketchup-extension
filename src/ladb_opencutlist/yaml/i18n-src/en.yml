@@ -2425,9 +2425,9 @@ tool:
       separator_number_overflow: "It is not possible to place {{ number }} dividers in this cavity"
     success:
       part_created: "New part created: {{ name }}"
+      part_created_plural: "{{ count }} new parts created: {{ name }}"
       part_reused: "New instance of the existing part: {{ name }}"
-      parts_created: "{{ count }} new parts created: {{ name }}"
-      parts_reused: "{{ count }} new occurrences of the existing part: {{ name }}"
+      part_reused_plural: "{{ count }} new instances of the existing part: {{ name }}"
   smart_handle:
     title: Handle
     action_0: Select
