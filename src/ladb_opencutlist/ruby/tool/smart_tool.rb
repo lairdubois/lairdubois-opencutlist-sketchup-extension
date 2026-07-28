@@ -2778,9 +2778,9 @@ module Ladb::OpenCutList
 
             k_box = Kuix::BoxCornersMotif3d.new
             k_box.bounds.copy!(kb)
-            k_box.corner_size = 30
+            k_box.corner_size = 20
             k_box.color = Kuix::COLOR_DARK_GREY
-            k_box.line_width = 1.5
+            k_box.line_width = 2.0
             k_box.line_stipple = Kuix::LINE_STIPPLE_SOLID
             k_box.transformation = t
             @tool.append_3d(k_box, layer)
