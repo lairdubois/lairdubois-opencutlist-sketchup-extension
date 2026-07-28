@@ -4656,6 +4656,67 @@ module Ladb::OpenCutList
       true
     end
 
+    # Turns the raw Meshy fragments (world coordinates) into real, coplanar-
+    # merged Sketchup::Face geometry inside +entities+, expressed in the
+    # given transformation's local space. Deliberately simpler than
+    # CommonSolidBooleanApplyWorker#_solid_fragments_to_geometry : the whole
+    # definition is fresh (never touches pre-existing geometry) and carries
+    # a single new part, so there is no per-face material/layer/curve
+    # provenance to restore - any two coplanar adjacent faces merge
+    # unconditionally.
+    def _build_separator_faces(entities, fragments, world_transformation)
+      ti = world_transformation.inverse
+      flipped = TransformationUtils.flipped?(world_transformation)
+
+      fragments.each do |fragment|
+        vertices = fragment['vertices']
+        face_indices = fragment['face_indices']
+
+        points = vertices.each_slice(3).map { |x, y, z| Geom::Point3d.new(x, y, z).transform(ti) }
+
+        mesh = Geom::PolygonMesh.new(points.length, face_indices.length / 3)
+        face_indices.each_slice(3) do |a, b, c|
+          triangle = [ points[a], points[b], points[c] ]
+          triangle.reverse! if flipped
+          mesh.add_polygon(triangle)
+        end
+
+        entities.add_faces_from_mesh(mesh, Geom::PolygonMesh::NO_SMOOTH_OR_HIDE)
+      end
+
+      faces = entities.grep(Sketchup::Face)
+      return [] if faces.empty?
+
+      # Merge coplanar adjacent faces (native solid tools do the same) :
+      # erase only when SketchUp will actually merge the two faces (same
+      # oriented normal, truly coplanar within tolerance), otherwise erasing
+      # the edge would erase both faces and leave a hole.
+      edges_to_erase = []
+      entities.grep(Sketchup::Edge).each do |edge|
+        edge_faces = edge.faces
+        next unless edge_faces.length == 2
+        face_0, face_1 = edge_faces
+        next unless face_0.normal.samedirection?(face_1.normal) && face_1.outer_loop.vertices.all? { |vertex| vertex.position.on_plane?(face_0.plane) }
+        edges_to_erase << edge
+      end
+      entities.erase_entities(edges_to_erase) if edges_to_erase.any?
+
+      # Degenerate remnants : Manifold may emit a sliver triangle thinner
+      # than the SketchUp merge tolerance ; a face with less than 3 edges is
+      # never a legitimate piece of the shell.
+      degenerate_faces = faces.select { |face| !face.deleted? && face.edges.length < 3 }
+      unless degenerate_faces.empty?
+        degenerate_entities = []
+        degenerate_faces.each do |face|
+          degenerate_entities.concat(face.edges.select { |edge| edge.faces.all? { |edge_face| degenerate_faces.include?(edge_face) } })
+          degenerate_entities << face
+        end
+        entities.erase_entities(degenerate_entities)
+      end
+
+      faces.reject(&:deleted?)
+    end
+
     # -----
 
     # Applies a new distribution - how many separators, and which openings are
@@ -5135,7 +5196,7 @@ module Ladb::OpenCutList
           fragments = [ touched_fragment ] unless touched_fragment.nil?
         end
 
-        separator_defs << SeparatorDef.new(reference_point, normal_3f, fragments, cavities_def.container_path, fragment_def, distance.to_l)
+        separator_defs << SeparatorDef.new(cavities_def, reference_point, normal_3f, fragments, fragment_def, distance.to_l)
 
       end
 
@@ -5150,67 +5211,6 @@ module Ladb::OpenCutList
       end
 
       separator_defs
-    end
-
-    # Turns the raw Meshy fragments (world coordinates) into real, coplanar-
-    # merged Sketchup::Face geometry inside +entities+, expressed in the
-    # given transformation's local space. Deliberately simpler than
-    # CommonSolidBooleanApplyWorker#_solid_fragments_to_geometry : the whole
-    # definition is fresh (never touches pre-existing geometry) and carries
-    # a single new part, so there is no per-face material/layer/curve
-    # provenance to restore - any two coplanar adjacent faces merge
-    # unconditionally.
-    def _build_separator_faces(entities, fragments, world_transformation)
-      ti = world_transformation.inverse
-      flipped = TransformationUtils.flipped?(world_transformation)
-
-      fragments.each do |fragment|
-        vertices = fragment['vertices']
-        face_indices = fragment['face_indices']
-
-        points = vertices.each_slice(3).map { |x, y, z| Geom::Point3d.new(x, y, z).transform(ti) }
-
-        mesh = Geom::PolygonMesh.new(points.length, face_indices.length / 3)
-        face_indices.each_slice(3) do |a, b, c|
-          triangle = [ points[a], points[b], points[c] ]
-          triangle.reverse! if flipped
-          mesh.add_polygon(triangle)
-        end
-
-        entities.add_faces_from_mesh(mesh, Geom::PolygonMesh::NO_SMOOTH_OR_HIDE)
-      end
-
-      faces = entities.grep(Sketchup::Face)
-      return [] if faces.empty?
-
-      # Merge coplanar adjacent faces (native solid tools do the same) :
-      # erase only when SketchUp will actually merge the two faces (same
-      # oriented normal, truly coplanar within tolerance), otherwise erasing
-      # the edge would erase both faces and leave a hole.
-      edges_to_erase = []
-      entities.grep(Sketchup::Edge).each do |edge|
-        edge_faces = edge.faces
-        next unless edge_faces.length == 2
-        face_0, face_1 = edge_faces
-        next unless face_0.normal.samedirection?(face_1.normal) && face_1.outer_loop.vertices.all? { |vertex| vertex.position.on_plane?(face_0.plane) }
-        edges_to_erase << edge
-      end
-      entities.erase_entities(edges_to_erase) if edges_to_erase.any?
-
-      # Degenerate remnants : Manifold may emit a sliver triangle thinner
-      # than the SketchUp merge tolerance ; a face with less than 3 edges is
-      # never a legitimate piece of the shell.
-      degenerate_faces = faces.select { |face| !face.deleted? && face.edges.length < 3 }
-      unless degenerate_faces.empty?
-        degenerate_entities = []
-        degenerate_faces.each do |face|
-          degenerate_entities.concat(face.edges.select { |edge| edge.faces.all? { |edge_face| degenerate_faces.include?(edge_face) } })
-          degenerate_entities << face
-        end
-        entities.erase_entities(degenerate_entities)
-      end
-
-      faces.reject(&:deleted?)
     end
 
     # The two local axes of the picked face's container transformation lying
@@ -5229,6 +5229,21 @@ module Ladb::OpenCutList
       candidates
     end
 
+    # Which of the two candidate axes to use as the separator's normal.
+    #
+    # First criterion, the cavity's opening : the candidate the LEAST aligned
+    # with the opening axis is the one whose slab meets the open side by a
+    # chant instead of a main face. The epsilon widens the minimum into a
+    # tie band, so a candidate is only accepted when it is alone in it -
+    # two axes equally (im)perpendicular to the opening (typically a
+    # cavity open along the third, excluded axis) tell nothing and fall
+    # through. A hermetic cavity, a non-cavity fragment or a degenerate one
+    # yields no opening normal at all and falls through too.
+    #
+    # Fallback, the camera : the candidate reading the most horizontal on
+    # screen, i.e. the most aligned with the screen-right vector - the
+    # natural "shelf" reading of what the user currently sees. Degenerate
+    # camera (direction parallel to up) : first candidate, deterministic.
     def _get_separator_normal_candidate_index(candidates, fragment_def, view)
       if (opening_normal_3f = _get_cavity_opening_normal_3f(fragment_def)).is_a?(Array)
         opening_normal = Geom::Vector3d.new(opening_normal_3f)
@@ -5463,7 +5478,10 @@ module Ladb::OpenCutList
     # +trailing_wall_point+ : only the LAST separator of a distribution
     # carries it, since every other closing opening is the next separator's
     # own +distance+.
-    SeparatorDef = Struct.new(:point, :normal_3f, :fragments, :container_path, :fragment_def, :distance, :trailing_point, :trailing_distance) do
+    SeparatorDef = Struct.new(:cavity_def, :point, :normal_3f, :fragments, :fragment_def, :distance, :trailing_point, :trailing_distance) do
+      def container_path
+        cavity_def.container_path
+      end
       def normal
         @normal ||= Geom::Vector3d.new(normal_3f)
       end
