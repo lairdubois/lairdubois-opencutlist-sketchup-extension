@@ -357,7 +357,7 @@ module Ladb::OpenCutList
     # The triangle's own unit normal is yielded last, after the doubled area :
     # every triangle sharing a plane index agrees with it to
     # PLANE_NORMAL_TOLERANCE (the matching is signed), so it doubles as the
-    # plane's normal — see SolidCavityFragmentDef#walled_on_facing_planes?.
+    # plane's normal — see SolidCavityFragmentDef#enclosed_by_walls?.
     def _each_triangle_plane
       min_area2 = SolidMeshDef::TOLERANCE * SolidMeshDef::TOLERANCE
 

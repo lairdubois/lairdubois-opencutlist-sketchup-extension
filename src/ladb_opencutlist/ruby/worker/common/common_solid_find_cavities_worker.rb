@@ -35,9 +35,9 @@ module Ladb::OpenCutList
   #   planes and are filtered out. A cap structure alone does not always tell
   #   them apart, though — a notched cabinet's L-shaped cavity and the pocket
   #   its notch leaves OUTSIDE score the same on the caps — so a candidate
-  #   must also be ENCLOSED : walled on two opposing sides, which a
-  #   compartment is by definition and a pocket wrapping a corner is not (see
-  #   SolidCavityFragmentDef#walled_on_facing_planes?). max_openness — the
+  #   must also be ENCLOSED : hemmed in by its walls, which a compartment is
+  #   by definition and a pocket wrapping a corner is not (see
+  #   SolidCavityFragmentDef#enclosed_by_walls?). max_openness — the
   #   maximum fraction of the candidate surface lying on the caps — remains as
   #   an optional secondary cap (disabled by default).
   #
@@ -406,10 +406,10 @@ module Ladb::OpenCutList
           # the outside world and concavity pockets face the envelope on many
           # planes
           next if !hermetic && fragment_def.opening_plane_count > @max_opening_planes
-          # Enclosure filter : a compartment is walled on two opposing sides,
-          # a concavity pocket only wraps a corner of the assembly — see
-          # SolidCavityFragmentDef#walled_on_facing_planes?
-          next if !hermetic && !fragment_def.walled_on_facing_planes?
+          # Enclosure filter : a compartment is hemmed in by its walls, a
+          # concavity pocket only wraps a corner of the assembly — see
+          # SolidCavityFragmentDef#enclosed_by_walls?
+          next if !hermetic && !fragment_def.enclosed_by_walls?
           collected << fragment_def
         end
         collected
