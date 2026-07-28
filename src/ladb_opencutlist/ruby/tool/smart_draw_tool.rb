@@ -4528,7 +4528,7 @@ module Ladb::OpenCutList
         separator_defs.each do |separator_def|
 
           normal_3f = separator_def.normal_3f
-          u, v = _get_separator_plane_basis(normal_3f)
+          u, v = _get_separator_plane_uv_3f(normal_3f)
 
           # Local frame for the new part : Z = thickness axis (the chosen
           # separator normal), X/Y = the slab's own in-plane basis. u, v, normal
@@ -4687,6 +4687,64 @@ module Ladb::OpenCutList
 
     # -----
 
+    def _get_edit_transformation
+      return PathUtils.get_transformation(get_active_part_entity_path[0...-1], IDENTITY) if _fetch_option_axes_context?
+      super
+    end
+
+    # -----
+
+    def _get_cavities_def
+      return @cavities_def if @cavities_def.is_a?(CavitiesDef)
+
+      return nil if !has_active_part? || get_active_part.group.material_is_virtual || get_active_part.group.material_type == MaterialAttributes::TYPE_HARDWARE
+
+      active_part_entity_path = get_active_part_entity_path
+      if active_part_entity_path.is_a?(Array) && active_part_entity_path.length > 1
+
+        container_path = active_part_entity_path[0...-1]
+        return nil if container_path.empty?
+
+        container = container_path.last
+        return nil if container.nil?
+
+        cutlist = CutlistGenerateWorker.new(**HashUtils.symbolize_keys(PLUGIN.get_model_preset('cutlist_options'))
+                                                       .merge({ active_entity: container, active_path: container_path[0...-1] })
+        ).run
+
+        parts = cutlist.groups
+                       .reject { |group| group.material_is_virtual || group.material_type == MaterialAttributes::TYPE_HARDWARE}
+                       .flat_map { |group| group.get_parts }
+        drawing_defs = parts.flat_map { |part|
+          part.def.instance_infos.values.map { |instance_info|
+            CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new(instance_info.path) ],
+                                                 ignore_surfaces: true,
+                                                 ignore_edges: true,
+                                                 container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART_WITHOUT_MACHININGS_AND_CUTS_OPENING
+            ).run
+          }
+        }
+
+        result_def = CommonSolidFindCavitiesWorker.new(drawing_defs,
+                                                       max_opening_planes: 4,
+                                                       reduce_envelope: _fetch_option_reduce_envelope?
+        ).run
+
+        @cavities_def = CavitiesDef.new(container_path, result_def, drawing_defs)
+
+        unless result_def.success?
+          @tool.notify_errors(result_def.errors)
+        end
+
+      else
+        return nil
+      end
+
+      @cavities_def
+    end
+
+    # -----
+
     # A freshly created separator, in the shape #_find_reusable_definition's
     # candidate pool expects : [ occurrence path, instance, WORLD face
     # manipulators, face planes ]. Read off the definition AFTER the auto
@@ -4813,9 +4871,9 @@ module Ladb::OpenCutList
       face_manipulators.map { |face_manipulator|
         points = face_manipulator.outer_loop_manipulator.points
         next nil if points.length < 3
-        normal = face_manipulator.normal.to_a
-        origin = points.first.to_a
-        [ normal, normal[0] * origin[0] + normal[1] * origin[1] + normal[2] * origin[2], points ]
+        normal_3f = face_manipulator.normal.to_a
+        origin_3f = points.first.to_a
+        [ normal_3f, normal_3f[0] * origin_3f[0] + normal_3f[1] * origin_3f[1] + normal_3f[2] * origin_3f[2], points ]
       }.compact
     end
 
@@ -4826,28 +4884,28 @@ module Ladb::OpenCutList
     # measured on the outer loops' extents in the plane's own basis, so it
     # follows the assembly's orientation ; it may read as a contact where two
     # notched outlines only interleave, which merely gives up a reuse.
-    def _face_planes_touch?(face_plane, other_face_plane)
-      normal, offset, points = face_plane
-      other_normal, other_offset, other_points = other_face_plane
+    def _face_planes_touch?(face_plane_a, face_plane_b)
+      normal_3f_a, offset_3f_a, points_a = face_plane_a
+      normal_3f_b, offset_3f_b, points_b = face_plane_b
 
-      return false if normal[0] * other_normal[0] + normal[1] * other_normal[1] + normal[2] * other_normal[2] > -0.9999
-      return false if (offset + other_offset).abs > SolidMeshDef::TOLERANCE
+      return false if normal_3f_a[0] * normal_3f_b[0] + normal_3f_a[1] * normal_3f_b[1] + normal_3f_a[2] * normal_3f_b[2] > -0.9999
+      return false if (offset_3f_a + offset_3f_b).abs > SolidMeshDef::TOLERANCE
 
-      u, v = _get_separator_plane_basis(normal)
+      u, v = _get_separator_plane_uv_3f(normal_3f_a)
       [ u, v ].all? do |axis|
-        min = max = nil
-        points.each do |point|
+        min_a = max_a = nil
+        points_a.each do |point|
           projection = axis[0] * point.x.to_f + axis[1] * point.y.to_f + axis[2] * point.z.to_f
-          min = projection if min.nil? || projection < min
-          max = projection if max.nil? || projection > max
+          min_a = projection if min_a.nil? || projection < min_a
+          max_a = projection if max_a.nil? || projection > max_a
         end
-        other_min = other_max = nil
-        other_points.each do |point|
+        min_b = max_b = nil
+        points_b.each do |point|
           projection = axis[0] * point.x.to_f + axis[1] * point.y.to_f + axis[2] * point.z.to_f
-          other_min = projection if other_min.nil? || projection < other_min
-          other_max = projection if other_max.nil? || projection > other_max
+          min_b = projection if min_b.nil? || projection < min_b
+          max_b = projection if max_b.nil? || projection > max_b
         end
-        [ max, other_max ].min - [ min, other_min ].max > SolidMeshDef::TOLERANCE
+        [ max_a, max_b ].min - [ min_a, min_b ].max > SolidMeshDef::TOLERANCE
       end
     end
 
@@ -4879,64 +4937,6 @@ module Ladb::OpenCutList
       min = bounds.min.to_a ; max = bounds.max.to_a
       other_min = other_bounds.min.to_a ; other_max = other_bounds.max.to_a
       (0..2).all? { |axis| (min[axis] - other_min[axis]).abs <= tolerance && (max[axis] - other_max[axis]).abs <= tolerance }
-    end
-
-    # -----
-
-    def _get_edit_transformation
-      return PathUtils.get_transformation(get_active_part_entity_path[0...-1], IDENTITY) if _fetch_option_axes_context?
-      super
-    end
-
-    # -----
-
-    def _get_cavities_def
-      return @cavities_def if @cavities_def.is_a?(CavitiesDef)
-
-      return nil if !has_active_part? || get_active_part.group.material_is_virtual || get_active_part.group.material_type == MaterialAttributes::TYPE_HARDWARE
-
-      active_part_entity_path = get_active_part_entity_path
-      if active_part_entity_path.is_a?(Array) && active_part_entity_path.length > 1
-
-        container_path = active_part_entity_path[0...-1]
-        return nil if container_path.empty?
-
-        container = container_path.last
-        return nil if container.nil?
-
-        cutlist = CutlistGenerateWorker.new(**HashUtils.symbolize_keys(PLUGIN.get_model_preset('cutlist_options'))
-                                                       .merge({ active_entity: container, active_path: container_path[0...-1] })
-        ).run
-
-        parts = cutlist.groups
-                       .reject { |group| group.material_is_virtual || group.material_type == MaterialAttributes::TYPE_HARDWARE}
-                       .flat_map { |group| group.get_parts }
-        drawing_defs = parts.flat_map { |part|
-          part.def.instance_infos.values.map { |instance_info|
-            CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new(instance_info.path) ],
-                                                 ignore_surfaces: true,
-                                                 ignore_edges: true,
-                                                 container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART_WITHOUT_MACHININGS_AND_CUTS_OPENING
-            ).run
-          }
-        }
-
-        result_def = CommonSolidFindCavitiesWorker.new(drawing_defs,
-                                                       max_opening_planes: 4,
-                                                       reduce_envelope: _fetch_option_reduce_envelope?
-        ).run
-
-        @cavities_def = CavitiesDef.new(container_path, result_def, drawing_defs)
-
-        unless result_def.success?
-          @tool.notify_errors(result_def.errors)
-        end
-
-      else
-        return nil
-      end
-
-      @cavities_def
     end
 
     # -----
@@ -5324,7 +5324,7 @@ module Ladb::OpenCutList
     # Float arithmetic (no Geom:: classes) to match the fragment/mesh data,
     # already extracted as flat Float arrays - see the "Length JSON gotcha"
     # in SolidMeshDef.
-    def _get_separator_plane_basis(normal)
+    def _get_separator_plane_uv_3f(normal)
       seed = [ [ 1.0, 0.0, 0.0 ], [ 0.0, 1.0, 0.0 ], [ 0.0, 0.0, 1.0 ] ][normal.map(&:abs).each_with_index.min.last]
       u = [
         normal[1] * seed[2] - normal[2] * seed[1],
@@ -5409,7 +5409,7 @@ module Ladb::OpenCutList
     # id convention as CommonSolidFindCavitiesWorker's envelope - irrelevant
     # here since only the geometry is used for the preview).
     def _get_separator_slab_mesh(normal_3f, d0, d1, fragment_def)
-      u, v = _get_separator_plane_basis(normal_3f)
+      u, v = _get_separator_plane_uv_3f(normal_3f)
 
       u0, u1 = _get_separator_mesh_extent(fragment_def.vertices, u)
       v0, v1 = _get_separator_mesh_extent(fragment_def.vertices, v)

@@ -357,7 +357,7 @@ module Ladb::OpenCutList
     # The triangle's own unit normal is yielded last, after the doubled area :
     # every triangle sharing a plane index agrees with it to
     # PLANE_NORMAL_TOLERANCE (the matching is signed), so it doubles as the
-    # plane's normal — see SolidCavityFragmentDef#walled_on_facing_planes?.
+    # plane's normal — see SolidCavityFragmentDef#enclosed_by_walls?.
     def _each_triangle_plane
       min_area2 = SolidMeshDef::TOLERANCE * SolidMeshDef::TOLERANCE
 
@@ -416,17 +416,84 @@ module Ladb::OpenCutList
       plane_index
     end
 
+    # Canonical vertex index of every vertex : two indices whose points lie
+    # within SolidMeshDef::TOLERANCE of each other both map to the first of
+    # them. Same tolerance grid + neighbor cell probe doctrine as
+    # SolidMeshDef#_vertex_index, with a real distance gate so that two
+    # vertices farther than TOLERANCE never weld. Memoized.
+    #
+    # A Manifold output may well carry SEVERAL vertices at what is, at the
+    # mesh tolerance, the same point : an OBLIQUE assembly (anything in a
+    # rotated model) sees its near tangential intersections land a few 1e-7
+    # inch apart — distinct indices on geometrically identical corners.
+    # Cancelling interior edges by vertex INDEX then breaks down : two
+    # triangles meeting on such a corner traverse their shared edge as, say,
+    # [ a, b ] and [ b', a' ], which never match, and both survive. The
+    # merged quad they form draws with its diagonal — a flat face reading as
+    # its two triangles. Welding first lets the cancellation see the
+    # geometry rather than the indexing.
+    def _welded_vertex_indices
+      @welded_vertex_indices ||= begin
+
+        tolerance = SolidMeshDef::TOLERANCE
+        welded_vertex_indices = Array.new(vertex_count)
+        indices_by_cell = {}
+
+        (0...vertex_count).each do |index|
+          x, y, z = @vertices[index * 3], @vertices[index * 3 + 1], @vertices[index * 3 + 2]
+          cell = [ (x / tolerance).round, (y / tolerance).round, (z / tolerance).round ]
+
+          welded_index = nil
+          (-1..1).each do |dx|
+            (-1..1).each do |dy|
+              (-1..1).each do |dz|
+                candidate_indices = indices_by_cell[[ cell[0] + dx, cell[1] + dy, cell[2] + dz ]]
+                next if candidate_indices.nil?
+                candidate_indices.each do |candidate_index|
+                  ux = @vertices[candidate_index * 3] - x
+                  uy = @vertices[candidate_index * 3 + 1] - y
+                  uz = @vertices[candidate_index * 3 + 2] - z
+                  next if ux * ux + uy * uy + uz * uz > tolerance * tolerance
+                  welded_index = candidate_index
+                  break
+                end
+                break unless welded_index.nil?
+              end
+              break unless welded_index.nil?
+            end
+            break unless welded_index.nil?
+          end
+
+          if welded_index.nil?
+            (indices_by_cell[cell] ||= []) << index
+            welded_vertex_indices[index] = index
+          else
+            welded_vertex_indices[index] = welded_vertex_indices[welded_index]
+          end
+        end
+
+        welded_vertex_indices
+      end
+    end
+
     # Net boundary edges of the fragment, grouped by plane : for each plane,
     # an edge traversed once in each direction by two of its triangles is
     # interior and cancels out, the surviving edges draw that plane's face
-    # contour. Memoized.
+    # contour. Edges are keyed on WELDED vertex indices (see
+    # #_welded_vertex_indices), the only identity the cancellation can trust ;
+    # an edge whose two ends weld together is shorter than the mesh tolerance
+    # and draws nothing, dropped. Memoized.
     def _edge_counts_by_plane
       @edge_counts_by_plane ||= begin
 
+        welded_vertex_indices = _welded_vertex_indices
+
         edge_counts_by_plane = {}
         _each_triangle_plane do |plane_index, _triangle_index, a, b, c, _area2|
+          wa, wb, wc = welded_vertex_indices[a], welded_vertex_indices[b], welded_vertex_indices[c]
           edge_counts = (edge_counts_by_plane[plane_index] ||= Hash.new(0))
-          [ [ a, b ], [ b, c ], [ c, a ] ].each do |index_a, index_b|
+          [ [ wa, wb ], [ wb, wc ], [ wc, wa ] ].each do |index_a, index_b|
+            next if index_a == index_b
             if edge_counts[[ index_b, index_a ]] > 0
               edge_counts[[ index_b, index_a ]] -= 1
             else
