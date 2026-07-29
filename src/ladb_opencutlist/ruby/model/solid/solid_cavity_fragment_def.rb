@@ -68,10 +68,20 @@ module Ladb::OpenCutList
     WALL_PLANE_MIN_AREA_SHARE = 0.05
 
     # Maximum dot product between two wall normals for them to count as
-    # FACING each other : antiparallel within about 45°, so a cavity between
-    # two panels still qualifies when one of them is tilted (a lectern's
-    # slanted top over its bottom).
-    FACING_WALL_MAX_DOT = -0.7
+    # FACING each other : antiparallel within about 66°, so a cavity between
+    # two panels still qualifies when they are canted apart rather than
+    # strictly parallel (a lectern's slanted top over its bottom, or a
+    # 3-sided splayed trough whose two sides meet the bottom at a shallow
+    # angle instead of standing at 90° — a "caisson à 3 côtés" with a
+    # 117° angle between its two canted sides, dot -0.453, was the case
+    # that drove this down from -0.7). Being a plain dot product between
+    # unit normals, this stays monotonic in the angle : any FLATTER pair
+    # (wider angle, more negative dot) passes more easily still, so one
+    # threshold covers the whole family once set for its steepest member.
+    # Kept well clear of 0, where a true 90° concavity POCKET (e.g. the
+    # corner two perpendicular panels leave outside a notched footprint)
+    # must keep failing.
+    FACING_WALL_MAX_DOT = -0.4
 
     # Minimum dot an escape direction must keep against EVERY wall to count
     # as one (see #_walls_leave_no_escape?) : the wall normals are unit

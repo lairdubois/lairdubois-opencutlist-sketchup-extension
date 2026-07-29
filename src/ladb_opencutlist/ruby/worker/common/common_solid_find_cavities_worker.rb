@@ -213,6 +213,22 @@ module Ladb::OpenCutList
     # them. See #_restore_plane_offset.
     RESTORE_MIN_DETERMINANT = 1.0e-6
 
+    # Minimum a plane's normal must add to the directions already constrained
+    # to be worth constraining too — the sine of the angle it makes with the
+    # ones already taken, so the counterpart of RESTORE_MIN_DETERMINANT (a
+    # determinant of 1 - cos² = sin² for a pair) on one normal at a time. See
+    # #_restore_append_basis.
+    RESTORE_MIN_INDEPENDENCE = 1.0e-3
+
+    # How much longer than the plain correction the move holding a vertex on
+    # its faces may get before it is given up on. Holding a face that GRAZES
+    # the plane being restored costs a slide of erosion / sin(angle), which
+    # runs away as the angle closes — and the angle alone cannot say where to
+    # stop, so the move is what gets measured. Ten times the erosion is still
+    # a few hundredths of a millimetre, and anything past it is a corner too
+    # degenerate to slide along at all. See #_restore_held_offset.
+    RESTORE_MAX_AMPLIFICATION = 10.0
+
     # Safety bound on the reduction rounds : a cavity is clipped at ONE plane
     # per round and both sides go back through the detection (see #run), so
     # an assembly needs one round per recess it exposes — whether NESTED (a
@@ -998,6 +1014,27 @@ module Ladb::OpenCutList
     # openings meet — and each of them wants it on its own restored plane :
     # the correction is the combination that satisfies them all, found by
     # solving the small system its normals make (see #_restore_plane_offset).
+    #
+    # The cap is not the only face the vertex belongs to, though : it is a
+    # CORNER, where the cap meets the panel WALLS that the opening is cut
+    # through, and those walls are where they belong already — only the cap
+    # was eroded. Moving the vertex along the cap normal alone takes it OFF
+    # them by erosion × |n_cap · n_wall|, so the cavity's wall comes out
+    # PIVOTED : exact at the closed end, adrift at the open one. It stays
+    # invisible as long as walls meet caps at a right angle (the dot is 0,
+    # and every ordinary caisson is built that way) and appears as soon as
+    # one is OBLIQUE — the splayed sides of a 3-sided trough, a tent, a
+    # lectern. It is the cavity's own surface that ends up off the panel
+    # then, by more than SolidMeshDef::TOLERANCE, which is enough for a point
+    # picked on the panel to miss the cavity entirely
+    # (SolidFragmentDef#contains_point?).
+    #
+    # So the walls meeting the vertex constrain the move too, each asking for
+    # none of it along its own normal : the vertex slides ALONG them, back
+    # onto the restored cap. Perpendicular walls ask for nothing the cap
+    # normal was not already giving them (the two are orthogonal, the
+    # solution is unchanged), which is why this only ever moves an oblique
+    # case.
     def _restore_envelope_vertices(fragments)
       return if @envelope_restore_planes.nil? || @envelope_restore_planes.empty?
       return unless fragments.is_a?(Array)
@@ -1005,6 +1042,7 @@ module Ladb::OpenCutList
       fragments.each do |fragment|
         vertices = fragment['vertices']
         next unless vertices.is_a?(Array)
+        wall_normals_by_vertex = _face_normals_by_vertex(fragment, true)
         index = 0
         while index < vertices.length
 
@@ -1019,7 +1057,7 @@ module Ladb::OpenCutList
           end
 
           unless corrections.empty?
-            offset = _restore_plane_offset(corrections)
+            offset = _restore_held_offset(corrections, wall_normals_by_vertex[index / 3])
             vertices[index] += offset[0]
             vertices[index + 1] += offset[1]
             vertices[index + 2] += offset[2]
@@ -1028,6 +1066,117 @@ module Ladb::OpenCutList
           index += 3
         end
       end
+    end
+
+    # The smallest move satisfying +corrections+ that also HOLDS the vertex on
+    # the faces it already belongs to, +held_normals+ : each of them joins the
+    # system asking for no move at all along its own normal, so the vertex
+    # slides ALONG it instead of leaving it. Only the directions the
+    # corrections do not already span are worth taking (a face parallel to one
+    # of them says nothing new and would only make the system singular), and a
+    # corner meets three faces at most.
+    #
+    # A face GRAZING the plane being restored is the degenerate case : the
+    # slide along it runs away as the angle closes, and no threshold on the
+    # angle bounds the move usefully. So the move itself is what is checked —
+    # beyond RESTORE_MAX_AMPLIFICATION times the plain correction there is no
+    # usable corner here, and the plain correction is the sane answer.
+    def _restore_held_offset(corrections, held_normals)
+      offset = _restore_plane_offset(corrections)
+      return offset if held_normals.nil? || held_normals.empty?
+
+      held = corrections.dup
+      basis = []
+      corrections.each { |normal, _distance| _restore_append_basis(basis, normal) }
+      held_normals.each do |normal|
+        break if held.length == 3
+        held << [ normal, 0.0 ] if _restore_append_basis(basis, normal)
+      end
+      return offset if held.length == corrections.length
+
+      held_offset = _restore_plane_offset(held)
+      limit = RESTORE_MAX_AMPLIFICATION * Math.sqrt(offset[0] * offset[0] + offset[1] * offset[1] + offset[2] * offset[2])
+      return offset if Math.sqrt(held_offset[0] * held_offset[0] + held_offset[1] * held_offset[1] + held_offset[2] * held_offset[2]) > limit
+      held_offset
+    end
+
+    # Unit normals of the faces each vertex of the given raw Meshy fragment
+    # lies on, as { vertex index => [ normal, ... ] }, one entry per distinct
+    # plane. Feeds the held constraints of #_restore_held_offset.
+    #
+    # +walls_only+ keeps the PANEL faces alone (face id != 0 — the envelope's
+    # own id is 0, see #run) : that is what #_restore_envelope_vertices wants,
+    # since every cap the vertex lies on is a plane it is being MOVED to, and
+    # is already among its corrections. #_restore_clipped_vertices wants them
+    # all instead — the caps of a cavity reaching a clip have been restored
+    # ALREADY, so they hold the vertex exactly like a panel does, and the clip
+    # plane itself (an id 0 face too, the slab brings the cap id in) is
+    # discarded on the spot for being parallel to the correction.
+    def _face_normals_by_vertex(fragment, walls_only)
+      normals_by_vertex = {}
+
+      vertices = fragment['vertices']
+      face_indices = fragment['face_indices']
+      face_ids = fragment['face_ids']
+      return normals_by_vertex unless vertices.is_a?(Array) && face_indices.is_a?(Array) && face_ids.is_a?(Array)
+
+      triangle_index = 0
+      while triangle_index * 3 < face_indices.length
+
+        if !walls_only || face_ids[triangle_index] != 0
+
+          ia = face_indices[triangle_index * 3]
+          ib = face_indices[triangle_index * 3 + 1]
+          ic = face_indices[triangle_index * 3 + 2]
+
+          ax = vertices[ia * 3] ; ay = vertices[ia * 3 + 1] ; az = vertices[ia * 3 + 2]
+          bx = vertices[ib * 3] ; by = vertices[ib * 3 + 1] ; bz = vertices[ib * 3 + 2]
+          cx = vertices[ic * 3] ; cy = vertices[ic * 3 + 1] ; cz = vertices[ic * 3 + 2]
+
+          ux = bx - ax ; uy = by - ay ; uz = bz - az
+          vx = cx - ax ; vy = cy - ay ; vz = cz - az
+
+          nx = uy * vz - uz * vy
+          ny = uz * vx - ux * vz
+          nz = ux * vy - uy * vx
+          length = Math.sqrt(nx * nx + ny * ny + nz * nz)
+
+          if length > 0
+            normal = [ nx / length, ny / length, nz / length ]
+            [ ia, ib, ic ].each do |vertex_index|
+              normals = (normals_by_vertex[vertex_index] ||= [])
+              # Same plane, already held : the triangles of one panel face all
+              # carry its normal
+              next if normals.any? { |other|
+                (normal[0] * other[0] + normal[1] * other[1] + normal[2] * other[2]).abs > 1.0 - SolidFragmentDef::PLANE_NORMAL_TOLERANCE
+              }
+              normals << normal
+            end
+          end
+
+        end
+
+        triangle_index += 1
+      end
+
+      normals_by_vertex
+    end
+
+    # Appends the given unit normal to +basis+, an orthonormal basis of the
+    # directions already spoken for, and returns whether it brought a new one.
+    # The part of it the basis does not already span is what it adds ; below
+    # RESTORE_MIN_INDEPENDENCE of it there is nothing left to add, and taking
+    # it anyway would only make #_restore_plane_offset's system singular.
+    def _restore_append_basis(basis, normal)
+      residual = [ normal[0], normal[1], normal[2] ]
+      basis.each do |axis|
+        dot = residual[0] * axis[0] + residual[1] * axis[1] + residual[2] * axis[2]
+        3.times { |i| residual[i] -= dot * axis[i] }
+      end
+      length = Math.sqrt(residual[0] * residual[0] + residual[1] * residual[1] + residual[2] * residual[2])
+      return false if length < RESTORE_MIN_INDEPENDENCE
+      basis << [ residual[0] / length, residual[1] / length, residual[2] / length ]
+      true
     end
 
     # The smallest move putting a point back on all of the given restored
@@ -1107,24 +1256,34 @@ module Ladb::OpenCutList
     # #_merge_close_reduction_planes) and the next clip lands where the
     # previous one did.
     #
-    # Vertices are moved along the plane normal, so a face perpendicular to
-    # the clip - the walls of any compartment - simply gets that much longer.
-    # A face meeting the clip at an angle (a bevelled edge) ends up bent by
-    # the erosion, a few hundredths of a millimetre : below anything the
-    # cavity is used for.
+    # A vertex on the clip is a CORNER of it, shared with the faces the clip
+    # cuts through - the compartment's walls, and the cavity's own caps, which
+    # #_restore_envelope_vertices has already put back by the time a fragment
+    # reaches a reduction. Only the clip moves, so those faces hold the vertex
+    # and it SLIDES along them (see #_restore_held_offset) : a face
+    # perpendicular to the clip simply gets that much longer, exactly as a
+    # move along the plane normal alone would have made it, and one meeting it
+    # at an angle - a bevelled edge, the splayed side of a trough - keeps its
+    # own plane instead of being bent by the erosion. That bend used to be
+    # accepted as "a few hundredths of a millimetre, below anything the cavity
+    # is used for", which held right up until a point picked ON such a face
+    # had to land inside the cavity : SolidFragmentDef#contains_point? works
+    # to SolidMeshDef::TOLERANCE, and the bend is bigger than that.
     def _restore_clipped_vertices(fragments, normal, d)
       return unless fragments.is_a?(Array)
       clip_d = d + REDUCTION_CLIP_EROSION
       fragments.each do |fragment|
         vertices = fragment['vertices']
         next unless vertices.is_a?(Array)
+        face_normals_by_vertex = _face_normals_by_vertex(fragment, false)
         index = 0
         while index < vertices.length
           distance = normal[0] * vertices[index] + normal[1] * vertices[index + 1] + normal[2] * vertices[index + 2] - clip_d
           if distance.abs <= SolidMeshDef::TOLERANCE
-            vertices[index] -= normal[0] * REDUCTION_CLIP_EROSION
-            vertices[index + 1] -= normal[1] * REDUCTION_CLIP_EROSION
-            vertices[index + 2] -= normal[2] * REDUCTION_CLIP_EROSION
+            offset = _restore_held_offset([ [ normal, -REDUCTION_CLIP_EROSION ] ], face_normals_by_vertex[index / 3])
+            vertices[index] += offset[0]
+            vertices[index + 1] += offset[1]
+            vertices[index + 2] += offset[2]
           end
           index += 3
         end
