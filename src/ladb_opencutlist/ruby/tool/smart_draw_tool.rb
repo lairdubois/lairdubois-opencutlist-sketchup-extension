@@ -4143,21 +4143,19 @@ module Ladb::OpenCutList
 
       when STATE_PLACE, STATE_DISTRIBUTE
         _pick_part(picker, view)
-        if has_active_part? && picker.picked_plane_manipulator.is_a?(PlaneManipulator)
-          @picked_point = picker.picked_point.project_to_plane(picker.picked_plane_manipulator.plane)
-        else
-          @picked_point = nil
+        if has_active_part?
+          if _snap_point(picker)
+            @tool.remove_tooltip
+            @tool.pop_cursor(SmartCursorManager.cursor_select_error)
+          else
+            @tool.show_tooltip(PLUGIN.get_i18n_string('tool.smart_draw.error.invalid_divider_cavity'), SmartTool::MESSAGE_TYPE_ERROR)
+            @tool.push_cursor(SmartCursorManager.cursor_select_error)
+          end
         end
         _preview_divider(view)
         _preview_cavity
-
       end
 
-      super
-    end
-
-    def onActivePartChanged(part_entity_path, part, highlighted = false)
-      @cavities_def = nil
       super
     end
 
@@ -4198,7 +4196,14 @@ module Ladb::OpenCutList
     def _can_activate_part?(part_entity_path, part)
       return [ false, 'tool.smart_draw.error.invalid_divider_seed' ] unless (!part.is_a?(Part) || part.group.material_type != MaterialAttributes::TYPE_HARDWARE)
       return [ false, 'tool.smart_draw.error.invalid_divider_container' ] if !part_entity_path.nil? && part_entity_path.one?
-      super
+
+      # The inherited tests first : no point paying for a cavity detection on a part that will be refused anyway.
+      can_activate, _ = super_result = super
+      return super_result unless can_activate
+
+      return [ false, 'tool.smart_draw.error.no_divider_cavity' ] if (cavities_def = _get_cavities_def(part_entity_path, part)).is_a?(CavitiesDef) && cavities_def.valid? && cavities_def.fragment_defs.empty?
+
+      super_result
     end
 
     def _preview_part_mesh?
@@ -4207,6 +4212,20 @@ module Ladb::OpenCutList
 
     def _preview_part_container?
       true
+    end
+
+    # -----
+
+    def _snap_point(picker)
+      if has_active_part? && (picked_plane_manipulator = picker.picked_plane_manipulator).is_a?(PlaneManipulator)
+        @picked_point = picker.picked_point.project_to_plane(picked_plane_manipulator.plane)
+        return (cavities_def = _get_cavities_def).is_a?(CavitiesDef) && cavities_def.valid? &&
+               !cavities_def.fragment_defs.empty? &&
+               _get_cavity_fragment_def(cavities_def, @picked_point, picked_plane_manipulator).is_a?(SolidCavityFragmentDef)
+      else
+        @picked_point = nil
+        return false
+      end
     end
 
     # -----
@@ -4358,10 +4377,6 @@ module Ladb::OpenCutList
 
     # -----
 
-    # "*n" (or "/n", meaning "split in n", so n - 1 dividers) sets how many
-    # dividers one pick draws - same VCB grammar as the Smart Handle
-    # "distribute" action. Unlike it, 0 is a legal count here : it is the free
-    # mode, where the pick alone places a single divider.
     def _read_number(tool, text, view)
       return false unless text.is_a?(String) && (match = text.match(/^([x*\/])(\d+)$/))
 
@@ -4761,50 +4776,54 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _get_cavities_def
-      return @cavities_def if @cavities_def.is_a?(CavitiesDef)
+    # The cavities of the given part's container - by default the ACTIVE
+    # part's. The explicit parameters exist for #_can_activate_part?, which
+    # runs BEFORE the part it examines is activated and so cannot rely on the
+    # active one.
+    def _get_cavities_def(part_entity_path = get_active_part_entity_path, part = get_active_part)
+      return nil unless part_entity_path.is_a?(Array) && part_entity_path.length > 1
 
-      return nil if !has_active_part? || get_active_part.group.material_is_virtual || get_active_part.group.material_type == MaterialAttributes::TYPE_HARDWARE
+      container_path = part_entity_path[0...-1]
+      return nil if container_path.empty?
 
-      active_part_entity_path = get_active_part_entity_path
-      if active_part_entity_path.is_a?(Array) && active_part_entity_path.length > 1
+      container = container_path.last
+      return nil if container.nil?
 
-        container_path = active_part_entity_path[0...-1]
-        return nil if container_path.empty?
+      # Cavities belong to the CONTAINER, not to the picked part : sliding the
+      # pick from one panel to another of the same box must reuse the boolean
+      # pass rather than pay for it again. Comparing the paths compares the
+      # entities themselves, so a #_make_unique_groups_in_path that replaced
+      # them invalidates the cache - which is exactly what it should do.
+      return @cavities_def if @cavities_def.is_a?(CavitiesDef) && @cavities_def.container_path == container_path
 
-        container = container_path.last
-        return nil if container.nil?
+      return nil if !part.is_a?(Part) || part.group.material_is_virtual || part.group.material_type == MaterialAttributes::TYPE_HARDWARE
 
-        cutlist = CutlistGenerateWorker.new(**HashUtils.symbolize_keys(PLUGIN.get_model_preset('cutlist_options'))
-                                                       .merge({ active_entity: container, active_path: container_path[0...-1] })
-        ).run
+      cutlist = CutlistGenerateWorker.new(**HashUtils.symbolize_keys(PLUGIN.get_model_preset('cutlist_options'))
+                                                     .merge({ active_entity: container, active_path: container_path[0...-1] })
+      ).run
 
-        parts = cutlist.groups
-                       .reject { |group| group.material_is_virtual || group.material_type == MaterialAttributes::TYPE_HARDWARE}
-                       .flat_map { |group| group.get_parts }
-        drawing_defs = parts.flat_map { |part|
-          part.def.instance_infos.values.map { |instance_info|
-            CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new(instance_info.path) ],
-                                                 ignore_surfaces: true,
-                                                 ignore_edges: true,
-                                                 container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART_WITHOUT_MACHININGS_AND_CUTS_OPENING
-            ).run
-          }
+      parts = cutlist.groups
+                     .reject { |group| group.material_is_virtual || group.material_type == MaterialAttributes::TYPE_HARDWARE}
+                     .flat_map { |group| group.get_parts }
+      drawing_defs = parts.flat_map { |container_part|
+        container_part.def.instance_infos.values.map { |instance_info|
+          CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new(instance_info.path) ],
+                                               ignore_surfaces: true,
+                                               ignore_edges: true,
+                                               container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART_WITHOUT_MACHININGS_AND_CUTS_OPENING
+          ).run
         }
+      }
 
-        result_def = CommonSolidFindCavitiesWorker.new(drawing_defs,
-                                                       max_opening_planes: 4,
-                                                       reduce_envelope: _fetch_option_reduce_envelope?
-        ).run
+      result_def = CommonSolidFindCavitiesWorker.new(drawing_defs,
+                                                     max_opening_planes: 4,
+                                                     reduce_envelope: _fetch_option_reduce_envelope?
+      ).run
 
-        @cavities_def = CavitiesDef.new(container_path, result_def, drawing_defs)
+      @cavities_def = CavitiesDef.new(container_path, result_def, drawing_defs)
 
-        unless result_def.success?
-          @tool.notify_errors(result_def.errors)
-        end
-
-      else
-        return nil
+      unless result_def.success?
+        @tool.notify_errors(result_def.errors)
       end
 
       @cavities_def
@@ -5008,21 +5027,27 @@ module Ladb::OpenCutList
 
     # -----
 
+    # The cavity fragment a pick designates, or nil when the point sits in no
+    # cavity at all.
+    #
+    # The lookup point is nudged to the cavity side of the picked face : a
+    # point picked exactly on a boundary face is ambiguous between the
+    # cavities it separates (fragment_defs_for_point would return both).
+    def _get_cavity_fragment_def(cavities_def, point, picked_face_manipulator)
+      inward_point = point.offset(picked_face_manipulator.normal.reverse, SolidMeshDef::TOLERANCE * 10)
+      cavities_def.fragment_defs_for_point(inward_point).first || cavities_def.fragment_defs_for_point(point).first
+    end
+
     # What the pick resolves to, before any slab is built :
     # [ cavities_def, fragment_def, normal_3f ], or nil when the pick is not
     # on a usable cavity. Split out of #_compute_dividers so the count can
     # be validated (see #_set_distribution) without paying for the booleans.
     def _compute_divider_context(point, view)
-      return nil unless (picked_face_manipulator = @picker.picked_plane_manipulator).is_a?(PlaneManipulator)
       return nil unless point.is_a?(Geom::Point3d)
+      return nil unless (picked_face_manipulator = @picker.picked_plane_manipulator).is_a?(PlaneManipulator)
       return nil unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef) && cavities_def.valid?
 
-      # Nudge the lookup point to the cavity side of the picked face : a
-      # point picked exactly on a boundary face is ambiguous between the
-      # cavities it separates (fragment_defs_for_point would return both).
-      inward_point = point.offset(picked_face_manipulator.normal.reverse, SolidMeshDef::TOLERANCE * 10)
-      fragment_def = cavities_def.fragment_defs_for_point(inward_point).first
-      fragment_def ||= cavities_def.fragment_defs_for_point(point).first
+      fragment_def = _get_cavity_fragment_def(cavities_def, point, picked_face_manipulator)
       return nil if fragment_def.nil?
 
       normal_3f = _get_divider_normal_3f(picked_face_manipulator, fragment_def, view)

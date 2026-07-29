@@ -2422,8 +2422,10 @@ tool:
     action_toggle_move_copy_status: Alterner entre copier/déplacer
     action_change_move_anchor_status: Changer le point d'ancrage
     error:
-      invalid_divider_container: "Cette pièce est isolée : elle ne partage pas de groupe ou composant avec d'autres pièces"
       invalid_divider_seed: Ce type de pièce ne permet pas le dessin d'un séparateur
+      invalid_divider_container: "Cette pièce est isolée : elle ne partage pas de groupe ou composant avec d'autres pièces"
+      invalid_divider_cavity: "Aucune cavité ne touche cette paroi"
+      no_divider_cavity: Aucune cavité n'a été détectée dans ce groupe ou composant
       divider_number_overflow: "Impossible de répartir {{ number }} séparateurs dans cette cavité"
     success:
       part_created: "Nouvelle pièce créée : {{ name }}"
