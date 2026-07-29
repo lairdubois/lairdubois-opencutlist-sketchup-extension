@@ -121,14 +121,16 @@ module Ladb::OpenCutList
 
       if @texture_changed || @texture_rotation > 0
 
+        texture_file = PLUGIN.resolve_dialog_temp_url(@texture_file)
+
         # Rotate texture
-        if @texture_rotation > 0 && @texture_file
+        if @texture_rotation > 0 && texture_file
 
           require_relative '../../lib/fiddle/imagy/imagy'
 
-          if Fiddle::Imagy.load(@texture_file)
+          if Fiddle::Imagy.load(texture_file)
             Fiddle::Imagy.rotate!(@texture_rotation)
-            Fiddle::Imagy.write(@texture_file)
+            Fiddle::Imagy.write(texture_file)
             Fiddle::Imagy.clear!
           end
 
@@ -142,7 +144,7 @@ module Ladb::OpenCutList
         end
 
         # Set a new texture to the material and re-apply the previous color
-        material.texture = @texture_file
+        material.texture = texture_file
 
         # Re-apply color if colorized material
         material.color = color if color

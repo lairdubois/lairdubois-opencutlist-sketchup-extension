@@ -46,7 +46,7 @@ module Ladb::OpenCutList
           response[:texture_image_width] = texture_image_width
           response[:texture_image_height] = texture_image_height
 
-          response[:texture_file] = texture_file
+          response[:texture_file] = PLUGIN.dialog_temp_url(texture_file)
           response[:texture_name] = File.basename(path, File.extname(path))
 
         else

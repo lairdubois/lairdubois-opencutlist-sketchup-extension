@@ -154,6 +154,26 @@ module Ladb::OpenCutList
       @temp_dir = dir
     end
 
+    # Converts an absolute path under temp_dir into a URL the dialog can load it from.
+    # Falls back to the raw path unchanged if the local HTTP server isn't running
+    # (dialog loaded via file://, where absolute paths resolve directly).
+    def dialog_temp_url(absolute_path)
+      return absolute_path if absolute_path.nil?
+      port = local_http_server.running? ? local_http_server.port : nil
+      return absolute_path unless port
+      relative = absolute_path.sub(temp_dir, '')
+      "http://127.0.0.1:#{port}/tmp#{relative}"
+    end
+
+    # Inverse of dialog_temp_url : converts a value received back from the dialog
+    # (a dialog_temp_url URL, or a raw path in the file:// fallback case) into a
+    # real filesystem path.
+    def resolve_dialog_temp_url(value)
+      return value if value.nil? || value.empty?
+      match = value.match(%r{\Ahttp://127\.0\.0\.1:\d+/tmp/(.+)\z})
+      match ? File.join(temp_dir, match[1]) : value
+    end
+
     def language
       return @language unless @language.nil?
       # Try to retrieve and set language from defaults
@@ -1549,6 +1569,7 @@ module Ladb::OpenCutList
           :chrome_version => defined?(UI::HtmlDialog::CHROME_VERSION) ? UI::HtmlDialog::CHROME_VERSION : nil,
           :platform_name => platform_name,
           :is_64bit => Sketchup.respond_to?(:is_64bit?) && Sketchup.is_64bit?,
+          :dialog_transport => local_http_server.running? ? 'http://' : 'file://',
           :locale => Sketchup.get_locale,
           :language => PLUGIN.language,
           :languages => PLUGIN.get_languages,

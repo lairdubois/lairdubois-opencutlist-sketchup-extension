@@ -63,7 +63,7 @@ module Ladb::OpenCutList
             :id => material.entityID,
             :name => material.name,
             :display_name => material.display_name,
-            :thumbnail_file => thumbnail_file,
+            :thumbnail_file => PLUGIN.dialog_temp_url(thumbnail_file),
             :color => ColorUtils.color_to_hex(material.color),
             :alpha => material.alpha,
             :description => material_attributes.description,
