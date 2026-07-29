@@ -82,7 +82,7 @@ default:
   setup_model_units: Установка единиц измерения
   load_more: Загрузить больше
   reset_to_app_defaults: Восстановить исходные значения
-  constrain_key: Сдвиг
+  constrain_key: Shift
   copy_key_win: Ctrl
   copy_key_mac: Вариант
   alt_key_win: Alt
@@ -1842,7 +1842,7 @@ tab:
       instance_name: Экземпляр
       material: Материал
       is_grain_group: Задать как **Группу подбора текстуры**
-      is_grain_group_help: "Если эта опция включена, данный компонент автоматически станет **Группой подбора текстуры** для всех входящих в него деталей, у которых включен **Подбор текстуры**."
+      is_grain_group_help: "Если эта опция включена, данный компонент автоматически станет **Группой подбора текстуры** для всех входящих в него деталей, у которых включен *Подбор текстуры*."
       definition_name: Содержание
       description: Описание
       url: URL
@@ -2422,7 +2422,7 @@ tool:
     action_toggle_move_copy_status: Переключение копировать/переместить
     action_change_move_anchor_status: Изменить точку привязки
     error:
-      separator_number_overflow: "Не удалось разместить {{ number }} разделителей в этой полости"
+      divider_number_overflow: "Не удалось разместить {{ number }} разделителей в этой полости"
     success:
       part_created: "Создание нового компонента: : {{ name }}"
       part_created_plural: "{{ count }} новых создано деталей: {{ name }}"
@@ -2472,27 +2472,27 @@ tool:
     action_0_state_11_status: "Нажмите, чтобы добавить схему распила"
     action_0_state_12_status: "Нажмите на схему распила, чтобы удалить ее"
     action_0_state_2_status: "Кликните, чтобы подтвердить растяжение, или введите расстояние"
-    action_1: Установить указатели
+    action_1: Окантовать
     action_1_status: Создать серию деталей из замкнутого твердого тела
     action_1_state_0_status: "Кликните замкнутое тело, чтобы задать вспомогательную геометрию"
-    action_1_state_1_status: Выберите грани для выдавливания
+    action_1_state_1_status: Выберите грани для окантовки
     action_2: Объединить
     action_2_status: Объединить несколько деталей в одну
     action_2_state_0_status: Выберите деталь А
     action_2_state_1_status: Выберите деталь B
-    action_3: Раскроить
-    action_3_status: Вычесть одну деталь из другой
+    action_3: Высечка
+    action_3_status: Создание уникальных вырезов вычетанием формы одной детали из массива другой
     action_3_state_0_status: Выберите деталь А
     action_3_state_1_status: Выберите деталь B
-    action_4: Пересечь
+    action_4: Пересечение
     action_4_status: Создать деталь на пересечении нескольких деталей
     action_4_state_0_status: Выберите деталь А
     action_4_state_1_status: Выберите деталь B
     action_option_group_thickness: Толщина
     action_option_group_stretch_measure_type: Отсчет
     action_option_group_axes: Оси
-    action_option_group_paneling_joint_type: Сборка
-    action_option_group_paneling_direction: Измерение
+    action_option_group_paneling_joint_type: Стыковка
+    action_option_group_paneling_direction: Направление
     action_option_group_csg_operation: Операция
     action_option_group_options: Опции
     action_option_thickness_thickness: Толщина
@@ -2502,14 +2502,14 @@ tool:
     action_option_axes_active_status: Перемещение по активным осям
     action_option_axes_context_status: "Перемещение по осям группы или компонента, содержащего деталь"
     action_option_axes_entity_status: Перемещение по осям детали
-    action_option_paneling_joint_type_flat_status: Плоская прокладка
-    action_option_paneling_joint_type_miter_status: Резка под углом
-    action_option_paneling_direction_inward_status: Внутри
-    action_option_paneling_direction_outward_status: Снаружи
+    action_option_paneling_joint_type_flat_status: Встык
+    action_option_paneling_joint_type_miter_status: Заусовка
+    action_option_paneling_direction_inward_status: Внутрь угла
+    action_option_paneling_direction_outward_status: Снаружи угла
     action_option_options_centered_status: Центрировать по растянутым элементам
-    action_option_options_make_unique_status: Сделать измененные детали уникальными
+    action_option_options_make_unique_status: Сделать уникальными полученные детали
     action_option_options_keep_a: Оставить деталь А
-    action_option_options_keep_a_status: Сохранять копии А после операции и поместить результат в новую деталь
+    action_option_options_keep_a_status: После операции сохранять детали А и результат пересечения в новую деталь
     action_option_options_keep_b: Оставить деталь B
     action_option_options_keep_b_status: Сохранять экземпляры B после операции
     action_option_options_remove_unused_definitions_status: Очистить неиспользуемые компоненты после выполнения операции
