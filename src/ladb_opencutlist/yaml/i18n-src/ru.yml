@@ -2461,7 +2461,7 @@ tool:
     warning:
       copies_disable_mirror: Многократное копирование не работает $t(tool.smart_handle.action_option_options_mirror_status)'
   smart_reshape:
-    title: Изменить
+    title: Модификатор
     action_0: Растянуть
     action_0_status: Растянуть деталь
     action_0_state_1_status: "Кликните на ручку, чтобы растянуть"
@@ -2497,8 +2497,8 @@ tool:
     action_option_group_options: Опции
     action_option_thickness_thickness: Толщина
     action_option_thickness_thickness_status: Настройка толщины панелей
-    action_option_stretch_measure_type_outside_status: Внешнее измерение
-    action_option_stretch_measure_type_offset_status: Измерить разницу
+    action_option_stretch_measure_type_outside_status: Изменяемая длина
+    action_option_stretch_measure_type_offset_status: Дельта размера
     action_option_axes_active_status: Перемещение по активным осям
     action_option_axes_context_status: "Перемещение по осям группы или компонента, содержащего деталь"
     action_option_axes_entity_status: Перемещение по осям детали
@@ -2506,13 +2506,13 @@ tool:
     action_option_paneling_joint_type_miter_status: Заусовка
     action_option_paneling_direction_inward_status: Внутрь угла
     action_option_paneling_direction_outward_status: Снаружи угла
-    action_option_options_centered_status: Центрировать по растянутым элементам
+    action_option_options_centered_status: Симметричная  растяжка элемента относительно собственного центра
     action_option_options_make_unique_status: Сделать уникальными полученные детали
     action_option_options_keep_a: Оставить деталь А
     action_option_options_keep_a_status: После операции сохранять детали А и результат пересечения в новую деталь
     action_option_options_keep_b: Оставить деталь B
     action_option_options_keep_b_status: Сохранять экземпляры B после операции
-    action_option_options_remove_unused_definitions_status: Очистить неиспользуемые компоненты после выполнения операции
+    action_option_options_remove_unused_definitions_status: "После выполнения операции удалять детали, которые опционально не выбраны для сохранения "
     notify:
       validate_a: "Подтвердите, чтобы перейти к выбору B"
       validate_b: "Подтвердите, чтобы применить операцию"

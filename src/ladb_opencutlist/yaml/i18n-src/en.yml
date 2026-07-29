@@ -2422,6 +2422,10 @@ tool:
     action_toggle_move_copy_status: Toggle between copy/move
     action_change_move_anchor_status: Change the anchor point
     error:
+      invalid_divider_seed: This type of part does not allow for the creation of a divider
+      invalid_divider_container: "This part is isolated: it does not share any groups or components with other parts"
+      invalid_divider_cavity: "No compartment this location"
+      no_divider_cavity: No compartments were detected in this group or component
       divider_number_overflow: "It is not possible to place {{ number }} dividers in this compartment"
     success:
       part_created: "New part created: {{ name }}"

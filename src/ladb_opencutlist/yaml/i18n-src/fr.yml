@@ -2424,7 +2424,7 @@ tool:
     error:
       invalid_divider_seed: Ce type de pièce ne permet pas le dessin d'un séparateur
       invalid_divider_container: "Cette pièce est isolée : elle ne partage pas de groupe ou composant avec d'autres pièces"
-      invalid_divider_cavity: "Aucune cavité a cette position"
+      invalid_divider_cavity: "Aucune cavité à cette position"
       no_divider_cavity: Aucune cavité n'a été détectée dans ce groupe ou composant
       divider_number_overflow: "Impossible de répartir {{ number }} séparateurs dans cette cavité"
     success:
