@@ -2373,7 +2373,7 @@ tool:
     action_2_state_1_status: Click to define a new point or enter distance
     action_x_state_2_status: Click to set the elevation or enter distance
     action_3: Draw Divider
-    action_3_status: Draw a divider in a cavity formed by a group of existing parts
+    action_3_status: Draw a divider in a compartment formed by a group of existing parts
     action_3_state_0_status: Click on a wall to draw a divider
     action_3_state_1_status: Click on a wall to draw dividers
     action_option_group_offset: Offset
@@ -2422,7 +2422,7 @@ tool:
     action_toggle_move_copy_status: Toggle between copy/move
     action_change_move_anchor_status: Change the anchor point
     error:
-      separator_number_overflow: "It is not possible to place {{ number }} dividers in this cavity"
+      divider_number_overflow: "It is not possible to place {{ number }} dividers in this compartment"
     success:
       part_created: "New part created: {{ name }}"
       part_created_plural: "{{ count }} new parts created: {{ name }}"
