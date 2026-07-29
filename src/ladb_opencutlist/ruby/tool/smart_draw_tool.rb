@@ -4195,6 +4195,12 @@ module Ladb::OpenCutList
 
     # -----
 
+    def _can_activate_part?(part_entity_path, part)
+      return [ false, 'tool.smart_draw.error.invalid_divider_seed' ] unless (!part.is_a?(Part) || part.group.material_type != MaterialAttributes::TYPE_HARDWARE)
+      return [ false, 'tool.smart_draw.error.invalid_divider_container' ] if !part_entity_path.nil? && part_entity_path.one?
+      super
+    end
+
     def _preview_part_mesh?
       false
     end
