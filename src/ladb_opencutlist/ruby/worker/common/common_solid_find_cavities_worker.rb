@@ -72,7 +72,33 @@ module Ladb::OpenCutList
   #   rather than reaching the envelope's outer edge (e.g. a lone recessed
   #   back panel, walled by the sides/top/bottom) — see
   #   #_reduction_pocket_confined?.
-  # Failing all three, this sub-group's chant is exposed by a
+  # Failing all three FOR EVERY sub-group, one last piece of evidence is
+  # read across the plane as a whole : SEVERAL DISTINCT panels expose it
+  # from sub-groups that do NOT touch each other, each of them receding to
+  # it WHOLLY — no part of the panel reaching beyond (see
+  # #_reduction_panel_side). That is the two facing SIDES of a case set
+  # back from its top and bottom : each side is a lone contour panel in its
+  # own sub-group (no BOTH-main-faces, no shared sub-group), and the pocket
+  # necessarily reaches the envelope's outer edge on the very flanks those
+  # sides left open (no confinement) — none of the three can see it, yet
+  # two opposite walls stopping at the exact same depth is precisely the
+  # intentional, uniformly receding assembly the shared-sub-group evidence
+  # is about. Receding WHOLLY stands in for the physical contact that
+  # normally proves the match is no coincidence, and it is what keeps the
+  # concave/notched footprint out : a panel merely NOTCHED at this depth
+  # still extends beyond the plane where it is not notched. Coinciding
+  # chants being that much more ordinary once contact is no longer asked
+  # for, the plane must in addition leave every WALL of the cavity
+  # standing — no panel bounding it lying WHOLLY on the removed side (a
+  # back and a front set between a case's top and bottom expose their top
+  # chants at one and the same height, yet the top itself is entirely
+  # beyond it). The SIDE/END shape test below is then read on the
+  # footprint the WHOLE plane merges rather than sub-group by sub-group,
+  # for the reason the sub-group merge exists at all : the rails of a
+  # frame set back behind its stiles are commonly deeper than they are
+  # long, each reading its own front chant as an END, while the pair of
+  # them spanning the frame's full height reads as the SIDE it is.
+  # Failing that too, this sub-group's chant is exposed by a
   # concave/notched footprint, not a recess, and reducing there would clip
   # away the real cavity instead of splitting it. A chant is further
   # trusted only when the sub-group's MERGED footprint (safe now that
@@ -830,6 +856,9 @@ module Ladb::OpenCutList
         main_plane_keys_by_panel = Hash.new { |h, k| h[k] = {} }
         triangle_mesh_position = {}
         candidates = {}
+        # Every panel bounding this cavity, by whatever kind of face — the
+        # walls a clip must not throw away, see #_reduction_panel_side
+        bounding_mesh_positions = {}
         # The cavity's openings ([ normal, offset, area ] per envelope cap
         # plane) and the tilted edge faces flaring toward them
         # ([ triangle index, normal, area ]) — see #_detect_bevel_planes
@@ -850,6 +879,7 @@ module Ladb::OpenCutList
           next if mesh_position.nil?
           dominant_normal = dominant_normals[mesh_position]
           next if dominant_normal.nil?
+          bounding_mesh_positions[mesh_position] = true
           dot = normal[0] * dominant_normal[0] + normal[1] * dominant_normal[1] + normal[2] * dominant_normal[2]
           if dot.abs >= REDUCTION_MAIN_DOT  # Main face plane, not an edge
             ax, ay, az = vertices[a * 3], vertices[a * 3 + 1], vertices[a * 3 + 2]
@@ -906,8 +936,14 @@ module Ladb::OpenCutList
           # plane to be trusted (the eventual clip still applies to the full
           # cross-section, unchanged — this only decides whether to trust
           # the plane at all).
-          accepted = _reduction_group_components(triangle_indices, fragment_def).any? { |component|
-            mesh_positions = component.map { |triangle_index| triangle_mesh_position[triangle_index] }.uniq
+          mesh_positions_by_component = _reduction_group_components(triangle_indices, fragment_def).map { |component|
+            component.map { |triangle_index| triangle_mesh_position[triangle_index] }.uniq
+          }
+          fn_side_plane = lambda { |mesh_positions|
+            merged_mesh = { :vertices => mesh_positions.flat_map { |mesh_position| panel_meshes[mesh_position][:vertices] } }
+            _reduction_side_plane?(normal, merged_mesh)
+          }
+          accepted = mesh_positions_by_component.any? { |mesh_positions|
             # A genuine recessed panel (e.g. a shallow shelf) is exposed to
             # the cavity on BOTH its main faces — front and back, the two
             # compartments it separates ; a contour panel (side, top,
@@ -948,9 +984,61 @@ module Ladb::OpenCutList
             # shape test stays as the last line of defence for the weaker
             # group- and pocket-based evidence, where the concave/notched
             # footprint family lives.
-            merged_mesh = { :vertices => mesh_positions.flat_map { |mesh_position| panel_meshes[mesh_position][:vertices] } }
-            both_main_faces || _reduction_side_plane?(normal, merged_mesh)
+            both_main_faces || fn_side_plane.call(mesh_positions)
           }
+          # Failing every per-sub-group test : SEVERAL DISTINCT panels expose
+          # this plane from sub-groups that do NOT touch each other, and each
+          # of them recedes to it WHOLLY — no part of the panel reaches beyond
+          # (see #_reduction_panel_side). That is the two facing sides of
+          # a case set back from its top and bottom : one lone contour panel
+          # per sub-group (no BOTH-main-faces, no shared sub-group), and a
+          # pocket that necessarily reaches the envelope's outer edge on the
+          # very flanks the receding panels left open (no confinement) — the
+          # three tests above are structurally unable to see it, yet two
+          # opposite walls stopping at the exact same depth is precisely the
+          # intentional, uniformly receding assembly the shared-sub-group
+          # evidence is about.
+          #
+          # Receding WHOLLY replaces physical contact as the proof that the
+          # match is no coincidence, and it is what keeps the concave/notched
+          # footprint family out : a panel merely NOTCHED at this depth (a
+          # case stepped in plan, deeper on one side than the other) still
+          # extends beyond the plane where it is not notched, so clipping
+          # there would amputate the deeper compartment it bounds. A panel
+          # that stops here for its whole body is not stepping around
+          # anything — it recedes.
+          #
+          # Coinciding chants are far more ordinary here than in the tests
+          # above, though — the evidence no longer rests on the panels
+          # touching — so the plane must also leave every WALL of the cavity
+          # standing : no panel bounding it may lie WHOLLY on the removed
+          # side. A back and a front set between a case's top and bottom
+          # expose their own top chants at one and the same height (the
+          # gap left by the drawing, however small, is enough), two lone
+          # non-touching panels receding wholly like any real recess — but
+          # the top itself is entirely beyond that height, and clipping
+          # there would cut the cavity off from the very wall closing it.
+          # A recess recedes an OPENING : there is nothing of the assembly
+          # left in front of it to lose.
+          #
+          # The shape test is here read on the footprint the WHOLE plane
+          # merges, not sub-group by sub-group — the same widening the
+          # sub-group merge above already makes, carried to the grouping
+          # this branch actually rests on. What binds these panels is that
+          # they all stop dead at one and the same plane, which is as much
+          # of a group as touching makes, and each of them taken alone is
+          # exactly the misleading aspect ratio the merge exists to escape :
+          # the rails of a frame set back behind its stiles are commonly
+          # deeper than they are long (a 528 mm deep, 400 mm long rail
+          # reads its own front chant as an END), while the pair of them,
+          # spanning the frame's full height, reads as the SIDE it is.
+          unless accepted
+            mesh_positions = mesh_positions_by_component.flatten.uniq
+            accepted = mesh_positions.length >= 2 &&
+              mesh_positions.all? { |mesh_position| _reduction_panel_side(normal, d, panel_meshes[mesh_position]) == :kept } &&
+              bounding_mesh_positions.keys.none? { |mesh_position| _reduction_panel_side(normal, d, panel_meshes[mesh_position]) == :removed } &&
+              fn_side_plane.call(mesh_positions)
+          end
           next unless accepted
           planes[key] = [ normal, d ]
         end
@@ -1510,6 +1598,27 @@ module Ladb::OpenCutList
       pu0, pu1 = _mesh_extent(panel_mesh, u)
       pv0, pv1 = _mesh_extent(panel_mesh, v)
       (pn1 - pn0) <= [ pu1 - pu0, pv1 - pv0 ].max
+    end
+
+    # Which side of the given plane (unit normal pointing toward the KEPT
+    # side, n.p = d) the given panel lies on : :kept when it stops at the
+    # plane, :removed when it lies entirely past it, :crossing when it
+    # straddles it. See #_detect_reduction_planes, where both extremes are
+    # evidence :
+    #
+    # - :kept says the plane is where that board ENDS, not a step it happens
+    #   to expose halfway along its body — a panel merely notched (a case
+    #   stepped in plan, a top cut back over part of its width) comes out
+    #   :crossing, and a clip there would amputate the deeper compartment it
+    #   still bounds ;
+    # - :removed says the clip would throw that panel's wall away
+    #   altogether, which no genuine recess ever does : a recess recedes an
+    #   OPENING, and there is nothing of the assembly left in front of it.
+    def _reduction_panel_side(normal, d, panel_mesh)
+      min, max = _mesh_extent(panel_mesh, normal)
+      return :kept if min >= d - REDUCTION_MIN_DEPTH
+      return :removed if max <= d + REDUCTION_MIN_DEPTH
+      :crossing
     end
 
     # Whether the given plane (unit normal pointing toward the KEPT side,
