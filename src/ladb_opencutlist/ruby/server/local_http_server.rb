@@ -51,6 +51,8 @@ module Ladb::OpenCutList
     }.freeze
     DEFAULT_MIME_TYPE = 'application/octet-stream'.freeze
 
+    attr_reader :port
+
     def initialize
       @server = nil
       @port = nil
@@ -213,10 +215,18 @@ module Ladb::OpenCutList
       false
     end
 
-    # Resolves `path` against PLUGIN_DIR ; returns nil if it would escape it.
+    # Resolves `path` against PLUGIN_DIR (or PLUGIN.temp_dir for the '/tmp/' prefix,
+    # used to serve dynamically generated thumbnails/textures) ; returns nil if it
+    # would escape the applicable root.
     def _resolve_path(path)
-      root = File.expand_path(PLUGIN_DIR)
-      candidate = File.expand_path(File.join(root, path))
+      if path == '/tmp' || path.start_with?('/tmp/')
+        root = File.expand_path(PLUGIN.temp_dir)
+        sub_path = path.sub(/\A\/tmp\/?/, '')
+      else
+        root = File.expand_path(PLUGIN_DIR)
+        sub_path = path
+      end
+      candidate = File.expand_path(File.join(root, sub_path))
       return nil unless candidate == root || candidate.start_with?(root + File::SEPARATOR)
       candidate
     end

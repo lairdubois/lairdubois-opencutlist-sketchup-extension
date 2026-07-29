@@ -58,7 +58,7 @@ module Ladb::OpenCutList
           thumbnail_file = File.join(component_thumbnails_dir, "#{definition.guid}.png")
           definition.save_thumbnail(thumbnail_file)
 
-          response[:thumbnail_file] = thumbnail_file
+          response[:thumbnail_file] = PLUGIN.dialog_temp_url(thumbnail_file)
 
         end
 

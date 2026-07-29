@@ -25,6 +25,7 @@ function LadbAbstractDialog(element, options) {
         chrome_version: options.chrome_version,
         platform_name: options.platform_name,
         is_64bit: options.is_64bit,
+        dialog_transport: options.dialog_transport,
         user_agent: window.navigator.userAgent,
         locale: options.locale,
         language: options.language,

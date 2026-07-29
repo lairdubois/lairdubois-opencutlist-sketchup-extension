@@ -27,6 +27,9 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
+### 2026-07-xx
+ * Fixed material texture displays introduced when loading dialog HTML from the local server
+ * Updated PackingSolver dependency
 ### 2026-07-28
  * Updated translations
  * Updated PackingSolver dependency + fix [#1019](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/issues/1019)

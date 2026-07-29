@@ -40,7 +40,7 @@ module Ladb::OpenCutList
 
         material.texture.write(texture_file)
 
-        response[:texture_file] = texture_file
+        response[:texture_file] = PLUGIN.dialog_temp_url(texture_file)
 
       end
 

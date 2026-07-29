@@ -2422,7 +2422,7 @@ tool:
     action_toggle_move_copy_status: Alterner entre copier/déplacer
     action_change_move_anchor_status: Changer le point d'ancrage
     error:
-      separator_number_overflow: "Impossible de répartir {{ number }} séparateurs dans cette cavité"
+      divider_number_overflow: "Impossible de répartir {{ number }} séparateurs dans cette cavité"
     success:
       part_created: "Nouvelle pièce créée : {{ name }}"
       part_created_plural: "{{ count }} nouvelles pièces créées : {{ name }}"
