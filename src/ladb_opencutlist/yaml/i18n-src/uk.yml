@@ -295,10 +295,15 @@ core:
   solid:
     error:
       empty: Об'єкт не містить жодної геометрії
+      empty_named: "« {{ name }} » не містить геометрії"
       non_manifold_edges: "Об'єкт містить {{ count }} нерізноманітного краю"
       non_manifold_edges_plural: "Об'єкт містить {{ count }} нерізноманітних ребер"
+      non_manifold_edges_named: "« {{ name }} » містить {{ count }} некоректне ребро"
+      non_manifold_edges_named_plural: "« {{ name }} » містить {{ count }} некоректних ребер"
       open_edges: "Об'єкт містить {{ count }} відкритий край"
       open_edges_plural: "Об'єкт містить {{ count }} відкритих країв"
+      open_edges_named: "“{{ name }}” містить {{ count }} відкрите ребро"
+      open_edges_named_plural: "« {{ name }} » містить {{ count }} відкритих ребер"
       locked_instances: "Операція не може змінити заблокований екземпляр: {{ list }}"
 tab:
   cutlist:
@@ -2317,6 +2322,7 @@ tool:
     vcb_radius: Радіус
     vcb_diameter: Діаметр
     vcb_distance: Відстань
+    vcb_spacings: Інтервали
     error:
       no_direction: "Будь ласка, вкажіть напрямок мишкою"
       invalid_length: "Довжина {{ value }} недійсна"
@@ -2367,9 +2373,14 @@ tool:
     action_2_state_1_status: "Натисніть, щоб встановити нову точку або ввести відстань"
     action_x_state_2_status: "Натисніть, щоб встановити висоту або ввести відстань"
     action_3: Малювання роздільника
+    action_3_status: "Намалюйте роздільник у порожнині, утвореній групою існуючих деталей"
+    action_3_state_0_status: "Натисніть на боковину, щоб намалювати розділювач"
+    action_3_state_1_status: "Натисніть на боковину, щоб намалювати роздільники"
     action_option_group_offset: Відступ
     action_option_group_segments: Сегменти
     action_option_group_thickness: Товщина
+    action_option_group_axes: Осі
+    action_option_group_measure_type: Вимірювання
     action_option_group_options: Опції
     action_option_offset_shape_offset: Зміщення
     action_option_offset_shape_offset_status: Дозволяє застосувати зсув до контуру намальованої фігури
@@ -2377,6 +2388,11 @@ tool:
     action_option_segments_segment_count_status: Дозволяє задати кількість сегментів в колі
     action_option_thickness_thickness: Товщина
     action_option_thickness_thickness_status: Визначає товщину панелей
+    action_option_measure_type_inside_status: Розташувати товщину всередині цільової точки
+    action_option_measure_type_centered_status: Відцентрувати товщину на цільовій точці
+    action_option_measure_type_outside_status: Розмістити товщину за межами цільової точки
+    action_option_axes_active_status: Маніпулювати вздовж активних осей
+    action_option_axes_context_status: Маніпулювати вздовж осей хост-групи або компонента
     action_option_options_construction: Конструктивні особливості
     action_option_options_construction_status: Намалювати у вигляді будівельних ліній
     action_option_options_rectangle_centered: Прямокутник від центру
@@ -2396,13 +2412,26 @@ tool:
     action_option_options_draw_in_0: Малювати в активному елементі
     action_option_options_draw_in_1: Намалювати деталь у батьківському контейнері у початковій точці
     action_option_options_draw_in_status: "Намалювати деталь у батьківському контейнері, на який вказує перша точка"
+    action_option_options_reduce_envelope: Заглиблення деталей
+    action_option_options_reduce_envelope_status: Розгляньте втоплені деталі
+    action_option_options_reuse_definition: Повторне використання деталей
+    action_option_options_reuse_definition_status: "Повторно використовувати наявну деталь тієї самої форми та в тій самій зоні, а не створювати нову"
     action_option_options_ask_name: Найменування деталей
     action_option_options_ask_name_status: Введення назв деталей вручну
     action_measure_locked_status: Фіксація під час останнього вимірювання
     action_toggle_move_copy_status: Чергування копіювання/переміщення
     action_change_move_anchor_status: Зміна опорної точки
+    error:
+      invalid_divider_seed: Цей тип деталі не допускає конструкції розділювача
+      invalid_divider_container: "Ця деталь ізольована: вона не має спільної групи чи компонента з іншими деталями"
+      invalid_divider_cavity: "У цій позиції немає порожнини"
+      no_divider_cavity: У цій групі або компоненті не було виявлено жодних порожнин
+      divider_number_overflow: "Неможливо розподілити {{ number }} розділювачів у цій порожнині"
     success:
       part_created: "Створено нову деталь: {{ name }}"
+      part_created_plural: "Створено {{ count }} нових деталей: {{ name }}"
+      part_reused: "Новий екземпляр існуючої деталі: {{ name }}"
+      part_reused_plural: "{{ count }} нові випадки наявної деталі: {{ name }}"
   smart_handle:
     title: Редагувати
     action_0: Обрати
