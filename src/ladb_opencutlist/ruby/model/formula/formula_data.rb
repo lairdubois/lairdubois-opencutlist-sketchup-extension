@@ -1,8 +1,21 @@
 module Ladb::OpenCutList
 
   require_relative '../data_container'
+  require_relative '../../parser/formula_parser'
 
   class FormulaData < DataContainer
+
+    # Defense in depth : this is the `self` receiver of user-authored formulas evaluated by
+    # CommonEvalFormulaWorker. FormulaParser already rejects these method names statically, but
+    # this also removes them at runtime so a parser bypass (or a future Ruby/Kernel method the
+    # parser doesn't know about yet) can't reach them. `binding` is kept since `get_binding` needs it.
+    previous_verbose = $VERBOSE
+    $VERBOSE = nil # Silence Ruby's "undefining '__send__' may cause serious problems" warning, this is intentional
+    FormulaParser::BLACK_LIST_COMMAND.each do |method_name|
+      next if method_name == 'binding'
+      undef_method(method_name) if method_defined?(method_name) || private_method_defined?(method_name)
+    end
+    $VERBOSE = previous_verbose
 
     def get_binding
       binding

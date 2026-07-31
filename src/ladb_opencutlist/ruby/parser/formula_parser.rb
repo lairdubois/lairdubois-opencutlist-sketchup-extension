@@ -14,22 +14,30 @@ module Ladb::OpenCutList
     BLACK_LIST_COMMAND = %w[
       exec fork spawn system syscall
       abort exit exit! at_exit
-      binding send
+      binding send __send__ public_send
       alias_method
       catch fail throw
-      eval instance_eval class_eval module_eval
+      eval instance_eval class_eval module_eval instance_exec
       open sysopen load autoload
       require require_relative
       caller caller_locations
       sleep
       puts pp
       gem
+      method methods public_methods private_methods singleton_methods
+      instance_variable_get instance_variable_set instance_variable_defined? remove_instance_variable
+      define_singleton_method define_method remove_method undef_method
+      const_get const_set const_defined?
+      class_variable_get class_variable_set
+      singleton_class extend
     ]
 
     WHITE_LIST_CONST = %w[
       Math
       Date DateTime Time
     ]
+
+    VOID_STMT = Object.new
 
     TYPE_IDENT = 0
     TYPE_CONST = 1
@@ -138,6 +146,57 @@ module Ladb::OpenCutList
       # puts "on_command : #{message} #{args}"
       _assert_authorized_command(message)
       [ message, args ]
+    end
+
+    def on_void_stmt
+      # https://github.com/kddnewton/ripper-docs/blob/main/events.md#void_stmt
+      VOID_STMT
+    end
+
+    def on_stmts_new
+      # https://github.com/kddnewton/ripper-docs/blob/main/events.md#stmts_new
+      []
+    end
+
+    def on_stmts_add(stmts, stmt)
+      # https://github.com/kddnewton/ripper-docs/blob/main/events.md#stmts_add
+      stmts + [ stmt ]
+    end
+
+    def on_while(cond, stmts)
+      # https://github.com/kddnewton/ripper-docs/blob/main/events.md#while
+      # A "while true; end" style empty-bodied loop never executes any traceable statement, so it
+      # can't be interrupted by the instruction-budget guard in CommonEvalFormulaWorker : reject it here.
+      raise ForbiddenFormulaError.new("Forbidden empty loop body") if stmts == [ VOID_STMT ]
+      [ cond, stmts ]
+    end
+
+    def on_until(cond, stmts)
+      # https://github.com/kddnewton/ripper-docs/blob/main/events.md#until
+      raise ForbiddenFormulaError.new("Forbidden empty loop body") if stmts == [ VOID_STMT ]
+      [ cond, stmts ]
+    end
+
+    def on_bodystmt(stmts, rescue_stmt, else_stmt, ensure_stmt)
+      # https://github.com/kddnewton/ripper-docs/blob/main/events.md#bodystmt
+      stmts
+    end
+
+    def on_begin(bodystmt)
+      # https://github.com/kddnewton/ripper-docs/blob/main/events.md#begin
+      bodystmt
+    end
+
+    def on_while_mod(cond, stmt)
+      # https://github.com/kddnewton/ripper-docs/blob/main/events.md#while_mod
+      raise ForbiddenFormulaError.new("Forbidden empty loop body") if stmt == VOID_STMT || stmt == [ VOID_STMT ]
+      [ cond, stmt ]
+    end
+
+    def on_until_mod(cond, stmt)
+      # https://github.com/kddnewton/ripper-docs/blob/main/events.md#until_mod
+      raise ForbiddenFormulaError.new("Forbidden empty loop body") if stmt == VOID_STMT || stmt == [ VOID_STMT ]
+      [ cond, stmt ]
     end
 
     def on_undef(methods)

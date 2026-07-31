@@ -149,6 +149,56 @@ class TC_Ladb_Parser_FormulaParser < TestUp::TestCase
     TXT
     )
 
+    assert_invalid_formula(<<~TXT
+      __send__(:instance_variable_get, :@var1)
+    TXT
+    )
+
+    assert_invalid_formula(<<~TXT
+      public_send(:instance_variable_get, :@var1)
+    TXT
+    )
+
+    assert_invalid_formula(<<~TXT
+      method(:instance_variable_get).call(:@var1)
+    TXT
+    )
+
+    assert_invalid_formula(<<~TXT
+      instance_variable_get(:@var1)
+    TXT
+    )
+
+    assert_invalid_formula(<<~TXT
+      instance_exec { @var1 }
+    TXT
+    )
+
+    assert_invalid_formula(<<~TXT
+      define_singleton_method(:foo) { @var1 }
+    TXT
+    )
+
+    assert_invalid_formula(<<~TXT
+      1.class.const_get(:ObjectSpace)
+    TXT
+    )
+
+    assert_invalid_formula(<<~TXT
+      while true; end
+    TXT
+    )
+
+    assert_invalid_formula(<<~TXT
+      until false; end
+    TXT
+    )
+
+    assert_invalid_formula(<<~TXT
+      begin; end while true
+    TXT
+    )
+
     # VALID
 
     assert_valid_formula(<<~TXT
@@ -164,6 +214,14 @@ class TC_Ladb_Parser_FormulaParser < TestUp::TestCase
     TXT
     )
 
+    assert_valid_formula(<<~TXT
+      i = 0
+      while i < 10
+        i += 1
+      end
+      i
+    TXT
+    )
 
   end
 
