@@ -1602,8 +1602,8 @@ module Ladb::OpenCutList
       @locked_normal = nil
       @locked_axis = nil
 
-      if @state == STATE_PULL && (drawing_def = _get_drawing_def).is_a?(DrawingDef) # && !_fetch_option_construction?
-        _append_floating_tools_at(drawing_def.bounds.center.transform(drawing_def.transformation), new_action_handler)
+      if @state == STATE_PULL && !(center = _get_instance_bounds_center).nil?
+        _append_floating_tools_at(center, new_action_handler)
       end
 
     end
@@ -1882,6 +1882,19 @@ module Ladb::OpenCutList
     def _get_instance
       return nil if @definition.nil? || @definition.deleted?
       @definition.instances.first
+    end
+
+    # Returns the center of the created instance bounds expressed in model space.
+    # Unlike _get_drawing_def, definition bounds take clines and cpoints into account.
+    def _get_instance_bounds_center
+      return nil if (instance = _get_instance).nil?
+
+      bounds = instance.definition.bounds
+      return nil unless bounds.valid?
+
+      instance_path = (@active_container_path.nil? ? Sketchup.active_model.active_path.to_a : @active_container_path) + [ instance ]
+
+      bounds.center.transform(PathUtils.get_transformation(instance_path, IDENTITY))
     end
 
     def _get_drawing_def
@@ -4896,7 +4909,7 @@ module Ladb::OpenCutList
         path = drawing_def.container_path
         next nil unless path.is_a?(Array) && !path.empty?
         instance = path.last
-        next nil unless instance.deleted? && instance.respond_to?(:definition)
+        next nil unless instance.respond_to?(:definition) && !instance.deleted?
         face_manipulators = drawing_def.face_manipulators.map { |face_manipulator|
           FaceManipulator.new(face_manipulator.face, drawing_def.transformation * face_manipulator.transformation)
         }
