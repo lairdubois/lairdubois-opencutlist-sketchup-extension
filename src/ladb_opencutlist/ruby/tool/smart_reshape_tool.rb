@@ -4075,25 +4075,35 @@ module Ladb::OpenCutList
 
       unless @cline_source_ipath.nil?
 
+        segments = @cline_source_manipulators.flat_map { |manipulator| manipulator.points }
         transformation = @cline_source_ipath.transformation
 
         k_segments = Kuix::Segments.new
-        k_segments.add_segments(@cline_source_manipulators.flat_map { |manipulator| manipulator.points })
+        k_segments.add_segments(segments)
+        k_segments.line_width = 4
+        k_segments.line_stipple = Kuix::LINE_STIPPLE_SOLID
+        k_segments.color = ColorUtils.color_lighten(Kuix::COLOR_BLUE, 0.8)
+        k_segments.transformation = transformation
+        @tool.append_3d(k_segments, LAYER_3D_PANELING_PREVIEW)
+
+        k_segments = Kuix::Segments.new
+        k_segments.add_segments(segments)
         k_segments.line_width = 2
         k_segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
         k_segments.color = Kuix::COLOR_BLUE
         k_segments.transformation = transformation
+        k_segments.on_top = true
         @tool.append_3d(k_segments, LAYER_3D_PANELING_PREVIEW)
 
         bounds = Geom::BoundingBox.new
         @cline_source_manipulators.each { |manipulator| bounds.add(manipulator.points) }
 
-        k_box = Kuix::BoxMotif3d.new
-        k_box.bounds.copy!(Kuix::Bounds3d.new.copy!(bounds).inflate_all!(1))
-        k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-        k_box.color = Kuix::COLOR_DARK_GREY
-        k_box.transformation = transformation
-        @tool.append_3d(k_box, LAYER_3D_PANELING_PREVIEW)
+        # k_box = Kuix::BoxMotif3d.new
+        # k_box.bounds.copy!(Kuix::Bounds3d.new.copy!(bounds).inflate_all!(1))
+        # k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+        # k_box.color = Kuix::COLOR_DARK_GREY
+        # k_box.transformation = transformation
+        # @tool.append_3d(k_box, LAYER_3D_PANELING_PREVIEW)
 
       end
 
@@ -4104,18 +4114,18 @@ module Ladb::OpenCutList
 
       k_mesh = Kuix::Mesh.new
       k_mesh.add_triangles(drawing_def.face_manipulators.flat_map(&:triangles))
-      k_mesh.background_color = ColorUtils.color_translucent(@drawing_def.nil? ? Kuix::COLOR_RED : Kuix::COLOR_BLUE, 0.3) #Sketchup::Color.new(254, 222, 11, 200)
+      k_mesh.background_color = ColorUtils.color_lighten(Kuix::COLOR_BLUE, 0.5) #ColorUtils.color_translucent(@drawing_def.nil? ? Kuix::COLOR_RED : Kuix::COLOR_BLUE, 0.3)
       k_mesh.transformation = drawing_def.transformation
       @tool.append_3d(k_mesh, LAYER_3D_PANELING_PREVIEW)
 
       kb = Kuix::Bounds3d.new.copy!(drawing_def.bounds).inflate_all!(1)
 
-      k_box = Kuix::BoxMotif3d.new
-      k_box.bounds.copy!(kb)
-      k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-      k_box.color = Kuix::COLOR_DARK_GREY
-      k_box.transformation = drawing_def.transformation
-      @tool.append_3d(k_box, LAYER_3D_PANELING_PREVIEW)
+      # k_box = Kuix::BoxMotif3d.new
+      # k_box.bounds.copy!(kb)
+      # k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+      # k_box.color = Kuix::COLOR_DARK_GREY
+      # k_box.transformation = drawing_def.transformation
+      # @tool.append_3d(k_box, LAYER_3D_PANELING_PREVIEW)
 
     end
 

@@ -697,20 +697,34 @@ module Ladb::OpenCutList
     #
     # Both offsets share one normal : the erosion being a uniform scale, it
     # leaves every face parallel to itself.
+    #
+    # The faces are told apart GEOMETRICALLY - same normal, same offset within
+    # the mesh tolerance - rather than by a quantized key : a face's eroded
+    # offset lands on a quantization boundary as soon as it is the one the
+    # erosion ratio was set on (it recedes by exactly ENVELOPE_HULL_EROSION,
+    # a whole number of half tolerances) and passes through the origin, which
+    # is simply where models are drawn. The float noise between its own
+    # triangles then falls on either side of that boundary and registers ONE
+    # plane TWICE - and a duplicate is not free downstream : it fills a slot
+    # of #_restore_envelope_vertices' three corrections budget and makes the
+    # system its twin normals form singular, which silently drops the very
+    # correction it duplicates (see #_restore_plane_offset).
     def _envelope_restore_planes(vertices, eroded_vertices, face_indices)
       return [] if eroded_vertices.equal?(vertices)
 
-      planes = {}
+      planes = []
       face_indices.each_slice(3) do |a, b, c|
         normal, _area2 = _triangle_normal(eroded_vertices, a, b, c)
         next if normal.nil?
         d_eroded = normal[0] * eroded_vertices[a * 3] + normal[1] * eroded_vertices[a * 3 + 1] + normal[2] * eroded_vertices[a * 3 + 2]
-        key = normal.map { |v| (v * 1000).round } << (d_eroded / SolidMeshDef::TOLERANCE).round
-        next if planes.key?(key)
+        next if planes.any? { |other_normal, other_d_eroded, _other_d_original|
+          normal[0] * other_normal[0] + normal[1] * other_normal[1] + normal[2] * other_normal[2] > 1.0 - SolidFragmentDef::PLANE_NORMAL_TOLERANCE &&
+            (d_eroded - other_d_eroded).abs <= SolidMeshDef::TOLERANCE
+        }
         d_original = normal[0] * vertices[a * 3] + normal[1] * vertices[a * 3 + 1] + normal[2] * vertices[a * 3 + 2]
-        planes[key] = [ normal, d_eroded, d_original ]
+        planes << [ normal, d_eroded, d_original ]
       end
-      planes.values
+      planes
     end
 
     # Pulls every face of the given hull (flat vertices, triangle indices)
@@ -1139,6 +1153,18 @@ module Ladb::OpenCutList
           @envelope_restore_planes.each do |normal, d_eroded, d_original|
             projection = normal[0] * x + normal[1] * y + normal[2] * z
             next if (projection - d_eroded).abs > SolidMeshDef::TOLERANCE
+            # A plane PARALLEL to one already taken says nothing new - the
+            # vertex being within one tolerance of both, they ask for the same
+            # move - and taking it anyway would make the system they form
+            # singular, which costs the correction itself : the singular
+            # fallback keeps the LARGEST one alone (see #_restore_plane_offset),
+            # so a cap paired with a farther face loses its own restoration
+            # entirely. Two barely tilted hull facets are enough for this ;
+            # exact duplicates are already ruled out upstream (see
+            # #_envelope_restore_planes).
+            next if corrections.any? { |other_normal, _distance|
+              (normal[0] * other_normal[0] + normal[1] * other_normal[1] + normal[2] * other_normal[2]).abs > 1.0 - SolidFragmentDef::PLANE_NORMAL_TOLERANCE
+            }
             corrections << [ normal, d_original - projection ]
             # A non degenerate corner meets three faces at most
             break if corrections.length == 3
