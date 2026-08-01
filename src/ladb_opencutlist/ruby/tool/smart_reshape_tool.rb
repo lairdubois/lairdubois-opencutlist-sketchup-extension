@@ -13,6 +13,7 @@ module Ladb::OpenCutList
   require_relative '../utils/lock_utils'
   require_relative '../worker/common/common_drawing_decomposition_worker'
   require_relative '../worker/common/common_solid_boolean_apply_worker'
+  require_relative '../worker/common/common_solid_rebuild_from_clines_worker'
 
   class SmartReshapeTool < SmartTool
 
@@ -3535,6 +3536,20 @@ module Ladb::OpenCutList
 
       @drawing_def = nil
 
+      # The shell the pick landed on when it is NOT a closed manifold solid,
+      # and the i18n tuple saying why : kept only to SHOW the user what was
+      # refused and what is wrong with it — see #_snap_select. Never becomes
+      # @drawing_def, nothing is ever panelled from it.
+      @refused_drawing_def = nil
+      @refused_error = nil
+
+      # A CONSTRUCTION drawing waiting to become one : the container of the
+      # CLines (InstancePath) and the manipulators the STATE_SELECT preview
+      # draws it with. The solid itself is only rebuilt when STATE_PANELING
+      # opens its operation — see #_rebuild_drawing_def_from_clines.
+      @cline_source_ipath = nil
+      @cline_source_manipulators = []
+
       @hover_face_manipulators = Set.new
       @hover_edge_manipulators = Set.new
 
@@ -3571,13 +3586,40 @@ module Ladb::OpenCutList
       end
 
       unless container_path.nil? || container.nil?
-        @drawing_def = CommonDrawingDecompositionWorker
-                         .new([ Sketchup::InstancePath.new(container_path + [ container ]) ],
-                              ignore_faces: false,
-                              ignore_edges: false
-                         )
-                         .run
-        set_state(STATE_PANELING) if @drawing_def.is_a?(DrawingDef)
+
+        ipath = Sketchup::InstancePath.new(container_path + [ container ])
+
+        @drawing_def = CommonDrawingDecompositionWorker.new([ipath],
+          ignore_faces: false,
+          ignore_edges: false
+        ).run
+
+        # No face to panel : the container may still be a CONSTRUCTION
+        # drawing, whose CLines the decomposition leaves out (ignore_clines
+        # defaults to true, and there would be nothing to hide or extrude
+        # anyway). The solid is rebuilt from them when STATE_PANELING opens
+        # its operation — see #_rebuild_drawing_def_from_clines.
+        if @drawing_def.is_a?(DrawingDef) && @drawing_def.face_manipulators.empty?
+          _reset_drawing_def
+          _set_cline_source(ipath)
+        elsif @drawing_def.is_a?(DrawingDef) && !(error = _get_shell_error(@drawing_def.face_manipulators)).nil?
+
+          # Panelling only knows how to work from a closed manifold solid — see
+          # #_get_shell_error. A selection made BEFORE the action started has no
+          # hover to carry a tooltip, so the refusal is notified out loud.
+          @tool.notify_errors([ error ])
+          _reset_drawing_def
+
+        end
+
+        # A DrawingDef with no face and no CLine to rebuild one from is not a
+        # paneling source : entering STATE_PANELING with it used to leave the
+        # tool in a state with nothing to click on and no way to tell why.
+        if @drawing_def.is_a?(DrawingDef) || !@cline_source_ipath.nil?
+          set_state(STATE_PANELING)
+          _abandon_paneling if @drawing_def.nil?
+        end
+
       end
 
     end
@@ -3604,6 +3646,7 @@ module Ladb::OpenCutList
       end
       _clear_selected
       _clear_edge_joint_types
+      _reset_refused_drawing_def
       super
     end
 
@@ -3623,7 +3666,7 @@ module Ladb::OpenCutList
 
       case state
       when STATE_SELECT
-        return SmartPicker.new(tool: @tool, observer: self, pick_point: false)
+        return SmartPicker.new(tool: @tool, observer: self, pick_point: false, pick_clines: true, pick_context_by_cline: true)
       end
 
       super
@@ -3706,10 +3749,11 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_SELECT
-        if @drawing_def.nil?
+        if @drawing_def.nil? && @cline_source_ipath.nil?
           UI.beep
         else
           set_state(STATE_PANELING)
+          _abandon_paneling if @drawing_def.nil?  # The CLine rebuild failed
           return true
         end
 
@@ -3766,13 +3810,22 @@ module Ladb::OpenCutList
       case new_state
 
       when STATE_SELECT
-        @drawing_def = nil
+        _reset_drawing_def
+        _reset_refused_drawing_def
+        _reset_cline_source
         @tool.clear_3d([ LAYER_3D_PANELING_PREVIEW ])
 
       when STATE_PANELING
 
         # Start operation (allows manipulating entities without altering the undo stack)
         Sketchup.active_model.start_operation(PLUGIN.get_i18n_string('tool.smart_reshape.action_1'), true)
+
+        # A CONSTRUCTION drawing becomes a solid here, INSIDE the operation
+        # just opened : leaving this state aborts it and the rebuilt geometry
+        # never existed, committing erases it through _erase_drawings like any
+        # other reference geometry. On failure @drawing_def stays nil and the
+        # caller backs out — see #_abandon_paneling.
+        _rebuild_drawing_def_from_clines unless @cline_source_ipath.nil?
 
         _clear_selected
         _clear_edge_joint_types
@@ -3789,8 +3842,11 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_SELECT
-        @drawing_def = nil
+        _reset_drawing_def
+        _reset_refused_drawing_def
+        _reset_cline_source
         _snap_select(picker, view)
+        _feedback_select
         _preview_select
 
       end
@@ -3820,13 +3876,34 @@ module Ladb::OpenCutList
     def _reset
       _purge_definitions
       _unhide_drawings
-      @drawing_def = nil
+      _reset_drawing_def
+      _reset_refused_drawing_def
+      _reset_cline_source
       @hover_face_manipulators.clear
       @hover_edge_manipulators.clear
       @selected_face_manipulators.clear
       @edge_joint_types.clear
       super
       set_state(STATE_SELECT)
+    end
+
+    def _reset_drawing_def
+      @drawing_def = nil
+    end
+
+    # Drops the refused shell AND the feedback it put on screen : the tooltip and
+    # the error cursor outlive the pick that raised them, and would otherwise
+    # follow the user out of the state, or out of the tool.
+    def _reset_refused_drawing_def
+      @refused_drawing_def = nil
+      @refused_error = nil
+      @tool.remove_tooltip
+      @tool.pop_cursor(SmartCursorManager.cursor_select_error)
+    end
+
+    def _reset_cline_source
+      @cline_source_ipath = nil
+      @cline_source_manipulators = []
     end
 
     def _restart
@@ -3838,24 +3915,106 @@ module Ladb::OpenCutList
       end
     end
 
-    # -----
+    # Backs out of a STATE_PANELING that has nothing to panel — the CLine
+    # rebuild failed, and its errors are already notified.
+    #
+    # Called by whoever asked for the state change, once set_state has
+    # RETURNED : set_state is onStateChanged(@state, @state = state), so
+    # switching back from inside onStateChanged would nest the abort inside the
+    # operation being opened. From here the abort lands where it belongs.
+    def _abandon_paneling
+      set_state(STATE_SELECT)
+      UI.beep
+    end
+
+    # ----- Check
+
+    # The i18n error tuple saying why the shell these face manipulators describe
+    # is not a closed manifold solid, nil when it is one. Paneling accepts
+    # nothing else : a panel is bounded by the planes its neighbours provide, and
+    # on a naked edge there is no neighbour — hence no miter, and no thickness to
+    # stop against.
+    #
+    # An edge is read through the DRAWING and not through the model : what counts
+    # is how many of its faces the drawing holds, so a face left outside — in
+    # another context, on a hidden layer — closes nothing the paneling could rely
+    # on. The edges are walked from the FACES rather than from the drawing's own
+    # edge manipulators : the decomposition files curved edges under
+    # curve_manipulators (see CommonDrawingDecompositionWorker), and a cylinder
+    # would sail through unchecked. Edges bounding no face at all — stray
+    # geometry the connectivity walk dragged along — are none of the shell's
+    # business.
+    #
+    # Entities are keyed by #entityID and not by object : the same entity can
+    # reach Ruby as more than one wrapper, which a Set of objects would count
+    # twice.
+    def _get_shell_error(face_manipulators)
+      return [ 'core.solid.error.empty' ] if face_manipulators.empty?
+
+      face_ids = Set.new(face_manipulators.map { |face_manipulator| face_manipulator.face.entityID })
+
+      naked_edge_count = 0
+      non_manifold_edge_count = 0
+
+      edge_ids = Set.new
+      face_manipulators.each do |face_manipulator|
+        face_manipulator.face.edges.each do |edge|
+          next unless edge_ids.add?(edge.entityID)
+          count = edge.faces.count { |face| face_ids.include?(face.entityID) }
+          naked_edge_count += 1 if count == 1
+          non_manifold_edge_count += 1 if count > 2
+        end
+      end
+
+      return [ 'core.solid.error.non_manifold_edges', { :count => non_manifold_edge_count } ] if non_manifold_edge_count > 0
+      return [ 'core.solid.error.open_edges', { :count => naked_edge_count } ] if naked_edge_count > 0
+
+      nil
+    end
+
+    # ----- Snap
 
     def _snap_select(picker, view)
-      return unless (picked_face = picker.picked_face).is_a?(Sketchup::Face)
-      return unless (picked_face_path = picker.picked_face_path).is_a?(Array)
 
-      container = picked_face_path[-2]
-      container_transformation = PathUtils.get_transformation(picked_face_path[0..-2], IDENTITY)
+      if (picked_face = picker.picked_face).is_a?(Sketchup::Face) && (picked_face_path = picker.picked_face_path).is_a?(Array)
 
-      all_connected = picked_face.all_connected
+        container = picked_face_path[-2]
+        container_transformation = PathUtils.get_transformation(picked_face_path[0..-2], IDENTITY)
 
-      @drawing_def = DrawingDef.new(container, container_transformation)
-      @drawing_def.face_manipulators.concat(all_connected
-                                              .grep(Sketchup::Face)
-                                              .map { |face| FaceManipulator.new(face) })
-      @drawing_def.edge_manipulators.concat(all_connected
-                                              .grep(Sketchup::Edge)
-                                              .map { |edge| EdgeManipulator.new(edge) })
+        all_connected = picked_face.all_connected
+
+        drawing_def = DrawingDef.new(container, container_transformation)
+        drawing_def.face_manipulators.concat(all_connected
+                                                .grep(Sketchup::Face)
+                                                .map { |face| FaceManipulator.new(face) })
+        drawing_def.edge_manipulators.concat(all_connected
+                                                .grep(Sketchup::Edge)
+                                                .map { |edge| EdgeManipulator.new(edge) })
+
+        # Everything connected to the picked face is a shell, but only a CLOSED
+        # MANIFOLD one is a solid to panel — see #_get_shell_error. What it
+        # refuses is retained apart : shown, explained, and never panelled.
+        if (error = _get_shell_error(drawing_def.face_manipulators)).nil?
+          @drawing_def = drawing_def
+        else
+          @refused_drawing_def = drawing_def
+          @refused_error = error
+        end
+
+      end
+
+      if picker.picked_cline.is_a?(Sketchup::ConstructionLine) && (picked_cline_path = picker.picked_cline_path).is_a?(Array)
+
+        active_path = view.model.active_path.to_a
+        _set_cline_source(Sketchup::InstancePath.new(active_path + picked_cline_path[0...-1]))
+
+      end
+
+      # A pick can land on a face AND on a CLine — one drawn over the other. The
+      # CLine source wins : STATE_PANELING rebuilds from it and overwrites
+      # whatever the face gave. So a shell refused next to one is refused for
+      # nothing, and saying so would deny a click that does work.
+      _reset_refused_drawing_def unless @cline_source_ipath.nil?
 
     end
 
@@ -3908,25 +4067,54 @@ module Ladb::OpenCutList
 
     end
 
+    # ----- Preview
+
     def _preview_select
 
       @tool.clear_3d([ LAYER_3D_PANELING_PREVIEW ])
 
-      return unless @drawing_def.is_a?(DrawingDef)
+      unless @cline_source_ipath.nil?
+
+        transformation = @cline_source_ipath.transformation
+
+        k_segments = Kuix::Segments.new
+        k_segments.add_segments(@cline_source_manipulators.flat_map { |manipulator| manipulator.points })
+        k_segments.line_width = 2
+        k_segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+        k_segments.color = Kuix::COLOR_BLUE
+        k_segments.transformation = transformation
+        @tool.append_3d(k_segments, LAYER_3D_PANELING_PREVIEW)
+
+        bounds = Geom::BoundingBox.new
+        @cline_source_manipulators.each { |manipulator| bounds.add(manipulator.points) }
+
+        k_box = Kuix::BoxMotif3d.new
+        k_box.bounds.copy!(Kuix::Bounds3d.new.copy!(bounds).inflate_all!(1))
+        k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+        k_box.color = Kuix::COLOR_DARK_GREY
+        k_box.transformation = transformation
+        @tool.append_3d(k_box, LAYER_3D_PANELING_PREVIEW)
+
+      end
+
+      # A refused shell is previewed too, in red : the user has to see WHICH
+      # geometry the tooltip is talking about — see #_feedback_select.
+      drawing_def = @drawing_def.is_a?(DrawingDef) ? @drawing_def : @refused_drawing_def
+      return unless drawing_def.is_a?(DrawingDef)
 
       k_mesh = Kuix::Mesh.new
-      k_mesh.add_triangles(@drawing_def.face_manipulators.flat_map(&:triangles))
-      k_mesh.background_color = ColorUtils.color_translucent(Kuix::COLOR_BLUE, 0.3) #Sketchup::Color.new(254, 222, 11, 200)
-      k_mesh.transformation = @drawing_def.transformation
+      k_mesh.add_triangles(drawing_def.face_manipulators.flat_map(&:triangles))
+      k_mesh.background_color = ColorUtils.color_translucent(@drawing_def.nil? ? Kuix::COLOR_RED : Kuix::COLOR_BLUE, 0.3) #Sketchup::Color.new(254, 222, 11, 200)
+      k_mesh.transformation = drawing_def.transformation
       @tool.append_3d(k_mesh, LAYER_3D_PANELING_PREVIEW)
 
-      kb = Kuix::Bounds3d.new.copy!(@drawing_def.bounds).inflate_all!(1)
+      kb = Kuix::Bounds3d.new.copy!(drawing_def.bounds).inflate_all!(1)
 
       k_box = Kuix::BoxMotif3d.new
       k_box.bounds.copy!(kb)
       k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
       k_box.color = Kuix::COLOR_DARK_GREY
-      k_box.transformation = @drawing_def.transformation
+      k_box.transformation = drawing_def.transformation
       @tool.append_3d(k_box, LAYER_3D_PANELING_PREVIEW)
 
     end
@@ -4003,6 +4191,24 @@ module Ladb::OpenCutList
 
     end
 
+    # ----- Feedback
+
+    # Says, on the spot, why the shell under the cursor cannot be panelled : the
+    # error cursor that the click will lead nowhere, the tooltip what is wrong
+    # with the geometry. Same idiom as
+    # SmartActionHandlerPartHelper#_set_active_part.
+    #
+    # Only ever puts feedback UP : taking it down belongs to
+    # #_reset_refused_drawing_def, which every pick — and every way out of the
+    # state — goes through first.
+    def _feedback_select
+      return if @refused_error.nil?
+      @tool.show_tooltip(PLUGIN.get_i18n_string(@refused_error[0], @refused_error[1]), SmartTool::MESSAGE_TYPE_ERROR)
+      @tool.push_cursor(SmartCursorManager.cursor_select_error)
+    end
+
+    # ----- Read
+
     def _read_thickness(tool, text, view)
 
       # Keep it "compatible" with the way to enter offset in Smart Draw Tool.
@@ -4073,8 +4279,105 @@ module Ladb::OpenCutList
     def _erase_drawings
       if @drawing_def.is_a?(DrawingDef)
         _get_active_entities.erase_entities(@drawing_def.edge_manipulators.map(&:edge))
-        @drawing_def = nil
+        _reset_drawing_def
       end
+    end
+
+    # ----- CLine stuff
+
+    # Retains the given container (InstancePath) as the CONSTRUCTION drawing to
+    # rebuild, and collects the manipulators the STATE_SELECT preview draws it
+    # with. Returns false — and retains nothing — when it holds no usable CLine,
+    # or when the model locks forbid writing into it : the rebuild puts the
+    # solid, and later the panels, inside that very container.
+    #
+    # Infinite CLines are left out of the PREVIEW only (ClineManipulator#points
+    # would dereference a nil endpoint) ; the rebuild clips them against the
+    # rest of the drawing on its own.
+    def _set_cline_source(ipath)
+      return false if ipath.nil?
+
+      container = _cline_source_container(ipath)
+      return false unless container.respond_to?(:definition)
+
+      manipulators = container.definition.entities
+                              .grep(Sketchup::ConstructionLine)
+                              .map { |cline| ClineManipulator.new(cline) }
+                              .reject { |manipulator| manipulator.infinite? }
+      return false if manipulators.empty?
+
+      if LockUtils.locked_path?(ipath.to_a)
+        @tool.notify_errors([ [ 'tool.default.error.selection_contains_locked_entities' ] ])
+        return false
+      end
+
+      @cline_source_ipath = ipath
+      @cline_source_manipulators = manipulators
+      true
+    end
+
+    # The container an InstancePath ends on. Read off #to_a and NOT off #leaf :
+    # a path whose last element is an INSTANCE — which is exactly what a
+    # container path is — makes Sketchup::InstancePath#leaf return nil, as it
+    # only ever yields a terminal drawing element.
+    def _cline_source_container(ipath)
+      ipath.to_a.last
+    end
+
+    # Turns the retained CONSTRUCTION drawing into the reference solid, in the
+    # operation STATE_PANELING has just opened (hence wrap_operation: false).
+    # The CLines are kept : they are the drawing the user works from, they
+    # survive _erase_drawings at commit — which only erases edges — and the
+    # panels are built alongside them, in the same container.
+    #
+    # The manipulators are left untransformed and the container transformation
+    # carried by the DrawingDef, which is the convention #_snap_select follows —
+    # NOT the one CommonDrawingDecompositionWorker produces.
+    def _rebuild_drawing_def_from_clines
+
+      container = _cline_source_container(@cline_source_ipath)
+      container_transformation = @cline_source_ipath.transformation
+
+      result_def = CommonSolidRebuildFromClinesWorker.new(container,
+                                                          # The CLines are read through the container's own placement, and the
+                                                          # rebuilt geometry written back into it : both sides of the worker
+                                                          # speak the same space, whatever the container is nested in.
+                                                          source_transformation: PathUtils.get_transformation(@cline_source_ipath.to_a[0...-1], IDENTITY),
+                                                          target_entities: container.definition.entities,
+                                                          target_transformation: container_transformation,
+                                                          keep_inner_faces: false,
+                                                          orient_faces: true,
+                                                          erase_sources: false,
+                                                          wrap_operation: false
+      ).run
+
+      unless result_def.success?
+        @tool.notify_errors(result_def.errors)
+        return false
+      end
+
+      # The rebuild succeeds as soon as it makes ONE face, but paneling asks for
+      # a closed manifold solid like anywhere else — see #_get_shell_error. The
+      # drawing gets the same verdict as a picked shell, only later : what the
+      # CLines enclose is only known once they have been turned into geometry.
+      # Sending back false leaves the caller to abandon the state, whose abort
+      # takes that geometry with it.
+      unless result_def.closed?
+        if result_def.face_count == 0
+          @tool.notify_errors([ [ 'core.solid.error.empty' ] ])
+        elsif result_def.non_manifold_edge_count > 0
+          @tool.notify_errors([ [ 'core.solid.error.non_manifold_edges', { :count => result_def.non_manifold_edge_count } ] ])
+        else
+          @tool.notify_errors([ [ 'core.solid.error.open_edges', { :count => result_def.naked_edge_count } ] ])
+        end
+        return false
+      end
+
+      @drawing_def = DrawingDef.new(container, container_transformation)
+      @drawing_def.face_manipulators.concat(result_def.faces.map { |face| FaceManipulator.new(face) })
+      @drawing_def.edge_manipulators.concat(result_def.edges.map { |edge| EdgeManipulator.new(edge) })
+
+      true
     end
 
     # -----
@@ -4216,6 +4519,10 @@ module Ladb::OpenCutList
       points
     end
 
+    # A corner point is the intersection of three planes, and the drawing is
+    # guaranteed a closed manifold solid — see #_get_shell_error — so every
+    # vertex has its three faces to provide them. The `gd_points.size < 3` guard
+    # below only ever catches degenerate geometry.
     def _compute
 
       _clear_computed
@@ -4270,6 +4577,7 @@ module Ladb::OpenCutList
 
             planes = vm.vertex.faces
                        .map { |face| @drawing_def.face_manipulators.find { |fm| fm.face == face } }
+                       .compact
                        .map { |fm|
                          if fm == sfm || !(miter = _get_faces_joint_type_miter?(fm, sfm)) && extruded_face_manipulators.include?(fm) || miter && @selected_face_manipulators.include?(fm)
                            [ fm.position.offset(fm.normal, thickness), fm.normal ]

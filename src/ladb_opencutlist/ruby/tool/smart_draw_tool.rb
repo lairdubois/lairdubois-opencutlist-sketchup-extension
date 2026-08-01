@@ -1602,7 +1602,7 @@ module Ladb::OpenCutList
       @locked_normal = nil
       @locked_axis = nil
 
-      if @state == STATE_PULL && (drawing_def = _get_drawing_def).is_a?(DrawingDef) && !_fetch_option_construction?
+      if @state == STATE_PULL && (drawing_def = _get_drawing_def).is_a?(DrawingDef) # && !_fetch_option_construction?
         _append_floating_tools_at(drawing_def.bounds.center.transform(drawing_def.transformation), new_action_handler)
       end
 
@@ -4896,7 +4896,7 @@ module Ladb::OpenCutList
         path = drawing_def.container_path
         next nil unless path.is_a?(Array) && !path.empty?
         instance = path.last
-        next nil unless instance.respond_to?(:definition) && !instance.definition.nil?
+        next nil unless instance.deleted? && instance.respond_to?(:definition)
         face_manipulators = drawing_def.face_manipulators.map { |face_manipulator|
           FaceManipulator.new(face_manipulator.face, drawing_def.transformation * face_manipulator.transformation)
         }

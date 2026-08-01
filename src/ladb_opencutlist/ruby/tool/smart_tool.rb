@@ -4267,6 +4267,7 @@ module Ladb::OpenCutList
 
                    pick_context_by_face: true,
                    pick_context_by_edge: false,
+                   pick_context_by_cline: false,
 
                    pick_point: false,
                    pick_edges: false,
@@ -4286,9 +4287,10 @@ module Ladb::OpenCutList
       @pick_helper = @view.pick_helper
       @pick_ip = SmartInputPoint.new(tool) if pick_point
 
-      @pick_context = pick_context_by_face || pick_context_by_edge
+      @pick_context = pick_context_by_face || pick_context_by_edge || pick_context_by_cline
       @pick_context_by_face = pick_context_by_face
       @pick_context_by_edge = pick_context_by_edge
+      @pick_context_by_cline = pick_context_by_cline
       @pick_point = pick_point
       @pick_edges = pick_edges
       @pick_clines = pick_clines
@@ -4299,6 +4301,7 @@ module Ladb::OpenCutList
 
       @fn_face_filter = nil
       @fn_edge_filter = nil
+      @fn_cline_filter = nil
 
       @invalidated = false
 
@@ -4339,6 +4342,7 @@ module Ladb::OpenCutList
     def picked_context_path
       return @picked_face_path[0...-1] if @pick_context_by_face && @picked_face_path.is_a?(Array)
       return @picked_edge_path[0...-1] if @pick_context_by_edge && @picked_edge_path.is_a?(Array)
+      return @picked_cline_path[0...-1] if @pick_context_by_cline && @picked_cline_path.is_a?(Array)
       nil
     end
 
@@ -4416,8 +4420,8 @@ module Ladb::OpenCutList
       picked_point_path = nil
       picked_edge = context_locked && @pick_context_by_edge ? @picked_edge : nil
       picked_edge_path = context_locked && @pick_context_by_edge ? @picked_edge_path : nil
-      picked_cline = nil
-      picked_cline_path = nil
+      picked_cline = context_locked && @pick_context_by_cline ? @picked_cline : nil
+      picked_cline_path = context_locked && @pick_context_by_cline ? @picked_cline_path : nil
       picked_axes = nil
       picked_axes_line = nil
       picked_axes_path = nil
@@ -4426,13 +4430,13 @@ module Ladb::OpenCutList
 
       best_picked = nil
 
-      if !context_locked && (@pick_context_by_face && picked_face.nil? || @pick_context_by_edge && picked_edge.nil?)
+      if !context_locked && (@pick_context_by_face && picked_face.nil? || @pick_context_by_edge && picked_edge.nil? || @pick_context_by_cline && picked_cline.nil?)
         @pick_helper.do_pick(@pick_position.x, @pick_position.y)
         best_picked = @pick_helper.best_picked
         @pick_helper.count.times do |index|
 
           path = @pick_helper.path_at(index)
-          next unless best_picked.nil? || path.include?(best_picked)
+          next unless @pick_context_by_cline || best_picked.nil? || path.include?(best_picked)
 
           if @pick_context_by_face && @pick_helper.leaf_at(index).is_a?(Sketchup::Face)
             if @fn_face_filter.nil? || @fn_face_filter.call(path)
@@ -4450,10 +4454,18 @@ module Ladb::OpenCutList
             end
           end
 
+          if @pick_context_by_cline && @pick_helper.leaf_at(index).is_a?(Sketchup::ConstructionLine)
+            if @fn_cline_filter.nil? || @fn_cline_filter.call(path)
+              picked_cline = @pick_helper.leaf_at(index)
+              picked_cline_path = active_path + path
+              break
+            end
+          end
+
         end
       end
 
-      if !@pick_context || picked_face || picked_edge
+      if !@pick_context || picked_face || picked_edge || picked_cline
 
         # Second stage
 
@@ -4475,9 +4487,9 @@ module Ladb::OpenCutList
 
       end
 
-      if picked_face || picked_edge
+      if picked_face || picked_edge || picked_cline
 
-          if @pick_edges || @picked_cline || @pick_axes
+        if @pick_edges || @picked_cline || @pick_axes
 
           # pick "lines" (aperture = 50)
 
