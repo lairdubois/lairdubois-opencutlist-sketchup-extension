@@ -4448,7 +4448,7 @@ module Ladb::OpenCutList
       return true if distance.nil?
 
       if distance < 0
-        tool.notify_errors([[ 'tool.default.error.invalid_distance', { :value => distance } ]])
+        tool.notify_errors([[ 'tool.default.error.invalid_length', { :value => distance } ]])
         return true
       end
 
