@@ -624,18 +624,30 @@ namespace Meshy {
     constexpr double NUDGE_CONDITION_MIN = 1e-2;
 
     // Displaces the mesh vertices so that every vertex lying (within
-    // tolerance) on one or more of the target planes ends EXACTLY at the
-    // requested signed offset from EACH of them. The displacement is solved
-    // per vertex over all its planes simultaneously (incremental
+    // tolerance) on one or more of the target planes clears EACH of them by
+    // the requested signed offset. The displacement is solved per
+    // vertex over all its planes simultaneously (incremental
     // orthonormalization + forward substitution, planes taken in the given
-    // order — canonical order, largest faces first — and capped at 3
-    // independent constraints) : shifting sequentially along each plane
-    // normal, as a per-plane pass would, breaks the previously applied
-    // offsets at every corner where target planes meet — the later shift has
-    // a component along the earlier normal — and can land the vertex on the
-    // WRONG side of a plane it was meant to clear, leaving an epsilon
-    // crossing that the boolean turns into slivers, in a way that depends on
-    // the operand order.
+    // order — offsets first, then the zero-offset holds, each in canonical
+    // order, largest faces first — and capped at 3 independent constraints) :
+    // shifting sequentially along each plane normal, as a per-plane pass
+    // would, breaks the previously applied offsets at every corner where
+    // target planes meet — the later shift has a component along the earlier
+    // normal — and can land the vertex on the WRONG side of a plane it was
+    // meant to clear, leaving an epsilon crossing that the boolean turns into
+    // slivers, in a way that depends on the operand order.
+    //
+    // An offset is a MINIMUM clearance, not an exact target : a vertex the
+    // constraints accepted before it have already carried past the requested
+    // distance is left where it is, rather than pulled back onto the offset
+    // plane. Overshooting is always safe — the operands are being expanded
+    // apart, and a wider clearance only makes the configuration more clearly
+    // transversal — whereas pulling back makes the FINAL position of a vertex
+    // depend on which other planes happen to pass through it, so two operands
+    // meeting at an edge through DIFFERENT planes ended up recessed relative
+    // to one another by an amount decided by their offset multiples, i.e. by
+    // the operand order. A zero offset is the one exact constraint : it holds
+    // the vertex ON its plane (see the axis planes in Solver::operate).
     inline void nudge_vertices_to_offset_planes(
             manifold::MeshGL64& mesh,
             const std::vector<std::pair<const Plane*, double>>& plane_offsets,
@@ -674,13 +686,22 @@ namespace Meshy {
                 if (r2 < NUDGE_CONDITION_MIN) continue;
                 const double rl = std::sqrt(r2);
 
-                // n·δ = Σ proj[j]·a[j] + rl·a[count] must equal offset - dist
+                // n·δ = Σ proj[j]·a[j] + rl·a[count] must reach offset - dist
                 double partial = 0.0;
                 for (int j = 0; j < count; ++j) partial += proj[j] * a[j];
+
+                // Minimum clearance : nothing to impose when the constraints
+                // accepted so far already carry the vertex past it. Skipping
+                // rather than solving also leaves the slot free for the next
+                // plane.
+                const double target = offset - dist;
+                if (offset > 0.0 && partial >= target) continue;
+                if (offset < 0.0 && partial <= target) continue;
+
                 e[count][0] = rx / rl;
                 e[count][1] = ry / rl;
                 e[count][2] = rz / rl;
-                a[count] = (offset - dist - partial) / rl;
+                a[count] = (target - partial) / rl;
                 ++count;
             }
 

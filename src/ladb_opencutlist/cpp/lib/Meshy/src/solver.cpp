@@ -343,20 +343,44 @@ namespace Meshy {
                     }
                 }
             }
-            bool nudged = false;
+            // The axis planes are never nudged, but a vertex sitting on one
+            // must not LEAVE it either : they join the constraint list with a
+            // ZERO offset, so the nudge holds the vertex on them while it
+            // clears the tilted ones — it SLIDES along its axis planes instead
+            // of being pushed off them.
+            //
+            // Re-snapping onto the axis planes AFTERWARDS, as a separate pass,
+            // cannot do this : a plain projection along the axis normal knows
+            // nothing of the offsets just imposed, so at every corner where a
+            // nudged tilted plane meets an axis plane it dragged the vertex
+            // back and destroyed them — measured on a mitred cabinet corner,
+            // 50 % to 92 % of the offset lost, by an amount that differs per
+            // operand and per rank. That left the very coincidences the nudge
+            // exists to break, and left them ORDER-DEPENDENTLY : the boolean
+            // then grew a zero-thickness fin into the joint for some input
+            // orders and not others.
+            //
+            // The holds come AFTER the offsets : the solve honors at most 3
+            // independent constraints per vertex, and the offsets are what
+            // break the degeneracy — the holds then spend whatever freedom is
+            // left keeping the vertex on its axis planes. Tried the other way
+            // round, and it is measurably worse : giving the holds priority
+            // starves the offsets on exactly the crowded corner vertices that
+            // need them, and the fin comes back.
+            //
+            // Only the operands that are actually nudged get the holds : one
+            // with no offset at all has not moved, and is still exactly on the
+            // axis planes snap_to_planes put it on above.
+            for (std::size_t k = 0; k < nudge_pool.size(); ++k) {
+                if (pool_offsets[k].empty()) continue;
+                for (const auto& plane : planes) {
+                    if (is_axis_plane(plane)) pool_offsets[k].emplace_back(&plane, 0.0);
+                }
+            }
+
             for (std::size_t k = 0; k < nudge_pool.size(); ++k) {
                 if (pool_offsets[k].empty()) continue;
                 nudge_vertices_to_offset_planes(*nudge_pool[k], pool_offsets[k], tolerance_);
-                nudged = true;
-            }
-            if (nudged) {
-                std::vector<Plane> axis_planes;
-                for (const auto& plane : planes) {
-                    if (is_axis_plane(plane)) axis_planes.push_back(plane);
-                }
-                if (!axis_planes.empty()) {
-                    for (auto* mesh : nudge_pool) snap_to_planes(*mesh, axis_planes, tolerance_);
-                }
             }
         }
 
