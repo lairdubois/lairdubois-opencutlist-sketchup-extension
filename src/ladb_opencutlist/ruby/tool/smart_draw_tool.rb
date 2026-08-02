@@ -3962,6 +3962,11 @@ module Ladb::OpenCutList
     # cavity is open) ever clips the intersection - never the slab itself.
     DIVIDER_SLAB_MARGIN = 1.0
 
+    # A body of the slab ∩ cavity intersection weighing less than this share
+    # of the biggest one is a boolean sliver, not a compartment : each body
+    # becomes a part of the model, so they are dropped rather than drawn.
+    DIVIDER_FRAGMENT_MIN_VOLUME_SHARE = 1.0e-3
+
     # Below this dot-product gap, two candidates are considered equally
     # (im)perpendicular to the cavity's opening : the opening criterion does
     # not discriminate between them (e.g. the picked face's normal already
@@ -4548,13 +4553,18 @@ module Ladb::OpenCutList
       begin
 
         # Definitions this batch actually BUILT - what the naming applies to
-        # (one when the dividers share it, as many as dividers when the
-        # reuse option is off), and the last one a divider turned out to be
-        # one more occurrence of.
+        # (one when the parts share it, as many as parts when the reuse
+        # option is off), and the last one a part turned out to be one more
+        # occurrence of.
         created_definitions = []
         reused_definition = nil
 
-        # The dividers of one batch, as candidates for the next ones :
+        # Entities the batch actually added to the model : a divider whose
+        # slab was clipped into several disjoint bodies builds one part per
+        # body (see below), so this is NOT the divider count.
+        created_entity_count = 0
+
+        # The parts of one batch, as candidates for the next ones :
         # #_find_reusable_definition only knows the parts that were already
         # there when the cavities were computed, so without this the second
         # divider of a distribution would never recognize the first - the
@@ -4569,85 +4579,105 @@ module Ladb::OpenCutList
           normal_3f = divider_def.normal_3f
           u, v = _get_divider_plane_uv_3f(normal_3f)
 
-          # Local frame for the new part : Z = thickness axis (the chosen
-          # divider normal), X/Y = the slab's own in-plane basis. u, v, normal
-          # is right-handed by construction (_get_divider_plane_basis), so this
-          # transformation is a pure rotation - never a mirror.
-          world_transformation = Geom::Transformation.axes(divider_def.point, Geom::Vector3d.new(u), Geom::Vector3d.new(v), Geom::Vector3d.new(normal_3f))
+          # One part per disjoint body the divider's slab was clipped into :
+          # a "U" cavity divided across both its branches leaves two boards,
+          # not one board in two pieces (see #_compute_dividers).
+          divider_def.fragments.each do |fragment|
 
-          if _fetch_option_construction?
+            # Local frame for the new part : Z = thickness axis (the chosen
+            # divider normal), X/Y = the slab's own in-plane basis, origin on
+            # the slab's reference plane at this body's own corner. u, v,
+            # normal is right-handed by construction
+            # (_get_divider_plane_basis), so this transformation is a pure
+            # rotation - never a mirror.
+            world_transformation = Geom::Transformation.axes(_get_divider_fragment_origin(divider_def, fragment, u, v), Geom::Vector3d.new(u), Geom::Vector3d.new(v), Geom::Vector3d.new(normal_3f))
 
-            group = active_entities.add_group
-            group.transformation = active_transformation.inverse * world_transformation
+            if _fetch_option_construction?
 
-            created_faces = _build_divider_faces(group.entities, divider_def.fragments, world_transformation)
+              group = active_entities.add_group
+              group.transformation = active_transformation.inverse * world_transformation
+
+              created_faces = _build_divider_faces(group.entities, [ fragment ], world_transformation)
+              if created_faces.empty?
+                group.erase!
+                next
+              end
+
+              edges = created_faces.flat_map(&:edges).uniq
+              edges.each { |edge| group.entities.add_cline(edge.start.position, edge.end.position) }
+              group.entities.erase_entities(created_faces + edges)
+
+              created_entity_count += 1
+
+              next
+            end
+
+            definition = model.definitions.add(PLUGIN.get_i18n_string('default.part_single').capitalize)
+
+            # A body the boolean left unbuildable is skipped rather than
+            # fatal : the other bodies - and the other dividers - of the
+            # batch are legitimate, and must not fall with it.
+            created_faces = _build_divider_faces(definition.entities, [ fragment ], world_transformation)
             if created_faces.empty?
-              model.abort_operation
-              return false
+              model.definitions.remove(definition) if model.definitions.respond_to?(:remove)
+              next
             end
 
-            edges = created_faces.flat_map(&:edges).uniq
-            edges.each { |edge| group.entities.add_cline(edge.start.position, edge.end.position) }
-            group.entities.erase_entities(created_faces + edges)
+            candidate_definition, candidate_world_transformation = _find_reusable_definition(fragment, created_faces, world_transformation, sibling_part_defs)
 
-            next
-          end
+            if candidate_definition.nil?
 
-          definition = model.definitions.add(PLUGIN.get_i18n_string('default.part_single').capitalize)
+              tao = _get_auto_orient_transformation(definition, world_transformation)
+              unless tao.identity?
 
-          created_faces = _build_divider_faces(definition.entities, divider_def.fragments, world_transformation)
-          if created_faces.empty?
-            model.definitions.remove(definition) if model.definitions.respond_to?(:remove)
-            model.abort_operation
-            return false
-          end
+                world_transformation = world_transformation * tao
+                taoi = tao.inverse
 
-          candidate_definition, candidate_world_transformation = _find_reusable_definition(divider_def, created_faces, world_transformation, sibling_part_defs)
+                # Transform definition's entities
+                entities = definition.entities
+                entities.transform_entities(taoi, entities.to_a)
 
-          if candidate_definition.nil?
+              end
 
-            tao = _get_auto_orient_transformation(definition, world_transformation)
-            unless tao.identity?
+              instance = active_entities.add_instance(definition, active_transformation.inverse * world_transformation)
 
-              world_transformation = world_transformation * tao
-              taoi = tao.inverse
+              # Force UUID to be generated in the creation operation
+              DefinitionAttributes.new(definition).uuid
 
-              # Transform definition's entities
-              entities = definition.entities
-              entities.transform_entities(taoi, entities.to_a)
+              created_definitions << definition
+
+            else
+
+              # The part is one more occurrence of a part that is already
+              # there : the freshly built geometry is thrown away and the
+              # existing definition is instanced instead - see
+              # #_find_reusable_definition
+              model.definitions.remove(definition) if model.definitions.respond_to?(:remove)
+              definition = candidate_definition
+              world_transformation = candidate_world_transformation
+              instance = active_entities.add_instance(definition, active_transformation.inverse * world_transformation)
+
+              reused_definition = definition
 
             end
 
-            instance = active_entities.add_instance(definition, active_transformation.inverse * world_transformation)
+            sibling_part_defs << _get_divider_part_def(container_path, instance, world_transformation) if _fetch_option_reuse_definition?
 
-            # Force UUID to be generated in the creation operation
-            DefinitionAttributes.new(definition).uuid
-
-            created_definitions << definition
-
-          else
-
-            # The divider is one more occurrence of a part that is already
-            # there : the freshly built geometry is thrown away and the
-            # existing definition is instanced instead - see
-            # #_find_reusable_definition
-            model.definitions.remove(definition) if model.definitions.respond_to?(:remove)
-            definition = candidate_definition
-            world_transformation = candidate_world_transformation
-            instance = active_entities.add_instance(definition, active_transformation.inverse * world_transformation)
-
-            reused_definition = definition
+            created_entity_count += 1
 
           end
 
-          sibling_part_defs << _get_divider_part_def(container_path, instance, world_transformation) if _fetch_option_reuse_definition?
+        end
 
+        if created_entity_count == 0
+          model.abort_operation
+          return false
         end
 
         if active? && !_fetch_option_construction?
 
           new_definition = created_definitions.first
-          count = divider_defs.length
+          count = created_entity_count
 
           fn_ask_name = lambda {
             unless new_definition.nil? || new_definition.deleted?
@@ -4859,8 +4889,34 @@ module Ladb::OpenCutList
       [ container_path + [ instance ], instance, face_manipulators, _get_face_planes(face_manipulators) ]
     end
 
-    # [ definition, WORLD transformation ] of an existing part the divider
-    # just built is one more occurrence of, or nil : the caller then throws
+    # WORLD origin of the local frame a fragment's part is built in : on the
+    # slab's own reference plane (+divider_def+'s point), but at the
+    # fragment's own low corner in the slab plane. All the bodies of one slab
+    # would otherwise share the pick's lateral position, leaving the axes of
+    # the part built from the far branch of a "U" cavity well outside its own
+    # material.
+    def _get_divider_fragment_origin(divider_def, fragment, u, v)
+      normal_3f = divider_def.normal_3f
+      vertices = fragment['vertices']
+
+      du = _get_divider_mesh_extent(vertices, u).first
+      dv = _get_divider_mesh_extent(vertices, v).first
+
+      # Point3d coordinates are Lengths : to_f keeps the recomposition in plain Float
+      point_3f = divider_def.point.to_a.map { |coord| coord.to_f }
+      dn = normal_3f[0] * point_3f[0] + normal_3f[1] * point_3f[1] + normal_3f[2] * point_3f[2]
+
+      # (u, v, normal) is orthonormal, so recomposing from the three
+      # coordinates is exact.
+      Geom::Point3d.new(
+        u[0] * du + v[0] * dv + normal_3f[0] * dn,
+        u[1] * du + v[1] * dv + normal_3f[1] * dn,
+        u[2] * du + v[2] * dv + normal_3f[2] * dn
+      )
+    end
+
+    # [ definition, WORLD transformation ] of an existing part the one just
+    # built is one more occurrence of, or nil : the caller then throws
     # its freshly built geometry away and instances that definition instead,
     # so the two are ONE part in the cutlist rather than two identical ones.
     # nil unless the reuse option is on.
@@ -4886,20 +4942,20 @@ module Ladb::OpenCutList
     #   there would silently link two parts the user means to keep apart :
     #   editing one would edit the other.
     #
-    # +sibling_part_defs+ carries the dividers the SAME batch has already
-    # created (see #_get_divider_part_def) : the cavities - hence the
-    # candidate pool below - were computed before any of them existed, so a
-    # distribution would otherwise never see its own dividers as candidates
-    # for one another. They are examined last, so an eligible part that was
-    # already in the model still wins.
-    def _find_reusable_definition(divider_def, created_faces, world_transformation, sibling_part_defs = [])
+    # +sibling_part_defs+ carries the parts the SAME batch has already created
+    # (see #_get_divider_part_def) : the cavities - hence the candidate pool
+    # below - were computed before any of them existed, so a distribution
+    # would otherwise never see its own parts as candidates for one another.
+    # They are examined last, so an eligible part that was already in the
+    # model still wins.
+    def _find_reusable_definition(fragment, created_faces, world_transformation, sibling_part_defs = [])
       return nil unless _fetch_option_reuse_definition?
       return nil unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef)
 
       drawing_defs = cavities_def.drawing_defs
       return nil unless drawing_defs.is_a?(Array) && !drawing_defs.empty?
 
-      bounds = _get_divider_bounds(divider_def)
+      bounds = _get_divider_fragment_bounds(fragment)
       return nil if bounds.nil? || bounds.empty?
 
       divider_manipulators = created_faces.map { |face| FaceManipulator.new(face, world_transformation) }
@@ -5023,15 +5079,14 @@ module Ladb::OpenCutList
       bounds
     end
 
-    # WORLD bounds of the divider solid, read off the fragments it is about
-    # to be built from.
-    def _get_divider_bounds(divider_def)
+    # WORLD bounds of the solid a part is about to be built from - one
+    # fragment, never the whole divider : on a "U" cavity the bounds of both
+    # branches together would span the notch between them, and match no
+    # existing part at all.
+    def _get_divider_fragment_bounds(fragment)
       bounds = Geom::BoundingBox.new
-      divider_def.fragments.each do |fragment|
-        vertices = fragment['vertices']
-        next unless vertices.is_a?(Array)
-        vertices.each_slice(3) { |x, y, z| bounds.add(Geom::Point3d.new(x, y, z)) }
-      end
+      vertices = fragment['vertices']
+      vertices.each_slice(3) { |x, y, z| bounds.add(Geom::Point3d.new(x, y, z)) } if vertices.is_a?(Array)
       bounds
     end
 
@@ -5203,6 +5258,7 @@ module Ladb::OpenCutList
       end
 
       normal = Geom::Vector3d.new(normal_3f)
+      u, v = _get_divider_plane_uv_3f(normal_3f)
       cavity_mesh = {
         :vertices => fragment_def.vertices,
         :face_indices => fragment_def.face_indices,
@@ -5223,6 +5279,7 @@ module Ladb::OpenCutList
         return nil unless output.is_a?(Hash) && output['fragments'].is_a?(Array)
 
         fragments = output['fragments'].select { |fragment| fragment['vertices'].is_a?(Array) && fragment['face_indices'].is_a?(Array) }
+        fragments = _normalize_divider_fragments(fragments, u, v)
         return nil if fragments.empty?
 
         # The picked point, slid along the normal onto this slab's own
@@ -5233,12 +5290,18 @@ module Ladb::OpenCutList
         reference_point = reference_d == d ? point : point.offset(normal, reference_d - d)
 
         # The slab ∩ cavity intersection can split into several disjoint
-        # fragments (e.g. a non-convex cavity clipping the oversized slab in
-        # more than one place) : only the one actually touched by the picked
-        # point is the divider the user meant to draw, so it's the only one
-        # kept - the rest would otherwise be built as extra, unwanted geometry
-        # in the same part.
-        if fragments.length > 1
+        # bodies (a non-convex cavity - a "U" - clipping the oversized slab in
+        # more than one place).
+        #
+        # In FREE mode the pick designates one precise compartment : the body
+        # it lands in is the divider the user meant to draw, and the others
+        # would be extra, unwanted geometry.
+        #
+        # In DISTRIBUTED mode nothing is designated - the pick only names the
+        # cavity, the ask is "divide it in n" - so every body is kept, and
+        # each one goes on to build a part of its own (see #_create_entity) :
+        # two disjoint bodies are two boards, never one board in two pieces.
+        if @number == 0 && fragments.length > 1
           touched_fragment = fragments.find do |fragment|
             SolidFragmentDef.new(fragment['vertices'], fragment['face_indices'], fragment['face_ids'], []).contains_point?(reference_point)
           end
@@ -5418,6 +5481,31 @@ module Ladb::OpenCutList
       [ min, max ]
     end
 
+    # The bodies of a slab ∩ cavity intersection worth building, in a stable
+    # order.
+    #
+    # Manifold outputs its disjoint bodies in no guaranteed order, and that
+    # order now decides which part the batch is named after (see
+    # #_create_entity) : they are sorted by their own position in the slab's
+    # plane, so the same pick always names the same one.
+    #
+    # A body negligible next to the biggest one is dropped : every survivor
+    # becomes a part of the model, and a boolean sliver left along the cavity
+    # boundary is not a compartment the user asked for.
+    def _normalize_divider_fragments(fragments, u, v)
+      return fragments if fragments.length < 2
+
+      fragment_defs = fragments.map { |fragment| SolidFragmentDef.new(fragment['vertices'], fragment['face_indices'], fragment['face_ids'], []) }
+      min_volume = fragment_defs.map { |fragment_def| fragment_def.volume }.max * DIVIDER_FRAGMENT_MIN_VOLUME_SHARE
+
+      fragments.each_index.reject { |index|
+        fragment_defs[index].empty? || fragment_defs[index].volume < min_volume
+      }.sort_by { |index|
+        vertices = fragments[index]['vertices']
+        [ _get_divider_mesh_extent(vertices, u).first, _get_divider_mesh_extent(vertices, v).first ]
+      }.map { |index| fragments[index] }
+    end
+
     # [ d0, d1 ] the slab of a FREELY placed divider spans along the normal :
     # +d+ (the picked point's own offset) being its inside face, its outside
     # face, or its center, per the "measure_type" option, then clamped to the
@@ -5521,6 +5609,11 @@ module Ladb::OpenCutList
       end
     end
 
+    # One divider - i.e. one slab of the distribution, carrying the 1..N
+    # disjoint bodies the cavity clipped that slab into, hence 1..N parts
+    # (see #_compute_dividers and #_create_entity). The measures below belong
+    # to the slab as a whole, not to any one of its bodies.
+    #
     # +distance+ is the clear opening BEFORE the divider, measured from
     # +point+ (its near face) back to +wall_point+. +trailing_distance+ is the
     # one AFTER it, measured from +trailing_point+ (its far face) on to
