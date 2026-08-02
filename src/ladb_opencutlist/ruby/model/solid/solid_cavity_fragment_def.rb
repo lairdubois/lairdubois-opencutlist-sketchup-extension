@@ -120,12 +120,70 @@ module Ladb::OpenCutList
     #   threshold on the pair test can fix that family : the more acute the
     #   apex, the further its walls are from facing each other.
     #
+    # Both read the candidate ALONE, which is all they can do : the corner
+    # compartment a divider leaves against a side (two perpendicular walls,
+    # everything else open) and a pocket are congruent shapes, and nothing
+    # inside the fragment tells them apart. What does is what the fragment
+    # leans on — see #leans_on_a_wall_face_of?, read by
+    # CommonSolidFindCavitiesWorker over the whole batch of candidates.
+    #
     # Memoized.
     def enclosed_by_walls?
       return @enclosed_by_walls if defined?(@enclosed_by_walls)
 
       normals = _wall_normals
       @enclosed_by_walls = _facing_wall_pair?(normals) || _walls_leave_no_escape?(normals)
+    end
+
+    # Outward unit normal of each WALL FACE of the cavity, keyed by the id of
+    # the panel face it lies on : the same accounting as #_wall_normals — face
+    # id != 0, at least WALL_PLANE_MIN_AREA_SHARE of the wall area — kept per
+    # FACE rather than per plane, so that a wall can be recognized from one
+    # cavity to the next (a plane index is local to a fragment's own mesh, a
+    # face id names the very face of the very panel). See
+    # #leans_on_a_wall_face_of?. Memoized.
+    def wall_face_normals
+      return @wall_face_normals if defined?(@wall_face_normals)
+
+      area_by_face_id = Hash.new(0.0)
+      normal_by_face_id = {}
+      unless @face_ids.nil?
+
+        _each_triangle_plane do |_plane_index, triangle_index, _a, _b, _c, area2, nx, ny, nz|
+          face_id = @face_ids[triangle_index]
+          next if face_id == 0  # Envelope cap, not a wall
+          # Doubled triangle area : the factor cancels out in the relative
+          # area comparison below
+          area_by_face_id[face_id] += area2
+          normal_by_face_id[face_id] ||= [ nx, ny, nz ]
+        end
+
+      end
+
+      total = area_by_face_id.values.inject(0.0) { |sum, area| sum + area }
+      return @wall_face_normals = {} unless total > 0
+      @wall_face_normals = area_by_face_id.select { |_face_id, area| area >= total * WALL_PLANE_MIN_AREA_SHARE }
+                                          .keys.map { |face_id| [ face_id, normal_by_face_id[face_id] ] }.to_h
+    end
+
+    # Whether the two cavities lean on ONE AND THE SAME wall face — the same
+    # face of the same panel, from the SAME side (their outward normals there
+    # point the same way, both being the face's own).
+    #
+    # That is what a DIVIDER does : it splits the space in front of a face
+    # into two compartments, and the face carries on behind it — so a
+    # candidate the enclosure test cannot vouch for on its own is a
+    # compartment all the same as soon as it shares a wall face with one that
+    # passed (see #enclosed_by_walls?). A concavity pocket never can : it
+    # wraps the assembly's corner, so it leans on the OUTER faces of the very
+    # panels whose INNER faces bound the compartments — the same panels, never
+    # the same faces.
+    def leans_on_a_wall_face_of?(other)
+      other_normals = other.wall_face_normals
+      wall_face_normals.any? { |face_id, normal|
+        other_normal = other_normals[face_id]
+        !other_normal.nil? && normal[0] * other_normal[0] + normal[1] * other_normal[1] + normal[2] * other_normal[2] > 0
+      }
     end
 
     private

@@ -288,11 +288,6 @@ module Ladb::OpenCutList
       refresh
     end
 
-    def onTransactionUndo(model)
-      super
-      refresh
-    end
-
   end
 
   # -----
@@ -323,6 +318,10 @@ module Ladb::OpenCutList
       end
 
       false
+    end
+
+    def onToolTransactionUndo(tool, model)
+      _refresh
     end
 
     # -----
@@ -4183,6 +4182,11 @@ module Ladb::OpenCutList
         _refresh
       end
 
+    end
+
+    def onToolTransactionUndo(tool, model)
+      @cavities_def = nil
+      super
     end
 
     # -----

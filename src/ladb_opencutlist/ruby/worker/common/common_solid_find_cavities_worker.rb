@@ -37,7 +37,11 @@ module Ladb::OpenCutList
   #   its notch leaves OUTSIDE score the same on the caps — so a candidate
   #   must also be ENCLOSED : hemmed in by its walls, which a compartment is
   #   by definition and a pocket wrapping a corner is not (see
-  #   SolidCavityFragmentDef#enclosed_by_walls?). max_openness — the
+  #   SolidCavityFragmentDef#enclosed_by_walls?) — or else lean on the same
+  #   wall FACE as a candidate that is, which is what the two sides of a
+  #   DIVIDER do and what a pocket, leaning on the OUTER faces of the panels
+  #   whose inner faces bound the compartments, never does (see
+  #   SolidCavityFragmentDef#leans_on_a_wall_face_of?). max_openness — the
   #   maximum fraction of the candidate surface lying on the caps — remains as
   #   an optional secondary cap (disabled by default).
   #
@@ -421,6 +425,7 @@ module Ladb::OpenCutList
 
       fn_collect = lambda { |output, hermetic|
         collected = []
+        leaning = []  # Candidates the enclosure filter alone turned down
         next collected unless output['fragments'].is_a?(Array)
         output['fragments'].each do |fragment|
           face_ids = fragment['face_ids']
@@ -450,10 +455,33 @@ module Ladb::OpenCutList
           next if !hermetic && fragment_def.opening_plane_count > @max_opening_planes
           # Enclosure filter : a compartment is hemmed in by its walls, a
           # concavity pocket only wraps a corner of the assembly — see
-          # SolidCavityFragmentDef#enclosed_by_walls?
-          next if !hermetic && !fragment_def.enclosed_by_walls?
+          # SolidCavityFragmentDef#enclosed_by_walls?. A candidate it turns
+          # down is not settled yet : the corner compartment a divider leaves
+          # against a side is shaped exactly like a pocket, and only the rest
+          # of the batch can tell (below).
+          unless hermetic || fragment_def.enclosed_by_walls?
+            leaning << fragment_def
+            next
+          end
           collected << fragment_def
         end
+
+        # Second reading of the candidates the enclosure filter turned down,
+        # this time against the compartments it recognized : one that leans on
+        # the very same wall FACE as an accepted cavity is the other side of a
+        # DIVIDER, hence a compartment too — see
+        # SolidCavityFragmentDef#leans_on_a_wall_face_of?. Read from the
+        # accepted set as it stands BEFORE this pass, so the evidence always
+        # traces back to a cavity enclosed on its own merits : a chain of
+        # candidates vouching for one another would let a pocket in through
+        # any one of them.
+        unless leaning.empty?
+          enclosed_fragment_defs = collected.dup
+          leaning.each do |fragment_def|
+            collected << fragment_def if enclosed_fragment_defs.any? { |other| fragment_def.leans_on_a_wall_face_of?(other) }
+          end
+        end
+
         collected
       }
 

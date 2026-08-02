@@ -1638,6 +1638,11 @@ module Ladb::OpenCutList
       @action_handler.onToolValidationOk(self) if !@action_handler.nil? && @action_handler.respond_to?(:onToolValidationOk)
     end
 
+    def onTransactionUndo(model)
+      @action_handler.onToolTransactionUndo(self, model) if !@action_handler.nil? && @action_handler.respond_to?(:onToolTransactionUndo)
+      super
+    end
+
   end
 
   class SmartToolLegacy < SmartTool
