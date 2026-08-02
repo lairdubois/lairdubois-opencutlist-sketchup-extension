@@ -305,6 +305,10 @@ core:
       open_edges_named: "« {{ name }} » enthält {{ count }} offene Kante"
       open_edges_named_plural: "« {{ name }} » enthält {{ count }} offene Kanten"
       locked_instances: "Der Vorgang kann eine gesperrte Instanz nicht ändern: {{ list }}"
+    rebuild:
+      error:
+        no_segment: In der Auswahl sind keine verwertbaren Konstruktionslinien enthalten
+        no_face: Es konnte keine koplanare geschlossene Schleife rekonstruiert werden
 tab:
   cutlist:
     label: Holzliste
@@ -2477,8 +2481,8 @@ tool:
     action_0_state_12_status: "cken Sie auf eine Schnittebene, um sie zu löschen"
     action_0_state_2_status: "Klicken Sie, um die Dehnung zu bestätigen, oder geben Sie einen Abstand ein"
     action_1: Panellieren
-    action_1_status: Erstellen einer Teilereihe aus einem geschlossenen Volumenkörper
-    action_1_state_0_status: "Klicken Sie auf einen geschlossenen Körper, um die Referenzgeometrie zu definieren"
+    action_1_status: Eine Teileserie aus einem geschlossenen Volumenkörper oder einer Konstruktionslinienzeichnung erstellen
+    action_1_state_0_status: "Klicken Sie auf eine geschlossene Figur oder auf eine Gruppe von Konstruktionslinien, um die Referenzgeometrie festzulegen"
     action_1_state_1_status: Wählen Sie die zu extrudierenden Flächen aus
     action_2: Schweißen
     action_2_status: Mehrere Teile zu einem einzigen verschweißen
