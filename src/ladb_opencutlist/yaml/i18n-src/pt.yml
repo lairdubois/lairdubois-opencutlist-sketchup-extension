@@ -295,11 +295,20 @@ core:
   solid:
     error:
       empty: O sólido não contém nenhuma geometria
+      empty_named: "« {{ name }} » não contém nenhuma geometria"
       non_manifold_edges: "O sólido contém {{ count }} aresta não-manifold"
       non_manifold_edges_plural: "O sólido contém {{ count }} arestas não-manifold"
+      non_manifold_edges_named: "« {{ name }} » contém {{ count }} aresta não-manifold"
+      non_manifold_edges_named_plural: "« {{ name }} » contém {{ count }} arestas não-manifold"
       open_edges: "O sólido contém {{ count }} arestas abertas"
       open_edges_plural: "O sólido contém {{ count }} arestas abertas"
+      open_edges_named: "« {{ name }} » contém {{ count }} aresta aberta"
+      open_edges_named_plural: "« {{ name }} » contém {{ count }} arestas abertas"
       locked_instances: "A operação não pode modificar uma instância bloqueada: {{ list }}"
+    rebuild:
+      error:
+        no_segment: Nenhuma linha de construção utilizável na seleção
+        no_face: Nenhum contorno fechado coplanar pôde ser reconstruído
 tab:
   cutlist:
     label: Peças
@@ -2317,6 +2326,7 @@ tool:
     vcb_radius: Raio
     vcb_diameter: Diâmetro
     vcb_distance: Distância
+    vcb_spacings: Espaçamentos
     error:
       no_direction: Indique uma direção com o mouse
       invalid_length: "O comprimento {{ value }} é inválido"
@@ -2367,9 +2377,14 @@ tool:
     action_2_state_1_status: Clique para definir um novo ponto ou insira uma distância
     action_x_state_2_status: Clique para definir a elevação ou insira uma distância
     action_3: Inserir uma Divisão
+    action_3_status: Desenhar uma divisória em uma cavidade formada por um grupo de peças existentes
+    action_3_state_0_status: Clique em uma parede para desenhar uma divisória
+    action_3_state_1_status: Clique em uma parede para desenhar divisórias
     action_option_group_offset: Diferença
     action_option_group_segments: Segmentos
     action_option_group_thickness: Espessura
+    action_option_group_axes: Eixos
+    action_option_group_measure_type: Medida
     action_option_group_options: Opções
     action_option_offset_shape_offset: Diferença
     action_option_offset_shape_offset_status: Permite aplicar um deslocamento ao traçado da forma desenhada
@@ -2377,6 +2392,11 @@ tool:
     action_option_segments_segment_count_status: Permite definir o número de segmentos do círculo
     action_option_thickness_thickness: Espessura
     action_option_thickness_thickness_status: Define a espessura das chapas
+    action_option_measure_type_inside_status: Posicionar a espessura no interior do ponto alvo
+    action_option_measure_type_centered_status: Centralizar a espessura no ponto alvo
+    action_option_measure_type_outside_status: Posicionar a espessura no exterior do ponto alvo
+    action_option_axes_active_status: Manipular ao longo dos eixos ativos
+    action_option_axes_context_status: Manipular ao longo dos eixos do grupo ou componente hospedeiro
     action_option_options_construction: Linhas de Construção
     action_option_options_construction_status: Desenhar com linhas de construção
     action_option_options_rectangle_centered: Retângulo Centralizado
@@ -2396,13 +2416,26 @@ tool:
     action_option_options_draw_in_0: Desenhar no elemento ativo
     action_option_options_draw_in_1: Desenhar no objeto pai da peça do primeiro ponto
     action_option_options_draw_in_status: Desenhar no objeto pai da peça alvo do primeiro ponto
+    action_option_options_reduce_envelope: Peças em recuo
+    action_option_options_reduce_envelope_status: Considerar as peças em recuo
+    action_option_options_reuse_definition: Reutilizar as peças
+    action_option_options_reuse_definition_status: Reutilizar a peça existente de mesma forma e mesma vizinhança em vez de criar uma nova
     action_option_options_ask_name: Nomeação das Peças
     action_option_options_ask_name_status: Inserir manualmente o nome das peças
     action_measure_locked_status: Bloquear na última medida
     action_toggle_move_copy_status: Alternar entre copiar/mover
     action_change_move_anchor_status: Alterar o ponto de ancoragem
+    error:
+      invalid_divider_seed: Este tipo de peça não permite o desenho de uma divisória
+      invalid_divider_container: "Esta peça está isolada: ela não compartilha grupo ou componente com outras peças"
+      invalid_divider_cavity: "Nenhuma cavidade nesta posição"
+      no_divider_cavity: Nenhuma cavidade foi detectada neste grupo ou componente
+      divider_number_overflow: "Não foi possível distribuir {{ number }} divisórias nesta cavidade"
     success:
       part_created: "Nova peça criada : {{ name }}"
+      part_created_plural: "{{ count }} novas peças criadas : {{ name }}"
+      part_reused: "Nova ocorrência da peça existente : {{ name }}"
+      part_reused_plural: "{{ count }} novas ocorrências da peça existente : {{ name }}"
   smart_handle:
     title: Manipular
     action_0: Selecionar
@@ -2448,8 +2481,8 @@ tool:
     action_0_state_12_status: Clique em um plano de divisão para excluí-lo
     action_0_state_2_status: Clique para confirmar o estiramento ou insira uma distância
     action_1: Painelar
-    action_1_status: Criar uma série de peças a partir de um sólido fechado
-    action_1_state_0_status: Clique em um sólido fechado para definir a geometria de referência
+    action_1_status: Criar uma série de peças a partir de um sólido fechado ou de um desenho em linhas de construção
+    action_1_state_0_status: Clique em um sólido fechado ou em um grupo de linhas de construção para definir a geometria de referência
     action_1_state_1_status: Selecione as faces para extrudar
     action_2: Soldar
     action_2_status: Soldar várias peças em uma só
