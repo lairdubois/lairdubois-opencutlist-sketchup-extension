@@ -202,6 +202,24 @@ module Ladb::OpenCutList
   # A profile with RIGHT angles (rebate, shoulder) exposes a plain chant
   # instead, already handled by the recess detection above.
   #
+  # The tilt alone does not settle it, though : it is read against the panel's
+  # OWN dominant normal, so a board set OBLIQUE to the assembly (a divider at
+  # 45° in plan) tilts every square cut it ends on — a chant cut parallel to
+  # the case's front, the ordinary way to end such a board, comes out at 45°
+  # of its own board and lands in the very band a mitre does. What tells them
+  # apart is the cavity, not the board : a profile FLARES to an opening, a
+  # recess merely STOPS in front of one. A tilted face whose plane recedes one
+  # of the cavity's own dominant openings — antiparallel to it, that opening
+  # lying beyond, the very test every recess plane must pass anyway (see
+  # #_reduction_recedes_opening?) — therefore goes down the recess path after
+  # all, and only the rest reaches the bevel detection. No genuine profile can
+  # slip through : a mitre, a chamfer, a moulding facet all meet their opening
+  # at an angle, and a facet that WERE parallel to it is a rebate shoulder,
+  # which the recess path already owns wherever the board is square to the
+  # assembly. Nor can the diversion reach an axis-aligned one : that same
+  # chant, on a board square to the opening it recedes, is perpendicular to
+  # its dominant normal and never entered the band to begin with.
+  #
   # Panels may overlap each other freely (the boolean absorbs overlaps, no
   # exact joinery needed) and gaps below the SketchUp merge tolerance are
   # sealed by Meshy's plane canonicalization.
@@ -286,12 +304,18 @@ module Ladb::OpenCutList
     # A cavity boundary face is an edge (chant) face of its panel when its
     # normal departs from the panel dominant normal by more than 60°, and a
     # main face when it departs by less than about 14°. In between, it is a
-    # BEVELED edge — still an edge of the board, but tilted (mitred front,
-    # chamfer, moulding facet) : see the class doc, BEVELED EDGES. Only the
-    # band that used to be read as a main face is diverted there : what
-    # already qualified as a chant keeps going down the recess path, where a
-    # bevel too shallow to leave that band is rejected anyway (a contour
-    # panel exposes a single main face to the cavity).
+    # TILTED edge — still an edge of the board, but not square to it (mitred
+    # front, chamfer, moulding facet... or the square cut an OBLIQUE panel
+    # ends on) : see the class doc, BEVELED EDGES. Only the band that used to
+    # be read as a main face is diverted there : what already qualified as a
+    # chant keeps going down the recess path, where a bevel too shallow to
+    # leave that band is rejected anyway (a contour panel exposes a single
+    # main face to the cavity).
+    #
+    # The band is a first sort only. Being measured against the panel's OWN
+    # dominant normal, it says how the face sits on its board, not what it
+    # does to the cavity : what falls in it is arbitrated afterwards on the
+    # cavity's openings — see #_detect_reduction_planes.
     REDUCTION_EDGE_DOT = 0.5
     REDUCTION_MAIN_DOT = 0.97
 
@@ -902,9 +926,13 @@ module Ladb::OpenCutList
         # walls a clip must not throw away, see #_reduction_panel_side
         bounding_mesh_positions = {}
         # The cavity's openings ([ normal, offset, area ] per envelope cap
-        # plane) and the tilted edge faces flaring toward them
-        # ([ triangle index, normal, area ]) — see #_detect_bevel_planes
+        # plane), the edge faces TILTED on their own board
+        # ([ triangle index, normal, area, offset, panel ]) and, once those
+        # have been sorted out below, the ones among them that flare toward an
+        # opening ([ triangle index, normal, area ]) — see
+        # #_detect_bevel_planes
         cap_planes = {}
+        tilted_triangles = []
         bevel_triangles = []
         fragment_def.face_indices.each_slice(3).with_index do |(a, b, c), triangle_index|
           face_id = face_ids[triangle_index]
@@ -929,19 +957,42 @@ module Ladb::OpenCutList
             main_plane_keys_by_panel[mesh_position][(offset / SolidMeshDef::TOLERANCE).round] = true
             next
           end
-          if dot.abs >= REDUCTION_EDGE_DOT  # Beveled edge face
-            # Deliberately NOT registered as a main plane above : a tilted
-            # face spans a whole range of offsets on the panel's dominant
-            # axis, so the single offset it would contribute is arbitrary —
-            # two of them would fake the "bounds the cavity on both its main
-            # faces" evidence a genuine recess must produce.
-            bevel_triangles << [ triangle_index, normal, area2 / 2.0 ]
+          d = normal[0] * vertices[a * 3] + normal[1] * vertices[a * 3 + 1] + normal[2] * vertices[a * 3 + 2]
+          if dot.abs >= REDUCTION_EDGE_DOT  # Edge face TILTED on its own board
+            # A profile or a recessed chant of an OBLIQUE panel — told apart
+            # below, once the cavity's own openings are all in.
+            #
+            # Deliberately NOT registered as a main plane above, whichever it
+            # turns out to be : a tilted face spans a whole range of offsets
+            # on the panel's dominant axis, so the single offset it would
+            # contribute is arbitrary — two of them would fake the "bounds the
+            # cavity on both its main faces" evidence a genuine recess must
+            # produce.
+            tilted_triangles << [ triangle_index, normal, area2 / 2.0, d, mesh_position ]
             next
           end
-          d = normal[0] * vertices[a * 3] + normal[1] * vertices[a * 3 + 1] + normal[2] * vertices[a * 3 + 2]
           key = normal.map { |v| (v * 1000).round } << (d / SolidMeshDef::TOLERANCE).round
           candidate = candidates[key] ||= [ normal, d, 0.0, [] ]
           candidate[2] += area2 / 2.0
+          candidate[3] << triangle_index
+          triangle_mesh_position[triangle_index] = mesh_position
+        end
+
+        # A face tilted on its own board is a PROFILE when it FLARES toward an
+        # opening, and a plain recessed chant when it merely STOPS in front of
+        # one — a question about the cavity, which only the openings collected
+        # above can answer, and which the tilt alone must not be asked (see the
+        # class doc, BEVELED EDGES). The chants join the candidates they would
+        # have been had their board been square to the assembly ; everything
+        # else goes on to #_detect_bevel_planes.
+        tilted_triangles.each do |triangle_index, normal, area, d, mesh_position|
+          unless _reduction_recedes_opening?(normal, d, cap_planes)
+            bevel_triangles << [ triangle_index, normal, area ]
+            next
+          end
+          key = normal.map { |v| (v * 1000).round } << (d / SolidMeshDef::TOLERANCE).round
+          candidate = candidates[key] ||= [ normal, d, 0.0, [] ]
+          candidate[2] += area
           candidate[3] << triangle_index
           triangle_mesh_position[triangle_index] = mesh_position
         end
