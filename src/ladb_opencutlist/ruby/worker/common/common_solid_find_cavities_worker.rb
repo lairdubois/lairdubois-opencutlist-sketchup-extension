@@ -220,6 +220,47 @@ module Ladb::OpenCutList
   # chant, on a board square to the opening it recedes, is perpendicular to
   # its dominant normal and never entered the band to begin with.
   #
+  # OVERALL CAVITY (overall_cavity option) : the interior of the enclosure as
+  # if it were EMPTY — what a part spanning the whole case (a back, a front, a
+  # plinth) is drawn in — bounded by its CONTOUR panels only, the ones facing
+  # the outside world, and ignoring the dividers and shelves that carve it into
+  # compartments. It cannot be read off the compartments already found : their
+  # union leaves out the material of every panel between them, and comes out
+  # holed, or plainly disjoint as soon as a divider spans the case. So it is a
+  # SECOND PASS of the whole pipeline above, over the contour panels alone —
+  # cheap in code, since the hull of the contour is the hull of the assembly
+  # (an internal panel is, by definition, inside it) and every filter applies
+  # unchanged. Its cavities carry the mark (SolidCavityFragmentDef#overall?)
+  # and are appended AFTER the compartments ; there may well be several, an
+  # assembly holding two disjoint cases having one overall cavity each.
+  #
+  # A panel is INTERNAL when a cavity bounds it on BOTH SIDES of its board, and
+  # CONTOUR otherwise — read on the first pass's own cavities, whose faces name
+  # both the panel they lie on and, by the sign of their normal against its
+  # dominant one, the side they lie on (see #_internal_panel_indices). The SIDE
+  # is what settles it, never the number of parallel planes exposed : one side
+  # of a board commonly shows several (a rebate for the back, a shoulder), and
+  # counting them would read an ordinary rebated case side as a divider and cut
+  # the overall cavity in two on the very panel meant to bound it.
+  #
+  # The reduction above then reads the second pass as it reads any other, which
+  # is precisely right : the internal panels are not in it, so a shelf recessed
+  # behind the opening can no longer recede anything, while the case's own
+  # recessed back or mitred front still does. The overall cavity recedes for
+  # what the CONTOUR does, and for nothing else.
+  #
+  # An assembly with no internal panel at all (a bare case) is not run twice :
+  # its compartments ARE its overall cavity, and marked copies of them are
+  # appended instead — a fragment is either one or the other, never both, so a
+  # caller sorts the two apart by #overall? whatever the assembly.
+  #
+  # An enclosure that exists only BECAUSE of an internal panel has, on the
+  # other hand, no overall cavity at all : a shelf between a side and a top is
+  # enclosed by the three of them, and the two contour panels left alone are an
+  # open L enclosing nothing (see SolidCavityFragmentDef#enclosed_by_walls?).
+  # The pass then simply finds nothing, and nothing is what comes back — never
+  # the compartments in disguise, which are the whole of no such volume.
+  #
   # Panels may overlap each other freely (the boolean absorbs overlaps, no
   # exact joinery needed) and gaps below the SketchUp merge tolerance are
   # sealed by Meshy's plane canonicalization.
@@ -361,6 +402,7 @@ module Ladb::OpenCutList
                    max_opening_planes: 2,
                    max_openness: 1.0,
                    reduce_envelope: true,
+                   overall_cavity: false,
                    validate: true
 
     )
@@ -371,6 +413,7 @@ module Ladb::OpenCutList
       @max_opening_planes = max_opening_planes
       @max_openness = max_openness
       @reduce_envelope = reduce_envelope
+      @overall_cavity = overall_cavity
       @validate = validate
 
     end
@@ -379,7 +422,6 @@ module Ladb::OpenCutList
 
     def run
       result_def = SolidBooleanResultDef.new
-      @envelope_restore_planes = []
 
       if @panel_drawing_defs.empty? || !@panel_drawing_defs.all? { |drawing_def| drawing_def.is_a?(DrawingDef) }
         result_def.errors << [ 'default.error' ]
@@ -400,6 +442,74 @@ module Ladb::OpenCutList
       # re-attribution if the cavities get rebuilt.
       panel_mesh_defs.each { |mesh_def| result_def.curve_info_defs.concat(mesh_def.curve_info_defs) }
 
+      # [ mesh def, index in @panel_drawing_defs ] of the non empty panels. The
+      # index travels WITH the mesh : a pass may run on a SUBSET of the panels
+      # (the contour ones, for the overall cavity below), and its cavities must
+      # still name the caller's own drawing defs — see #_find_cavities.
+      indexed_mesh_defs = []
+      panel_mesh_defs.each_with_index { |mesh_def, panel_index| indexed_mesh_defs << [ mesh_def, panel_index ] unless mesh_def.empty? }
+      if indexed_mesh_defs.empty?
+        result_def.errors << [ 'default.error' ]
+        return result_def
+      end
+
+      fragment_defs, panel_id_ranges, dominant_normals = _find_cavities(indexed_mesh_defs, result_def, validate: @validate, overall: false)
+      result_def.fragment_defs.concat(fragment_defs)
+      return result_def unless result_def.success?
+
+      # OVERALL CAVITY : a second pass, over the CONTOUR panels only — see the
+      # class doc. Appended AFTER the compartments, so that a caller reading
+      # the list in order (or picking the first fragment holding a point) still
+      # meets them first.
+      if @overall_cavity
+        internal_panel_indices = _internal_panel_indices(fragment_defs, panel_id_ranges, dominant_normals)
+        if internal_panel_indices.empty?
+          # Nothing partitions this enclosure : its compartments ARE its
+          # overall cavity, and a second pass would recompute them identically.
+          # Marked COPIES rather than the fragments themselves, so that a
+          # caller may sort the two apart by #overall? in every case alike.
+          result_def.fragment_defs.concat(fragment_defs.map { |fragment_def| _as_overall(fragment_def) })
+        else
+          contour_mesh_defs = indexed_mesh_defs.reject { |_mesh_def, panel_index| internal_panel_indices.include?(panel_index) }
+          unless contour_mesh_defs.empty?
+            # validate: false — these very panels went through the first pass's
+            # validation, only a native exception is left to report
+            overall_fragment_defs, _panel_id_ranges, _dominant_normals = _find_cavities(contour_mesh_defs, result_def, validate: false, overall: true)
+            result_def.fragment_defs.concat(overall_fragment_defs)
+          end
+        end
+      end
+
+      result_def
+    end
+
+    # -----
+
+    private
+
+    # ONE cavity detection pass over the given panels : the face info registry,
+    # the envelope, the hermetic and open subtractions and, in hull mode, the
+    # envelope reduction — the whole of what the class doc describes.
+    #
+    # +indexed_mesh_defs+ is a list of [ SolidMeshDef, index in
+    # @panel_drawing_defs ]. A pass may run on a SUBSET of the panels (the
+    # contour ones, for the overall cavity), so the index cannot be the
+    # position in that list : carried along, it keeps
+    # SolidFragmentDef#src_indices and the culprit an error names (see
+    # #_report_errors) expressed in the caller's own drawing defs, whatever the
+    # pass was given.
+    #
+    # +overall+ marks the cavities this pass produces (see
+    # SolidCavityFragmentDef#overall?).
+    #
+    # Returns [ cavity fragment defs, panel id ranges, panel dominant normals ]
+    # — the last two being what #_internal_panel_indices reads its panels off.
+    # On error the errors are appended to +result_def+ and the tuple is
+    # returned AS IT STANDS : the cavities an earlier stage did produce are
+    # still cavities, and the caller tells the failure by result_def#success?.
+    def _find_cavities(indexed_mesh_defs, result_def, validate:, overall:)
+      @envelope_restore_planes = []
+
       # Merge all face info registries into a single one, offsetting ids
       # accordingly. Id 0 is reserved for the envelope : it drives the
       # outside / openness filtering below. Panel id ranges are kept aside to
@@ -407,22 +517,24 @@ module Ladb::OpenCutList
       face_info_defs = [ SolidFaceInfoDef.new(nil, virtual: true) ]
       panel_id_ranges = []
       panel_meshes = []
-      panel_mesh_defs.each_with_index do |mesh_def, panel_index|
-        next if mesh_def.empty?
+      indexed_mesh_defs.each do |mesh_def, panel_index|
         id_offset = face_info_defs.length
         panel_meshes << mesh_def.to_meshy_hash(id_offset: id_offset)
         face_info_defs.concat(mesh_def.face_info_defs)
         panel_id_ranges << [ (id_offset...face_info_defs.length), panel_index ]
       end
-      if panel_meshes.empty?
-        result_def.errors << [ 'default.error' ]
-        return result_def
-      end
+
+      dominant_normals = _panel_dominant_normals(panel_meshes)
+
+      # What this pass returns, built up front so that every error path below
+      # gives back the cavities collected so far — the list is filled IN PLACE
+      cavity_fragment_defs = []
+      pass = [ cavity_fragment_defs, panel_id_ranges, dominant_normals ]
 
       envelope_mesh = @envelope == ENVELOPE_BBOX ? _envelope_bbox_mesh(panel_meshes) : _envelope_hull_mesh(panel_meshes)
       if envelope_mesh.nil?
         result_def.errors << [ 'default.error' ]
-        return result_def
+        return pass
       end
 
       # The cavities are collected by TWO complementary passes :
@@ -470,7 +582,8 @@ module Ladb::OpenCutList
           fragment_def = SolidCavityFragmentDef.new(
             fragment['vertices'], fragment['face_indices'], face_ids, face_info_defs,
             src_indices: _panel_indices(face_ids, panel_id_ranges),
-            openness: openness
+            openness: openness,
+            overall: overall
           )
           next if fragment_def.empty?
           # Structural filter : a real compartment opens on few flat openings,
@@ -512,13 +625,13 @@ module Ladb::OpenCutList
       # Hermetic pass
       direct_output = Meshy.operate(
         :operation => Meshy::OPERATION_SUBTRACTION,
-        :validate => @validate,
+        :validate => validate,
         :tolerance => SolidMeshDef::TOLERANCE,
         :src_meshes => [ envelope_mesh ],
         :cut_meshes => panel_meshes
       )
-      return result_def if _report_errors(direct_output, result_def, panel_id_ranges)
-      result_def.fragment_defs.concat(fn_collect.call(direct_output, true))
+      return pass if _report_errors(direct_output, result_def, panel_id_ranges)
+      cavity_fragment_defs.concat(fn_collect.call(direct_output, true))
 
       # Open pass (the bbox envelope only reveals hermetic cavities)
       if @envelope != ENVELOPE_BBOX
@@ -529,7 +642,7 @@ module Ladb::OpenCutList
           :src_meshes => panel_meshes,
           :cut_meshes => []
         )
-        return result_def if _report_errors(union_output, result_def)
+        return pass if _report_errors(union_output, result_def)
 
         welded_meshes = (union_output['fragments'] || []).map { |fragment|
           {
@@ -547,7 +660,7 @@ module Ladb::OpenCutList
             :src_meshes => [ envelope_mesh ],
             :cut_meshes => welded_meshes
           )
-          return result_def if _report_errors(welded_output, result_def)
+          return pass if _report_errors(welded_output, result_def)
           # Only the open cavities need it : a hermetic one is bounded by
           # panels alone, it never touches the hull
           _restore_envelope_vertices(welded_output['fragments'])
@@ -579,7 +692,6 @@ module Ladb::OpenCutList
           # round with no plane of its own is that plain flare after all, and
           # is dropped.
           if @reduce_envelope && !open_fragment_defs.empty?
-            dominant_normals = _panel_dominant_normals(panel_meshes)
             confirmed_fragment_defs = []
             # An untouched cavity is a cavity : the ones no reduction ever
             # clips must reach the result, so they start out confirmed
@@ -604,7 +716,7 @@ module Ladb::OpenCutList
                   :src_meshes => [ _reduction_fragment_mesh(fragment_def) ],
                   :cut_meshes => [ _reduction_slab_mesh(normal, d, envelope_mesh) ]
                 )
-                return result_def if _report_errors(kept_output, result_def)
+                return pass if _report_errors(kept_output, result_def)
                 _restore_clipped_vertices(kept_output['fragments'], normal, d)
                 kept = fn_collect.call(kept_output, false)
 
@@ -628,7 +740,7 @@ module Ladb::OpenCutList
                   :src_meshes => [ _reduction_fragment_mesh(fragment_def) ],
                   :cut_meshes => [ _reduction_slab_mesh(normal, d, envelope_mesh) ]
                 )
-                return result_def if _report_errors(beyond_output, result_def)
+                return pass if _report_errors(beyond_output, result_def)
                 _restore_clipped_vertices(beyond_output['fragments'], normal, d)
                 fn_collect.call(beyond_output, false).each { |beyond_fragment_def| next_active << [ beyond_fragment_def, true ] }
               end
@@ -645,16 +757,78 @@ module Ladb::OpenCutList
             open_fragment_defs = confirmed_fragment_defs
           end
 
-          result_def.fragment_defs.concat(open_fragment_defs)
+          cavity_fragment_defs.concat(open_fragment_defs)
         end
       end
 
-      result_def
+      pass
     end
 
-    # -----
+    # Panel indices (in @panel_drawing_defs) of the INTERNAL panels of the
+    # given cavities : the ones a cavity bounds on BOTH SIDES of their board —
+    # the dividers, shelves and partitions that carve an enclosure into
+    # compartments. Everything else is a CONTOUR panel, and it is the contour
+    # alone that bounds the overall cavity (see the class doc, OVERALL CAVITY).
+    #
+    # A cavity face lying on a panel's MAIN face (within REDUCTION_MAIN_DOT of
+    # its dominant normal, the same reading as #_detect_reduction_planes)
+    # points OUT of the cavity, hence INTO the panel : the SIGN of its dot with
+    # the dominant normal says which side of the board that cavity is on. Both
+    # signs present is a panel with a cavity on either side of it.
+    #
+    # The side, not the plane OFFSET, is what settles it : a single side of a
+    # board commonly exposes several parallel main planes (a rebate for the
+    # back, a shoulder), and counting planes would read an ordinary rebated
+    # side panel as a divider — cutting the overall cavity in two on the very
+    # panel that was supposed to bound it. Each side must in addition carry
+    # REDUCTION_MIN_AREA, the same guard the reduction planes get against the
+    # degenerate slivers a boolean leaves where two faces are flush.
+    #
+    # A divider whose other side produced no cavity of its own (a compartment
+    # the filters turned down) reads as contour and stays in the pass, where it
+    # merely splits the overall cavity : the failure mode is a cavity too MANY,
+    # never one reaching past a panel it should have stopped at.
+    def _internal_panel_indices(fragment_defs, panel_id_ranges, dominant_normals)
 
-    private
+      area_by_panel_side = Hash.new(0.0)
+      fragment_defs.each do |fragment_def|
+        face_ids = fragment_def.face_ids
+        next if face_ids.nil?
+        vertices = fragment_def.vertices
+        fragment_def.face_indices.each_slice(3).with_index do |(a, b, c), triangle_index|
+          face_id = face_ids[triangle_index]
+          next if face_id == 0  # Envelope cap, not a panel face
+          mesh_position = panel_id_ranges.find_index { |id_range, _| id_range.cover?(face_id) }
+          next if mesh_position.nil?
+          dominant_normal = dominant_normals[mesh_position]
+          next if dominant_normal.nil?
+          normal, area2 = _triangle_normal(vertices, a, b, c)
+          next if normal.nil?
+          dot = normal[0] * dominant_normal[0] + normal[1] * dominant_normal[1] + normal[2] * dominant_normal[2]
+          next if dot.abs < REDUCTION_MAIN_DOT  # An edge (chant) face, or a tilted one : says nothing about the sides
+          area_by_panel_side[[ panel_id_ranges[mesh_position].last, dot > 0 ? 1 : -1 ]] += area2 / 2.0
+        end
+      end
+
+      sides_by_panel_index = Hash.new(0)
+      area_by_panel_side.each do |(panel_index, _side), area|
+        sides_by_panel_index[panel_index] += 1 if area >= REDUCTION_MIN_AREA
+      end
+      sides_by_panel_index.select { |_panel_index, sides| sides >= 2 }.keys
+    end
+
+    # A copy of the given cavity marked as the OVERALL one — same geometry,
+    # same provenance. See #run : an enclosure with no internal panel at all
+    # has its compartments for overall cavity, and a fragment is either one or
+    # the other, never both, so the caller may always sort them apart.
+    def _as_overall(fragment_def)
+      SolidCavityFragmentDef.new(
+        fragment_def.vertices, fragment_def.face_indices, fragment_def.face_ids, fragment_def.face_info_defs,
+        src_indices: fragment_def.src_indices,
+        openness: fragment_def.openness,
+        overall: true
+      )
+    end
 
     # Appends the given Meshy output errors (native exception or structured
     # per-mesh validation errors) to the result def as i18n tuples. Returns

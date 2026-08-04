@@ -126,4 +126,79 @@ class TC_Ladb_Worker_SolidFindCavities < TestUp::TestCase
 
   end
 
+  # -- Contour / internal panels --
+
+  # Two panels : #0 a horizontal shelf (dominant normal Z, its two main faces
+  # carrying ids 1 and 2), #1 a vertical side (dominant normal X, ids 3 and 4).
+  PANEL_ID_RANGES = [ [ (1...3), 0 ], [ (3...5), 1 ] ]
+  DOMINANT_NORMALS = [ [ 0.0, 0.0, 1.0 ], [ 1.0, 0.0, 0.0 ] ]
+
+  # A panel a cavity bounds on BOTH sides is a divider, and the overall cavity
+  # must not be bounded by it. A cavity face lies ON the panel, so its outward
+  # normal points into it : the cavity ABOVE the shelf shows -Z there, the one
+  # BELOW +Z.
+  #
+  # The side, meanwhile, exposes TWO parallel main planes to the cavity, both
+  # facing the same way - an everyday rebate, for the back or a shoulder - and
+  # that must NOT read as a divider.
+  def test_internal_panel_indices_tells_a_divider_from_a_rebated_contour_panel
+
+    fragment_def = _fragment([
+      [ [ 0.0, 0.0, 0.0,  0.0, 1.0, 0.0,  1.0, 0.0, 0.0 ], 1 ],        # shelf, top face : normal -Z
+      [ [ 0.0, 0.0, -1.0, 1.0, 0.0, -1.0, 0.0, 1.0, -1.0 ], 2 ],       # shelf, bottom face : normal +Z
+      [ [ 2.0, 0.0, 0.0,  2.0, 1.0, 0.0,  2.0, 0.0, 1.0 ], 3 ],        # side, inner face : normal +X
+      [ [ 2.5, 0.0, 0.0,  2.5, 1.0, 0.0,  2.5, 0.0, 1.0 ], 4 ]         # side, rebate bottom : +X again
+    ])
+
+    assert_equal([ 0 ], @worker.send(:_internal_panel_indices, [ fragment_def ], PANEL_ID_RANGES, DOMINANT_NORMALS))
+
+  end
+
+  # The second side must carry real area : the degenerate slivers a boolean
+  # leaves where two faces are flush would otherwise turn every contour panel
+  # into a divider - the very failure REDUCTION_MIN_AREA guards the reduction
+  # planes against.
+  def test_internal_panel_indices_ignores_a_sliver_on_the_second_side
+
+    sliver = 0.01  # 5e-5 sq in, well below REDUCTION_MIN_AREA (1e-4)
+
+    fragment_def = _fragment([
+      [ [ 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0 ], 1 ],
+      [ [ 0.0, 0.0, -1.0, sliver, 0.0, -1.0, 0.0, sliver, -1.0 ], 2 ]
+    ])
+
+    assert_equal([], @worker.send(:_internal_panel_indices, [ fragment_def ], PANEL_ID_RANGES, DOMINANT_NORMALS))
+
+  end
+
+  # An EDGE (chant) face says nothing about the sides of the board : a cabinet
+  # side whose front chant bounds the cavity is a contour panel all the same.
+  def test_internal_panel_indices_ignores_an_edge_face
+
+    fragment_def = _fragment([
+      [ [ 2.0, 0.0, 0.0, 2.0, 1.0, 0.0, 2.0, 0.0, 1.0 ], 3 ],     # inner main face : +X
+      [ [ 0.0, 2.0, 0.0, 1.0, 2.0, 0.0, 0.0, 2.0, 1.0 ], 4 ]      # chant : -Y, perpendicular to the dominant normal
+    ])
+
+    assert_equal([], @worker.send(:_internal_panel_indices, [ fragment_def ], PANEL_ID_RANGES, DOMINANT_NORMALS))
+
+  end
+
+  # -----
+
+  # A cavity fragment made of the given [ flat triangle coordinates, face id ]
+  # triangles - all #_internal_panel_indices ever reads of one.
+  def _fragment(triangles)
+    vertices = []
+    face_indices = []
+    face_ids = []
+    triangles.each do |coordinates, face_id|
+      index = vertices.length / 3
+      face_indices << index << index + 1 << index + 2
+      vertices.concat(coordinates)
+      face_ids << face_id
+    end
+    Ladb::OpenCutList::SolidCavityFragmentDef.new(vertices, face_indices, face_ids, [])
+  end
+
 end

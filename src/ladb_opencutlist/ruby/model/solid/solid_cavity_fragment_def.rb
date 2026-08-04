@@ -11,15 +11,25 @@ module Ladb::OpenCutList
 
     attr_reader :openness
 
-    def initialize(vertices, face_indices, face_ids, face_info_defs, src_indices: [], openness: 0.0)
+    def initialize(vertices, face_indices, face_ids, face_info_defs, src_indices: [], openness: 0.0, overall: false)
       super(vertices, face_indices, face_ids, face_info_defs, src_indices: src_indices)
       @openness = openness
+      @overall = overall
     end
 
     # -----
 
     def closed?
       @openness == 0.0
+    end
+
+    # Whether this cavity is the OVERALL one : the interior of the enclosure as
+    # if it were empty, bounded by its CONTOUR panels only — the compartments
+    # its internal panels carve out of it are separate fragments of their own.
+    # See CommonSolidFindCavitiesWorker, OVERALL CAVITY. false unless the
+    # worker was asked for it.
+    def overall?
+      @overall
     end
 
     # Minimum share of the total opening area a plane must carry to count as
