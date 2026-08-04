@@ -2634,6 +2634,10 @@ module Ladb::OpenCutList
       false
     end
 
+    def _preview_part_container_axes?
+      false
+    end
+
     def _get_active_part_preview_color(part, highlighted = false)
       highlighted ? COLOR_PART_HIGHLIGHTED : COLOR_PART
     end
@@ -2797,6 +2801,14 @@ module Ladb::OpenCutList
             k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
             k_box.transformation = t
             @tool.append_3d(k_box, layer)
+
+            if _preview_part_container_axes?
+
+              k_axes_helper = Kuix::AxesHelper.new(20)
+              k_axes_helper.transformation = t * Geom::Transformation.translation(ORIGIN.vector_to(kb.min.to_p))
+              @tool.append_3d(k_axes_helper, layer)
+
+            end
 
           end
 

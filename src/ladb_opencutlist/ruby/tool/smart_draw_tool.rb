@@ -4237,6 +4237,10 @@ module Ladb::OpenCutList
       true
     end
 
+    def _preview_part_container_axes?
+      _fetch_option_axes_context?
+    end
+
     # -----
 
     def _snap_point(picker)
