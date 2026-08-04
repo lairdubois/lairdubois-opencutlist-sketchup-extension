@@ -321,6 +321,10 @@ module Ladb::OpenCutList
 
     @@last_cutters_data = nil
 
+    @@last_stretch_measures = { :outside => 0, :offset => 0 }
+
+    attr_writer :ignore_next_lbutton_up
+
     def initialize(tool, previous_action_handler = nil)
       super(SmartReshapeTool::ACTION_STRETCH, tool, previous_action_handler)
 
@@ -329,11 +333,13 @@ module Ladb::OpenCutList
       @mouse_down_point = nil
       @mouse_snap_point = nil
 
+      @ignore_next_lbutton_up = false
+
       @picked_stretch_start_point = nil
       @picked_stretch_end_point = nil
 
       @picked_axis = nil
-      @picked_grip_index = -1
+      @picked_grip_index = nil
 
       @cutters = nil
 
@@ -400,6 +406,7 @@ module Ladb::OpenCutList
 
       when STATE_STRETCH
         return super +
+               ' | ' + PLUGIN.get_i18n_string("default.constrain_key") + ' = ' + PLUGIN.get_i18n_string("tool.default.locked_on_last_measure") + '.' +
                ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_option_options_centered_status") + '.' +
                ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_option_options_make_unique_status") + '.'
 
@@ -569,6 +576,8 @@ module Ladb::OpenCutList
 
     def onToolLButtonDown(tool, flags, x, y, view)
 
+      @ignore_next_lbutton_up = false  # A "down" always pairs with the following "up"
+
       case @state
 
       when STATE_STRETCH_START
@@ -615,6 +624,13 @@ module Ladb::OpenCutList
     end
 
     def onToolLButtonUp(tool, flags, x, y, view)
+
+      # Ignore the "up" event that trails a double click : it isn't paired with a "down" and it is
+      # dispatched to the handler recreated by the '_restart' triggered by the double click.
+      if @ignore_next_lbutton_up
+        @ignore_next_lbutton_up = false
+        return true
+      end
 
       case @state
 
@@ -690,6 +706,34 @@ module Ladb::OpenCutList
       super
     end
 
+    def onToolLButtonDoubleClick(tool, flags, x, y, view)
+
+      case @state
+
+      when STATE_STRETCH
+
+        # Reuse the last measure AND its way : the direction is the grip outward one, the sign of
+        # the measure tells if the shape was expanded or compressed.
+        measure = _fetch_last_stretch_measure
+        unless measure == 0 || (measure_def = _get_stretch_measure_def(measure, @mouse_snap_point, _get_stretch_outward_direction)).nil?
+
+          @picked_stretch_end_point = measure_def[:end_point]
+
+          _stretch_entity  # Silently clamped to the max compression distance by '_get_stretch_def'
+
+          new_action_handler = _restart
+          new_action_handler.ignore_next_lbutton_up = true if new_action_handler.is_a?(SmartReshapeStretchActionHandler)
+
+          return true
+        end
+
+        UI.beep
+
+      end
+
+      false
+    end
+
     def onToolKeyDown(tool, key, repeat, flags, view)
       return true if super
 
@@ -745,6 +789,14 @@ module Ladb::OpenCutList
           end
         end
 
+      when STATE_STRETCH
+
+        if tool.is_key_shift?(key)
+          UI.beep if _fetch_last_stretch_measure == 0
+          _refresh
+          return true
+        end
+
       end
 
       false
@@ -778,6 +830,10 @@ module Ladb::OpenCutList
         if tool.is_key_ctrl_or_option?(key) && is_quick
           @tool.store_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_CENTERED, !_fetch_option_options_centered?, fire_event: true)
           _refresh
+          return true
+        end
+        if tool.is_key_shift?(key)
+          _refresh  # Release the measure lock
           return true
         end
 
@@ -1240,6 +1296,16 @@ module Ladb::OpenCutList
 
       end
 
+      # Lock on the last stretch measure. Only its magnitude is locked : the way stays driven by
+      # the mouse, like the SmartDraw pull lock.
+      if @tool.is_key_shift_down? && (measure = _fetch_last_stretch_measure) != 0
+        measure_def = _get_stretch_measure_def(measure.abs)
+        unless measure_def.nil?
+          @mouse_snap_point = measure_def[:end_point]
+          @mouse_ip.clear
+        end
+      end
+
     end
 
     def _preview_active_cutters(view)
@@ -1645,11 +1711,9 @@ module Ladb::OpenCutList
     def _read_stretch(tool, text, view)
       return false if (stretch_def = _get_stretch_def(@picked_stretch_start_point, @mouse_snap_point)).nil?
 
-      split_def, factor, esv, lps, lpe = stretch_def.values_at(:split_def, :factor, :esv, :lps, :lpe)
-      et, epmin, epmax, max_compression_distance, reversed = split_def.values_at(:et, :epmin, :epmax, :max_compression_distance, :reversed)
-      v = lps.vector_to(lpe)
+      lps, lpe = stretch_def.values_at(:lps, :lpe)
 
-      distance = _read_user_text_length(tool, text, v.length)
+      distance = _read_user_text_length(tool, text, lps.distance(lpe))
       return true if distance.nil?
 
       measure_type_outside = _fetch_option_stretch_measure_type_outside?
@@ -1660,21 +1724,12 @@ module Ladb::OpenCutList
         return false
       end
 
-      pmin = epmin.transform(et)
-      pmax = epmax.transform(et)
-
-      if measure_type_outside
-        real_distance = (distance - (pmax - pmin).length) / factor
-        compression_distance = (real_distance * factor).abs
-      else
-        real_distance = distance
-        compression_distance = real_distance.abs
-        max_compression_distance = max_compression_distance / factor
-      end
-      end_point = @picked_stretch_start_point.offset(v, real_distance)
+      return false if (measure_def = _get_stretch_measure_def(distance)).nil?
+      end_point, pmin, pmax, compression_distance, max_compression_distance = measure_def.values_at(:end_point, :pmin, :pmax, :compression_distance, :max_compression_distance)
 
       return false if (stretch_def = _get_stretch_def(@picked_stretch_start_point, end_point)).nil?
-      esv, _ = stretch_def.values_at(:esv)
+      split_def, esv = stretch_def.values_at(:split_def, :esv)
+      reversed, _ = split_def.values_at(:reversed)
 
       # Error if max distance exceeded
       compressed = esv.valid? && (reversed ? esv.samedirection?(@picked_axis) : !esv.samedirection?(@picked_axis))
@@ -1693,6 +1748,26 @@ module Ladb::OpenCutList
       Sketchup.set_status_text('', SB_VCB_VALUE)
 
       true
+    end
+
+    # -----
+
+    # Last measure is stored by measure type because its meaning differs :
+    # overall dimension in "outside" mode - always positive, the compression is implied by the
+    # comparison with the current dimension - and stretch delta in "offset" mode, where it is
+    # signed : positive = expansion, negative = compression.
+
+    def _fetch_last_stretch_measure
+      @@last_stretch_measures[_fetch_option_stretch_measure_type_outside? ? :outside : :offset]
+    end
+
+    def _store_last_stretch_measure(measure, compressed = false)
+      return if measure.nil? || measure == 0  # A null measure doesn't erase the stored one
+      if _fetch_option_stretch_measure_type_outside?
+        @@last_stretch_measures[:outside] = measure
+      else
+        @@last_stretch_measures[:offset] = compressed ? -measure : measure
+      end
     end
 
     # -----
@@ -1757,6 +1832,52 @@ module Ladb::OpenCutList
 
     # -----
 
+    # The grip outward direction : offsetting the grip along it expands the shape, offsetting it
+    # backward compresses the shape.
+    def _get_stretch_outward_direction
+      return nil if @picked_stretch_start_opposite_point.nil? || @picked_stretch_start_point.nil?
+      @picked_stretch_start_opposite_point.vector_to(@picked_stretch_start_point)
+    end
+
+    # Convert a "measure" - as displayed in the VCB : overall dimension if the measure type is
+    # "outside", stretch delta if it is "offset" - to the matching stretch end point.
+    # 'direction' defaults to the mouse driven one : pass an explicit one to let the sign of the
+    # measure drive the way.
+    def _get_stretch_measure_def(measure, reference_point = @mouse_snap_point, direction = nil)
+      return nil if (stretch_def = _get_stretch_def(@picked_stretch_start_point, reference_point)).nil?
+
+      split_def, factor, lps, lpe = stretch_def.values_at(:split_def, :factor, :lps, :lpe)
+      et, epmin, epmax, max_compression_distance = split_def.values_at(:et, :epmin, :epmax, :max_compression_distance)
+
+      if (v = direction).nil?
+        v = lps.vector_to(lpe)
+        v = _get_stretch_outward_direction unless v.valid?  # Fallback to the grip outward direction
+      end
+      return nil if v.nil? || !v.valid?
+
+      pmin = epmin.transform(et)
+      pmax = epmax.transform(et)
+
+      if _fetch_option_stretch_measure_type_outside?
+        real_distance = (measure - (pmax - pmin).length) / factor
+        compression_distance = (real_distance * factor).abs
+      else
+        real_distance = measure
+        compression_distance = real_distance.abs
+        max_compression_distance = max_compression_distance / factor
+      end
+
+      {
+        end_point: @picked_stretch_start_point.offset(v, real_distance),
+        pmin: pmin,
+        pmax: pmax,
+        compression_distance: compression_distance,
+        max_compression_distance: max_compression_distance,
+      }
+    end
+
+    # -----
+
     # Returns the 0-based index in the active selection path of the first ancestor to make unique
     # when the edited context (the last path element's definition) is also visible through a locked
     # occurrence path, or nil if the context is safe. Occurrence paths that share the context
@@ -1815,8 +1936,12 @@ module Ladb::OpenCutList
     def _stretch_entity
       return if (stretch_def = _get_stretch_def(@picked_stretch_start_point, @picked_stretch_end_point)).nil?
 
-      split_def, emv, esv, edvs, lpe = stretch_def.values_at(:split_def, :emv, :esv, :edvs, :lpe)
+      split_def, emv, esv, edvs, lps, lpe = stretch_def.values_at(:split_def, :emv, :esv, :edvs, :lps, :lpe)
       et, eps, evpspe, reversed, section_defs, container_defs = split_def.values_at(:et, :eps, :evpspe, :reversed, :section_defs, :container_defs)
+
+      # Keep the applied measure - and its way - to be able to reuse them on the next stretch
+      compressed = esv.valid? && (reversed ? esv.samedirection?(@picked_axis) : !esv.samedirection?(@picked_axis))
+      _store_last_stretch_measure(lps.distance(lpe), compressed)
 
       _unhide_instances
 

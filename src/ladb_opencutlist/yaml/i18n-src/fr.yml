@@ -2346,6 +2346,7 @@ tool:
       not_sibling_part: Cette pièce n'est pas dans le même groupe ou composant que le reste de la sélection
       selection_contains_locked_entities: La sélection contient des entités verrouillées
       wrong_material_type: "La pièce ciblée doit être du type '{{ type }}'"
+      locked_on_last_measure: Verrouiller sur la dernière mesure  # TODO : Moved from tool.smart_draw.action_measure_locked_status
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2422,7 +2423,6 @@ tool:
     action_option_options_reuse_definition_status: Réutiliser la pièce existante de même forme et de même voisinage plutôt que d'en créer une nouvelle
     action_option_options_ask_name: Nommage des pièces
     action_option_options_ask_name_status: Saisir manuellement le nom des pièces
-    action_measure_locked_status: Verrouiller sur la dernière mesure
     action_toggle_move_copy_status: Alterner entre copier/déplacer
     action_change_move_anchor_status: Changer le point d'ancrage
     error:
