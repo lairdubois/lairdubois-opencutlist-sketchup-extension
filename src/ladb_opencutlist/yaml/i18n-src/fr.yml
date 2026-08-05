@@ -2327,6 +2327,7 @@ tool:
     vcb_diameter: Diamètre
     vcb_distance: Distance
     vcb_spacings: Espacements
+    locked_on_last_measure_status: Verrouiller sur la dernière mesure  # TODO : Moved from tool.smart_draw.action_measure_locked_status
     error:
       no_direction: Veuillez indiquer une direction avec la souris
       invalid_length: "La longueur {{ value }} est invalide"
@@ -2346,7 +2347,6 @@ tool:
       not_sibling_part: Cette pièce n'est pas dans le même groupe ou composant que le reste de la sélection
       selection_contains_locked_entities: La sélection contient des entités verrouillées
       wrong_material_type: "La pièce ciblée doit être du type '{{ type }}'"
-      locked_on_last_measure: Verrouiller sur la dernière mesure  # TODO : Moved from tool.smart_draw.action_measure_locked_status
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
