@@ -4128,7 +4128,7 @@ module Ladb::OpenCutList
           # The just-created divider is now real geometry in the model :
           # the cached cavities (and the fragment it was clipped to) are
           # stale, whatever the next divider picks must see it.
-          @cavities_def = nil
+          _reset_cavities_def
           _refresh
         else
           UI.beep
@@ -4208,14 +4208,10 @@ module Ladb::OpenCutList
         end
         if tool.is_key_ctrl_or_option?(key) && is_quick
           @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_REVERSED, !_fetch_option_measure_reversed?, fire_event: true)
-          _refresh
           return true
         end
         if tool.is_key_alt_or_command?(key) && is_quick
           @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, !_fetch_option_reduce_envelope?, fire_event: true)
-          @cavities_def = nil
-          @locked_normal = nil
-          _refresh
           return true
         end
 
@@ -4262,12 +4258,20 @@ module Ladb::OpenCutList
       when SmartDrawTool::ACTION_OPTION_AXES
         @locked_normal = nil
         _refresh
+      when SmartDrawTool::ACTION_OPTION_OPTIONS
+        case option
+        when SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_REVERSED
+          _refresh
+        when SmartDrawTool::ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE
+          _reset_cavities_def
+          _refresh
+        end
       end
 
     end
 
     def onToolTransactionUndo(tool, model)
-      @cavities_def = nil
+      _reset_cavities_def
       super
     end
 
@@ -4278,12 +4282,16 @@ module Ladb::OpenCutList
     # -----
 
     def _reset
-      @cavities_def = nil
+      _reset_cavities_def
       @picked_point = nil
       @locked_normal = nil
       @number = 0
       @spacings = []
       super
+    end
+
+    def _reset_cavities_def
+      @cavities_def = nil
     end
 
     def _refresh
