@@ -371,10 +371,30 @@ namespace Meshy {
             // Only the operands that are actually nudged get the holds : one
             // with no offset at all has not moved, and is still exactly on the
             // axis planes snap_to_planes put it on above.
+            //
+            // And an operand is only held on the axis planes it has a FACE on :
+            // that is the coplanarity the hold exists to preserve. Holding a
+            // vertex on a plane its own mesh merely TOUCHES (an edge, or a
+            // single corner) preserves nothing of its own, and forces the
+            // displacement to be tangential — it slides ALONG that plane. When
+            // the plane happens to be the exactly coincident interface between
+            // two OTHER operands (an axis plane is never nudged, so two flush
+            // faces on it stay bit-identical), the slide plants a T-vertex in
+            // the middle of that coincident face pair, and the union can no
+            // longer cancel the two faces against each other : it leaves a
+            // zero-thickness crack, which the subtraction behind it inflates
+            // into a fin reaching through the panel. Seen on a cabinet whose
+            // bottom and top are NOTCHED flush with a divider's side face
+            // (their notch face and the divider's face share the axis plane)
+            // while the divider is MITRED to a second panel : the mitre is
+            // tilted, so it nudges, and the corner vertex it moves is the one
+            // touching the notch interface.
             for (std::size_t k = 0; k < nudge_pool.size(); ++k) {
                 if (pool_offsets[k].empty()) continue;
                 for (const auto& plane : planes) {
-                    if (is_axis_plane(plane)) pool_offsets[k].emplace_back(&plane, 0.0);
+                    if (!is_axis_plane(plane)) continue;
+                    if (outward_sign_on_plane(*nudge_pool[k], plane, tolerance_) == 0.0) continue;
+                    pool_offsets[k].emplace_back(&plane, 0.0);
                 }
             }
 
