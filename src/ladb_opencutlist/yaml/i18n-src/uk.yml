@@ -2327,6 +2327,7 @@ tool:
     vcb_diameter: Діаметр
     vcb_distance: Відстань
     vcb_spacings: Інтервали
+    locked_on_last_measure_status: Фіксація під час останнього вимірювання  # TODO : Moved from tool.smart_draw.action_measure_locked_status
     error:
       no_direction: "Будь ласка, вкажіть напрямок мишкою"
       invalid_length: "Довжина {{ value }} недійсна"
@@ -2422,7 +2423,6 @@ tool:
     action_option_options_reuse_definition_status: "Повторно використовувати наявну деталь тієї самої форми та в тій самій зоні, а не створювати нову"
     action_option_options_ask_name: Найменування деталей
     action_option_options_ask_name_status: Введення назв деталей вручну
-    action_measure_locked_status: Фіксація під час останнього вимірювання
     action_toggle_move_copy_status: Чергування копіювання/переміщення
     action_change_move_anchor_status: Зміна опорної точки
     error:

@@ -2327,6 +2327,7 @@ tool:
     vcb_diameter: Diâmetro
     vcb_distance: Distância
     vcb_spacings: Espaçamentos
+    locked_on_last_measure_status: Bloquear na última medida  # TODO : Moved from tool.smart_draw.action_measure_locked_status
     error:
       no_direction: Indique uma direção com o mouse
       invalid_length: "O comprimento {{ value }} é inválido"
@@ -2422,7 +2423,6 @@ tool:
     action_option_options_reuse_definition_status: Reutilizar a peça existente de mesma forma e mesma vizinhança em vez de criar uma nova
     action_option_options_ask_name: Nomeação das Peças
     action_option_options_ask_name_status: Inserir manualmente o nome das peças
-    action_measure_locked_status: Bloquear na última medida
     action_toggle_move_copy_status: Alternar entre copiar/mover
     action_change_move_anchor_status: Alterar o ponto de ancoragem
     error:

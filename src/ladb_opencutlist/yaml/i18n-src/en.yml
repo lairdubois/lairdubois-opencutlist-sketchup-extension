@@ -2327,6 +2327,7 @@ tool:
     vcb_diameter: Diameter
     vcb_distance: Distance
     vcb_spacings: Spacing
+    locked_on_last_measure_status: Lock on last measurement  # TODO : Moved from tool.smart_draw.action_measure_locked_status
     error:
       no_direction: Please indicate a direction with your mouse
       invalid_length: "Length {{ value }} is invalid"
@@ -2422,7 +2423,6 @@ tool:
     action_option_options_reuse_definition_status: "Rather than creating a new one, reuse the existing part which has the same shape and is located in the same area"
     action_option_options_ask_name: Part Naming
     action_option_options_ask_name_status: Enter part names manually
-    action_measure_locked_status: Lock on last measurement
     action_toggle_move_copy_status: Toggle between copy/move
     action_change_move_anchor_status: Change the anchor point
     error:
