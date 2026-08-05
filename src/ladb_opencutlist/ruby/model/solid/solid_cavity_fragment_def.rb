@@ -145,12 +145,33 @@ module Ladb::OpenCutList
       @enclosed_by_walls = _facing_wall_pair?(normals) || _walls_leave_no_escape?(normals)
     end
 
+    # Minimum share of the WALL area a face must carry to be READ AS AN
+    # APPUI — deliberately far below WALL_PLANE_MIN_AREA_SHARE, because the
+    # two tests ask opposite questions of the area.
+    #
+    # A wall is weighed on its own (does this face HEM THE CAVITY IN ?), and
+    # a strip of a few percent is no evidence of that : hence the 5 %.
+    # #leans_on_a_wall_face_of? weighs a MATCH against another cavity, and
+    # there a sliver of the same face, from the same side, says exactly as
+    # much as a large one — the face either carries on behind the panel that
+    # splits the two volumes, or it does not. Holding it to the wall share
+    # loses the shallow compartments : a rear rebate 20 mm deep behind a back
+    # panel set into 462 mm wide sides leans on those sides over 3.98 % of
+    # its wall area — under the wall floor, though it is the very same face,
+    # from the very same side, as the main compartment's.
+    #
+    # What is left to guard against is the degenerate SLIVER a boolean leaves
+    # where two faces are flush, whose face id (and normal) are arbitrary :
+    # orders of magnitude below this, as the reduction planes' own
+    # REDUCTION_MIN_AREA guard already assumes.
+    LEANING_WALL_FACE_MIN_AREA_SHARE = 0.005
+
     # Outward unit normal of each WALL FACE of the cavity, keyed by the id of
     # the panel face it lies on : the same accounting as #_wall_normals — face
-    # id != 0, at least WALL_PLANE_MIN_AREA_SHARE of the wall area — kept per
-    # FACE rather than per plane, so that a wall can be recognized from one
-    # cavity to the next (a plane index is local to a fragment's own mesh, a
-    # face id names the very face of the very panel). See
+    # id != 0, at least LEANING_WALL_FACE_MIN_AREA_SHARE of the wall area —
+    # kept per FACE rather than per plane, so that a wall can be recognized
+    # from one cavity to the next (a plane index is local to a fragment's own
+    # mesh, a face id names the very face of the very panel). See
     # #leans_on_a_wall_face_of?. Memoized.
     def wall_face_normals
       return @wall_face_normals if defined?(@wall_face_normals)
@@ -172,7 +193,7 @@ module Ladb::OpenCutList
 
       total = area_by_face_id.values.inject(0.0) { |sum, area| sum + area }
       return @wall_face_normals = {} unless total > 0
-      @wall_face_normals = area_by_face_id.select { |_face_id, area| area >= total * WALL_PLANE_MIN_AREA_SHARE }
+      @wall_face_normals = area_by_face_id.select { |_face_id, area| area >= total * LEANING_WALL_FACE_MIN_AREA_SHARE }
                                           .keys.map { |face_id| [ face_id, normal_by_face_id[face_id] ] }.to_h
     end
 
@@ -187,7 +208,9 @@ module Ladb::OpenCutList
     # passed (see #enclosed_by_walls?). A concavity pocket never can : it
     # wraps the assembly's corner, so it leans on the OUTER faces of the very
     # panels whose INNER faces bound the compartments — the same panels, never
-    # the same faces.
+    # the same faces. That is what makes the appui readable down to
+    # LEANING_WALL_FACE_MIN_AREA_SHARE : however little of the face a cavity
+    # sees, seeing it AT ALL from that side is the whole of the evidence.
     def leans_on_a_wall_face_of?(other)
       other_normals = other.wall_face_normals
       wall_face_normals.any? { |face_id, normal|
