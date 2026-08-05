@@ -2654,6 +2654,22 @@ module Ladb::OpenCutList
       end
     end
 
+    def _get_active_part_preview_offset(part, highlighted = false)
+      0
+    end
+
+    def _get_instance_part_preview_offset(part, highlighted = false)
+      0
+    end
+
+    def _get_path_part_preview_offset(path, part, highlighted = false)
+      if path == @active_part_entity_path
+        _get_active_part_preview_offset(part, highlighted)
+      else
+        _get_instance_part_preview_offset(part, highlighted)
+      end
+    end
+
     def _preview_part(part_entity_path, part, layer = LAYER_3D_PART_PREVIEW, highlighted: false, clear_before: true)
       @tool.clear_3d(layer) if clear_before
       if part.is_a?(Part)
@@ -2759,6 +2775,9 @@ module Ladb::OpenCutList
         # Mesh
         if _preview_part_mesh?
 
+          view = Sketchup.active_model.active_view
+          center = part.def.definition.bounds.center
+
           triangles = _compute_children_faces_triangles(part.def.definition.entities)
 
           instance_paths.each do |path|
@@ -2768,6 +2787,7 @@ module Ladb::OpenCutList
             k_mesh = Kuix::Mesh.new
             k_mesh.add_triangles(triangles)
             k_mesh.background_color = _get_path_part_preview_color(path, part, highlighted)
+            k_mesh.offset = view.pixels_to_model(_get_path_part_preview_offset(path, part, highlighted), center.transform(t))
             k_mesh.transformation = t
             @tool.append_3d(k_mesh, layer)
 
@@ -2821,7 +2841,12 @@ module Ladb::OpenCutList
       @tool.clear_3d(layer)
       if @active_part_twins_entity_paths.is_a?(Array) && has_active_part?
 
-        triangles = _compute_children_faces_triangles(get_active_part.def.definition.entities)
+        part = get_active_part
+
+        view = Sketchup.active_model.active_view
+        center = part.def.definition.bounds.center
+
+        triangles = _compute_children_faces_triangles(part.def.definition.entities)
 
         # Mesh
         @active_part_twins_entity_paths.each do |path|
@@ -2831,6 +2856,7 @@ module Ladb::OpenCutList
           k_mesh = Kuix::Mesh.new
           k_mesh.add_triangles(triangles)
           k_mesh.background_color = highlighted ? COLOR_INSTANCE_HIGHLIGHTED : COLOR_INSTANCE
+          k_mesh.offset = view.pixels_to_model(_get_instance_part_preview_offset(part, highlighted), center.transform(t))
           k_mesh.transformation = t
           @tool.append_3d(k_mesh, layer)
 

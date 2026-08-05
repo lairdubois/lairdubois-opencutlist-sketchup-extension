@@ -5,6 +5,7 @@ module Ladb::OpenCutList::Kuix
     attr_accessor :background_color
     attr_accessor :on_top
     attr_reader :cull_face
+    attr_reader :offset
 
     def initialize(id = nil)
       super(id)
@@ -12,6 +13,7 @@ module Ladb::OpenCutList::Kuix
       @background_color = nil
       @on_top = false
       @cull_face = CULL_FACE_NONE
+      @offset = 0
 
       @triangles = [] # Array<Geom::Point3d>
       @quads = [] # Array<Geom::Point3d>
@@ -54,6 +56,19 @@ module Ladb::OpenCutList::Kuix
       invalidate
     end
 
+    # Two meshes drawn on the same surface are coplanar : the depth test settles
+    # them arbitrarily and they z-fight. Moving each primitive away along its own
+    # normal by a small distance (in inches, world space) breaks the tie. On a
+    # consistently OUTWARD wound closed volume this is a uniform inflation of the
+    # shell : the offset mesh strictly encloses the other one, so it wins from
+    # every point of view. Unlike #on_top, the depth test still applies : the mesh
+    # stays hidden behind the geometry that should occlude it.
+    def offset=(value)
+      return if @offset == value
+      @offset = value
+      invalidate
+    end
+
     # -- LAYOUT --
 
     def do_layout_content(transformation)
@@ -64,16 +79,24 @@ module Ladb::OpenCutList::Kuix
         @_triangle_points = @triangles.map { |point| point.transform(transformation) }
         @_quad_points = @quads.map { |point| point.transform(transformation) }
       end
+      if @offset != 0 || @cull_face != CULL_FACE_NONE
+        # A mirror transformation (negative determinant) reverses the winding of the
+        # transformed points : re-reverse the normals computed from them so they keep
+        # pointing outward.
+        flipped = transformation.xaxis.cross(transformation.yaxis).dot(transformation.zaxis) < 0
+      end
+      if @offset != 0
+        # Fresh arrays : @_triangle_points and @_quad_points can be the source arrays
+        # themselves (identity transformation), they must never be offset in place.
+        @_triangle_points = _offset_points(@_triangle_points, 3, flipped)
+        @_quad_points = _offset_points(@_quad_points, 4, flipped)
+      end
       @extents.add(@_triangle_points) unless @_triangle_points.empty?
       @extents.add(@_quad_points) unless @_quad_points.empty?
       if @cull_face == CULL_FACE_NONE
         @_triangle_cull_data = nil
         @_quad_cull_data = nil
       else
-        # A mirror transformation (negative determinant) reverses the winding of the
-        # transformed points : re-reverse the normals computed from them so they keep
-        # pointing outward.
-        flipped = transformation.xaxis.cross(transformation.yaxis).dot(transformation.zaxis) < 0
         @_triangle_cull_data = _compute_cull_data(@_triangle_points, 3, flipped)
         @_quad_cull_data = _compute_cull_data(@_quad_points, 4, flipped)
       end
@@ -117,6 +140,52 @@ module Ladb::OpenCutList::Kuix
     # -----
 
     private
+
+    # Moves each primitive away from the mesh by @offset along its own normal - see #offset=
+    # Returns a new Array<Geom::Point3d>, the input array is left untouched.
+    def _offset_points(points, stride, flipped)
+      return points if points.empty?
+      offset = @offset.to_f
+      offset_points = []
+      index = 0
+      while index < points.length
+        pa = points[index]
+        pb = points[index + 1]
+        pc = points[index + 2]
+        ax = pa.x.to_f
+        ay = pa.y.to_f
+        az = pa.z.to_f
+        ux = pb.x.to_f - ax
+        uy = pb.y.to_f - ay
+        uz = pb.z.to_f - az
+        vx = pc.x.to_f - ax
+        vy = pc.y.to_f - ay
+        vz = pc.z.to_f - az
+        nx = uy * vz - uz * vy
+        ny = uz * vx - ux * vz
+        nz = ux * vy - uy * vx
+        if flipped
+          nx = -nx
+          ny = -ny
+          nz = -nz
+        end
+        length = Math.sqrt(nx * nx + ny * ny + nz * nz)
+        if length == 0.0 # Degenerated primitive : no normal to move it along
+          offset_points.concat(points[index, stride])
+        else
+          f = offset / length
+          dx = nx * f
+          dy = ny * f
+          dz = nz * f
+          stride.times do |i|
+            point = points[index + i]
+            offset_points << Geom::Point3d.new(point.x.to_f + dx, point.y.to_f + dy, point.z.to_f + dz)
+          end
+        end
+        index += stride
+      end
+      offset_points
+    end
 
     # Precomputes, for each primitive, its (non normalized - only the sign of the dot
     # product matters) normal and its first vertex. Returns a flat Array<Float>,

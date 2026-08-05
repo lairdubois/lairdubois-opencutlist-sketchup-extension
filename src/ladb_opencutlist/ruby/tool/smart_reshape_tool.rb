@@ -3602,6 +3602,15 @@ module Ladb::OpenCutList
       end
     end
 
+    def _get_active_part_preview_offset(part, highlighted = false)
+      case @state
+      when STATE_SELECT_CUT
+        0.5
+      else
+        super
+      end
+    end
+
     # -----
 
     def _operate(operation = nil)
