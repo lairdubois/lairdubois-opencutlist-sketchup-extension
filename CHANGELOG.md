@@ -27,6 +27,9 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
+### 2026-08-06
+ * Updated translations
+ * Updated PackingSolver dependency
 ### 2026-08-05
  * Added Smart Stretch Tool locked_on_last_measure capability
  * Improved Smart Draw Divider Tool
