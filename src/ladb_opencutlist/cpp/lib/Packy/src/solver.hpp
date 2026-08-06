@@ -1041,6 +1041,7 @@ namespace Packy {
             Length height = read_length(j, "height", -1);
             const Profit profit = j.value("profit", static_cast<Profit>(-1));
             const ItemPos copies = j.value("copies", static_cast<ItemPos>(1));
+            const ItemPos copies_min = j.value("copies_min", static_cast<ItemPos>(0));
             const bool oriented = j.value("oriented", false);
             const GroupId group_id = j.value("group_id", static_cast<GroupId>(0));
 
@@ -1052,6 +1053,7 @@ namespace Packy {
             ItemTypeId item_type_id = builder.instance_builder().add_item_type(width, height, oriented);
             if (profit > 0) builder.instance_builder().set_item_type_profit(item_type_id, profit);
             builder.instance_builder().set_item_type_copies(item_type_id, copies);
+            if (copies_min > 0) builder.instance_builder().set_item_type_copies_min(item_type_id, copies_min);
             builder.instance_builder().set_item_type_group(item_type_id, group_id);
 
             return item_type_id;
@@ -1368,12 +1370,14 @@ namespace Packy {
             Length height = read_length(j, "height", -1);
             const Profit profit = j.value("profit", static_cast<Profit>(-1));
             const ItemPos copies = j.value("copies", static_cast<ItemPos>(1));
+            const ItemPos copies_min = j.value("copies_min", static_cast<ItemPos>(0));
             const bool oriented = j.value("oriented", false);
             const StackId stack_id = j.value("stack_id", static_cast<StackId>(-1));
 
             ItemTypeId item_type_id = builder.instance_builder().add_item_type(width, height, oriented, stack_id);
             if (profit > 0) builder.instance_builder().set_item_type_profit(item_type_id, profit);
             builder.instance_builder().set_item_type_copies(item_type_id, copies);
+            if (copies_min > 0) builder.instance_builder().set_item_type_copies_min(item_type_id, copies_min);
 
             return item_type_id;
         }
@@ -1776,6 +1780,7 @@ namespace Packy {
             Length width = read_length(j, "width", -1);
             const Profit profit = j.value("profit", static_cast<Profit>(-1));
             const ItemPos copies = j.value("copies", static_cast<ItemPos>(1));
+            const ItemPos copies_min = j.value("copies_min", static_cast<ItemPos>(0));
 
             if (fake_spacing_ > 0) {
                 if (width >= 0) width += fake_spacing_;
@@ -1784,6 +1789,7 @@ namespace Packy {
             ItemTypeId item_type_id = builder.instance_builder().add_item_type(width);
             if (profit > 0) builder.instance_builder().set_item_type_profit(item_type_id, profit);
             builder.instance_builder().set_item_type_copies(item_type_id, copies);
+            if (copies_min > 0) builder.instance_builder().set_item_type_copies_min(item_type_id, copies_min);
 
             return item_type_id;
         }
@@ -2018,10 +2024,12 @@ namespace Packy {
 
             const Profit profit = j.value("profit", static_cast<Profit>(-1));
             const ItemPos copies = j.value("copies", static_cast<ItemPos>(1));
+            const ItemPos copies_min = j.value("copies_min", static_cast<ItemPos>(0));
 
             ItemTypeId item_type_id = builder.instance_builder().add_item_type(item_shapes);
             if (profit > 0) builder.instance_builder().set_item_type_profit(item_type_id, profit);
             builder.instance_builder().set_item_type_copies(item_type_id, copies);
+            if (copies_min > 0) builder.instance_builder().set_item_type_copies_min(item_type_id, copies_min);
 
             // Read allowed rotations + mirror. (Angles are read in degrees)
             if (j.contains("allowed_rotations")) {
