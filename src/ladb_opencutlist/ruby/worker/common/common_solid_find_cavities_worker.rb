@@ -57,6 +57,17 @@ module Ladb::OpenCutList
   # edge and would come out as a single merged cavity. Such a panel is
   # betrayed by its edge (chant) faces : they bound the cavity on a plane
   # that, extended, crosses the cavity interior, with envelope cap beyond it.
+  # Those planes are read off the SOURCE faces the cavity's triangles came
+  # from, never off the triangles themselves : a face of the model is planar
+  # by construction, so anything the boolean scattered off it — a vertex
+  # nudged by the plane canonicalization, a sliver left where an envelope cap
+  # grazes the face at a shallow angle — is noise, and a reduction plane that
+  # does not exist in the assembly is the one mistake no amount of evidence
+  # below can catch (such a sliver is a legitimate chant of a real panel,
+  # walled and confined exactly like the face it detached from — it merely
+  # points a couple of degrees off, and being that little bit SHALLOWER it
+  # wins the clip and tilts the very opening the true plane would have
+  # receded). See #_panel_face_planes.
   # Chants merely lying on the same plane can be pure coincidence (e.g. a
   # large contour panel and an unrelated divider's free tip landing on the
   # same depth) : they are first split into sub-groups of chant triangles
@@ -509,6 +520,7 @@ module Ladb::OpenCutList
     # still cavities, and the caller tells the failure by result_def#success?.
     def _find_cavities(indexed_mesh_defs, result_def, validate:, overall:)
       @envelope_restore_planes = []
+      @panel_face_planes = nil  # This pass's own panels — see #_panel_face_planes
 
       # Merge all face info registries into a single one, offsetting ids
       # accordingly. Id 0 is reserved for the envelope : it drives the
@@ -1056,6 +1068,45 @@ module Ladb::OpenCutList
       end
     end
 
+    # Plane of every panel FACE, as [ normal, d ] by face id (unit normal
+    # pointing OUT of the panel, n.p = d on the plane), read off the SOURCE
+    # meshes — the model's own geometry, before any boolean touched it.
+    #
+    # A face of the model is planar by construction : all the triangles
+    # carrying its id lie on one plane, and the area weighting only serves to
+    # keep a degenerate one from skewing the result. What the caller gets out
+    # of this is the plane a cavity face BELONGS to, as opposed to the plane
+    # the boolean happened to leave its triangles on — see
+    # #_detect_reduction_planes.
+    def _panel_face_planes(panel_meshes)
+      accumulators = {}
+      panel_meshes.each do |mesh|
+        vertices = mesh[:vertices]
+        face_ids = mesh[:face_ids]
+        next if vertices.nil? || face_ids.nil?
+        mesh[:face_indices].each_slice(3).with_index do |(a, b, c), triangle_index|
+          face_id = face_ids[triangle_index]
+          next if face_id.nil?
+          normal, area2 = _triangle_normal(vertices, a, b, c)
+          next if normal.nil?
+          d = normal[0] * vertices[a * 3] + normal[1] * vertices[a * 3 + 1] + normal[2] * vertices[a * 3 + 2]
+          accumulator = accumulators[face_id] ||= [ 0.0, 0.0, 0.0, 0.0, 0.0 ]
+          accumulator[0] += area2 * normal[0]
+          accumulator[1] += area2 * normal[1]
+          accumulator[2] += area2 * normal[2]
+          accumulator[3] += area2 * d
+          accumulator[4] += area2
+        end
+      end
+      planes = {}
+      accumulators.each do |face_id, (nx, ny, nz, sum_d, sum_area2)|
+        length = Math.sqrt(nx * nx + ny * ny + nz * nz)
+        next if length == 0 || sum_area2 == 0
+        planes[face_id] = [ [ nx / length, ny / length, nz / length ], sum_d / sum_area2 ]
+      end
+      planes
+    end
+
     # Unit normal ([ x, y, z ]) and doubled area of the given triangle, nil
     # normal when degenerate.
     def _triangle_normal(vertices, a, b, c)
@@ -1084,6 +1135,9 @@ module Ladb::OpenCutList
     # cavity that exposed it and about no other, so it only ever clips that
     # one — see the class doc, ENVELOPE REDUCTION.
     def _detect_reduction_planes(fragment_defs, panel_id_ranges, panel_meshes, dominant_normals, envelope_mesh)
+      # The source planes are those of the panels this pass was given : they
+      # outlive the reduction rounds, which only ever clip the CAVITIES
+      face_planes = (@panel_face_planes ||= _panel_face_planes(panel_meshes))
       fragment_defs.map do |fragment_def|
         planes = {}
         vertices = fragment_def.vertices
@@ -1124,14 +1178,38 @@ module Ladb::OpenCutList
           dominant_normal = dominant_normals[mesh_position]
           next if dominant_normal.nil?
           bounding_mesh_positions[mesh_position] = true
+          # The triangle's own plane is the BOOLEAN's, not the MODEL's : snap
+          # it back onto the plane of the panel face it came from, keeping the
+          # triangle's own orientation (a cavity face points INTO its panel,
+          # the source face out of it). A face of the model is planar by
+          # construction, so everything the boolean scattered off it — a
+          # vertex nudged by the plane canonicalization, a sliver left where
+          # an envelope cap grazes the face — is read back as the one plane
+          # the assembly actually has, and can no longer pass for a recess of
+          # its own. See #_panel_face_planes.
+          face_normal, face_d = face_planes[face_id]
+          if face_normal.nil?
+            d = normal[0] * vertices[a * 3] + normal[1] * vertices[a * 3 + 1] + normal[2] * vertices[a * 3 + 2]
+          elsif normal[0] * face_normal[0] + normal[1] * face_normal[1] + normal[2] * face_normal[2] < 0
+            normal, d = face_normal.map { |v| -v }, -face_d
+          else
+            normal, d = face_normal, face_d
+          end
           dot = normal[0] * dominant_normal[0] + normal[1] * dominant_normal[1] + normal[2] * dominant_normal[2]
           if dot.abs >= REDUCTION_MAIN_DOT  # Main face plane, not an edge
-            ax, ay, az = vertices[a * 3], vertices[a * 3 + 1], vertices[a * 3 + 2]
+            # Read on the vertex brought back onto that same plane : the
+            # offsets are quantized to the tolerance, and a vertex drifting
+            # off its face by a fraction of it would else split ONE main
+            # plane into two keys — which is the very evidence "the panel
+            # bounds the cavity on BOTH its main faces" rests on.
+            gap = normal[0] * vertices[a * 3] + normal[1] * vertices[a * 3 + 1] + normal[2] * vertices[a * 3 + 2] - d
+            ax = vertices[a * 3] - normal[0] * gap
+            ay = vertices[a * 3 + 1] - normal[1] * gap
+            az = vertices[a * 3 + 2] - normal[2] * gap
             offset = dominant_normal[0] * ax + dominant_normal[1] * ay + dominant_normal[2] * az
             main_plane_keys_by_panel[mesh_position][(offset / SolidMeshDef::TOLERANCE).round] = true
             next
           end
-          d = normal[0] * vertices[a * 3] + normal[1] * vertices[a * 3 + 1] + normal[2] * vertices[a * 3 + 2]
           if dot.abs >= REDUCTION_EDGE_DOT  # Edge face TILTED on its own board
             # A profile or a recessed chant of an OBLIQUE panel — told apart
             # below, once the cavity's own openings are all in.
