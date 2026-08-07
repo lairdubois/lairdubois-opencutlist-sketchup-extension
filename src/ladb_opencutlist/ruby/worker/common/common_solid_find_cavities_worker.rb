@@ -44,6 +44,11 @@ module Ladb::OpenCutList
   #   SolidCavityFragmentDef#leans_on_a_wall_face_of?). max_openness — the
   #   maximum fraction of the candidate surface lying on the caps — remains as
   #   an optional secondary cap (disabled by default).
+  #   The cap COUNT is not read as final while an envelope reduction is still
+  #   to come : a NOTCHED assembly is bridged over its notch by a fan of
+  #   slanted hull caps, one opening apiece, that the reduction is precisely
+  #   there to cut away — so a candidate over the budget is handed to it as a
+  #   PROVISIONAL fragment and must come back under it to be kept.
   #
   # - ENVELOPE_BBOX : the envelope is the panels world bounds inflated by
   #   ENVELOPE_MARGIN. Only hermetically closed cavities are found : any
@@ -571,10 +576,16 @@ module Ladb::OpenCutList
       # A cavity is hermetic or open, never both : the two sets are disjoint
       # by construction.
 
+      # Returns [ collected, deferred ] : the cavities this output yields, and
+      # the candidates only the envelope reduction can still settle (see the
+      # opening filter below). The second list is empty unless
+      # @reduce_envelope, the caller feeding it back as PROVISIONAL fragments.
       fn_collect = lambda { |output, hermetic|
         collected = []
-        leaning = []  # Candidates the enclosure filter alone turned down
-        next collected unless output['fragments'].is_a?(Array)
+        deferred = []          # Candidates the opening filter turned down, pending reduction
+        leaning = []           # Candidates the enclosure filter alone turned down
+        leaning_deferred = []  # ... which the opening filter turned down too
+        next [ collected, deferred ] unless output['fragments'].is_a?(Array)
         output['fragments'].each do |fragment|
           face_ids = fragment['face_ids']
           next unless face_ids.is_a?(Array) && !face_ids.empty?
@@ -600,8 +611,19 @@ module Ladb::OpenCutList
           next if fragment_def.empty?
           # Structural filter : a real compartment opens on few flat openings,
           # the outside world and concavity pockets face the envelope on many
-          # planes
-          next if !hermetic && fragment_def.opening_plane_count > @max_opening_planes
+          # planes.
+          #
+          # Counted too early, though, to settle the matter on its own : the
+          # openings are read off the ENVELOPE faces, and a NOTCHED assembly
+          # (a side and a bottom running deeper than the rest, an L) is bridged
+          # by the convex hull over its notch with a fan of slanted caps, each
+          # of them an opening of its own. Those are precisely what the
+          # envelope reduction takes away — so a candidate the count turns
+          # down is handed to it as PROVISIONAL rather than dropped, and has to
+          # earn its keep by coming out of a clip within the limit. With no
+          # reduction to appeal to, the count stands.
+          too_open = !hermetic && fragment_def.opening_plane_count > @max_opening_planes
+          next if too_open && !@reduce_envelope
           # Enclosure filter : a compartment is hemmed in by its walls, a
           # concavity pocket only wraps a corner of the assembly — see
           # SolidCavityFragmentDef#enclosed_by_walls?. A candidate it turns
@@ -609,10 +631,10 @@ module Ladb::OpenCutList
           # against a side is shaped exactly like a pocket, and only the rest
           # of the batch can tell (below).
           unless hermetic || fragment_def.enclosed_by_walls?
-            leaning << fragment_def
+            (too_open ? leaning_deferred : leaning) << fragment_def
             next
           end
-          collected << fragment_def
+          (too_open ? deferred : collected) << fragment_def
         end
 
         # Second reading of the candidates the enclosure filter turned down,
@@ -624,14 +646,17 @@ module Ladb::OpenCutList
         # traces back to a cavity enclosed on its own merits : a chain of
         # candidates vouching for one another would let a pocket in through
         # any one of them.
-        unless leaning.empty?
+        unless leaning.empty? && leaning_deferred.empty?
           enclosed_fragment_defs = collected.dup
           leaning.each do |fragment_def|
             collected << fragment_def if enclosed_fragment_defs.any? { |other| fragment_def.leans_on_a_wall_face_of?(other) }
           end
+          leaning_deferred.each do |fragment_def|
+            deferred << fragment_def if enclosed_fragment_defs.any? { |other| fragment_def.leans_on_a_wall_face_of?(other) }
+          end
         end
 
-        collected
+        [ collected, deferred ]
       }
 
       # Hermetic pass
@@ -643,7 +668,7 @@ module Ladb::OpenCutList
         :cut_meshes => panel_meshes
       )
       return pass if _report_errors(direct_output, result_def, panel_id_ranges)
-      cavity_fragment_defs.concat(fn_collect.call(direct_output, true))
+      cavity_fragment_defs.concat(fn_collect.call(direct_output, true).first)  # A hermetic cavity has no opening to defer
 
       # Open pass (the bbox envelope only reveals hermetic cavities)
       if @envelope != ENVELOPE_BBOX
@@ -676,7 +701,7 @@ module Ladb::OpenCutList
           # Only the open cavities need it : a hermetic one is bounded by
           # panels alone, it never touches the hull
           _restore_envelope_vertices(welded_output['fragments'])
-          open_fragment_defs = fn_collect.call(welded_output, false)
+          open_fragment_defs, deferred_fragment_defs = fn_collect.call(welded_output, false)
 
           # Envelope reduction : the recessed panel edges detected on an open
           # cavity clip THAT cavity, shallowest recess first, the survivors
@@ -703,11 +728,15 @@ module Ladb::OpenCutList
           # confirmed like any other — and a provisional fragment reaching a
           # round with no plane of its own is that plain flare after all, and
           # is dropped.
-          if @reduce_envelope && !open_fragment_defs.empty?
+          if @reduce_envelope && !(open_fragment_defs.empty? && deferred_fragment_defs.empty?)
             confirmed_fragment_defs = []
             # An untouched cavity is a cavity : the ones no reduction ever
-            # clips must reach the result, so they start out confirmed
-            active = open_fragment_defs.map { |fragment_def| [ fragment_def, false ] }
+            # clips must reach the result, so they start out confirmed. The
+            # ones the opening filter deferred start out PROVISIONAL, on the
+            # contrary : they only exist here to be clipped, and a round that
+            # finds no plane on them drops them just like a plain flare.
+            active = open_fragment_defs.map { |fragment_def| [ fragment_def, false ] } +
+                     deferred_fragment_defs.map { |fragment_def| [ fragment_def, true ] }
             REDUCTION_MAX_PASSES.times do
               break if active.empty?
               reduction_planes_per_fragment = _detect_reduction_planes(active.map { |fragment_def, _provisional| fragment_def }, panel_id_ranges, panel_meshes, dominant_normals, envelope_mesh)
@@ -730,9 +759,9 @@ module Ladb::OpenCutList
                 )
                 return pass if _report_errors(kept_output, result_def)
                 _restore_clipped_vertices(kept_output['fragments'], normal, d)
-                kept = fn_collect.call(kept_output, false)
+                kept, kept_deferred_fragment_defs = fn_collect.call(kept_output, false)
 
-                if kept.empty?
+                if kept.empty? && kept_deferred_fragment_defs.empty?
                   # Nothing on the kept side : the reduction has nothing to
                   # say here, keep the fragment as it came in rather than
                   # losing it
@@ -744,6 +773,10 @@ module Ladb::OpenCutList
                 # In place, so the cavity order stays the panel order the
                 # subtraction produced
                 kept.each { |kept_fragment_def| next_active << [ kept_fragment_def, false ] }
+                # A kept side STILL over its opening budget is not a
+                # compartment yet : it goes back provisional, to be settled by
+                # a deeper clip or dropped
+                kept_deferred_fragment_defs.each { |kept_fragment_def| next_active << [ kept_fragment_def, true ] }
 
                 beyond_output = Meshy.operate(
                   :operation => Meshy::OPERATION_SUBTRACTION,
@@ -754,7 +787,8 @@ module Ladb::OpenCutList
                 )
                 return pass if _report_errors(beyond_output, result_def)
                 _restore_clipped_vertices(beyond_output['fragments'], normal, d)
-                fn_collect.call(beyond_output, false).each { |beyond_fragment_def| next_active << [ beyond_fragment_def, true ] }
+                beyond, beyond_deferred_fragment_defs = fn_collect.call(beyond_output, false)
+                (beyond + beyond_deferred_fragment_defs).each { |beyond_fragment_def| next_active << [ beyond_fragment_def, true ] }
               end
               active = next_active
               # A clip strictly shrinks its cavity and takes away the very
