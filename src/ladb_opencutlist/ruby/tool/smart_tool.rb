@@ -1113,10 +1113,11 @@ module Ladb::OpenCutList
     end
 
     def fetch_action
-      return @current_action unless @current_action.nil?
-      @current_action = PLUGIN.read_default("settings.smart_#{get_stripped_name}_last_action")
-      @current_action = get_action_defs.first[:action] if get_action_defs.find { |action_def| action_def[:action] == @current_action }.nil?
-      @current_action
+      @current_action ||= begin
+                            @current_action = PLUGIN.read_default("settings.smart_#{get_stripped_name}_last_action")
+                            @current_action = get_action_defs.first[:action] if get_action_defs.find { |action_def| action_def[:action] == @current_action }.nil?
+                            @current_action
+                          end
     end
 
     def store_action_option_value(action, option_group, option, value = nil, fire_event: false, synchronize: true)
