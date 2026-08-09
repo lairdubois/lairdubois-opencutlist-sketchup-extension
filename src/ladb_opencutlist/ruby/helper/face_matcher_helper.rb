@@ -84,9 +84,31 @@ module Ladb::OpenCutList
       signature_a = face_manipulator_a.signature(mirror: mirror)
       return nil if signature_a.nil?
       return nil unless signature_a == face_manipulator_b.signature(mirror: mirror)
-      transformation = _face_variant_alignment_transformation(face_manipulator_a, face_manipulator_b, false)
+      transformation = _face_variant_alignment_transformations(face_manipulator_a, face_manipulator_b, false, true).first
       return transformation unless transformation.nil?
-      mirror ? _face_variant_alignment_transformation(face_manipulator_a, face_manipulator_b, true) : nil
+      mirror ? _face_variant_alignment_transformations(face_manipulator_a, face_manipulator_b, true, true).first : nil
+    end
+
+    # ALL the rigid transformations superposing face_manipulator_b onto
+    # face_manipulator_a, where #_face_manipulators_alignment_transformation
+    # only answers the first one.
+    #
+    # A face with a symmetry admits several of them - a rectangle superposes
+    # four ways - and they are NOT interchangeable to the caller that means to
+    # place the face's owner : only some of them may also superpose the solid
+    # the face belongs to. Such a caller has to try them all.
+    #
+    # @param face_manipulator_a [FaceManipulator] the reference face manipulator
+    # @param face_manipulator_b [FaceManipulator] the face manipulator to align onto the reference
+    # @param mirror [Boolean] whether the flipped over superpositions are enumerated too
+    # @return [Array<Geom::Transformation>] the alignment transformations, empty when the two faces are not congruent
+    def _face_manipulators_alignment_transformations(face_manipulator_a, face_manipulator_b, mirror: true)
+      signature_a = face_manipulator_a.signature(mirror: mirror)
+      return [] if signature_a.nil?
+      return [] unless signature_a == face_manipulator_b.signature(mirror: mirror)
+      transformations = _face_variant_alignment_transformations(face_manipulator_a, face_manipulator_b, false)
+      transformations += _face_variant_alignment_transformations(face_manipulator_a, face_manipulator_b, true) if mirror
+      transformations
     end
 
     # -- Signature (pre-filter) --
@@ -137,41 +159,47 @@ module Ladb::OpenCutList
     # @param mirrored [Boolean] whether to test the mirrored (flipped over) variant
     # @return [Boolean] true if that superposition variant exists
     def _face_variant_congruent?(face_manipulator_a, face_manipulator_b, mirrored)
-      !_face_variant_alignment_transformation(face_manipulator_a, face_manipulator_b, mirrored).nil?
+      !_face_variant_alignment_transformations(face_manipulator_a, face_manipulator_b, mirrored, true).empty?
     end
 
-    # Tests one superposition kind and returns the transformation that achieves
-    # it : mirrored = false tries to superpose B onto A as is (normals
+    # Tests one superposition kind and returns every transformation that
+    # achieves it : mirrored = false tries to superpose B onto A as is (normals
     # aligned), mirrored = true tries with B flipped over (reversed traversal,
-    # opposite normal).
+    # opposite normal). One transformation per vertex correspondence that
+    # works, so a symmetric face yields several.
     #
     # @param face_manipulator_a [FaceManipulator] the reference face manipulator
     # @param face_manipulator_b [FaceManipulator] the face manipulator to align onto the reference
     # @param mirrored [Boolean] whether to try the flipped over variant of B
-    # @return [Geom::Transformation, nil] the alignment transformation, or nil when that variant doesn't superpose
-    def _face_variant_alignment_transformation(face_manipulator_a, face_manipulator_b, mirrored)
+    # @param first_only [Boolean] stop at the first transformation found - what callers that only need to know THAT the faces superpose want
+    # @return [Array<Geom::Transformation>] the alignment transformations, empty when that variant doesn't superpose
+    def _face_variant_alignment_transformations(face_manipulator_a, face_manipulator_b, mirrored, first_only = false)
 
       points_a = face_manipulator_a.outer_loop_manipulator.points
-      return nil if points_a.length < 3
+      return [] if points_a.length < 3
       sequence_a = _loop_sequence(points_a, face_manipulator_a.normal)
 
       points_b = face_manipulator_b.outer_loop_manipulator.points
-      return nil unless points_b.length == points_a.length
+      return [] unless points_b.length == points_a.length
       normal_b = face_manipulator_b.normal
       if mirrored
         points_b = points_b.reverse
         normal_b = normal_b.reverse
       end
 
+      transformations = []
+
       sequence_b = _loop_sequence(points_b, normal_b)
       points_a.length.times do |offset|
         next unless _sequences_match?(sequence_a, sequence_b, offset)
         t = _alignment_transformation(points_a, face_manipulator_a.normal, points_b, normal_b, offset)
         next unless _points_superpose?(points_a, points_b, offset, t)
-        return t if _inner_loops_superpose?(face_manipulator_a, face_manipulator_b, t)
+        next unless _inner_loops_superpose?(face_manipulator_a, face_manipulator_b, t)
+        transformations << t
+        break if first_only
       end
 
-      nil
+      transformations
     end
 
     # Intrinsic description of a loop : for each vertex, the outgoing edge length

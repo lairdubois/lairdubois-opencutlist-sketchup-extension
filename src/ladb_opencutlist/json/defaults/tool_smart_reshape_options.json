@@ -11,7 +11,9 @@
   "action_1": { /* ACTION_PANELING */
     "thickness": { "metric": "18mm", "imperial": "1/2\"" },
     "paneling_direction": "inward",
-    "paneling_joint_type": "flat"
+    "paneling_joint_type": "flat",
+    "reuse_definition": true,
+    "reuse_definition_mirrored": true
   },
   "action_2": { /* ACTION_SOLID_UNITE */
     "keep_a": false,

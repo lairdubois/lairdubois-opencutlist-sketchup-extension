@@ -2484,6 +2484,9 @@ tool:
     action_1_status: Créer une série de pièces à partir d'un solide fermé ou d'un dessin en lignes de construction
     action_1_state_0_status: Cliquez sur un solide fermé ou sur un groupe de lignes de construction pour définir la géométrie de référence
     action_1_state_1_status: Sélectionnez les faces à extruder
+    action_1_rollover_face_status: Face survolée
+    action_1_select_similar_status: Sélectionner toutes les faces de forme identique
+    action_1_select_all_edges_status: Sélectionner toutes les arrêtes en contact
     action_2: Souder
     action_2_status: Souder plusieurs pièces en une seule
     action_2_state_0_status: Sélectionnez la pièce A
@@ -2521,6 +2524,10 @@ tool:
     action_option_options_keep_b: Conserver B
     action_option_options_keep_b_status: Conserver les instances B après l'opération
     action_option_options_remove_unused_definitions_status: Effacer les définitions de composant qui ne sont plus utilisées après l'opération
+    action_option_options_reuse_definition: Réutiliser les pièces
+    action_option_options_reuse_definition_status: Partager la même définition de composant entre les panneaux de forme identique
+    action_option_options_reuse_definition_mirrored: Pose en miroir
+    action_option_options_reuse_definition_mirrored_status: Pose en miroir pour les panneaux de forme identique en vis-à-vis
     notify:
       validate_a: Validez pour passer à la sélection de B
       validate_b: Validez pour appliquer l'opération

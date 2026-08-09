@@ -288,10 +288,13 @@ module Ladb::OpenCutList
                   btn.set_style_attribute(:background_color, Kuix::COLOR_WHITE, :selected)
                   btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :hover)
                   btn.set_style_attribute(:background_color, COLOR_BRAND, :active)
+                  btn.set_style_attribute(:background_color, Kuix::COLOR_WHITE, :disabled)
                   btn.set_style_attribute(:border_color, COLOR_BRAND, :selected)
+                  btn.set_style_attribute(:border_color, nil, :disabled)
                   btn.border.set_all!(unit * 0.5)
                   btn.data = { :option_group => option_group, :option => option }
                   btn.selected = fetch_action_option_boolean(action, option_group, option)
+                  btn.disabled = get_action_option_btn_disabled?(action, option_group, option)
                   btn.on(:click) { |button|
                     if get_action_option_toggle?(action, option_group, option)
                       if get_action_option_group_unique?(action, option_group)
@@ -331,6 +334,7 @@ module Ladb::OpenCutList
                       end
                       child.set_style_attribute(:color, Kuix::COLOR_BLACK)
                       child.set_style_attribute(:color, Kuix::COLOR_WHITE, :active)
+                      child.set_style_attribute(:color, Kuix::COLOR_LIGHT_GREY, :disabled)
                       btn.append(child)
                     end
 
@@ -1099,6 +1103,10 @@ module Ladb::OpenCutList
       nil
     end
 
+    def get_action_option_btn_disabled?(action, option_group, option)
+      false
+    end
+
     def get_action_option_btn_prefix(action, option_group, option)
       nil
     end
@@ -1623,6 +1631,7 @@ module Ladb::OpenCutList
             if b.is_a?(Kuix::Button)
               b.children.first.text = fetch_action_option_string(action, option_group, option) if !get_action_option_toggle?(action, option_group, option) && b.children.first.is_a?(Kuix::Label)
               b.selected = fetch_action_option_boolean(action, option_group, option)
+              b.disabled = get_action_option_btn_disabled?(action, option_group, option)
             end
           end
         end

@@ -138,12 +138,14 @@ module Ladb::OpenCutList::Kuix
     # Append given entity to self and returns self
     def append(entity)
       raise 'Entity2d.append only supports Entity2d' unless entity.is_a?(Entity2d)
+      @active_pseudo_classes.each { |pseudo_class| entity.activate_pseudo_class(pseudo_class, 1) if entity.propagable_pseudo_class?(pseudo_class, 1) } if @active_pseudo_classes.any?
       super
     end
 
     # Prepend given entity to self and returns self
     def prepend(entity)
       raise 'Entity2d.prepend only supports Entity2d' unless entity.is_a?(Entity2d)
+      @active_pseudo_classes.each { |pseudo_class| entity.activate_pseudo_class(pseudo_class, 1) if entity.propagable_pseudo_class?(pseudo_class, 1) } if @active_pseudo_classes.any?
       super
     end
 

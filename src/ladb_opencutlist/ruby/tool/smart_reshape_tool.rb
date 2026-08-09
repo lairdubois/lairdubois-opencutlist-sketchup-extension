@@ -3,6 +3,7 @@ module Ladb::OpenCutList
   require 'digest'
   require_relative 'smart_tool'
   require_relative '../lib/kuix/geom/bounds3d'
+  require_relative '../lib/geometrix/geometrix'
   require_relative '../manipulator/vertex_manipulator'
   require_relative '../manipulator/edge_manipulator'
   require_relative '../manipulator/face_manipulator'
@@ -50,6 +51,8 @@ module Ladb::OpenCutList
     ACTION_OPTION_OPTIONS_KEEP_A = 'keep_a'
     ACTION_OPTION_OPTIONS_KEEP_B = 'keep_b'
     ACTION_OPTION_OPTIONS_REMOVE_UNUSED_DEFINITIONS = 'remove_unused_definitions'
+    ACTION_OPTION_OPTIONS_REUSE_DEFINITION = 'reuse_definition'
+    ACTION_OPTION_OPTIONS_REUSE_DEFINITION_MIRRORED = 'reuse_definition_mirrored'
 
     ACTIONS = [
       {
@@ -83,7 +86,8 @@ module Ladb::OpenCutList
         :options => {
           ACTION_OPTION_THICKNESS => [ ACTION_OPTION_THICKNESS_THICKNESS ],
           ACTION_OPTION_PANELING_DIRECTION => [ ACTION_OPTION_PANELING_DIRECTION_INWARD, ACTION_OPTION_PANELING_DIRECTION_OUTWARD ],
-          ACTION_OPTION_PANELING_JOINT_TYPE => [ ACTION_OPTION_PANELING_JOINT_TYPE_FLAT, ACTION_OPTION_PANELING_JOINT_TYPE_MITER ]
+          ACTION_OPTION_PANELING_JOINT_TYPE => [ ACTION_OPTION_PANELING_JOINT_TYPE_FLAT, ACTION_OPTION_PANELING_JOINT_TYPE_MITER ],
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_REUSE_DEFINITION, ACTION_OPTION_OPTIONS_REUSE_DEFINITION_MIRRORED ]
         }
       }
     ].freeze
@@ -252,6 +256,24 @@ module Ladb::OpenCutList
           return Kuix::Label.new(PLUGIN.get_i18n_string('tool.smart_reshape.action_option_options_keep_b'))
         when ACTION_OPTION_OPTIONS_REMOVE_UNUSED_DEFINITIONS
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.75,0.625L0.25,0.625L0.25,0.75L0.75,0.75L0.75,0.625 M0.5,0.625L0.5,0 M0.25,0.75L0.188,1 M0.75,0.75L0.813,1 M0.375,0.75L0.345,1 M0.5,0.75L0.5,1 M0.625,0.75L0.655,1'))
+        when ACTION_OPTION_OPTIONS_REUSE_DEFINITION
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.333L0.667,0.333L0.667,1L0,1L0,0.333 M0.333,0.333L0.333,0L1,0L1,0.667L0.667,0.667'))
+        when ACTION_OPTION_OPTIONS_REUSE_DEFINITION_MIRRORED
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.5,0L0.5,0.2 M0.5,0.4L0.5,0.6 M0.5,0.8L0.5,1 M0,0.2L0.3,0.5L0,0.8L0,0.2 M1,0.2L0.7,0.5L1,0.8L1,0.2'))
+        end
+      end
+
+      super
+    end
+
+    def get_action_option_btn_disabled?(action, option_group, option)
+
+      case option_group
+
+      when ACTION_OPTION_OPTIONS
+        case option
+        when ACTION_OPTION_OPTIONS_REUSE_DEFINITION_MIRRORED
+          return !fetch_action_option_boolean(action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_REUSE_DEFINITION)
         end
       end
 
@@ -3665,6 +3687,12 @@ module Ladb::OpenCutList
 
     LAYER_3D_PANELING_PREVIEW = 10
 
+    # Any fixed reflection does. #_find_reusable_panel_def composes it with the
+    # proper alignments FaceMatcherHelper answers to reach the mirrored
+    # placements ; which plane it reflects about is irrelevant, the alignment
+    # that follows puts the panel back where it belongs.
+    PANEL_REFLECTION = Geom::Transformation.scaling(-1, 1, 1)
+
     def initialize(tool, previous_action_handler = nil)
       super(SmartReshapeTool::ACTION_PANELING, tool, previous_action_handler)
 
@@ -3759,20 +3787,28 @@ module Ladb::OpenCutList
     end
 
     def stop
-      _purge_definitions
-      _clear_definitions_factory
       if @selected_face_manipulators.any?
 
         # Hide tool validation
         @tool.hide_validation
 
-        # Remove faces and edges
+        # Remove faces and edges FIRST : purging goes through
+        # DefinitionList#remove, and whatever it does to the open operation must
+        # not cost the reference drawing its erasure. Reuse made this matter -
+        # without it every definition holds an instance and nothing is ever
+        # removed here.
         _erase_drawings
+
+        _purge_definitions
+        _clear_definitions_factory
 
         # Commit operation (apply entity changes)
         Sketchup.active_model.commit_operation
 
       else
+
+        _purge_definitions
+        _clear_definitions_factory
 
         # Abord operation (restore entities)
         Sketchup.active_model.abort_operation
@@ -3807,6 +3843,14 @@ module Ladb::OpenCutList
     end
 
     def get_state_status(state)
+
+      case state
+      when STATE_PANELING
+        return super +
+          ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' + ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_1_rollover_face_status") + ' = ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_1_select_similar_status") + '.' +
+          ' | ' + PLUGIN.get_i18n_string("default.constrain_key") + ' + ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_1_rollover_face_status") + ' = ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_1_select_all_edges_status") + '.'
+      end
+
       super
     end
 
@@ -3994,6 +4038,8 @@ module Ladb::OpenCutList
         _compute
       elsif option_group == SmartReshapeTool::ACTION_OPTION_PANELING_DIRECTION
         _compute
+      elsif option_group == SmartReshapeTool::ACTION_OPTION_OPTIONS
+        _compute
       end
     end
 
@@ -4008,8 +4054,10 @@ module Ladb::OpenCutList
     protected
 
     def _reset
-      _purge_definitions
+      # Same order as #stop : the reference drawing is put back BEFORE the
+      # purge goes through DefinitionList#remove
       _unhide_drawings
+      _purge_definitions
       _reset_drawing_def
       _reset_refused_drawing_def
       _reset_cline_source
@@ -4406,6 +4454,15 @@ module Ladb::OpenCutList
       @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_PANELING_JOINT_TYPE, SmartReshapeTool::ACTION_OPTION_PANELING_JOINT_TYPE_MITER)
     end
 
+    def _fetch_option_reuse_definition?
+      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_REUSE_DEFINITION)
+    end
+
+    def _fetch_option_reuse_definition_mirrored?
+      _fetch_option_reuse_definition? &&
+        @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_REUSE_DEFINITION_MIRRORED)
+    end
+
     # -----
 
     def _hide_drawings
@@ -4422,7 +4479,9 @@ module Ladb::OpenCutList
 
     def _erase_drawings
       if @drawing_def.is_a?(DrawingDef)
-        _get_active_entities.erase_entities(@drawing_def.edge_manipulators.map(&:edge))
+        edges = @drawing_def.edge_manipulators.map(&:edge).reject { |edge| !edge.is_a?(Sketchup::Edge) || edge.deleted? }
+        edges += @drawing_def.curve_manipulators.flat_map { |cm| cm.curve.edges }.reject { |edge| !edge.is_a?(Sketchup::Edge) || edge.deleted? }
+        _get_active_entities.erase_entities(edges) unless edges.empty?
         _reset_drawing_def
       end
     end
@@ -4604,6 +4663,141 @@ module Ladb::OpenCutList
       definition
     end
 
+    # An already created panel whose definition the panel being computed could
+    # share, or nil. Returns [ definition, transformation ] : the definition to
+    # instantiate, and where to place that new instance.
+    #
+    # Congruence is read on the PANEL, never on the source face : a corner
+    # point is the intersection of three planes, and whether a neighbour
+    # contributes its own plane or its plane offset by the thickness depends on
+    # the edge's joint type AND on the extrusion order (see #_compute). Two
+    # congruent source faces routinely produce two different panels.
+    #
+    # +points+ is the panel's whole point cloud - gd points and up points
+    # together - so the check below covers the solid, not just an outline.
+    def _find_reusable_panel_def(entities, points, signature, front_centroid, panel_defs)
+      return nil unless _fetch_option_reuse_definition?
+      return nil if panel_defs.empty?
+
+      # The panel is still expressed in the container's space at this stage -
+      # its axes are only adapted once it is known not to be reusable
+      reference_manipulator = entities.grep(Sketchup::Face)
+                                      .map { |face| FaceManipulator.new(face) }
+                                      .max_by { |face_manipulator| face_manipulator.face.area }
+      return nil if reference_manipulator.nil?
+
+      mirrored = _fetch_option_reuse_definition_mirrored?
+
+      best = nil # [ definition, instance transformation, score ]
+
+      panel_defs.each do |definition, transformation, face_manipulators, candidate_points, candidate_signature, candidate_front_centroid|
+        next unless _panel_points_signatures_match?(signature, candidate_signature)
+
+        # #_face_manipulators_alignment_transformations only ever answers
+        # PROPER motions - see FaceMatcherHelper. The mirrored placements are
+        # reached by reflecting the candidate first : the proper V it then
+        # returns composes into V * REFLECTION, of negative determinant.
+        variants = [ [ face_manipulators, nil ] ]
+        if mirrored
+          variants << [
+            face_manipulators.map { |face_manipulator| FaceManipulator.new(face_manipulator.face, PANEL_REFLECTION * transformation) },
+            PANEL_REFLECTION
+          ]
+        end
+
+        variants.each do |variant_manipulators, reflection|
+
+          variant_manipulators.each do |face_manipulator|
+
+            # Every alignment, not just the first : a symmetric face superposes
+            # several ways - a rectangle four ways - and only some of them may
+            # also superpose the solid
+            _face_manipulators_alignment_transformations(reference_manipulator, face_manipulator).each do |alignment|
+
+              t = reflection.nil? ? alignment : alignment * reflection
+
+              next unless _points_sets_superpose?(points, candidate_points, t)
+
+              score = _panel_placement_score(t, candidate_front_centroid, front_centroid)
+              next unless best.nil? || (score <=> best.last) > 0
+
+              best = [ definition, t * transformation, score ]
+
+            end
+
+          end
+
+        end
+
+      end
+
+      best.nil? ? nil : [ best[0], best[1] ]
+    end
+
+    # How good a placement is, highest wins. Every placement scored here
+    # already superposes the solid - they only differ in how the reused panel
+    # is turned.
+    #
+    # 1. front face outside, the convention #_compute sets its part axes on.
+    #    Beats everything else : the alternative is a panel that reads
+    #    inside out.
+    # 2. then, the linear part closest to the identity - maximizing its trace
+    #    minimizes ||L - I||, so the reused instance keeps the owner's axes as
+    #    much as the placement allows.
+    #
+    # On two facing panels of a caisson these two criteria cannot both be fully
+    # met by a proper motion : keeping the front face outside forces a 180°
+    # turn that reverses either the "up" axis or the "front" axis. Only a
+    # reflection preserves all three, which is what criterion 2 elects as soon
+    # as the mirrored variants are enumerated (trace 1, against -1 for both
+    # proper turns).
+    def _panel_placement_score(t, candidate_front_centroid, front_centroid)
+      [
+        candidate_front_centroid.transform(t) == front_centroid ? 1 : 0,
+        _transformation_trace(t)
+      ]
+    end
+
+    def _transformation_trace(transformation)
+      a = transformation.to_a
+      w = a[15]
+      w = 1.0 if w.nil? || w == 0
+      (a[0] + a[5] + a[10]) / w
+    end
+
+    # Fingerprint invariant by rotation AND translation : the sorted distances
+    # from the point cloud's centroid. Cheap pre-filter that spares the
+    # alignment search on all but the genuinely congruent candidates.
+    #
+    # Kept as raw lengths and compared with a tolerance rather than quantized
+    # into a hashable key : two congruent panels are computed independently,
+    # each through its own plane intersections, so they carry their own
+    # floating point noise - and any quantization boundary they happened to
+    # straddle would silently cost the reuse.
+    def _panel_points_signature(points)
+      centroid = Geometrix::PointFinder.find_centroid(points)
+      points.map { |point| centroid.distance(point).to_f }.sort
+    end
+
+    def _panel_points_signatures_match?(signature, other_signature)
+      return false unless signature.length == other_signature.length
+      signature.each_with_index.all? { |distance, index| (distance - other_signature[index]).abs <= SolidMeshDef::TOLERANCE }
+    end
+
+    # True when +other_points+, once transformed, is exactly +points+ - each
+    # point matched one to one, within SketchUp's tolerance.
+    def _points_sets_superpose?(points, other_points, t)
+      return false unless points.length == other_points.length
+      remaining = points.dup
+      other_points.all? { |point|
+        transformed_point = point.transform(t)
+        index = remaining.index { |other_point| other_point == transformed_point }
+        next false if index.nil?
+        remaining.delete_at(index)
+        true
+      }
+    end
+
     def _purge_definitions
       _get_definitions_factory.each_value do |definition|
         next if definition.deleted? || definition.count_used_instances > 0
@@ -4678,6 +4872,11 @@ module Ladb::OpenCutList
       thickness *= -1 unless outward
       active_entities = _get_active_entities
       extruded_face_manipulators = Set.new
+
+      # [ definition, transformation, CONTAINER space face manipulators, points, signature, front centroid ]
+      # of every panel created by this pass, the pool #_find_reusable_panel_def
+      # picks a definition to share from
+      panel_defs = []
 
       @selected_face_manipulators.each do |sfm|
 
@@ -4780,16 +4979,46 @@ module Ladb::OpenCutList
 
         end
 
-        # 5. Adapt part axes
+        # 5. Reuse the definition of an identical panel, or keep this one
 
-        z_axis = sfm.normal # Front face is always outside
-        x_axis = EdgeManipulator.new(sfm.longest_outer_edge, sfm.transformation).direction
-        y_axis = z_axis.cross(x_axis).normalize!
+        points = gd_points + up_points
+        signature = _panel_points_signature(points)
+        front_centroid = Geometrix::PointFinder.find_centroid(outward ? up_points : gd_points)
 
-        t = Geom::Transformation.axes(sfm.centroid, x_axis, y_axis, z_axis)
+        if (panel_def = _find_reusable_panel_def(entities, points, signature, front_centroid, panel_defs)).nil?
 
-        definition.entities.transform_entities(t.inverse, definition.entities.to_a) # Inverted both lines failed on old version of SketchUp
-        active_entities.add_instance(definition, t)
+          # 6. Adapt part axes
+
+          z_axis = sfm.normal # Front face is always outside
+          x_axis = EdgeManipulator.new(sfm.longest_outer_edge, sfm.transformation).direction
+          y_axis = z_axis.cross(x_axis).normalize!
+
+          t = Geom::Transformation.axes(sfm.centroid, x_axis, y_axis, z_axis)
+
+          definition.entities.transform_entities(t.inverse, definition.entities.to_a) # Inverted both lines failed on old version of SketchUp
+          active_entities.add_instance(definition, t)
+
+          # Offer this panel to the following ones. Its face manipulators are
+          # built AFTER the entities moved to the definition's own space, and
+          # carry t so they read back in the container's space - building them
+          # before would leave them caching points the transform then moves.
+          panel_defs << [
+            definition,
+            t,
+            definition.entities.grep(Sketchup::Face).map { |face| FaceManipulator.new(face, t) },
+            points,
+            signature,
+            front_centroid
+          ]
+
+        else
+
+          # Give the temporary definition back - #_purge_definitions removes it
+          # from the model when the operation ends
+          entities.clear!
+          active_entities.add_instance(panel_def[0], panel_def[1])
+
+        end
 
         # Flag face as extruded
         extruded_face_manipulators << sfm
