@@ -2484,6 +2484,9 @@ tool:
     action_1_status: Create a series of parts from a closed solid or a construction lines drawing
     action_1_state_0_status: Click on a closed solid or a group of construction lines to define the reference geometry
     action_1_state_1_status: Select the faces to extrude
+    action_1_rollover_face_status: Face hovered
+    action_1_select_similar_status: Select all faces of the same shape
+    action_1_select_all_edges_status: Select all adjacent edges
     action_2: Weld
     action_2_status: Welding multiple parts into a single part
     action_2_state_0_status: Select part A
@@ -2521,6 +2524,10 @@ tool:
     action_option_options_keep_b: Keep B
     action_option_options_keep_b_status: Keep the B instances after the operation
     action_option_options_remove_unused_definitions_status: Delete component definitions that are no longer in use after the operation
+    action_option_options_reuse_definition: Reuse parts
+    action_option_options_reuse_definition_status: Share the same component definition across panels with the same shape
+    action_option_options_reuse_definition_mirrored: Mirror Layout
+    action_option_options_reuse_definition_mirrored_status: Mirror layout for panels of the same shape facing each other
     notify:
       validate_a: Validate to proceed to the selection of B
       validate_b: Validate to apply the operation

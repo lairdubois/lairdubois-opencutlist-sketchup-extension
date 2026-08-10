@@ -2486,7 +2486,7 @@ tool:
     action_1_state_1_status: Sélectionnez les faces à extruder
     action_1_rollover_face_status: Face survolée
     action_1_select_similar_status: Sélectionner toutes les faces de forme identique
-    action_1_select_all_edges_status: Sélectionner toutes les arrêtes en contact
+    action_1_select_all_edges_status: Sélectionner toutes les arêtes en contact
     action_2: Souder
     action_2_status: Souder plusieurs pièces en une seule
     action_2_state_0_status: Sélectionnez la pièce A
