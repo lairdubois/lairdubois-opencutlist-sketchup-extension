@@ -2484,6 +2484,9 @@ tool:
     action_1_status: Eine Teileserie aus einem geschlossenen Volumenkörper oder einer Konstruktionslinienzeichnung erstellen
     action_1_state_0_status: "Klicken Sie auf eine geschlossene Figur oder auf eine Gruppe von Konstruktionslinien, um die Referenzgeometrie festzulegen"
     action_1_state_1_status: Wählen Sie die zu extrudierenden Flächen aus
+    action_1_rollover_face_status: Überflogene Fläche
+    action_1_select_similar_status: Alle Flächen mit identischer Form auswählen
+    action_1_select_all_edges_status: Alle berührenden Kanten auswählen
     action_2: Schweißen
     action_2_status: Mehrere Teile zu einem einzigen verschweißen
     action_2_state_0_status: Wählen Sie Teil A aus
@@ -2521,6 +2524,10 @@ tool:
     action_option_options_keep_b: B behalten
     action_option_options_keep_b_status: Die Instanzen B nach der Operation beibehalten
     action_option_options_remove_unused_definitions_status: Nach dem Vorgang nicht mehr verwendete Komponentendefinitionen löschen
+    action_option_options_reuse_definition: Teile wiederverwenden
+    action_option_options_reuse_definition_status: Gleiche Komponentendefinition für Platten mit identischer Form verwenden
+    action_option_options_reuse_definition_mirrored: Spiegelbildliche Anordnung
+    action_option_options_reuse_definition_mirrored_status: Spiegelbildliche Anordnung bei gegenüberliegenden Platten gleicher Form
     notify:
       validate_a: "Bestätigen Sie, um zur Auswahl von B zu gelangen"
       validate_b: "Bestätigen Sie, um den Vorgang auszuführen"

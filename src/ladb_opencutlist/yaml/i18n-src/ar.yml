@@ -211,16 +211,21 @@ core:
       *يتيح لك إنشاء إعداد مسبق مخصص الاحتفاظ بمُعلِّمات النموذج الحالية بصفة عامة لتتمكن من إعادة استخدامها في جميع نماذجك*.
 
       أدخل اسم الإعداد :
+    rename_prompt_title: إعادة تسمية
+    rename_prompt: "أدخل الاسم الجديد للإعداد المسبق **\"{{ name }}\"**"
     delete_confirm_title: إزالة
     delete_confirm: "هل أنت واثق من رغبتك في إزالة الإعداد المسبق **\"{{ name }}\"**؟"
     override_confirm_title: ترقية
     override_confirm: "هل تؤكد تحديث الإعداد المسبق **\"{{ name }}\"** بمُعلِّمات النموذج؟"
+    new_error: "مستحيل، يوجد إعداد مسبق **\"{{ name }}\"** سلفًا"
     new_success: "لقد اكتمل إنشاء الإعداد **\"{{ name }}\"**"
     override_success: "لقد اكتمل تحديث الإعداد **\"{{ name }}\"**"
     restore_success: "لقد مُلِئ النموذج بالإعداد المسبق **\"{{ name }}\"**"
+    rename_success: "أُعيدت تسمية الإعداد المسبق **\"{{ name }}\"** إلى **\"{{ new_name }}\"**"
     delete_success: "لقد اكتمل حذف الإعداد **\"{{ name }}\"**"
     tooltip:
       save_to: "تحديث الإعداد المسبق '{{ name }}'"
+      rename: "إعادة تسمية الإعداد المسبق '{{ name }}'"
       delete: "حذف الإعداد المسبق '{{ name }}'"
     dictionary:
       component_textinput_color: لوحة الألوان
@@ -244,11 +249,14 @@ core:
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       outliner_options: $t(tab.outliner.label) / $t(default.options)
+      outliner_deep_rename_parts_options: $t(tab.outliner.label) / $t(tab.outliner.deep_rename_parts.title)
       settings_model: $t(tab.settings.label) / النموذج
       tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
       tool_smart_handle_options: $t(core.toolbar.command.smart_handle)
+      tool_smart_reshape_options: $t(core.toolbar.command.smart_reshape)
       tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
       tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
+      tool_smart_join_options: $t(core.toolbar.command.smart_join)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
   progress:
     please_wait: حساب عالم من السلم
@@ -260,7 +268,9 @@ core:
       remove: انس أمر اللون
     textinput_code:
       snippets: أمثلة عن المعادلات
-      help: اضغط على **@** للحصول على قائمة المتغيرات.
+      help: اكتب **@** للحصول على قائمة المتغيرات
+    textinput_file:
+      browse: تصفح
     textinput_size:
       quantity: العدد
     three_viewer:
@@ -282,6 +292,23 @@ core:
       failed_to_load: |
         تعذر فتح المستندات
         تأكد من اتصالك بالإنترنت
+  solid:
+    error:
+      empty: لا يحتوي الجسم الصلب على أي هندسة
+      empty_named: "« {{ name }} » لا يحتوي على أي هندسة"
+      non_manifold_edges: "يحتوي الجسم الصلب على {{ count }} حافة غير متعددة الوجوه"
+      non_manifold_edges_plural: "يحتوي الجسم الصلب على {{ count }} حواف غير متعددة الوجوه"
+      non_manifold_edges_named: "« {{ name }} » يحتوي على {{ count }} حافة غير متعددة الوجوه"
+      non_manifold_edges_named_plural: "« {{ name }} » يحتوي على {{ count }} حواف غير متعددة الوجوه"
+      open_edges: "يحتوي الجسم الصلب على {{ count }} حافة مفتوحة"
+      open_edges_plural: "يحتوي الجسم الصلب على {{ count }} حواف مفتوحة"
+      open_edges_named: "« {{ name }} » يحتوي على {{ count }} حافة مفتوحة"
+      open_edges_named_plural: "« {{ name }} » يحتوي على {{ count }} حواف مفتوحة"
+      locked_instances: "لا يمكن للعملية تعديل مثيل مقفل : {{ list }}"
+    rebuild:
+      error:
+        no_segment: لا توجد خطوط إنشائية قابلة للاستخدام في التحديد
+        no_face: تعذر إعادة بناء أي حلقة مغلقة مستوية
 tab:
   cutlist:
     label: القِطع
@@ -358,6 +385,7 @@ tab:
       flipped: لقد طبق على هذه القطعة انعكاس مقارنة بتعريف عنصرها
       symmetrical: الكشف عن الانعكاس لهذه القطعة معطل
       ignore_grain_direction: اتجاه تعرق ألياف هذه القطعة مهمل
+      follow_grain_direction: كشف استمرارية تعرّق الألياف مفعّل على هذه القطعة
       auto_oriented: لقد أُعيد توجيه هذه القطعة آليا
       oko_label_filter: "تضمين / استبعاد هذا الوسم"
       add_label_filter: "تصفية وفق '{{ label }}'"
@@ -481,11 +509,11 @@ tab:
         *عندها ستضع OpenCutList في حسابها أن هناك قطعتين سمكهما 19 مم بدلا من قطعة واحدة سمكها 38 مم.*
       cut_options: $t(tab.materials.edit_material.cut_options)
       length_increase: $t(tab.materials.edit_material.length_increase)
-      length_increase_help: طُبق تمديد على الطول لتحديد **الطول الأولي**.  # TODO: singular version of tab.materials.edit_material.length_increase
+      length_increase_help: $t(tab.materials.edit_material.length_increase_help)
       width_increase: $t(tab.materials.edit_material.width_increase)
-      width_increase_help: طُبق تمديد على العرض لتحديد **العرض الأولي**. # TODO: singular version of tab.materials.edit_material.width_increase
+      width_increase_help: $t(tab.materials.edit_material.width_increase_help)
       thickness_increase: $t(tab.materials.edit_material.thickness_increase)
-      thickness_increase_help: طُبق تمديد على السُّمك لتحديد **السمك الأولي**. # TODO: singular version of tab.materials.edit_material.thickness_increase
+      thickness_increase_help: $t(tab.materials.edit_material.thickness_increase_help)
       description: تعليق وصفيّ
       description_help: |
         يتيح لك *الوصف* معلومات معلومات مخصصة عن تعريف كل قطعة.
@@ -510,9 +538,21 @@ tab:
       symmetrical: عطّل الكشف عن الانعكاس لهذه القطعة
       symmetrical_help: |
         إذا تم تحديد هذا المربع، فلن يكون لاكتشاف *قطعة معكوسة* أي تأثير على هذه القطعة.
-      ignore_grain_direction: تجاهل اتجاه تعرق الألياف في هذه القطعة
+      ignore_grain_direction: اتجاه تعرّق الألياف
       ignore_grain_direction_help: |
-        إذا تم تحديد هذا المربع، فإن اتجاه تعرق الألياف في هذه القطعة سيُهمَل.
+        إن كان هذا الخيار محدداً، فسيُتجاهل اتجاه تعرّق الألياف الخاص بالخامة لهذه القطعة
+      ignore_grain_direction_0: تعرّق الألياف يتبع الطول
+      ignore_grain_direction_1: تجاهل اتجاه تعرق الألياف في هذه القطعة
+      follow_grain_direction: استمرارية تعرّق الألياف
+      follow_grain_direction_help: |
+        بتفعيل هذا الخيار، ستُعامل مثيلات هذه القطعة على أنها قِطع موضوعة في **استمرارية تعرّق الألياف** مع جاراتها التي تشترك في:
+        - نفس *مجموعة استمرارية تعرّق الألياف*
+        - نفس المستوي
+        - نفس التوجيه
+        - نفس الخامة ذات التعرّق
+        - نفس السُمك
+      follow_grain_direction_0: $t(default.no)
+      follow_grain_direction_1: كشف استمرارية تعرّق الألياف مفعّل
       axes: المحاور
       axes_help: أعد ترتيب الأبعاد لتتناسب مع ألوان المحور المطلوبة في قطعتك.
       axes_tip: |
@@ -1069,8 +1109,19 @@ tab:
       option_rectangleguillotine_first_stage_orientation_horizontal: أفقي
       option_rectangleguillotine_first_stage_orientation_vertical: عمودي
       option_rectangleguillotine_first_stage_orientation_any: عشوائي
+      option_rectangleguillotine_sort_subplates_criteria: فرز المستويات
+      option_rectangleguillotine_sort_subplates_criteria_help: |
+        يحدد معايير فرز القِطع على كل مستوى
+      option_rectangleguillotine_sort_subplates_criteria_l1l2: حسب الحجم تنازليًا
+      option_rectangleguillotine_sort_subplates_criteria_dl2l1: حسب الكثافة تنازليًا
       option_rectangleguillotine_keep: القياس الأدنى لبواقي التقطيع
       option_rectangleguillotine_keep_help: ستُعلَّم بواقي التقطيع التي يزيد طولها و عرضها عن الحد الأدنى بـ **تُحفظ**.
+      option_rectangle_leftover_mode: اتجاه التوزيع
+      option_rectangle_leftover_mode_help: |
+        يحدد اتجاه توزيع القِطع على آخر لوح غير ممتلئ
+      option_rectangle_leftover_mode_area: تلقائي
+      option_rectangle_leftover_mode_x: على عرض اللوح
+      option_rectangle_leftover_mode_y: على طول اللوح
       option_irregular_allowed_rotations: التدوير المسموح به
       option_irregular_allowed_rotations_help: |
         يحدد زوايا التدوير الممكنة لوضع القطعة.
@@ -1085,6 +1136,12 @@ tab:
         يحدد ما إذا كان تطبيق الانعكاس على القطعة مسموحًا أثناء وضعها
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
+      option_irregular_leftover_mode: اتجاه التوزيع
+      option_irregular_leftover_mode_help: |
+        يحدد اتجاه توزيع القِطع على آخر لوح غير ممتلئ
+      option_irregular_leftover_mode_bottom_left: تلقائي
+      option_irregular_leftover_mode_left: على عرض اللوح
+      option_irregular_leftover_mode_bottom: على طول اللوح
       option_spacing: مباعدة
       option_spacing_help: |
         المسافة الدنيا بين كل قطعتين
@@ -1144,6 +1201,7 @@ tab:
       option_hide_edges_preview_1: مخفي من مخطط التقطيع
       option_hide_edges_preview_help: يتيح لك إبراز أو إخفاء تصوير أشرطة الحواشي لكل قِطعة في مخطط التقطيع
       option_zoom_threshold: عتبة التكبير
+      # TODO find a better explanation
       option_zoom_threshold_help: |
         يتيح لك ضبط عرض الرسم التخطيطي الذي تكون الرسوم التخطيطية أسفله مُكبّرة تلقائيًا
 
@@ -1151,6 +1209,11 @@ tab:
       option_time_limit: الحد الزمني
       option_time_limit_help: |
         يثبت الحد الزمني المخصص للحساب
+      grain_groups:
+        title: "{{ count }} مجموعة استمرارية تعرّق الألياف"
+        title_plural: "{{ count }} مجموعات استمرارية تعرّق الألياف"
+        name: الإسم
+        item_count: مجموع القطع
       tooltip:
         scroll_to_block_1d: مرور إلى القضيب أو شريط الحاشية الأول
         scroll_to_block_2d: التمرير إلى اللوح الخشبي أو ورقة قشرة الخشب الأولى
@@ -1249,7 +1312,8 @@ tab:
         no_solution: لم يتم العثور على أي حل لوضع **كل القِطع** في الخامة المتوفرة
         unplaced_parts: "تعذر وضع **1 قطعة** "
         unplaced_parts_plural: "تعذر وضع **{{ count }} قطع / قطعة**"
-        unusable_part: القِطعة كبيرة للغاية
+        unusable_part_1: القِطعة كبيرة للغاية
+        unusable_part_2: مجموعة استمرارية تعرّق الألياف كبيرة جدًا
       warning:
         is_part_selection: رسم التقطيعِ التخطيطيُّ هذا محدود بـ **القطع المحددة**
         cutting_dimensions: يستخدم رسم التقطيعِ التخطيطيُّ هذا البعد الـ **أولي** للقطع.
@@ -1462,6 +1526,13 @@ tab:
 
         - بُنية **الطبقات** تُسطِّح كل الخطوط، و تميز بين أنواع الخطوط المختلفة باستعمال الطبقات فقط. *توفر هذه البُنية توافقا أكبر مع البرامج المُساعِدة* 
         - بُنية **الطبقات + الكتل** تنشئ كتلة واحدة لكل قِطعة، و تضيف هذه الكتل عدة مرات حسب تكرار القِطع. *توفر هذه البنية مرونة أكبر لتعديل الملف*
+      option_dxf_depth_to_z: الأعماق على Z
+      option_dxf_depth_to_z_0: $t(default.no)
+      option_dxf_depth_to_z_1: توزيع أعماق الطبقات على Z
+      option_dxf_depth_to_z_help: |
+        يتيح تفعيل توزيع الطبقات على المحور Z وفقاً لعمقها
+
+        عطّل هذا الخيار لتصدير DXF ثنائي الأبعاد 2D فقط
       option_unit: الوحدة
       option_unit_help: |
         حدد الوحدة المستعملة في الملف المُصدَّر
@@ -1635,10 +1706,13 @@ tab:
         * إذا لم يتم تحديد وحدة، فستطبق وحدة النموذج.*
       length_increase: تمديد الطول
       length_increase_help: طُبق تمديد على الطول لتحديد **الطول الأولي**.
+      length_increase_help_plural: طُبق تمديد على الطول لتحديد **الطول الأولي**.
       width_increase: تمديد العرض
       width_increase_help: طُبق تمديد على العرض لتحديد **العرض الأولي**.
+      width_increase_help_plural: طُبق تمديد على العرض لتحديد **العرض الأولي**.
       thickness_increase: تمديد السُمك
       thickness_increase_help: طُبق تمديد على السُّمك لتحديد **السمك الأولي**.
+      thickness_increase_help_plural: طُبق تمديد على السُّمك لتحديد **السمك الأولي**.
       std_lengths: الأطوال النظامية
       std_lengths_help: |
         الأطوال النظامية المتوفرة لهذه الخامة 
@@ -1771,6 +1845,8 @@ tab:
       name: الإسم
       instance_name: مثيل
       material: الخامة
+      is_grain_group: تعيين كـ **مجموعة استمرارية تعرّق الألياف**
+      is_grain_group_help: بتفعيل هذا الخيار، يمكن اعتبار هذا المثيل **مجموعة استمرارية تعرّق الألياف** للقِطع التي يحتويها والتي تكون *استمرارية تعرّق الألياف* مفعّلة فيها
       definition_name: التعريف
       description: تعليق وصفيّ
       url: رابط
@@ -2250,6 +2326,8 @@ tool:
     vcb_radius: نصف القطر
     vcb_diameter: القطر
     vcb_distance: المسافة
+    vcb_spacings: حجم الفراغ
+    locked_on_last_measure_status: قفل على آخر قياس  # TODO : Moved from tool.smart_draw.action_measure_locked_status
     error:
       no_direction: يرجى تحديد اتجاه باستخدام الفأرة
       invalid_length: "الطول {{ value }} غير صالح"
@@ -2268,18 +2346,21 @@ tool:
       locked_part: هذه القِطعة مقفلة
       not_sibling_part: هذه القِطعة ليست في نفس عنصر أو مجموعة بقية التحديد
       selection_contains_locked_entities: يحتوي التحديد على كيانات مقفلة
+      wrong_material_type: "يجب أن تكون القِطعة المستهدفة من النوع '{{ type }}'"
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_select:
     state_0_status: انقر على قطعة لتحديدها
     state_0_to_6_status: حدد عنصرا متبوعا
+    state_0_to_7_status: تحديد متعدد
     state_4_status: اسحب على قِطعة مماثلة ضمن نفس المتبوع لإضافتها إلى التحديد، ثم أفلت للمواصلة
     state_5_status: مرر للإضافة إلى التحديد و أفلت للمواصلة
     state_6_status: حدد عنصرا من القائمة
     state_7_status: اضغط على قِطعة لإضافتها أو إزالتها من التحديد
     warning:
       no_active_part: أولا عليك التمرير فوق قِطعة ما
+      no_parent_group: القطعة قيد الفحص ليس لها مجموعة أو عنصر أب
   smart_draw:
     title: ارسم
     action_0: ارسم مستطيلا
@@ -2296,13 +2377,27 @@ tool:
     action_2_status: ارسم جسما أساسه مضلع
     action_2_state_1_status: انقر لتحديد نقطة جديدة أو أدخل مسافة
     action_x_state_2_status: انقر لتحديد الارتفاع أو أدخل مسافة
+    action_3: ارسم فاصلًا
+    action_3_status: ارسم فاصلًا داخل تجويف مكون من مجموعة قِطع موجودة
+    action_3_state_0_status: انقر على جدار لرسم فاصل
+    action_3_state_1_status: انقر على جدار لرسم فواصل
     action_option_group_offset: إزاحة
     action_option_group_segments: القِطع المستقيمة
+    action_option_group_thickness: السُمك
+    action_option_group_axes: المحاور
+    action_option_group_measure_type: القياس
     action_option_group_options: الخيارات
     action_option_offset_shape_offset: إزاحة
     action_option_offset_shape_offset_status: يسمح بتطبيق إزاحة على مسار الشكل المرسوم
     action_option_segments_segment_count: عدد القطع المستقيمة
     action_option_segments_segment_count_status: يسمح بتحديد عدد الخطوط المكونة للدائرة
+    action_option_thickness_thickness: السُمك
+    action_option_thickness_thickness_status: يحدد سُمك الألواح
+    action_option_measure_type_inside_status: وضع السُمك داخل النقطة المستهدفة
+    action_option_measure_type_centered_status: توسيط السُمك على النقطة المستهدفة
+    action_option_measure_type_outside_status: وضع السُمك خارج النقطة المستهدفة
+    action_option_axes_active_status: المعالجة على طول المحاور النشطة
+    action_option_axes_context_status: المعالجة على طول محاور المجموعة أو العنصر المضيف
     action_option_options_construction: الخطوط الإنشائية
     action_option_options_construction_status: الرسم بالخطوط الإنشائية
     action_option_options_rectangle_centered: مستطيل انطلاقا من المركز
@@ -2322,13 +2417,25 @@ tool:
     action_option_options_draw_in_0: الرسم داخل العنصر النشط
     action_option_options_draw_in_1: الرسم داخل العنصر "الأب" للقٍطعة التابعة للنقطة الأولى
     action_option_options_draw_in_status: الرسم داخل العنصر "الأب" للقِطعة المستهدفة بواسطة النقطة الأولى
+    action_option_options_reduce_envelope: قِطع غائرة
+    action_option_options_reduce_envelope_status: مراعاة القِطع الغائرة
+    action_option_options_reuse_definition: إعادة استخدام القِطع
+    action_option_options_reuse_definition_status: "بدلًا من إنشاء قطعة جديدة، أعد استخدام القطعة الموجودة التي لها نفس الشكل وتقع في نفس المنطقة "
     action_option_options_ask_name: تسمية القِطع
     action_option_options_ask_name_status: إدخال تسمية القِطع يدويًا
-    action_measure_locked_status: قفل على آخر قياس
     action_toggle_move_copy_status: التبديل بين النسخ/النقل
     action_change_move_anchor_status: تغيير نقطة الإرساء
+    error:
+      invalid_divider_seed: هذا النوع من القِطع لا يسمح بإنشاء فاصل
+      invalid_divider_container: "هذه القطعة معزولة : لا تشترك في أي مجموعة أو عنصر مع قِطع أخرى"
+      invalid_divider_cavity: "لا يوجد تجويف في هذا الموضع"
+      no_divider_cavity: لم يُكتشف أي تجويف في هذه المجموعة أو العنصر
+      divider_number_overflow: "يتعذر وضع {{ number }} فواصل في هذا التجويف"
     success:
       part_created: "تم إنشاء قطعة جديدة: {{ name }}"
+      part_created_plural: "{{ count }} قِطع جديدة أُنشئت : {{ name }}"
+      part_reused: "مثيل جديد للقطعة الموجودة : {{ name }}"
+      part_reused_plural: "{{ count }} مثيلات جديدة للقطعة الموجودة : {{ name }}"
   smart_handle:
     title: معالجة
     action_0: تحديد
@@ -2374,12 +2481,24 @@ tool:
     action_0_state_12_status: انقر على مستوٍ قاطعٍ لحذفه
     action_0_state_2_status: انقر لتأكيد التمديد أو أدخل مسافة معينة
     action_1: تركيب الألواح
-    action_1_status: إنشاء مجموعة قِطع انطلاقا من مجسم مصمت مغلق
-    action_1_state_0_status: انقر فوق مجسم مصمت مغلق لتحديد الهندسة المرجعية
+    action_1_status: إنشاء سلسلة من القِطع انطلاقاً من جسم مغلق أو رسم خطوط إنشائية
+    action_1_state_0_status: انقر على جسم مغلق أو مجموعة خطوط إنشائية لتحديد الهندسة المرجعية
     action_1_state_1_status: حدد الوجوه التي ستمدد
-    # CSG = Constructive Solid Geometry
-    action_2: الهندسة الفراغية التشكيلية
-    action_2_status: إلى اللانهائية و ما بعدها
+    action_1_rollover_face_status: ""
+    action_1_select_similar_status: ""
+    action_1_select_all_edges_status: ""
+    action_2: لَحْم
+    action_2_status: لَحْم عدة قِطع في قطعة واحدة
+    action_2_state_0_status: حدد القطعة A
+    action_2_state_1_status: حدد القطعة B
+    action_3: قص
+    action_3_status: قص قطعة بأخرى
+    action_3_state_0_status: حدد القطعة A
+    action_3_state_1_status: حدد القطعة B
+    action_4: تقاطع
+    action_4_status: إنشاء قطعة تقابل تقاطع عدة قِطع
+    action_4_state_0_status: حدد القطعة A
+    action_4_state_1_status: حدد القطعة B
     action_option_group_thickness: السُمك
     action_option_group_stretch_measure_type: قياس
     action_option_group_axes: المحاور
@@ -2388,7 +2507,7 @@ tool:
     action_option_group_csg_operation: عملية
     action_option_group_options: الخيارات
     action_option_thickness_thickness: السُمك
-    action_option_thickness_thickness_status: يحدد سمك الألواح
+    action_option_thickness_thickness_status: يحدد سُمك الألواح
     action_option_stretch_measure_type_outside_status: القياس من الخارج
     action_option_stretch_measure_type_offset_status: قِس الفرق
     action_option_axes_active_status: المعالجة على طول المحاور النشطة
@@ -2398,8 +2517,20 @@ tool:
     action_option_paneling_joint_type_miter_status: وصلة مشطوبة
     action_option_paneling_direction_inward_status: باتجاه الداخل
     action_option_paneling_direction_outward_status: باتجاه الخارج
-    action_option_options_centred_status: توسيط العناصر الممددة
-    action_option_options_make_unique_status: اجعل العناصر الممددة فريدة من نوعها
+    action_option_options_centered_status: توسيط العناصر الممددة
+    action_option_options_make_unique_status: جعل العناصر المُعاد تشكيلها فريدة
+    action_option_options_keep_a: الاحتفاظ بـ A
+    action_option_options_keep_a_status: الاحتفاظ بمثيلات A بعد العملية ووضع النتيجة في قطعة جديدة
+    action_option_options_keep_b: الاحتفاظ بـ B
+    action_option_options_keep_b_status: الاحتفاظ بمثيلات B بعد العملية
+    action_option_options_remove_unused_definitions_status: حذف تعريفات العناصر التي لم تعد مستخدمة بعد العملية
+    action_option_options_reuse_definition: إعادة استخدام القِطع
+    action_option_options_reuse_definition_status: ""
+    action_option_options_reuse_definition_mirrored: ""
+    action_option_options_reuse_definition_mirrored_status: ""
+    notify:
+      validate_a: أكّد للانتقال إلى تحديد B
+      validate_b: أكّد لتطبيق العملية
     error:
       curve_intersect: أحد المستويات القاطعة يمر عبر مستوٍ غير قابل للتمديد
   smart_paint:
@@ -2451,7 +2582,6 @@ tool:
       not_part: المجسم المستهدف ليس قِطعة (عنصر)
       not_edge: الوجه المستهدف ليس حاشية لوح
       not_face: الوجه المستهدف ليس وجه لوح
-      wrong_material_type: "يجب أن تكون القِطعة المستهدفة من النوع '{{ type }}'"
   smart_axes:
     title: وجِّه
     action_0: اقلِب
@@ -2464,6 +2594,10 @@ tool:
     action_3_status: استهدف أحد أوجه قِطعة ما و اضغط على حاشية من حواشيه لتهيئة محاوره
     action_4: حرّك المبدأ
     action_4_status: استهدف أحد أوجه قِطعة ما و اضغط على نقطة لتعيين مبدئه فيها
+    action_5: تكوين استمرارية تعرّق الألياف
+    action_5_status: انقر على قطعة لتفعيل أو تعطيل كشف استمرارية تعرّق الألياف
+    action_5_to_state_10_status: حدد مجموعة استمرارية تعرّق الألياف
+    action_5_state_10_status: انقر على عنصر في القائمة لتغيير حالة مجموعة استمرارية تعرّق الألياف
     action_option_group_direction: الاتجاه
     action_option_direction_0: ط
     action_option_direction_1: ع
@@ -2476,10 +2610,74 @@ tool:
     error:
       not_part: المجسم المستهدف ليس قِطعة (عنصر)
       not_orientable: نوع هذه القِطعة لا يسمح بتوجيهها
+      not_grained: ليس للقطعة المستهدفة اتجاه تعرّق للألياف
+      not_single_thickness_layer: يجب أن تتكون القطعة المستهدفة من طبقة واحدة فقط
+  # TODO: It's currently just for dev purposes
   smart_join:
     title: تجميع
-    action_0: لمس-لمس # TODO: It's currently just for dev purposes
-    action_0_status: للإنجاز # TODO
+    action_0: إضافة موصلات
+    action_0_status: إضافة موصلات لتجميع القِطع
+    action_0_state_0_status: انقر على الوجه المرجعي لقطعة لإضافة موصلات إلى القِطع المجاورة المتلامسة
+    action_1: حذف الموصلات
+    action_1_status: حذف الموصلات المستخدمة في تجميع القِطع
+    action_1_state_0_status: انقر على الوجه المرجعي لقطعة لحذف الموصلات التي تشترك فيها مع القِطع المجاورة
+    action_1_only_one_status: الحد إلى موصل واحد
+    action_2: إضافة وصلات
+    action_2_status: إضافة وصلات لربط القِطع
+    action_2_state_0_status: انقر على الوجه المرجعي للقطعة A لإضافة وصلات إلى قطعة مجاورة
+    action_2_state_1_status: انقر على الوجه المرجعي للقطعة B لإضافة وصلات إلى القطعة A
+    action_3: حذف الوصلات
+    action_3_status: حذف الوصلات المستخدمة في ربط القِطع
+    action_3_state_0_status: انقر على الوجه المرجعي للقطعة A لمسح الوصلات التي تشترك فيها مع قطعة مجاورة
+    action_3_state_1_status: انقر على الوجه المرجعي للقطعة B لحذف الوصلات التي تشترك فيها مع القطعة A
+    action_3_only_one_status: الحد إلى وصلة واحدة
+    action_option_group_height: الارتفاع
+    action_option_group_offsets: الإزاحات
+    action_option_group_spacings: المسافات
+    action_option_group_options: الخيارات
+    action_option_height: الارتفاع
+    action_option_offsets_start_offset: البداية
+    action_option_offsets_end_offset: النهاية
+    action_option_spacings_min_spacing: الحد الأدنى
+    action_option_spacings_max_spacing: الحد الأقصى
+    action_option_options_opposite_status: التقاط الوجه المقابل
+    action_option_options_make_unique_status: جعل القِطع المُجمَّعة فريدة
+    action_option_hardware_connector_a: الموصل A
+    action_option_hardware_connector_b: الموصل B
+    action_option_hardware_fitting_a: الوصلة A
+    action_option_hardware_fitting_b: الوصلة B
+    action_option_machining_a: التشغيل A
+    action_option_machining_b: التشغيل B
+    action_option_hardware_connector_material_name: خامة الموصلات
+    action_option_hardware_fitting_material_name: خامة الوصلات
+    action_option_machining_material_name: خامة التشغيل
+    action_option_hardware_connector_layer_name: وسم الموصلات
+    action_option_hardware_fitting_layer_name: وسم الوصلات
+    action_option_machining_layer_name: وسم التشغيل
+    measures: القياسات
+    geometries: الهندسات
+    error:
+      invalid_height: "الارتفاع {{ value }} غير صالح"
+      invalid_start_offset: "إزاحة البداية {{ value }} غير صالحة"
+      invalid_end_offset: "إزاحة النهاية {{ value }} غير صالحة"
+      invalid_min_spacing: "المسافة الدنيا {{ value }} غير صالحة"
+      invalid_max_spacing: "المسافة القصوى {{ value }} غير صالحة"
+      not_assemblable: هذا النوع من القِطع لا يمكن تجميعه
+      no_valid_join: لا توجد أسطح تلامس تستوفي متطلبات التجميع
+      occupied_anchors: "{{ count }} موصل في تعارض موضع مع موصلات موجودة"
+      occupied_anchors_plural: "{{ count }} موصلات في تعارض موضع مع موصلات موجودة"
+      failed_to_load_skp_file: |
+        فشل تحميل ملف SKP : {{ file }}
+      unsupported_skp_version: |
+        أُنشئ ملف SKP بنسخة أحدث من SketchUp : {{ version }}
+    warning:
+      no_connector_to_remove: لا يوجد موصل لمسحه
+      x_connectors_to_remove: "{{ count }} موصل لمسحه"
+      x_connectors_to_remove_plural: "{{ count }} موصلات لمسحها"
+      no_fitting_to_remove: لا توجد وصلة لمسحها
+      x_fittings_to_remove: "{{ count }} وصلة لمسحها"
+      x_fittings_to_remove_plural: "{{ count }} وصلات لمسحها"
+      different_file_name: "اسم ملف SKP ({{ file_name }}) يختلف عن اسم التعريف الذي يحتويه ({{ definition_name }})"
   smart_export:
     title: تصدير
     action_0: صدّر قِطعة ثلاثية البعد

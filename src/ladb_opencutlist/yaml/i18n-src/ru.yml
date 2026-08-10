@@ -2484,6 +2484,9 @@ tool:
     action_1_status: ""
     action_1_state_0_status: ""
     action_1_state_1_status: Выберите грани для окантовки
+    action_1_rollover_face_status: ""
+    action_1_select_similar_status: ""
+    action_1_select_all_edges_status: ""
     action_2: Объединить
     action_2_status: Объединить несколько деталей в одну
     action_2_state_0_status: Выберите деталь А
@@ -2521,6 +2524,10 @@ tool:
     action_option_options_keep_b: Оставить деталь B
     action_option_options_keep_b_status: Сохранять экземпляры B после операции
     action_option_options_remove_unused_definitions_status: "После выполнения операции удалять детали, которые опционально не выбраны для сохранения"
+    action_option_options_reuse_definition: Использовать детали повторно
+    action_option_options_reuse_definition_status: ""
+    action_option_options_reuse_definition_mirrored: ""
+    action_option_options_reuse_definition_mirrored_status: ""
     notify:
       validate_a: "Подтвердите, чтобы перейти к выбору B"
       validate_b: "Подтвердите, чтобы применить операцию"
