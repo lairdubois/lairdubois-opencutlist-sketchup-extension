@@ -3,7 +3,7 @@ module Ladb::OpenCutList
   require_relative 'plane_manipulator'
   require_relative 'loop_manipulator'
   require_relative '../helper/face_matcher_helper'
-  require_relative '../lib/geometrix/finder/circle_finder'
+  require_relative '../lib/geometrix/geometrix'
 
   class FaceManipulator < PlaneManipulator
 
@@ -67,17 +67,17 @@ module Ladb::OpenCutList
     def pole_of_inaccessibility
       @pole_of_inaccessibility ||= begin
 
-        # find_pole_of_inaccessibility only considers X and Y point coordinates : project loops into the face's plane local space
-        t = Geom::Transformation.new(position, normal)
-        ti = t.inverse
+                                     # find_pole_of_inaccessibility only considers X and Y point coordinates : project loops into the face's plane local space
+                                     t = Geom::Transformation.new(position, normal)
+                                     ti = t.inverse
 
-        pole = Geometrix::PointFinder.find_pole_of_inaccessibility(
-          outer_loop_manipulator.points.map { |point| point.transform(ti) },
-          inner_loop_manipulators.map { |loop_manipulator| loop_manipulator.points.map { |point| point.transform(ti) } }
-        )
+                                     pole = Geometrix::PointFinder.find_pole_of_inaccessibility(
+                                       outer_loop_manipulator.points.map { |point| point.transform(ti) },
+                                       inner_loop_manipulators.map { |loop_manipulator| loop_manipulator.points.map { |point| point.transform(ti) } }
+                                     )
 
-        pole.nil? ? nil : pole.transform(t)
-      end
+                                     pole.nil? ? nil : pole.transform(t)
+                                   end
     end
 
     def longest_outer_edge

@@ -120,7 +120,6 @@ var TABS_JS_FILES = withBase(JS_BASE, [
     'dialog-tabs.js',
 ]);
 var MODAL_JS_FILES = withBase(JS_BASE, [
-    'plugins/components/jquery.ladb.leftbar.js',
     'plugins/components/jquery.ladb.abstract-textinput.js',
     'plugins/components/jquery.ladb.textinput-area.js',
     'plugins/components/jquery.ladb.textinput-code.js',

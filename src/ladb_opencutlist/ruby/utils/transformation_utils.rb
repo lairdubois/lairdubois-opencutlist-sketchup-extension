@@ -1,6 +1,5 @@
 module Ladb::OpenCutList
 
-  require_relative '../model/geom/scale3d'
   require_relative 'axis_utils'
 
   module TransformationUtils

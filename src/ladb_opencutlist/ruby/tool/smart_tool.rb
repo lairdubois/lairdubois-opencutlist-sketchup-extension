@@ -1653,6 +1653,11 @@ module Ladb::OpenCutList
       super
     end
 
+    def onTransactionRedo(model)
+      @action_handler.onToolTransactionRedo(self, model) if !@action_handler.nil? && @action_handler.respond_to?(:onToolTransactionRedo)
+      super
+    end
+    
   end
 
   class SmartToolLegacy < SmartTool

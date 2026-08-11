@@ -803,6 +803,8 @@ module Ladb::OpenCutList
       @app_observer ||= AppObserver.new
     end
 
+    # -----
+
     def local_http_server
       @local_http_server ||= LocalHttpServer.new
     end
