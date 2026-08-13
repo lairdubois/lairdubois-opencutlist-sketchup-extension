@@ -2484,9 +2484,9 @@ tool:
     action_1_status: Criar uma série de peças a partir de um sólido fechado ou de um desenho em linhas de construção
     action_1_state_0_status: Clique em um sólido fechado ou em um grupo de linhas de construção para definir a geometria de referência
     action_1_state_1_status: Selecione as faces para extrudar
-    action_1_rollover_face_status: ""
-    action_1_select_similar_status: ""
-    action_1_select_all_edges_status: ""
+    action_1_rollover_face_status: Face sob o cursor
+    action_1_select_similar_status: Selecionar todas as faces de forma idêntica
+    action_1_select_all_edges_status: Selecionar todas as arestas em contato
     action_2: Soldar
     action_2_status: Soldar várias peças em uma só
     action_2_state_0_status: Selecione a peça A
@@ -2525,9 +2525,9 @@ tool:
     action_option_options_keep_b_status: Manter as instâncias B após a operação
     action_option_options_remove_unused_definitions_status: Eliminar as definições de componentes que já não são utilizadas após a operação
     action_option_options_reuse_definition: Reutilizar as peças
-    action_option_options_reuse_definition_status: ""
-    action_option_options_reuse_definition_mirrored: ""
-    action_option_options_reuse_definition_mirrored_status: ""
+    action_option_options_reuse_definition_status: Compartilhar a mesma definição de componente entre as chapas de forma idêntica
+    action_option_options_reuse_definition_mirrored: Posicionamento espelhado
+    action_option_options_reuse_definition_mirrored_status: Posicionamento espelhado para as chapas de forma idêntica em oposição
     notify:
       validate_a: Confirme para avançar para a seleção de B
       validate_b: Confirme para aplicar a operação
