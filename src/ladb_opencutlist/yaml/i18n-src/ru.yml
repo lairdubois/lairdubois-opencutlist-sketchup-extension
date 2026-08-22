@@ -268,7 +268,7 @@ core:
       remove: Забыть этот цвет
     textinput_code:
       snippets: Примеры формул
-      help: Введите **@** чтобы открыть список переменных данных
+      help: Введите **@** чтобы открыть список переменных данных.
     textinput_file:
       browse: Обзор
     textinput_size:
@@ -307,8 +307,8 @@ core:
       locked_instances: "Операция невозможна, так как элементы заблокированы: {{ list }}"
     rebuild:
       error:
-        no_segment: ""
-        no_face: ""
+        no_segment: В выбранном элементе нет подходящих направляющих линий
+        no_face: Не удалось собрать замкнутые контуры в одной плоскости
 tab:
   cutlist:
     label: Раскрой
@@ -2377,29 +2377,29 @@ tool:
     action_2_status: Построение объема на основе многоугольника
     action_2_state_1_status: "Кликните, чтобы задать новую точку или введите нужный размер"
     action_x_state_2_status: "Кликните, чтобы задать высоту или введите нужный размер"
-    action_3: Создать разделитель
-    action_3_status: "Нарисовать разделитель в полости, образованной группой существующих деталей"
+    action_3: Создать перегородку
+    action_3_status: "Создание полок и перегородок внутри замкнутого контура из деталей, образующих корпус"
     action_3_state_0_status: "Кликните по стенке, чтобы создать перегородку"
     action_3_state_1_status: "Кликните по стенке, чтобы создать перегородки"
     action_option_group_offset: Смещение
     action_option_group_segments: Сегменты
     action_option_group_thickness: Толщина
     action_option_group_axes: Оси
-    action_option_group_measure_type: Измерение
+    action_option_group_measure_type: Отсчет
     action_option_group_options: Опции
     action_option_offset_shape_offset: Смещение
     action_option_offset_shape_offset_status: Задает смещение линии контура проектируемой фигуры
     action_option_segments_segment_count: Количество сегментов
     action_option_segments_segment_count_status: Задает количества сегментов в проектируемой окружности
     action_option_thickness_thickness: Толщина
-    action_option_thickness_thickness_status: Настройка толщины панелей
-    action_option_measure_type_inside_status: Задать толщину с внутренней стороны целевой точки
-    action_option_measure_type_centered_status: Задать толщину от центра целевой точки
-    action_option_measure_type_outside_status: Задать толщину с внешней стороны целевой точки
+    action_option_thickness_thickness_status: Ввод толщины перегородки
+    action_option_measure_type_inside_status: Размер без учета толщины перегородки
+    action_option_measure_type_centered_status: Отсчет измерения до центра перегородки
+    action_option_measure_type_outside_status: Размер с учетом толщины перегородки
     action_option_axes_active_status: Перемещение вдоль активных осей
     action_option_axes_context_status: Перемещение вдоль осей родительской группы или компонента
     action_option_options_construction: Конструкционные элементы
-    action_option_options_construction_status: Моделирование каркасной основы
+    action_option_options_construction_status: Каркасный вид детали
     action_option_options_rectangle_centered: Прямоугольник из центра
     action_option_options_rectangle_centered_status: Первым кликом задайте центр прямоугольника
     action_option_options_smoothing: Сглаживание
@@ -2409,7 +2409,7 @@ tool:
     action_option_options_measure_from_diameter_status: Размер окружности по ее диаметру
     action_option_options_measure_from_radius_status: Измерить окружность по ее радиусу
     action_option_options_measure_reversed: Реверсивное измерение
-    action_option_options_measure_reversed_status: Измерение в обратном направлении
+    action_option_options_measure_reversed_status: Реверс отсчета
     action_option_options_pull_centered: Центр для вытягивания
     action_option_options_pull_centered_status: Симметричное вытягивание от заданного кликом центра
     action_option_options_pull_locked_status: Блокировка подъема по оси
@@ -2427,12 +2427,12 @@ tool:
     action_change_move_anchor_status: Изменить точку привязки
     error:
       invalid_divider_seed: Этот тип детали не поддерживает создание разделителя
-      invalid_divider_container: "Деталь изолирована и не связана с другими группами или компонентами"
-      invalid_divider_cavity: "В этой позиции нет отверстий или пазов"
-      no_divider_cavity: В этой группе или компоненте не обнаружено отверстий или пазов
+      invalid_divider_container: "Эта деталь не входит в состав группы, образующей замкнутый контур"
+      invalid_divider_cavity: "С этой стороны нет полости для перегородки"
+      no_divider_cavity: В этой группе или компоненте не обнаружено полости для перегородок
       divider_number_overflow: "Не удалось разместить {{ number }} разделителей в этой полости"
     success:
-      part_created: "Создание нового компонента: : {{ name }}"
+      part_created: "Создан новый компонент: : {{ name }}"
       part_created_plural: "{{ count }} новых создано деталей: {{ name }}"
       part_reused: "Новый экземпляр существующей детали: {{ name }}"
       part_reused_plural: "Создано {{ count }} новых экземпляров существующей детали: {{ name }}"
@@ -2464,7 +2464,7 @@ tool:
     action_option_axes_active_status: Перемещение по активным осям
     action_option_axes_context_status: "Перемещение по осям группы или компонента, содержащего деталь"
     action_option_axes_entity_status: Перемещение по осям детали
-    action_option_options_mirror_status: Симметричное копирование
+    action_option_options_mirror_status: Копировать зеркально
     action_toggle_raytest_status: Проецировать на следующую точку
     warning:
       copies_disable_mirror: Многократное копирование не работает $t(tool.smart_handle.action_option_options_mirror_status)'
@@ -2481,12 +2481,12 @@ tool:
     action_0_state_12_status: "Нажмите на схему распила, чтобы удалить ее"
     action_0_state_2_status: "Кликните, чтобы подтвердить растяжение, или введите расстояние"
     action_1: Окантовать
-    action_1_status: ""
-    action_1_state_0_status: ""
+    action_1_status: Создание серии деталей на основе замкнутого твердого тела или чертежа из направляющих линий
+    action_1_state_0_status: "Кликните на замкнутый контур или группу направляющих, чтобы задать базовую геометрию"
     action_1_state_1_status: Выберите грани для окантовки
-    action_1_rollover_face_status: ""
-    action_1_select_similar_status: ""
-    action_1_select_all_edges_status: ""
+    action_1_rollover_face_status: Грань под курсором
+    action_1_select_similar_status: Выделить все одинаковые грани
+    action_1_select_all_edges_status: Выбрать все смежные ребра
     action_2: Объединить
     action_2_status: Объединить несколько деталей в одну
     action_2_state_0_status: Выберите деталь А
@@ -2525,9 +2525,9 @@ tool:
     action_option_options_keep_b_status: Сохранять экземпляры B после операции
     action_option_options_remove_unused_definitions_status: "После выполнения операции удалять детали, которые опционально не выбраны для сохранения"
     action_option_options_reuse_definition: Использовать детали повторно
-    action_option_options_reuse_definition_status: ""
-    action_option_options_reuse_definition_mirrored: ""
-    action_option_options_reuse_definition_mirrored_status: ""
+    action_option_options_reuse_definition_status: Назначить общее определение компонента для одинаковых панелей
+    action_option_options_reuse_definition_mirrored: Зеркальное отображение
+    action_option_options_reuse_definition_mirrored_status: Зеркальный раскрой для противоположных одинаковых панелей
     notify:
       validate_a: "Подтвердите, чтобы перейти к выбору B"
       validate_b: "Подтвердите, чтобы применить операцию"
