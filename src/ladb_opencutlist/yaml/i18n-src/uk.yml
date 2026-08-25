@@ -2484,9 +2484,9 @@ tool:
     action_1_status: Створіть серію деталей із замкненого твердого тіла або креслення з напрямних ліній
     action_1_state_0_status: "Натисніть на замкнене тіло або групу напрямних ліній, щоб визначити еталонну геометрію"
     action_1_state_1_status: Виберіть грані для екструдування
-    action_1_rollover_face_status: ""
-    action_1_select_similar_status: ""
-    action_1_select_all_edges_status: ""
+    action_1_rollover_face_status: Вказана грань
+    action_1_select_similar_status: Вибрати усі грані однакової форми
+    action_1_select_all_edges_status: "Обрати усі краї, що торкаються"
     action_2: Об'єднати
     action_2_status: Об'єднати кілька деталей в одну
     action_2_state_0_status: Виберіть деталь А
@@ -2525,9 +2525,9 @@ tool:
     action_option_options_keep_b_status: Зберігає екземпляри B після операції
     action_option_options_remove_unused_definitions_status: "Очистити визначення компонентів, які більше не використовуються після роботи"
     action_option_options_reuse_definition: Повторне використання деталей
-    action_option_options_reuse_definition_status: ""
-    action_option_options_reuse_definition_mirrored: ""
-    action_option_options_reuse_definition_mirrored_status: ""
+    action_option_options_reuse_definition_status: Спільне визначення компонентів між панелями однакової форми
+    action_option_options_reuse_definition_mirrored: Встановити дзеркально
+    action_option_options_reuse_definition_mirrored_status: Дзеркальна установка для панелей однакової форми один навпроти одного
     notify:
       validate_a: "Перевірте, щоб перейти до вибору B"
       validate_b: "Перевірте, щоб застосувати операцію"

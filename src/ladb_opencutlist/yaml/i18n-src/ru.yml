@@ -2426,14 +2426,14 @@ tool:
     action_toggle_move_copy_status: Переключение копировать/переместить
     action_change_move_anchor_status: Изменить точку привязки
     error:
-      invalid_divider_seed: Этот тип детали не поддерживает создание разделителя
+      invalid_divider_seed: Этот тип детали не поддерживает создание перегородки
       invalid_divider_container: "Эта деталь не входит в состав группы, образующей замкнутый контур"
       invalid_divider_cavity: "С этой стороны нет полости для перегородки"
       no_divider_cavity: В этой группе или компоненте не обнаружено полости для перегородок
-      divider_number_overflow: "Не удалось разместить {{ number }} разделителей в этой полости"
+      divider_number_overflow: "Не удалось разместить {{ number }} перегородок в этой полости"
     success:
       part_created: "Создан новый компонент: : {{ name }}"
-      part_created_plural: "{{ count }} новых создано деталей: {{ name }}"
+      part_created_plural: "создано {{ count }} новых деталей: {{ name }}"
       part_reused: "Новый экземпляр существующей детали: {{ name }}"
       part_reused_plural: "Создано {{ count }} новых экземпляров существующей детали: {{ name }}"
   smart_handle:
