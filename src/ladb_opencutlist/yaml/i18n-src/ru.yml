@@ -2388,9 +2388,9 @@ tool:
     action_option_group_measure_type: Отсчет
     action_option_group_options: Опции
     action_option_offset_shape_offset: Смещение
-    action_option_offset_shape_offset_status: Задает смещение линии контура проектируемой фигуры
+    action_option_offset_shape_offset_status: Задать смещение линии контура проектируемой фигуры
     action_option_segments_segment_count: Количество сегментов
-    action_option_segments_segment_count_status: Задает количества сегментов в проектируемой окружности
+    action_option_segments_segment_count_status: Задать количество сегментов в проектируемой окружности
     action_option_thickness_thickness: Толщина
     action_option_thickness_thickness_status: Ввод толщины перегородки
     action_option_measure_type_inside_status: Размер без учета толщины перегородки
@@ -2502,12 +2502,12 @@ tool:
     action_option_group_thickness: Толщина
     action_option_group_stretch_measure_type: Отсчет
     action_option_group_axes: Оси
-    action_option_group_paneling_joint_type: Стыковка
+    action_option_group_paneling_joint_type: Тип стыка
     action_option_group_paneling_direction: Направление
     action_option_group_csg_operation: Операция
     action_option_group_options: Опции
     action_option_thickness_thickness: Толщина
-    action_option_thickness_thickness_status: Настройка толщины панелей
+    action_option_thickness_thickness_status: Ввод толщины окантовки
     action_option_stretch_measure_type_outside_status: Изменяемая длина
     action_option_stretch_measure_type_offset_status: Дельта размера
     action_option_axes_active_status: Перемещение по активным осям
@@ -2515,8 +2515,8 @@ tool:
     action_option_axes_entity_status: Перемещение по осям детали
     action_option_paneling_joint_type_flat_status: Встык
     action_option_paneling_joint_type_miter_status: Заусовка
-    action_option_paneling_direction_inward_status: Внутрь угла
-    action_option_paneling_direction_outward_status: Снаружи угла
+    action_option_paneling_direction_inward_status: Внутри
+    action_option_paneling_direction_outward_status: Снаружи
     action_option_options_centered_status: Симметричная растяжка элемента относительно собственного центра
     action_option_options_make_unique_status: Сделать уникальными полученные детали
     action_option_options_keep_a: Оставить деталь А
