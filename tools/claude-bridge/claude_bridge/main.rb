@@ -205,8 +205,9 @@ module Ladb
       cmd = UI::Command.new('Claude Bridge') { toggle }
       cmd.tooltip = 'Claude Bridge'
       cmd.status_bar_text = "Start/stop the Claude Bridge eval server on http://127.0.0.1:#{DEFAULT_PORT}"
-      cmd.small_icon = File.join(icons_dir, 'claude_bridge_24.png')
-      cmd.large_icon = File.join(icons_dir, 'claude_bridge_48.png')
+      icon = File.join(icons_dir, 'claude_bridge.svg')
+      cmd.small_icon = icon
+      cmd.large_icon = icon
       cmd.set_validation_proc { running? ? MF_CHECKED : MF_UNCHECKED }
 
       toolbar = UI::Toolbar.new('Claude Bridge')
