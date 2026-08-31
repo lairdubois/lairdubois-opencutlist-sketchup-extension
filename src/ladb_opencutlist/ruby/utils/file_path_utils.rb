@@ -6,35 +6,60 @@ module Ladb::OpenCutList
     FORBIDDEN_CHARS_STRICT = /[<>:"\/\\|?*\x00-\x1F]/
     # Forbidden characters for a full path — excludes / to preserve path separators
     FORBIDDEN_CHARS = /[<>:"\\|?*\x00-\x1F]/
-    # Leading and trailing dots
-    LEADING_TRAILING_DOTS = /^\.+|\.+$/
+    # Trailing dots — leading dots are kept, they are part of the name
+    TRAILING_DOTS = /\.+\z/
     # Windows reserved names
     WINDOWS_RESERVED = /\A(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])\z/i
     # Maximum length for a file or folder name
     MAX_LENGTH = 255
+    # File extension of a single segment — the separators are NOT considered as
+    # such here, they are legit characters of the name (see .sanitize_file_name)
+    SEGMENT_EXTNAME = /\A(.+)(\.[^.\/\\]+)\z/
+
+    # Visually similar (and allowed) Unicode substitutes for forbidden characters.
+    # They keep the name readable when the forbidden character carries a meaning
+    # (typically a "/" used as a separator inside a part name).
+    SIMILAR_CHARS = {
+      '/'  => "\u2215",   # DIVISION SLASH
+      '\\' => "\u29F5",   # REVERSE SOLIDUS OPERATOR
+      ':'  => "\u02D0",   # MODIFIER LETTER TRIANGULAR COLON
+      '*'  => "\u2217",   # ASTERISK OPERATOR
+      '?'  => "\uFF1F",   # FULLWIDTH QUESTION MARK
+      '"'  => "\u201D",   # RIGHT DOUBLE QUOTATION MARK
+      '<'  => "\u2039",   # SINGLE LEFT-POINTING ANGLE QUOTATION MARK
+      '>'  => "\u203A",   # SINGLE RIGHT-POINTING ANGLE QUOTATION MARK
+      '|'  => "\u2223"    # DIVIDES
+    }
 
     # Sanitizes a folder name by removing or replacing forbidden characters
     def self.sanitize_folder_name(name, replacement: "_")
       _sanitize_segment(name, replacement: replacement)
     end
 
-    # Sanitizes a file name while preserving its extension
+    # Sanitizes a file name while preserving its extension.
+    # The given name is considered as a *single* segment : a "/" (or a "\") is
+    # part of the name and is replaced by a similar character, it does not split
+    # the name (File.basename("C4.Ti.Face/1.dxf") would return "1.dxf").
     def self.sanitize_file_name(name, replacement: "_")
       return nil unless name.is_a?(String)
 
-      ext = File.extname(name)
-      base = File.basename(name, ext)
+      # Split base name and extension without File.extname / File.basename which
+      # would truncate the name at the last path separator
+      if (m = SEGMENT_EXTNAME.match(name))
+        base = m[1]
+        ext = m[2]
+      else
+        base = name
+        ext = ""
+      end
 
       # Sanitize base name
       base = _sanitize_segment(base, replacement: replacement)
 
       # Sanitize extension (remove the leading dot, sanitize, then re-add if not empty)
-      if ext && !ext.empty?
-        ext_without_dot = ext[1..-1] # Remove leading dot
-        ext_sanitized = ext_without_dot.gsub(FORBIDDEN_CHARS_STRICT, replacement).strip
+      unless ext.empty?
+        ext_sanitized = _replace_forbidden_chars(ext[1..-1], replacement).strip
         ext = ext_sanitized.empty? ? "" : ".#{ext_sanitized}"
-      else
-        ext = ""
       end
 
       # Reassemble
@@ -97,17 +122,23 @@ module Ladb::OpenCutList
     # Shared private helper that sanitizes a single path segment (folder or file base name)
     def self._sanitize_segment(name, replacement: "_")
       # Replace forbidden characters
-      name = name.gsub(FORBIDDEN_CHARS_STRICT, replacement)
-      # Remove leading and trailing dots
-      name = name.gsub(LEADING_TRAILING_DOTS, "")
+      name = _replace_forbidden_chars(name, replacement)
       # Remove leading and trailing whitespace
       name = name.strip
+      # Remove trailing dots (and the whitespace they could uncover)
+      name = name.gsub(TRAILING_DOTS, "").strip
       # Wrap Windows reserved names to avoid conflicts
       name = "_#{name}_" if !!(name =~ WINDOWS_RESERVED)
       # Fallback if name is empty after sanitization
       name = "unnamed" if name.empty?
       # Truncate to maximum allowed length
       name[0..MAX_LENGTH - 1]
+    end
+
+    # Replaces forbidden characters by a visually similar one when it exists,
+    # by the given replacement otherwise
+    def self._replace_forbidden_chars(name, replacement)
+      name.gsub(FORBIDDEN_CHARS_STRICT) { |char| SIMILAR_CHARS.fetch(char, replacement) }
     end
 
   end
