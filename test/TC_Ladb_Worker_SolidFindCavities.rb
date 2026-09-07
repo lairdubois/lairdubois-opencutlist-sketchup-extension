@@ -3,11 +3,12 @@ require 'testup/testcase'
 require_relative '../src/ladb_opencutlist/ruby/worker/common/common_solid_find_cavities_worker'
 
 # The hull envelope's RESTORE path, which puts a cavity's caps back where the
-# panels really end after ENVELOPE_HULL_EROSION pulled them in.
+# panels really end after ENVELOPE_HULL_EROSION pulled them in, and the way a
+# DETACHED part is told from one the enclosure needs.
 #
-# Everything here is plain array arithmetic - no entity, no native lib - so the
-# worker is built on an empty panel list and the methods are called directly.
-# Lengths are in inches, SketchUp's internal unit, like the meshes they read.
+# Everything here is plain array arithmetic - no entity - so the worker is
+# built on an empty panel list and the methods are called directly. Lengths are
+# in inches, SketchUp's internal unit, like the meshes they read.
 class TC_Ladb_Worker_SolidFindCavities < TestUp::TestCase
 
   DELTA = 1e-9
@@ -184,9 +185,191 @@ class TC_Ladb_Worker_SolidFindCavities < TestUp::TestCase
 
   end
 
+  # -- Panel components --
+
+  # A door standing in FRONT of its case touches nothing : left in, it inflates
+  # the hull over the gap and the cavity comes out flush with the door's back
+  # rather than with the case's own front.
+  def test_panel_components_splits_a_detached_door_from_its_case
+
+    case_u = _case_mesh_defs
+    door = _box_mesh_def(2.0, -3.0, 2.0, 8.0, -2.0, 8.0)
+
+    assert_equal([ [ 0, 1, 2 ], [ 3 ] ], _components(case_u + [ door ]))
+
+  end
+
+  # Two boxes side by side, a world apart : two components.
+  def test_panel_components_splits_two_disjoint_boxes
+
+    assert_equal([ [ 0 ], [ 1 ] ], _components([
+      _box_mesh_def(0.0, 0.0, 0.0, 10.0, 10.0, 1.0),
+      _box_mesh_def(0.0, 20.0, 0.0, 10.0, 30.0, 1.0)
+    ]))
+
+  end
+
+  # Panels abutting face to face are ONE part of the assembly.
+  def test_panel_components_keeps_abutting_panels_together
+
+    assert_equal([ [ 0, 1 ] ], _components([
+      _box_mesh_def(0.0, 0.0, 0.0, 10.0, 10.0, 1.0),
+      _box_mesh_def(0.0, 0.0, 1.0, 10.0, 10.0, 2.0)
+    ]))
+
+  end
+
+  # A shelf on pins is a component of its own, which is what it geometrically
+  # is - it is the hull test and the removal test that keep it, not this one.
+  def test_panel_components_sees_a_floating_shelf_as_its_own
+
+    floating = _box_mesh_def(2.0, 2.0, 4.0, 8.0, 8.0, 5.0)
+
+    assert_equal([ [ 0, 1, 2 ], [ 3 ] ], _components(_case_mesh_defs + [ floating ]))
+
+  end
+
+  # Nothing to tell apart.
+  def test_panel_components_returns_a_lone_panel_untouched
+
+    assert_equal([ [ 0 ] ], _components([ _box_mesh_def(0.0, 0.0, 0.0, 10.0, 10.0, 1.0) ]))
+
+  end
+
+  # A case whose joints are modelled a half millimetre apart is welded nowhere
+  # and is one case all the same : taking any of its walls away would leave a
+  # cavity the hull closes back a hair smaller, exactly as a laid-on part does,
+  # so the walls must never become candidates in the first place.
+  def test_panel_components_absorbs_a_sloppy_joint
+
+    sloppy = 0.5.mm.to_f  # over SolidMeshDef::TOLERANCE, under JOINT_MAX_GAP
+
+    assert_equal([ [ 0, 1 ] ], _components([
+      _box_mesh_def(0.0, 0.0, 0.0, 10.0, 10.0, 1.0),
+      _box_mesh_def(0.0, 0.0, 1.0 + sloppy, 10.0, 10.0, 2.0)
+    ]))
+
+    apart = Ladb::OpenCutList::CommonSolidFindCavitiesWorker::JOINT_MAX_GAP * 2.0
+
+    assert_equal([ [ 0 ], [ 1 ] ], _components([
+      _box_mesh_def(0.0, 0.0, 0.0, 10.0, 10.0, 1.0),
+      _box_mesh_def(0.0, 0.0, 1.0 + apart, 10.0, 10.0, 2.0)
+    ]))
+
+  end
+
+  # -- Interior components --
+
+  # The pre-test that keeps a shelf on pins, a drawer box, a partition with a
+  # whisker of play from ever being tried : holding no vertex of the envelope,
+  # it cannot shrink it. The margin is what tells "inside the hull" from "on
+  # it" - a panel of the case itself must NOT read as interior.
+  def test_points_within_planes_tells_an_interior_component_from_the_hull
+
+    hull_planes = @worker.send(:_hull_planes, _box_mesh_def(0.0, 0.0, 0.0, 10.0, 10.0, 10.0).vertices)
+    interior = _box_mesh_def(2.0, 2.0, 4.0, 8.0, 8.0, 5.0).vertices
+    on_the_hull = _box_mesh_def(0.0, 0.0, 0.0, 10.0, 10.0, 1.0).vertices
+    outside = _box_mesh_def(2.0, -3.0, 2.0, 8.0, -2.0, 8.0).vertices
+
+    assert_equal(true, @worker.send(:_points_within_planes?, interior, hull_planes, -TOLERANCE))
+    assert_equal(false, @worker.send(:_points_within_planes?, on_the_hull, hull_planes, -TOLERANCE))
+    assert_equal(false, @worker.send(:_points_within_planes?, outside, hull_planes, -TOLERANCE))
+
+  end
+
+  # -- Cavities kept --
+
+  # Taking away a part that was merely inflating the envelope can do nothing
+  # but SHRINK the cavity it was inflating - which is what earns its removal.
+  def test_cavities_kept_accepts_a_cavity_that_only_shrank
+
+    reference = [ _box_fragment(0.0, 0.0, 0.0, 10.0, 10.0, 10.0) ]
+    shrunk = [ _box_fragment(0.0, 0.0, 0.0, 10.0, 10.0, 9.0) ]
+
+    assert_equal(true, @worker.send(:_cavities_kept?, reference, shrunk))
+
+  end
+
+  # Taking away the shelf a zone rested on LOSES that zone.
+  def test_cavities_kept_rejects_a_lost_cavity
+
+    reference = [ _box_fragment(0.0, 0.0, 0.0, 10.0, 10.0, 10.0) ]
+    elsewhere = [ _box_fragment(20.0, 20.0, 20.0, 30.0, 30.0, 30.0) ]
+
+    assert_equal(false, @worker.send(:_cavities_kept?, reference, elsewhere))
+
+  end
+
+  # Taking away what SEPARATED two compartments merges them : the counterpart
+  # is there, holding the inner point, but it is twice the cavity it stands
+  # for - which no shrinking envelope could ever produce.
+  def test_cavities_kept_rejects_two_compartments_merged_into_one
+
+    reference = [
+      _box_fragment(0.0, 0.0, 0.0, 10.0, 10.0, 10.0),
+      _box_fragment(0.0, 0.0, 12.0, 10.0, 10.0, 22.0)
+    ]
+    merged = [ _box_fragment(0.0, 0.0, 0.0, 10.0, 10.0, 22.0) ]
+
+    assert_equal(false, @worker.send(:_cavities_kept?, reference, merged))
+
+  end
+
   # -----
 
-  # A cavity fragment made of the given [ flat triangle coordinates, face id ]
+  # #_panel_components on the given mesh defs.
+  def _components(mesh_defs)
+    @worker.send(:_panel_components, mesh_defs.each_with_index.map { |mesh_def, index| [ mesh_def, index ] })
+  end
+
+  # A U shaped case - a bottom carrying two sides - i.e. ONE part of the
+  # assembly, whose hull encloses the space between the sides.
+  def _case_mesh_defs
+    [
+      _box_mesh_def(0.0, 0.0, 0.0, 10.0, 10.0, 1.0),   # bottom
+      _box_mesh_def(0.0, 0.0, 1.0, 1.0, 10.0, 10.0),   # left side
+      _box_mesh_def(9.0, 0.0, 1.0, 10.0, 10.0, 10.0)   # right side
+    ]
+  end
+
+  # A SolidMeshDef for an axis aligned box, filled in place : the methods above
+  # only ever read #vertices of one, so no entity is needed to make it.
+  def _box_mesh_def(x0, y0, z0, x1, y1, z1)
+    mesh_def = Ladb::OpenCutList::SolidMeshDef.new
+    mesh_def.vertices.concat(_box_vertices(x0, y0, z0, x1, y1, z1))
+    mesh_def.face_indices.concat(BOX_FACE_INDICES)
+    6.times do |face|
+      mesh_def.face_ids.concat([ face, face ])
+      mesh_def.face_info_defs << Ladb::OpenCutList::SolidFaceInfoDef.new(nil)
+    end
+    mesh_def
+  end
+
+  # A cavity fragment shaped like an axis aligned box - #volume, #centroid and
+  # #contains_point? are all #_cavities_kept? reads of one.
+  def _box_fragment(x0, y0, z0, x1, y1, z1)
+    Ladb::OpenCutList::SolidCavityFragmentDef.new(_box_vertices(x0, y0, z0, x1, y1, z1), BOX_FACE_INDICES.dup, [], [])
+  end
+
+  def _box_vertices(x0, y0, z0, x1, y1, z1)
+    [
+      x0, y0, z0,  x1, y0, z0,  x1, y1, z0,  x0, y1, z0,
+      x0, y0, z1,  x1, y0, z1,  x1, y1, z1,  x0, y1, z1
+    ]
+  end
+
+  BOX_FACE_INDICES = [
+    0, 2, 1,  0, 3, 2,
+    4, 5, 6,  4, 6, 7,
+    0, 1, 5,  0, 5, 4,
+    2, 3, 7,  2, 7, 6,
+    1, 2, 6,  1, 6, 5,
+    3, 0, 4,  3, 4, 7
+  ].freeze
+
+  # -----
+
+  # A cavity fragment made of the given   # A cavity fragment made of the given [ flat triangle coordinates, face id ]
   # triangles - all #_internal_panel_indices ever reads of one.
   def _fragment(triangles)
     vertices = []

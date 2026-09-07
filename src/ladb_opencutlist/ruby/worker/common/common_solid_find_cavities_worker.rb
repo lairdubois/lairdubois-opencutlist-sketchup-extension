@@ -55,6 +55,57 @@ module Ladb::OpenCutList
   #   opening connects the would-be cavity to the envelope boundary, and the
   #   single body carrying envelope faces is the outside world, dropped.
   #
+  # DETACHED PARTS : the panels given are not necessarily ONE enclosure. A case
+  # modelled with its DOOR standing in front of it, a back laid on with a gap,
+  # a façade — anything that touches nothing else inflates the hull over space
+  # the enclosure never encloses, and the envelope then joins that space to the
+  # compartment through the very gap that separates them : a cavity flush with
+  # the door's back rather than with the case's own front. No filter below can
+  # catch it — the two make up ONE fragment, walled and opening exactly like
+  # the compartment it should have been, merely too big.
+  #
+  # Which panels make up one part of the assembly is read off their BOUNDING
+  # BOXES, taken as belonging together when they come within JOINT_MAX_GAP of
+  # each other. A boolean union would say EXACTLY what is welded to what — and
+  # it is what the panels go through anyway — but exactness is the wrong answer
+  # to this question : a case whose joints are modelled half a millimetre apart
+  # is welded nowhere and is one case all the same, and any of its walls, taken
+  # away, leaves a cavity the hull closes back a hair SMALLER — the caps
+  # collapsing flush onto the panels left — which is precisely the signature of
+  # a part merely laid on. What tells a part from an assembly is therefore a
+  # MODELLING distance, not a geometric one. Boxes over-report proximity (two
+  # L shaped panels interlocking without touching share one), and that is the
+  # safe direction : a part not told apart is a part left where it was.
+  # See #_panel_components.
+  #
+  # Standing apart is NOT, however, enough to be foreign to the enclosure : a
+  # pair of bare shelves facing each other encloses the space between them and
+  # comes nowhere near touching. A component is therefore only a CANDIDATE, and
+  # what settles it is what its REMOVAL does to the cavities. The whole assembly is the reference — an ordinary enclosure
+  # never leaves it — and a component is dropped only when the assembly without
+  # it keeps every cavity, a counterpart holding the same inner point, and
+  # grows none of them : removing a part that structures the space either LOSES
+  # a compartment (the shelf a zone rested on) or MERGES two of them into a
+  # bigger one (a divider, a shelf between two others), while removing a part
+  # merely laid on can do nothing but shrink the envelope it was inflating.
+  # See #_essential_mesh_defs / #_cavities_kept?.
+  #
+  # Reading each candidate against the WHOLE is what keeps the answer stable as
+  # the drawing goes on : a divider added between two floating shelves welds
+  # itself to them and leaves the others alone in their own components, and it
+  # is only because those are still judged against the whole — never against
+  # what the split leaves standing — that the zones between them survive it.
+  #
+  # A component lying strictly INSIDE the hull of the whole is not even tried :
+  # holding no vertex of the envelope, it cannot shrink it, and its removal
+  # could only enlarge what is left. That is the shelf on pins, the drawer box,
+  # the partition modelled with a whisker of play — the everyday detached part,
+  # and the one that costs nothing to keep.
+  #
+  # Finding NOTHING at all is the one case where the reference has nothing to
+  # protect : the components are then run on their own, and whatever they
+  # enclose beats the empty answer the whole assembly gave.
+  #
   # MACHININGS : a panel drilled by glued cuts-opening components (a domino
   # mortise, a dowel hole) has its host face tessellation PUNCHED by SketchUp,
   # so its shell only closes back with the machining geometry — which the
@@ -433,6 +484,24 @@ module Ladb::OpenCutList
     # which reads the openings off the DOMINANT cap planes.
     REDUCTION_BEVEL_CAP_RATIO = 0.05
 
+    # How far apart, in inches, two panels may be drawn and still be read as
+    # belonging to the same part of the assembly — see #_panel_components. It
+    # stands for the sloppiness of hand modelling, not for any tolerance of the
+    # geometry : SketchUp joints commonly miss by a few tenths of a millimetre
+    # (a whole order of magnitude above SolidMeshDef::TOLERANCE, which is what
+    # the MESH may be off by), while a part actually laid on another stands
+    # millimetres away — a door's clearance, a back's rebate. About a
+    # millimetre sits between the two with room to spare on either side.
+    JOINT_MAX_GAP = 0.04
+
+    # How much bigger than the cavity it stands for a fragment may come out
+    # when a DETACHED component is taken away, before the two are read as a
+    # different cavity — see #_cavities_kept?. Removing a component that
+    # SEPARATED two compartments merges them, which doubles a volume rather
+    # than nudging it, so the margin only has to clear the hair the envelope
+    # moves by when the hull it is eroded from loses a few points.
+    KEPT_CAVITY_MAX_VOLUME_RATIO = 1.01
+
     def initialize(panel_drawing_defs,
 
                    envelope: ENVELOPE_HULL,
@@ -490,32 +559,51 @@ module Ladb::OpenCutList
         return result_def
       end
 
-      fragment_defs, panel_id_ranges, dominant_normals = _find_cavities(indexed_mesh_defs, result_def, validate: @validate, overall: false)
-      result_def.fragment_defs.concat(fragment_defs)
+      # The assembly AS A WHOLE is the reference : an ordinary enclosure never
+      # leaves it, and a detached part has to earn its removal against it —
+      # see the class doc, DETACHED PARTS.
+      compartment_fragment_defs, overall_fragment_defs = _run_clusters([ indexed_mesh_defs ], result_def, validate: @validate, overall: @overall_cavity)
       return result_def unless result_def.success?
 
-      # OVERALL CAVITY : a second pass, over the CONTOUR panels only — see the
-      # class doc. Appended AFTER the compartments, so that a caller reading
-      # the list in order (or picking the first fragment holding a point) still
-      # meets them first.
-      if @overall_cavity
-        internal_panel_indices = _internal_panel_indices(fragment_defs, panel_id_ranges, dominant_normals)
-        if internal_panel_indices.empty?
-          # Nothing partitions this enclosure : its compartments ARE its
-          # overall cavity, and a second pass would recompute them identically.
-          # Marked COPIES rather than the fragments themselves, so that a
-          # caller may sort the two apart by #overall? in every case alike.
-          result_def.fragment_defs.concat(fragment_defs.map { |fragment_def| _as_overall(fragment_def) })
-        else
-          contour_mesh_defs = indexed_mesh_defs.reject { |_mesh_def, panel_index| internal_panel_indices.include?(panel_index) }
-          unless contour_mesh_defs.empty?
-            # validate: false — these very panels went through the first pass's
-            # validation, only a native exception is left to report
-            overall_fragment_defs, _panel_id_ranges, _dominant_normals = _find_cavities(contour_mesh_defs, result_def, validate: false, overall: true)
-            result_def.fragment_defs.concat(overall_fragment_defs)
+      components = _panel_components(indexed_mesh_defs)
+      if components.length > 1
+
+        if compartment_fragment_defs.empty?
+
+          # Nothing to protect : whatever the components enclose on their own
+          # beats the empty answer the whole assembly gave. Run aside, so that
+          # an attempt that fails leaves the reported result untouched.
+          split_result_def = SolidBooleanResultDef.new
+          split_fragment_defs, split_overall_fragment_defs = _run_clusters(
+            components.map { |positions| positions.map { |position| indexed_mesh_defs[position] } },
+            split_result_def, validate: false, overall: @overall_cavity
+          )
+          if split_result_def.success? && !split_fragment_defs.empty?
+            compartment_fragment_defs = split_fragment_defs
+            overall_fragment_defs = split_overall_fragment_defs
           end
+
+        else
+
+          essential_mesh_defs = _essential_mesh_defs(indexed_mesh_defs, components, compartment_fragment_defs)
+          unless essential_mesh_defs.equal?(indexed_mesh_defs)
+            # Read once more as a whole, and kept only if it still holds every
+            # cavity the reference had : what was true of each removal apart
+            # has to be true of them together.
+            kept_result_def = SolidBooleanResultDef.new
+            kept_fragment_defs, kept_overall_fragment_defs = _run_clusters([ essential_mesh_defs ], kept_result_def, validate: false, overall: @overall_cavity)
+            if kept_result_def.success? && _cavities_kept?(compartment_fragment_defs, kept_fragment_defs)
+              compartment_fragment_defs = kept_fragment_defs
+              overall_fragment_defs = kept_overall_fragment_defs
+            end
+          end
+
         end
+
       end
+
+      result_def.fragment_defs.concat(compartment_fragment_defs)
+      result_def.fragment_defs.concat(overall_fragment_defs)
 
       result_def
     end
@@ -523,6 +611,219 @@ module Ladb::OpenCutList
     # -----
 
     private
+
+    # ONE detection over each of the given clusters — a cluster being a
+    # [ SolidMeshDef, index in @panel_drawing_defs ] list, see #_find_cavities.
+    #
+    # Returns [ compartments, overall cavities ] rather than filing them in
+    # +result_def+ : the caller weighs several of these against each other and
+    # only one of them ends up reported (see the class doc, DETACHED PARTS), so
+    # a run it disowns must leave nothing of itself behind — errors included,
+    # which is what the throwaway +result_def+ a trial run is given is for.
+    def _run_clusters(clusters, result_def, validate:, overall:)
+      compartment_fragment_defs = []
+      overall_fragment_defs = []
+
+      clusters.each do |cluster_mesh_defs|
+
+        fragment_defs, panel_id_ranges, dominant_normals = _find_cavities(cluster_mesh_defs, result_def, validate: validate, overall: false)
+        compartment_fragment_defs.concat(fragment_defs)
+        break unless result_def.success?
+
+        # OVERALL CAVITY : a second pass, over the CONTOUR panels only — see
+        # the class doc. Held apart from the compartments, and appended AFTER
+        # them by #run, so that a caller reading the list in order (or picking
+        # the first fragment holding a point) still meets them first.
+        next unless overall
+
+        internal_panel_indices = _internal_panel_indices(fragment_defs, panel_id_ranges, dominant_normals)
+        if internal_panel_indices.empty?
+          # Nothing partitions this enclosure : its compartments ARE its
+          # overall cavity, and a second pass would recompute them identically.
+          # Marked COPIES rather than the fragments themselves, so that a
+          # caller may sort the two apart by #overall? in every case alike.
+          overall_fragment_defs.concat(fragment_defs.map { |fragment_def| _as_overall(fragment_def) })
+        else
+          contour_mesh_defs = cluster_mesh_defs.reject { |_mesh_def, panel_index| internal_panel_indices.include?(panel_index) }
+          unless contour_mesh_defs.empty?
+            # validate: false — these very panels went through the first pass's
+            # validation, only a native exception is left to report
+            cluster_overall_fragment_defs, _panel_id_ranges, _dominant_normals = _find_cavities(contour_mesh_defs, result_def, validate: false, overall: true)
+            overall_fragment_defs.concat(cluster_overall_fragment_defs)
+          end
+        end
+
+      end
+
+      [ compartment_fragment_defs, overall_fragment_defs ]
+    end
+
+    # The positions (in +indexed_mesh_defs+) of the panels making up one part
+    # of the assembly, one list per part — see the class doc, DETACHED PARTS.
+    # Panels whose bounding boxes come within JOINT_MAX_GAP of each other
+    # belong together, transitively. Each list is in the order of its panels,
+    # and the lists in the order of their first one, so that what is built on
+    # them stays stable.
+    def _panel_components(indexed_mesh_defs)
+      count = indexed_mesh_defs.length
+      return [ (0...count).to_a ] if count < 2
+
+      # Half the gap on each box : two boxes then overlap exactly when the
+      # panels they hold are no farther apart than the whole of it.
+      margin = JOINT_MAX_GAP / 2.0
+      bounds = indexed_mesh_defs.map { |mesh_def, _panel_index|
+        min = [ Float::INFINITY ] * 3
+        max = [ -Float::INFINITY ] * 3
+        mesh_def.vertices.each_slice(3) do |point|
+          3.times do |i|
+            min[i] = point[i] if point[i] < min[i]
+            max[i] = point[i] if point[i] > max[i]
+          end
+        end
+        [ min.map { |v| v - margin }, max.map { |v| v + margin } ]
+      }
+
+      parent = (0...count).to_a
+      fn_find = lambda { |i| parent[i] = fn_find.call(parent[i]) unless parent[i] == i ; parent[i] }
+      fn_union = lambda { |i, j| pi, pj = fn_find.call(i), fn_find.call(j) ; parent[pi] = pj if pi != pj }
+
+      count.times do |i|
+        ((i + 1)...count).each do |j|
+          next if fn_find.call(i) == fn_find.call(j)
+          min_i, max_i = bounds[i]
+          min_j, max_j = bounds[j]
+          next unless (0..2).all? { |axis| min_i[axis] <= max_j[axis] && min_j[axis] <= max_i[axis] }
+          fn_union.call(i, j)
+        end
+      end
+
+      components = {}
+      count.times { |position| (components[fn_find.call(position)] ||= []) << position }
+      components.values
+    end
+
+    # The panels left once the DETACHED components that turn out to structure
+    # nothing are dropped — see the class doc, DETACHED PARTS. Returns
+    # +indexed_mesh_defs+ ITSELF when they all earn their keep, which is the
+    # caller's signal that there is nothing to recompute.
+    #
+    # +reference_fragment_defs+ are the cavities of the whole assembly : each
+    # candidate is weighed against them, never against what an earlier removal
+    # left standing, so that one detached part cannot decide for another.
+    def _essential_mesh_defs(indexed_mesh_defs, components, reference_fragment_defs)
+      hull_planes = _hull_planes(indexed_mesh_defs.inject([]) { |vertices, (mesh_def, _panel_index)| vertices.concat(mesh_def.vertices) })
+      superfluous_positions = []
+
+      components.each do |positions|
+        next if positions.length == indexed_mesh_defs.length
+
+        # Holding no vertex of the envelope, a component strictly INSIDE the
+        # hull cannot shrink it : whatever it is, removing it could only
+        # enlarge what is left, so it is kept without being tried.
+        unless hull_planes.nil?
+          component_vertices = positions.inject([]) { |vertices, position| vertices.concat(indexed_mesh_defs[position].first.vertices) }
+          next if _points_within_planes?(component_vertices, hull_planes, -SolidMeshDef::TOLERANCE)
+        end
+
+        # Removals already granted stay out : two doors on the same case are
+        # each superfluous, and the second must be weighed without the first
+        # inflating the envelope back.
+        dropped_positions = superfluous_positions + positions
+        trial_mesh_defs = indexed_mesh_defs.reject.with_index { |_entry, position| dropped_positions.include?(position) }
+        next if trial_mesh_defs.empty?
+
+        trial_result_def = SolidBooleanResultDef.new
+        trial_fragment_defs, _overall_fragment_defs = _run_clusters([ trial_mesh_defs ], trial_result_def, validate: false, overall: false)
+        next unless trial_result_def.success?
+
+        superfluous_positions = dropped_positions if _cavities_kept?(reference_fragment_defs, trial_fragment_defs)
+      end
+
+      return indexed_mesh_defs if superfluous_positions.empty?
+      indexed_mesh_defs.reject.with_index { |_entry, position| superfluous_positions.include?(position) }
+    end
+
+    # Whether every one of +reference_fragment_defs+ is still there in
+    # +fragment_defs+ — a cavity holding its inner point, and no bigger than it
+    # was. Losing one means the removal took away a wall the compartment needed
+    # ; a bigger one means it took away what SEPARATED two compartments, and
+    # they have merged. Only a part that was merely inflating the envelope
+    # leaves every cavity where it stood — see the class doc, DETACHED PARTS.
+    def _cavities_kept?(reference_fragment_defs, fragment_defs)
+      reference_fragment_defs.each do |reference_fragment_def|
+        point = _inner_point(reference_fragment_def)
+        return false if point.nil?
+        fragment_def = fragment_defs.find { |other| other.contains_point?(point) }
+        return false if fragment_def.nil?
+        return false if fragment_def.volume > reference_fragment_def.volume * KEPT_CAVITY_MAX_VOLUME_RATIO
+      end
+      true
+    end
+
+    # A point WITHIN the given fragment, to recognize it by in another run.
+    # Its centroid when that lies inside — which it does on the ordinary
+    # compartment — else a point stepped inward from the middle of its largest
+    # face, an L shaped cavity having its centroid out in the notch. nil when
+    # neither lands inside, on which the caller keeps the panel rather than
+    # decide on evidence it does not have.
+    def _inner_point(fragment_def)
+      centroid = fragment_def.centroid
+      return centroid if !centroid.nil? && fragment_def.contains_point?(centroid)
+
+      vertices = fragment_def.vertices
+      step = SolidMeshDef::TOLERANCE * 10
+      point = nil
+      area2 = 0.0
+      fragment_def.face_indices.each_slice(3) do |a, b, c|
+        triangle_normal, triangle_area2 = _triangle_normal(vertices, a, b, c)
+        next if triangle_normal.nil? || triangle_area2 <= area2
+        cx = (vertices[a * 3] + vertices[b * 3] + vertices[c * 3]) / 3.0
+        cy = (vertices[a * 3 + 1] + vertices[b * 3 + 1] + vertices[c * 3 + 1]) / 3.0
+        cz = (vertices[a * 3 + 2] + vertices[b * 3 + 2] + vertices[c * 3 + 2]) / 3.0
+        [ -1.0, 1.0 ].each do |way|
+          candidate = Geom::Point3d.new(cx + way * step * triangle_normal[0], cy + way * step * triangle_normal[1], cz + way * step * triangle_normal[2])
+          next unless fragment_def.contains_point?(candidate)
+          point = candidate
+          area2 = triangle_area2
+          break
+        end
+      end
+      point
+    end
+
+    # Outward [ nx, ny, nz, d ] planes of the convex hull of the given flat
+    # vertex array, nil when it is degenerate (fewer than 4 points, coplanar) —
+    # a set of points no other can be said to lie inside of.
+    def _hull_planes(vertices)
+      points = []
+      vertices.each_slice(3) { |x, y, z| points << Geom::Point3d.new(x, y, z) }
+      triangles = Geometrix::HullFinder.find_convex_hull_triangle_indices(points)
+      return nil if triangles.nil?
+
+      planes = []
+      triangles.each do |a, b, c|
+        normal, _length = _triangle_normal(vertices, a, b, c)
+        next if normal.nil?
+        planes << [
+          normal[0], normal[1], normal[2],
+          normal[0] * vertices[a * 3] + normal[1] * vertices[a * 3 + 1] + normal[2] * vertices[a * 3 + 2]
+        ]
+      end
+      planes.empty? ? nil : planes
+    end
+
+    # Whether every point of the given flat vertex array lies on the inner side
+    # of every one of the given outward planes. +margin+ is how far a point may
+    # sit PAST a plane and still count : the mesh tolerance to read a point as
+    # being on the hull, its opposite to ask for a point strictly within it.
+    def _points_within_planes?(vertices, planes, margin = SolidMeshDef::TOLERANCE)
+      vertices.each_slice(3) do |x, y, z|
+        planes.each do |nx, ny, nz, d|
+          return false if nx * x + ny * y + nz * z - d > margin
+        end
+      end
+      true
+    end
 
     # ONE cavity detection pass over the given panels : the face info registry,
     # the envelope, the hermetic and open subtractions and, in hull mode, the
