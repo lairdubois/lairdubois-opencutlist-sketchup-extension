@@ -244,8 +244,9 @@ core:
       cutlist_estimate_options: $t(tab.cutlist.label) / $t(tab.cutlist.estimate.title)
       cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
       cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
-      importer_import_options: $t(tab.importer.label) / $t(default.import)
-      importer_load_options: $t(tab.importer.label) / $t(default.open)
+      importers_csv_import_options: $t(tab.importers.csv.label) / $t(default.import)
+      importers_csv_load_options: $t(tab.importers.csv.label) / $t(default.open)
+      importers_bxf2_import_options: $t(tab.importers.bxf2.label) / $t(default.import)
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       outliner_options: $t(tab.outliner.label) / $t(default.options)
@@ -271,6 +272,7 @@ core:
       help: Tapez **@** pour ouvrir la liste des variables de données.
     textinput_file:
       browse: Parcourir
+      browse_library: Parcourir et copier dans la bibliothèque
     textinput_size:
       quantity: Qté
     three_viewer:
@@ -2242,11 +2244,15 @@ tab:
       export_global_presets_help: |
         Cette fonctionnalité vous permet d'exporter vos préréglages vers un fichier **.json**.
         Sélectionnez les préréglages que vous souhaitez y exporter.
+        Si les préréglages sélectionnés font référence à des fichiers **.skp** ou **.skm**, ceux-ci sont inclus dans une archive **.oclp** afin que l'export soit partageable tel quel.
       export_global_presets_success: Les préréglages ont été exportés avec succès.
+      export_global_presets_success_with_assets: "Les préréglages ont été exportés avec succès, ainsi que {{count}} fichier(s) associé(s)."
       import_global_presets: Importer des préréglages
       import_global_presets_help: |
-        Sélectionnez les préréglages présents dans le fichier **.json** que vous souhaitez importer.
+        Sélectionnez les préréglages présents dans le fichier **.json** ou **.oclp** que vous souhaitez importer.
         Attention, si un préréglage avec un nom identique existe déjà, il sera remplacé par la version importée.
+        Les fichiers contenus dans une archive **.oclp** sont copiés dans votre bibliothèque, à l'emplacement qu'ils occupaient dans celle de l'expéditeur.
+      open_library_dir: Ouvrir le dossier de la bibliothèque
       import_global_presets_success: |
         Les préréglages *OpenCutList* ont été importés avec succès.
         Afin de prendre en compte les changements, vous devez **fermer** et **réouvrir** la fenêtre OpenCutList.
@@ -2271,6 +2277,8 @@ tab:
       error:
         no_preset_to_export: Aucun préréglage à exporter.
         no_preset_to_import: Aucun préréglage à importer.
+        failed_to_export: "Impossible d'exporter les préréglages : **{{ error }}**."
+        failed_to_open_library_dir: "Impossible d'ouvrir le dossier de la bibliothèque : **{{ error }}**."
         failed_to_import: "Impossible d'importer les préréglages : **{{ error }}**."
         failed_to_import_invalid_hexdigest: Ce fichier a été modifié. Il ne peut pas être importé.
         failed_to_import_bad_file_format: Format de fichier invalide.

@@ -63,12 +63,12 @@
                 $inputEndOffset.val(options.end_offset);
                 $inputMinSpacing.val(options.min_spacing);
                 $inputMaxSpacing.val(options.max_spacing);
-                $inputHardwareA.val(options.hardware_a);
-                $inputHardwareB.val(options.hardware_b);
-                $inputMachiningA.val(options.machining_a);
-                $inputMachiningB.val(options.machining_b);
-                $inputHardwareMaterialName.val(options.hardware_material_name);
-                $inputMachiningMaterialName.val(options.machining_material_name);
+                $inputHardwareA.ladbTextinputFile('val', options.hardware_a ? options.hardware_a : '');
+                $inputHardwareB.ladbTextinputFile('val', options.hardware_b ? options.hardware_b : '');
+                $inputMachiningA.ladbTextinputFile('val', options.machining_a ? options.machining_a : '');
+                $inputMachiningB.ladbTextinputFile('val', options.machining_b ? options.machining_b : '');
+                $inputHardwareMaterialName.ladbTextinputFile('val', options.hardware_material_name ? options.hardware_material_name : '');
+                $inputMachiningMaterialName.ladbTextinputFile('val', options.machining_material_name ? options.machining_material_name : '');
                 $inputHardwareLayerName.val(options.hardware_layer_name);
                 $inputMachiningLayerName.val(options.machining_layer_name);
             };
@@ -84,12 +84,12 @@
             $inputEndOffset.ladbTextinputDimension();
             $inputMinSpacing.ladbTextinputDimension();
             $inputMaxSpacing.ladbTextinputDimension();
-            $inputHardwareA.ladbTextinputFile();
-            $inputHardwareB.ladbTextinputFile();
-            $inputMachiningA.ladbTextinputFile();
-            $inputMachiningB.ladbTextinputFile();
-            $inputHardwareMaterialName.ladbTextinputFile();
-            $inputMachiningMaterialName.ladbTextinputFile();
+            $inputHardwareA.ladbTextinputFile({ library: true });
+            $inputHardwareB.ladbTextinputFile({ library: true });
+            $inputMachiningA.ladbTextinputFile({ library: true });
+            $inputMachiningB.ladbTextinputFile({ library: true });
+            $inputHardwareMaterialName.ladbTextinputFile({ library: true });
+            $inputMachiningMaterialName.ladbTextinputFile({ library: true });
             $inputHardwareLayerName.ladbTextinputText();
             $inputMachiningLayerName.ladbTextinputText();
 

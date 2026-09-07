@@ -480,6 +480,8 @@ module Ladb::OpenCutList
 
         fn_get_definition = lambda do |ref|
           return nil if !ref.is_a?(String) || ref.strip.empty?
+          ref = PLUGIN.resolve_library_ref(ref)   # '$LIB/…' refs point to a file of the asset library
+          return nil if ref.nil?
           if (extname = File.extname(ref)).downcase == '.skp'
             name = File.basename(ref, extname)
             definition = model.definitions[name]  # Try to get definition from DefinitionList first
@@ -538,6 +540,8 @@ module Ladb::OpenCutList
 
         fn_get_material = lambda do |ref, default_color = nil, default_type = nil|
           return nil if !ref.is_a?(String) || ref.strip.empty?
+          ref = PLUGIN.resolve_library_ref(ref)   # '$LIB/…' refs point to a file of the asset library
+          return nil if ref.nil?
           if File.extname(ref).downcase == '.skm'
             material = model.materials.load(ref)
           else

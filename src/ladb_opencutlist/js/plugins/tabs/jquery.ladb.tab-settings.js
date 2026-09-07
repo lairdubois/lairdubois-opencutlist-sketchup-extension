@@ -121,8 +121,14 @@
 
                     rubyCallCommand('settings_export_global_presets_to_json', { paths_filter: pathsFilter }, function (response) {
 
-                        if (response.success) {
-                            that.dialog.notifySuccess(i18next.t('tab.settings.presets.export_global_presets_success'));
+                        if (response.errors) {
+                            that.dialog.notifyErrors(response.errors);
+                        } else if (response.success) {
+                            if (response.assets_count > 0) {
+                                that.dialog.notifySuccess(i18next.t('tab.settings.presets.export_global_presets_success_with_assets', { count: response.assets_count }));
+                            } else {
+                                that.dialog.notifySuccess(i18next.t('tab.settings.presets.export_global_presets_success'));
+                            }
                         }
 
                     });
@@ -213,6 +219,13 @@
         });
         $('#ladb_item_import_global_presets', this.$element).on('click', function () {
             that.importGlobalPresets();
+        });
+        $('#ladb_item_open_library_dir', this.$element).on('click', function () {
+            rubyCallCommand('core_open_library_dir', null, function (response) {
+                if (response.errors) {
+                    that.dialog.notifyErrors(response.errors);
+                }
+            });
         });
         $('#ladb_item_dump_global_presets', this.$element).on('click', function () {
             rubyCallCommand('settings_dump_global_presets');

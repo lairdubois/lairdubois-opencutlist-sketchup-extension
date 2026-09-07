@@ -15,6 +15,7 @@ module Ladb::OpenCutList
   require_relative 'observer/plugin_observer'
   require_relative 'utils/dimension_utils'
   require_relative 'utils/path_utils'
+  require_relative 'utils/file_path_utils'
   require_relative 'utils/hash_utils'
   require_relative 'tool/smart_draw_tool'
   require_relative 'tool/smart_handle_tool'
@@ -40,6 +41,11 @@ module Ladb::OpenCutList
 
     PRESETS_KEY = 'core.presets'.freeze
     PRESETS_DEFAULT_NAME = '_default'.freeze
+
+    LIBRARY_DIR_NAME = 'library'.freeze
+    LIBRARY_REF_PREFIX = '$LIB/'.freeze
+    LIBRARY_SUB_DIR_COMPONENTS = 'components'.freeze
+    LIBRARY_SUB_DIR_MATERIALS = 'materials'.freeze
 
     PRESETS_PREPROCESSOR_NONE = 0
     PRESETS_PREPROCESSOR_D = 1                   # 1D dimension
@@ -108,6 +114,7 @@ module Ladb::OpenCutList
     def initialize
 
       @temp_dir = nil
+      @library_dir = nil
       @language = nil
       @webgl_available = false
 
@@ -154,6 +161,8 @@ module Ladb::OpenCutList
       @temp_dir = dir
     end
 
+    # -----
+
     # Converts an absolute path under temp_dir into a URL the dialog can load it from.
     # Falls back to the raw path unchanged if the local HTTP server isn't running
     # (dialog loaded via file://, where absolute paths resolve directly).
@@ -173,6 +182,105 @@ module Ladb::OpenCutList
       match = value.match(%r{\Ahttp://127\.0\.0\.1:\d+/tmp/(.+)\z})
       match ? File.join(temp_dir, match[1]) : value
     end
+
+    # -----
+
+    # The user's asset library : the persistent folder where OCL stores the files
+    # (.skp, .skm) referenced by presets.
+    # Deliberately kept out of temp_dir (wiped at each startup) and of PLUGIN_DIR
+    # (wiped at each extension update), and not tied to a SketchUp version, so
+    # that a preset stays valid after an update or a SketchUp upgrade.
+    # The directory is *not* created here, only computed. See ensure_library_dir.
+    def library_dir
+      return @library_dir unless @library_dir.nil?
+      if Sketchup.platform == :platform_win
+        root = ENV['APPDATA']
+        root = File.join(ENV['USERPROFILE'].to_s, 'AppData', 'Roaming') if root.nil? || root.empty?
+      else
+        root = File.join(Dir.home, 'Library', 'Application Support')
+      end
+      @library_dir = File.join(root.to_s.gsub('\\', '/'), 'OpenCutList', LIBRARY_DIR_NAME)
+    end
+
+    def ensure_library_dir
+      dir = library_dir
+      FileUtils.mkdir_p(dir) unless Dir.exist?(dir)
+      dir
+    end
+
+    # Returns true if the given value is a '$LIB/…' library ref
+    def library_ref?(value)
+      value.is_a?(String) && value.start_with?(LIBRARY_REF_PREFIX)
+    end
+
+    # Converts a path located inside the library into a portable '$LIB/…' ref.
+    # Returns the given value unchanged if it points elsewhere.
+    def library_ref_from_path(path)
+      return path unless path.is_a?(String) && !path.empty?
+      absolute = File.expand_path(path.gsub('\\', '/'))
+      root = File.expand_path(library_dir)
+      if Sketchup.platform == :platform_win
+        return path unless absolute.downcase.start_with?("#{root.downcase}/")
+      else
+        return path unless absolute.start_with?("#{root}/")
+      end
+      LIBRARY_REF_PREFIX + absolute[(root.length + 1)..-1]
+    end
+
+    # Inverse of library_ref_from_path : converts a '$LIB/…' ref into an absolute
+    # path. Returns the given value unchanged if it isn't a library ref, and nil
+    # if the ref tries to escape the library.
+    def resolve_library_ref(value)
+      return value unless library_ref?(value)
+      relative = value[LIBRARY_REF_PREFIX.length..-1].to_s
+      return nil if relative.empty? || relative.split('/').include?('..')
+      File.join(library_dir, relative)
+    end
+
+    # The library sub folder a file belongs to, deduced from its extension.
+    # Files are never stored at the root : an arbitrary name (of an archive, of a
+    # source folder) would make a taxonomy nobody chose, while the extension is
+    # always meaningful and identical on both sides of a shared archive.
+    def library_sub_dir_for(path)
+      case File.extname(path.to_s).downcase
+      when '.skm'
+        LIBRARY_SUB_DIR_MATERIALS
+      else
+        LIBRARY_SUB_DIR_COMPONENTS
+      end
+    end
+
+    # Copies the given file into the library, unless it is already stored there.
+    # An existing file with the same name is reused as is if its content is
+    # identical, else the copy is stored under a suffixed name.
+    # Returns the absolute path of the file inside the library.
+    def copy_to_library(path, sub_dir: nil)
+      return path unless library_ref_from_path(path) == path  # Already in the library
+
+      dir = ensure_library_dir
+      unless sub_dir.nil? || sub_dir.empty?
+        segments = sub_dir.gsub('\\', '/').split('/').reject { |segment| segment.empty? || segment == '.' || segment == '..' }
+        dir = File.join(dir, *segments.map { |segment| FilePathUtils.sanitize_folder_name(segment) }) unless segments.empty?
+        FileUtils.mkdir_p(dir) unless Dir.exist?(dir)
+      end
+
+      extname = File.extname(path)
+      basename = FilePathUtils.sanitize_file_name(File.basename(path, extname))
+      hexdigest = Digest::MD5.file(path).hexdigest
+
+      index = 1
+      loop do
+        candidate = File.join(dir, "#{basename}#{index > 1 ? " (#{index})" : ''}#{extname}")
+        unless File.exist?(candidate)
+          FileUtils.cp(path, candidate)
+          return candidate
+        end
+        return candidate if Digest::MD5.file(candidate).hexdigest == hexdigest  # Same content, reuse it
+        index += 1
+      end
+    end
+
+    # -----
 
     def language
       return @language unless @language.nil?
@@ -1058,6 +1166,12 @@ module Ladb::OpenCutList
         register_command('core_browse_file') do |params|
           browse_file_command(**params)
         end
+        register_command('core_browse_library_file') do |params|
+          browse_library_file_command(**params)
+        end
+        register_command('core_open_library_dir') do |params|
+          open_library_dir_command
+        end
         register_command('core_unload_c_lib') do |params|
           unload_c_lib_command(**params)
         end
@@ -1759,6 +1873,54 @@ module Ladb::OpenCutList
       {
         :file_path => file_path
       }
+    end
+
+    # Same as browse_file_command, but the picked file is copied into the asset
+    # library and returned as a portable '$LIB/…' ref, so that the preset holding
+    # it stays valid on another machine.
+    # Falls back to the plain absolute path if the copy fails : the value keeps
+    # working locally, it is just not shareable.
+    def browse_library_file_command(title: '', file_path: '')
+
+      # Start the panel from the current value, or from the library itself
+      current_path = library_ref?(file_path) ? resolve_library_ref(file_path).to_s : file_path
+      if current_path.empty?
+        dir = begin
+          ensure_library_dir
+        rescue Exception => e
+          ''
+        end
+        basename = ''
+      else
+        dir = File.dirname(current_path)
+        basename = File.basename(current_path)
+      end
+
+      file_path = UI.openpanel(title, dir, basename).to_s
+      return { :file_path => '' } if file_path.empty?
+
+      begin
+        file_path = library_ref_from_path(copy_to_library(file_path, sub_dir: library_sub_dir_for(file_path)))
+      rescue Exception => e
+        dump_exception(e)
+      end
+
+      {
+        :file_path => file_path
+      }
+    end
+
+    def open_library_dir_command
+      begin
+        dir = ensure_library_dir
+      rescue Exception => e
+        dump_exception(e)
+        return { :errors => [ [ 'tab.settings.presets.error.failed_to_open_library_dir', { :error => e.message } ] ] }
+      end
+      url = dir.gsub('\\', '/')
+      url = "/#{url}" unless url.start_with?('/')   # Windows drive letter
+      UI.openURL("file://#{URI::DEFAULT_PARSER.escape(url)}")
+      { :success => true }
     end
 
     def unload_c_lib_command(lib:)

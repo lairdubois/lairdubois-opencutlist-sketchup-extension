@@ -1,0 +1,55 @@
+//
+// LADB TexinputFile
+//
+
+div.ladb-textinput.ladb-textinput-file {
+
+  > .ladb-textinput-input {
+    position: relative;
+
+    > .ladb-textinput-file-display {
+      display: none;
+      position: absolute;
+      top: 0;
+      right: 6px;         // Same padding as input.form-control, tools on the right
+      bottom: 0;
+      left: 12px;
+      align-items: center;
+      font-size: 14px;    // input.form-control size, which does not follow the dialog font size
+      white-space: nowrap;
+      overflow: hidden;
+      pointer-events: none;   // Let the click reach the input below
+
+      > .ladb-textinput-file-display-dir {
+        color: #888;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      > .ladb-textinput-file-display-name {
+        color: #000;
+        flex-shrink: 0;     // The file name always stays visible
+      }
+
+    }
+
+  }
+
+  &.ladb-textinput-file-collapsed {
+
+    > .ladb-textinput-input {
+
+      > input.form-control {
+        color: transparent;   // Hidden, but keeps its size and its caret behavior
+      }
+
+      > .ladb-textinput-file-display {
+        display: flex;
+      }
+
+    }
+
+  }
+
+}
