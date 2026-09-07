@@ -55,6 +55,15 @@ module Ladb::OpenCutList
   #   opening connects the would-be cavity to the envelope boundary, and the
   #   single body carrying envelope faces is the outside world, dropped.
   #
+  # MACHININGS : a panel drilled by glued cuts-opening components (a domino
+  # mortise, a dowel hole) has its host face tessellation PUNCHED by SketchUp,
+  # so its shell only closes back with the machining geometry — which the
+  # callers must therefore leave in (SolidMeshDef marks it virtual, see
+  # SolidMeshDef.virtual_glued_container?), on pain of an open-edges error on
+  # every drilled panel. The voids those machinings enclose are not
+  # compartments, though, and are dropped on their provenance — see
+  # MACHINING_VOID_MIN_AREA_SHARE.
+  #
   # ENVELOPE REDUCTION (hull mode, reduce_envelope option) : when a panel is
   # RECESSED behind an opening (e.g. shelves shallower than the sides, or a
   # cabinet back set forward from the case's true rear edge), the
@@ -334,6 +343,18 @@ module Ladb::OpenCutList
     # degenerate to slide along at all. See #_restore_held_offset.
     RESTORE_MAX_AMPLIFICATION = 10.0
 
+    # Share of a candidate's PANEL boundary (its openings left aside) that may
+    # lie on virtual machining faces before it is read as the machining's own
+    # void rather than a cavity : the pocket of a domino mortise, of a dowel
+    # hole, of a hinge cup. That geometry cannot simply be kept out of the
+    # panels — it is what closes their punched shell back (see the class doc,
+    # MACHININGS) — so what it encloses is filtered here instead. A pocket
+    # dug in a panel is bounded by its machining and by nothing else, so the
+    # share is all-or-nothing in principle ; the margin only absorbs the
+    # degenerate triangles the boolean may attribute to the host face where
+    # the machining meets it, whose area is zero to begin with.
+    MACHINING_VOID_MIN_AREA_SHARE = 0.99
+
     # Safety bound on the reduction rounds : a cavity is clipped at ONE plane
     # per round and both sides go back through the detection (see #run), so
     # an assembly needs one round per recess it exposes — whether NESTED (a
@@ -589,10 +610,15 @@ module Ladb::OpenCutList
         output['fragments'].each do |fragment|
           face_ids = fragment['face_ids']
           next unless face_ids.is_a?(Array) && !face_ids.empty?
-          volume, total_area, envelope_area = _measure(fragment)
+          volume, total_area, envelope_area, machining_area = _measure(fragment, face_info_defs)
           # Sheet residue : a body whose mean thickness is below the SketchUp
           # merge tolerance is a collapsed joint imperfection, not a void
           next if total_area <= 0 || 2.0 * volume / total_area < SolidMeshDef::TOLERANCE
+          # Machining void : the pocket a glued cuts-opening component digs
+          # into a panel, bounded by that machining alone — see
+          # MACHINING_VOID_MIN_AREA_SHARE
+          panel_area = total_area - envelope_area
+          next if panel_area > 0 && machining_area / panel_area >= MACHINING_VOID_MIN_AREA_SHARE
           openness = envelope_area / total_area
           if hermetic
             next if face_ids.include?(0)  # Envelope face : the outside world or an open cavity
@@ -1045,15 +1071,18 @@ module Ladb::OpenCutList
       }
     end
 
-    # [ volume, total surface area, envelope (face id 0) surface area ] of the
-    # given fragment, in one pass over its triangles. The envelope area drives
-    # the openness (0.0 for a hermetically closed cavity, the opening ratio
-    # for an open one), the volume / area ratio the sheet residue filter.
-    def _measure(fragment)
+    # [ volume, total surface area, envelope (face id 0) surface area,
+    # machining (virtual face) surface area ] of the given fragment, in one
+    # pass over its triangles. The envelope area drives the openness (0.0 for
+    # a hermetically closed cavity, the opening ratio for an open one), the
+    # volume / area ratio the sheet residue filter and the machining area the
+    # machining void one (see MACHINING_VOID_MIN_AREA_SHARE).
+    def _measure(fragment, face_info_defs)
       vertices = fragment['vertices']
       face_ids = fragment['face_ids']
       volume = 0.0
       envelope_area = 0.0
+      machining_area = 0.0
       total_area = 0.0
       fragment['face_indices'].each_slice(3).with_index do |(a, b, c), triangle_index|
         ax, ay, az = vertices[a * 3], vertices[a * 3 + 1], vertices[a * 3 + 2]
@@ -1067,9 +1096,14 @@ module Ladb::OpenCutList
         nz = ux * vy - uy * vx
         area = Math.sqrt(nx * nx + ny * ny + nz * nz) / 2.0
         total_area += area
-        envelope_area += area if face_ids[triangle_index] == 0
+        face_id = face_ids[triangle_index]
+        if face_id == 0
+          envelope_area += area
+        elsif (face_info_def = face_info_defs[face_id]) && face_info_def.virtual?
+          machining_area += area
+        end
       end
-      [ volume.abs, total_area, envelope_area ]
+      [ volume.abs, total_area, envelope_area, machining_area ]
     end
 
     # Indices of the panel drawing defs whose faces appear in the given
@@ -1176,6 +1210,7 @@ module Ladb::OpenCutList
         planes = {}
         vertices = fragment_def.vertices
         face_ids = fragment_def.face_ids
+        face_info_defs = fragment_def.face_info_defs
         next [] if face_ids.nil?
 
         # Chant plane candidates of this fragment, and the plane offsets (in
@@ -1207,6 +1242,13 @@ module Ladb::OpenCutList
             cap_plane[2] += area2 / 2.0
             next
           end
+          # A machining face says where a panel is DUG, never where it stops :
+          # the wall of a mortise opening on the cavity is a plane of the
+          # assembly like any other, large enough to clear REDUCTION_MIN_AREA,
+          # and would recede the envelope down to a pocket a few millimetres
+          # deep. See the class doc, MACHININGS.
+          face_info_def = face_info_defs[face_id]
+          next if face_info_def && face_info_def.virtual?
           mesh_position = panel_id_ranges.find_index { |id_range, _| id_range.cover?(face_id) }
           next if mesh_position.nil?
           dominant_normal = dominant_normals[mesh_position]

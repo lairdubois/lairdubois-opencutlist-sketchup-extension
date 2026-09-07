@@ -4547,7 +4547,7 @@ module Ladb::OpenCutList
 
       if picked_face || picked_edge || picked_cline
 
-        if @pick_edges || @picked_cline || @pick_axes
+        if @pick_edges || @pick_clines || @pick_axes
 
           # pick "lines" (aperture = 50)
 

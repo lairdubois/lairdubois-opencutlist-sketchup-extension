@@ -40,8 +40,7 @@ module Ladb::OpenCutList
     CONTAINER_VALIDATOR_NONE = 1
     CONTAINER_VALIDATOR_PART = 2
     CONTAINER_VALIDATOR_PART_WITHOUT_MACHININGS = 3
-    CONTAINER_VALIDATOR_PART_WITHOUT_MACHININGS_AND_CUTS_OPENING = 4
-    CONTAINER_VALIDATOR_NO_SCALE = 5
+    CONTAINER_VALIDATOR_NO_SCALE = 4
 
     # Backward compatibility
     SketchupSnapClass = Object.const_defined?('Sketchup::Snap') ? Sketchup::Snap : nil
@@ -302,6 +301,7 @@ module Ladb::OpenCutList
       when CONTAINER_VALIDATOR_PART
         container_validator = lambda { |container, depth|
           return false if container.definition.behavior.always_face_camera?
+          return true if _glued_cuts_opening?(container)
           ma = _get_material_attributes(container.material)
           return true if ma.type == MaterialAttributes::TYPE_MACHINING
           return false if depth != 0 && ma.type == MaterialAttributes::TYPE_HARDWARE && !container.name.strip.empty?
@@ -312,20 +312,11 @@ module Ladb::OpenCutList
       when CONTAINER_VALIDATOR_PART_WITHOUT_MACHININGS
         container_validator = lambda { |container, depth|
           return false if container.definition.behavior.always_face_camera?
+          return true if _glued_cuts_opening?(container)
           ma = _get_material_attributes(container.material)
           return false if ma.type == MaterialAttributes::TYPE_MACHINING
           return false if depth != 0 && ma.type == MaterialAttributes::TYPE_HARDWARE && !container.name.strip.empty?
           return true if container.definition.behavior.cuts_opening?
-          return false if container.is_a?(Sketchup::ComponentInstance)
-          true
-        }
-      when CONTAINER_VALIDATOR_PART_WITHOUT_MACHININGS_AND_CUTS_OPENING
-        container_validator = lambda { |container, depth|
-          return false if container.definition.behavior.always_face_camera?
-          ma = _get_material_attributes(container.material)
-          return false if ma.type == MaterialAttributes::TYPE_MACHINING
-          return false if depth != 0 && ma.type == MaterialAttributes::TYPE_HARDWARE && !container.name.strip.empty?
-          return false if container.definition.behavior.cuts_opening?
           return false if container.is_a?(Sketchup::ComponentInstance)
           true
         }
@@ -358,6 +349,19 @@ module Ladb::OpenCutList
     # -----
 
     private
+
+    # A GLUED cuts-opening container is a virtual machining : SketchUp punches
+    # its outline in the HOST FACE's tessellation, so the part is an open shell
+    # without it — whatever its material says. It has to be walked into by every
+    # PART validator, and is marked virtual downstream
+    # (SolidMeshDef.virtual_glued_container?) so that it closes the shell
+    # without passing for material of its own. Same condition as there, on
+    # purpose : a cuts-opening container glued to NOTHING punches no face, and
+    # keeps being sorted on its material like any other.
+    def _glued_cuts_opening?(container)
+      return false unless container.definition.behavior.cuts_opening?
+      container.respond_to?(:glued_to) && !container.glued_to.nil?
+    end
 
     def _get_input_axes(input_plane_manipulator, input_line_manipulator = nil)
 

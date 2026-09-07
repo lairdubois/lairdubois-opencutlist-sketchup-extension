@@ -4942,12 +4942,20 @@ module Ladb::OpenCutList
       parts = cutlist.groups
                      .reject { |group| group.material_is_virtual || group.material_type == MaterialAttributes::TYPE_HARDWARE}
                      .flat_map { |group| group.get_parts }
+      # The glued cuts-opening machinings stay IN : SketchUp punches their
+      # opening in the host face tessellation, so a drilled panel without them
+      # is an open shell (one open edge loop per mortise) that no boolean can
+      # take. They are what closes it back — SolidMeshDef marks them virtual,
+      # and CommonSolidFindCavitiesWorker drops the voids they enclose. Hence
+      # flatten: false, without which they land in the drawing def's own faces
+      # and lose that provenance.
       drawing_defs = parts.flat_map { |container_part|
         container_part.def.instance_infos.values.map { |instance_info|
           CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new(instance_info.path) ],
                                                ignore_surfaces: true,
                                                ignore_edges: true,
-                                               container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART_WITHOUT_MACHININGS_AND_CUTS_OPENING
+                                               container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART_WITHOUT_MACHININGS,
+                                               flatten: false
           ).run
         }
       }
