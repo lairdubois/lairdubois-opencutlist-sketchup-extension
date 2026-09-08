@@ -2397,7 +2397,7 @@ tool:
     action_option_group_segments: Segments
     action_option_group_thickness: Epaisseur
     action_option_group_clearance: Jeu
-    action_option_group_pose: Pose
+    action_option_group_overlay: Pose
     action_option_group_axes: Axes
     action_option_group_measure_type: Mesure
     action_option_group_options: Options
@@ -2409,8 +2409,8 @@ tool:
     action_option_segments_segment_count_status: Permet de définir le nombre de segments du cercle
     action_option_thickness_thickness: Epaisseur
     action_option_thickness_thickness_status: Définit l'épaisseur des panneaux
-    action_option_pose_inset_status: "Façade encastrée : posée dans l'ouverture, au nu de la face avant"
-    action_option_pose_overlay_status: "Façade en applique : posée devant la face avant, recouvrant les panneaux jusqu'au nu extérieur du caisson et jusqu'à mi-épaisseur des panneaux intérieurs"
+    action_option_overlay_inset_status: "Façade encastrée : posée dans l'ouverture, au nu de la face avant"
+    action_option_overlay_full_overlay_status: "Façade en applique : posée devant la face avant, recouvrant les panneaux jusqu'au nu extérieur du caisson et jusqu'à mi-épaisseur des panneaux intérieurs"
     action_option_measure_type_inside_status: Positionner l'épaisseur à l'intérieur du point ciblé
     action_option_measure_type_centered_status: Centrer l'épaisseur sur le point ciblé
     action_option_measure_type_outside_status: Positionner l'épaisseur à l'extérieur du point ciblé

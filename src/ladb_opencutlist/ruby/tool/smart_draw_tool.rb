@@ -35,7 +35,7 @@ module Ladb::OpenCutList
     ACTION_OPTION_OFFSET = 'offset'
     ACTION_OPTION_SEGMENTS = 'segments'
     ACTION_OPTION_MEASURE_TYPE = 'measure_type'
-    ACTION_OPTION_POSE = 'pose'
+    ACTION_OPTION_OVERLAY = 'overlay'
     ACTION_OPTION_AXES = 'axes'
     ACTION_OPTION_OPTIONS = 'options'
 
@@ -50,8 +50,8 @@ module Ladb::OpenCutList
     ACTION_OPTION_MEASURE_TYPE_CENTERED = 'centered'
     ACTION_OPTION_MEASURE_TYPE_OUTSIDE = 'outside'
 
-    ACTION_OPTION_POSE_INSET = 'inset'
-    ACTION_OPTION_POSE_OVERLAY = 'overlay'
+    ACTION_OPTION_OVERLAY_INSET = 'inset'
+    ACTION_OPTION_OVERLAY_FULL_OVERLAY = 'full_overlay'
 
     ACTION_OPTION_AXES_ACTIVE = 'active'
     ACTION_OPTION_AXES_CONTEXT = 'context'
@@ -105,7 +105,7 @@ module Ladb::OpenCutList
         :options => {
           ACTION_OPTION_THICKNESS => [ ACTION_OPTION_THICKNESS_THICKNESS ],
           ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_FACADE_OFFSET ],
-          ACTION_OPTION_POSE => [ ACTION_OPTION_POSE_INSET, ACTION_OPTION_POSE_OVERLAY ],
+          ACTION_OPTION_OVERLAY => [ ACTION_OPTION_OVERLAY_INSET, ACTION_OPTION_OVERLAY_FULL_OVERLAY ],
           ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_CONTEXT ],
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_REUSE_DEFINITION, ACTION_OPTION_OPTIONS_ASK_NAME ]
         }
@@ -213,7 +213,7 @@ module Ladb::OpenCutList
     def get_action_option_group_unique?(action, option_group)
 
       case option_group
-      when ACTION_OPTION_POSE
+      when ACTION_OPTION_OVERLAY
         return true
       when ACTION_OPTION_MEASURE_TYPE
         return true
@@ -259,11 +259,11 @@ module Ladb::OpenCutList
         when ACTION_OPTION_AXES_CONTEXT
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.167,0L0.167,0.833L1,0.833 M0,0.167L0.167,0L0.333,0.167 M0.833,0.667L1,0.833L0.833,1 M0.5,0.083L0.5,0.5L0.917,0.5L0.917,0.083L0.5,0.083'))
         end
-      when ACTION_OPTION_POSE
+      when ACTION_OPTION_OVERLAY
         case option
-        when ACTION_OPTION_POSE_INSET
+        when ACTION_OPTION_OVERLAY_INSET
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.125,0.125L0.688,0.125L0.688,0L0.125,0L0.125,0.125 M0.125,1L0.688,1L0.688,0.875L0.125,0.875L0.125,1 M0.688,0.25L0.5,0.25L0.5,0.75L0.688,0.75L0.688,0.25'))
-        when ACTION_OPTION_POSE_OVERLAY
+        when ACTION_OPTION_OVERLAY_FULL_OVERLAY
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.125,0.125L0.688,0.125L0.688,0L0.125,0L0.125,0.125 M0.125,1L0.688,1L0.688,0.875L0.125,0.875L0.125,1 M1,0L0.813,0L0.813,1L1,1L1,0'))
         end
       when ACTION_OPTION_OPTIONS
@@ -5993,7 +5993,7 @@ module Ladb::OpenCutList
       case state
       when STATE_PLACE
         return super +
-               (_fetch_option_pose_overlay? ? ' | ' + PLUGIN.get_i18n_string("tool.smart_#{@tool.get_stripped_name}.action_#{@action}_state_#{state}_merge_status") + '.' : '') +
+               (_fetch_option_overlay_full_overlay? ? ' | ' + PLUGIN.get_i18n_string("tool.smart_#{@tool.get_stripped_name}.action_#{@action}_state_#{state}_merge_status") + '.' : '') +
                ' | ' + PLUGIN.get_i18n_string("default.constrain_key") + ' + X = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_construction_status') + '.' +
                ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_measure_reversed_status') + '.'
       end
@@ -6032,7 +6032,7 @@ module Ladb::OpenCutList
       case @state
       when STATE_PLACE
         @merge_cancelled = false
-        if _fetch_option_pose_overlay? && (context = _compute_facade_context(@picked_point, view)).is_a?(FacadeContext)
+        if _fetch_option_overlay_full_overlay? && (context = _compute_facade_context(@picked_point, view)).is_a?(FacadeContext)
           @merge_context = context
           @merge_fragment_defs = [ context.fragment_def ]
           @merge_paths = [ Fiddle::Clippy.points_to_rpath(context.points) ]
@@ -6376,8 +6376,8 @@ module Ladb::OpenCutList
       @tool.fetch_action_option_length(@action, SmartDrawTool::ACTION_OPTION_OFFSET, SmartDrawTool::ACTION_OPTION_OFFSET_FACADE_OFFSET)
     end
 
-    def _fetch_option_pose_overlay?
-      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_POSE, SmartDrawTool::ACTION_OPTION_POSE_OVERLAY)
+    def _fetch_option_overlay_full_overlay?
+      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OVERLAY, SmartDrawTool::ACTION_OPTION_OVERLAY_FULL_OVERLAY)
     end
 
     def _fetch_option_reuse_definition?
@@ -6440,7 +6440,7 @@ module Ladb::OpenCutList
       outlines = _get_facade_outlines(context)
       return nil if outlines.nil?
 
-      overlay = _fetch_option_pose_overlay?
+      overlay = _fetch_option_overlay_full_overlay?
       direction = context.world_direction
       outlines.map { |outline| FacadeDef.new(context.container_path, context.fragment_def, context.opening_def, outline, thickness, overlay, direction) }
     end
@@ -6519,7 +6519,7 @@ module Ladb::OpenCutList
 
       mouth_points = mouth.map { |point| point.transform(ti) }
 
-      return mouth_points unless _fetch_option_pose_overlay?
+      return mouth_points unless _fetch_option_overlay_full_overlay?
 
       _get_overlay_points(fragment_def, opening_def, mouth_points, ti)
     end
@@ -6564,7 +6564,7 @@ module Ladb::OpenCutList
     # out with a superfluous edge splitting one of its sides into two coplanar
     # faces. The mouth of a cavity, read off a triangle soup, can hand over
     # such a vertex just as well - so the facade outline is flattened whatever
-    # the pose that drew it.
+    # the overlay setting that drew it.
     #
     # Read as a DISTANCE to the chord rather than as an angle : it is the
     # sagitta that says whether the corner would ever be seen, where an angle
@@ -7589,7 +7589,7 @@ module Ladb::OpenCutList
     #
     # The criterion is the OUTLINE alone, and it can be : the facades of a
     # batch come from one contour shared equally, and they carry the same
-    # thickness and the same pose by construction - so two of them with
+    # thickness and the same overlay setting by construction - so two of them with
     # superposable outlines are the same solid, full stop. No neighbourhood
     # test like the divider's is needed either : what makes them the same
     # part is not a coincidence to be confirmed, it is how they were cut.
@@ -7740,7 +7740,7 @@ module Ladb::OpenCutList
 
       # The facade as a raw mesh - [ vertices, face_indices, face_ids ] - for
       # the preview : the outline triangulated (see #cap_triangles), and the
-      # same outline pushed by the thickness, on the side the pose puts the
+      # same outline pushed by the thickness, on the side the overlay setting puts the
       # body. The cap's own interior edges are traversed once each way and
       # cancel out, so the net contour
       # (SolidFragmentDef#unique_boundary_segments) draws the facade's real
