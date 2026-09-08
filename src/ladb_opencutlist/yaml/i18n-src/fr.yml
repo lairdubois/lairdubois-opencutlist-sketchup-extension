@@ -1533,7 +1533,7 @@ tab:
       option_dxf_depth_to_z_1: Répartir les profondeurs des calques sur Z
       option_dxf_depth_to_z_help: |
         Permet d'activer la répartition des calques sur l'axe Z suivant leur profondeur.
-        
+
         Désactivez cette option pour exporter un DXF en 2D uniquement.
       option_unit: Unité
       option_unit_help: |
@@ -2246,7 +2246,7 @@ tab:
         Sélectionnez les préréglages que vous souhaitez y exporter.
         Si les préréglages sélectionnés font référence à des fichiers **.skp** ou **.skm**, ceux-ci sont inclus dans une archive **.oclp** afin que l'export soit partageable tel quel.
       export_global_presets_success: Les préréglages ont été exportés avec succès.
-      export_global_presets_success_with_assets: "Les préréglages ont été exportés avec succès, ainsi que {{count}} fichier(s) associé(s)."
+      export_global_presets_success_with_assets: "Les préréglages ont été exportés avec succès, ainsi que {{ count }} fichier(s) associé(s)."
       import_global_presets: Importer des préréglages
       import_global_presets_help: |
         Sélectionnez les préréglages présents dans le fichier **.json** ou **.oclp** que vous souhaitez importer.

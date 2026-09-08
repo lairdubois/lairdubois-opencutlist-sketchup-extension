@@ -244,8 +244,9 @@ core:
       cutlist_estimate_options: $t(tab.cutlist.label) / $t(tab.cutlist.estimate.title)
       cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
       cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
-      importer_import_options: $t(tab.importer.label) / $t(default.import)
-      importer_load_options: $t(tab.importer.label) / $t(default.open)
+      importers_csv_import_options: $t(tab.importers.csv.label) / $t(default.import)
+      importers_csv_load_options: $t(tab.importers.csv.label) / $t(default.open)
+      importers_bxf2_import_options: $t(tab.importers.bxf2.label) / $t(default.import)
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       outliner_options: $t(tab.outliner.label) / $t(default.options)
@@ -271,6 +272,7 @@ core:
       help: Type **@** to get a list of variables.
     textinput_file:
       browse: Browse
+      browse_library: Browse and copy into the library
     textinput_size:
       quantity: Qty.
     three_viewer:
@@ -2241,12 +2243,16 @@ tab:
       export_global_presets: Export presets
       export_global_presets_help: |
         This feature allows you to export your presets to a **.json** file.
-        Select the presets you wish to export.
+        Select the presets you want to export.
+        If the selected presets reference **.skp** or **.skm** files, those files are included in an **.oclp** archive so that the export can be shared as-is.
       export_global_presets_success: Presets have been successfully exported.
+      export_global_presets_success_with_assets: "The presets were successfully exported, along with {{ count }} associated file(s)."
       import_global_presets: Import presets
       import_global_presets_help: |
-        Select the presets from the **.json** file that you wish to import.
-        Note that if a preset with an identical name already exists, it will be replaced by the imported version.
+        Select the presets from the **.json** or **.oclp** file that you want to import.
+        Please note: if a preset with the same name already exists, it will be replaced by the imported version.
+        The files contained in an **.oclp** archive are copied to your library, in the same location they occupied in the sender’s library.
+      open_library_dir: Open the library folder
       import_global_presets_success: |
         *OpenCutList* presets have been successfully imported.
         In order to reflect the changes, you must **close** and **reopen** the OpenCutList window.
@@ -2271,6 +2277,8 @@ tab:
       error:
         no_preset_to_export: No preset to export.
         no_preset_to_import: No presets to import.
+        failed_to_export: "Unable to export presets: **{{ error }}**."
+        failed_to_open_library_dir: "Unable to open the library folder: **{{ error }}**."
         failed_to_import: "Impossible to import the presets: **{{ error }}**."
         failed_to_import_invalid_hexdigest: This file was modified. It cannot be imported.
         failed_to_import_bad_file_format: Invalid file format.
@@ -2381,18 +2389,28 @@ tool:
     action_3_status: Draw a divider in a compartment formed by a group of existing parts
     action_3_state_0_status: Click on a wall to draw a divider
     action_3_state_1_status: Click on a wall to draw dividers
+    action_4: Draw Facade
+    action_4_status: Draw a facade within a space formed by a group of existing parts
+    action_4_state_0_status: Click inside a cavity to draw a facade across its opening
+    action_4_state_0_merge_status: "Slide to the adjacent cavities to create a shared facade"
     action_option_group_offset: Offset
     action_option_group_segments: Segments
     action_option_group_thickness: Thickness
+    action_option_group_clearance: Clearance
+    action_option_group_pose: ""
     action_option_group_axes: Axes
     action_option_group_measure_type: Measure
     action_option_group_options: Options
     action_option_offset_shape_offset: Offset
     action_option_offset_shape_offset_status: Allows you to apply an offset to the outline of the drawn shape
+    action_option_offset_facade_offset: Clearance
+    action_option_offset_facade_offset_status: "Defines the clearance left on each side of the front panel"
     action_option_segments_segment_count: Number of Segments
     action_option_segments_segment_count_status: Allows you to set the number of segments in the circle
     action_option_thickness_thickness: Thickness
     action_option_thickness_thickness_status: Defines the thickness of the panels
+    action_option_pose_inset_status: "Recessed facade: installed in the opening, flush with the front surface"
+    action_option_pose_overlay_status: "Surface-mounted facade: installed in front of the front face, covering the panels up to the outer edge of the cabinet and extending to half the thickness of the interior panels"
     action_option_measure_type_inside_status: Position the thickness inside the target point
     action_option_measure_type_centered_status: Center the thickness on the target point
     action_option_measure_type_outside_status: Position the thickness inside the target point
@@ -2425,12 +2443,18 @@ tool:
     action_option_options_ask_name_status: Enter part names manually
     action_toggle_move_copy_status: Toggle between copy/move
     action_change_move_anchor_status: Change the anchor point
+    facade_layer: Fronts
     error:
       invalid_divider_seed: This type of part does not allow for the creation of a divider
       invalid_divider_container: "This part is isolated: it does not share any groups or components with other parts"
       invalid_divider_cavity: "No compartment this location"
       no_divider_cavity: No compartments were detected in this group or component
+      invalid_facade_seed: This type of part does not allow for the design of a facade
+      invalid_facade_container: "This part is isolated: it does not share any groups or components with other parts"
+      invalid_facade_cavity: "There are no cavities open toward you in this position"
+      no_facade_cavity: No compartments were detected in this group or component
       divider_number_overflow: "It is not possible to place {{ number }} dividers in this compartment"
+      facade_number_overflow: "It is not possible to distribute {{ number }} facades across this opening"
     success:
       part_created: "New part created: {{ name }}"
       part_created_plural: "{{ count }} new parts created: {{ name }}"

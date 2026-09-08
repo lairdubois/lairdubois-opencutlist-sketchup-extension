@@ -244,8 +244,9 @@ core:
       cutlist_estimate_options: $t(tab.cutlist.label) / $t(tab.cutlist.estimate.title)
       cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
       cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
-      importer_import_options: $t(tab.importer.label) / $t(default.import)
-      importer_load_options: $t(tab.importer.label) / $t(default.open)
+      importers_csv_import_options: $t(tab.importers.csv.label) / $t(default.import)
+      importers_csv_load_options: $t(tab.importers.csv.label) / $t(default.open)
+      importers_bxf2_import_options: $t(tab.importers.bxf2.label) / $t(default.import)
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       outliner_options: $t(tab.outliner.label) / $t(default.options)
@@ -271,6 +272,7 @@ core:
       help: "Drücken Sie **@**, um die Liste der Datenvariablen zu öffnen."
     textinput_file:
       browse: Durchsuchen
+      browse_library: Durchsuchen und in die Bibliothek kopieren
     textinput_size:
       quantity: Anz.
     three_viewer:
@@ -2242,11 +2244,15 @@ tab:
       export_global_presets_help: |
         Mit dieser Funktion können Sie Ihre Voreinstellungen in eine **.json**-Datei exportieren.
         Wählen Sie die Voreinstellungen aus, die Sie exportieren möchten.
+        Wenn die ausgewählten Voreinstellungen auf **.skp**- oder **.skm**-Dateien verweisen, werden diese in ein **.oclp**-Archiv eingebunden, sodass der Export direkt weitergegeben werden kann.
       export_global_presets_success: Die Voreinstellungen wurden erfolgreich exportiert.
+      export_global_presets_success_with_assets: "Die Voreinstellungen wurden erfolgreich exportiert, ebenso wie {{ count }} zugehörige Datei(en)."
       import_global_presets: Voreinstellungen importieren
-      import_global_presets_help: |
-        Wählen Sie die Voreinstellungen in der **.json**-Datei aus, die Sie importieren möchten.
-        Bitte beachten Sie, dass eine bereits vorhandene Voreinstellung mit identischem Namen durch die importierte Version ersetzt wird.
+      import_global_presets_help: |-
+        Wählen Sie die Voreinstellungen aus der **.json**- oder **.oclp**-Datei aus, die Sie importieren möchten.
+        Achtung: Wenn bereits eine Voreinstellung mit demselben Namen vorhanden ist, wird diese durch die importierte Version ersetzt.
+        Die in einem **.oclp**-Archiv enthaltenen Dateien werden in Ihre Bibliothek kopiert, und zwar an denselben Speicherort, an dem sie sich in der Bibliothek des Absenders befanden.
+      open_library_dir: Den Bibliotheksordner öffnen
       import_global_presets_success: |
         Die Voreinstellungen *OpenCutList* wurden erfolgreich importiert.
         Um die Änderungen zu berücksichtigen, müssen Sie das Fenster von OpenCutList **schließen** und **neu öffnen**.
@@ -2271,6 +2277,8 @@ tab:
       error:
         no_preset_to_export: Keine Voreinstellungen zu exportieren.
         no_preset_to_import: Keine Voreinstellungen zu importieren.
+        failed_to_export: "Die Voreinstellungen können nicht exportiert werden: **{{ error }}**."
+        failed_to_open_library_dir: "Der Bibliotheksordner kann nicht geöffnet werden: **{{ error }}**."
         failed_to_import: "Voreinstellungen konnten nicht importiert werden: **{{ error }}**."
         failed_to_import_invalid_hexdigest: Diese Datei wurde verändert. Sie kann nicht importiert werden.
         failed_to_import_bad_file_format: Ungültiges Dateiformat.
@@ -2381,18 +2389,28 @@ tool:
     action_3_status: "Eine Trennwand in einem Zwischenraum zeichnen, der durch eine Gruppe vorhandener Teile gebildet wird"
     action_3_state_0_status: "Klicken Sie auf eine Wand, um eine Trennwand zu zeichnen"
     action_3_state_1_status: "Klicken Sie auf eine Wand, um Trennwände zu zeichnen"
+    action_4: Fassade zeichnen
+    action_4_status: "Eine Fassade in einem Hohlraum entwerfen, der durch eine Gruppe bestehender Teile gebildet wird"
+    action_4_state_0_status: "Klicken Sie in eine Aussparung, um eine Fassade an deren Öffnung zu zeichnen"
+    action_4_state_0_merge_status: "Ziehen Sie die Elemente in die benachbarten Felder, um eine gemeinsame Fassade zu bilden"
     action_option_group_offset: Versatz
     action_option_group_segments: Segmente
     action_option_group_thickness: Dicke
+    action_option_group_clearance: Abstand
+    action_option_group_pose: ""
     action_option_group_axes: Achsen
     action_option_group_measure_type: Maß
     action_option_group_options: Optionen
     action_option_offset_shape_offset: Versatz
     action_option_offset_shape_offset_status: "Ermöglicht es, einen Versatz auf die gezeichnete Form anzuwenden"
+    action_option_offset_facade_offset: Abstand
+    action_option_offset_facade_offset_status: "Legt den Abstand fest, der an jedem Rand der Fassade verbleibt"
     action_option_segments_segment_count: Anzahl Segmente
     action_option_segments_segment_count_status: Ermöglicht das Festlegen der Anzahl der Kreissegmente
     action_option_thickness_thickness: Dicke
     action_option_thickness_thickness_status: Definiert die Dicke der Platten
+    action_option_pose_inset_status: "Einbaufront: in der Öffnung montiert, bündig mit der Vorderseite"
+    action_option_pose_overlay_status: "Aufgesetzte Fassade: wird vor der Vorderseite angebracht und bedeckt die Paneele bis zur Außenkante des Korpus und bis zur halben Dicke der Innenpaneele"
     action_option_measure_type_inside_status: Dicke innerhalb des Zielpunkts positionieren
     action_option_measure_type_centered_status: Dicke auf den Zielpunkt ausrichten
     action_option_measure_type_outside_status: Dicke außerhalb des Zielpunkts positionieren
@@ -2425,12 +2443,18 @@ tool:
     action_option_options_ask_name_status: Namen der Teile manuell eingeben
     action_toggle_move_copy_status: Abwechselnd kopieren/verschieben
     action_change_move_anchor_status: Ankerpunkt ändern
+    facade_layer: Frontteile
     error:
       invalid_divider_seed: Bei dieser Art von Teil ist das Einfügen einer Trennwand nicht möglich
       invalid_divider_container: "Dieses Teil ist isoliert: Es gehört zu keiner gemeinsamen Gruppe und enthält keine gemeinsamen Komponenten mit anderen Teilen"
       invalid_divider_cavity: "An dieser Stelle befindet sich kein Zwischenraum"
       no_divider_cavity: In dieser Gruppe oder Komponente wurden keine Hohlräume festgestellt
+      invalid_facade_seed: Bei dieser Art von Teil ist die Darstellung einer Fassade nicht möglich
+      invalid_facade_container: "Dieses Teil ist isoliert: Es gehört zu keiner gemeinsamen Gruppe und enthält keine gemeinsamen Komponenten mit anderen Teilen"
+      invalid_facade_cavity: "In dieser Position gibt es keine zu Ihnen hin offenen Hohlräume"
+      no_facade_cavity: In dieser Gruppe oder Komponente wurden keine Hohlräume festgestellt
       divider_number_overflow: "Es ist nicht möglich, {{ number }} Trennwände in diesem Zwischenraum zu verteilen"
+      facade_number_overflow: "Es ist nicht möglich, {{ number }} Fassaden auf diese Öffnung zu verteilen"
     success:
       part_created: "Neu erstelltes Teil: {{ name }}"
       part_created_plural: "{{ count }} neu erstellte Teile: {{ name }}"
