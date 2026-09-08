@@ -2251,7 +2251,7 @@ tab:
       import_global_presets_help: |
         Select the presets from the **.json** or **.oclp** file that you want to import.
         Please note: if a preset with the same name already exists, it will be replaced by the imported version.
-        The files contained in an **.oclp** archive are copied to your library, in the same location they occupied in the sender’s library.
+        The files contained in an **.oclp** archive are copied to your library, in the same location they occupied in the sender's library.
       open_library_dir: Open the library folder
       import_global_presets_success: |
         *OpenCutList* presets have been successfully imported.
@@ -2397,7 +2397,7 @@ tool:
     action_option_group_segments: Segments
     action_option_group_thickness: Thickness
     action_option_group_clearance: Clearance
-    action_option_group_pose: ""
+    action_option_group_overlay: Overlay
     action_option_group_axes: Axes
     action_option_group_measure_type: Measure
     action_option_group_options: Options
@@ -2409,8 +2409,8 @@ tool:
     action_option_segments_segment_count_status: Allows you to set the number of segments in the circle
     action_option_thickness_thickness: Thickness
     action_option_thickness_thickness_status: Defines the thickness of the panels
-    action_option_pose_inset_status: "Recessed facade: installed in the opening, flush with the front surface"
-    action_option_pose_overlay_status: "Surface-mounted facade: installed in front of the front face, covering the panels up to the outer edge of the cabinet and extending to half the thickness of the interior panels"
+    action_option_overlay_inset_status: "Full inset: installed in the opening, flush with the front surface"
+    action_option_overlay_full_overlay_status: "Full overlay: installed in front of the front face, covering the sides up to the outer edge of the cabinet and extending to half the thickness of the interior separators"
     action_option_measure_type_inside_status: Position the thickness inside the target point
     action_option_measure_type_centered_status: Center the thickness on the target point
     action_option_measure_type_outside_status: Position the thickness inside the target point
