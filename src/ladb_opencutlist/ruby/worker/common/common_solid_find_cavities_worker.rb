@@ -56,11 +56,11 @@ module Ladb::OpenCutList
   #   single body carrying envelope faces is the outside world, dropped.
   #
   # DETACHED PARTS : the panels given are not necessarily ONE enclosure. A case
-  # modelled with its DOOR standing in front of it, a back laid on with a gap,
+  # modelled with its FACADE standing in front of it, a back laid on with a gap,
   # a façade — anything that touches nothing else inflates the hull over space
   # the enclosure never encloses, and the envelope then joins that space to the
   # compartment through the very gap that separates them : a cavity flush with
-  # the door's back rather than with the case's own front. No filter below can
+  # the facade's back rather than with the case's own front. No filter below can
   # catch it — the two make up ONE fragment, walled and opening exactly like
   # the compartment it should have been, merely too big.
   #
@@ -111,7 +111,7 @@ module Ladb::OpenCutList
   # Touching, it belongs to its case's component, and the reading above never
   # looks at it — yet it inflates the hull just the same, and over PART of the
   # front only, which leaves the openings that are left reading on a slanted
-  # cap. That is what a tool DRAWING such panels runs into : the door it has
+  # cap. That is what a tool DRAWING such panels runs into : the facade it has
   # just laid down is read as a wall of the carcass, and the next one is fitted
   # to a mouth that no longer exists.
   #
@@ -120,10 +120,10 @@ module Ladb::OpenCutList
   # whole of the rest of the assembly beyond it, so it could be lifted off
   # along that face. That says nothing yet — the bottom a case stands on
   # answers to it word for word — and it is again the REMOVAL that settles it.
-  # A bottom holds its compartment in ; a door merely covers one. See
+  # A bottom holds its compartment in ; a facade merely covers one. See
   # #_applied_panel_positions.
   #
-  # The trial cannot tell a door from a BACK laid on the same way : both are
+  # The trial cannot tell a facade from a BACK laid on the same way : both are
   # lifted off along one face, and both leave every cavity where it stood, the
   # envelope collapsing onto the panels left. A back so drawn is therefore
   # dropped too, and the compartment it closed comes out with one opening more.
@@ -279,7 +279,7 @@ module Ladb::OpenCutList
   # CONFIRMED : the panel's own mass separates whatever it touches, so it is
   # a compartment whatever it came off of, and it reaches the result as soon
   # as no further plane splits it. A side LEFT BEHIND is only PROVISIONAL :
-  # most of the time it is the plain "extra depth" a door would still occupy
+  # most of the time it is the plain "extra depth" a facade would still occupy
   # in front of the recess, no compartment of its own. It earns its keep only
   # through what a later round finds INSIDE it — the kept sides of any clip
   # it turns out to hide being confirmed like any other — and one that
@@ -514,7 +514,7 @@ module Ladb::OpenCutList
     # geometry : SketchUp joints commonly miss by a few tenths of a millimetre
     # (a whole order of magnitude above SolidMeshDef::TOLERANCE, which is what
     # the MESH may be off by), while a part actually laid on another stands
-    # millimetres away — a door's clearance, a back's rebate. About a
+    # millimetres away — a facade's clearance, a back's rebate. About a
     # millimetre sits between the two with room to spare on either side.
     JOINT_MAX_GAP = 0.04
 
@@ -763,7 +763,7 @@ module Ladb::OpenCutList
           next if _points_within_planes?(component_vertices, hull_planes, -SolidMeshDef::TOLERANCE)
         end
 
-        # Removals already granted stay out : two doors on the same case are
+        # Removals already granted stay out : two facades on the same case are
         # each superfluous, and the second must be weighed without the first
         # inflating the envelope back.
         dropped_positions = superfluous_positions + positions
@@ -851,7 +851,7 @@ module Ladb::OpenCutList
     end
 
     # The panels that are LAID ON the assembly rather than built into it — a
-    # facade in applique, a door — one position list each, ready for the very
+    # facade in applique, a facade — one position list each, ready for the very
     # trial the detached components go through.
     #
     # What is read here is only a NECESSARY condition, and a cheap one : the
@@ -861,7 +861,7 @@ module Ladb::OpenCutList
     # applied — a side of a carcass answers to it just as well, everything
     # else standing on its inner side. What settles it is the trial in
     # #_essential_mesh_defs : a side HOLDS its compartment in, and taking it
-    # away opens the cavity or merges it with the next ; a door merely covers
+    # away opens the cavity or merges it with the next ; a facade merely covers
     # one, and taking it away leaves every cavity exactly where it stood.
     #
     # Reading the separating plane off the panel's DOMINANT face is what keeps
@@ -1151,7 +1151,7 @@ module Ladb::OpenCutList
           # so it is a compartment whatever it came off of, and it goes to
           # the result once no further plane splits it. A BEYOND side is only
           # PROVISIONAL : most of the time it is the plain "extra depth" a
-          # door would still occupy in front of the recess, no compartment of
+          # facade would still occupy in front of the recess, no compartment of
           # its own. It earns its keep only through what a LATER round finds
           # inside it — the kept sides of any clip it turns out to hide are
           # confirmed like any other — and a provisional fragment reaching a

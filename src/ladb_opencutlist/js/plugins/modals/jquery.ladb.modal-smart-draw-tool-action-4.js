@@ -29,21 +29,21 @@
 
             // Fetch UI elements
             const $widgetPreset = $('.ladb-widget-preset', that.$element);
-            const $inputDoorOffset = $('#ladb_input_door_offset', that.$element);
+            const $inputFacadeOffset = $('#ladb_input_facade_offset', that.$element);
             const $inputThickness = $('#ladb_input_thickness', that.$element);
             const $selectConstrution = $('#ladb_select_construction', that.$element);
             const $selectAskName = $('#ladb_select_ask_name', that.$element);
             const $btnValidate = $('#ladb_btn_validate', that.$element);
 
             const fnFetchOptions = function (options) {
-                options.door_offset = $inputDoorOffset.val();
+                options.facade_offset = $inputFacadeOffset.val();
                 options.thickness = $inputThickness.val();
                 options.construction = $selectConstrution.val() === '1';
                 options.ask_name = $selectAskName.val() === '1';
             };
             const fnFillInputs = function (options) {
                 $inputThickness.val(options.thickness);
-                $inputDoorOffset.val(options.door_offset);
+                $inputFacadeOffset.val(options.facade_offset);
                 $selectConstrution.selectpicker('val', options.construction ? '1' : '0');
                 $selectAskName.selectpicker('val', options.ask_name ? '1' : '0');
             };
@@ -56,7 +56,7 @@
                 fnFillInputs: fnFillInputs
             });
             $inputThickness.ladbTextinputDimension();
-            $inputDoorOffset.ladbTextinputDimension();
+            $inputFacadeOffset.ladbTextinputDimension();
             $selectConstrution.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
             $selectAskName.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
 
@@ -86,9 +86,9 @@
                 if (that.options.focused_field.option === 'thickness') {
                     $inputThickness.focus();
                     $inputThickness.select();
-                } else if (that.options.focused_field.option === 'door_offset') {
-                    $inputDoorOffset.focus();
-                    $inputDoorOffset.select();
+                } else if (that.options.focused_field.option === 'facade_offset') {
+                    $inputFacadeOffset.focus();
+                    $inputFacadeOffset.select();
                 }
             }
 

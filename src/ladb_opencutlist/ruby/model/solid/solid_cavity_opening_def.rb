@@ -3,7 +3,7 @@ module Ladb::OpenCutList
   require_relative '../data_container'
 
   # One flat OPENING of a cavity : the plane it lies on, and the closed
-  # contours it draws there — the mouth a door, a drawer front or a glass
+  # contours it draws there — the mouth a facade, a drawer front or a glass
   # pane has to fill.
   #
   # Built by SolidCavityFragmentDef#opening_defs off the cavity's ENVELOPE
@@ -21,7 +21,7 @@ module Ladb::OpenCutList
   # #area.
   class SolidCavityOpeningDef < DataContainer
 
-    attr_reader :normal,  # Geom::Vector3d, unit, pointing OUT of the cavity — the direction a door opens towards
+    attr_reader :normal,  # Geom::Vector3d, unit, pointing OUT of the cavity — the direction a facade opens towards
                 :origin,  # Geom::Point3d, a point of the opening plane (WORLD coordinates)
                 :loops    # Array<Array<Geom::Point3d>> closed contours (WORLD coordinates), the closing point NOT repeated
 

@@ -3889,8 +3889,8 @@ module Ladb::OpenCutList
       create_cursor('pencil-divider', 0, 31)
     end
 
-    def cursor_pencil_door
-      create_cursor('pencil-door', 0, 31)
+    def cursor_pencil_facade
+      create_cursor('pencil-facade', 0, 31)
     end
 
 

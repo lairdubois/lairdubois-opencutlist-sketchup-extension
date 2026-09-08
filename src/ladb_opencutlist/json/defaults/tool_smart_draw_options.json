@@ -44,9 +44,9 @@
     "reuse_definition": true,
     "ask_name": false
   },
-  "action_4": { /* ACTION_DRAW_DOOR */
+  "action_4": { /* ACTION_DRAW_FACADE */
     "pose": "inset",
-    "door_offset": { "metric": "2mm", "imperial": "1/16\"" },
+    "facade_offset": { "metric": "2mm", "imperial": "1/16\"" },
     "thickness": { "metric": "18mm", "imperial": "1/2\"" },
     "construction": false,
     "reuse_definition": true,

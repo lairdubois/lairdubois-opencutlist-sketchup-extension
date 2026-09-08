@@ -2389,10 +2389,10 @@ tool:
     action_3_status: Dessiner un séparateur dans une cavité formée par un groupe de pièces existantes
     action_3_state_0_status: Cliquez sur une paroi pour dessiner un séparateur
     action_3_state_1_status: Cliquez sur une paroi pour dessiner des séparateurs
-    action_4: Dessiner une Porte
-    action_4_status: Dessiner une porte dans une cavité formée par un groupe de pièces existantes
-    action_4_state_0_status: Cliquez dans une cavité pour dessiner une porte sur son ouverture
-    action_4_state_0_merge_status: "Glissez jusqu'aux cavités voisines pour une porte commune"
+    action_4: Dessiner une Façade
+    action_4_status: Dessiner une façade dans une cavité formée par un groupe de pièces existantes
+    action_4_state_0_status: Cliquez dans une cavité pour dessiner une façade sur son ouverture
+    action_4_state_0_merge_status: "Glissez jusqu'aux cavités voisines pour une façade commune"
     action_option_group_offset: Décalage
     action_option_group_segments: Segments
     action_option_group_thickness: Epaisseur
@@ -2403,14 +2403,14 @@ tool:
     action_option_group_options: Options
     action_option_offset_shape_offset: Décalage
     action_option_offset_shape_offset_status: Permet d'appliquer un décalage au tracé de la forme dessinée
-    action_option_offset_door_offset: Jeu
-    action_option_offset_door_offset_status: "Définit le jeu laissé sur chaque bord de la porte"
+    action_option_offset_facade_offset: Jeu
+    action_option_offset_facade_offset_status: "Définit le jeu laissé sur chaque bord de la façade"
     action_option_segments_segment_count: Nombre de segments
     action_option_segments_segment_count_status: Permet de définir le nombre de segments du cercle
     action_option_thickness_thickness: Epaisseur
     action_option_thickness_thickness_status: Définit l'épaisseur des panneaux
-    action_option_pose_inset_status: "Porte encastrée : posée dans l'ouverture, au nu de la façade"
-    action_option_pose_overlay_status: "Porte en applique : posée devant la façade, recouvrant les panneaux jusqu'au nu extérieur du caisson et jusqu'à mi-épaisseur des panneaux intérieurs"
+    action_option_pose_inset_status: "Façade encastrée : posée dans l'ouverture, au nu de la face avant"
+    action_option_pose_overlay_status: "Façade en applique : posée devant la face avant, recouvrant les panneaux jusqu'au nu extérieur du caisson et jusqu'à mi-épaisseur des panneaux intérieurs"
     action_option_measure_type_inside_status: Positionner l'épaisseur à l'intérieur du point ciblé
     action_option_measure_type_centered_status: Centrer l'épaisseur sur le point ciblé
     action_option_measure_type_outside_status: Positionner l'épaisseur à l'extérieur du point ciblé
@@ -2443,18 +2443,18 @@ tool:
     action_option_options_ask_name_status: Saisir manuellement le nom des pièces
     action_toggle_move_copy_status: Alterner entre copier/déplacer
     action_change_move_anchor_status: Changer le point d'ancrage
-    door_layer: Portes
+    facade_layer: Façades
     error:
       invalid_divider_seed: Ce type de pièce ne permet pas le dessin d'un séparateur
       invalid_divider_container: "Cette pièce est isolée : elle ne partage pas de groupe ou composant avec d'autres pièces"
       invalid_divider_cavity: "Aucune cavité à cette position"
       no_divider_cavity: Aucune cavité n'a été détectée dans ce groupe ou composant
-      invalid_door_seed: Ce type de pièce ne permet pas le dessin d'une porte
-      invalid_door_container: "Cette pièce est isolée : elle ne partage pas de groupe ou composant avec d'autres pièces"
-      invalid_door_cavity: "Aucune cavité ouverte vers vous à cette position"
-      no_door_cavity: Aucune cavité n'a été détectée dans ce groupe ou composant
+      invalid_facade_seed: Ce type de pièce ne permet pas le dessin d'une façade
+      invalid_facade_container: "Cette pièce est isolée : elle ne partage pas de groupe ou composant avec d'autres pièces"
+      invalid_facade_cavity: "Aucune cavité ouverte vers vous à cette position"
+      no_facade_cavity: Aucune cavité n'a été détectée dans ce groupe ou composant
       divider_number_overflow: "Impossible de répartir {{ number }} séparateurs dans cette cavité"
-      door_number_overflow: "Impossible de répartir {{ number }} portes sur cette ouverture"
+      facade_number_overflow: "Impossible de répartir {{ number }} façades sur cette ouverture"
     success:
       part_created: "Nouvelle pièce créée : {{ name }}"
       part_created_plural: "{{ count }} nouvelles pièces créées : {{ name }}"

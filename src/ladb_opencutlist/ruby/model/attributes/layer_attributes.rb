@@ -8,16 +8,16 @@ module Ladb::OpenCutList
   # for every part of a kind at once, and a part that is no longer of that kind
   # only has to be moved off it.
   #
-  # TYPE_DOOR is the first of them. A door is a panel LAID ON its carcass, and
+  # TYPE_FACADE is the first of them. A facade is a panel LAID ON its carcass, and
   # nothing in its geometry says so — see CommonSolidFindCavitiesWorker, its
   # doc's APPLIED PANELS : a back laid on the same way is shaped exactly alike,
   # and only what the part is FOR tells the two apart. Being told, the cavity
-  # detection can read the carcass bare, and a second door be fitted to the
+  # detection can read the carcass bare, and a second facade be fitted to the
   # openings the first one left.
   class LayerAttributes
 
     TYPE_UNKNOWN = 0
-    TYPE_DOOR = 1
+    TYPE_FACADE = 1
 
     attr_accessor :type
     attr_reader :layer
@@ -32,7 +32,7 @@ module Ladb::OpenCutList
     def self.valid_type(type)
       return TYPE_UNKNOWN if type.nil?
       i_type = type.to_i
-      return TYPE_UNKNOWN if i_type < TYPE_UNKNOWN || i_type > TYPE_DOOR
+      return TYPE_UNKNOWN if i_type < TYPE_UNKNOWN || i_type > TYPE_FACADE
       i_type
     end
 

@@ -59,7 +59,7 @@ module Ladb::OpenCutList
     # The cavity's openings, one SolidCavityOpeningDef per plane
     # #opening_plane_count counts, biggest first : the plane, its outward
     # normal, and the closed contours the caps draw on it — everything a tool
-    # needs to fit a door, a drawer front or a glass pane in the mouth, or
+    # needs to fit a facade, a drawer front or a glass pane in the mouth, or
     # simply to measure it.
     #
     # The contours are the NET boundary of the plane's CAP triangles alone
