@@ -2402,13 +2402,12 @@ tool:
     action_option_group_options: Options
     action_option_offset_shape_offset: Décalage
     action_option_offset_shape_offset_status: Permet d'appliquer un décalage au tracé de la forme dessinée
+    action_option_offset_door_offset: Jeu
+    action_option_offset_door_offset_status: "Définit le jeu laissé sur chaque bord de la porte"
     action_option_segments_segment_count: Nombre de segments
     action_option_segments_segment_count_status: Permet de définir le nombre de segments du cercle
     action_option_thickness_thickness: Epaisseur
     action_option_thickness_thickness_status: Définit l'épaisseur des panneaux
-    action_option_clearance_clearance: Jeu
-    action_option_clearance_clearance_status: "Définit le jeu laissé sur chaque bord de la porte"
-    door_layer: Portes
     action_option_pose_inset_status: "Porte encastrée : posée dans l'ouverture, au nu de la façade"
     action_option_pose_overlay_status: "Porte en applique : posée devant la façade, recouvrant les panneaux jusqu'au nu extérieur du caisson et jusqu'à mi-épaisseur des panneaux intérieurs"
     action_option_measure_type_inside_status: Positionner l'épaisseur à l'intérieur du point ciblé
@@ -2443,6 +2442,7 @@ tool:
     action_option_options_ask_name_status: Saisir manuellement le nom des pièces
     action_toggle_move_copy_status: Alterner entre copier/déplacer
     action_change_move_anchor_status: Changer le point d'ancrage
+    door_layer: Portes
     error:
       invalid_divider_seed: Ce type de pièce ne permet pas le dessin d'un séparateur
       invalid_divider_container: "Cette pièce est isolée : elle ne partage pas de groupe ou composant avec d'autres pièces"
