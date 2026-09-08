@@ -1494,10 +1494,14 @@ module Ladb::OpenCutList
 
             unless action_defs[action_index][:options].nil? || action_defs[action_index][:options].empty?
 
-              modifier_option_group = action_defs[action_index][:options].keys.first
-              modifier_options = action_defs[action_index][:options][modifier_option_group]
+              # The "modifier" is the first UNIQUE option group of the action :
+              # only a group where exactly one option is on at a time has a
+              # "next" option to cycle to.
+              modifier_option_group = action_defs[action_index][:options].keys.detect { |option_group| get_action_option_group_unique?(action, option_group) }
 
-              if get_action_option_group_unique?(action, modifier_option_group)
+              unless modifier_option_group.nil?
+
+                modifier_options = action_defs[action_index][:options][modifier_option_group]
 
                 modifier_option = modifier_options.detect { |option| fetch_action_option_boolean(action, modifier_option_group, option) }
                 modifier_option_index = modifier_options.index(modifier_option)

@@ -31,20 +31,26 @@
             const $widgetPreset = $('.ladb-widget-preset', that.$element);
             const $inputFacadeOffset = $('#ladb_input_facade_offset', that.$element);
             const $inputThickness = $('#ladb_input_thickness', that.$element);
+            const $selectAxes = $('#ladb_select_axes', that.$element);
             const $selectConstrution = $('#ladb_select_construction', that.$element);
+            const $selectMeasureReversed = $('#ladb_select_measure_reversed', that.$element);
             const $selectAskName = $('#ladb_select_ask_name', that.$element);
             const $btnValidate = $('#ladb_btn_validate', that.$element);
 
             const fnFetchOptions = function (options) {
                 options.facade_offset = $inputFacadeOffset.val();
                 options.thickness = $inputThickness.val();
+                options.axes = $selectAxes.val();
                 options.construction = $selectConstrution.val() === '1';
+                options.measure_reversed = $selectMeasureReversed.val() === '1';
                 options.ask_name = $selectAskName.val() === '1';
             };
             const fnFillInputs = function (options) {
                 $inputThickness.val(options.thickness);
                 $inputFacadeOffset.val(options.facade_offset);
+                $selectAxes.selectpicker('val', options.axes);
                 $selectConstrution.selectpicker('val', options.construction ? '1' : '0');
+                $selectMeasureReversed.selectpicker('val', options.measure_reversed ? '1' : '0');
                 $selectAskName.selectpicker('val', options.ask_name ? '1' : '0');
             };
 
@@ -57,7 +63,9 @@
             });
             $inputThickness.ladbTextinputDimension();
             $inputFacadeOffset.ladbTextinputDimension();
+            $selectAxes.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
             $selectConstrution.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
+            $selectMeasureReversed.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
             $selectAskName.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
 
             fnFillInputs(options);

@@ -31,30 +31,30 @@ module Ladb::OpenCutList
     ACTION_DRAW_DIVIDER = 3
     ACTION_DRAW_FACADE = 4
 
+    ACTION_OPTION_THICKNESS = 'thickness'
     ACTION_OPTION_OFFSET = 'offset'
     ACTION_OPTION_SEGMENTS = 'segments'
-    ACTION_OPTION_THICKNESS = 'thickness'
     ACTION_OPTION_MEASURE_TYPE = 'measure_type'
-    ACTION_OPTION_AXES = 'axes'
     ACTION_OPTION_POSE = 'pose'
+    ACTION_OPTION_AXES = 'axes'
     ACTION_OPTION_OPTIONS = 'options'
+
+    ACTION_OPTION_THICKNESS_THICKNESS = 'thickness'
 
     ACTION_OPTION_OFFSET_SHAPE_OFFSET = 'shape_offset'
     ACTION_OPTION_OFFSET_FACADE_OFFSET = 'facade_offset'
 
     ACTION_OPTION_SEGMENTS_SEGMENT_COUNT = 'segment_count'
 
-    ACTION_OPTION_THICKNESS_THICKNESS = 'thickness'
-
     ACTION_OPTION_MEASURE_TYPE_INSIDE = 'inside'
     ACTION_OPTION_MEASURE_TYPE_CENTERED = 'centered'
     ACTION_OPTION_MEASURE_TYPE_OUTSIDE = 'outside'
 
-    ACTION_OPTION_AXES_ACTIVE = 'active'
-    ACTION_OPTION_AXES_CONTEXT = 'context'
-
     ACTION_OPTION_POSE_INSET = 'inset'
     ACTION_OPTION_POSE_OVERLAY = 'overlay'
+
+    ACTION_OPTION_AXES_ACTIVE = 'active'
+    ACTION_OPTION_AXES_CONTEXT = 'context'
 
     ACTION_OPTION_OPTIONS_CONSTRUCTION = 'construction'
     ACTION_OPTION_OPTIONS_DRAW_IN = 'draw_in'
@@ -94,19 +94,20 @@ module Ladb::OpenCutList
       {
         :action => ACTION_DRAW_DIVIDER,
         :options => {
+          ACTION_OPTION_THICKNESS => [ ACTION_OPTION_THICKNESS_THICKNESS ],
           ACTION_OPTION_MEASURE_TYPE => [ ACTION_OPTION_MEASURE_TYPE_INSIDE, ACTION_OPTION_MEASURE_TYPE_CENTERED, ACTION_OPTION_MEASURE_TYPE_OUTSIDE ],
           ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_CONTEXT ],
-          ACTION_OPTION_THICKNESS => [ ACTION_OPTION_THICKNESS_THICKNESS ],
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, ACTION_OPTION_OPTIONS_REUSE_DEFINITION, ACTION_OPTION_OPTIONS_ASK_NAME ]
         }
       },
       {
         :action => ACTION_DRAW_FACADE,
         :options => {
-          ACTION_OPTION_POSE => [ ACTION_OPTION_POSE_INSET, ACTION_OPTION_POSE_OVERLAY ],
-          ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_FACADE_OFFSET ],
           ACTION_OPTION_THICKNESS => [ ACTION_OPTION_THICKNESS_THICKNESS ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_REUSE_DEFINITION, ACTION_OPTION_OPTIONS_ASK_NAME ]
+          ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_FACADE_OFFSET ],
+          ACTION_OPTION_POSE => [ ACTION_OPTION_POSE_INSET, ACTION_OPTION_POSE_OVERLAY ],
+          ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_CONTEXT ],
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_REUSE_DEFINITION, ACTION_OPTION_OPTIONS_ASK_NAME ]
         }
       }
     ]
@@ -160,16 +161,18 @@ module Ladb::OpenCutList
     def get_action_option_sync_actions(action, option_group, option)
 
       case option_group
-      when ACTION_OPTION_OFFSET
-        case option
-        when ACTION_OPTION_OFFSET_SHAPE_OFFSET
-          return [ ACTION_DRAW_RECTANGLE, ACTION_DRAW_CIRCLE, ACTION_DRAW_POLYGON ]
-        end
       when ACTION_OPTION_THICKNESS
         case option
         when ACTION_OPTION_THICKNESS_THICKNESS
           return [ ACTION_DRAW_DIVIDER, ACTION_DRAW_FACADE ]
         end
+      when ACTION_OPTION_OFFSET
+        case option
+        when ACTION_OPTION_OFFSET_SHAPE_OFFSET
+          return [ ACTION_DRAW_RECTANGLE, ACTION_DRAW_CIRCLE, ACTION_DRAW_POLYGON ]
+        end
+      when ACTION_OPTION_AXES
+        return [ ACTION_DRAW_DIVIDER, ACTION_DRAW_FACADE ]
       when ACTION_OPTION_OPTIONS
         case option
         when ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_ASK_NAME
@@ -185,6 +188,11 @@ module Ladb::OpenCutList
     def get_action_option_toggle?(action, option_group, option)
 
       case option_group
+      when ACTION_OPTION_THICKNESS
+        case option
+        when ACTION_OPTION_THICKNESS_THICKNESS
+          return false
+        end
       when ACTION_OPTION_OFFSET
         case option
         when ACTION_OPTION_OFFSET_SHAPE_OFFSET
@@ -195,11 +203,6 @@ module Ladb::OpenCutList
       when ACTION_OPTION_SEGMENTS
         case option
         when ACTION_OPTION_SEGMENTS_SEGMENT_COUNT
-          return false
-        end
-      when ACTION_OPTION_THICKNESS
-        case option
-        when ACTION_OPTION_THICKNESS_THICKNESS
           return false
         end
       end
@@ -225,6 +228,11 @@ module Ladb::OpenCutList
 
       case option_group
 
+      when ACTION_OPTION_THICKNESS
+        case option
+        when ACTION_OPTION_THICKNESS_THICKNESS
+          return Kuix::Label.new(fetch_action_option_value(action, option_group, option).to_s)
+        end
       when ACTION_OPTION_OFFSET
         case option
         when ACTION_OPTION_OFFSET_SHAPE_OFFSET, ACTION_OPTION_OFFSET_FACADE_OFFSET
@@ -233,11 +241,6 @@ module Ladb::OpenCutList
       when ACTION_OPTION_SEGMENTS
         case option
         when ACTION_OPTION_SEGMENTS_SEGMENT_COUNT
-          return Kuix::Label.new(fetch_action_option_value(action, option_group, option).to_s)
-        end
-      when ACTION_OPTION_THICKNESS
-        case option
-        when ACTION_OPTION_THICKNESS_THICKNESS
           return Kuix::Label.new(fetch_action_option_value(action, option_group, option).to_s)
         end
       when ACTION_OPTION_MEASURE_TYPE
@@ -4115,6 +4118,29 @@ module Ladb::OpenCutList
       false
     end
 
+    # -----
+
+    def _fetch_option_axes_context?
+      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_AXES, SmartDrawTool::ACTION_OPTION_AXES_CONTEXT)
+    end
+
+    # The frame the axis locks (arrow keys) are read in : the CONTAINER's own,
+    # when the axes option asks for it - a canted carcass then locks on its
+    # own axes rather than on the model's. Falls back to the active frame
+    # while no part is picked yet, there being no container to read.
+    def _get_edit_transformation
+      if _fetch_option_axes_context? && (part_entity_path = get_active_part_entity_path).is_a?(Array) && part_entity_path.length > 1
+        return PathUtils.get_transformation(part_entity_path[0...-1], IDENTITY)
+      end
+      super
+    end
+
+    def _preview_part_container_axes?
+      _fetch_option_axes_context?
+    end
+
+    # -----
+
     # The point a pick designates on the wall of a cavity, kept in
     # @picked_point ; true when it really lands in one.
     #
@@ -4581,10 +4607,6 @@ module Ladb::OpenCutList
       true
     end
 
-    def _preview_part_container_axes?
-      _fetch_option_axes_context?
-    end
-
     # -----
 
     def _preview_divider(view)
@@ -4818,10 +4840,6 @@ module Ladb::OpenCutList
 
     def _fetch_option_measure_type_outside?
       @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_MEASURE_TYPE, SmartDrawTool::ACTION_OPTION_MEASURE_TYPE_OUTSIDE)
-    end
-
-    def _fetch_option_axes_context?
-      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_AXES, SmartDrawTool::ACTION_OPTION_AXES_CONTEXT)
     end
 
     # -----
@@ -5113,13 +5131,6 @@ module Ladb::OpenCutList
         set_state(STATE_PLACE) unless @state == STATE_PLACE
       end
       _refresh
-    end
-
-    # -----
-
-    def _get_edit_transformation
-      return PathUtils.get_transformation(get_active_part_entity_path[0...-1], IDENTITY) if _fetch_option_axes_context?
-      super
     end
 
     # -----
@@ -5947,11 +5958,12 @@ module Ladb::OpenCutList
     # and the next criterion of #_orient_split_direction takes over.
     SPLIT_DIRECTION_WAY_EPSILON = 1e-6
 
-    attr_reader :number, :widths
+    attr_reader :locked_direction, :number, :widths
 
     def initialize(tool, previous_action_handler = nil)
       super(SmartDrawTool::ACTION_DRAW_FACADE, tool, previous_action_handler)
 
+      @locked_direction = previous_action_handler.is_a?(self.class) ? previous_action_handler.locked_direction : nil
       @number = previous_action_handler.is_a?(self.class) ? previous_action_handler.number : 1
       @widths = previous_action_handler.is_a?(self.class) ? previous_action_handler.widths : []
 
@@ -5982,7 +5994,18 @@ module Ladb::OpenCutList
       when STATE_PLACE
         return super +
                (_fetch_option_pose_overlay? ? ' | ' + PLUGIN.get_i18n_string("tool.smart_#{@tool.get_stripped_name}.action_#{@action}_state_#{state}_merge_status") + '.' : '') +
-               ' | ' + PLUGIN.get_i18n_string("default.constrain_key") + ' + X = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_construction_status') + '.'
+               ' | ' + PLUGIN.get_i18n_string("default.constrain_key") + ' + X = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_construction_status') + '.' +
+               ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_measure_reversed_status') + '.'
+      end
+
+      super
+    end
+
+    def get_state_vcb_label(state)
+
+      case state
+      when STATE_PLACE
+        return PLUGIN.get_i18n_string("tool.default.vcb_thickness")
       end
 
       super
@@ -6096,15 +6119,52 @@ module Ladb::OpenCutList
           end
         end
 
+        # The arrow keys pin the direction the facades succeed one another
+        # along, the way they pin the divider's normal - the same axis, the
+        # same frame (see the axes option). It only has anything to say once
+        # the opening is SHARED : a lone facade takes the whole mouth
+        # whichever way it would have been cut.
+        if key == VK_RIGHT
+          _toggle_locked_direction(_get_active_x_axis)
+          return true
+        end
+        if key == VK_LEFT
+          _toggle_locked_direction(_get_active_y_axis)
+          return true
+        end
+        if key == VK_UP
+          _toggle_locked_direction(_get_active_z_axis)
+          return true
+        end
+        if key == VK_DOWN
+          _toggle_locked_direction(nil)
+          return true
+        end
+
       end
 
       false
+    end
+
+    def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
+
+      case @state
+
+      when STATE_PLACE
+        if tool.is_key_ctrl_or_option?(key) && is_quick
+          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_REVERSED, !_fetch_option_measure_reversed?, fire_event: true)
+          return true
+        end
+
+      end
+
     end
 
     def onToolUserText(tool, text, view)
 
       return true if _read_number(tool, text, view)
       return true if _read_widths(tool, text, view)
+      return true if _read_facade_offset(tool, text, view)
       return true if _read_thickness(tool, text, view)
 
       false
@@ -6136,6 +6196,9 @@ module Ladb::OpenCutList
     end
 
     def onToolActionOptionStored(tool, action, option_group, option)
+      # The lock holds an axis of the frame the option just changed : it no
+      # longer stands for the one the user pointed at.
+      @locked_direction = nil if option_group == SmartDrawTool::ACTION_OPTION_AXES
       _refresh
     end
 
@@ -6152,11 +6215,20 @@ module Ladb::OpenCutList
 
     def _reset
       @picked_point = nil
+      @locked_direction = nil
       @number = 1
       @widths = []
       @merge_cancelled = false
       _reset_merge
       super
+    end
+
+    # Locks the split direction on +direction+, or unlocks it - pressing the
+    # axis it is already on being how the lock is called off, exactly as on
+    # the divider.
+    def _toggle_locked_direction(direction)
+      @locked_direction = @locked_direction == direction ? nil : direction
+      _refresh
     end
 
     def _reset_cavities_def
@@ -6257,13 +6329,6 @@ module Ladb::OpenCutList
 
     def _read_thickness(tool, text, view)
 
-      # Keep it "compatible" with the way to enter offset in Smart Draw Tool.
-      if (match = /^(.+)x$/i.match(text))
-        text = match[1]
-      else
-        return false
-      end
-
       thickness = _read_user_text_length(tool, text)
       return true if thickness.nil?
 
@@ -6279,12 +6344,36 @@ module Ladb::OpenCutList
       true
     end
 
-    def _fetch_option_facade_offset
-      @tool.fetch_action_option_length(@action, SmartDrawTool::ACTION_OPTION_OFFSET, SmartDrawTool::ACTION_OPTION_OFFSET_FACADE_OFFSET)
+    # A length SUFFIXED with "x" - "3x" - sets the facade offset, the same VCB
+    # grammar the other actions read their shape offset with (see
+    # #_read_offset). A bare length is already the thickness here, so the
+    # suffix is what tells the two apart.
+    def _read_facade_offset(tool, text, view)
+      return false unless text.is_a?(String) && (match = /^(.+)x$/i.match(text))
+
+      facade_offset = _read_user_text_length(tool, match[1])
+      return true if facade_offset.nil?
+
+      if facade_offset < 0
+        tool.notify_errors([[ 'tool.default.error.invalid_offset', { :value => facade_offset } ]])
+        return true
+      end
+
+      @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OFFSET, SmartDrawTool::ACTION_OPTION_OFFSET_FACADE_OFFSET, facade_offset.to_s, fire_event: true)
+      Sketchup.set_status_text('', SB_VCB_VALUE)
+      _refresh
+
+      true
     end
+
+    # -----
 
     def _fetch_option_thickness
       @tool.fetch_action_option_length(@action, SmartDrawTool::ACTION_OPTION_THICKNESS, SmartDrawTool::ACTION_OPTION_THICKNESS_THICKNESS)
+    end
+
+    def _fetch_option_facade_offset
+      @tool.fetch_action_option_length(@action, SmartDrawTool::ACTION_OPTION_OFFSET, SmartDrawTool::ACTION_OPTION_OFFSET_FACADE_OFFSET)
     end
 
     def _fetch_option_pose_overlay?
@@ -6293,6 +6382,10 @@ module Ladb::OpenCutList
 
     def _fetch_option_reuse_definition?
       @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_REUSE_DEFINITION)
+    end
+
+    def _fetch_option_measure_reversed?
+      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_REVERSED)
     end
 
     # -----
@@ -6527,23 +6620,55 @@ module Ladb::OpenCutList
     # the camera so that orbiting does not swing it around ; on a HORIZONTAL
     # opening, where there is no horizontal of the plane to speak of, the
     # screen's own right takes over.
+    #
+    # A LOCKED axis (arrow keys) overrides the panel rule entirely : the
+    # facades then succeed one another along that axis, whatever the cursor
+    # rests on - which is the whole point, the pick being free to wander over
+    # the cavity while the layout holds.
+    #
+    # The "measure reversed" option flips the WAY only, after it is settled -
+    # the same complement it applies to a pinned measure anywhere else in the
+    # tool - so the pinned widths count from the opposite end.
     def _get_split_direction(picked_face_manipulator, opening_def, ti, view)
       normal = opening_def.normal
 
-      direction = _vector_rejection(picked_face_manipulator.normal, normal)
+      direction = _get_locked_split_direction(normal)
 
-      if direction.length.to_f < SPLIT_DIRECTION_MIN_NORM
-        direction = normal.cross(Z_AXIS)
-        unless direction.valid?
-          camera = view.camera
-          direction = _vector_rejection(camera.direction.cross(camera.up), normal)
-          return nil unless direction.valid?
+      if direction.nil?
+
+        direction = _vector_rejection(picked_face_manipulator.normal, normal)
+
+        if direction.length.to_f < SPLIT_DIRECTION_MIN_NORM
+          direction = normal.cross(Z_AXIS)
+          unless direction.valid?
+            camera = view.camera
+            direction = _vector_rejection(camera.direction.cross(camera.up), normal)
+            return nil unless direction.valid?
+          end
         end
+
       end
 
-      direction = _orient_split_direction(direction.normalize, normal).transform(ti)
+      direction = _orient_split_direction(direction.normalize, normal)
+      direction = direction.reverse if _fetch_option_measure_reversed?
+      direction = direction.transform(ti)
 
       [ direction.x, direction.y ]
+    end
+
+    # What the locked axis amounts to on the opening the facades are cut from :
+    # its share of that plane. nil when no axis is locked, and nil too when
+    # the locked one stands too close to the opening's OWN normal to say
+    # anything about a direction in it - the very threshold the panel under
+    # the cursor is held to. The lock is then simply inert on this opening,
+    # rather than cutting the facades on a direction that reads as nothing :
+    # a case is faced from several sides, and an axis that means "side by
+    # side" on its front means nothing on its flank.
+    def _get_locked_split_direction(normal)
+      return nil unless @locked_direction.is_a?(Geom::Vector3d) && @locked_direction.valid?
+
+      direction = _vector_rejection(@locked_direction, normal)
+      direction.length.to_f < SPLIT_DIRECTION_MIN_NORM ? nil : direction
     end
 
     # Which WAY that direction points - hence which end the pinned widths are
@@ -7223,7 +7348,12 @@ module Ladb::OpenCutList
 
       return unless (facade_defs = _compute_facade_defs(@picked_point, view)).is_a?(Array) && !facade_defs.empty?
 
-      color = Kuix::COLOR_MAGENTA
+      # The AXIS colour says the arrow keys are the ones deciding where the
+      # facades meet - and only when they really are : a lock the opening
+      # makes nothing of (see #_get_locked_split_direction), or an opening no
+      # count shares at all, is no lock to report.
+      locked = _shared? && !_get_locked_split_direction(facade_defs.first.opening_def.normal).nil?
+      color = locked ? _get_vector_color(@locked_direction, Kuix::COLOR_MAGENTA) : Kuix::COLOR_MAGENTA
 
       facade_defs.each do |facade_def|
 
@@ -7246,7 +7376,7 @@ module Ladb::OpenCutList
           k_segments = Kuix::Segments.new
           k_segments.add_segments(segments)
           k_segments.color = color
-          k_segments.line_width = 1.5
+          k_segments.line_width = locked ? 2.5 : 1.5
           @tool.append_3d(k_segments, LAYER_3D_FACADE_PREVIEW)
 
         end
@@ -7733,4 +7863,5 @@ module Ladb::OpenCutList
     end
 
   end
+
 end

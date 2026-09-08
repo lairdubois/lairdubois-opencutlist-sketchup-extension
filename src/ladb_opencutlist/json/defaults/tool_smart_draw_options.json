@@ -1,8 +1,8 @@
 {
   "_preprocessors": {
-    "shape_offset": 5, /* PRESETS_PREPROCESSOR_D_NEGATIVE_ALLOWED */
     "thickness": 1, /* PRESETS_PREPROCESSOR_D */
-    "clearance": 1 /* PRESETS_PREPROCESSOR_D */
+    "shape_offset": 5, /* PRESETS_PREPROCESSOR_D_NEGATIVE_ALLOWED */
+    "facade_offset": 1 /* PRESETS_PREPROCESSOR_D */
   },
   "action_0": { /* ACTION_DRAW_RECTANGLE */
     "shape_offset": "0",
@@ -45,10 +45,12 @@
     "ask_name": false
   },
   "action_4": { /* ACTION_DRAW_FACADE */
-    "pose": "inset",
-    "facade_offset": { "metric": "2mm", "imperial": "1/16\"" },
     "thickness": { "metric": "18mm", "imperial": "1/2\"" },
+    "facade_offset": { "metric": "2mm", "imperial": "1/16\"" },
+    "pose": "inset",
+    "axes": "context",
     "construction": false,
+    "measure_reversed": false,
     "reuse_definition": true,
     "ask_name": false
   }
