@@ -1,7 +1,8 @@
 {
   "_preprocessors": {
     "shape_offset": 5, /* PRESETS_PREPROCESSOR_D_NEGATIVE_ALLOWED */
-    "thickness": 1 /* PRESETS_PREPROCESSOR_D */
+    "thickness": 1, /* PRESETS_PREPROCESSOR_D */
+    "clearance": 1 /* PRESETS_PREPROCESSOR_D */
   },
   "action_0": { /* ACTION_DRAW_RECTANGLE */
     "shape_offset": "0",
@@ -32,7 +33,7 @@
     "draw_in": false,
     "ask_name": false
   },
-  "action_3": { /* ACTION_DRAW_SEPARATOR */
+  "action_3": { /* ACTION_DRAW_DIVIDER */
     "thickness": { "metric": "18mm", "imperial": "1/2\"" },
     "measure_type": "centered",
     "axes": "context",
@@ -41,6 +42,13 @@
     "measure_reversed": false,
     "reduce_envelope": false,
     "reuse_definition": true,
+    "ask_name": false
+  },
+  "action_4": { /* ACTION_DRAW_DOOR */
+    "pose": "inset",
+    "door_offset": { "metric": "2mm", "imperial": "1/16\"" },
+    "thickness": { "metric": "18mm", "imperial": "1/2\"" },
+    "construction": false,
     "ask_name": false
   }
 }

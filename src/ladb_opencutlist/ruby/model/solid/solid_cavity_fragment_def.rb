@@ -1,6 +1,7 @@
 module Ladb::OpenCutList
 
   require_relative 'solid_boolean_result_def'
+  require_relative 'solid_cavity_opening_def'
 
   # Fragment produced by CommonFindCavitiesWorker : one cavity, carrying its
   # openness — the fraction of its surface area lying on the envelope caps
@@ -52,22 +53,49 @@ module Ladb::OpenCutList
     # (SolidFragmentDef#_each_triangle_plane) : an exact key would count one
     # oblique opening as many planes and drop the cavity. Memoized.
     def opening_plane_count
-      return @opening_plane_count if defined?(@opening_plane_count)
+      _opening_plane_indices.length
+    end
 
-      area_by_plane = Hash.new(0.0)
-      unless @face_ids.nil?
+    # The cavity's openings, one SolidCavityOpeningDef per plane
+    # #opening_plane_count counts, biggest first : the plane, its outward
+    # normal, and the closed contours the caps draw on it — everything a tool
+    # needs to fit a door, a drawer front or a glass pane in the mouth, or
+    # simply to measure it.
+    #
+    # The contours are the NET boundary of the plane's CAP triangles alone
+    # (face id 0), by the same directed edge cancellation as
+    # #boundary_segments — restricted to the caps because that is what an
+    # opening is : #boundary_segments draws the whole cavity's wireframe,
+    # panel faces included, and would hand back the mouth welded to whatever
+    # panel face happens to be coplanar with it.
+    #
+    # Kept apart from #opening_plane_count, which shares only the area
+    # accounting (#_cap_area_by_plane) : the count is read on every candidate
+    # fragment while the worker filters them, and chaining loops for a
+    # fragment about to be dropped would be paid for nothing. Memoized.
+    def opening_defs
+      @opening_defs ||= begin
 
-        _each_triangle_plane do |plane_index, triangle_index, _a, _b, _c, area2|
-          next unless @face_ids[triangle_index] == 0
-          # Doubled triangle area : the factor cancels out in the relative
-          # area comparison below
-          area_by_plane[plane_index] += area2
+        plane_indices = _opening_plane_indices
+        if plane_indices.empty?
+          []
+        else
+
+          _area_by_plane, normal_by_plane, origin_index_by_plane = _cap_area_by_plane
+          edge_counts_by_plane = _cap_edge_counts_by_plane(plane_indices)
+          pts = points
+
+          plane_indices.map { |plane_index|
+            normal = normal_by_plane[plane_index]
+            SolidCavityOpeningDef.new(
+              Geom::Vector3d.new(normal[0], normal[1], normal[2]),
+              pts[origin_index_by_plane[plane_index]],
+              _cap_loops(edge_counts_by_plane[plane_index]).map { |indices| indices.map { |index| pts[index] } }
+            )
+          }.sort { |first, second| second.area <=> first.area }
+
         end
-
       end
-
-      total = area_by_plane.values.inject(0.0) { |sum, area| sum + area }
-      @opening_plane_count = total > 0 ? area_by_plane.values.count { |area| area >= total * OPENING_PLANE_MIN_AREA_SHARE } : 0
     end
 
     # Minimum share of the total WALL area a panel plane must carry to be
@@ -220,6 +248,115 @@ module Ladb::OpenCutList
     end
 
     private
+
+    # Indices, among the cavity's planes, of the planes carrying an OPENING —
+    # at least OPENING_PLANE_MIN_AREA_SHARE of the total cap area. Read by
+    # #opening_plane_count and #opening_defs alike, so that the openings ARE
+    # the planes the count counts. Memoized.
+    def _opening_plane_indices
+      @opening_plane_indices ||= begin
+        area_by_plane, = _cap_area_by_plane
+        total = area_by_plane.values.inject(0.0) { |sum, area| sum + area }
+        total > 0 ? area_by_plane.select { |_plane_index, area| area >= total * OPENING_PLANE_MIN_AREA_SHARE }.keys : []
+      end
+    end
+
+    # The cavity's ENVELOPE CAPS (face id 0) gathered by plane :
+    # [ doubled area by plane index, unit normal by plane index, index of a
+    # vertex of the plane by plane index ]. The doubled area is what
+    # #_each_triangle_plane hands out and the factor cancels in every relative
+    # comparison made of it ; the normal is the plane's own, every triangle
+    # sharing the index agreeing with it to PLANE_NORMAL_TOLERANCE, and it
+    # points OUT of the cavity (the fragment is outward wound). Memoized.
+    def _cap_area_by_plane
+      @cap_area_by_plane ||= begin
+
+        area_by_plane = Hash.new(0.0)
+        normal_by_plane = {}
+        origin_index_by_plane = {}
+        unless @face_ids.nil?
+
+          _each_triangle_plane do |plane_index, triangle_index, a, _b, _c, area2, nx, ny, nz|
+            next unless @face_ids[triangle_index] == 0
+            area_by_plane[plane_index] += area2
+            next if normal_by_plane.key?(plane_index)
+            normal_by_plane[plane_index] = [ nx, ny, nz ]
+            origin_index_by_plane[plane_index] = a
+          end
+
+        end
+
+        [ area_by_plane, normal_by_plane, origin_index_by_plane ]
+      end
+    end
+
+    # Net boundary edges of the CAP triangles of the given planes, grouped by
+    # plane index : same directed edge cancellation as
+    # SolidFragmentDef#_edge_counts_by_plane, on WELDED vertex indices for the
+    # same reason (an oblique assembly leaves geometrically identical corners
+    # on distinct indices), but restricted to face id 0 — a panel face
+    # coplanar with the mouth, were there one, is not part of it.
+    def _cap_edge_counts_by_plane(plane_indices)
+      welded_vertex_indices = _welded_vertex_indices
+
+      wanted = {}
+      plane_indices.each { |plane_index| wanted[plane_index] = true }
+
+      edge_counts_by_plane = {}
+      _each_triangle_plane do |plane_index, triangle_index, a, b, c, _area2|
+        next unless wanted[plane_index]
+        next unless @face_ids[triangle_index] == 0
+        wa, wb, wc = welded_vertex_indices[a], welded_vertex_indices[b], welded_vertex_indices[c]
+        edge_counts = (edge_counts_by_plane[plane_index] ||= Hash.new(0))
+        [ [ wa, wb ], [ wb, wc ], [ wc, wa ] ].each do |index_a, index_b|
+          next if index_a == index_b
+          if edge_counts[[ index_b, index_a ]] > 0
+            edge_counts[[ index_b, index_a ]] -= 1
+          else
+            edge_counts[[ index_a, index_b ]] += 1
+          end
+        end
+      end
+
+      edge_counts_by_plane
+    end
+
+    # Chains the surviving directed edges of one plane into CLOSED loops of
+    # vertex indices (the closing point not repeated). The net boundary of a
+    # cap is a set of closed cycles by construction — each vertex has as many
+    # edges leaving it as entering it — so following the successors from any
+    # edge comes back to where it started ; a chain that dead ends instead
+    # (only a degenerate cap could produce one) is dropped rather than handed
+    # out as an open contour. Where two contours PINCH at a shared vertex,
+    # any exit closes a loop and the rest is chained on the next pass.
+    def _cap_loops(edge_counts)
+      return [] if edge_counts.nil?
+
+      successors = {}
+      edge_counts.each do |(index_a, index_b), count|
+        next if count <= 0
+        count.times { (successors[index_a] ||= []) << index_b }
+      end
+
+      loops = []
+      until successors.empty?
+
+        start = successors.keys.first
+        indices = []
+        index = start
+        while (following = successors[index]) && !following.empty?
+          indices << index
+          index = following.shift
+          successors.delete(indices.last) if following.empty?
+          break if index == start
+        end
+
+        loops << indices if index == start && indices.length >= 3
+
+      end
+
+      loops
+    end
 
     # Outward unit normals of the cavity's walls — its panel planes (face id
     # != 0) carrying at least WALL_PLANE_MIN_AREA_SHARE of the wall area.

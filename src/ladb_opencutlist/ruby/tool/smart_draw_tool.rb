@@ -14,6 +14,7 @@ module Ladb::OpenCutList
   require_relative '../helper/part_helper'
   require_relative '../helper/face_matcher_helper'
   require_relative '../model/attributes/definition_attributes'
+  require_relative '../model/attributes/layer_attributes'
   require_relative '../model/solid/solid_mesh_def'
   require_relative '../model/solid/solid_boolean_result_def'
   require_relative '../utils/path_utils'
@@ -28,15 +29,18 @@ module Ladb::OpenCutList
     ACTION_DRAW_CIRCLE = 1
     ACTION_DRAW_POLYGON = 2
     ACTION_DRAW_DIVIDER = 3
+    ACTION_DRAW_DOOR = 4
 
     ACTION_OPTION_OFFSET = 'offset'
     ACTION_OPTION_SEGMENTS = 'segments'
     ACTION_OPTION_THICKNESS = 'thickness'
     ACTION_OPTION_MEASURE_TYPE = 'measure_type'
     ACTION_OPTION_AXES = 'axes'
+    ACTION_OPTION_POSE = 'pose'
     ACTION_OPTION_OPTIONS = 'options'
 
     ACTION_OPTION_OFFSET_SHAPE_OFFSET = 'shape_offset'
+    ACTION_OPTION_OFFSET_DOOR_OFFSET = 'door_offset'
 
     ACTION_OPTION_SEGMENTS_SEGMENT_COUNT = 'segment_count'
 
@@ -48,6 +52,9 @@ module Ladb::OpenCutList
 
     ACTION_OPTION_AXES_ACTIVE = 'active'
     ACTION_OPTION_AXES_CONTEXT = 'context'
+
+    ACTION_OPTION_POSE_INSET = 'inset'
+    ACTION_OPTION_POSE_OVERLAY = 'overlay'
 
     ACTION_OPTION_OPTIONS_CONSTRUCTION = 'construction'
     ACTION_OPTION_OPTIONS_DRAW_IN = 'draw_in'
@@ -92,6 +99,15 @@ module Ladb::OpenCutList
           ACTION_OPTION_THICKNESS => [ ACTION_OPTION_THICKNESS_THICKNESS ],
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, ACTION_OPTION_OPTIONS_REUSE_DEFINITION, ACTION_OPTION_OPTIONS_ASK_NAME ]
         }
+      },
+      {
+        :action => ACTION_DRAW_DOOR,
+        :options => {
+          ACTION_OPTION_POSE => [ ACTION_OPTION_POSE_INSET, ACTION_OPTION_POSE_OVERLAY ],
+          ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_DOOR_OFFSET ],
+          ACTION_OPTION_THICKNESS => [ ACTION_OPTION_THICKNESS_THICKNESS ],
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_ASK_NAME ]
+        }
       }
     ]
 
@@ -130,13 +146,15 @@ module Ladb::OpenCutList
           return SmartCursorManager.cursor_pencil_polygon
       when ACTION_DRAW_DIVIDER
           return SmartCursorManager.cursor_pencil_divider
+      when ACTION_DRAW_DOOR
+          return SmartCursorManager.cursor_pencil_door
       end
 
       super
     end
 
     def get_action_options_modal?(action)
-      action != ACTION_DRAW_DIVIDER
+      action != ACTION_DRAW_DIVIDER && action != ACTION_DRAW_DOOR
     end
 
     def get_action_option_sync_actions(action, option_group, option)
@@ -147,10 +165,15 @@ module Ladb::OpenCutList
         when ACTION_OPTION_OFFSET_SHAPE_OFFSET
           return [ ACTION_DRAW_RECTANGLE, ACTION_DRAW_CIRCLE, ACTION_DRAW_POLYGON ]
         end
+      when ACTION_OPTION_THICKNESS
+        case option
+        when ACTION_OPTION_THICKNESS_THICKNESS
+          return [ ACTION_DRAW_DIVIDER, ACTION_DRAW_DOOR ]
+        end
       when ACTION_OPTION_OPTIONS
         case option
         when ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_ASK_NAME
-          return [ ACTION_DRAW_RECTANGLE, ACTION_DRAW_CIRCLE, ACTION_DRAW_POLYGON, ACTION_DRAW_DIVIDER ]
+          return [ ACTION_DRAW_RECTANGLE, ACTION_DRAW_CIRCLE, ACTION_DRAW_POLYGON, ACTION_DRAW_DIVIDER, ACTION_DRAW_DOOR ]
         when ACTION_OPTION_OPTIONS_DRAW_IN, ACTION_OPTION_OPTIONS_PULL_CENTRED
           return [ ACTION_DRAW_RECTANGLE, ACTION_DRAW_CIRCLE, ACTION_DRAW_POLYGON ]
         end
@@ -165,6 +188,8 @@ module Ladb::OpenCutList
       when ACTION_OPTION_OFFSET
         case option
         when ACTION_OPTION_OFFSET_SHAPE_OFFSET
+          return false
+        when ACTION_OPTION_OFFSET_DOOR_OFFSET
           return false
         end
       when ACTION_OPTION_SEGMENTS
@@ -185,6 +210,8 @@ module Ladb::OpenCutList
     def get_action_option_group_unique?(action, option_group)
 
       case option_group
+      when ACTION_OPTION_POSE
+        return true
       when ACTION_OPTION_MEASURE_TYPE
         return true
       when ACTION_OPTION_AXES
@@ -200,7 +227,7 @@ module Ladb::OpenCutList
 
       when ACTION_OPTION_OFFSET
         case option
-        when ACTION_OPTION_OFFSET_SHAPE_OFFSET
+        when ACTION_OPTION_OFFSET_SHAPE_OFFSET, ACTION_OPTION_OFFSET_DOOR_OFFSET
           return Kuix::Label.new(fetch_action_option_value(action, option_group, option).to_s)
         end
       when ACTION_OPTION_SEGMENTS
@@ -228,6 +255,13 @@ module Ladb::OpenCutList
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.167,0L0.167,0.833L1,0.833 M0,0.167L0.167,0L0.333,0.167 M0.833,0.667L1,0.833L0.833,1'))
         when ACTION_OPTION_AXES_CONTEXT
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.167,0L0.167,0.833L1,0.833 M0,0.167L0.167,0L0.333,0.167 M0.833,0.667L1,0.833L0.833,1 M0.5,0.083L0.5,0.5L0.917,0.5L0.917,0.083L0.5,0.083'))
+        end
+      when ACTION_OPTION_POSE
+        case option
+        when ACTION_OPTION_POSE_INSET
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.125,0.125L0.688,0.125L0.688,0L0.125,0L0.125,0.125 M0.125,1L0.688,1L0.688,0.875L0.125,0.875L0.125,1 M0.688,0.25L0.5,0.25L0.5,0.75L0.688,0.75L0.688,0.25'))
+        when ACTION_OPTION_POSE_OVERLAY
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.125,0.125L0.688,0.125L0.688,0L0.125,0L0.125,0.125 M0.125,1L0.688,1L0.688,0.875L0.125,0.875L0.125,1 M1,0L0.813,0L0.813,1L1,1L1,0'))
         end
       when ACTION_OPTION_OPTIONS
         case option
@@ -278,6 +312,8 @@ module Ladb::OpenCutList
         set_action_handler(SmartDrawPolygonActionHandler.new(self))
       when ACTION_DRAW_DIVIDER
         set_action_handler(SmartDrawDividerActionHandler.new(self))
+      when ACTION_DRAW_DOOR
+        set_action_handler(SmartDrawDoorActionHandler.new(self))
       end
 
       super
@@ -4021,15 +4057,237 @@ module Ladb::OpenCutList
 
   end
 
-  class SmartDrawDividerActionHandler < SmartDrawActionHandler
+  # Base of the action handlers that draw a panel INSIDE an existing
+  # enclosure - a divider fitted to a compartment, a door fitted to its
+  # opening. What they share is the CAVITIES of the container the pick lands
+  # in : one boolean pass, cached on that container, that all of them read.
+  class SmartDrawPanelActionHandler < SmartDrawActionHandler
 
     include SmartActionHandlerPartHelper
+
+    LAYER_3D_CAVITY_PREVIEW = 100
+
+    def initialize(action, tool, previous_action_handler = nil)
+      super
+    end
+
+    # -----
+
+    protected
+
+    def _reset
+      _reset_cavities_def
+      super
+    end
+
+    def _reset_cavities_def
+      @cavities_def = nil
+    end
+
+    # -----
+
+    # Whether the cavity envelope must be REDUCED to what the panels really
+    # enclose (see CommonSolidFindCavitiesWorker, ENVELOPE REDUCTION). Off
+    # here : the reduction pulls the envelope back to a recessed chant, and
+    # with it the CAPS that stand for the openings - which is precisely where
+    # a facade sits. A handler that fits a panel INTO a compartment may turn
+    # it on ; one that fits a panel ONTO an opening must not.
+    def _cavities_reduce_envelope?
+      false
+    end
+
+    # Whether the OVERALL cavity is wanted alongside the compartments : the
+    # interior as if the enclosure were empty, bounded by its contour panels
+    # only (see CommonSolidFindCavitiesWorker, OVERALL CAVITY). That is what
+    # a full height facade spans, across the compartments its internal panels
+    # carve out.
+    def _cavities_overall?
+      false
+    end
+
+    # Whether the panels merely LAID ON the assembly are to be left out of
+    # the enclosure (see CommonSolidFindCavitiesWorker, DETACHED PARTS). Off
+    # here : a panel of the container is part of it until proven otherwise.
+    # A handler that DRAWS such panels has to turn it on, or the ones it has
+    # already drawn would be read as part of the carcass and inflate the
+    # envelope over the openings that are left.
+    def _cavities_ignore_applied_panels?
+      false
+    end
+
+    # The point a pick designates on the wall of a cavity, kept in
+    # @picked_point ; true when it really lands in one.
+    #
+    # The point is projected on the picked face's own plane : a pick reads a
+    # bit off the surface, and a point floating in front of the wall belongs
+    # to no cavity at all.
+    def _snap_point(picker)
+      if has_active_part? && (picked_plane_manipulator = picker.picked_plane_manipulator).is_a?(PlaneManipulator)
+        @picked_point = picker.picked_point.project_to_plane(picked_plane_manipulator.plane)
+        return (cavities_def = _get_cavities_def).is_a?(CavitiesDef) && cavities_def.valid? &&
+               !cavities_def.fragment_defs.empty? &&
+               _get_cavity_fragment_def(cavities_def, @picked_point, picked_plane_manipulator).is_a?(SolidCavityFragmentDef)
+      else
+        @picked_point = nil
+        return false
+      end
+    end
+
+    # -----
+
+    # Draws the cavities the pick lands in - their contours, and their volume
+    # as a translucent shell.
+    def _preview_cavity
+
+      @tool.clear_3d(LAYER_3D_CAVITY_PREVIEW)
+
+      return unless @picked_point.is_a?(Geom::Point3d)
+      return unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef) && cavities_def.valid?
+
+      color = Kuix::COLOR_BLUE
+
+      active_fragment_defs = cavities_def.fragment_defs_for_point(@picked_point)
+      active_fragment_defs.each do |fragment_def|
+
+        segments = fragment_def.unique_boundary_segments
+
+        k_segments = Kuix::Segments.new
+        k_segments.add_segments(segments)
+        k_segments.color = color
+        k_segments.line_width = 1
+        k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+        k_segments.on_top = true
+        @tool.append_3d(k_segments, LAYER_3D_CAVITY_PREVIEW)
+
+        k_segments = Kuix::Segments.new
+        k_segments.add_segments(segments)
+        k_segments.color = color
+        k_segments.line_width = 1.5
+        @tool.append_3d(k_segments, LAYER_3D_CAVITY_PREVIEW)
+
+        fragment_def.each_triangle_batch do |_, triangles|
+
+          k_mesh = Kuix::Mesh.new
+          k_mesh.add_triangles(triangles.flatten)
+          k_mesh.cull_face = Kuix::CULL_FACE_BACK # The fragment is a closed volume : without culling its near and far walls would blend on the same pixels and the tint would darken where they overlap
+          k_mesh.background_color = ColorUtils.color_translucent(color, 0.05)
+          @tool.append_3d(k_mesh, LAYER_3D_CAVITY_PREVIEW)
+
+        end
+
+      end
+
+    end
+
+    # -----
+
+    # The cavities of the given part's container - by default the ACTIVE
+    # part's. The explicit parameters exist for #_can_activate_part?, which
+    # runs BEFORE the part it examines is activated and so cannot rely on the
+    # active one.
+    def _get_cavities_def(part_entity_path = get_active_part_entity_path, part = get_active_part)
+      return nil unless part_entity_path.is_a?(Array) && part_entity_path.length > 1
+
+      container_path = part_entity_path[0...-1]
+      return nil if container_path.empty?
+
+      container = container_path.last
+      return nil if container.nil?
+
+      # Cavities belong to the CONTAINER, not to the picked part : sliding the
+      # pick from one panel to another of the same box must reuse the boolean
+      # pass rather than pay for it again. Comparing the paths compares the
+      # entities themselves, so a #_make_unique_groups_in_path that replaced
+      # them invalidates the cache - which is exactly what it should do.
+      return @cavities_def if @cavities_def.is_a?(CavitiesDef) && @cavities_def.container_path == container_path
+
+      return nil if !part.is_a?(Part) || part.group.material_is_virtual || part.group.material_type == MaterialAttributes::TYPE_HARDWARE
+
+      cutlist = CutlistGenerateWorker.new(**HashUtils.symbolize_keys(PLUGIN.get_model_preset('cutlist_options'))
+                                                     .merge({ active_entity: container, active_path: container_path[0...-1] })
+      ).run
+
+      parts = cutlist.groups
+                     .reject { |group| group.material_is_virtual || group.material_type == MaterialAttributes::TYPE_HARDWARE}
+                     .flat_map { |group| group.get_parts }
+      # The glued cuts-opening machinings stay IN : SketchUp punches their
+      # opening in the host face tessellation, so a drilled panel without them
+      # is an open shell (one open edge loop per mortise) that no boolean can
+      # take. They are what closes it back — SolidMeshDef marks them virtual,
+      # and CommonSolidFindCavitiesWorker drops the voids they enclose. Hence
+      # flatten: false, without which they land in the drawing def's own faces
+      # and lose that provenance.
+      # The DOORS are left out : a door is laid ON the carcass, and read as a
+      # panel of it, it pushes the envelope forward over the part of the
+      # facade it covers - the openings that are left then read on a slanted,
+      # oversized cap, and the next door is fitted to a mouth that does not
+      # exist. Nothing in its geometry says it is a door (see
+      # CommonSolidFindCavitiesWorker, APPLIED PANELS) : its LAYER does.
+      drawing_defs = parts.flat_map { |container_part|
+        container_part.def.instance_infos.values.reject { |instance_info|
+          LayerAttributes.type_of(instance_info.entity) == LayerAttributes::TYPE_DOOR
+        }.map { |instance_info|
+          CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new(instance_info.path) ],
+                                               ignore_surfaces: true,
+                                               ignore_edges: true,
+                                               container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART_WITHOUT_MACHININGS,
+                                               flatten: false
+          ).run
+        }
+      }
+
+      result_def = CommonSolidFindCavitiesWorker.new(drawing_defs,
+                                                     max_opening_planes: 4,
+                                                     reduce_envelope: _cavities_reduce_envelope?,
+                                                     overall_cavity: _cavities_overall?,
+                                                     ignore_applied_panels: _cavities_ignore_applied_panels?
+      ).run
+
+      @cavities_def = CavitiesDef.new(container_path, result_def, drawing_defs)
+
+      unless result_def.success?
+        @tool.notify_errors(result_def.errors)
+      end
+
+      @cavities_def
+    end
+
+    # -----
+
+    # The cavity fragment a pick designates, or nil when the point sits in no
+    # cavity at all.
+    #
+    # The lookup point is nudged to the cavity side of the picked face : a
+    # point picked exactly on a boundary face is ambiguous between the
+    # cavities it separates (fragment_defs_for_point would return both).
+    def _get_cavity_fragment_def(cavities_def, point, picked_face_manipulator)
+      inward_point = point.offset(picked_face_manipulator.normal.reverse, SolidMeshDef::TOLERANCE * 10)
+      cavities_def.fragment_defs_for_point(inward_point).first || cavities_def.fragment_defs_for_point(point).first
+    end
+
+    # -----
+
+    CavitiesDef = Struct.new(:container_path, :result_def, :drawing_defs) do
+      def valid?
+        result_def.is_a?(SolidBooleanResultDef) && result_def.success?
+      end
+      def fragment_defs
+        result_def.fragment_defs
+      end
+      def fragment_defs_for_point(point)
+        result_def.fragment_defs_for_point(point)
+      end
+    end
+
+  end
+
+  class SmartDrawDividerActionHandler < SmartDrawPanelActionHandler
+
     include FaceMatcherHelper
 
     STATE_PLACE = 0
     STATE_DISTRIBUTE = 1
 
-    LAYER_3D_CAVITY_PREVIEW = 100
     LAYER_3D_DIVIDER_PREVIEW = 200
 
     LAYER_2D_DISTANCE = 100
@@ -4282,16 +4540,11 @@ module Ladb::OpenCutList
     # -----
 
     def _reset
-      _reset_cavities_def
       @picked_point = nil
       @locked_normal = nil
       @number = 0
       @spacings = []
       super
-    end
-
-    def _reset_cavities_def
-      @cavities_def = nil
     end
 
     def _refresh
@@ -4327,62 +4580,6 @@ module Ladb::OpenCutList
     end
 
     # -----
-
-    def _snap_point(picker)
-      if has_active_part? && (picked_plane_manipulator = picker.picked_plane_manipulator).is_a?(PlaneManipulator)
-        @picked_point = picker.picked_point.project_to_plane(picked_plane_manipulator.plane)
-        return (cavities_def = _get_cavities_def).is_a?(CavitiesDef) && cavities_def.valid? &&
-               !cavities_def.fragment_defs.empty? &&
-               _get_cavity_fragment_def(cavities_def, @picked_point, picked_plane_manipulator).is_a?(SolidCavityFragmentDef)
-      else
-        @picked_point = nil
-        return false
-      end
-    end
-
-    # -----
-
-    def _preview_cavity
-
-      @tool.clear_3d(LAYER_3D_CAVITY_PREVIEW)
-
-      return unless @picked_point.is_a?(Geom::Point3d)
-      return unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef) && cavities_def.valid?
-
-      color = Kuix::COLOR_BLUE
-
-      active_fragment_defs = cavities_def.fragment_defs_for_point(@picked_point)
-      active_fragment_defs.each do |fragment_def|
-
-        segments = fragment_def.unique_boundary_segments
-
-        k_segments = Kuix::Segments.new
-        k_segments.add_segments(segments)
-        k_segments.color = color
-        k_segments.line_width = 1
-        k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-        k_segments.on_top = true
-        @tool.append_3d(k_segments, LAYER_3D_CAVITY_PREVIEW)
-
-        k_segments = Kuix::Segments.new
-        k_segments.add_segments(segments)
-        k_segments.color = color
-        k_segments.line_width = 1.5
-        @tool.append_3d(k_segments, LAYER_3D_CAVITY_PREVIEW)
-
-        fragment_def.each_triangle_batch do |_, triangles|
-
-          k_mesh = Kuix::Mesh.new
-          k_mesh.add_triangles(triangles.flatten)
-          k_mesh.cull_face = Kuix::CULL_FACE_BACK # The fragment is a closed volume : without culling its near and far walls would blend on the same pixels and the tint would darken where they overlap
-          k_mesh.background_color = ColorUtils.color_translucent(color, 0.05)
-          @tool.append_3d(k_mesh, LAYER_3D_CAVITY_PREVIEW)
-
-        end
-
-      end
-
-    end
 
     def _preview_divider(view)
 
@@ -4595,6 +4792,14 @@ module Ladb::OpenCutList
 
     def _fetch_option_reduce_envelope?
       @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE)
+    end
+
+    # The reduction is the divider's own option : a divider is fitted BETWEEN
+    # the panels it lands on, so pulling the envelope back to a recessed
+    # chant is a legitimate reading of the compartment - see
+    # SmartDrawTool::ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE.
+    def _cavities_reduce_envelope?
+      _fetch_option_reduce_envelope?
     end
 
     def _fetch_option_reuse_definition?
@@ -4913,69 +5118,6 @@ module Ladb::OpenCutList
 
     # -----
 
-    # The cavities of the given part's container - by default the ACTIVE
-    # part's. The explicit parameters exist for #_can_activate_part?, which
-    # runs BEFORE the part it examines is activated and so cannot rely on the
-    # active one.
-    def _get_cavities_def(part_entity_path = get_active_part_entity_path, part = get_active_part)
-      return nil unless part_entity_path.is_a?(Array) && part_entity_path.length > 1
-
-      container_path = part_entity_path[0...-1]
-      return nil if container_path.empty?
-
-      container = container_path.last
-      return nil if container.nil?
-
-      # Cavities belong to the CONTAINER, not to the picked part : sliding the
-      # pick from one panel to another of the same box must reuse the boolean
-      # pass rather than pay for it again. Comparing the paths compares the
-      # entities themselves, so a #_make_unique_groups_in_path that replaced
-      # them invalidates the cache - which is exactly what it should do.
-      return @cavities_def if @cavities_def.is_a?(CavitiesDef) && @cavities_def.container_path == container_path
-
-      return nil if !part.is_a?(Part) || part.group.material_is_virtual || part.group.material_type == MaterialAttributes::TYPE_HARDWARE
-
-      cutlist = CutlistGenerateWorker.new(**HashUtils.symbolize_keys(PLUGIN.get_model_preset('cutlist_options'))
-                                                     .merge({ active_entity: container, active_path: container_path[0...-1] })
-      ).run
-
-      parts = cutlist.groups
-                     .reject { |group| group.material_is_virtual || group.material_type == MaterialAttributes::TYPE_HARDWARE}
-                     .flat_map { |group| group.get_parts }
-      # The glued cuts-opening machinings stay IN : SketchUp punches their
-      # opening in the host face tessellation, so a drilled panel without them
-      # is an open shell (one open edge loop per mortise) that no boolean can
-      # take. They are what closes it back — SolidMeshDef marks them virtual,
-      # and CommonSolidFindCavitiesWorker drops the voids they enclose. Hence
-      # flatten: false, without which they land in the drawing def's own faces
-      # and lose that provenance.
-      drawing_defs = parts.flat_map { |container_part|
-        container_part.def.instance_infos.values.map { |instance_info|
-          CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new(instance_info.path) ],
-                                               ignore_surfaces: true,
-                                               ignore_edges: true,
-                                               container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART_WITHOUT_MACHININGS,
-                                               flatten: false
-          ).run
-        }
-      }
-
-      result_def = CommonSolidFindCavitiesWorker.new(drawing_defs,
-                                                     max_opening_planes: 4,
-                                                     reduce_envelope: _fetch_option_reduce_envelope?
-      ).run
-
-      @cavities_def = CavitiesDef.new(container_path, result_def, drawing_defs)
-
-      unless result_def.success?
-        @tool.notify_errors(result_def.errors)
-      end
-
-      @cavities_def
-    end
-
-    # -----
-
     # A freshly created divider, in the shape #_find_reusable_definition's
     # candidate pool expects : [ occurrence path, instance, WORLD face
     # manipulators, face planes ]. Read off the definition AFTER the auto
@@ -5196,17 +5338,6 @@ module Ladb::OpenCutList
     end
 
     # -----
-
-    # The cavity fragment a pick designates, or nil when the point sits in no
-    # cavity at all.
-    #
-    # The lookup point is nudged to the cavity side of the picked face : a
-    # point picked exactly on a boundary face is ambiguous between the
-    # cavities it separates (fragment_defs_for_point would return both).
-    def _get_cavity_fragment_def(cavities_def, point, picked_face_manipulator)
-      inward_point = point.offset(picked_face_manipulator.normal.reverse, SolidMeshDef::TOLERANCE * 10)
-      cavities_def.fragment_defs_for_point(inward_point).first || cavities_def.fragment_defs_for_point(point).first
-    end
 
     # What the pick resolves to, before any slab is built :
     # [ cavities_def, fragment_def, normal_3f ], or nil when the pick is not
@@ -5694,18 +5825,6 @@ module Ladb::OpenCutList
 
     # -----
 
-    CavitiesDef = Struct.new(:container_path, :result_def, :drawing_defs) do
-      def valid?
-        result_def.is_a?(SolidBooleanResultDef) && result_def.success?
-      end
-      def fragment_defs
-        result_def.fragment_defs
-      end
-      def fragment_defs_for_point(point)
-        result_def.fragment_defs_for_point(point)
-      end
-    end
-
     # One divider - i.e. one slab of the distribution, carrying the 1..N
     # disjoint bodies the cavity clipped that slab into, hence 1..N parts
     # (see #_compute_dividers and #_create_entity). The measures below belong
@@ -5735,4 +5854,824 @@ module Ladb::OpenCutList
 
   end
 
+  # Draws a DOOR fitted to an opening of a cavity.
+  #
+  # The cavity detector already knows what an opening is : the envelope CAPS
+  # (face id 0) close the cavity flush with the panel edges where no panel
+  # does, and SolidCavityFragmentDef#opening_defs reads their net contour -
+  # one closed loop per opening, exact whatever the tessellation or the slope
+  # of the facade. That contour IS the door, so the handler only has to
+  # choose WHICH opening the pick means, and give it a thickness.
+  #
+  # INSET only for now : the door fills the mouth, its outer face flush with
+  # the plane the caps stand on. An OVERLAY door needs something the cavity
+  # cannot tell - the outer outline of the contour panels around the mouth -
+  # and will come as an option of its own ; #_get_door_outline is the single
+  # place that will branch.
+  #
+  # The OVERALL cavity is deliberately not asked for either
+  # (#_cavities_overall? stays false, see SmartDrawPanelActionHandler) : it is
+  # what a FULL HEIGHT door spans, but a pick would then land in two cavities
+  # at once - its compartment and the overall one - and which of them the user
+  # means is a rule of its own, not something to settle by fragment order.
+  class SmartDrawDoorActionHandler < SmartDrawPanelActionHandler
+
+    STATE_PLACE = 0
+
+    LAYER_3D_DOOR_PREVIEW = 200
+
+    # Minimum dot between an opening's outward normal and the direction the
+    # camera looks FROM, for that opening to be a candidate : an opening seen
+    # edge-on, or from behind, is not the one the user is pointing at. A
+    # facade may still be as flat as 6° from edge-on and take a door - only
+    # the ones actually turned away are ruled out.
+    OPENING_FACING_MIN_DOT = 0.1
+
+    # Below this dot deviation two opening normals are the same direction,
+    # and below this projected area (square inches) a triangle stands edge-on
+    # to the opening plane : it projects to a segment and brings nothing to
+    # the container's silhouette.
+    OPENING_PLANE_MIN_DOT = 1.0 - 1e-6
+    FOOTPRINT_MIN_TRIANGLE_AREA = 1e-9
+
+    def initialize(tool, previous_action_handler = nil)
+      super(SmartDrawTool::ACTION_DRAW_DOOR, tool, previous_action_handler)
+
+      @picked_point = nil
+
+    end
+
+    # -----
+
+    def get_state_picker(state)
+
+      case state
+      when STATE_PLACE
+        return SmartPicker.new(tool: @tool, observer: self, pick_point: true)
+      end
+
+      super
+    end
+
+    def get_state_status(state)
+
+      case state
+      when STATE_PLACE
+        return super +
+               ' | ' + PLUGIN.get_i18n_string("default.constrain_key") + ' + X = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_construction_status') + '.'
+      end
+
+      super
+    end
+
+    # -----
+
+    def onToolLButtonUp(tool, flags, x, y, view)
+      super
+
+      case @state
+      when STATE_PLACE
+        if _create_entity(@picked_point, view)
+          # The cavities are NOT re-read : laying a door on the carcass does
+          # not change the compartments it has, and the next door is to be
+          # fitted to the same bare openings as this one. The detection would
+          # come to the same answer anyway - the door goes on a layer marked
+          # as such, which #_get_cavities_def leaves out of the enclosure -
+          # this only spares paying for it again at every door.
+          _refresh
+        else
+          UI.beep
+        end
+      end
+
+      true
+    end
+
+    def onToolUserText(tool, text, view)
+
+      return true if _read_thickness(tool, text, view)
+
+      false
+    end
+
+    def onPickerChanged(picker, view)
+      case @state
+
+      when STATE_PLACE
+        _pick_part(picker, view)
+        if has_active_part?
+          if _snap_point(picker)
+            @tool.remove_tooltip
+            @tool.pop_cursor(SmartCursorManager.cursor_select_error)
+          else
+            @tool.show_tooltip(PLUGIN.get_i18n_string('tool.smart_draw.error.invalid_door_cavity'), SmartTool::MESSAGE_TYPE_ERROR)
+            @tool.push_cursor(SmartCursorManager.cursor_select_error)
+          end
+        end
+        _preview_door(view)
+        _preview_cavity
+      end
+
+      super
+    end
+
+    def onToolActionOptionStored(tool, action, option_group, option)
+      _refresh
+    end
+
+    def onToolTransactionUndo(tool, model)
+      _reset_cavities_def
+      super
+    end
+
+    # -----
+
+    protected
+
+    # -----
+
+    def _reset
+      @picked_point = nil
+      super
+    end
+
+    def _reset_cavities_def
+      @footprint_container_path = nil
+      @footprint_paths_cache = nil
+      super
+    end
+
+    def _refresh
+      @picker.invalidate if @picker.is_a?(SmartPicker)
+      super
+    end
+
+    # -----
+
+    def _can_activate_part?(part_entity_path, part)
+      return [ false, 'tool.smart_draw.error.invalid_door_seed' ] unless (!part.is_a?(Part) || part.group.material_type != MaterialAttributes::TYPE_HARDWARE)
+      return [ false, 'tool.smart_draw.error.invalid_door_container' ] if !part_entity_path.nil? && part_entity_path.one?
+
+      # The inherited tests first : no point paying for a cavity detection on a part that will be refused anyway.
+      can_activate, _ = super_result = super
+      return super_result unless can_activate
+
+      return [ false, 'tool.smart_draw.error.no_door_cavity' ] if (cavities_def = _get_cavities_def(part_entity_path, part)).is_a?(CavitiesDef) && cavities_def.valid? && cavities_def.fragment_defs.empty?
+
+      super_result
+    end
+
+    def _preview_part_mesh?
+      false
+    end
+
+    def _preview_part_container?
+      true
+    end
+
+    # -----
+
+    def _read_thickness(tool, text, view)
+
+      # Keep it "compatible" with the way to enter offset in Smart Draw Tool.
+      if (match = /^(.+)x$/i.match(text))
+        text = match[1]
+      else
+        return false
+      end
+
+      thickness = _read_user_text_length(tool, text)
+      return true if thickness.nil?
+
+      if thickness < 0
+        tool.notify_errors([[ 'tool.default.error.invalid_thickness', { :value => thickness } ]])
+        return true
+      end
+
+      @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_THICKNESS, SmartDrawTool::ACTION_OPTION_THICKNESS_THICKNESS, thickness.to_s, fire_event: true)
+      Sketchup.set_status_text('', SB_VCB_VALUE)
+      _refresh
+
+      true
+    end
+
+    def _fetch_option_door_offset
+      @tool.fetch_action_option_length(@action, SmartDrawTool::ACTION_OPTION_OFFSET, SmartDrawTool::ACTION_OPTION_OFFSET_DOOR_OFFSET)
+    end
+
+    def _fetch_option_thickness
+      @tool.fetch_action_option_length(@action, SmartDrawTool::ACTION_OPTION_THICKNESS, SmartDrawTool::ACTION_OPTION_THICKNESS_THICKNESS)
+    end
+
+    def _fetch_option_pose_overlay?
+      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_POSE, SmartDrawTool::ACTION_OPTION_POSE_OVERLAY)
+    end
+
+    # -----
+
+    # What the pick resolves to : the DoorDef to build, or nil when the pick
+    # is not on a cavity that has an opening facing the viewer.
+    def _compute_door_def(point, view)
+      return nil unless point.is_a?(Geom::Point3d)
+      return nil unless (picked_face_manipulator = @picker.picked_plane_manipulator).is_a?(PlaneManipulator)
+      return nil unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef) && cavities_def.valid?
+
+      fragment_def = _get_cavity_fragment_def(cavities_def, point, picked_face_manipulator)
+      return nil unless fragment_def.is_a?(SolidCavityFragmentDef)
+
+      opening_def = _get_door_opening_def(fragment_def, view)
+      return nil if opening_def.nil?
+
+      outline = _get_door_outline(fragment_def, opening_def)
+      return nil if outline.nil? || outline.length < 3
+
+      thickness = _fetch_option_thickness
+      return nil if thickness.nil? || thickness <= 0
+
+      DoorDef.new(cavities_def.container_path, fragment_def, opening_def, outline, thickness, _fetch_option_pose_overlay?)
+    end
+
+    # The opening a door is meant for : among the ones the cavity has, the
+    # one the camera FACES most squarely.
+    #
+    # Nothing in the cavity says which of its mouths is the front - a through
+    # tube has two, congruent ones. What says it is the viewer : a door is
+    # drawn on the facade being looked at, so the outward normals are scored
+    # against the direction the camera looks FROM, and an opening seen from
+    # behind (or edge-on, OPENING_FACING_MIN_DOT) is not a candidate at all.
+    #
+    # FACING first, area only to break a tie between two openings the camera
+    # is square to alike. Reading the area first looks reasonable - the main
+    # facade is usually the biggest mouth - and is wrong as soon as the case
+    # is seen from three quarters : a compartment open on its side offers a
+    # mouth several times the facade's, and the door lands on the flank the
+    # user is not even looking at. What the user points at is what they FACE.
+    def _get_door_opening_def(fragment_def, view)
+      direction = view.camera.direction
+      to_camera = [ -direction.x, -direction.y, -direction.z ]
+
+      best = nil
+      best_score = nil
+      fragment_def.opening_defs.each do |opening_def|
+        normal = opening_def.normal
+        dot = normal.x * to_camera[0] + normal.y * to_camera[1] + normal.z * to_camera[2]
+        next if dot < OPENING_FACING_MIN_DOT
+        score = [ dot, opening_def.area ]
+        next unless best_score.nil? || (score <=> best_score) > 0
+        best = opening_def
+        best_score = score
+      end
+
+      best
+    end
+
+    # The outline the door is cut to, in WORLD coordinates.
+    #
+    # Two POSES, and what separates them is entirely here : the nominal
+    # contour they start from. The CLEARANCE then applies to both the same
+    # way - the gap left on EVERY edge, the way a door is specified (2 mm
+    # takes 4 mm off the width and 4 off the height).
+    #
+    #   INSET   : the mouth itself, the opening's outer contour.
+    #   OVERLAY : the share of the container's front this cavity is entitled
+    #             to - see #_get_overlay_points.
+    #
+    # Everything is computed in the opening's OWN frame, where the mouth lies
+    # flat on z = 0, and brought back once cut. That frame is canonical for
+    # the PLANE - its origin is the world origin projected on it, its axes
+    # come from the normal alone - so two cavities sharing a facade read
+    # their neighbours and the container's silhouette in the very same
+    # coordinates, and the silhouette can be computed once for them all.
+    def _get_door_outline(fragment_def, opening_def)
+
+      mouth = opening_def.outer_loop
+      return nil if mouth.nil? || mouth.length < 3
+
+      x_axis, y_axis, z_axis = opening_def.normal.axes
+      t = Geom::Transformation.axes(Geom::Point3d.new(0, 0, 0).project_to_plane(opening_def.plane), x_axis, y_axis, z_axis)
+      ti = t.inverse
+
+      mouth_points = mouth.map { |point| point.transform(ti) }
+
+      if _fetch_option_pose_overlay?
+        points = _get_overlay_points(fragment_def, opening_def, mouth_points, ti)
+      else
+        points = mouth_points
+      end
+      return nil if points.nil? || points.length < 3
+
+      points = _apply_door_offset(points)
+      return nil if points.nil?
+
+      points.map { |point| point.transform(t) }
+    end
+
+    # The nominal contour pulled back by the CLEARANCE on every edge, in the
+    # opening's frame.
+    #
+    # A real polygon offset (Clippy, the same one the shape offset of the
+    # other actions uses), not a scaling : a contour is not always a
+    # rectangle - a canted or notched one keeps its angles, and every edge
+    # stands back by the same distance, which is what a door offset means.
+    def _apply_door_offset(points)
+
+      door_offset = _fetch_option_door_offset
+      return points if door_offset.nil? || door_offset <= 0
+
+      # The union normalizes the winding, and the winding is what decides
+      # which side a negative delta offsets towards.
+      paths, _ = Fiddle::Clippy.execute_union(closed_subjects: [ Fiddle::Clippy.points_to_rpath(points) ])
+      outlines = Fiddle::Clippy.inflate_paths(
+        paths: paths,
+        delta: -door_offset.to_f,
+        join_type: Fiddle::Clippy::JOIN_TYPE_MITER,
+        miter_limit: 100.0
+      ).map { |path| Fiddle::Clippy.rpath_to_points(path) }
+       .delete_if { |inset_points| inset_points.length < 3 }
+
+      # A door offset the contour is too narrow for leaves nothing at all, or
+      # breaks it into several rings : neither is a door, and the pick simply
+      # yields nothing rather than a mangled one.
+      return nil unless outlines.length == 1
+
+      outlines.first
+    end
+
+    # OVERLAY : the share of the container's front that belongs to this
+    # cavity, in the opening's frame.
+    #
+    # A door in applique covers the frame around its mouth, and how far is
+    # not a number the user should have to give : it is written in the
+    # carcass. It runs to the OUTER EDGE of the container where nothing else
+    # claims the material, and stops HALF WAY through a panel it shares with
+    # a neighbouring compartment, so that the two doors meet on the middle of
+    # that panel. Front to front, the pair of them covers the whole facade.
+    #
+    # Read as a partition of the container's silhouette. Each sibling mouth
+    # of the same plane contributes ONE CUT : the perpendicular bisector of
+    # the shortest segment between the two mouths, which is the mid plane of
+    # the panel they share, and everything past it is taken away. A bisector
+    # is a half plane, unbounded - that is the whole point. A collar grown
+    # around the neighbour would not do : it stops a few millimetres past its
+    # own mouth, and the two shares simply flow into each other around it,
+    # along the top and bottom borders of the facade.
+    #
+    # Nothing is cut out of our own side, so the outer border, claimed by no
+    # one else, stays whole. A sibling sitting diagonally cuts on the
+    # diagonal, and on a grid of compartments that bisector passes exactly
+    # through the corner where the four of them meet : it takes nothing the
+    # straight neighbours had not already taken.
+    #
+    # What is left may well be in several pieces ; ours is the one the mouth
+    # falls in. Only its OUTER contour is kept : a hole in the container's
+    # front is not the door's business.
+    def _get_overlay_points(fragment_def, opening_def, mouth_points, ti)
+
+      footprint_paths = _get_footprint_paths(opening_def, ti)
+      return nil if footprint_paths.nil? || footprint_paths.empty?
+
+      reach = _paths_reach(footprint_paths)
+
+      clips = []
+      _get_sibling_mouth_points(fragment_def, opening_def, ti).each do |sibling_points|
+        near_point, far_point = _loops_closest_points(mouth_points, sibling_points)
+        next if near_point.nil?
+        dx = (far_point.x - near_point.x).to_f
+        dy = (far_point.y - near_point.y).to_f
+        gap = Math.sqrt(dx * dx + dy * dy)
+        # Mouths that touch share no panel : there is nothing between them to
+        # halve, and no direction to cut along either.
+        next if gap <= SolidMeshDef::TOLERANCE
+        clips << _half_plane_path((near_point.x + far_point.x).to_f / 2.0, (near_point.y + far_point.y).to_f / 2.0, dx / gap, dy / gap, reach)
+      end
+
+      polytree = Fiddle::Clippy.execute_polytree(
+        clip_type: clips.empty? ? Fiddle::Clippy::CLIP_TYPE_UNION : Fiddle::Clippy::CLIP_TYPE_DIFFERENCE,
+        closed_subjects: footprint_paths,
+        clips: clips
+      )
+
+      # Through a union, so that the mouth is wound the way Clipper expects
+      # whichever way the opening handed it over.
+      mouth_paths, _ = Fiddle::Clippy.execute_union(closed_subjects: [ Fiddle::Clippy.points_to_rpath(mouth_points) ])
+
+      best_path = nil
+      best_area = 0.0
+      Fiddle::Clippy.polytree_to_polyshapes(polytree).each do |polyshape|
+        path = polyshape.paths.first
+        next if path.nil? || path.length < 6
+        overlap_paths, _ = Fiddle::Clippy.execute_intersection(closed_subjects: [ path ], clips: mouth_paths)
+        area = overlap_paths.inject(0.0) { |sum, overlap_path| sum + Fiddle::Clippy.get_rpath_area(overlap_path) }
+        next unless area > best_area
+        best_path = path
+        best_area = area
+      end
+      return nil if best_path.nil?
+
+      Fiddle::Clippy.rpath_to_points(best_path)
+    end
+
+    # The container's SILHOUETTE on the opening plane : every panel of the
+    # container projected on it and unioned - the outline a door in applique
+    # may cover, and no further.
+    #
+    # A triangle standing edge-on to the plane projects to a segment and is
+    # dropped : it adds nothing, and the faces that do face the plane already
+    # carry that part of the outline. On a plain carcass that leaves only the
+    # front and back faces of each panel, a handful of triangles.
+    #
+    # Cached per PLANE for the container the cavities were read on : the
+    # preview recomputes the door on every mouse move, the carcass does not
+    # change under it.
+    def _get_footprint_paths(opening_def, ti)
+      return nil unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef)
+
+      unless @footprint_paths_cache.is_a?(Hash) && @footprint_container_path == cavities_def.container_path
+        @footprint_container_path = cavities_def.container_path
+        @footprint_paths_cache = {}
+      end
+
+      normal = opening_def.normal
+      origin = opening_def.origin
+      key = [
+        (normal.x * 1e6).round, (normal.y * 1e6).round, (normal.z * 1e6).round,
+        ((origin.x * normal.x + origin.y * normal.y + origin.z * normal.z) / SolidMeshDef::TOLERANCE).round
+      ]
+      return @footprint_paths_cache[key] if @footprint_paths_cache.has_key?(key)
+
+      @footprint_paths_cache[key] = _compute_footprint_paths(cavities_def.drawing_defs, ti)
+    end
+
+    def _compute_footprint_paths(drawing_defs, ti)
+
+      paths = []
+      drawing_defs.each do |drawing_def|
+
+        mesh_def = SolidMeshDef.from_drawing_def(drawing_def)
+        vertices = mesh_def.vertices
+        face_indices = mesh_def.face_indices
+
+        index = 0
+        while index < face_indices.length
+
+          points = (0..2).map { |offset|
+            base = face_indices[index + offset] * 3
+            Geom::Point3d.new(vertices[base], vertices[base + 1], vertices[base + 2]).transform(ti)
+          }
+          index += 3
+
+          # Twice the signed projected area, and its sign is the winding :
+          # the union runs on NON ZERO, so every path is turned the same way
+          # before it goes in.
+          area = ((points[1].x - points[0].x) * (points[2].y - points[0].y) -
+                  (points[1].y - points[0].y) * (points[2].x - points[0].x)).to_f
+          next if area.abs < FOOTPRINT_MIN_TRIANGLE_AREA
+          points.reverse! if area < 0
+
+          paths << Fiddle::Clippy.points_to_rpath(points)
+
+        end
+
+      end
+      return [] if paths.empty?
+
+      footprint_paths, _ = Fiddle::Clippy.execute_union(closed_subjects: paths)
+      footprint_paths
+    end
+
+    # The mouths of the OTHER cavities that open on the very same plane, in
+    # the opening's frame - the neighbours a door in applique has to share
+    # the frame with.
+    #
+    # Same plane AND same side : a cavity opening the other way sits behind
+    # the facade and is no neighbour of this door.
+    def _get_sibling_mouth_points(fragment_def, opening_def, ti)
+      return [] unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef)
+
+      normal = opening_def.normal
+      origin = opening_def.origin
+
+      mouths = []
+      cavities_def.fragment_defs.each do |other_fragment_def|
+        next if other_fragment_def.equal?(fragment_def)
+        other_fragment_def.opening_defs.each do |other_opening_def|
+          next if other_opening_def.normal.dot(normal) < OPENING_PLANE_MIN_DOT
+          next if (other_opening_def.origin - origin).dot(normal).abs > SolidMeshDef::TOLERANCE
+          loop_points = other_opening_def.outer_loop
+          next if loop_points.nil? || loop_points.length < 3
+          mouths << loop_points.map { |point| point.transform(ti) }
+        end
+      end
+      mouths
+    end
+
+    # The closest pair of points of two closed contours of the plane, the
+    # first on the FIRST contour - read on every vertex against every edge of
+    # the other, both ways round. Two mouths never overlap, so their contours
+    # never cross : the closest pair always has one of its ends on a vertex,
+    # and that reading is exact.
+    def _loops_closest_points(loop_points, other_loop_points)
+      best = nil
+      best_distance = nil
+      [ [ loop_points, other_loop_points, false ], [ other_loop_points, loop_points, true ] ].each do |points, edge_points, swapped|
+        points.each do |point|
+          edge_points.each_with_index do |start_point, index|
+            foot, distance = _point_segment_foot(point, start_point, edge_points[(index + 1) % edge_points.length])
+            next unless best_distance.nil? || distance < best_distance
+            best_distance = distance
+            best = swapped ? [ foot, point ] : [ point, foot ]
+          end
+        end
+      end
+      return [ nil, nil ] if best.nil?
+      best
+    end
+
+    # [ the point of the segment closest to +point+, its distance ].
+    def _point_segment_foot(point, start_point, end_point)
+      dx = (end_point.x - start_point.x).to_f
+      dy = (end_point.y - start_point.y).to_f
+      px = (point.x - start_point.x).to_f
+      py = (point.y - start_point.y).to_f
+      length2 = dx * dx + dy * dy
+      if length2 <= 0
+        ratio = 0.0
+      else
+        ratio = (px * dx + py * dy) / length2
+        ratio = 0.0 if ratio < 0.0
+        ratio = 1.0 if ratio > 1.0
+      end
+      foot = Geom::Point3d.new(start_point.x.to_f + ratio * dx, start_point.y.to_f + ratio * dy, 0.0)
+      [ foot, Math.sqrt((px - ratio * dx) ** 2 + (py - ratio * dy) ** 2) ]
+    end
+
+    # How far a half plane has to run to be, as far as the footprint is
+    # concerned, unbounded.
+    def _paths_reach(paths)
+      reach = 0.0
+      paths.each { |path| path.each { |coordinate| value = coordinate.to_f.abs ; reach = value if value > reach } }
+      reach * 4.0 + 1.0
+    end
+
+    # The half plane { p | (p - origin) . direction >= 0 }, as a closed path
+    # big enough to behave like one - wound counter clockwise, the way the
+    # NON ZERO fill of the difference expects its clips.
+    def _half_plane_path(origin_x, origin_y, direction_x, direction_y, reach)
+      side_x = -direction_y
+      side_y = direction_x
+      [
+        origin_x - side_x * reach,                          origin_y - side_y * reach,
+        origin_x + (direction_x - side_x) * reach,          origin_y + (direction_y - side_y) * reach,
+        origin_x + (direction_x + side_x) * reach,          origin_y + (direction_y + side_y) * reach,
+        origin_x + side_x * reach,                          origin_y + side_y * reach
+      ]
+    end
+
+    # -----
+
+    def _preview_door(view)
+
+      @tool.clear_3d(LAYER_3D_DOOR_PREVIEW)
+
+      return unless (door_def = _compute_door_def(@picked_point, view)).is_a?(DoorDef)
+
+      color = Kuix::COLOR_MAGENTA
+
+      # face_info_defs is irrelevant here : the preview only needs the
+      # geometry (boundary_segments doesn't dereference it).
+      vertices, face_indices, face_ids = door_def.mesh_3f
+      door_fragment_def = SolidFragmentDef.new(vertices, face_indices, face_ids, [])
+      segments = door_fragment_def.unique_boundary_segments
+
+      k_segments = Kuix::Segments.new
+      k_segments.add_segments(segments)
+      k_segments.color = color
+      k_segments.line_width = 1
+      k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+      k_segments.on_top = true
+      @tool.append_3d(k_segments, LAYER_3D_DOOR_PREVIEW)
+
+      unless _fetch_option_construction?
+
+        k_segments = Kuix::Segments.new
+        k_segments.add_segments(segments)
+        k_segments.color = color
+        k_segments.line_width = 1.5
+        @tool.append_3d(k_segments, LAYER_3D_DOOR_PREVIEW)
+
+      end
+
+      Sketchup.set_status_text(door_def.thickness.to_l, SB_VCB_VALUE)
+
+    end
+
+    # -----
+
+    def _create_entity(point, view)
+      return false unless (door_def = _compute_door_def(point, view)).is_a?(DoorDef)
+
+      container_path = door_def.container_path
+      if container_path.is_a?(Array) && container_path.any? && (container = container_path.last) && container.respond_to?(:definition)
+        active_entities = container.definition.entities
+        active_transformation = PathUtils.get_transformation(container_path, IDENTITY)
+      else
+        active_entities = Sketchup.active_model.entities
+        active_transformation = IDENTITY
+        container_path = []
+      end
+
+      model = Sketchup.active_model
+      model.start_operation('OCL Create Door', true, false, !active?)
+      begin
+
+        # Local frame for the new part : Z = the opening's outward normal,
+        # X/Y its own in-plane basis, origin on the opening plane. The door
+        # is then built on one side of z = 0 or the other, according to the
+        # POSE - inset INTO the cavity, in applique in FRONT of it - so that
+        # in both cases one of its faces lands exactly on the mouth plane.
+        x_axis, y_axis, z_axis = door_def.axes
+      world_transformation = Geom::Transformation.axes(door_def.origin, x_axis, y_axis, z_axis)
+
+        if _fetch_option_construction?
+
+          group = active_entities.add_group
+          group.transformation = active_transformation.inverse * world_transformation
+
+          created_faces = _build_door_faces(group.entities, door_def, world_transformation)
+          if created_faces.empty?
+            group.erase!
+            model.abort_operation
+            return false
+          end
+
+          edges = created_faces.flat_map(&:edges).uniq
+          edges.each { |edge| group.entities.add_cline(edge.start.position, edge.end.position) }
+          group.entities.erase_entities(created_faces + edges)
+
+          model.commit_operation
+          return true
+        end
+
+        definition = model.definitions.add(PLUGIN.get_i18n_string('default.part_single').capitalize)
+
+        created_faces = _build_door_faces(definition.entities, door_def, world_transformation)
+        if created_faces.empty?
+          model.definitions.remove(definition) if model.definitions.respond_to?(:remove)
+          model.abort_operation
+          return false
+        end
+
+        tao = _get_auto_orient_transformation(definition, world_transformation)
+        unless tao.identity?
+
+          world_transformation = world_transformation * tao
+          taoi = tao.inverse
+
+          # Transform definition's entities
+          entities = definition.entities
+          entities.transform_entities(taoi, entities.to_a)
+
+        end
+
+        instance = active_entities.add_instance(definition, active_transformation.inverse * world_transformation)
+
+        # Marked as a door, so that the cavity detection can go on reading the
+        # carcass bare - see SmartDrawPanelActionHandler#_get_cavities_def and
+        # LayerAttributes.
+        instance.layer = LayerAttributes.fetch_or_create_layer(model, LayerAttributes::TYPE_DOOR, PLUGIN.get_i18n_string('tool.smart_draw.door_layer'))
+
+        # Force UUID to be generated in the creation operation
+        DefinitionAttributes.new(definition).uuid
+
+        if active?
+
+          fn_ask_name = lambda {
+            unless definition.nil? || definition.deleted?
+              if (data = UI.inputbox([ PLUGIN.get_i18n_string('tab.cutlist.edit_part.name') ], [ definition.name ], PLUGIN.get_i18n_string('default.rename')))
+                name = data.first
+                if name.empty?
+                  UI.beep
+                else
+                  definition.name = name
+                end
+              end
+            end
+          }
+
+          if _fetch_option_ask_name?
+            fn_ask_name.call
+          else
+            @tool.notify_success(
+              PLUGIN.get_i18n_string("tool.smart_draw.success.part_created", { :name => definition.name, :count => 1 }),
+              [
+                {
+                  :label => PLUGIN.get_i18n_string('default.rename'),
+                  :block => fn_ask_name,
+                }
+              ]
+            )
+          end
+
+        end
+
+        model.commit_operation
+
+      rescue Exception => e
+        PLUGIN.dump_exception(e)
+        model.abort_operation
+        return false
+      end
+
+      true
+    end
+
+    # Builds the door as real geometry inside +entities+, in the given
+    # transformation's local space : the outline as a face - SketchUp
+    # triangulates and closes it, however many points and however concave it
+    # is - pushed to its thickness INTO the cavity. Returns the created
+    # faces, empty when the outline could not be built.
+    def _build_door_faces(entities, door_def, world_transformation)
+      ti = world_transformation.inverse
+      points = door_def.outline.map { |point| point.transform(ti) }
+
+      face = entities.add_face(points)
+      return [] if face.nil?
+
+      # The outline lies on z = 0 and the door grows towards -z when it is
+      # fitted INTO the cavity, +z when it is laid in applique ON its front.
+      # The face is turned to look that way first, so that #pushpull extrudes
+      # on the right side whichever way add_face wound it.
+      face.reverse! if (face.normal.z > 0) != door_def.overlay?
+      face.pushpull(door_def.thickness)
+
+      entities.grep(Sketchup::Face)
+    end
+
+    # -----
+
+    # One door : the opening it fills, the outline it is cut to (WORLD
+    # coordinates, closed, the closing point not repeated), its thickness,
+    # and whether it is laid in applique on the opening rather than fitted
+    # into it.
+    DoorDef = Struct.new(:container_path, :fragment_def, :opening_def, :outline, :thickness, :overlay) do
+
+      def overlay?
+        !!overlay
+      end
+
+      # Origin of the door's own frame : the first point of its outline, on
+      # the opening plane.
+      def origin
+        outline.first
+      end
+
+      # [ X, Y, Z ] of the door's own frame, Z being the opening's outward
+      # normal. Right-handed (Vector3d#axes), so the transformation built on
+      # it is a pure rotation - never a mirror.
+      def axes
+        @axes ||= opening_def.normal.axes
+      end
+
+      # The door as a raw mesh - [ vertices, face_indices, face_ids ] - for
+      # the preview : the outline, fanned into triangles, and the same
+      # outline pushed by the thickness, on the side the pose puts the body.
+      # The fan's own edges are
+      # interior to the cap and cancel out, so the net contour
+      # (SolidFragmentDef#unique_boundary_segments) draws the door's real
+      # outline, not its tessellation.
+      def mesh_3f
+        return @mesh_3f if defined?(@mesh_3f)
+
+        normal = opening_def.normal
+        count = outline.length
+
+        # The ring the caps are wound on is always the one the outward
+        # normal looks out of : the mouth when the door is fitted into the
+        # cavity, the door's own outer face when it is laid in applique in
+        # front of it. The body then runs from it towards -normal either way,
+        # and the mesh stays wound the right way out.
+        offset_outline = outline.map { |point| point.offset(normal, overlay? ? thickness : -thickness) }
+        front_outline, back_outline = overlay? ? [ offset_outline, outline ] : [ outline, offset_outline ]
+
+        vertices = []
+        front_outline.each { |point| vertices << point.x.to_f << point.y.to_f << point.z.to_f }
+        back_outline.each { |point| vertices << point.x.to_f << point.y.to_f << point.z.to_f }
+
+        face_indices = []
+        (1...(count - 1)).each do |index|
+          face_indices << 0 << index << index + 1                                        # front cap
+          face_indices << count << count + index + 1 << count + index                    # back cap, the other way round
+        end
+        (0...count).each do |index|
+          following = (index + 1) % count
+          face_indices << index << count + index << count + following                    # side
+          face_indices << index << count + following << following
+        end
+
+        @mesh_3f = [ vertices, face_indices, Array.new(face_indices.length / 3, 0) ]
+      end
+
+    end
+
+  end
 end

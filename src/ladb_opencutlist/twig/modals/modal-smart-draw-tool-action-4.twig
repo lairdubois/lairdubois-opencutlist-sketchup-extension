@@ -1,0 +1,29 @@
+{% extends 'modals/modal-smart-draw-tool-action.twig' %}
+
+{% block optionOffset %}{% endblock %}
+{% block optionSegments %}{% endblock %}
+{% block optionOptionsRectangleCentered %}{% endblock %}
+{% block optionOptionsSmoothing %}{% endblock %}
+{% block optionOptionsMeasureFromDiameter %}{% endblock %}
+{% block optionOptionsMeasureReversed %}{% endblock %}
+{% block optionOptionsOptionsPullCentred %}{% endblock %}
+{% block optionOptionsOptionsDrawIn %}{% endblock %}
+
+{% block formInner %}
+    <div class="form-group">
+        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_draw.action_option_thickness_thickness_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+        <label class="control-label col-xs-4">{{ 'tool.smart_draw.action_option_group_thickness'|i18next }}</label>
+        <div class="col-xs-7">
+            <input type="text" class="form-control" id="ladb_input_thickness">
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_draw.action_option_clearance_clearance_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+        <label class="control-label col-xs-4">{{ 'tool.smart_draw.action_option_group_clearance'|i18next }}</label>
+        <div class="col-xs-7">
+            <input type="text" class="form-control" id="ladb_input_clearance">
+        </div>
+    </div>
+    <hr>
+    {{ parent() }}
+{% endblock %}

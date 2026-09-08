@@ -199,6 +199,49 @@ class TC_Ladb_Worker_SolidFindCavities < TestUp::TestCase
 
   end
 
+  # -- Applied panels --
+
+  # A door laid FLAT on the front of its case touches it, so it forms no
+  # component of its own : this is what offers it to the removal trial all the
+  # same.
+  def test_applied_panel_positions_offers_a_door_laid_on_its_case
+
+    case_u = _case_mesh_defs
+    door = _box_mesh_def(0.0, -1.0, 0.0, 10.0, 0.0, 10.0)
+
+    assert_equal([ [ 3 ] ], _applied(case_u + [ door ]))
+
+  end
+
+  # A shelf between the sides is hemmed in on both faces : no plane of its own
+  # has the rest of the assembly beyond it, and it is never offered. The bottom
+  # still is - see below.
+  def test_applied_panel_positions_ignores_an_inner_shelf
+
+    case_u = _case_mesh_defs
+    shelf = _box_mesh_def(1.0, 0.0, 5.0, 9.0, 10.0, 6.0)
+
+    assert_equal([ [ 0 ] ], _applied(case_u + [ shelf ]))
+
+  end
+
+  # The bottom the sides STAND ON answers to the separating plane just as a
+  # door laid on the front does : everything else is above it. Being OFFERED is
+  # not being removed - only the trial can tell a bottom from a door.
+  def test_applied_panel_positions_offers_the_bottom_the_sides_stand_on
+
+    assert_equal([ [ 0 ] ], _applied(_case_mesh_defs))
+
+  end
+
+  # A side is not offered as soon as the bottom runs past it : along its own
+  # main face, part of the assembly stands on either side of it.
+  def test_applied_panel_positions_ignores_a_side_the_bottom_runs_past
+
+    assert_equal(false, _applied(_case_mesh_defs).include?([ 1 ]))
+
+  end
+
   # Two boxes side by side, a world apart : two components.
   def test_panel_components_splits_two_disjoint_boxes
 
@@ -320,6 +363,10 @@ class TC_Ladb_Worker_SolidFindCavities < TestUp::TestCase
   # #_panel_components on the given mesh defs.
   def _components(mesh_defs)
     @worker.send(:_panel_components, mesh_defs.each_with_index.map { |mesh_def, index| [ mesh_def, index ] })
+  end
+
+  def _applied(mesh_defs)
+    @worker.send(:_applied_panel_positions, mesh_defs.each_with_index.map { |mesh_def, index| [ mesh_def, index ] })
   end
 
   # A U shaped case - a bottom carrying two sides - i.e. ONE part of the

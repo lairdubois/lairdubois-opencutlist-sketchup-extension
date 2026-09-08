@@ -106,6 +106,30 @@ module Ladb::OpenCutList
   # protect : the components are then run on their own, and whatever they
   # enclose beats the empty answer the whole assembly gave.
   #
+  # APPLIED PANELS (ignore_applied_panels option) : a facade laid FLAT on its
+  # case is the same trouble as a detached one, minus the gap that betrayed it.
+  # Touching, it belongs to its case's component, and the reading above never
+  # looks at it — yet it inflates the hull just the same, and over PART of the
+  # front only, which leaves the openings that are left reading on a slanted
+  # cap. That is what a tool DRAWING such panels runs into : the door it has
+  # just laid down is read as a wall of the carcass, and the next one is fitted
+  # to a mouth that no longer exists.
+  #
+  # Such a panel is offered to the very same trial, on a necessary condition
+  # cheap enough to ask of every panel : one of its own dominant faces has the
+  # whole of the rest of the assembly beyond it, so it could be lifted off
+  # along that face. That says nothing yet — the bottom a case stands on
+  # answers to it word for word — and it is again the REMOVAL that settles it.
+  # A bottom holds its compartment in ; a door merely covers one. See
+  # #_applied_panel_positions.
+  #
+  # The trial cannot tell a door from a BACK laid on the same way : both are
+  # lifted off along one face, and both leave every cavity where it stood, the
+  # envelope collapsing onto the panels left. A back so drawn is therefore
+  # dropped too, and the compartment it closed comes out with one opening more.
+  # Nothing geometric separates the two — only what the part is FOR does —
+  # which is why this is an option and not the rule.
+  #
   # MACHININGS : a panel drilled by glued cuts-opening components (a domino
   # mortise, a dowel hole) has its host face tessellation PUNCHED by SketchUp,
   # so its shell only closes back with the machining geometry — which the
@@ -509,6 +533,7 @@ module Ladb::OpenCutList
                    max_openness: 1.0,
                    reduce_envelope: true,
                    overall_cavity: false,
+                   ignore_applied_panels: false,
                    validate: true
 
     )
@@ -520,6 +545,7 @@ module Ladb::OpenCutList
       @max_openness = max_openness
       @reduce_envelope = reduce_envelope
       @overall_cavity = overall_cavity
+      @ignore_applied_panels = ignore_applied_panels
       @validate = validate
 
     end
@@ -566,26 +592,32 @@ module Ladb::OpenCutList
       return result_def unless result_def.success?
 
       components = _panel_components(indexed_mesh_defs)
-      if components.length > 1
 
-        if compartment_fragment_defs.empty?
+      if components.length > 1 && compartment_fragment_defs.empty?
 
-          # Nothing to protect : whatever the components enclose on their own
-          # beats the empty answer the whole assembly gave. Run aside, so that
-          # an attempt that fails leaves the reported result untouched.
-          split_result_def = SolidBooleanResultDef.new
-          split_fragment_defs, split_overall_fragment_defs = _run_clusters(
-            components.map { |positions| positions.map { |position| indexed_mesh_defs[position] } },
-            split_result_def, validate: false, overall: @overall_cavity
-          )
-          if split_result_def.success? && !split_fragment_defs.empty?
-            compartment_fragment_defs = split_fragment_defs
-            overall_fragment_defs = split_overall_fragment_defs
-          end
+        # Nothing to protect : whatever the components enclose on their own
+        # beats the empty answer the whole assembly gave. Run aside, so that
+        # an attempt that fails leaves the reported result untouched.
+        split_result_def = SolidBooleanResultDef.new
+        split_fragment_defs, split_overall_fragment_defs = _run_clusters(
+          components.map { |positions| positions.map { |position| indexed_mesh_defs[position] } },
+          split_result_def, validate: false, overall: @overall_cavity
+        )
+        if split_result_def.success? && !split_fragment_defs.empty?
+          compartment_fragment_defs = split_fragment_defs
+          overall_fragment_defs = split_overall_fragment_defs
+        end
 
-        else
+      elsif !compartment_fragment_defs.empty?
 
-          essential_mesh_defs = _essential_mesh_defs(indexed_mesh_defs, components, compartment_fragment_defs)
+        # What may be taken off : the DETACHED components, and — when the
+        # caller asks for it — the panels merely LAID ON the assembly, which
+        # are jointive and so form no component of their own.
+        candidates = components.length > 1 ? components : []
+        candidates += _applied_panel_positions(indexed_mesh_defs) if @ignore_applied_panels
+
+        unless candidates.empty?
+          essential_mesh_defs = _essential_mesh_defs(indexed_mesh_defs, candidates, compartment_fragment_defs)
           unless essential_mesh_defs.equal?(indexed_mesh_defs)
             # Read once more as a whole, and kept only if it still holds every
             # cavity the reference had : what was true of each removal apart
@@ -597,7 +629,6 @@ module Ladb::OpenCutList
               overall_fragment_defs = kept_overall_fragment_defs
             end
           end
-
         end
 
       end
@@ -702,20 +733,27 @@ module Ladb::OpenCutList
       components.values
     end
 
-    # The panels left once the DETACHED components that turn out to structure
-    # nothing are dropped — see the class doc, DETACHED PARTS. Returns
+    # The panels left once the CANDIDATES that turn out to structure nothing
+    # are dropped — see the class doc, DETACHED PARTS. Returns
     # +indexed_mesh_defs+ ITSELF when they all earn their keep, which is the
     # caller's signal that there is nothing to recompute.
+    #
+    # +candidates+ is a list of position lists : the detached components, and
+    # the panels merely laid on the assembly when the caller asked for those
+    # too (see #_applied_panel_positions). Both are weighed the same way, and
+    # for the same reason — they may be inflating the envelope without
+    # enclosing anything.
     #
     # +reference_fragment_defs+ are the cavities of the whole assembly : each
     # candidate is weighed against them, never against what an earlier removal
     # left standing, so that one detached part cannot decide for another.
-    def _essential_mesh_defs(indexed_mesh_defs, components, reference_fragment_defs)
+    def _essential_mesh_defs(indexed_mesh_defs, candidates, reference_fragment_defs)
       hull_planes = _hull_planes(indexed_mesh_defs.inject([]) { |vertices, (mesh_def, _panel_index)| vertices.concat(mesh_def.vertices) })
       superfluous_positions = []
 
-      components.each do |positions|
+      candidates.each do |positions|
         next if positions.length == indexed_mesh_defs.length
+        next if positions.any? { |position| superfluous_positions.include?(position) }
 
         # Holding no vertex of the envelope, a component strictly INSIDE the
         # hull cannot shrink it : whatever it is, removing it could only
@@ -810,6 +848,70 @@ module Ladb::OpenCutList
         ]
       end
       planes.empty? ? nil : planes
+    end
+
+    # The panels that are LAID ON the assembly rather than built into it — a
+    # facade in applique, a door — one position list each, ready for the very
+    # trial the detached components go through.
+    #
+    # What is read here is only a NECESSARY condition, and a cheap one : the
+    # panel has one of its own dominant faces with the whole of the rest of
+    # the assembly on the far side of it, so it could be lifted off along that
+    # face without anything having to move. That alone does not make it
+    # applied — a side of a carcass answers to it just as well, everything
+    # else standing on its inner side. What settles it is the trial in
+    # #_essential_mesh_defs : a side HOLDS its compartment in, and taking it
+    # away opens the cavity or merges it with the next ; a door merely covers
+    # one, and taking it away leaves every cavity exactly where it stood.
+    #
+    # Reading the separating plane off the panel's DOMINANT face is what keeps
+    # this to one pass over the vertices — no hull, no boolean. A part laid on
+    # by its edge is missed, which only means it is not offered to the trial :
+    # the answer stays the one the assembly as a whole gave.
+    def _applied_panel_positions(indexed_mesh_defs)
+      count = indexed_mesh_defs.length
+      return [] if count < 2
+
+      dominant_normals = _panel_dominant_normals(indexed_mesh_defs.map { |mesh_def, _panel_index|
+        { :vertices => mesh_def.vertices, :face_indices => mesh_def.face_indices }
+      })
+
+      positions = []
+      count.times do |position|
+        normal = dominant_normals[position]
+        next if normal.nil?
+
+        own_min, own_max = _projection_range(indexed_mesh_defs[position].first.vertices, normal)
+        next if own_min.nil?
+
+        others_min = nil
+        others_max = nil
+        indexed_mesh_defs.each_with_index do |(mesh_def, _panel_index), other_position|
+          next if other_position == position
+          min, max = _projection_range(mesh_def.vertices, normal)
+          next if min.nil?
+          others_min = min if others_min.nil? || min < others_min
+          others_max = max if others_max.nil? || max > others_max
+        end
+        next if others_min.nil?
+
+        positions << [ position ] if others_min >= own_max - SolidMeshDef::TOLERANCE ||
+                                     others_max <= own_min + SolidMeshDef::TOLERANCE
+      end
+      positions
+    end
+
+    # [ lowest, highest ] projection of the given flat vertex array on the
+    # given direction, [ nil, nil ] when it is empty.
+    def _projection_range(vertices, normal)
+      min = nil
+      max = nil
+      vertices.each_slice(3) do |x, y, z|
+        value = normal[0] * x + normal[1] * y + normal[2] * z
+        min = value if min.nil? || value < min
+        max = value if max.nil? || value > max
+      end
+      [ min, max ]
     end
 
     # Whether every point of the given flat vertex array lies on the inner side
