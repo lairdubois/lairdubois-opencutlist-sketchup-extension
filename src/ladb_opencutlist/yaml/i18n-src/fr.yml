@@ -2453,6 +2453,7 @@ tool:
       invalid_door_cavity: "Aucune cavité ouverte vers vous à cette position"
       no_door_cavity: Aucune cavité n'a été détectée dans ce groupe ou composant
       divider_number_overflow: "Impossible de répartir {{ number }} séparateurs dans cette cavité"
+      door_number_overflow: "Impossible de répartir {{ number }} portes sur cette ouverture"
     success:
       part_created: "Nouvelle pièce créée : {{ name }}"
       part_created_plural: "{{ count }} nouvelles pièces créées : {{ name }}"

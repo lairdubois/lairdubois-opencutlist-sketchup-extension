@@ -106,7 +106,7 @@ module Ladb::OpenCutList
           ACTION_OPTION_POSE => [ ACTION_OPTION_POSE_INSET, ACTION_OPTION_POSE_OVERLAY ],
           ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_DOOR_OFFSET ],
           ACTION_OPTION_THICKNESS => [ ACTION_OPTION_THICKNESS_THICKNESS ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_ASK_NAME ]
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_REUSE_DEFINITION, ACTION_OPTION_OPTIONS_ASK_NAME ]
         }
       }
     ]
@@ -5863,11 +5863,17 @@ module Ladb::OpenCutList
   # of the facade. That contour IS the door, so the handler only has to
   # choose WHICH opening the pick means, and give it a thickness.
   #
-  # INSET only for now : the door fills the mouth, its outer face flush with
-  # the plane the caps stand on. An OVERLAY door needs something the cavity
-  # cannot tell - the outer outline of the contour panels around the mouth -
-  # and will come as an option of its own ; #_get_door_outline is the single
-  # place that will branch.
+  # Two POSES : INSET, where the door fills the mouth with its outer face
+  # flush with the plane the caps stand on, and OVERLAY, where it is laid in
+  # front of the facade and covers the frame around its mouth - which the
+  # cavity cannot tell on its own, and is read off the container's silhouette
+  # instead (see #_get_overlay_points). #_get_door_nominal_points is the
+  # single place the two branch.
+  #
+  # One mouth may take SEVERAL doors : the nominal contour is then shared
+  # into equal bands before the clearance applies, and the direction they
+  # succeed one another along is read off the panel under the cursor - the
+  # cuts run parallel to it (see #_get_split_direction).
   #
   # The OVERALL cavity is deliberately not asked for either
   # (#_cavities_overall? stays false, see SmartDrawPanelActionHandler) : it is
@@ -5879,6 +5885,8 @@ module Ladb::OpenCutList
     STATE_PLACE = 0
 
     LAYER_3D_DOOR_PREVIEW = 200
+
+    LAYER_2D_WIDTH = 100
 
     # Minimum dot between an opening's outward normal and the direction the
     # camera looks FROM, for that opening to be a candidate : an opening seen
@@ -5894,8 +5902,39 @@ module Ladb::OpenCutList
     OPENING_PLANE_MIN_DOT = 1.0 - 1e-6
     FOOTPRINT_MIN_TRIANGLE_AREA = 1e-9
 
+    # How far the silhouette is grown and shrunk back to shake the union's
+    # degeneracies out of it - see #_compute_footprint_paths. A tenth of the
+    # model tolerance : wide enough that no contact survives it as a mere
+    # touch, narrow enough that nothing a carcass is actually made of is
+    # thinner.
+    FOOTPRINT_CLEANUP_DELTA = SolidMeshDef::TOLERANCE / 10.0
+
+    # How far off the straight line its two neighbours draw a vertex of a
+    # door outline may sit and still be no corner at all - see
+    # #_flatten_outline. Same order as the silhouette cleanup, and for the
+    # same reason : a tenth of the model tolerance is under anything drawn on
+    # purpose and over everything left behind by an assembly meant to be
+    # flush.
+    OUTLINE_FLAT_TOLERANCE = SolidMeshDef::TOLERANCE / 10.0
+
+    # Below this norm the picked face's normal, projected on the opening
+    # plane, is no direction at all : the face is nearly PARALLEL to the
+    # opening and says nothing about where the doors should meet. Both
+    # normals being unit, that norm IS the sine of the angle between the two
+    # planes - so this is a 10 degree threshold.
+    SPLIT_DIRECTION_MIN_NORM = 0.17
+
+    # Below this the way a direction reads on an axis is no reading at all,
+    # and the next criterion of #_orient_split_direction takes over.
+    SPLIT_DIRECTION_WAY_EPSILON = 1e-6
+
+    attr_reader :number, :widths
+
     def initialize(tool, previous_action_handler = nil)
       super(SmartDrawTool::ACTION_DRAW_DOOR, tool, previous_action_handler)
+
+      @number = previous_action_handler.is_a?(self.class) ? previous_action_handler.number : 1
+      @widths = previous_action_handler.is_a?(self.class) ? previous_action_handler.widths : []
 
       @picked_point = nil
 
@@ -5947,8 +5986,50 @@ module Ladb::OpenCutList
       true
     end
 
+    # The distribution is the only thing a pick cannot undo by itself, and it
+    # survives from one door to the next on purpose : it is unwound here, the
+    # pinned widths first, then the count.
+    def onToolCancel(tool, reason, view)
+
+      if @widths.any?
+        _set_distribution(@number, [], tool, view)
+        return true
+      end
+      if @number > 1
+        _set_distribution(1, [], tool, view)
+        return true
+      end
+
+      super
+    end
+
+    def onToolKeyDown(tool, key, repeat, flags, view)
+      return true if super
+
+      case @state
+
+      when STATE_PLACE
+
+        if tool.is_key_shift_down?
+          if key == Kuix::VK_ADD
+            _set_distribution(@number + 1, @widths, tool, view)
+            return true
+          end
+          if key == Kuix::VK_SUBTRACT
+            _set_distribution(@number - 1, @widths, tool, view)
+            return true
+          end
+        end
+
+      end
+
+      false
+    end
+
     def onToolUserText(tool, text, view)
 
+      return true if _read_number(tool, text, view)
+      return true if _read_widths(tool, text, view)
       return true if _read_thickness(tool, text, view)
 
       false
@@ -5992,6 +6073,8 @@ module Ladb::OpenCutList
 
     def _reset
       @picked_point = nil
+      @number = 1
+      @widths = []
       super
     end
 
@@ -6031,6 +6114,57 @@ module Ladb::OpenCutList
 
     # -----
 
+    # "x3", "*3" or "/3" - how many doors share the opening. The two forms
+    # mean the same layout here, unlike the divider's : a door takes no
+    # thickness out of the opening, so "3 of them" and "divide it in 3"
+    # describe the very same three doors.
+    def _read_number(tool, text, view)
+      return false unless text.is_a?(String) && (match = text.match(/^([x*\/])(\d+)$/))
+
+      value = match[2]
+      number = value.to_i
+
+      if number < 1
+        UI.beep
+        tool.notify_errors([ [ 'tool.default.error.invalid_divider', { :value => value } ] ])
+        return true
+      end
+
+      _set_distribution(number, @widths, tool, view)
+      Sketchup.set_status_text('', SB_VCB_VALUE)
+
+      true
+    end
+
+    # A list of lengths - "400;500", regional list divider, "400=" repeating
+    # a value (see #_split_user_text) - PINS the widths of the current
+    # distribution instead of leaving them all equal. Same VCB grammar and
+    # same reading as the Smart Draw Divider's spacings : the leading run
+    # pins from the near end of the opening, the trailing run from the far
+    # end, an invalid or empty entry marking where the free middle begins -
+    # "400;" pins only the first door, ";400" only the last. Which end is
+    # near is settled by #_orient_split_direction, never by where the cursor
+    # happened to be. See #_get_door_band_intervals.
+    def _read_widths(tool, text, view)
+
+      list = _split_user_text(text)
+      return false unless list.is_a?(Array) && list.size > 1
+
+      # An entry that is not a length at all is not an error here : it is how
+      # the user says "leave this one free"
+      widths = list.map { |width|
+        length = _read_user_text_length(tool, width, -1)
+        length.nil? || length == -1 ? -1 : length.abs.to_l
+      }
+
+      number = [ @number, widths.select { |width| width > 0 }.size ].max
+
+      _set_distribution(number, widths, tool, view)
+      Sketchup.set_status_text('', SB_VCB_VALUE)
+
+      true
+    end
+
     def _read_thickness(tool, text, view)
 
       # Keep it "compatible" with the way to enter offset in Smart Draw Tool.
@@ -6067,11 +6201,19 @@ module Ladb::OpenCutList
       @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_POSE, SmartDrawTool::ACTION_OPTION_POSE_OVERLAY)
     end
 
+    def _fetch_option_reuse_definition?
+      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_REUSE_DEFINITION)
+    end
+
     # -----
 
-    # What the pick resolves to : the DoorDef to build, or nil when the pick
-    # is not on a cavity that has an opening facing the viewer.
-    def _compute_door_def(point, view)
+    # What the pick resolves to, before any outline is cut : the DoorContext,
+    # or nil when the pick is not on a cavity that has an opening facing the
+    # viewer.
+    #
+    # Split out of #_compute_door_defs so that a count can be validated (see
+    # #_set_distribution) against the very contour the preview is cut from.
+    def _compute_door_context(point, view)
       return nil unless point.is_a?(Geom::Point3d)
       return nil unless (picked_face_manipulator = @picker.picked_plane_manipulator).is_a?(PlaneManipulator)
       return nil unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef) && cavities_def.valid?
@@ -6082,13 +6224,63 @@ module Ladb::OpenCutList
       opening_def = _get_door_opening_def(fragment_def, view)
       return nil if opening_def.nil?
 
-      outline = _get_door_outline(fragment_def, opening_def)
-      return nil if outline.nil? || outline.length < 3
+      # The opening's OWN frame, where the mouth lies flat on z = 0 and
+      # everything below is computed. It is canonical for the PLANE - its
+      # origin is the world origin projected on it, its axes come from the
+      # normal alone - so two cavities sharing a facade read their
+      # neighbours and the container's silhouette in the very same
+      # coordinates, and the silhouette can be computed once for them all.
+      x_axis, y_axis, z_axis = opening_def.normal.axes
+      t = Geom::Transformation.axes(Geom::Point3d.new(0, 0, 0).project_to_plane(opening_def.plane), x_axis, y_axis, z_axis)
+      ti = t.inverse
+
+      points = _get_door_nominal_points(fragment_def, opening_def, ti)
+      return nil if points.nil? || points.length < 3
+
+      DoorContext.new(cavities_def, fragment_def, opening_def, t, points, _get_split_direction(picked_face_manipulator, opening_def, ti, view))
+    end
+
+    # The doors the pick resolves to, in the split direction's own order - so
+    # the same pick always yields them in the same order, and the batch is
+    # always named after the same one. nil when the pick is not on a usable
+    # opening, or when the count does not fit on it.
+    def _compute_door_defs(point, view)
+      return nil unless (context = _compute_door_context(point, view)).is_a?(DoorContext)
 
       thickness = _fetch_option_thickness
       return nil if thickness.nil? || thickness <= 0
 
-      DoorDef.new(cavities_def.container_path, fragment_def, opening_def, outline, thickness, _fetch_option_pose_overlay?)
+      outlines = _get_door_outlines(context)
+      return nil if outlines.nil?
+
+      overlay = _fetch_option_pose_overlay?
+      direction = context.world_direction
+      outlines.map { |outline| DoorDef.new(context.container_path, context.fragment_def, context.opening_def, outline, thickness, overlay, direction) }
+    end
+
+    # Applies a new distribution - how many doors, and which widths are
+    # pinned - then previews it, reporting the one thing the user cannot see
+    # coming : a layout the opening under the cursor has no room for. It is
+    # still stored in that case, the pick may well land on a roomier opening
+    # next.
+    def _set_distribution(number, widths, tool, view)
+
+      @number = [ number, 1 ].max
+      @widths = widths
+
+      if _shared? && (context = _compute_door_context(@picked_point, view)).is_a?(DoorContext) && _get_door_outlines(context).nil?
+        UI.beep
+        tool.notify_errors([ [ 'tool.smart_draw.error.door_number_overflow', { :number => @number } ] ])
+      end
+
+      _refresh
+    end
+
+    # Whether the opening is SHARED at all - several doors, or a single one
+    # the user pinned the width of. A lone door taking the whole contour
+    # short circuits the whole sharing pass.
+    def _shared?
+      @number > 1 || @widths.any?
     end
 
     # The opening a door is meant for : among the ones the cavity has, the
@@ -6125,45 +6317,327 @@ module Ladb::OpenCutList
       best
     end
 
-    # The outline the door is cut to, in WORLD coordinates.
+    # The NOMINAL contour the doors are cut out of, in the opening's frame -
+    # before the count shares it and before the clearance pulls it back.
     #
-    # Two POSES, and what separates them is entirely here : the nominal
-    # contour they start from. The CLEARANCE then applies to both the same
-    # way - the gap left on EVERY edge, the way a door is specified (2 mm
-    # takes 4 mm off the width and 4 off the height).
+    # Two POSES, and what separates them is entirely here :
     #
     #   INSET   : the mouth itself, the opening's outer contour.
     #   OVERLAY : the share of the container's front this cavity is entitled
     #             to - see #_get_overlay_points.
-    #
-    # Everything is computed in the opening's OWN frame, where the mouth lies
-    # flat on z = 0, and brought back once cut. That frame is canonical for
-    # the PLANE - its origin is the world origin projected on it, its axes
-    # come from the normal alone - so two cavities sharing a facade read
-    # their neighbours and the container's silhouette in the very same
-    # coordinates, and the silhouette can be computed once for them all.
-    def _get_door_outline(fragment_def, opening_def)
+    def _get_door_nominal_points(fragment_def, opening_def, ti)
 
       mouth = opening_def.outer_loop
       return nil if mouth.nil? || mouth.length < 3
 
-      x_axis, y_axis, z_axis = opening_def.normal.axes
-      t = Geom::Transformation.axes(Geom::Point3d.new(0, 0, 0).project_to_plane(opening_def.plane), x_axis, y_axis, z_axis)
-      ti = t.inverse
-
       mouth_points = mouth.map { |point| point.transform(ti) }
 
-      if _fetch_option_pose_overlay?
-        points = _get_overlay_points(fragment_def, opening_def, mouth_points, ti)
+      return mouth_points unless _fetch_option_pose_overlay?
+
+      _get_overlay_points(fragment_def, opening_def, mouth_points, ti)
+    end
+
+    # The outlines the doors are cut to, in WORLD coordinates - one per door,
+    # ordered along the split direction.
+    #
+    # The nominal contour is shared FIRST, and only then does the CLEARANCE
+    # apply, to each door on every one of its own edges. That order is the
+    # whole point : it is how a set of doors is specified - a 2 mm clearance
+    # takes 4 mm off the pair's width, 4 off its height, and leaves 4 mm
+    # between the two leaves. A PINNED width is therefore the width of the
+    # share, not of the finished leaf, exactly as a pinned opening is for the
+    # divider.
+    #
+    # nil when the layout leaves nothing buildable : a count the contour is
+    # too narrow for, or a clearance that eats a door whole. Building fewer
+    # doors than asked is not the answer.
+    def _get_door_outlines(context)
+
+      if _shared?
+        bands = _split_points(context.points, context.direction, @number, @widths)
+        return nil if bands.nil?
       else
-        points = mouth_points
+        bands = [ context.points ]
       end
-      return nil if points.nil? || points.length < 3
 
-      points = _apply_door_offset(points)
-      return nil if points.nil?
+      bands.map { |band|
+        points = _apply_door_offset(band)
+        return nil if points.nil?
+        _flatten_outline(points).map { |point| point.transform(context.transformation) }
+      }
+    end
 
-      points.map { |point| point.transform(t) }
+    # Drops the vertices that draw no corner : the ones sitting, within
+    # OUTLINE_FLAT_TOLERANCE, on the straight line their two neighbours draw.
+    #
+    # A carcass is full of faces MEANT to be flush - the end of a panel cut
+    # to the very plane of the face of the next one at a mitre - and modelled
+    # a micron off. The silhouette then carries a 179.999 degree vertex that
+    # Clipper, rightly, has no reason to drop, and the door built on it comes
+    # out with a superfluous edge splitting one of its sides into two coplanar
+    # faces. The mouth of a cavity, read off a triangle soup, can hand over
+    # such a vertex just as well - so the door outline is flattened whatever
+    # the pose that drew it.
+    #
+    # Read as a DISTANCE to the chord rather than as an angle : it is the
+    # sagitta that says whether the corner would ever be seen, where an angle
+    # reads wide on a very short edge that deviates by nothing at all.
+    #
+    # One vertex at a time, and over again : dropping one puts its neighbours
+    # face to face and may well flatten them in turn.
+    def _flatten_outline(points)
+
+      outline = points
+      while outline.length > 3
+
+        index = (0...outline.length).find { |i|
+          _chord_deviation(outline[i], outline[i - 1], outline[(i + 1) % outline.length]) <= OUTLINE_FLAT_TOLERANCE
+        }
+        break if index.nil?
+
+        outline = outline.dup if outline.equal?(points)
+        outline.delete_at(index)
+
+      end
+      outline
+    end
+
+    # Distance from +point+ to the straight line through its two neighbours,
+    # zero when the three are aligned. Neighbours that coincide draw no line
+    # at all : the point is then the tip of a spur, and reads as flat, which
+    # is exactly what it is.
+    def _chord_deviation(point, previous_point, following_point)
+      dx = (following_point.x - previous_point.x).to_f
+      dy = (following_point.y - previous_point.y).to_f
+      length = Math.sqrt(dx * dx + dy * dy)
+      return 0.0 if length <= 0
+      ((point.x - previous_point.x).to_f * dy - (point.y - previous_point.y).to_f * dx).abs / length
+    end
+
+    # The direction, in the opening's own frame ([ x, y ] unit Floats), the
+    # doors succeed one another along - so the cuts between them run
+    # PERPENDICULAR to it, that is, PARALLEL to the panel under the cursor.
+    #
+    # That panel is the whole rule : its normal, projected on the opening
+    # plane. Hovering a side gives doors side by side, hovering a shelf gives
+    # them stacked, and an oblique panel gives a cut parallel to it - nothing
+    # is snapped to the container's axes, so a canted carcass reads as
+    # exactly as an orthogonal one.
+    #
+    # A panel PARALLEL to the opening says nothing : the projection vanishes
+    # (SPLIT_DIRECTION_MIN_NORM), and that panel is the BACK of the very
+    # cavity being faced - the most natural thing to hover on a case seen
+    # from the front. The fallback is then the horizontal of the opening
+    # plane, hence vertical cuts and doors side by side, which is what a pair
+    # of doors usually is. It is read off the world's own up rather than off
+    # the camera so that orbiting does not swing it around ; on a HORIZONTAL
+    # opening, where there is no horizontal of the plane to speak of, the
+    # screen's own right takes over.
+    def _get_split_direction(picked_face_manipulator, opening_def, ti, view)
+      normal = opening_def.normal
+
+      direction = _vector_rejection(picked_face_manipulator.normal, normal)
+
+      if direction.length.to_f < SPLIT_DIRECTION_MIN_NORM
+        direction = normal.cross(Z_AXIS)
+        unless direction.valid?
+          camera = view.camera
+          direction = _vector_rejection(camera.direction.cross(camera.up), normal)
+          return nil unless direction.valid?
+        end
+      end
+
+      direction = _orient_split_direction(direction.normalize, normal).transform(ti)
+
+      [ direction.x, direction.y ]
+    end
+
+    # Which WAY that direction points - hence which end the pinned widths are
+    # counted from, and which door the batch is named after.
+    #
+    # The panel under the cursor gives an AXIS, not a way : the left side of
+    # a case and its right side have opposite normals, and "400;" would pin
+    # one door or the other depending on where the cursor happened to be. So
+    # the way is settled off the WORLD alone - never off the pick, never off
+    # the camera :
+    #
+    #   - a direction with a vertical component points UP : stacked doors are
+    #     pinned from the bottom one.
+    #   - a horizontal one points to the RIGHT of the facade as seen from
+    #     OUTSIDE it, that is, the one whose turn from the outward normal
+    #     goes the same way as the world's up.
+    #   - on a HORIZONTAL opening neither reading means anything : +X then
+    #     +Y, for the sake of answering the same thing twice.
+    def _orient_split_direction(direction, normal)
+
+      z = direction.z
+      return direction.reverse if z < -SPLIT_DIRECTION_WAY_EPSILON
+      return direction if z > SPLIT_DIRECTION_WAY_EPSILON
+
+      right = normal.cross(direction) % Z_AXIS
+      return direction.reverse if right < -SPLIT_DIRECTION_WAY_EPSILON
+      return direction if right > SPLIT_DIRECTION_WAY_EPSILON
+
+      return direction.reverse if direction.x < -SPLIT_DIRECTION_WAY_EPSILON
+      return direction if direction.x > SPLIT_DIRECTION_WAY_EPSILON
+
+      direction.y < 0 ? direction.reverse : direction
+    end
+
+    # +vector+ stripped of its component along +normal+ (a UNIT vector) :
+    # what is left of it in the plane +normal+ stands on. Not normalized -
+    # its norm is what tells how much of the vector was in the plane to begin
+    # with.
+    def _vector_rejection(vector, normal)
+      dot = vector % normal
+      Geom::Vector3d.new(
+        vector.x - dot * normal.x,
+        vector.y - dot * normal.y,
+        vector.z - dot * normal.z
+      )
+    end
+
+    # +points+ - a closed contour of the opening's frame - shared into
+    # +number+ bands along +direction+, ordered from the low end : equal
+    # ones, or the ones +widths+ pins (see #_get_door_band_intervals).
+    #
+    # Each band is CLIPPED to the contour rather than assumed rectangular :
+    # the contour may be canted, notched, or - in applique - the share of a
+    # silhouette a neighbour's bisector has already cut into. Of what a band
+    # is clipped to, only the widest ring is kept : a door is one panel, and
+    # a contour narrowing to nothing in the middle of a band is not two
+    # doors.
+    #
+    # nil when the direction is unusable, when the contour is degenerate
+    # along it, when the layout does not fit, or when a band comes out empty.
+    def _split_points(points, direction, number, widths)
+      return nil unless number > 0
+      return nil if direction.nil?
+
+      dx, dy = direction
+
+      d0 = d1 = nil
+      points.each do |point|
+        d = point.x.to_f * dx + point.y.to_f * dy
+        d0 = d if d0.nil? || d < d0
+        d1 = d if d1.nil? || d > d1
+      end
+      return nil if d0.nil? || d1 - d0 <= SolidMeshDef::TOLERANCE
+
+      intervals = _get_door_band_intervals(d0, d1, number, widths)
+      return nil if intervals.nil?
+
+      # Through a union, so that the contour is wound the way Clipper expects
+      # its subjects whichever way the opening handed it over.
+      subject_paths, _ = Fiddle::Clippy.execute_union(closed_subjects: [ Fiddle::Clippy.points_to_rpath(points) ])
+      return nil if subject_paths.empty?
+
+      reach = _paths_reach(subject_paths)
+
+      bands = []
+      intervals.each do |b0, b1|
+
+        band_paths, _ = Fiddle::Clippy.execute_intersection(
+          closed_subjects: subject_paths,
+          clips: [ _band_path(dx, dy, b0, b1, reach) ]
+        )
+
+        band_path = band_paths.max_by { |path| Fiddle::Clippy.get_rpath_area(path).abs }
+        return nil if band_path.nil? || band_path.length < 6
+
+        bands << Fiddle::Clippy.rpath_to_points(band_path)
+
+      end
+
+      bands
+    end
+
+    # [ [ b0, b1 ], ... ] the +number+ doors span along the split direction,
+    # ordered, inside the contour's own [ +w0+, +w1+ ] extent.
+    #
+    # What is shared is the whole extent : a door takes no thickness out of
+    # the opening the way a divider does, so with no pin at all the cuts are
+    # plain divisions and the bands tile the contour edge to edge.
+    #
+    # +widths+ PINS bands, from the ends inward : its leading run of valid
+    # lengths fixes the first doors, its trailing run - whatever follows an
+    # invalid or empty entry, so "400;" pins the first and ";400" the last -
+    # fixes the last ones. Only the doors LEFT IN THE MIDDLE share what
+    # remains. Pins beyond the count are dropped : they have no door to size.
+    #
+    # Pinned runs that do not fill the extent leave the middle of the facade
+    # BARE rather than stretching anything : the widths are what the user
+    # asked for, and that is the only honest reading of them.
+    #
+    # nil when the layout does not fit : a middle share with no room left, or
+    # pinned runs that overrun each other.
+    def _get_door_band_intervals(w0, w1, number, widths)
+      return nil unless number > 0
+
+      fn_valid_width = lambda { |width| width.is_a?(Length) && width > 0 }
+      start_widths = widths.take_while(&fn_valid_width)
+      end_widths = start_widths.size == widths.size ? [] : widths.reverse.take_while(&fn_valid_width)
+
+      if start_widths.size > number
+        start_widths = start_widths.take(number)
+        end_widths = []
+      elsif start_widths.size + end_widths.size > number
+        end_widths = end_widths.take(number - start_widths.size)
+      end
+
+      # Pinned from the near end, in order
+      start_d = w0
+      start_intervals = start_widths.map { |width|
+        b0 = start_d
+        start_d = b0 + width
+        [ b0, start_d ]
+      }
+
+      # Pinned from the far end : +end_widths+ reads outermost first, so
+      # these come out in reverse
+      end_d = w1
+      end_intervals = end_widths.map { |width|
+        b1 = end_d
+        end_d = b1 - width
+        [ end_d, b1 ]
+      }.reverse
+
+      middle_size = number - start_intervals.size - end_intervals.size
+      if middle_size > 0
+
+        width = (end_d - start_d) / middle_size.to_f
+        return nil if width <= SolidMeshDef::TOLERANCE
+
+        middle_intervals = (0...middle_size).map { |index|
+          b0 = start_d + index * width
+          [ b0, b0 + width ]
+        }
+
+      else
+
+        # Nothing to share, but the two pinned runs must still not have
+        # walked past each other
+        return nil if end_d - start_d < -SolidMeshDef::TOLERANCE
+
+        middle_intervals = []
+
+      end
+
+      start_intervals + middle_intervals + end_intervals
+    end
+
+    # The band { p | +d0+ <= p . direction <= +d1+ }, as a closed path long
+    # enough across to behave like an unbounded strip - wound counter
+    # clockwise, the way the NON ZERO fill of the intersection expects it.
+    def _band_path(direction_x, direction_y, d0, d1, reach)
+      side_x = -direction_y
+      side_y = direction_x
+      [
+        direction_x * d0 - side_x * reach, direction_y * d0 - side_y * reach,
+        direction_x * d1 - side_x * reach, direction_y * d1 - side_y * reach,
+        direction_x * d1 + side_x * reach, direction_y * d1 + side_y * reach,
+        direction_x * d0 + side_x * reach, direction_y * d0 + side_y * reach
+      ]
     end
 
     # The nominal contour pulled back by the CLEARANCE on every edge, in the
@@ -6336,7 +6810,44 @@ module Ladb::OpenCutList
       return [] if paths.empty?
 
       footprint_paths, _ = Fiddle::Clippy.execute_union(closed_subjects: paths)
-      footprint_paths
+      _cleanup_footprint_paths(footprint_paths)
+    end
+
+    # Grows the silhouette by a hair and shrinks it straight back.
+    #
+    # A no-op on the SHAPE, and not one on the way it is written down. Two
+    # panels of a carcass never overlap - they butt - and a MITRE makes that
+    # contact degenerate : the end face of one lands exactly on the face of
+    # the other, coplanar, so in projection the two outlines share a whole
+    # edge and meet on it at a single point. Clipper hands such a union back
+    # as ONE self touching path : the outer contour, a zero width slit run
+    # down to the mouth and back, then the mouth traversed as if it were part
+    # of the outline. Taken for the outer contour it is (see
+    # #_get_overlay_points), it cuts the door to the shape of the carcass
+    # frame itself - the panels, mouth left out - instead of the facade.
+    #
+    # The round trip breaks the tie : grown, the panels genuinely OVERLAP and
+    # the union is a plain region ; shrunk back, it comes out as an outer
+    # contour and its holes, each on its own path, to the micron. What it
+    # also drops on the way is collinear vertices, which is no loss.
+    def _cleanup_footprint_paths(footprint_paths)
+      return footprint_paths if footprint_paths.empty?
+
+      grown = Fiddle::Clippy.inflate_paths(
+        paths: footprint_paths,
+        delta: FOOTPRINT_CLEANUP_DELTA,
+        join_type: Fiddle::Clippy::JOIN_TYPE_MITER,
+        miter_limit: 100.0
+      )
+      return footprint_paths if grown.empty?
+
+      cleaned = Fiddle::Clippy.inflate_paths(
+        paths: grown,
+        delta: -FOOTPRINT_CLEANUP_DELTA,
+        join_type: Fiddle::Clippy::JOIN_TYPE_MITER,
+        miter_limit: 100.0
+      )
+      cleaned.empty? ? footprint_paths : cleaned
     end
 
     # The mouths of the OTHER cavities that open on the very same plane, in
@@ -6432,45 +6943,74 @@ module Ladb::OpenCutList
     def _preview_door(view)
 
       @tool.clear_3d(LAYER_3D_DOOR_PREVIEW)
+      @tool.clear_2d(LAYER_2D_WIDTH)
 
-      return unless (door_def = _compute_door_def(@picked_point, view)).is_a?(DoorDef)
+      return unless (door_defs = _compute_door_defs(@picked_point, view)).is_a?(Array) && !door_defs.empty?
 
       color = Kuix::COLOR_MAGENTA
 
-      # face_info_defs is irrelevant here : the preview only needs the
-      # geometry (boundary_segments doesn't dereference it).
-      vertices, face_indices, face_ids = door_def.mesh_3f
-      door_fragment_def = SolidFragmentDef.new(vertices, face_indices, face_ids, [])
-      segments = door_fragment_def.unique_boundary_segments
+      door_defs.each do |door_def|
 
-      k_segments = Kuix::Segments.new
-      k_segments.add_segments(segments)
-      k_segments.color = color
-      k_segments.line_width = 1
-      k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-      k_segments.on_top = true
-      @tool.append_3d(k_segments, LAYER_3D_DOOR_PREVIEW)
-
-      unless _fetch_option_construction?
+        # face_info_defs is irrelevant here : the preview only needs the
+        # geometry (boundary_segments doesn't dereference it).
+        vertices, face_indices, face_ids = door_def.mesh_3f
+        door_fragment_def = SolidFragmentDef.new(vertices, face_indices, face_ids, [])
+        segments = door_fragment_def.unique_boundary_segments
 
         k_segments = Kuix::Segments.new
         k_segments.add_segments(segments)
         k_segments.color = color
-        k_segments.line_width = 1.5
+        k_segments.line_width = 1
+        k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+        k_segments.on_top = true
         @tool.append_3d(k_segments, LAYER_3D_DOOR_PREVIEW)
+
+        unless _fetch_option_construction?
+
+          k_segments = Kuix::Segments.new
+          k_segments.add_segments(segments)
+          k_segments.color = color
+          k_segments.line_width = 1.5
+          @tool.append_3d(k_segments, LAYER_3D_DOOR_PREVIEW)
+
+        end
+
+        # Each door's own width, once the opening is shared : what the count
+        # and the pins did to the facade is exactly what the user cannot read
+        # off the outlines alone. A lone door filling its whole mouth needs
+        # none of it - the VCB already carries its thickness.
+        if _shared?
+          k_label = _create_floating_label(
+            snap_point: door_def.center,
+            text: door_def.width.to_l.to_s,
+            text_color: color,
+            border_color: color
+          )
+          @tool.append_2d(k_label, LAYER_2D_WIDTH)
+        end
 
       end
 
-      Sketchup.set_status_text(door_def.thickness.to_l, SB_VCB_VALUE)
+      Sketchup.set_status_text(door_defs.first.thickness.to_l, SB_VCB_VALUE)
 
     end
 
     # -----
 
+    # Rebuilds the doors the pick resolves to as real geometry inside the
+    # model, and names the batch - the same tail conventions (ask_name option
+    # / success notification) as the other draw handlers' _create_entity.
+    # When the construction option is on, only the outlines are drawn (as
+    # clines, in a plain group each) instead of real parts, so no naming /
+    # success notification happens in that case either.
+    #
+    # A door the boolean or SketchUp left unbuildable is skipped rather than
+    # fatal : the other doors of the batch are legitimate and must not fall
+    # with it. Returns true as soon as one of them was built.
     def _create_entity(point, view)
-      return false unless (door_def = _compute_door_def(point, view)).is_a?(DoorDef)
+      return false unless (door_defs = _compute_door_defs(point, view)).is_a?(Array) && !door_defs.empty?
 
-      container_path = door_def.container_path
+      container_path = door_defs.first.container_path
       if container_path.is_a?(Array) && container_path.any? && (container = container_path.last) && container.respond_to?(:definition)
         active_entities = container.definition.entities
         active_transformation = PathUtils.get_transformation(container_path, IDENTITY)
@@ -6484,75 +7024,125 @@ module Ladb::OpenCutList
       model.start_operation('OCL Create Door', true, false, !active?)
       begin
 
-        # Local frame for the new part : Z = the opening's outward normal,
-        # X/Y its own in-plane basis, origin on the opening plane. The door
-        # is then built on one side of z = 0 or the other, according to the
-        # POSE - inset INTO the cavity, in applique in FRONT of it - so that
-        # in both cases one of its faces lands exactly on the mouth plane.
-        x_axis, y_axis, z_axis = door_def.axes
-      world_transformation = Geom::Transformation.axes(door_def.origin, x_axis, y_axis, z_axis)
+        # Definitions this batch actually BUILT - what the naming applies to,
+        # one per distinct door - and how many entities it added to the
+        # model. With the reuse option on the two no longer match : a mouth
+        # shared between three equal doors builds ONE definition and three
+        # instances of it.
+        created_definitions = []
+        created_entity_count = 0
 
-        if _fetch_option_construction?
+        # The doors this batch has already built - [ outline, definition,
+        # WORLD transformation ] - as candidates for the ones that follow.
+        # See #_find_reusable_door.
+        sibling_door_defs = []
 
-          group = active_entities.add_group
-          group.transformation = active_transformation.inverse * world_transformation
+        door_defs.each do |door_def|
 
-          created_faces = _build_door_faces(group.entities, door_def, world_transformation)
-          if created_faces.empty?
-            group.erase!
-            model.abort_operation
-            return false
+          # Local frame for the new part : Z = the opening's outward normal,
+          # X/Y its own in-plane basis, origin on the opening plane. The door
+          # is then built on one side of z = 0 or the other, according to the
+          # POSE - inset INTO the cavity, in applique in FRONT of it - so that
+          # in both cases one of its faces lands exactly on the mouth plane.
+          x_axis, y_axis, z_axis = door_def.axes
+          world_transformation = Geom::Transformation.axes(door_def.origin, x_axis, y_axis, z_axis)
+
+          if _fetch_option_construction?
+
+            group = active_entities.add_group
+            group.transformation = active_transformation.inverse * world_transformation
+
+            created_faces = _build_door_faces(group.entities, door_def, world_transformation)
+            if created_faces.empty?
+              group.erase!
+              next
+            end
+
+            edges = created_faces.flat_map(&:edges).uniq
+            edges.each { |edge| group.entities.add_cline(edge.start.position, edge.end.position) }
+            group.entities.erase_entities(created_faces + edges)
+
+            created_entity_count += 1
+
+            next
           end
 
-          edges = created_faces.flat_map(&:edges).uniq
-          edges.each { |edge| group.entities.add_cline(edge.start.position, edge.end.position) }
-          group.entities.erase_entities(created_faces + edges)
+          candidate_definition, candidate_world_transformation = _find_reusable_door(door_def, sibling_door_defs)
 
-          model.commit_operation
-          return true
+          if candidate_definition.nil?
+
+            definition = model.definitions.add(PLUGIN.get_i18n_string('default.part_single').capitalize)
+
+            created_faces = _build_door_faces(definition.entities, door_def, world_transformation)
+            if created_faces.empty?
+              model.definitions.remove(definition) if model.definitions.respond_to?(:remove)
+              next
+            end
+
+            tao = _get_auto_orient_transformation(definition, world_transformation)
+            unless tao.identity?
+
+              world_transformation = world_transformation * tao
+              taoi = tao.inverse
+
+              # Transform definition's entities
+              entities = definition.entities
+              entities.transform_entities(taoi, entities.to_a)
+
+            end
+
+            instance = active_entities.add_instance(definition, active_transformation.inverse * world_transformation)
+
+            # Force UUID to be generated in the creation operation
+            DefinitionAttributes.new(definition).uuid
+
+            created_definitions << definition
+
+            # The outline is kept as it was CUT, in world coordinates - the
+            # auto orientation moved the definition's entities and its
+            # transformation together, so what the next door has to be
+            # compared to is unchanged by it.
+            sibling_door_defs << [ door_def.outline, definition, world_transformation ] if _fetch_option_reuse_definition?
+
+          else
+
+            # The door is one more occurrence of a door this batch has
+            # already built : nothing is built at all, that definition is
+            # instanced where this one stands - see #_find_reusable_door
+            instance = active_entities.add_instance(candidate_definition, active_transformation.inverse * candidate_world_transformation)
+
+          end
+
+          # Marked as a door, so that the cavity detection can go on reading the
+          # carcass bare - see SmartDrawPanelActionHandler#_get_cavities_def and
+          # LayerAttributes.
+          instance.layer = LayerAttributes.fetch_or_create_layer(model, LayerAttributes::TYPE_DOOR, PLUGIN.get_i18n_string('tool.smart_draw.door_layer'))
+
+          created_entity_count += 1
+
         end
 
-        definition = model.definitions.add(PLUGIN.get_i18n_string('default.part_single').capitalize)
-
-        created_faces = _build_door_faces(definition.entities, door_def, world_transformation)
-        if created_faces.empty?
-          model.definitions.remove(definition) if model.definitions.respond_to?(:remove)
+        if created_entity_count == 0
           model.abort_operation
           return false
         end
 
-        tao = _get_auto_orient_transformation(definition, world_transformation)
-        unless tao.identity?
+        if active? && !_fetch_option_construction?
 
-          world_transformation = world_transformation * tao
-          taoi = tao.inverse
-
-          # Transform definition's entities
-          entities = definition.entities
-          entities.transform_entities(taoi, entities.to_a)
-
-        end
-
-        instance = active_entities.add_instance(definition, active_transformation.inverse * world_transformation)
-
-        # Marked as a door, so that the cavity detection can go on reading the
-        # carcass bare - see SmartDrawPanelActionHandler#_get_cavities_def and
-        # LayerAttributes.
-        instance.layer = LayerAttributes.fetch_or_create_layer(model, LayerAttributes::TYPE_DOOR, PLUGIN.get_i18n_string('tool.smart_draw.door_layer'))
-
-        # Force UUID to be generated in the creation operation
-        DefinitionAttributes.new(definition).uuid
-
-        if active?
+          new_definition = created_definitions.first
+          count = created_entity_count
 
           fn_ask_name = lambda {
-            unless definition.nil? || definition.deleted?
-              if (data = UI.inputbox([ PLUGIN.get_i18n_string('tab.cutlist.edit_part.name') ], [ definition.name ], PLUGIN.get_i18n_string('default.rename')))
+            unless new_definition.nil? || new_definition.deleted?
+              if (data = UI.inputbox([ PLUGIN.get_i18n_string('tab.cutlist.edit_part.name') ], [ new_definition.name ], PLUGIN.get_i18n_string('default.rename')))
                 name = data.first
                 if name.empty?
                   UI.beep
                 else
-                  definition.name = name
+                  # One name for the whole batch : the doors of one opening
+                  # are as many definitions, and they are all the part the
+                  # user just named
+                  created_definitions.each { |created_definition| created_definition.name = name unless created_definition.deleted? }
                 end
               end
             end
@@ -6562,7 +7152,7 @@ module Ladb::OpenCutList
             fn_ask_name.call
           else
             @tool.notify_success(
-              PLUGIN.get_i18n_string("tool.smart_draw.success.part_created", { :name => definition.name, :count => 1 }),
+              PLUGIN.get_i18n_string("tool.smart_draw.success.part_created", { :name => new_definition.name, :count => count }),
               [
                 {
                   :label => PLUGIN.get_i18n_string('default.rename'),
@@ -6583,6 +7173,77 @@ module Ladb::OpenCutList
       end
 
       true
+    end
+
+    # [ definition, WORLD transformation ] of a door of the SAME batch the
+    # given one is one more occurrence of, or nil : the caller then builds
+    # nothing and instances that definition instead, so the doors of one
+    # mouth are ONE part in the cutlist rather than as many identical ones.
+    # nil unless the reuse option is on.
+    #
+    # The criterion is the OUTLINE alone, and it can be : the doors of a
+    # batch come from one contour shared equally, and they carry the same
+    # thickness and the same pose by construction - so two of them with
+    # superposable outlines are the same solid, full stop. No neighbourhood
+    # test like the divider's is needed either : what makes them the same
+    # part is not a coincidence to be confirmed, it is how they were cut.
+    #
+    # Deliberately limited to the doors of ONE batch. Two doors drawn on two
+    # separate picks may well look alike, but the user drew them apart, and
+    # silently linking them would make editing one edit the other.
+    def _find_reusable_door(door_def, sibling_door_defs)
+      return nil unless _fetch_option_reuse_definition?
+
+      sibling_door_defs.each do |sibling_outline, definition, world_transformation|
+        next if definition.deleted?
+        offset = _outlines_translation_offset(door_def.outline, sibling_outline)
+        next if offset.nil?
+
+        # The definition's own geometry is +sibling_outline+'s, so carrying
+        # that door onto this one carries its transformation the same way.
+        # A plain translation composes on the LEFT : the definition is placed
+        # where it was, then moved.
+        return [ definition, Geom::Transformation.translation(offset) * world_transformation ]
+      end
+
+      nil
+    end
+
+    # The WORLD translation carrying +other_outline+ onto +outline+ when one
+    # is the other merely moved - nil when they are not congruent that way.
+    #
+    # The two are CLOSED contours, so the match may start on any of the
+    # other's vertices : every cyclic shift is tried, and the offset returned
+    # is the one that shift implies.
+    #
+    # Translations only. A door superposable by a ROTATION is not the same
+    # part : it would carry the grain of its panel the other way round, and
+    # nothing here would tell the two apart afterwards.
+    def _outlines_translation_offset(outline, other_outline)
+      count = outline.length
+      return nil unless other_outline.length == count && count > 2
+
+      tolerance = SolidMeshDef::TOLERANCE
+
+      (0...count).each do |shift|
+
+        dx = outline[0].x.to_f - other_outline[shift].x.to_f
+        dy = outline[0].y.to_f - other_outline[shift].y.to_f
+        dz = outline[0].z.to_f - other_outline[shift].z.to_f
+
+        matches = (1...count).all? { |index|
+          point = outline[index]
+          other_point = other_outline[(shift + index) % count]
+          (point.x.to_f - other_point.x.to_f - dx).abs < tolerance &&
+          (point.y.to_f - other_point.y.to_f - dy).abs < tolerance &&
+          (point.z.to_f - other_point.z.to_f - dz).abs < tolerance
+        }
+        next unless matches
+
+        return Geom::Vector3d.new(dx, dy, dz)
+      end
+
+      nil
     end
 
     # Builds the door as real geometry inside +entities+, in the given
@@ -6609,14 +7270,53 @@ module Ladb::OpenCutList
 
     # -----
 
+    # What one pick resolves to, shared by every door it yields : the cavity
+    # and the opening the doors go on, the frame that opening is read in, the
+    # NOMINAL contour they are cut out of (in that frame), and the direction
+    # they succeed one another along (in that frame too, [ x, y ] unit
+    # Floats, nil when none could be read).
+    DoorContext = Struct.new(:cavities_def, :fragment_def, :opening_def, :transformation, :points, :direction) do
+
+      def container_path
+        cavities_def.container_path
+      end
+
+      # The split direction back in WORLD coordinates - what the doors' own
+      # widths are measured along.
+      def world_direction
+        return nil if direction.nil?
+        @world_direction ||= Geom::Vector3d.new(direction[0], direction[1], 0).transform(transformation)
+      end
+
+    end
+
     # One door : the opening it fills, the outline it is cut to (WORLD
     # coordinates, closed, the closing point not repeated), its thickness,
-    # and whether it is laid in applique on the opening rather than fitted
-    # into it.
-    DoorDef = Struct.new(:container_path, :fragment_def, :opening_def, :outline, :thickness, :overlay) do
+    # whether it is laid in applique on the opening rather than fitted into
+    # it, and the WORLD direction the doors of its batch succeed one another
+    # along - the one its own width is read on.
+    DoorDef = Struct.new(:container_path, :fragment_def, :opening_def, :outline, :thickness, :overlay, :direction) do
 
       def overlay?
         !!overlay
+      end
+
+      # Center of the outline's bounds - where the width label hangs.
+      def center
+        return @center if defined?(@center)
+        bounds = Geom::BoundingBox.new
+        outline.each { |point| bounds.add(point) }
+        @center = bounds.center
+      end
+
+      # The door's own extent along the batch's split direction : its WIDTH,
+      # the dimension the count shares. 0 when there is no direction to read
+      # it on (a lone door on a facade nothing pointed a direction at).
+      def width
+        return @width if defined?(@width)
+        return @width = 0 if direction.nil?
+        projections = outline.map { |point| point.x.to_f * direction.x + point.y.to_f * direction.y + point.z.to_f * direction.z }
+        @width = projections.max - projections.min
       end
 
       # Origin of the door's own frame : the first point of its outline, on
