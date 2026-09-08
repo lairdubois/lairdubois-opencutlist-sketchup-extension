@@ -2392,6 +2392,7 @@ tool:
     action_4: Dessiner une Porte
     action_4_status: Dessiner une porte dans une cavité formée par un groupe de pièces existantes
     action_4_state_0_status: Cliquez dans une cavité pour dessiner une porte sur son ouverture
+    action_4_state_0_merge_status: "Glissez jusqu'aux cavités voisines pour une porte commune"
     action_option_group_offset: Décalage
     action_option_group_segments: Segments
     action_option_group_thickness: Epaisseur

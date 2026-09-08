@@ -4146,7 +4146,7 @@ module Ladb::OpenCutList
 
       color = Kuix::COLOR_BLUE
 
-      active_fragment_defs = cavities_def.fragment_defs_for_point(@picked_point)
+      active_fragment_defs = _get_preview_cavity_fragment_defs(cavities_def)
       active_fragment_defs.each do |fragment_def|
 
         segments = fragment_def.unique_boundary_segments
@@ -4177,6 +4177,12 @@ module Ladb::OpenCutList
 
       end
 
+    end
+
+    # The cavities #_preview_cavity draws : the ones the pick lands in. A
+    # handler whose pick gathers SEVERAL of them has more than that to show.
+    def _get_preview_cavity_fragment_defs(cavities_def)
+      cavities_def.fragment_defs_for_point(@picked_point)
     end
 
     # -----
@@ -5917,6 +5923,19 @@ module Ladb::OpenCutList
     # flush.
     OUTLINE_FLAT_TOLERANCE = SolidMeshDef::TOLERANCE / 10.0
 
+    # How far a cavity's share of the facade is grown to see whether it
+    # TOUCHES another - see #_merge_adjacent?. The contact between two shares
+    # is exact, they are cut apart by the very same bisector, so all this has
+    # to tell apart is a contact by an EDGE from one by a mere CORNER : grown
+    # by delta, a share overlaps an edge neighbour over delta times the
+    # length of their common border, and a diagonal one over delta squared.
+    MERGE_ADJACENCY_DELTA = SolidMeshDef::TOLERANCE
+
+    # The shortest common border two shares may be merged on. A tenth of an
+    # inch of contact is a corner, not a shared panel - and it stands four
+    # orders of magnitude over what a corner actually scores.
+    MERGE_MIN_SHARED_BORDER = 0.1
+
     # Below this norm the picked face's normal, projected on the opening
     # plane, is no direction at all : the face is nearly PARALLEL to the
     # opening and says nothing about where the doors should meet. Both
@@ -5938,6 +5957,11 @@ module Ladb::OpenCutList
 
       @picked_point = nil
 
+      @merge_context = nil
+      @merge_fragment_defs = []
+      @merge_paths = []
+      @merge_cancelled = false
+
     end
 
     # -----
@@ -5957,6 +5981,7 @@ module Ladb::OpenCutList
       case state
       when STATE_PLACE
         return super +
+               (_fetch_option_pose_overlay? ? ' | ' + PLUGIN.get_i18n_string("tool.smart_#{@tool.get_stripped_name}.action_#{@action}_state_#{state}_merge_status") + '.' : '') +
                ' | ' + PLUGIN.get_i18n_string("default.constrain_key") + ' + X = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_construction_status') + '.'
       end
 
@@ -5965,21 +5990,62 @@ module Ladb::OpenCutList
 
     # -----
 
+    # A pick that stays DOWN opens a MERGE : the door then spans every cavity
+    # the cursor visits before the button comes back up - one leaf over
+    # several compartments, the way a facade is often built.
+    #
+    # What the pick resolves to is frozen here, once : the opening, the frame
+    # it is read in, the direction the doors would be shared along. The drag
+    # only ever adds cavities to it. That is what lets the cursor cross a
+    # chant, a hinge, the outside of the case - anything that resolves to no
+    # cavity at all - without the door losing the shape it has.
+    #
+    # In applique ONLY : an inset door merged over two compartments would
+    # have to be notched around the panel that separates them. The gesture
+    # then simply is the click it always was.
+    def onToolLButtonDown(tool, flags, x, y, view)
+      super
+
+      case @state
+      when STATE_PLACE
+        @merge_cancelled = false
+        if _fetch_option_pose_overlay? && (context = _compute_door_context(@picked_point, view)).is_a?(DoorContext)
+          @merge_context = context
+          @merge_fragment_defs = [ context.fragment_def ]
+          @merge_paths = [ Fiddle::Clippy.points_to_rpath(context.points) ]
+        end
+      end
+
+      true
+    end
+
     def onToolLButtonUp(tool, flags, x, y, view)
       super
 
       case @state
       when STATE_PLACE
-        if _create_entity(@picked_point, view)
-          # The cavities are NOT re-read : laying a door on the carcass does
-          # not change the compartments it has, and the next door is to be
-          # fitted to the same bare openings as this one. The detection would
-          # come to the same answer anyway - the door goes on a layer marked
-          # as such, which #_get_cavities_def leaves out of the enclosure -
-          # this only spares paying for it again at every door.
-          _refresh
+        if @merge_cancelled
+          # The drag was called off while the button was still down : this is
+          # the release of a gesture that no longer stands for anything.
+          @merge_cancelled = false
         else
-          UI.beep
+          merging = _merging?
+          if _create_entity(@picked_point, view)
+            _reset_merge
+            # The cavities are NOT re-read : laying a door on the carcass does
+            # not change the compartments it has, and the next door is to be
+            # fitted to the same bare openings as this one. The detection would
+            # come to the same answer anyway - the door goes on a layer marked
+            # as such, which #_get_cavities_def leaves out of the enclosure -
+            # this only spares paying for it again at every door.
+            _refresh
+          else
+            # The merged door is gone with the drag that carried it : the
+            # preview has to stop showing it.
+            _reset_merge
+            _refresh if merging
+            UI.beep
+          end
         end
       end
 
@@ -5990,6 +6056,15 @@ module Ladb::OpenCutList
     # survives from one door to the next on purpose : it is unwound here, the
     # pinned widths first, then the count.
     def onToolCancel(tool, reason, view)
+
+      # The button is still down when a drag is called off : the release that
+      # follows must not build the door it was about.
+      if _merging?
+        _reset_merge
+        @merge_cancelled = true
+        _refresh
+        return true
+      end
 
       if @widths.any?
         _set_distribution(@number, [], tool, view)
@@ -6039,14 +6114,18 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_PLACE
-        _pick_part(picker, view)
-        if has_active_part?
-          if _snap_point(picker)
-            @tool.remove_tooltip
-            @tool.pop_cursor(SmartCursorManager.cursor_select_error)
-          else
-            @tool.show_tooltip(PLUGIN.get_i18n_string('tool.smart_draw.error.invalid_door_cavity'), SmartTool::MESSAGE_TYPE_ERROR)
-            @tool.push_cursor(SmartCursorManager.cursor_select_error)
+        if _merging?
+          _merge_pick(picker, view)
+        else
+          _pick_part(picker, view)
+          if has_active_part?
+            if _snap_point(picker)
+              @tool.remove_tooltip
+              @tool.pop_cursor(SmartCursorManager.cursor_select_error)
+            else
+              @tool.show_tooltip(PLUGIN.get_i18n_string('tool.smart_draw.error.invalid_door_cavity'), SmartTool::MESSAGE_TYPE_ERROR)
+              @tool.push_cursor(SmartCursorManager.cursor_select_error)
+            end
           end
         end
         _preview_door(view)
@@ -6075,12 +6154,16 @@ module Ladb::OpenCutList
       @picked_point = nil
       @number = 1
       @widths = []
+      @merge_cancelled = false
+      _reset_merge
       super
     end
 
     def _reset_cavities_def
       @footprint_container_path = nil
       @footprint_paths_cache = nil
+      @share_container_path = nil
+      @share_points_cache = nil
       super
     end
 
@@ -6110,6 +6193,13 @@ module Ladb::OpenCutList
 
     def _preview_part_container?
       true
+    end
+
+    # Every cavity the door spans while a merge is on, not just the one under
+    # the cursor : the whole point of the drag is to see the set grow.
+    def _get_preview_cavity_fragment_defs(cavities_def)
+      return @merge_fragment_defs if _merging?
+      super
     end
 
     # -----
@@ -6214,6 +6304,10 @@ module Ladb::OpenCutList
     # Split out of #_compute_door_defs so that a count can be validated (see
     # #_set_distribution) against the very contour the preview is cut from.
     def _compute_door_context(point, view)
+      # A merge in progress IS the answer : it was resolved when the drag
+      # opened, and has been fed cavities ever since (see #_merge_add).
+      return @merge_context if _merging?
+
       return nil unless point.is_a?(Geom::Point3d)
       return nil unless (picked_face_manipulator = @picker.picked_plane_manipulator).is_a?(PlaneManipulator)
       return nil unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef) && cavities_def.valid?
@@ -6765,15 +6859,24 @@ module Ladb::OpenCutList
         @footprint_paths_cache = {}
       end
 
-      normal = opening_def.normal
-      origin = opening_def.origin
-      key = [
-        (normal.x * 1e6).round, (normal.y * 1e6).round, (normal.z * 1e6).round,
-        ((origin.x * normal.x + origin.y * normal.y + origin.z * normal.z) / SolidMeshDef::TOLERANCE).round
-      ]
+      key = _opening_plane_key(opening_def)
       return @footprint_paths_cache[key] if @footprint_paths_cache.has_key?(key)
 
       @footprint_paths_cache[key] = _compute_footprint_paths(cavities_def.drawing_defs, ti)
+    end
+
+    # What identifies the PLANE an opening lies on, as a hash key : its
+    # normal, and how far from the world origin it stands along it. Both read
+    # coarsely enough that two mouths of the same facade answer the same
+    # thing - which is the whole point, they share everything that is read
+    # per plane.
+    def _opening_plane_key(opening_def)
+      normal = opening_def.normal
+      origin = opening_def.origin
+      [
+        (normal.x * 1e6).round, (normal.y * 1e6).round, (normal.z * 1e6).round,
+        ((origin.x * normal.x + origin.y * normal.y + origin.z * normal.z) / SolidMeshDef::TOLERANCE).round
+      ]
     end
 
     def _compute_footprint_paths(drawing_defs, ti)
@@ -6859,21 +6962,30 @@ module Ladb::OpenCutList
     def _get_sibling_mouth_points(fragment_def, opening_def, ti)
       return [] unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef)
 
-      normal = opening_def.normal
-      origin = opening_def.origin
-
       mouths = []
       cavities_def.fragment_defs.each do |other_fragment_def|
         next if other_fragment_def.equal?(fragment_def)
-        other_fragment_def.opening_defs.each do |other_opening_def|
-          next if other_opening_def.normal.dot(normal) < OPENING_PLANE_MIN_DOT
-          next if (other_opening_def.origin - origin).dot(normal).abs > SolidMeshDef::TOLERANCE
+        _get_opening_defs_on_plane(other_fragment_def, opening_def).each do |other_opening_def|
           loop_points = other_opening_def.outer_loop
           next if loop_points.nil? || loop_points.length < 3
           mouths << loop_points.map { |point| point.transform(ti) }
         end
       end
       mouths
+    end
+
+    # The openings of +fragment_def+ that lie on the SAME plane as the given
+    # one - same outward direction, same offset along it. A cavity has at
+    # most one on a given facade in all but the twisted cases, but nothing
+    # says so : an L shaped compartment may well show two separate mouths on
+    # the same front.
+    def _get_opening_defs_on_plane(fragment_def, opening_def)
+      normal = opening_def.normal
+      origin = opening_def.origin
+      fragment_def.opening_defs.select { |other_opening_def|
+        other_opening_def.normal.dot(normal) >= OPENING_PLANE_MIN_DOT &&
+        (other_opening_def.origin - origin).dot(normal).abs <= SolidMeshDef::TOLERANCE
+      }
     end
 
     # The closest pair of points of two closed contours of the plane, the
@@ -6936,6 +7048,170 @@ module Ladb::OpenCutList
         origin_x + (direction_x + side_x) * reach,          origin_y + (direction_y + side_y) * reach,
         origin_x + side_x * reach,                          origin_y + side_y * reach
       ]
+    end
+
+    # -----
+
+    # Whether a MERGE is on : a pick held down, gathering the cavities one
+    # single door is to span.
+    def _merging?
+      @merge_context.is_a?(DoorContext)
+    end
+
+    def _reset_merge
+      @merge_context = nil
+      @merge_fragment_defs = []
+      @merge_paths = []
+    end
+
+    # Feeds the merge the cavity under the cursor.
+    #
+    # Anything else leaves the door exactly as it is : the cursor off the
+    # carcass, on the chant between two compartments, on a cavity already
+    # taken, on one that meets the door by a corner alone. A drag crosses all
+    # of that on its way, and would be unusable if the door came undone every
+    # time it did.
+    #
+    # The active part is deliberately NOT picked again : the cavities are the
+    # ones the drag started in, and reading them on another container would
+    # cost a whole boolean pass and drop the door being drawn. #_snap_point
+    # reads the pick against the ACTIVE part's cavities, so leaving that part
+    # alone is exactly what keeps it answering for the right container.
+    def _merge_pick(picker, view)
+
+      picked_point = @picked_point
+      unless _snap_point(picker)
+        @picked_point = picked_point    # A pick on nothing is not a pick : the cavity preview keeps the point it had
+        return
+      end
+
+      fragment_def = _get_cavity_fragment_def(@merge_context.cavities_def, @picked_point, picker.picked_plane_manipulator)
+      return unless fragment_def.is_a?(SolidCavityFragmentDef)
+
+      _merge_add(fragment_def)
+    end
+
+    # Adds one cavity to the merge - its own share of the facade unioned into
+    # the door's contour. Answers whether it took.
+    #
+    # Each cavity's share is a CELL of a partition of the container's front
+    # (see #_get_overlay_points), and two neighbouring cells are jointive to
+    # the micron, having been cut apart by the very same bisector. So the
+    # door over several cavities is quite simply the UNION of their cells :
+    # nothing has to be derived anew, and every cell stays cut by the
+    # neighbours that were left out of the merge - which is exactly what a
+    # door in applique still owes them.
+    #
+    # Cutting the shares first and unioning them after is also what makes an
+    # L shaped merge come out right. Merging the cavities first, by leaving
+    # them out of one another's neighbours, looks equivalent and is not : a
+    # bisector is an unbounded half plane, so the cut called for by a cavity
+    # standing above the left leg of the L would run on and rob the right
+    # leg too, which it stands nowhere near.
+    def _merge_add(fragment_def)
+      return false if @merge_fragment_defs.any? { |other_fragment_def| other_fragment_def.equal?(fragment_def) }
+
+      points = _get_cavity_share_points(fragment_def, @merge_context.opening_def, @merge_context.transformation.inverse)
+      return false if points.nil? || points.length < 3
+
+      path = Fiddle::Clippy.points_to_rpath(points)
+      return false unless _merge_adjacent?(path)
+
+      paths = @merge_paths + [ path ]
+      merged_points = _merge_points(paths)
+      return false if merged_points.nil?
+
+      @merge_fragment_defs << fragment_def
+      @merge_paths = paths
+      @merge_context.points = merged_points
+
+      true
+    end
+
+    # The contour the merged shares draw, in the opening's frame - nil when
+    # they draw anything but ONE plain ring.
+    #
+    # The union of two jointive cells is the very degeneracy
+    # #_cleanup_footprint_paths exists for : they share a whole edge and
+    # touch nowhere else, and Clipper hands that back as a single self
+    # touching path unless the pair is grown apart and shrunk back first. The
+    # collinear vertices the seam leaves along the way are dropped later,
+    # together with the ones the carcass itself leaves behind (see
+    # #_flatten_outline).
+    #
+    # More than one ring means the shares enclose something they do not
+    # cover - a compartment left out in the middle of the ones taken. That is
+    # a frame, not a door.
+    def _merge_points(paths)
+      merged_paths, _ = Fiddle::Clippy.execute_union(closed_subjects: paths)
+      merged_paths = _cleanup_footprint_paths(merged_paths)
+      return nil unless merged_paths.length == 1
+
+      points = Fiddle::Clippy.rpath_to_points(merged_paths.first)
+      points.length < 3 ? nil : points
+    end
+
+    # Whether the given share touches what the door already covers by an
+    # EDGE - by a shared panel, that is - and not by a single corner.
+    #
+    # The four cells of a grid meet at one point : taking two of them
+    # DIAGONALLY would draw a bow tie, which is no panel. Grown by
+    # MERGE_ADJACENCY_DELTA, a share overlaps an edge neighbour over that
+    # delta times the length of their common border, and a diagonal one over
+    # the delta squared - orders of magnitude apart, so the reading needs no
+    # finesse at all.
+    def _merge_adjacent?(path)
+      return true if @merge_paths.empty?
+
+      grown_paths = Fiddle::Clippy.inflate_paths(
+        paths: [ path ],
+        delta: MERGE_ADJACENCY_DELTA,
+        join_type: Fiddle::Clippy::JOIN_TYPE_MITER,
+        miter_limit: 100.0
+      )
+      return false if grown_paths.empty?
+
+      overlap_paths, _ = Fiddle::Clippy.execute_intersection(closed_subjects: @merge_paths, clips: grown_paths)
+      area = overlap_paths.inject(0.0) { |sum, overlap_path| sum + Fiddle::Clippy.get_rpath_area(overlap_path).abs }
+
+      area > MERGE_ADJACENCY_DELTA * MERGE_MIN_SHARED_BORDER
+    end
+
+    # The share of the facade one cavity is entitled to, in the frame the
+    # merge is read in : what #_get_door_nominal_points computes for the
+    # picked cavity, for any other cavity of the same facade.
+    #
+    # The REFERENCE opening is what is handed over to #_get_overlay_points,
+    # never the cavity's own : both lie on the same plane, and everything
+    # that is read per plane - the container's silhouette above all - is then
+    # read once for them all. Only the MOUTH has to be the cavity's own, it
+    # is what tells which piece of the partition is its.
+    #
+    # Cached, and rightly so : a drag walks in and out of the same cavities,
+    # and without it a share that was refused would be computed again at
+    # every mouse move. Held per container, like the silhouette, so that the
+    # fragments the keys name are still the ones the cache was filled on.
+    def _get_cavity_share_points(fragment_def, opening_def, ti)
+      return nil unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef)
+
+      unless @share_points_cache.is_a?(Hash) && @share_container_path == cavities_def.container_path
+        @share_container_path = cavities_def.container_path
+        @share_points_cache = {}
+      end
+
+      key = [ fragment_def.object_id, _opening_plane_key(opening_def) ]
+      return @share_points_cache[key] if @share_points_cache.has_key?(key)
+
+      points = nil
+      own_opening_def = _get_opening_defs_on_plane(fragment_def, opening_def).max_by { |other_opening_def| other_opening_def.area }
+      unless own_opening_def.nil?
+        mouth = own_opening_def.outer_loop
+        unless mouth.nil? || mouth.length < 3
+          points = _get_overlay_points(fragment_def, opening_def, mouth.map { |point| point.transform(ti) }, ti)
+        end
+      end
+
+      @share_points_cache[key] = points
     end
 
     # -----
@@ -7333,10 +7609,10 @@ module Ladb::OpenCutList
       end
 
       # The door as a raw mesh - [ vertices, face_indices, face_ids ] - for
-      # the preview : the outline, fanned into triangles, and the same
-      # outline pushed by the thickness, on the side the pose puts the body.
-      # The fan's own edges are
-      # interior to the cap and cancel out, so the net contour
+      # the preview : the outline triangulated (see #cap_triangles), and the
+      # same outline pushed by the thickness, on the side the pose puts the
+      # body. The cap's own interior edges are traversed once each way and
+      # cancel out, so the net contour
       # (SolidFragmentDef#unique_boundary_segments) draws the door's real
       # outline, not its tessellation.
       def mesh_3f
@@ -7358,9 +7634,9 @@ module Ladb::OpenCutList
         back_outline.each { |point| vertices << point.x.to_f << point.y.to_f << point.z.to_f }
 
         face_indices = []
-        (1...(count - 1)).each do |index|
-          face_indices << 0 << index << index + 1                                        # front cap
-          face_indices << count << count + index + 1 << count + index                    # back cap, the other way round
+        cap_triangles.each do |a, b, c|
+          face_indices << a << b << c                                                    # front cap
+          face_indices << count + c << count + b << count + a                            # back cap, the other way round
         end
         (0...count).each do |index|
           following = (index + 1) % count
@@ -7369,6 +7645,89 @@ module Ladb::OpenCutList
         end
 
         @mesh_3f = [ vertices, face_indices, Array.new(face_indices.length / 3, 0) ]
+      end
+
+      # The outline cut into triangles, as index triples wound the way the
+      # outline itself runs - what #mesh_3f builds its two caps on. Memoized.
+      #
+      # A fan opened from the first vertex would do for a CONVEX outline, and
+      # stops doing once a door spans several merged cavities : an L is star
+      # shaped from some of its corners only, and a fan opened from any of
+      # the others lays triangles OUTSIDE it. Their edges then meet the
+      # neighbouring ones the same way round rather than head to tail, so
+      # nothing cancels and the preview draws the fan itself - strokes
+      # straight across the door. Which corner the union hands over first is
+      # nobody's decision, so the fan is simply not an option any more.
+      #
+      # Ear clipping instead : it only ever cuts a triangle the outline
+      # already contains, so every edge it adds is interior twice over. O(n2)
+      # on a contour of a dozen points at most, recomputed only when the pick
+      # changes.
+      def cap_triangles
+        return @cap_triangles if defined?(@cap_triangles)
+
+        count = outline.length
+        x_axis, y_axis = axes
+
+        # The outline read flat, in the opening's own basis : the door lies
+        # on a plane, whatever its slant in the model.
+        us = outline.map { |point| point.x.to_f * x_axis.x + point.y.to_f * x_axis.y + point.z.to_f * x_axis.z }
+        vs = outline.map { |point| point.x.to_f * y_axis.x + point.y.to_f * y_axis.y + point.z.to_f * y_axis.z }
+
+        # Ears are cut counterclockwise ; an outline running the other way in
+        # that basis is walked backwards and its triangles flipped back, so
+        # the caps come out wound like the outline either way.
+        doubled_area = 0.0
+        (0...count).each do |index|
+          following = (index + 1) % count
+          doubled_area += us[index] * vs[following] - us[following] * vs[index]
+        end
+        reversed = doubled_area < 0
+
+        remaining = (0...count).to_a
+        remaining.reverse! if reversed
+
+        triangles = []
+        while remaining.length > 2
+          position = (0...remaining.length).find { |candidate| _ear?(us, vs, remaining, candidate) }
+          break if position.nil?
+          a, b, c = remaining[position - 1], remaining[position], remaining[(position + 1) % remaining.length]
+          triangles << (reversed ? [ c, b, a ] : [ a, b, c ])
+          remaining.delete_at(position)
+        end
+
+        # A self touching or otherwise degenerate outline left an ear the
+        # test would not take : back to the fan, which is wrong on a concave
+        # contour but never leaves a hole - and a hole is the one thing that
+        # would make the preview show LESS than the door.
+        triangles = (1...(count - 1)).map { |index| [ 0, index, index + 1 ] } if triangles.length != count - 2
+
+        @cap_triangles = triangles
+      end
+
+      # Whether the vertex at +position+ of the +remaining+ ring is an EAR :
+      # convex, and cutting a triangle no other vertex of the ring falls in.
+      # A vertex sitting exactly ON the triangle counts as falling in - the
+      # ear is refused rather than cut through something the outline touches.
+      def _ear?(us, vs, remaining, position)
+        a = remaining[position - 1]
+        b = remaining[position]
+        c = remaining[(position + 1) % remaining.length]
+
+        return false if _cross(us, vs, a, b, c) <= 0    # Reflex corner, or three points in a line
+
+        remaining.each do |index|
+          next if index == a || index == b || index == c
+          return false if _cross(us, vs, a, b, index) >= 0 && _cross(us, vs, b, c, index) >= 0 && _cross(us, vs, c, a, index) >= 0
+        end
+
+        true
+      end
+
+      # Twice the signed area of the flattened triangle a-b-c : positive when
+      # it turns counterclockwise in the opening's basis.
+      def _cross(us, vs, a, b, c)
+        (us[b] - us[a]) * (vs[c] - vs[a]) - (vs[b] - vs[a]) * (us[c] - us[a])
       end
 
     end
