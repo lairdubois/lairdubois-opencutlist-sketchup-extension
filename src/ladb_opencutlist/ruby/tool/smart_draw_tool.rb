@@ -7391,14 +7391,32 @@ module Ladb::OpenCutList
     #
     # Same plane AND same side : a cavity opening the other way sits behind
     # the facade and is no neighbour of this facade.
+    #
+    # A neighbour CLOSED on this very plane - a real panel standing where an
+    # opening could have been, e.g. the fitted back of one compartment while
+    # the one next to it is bare - has no #opening_defs there at all, and is
+    # silently left out of the partition without the fallback below : nothing
+    # then cuts the picked cavity's share off from its territory, and the
+    # overlay balloons through the shared panel into whatever the neighbour
+    # was walling off. #wall_loops_on_plane reads that wall's own inner loop
+    # instead, which is flush with the very same panel edges a mouth would
+    # have drawn there - so it slots into the same list unchanged. See
+    # SolidCavityFragmentDef#wall_loops_on_plane.
     def _get_sibling_mouth_points(fragment_def, opening_def, ti)
       return [] unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef)
 
       mouths = []
       cavities_def.fragment_defs.each do |other_fragment_def|
         next if other_fragment_def.equal?(fragment_def)
-        _get_opening_defs_on_plane(other_fragment_def, opening_def).each do |other_opening_def|
-          loop_points = other_opening_def.outer_loop
+
+        opening_defs_on_plane = _get_opening_defs_on_plane(other_fragment_def, opening_def)
+        loops = if opening_defs_on_plane.empty?
+          other_fragment_def.wall_loops_on_plane(opening_def.normal, opening_def.origin)
+        else
+          opening_defs_on_plane.map(&:outer_loop)
+        end
+
+        loops.each do |loop_points|
           next if loop_points.nil? || loop_points.length < 3
           mouths << loop_points.map { |point| point.transform(ti) }
         end

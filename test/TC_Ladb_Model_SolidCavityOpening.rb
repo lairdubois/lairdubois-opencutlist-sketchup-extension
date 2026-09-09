@@ -164,10 +164,124 @@ class TC_Ladb_Model_SolidCavityOpening < TestUp::TestCase
     assert_equal([], fragment_def.opening_defs)
   end
 
+  # -- Wall loops, for a neighbour closed on the plane a facade is cut on --
+
+  # A wall reads the same way a cap does : the net boundary of the plane's
+  # triangles, provided they carry a real face id rather than 0.
+  def test_wall_loops_on_plane_reads_a_walled_plane
+
+    vertices = [ 0.0, 0.0, 0.0,  120.0, 0.0, 0.0,  120.0, 120.0, 0.0,  0.0, 120.0, 0.0 ]
+    face_indices = [ 0, 1, 2,  0, 2, 3 ]
+
+    fragment_def = _fragment(vertices, face_indices, [ 7, 7 ])
+
+    loops = fragment_def.wall_loops_on_plane(_up, _at(0.0))
+
+    assert_equal(1, loops.length)
+    assert_equal(4, loops.first.length)
+    assert_equal([], fragment_def.opening_defs, 'a walled plane is not an opening')
+  end
+
+  # SmartDrawFacadeActionHandler#_get_sibling_mouth_points falls back to this
+  # for a neighbour CLOSED by a real panel : that panel sits one thickness
+  # short of where the neighbour's hull cap would have been had it been open
+  # instead, so an exact plane match would find nothing at all.
+  def test_wall_loops_on_plane_reads_a_wall_set_back_by_its_own_panel
+
+    vertices = [ 0.0, 0.0, -0.75,  120.0, 0.0, -0.75,  120.0, 120.0, -0.75,  0.0, 120.0, -0.75 ]
+    face_indices = [ 0, 1, 2,  0, 2, 3 ]
+
+    fragment_def = _fragment(vertices, face_indices, [ 7, 7 ])
+
+    loops = fragment_def.wall_loops_on_plane(_up, _at(0.0))
+
+    assert_equal(1, loops.length, 'a wall one panel thickness behind the plane still closes it')
+    assert(loops.first.all? { |point| point.z.to_f.round(6) == -0.75 }, 'the loop must keep the wall\'s own depth, not the plane asked for')
+  end
+
+  # Bounded, though : a whole COMPARTMENT behind - the far side of a two depth
+  # carcass, a sealed void - is walled facing this way too, and is no
+  # neighbour of this plane. Read as one it robs the facade of everything past
+  # the bisector it has no business drawing.
+  def test_wall_loops_on_plane_ignores_a_wall_a_compartment_away
+
+    depth = -Ladb::OpenCutList::SolidCavityFragmentDef::WALL_PLANE_MAX_SETBACK - 1.0
+    vertices = [ 0.0, 0.0, depth,  120.0, 0.0, depth,  120.0, 120.0, depth,  0.0, 120.0, depth ]
+    face_indices = [ 0, 1, 2,  0, 2, 3 ]
+
+    fragment_def = _fragment(vertices, face_indices, [ 7, 7 ])
+
+    assert_equal([], fragment_def.wall_loops_on_plane(_up, _at(0.0)))
+  end
+
+  # The setback is read on the WALL, not on the cavity : one reaching right up
+  # to the plane by its side, while the only wall facing it stands a
+  # compartment behind, closes nothing there either. (The bounds say yes here
+  # - it is the triangles that answer.)
+  def test_wall_loops_on_plane_ignores_a_far_wall_of_a_cavity_reaching_the_plane
+
+    depth = -Ladb::OpenCutList::SolidCavityFragmentDef::WALL_PLANE_MAX_SETBACK - 6.0
+    vertices = [
+      0.0, 0.0, depth,  120.0, 0.0, depth,  120.0, 120.0, depth,  0.0, 120.0, depth,   # facing +Z, far below
+      120.0, 0.0, depth, 120.0, 120.0, depth, 120.0, 120.0, 0.0,  120.0, 0.0, 0.0      # facing +X, reaching z = 0
+    ]
+    face_indices = [ 0, 1, 2,  0, 2, 3,   4, 5, 6,  4, 6, 7 ]
+
+    fragment_def = _fragment(vertices, face_indices, [ 7, 7, 8, 8 ])
+
+    assert_equal([], fragment_def.wall_loops_on_plane(_up, _at(0.0)))
+  end
+
+  # A wall standing IN FRONT of the plane closes nothing of it either : it
+  # belongs to whatever lies on the other side of the facade.
+  def test_wall_loops_on_plane_ignores_a_wall_in_front_of_the_plane
+
+    vertices = [ 0.0, 0.0, 10.0,  120.0, 0.0, 10.0,  120.0, 120.0, 10.0,  0.0, 120.0, 10.0 ]
+    face_indices = [ 0, 1, 2,  0, 2, 3 ]
+
+    fragment_def = _fragment(vertices, face_indices, [ 7, 7 ])
+
+    assert_equal([], fragment_def.wall_loops_on_plane(_up, _at(0.0)))
+  end
+
+  # The match is by SIGNED normal : a wall facing the other way belongs to
+  # whatever lies on ITS side, not to a cavity asking after the opposite
+  # direction.
+  def test_wall_loops_on_plane_ignores_a_wall_facing_the_other_way
+
+    vertices = [ 0.0, 0.0, 0.0,  0.0, 120.0, 0.0,  120.0, 0.0, 0.0 ] # wound for normal (0, 0, -1)
+    face_indices = [ 0, 1, 2 ]
+
+    fragment_def = _fragment(vertices, face_indices, [ 7 ])
+
+    assert_equal([], fragment_def.wall_loops_on_plane(_up, _at(0.0)))
+  end
+
+  # A plane that is OPEN (its triangles are caps, face id 0) has no wall to
+  # read at all - #opening_defs is where that plane is found instead.
+  def test_wall_loops_on_plane_is_empty_for_an_open_plane
+
+    vertices = [ 0.0, 0.0, 0.0,  120.0, 0.0, 0.0,  120.0, 120.0, 0.0,  0.0, 120.0, 0.0 ]
+    face_indices = [ 0, 1, 2,  0, 2, 3 ]
+
+    fragment_def = _fragment(vertices, face_indices, [ 0, 0 ])
+
+    assert_equal([], fragment_def.wall_loops_on_plane(_up, _at(0.0)))
+  end
+
   private
 
   def _fragment(vertices, face_indices, face_ids)
     Ladb::OpenCutList::SolidCavityFragmentDef.new(vertices, face_indices, face_ids, [])
+  end
+
+  # The plane the wall tests ask after : z = +z_offset, looking up.
+  def _up
+    Geom::Vector3d.new(0.0, 0.0, 1.0)
+  end
+
+  def _at(z_offset)
+    Geom::Point3d.new(0.0, 0.0, z_offset)
   end
 
 end

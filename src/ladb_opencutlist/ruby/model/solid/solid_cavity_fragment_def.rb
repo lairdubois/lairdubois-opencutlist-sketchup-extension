@@ -247,7 +247,125 @@ module Ladb::OpenCutList
       }
     end
 
+    # Same tolerant matching as SmartDrawFacadeActionHandler::OPENING_PLANE_MIN_DOT
+    # (a signed dot, so a plane and its own reverse never match).
+    WALL_PLANE_MATCH_MIN_DOT = 1.0 - 1e-6
+
+    # How far BEHIND the plane asked for a wall may stand and still be read as
+    # closing it : the thickness of the panel that closes it, and no more.
+    #
+    # The setback is never zero - a cavity closed by a fitted panel stops at
+    # that panel's INNER face, one thickness short of where its hull cap would
+    # have sat had it been open instead - so an exact plane match finds
+    # nothing. It is bounded all the same, and by a PANEL : what stands
+    # between a genuine neighbour's wall and the plane is the panel that
+    # closes it. Anything further back has something else in between - and if
+    # that something is a cavity, it has its own mouth on the plane and speaks
+    # for itself as a sibling. Without this bound the reading goes wrong the
+    # far side of the assembly : the compartment behind a mid-back, a sealed
+    # void, anything walled facing this way at any depth at all, is read as a
+    # neighbour of a plane it stands nowhere near.
+    #
+    # 4 inches clears the thickest doubled panel an assembly is made of and
+    # stays an order of magnitude under the shallowest compartment one.
+    WALL_PLANE_MAX_SETBACK = 4.0
+
+    # The loop(s) the cavity's WALL draws on the given plane - the panel that
+    # closes it there, exactly as far as it reaches - or [] when the cavity
+    # is OPEN on that plane (nothing but caps facing it), has no wall facing
+    # it, or none standing near enough to close it (WALL_PLANE_MAX_SETBACK).
+    #
+    # Read by SmartDrawFacadeActionHandler#_get_sibling_mouth_points as the
+    # fallback for a neighbouring cavity CLOSED on the very plane a facade is
+    # being cut on : such a cavity has no #opening_defs there at all - it is
+    # not a mouth - yet its wall is exactly the boundary the facade's overlay
+    # share must stop at (see #_get_overlay_points).
+    #
+    # The depth the wall comes back at is its OWN, the setback included, and
+    # not the plane's : harmless, since every reader of the loop works in the
+    # opening's own 2D frame and never looks past its X, Y - the frame's Z
+    # carries the setback and nothing reads it.
+    #
+    # Memoized PER PLANE, and cheaply turned down before that : the facade
+    # preview reads its siblings again at every mouse move, over every cavity
+    # of the container, while the carcass does not move under it. The key is
+    # quantized the way SmartDrawFacadeActionHandler#_opening_plane_key is,
+    # and for the same reason - two queries closer than that answer the same
+    # thing anyway, the matching below being tolerant to exactly that degree.
+    def wall_loops_on_plane(normal, origin)
+      nx = normal.x.to_f ; ny = normal.y.to_f ; nz = normal.z.to_f
+      d = nx * origin.x.to_f + ny * origin.y.to_f + nz * origin.z.to_f
+
+      cache = (@wall_loops_by_plane ||= {})
+      key = [ (nx * 1e6).round, (ny * 1e6).round, (nz * 1e6).round, (d / SolidMeshDef::TOLERANCE).round ]
+      return cache[key] if cache.has_key?(key)
+
+      cache[key] = _wall_loops_on_plane(nx, ny, nz, d)
+    end
+
     private
+
+    # #wall_loops_on_plane once the plane is read as [ unit normal, offset ] —
+    # see there. The AABB is asked FIRST : a cavity whose every point stands
+    # outside the window can carry no wall in it, and turning it down costs
+    # one support function rather than a pass over its triangles. That is the
+    # common answer, and the one that has to be cheap — the fallback is tried
+    # on every cavity with no mouth on the plane, most of which are simply
+    # somewhere else in the carcass.
+    def _wall_loops_on_plane(nx, ny, nz, d)
+      min_d = d - WALL_PLANE_MAX_SETBACK
+      max_d = d + SolidMeshDef::TOLERANCE
+      return [] unless _spans_offsets?(nx, ny, nz, min_d, max_d)
+
+      welded_vertex_indices = _welded_vertex_indices
+      edge_counts = Hash.new(0)
+      matched = false
+
+      _each_triangle_plane do |_plane_index, triangle_index, a, b, c, _area2, tnx, tny, tnz|
+        next if @face_ids[triangle_index] == 0 # Envelope cap, not a wall
+        next if tnx * nx + tny * ny + tnz * nz < WALL_PLANE_MATCH_MIN_DOT
+        td = @vertices[a * 3] * nx + @vertices[a * 3 + 1] * ny + @vertices[a * 3 + 2] * nz
+        next if td < min_d || td > max_d
+        matched = true
+        wa, wb, wc = welded_vertex_indices[a], welded_vertex_indices[b], welded_vertex_indices[c]
+        [ [ wa, wb ], [ wb, wc ], [ wc, wa ] ].each do |index_a, index_b|
+          next if index_a == index_b
+          if edge_counts[[ index_b, index_a ]] > 0
+            edge_counts[[ index_b, index_a ]] -= 1
+          else
+            edge_counts[[ index_a, index_b ]] += 1
+          end
+        end
+      end
+
+      return [] unless matched
+      pts = points
+      _cap_loops(edge_counts).map { |indices| indices.map { |index| pts[index] } }
+    end
+
+    # Whether ANY point of the fragment has an offset along the given unit
+    # direction within [ min_d, max_d ] — read off #bounds alone, which is the
+    # support function of a box : the extreme corner along a direction is the
+    # one taking each coordinate from the side that direction points to.
+    # Conservative on purpose : the box says yes to more than the mesh does,
+    # never to less, so nothing real is turned away.
+    def _spans_offsets?(nx, ny, nz, min_d, max_d)
+      min_point = bounds.min
+      max_point = bounds.max
+
+      low = high = 0.0
+      [ [ nx, min_point.x.to_f, max_point.x.to_f ],
+        [ ny, min_point.y.to_f, max_point.y.to_f ],
+        [ nz, min_point.z.to_f, max_point.z.to_f ] ].each do |n, lower, upper|
+        if n >= 0.0
+          low += n * lower ; high += n * upper
+        else
+          low += n * upper ; high += n * lower
+        end
+      end
+
+      low <= max_d && high >= min_d
+    end
 
     # Indices, among the cavity's planes, of the planes carrying an OPENING —
     # at least OPENING_PLANE_MIN_AREA_SHARE of the total cap area. Read by
