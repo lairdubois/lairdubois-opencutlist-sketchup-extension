@@ -47,7 +47,7 @@
   "action_4": { /* ACTION_DRAW_FACADE */
     "thickness": { "metric": "18mm", "imperial": "1/2\"" },
     "facade_offset": { "metric": "2mm", "imperial": "1/16\"" },
-    "pose": "inset",
+    "overlay": "inset",
     "axes": "context",
     "construction": false,
     "measure_reversed": false,

@@ -6223,14 +6223,6 @@ module Ladb::OpenCutList
       super
     end
 
-    # Locks the split direction on +direction+, or unlocks it - pressing the
-    # axis it is already on being how the lock is called off, exactly as on
-    # the divider.
-    def _toggle_locked_direction(direction)
-      @locked_direction = @locked_direction == direction ? nil : direction
-      _refresh
-    end
-
     def _reset_cavities_def
       @footprint_container_path = nil
       @footprint_paths_cache = nil
@@ -6242,6 +6234,16 @@ module Ladb::OpenCutList
     def _refresh
       @picker.invalidate if @picker.is_a?(SmartPicker)
       super
+    end
+
+    # -----
+
+    # Locks the split direction on +direction+, or unlocks it - pressing the
+    # axis it is already on being how the lock is called off, exactly as on
+    # the divider.
+    def _toggle_locked_direction(direction)
+      @locked_direction = @locked_direction == direction ? nil : direction
+      _refresh
     end
 
     # -----
@@ -6267,6 +6269,7 @@ module Ladb::OpenCutList
       true
     end
 
+    # -----
     # Every cavity the facade spans while a merge is on, not just the one under
     # the cursor : the whole point of the drag is to see the set grow.
     def _get_preview_cavity_fragment_defs(cavities_def)
