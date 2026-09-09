@@ -2248,7 +2248,7 @@ tab:
       export_global_presets_success: Die Voreinstellungen wurden erfolgreich exportiert.
       export_global_presets_success_with_assets: "Die Voreinstellungen wurden erfolgreich exportiert, ebenso wie {{ count }} zugehörige Datei(en)."
       import_global_presets: Voreinstellungen importieren
-      import_global_presets_help: |-
+      import_global_presets_help: |
         Wählen Sie die Voreinstellungen aus der **.json**- oder **.oclp**-Datei aus, die Sie importieren möchten.
         Achtung: Wenn bereits eine Voreinstellung mit demselben Namen vorhanden ist, wird diese durch die importierte Version ersetzt.
         Die in einem **.oclp**-Archiv enthaltenen Dateien werden in Ihre Bibliothek kopiert, und zwar an denselben Speicherort, an dem sie sich in der Bibliothek des Absenders befanden.
@@ -2397,7 +2397,7 @@ tool:
     action_option_group_segments: Segmente
     action_option_group_thickness: Dicke
     action_option_group_clearance: Abstand
-    action_option_group_pose: ""
+    action_option_group_overlay: Anschlagsart
     action_option_group_axes: Achsen
     action_option_group_measure_type: Maß
     action_option_group_options: Optionen
@@ -2409,8 +2409,8 @@ tool:
     action_option_segments_segment_count_status: Ermöglicht das Festlegen der Anzahl der Kreissegmente
     action_option_thickness_thickness: Dicke
     action_option_thickness_thickness_status: Definiert die Dicke der Platten
-    action_option_pose_inset_status: "Einbaufront: in der Öffnung montiert, bündig mit der Vorderseite"
-    action_option_pose_overlay_status: "Aufgesetzte Fassade: wird vor der Vorderseite angebracht und bedeckt die Paneele bis zur Außenkante des Korpus und bis zur halben Dicke der Innenpaneele"
+    action_option_overlay_inset_status: "Innenanschlag: Fassade liegt komplett in der Öffnung, bündig mit der Vorderkante des Korpus"
+    action_option_overlay_full_overlay_status: "Eckanschlag: Fassade verdeckt die Öffnung komplett, bedeckt die Außenkante des Korpus und die Innenkanten bis zur halben Dicke"
     action_option_measure_type_inside_status: Dicke innerhalb des Zielpunkts positionieren
     action_option_measure_type_centered_status: Dicke auf den Zielpunkt ausrichten
     action_option_measure_type_outside_status: Dicke außerhalb des Zielpunkts positionieren
