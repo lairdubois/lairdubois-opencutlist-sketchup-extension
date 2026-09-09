@@ -51,7 +51,9 @@
     "axes": "context",
     "construction": false,
     "measure_reversed": false,
+    "reduce_envelope": false,
     "reuse_definition": true,
-    "ask_name": false
+    "ask_name": false,
+    "layer_name": "OCL_FRONT_PANELS"
   }
 }

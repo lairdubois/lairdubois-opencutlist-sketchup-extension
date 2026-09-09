@@ -8,6 +8,19 @@
 {% block optionOptionsOptionsPullCentred %}{% endblock %}
 {% block optionOptionsOptionsDrawIn %}{% endblock %}
 
+{% block optionOptionsReduceEnvelope %}
+    <div class="form-group">
+        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_draw.action_option_options_reduce_envelope_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+        <label class="control-label col-xs-4">{{ 'tool.smart_draw.action_option_options_reduce_envelope'|i18next }}</label>
+        <div class="col-xs-7">
+            <select class="form-control" id="ladb_select_reduce_envelope">
+                <option value="0" data-content="{{ 'default.no'|i18next }}"></option>
+                <option value="1" data-content="{{ 'tool.smart_draw.action_option_options_reduce_envelope_status'|i18next }}"></option>
+            </select>
+        </div>
+    </div>
+{% endblock %}
+
 {% block formInner %}
     <div class="form-group">
         <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_draw.action_option_thickness_thickness_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
@@ -33,4 +46,12 @@
         </div>
     </div>
     {{ parent() }}
+    <hr>
+    <div class="form-group">
+        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_draw.action_option_options_layer_name_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+        <label class="control-label col-xs-4">{{ 'tool.smart_draw.action_option_options_layer_name'|i18next }}</label>
+        <div class="col-xs-7">
+            <input type="text" class="form-control" id="ladb_input_layer_name">
+        </div>
+    </div>
 {% endblock %}

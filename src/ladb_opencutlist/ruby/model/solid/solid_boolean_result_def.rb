@@ -143,6 +143,18 @@ module Ladb::OpenCutList
     # stays clear of merging planes that are genuinely distinct.
     PLANE_NORMAL_TOLERANCE = 1e-6
 
+    # Below this, the determinant of a Moller-Trumbore crossing reads the ray
+    # as PARALLEL to the triangle's plane. An absolute threshold on a quantity
+    # that scales as an area (inches squared, times the sine of the incidence)
+    # : it only has to stand clear of the float noise, a grazing hit being of
+    # no use to a picker anyway - the triangle next to it is hit square.
+    RAY_PARALLEL_TOLERANCE = 1e-12
+
+    # Slack on the barycentric coordinates of a crossing, so that a ray
+    # passing exactly on the edge shared by two triangles hits BOTH rather
+    # than slipping between them. Unitless, hence absolute.
+    RAY_BARYCENTRIC_TOLERANCE = 1e-9
+
     # Bucketing quantum of the plane normal components : plane candidates are
     # indexed by their coarsely rounded normal so the matching above stays
     # local on a fragment carrying many distinct planes - see
@@ -173,6 +185,103 @@ module Ladb::OpenCutList
 
     def points
       @points ||= @vertices.each_slice(3).map { |coords| Geom::Point3d.new(coords) }
+    end
+
+    # Axis aligned bounds of the fragment (WORLD coordinates). Memoized.
+    def bounds
+      @bounds ||= begin
+        bounds = Geom::BoundingBox.new
+        points.each { |point| bounds.add(point) }
+        bounds
+      end
+    end
+
+    # Unit normal of one triangle (WORLD coordinates), as the winding gives it
+    # - outward on a Manifold output. nil on a degenerate triangle.
+    def triangle_normal(triangle_index)
+      a, b, c = @face_indices[triangle_index * 3, 3]
+      return nil if a.nil? || b.nil? || c.nil?
+      ax, ay, az = @vertices[a * 3], @vertices[a * 3 + 1], @vertices[a * 3 + 2]
+      bx, by, bz = @vertices[b * 3], @vertices[b * 3 + 1], @vertices[b * 3 + 2]
+      cx, cy, cz = @vertices[c * 3], @vertices[c * 3 + 1], @vertices[c * 3 + 2]
+      normal = Geom::Vector3d.new(
+        (by - ay) * (cz - az) - (bz - az) * (cy - ay),
+        (bz - az) * (cx - ax) - (bx - ax) * (cz - az),
+        (bx - ax) * (cy - ay) - (by - ay) * (cx - ax)
+      )
+      normal.valid? ? normal.normalize : nil
+    end
+
+    # The face id of one triangle - the index in #face_info_defs of the source
+    # face it comes from, 0 being the reserved entry of the geometry no source
+    # face stands behind (the envelope caps of a cavity, see
+    # CommonSolidFindCavitiesWorker). nil when the fragment carries no ids.
+    def triangle_face_id(triangle_index)
+      return nil unless @face_ids.is_a?(Array)
+      @face_ids[triangle_index]
+    end
+
+    # Where the given ray crosses the fragment's triangles, NEAREST FIRST :
+    # [ [ distance, Geom::Point3d, triangle_index ], ... ], empty when it
+    # misses. Reads +origin+ / +direction+ in the fragment's own space - the
+    # world, for anything the solid workers produce - and only looks FORWARD :
+    # a ray starting inside the volume reports what lies ahead of it, never
+    # what it has left behind.
+    #
+    # Every crossed triangle is reported, and what a crossing MEANS is left to
+    # the caller : which of them is a wall and which is an opening cap is read
+    # off #triangle_face_id, and only the caller knows what it is after.
+    #
+    # Moller-Trumbore, on the flat arrays directly (no Point3d per vertex) :
+    # this runs on every mouse move of a tool that picks in a cavity.
+    def ray_hits(origin, direction)
+      o = origin.is_a?(Geom::Point3d) ? origin.to_a : origin
+      d = direction.is_a?(Geom::Vector3d) ? direction.to_a : direction
+
+      length = Math.sqrt(d[0] * d[0] + d[1] * d[1] + d[2] * d[2])
+      return [] if length == 0.0
+      dx = d[0] / length ; dy = d[1] / length ; dz = d[2] / length
+
+      # Whole fragment rejected on its bounds first : a tool picking in a
+      # carcass sweeps every compartment on every move, and the ray misses all
+      # but one of them.
+      return [] unless _ray_crosses_bounds?(o, [ dx, dy, dz ])
+
+      hits = []
+      @face_indices.each_slice(3).with_index do |(a, b, c), triangle_index|
+
+        ax, ay, az = @vertices[a * 3], @vertices[a * 3 + 1], @vertices[a * 3 + 2]
+        e1x = @vertices[b * 3] - ax ; e1y = @vertices[b * 3 + 1] - ay ; e1z = @vertices[b * 3 + 2] - az
+        e2x = @vertices[c * 3] - ax ; e2y = @vertices[c * 3 + 1] - ay ; e2z = @vertices[c * 3 + 2] - az
+
+        px = dy * e2z - dz * e2y
+        py = dz * e2x - dx * e2z
+        pz = dx * e2y - dy * e2x
+
+        det = e1x * px + e1y * py + e1z * pz
+        next if det.abs < RAY_PARALLEL_TOLERANCE   # Ray parallel to the triangle's plane
+        inv_det = 1.0 / det
+
+        tx = o[0] - ax ; ty = o[1] - ay ; tz = o[2] - az
+
+        u = (tx * px + ty * py + tz * pz) * inv_det
+        next if u < -RAY_BARYCENTRIC_TOLERANCE || u > 1.0 + RAY_BARYCENTRIC_TOLERANCE
+
+        qx = ty * e1z - tz * e1y
+        qy = tz * e1x - tx * e1z
+        qz = tx * e1y - ty * e1x
+
+        v = (dx * qx + dy * qy + dz * qz) * inv_det
+        next if v < -RAY_BARYCENTRIC_TOLERANCE || u + v > 1.0 + RAY_BARYCENTRIC_TOLERANCE
+
+        distance = (e2x * qx + e2y * qy + e2z * qz) * inv_det
+        next if distance < 0.0
+
+        hits << [ distance, Geom::Point3d.new(o[0] + dx * distance, o[1] + dy * distance, o[2] + dz * distance), triangle_index ]
+
+      end
+
+      hits.sort_by { |hit| hit[0] }
     end
 
     # Enclosed volume in cubic inches, by the divergence theorem over the
@@ -260,6 +369,32 @@ module Ladb::OpenCutList
     end
 
     private
+
+    # Whether the ray (unit +d+) crosses the fragment's #bounds, grown by the
+    # boolean tolerance - the cheap reject #ray_hits opens with. Slab method,
+    # the axes the ray is parallel to tested apart so no division by zero
+    # turns into a NaN comparison.
+    def _ray_crosses_bounds?(o, d)
+      min = bounds.min.to_a ; max = bounds.max.to_a
+      tolerance = SolidMeshDef::TOLERANCE
+      near = 0.0
+      far = nil
+      (0..2).each do |axis|
+        low = min[axis] - tolerance
+        high = max[axis] + tolerance
+        if d[axis].abs < RAY_PARALLEL_TOLERANCE
+          return false if o[axis] < low || o[axis] > high
+          next
+        end
+        first = (low - o[axis]) / d[axis]
+        second = (high - o[axis]) / d[axis]
+        first, second = second, first if first > second
+        near = first if first > near
+        far = second if far.nil? || second < far
+        return false if near > far
+      end
+      true
+    end
 
     # Signed solid angle (steradians) subtended by triangle a-b-c as seen
     # from p, via Van Oosterom & Strackee's formula. Summed over a closed,

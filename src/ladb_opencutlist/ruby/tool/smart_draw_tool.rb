@@ -67,6 +67,7 @@ module Ladb::OpenCutList
     ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE = 'reduce_envelope'
     ACTION_OPTION_OPTIONS_REUSE_DEFINITION = 'reuse_definition'
     ACTION_OPTION_OPTIONS_ASK_NAME = 'ask_name'
+    ACTION_OPTION_OPTIONS_LAYER_NAME = 'layer_name'
 
     ACTIONS = [
       {
@@ -107,7 +108,7 @@ module Ladb::OpenCutList
           ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_FACADE_OFFSET ],
           ACTION_OPTION_OVERLAY => [ ACTION_OPTION_OVERLAY_INSET, ACTION_OPTION_OVERLAY_FULL_OVERLAY ],
           ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_CONTEXT ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_REUSE_DEFINITION, ACTION_OPTION_OPTIONS_ASK_NAME ]
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, ACTION_OPTION_OPTIONS_REUSE_DEFINITION, ACTION_OPTION_OPTIONS_ASK_NAME ]
         }
       }
     ]
@@ -155,7 +156,7 @@ module Ladb::OpenCutList
     end
 
     def get_action_options_modal?(action)
-      action != ACTION_DRAW_DIVIDER && action != ACTION_DRAW_FACADE
+      action != ACTION_DRAW_DIVIDER
     end
 
     def get_action_option_sync_actions(action, option_group, option)
@@ -4085,6 +4086,15 @@ module Ladb::OpenCutList
 
     def _reset_cavities_def
       @cavities_def = nil
+      _reset_picked_cavity
+    end
+
+    # What a pick resolved to in the cavities, for the handlers that read it
+    # there (see SmartDrawDividerActionHandler#_snap_point) : dropped with the
+    # cavities it points into, which the next pick recomputes.
+    def _reset_picked_cavity
+      @picked_fragment_def = nil
+      @picked_plane_manipulator = nil
     end
 
     # -----
@@ -4368,6 +4378,105 @@ module Ladb::OpenCutList
       def fragment_defs_for_point(point)
         result_def.fragment_defs_for_point(point)
       end
+
+      # What a RAY designates in these cavities : [ fragment_def, point,
+      # plane_manipulator ] - the compartment it enters, where it first meets
+      # a wall of it, and that wall read as the picker would have read the
+      # face behind it. nil when it designates none.
+      #
+      # Picking the cavities rather than the model is what lets a part be
+      # fitted in a compartment something else stands in front of - a facade,
+      # a drawer front, anything laid over the opening - without hiding it :
+      # the mouths are the cavity's own geometry, and what fills them is not.
+      #
+      # The ray must ENTER by a mouth, i.e. its first crossing of the
+      # compartment must be one of the CAPS the openings stand for (face id
+      # 0). That is what keeps a pick READING INTO an opening : aiming at the
+      # outside of a carcass crosses no mouth at all - the first thing met is
+      # the far side of the panel aimed at - and designates nothing, exactly
+      # as it does today.
+      def pick_ray(origin, direction)
+
+        picked = nil
+        fragment_defs.each do |fragment_def|
+
+          hits = fragment_def.ray_hits(origin, direction)
+          next if hits.empty?
+          next unless fragment_def.triangle_face_id(hits.first[2]) == 0 || _origin_inside?(fragment_def, origin)   # Entered by something else than a mouth
+
+          # The first WALL met after the mouth - the face the cursor is on, as
+          # the picker would have given it if nothing stood in front. One that
+          # no panel can be read behind (a cap, or geometry with no
+          # provenance) is passed over rather than fatal : the next one along
+          # the ray is just as much in the compartment.
+          point = nil
+          plane_manipulator = nil
+          hits.each do |_distance, hit_point, triangle_index|
+            next if fragment_def.triangle_face_id(triangle_index).to_i == 0
+            plane_manipulator = _wall_plane_manipulator(fragment_def, triangle_index, hit_point)
+            next if plane_manipulator.nil?
+            point = hit_point
+            break
+          end
+          next if point.nil?   # A cavity crossed through its mouths only : nothing to lean the pick on
+
+          # Compared on the MOUTH, not on the wall : which compartment the
+          # user is looking into is settled at its opening, and a shallow one
+          # in front of a deep one is the one they see.
+          next unless picked.nil? || hits.first[0] < picked[0]
+          picked = [ hits.first[0], fragment_def, point, plane_manipulator ]
+
+        end
+        return nil if picked.nil?
+
+        _distance, fragment_def, point, plane_manipulator = picked
+
+        [ fragment_def, point, plane_manipulator ]
+      end
+
+      private
+
+      # Whether the ray STARTS inside the given cavity - the camera standing in
+      # the compartment it looks at, where there is no mouth left to cross on
+      # the way to its walls. Bounds first : the eye is outside every
+      # compartment on the vast majority of picks, and that answers those for
+      # the price of a box test.
+      def _origin_inside?(fragment_def, origin)
+        point = origin.is_a?(Geom::Point3d) ? origin : Geom::Point3d.new(origin)
+        return false unless fragment_def.bounds.contains?(point)
+        fragment_def.contains_point?(point)
+      end
+
+      # The wall a ray hit, as the PlaneManipulator a picker would have handed
+      # back for the source face behind it : the plane read off the triangle
+      # itself - exact, and free of the source face's own extent - carried by
+      # the TRANSFORMATION of the panel it comes from, which is what the
+      # handlers read the part's own axes on (see
+      # #_get_divider_normal_candidates).
+      #
+      # The panel is found through the triangle's face id : it indexes the
+      # operation's face info registry, whose container_def is the panel's own
+      # DrawingDef (only a root one bounds a cavity - see
+      # SolidBooleanResultDef#fragment_defs_for_face). nil for a wall no panel
+      # stands behind, an opening cap included.
+      def _wall_plane_manipulator(fragment_def, triangle_index, point)
+        face_id = fragment_def.triangle_face_id(triangle_index)
+        return nil if face_id.nil? || face_id == 0
+        face_info_def = fragment_def.face_info_defs[face_id]
+        return nil if face_info_def.nil?
+        drawing_def = face_info_def.container_def
+        return nil unless drawing_def.is_a?(DrawingDef)
+        transformation = drawing_def.transformation
+        return nil unless transformation.is_a?(Geom::Transformation)
+        normal = fragment_def.triangle_normal(triangle_index)
+        return nil if normal.nil?
+
+        # Expressed in the panel's own space, since PlaneManipulator brings its
+        # plane back to the world through the transformation it is given.
+        ti = transformation.inverse
+        PlaneManipulator.new([ point.transform(ti), normal.transform(ti) ], transformation)
+      end
+
     end
 
   end
@@ -4632,6 +4741,8 @@ module Ladb::OpenCutList
 
     def _reset
       @picked_point = nil
+      @picked_fragment_def = nil
+      @picked_plane_manipulator = nil
       @locked_normal = nil
       @number = 0
       @spacings = []
@@ -4897,6 +5008,56 @@ module Ladb::OpenCutList
     def _cavities_recess_facades?
       true
     end
+
+    # -----
+
+    # The pick, read on the CAVITIES themselves rather than on the model : the
+    # ray under the cursor is cast at the compartments, and the compartment it
+    # enters through a mouth, the point where it first meets a wall of it, and
+    # that wall are what the placement then works on (see
+    # CavitiesDef#pick_ray).
+    #
+    # A divider is fitted INSIDE a compartment, and what closes that
+    # compartment stands between the cursor and it : a facade, a drawer front,
+    # a plinth, the neighbouring carcass. Reading the pick off the model makes
+    # every one of them opaque - the picker hands back the face in FRONT, a
+    # point that lies in no cavity - and the only way through is to hide them.
+    # The cavities, themselves, are not hidden by what fills their mouth : the
+    # mouths are their own geometry.
+    #
+    # What the inherited pick does and this one does not : SketchUp's
+    # inference (endpoints, midpoints, edges) no longer takes part, the point
+    # being read off the cavity wall alone. A divider is placed at a distance
+    # or by distribution, not on a vertex, so there is nothing there to lose.
+    def _snap_point(picker)
+
+      @picked_point = nil
+      @picked_fragment_def = nil
+      @picked_plane_manipulator = nil
+
+      return false unless has_active_part?
+      return false unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef) && cavities_def.valid?
+      return false unless picker.is_a?(SmartPicker) && (view = picker.view).is_a?(Sketchup::View)
+
+      ray = view.pickray(picker.pick_position.x, picker.pick_position.y)
+      return false unless ray.is_a?(Array) && ray.length == 2
+
+      picked = cavities_def.pick_ray(ray[0], ray[1])
+      return false if picked.nil?
+
+      @picked_fragment_def, @picked_point, @picked_plane_manipulator = picked
+
+      true
+    end
+
+    # The pick designates ONE compartment, and #_snap_point already knows
+    # which : looking it up again from the point would hand back every cavity
+    # that point touches, and it lies exactly on a wall two of them may share.
+    def _get_preview_cavity_fragment_defs(cavities_def)
+      @picked_fragment_def.is_a?(SolidCavityFragmentDef) ? [ @picked_fragment_def ] : []
+    end
+
+    # -----
 
     def _fetch_option_reuse_definition?
       @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_REUSE_DEFINITION)
@@ -5430,11 +5591,14 @@ module Ladb::OpenCutList
     # be validated (see #_set_distribution) without paying for the booleans.
     def _compute_divider_context(point, view)
       return nil unless point.is_a?(Geom::Point3d)
-      return nil unless (picked_face_manipulator = @picker.picked_plane_manipulator).is_a?(PlaneManipulator)
+      return nil unless (picked_face_manipulator = @picked_plane_manipulator).is_a?(PlaneManipulator)
       return nil unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef) && cavities_def.valid?
 
-      fragment_def = _get_cavity_fragment_def(cavities_def, point, picked_face_manipulator)
-      return nil if fragment_def.nil?
+      # The compartment comes from the pick itself (#_snap_point) : the ray
+      # entered ONE of them, and there is nothing to look up - nor any point
+      # sitting on a boundary to disambiguate.
+      fragment_def = @picked_fragment_def
+      return nil unless fragment_def.is_a?(SolidCavityFragmentDef)
 
       normal_3f = _get_divider_normal_3f(picked_face_manipulator, fragment_def, view)
       return nil if normal_3f.nil?
@@ -6063,7 +6227,8 @@ module Ladb::OpenCutList
         return super +
                (_fetch_option_overlay_full_overlay? ? ' | ' + PLUGIN.get_i18n_string("tool.smart_#{@tool.get_stripped_name}.action_#{@action}_state_#{state}_merge_status") + '.' : '') +
                ' | ' + PLUGIN.get_i18n_string("default.constrain_key") + ' + X = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_construction_status') + '.' +
-               ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_measure_reversed_status') + '.'
+               ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_measure_reversed_status') + '.' +
+               ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_reduce_envelope_status') + '.'
       end
 
       super
@@ -6223,6 +6388,10 @@ module Ladb::OpenCutList
           @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_REVERSED, !_fetch_option_measure_reversed?, fire_event: true)
           return true
         end
+        if tool.is_key_alt_or_command?(key) && is_quick
+          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, !_fetch_option_reduce_envelope?, fire_event: true)
+          return true
+        end
 
       end
 
@@ -6267,6 +6436,13 @@ module Ladb::OpenCutList
       # The lock holds an axis of the frame the option just changed : it no
       # longer stands for the one the user pointed at.
       @locked_direction = nil if option_group == SmartDrawTool::ACTION_OPTION_AXES
+      # OVERLAY is folded into #_cavities_reduce_envelope? itself (an applied
+      # facade never wants a receded mouth - see there), so flipping it can
+      # change what the cavities compute to just as much as the option does.
+      if option_group == SmartDrawTool::ACTION_OPTION_OVERLAY ||
+         (option_group == SmartDrawTool::ACTION_OPTION_OPTIONS && option == SmartDrawTool::ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE)
+        _reset_cavities_def
+      end
       _refresh
     end
 
@@ -6459,6 +6635,65 @@ module Ladb::OpenCutList
       @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_REVERSED)
     end
 
+    def _fetch_option_reduce_envelope?
+      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE)
+    end
+
+    # Not exposed in the action's options panel : the layer facades are put on
+    # is a technical setting, not a drawing option - only the modal (see
+    # modal-smart-draw-tool-action-4.twig) gives access to it.
+    def _fetch_option_layer_name
+      @tool.fetch_action_option_string(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_LAYER_NAME)
+    end
+
+    # Off by default, like the base class : reduction pulls a cavity's own
+    # mouth back to a recessed chant, which is the LAST place a facade
+    # spanning the whole opening wants it. Turned on, though, it is what lets
+    # a recessed divider (or shelf) split the opening into one cavity per
+    # compartment in the first place - with nothing left to select, there
+    # would be no per-compartment facade to place.
+    #
+    # OVERLAY is the exception, whatever the option says : an applied facade
+    # is read off the RECEDED mouth just the same (#_get_facade_nominal_points
+    # starts from opening_def.outer_loop before growing it), and everything
+    # #_get_overlay_points then builds - the frame the growth happens in, and
+    # the plane the facade is finally cut and placed on - inherits that same
+    # setback. The growth itself lands right, since #_compute_footprint_paths
+    # reads the UNREDUCED panels, but at the wrong depth : the facade ends up
+    # spanning the container's true outer silhouette - the untouched contour
+    # stiles included - while sitting flush with the recessed divider's edge,
+    # deep enough behind the case's own front to bury itself in the stiles'
+    # own material. INSET has no such trap : its facade IS the mouth, at
+    # whatever depth that mouth sits.
+    def _cavities_reduce_envelope?
+      _fetch_option_reduce_envelope? && !_fetch_option_overlay_full_overlay?
+    end
+
+    # -----
+
+    # Whether the given pick lands on a facade already built there, rather
+    # than on the bare cavity behind it.
+    #
+    # Nothing downstream can tell the two apart on its own : an INSET facade's
+    # outward face sits exactly on the mouth it fills, so nudged inward (see
+    # #_get_cavity_fragment_def) it lands in the very same compartment a bare
+    # opening would - offering to build a second facade where one already
+    # stands. #_get_facade_opening_def cannot catch it either : it only reads
+    # what the pick resolved TO, never what actually stopped the ray. Only the
+    # pick itself still knows that, off the face it hit - marked, like every
+    # facade, by its LAYER alone (see LayerAttributes, TYPE_FACADE).
+    def _picked_on_existing_facade?(picker)
+      (picked_face_path = picker.picked_face_path).is_a?(Array) &&
+        picked_face_path.any? { |entity| LayerAttributes.type_of(entity) == LayerAttributes::TYPE_FACADE }
+    end
+
+    # A pick on an existing facade snaps to nothing : see
+    # #_picked_on_existing_facade?.
+    def _snap_point(picker)
+      return false if _picked_on_existing_facade?(picker)
+      super
+    end
+
     # -----
 
     # What the pick resolves to, before any outline is cut : the FacadeContext,
@@ -6473,6 +6708,7 @@ module Ladb::OpenCutList
       return @merge_context if _merging?
 
       return nil unless point.is_a?(Geom::Point3d)
+      return nil if _picked_on_existing_facade?(@picker)
       return nil unless (picked_face_manipulator = @picker.picked_plane_manipulator).is_a?(PlaneManipulator)
       return nil unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef) && cavities_def.valid?
 
@@ -7593,7 +7829,7 @@ module Ladb::OpenCutList
           # Marked as a facade, so that the cavity detection can go on reading the
           # carcass bare - see SmartDrawPanelActionHandler#_get_cavities_def and
           # LayerAttributes.
-          instance.layer = LayerAttributes.fetch_or_create_layer(model, LayerAttributes::TYPE_FACADE, PLUGIN.get_i18n_string('tool.smart_draw.facade_layer'))
+          instance.layer = LayerAttributes.fetch_or_create_layer(model, LayerAttributes::TYPE_FACADE, _fetch_option_layer_name)
 
           created_entity_count += 1
 

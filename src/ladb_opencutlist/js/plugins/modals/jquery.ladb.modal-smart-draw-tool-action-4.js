@@ -34,7 +34,9 @@
             const $selectAxes = $('#ladb_select_axes', that.$element);
             const $selectConstrution = $('#ladb_select_construction', that.$element);
             const $selectMeasureReversed = $('#ladb_select_measure_reversed', that.$element);
+            const $selectReduceEnvelope = $('#ladb_select_reduce_envelope', that.$element);
             const $selectAskName = $('#ladb_select_ask_name', that.$element);
+            const $inputLayerName = $('#ladb_input_layer_name', that.$element);
             const $btnValidate = $('#ladb_btn_validate', that.$element);
 
             const fnFetchOptions = function (options) {
@@ -43,7 +45,9 @@
                 options.axes = $selectAxes.val();
                 options.construction = $selectConstrution.val() === '1';
                 options.measure_reversed = $selectMeasureReversed.val() === '1';
+                options.reduce_envelope = $selectReduceEnvelope.val() === '1';
                 options.ask_name = $selectAskName.val() === '1';
+                options.layer_name = $inputLayerName.val();
             };
             const fnFillInputs = function (options) {
                 $inputThickness.val(options.thickness);
@@ -51,7 +55,9 @@
                 $selectAxes.selectpicker('val', options.axes);
                 $selectConstrution.selectpicker('val', options.construction ? '1' : '0');
                 $selectMeasureReversed.selectpicker('val', options.measure_reversed ? '1' : '0');
+                $selectReduceEnvelope.selectpicker('val', options.reduce_envelope ? '1' : '0');
                 $selectAskName.selectpicker('val', options.ask_name ? '1' : '0');
+                $inputLayerName.val(options.layer_name);
             };
 
             $widgetPreset.ladbWidgetPreset({
@@ -66,6 +72,7 @@
             $selectAxes.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
             $selectConstrution.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
             $selectMeasureReversed.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
+            $selectReduceEnvelope.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
             $selectAskName.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
 
             fnFillInputs(options);
