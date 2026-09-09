@@ -7,6 +7,7 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 # 8.0.0 (WIP)
 
   * Added Smart Draw Divider Tool
+  * Added Smart Draw Facade Tool
   * Added Smart Stretch Tool
   * Added Smart Paneling Tool
   * Added Smart Boolean Tools
@@ -27,6 +28,9 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
+### 2026-09-xx
+ * Added Smart Draw Facade Tool
+ * Updated PackingSolver dependency
 ### 2026-09-07
  * Improved Presets exporter
  * Updated PackingSolver dependency

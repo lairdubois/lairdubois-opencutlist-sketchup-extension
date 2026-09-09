@@ -70,6 +70,8 @@ module Ladb::OpenCutList
 
                    container_validator: CONTAINER_VALIDATOR_ALL,
 
+                   ignore_visibility: false,
+
                    flatten: true
 
     )
@@ -98,6 +100,11 @@ module Ladb::OpenCutList
       @ignore_snaps = ignore_snaps
 
       @container_validator = container_validator
+
+      # Reads the entities the model HIDES too - a caller that decomposes a
+      # given element because of what it IS, not because it is on screen, has
+      # no more reason to lose its hidden half than to lose the element itself.
+      @ignore_visibility = ignore_visibility
 
       @flatten = flatten
 
@@ -383,7 +390,7 @@ module Ladb::OpenCutList
 
     def _populate_manipulators(drawing_container_def, entities, transformation = IDENTITY, material = nil, layer = nil, face_validator = nil, edge_validator = nil, container_validator = nil, depth = 0)
       entities.each do |entity|
-        next unless entity.visible? && _layer_visible?(entity.layer)
+        next unless @ignore_visibility || (entity.visible? && _layer_visible?(entity.layer))
         case entity
         when Sketchup::Face
           next if @ignore_faces

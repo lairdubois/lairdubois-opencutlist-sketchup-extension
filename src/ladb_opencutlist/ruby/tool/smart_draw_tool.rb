@@ -4118,6 +4118,16 @@ module Ladb::OpenCutList
       false
     end
 
+    # Whether the FACADES already drawn make the openings they fill recede
+    # (see CommonSolidFindCavitiesWorker, INSET FACADES). Off here : a
+    # handler that fits a panel ONTO an opening has to read that opening as
+    # the carcass leaves it, or it would lay its facade against the back of
+    # the one already there. A handler that fits a panel INTO a compartment
+    # must turn it on, on pain of telescoping into an inset facade.
+    def _cavities_recess_facades?
+      false
+    end
+
     # -----
 
     def _fetch_option_axes_context?
@@ -4249,30 +4259,49 @@ module Ladb::OpenCutList
       # and CommonSolidFindCavitiesWorker drops the voids they enclose. Hence
       # flatten: false, without which they land in the drawing def's own faces
       # and lose that provenance.
-      # The FACADES are left out : a facade is laid ON the carcass, and read as a
-      # panel of it, it pushes the envelope forward over the part of the
-      # facade it covers - the openings that are left then read on a slanted,
-      # oversized cap, and the next facade is fitted to a mouth that does not
-      # exist. Nothing in its geometry says it is a facade (see
-      # CommonSolidFindCavitiesWorker, APPLIED PANELS) : its LAYER does.
-      drawing_defs = parts.flat_map { |container_part|
-        container_part.def.instance_infos.values.reject { |instance_info|
-          LayerAttributes.type_of(instance_info.entity) == LayerAttributes::TYPE_FACADE
-        }.map { |instance_info|
-          CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new(instance_info.path) ],
-                                               ignore_surfaces: true,
-                                               ignore_edges: true,
-                                               container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART_WITHOUT_MACHININGS,
-                                               flatten: false
-          ).run
-        }
+      fn_decompose = lambda { |entity_path, ignore_visibility|
+        CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new(entity_path) ],
+                                             ignore_surfaces: true,
+                                             ignore_edges: true,
+                                             container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART_WITHOUT_MACHININGS,
+                                             ignore_visibility: ignore_visibility,
+                                             flatten: false
+        ).run
       }
+
+      # The FACADES are held apart from the panels : a facade is laid ON the
+      # carcass, and read as a panel of it, it pushes the envelope forward over
+      # the part of the facade it covers - the openings that are left then read
+      # on a slanted, oversized cap, and the next facade is fitted to a mouth
+      # that does not exist. Nothing in its geometry says it is a facade (see
+      # CommonSolidFindCavitiesWorker, APPLIED PANELS) : its LAYER does.
+      #
+      # They are not necessarily out of the picture, though : a facade fitted
+      # INTO its mouth occupies the front of the compartment it closes, and a
+      # handler that fits a panel in there has to stop at its back. Handed to
+      # the worker aside, that is exactly what they do - they recede the
+      # openings they fill, and nothing else (see
+      # CommonSolidFindCavitiesWorker, INSET FACADES). Aside also means read
+      # aside : #_fetch_facade_entity_paths goes and gets them from the
+      # container itself, where the ones the model hides are still there.
+      panel_instance_infos = parts.flat_map { |container_part|
+        container_part.def.instance_infos.values
+      }.reject { |instance_info|
+        LayerAttributes.type_of(instance_info.entity) == LayerAttributes::TYPE_FACADE
+      }
+
+      drawing_defs = panel_instance_infos.map { |instance_info| fn_decompose.call(instance_info.path, false) }
+      # A facade is read whole and blind to what the model shows : the tag it
+      # is marked with is the tag its own faces are likely to carry, and hidden
+      # once it is the mesh that would come back empty.
+      facade_drawing_defs = _cavities_recess_facades? ? _fetch_facade_entity_paths(container, container_path).map { |entity_path| fn_decompose.call(entity_path, true) } : []
 
       result_def = CommonSolidFindCavitiesWorker.new(drawing_defs,
                                                      max_opening_planes: 4,
                                                      reduce_envelope: _cavities_reduce_envelope?,
                                                      overall_cavity: _cavities_overall?,
-                                                     ignore_applied_panels: _cavities_ignore_applied_panels?
+                                                     ignore_applied_panels: _cavities_ignore_applied_panels?,
+                                                     facade_drawing_defs: facade_drawing_defs
       ).run
 
       @cavities_def = CavitiesDef.new(container_path, result_def, drawing_defs)
@@ -4282,6 +4311,36 @@ module Ladb::OpenCutList
       end
 
       @cavities_def
+    end
+
+    # -----
+
+    # The paths of every FACADE the given container holds, at any depth and
+    # WHATEVER its visibility.
+    #
+    # The cutlist #_get_cavities_def runs cannot hand them over : like the rest
+    # of the extension it reads what the model SHOWS, and hiding the facades -
+    # their tag, or the instances themselves - to work inside the carcass is
+    # precisely how a box is drawn. The facade a part would telescope into
+    # would then be the one nobody has in front of them.
+    #
+    # Only the RECESS reads this list. A hidden PANEL stays out of the cavities
+    # exactly as it stays out of the cutlist : what it does there is WIDEN a
+    # cavity, which errs the way the model reads, where a facade gone missing
+    # puts a part through another.
+    def _fetch_facade_entity_paths(container, container_path, facade_entity_paths = [])
+      return facade_entity_paths unless container.respond_to?(:definition)
+      container.definition.entities.each do |entity|
+        next unless entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance)
+        next if entity.definition.behavior.always_face_camera?
+        entity_path = container_path + [ entity ]
+        if LayerAttributes.type_of(entity) == LayerAttributes::TYPE_FACADE
+          facade_entity_paths << entity_path   # A facade is read WHOLE : what it holds is its own business, and a facade inside a facade is none
+        else
+          _fetch_facade_entity_paths(entity, entity_path, facade_entity_paths)
+        end
+      end
+      facade_entity_paths
     end
 
     # -----
@@ -4828,6 +4887,15 @@ module Ladb::OpenCutList
     # SmartDrawTool::ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE.
     def _cavities_reduce_envelope?
       _fetch_option_reduce_envelope?
+    end
+
+    # A divider is fitted INTO the compartment it divides : a facade already
+    # standing in its mouth is in the way, and the compartment stops at its
+    # back - see CommonSolidFindCavitiesWorker, INSET FACADES. A facade laid
+    # in applique is no obstacle and recedes nothing, which the worker reads
+    # off the cavities themselves : there is nothing to tell it here.
+    def _cavities_recess_facades?
+      true
     end
 
     def _fetch_option_reuse_definition?

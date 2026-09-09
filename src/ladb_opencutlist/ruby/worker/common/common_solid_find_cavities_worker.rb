@@ -130,6 +130,33 @@ module Ladb::OpenCutList
   # Nothing geometric separates the two — only what the part is FOR does —
   # which is why this is an option and not the rule.
   #
+  # INSET FACADES (facade_drawing_defs option) : a facade
+  # fitted INTO an opening rather than laid over it OCCUPIES the front of the
+  # compartment it closes, and a part fitted in that compartment afterwards
+  # would telescope into it. Such a panel is not handed in WITH the panels —
+  # read as a wall of the carcass it would inflate the hull over the very
+  # mouth it fills, which is what APPLIED PANELS above is about — but ASIDE,
+  # and what it does to the cavity is done to its CAP : the opening it fills
+  # RECEDES to its deepest point. The compartment stays OPEN, with an opening
+  # of its own, one board's thickness shallower — which is what keeps
+  # everything read off an opening (its normal, its count, the recesses it may
+  # still hide) saying what it said before.
+  #
+  # Which facades are INSET is not asked of the caller : it is read off the
+  # cavities themselves. One laid ON the front stands beyond the cap — the
+  # hull closes the opening flush with the panel edges — and intersects no
+  # cavity at all, while an inset one is INSIDE the compartment it closes, the
+  # intersection being both the proof of the intrusion and its measure. Each
+  # facade is weighed against the opening it stands SQUARE to and NEAREST to,
+  # so the door of one compartment says nothing about the compartment beside
+  # it, and a door says nothing about the open top its cavity may also have.
+  #
+  # An opening recedes ONCE, to the DEEPEST of the facades filling it. The
+  # clip is unbounded in its own plane (see #_reduction_slab_mesh), and that
+  # is precisely what is wanted here : a pair of doors meeting on a joint is
+  # ONE closed front, and the cavity must reach neither into the joint between
+  # them nor behind the shallower of two facades of unequal thickness.
+  #
   # MACHININGS : a panel drilled by glued cuts-opening components (a domino
   # mortise, a dowel hole) has its host face tessellation PUNCHED by SketchUp,
   # so its shell only closes back with the machining geometry — which the
@@ -534,11 +561,13 @@ module Ladb::OpenCutList
                    reduce_envelope: true,
                    overall_cavity: false,
                    ignore_applied_panels: false,
+                   facade_drawing_defs: [],
                    validate: true
 
     )
 
       @panel_drawing_defs = Array(panel_drawing_defs)
+      @facade_drawing_defs = Array(facade_drawing_defs)
 
       @envelope = envelope
       @max_opening_planes = max_opening_planes
@@ -584,6 +613,17 @@ module Ladb::OpenCutList
         result_def.errors << [ 'default.error' ]
         return result_def
       end
+
+      # The facades stand ASIDE from the panels : they are no wall of the
+      # assembly, and what they do is done to the cavities' caps once those
+      # are found — see the class doc, INSET FACADES. Their own dominant
+      # normal tells which opening each of them stands square to, their bounds
+      # keep the intrusion test off the compartments they cannot reach.
+      @facade_meshes = @facade_drawing_defs.map { |drawing_def|
+        drawing_def.is_a?(DrawingDef) ? SolidMeshDef.from_drawing_def(drawing_def) : nil
+      }.compact.reject { |mesh_def| mesh_def.empty? }.map { |mesh_def| mesh_def.to_meshy_hash }
+      @facade_normals = _panel_dominant_normals(@facade_meshes)
+      @facade_bounds = @facade_meshes.map { |mesh| _vertices_bounds(mesh[:vertices]) }
 
       # The assembly AS A WHOLE is the reference : an ordinary enclosure never
       # leaves it, and a detached part has to earn its removal against it —
@@ -1131,6 +1171,18 @@ module Ladb::OpenCutList
           # panels alone, it never touches the hull
           _restore_envelope_vertices(welded_output['fragments'])
           open_fragment_defs, deferred_fragment_defs = fn_collect.call(welded_output, false)
+
+          # INSET FACADES : the openings a facade fills recede behind it, so
+          # that what is fitted in the compartment next stops at its back and
+          # not at the mouth it closed — see the class doc. Applied BEFORE the
+          # reduction, whose recesses are then read on the cavity as the
+          # facades leave it : a chant recessed less deeply than the facade it
+          # stands behind has nothing left to recede.
+          unless @facade_meshes.empty?
+            recessed = _recess_facade_openings(open_fragment_defs, deferred_fragment_defs, envelope_mesh, result_def, fn_collect)
+            return pass if recessed.nil?
+            open_fragment_defs, deferred_fragment_defs = recessed
+          end
 
           # Envelope reduction : the recessed panel edges detected on an open
           # cavity clip THAT cavity, shallowest recess first, the survivors
@@ -2487,6 +2539,192 @@ module Ladb::OpenCutList
         # side the clip removes
         -cap_d - d < -REDUCTION_MIN_DEPTH
       }
+    end
+
+    # The given cavities with the openings their FACADES fill receded behind
+    # them — see the class doc, INSET FACADES.
+    #
+    # +fragment_defs+ are the OPEN cavities as the collection left them,
+    # +deferred_fragment_defs+ the ones the opening filter deferred. The
+    # clipped pieces go back through +fn_collect+, so a cavity the recess
+    # brings under the opening budget changes bucket on the way — and one a
+    # facade fills WHOLE comes back from neither, which is what it is : no
+    # compartment left to fit anything into.
+    #
+    # Returns [ open, deferred ], or nil when a clip failed — the errors then
+    # being in +result_def+.
+    def _recess_facade_openings(fragment_defs, deferred_fragment_defs, envelope_mesh, result_def, fn_collect)
+      recessed_fragment_defs = []
+      recessed_deferred_fragment_defs = []
+
+      [ [ fragment_defs, recessed_fragment_defs ], [ deferred_fragment_defs, recessed_deferred_fragment_defs ] ].each do |source_fragment_defs, unchanged_fragment_defs|
+        source_fragment_defs.each do |fragment_def|
+
+          planes = _facade_recess_planes(fragment_def)
+          if planes.empty?
+            # No facade fills this one : it stays as it is, in the very bucket
+            # it came from
+            unchanged_fragment_defs << fragment_def
+            next
+          end
+
+          # One operation for the lot : Meshy chains the cuts of an
+          # INTERSECTION together, so a cavity open on two sides, each closed
+          # by a facade of its own, is clipped by both at once. They belong to
+          # different openings, so — unlike the reduction planes, which may
+          # well be about the same part of one cavity — neither can impose its
+          # depth on what the other recedes.
+          output = Meshy.operate(
+            :operation => Meshy::OPERATION_INTERSECTION,
+            :validate => false,
+            :tolerance => SolidMeshDef::TOLERANCE,
+            :src_meshes => [ _reduction_fragment_mesh(fragment_def) ],
+            :cut_meshes => planes.map { |normal, d| _reduction_slab_mesh(normal, d, envelope_mesh) }
+          )
+          return nil if _report_errors(output, result_def)
+          planes.each { |normal, d| _restore_clipped_vertices(output['fragments'], normal, d) }
+
+          recessed, recessed_deferred = fn_collect.call(output, false)
+          recessed_fragment_defs.concat(recessed)
+          recessed_deferred_fragment_defs.concat(recessed_deferred)
+
+        end
+      end
+
+      [ recessed_fragment_defs, recessed_deferred_fragment_defs ]
+    end
+
+    # The planes the facades filling the openings of the given cavity recede
+    # them to, as [ [ normal, d ], ... ] — the same contract as one entry of
+    # #_detect_reduction_planes (the normal pointing toward the KEPT side), so
+    # that they feed the very same clipping. Empty when no facade intrudes,
+    # which is the ordinary answer : a facade laid ON the front stands beyond
+    # the cap — the hull closes the mouth flush with the panel edges — and
+    # meets no cavity at all.
+    #
+    # A facade has a say on ONE opening : the one it stands SQUARE to (its own
+    # dominant normal against the opening's, sign aside — see
+    # #_panel_dominant_normals) and reaches farthest out on, which is the
+    # mouth it fills whatever else the cavity may be open on. How deep it
+    # intrudes is then read off what of it is actually INSIDE the cavity, the
+    # intersection answering "is it inset ?" and "by how much ?" at once.
+    #
+    # One opening yields ONE plane, at the DEEPEST of the facades filling it,
+    # so that neither the joint between two doors nor the extra depth behind
+    # the shallower of two lets the cavity through.
+    def _facade_recess_planes(fragment_def)
+
+      # Cheap reject first : a facade whose bounds do not overlap the cavity's
+      # cannot be inside it, and one merely TOUCHING it is laid on the mouth
+      # rather than fitted in it. The ordinary cavity has no facade of its own
+      # and is done with here, before its openings are even chained.
+      bounds = _vertices_bounds(fragment_def.vertices)
+      facade_indices = (0...@facade_meshes.length).select { |facade_index| _bounds_overlap?(bounds, @facade_bounds[facade_index]) }
+      return [] if facade_indices.empty?
+
+      opening_defs = fragment_def.opening_defs
+      return [] if opening_defs.empty?
+
+      fragment_mesh = nil
+      depth_by_opening = {}
+
+      facade_indices.each do |facade_index|
+
+        facade_mesh = @facade_meshes[facade_index]
+        facade_vertices = facade_mesh[:vertices]
+        facade_normal = @facade_normals[facade_index]
+
+        opening_index = nil
+        opening_gap = nil
+        opening_defs.each_with_index do |opening_def, index|
+          normal = [ opening_def.normal.x.to_f, opening_def.normal.y.to_f, opening_def.normal.z.to_f ]
+          unless facade_normal.nil?
+            dot = normal[0] * facade_normal[0] + normal[1] * facade_normal[1] + normal[2] * facade_normal[2]
+            next if dot.abs < -REDUCTION_OPENING_DOT
+          end
+          _min, max = _projection_range(facade_vertices, normal)
+          next if max.nil?
+          gap = max - _plane_offset(normal, opening_def.origin)
+          next unless opening_gap.nil? || gap > opening_gap
+          opening_index = index
+          opening_gap = gap
+        end
+        next if opening_index.nil?
+
+        opening_def = opening_defs[opening_index]
+        normal = [ opening_def.normal.x.to_f, opening_def.normal.y.to_f, opening_def.normal.z.to_f ]
+
+        fragment_mesh ||= _reduction_fragment_mesh(fragment_def)
+        output = Meshy.operate(
+          :operation => Meshy::OPERATION_INTERSECTION,
+          :validate => false,
+          :tolerance => SolidMeshDef::TOLERANCE,
+          :src_meshes => [ fragment_mesh ],
+          :cut_meshes => [ facade_mesh ]
+        )
+        # A facade whose intersection cannot be taken says nothing, and is not
+        # reported either : it is no operand of the caller's own operation,
+        # and the cavities stand exactly as they stood without it.
+        next unless output.is_a?(Hash) && output['fragments'].is_a?(Array)
+
+        depth = nil
+        output['fragments'].each do |fragment|
+          vertices = fragment['vertices']
+          next unless vertices.is_a?(Array)
+          min, _max = _projection_range(vertices, normal)
+          depth = min if !min.nil? && (depth.nil? || min < depth)
+        end
+        next if depth.nil?
+        # Deep enough to be a pose, not the wafer a boolean leaves where a
+        # facade laid on the mouth touches it
+        next if _plane_offset(normal, opening_def.origin) - depth <= REDUCTION_MIN_DEPTH
+
+        current_depth = depth_by_opening[opening_index]
+        depth_by_opening[opening_index] = depth if current_depth.nil? || depth < current_depth
+
+      end
+
+      depth_by_opening.map { |opening_index, depth|
+        normal = opening_defs[opening_index].normal
+        # The clip keeps the side its normal points to, and what is kept is
+        # what stands BEHIND the facade : the plane faces the cavity, i.e. the
+        # other way round from the opening it recedes.
+        [ [ -normal.x.to_f, -normal.y.to_f, -normal.z.to_f ], -depth ]
+      }
+    end
+
+    # Offset of the plane the given unit normal and point define : n.p on it.
+    def _plane_offset(normal, point)
+      normal[0] * point.x.to_f + normal[1] * point.y.to_f + normal[2] * point.z.to_f
+    end
+
+    # [ min x, min y, min z, max x, max y, max z ] of the given flat vertex
+    # array, nil when it is empty.
+    def _vertices_bounds(vertices)
+      return nil if vertices.nil? || vertices.empty?
+      min_x = min_y = min_z = nil
+      max_x = max_y = max_z = nil
+      vertices.each_slice(3) do |x, y, z|
+        min_x = x if min_x.nil? || x < min_x
+        min_y = y if min_y.nil? || y < min_y
+        min_z = z if min_z.nil? || z < min_z
+        max_x = x if max_x.nil? || x > max_x
+        max_y = y if max_y.nil? || y > max_y
+        max_z = z if max_z.nil? || z > max_z
+      end
+      [ min_x, min_y, min_z, max_x, max_y, max_z ]
+    end
+
+    # Whether the two bounds overlap on EVERY axis by more than the mesh
+    # tolerance. A mere contact is no overlap : the panel a boolean would
+    # meet on a plane alone shares no volume with the cavity.
+    def _bounds_overlap?(bounds, other_bounds)
+      return false if bounds.nil? || other_bounds.nil?
+      3.times do |axis|
+        return false if bounds[axis] >= other_bounds[axis + 3] - SolidMeshDef::TOLERANCE
+        return false if other_bounds[axis] >= bounds[axis + 3] - SolidMeshDef::TOLERANCE
+      end
+      true
     end
 
     # Box covering the envelope on the KEPT side of the given plane (unit
