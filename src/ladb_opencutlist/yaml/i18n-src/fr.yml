@@ -2501,6 +2501,7 @@ tool:
     action_0_state_1a_status: Cliquez sur un plan de coupe pour le déplacer
     action_0_state_1b_status: Ajouter un plan de coupe
     action_0_state_1c_status: Effacer un plan de coupe
+    action_0_state_1d_status: Cliquez pour déplacer la géométrie situés entre les deux plans de coupe
     action_0_state_10_status: Faites glisser le plan de coupe pour le déplacer
     action_0_state_11_status: Cliquez pour ajouter le plan de coupe
     action_0_state_12_status: Cliquez sur un plan de coupe pour le supprimer

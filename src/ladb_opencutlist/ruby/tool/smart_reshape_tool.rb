@@ -346,6 +346,7 @@ module Ladb::OpenCutList
     @@last_stretch_measures = { :outside => 0, :offset => 0 }
 
     attr_writer :ignore_next_lbutton_up
+    attr_reader :picked_axis, :picked_interior_handle
 
     def initialize(tool, previous_action_handler = nil)
       super(SmartReshapeTool::ACTION_STRETCH, tool, previous_action_handler)
@@ -362,6 +363,15 @@ module Ladb::OpenCutList
 
       @picked_axis = nil
       @picked_grip_index = nil
+      @picked_interior_handle = nil
+
+      # An end grip stretch leaves the mouse right on the grip it moved, so the next mouse move
+      # picks its axis again by itself. An interior one leaves it on its handle, which is only
+      # pickable once an axis is active : carry the axis over so the stretch can be chained.
+      if previous_action_handler.is_a?(SmartReshapeStretchActionHandler) &&
+         !previous_action_handler.picked_interior_handle.nil?
+        @picked_axis = previous_action_handler.picked_axis
+      end
 
       @cutters = nil
 
@@ -421,15 +431,22 @@ module Ladb::OpenCutList
 
       when STATE_STRETCH_START
         return super if @picked_axis.nil?
-        return super +
-               ' ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_0_state_1a_status") + '.' +
+        # An interior handle stretches too, but at constant overall dimension
+        status = if @picked_interior_handle.nil?
+                   super + ' ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_0_state_1a_status") + '.'
+                 else
+                   PLUGIN.get_i18n_string("tool.smart_reshape.action_0_state_1d_status") + '.'
+                 end
+        return status +
                ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_0_state_1b_status") + '.' +
                ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_0_state_1c_status") + '.'
 
       when STATE_STRETCH
-        return super +
-               ' | ' + PLUGIN.get_i18n_string("default.constrain_key") + ' = ' + PLUGIN.get_i18n_string("tool.default.locked_on_last_measure_status") + '.' +
-               ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_option_options_centered_status") + '.' +
+        status = super +
+                 ' | ' + PLUGIN.get_i18n_string("default.constrain_key") + ' = ' + PLUGIN.get_i18n_string("tool.default.locked_on_last_measure_status") + '.'
+        # The "centered" option has no meaning for an interior stretch : the overall dimension is preserved
+        status += ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_option_options_centered_status") + '.' if @picked_interior_handle.nil?
+        return status +
                ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_option_options_make_unique_status") + '.'
 
       end
@@ -514,8 +531,15 @@ module Ladb::OpenCutList
           @tool.clear_all_2d
           @tool.clear_3d([LAYER_3D_STRETCH_PREVIEW ])
 
+          previous_interior_handle = @picked_interior_handle
+
           _snap_stretch_start(flags, x, y, view)
           _preview_stretch_start(view)
+
+          # The status differs when an interior handle is hovered
+          if previous_interior_handle.nil? != @picked_interior_handle.nil?
+            Sketchup.set_status_text(get_state_status(@state), SB_PROMPT)
+          end
 
         when STATE_STRETCH
 
@@ -546,8 +570,7 @@ module Ladb::OpenCutList
             eb = _get_drawing_def_edit_bounds(drawing_def, et)
             keb = Kuix::Bounds3d.new.copy!(eb)
 
-            @picked_stretch_start_point = keb.face_center(@picked_grip_index).to_p.transform(et)
-            @picked_stretch_start_opposite_point = keb.face_center(Kuix::Bounds3d.face_opposite(@picked_grip_index)).to_p.transform(et)
+            _pick_stretch_start_points(keb, et)
 
             @mouse_down_point = nil
             set_state(STATE_STRETCH) if _assert_valid_cutters
@@ -664,8 +687,7 @@ module Ladb::OpenCutList
           eb = _get_drawing_def_edit_bounds(drawing_def, et)
           keb = Kuix::Bounds3d.new.copy!(eb)
 
-          @picked_stretch_start_point = keb.face_center(@picked_grip_index).to_p.transform(et)
-          @picked_stretch_start_opposite_point = keb.face_center(Kuix::Bounds3d.face_opposite(@picked_grip_index)).to_p.transform(et)
+          _pick_stretch_start_points(keb, et)
           @mouse_down_point = nil
 
           set_state(STATE_STRETCH) if _assert_valid_cutters
@@ -974,6 +996,7 @@ module Ladb::OpenCutList
       @split_def = nil
       @picked_axis = nil
       @picked_grip_index = nil
+      @picked_interior_handle = nil
       @picked_cutter_index = nil
       @extern_instances_ref_positions = {}
       super
@@ -1058,10 +1081,74 @@ module Ladb::OpenCutList
 
     # -----
 
+    # Set the stretch start point - and the opposite one, used as the "outward" reference by the
+    # last measure reuse - from the picked handle : a bbox face center for an end grip, the handle
+    # point itself for an interior one, whose outward way is the axis.
+    def _pick_stretch_start_points(keb, et)
+      if @picked_interior_handle.nil?
+        @picked_stretch_start_point = keb.face_center(@picked_grip_index).to_p.transform(et)
+        @picked_stretch_start_opposite_point = keb.face_center(Kuix::Bounds3d.face_opposite(@picked_grip_index)).to_p.transform(et)
+      else
+        @picked_stretch_start_point = @picked_interior_handle[:point]
+        @picked_stretch_start_opposite_point = @picked_stretch_start_point.offset(@picked_axis.transform(et).reverse)
+      end
+    end
+
+    # True when the mouse inference point tells a stable position along 'direction' : an exact point,
+    # an edge perpendicular to it, or a face facing it. Anywhere else the point slides freely along
+    # the direction, so it says nothing about it and the raw mouse ray is a better source.
+    def _stretch_ip_stable_along?(direction)
+      return false unless @mouse_ip.valid?
+      !(@mouse_ip.degrees_of_freedom > 2 ||
+        @mouse_ip.instance_path.empty? && @mouse_ip.degrees_of_freedom > 1 ||
+        @mouse_ip.face && @mouse_ip.face == @mouse_ip.instance_path.leaf && @mouse_ip.vertex.nil? && @mouse_ip.edge.nil? && !@mouse_ip.face.normal.transform(@mouse_ip.transformation).parallel?(direction) ||
+        @mouse_ip.edge && @mouse_ip.degrees_of_freedom == 1 && !@mouse_ip.edge.start.position.vector_to(@mouse_ip.edge.end.position).transform(@mouse_ip.transformation).perpendicular?(direction))
+    end
+
+    # The point of the given segment closest to the given point, ends included.
+    def _get_segment_clamped_point(points, point)
+      p0 = points.first
+      p1 = points.last
+      v = p0.vector_to(p1)
+      return p0 unless v.valid?
+      ratio = p0.vector_to(point).dot(v) / v.dot(v)
+      return p0 if ratio <= 0
+      return p1 if ratio >= 1
+      p0.offset(v, v.length * ratio)
+    end
+
+    # The point of the given segment closest to the given line, ends included.
+    def _get_segment_closest_point(points, line)
+      p0 = points.first
+      v = p0.vector_to(points.last)
+      return p0 unless v.valid?
+      point, _ = Geom.closest_points([ p0, v ], line)
+      return p0 if point.nil?
+      _get_segment_clamped_point(points, point)
+    end
+
+    # The point of the given segment a stretch starts from, and whether it is magnetized : the mouse
+    # inference point projected on the segment when it tells a known position along it - a vertex,
+    # an edge across it, a face facing it - so the move can start from a precise origin, else the
+    # point closest to the mouse ray. The inference point is only a source here : it is released
+    # right away so the grab point drawn on the segment stays the only feedback.
+    def _get_segment_grab_point(points, view, x, y)
+      if (v = points.first.vector_to(points.last)).valid?
+        @mouse_ip.pick(view, x, y)
+        point = _stretch_ip_stable_along?(v) ? _get_segment_clamped_point(points, @mouse_ip.position) : nil
+        @mouse_ip.clear
+        return [ point, true ] unless point.nil?
+      end
+      [ _get_segment_closest_point(points, view.pickray(x, y)), false ]
+    end
+
     def _snap_stretch_start(flags, x, y, view)
 
       @picked_grip_index = nil
+      @picked_interior_handle = nil
       @picked_cutter_index = nil
+
+      @mouse_ip.clear   # This state never displays an inference : a section handle only reads it
 
       return false unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
       et = _get_edit_transformation
@@ -1090,6 +1177,24 @@ module Ladb::OpenCutList
       end
 
       unless @cutters.nil? || @picked_axis.nil?
+
+        # Snap to an interior handle?
+
+        _get_interior_handle_defs(keb, et).each do |handle_def|
+
+          # A section handle is grabbable all along its slab segment, magnetized to the geometry
+          next unless ph.pick_segment(handle_def[:points], x, y, 20)
+          handle_def[:point], handle_def[:magnetized] = _get_segment_grab_point(handle_def[:points], view, x, y)
+
+          @picked_interior_handle = handle_def
+          # An interior handle isn't attached to a bbox face. The split def only needs the axis
+          # orientation, so synthesize the "max" grip to get a canonical - never reversed -
+          # section order.
+          @picked_grip_index = Kuix::Bounds3d.faces_by_axis(@picked_axis).last
+          @split_def = nil
+          @mouse_snap_point = handle_def[:point]
+          return true
+        end
 
         # Snap to a cutter?
 
@@ -1299,11 +1404,10 @@ module Ladb::OpenCutList
         et = _get_edit_transformation
         direction = @picked_axis.transform(et)
 
-        if @mouse_ip.degrees_of_freedom > 2 ||
-           @mouse_ip.instance_path.empty? && @mouse_ip.degrees_of_freedom > 1 ||
-           @mouse_ip.position.on_plane?([@picked_stretch_start_opposite_point, direction ]) ||
-           @mouse_ip.face && @mouse_ip.face == @mouse_ip.instance_path.leaf && @mouse_ip.vertex.nil? && @mouse_ip.edge.nil? && !@mouse_ip.face.normal.transform(@mouse_ip.transformation).parallel?(direction) ||
-           @mouse_ip.edge && @mouse_ip.degrees_of_freedom == 1 && !@mouse_ip.edge.start.position.vector_to(@mouse_ip.edge.end.position).transform(@mouse_ip.transformation).perpendicular?(direction)
+        # The opposite point is a real bbox face for an end grip - snapping the end of the stretch
+        # there would flatten the shape - but only a way marker for an interior handle
+        if !_stretch_ip_stable_along?(direction) ||
+           @picked_interior_handle.nil? && @mouse_ip.position.on_plane?([@picked_stretch_start_opposite_point, direction ])
 
           picked_point, _ = Geom::closest_points([@picked_stretch_start_point, direction ], view.pickray(x, y))
           @mouse_snap_point = picked_point
@@ -1439,7 +1543,9 @@ module Ladb::OpenCutList
         k_points.transformation = et
         @tool.append_3d(k_points, LAYER_3D_STRETCH_PREVIEW)
 
-        unless @picked_grip_index.nil?
+        # An interior handle is highlighted where its own family is drawn : the grip index is
+        # synthesized for it and points at a bbox face that has nothing to do with it
+        if @picked_interior_handle.nil? && !@picked_grip_index.nil?
 
           k_points = _create_floating_points(
             points: keb.face_center(@picked_grip_index).to_p,
@@ -1504,6 +1610,50 @@ module Ladb::OpenCutList
 
       _preview_active_cutters(view)
       _preview_active_axis
+
+      # The picked interior handle : its section slab is grabbable all along, so its segment is
+      # drawn solid over the dashed axis
+
+      unless @picked_interior_handle.nil?
+
+        color = _get_vector_color(@picked_axis.transform(et))
+
+        k_edge = Kuix::EdgeMotif3d.new
+        k_edge.start.copy!(@picked_interior_handle[:points].first)   # Already expressed in the global space
+        k_edge.end.copy!(@picked_interior_handle[:points].last)
+        k_edge.line_width = 3
+        k_edge.start_arrow = k_edge.end_arrow = true
+        k_edge.arrow_size = 10
+        k_edge.color = color
+        @tool.append_3d(k_edge, LAYER_3D_GRIPS_PREVIEW)
+
+        # Show where the segment is grabbed, the diamond telling the grab point is magnetized to
+        # the geometry and not just the closest point to the mouse ray
+        if @picked_interior_handle[:magnetized]
+          style = Kuix::POINT_STYLE_DIAMOND
+          size = 3
+        else
+          style = Kuix::POINT_STYLE_CIRCLE
+          size = 2
+        end
+        k_points = _create_floating_points(
+          points: @picked_interior_handle[:point],
+          style: style,
+          stroke_color: nil,
+          fill_color: color,
+          size: size
+        )
+        @tool.append_3d(k_points, LAYER_3D_GRIPS_PREVIEW)
+        k_points = _create_floating_points(
+          points: @picked_interior_handle[:point],
+          style: style,
+          stroke_color: Kuix::COLOR_WHITE,
+          fill_color: nil,
+          size: size + 1
+        )
+        @tool.append_3d(k_points, LAYER_3D_GRIPS_PREVIEW)
+
+      end
 
     end
 
@@ -1738,7 +1888,7 @@ module Ladb::OpenCutList
       distance = _read_user_text_length(tool, text, lps.distance(lpe))
       return true if distance.nil?
 
-      measure_type_outside = _fetch_option_stretch_measure_type_outside?
+      measure_type_outside = _stretch_measure_type_outside?
 
       # Error if distance < 0 and the measure type is outside
       if measure_type_outside && distance < 0
@@ -1755,6 +1905,7 @@ module Ladb::OpenCutList
 
       # Error if max distance exceeded
       compressed = esv.valid? && (reversed ? esv.samedirection?(@picked_axis) : !esv.samedirection?(@picked_axis))
+      compressed = true unless @picked_interior_handle.nil?  # An interior stretch compresses gaps both ways
       if compressed && compression_distance > max_compression_distance
         if measure_type_outside
           tool.notify_errors([ [ "tool.default.error.lt_min_distance", { :value1 => distance.abs.to_l, :value2 => (pmin.distance(pmax) - max_compression_distance).abs.to_l } ] ])
@@ -1780,12 +1931,12 @@ module Ladb::OpenCutList
     # signed : positive = expansion, negative = compression.
 
     def _fetch_last_stretch_measure
-      @@last_stretch_measures[_fetch_option_stretch_measure_type_outside? ? :outside : :offset]
+      @@last_stretch_measures[_stretch_measure_type_outside? ? :outside : :offset]
     end
 
     def _store_last_stretch_measure(measure, compressed = false)
       return if measure.nil? || measure == 0  # A null measure doesn't erase the stored one
-      if _fetch_option_stretch_measure_type_outside?
+      if _stretch_measure_type_outside?
         @@last_stretch_measures[:outside] = measure
       else
         @@last_stretch_measures[:offset] = compressed ? -measure : measure
@@ -1804,6 +1955,12 @@ module Ladb::OpenCutList
 
     def _fetch_option_stretch_measure_type_offset?
       @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_STRETCH_MEASURE_TYPE, SmartReshapeTool::ACTION_OPTION_STRETCH_MEASURE_TYPE_OFFSET)
+    end
+
+    # The "outside" measure means the overall dimension. An interior stretch preserves it, so its
+    # measure is always the handle offset, whatever the option says.
+    def _stretch_measure_type_outside?
+      @picked_interior_handle.nil? && _fetch_option_stretch_measure_type_outside?
     end
 
     def _fetch_option_axes
@@ -1869,7 +2026,7 @@ module Ladb::OpenCutList
       return nil if (stretch_def = _get_stretch_def(@picked_stretch_start_point, reference_point)).nil?
 
       split_def, factor, lps, lpe = stretch_def.values_at(:split_def, :factor, :lps, :lpe)
-      et, epmin, epmax, max_compression_distance = split_def.values_at(:et, :epmin, :epmax, :max_compression_distance)
+      et, epmin, epmax, max_compression_distance, section_defs = split_def.values_at(:et, :epmin, :epmax, :max_compression_distance, :section_defs)
 
       if (v = direction).nil?
         v = lps.vector_to(lpe)
@@ -1880,13 +2037,22 @@ module Ladb::OpenCutList
       pmin = epmin.transform(et)
       pmax = epmax.transform(et)
 
-      if _fetch_option_stretch_measure_type_outside?
+      if _stretch_measure_type_outside?
         real_distance = (measure - (pmax - pmin).length) / factor
         compression_distance = (real_distance * factor).abs
       else
         real_distance = measure
         compression_distance = real_distance.abs
         max_compression_distance = max_compression_distance / factor
+      end
+
+      unless @picked_interior_handle.nil?
+        # An interior stretch compresses gaps both ways : the max distance depends on the way
+        t_coefs = _get_interior_t_coefs(section_defs.length - 1)
+        way = v.transform(et.inverse).samedirection?(@picked_axis) ? 1.0 : -1.0
+        way = -way if real_distance < 0
+        interior_max_distance = _get_interior_max_distance(split_def, t_coefs, way)
+        max_compression_distance = interior_max_distance unless interior_max_distance.nil?
       end
 
       {
@@ -2376,9 +2542,16 @@ module Ladb::OpenCutList
 
         # Adjust cutters
         eti = et.inverse
-        epo = reversed ? lpe.transform(eti) : eps.offset(emv)
-        epomax = reversed ? eps.offset(emv) : lpe.transform(eti)
-        distance = epo.distance(epomax)
+        if @picked_interior_handle.nil?
+          epo = reversed ? lpe.transform(eti) : eps.offset(emv)
+          epomax = reversed ? eps.offset(emv) : lpe.transform(eti)
+          distance = epo.distance(epomax)
+        else
+          # An interior stretch preserves the overall dimension : the bbox itself stays the
+          # reference, and 'lpe' is on the handle, not on an extremity
+          epo = eps
+          distance = evpspe.length
+        end
         el = [ epo, evpspe ]
         sd = section_defs
         sd = sd.reverse if reversed
@@ -2393,6 +2566,7 @@ module Ladb::OpenCutList
               end
             }
            .compact
+
         _store_cutters
         _load_cutters
 
@@ -2466,6 +2640,41 @@ module Ladb::OpenCutList
       end
 
       true
+    end
+
+    # -----
+
+    # The translation coefficient of each section - in [0, 1], to be multiplied by the move
+    # distance - for the picked interior handle. Below the handle point each gap takes '+1/L' of the
+    # move, above each takes '-1/U' : the shape is stretched on one side and compressed on the
+    # other, so the overall dimension is preserved. The handle sits in the matter of its section,
+    # hence every gap is clearly on one side or the other.
+    def _get_interior_t_coefs(gap_count)
+      return nil if @picked_interior_handle.nil? || gap_count < 1
+
+      index = @picked_interior_handle[:index]
+      return nil unless index >= 1 && index <= gap_count - 1
+
+      l = index.to_f
+      u = (gap_count - index).to_f
+      gap_coefs = (0...gap_count).map { |i| i < index ? 1.0 / l : -1.0 / u }
+
+      t_coefs = [ 0.0 ]
+      gap_coefs.each { |gap_coef| t_coefs << t_coefs.last + gap_coef }
+      t_coefs
+    end
+
+    # The largest interior move that keeps every compressed gap above the minimal distance.
+    # 'way' is 1.0 when the move follows the picked axis, -1.0 otherwise. Gap deltas being linear in
+    # the move distance, each gap that shrinks caps the move.
+    def _get_interior_max_distance(split_def, t_coefs, way)
+      return nil unless (gap_defs = split_def[:gap_defs]).is_a?(Array) && !t_coefs.nil?
+      gap_defs.map { |gap_def|
+        section_def0, section_def1, distance = gap_def
+        coef = (t_coefs[section_def1.index] - t_coefs[section_def0.index]) * way
+        next if coef >= 0
+        [ (distance - 1.mm) / -coef, 0 ].max  # Keep 1mm to avoid geometry merge problems
+      }.compact.min
     end
 
     # -----
@@ -2804,22 +3013,29 @@ module Ladb::OpenCutList
 
       fn_analyse.call(drawing_def)
 
-      # Compute max compression distance
+      # Compute gaps between sections that own matter. A run of empty sections counts as a single
+      # physical gap, hence the 'each_cons' on the filtered list.
       el = [ eps, evpspe ]
       sd = section_defs
       sd = sd.reverse if reversed
       vsd = sd.select { |section_def| section_def.bounds.valid? && !section_def.bounds.empty? }
+      gap_defs = vsd
+        .each_cons(2).map { |section_def0, section_def1|
+          [
+            section_def0,
+            section_def1,
+            section_def0.bounds.max.project_to_line(el).transform(et).distance(section_def1.bounds.min.project_to_line(el).transform(et))
+          ]
+        }
+
+      # Compute max compression distance
       if vsd.one?
         # TODO : Improve this case where there's only one section
         drawing_size = drawing_def.bounds.min.project_to_line(el).transform(et).distance(drawing_def.bounds.max.project_to_line(el).transform(et))
         section_size = vsd.first.bounds.min.project_to_line(el).transform(et).distance(vsd.first.bounds.max.project_to_line(el).transform(et))
         min_distance = drawing_size - section_size
       else
-        min_distance = vsd
-          .each_cons(2).map { |section_def0, section_def1|
-            section_def0.bounds.max.project_to_line(el).transform(et).distance(section_def1.bounds.min.project_to_line(el).transform(et))
-          }
-          .min
+        min_distance = gap_defs.map { |gap_def| gap_def.last }.min
         min_distance = 0 if min_distance.nil?
       end
       max_compression_distance = [ (min_distance * (vsd.size - 1)) - 1.mm, 0 ].max # Keep 1mm to avoid geometry merge problems
@@ -2837,7 +3053,35 @@ module Ladb::OpenCutList
         reversed: reversed,
         max_compression_distance: max_compression_distance,
         section_defs: section_defs,
+        gap_defs: gap_defs,
         container_defs: container_defs,
+      }
+    end
+
+    # The interior handle candidates for the picked axis, expressed in the global space : a point on
+    # each cutting plane, and the whole slab segment of each interior section - a section handle is
+    # grabbable anywhere between its two planes, ':point' being only its default grab point. The
+    # sections at both ends are anchors - they never move - so they get no handle.
+    def _get_interior_handle_defs(keb, et)
+      return [] if @cutters.nil? || @picked_axis.nil?
+      return [] unless (ratios = @cutters[@picked_axis]).is_a?(Array)
+
+      ratios = ratios.sort
+      ratios.uniq!   # Same normalization as '_get_split_def'
+      return [] if ratios.empty?
+
+      grip_index_min, grip_index_max = Kuix::Bounds3d.faces_by_axis(@picked_axis)
+      pmin = keb.face_center(grip_index_min).to_p
+      v = pmin.vector_to(keb.face_center(grip_index_max).to_p)
+      return [] unless v.valid?
+
+      # One handle spanning each interior section's slab, from plane to plane. The grab point along
+      # that segment is only known at pick time.
+      ratios.each_cons(2).each_with_index.map { |min_max, index|
+        {
+          :index => index + 1,
+          :points => min_max.map { |ratio| pmin.offset(v, v.length * ratio).transform(et) }
+        }
       }
     end
 
@@ -2851,13 +3095,34 @@ module Ladb::OpenCutList
       v = ps.vector_to(pe)     # "Move" vector in global space
       ev = v.transform(eti)
 
-      factor = _fetch_option_options_centered? ? 2.0 : 1.0
+      # An interior handle distributes the move over the gaps of both sides : the overall dimension
+      # is preserved, so the "centered" option and the outside measure have no meaning here
+      t_coefs = @picked_interior_handle.nil? ? nil : _get_interior_t_coefs(section_defs.length - 1)
 
-      # Limit move to max compression distance
-      compressed = ev.valid? && (reversed ? ev.samedirection?(@picked_axis) : !ev.samedirection?(@picked_axis))
-      if compressed && (v.length * factor > max_compression_distance)
-        pe = ps.offset(v, max_compression_distance / factor)
-        v = ps.vector_to(pe)
+      factor = t_coefs.nil? && _fetch_option_options_centered? ? 2.0 : 1.0
+
+      if t_coefs.nil?
+
+        # Limit move to max compression distance
+        compressed = ev.valid? && (reversed ? ev.samedirection?(@picked_axis) : !ev.samedirection?(@picked_axis))
+        if compressed && (v.length * factor > max_compression_distance)
+          pe = ps.offset(v, max_compression_distance / factor)
+          v = ps.vector_to(pe)
+        end
+
+      else
+
+        # Both ways compress a gap : limit move to the largest one that keeps them all above the
+        # minimal distance
+        if ev.valid?
+          way = ev.samedirection?(@picked_axis) ? 1.0 : -1.0
+          max_distance = _get_interior_max_distance(split_def, t_coefs, way)
+          if !max_distance.nil? && v.length > max_distance
+            pe = ps.offset(v, max_distance)
+            v = ps.vector_to(pe)
+          end
+        end
+
       end
 
       if factor > 1.0
@@ -2875,11 +3140,19 @@ module Ladb::OpenCutList
       # Compute move vectors for each section
       edvs = section_defs.map { |section_def|
         edv = Geom::Vector3d.new(esv)
-        edv.length = edv.length * section_def.index / (section_defs.length - 1) if esv.valid? && section_defs.length > 1
+        if esv.valid?
+          if t_coefs.nil?
+            edv.length = edv.length * section_def.index / (section_defs.length - 1) if section_defs.length > 1
+          elsif (coef = t_coefs[section_def.index]).nil? || coef <= 0
+            edv = Geom::Vector3d.new   # Anchored section
+          else
+            edv.length = esv.length * coef
+          end
+        end
         [ section_def, edv ]
       }.to_h
 
-      lps = _fetch_option_stretch_measure_type_outside? ? eps.transform(et).offset(mv) : ps
+      lps = _stretch_measure_type_outside? ? eps.transform(et).offset(mv) : ps
       lpe = pe
 
       {
