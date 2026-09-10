@@ -244,8 +244,9 @@ core:
       cutlist_estimate_options: $t(tab.cutlist.label) / $t(tab.cutlist.estimate.title)
       cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
       cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
-      importer_import_options: $t(tab.importer.label) / $t(default.import)
-      importer_load_options: $t(tab.importer.label) / $t(default.open)
+      importers_csv_import_options: $t(tab.importers.csv.label) / $t(default.import)
+      importers_csv_load_options: $t(tab.importers.csv.label) / $t(default.open)
+      importers_bxf2_import_options: $t(tab.importers.bxf2.label) / $t(default.import)
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       outliner_options: $t(tab.outliner.label) / $t(default.options)
@@ -271,6 +272,7 @@ core:
       help: Введите **@** чтобы открыть список переменных данных.
     textinput_file:
       browse: Обзор
+      browse_library: Найти и скопировать в библиотеку
     textinput_size:
       quantity: Кол-во
     three_viewer:
@@ -312,7 +314,7 @@ core:
 tab:
   cutlist:
     label: Раскрой
-    title: Список элементов
+    title: Карта раскроя
     help: |
       Для частичного расчета раскроя, выделите в сцене необходимые детали нажмите кнопку **Рассчитать**.
       Если ничего не выделять, то все видимые компоненты сцены будут включены в расчет.
@@ -1793,7 +1795,7 @@ tab:
       general: Общие
       material_order_strategy: Сортировка материала
       material_order_strategy_help: |
-        Упорядочить следующие свойства для определения порядка сортировки внутри каждой группы.
+        Определение порядка сортировки свойств деталей внутри каждой группы.
         Свойства могут быть отсортированы в <i class="ladb-opencutlist-icon-sort-asc"></i> *по возрастанию* или <i class="ladb-opencutlist-icon-sort-desc"></i> *по убыванию*.
       property_type: Тип
       property_name: Определение
@@ -2240,13 +2242,17 @@ tab:
     presets:
       export_global_presets: Экспорт пресетов
       export_global_presets_help: |
-        Эта функция позволяет экспортировать пресеты в файл формата **.json**.
-        Выберите пресеты, которые вы хотите экспортировать в этот формат.
+        Эта функция позволяет экспортировать ваши пресеты в файл **.json**.
+        Выберите пресеты, которые вы хотите экспортировать.
+        Если выбранные пресеты ссылаются на файлы **.skp** или **.skm**, они будут включены в архив **.oclp**, чтобы экспортированным файлом можно было сразу поделиться.
       export_global_presets_success: Пресеты успешно экспортированы.
+      export_global_presets_success_with_assets: "Пресеты успешно экспортированы вместе с {{ count }} сопутствующим(и) файлом(ами)."
       import_global_presets: Импорт пресетов
       import_global_presets_help: |
-        Выберите файл пресета формата **.json**, который вы хотите импортировать.
-        Внимание, импортируемая версия заменит существующий пресет, если они имеют одинаковое название.
+        Выберите пресеты из файла **.json** или **.oclp**, которые вы хотите импортировать.
+        Внимание: если пресет с таким же именем уже существует, он будет заменён импортированной версией.
+        Файлы, содержащиеся в архиве **.oclp**, копируются в вашу библиотеку по тому же пути, который заимствован у отправителя.
+      open_library_dir: Открыть папку библиотеки
       import_global_presets_success: |
         Пресеты *OpenCutList* успешно импортированы.
         Чтобы изменения вступили в силу, вы должны **закрыть** и снова **открыть** окно OpenCutList.
@@ -2271,6 +2277,8 @@ tab:
       error:
         no_preset_to_export: Нет пресетов для экспорта.
         no_preset_to_import: Нет пресетов для импорта.
+        failed_to_export: "Не удалось экспортировать пресеты: **{{ error }}**."
+        failed_to_open_library_dir: "Не удалось открыть папку библиотеки: **{{ error }}**."
         failed_to_import: "Не удалось импортировать пресеты: **{{ error }}**."
         failed_to_import_invalid_hexdigest: Этот файл был изменен. Он не может быть импортирован.
         failed_to_import_bad_file_format: Недопустимый формат файла.
@@ -2381,18 +2389,28 @@ tool:
     action_3_status: "Создание полок и перегородок внутри замкнутого контура из деталей, образующих корпус"
     action_3_state_0_status: "Кликните по стенке, чтобы создать перегородку"
     action_3_state_1_status: "Кликните по стенке, чтобы создать перегородки"
+    action_4: Создать фасад
+    action_4_status: "Моделировать фасад в нише, образованной группой смежных деталей"
+    action_4_state_0_status: "Кликните внутри ниши, чтобы создать там фасад"
+    action_4_state_0_merge_status: "Для создания общего фасада перетащите указатель на соседние ниши"
     action_option_group_offset: Смещение
     action_option_group_segments: Сегменты
     action_option_group_thickness: Толщина
+    action_option_group_clearance: Зазор
+    action_option_group_overlay: Монтаж
     action_option_group_axes: Оси
     action_option_group_measure_type: Отсчет
     action_option_group_options: Опции
     action_option_offset_shape_offset: Смещение
     action_option_offset_shape_offset_status: Задать смещение линии контура проектируемой фигуры
+    action_option_offset_front_panel_offset: Зазор
+    action_option_offset_front_panel_offset_status: "Зазор по периметру фасада"
     action_option_segments_segment_count: Количество сегментов
     action_option_segments_segment_count_status: Задать количество сегментов в проектируемой окружности
     action_option_thickness_thickness: Толщина
     action_option_thickness_thickness_status: Ввод толщины перегородки
+    action_option_overlay_inset_status: "Вкладной фасад: устанавливается внутри проема, заподлицо с передней кромкой"
+    action_option_overlay_full_overlay_status: "Накладной фасад: устанавливается поверх передней кромки, полностью перекрывая внешние стенки и до половины толщины внутренних перегородок корпуса"
     action_option_measure_type_inside_status: Размер без учета толщины перегородки
     action_option_measure_type_centered_status: Отсчет измерения до центра перегородки
     action_option_measure_type_outside_status: Размер с учетом толщины перегородки
@@ -2415,7 +2433,7 @@ tool:
     action_option_options_pull_locked_status: Блокировка подъема по оси
     action_option_options_draw_in: Рисовать в
     action_option_options_draw_in_0: Рисование в активном элементе
-    action_option_options_draw_in_1: Нарисовать детали первой точки в родительском элементе
+    action_option_options_draw_in_1: Рисовать от первой точки родительского элемента
     action_option_options_draw_in_status: "Нарисовать в родительском элементе, на который указывает первая точка"
     action_option_options_reduce_envelope: Детали с отступом
     action_option_options_reduce_envelope_status: Учитывать детали с отступом
@@ -2423,6 +2441,8 @@ tool:
     action_option_options_reuse_definition_status: Повторно использовать существующую деталь аналогичной формы и расположения вместо создания новой
     action_option_options_ask_name: Задать имена деталям
     action_option_options_ask_name_status: Ввод названий деталей вручную
+    action_option_options_layer_name: ""
+    action_option_options_layer_name_status: ""
     action_toggle_move_copy_status: Переключение копировать/переместить
     action_change_move_anchor_status: Изменить точку привязки
     error:
@@ -2430,7 +2450,12 @@ tool:
       invalid_divider_container: "Эта деталь не входит в состав группы, образующей замкнутый контур"
       invalid_divider_cavity: "С этой стороны нет полости для перегородки"
       no_divider_cavity: В этой группе или компоненте не обнаружено полости для перегородок
+      invalid_front_panel_seed: Этот тип детали не поддерживает создание фасада
+      invalid_front_panel_container: "Эта деталь не входит в состав группы, образующей замкнутый контур"
+      invalid_front_panel_cavity: "В этой позиции нет открытых проемов"
+      no_front_panel_cavity: В этой группе или компоненте не обнаружено полости для перегородок
       divider_number_overflow: "Не удалось разместить {{ number }} перегородок в этой полости"
+      front_panel_number_overflow: "Не размещено {{ number }} фас. в этом проеме"
     success:
       part_created: "Создан новый компонент: : {{ name }}"
       part_created_plural: "создано {{ count }} новых деталей: {{ name }}"
@@ -2476,6 +2501,7 @@ tool:
     action_0_state_1a_status: "Кликните на схему распила, чтобы переместить ее"
     action_0_state_1b_status: Добавить схему распила
     action_0_state_1c_status: Удалить схему распила
+    action_0_state_1d_status: ""
     action_0_state_10_status: "Перетащите схему распила, чтобы переместить ее"
     action_0_state_11_status: "Нажмите, чтобы добавить схему распила"
     action_0_state_12_status: "Нажмите на схему распила, чтобы удалить ее"
