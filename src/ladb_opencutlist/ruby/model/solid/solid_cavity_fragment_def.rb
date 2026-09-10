@@ -59,7 +59,7 @@ module Ladb::OpenCutList
     # The cavity's openings, one SolidCavityOpeningDef per plane
     # #opening_plane_count counts, biggest first : the plane, its outward
     # normal, and the closed contours the caps draw on it — everything a tool
-    # needs to fit a facade, a drawer front or a glass pane in the mouth, or
+    # needs to fit a front panel, a drawer front or a glass pane in the mouth, or
     # simply to measure it.
     #
     # The contours are the NET boundary of the plane's CAP triangles alone
@@ -247,7 +247,7 @@ module Ladb::OpenCutList
       }
     end
 
-    # Same tolerant matching as SmartDrawFacadeActionHandler::OPENING_PLANE_MIN_DOT
+    # Same tolerant matching as SmartDrawFrontPanelActionHandler::OPENING_PLANE_MIN_DOT
     # (a signed dot, so a plane and its own reverse never match).
     WALL_PLANE_MATCH_MIN_DOT = 1.0 - 1e-6
 
@@ -275,10 +275,10 @@ module Ladb::OpenCutList
     # is OPEN on that plane (nothing but caps facing it), has no wall facing
     # it, or none standing near enough to close it (WALL_PLANE_MAX_SETBACK).
     #
-    # Read by SmartDrawFacadeActionHandler#_get_sibling_mouth_points as the
-    # fallback for a neighbouring cavity CLOSED on the very plane a facade is
+    # Read by SmartDrawFrontPanelActionHandler#_get_sibling_mouth_points as the
+    # fallback for a neighbouring cavity CLOSED on the very plane a front panel is
     # being cut on : such a cavity has no #opening_defs there at all - it is
-    # not a mouth - yet its wall is exactly the boundary the facade's overlay
+    # not a mouth - yet its wall is exactly the boundary the front panel's overlay
     # share must stop at (see #_get_overlay_points).
     #
     # The depth the wall comes back at is its OWN, the setback included, and
@@ -286,10 +286,10 @@ module Ladb::OpenCutList
     # opening's own 2D frame and never looks past its X, Y - the frame's Z
     # carries the setback and nothing reads it.
     #
-    # Memoized PER PLANE, and cheaply turned down before that : the facade
+    # Memoized PER PLANE, and cheaply turned down before that : the front panel
     # preview reads its siblings again at every mouse move, over every cavity
     # of the container, while the carcass does not move under it. The key is
-    # quantized the way SmartDrawFacadeActionHandler#_opening_plane_key is,
+    # quantized the way SmartDrawFrontPanelActionHandler#_opening_plane_key is,
     # and for the same reason - two queries closer than that answer the same
     # thing anyway, the matching below being tolerant to exactly that degree.
     def wall_loops_on_plane(normal, origin)

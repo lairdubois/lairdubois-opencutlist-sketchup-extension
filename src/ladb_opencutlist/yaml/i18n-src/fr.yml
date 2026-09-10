@@ -2403,8 +2403,8 @@ tool:
     action_option_group_options: Options
     action_option_offset_shape_offset: Décalage
     action_option_offset_shape_offset_status: Permet d'appliquer un décalage au tracé de la forme dessinée
-    action_option_offset_facade_offset: Jeu
-    action_option_offset_facade_offset_status: "Définit le jeu laissé sur chaque bord de la façade"
+    action_option_offset_front_panel_offset: Jeu
+    action_option_offset_front_panel_offset_status: "Définit le jeu laissé sur chaque bord de la façade"
     action_option_segments_segment_count: Nombre de segments
     action_option_segments_segment_count_status: Permet de définir le nombre de segments du cercle
     action_option_thickness_thickness: Epaisseur
@@ -2450,12 +2450,12 @@ tool:
       invalid_divider_container: "Cette pièce est isolée : elle ne partage pas de groupe ou composant avec d'autres pièces"
       invalid_divider_cavity: "Aucune cavité à cette position"
       no_divider_cavity: Aucune cavité n'a été détectée dans ce groupe ou composant
-      invalid_facade_seed: Ce type de pièce ne permet pas le dessin d'une façade
-      invalid_facade_container: "Cette pièce est isolée : elle ne partage pas de groupe ou composant avec d'autres pièces"
-      invalid_facade_cavity: "Aucune cavité ouverte vers vous à cette position"
-      no_facade_cavity: Aucune cavité n'a été détectée dans ce groupe ou composant
+      invalid_front_panel_seed: Ce type de pièce ne permet pas le dessin d'une façade
+      invalid_front_panel_container: "Cette pièce est isolée : elle ne partage pas de groupe ou composant avec d'autres pièces"
+      invalid_front_panel_cavity: "Aucune cavité ouverte vers vous à cette position"
+      no_front_panel_cavity: Aucune cavité n'a été détectée dans ce groupe ou composant
       divider_number_overflow: "Impossible de répartir {{ number }} séparateurs dans cette cavité"
-      facade_number_overflow: "Impossible de répartir {{ number }} façades sur cette ouverture"
+      front_panel_number_overflow: "Impossible de répartir {{ number }} façades sur cette ouverture"
     success:
       part_created: "Nouvelle pièce créée : {{ name }}"
       part_created_plural: "{{ count }} nouvelles pièces créées : {{ name }}"

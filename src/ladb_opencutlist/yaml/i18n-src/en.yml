@@ -2389,10 +2389,10 @@ tool:
     action_3_status: Draw a divider in a compartment formed by a group of existing parts
     action_3_state_0_status: Click on a wall to draw a divider
     action_3_state_1_status: Click on a wall to draw dividers
-    action_4: Draw Facade
-    action_4_status: Draw a facade within a space formed by a group of existing parts
-    action_4_state_0_status: Click inside a cavity to draw a facade across its opening
-    action_4_state_0_merge_status: "Slide to the adjacent cavities to create a shared facade"
+    action_4: Draw Front Panel
+    action_4_status: Draw a front panel within a space formed by a group of existing parts
+    action_4_state_0_status: Click inside a cavity to draw a front panel across its opening
+    action_4_state_0_merge_status: "Slide to the adjacent cavities to create a shared front panel"
     action_option_group_offset: Offset
     action_option_group_segments: Segments
     action_option_group_thickness: Thickness
@@ -2403,8 +2403,8 @@ tool:
     action_option_group_options: Options
     action_option_offset_shape_offset: Offset
     action_option_offset_shape_offset_status: Allows you to apply an offset to the outline of the drawn shape
-    action_option_offset_facade_offset: Clearance
-    action_option_offset_facade_offset_status: "Defines the clearance left on each side of the front panel"
+    action_option_offset_front_panel_offset: Clearance
+    action_option_offset_front_panel_offset_status: "Defines the clearance left on each side of the front panel"
     action_option_segments_segment_count: Number of Segments
     action_option_segments_segment_count_status: Allows you to set the number of segments in the circle
     action_option_thickness_thickness: Thickness
@@ -2443,18 +2443,18 @@ tool:
     action_option_options_ask_name_status: Enter part names manually
     action_toggle_move_copy_status: Toggle between copy/move
     action_change_move_anchor_status: Change the anchor point
-    facade_layer: Fronts
+    front_panel_layer: Fronts
     error:
       invalid_divider_seed: This type of part does not allow for the creation of a divider
       invalid_divider_container: "This part is isolated: it does not share any groups or components with other parts"
       invalid_divider_cavity: "No compartment this location"
       no_divider_cavity: No compartments were detected in this group or component
-      invalid_facade_seed: This type of part does not allow for the design of a facade
-      invalid_facade_container: "This part is isolated: it does not share any groups or components with other parts"
-      invalid_facade_cavity: "There are no cavities open toward you in this position"
-      no_facade_cavity: No compartments were detected in this group or component
+      invalid_front_panel_seed: This type of part does not allow for the design of a front panel
+      invalid_front_panel_container: "This part is isolated: it does not share any groups or components with other parts"
+      invalid_front_panel_cavity: "There are no cavities open toward you in this position"
+      no_front_panel_cavity: No compartments were detected in this group or component
       divider_number_overflow: "It is not possible to place {{ number }} dividers in this compartment"
-      facade_number_overflow: "It is not possible to distribute {{ number }} facades across this opening"
+      front_panel_number_overflow: "It is not possible to distribute {{ number }} front panels across this opening"
     success:
       part_created: "New part created: {{ name }}"
       part_created_plural: "{{ count }} new parts created: {{ name }}"

@@ -164,7 +164,7 @@ class TC_Ladb_Model_SolidCavityOpening < TestUp::TestCase
     assert_equal([], fragment_def.opening_defs)
   end
 
-  # -- Wall loops, for a neighbour closed on the plane a facade is cut on --
+  # -- Wall loops, for a neighbour closed on the plane a front panel is cut on --
 
   # A wall reads the same way a cap does : the net boundary of the plane's
   # triangles, provided they carry a real face id rather than 0.
@@ -182,7 +182,7 @@ class TC_Ladb_Model_SolidCavityOpening < TestUp::TestCase
     assert_equal([], fragment_def.opening_defs, 'a walled plane is not an opening')
   end
 
-  # SmartDrawFacadeActionHandler#_get_sibling_mouth_points falls back to this
+  # SmartDrawFrontPanelActionHandler#_get_sibling_mouth_points falls back to this
   # for a neighbour CLOSED by a real panel : that panel sits one thickness
   # short of where the neighbour's hull cap would have been had it been open
   # instead, so an exact plane match would find nothing at all.
@@ -201,7 +201,7 @@ class TC_Ladb_Model_SolidCavityOpening < TestUp::TestCase
 
   # Bounded, though : a whole COMPARTMENT behind - the far side of a two depth
   # carcass, a sealed void - is walled facing this way too, and is no
-  # neighbour of this plane. Read as one it robs the facade of everything past
+  # neighbour of this plane. Read as one it robs the front panel of everything past
   # the bisector it has no business drawing.
   def test_wall_loops_on_plane_ignores_a_wall_a_compartment_away
 
@@ -233,7 +233,7 @@ class TC_Ladb_Model_SolidCavityOpening < TestUp::TestCase
   end
 
   # A wall standing IN FRONT of the plane closes nothing of it either : it
-  # belongs to whatever lies on the other side of the facade.
+  # belongs to whatever lies on the other side of the front panel.
   def test_wall_loops_on_plane_ignores_a_wall_in_front_of_the_plane
 
     vertices = [ 0.0, 0.0, 10.0,  120.0, 0.0, 10.0,  120.0, 120.0, 10.0,  0.0, 120.0, 10.0 ]

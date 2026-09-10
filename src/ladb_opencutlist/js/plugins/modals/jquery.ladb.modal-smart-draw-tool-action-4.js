@@ -29,7 +29,7 @@
 
             // Fetch UI elements
             const $widgetPreset = $('.ladb-widget-preset', that.$element);
-            const $inputFacadeOffset = $('#ladb_input_facade_offset', that.$element);
+            const $inputFrontPanelOffset = $('#ladb_input_front_panel_offset', that.$element);
             const $inputThickness = $('#ladb_input_thickness', that.$element);
             const $selectAxes = $('#ladb_select_axes', that.$element);
             const $selectConstrution = $('#ladb_select_construction', that.$element);
@@ -40,7 +40,7 @@
             const $btnValidate = $('#ladb_btn_validate', that.$element);
 
             const fnFetchOptions = function (options) {
-                options.facade_offset = $inputFacadeOffset.val();
+                options.front_panel_offset = $inputFrontPanelOffset.val();
                 options.thickness = $inputThickness.val();
                 options.axes = $selectAxes.val();
                 options.construction = $selectConstrution.val() === '1';
@@ -51,7 +51,7 @@
             };
             const fnFillInputs = function (options) {
                 $inputThickness.val(options.thickness);
-                $inputFacadeOffset.val(options.facade_offset);
+                $inputFrontPanelOffset.val(options.front_panel_offset);
                 $selectAxes.selectpicker('val', options.axes);
                 $selectConstrution.selectpicker('val', options.construction ? '1' : '0');
                 $selectMeasureReversed.selectpicker('val', options.measure_reversed ? '1' : '0');
@@ -68,7 +68,7 @@
                 fnFillInputs: fnFillInputs
             });
             $inputThickness.ladbTextinputDimension();
-            $inputFacadeOffset.ladbTextinputDimension();
+            $inputFrontPanelOffset.ladbTextinputDimension();
             $selectAxes.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
             $selectConstrution.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
             $selectMeasureReversed.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
@@ -101,9 +101,9 @@
                 if (that.options.focused_field.option === 'thickness') {
                     $inputThickness.focus();
                     $inputThickness.select();
-                } else if (that.options.focused_field.option === 'facade_offset') {
-                    $inputFacadeOffset.focus();
-                    $inputFacadeOffset.select();
+                } else if (that.options.focused_field.option === 'front_panel_offset') {
+                    $inputFrontPanelOffset.focus();
+                    $inputFrontPanelOffset.select();
                 }
             }
 

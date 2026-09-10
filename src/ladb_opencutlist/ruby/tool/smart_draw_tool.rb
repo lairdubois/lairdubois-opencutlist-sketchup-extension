@@ -29,7 +29,7 @@ module Ladb::OpenCutList
     ACTION_DRAW_CIRCLE = 1
     ACTION_DRAW_POLYGON = 2
     ACTION_DRAW_DIVIDER = 3
-    ACTION_DRAW_FACADE = 4
+    ACTION_DRAW_FRONT_PANEL = 4
 
     ACTION_OPTION_THICKNESS = 'thickness'
     ACTION_OPTION_OFFSET = 'offset'
@@ -42,7 +42,7 @@ module Ladb::OpenCutList
     ACTION_OPTION_THICKNESS_THICKNESS = 'thickness'
 
     ACTION_OPTION_OFFSET_SHAPE_OFFSET = 'shape_offset'
-    ACTION_OPTION_OFFSET_FACADE_OFFSET = 'facade_offset'
+    ACTION_OPTION_OFFSET_FRONT_PANEL_OFFSET = 'front_panel_offset'
 
     ACTION_OPTION_SEGMENTS_SEGMENT_COUNT = 'segment_count'
 
@@ -105,10 +105,10 @@ module Ladb::OpenCutList
 
     if Sketchup.debug_mode?
       ACTIONS << {
-        :action => ACTION_DRAW_FACADE,
+        :action => ACTION_DRAW_FRONT_PANEL,
         :options => {
           ACTION_OPTION_THICKNESS => [ ACTION_OPTION_THICKNESS_THICKNESS ],
-          ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_FACADE_OFFSET ],
+          ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_FRONT_PANEL_OFFSET ],
           ACTION_OPTION_OVERLAY => [ ACTION_OPTION_OVERLAY_INSET, ACTION_OPTION_OVERLAY_FULL_OVERLAY ],
           ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_CONTEXT ],
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, ACTION_OPTION_OPTIONS_REUSE_DEFINITION, ACTION_OPTION_OPTIONS_ASK_NAME ]
@@ -151,8 +151,8 @@ module Ladb::OpenCutList
           return SmartCursorManager.cursor_pencil_polygon
       when ACTION_DRAW_DIVIDER
           return SmartCursorManager.cursor_pencil_divider
-      when ACTION_DRAW_FACADE
-          return SmartCursorManager.cursor_pencil_facade
+      when ACTION_DRAW_FRONT_PANEL
+          return SmartCursorManager.cursor_pencil_front_panel
       end
 
       super
@@ -168,7 +168,7 @@ module Ladb::OpenCutList
       when ACTION_OPTION_THICKNESS
         case option
         when ACTION_OPTION_THICKNESS_THICKNESS
-          return [ ACTION_DRAW_DIVIDER, ACTION_DRAW_FACADE ]
+          return [ ACTION_DRAW_DIVIDER, ACTION_DRAW_FRONT_PANEL ]
         end
       when ACTION_OPTION_OFFSET
         case option
@@ -176,11 +176,11 @@ module Ladb::OpenCutList
           return [ ACTION_DRAW_RECTANGLE, ACTION_DRAW_CIRCLE, ACTION_DRAW_POLYGON ]
         end
       when ACTION_OPTION_AXES
-        return [ ACTION_DRAW_DIVIDER, ACTION_DRAW_FACADE ]
+        return [ ACTION_DRAW_DIVIDER, ACTION_DRAW_FRONT_PANEL ]
       when ACTION_OPTION_OPTIONS
         case option
         when ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_ASK_NAME
-          return [ ACTION_DRAW_RECTANGLE, ACTION_DRAW_CIRCLE, ACTION_DRAW_POLYGON, ACTION_DRAW_DIVIDER, ACTION_DRAW_FACADE ]
+          return [ ACTION_DRAW_RECTANGLE, ACTION_DRAW_CIRCLE, ACTION_DRAW_POLYGON, ACTION_DRAW_DIVIDER, ACTION_DRAW_FRONT_PANEL ]
         when ACTION_OPTION_OPTIONS_DRAW_IN, ACTION_OPTION_OPTIONS_PULL_CENTRED
           return [ ACTION_DRAW_RECTANGLE, ACTION_DRAW_CIRCLE, ACTION_DRAW_POLYGON ]
         end
@@ -201,7 +201,7 @@ module Ladb::OpenCutList
         case option
         when ACTION_OPTION_OFFSET_SHAPE_OFFSET
           return false
-        when ACTION_OPTION_OFFSET_FACADE_OFFSET
+        when ACTION_OPTION_OFFSET_FRONT_PANEL_OFFSET
           return false
         end
       when ACTION_OPTION_SEGMENTS
@@ -239,7 +239,7 @@ module Ladb::OpenCutList
         end
       when ACTION_OPTION_OFFSET
         case option
-        when ACTION_OPTION_OFFSET_SHAPE_OFFSET, ACTION_OPTION_OFFSET_FACADE_OFFSET
+        when ACTION_OPTION_OFFSET_SHAPE_OFFSET, ACTION_OPTION_OFFSET_FRONT_PANEL_OFFSET
           return Kuix::Label.new(fetch_action_option_value(action, option_group, option).to_s)
         end
       when ACTION_OPTION_SEGMENTS
@@ -319,8 +319,8 @@ module Ladb::OpenCutList
         set_action_handler(SmartDrawPolygonActionHandler.new(self))
       when ACTION_DRAW_DIVIDER
         set_action_handler(SmartDrawDividerActionHandler.new(self))
-      when ACTION_DRAW_FACADE
-        set_action_handler(SmartDrawFacadeActionHandler.new(self))
+      when ACTION_DRAW_FRONT_PANEL
+        set_action_handler(SmartDrawFrontPanelActionHandler.new(self))
       end
 
       super
@@ -4065,7 +4065,7 @@ module Ladb::OpenCutList
   end
 
   # Base of the action handlers that draw a panel INSIDE an existing
-  # enclosure - a divider fitted to a compartment, a facade fitted to its
+  # enclosure - a divider fitted to a compartment, a front panel fitted to its
   # opening. What they share is the CAVITIES of the container the pick lands
   # in : one boolean pass, cached on that container, that all of them read.
   class SmartDrawPanelActionHandler < SmartDrawActionHandler
@@ -4102,11 +4102,36 @@ module Ladb::OpenCutList
 
     # -----
 
+    def _preview_part_container_axes?
+      _fetch_option_axes_context?
+    end
+
+    # -----
+
+    # The frame the axis locks (arrow keys) are read in : the CONTAINER's own,
+    # when the axes option asks for it - a canted carcass then locks on its
+    # own axes rather than on the model's. Falls back to the active frame
+    # while no part is picked yet, there being no container to read.
+    def _get_edit_transformation
+      if _fetch_option_axes_context? && (part_entity_path = get_active_part_entity_path).is_a?(Array) && part_entity_path.length > 1
+        return PathUtils.get_transformation(part_entity_path[0...-1], IDENTITY)
+      end
+      super
+    end
+
+    # -----
+
+    def _fetch_option_axes_context?
+      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_AXES, SmartDrawTool::ACTION_OPTION_AXES_CONTEXT)
+    end
+
+    # -----
+
     # Whether the cavity envelope must be REDUCED to what the panels really
     # enclose (see CommonSolidFindCavitiesWorker, ENVELOPE REDUCTION). Off
     # here : the reduction pulls the envelope back to a recessed chant, and
     # with it the CAPS that stand for the openings - which is precisely where
-    # a facade sits. A handler that fits a panel INTO a compartment may turn
+    # a front panel sits. A handler that fits a panel INTO a compartment may turn
     # it on ; one that fits a panel ONTO an opening must not.
     def _cavities_reduce_envelope?
       false
@@ -4115,7 +4140,7 @@ module Ladb::OpenCutList
     # Whether the OVERALL cavity is wanted alongside the compartments : the
     # interior as if the enclosure were empty, bounded by its contour panels
     # only (see CommonSolidFindCavitiesWorker, OVERALL CAVITY). That is what
-    # a full height facade spans, across the compartments its internal panels
+    # a full height front panel spans, across the compartments its internal panels
     # carve out.
     def _cavities_overall?
       false
@@ -4131,35 +4156,14 @@ module Ladb::OpenCutList
       false
     end
 
-    # Whether the FACADES already drawn make the openings they fill recede
-    # (see CommonSolidFindCavitiesWorker, INSET FACADES). Off here : a
+    # Whether the FRONT PANELS already drawn make the openings they fill recede
+    # (see CommonSolidFindCavitiesWorker, INSET FRONT PANELS). Off here : a
     # handler that fits a panel ONTO an opening has to read that opening as
-    # the carcass leaves it, or it would lay its facade against the back of
+    # the carcass leaves it, or it would lay its front panel against the back of
     # the one already there. A handler that fits a panel INTO a compartment
-    # must turn it on, on pain of telescoping into an inset facade.
-    def _cavities_recess_facades?
+    # must turn it on, on pain of telescoping into an inset front panel.
+    def _cavities_recess_front_panels?
       false
-    end
-
-    # -----
-
-    def _fetch_option_axes_context?
-      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_AXES, SmartDrawTool::ACTION_OPTION_AXES_CONTEXT)
-    end
-
-    # The frame the axis locks (arrow keys) are read in : the CONTAINER's own,
-    # when the axes option asks for it - a canted carcass then locks on its
-    # own axes rather than on the model's. Falls back to the active frame
-    # while no part is picked yet, there being no container to read.
-    def _get_edit_transformation
-      if _fetch_option_axes_context? && (part_entity_path = get_active_part_entity_path).is_a?(Array) && part_entity_path.length > 1
-        return PathUtils.get_transformation(part_entity_path[0...-1], IDENTITY)
-      end
-      super
-    end
-
-    def _preview_part_container_axes?
-      _fetch_option_axes_context?
     end
 
     # -----
@@ -4236,6 +4240,36 @@ module Ladb::OpenCutList
 
     # -----
 
+    # The paths of every FRONT PANEL the given container holds, at any depth and
+    # WHATEVER its visibility.
+    #
+    # The cutlist #_get_cavities_def runs cannot hand them over : like the rest
+    # of the extension it reads what the model SHOWS, and hiding the front panels -
+    # their tag, or the instances themselves - to work inside the carcass is
+    # precisely how a box is drawn. The front panel a part would telescope into
+    # would then be the one nobody has in front of them.
+    #
+    # Only the RECESS reads this list. A hidden PANEL stays out of the cavities
+    # exactly as it stays out of the cutlist : what it does there is WIDEN a
+    # cavity, which errs the way the model reads, where a front panel gone missing
+    # puts a part through another.
+    def _fetch_front_panel_entity_paths(container, container_path, front_panel_entity_paths = [])
+      return front_panel_entity_paths unless container.respond_to?(:definition)
+      container.definition.entities.each do |entity|
+        next unless entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance)
+        next if entity.definition.behavior.always_face_camera?
+        entity_path = container_path + [ entity ]
+        if LayerAttributes.type_of(entity) == LayerAttributes::TYPE_FRONT_PANEL
+          front_panel_entity_paths << entity_path   # A front panel is read WHOLE : what it holds is its own business, and a front panel inside a front panel is none
+        else
+          _fetch_front_panel_entity_paths(entity, entity_path, front_panel_entity_paths)
+        end
+      end
+      front_panel_entity_paths
+    end
+
+    # -----
+
     # The cavities of the given part's container - by default the ACTIVE
     # part's. The explicit parameters exist for #_can_activate_part?, which
     # runs BEFORE the part it examines is activated and so cannot rely on the
@@ -4282,39 +4316,39 @@ module Ladb::OpenCutList
         ).run
       }
 
-      # The FACADES are held apart from the panels : a facade is laid ON the
+      # The FRONT PANELS are held apart from the panels : a front panel is laid ON the
       # carcass, and read as a panel of it, it pushes the envelope forward over
-      # the part of the facade it covers - the openings that are left then read
-      # on a slanted, oversized cap, and the next facade is fitted to a mouth
-      # that does not exist. Nothing in its geometry says it is a facade (see
+      # the part of the front panel it covers - the openings that are left then read
+      # on a slanted, oversized cap, and the next front panel is fitted to a mouth
+      # that does not exist. Nothing in its geometry says it is a front panel (see
       # CommonSolidFindCavitiesWorker, APPLIED PANELS) : its LAYER does.
       #
-      # They are not necessarily out of the picture, though : a facade fitted
+      # They are not necessarily out of the picture, though : a front panel fitted
       # INTO its mouth occupies the front of the compartment it closes, and a
       # handler that fits a panel in there has to stop at its back. Handed to
       # the worker aside, that is exactly what they do - they recede the
       # openings they fill, and nothing else (see
-      # CommonSolidFindCavitiesWorker, INSET FACADES). Aside also means read
-      # aside : #_fetch_facade_entity_paths goes and gets them from the
+      # CommonSolidFindCavitiesWorker, INSET FRONT PANELS). Aside also means read
+      # aside : #_fetch_front_panel_entity_paths goes and gets them from the
       # container itself, where the ones the model hides are still there.
       panel_instance_infos = parts.flat_map { |container_part|
         container_part.def.instance_infos.values
       }.reject { |instance_info|
-        LayerAttributes.type_of(instance_info.entity) == LayerAttributes::TYPE_FACADE
+        LayerAttributes.type_of(instance_info.entity) == LayerAttributes::TYPE_FRONT_PANEL
       }
 
       drawing_defs = panel_instance_infos.map { |instance_info| fn_decompose.call(instance_info.path, false) }
-      # A facade is read whole and blind to what the model shows : the tag it
+      # A front panel is read whole and blind to what the model shows : the tag it
       # is marked with is the tag its own faces are likely to carry, and hidden
       # once it is the mesh that would come back empty.
-      facade_drawing_defs = _cavities_recess_facades? ? _fetch_facade_entity_paths(container, container_path).map { |entity_path| fn_decompose.call(entity_path, true) } : []
+      front_panel_drawing_defs = _cavities_recess_front_panels? ? _fetch_front_panel_entity_paths(container, container_path).map { |entity_path| fn_decompose.call(entity_path, true) } : []
 
       result_def = CommonSolidFindCavitiesWorker.new(drawing_defs,
                                                      max_opening_planes: 4,
                                                      reduce_envelope: _cavities_reduce_envelope?,
                                                      overall_cavity: _cavities_overall?,
                                                      ignore_applied_panels: _cavities_ignore_applied_panels?,
-                                                     facade_drawing_defs: facade_drawing_defs
+                                                     front_panel_drawing_defs: front_panel_drawing_defs
       ).run
 
       @cavities_def = CavitiesDef.new(container_path, result_def, drawing_defs)
@@ -4325,38 +4359,6 @@ module Ladb::OpenCutList
 
       @cavities_def
     end
-
-    # -----
-
-    # The paths of every FACADE the given container holds, at any depth and
-    # WHATEVER its visibility.
-    #
-    # The cutlist #_get_cavities_def runs cannot hand them over : like the rest
-    # of the extension it reads what the model SHOWS, and hiding the facades -
-    # their tag, or the instances themselves - to work inside the carcass is
-    # precisely how a box is drawn. The facade a part would telescope into
-    # would then be the one nobody has in front of them.
-    #
-    # Only the RECESS reads this list. A hidden PANEL stays out of the cavities
-    # exactly as it stays out of the cutlist : what it does there is WIDEN a
-    # cavity, which errs the way the model reads, where a facade gone missing
-    # puts a part through another.
-    def _fetch_facade_entity_paths(container, container_path, facade_entity_paths = [])
-      return facade_entity_paths unless container.respond_to?(:definition)
-      container.definition.entities.each do |entity|
-        next unless entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance)
-        next if entity.definition.behavior.always_face_camera?
-        entity_path = container_path + [ entity ]
-        if LayerAttributes.type_of(entity) == LayerAttributes::TYPE_FACADE
-          facade_entity_paths << entity_path   # A facade is read WHOLE : what it holds is its own business, and a facade inside a facade is none
-        else
-          _fetch_facade_entity_paths(entity, entity_path, facade_entity_paths)
-        end
-      end
-      facade_entity_paths
-    end
-
-    # -----
 
     # The cavity fragment a pick designates, or nil when the point sits in no
     # cavity at all.
@@ -4388,7 +4390,7 @@ module Ladb::OpenCutList
       # face behind it. nil when it designates none.
       #
       # Picking the cavities rather than the model is what lets a part be
-      # fitted in a compartment something else stands in front of - a facade,
+      # fitted in a compartment something else stands in front of - a front panel,
       # a drawer front, anything laid over the opening - without hiding it :
       # the mouths are the cavity's own geometry, and what fills them is not.
       #
@@ -5003,12 +5005,12 @@ module Ladb::OpenCutList
       _fetch_option_reduce_envelope?
     end
 
-    # A divider is fitted INTO the compartment it divides : a facade already
+    # A divider is fitted INTO the compartment it divides : a front panel already
     # standing in its mouth is in the way, and the compartment stops at its
-    # back - see CommonSolidFindCavitiesWorker, INSET FACADES. A facade laid
+    # back - see CommonSolidFindCavitiesWorker, INSET FRONT PANELS. A front panel laid
     # in applique is no obstacle and recedes nothing, which the worker reads
     # off the cavities themselves : there is nothing to tell it here.
-    def _cavities_recess_facades?
+    def _cavities_recess_front_panels?
       true
     end
 
@@ -5021,7 +5023,7 @@ module Ladb::OpenCutList
     # CavitiesDef#pick_ray).
     #
     # A divider is fitted INSIDE a compartment, and what closes that
-    # compartment stands between the cursor and it : a facade, a drawer front,
+    # compartment stands between the cursor and it : a front panel, a drawer front,
     # a plinth, the neighbouring carcass. Reading the pick off the model makes
     # every one of them opaque - the picker hands back the face in FRONT, a
     # point that lies in no cavity - and the only way through is to hide them.
@@ -6106,44 +6108,44 @@ module Ladb::OpenCutList
 
   end
 
-  # Draws a FACADE fitted to an opening of a cavity.
+  # Draws a FRONT PANEL fitted to an opening of a cavity.
   #
   # The cavity detector already knows what an opening is : the envelope CAPS
   # (face id 0) close the cavity flush with the panel edges where no panel
   # does, and SolidCavityFragmentDef#opening_defs reads their net contour -
   # one closed loop per opening, exact whatever the tessellation or the slope
-  # of the facade. That contour IS the facade, so the handler only has to
+  # of the front panel. That contour IS the front panel, so the handler only has to
   # choose WHICH opening the pick means, and give it a thickness.
   #
-  # Two POSES : INSET, where the facade fills the mouth with its outer face
+  # Two POSES : INSET, where the front panel fills the mouth with its outer face
   # flush with the plane the caps stand on, and OVERLAY, where it is laid in
-  # front of the facade and covers the frame around its mouth - which the
+  # front of the front panel and covers the frame around its mouth - which the
   # cavity cannot tell on its own, and is read off the container's silhouette
-  # instead (see #_get_overlay_points). #_get_facade_nominal_points is the
+  # instead (see #_get_overlay_points). #_get_front_panel_nominal_points is the
   # single place the two branch.
   #
-  # One mouth may take SEVERAL facades : the nominal contour is then shared
+  # One mouth may take SEVERAL front panels : the nominal contour is then shared
   # into equal bands before the clearance applies, and the direction they
   # succeed one another along is read off the panel under the cursor - the
   # cuts run parallel to it (see #_get_split_direction).
   #
   # The OVERALL cavity is deliberately not asked for either
   # (#_cavities_overall? stays false, see SmartDrawPanelActionHandler) : it is
-  # what a FULL HEIGHT facade spans, but a pick would then land in two cavities
+  # what a FULL HEIGHT front panel spans, but a pick would then land in two cavities
   # at once - its compartment and the overall one - and which of them the user
   # means is a rule of its own, not something to settle by fragment order.
-  class SmartDrawFacadeActionHandler < SmartDrawPanelActionHandler
+  class SmartDrawFrontPanelActionHandler < SmartDrawPanelActionHandler
 
     STATE_PLACE = 0
 
-    LAYER_3D_FACADE_PREVIEW = 200
+    LAYER_3D_FRONT_PANEL_PREVIEW = 200
 
     LAYER_2D_WIDTH = 100
 
     # Minimum dot between an opening's outward normal and the direction the
     # camera looks FROM, for that opening to be a candidate : an opening seen
     # edge-on, or from behind, is not the one the user is pointing at. A
-    # facade may still be as flat as 6° from edge-on and take a facade - only
+    # front panel may still be as flat as 6° from edge-on and take a front panel - only
     # the ones actually turned away are ruled out.
     OPENING_FACING_MIN_DOT = 0.1
 
@@ -6162,14 +6164,14 @@ module Ladb::OpenCutList
     FOOTPRINT_CLEANUP_DELTA = SolidMeshDef::TOLERANCE / 10.0
 
     # How far off the straight line its two neighbours draw a vertex of a
-    # facade outline may sit and still be no corner at all - see
+    # front panel outline may sit and still be no corner at all - see
     # #_flatten_outline. Same order as the silhouette cleanup, and for the
     # same reason : a tenth of the model tolerance is under anything drawn on
     # purpose and over everything left behind by an assembly meant to be
     # flush.
     OUTLINE_FLAT_TOLERANCE = SolidMeshDef::TOLERANCE / 10.0
 
-    # How far a cavity's share of the facade is grown to see whether it
+    # How far a cavity's share of the front panel is grown to see whether it
     # TOUCHES another - see #_merge_adjacent?. The contact between two shares
     # is exact, they are cut apart by the very same bisector, so all this has
     # to tell apart is a contact by an EDGE from one by a mere CORNER : grown
@@ -6184,7 +6186,7 @@ module Ladb::OpenCutList
 
     # Below this norm the picked face's normal, projected on the opening
     # plane, is no direction at all : the face is nearly PARALLEL to the
-    # opening and says nothing about where the facades should meet. Both
+    # opening and says nothing about where the front panels should meet. Both
     # normals being unit, that norm IS the sine of the angle between the two
     # planes - so this is a 10 degree threshold.
     SPLIT_DIRECTION_MIN_NORM = 0.17
@@ -6196,7 +6198,7 @@ module Ladb::OpenCutList
     attr_reader :locked_direction, :number, :widths
 
     def initialize(tool, previous_action_handler = nil)
-      super(SmartDrawTool::ACTION_DRAW_FACADE, tool, previous_action_handler)
+      super(SmartDrawTool::ACTION_DRAW_FRONT_PANEL, tool, previous_action_handler)
 
       @locked_direction = previous_action_handler.is_a?(self.class) ? previous_action_handler.locked_direction : nil
       @number = previous_action_handler.is_a?(self.class) ? previous_action_handler.number : 1
@@ -6249,17 +6251,17 @@ module Ladb::OpenCutList
 
     # -----
 
-    # A pick that stays DOWN opens a MERGE : the facade then spans every cavity
+    # A pick that stays DOWN opens a MERGE : the front panel then spans every cavity
     # the cursor visits before the button comes back up - one leaf over
-    # several compartments, the way a facade is often built.
+    # several compartments, the way a front panel is often built.
     #
     # What the pick resolves to is frozen here, once : the opening, the frame
-    # it is read in, the direction the facades would be shared along. The drag
+    # it is read in, the direction the front panels would be shared along. The drag
     # only ever adds cavities to it. That is what lets the cursor cross a
     # chant, a hinge, the outside of the case - anything that resolves to no
-    # cavity at all - without the facade losing the shape it has.
+    # cavity at all - without the front panel losing the shape it has.
     #
-    # In applique ONLY : an inset facade merged over two compartments would
+    # In applique ONLY : an inset front panel merged over two compartments would
     # have to be notched around the panel that separates them. The gesture
     # then simply is the click it always was.
     def onToolLButtonDown(tool, flags, x, y, view)
@@ -6268,7 +6270,7 @@ module Ladb::OpenCutList
       case @state
       when STATE_PLACE
         @merge_cancelled = false
-        if _fetch_option_overlay_full_overlay? && (context = _compute_facade_context(@picked_point, view)).is_a?(FacadeContext)
+        if _fetch_option_overlay_full_overlay? && (context = _compute_front_panel_context(@picked_point, view)).is_a?(FrontPanelContext)
           @merge_context = context
           @merge_fragment_defs = [ context.fragment_def ]
           @merge_paths = [ Fiddle::Clippy.points_to_rpath(context.points) ]
@@ -6291,15 +6293,15 @@ module Ladb::OpenCutList
           merging = _merging?
           if _create_entity(@picked_point, view)
             _reset_merge
-            # The cavities are NOT re-read : laying a facade on the carcass does
-            # not change the compartments it has, and the next facade is to be
+            # The cavities are NOT re-read : laying a front panel on the carcass does
+            # not change the compartments it has, and the next front panel is to be
             # fitted to the same bare openings as this one. The detection would
-            # come to the same answer anyway - the facade goes on a layer marked
+            # come to the same answer anyway - the front panel goes on a layer marked
             # as such, which #_get_cavities_def leaves out of the enclosure -
-            # this only spares paying for it again at every facade.
+            # this only spares paying for it again at every front panel.
             _refresh
           else
-            # The merged facade is gone with the drag that carried it : the
+            # The merged front panel is gone with the drag that carried it : the
             # preview has to stop showing it.
             _reset_merge
             _refresh if merging
@@ -6312,12 +6314,12 @@ module Ladb::OpenCutList
     end
 
     # The distribution is the only thing a pick cannot undo by itself, and it
-    # survives from one facade to the next on purpose : it is unwound here, the
+    # survives from one front panel to the next on purpose : it is unwound here, the
     # pinned widths first, then the count.
     def onToolCancel(tool, reason, view)
 
       # The button is still down when a drag is called off : the release that
-      # follows must not build the facade it was about.
+      # follows must not build the front panel it was about.
       if _merging?
         _reset_merge
         @merge_cancelled = true
@@ -6355,10 +6357,10 @@ module Ladb::OpenCutList
           end
         end
 
-        # The arrow keys pin the direction the facades succeed one another
+        # The arrow keys pin the direction the front panels succeed one another
         # along, the way they pin the divider's normal - the same axis, the
         # same frame (see the axes option). It only has anything to say once
-        # the opening is SHARED : a lone facade takes the whole mouth
+        # the opening is SHARED : a lone front panel takes the whole mouth
         # whichever way it would have been cut.
         if key == VK_RIGHT
           _toggle_locked_direction(_get_active_x_axis)
@@ -6404,7 +6406,7 @@ module Ladb::OpenCutList
 
       return true if _read_number(tool, text, view)
       return true if _read_widths(tool, text, view)
-      return true if _read_facade_offset(tool, text, view)
+      return true if _read_front_panel_offset(tool, text, view)
       return true if _read_thickness(tool, text, view)
 
       false
@@ -6423,12 +6425,12 @@ module Ladb::OpenCutList
               @tool.remove_tooltip
               @tool.pop_cursor(SmartCursorManager.cursor_select_error)
             else
-              @tool.show_tooltip(PLUGIN.get_i18n_string('tool.smart_draw.error.invalid_facade_cavity'), SmartTool::MESSAGE_TYPE_ERROR)
+              @tool.show_tooltip(PLUGIN.get_i18n_string('tool.smart_draw.error.invalid_front_panel_cavity'), SmartTool::MESSAGE_TYPE_ERROR)
               @tool.push_cursor(SmartCursorManager.cursor_select_error)
             end
           end
         end
-        _preview_facade(view)
+        _preview_front_panel(view)
         _preview_cavity
       end
 
@@ -6440,7 +6442,7 @@ module Ladb::OpenCutList
       # longer stands for the one the user pointed at.
       @locked_direction = nil if option_group == SmartDrawTool::ACTION_OPTION_AXES
       # OVERLAY is folded into #_cavities_reduce_envelope? itself (an applied
-      # facade never wants a receded mouth - see there), so flipping it can
+      # front panel never wants a receded mouth - see there), so flipping it can
       # change what the cavities compute to just as much as the option does.
       if option_group == SmartDrawTool::ACTION_OPTION_OVERLAY ||
          (option_group == SmartDrawTool::ACTION_OPTION_OPTIONS && option == SmartDrawTool::ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE)
@@ -6496,14 +6498,14 @@ module Ladb::OpenCutList
     # -----
 
     def _can_activate_part?(part_entity_path, part)
-      return [ false, 'tool.smart_draw.error.invalid_facade_seed' ] unless (!part.is_a?(Part) || part.group.material_type != MaterialAttributes::TYPE_HARDWARE)
-      return [ false, 'tool.smart_draw.error.invalid_facade_container' ] if !part_entity_path.nil? && part_entity_path.one?
+      return [ false, 'tool.smart_draw.error.invalid_front_panel_seed' ] unless (!part.is_a?(Part) || part.group.material_type != MaterialAttributes::TYPE_HARDWARE)
+      return [ false, 'tool.smart_draw.error.invalid_front_panel_container' ] if !part_entity_path.nil? && part_entity_path.one?
 
       # The inherited tests first : no point paying for a cavity detection on a part that will be refused anyway.
       can_activate, _ = super_result = super
       return super_result unless can_activate
 
-      return [ false, 'tool.smart_draw.error.no_facade_cavity' ] if (cavities_def = _get_cavities_def(part_entity_path, part)).is_a?(CavitiesDef) && cavities_def.valid? && cavities_def.fragment_defs.empty?
+      return [ false, 'tool.smart_draw.error.no_front_panel_cavity' ] if (cavities_def = _get_cavities_def(part_entity_path, part)).is_a?(CavitiesDef) && cavities_def.valid? && cavities_def.fragment_defs.empty?
 
       super_result
     end
@@ -6517,7 +6519,7 @@ module Ladb::OpenCutList
     end
 
     # -----
-    # Every cavity the facade spans while a merge is on, not just the one under
+    # Every cavity the front panel spans while a merge is on, not just the one under
     # the cursor : the whole point of the drag is to see the set grow.
     def _get_preview_cavity_fragment_defs(cavities_def)
       return @merge_fragment_defs if _merging?
@@ -6526,10 +6528,10 @@ module Ladb::OpenCutList
 
     # -----
 
-    # "x3", "*3" or "/3" - how many facades share the opening. The two forms
-    # mean the same layout here, unlike the divider's : a facade takes no
+    # "x3", "*3" or "/3" - how many front panels share the opening. The two forms
+    # mean the same layout here, unlike the divider's : a front panel takes no
     # thickness out of the opening, so "3 of them" and "divide it in 3"
-    # describe the very same three facades.
+    # describe the very same three front panels.
     def _read_number(tool, text, view)
       return false unless text.is_a?(String) && (match = text.match(/^([x*\/])(\d+)$/))
 
@@ -6554,9 +6556,9 @@ module Ladb::OpenCutList
     # same reading as the Smart Draw Divider's spacings : the leading run
     # pins from the near end of the opening, the trailing run from the far
     # end, an invalid or empty entry marking where the free middle begins -
-    # "400;" pins only the first facade, ";400" only the last. Which end is
+    # "400;" pins only the first front panel, ";400" only the last. Which end is
     # near is settled by #_orient_split_direction, never by where the cursor
-    # happened to be. See #_get_facade_band_intervals.
+    # happened to be. See #_get_front_panel_band_intervals.
     def _read_widths(tool, text, view)
 
       list = _split_user_text(text)
@@ -6594,22 +6596,22 @@ module Ladb::OpenCutList
       true
     end
 
-    # A length SUFFIXED with "x" - "3x" - sets the facade offset, the same VCB
+    # A length SUFFIXED with "x" - "3x" - sets the front panel offset, the same VCB
     # grammar the other actions read their shape offset with (see
     # #_read_offset). A bare length is already the thickness here, so the
     # suffix is what tells the two apart.
-    def _read_facade_offset(tool, text, view)
+    def _read_front_panel_offset(tool, text, view)
       return false unless text.is_a?(String) && (match = /^(.+)x$/i.match(text))
 
-      facade_offset = _read_user_text_length(tool, match[1])
-      return true if facade_offset.nil?
+      front_panel_offset = _read_user_text_length(tool, match[1])
+      return true if front_panel_offset.nil?
 
-      if facade_offset < 0
-        tool.notify_errors([[ 'tool.default.error.invalid_offset', { :value => facade_offset } ]])
+      if front_panel_offset < 0
+        tool.notify_errors([[ 'tool.default.error.invalid_offset', { :value => front_panel_offset } ]])
         return true
       end
 
-      @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OFFSET, SmartDrawTool::ACTION_OPTION_OFFSET_FACADE_OFFSET, facade_offset.to_s, fire_event: true)
+      @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OFFSET, SmartDrawTool::ACTION_OPTION_OFFSET_FRONT_PANEL_OFFSET, front_panel_offset.to_s, fire_event: true)
       Sketchup.set_status_text('', SB_VCB_VALUE)
       _refresh
 
@@ -6622,8 +6624,8 @@ module Ladb::OpenCutList
       @tool.fetch_action_option_length(@action, SmartDrawTool::ACTION_OPTION_THICKNESS, SmartDrawTool::ACTION_OPTION_THICKNESS_THICKNESS)
     end
 
-    def _fetch_option_facade_offset
-      @tool.fetch_action_option_length(@action, SmartDrawTool::ACTION_OPTION_OFFSET, SmartDrawTool::ACTION_OPTION_OFFSET_FACADE_OFFSET)
+    def _fetch_option_front_panel_offset
+      @tool.fetch_action_option_length(@action, SmartDrawTool::ACTION_OPTION_OFFSET, SmartDrawTool::ACTION_OPTION_OFFSET_FRONT_PANEL_OFFSET)
     end
 
     def _fetch_option_overlay_full_overlay?
@@ -6642,7 +6644,7 @@ module Ladb::OpenCutList
       @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE)
     end
 
-    # Not exposed in the action's options panel : the layer facades are put on
+    # Not exposed in the action's options panel : the layer front panels are put on
     # is a technical setting, not a drawing option - only the modal (see
     # modal-smart-draw-tool-action-4.twig) gives access to it.
     def _fetch_option_layer_name
@@ -6650,23 +6652,23 @@ module Ladb::OpenCutList
     end
 
     # Off by default, like the base class : reduction pulls a cavity's own
-    # mouth back to a recessed chant, which is the LAST place a facade
+    # mouth back to a recessed chant, which is the LAST place a front panel
     # spanning the whole opening wants it. Turned on, though, it is what lets
     # a recessed divider (or shelf) split the opening into one cavity per
     # compartment in the first place - with nothing left to select, there
-    # would be no per-compartment facade to place.
+    # would be no per-compartment front panel to place.
     #
-    # OVERLAY is the exception, whatever the option says : an applied facade
-    # is read off the RECEDED mouth just the same (#_get_facade_nominal_points
+    # OVERLAY is the exception, whatever the option says : an applied front panel
+    # is read off the RECEDED mouth just the same (#_get_front_panel_nominal_points
     # starts from opening_def.outer_loop before growing it), and everything
     # #_get_overlay_points then builds - the frame the growth happens in, and
-    # the plane the facade is finally cut and placed on - inherits that same
+    # the plane the front panel is finally cut and placed on - inherits that same
     # setback. The growth itself lands right, since #_compute_footprint_paths
-    # reads the UNREDUCED panels, but at the wrong depth : the facade ends up
+    # reads the UNREDUCED panels, but at the wrong depth : the front panel ends up
     # spanning the container's true outer silhouette - the untouched contour
     # stiles included - while sitting flush with the recessed divider's edge,
     # deep enough behind the case's own front to bury itself in the stiles'
-    # own material. INSET has no such trap : its facade IS the mouth, at
+    # own material. INSET has no such trap : its front panel IS the mouth, at
     # whatever depth that mouth sits.
     def _cavities_reduce_envelope?
       _fetch_option_reduce_envelope? && !_fetch_option_overlay_full_overlay?
@@ -6674,88 +6676,88 @@ module Ladb::OpenCutList
 
     # -----
 
-    # Whether the given pick lands on a facade already built there, rather
+    # Whether the given pick lands on a front panel already built there, rather
     # than on the bare cavity behind it.
     #
-    # Nothing downstream can tell the two apart on its own : an INSET facade's
+    # Nothing downstream can tell the two apart on its own : an INSET front panel's
     # outward face sits exactly on the mouth it fills, so nudged inward (see
     # #_get_cavity_fragment_def) it lands in the very same compartment a bare
-    # opening would - offering to build a second facade where one already
-    # stands. #_get_facade_opening_def cannot catch it either : it only reads
+    # opening would - offering to build a second front panel where one already
+    # stands. #_get_front_panel_opening_def cannot catch it either : it only reads
     # what the pick resolved TO, never what actually stopped the ray. Only the
     # pick itself still knows that, off the face it hit - marked, like every
-    # facade, by its LAYER alone (see LayerAttributes, TYPE_FACADE).
-    def _picked_on_existing_facade?(picker)
+    # front panel, by its LAYER alone (see LayerAttributes, TYPE_FRONT_PANEL).
+    def _picked_on_existing_front_panel?(picker)
       (picked_face_path = picker.picked_face_path).is_a?(Array) &&
-        picked_face_path.any? { |entity| LayerAttributes.type_of(entity) == LayerAttributes::TYPE_FACADE }
+        picked_face_path.any? { |entity| LayerAttributes.type_of(entity) == LayerAttributes::TYPE_FRONT_PANEL }
     end
 
-    # A pick on an existing facade snaps to nothing : see
-    # #_picked_on_existing_facade?.
+    # A pick on an existing front panel snaps to nothing : see
+    # #_picked_on_existing_front_panel?.
     def _snap_point(picker)
-      return false if _picked_on_existing_facade?(picker)
+      return false if _picked_on_existing_front_panel?(picker)
       super
     end
 
     # -----
 
-    # What the pick resolves to, before any outline is cut : the FacadeContext,
+    # What the pick resolves to, before any outline is cut : the FrontPanelContext,
     # or nil when the pick is not on a cavity that has an opening facing the
     # viewer.
     #
-    # Split out of #_compute_facade_defs so that a count can be validated (see
+    # Split out of #_compute_front_panel_defs so that a count can be validated (see
     # #_set_distribution) against the very contour the preview is cut from.
-    def _compute_facade_context(point, view)
+    def _compute_front_panel_context(point, view)
       # A merge in progress IS the answer : it was resolved when the drag
       # opened, and has been fed cavities ever since (see #_merge_add).
       return @merge_context if _merging?
 
       return nil unless point.is_a?(Geom::Point3d)
-      return nil if _picked_on_existing_facade?(@picker)
+      return nil if _picked_on_existing_front_panel?(@picker)
       return nil unless (picked_face_manipulator = @picker.picked_plane_manipulator).is_a?(PlaneManipulator)
       return nil unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef) && cavities_def.valid?
 
       fragment_def = _get_cavity_fragment_def(cavities_def, point, picked_face_manipulator)
       return nil unless fragment_def.is_a?(SolidCavityFragmentDef)
 
-      opening_def = _get_facade_opening_def(fragment_def, view)
+      opening_def = _get_front_panel_opening_def(fragment_def, view)
       return nil if opening_def.nil?
 
       # The opening's OWN frame, where the mouth lies flat on z = 0 and
       # everything below is computed. It is canonical for the PLANE - its
       # origin is the world origin projected on it, its axes come from the
-      # normal alone - so two cavities sharing a facade read their
+      # normal alone - so two cavities sharing a front panel read their
       # neighbours and the container's silhouette in the very same
       # coordinates, and the silhouette can be computed once for them all.
       x_axis, y_axis, z_axis = opening_def.normal.axes
       t = Geom::Transformation.axes(Geom::Point3d.new(0, 0, 0).project_to_plane(opening_def.plane), x_axis, y_axis, z_axis)
       ti = t.inverse
 
-      points = _get_facade_nominal_points(fragment_def, opening_def, ti)
+      points = _get_front_panel_nominal_points(fragment_def, opening_def, ti)
       return nil if points.nil? || points.length < 3
 
-      FacadeContext.new(cavities_def, fragment_def, opening_def, t, points, _get_split_direction(picked_face_manipulator, opening_def, ti, view))
+      FrontPanelContext.new(cavities_def, fragment_def, opening_def, t, points, _get_split_direction(picked_face_manipulator, opening_def, ti, view))
     end
 
-    # The facades the pick resolves to, in the split direction's own order - so
+    # The front panels the pick resolves to, in the split direction's own order - so
     # the same pick always yields them in the same order, and the batch is
     # always named after the same one. nil when the pick is not on a usable
     # opening, or when the count does not fit on it.
-    def _compute_facade_defs(point, view)
-      return nil unless (context = _compute_facade_context(point, view)).is_a?(FacadeContext)
+    def _compute_front_panel_defs(point, view)
+      return nil unless (context = _compute_front_panel_context(point, view)).is_a?(FrontPanelContext)
 
       thickness = _fetch_option_thickness
       return nil if thickness.nil? || thickness <= 0
 
-      outlines = _get_facade_outlines(context)
+      outlines = _get_front_panel_outlines(context)
       return nil if outlines.nil?
 
       overlay = _fetch_option_overlay_full_overlay?
       direction = context.world_direction
-      outlines.map { |outline| FacadeDef.new(context.container_path, context.fragment_def, context.opening_def, outline, thickness, overlay, direction) }
+      outlines.map { |outline| FrontPanelDef.new(context.container_path, context.fragment_def, context.opening_def, outline, thickness, overlay, direction) }
     end
 
-    # Applies a new distribution - how many facades, and which widths are
+    # Applies a new distribution - how many front panels, and which widths are
     # pinned - then previews it, reporting the one thing the user cannot see
     # coming : a layout the opening under the cursor has no room for. It is
     # still stored in that case, the pick may well land on a roomier opening
@@ -6765,37 +6767,37 @@ module Ladb::OpenCutList
       @number = [ number, 1 ].max
       @widths = widths
 
-      if _shared? && (context = _compute_facade_context(@picked_point, view)).is_a?(FacadeContext) && _get_facade_outlines(context).nil?
+      if _shared? && (context = _compute_front_panel_context(@picked_point, view)).is_a?(FrontPanelContext) && _get_front_panel_outlines(context).nil?
         UI.beep
-        tool.notify_errors([ [ 'tool.smart_draw.error.facade_number_overflow', { :number => @number } ] ])
+        tool.notify_errors([ [ 'tool.smart_draw.error.front_panel_number_overflow', { :number => @number } ] ])
       end
 
       _refresh
     end
 
-    # Whether the opening is SHARED at all - several facades, or a single one
-    # the user pinned the width of. A lone facade taking the whole contour
+    # Whether the opening is SHARED at all - several front panels, or a single one
+    # the user pinned the width of. A lone front panel taking the whole contour
     # short circuits the whole sharing pass.
     def _shared?
       @number > 1 || @widths.any?
     end
 
-    # The opening a facade is meant for : among the ones the cavity has, the
+    # The opening a front panel is meant for : among the ones the cavity has, the
     # one the camera FACES most squarely.
     #
     # Nothing in the cavity says which of its mouths is the front - a through
-    # tube has two, congruent ones. What says it is the viewer : a facade is
-    # drawn on the facade being looked at, so the outward normals are scored
+    # tube has two, congruent ones. What says it is the viewer : a front panel is
+    # drawn on the front panel being looked at, so the outward normals are scored
     # against the direction the camera looks FROM, and an opening seen from
     # behind (or edge-on, OPENING_FACING_MIN_DOT) is not a candidate at all.
     #
     # FACING first, area only to break a tie between two openings the camera
     # is square to alike. Reading the area first looks reasonable - the main
-    # facade is usually the biggest mouth - and is wrong as soon as the case
+    # front panel is usually the biggest mouth - and is wrong as soon as the case
     # is seen from three quarters : a compartment open on its side offers a
-    # mouth several times the facade's, and the facade lands on the flank the
+    # mouth several times the front panel's, and the front panel lands on the flank the
     # user is not even looking at. What the user points at is what they FACE.
-    def _get_facade_opening_def(fragment_def, view)
+    def _get_front_panel_opening_def(fragment_def, view)
       direction = view.camera.direction
       to_camera = [ -direction.x, -direction.y, -direction.z ]
 
@@ -6814,7 +6816,7 @@ module Ladb::OpenCutList
       best
     end
 
-    # The NOMINAL contour the facades are cut out of, in the opening's frame -
+    # The NOMINAL contour the front panels are cut out of, in the opening's frame -
     # before the count shares it and before the clearance pulls it back.
     #
     # Two POSES, and what separates them is entirely here :
@@ -6822,7 +6824,7 @@ module Ladb::OpenCutList
     #   INSET   : the mouth itself, the opening's outer contour.
     #   OVERLAY : the share of the container's front this cavity is entitled
     #             to - see #_get_overlay_points.
-    def _get_facade_nominal_points(fragment_def, opening_def, ti)
+    def _get_front_panel_nominal_points(fragment_def, opening_def, ti)
 
       mouth = opening_def.outer_loop
       return nil if mouth.nil? || mouth.length < 3
@@ -6834,21 +6836,21 @@ module Ladb::OpenCutList
       _get_overlay_points(fragment_def, opening_def, mouth_points, ti)
     end
 
-    # The outlines the facades are cut to, in WORLD coordinates - one per facade,
+    # The outlines the front panels are cut to, in WORLD coordinates - one per front panel,
     # ordered along the split direction.
     #
     # The nominal contour is shared FIRST, and only then does the CLEARANCE
-    # apply, to each facade on every one of its own edges. That order is the
-    # whole point : it is how a set of facades is specified - a 2 mm clearance
+    # apply, to each front panel on every one of its own edges. That order is the
+    # whole point : it is how a set of front panels is specified - a 2 mm clearance
     # takes 4 mm off the pair's width, 4 off its height, and leaves 4 mm
     # between the two leaves. A PINNED width is therefore the width of the
     # share, not of the finished leaf, exactly as a pinned opening is for the
     # divider.
     #
     # nil when the layout leaves nothing buildable : a count the contour is
-    # too narrow for, or a clearance that eats a facade whole. Building fewer
-    # facades than asked is not the answer.
-    def _get_facade_outlines(context)
+    # too narrow for, or a clearance that eats a front panel whole. Building fewer
+    # front panels than asked is not the answer.
+    def _get_front_panel_outlines(context)
 
       if _shared?
         bands = _split_points(context.points, context.direction, @number, @widths)
@@ -6858,7 +6860,7 @@ module Ladb::OpenCutList
       end
 
       bands.map { |band|
-        points = _apply_facade_offset(band)
+        points = _apply_front_panel_offset(band)
         return nil if points.nil?
         _flatten_outline(points).map { |point| point.transform(context.transformation) }
       }
@@ -6870,10 +6872,10 @@ module Ladb::OpenCutList
     # A carcass is full of faces MEANT to be flush - the end of a panel cut
     # to the very plane of the face of the next one at a mitre - and modelled
     # a micron off. The silhouette then carries a 179.999 degree vertex that
-    # Clipper, rightly, has no reason to drop, and the facade built on it comes
+    # Clipper, rightly, has no reason to drop, and the front panel built on it comes
     # out with a superfluous edge splitting one of its sides into two coplanar
     # faces. The mouth of a cavity, read off a triangle soup, can hand over
-    # such a vertex just as well - so the facade outline is flattened whatever
+    # such a vertex just as well - so the front panel outline is flattened whatever
     # the overlay setting that drew it.
     #
     # Read as a DISTANCE to the chord rather than as an angle : it is the
@@ -6912,11 +6914,11 @@ module Ladb::OpenCutList
     end
 
     # The direction, in the opening's own frame ([ x, y ] unit Floats), the
-    # facades succeed one another along - so the cuts between them run
+    # front panels succeed one another along - so the cuts between them run
     # PERPENDICULAR to it, that is, PARALLEL to the panel under the cursor.
     #
     # That panel is the whole rule : its normal, projected on the opening
-    # plane. Hovering a side gives facades side by side, hovering a shelf gives
+    # plane. Hovering a side gives front panels side by side, hovering a shelf gives
     # them stacked, and an oblique panel gives a cut parallel to it - nothing
     # is snapped to the container's axes, so a canted carcass reads as
     # exactly as an orthogonal one.
@@ -6925,14 +6927,14 @@ module Ladb::OpenCutList
     # (SPLIT_DIRECTION_MIN_NORM), and that panel is the BACK of the very
     # cavity being faced - the most natural thing to hover on a case seen
     # from the front. The fallback is then the horizontal of the opening
-    # plane, hence vertical cuts and facades side by side, which is what a pair
-    # of facades usually is. It is read off the world's own up rather than off
+    # plane, hence vertical cuts and front panels side by side, which is what a pair
+    # of front panels usually is. It is read off the world's own up rather than off
     # the camera so that orbiting does not swing it around ; on a HORIZONTAL
     # opening, where there is no horizontal of the plane to speak of, the
     # screen's own right takes over.
     #
     # A LOCKED axis (arrow keys) overrides the panel rule entirely : the
-    # facades then succeed one another along that axis, whatever the cursor
+    # front panels then succeed one another along that axis, whatever the cursor
     # rests on - which is the whole point, the pick being free to wander over
     # the cavity while the layout holds.
     #
@@ -6966,12 +6968,12 @@ module Ladb::OpenCutList
       [ direction.x, direction.y ]
     end
 
-    # What the locked axis amounts to on the opening the facades are cut from :
+    # What the locked axis amounts to on the opening the front panels are cut from :
     # its share of that plane. nil when no axis is locked, and nil too when
     # the locked one stands too close to the opening's OWN normal to say
     # anything about a direction in it - the very threshold the panel under
     # the cursor is held to. The lock is then simply inert on this opening,
-    # rather than cutting the facades on a direction that reads as nothing :
+    # rather than cutting the front panels on a direction that reads as nothing :
     # a case is faced from several sides, and an axis that means "side by
     # side" on its front means nothing on its flank.
     def _get_locked_split_direction(normal)
@@ -6982,17 +6984,17 @@ module Ladb::OpenCutList
     end
 
     # Which WAY that direction points - hence which end the pinned widths are
-    # counted from, and which facade the batch is named after.
+    # counted from, and which front panel the batch is named after.
     #
     # The panel under the cursor gives an AXIS, not a way : the left side of
     # a case and its right side have opposite normals, and "400;" would pin
-    # one facade or the other depending on where the cursor happened to be. So
+    # one front panel or the other depending on where the cursor happened to be. So
     # the way is settled off the WORLD alone - never off the pick, never off
     # the camera :
     #
-    #   - a direction with a vertical component points UP : stacked facades are
+    #   - a direction with a vertical component points UP : stacked front panels are
     #     pinned from the bottom one.
-    #   - a horizontal one points to the RIGHT of the facade as seen from
+    #   - a horizontal one points to the RIGHT of the front panel as seen from
     #     OUTSIDE it, that is, the one whose turn from the outward normal
     #     goes the same way as the world's up.
     #   - on a HORIZONTAL opening neither reading means anything : +X then
@@ -7028,14 +7030,14 @@ module Ladb::OpenCutList
 
     # +points+ - a closed contour of the opening's frame - shared into
     # +number+ bands along +direction+, ordered from the low end : equal
-    # ones, or the ones +widths+ pins (see #_get_facade_band_intervals).
+    # ones, or the ones +widths+ pins (see #_get_front_panel_band_intervals).
     #
     # Each band is CLIPPED to the contour rather than assumed rectangular :
     # the contour may be canted, notched, or - in applique - the share of a
     # silhouette a neighbour's bisector has already cut into. Of what a band
-    # is clipped to, only the widest ring is kept : a facade is one panel, and
+    # is clipped to, only the widest ring is kept : a front panel is one panel, and
     # a contour narrowing to nothing in the middle of a band is not two
-    # facades.
+    # front panels.
     #
     # nil when the direction is unusable, when the contour is degenerate
     # along it, when the layout does not fit, or when a band comes out empty.
@@ -7053,7 +7055,7 @@ module Ladb::OpenCutList
       end
       return nil if d0.nil? || d1 - d0 <= SolidMeshDef::TOLERANCE
 
-      intervals = _get_facade_band_intervals(d0, d1, number, widths)
+      intervals = _get_front_panel_band_intervals(d0, d1, number, widths)
       return nil if intervals.nil?
 
       # Through a union, so that the contour is wound the way Clipper expects
@@ -7081,26 +7083,26 @@ module Ladb::OpenCutList
       bands
     end
 
-    # [ [ b0, b1 ], ... ] the +number+ facades span along the split direction,
+    # [ [ b0, b1 ], ... ] the +number+ front panels span along the split direction,
     # ordered, inside the contour's own [ +w0+, +w1+ ] extent.
     #
-    # What is shared is the whole extent : a facade takes no thickness out of
+    # What is shared is the whole extent : a front panel takes no thickness out of
     # the opening the way a divider does, so with no pin at all the cuts are
     # plain divisions and the bands tile the contour edge to edge.
     #
     # +widths+ PINS bands, from the ends inward : its leading run of valid
-    # lengths fixes the first facades, its trailing run - whatever follows an
+    # lengths fixes the first front panels, its trailing run - whatever follows an
     # invalid or empty entry, so "400;" pins the first and ";400" the last -
-    # fixes the last ones. Only the facades LEFT IN THE MIDDLE share what
-    # remains. Pins beyond the count are dropped : they have no facade to size.
+    # fixes the last ones. Only the front panels LEFT IN THE MIDDLE share what
+    # remains. Pins beyond the count are dropped : they have no front panel to size.
     #
-    # Pinned runs that do not fill the extent leave the middle of the facade
+    # Pinned runs that do not fill the extent leave the middle of the front panel
     # BARE rather than stretching anything : the widths are what the user
     # asked for, and that is the only honest reading of them.
     #
     # nil when the layout does not fit : a middle share with no room left, or
     # pinned runs that overrun each other.
-    def _get_facade_band_intervals(w0, w1, number, widths)
+    def _get_front_panel_band_intervals(w0, w1, number, widths)
       return nil unless number > 0
 
       fn_valid_width = lambda { |width| width.is_a?(Length) && width > 0 }
@@ -7175,25 +7177,25 @@ module Ladb::OpenCutList
     # A real polygon offset (Clippy, the same one the shape offset of the
     # other actions uses), not a scaling : a contour is not always a
     # rectangle - a canted or notched one keeps its angles, and every edge
-    # stands back by the same distance, which is what a facade offset means.
-    def _apply_facade_offset(points)
+    # stands back by the same distance, which is what a front panel offset means.
+    def _apply_front_panel_offset(points)
 
-      facade_offset = _fetch_option_facade_offset
-      return points if facade_offset.nil? || facade_offset <= 0
+      front_panel_offset = _fetch_option_front_panel_offset
+      return points if front_panel_offset.nil? || front_panel_offset <= 0
 
       # The union normalizes the winding, and the winding is what decides
       # which side a negative delta offsets towards.
       paths, _ = Fiddle::Clippy.execute_union(closed_subjects: [ Fiddle::Clippy.points_to_rpath(points) ])
       outlines = Fiddle::Clippy.inflate_paths(
         paths: paths,
-        delta: -facade_offset.to_f,
+        delta: -front_panel_offset.to_f,
         join_type: Fiddle::Clippy::JOIN_TYPE_MITER,
         miter_limit: 100.0
       ).map { |path| Fiddle::Clippy.rpath_to_points(path) }
        .delete_if { |inset_points| inset_points.length < 3 }
 
-      # A facade offset the contour is too narrow for leaves nothing at all, or
-      # breaks it into several rings : neither is a facade, and the pick simply
+      # A front panel offset the contour is too narrow for leaves nothing at all, or
+      # breaks it into several rings : neither is a front panel, and the pick simply
       # yields nothing rather than a mangled one.
       return nil unless outlines.length == 1
 
@@ -7203,12 +7205,12 @@ module Ladb::OpenCutList
     # OVERLAY : the share of the container's front that belongs to this
     # cavity, in the opening's frame.
     #
-    # A facade in applique covers the frame around its mouth, and how far is
+    # A front panel in applique covers the frame around its mouth, and how far is
     # not a number the user should have to give : it is written in the
     # carcass. It runs to the OUTER EDGE of the container where nothing else
     # claims the material, and stops HALF WAY through a panel it shares with
-    # a neighbouring compartment, so that the two facades meet on the middle of
-    # that panel. Front to front, the pair of them covers the whole facade.
+    # a neighbouring compartment, so that the two front panels meet on the middle of
+    # that panel. Front to front, the pair of them covers the whole front panel.
     #
     # Read as a partition of the container's silhouette. Each sibling mouth
     # of the same plane contributes ONE CUT : the perpendicular bisector of
@@ -7217,7 +7219,7 @@ module Ladb::OpenCutList
     # is a half plane, unbounded - that is the whole point. A collar grown
     # around the neighbour would not do : it stops a few millimetres past its
     # own mouth, and the two shares simply flow into each other around it,
-    # along the top and bottom borders of the facade.
+    # along the top and bottom borders of the front panel.
     #
     # Nothing is cut out of our own side, so the outer border, claimed by no
     # one else, stays whole. A sibling sitting diagonally cuts on the
@@ -7227,7 +7229,7 @@ module Ladb::OpenCutList
     #
     # What is left may well be in several pieces ; ours is the one the mouth
     # falls in. Only its OUTER contour is kept : a hole in the container's
-    # front is not the facade's business.
+    # front is not the front panel's business.
     def _get_overlay_points(fragment_def, opening_def, mouth_points, ti)
 
       footprint_paths = _get_footprint_paths(opening_def, ti)
@@ -7275,7 +7277,7 @@ module Ladb::OpenCutList
     end
 
     # The container's SILHOUETTE on the opening plane : every panel of the
-    # container projected on it and unioned - the outline a facade in applique
+    # container projected on it and unioned - the outline a front panel in applique
     # may cover, and no further.
     #
     # A triangle standing edge-on to the plane projects to a segment and is
@@ -7284,7 +7286,7 @@ module Ladb::OpenCutList
     # front and back faces of each panel, a handful of triangles.
     #
     # Cached per PLANE for the container the cavities were read on : the
-    # preview recomputes the facade on every mouse move, the carcass does not
+    # preview recomputes the front panel on every mouse move, the carcass does not
     # change under it.
     def _get_footprint_paths(opening_def, ti)
       return nil unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef)
@@ -7302,7 +7304,7 @@ module Ladb::OpenCutList
 
     # What identifies the PLANE an opening lies on, as a hash key : its
     # normal, and how far from the world origin it stands along it. Both read
-    # coarsely enough that two mouths of the same facade answer the same
+    # coarsely enough that two mouths of the same front panel answer the same
     # thing - which is the whole point, they share everything that is read
     # per plane.
     def _opening_plane_key(opening_def)
@@ -7361,8 +7363,8 @@ module Ladb::OpenCutList
     # as ONE self touching path : the outer contour, a zero width slit run
     # down to the mouth and back, then the mouth traversed as if it were part
     # of the outline. Taken for the outer contour it is (see
-    # #_get_overlay_points), it cuts the facade to the shape of the carcass
-    # frame itself - the panels, mouth left out - instead of the facade.
+    # #_get_overlay_points), it cuts the front panel to the shape of the carcass
+    # frame itself - the panels, mouth left out - instead of the front panel.
     #
     # The round trip breaks the tie : grown, the panels genuinely OVERLAP and
     # the union is a plain region ; shrunk back, it comes out as an outer
@@ -7389,11 +7391,11 @@ module Ladb::OpenCutList
     end
 
     # The mouths of the OTHER cavities that open on the very same plane, in
-    # the opening's frame - the neighbours a facade in applique has to share
+    # the opening's frame - the neighbours a front panel in applique has to share
     # the frame with.
     #
     # Same plane AND same side : a cavity opening the other way sits behind
-    # the facade and is no neighbour of this facade.
+    # the front panel and is no neighbour of this front panel.
     #
     # A neighbour CLOSED on this very plane - a real panel standing where an
     # opening could have been, e.g. the fitted back of one compartment while
@@ -7429,7 +7431,7 @@ module Ladb::OpenCutList
 
     # The openings of +fragment_def+ that lie on the SAME plane as the given
     # one - same outward direction, same offset along it. A cavity has at
-    # most one on a given facade in all but the twisted cases, but nothing
+    # most one on a given front panel in all but the twisted cases, but nothing
     # says so : an L shaped compartment may well show two separate mouths on
     # the same front.
     def _get_opening_defs_on_plane(fragment_def, opening_def)
@@ -7506,9 +7508,9 @@ module Ladb::OpenCutList
     # -----
 
     # Whether a MERGE is on : a pick held down, gathering the cavities one
-    # single facade is to span.
+    # single front panel is to span.
     def _merging?
-      @merge_context.is_a?(FacadeContext)
+      @merge_context.is_a?(FrontPanelContext)
     end
 
     def _reset_merge
@@ -7519,15 +7521,15 @@ module Ladb::OpenCutList
 
     # Feeds the merge the cavity under the cursor.
     #
-    # Anything else leaves the facade exactly as it is : the cursor off the
+    # Anything else leaves the front panel exactly as it is : the cursor off the
     # carcass, on the chant between two compartments, on a cavity already
-    # taken, on one that meets the facade by a corner alone. A drag crosses all
-    # of that on its way, and would be unusable if the facade came undone every
+    # taken, on one that meets the front panel by a corner alone. A drag crosses all
+    # of that on its way, and would be unusable if the front panel came undone every
     # time it did.
     #
     # The active part is deliberately NOT picked again : the cavities are the
     # ones the drag started in, and reading them on another container would
-    # cost a whole boolean pass and drop the facade being drawn. #_snap_point
+    # cost a whole boolean pass and drop the front panel being drawn. #_snap_point
     # reads the pick against the ACTIVE part's cavities, so leaving that part
     # alone is exactly what keeps it answering for the right container.
     def _merge_pick(picker, view)
@@ -7544,16 +7546,16 @@ module Ladb::OpenCutList
       _merge_add(fragment_def)
     end
 
-    # Adds one cavity to the merge - its own share of the facade unioned into
-    # the facade's contour. Answers whether it took.
+    # Adds one cavity to the merge - its own share of the front panel unioned into
+    # the front panel's contour. Answers whether it took.
     #
     # Each cavity's share is a CELL of a partition of the container's front
     # (see #_get_overlay_points), and two neighbouring cells are jointive to
     # the micron, having been cut apart by the very same bisector. So the
-    # facade over several cavities is quite simply the UNION of their cells :
+    # front panel over several cavities is quite simply the UNION of their cells :
     # nothing has to be derived anew, and every cell stays cut by the
     # neighbours that were left out of the merge - which is exactly what a
-    # facade in applique still owes them.
+    # front panel in applique still owes them.
     #
     # Cutting the shares first and unioning them after is also what makes an
     # L shaped merge come out right. Merging the cavities first, by leaving
@@ -7594,7 +7596,7 @@ module Ladb::OpenCutList
     #
     # More than one ring means the shares enclose something they do not
     # cover - a compartment left out in the middle of the ones taken. That is
-    # a frame, not a facade.
+    # a frame, not a front panel.
     def _merge_points(paths)
       merged_paths, _ = Fiddle::Clippy.execute_union(closed_subjects: paths)
       merged_paths = _cleanup_footprint_paths(merged_paths)
@@ -7604,7 +7606,7 @@ module Ladb::OpenCutList
       points.length < 3 ? nil : points
     end
 
-    # Whether the given share touches what the facade already covers by an
+    # Whether the given share touches what the front panel already covers by an
     # EDGE - by a shared panel, that is - and not by a single corner.
     #
     # The four cells of a grid meet at one point : taking two of them
@@ -7630,9 +7632,9 @@ module Ladb::OpenCutList
       area > MERGE_ADJACENCY_DELTA * MERGE_MIN_SHARED_BORDER
     end
 
-    # The share of the facade one cavity is entitled to, in the frame the
-    # merge is read in : what #_get_facade_nominal_points computes for the
-    # picked cavity, for any other cavity of the same facade.
+    # The share of the front panel one cavity is entitled to, in the frame the
+    # merge is read in : what #_get_front_panel_nominal_points computes for the
+    # picked cavity, for any other cavity of the same front panel.
     #
     # The REFERENCE opening is what is handed over to #_get_overlay_points,
     # never the cavity's own : both lie on the same plane, and everything
@@ -7669,27 +7671,27 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _preview_facade(view)
+    def _preview_front_panel(view)
 
-      @tool.clear_3d(LAYER_3D_FACADE_PREVIEW)
+      @tool.clear_3d(LAYER_3D_FRONT_PANEL_PREVIEW)
       @tool.clear_2d(LAYER_2D_WIDTH)
 
-      return unless (facade_defs = _compute_facade_defs(@picked_point, view)).is_a?(Array) && !facade_defs.empty?
+      return unless (front_panel_defs = _compute_front_panel_defs(@picked_point, view)).is_a?(Array) && !front_panel_defs.empty?
 
       # The AXIS colour says the arrow keys are the ones deciding where the
-      # facades meet - and only when they really are : a lock the opening
+      # front panels meet - and only when they really are : a lock the opening
       # makes nothing of (see #_get_locked_split_direction), or an opening no
       # count shares at all, is no lock to report.
-      locked = _shared? && !_get_locked_split_direction(facade_defs.first.opening_def.normal).nil?
+      locked = _shared? && !_get_locked_split_direction(front_panel_defs.first.opening_def.normal).nil?
       color = locked ? _get_vector_color(@locked_direction, Kuix::COLOR_MAGENTA) : Kuix::COLOR_MAGENTA
 
-      facade_defs.each do |facade_def|
+      front_panel_defs.each do |front_panel_def|
 
         # face_info_defs is irrelevant here : the preview only needs the
         # geometry (boundary_segments doesn't dereference it).
-        vertices, face_indices, face_ids = facade_def.mesh_3f
-        facade_fragment_def = SolidFragmentDef.new(vertices, face_indices, face_ids, [])
-        segments = facade_fragment_def.unique_boundary_segments
+        vertices, face_indices, face_ids = front_panel_def.mesh_3f
+        front_panel_fragment_def = SolidFragmentDef.new(vertices, face_indices, face_ids, [])
+        segments = front_panel_fragment_def.unique_boundary_segments
 
         k_segments = Kuix::Segments.new
         k_segments.add_segments(segments)
@@ -7697,7 +7699,7 @@ module Ladb::OpenCutList
         k_segments.line_width = 1
         k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
         k_segments.on_top = true
-        @tool.append_3d(k_segments, LAYER_3D_FACADE_PREVIEW)
+        @tool.append_3d(k_segments, LAYER_3D_FRONT_PANEL_PREVIEW)
 
         unless _fetch_option_construction?
 
@@ -7705,18 +7707,18 @@ module Ladb::OpenCutList
           k_segments.add_segments(segments)
           k_segments.color = color
           k_segments.line_width = locked ? 2.5 : 1.5
-          @tool.append_3d(k_segments, LAYER_3D_FACADE_PREVIEW)
+          @tool.append_3d(k_segments, LAYER_3D_FRONT_PANEL_PREVIEW)
 
         end
 
-        # Each facade's own width, once the opening is shared : what the count
-        # and the pins did to the facade is exactly what the user cannot read
-        # off the outlines alone. A lone facade filling its whole mouth needs
+        # Each front panel's own width, once the opening is shared : what the count
+        # and the pins did to the front panel is exactly what the user cannot read
+        # off the outlines alone. A lone front panel filling its whole mouth needs
         # none of it - the VCB already carries its thickness.
         if _shared?
           k_label = _create_floating_label(
-            snap_point: facade_def.center,
-            text: facade_def.width.to_l.to_s,
+            snap_point: front_panel_def.center,
+            text: front_panel_def.width.to_l.to_s,
             text_color: color,
             border_color: color
           )
@@ -7725,26 +7727,26 @@ module Ladb::OpenCutList
 
       end
 
-      Sketchup.set_status_text(facade_defs.first.thickness.to_l, SB_VCB_VALUE)
+      Sketchup.set_status_text(front_panel_defs.first.thickness.to_l, SB_VCB_VALUE)
 
     end
 
     # -----
 
-    # Rebuilds the facades the pick resolves to as real geometry inside the
+    # Rebuilds the front panels the pick resolves to as real geometry inside the
     # model, and names the batch - the same tail conventions (ask_name option
     # / success notification) as the other draw handlers' _create_entity.
     # When the construction option is on, only the outlines are drawn (as
     # clines, in a plain group each) instead of real parts, so no naming /
     # success notification happens in that case either.
     #
-    # A facade the boolean or SketchUp left unbuildable is skipped rather than
-    # fatal : the other facades of the batch are legitimate and must not fall
+    # A front panel the boolean or SketchUp left unbuildable is skipped rather than
+    # fatal : the other front panels of the batch are legitimate and must not fall
     # with it. Returns true as soon as one of them was built.
     def _create_entity(point, view)
-      return false unless (facade_defs = _compute_facade_defs(point, view)).is_a?(Array) && !facade_defs.empty?
+      return false unless (front_panel_defs = _compute_front_panel_defs(point, view)).is_a?(Array) && !front_panel_defs.empty?
 
-      container_path = facade_defs.first.container_path
+      container_path = front_panel_defs.first.container_path
       if container_path.is_a?(Array) && container_path.any? && (container = container_path.last) && container.respond_to?(:definition)
         active_entities = container.definition.entities
         active_transformation = PathUtils.get_transformation(container_path, IDENTITY)
@@ -7755,38 +7757,38 @@ module Ladb::OpenCutList
       end
 
       model = Sketchup.active_model
-      model.start_operation('OCL Create Facade', true, false, !active?)
+      model.start_operation('OCL Create Front Panel', true, false, !active?)
       begin
 
         # Definitions this batch actually BUILT - what the naming applies to,
-        # one per distinct facade - and how many entities it added to the
+        # one per distinct front panel - and how many entities it added to the
         # model. With the reuse option on the two no longer match : a mouth
-        # shared between three equal facades builds ONE definition and three
+        # shared between three equal front panels builds ONE definition and three
         # instances of it.
         created_definitions = []
         created_entity_count = 0
 
-        # The facades this batch has already built - [ outline, definition,
+        # The front panels this batch has already built - [ outline, definition,
         # WORLD transformation ] - as candidates for the ones that follow.
-        # See #_find_reusable_facade.
-        sibling_facade_defs = []
+        # See #_find_reusable_front_panel.
+        sibling_front_panel_defs = []
 
-        facade_defs.each do |facade_def|
+        front_panel_defs.each do |front_panel_def|
 
           # Local frame for the new part : Z = the opening's outward normal,
-          # X/Y its own in-plane basis, origin on the opening plane. The facade
+          # X/Y its own in-plane basis, origin on the opening plane. The front panel
           # is then built on one side of z = 0 or the other, according to the
           # POSE - inset INTO the cavity, in applique in FRONT of it - so that
           # in both cases one of its faces lands exactly on the mouth plane.
-          x_axis, y_axis, z_axis = facade_def.axes
-          world_transformation = Geom::Transformation.axes(facade_def.origin, x_axis, y_axis, z_axis)
+          x_axis, y_axis, z_axis = front_panel_def.axes
+          world_transformation = Geom::Transformation.axes(front_panel_def.origin, x_axis, y_axis, z_axis)
 
           if _fetch_option_construction?
 
             group = active_entities.add_group
             group.transformation = active_transformation.inverse * world_transformation
 
-            created_faces = _build_facade_faces(group.entities, facade_def, world_transformation)
+            created_faces = _build_front_panel_faces(group.entities, front_panel_def, world_transformation)
             if created_faces.empty?
               group.erase!
               next
@@ -7801,13 +7803,13 @@ module Ladb::OpenCutList
             next
           end
 
-          candidate_definition, candidate_world_transformation = _find_reusable_facade(facade_def, sibling_facade_defs)
+          candidate_definition, candidate_world_transformation = _find_reusable_front_panel(front_panel_def, sibling_front_panel_defs)
 
           if candidate_definition.nil?
 
             definition = model.definitions.add(PLUGIN.get_i18n_string('default.part_single').capitalize)
 
-            created_faces = _build_facade_faces(definition.entities, facade_def, world_transformation)
+            created_faces = _build_front_panel_faces(definition.entities, front_panel_def, world_transformation)
             if created_faces.empty?
               model.definitions.remove(definition) if model.definitions.respond_to?(:remove)
               next
@@ -7834,23 +7836,23 @@ module Ladb::OpenCutList
 
             # The outline is kept as it was CUT, in world coordinates - the
             # auto orientation moved the definition's entities and its
-            # transformation together, so what the next facade has to be
+            # transformation together, so what the next front panel has to be
             # compared to is unchanged by it.
-            sibling_facade_defs << [ facade_def.outline, definition, world_transformation ] if _fetch_option_reuse_definition?
+            sibling_front_panel_defs << [ front_panel_def.outline, definition, world_transformation ] if _fetch_option_reuse_definition?
 
           else
 
-            # The facade is one more occurrence of a facade this batch has
+            # The front panel is one more occurrence of a front panel this batch has
             # already built : nothing is built at all, that definition is
-            # instanced where this one stands - see #_find_reusable_facade
+            # instanced where this one stands - see #_find_reusable_front_panel
             instance = active_entities.add_instance(candidate_definition, active_transformation.inverse * candidate_world_transformation)
 
           end
 
-          # Marked as a facade, so that the cavity detection can go on reading the
+          # Marked as a front panel, so that the cavity detection can go on reading the
           # carcass bare - see SmartDrawPanelActionHandler#_get_cavities_def and
           # LayerAttributes.
-          instance.layer = LayerAttributes.fetch_or_create_layer(model, LayerAttributes::TYPE_FACADE, _fetch_option_layer_name)
+          instance.layer = LayerAttributes.fetch_or_create_layer(model, LayerAttributes::TYPE_FRONT_PANEL, _fetch_option_layer_name)
 
           created_entity_count += 1
 
@@ -7873,7 +7875,7 @@ module Ladb::OpenCutList
                 if name.empty?
                   UI.beep
                 else
-                  # One name for the whole batch : the facades of one opening
+                  # One name for the whole batch : the front panels of one opening
                   # are as many definitions, and they are all the part the
                   # user just named
                   created_definitions.each { |created_definition| created_definition.name = name unless created_definition.deleted? }
@@ -7909,32 +7911,32 @@ module Ladb::OpenCutList
       true
     end
 
-    # [ definition, WORLD transformation ] of a facade of the SAME batch the
+    # [ definition, WORLD transformation ] of a front panel of the SAME batch the
     # given one is one more occurrence of, or nil : the caller then builds
-    # nothing and instances that definition instead, so the facades of one
+    # nothing and instances that definition instead, so the front panels of one
     # mouth are ONE part in the cutlist rather than as many identical ones.
     # nil unless the reuse option is on.
     #
-    # The criterion is the OUTLINE alone, and it can be : the facades of a
+    # The criterion is the OUTLINE alone, and it can be : the front panels of a
     # batch come from one contour shared equally, and they carry the same
     # thickness and the same overlay setting by construction - so two of them with
     # superposable outlines are the same solid, full stop. No neighbourhood
     # test like the divider's is needed either : what makes them the same
     # part is not a coincidence to be confirmed, it is how they were cut.
     #
-    # Deliberately limited to the facades of ONE batch. Two facades drawn on two
+    # Deliberately limited to the front panels of ONE batch. Two front panels drawn on two
     # separate picks may well look alike, but the user drew them apart, and
     # silently linking them would make editing one edit the other.
-    def _find_reusable_facade(facade_def, sibling_facade_defs)
+    def _find_reusable_front_panel(front_panel_def, sibling_front_panel_defs)
       return nil unless _fetch_option_reuse_definition?
 
-      sibling_facade_defs.each do |sibling_outline, definition, world_transformation|
+      sibling_front_panel_defs.each do |sibling_outline, definition, world_transformation|
         next if definition.deleted?
-        offset = _outlines_translation_offset(facade_def.outline, sibling_outline)
+        offset = _outlines_translation_offset(front_panel_def.outline, sibling_outline)
         next if offset.nil?
 
         # The definition's own geometry is +sibling_outline+'s, so carrying
-        # that facade onto this one carries its transformation the same way.
+        # that front panel onto this one carries its transformation the same way.
         # A plain translation composes on the LEFT : the definition is placed
         # where it was, then moved.
         return [ definition, Geom::Transformation.translation(offset) * world_transformation ]
@@ -7950,7 +7952,7 @@ module Ladb::OpenCutList
     # other's vertices : every cyclic shift is tried, and the offset returned
     # is the one that shift implies.
     #
-    # Translations only. A facade superposable by a ROTATION is not the same
+    # Translations only. A front panel superposable by a ROTATION is not the same
     # part : it would carry the grain of its panel the other way round, and
     # nothing here would tell the two apart afterwards.
     def _outlines_translation_offset(outline, other_outline)
@@ -7980,42 +7982,42 @@ module Ladb::OpenCutList
       nil
     end
 
-    # Builds the facade as real geometry inside +entities+, in the given
+    # Builds the front panel as real geometry inside +entities+, in the given
     # transformation's local space : the outline as a face - SketchUp
     # triangulates and closes it, however many points and however concave it
     # is - pushed to its thickness INTO the cavity. Returns the created
     # faces, empty when the outline could not be built.
-    def _build_facade_faces(entities, facade_def, world_transformation)
+    def _build_front_panel_faces(entities, front_panel_def, world_transformation)
       ti = world_transformation.inverse
-      points = facade_def.outline.map { |point| point.transform(ti) }
+      points = front_panel_def.outline.map { |point| point.transform(ti) }
 
       face = entities.add_face(points)
       return [] if face.nil?
 
-      # The outline lies on z = 0 and the facade grows towards -z when it is
+      # The outline lies on z = 0 and the front panel grows towards -z when it is
       # fitted INTO the cavity, +z when it is laid in applique ON its front.
       # The face is turned to look that way first, so that #pushpull extrudes
       # on the right side whichever way add_face wound it.
-      face.reverse! if (face.normal.z > 0) != facade_def.overlay?
-      face.pushpull(facade_def.thickness)
+      face.reverse! if (face.normal.z > 0) != front_panel_def.overlay?
+      face.pushpull(front_panel_def.thickness)
 
       entities.grep(Sketchup::Face)
     end
 
     # -----
 
-    # What one pick resolves to, shared by every facade it yields : the cavity
-    # and the opening the facades go on, the frame that opening is read in, the
+    # What one pick resolves to, shared by every front panel it yields : the cavity
+    # and the opening the front panels go on, the frame that opening is read in, the
     # NOMINAL contour they are cut out of (in that frame), and the direction
     # they succeed one another along (in that frame too, [ x, y ] unit
     # Floats, nil when none could be read).
-    FacadeContext = Struct.new(:cavities_def, :fragment_def, :opening_def, :transformation, :points, :direction) do
+    FrontPanelContext = Struct.new(:cavities_def, :fragment_def, :opening_def, :transformation, :points, :direction) do
 
       def container_path
         cavities_def.container_path
       end
 
-      # The split direction back in WORLD coordinates - what the facades' own
+      # The split direction back in WORLD coordinates - what the front panels' own
       # widths are measured along.
       def world_direction
         return nil if direction.nil?
@@ -8024,12 +8026,12 @@ module Ladb::OpenCutList
 
     end
 
-    # One facade : the opening it fills, the outline it is cut to (WORLD
+    # One front panel : the opening it fills, the outline it is cut to (WORLD
     # coordinates, closed, the closing point not repeated), its thickness,
     # whether it is laid in applique on the opening rather than fitted into
-    # it, and the WORLD direction the facades of its batch succeed one another
+    # it, and the WORLD direction the front panels of its batch succeed one another
     # along - the one its own width is read on.
-    FacadeDef = Struct.new(:container_path, :fragment_def, :opening_def, :outline, :thickness, :overlay, :direction) do
+    FrontPanelDef = Struct.new(:container_path, :fragment_def, :opening_def, :outline, :thickness, :overlay, :direction) do
 
       def overlay?
         !!overlay
@@ -8043,9 +8045,9 @@ module Ladb::OpenCutList
         @center = bounds.center
       end
 
-      # The facade's own extent along the batch's split direction : its WIDTH,
+      # The front panel's own extent along the batch's split direction : its WIDTH,
       # the dimension the count shares. 0 when there is no direction to read
-      # it on (a lone facade on a facade nothing pointed a direction at).
+      # it on (a lone front panel on a front panel nothing pointed a direction at).
       def width
         return @width if defined?(@width)
         return @width = 0 if direction.nil?
@@ -8053,25 +8055,25 @@ module Ladb::OpenCutList
         @width = projections.max - projections.min
       end
 
-      # Origin of the facade's own frame : the first point of its outline, on
+      # Origin of the front panel's own frame : the first point of its outline, on
       # the opening plane.
       def origin
         outline.first
       end
 
-      # [ X, Y, Z ] of the facade's own frame, Z being the opening's outward
+      # [ X, Y, Z ] of the front panel's own frame, Z being the opening's outward
       # normal. Right-handed (Vector3d#axes), so the transformation built on
       # it is a pure rotation - never a mirror.
       def axes
         @axes ||= opening_def.normal.axes
       end
 
-      # The facade as a raw mesh - [ vertices, face_indices, face_ids ] - for
+      # The front panel as a raw mesh - [ vertices, face_indices, face_ids ] - for
       # the preview : the outline triangulated (see #cap_triangles), and the
       # same outline pushed by the thickness, on the side the overlay setting puts the
       # body. The cap's own interior edges are traversed once each way and
       # cancel out, so the net contour
-      # (SolidFragmentDef#unique_boundary_segments) draws the facade's real
+      # (SolidFragmentDef#unique_boundary_segments) draws the front panel's real
       # outline, not its tessellation.
       def mesh_3f
         return @mesh_3f if defined?(@mesh_3f)
@@ -8080,8 +8082,8 @@ module Ladb::OpenCutList
         count = outline.length
 
         # The ring the caps are wound on is always the one the outward
-        # normal looks out of : the mouth when the facade is fitted into the
-        # cavity, the facade's own outer face when it is laid in applique in
+        # normal looks out of : the mouth when the front panel is fitted into the
+        # cavity, the front panel's own outer face when it is laid in applique in
         # front of it. The body then runs from it towards -normal either way,
         # and the mesh stays wound the right way out.
         offset_outline = outline.map { |point| point.offset(normal, overlay? ? thickness : -thickness) }
@@ -8109,12 +8111,12 @@ module Ladb::OpenCutList
       # outline itself runs - what #mesh_3f builds its two caps on. Memoized.
       #
       # A fan opened from the first vertex would do for a CONVEX outline, and
-      # stops doing once a facade spans several merged cavities : an L is star
+      # stops doing once a front panel spans several merged cavities : an L is star
       # shaped from some of its corners only, and a fan opened from any of
       # the others lays triangles OUTSIDE it. Their edges then meet the
       # neighbouring ones the same way round rather than head to tail, so
       # nothing cancels and the preview draws the fan itself - strokes
-      # straight across the facade. Which corner the union hands over first is
+      # straight across the front panel. Which corner the union hands over first is
       # nobody's decision, so the fan is simply not an option any more.
       #
       # Ear clipping instead : it only ever cuts a triangle the outline
@@ -8127,7 +8129,7 @@ module Ladb::OpenCutList
         count = outline.length
         x_axis, y_axis = axes
 
-        # The outline read flat, in the opening's own basis : the facade lies
+        # The outline read flat, in the opening's own basis : the front panel lies
         # on a plane, whatever its slant in the model.
         us = outline.map { |point| point.x.to_f * x_axis.x + point.y.to_f * x_axis.y + point.z.to_f * x_axis.z }
         vs = outline.map { |point| point.x.to_f * y_axis.x + point.y.to_f * y_axis.y + point.z.to_f * y_axis.z }
@@ -8157,7 +8159,7 @@ module Ladb::OpenCutList
         # A self touching or otherwise degenerate outline left an ear the
         # test would not take : back to the fan, which is wrong on a concave
         # contour but never leaves a hole - and a hole is the one thing that
-        # would make the preview show LESS than the facade.
+        # would make the preview show LESS than the front panel.
         triangles = (1...(count - 1)).map { |index| [ 0, index, index + 1 ] } if triangles.length != count - 2
 
         @cap_triangles = triangles
