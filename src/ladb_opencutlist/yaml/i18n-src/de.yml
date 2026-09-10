@@ -2389,10 +2389,10 @@ tool:
     action_3_status: "Eine Trennwand in einem Zwischenraum zeichnen, der durch eine Gruppe vorhandener Teile gebildet wird"
     action_3_state_0_status: "Klicken Sie auf eine Wand, um eine Trennwand zu zeichnen"
     action_3_state_1_status: "Klicken Sie auf eine Wand, um Trennwände zu zeichnen"
-    action_4: Fassade zeichnen
-    action_4_status: "Eine Fassade in einem Hohlraum entwerfen, der durch eine Gruppe bestehender Teile gebildet wird"
-    action_4_state_0_status: "Klicken Sie in eine Aussparung, um eine Fassade an deren Öffnung zu zeichnen"
-    action_4_state_0_merge_status: "Ziehen Sie die Elemente in die benachbarten Felder, um eine gemeinsame Fassade zu bilden"
+    action_4: Frontteil zeichnen
+    action_4_status: "Ein Frontteil in einem Hohlraum entwerfen, der durch eine Gruppe bestehender Teile gebildet wird"
+    action_4_state_0_status: "Klicken Sie in eine Aussparung, um ein Frontteil an deren Öffnung zu zeichnen"
+    action_4_state_0_merge_status: "Ziehen Sie die Elemente in die benachbarten Felder, um eine gemeinsames Frontteil zu bilden"
     action_option_group_offset: Versatz
     action_option_group_segments: Segmente
     action_option_group_thickness: Dicke
@@ -2404,13 +2404,13 @@ tool:
     action_option_offset_shape_offset: Versatz
     action_option_offset_shape_offset_status: "Ermöglicht es, einen Versatz auf die gezeichnete Form anzuwenden"
     action_option_offset_front_panel_offset: Abstand
-    action_option_offset_front_panel_offset_status: "Legt den Abstand fest, der an jedem Rand der Fassade verbleibt"
+    action_option_offset_front_panel_offset_status: "Legt den Abstand fest, der an jedem Rand des Frontteils verbleibt"
     action_option_segments_segment_count: Anzahl Segmente
     action_option_segments_segment_count_status: Ermöglicht das Festlegen der Anzahl der Kreissegmente
     action_option_thickness_thickness: Dicke
     action_option_thickness_thickness_status: Definiert die Dicke der Platten
-    action_option_overlay_inset_status: "Innenanschlag: Fassade liegt komplett in der Öffnung, bündig mit der Vorderkante des Korpus"
-    action_option_overlay_full_overlay_status: "Eckanschlag: Fassade verdeckt die Öffnung komplett, bedeckt die Außenkante des Korpus und die Innenkanten bis zur halben Dicke"
+    action_option_overlay_inset_status: "Innenanschlag: Frontteil liegt komplett in der Öffnung, bündig mit der Vorderkante des Korpus"
+    action_option_overlay_full_overlay_status: "Eckanschlag: Frontteil verdeckt die Öffnung komplett, bedeckt die Außenkante des Korpus und die Innenkanten bis zur halben Dicke"
     action_option_measure_type_inside_status: Dicke innerhalb des Zielpunkts positionieren
     action_option_measure_type_centered_status: Dicke auf den Zielpunkt ausrichten
     action_option_measure_type_outside_status: Dicke außerhalb des Zielpunkts positionieren
@@ -2441,20 +2441,21 @@ tool:
     action_option_options_reuse_definition_status: "Das vorhandene Teil mit derselben Form und in derselben Umgebung wiederverwenden, anstatt ein neues zu erstellen"
     action_option_options_ask_name: Benennung der Teile
     action_option_options_ask_name_status: Namen der Teile manuell eingeben
+    action_option_options_layer_name: Layer
+    action_option_options_layer_name_status: "Name der Layer, auf der das Frontteil platziert sind"
     action_toggle_move_copy_status: Abwechselnd kopieren/verschieben
     action_change_move_anchor_status: Ankerpunkt ändern
-    front_panel_layer: Frontteile
     error:
       invalid_divider_seed: Bei dieser Art von Teil ist das Einfügen einer Trennwand nicht möglich
       invalid_divider_container: "Dieses Teil ist isoliert: Es gehört zu keiner gemeinsamen Gruppe und enthält keine gemeinsamen Komponenten mit anderen Teilen"
       invalid_divider_cavity: "An dieser Stelle befindet sich kein Zwischenraum"
       no_divider_cavity: In dieser Gruppe oder Komponente wurden keine Hohlräume festgestellt
-      invalid_front_panel_seed: Bei dieser Art von Teil ist die Darstellung einer Fassade nicht möglich
+      invalid_front_panel_seed: Bei dieser Art von Teil ist die Darstellung eines Frontteils nicht möglich
       invalid_front_panel_container: "Dieses Teil ist isoliert: Es gehört zu keiner gemeinsamen Gruppe und enthält keine gemeinsamen Komponenten mit anderen Teilen"
       invalid_front_panel_cavity: "In dieser Position gibt es keine zu Ihnen hin offenen Hohlräume"
       no_front_panel_cavity: In dieser Gruppe oder Komponente wurden keine Hohlräume festgestellt
       divider_number_overflow: "Es ist nicht möglich, {{ number }} Trennwände in diesem Zwischenraum zu verteilen"
-      front_panel_number_overflow: "Es ist nicht möglich, {{ number }} Fassaden auf diese Öffnung zu verteilen"
+      front_panel_number_overflow: "Es ist nicht möglich, {{ number }} Frontteile auf diese Öffnung zu verteilen"
     success:
       part_created: "Neu erstelltes Teil: {{ name }}"
       part_created_plural: "{{ count }} neu erstellte Teile: {{ name }}"
@@ -2500,6 +2501,7 @@ tool:
     action_0_state_1a_status: "Klicken Sie auf eine Schnittebene, um sie zu verschieben"
     action_0_state_1b_status: Schnittebene hinzufügen
     action_0_state_1c_status: Schnittebene löschen
+    action_0_state_1d_status: "Klicken Sie hier, um die Geometrie zwischen den beiden Schnittebenen zu verschieben"
     action_0_state_10_status: "Ziehen Sie die Schnittebene, um sie zu verschieben"
     action_0_state_11_status: "Klicken Sie, um die Schnittebene hinzuzufügen"
     action_0_state_12_status: "cken Sie auf eine Schnittebene, um sie zu löschen"

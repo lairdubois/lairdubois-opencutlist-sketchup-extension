@@ -244,8 +244,9 @@ core:
       cutlist_estimate_options: $t(tab.cutlist.label) / $t(tab.cutlist.estimate.title)
       cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
       cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
-      importer_import_options: $t(tab.importer.label) / $t(default.import)
-      importer_load_options: $t(tab.importer.label) / $t(default.open)
+      importers_csv_import_options: $t(tab.importers.csv.label) / $t(default.import)
+      importers_csv_load_options: $t(tab.importers.csv.label) / $t(default.open)
+      importers_bxf2_import_options: $t(tab.importers.bxf2.label) / $t(default.import)
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       outliner_options: $t(tab.outliner.label) / $t(default.options)
@@ -271,6 +272,7 @@ core:
       help: "Введіть **@**, щоб відкрити список змінних."
     textinput_file:
       browse: Переглянути
+      browse_library: Переглянути та скопіювати в бібліотеку
     textinput_size:
       quantity: Кількість
     three_viewer:
@@ -2240,13 +2242,17 @@ tab:
     presets:
       export_global_presets: Експорт пресетів
       export_global_presets_help: |
-        Ця функція дозволяє експортувати ваші пресети у файл **.json**.
-        Виберіть пресети, які потрібно експортувати.
+        Ця функція дозволяє експортувати ваші стилі у файл **.json**.
+        Виберіть стилі, які потрібно експортувати.
+        Якщо вибрані стилі посилаються на файли **.skp** або **.skm**, вони включені в архів **.oclp**, щоб експорт можна було спільно використовувати як є.
       export_global_presets_success: Попередні налаштування успішно експортовано.
+      export_global_presets_success_with_assets: "Попередні налаштування успішно експортовано разом із пов’язаними файлами {{ count }}."
       import_global_presets: Імпорт пресетів
       import_global_presets_help: |
-        Виберіть пресети у файлі **.json**, які ви хочете імпортувати.
-        Увага, якщо пресет із такою назвою вже існує, його буде замінено імпортованою версією.
+        Виберіть стилі, наявні у файлі **.json** або **.oclp**, який потрібно імпортувати.
+        Будь ласка, зверніть увагу: якщо стиль із такою назвою вже існує, його буде замінено імпортованою версією.
+        Файли, що містяться в архіві **.oclp**, копіюються до вашої бібліотеки в місці, яке вони займали в бібліотеці відправника.
+      open_library_dir: Відкрити папку бібліотеки
       import_global_presets_success: |
         Пресети *OpenCutList* успішно імпортовано.
         Щоб врахувати зміни, потрібно **закрити** та **знову відкрити** вікно OpenCutList.
@@ -2271,6 +2277,8 @@ tab:
       error:
         no_preset_to_export: Немає пресету для експорту.
         no_preset_to_import: Немає пресету для імпорту.
+        failed_to_export: "Не вдалося експортувати стилі: **{{ error }}**."
+        failed_to_open_library_dir: "Неможливо відкрити папку бібліотеки: **{{ error }}**."
         failed_to_import: "Не вдалося імпортувати пресет: **{{ error }}**."
         failed_to_import_invalid_hexdigest: Цей файл було змінено. Його не можна імпортувати.
         failed_to_import_bad_file_format: Недійсний формат файлу.
@@ -2381,18 +2389,28 @@ tool:
     action_3_status: "Намалюйте роздільник у порожнині, утвореній групою існуючих деталей"
     action_3_state_0_status: "Натисніть на боковину, щоб намалювати розділювач"
     action_3_state_1_status: "Натисніть на боковину, щоб намалювати роздільники"
+    action_4: Фасади
+    action_4_status: "Намалюйте фасад у порожнині, утвореній групою існуючих деталей"
+    action_4_state_0_status: "Натисніть на порожнину, щоб намалювати фасад на її лиці"
+    action_4_state_0_merge_status: "Пересувайтеся до сусідніх порожнин для загального фасаду"
     action_option_group_offset: Відступ
     action_option_group_segments: Сегменти
     action_option_group_thickness: Товщина
+    action_option_group_clearance: Зазор
+    action_option_group_overlay: Монтаж
     action_option_group_axes: Осі
     action_option_group_measure_type: Вимірювання
     action_option_group_options: Опції
     action_option_offset_shape_offset: Зміщення
     action_option_offset_shape_offset_status: Дозволяє застосувати зсув до контуру намальованої фігури
+    action_option_offset_front_panel_offset: Зазор
+    action_option_offset_front_panel_offset_status: "Визначає зазор, що залишився на кожному краю фасаду"
     action_option_segments_segment_count: Кількість сегментів
     action_option_segments_segment_count_status: Дозволяє задати кількість сегментів в колі
     action_option_thickness_thickness: Товщина
     action_option_thickness_thickness_status: Визначає товщину панелей
+    action_option_overlay_inset_status: "Вкладний фасад: встановлюється в отвір, виходить на лицьову сторону"
+    action_option_overlay_full_overlay_status: "Фасад для поверхневого монтажу (накладний): розміщений перед передньою стороною, покриваючи панелі до зовнішньої поверхні коробки та до середини товщини внутрішніх панелей"
     action_option_measure_type_inside_status: Розташувати товщину всередині цільової точки
     action_option_measure_type_centered_status: Відцентрувати товщину на цільовій точці
     action_option_measure_type_outside_status: Розмістити товщину за межами цільової точки
@@ -2423,6 +2441,8 @@ tool:
     action_option_options_reuse_definition_status: "Повторно використовувати наявну деталь тієї самої форми та в тій самій зоні, а не створювати нову"
     action_option_options_ask_name: Найменування деталей
     action_option_options_ask_name_status: Введення назв деталей вручну
+    action_option_options_layer_name: ""
+    action_option_options_layer_name_status: ""
     action_toggle_move_copy_status: Чергування копіювання/переміщення
     action_change_move_anchor_status: Зміна опорної точки
     error:
@@ -2430,7 +2450,12 @@ tool:
       invalid_divider_container: "Ця деталь ізольована: вона не має спільної групи чи компонента з іншими деталями"
       invalid_divider_cavity: "У цій позиції немає порожнини"
       no_divider_cavity: У цій групі або компоненті не було виявлено жодних порожнин
+      invalid_front_panel_seed: Цей тип деталі не допускає створення фасаду
+      invalid_front_panel_container: "Ця деталь ізольована: вона не має спільної групи чи компонента з іншими деталями"
+      invalid_front_panel_cavity: "У цьому положенні жодна порожнина не відкрита до вас"
+      no_front_panel_cavity: У цій групі або компоненті не було виявлено жодних порожнин
       divider_number_overflow: "Неможливо розподілити {{ number }} розділювачів у цій порожнині"
+      front_panel_number_overflow: "Неможливо розподілити {{ number }} фасадів на цьому отворі"
     success:
       part_created: "Створено нову деталь: {{ name }}"
       part_created_plural: "Створено {{ count }} нових деталей: {{ name }}"
@@ -2476,6 +2501,7 @@ tool:
     action_0_state_1a_status: "Натисніть на січну площину, щоб перемістити її"
     action_0_state_1b_status: Додайте січну площину
     action_0_state_1c_status: Видалити січну площину
+    action_0_state_1d_status: ""
     action_0_state_10_status: "Перетягніть січну площину, щоб перемістити її"
     action_0_state_11_status: "Натисніть, щоб додати січну площину"
     action_0_state_12_status: "Натисніть на січну площину, щоб видалити її"
