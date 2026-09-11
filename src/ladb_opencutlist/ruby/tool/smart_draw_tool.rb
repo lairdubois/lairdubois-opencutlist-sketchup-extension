@@ -66,8 +66,15 @@ module Ladb::OpenCutList
     ACTION_OPTION_OPTIONS_PULL_CENTRED = 'pull_centered'
     ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE = 'reduce_envelope'
     ACTION_OPTION_OPTIONS_REUSE_DEFINITION = 'reuse_definition'
+    ACTION_OPTION_OPTIONS_MIRROR = 'mirror'
     ACTION_OPTION_OPTIONS_ASK_NAME = 'ask_name'
     ACTION_OPTION_OPTIONS_LAYER_NAME = 'layer_name'
+
+    # The mirror motif - a dashed axis, a triangle on each side pointing at it
+    # (the same as SmartHandleTool's) - and the same turned a quarter : the
+    # axis then runs across, for front panels mirrored on top of one another.
+    MIRROR_MOTIF_VERTICAL_PATH = 'M0.5,0L0.5,0.2 M0.5,0.4L0.5,0.6 M0.5,0.8L0.5,1 M0,0.2L0.3,0.5L0,0.8L0,0.2 M1,0.2L0.7,0.5L1,0.8L1,0.2'
+    MIRROR_MOTIF_HORIZONTAL_PATH = 'M0,0.5L0.2,0.5 M0.4,0.5L0.6,0.5 M0.8,0.5L1,0.5 M0.2,0L0.5,0.3L0.8,0L0.2,0 M0.2,1L0.5,0.7L0.8,1L0.2,1'
 
     ACTIONS = [
       {
@@ -111,7 +118,7 @@ module Ladb::OpenCutList
           ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_FRONT_PANEL_OFFSET ],
           ACTION_OPTION_OVERLAY => [ ACTION_OPTION_OVERLAY_INSET, ACTION_OPTION_OVERLAY_FULL_OVERLAY ],
           ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_CONTEXT ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, ACTION_OPTION_OPTIONS_REUSE_DEFINITION, ACTION_OPTION_OPTIONS_ASK_NAME ]
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, ACTION_OPTION_OPTIONS_REUSE_DEFINITION, ACTION_OPTION_OPTIONS_MIRROR, ACTION_OPTION_OPTIONS_ASK_NAME ]
         }
       }
     end
@@ -292,6 +299,8 @@ module Ladb::OpenCutList
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0L0,1L1,1L1,0L0,0 M0,0.625L0.625,0.625L0.625,0.375L0,0.375'))
         when ACTION_OPTION_OPTIONS_REUSE_DEFINITION
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.333L0.667,0.333L0.667,1L0,1L0,0.333 M0.333,0.333L0.333,0L1,0L1,0.667L0.667,0.667'))
+        when ACTION_OPTION_OPTIONS_MIRROR
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path(MIRROR_MOTIF_VERTICAL_PATH))
         end
       end
 
@@ -6141,6 +6150,7 @@ module Ladb::OpenCutList
     LAYER_3D_FRONT_PANEL_PREVIEW = 200
 
     LAYER_2D_WIDTH = 100
+    LAYER_2D_MIRROR = 101
 
     # Minimum dot between an opening's outward normal and the direction the
     # camera looks FROM, for that opening to be a candidate : an opening seen
@@ -6194,6 +6204,13 @@ module Ladb::OpenCutList
     # Below this the way a direction reads on an axis is no reading at all,
     # and the next criterion of #_orient_split_direction takes over.
     SPLIT_DIRECTION_WAY_EPSILON = 1e-6
+
+    # The narrowest a front panel may be, anywhere - see #_clean_pieces.
+    # Whatever the sharing and the clearance leave narrower than this is no
+    # panel anyone would cut : the 1 mm bridge a clearance leaves between the
+    # two legs of a U, a sliver a band catches off the tip of a leg, a lip a
+    # carcass leaves on its silhouette.
+    FRONT_PANEL_MIN_WIDTH = 5.mm
 
     attr_reader :locked_direction, :number, :widths
 
@@ -6636,6 +6653,10 @@ module Ladb::OpenCutList
       @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_REUSE_DEFINITION)
     end
 
+    def _fetch_option_mirror?
+      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MIRROR)
+    end
+
     def _fetch_option_measure_reversed?
       @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_REVERSED)
     end
@@ -6693,9 +6714,14 @@ module Ladb::OpenCutList
     end
 
     # A pick on an existing front panel snaps to nothing : see
-    # #_picked_on_existing_front_panel?.
+    # #_picked_on_existing_front_panel?. Nothing at all - the point the
+    # previous pick left is dropped too, or #_preview_cavity would go on
+    # drawing the cavity that pick landed in.
     def _snap_point(picker)
-      return false if _picked_on_existing_front_panel?(picker)
+      if _picked_on_existing_front_panel?(picker)
+        @picked_point = nil
+        return false
+      end
       super
     end
 
@@ -6739,22 +6765,25 @@ module Ladb::OpenCutList
       FrontPanelContext.new(cavities_def, fragment_def, opening_def, t, points, _get_split_direction(picked_face_manipulator, opening_def, ti, view))
     end
 
-    # The front panels the pick resolves to, in the split direction's own order - so
-    # the same pick always yields them in the same order, and the batch is
-    # always named after the same one. nil when the pick is not on a usable
-    # opening, or when the count does not fit on it.
+    # The front panels the pick resolves to, in the split direction's own order -
+    # band after band, and across it within a band the contour cuts in
+    # several pieces - so the same pick always yields them in the same order,
+    # and the batch is always named after the same one. nil when the pick is
+    # not on a usable opening, or when the count does not fit on it.
     def _compute_front_panel_defs(point, view)
       return nil unless (context = _compute_front_panel_context(point, view)).is_a?(FrontPanelContext)
 
       thickness = _fetch_option_thickness
       return nil if thickness.nil? || thickness <= 0
 
-      outlines = _get_front_panel_outlines(context)
-      return nil if outlines.nil?
+      bands = _get_front_panel_outlines(context)
+      return nil if bands.nil?
 
       overlay = _fetch_option_overlay_full_overlay?
       direction = context.world_direction
-      outlines.map { |outline| FrontPanelDef.new(context.container_path, context.fragment_def, context.opening_def, outline, thickness, overlay, direction) }
+      bands.each_with_index.flat_map { |outlines, band|
+        outlines.map { |outline| FrontPanelDef.new(context.container_path, context.fragment_def, context.opening_def, outline, thickness, overlay, direction, band) }
+      }
     end
 
     # Applies a new distribution - how many front panels, and which widths are
@@ -6836,8 +6865,9 @@ module Ladb::OpenCutList
       _get_overlay_points(fragment_def, opening_def, mouth_points, ti)
     end
 
-    # The outlines the front panels are cut to, in WORLD coordinates - one per front panel,
-    # ordered along the split direction.
+    # The outlines the front panels are cut to, in WORLD coordinates - one list
+    # per band, ordered along the split direction, each holding the outline
+    # of every front panel that band comes out as (see #_split_points).
     #
     # The nominal contour is shared FIRST, and only then does the CLEARANCE
     # apply, to each front panel on every one of its own edges. That order is the
@@ -6847,23 +6877,47 @@ module Ladb::OpenCutList
     # share, not of the finished leaf, exactly as a pinned opening is for the
     # divider.
     #
+    # The clearance may in turn cut a piece in several, and so may
+    # FRONT_PANEL_MIN_WIDTH : a neck left narrower than that simply vanishes,
+    # and what it joined becomes as many front panels (see
+    # #_apply_front_panel_offset). The pieces of a band are therefore ordered
+    # only once all of them are known - see #_sort_pieces_across.
+    #
     # nil when the layout leaves nothing buildable : a count the contour is
-    # too narrow for, or a clearance that eats a front panel whole. Building fewer
-    # front panels than asked is not the answer.
+    # too narrow for, or a band the clearance leaves nothing of. Building
+    # fewer front panels than asked is not the answer - a band losing SOME of
+    # its pieces is : a sliver thinner than FRONT_PANEL_MIN_WIDTH never was a
+    # panel to begin with.
     def _get_front_panel_outlines(context)
 
       if _shared?
         bands = _split_points(context.points, context.direction, @number, @widths)
         return nil if bands.nil?
       else
-        bands = [ context.points ]
+        bands = [ [ context.points ] ]
       end
 
-      bands.map { |band|
-        points = _apply_front_panel_offset(band)
-        return nil if points.nil?
-        _flatten_outline(points).map { |point| point.transform(context.transformation) }
+      bands.map { |pieces|
+        outlines = pieces.flat_map { |piece| _apply_front_panel_offset(piece) }
+        return nil if outlines.empty?
+        _sort_pieces_across(outlines, context.direction).map { |points|
+          _flatten_outline(points).map { |point| point.transform(context.transformation) }
+        }
       }
+    end
+
+    # +pieces+ - the front panels one band comes out as, in the opening's
+    # frame - ordered ACROSS the split +direction+, so that the same pick
+    # always yields them in the same order, whatever order Clipper hands them
+    # over in. The opening's frame has its x to the right as seen from
+    # outside, so turning the direction CLOCKWISE reads them in reading
+    # order : left to right across stacked bands, top to bottom across bands
+    # side by side. A lone front panel may have no direction at all, and is
+    # then read as stacked.
+    def _sort_pieces_across(pieces, direction)
+      return pieces if pieces.length < 2
+      dx, dy = direction.nil? ? [ 0.0, 1.0 ] : direction
+      pieces.sort_by { |piece| piece.map { |point| point.x.to_f * dy - point.y.to_f * dx }.min }
     end
 
     # Drops the vertices that draw no corner : the ones sitting, within
@@ -7034,10 +7088,13 @@ module Ladb::OpenCutList
     #
     # Each band is CLIPPED to the contour rather than assumed rectangular :
     # the contour may be canted, notched, or - in applique - the share of a
-    # silhouette a neighbour's bisector has already cut into. Of what a band
-    # is clipped to, only the widest ring is kept : a front panel is one panel, and
-    # a contour narrowing to nothing in the middle of a band is not two
-    # front panels.
+    # silhouette a neighbour's bisector has already cut into. So a band may
+    # well come out in several PIECES - the two legs of a U, cut across - and
+    # every one of them is a front panel of its own : a front panel is one
+    # panel, and keeping only one of them would leave the others' part of
+    # the opening bare. Each band is therefore a LIST of pieces, handed over
+    # raw and in no particular order : #_get_front_panel_outlines cleans them
+    # (see #_clean_pieces) and orders them once the clearance has had its say.
     #
     # nil when the direction is unusable, when the contour is degenerate
     # along it, when the layout does not fit, or when a band comes out empty.
@@ -7073,14 +7130,54 @@ module Ladb::OpenCutList
           clips: [ _band_path(dx, dy, b0, b1, reach) ]
         )
 
-        band_path = band_paths.max_by { |path| Fiddle::Clippy.get_rpath_area(path).abs }
-        return nil if band_path.nil? || band_path.length < 6
+        pieces = band_paths.select { |path| path.length >= 6 }.map { |path| Fiddle::Clippy.rpath_to_points(path) }
+        return nil if pieces.empty?
 
-        bands << Fiddle::Clippy.rpath_to_points(band_path)
+        bands << pieces
 
       end
 
       bands
+    end
+
+    # What of the given paths - a front panel's contour, once shared and
+    # pulled back by the clearance - can actually be cut : each resulting
+    # path is a front panel.
+    #
+    # Straight out of Clipper, not everything is. A band edge landing ON an
+    # edge of the contour - a pinned width equal to the depth of a notch,
+    # and a notch modelled a micron off that - leaves a hairline that is
+    # either DUST of its own, or a BRIDGE a micron thick welding two legs
+    # into one ring. And a clearance just short of half a neck leaves a
+    # bridge that is real, but no thicker than a veneer : the two legs of a
+    # U over a 3 mm band, pulled back by 1 mm on each side, hang together by
+    # a 1 mm strip as long as the notch is wide.
+    #
+    # Shrunk by half of FRONT_PANEL_MIN_WIDTH and grown straight back, the
+    # paths lose all of that : what is narrower than FRONT_PANEL_MIN_WIDTH -
+    # a whole sliver, or the neck between two legs - does not survive the
+    # shrinking, and all the rest comes back to the micron, as in
+    # #_cleanup_footprint_paths the other way round. The miter joins are what
+    # make that round trip exact : every corner is rebuilt sharp, where a
+    # rounded join would leave it bevelled.
+    def _clean_pieces(paths)
+      return [] if paths.empty?
+
+      delta = FRONT_PANEL_MIN_WIDTH.to_f / 2.0
+      shrunk_paths = Fiddle::Clippy.inflate_paths(
+        paths: paths,
+        delta: -delta,
+        join_type: Fiddle::Clippy::JOIN_TYPE_MITER,
+        miter_limit: 100.0
+      )
+      return [] if shrunk_paths.empty?
+
+      Fiddle::Clippy.inflate_paths(
+        paths: shrunk_paths,
+        delta: delta,
+        join_type: Fiddle::Clippy::JOIN_TYPE_MITER,
+        miter_limit: 100.0
+      ).select { |path| path.length >= 6 }
     end
 
     # [ [ b0, b1 ], ... ] the +number+ front panels span along the split direction,
@@ -7172,34 +7269,43 @@ module Ladb::OpenCutList
     end
 
     # The nominal contour pulled back by the CLEARANCE on every edge, in the
-    # opening's frame.
+    # opening's frame - as a LIST of contours, the front panels it comes out
+    # as.
     #
     # A real polygon offset (Clippy, the same one the shape offset of the
     # other actions uses), not a scaling : a contour is not always a
     # rectangle - a canted or notched one keeps its angles, and every edge
     # stands back by the same distance, which is what a front panel offset means.
+    #
+    # Pulled back that way, a contour narrowing somewhere to less than twice
+    # the clearance loses that neck altogether and breaks into several rings
+    # - the two legs of a U whose bridge is thinner than that. Each is a
+    # front panel of its own, exactly as the pieces a band is clipped to
+    # are, for the very same reason : the clearance is taken on every edge
+    # of every leaf, and a neck that narrow has nothing left between the two
+    # edges it runs along. A neck the clearance leaves narrower than
+    # FRONT_PANEL_MIN_WIDTH goes the same way - see #_clean_pieces, which
+    # every contour goes through, clearance or not.
+    #
+    # Empty when nothing is left at all : the contour is too narrow for the
+    # clearance everywhere, or no wider than a sliver to begin with.
     def _apply_front_panel_offset(points)
-
-      front_panel_offset = _fetch_option_front_panel_offset
-      return points if front_panel_offset.nil? || front_panel_offset <= 0
 
       # The union normalizes the winding, and the winding is what decides
       # which side a negative delta offsets towards.
       paths, _ = Fiddle::Clippy.execute_union(closed_subjects: [ Fiddle::Clippy.points_to_rpath(points) ])
-      outlines = Fiddle::Clippy.inflate_paths(
-        paths: paths,
-        delta: -front_panel_offset.to_f,
-        join_type: Fiddle::Clippy::JOIN_TYPE_MITER,
-        miter_limit: 100.0
-      ).map { |path| Fiddle::Clippy.rpath_to_points(path) }
-       .delete_if { |inset_points| inset_points.length < 3 }
 
-      # A front panel offset the contour is too narrow for leaves nothing at all, or
-      # breaks it into several rings : neither is a front panel, and the pick simply
-      # yields nothing rather than a mangled one.
-      return nil unless outlines.length == 1
+      front_panel_offset = _fetch_option_front_panel_offset
+      if !front_panel_offset.nil? && front_panel_offset > 0
+        paths = Fiddle::Clippy.inflate_paths(
+          paths: paths,
+          delta: -front_panel_offset.to_f,
+          join_type: Fiddle::Clippy::JOIN_TYPE_MITER,
+          miter_limit: 100.0
+        )
+      end
 
-      outlines.first
+      _clean_pieces(paths).map { |path| Fiddle::Clippy.rpath_to_points(path) }
     end
 
     # OVERLAY : the share of the container's front that belongs to this
@@ -7674,7 +7780,7 @@ module Ladb::OpenCutList
     def _preview_front_panel(view)
 
       @tool.clear_3d(LAYER_3D_FRONT_PANEL_PREVIEW)
-      @tool.clear_2d(LAYER_2D_WIDTH)
+      @tool.clear_2d([ LAYER_2D_WIDTH, LAYER_2D_MIRROR ])
 
       return unless (front_panel_defs = _compute_front_panel_defs(@picked_point, view)).is_a?(Array) && !front_panel_defs.empty?
 
@@ -7727,6 +7833,34 @@ module Ladb::OpenCutList
 
       end
 
+      # The mirror motif on the seam of every pair laid in mirror - and only
+      # of those : an even front panel that is not its neighbour's mirror
+      # image is built on its own, and says so by showing none.
+      _get_front_panel_mirror_transformations(front_panel_defs).each_with_index do |mirror, index|
+        next if mirror.nil?
+
+        _, mirrored_index = mirror
+        front_panel_def = front_panel_defs[index]
+        seam_point = Geom.linear_combination(0.5, front_panel_defs[mirrored_index].center, 0.5, front_panel_def.center)
+
+        # The motif's axis stands across the split direction as the screen
+        # shows it : upright between front panels side by side, lying between
+        # stacked ones.
+        screen_seam_point = view.screen_coords(seam_point)
+        screen_along_point = view.screen_coords(seam_point.offset(front_panel_def.direction, view.pixels_to_model(10, seam_point)))
+        side_by_side = (screen_along_point.x - screen_seam_point.x).abs >= (screen_along_point.y - screen_seam_point.y).abs
+
+        unit = @tool.get_unit(view)
+
+        k_motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path(side_by_side ? SmartDrawTool::MIRROR_MOTIF_VERTICAL_PATH : SmartDrawTool::MIRROR_MOTIF_HORIZONTAL_PATH))
+        k_motif.layout_data = Kuix::StaticLayoutDataWithSnap.new(seam_point, unit * 5, unit * 5, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+        k_motif.padding.set_all!(unit)
+        k_motif.set_style_attribute(:color, Kuix::COLOR_WHITE)
+        k_motif.set_style_attribute(:background_color, color)
+        @tool.append_2d(k_motif, LAYER_2D_MIRROR)
+
+      end
+
       Sketchup.set_status_text(front_panel_defs.first.thickness.to_l, SB_VCB_VALUE)
 
     end
@@ -7773,7 +7907,14 @@ module Ladb::OpenCutList
         # See #_find_reusable_front_panel.
         sibling_front_panel_defs = []
 
-        front_panel_defs.each do |front_panel_def|
+        # [ definition, WORLD transformation ] of each front panel of the batch
+        # once it stands in the model, by its index - nil for the ones
+        # skipped. What the mirror option instances its even front panels
+        # from, see #_get_front_panel_mirror_transformations.
+        instance_defs = []
+        mirror_transformations = _get_front_panel_mirror_transformations(front_panel_defs)
+
+        front_panel_defs.each_with_index do |front_panel_def, index|
 
           # Local frame for the new part : Z = the opening's outward normal,
           # X/Y its own in-plane basis, origin on the opening plane. The front panel
@@ -7803,7 +7944,17 @@ module Ladb::OpenCutList
             next
           end
 
-          candidate_definition, candidate_world_transformation = _find_reusable_front_panel(front_panel_def, sibling_front_panel_defs)
+          # A front panel the mirror option lays in mirror is its
+          # neighbour's definition, reflected - whatever the reuse option says,
+          # and before any translated occurrence it might also be.
+          mirror_transformation, mirrored_index = mirror_transformations[index]
+          mirrored_instance_def = mirrored_index.nil? ? nil : instance_defs[mirrored_index]
+          if !mirror_transformation.nil? && !mirrored_instance_def.nil?
+            candidate_definition = mirrored_instance_def[0]
+            candidate_world_transformation = mirror_transformation * mirrored_instance_def[1]
+          else
+            candidate_definition, candidate_world_transformation = _find_reusable_front_panel(front_panel_def, sibling_front_panel_defs)
+          end
 
           if candidate_definition.nil?
 
@@ -7840,12 +7991,17 @@ module Ladb::OpenCutList
             # compared to is unchanged by it.
             sibling_front_panel_defs << [ front_panel_def.outline, definition, world_transformation ] if _fetch_option_reuse_definition?
 
+            instance_defs[index] = [ definition, world_transformation ]
+
           else
 
             # The front panel is one more occurrence of a front panel this batch has
             # already built : nothing is built at all, that definition is
             # instanced where this one stands - see #_find_reusable_front_panel
+            # and #_get_front_panel_mirror_transformations
             instance = active_entities.add_instance(candidate_definition, active_transformation.inverse * candidate_world_transformation)
+
+            instance_defs[index] = [ candidate_definition, candidate_world_transformation ]
 
           end
 
@@ -7909,6 +8065,81 @@ module Ladb::OpenCutList
       end
 
       true
+    end
+
+    # For each front panel of the batch, [ the WORLD transformation carrying
+    # the front panel it mirrors onto it, the index of that one ] when the
+    # mirror option lays it in mirror - nil for every other one.
+    #
+    # Only the front panels of the EVEN bands (the 2nd, the 4th... counted
+    # from the low end of the split direction, so the measure reversed option
+    # decides which ones they are) are laid in mirror, each of a front panel
+    # of the band just before it : pairs of leaves opening on their common
+    # seam. A band the contour cuts in several pieces (see #_split_points)
+    # pairs piece to piece : each one takes, among the pieces of the band
+    # before that it is the mirror image of, the one standing SQUARELY across
+    # the seam from it - the reflection that slides it the least along the
+    # seam - rather than the same leg of a U on its other side. A front panel
+    # that is NOT the mirror image of any - a pinned width, an applied contour
+    # cut differently at each end - is simply left alone : a mirror it does
+    # not have would be a lie in the model.
+    #
+    # Nothing to mirror when the front panels are only construction lines.
+    def _get_front_panel_mirror_transformations(front_panel_defs)
+      mirror = _fetch_option_mirror? && !_fetch_option_construction?
+      front_panel_defs.map { |front_panel_def|
+        next nil unless mirror && front_panel_def.band.odd?
+
+        best = nil
+        best_slide = nil
+        front_panel_defs.each_with_index do |other_front_panel_def, other_index|
+          next unless other_front_panel_def.band == front_panel_def.band - 1
+          next if (transformation = _get_front_panel_mirror_transformation(front_panel_def, other_front_panel_def)).nil?
+          slide = _vector_rejection(transformation.origin - ORIGIN, front_panel_def.direction.normalize).length.to_f
+          next unless best_slide.nil? || slide < best_slide
+          best = [ transformation, other_index ]
+          best_slide = slide
+        end
+        best
+      }
+    end
+
+    # The WORLD reflection carrying +other_front_panel_def+ onto
+    # +front_panel_def+, across a plane square to the batch's split direction -
+    # nil when the one is not the other's mirror image that way.
+    #
+    # The reflection is read across the plane through the origin first, and
+    # whatever translation then carries the reflected outline onto the other
+    # one places that plane : on the seam between two leaves, or wherever a
+    # contour stepped along the way puts it. Reflecting reverses the way an
+    # outline turns, so the reflected one is matched walked backwards too.
+    #
+    # Its determinant is -1 : instanced with it, the neighbour's definition
+    # is a MIRRORED occurrence, one the cutlist reads as flipped.
+    def _get_front_panel_mirror_transformation(front_panel_def, other_front_panel_def)
+      direction = front_panel_def.direction
+      return nil if direction.nil? || !direction.valid?
+
+      dx, dy, dz = direction.normalize.to_a
+
+      reflected_outline = other_front_panel_def.outline.map { |point|
+        k = 2.0 * (point.x.to_f * dx + point.y.to_f * dy + point.z.to_f * dz)
+        Geom::Point3d.new(point.x.to_f - k * dx, point.y.to_f - k * dy, point.z.to_f - k * dz)
+      }
+
+      offset = _outlines_translation_offset(front_panel_def.outline, reflected_outline.reverse) ||
+               _outlines_translation_offset(front_panel_def.outline, reflected_outline)
+      return nil if offset.nil?
+
+      # I - 2 d dT : symmetric, so row or column major reads the same
+      reflection = Geom::Transformation.new([
+        1.0 - 2.0 * dx * dx,      -2.0 * dx * dy,       -2.0 * dx * dz, 0.0,
+             -2.0 * dx * dy, 1.0 - 2.0 * dy * dy,       -2.0 * dy * dz, 0.0,
+             -2.0 * dx * dz,      -2.0 * dy * dz,  1.0 - 2.0 * dz * dz, 0.0,
+                        0.0,                 0.0,                  0.0, 1.0
+      ])
+
+      Geom::Transformation.translation(offset) * reflection
     end
 
     # [ definition, WORLD transformation ] of a front panel of the SAME batch the
@@ -8029,9 +8260,11 @@ module Ladb::OpenCutList
     # One front panel : the opening it fills, the outline it is cut to (WORLD
     # coordinates, closed, the closing point not repeated), its thickness,
     # whether it is laid in applique on the opening rather than fitted into
-    # it, and the WORLD direction the front panels of its batch succeed one another
-    # along - the one its own width is read on.
-    FrontPanelDef = Struct.new(:container_path, :fragment_def, :opening_def, :outline, :thickness, :overlay, :direction) do
+    # it, the WORLD direction the front panels of its batch succeed one another
+    # along - the one its own width is read on - and the index of the band of
+    # that batch it was cut from, which it may share with other pieces of the
+    # same band (see #_split_points).
+    FrontPanelDef = Struct.new(:container_path, :fragment_def, :opening_def, :outline, :thickness, :overlay, :direction, :band) do
 
       def overlay?
         !!overlay

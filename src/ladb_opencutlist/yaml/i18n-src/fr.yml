@@ -2439,6 +2439,8 @@ tool:
     action_option_options_reduce_envelope_status: Considérer les pièces en retrait
     action_option_options_reuse_definition: Réutiliser les pièces
     action_option_options_reuse_definition_status: Réutiliser la pièce existante de même forme et de même voisinage plutôt que d'en créer une nouvelle
+    action_option_options_mirror: Pose en miroir
+    action_option_options_mirror_status: Poser chaque façade de rang pair en miroir de sa voisine
     action_option_options_ask_name: Nommage des pièces
     action_option_options_ask_name_status: Saisir manuellement le nom des pièces
     action_option_options_layer_name: Calque
