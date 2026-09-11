@@ -28,6 +28,9 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
+### 2026-09-11
+* Updated translations
+ * Updated PackingSolver dependency
 ### 2026-09-10
  * Improved Smart Stretch Tool by adding "bloc movements" option
 ### 2026-09-09

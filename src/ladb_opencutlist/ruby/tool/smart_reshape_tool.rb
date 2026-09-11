@@ -1621,10 +1621,11 @@ module Ladb::OpenCutList
         k_edge = Kuix::EdgeMotif3d.new
         k_edge.start.copy!(@picked_interior_handle[:points].first)   # Already expressed in the global space
         k_edge.end.copy!(@picked_interior_handle[:points].last)
-        k_edge.line_width = 3
+        k_edge.line_width = 2.5
         k_edge.start_arrow = k_edge.end_arrow = true
         k_edge.arrow_size = 10
         k_edge.color = color
+        k_edge.on_top = true
         @tool.append_3d(k_edge, LAYER_3D_GRIPS_PREVIEW)
 
         # Show where the segment is grabbed, the diamond telling the grab point is magnetized to
@@ -1639,20 +1640,11 @@ module Ladb::OpenCutList
         k_points = _create_floating_points(
           points: @picked_interior_handle[:point],
           style: style,
-          stroke_color: nil,
+          stroke_color: Kuix::COLOR_WHITE,
           fill_color: color,
           size: size
         )
         @tool.append_3d(k_points, LAYER_3D_GRIPS_PREVIEW)
-        k_points = _create_floating_points(
-          points: @picked_interior_handle[:point],
-          style: style,
-          stroke_color: Kuix::COLOR_WHITE,
-          fill_color: nil,
-          size: size + 1
-        )
-        @tool.append_3d(k_points, LAYER_3D_GRIPS_PREVIEW)
-
       end
 
     end
