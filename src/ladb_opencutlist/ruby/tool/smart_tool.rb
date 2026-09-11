@@ -31,6 +31,8 @@ module Ladb::OpenCutList
     MESSAGE_TYPE_WARNING = 2
     MESSAGE_TYPE_SUCCESS = 3
 
+    NOTIFICATION_MAX_COUNT = 4
+
     ACTION_NONE = -1
 
     COLOR_BRAND = Sketchup::Color.new(247, 127, 0).freeze
@@ -951,6 +953,10 @@ module Ladb::OpenCutList
 
       end
 
+      # Close the oldest notifications to keep at most NOTIFICATION_MAX_COUNT boxes
+      overflow_count = @notification_panel.children.size - (NOTIFICATION_MAX_COUNT - 1)
+      @notification_panel.children.first(overflow_count).each { |child| child.fire(:click) } if overflow_count > 0
+
       @notification_panel.append(box)
       @notification_panel.visible = @notification_panel.children.any?
 
@@ -990,7 +996,7 @@ module Ladb::OpenCutList
 
     def clear_notifications
       return unless @notification_panel
-      @notification_panel.children.each { |child| child.fire(:click) }
+      @notification_panel.children.dup.each { |child| child.fire(:click) }
     end
 
     def show_validation
