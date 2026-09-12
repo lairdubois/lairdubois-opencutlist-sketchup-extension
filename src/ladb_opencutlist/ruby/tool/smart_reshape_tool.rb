@@ -2116,7 +2116,7 @@ module Ladb::OpenCutList
     def _stretch_entity
       return if (stretch_def = _get_stretch_def(@picked_stretch_start_point, @picked_stretch_end_point)).nil?
 
-      split_def, emv, esv, edvs, lps, lpe = stretch_def.values_at(:split_def, :emv, :esv, :edvs, :lps, :lpe)
+      split_def, t_coefs, emv, esv, edvs, lps, lpe = stretch_def.values_at(:split_def, :t_coefs, :emv, :esv, :edvs, :lps, :lpe)
       et, eps, evpspe, reversed, section_defs, container_defs = split_def.values_at(:et, :eps, :evpspe, :reversed, :section_defs, :container_defs)
 
       # Keep the applied measure - and its way - to be able to reuse them on the next stretch
@@ -2126,7 +2126,7 @@ module Ladb::OpenCutList
       _unhide_instances
 
       # Prepare uniqueness data
-      container_defs.first.compute_md5(@picked_axis)
+      container_defs.first.compute_md5(@picked_axis, t_coefs)
       container_defs.first.compute_entity_pos
 
       # Divide in 2 operations to hide native make_unique group operations
@@ -3150,6 +3150,7 @@ module Ladb::OpenCutList
       {
         split_def: split_def,
         factor: factor,
+        t_coefs: t_coefs,
         emv: emv,
         esv: esv,
         edvs: edvs,
@@ -3257,37 +3258,55 @@ module Ladb::OpenCutList
         @md5
       end
 
-      def compute_md5(axis)
+      # 'section_coefs' holds the translation coefficient of each section, indexed by section index,
+      # or nil when the sections translate proportionally to their index - the profile of a plain
+      # stretch. Deltas must be measured on these coefficients and not on the section indices : the
+      # profile of an interior handle move is not linear, so two containers anchored on both sides of
+      # the moved section are deformed in opposite ways even though their index deltas match.
+      def compute_md5(axis, section_coefs = nil)
         @md5 ||= begin
           data = []
           data << container.definition.persistent_id if container.respond_to?(:definition)
 
+          sign = 1.0
           unless parent.nil?
             if (local_axis = axis.transform((transformation * container.transformation).inverse)).valid?
               data << (local_axis.angle_between(axis) % Math::PI).round(6) # Differentiating rotations but not perfect aligned mirrors
               data << local_axis.length.to_f.round(6) if operation == OPERATION_SPLIT  # Differentiating scaling
+              sign = _axis_sign(local_axis)
             end
           end
+
+          fn_coef = lambda { |sd|
+            next 0.0 if sd.nil?
+            next sd.index.to_f if section_coefs.nil?   # Proportional to the index : the linear profile of a plain stretch
+            (section_coefs[sd.index] || 0.0).to_f
+          }
+          fn_delta = lambda { |other_section_def|
+            # Signed delta anchored on the local axis way to be able to unify flipped elements
+            delta = ((fn_coef.call(section_def) - fn_coef.call(other_section_def)) * sign).round(6)
+            delta == 0.0 ? 0.0 : delta   # '-0.0' and '0.0' are equal but do not dump the same
+          }
 
           if operation == OPERATION_SPLIT
             data << edge_defs.map { |edge_def|
               [
                 edge_def.edge.persistent_id,
-                (section_def.index - edge_def.start_section_def.index).abs, # Use "delta" to be able to unify flipped elements
-                (section_def.index - edge_def.end_section_def.index).abs
+                fn_delta.call(edge_def.start_section_def),
+                fn_delta.call(edge_def.end_section_def)
               ]
             } if edge_defs.any?
             data << cline_defs.map { |cline_def|
               [
                 cline_def.cline.persistent_id,
-                (section_def.index - cline_def.start_section_def.index).abs, # Use "delta" to be able to unify flipped elements
-                (section_def.index - cline_def.end_section_def.index).abs
+                fn_delta.call(cline_def.start_section_def),
+                fn_delta.call(cline_def.end_section_def)
               ]
             } if cline_defs.any?
             data << snap_defs.map { |snap_def|
               [
                 snap_def.snap.persistent_id,
-                (section_def.index - snap_def.section_def.index).abs, # Use "delta" to be able to unify flipped elements
+                fn_delta.call(snap_def.section_def)
               ]
             } if snap_defs.any?
           end
@@ -3299,15 +3318,27 @@ module Ladb::OpenCutList
           # direct edges (e.g. a component made only of sub-components).
           data << children.map { |container_def|
             [
-              container_def.compute_md5(axis),
+              container_def.compute_md5(axis, section_coefs),
               if operation == OPERATION_SPLIT && !section_def.nil? && !container_def.section_def.nil?
-                (section_def.index - container_def.section_def.index).abs # Use "delta" to be able to unify flipped elements
+                fn_delta.call(container_def.section_def)
               end
             ]
           }
 
           Digest::MD5.hexdigest(Marshal.dump(data))
         end
+      end
+
+      # Two instances of a same definition see the stretch axis - expressed in that definition space -
+      # as a same vector up to its sign. Anchoring the section deltas on a sign read from that vector
+      # alone therefore keeps them comparable between an instance and its mirrored twin : the delta
+      # sign flips with the axis, their product does not.
+      def _axis_sign(local_axis)
+        [ local_axis.x, local_axis.y, local_axis.z ].each do |coord|
+          next if coord.to_f.round(6) == 0.0
+          return coord.to_f < 0 ? -1.0 : 1.0
+        end
+        1.0
       end
 
       def compute_entity_pos
