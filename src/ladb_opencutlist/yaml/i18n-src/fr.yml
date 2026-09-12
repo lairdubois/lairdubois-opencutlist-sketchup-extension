@@ -2393,11 +2393,15 @@ tool:
     action_4_status: Dessiner une façade dans une cavité formée par un groupe de pièces existantes
     action_4_state_0_status: Cliquez dans une cavité pour dessiner une façade sur son ouverture
     action_4_state_0_merge_status: "Glissez jusqu'aux cavités voisines pour une façade commune"
+    action_5: Dessiner un Fond
+    action_5_status: Dessiner un fond dans une cavité formée par un groupe de pièces existantes
+    action_5_state_0_status: Cliquez dans une cavité pour dessiner un fond sur son ouverture opposée à la vue
+    action_5_state_0_merge_status: "Glissez jusqu'aux cavités voisines pour un fond commun"
     action_option_group_offset: Décalage
     action_option_group_segments: Segments
     action_option_group_thickness: Epaisseur
-    action_option_group_clearance: Jeu
     action_option_group_overlay: Pose
+    action_option_group_machining: Usinage
     action_option_group_axes: Axes
     action_option_group_measure_type: Mesure
     action_option_group_options: Options
@@ -2405,12 +2409,21 @@ tool:
     action_option_offset_shape_offset_status: Permet d'appliquer un décalage au tracé de la forme dessinée
     action_option_offset_front_panel_offset: Jeu
     action_option_offset_front_panel_offset_status: "Définit le jeu laissé sur chaque bord de la façade"
+    action_option_offset_back_panel_depth: Profondeur de rainure
+    action_option_offset_back_panel_depth_status: "Définit de combien le fond dépasse l'ouverture sur chaque bord, c'est à dire la profondeur de la rainure dans laquelle il est engagé"
+    action_option_offset_back_panel_setback: Retrait
+    action_option_offset_back_panel_setback_status: "Définit de combien le fond recule vers l'intérieur du caisson, et donc où la rainure est usinée"
     action_option_segments_segment_count: Nombre de segments
     action_option_segments_segment_count_status: Permet de définir le nombre de segments du cercle
     action_option_thickness_thickness: Epaisseur
     action_option_thickness_thickness_status: Définit l'épaisseur des panneaux
     action_option_overlay_inset_status: "Façade encastrée : posée dans l'ouverture, au nu de la face avant"
     action_option_overlay_full_overlay_status: "Façade en applique : posée devant la face avant, recouvrant les panneaux jusqu'au nu extérieur du caisson et jusqu'à mi-épaisseur des panneaux intérieurs"
+    action_5_action_option_group_offset: Rainure
+    action_5_action_option_overlay_inset_status: "Fond en rainure : engagé dans une rainure usinée dans les pièces qui bordent l'ouverture"
+    action_5_action_option_overlay_full_overlay_status: "Fond en applique : posé sur l'arrière du caisson, recouvrant les panneaux jusqu'au nu extérieur et jusqu'à mi-épaisseur des panneaux intérieurs, sans aucun usinage"
+    action_option_machining_none_status: "Ne pas usiner les pièces voisines : le fond est dessiné seul"
+    action_option_machining_volume_status: "Usiner les pièces voisines : la rainure est dessinée comme un volume de matière enlevée, à l'intérieur de chaque pièce"
     action_option_measure_type_inside_status: Positionner l'épaisseur à l'intérieur du point ciblé
     action_option_measure_type_centered_status: Centrer l'épaisseur sur le point ciblé
     action_option_measure_type_outside_status: Positionner l'épaisseur à l'extérieur du point ciblé
@@ -2444,7 +2457,11 @@ tool:
     action_option_options_ask_name: Nommage des pièces
     action_option_options_ask_name_status: Saisir manuellement le nom des pièces
     action_option_options_layer_name: Calque
-    action_option_options_layer_name_status: Nom du calque sur lequel sont placées les façades
+    action_option_options_layer_name_status: Nom du calque sur lequel sont placées les pièces
+    action_option_options_machining_material_name: Matière d'usinage
+    action_option_options_machining_material_name_status: "Nom de la matière donnée aux volumes d'usinage. Laissez vide pour utiliser le nom du type de matière '$t(tab.materials.type_7)'"
+    action_option_options_machining_layer_name: Calque d'usinage
+    action_option_options_machining_layer_name_status: Nom du calque sur lequel sont placés les volumes d'usinage
     action_toggle_move_copy_status: Alterner entre copier/déplacer
     action_change_move_anchor_status: Changer le point d'ancrage
     error:
@@ -2456,8 +2473,15 @@ tool:
       invalid_front_panel_container: "Cette pièce est isolée : elle ne partage pas de groupe ou composant avec d'autres pièces"
       invalid_front_panel_cavity: "Aucune cavité ouverte vers vous à cette position"
       no_front_panel_cavity: Aucune cavité n'a été détectée dans ce groupe ou composant
+      invalid_back_panel_seed: Ce type de pièce ne permet pas le dessin d'un fond
+      invalid_back_panel_container: "Cette pièce est isolée : elle ne partage pas de groupe ou composant avec d'autres pièces"
+      invalid_back_panel_cavity: "Aucune cavité ouverte à l'opposé de la vue à cette position"
+      no_back_panel_cavity: Aucune cavité n'a été détectée dans ce groupe ou composant
       divider_number_overflow: "Impossible de répartir {{ number }} séparateurs dans cette cavité"
       front_panel_number_overflow: "Impossible de répartir {{ number }} façades sur cette ouverture"
+      back_panel_number_overflow: "Impossible de répartir {{ number }} fonds sur cette ouverture"
+    warning:
+      no_back_panel_machining: "Aucune rainure n'a pu être usinée : aucune pièce voisine ne borde le fond à cette profondeur"
     success:
       part_created: "Nouvelle pièce créée : {{ name }}"
       part_created_plural: "{{ count }} nouvelles pièces créées : {{ name }}"

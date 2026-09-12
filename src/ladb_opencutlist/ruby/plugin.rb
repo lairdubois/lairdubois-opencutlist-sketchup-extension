@@ -336,16 +336,24 @@ module Ladb::OpenCutList
       Sketchup.platform == :platform_osx ? 'mac' : 'win'
     end
 
+    # Whether the i18n file really holds a string at +path_key+ - and WITHOUT
+    # the "not found" trace #get_i18n_string leaves behind, so that a caller may
+    # offer an optional key and fall back on another when it is absent (see
+    # SmartTool#_get_action_i18n_string).
+    #
+    # The trace is the whole point of the separate method : a line on a visible
+    # Ruby console costs tens of milliseconds, and a key that is MEANT to be
+    # missing most of the time would pay it on every read.
+    def has_i18n_string?(path_key)
+      _load_i18n_strings_cache
+      path_key.split('.').inject(@i18n_strings_cache) { |hash, key|
+        hash.is_a?(Hash) ? hash[key] : nil
+      }.is_a?(String)
+    end
+
     def get_i18n_string(path_key, vars = nil)
 
-      unless @i18n_strings_cache
-        file_path = File.join(PLUGIN_DIR, 'yaml', 'i18n', "#{language}.yml")
-        begin
-          @i18n_strings_cache = YAML::load_file(file_path)
-        rescue => e
-          raise "Error loading i18n file (file='#{file_path}') : #{e.message}."
-        end
-      end
+      _load_i18n_strings_cache
 
       # Process plural if a count var is defined
       if vars.is_a?(Hash) && !vars[:count].nil? && vars[:count] > 1 && !path_key.end_with?('_plural')
@@ -371,6 +379,17 @@ module Ladb::OpenCutList
       end
 
       path_key
+    end
+
+    def _load_i18n_strings_cache
+      return if @i18n_strings_cache
+
+      file_path = File.join(PLUGIN_DIR, 'yaml', 'i18n', "#{language}.yml")
+      begin
+        @i18n_strings_cache = YAML::load_file(file_path)
+      rescue => e
+        raise "Error loading i18n file (file='#{file_path}') : #{e.message}."
+      end
     end
 
     def open_docs_page(page)

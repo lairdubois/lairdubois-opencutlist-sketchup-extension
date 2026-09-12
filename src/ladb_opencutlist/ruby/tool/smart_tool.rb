@@ -253,7 +253,7 @@ module Ladb::OpenCutList
 
               options.each do |option_group, options|
 
-                group_title = PLUGIN.get_i18n_string("tool.smart_#{get_stripped_name}.action_option_group_#{option_group}")
+                group_title = get_action_option_group_title(action, option_group)
                 group_titled = get_action_option_group_titled?(action, option_group)
 
                 lbl = Kuix::Label.new
@@ -1074,7 +1074,35 @@ module Ladb::OpenCutList
 
     def get_action_option_status(action, option_group, option)
       return '' if action.nil? || option_group.nil? || option.nil?
-      PLUGIN.get_i18n_string("tool.smart_#{get_stripped_name}.action_option_#{option_group}_#{option}_status")
+      _get_action_i18n_string(action, "action_option_#{option_group}_#{option}_status")
+    end
+
+    def get_action_option_group_title(action, option_group)
+      return '' if option_group.nil?
+      _get_action_i18n_string(action, "action_option_group_#{option_group}")
+    end
+
+    # The tool's own i18n string for +key+, the one SCOPED TO THE ACTION first
+    # and the plain one after.
+    #
+    # An option group shared by several actions does not have to say the same
+    # thing of all of them - the POSE of a panel means being inset in a mouth
+    # to a front panel, and being let into a groove to a back one - while the
+    # vast majority of options mean exactly one thing and must not have to be
+    # written once per action. Hence the fallback : a scoped key is added only
+    # where it says something the generic one cannot.
+    #
+    # Probed with PLUGIN.has_i18n_string? rather than read and compared : a
+    # scoped key is absent for nearly every option, and get_i18n_string traces
+    # every miss to the Ruby console - tens of milliseconds a line, on a panel
+    # that is rebuilt whole.
+    def _get_action_i18n_string(action, key)
+      prefix = "tool.smart_#{get_stripped_name}"
+      unless action.nil?
+        scoped_key = "#{prefix}.action_#{action}_#{key}"
+        return PLUGIN.get_i18n_string(scoped_key) if PLUGIN.has_i18n_string?(scoped_key)
+      end
+      PLUGIN.get_i18n_string("#{prefix}.#{key}")
     end
 
     def get_action_cursor(action)
@@ -2424,6 +2452,39 @@ module Ladb::OpenCutList
           end
         end
       end
+    end
+
+    # Separates every instance of +path+ that shares its definition, from the
+    # root down, so that CHANGING what the leaf holds changes it there and
+    # nowhere else. Mutates +path+ in place, re-resolving each child by its
+    # POSITION in its parent - a make_unique clones the definition, and the
+    # entity the caller was holding belongs to the old one. Answers whether
+    # anything was cloned at all.
+    #
+    # Wider than #_make_unique_groups_in_path in what it separates - COMPONENTS
+    # too, not only groups - and narrower in when : only what is REALLY shared,
+    # an instance whose definition has others. That is why the two exist side
+    # by side rather than one : #_pick_part runs on every mouse move and must
+    # never clone a component, a component being shared ON PURPOSE where a
+    # group is shared behind the user's back.
+    def _make_unique_instances_in_path(path)
+      made_unique = false
+      path.each_with_index do |entity, index|
+        next unless entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance)
+        next if entity.definition.instances.length < 2
+
+        # Read BEFORE the clone : afterwards this entity's definition is no
+        # longer the one the child is in.
+        child_position = index < path.size - 1 ? entity.definition.entities.to_a.index(path[index + 1]) : nil
+
+        new_entity = entity.make_unique
+        next if new_entity == entity
+
+        made_unique = true
+        path[index] = new_entity
+        path[index + 1] = new_entity.definition.entities.to_a[child_position] unless child_position.nil?
+      end
+      made_unique
     end
 
   end

@@ -2,7 +2,9 @@
   "_preprocessors": {
     "thickness": 1, /* PRESETS_PREPROCESSOR_D */
     "shape_offset": 5, /* PRESETS_PREPROCESSOR_D_NEGATIVE_ALLOWED */
-    "front_panel_offset": 1 /* PRESETS_PREPROCESSOR_D */
+    "front_panel_offset": 1, /* PRESETS_PREPROCESSOR_D */
+    "back_panel_depth": 1, /* PRESETS_PREPROCESSOR_D */
+    "back_panel_setback": 1 /* PRESETS_PREPROCESSOR_D */
   },
   "action_0": { /* ACTION_DRAW_RECTANGLE */
     "shape_offset": "0",
@@ -56,5 +58,21 @@
     "mirror": false,
     "ask_name": false,
     "layer_name": "OCL_FRONT_PANELS"
+  },
+  "action_5": { /* ACTION_DRAW_BACK_PANEL */
+    "thickness": { "metric": "8mm", "imperial": "5/16\"" },
+    "back_panel_depth": { "metric": "8mm", "imperial": "5/16\"" },
+    "back_panel_setback": "0",
+    "overlay": "inset",
+    "machining": "volume",
+    "axes": "context",
+    "construction": false,
+    "measure_reversed": false,
+    "reduce_envelope": false,
+    "reuse_definition": true,
+    "ask_name": false,
+    "layer_name": "OCL_BACK_PANELS",
+    "machining_material_name": "",
+    "machining_layer_name": "OCL_MACHININGS"
   }
 }

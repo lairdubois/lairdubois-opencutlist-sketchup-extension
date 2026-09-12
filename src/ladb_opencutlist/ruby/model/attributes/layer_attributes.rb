@@ -14,10 +14,26 @@ module Ladb::OpenCutList
   # and only what the part is FOR tells the two apart. Being told, the cavity
   # detection can read the carcass bare, and a second front panel be fitted to the
   # openings the first one left.
+  #
+  # TYPE_BACK_PANEL is that very back, and it is a separate type rather than
+  # one "applied panel" type for both, because what the two are FOR is exactly
+  # what has to be told apart : a handler draws its own kind, and must not
+  # offer to draw a second one where one already stands — while the OTHER kind
+  # is the most natural wall in the world to lean a pick on (see
+  # SmartDrawMouthPanelActionHandler#_picked_on_existing_panel?). Where the
+  # cavity detection is concerned, though, both are laid on and neither is
+  # carcass : that reading asks for TYPES_PANEL.
   class LayerAttributes
 
     TYPE_UNKNOWN = 0
     TYPE_FRONT_PANEL = 1
+    TYPE_BACK_PANEL = 2
+
+    TYPE_MAX = TYPE_BACK_PANEL
+
+    # The types that mark a panel LAID ON its container rather than part of
+    # it - what the cavity detection has to leave out of the carcass.
+    TYPES_PANEL = [ TYPE_FRONT_PANEL, TYPE_BACK_PANEL ].freeze
 
     attr_accessor :type
     attr_reader :layer
@@ -32,8 +48,14 @@ module Ladb::OpenCutList
     def self.valid_type(type)
       return TYPE_UNKNOWN if type.nil?
       i_type = type.to_i
-      return TYPE_UNKNOWN if i_type < TYPE_UNKNOWN || i_type > TYPE_FRONT_PANEL
+      return TYPE_UNKNOWN if i_type < TYPE_UNKNOWN || i_type > TYPE_MAX
       i_type
+    end
+
+    # Whether the given type marks a panel LAID ON its container - see
+    # TYPES_PANEL.
+    def self.panel_type?(type)
+      TYPES_PANEL.include?(type)
     end
 
     # The type marked on the layer the given entity is drawn on, TYPE_UNKNOWN
