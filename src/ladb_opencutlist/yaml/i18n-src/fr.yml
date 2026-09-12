@@ -2477,6 +2477,8 @@ tool:
       invalid_back_panel_container: "Cette pièce est isolée : elle ne partage pas de groupe ou composant avec d'autres pièces"
       invalid_back_panel_cavity: "Aucune cavité ouverte à l'opposé de la vue à cette position"
       no_back_panel_cavity: Aucune cavité n'a été détectée dans ce groupe ou composant
+      closed_front_panel_opening: "Cette ouverture est déjà fermée par une façade"
+      closed_back_panel_opening: "Cette ouverture est déjà fermée par un fond"
       divider_number_overflow: "Impossible de répartir {{ number }} séparateurs dans cette cavité"
       front_panel_number_overflow: "Impossible de répartir {{ number }} façades sur cette ouverture"
       back_panel_number_overflow: "Impossible de répartir {{ number }} fonds sur cette ouverture"
