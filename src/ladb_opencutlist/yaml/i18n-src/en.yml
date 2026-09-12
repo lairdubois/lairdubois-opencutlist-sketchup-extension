@@ -2439,6 +2439,8 @@ tool:
     action_option_options_reduce_envelope_status: Consider recessed parts
     action_option_options_reuse_definition: Reuse parts
     action_option_options_reuse_definition_status: "Rather than creating a new one, reuse the existing part which has the same shape and is located in the same area"
+    action_option_options_mirror: Mirror Layout
+    action_option_options_mirror_status: Place each even-numbered front as a mirror image of its neighbor
     action_option_options_ask_name: Part Naming
     action_option_options_ask_name_status: Enter part names manually
     action_option_options_layer_name: Layer

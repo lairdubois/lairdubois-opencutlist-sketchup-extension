@@ -2439,6 +2439,8 @@ tool:
     action_option_options_reduce_envelope_status: Zurückgesetzte Teil berücksichtigen
     action_option_options_reuse_definition: Teile wiederverwenden
     action_option_options_reuse_definition_status: "Das vorhandene Teil mit derselben Form und in derselben Umgebung wiederverwenden, anstatt ein neues zu erstellen"
+    action_option_options_mirror: Spiegelbildliche Anordnung
+    action_option_options_mirror_status: Jede Frontteil einer geraden Reihe spiegelbildlich zur benachbarten anbringen
     action_option_options_ask_name: Benennung der Teile
     action_option_options_ask_name_status: Namen der Teile manuell eingeben
     action_option_options_layer_name: Layer

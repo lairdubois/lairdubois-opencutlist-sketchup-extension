@@ -2439,10 +2439,12 @@ tool:
     action_option_options_reduce_envelope_status: Учитывать детали с отступом
     action_option_options_reuse_definition: Использовать детали повторно
     action_option_options_reuse_definition_status: Повторно использовать существующую деталь аналогичной формы и расположения вместо создания новой
+    action_option_options_mirror: Зеркальное отображение
+    action_option_options_mirror_status: ""
     action_option_options_ask_name: Задать имена деталям
     action_option_options_ask_name_status: Ввод названий деталей вручную
-    action_option_options_layer_name: ""
-    action_option_options_layer_name_status: ""
+    action_option_options_layer_name: Слой
+    action_option_options_layer_name_status: "Имя слоя, на котором размещаются фасады"
     action_toggle_move_copy_status: Переключение копировать/переместить
     action_change_move_anchor_status: Изменить точку привязки
     error:
@@ -2501,7 +2503,7 @@ tool:
     action_0_state_1a_status: "Кликните на схему распила, чтобы переместить ее"
     action_0_state_1b_status: Добавить схему распила
     action_0_state_1c_status: Удалить схему распила
-    action_0_state_1d_status: ""
+    action_0_state_1d_status: "Кликните, чтобы переместить геометрию, расположенную между двумя плоскостями сечения"
     action_0_state_10_status: "Перетащите схему распила, чтобы переместить ее"
     action_0_state_11_status: "Нажмите, чтобы добавить схему распила"
     action_0_state_12_status: "Нажмите на схему распила, чтобы удалить ее"
