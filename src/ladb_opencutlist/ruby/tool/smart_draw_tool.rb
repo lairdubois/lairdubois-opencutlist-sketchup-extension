@@ -22,6 +22,7 @@ module Ladb::OpenCutList
   require_relative '../utils/transformation_utils'
   require_relative '../worker/common/common_drawing_decomposition_worker'
   require_relative '../worker/common/common_solid_find_cavities_worker'
+  require_relative '../worker/common/common_solid_boolean_apply_worker'
 
   class SmartDrawTool < SmartTool
 
@@ -6290,6 +6291,7 @@ module Ladb::OpenCutList
       @merge_context = nil
       @merge_fragment_defs = []
       @merge_paths = []
+      @merge_mouth_paths = []
       @merge_cancelled = false
 
     end
@@ -6311,7 +6313,7 @@ module Ladb::OpenCutList
       case state
       when STATE_PLACE
         return super +
-               (_fetch_option_overlay_full_overlay? ? ' | ' + PLUGIN.get_i18n_string("tool.smart_#{@tool.get_stripped_name}.action_#{@action}_state_#{state}_merge_status") + '.' : '') +
+               (_merge_allowed? ? ' | ' + PLUGIN.get_i18n_string("tool.smart_#{@tool.get_stripped_name}.action_#{@action}_state_#{state}_merge_status") + '.' : '') +
                ' | ' + PLUGIN.get_i18n_string("default.constrain_key") + ' + X = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_construction_status') + '.' +
                ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_measure_reversed_status') + '.' +
                ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_reduce_envelope_status') + '.'
@@ -6342,19 +6344,30 @@ module Ladb::OpenCutList
     # chant, a hinge, the outside of the case - anything that resolves to no
     # cavity at all - without the panel losing the shape it has.
     #
-    # In applique ONLY : an inset panel merged over two compartments would
-    # have to be notched around the panel that separates them. The gesture
+    # Only where the pose allows it at all - see #_merge_allowed?. The gesture
     # then simply is the click it always was.
+    #
+    # What is kept of the picked cavity is its SHARE and its MOUTH, not the
+    # contour the context carries : that one has already been through the pose's
+    # own growth (see #_get_panel_nominal_points), and feeding a grown contour
+    # back into the growth at the next cavity would grow it twice. The contour
+    # is rebuilt from these two, whole, at every cavity that comes in.
     def onToolLButtonDown(tool, flags, x, y, view)
       super
 
       case @state
       when STATE_PLACE
         @merge_cancelled = false
-        if _fetch_option_overlay_full_overlay? && (context = _compute_panel_context(@picked_point, view)).is_a?(MouthPanelContext)
-          @merge_context = context
-          @merge_fragment_defs = [ context.fragment_def ]
-          @merge_paths = [ Fiddle::Clippy.points_to_rpath(context.points) ]
+        if _merge_allowed? && (context = _compute_panel_context(@picked_point, view)).is_a?(MouthPanelContext)
+          ti = context.transformation.inverse
+          share_points = _get_cavity_share_points(context.fragment_def, context.opening_def, ti)
+          mouth_points = _get_cavity_mouth_points(context.fragment_def, context.opening_def, ti)
+          unless share_points.nil? || mouth_points.nil?
+            @merge_context = context
+            @merge_fragment_defs = [ context.fragment_def ]
+            @merge_paths = [ Fiddle::Clippy.points_to_rpath(share_points) ]
+            @merge_mouth_paths = [ Fiddle::Clippy.points_to_rpath(mouth_points) ]
+          end
         end
       end
 
@@ -7824,6 +7837,32 @@ module Ladb::OpenCutList
       @merge_context = nil
       @merge_fragment_defs = []
       @merge_paths = []
+      @merge_mouth_paths = []
+    end
+
+    # Whether the drag may gather cavities at all, for the pose in force.
+    #
+    # In applique ONLY here : an inset panel merged over two compartments would
+    # have to be notched around the panel that separates them, and that is no
+    # door. A panel that stands BACK from its mouth is not bound by that - it
+    # runs straight past such a panel, which is then shortened instead. See
+    # SmartDrawBackPanelActionHandler.
+    def _merge_allowed?
+      _fetch_option_overlay_full_overlay?
+    end
+
+    # The MOUTHS of the cavities the merge has gathered, in the frame the merge
+    # is read in - what a pose that grows out of its mouth measures from, at the
+    # merged panel just as at a lone one. Empty when no merge is on.
+    def _merge_mouth_paths
+      _merging? ? @merge_mouth_paths : []
+    end
+
+    # The SHARES of the cavities the merge has gathered - the cells of the
+    # container's front they are each entitled to. What tells where the merge
+    # STOPS, which is not something its mouths can say. Empty when no merge is on.
+    def _merge_share_paths
+      _merging? ? @merge_paths : []
     end
 
     # Feeds the merge the cavity under the cursor.
@@ -7870,24 +7909,49 @@ module Ladb::OpenCutList
     # bisector is an unbounded half plane, so the cut called for by a cavity
     # standing above the left leg of the L would run on and rob the right
     # leg too, which it stands nowhere near.
+    #
+    # The SHARES are what adjacency is read on, whatever the pose : they are cut
+    # apart by one bisector and are jointive to the micron, where two MOUTHS of
+    # neighbouring compartments stand a whole panel apart. So both are kept - the
+    # shares to tell a neighbour from a stranger, the mouths for the pose that
+    # measures from them.
     def _merge_add(fragment_def)
       return false if @merge_fragment_defs.any? { |other_fragment_def| other_fragment_def.equal?(fragment_def) }
 
-      points = _get_cavity_share_points(fragment_def, @merge_context.opening_def, @merge_context.transformation.inverse)
+      ti = @merge_context.transformation.inverse
+
+      points = _get_cavity_share_points(fragment_def, @merge_context.opening_def, ti)
       return false if points.nil? || points.length < 3
+
+      mouth_points = _get_cavity_mouth_points(fragment_def, @merge_context.opening_def, ti)
+      return false if mouth_points.nil? || mouth_points.length < 3
 
       path = Fiddle::Clippy.points_to_rpath(points)
       return false unless _merge_adjacent?(path)
 
       paths = @merge_paths + [ path ]
-      merged_points = _merge_points(paths)
+      mouth_paths = @merge_mouth_paths + [ Fiddle::Clippy.points_to_rpath(mouth_points) ]
+      merged_points = _merge_nominal_points(paths, mouth_paths, @merge_context.opening_def, ti)
       return false if merged_points.nil?
 
       @merge_fragment_defs << fragment_def
       @merge_paths = paths
+      @merge_mouth_paths = mouth_paths
       @merge_context.points = merged_points
 
       true
+    end
+
+    # The NOMINAL contour the gathered cavities draw, in the opening's frame -
+    # nil when they draw no panel at all.
+    #
+    # The SHARES, here : a panel in applique is the share of the front each
+    # compartment is entitled to, and several of them is their union, nothing
+    # more (see #_merge_add). The mouths are of no use to it. A pose that grows
+    # out of its mouth reads them instead - see
+    # SmartDrawBackPanelActionHandler.
+    def _merge_nominal_points(share_paths, mouth_paths, opening_def, ti)
+      _merge_points(share_paths)
     end
 
     # The contour the merged shares draw, in the opening's frame - nil when
@@ -7964,16 +8028,28 @@ module Ladb::OpenCutList
       key = [ fragment_def.object_id, _opening_plane_key(opening_def) ]
       return @share_points_cache[key] if @share_points_cache.has_key?(key)
 
-      points = nil
-      own_opening_def = _get_opening_defs_on_plane(fragment_def, opening_def).max_by { |other_opening_def| other_opening_def.area }
-      unless own_opening_def.nil?
-        mouth = own_opening_def.outer_loop
-        unless mouth.nil? || mouth.length < 3
-          points = _get_overlay_points(fragment_def, opening_def, mouth.map { |point| point.transform(ti) }, ti)
-        end
-      end
+      mouth_points = _get_cavity_mouth_points(fragment_def, opening_def, ti)
+      points = mouth_points.nil? ? nil : _get_overlay_points(fragment_def, opening_def, mouth_points, ti)
 
       @share_points_cache[key] = points
+    end
+
+    # The MOUTH one cavity shows on the reference opening's plane, in that
+    # opening's frame - what tells which piece of the partition is its share,
+    # and what a panel let into a groove is cut from directly.
+    #
+    # The LARGEST when a cavity shows several there : an L shaped compartment
+    # may well open twice on one front, and the panel is drawn on the mouth the
+    # pick is about, not on a corner of the same compartment. nil when the cavity
+    # does not open on that plane at all.
+    def _get_cavity_mouth_points(fragment_def, opening_def, ti)
+      own_opening_def = _get_opening_defs_on_plane(fragment_def, opening_def).max_by { |other_opening_def| other_opening_def.area }
+      return nil if own_opening_def.nil?
+
+      mouth = own_opening_def.outer_loop
+      return nil if mouth.nil? || mouth.length < 3
+
+      mouth.map { |point| point.transform(ti) }
     end
 
     # -----
@@ -8803,6 +8879,12 @@ module Ladb::OpenCutList
   # open, and there is no pair of leaves to reflect.
   class SmartDrawBackPanelActionHandler < SmartDrawMouthPanelActionHandler
 
+    # How far a CROSSING cut is pushed past the part it takes off, on every side
+    # - see #_compute_machining_defs. Big enough that nothing of the cut lands
+    # within the model tolerance of a face of that part, small enough to stay
+    # invisible had anything of it survived.
+    CROSSING_OVERSHOOT = 1.mm
+
     def initialize(tool, previous_action_handler = nil)
       super(SmartDrawTool::ACTION_DRAW_BACK_PANEL, tool, previous_action_handler)
     end
@@ -8930,6 +9012,94 @@ module Ladb::OpenCutList
       best_path.nil? ? nil : Fiddle::Clippy.rpath_to_points(best_path)
     end
 
+    # ALWAYS, where a front panel merges in applique alone.
+    #
+    # The reason the base gives for that restriction is a door's reason : an
+    # inset door spanning two compartments would have to be notched around the
+    # panel that separates them. A back stands BACK from its mouth, inside the
+    # carcass : it runs straight past that panel, which is simply SHORTENED by
+    # as much as the back takes - and that is how a one piece back is built,
+    # rather than the exception the notch would be.
+    def _merge_allowed?
+      true
+    end
+
+    # The MOUTHS of the gathered cavities, plus the panels the merged back runs
+    # straight across, the whole grown by the groove depth.
+    #
+    # Two mouths of neighbouring compartments stand a whole panel apart, so
+    # their union alone is two rings, and no panel : what closes it is the
+    # panel between them, taken WHOLE (see #_get_crossed_footprint_paths).
+    # Whole, and not merely bridged by the growth, because a groove is 8 mm deep
+    # where a divider is 18 mm thick - the growth from either side would not meet
+    # in the middle, and the back would come out in two pieces over a divider it
+    # is meant to pass in front of.
+    #
+    # Taking it whole is also what tells #_compute_machining_defs the truth
+    # about it : the panel then falls in the RING - the contour minus the mouths -
+    # over its whole footprint, so it is machined over its whole width, which is
+    # exactly a divider stopped short of the back by the setback and the
+    # thickness.
+    def _merge_nominal_points(share_paths, mouth_paths, opening_def, ti)
+      return super if _fetch_option_overlay_full_overlay?
+
+      crossed_paths = _get_crossed_drawing_defs(share_paths, opening_def, ti).flat_map { |drawing_def| _get_panel_footprint_paths(drawing_def, opening_def, ti) }
+      points = _merge_points(mouth_paths + crossed_paths)
+      return nil if points.nil?
+
+      _grow_nominal_points(points, opening_def, ti)
+    end
+
+    # The panels the merge SURROUNDS - the ones a back spanning the gathered
+    # cavities has to run across, and so to shorten.
+    #
+    # What tells them apart from the frame around the merge is where they stand
+    # with respect to the merged SHARES : the shares run out to the container's
+    # silhouette, so a stile of the frame REACHES their border, and so does a
+    # divider the merge only took one side of - its share was cut through the
+    # middle of that very divider by the bisector. A divider standing between two
+    # gathered cavities reaches nothing : the frame stands between it and the
+    # outside.
+    #
+    # Read by shrinking the shares by a hair and looking for what then sticks
+    # out, scored the way #_merge_adjacent? scores a contact : a panel reaching
+    # the border sticks out over a hair times the length of that border, one
+    # surrounded by the merge sticks out over nothing at all. Orders of magnitude
+    # apart, so the reading needs no finesse.
+    #
+    # A divider that runs out to the silhouette itself - flush with the back of a
+    # carcass at both its ends - is left out on purpose : crossing it would show
+    # from the outside. The mouths then stay two rings, #_merge_points reads no
+    # panel in them, and the drag simply does not take that cavity.
+    def _get_crossed_drawing_defs(share_paths, opening_def, ti)
+      return [] if share_paths.length < 2
+      return [] unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef)
+
+      merged_paths, _ = Fiddle::Clippy.execute_union(closed_subjects: share_paths)
+      inner_paths = Fiddle::Clippy.inflate_paths(
+        paths: merged_paths,
+        delta: -MERGE_ADJACENCY_DELTA,
+        join_type: Fiddle::Clippy::JOIN_TYPE_MITER,
+        miter_limit: 100.0
+      )
+      return [] if inner_paths.empty?
+
+      cavities_def.drawing_defs.select { |drawing_def|
+
+        # A panel already laid on the carcass is not carcass : a back never runs
+        # across another back, nor across a front.
+        next false if LayerAttributes.panel_type?(LayerAttributes.type_of(drawing_def.container))
+
+        footprint_paths = _get_panel_footprint_paths(drawing_def, opening_def, ti)
+        next false if footprint_paths.nil? || footprint_paths.empty?
+
+        outside_paths, _ = Fiddle::Clippy.execute_difference(closed_subjects: footprint_paths, clips: inner_paths)
+        area = outside_paths.inject(0.0) { |sum, outside_path| sum + Fiddle::Clippy.get_rpath_area(outside_path).abs }
+        area <= MERGE_ADJACENCY_DELTA * MERGE_MIN_SHARED_BORDER
+
+      }
+    end
+
     # The SETBACK, and only when the panel is let into a groove : one laid on
     # the back of the carcass is laid ON it, there is nothing to stand back
     # from.
@@ -8950,24 +9120,69 @@ module Ladb::OpenCutList
     # definition clones it, and every entity read beforehand then belongs to
     # the definition nobody sees any more. The hosts are therefore found again
     # afterwards by their POSITION, not by the reference that was held on them.
+    # Two cuts of a DIFFERENT NATURE, and the difference is not a matter of
+    # taste :
+    #
+    #   A GROOVE bites into a part that stays WHOLE. A machining volume is
+    #   exactly right for it - the part keeps its dimensions, which is the truth
+    #   a grooved stile owes the cutlist, the pocket is read off the volume by
+    #   CommonDrawingProjectionWorker for the CNC, and deleting the volume gives
+    #   the part back. Nothing of it shows either : the panel's edge is buried
+    #   inside an opaque part.
+    #
+    #   A CROSSING ends a part. A machining volume is WRONG for it, and not just
+    #   to look at : BoundingBoxHelper skips machining volumes outright
+    #   (bounding_box_helper.rb:27), so the part would keep the length it no
+    #   longer has and the cutlist would call for a divider that does not fit.
+    #   The volume has to come off for real - hence the subtraction.
+    #
+    # Order matters. The grooves go first, by position, separating what they must
+    # as they go ; the crossings are resolved only afterwards, on a container
+    # that has stopped moving, and their own sharing is left to
+    # CommonSolidBooleanApplyWorker, which preserves a definition two identical
+    # dividers share when the cut leaves them identical - something a separation
+    # of our own would have thrown away.
     def _prepare_panels!(panel_defs)
       container_path = panel_defs.first.container_path.dup
 
       machining_defs = _compute_machining_defs(panel_defs)
       return container_path if machining_defs.empty?
 
+      # The container first : it is the ancestor every host hangs under, and
+      # separating it after them would strand the cuts in the definition nobody
+      # sees any more.
+      _make_unique_instances_in_path(container_path)
+
+      opening_transformation = _get_opening_transformation(panel_defs.first.opening_def)
+
+      cut = _nest_machinings!(container_path, opening_transformation, machining_defs.reject { |machining_def| machining_def.crossed })
+      cut += _subtract_crossings!(container_path, opening_transformation, machining_defs.select { |machining_def| machining_def.crossed })
+
+      # The cavities were read on entities a separation may have replaced, and
+      # so was the active part : both are dropped rather than left pointing at
+      # geometry nobody sees any more. The next pick pays for a detection again,
+      # and only in that case.
+      _reset_cavities_def
+      _reset_active_part
+
+      # Worth saying only when a groove was ASKED for and none could be cut :
+      # the panel is then loose in its mouth, which is not what the options
+      # describe. A groove the silhouette clipped away on some edges is not
+      # this case - see #_grow_nominal_points.
+      @tool.notify_warnings([ [ "tool.smart_draw.warning.no_#{_panel_i18n_key_suffix}_machining" ] ]) if cut == 0
+
+      container_path
+    end
+
+    # Nests one machining volume per given groove, in the part it is cut in.
+    # Answers how many parts took one.
+    def _nest_machinings!(container_path, opening_transformation, machining_defs)
+      return 0 if machining_defs.empty?
+
       model = Sketchup.active_model
       material = MaterialAttributes.fetch_or_create_material(model, _fetch_option_machining_material_name, MaterialAttributes::TYPE_MACHINING, SmartDrawTool::COLOR_DEFAULT_MACHINING_MATERIAL)
       layer_name = _fetch_option_machining_layer_name
       layer = layer_name.is_a?(String) && !layer_name.strip.empty? ? (model.layers[layer_name] || model.layers.add(layer_name)) : nil
-
-      # The container first : it is the ancestor every host hangs under, and
-      # separating it after them would strand the grooves in the definition
-      # nobody sees any more.
-      _make_unique_instances_in_path(container_path)
-      container = container_path.last
-
-      opening_transformation = _get_opening_transformation(panel_defs.first.opening_def)
 
       grooved = 0
       machining_defs.each do |machining_def|
@@ -8998,28 +9213,115 @@ module Ladb::OpenCutList
         grooved += 1
 
       end
-
-      # The cavities were read on entities a separation may have replaced, and
-      # so was the active part : both are dropped rather than left pointing at
-      # geometry nobody sees any more. The next pick pays for a detection again,
-      # and only in that case.
-      _reset_cavities_def
-      _reset_active_part
-
-      # Worth saying only when a groove was ASKED for and none could be cut :
-      # the panel is then loose in its mouth, which is not what the options
-      # describe. A groove the silhouette clipped away on some edges is not
-      # this case - see #_grow_nominal_points.
-      @tool.notify_warnings([ [ "tool.smart_draw.warning.no_#{_panel_i18n_key_suffix}_machining" ] ]) if grooved == 0
-
-      container_path
+      grooved
     end
 
-    # One groove to cut : the part it goes in (as the chain of positions
-    # leading to it from the cavity container, read before anything moved), the
-    # contours of the groove in the OPENING's frame, and the depth range along
-    # that frame's normal it is cut between.
-    MachiningDef = Struct.new(:host_index_path, :paths, :z_low, :z_high)
+    # Takes the crossed parts down to the panel, for real : the volume standing
+    # on the far side of it is SUBTRACTED from each of them. Answers how many
+    # parts were cut.
+    #
+    # One single call for all of them - one Manifold pass, one shared definition
+    # plan. The cut volumes are built as plain groups beside the hosts and are
+    # consumed by the operation (keep_cuts: false).
+    #
+    # wrap_operation: false : the subtraction joins the operation the panel is
+    # being built in, so ONE undo takes back the panel and every part it cut. A
+    # failure is raised rather than reported, so that #_create_entity's own
+    # rescue aborts that operation whole - a carcass half cut is worse than no
+    # panel at all.
+    def _subtract_crossings!(container_path, opening_transformation, machining_defs)
+      return 0 if machining_defs.empty?
+
+      container = container_path.last
+      return 0 unless container.respond_to?(:definition)
+
+      container_transformation_inverse = PathUtils.get_transformation(container_path, IDENTITY).inverse
+
+      src_ipaths = []
+      cut_ipaths = []
+      machining_defs.each do |machining_def|
+
+        host_path = _descendant_path(container_path, machining_def.host_index_path)
+        next if host_path.nil?
+        next unless host_path.last.respond_to?(:definition)
+
+        # Beside the hosts, not inside them : a cut is an operand of the
+        # operation, not a part of anything.
+        group = container.definition.entities.add_group
+        # Set BEFORE the faces go in, so that they are drawn in the opening's own
+        # frame - the very frame the contours were computed in.
+        group.transformation = container_transformation_inverse * opening_transformation
+
+        machining_def.paths.each do |path|
+          _build_machining_prism(group.entities, Fiddle::Clippy.rpath_to_points(path), machining_def.z_low, machining_def.z_high)
+        end
+
+        if group.entities.grep(Sketchup::Face).empty?
+          group.erase!
+          next
+        end
+
+        src_ipaths << Sketchup::InstancePath.new(host_path)
+        cut_ipaths << Sketchup::InstancePath.new(container_path + [ group ])
+
+      end
+      return 0 if src_ipaths.empty?
+
+      # The very parameters the reshape tool's own boolean handler uses : the
+      # container tree preserved (flatten: false), and the hosts' existing
+      # machinings left out of the operand, so a part already grooved is not
+      # rebuilt around its own pockets.
+      parameters = {
+        ignore_surfaces: true,
+        ignore_faces: false,
+        ignore_edges: true,
+        ignore_soft_edges: true,
+        ignore_clines: true,
+        container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART_WITHOUT_MACHININGS,
+        flatten: false
+      }
+      fn_decompose = lambda { |ipath| CommonDrawingDecompositionWorker.new([ ipath ], **parameters).run }
+
+      src_drawing_defs = src_ipaths.map { |ipath| fn_decompose.call(ipath) }
+      cut_drawing_defs = cut_ipaths.map { |ipath| fn_decompose.call(ipath) }
+      raise "Unable to read the parts the #{_panel_i18n_key_suffix} runs across" unless (src_drawing_defs + cut_drawing_defs).all? { |drawing_def| drawing_def.is_a?(DrawingDef) }
+
+      result_def = CommonSolidBooleanApplyWorker.new(
+        src_drawing_defs,
+        cut_drawing_defs,
+        operation: CommonSolidBooleanWorker::OPERATION_SUBTRACTION,
+        keep_cuts: false,
+        wrap_operation: false
+      ).run
+      raise "Unable to cut the parts the #{_panel_i18n_key_suffix} runs across : #{result_def.errors.inspect}" unless result_def.success?
+
+      src_ipaths.length
+    end
+
+    # The path +index_path+ leads to from +container_path+, walked by POSITION
+    # and separating nothing on the way - what a host is found again by once the
+    # container has been made unique. nil when the chain no longer leads
+    # anywhere.
+    def _descendant_path(container_path, index_path)
+      path = container_path.dup
+      index_path.each do |index|
+        parent = path.last
+        return nil unless parent.respond_to?(:definition)
+        entity = parent.definition.entities.to_a[index]
+        return nil unless entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance)
+        path << entity
+      end
+      path
+    end
+
+    # One cut to make : the part it goes in (as the chain of positions leading to
+    # it from the cavity container, read before anything moved), the contours in
+    # the OPENING's frame, the range along that frame's normal it runs between,
+    # and whether the panel CROSSES that part rather than merely biting into it.
+    #
+    # +crossed+ is what decides how the cut is made at all, and the two are not
+    # interchangeable - see #_prepare_panels!.
+    MachiningDef = Struct.new(:host_index_path, :paths, :z_low, :z_high, :crossed)
 
     # The grooves the given panels call for, one per part they run into -
     # measured, never written.
@@ -9048,14 +9350,22 @@ module Ladb::OpenCutList
       return [] unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef) && cavities_def.valid?
 
       opening_def = panel_defs.first.opening_def
-      mouth = opening_def.outer_loop
-      return [] if mouth.nil? || mouth.length < 3
 
       t = _get_opening_transformation(opening_def)
       ti = t.inverse
 
+      # EVERY mouth the panel spans, not just the picked one : over a merge, the
+      # ring read off a single mouth would count the whole of the other
+      # compartments as material to cut into.
+      raw_mouth_paths = _merge_mouth_paths
+      if raw_mouth_paths.empty?
+        mouth = opening_def.outer_loop
+        return [] if mouth.nil? || mouth.length < 3
+        raw_mouth_paths = [ Fiddle::Clippy.points_to_rpath(mouth.map { |point| point.transform(ti) }) ]
+      end
+
       panel_paths, _ = Fiddle::Clippy.execute_union(closed_subjects: panel_defs.map { |panel_def| Fiddle::Clippy.points_to_rpath(panel_def.plane_outline) })
-      mouth_paths, _ = Fiddle::Clippy.execute_union(closed_subjects: [ Fiddle::Clippy.points_to_rpath(mouth.map { |point| point.transform(ti) }) ])
+      mouth_paths, _ = Fiddle::Clippy.execute_union(closed_subjects: raw_mouth_paths)
       ring_paths, _ = Fiddle::Clippy.execute_difference(closed_subjects: panel_paths, clips: mouth_paths)
       return [] if ring_paths.empty?
 
@@ -9064,6 +9374,11 @@ module Ladb::OpenCutList
       setback = _panel_outline_offset(opening_def).to_f
       slot_high = -setback
       slot_low = -setback - thickness.to_f
+
+      # The parts the panel runs STRAIGHT ACROSS, over a merge - see
+      # #_get_crossed_drawing_defs. They take a cut of another nature entirely,
+      # and are told apart here, once.
+      crossed_drawing_defs = _get_crossed_drawing_defs(_merge_share_paths, opening_def, ti)
 
       machining_defs = []
       cavities_def.drawing_defs.each do |drawing_def|
@@ -9087,9 +9402,33 @@ module Ladb::OpenCutList
         groove_paths = _clean_pieces(groove_paths)
         next if groove_paths.empty?
 
-        # Clamped to the part itself : a groove never sticks out of the part it
-        # is cut in, whatever the setback and the thickness say.
-        machining_defs << MachiningDef.new(host_index_path, groove_paths, [ slot_low, z_min ].max, [ slot_high, z_max ].min)
+        crossed = crossed_drawing_defs.any? { |crossed_drawing_def| crossed_drawing_def.equal?(drawing_def) }
+
+        if crossed
+          # OVERSHOT, on every side. A crossing cut is flush with the part it
+          # takes off on three of its faces at once - its walls stand on that
+          # part's own sides, its far face on that part's far face - which is the
+          # degeneracy a boolean is worst at. Pushed out by a hair it is flush
+          # with nothing, and it removes not one cubic millimetre more : there is
+          # no material of that part out there, and the cut is subtracted from
+          # the parts it is meant for and from no others.
+          overshot_paths = Fiddle::Clippy.inflate_paths(
+            paths: groove_paths,
+            delta: CROSSING_OVERSHOOT.to_f,
+            join_type: Fiddle::Clippy::JOIN_TYPE_MITER,
+            miter_limit: 100.0
+          )
+          groove_paths = overshot_paths unless overshot_paths.empty?
+        end
+
+        # A CROSSED part is cut from the panel's inner face OUT, through whatever
+        # of it stood beyond : the panel passes in front of it, so everything on
+        # the far side of the panel is material that has nowhere left to be - the
+        # lip a setback would otherwise leave standing behind the panel included.
+        # A GROOVE is clamped to the slot the panel occupies, and to the part
+        # itself : it never sticks out of the part whatever the setback and the
+        # thickness say.
+        machining_defs << MachiningDef.new(host_index_path, groove_paths, [ slot_low, z_min ].max, crossed ? z_max + CROSSING_OVERSHOOT.to_f : [ slot_high, z_max ].min, crossed)
 
       end
 
