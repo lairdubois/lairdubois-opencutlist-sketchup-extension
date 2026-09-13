@@ -300,9 +300,19 @@ module Ladb::OpenCutList
       when ACTION_OPTION_OVERLAY
         case option
         when ACTION_OPTION_OVERLAY_INSET
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.125,0.125L0.688,0.125L0.688,0L0.125,0L0.125,0.125 M0.125,1L0.688,1L0.688,0.875L0.125,0.875L0.125,1 M0.688,0.25L0.5,0.25L0.5,0.75L0.688,0.75L0.688,0.25'))
+          case action
+          when ACTION_DRAW_BACK_PANEL
+            return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.75,0.75L0.75,0.875L0.5,0.875L0.5,0.75L0,0.75L0,1L1,1L1,0.75L0.75,0.75 M0.75,0L0.5,0L0.5,0.875L0.75,0.875L0.75,0'))
+          else
+            return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.125,0.125L0.688,0.125L0.688,0L0.125,0L0.125,0.125 M0.125,1L0.688,1L0.688,0.875L0.125,0.875L0.125,1 M0.688,0.25L0.5,0.25L0.5,0.75L0.688,0.75L0.688,0.25'))
+          end
         when ACTION_OPTION_OVERLAY_FULL_OVERLAY
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.125,0.125L0.688,0.125L0.688,0L0.125,0L0.125,0.125 M0.125,1L0.688,1L0.688,0.875L0.125,0.875L0.125,1 M1,0L0.813,0L0.813,1L1,1L1,0'))
+          case action
+          when ACTION_DRAW_BACK_PANEL
+            return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.75,0.75L0,0.75L0,1L0.75,1L0.75,0.75 M1,0L0.75,0L0.75,1L1,1L1,0'))
+          else
+            return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.125,0.125L0.688,0.125L0.688,0L0.125,0L0.125,0.125 M0.125,1L0.688,1L0.688,0.875L0.125,0.875L0.125,1 M1,0L0.813,0L0.813,1L1,1L1,0'))
+          end
         end
       when ACTION_OPTION_OPTIONS
         case option
@@ -329,6 +339,17 @@ module Ladb::OpenCutList
         when ACTION_OPTION_OPTIONS_MIRROR
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path(MIRROR_MOTIF_VERTICAL_PATH))
         end
+      end
+
+      super
+    end
+
+    def get_action_option_btn_prefix(action, option_group, option)
+      case option
+      when ACTION_OPTION_OFFSET_BACK_PANEL_DEPTH
+        return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.375,0.5L0.5,0.5L0.5,0.75L0.75,0.75L0.75,0.5L1,0.5L1,0.875L0.375,0.875 M0.375,0.625L0.625,0.875 M0.75,0.625L1,0.875 M0.75,0.5L1,0.75 M0.625,0.75L0.75,0.875 M0.75,0.75L0.875,0.875 M0.875,0.5L1,0.625 M0.375,0.75L0.5,0.875 M0.375,0.5L0.5,0.625 M0.25,0.5L0,0.5 M0.25,0.75L0,0.75 M0.125,0.5L0.125,0.75'))
+      when ACTION_OPTION_OFFSET_BACK_PANEL_SETBACK
+        return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.375,0.5L0.5,0.5L0.5,0.75L0.75,0.75L0.75,0.5L1,0.5L1,0.875L0.375,0.875 M0.375,0.625L0.625,0.875 M0.75,0.625L1,0.875 M0.75,0.5L1,0.75 M0.625,0.75L0.75,0.875 M0.75,0.75L0.875,0.875 M0.875,0.5L1,0.625 M0.375,0.75L0.5,0.875 M0.375,0.5L0.5,0.625 M1,0.125L1,0.375 M0.75,0.25L1,0.25 M0.75,0.125L0.75,0.375'))
       end
 
       super
