@@ -280,11 +280,33 @@ namespace Meshy {
         // pockets under the surviving face, sliver flaps along the seams). So every
         // tilted plane shared by two operands that get booleaned together has the
         // coincidence broken into a CLEAR transversal configuration by nudging
-        // vertices along the plane normal. Each nudged operand receives its own
-        // offset multiple ((rank + 1) x SHARED_PLANE_OFFSET), so no two operands
-        // stay tied with each other on the plane either — this is what makes the
-        // result independent of the operand order. Then the nudged meshes are
+        // vertices along the plane normal, by ONE AND THE SAME
+        // SHARED_PLANE_OFFSET for every operand. Then the nudged meshes are
         // re-snapped onto the axis planes the nudge may have dragged them off.
+        //
+        // The offset used to be STAGGERED — each operand got its own multiple
+        // of it, (position in the pool + 1) — so that no two operands stayed
+        // tied with each other on the plane. That was the defect, not a
+        // precaution. The multiple decides how far each operand retreats from
+        // a shared plane, so where two operands meet at an edge through
+        // DIFFERENT planes their retreats point different ways and differ in
+        // length : whichever retreats LESS leaves the other's face uncovered,
+        // and the stagger OPENS a ~1e-6 gap exactly where it was supposed to
+        // close one. The boolean then resolves that gap into a zero-thickness
+        // fin reaching through the panel, welding the compartments on either
+        // side of it into one.
+        //
+        // Expanding every operand by the same amount cannot do that : two
+        // faces flush against each other both move ACROSS their shared plane,
+        // so they can only ever overlap. The tie the stagger was there to
+        // break — two coplanar faces still coplanar after the nudge — is
+        // harmless, being the exact coplanarity the canonicalization above has
+        // just established on purpose.
+        //
+        // Measured on a seven panel cabinet, over all 5040 permutations of its
+        // panels : staggered, 5040 DISTINCT output meshes, only 2004 of them
+        // free of T-vertices ; uniform, ONE output mesh, free of T-vertices in
+        // every permutation.
         //
         // - Union merges everything : every operand with a face on a shared tilted
         //   plane is expanded across it along its own outward normal, so seams
@@ -331,7 +353,7 @@ namespace Meshy {
                     // src face on the plane : every cut (even one only touching the
                     // plane through an edge or vertex) moves to the src exterior.
                     for (std::size_t k = 0; k < nudge_pool.size(); ++k) {
-                        pool_offsets[k].emplace_back(&plane, src_sign * SHARED_PLANE_OFFSET * double(k + 1));
+                        pool_offsets[k].emplace_back(&plane, src_sign * SHARED_PLANE_OFFSET);
                     }
                 } else if (faces_on_plane >= 2) {
                     // plane shared between chained operands only : expand each face
@@ -339,7 +361,7 @@ namespace Meshy {
                     const double dir = (operation_ == Operation::Intersection ? -1.0 : 1.0);
                     for (std::size_t k = 0; k < nudge_pool.size(); ++k) {
                         if (pool_signs[k] == 0.0) continue;
-                        pool_offsets[k].emplace_back(&plane, dir * pool_signs[k] * SHARED_PLANE_OFFSET * double(k + 1));
+                        pool_offsets[k].emplace_back(&plane, dir * pool_signs[k] * SHARED_PLANE_OFFSET);
                     }
                 }
             }
@@ -430,23 +452,47 @@ namespace Meshy {
         // result body is attributable to a single src. Union is the one
         // operation whose purpose is to merge : it stays global.
 
+        // Chaining a boolean is a FOLD, and a fold reads its operands in the
+        // order it is given them : `a + b + c` and `c + b + a` resolve their
+        // coincidences differently and do not produce the same mesh. So the
+        // chained operands are folded in their GEOMETRIC order (see
+        // geometric_fold_order) — otherwise the caller's list order would leak
+        // back into the result through the chaining, having just been kept out
+        // of the nudging. Measured on a seven panel cabinet whose nudge was
+        // already order-free : the fold alone still produced 4 distinct meshes
+        // across the 5040 permutations of the same panels.
+        //
+        // Only the CHAINING is reordered. The src list of a subtraction or an
+        // intersection is not : each src yields its own result body, in the
+        // caller's own order, which is how a fragment is attributed back to the
+        // operand it came from.
+        std::vector<const manifold::MeshGL64*> cut_mesh_pointers;
+        cut_mesh_pointers.reserve(cut_meshes_.size());
+        for (const auto& mesh : cut_meshes_) cut_mesh_pointers.push_back(&mesh);
+        const std::vector<std::size_t> cut_fold_order = geometric_fold_order(cut_mesh_pointers);
+
         std::vector<manifold::Manifold> results;
         switch (operation_) {
             case Operation::Union: {
+                // A union merges everything into one body, so its whole operand
+                // list is one chain and every one of them is reordered.
+                std::vector<const manifold::MeshGL64*> union_mesh_pointers = cut_mesh_pointers;
+                union_mesh_pointers.reserve(cut_meshes_.size() + src_meshes_.size());
+                for (const auto& mesh : src_meshes_) union_mesh_pointers.push_back(&mesh);
+
                 manifold::Manifold result;
-                for (auto& manifold : cut_manifolds) {
-                    result = result + manifold;
-                }
-                for (auto& manifold : src_manifolds) {
-                    result = result + manifold;
+                for (const std::size_t index : geometric_fold_order(union_mesh_pointers)) {
+                    result = result + (index < cut_manifolds.size()
+                        ? cut_manifolds[index]
+                        : src_manifolds[index - cut_manifolds.size()]);
                 }
                 results.push_back(result);
                 break;
             }
             case Operation::Subtraction: {
                 manifold::Manifold cut_result;
-                for (auto& manifold : cut_manifolds) {
-                    cut_result = cut_result + manifold;
+                for (const std::size_t index : cut_fold_order) {
+                    cut_result = cut_result + cut_manifolds[index];
                 }
                 for (auto& manifold : src_manifolds) {
                     results.push_back(manifold - cut_result);
@@ -460,11 +506,11 @@ namespace Meshy {
                 // leaves each src unchanged.
                 manifold::Manifold cut_result;
                 bool has_cut = false;
-                for (auto& manifold : cut_manifolds) {
+                for (const std::size_t index : cut_fold_order) {
                     if (has_cut) {
-                        cut_result ^= manifold;
+                        cut_result ^= cut_manifolds[index];
                     } else {
-                        cut_result = manifold;
+                        cut_result = cut_manifolds[index];
                         has_cut = true;
                     }
                 }

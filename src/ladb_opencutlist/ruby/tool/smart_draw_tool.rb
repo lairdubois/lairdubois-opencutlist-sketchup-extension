@@ -7529,10 +7529,15 @@ module Ladb::OpenCutList
     # #_cleanup_footprint_paths the other way round. The miter joins are what
     # make that round trip exact : every corner is rebuilt sharp, where a
     # rounded join would leave it bevelled.
-    def _clean_pieces(paths)
+    #
+    # +min_width+ is what the caller is sizing. PANEL_MIN_WIDTH wherever the
+    # region IS a panel, which is all of them but one : #_cut_host_defs sizes
+    # the footprint of a GROOVE, and a groove is only as wide as it is deep -
+    # see there.
+    def _clean_pieces(paths, min_width = PANEL_MIN_WIDTH)
       return [] if paths.empty?
 
-      delta = PANEL_MIN_WIDTH.to_f / 2.0
+      delta = min_width.to_f / 2.0
       shrunk_paths = Fiddle::Clippy.inflate_paths(
         paths: paths,
         delta: -delta,
@@ -8784,8 +8789,20 @@ module Ladb::OpenCutList
         host_paths = _get_panel_footprint_paths(drawing_def, opening_def, ti)
         next if host_paths.nil? || host_paths.empty?
 
+        # Sized at the MERGE TOLERANCE, not at PANEL_MIN_WIDTH : what is being
+        # measured here is not a panel but the footprint of a GROOVE, and a
+        # groove is exactly #_cut_growth_delta wide by construction - 5 mm by
+        # default, which is PANEL_MIN_WIDTH itself. Put through the panel gate,
+        # every groove asked for at that depth or less erodes to nothing and
+        # NO part is ever found to border the panel.
+        #
+        # All this has to reject is a contact WITHOUT overlap - a footprint
+        # merely touching the contour along an edge, which is what every part
+        # around the mouth gives when the panel is laid on rather than let in
+        # (delta 0, the contour being then the mouth itself) - and a contact
+        # like that is a region of zero width.
         overlap_paths, _ = Fiddle::Clippy.execute_intersection(closed_subjects: cut_paths, clips: host_paths)
-        next if _clean_pieces(overlap_paths).empty?
+        next if _clean_pieces(overlap_paths, SolidMeshDef::TOLERANCE).empty?
 
         host_defs << [ host_index_path, crossed_drawing_defs.any? { |crossed_drawing_def| crossed_drawing_def.equal?(drawing_def) } ]
 

@@ -987,70 +987,7 @@ module Ladb::OpenCutList
     # On error the errors are appended to +result_def+ and the tuple is
     # returned AS IT STANDS : the cavities an earlier stage did produce are
     # still cavities, and the caller tells the failure by result_def#success?.
-    #
-    # MEMBRANE BACKSTOP. The pass is run by #_find_cavities_once, and REPLAYED
-    # with the operands permuted when the cavities it gives back carry a
-    # MEMBRANE (SolidFragmentDef#carries_membrane?).
-    #
-    # Where a panel's end face is EXACTLY coplanar with the face it butts
-    # against — an ordinary flush butt joint, the shelf against the side of a
-    # case — Meshy's staggered nudging may leave that contact plane tiled TWICE
-    # over, the shelf's end face and the side's inner face both facing into the
-    # cavity. The zero-thickness sheet that makes is a wall without thickness :
-    # it separates nothing, and the two compartments it was supposed to tell
-    # apart come back WELDED into one oversized cavity — which a tool fitting a
-    # divider then reads as a single compartment, and draws right across the
-    # shelf.
-    #
-    # Nothing downstream can catch it. The sheet is fused into the fragment, so
-    # the sheet-residue filter never fires on it, and the fragment is walled and
-    # opens exactly like the compartment it should have been, merely too big.
-    # Nor is it a modelling fault to hand back to the user : the joint is drawn
-    # exactly as it should be.
-    #
-    # What settles it is that the defect is decided by the ORDER the operands
-    # are nudged in and by nothing else — the ranks the stagger reads. On the
-    # model this was read off, the panels' own order was the only failing one of
-    # thirteen tried, and every deterministic permutation of it came back exact.
-    # So a pass whose cavities carry a membrane is simply replayed permuted, and
-    # the first membrane-free result wins.
-    #
-    # The permutations are DETERMINISTIC on purpose : an order drawn at random
-    # would make the tool answer differently to the same model from one pick to
-    # the next. Both of them move EVERY operand's rank, a permutation leaving
-    # one in place being liable to replay the very coincidence it is there to
-    # break. When neither comes back clean the original pass stands : a merged
-    # cavity is still a cavity, and losing it would be worse than keeping it
-    # oversized.
-    #
-    # Costs a plane scan of the cavities on every model, and NOTHING else
-    # unless a membrane is really there.
     def _find_cavities(indexed_mesh_defs, result_def, validate:, overall:)
-      pass = _find_cavities_once(indexed_mesh_defs, result_def, validate: validate, overall: overall)
-      return pass unless result_def.success?
-      return pass unless pass.first.any? { |fragment_def| fragment_def.carries_membrane? }
-
-      [ indexed_mesh_defs.reverse, indexed_mesh_defs.rotate(1) ].each do |permuted_mesh_defs|
-        # A throwaway result def : a retry that does not win must leave nothing
-        # of itself behind, errors included — same doctrine as the trial runs of
-        # #_essential_mesh_defs. validate: false, the operands having just been
-        # validated by the pass above.
-        retry_result_def = SolidBooleanResultDef.new
-        retry_pass = _find_cavities_once(permuted_mesh_defs, retry_result_def, validate: false, overall: overall)
-        next unless retry_result_def.success?
-        next if retry_pass.first.any? { |fragment_def| fragment_def.carries_membrane? }
-        return retry_pass
-      end
-
-      pass
-    end
-
-    # One run of the pass #_find_cavities documents, on the operands exactly as
-    # given. Everything it hands back travels WITH the operands — each carries
-    # its own panel index — so a permuted run is read in the caller's terms just
-    # like a straight one, which is what lets the backstop above swap one for
-    # the other.
-    def _find_cavities_once(indexed_mesh_defs, result_def, validate:, overall:)
       @envelope_restore_planes = []
       @panel_face_planes = nil  # This pass's own panels — see #_panel_face_planes
 

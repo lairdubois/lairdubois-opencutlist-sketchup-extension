@@ -399,6 +399,81 @@ namespace Meshy {
         return volume / 6.0;
     }
 
+    // Order-independent identity of an operand : aggregates that tell two
+    // operands apart without ever consulting their POSITION in the caller's
+    // list. Every one of them is a sum over the mesh's own triangles, whose
+    // order a permutation of the operand list does not touch, so the same mesh
+    // always yields the same signature, bit for bit.
+    //
+    // Volume first because it separates the parts of an assembly at a glance
+    // (a side from a shelf), centroid next because it separates the IDENTICAL
+    // parts an assembly is mostly made of (two shelves of the same board, at
+    // different heights), and the vertex count last as a cheap tie-break on
+    // shapes that agree on both.
+    //
+    // What reads it is geometric_fold_order, so that chaining a boolean does
+    // not depend on the order the operands were handed in.
+    struct OperandSignature {
+        double volume;
+        double cx, cy, cz;
+        std::size_t vertex_count;
+    };
+
+    // Strict weak ordering on the signatures, read on the coefficients alone.
+    inline bool operand_signature_less(
+            const OperandSignature& a,
+            const OperandSignature& b
+    ) {
+        if (a.volume != b.volume) return a.volume > b.volume;
+        if (a.cx != b.cx) return a.cx < b.cx;
+        if (a.cy != b.cy) return a.cy < b.cy;
+        if (a.cz != b.cz) return a.cz < b.cz;
+        return a.vertex_count < b.vertex_count;
+    }
+
+    inline OperandSignature operand_signature(
+            const manifold::MeshGL64& mesh
+    ) {
+        const std::size_t stride = mesh.numProp;
+        const std::size_t vertex_count = mesh.vertProperties.size() / stride;
+
+        OperandSignature signature = { 0.0, 0.0, 0.0, 0.0, vertex_count };
+        if (vertex_count == 0) return signature;
+
+        signature.volume = signed_volume(mesh);
+        for (std::size_t v = 0; v < vertex_count; ++v) {
+            signature.cx += mesh.vertProperties[v * stride];
+            signature.cy += mesh.vertProperties[v * stride + 1];
+            signature.cz += mesh.vertProperties[v * stride + 2];
+        }
+        signature.cx /= double(vertex_count);
+        signature.cy /= double(vertex_count);
+        signature.cz /= double(vertex_count);
+        return signature;
+    }
+
+    // The order a list of operands must be CHAINED in so that the chaining does
+    // not depend on the order they were handed in : the positions of the
+    // meshes, sorted on their signature. Equal signatures keep distinct
+    // positions — a fold has to visit every operand exactly once, and two
+    // interchangeable ones may be visited in either order.
+    inline std::vector<std::size_t> geometric_fold_order(
+            const std::vector<const manifold::MeshGL64*>& meshes
+    ) {
+        std::vector<OperandSignature> signatures;
+        signatures.reserve(meshes.size());
+        for (const auto* mesh : meshes) {
+            signatures.push_back(operand_signature(*mesh));
+        }
+
+        std::vector<std::size_t> order(meshes.size());
+        for (std::size_t i = 0; i < order.size(); ++i) order[i] = i;
+        std::stable_sort(order.begin(), order.end(), [&signatures](std::size_t a, std::size_t b) {
+            return operand_signature_less(signatures[a], signatures[b]);
+        });
+        return order;
+    }
+
     // Manifold interprets winding as defining solidity : flip the triangles if
     // normals point inward. faceID is per-triangle, so it stays aligned.
     inline void ensure_outward_winding(
