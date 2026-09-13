@@ -302,16 +302,16 @@ module Ladb::OpenCutList
         when ACTION_OPTION_OVERLAY_INSET
           case action
           when ACTION_DRAW_BACK_PANEL
-            return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.75,.75V.875H.625V.75H0V1H1V.75ZM0,.75L.25,1M.125,.75L.375,1M.25,.75L.5,1M.375,.75L.625,1M.5,.75L.75,1M.75,.75L1,1M0,.875L.125,1M.75,.875L.875,1M.875,.75L1,.875M.75,0H.625V.875H.75Z'))
+            return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,.75H.5M.75,.75H1V1H0M.5,0H.75V.875H.5ZM0,.875L.125,1M.75,.875L.875,1M.875,.75L1,.875M.375,.75L.625,1M.125,.75L.375,1'))
           else
-            return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.375,.75L.625,1M.25,.75L.5,1M0,.75L.25,1M.125,.75L.375,1M.5,.75L.75,1M.625,.75L.875,1M.75,.75L1,1M0,.875L.125,1M.875,.75L1,.875M1,0H.75V.625H1ZM0,.75H1V1H0'))
+            return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,.75H1V1H0M.75,0H1V.625H.75ZM0,.875L.125,1M.875,.75L1,.875M.375,.75L.625,1M.125,.75L.375,1M.625,.75L.875,1'))
           end
         when ACTION_OPTION_OVERLAY_FULL_OVERLAY
           case action
           when ACTION_DRAW_BACK_PANEL
-            return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,.75H.875V1H0ZM0,.75L.25,1M.125,.75L.375,1M.25,.75L.5,1M.375,.75L.625,1M.5,.75L.75,1M.625,.75L.875,1M0,.875L.125,1M.75,.75L.875,.875M1,0H.875V1H1Z'))
+            return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,.75H.75V1H0M.75,0H1V1H.75ZM0,.875L.125,1M.625,.75L.75,.875M.375,.75L.625,1M.125,.75L.375,1'))
           else
-            return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,.75L.25,1M.125,.75L.375,1M.25,.75L.5,1M.375,.75L.625,1M0,.875L.125,1M.5,.75L.625,.875M1,0H.75V1H1ZM0,.75H.625V1H0'))
+            return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,.75H.625V1H0M.75,0H1V1H.75ZM0,.875L.125,1M.125,.75L.375,1M.375,.75L.625,1'))
           end
         end
       when ACTION_OPTION_OPTIONS
@@ -9712,12 +9712,12 @@ module Ladb::OpenCutList
     # -----
 
     # Two SUFFIXED lengths here, where a front panel has one : "8x" is the
-    # groove DEPTH, "8r" the SETBACK. A bare length is the thickness, as
+    # groove DEPTH, "8d" the SETBACK. A bare length is the thickness, as
     # everywhere.
     def _read_panel_lengths(tool, text, view)
       read = _read_suffixed_offset(tool, text, 'x', SmartDrawTool::ACTION_OPTION_OFFSET_BACK_PANEL_DEPTH)
       return read unless read.nil?
-      read = _read_suffixed_offset(tool, text, 'r', SmartDrawTool::ACTION_OPTION_OFFSET_BACK_PANEL_SETBACK)
+      read = _read_suffixed_offset(tool, text, 'd', SmartDrawTool::ACTION_OPTION_OFFSET_BACK_PANEL_SETBACK)
       read.nil? ? super : read
     end
 
