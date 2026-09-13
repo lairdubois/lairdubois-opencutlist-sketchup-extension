@@ -2401,7 +2401,6 @@ tool:
     action_option_group_segments: Segments
     action_option_group_thickness: Epaisseur
     action_option_group_overlay: Pose
-    action_option_group_machining: Usinage
     action_option_group_axes: Axes
     action_option_group_measure_type: Mesure
     action_option_group_options: Options
@@ -2422,8 +2421,6 @@ tool:
     action_5_action_option_group_offset: Rainure
     action_5_action_option_overlay_inset_status: "Fond en rainure : engagé dans une rainure usinée dans les pièces qui bordent l'ouverture"
     action_5_action_option_overlay_full_overlay_status: "Fond en applique : posé sur l'arrière du caisson, recouvrant les panneaux jusqu'au nu extérieur et jusqu'à mi-épaisseur des panneaux intérieurs, sans aucun usinage"
-    action_option_machining_none_status: "Ne pas usiner les pièces voisines : le fond est dessiné seul"
-    action_option_machining_volume_status: "Usiner les pièces voisines : la rainure est dessinée comme un volume de matière enlevée, à l'intérieur de chaque pièce"
     action_option_measure_type_inside_status: Positionner l'épaisseur à l'intérieur du point ciblé
     action_option_measure_type_centered_status: Centrer l'épaisseur sur le point ciblé
     action_option_measure_type_outside_status: Positionner l'épaisseur à l'extérieur du point ciblé
@@ -2458,10 +2455,6 @@ tool:
     action_option_options_ask_name_status: Saisir manuellement le nom des pièces
     action_option_options_layer_name: Calque
     action_option_options_layer_name_status: Nom du calque sur lequel sont placées les pièces
-    action_option_options_machining_material_name: Matière d'usinage
-    action_option_options_machining_material_name_status: "Nom de la matière donnée aux volumes d'usinage. Laissez vide pour utiliser le nom du type de matière '$t(tab.materials.type_7)'"
-    action_option_options_machining_layer_name: Calque d'usinage
-    action_option_options_machining_layer_name_status: Nom du calque sur lequel sont placés les volumes d'usinage
     action_toggle_move_copy_status: Alterner entre copier/déplacer
     action_change_move_anchor_status: Changer le point d'ancrage
     error:

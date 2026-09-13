@@ -38,8 +38,6 @@
             const $selectReduceEnvelope = $('#ladb_select_reduce_envelope', that.$element);
             const $selectAskName = $('#ladb_select_ask_name', that.$element);
             const $inputLayerName = $('#ladb_input_layer_name', that.$element);
-            const $inputMachiningMaterialName = $('#ladb_input_machining_material_name', that.$element);
-            const $inputMachiningLayerName = $('#ladb_input_machining_layer_name', that.$element);
             const $btnValidate = $('#ladb_btn_validate', that.$element);
 
             const fnFetchOptions = function (options) {
@@ -52,8 +50,6 @@
                 options.reduce_envelope = $selectReduceEnvelope.val() === '1';
                 options.ask_name = $selectAskName.val() === '1';
                 options.layer_name = $inputLayerName.val();
-                options.machining_material_name = $inputMachiningMaterialName.val();
-                options.machining_layer_name = $inputMachiningLayerName.val();
             };
             const fnFillInputs = function (options) {
                 $inputThickness.val(options.thickness);
@@ -65,8 +61,6 @@
                 $selectReduceEnvelope.selectpicker('val', options.reduce_envelope ? '1' : '0');
                 $selectAskName.selectpicker('val', options.ask_name ? '1' : '0');
                 $inputLayerName.val(options.layer_name);
-                $inputMachiningMaterialName.val(options.machining_material_name);
-                $inputMachiningLayerName.val(options.machining_layer_name);
             };
 
             $widgetPreset.ladbWidgetPreset({

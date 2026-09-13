@@ -3464,6 +3464,7 @@ module Ladb::OpenCutList
   class SmartReshapeSolidActionHandler < SmartActionHandler
 
     include SmartActionHandlerPartHelper
+    include SmartActionHandlerSolidBooleanHelper
 
     STATE_SELECT_SRC = 0
     STATE_SELECT_CUT = 1
@@ -3703,16 +3704,10 @@ module Ladb::OpenCutList
 
     # -----
 
+    # The operands are read the way every solid boolean in the tools reads
+    # them - see SmartActionHandlerSolidBooleanHelper.
     def _get_drawing_def_parameters
-      {
-        ignore_surfaces: true,
-        ignore_faces: false,
-        ignore_edges: true,
-        ignore_soft_edges: true,
-        ignore_clines: true,
-        container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART_WITHOUT_MACHININGS,
-        flatten: false
-      }
+      SOLID_BOOLEAN_DRAWING_DEF_PARAMETERS
     end
 
     # -----
@@ -3774,16 +3769,15 @@ module Ladb::OpenCutList
           selected_definitions.uniq!
         end
 
-        # Apply boolean operations
-        result_def = CommonSolidBooleanApplyWorker.new(
+        # Apply boolean operations, inside the operation opened above
+        result_def = _apply_solid_boolean(
           @src_selection.items.map(&:drawing_def),
           @cut_selection.items.map(&:drawing_def),
           operation: operation,
           keep_srcs: _fetch_option_options_keep_a?,
           keep_cuts: _fetch_option_options_keep_b?,
-          make_unique: _fetch_option_options_make_unique?,
-          wrap_operation: false
-        ).run
+          make_unique: _fetch_option_options_make_unique?
+        )
         if result_def.success?
 
           # Clean up unused definitions if possible

@@ -38,7 +38,6 @@ module Ladb::OpenCutList
     ACTION_OPTION_SEGMENTS = 'segments'
     ACTION_OPTION_MEASURE_TYPE = 'measure_type'
     ACTION_OPTION_OVERLAY = 'overlay'
-    ACTION_OPTION_MACHINING = 'machining'
     ACTION_OPTION_AXES = 'axes'
     ACTION_OPTION_OPTIONS = 'options'
 
@@ -58,15 +57,6 @@ module Ladb::OpenCutList
     ACTION_OPTION_OVERLAY_INSET = 'inset'
     ACTION_OPTION_OVERLAY_FULL_OVERLAY = 'full_overlay'
 
-    # What a panel does to the parts it cuts into. VOLUME stands the removed
-    # material up as a group of its own, marked with a machining material -
-    # non destructive, and what the projection reads as a pocket (see
-    # CommonDrawingProjectionWorker). A real boolean subtraction is the
-    # variant to come ; the option is a group of its own from the start so
-    # that adding it is one value, not a migration.
-    ACTION_OPTION_MACHINING_NONE = 'none'
-    ACTION_OPTION_MACHINING_VOLUME = 'volume'
-
     ACTION_OPTION_AXES_ACTIVE = 'active'
     ACTION_OPTION_AXES_CONTEXT = 'context'
 
@@ -83,13 +73,10 @@ module Ladb::OpenCutList
     ACTION_OPTION_OPTIONS_MIRROR = 'mirror'
     ACTION_OPTION_OPTIONS_ASK_NAME = 'ask_name'
     ACTION_OPTION_OPTIONS_LAYER_NAME = 'layer_name'
-    ACTION_OPTION_OPTIONS_MACHINING_MATERIAL_NAME = 'machining_material_name'
-    ACTION_OPTION_OPTIONS_MACHINING_LAYER_NAME = 'machining_layer_name'
 
     # What a machining volume is drawn as when the handler has to create one -
     # the same blue the BXF import and the Smart Join tool give theirs, so that
     # machinings of every provenance read alike in a model.
-    COLOR_DEFAULT_MACHINING_MATERIAL = Sketchup::Color.new('#0068ff')
 
     # The mirror motif - a dashed axis, a triangle on each side pointing at it
     # (the same as SmartHandleTool's) - and the same turned a quarter : the
@@ -151,7 +138,6 @@ module Ladb::OpenCutList
           ACTION_OPTION_THICKNESS => [ ACTION_OPTION_THICKNESS_THICKNESS ],
           ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_BACK_PANEL_DEPTH, ACTION_OPTION_OFFSET_BACK_PANEL_SETBACK ],
           ACTION_OPTION_OVERLAY => [ ACTION_OPTION_OVERLAY_INSET, ACTION_OPTION_OVERLAY_FULL_OVERLAY ],
-          ACTION_OPTION_MACHINING => [ ACTION_OPTION_MACHINING_NONE, ACTION_OPTION_MACHINING_VOLUME ],
           ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_CONTEXT ],
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, ACTION_OPTION_OPTIONS_REUSE_DEFINITION, ACTION_OPTION_OPTIONS_ASK_NAME ]
         }
@@ -266,8 +252,6 @@ module Ladb::OpenCutList
       case option_group
       when ACTION_OPTION_OVERLAY
         return true
-      when ACTION_OPTION_MACHINING
-        return true
       when ACTION_OPTION_MEASURE_TYPE
         return true
       when ACTION_OPTION_AXES
@@ -319,15 +303,6 @@ module Ladb::OpenCutList
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.125,0.125L0.688,0.125L0.688,0L0.125,0L0.125,0.125 M0.125,1L0.688,1L0.688,0.875L0.125,0.875L0.125,1 M0.688,0.25L0.5,0.25L0.5,0.75L0.688,0.75L0.688,0.25'))
         when ACTION_OPTION_OVERLAY_FULL_OVERLAY
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.125,0.125L0.688,0.125L0.688,0L0.125,0L0.125,0.125 M0.125,1L0.688,1L0.688,0.875L0.125,0.875L0.125,1 M1,0L0.813,0L0.813,1L1,1L1,0'))
-        end
-      when ACTION_OPTION_MACHINING
-        # Two stiles and a panel between them - bare, then let into a groove
-        # cut in each of them.
-        case option
-        when ACTION_OPTION_MACHINING_NONE
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0L0.188,0L0.188,1L0,1L0,0 M0.813,0L1,0L1,1L0.813,1L0.813,0 M0.313,0.375L0.688,0.375L0.688,0.625L0.313,0.625L0.313,0.375'))
-        when ACTION_OPTION_MACHINING_VOLUME
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0L0.188,0L0.188,0.375L0.063,0.375L0.063,0.625L0.188,0.625L0.188,1L0,1L0,0 M1,0L0.813,0L0.813,0.375L0.938,0.375L0.938,0.625L0.813,0.625L0.813,1L1,1L1,0 M0.063,0.375L0.938,0.375L0.938,0.625L0.063,0.625L0.063,0.375'))
         end
       when ACTION_OPTION_OPTIONS
         case option
@@ -6247,6 +6222,8 @@ module Ladb::OpenCutList
   # means is a rule of its own, not something to settle by fragment order.
   class SmartDrawMouthPanelActionHandler < SmartDrawPanelActionHandler
 
+    include SmartActionHandlerSolidBooleanHelper
+
     STATE_PLACE = 0
 
     LAYER_3D_PANEL_PREVIEW = 200
@@ -6301,12 +6278,6 @@ module Ladb::OpenCutList
     # anything that leaves the better part of it open is furniture standing in
     # the compartment, not the panel closing it.
     OPENING_CLOSED_MIN_COVERAGE = 0.5
-
-    # How far a CROSSING cut is pushed past the part it takes off, on every side
-    # - see #_compute_machining_defs. Big enough that nothing of the cut lands
-    # within the model tolerance of a face of that part, small enough to stay
-    # invisible had anything of it survived.
-    CROSSING_OVERSHOOT = 1.mm
 
     # Below this norm the picked face's normal, projected on the opening
     # plane, is no direction at all : the face is nearly PARALLEL to the
@@ -6813,34 +6784,6 @@ module Ladb::OpenCutList
     # modal-smart-draw-tool-action-4.twig and -5) gives access to it.
     def _fetch_option_layer_name
       @tool.fetch_action_option_string(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_LAYER_NAME)
-    end
-
-    # Whether this handler may cut into the parts it finds around the panel at
-    # all - see #_prepare_panels!.
-    #
-    # ALWAYS here, because the only cut the base makes is one it cannot do
-    # without : the panels a MERGED inset panel runs straight across (see
-    # #_get_crossed_drawing_defs) stand exactly where the panel does, and
-    # leaving them be would build two solids in one another's material and give
-    # the cutlist a divider that no longer fits. It is not a decoration to opt
-    # out of, it is the merge itself.
-    #
-    # A handler that ALSO cuts by choice - a groove a back is let into is a
-    # choice, the carcass holds together without it - says so there, and then
-    # answers for both (see SmartDrawBackPanelActionHandler).
-    def _alter_hosts?
-      true
-    end
-
-    # The material and the layer a nested machining volume is marked with -
-    # nothing here, since the base nests none : a crossing is SUBTRACTED, it
-    # leaves no volume behind to mark (see #_prepare_panels!).
-    def _fetch_option_machining_material_name
-      nil
-    end
-
-    def _fetch_option_machining_layer_name
-      nil
     end
 
     # -- WHAT KIND OF PANEL THIS IS --
@@ -8200,9 +8143,10 @@ module Ladb::OpenCutList
     # is 18 mm thick, so the growth from either side would not meet in the
     # middle, and a front grows by nothing at all.
     #
-    # Taking it whole is also what tells #_compute_machining_defs the truth about
-    # it - the part is cut over its whole footprint, which is exactly a divider
-    # stopped short of the panel.
+    # Taking it whole is also what tells #_cut_host_defs the truth about it - a
+    # part the merged panel spans end to end is a part the panel ENDS, and the
+    # piece of it left behind the panel is dropped (see #_drop_offcuts!), which
+    # is exactly a divider stopped short of the panel.
     def _merge_nominal_points(share_paths, mouth_paths, opening_def, ti)
       return _merge_points(share_paths) if _fetch_option_overlay_full_overlay?
 
@@ -8665,28 +8609,25 @@ module Ladb::OpenCutList
     # the definition nobody sees any more. The hosts are therefore found again
     # afterwards by their POSITION, not by the reference that was held on them.
     #
-    # Two cuts of a DIFFERENT NATURE, and the difference is not a matter of
-    # taste :
+    # ONE shape drives all of it - the panel's own, grown by the depth it is
+    # let in by (#_cut_contour_paths) - and every part it reaches is subtracted
+    # from in ONE pass. What tells the parts apart is only what happens after :
     #
-    #   A GROOVE bites into a part that stays WHOLE. A machining volume is
-    #   exactly right for it - the part keeps its dimensions, which is the truth
-    #   a grooved stile owes the cutlist, the pocket is read off the volume by
-    #   CommonDrawingProjectionWorker for the CNC, and deleting the volume gives
-    #   the part back. Nothing of it shows either : the panel's edge is buried
-    #   inside an opaque part.
+    #   A part the panel merely bites into comes out GROOVED, and that is the
+    #   end of it.
     #
-    #   A CROSSING ends a part. A machining volume is WRONG for it, and not just
-    #   to look at : BoundingBoxHelper skips machining volumes outright
-    #   (bounding_box_helper.rb:27), so the part would keep the length it no
-    #   longer has and the cutlist would call for a divider that does not fit.
-    #   The volume has to come off for real - hence the subtraction.
+    #   A part the panel CROSSES comes out SEVERED - the panel passes right
+    #   through it - and the piece left standing behind the panel is dropped
+    #   (see #_drop_offcuts!), which is what ends that part at the panel. It has
+    #   to come off for real : BoundingBoxHelper skips machining volumes outright
+    #   (bounding_box_helper.rb:27), so a part merely MARKED as cut would keep
+    #   the length it no longer has and the cutlist would call for a divider
+    #   that does not fit.
     #
-    # Order matters. The grooves go first, by position, separating what they must
-    # as they go ; the crossings are resolved only afterwards, on a container
-    # that has stopped moving, and their own sharing is left to
-    # CommonSolidBooleanApplyWorker, which preserves a definition two identical
-    # dividers share when the cut leaves them identical - something a separation
-    # of our own would have thrown away.
+    # The sharing of two identical dividers is left to
+    # CommonSolidBooleanApplyWorker, which preserves a definition they share
+    # when the cut leaves them identical - something a separation of our own
+    # would have thrown away.
     #
     # Raises rather than returning half a job : the caller's rescue aborts the
     # whole operation, which is the only safe outcome once the model has been
@@ -8694,21 +8635,30 @@ module Ladb::OpenCutList
     def _prepare_panels!(panel_defs)
       container_path = panel_defs.first.container_path.dup
 
-      machining_defs = _compute_machining_defs(panel_defs)
-      return container_path if machining_defs.empty?
+      host_defs = _cut_host_defs(panel_defs)
 
-      groove_defs = machining_defs.reject { |machining_def| machining_def.crossed }
-      crossing_defs = machining_defs.select { |machining_def| machining_def.crossed }
+      groove_index_paths = host_defs.reject { |_host_index_path, crossed| crossed }.map { |host_index_path, _crossed| host_index_path }
+      crossed_index_paths = host_defs.select { |_host_index_path, crossed| crossed }.map { |host_index_path, _crossed| host_index_path }
+
+      # Worth saying only when a groove was ASKED for and nothing borders the
+      # panel at the depth it sits at : the panel is then loose in its mouth,
+      # which is not what the options describe. A CROSSING never gets here - it
+      # raises rather than quietly failing.
+      delta = _cut_growth_delta
+      if !delta.nil? && delta > 0 && groove_index_paths.empty?
+        @tool.notify_warnings([ [ "tool.smart_draw.warning.no_#{_panel_i18n_key_suffix}_machining" ] ])
+      end
+
+      return container_path if host_defs.empty?
+
+      opening_def = panel_defs.first.opening_def
 
       # The container first : it is the ancestor every host hangs under, and
-      # separating it after them would strand the cuts in the definition nobody
+      # separating it after them would strand the cut in the definition nobody
       # sees any more.
       _make_unique_instances_in_path(container_path)
 
-      opening_transformation = _get_opening_transformation(panel_defs.first.opening_def)
-
-      grooved = _nest_machinings!(container_path, opening_transformation, groove_defs)
-      _subtract_crossings!(container_path, opening_transformation, crossing_defs)
+      _subtract_panel_cut!(container_path, opening_def, host_defs.map { |host_index_path, _crossed| host_index_path }, crossed_index_paths)
 
       # The cavities were read on entities a separation may have replaced, and
       # so was the active part : both are dropped rather than left pointing at
@@ -8717,229 +8667,85 @@ module Ladb::OpenCutList
       _reset_cavities_def
       _reset_active_part
 
-      # Worth saying only when a groove was ASKED for and none could be cut :
-      # the panel is then loose in its mouth, which is not what the options
-      # describe. A groove the silhouette clipped away on some edges is not this
-      # case - see SmartDrawBackPanelActionHandler#_grow_nominal_points. A
-      # CROSSING never gets here : it raises rather than quietly failing.
-      @tool.notify_warnings([ [ "tool.smart_draw.warning.no_#{_panel_i18n_key_suffix}_machining" ] ]) if grooved == 0 && !groove_defs.empty?
-
       container_path
     end
 
-    # Nests one machining volume per given groove, in the part it is cut in.
-    # Answers how many parts took one.
-    def _nest_machinings!(container_path, opening_transformation, machining_defs)
-      return 0 if machining_defs.empty?
-
-      model = Sketchup.active_model
-      material = MaterialAttributes.fetch_or_create_material(model, _fetch_option_machining_material_name, MaterialAttributes::TYPE_MACHINING, SmartDrawTool::COLOR_DEFAULT_MACHINING_MATERIAL)
-      layer_name = _fetch_option_machining_layer_name
-      layer = layer_name.is_a?(String) && !layer_name.strip.empty? ? (model.layers[layer_name] || model.layers.add(layer_name)) : nil
-
-      grooved = 0
-      machining_defs.each do |machining_def|
-
-        host_path = _make_unique_descendant_path(container_path, machining_def.host_index_path)
-        next if host_path.nil?
-
-        host = host_path.last
-        next unless host.respond_to?(:definition)
-
-        group = host.definition.entities.add_group
-        # Set BEFORE the faces go in, so that they are drawn in the opening's
-        # own frame - the very frame the ring was computed in.
-        group.transformation = PathUtils.get_transformation(host_path, IDENTITY).inverse * opening_transformation
-
-        machining_def.paths.each do |path|
-          _build_machining_prism(group.entities, Fiddle::Clippy.rpath_to_points(path), machining_def.z_low, machining_def.z_high)
-        end
-
-        if group.entities.grep(Sketchup::Face).empty?
-          group.erase!
-          next
-        end
-
-        group.material = material unless material.nil?
-        group.layer = layer unless layer.nil?
-
-        grooved += 1
-
-      end
-      grooved
-    end
-
-    # Takes the crossed parts down to the panel, for real : the volume standing
-    # on the far side of it is SUBTRACTED from each of them. Answers how many
-    # parts were cut.
+    # Subtracts the cut from the given parts, in ONE pass. Answers how many
+    # parts were handed to it.
     #
-    # One single call for all of them - one Manifold pass, one shared definition
-    # plan. The cut volumes are built as plain groups beside the hosts and are
-    # consumed by the operation (keep_cuts: false).
+    # One pass and not two, and that is not a convenience : a cut chained with
+    # a second one leaves zero-thickness membranes along the planes the two
+    # share, at the ends of any part they both touch, on every carcass that is
+    # not aligned to the world axes. One solid, one operation, no seam.
     #
-    # wrap_operation: false : the subtraction joins the operation the panel is
-    # being built in, so ONE undo takes back the panel and every part it cut. A
-    # failure is raised rather than reported, so that #_create_entity's own
-    # rescue aborts that operation whole - a carcass half cut is worse than no
-    # panel at all.
-    def _subtract_crossings!(container_path, opening_transformation, machining_defs)
-      return 0 if machining_defs.empty?
+    # The parts named in +crossed_index_paths+ come out of it SEVERED - the
+    # panel passes right through them - and the piece left standing behind the
+    # panel is dropped, which is what ends them at the panel.
+    def _subtract_panel_cut!(container_path, opening_def, host_index_paths, crossed_index_paths)
+      return 0 if host_index_paths.empty?
 
-      container = container_path.last
-      return 0 unless container.respond_to?(:definition)
-
-      container_transformation_inverse = PathUtils.get_transformation(container_path, IDENTITY).inverse
+      cut_group = _build_panel_cut_group(container_path, opening_def)
+      return 0 if cut_group.nil?
 
       src_ipaths = []
-      cut_ipaths = []
-      machining_defs.each do |machining_def|
-
-        host_path = _descendant_path(container_path, machining_def.host_index_path)
-        next if host_path.nil?
-        next unless host_path.last.respond_to?(:definition)
-
-        # Beside the hosts, not inside them : a cut is an operand of the
-        # operation, not a part of anything.
-        group = container.definition.entities.add_group
-        # Set BEFORE the faces go in, so that they are drawn in the opening's own
-        # frame - the very frame the contours were computed in.
-        group.transformation = container_transformation_inverse * opening_transformation
-
-        machining_def.paths.each do |path|
-          _build_machining_prism(group.entities, Fiddle::Clippy.rpath_to_points(path), machining_def.z_low, machining_def.z_high)
-        end
-
-        if group.entities.grep(Sketchup::Face).empty?
-          group.erase!
-          next
-        end
-
+      host_index_paths.each do |host_index_path|
+        host_path = _descendant_path(container_path, host_index_path)
+        next if host_path.nil? || !host_path.last.respond_to?(:definition)
         src_ipaths << Sketchup::InstancePath.new(host_path)
-        cut_ipaths << Sketchup::InstancePath.new(container_path + [ group ])
-
       end
-      return 0 if src_ipaths.empty?
+      if src_ipaths.empty?
+        cut_group.erase!
+        return 0
+      end
 
-      # The very parameters the reshape tool's own boolean handler uses : the
-      # container tree preserved (flatten: false), and the hosts' existing
-      # machinings left out of the operand, so a part already grooved is not
-      # rebuilt around its own pockets.
-      parameters = {
-        ignore_surfaces: true,
-        ignore_faces: false,
-        ignore_edges: true,
-        ignore_soft_edges: true,
-        ignore_clines: true,
-        container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART_WITHOUT_MACHININGS,
-        flatten: false
-      }
-      fn_decompose = lambda { |ipath| CommonDrawingDecompositionWorker.new([ ipath ], **parameters).run }
+      src_drawing_defs = _decompose_for_solid_boolean(src_ipaths)
+      cut_drawing_defs = _decompose_for_solid_boolean([ Sketchup::InstancePath.new(container_path + [ cut_group ]) ])
+      raise "Unable to read the parts the #{_panel_i18n_key_suffix} runs into" unless (src_drawing_defs + cut_drawing_defs).all? { |drawing_def| drawing_def.is_a?(DrawingDef) }
 
-      src_drawing_defs = src_ipaths.map { |ipath| fn_decompose.call(ipath) }
-      cut_drawing_defs = cut_ipaths.map { |ipath| fn_decompose.call(ipath) }
-      raise "Unable to read the parts the #{_panel_i18n_key_suffix} runs across" unless (src_drawing_defs + cut_drawing_defs).all? { |drawing_def| drawing_def.is_a?(DrawingDef) }
-
-      result_def = CommonSolidBooleanApplyWorker.new(
+      result_def = _apply_solid_boolean(
         src_drawing_defs,
         cut_drawing_defs,
         operation: CommonSolidBooleanWorker::OPERATION_SUBTRACTION,
-        keep_cuts: false,
-        wrap_operation: false
-      ).run
-      raise "Unable to cut the parts the #{_panel_i18n_key_suffix} runs across : #{result_def.errors.inspect}" unless result_def.success?
+        keep_cuts: false
+      )
+      raise "Unable to cut the parts the #{_panel_i18n_key_suffix} runs into : #{result_def.errors.inspect}" unless result_def.success?
+
+      _drop_offcuts!(container_path, opening_def, crossed_index_paths)
 
       src_ipaths.length
     end
 
-    # The path +index_path+ leads to from +container_path+, walked by POSITION
-    # and separating nothing on the way - what a host is found again by once the
-    # container has been made unique. nil when the chain no longer leads
-    # anywhere.
-    def _descendant_path(container_path, index_path)
-      path = container_path.dup
-      index_path.each do |index|
-        parent = path.last
-        return nil unless parent.respond_to?(:definition)
-        entity = parent.definition.entities.to_a[index]
-        return nil unless entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance)
-        path << entity
-      end
-      path
-    end
-
-    # One cut to make : the part it goes in (as the chain of positions leading to
-    # it from the cavity container, read before anything moved), the contours in
-    # the OPENING's frame, the range along that frame's normal it runs between,
-    # and whether the panel CROSSES that part rather than merely biting into it.
+    # The parts the cut is to be subtracted from : each as the chain of
+    # POSITIONS leading to it from the cavity container - read before anything
+    # is written, because a separation replaces the entities on the way - and
+    # whether the panel CROSSES it rather than merely biting into it.
     #
-    # +crossed+ is what decides how the cut is made at all, and the two are not
-    # interchangeable - see #_prepare_panels!.
-    MachiningDef = Struct.new(:host_index_path, :paths, :z_low, :z_high, :crossed)
-
-    # The cuts the given panels call for, one per part they run into - measured,
-    # never written.
-    #
-    # Two readings, for the two natures #_prepare_panels! describes :
-    #
-    #   A CROSSED part is taken WHOLE : its own footprint is the cut, from the
-    #   panel's inner face OUT, through whatever of it stood beyond. That is not
-    #   read off the panels but off the merge (see #_get_crossed_drawing_defs),
-    #   and deliberately so - a merged contour SPLIT back over the very divider
-    #   it crosses would otherwise leave a fin of it standing in the seam.
-    #
-    #   Every other part takes a GROOVE, and the RING is what does the work :
-    #   the panels' own contours, minus the mouths. What is left is exactly the
-    #   material they are driven into, and nothing else - the seam between two
-    #   panels of one shared contour falls INSIDE the mouth and drops out of the
-    #   ring on its own, which is why a pose that grows its contour has to grow
-    #   it before the sharing and not after. The ring is then cut up by the parts
-    #   it lies over : intersected with each part's own footprint (see
-    #   #_get_panel_footprint_paths), it gives that part's groove and no other's.
-    #
-    # A part the cut does not reach, or one that has no material at the depth the
-    # panel sits at, takes none.
-    def _compute_machining_defs(panel_defs)
+    # A part makes the list only when the cut really reaches it : it stands at
+    # the depth the panel sits at, AND its footprint meets the cut's contour.
+    # That second test is what keeps the list tight, and it matters - the
+    # worker rebuilds every src it is given, changed by the operation or not.
+    def _cut_host_defs(panel_defs)
       return [] if _fetch_option_construction?
       return [] if _fetch_option_overlay_full_overlay?
-      return [] unless _alter_hosts?
-
-      thickness = _fetch_option_thickness
-      return [] if thickness.nil? || thickness <= 0
-
       return [] unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef) && cavities_def.valid?
 
       opening_def = panel_defs.first.opening_def
+      ti = _get_opening_transformation(opening_def).inverse
 
-      t = _get_opening_transformation(opening_def)
-      ti = t.inverse
+      cut_paths = _cut_contour_paths(opening_def, ti)
+      return [] if cut_paths.nil? || cut_paths.empty?
 
-      # EVERY mouth the panel spans, not just the picked one : over a merge, the
-      # ring read off a single mouth would count the whole of the other
-      # compartments as material to cut into.
-      raw_mouth_paths = _merge_mouth_paths
-      if raw_mouth_paths.empty?
-        mouth = opening_def.outer_loop
-        return [] if mouth.nil? || mouth.length < 3
-        raw_mouth_paths = [ Fiddle::Clippy.points_to_rpath(mouth.map { |point| point.transform(ti) }) ]
-      end
+      slot = _cut_slot_range(opening_def)
+      return [] if slot.nil?
+      slot_low = slot[0]
+      slot_high = slot[1]
 
-      panel_paths, _ = Fiddle::Clippy.execute_union(closed_subjects: panel_defs.map { |panel_def| Fiddle::Clippy.points_to_rpath(panel_def.plane_outline) })
-      mouth_paths, _ = Fiddle::Clippy.execute_union(closed_subjects: raw_mouth_paths)
-      ring_paths, _ = Fiddle::Clippy.execute_difference(closed_subjects: panel_paths, clips: mouth_paths)
-
-      # The parts the panel runs STRAIGHT ACROSS, over a merge. They take a cut
-      # of another nature entirely, and are told apart here, once.
+      # The parts the panel runs STRAIGHT ACROSS, over a merge : told apart
+      # here, once, because what ends them is not the cut but the drop that
+      # follows it.
       crossed_drawing_defs = _get_crossed_drawing_defs(_merge_share_paths, opening_def, ti)
 
-      return [] if ring_paths.empty? && crossed_drawing_defs.empty?
-
-      # The slot the panel itself occupies, along the opening's normal : it
-      # stands back by the setback, and runs inwards by its thickness.
-      setback = _panel_outline_offset(opening_def).to_f
-      slot_high = -setback
-      slot_low = -setback - thickness.to_f
-
-      machining_defs = []
+      host_defs = []
       cavities_def.drawing_defs.each do |drawing_def|
 
         # A panel already laid on the carcass is not carcass : nothing is ever
@@ -8957,50 +8763,106 @@ module Ladb::OpenCutList
         host_paths = _get_panel_footprint_paths(drawing_def, opening_def, ti)
         next if host_paths.nil? || host_paths.empty?
 
-        if crossed_drawing_defs.any? { |crossed_drawing_def| crossed_drawing_def.equal?(drawing_def) }
+        overlap_paths, _ = Fiddle::Clippy.execute_intersection(closed_subjects: cut_paths, clips: host_paths)
+        next if _clean_pieces(overlap_paths).empty?
 
-          cut_paths = _clean_pieces(host_paths)
-          next if cut_paths.empty?
-
-          # OVERSHOT, on every side. A crossing cut is flush with the part it
-          # takes off on three of its faces at once - its walls stand on that
-          # part's own sides, its far face on that part's far face - which is the
-          # degeneracy a boolean is worst at. Pushed out by a hair it is flush
-          # with nothing, and it removes not one cubic millimetre more : there is
-          # no material of that part out there, and the cut is subtracted from
-          # the parts it is meant for and from no others.
-          overshot_paths = Fiddle::Clippy.inflate_paths(
-            paths: cut_paths,
-            delta: CROSSING_OVERSHOOT.to_f,
-            join_type: Fiddle::Clippy::JOIN_TYPE_MITER,
-            miter_limit: 100.0
-          )
-          cut_paths = overshot_paths unless overshot_paths.empty?
-
-          # From the panel's inner face OUT, through whatever of the part stood
-          # beyond : the panel passes in front of it, so everything on the far
-          # side of the panel is material that has nowhere left to be - the lip a
-          # setback would otherwise leave standing behind the panel included.
-          machining_defs << MachiningDef.new(host_index_path, cut_paths, [ slot_low, z_min ].max, z_max + CROSSING_OVERSHOOT.to_f, true)
-
-        else
-
-          next if ring_paths.empty?
-
-          groove_paths, _ = Fiddle::Clippy.execute_intersection(closed_subjects: ring_paths, clips: host_paths)
-          groove_paths = _clean_pieces(groove_paths)
-          next if groove_paths.empty?
-
-          # Clamped to the slot the panel occupies, and to the part itself : a
-          # groove never sticks out of its part whatever the setback and the
-          # thickness say.
-          machining_defs << MachiningDef.new(host_index_path, groove_paths, [ slot_low, z_min ].max, [ slot_high, z_max ].min, false)
-
-        end
+        host_defs << [ host_index_path, crossed_drawing_defs.any? { |crossed_drawing_def| crossed_drawing_def.equal?(drawing_def) } ]
 
       end
 
-      machining_defs
+      host_defs
+    end
+
+    # Ends the crossed parts at the panel, for real : the cut SEVERED each of
+    # them - it runs right through - and what is left standing on the far side
+    # of the panel is material with nowhere to be. Erased. Answers how many
+    # pieces came off.
+    #
+    # Read on the parts' own faces rather than on the operation's result : the
+    # worker rebuilds every fragment inside the container it came from, so both
+    # pieces of a severed part come back in ONE container, as two sets of
+    # connected faces.
+    #
+    # A part the panel merely grooves is never severed - its single set of
+    # faces straddles the slot, so it can never lie wholly beyond it - which
+    # makes the test self-selecting. The crossed list is there to keep the
+    # sweep off the parts nobody asked about, not to make the test work.
+    def _drop_offcuts!(container_path, opening_def, host_index_paths)
+      return 0 if host_index_paths.empty?
+
+      slot = _cut_slot_range(opening_def)
+      return 0 if slot.nil?
+
+      t = _get_opening_transformation(opening_def)
+      # The panel's own far face : everything beyond it, on a part the panel
+      # passes through, is what the panel has taken the place of.
+      threshold = slot[1] - SolidMeshDef::TOLERANCE
+
+      # One entity collection at a time, sub containers INCLUDED : the worker
+      # rebuilds a fragment inside the sub container node its faces came from,
+      # so an offcut can land one level down from the part itself.
+      fn_sweep = nil
+      fn_sweep = lambda { |entities, to_opening|
+        dropped = 0
+
+        # Every connected set collected BEFORE anything is erased : erasing one
+        # invalidates what a walk in progress is holding.
+        seen = {}
+        offcuts = []
+        entities.grep(Sketchup::Face).each do |face|
+          next if seen[face.entityID]
+          connected = face.all_connected
+          faces = connected.grep(Sketchup::Face)
+          faces.each { |f| seen[f.entityID] = true }
+          next if faces.empty?
+          next unless faces.all? { |f| f.vertices.all? { |vertex| vertex.position.transform(to_opening).z > threshold } }
+          offcuts << connected
+        end
+        offcuts.each do |connected|
+          entities.erase_entities(connected.reject { |entity| entity.deleted? })
+          dropped += 1
+        end
+
+        entities.to_a.each do |entity|
+          next unless entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance)
+          next if entity.deleted?
+          dropped += fn_sweep.call(entity.definition.entities, to_opening * entity.transformation)
+          # A node the drop emptied is dead weight, but only its own : a
+          # definition displayed elsewhere is left alone.
+          entity.erase! if entity.definition.entities.length.zero? && entity.definition.instances.length == 1
+        end
+
+        dropped
+      }
+
+      dropped = 0
+      host_index_paths.each do |host_index_path|
+
+        host_path = _descendant_path(container_path, host_index_path)
+        raise "Unable to end the parts the #{_panel_i18n_key_suffix} runs across" if host_path.nil? || !host_path.last.respond_to?(:definition)
+
+        # Faces live in their definition's space ; the slot is measured in the
+        # opening's.
+        dropped += fn_sweep.call(host_path.last.definition.entities, t.inverse * PathUtils.get_transformation(host_path, IDENTITY))
+
+      end
+      dropped
+    end
+
+    # The path +index_path+ leads to from +container_path+, walked by POSITION
+    # and separating nothing on the way - what a host is found again by once the
+    # container has been made unique. nil when the chain no longer leads
+    # anywhere.
+    def _descendant_path(container_path, index_path)
+      path = container_path.dup
+      index_path.each do |index|
+        parent = path.last
+        return nil unless parent.respond_to?(:definition)
+        entity = parent.definition.entities.to_a[index]
+        return nil unless entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance)
+        path << entity
+      end
+      path
     end
 
     # The chain of POSITIONS leading from +container_path+ down to
@@ -9024,28 +8886,6 @@ module Ladb::OpenCutList
       index_path
     end
 
-    # Walks +index_path+ down from +container_path+, separating every instance
-    # on the way that shares its definition, and answers the path to what it
-    # lands on - so that what is about to be added down there is added THERE
-    # and nowhere else. nil when the chain no longer leads anywhere.
-    #
-    # Walked from the container EVERY time, by position : a separation on one
-    # host replaces the entities its siblings are read through as well, and
-    # reading them again is what keeps the next host right.
-    def _make_unique_descendant_path(container_path, index_path)
-      path = container_path.dup
-      index_path.each do |index|
-        parent = path.last
-        return nil unless parent.respond_to?(:definition)
-        entity = parent.definition.entities.to_a[index]
-        return nil if entity.nil?
-        step = [ entity ]
-        _make_unique_instances_in_path(step)
-        path << step.first
-      end
-      path
-    end
-
     # How far the given part reaches along the opening's normal, as [ min, max ]
     # in the opening's frame - read off its BOUNDS, so conservative for an L
     # shaped part. That is enough : it only ever rules out a part that stands
@@ -9065,6 +8905,133 @@ module Ladb::OpenCutList
         z_max = z if z_max.nil? || z > z_max
       end
       [ z_min, z_max ]
+    end
+
+    # How far the CUT grows beyond the mouth, on every edge. Zero here : a
+    # panel laid on its mouth is driven into nothing, so there is nothing of
+    # the parts around it to take.
+    #
+    # A panel let into a GROOVE runs into them by the groove depth, and that
+    # is exactly the material the cut has to remove - see
+    # SmartDrawBackPanelActionHandler.
+    def _cut_growth_delta
+      0
+    end
+
+    # The contour the CUT is built on, in the opening's frame : every mouth
+    # the panel spans, unioned, grown by #_cut_growth_delta.
+    #
+    # NEITHER intersected with a host's footprint NOR clipped to the container
+    # silhouette, and that is the whole point. Both of those stop the contour
+    # ON a plane of a part, and a face laid exactly in a plane of the solid it
+    # cuts is the one configuration a boolean has to work to resolve. Left
+    # whole, the cut runs THROUGH the part it grooves and out the other side
+    # into the cavity - or, where the silhouette would have clipped it, into
+    # the air outside the carcass, where there is no material left to remove
+    # anyway. The contour carries no face of its own on any plane of any part.
+    #
+    # EVERY mouth, not just the picked one : over a merge, a contour read off
+    # a single mouth would leave the other compartments' grooves uncut.
+    #
+    # Answers nil when there is no contour to cut with.
+    def _cut_contour_paths(opening_def, ti)
+      raw_mouth_paths = _merge_mouth_paths
+      if raw_mouth_paths.empty?
+        mouth = opening_def.outer_loop
+        return nil if mouth.nil? || mouth.length < 3
+        raw_mouth_paths = [ Fiddle::Clippy.points_to_rpath(mouth.map { |point| point.transform(ti) }) ]
+      else
+
+        # Over a MERGE, the mouths ALONE are not what the panel covers, and
+        # growing them is not enough to make them so : two mouths of
+        # neighbouring compartments stand a whole divider apart, and a back's
+        # groove is 8 mm deep where a divider is 18 mm thick - the two growths
+        # stop 2 mm short of one another and leave the divider standing, with a
+        # groove cut in each of its faces. Which is exactly a merge that did not
+        # happen.
+        #
+        # What closes the contour is the divider itself, taken WHOLE - the same
+        # way #_merge_nominal_points closes the PANEL's own outline, and
+        # necessarily so : the panel and the cut are one shape, and this is
+        # where they have to agree on it.
+        raw_mouth_paths += _get_crossed_drawing_defs(_merge_share_paths, opening_def, ti).flat_map { |drawing_def| _get_panel_footprint_paths(drawing_def, opening_def, ti) || [] }
+
+      end
+
+      # The union normalizes the winding, and the winding is what decides which
+      # side a positive delta grows towards.
+      mouth_paths, _ = Fiddle::Clippy.execute_union(closed_subjects: raw_mouth_paths)
+      return nil if mouth_paths.empty?
+
+      delta = _cut_growth_delta
+      return mouth_paths if delta.nil? || delta <= 0
+
+      # Every path kept, unlike the panel's own contour : a merge of
+      # compartments too far apart to grow into one another cuts in two
+      # places, and both of them are the cut.
+      grown_paths = Fiddle::Clippy.inflate_paths(
+        paths: mouth_paths,
+        delta: delta.to_f,
+        join_type: Fiddle::Clippy::JOIN_TYPE_MITER,
+        miter_limit: 100.0
+      )
+      grown_paths.empty? ? nil : grown_paths
+    end
+
+    # The slot the panel occupies along the opening's normal : it stands back
+    # by the setback and runs inwards by its thickness. [ z_low, z_high ], or
+    # nil when there is no slot to speak of.
+    #
+    # Bounded by the panel and by NOTHING else - no clamp to the part being
+    # cut, unlike a machining volume's : a boolean cannot remove what is not
+    # there, so keeping the cut inside its host is work the operation already
+    # does, and does in 3D rather than on a projection.
+    def _cut_slot_range(opening_def)
+      thickness = _fetch_option_thickness
+      return nil if thickness.nil? || thickness <= 0
+      setback = _panel_outline_offset(opening_def).to_f
+      [ -setback - thickness.to_f, -setback ]
+    end
+
+    # The cut itself, as a throwaway group standing beside the parts it is
+    # about to be subtracted from - built, never kept :
+    # CommonSolidBooleanApplyWorker consumes it (keep_cuts: false).
+    #
+    # A COPY of the panel's shape rather than the panel itself, for two reasons
+    # that have nothing to do with geometry : the panels are not built yet when
+    # the cut is needed - #_prepare_panels! measures everything before the first
+    # write, because separating a shared definition invalidates every entity
+    # read beforehand - and a copy can be pushed past a face the panel itself
+    # has to stop at, which is what a flush pose asks for.
+    #
+    # Answers the group, or nil when there is nothing to cut with.
+    def _build_panel_cut_group(container_path, opening_def)
+      container = container_path.last
+      return nil unless container.respond_to?(:definition)
+
+      t = _get_opening_transformation(opening_def)
+
+      paths = _cut_contour_paths(opening_def, t.inverse)
+      return nil if paths.nil? || paths.empty?
+
+      slot = _cut_slot_range(opening_def)
+      return nil if slot.nil?
+
+      group = container.definition.entities.add_group
+      # Set BEFORE the faces go in, so that they are drawn in the opening's own
+      # frame - the very frame the contour was computed in.
+      group.transformation = PathUtils.get_transformation(container_path, IDENTITY).inverse * t
+
+      paths.each do |path|
+        _build_machining_prism(group.entities, Fiddle::Clippy.rpath_to_points(path), slot[0], slot[1])
+      end
+
+      if group.entities.grep(Sketchup::Face).empty?
+        group.erase!
+        return nil
+      end
+
+      group
     end
 
     # The cut itself : +points+, given in the opening's frame on z = 0, standing
@@ -9604,9 +9571,8 @@ module Ladb::OpenCutList
   #             and the parts around it are GROOVED for it (see
   #             SmartDrawMouthPanelActionHandler#_prepare_panels!). Cutting
   #             into what it did not create is the base's doing now, and a
-  #             merged front panel does as much ; a groove is what this handler
-  #             adds to it, and what its MACHINING option governs (see
-  #             #_alter_hosts?).
+  #             merged front panel does as much ; a groove is what this
+  #             handler adds to it.
   #   OVERLAY : nailed on the back of the carcass, over its whole silhouette.
   #             Nothing is grown, nothing stands back, and nothing is cut : the
   #             pipeline of the mouth panel, unchanged.
@@ -9681,36 +9647,6 @@ module Ladb::OpenCutList
       @tool.fetch_action_option_length(@action, SmartDrawTool::ACTION_OPTION_OFFSET, SmartDrawTool::ACTION_OPTION_OFFSET_BACK_PANEL_SETBACK)
     end
 
-    def _fetch_option_machining
-      @tool.fetch_action_option_value(@action, SmartDrawTool::ACTION_OPTION_MACHINING)
-    end
-
-    # Not exposed in the action's options panel, like the layer name : what a
-    # machining is called is a technical setting - only the modal gives access
-    # to it. Blank falls back on the name the materials tab gives the type, so
-    # that the material reads in the user's own language.
-    def _fetch_option_machining_material_name
-      name = @tool.fetch_action_option_string(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MACHINING_MATERIAL_NAME)
-      return name if name.is_a?(String) && !name.strip.empty?
-      PLUGIN.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_MACHINING}")
-    end
-
-    def _fetch_option_machining_layer_name
-      @tool.fetch_action_option_string(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MACHINING_LAYER_NAME)
-    end
-
-    # What the MACHINING option says, for grooves and crossings alike.
-    #
-    # The base cuts crossings unconditionally, and rightly : they are the merge
-    # itself. Here the option covers them too, and deliberately - a back that
-    # grooves nothing is a back the user asked to lay in the model without
-    # touching a single existing part, and cutting its dividers behind its back
-    # would be exactly the thing they turned off. The panel then runs through
-    # them, which is what a drawing with no machining looks like.
-    def _alter_hosts?
-      _fetch_option_machining == SmartDrawTool::ACTION_OPTION_MACHINING_VOLUME
-    end
-
     # -----
 
     # The mouth GROWN by the groove depth, on every edge - the contour the
@@ -9752,6 +9688,16 @@ module Ladb::OpenCutList
 
       best_path = _best_overlapping_path(grown_paths, mouth_paths)
       best_path.nil? ? nil : Fiddle::Clippy.rpath_to_points(best_path)
+    end
+
+    # The GROOVE DEPTH : how far the panel runs into the parts around its
+    # mouth, and so exactly how much of them the cut has to take. The same
+    # number #_grow_nominal_points grows the PANEL by - the panel and its
+    # groove are one shape, read once.
+    def _cut_growth_delta
+      return 0 if _fetch_option_overlay_full_overlay?
+      depth = _fetch_option_back_panel_depth
+      depth.nil? ? 0 : depth
     end
 
     # The SETBACK, and only when the panel is let into a groove : one laid on

@@ -6,6 +6,8 @@ module Ladb::OpenCutList
   require_relative '../helper/face_triangles_helper'
   require_relative '../helper/part_helper'
   require_relative '../helper/material_attributes_caching_helper'
+  require_relative '../worker/common/common_drawing_decomposition_worker'
+  require_relative '../worker/common/common_solid_boolean_apply_worker'
   require_relative '../utils/dimension_utils'
   require_relative '../utils/hash_utils'
   require_relative '../utils/view_utils'
@@ -3149,6 +3151,63 @@ module Ladb::OpenCutList
       end
     end
 
+
+  end
+
+  # How the tools hand solids to CommonSolidBooleanApplyWorker.
+  #
+  # Two things every one of them needs, and needs IDENTICAL : a decomposition
+  # that keeps the container tree and leaves the parts' own machinings out of
+  # the operands, and a call that joins the operation the caller already owns
+  # rather than opening one of its own.
+  #
+  # They lived in two copies - the reshape tool's boolean handler and the draw
+  # tool's crossing cut, whose comment already pointed at the other one - which
+  # is the whole reason this module exists : one definition, so the two cannot
+  # drift apart.
+  module SmartActionHandlerSolidBooleanHelper
+
+    # The container tree PRESERVED (flatten: false), so the worker can rebuild
+    # every fragment inside the container it came from ; and the parts'
+    # existing machinings left OUT of the operands, so a part already grooved
+    # is not rebuilt around its own pockets.
+    SOLID_BOOLEAN_DRAWING_DEF_PARAMETERS = {
+      ignore_surfaces: true,
+      ignore_faces: false,
+      ignore_edges: true,
+      ignore_soft_edges: true,
+      ignore_clines: true,
+      container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART_WITHOUT_MACHININGS,
+      flatten: false
+    }.freeze
+
+    # One reading per given instance path, each in its OWN drawing def : the
+    # worker takes the operands as a list and attributes every fragment to the
+    # one it came from, which a single merged reading would have thrown away.
+    #
+    # Answers whatever the decomposition answered, DrawingDef or not : what to
+    # do with a path that could not be read is the caller's business - the
+    # reshape tool has a user to tell, the draw tool has an operation to abort.
+    def _decompose_for_solid_boolean(ipaths)
+      ipaths.map { |ipath| CommonDrawingDecompositionWorker.new([ ipath ], **SOLID_BOOLEAN_DRAWING_DEF_PARAMETERS).run }
+    end
+
+    # The operation itself, run inside the caller's own (wrap_operation:
+    # false) : ONE undo then takes back everything the caller did, the boolean
+    # included. The caller MUST check the answer and abort its own operation
+    # when the boolean failed - the boolean modifies nothing in that case, but
+    # whatever the caller wrote beforehand still stands.
+    def _apply_solid_boolean(src_drawing_defs, cut_drawing_defs, operation:, keep_srcs: false, keep_cuts: false, make_unique: true)
+      CommonSolidBooleanApplyWorker.new(
+        src_drawing_defs,
+        cut_drawing_defs,
+        operation: operation,
+        keep_srcs: keep_srcs,
+        keep_cuts: keep_cuts,
+        make_unique: make_unique,
+        wrap_operation: false
+      ).run
+    end
 
   end
 
