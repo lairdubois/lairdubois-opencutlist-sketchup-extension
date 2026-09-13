@@ -1076,35 +1076,12 @@ module Ladb::OpenCutList
 
     def get_action_option_status(action, option_group, option)
       return '' if action.nil? || option_group.nil? || option.nil?
-      _get_action_i18n_string(action, "action_option_#{option_group}_#{option}_status")
+      PLUGIN.get_i18n_string("tool.smart_#{get_stripped_name}.action_option_#{option_group}_#{option}_status")
     end
 
     def get_action_option_group_title(action, option_group)
       return '' if option_group.nil?
-      _get_action_i18n_string(action, "action_option_group_#{option_group}")
-    end
-
-    # The tool's own i18n string for +key+, the one SCOPED TO THE ACTION first
-    # and the plain one after.
-    #
-    # An option group shared by several actions does not have to say the same
-    # thing of all of them - the POSE of a panel means being inset in a mouth
-    # to a front panel, and being let into a groove to a back one - while the
-    # vast majority of options mean exactly one thing and must not have to be
-    # written once per action. Hence the fallback : a scoped key is added only
-    # where it says something the generic one cannot.
-    #
-    # Probed with PLUGIN.has_i18n_string? rather than read and compared : a
-    # scoped key is absent for nearly every option, and get_i18n_string traces
-    # every miss to the Ruby console - tens of milliseconds a line, on a panel
-    # that is rebuilt whole.
-    def _get_action_i18n_string(action, key)
-      prefix = "tool.smart_#{get_stripped_name}"
-      unless action.nil?
-        scoped_key = "#{prefix}.action_#{action}_#{key}"
-        return PLUGIN.get_i18n_string(scoped_key) if PLUGIN.has_i18n_string?(scoped_key)
-      end
-      PLUGIN.get_i18n_string("#{prefix}.#{key}")
+      PLUGIN.get_i18n_string("tool.smart_#{get_stripped_name}.action_option_group_#{option_group}")
     end
 
     def get_action_cursor(action)

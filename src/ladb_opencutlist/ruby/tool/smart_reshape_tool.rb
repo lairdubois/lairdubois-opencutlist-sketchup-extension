@@ -171,19 +171,6 @@ module Ladb::OpenCutList
       super
     end
 
-    def get_action_option_group_titled?(action, option_group)
-
-      case action
-      when ACTION_PANELING
-        case option_group
-        when ACTION_OPTION_PANELING_JOINT_TYPE
-          return true
-        end
-      end
-
-      super
-    end
-
     def get_action_option_group_unique?(action, option_group)
 
       case option_group

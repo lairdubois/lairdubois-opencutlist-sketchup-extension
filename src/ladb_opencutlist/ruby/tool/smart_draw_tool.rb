@@ -179,11 +179,36 @@ module Ladb::OpenCutList
           return SmartCursorManager.cursor_pencil_polygon
       when ACTION_DRAW_DIVIDER
           return SmartCursorManager.cursor_pencil_divider
-      when ACTION_DRAW_FRONT_PANEL, ACTION_DRAW_BACK_PANEL
-          # The same pencil for both : what a mouth panel is FOR is not
-          # something a cursor can show, and a dedicated icon is an asset to
-          # draw, not a line to write.
+      when ACTION_DRAW_FRONT_PANEL
           return SmartCursorManager.cursor_pencil_front_panel
+      when ACTION_DRAW_BACK_PANEL
+          return SmartCursorManager.cursor_pencil_front_panel
+      end
+
+      super
+    end
+
+    def get_action_option_status(action, option_group, option)
+
+      case action
+      when ACTION_DRAW_BACK_PANEL
+        case option_group
+        when ACTION_OPTION_OVERLAY
+          return PLUGIN.get_i18n_string("tool.smart_#{get_stripped_name}.action_#{action}_option_#{option_group}_#{option}_status")
+        end
+      end
+
+      super
+    end
+
+    def get_action_option_group_title(action, option_group)
+
+      case action
+      when ACTION_DRAW_FRONT_PANEL, ACTION_DRAW_BACK_PANEL
+        case option_group
+        when ACTION_OPTION_OFFSET
+          return PLUGIN.get_i18n_string("tool.smart_#{get_stripped_name}.action_#{action}_option_group_#{option_group}")
+        end
       end
 
       super
