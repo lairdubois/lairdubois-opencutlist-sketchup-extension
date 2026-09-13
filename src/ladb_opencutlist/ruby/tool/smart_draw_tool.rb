@@ -4158,6 +4158,9 @@ module Ladb::OpenCutList
 
     LAYER_3D_CAVITY_PREVIEW = 100
 
+    # How many containers #_get_cavities_def keeps the cavities of at once.
+    CAVITIES_CACHE_SIZE = 16
+
     def initialize(action, tool, previous_action_handler = nil)
       super
     end
@@ -4171,8 +4174,11 @@ module Ladb::OpenCutList
       super
     end
 
+    # Drops the cavities of EVERY container kept, not only the active one's :
+    # what changes the model under one container may change it under the
+    # others - its ancestors hold it.
     def _reset_cavities_def
-      @cavities_def = nil
+      @cavities_defs = nil
       _reset_picked_cavity
     end
 
@@ -4429,7 +4435,16 @@ module Ladb::OpenCutList
       # pass rather than pay for it again. Comparing the paths compares the
       # entities themselves, so a #_make_unique_groups_in_path that replaced
       # them invalidates the cache - which is exactly what it should do.
-      return @cavities_def if @cavities_def.is_a?(CavitiesDef) && @cavities_def.container_path == container_path
+      #
+      # Several containers are kept, most recently used first : a pick that
+      # slides from a carcass onto the drawers it holds and back would
+      # otherwise pay again, at every crossing, for a detection the previous
+      # crossing had already paid for - and the carcass is the dearest of them.
+      @cavities_defs = [] unless @cavities_defs.is_a?(Array)
+      if (index = @cavities_defs.index { |cavities_def| cavities_def.container_path == container_path })
+        @cavities_defs.unshift(@cavities_defs.delete_at(index)) if index > 0
+        return @cavities_defs.first
+      end
 
       return nil if !part.is_a?(Part) || part.group.material_is_virtual || part.group.material_type == MaterialAttributes::TYPE_HARDWARE
 
@@ -4440,22 +4455,6 @@ module Ladb::OpenCutList
       parts = cutlist.groups
                      .reject { |group| group.material_is_virtual || group.material_type == MaterialAttributes::TYPE_HARDWARE}
                      .flat_map { |group| group.get_parts }
-      # The glued cuts-opening machinings stay IN : SketchUp punches their
-      # opening in the host face tessellation, so a drilled panel without them
-      # is an open shell (one open edge loop per mortise) that no boolean can
-      # take. They are what closes it back — SolidMeshDef marks them virtual,
-      # and CommonSolidFindCavitiesWorker drops the voids they enclose. Hence
-      # flatten: false, without which they land in the drawing def's own faces
-      # and lose that provenance.
-      fn_decompose = lambda { |entity_path, ignore_visibility|
-        CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new(entity_path) ],
-                                             ignore_surfaces: true,
-                                             ignore_edges: true,
-                                             container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART_WITHOUT_MACHININGS,
-                                             ignore_visibility: ignore_visibility,
-                                             flatten: false
-        ).run
-      }
 
       # The APPLIED PANELS - a front panel or a back, see
       # LayerAttributes::TYPES_PANEL - are held apart from the panels of the
@@ -4482,7 +4481,7 @@ module Ladb::OpenCutList
         LayerAttributes.panel_type?(LayerAttributes.type_of(instance_info.entity))
       }
 
-      drawing_defs = panel_instance_infos.map { |instance_info| fn_decompose.call(instance_info.path, false) }
+      drawing_defs = panel_instance_infos.map { |instance_info| _decompose_cavity_panel(instance_info.path, false) }
       # An applied panel is read whole and blind to what the model shows : the tag it
       # is marked with is the tag its own faces are likely to carry, and hidden
       # once it is the mesh that would come back empty.
@@ -4498,7 +4497,7 @@ module Ladb::OpenCutList
       unless recess_panel_types.empty? && own_panel_types.empty?
         _fetch_applied_panel_entity_paths(container, container_path, recess_panel_types + own_panel_types).each do |entity_path|
           type = LayerAttributes.type_of(entity_path.last)
-          drawing_def = fn_decompose.call(entity_path, true)
+          drawing_def = _decompose_cavity_panel(entity_path, true)
           front_panel_drawing_defs << drawing_def if recess_panel_types.include?(type)
           own_panel_drawing_defs << drawing_def if own_panel_types.include?(type)
         end
@@ -4512,13 +4511,52 @@ module Ladb::OpenCutList
                                                      front_panel_drawing_defs: front_panel_drawing_defs
       ).run
 
-      @cavities_def = CavitiesDef.new(container_path, result_def, drawing_defs, own_panel_drawing_defs)
+      cavities_def = CavitiesDef.new(container_path, result_def, drawing_defs, own_panel_drawing_defs)
+      @cavities_defs.unshift(cavities_def)
+      @cavities_defs.pop while @cavities_defs.length > CAVITIES_CACHE_SIZE
 
       unless result_def.success?
         @tool.notify_errors(result_def.errors)
       end
 
-      @cavities_def
+      cavities_def
+    end
+
+    # One panel of a container, the way #_get_cavities_def reads it.
+    #
+    # The glued cuts-opening machinings stay IN : SketchUp punches their
+    # opening in the host face tessellation, so a drilled panel without them
+    # is an open shell (one open edge loop per mortise) that no boolean can
+    # take. They are what closes it back — SolidMeshDef marks them virtual,
+    # and CommonSolidFindCavitiesWorker drops the voids they enclose. Hence
+    # flatten: false, without which they land in the drawing def's own faces
+    # and lose that provenance.
+    def _decompose_cavity_panel(entity_path, ignore_visibility)
+      CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new(entity_path) ],
+                                           ignore_surfaces: true,
+                                           ignore_edges: true,
+                                           container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART_WITHOUT_MACHININGS,
+                                           ignore_visibility: ignore_visibility,
+                                           flatten: false
+      ).run
+    end
+
+    # Reads again, for every container kept, the applied panels of the
+    # handler's OWN kinds (see #_cavities_own_panel_types) - and only them.
+    #
+    # What a handler that has just built such a panel calls : the cavities
+    # themselves are blind to it and stand as they were, but the panels read
+    # aside are precisely the ones that tell an opening it has just closed from
+    # a bare one. Every container kept is read, the one the panel went into as
+    # much as its ancestors - they hold it too.
+    def _refresh_cavities_own_panels
+      return unless @cavities_defs.is_a?(Array)
+      own_panel_types = _cavities_own_panel_types
+      return if own_panel_types.empty?
+      @cavities_defs.each do |cavities_def|
+        container_path = cavities_def.container_path
+        cavities_def.own_panel_drawing_defs = _fetch_applied_panel_entity_paths(container_path.last, container_path, own_panel_types).map { |entity_path| _decompose_cavity_panel(entity_path, true) }
+      end
     end
 
     # The cavity fragment a pick designates, or nil when the point sits in no
@@ -6471,6 +6509,11 @@ module Ladb::OpenCutList
             # come to the same answer anyway - the panel goes on a layer marked
             # as such, which #_get_cavities_def leaves out of the enclosure -
             # this only spares paying for it again at every panel.
+            #
+            # The panels of its own kind read aside are, though : the one just
+            # built is among them now, and it is what says its opening is closed
+            # (see #_opening_already_panelled?).
+            _refresh_cavities_own_panels
             _refresh
           else
             # The merged panel is gone with the drag that carried it : the
@@ -6659,6 +6702,14 @@ module Ladb::OpenCutList
       @panel_footprint_paths_cache = nil
       @share_container_path = nil
       @share_points_cache = nil
+      super
+    end
+
+    # The footprints of the panels read aside are keyed by their drawing def
+    # (see #_get_panel_footprint_paths), which the refresh replaces.
+    def _refresh_cavities_own_panels
+      @panel_footprint_container_path = nil
+      @panel_footprint_paths_cache = nil
       super
     end
 
@@ -7828,6 +7879,7 @@ module Ladb::OpenCutList
       unless @footprint_paths_cache.is_a?(Hash) && @footprint_container_path == cavities_def.container_path
         @footprint_container_path = cavities_def.container_path
         @footprint_paths_cache = {}
+        @silhouette_paths_cache = nil   # Keyed by plane alone, like the footprint : the carcass next door has its front on that very plane
       end
 
       key = _opening_plane_key(opening_def)
@@ -8915,7 +8967,7 @@ module Ladb::OpenCutList
           faces = connected.grep(Sketchup::Face)
           faces.each { |f| seen[f.entityID] = true }
           next if faces.empty?
-          next unless faces.all? { |f| f.vertices.all? { |vertex| vertex.position.transform(to_opening).z > threshold } }
+          next unless faces.all? { |f| f.vertices.all? { |vertex| vertex.position.transform(to_opening).z.to_f > threshold } }
           offcuts << connected
         end
         offcuts.each do |connected|
