@@ -177,9 +177,9 @@ module Ladb::OpenCutList
       when ACTION_OPTION_OPTIONS
         case option
         when ACTION_OPTION_OPTIONS_OPPOSITE
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M1,0L1,1 M0.5,0L0.5,0.25 M0.5,0.75L0.5,1 M0.5,0.375L0.5,0.625 M0,0.5L1,0.5 M0.75,0.25L1,0.5L0.75,0.75'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M1,0V1M.5,0V.25M.5,.75V1M.5,.375V.625M0,.5H1M.75,.25L1,.5L.75,.75'))
         when ACTION_OPTION_OPTIONS_MAKE_UNIQUE
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.167,0.167L0.167,0.833 M0.417,0.167L0.417,0.833 M0,0.333L0.583,0.333 M0,0.667L0.583,0.667 M0.75,0.333L1,0.167L1,0.833'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.167,.167V.833M.417,.167V.833M0,.333H.583M0,.667H.583M.75,.333L1,.167V.833'))
         end
       end
 

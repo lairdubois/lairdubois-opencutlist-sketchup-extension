@@ -284,58 +284,58 @@ module Ladb::OpenCutList
       when ACTION_OPTION_MEASURE_TYPE
         case option
         when ACTION_OPTION_MEASURE_TYPE_OUTSIDE
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.655,0.917L0.655,0.583L0.989,0.583L0.989,0.917L0.655,0.917M0,0.25L1,0.25M0,0.083L0,0.417M1,0.083L1,0.417'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.655,.917V.583H.989V.917ZM0,.25H1M0,.083V.417M1,.083V.417'))
         when ACTION_OPTION_MEASURE_TYPE_CENTERED
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.655,0.917L0.655,0.583L0.989,0.583L0.989,0.917L0.655,0.917M0,0.25L0.833,0.25M0,0.083L0,0.417M0.833,0.083L0.833,0.417'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.655,.917V.583H.989V.917ZM0,.25H.833M0,.083V.417M.833,.083V.417'))
         when ACTION_OPTION_MEASURE_TYPE_INSIDE
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.655,0.917L0.655,0.583L0.989,0.583L0.989,0.917L0.655,0.917M0,0.25L0.667,0.25M0,0.083L0,0.417M0.667,0.083L0.667,0.417'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.655,.917V.583H.989V.917ZM0,.25H.667M0,.083V.417M.667,.083V.417'))
         end
       when ACTION_OPTION_AXES
         case option
         when ACTION_OPTION_AXES_ACTIVE
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.167,0L0.167,0.833L1,0.833 M0,0.167L0.167,0L0.333,0.167 M0.833,0.667L1,0.833L0.833,1'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.167,0V.833H1M0,.167L.167,0L.333,.167M.833,.667L1,.833L.833,1'))
         when ACTION_OPTION_AXES_CONTEXT
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.167,0L0.167,0.833L1,0.833 M0,0.167L0.167,0L0.333,0.167 M0.833,0.667L1,0.833L0.833,1 M0.5,0.083L0.5,0.5L0.917,0.5L0.917,0.083L0.5,0.083'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.167,0V.833H1M0,.167L.167,0L.333,.167M.833,.667L1,.833L.833,1M.5,.083V.5H.917V.083Z'))
         end
       when ACTION_OPTION_OVERLAY
         case option
         when ACTION_OPTION_OVERLAY_INSET
           case action
           when ACTION_DRAW_BACK_PANEL
-            return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.75,0.75L0.75,0.875L0.5,0.875L0.5,0.75L0,0.75L0,1L1,1L1,0.75L0.75,0.75 M0.75,0L0.5,0L0.5,0.875L0.75,0.875L0.75,0'))
+            return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.75,.75V.875H.625V.75H0V1H1V.75ZM0,.75L.25,1M.125,.75L.375,1M.25,.75L.5,1M.375,.75L.625,1M.5,.75L.75,1M.75,.75L1,1M0,.875L.125,1M.75,.875L.875,1M.875,.75L1,.875M.75,0H.625V.875H.75Z'))
           else
-            return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.125,0.125L0.688,0.125L0.688,0L0.125,0L0.125,0.125 M0.125,1L0.688,1L0.688,0.875L0.125,0.875L0.125,1 M0.688,0.25L0.5,0.25L0.5,0.75L0.688,0.75L0.688,0.25'))
+            return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.375,.75L.625,1M.25,.75L.5,1M0,.75L.25,1M.125,.75L.375,1M.5,.75L.75,1M.625,.75L.875,1M.75,.75L1,1M0,.875L.125,1M.875,.75L1,.875M1,0H.75V.625H1ZM0,.75H1V1H0'))
           end
         when ACTION_OPTION_OVERLAY_FULL_OVERLAY
           case action
           when ACTION_DRAW_BACK_PANEL
-            return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.75,0.75L0,0.75L0,1L0.75,1L0.75,0.75 M1,0L0.75,0L0.75,1L1,1L1,0'))
+            return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,.75H.875V1H0ZM0,.75L.25,1M.125,.75L.375,1M.25,.75L.5,1M.375,.75L.625,1M.5,.75L.75,1M.625,.75L.875,1M0,.875L.125,1M.75,.75L.875,.875M1,0H.875V1H1Z'))
           else
-            return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.125,0.125L0.688,0.125L0.688,0L0.125,0L0.125,0.125 M0.125,1L0.688,1L0.688,0.875L0.125,0.875L0.125,1 M1,0L0.813,0L0.813,1L1,1L1,0'))
+            return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,.75L.25,1M.125,.75L.375,1M.25,.75L.5,1M.375,.75L.625,1M0,.875L.125,1M.5,.75L.625,.875M1,0H.75V1H1ZM0,.75H.625V1H0'))
           end
         end
       when ACTION_OPTION_OPTIONS
         case option
         when ACTION_OPTION_OPTIONS_CONSTRUCTION
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.167,1L0,1L0,0.833 M0,0.667L0,0.333 M0,0.167L0,0L0.167,0 M0.333,0L0.667,0 M0.833,0L1,0L1,0.167 M1,0.333L1,0.667 M1,0.833L1,1L0.833,1 M0.333,1L0.667,1'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.167,1H0V.833M0,.667V.333M0,.167V0H.167M.333,0H.667M.833,0H1V.167M1,.333V.667M1,.833V1H.833M.333,1H.667'))
         when ACTION_OPTION_OPTIONS_DRAW_IN
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0L0.25,0L0,0L0,0.25 M1,0L1,0.25L1,0L0.75,0 M0,1L0.25,1L0,1L0,0.75 M1,1L1,0.75L1,1L0.75,1 M0.583,0.417L0.25,0.417L0.25,0.75L0.583,0.75L0.583,0.417 M0.583,0.583L0.75,0.583L0.75,0.25L0.417,0.25L0.417,0.417'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0H.25H0V.25M1,0V.25V0H.75M0,1H.25H0V.75M1,1V.75V1H.75M.583,.417H.25V.75H.583ZM.583,.583H.75V.25H.417V.417'))
         when ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0L1,0L1,1L0,1L0,0 M0.5,0.667L0.5,0.333 M0.333,0.5L0.667,0.5'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0H1V1H0ZM.5,.667V.333M.333,.5H.667'))
         when ACTION_OPTION_OPTIONS_SMOOTHING
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M1,0.719L0.97,0.548L0.883,0.398L0.75,0.286L0.587,0.227L0.413,0.227L0.25,0.286L0.117,0.398L0.03,0.548L0,0.719'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M1,.719L.97,.548L.883,.398L.75,.286L.587,.227H.413L.25,.286L.117,.398L.03,.548L0,.719'))
         when ACTION_OPTION_OPTIONS_MEASURE_FROM_DIAMETER
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1L0,0.667L1,0.667L1,1L0,1 M0.25,0.667L0.25,0.833 M0.5,0.667L0.5,0.833 M0.75,0.667L0.75,0.833 M0.25,0.5L0.75,0 M0.25,0.25L0.323,0.427L0.5,0.5L0.677,0.427L0.75,0.25L0.677,0.073L0.5,0L0.323,0.073L0.25,0.25'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1V.667H1V1ZM.25,.667V.833M.5,.667V.833M.75,.667V.833M.25,.5L.75,0M.25,.25L.323,.427L.5,.5L.677,.427L.75,.25L.677,.073L.5,0L.323,.073Z'))
         when ACTION_OPTION_OPTIONS_MEASURE_REVERSED
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1L0,0.667L1,0.667L1,1L0,1 M0.25,0.667L0.25,0.833 M0.5,0.667L0.5,0.833 M0.75,0.667L0.75,0.833  M0.861,0.292L0.708,0.139L0.5,0.083L0.292,0.139L0.14,0.292 M0.14,0.083L0.14,0.292L0.333,0.292'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1V.667H1V1ZM.25,.667V.833M.5,.667V.833M.75,.667V.833M.861,.292L.708,.139L.5,.083L.292,.139L.14,.292M.14,.083V.292H.333'))
         when ACTION_OPTION_OPTIONS_PULL_CENTRED
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1L0.667,1L1,0.667L1,0L0.333,0L0,0.333L0,1 M0,0.333L0.667,0.333L0.667,1 M0.667,0.333L1,0 M0.333,0.5L0.333,0.833 M0.167,0.667L0.5,0.667'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1H.667L1,.667V0H.333L0,.333ZM0,.333H.667V1M.667,.333L1,0M.333,.5V.833M.167,.667H.5'))
         when ACTION_OPTION_OPTIONS_ASK_NAME
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.25L1,0.25L1,0.75L0,0.75L0,0.25 M0.438,0.313L0.438,0.688 M0.125,0.625L0.125,0.375L0.313,0.625L0.313,0.375'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,.25H1V.75H0ZM.438,.313V.688M.125,.625V.375L.313,.625V.375'))
         when ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0L0,1L1,1L1,0L0,0 M0,0.625L0.625,0.625L0.625,0.375L0,0.375'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0V1H1V0ZM0,.625H.625V.375H0'))
         when ACTION_OPTION_OPTIONS_REUSE_DEFINITION
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.333L0.667,0.333L0.667,1L0,1L0,0.333 M0.333,0.333L0.333,0L1,0L1,0.667L0.667,0.667'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,.333H.667V1H0ZM.333,.333V0H1V.667H.667'))
         when ACTION_OPTION_OPTIONS_MIRROR
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path(MIRROR_MOTIF_VERTICAL_PATH))
         end
@@ -4259,6 +4259,44 @@ module Ladb::OpenCutList
       end
     end
 
+    # The pick, read on the CAVITIES themselves rather than on the model : the
+    # ray under the cursor is cast at the compartments, and the compartment it
+    # enters through a mouth, the point where it first meets a wall of it, and
+    # that wall are kept in @picked_fragment_def, @picked_point and
+    # @picked_plane_manipulator (see CavitiesDef#pick_ray) ; true when it
+    # really lands in one.
+    #
+    # What stands in a mouth stands between the cursor and the compartment : a
+    # front panel, a drawer front, a plinth, the neighbouring carcass. Reading
+    # the pick off the model makes every one of them opaque - the picker hands
+    # back the face in FRONT, a point that lies in no cavity - and the only way
+    # through is to hide them. The cavities, themselves, are not hidden by what
+    # fills their mouth : the mouths are their own geometry.
+    #
+    # What #_snap_point does and this one does not : SketchUp's inference
+    # (endpoints, midpoints, edges) no longer takes part, the point being read
+    # off the cavity wall alone.
+    def _snap_point_through_cavities(picker)
+
+      @picked_point = nil
+      @picked_fragment_def = nil
+      @picked_plane_manipulator = nil
+
+      return false unless has_active_part?
+      return false unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef) && cavities_def.valid?
+      return false unless picker.is_a?(SmartPicker) && (view = picker.view).is_a?(Sketchup::View)
+
+      ray = view.pickray(picker.pick_position.x, picker.pick_position.y)
+      return false unless ray.is_a?(Array) && ray.length == 2
+
+      picked = cavities_def.pick_ray(ray[0], ray[1])
+      return false if picked.nil?
+
+      @picked_fragment_def, @picked_point, @picked_plane_manipulator = picked
+
+      true
+    end
+
     # -----
 
     # Draws the cavities the pick lands in - their contours, and their volume
@@ -5119,43 +5157,14 @@ module Ladb::OpenCutList
 
     # -----
 
-    # The pick, read on the CAVITIES themselves rather than on the model : the
-    # ray under the cursor is cast at the compartments, and the compartment it
-    # enters through a mouth, the point where it first meets a wall of it, and
-    # that wall are what the placement then works on (see
-    # CavitiesDef#pick_ray).
+    # The pick, read THROUGH what closes the compartment - see
+    # #_snap_point_through_cavities. A divider is fitted INSIDE a compartment,
+    # so whatever closes it is precisely what stands in the way.
     #
-    # A divider is fitted INSIDE a compartment, and what closes that
-    # compartment stands between the cursor and it : a front panel, a drawer front,
-    # a plinth, the neighbouring carcass. Reading the pick off the model makes
-    # every one of them opaque - the picker hands back the face in FRONT, a
-    # point that lies in no cavity - and the only way through is to hide them.
-    # The cavities, themselves, are not hidden by what fills their mouth : the
-    # mouths are their own geometry.
-    #
-    # What the inherited pick does and this one does not : SketchUp's
-    # inference (endpoints, midpoints, edges) no longer takes part, the point
-    # being read off the cavity wall alone. A divider is placed at a distance
-    # or by distribution, not on a vertex, so there is nothing there to lose.
+    # The inference lost on the way costs nothing here : a divider is placed at
+    # a distance or by distribution, not on a vertex.
     def _snap_point(picker)
-
-      @picked_point = nil
-      @picked_fragment_def = nil
-      @picked_plane_manipulator = nil
-
-      return false unless has_active_part?
-      return false unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef) && cavities_def.valid?
-      return false unless picker.is_a?(SmartPicker) && (view = picker.view).is_a?(Sketchup::View)
-
-      ray = view.pickray(picker.pick_position.x, picker.pick_position.y)
-      return false unless ray.is_a?(Array) && ray.length == 2
-
-      picked = cavities_def.pick_ray(ray[0], ray[1])
-      return false if picked.nil?
-
-      @picked_fragment_def, @picked_point, @picked_plane_manipulator = picked
-
-      true
+      _snap_point_through_cavities(picker)
     end
 
     # The pick designates ONE compartment, and #_snap_point already knows
@@ -6669,8 +6678,13 @@ module Ladb::OpenCutList
     # -----
     # Every cavity the panel spans while a merge is on, not just the one under
     # the cursor : the whole point of the drag is to see the set grow.
+    #
+    # A pick read through the cavities designates ONE compartment, for the
+    # reason SmartDrawDividerActionHandler#_get_preview_cavity_fragment_defs
+    # gives.
     def _get_preview_cavity_fragment_defs(cavities_def)
       return @merge_fragment_defs if _merging?
+      return (@picked_fragment_def.is_a?(SolidCavityFragmentDef) ? [ @picked_fragment_def ] : []) if _snap_point_through_panels?
       super
     end
 
@@ -6913,11 +6927,26 @@ module Ladb::OpenCutList
         picked_face_path.any? { |entity| LayerAttributes.type_of(entity) == _panel_layer_type }
     end
 
+    # Whether the pick is read THROUGH the panels standing in the way - see
+    # SmartDrawPanelActionHandler#_snap_point_through_cavities. Off here : a
+    # panel laid on the mouth the camera faces has nothing to look through, and
+    # the model's own pick keeps its inference. A handler whose opening lies at
+    # the FAR end of the look turns it on (see SmartDrawBackPanelActionHandler).
+    #
+    # Read through, a pick never lands on a panel at all - the ray is cast at
+    # the cavities, which no applied panel of this handler's own kind is part
+    # of - so #_picked_on_existing_panel? has nothing left to catch, and a
+    # mouth already closed is told by #_opening_already_panelled? alone.
+    def _snap_point_through_panels?
+      false
+    end
+
     # A pick on an existing panel snaps to nothing : see
     # #_picked_on_existing_panel?. Nothing at all - the point the
     # previous pick left is dropped too, or #_preview_cavity would go on
     # drawing the cavity that pick landed in.
     def _snap_point(picker)
+      return _snap_point_through_cavities(picker) if _snap_point_through_panels?
       if _picked_on_existing_panel?(picker)
         @picked_point = nil
         return false
@@ -6965,12 +6994,19 @@ module Ladb::OpenCutList
     # #_picked_on_closed_opening? needs to answer while the cursor moves.
     def _resolve_pick(point, view)
       return nil unless point.is_a?(Geom::Point3d)
-      return nil if _picked_on_existing_panel?(@picker)
-      return nil unless (picked_face_manipulator = @picker.picked_plane_manipulator).is_a?(PlaneManipulator)
       return nil unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef) && cavities_def.valid?
 
-      fragment_def = _get_cavity_fragment_def(cavities_def, point, picked_face_manipulator)
-      return nil unless fragment_def.is_a?(SolidCavityFragmentDef)
+      if _snap_point_through_panels?
+        # The pick already knows the compartment and the wall : the picker's
+        # own face is whatever stood in front of them.
+        return nil unless (fragment_def = @picked_fragment_def).is_a?(SolidCavityFragmentDef)
+        return nil unless (picked_face_manipulator = @picked_plane_manipulator).is_a?(PlaneManipulator)
+      else
+        return nil if _picked_on_existing_panel?(@picker)
+        return nil unless (picked_face_manipulator = @picker.picked_plane_manipulator).is_a?(PlaneManipulator)
+        fragment_def = _get_cavity_fragment_def(cavities_def, point, picked_face_manipulator)
+        return nil unless fragment_def.is_a?(SolidCavityFragmentDef)
+      end
 
       opening_def = _get_panel_opening_def(fragment_def, view)
       return nil if opening_def.nil?
@@ -8078,13 +8114,14 @@ module Ladb::OpenCutList
     # alone is exactly what keeps it answering for the right container.
     def _merge_pick(picker, view)
 
-      picked_point = @picked_point
+      picked_point, picked_fragment_def, picked_plane_manipulator = @picked_point, @picked_fragment_def, @picked_plane_manipulator
       unless _snap_point(picker)
-        @picked_point = picked_point    # A pick on nothing is not a pick : the cavity preview keeps the point it had
+        # A pick on nothing is not a pick : the cavity preview keeps the point it had
+        @picked_point, @picked_fragment_def, @picked_plane_manipulator = picked_point, picked_fragment_def, picked_plane_manipulator
         return
       end
 
-      fragment_def = _get_cavity_fragment_def(@merge_context.cavities_def, @picked_point, picker.picked_plane_manipulator)
+      fragment_def = _snap_point_through_panels? ? @picked_fragment_def : _get_cavity_fragment_def(@merge_context.cavities_def, @picked_point, picker.picked_plane_manipulator)
       return unless fragment_def.is_a?(SolidCavityFragmentDef)
 
       _merge_add(fragment_def)
@@ -9656,6 +9693,20 @@ module Ladb::OpenCutList
     def _panel_opening_facing_vector(view)
       direction = view.camera.direction
       [ direction.x, direction.y, direction.z ]
+    end
+
+    # READ THROUGH the panels, like the divider : the back closes the far end
+    # of the look, so everything laid on the near mouth - a front panel, a
+    # drawer front - stands between the cursor and the compartment it is drawn
+    # for. Picked off the model, the front panels already drawn would have to be
+    # hidden before the carcass could get its back.
+    #
+    # The compartment still has to be ENTERED by a mouth (see
+    # CavitiesDef#pick_ray), and an INSET front panel is no exception : it
+    # recedes that mouth to its own back face (see #_cavities_recess_panel_types),
+    # which the ray crosses just the same.
+    def _snap_point_through_panels?
+      true
     end
 
     # -----

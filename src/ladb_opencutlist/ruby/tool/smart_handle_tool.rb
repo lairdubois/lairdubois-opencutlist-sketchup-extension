@@ -148,25 +148,25 @@ module Ladb::OpenCutList
       when ACTION_OPTION_COPY_MEASURE_TYPE
         case option
         when ACTION_OPTION_COPY_MEASURE_TYPE_OUTSIDE
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.917L0,0.583L0.333,0.583L0.333,0.917L0,0.917M0.655,0.917L0.655,0.583L0.989,0.583L0.989,0.917L0.655,0.917 M0,0.25L1,0.25 M0,0.083L0,0.417 M1,0.083L1,0.417'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,.917V.583H.333V.917ZM.655,.917V.583H.989V.917ZM0,.25H1M0,.083V.417M1,.083V.417'))
         when ACTION_OPTION_COPY_MEASURE_TYPE_CENTERED
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.917L0,0.583L0.333,0.583L0.333,0.917L0,0.917 M0.655,0.917L0.655,0.583L0.989,0.583L0.989,0.917L0.655,0.917 M0.167,0.25L0.822,0.25 M0.167,0.083L0.167,0.417 M0.822,0.083L0.822,0.417'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,.917V.583H.333V.917ZM.655,.917V.583H.989V.917ZM.167,.25H.822M.167,.083V.417M.822,.083V.417'))
         when ACTION_OPTION_COPY_MEASURE_TYPE_INSIDE
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.917L0,0.583L0.333,0.583L0.333,0.917L0,0.917M0.655,0.917L0.655,0.583L0.989,0.583L0.989,0.917L0.655,0.917 M0.333,0.25L0.667,0.25 M0.333,0.083L0.333,0.417 M0.667,0.083L0.667,0.417'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,.917V.583H.333V.917ZM.655,.917V.583H.989V.917ZM.333,.25H.667M.333,.083V.417M.667,.083V.417'))
         end
       when ACTION_OPTION_AXES
         case option
         when ACTION_OPTION_AXES_ACTIVE
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.167,0L0.167,0.833L1,0.833 M0,0.167L0.167,0L0.333,0.167 M0.833,0.667L1,0.833L0.833,1'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.167,0V.833H1M0,.167L.167,0L.333,.167M.833,.667L1,.833L.833,1'))
         when ACTION_OPTION_AXES_CONTEXT
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.167,0L0.167,0.833L1,0.833 M0,0.167L0.167,0L0.333,0.167 M0.833,0.667L1,0.833L0.833,1 M0.5,0.083L0.5,0.5L0.917,0.5L0.917,0.083L0.5,0.083'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.167,0V.833H1M0,.167L.167,0L.333,.167M.833,.667L1,.833L.833,1M.5,.083V.5H.917V.083Z'))
         when ACTION_OPTION_AXES_ENTITY
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.25,0L0.25,0.75L1,0.75 M0.083,0.167L0.25,0L0.417,0.167 M0.833,0.583L1,0.75L0.833,0.917 M0.042,0.5L0.042,0.958L0.5,0.958L0.5,0.5L0.042,0.5'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.25,0V.75H1M.083,.167L.25,0L.417,.167M.833,.583L1,.75L.833,.917M.042,.5V.958H.5V.5Z'))
         end
       when ACTION_OPTION_OPTIONS
         case option
         when ACTION_OPTION_OPTIONS_MIRROR
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.5,0L0.5,0.2 M0.5,0.4L0.5,0.6 M0.5,0.8L0.5,1 M0,0.2L0.3,0.5L0,0.8L0,0.2 M1,0.2L0.7,0.5L1,0.8L1,0.2'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.5,0V.2M.5,.4V.6M.5,.8V1M0,.2L.3,.5L0,.8ZM1,.2L.7,.5L1,.8Z'))
         end
       end
 

@@ -217,49 +217,49 @@ module Ladb::OpenCutList
       when ACTION_OPTION_STRETCH_MEASURE_TYPE
         case option
         when ACTION_OPTION_STRETCH_MEASURE_TYPE_OUTSIDE
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.917L0,0.583L1,0.583L1,0.917L0,0.917M0,0.25L1,0.25M0,0.083L0,0.417M1,0.083L1,0.417'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,.917V.583H1V.917ZM0,.25H1M0,.083V.417M1,.083V.417'))
         when ACTION_OPTION_STRETCH_MEASURE_TYPE_OFFSET
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.917L0,0.583L0.5,0.583L0.5,0.917L0,0.917M0.5,0.25L1,0.25M0.5,0.083L0.5,0.417M1,0.083L1,0.417 M0.75,0.583L1,0.583L1,0.917L0.75,0.917'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,.917V.583H.5V.917ZM.5,.25H1M.5,.083V.417M1,.083V.417M.75,.583H1V.917H.75'))
         end
       when ACTION_OPTION_AXES
         case option
         when ACTION_OPTION_AXES_ACTIVE
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.167,0L0.167,0.833L1,0.833 M0,0.167L0.167,0L0.333,0.167 M0.833,0.667L1,0.833L0.833,1'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.167,0V.833H1M0,.167L.167,0L.333,.167M.833,.667L1,.833L.833,1'))
         when ACTION_OPTION_AXES_CONTEXT
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.167,0L0.167,0.833L1,0.833 M0,0.167L0.167,0L0.333,0.167 M0.833,0.667L1,0.833L0.833,1 M0.5,0.083L0.5,0.5L0.917,0.5L0.917,0.083L0.5,0.083'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.167,0V.833H1M0,.167L.167,0L.333,.167M.833,.667L1,.833L.833,1M.5,.083V.5H.917V.083Z'))
         when ACTION_OPTION_AXES_ENTITY
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.25,0L0.25,0.75L1,0.75 M0.083,0.167L0.25,0L0.417,0.167 M0.833,0.583L1,0.75L0.833,0.917 M0.042,0.5L0.042,0.958L0.5,0.958L0.5,0.5L0.042,0.5'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.25,0V.75H1M.083,.167L.25,0L.417,.167M.833,.583L1,.75L.833,.917M.042,.5V.958H.5V.5Z'))
         end
       when ACTION_OPTION_PANELING_DIRECTION
         case option
         when ACTION_OPTION_PANELING_DIRECTION_INWARD
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.125,0.125L0.875,0.125L0.875,0.875 M0.625,0.375L0.375,0.625 M0.375,0.375L0.375,0.625L0.625,0.625'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.125,.125H.875V.875M.625,.375L.375,.625M.375,.375V.625H.625'))
         when ACTION_OPTION_PANELING_DIRECTION_OUTWARD
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.375L0.625,0.375L0.625,1 M0.75,0.25L1,0 M1,0.25L1,0L0.75,0'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,.375H.625V1M.75,.25L1,0M1,.25V0H.75'))
         end
       when ACTION_OPTION_PANELING_JOINT_TYPE
         case option
         when ACTION_OPTION_PANELING_JOINT_TYPE_FLAT
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M1,0L1,1L0.625,1L0.625,0.375 M1,0L0,0L0,0.375L0.625,0.375L0.625,0'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M1,0V1H.625V.375M1,0H0V.375H.625V0'))
         when ACTION_OPTION_PANELING_JOINT_TYPE_MITER
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0L0,0.375L0.625,0.375L1,0L0,0 M1,0L1,1L0.625,1L0.625,0.375'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0V.375H.625L1,0ZM1,0V1H.625V.375'))
         end
       when ACTION_OPTION_OPTIONS
         case option
         when ACTION_OPTION_OPTIONS_CENTERED
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1L0.667,1L1,0.667L1,0L0.333,0L0,0.333L0,1 M0,0.333L0.667,0.333L0.667,1 M0.667,0.333L1,0 M0.333,0.5L0.333,0.833 M0.167,0.667L0.5,0.667'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1H.667L1,.667V0H.333L0,.333ZM0,.333H.667V1M.667,.333L1,0M.333,.5V.833M.167,.667H.5'))
         when ACTION_OPTION_OPTIONS_MAKE_UNIQUE
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.167,0.167L0.167,0.833 M0.417,0.167L0.417,0.833 M0,0.333L0.583,0.333 M0,0.667L0.583,0.667 M0.75,0.333L1,0.167L1,0.833'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.167,.167V.833M.417,.167V.833M0,.333H.583M0,.667H.583M.75,.333L1,.167V.833'))
         when ACTION_OPTION_OPTIONS_KEEP_A
           return Kuix::Label.new(PLUGIN.get_i18n_string('tool.smart_reshape.action_option_options_keep_a'))
         when ACTION_OPTION_OPTIONS_KEEP_B
           return Kuix::Label.new(PLUGIN.get_i18n_string('tool.smart_reshape.action_option_options_keep_b'))
         when ACTION_OPTION_OPTIONS_REMOVE_UNUSED_DEFINITIONS
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.75,0.625L0.25,0.625L0.25,0.75L0.75,0.75L0.75,0.625 M0.5,0.625L0.5,0 M0.25,0.75L0.188,1 M0.75,0.75L0.813,1 M0.375,0.75L0.345,1 M0.5,0.75L0.5,1 M0.625,0.75L0.655,1'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.75,.625H.25V.75H.75ZM.5,.625V0M.25,.75L.188,1M.75,.75L.813,1M.375,.75L.345,1M.5,.75V1M.625,.75L.655,1'))
         when ACTION_OPTION_OPTIONS_REUSE_DEFINITION
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.333L0.667,0.333L0.667,1L0,1L0,0.333 M0.333,0.333L0.333,0L1,0L1,0.667L0.667,0.667'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,.333H.667V1H0ZM.333,.333V0H1V.667H.667'))
         when ACTION_OPTION_OPTIONS_REUSE_DEFINITION_MIRRORED
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.5,0L0.5,0.2 M0.5,0.4L0.5,0.6 M0.5,0.8L0.5,1 M0,0.2L0.3,0.5L0,0.8L0,0.2 M1,0.2L0.7,0.5L1,0.8L1,0.2'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.5,0V.2M.5,.4V.6M.5,.8V1M0,.2L.3,.5L0,.8ZM1,.2L.7,.5L1,.8Z'))
         end
       end
 

@@ -228,13 +228,13 @@ module Ladb::OpenCutList
       when ACTION_OPTION_OPTIONS
         case option
         when ACTION_OPTION_OPTIONS_ANCHOR
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.25,0L0.25,0.75L1,0.75 M0.083,0.167L0.25,0L0.417,0.167 M0.833,0.583L1,0.75L0.833,0.917 M0.042,0.5L0.042,0.958L0.5,0.958L0.5,0.5L0.042,0.5'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.25,0V.75H1M.083,.167L.25,0L.417,.167M.833,.583L1,.75L.833,.917M.042,.5V.958H.5V.5Z'))
         when ACTION_OPTION_OPTIONS_SMOOTHING
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M1,0.719L0.97,0.548L0.883,0.398L0.75,0.286L0.587,0.227L0.413,0.227L0.25,0.286L0.117,0.398L0.03,0.548L0,0.719'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M1,.719L.97,.548L.883,.398L.75,.286L.587,.227H.413L.25,.286L.117,.398L.03,.548L0,.719'))
         when ACTION_OPTION_OPTIONS_MERGE_HOLES
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.167L0.5,0L1,0.167L0.75,0.25L0.5,0.167L0.25,0.25L0,0.167 M0.25,0.833L0.5,0.75L0.75,0.833L0.5,0.917L0.25,0.833 M0.5,0.333L0.5,0.667 M0.667,0.5L0.333,0.5'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,.167L.5,0L1,.167L.75,.25L.5,.167L.25,.25ZM.25,.833L.5,.75L.75,.833L.5,.917ZM.5,.333V.667M.667,.5H.333'))
         when ACTION_OPTION_OPTIONS_INCLUDE_PATHS
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.167,0L0.167,1 M0,0.167L1,0.167 M0,0.833L1,0.833 M0.833,0L0.833,1'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.167,0V1M0,.167H1M0,.833H1M.833,0V1'))
         end
       end
 

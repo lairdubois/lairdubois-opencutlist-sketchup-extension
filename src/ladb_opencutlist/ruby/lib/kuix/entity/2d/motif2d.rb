@@ -20,17 +20,70 @@ module Ladb::OpenCutList::Kuix
 
     # -- STATIC --
 
+    # Parses a subset of the SVG path syntax into patterns.
+    # Supported : absolute M, L, H, V, Z commands, implicit repetition of the previous command,
+    # numbers with or without leading zero (0.75 or .75), optional separators.
+    # Ex : 'M0,0.75L0.25,1 M1,0L0.75,0L0.75,1L1,1L1,0' or compact 'M0,.75L.25,1M1,0H.75V1H1Z'
     def self.patterns_from_svg_path(path)
       patterns = []
-      pattern = []
-      path.scan(Regexp.new('([ML])(\d+(?:\.\d+)*),(\d(?:\.\d+)*)')) do |m|
-        if m[0] == 'M'
-          pattern = []
-          patterns.push(pattern)
+      pattern = nil
+      x = y = nil
+      command = nil
+      tokens = path.scan(/[MLHVZ]|-?(?:\d+(?:\.\d*)?|\.\d+)/)
+      until tokens.empty?
+
+        command = tokens.shift if tokens.first =~ /[MLHVZ]/
+
+        if command == 'Z'
+          if pattern && pattern.length > 1
+            first = pattern.first
+            last = pattern.last
+            pattern << Point2d.new(first.x, first.y) unless first.x == last.x && first.y == last.y
+            x, y = first.x, first.y
+          end
+          pattern = nil
+          command = nil # Z takes no argument
         end
-        if m[0] == 'M' || m[0] == 'L'
-          pattern << Point2d.new(m[1].to_f, m[2].to_f)
+
+        arity = case command
+                when 'M', 'L'
+                  2
+                when 'H', 'V'
+                  1
+                else
+                  0
+                end
+        values = []
+        values << tokens.shift.to_f while values.length < arity && tokens.first && tokens.first !~ /[MLHVZ]/
+        if arity == 0 || values.length < arity
+          tokens.shift while tokens.first && tokens.first !~ /[MLHVZ]/ # Skip stray numbers
+          next
         end
+
+        if command == 'M'
+          x, y = values
+          pattern = [ Point2d.new(x, y) ]
+          patterns << pattern
+          command = 'L' # Subsequent pairs are implicit L
+          next
+        end
+
+        next if x.nil? # Drawing before any M is ignored
+        if pattern.nil? # Drawing after Z starts from the current point
+          pattern = [ Point2d.new(x, y) ]
+          patterns << pattern
+        end
+
+        case command
+        when 'L'
+          x, y = values
+        when 'H'
+          x = values[0]
+        when 'V'
+          y = values[0]
+        end
+        pattern << Point2d.new(x, y)
+
       end
       patterns
     end
