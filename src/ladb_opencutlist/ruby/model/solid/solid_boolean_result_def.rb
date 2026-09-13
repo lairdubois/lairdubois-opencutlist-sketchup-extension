@@ -161,6 +161,16 @@ module Ladb::OpenCutList
     # #_triangle_plane_index.
     PLANE_BUCKET_QUANTUM = 0.01
 
+    # Minimum area, in square inches, for a plane to count as one side of a
+    # membrane — see #carries_membrane?. The same guard, and for the same
+    # reason, as the one the envelope reduction gives itself
+    # (CommonSolidFindCavitiesWorker::REDUCTION_MIN_AREA) : a membrane welding
+    # two compartments spans a panel section, square inches, while the
+    # degenerate sliver triangles a boolean leaves where two faces are flush
+    # are many orders of magnitude below — and their normals, being pure
+    # numerical noise, pair up with anything.
+    MEMBRANE_MIN_AREA = (SolidMeshDef::TOLERANCE * 10) * (SolidMeshDef::TOLERANCE * 10)
+
     def initialize(vertices, face_indices, face_ids, face_info_defs, src_indices: [])
       @vertices = vertices
       @face_indices = face_indices
@@ -366,6 +376,53 @@ module Ladb::OpenCutList
     # Kuix::Segments#add_segments. Memoized.
     def unique_boundary_segments
       @unique_boundary_segments ||= _flatten_edge_counts_by_plane(unique: true)
+    end
+
+    # Whether the fragment carries a MEMBRANE : two of its planes exactly
+    # OPPOSITE — (n, d) and (-n, -d) — which is to say a sheet of zero
+    # thickness hanging inside the body.
+    #
+    # A sound fragment never has one. Its boundary is a surface with an inside
+    # and an outside, and a plane that surface lies on is traversed one way
+    # only ; two opposite planes are the two sides of a same sheet, a wall the
+    # boolean failed to give any thickness. Such a wall separates nothing, so
+    # whatever it was supposed to hold apart comes back welded into ONE body —
+    # which is exactly how it is met in practice, and why it is worth a name :
+    # see CommonSolidFindCavitiesWorker#_find_cavities, MEMBRANE BACKSTOP.
+    #
+    # Planes are matched by the same tolerant and SIGNED reading as
+    # #boundary_segments (#_each_triangle_plane) — which is what makes the
+    # opposition detectable at all : the two sides of a membrane are the same
+    # plane seen twice, and agree to the last float digits. Memoized.
+    def carries_membrane?
+      return @carries_membrane unless @carries_membrane.nil?
+
+      normals = []  # plane index -> [ nx, ny, nz ], as the plane was first seen
+      offsets = []  # plane index -> signed offset d
+      areas = []    # plane index -> area accumulated over its triangles
+
+      _each_triangle_plane do |plane_index, _triangle_index, a, _b, _c, area2, nx, ny, nz|
+        if normals[plane_index].nil?
+          normals[plane_index] = [ nx, ny, nz ]
+          offsets[plane_index] = nx * @vertices[a * 3] + ny * @vertices[a * 3 + 1] + nz * @vertices[a * 3 + 2]
+          areas[plane_index] = 0.0
+        end
+        areas[plane_index] += area2 / 2.0
+      end
+
+      max_dot = -(1.0 - PLANE_NORMAL_TOLERANCE)
+      tolerance = SolidMeshDef::TOLERANCE
+
+      @carries_membrane = (0...normals.length).any? { |i|
+        next false if areas[i] < MEMBRANE_MIN_AREA
+        ni = normals[i]
+        di = offsets[i]
+        ((i + 1)...normals.length).any? { |j|
+          next false if areas[j] < MEMBRANE_MIN_AREA
+          nj = normals[j]
+          ni[0] * nj[0] + ni[1] * nj[1] + ni[2] * nj[2] <= max_dot && (di + offsets[j]).abs <= tolerance
+        }
+      }
     end
 
     private
