@@ -2458,6 +2458,7 @@ tool:
     action_option_options_layer_name_status: Nom du calque sur lequel sont placées les pièces
     action_toggle_move_copy_status: Alterner entre copier/déplacer
     action_change_move_anchor_status: Changer le point d'ancrage
+    detecting_cavities: "Détection des cavités…"
     error:
       invalid_divider_seed: Ce type de pièce ne permet pas le dessin d'un séparateur
       invalid_divider_container: "Cette pièce est isolée : elle ne partage pas de groupe ou composant avec d'autres pièces"
@@ -2471,6 +2472,7 @@ tool:
       invalid_back_panel_container: "Cette pièce est isolée : elle ne partage pas de groupe ou composant avec d'autres pièces"
       invalid_back_panel_cavity: "Aucune cavité ouverte à l'opposé de la vue à cette position"
       no_back_panel_cavity: Aucune cavité n'a été détectée dans ce groupe ou composant
+      too_complex_cavity: "Géométrie trop complexe pour y détecter des cavités"
       closed_front_panel_opening: "Cette ouverture est déjà fermée par une façade"
       closed_back_panel_opening: "Cette ouverture est déjà fermée par un fond"
       divider_number_overflow: "Impossible de répartir {{ number }} séparateurs dans cette cavité"

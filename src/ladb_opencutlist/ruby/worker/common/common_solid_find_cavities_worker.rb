@@ -401,6 +401,14 @@ module Ladb::OpenCutList
     ENVELOPE_HULL = 'hull'.freeze
     ENVELOPE_BBOX = 'bbox'.freeze
 
+    # The error a detection gives up with once past the +time_budget+ it was
+    # given. Nothing in the geometry says beforehand what a detection will
+    # cost - a machined carcass and a sculpted assembly weigh the same by
+    # vertices and by planes, and differ by seconds (see #run) - so the
+    # budget is TIME, checked between the booleans : a boolean under way is
+    # never interrupted, and the budget is overrun by at most one of them.
+    ERROR_TOO_COMPLEX = 'tool.smart_draw.error.too_complex_cavity'.freeze
+
     # Bbox envelope inflation, in inches. Keeps the envelope planes well
     # clear of the panel planes, so that Meshy's plane canonicalization
     # (TOLERANCE scale) never merges an envelope face with a panel face.
@@ -562,6 +570,7 @@ module Ladb::OpenCutList
                    overall_cavity: false,
                    ignore_applied_panels: false,
                    front_panel_drawing_defs: [],
+                   time_budget: nil,
                    validate: true
 
     )
@@ -575,6 +584,7 @@ module Ladb::OpenCutList
       @reduce_envelope = reduce_envelope
       @overall_cavity = overall_cavity
       @ignore_applied_panels = ignore_applied_panels
+      @time_budget = time_budget
       @validate = validate
 
     end
@@ -583,6 +593,10 @@ module Ladb::OpenCutList
 
     def run
       result_def = SolidBooleanResultDef.new
+
+      # See ERROR_TOO_COMPLEX and #_budget_exhausted?
+      @deadline = @time_budget.nil? ? nil : Time.now + @time_budget
+      @budget_exhausted = false
 
       if @panel_drawing_defs.empty? || !@panel_drawing_defs.all? { |drawing_def| drawing_def.is_a?(DrawingDef) }
         result_def.errors << [ 'default.error' ]
@@ -673,6 +687,14 @@ module Ladb::OpenCutList
 
       end
 
+      # A budget run out anywhere leaves a detection other than the one asked
+      # for - reductions left undone, trials cut short : none of it is
+      # reported. See ERROR_TOO_COMPLEX.
+      if @budget_exhausted
+        result_def.errors << [ ERROR_TOO_COMPLEX ]
+        return result_def
+      end
+
       result_def.fragment_defs.concat(compartment_fragment_defs)
       result_def.fragment_defs.concat(overall_fragment_defs)
 
@@ -696,6 +718,7 @@ module Ladb::OpenCutList
       overall_fragment_defs = []
 
       clusters.each do |cluster_mesh_defs|
+        break if _budget_exhausted?
 
         fragment_defs, panel_id_ranges, dominant_normals = _find_cavities(cluster_mesh_defs, result_def, validate: validate, overall: false)
         compartment_fragment_defs.concat(fragment_defs)
@@ -716,7 +739,7 @@ module Ladb::OpenCutList
           overall_fragment_defs.concat(fragment_defs.map { |fragment_def| _as_overall(fragment_def) })
         else
           contour_mesh_defs = cluster_mesh_defs.reject { |_mesh_def, panel_index| internal_panel_indices.include?(panel_index) }
-          unless contour_mesh_defs.empty?
+          unless contour_mesh_defs.empty? || _budget_exhausted?
             # validate: false — these very panels went through the first pass's
             # validation, only a native exception is left to report
             cluster_overall_fragment_defs, _panel_id_ranges, _dominant_normals = _find_cavities(contour_mesh_defs, result_def, validate: false, overall: true)
@@ -727,6 +750,13 @@ module Ladb::OpenCutList
       end
 
       [ compartment_fragment_defs, overall_fragment_defs ]
+    end
+
+    # Whether the time budget is run out - see ERROR_TOO_COMPLEX. Asked
+    # between the booleans ; once it says so, it goes on saying so, and #run
+    # reports the detection as given up whatever the passes still returned.
+    def _budget_exhausted?
+      @budget_exhausted ||= !@deadline.nil? && Time.now >= @deadline
     end
 
     # The positions (in +indexed_mesh_defs+) of the panels making up one part
@@ -792,6 +822,7 @@ module Ladb::OpenCutList
       superfluous_positions = []
 
       candidates.each do |positions|
+        break if _budget_exhausted?
         next if positions.length == indexed_mesh_defs.length
         next if positions.any? { |position| superfluous_positions.include?(position) }
 
@@ -1220,6 +1251,7 @@ module Ladb::OpenCutList
                      deferred_fragment_defs.map { |fragment_def| [ fragment_def, true ] }
             REDUCTION_MAX_PASSES.times do
               break if active.empty?
+              return pass if _budget_exhausted?
               reduction_planes_per_fragment = _detect_reduction_planes(active.map { |fragment_def, _provisional| fragment_def }, panel_id_ranges, panel_meshes, dominant_normals, envelope_mesh)
               next_active = []
               clipped_any = false
@@ -1231,6 +1263,7 @@ module Ladb::OpenCutList
                   confirmed_fragment_defs << fragment_def unless provisional
                   next
                 end
+                return pass if _budget_exhausted?
                 kept_output = Meshy.operate(
                   :operation => Meshy::OPERATION_INTERSECTION,
                   :validate => false,
@@ -1661,6 +1694,11 @@ module Ladb::OpenCutList
       # The source planes are those of the panels this pass was given : they
       # outlive the reduction rounds, which only ever clip the CAVITIES
       face_planes = (@panel_face_planes ||= _panel_face_planes(panel_meshes))
+      # Position of the panel each face id belongs to, read per triangle
+      # below : the id ranges are disjoint, a lookup answers what a scan of
+      # them would
+      mesh_position_by_face_id = []
+      panel_id_ranges.each_with_index { |(id_range, _panel_index), mesh_position| id_range.each { |face_id| mesh_position_by_face_id[face_id] = mesh_position } }
       fragment_defs.map do |fragment_def|
         planes = {}
         vertices = fragment_def.vertices
@@ -1704,7 +1742,7 @@ module Ladb::OpenCutList
           # deep. See the class doc, MACHININGS.
           face_info_def = face_info_defs[face_id]
           next if face_info_def && face_info_def.virtual?
-          mesh_position = panel_id_ranges.find_index { |id_range, _| id_range.cover?(face_id) }
+          mesh_position = mesh_position_by_face_id[face_id]
           next if mesh_position.nil?
           dominant_normal = dominant_normals[mesh_position]
           next if dominant_normal.nil?
@@ -1768,8 +1806,9 @@ module Ladb::OpenCutList
         # class doc, BEVELED EDGES). The chants join the candidates they would
         # have been had their board been square to the assembly ; everything
         # else goes on to #_detect_bevel_planes.
+        opening_caps = _reduction_opening_caps(cap_planes)
         tilted_triangles.each do |triangle_index, normal, area, d, mesh_position|
-          unless _reduction_recedes_opening?(normal, d, cap_planes)
+          unless _reduction_recedes_opening?(normal, d, opening_caps)
             bevel_triangles << [ triangle_index, normal, area ]
             next
           end
@@ -1785,24 +1824,29 @@ module Ladb::OpenCutList
           # Degenerate boolean sliver, not a chant strip — see
           # REDUCTION_MIN_AREA
           next if area < REDUCTION_MIN_AREA
+          # The plane must make one of the cavity's own OPENINGS recede : that
+          # is what tells a recess from a chant that merely cuts ACROSS the
+          # cavity (a stub shelf's lateral tip, where the board just ends and
+          # nothing beyond it justifies a cut) — see
+          # #_reduction_recedes_opening?. Asked first : it only reads the few
+          # opening caps, where the test below reads every vertex.
+          next unless _reduction_recedes_opening?(normal, d, opening_caps)
           # The cavity must extend on both sides of the extended plane —
           # beyond the chant (removed side, negative distances) and behind
           # it (kept side, where the panel and the compartments lie)
           beyond = false
           behind = false
-          vertices.each_slice(3) do |x, y, z|
-            distance = normal[0] * x + normal[1] * y + normal[2] * z - d
+          nx, ny, nz = normal
+          index = 0
+          length = vertices.length
+          while index < length
+            distance = nx * vertices[index] + ny * vertices[index + 1] + nz * vertices[index + 2] - d
             beyond ||= distance < -REDUCTION_MIN_DEPTH
             behind ||= distance > REDUCTION_MIN_DEPTH
             break if beyond && behind
+            index += 3
           end
           next unless beyond && behind
-          # The plane must make one of the cavity's own OPENINGS recede : that
-          # is what tells a recess from a chant that merely cuts ACROSS the
-          # cavity (a stub shelf's lateral tip, where the board just ends and
-          # nothing beyond it justifies a cut) — see
-          # #_reduction_recedes_opening?
-          next unless _reduction_recedes_opening?(normal, d, cap_planes)
           # Several panels merely lying on the same (normal, d) plane can be
           # pure coincidence (e.g. a large contour panel and an unrelated
           # divider's free tip that happen to sit at the same depth) : a
@@ -2003,18 +2047,68 @@ module Ladb::OpenCutList
       return if @envelope_restore_planes.nil? || @envelope_restore_planes.empty?
       return unless fragments.is_a?(Array)
 
+      # Every vertex is read against every plane - hundreds of them on a
+      # hull wrapping anything but a box : the planes are laid out flat once,
+      # and walked without a block
+      tolerance = SolidMeshDef::TOLERANCE
+      plane_count = @envelope_restore_planes.length
+      plane_normals = @envelope_restore_planes.map { |normal, _d_eroded, _d_original| normal }
+      plane_nxs = plane_normals.map { |normal| normal[0] }
+      plane_nys = plane_normals.map { |normal| normal[1] }
+      plane_nzs = plane_normals.map { |normal| normal[2] }
+      plane_d_eroded = @envelope_restore_planes.map { |_normal, d_eroded, _d_original| d_eroded }
+      plane_d_original = @envelope_restore_planes.map { |_normal, _d_eroded, d_original| d_original }
+
       fragments.each do |fragment|
         vertices = fragment['vertices']
         next unless vertices.is_a?(Array)
-        wall_normals_by_vertex = _face_normals_by_vertex(fragment, true)
+        # Read on the vertices as Meshy left them : taken at the first
+        # correction, before it moves anything
+        wall_normals_by_vertex = nil
+        next if vertices.length < 3
+
+        # Most planes pass nowhere near a given vertex : the vertices are
+        # sorted into a coarse grid, and a cell only walks the planes passing
+        # within its reach — the tolerance plus the cell's half diagonal from
+        # its center, which no vertex of the cell is farther from. The planes a
+        # cell keeps stay in their order, and each is still asked the exact
+        # question below, so the corrections come out exactly the same.
+        min_x = max_x = vertices[0] ; min_y = max_y = vertices[1] ; min_z = max_z = vertices[2]
+        index = 3
+        while index < vertices.length
+          x = vertices[index] ; y = vertices[index + 1] ; z = vertices[index + 2]
+          min_x = x if x < min_x ; max_x = x if x > max_x
+          min_y = y if y < min_y ; max_y = y if y > max_y
+          min_z = z if z < min_z ; max_z = z if z > max_z
+          index += 3
+        end
+        cell_size = [ max_x - min_x, max_y - min_y, max_z - min_z ].max / 16.0
+        cell_size = tolerance if cell_size < tolerance
+        reach = cell_size * 0.8661 + tolerance * 2.0  # Half diagonal (√3 / 2, rounded up) + tolerance, and as much again against rounding
+        plane_indices_by_cell = {}
+
         index = 0
         while index < vertices.length
 
           x = vertices[index] ; y = vertices[index + 1] ; z = vertices[index + 2]
+          cell_x = ((x - min_x) / cell_size).floor
+          cell_y = ((y - min_y) / cell_size).floor
+          cell_z = ((z - min_z) / cell_size).floor
+          cell_plane_indices = plane_indices_by_cell[(cell_x * 64 + cell_y) * 64 + cell_z] ||= begin
+            center_x = min_x + (cell_x + 0.5) * cell_size
+            center_y = min_y + (cell_y + 0.5) * cell_size
+            center_z = min_z + (cell_z + 0.5) * cell_size
+            (0...plane_count).select { |plane_index|
+              (plane_nxs[plane_index] * center_x + plane_nys[plane_index] * center_y + plane_nzs[plane_index] * center_z - plane_d_eroded[plane_index]).abs <= reach
+            }
+          end
+
           corrections = []
-          @envelope_restore_planes.each do |normal, d_eroded, d_original|
-            projection = normal[0] * x + normal[1] * y + normal[2] * z
-            next if (projection - d_eroded).abs > SolidMeshDef::TOLERANCE
+          cell_plane_indices.each do |plane_index|
+            projection = plane_nxs[plane_index] * x + plane_nys[plane_index] * y + plane_nzs[plane_index] * z
+            next if (projection - plane_d_eroded[plane_index]).abs > tolerance
+            normal = plane_normals[plane_index]
+            d_original = plane_d_original[plane_index]
             # A plane PARALLEL to one already taken says nothing new - the
             # vertex being within one tolerance of both, they ask for the same
             # move - and taking it anyway would make the system they form
@@ -2033,6 +2127,7 @@ module Ladb::OpenCutList
           end
 
           unless corrections.empty?
+            wall_normals_by_vertex ||= _face_normals_by_vertex(fragment, true)
             offset = _restore_held_offset(corrections, wall_normals_by_vertex[index / 3])
             vertices[index] += offset[0]
             vertices[index + 1] += offset[1]
@@ -2527,11 +2622,10 @@ module Ladb::OpenCutList
     # incidental leak faces the envelope on a few square millimetres and
     # would justify receding the whole cross section on a plane the assembly
     # never asked for.
-    def _reduction_recedes_opening?(normal, d, cap_planes)
-      total_area = cap_planes.values.reduce(0.0) { |sum, cap_plane| sum + cap_plane[2] }
-      return false if total_area <= 0
-      cap_planes.values.any? { |cap_normal, cap_d, area|
-        next false if area / total_area < REDUCTION_BEVEL_CAP_RATIO
+    #
+    # +opening_caps+ : the cavity's major caps, see #_reduction_opening_caps.
+    def _reduction_recedes_opening?(normal, d, opening_caps)
+      opening_caps.any? { |cap_normal, cap_d|
         dot = normal[0] * cap_normal[0] + normal[1] * cap_normal[1] + normal[2] * cap_normal[2]
         next false unless dot <= REDUCTION_OPENING_DOT
         # The normals being antiparallel, the cap's own offset reads -cap_d on
@@ -2539,6 +2633,18 @@ module Ladb::OpenCutList
         # side the clip removes
         -cap_d - d < -REDUCTION_MIN_DEPTH
       }
+    end
+
+    # The [ normal, offset ] of the cavity's MAJOR caps — at least
+    # REDUCTION_BEVEL_CAP_RATIO of the whole cap area, see
+    # #_reduction_recedes_opening? — out of its +cap_planes+ ([ normal,
+    # offset, area ] by plane key). Read once per cavity : the test asks it
+    # for every tilted triangle and every candidate plane.
+    def _reduction_opening_caps(cap_planes)
+      total_area = cap_planes.values.reduce(0.0) { |sum, cap_plane| sum + cap_plane[2] }
+      return [] if total_area <= 0
+      cap_planes.values.reject { |_cap_normal, _cap_d, area| area / total_area < REDUCTION_BEVEL_CAP_RATIO }
+                       .map { |cap_normal, cap_d, _area| [ cap_normal, cap_d ] }
     end
 
     # The given cavities with the openings their FRONT PANELS fill receded behind

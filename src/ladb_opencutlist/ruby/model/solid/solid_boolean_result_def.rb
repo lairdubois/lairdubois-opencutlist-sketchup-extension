@@ -493,29 +493,53 @@ module Ladb::OpenCutList
     # every triangle sharing a plane index agrees with it to
     # PLANE_NORMAL_TOLERANCE (the matching is signed), so it doubles as the
     # plane's normal — see SolidCavityFragmentDef#enclosed_by_walls?.
+    #
+    # The walk itself is memoized : a cavity asks it again and again (walls,
+    # caps, openings, wall faces, wall loops...) and the plane matching is
+    # the dearest part of it on a mesh of many planes. Safe as long as the
+    # fragment's arrays are never touched after construction, which they are
+    # not — the vertex restorations all run on the raw Meshy output, before
+    # any fragment def is built from it.
     def _each_triangle_plane
-      min_area2 = SolidMeshDef::TOLERANCE * SolidMeshDef::TOLERANCE
+      entries = _triangle_plane_entries
+      index = 0
+      length = entries.length
+      while index < length
+        yield entries[index], entries[index + 1], entries[index + 2], entries[index + 3], entries[index + 4], entries[index + 5], entries[index + 6], entries[index + 7], entries[index + 8]
+        index += 9
+      end
+    end
 
-      planes = []                   # [ [ normal, d ], ... ], index = plane index
-      plane_indices_by_bucket = {}  # coarse normal key -> Array of plane indices
+    # What #_each_triangle_plane yields, flattened 9 values per triangle.
+    # Memoized.
+    def _triangle_plane_entries
+      @triangle_plane_entries ||= begin
+        min_area2 = SolidMeshDef::TOLERANCE * SolidMeshDef::TOLERANCE
 
-      @face_indices.each_slice(3).with_index do |(a, b, c), triangle_index|
-        ax, ay, az = @vertices[a * 3], @vertices[a * 3 + 1], @vertices[a * 3 + 2]
-        bx, by, bz = @vertices[b * 3], @vertices[b * 3 + 1], @vertices[b * 3 + 2]
-        cx, cy, cz = @vertices[c * 3], @vertices[c * 3 + 1], @vertices[c * 3 + 2]
-        ux = bx - ax ; uy = by - ay ; uz = bz - az
-        vx = cx - ax ; vy = cy - ay ; vz = cz - az
-        nx = uy * vz - uz * vy
-        ny = uz * vx - ux * vz
-        nz = ux * vy - uy * vx
-        area2 = Math.sqrt(nx * nx + ny * ny + nz * nz)
-        # A triangle thinner than the tolerance has no plane of its own worth
-        # trusting (its normal is pure numerical noise) : skipped
-        next if area2 <= min_area2
-        nx /= area2 ; ny /= area2 ; nz /= area2
-        d = nx * ax + ny * ay + nz * az
+        entries = []
+        planes = []                   # [ [ normal, d ], ... ], index = plane index
+        plane_indices_by_bucket = {}  # coarse normal key -> Array of plane indices
 
-        yield _triangle_plane_index(planes, plane_indices_by_bucket, nx, ny, nz, d), triangle_index, a, b, c, area2, nx, ny, nz
+        @face_indices.each_slice(3).with_index do |(a, b, c), triangle_index|
+          ax, ay, az = @vertices[a * 3], @vertices[a * 3 + 1], @vertices[a * 3 + 2]
+          bx, by, bz = @vertices[b * 3], @vertices[b * 3 + 1], @vertices[b * 3 + 2]
+          cx, cy, cz = @vertices[c * 3], @vertices[c * 3 + 1], @vertices[c * 3 + 2]
+          ux = bx - ax ; uy = by - ay ; uz = bz - az
+          vx = cx - ax ; vy = cy - ay ; vz = cz - az
+          nx = uy * vz - uz * vy
+          ny = uz * vx - ux * vz
+          nz = ux * vy - uy * vx
+          area2 = Math.sqrt(nx * nx + ny * ny + nz * nz)
+          # A triangle thinner than the tolerance has no plane of its own worth
+          # trusting (its normal is pure numerical noise) : skipped
+          next if area2 <= min_area2
+          nx /= area2 ; ny /= area2 ; nz /= area2
+          d = nx * ax + ny * ay + nz * az
+
+          entries.push(_triangle_plane_index(planes, plane_indices_by_bucket, nx, ny, nz, d), triangle_index, a, b, c, area2, nx, ny, nz)
+        end
+
+        entries
       end
     end
 

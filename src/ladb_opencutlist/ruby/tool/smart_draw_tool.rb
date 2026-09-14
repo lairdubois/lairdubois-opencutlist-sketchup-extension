@@ -4161,8 +4161,37 @@ module Ladb::OpenCutList
     # How many containers #_get_cavities_def keeps the cavities of at once.
     CAVITIES_CACHE_SIZE = 16
 
+    # How long, in seconds, the pick has to stay on a container whose cavities
+    # are not known yet before they are detected - see #_schedule_cavities_def.
+    CAVITIES_DWELL_DELAY = 0.15
+
+    # How long, in seconds, the detection may run before it gives up (see
+    # CommonSolidFindCavitiesWorker::ERROR_TOO_COMPLEX) and the container is
+    # refused. Measured 2026-09-14 with the envelope reduced : a machined open
+    # carcass takes ~3 s, an assembly of sculpted CNC slices ~7.5 s.
+    CAVITIES_TIME_BUDGET = 3.0
+
     def initialize(action, tool, previous_action_handler = nil)
       super
+    end
+
+    def stop
+      _cancel_cavities_dwell
+      super
+    end
+
+    # -----
+
+    # A pick on the move only designates containers in passing : the cavities
+    # of one not known yet are not detected under it, but once it has dwelt
+    # there - see #_get_cavities_def. Anything else (a click, a key, a panel
+    # being built) still gets them on the spot.
+    def onToolMouseMove(tool, flags, x, y, view)
+      deferring = @cavities_deferring
+      @cavities_deferring = true
+      super
+    ensure
+      @cavities_deferring = deferring
     end
 
     # -----
@@ -4177,8 +4206,13 @@ module Ladb::OpenCutList
     # Drops the cavities of EVERY container kept, not only the active one's :
     # what changes the model under one container may change it under the
     # others - its ancestors hold it.
+    #
+    # All but the verdicts of excess complexity (see
+    # CommonSolidFindCavitiesWorker::ERROR_TOO_COMPLEX) : nothing this handler
+    # does can simplify a container it refuses to work in, and forgetting them
+    # would pay for the detection again at the very next pass over it.
     def _reset_cavities_def
-      @cavities_defs = nil
+      @cavities_defs = @cavities_defs.is_a?(Array) ? @cavities_defs.select(&:too_complex?) : nil
       _reset_picked_cavity
     end
 
@@ -4441,12 +4475,22 @@ module Ladb::OpenCutList
       # otherwise pay again, at every crossing, for a detection the previous
       # crossing had already paid for - and the carcass is the dearest of them.
       @cavities_defs = [] unless @cavities_defs.is_a?(Array)
-      if (index = @cavities_defs.index { |cavities_def| cavities_def.container_path == container_path })
+      options_key = _cavities_options_key
+      if (index = @cavities_defs.index { |cavities_def| cavities_def.container_path == container_path && cavities_def.options_key == options_key })
         @cavities_defs.unshift(@cavities_defs.delete_at(index)) if index > 0
         return @cavities_defs.first
       end
 
       return nil if !part.is_a?(Part) || part.group.material_is_virtual || part.group.material_type == MaterialAttributes::TYPE_HARDWARE
+
+      # Not known yet, and the pick merely passing over it : detected once it
+      # has dwelt there (see #onToolMouseMove) - PENDING until then, see
+      # #_cavities_pending?.
+      if @cavities_deferring
+        _schedule_cavities_def(container_path)
+        return nil
+      end
+      _cancel_cavities_dwell if _cavities_pending?(part_entity_path)
 
       cutlist = CutlistGenerateWorker.new(**HashUtils.symbolize_keys(PLUGIN.get_model_preset('cutlist_options'))
                                                      .merge({ active_entity: container, active_path: container_path[0...-1] })
@@ -4508,14 +4552,16 @@ module Ladb::OpenCutList
                                                      reduce_envelope: _cavities_reduce_envelope?,
                                                      overall_cavity: _cavities_overall?,
                                                      ignore_applied_panels: _cavities_ignore_applied_panels?,
-                                                     front_panel_drawing_defs: front_panel_drawing_defs
+                                                     front_panel_drawing_defs: front_panel_drawing_defs,
+                                                     time_budget: CAVITIES_TIME_BUDGET
       ).run
 
-      cavities_def = CavitiesDef.new(container_path, result_def, drawing_defs, own_panel_drawing_defs)
+      cavities_def = CavitiesDef.new(container_path, result_def, drawing_defs, own_panel_drawing_defs, options_key)
       @cavities_defs.unshift(cavities_def)
       @cavities_defs.pop while @cavities_defs.length > CAVITIES_CACHE_SIZE
 
-      unless result_def.success?
+      # A refusal for excess complexity is said where the pick is, see #_can_activate_part?
+      unless result_def.success? || cavities_def.too_complex?
         @tool.notify_errors(result_def.errors)
       end
 
@@ -4554,6 +4600,7 @@ module Ladb::OpenCutList
       own_panel_types = _cavities_own_panel_types
       return if own_panel_types.empty?
       @cavities_defs.each do |cavities_def|
+        next unless cavities_def.valid?
         container_path = cavities_def.container_path
         cavities_def.own_panel_drawing_defs = _fetch_applied_panel_entity_paths(container_path.last, container_path, own_panel_types).map { |entity_path| _decompose_cavity_panel(entity_path, true) }
       end
@@ -4570,14 +4617,88 @@ module Ladb::OpenCutList
       cavities_def.fragment_defs_for_point(inward_point).first || cavities_def.fragment_defs_for_point(point).first
     end
 
+    # What the cavities of a container depend on besides the container itself :
+    # the way this handler reads it. See #_get_cavities_def.
+    def _cavities_options_key
+      [ _cavities_reduce_envelope?, _cavities_overall?, _cavities_ignore_applied_panels?, _cavities_recess_panel_types, _cavities_own_panel_types ]
+    end
+
+    # Whether the cavities of the given part's container - by default the
+    # active part's - are PENDING : not known yet, and waiting for the pick to
+    # dwell there (see #_schedule_cavities_def). Nothing can be said of a
+    # position in them in the meantime, either way.
+    def _cavities_pending?(part_entity_path = get_active_part_entity_path)
+      !@cavities_dwell.nil? && part_entity_path.is_a?(Array) && @cavities_dwell.first == part_entity_path[0...-1]
+    end
+
+    # Arms the detection of the given container's cavities, to run once the
+    # pick has stayed on it CAVITIES_DWELL_DELAY. A pick still on the same
+    # container leaves the count running : moving over its panels is dwelling
+    # on it all the same.
+    def _schedule_cavities_def(container_path)
+      return if !@cavities_dwell.nil? && @cavities_dwell.first == container_path
+      _cancel_cavities_dwell
+      timer_id = UI.start_timer(CAVITIES_DWELL_DELAY, false) { _on_cavities_dwell(timer_id) }
+      @cavities_dwell = [ container_path, timer_id ]
+    end
+
+    def _cancel_cavities_dwell
+      return if @cavities_dwell.nil?
+      UI.stop_timer(@cavities_dwell.last)
+      @cavities_dwell = nil
+    end
+
+    def _on_cavities_dwell(timer_id)
+      return if @cavities_dwell.nil? || @cavities_dwell.last != timer_id  # Called off, or superseded
+      container_path = @cavities_dwell.first
+      @cavities_dwell = nil
+      return unless active?
+
+      # Only for the container the pick is still on : it may have left it for
+      # nothing since, which armed no other count
+      part_entity_path = get_active_part_entity_path
+      return unless part_entity_path.is_a?(Array) && part_entity_path[0...-1] == container_path
+
+      model = Sketchup.active_model
+      return if model.nil?
+
+      # The detection freezes the view : the message is painted first
+      # (View#refresh, SketchUp 2020+)
+      @tool.show_tooltip(PLUGIN.get_i18n_string('tool.smart_draw.detecting_cavities'))
+      model.active_view.refresh if model.active_view.respond_to?(:refresh)
+
+      _get_cavities_def(part_entity_path, get_active_part)
+      @tool.remove_tooltip
+      _refresh
+    end
+
+    # Detects at once the cavities the pick is dwelling on, if it is : what a
+    # click on a container still waiting for them asks for. Returns whether it
+    # did - the click then stands for that, and for nothing more.
+    def _flush_cavities_dwell
+      return false unless _cavities_pending?
+      _cancel_cavities_dwell
+      _get_cavities_def
+      _refresh
+      true
+    end
+
     # -----
 
     # +own_panel_drawing_defs+ : the APPLIED PANELS the cavities were read
     # BLIND to - see #_cavities_own_panel_types. Nothing in the fragments says
     # they are there, which is exactly what they are kept here for.
-    CavitiesDef = Struct.new(:container_path, :result_def, :drawing_defs, :own_panel_drawing_defs) do
+    #
+    # +options_key+ : the reading they were detected with, see
+    # SmartDrawPanelActionHandler#_cavities_options_key.
+    CavitiesDef = Struct.new(:container_path, :result_def, :drawing_defs, :own_panel_drawing_defs, :options_key) do
       def valid?
         result_def.is_a?(SolidBooleanResultDef) && result_def.success?
+      end
+      # Whether the detection gave up on the container for excess complexity -
+      # see CommonSolidFindCavitiesWorker::ERROR_TOO_COMPLEX.
+      def too_complex?
+        result_def.is_a?(SolidBooleanResultDef) && result_def.errors.any? { |key, _vars| key == CommonSolidFindCavitiesWorker::ERROR_TOO_COMPLEX }
       end
       def fragment_defs
         result_def.fragment_defs
@@ -4787,6 +4908,8 @@ module Ladb::OpenCutList
     def onToolLButtonUp(tool, flags, x, y, view)
       super
 
+      return true if _flush_cavities_dwell
+
       case @state
       when STATE_PLACE, STATE_DISTRIBUTE
         if _create_entity(@picked_point, view)
@@ -4900,7 +5023,7 @@ module Ladb::OpenCutList
       when STATE_PLACE, STATE_DISTRIBUTE
         _pick_part(picker, view)
         if has_active_part?
-          if _snap_point(picker)
+          if _snap_point(picker) || _cavities_pending?  # Pending : nothing to say of this position yet, either way
             @tool.remove_tooltip
             @tool.pop_cursor(SmartCursorManager.cursor_select_error)
           else
@@ -4972,6 +5095,11 @@ module Ladb::OpenCutList
       return super_result unless can_activate
 
       return [ false, 'tool.smart_draw.error.no_divider_cavity' ] if (cavities_def = _get_cavities_def(part_entity_path, part)).is_a?(CavitiesDef) && cavities_def.valid? && cavities_def.fragment_defs.empty?
+      # A detection that failed says why - a panel the booleans cannot take
+      # (open or non manifold edges, named), a container too complex (see
+      # CommonSolidFindCavitiesWorker::ERROR_TOO_COMPLEX) - rather than let the
+      # pick go on and land on "no cavity at this position"
+      return [ false, *cavities_def.result_def.errors.first ] if cavities_def.is_a?(CavitiesDef) && !cavities_def.valid?
 
       super_result
     end
@@ -6493,6 +6621,8 @@ module Ladb::OpenCutList
     def onToolLButtonUp(tool, flags, x, y, view)
       super
 
+      return true if _flush_cavities_dwell
+
       case @state
       when STATE_PLACE
         if @merge_cancelled
@@ -6636,7 +6766,12 @@ module Ladb::OpenCutList
         else
           _pick_part(picker, view)
           if has_active_part?
-            if !_snap_point(picker)
+            snapped = _snap_point(picker)
+            if !snapped && _cavities_pending?
+              # Not known yet : nothing to say of this position, either way
+              @tool.remove_tooltip
+              @tool.pop_cursor(SmartCursorManager.cursor_select_error)
+            elsif !snapped
               @tool.show_tooltip(PLUGIN.get_i18n_string("tool.smart_draw.error.invalid_#{_panel_i18n_key_suffix}_cavity"), SmartTool::MESSAGE_TYPE_ERROR)
               @tool.push_cursor(SmartCursorManager.cursor_select_error)
             elsif _picked_on_closed_opening?(view)
@@ -6739,6 +6874,11 @@ module Ladb::OpenCutList
       return super_result unless can_activate
 
       return [ false, "tool.smart_draw.error.no_#{_panel_i18n_key_suffix}_cavity" ] if (cavities_def = _get_cavities_def(part_entity_path, part)).is_a?(CavitiesDef) && cavities_def.valid? && cavities_def.fragment_defs.empty?
+      # A detection that failed says why - a panel the booleans cannot take
+      # (open or non manifold edges, named), a container too complex (see
+      # CommonSolidFindCavitiesWorker::ERROR_TOO_COMPLEX) - rather than let the
+      # pick go on and land on "no cavity at this position"
+      return [ false, *cavities_def.result_def.errors.first ] if cavities_def.is_a?(CavitiesDef) && !cavities_def.valid?
 
       super_result
     end
