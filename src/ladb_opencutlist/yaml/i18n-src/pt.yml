@@ -244,8 +244,9 @@ core:
       cutlist_estimate_options: $t(tab.cutlist.label) / $t(tab.cutlist.estimate.title)
       cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
       cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
-      importer_import_options: $t(tab.importer.label) / $t(default.import)
-      importer_load_options: $t(tab.importer.label) / $t(default.open)
+      importers_csv_import_options: $t(tab.importers.csv.label) / $t(default.import)
+      importers_csv_load_options: $t(tab.importers.csv.label) / $t(default.open)
+      importers_bxf2_import_options: $t(tab.importers.bxf2.label) / $t(default.import)
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       outliner_options: $t(tab.outliner.label) / $t(default.options)
@@ -271,6 +272,7 @@ core:
       help: Digite **@** para obter uma lista de variáveis.
     textinput_file:
       browse: Procurar
+      browse_library: Procurar e copiar para a biblioteca
     textinput_size:
       quantity: Qtd.
     three_viewer:
@@ -2240,13 +2242,17 @@ tab:
     presets:
       export_global_presets: Exportar predefinições
       export_global_presets_help: |
-        Esta característica permite exportar suas predefinições para um arquivo **.json**.
-        Selecione as predefinições que você deseja exportar.
+        Esta funcionalidade permite exportar suas predefinições para um arquivo **.json**.
+        Selecione as predefinições que deseja exportar.
+        Se as predefinições selecionadas fizerem referência a arquivos **.skp** ou **.skm**, eles serão incluídos em um pacote **.oclp** para que a exportação possa ser compartilhada diretamente.
       export_global_presets_success: As predefinições foram exportadas com sucesso.
+      export_global_presets_success_with_assets: "As predefinições foram exportadas com sucesso, assim como {{ count }} arquivo(s) associado(s)."
       import_global_presets: Importar predefinições
       import_global_presets_help: |
-        Selecione as predefinições no arquivo **.json** que você deseja importar.
-        Observe que se já existir uma predefinição com um nome idêntico, ela será substituída pela versão importada.
+        Selecione as predefinições presentes no arquivo **.json** ou **.oclp** que deseja importar.
+        Atenção: se já existir uma predefinição com nome idêntico, ela será substituída pela versão importada.
+        Os arquivos contidos em um pacote **.oclp** são copiados para a sua biblioteca, no mesmo local em que estavam na biblioteca de origem.
+      open_library_dir: Abrir a pasta da biblioteca
       import_global_presets_success: |
         As predefinições da *OpenCutList* foram importadas com sucesso.
         Para que as mudanças sejam efetivadas, é necessário **fechar** e **reabrir** a janela OpenCutList.
@@ -2271,6 +2277,8 @@ tab:
       error:
         no_preset_to_export: Não há predefinições para exportar.
         no_preset_to_import: Não há predefinições para importar.
+        failed_to_export: "Não foi possível exportar as predefinições: **{{ error }}**."
+        failed_to_open_library_dir: "Não foi possível abrir a pasta da biblioteca: **{{ error }}**."
         failed_to_import: "Não foi possível importar as predefinições : **{{ error }}**."
         failed_to_import_invalid_hexdigest: Este arquivo foi modificado. Não pode ser importado.
         failed_to_import_bad_file_format: Formato de arquivo inválido.
@@ -2381,18 +2389,28 @@ tool:
     action_3_status: Desenhar uma divisória em uma cavidade formada por um grupo de peças existentes
     action_3_state_0_status: Clique em uma parede para desenhar uma divisória
     action_3_state_1_status: Clique em uma parede para desenhar divisórias
+    action_4: Desenhar uma Frente
+    action_4_status: Desenhar uma frente em uma cavidade formada por um grupo de peças existentes
+    action_4_state_0_status: Clique em uma cavidade para desenhar uma frente em seu vão
+    action_4_state_0_merge_status: "Arraste até as cavidades vizinhas para uma frente compartilhada"
     action_option_group_offset: Diferença
     action_option_group_segments: Segmentos
     action_option_group_thickness: Espessura
+    action_option_group_clearance: Folga
+    action_option_group_overlay: Instalação
     action_option_group_axes: Eixos
     action_option_group_measure_type: Medida
     action_option_group_options: Opções
     action_option_offset_shape_offset: Diferença
     action_option_offset_shape_offset_status: Permite aplicar um deslocamento ao traçado da forma desenhada
+    action_option_offset_front_panel_offset: Folga
+    action_option_offset_front_panel_offset_status: "Define a folga deixada em cada borda da frente"
     action_option_segments_segment_count: Número de Segmentos
     action_option_segments_segment_count_status: Permite definir o número de segmentos do círculo
     action_option_thickness_thickness: Espessura
     action_option_thickness_thickness_status: Define a espessura das chapas
+    action_option_overlay_inset_status: "Frente embutida: instalada no vão, alinhada à face frontal"
+    action_option_overlay_full_overlay_status: "Frente sobreposta: instalada à frente da face frontal, cobrindo as chapas até a face externa da caixa e até a meia-espessura das chapas internas"
     action_option_measure_type_inside_status: Posicionar a espessura no interior do ponto alvo
     action_option_measure_type_centered_status: Centralizar a espessura no ponto alvo
     action_option_measure_type_outside_status: Posicionar a espessura no exterior do ponto alvo
@@ -2421,8 +2439,12 @@ tool:
     action_option_options_reduce_envelope_status: Considerar as peças em recuo
     action_option_options_reuse_definition: Reutilizar as peças
     action_option_options_reuse_definition_status: Reutilizar a peça existente de mesma forma e mesma vizinhança em vez de criar uma nova
+    action_option_options_mirror: Posicionamento espelhado
+    action_option_options_mirror_status: Instalar cada frente de ordem par de forma espelhada em relação à vizinha
     action_option_options_ask_name: Nomeação das Peças
     action_option_options_ask_name_status: Inserir manualmente o nome das peças
+    action_option_options_layer_name: Camada
+    action_option_options_layer_name_status: Nome da camada na qual as frentes são inseridas
     action_toggle_move_copy_status: Alternar entre copiar/mover
     action_change_move_anchor_status: Alterar o ponto de ancoragem
     error:
@@ -2430,7 +2452,12 @@ tool:
       invalid_divider_container: "Esta peça está isolada: ela não compartilha grupo ou componente com outras peças"
       invalid_divider_cavity: "Nenhuma cavidade nesta posição"
       no_divider_cavity: Nenhuma cavidade foi detectada neste grupo ou componente
+      invalid_front_panel_seed: Este tipo de peça não permite o desenho de uma frente
+      invalid_front_panel_container: "Esta peça está isolada: ela não compartilha grupo ou componente com outras peças"
+      invalid_front_panel_cavity: "Nenhuma cavidade voltada para você nesta posição"
+      no_front_panel_cavity: Nenhuma cavidade foi detectada neste grupo ou componente
       divider_number_overflow: "Não foi possível distribuir {{ number }} divisórias nesta cavidade"
+      front_panel_number_overflow: "Não foi possível distribuir {{ number }} frentes neste vão"
     success:
       part_created: "Nova peça criada : {{ name }}"
       part_created_plural: "{{ count }} novas peças criadas : {{ name }}"
@@ -2476,6 +2503,7 @@ tool:
     action_0_state_1a_status: Clique em um plano de divisão para movê-lo
     action_0_state_1b_status: Adicionar plano de divisão
     action_0_state_1c_status: Apagar um plano de divisão
+    action_0_state_1d_status: Clique para mover a geometria situada entre os dois planos de corte
     action_0_state_10_status: Arraste o plano de divisão para movê-lo
     action_0_state_11_status: Clique para adicionar o plano de divisão
     action_0_state_12_status: Clique em um plano de divisão para excluí-lo
