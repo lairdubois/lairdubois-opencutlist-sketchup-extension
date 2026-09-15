@@ -56,6 +56,27 @@ module Ladb::OpenCutList
       _opening_plane_indices.length
     end
 
+    # Above this cosine, two opening planes are not read as turning their
+    # backs on one another - see #opening_planes_opposed?. A hair below zero,
+    # so that the two openings of a corner compartment, square to each other,
+    # do not come out opposed for the rounding of an oblique assembly.
+    OPENING_PLANES_OPPOSED_MAX_DOT = -0.05
+
+    # Whether every two openings of the cavity turn their backs on one
+    # another : their outward normals more than a right angle apart. What a
+    # compartment a front and a back close looks like - a through tube, even
+    # with its front sloped or its rear bridged by a slanted hull cap - as
+    # opposed to a CORNER compartment, open at the front and on top, or on a
+    # side. true with fewer than two openings. Memoized.
+    def opening_planes_opposed?
+      @opening_planes_opposed = begin
+        _, normal_by_plane, = _cap_area_by_plane
+        normals = _opening_plane_indices.map { |plane_index| normal_by_plane[plane_index] }
+        normals.combination(2).all? { |(ax, ay, az), (bx, by, bz)| ax * bx + ay * by + az * bz <= OPENING_PLANES_OPPOSED_MAX_DOT }
+      end if @opening_planes_opposed.nil?
+      @opening_planes_opposed
+    end
+
     # The cavity's openings, one SolidCavityOpeningDef per plane
     # #opening_plane_count counts, biggest first : the plane, its outward
     # normal, and the closed contours the caps draw on it — everything a tool

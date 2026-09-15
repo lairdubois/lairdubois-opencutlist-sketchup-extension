@@ -4316,6 +4316,21 @@ module Ladb::OpenCutList
       []
     end
 
+    # How many opening planes a cavity may have and still be a compartment -
+    # see CommonSolidFindCavitiesWorker, max_opening_planes. Generous here : a
+    # part fitted INTO a compartment is at home in one open on every side it
+    # does not lean on.
+    def _cavities_max_opening_planes
+      4
+    end
+
+    # Whether the openings of a cavity must turn their backs on one another
+    # for it to be a compartment - see CommonSolidFindCavitiesWorker,
+    # opposed_opening_planes. Off here, for the same reason as above.
+    def _cavities_opposed_opening_planes?
+      false
+    end
+
     # -----
 
     # The point a pick designates on the wall of a cavity, kept in
@@ -4560,7 +4575,8 @@ module Ladb::OpenCutList
       end
 
       result_def = CommonSolidFindCavitiesWorker.new(drawing_defs,
-                                                     max_opening_planes: 4,
+                                                     max_opening_planes: _cavities_max_opening_planes,
+                                                     opposed_opening_planes: _cavities_opposed_opening_planes?,
                                                      reduce_envelope: _cavities_reduce_envelope?,
                                                      overall_cavity: _cavities_overall?,
                                                      ignore_applied_panels: _cavities_ignore_applied_panels?,
@@ -4632,7 +4648,7 @@ module Ladb::OpenCutList
     # What the cavities of a container depend on besides the container itself :
     # the way this handler reads it. See #_get_cavities_def.
     def _cavities_options_key
-      [ _cavities_reduce_envelope?, _cavities_overall?, _cavities_ignore_applied_panels?, _cavities_recess_panel_types, _cavities_own_panel_types ]
+      [ _cavities_reduce_envelope?, _cavities_overall?, _cavities_ignore_applied_panels?, _cavities_recess_panel_types, _cavities_own_panel_types, _cavities_max_opening_planes, _cavities_opposed_opening_planes? ]
     end
 
     # Whether the cavities of the given part's container - by default the
@@ -7097,6 +7113,29 @@ module Ladb::OpenCutList
     # deep enough behind the case's own front to bury itself in the stiles'
     # own material. INSET has no such trap : its panel IS the mouth, at
     # whatever depth that mouth sits.
+    # TWO at most : a front and a back, the mouth a panel closes and the one
+    # facing it. A cavity open on a third side is not a compartment a front or
+    # a back closes - the notch a U shaped carcass leaves between its legs,
+    # the top compartment of a carcass without a top - and kept, it would
+    # also stand as a NEIGHBOUR of the real compartments beside it, sharing
+    # out the frame of the panel in applique that closes them (see
+    # #_get_overlay_points) : that panel would stop halfway across the
+    # dividers and the shelf walling the notch off, where it has every reason
+    # to cover them whole.
+    def _cavities_max_opening_planes
+      2
+    end
+
+    # And those two FACING AWAY from each other, for the same reasons : a
+    # CORNER compartment, open at the front and on top - the top of a carcass
+    # without a top, but with a back - or on a side, is no more a compartment
+    # a front or a back closes than one open on three sides. Facing away, not
+    # parallel : a sloped front, a trapezoidal carcass, a rear bridged by a
+    # slanted hull cap all keep their front and their back.
+    def _cavities_opposed_opening_planes?
+      true
+    end
+
     def _cavities_reduce_envelope?
       _fetch_option_reduce_envelope? && !_fetch_option_overlay_full_overlay?
     end
@@ -7956,40 +7995,157 @@ module Ladb::OpenCutList
     # What is left may well be in several pieces ; ours is the one the mouth
     # falls in. Only its OUTER contour is kept : a hole in the container's
     # front is not the panel's business.
+    #
+    # A bisector is only a sound cut between CONVEX mouths : it is then the
+    # line that separates them. Around a U shaped mouth with a neighbour
+    # standing in its notch, the shortest segment may well be the one to the
+    # floor of that notch, and the bisector across it takes both legs of the
+    # U away. So both mouths are read as their CONVEX PIECES (see
+    # #_convex_pieces), each piece of ours is cut by every piece of the
+    # neighbours, and our share is the union of what each piece keeps : a
+    # point belongs to us as soon as it belongs to one of our pieces. A
+    # convex mouth is one piece, and reads exactly as before.
+    #
+    # What is cut is the silhouette, OUR MOUTH INCLUDED, rather than the bare
+    # footprint. The footprint has the mouth as a hole, and a cut running
+    # across that hole - which a piece's own cut does, through the pieces
+    # beside it - opens it onto the outside : the outer contour then hugs the
+    # frame and holds no mouth at all. A mouth that is a NOTCH in the
+    # silhouette's own border - a compartment open on the edge of the
+    # container - is not even inside the footprint to begin with.
     def _get_overlay_points(fragment_def, opening_def, mouth_points, ti)
 
-      footprint_paths = _get_footprint_paths(opening_def, ti)
-      return nil if footprint_paths.nil? || footprint_paths.empty?
-
-      reach = _paths_reach(footprint_paths)
-
-      clips = []
-      _get_sibling_mouth_points(fragment_def, opening_def, ti).each do |sibling_points|
-        near_point, far_point = _loops_closest_points(mouth_points, sibling_points)
-        next if near_point.nil?
-        dx = (far_point.x - near_point.x).to_f
-        dy = (far_point.y - near_point.y).to_f
-        gap = Math.sqrt(dx * dx + dy * dy)
-        # Mouths that touch share no panel : there is nothing between them to
-        # halve, and no direction to cut along either.
-        next if gap <= SolidMeshDef::TOLERANCE
-        clips << _half_plane_path((near_point.x + far_point.x).to_f / 2.0, (near_point.y + far_point.y).to_f / 2.0, dx / gap, dy / gap, reach)
-      end
-
-      polytree = Fiddle::Clippy.execute_polytree(
-        clip_type: clips.empty? ? Fiddle::Clippy::CLIP_TYPE_UNION : Fiddle::Clippy::CLIP_TYPE_DIFFERENCE,
-        closed_subjects: footprint_paths,
-        clips: clips
-      )
+      silhouette_paths = _get_silhouette_paths(opening_def, ti)
+      return nil if silhouette_paths.nil? || silhouette_paths.empty?
 
       # Through a union, so that the mouth is wound the way Clipper expects
       # whichever way the opening handed it over.
       mouth_paths, _ = Fiddle::Clippy.execute_union(closed_subjects: [ Fiddle::Clippy.points_to_rpath(mouth_points) ])
+      return nil if mouth_paths.empty?
+
+      subject_polytree = Fiddle::Clippy.execute_polytree(clip_type: Fiddle::Clippy::CLIP_TYPE_UNION, closed_subjects: silhouette_paths + mouth_paths)
+      subject_paths = Fiddle::Clippy.polytree_to_polyshapes(subject_polytree).map { |polyshape| polyshape.paths.first }.compact
+      return nil if subject_paths.empty?
+
+      reach = _paths_reach(subject_paths)
+
+      sibling_pieces = _get_sibling_mouth_points(fragment_def, opening_def, ti).flat_map { |sibling_points| _convex_pieces(sibling_points) }
+
+      share_paths = _convex_pieces(mouth_points).map { |piece|
+
+        clips = []
+        sibling_pieces.each do |sibling_piece|
+          near_point, far_point = _loops_closest_points(piece, sibling_piece)
+          next if near_point.nil?
+          dx = (far_point.x - near_point.x).to_f
+          dy = (far_point.y - near_point.y).to_f
+          gap = Math.sqrt(dx * dx + dy * dy)
+          # Mouths that touch share no panel : there is nothing between them to
+          # halve, and no direction to cut along either.
+          next if gap <= SolidMeshDef::TOLERANCE
+          clips << _half_plane_path((near_point.x + far_point.x).to_f / 2.0, (near_point.y + far_point.y).to_f / 2.0, dx / gap, dy / gap, reach)
+        end
+
+        polytree = Fiddle::Clippy.execute_polytree(
+          clip_type: clips.empty? ? Fiddle::Clippy::CLIP_TYPE_UNION : Fiddle::Clippy::CLIP_TYPE_DIFFERENCE,
+          closed_subjects: subject_paths,
+          clips: clips
+        )
+
+        # No cut crosses the piece - a bisector separates it from the
+        # neighbour's - so the piece lies whole in one region, the one kept.
+        piece_paths, _ = Fiddle::Clippy.execute_union(closed_subjects: [ Fiddle::Clippy.points_to_rpath(piece) ])
+        _best_overlapping_path(Fiddle::Clippy.polytree_to_polyshapes(polytree).map { |polyshape| polyshape.paths.first }, piece_paths)
+
+      }.compact
+      return nil if share_paths.empty?
+
+      polytree = Fiddle::Clippy.execute_polytree(clip_type: Fiddle::Clippy::CLIP_TYPE_UNION, closed_subjects: share_paths)
 
       best_path = _best_overlapping_path(Fiddle::Clippy.polytree_to_polyshapes(polytree).map { |polyshape| polyshape.paths.first }, mouth_paths)
       return nil if best_path.nil?
 
       Fiddle::Clippy.rpath_to_points(best_path)
+    end
+
+    # +points+ - a closed contour of the opening's frame - as a list of CONVEX
+    # contours that tile it, each one a list of points. The contour itself
+    # when it already is convex, which is what nearly every mouth is.
+    #
+    # Ear clipping first, then Hertel-Mehlhorn : two neighbouring pieces are
+    # merged back across their common diagonal whenever the union stays
+    # convex, which leaves a U as its two legs and its base rather than as
+    # six triangles.
+    #
+    # The vertices that draw no corner are dropped beforehand (see
+    # #_flatten_outline) : a 179.999 degree vertex would read as REFLEX and
+    # split a rectangle for nothing. A contour the clipping gets stuck on -
+    # a self touching one - is handed back whole, which is what reading it as
+    # one piece always did.
+    def _convex_pieces(points)
+      return [ points ] if points.length <= 3
+
+      coords = _flatten_outline(points).map { |point| [ point.x.to_f, point.y.to_f ] }
+      return [ points ] if coords.length <= 3
+
+      signed_area = 0.0
+      coords.each_with_index { |(x, y), index| following_x, following_y = coords[(index + 1) % coords.length] ; signed_area += x * following_y - following_x * y }
+      coords.reverse! if signed_area < 0   # Counter clockwise : a convex vertex turns left
+
+      fn_convex = lambda { |indices| indices.each_index.all? { |i| _cross_2d(coords[indices[i - 1]], coords[indices[i]], coords[indices[(i + 1) % indices.length]]) >= 0 } }
+
+      indices = (0...coords.length).to_a
+      return [ points ] if fn_convex.call(indices)
+
+      # Ear clipping
+      polygons = []
+      while indices.length > 3
+        count = indices.length
+        ear = (0...count).find { |i|
+          a, b, c = indices[i - 1], indices[i], indices[(i + 1) % count]
+          next false unless _cross_2d(coords[a], coords[b], coords[c]) > 0
+          indices.none? { |j|
+            next false if coords[j] == coords[a] || coords[j] == coords[b] || coords[j] == coords[c]
+            _cross_2d(coords[a], coords[b], coords[j]) >= 0 && _cross_2d(coords[b], coords[c], coords[j]) >= 0 && _cross_2d(coords[c], coords[a], coords[j]) >= 0
+          }
+        }
+        return [ points ] if ear.nil?
+        polygons << [ indices[ear - 1], indices[ear], indices[(ear + 1) % count] ]
+        indices.delete_at(ear)
+      end
+      polygons << indices
+
+      # Hertel-Mehlhorn : an edge u -> v of one polygon is v -> u in the other
+      merged = true
+      while merged
+        merged = false
+        polygons.each_with_index do |polygon, index|
+          polygons.each_with_index do |other_polygon, other_index|
+            next if other_index <= index
+            polygon.each_with_index do |u, i|
+              v = polygon[(i + 1) % polygon.length]
+              j = other_polygon.index(v)
+              next unless !j.nil? && other_polygon[(j + 1) % other_polygon.length] == u
+              candidate = polygon.rotate(i + 1) + other_polygon.rotate(j + 1)[1...-1]   # v ... u, then the other one from past u to short of v
+              next unless fn_convex.call(candidate)
+              polygons[index] = candidate
+              polygons.delete_at(other_index)
+              merged = true
+              break
+            end
+            break if merged
+          end
+          break if merged
+        end
+      end
+
+      polygons.map { |polygon| polygon.map { |i| Geom::Point3d.new(coords[i][0], coords[i][1], 0.0) } }
+    end
+
+    # Twice the signed area of the triangle +o+ +a+ +b+ - [ x, y ] Floats -,
+    # positive when it turns left.
+    def _cross_2d(o, a, b)
+      (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0])
     end
 
     # The one of +paths+ that covers most of +reference_paths+, or nil when

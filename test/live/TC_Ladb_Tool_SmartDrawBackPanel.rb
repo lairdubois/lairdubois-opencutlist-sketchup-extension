@@ -8,7 +8,7 @@
 #   description  String
 #   picks        JSON [ { origin, target, facing, merge: [ { origin, target, facing } ] } ]
 #                (mm, case local ; the ray must enter the mouth and land on a wall)
-#   options      JSON { thickness, depth, setback (mm), through_groove }
+#   options      JSON { thickness, depth, setback (mm), through_groove, overlay (optional, false by default) }
 #   expected     JSON, what is compared (see BackPanelRegression::COMPARED) - written by record: true
 #
 # Through TestUp : add test/live as a test path, run TC_Ladb_Tool_SmartDrawBackPanel.
@@ -136,7 +136,7 @@ module BackPanelRegression
       :_fetch_option_groove_setback => options['setback'].to_f.mm,
       :_fetch_option_groove_through? => options['through_groove'],
       :_fetch_option_construction? => false,
-      :_fetch_option_overlay_full_overlay? => false,
+      :_fetch_option_overlay_full_overlay? => options['overlay'] == true,
       :_fetch_option_reduce_envelope? => false,
       :_fetch_option_reuse_definition? => true,
       :_fetch_option_measure_reversed? => false,
@@ -243,7 +243,7 @@ if defined?(TestUp::TestCase)
 
   class TC_Ladb_Tool_SmartDrawBackPanel < TestUp::TestCase
 
-    CASES = %w[B01 B02 B03 B04 B05 B06 B07 B08 B09 B10 B11 B12 B13 B14 B15]
+    CASES = %w[B01 B02 B03 B04 B05 B06 B07 B08 B09 B10 B11 B12 B13 B14 B15 B16 B17 B18]
 
     def setup
       assert(BackPanelRegression.model_ready?, "Live test : open docs/skp/#{BackPanelRegression::MODEL_NAME} first (active model : #{Sketchup.active_model.path.inspect})")
