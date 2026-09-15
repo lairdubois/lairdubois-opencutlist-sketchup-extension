@@ -292,7 +292,7 @@ module Ladb::OpenCutList
                   btn.set_style_attribute(:background_color, Kuix::COLOR_WHITE, :selected)
                   btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :hover)
                   btn.set_style_attribute(:background_color, COLOR_BRAND, :active)
-                  btn.set_style_attribute(:background_color, Kuix::COLOR_WHITE, :disabled)
+                  btn.set_style_attribute(:background_color, Sketchup::Color.new(245, 245, 245), :disabled)
                   btn.set_style_attribute(:border_color, COLOR_BRAND, :selected)
                   btn.set_style_attribute(:border_color, nil, :disabled)
                   btn.border.set_all!(unit * 0.5)

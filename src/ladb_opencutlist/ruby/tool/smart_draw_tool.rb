@@ -392,6 +392,25 @@ module Ladb::OpenCutList
       super
     end
 
+    def get_action_option_btn_disabled?(action, option_group, option)
+
+      case option_group
+
+      when ACTION_OPTION_GROOVE
+        case option
+        when ACTION_OPTION_GROOVE_DEPTH, ACTION_OPTION_GROOVE_SETBACK, ACTION_OPTION_GROOVE_THROUGH
+          return !fetch_action_option_boolean(action, ACTION_OPTION_OVERLAY, ACTION_OPTION_OVERLAY_FULL_OVERLAY)
+        end
+      when ACTION_OPTION_OPTIONS
+        case option
+        when ACTION_OPTION_OPTIONS_MIRROR
+          return !fetch_action_option_boolean(action, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_REUSE_DEFINITION)
+        end
+      end
+
+      super
+    end
+
     # -- Events --
 
     def onActivate(view)
