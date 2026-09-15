@@ -2480,6 +2480,7 @@ tool:
       divider_number_overflow: "Impossible de répartir {{ number }} séparateurs dans cette cavité"
       front_panel_number_overflow: "Impossible de répartir {{ number }} façades sur cette ouverture"
       back_panel_number_overflow: "Impossible de répartir {{ number }} fonds sur cette ouverture"
+      back_panel_severs_parts: "La rainure couperait de part en part : {{ names }}. Réduisez sa profondeur"
     warning:
       no_back_panel_machining: "Aucune rainure n'a pu être usinée : aucune pièce voisine ne borde le fond à cette profondeur"
     success:

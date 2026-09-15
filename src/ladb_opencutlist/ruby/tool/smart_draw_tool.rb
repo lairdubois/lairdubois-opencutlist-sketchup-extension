@@ -399,7 +399,7 @@ module Ladb::OpenCutList
       when ACTION_OPTION_GROOVE
         case option
         when ACTION_OPTION_GROOVE_DEPTH, ACTION_OPTION_GROOVE_SETBACK, ACTION_OPTION_GROOVE_THROUGH
-          return !fetch_action_option_boolean(action, ACTION_OPTION_OVERLAY, ACTION_OPTION_OVERLAY_FULL_OVERLAY)
+          return fetch_action_option_boolean(action, ACTION_OPTION_OVERLAY, ACTION_OPTION_OVERLAY_FULL_OVERLAY)
         end
       when ACTION_OPTION_OPTIONS
         case option
@@ -6565,6 +6565,20 @@ module Ladb::OpenCutList
     # carcass leaves on its silhouette.
     PANEL_MIN_WIDTH = 5.mm
 
+    # Raised while the batch touches the model, to REFUSE it : the operation is
+    # aborted like on any failure, but the user is told why with +errors+ (i18n
+    # tuples, see SmartTool#notify_errors) rather than handed a crash report.
+    class RefusedError < StandardError
+
+      attr_reader :errors
+
+      def initialize(errors)
+        super(errors.inspect)
+        @errors = errors
+      end
+
+    end
+
     attr_reader :locked_direction, :number, :widths
 
     def initialize(action, tool, previous_action_handler = nil)
@@ -9057,6 +9071,10 @@ module Ladb::OpenCutList
 
         model.commit_operation
 
+      rescue RefusedError => e
+        model.abort_operation
+        @tool.notify_errors(e.errors)
+        return false
       rescue Exception => e
         PLUGIN.dump_exception(e)
         model.abort_operation
@@ -9159,7 +9177,7 @@ module Ladb::OpenCutList
 
       count = 0
       host_defs.group_by { |_host_index_path, _crossed, pass| pass }.sort_by(&:first).each do |_pass, pass_host_defs|
-        count += _subtract_panel_cut_pass!(container_path, opening_def, pass_host_defs.map(&:first), pass_host_defs.first[3])
+        count += _subtract_panel_cut_pass!(container_path, opening_def, pass_host_defs.map(&:first), pass_host_defs.first[3], pass_host_defs.select { |_host_index_path, crossed| crossed }.map(&:first))
       end
 
       _drop_offcuts!(container_path, opening_def, host_defs.select { |_host_index_path, crossed| crossed }.map(&:first))
@@ -9171,17 +9189,29 @@ module Ladb::OpenCutList
     # united with +extension_paths+, subtracted from the parts at
     # +host_index_paths+. The parts are found again by POSITION, which is what
     # survives the previous pass rebuilding its own.
-    def _subtract_panel_cut_pass!(container_path, opening_def, host_index_paths, extension_paths)
+    #
+    # A part the panel only GROOVES - one not in +crossed_index_paths+ - has to
+    # come out of the cut in as many pieces as it went in. One that does not
+    # has been cut right through, and not by a panel spanning it : by grooves
+    # meeting inside it, two backs let 10 mm into either side of a 19 mm stile,
+    # or by a groove deeper than the part is thick. That is no joint anyone can
+    # machine, and nothing would ever show it - each piece is a sound solid -
+    # so the batch is REFUSED, naming the parts. Read on the computed result,
+    # before anything of the boolean is written, which then applies that very
+    # result.
+    def _subtract_panel_cut_pass!(container_path, opening_def, host_index_paths, extension_paths, crossed_index_paths = [])
       return 0 if host_index_paths.empty?
 
       cut_group = _build_panel_cut_group(container_path, opening_def, extension_paths)
       return 0 if cut_group.nil?
 
       src_ipaths = []
+      src_crossed = []
       host_index_paths.each do |host_index_path|
         host_path = _descendant_path(container_path, host_index_path)
         next if host_path.nil? || !host_path.last.respond_to?(:definition)
         src_ipaths << Sketchup::InstancePath.new(host_path)
+        src_crossed << crossed_index_paths.include?(host_index_path)
       end
       if src_ipaths.empty?
         cut_group.erase!
@@ -9192,15 +9222,50 @@ module Ladb::OpenCutList
       cut_drawing_defs = _decompose_for_solid_boolean([ Sketchup::InstancePath.new(container_path + [ cut_group ]) ])
       raise "Unable to read the parts the #{_panel_i18n_key_suffix} runs into" unless (src_drawing_defs + cut_drawing_defs).all? { |drawing_def| drawing_def.is_a?(DrawingDef) }
 
+      result_def = CommonSolidBooleanWorker.new(src_drawing_defs, cut_drawing_defs, operation: CommonSolidBooleanWorker::OPERATION_SUBTRACTION).run
+      raise "Unable to cut the parts the #{_panel_i18n_key_suffix} runs into : #{result_def.errors.inspect}" unless result_def.success?
+
+      severed_names = []
+      src_drawing_defs.each_with_index do |drawing_def, index|
+        next if src_crossed[index]
+        next unless result_def.fragment_defs.count { |fragment_def| fragment_def.src_indices.include?(index) } > _drawing_def_shell_count(drawing_def)
+        container = drawing_def.container
+        severed_names << (container.respond_to?(:definition) ? container.definition.name : container.name)
+      end
+      unless severed_names.empty?
+        cut_group.erase!   # The abort takes it back too, but nothing of a refused batch is left standing on the way there
+        raise RefusedError.new([ [ "tool.smart_draw.error.#{_panel_i18n_key_suffix}_severs_parts", { :names => severed_names.uniq.join(', ') } ] ])
+      end
+
       result_def = _apply_solid_boolean(
         src_drawing_defs,
         cut_drawing_defs,
         operation: CommonSolidBooleanWorker::OPERATION_SUBTRACTION,
-        keep_cuts: false
+        keep_cuts: false,
+        result_def: result_def
       )
       raise "Unable to cut the parts the #{_panel_i18n_key_suffix} runs into : #{result_def.errors.inspect}" unless result_def.success?
 
       src_ipaths.length
+    end
+
+    # How many separate solids the given part is made of - its connected sets
+    # of triangles, read on the mesh the boolean itself is fed with.
+    def _drawing_def_shell_count(drawing_def)
+      mesh_def = SolidMeshDef.from_drawing_def(drawing_def)
+      return 0 if mesh_def.nil? || mesh_def.empty?
+
+      parent = (0...mesh_def.vertex_count).to_a
+      fn_find = lambda { |index|
+        index = parent[index] = parent[parent[index]] while parent[index] != index
+        index
+      }
+      mesh_def.face_indices.each_slice(3) do |a, b, c|
+        root = fn_find.call(a)
+        [ b, c ].each { |vertex| other = fn_find.call(vertex) ; parent[other] = root unless other == root }
+      end
+
+      mesh_def.face_indices.map { |index| fn_find.call(index) }.uniq.length
     end
 
     # The parts the cut is to be subtracted from : each as the chain of

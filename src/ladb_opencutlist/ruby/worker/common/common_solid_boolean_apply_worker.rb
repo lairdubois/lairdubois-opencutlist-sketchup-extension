@@ -1395,6 +1395,12 @@ module Ladb::OpenCutList
       fragment_defs.each do |fragment_def|
         next if fragment_def.empty?
 
+        # Vertices closer than SketchUp's weld tolerance are welded by SketchUp
+        # itself as it builds the faces, which pinches the shell : collapsed
+        # first, where the shell can be kept closed - see
+        # SolidFragmentDef#collapse_short_edges.
+        fragment_def = fragment_def.collapse_short_edges(SolidMeshDef::TOLERANCE)
+
         # Virtual machining geometry (glued cuts-opening containers) is not
         # rebuilt : the glued instance survives and punches its opening again.
         # The holes it leaves in the host faces are filled back below. Nodes

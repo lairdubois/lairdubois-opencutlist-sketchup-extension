@@ -3174,11 +3174,15 @@ module Ladb::OpenCutList
     # included. The caller MUST check the answer and abort its own operation
     # when the boolean failed - the boolean modifies nothing in that case, but
     # whatever the caller wrote beforehand still stands.
-    def _apply_solid_boolean(src_drawing_defs, cut_drawing_defs, operation:, keep_srcs: false, keep_cuts: false, make_unique: true)
+    #
+    # +result_def+ is the operation already computed on these very drawing def
+    # lists, when the caller had to read it before writing anything.
+    def _apply_solid_boolean(src_drawing_defs, cut_drawing_defs, operation:, keep_srcs: false, keep_cuts: false, make_unique: true, result_def: nil)
       CommonSolidBooleanApplyWorker.new(
         src_drawing_defs,
         cut_drawing_defs,
         operation: operation,
+        result_def: result_def,
         keep_srcs: keep_srcs,
         keep_cuts: keep_cuts,
         make_unique: make_unique,

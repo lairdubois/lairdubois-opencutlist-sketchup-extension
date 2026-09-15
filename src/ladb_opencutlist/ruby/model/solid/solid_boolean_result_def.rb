@@ -284,6 +284,159 @@ module Ladb::OpenCutList
       hits.sort_by { |hit| hit[0] }
     end
 
+    # This fragment with every edge shorter than +tolerance+ COLLAPSED - or the
+    # fragment itself when it has none.
+    #
+    # Manifold keeps vertices a hair apart that SketchUp cannot : a cut whose
+    # face lies exactly in the plane of a void already cut in the part (a
+    # groove run on into another groove) is imprinted where its edges cross
+    # the TRIANGULATION of that plane, and such a crossing can fall 0.007 mm
+    # from a real corner. The mesh is sound ; SketchUp welds the two vertices
+    # as it builds the faces, and the shell comes out non manifold.
+    #
+    # Collapsed here on the index mesh instead, where it can be done keeping the
+    # shell closed : the two triangles along the edge go, and the dropped vertex
+    # is replaced by the kept one everywhere else. The KEPT vertex is the one
+    # standing on more planes - a corner over a crease, a crease over the
+    # middle of a face - so that the features of the part do not move. Skipped,
+    # and left as it was, when a collapse would pinch the shell (link
+    # condition), turn a triangle over, or move a vertex farther than
+    # +tolerance+ from where it was.
+    #
+    # The vertices array is kept whole : a dropped vertex is simply no longer
+    # indexed.
+    def collapse_short_edges(tolerance)
+      return self if empty?
+
+      vertices = @vertices
+      tolerance2 = tolerance * tolerance
+
+      fn_distance2 = lambda { |a, b|
+        dx = vertices[a * 3] - vertices[b * 3]
+        dy = vertices[a * 3 + 1] - vertices[b * 3 + 1]
+        dz = vertices[a * 3 + 2] - vertices[b * 3 + 2]
+        dx * dx + dy * dy + dz * dz
+      }
+
+      # Cheap reject first : the vast majority of fragments has no such edge
+      short = false
+      @face_indices.each_slice(3) do |a, b, c|
+        next unless fn_distance2.call(a, b) < tolerance2 || fn_distance2.call(b, c) < tolerance2 || fn_distance2.call(c, a) < tolerance2
+        short = true
+        break
+      end
+      return self unless short
+
+      # Unnormalized normal of three vertex indices
+      fn_cross = lambda { |a, b, c|
+        ux = vertices[b * 3] - vertices[a * 3] ; uy = vertices[b * 3 + 1] - vertices[a * 3 + 1] ; uz = vertices[b * 3 + 2] - vertices[a * 3 + 2]
+        vx = vertices[c * 3] - vertices[a * 3] ; vy = vertices[c * 3 + 1] - vertices[a * 3 + 1] ; vz = vertices[c * 3 + 2] - vertices[a * 3 + 2]
+        [ uy * vz - uz * vy, uz * vx - ux * vz, ux * vy - uy * vx ]
+      }
+
+      # Whether a triangle is wide enough for its normal to mean anything
+      fn_sound = lambda { |a, b, c, cross|
+        longest2 = [ fn_distance2.call(a, b), fn_distance2.call(b, c), fn_distance2.call(c, a) ].max
+        area2 = cross[0] * cross[0] + cross[1] * cross[1] + cross[2] * cross[2]
+        longest2 > 0 && area2 >= tolerance2 * longest2   # altitude >= tolerance
+      }
+
+      triangles = @face_indices.each_slice(3).to_a
+      vertex_triangles = Hash.new { |hash, key| hash[key] = [] }
+      triangles.each_with_index { |triangle, index| triangle.each { |vertex| vertex_triangles[vertex] << index } }
+      merged = Hash.new { |hash, key| hash[key] = [] }   # kept vertex -> the vertices collapsed onto it
+
+      fn_neighbours = lambda { |vertex| vertex_triangles[vertex].flat_map { |index| triangles[index] }.uniq - [ vertex ] }
+
+      # The distinct planes [ unit normal, offset ] of the sound triangles
+      # around the given vertices, out to their neighbours. Around them and not
+      # only AT them : the triangles a crease vertex has on one of its two
+      # planes may all be the very needles being collapsed.
+      fn_planes = lambda { |seeds|
+        planes = []
+        (seeds + seeds.flat_map { |vertex| fn_neighbours.call(vertex) }).uniq.flat_map { |vertex| vertex_triangles[vertex] }.uniq.each do |index|
+          a, b, c = triangles[index]
+          cross = fn_cross.call(a, b, c)
+          next unless fn_sound.call(a, b, c, cross)
+          length = Math.sqrt(cross[0] * cross[0] + cross[1] * cross[1] + cross[2] * cross[2])
+          normal = cross.map { |value| value / length }
+          offset = normal[0] * vertices[a * 3] + normal[1] * vertices[a * 3 + 1] + normal[2] * vertices[a * 3 + 2]
+          next if planes.any? { |other, other_offset| normal[0] * other[0] + normal[1] * other[1] + normal[2] * other[2] >= 1.0 - PLANE_NORMAL_TOLERANCE && (offset - other_offset).abs < tolerance }
+          planes << [ normal, offset ]
+        end
+        planes
+      }
+
+      # How many of the given planes a vertex lies ON - far closer than the
+      # tolerance, which is the scale of the very imprints told apart here
+      fn_plane_count = lambda { |vertex, planes|
+        x, y, z = vertices[vertex * 3], vertices[vertex * 3 + 1], vertices[vertex * 3 + 2]
+        planes.count { |normal, offset| (normal[0] * x + normal[1] * y + normal[2] * z - offset).abs < tolerance * 1e-3 }
+      }
+
+      fn_collapse = lambda { |a, b|
+        shared = vertex_triangles[a] & vertex_triangles[b]
+        return false unless shared.length == 2   # Not an edge between two triangles
+
+        # Link condition : the only vertices a and b both see are the apexes of
+        # the two triangles along their edge, or the collapse pinches the shell
+        apexes = shared.map { |index| (triangles[index] - [ a, b ]).first }
+        return false unless (fn_neighbours.call(a) & fn_neighbours.call(b)).sort == apexes.sort
+
+        planes = fn_planes.call([ a, b ])
+        keep, drop = fn_plane_count.call(b, planes) > fn_plane_count.call(a, planes) ? [ b, a ] : [ a, b ]
+        return false unless ([ drop ] + merged[drop]).all? { |vertex| fn_distance2.call(vertex, keep) < tolerance2 }
+
+        moved = vertex_triangles[drop] - shared
+        moved.each do |index|
+          triangle = triangles[index]
+          old_cross = fn_cross.call(*triangle)
+          next unless fn_sound.call(*triangle, old_cross)
+          new_cross = fn_cross.call(*triangle.map { |vertex| vertex == drop ? keep : vertex })
+          return false unless old_cross[0] * new_cross[0] + old_cross[1] * new_cross[1] + old_cross[2] * new_cross[2] > 0
+        end
+
+        shared.each do |index|
+          triangles[index].each { |vertex| vertex_triangles[vertex].delete(index) }
+          triangles[index] = nil
+        end
+        moved.each do |index|
+          triangles[index] = triangles[index].map { |vertex| vertex == drop ? keep : vertex }
+          vertex_triangles[keep] << index
+        end
+        vertex_triangles.delete(drop)
+        merged[keep].concat([ drop ] + (merged.delete(drop) || []))
+        true
+      }
+
+      collapsed = false
+      loop do
+        changed = false
+        triangles.each_index do |index|
+          3.times do |edge|
+            triangle = triangles[index]
+            break if triangle.nil?
+            a, b = triangle[edge], triangle[(edge + 1) % 3]
+            next unless fn_distance2.call(a, b) < tolerance2
+            changed = true if fn_collapse.call(a, b)
+          end
+        end
+        break unless changed
+        collapsed = true
+      end
+      return self unless collapsed
+
+      face_indices = []
+      face_ids = @face_ids.nil? ? nil : []
+      triangles.each_with_index do |triangle, index|
+        next if triangle.nil?
+        face_indices.concat(triangle)
+        face_ids << @face_ids[index] unless face_ids.nil?
+      end
+
+      SolidFragmentDef.new(@vertices, face_indices, face_ids, @face_info_defs, src_indices: @src_indices)
+    end
+
     # Enclosed volume in cubic inches, by the divergence theorem over the
     # triangles. Meaningful on a closed, consistently wound fragment (always
     # true of Manifold output).
