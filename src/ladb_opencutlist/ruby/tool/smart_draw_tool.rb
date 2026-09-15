@@ -327,16 +327,16 @@ module Ladb::OpenCutList
         when ACTION_OPTION_OVERLAY_INSET
           case action
           when ACTION_DRAW_BACK_PANEL
-            return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,.75H.5M.75,.75H1V1H0M.5,0H.75V.875H.5ZM0,.875L.125,1M.75,.875L.875,1M.875,.75L1,.875M.375,.75L.625,1M.125,.75L.375,1'))
+            return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.75,1V.5M.75,.25V0H1V1M0,.25V.5H.875V.25ZM.875,1L1,.875M.875,.25L1,.125M.75,.125L.875,0M.75,.625L1,.375M.75,.875L1,.625'))
           else
-            return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,.75H1V1H0M.75,0H1V.625H.75ZM0,.875L.125,1M.875,.75L1,.875M.375,.75L.625,1M.125,.75L.375,1M.625,.75L.875,1'))
+            return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,.75V1H.625V.75ZM.75,0V1H1V0M.875,0L1,.125M.75,.875L.875,1M.75,.375L1,.625M.75,.625L1,.875M.75,.125L1,.375'))
           end
         when ACTION_OPTION_OVERLAY_FULL_OVERLAY
           case action
           when ACTION_DRAW_BACK_PANEL
-            return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,.75H.75V1H0M.75,0H1V1H.75ZM0,.875L.125,1M.625,.75L.75,.875M.375,.75L.625,1M.125,.75L.375,1'))
+            return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.75,1V.25H1V1M0,0V.25H1V0ZM.875,1L1,.875M.75,.375L.875,.25M.75,.625L1,.375M.75,.875L1,.625'))
           else
-            return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,.75H.625V1H0M.75,0H1V1H.75ZM0,.875L.125,1M.125,.75L.375,1M.375,.75L.625,1'))
+            return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,.75V1H1V.75ZM.75,0V.625H1V0M.875,0L1,.125M.75,.375L1,.625M.75,.125L1,.375'))
           end
         end
       when ACTION_OPTION_OPTIONS
@@ -372,9 +372,9 @@ module Ladb::OpenCutList
     def get_action_option_btn_prefix(action, option_group, option)
       case option
       when ACTION_OPTION_OFFSET_BACK_PANEL_DEPTH
-        return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.375,0.5L0.5,0.5L0.5,0.75L0.75,0.75L0.75,0.5L1,0.5L1,0.875L0.375,0.875 M0.375,0.625L0.625,0.875 M0.75,0.625L1,0.875 M0.75,0.5L1,0.75 M0.625,0.75L0.75,0.875 M0.75,0.75L0.875,0.875 M0.875,0.5L1,0.625 M0.375,0.75L0.5,0.875 M0.375,0.5L0.5,0.625 M0.25,0.5L0,0.5 M0.25,0.75L0,0.75 M0.125,0.5L0.125,0.75'))
+        return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.875,.625V0H.5V.25H.75V.5H.5V.625M.5,0H.875M.75,0L.875,.125M.75,.5L.875,.625M.5,.5L.625,.625M.625,.5L.75,.625M.75,.375L.875,.5M.5,.125L.625,.25M.625,0L.875,.25M.5,0L.875,.375M.75,.75V1M.5,.75V1M.75,.875H.5'))
       when ACTION_OPTION_OFFSET_BACK_PANEL_SETBACK
-        return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.375,0.5L0.5,0.5L0.5,0.75L0.75,0.75L0.75,0.5L1,0.5L1,0.875L0.375,0.875 M0.375,0.625L0.625,0.875 M0.75,0.625L1,0.875 M0.75,0.5L1,0.75 M0.625,0.75L0.75,0.875 M0.75,0.75L0.875,0.875 M0.875,0.5L1,0.625 M0.375,0.75L0.5,0.875 M0.375,0.5L0.5,0.625 M1,0.125L1,0.375 M0.75,0.25L1,0.25 M0.75,0.125L0.75,0.375'))
+        return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.875,.625V0H.5V.25H.75V.5H.5V.625M.5,0H.875M.75,0L.875,.125M.75,.5L.875,.625M.5,.5L.625,.625M.625,.5L.75,.625M.75,.375L.875,.5M.5,.125L.625,.25M.625,0L.875,.25M.5,0L.875,.375M.125,0H.375M.125,.25H.375M.25,0V.25'))
       end
 
       super

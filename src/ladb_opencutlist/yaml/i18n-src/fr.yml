@@ -2411,7 +2411,7 @@ tool:
     action_option_offset_front_panel_offset: Jeu
     action_option_offset_front_panel_offset_status: "Définit le jeu laissé sur chaque bord de la façade"
     action_option_offset_back_panel_depth: Profondeur de rainure
-    action_option_offset_back_panel_depth_status: "Définit de combien le fond dépasse l'ouverture sur chaque bord, c'est à dire la profondeur de la rainure dans laquelle il est engagé"
+    action_option_offset_back_panel_depth_status: "Définit la profondeur de la rainure dans laquelle le fond est engagé"
     action_option_offset_back_panel_setback: Retrait
     action_option_offset_back_panel_setback_status: "Définit de combien le fond recule vers l'intérieur du caisson, et donc où la rainure est usinée"
     action_option_segments_segment_count: Nombre de segments
