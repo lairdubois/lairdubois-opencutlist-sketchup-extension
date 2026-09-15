@@ -2398,8 +2398,8 @@ tool:
     action_5_state_0_status: Cliquez dans une cavité pour dessiner un fond sur son ouverture opposée à la vue
     action_5_state_0_merge_status: "Glissez jusqu'aux cavités voisines pour un fond commun"
     action_option_group_offset: Décalage
+    action_option_group_groove: Rainure
     action_4_option_group_offset: Jeu
-    action_5_option_group_offset: Rainure
     action_option_group_segments: Segments
     action_option_group_thickness: Epaisseur
     action_option_group_overlay: Pose
@@ -2410,10 +2410,12 @@ tool:
     action_option_offset_shape_offset_status: Permet d'appliquer un décalage au tracé de la forme dessinée
     action_option_offset_front_panel_offset: Jeu
     action_option_offset_front_panel_offset_status: "Définit le jeu laissé sur chaque bord de la façade"
-    action_option_offset_back_panel_depth: Profondeur de rainure
-    action_option_offset_back_panel_depth_status: "Définit la profondeur de la rainure dans laquelle le fond est engagé"
-    action_option_offset_back_panel_setback: Retrait
-    action_option_offset_back_panel_setback_status: "Définit de combien le fond recule vers l'intérieur du caisson, et donc où la rainure est usinée"
+    action_option_groove_groove_depth: Profondeur de rainure
+    action_option_groove_groove_depth_status: "Définit la profondeur de la rainure dans laquelle le fond est engagé"
+    action_option_groove_groove_setback: Retrait
+    action_option_groove_groove_setback_status: "Définit de combien le fond recule vers l'intérieur du caisson, et donc où la rainure est usinée"
+    action_option_groove_groove_through: Rainure filante
+    action_option_groove_groove_through_status: "Prolonger la rainure jusqu'au bout des pièces qui couvrent leur voisine, lorsqu'elle y débouche sans être visible"
     action_option_segments_segment_count: Nombre de segments
     action_option_segments_segment_count_status: Permet de définir le nombre de segments du cercle
     action_option_thickness_thickness: Epaisseur

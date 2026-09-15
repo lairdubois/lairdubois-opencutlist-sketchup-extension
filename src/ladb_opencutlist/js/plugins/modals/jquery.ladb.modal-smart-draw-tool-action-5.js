@@ -30,8 +30,9 @@
             // Fetch UI elements
             const $widgetPreset = $('.ladb-widget-preset', that.$element);
             const $inputThickness = $('#ladb_input_thickness', that.$element);
-            const $inputBackPanelDepth = $('#ladb_input_back_panel_depth', that.$element);
-            const $inputBackPanelSetback = $('#ladb_input_back_panel_setback', that.$element);
+            const $inputGrooveDepth = $('#ladb_input_groove_depth', that.$element);
+            const $inputGrooveSetback = $('#ladb_input_groove_setback', that.$element);
+            const $selectGrooveThrough = $('#ladb_select_groove_through', that.$element);
             const $selectAxes = $('#ladb_select_axes', that.$element);
             const $selectConstrution = $('#ladb_select_construction', that.$element);
             const $selectMeasureReversed = $('#ladb_select_measure_reversed', that.$element);
@@ -42,8 +43,9 @@
 
             const fnFetchOptions = function (options) {
                 options.thickness = $inputThickness.val();
-                options.back_panel_depth = $inputBackPanelDepth.val();
-                options.back_panel_setback = $inputBackPanelSetback.val();
+                options.groove_depth = $inputGrooveDepth.val();
+                options.groove_setback = $inputGrooveSetback.val();
+                options.groove_through = $selectGrooveThrough.val() === '1';
                 options.axes = $selectAxes.val();
                 options.construction = $selectConstrution.val() === '1';
                 options.measure_reversed = $selectMeasureReversed.val() === '1';
@@ -53,8 +55,9 @@
             };
             const fnFillInputs = function (options) {
                 $inputThickness.val(options.thickness);
-                $inputBackPanelDepth.val(options.back_panel_depth);
-                $inputBackPanelSetback.val(options.back_panel_setback);
+                $inputGrooveDepth.val(options.groove_depth);
+                $inputGrooveSetback.val(options.groove_setback);
+                $selectGrooveThrough.selectpicker('val', options.groove_through ? '1' : '0');
                 $selectAxes.selectpicker('val', options.axes);
                 $selectConstrution.selectpicker('val', options.construction ? '1' : '0');
                 $selectMeasureReversed.selectpicker('val', options.measure_reversed ? '1' : '0');
@@ -71,8 +74,9 @@
                 fnFillInputs: fnFillInputs
             });
             $inputThickness.ladbTextinputDimension();
-            $inputBackPanelDepth.ladbTextinputDimension();
-            $inputBackPanelSetback.ladbTextinputDimension();
+            $inputGrooveDepth.ladbTextinputDimension();
+            $inputGrooveSetback.ladbTextinputDimension();
+            $selectGrooveThrough.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
             $selectAxes.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
             $selectConstrution.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
             $selectMeasureReversed.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
@@ -105,12 +109,12 @@
                 if (that.options.focused_field.option === 'thickness') {
                     $inputThickness.focus();
                     $inputThickness.select();
-                } else if (that.options.focused_field.option === 'back_panel_depth') {
-                    $inputBackPanelDepth.focus();
-                    $inputBackPanelDepth.select();
-                } else if (that.options.focused_field.option === 'back_panel_setback') {
-                    $inputBackPanelSetback.focus();
-                    $inputBackPanelSetback.select();
+                } else if (that.options.focused_field.option === 'groove_depth') {
+                    $inputGrooveDepth.focus();
+                    $inputGrooveDepth.select();
+                } else if (that.options.focused_field.option === 'groove_setback') {
+                    $inputGrooveSetback.focus();
+                    $inputGrooveSetback.select();
                 }
             }
 

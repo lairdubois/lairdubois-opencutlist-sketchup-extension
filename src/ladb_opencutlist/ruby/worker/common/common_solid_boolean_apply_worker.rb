@@ -92,6 +92,10 @@ module Ladb::OpenCutList
     TRACKING_CONTAINER_KEY = 'container'.freeze
     TRACKING_OCCURRENCE_KEY = 'occurrence'.freeze   # Own key : stale occurrence tokens must never collide with the erase pass tokens
 
+    # Below this altitude a rebuilt triangle is a NEEDLE SketchUp cannot hold,
+    # see #_merge_sliver_triangles. Twice its own 0.001" weld tolerance.
+    SLIVER_MIN_ALTITUDE = SolidMeshDef::TOLERANCE * 2
+
     def initialize(src_drawing_defs, cut_drawing_defs,
 
                    operation: CommonSolidBooleanWorker::OPERATION_UNION,
@@ -1401,12 +1405,11 @@ module Ladb::OpenCutList
         fragment_def.each_triangle_batch do |face_info_def, triangles|
           next if !fill_plan.nil? && !face_info_def.nil? && face_info_def.virtual? && fill_plan[:virtual_nodes].key?(face_info_def.container_def)
 
+          triangles = triangles.map { |points| points.map { |point| point.transform(transformation) } } unless transformation.nil?
+          triangles = triangles.map(&:reverse) if flipped
+
           mesh = Geom::PolygonMesh.new(triangles.length * 3, triangles.length)
-          triangles.each do |points|
-            points = points.map { |point| point.transform(transformation) } unless transformation.nil?
-            points = points.reverse if flipped
-            mesh.add_polygon(points)
-          end
+          _merge_sliver_triangles(triangles).each { |points| mesh.add_polygon(points) }
 
           material = preserve_materials && !face_info_def.nil? ? face_info_def.material : nil
           entities.add_faces_from_mesh(mesh, Geom::PolygonMesh::NO_SMOOTH_OR_HIDE, material)
@@ -1496,6 +1499,78 @@ module Ladb::OpenCutList
       _solid_weld_curves(entities, face_infos, curve_info_defs, transformation: transformation) if restore_curves
 
       face_infos.keys.reject(&:deleted?)
+    end
+
+    # The triangles of one batch as the polygons to hand SketchUp, with every
+    # NEEDLE merged away.
+    #
+    # Manifold triangulates a planar region with no regard for the shape of its
+    # triangles : a long strip whose side carries a few close collinear
+    # imprints - the thin web left between two grooves - comes out as a fan
+    # from its far corner, and one triangle of that fan may be a needle whose
+    # altitude is under SketchUp's 0.001" weld tolerance (measured : 0.0247 mm,
+    # a stile grooved by two successive backs). SketchUp welds the needle's apex
+    # onto its long edge as it builds the faces, and the shell comes out non
+    # manifold - two edges with 3 faces, one with 1. The mesh itself is sound.
+    #
+    # A needle is merged with the triangle across its LONG edge into one
+    # polygon, which a PolygonMesh takes just as well : the diagonal SketchUp
+    # cannot hold is simply never drawn. The apex projects inside the long edge,
+    # so it lies well away from every edge the polygon keeps. A needle whose
+    # long edge borders the batch, or whose merge would not give a simple
+    # polygon, is left as it was.
+    #
+    # Winding is kept. A batch with no needle is returned as it came.
+    def _merge_sliver_triangles(triangles)
+
+      fn_key = lambda { |point| [ point.x.to_f, point.y.to_f, point.z.to_f ] }
+
+      # [ index of the long edge's start, altitude ] of a triangle
+      fn_needle = lambda { |points|
+        keys = points.map(&fn_key)
+        lengths = (0..2).map { |i| Math.sqrt((0..2).inject(0.0) { |sum, axis| sum + (keys[(i + 1) % 3][axis] - keys[i][axis])**2 }) }
+        long = lengths.index(lengths.max)
+        return nil if lengths[long] <= 0
+        ux, uy, uz = (0..2).map { |axis| keys[1][axis] - keys[0][axis] }
+        vx, vy, vz = (0..2).map { |axis| keys[2][axis] - keys[0][axis] }
+        area2 = Math.sqrt((uy * vz - uz * vy)**2 + (uz * vx - ux * vz)**2 + (ux * vy - uy * vx)**2)
+        altitude = area2 / lengths[long]
+        altitude < SLIVER_MIN_ALTITUDE ? long : nil
+      }
+
+      needles = []
+      triangles.each_with_index { |points, index| needles << index unless fn_needle.call(points).nil? }
+      return triangles if needles.empty?
+
+      polygons = triangles.map(&:dup)
+      needles.each do |index|
+        points = polygons[index]
+        next if points.nil? || points.length != 3
+        long = fn_needle.call(points)
+        next if long.nil?
+
+        u = fn_key.call(points[long])
+        v = fn_key.call(points[(long + 1) % 3])
+
+        # The neighbour runs that edge the other way : v -> u
+        neighbour_index = polygons.each_index.find { |other_index|
+          next false if other_index == index || (other = polygons[other_index]).nil?
+          other.each_index.any? { |i| fn_key.call(other[i]) == v && fn_key.call(other[(i + 1) % other.length]) == u }
+        }
+        next if neighbour_index.nil?
+
+        # The neighbour's cycle read from u to v, both excluded, goes in between
+        neighbour = polygons[neighbour_index]
+        start = neighbour.each_index.find { |i| fn_key.call(neighbour[i]) == u && fn_key.call(neighbour[i - 1]) == v }
+        inserted = (1..neighbour.length - 2).map { |offset| neighbour[(start + offset) % neighbour.length] }
+        merged = points[0..long] + inserted + points[(long + 1)..-1]
+        next unless merged.map(&fn_key).uniq.length == merged.length
+
+        polygons[index] = merged
+        polygons[neighbour_index] = nil
+      end
+
+      polygons.compact
     end
 
     # Analyses the virtual geometry of a fragment (faces of glued cuts-opening

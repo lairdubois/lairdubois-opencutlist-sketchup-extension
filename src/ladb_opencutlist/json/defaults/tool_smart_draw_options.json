@@ -3,8 +3,8 @@
     "thickness": 1, /* PRESETS_PREPROCESSOR_D */
     "shape_offset": 5, /* PRESETS_PREPROCESSOR_D_NEGATIVE_ALLOWED */
     "front_panel_offset": 1, /* PRESETS_PREPROCESSOR_D */
-    "back_panel_depth": 1, /* PRESETS_PREPROCESSOR_D */
-    "back_panel_setback": 1 /* PRESETS_PREPROCESSOR_D */
+    "groove_depth": 1, /* PRESETS_PREPROCESSOR_D */
+    "groove_setback": 1 /* PRESETS_PREPROCESSOR_D */
   },
   "action_0": { /* ACTION_DRAW_RECTANGLE */
     "shape_offset": "0",
@@ -61,8 +61,9 @@
   },
   "action_5": { /* ACTION_DRAW_BACK_PANEL */
     "thickness": { "metric": "8mm", "imperial": "5/16\"" },
-    "back_panel_depth": { "metric": "8mm", "imperial": "5/16\"" },
-    "back_panel_setback": "0",
+    "groove_depth": { "metric": "8mm", "imperial": "5/16\"" },
+    "groove_setback": "0",
+    "groove_through": true,
     "overlay": "inset",
     "machining": "volume",
     "axes": "context",

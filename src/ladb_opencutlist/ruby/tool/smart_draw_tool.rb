@@ -35,6 +35,7 @@ module Ladb::OpenCutList
 
     ACTION_OPTION_THICKNESS = 'thickness'
     ACTION_OPTION_OFFSET = 'offset'
+    ACTION_OPTION_GROOVE = 'groove'
     ACTION_OPTION_SEGMENTS = 'segments'
     ACTION_OPTION_MEASURE_TYPE = 'measure_type'
     ACTION_OPTION_OVERLAY = 'overlay'
@@ -45,8 +46,10 @@ module Ladb::OpenCutList
 
     ACTION_OPTION_OFFSET_SHAPE_OFFSET = 'shape_offset'
     ACTION_OPTION_OFFSET_FRONT_PANEL_OFFSET = 'front_panel_offset'
-    ACTION_OPTION_OFFSET_BACK_PANEL_DEPTH = 'back_panel_depth'
-    ACTION_OPTION_OFFSET_BACK_PANEL_SETBACK = 'back_panel_setback'
+
+    ACTION_OPTION_GROOVE_DEPTH = 'groove_depth'
+    ACTION_OPTION_GROOVE_SETBACK = 'groove_setback'
+    ACTION_OPTION_GROOVE_THROUGH = 'groove_through'
 
     ACTION_OPTION_SEGMENTS_SEGMENT_COUNT = 'segment_count'
 
@@ -136,7 +139,7 @@ module Ladb::OpenCutList
         :action => ACTION_DRAW_BACK_PANEL,
         :options => {
           ACTION_OPTION_THICKNESS => [ ACTION_OPTION_THICKNESS_THICKNESS ],
-          ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_BACK_PANEL_DEPTH, ACTION_OPTION_OFFSET_BACK_PANEL_SETBACK ],
+          ACTION_OPTION_GROOVE => [ ACTION_OPTION_GROOVE_DEPTH, ACTION_OPTION_GROOVE_SETBACK, ACTION_OPTION_GROOVE_THROUGH ],
           ACTION_OPTION_OVERLAY => [ ACTION_OPTION_OVERLAY_INSET, ACTION_OPTION_OVERLAY_FULL_OVERLAY ],
           ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_CONTEXT ],
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, ACTION_OPTION_OPTIONS_REUSE_DEFINITION, ACTION_OPTION_OPTIONS_ASK_NAME ]
@@ -204,7 +207,7 @@ module Ladb::OpenCutList
     def get_action_option_group_title(action, option_group)
 
       case action
-      when ACTION_DRAW_FRONT_PANEL, ACTION_DRAW_BACK_PANEL
+      when ACTION_DRAW_FRONT_PANEL
         case option_group
         when ACTION_OPTION_OFFSET
           return PLUGIN.get_i18n_string("tool.smart_#{get_stripped_name}.action_#{action}_option_group_#{option_group}")
@@ -259,7 +262,10 @@ module Ladb::OpenCutList
           return false
         when ACTION_OPTION_OFFSET_FRONT_PANEL_OFFSET
           return false
-        when ACTION_OPTION_OFFSET_BACK_PANEL_DEPTH, ACTION_OPTION_OFFSET_BACK_PANEL_SETBACK
+        end
+      when ACTION_OPTION_GROOVE
+        case option
+        when ACTION_OPTION_GROOVE_DEPTH, ACTION_OPTION_GROOVE_SETBACK
           return false
         end
       when ACTION_OPTION_SEGMENTS
@@ -297,9 +303,15 @@ module Ladb::OpenCutList
         end
       when ACTION_OPTION_OFFSET
         case option
-        when ACTION_OPTION_OFFSET_SHAPE_OFFSET, ACTION_OPTION_OFFSET_FRONT_PANEL_OFFSET,
-             ACTION_OPTION_OFFSET_BACK_PANEL_DEPTH, ACTION_OPTION_OFFSET_BACK_PANEL_SETBACK
+        when ACTION_OPTION_OFFSET_SHAPE_OFFSET, ACTION_OPTION_OFFSET_FRONT_PANEL_OFFSET
           return Kuix::Label.new(fetch_action_option_value(action, option_group, option).to_s)
+        end
+      when ACTION_OPTION_GROOVE
+        case option
+        when ACTION_OPTION_GROOVE_DEPTH, ACTION_OPTION_GROOVE_SETBACK
+          return Kuix::Label.new(fetch_action_option_value(action, option_group, option).to_s)
+        when ACTION_OPTION_GROOVE_THROUGH
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0H.5V.375H0ZM.75,.125V1M.5,0H1V1H.5ZM.625,.375L.75,.125L.875,.375'))
         end
       when ACTION_OPTION_SEGMENTS
         case option
@@ -371,9 +383,9 @@ module Ladb::OpenCutList
 
     def get_action_option_btn_prefix(action, option_group, option)
       case option
-      when ACTION_OPTION_OFFSET_BACK_PANEL_DEPTH
+      when ACTION_OPTION_GROOVE_DEPTH
         return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.875,.625V0H.5V.25H.75V.5H.5V.625M.5,0H.875M.75,0L.875,.125M.75,.5L.875,.625M.5,.5L.625,.625M.625,.5L.75,.625M.75,.375L.875,.5M.5,.125L.625,.25M.625,0L.875,.25M.5,0L.875,.375M.75,.75V1M.5,.75V1M.75,.875H.5'))
-      when ACTION_OPTION_OFFSET_BACK_PANEL_SETBACK
+      when ACTION_OPTION_GROOVE_SETBACK
         return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.875,.625V0H.5V.25H.75V.5H.5V.625M.5,0H.875M.75,0L.875,.125M.75,.5L.875,.625M.5,.5L.625,.625M.625,.5L.75,.625M.75,.375L.875,.5M.5,.125L.625,.25M.625,0L.875,.25M.5,0L.875,.375M.125,0H.375M.125,.25H.375M.25,0V.25'))
       end
 
@@ -8914,11 +8926,12 @@ module Ladb::OpenCutList
     # touched.
     def _prepare_panels!(panel_defs)
       container_path = panel_defs.first.container_path.dup
+      opening_def = panel_defs.first.opening_def
 
-      host_defs = _cut_host_defs(panel_defs)
+      extension_defs = _cut_extension_defs(opening_def, _get_opening_transformation(opening_def).inverse)
+      host_defs = _cut_host_defs(panel_defs, extension_defs)
 
       groove_index_paths = host_defs.reject { |_host_index_path, crossed| crossed }.map { |host_index_path, _crossed| host_index_path }
-      crossed_index_paths = host_defs.select { |_host_index_path, crossed| crossed }.map { |host_index_path, _crossed| host_index_path }
 
       # Worth saying only when a groove was ASKED for and nothing borders the
       # panel at the depth it sits at : the panel is then loose in its mouth,
@@ -8931,14 +8944,12 @@ module Ladb::OpenCutList
 
       return container_path if host_defs.empty?
 
-      opening_def = panel_defs.first.opening_def
-
       # The container first : it is the ancestor every host hangs under, and
       # separating it after them would strand the cut in the definition nobody
       # sees any more.
       _make_unique_instances_in_path(container_path)
 
-      _subtract_panel_cut!(container_path, opening_def, host_defs.map { |host_index_path, _crossed| host_index_path }, crossed_index_paths)
+      _subtract_panel_cut!(container_path, opening_def, host_defs)
 
       # The cavities were read on entities a separation may have replaced, and
       # so was the active part : both are dropped rather than left pointing at
@@ -8950,21 +8961,45 @@ module Ladb::OpenCutList
       container_path
     end
 
-    # Subtracts the cut from the given parts, in ONE pass. Answers how many
-    # parts were handed to it.
+    # Subtracts the cut from the given parts (see #_cut_host_defs). Answers how
+    # many parts were handed to it.
     #
-    # One pass and not two, and that is not a convenience : a cut chained with
-    # a second one leaves zero-thickness membranes along the planes the two
+    # ONCE per part, and that is not a convenience : a cut chained with a
+    # second one leaves zero-thickness membranes along the planes the two
     # share, at the ends of any part they both touch, on every carcass that is
-    # not aligned to the world axes. One solid, one operation, no seam.
+    # not aligned to the world axes. One solid per part, one operation, no seam.
     #
-    # The parts named in +crossed_index_paths+ come out of it SEVERED - the
-    # panel passes right through them - and the piece left standing behind the
-    # panel is dropped, which is what ends them at the panel.
-    def _subtract_panel_cut!(container_path, opening_def, host_index_paths, crossed_index_paths)
+    # In PASSES, though, over sets of parts that never meet : the parts a
+    # groove runs THROUGH (see #_cut_extension_defs) are cut by a contour that
+    # spills past their faces onto their neighbours, and those neighbours must
+    # not be cut by it - they take the plain contour, or the contour of a pass
+    # of their own when a groove runs through them too (see
+    # #_cut_pass_groups).
+    #
+    # The CROSSED parts come out SEVERED - the panel passes right through them
+    # - and the piece left standing behind the panel is dropped, which is what
+    # ends them at the panel.
+    def _subtract_panel_cut!(container_path, opening_def, host_defs)
+      return 0 if host_defs.empty?
+
+      count = 0
+      host_defs.group_by { |_host_index_path, _crossed, pass| pass }.sort_by(&:first).each do |_pass, pass_host_defs|
+        count += _subtract_panel_cut_pass!(container_path, opening_def, pass_host_defs.map(&:first), pass_host_defs.first[3])
+      end
+
+      _drop_offcuts!(container_path, opening_def, host_defs.select { |_host_index_path, crossed| crossed }.map(&:first))
+
+      count
+    end
+
+    # One pass of #_subtract_panel_cut! : the cut built on the grown mouths
+    # united with +extension_paths+, subtracted from the parts at
+    # +host_index_paths+. The parts are found again by POSITION, which is what
+    # survives the previous pass rebuilding its own.
+    def _subtract_panel_cut_pass!(container_path, opening_def, host_index_paths, extension_paths)
       return 0 if host_index_paths.empty?
 
-      cut_group = _build_panel_cut_group(container_path, opening_def)
+      cut_group = _build_panel_cut_group(container_path, opening_def, extension_paths)
       return 0 if cut_group.nil?
 
       src_ipaths = []
@@ -8990,21 +9025,21 @@ module Ladb::OpenCutList
       )
       raise "Unable to cut the parts the #{_panel_i18n_key_suffix} runs into : #{result_def.errors.inspect}" unless result_def.success?
 
-      _drop_offcuts!(container_path, opening_def, crossed_index_paths)
-
       src_ipaths.length
     end
 
     # The parts the cut is to be subtracted from : each as the chain of
     # POSITIONS leading to it from the cavity container - read before anything
     # is written, because a separation replaces the entities on the way - and
-    # whether the panel CROSSES it rather than merely biting into it.
+    # whether the panel CROSSES it rather than merely biting into it, and the
+    # PASS it is cut in with the extension paths of that pass : pass 0 and none
+    # for a part no groove runs through, see #_cut_pass_groups for the others.
     #
     # A part makes the list only when the cut really reaches it : it stands at
     # the depth the panel sits at, AND its footprint meets the cut's contour.
     # That second test is what keeps the list tight, and it matters - the
     # worker rebuilds every src it is given, changed by the operation or not.
-    def _cut_host_defs(panel_defs)
+    def _cut_host_defs(panel_defs, extension_defs)
       return [] if _fetch_option_construction?
       return [] if _fetch_option_overlay_full_overlay?
       return [] unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef) && cavities_def.valid?
@@ -9012,13 +9047,11 @@ module Ladb::OpenCutList
       opening_def = panel_defs.first.opening_def
       ti = _get_opening_transformation(opening_def).inverse
 
-      cut_paths = _cut_contour_paths(opening_def, ti)
+      cut_paths = _cut_contour_paths(opening_def, ti, extension_defs.map(&:last))
       return [] if cut_paths.nil? || cut_paths.empty?
 
       slot = _cut_slot_range(opening_def)
       return [] if slot.nil?
-      slot_low = slot[0]
-      slot_high = slot[1]
 
       # The parts the panel runs STRAIGHT ACROSS, over a merge : told apart
       # here, once, because what ends them is not the cut but the drop that
@@ -9026,19 +9059,11 @@ module Ladb::OpenCutList
       crossed_drawing_defs = _get_crossed_drawing_defs(_merge_share_paths, opening_def, ti)
 
       host_defs = []
-      cavities_def.drawing_defs.each do |drawing_def|
-
-        # A panel already laid on the carcass is not carcass : nothing is ever
-        # cut into another back, or into a front.
-        next if LayerAttributes.panel_type?(LayerAttributes.type_of(drawing_def.container))
+      host_drawing_defs = []
+      _cut_slot_drawing_defs(cavities_def, slot, ti).each do |drawing_def|
 
         host_index_path = _entity_index_path(cavities_def.container_path, drawing_def.container_path)
         next if host_index_path.nil? || host_index_path.empty?
-
-        z_min, z_max = _drawing_def_plane_extent(drawing_def, ti)
-        next if z_min.nil?
-        # Nothing of this part stands where the panel does : nothing to cut.
-        next if z_max <= slot_low + SolidMeshDef::TOLERANCE || z_min >= slot_high - SolidMeshDef::TOLERANCE
 
         host_paths = _get_panel_footprint_paths(drawing_def, opening_def, ti)
         next if host_paths.nil? || host_paths.empty?
@@ -9058,11 +9083,67 @@ module Ladb::OpenCutList
         overlap_paths, _ = Fiddle::Clippy.execute_intersection(closed_subjects: cut_paths, clips: host_paths)
         next if _clean_pieces(overlap_paths, SolidMeshDef::TOLERANCE).empty?
 
-        host_defs << [ host_index_path, crossed_drawing_defs.any? { |crossed_drawing_def| crossed_drawing_def.equal?(drawing_def) } ]
+        host_defs << [ host_index_path, crossed_drawing_defs.any? { |crossed_drawing_def| crossed_drawing_def.equal?(drawing_def) }, 0, [] ]
+        host_drawing_defs << drawing_def
 
       end
 
+      through_drawing_defs = host_drawing_defs.select { |drawing_def| extension_defs.any? { |extension_drawing_def, _path| extension_drawing_def.equal?(drawing_def) } }
+      _cut_pass_groups(through_drawing_defs, extension_defs, opening_def, ti).each_with_index do |group, index|
+        extension_paths = extension_defs.select { |extension_drawing_def, _path| group.any? { |drawing_def| drawing_def.equal?(extension_drawing_def) } }.map(&:last)
+        group.each do |drawing_def|
+          host_def = host_defs[host_drawing_defs.index { |host_drawing_def| host_drawing_def.equal?(drawing_def) }]
+          host_def[2] = index + 1
+          host_def[3] = extension_paths
+        end
+      end
+
       host_defs
+    end
+
+    # The parts a groove runs THROUGH, gathered into as few passes as can be
+    # cut together - see #_subtract_panel_cut!. Two of them share a pass unless
+    # the extensions of either SPILL onto the other : the one it lands on would
+    # be cut by it. That is the PINWHEEL, where every part covers the end of
+    # the next and is covered by the one before ; anywhere else the spills land
+    # on parts no groove runs through, and all of them are cut in one pass -
+    # which also lets identical stiles keep sharing their definition.
+    #
+    # Greedy, in the order given : the first pass that has no conflict with a
+    # part takes it. A pinwheel of four comes out in two passes.
+    def _cut_pass_groups(drawing_defs, extension_defs, opening_def, ti)
+      spills_onto = lambda { |from_drawing_def, onto_drawing_def|
+        paths = extension_defs.select { |extension_drawing_def, _path| extension_drawing_def.equal?(from_drawing_def) }.map(&:last)
+        footprint_paths = _get_panel_footprint_paths(onto_drawing_def, opening_def, ti)
+        next false if paths.empty? || footprint_paths.nil? || footprint_paths.empty?
+        overlap_paths, _ = Fiddle::Clippy.execute_intersection(closed_subjects: paths, clips: footprint_paths)
+        !_clean_pieces(overlap_paths, SolidMeshDef::TOLERANCE).empty?
+      }
+
+      groups = []
+      drawing_defs.each do |drawing_def|
+        group = groups.find { |members| members.none? { |member| spills_onto.call(drawing_def, member) || spills_onto.call(member, drawing_def) } }
+        if group.nil?
+          groups << [ drawing_def ]
+        else
+          group << drawing_def
+        end
+      end
+      groups
+    end
+
+    # The parts of the carcass that stand where the panel does - at the depth
+    # of +slot+ along the opening's normal. The only ones a cut can reach, and
+    # the only ones that can hide one.
+    #
+    # A panel already laid on the carcass is not carcass : nothing is ever cut
+    # into another back, or into a front.
+    def _cut_slot_drawing_defs(cavities_def, slot, ti)
+      cavities_def.drawing_defs.select { |drawing_def|
+        next false if LayerAttributes.panel_type?(LayerAttributes.type_of(drawing_def.container))
+        z_min, z_max = _drawing_def_plane_extent(drawing_def, ti)
+        !z_min.nil? && z_max > slot[0] + SolidMeshDef::TOLERANCE && z_min < slot[1] - SolidMeshDef::TOLERANCE
+      }
     end
 
     # Ends the crossed parts at the panel, for real : the cut SEVERED each of
@@ -9225,8 +9306,41 @@ module Ladb::OpenCutList
     # EVERY mouth, not just the picked one : over a merge, a contour read off
     # a single mouth would leave the other compartments' grooves uncut.
     #
+    # United with +extension_paths+, when there are any - see
+    # #_cut_extension_defs.
+    #
     # Answers nil when there is no contour to cut with.
-    def _cut_contour_paths(opening_def, ti)
+    def _cut_contour_paths(opening_def, ti, extension_paths = [])
+      mouth_paths = _cut_mouth_paths(opening_def, ti)
+      return nil if mouth_paths.nil?
+
+      delta = _cut_growth_delta
+      return mouth_paths if delta.nil? || delta <= 0
+
+      # Every path kept, unlike the panel's own contour : a merge of
+      # compartments too far apart to grow into one another cuts in two
+      # places, and both of them are the cut.
+      grown_paths = Fiddle::Clippy.inflate_paths(
+        paths: mouth_paths,
+        delta: delta.to_f,
+        join_type: Fiddle::Clippy::JOIN_TYPE_MITER,
+        miter_limit: 100.0
+      )
+      return nil if grown_paths.empty?
+      return grown_paths if extension_paths.empty?
+
+      united_paths, _ = Fiddle::Clippy.execute_union(closed_subjects: grown_paths + extension_paths)
+      return grown_paths if united_paths.empty?
+
+      # The union leaves vertices a hair apart where several contours meet on
+      # one corner, and #add_face refuses any two closer than SketchUp's own
+      # tolerance.
+      united_paths.map { |path| _weld_rpath(path, SolidMeshDef::TOLERANCE) }.select { |path| path.length >= 6 }
+    end
+
+    # The MOUTHS the cut is grown from, in the opening's frame, unioned - every
+    # mouth the panel spans. nil when there is none.
+    def _cut_mouth_paths(opening_def, ti)
       raw_mouth_paths = _merge_mouth_paths
       if raw_mouth_paths.empty?
         mouth = opening_def.outer_loop
@@ -9253,21 +9367,30 @@ module Ladb::OpenCutList
       # The union normalizes the winding, and the winding is what decides which
       # side a positive delta grows towards.
       mouth_paths, _ = Fiddle::Clippy.execute_union(closed_subjects: raw_mouth_paths)
-      return nil if mouth_paths.empty?
+      mouth_paths.empty? ? nil : mouth_paths
+    end
 
-      delta = _cut_growth_delta
-      return mouth_paths if delta.nil? || delta <= 0
+    # +rpath+ without its vertices closer than +tolerance+ to the previous one
+    # kept - the closing pair included.
+    def _weld_rpath(rpath, tolerance)
+      points = []
+      rpath.each_slice(2) do |x, y|
+        previous = points.last
+        next if !previous.nil? && (x - previous[0]).abs <= tolerance && (y - previous[1]).abs <= tolerance
+        points << [ x, y ]
+      end
+      points.pop while points.length > 1 && (points.last[0] - points.first[0]).abs <= tolerance && (points.last[1] - points.first[1]).abs <= tolerance
+      points.flatten(1)
+    end
 
-      # Every path kept, unlike the panel's own contour : a merge of
-      # compartments too far apart to grow into one another cuts in two
-      # places, and both of them are the cut.
-      grown_paths = Fiddle::Clippy.inflate_paths(
-        paths: mouth_paths,
-        delta: delta.to_f,
-        join_type: Fiddle::Clippy::JOIN_TYPE_MITER,
-        miter_limit: 100.0
-      )
-      grown_paths.empty? ? nil : grown_paths
+    # What the cut runs on BEYOND the grown mouths, in the opening's frame, as
+    # [ [ the part it runs through, its path ], ... ]. Nothing here : a groove
+    # stops where its mouth, grown, stops - see SmartDrawBackPanelActionHandler
+    # for the one that may not.
+    #
+    # Read before anything is written, like everything the cut is built from.
+    def _cut_extension_defs(opening_def, ti)
+      []
     end
 
     # The slot the panel occupies along the opening's normal : it stands back
@@ -9297,13 +9420,13 @@ module Ladb::OpenCutList
     # has to stop at, which is what a flush pose asks for.
     #
     # Answers the group, or nil when there is nothing to cut with.
-    def _build_panel_cut_group(container_path, opening_def)
+    def _build_panel_cut_group(container_path, opening_def, extension_paths = [])
       container = container_path.last
       return nil unless container.respond_to?(:definition)
 
       t = _get_opening_transformation(opening_def)
 
-      paths = _cut_contour_paths(opening_def, t.inverse)
+      paths = _cut_contour_paths(opening_def, t.inverse, extension_paths)
       return nil if paths.nil? || paths.empty?
 
       slot = _cut_slot_range(opening_def)
@@ -9873,6 +9996,11 @@ module Ladb::OpenCutList
   # open, and there is no pair of leaves to reflect.
   class SmartDrawBackPanelActionHandler < SmartDrawMouthPanelActionHandler
 
+    # How far a through groove spills past its host's face onto the neighbour
+    # it covers - see #_cut_extension_defs. Ten times the tolerance the solid
+    # booleans snap coplanar faces within, so that it is never snapped back.
+    THROUGH_GROOVE_SPILL = SolidMeshDef::TOLERANCE * 10
+
     def initialize(tool, previous_action_handler = nil)
       super(SmartDrawTool::ACTION_DRAW_BACK_PANEL, tool, previous_action_handler)
     end
@@ -9932,9 +10060,9 @@ module Ladb::OpenCutList
     # groove DEPTH, "8d" the SETBACK. A bare length is the thickness, as
     # everywhere.
     def _read_panel_lengths(tool, text, view)
-      read = _read_suffixed_offset(tool, text, 'x', SmartDrawTool::ACTION_OPTION_OFFSET_BACK_PANEL_DEPTH)
+      read = _read_suffixed_offset(tool, text, 'x', SmartDrawTool::ACTION_OPTION_GROOVE_DEPTH)
       return read unless read.nil?
-      read = _read_suffixed_offset(tool, text, 'd', SmartDrawTool::ACTION_OPTION_OFFSET_BACK_PANEL_SETBACK)
+      read = _read_suffixed_offset(tool, text, 'd', SmartDrawTool::ACTION_OPTION_GROOVE_SETBACK)
       read.nil? ? super : read
     end
 
@@ -9942,15 +10070,19 @@ module Ladb::OpenCutList
 
     # How deep the panel runs into the parts around its mouth - and so how much
     # WIDER than that mouth it is cut, on every edge.
-    def _fetch_option_back_panel_depth
-      @tool.fetch_action_option_length(@action, SmartDrawTool::ACTION_OPTION_OFFSET, SmartDrawTool::ACTION_OPTION_OFFSET_BACK_PANEL_DEPTH)
+    def _fetch_option_groove_depth
+      @tool.fetch_action_option_length(@action, SmartDrawTool::ACTION_OPTION_GROOVE, SmartDrawTool::ACTION_OPTION_GROOVE_DEPTH)
     end
 
     # How far the panel stands back from the mouth plane, towards the inside of
     # the carcass - where the groove is cut, and what is left free behind the
     # panel.
-    def _fetch_option_back_panel_setback
-      @tool.fetch_action_option_length(@action, SmartDrawTool::ACTION_OPTION_OFFSET, SmartDrawTool::ACTION_OPTION_OFFSET_BACK_PANEL_SETBACK)
+    def _fetch_option_groove_setback
+      @tool.fetch_action_option_length(@action, SmartDrawTool::ACTION_OPTION_GROOVE, SmartDrawTool::ACTION_OPTION_GROOVE_SETBACK)
+    end
+
+    def _fetch_option_groove_through?
+      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_GROOVE_THROUGH)
     end
 
     # -----
@@ -9972,7 +10104,7 @@ module Ladb::OpenCutList
     def _grow_nominal_points(points, opening_def, ti)
       return points if _fetch_option_overlay_full_overlay?
 
-      depth = _fetch_option_back_panel_depth
+      depth = _fetch_option_groove_depth
       return points if depth.nil? || depth <= 0
 
       # The union normalizes the winding, and the winding is what decides which
@@ -10002,8 +10134,208 @@ module Ladb::OpenCutList
     # groove are one shape, read once.
     def _cut_growth_delta
       return 0 if _fetch_option_overlay_full_overlay?
-      depth = _fetch_option_back_panel_depth
+      depth = _fetch_option_groove_depth
       depth.nil? ? 0 : depth
+    end
+
+    # The THROUGH GROOVES : a groove that stops inside a part COVERING the end
+    # of its neighbour is run on out of that part - the way it is really cut,
+    # end to end on a table saw or a spindle moulder, rather than stopped.
+    #
+    # Read at both ends of every mouth edge, running on along that edge, and
+    # kept at an end only when all of this holds :
+    #
+    #   FLUSH   : the HOST - the part that edge's groove is cut in, read in the
+    #             MIDDLE of the edge - runs on out to the
+    #             container's silhouette. A stile standing on past the rail, on
+    #             a foot, is not flush, nor is one capped by a top : its groove
+    #             stays stopped.
+    #   HIDDEN  : beside the groove, on the mouth side, stands material at the
+    #             depth of the slot all the way to that silhouette - the rail
+    #             whose end the host covers. A groove that would run past the
+    #             mouth of another compartment, or open onto the gap between two
+    #             feet, stays stopped at that end ; the other end may still run
+    #             through.
+    #
+    # Orientation-blind : whichever of a stile or a rail covers the other, the
+    # one that does is the one grooved through, and the one covered keeps a
+    # groove that stops at its own end - where it already comes out.
+    #
+    # Only the grooves of THIS back : one an earlier back left stopped is not
+    # revisited, the new cut merely runs into it.
+    #
+    # Each extension SPILLS past its host's face onto the neighbour it covers,
+    # by THROUGH_GROOVE_SPILL. Stopped exactly on that face, its side would lie
+    # in the very plane of the host's face, facing the same way - the one tie
+    # Meshy leaves standing, which it resolves into a zero-thickness membrane
+    # across the groove instead of opening it. The neighbour is not cut by it :
+    # the host is cut in a pass of its own (see #_subtract_panel_cut! and
+    # #_cut_pass_groups).
+    def _cut_extension_defs(opening_def, ti)
+      return [] unless _fetch_option_groove_through?
+      delta = _cut_growth_delta
+      return [] if delta.nil? || delta <= 0
+      return [] unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef) && cavities_def.valid?
+
+      mouth_paths = _cut_mouth_paths(opening_def, ti)
+      return [] if mouth_paths.nil?
+
+      silhouette_paths = _get_silhouette_paths(opening_def, ti)
+      return [] if silhouette_paths.nil? || silhouette_paths.empty?
+
+      slot = _cut_slot_range(opening_def)
+      return [] if slot.nil?
+
+      # Each part apart, to tell the host ; all of them together, to tell what
+      # covers the groove - two neighbours flush with one another cover it as
+      # one.
+      part_defs = _cut_slot_drawing_defs(cavities_def, slot, ti).map { |drawing_def|
+        [ drawing_def, _get_panel_footprint_paths(drawing_def, opening_def, ti) ]
+      }.reject { |_drawing_def, paths| paths.nil? || paths.empty? }
+      return [] if part_defs.empty?
+      part_paths_list = part_defs.map(&:last)
+
+      cover_paths, _ = Fiddle::Clippy.execute_union(closed_subjects: part_paths_list.flatten(1))
+      return [] if cover_paths.empty?
+
+      depth = delta.to_f
+      reach = _paths_reach(silhouette_paths)
+
+      # Which side of an edge is OUT of the mouth : the union winds every outer
+      # contour one way and every hole the other, so one reading - on the
+      # widest contour, necessarily an outer one - holds for all of them.
+      side = _rpath_signed_area(mouth_paths.max_by { |path| _rpath_signed_area(path).abs }) > 0 ? 1.0 : -1.0
+
+      extension_defs = []
+      mouth_paths.each do |path|
+        count = path.length / 2
+        next if count < 3
+
+        (0...count).each do |index|
+          ax = path[index * 2].to_f
+          ay = path[index * 2 + 1].to_f
+          bx = path[(index + 1) % count * 2].to_f
+          by = path[(index + 1) % count * 2 + 1].to_f
+          length = Math.sqrt((bx - ax) ** 2 + (by - ay) ** 2)
+          next if length <= SolidMeshDef::TOLERANCE
+
+          ux = (bx - ax) / length
+          uy = (by - ay) / length
+
+          # Both ends, each read running AWAY from its edge : the outside of the
+          # mouth stays on the same side either way.
+          [ [ bx, by, ux, uy ], [ ax, ay, -ux, -uy ] ].each do |ox, oy, dx, dy|
+            frame = [ ox, oy, dx, dy, uy * side, -ux * side ]
+            run, host_index = _through_groove_run(frame, length / 2.0, depth, reach, part_paths_list, silhouette_paths, cover_paths)
+            next if run.nil?
+
+            # On past the silhouette by the depth, for the same reason it
+            # spills onto the neighbour : a cut stopped ON the end face of its
+            # host would lay a face in a plane of the solid it cuts. Beyond the
+            # silhouette there is nothing left of the container to take.
+            extension_defs << [ part_defs[host_index].first, _band_rpath(frame, 0.0, run + depth, -THROUGH_GROOVE_SPILL, depth, side > 0) ]
+          end
+        end
+      end
+
+      extension_defs
+    end
+
+    # [ how far past the end of its edge the groove runs through - measured
+    # from that end, along the edge -, the index of its host in
+    # +part_paths_list+ ], or nil when it stops there. +frame+ is the end,
+    # the direction running away from the edge and the normal pointing out of
+    # the mouth ; +back+ how much of the edge itself is read to find the host.
+    # See #_cut_extension_defs.
+    #
+    # The host is read from the MIDDLE of the edge, and not just before its
+    # end : at an acute corner, the groove band already runs into the part
+    # standing across it well before the corner - the grown mitre is cut in
+    # both - and read there, the stile would pass for the host of the rail's
+    # groove, which would then run right through it.
+    def _through_groove_run(frame, back, depth, reach, part_paths_list, silhouette_paths, cover_paths)
+
+      # Read on LINES rather than on the band as a whole : a part ending on a
+      # bevel, or a silhouette standing askew to the groove, lets one edge of
+      # the band run further than the other, and only an edge compared with
+      # the same edge says whether they stop together. Each line a hair inside
+      # the band, never ON the boundary of a part - which is exactly where its
+      # edges lie.
+      inset = SolidMeshDef::TOLERANCE
+
+      # FLUSH, on both edges of the groove.
+      runs = [ inset, depth - inset ].map { |t|
+        line = _band_line(frame, -back, reach, t)
+        silhouette_run = _line_run(frame, line, -back, silhouette_paths)
+        return nil if silhouette_run.nil?
+        host_runs = part_paths_list.map { |part_paths| _line_run(frame, line, -back, part_paths) }
+        host_run = host_runs.compact.max
+        return nil if host_run.nil? || host_run < silhouette_run - SolidMeshDef::TOLERANCE
+        [ silhouette_run, host_runs.index(host_run) ]
+      }
+      return nil unless runs.first[1] == runs.last[1]   # One host, the same on both edges of the groove
+      host_index = runs.first[1]
+      runs = runs.map(&:first)
+
+      run = runs.max
+      # Out of the carcass within the grown corner already : nothing to add.
+      return nil if run <= depth + SolidMeshDef::TOLERANCE
+
+      # HIDDEN, along the side of the groove that faces the neighbour - as far
+      # as that side runs in the host. Allowed to fall short by up to the
+      # depth, and on both counts for the same reason, the obliqueness of what
+      # the line meets : a neighbour meeting the host on a slant starts
+      # covering a little past the corner, and stops a little short of where
+      # the host does. A groove that would really show falls short by a whole
+      # compartment, or a whole foot.
+      cover_run = _line_run(frame, _band_line(frame, 0.0, reach, -inset), 0.0, cover_paths, depth)
+      return nil if cover_run.nil? || cover_run < runs.first - depth
+
+      [ run, host_index ]
+    end
+
+    # How far along +line+ the region of +paths+ it STARTS in runs, measured
+    # along +frame+'s direction from its origin - nil when the line does not
+    # start in that region, within +slack+ of +start+.
+    def _line_run(frame, line, start, paths, slack = SolidMeshDef::TOLERANCE)
+      ox, oy, dx, dy = frame
+      _, pieces = Fiddle::Clippy.execute_intersection(open_subjects: [ line ], clips: paths)
+      run = nil
+      pieces.each do |piece|
+        runs = (0...piece.length / 2).map { |index| (piece[index * 2] - ox) * dx + (piece[index * 2 + 1] - oy) * dy }
+        next if runs.min > start + slack
+        run = runs.max if run.nil? || runs.max > run
+      end
+      run
+    end
+
+    # The segment [ +s0+, +s1+ ] along +frame+'s direction, at +t+ along its
+    # normal, as an open path.
+    def _band_line(frame, s0, s1, t)
+      ox, oy, dx, dy, nx, ny = frame
+      [ ox + dx * s0 + nx * t, oy + dy * s0 + ny * t, ox + dx * s1 + nx * t, oy + dy * s1 + ny * t ]
+    end
+
+    # The rectangle [ +s0+, +s1+ ] along +frame+'s direction by [ +t0+, +t1+ ]
+    # along its normal, wound counter clockwise when +positive+, clockwise
+    # otherwise - whatever the frame's handedness. United with the grown mouths
+    # on NON ZERO, a rectangle not wound the way their outer contours are would
+    # cancel out where it overlaps them.
+    def _band_rpath(frame, s0, s1, t0, t1, positive = true)
+      ox, oy, dx, dy, nx, ny = frame
+      rpath = [ [ s0, t0 ], [ s1, t0 ], [ s1, t1 ], [ s0, t1 ] ].flat_map { |s, t| [ ox + dx * s + nx * t, oy + dy * s + ny * t ] }
+      (_rpath_signed_area(rpath) > 0) == positive ? rpath : Fiddle::Clippy.reverse_rpath(rpath)
+    end
+
+    # The signed area of a closed path, positive when wound counter clockwise.
+    def _rpath_signed_area(rpath)
+      count = rpath.length / 2
+      sum = 0.0
+      (0...count).each do |index|
+        following = (index + 1) % count
+        sum += rpath[index * 2].to_f * rpath[following * 2 + 1].to_f - rpath[following * 2].to_f * rpath[index * 2 + 1].to_f
+      end
+      sum / 2.0
     end
 
     # The SETBACK, and only when the panel is let into a groove : one laid on
@@ -10011,7 +10343,7 @@ module Ladb::OpenCutList
     # from.
     def _panel_outline_offset(opening_def)
       return 0 if _fetch_option_overlay_full_overlay?
-      setback = _fetch_option_back_panel_setback
+      setback = _fetch_option_groove_setback
       setback.nil? || setback <= 0 ? 0 : setback
     end
 
