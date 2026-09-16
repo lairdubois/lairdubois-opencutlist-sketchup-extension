@@ -6,9 +6,9 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 # 8.0.0 (WIP)
 
-  * Added Smart Draw Divider Tool
-  * Added Smart Draw Front Panel Tool **(DEV team only)**
-  * Added Smart Draw Back Panel Tool **(DEV team only)**
+  * Added Smart Build Divider Tool
+  * Added Smart Build Front Panel Tool
+  * Added Smart Build Back Panel Tool
   * Added Smart Stretch Tool
   * Added Smart Paneling Tool
   * Added Smart Boolean Tools
@@ -29,6 +29,8 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
+### 2026-09-16
+ * Added Smart Build tools
 ### 2026-09-14
  * Improve Smart Draw Panel tools **(DEV team only)**
  * Updated PackingSolver dependency
