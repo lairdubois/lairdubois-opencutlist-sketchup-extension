@@ -9,6 +9,10 @@
     const MANIFEST_URL = 'https://www.lairdubois.fr/opencutlist/manifest'
     const MANIFEST_DEV_URL = 'https://www.lairdubois.fr/opencutlist/manifest-dev'
 
+    // How much of the dialog must stay within the screen for it to count as
+    // reachable. Below that, it is pulled back into view on startup.
+    const MIN_VISIBLE_SIZE = 100;
+
     const SETTING_KEY_MUTED_UPDATE_BUILD = 'core.muted_update_build';
     const SETTING_KEY_LAST_LISTED_NEWS_TIMESTAMP = 'core.last_listed_news_timestamp';
 
@@ -253,6 +257,60 @@
     };
 
     // Actions /////
+
+    // Brings the dialog back into view when its stored position points outside
+    // the desktop — typically after a monitor has been unplugged between two
+    // sessions. The dialog is a browser and knows its own screen, so this needs
+    // no native call and behaves the same on macOS and Windows.
+    LadbDialogTabs.prototype.constrainToScreen = function () {
+
+        // availLeft / availTop are non standard, but Chromium implements them.
+        // They are what makes a secondary monitor (negative or large offsets)
+        // distinguishable from the primary one.
+        const availLeft = typeof screen.availLeft === 'number' ? screen.availLeft : 0;
+        const availTop = typeof screen.availTop === 'number' ? screen.availTop : 0;
+        const availRight = availLeft + screen.availWidth;
+        const availBottom = availTop + screen.availHeight;
+
+        const width = window.outerWidth;
+        const height = window.outerHeight;
+        const left = window.screenX;
+        const top = window.screenY;
+
+        // Give up rather than guess if the browser reports nothing usable.
+        if (!screen.availWidth || !screen.availHeight || !width || !height) {
+            return;
+        }
+
+        const visibleWidth = Math.min(left + width, availRight) - Math.max(left, availLeft);
+        const visibleHeight = Math.min(top + height, availBottom) - Math.max(top, availTop);
+
+        // A window smaller than the margin could never satisfy it, so the
+        // requirement is capped by the window's own size : the minimized palette
+        // is 90px wide and would otherwise count as unreachable even when it
+        // sits perfectly on screen.
+        const minVisibleWidth = Math.min(MIN_VISIBLE_SIZE, width);
+        const minVisibleHeight = Math.min(MIN_VISIBLE_SIZE, height);
+
+        // A title bar sitting above the top edge cannot be grabbed at all, no
+        // matter how much of the window shows below it — hence the separate test.
+        if (top >= availTop && visibleWidth >= minVisibleWidth && visibleHeight >= minVisibleHeight) {
+            return;
+        }
+
+        // Clamp instead of resetting to the default position : the window keeps
+        // its size and lands as close as possible to where it was left. The min
+        // comes before the max so that a window larger than the screen is pinned
+        // to the top left corner rather than pushed off the other side.
+        const constrainedLeft = Math.max(availLeft, Math.min(left, availRight - width));
+        const constrainedTop = Math.max(availTop, Math.min(top, availBottom - height));
+
+        rubyCallCommand('core_tabs_dialog_set_position', {
+            left: Math.round(constrainedLeft),
+            top: Math.round(constrainedTop)
+        });
+
+    };
 
     LadbDialogTabs.prototype.minimize = function () {
         const that = this;
@@ -782,6 +840,11 @@
                     }
 
                     that.bind();
+
+                    // Ruby has already applied the stored position by now, so
+                    // this is the first moment the dialog can tell whether that
+                    // position still lands on an existing screen.
+                    that.constrainToScreen();
 
                     that.setFontSize(that.options.tabs_dialog_font_size);
                     if (that.options.tabs_dialog_table_row_size) {

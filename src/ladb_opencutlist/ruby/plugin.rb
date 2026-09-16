@@ -1128,6 +1128,9 @@ module Ladb::OpenCutList
         register_command('core_tabs_dialog_hide') do
           tabs_dialog_hide_command
         end
+        register_command('core_tabs_dialog_set_position') do |params|
+          tabs_dialog_set_position_command(**params)
+        end
         register_command('core_modal_dialog_hide') do
           modal_dialog_hide_command
         end
@@ -1770,6 +1773,19 @@ module Ladb::OpenCutList
 
     def tabs_dialog_hide_command
       hide_tabs_dialog
+    end
+
+    # Called by the dialog when it finds itself outside the visible desktop, with
+    # a position it has already constrained to its own screen. The stored
+    # position is overwritten too : the point is that the next startup does not
+    # repeat the problem.
+    def tabs_dialog_set_position_command(left:, top:)
+      return unless @tabs_dialog
+      left = left.to_i
+      top = top.to_i
+      tabs_dialog_store_position(left, top)
+      tabs_dialog_set_position(left, top)
+      nil
     end
 
     def modal_dialog_hide_command
