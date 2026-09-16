@@ -182,7 +182,7 @@ class TC_Ladb_Model_SolidCavityOpening < TestUp::TestCase
     assert_equal([], fragment_def.opening_defs, 'a walled plane is not an opening')
   end
 
-  # SmartDrawFrontPanelActionHandler#_get_sibling_mouth_points falls back to this
+  # SmartBuildFrontPanelActionHandler#_get_sibling_mouth_points falls back to this
   # for a neighbour CLOSED by a real panel : that panel sits one thickness
   # short of where the neighbour's hull cap would have been had it been open
   # instead, so an exact plane match would find nothing at all.

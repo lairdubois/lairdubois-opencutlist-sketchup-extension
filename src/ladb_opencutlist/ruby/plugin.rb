@@ -17,13 +17,6 @@ module Ladb::OpenCutList
   require_relative 'utils/path_utils'
   require_relative 'utils/file_path_utils'
   require_relative 'utils/hash_utils'
-  require_relative 'tool/smart_draw_tool'
-  require_relative 'tool/smart_handle_tool'
-  require_relative 'tool/smart_paint_tool'
-  require_relative 'tool/smart_reshape_tool'
-  require_relative 'tool/smart_axes_tool'
-  require_relative 'tool/smart_join_tool'
-  require_relative 'tool/smart_export_tool'
 
   attr_reader :app_observer
 
@@ -106,7 +99,7 @@ module Ladb::OpenCutList
     if IS_RBZ && !Sketchup.debug_mode?
       SMART_TOOLS_STRIPPED_NAMES = %w[draw handle reshape paint axes export]
     else
-      SMART_TOOLS_STRIPPED_NAMES = %w[draw handle reshape paint axes join export]
+      SMART_TOOLS_STRIPPED_NAMES = %w[draw build handle reshape paint axes join export]
     end
 
     # -----
@@ -965,6 +958,8 @@ module Ladb::OpenCutList
       submenu.add_separator
       SMART_TOOLS_STRIPPED_NAMES.each do |stripped_name|
 
+        require_relative "tool/smart_#{stripped_name}_tool"
+
         clazz = Object.const_get("Ladb::OpenCutList::Smart#{stripped_name.capitalize}Tool")
 
         smart_tool_submenu = submenu.add_submenu(get_i18n_string("core.menu.item.smart_#{stripped_name}"))
@@ -1008,8 +1003,8 @@ module Ladb::OpenCutList
       cmd = UI::Command.new(get_i18n_string('core.toolbar.command.dialog')) {
         toggle_tabs_dialog if _assert_not_zzz
       }
-      cmd.small_icon = '../img/icon-dialog-72x72.png'
-      cmd.large_icon = '../img/icon-dialog-114x114.png'
+      cmd.small_icon = '../img/icon-dialog.svg'
+      cmd.large_icon = '../img/icon-dialog.svg'
       cmd.tooltip = get_i18n_string('core.toolbar.command.dialog')
       cmd.status_bar_text = get_i18n_string('core.toolbar.command.dialog')
       cmd.menu_text = get_i18n_string('core.toolbar.command.dialog')
@@ -1034,8 +1029,8 @@ module Ladb::OpenCutList
             Sketchup.focus if Sketchup.respond_to?(:focus)
           end
         }
-        cmd.small_icon = "../img/icon-smart-#{stripped_name}-72x72.png"
-        cmd.large_icon = "../img/icon-smart-#{stripped_name}-114x114.png"
+        cmd.small_icon = "../img/icon-smart-#{stripped_name}.svg"
+        cmd.large_icon = "../img/icon-smart-#{stripped_name}.svg"
         cmd.tooltip = get_i18n_string("core.toolbar.command.smart_#{stripped_name}")
         cmd.status_bar_text = get_i18n_string("core.toolbar.command.smart_#{stripped_name}")
         cmd.menu_text = get_i18n_string("core.toolbar.command.smart_#{stripped_name}")

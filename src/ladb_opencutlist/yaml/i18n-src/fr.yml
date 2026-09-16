@@ -112,6 +112,7 @@ core:
       unhide_part_instance: Révéler l'instance
       edit_part_instance_properties: Editer les propriétés de l'instance
       smart_draw: $t(core.toolbar.command.smart_draw)
+      smart_build: $t(core.toolbar.command.smart_build)
       smart_handle: $t(core.toolbar.command.smart_handle)
       smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
@@ -125,6 +126,7 @@ core:
     command:
       dialog: OpenCutList
       smart_draw: Dessiner des pièces
+      smart_build: Construire des pièces
       smart_handle: Manipuler des pièces
       smart_reshape: Remodeler des pièces
       smart_paint: Colorier des pièces
@@ -2385,50 +2387,13 @@ tool:
     action_2_status: Dessiner un volume sur la base d'une forme polygonale
     action_2_state_1_status: Cliquez pour définir un nouveau point ou entrez une distance
     action_x_state_2_status: Cliquez pour définir l'élévation ou entrez une distance
-    action_3: Dessiner un Séparateur
-    action_3_status: Dessiner un séparateur dans une cavité formée par un groupe de pièces existantes
-    action_3_state_0_status: Cliquez sur une paroi pour dessiner un séparateur
-    action_3_state_1_status: Cliquez sur une paroi pour dessiner des séparateurs
-    action_4: Dessiner une Façade
-    action_4_status: Dessiner une façade dans une cavité formée par un groupe de pièces existantes
-    action_4_state_0_status: Cliquez dans une cavité pour dessiner une façade sur son ouverture
-    action_4_state_0_merge_status: "Glissez jusqu'aux cavités voisines pour une façade commune"
-    action_5: Dessiner un Fond
-    action_5_status: Dessiner un fond dans une cavité formée par un groupe de pièces existantes
-    action_5_state_0_status: Cliquez dans une cavité pour dessiner un fond sur son ouverture opposée à la vue
-    action_5_state_0_merge_status: "Glissez jusqu'aux cavités voisines pour un fond commun"
     action_option_group_offset: Décalage
-    action_option_group_groove: Rainure
-    action_4_option_group_offset: Jeu
     action_option_group_segments: Segments
-    action_option_group_thickness: Epaisseur
-    action_option_group_overlay: Pose
-    action_option_group_axes: Axes
-    action_option_group_measure_type: Mesure
     action_option_group_options: Options
     action_option_offset_shape_offset: Décalage
     action_option_offset_shape_offset_status: Permet d'appliquer un décalage au tracé de la forme dessinée
-    action_option_offset_front_panel_offset: Jeu
-    action_option_offset_front_panel_offset_status: "Définit le jeu laissé sur chaque bord de la façade"
-    action_option_groove_groove_depth: Profondeur de rainure
-    action_option_groove_groove_depth_status: "Définit la profondeur de la rainure dans laquelle le fond est engagé"
-    action_option_groove_groove_setback: Retrait
-    action_option_groove_groove_setback_status: "Définit de combien le fond recule vers l'intérieur du caisson, et donc où la rainure est usinée"
-    action_option_groove_groove_through: Rainure filante
-    action_option_groove_groove_through_status: "Prolonger la rainure jusqu'au bout des pièces qui couvrent leur voisine, lorsqu'elle y débouche sans être visible"
     action_option_segments_segment_count: Nombre de segments
     action_option_segments_segment_count_status: Permet de définir le nombre de segments du cercle
-    action_option_thickness_thickness: Epaisseur
-    action_option_thickness_thickness_status: Définit l'épaisseur des panneaux
-    action_option_overlay_inset_status: "Façade encastrée : posée dans l'ouverture, au nu de la face avant"
-    action_5_option_overlay_inset_status: "Fond en rainure : engagé dans une rainure usinée dans les pièces qui bordent l'ouverture"
-    action_option_overlay_full_overlay_status: "Façade en applique : posée devant la face avant, recouvrant les panneaux jusqu'au nu extérieur du caisson et jusqu'à mi-épaisseur des panneaux intérieurs"
-    action_5_option_overlay_full_overlay_status: "Fond en applique : posé sur l'arrière du caisson, recouvrant les panneaux jusqu'au nu extérieur et jusqu'à mi-épaisseur des panneaux intérieurs, sans aucun usinage"
-    action_option_measure_type_inside_status: Positionner l'épaisseur à l'intérieur du point ciblé
-    action_option_measure_type_centered_status: Centrer l'épaisseur sur le point ciblé
-    action_option_measure_type_outside_status: Positionner l'épaisseur à l'extérieur du point ciblé
-    action_option_axes_active_status: Manipuler le long des axes actifs
-    action_option_axes_context_status: Manipuler le long des axes du groupe ou composant hôte
     action_option_options_construction: Traits de construction
     action_option_options_construction_status: Dessiner en traits de construction
     action_option_options_rectangle_centered: Rectangle centré
@@ -2448,6 +2413,57 @@ tool:
     action_option_options_draw_in_0: Dessiner dans l'élément actif
     action_option_options_draw_in_1: Dessiner dans le parent de la pièce du premier point
     action_option_options_draw_in_status: Dessiner dans le parent de la pièce ciblée par le premier point
+    action_option_options_ask_name: Nommage des pièces
+    action_option_options_ask_name_status: Saisir manuellement le nom des pièces
+    action_toggle_move_copy_status: Alterner entre copier/déplacer
+    action_change_move_anchor_status: Changer le point d'ancrage
+    success:
+      part_created: "Nouvelle pièce créée : {{ name }}"
+      part_created_plural: "{{ count }} nouvelles pièces créées : {{ name }}"
+  smart_build:
+    title: Construire
+    action_1: Construire un Séparateur
+    action_1_status: Construire un séparateur dans une cavité formée par un groupe de pièces existantes
+    action_1_state_0_status: Cliquez sur une paroi pour construire un séparateur
+    action_1_state_1_status: Cliquez sur une paroi pour construire des séparateurs
+    action_2: Construire une Façade
+    action_2_status: Construire une façade dans une cavité formée par un groupe de pièces existantes
+    action_2_state_0_status: Cliquez dans une cavité pour construire une façade sur son ouverture
+    action_2_state_0_merge_status: "Glissez jusqu'aux cavités voisines pour une façade commune"
+    action_3: Construire un Fond
+    action_3_status: Construire un fond dans une cavité formée par un groupe de pièces existantes
+    action_3_state_0_status: Cliquez dans une cavité pour construire un fond sur son ouverture opposée à la vue
+    action_3_state_0_merge_status: "Glissez jusqu'aux cavités voisines pour un fond commun"
+    action_option_group_groove: Rainure
+    action_2_option_group_offset: Jeu
+    action_option_group_thickness: Epaisseur
+    action_option_group_overlay: Pose
+    action_option_group_axes: Axes
+    action_option_group_measure_type: Mesure
+    action_option_group_options: Options
+    action_option_offset_front_panel_offset: Jeu
+    action_option_offset_front_panel_offset_status: "Définit le jeu laissé sur chaque bord de la façade"
+    action_option_groove_groove_depth: Profondeur de rainure
+    action_option_groove_groove_depth_status: "Définit la profondeur de la rainure dans laquelle le fond est engagé"
+    action_option_groove_groove_setback: Retrait
+    action_option_groove_groove_setback_status: "Définit de combien le fond recule vers l'intérieur du caisson, et donc où la rainure est usinée"
+    action_option_groove_groove_through: Rainure filante
+    action_option_groove_groove_through_status: "Prolonger la rainure jusqu'au bout des pièces qui couvrent leur voisine, lorsqu'elle y débouche sans être visible"
+    action_option_thickness_thickness: Epaisseur
+    action_option_thickness_thickness_status: Définit l'épaisseur des panneaux
+    action_option_overlay_inset_status: "Façade encastrée : posée dans l'ouverture, au nu de la face avant"
+    action_3_option_overlay_inset_status: "Fond en rainure : engagé dans une rainure usinée dans les pièces qui bordent l'ouverture"
+    action_option_overlay_full_overlay_status: "Façade en applique : posée devant la face avant, recouvrant les panneaux jusqu'au nu extérieur du caisson et jusqu'à mi-épaisseur des panneaux intérieurs"
+    action_3_option_overlay_full_overlay_status: "Fond en applique : posé sur l'arrière du caisson, recouvrant les panneaux jusqu'au nu extérieur et jusqu'à mi-épaisseur des panneaux intérieurs, sans aucun usinage"
+    action_option_measure_type_inside_status: Positionner l'épaisseur à l'intérieur du point ciblé
+    action_option_measure_type_centered_status: Centrer l'épaisseur sur le point ciblé
+    action_option_measure_type_outside_status: Positionner l'épaisseur à l'extérieur du point ciblé
+    action_option_axes_active_status: Manipuler le long des axes actifs
+    action_option_axes_context_status: Manipuler le long des axes du groupe ou composant hôte
+    action_option_options_construction: Traits de construction
+    action_option_options_construction_status: Dessiner en traits de construction
+    action_option_options_measure_reversed: Mesure inversée
+    action_option_options_measure_reversed_status: Inverser la mesure
     action_option_options_reduce_envelope: Pièces en retrait
     action_option_options_reduce_envelope_status: Considérer les pièces en retrait
     action_option_options_reuse_definition: Réutiliser les pièces
@@ -2458,19 +2474,17 @@ tool:
     action_option_options_ask_name_status: Saisir manuellement le nom des pièces
     action_option_options_layer_name: Calque
     action_option_options_layer_name_status: Nom du calque sur lequel sont placées les pièces
-    action_toggle_move_copy_status: Alterner entre copier/déplacer
-    action_change_move_anchor_status: Changer le point d'ancrage
     detecting_cavities: "Détection des cavités…"
     error:
-      invalid_divider_seed: Ce type de pièce ne permet pas le dessin d'un séparateur
+      invalid_divider_seed: Ce type de pièce ne permet pas la construction d'un séparateur
       invalid_divider_container: "Cette pièce est isolée : elle ne partage pas de groupe ou composant avec d'autres pièces"
       invalid_divider_cavity: "Aucune cavité à cette position"
       no_divider_cavity: Aucune cavité n'a été détectée dans ce groupe ou composant
-      invalid_front_panel_seed: Ce type de pièce ne permet pas le dessin d'une façade
+      invalid_front_panel_seed: Ce type de pièce ne permet pas la construction d'une façade
       invalid_front_panel_container: "Cette pièce est isolée : elle ne partage pas de groupe ou composant avec d'autres pièces"
       invalid_front_panel_cavity: "Aucune cavité ouverte vers vous à cette position"
       no_front_panel_cavity: Aucune cavité n'a été détectée dans ce groupe ou composant
-      invalid_back_panel_seed: Ce type de pièce ne permet pas le dessin d'un fond
+      invalid_back_panel_seed: Ce type de pièce ne permet pas la construction d'un fond
       invalid_back_panel_container: "Cette pièce est isolée : elle ne partage pas de groupe ou composant avec d'autres pièces"
       invalid_back_panel_cavity: "Aucune cavité ouverte à l'opposé de la vue à cette position"
       no_back_panel_cavity: Aucune cavité n'a été détectée dans ce groupe ou composant

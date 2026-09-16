@@ -20,7 +20,7 @@ module Ladb::OpenCutList
   # what has to be told apart : a handler draws its own kind, and must not
   # offer to draw a second one where one already stands — while the OTHER kind
   # is the most natural wall in the world to lean a pick on (see
-  # SmartDrawMouthPanelActionHandler#_picked_on_existing_panel?). Where the
+  # SmartBuildMouthPanelActionHandler#_picked_on_existing_panel?). Where the
   # cavity detection is concerned, though, both are laid on and neither is
   # carcass : that reading asks for TYPES_PANEL.
   class LayerAttributes

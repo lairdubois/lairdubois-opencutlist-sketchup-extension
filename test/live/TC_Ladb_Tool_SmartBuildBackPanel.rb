@@ -11,16 +11,16 @@
 #   options      JSON { thickness, depth, setback (mm), through_groove, overlay (optional, false by default) }
 #   expected     JSON, what is compared (see BackPanelRegression::COMPARED) - written by record: true
 #
-# Through TestUp : add test/live as a test path, run TC_Ladb_Tool_SmartDrawBackPanel.
+# Through TestUp : add test/live as a test path, run TC_Ladb_Tool_SmartBuildBackPanel.
 #
 # From the Ruby console or the Claude Bridge, without TestUp :
-#   load 'test/live/TC_Ladb_Tool_SmartDrawBackPanel.rb'
+#   load 'test/live/TC_Ladb_Tool_SmartBuildBackPanel.rb'
 #   BackPanelRegression.run                                   # every case : report, compared to 'expected'
 #   BackPanelRegression.run([ 'B06' ])                        # some cases
 #   BackPanelRegression.run(nil, record: true)                # store the results as 'expected'
 #   BackPanelRegression.run([ 'B12' ], overrides: { 'through_groove' => false })
 #
-# Each case draws its back panel(s) with a real SmartDrawBackPanelActionHandler,
+# Each case draws its back panel(s) with a real SmartBuildBackPanelActionHandler,
 # driven without the mouse, inside a model operation that is aborted
 # afterwards : the file is left as it was. The handler's own operations are
 # neutralized for the duration (SketchUp commits an open operation when another
@@ -84,7 +84,7 @@ module BackPanelRegression
     handler.instance_variable_set(:@active_part, part)
 
     cavities_def = handler.send(:_get_cavities_def)
-    raise "no cavities (#{cavities_def.inspect[0, 200]})" unless cavities_def.is_a?(OCL::SmartDrawPanelActionHandler::CavitiesDef) && cavities_def.valid?
+    raise "no cavities (#{cavities_def.inspect[0, 200]})" unless cavities_def.is_a?(OCL::SmartBuildPanelActionHandler::CavitiesDef) && cavities_def.valid?
 
     ray = lambda { |r|
       origin = pnt(r['origin'], t)
@@ -100,7 +100,7 @@ module BackPanelRegression
 
     unless (merge = pick['merge'] || []).empty?
       context = handler.send(:_compute_panel_context, point, view)
-      raise 'merge seed refused' unless context.is_a?(OCL::SmartDrawMouthPanelActionHandler::MouthPanelContext)
+      raise 'merge seed refused' unless context.is_a?(OCL::SmartBuildMouthPanelActionHandler::MouthPanelContext)
       ti = context.transformation.inverse
       handler.instance_variable_set(:@merge_context, context)
       handler.instance_variable_set(:@merge_fragment_defs, [ context.fragment_def ])
@@ -122,13 +122,13 @@ module BackPanelRegression
     picks = JSON.parse(case_instance.get_attribute(DICT, 'picks'))
     options = JSON.parse(case_instance.get_attribute(DICT, 'options')).merge(overrides)
 
-    tool = OCL::SmartDrawTool.new(current_action: OCL::SmartDrawTool::ACTION_DRAW_BACK_PANEL)
+    tool = OCL::SmartBuildTool.new(current_action: OCL::SmartBuildTool::ACTION_BUILD_BACK_PANEL)
     messages = []
     [ :notify_success, :notify_warnings, :notify_errors, :notify, :show_tooltip, :remove_tooltip, :push_cursor, :pop_cursor ].each do |name|
       tool.define_singleton_method(name) { |*args| messages << [ name.to_s, args.first ].inspect unless [ :notify_success, :remove_tooltip, :push_cursor, :pop_cursor ].include?(name) }
     end
 
-    handler = OCL::SmartDrawBackPanelActionHandler.new(tool)
+    handler = OCL::SmartBuildBackPanelActionHandler.new(tool)
     handler.singleton_class.send(:prepend, Probe)
     fixed = {
       :_fetch_option_thickness => options['thickness'].to_f.mm,
@@ -241,7 +241,7 @@ end
 
 if defined?(TestUp::TestCase)
 
-  class TC_Ladb_Tool_SmartDrawBackPanel < TestUp::TestCase
+  class TC_Ladb_Tool_SmartBuildBackPanel < TestUp::TestCase
 
     CASES = %w[B01 B02 B03 B04 B05 B06 B07 B08 B09 B10 B11 B12 B13 B14 B15 B16 B17 B18 B19]
 

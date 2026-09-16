@@ -412,7 +412,7 @@ module Ladb::OpenCutList
     # vertices and by planes, and differ by seconds (see #run) - so the
     # budget is TIME, checked between the booleans : a boolean under way is
     # never interrupted, and the budget is overrun by at most one of them.
-    ERROR_TOO_COMPLEX = 'tool.smart_draw.error.too_complex_cavity'.freeze
+    ERROR_TOO_COMPLEX = 'tool.smart_build.error.too_complex_cavity'.freeze
 
     # Bbox envelope inflation, in inches. Keeps the envelope planes well
     # clear of the panel planes, so that Meshy's plane canonicalization

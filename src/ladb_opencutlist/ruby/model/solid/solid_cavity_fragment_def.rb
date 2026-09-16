@@ -268,7 +268,7 @@ module Ladb::OpenCutList
       }
     end
 
-    # Same tolerant matching as SmartDrawFrontPanelActionHandler::OPENING_PLANE_MIN_DOT
+    # Same tolerant matching as SmartBuildFrontPanelActionHandler::OPENING_PLANE_MIN_DOT
     # (a signed dot, so a plane and its own reverse never match).
     WALL_PLANE_MATCH_MIN_DOT = 1.0 - 1e-6
 
@@ -296,7 +296,7 @@ module Ladb::OpenCutList
     # is OPEN on that plane (nothing but caps facing it), has no wall facing
     # it, or none standing near enough to close it (WALL_PLANE_MAX_SETBACK).
     #
-    # Read by SmartDrawFrontPanelActionHandler#_get_sibling_mouth_points as the
+    # Read by SmartBuildFrontPanelActionHandler#_get_sibling_mouth_points as the
     # fallback for a neighbouring cavity CLOSED on the very plane a front panel is
     # being cut on : such a cavity has no #opening_defs there at all - it is
     # not a mouth - yet its wall is exactly the boundary the front panel's overlay
@@ -310,7 +310,7 @@ module Ladb::OpenCutList
     # Memoized PER PLANE, and cheaply turned down before that : the front panel
     # preview reads its siblings again at every mouse move, over every cavity
     # of the container, while the carcass does not move under it. The key is
-    # quantized the way SmartDrawFrontPanelActionHandler#_opening_plane_key is,
+    # quantized the way SmartBuildFrontPanelActionHandler#_opening_plane_key is,
     # and for the same reason - two queries closer than that answer the same
     # thing anyway, the matching below being tolerant to exactly that degree.
     def wall_loops_on_plane(normal, origin)
