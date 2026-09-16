@@ -112,6 +112,7 @@ core:
       unhide_part_instance: Show Instance
       edit_part_instance_properties: Edit Instance Properties
       smart_draw: $t(core.toolbar.command.smart_draw)
+      smart_build: $t(core.toolbar.command.smart_build)
       smart_handle: $t(core.toolbar.command.smart_handle)
       smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
@@ -125,6 +126,7 @@ core:
     command:
       dialog: OpenCutList
       smart_draw: Draw Parts
+      smart_build: Build Parts
       smart_handle: Handle Parts
       smart_reshape: Reshape Parts
       smart_paint: Paint Parts
@@ -2385,37 +2387,13 @@ tool:
     action_2_status: Draw a volume based on a polygonal shape
     action_2_state_1_status: Click to define a new point or enter distance
     action_x_state_2_status: Click to set the elevation or enter distance
-    action_3: Draw Divider
-    action_3_status: Draw a divider in a compartment formed by a group of existing parts
-    action_3_state_0_status: Click on a wall to draw a divider
-    action_3_state_1_status: Click on a wall to draw dividers
-    action_4: Draw Front
-    action_4_status: Draw a front within a space formed by a group of existing parts
-    action_4_state_0_status: Click inside a cavity to draw a front across its opening
-    action_4_state_0_merge_status: "Slide to the adjacent cavities to create a shared front"
     action_option_group_offset: Offset
     action_option_group_segments: Segments
-    action_option_group_thickness: Thickness
-    action_option_group_clearance: Clearance
-    action_option_group_overlay: Overlay
-    action_option_group_axes: Axes
-    action_option_group_measure_type: Measure
     action_option_group_options: Options
     action_option_offset_shape_offset: Offset
     action_option_offset_shape_offset_status: Allows you to apply an offset to the outline of the drawn shape
-    action_option_offset_front_panel_offset: Clearance
-    action_option_offset_front_panel_offset_status: "Defines the clearance left on each side of the front panel"
     action_option_segments_segment_count: Number of Segments
     action_option_segments_segment_count_status: Allows you to set the number of segments in the circle
-    action_option_thickness_thickness: Thickness
-    action_option_thickness_thickness_status: Defines the thickness of the panels
-    action_option_overlay_inset_status: "Full inset: installed in the opening, flush with the front surface"
-    action_option_overlay_full_overlay_status: "Full overlay: installed in front of the front face, covering the sides up to the outer edge of the cabinet and extending to half the thickness of the interior separators"
-    action_option_measure_type_inside_status: Position the thickness inside the target point
-    action_option_measure_type_centered_status: Center the thickness on the target point
-    action_option_measure_type_outside_status: Position the thickness inside the target point
-    action_option_axes_active_status: Manipulate along the active axes
-    action_option_axes_context_status: Manipulate along the axes of the group or host component
     action_option_options_construction: Construction Lines
     action_option_options_construction_status: Draw as construction lines
     action_option_options_rectangle_centered: Rectangle Centered
@@ -2435,6 +2413,57 @@ tool:
     action_option_options_draw_in_0: Draw in the active element
     action_option_options_draw_in_1: Draw in the parent of the part of the first point
     action_option_options_draw_in_status: Draw in the parent of the part targeted by the first point
+    action_option_options_ask_name: Part Naming
+    action_option_options_ask_name_status: Enter part names manually
+    action_toggle_move_copy_status: Toggle between copy/move
+    action_change_move_anchor_status: Change the anchor point
+    success:
+      part_created: "New part created: {{ name }}"
+      part_created_plural: "{{ count }} new parts created: {{ name }}"
+  smart_build:
+    title: Build
+    action_1: Build Divider
+    action_1_status: Build a divider in a cavity formed by a group of existing parts
+    action_1_state_0_status: Click on a wall to build a divider
+    action_1_state_1_status: Click on a wall to build dividers
+    action_2: Build Front
+    action_2_status: Build a front in a cavity formed by a group of existing parts
+    action_2_state_0_status: Click inside a cavity to build a front across its opening
+    action_2_state_0_merge_status: "Slide to the adjacent cavities to create a shared front"
+    action_3: Build Back
+    action_3_status: Build a back in a cavity formed by a group of existing parts
+    action_3_state_0_status: Click inside a cavity to build a back wall at the opening opposite the view
+    action_3_state_0_merge_status: "Slide to the adjacent cavities to create a shared back"
+    action_option_group_groove: Groove
+    action_2_option_group_offset: Clearance
+    action_option_group_thickness: Thickness
+    action_option_group_overlay: Overlay
+    action_option_group_axes: Axes
+    action_option_group_measure_type: Measure
+    action_option_group_options: Options
+    action_option_offset_front_panel_offset: Clearance
+    action_option_offset_front_panel_offset_status: "Defines the clearance left on each side of the front panel"
+    action_option_groove_groove_depth: Depth of groove
+    action_option_groove_groove_depth_status: "Defines the depth of the groove into which the back is engaged"
+    action_option_groove_groove_setback: Setback
+    action_option_groove_groove_setback_status: "Specifies how far the bottom recedes toward the inside of the box, and thus where the groove is machined"
+    action_option_groove_groove_through: Through groove
+    action_option_groove_groove_through_status: "Extend the groove to the ends of the pieces that overlap their neighbors, when the groove opens up there without being visible"
+    action_option_thickness_thickness: Thickness
+    action_option_thickness_thickness_status: Defines the thickness of the panels
+    action_option_overlay_inset_status: "Full inset: installed in the opening, flush with the front surface"
+    action_3_option_overlay_inset_status: "Groove-mounted: fitted into a groove machined into the parts bordering the opening"
+    action_option_overlay_full_overlay_status: "Full overlay: installed in front of the front face, covering the sides up to the outer edge of the cabinet and extending to half the thickness of the interior separators"
+    action_3_option_overlay_full_overlay_status: "Surface-mounted bottom panel: installed on the back of the cabinet, covering the panels up to the outer edge and extending halfway through the thickness of the interior panels, without any machining"
+    action_option_measure_type_inside_status: Position the thickness inside the target point
+    action_option_measure_type_centered_status: Center the thickness on the target point
+    action_option_measure_type_outside_status: Position the thickness inside the target point
+    action_option_axes_active_status: Manipulate along the active axes
+    action_option_axes_context_status: Manipulate along the axes of the group or host component
+    action_option_options_construction: Construction Lines
+    action_option_options_construction_status: Draw as construction lines
+    action_option_options_measure_reversed: Inverted Measure
+    action_option_options_measure_reversed_status: Reverse the measurement
     action_option_options_reduce_envelope: Recessed Parts
     action_option_options_reduce_envelope_status: Consider recessed parts
     action_option_options_reuse_definition: Reuse parts
@@ -2444,20 +2473,30 @@ tool:
     action_option_options_ask_name: Part Naming
     action_option_options_ask_name_status: Enter part names manually
     action_option_options_layer_name: Layer
-    action_option_options_layer_name_status: Name of the layer on which the fronts are placed
-    action_toggle_move_copy_status: Toggle between copy/move
-    action_change_move_anchor_status: Change the anchor point
+    action_option_options_layer_name_status: Name of the layer on which the parts are placed
+    detecting_cavities: "Cavity detection…"
     error:
-      invalid_divider_seed: This type of part does not allow for the creation of a divider
+      invalid_divider_seed: This type of part does not allow for the construction of a divider
       invalid_divider_container: "This part is isolated: it does not share any groups or components with other parts"
-      invalid_divider_cavity: "No compartment this location"
-      no_divider_cavity: No compartments were detected in this group or component
-      invalid_front_panel_seed: This type of part does not allow for the design of a front
+      invalid_divider_cavity: "No cavity at this position"
+      no_divider_cavity: No cavities were detected in this group or component
+      invalid_front_panel_seed: This type of part does not allow for the construction of a front
       invalid_front_panel_container: "This part is isolated: it does not share any groups or components with other parts"
       invalid_front_panel_cavity: "There are no cavities open toward you in this position"
-      no_front_panel_cavity: No compartments were detected in this group or component
-      divider_number_overflow: "It is not possible to place {{ number }} dividers in this compartment"
+      no_front_panel_cavity: No cavities were detected in this group or component
+      invalid_back_panel_seed: This type of part does not allow for the construction of a back
+      invalid_back_panel_container: "This part is isolated: it does not share any groups or components with other parts"
+      invalid_back_panel_cavity: "No open cavities are visible opposite this position"
+      no_back_panel_cavity: No cavities were detected in this group or component
+      too_complex_cavity: "The geometry is too complex to detect cavities in it"
+      closed_front_panel_opening: "This opening is already closed off by a front"
+      closed_back_panel_opening: "This opening is already closed by a back"
+      divider_number_overflow: "It is not possible to place {{ number }} dividers in this cavity"
       front_panel_number_overflow: "It is not possible to distribute {{ number }} fronts across this opening"
+      back_panel_number_overflow: "Impossible to distribute {{ number }} backs across this opening"
+      back_panel_severs_parts: "The groove would cut all the way through: {{ names }}. Reduce its depth"
+    warning:
+      no_back_panel_machining: "No groove could be machined: there are no adjacent parts bordering the back at this depth"
     success:
       part_created: "New part created: {{ name }}"
       part_created_plural: "{{ count }} new parts created: {{ name }}"
