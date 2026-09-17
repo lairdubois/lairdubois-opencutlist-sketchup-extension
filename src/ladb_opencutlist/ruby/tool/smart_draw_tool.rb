@@ -216,6 +216,7 @@ module Ladb::OpenCutList
 
   class SmartDrawActionHandler < SmartActionHandler
 
+    include SmartActionHandlerAutoOrientHelper
     include UserTextHelper
 
     # -----
@@ -264,141 +265,6 @@ module Ladb::OpenCutList
 
     def _fetch_option_ask_name?
       @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_ASK_NAME)
-    end
-
-    # -----
-
-    # Weights of the axis signs in #_get_auto_orient_axes_transformation's
-    # score. Offsets are normalized in [ -1, 1 ], and 4 > 2 + 1, 2 > 1, so
-    # these make the score a STRICT priority order Z > X > Y : the offset
-    # magnitudes only break ties, when an axis is ambiguous (offset ~ 0).
-    AUTO_ORIENT_Z_WEIGHT = 4.0
-    AUTO_ORIENT_X_WEIGHT = 2.0
-    AUTO_ORIENT_Y_WEIGHT = 1.0
-
-    # Orients the newly built +definition+'s own axes on its own geometry :
-    # Z on the normal of its largest face, X on the longest edge lying in
-    # that face (perpendicular to the normal) - so the part's axes read as
-    # "front/thickness" instead of whatever axes the pick happened to leave
-    # it in. Axis SIGNS are then decided by the geometry itself, see
-    # #_get_auto_orient_axes_transformation. Returns a transformation to
-    # apply to the definition's content (see callers), or IDENTITY when
-    # there is no face to orient on.
-    def _get_auto_orient_transformation(definition, transformation = IDENTITY)
-
-      # Sum areas of all faces that are "parallel"
-      a_defs = {}
-      definition.entities.each do |entity|
-        next unless entity.is_a?(Sketchup::Face)
-        normal = entity.normal
-        key = a_defs.keys.find { |k| k.parallel?(normal) }
-        if (a_def = a_defs[key]).nil?
-          a_def = { :area => 0, :face => entity }
-          a_defs[normal] = a_def
-        end
-        a_def[:area] += entity.area(transformation)
-      end
-      max_a_def = a_defs.values.max_by { |a_def| a_def[:area] }
-      unless max_a_def.nil?
-
-        face = max_a_def[:face]
-        normal = face.normal
-
-        # Sum lengths of all edges that are "parallel"
-        l_defs = {}
-        definition.entities.each do |entity|
-          next unless entity.is_a?(Sketchup::Edge)
-          _, direction = entity.line
-          next unless direction.valid?
-          next unless direction.perpendicular?(normal)
-          key = l_defs.keys.find { |k| k.parallel?(direction) }
-          if (l_def = l_defs[key]).nil?
-            l_def = { :length => 0, :edge => entity }
-            l_defs[direction] = l_def
-          end
-          l_def[:length] += entity.length(transformation)
-        end
-        max_l_def = l_defs.values.max_by { |l_def| l_def[:length] }
-        unless max_l_def.nil?
-
-          edge = max_l_def[:edge]
-          _, direction = edge.line
-
-          # Both candidates are directions, not oriented axes : the face is
-          # the FIRST one of its parallel group (a panel's two large faces
-          # are antiparallel, so they share a group) and the edge direction
-          # follows its start/end order. Both signs are therefore arbitrary,
-          # and the helper decides them from the geometry.
-          return _get_auto_orient_axes_transformation(definition, direction, normal)
-        end
-
-      end
-
-      IDENTITY
-    end
-
-    # Signs +x_axis+ and +z_axis+ - given as unsigned DIRECTIONS - so that
-    # they point toward +definition+'s geometry, and returns the resulting
-    # transformation (IDENTITY when the corrected basis is the canonical
-    # one, both callers rely on that).
-    #
-    # The transformation is a pure rotation around the definition's own
-    # ORIGIN and Y = Z * X, so the three signs can NOT be chosen freely :
-    # once X and Z are set, Y follows - picking it too would mirror the part
-    # (negative determinant). Only the 4 (sx, sz) combinations are valid, and
-    # they are ranked by a woodworking priority : Z (thickness) first, then
-    # X (length), Y last (see AUTO_ORIENT_*_WEIGHT).
-    def _get_auto_orient_axes_transformation(definition, x_axis, z_axis)
-
-      y_axis = z_axis * x_axis
-
-      points = definition.entities.grep(Sketchup::Edge).flat_map { |edge| [ edge.start.position, edge.end.position ] }
-      return Geom::Transformation.axes(ORIGIN, x_axis, y_axis, z_axis) if points.empty?
-
-      ox = _get_auto_orient_offset(points, x_axis)
-      oy = _get_auto_orient_offset(points, y_axis)
-      oz = _get_auto_orient_offset(points, z_axis)
-
-      # (1, 1) is evaluated first and only a strictly better score replaces
-      # it : a symmetric geometry - where every offset is 0 - keeps the
-      # incoming basis instead of flipping on numerical noise.
-      best_sx = 1
-      best_sz = 1
-      best_score = nil
-      [ 1, -1 ].each do |sx|
-        [ 1, -1 ].each do |sz|
-          score = AUTO_ORIENT_Z_WEIGHT * sz * oz + AUTO_ORIENT_X_WEIGHT * sx * ox + AUTO_ORIENT_Y_WEIGHT * sx * sz * oy
-          if best_score.nil? || score > best_score + 1e-9
-            best_score = score
-            best_sx = sx
-            best_sz = sz
-          end
-        end
-      end
-
-      x_axis = x_axis.reverse if best_sx < 0
-      z_axis = z_axis.reverse if best_sz < 0
-      y_axis = z_axis * x_axis  # Recomputed : keeps the basis right handed, never a mirror
-
-      Geom::Transformation.axes(ORIGIN, x_axis, y_axis, z_axis)
-    end
-
-    # Where +points+ sit along +axis+, relative to the definition's origin,
-    # as a ratio in [ -1, 1 ] : 1 = entirely on the positive side, 0 =
-    # centered on the origin (ambiguous : a disc, a cylinder), -1 = entirely
-    # on the negative side.
-    def _get_auto_orient_offset(points, axis)
-      min = nil
-      max = nil
-      points.each do |point|
-        # Point3d coordinates are Lengths, whose comparisons are tolerant :
-        # to_f keeps the extent computation in plain Float
-        d = point.x.to_f * axis.x + point.y.to_f * axis.y + point.z.to_f * axis.z
-        min = d if min.nil? || d < min
-        max = d if max.nil? || d > max
-      end
-      return 0.0 if min.nil? || (max - min).abs < 1e-9
-      (min + max) / (max - min)
     end
 
   end

@@ -48,7 +48,6 @@ module Ladb::OpenCutList
     ACTION_OPTION_AXES_ACTIVE = 'active'
     ACTION_OPTION_AXES_CONTEXT = 'context'
 
-    ACTION_OPTION_OPTIONS_CONSTRUCTION = 'construction'
     ACTION_OPTION_OPTIONS_MEASURE_REVERSED = 'measure_reversed'
     ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE = 'reduce_envelope'
     ACTION_OPTION_OPTIONS_REUSE_DEFINITION = 'reuse_definition'
@@ -69,7 +68,7 @@ module Ladb::OpenCutList
           ACTION_OPTION_THICKNESS => [ ACTION_OPTION_THICKNESS_THICKNESS ],
           ACTION_OPTION_MEASURE_TYPE => [ ACTION_OPTION_MEASURE_TYPE_INSIDE, ACTION_OPTION_MEASURE_TYPE_CENTERED, ACTION_OPTION_MEASURE_TYPE_OUTSIDE ],
           ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_CONTEXT ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, ACTION_OPTION_OPTIONS_REUSE_DEFINITION, ACTION_OPTION_OPTIONS_ASK_NAME ]
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, ACTION_OPTION_OPTIONS_REUSE_DEFINITION, ACTION_OPTION_OPTIONS_ASK_NAME ]
         }
       },
       {
@@ -79,7 +78,7 @@ module Ladb::OpenCutList
           ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_FRONT_PANEL_OFFSET ],
           ACTION_OPTION_OVERLAY => [ ACTION_OPTION_OVERLAY_INSET, ACTION_OPTION_OVERLAY_FULL_OVERLAY ],
           ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_CONTEXT ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, ACTION_OPTION_OPTIONS_REUSE_DEFINITION, ACTION_OPTION_OPTIONS_MIRROR, ACTION_OPTION_OPTIONS_ASK_NAME ]
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, ACTION_OPTION_OPTIONS_REUSE_DEFINITION, ACTION_OPTION_OPTIONS_MIRROR, ACTION_OPTION_OPTIONS_ASK_NAME ]
         }
       },
       {
@@ -89,7 +88,7 @@ module Ladb::OpenCutList
           ACTION_OPTION_GROOVE => [ ACTION_OPTION_GROOVE_DEPTH, ACTION_OPTION_GROOVE_SETBACK, ACTION_OPTION_GROOVE_THROUGH ],
           ACTION_OPTION_OVERLAY => [ ACTION_OPTION_OVERLAY_INSET, ACTION_OPTION_OVERLAY_FULL_OVERLAY ],
           ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_CONTEXT ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, ACTION_OPTION_OPTIONS_REUSE_DEFINITION, ACTION_OPTION_OPTIONS_ASK_NAME ]
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, ACTION_OPTION_OPTIONS_REUSE_DEFINITION, ACTION_OPTION_OPTIONS_ASK_NAME ]
         }
       }
     ]
@@ -126,7 +125,7 @@ module Ladb::OpenCutList
       when ACTION_BUILD_FRONT_PANEL
           return SmartCursorManager.cursor_pencil_front_panel
       when ACTION_BUILD_BACK_PANEL
-          return SmartCursorManager.cursor_pencil_front_panel
+          return SmartCursorManager.cursor_pencil_back_panel
       end
 
       super
@@ -174,7 +173,7 @@ module Ladb::OpenCutList
         return [ ACTION_BUILD_DIVIDER, ACTION_BUILD_FRONT_PANEL, ACTION_BUILD_BACK_PANEL ]
       when ACTION_OPTION_OPTIONS
         case option
-        when ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_ASK_NAME
+        when ACTION_OPTION_OPTIONS_ASK_NAME
           return [ ACTION_BUILD_DIVIDER, ACTION_BUILD_FRONT_PANEL, ACTION_BUILD_BACK_PANEL ]
         end
       end
@@ -275,8 +274,6 @@ module Ladb::OpenCutList
         end
       when ACTION_OPTION_OPTIONS
         case option
-        when ACTION_OPTION_OPTIONS_CONSTRUCTION
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.167,1H0V.833M0,.667V.333M0,.167V0H.167M.333,0H.667M.833,0H1V.167M1,.333V.667M1,.833V1H.833M.333,1H.667'))
         when ACTION_OPTION_OPTIONS_MEASURE_REVERSED
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1V.667H1V1ZM.25,.667V.833M.5,.667V.833M.75,.667V.833M.861,.292L.708,.139L.5,.083L.292,.139L.14,.292M.14,.083V.292H.333'))
         when ACTION_OPTION_OPTIONS_ASK_NAME
@@ -358,6 +355,7 @@ module Ladb::OpenCutList
 
   class SmartBuildActionHandler < SmartActionHandler
 
+    include SmartActionHandlerAutoOrientHelper
     include UserTextHelper
 
     # -----
@@ -369,20 +367,6 @@ module Ladb::OpenCutList
     end
 
     # -----
-
-    def onToolKeyDown(tool, key, repeat, flags, view)
-
-      if key <= 128
-        key_char = key.chr
-        if key_char == 'X' && @tool.is_key_shift_down?
-          @tool.store_action_option_value(@action, SmartBuildTool::ACTION_OPTION_OPTIONS, SmartBuildTool::ACTION_OPTION_OPTIONS_CONSTRUCTION, !_fetch_option_construction?, fire_event: true)
-          _refresh
-          return true
-        end
-      end
-
-      false
-    end
 
     def onToolTransactionUndo(tool, model)
       _refresh
@@ -396,147 +380,8 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _fetch_option_construction?
-      @tool.fetch_action_option_boolean(@action, SmartBuildTool::ACTION_OPTION_OPTIONS, SmartBuildTool::ACTION_OPTION_OPTIONS_CONSTRUCTION)
-    end
-
     def _fetch_option_ask_name?
       @tool.fetch_action_option_boolean(@action, SmartBuildTool::ACTION_OPTION_OPTIONS, SmartBuildTool::ACTION_OPTION_OPTIONS_ASK_NAME)
-    end
-
-    # -----
-
-    # Weights of the axis signs in #_get_auto_orient_axes_transformation's
-    # score. Offsets are normalized in [ -1, 1 ], and 4 > 2 + 1, 2 > 1, so
-    # these make the score a STRICT priority order Z > X > Y : the offset
-    # magnitudes only break ties, when an axis is ambiguous (offset ~ 0).
-    AUTO_ORIENT_Z_WEIGHT = 4.0
-    AUTO_ORIENT_X_WEIGHT = 2.0
-    AUTO_ORIENT_Y_WEIGHT = 1.0
-
-    # Orients the newly built +definition+'s own axes on its own geometry :
-    # Z on the normal of its largest face, X on the longest edge lying in
-    # that face (perpendicular to the normal) - so the part's axes read as
-    # "front/thickness" instead of whatever axes the pick happened to leave
-    # it in. Axis SIGNS are then decided by the geometry itself, see
-    # #_get_auto_orient_axes_transformation. Returns a transformation to
-    # apply to the definition's content (see callers), or IDENTITY when
-    # there is no face to orient on.
-    def _get_auto_orient_transformation(definition, transformation = IDENTITY)
-
-      # Sum areas of all faces that are "parallel"
-      a_defs = {}
-      definition.entities.each do |entity|
-        next unless entity.is_a?(Sketchup::Face)
-        normal = entity.normal
-        key = a_defs.keys.find { |k| k.parallel?(normal) }
-        if (a_def = a_defs[key]).nil?
-          a_def = { :area => 0, :face => entity }
-          a_defs[normal] = a_def
-        end
-        a_def[:area] += entity.area(transformation)
-      end
-      max_a_def = a_defs.values.max_by { |a_def| a_def[:area] }
-      unless max_a_def.nil?
-
-        face = max_a_def[:face]
-        normal = face.normal
-
-        # Sum lengths of all edges that are "parallel"
-        l_defs = {}
-        definition.entities.each do |entity|
-          next unless entity.is_a?(Sketchup::Edge)
-          _, direction = entity.line
-          next unless direction.valid?
-          next unless direction.perpendicular?(normal)
-          key = l_defs.keys.find { |k| k.parallel?(direction) }
-          if (l_def = l_defs[key]).nil?
-            l_def = { :length => 0, :edge => entity }
-            l_defs[direction] = l_def
-          end
-          l_def[:length] += entity.length(transformation)
-        end
-        max_l_def = l_defs.values.max_by { |l_def| l_def[:length] }
-        unless max_l_def.nil?
-
-          edge = max_l_def[:edge]
-          _, direction = edge.line
-
-          # Both candidates are directions, not oriented axes : the face is
-          # the FIRST one of its parallel group (a panel's two large faces
-          # are antiparallel, so they share a group) and the edge direction
-          # follows its start/end order. Both signs are therefore arbitrary,
-          # and the helper decides them from the geometry.
-          return _get_auto_orient_axes_transformation(definition, direction, normal)
-        end
-
-      end
-
-      IDENTITY
-    end
-
-    # Signs +x_axis+ and +z_axis+ - given as unsigned DIRECTIONS - so that
-    # they point toward +definition+'s geometry, and returns the resulting
-    # transformation (IDENTITY when the corrected basis is the canonical
-    # one, both callers rely on that).
-    #
-    # The transformation is a pure rotation around the definition's own
-    # ORIGIN and Y = Z * X, so the three signs can NOT be chosen freely :
-    # once X and Z are set, Y follows - picking it too would mirror the part
-    # (negative determinant). Only the 4 (sx, sz) combinations are valid, and
-    # they are ranked by a woodworking priority : Z (thickness) first, then
-    # X (length), Y last (see AUTO_ORIENT_*_WEIGHT).
-    def _get_auto_orient_axes_transformation(definition, x_axis, z_axis)
-
-      y_axis = z_axis * x_axis
-
-      points = definition.entities.grep(Sketchup::Edge).flat_map { |edge| [ edge.start.position, edge.end.position ] }
-      return Geom::Transformation.axes(ORIGIN, x_axis, y_axis, z_axis) if points.empty?
-
-      ox = _get_auto_orient_offset(points, x_axis)
-      oy = _get_auto_orient_offset(points, y_axis)
-      oz = _get_auto_orient_offset(points, z_axis)
-
-      # (1, 1) is evaluated first and only a strictly better score replaces
-      # it : a symmetric geometry - where every offset is 0 - keeps the
-      # incoming basis instead of flipping on numerical noise.
-      best_sx = 1
-      best_sz = 1
-      best_score = nil
-      [ 1, -1 ].each do |sx|
-        [ 1, -1 ].each do |sz|
-          score = AUTO_ORIENT_Z_WEIGHT * sz * oz + AUTO_ORIENT_X_WEIGHT * sx * ox + AUTO_ORIENT_Y_WEIGHT * sx * sz * oy
-          if best_score.nil? || score > best_score + 1e-9
-            best_score = score
-            best_sx = sx
-            best_sz = sz
-          end
-        end
-      end
-
-      x_axis = x_axis.reverse if best_sx < 0
-      z_axis = z_axis.reverse if best_sz < 0
-      y_axis = z_axis * x_axis  # Recomputed : keeps the basis right handed, never a mirror
-
-      Geom::Transformation.axes(ORIGIN, x_axis, y_axis, z_axis)
-    end
-
-    # Where +points+ sit along +axis+, relative to the definition's origin,
-    # as a ratio in [ -1, 1 ] : 1 = entirely on the positive side, 0 =
-    # centered on the origin (ambiguous : a disc, a cylinder), -1 = entirely
-    # on the negative side.
-    def _get_auto_orient_offset(points, axis)
-      min = nil
-      max = nil
-      points.each do |point|
-        # Point3d coordinates are Lengths, whose comparisons are tolerant :
-        # to_f keeps the extent computation in plain Float
-        d = point.x.to_f * axis.x + point.y.to_f * axis.y + point.z.to_f * axis.z
-        min = d if min.nil? || d < min
-        max = d if max.nil? || d > max
-      end
-      return 0.0 if min.nil? || (max - min).abs < 1e-9
-      (min + max) / (max - min)
     end
 
   end
@@ -1278,7 +1123,6 @@ module Ladb::OpenCutList
       case state
       when STATE_PLACE, STATE_DISTRIBUTE
         return super +
-               ' | ' + PLUGIN.get_i18n_string("default.constrain_key") + ' + X = ' + PLUGIN.get_i18n_string('tool.smart_build.action_option_options_construction_status') + '.' +
                ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_build.action_option_options_measure_reversed_status') + '.' +
                ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_build.action_option_options_reduce_envelope_status') + '.'
       end
@@ -1549,15 +1393,11 @@ module Ladb::OpenCutList
           k_segments.on_top = true
           @tool.append_3d(k_segments, LAYER_3D_DIVIDER_PREVIEW)
 
-          unless _fetch_option_construction?
-
-            k_segments = Kuix::Segments.new
-            k_segments.add_segments(segments)
-            k_segments.color = color
-            k_segments.line_width = @locked_normal ? 2.5 : 1.5
-            @tool.append_3d(k_segments, LAYER_3D_DIVIDER_PREVIEW)
-
-          end
+          k_segments = Kuix::Segments.new
+          k_segments.add_segments(segments)
+          k_segments.color = color
+          k_segments.line_width = @locked_normal ? 2.5 : 1.5
+          @tool.append_3d(k_segments, LAYER_3D_DIVIDER_PREVIEW)
 
         end
       end
@@ -1793,10 +1633,7 @@ module Ladb::OpenCutList
     # Rebuilds the divider fragments as real geometry inside the model,
     # names and selects the resulting part - the same tail conventions
     # (ask_name option / success notification) as the other draw handlers'
-    # _create_entity. When the construction option is on, only the outline
-    # is drawn (as clines, in a plain group) instead of a real solid part -
-    # same "construction, not a part" contract as the other draw handlers,
-    # so no naming / success notification happens in that case either.
+    # _create_entity.
     # Returns true on success, false when there is nothing valid to build
     # (no pick, no cavity, degenerate intersection).
     def _create_entity(point, view)
@@ -1855,26 +1692,6 @@ module Ladb::OpenCutList
             # (_get_divider_plane_basis), so this transformation is a pure
             # rotation - never a mirror.
             world_transformation = Geom::Transformation.axes(_get_divider_fragment_origin(divider_def, fragment, u, v), Geom::Vector3d.new(u), Geom::Vector3d.new(v), Geom::Vector3d.new(normal_3f))
-
-            if _fetch_option_construction?
-
-              group = active_entities.add_group
-              group.transformation = active_transformation.inverse * world_transformation
-
-              created_faces = _build_divider_faces(group.entities, [ fragment ], world_transformation)
-              if created_faces.empty?
-                group.erase!
-                next
-              end
-
-              edges = created_faces.flat_map(&:edges).uniq
-              edges.each { |edge| group.entities.add_cline(edge.start.position, edge.end.position) }
-              group.entities.erase_entities(created_faces + edges)
-
-              created_entity_count += 1
-
-              next
-            end
 
             definition = model.definitions.add(PLUGIN.get_i18n_string('default.part_single').capitalize)
 
@@ -1938,7 +1755,7 @@ module Ladb::OpenCutList
           return false
         end
 
-        if active? && !_fetch_option_construction?
+        if active?
 
           new_definition = created_definitions.first
           count = created_entity_count
@@ -2981,7 +2798,6 @@ module Ladb::OpenCutList
       when STATE_PLACE
         return super +
                (_merge_allowed? ? ' | ' + PLUGIN.get_i18n_string("tool.smart_#{@tool.get_stripped_name}.action_#{@action}_state_#{state}_merge_status") + '.' : '') +
-               ' | ' + PLUGIN.get_i18n_string("default.constrain_key") + ' + X = ' + PLUGIN.get_i18n_string('tool.smart_build.action_option_options_construction_status') + '.' +
                ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_build.action_option_options_measure_reversed_status') + '.' +
                ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_build.action_option_options_reduce_envelope_status') + '.'
       end
@@ -3108,7 +2924,6 @@ module Ladb::OpenCutList
     end
 
     def onToolKeyDown(tool, key, repeat, flags, view)
-      return true if super
 
       case @state
 
@@ -5187,15 +5002,11 @@ module Ladb::OpenCutList
         k_segments.on_top = true
         @tool.append_3d(k_segments, LAYER_3D_PANEL_PREVIEW)
 
-        unless _fetch_option_construction?
-
-          k_segments = Kuix::Segments.new
-          k_segments.add_segments(segments)
-          k_segments.color = color
-          k_segments.line_width = locked ? 2.5 : 1.5
-          @tool.append_3d(k_segments, LAYER_3D_PANEL_PREVIEW)
-
-        end
+        k_segments = Kuix::Segments.new
+        k_segments.add_segments(segments)
+        k_segments.color = color
+        k_segments.line_width = locked ? 2.5 : 1.5
+        @tool.append_3d(k_segments, LAYER_3D_PANEL_PREVIEW)
 
         # Each panel's own width, once the opening is shared : what the count
         # and the pins did to the panel is exactly what the user cannot read
@@ -5237,9 +5048,6 @@ module Ladb::OpenCutList
     # Rebuilds the panels the pick resolves to as real geometry inside the
     # model, and names the batch - the same tail conventions (ask_name option
     # / success notification) as the other draw handlers' _create_entity.
-    # When the construction option is on, only the outlines are drawn (as
-    # clines, in a plain group each) instead of real parts, so no naming /
-    # success notification happens in that case either.
     #
     # A panel the boolean or SketchUp left unbuildable is skipped rather than
     # fatal : the other panels of the batch are legitimate and must not fall
@@ -5298,26 +5106,6 @@ module Ladb::OpenCutList
           # in both cases one of its faces lands exactly on the mouth plane.
           x_axis, y_axis, z_axis = panel_def.axes
           world_transformation = Geom::Transformation.axes(panel_def.origin, x_axis, y_axis, z_axis)
-
-          if _fetch_option_construction?
-
-            group = active_entities.add_group
-            group.transformation = active_transformation.inverse * world_transformation
-
-            created_faces = _build_panel_faces(group.entities, panel_def, world_transformation)
-            if created_faces.empty?
-              group.erase!
-              next
-            end
-
-            edges = created_faces.flat_map(&:edges).uniq
-            edges.each { |edge| group.entities.add_cline(edge.start.position, edge.end.position) }
-            group.entities.erase_entities(created_faces + edges)
-
-            created_entity_count += 1
-
-            next
-          end
 
           # A panel the mirror option lays in mirror is its
           # neighbour's definition, reflected - whatever the reuse option says,
@@ -5394,7 +5182,7 @@ module Ladb::OpenCutList
           return false
         end
 
-        if active? && !_fetch_option_construction?
+        if active?
 
           new_definition = created_definitions.first
           count = created_entity_count
@@ -5642,7 +5430,6 @@ module Ladb::OpenCutList
     # That second test is what keeps the list tight, and it matters - the
     # worker rebuilds every src it is given, changed by the operation or not.
     def _cut_host_defs(panel_defs, extension_defs)
-      return [] if _fetch_option_construction?
       return [] if _fetch_option_overlay_full_overlay?
       return [] unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef) && cavities_def.valid?
 
@@ -6476,10 +6263,8 @@ module Ladb::OpenCutList
     # that is NOT the mirror image of any - a pinned width, an applied contour
     # cut differently at each end - is simply left alone : a mirror it does
     # not have would be a lie in the model.
-    #
-    # Nothing to mirror when the panels are only construction lines.
     def _get_panel_mirror_transformations(panel_defs)
-      mirror = _fetch_option_mirror? && !_fetch_option_construction?
+      mirror = _fetch_option_mirror?
       panel_defs.map { |panel_def|
         next nil unless mirror && panel_def.band.odd?
 

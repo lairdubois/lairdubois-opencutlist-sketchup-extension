@@ -2460,8 +2460,6 @@ tool:
     action_option_measure_type_outside_status: Positionner l'épaisseur à l'extérieur du point ciblé
     action_option_axes_active_status: Manipuler le long des axes actifs
     action_option_axes_context_status: Manipuler le long des axes du groupe ou composant hôte
-    action_option_options_construction: Traits de construction
-    action_option_options_construction_status: Dessiner en traits de construction
     action_option_options_measure_reversed: Mesure inversée
     action_option_options_measure_reversed_status: Inverser la mesure
     action_option_options_reduce_envelope: Pièces en retrait
@@ -2474,7 +2472,7 @@ tool:
     action_option_options_ask_name_status: Saisir manuellement le nom des pièces
     action_option_options_layer_name: Calque
     action_option_options_layer_name_status: Nom du calque sur lequel sont placées les pièces
-    detecting_cavities: "Détection des cavités…"
+    detecting_cavities: "Détection des cavités..."
     error:
       invalid_divider_seed: Ce type de pièce ne permet pas la construction d'un séparateur
       invalid_divider_container: "Cette pièce est isolée : elle ne partage pas de groupe ou composant avec d'autres pièces"

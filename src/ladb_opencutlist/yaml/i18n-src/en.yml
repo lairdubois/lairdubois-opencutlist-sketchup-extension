@@ -2460,8 +2460,6 @@ tool:
     action_option_measure_type_outside_status: Position the thickness inside the target point
     action_option_axes_active_status: Manipulate along the active axes
     action_option_axes_context_status: Manipulate along the axes of the group or host component
-    action_option_options_construction: Construction Lines
-    action_option_options_construction_status: Draw as construction lines
     action_option_options_measure_reversed: Inverted Measure
     action_option_options_measure_reversed_status: Reverse the measurement
     action_option_options_reduce_envelope: Recessed Parts

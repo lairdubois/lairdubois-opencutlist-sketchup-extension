@@ -135,7 +135,6 @@ module BackPanelRegression
       :_fetch_option_groove_depth => options['depth'].to_f.mm,
       :_fetch_option_groove_setback => options['setback'].to_f.mm,
       :_fetch_option_groove_through? => options['through_groove'],
-      :_fetch_option_construction? => false,
       :_fetch_option_overlay_full_overlay? => options['overlay'] == true,
       :_fetch_option_reduce_envelope? => false,
       :_fetch_option_reuse_definition? => true,
