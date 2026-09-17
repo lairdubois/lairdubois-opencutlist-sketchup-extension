@@ -43,11 +43,12 @@ module Ladb::OpenCutList
   #   whose inner faces bound the compartments, never does (see
   #   SolidCavityFragmentDef#leans_on_a_wall_face_of?). max_openness — the
   #   maximum fraction of the candidate surface lying on the caps — remains as
-  #   an optional secondary cap (disabled by default), and opposed_opening_planes
+  #   an optional secondary cap (disabled by default), and apart_opening_planes
   #   an optional stricter STRUCTURE (disabled by default) : every two
-  #   openings must turn their backs on one another, which leaves out the
-  #   CORNER compartments, open at the front and on top or on a side - see
-  #   SolidCavityFragmentDef#opening_planes_opposed?. It is settled along
+  #   openings must stand apart - turn their backs on one another, or not
+  #   meet at all - which leaves out the CORNER compartments, open at the
+  #   front and on top or on a side - see
+  #   SolidCavityFragmentDef#opening_planes_apart?. It is settled along
   #   with the count below, and appeals to the reduction the same way.
   #   The cap COUNT is not read as final while an envelope reduction is still
   #   to come : a NOTCHED assembly is bridged over its notch by a fan of
@@ -570,7 +571,7 @@ module Ladb::OpenCutList
 
                    envelope: ENVELOPE_HULL,
                    max_opening_planes: 2,
-                   opposed_opening_planes: false,
+                   apart_opening_planes: false,
                    max_openness: 1.0,
                    reduce_envelope: true,
                    overall_cavity: false,
@@ -586,7 +587,7 @@ module Ladb::OpenCutList
 
       @envelope = envelope
       @max_opening_planes = max_opening_planes
-      @opposed_opening_planes = opposed_opening_planes
+      @apart_opening_planes = apart_opening_planes
       @max_openness = max_openness
       @reduce_envelope = reduce_envelope
       @overall_cavity = overall_cavity
@@ -1129,7 +1130,7 @@ module Ladb::OpenCutList
           # down is handed to it as PROVISIONAL rather than dropped, and has to
           # earn its keep by coming out of a clip within the limit. With no
           # reduction to appeal to, the count stands.
-          too_open = !hermetic && (fragment_def.opening_plane_count > @max_opening_planes || (@opposed_opening_planes && !fragment_def.opening_planes_opposed?))
+          too_open = !hermetic && (fragment_def.opening_plane_count > @max_opening_planes || (@apart_opening_planes && !fragment_def.opening_planes_apart?))
           next if too_open && !@reduce_envelope
           # Enclosure filter : a compartment is hemmed in by its walls, a
           # concavity pocket only wraps a corner of the assembly — see

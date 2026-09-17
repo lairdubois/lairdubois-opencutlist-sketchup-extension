@@ -552,8 +552,8 @@ module Ladb::OpenCutList
 
     # Whether the openings of a cavity must turn their backs on one another
     # for it to be a compartment - see CommonSolidFindCavitiesWorker,
-    # opposed_opening_planes. Off here, for the same reason as above.
-    def _cavities_opposed_opening_planes?
+    # apart_opening_planes. Off here, for the same reason as above.
+    def _cavities_apart_opening_planes?
       false
     end
 
@@ -802,7 +802,7 @@ module Ladb::OpenCutList
 
       result_def = CommonSolidFindCavitiesWorker.new(drawing_defs,
                                                      max_opening_planes: _cavities_max_opening_planes,
-                                                     opposed_opening_planes: _cavities_opposed_opening_planes?,
+                                                     apart_opening_planes: _cavities_apart_opening_planes?,
                                                      reduce_envelope: _cavities_reduce_envelope?,
                                                      overall_cavity: _cavities_overall?,
                                                      ignore_applied_panels: _cavities_ignore_applied_panels?,
@@ -874,7 +874,7 @@ module Ladb::OpenCutList
     # What the cavities of a container depend on besides the container itself :
     # the way this handler reads it. See #_get_cavities_def.
     def _cavities_options_key
-      [ _cavities_reduce_envelope?, _cavities_overall?, _cavities_ignore_applied_panels?, _cavities_recess_panel_types, _cavities_own_panel_types, _cavities_max_opening_planes, _cavities_opposed_opening_planes? ]
+      [ _cavities_reduce_envelope?, _cavities_overall?, _cavities_ignore_applied_panels?, _cavities_recess_panel_types, _cavities_own_panel_types, _cavities_max_opening_planes, _cavities_apart_opening_planes? ]
     end
 
     # Whether the cavities of the given part's container - by default the
@@ -1180,7 +1180,6 @@ module Ladb::OpenCutList
     end
 
     def onToolKeyDown(tool, key, repeat, flags, view)
-      return true if super
 
       case @state
 
@@ -3336,13 +3335,15 @@ module Ladb::OpenCutList
       2
     end
 
-    # And those two FACING AWAY from each other, for the same reasons : a
-    # CORNER compartment, open at the front and on top - the top of a carcass
+    # And those two standing APART, for the same reasons : a CORNER
+    # compartment, open at the front and on top - the top of a carcass
     # without a top, but with a back - or on a side, is no more a compartment
-    # a front or a back closes than one open on three sides. Facing away, not
+    # a front or a back closes than one open on three sides. Apart, not
     # parallel : a sloped front, a trapezoidal carcass, a rear bridged by a
-    # slanted hull cap all keep their front and their back.
-    def _cavities_opposed_opening_planes?
+    # slanted hull cap all keep their front and their back - and a top made
+    # of two rails, open between them, keeps its front, the front rail
+    # standing between the two mouths.
+    def _cavities_apart_opening_planes?
       true
     end
 
@@ -3643,7 +3644,8 @@ module Ladb::OpenCutList
     end
 
     # The opening a panel is meant for : among the ones the cavity has, the one
-    # turned most squarely the way #_panel_opening_facing_vector asks for.
+    # the viewer SEES the most of, looking the way
+    # #_panel_opening_facing_vector asks for.
     #
     # Nothing in the cavity says which of its mouths is which - a through tube
     # has two, congruent ones. What says it is the VIEWER, and which way round
@@ -3652,12 +3654,20 @@ module Ladb::OpenCutList
     # (see the hook). An opening turned the other way, or seen edge-on
     # (OPENING_FACING_MIN_DOT), is not a candidate at all.
     #
-    # FACING first, area only to break a tie between two openings the camera
-    # is square to alike. Reading the area first looks reasonable - the main
-    # panel is usually the biggest mouth - and is wrong as soon as the case
-    # is seen from three quarters : a compartment open on its side offers a
-    # mouth several times the panel's, and the panel lands on the flank the
-    # user is not even looking at. What the user points at is what they FACE.
+    # Among the candidates, the APPARENT area decides - the area times the
+    # facing dot, what the opening covers on screen - and the facing alone
+    # breaks a tie. Facing alone is not enough since a compartment may open
+    # on two planes square to each other, provided a panel stands between the
+    # two mouths (see #_cavities_apart_opening_planes?) : a carcass whose top
+    # is two rails, open between them, looked at from above at more than 45°,
+    # would get its front panel on the narrow slot between the rails rather
+    # than on the front it is plainly meant for. The area alone would be wrong
+    # the other way round, a big mouth seen almost edge-on outweighing the one
+    # the user faces - which is why the two are weighed together. And what
+    # made area first wrong once, a corner compartment offering a side mouth
+    # several times the front's in a three quarter view, is no candidate here
+    # any more : its two mouths meet, and the cavity is not a compartment a
+    # front or a back closes.
     def _get_panel_opening_def(fragment_def, view)
       facing = _panel_opening_facing_vector(view)
 
@@ -3667,7 +3677,7 @@ module Ladb::OpenCutList
         normal = opening_def.normal
         dot = normal.x * facing[0] + normal.y * facing[1] + normal.z * facing[2]
         next if dot < OPENING_FACING_MIN_DOT
-        score = [ dot, opening_def.area ]
+        score = [ opening_def.area * dot, dot ]
         next unless best_score.nil? || (score <=> best_score) > 0
         best = opening_def
         best_score = score

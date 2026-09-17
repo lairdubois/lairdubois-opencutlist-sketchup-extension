@@ -6,8 +6,12 @@
 # parts (instance name = part id) and a "ladb_back_panel_test" attribute
 # dictionary :
 #   description  String
-#   picks        JSON [ { origin, target, facing, merge: [ { origin, target, facing } ] } ]
-#                (mm, case local ; the ray must enter the mouth and land on a wall)
+#   picks        JSON [ { origin, target, facing | camera, merge: [ { origin, target } ] } ]
+#                (mm, case local ; the ray must enter the mouth and land on a wall).
+#                facing forces the direction the opening must face ; camera is a
+#                camera DIRECTION instead, handed to the handler's own
+#                _panel_opening_facing_vector - what exercises the choice
+#                between several openings the view sees at once.
 #   options      JSON { thickness, depth, setback (mm), through_groove, overlay (optional, false by default) }
 #   expected     JSON, what is compared (see BackPanelRegression::COMPARED) - written by record: true
 #
@@ -74,8 +78,14 @@ module BackPanelRegression
 
   def self.draw(handler, view, case_instance, pick, options)
     t = case_instance.transformation
-    facing = vec(pick['facing'], t).normalize
-    handler.define_singleton_method(:_panel_opening_facing_vector) { |_view| [ facing.x, facing.y, facing.z ] }
+    if pick['camera']
+      # A real look : the handler's own hook turns it into the facing it asks for
+      camera_view = Struct.new(:camera).new(Struct.new(:direction).new(vec(pick['camera'], t).normalize))
+      handler.define_singleton_method(:_panel_opening_facing_vector) { |_view| super(camera_view) }
+    else
+      facing = vec(pick['facing'], t).normalize
+      handler.define_singleton_method(:_panel_opening_facing_vector) { |_view| [ facing.x, facing.y, facing.z ] }
+    end
 
     part_path = [ case_instance, case_instance.definition.entities.grep(Sketchup::ComponentInstance).first ]
     part = handler.send(:_generate_part_from_path, part_path)
@@ -242,7 +252,7 @@ if defined?(TestUp::TestCase)
 
   class TC_Ladb_Tool_SmartBuildBackPanel < TestUp::TestCase
 
-    CASES = %w[B01 B02 B03 B04 B05 B06 B07 B08 B09 B10 B11 B12 B13 B14 B15 B16 B17 B18 B19]
+    CASES = %w[B01 B02 B03 B04 B05 B06 B07 B08 B09 B10 B11 B12 B13 B14 B15 B16 B17 B18 B19 B20]
 
     def setup
       assert(BackPanelRegression.model_ready?, "Live test : open docs/skp/#{BackPanelRegression::MODEL_NAME} first (active model : #{Sketchup.active_model.path.inspect})")

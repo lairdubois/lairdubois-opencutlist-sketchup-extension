@@ -57,24 +57,44 @@ module Ladb::OpenCutList
     end
 
     # Above this cosine, two opening planes are not read as turning their
-    # backs on one another - see #opening_planes_opposed?. A hair below zero,
+    # backs on one another - see #opening_planes_apart?. A hair below zero,
     # so that the two openings of a corner compartment, square to each other,
     # do not come out opposed for the rounding of an oblique assembly.
     OPENING_PLANES_OPPOSED_MAX_DOT = -0.05
 
-    # Whether every two openings of the cavity turn their backs on one
-    # another : their outward normals more than a right angle apart. What a
-    # compartment a front and a back close looks like - a through tube, even
-    # with its front sloped or its rear bridged by a slanted hull cap - as
-    # opposed to a CORNER compartment, open at the front and on top, or on a
-    # side. true with fewer than two openings. Memoized.
-    def opening_planes_opposed?
-      @opening_planes_opposed = begin
+    # Whether every two openings of the cavity stand APART : either they turn
+    # their backs on one another - outward normals more than a right angle
+    # apart - or their caps do not touch. What a compartment a front and a
+    # back close looks like - a through tube, even with its front sloped or
+    # its rear bridged by a slanted hull cap - as opposed to a CORNER
+    # compartment, open at the front and on top, or on a side.
+    #
+    # The orientation alone reads too much into a corner, though : what makes
+    # one is the two openings MEETING there, along the edge the missing
+    # panels would have shared. A carcass whose top is two rails, open
+    # between them, has a front and a top square to each other just the same,
+    # but the front rail stands between the two mouths - and a front panel
+    # closes that front exactly as it would a carcass with a full top. The
+    # caps tell the two apart : a corner's are one piece across the edge, the
+    # rails' two pieces with the rail's faces in between (see
+    # #_cap_component_ids_by_plane). A slanted sliver of hull bridging a
+    # non flush rim, too small to count as an opening, still joins the pieces
+    # it runs between - and the corner stays a corner.
+    #
+    # true with fewer than two openings. Memoized.
+    def opening_planes_apart?
+      @opening_planes_apart = begin
         _, normal_by_plane, = _cap_area_by_plane
-        normals = _opening_plane_indices.map { |plane_index| normal_by_plane[plane_index] }
-        normals.combination(2).all? { |(ax, ay, az), (bx, by, bz)| ax * bx + ay * by + az * bz <= OPENING_PLANES_OPPOSED_MAX_DOT }
-      end if @opening_planes_opposed.nil?
-      @opening_planes_opposed
+        component_ids_by_plane = nil
+        _opening_plane_indices.combination(2).all? { |first, second|
+          ax, ay, az = normal_by_plane[first]
+          bx, by, bz = normal_by_plane[second]
+          next true if ax * bx + ay * by + az * bz <= OPENING_PLANES_OPPOSED_MAX_DOT
+          component_ids_by_plane ||= _cap_component_ids_by_plane
+          (component_ids_by_plane[first] & component_ids_by_plane[second]).empty?
+        }
+      end if @opening_planes_apart.nil?
+      @opening_planes_apart
     end
 
     # The cavity's openings, one SolidCavityOpeningDef per plane
@@ -426,6 +446,46 @@ module Ladb::OpenCutList
         end
 
         [ area_by_plane, normal_by_plane, origin_index_by_plane ]
+      end
+    end
+
+    # The connected PIECES the caps (face id 0) make up, by plane index : the
+    # ids of the pieces each plane's cap triangles belong to. Two cap
+    # triangles are in the same piece when a chain of cap triangles sharing
+    # WELDED vertices links them - welded for the same reason as
+    # #_cap_edge_counts_by_plane, a corner of an oblique assembly comes back
+    # on distinct indices. Every plane counts, the ones too small to be an
+    # opening included : they are what bridges a non flush rim. Read by
+    # #opening_planes_apart?, and only when the orientation has not settled
+    # it. Memoized.
+    def _cap_component_ids_by_plane
+      @cap_component_ids_by_plane ||= begin
+
+        welded_vertex_indices = _welded_vertex_indices
+        parents = {}
+        find = lambda { |index|
+          parents[index] = index unless parents.key?(index)
+          index = (parents[index] = parents[parents[index]]) while parents[index] != index
+          index
+        }
+
+        vertex_indices_by_plane = {}
+        unless @face_ids.nil?
+
+          _each_triangle_plane do |plane_index, triangle_index, a, b, c|
+            next unless @face_ids[triangle_index] == 0
+            wa = welded_vertex_indices[a]
+            root = find.call(wa)
+            parents[find.call(welded_vertex_indices[b])] = root
+            parents[find.call(welded_vertex_indices[c])] = root
+            (vertex_indices_by_plane[plane_index] ||= []) << wa
+          end
+
+        end
+
+        component_ids_by_plane = {}
+        vertex_indices_by_plane.each { |plane_index, vertex_indices| component_ids_by_plane[plane_index] = vertex_indices.map { |index| find.call(index) }.uniq }
+        component_ids_by_plane
       end
     end
 
