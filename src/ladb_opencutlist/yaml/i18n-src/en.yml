@@ -2472,7 +2472,7 @@ tool:
     action_option_options_ask_name_status: Enter part names manually
     action_option_options_layer_name: Layer
     action_option_options_layer_name_status: Name of the layer on which the parts are placed
-    detecting_cavities: "Cavity detection…"
+    detecting_cavities: "Cavity detection..."
     error:
       invalid_divider_seed: This type of part does not allow for the construction of a divider
       invalid_divider_container: "This part is isolated: it does not share any groups or components with other parts"
