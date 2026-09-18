@@ -29,8 +29,10 @@
 
             // Fetch UI elements
             const $widgetPreset = $('.ladb-widget-preset', that.$element);
-            const $inputFrontPanelOffset = $('#ladb_input_front_panel_offset', that.$element);
             const $inputThickness = $('#ladb_input_thickness', that.$element);
+            const $inputGrooveDepth = $('#ladb_input_groove_depth', that.$element);
+            const $inputGrooveSetback = $('#ladb_input_groove_setback', that.$element);
+            const $selectGrooveThrough = $('#ladb_select_groove_through', that.$element);
             const $selectAxes = $('#ladb_select_axes', that.$element);
             const $selectMeasureReversed = $('#ladb_select_measure_reversed', that.$element);
             const $selectReduceEnvelope = $('#ladb_select_reduce_envelope', that.$element);
@@ -39,8 +41,10 @@
             const $btnValidate = $('#ladb_btn_validate', that.$element);
 
             const fnFetchOptions = function (options) {
-                options.front_panel_offset = $inputFrontPanelOffset.val();
                 options.thickness = $inputThickness.val();
+                options.groove_depth = $inputGrooveDepth.val();
+                options.groove_setback = $inputGrooveSetback.val();
+                options.groove_through = $selectGrooveThrough.val() === '1';
                 options.axes = $selectAxes.val();
                 options.measure_reversed = $selectMeasureReversed.val() === '1';
                 options.reduce_envelope = $selectReduceEnvelope.val() === '1';
@@ -49,7 +53,9 @@
             };
             const fnFillInputs = function (options) {
                 $inputThickness.val(options.thickness);
-                $inputFrontPanelOffset.val(options.front_panel_offset);
+                $inputGrooveDepth.val(options.groove_depth);
+                $inputGrooveSetback.val(options.groove_setback);
+                $selectGrooveThrough.selectpicker('val', options.groove_through ? '1' : '0');
                 $selectAxes.selectpicker('val', options.axes);
                 $selectMeasureReversed.selectpicker('val', options.measure_reversed ? '1' : '0');
                 $selectReduceEnvelope.selectpicker('val', options.reduce_envelope ? '1' : '0');
@@ -59,13 +65,15 @@
 
             $widgetPreset.ladbWidgetPreset({
                 dialog: that.dialog,
-                dictionary: 'tool_smart_build_options',
-                section: 'action_2',
+                dictionary: dictionary,
+                section: section,
                 fnFetchOptions: fnFetchOptions,
                 fnFillInputs: fnFillInputs
             });
             $inputThickness.ladbTextinputDimension();
-            $inputFrontPanelOffset.ladbTextinputDimension();
+            $inputGrooveDepth.ladbTextinputDimension();
+            $inputGrooveSetback.ladbTextinputDimension();
+            $selectGrooveThrough.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
             $selectAxes.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
             $selectMeasureReversed.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
             $selectReduceEnvelope.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
@@ -97,9 +105,12 @@
                 if (that.options.focused_field.option === 'thickness') {
                     $inputThickness.focus();
                     $inputThickness.select();
-                } else if (that.options.focused_field.option === 'front_panel_offset') {
-                    $inputFrontPanelOffset.focus();
-                    $inputFrontPanelOffset.select();
+                } else if (that.options.focused_field.option === 'groove_depth') {
+                    $inputGrooveDepth.focus();
+                    $inputGrooveDepth.select();
+                } else if (that.options.focused_field.option === 'groove_setback') {
+                    $inputGrooveSetback.focus();
+                    $inputGrooveSetback.select();
                 }
             }
 

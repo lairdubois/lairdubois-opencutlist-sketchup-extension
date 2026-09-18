@@ -18,9 +18,9 @@ module Ladb::OpenCutList
 
   class SmartBuildTool < SmartTool
 
-    ACTION_BUILD_DIVIDER = 1
-    ACTION_BUILD_FRONT_PANEL = 2
-    ACTION_BUILD_BACK_PANEL = 3
+    ACTION_BUILD_DIVIDER = 0
+    ACTION_BUILD_FRONT_PANEL = 1
+    ACTION_BUILD_BACK_PANEL = 2
 
     ACTION_OPTION_THICKNESS = 'thickness'
     ACTION_OPTION_OFFSET = 'offset'

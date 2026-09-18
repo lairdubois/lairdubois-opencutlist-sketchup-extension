@@ -30,7 +30,7 @@
             // Fetch UI elements
             const $widgetPreset = $('.ladb-widget-preset', that.$element);
             const $inputShapeOffset = $('#ladb_input_shape_offset', that.$element);
-            const $selectConstrution = $('#ladb_select_construction', that.$element);
+            const $selectConstruction = $('#ladb_select_construction', that.$element);
             const $selectMeasureReversed = $('#ladb_select_measure_reversed', that.$element);
             const $selectPullCentered = $('#ladb_select_pull_centered', that.$element);
             const $selectDrawIn = $('#ladb_select_draw_in', that.$element);
@@ -39,7 +39,7 @@
 
             const fnFetchOptions = function (options) {
                 options.shape_offset = $inputShapeOffset.val();
-                options.construction = $selectConstrution.val() === '1';
+                options.construction = $selectConstruction.val() === '1';
                 options.measure_reversed = $selectMeasureReversed.val() === '1';
                 options.pull_centered = $selectPullCentered.val() === '1';
                 options.draw_in = $selectDrawIn.val() === '1';
@@ -47,7 +47,7 @@
             };
             const fnFillInputs = function (options) {
                 $inputShapeOffset.val(options.shape_offset);
-                $selectConstrution.selectpicker('val', options.construction ? '1' : '0');
+                $selectConstruction.selectpicker('val', options.construction ? '1' : '0');
                 $selectMeasureReversed.selectpicker('val', options.measure_reversed ? '1' : '0');
                 $selectPullCentered.selectpicker('val', options.pull_centered ? '1' : '0');
                 $selectDrawIn.selectpicker('val', options.draw_in ? '1' : '0');
@@ -62,7 +62,7 @@
                 fnFillInputs: fnFillInputs
             });
             $inputShapeOffset.ladbTextinputDimension();
-            $selectConstrution.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
+            $selectConstruction.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
             $selectMeasureReversed.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
             $selectPullCentered.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
             $selectDrawIn.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
