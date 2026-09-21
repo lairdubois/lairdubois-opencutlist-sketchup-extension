@@ -1,6 +1,5 @@
 module Ladb::OpenCutList
 
-  require 'digest'
   require_relative 'smart_tool'
   require_relative '../lib/kuix/geom/bounds3d'
   require_relative '../lib/geometrix/geometrix'
@@ -15,6 +14,8 @@ module Ladb::OpenCutList
   require_relative '../worker/common/common_drawing_decomposition_worker'
   require_relative '../worker/common/common_solid_boolean_apply_worker'
   require_relative '../worker/common/common_solid_rebuild_from_clines_worker'
+  require_relative '../worker/common/common_stretch_split_worker'
+  require_relative '../worker/common/common_stretch_apply_worker'
 
   class SmartReshapeTool < SmartTool
 
@@ -323,10 +324,6 @@ module Ladb::OpenCutList
     LAYER_3D_CUTTERS_PREVIEW = 200
 
     PX_INFLATE_VALUE = 50
-
-    OPERATION_NONE = 0
-    OPERATION_MOVE = 1
-    OPERATION_SPLIT = 2
 
     @@last_cutters_data = nil
 
@@ -1651,8 +1648,8 @@ module Ladb::OpenCutList
     def _preview_stretch(view)
       return false if (stretch_def = _get_stretch_def(@picked_stretch_start_point, @mouse_snap_point)).nil?
 
-      split_def, emv, edvs, lps, lpe = stretch_def.values_at(:split_def, :emv,:edvs, :lps, :lpe)
-      et, container_defs = split_def.values_at(:et, :container_defs)
+      lps, lpe = stretch_def.lps, stretch_def.lpe
+      et = stretch_def.split_def.et
 
       axis_color = _get_vector_color(lps.vector_to(lpe))
       no_scale_color = Kuix::COLOR_DARK_GREY
@@ -1666,15 +1663,7 @@ module Ladb::OpenCutList
 
         if container_def.edge_defs.any?
           k_segments = Kuix::Segments.new
-          k_segments.add_segments(container_def.edge_defs.flat_map { |edge_def|
-            edge = edge_def.edge
-            t = edge_def.transformation
-            ti = edge_def.transformation_inverse
-            [
-              edge.start.position.offset(edvs[edge_def.start_section_def].transform(ti)).transform(t).offset(emv),
-              edge.end.position.offset(edvs[edge_def.end_section_def].transform(ti)).transform(t).offset(emv)
-            ]
-          })
+          k_segments.add_segments(stretch_def.preview_edge_segments(container_def))
           k_segments.color = color
           k_segments.line_width = 1.5
           k_segments.transformation = et
@@ -1685,15 +1674,7 @@ module Ladb::OpenCutList
 
         if container_def.cline_defs.any?
           k_segments = Kuix::Segments.new
-          k_segments.add_segments(container_def.cline_defs.flat_map { |cline_def|
-            cline = cline_def.cline
-            t = cline_def.transformation
-            ti = cline_def.transformation_inverse
-            [
-              cline.start.offset(edvs[cline_def.start_section_def].transform(ti)).transform(t).offset(emv),
-              cline.end.offset(edvs[cline_def.end_section_def].transform(ti)).transform(t).offset(emv)
-            ]
-          })
+          k_segments.add_segments(stretch_def.preview_cline_segments(container_def))
           k_segments.color = color
           k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
           k_segments.transformation = et
@@ -1704,12 +1685,7 @@ module Ladb::OpenCutList
 
         if container_def.snap_defs.any?
           k_points = _create_floating_points(
-            points: container_def.snap_defs.map { |snap_def|
-              snap = snap_def.snap
-              t = snap_def.transformation
-              ti = snap_def.transformation_inverse
-              snap.position.offset(edvs[snap_def.section_def].transform(ti)).transform(t).offset(emv)
-            },
+            points: stretch_def.preview_snap_points(container_def),
             style: Kuix::POINT_STYLE_CIRCLE,
             fill_color: Kuix::COLOR_SNAP_FILL,
             stroke_color: Kuix::COLOR_SNAP_STROKE,
@@ -1722,7 +1698,7 @@ module Ladb::OpenCutList
         container_def.children.each { |container_def| fn_preview_container.call(container_def, color) }
 
       end
-      fn_preview_container.call(container_defs.first, axis_color)
+      fn_preview_container.call(stretch_def.split_def.root_container_def, axis_color)
 
 
       # _unhide_instances
@@ -1862,7 +1838,7 @@ module Ladb::OpenCutList
     def _read_stretch(tool, text, view)
       return false if (stretch_def = _get_stretch_def(@picked_stretch_start_point, @mouse_snap_point)).nil?
 
-      lps, lpe = stretch_def.values_at(:lps, :lpe)
+      lps, lpe = stretch_def.lps, stretch_def.lpe
 
       distance = _read_user_text_length(tool, text, lps.distance(lpe))
       return true if distance.nil?
@@ -1879,11 +1855,9 @@ module Ladb::OpenCutList
       end_point, pmin, pmax, compression_distance, max_compression_distance = measure_def.values_at(:end_point, :pmin, :pmax, :compression_distance, :max_compression_distance)
 
       return false if (stretch_def = _get_stretch_def(@picked_stretch_start_point, end_point)).nil?
-      split_def, esv = stretch_def.values_at(:split_def, :esv)
-      reversed, _ = split_def.values_at(:reversed)
 
       # Error if max distance exceeded
-      compressed = esv.valid? && (reversed ? esv.samedirection?(@picked_axis) : !esv.samedirection?(@picked_axis))
+      compressed = stretch_def.compressed?
       compressed = true unless @picked_interior_handle.nil?  # An interior stretch compresses gaps both ways
       if compressed && compression_distance > max_compression_distance
         if measure_type_outside
@@ -1984,12 +1958,6 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _get_xyz_method
-      { X_AXIS => :x, Y_AXIS => :y, Z_AXIS => :z }[@picked_axis]
-    end
-
-    # -----
-
     # The grip outward direction : offsetting the grip along it expands the shape, offsetting it
     # backward compresses the shape.
     def _get_stretch_outward_direction
@@ -2002,100 +1970,13 @@ module Ladb::OpenCutList
     # 'direction' defaults to the mouse driven one : pass an explicit one to let the sign of the
     # measure drive the way.
     def _get_stretch_measure_def(measure, reference_point = @mouse_snap_point, direction = nil)
-      return nil if (stretch_def = _get_stretch_def(@picked_stretch_start_point, reference_point)).nil?
-
-      split_def, factor, lps, lpe = stretch_def.values_at(:split_def, :factor, :lps, :lpe)
-      et, epmin, epmax, max_compression_distance, section_defs = split_def.values_at(:et, :epmin, :epmax, :max_compression_distance, :section_defs)
-
-      if (v = direction).nil?
-        v = lps.vector_to(lpe)
-        v = _get_stretch_outward_direction unless v.valid?  # Fallback to the grip outward direction
-      end
-      return nil if v.nil? || !v.valid?
-
-      pmin = epmin.transform(et)
-      pmax = epmax.transform(et)
-
-      if _stretch_measure_type_outside?
-        real_distance = (measure - (pmax - pmin).length) / factor
-        compression_distance = (real_distance * factor).abs
-      else
-        real_distance = measure
-        compression_distance = real_distance.abs
-        max_compression_distance = max_compression_distance / factor
-      end
-
-      unless @picked_interior_handle.nil?
-        # An interior stretch compresses gaps both ways : the max distance depends on the way
-        t_coefs = _get_interior_t_coefs(section_defs.length - 1)
-        way = v.transform(et.inverse).samedirection?(@picked_axis) ? 1.0 : -1.0
-        way = -way if real_distance < 0
-        interior_max_distance = _get_interior_max_distance(split_def, t_coefs, way)
-        max_compression_distance = interior_max_distance unless interior_max_distance.nil?
-      end
-
-      {
-        end_point: @picked_stretch_start_point.offset(v, real_distance),
-        pmin: pmin,
-        pmax: pmax,
-        compression_distance: compression_distance,
-        max_compression_distance: max_compression_distance,
-      }
-    end
-
-    # -----
-
-    # Returns the 0-based index in the active selection path of the first ancestor to make unique
-    # when the edited context (the last path element's definition) is also visible through a locked
-    # occurrence path, or nil if the context is safe. Occurrence paths that share the context
-    # without any lock are left shared: the stretch is expected to propagate to them.
-    def _locked_aliased_context_level
-      path = get_active_selection_path
-      return nil if !path.is_a?(Array) || path.empty?
-      return nil unless (context = path.last).respond_to?(:definition)
-
-      _instances_to_paths(context.definition.instances, (occurrence_paths = []), Sketchup.active_model.entities)
-
-      level = nil
-      occurrence_paths.each do |occurrence_path|
-        next if occurrence_path == path ||
-                !LockUtils.locked_path?(occurrence_path)
-        divergence = 0
-        divergence += 1 while divergence < occurrence_path.size && divergence < path.size && occurrence_path[divergence] == path[divergence]
-        level = level.nil? ? divergence : [ level, divergence ].min
-      end
-      level
-    end
-
-    # Make the active selection path unique from 'level' down to its last element so that the
-    # stretch edits a context that no locked occurrence can see (SketchUp locks are not enforced
-    # by the Ruby API), then remap the active selection and the split_def containers to the
-    # copies. make_unique preserves the entity order, so copies are retrieved by index.
-    def _isolate_locked_aliased_context(level)
-      path = get_active_selection_path
-      instances = get_active_selection_instances
-
-      child_positions = path.each_cons(2).map { |parent, child| parent.definition.entities.to_a.index(child) }
-      instance_positions = instances.map { |instance| path.last.definition.entities.to_a.index(instance) }
-
-      new_path = path.take(level)
-      current = path[level]
-      (level...path.size).each do |j|
-        current.make_unique if current.definition.count_used_instances > 1
-        new_path << current
-        current = current.definition.entities[child_positions[j]] if j < path.size - 1
-      end
-
-      new_instances = instance_positions.map { |position| new_path.last.definition.entities[position] }
-
-      mapping = instances.zip(new_instances).to_h
-      if (split_def = _get_split_def).is_a?(Hash)
-        split_def[:container_defs].each do |container_def|
-          container_def.container = mapping[container_def.container] if mapping.key?(container_def.container)
-        end
-      end
-
-      _set_active_selection(new_path, new_instances, true)
+      return nil unless (split_def = _get_split_def).is_a?(StretchSplitDef)
+      split_def.measure_def(@picked_stretch_start_point, measure, reference_point,
+                            direction: direction,
+                            fallback_direction: _get_stretch_outward_direction,
+                            centered: _fetch_option_options_centered?,
+                            measure_outside: _stretch_measure_type_outside?,
+                            interior_index: _get_picked_interior_index)
     end
 
     # -----
@@ -2103,453 +1984,34 @@ module Ladb::OpenCutList
     def _stretch_entity
       return if (stretch_def = _get_stretch_def(@picked_stretch_start_point, @picked_stretch_end_point)).nil?
 
-      split_def, t_coefs, emv, esv, edvs, lps, lpe = stretch_def.values_at(:split_def, :t_coefs, :emv, :esv, :edvs, :lps, :lpe)
-      et, eps, evpspe, reversed, section_defs, container_defs = split_def.values_at(:et, :eps, :evpspe, :reversed, :section_defs, :container_defs)
-
       # Keep the applied measure - and its way - to be able to reuse them on the next stretch
-      compressed = esv.valid? && (reversed ? esv.samedirection?(@picked_axis) : !esv.samedirection?(@picked_axis))
-      _store_last_stretch_measure(lps.distance(lpe), compressed)
+      _store_last_stretch_measure(stretch_def.measure, stretch_def.compressed?)
 
       _unhide_instances
 
-      # Prepare uniqueness data
-      container_defs.first.compute_md5(@picked_axis, t_coefs)
-      container_defs.first.compute_entity_pos
-
-      # Divide in 2 operations to hide native make_unique group operations
-      # The first operation set with "next_transparent = true"
-
-      model = Sketchup.active_model
-      model.start_operation('OCL Stretch', true, true, !active?)
-
-        # Isolate context routine
-        # -----------------------
-
-        # If the edited context is visible through a locked occurrence path, make the selection
-        # path unique first so the stretch cannot alter what the lock protects.
-        unless (locked_aliased_level = _locked_aliased_context_level).nil?
-          _isolate_locked_aliased_context(locked_aliased_level)
-        end
-
-        # Make Unique routine
-        # -------------------
-
-        make_unique_o = _fetch_option_options_make_unique?
-
-        container_defs.group_by(&:definition)
-                      .sort_by { |definition, container_defs| container_defs.map(&:depth).max }  # Ensure that lowest depth containers are processed first
-                      .each do |definition, container_defs|
-
-          next if definition.nil?
-
-          count_stretched_instances = container_defs.size
-          count_instances = definition.count_instances
-          count_used_instances = definition.count_used_instances
-
-          # Process extern instances
-          if !make_unique_o && count_used_instances > count_stretched_instances
-
-            # -- Extern instances exist
-
-            # Extract definition instances
-            definition_instances = definition.instances
-
-            # Extract stretched instances
-            stretched_instances = container_defs.map(&:container)
-
-            if count_used_instances > count_instances
-
-              active_selection_path = get_active_selection_path
-              active_selection_path_size = active_selection_path.size
-
-              # Retrieve all instance paths
-              _instances_to_paths(definition_instances, (extern_instance_paths = []), model.entities)
-
-              # Reduce to extern instances only
-              extern_instance_paths.delete_if { |path|
-                path.take(active_selection_path_size) == active_selection_path &&
-                stretched_instances.include?(path[active_selection_path_size])
-              }
-
-              # An instance is locked if AT LEAST ONE of its paths is locked: re-pointing it to the
-              # stretched definition would also alter its occurrences under locked ancestors.
-              locked_extern_instances = extern_instance_paths.select { |path| LockUtils.locked_path?(path) }.map! { |path| path.last }
-              unlocked_extern_instances = extern_instance_paths.map { |path| path.last }.uniq - locked_extern_instances
-
-              make_unique_e = locked_extern_instances.any?
-
-            else
-
-              locked_extern_instances, unlocked_extern_instances = LockUtils.partition_locked_extern_instances(definition, stretched_instances)
-
-              # The Ruby API does not enforce locks: without make unique, locked extern instances
-              # would be silently deformed and back translated.
-              make_unique_e = locked_extern_instances.any?
-
-            end
-
-          else
-
-            # -- No extern instances
-
-            make_unique_e = false
-
-          end
-
-          # Groups with edges must be made unique because SketchUp make them unique when transform entities and this causing troubles with the stretching.
-          make_unique_g = definition.group? && (!make_unique_o || container_defs.first.edge_defs.any? && count_stretched_instances > 1)
-
-          container_defs.sort_by { |container_def| -container_def.operation }
-                        .group_by(&:md5)
-                        .each do |md5, container_defs|
-
-            make_unique_d = make_unique_o && count_stretched_instances < count_used_instances
-            make_unique_c = (make_unique_e || make_unique_g || make_unique_d || container_defs.size < count_stretched_instances) && container_defs.any? { |container_def| container_def.operation == OPERATION_SPLIT }
-
-            # puts "  make_unique_e: #{make_unique_e}"
-            # puts "  make_unique_d: #{make_unique_d}"
-            # puts "  make_unique_c: #{make_unique_c}"
-            # puts "  #{md5}: #{container_defs.size} / #{count_stretched_instances} / #{count_used_instances} (op: #{container_defs.map(&:operation)}))"
-            # container_defs.each do |container_def|
-            #   puts "   ↳ C <#{definition.name}> (#{container_def.container.name}) #{container_def.entity_pos} (edeges: #{container_def.edge_defs.size})"
-            #   # container_def.edge_defs.each do |edge_def|
-            #   #   puts "     ↳ E #{edge_def.entity_pos}"
-            #   # end
-            # end
-
-            if make_unique_c
-
-              if definition.group?
-
-                container_defs.each do |container_def|
-
-                  new_container = container_def.container.make_unique
-                  new_definition = new_container.definition
-
-                  container_def.container = new_container
-                  container_def.edge_defs.each do |edge_def|
-                    edge_def.edge = new_definition.entities[edge_def.entity_pos]
-                  end
-                  container_def.cline_defs.each do |cline_def|
-                    cline_def.cline = new_definition.entities[cline_def.entity_pos]
-                  end
-                  container_def.snap_defs.each do |snap_def|
-                    snap_def.snap = new_definition.entities[snap_def.entity_pos]
-                  end
-                  container_def.children.each do |container_def|
-                    container_def.container = new_definition.entities[container_def.entity_pos]
-                  end
-
-                end
-
-              else
-
-                container_def0 = container_defs.first
-
-                new_container = container_def0.container.make_unique
-                new_definition = new_container.definition
-
-                container_def0.container = new_container
-
-                container_defs.each do |container_def|
-                  container_def.container.definition = new_definition
-                  container_def.edge_defs.each do |edge_def|
-                    edge_def.edge = new_definition.entities[edge_def.entity_pos]
-                  end
-                  container_def.cline_defs.each do |cline_def|
-                    cline_def.cline = new_definition.entities[cline_def.entity_pos]
-                  end
-                  container_def.snap_defs.each do |snap_def|
-                    snap_def.snap = new_definition.entities[snap_def.entity_pos]
-                  end
-                  container_def.children.each do |container_def|
-                    container_def.container = new_definition.entities[container_def.entity_pos]
-                  end
-                end
-
-                if make_unique_e && defined?(unlocked_extern_instances)
-                  unlocked_extern_instances.each do |extern_instance|
-                    extern_instance.definition = new_definition
-                  end
-                end
-
-              end
-
-              count_stretched_instances -= container_defs.size
-              count_used_instances -= container_defs.size
-
-            end
-
-          end
-
-        end
-
-      model.commit_operation
-
-      model = Sketchup.active_model
-      model.start_operation('OCL Stretch', true, false, !active?)
-
-        # Stretch routine
-        # ---------------
-
-        # Keep stretched definitions (and their instances) to avoid stretching the same definition twice
-        stretched_definition_defs = {}
-
-        # A sorting order is defined to ensure that the furthest edges are moved first
-        sorting_order = (esv.valid? && esv.samedirection?(evpspe)) ? -1 : 1
-
-        # Precompute the inverse of the active selection path transformation (invariant within the loop)
-        active_selection_path_t = PathUtils.get_transformation(get_active_selection_path, IDENTITY)
-        active_selection_path_ti = active_selection_path_t.inverse
-
-        container_defs.each do |container_def|
-
-          next if container_def.model?
-
-          entities = container_def.entities
-          container = container_def.container
-          container_edv = edvs[container_def.section_def]
-
-          # Stretch definition edges only once
-          unless stretched_definition_defs.has_key?(container_def.definition)
-
-            # Move edges
-            # ----------
-
-            container_def.edge_defs
-                         .select { |edge_def| edge_def.operation == OPERATION_MOVE }
-                         .group_by(&:start_section_def)
-                         .sort_by { |section_def, _| section_def.index * sorting_order }.to_h # Sort edges to be sure that farthest points are moved first
-                         .each do |section_def, edge_defs|
-
-              edv = edvs[section_def]
-
-              edge_def0 = edge_defs.first
-              t = edge_def0.transformation
-
-              # Subtract container move
-              edv -= container_edv
-              edv.reverse! if container_def.section_def == section_def && edv.valid?
-
-              target_position0 = edge_def0.ref_position
-              target_position0 = target_position0.offset(edv.transform(t.inverse)) if edv.valid?
-              current_position0 = edge_def0.edge.start.position
-
-              v = current_position0.vector_to(target_position0)
-
-              entities.transform_entities(Geom::Transformation.translation(v), edge_defs.map(&:edge)) if v.valid?
-
-            end
-
-            # Move clines
-            # -----------
-
-            container_def.cline_defs
-                         .each do |cline_def|
-
-              t = cline_def.transformation
-
-              # Compute Start point
-
-              edv = edvs[cline_def.start_section_def]
-
-              # Subtract container move
-              edv -= container_edv
-              edv.reverse! if container_def.section_def == cline_def.start_section_def && edv.valid?
-
-              target_start = cline_def.ref_start_position
-              target_start = target_start.offset(edv.transform(t.inverse)) if edv.valid?
-
-              # Compute End point
-
-              edv = edvs[cline_def.end_section_def]
-
-              # Subtract container move
-              edv -= container_edv
-              edv.reverse! if container_def.section_def == cline_def.end_section_def && edv.valid?
-
-              target_end = cline_def.ref_end_position
-              target_end = target_end.offset(edv.transform(t.inverse)) if edv.valid?
-
-              # Apply
-
-              cline_def.cline.direction = target_start.vector_to(target_end)
-              cline_def.cline.position = cline_def.cline.start = target_start
-              cline_def.cline.end = target_end
-
-            end
-
-            # Move snaps
-            # ----------
-
-            container_def.snap_defs
-                         .select { |snap_def| snap_def.operation == OPERATION_MOVE }
-                         .group_by(&:section_def)
-                         .each do |section_def, snap_defs|
-
-              edv = edvs[section_def]
-
-              snap_def0 = snap_defs.first
-              t = snap_def0.transformation
-
-              # Subtract container move
-              edv -= container_edv
-              edv.reverse! if container_def.section_def == section_def && edv.valid?
-
-              target_position0 = snap_def0.ref_position
-              target_position0 = target_position0.offset(edv.transform(t.inverse)) if edv.valid?
-              current_position0 = snap_def0.snap.position
-
-              v = current_position0.vector_to(target_position0)
-
-              entities.transform_entities(Geom::Transformation.translation(v), snap_defs.map(&:snap)) if v.valid?
-
-            end
-
-            # Flag definition as stretched + keep edv converted to definition space
-            ddv = container_edv
-            unless ddv.nil?
-              ddv += emv if container_def.depth <= 1 && get_active_selection_instances.include?(container_def.container) # Apply "move" translation (if the centered option is enabled)
-              if container_def.depth > 0
-                ddv = ddv.transform((container_def.transformation * container_def.container_transformation).inverse)
-              else
-                # Root container: unlike children, its SplitContainerDef transformation is 'et' (edit -> world),
-                # not a local -> edit map. The edit -> definition conversion must be composed from the live
-                # path transformations: (path * container).inverse * et. Do NOT use 'det' here: the drawing_def
-                # root transformation is orthonormalized by the decomposition worker (mirror stripped), so 'det'
-                # carries a stray reflection for mirrored instances, while this composition stays consistent
-                # with the edge moves whatever the rotation or mirror of the instance and its path.
-                ddv = ddv.transform((active_selection_path_t * container_def.container_transformation).inverse * et)
-              end
-            end
-            stretched_definition_defs[container_def.definition] = StretchedDefinitionDef.new(ddv)
-
-          end
-
-          # Keep stretched container def, if not make unique to be able to back transform extern instances
-          stretched_definition_defs[container_def.definition].containers << container_def.container if !make_unique_o && container_def.component? && container_def.operation == OPERATION_SPLIT
-
-          # Move container
-          # --------------
-
-          next if container_def.operation == OPERATION_NONE ||
-                  container_def.section_def.nil?
-
-          edv = container_edv
-
-          # Subtract parent container move
-          unless container_def.parent.nil? || container_def.parent.section_def.nil?
-            edv -= edvs[container_def.parent.section_def]
-            edv.reverse! if container_def.parent.section_def == container_def.section_def && edv.valid?
-          end
-
-          # Apply move translation (if the centered option is enabled)
-          edv += emv if container_def.depth <= 1 && get_active_selection_instances.include?(container_def.container)
-
-          target_position = container_def.ref_position
-          target_position = target_position.offset(edv.transform(if container_def.depth == 0
-                                                                   active_selection_path_ti * container_def.transformation
-                                                                 else
-                                                                   container_def.transformation.inverse
-                                                                 end)) if edv.valid?
-          current_position = ORIGIN.transform(container.transformation)
-
-          v = current_position.vector_to(target_position)
-
-          if container.respond_to?(:glued_to) && container.glued_to
-            # Deforming the host face of a glued instance makes SketchUp rewrite its
-            # transformation in place to strip any mirror (det < 0). Re-impose the full
-            # reference transformation at the target position, even when v is zero.
-            container.transformation = Geom::Transformation.translation(container_def.ref_position.vector_to(target_position)) * container_def.ref_transformation
-          else
-            container.transform!(Geom::Transformation.translation(v)) if v.valid?
-          end
-
-        end
-
-        # Apply back translation on extern instances if needed
-        unless make_unique_o
-
-          stretched_definition_defs.each do |definition, stretched_definition_def|
-
-            if stretched_definition_def.containers.any?
-              extern_instances = definition.instances - stretched_definition_def.containers
-              if extern_instances.any?
-
-                extern_instances.each do |extern_instance|
-
-                  t = extern_instance.transformation
-
-                  ref_position = @extern_instances_ref_positions[extern_instance] ||= ORIGIN.transform(t)
-
-                  # puts "stretched_definition_def.ddv = #{stretched_definition_def.ddv}"
-
-                  target_position = ref_position
-                  target_position = target_position.offset(stretched_definition_def.ddv.transform(t)) if !stretched_definition_def.ddv.nil? && stretched_definition_def.ddv.valid?
-                  current_position = ORIGIN.transform(t)
-
-                  # k_edge = Kuix::EdgeMotif3d.new
-                  # k_edge.start.copy!(current_position)
-                  # k_edge.end.copy!(target_position)
-                  # k_edge.color = Kuix::COLOR_CYAN
-                  # k_edge.line_width = 2
-                  # k_edge.end_arrow = true
-                  # k_edge.on_top = true
-                  # @tool.append_3d(k_edge, 100)
-                  #
-                  # k_edge = Kuix::EdgeMotif3d.new
-                  # k_edge.start.copy!(current_position)
-                  # k_edge.end.copy!(current_position.offset(stretched_definition_def.ddv))
-                  # k_edge.color = Kuix::COLOR_MAGENTA
-                  # k_edge.line_width = 2
-                  # k_edge.end_arrow = true
-                  # k_edge.on_top = true
-                  # @tool.append_3d(k_edge, 100)
-
-                  v = current_position.vector_to(target_position)
-
-                  extern_instance.transform!(Geom::Transformation.translation(v)) if v.valid?
-
-                end
-
-              end
-            end
-
-          end
-
-        end
-
-        # Adjust cutters
-        eti = et.inverse
-        if @picked_interior_handle.nil?
-          epo = reversed ? lpe.transform(eti) : eps.offset(emv)
-          epomax = reversed ? eps.offset(emv) : lpe.transform(eti)
-          distance = epo.distance(epomax)
-        else
-          # An interior stretch preserves the overall dimension : the bbox itself stays the
-          # reference, and 'lpe' is on the handle, not on an extremity
-          epo = eps
-          distance = evpspe.length
-        end
-        el = [ epo, evpspe ]
-        sd = section_defs
-        sd = sd.reverse if reversed
-        @cutters[@picked_axis] = sd
-           .select { |section_def| section_def.bounds.valid? } # Exclude empty sections
-           .each_cons(2).map { |section_def0, section_def1|
-              max0 = section_def0.bounds.max.project_to_line(el).offset!(edvs[section_def0] + emv)
-              min1 = section_def1.bounds.min.project_to_line(el).offset!(edvs[section_def1] + emv)
-              if (v = max0.vector_to(min1)).valid? && v.samedirection?(@picked_axis)  # Exclude if bounds overlap
-                epc = Geom.linear_combination(0.5, max0, 0.5, min1)
-                epo.vector_to(epc).length / distance
-              end
-            }
-           .compact
-
-        _store_cutters
-        _load_cutters
-
-      model.commit_operation
+      result_def = CommonStretchApplyWorker.new(
+        stretch_def,
+        selection_path: get_active_selection_path,
+        selection_instances: get_active_selection_instances,
+        make_unique: _fetch_option_options_make_unique?,
+        extern_instances_ref_positions: @extern_instances_ref_positions,
+        transparent: !active?
+      ).run
+
+      # The selection may have been remapped to made unique copies
+      if result_def.selection_path != get_active_selection_path || result_def.selection_instances != get_active_selection_instances
+        _set_active_selection(result_def.selection_path, result_def.selection_instances, true)
+      end
+
+      unless result_def.success?
+        @tool.notify_errors(result_def.errors)
+        return
+      end
+
+      # Adjust cutters
+      @cutters[@picked_axis] = stretch_def.cutter_ratios
+      _store_cutters
+      _load_cutters
 
       # Fire event
       PLUGIN.app_observer.model_observer.onDrawingChange
@@ -2607,53 +2069,16 @@ module Ladb::OpenCutList
       return false if !@cutters.is_a?(Hash) ||
                       @picked_axis.nil? ||
                       !(ratios = @cutters[@picked_axis]).is_a?(Array) || ratios.empty? ||
-                      (section_defs, _ = _get_split_def.values_at(:section_defs)).nil?
-
-      xyz_method = _get_xyz_method
+                      !(split_def = _get_split_def).is_a?(StretchSplitDef)
 
       # Check section pt_boxes oversize
-      unless section_defs.all? { |section_def| !section_def.bounds.valid? || section_def.min_xyz <= section_def.bounds.min.send(xyz_method) && section_def.max_xyz >= section_def.bounds.max.send(xyz_method) }
+      unless split_def.sections_valid?
         UI.beep
         @tool.notify_errors([ "tool.smart_reshape.error.curve_intersect" ])
         return false
       end
 
       true
-    end
-
-    # -----
-
-    # The translation coefficient of each section - in [0, 1], to be multiplied by the move
-    # distance - for the picked interior handle. Below the handle point each gap takes '+1/L' of the
-    # move, above each takes '-1/U' : the shape is stretched on one side and compressed on the
-    # other, so the overall dimension is preserved. The handle sits in the matter of its section,
-    # hence every gap is clearly on one side or the other.
-    def _get_interior_t_coefs(gap_count)
-      return nil if @picked_interior_handle.nil? || gap_count < 1
-
-      index = @picked_interior_handle[:index]
-      return nil unless index >= 1 && index <= gap_count - 1
-
-      l = index.to_f
-      u = (gap_count - index).to_f
-      gap_coefs = (0...gap_count).map { |i| i < index ? 1.0 / l : -1.0 / u }
-
-      t_coefs = [ 0.0 ]
-      gap_coefs.each { |gap_coef| t_coefs << t_coefs.last + gap_coef }
-      t_coefs
-    end
-
-    # The largest interior move that keeps every compressed gap above the minimal distance.
-    # 'way' is 1.0 when the move follows the picked axis, -1.0 otherwise. Gap deltas being linear in
-    # the move distance, each gap that shrinks caps the move.
-    def _get_interior_max_distance(split_def, t_coefs, way)
-      return nil unless (gap_defs = split_def[:gap_defs]).is_a?(Array) && !t_coefs.nil?
-      gap_defs.map { |gap_def|
-        section_def0, section_def1, distance = gap_def
-        coef = (t_coefs[section_def1.index] - t_coefs[section_def0.index]) * way
-        next if coef >= 0
-        [ (distance - 1.mm) / -coef, 0 ].max  # Keep 1mm to avoid geometry merge problems
-      }.compact.min
     end
 
     # -----
@@ -2665,376 +2090,16 @@ module Ladb::OpenCutList
       return nil if @picked_grip_index.nil?
 
       et = _get_edit_transformation
-      eb = _get_drawing_def_edit_bounds(drawing_def, et)
-      keb = Kuix::Bounds3d.new.copy!(eb)
 
-      det = drawing_def.transformation.inverse * et
-      deti = det.inverse
-
-      # Compute a new drawing_def that include all content
-      return nil unless (drawing_def = CommonDrawingDecompositionWorker.new(_get_drawing_def_ipaths, **(_get_drawing_def_parameters.merge(
-        container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_ALL,
-        ignore_snaps: false,
-        flatten: false,
-      ))).run).is_a?(DrawingDef)
-
-      # Transform drawing_def to be expressed in the edit space
-      drawing_def.transform!(det)
-
-      grip_index_s = Kuix::Bounds3d.face_opposite(@picked_grip_index)
-      grip_index_e = @picked_grip_index
-
-      eps = keb.face_center(grip_index_s).to_p
-      epe = keb.face_center(grip_index_e).to_p
-      evpspe = eps.vector_to(epe)
-
-      reversed = evpspe.valid? && !evpspe.samedirection?(@picked_axis)
-
-      epmin = reversed ? epe : eps
-      epmax = reversed ? eps : epe
-
-      container_defs = []
-
-      v_s = {}  # Vertex => DrawingContainerDef => SectionDef
-
-      xyz_method = _get_xyz_method
-
-      ratios = @cutters[@picked_axis].sort
-      ratios.uniq!
-      ratios.reverse!.map! { |ratio| 1 - ratio } if reversed
-
-      section_defs = ([ Float::INFINITY * (reversed ? 1 : -1) ] + ratios.map { |ratio| eps.send(xyz_method) + ratio * evpspe.length * (reversed ? -1 : 1) } + [ Float::INFINITY * (reversed ? -1 : 1) ]).each_cons(2).map.with_index { |min_max, index|
-        SplitSectionDef.new(
-          index,
-          min_max.min,
-          min_max.max,
-          Geom::BoundingBox.new
-        )
-      }
-
-      fn_store_vertex_section_def = lambda { |vertex, drawing_container_def, section_def|
-        (v_s[vertex] ||= {})[drawing_container_def] = section_def
-      }
-      fn_fetch_vertex_section_def = lambda { |vertex, drawing_container_def|
-        (v_s[vertex] ||= {})[drawing_container_def]
-      }
-
-      fn_analyse = lambda do |drawing_container_def, parent_section_def = nil, depth = 0|
-
-        # Extract container
-        # -----------------
-
-        # k_box = Kuix::BoxMotif3d.new
-        # k_box.bounds.copy!(drawing_container_def.bounds)
-        # k_box.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-        # k_box.line_width = 2
-        # k_box.color = [ Kuix::COLOR_RED, Kuix::COLOR_GREEN, Kuix::COLOR_BLUE, Kuix::COLOR_MAGENTA ][depth % 4]
-        # k_box.transformation = et
-        # @tool.append_3d(k_box, LAYER_3D_PART_PREVIEW)
-
-        section_def = parent_section_def
-        if section_def.nil?
-
-          if drawing_container_def.is_root? && !get_active_selection_instances.one?
-
-            # No section_def if the root container is just the instance holder
-
-            operation = OPERATION_SPLIT
-
-          # Check if the container is locked. Locked containers are never deformed (no SPLIT),
-          # but they are translated with the section containing their origin: the lock protects
-          # the container's shape, not its position within the stretched assembly.
-          elsif LockUtils.locked?(drawing_container_def.container)
-
-            container_origin = ORIGIN.transform(drawing_container_def.transformation * drawing_container_def.container.transformation)
-            section_def = section_defs.find { |section_def| section_def.contains_point?(container_origin, xyz_method) }
-
-            # Add the container bounds to the section bounds so the locked container is taken into
-            # account by the max compression distance. If it straddles a cutter, the section
-            # oversize check rejects the cutter layout instead of silently translating it.
-            section_def.bounds.add(drawing_container_def.bounds) if !section_def.nil? && drawing_container_def.bounds.valid?
-
-            operation = OPERATION_MOVE
-
-          # Check if the container is glued or always face camera to search the section according to its origin only
-          elsif drawing_container_def.container.respond_to?(:glued_to) && drawing_container_def.container.glued_to ||
-                drawing_container_def.container.respond_to?(:definition) && (drawing_container_def.container.definition.behavior.always_face_camera? || drawing_container_def.container.definition.behavior.no_scale_mask? == 0b1111111)   # 0b1111111 = 127 (all disabld)
-
-            container_origin = ORIGIN.transform(drawing_container_def.transformation * drawing_container_def.container.transformation)
-            section_def = section_defs.find { |section_def| section_def.contains_point?(container_origin, xyz_method) }
-
-            # Container bounds are not considered in this case
-
-            operation = OPERATION_MOVE
-
-          else
-
-            # Check if container bounds is entirely inside a section
-            section_def = section_defs.find { |section_def| section_def.contains_bounds?(drawing_container_def.bounds, xyz_method) }
-            if section_def.nil?
-
-              container_origin = ORIGIN.transform(drawing_container_def.is_root? ? deti : drawing_container_def.transformation * drawing_container_def.container.transformation)
-              min_max = [ drawing_container_def.bounds.min, drawing_container_def.bounds.max ].min_by { |point| (point.send(xyz_method) - container_origin.send(xyz_method)).abs }
-
-              # Default container section_def is where the bounds extreme is the nearest origin
-              section_def = section_defs.find { |section_def| section_def.contains_point?(min_max, xyz_method) }
-
-              operation = OPERATION_SPLIT
-
-
-              # color = [ Kuix::COLOR_RED, Kuix::COLOR_GREEN, Kuix::COLOR_BLUE, Kuix::COLOR_MAGENTA ][depth % 4]
-              #
-              # k_box = Kuix::BoxMotif3d.new
-              # k_box.bounds.copy!(drawing_container_def.bounds)
-              # k_box.color = color
-              # k_box.transformation = det
-              # @tool.append_3d(k_box, LAYER_3D_PART_PREVIEW)
-              #
-              # k_points = _create_floating_points(
-              #   points: container_origin,
-              #   fill_color: color,
-              #   size: [ 6, 4, 2, 1 ][depth % 4]
-              # )
-              # k_points.transformation = det
-              # @tool.append_3d(k_points, LAYER_3D_PART_PREVIEW)
-
-
-            else
-
-              # Add the container bounds to the section bounds
-              section_def.bounds.add(drawing_container_def.bounds)
-
-              operation = OPERATION_MOVE
-
-            end
-
-          end
-
-        else
-          operation = OPERATION_NONE
-        end
-
-        container_def = SplitContainerDef.new(
-          drawing_container_def.container,
-          drawing_container_def.transformation,
-          depth,
-          drawing_container_def.container.respond_to?(:transformation) ? drawing_container_def.container.transformation : nil,
-          section_def,
-          operation
-        )
-        container_defs << container_def
-
-        # Keep container section as entire parent section
-        parent_section_def = section_def unless operation == OPERATION_SPLIT
-
-        # k_box = Kuix::BoxMotif3d.new
-        # k_box.bounds.copy!(drawing_container_def.bounds)
-        # k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-        # k_box.line_width = 2
-        # k_box.color = [ Kuix::COLOR_YELLOW, Kuix::COLOR_CYAN, Kuix::COLOR_MAGENTA ][(section_def.index % 3) - 1]
-        # k_box.transformation = et
-        # @tool.append_3d(k_box, LAYER_3D_PART_PREVIEW)
-
-        # Extract edges
-        # -------------
-
-        # 1. Iterate on curves
-
-        drawing_container_def.curve_manipulators.each do |cm|
-
-          # Treat curves as a whole undeformable entity
-
-          section_def = parent_section_def
-          section_def ||= fn_fetch_vertex_section_def.call(cm.curve.first_edge.start, drawing_container_def)
-          section_def ||= fn_fetch_vertex_section_def.call(cm.curve.last_edge.end, drawing_container_def)
-          section_def ||= section_defs.find { |s| s.intersects_bounds?(cm.bounds, xyz_method) }
-          unless section_def.nil?
-            cm.curve.edges.each do |edge|
-              container_def.edge_defs << SplitEdgeDef.new(
-                edge,
-                cm.transformation,
-                edge.start.position,
-                section_def,
-                section_def,
-                if operation == OPERATION_SPLIT
-                  OPERATION_MOVE
-                else
-                  OPERATION_NONE
-                end
-              )
-              fn_store_vertex_section_def.call(edge.start, drawing_container_def, section_def)
-              fn_store_vertex_section_def.call(edge.end, drawing_container_def, section_def)
-            end
-            section_def.bounds.add(cm.points)  # Add to section bounds
-          end
-
-        end
-
-        # 2. Iterate on edges
-
-        drawing_container_def.edge_manipulators.each do |em|
-
-          next if !parent_section_def.nil? && em.edge.soft? # Minor optimization - skip soft edges if container grabbed
-
-          if parent_section_def.nil?
-            start_section_def = fn_fetch_vertex_section_def.call(em.edge.start, drawing_container_def)
-            if start_section_def.nil?
-              start_section_def = section_defs.find { |s| s.contains_point?(em.start_point, xyz_method) }
-              fn_store_vertex_section_def.call(em.edge.start, drawing_container_def, start_section_def)
-            end
-            end_section_def = fn_fetch_vertex_section_def.call(em.edge.end, drawing_container_def)
-            if end_section_def.nil?
-              end_section_def = section_defs.find { |s| s.contains_point?(em.end_point, xyz_method) }
-              fn_store_vertex_section_def.call(em.edge.end, drawing_container_def, end_section_def)
-            end
-          else
-            start_section_def = end_section_def = parent_section_def
-          end
-
-          next if start_section_def.nil? || end_section_def.nil?  # TODO : this should not occur
-
-          container_def.edge_defs << SplitEdgeDef.new(
-            em.edge,
-            em.transformation,
-            em.edge.start.position,
-            start_section_def,
-            end_section_def,
-            if operation == OPERATION_SPLIT
-              start_section_def == end_section_def ? OPERATION_MOVE : OPERATION_SPLIT
-            else
-              OPERATION_NONE
-            end
-          )
-
-          if parent_section_def.nil? &&
-             start_section_def == end_section_def &&
-             em.edge.start.edges.all? { |edge| edge.curve.nil? } && em.edge.end.edges.all? { |edge| edge.curve.nil? }
-            start_section_def.bounds.add(em.points)  # Add to content bbox
-          end
-
-        end
-
-        # 3. Iterate on finite clines
-
-        drawing_container_def.cline_manipulators.each do |cm|
-
-          next if cm.infinite?
-
-          if parent_section_def.nil?
-            start_section_def = section_defs.find { |s| s.contains_point?(cm.start_point, xyz_method) }
-            end_section_def = section_defs.find { |s| s.contains_point?(cm.end_point, xyz_method) }
-          else
-            start_section_def = end_section_def = parent_section_def
-          end
-
-          container_def.cline_defs << SplitClineDef.new(
-            cm.cline,
-            cm.transformation,
-            cm.cline.start,
-            cm.cline.end,
-            start_section_def,
-            end_section_def,
-            if operation == OPERATION_SPLIT
-              start_section_def == end_section_def ? OPERATION_MOVE : OPERATION_SPLIT
-            else
-              OPERATION_NONE
-            end
-          )
-
-          if parent_section_def.nil? &&
-             start_section_def == end_section_def
-            start_section_def.bounds.add(cm.points)  # Add to content bbox
-          end
-
-        end
-
-        # 4. Iterate on snaps
-
-        drawing_container_def.snap_manipulators.each do |sm|
-
-          if parent_section_def.nil?
-            section_def = section_defs.find { |s| s.contains_point?(sm.position, xyz_method) }
-          else
-            section_def = parent_section_def
-          end
-
-          next if section_def.nil?  # TODO : this should not occur
-
-          container_def.snap_defs << SplitSnapDef.new(
-            sm.snap,
-            sm.transformation,
-            sm.snap.position,
-            section_def,
-            if operation == OPERATION_SPLIT
-              OPERATION_MOVE
-            else
-              OPERATION_NONE
-            end
-          )
-
-          if parent_section_def.nil?
-            section_def.bounds.add(sm.position)  # Add to content bbox
-          end
-
-        end
-
-        # 5. Iterate over children
-
-        depth += 1
-        drawing_container_def.container_defs.each do |child_drawing_container_def|
-          child = fn_analyse.call(child_drawing_container_def, parent_section_def, depth)
-          child.parent = container_def
-          container_def.children << child
-        end
-
-        container_def
-      end
-
-      fn_analyse.call(drawing_def)
-
-      # Compute gaps between sections that own matter. A run of empty sections counts as a single
-      # physical gap, hence the 'each_cons' on the filtered list.
-      el = [ eps, evpspe ]
-      sd = section_defs
-      sd = sd.reverse if reversed
-      vsd = sd.select { |section_def| section_def.bounds.valid? && !section_def.bounds.empty? }
-      gap_defs = vsd
-        .each_cons(2).map { |section_def0, section_def1|
-          [
-            section_def0,
-            section_def1,
-            section_def0.bounds.max.project_to_line(el).transform(et).distance(section_def1.bounds.min.project_to_line(el).transform(et))
-          ]
-        }
-
-      # Compute max compression distance
-      if vsd.one?
-        # TODO : Improve this case where there's only one section
-        drawing_size = drawing_def.bounds.min.project_to_line(el).transform(et).distance(drawing_def.bounds.max.project_to_line(el).transform(et))
-        section_size = vsd.first.bounds.min.project_to_line(el).transform(et).distance(vsd.first.bounds.max.project_to_line(el).transform(et))
-        min_distance = drawing_size - section_size
-      else
-        min_distance = gap_defs.map { |gap_def| gap_def.last }.min
-        min_distance = 0 if min_distance.nil?
-      end
-      max_compression_distance = [ (min_distance * (vsd.size - 1)) - 1.mm, 0 ].max # Keep 1mm to avoid geometry merge problems
-
-      @split_def = {
-        drawing_def: drawing_def,
+      @split_def = CommonStretchSplitWorker.new(
+        _get_drawing_def_ipaths,
         et: et,
-        det: det,
-        eb: eb,   # Expressed in 'Edit' space
-        epmin: epmin,
-        epmax: epmax,
-        eps: eps,
-        epe: epe,
-        evpspe: evpspe,
-        reversed: reversed,
-        max_compression_distance: max_compression_distance,
-        section_defs: section_defs,
-        gap_defs: gap_defs,
-        container_defs: container_defs,
-      }
+        axis: @picked_axis,
+        grip_index: @picked_grip_index,
+        ratios: @cutters[@picked_axis],
+        eb: _get_drawing_def_edit_bounds(drawing_def, et),
+        root_split: !get_active_selection_instances.one?
+      ).run
     end
 
     # The interior handle candidates for the picked axis, expressed in the global space : a point on
@@ -3065,385 +2130,15 @@ module Ladb::OpenCutList
     end
 
     def _get_stretch_def(ps, pe)
-      return nil unless ps.is_a?(Geom::Point3d) && pe.is_a?(Geom::Point3d)
-      return nil unless (split_def = _get_split_def).is_a?(Hash)
-
-      et, eps, max_compression_distance, section_defs, reversed = split_def.values_at(:et, :eps, :max_compression_distance, :section_defs, :reversed)
-      eti = et.inverse
-
-      v = ps.vector_to(pe)     # "Move" vector in global space
-      ev = v.transform(eti)
-
-      # An interior handle distributes the move over the gaps of both sides : the overall dimension
-      # is preserved, so the "centered" option and the outside measure have no meaning here
-      t_coefs = @picked_interior_handle.nil? ? nil : _get_interior_t_coefs(section_defs.length - 1)
-
-      factor = t_coefs.nil? && _fetch_option_options_centered? ? 2.0 : 1.0
-
-      if t_coefs.nil?
-
-        # Limit move to max compression distance
-        compressed = ev.valid? && (reversed ? ev.samedirection?(@picked_axis) : !ev.samedirection?(@picked_axis))
-        if compressed && (v.length * factor > max_compression_distance)
-          pe = ps.offset(v, max_compression_distance / factor)
-          v = ps.vector_to(pe)
-        end
-
-      else
-
-        # Both ways compress a gap : limit move to the largest one that keeps them all above the
-        # minimal distance
-        if ev.valid?
-          way = ev.samedirection?(@picked_axis) ? 1.0 : -1.0
-          max_distance = _get_interior_max_distance(split_def, t_coefs, way)
-          if !max_distance.nil? && v.length > max_distance
-            pe = ps.offset(v, max_distance)
-            v = ps.vector_to(pe)
-          end
-        end
-
-      end
-
-      if factor > 1.0
-        mv = v.reverse
-        sv = v
-        sv.length *= factor if sv.valid?
-      else
-        mv = Geom::Vector3d.new
-        sv = v
-      end
-
-      emv = mv.transform(eti)   # "Move" vector in edit space
-      esv = sv.transform(eti)   # "Stretch" vector in edit space
-
-      # Compute move vectors for each section
-      edvs = section_defs.map { |section_def|
-        edv = Geom::Vector3d.new(esv)
-        if esv.valid?
-          if t_coefs.nil?
-            edv.length = edv.length * section_def.index / (section_defs.length - 1) if section_defs.length > 1
-          elsif (coef = t_coefs[section_def.index]).nil? || coef <= 0
-            edv = Geom::Vector3d.new   # Anchored section
-          else
-            edv.length = esv.length * coef
-          end
-        end
-        [ section_def, edv ]
-      }.to_h
-
-      lps = _stretch_measure_type_outside? ? eps.transform(et).offset(mv) : ps
-      lpe = pe
-
-      {
-        split_def: split_def,
-        factor: factor,
-        t_coefs: t_coefs,
-        emv: emv,
-        esv: esv,
-        edvs: edvs,
-        lps: lps,
-        lpe: lpe,
-      }
+      return nil unless (split_def = _get_split_def).is_a?(StretchSplitDef)
+      split_def.stretch_def(ps, pe,
+                            centered: _fetch_option_options_centered?,
+                            measure_outside: _stretch_measure_type_outside?,
+                            interior_index: _get_picked_interior_index)
     end
 
-    # -----
-
-    SplitSectionDef = Struct.new(
-      :index,
-      :min_xyz,
-      :max_xyz,
-      :bounds
-    ) do
-
-      def contains_point?(point, xyz_method)
-        min_xyz <= point.send(xyz_method) && max_xyz >= point.send(xyz_method)
-      end
-
-      def contains_bounds?(bounds, xyz_method)
-        min_xyz <= bounds.min.send(xyz_method) && max_xyz >= bounds.max.send(xyz_method)
-      end
-
-      def intersects_bounds?(bounds, xyz_method)
-        min_xyz <= bounds.max.send(xyz_method) && max_xyz >= bounds.min.send(xyz_method)
-      end
-
-    end
-
-    SplitContainerDef = Struct.new(
-      :container,
-      :transformation,
-      :depth,
-      :ref_transformation,
-      :section_def,
-      :operation,
-      :entity_pos,
-      :edge_defs,
-      :cline_defs,
-      :snap_defs,
-      :parent,
-      :children,
-    ) do
-
-      def initialize(
-        container,
-        transformation,
-        depth,
-        ref_transformation,
-        section_def,
-        operation,
-        entity_pos = -1,
-        edge_defs = [],
-        cline_defs = [],
-        snap_defs = [],
-        parent = nil,
-        children = []
-      )
-        super
-        @md5 = nil
-      end
-
-      def definition
-        return container.definition if container.respond_to?(:definition)
-        nil
-      end
-
-      def entities
-        return container.entities if container.respond_to?(:entities)
-        return definition.entities unless definition.nil?
-        nil
-      end
-
-      def group?
-        unless (definition = self.definition).nil?
-          return definition.group?
-        end
-        false
-      end
-
-      def component?
-        unless (definition = self.definition).nil?
-          return !definition.group?
-        end
-        false
-      end
-
-      def model?
-        container.is_a?(Sketchup::Model)
-      end
-
-      def ref_position
-        return nil if ref_transformation.nil?
-        ORIGIN.transform(ref_transformation)
-      end
-
-      def container_transformation
-        return container.transformation if container.respond_to?(:transformation)
-        IDENTITY
-      end
-
-      def md5
-        @md5
-      end
-
-      # 'section_coefs' holds the translation coefficient of each section, indexed by section index,
-      # or nil when the sections translate proportionally to their index - the profile of a plain
-      # stretch. Deltas must be measured on these coefficients and not on the section indices : the
-      # profile of an interior handle move is not linear, so two containers anchored on both sides of
-      # the moved section are deformed in opposite ways even though their index deltas match.
-      def compute_md5(axis, section_coefs = nil)
-        @md5 ||= begin
-          data = []
-          data << container.definition.persistent_id if container.respond_to?(:definition)
-
-          sign = 1.0
-          unless parent.nil?
-            if (local_axis = axis.transform((transformation * container.transformation).inverse)).valid?
-              data << (local_axis.angle_between(axis) % Math::PI).round(6) # Differentiating rotations but not perfect aligned mirrors
-              data << local_axis.length.to_f.round(6) if operation == OPERATION_SPLIT  # Differentiating scaling
-              sign = _axis_sign(local_axis)
-            end
-          end
-
-          fn_coef = lambda { |sd|
-            next 0.0 if sd.nil?
-            next sd.index.to_f if section_coefs.nil?   # Proportional to the index : the linear profile of a plain stretch
-            (section_coefs[sd.index] || 0.0).to_f
-          }
-          fn_delta = lambda { |other_section_def|
-            # Signed delta anchored on the local axis way to be able to unify flipped elements
-            delta = ((fn_coef.call(section_def) - fn_coef.call(other_section_def)) * sign).round(6)
-            delta == 0.0 ? 0.0 : delta   # '-0.0' and '0.0' are equal but do not dump the same
-          }
-
-          if operation == OPERATION_SPLIT
-            data << edge_defs.map { |edge_def|
-              [
-                edge_def.edge.persistent_id,
-                fn_delta.call(edge_def.start_section_def),
-                fn_delta.call(edge_def.end_section_def)
-              ]
-            } if edge_defs.any?
-            data << cline_defs.map { |cline_def|
-              [
-                cline_def.cline.persistent_id,
-                fn_delta.call(cline_def.start_section_def),
-                fn_delta.call(cline_def.end_section_def)
-              ]
-            } if cline_defs.any?
-            data << snap_defs.map { |snap_def|
-              [
-                snap_def.snap.persistent_id,
-                fn_delta.call(snap_def.section_def)
-              ]
-            } if snap_defs.any?
-          end
-
-          # Children md5 alone carries no positional info. Under a SPLIT container, each child is translated
-          # according to its own section, so two instances whose children fall in sections with different
-          # "deltas" (relative to the container's anchor section) deform differently and must not share
-          # their definition. This can't be caught by the edge deltas above when the container has no
-          # direct edges (e.g. a component made only of sub-components).
-          data << children.map { |container_def|
-            [
-              container_def.compute_md5(axis, section_coefs),
-              if operation == OPERATION_SPLIT && !section_def.nil? && !container_def.section_def.nil?
-                fn_delta.call(container_def.section_def)
-              end
-            ]
-          }
-
-          Digest::MD5.hexdigest(Marshal.dump(data))
-        end
-      end
-
-      # Two instances of a same definition see the stretch axis - expressed in that definition space -
-      # as a same vector up to its sign. Anchoring the section deltas on a sign read from that vector
-      # alone therefore keeps them comparable between an instance and its mirrored twin : the delta
-      # sign flips with the axis, their product does not.
-      def _axis_sign(local_axis)
-        [ local_axis.x, local_axis.y, local_axis.z ].each do |coord|
-          next if coord.to_f.round(6) == 0.0
-          return coord.to_f < 0 ? -1.0 : 1.0
-        end
-        1.0
-      end
-
-      def compute_entity_pos
-        return if (entities = self.entities).nil?
-        entity_positions = entities.each_with_index.to_h { |entity, index| [ entity, index ] }
-        edge_defs.each do |edge_def|
-          edge_def.entity_pos = entity_positions[edge_def.edge]
-        end
-        cline_defs.each do |cline_def|
-          cline_def.entity_pos = entity_positions[cline_def.cline]
-        end
-        snap_defs.each do |snap_def|
-          snap_def.entity_pos = entity_positions[snap_def.snap]
-        end
-        children.each do |container_def|
-          container_def.entity_pos = entity_positions[container_def.container]
-          container_def.compute_entity_pos
-        end
-      end
-
-    end
-
-    SplitEdgeDef = Struct.new(
-      :edge,
-      :transformation,
-      :ref_position,
-      :start_section_def,
-      :end_section_def,
-      :operation,
-      :entity_pos
-    ) do
-
-      def initialize(
-        edge,
-        transformation,
-        ref_position,
-        start_section_def,
-        end_section_def,
-        operation,
-        entity_pos = -1
-      )
-        super
-      end
-
-      def transformation_inverse
-        @transformation_inverse ||= transformation.inverse
-      end
-
-    end
-
-    SplitClineDef = Struct.new(
-      :cline,
-      :transformation,
-      :ref_start_position,
-      :ref_end_position,
-      :start_section_def,
-      :end_section_def,
-      :operation,
-      :entity_pos
-    ) do
-
-      def initialize(
-        cline,
-        transformation,
-        ref_start_position,
-        ref_end_position,
-        start_section_def,
-        end_section_def,
-        operation,
-        entity_pos = -1
-      )
-        super
-      end
-
-      def transformation_inverse
-        @transformation_inverse ||= transformation.inverse
-      end
-
-    end
-
-    SplitSnapDef = Struct.new(
-      :snap,
-      :transformation,
-      :ref_position,
-      :section_def,
-      :operation,
-      :entity_pos
-    ) do
-
-      def initialize(
-        snap,
-        transformation,
-        ref_position,
-        section_def,
-        operation,
-        entity_pos = -1
-      )
-        super
-      end
-
-      def transformation_inverse
-        @transformation_inverse ||= transformation.inverse
-      end
-
-    end
-
-    StretchedDefinitionDef = Struct.new(
-      :ddv,
-      :containers
-    ) do
-
-      def initialize(
-        ddv,
-        containers = []
-      )
-        super
-      end
-
+    def _get_picked_interior_index
+      @picked_interior_handle.nil? ? nil : @picked_interior_handle[:index]
     end
 
   end

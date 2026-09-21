@@ -3,11 +3,13 @@ module Ladb::OpenCutList
   require 'timeout'
   require_relative '../lib/kuix/kuix'
   require_relative '../helper/layer_visibility_helper'
+  require_relative '../helper/instance_paths_helper'
   require_relative '../helper/face_triangles_helper'
   require_relative '../helper/part_helper'
   require_relative '../helper/material_attributes_caching_helper'
   require_relative '../worker/common/common_drawing_decomposition_worker'
   require_relative '../worker/common/common_solid_boolean_apply_worker'
+  require_relative '../worker/common/common_stretch_split_worker'
   require_relative '../utils/dimension_utils'
   require_relative '../utils/hash_utils'
   require_relative '../utils/view_utils'
@@ -23,6 +25,7 @@ module Ladb::OpenCutList
   class SmartTool < Kuix::KuixTool
 
     include LayerVisibilityHelper
+    include InstancePathsHelper
     include FaceTrianglesHelper
     include PartHelper
     include CutlistObserverHelper
@@ -1900,24 +1903,6 @@ module Ladb::OpenCutList
 
     end
 
-    def _instances_to_paths(instances, instance_paths, entities, path = [])
-      entities.each do |entity|
-        next unless entity.respond_to?(:definition)   # Minor Speed improvement
-        next unless entity.visible? && _layer_visible?(entity.layer, path.empty?)
-        path.push(entity)
-        if entity.definition.group?
-          _instances_to_paths(instances, instance_paths, entity.entities, path)
-        else
-          if instances.include?(entity)
-            instance_paths << path.dup
-          else
-            _instances_to_paths(instances, instance_paths, entity.definition.entities, path)
-          end
-        end
-        path.pop
-      end
-    end
-
   end
 
   # -----
@@ -2372,50 +2357,7 @@ module Ladb::OpenCutList
     def _get_drawing_def_edit_bounds(drawing_def, et)
       @drawing_def_edit_bounds ||= {}
       return @drawing_def_edit_bounds[et] if @drawing_def_edit_bounds.key?(et)
-      if et == drawing_def.transformation
-        eb = drawing_def.bounds
-      else
-        eb = Geom::BoundingBox.new
-        if drawing_def.is_a?(DrawingContainerDef)
-
-          eti = et.inverse
-
-          # TODO Improve the way to compute the edit bounds
-
-          fn = lambda do |drawing_container_def|
-
-            if drawing_container_def.faces_bounds.valid?
-              eb.add(drawing_container_def.face_manipulators
-                                          .flat_map { |manipulator| manipulator.outer_loop_manipulator.points
-                                                                               .map { |point| point.transform(eti * drawing_def.transformation)} }
-              ) if drawing_container_def.face_manipulators.any?
-            elsif drawing_container_def.edges_bounds.valid?
-              eb.add(drawing_container_def.edge_manipulators
-                                          .flat_map { |manipulator| manipulator.points
-                                                                               .map { |point| point.transform(eti * drawing_def.transformation)} }
-              ) if drawing_container_def.edge_manipulators.any?
-              eb.add(drawing_container_def.curve_manipulators
-                                          .flat_map { |manipulator| manipulator.points
-                                                                               .map { |point| point.transform(eti * drawing_def.transformation)} }
-              ) if drawing_container_def.curve_manipulators.any?
-            elsif drawing_container_def.clines_bounds.valid?
-              eb.add(drawing_container_def.cline_manipulators
-                                          .flat_map { |manipulator| manipulator.points
-                                                                               .map { |point| point.transform(eti * drawing_def.transformation) } }
-              ) if drawing_container_def.cline_manipulators.any?
-            end
-
-            drawing_container_def.container_defs.each do |child_drawing_container_def|
-              fn.call(child_drawing_container_def)
-            end
-
-          end
-
-          fn.call(drawing_def)
-
-        end
-      end
-      @drawing_def_edit_bounds[et] = eb
+      @drawing_def_edit_bounds[et] = CommonStretchSplitWorker.compute_edit_bounds(drawing_def, et)
     end
 
     # -- UTILS
@@ -2471,6 +2413,7 @@ module Ladb::OpenCutList
   module SmartActionHandlerPartHelper
 
     include SmartActionHandlerSelectionHelper
+    include InstancePathsHelper
     include FaceTrianglesHelper
     include PartHelper
 
@@ -3107,27 +3050,6 @@ module Ladb::OpenCutList
         container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART,
       }
     end
-
-    # -- UTILS --
-
-    def _instances_to_paths(instances, instance_paths, entities, path = [])
-      entities.each do |entity|
-        next unless entity.respond_to?(:definition)   # Minor Speed improvement
-        next unless entity.visible? && _layer_visible?(entity.layer, path.empty?)
-        path.push(entity)
-        if entity.definition.group?
-          _instances_to_paths(instances, instance_paths, entity.entities, path)
-        else
-          if instances.include?(entity)
-            instance_paths << path.dup
-          else
-            _instances_to_paths(instances, instance_paths, entity.definition.entities, path)
-          end
-        end
-        path.pop
-      end
-    end
-
 
   end
 

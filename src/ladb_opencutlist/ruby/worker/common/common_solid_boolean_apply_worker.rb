@@ -465,6 +465,7 @@ module Ladb::OpenCutList
         model.commit_operation if @wrap_operation
 
       rescue => e
+        PLUGIN.dump_exception(e)
         model.abort_operation if @wrap_operation
         result_def.errors << [ 'core.error.exception', { :error => e.message } ]
       end
