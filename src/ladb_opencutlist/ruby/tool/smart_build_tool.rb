@@ -15,12 +15,15 @@ module Ladb::OpenCutList
   require_relative '../worker/common/common_drawing_decomposition_worker'
   require_relative '../worker/common/common_solid_find_cavities_worker'
   require_relative '../worker/common/common_solid_boolean_apply_worker'
+  require_relative '../worker/common/common_stretch_split_worker'
+  require_relative '../worker/common/common_stretch_apply_worker'
 
   class SmartBuildTool < SmartTool
 
     ACTION_BUILD_DIVIDER = 0
     ACTION_BUILD_FRONT_PANEL = 1
     ACTION_BUILD_BACK_PANEL = 2
+    ACTION_BUILD_CABINET = 3
 
     ACTION_OPTION_THICKNESS = 'thickness'
     ACTION_OPTION_OFFSET = 'offset'
@@ -55,6 +58,9 @@ module Ladb::OpenCutList
     ACTION_OPTION_OPTIONS_ASK_NAME = 'ask_name'
     ACTION_OPTION_OPTIONS_LAYER_NAME = 'layer_name'
 
+    # TODO Replace by a file picked in the tool UI
+    CABINET_SKP_REF = '$LIB/components/cabinets/cabinet.skp'
+
     # The mirror motif - a dashed axis, a triangle on each side pointing at it
     # (the same as SmartHandleTool's) - and the same turned a quarter : the
     # axis then runs across, for front panels mirrored on top of one another.
@@ -62,6 +68,9 @@ module Ladb::OpenCutList
     MIRROR_MOTIF_HORIZONTAL_PATH = 'M0,0.5L0.2,0.5 M0.4,0.5L0.6,0.5 M0.8,0.5L1,0.5 M0.2,0L0.5,0.3L0.8,0L0.2,0 M0.2,1L0.5,0.7L0.8,1L0.2,1'
 
     ACTIONS = [
+      {
+        :action => ACTION_BUILD_CABINET,
+      },
       {
         :action => ACTION_BUILD_DIVIDER,
         :options => {
@@ -126,6 +135,8 @@ module Ladb::OpenCutList
           return SmartCursorManager.cursor_pencil_front_panel
       when ACTION_BUILD_BACK_PANEL
           return SmartCursorManager.cursor_pencil_back_panel
+      when ACTION_BUILD_CABINET
+          return SmartCursorManager.cursor_pencil_rectangle
       end
 
       super
@@ -158,7 +169,7 @@ module Ladb::OpenCutList
     end
 
     def get_action_options_modal?(action)
-      action != ACTION_BUILD_DIVIDER
+      action == ACTION_BUILD_FRONT_PANEL || action == ACTION_BUILD_BACK_PANEL
     end
 
     def get_action_option_sync_actions(action, option_group, option)
@@ -339,6 +350,8 @@ module Ladb::OpenCutList
         set_action_handler(SmartBuildFrontPanelActionHandler.new(self))
       when ACTION_BUILD_BACK_PANEL
         set_action_handler(SmartBuildBackPanelActionHandler.new(self))
+      when ACTION_BUILD_CABINET
+        set_action_handler(SmartBuildCabinetActionHandler.new(self))
       end
 
       super
@@ -382,6 +395,757 @@ module Ladb::OpenCutList
 
     def _fetch_option_ask_name?
       @tool.fetch_action_option_boolean(@action, SmartBuildTool::ACTION_OPTION_OPTIONS, SmartBuildTool::ACTION_OPTION_OPTIONS_ASK_NAME)
+    end
+
+  end
+
+  # Builds a cabinet imported from an SKP file (SmartBuildTool::CABINET_SKP_REF)
+  # by drawing its bounding box in 4 clicks : its origin, then its X, Y and Z
+  # edges - Y perpendicular to X, Z normal to the XY plane. SHIFT locks the
+  # current edge on the source size. The imported content is exploded into a
+  # new group, then resized axis by axis with the Stretch workers, cut where the
+  # 'stretch_cutters' of the SKP definition (as SmartReshape stores them) say.
+  #
+  # The cabinet is never mirrored : X and the Z side give its orientation, Y is
+  # deduced (right-handed) and the Y click only gives the depth and the side
+  # the box extends to.
+  class SmartBuildCabinetActionHandler < SmartBuildActionHandler
+
+    STATE_ORIGIN = 0
+    STATE_X = 1
+    STATE_Y = 2
+    STATE_Z = 3
+
+    LAYER_3D_BOX_PREVIEW = 200
+
+    LAYER_2D_DIMENSIONS = 100
+
+    # Source probes, by file path : { :mtime, :cutters, :origin, :sizes, :min_sizes }.
+    # Kept across handlers to probe a file only once while it is unchanged.
+    @@sources = {}
+
+    def initialize(tool, previous_action_handler = nil)
+      super(SmartBuildTool::ACTION_BUILD_CABINET, tool, previous_action_handler)
+
+      @mouse_ip = SmartInputPoint.new(tool)
+      @mouse_snap_point = nil
+
+      @picked_origin = nil
+      @picked_x_point = nil
+      @picked_y_point = nil
+
+      @front_flipped = false  # The user swapped the front with the back
+
+      @origin_directions = []   # Directions of the edges and clines touching the picked origin
+      @locked_x_axis = nil      # X direction locked by the arrow keys
+      @snapped_x_axis = nil     # X direction the mouse is snapped on (locked or auto)
+
+      @source = nil
+
+    end
+
+    # -----
+
+    def start
+      @source = _get_source
+      super
+    end
+
+    # -- State --
+
+    def get_startup_state
+      STATE_ORIGIN
+    end
+
+    def get_state_cursor(state)
+
+      case state
+      when STATE_Z
+        return SmartCursorManager.cursor_pull
+      end
+
+      super
+    end
+
+    def get_state_status(state)
+
+      case state
+      when STATE_X, STATE_Y, STATE_Z
+        return PLUGIN.get_i18n_string("tool.smart_build.action_#{@action}_state_#{state}_status") + '.' +
+               ' | ' + PLUGIN.get_i18n_string('default.constrain_key') + ' = ' + PLUGIN.get_i18n_string("tool.smart_build.action_#{@action}_state_#{state}_lock_status") + '.' +
+               ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_build.action_#{@action}_flip_status") + '.' +
+               (state == STATE_X ? ' | ' + PLUGIN.get_i18n_string("tool.smart_build.action_#{@action}_state_#{state}_arrows_status") + '.' : '')
+      end
+
+      super
+    end
+
+    def get_state_vcb_label(state)
+
+      case state
+      when STATE_X, STATE_Y, STATE_Z
+        return PLUGIN.get_i18n_string('tool.default.vcb_length')
+      end
+
+      super
+    end
+
+    # -- Events --
+
+    def onToolCancel(tool, reason, view)
+      super
+
+      case @state
+      when STATE_ORIGIN
+        _reset
+      when STATE_X
+        @picked_origin = nil
+        @origin_directions = []
+        @locked_x_axis = nil
+        set_state(STATE_ORIGIN)
+      when STATE_Y
+        @picked_x_point = nil
+        set_state(STATE_X)
+      when STATE_Z
+        @picked_y_point = nil
+        set_state(STATE_Y)
+      end
+      _refresh
+
+    end
+
+    def onToolMouseMove(tool, flags, x, y, view)
+      super
+
+      @mouse_ip.pick(view, x, y, _get_previous_input_point)
+      @mouse_snap_point = nil
+
+      @tool.clear_3d(LAYER_3D_BOX_PREVIEW)
+      @tool.clear_2d(LAYER_2D_DIMENSIONS)
+
+      case @state
+      when STATE_ORIGIN
+        @mouse_snap_point = @mouse_ip.position
+      when STATE_X
+        _snap_x(x, y, view)
+        _preview_box(view)
+      when STATE_Y
+        _snap_y(x, y, view)
+        _preview_box(view)
+      when STATE_Z
+        _snap_z(x, y, view)
+        _preview_box(view)
+      end
+
+      view.tooltip = @mouse_ip.tooltip
+      view.invalidate
+
+    end
+
+    def onToolMouseLeave(tool, view)
+      @tool.clear_3d(LAYER_3D_BOX_PREVIEW)
+      @tool.clear_2d(LAYER_2D_DIMENSIONS)
+      @mouse_ip.clear
+      view.tooltip = ''
+      super
+    end
+
+    def onToolLButtonUp(tool, flags, x, y, view)
+      return UI.beep if @mouse_snap_point.nil? || @source.nil?
+      _pick(@mouse_snap_point)
+      _refresh
+    end
+
+    def onToolKeyDown(tool, key, repeat, flags, view)
+      if tool.is_key_shift?(key) && @state != STATE_ORIGIN
+        _refresh
+        return true
+      end
+      if @state == STATE_X
+        axis = { VK_RIGHT => _get_active_x_axis, VK_LEFT => _get_active_y_axis, VK_UP => _get_active_z_axis }[key]
+        unless axis.nil?
+          @locked_x_axis = @locked_x_axis == axis ? nil : axis
+          _refresh
+          return true
+        end
+      end
+      false
+    end
+
+    def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
+      if tool.is_key_shift?(key) && @state != STATE_ORIGIN
+        _refresh
+        return true
+      end
+      if tool.is_key_ctrl_or_option?(key) && is_quick && @state != STATE_ORIGIN
+        @front_flipped = !@front_flipped
+        _refresh
+        return true
+      end
+      false
+    end
+
+    def onToolUserText(tool, text, view)
+      return true if super
+      return false if @state == STATE_ORIGIN || @mouse_snap_point.nil?
+
+      direction, base = _get_edge_direction_and_length(@mouse_snap_point)
+      return true if direction.nil?
+
+      length = _read_user_text_length(tool, text, base)
+      return true if length.nil?
+
+      _pick(@picked_origin.offset(direction, length))
+      _refresh
+
+      true
+    end
+
+    # -----
+
+    def draw(view)
+      super
+      @mouse_ip.draw(view) if @mouse_ip.valid?
+    end
+
+    # -----
+
+    protected
+
+    def _reset
+      @mouse_ip.clear
+      @mouse_snap_point = nil
+      @picked_origin = nil
+      @picked_x_point = nil
+      @picked_y_point = nil
+      @front_flipped = false
+      @origin_directions = []
+      @locked_x_axis = nil
+      @snapped_x_axis = nil
+      super
+      set_state(STATE_ORIGIN)
+    end
+
+    # -----
+
+    def _get_previous_input_point
+      return Sketchup::InputPoint.new(@picked_origin) unless @picked_origin.nil?
+      nil
+    end
+
+    # Picks the given point for the current state, or beeps if it doesn't make
+    # a valid edge.
+    def _pick(point)
+      case @state
+      when STATE_ORIGIN
+        @picked_origin = point
+        @origin_directions = _get_origin_directions
+        set_state(STATE_X)
+      when STATE_X
+        return UI.beep if _get_edge_direction_and_length(point).first.nil?
+        @picked_x_point = point
+        set_state(STATE_Y)
+      when STATE_Y
+        return UI.beep if _get_edge_direction_and_length(point).last == 0
+        @picked_y_point = point
+        set_state(STATE_Z)
+      when STATE_Z
+        return UI.beep if (box = _get_box(@picked_x_point, @picked_y_point, point)).nil?
+        _create_cabinet(box)
+        _reset
+      end
+    end
+
+    # The unit direction of the current edge and the signed length of the
+    # given point along it : the X direction itself, the part of the point
+    # perpendicular to X, the normal to the XY plane.
+    def _get_edge_direction_and_length(point)
+      v = @picked_origin.vector_to(point)
+      case @state
+      when STATE_X
+        return [ nil, 0 ] unless v.valid?
+        return [ v.normalize, v.length ]
+      when STATE_Y
+        x_axis = _get_x_axis
+        v = v - Geom::Vector3d.linear_combination(v % x_axis, x_axis, 0, x_axis)
+        return [ _get_default_y_axis(x_axis), 0 ] unless v.valid? && v.length > 0.001
+        return [ v.normalize, v.length ]
+      when STATE_Z
+        n = _get_xy_normal
+        return [ n, v % n ]
+      end
+      [ nil, 0 ]
+    end
+
+    def _get_x_axis
+      @picked_origin.vector_to(@picked_x_point).normalize
+    end
+
+    # The Y unit direction as picked : the part of the Y point perpendicular to X
+    def _get_y_axis
+      x_axis = _get_x_axis
+      v = @picked_origin.vector_to(@picked_y_point)
+      (v - Geom::Vector3d.linear_combination(v % x_axis, x_axis, 0, x_axis)).normalize
+    end
+
+    def _get_xy_normal
+      (_get_x_axis * _get_y_axis).normalize
+    end
+
+    # The Y unit direction while Y isn't drawn : the active horizontal
+    # direction perpendicular to X - making XY the active horizontal plane if
+    # X is horizontal. X being vertical : the one facing the camera.
+    def _get_default_y_axis(x_axis)
+      y_axis = _get_active_z_axis * x_axis
+      y_axis = x_axis * Sketchup.active_model.active_view.camera.direction unless y_axis.valid?
+      y_axis = x_axis.axes[1] unless y_axis.valid?
+      y_axis.normalize
+    end
+
+    # -----
+
+    # Replaces the length of the given snapped point along the current edge by
+    # the source size if SHIFT is down.
+    def _lock_on_source_size(point, index)
+      return point unless @tool.is_key_shift_down? && !@source.nil? && !point.nil?
+      direction, length = _get_edge_direction_and_length(point)
+      return point if direction.nil?
+      @picked_origin.offset(direction, @source[:sizes][index] * (length < 0 ? -1 : 1))
+    end
+
+    # The directions of the edges and clines the mouse input point touches -
+    # read when the origin is picked on it.
+    def _get_origin_directions
+      return [] unless @mouse_ip.valid?
+      directions = []
+      if @mouse_ip.vertex
+        directions += @mouse_ip.vertex.edges.map { |edge| EdgeManipulator.new(edge, @mouse_ip.transformation).direction }
+      elsif @mouse_ip.edge
+        directions << EdgeManipulator.new(@mouse_ip.edge, @mouse_ip.transformation).direction
+      end
+      directions << ClineManipulator.new(@mouse_ip.cline, @mouse_ip.transformation).direction if @mouse_ip.cline
+      directions.select(&:valid?).each_with_object([]) { |direction, uniques| uniques << direction unless uniques.any? { |unique| unique.parallel?(direction) } }
+    end
+
+    # The closest point to the mouse ray on the line through the origin along
+    # the given direction : its projection when the input point is snapped.
+    def _snap_on_origin_line(direction, x, y, view)
+      line = [ @picked_origin, direction ]
+      return @mouse_ip.position.project_to_line(line) if @mouse_ip.degrees_of_freedom < 2
+      point, _ = Geom.closest_points(line, view.pickray(x, y))
+      point
+    end
+
+    def _snap_x(x, y, view)
+      @snapped_x_axis = nil
+      point = @mouse_ip.position
+      if @locked_x_axis
+        # Locked by the arrow keys
+        point = _snap_on_origin_line(@locked_x_axis, x, y, view)
+        @snapped_x_axis = @locked_x_axis
+      elsif @mouse_ip.degrees_of_freedom >= 2
+        # Auto locked on the closest origin direction, within a few pixels
+        best_distance = 10
+        @origin_directions.each do |direction|
+          p = _snap_on_origin_line(direction, x, y, view)
+          sp = view.screen_coords(p)
+          distance = Math.hypot(sp.x - x, sp.y - y)
+          next unless distance < best_distance
+          best_distance = distance
+          point = p
+          @snapped_x_axis = direction
+        end
+      end
+      @mouse_ip.clear unless @snapped_x_axis.nil? || @mouse_ip.degrees_of_freedom < 2
+      @mouse_snap_point = _lock_on_source_size(point, 0)
+    end
+
+    def _snap_y(x, y, view)
+      if @mouse_ip.degrees_of_freedom > 2
+        # Free : on the plane holding the X edge and the default Y direction
+        x_axis = _get_x_axis
+        point = Geom.intersect_line_plane(view.pickray(x, y), [ @picked_origin, x_axis * _get_default_y_axis(x_axis) ])
+      else
+        point = @mouse_ip.position
+      end
+      @mouse_snap_point = _lock_on_source_size(point, 1)
+    end
+
+    def _snap_z(x, y, view)
+      line = [ @picked_origin, _get_xy_normal ]
+      if @mouse_ip.degrees_of_freedom > 2 || @mouse_ip.position.on_plane?([ @picked_origin, _get_xy_normal ])
+        point, _ = Geom.closest_points(line, view.pickray(x, y))
+        @mouse_ip.clear
+      else
+        point = @mouse_ip.position.project_to_line(line)
+      end
+      @mouse_snap_point = _lock_on_source_size(point, 2)
+    end
+
+    # -----
+
+    def _preview_box(view)
+
+      case @state
+      when STATE_X
+        points = [ @mouse_snap_point ]
+      when STATE_Y
+        points = [ @picked_x_point, @mouse_snap_point ]
+      when STATE_Z
+        points = [ @picked_x_point, @picked_y_point, @mouse_snap_point ]
+      end
+      return if points.nil?
+
+      # The line the X edge is snapped on
+      if @state == STATE_X && !@snapped_x_axis.nil?
+        k_line = Kuix::Line.new
+        k_line.position = @picked_origin
+        k_line.direction = @snapped_x_axis
+        k_line.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+        k_line.color = @snapped_x_axis == @locked_x_axis ? _get_vector_color(@snapped_x_axis) : Kuix::COLOR_MAGENTA
+        @tool.append_3d(k_line, LAYER_3D_BOX_PREVIEW)
+      end
+
+      return if (box = _get_box(*points)).nil?
+
+      t = box[:t]
+      w, d, h = box[:sizes].map { |size| size.to_l }
+
+      # Dotted : the whole box, the edges not drawn yet at the source sizes
+      box_complete = _get_box(*points, complete: true)
+
+      k_segments = Kuix::Segments.new
+      k_segments.add_segments(_get_box_segments(*box_complete[:sizes]))
+      k_segments.line_width = 1
+      k_segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+      k_segments.color = Kuix::COLOR_DARK_GREY
+      k_segments.transformation = box_complete[:t]
+      @tool.append_3d(k_segments, LAYER_3D_BOX_PREVIEW)
+
+      k_segments = Kuix::Segments.new
+      k_segments.add_segments(_get_box_segments(w, d, h))
+      k_segments.line_width = 1.5
+      k_segments.color = Kuix::COLOR_BLACK
+      k_segments.transformation = t
+      @tool.append_3d(k_segments, LAYER_3D_BOX_PREVIEW)
+
+      # The front face of the whole box
+      cw, cd, ch = box_complete[:sizes]
+      fy = box_complete[:flipped] ? cd : 0
+      front = [ [ 0, fy, 0 ], [ cw, fy, 0 ], [ cw, fy, ch ], [ 0, fy, ch ] ].map { |coords| Geom::Point3d.new(coords) }
+      k_mesh = Kuix::Mesh.new
+      k_mesh.add_quads(front)
+      k_mesh.background_color = ColorUtils.color_translucent(Kuix::COLOR_DARK_GREY, 0.3)
+      k_mesh.transformation = box_complete[:t]
+      @tool.append_3d(k_mesh, LAYER_3D_BOX_PREVIEW)
+
+      locked = @tool.is_key_shift_down?
+      labels = [ [ Geom::Point3d.new(w / 2, 0, 0), w, Kuix::COLOR_X, STATE_X ] ]
+      labels << [ Geom::Point3d.new(w, d / 2, 0), d, Kuix::COLOR_Y, STATE_Y ] if d > 0
+      labels << [ Geom::Point3d.new(w, 0, h / 2), h, Kuix::COLOR_Z, STATE_Z ] if h > 0
+      labels.each do |point, measure, color, state|
+        @tool.append_2d(_create_floating_label(
+                          snap_point: point.transform(t),
+                          text: measure,
+                          text_color: color,
+                          border_color: locked && state == @state ? Kuix::COLOR_MAGENTA : color
+                        ), LAYER_2D_DIMENSIONS)
+      end
+
+      Sketchup.set_status_text(box[:sizes][@state - 1].to_l.to_s, SB_VCB_VALUE)
+
+    end
+
+    # -----
+
+    # The box drawn so far, sizes raised to the source minimal sizes : its
+    # frame (origin on the box min corner) and its sizes along the frame axes.
+    # 'px', 'py', 'pz' are the X, Y and Z edge points ('py' and 'pz' optional).
+    # 'complete' gives the source sizes to the edges not drawn yet.
+    # The content is set in the box by ':content_t' : with its front (-Y) on
+    # the box side facing the camera - or 180° rotated around Z.
+    def _get_box(px, py = nil, pz = nil, complete: false)
+      return nil if @picked_origin.nil? || px.nil? || @source.nil?
+
+      vx = @picked_origin.vector_to(px)
+      return nil unless vx.valid?
+      x_axis = vx.normalize
+
+      fn_clamp = lambda { |value, min| value.abs >= min ? value : (value < 0 ? -min : min) }
+      min_sizes = @source[:min_sizes]
+
+      dx = fn_clamp.call(vx.length, min_sizes[0])
+      dy = 0
+      dz = 0
+
+      # The part of the Y point perpendicular to X, nil while there is none
+      unless py.nil?
+        vy = @picked_origin.vector_to(py)
+        vy = vy - Geom::Vector3d.linear_combination(vy % x_axis, x_axis, 0, x_axis)
+        vy = nil unless vy.valid? && vy.length > 0.001
+      end
+
+      if vy.nil?
+
+        # Y not drawn yet : the default Y direction
+        y_axis = _get_default_y_axis(x_axis)
+        z_axis = x_axis * y_axis
+        if complete
+          dy = @source[:sizes][1]
+          dz = @source[:sizes][2]
+        end
+
+      else
+
+        # Z on the side of the Z point, Y deduced to keep the frame right-handed
+        z_axis = (x_axis * vy).normalize
+        if pz.nil?
+          if complete
+            # Z not drawn yet : upward
+            z_axis = z_axis.reverse if z_axis % _get_active_z_axis < 0
+            dz = @source[:sizes][2]
+          end
+        else
+          dz = @picked_origin.vector_to(pz) % z_axis
+          z_axis = z_axis.reverse if dz < 0
+          dz = fn_clamp.call(dz.abs, min_sizes[2])
+        end
+        y_axis = z_axis * x_axis
+
+        dy = fn_clamp.call(vy % y_axis, min_sizes[1])
+
+      end
+
+      t = Geom::Transformation.axes(@picked_origin, x_axis, y_axis, z_axis) * Geom::Transformation.translation(Geom::Vector3d.new(0, [ dy, 0 ].min, 0))
+      sizes = [ dx, dy.abs, dz ]
+      flipped = _is_front_on_y_max?(t, sizes, dy >= 0) != @front_flipped
+      {
+        :t => t,
+        :sizes => sizes,
+        :flipped => flipped,
+        :content_t => flipped ? t * Geom::Transformation.translation(Geom::Vector3d.new(sizes[0], sizes[1], 0)) * Geom::Transformation.rotation(ORIGIN, Z_AXIS, Math::PI) : t
+      }
+    end
+
+    # Whether the box front is its max Y side : the Y side facing the camera
+    # the most. Seen from above (no side clearly facing it), the one away from
+    # the X edge - 'x_edge_on_y_min' - as the X edge is drawn along the back.
+    def _is_front_on_y_max?(t, sizes, x_edge_on_y_min)
+      camera = Sketchup.active_model.active_view.camera
+      v = camera.perspective? ? Geom::Point3d.new(sizes[0] / 2, sizes[1] / 2, sizes[2] / 2).transform(t).vector_to(camera.eye) : camera.direction.reverse
+      return x_edge_on_y_min unless v.valid?
+      cos = t.yaxis.normalize % v.normalize
+      return x_edge_on_y_min if cos.abs < 0.15
+      cos > 0
+    end
+
+    # The edges of a box of the given sizes, in its frame : the X edge alone
+    # while it's flat on Y, its bottom rectangle while it's flat on Z.
+    def _get_box_segments(w, d, h)
+      bottom = [ [ 0, 0, 0 ], [ w, 0, 0 ], [ w, d, 0 ], [ 0, d, 0 ] ].map { |coords| Geom::Point3d.new(coords) }
+      return bottom[0..1] unless d > 0
+      segments = bottom.zip(bottom.rotate).flatten(1)
+      return segments unless h > 0
+      top = bottom.map { |point| point.offset(Z_AXIS, h) }
+      segments + top.zip(top.rotate).flatten(1) + bottom.zip(top).flatten(1)
+    end
+
+    # -----
+
+    def _get_source_path
+      PLUGIN.resolve_library_ref(SmartBuildTool::CABINET_SKP_REF)
+    end
+
+    # Loads the source SKP file in the given model and returns its definition.
+    # Must run inside an operation.
+    def _load_source_definition(model, path)
+      Sketchup.version_number >= 2100000000 ? model.definitions.load(path, allow_newer: true) : model.definitions.load(path)
+    end
+
+    # The 'stretch_cutters' of the source definition - or of its single
+    # top level container, when the file holds the cabinet as a group - as
+    # { axis => ratios }, 0.5 on a missing axis.
+    def _read_cutters(definition)
+      data = PLUGIN.get_attribute(definition, 'stretch_cutters')
+      if data.nil?
+        containers = definition.entities.select { |entity| entity.respond_to?(:definition) }
+        data = PLUGIN.get_attribute(containers.first.definition, 'stretch_cutters') if containers.one? && definition.entities.count { |entity| entity.is_a?(Sketchup::Face) || entity.is_a?(Sketchup::Edge) } == 0
+      end
+      fn_ratios = lambda { |xyz|
+        ratios = data.is_a?(Hash) && data[xyz].is_a?(Array) ? data[xyz].map(&:to_f).select { |ratio| ratio > 0 && ratio < 1.0 } : []
+        ratios.empty? ? [ 0.5 ] : ratios
+      }
+      {
+        X_AXIS => fn_ratios.call('x'),
+        Y_AXIS => fn_ratios.call('y'),
+        Z_AXIS => fn_ratios.call('z'),
+      }
+    end
+
+    # Probes the source file : its cutters, the min corner and the sizes of its
+    # content bounds (as the stretch measures them), and its minimal sizes
+    # (sizes minus the max compression distance of each axis). The file is
+    # loaded in an aborted operation : nothing is left in the model.
+    def _get_source
+      path = _get_source_path
+      unless path.is_a?(String) && File.exist?(path)
+        @tool.notify_errors([ [ 'tool.smart_build.error.cabinet_file_not_found', { :file => SmartBuildTool::CABINET_SKP_REF } ] ])
+        return nil
+      end
+
+      mtime = File.mtime(path)
+      source = @@sources[path]
+      return source if !source.nil? && source[:mtime] == mtime
+
+      model = Sketchup.active_model
+      model.start_operation('OCL Probe Cabinet', true)
+      begin
+
+        definition = _load_source_definition(model, path)
+        raise "Failed to load #{path}" unless definition.is_a?(Sketchup::ComponentDefinition)
+
+        cutters = _read_cutters(definition)
+        instance = model.entities.add_instance(definition, IDENTITY)
+
+        origin = nil
+        sizes = []
+        min_sizes = []
+        [ X_AXIS, Y_AXIS, Z_AXIS ].each do |axis|
+          split_def = _split(Sketchup::InstancePath.new([ instance ]), IDENTITY, axis, cutters[axis])
+          raise "Failed to split #{path}" unless split_def.is_a?(StretchSplitDef)
+          size = _get_split_size(split_def)
+          origin = split_def.eb.min
+          sizes << size
+          min_sizes << [ size - split_def.max_compression_distance, 0 ].max
+        end
+
+        source = @@sources[path] = {
+          :mtime => mtime,
+          :cutters => cutters,
+          :origin => origin,
+          :sizes => sizes,
+          :min_sizes => min_sizes,
+        }
+
+      rescue Exception => e
+        PLUGIN.dump_exception(e)
+        @tool.notify_errors([ [ 'tool.smart_build.error.cabinet_file_invalid', { :file => SmartBuildTool::CABINET_SKP_REF } ] ])
+        source = nil
+      ensure
+        model.abort_operation
+      end
+
+      source
+    end
+
+    def _split(ipath, et, axis, ratios)
+      CommonStretchSplitWorker.new(
+        [ ipath ],
+        et: et,
+        axis: axis,
+        grip_index: Kuix::Bounds3d.faces_by_axis(axis).last,  # Pull the max face : the min corner stays in place
+        ratios: ratios
+      ).run
+    end
+
+    # The content size along the split axis, in the split edit space
+    def _get_split_size(split_def)
+      eb = split_def.eb
+      [ eb.width, eb.height, eb.depth ][[ X_AXIS, Y_AXIS, Z_AXIS ].index(split_def.axis)]
+    end
+
+    # -----
+
+    # Gives every container of the given entities - recursively - its own
+    # definition. Component instances sharing a definition keep sharing the
+    # new one ; groups are made unique one by one.
+    def _make_unique_containers(entities, definitions_map = {})
+      entities.each do |entity|
+        if entity.is_a?(Sketchup::Group)
+          entity.make_unique
+          _make_unique_containers(entity.definition.entities, definitions_map)
+        elsif entity.is_a?(Sketchup::ComponentInstance)
+          if (new_definition = definitions_map[entity.definition])
+            entity.definition = new_definition
+          else
+            definition = entity.definition
+            definitions_map[definition] = entity.make_unique.definition
+            _make_unique_containers(entity.definition.entities, definitions_map)
+          end
+        end
+      end
+    end
+
+    def _create_cabinet(box)
+      return UI.beep if box[:sizes].any? { |size| size <= 0 }
+
+      path = _get_source_path
+
+      model = Sketchup.active_model
+      model.start_operation('OCL Build Cabinet', true, false, !active?)
+      begin
+
+        definition = _load_source_definition(model, path)
+        raise "Failed to load #{path}" unless definition.is_a?(Sketchup::ComponentDefinition)
+
+        # Import the content in a new group
+        active_path = model.active_path.to_a
+        group = model.active_entities.add_group
+        group.name = definition.name
+        group.entities.add_instance(definition, IDENTITY).explode
+
+        # The imported containers still share their definitions with the source
+        # definition - and SketchUp would reuse them by GUID on the next load of
+        # the file : detach them before any deformation, then purge the source.
+        _make_unique_containers(group.entities)
+        model.definitions.remove(definition) if definition.count_instances == 0 && model.definitions.respond_to?(:remove)  # SU 2018+
+
+        # Put the content bounds min corner on the box min corner
+        group.transformation = PathUtils.get_transformation(active_path, IDENTITY).inverse * box[:content_t] * Geom::Transformation.translation(@source[:origin].vector_to(ORIGIN))
+
+        # Stretch it to the box sizes, axis by axis
+        [ X_AXIS, Y_AXIS, Z_AXIS ].each_with_index do |axis, index|
+
+          et = PathUtils.get_transformation(active_path + [ group ], IDENTITY)
+          split_def = _split(Sketchup::InstancePath.new(active_path + [ group ]), et, axis, @source[:cutters][axis])
+          raise "Failed to split" unless split_def.is_a?(StretchSplitDef) && split_def.sections_valid?
+
+          distance = box[:sizes][index] - _get_split_size(split_def)
+          next if distance.to_l == 0
+
+          stretch_def = split_def.stretch_def_by_distance(distance)
+          raise "Failed to stretch" unless stretch_def.is_a?(StretchDef)
+
+          result_def = CommonStretchApplyWorker.new(
+            stretch_def,
+            selection_path: active_path,
+            selection_instances: [ group ],
+            wrap_operation: false
+          ).run
+          raise "Failed to stretch : #{result_def.errors}" unless result_def.success?
+
+          group = result_def.selection_instances.first
+
+        end
+
+        # Keep the cutters to allow further stretches with SmartReshape
+        PLUGIN.set_attribute(group.definition, 'stretch_cutters', {
+          'x' => @source[:cutters][X_AXIS],
+          'y' => @source[:cutters][Y_AXIS],
+          'z' => @source[:cutters][Z_AXIS],
+        })
+
+        model.commit_operation
+
+        # Fire event
+        PLUGIN.app_observer.model_observer.onDrawingChange
+
+      rescue Exception => e
+        PLUGIN.dump_exception(e)
+        model.abort_operation
+        @tool.notify_errors([ [ 'tool.smart_build.error.cabinet_stretch_failed' ] ])
+      end
+
     end
 
   end

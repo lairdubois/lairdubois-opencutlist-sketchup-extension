@@ -2434,6 +2434,17 @@ tool:
     action_2_status: Construire un fond dans une cavité formée par un groupe de pièces existantes
     action_2_state_0_status: Cliquez dans une cavité pour construire un fond sur son ouverture opposée à la vue
     action_2_state_0_merge_status: "Glissez jusqu'aux cavités voisines pour un fond commun"
+    action_3: Construire un Caisson
+    action_3_status: Construire un caisson importé d'un fichier SKP, étiré aux dimensions de la boîte dessinée
+    action_3_state_0_status: Cliquez pour placer l'origine du caisson
+    action_3_state_1_status: Cliquez pour définir la largeur du caisson (axe X)
+    action_3_state_1_lock_status: Verrouiller sur la largeur du fichier source
+    action_3_state_1_arrows_status: "Flèches = Verrouiller sur un axe (→ X, ← Y, ↑ Z)"
+    action_3_state_2_status: Cliquez pour définir la profondeur du caisson (axe Y)
+    action_3_state_2_lock_status: Verrouiller sur la profondeur du fichier source
+    action_3_state_3_status: Cliquez pour définir la hauteur du caisson (axe Z)
+    action_3_state_3_lock_status: Verrouiller sur la hauteur du fichier source
+    action_3_flip_status: Inverser la façade et le dos
     action_option_group_groove: Rainure
     action_1_option_group_offset: Jeu
     action_option_group_thickness: Epaisseur
@@ -2493,6 +2504,9 @@ tool:
       front_panel_number_overflow: "Impossible de répartir {{ number }} façades sur cette ouverture"
       back_panel_number_overflow: "Impossible de répartir {{ number }} fonds sur cette ouverture"
       back_panel_severs_parts: "La rainure couperait de part en part : {{ names }}. Réduisez sa profondeur"
+      cabinet_file_not_found: "Fichier de caisson introuvable : **{{ file }}**"
+      cabinet_file_invalid: "Impossible de charger le fichier de caisson : **{{ file }}**"
+      cabinet_stretch_failed: "Impossible d'étirer le caisson à ces dimensions"
     warning:
       no_back_panel_machining: "Aucune rainure n'a pu être usinée : aucune pièce voisine ne borde le fond à cette profondeur"
     success:
