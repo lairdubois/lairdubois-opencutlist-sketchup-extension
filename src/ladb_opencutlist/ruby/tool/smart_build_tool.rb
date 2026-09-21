@@ -58,8 +58,8 @@ module Ladb::OpenCutList
     ACTION_OPTION_OPTIONS_ASK_NAME = 'ask_name'
     ACTION_OPTION_OPTIONS_LAYER_NAME = 'layer_name'
 
-    # TODO Replace by a file picked in the tool UI
-    CABINET_SKP_REF = '$LIB/components/cabinets/cabinet.skp'
+    # The library folder the cabinet SKP files are picked in
+    CABINETS_LIBRARY_REF = '$LIB/components/cabinets'
 
     # The mirror motif - a dashed axis, a triangle on each side pointing at it
     # (the same as SmartHandleTool's) - and the same turned a quarter : the
@@ -399,7 +399,8 @@ module Ladb::OpenCutList
 
   end
 
-  # Builds a cabinet imported from an SKP file (SmartBuildTool::CABINET_SKP_REF)
+  # Builds a cabinet imported from an SKP file - picked in the bottom bar among
+  # the files of SmartBuildTool::CABINETS_LIBRARY_REF and its sub folders -
   # by drawing its bounding box in 4 clicks : its origin, then its X, Y and Z
   # edges - Y perpendicular to X, Z normal to the XY plane. SHIFT locks the
   # current edge on the source size. The imported content is exploded into a
@@ -419,6 +420,12 @@ module Ladb::OpenCutList
     LAYER_3D_BOX_PREVIEW = 200
 
     LAYER_2D_DIMENSIONS = 100
+    LAYER_2D_LIBRARY = 110
+
+    # The library folder browsed and the source file picked, as '$LIB/…' refs.
+    # Remembered for the session only.
+    @@dir_ref = nil
+    @@source_ref = nil
 
     # Source probes, by file path : { :mtime, :cutters, :origin, :sizes, :min_sizes }.
     # Kept across handlers to probe a file only once while it is unchanged.
@@ -447,7 +454,9 @@ module Ladb::OpenCutList
     # -----
 
     def start
+      _check_library_refs
       @source = _get_source
+      _setup_library_panel
       super
     end
 
@@ -623,6 +632,7 @@ module Ladb::OpenCutList
       @locked_x_axis = nil
       @snapped_x_axis = nil
       super
+      _setup_library_panel  # Cleared with all the 2D layers
       set_state(STATE_ORIGIN)
     end
 
@@ -952,8 +962,158 @@ module Ladb::OpenCutList
 
     # -----
 
+    # -- Library --
+
+    # Falls back on the library root if the browsed folder is gone, and on the
+    # first file of the browsed folder if the picked file is gone.
+    def _check_library_refs
+      dir = @@dir_ref.nil? ? nil : PLUGIN.resolve_library_ref(@@dir_ref)
+      @@dir_ref = SmartBuildTool::CABINETS_LIBRARY_REF unless dir.is_a?(String) && File.directory?(dir)
+      path = _get_source_path
+      @@source_ref = PLUGIN.list_library_files(@@dir_ref, '.skp').first unless path.is_a?(String) && File.file?(path)
+    end
+
+    def _browse_library_dir(dir_ref)
+      @@dir_ref = dir_ref
+      _setup_library_panel
+    end
+
+    def _select_source(source_ref)
+      @@source_ref = source_ref
+      @source = _get_source
+      _setup_library_panel
+      if @source.nil?
+        _reset
+      else
+        _refresh
+      end
+    end
+
+    # The bottom bar : a row of the sub folders of the browsed folder - led by
+    # its parent below the library root - above the buttons of its SKP files.
+    def _setup_library_panel
+      @tool.clear_2d(LAYER_2D_LIBRARY)
+
+      unit = @tool.get_unit
+      text_size = unit * 3 * @tool.get_text_unit_factor
+
+      root_ref = SmartBuildTool::CABINETS_LIBRARY_REF
+      dir_refs = PLUGIN.list_library_dirs(@@dir_ref)
+      file_refs = PLUGIN.list_library_files(@@dir_ref, '.skp')
+
+      # Both rows share the same columns
+      num_dirs = dir_refs.length + (@@dir_ref == root_ref ? 0 : 1)
+      num_cols = [[ num_dirs, file_refs.length, 5 ].max, 10 ].min
+
+      fn_create_btn = lambda { |text, color, selected|
+        btn = Kuix::Button.new
+        btn.layout = Kuix::StaticLayout.new
+        btn.min_size.set!(unit * 20, unit * 8)
+        btn.border.set_all!(unit)
+        btn.set_style_attribute(:background_color, color)
+        btn.set_style_attribute(:background_color, color.blend(Kuix::COLOR_BLACK, 0.7), :active)
+        btn.set_style_attribute(:border_color, color)
+        btn.set_style_attribute(:border_color, color.blend(Kuix::COLOR_BLACK, 0.7), :hover)
+        btn.set_style_attribute(:border_color, SmartTool::COLOR_BRAND, :selected)
+        btn.append_static_label(text, text_size)
+        btn.selected = selected
+        btn
+      }
+
+      panel = Kuix::Panel.new
+      panel.layout_data = Kuix::StaticLayoutData.new(0, 1.0, 1.0, -1, Kuix::Anchor.new(Kuix::Anchor::BOTTOM_LEFT))
+      panel.layout = Kuix::BorderLayout.new
+      @tool.append_2d(panel, LAYER_2D_LIBRARY)
+
+      # Folders
+
+      if num_dirs > 0
+
+        dirs_panel = Kuix::ScrollPanel.new
+        dirs_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
+        dirs_panel.set_style_attribute(:background_color, Kuix::COLOR_MEDIUM_GREY)
+        panel.append(dirs_panel)
+
+          if @@dir_ref != root_ref
+            parent_ref = File.dirname(@@dir_ref)
+            btn = fn_create_btn.call("↑ #{File.basename(@@dir_ref)}", Kuix::COLOR_MEDIUM_GREY, false)
+            btn.on(:click) { _browse_library_dir(parent_ref) }
+            dirs_panel.append(btn)
+          end
+
+          dir_refs.each do |dir_ref|
+            btn = fn_create_btn.call("#{File.basename(dir_ref)} /", Kuix::COLOR_MEDIUM_GREY, !@@source_ref.nil? && @@source_ref.start_with?("#{dir_ref}/"))
+            btn.on(:click) { _browse_library_dir(dir_ref) }
+            dirs_panel.append(btn)
+          end
+
+        dirs_panel.set_viewport(num_cols, [ (num_dirs / num_cols.to_f).ceil, 2 ].min)
+
+      end
+
+      # Files
+
+      files_panel = Kuix::ScrollPanel.new
+      files_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
+      files_panel.set_style_attribute(:background_color, Kuix::COLOR_DARK_GREY)
+      panel.append(files_panel)
+
+        if file_refs.empty?
+
+          lbl = Kuix::Label.new
+          lbl.text = PLUGIN.get_i18n_string('tool.smart_build.warning.no_cabinet_file')
+          lbl.text_size = text_size
+          lbl.padding.set_all!(unit * 2)
+          lbl.set_style_attribute(:color, Kuix::COLOR_WHITE)
+          files_panel.append(lbl)
+
+        end
+
+        file_refs.each do |file_ref|
+          btn = fn_create_btn.call(File.basename(file_ref, '.*'), Kuix::COLOR_LIGHT_GREY, file_ref == @@source_ref)
+          btn.on(:click) { _select_source(file_ref) unless file_ref == @@source_ref }
+          files_panel.append(btn)
+        end
+
+      files_panel.set_viewport(num_cols, [[ (file_refs.length / num_cols.to_f).ceil, 1 ].max, 2 ].min)
+
+      # Scroll buttons, if the files overflow the 2 rows
+
+      scroll_btns = Kuix::Panel.new
+      scroll_btns.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
+      scroll_btns.layout = Kuix::GridLayout.new(1, 2)
+      scroll_btns.visible = file_refs.length > num_cols * 2
+      panel.append(scroll_btns)
+      files_panel.bind_scroll_btns_panel(scroll_btns)
+
+        [ [ 'M0,1L1,1L0.5,0L0,1Z', -1 ], [ 'M0,0L1,0L0.5,1L0,0Z', 1 ] ].each do |path, delta|
+
+          btn = Kuix::Button.new
+          btn.layout = Kuix::StaticLayout.new
+          btn.min_size.set!(unit * 8, unit * 8)
+          btn.set_style_attribute(:background_color, Kuix::COLOR_DARK_GREY)
+          btn.set_style_attribute(:background_color, Kuix::COLOR_MEDIUM_GREY, :hover)
+          scroll_btns.append(btn)
+          delta < 0 ? files_panel.bind_scroll_up_btn(btn) : files_panel.bind_scroll_down_btn(btn)
+
+            motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path(path))
+            motif.padding.set_all!(unit * 2)
+            motif.min_size.set_all!(unit * 6)
+            motif.line_width = unit <= 4 ? 1 : 2
+            motif.set_style_attribute(:color, Kuix::COLOR_LIGHT_GREY)
+            motif.set_style_attribute(:color, Kuix::COLOR_MEDIUM_GREY, :disabled)
+            btn.append(motif)
+
+        end
+
+      files_panel.scroll(0)
+
+    end
+
+    # -----
+
     def _get_source_path
-      PLUGIN.resolve_library_ref(SmartBuildTool::CABINET_SKP_REF)
+      @@source_ref.nil? ? nil : PLUGIN.resolve_library_ref(@@source_ref)
     end
 
     # Loads the source SKP file in the given model and returns its definition.
@@ -987,9 +1147,10 @@ module Ladb::OpenCutList
     # (sizes minus the max compression distance of each axis). The file is
     # loaded in an aborted operation : nothing is left in the model.
     def _get_source
+      return nil if @@source_ref.nil?  # No file in the library : the bar says it
       path = _get_source_path
       unless path.is_a?(String) && File.exist?(path)
-        @tool.notify_errors([ [ 'tool.smart_build.error.cabinet_file_not_found', { :file => SmartBuildTool::CABINET_SKP_REF } ] ])
+        @tool.notify_errors([ [ 'tool.smart_build.error.cabinet_file_not_found', { :file => @@source_ref } ] ])
         return nil
       end
 
@@ -1029,7 +1190,7 @@ module Ladb::OpenCutList
 
       rescue Exception => e
         PLUGIN.dump_exception(e)
-        @tool.notify_errors([ [ 'tool.smart_build.error.cabinet_file_invalid', { :file => SmartBuildTool::CABINET_SKP_REF } ] ])
+        @tool.notify_errors([ [ 'tool.smart_build.error.cabinet_file_invalid', { :file => @@source_ref } ] ])
         source = nil
       ensure
         model.abort_operation

@@ -2509,6 +2509,7 @@ tool:
       cabinet_stretch_failed: "Impossible d'étirer le caisson à ces dimensions"
     warning:
       no_back_panel_machining: "Aucune rainure n'a pu être usinée : aucune pièce voisine ne borde le fond à cette profondeur"
+      no_cabinet_file: Aucun fichier de caisson (.skp) dans ce dossier
     success:
       part_created: "Nouvelle pièce créée : {{ name }}"
       part_created_plural: "{{ count }} nouvelles pièces créées : {{ name }}"

@@ -230,6 +230,37 @@ module Ladb::OpenCutList
       File.join(library_dir, relative)
     end
 
+    # The '$LIB/…' refs of the sub folders of the given library folder ref,
+    # sorted by name. Hidden folders are skipped. Returns an empty array if the
+    # folder doesn't exist.
+    def list_library_dirs(dir_ref)
+      _list_library_entries(dir_ref) { |path| File.directory?(path) }
+    end
+
+    # The '$LIB/…' refs of the files of the given library folder ref - not
+    # recursive - sorted by name, optionally filtered by extensions (as
+    # '.skp', case insensitive). Hidden files and backups ('…~.skp') are
+    # skipped. Returns an empty array if the folder doesn't exist.
+    def list_library_files(dir_ref, extnames = nil)
+      extnames = Array(extnames).map(&:downcase)
+      _list_library_entries(dir_ref) { |path|
+        File.file?(path) && !File.basename(path, '.*').end_with?('~') && (extnames.empty? || extnames.include?(File.extname(path).downcase))
+      }
+    end
+
+    # The '$LIB/…' refs of the entries of the given library folder ref the
+    # block accepts (given their absolute path), sorted by name.
+    def _list_library_entries(dir_ref)
+      dir = resolve_library_ref(dir_ref)
+      return [] unless library_ref?(dir_ref) && dir.is_a?(String) && File.directory?(dir)
+      Dir.entries(dir)
+         .reject { |name| name.start_with?('.') }
+         .sort_by { |name| name.downcase }
+         .select { |name| yield(File.join(dir, name)) }
+         .map { |name| File.join(dir_ref.chomp('/'), name) }
+    end
+    private :_list_library_entries
+
     # The library sub folder a file belongs to, deduced from its extension.
     # Files are never stored at the root : an arbitrary name (of an archive, of a
     # source folder) would make a taxonomy nobody chose, while the extension is
