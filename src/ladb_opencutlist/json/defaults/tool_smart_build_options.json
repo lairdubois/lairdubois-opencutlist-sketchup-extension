@@ -34,14 +34,11 @@
     "groove_setback": "0",
     "groove_through": true,
     "overlay": "inset",
-    "machining": "volume",
     "axes": "context",
     "measure_reversed": false,
     "reduce_envelope": false,
     "reuse_definition": true,
     "ask_name": false,
-    "layer_name": "OCL_BACK_PANELS",
-    "machining_material_name": "",
-    "machining_layer_name": "OCL_MACHININGS"
+    "layer_name": "OCL_BACK_PANELS"
   }
 }

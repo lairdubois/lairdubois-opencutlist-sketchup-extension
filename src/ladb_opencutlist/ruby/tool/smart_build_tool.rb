@@ -3400,9 +3400,47 @@ module Ladb::OpenCutList
     # drawn - it is the back wall of the very cavity being faced, see
     # #_get_split_direction - and refusing that pick would refuse the tool's
     # commonest gesture.
-    def _picked_on_existing_panel?(picker)
-      (picked_face_path = picker.picked_face_path).is_a?(Array) &&
-        picked_face_path.any? { |entity| LayerAttributes.type_of(entity) == _panel_layer_type }
+    #
+    # And only one standing IN the mouth the pick resolves to : a compartment
+    # open at both ends, already closed at the FAR one, is looked into through
+    # its near mouth - and the ray stops on the inner face of the panel that
+    # closes the other end. That panel is the back wall of the cavity being
+    # faced, exactly like a back panel, and refusing it would refuse a mouth
+    # that is wide open. See #_panel_fills_mouth?.
+    def _picked_on_existing_panel?(picker, view)
+      return false unless (picked_face_path = picker.picked_face_path).is_a?(Array)
+      return false if (index = picked_face_path.index { |entity| LayerAttributes.type_of(entity) == _panel_layer_type }).nil?
+
+      # Nothing to tell where it stands : refused, as any panel of its kind was
+      return true unless @picked_point.is_a?(Geom::Point3d)
+      return true unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef) && cavities_def.valid?
+      return true unless (picked_plane_manipulator = picker.picked_plane_manipulator).is_a?(PlaneManipulator)
+      return true unless (fragment_def = _get_cavity_fragment_def(cavities_def, @picked_point, picked_plane_manipulator)).is_a?(SolidCavityFragmentDef)
+      return true if (opening_def = _get_panel_opening_def(fragment_def, view)).nil?
+
+      ti = _get_opening_transformation(opening_def).inverse
+      panel = picked_face_path[index]
+      bounds = panel.definition.bounds
+      z_min, z_max = _z_range((0..7).flat_map { |corner| bounds.corner(corner).to_a }, ti * PathUtils.get_transformation(picked_face_path[0..index], IDENTITY))
+
+      _panel_fills_mouth?(z_min, z_max, _z_range(fragment_def.vertices, ti).first)
+    end
+
+    # Whether a panel reaching [ z_min, z_max ] along an opening's normal - in
+    # the opening's own frame, the mouth on z = 0 and the cavity down to
+    # cavity_z_min - is one that FILLS that mouth.
+    #
+    # Neither one standing in front of the mouth - laid OVER it, a panel of
+    # another pose or of another carcass - nor one standing in the far HALF of
+    # the cavity or beyond : that one closes the other end of the compartment,
+    # or the compartment behind it. The half matters because the cavity is
+    # blind to the panels of this kind (see #_cavities_own_panel_types) : a
+    # compartment closed at the far end by one of them still reads open right
+    # through, its far end is that other mouth, and the panel filling it stands
+    # INSIDE the cavity's depth.
+    def _panel_fills_mouth?(z_min, z_max, cavity_z_min)
+      return false if z_min >= SolidMeshDef::TOLERANCE   # In front of the mouth : laid OVER it, not IN it
+      (z_min + z_max) / 2.0 > cavity_z_min / 2.0          # Nearer this mouth than the far end
     end
 
     # Whether the pick is read THROUGH the panels standing in the way - see
@@ -3420,16 +3458,14 @@ module Ladb::OpenCutList
     end
 
     # A pick on an existing panel snaps to nothing : see
-    # #_picked_on_existing_panel?. Nothing at all - the point the
-    # previous pick left is dropped too, or #_preview_cavity would go on
-    # drawing the cavity that pick landed in.
+    # #_picked_on_existing_panel?. Nothing at all - the point is dropped, or
+    # #_preview_cavity would go on drawing the cavity it landed in.
     def _snap_point(picker)
       return _snap_point_through_cavities(picker) if _snap_point_through_panels?
-      if _picked_on_existing_panel?(picker)
-        @picked_point = nil
-        return false
-      end
-      super
+      return false unless super
+      return true unless _picked_on_existing_panel?(picker, picker.view)
+      @picked_point = nil
+      false
     end
 
     # -----
@@ -3480,7 +3516,7 @@ module Ladb::OpenCutList
         return nil unless (fragment_def = @picked_fragment_def).is_a?(SolidCavityFragmentDef)
         return nil unless (picked_face_manipulator = @picked_plane_manipulator).is_a?(PlaneManipulator)
       else
-        return nil if _picked_on_existing_panel?(@picker)
+        return nil if _picked_on_existing_panel?(@picker, view)
         return nil unless (picked_face_manipulator = @picker.picked_plane_manipulator).is_a?(PlaneManipulator)
         fragment_def = _get_cavity_fragment_def(cavities_def, point, picked_face_manipulator)
         return nil unless fragment_def.is_a?(SolidCavityFragmentDef)
@@ -3521,10 +3557,10 @@ module Ladb::OpenCutList
     # whole.
     #
     # Two gates keep a panel that closes something ELSE out of the reckoning,
-    # both read along the opening's own normal :
+    # both read along the opening's own normal (see #_panel_fills_mouth?) :
     #
-    #   - one standing BEYOND the far end of the cavity closes the compartment
-    #     behind it, not this one ;
+    #   - one standing in the far HALF of the cavity, or beyond, closes its
+    #     other end or the compartment behind it, not this mouth ;
     #   - one standing OUTSIDE the mouth is laid over it - a panel of another
     #     pose, or of another carcass - and is not what fills it.
     #
@@ -3545,9 +3581,7 @@ module Ladb::OpenCutList
       cavity_z_min = _z_range(fragment_def.vertices, ti).first
 
       paths = own_panel_drawing_defs.flat_map { |drawing_def|
-        z_min, z_max = _drawing_def_z_range(drawing_def, ti)
-        next [] if z_max <= cavity_z_min + SolidMeshDef::TOLERANCE   # Behind the far end : it closes the compartment beyond this one
-        next [] if z_min >= SolidMeshDef::TOLERANCE                  # In front of the mouth : laid OVER it, not IN it
+        next [] unless _panel_fills_mouth?(*_drawing_def_z_range(drawing_def, ti), cavity_z_min)
         _get_panel_footprint_paths(drawing_def, opening_def, ti) || []
       }
       return false if paths.empty?
