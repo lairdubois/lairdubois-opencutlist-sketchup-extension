@@ -112,6 +112,7 @@ core:
       unhide_part_instance: Раскрыть экземпляр
       edit_part_instance_properties: Редактирование свойств экземпляра
       smart_draw: $t(core.toolbar.command.smart_draw)
+      smart_build: $t(core.toolbar.command.smart_build)
       smart_handle: $t(core.toolbar.command.smart_handle)
       smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
@@ -125,6 +126,7 @@ core:
     command:
       dialog: OpenCutList
       smart_draw: Моделирование деталей
+      smart_build: Создать детали
       smart_handle: Действия с деталями
       smart_reshape: Модификация деталей
       smart_paint: Раскраска деталей
@@ -2385,37 +2387,13 @@ tool:
     action_2_status: Построение объема на основе многоугольника
     action_2_state_1_status: "Кликните, чтобы задать новую точку или введите нужный размер"
     action_x_state_2_status: "Кликните, чтобы задать высоту или введите нужный размер"
-    action_3: Создать перегородку
-    action_3_status: "Создание полок и перегородок внутри замкнутого контура из деталей, образующих корпус"
-    action_3_state_0_status: "Кликните по стенке, чтобы создать перегородку"
-    action_3_state_1_status: "Кликните по стенке, чтобы создать перегородки"
-    action_4: Создать фасад
-    action_4_status: "Моделировать фасад в нише, образованной группой смежных деталей"
-    action_4_state_0_status: "Кликните внутри ниши, чтобы создать там фасад"
-    action_4_state_0_merge_status: "Для создания общего фасада перетащите указатель на соседние ниши"
     action_option_group_offset: Смещение
     action_option_group_segments: Сегменты
-    action_option_group_thickness: Толщина
-    action_option_group_clearance: Зазор
-    action_option_group_overlay: Монтаж
-    action_option_group_axes: Оси
-    action_option_group_measure_type: Отсчет
     action_option_group_options: Опции
     action_option_offset_shape_offset: Смещение
     action_option_offset_shape_offset_status: Задать смещение линии контура проектируемой фигуры
-    action_option_offset_front_panel_offset: Зазор
-    action_option_offset_front_panel_offset_status: "Зазор по периметру фасада"
     action_option_segments_segment_count: Количество сегментов
     action_option_segments_segment_count_status: Задать количество сегментов в проектируемой окружности
-    action_option_thickness_thickness: Толщина
-    action_option_thickness_thickness_status: Ввод толщины перегородки
-    action_option_overlay_inset_status: "Вкладной фасад: устанавливается внутри проема, заподлицо с передней кромкой"
-    action_option_overlay_full_overlay_status: "Накладной фасад: устанавливается поверх передней кромки, полностью перекрывая внешние стенки и до половины толщины внутренних перегородок корпуса"
-    action_option_measure_type_inside_status: Размер без учета толщины перегородки
-    action_option_measure_type_centered_status: Отсчет измерения до центра перегородки
-    action_option_measure_type_outside_status: Размер с учетом толщины перегородки
-    action_option_axes_active_status: Перемещение вдоль активных осей
-    action_option_axes_context_status: Перемещение вдоль осей родительской группы или компонента
     action_option_options_construction: Конструкционные элементы
     action_option_options_construction_status: Каркасный вид детали
     action_option_options_rectangle_centered: Прямоугольник из центра
@@ -2435,18 +2413,66 @@ tool:
     action_option_options_draw_in_0: Рисование в активном элементе
     action_option_options_draw_in_1: Рисовать от первой точки родительского элемента
     action_option_options_draw_in_status: "Нарисовать в родительском элементе, на который указывает первая точка"
+    action_option_options_ask_name: Задать имена деталям
+    action_option_options_ask_name_status: Ввод названий деталей вручную
+    action_toggle_move_copy_status: Переключение копировать/переместить
+    action_change_move_anchor_status: Изменить точку привязки
+    success:
+      part_created: "Создан новый компонент: : {{ name }}"
+      part_created_plural: "создано {{ count }} новых деталей: {{ name }}"
+  smart_build:
+    title: Создать
+    action_0: Создать перегородку
+    action_0_status: "Создать перегородку в нише, образованной группой смежных деталей, замкнутых в контур"
+    action_0_state_0_status: "Кликните на одну из стенок, чтобы создать перегородку"
+    action_0_state_1_status: "Кликните на стенку, чтобы создать перегородки"
+    action_1: Создать фасад
+    action_1_status: "Моделировать фасад в нише, образованной группой смежных деталей"
+    action_1_state_0_status: "Кликните внутри ниши, чтобы создать там фасад"
+    action_1_state_0_merge_status: "Для создания общего фасада перетащите указатель на соседние ниши"
+    action_2: Создать заднюю стенку
+    action_2_status: "Создание задней стенки внутри замкнутого контура из деталей, образующих корпус"
+    action_2_state_0_status: "Кликните внутри ниши, чтобы создать заднюю стенку на стороне, противоположной лицевой"
+    action_2_state_0_merge_status: "Перетащите указатель на соседние ниши для создания общей задней стенки"
+    action_option_group_groove: Паз
+    action_1_option_group_offset: Зазор
+    action_option_group_thickness: Толщина
+    action_option_group_overlay: Монтаж
+    action_option_group_axes: Оси
+    action_option_group_measure_type: Отсчет
+    action_option_group_options: Опции
+    action_option_offset_front_panel_offset: Зазор
+    action_option_offset_front_panel_offset_status: "Зазор по периметру фасада"
+    action_option_groove_groove_depth: Глубина паза
+    action_option_groove_groove_depth_status: "Задает параметр глубины паза, в который вставляется задняя стенка"
+    action_option_groove_groove_setback: Отступ
+    action_option_groove_groove_setback_status: "Задает параметр смещения задней стенки внутрь корпуса, и, следовательно, место фрезировки паза"
+    action_option_groove_groove_through: Паз на всю длину
+    action_option_groove_groove_through_status: "Продлить проходной паз до конца корпуса, если он скрыт соседней деталью"
+    action_option_thickness_thickness: Толщина
+    action_option_thickness_thickness_status: Ввод толщины окантовки
+    action_option_overlay_inset_status: "Вкладной фасад: устанавливается внутри проема, заподлицо с передней кромкой"
+    action_2_option_overlay_inset_status: "Задняя стенка в паз: стенка вставляется в паз, отфрезерованный в деталях, которые обрамляют проём"
+    action_option_overlay_full_overlay_status: "Накладной фасад: устанавливается поверх передней кромки, полностью перекрывая внешние стенки и до половины толщины внутренних перегородок корпуса"
+    action_2_option_overlay_full_overlay_status: "Задняя стенка внахлест: устанавливается на тыльную часть корпуса, закрывая нишу от наружной плоскости и до середины толщины внутренних панелей, без формирования паза или четверти"
+    action_option_measure_type_inside_status: Размер без учета толщины перегородки
+    action_option_measure_type_centered_status: Отсчет измерения до центра перегородки
+    action_option_measure_type_outside_status: Размер с учетом толщины перегородки
+    action_option_axes_active_status: Перемещение вдоль активных осей
+    action_option_axes_context_status: Перемещение вдоль осей родительской группы или компонента
+    action_option_options_measure_reversed: Реверсивное измерение
+    action_option_options_measure_reversed_status: Реверс отсчета
     action_option_options_reduce_envelope: Детали с отступом
     action_option_options_reduce_envelope_status: Учитывать детали с отступом
     action_option_options_reuse_definition: Использовать детали повторно
     action_option_options_reuse_definition_status: Повторно использовать существующую деталь аналогичной формы и расположения вместо создания новой
     action_option_options_mirror: Зеркальное отображение
-    action_option_options_mirror_status: ""
+    action_option_options_mirror_status: Зеркально отражать каждый чётный фасад относительно соседнего
     action_option_options_ask_name: Задать имена деталям
     action_option_options_ask_name_status: Ввод названий деталей вручную
     action_option_options_layer_name: Слой
-    action_option_options_layer_name_status: "Имя слоя, на котором размещаются фасады"
-    action_toggle_move_copy_status: Переключение копировать/переместить
-    action_change_move_anchor_status: Изменить точку привязки
+    action_option_options_layer_name_status: "Имя слоя, на котором размещаются детали"
+    detecting_cavities: "Поиск ниш..."
     error:
       invalid_divider_seed: Этот тип детали не поддерживает создание перегородки
       invalid_divider_container: "Эта деталь не входит в состав группы, образующей замкнутый контур"
@@ -2456,8 +2482,19 @@ tool:
       invalid_front_panel_container: "Эта деталь не входит в состав группы, образующей замкнутый контур"
       invalid_front_panel_cavity: "В этой позиции нет открытых проемов"
       no_front_panel_cavity: В этой группе или компоненте не обнаружено полости для перегородок
+      invalid_back_panel_seed: Этот тип детали не позволяет создать заднюю стенку
+      invalid_back_panel_container: "Эта деталь не входит в состав группы, образующей замкнутый контур"
+      invalid_back_panel_cavity: "В этой позиции нет открытой ниши, противоположной фасаду"
+      no_back_panel_cavity: В этой группе или компоненте не обнаружено полости для перегородок
+      too_complex_cavity: "Геометрия слишком сложна для поиска ниш"
+      closed_front_panel_opening: "Этот проём уже закрыт фасадом"
+      closed_back_panel_opening: "Этот проём уже закрыт задней стенкой"
       divider_number_overflow: "Не удалось разместить {{ number }} перегородок в этой полости"
       front_panel_number_overflow: "Не размещено {{ number }} фас. в этом проеме"
+      back_panel_number_overflow: "Не удалось распределить {{ number }} задних(е) стенок(ки) в этом проёме"
+      back_panel_severs_parts: "Паз прорежет насквозь детали: {{ names }}. Уменьшите его глубину"
+    warning:
+      no_back_panel_machining: "Фрезеровка не удалась: ни одна соседняя деталь не граничит с задней стенкой на этой глубине"
     success:
       part_created: "Создан новый компонент: : {{ name }}"
       part_created_plural: "создано {{ count }} новых деталей: {{ name }}"
