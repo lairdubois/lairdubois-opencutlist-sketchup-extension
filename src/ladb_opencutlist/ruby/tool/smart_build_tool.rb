@@ -900,12 +900,19 @@ module Ladb::OpenCutList
       box_complete = _get_box(*points, complete: true)
       _preview_box_complete(view, box_complete)
 
-      k_segments = Kuix::Segments.new
-      k_segments.add_segments(_get_box_segments(w, d, h))
-      k_segments.line_width = 2
-      k_segments.color = Kuix::COLOR_BLACK
-      k_segments.transformation = t
-      @tool.append_3d(k_segments, LAYER_3D_BOX_PREVIEW)
+      # Solid : the X, Y and Z edges measured by the labels, in their axis color
+      corner = Geom::Point3d.new(w, 0, 0)
+      edges = [ [ ORIGIN, corner, Kuix::COLOR_X ] ]
+      edges << [ corner, Geom::Point3d.new(w, d, 0), Kuix::COLOR_Y ] if d > 0
+      edges << [ corner, Geom::Point3d.new(w, 0, h), Kuix::COLOR_Z ] if h > 0
+      edges.each do |p1, p2, color|
+        k_segments = Kuix::Segments.new
+        k_segments.add_segments([ p1, p2 ])
+        k_segments.line_width = 2
+        k_segments.color = color
+        k_segments.transformation = t
+        @tool.append_3d(k_segments, LAYER_3D_BOX_PREVIEW)
+      end
 
       locked = @tool.is_key_shift_down?
       labels = [ [ Geom::Point3d.new(w / 2, 0, 0), w, Kuix::COLOR_X, STATE_X ] ]
