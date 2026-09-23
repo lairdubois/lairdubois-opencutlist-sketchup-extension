@@ -2433,6 +2433,7 @@ tool:
     action_0_state_3_status: Cliquez pour définir la hauteur du module (axe Z)
     action_0_state_3_lock_status: Verrouiller sur la hauteur du fichier source
     action_0_flip_status: Inverser la façade et le dos
+    action_0_flip_up_status: Inverser le haut et le bas
     action_1: Construire un Séparateur
     action_1_status: Construire un séparateur dans une cavité formée par un groupe de pièces existantes
     action_1_state_0_status: Cliquez sur une paroi pour construire un séparateur

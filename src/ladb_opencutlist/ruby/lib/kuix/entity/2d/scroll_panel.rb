@@ -4,10 +4,10 @@ module Ladb::OpenCutList::Kuix
 
     include EventHandlerHelper
 
-    def initialize(num_cols = 1, num_rows = 1, id = nil)
+    def initialize(num_cols = 1, num_rows = 1, horizontal_gap = 0, vertical_gap = 0, id = nil)
       super(id)
 
-      self.set_viewport(num_cols, num_rows)
+      self.set_viewport(num_cols, num_rows, horizontal_gap, vertical_gap)
       self.on(:wheel) do |entity, flags, delta|
         scroll(-delta)
       end
@@ -20,8 +20,8 @@ module Ladb::OpenCutList::Kuix
 
     # -- PROPERTIES --
 
-    def set_viewport(num_cols, num_rows)
-      self.layout = GridLayout.new(num_cols, num_rows)
+    def set_viewport(num_cols, num_rows, horizontal_gap = 0, vertical_gap = 0)
+      self.layout = GridLayout.new(num_cols, num_rows, horizontal_gap, vertical_gap)
       self.scroll(0)
       @scroll_btns_panel.visible = self.num_children > num_cols * num_rows unless @scroll_btns_panel.nil?
     end

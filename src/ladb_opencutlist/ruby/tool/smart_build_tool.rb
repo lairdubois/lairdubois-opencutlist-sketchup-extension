@@ -59,7 +59,7 @@ module Ladb::OpenCutList
     ACTION_OPTION_OPTIONS_LAYER_NAME = 'layer_name'
 
     # The library folder the module SKP files are picked in
-    CABINETS_LIBRARY_REF = '$LIB/components/cabinets'
+    MODULES_LIBRARY_REF = '$LIB/components/modules'
 
     # The mirror motif - a dashed axis, a triangle on each side pointing at it
     # (the same as SmartHandleTool's) - and the same turned a quarter : the
@@ -400,7 +400,7 @@ module Ladb::OpenCutList
   end
 
   # Builds a module imported from an SKP file - picked in the bottom bar among
-  # the files of SmartBuildTool::CABINETS_LIBRARY_REF and its sub folders -
+  # the files of SmartBuildTool::MODULES_LIBRARY_REF and its sub folders -
   # by drawing its bounding box in 4 clicks : its origin, then its X, Y and Z
   # edges - Y perpendicular to X, Z normal to the XY plane. SHIFT locks the
   # current edge on the source size. The imported content is exploded into a
@@ -442,6 +442,7 @@ module Ladb::OpenCutList
       @picked_y_point = nil
 
       @front_flipped = false  # The user swapped the front with the back
+      @up_flipped = false     # The user turned the content upside down
 
       @origin_directions = []   # Directions of the edges and clines touching the picked origin
       @locked_x_axis = nil      # X direction locked by the arrow keys
@@ -483,11 +484,13 @@ module Ladb::OpenCutList
       case state
       when STATE_ORIGIN
         return super +
-               ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_build.action_#{@action}_flip_status") + '.'
+               ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_build.action_#{@action}_flip_status") + '.' +
+               ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_build.action_#{@action}_flip_up_status") + '.'
       when STATE_X, STATE_Y, STATE_Z
         return PLUGIN.get_i18n_string("tool.smart_build.action_#{@action}_state_#{state}_status") + '.' +
                ' | ' + PLUGIN.get_i18n_string('default.constrain_key') + ' = ' + PLUGIN.get_i18n_string("tool.smart_build.action_#{@action}_state_#{state}_lock_status") + '.' +
                ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_build.action_#{@action}_flip_status") + '.' +
+               ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_build.action_#{@action}_flip_up_status") + '.' +
                (state == STATE_X ? ' | ' + PLUGIN.get_i18n_string("tool.smart_build.action_#{@action}_state_#{state}_arrows_status") + '.' : '')
       end
 
@@ -621,6 +624,11 @@ module Ladb::OpenCutList
         _refresh
         return true
       end
+      if tool.is_key_alt_or_command?(key) && is_quick
+        @up_flipped = !@up_flipped
+        _refresh
+        return true
+      end
       false
     end
 
@@ -658,6 +666,7 @@ module Ladb::OpenCutList
       @picked_x_point = nil
       @picked_y_point = nil
       @front_flipped = false
+      @up_flipped = false
       @origin_directions = []
       @locked_x_axis = nil
       @snapped_x_axis = nil
@@ -914,7 +923,7 @@ module Ladb::OpenCutList
       k_segments.on_top = true
       @tool.append_3d(k_segments, LAYER_3D_BOX_PREVIEW)
 
-      # An arrow out of the front face center of the whole box
+      # An arrow out of the front face center of the whole box (Y color)
       unit = @tool.get_unit(view)
       cw, cd, ch = box_complete[:sizes]
       front_center = Geom::Point3d.new(cw / 2, box_complete[:flipped] ? cd : 0, ch / 2)
@@ -925,7 +934,22 @@ module Ladb::OpenCutList
       k_edge.end_arrow = true
       k_edge.arrow_size = unit * 1.5
       k_edge.line_width = 1.5
-      k_edge.color = Kuix::COLOR_DARK_GREY
+      k_edge.color = Kuix::COLOR_Y
+      k_edge.transformation = box_complete[:t]
+      k_edge.on_top = true
+      @tool.append_3d(k_edge, LAYER_3D_BOX_PREVIEW)
+
+      # An arrow out of the content's top face center (Z color) : the box
+      # bottom face while the content is upside down
+      top_center = Geom::Point3d.new(cw / 2, cd / 2, box_complete[:up_flipped] ? 0 : ch)
+      length = view.pixels_to_model(unit * 10, top_center.transform(box_complete[:t]))
+      k_edge = Kuix::EdgeMotif3d.new
+      k_edge.start.copy!(top_center)
+      k_edge.end.copy!(top_center.offset(Z_AXIS, box_complete[:up_flipped] ? -length : length))
+      k_edge.end_arrow = true
+      k_edge.arrow_size = unit * 1.5
+      k_edge.line_width = 1.5
+      k_edge.color = Kuix::COLOR_Z
       k_edge.transformation = box_complete[:t]
       k_edge.on_top = true
       @tool.append_3d(k_edge, LAYER_3D_BOX_PREVIEW)
@@ -940,7 +964,8 @@ module Ladb::OpenCutList
     # 'complete' gives the source sizes to the edges not drawn yet. 'origin'
     # overrides the picked origin.
     # The content is set in the box by ':content_t' : with its front (-Y) on
-    # the box side facing the camera - or 180° rotated around Z.
+    # the box side facing the camera - or 180° rotated around Z - and turned
+    # upside down (180° rotated around Y, front kept) if the user asked so.
     def _get_box(px, py = nil, pz = nil, complete: false, origin: @picked_origin)
       return nil if origin.nil? || px.nil? || @source.nil?
 
@@ -996,11 +1021,14 @@ module Ladb::OpenCutList
       t = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis) * Geom::Transformation.translation(Geom::Vector3d.new(0, [ dy, 0 ].min, 0))
       sizes = [ dx, dy.abs, dz ]
       flipped = _is_front_on_y_max?(t, sizes, dy >= 0) != @front_flipped
+      content_t = flipped ? t * Geom::Transformation.translation(Geom::Vector3d.new(sizes[0], sizes[1], 0)) * Geom::Transformation.rotation(ORIGIN, Z_AXIS, Math::PI) : t
+      content_t = content_t * Geom::Transformation.translation(Geom::Vector3d.new(sizes[0], 0, sizes[2])) * Geom::Transformation.rotation(ORIGIN, Y_AXIS, Math::PI) if @up_flipped
       {
         :t => t,
         :sizes => sizes,
         :flipped => flipped,
-        :content_t => flipped ? t * Geom::Transformation.translation(Geom::Vector3d.new(sizes[0], sizes[1], 0)) * Geom::Transformation.rotation(ORIGIN, Z_AXIS, Math::PI) : t
+        :up_flipped => @up_flipped,
+        :content_t => content_t
       }
     end
 
@@ -1039,7 +1067,7 @@ module Ladb::OpenCutList
       if dir.is_a?(String) && File.directory?(dir)
         return if @@source_ref.nil?
       else
-        @@dir_ref = SmartBuildTool::CABINETS_LIBRARY_REF
+        @@dir_ref = SmartBuildTool::MODULES_LIBRARY_REF
         @@source_ref = nil
       end
       path = _get_source_path
@@ -1071,7 +1099,7 @@ module Ladb::OpenCutList
       unit = @tool.get_unit
       text_size = unit * 3 * @tool.get_text_unit_factor
 
-      root_ref = SmartBuildTool::CABINETS_LIBRARY_REF
+      root_ref = SmartBuildTool::MODULES_LIBRARY_REF
       dir_refs = PLUGIN.list_library_dirs(@@dir_ref)
       file_refs = PLUGIN.list_library_files(@@dir_ref, '.skp')
 
@@ -1079,21 +1107,60 @@ module Ladb::OpenCutList
       num_dirs = dir_refs.length + (@@dir_ref == root_ref ? 0 : 1)
       num_cols = [ [ num_dirs, file_refs.length, 5 ].max, 10 ].min
 
-      fn_create_btn = lambda { |text, color, selected, disabled = false|
+      fn_create_btn = lambda { |text, color, selected, disabled = false, hover_background = true|
         btn = Kuix::Button.new
         btn.layout = Kuix::StaticLayout.new
-        btn.min_size.set!(unit * 20, unit * 8)
-        btn.border.set_all!(unit)
+        btn.min_size.set!(unit * 20, unit * 10)
         btn.set_style_attribute(:background_color, color)
         btn.set_style_attribute(:background_color, color.blend(Kuix::COLOR_BLACK, 0.7), :active)
-        btn.set_style_attribute(:border_color, color)
-        btn.set_style_attribute(:border_color, color.blend(Kuix::COLOR_BLACK, 0.7), :hover)
-        btn.set_style_attribute(:border_color, SmartTool::COLOR_BRAND, :selected)
+        btn.set_style_attribute(:background_color, color.blend(Kuix::COLOR_BLACK, 0.7), :hover) if hover_background
+        btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND, :selected)
         btn.append_static_label(text, text_size)
            .set_style_attribute(:color, ColorUtils.color_is_dark?(color) ? Kuix::COLOR_WHITE : Kuix::COLOR_BLACK)
         btn.selected = selected
         btn.disabled = disabled
         btn
+      }
+
+      # Each row overflows its 2 lines of buttons
+      dirs_overflow = num_dirs > num_cols * 2
+      files_overflow = file_refs.length > num_cols * 2
+
+      # A scroll buttons column on the right of a row : reserved on both rows
+      # as soon as one overflows, to keep their columns aligned, with its
+      # buttons only on the rows that overflow.
+      fn_append_scroll_btns = lambda { |row, scroll_panel, overflow|
+
+        scroll_btns = Kuix::Panel.new
+        scroll_btns.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
+        scroll_btns.layout = Kuix::GridLayout.new(1, 2)
+        scroll_btns.min_size.set!(unit * 8, 0)
+        scroll_btns.visible = dirs_overflow || files_overflow
+        row.append(scroll_btns)
+
+          [ [ 'M0,1L1,1L0.5,0L0,1Z', -1 ], [ 'M0,0L1,0L0.5,1L0,0Z', 1 ] ].each do |path, delta|
+
+            btn = Kuix::Button.new
+            btn.layout = Kuix::StaticLayout.new
+            btn.min_size.set!(unit * 8, unit * 8)
+            btn.visible = overflow
+            btn.set_style_attribute(:background_color, Kuix::COLOR_DARK_GREY)
+            btn.set_style_attribute(:background_color, Kuix::COLOR_MEDIUM_GREY, :hover)
+            scroll_btns.append(btn)
+            delta < 0 ? scroll_panel.bind_scroll_up_btn(btn) : scroll_panel.bind_scroll_down_btn(btn)
+
+              motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path(path))
+              motif.padding.set_all!(unit * 2)
+              motif.min_size.set_all!(unit * 6)
+              motif.line_width = unit <= 4 ? 1 : 2
+              motif.set_style_attribute(:color, Kuix::COLOR_LIGHT_GREY)
+              motif.set_style_attribute(:color, Kuix::COLOR_MEDIUM_GREY, :disabled)
+              btn.append(motif)
+
+          end
+
+        scroll_panel.scroll(0)
+
       }
 
       panel = Kuix::Panel.new
@@ -1106,30 +1173,35 @@ module Ladb::OpenCutList
 
       if num_dirs > 0
 
-        dirs_panel = Kuix::ScrollPanel.new
-        dirs_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
-        dirs_panel.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
-        panel.append(dirs_panel)
+        dirs_row = Kuix::Panel.new
+        dirs_row.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
+        dirs_row.layout = Kuix::BorderLayout.new
+        panel.append(dirs_row)
 
-          if @@dir_ref == root_ref
-            root_btn_text = "ROOT"
-            root_btn_disabled = true
-          else
-            root_btn_text = "↑ #{File.basename(@@dir_ref)}"
-            root_btn_disabled = false
-          end
-          parent_ref = File.dirname(@@dir_ref)
-          btn = fn_create_btn.call(root_btn_text, SmartTool::COLOR_BRAND_DARK, false, root_btn_disabled)
-          btn.on(:click) { _browse_library_dir(parent_ref) }
-          dirs_panel.append(btn)
+          dirs_panel = Kuix::ScrollPanel.new(num_cols, [ (num_dirs / num_cols.to_f).ceil, 2 ].min, 1, 1)
+          dirs_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
+          dirs_panel.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
+          dirs_row.append(dirs_panel)
 
-          dir_refs.each do |dir_ref|
-            btn = fn_create_btn.call(File.basename(dir_ref), Kuix::COLOR_MEDIUM_GREY, !@@source_ref.nil? && @@source_ref.start_with?("#{dir_ref}/"))
-            btn.on(:click) { _browse_library_dir(dir_ref) }
+            if @@dir_ref == root_ref
+              root_btn_text = "#{File.basename(@@dir_ref)}"
+              root_btn_disabled = true
+            else
+              root_btn_text = "↑ #{File.basename(@@dir_ref)}"
+              root_btn_disabled = false
+            end
+            parent_ref = File.dirname(@@dir_ref)
+            btn = fn_create_btn.call(root_btn_text, SmartTool::COLOR_BRAND_DARK, false, root_btn_disabled, true)
+            btn.on(:click) { _browse_library_dir(parent_ref) }
             dirs_panel.append(btn)
-          end
 
-        dirs_panel.set_viewport(num_cols, [ (num_dirs / num_cols.to_f).ceil, 2 ].min)
+            dir_refs.each do |dir_ref|
+              btn = fn_create_btn.call(File.basename(dir_ref), Kuix::COLOR_MEDIUM_GREY, !@@source_ref.nil? && @@source_ref.start_with?("#{dir_ref}/"), false, true)
+              btn.on(:click) { _browse_library_dir(dir_ref) }
+              dirs_panel.append(btn)
+            end
+
+          fn_append_scroll_btns.call(dirs_row, dirs_panel, dirs_overflow)
 
       end
 
@@ -1147,47 +1219,22 @@ module Ladb::OpenCutList
 
       else
 
-        files_panel = Kuix::ScrollPanel.new(num_cols, [ [ (file_refs.length / num_cols.to_f).ceil, 1 ].max, 2 ].min)
-        files_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
-        files_panel.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_DARK)
-        panel.append(files_panel)
+        files_row = Kuix::Panel.new
+        files_row.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
+        files_row.layout = Kuix::BorderLayout.new
+        panel.append(files_row)
 
-          file_refs.each do |file_ref|
-            btn = fn_create_btn.call(File.basename(file_ref, '.*'), Kuix::COLOR_LIGHT_GREY, file_ref == @@source_ref)
-            btn.on(:click) { _select_source(file_ref) unless file_ref == @@source_ref }
-            files_panel.append(btn)
-          end
+          files_panel = Kuix::ScrollPanel.new(num_cols, [ [ (file_refs.length / num_cols.to_f).ceil, 1 ].max, 2 ].min, 1, 1)
+          files_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
+          files_row.append(files_panel)
 
-        # Scroll buttons, if the files overflow the 2 rows
+            file_refs.each do |file_ref|
+              btn = fn_create_btn.call(File.basename(file_ref, '.*'), Kuix::COLOR_LIGHT_GREY, file_ref == @@source_ref)
+              btn.on(:click) { _select_source(file_ref) unless file_ref == @@source_ref }
+              files_panel.append(btn)
+            end
 
-        scroll_btns = Kuix::Panel.new
-        scroll_btns.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
-        scroll_btns.layout = Kuix::GridLayout.new(1, 2)
-        scroll_btns.visible = file_refs.length > num_cols * 2
-        panel.append(scroll_btns)
-        files_panel.bind_scroll_btns_panel(scroll_btns)
-
-          [ [ 'M0,1L1,1L0.5,0L0,1Z', -1 ], [ 'M0,0L1,0L0.5,1L0,0Z', 1 ] ].each do |path, delta|
-
-            btn = Kuix::Button.new
-            btn.layout = Kuix::StaticLayout.new
-            btn.min_size.set!(unit * 8, unit * 8)
-            btn.set_style_attribute(:background_color, Kuix::COLOR_DARK_GREY)
-            btn.set_style_attribute(:background_color, Kuix::COLOR_MEDIUM_GREY, :hover)
-            scroll_btns.append(btn)
-            delta < 0 ? files_panel.bind_scroll_up_btn(btn) : files_panel.bind_scroll_down_btn(btn)
-
-              motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path(path))
-              motif.padding.set_all!(unit * 2)
-              motif.min_size.set_all!(unit * 6)
-              motif.line_width = unit <= 4 ? 1 : 2
-              motif.set_style_attribute(:color, Kuix::COLOR_LIGHT_GREY)
-              motif.set_style_attribute(:color, Kuix::COLOR_MEDIUM_GREY, :disabled)
-              btn.append(motif)
-
-          end
-
-        files_panel.scroll(0)
+          fn_append_scroll_btns.call(files_row, files_panel, files_overflow)
 
       end
 
