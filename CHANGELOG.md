@@ -9,6 +9,7 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added Smart Build Divider Tool
   * Added Smart Build Front Panel Tool
   * Added Smart Build Back Panel Tool
+  * Added Smart Build Module Tool **(DEV team only)**
   * Added Smart Stretch Tool
   * Added Smart Paneling Tool
   * Added Smart Boolean Tools
@@ -29,6 +30,9 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
+### 2026-09-23
+ * Added Smart Build Module Tool **(DEV team only)**
+ * Updated PackingSolver dependency
 ### 2026-09-18
  * Fixed Smart Build tools modals
 ### 2026-09-16
