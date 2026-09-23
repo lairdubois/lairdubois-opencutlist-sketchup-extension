@@ -2484,6 +2484,8 @@ tool:
     action_option_options_ask_name_status: Saisir manuellement le nom des pièces
     action_option_options_layer_name: Calque
     action_option_options_layer_name_status: Nom du calque sur lequel sont placées les pièces
+    action_option_options_include_origin: Origine du fichier
+    action_option_options_include_origin_status: "Inclure l'origine du fichier SKP dans la boîte englobante du module : l'écart entre l'origine et le contenu est conservé"
     detecting_cavities: "Détection des cavités..."
     error:
       invalid_divider_seed: Ce type de pièce ne permet pas la construction d'un séparateur
@@ -2511,6 +2513,8 @@ tool:
     warning:
       no_back_panel_machining: "Aucune rainure n'a pu être usinée : aucune pièce voisine ne borde le fond à cette profondeur"
       no_module_file: Aucun fichier .skp dans ce dossier
+      module_axis_no_scale: "Module non étirable selon {{ axis }} : bloqué par le comportement du composant"
+      module_axis_curve_intersect: "Module non étirable selon {{ axis }} : l'un des plans de coupe traverse une courbe non étirable"
     success:
       part_created: "Nouvelle pièce créée : {{ name }}"
       part_created_plural: "{{ count }} nouvelles pièces créées : {{ name }}"

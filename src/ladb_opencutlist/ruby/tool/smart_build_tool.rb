@@ -57,6 +57,7 @@ module Ladb::OpenCutList
     ACTION_OPTION_OPTIONS_MIRROR = 'mirror'
     ACTION_OPTION_OPTIONS_ASK_NAME = 'ask_name'
     ACTION_OPTION_OPTIONS_LAYER_NAME = 'layer_name'
+    ACTION_OPTION_OPTIONS_INCLUDE_ORIGIN = 'include_origin'
 
     # The library folder the module SKP files are picked in
     MODULES_LIBRARY_REF = '$LIB/components/modules'
@@ -70,6 +71,9 @@ module Ladb::OpenCutList
     ACTIONS = [
       {
         :action => ACTION_BUILD_MODULE,
+        :options => {
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_INCLUDE_ORIGIN ]
+        }
       },
       {
         :action => ACTION_BUILD_DIVIDER,
@@ -295,6 +299,8 @@ module Ladb::OpenCutList
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,.333H.667V1H0ZM.333,.333V0H1V.667H.667'))
         when ACTION_OPTION_OPTIONS_MIRROR
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path(MIRROR_MOTIF_VERTICAL_PATH))
+        when ACTION_OPTION_OPTIONS_INCLUDE_ORIGIN
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.25,0V.75H1M.083,.167L.25,0L.417,.167M.833,.583L1,.75L.833,.917M.042,.5V.958H.5V.5Z'))
         end
       end
 
@@ -429,7 +435,7 @@ module Ladb::OpenCutList
     @@dir_ref = nil
     @@source_ref = nil
 
-    # Source probes, by file path : { :mtime, :cutters, :origin, :sizes, :min_sizes }.
+    # Source probes, by file path : { :mtime, :cutters, :content_bounds, :compression_distances, … }.
     # Kept across handlers to probe a file only once while it is unchanged.
     @@sources = {}
 
@@ -462,6 +468,11 @@ module Ladb::OpenCutList
       _check_library_refs
       @source = _get_source
       _setup_library_panel
+      super
+    end
+
+    def stop
+      @tool.hide_message
       super
     end
 
@@ -507,6 +518,11 @@ module Ladb::OpenCutList
       end
 
       super
+    end
+
+    def onStateChanged(old_state, new_state)
+      super
+      _show_locked_axis_message
     end
 
     # -- Events --
@@ -648,6 +664,19 @@ module Ladb::OpenCutList
       _refresh
 
       true
+    end
+
+    def onToolActionOptionStored(tool, action, option_group, option)
+
+      case option_group
+      when SmartBuildTool::ACTION_OPTION_OPTIONS
+        case option
+        when SmartBuildTool::ACTION_OPTION_OPTIONS_INCLUDE_ORIGIN
+          @source = _get_source
+          _reset  # The box drawn so far was clamped on the previous sizes
+        end
+      end
+
     end
 
     # -----
@@ -887,7 +916,7 @@ module Ladb::OpenCutList
                           snap_point: point.transform(t),
                           text: measure,
                           text_color: color,
-                          border_color: locked && state == @state ? Kuix::COLOR_MAGENTA : color
+                          border_color: locked && state == @state || @source[:locked_axes][state - 1] ? Kuix::COLOR_MAGENTA : color
                         ), LAYER_2D_DIMENSIONS)
       end
 
@@ -975,10 +1004,13 @@ module Ladb::OpenCutList
       return nil unless vx.valid?
       x_axis = vx.normalize
 
-      fn_clamp = lambda { |value, min| value.abs >= min ? value : (value < 0 ? -min : min) }
-      min_sizes = @source[:min_sizes]
+      # Raised to the minimal size, or set to the source size on a locked axis
+      fn_clamp = lambda { |value, index|
+        size = @source[:locked_axes][index] ? @source[:sizes][index] : [ value.abs, @source[:min_sizes][index] ].max
+        value < 0 ? -size : size
+      }
 
-      dx = fn_clamp.call(vx.length, min_sizes[0])
+      dx = fn_clamp.call(vx.length, 0)
       dy = 0
       dz = 0
 
@@ -1012,11 +1044,11 @@ module Ladb::OpenCutList
         else
           dz = origin.vector_to(pz) % z_axis
           z_axis = z_axis.reverse if dz < 0
-          dz = fn_clamp.call(dz.abs, min_sizes[2])
+          dz = fn_clamp.call(dz.abs, 2)
         end
         y_axis = z_axis * x_axis
 
-        dy = fn_clamp.call(vy % y_axis, min_sizes[1])
+        dy = fn_clamp.call(vy % y_axis, 1)
 
       end
 
@@ -1106,7 +1138,7 @@ module Ladb::OpenCutList
       file_refs = PLUGIN.list_library_files(@@dir_ref, '.skp')
 
       # Both rows share the same columns
-      num_dirs = dir_refs.length + (@@dir_ref == root_ref ? 0 : 1)
+      num_dirs = dir_refs.length + 1
       num_cols = [ [ num_dirs, file_refs.length, 5 ].max, 10 ].min
 
       fn_create_btn = lambda { |text, color, selected, disabled = false, hover_background = true|
@@ -1248,21 +1280,29 @@ module Ladb::OpenCutList
       @@source_ref.nil? ? nil : PLUGIN.resolve_library_ref(@@source_ref)
     end
 
+    def _fetch_option_include_origin?
+      @tool.fetch_action_option_boolean(@action, SmartBuildTool::ACTION_OPTION_OPTIONS, SmartBuildTool::ACTION_OPTION_OPTIONS_INCLUDE_ORIGIN)
+    end
+
     # Loads the source SKP file in the given model and returns its definition.
     # Must run inside an operation.
     def _load_source_definition(model, path)
       Sketchup.version_number >= 2100000000 ? model.definitions.load(path, allow_newer: true) : model.definitions.load(path)
     end
 
-    # The 'stretch_cutters' of the source definition - or of its single
-    # top level container, when the file holds the module as a group - as
-    # { axis => ratios }, 0.5 on a missing axis.
+    # The source definition, followed by the definition of its single top
+    # level container when the file holds the module as a group.
+    def _get_module_definitions(definition)
+      definitions = [ definition ]
+      containers = definition.entities.select { |entity| entity.respond_to?(:definition) }
+      definitions << containers.first.definition if containers.one? && definition.entities.count { |entity| entity.is_a?(Sketchup::Face) || entity.is_a?(Sketchup::Edge) } == 0
+      definitions
+    end
+
+    # The 'stretch_cutters' of the module definitions - the first holding
+    # them - as { axis => ratios }, 0.5 on a missing axis.
     def _read_cutters(definition)
-      data = PLUGIN.get_attribute(definition, 'stretch_cutters')
-      if data.nil?
-        containers = definition.entities.select { |entity| entity.respond_to?(:definition) }
-        data = PLUGIN.get_attribute(containers.first.definition, 'stretch_cutters') if containers.one? && definition.entities.count { |entity| entity.is_a?(Sketchup::Face) || entity.is_a?(Sketchup::Edge) } == 0
-      end
+      data = _get_module_definitions(definition).map { |module_definition| PLUGIN.get_attribute(module_definition, 'stretch_cutters') }.compact.first
       fn_ratios = lambda { |xyz|
         ratios = data.is_a?(Hash) && data[xyz].is_a?(Array) ? data[xyz].map(&:to_f).select { |ratio| ratio > 0 && ratio < 1.0 } : []
         ratios.empty? ? [ 0.5 ] : ratios
@@ -1274,10 +1314,15 @@ module Ladb::OpenCutList
       }
     end
 
-    # Probes the source file : its cutters, the min corner and the sizes of its
-    # content bounds (as the stretch measures them), and its minimal sizes
-    # (sizes minus the max compression distance of each axis). The file is
-    # loaded in an aborted operation : nothing is left in the model.
+    # The axes the module definitions' behavior forbids to scale along
+    # ('no_scale_mask' bits 0, 1 and 2 : red, green and blue), as booleans.
+    def _read_no_scale_axes(definition)
+      mask = _get_module_definitions(definition).map { |module_definition| module_definition.behavior.no_scale_mask? }.reduce(0, :|)
+      (0..2).map { |bit| mask & (1 << bit) != 0 }
+    end
+
+    # The selected source - probed once while its file is unchanged - with its
+    # bounds.
     def _get_source
       return nil if @@source_ref.nil?  # No file in the library : the bar says it
       path = _get_source_path
@@ -1287,8 +1332,34 @@ module Ladb::OpenCutList
       end
 
       mtime = File.mtime(path)
-      source = @@sources[path]
-      return source if !source.nil? && source[:mtime] == mtime
+      probe = @@sources[path]
+      probe = _probe_source(path, mtime) if probe.nil? || probe[:mtime] != mtime
+      return nil if probe.nil?
+
+      _get_source_with_bounds(probe)
+    end
+
+    # Why the axis of the current state can't be stretched, in the message
+    # panel - hidden on the other states.
+    def _show_locked_axis_message
+      index = [ STATE_X, STATE_Y, STATE_Z ].index(@state)
+      if index.nil? || @source.nil? || !@source[:locked_axes][index]
+        @tool.hide_message
+        return
+      end
+      axis = %w[X Y Z][index]
+      texts = [ [ :no_scale_axes, 'module_axis_no_scale' ], [ :curve_intersect_axes, 'module_axis_curve_intersect' ] ].select { |key, _| @source[key][index] }.map { |_, warning|
+        PLUGIN.get_i18n_string("tool.smart_build.warning.#{warning}", { :axis => axis })
+      }
+      @tool.show_message("⚠ #{texts.join(' | ')}", SmartTool::MESSAGE_TYPE_WARNING)
+    end
+
+    # Probes the source file : its cutters, its content bounds (as the stretch
+    # measures them), the max compression distance of each axis and the axes
+    # it can't be stretched along - forbidden by the component behavior, or
+    # a cutter crossing a curve the stretch would deform. The file is loaded
+    # in an aborted operation : nothing is left in the model.
+    def _probe_source(path, mtime)
 
       model = Sketchup.active_model
       model.start_operation('OCL Probe Module', true)
@@ -1298,40 +1369,60 @@ module Ladb::OpenCutList
         raise "Failed to load #{path}" unless definition.is_a?(Sketchup::ComponentDefinition)
 
         cutters = _read_cutters(definition)
+        no_scale_axes = _read_no_scale_axes(definition)
         instance = model.entities.add_instance(definition, IDENTITY)
 
-        origin = nil
-        sizes = []
-        min_sizes = []
+        content_bounds = nil
+        compression_distances = []
+        curve_intersect_axes = []
         split_defs = []
         [ X_AXIS, Y_AXIS, Z_AXIS ].each do |axis|
           split_def = _split(Sketchup::InstancePath.new([ instance ]), IDENTITY, axis, cutters[axis])
           raise "Failed to split #{path}" unless split_def.is_a?(StretchSplitDef)
-          size = _get_split_size(split_def)
-          origin = split_def.eb.min
-          sizes << size
-          min_sizes << [ size - split_def.max_compression_distance, 0 ].max
+          content_bounds = split_def.eb
+          compression_distances << split_def.max_compression_distance
+          curve_intersect_axes << !split_def.sections_valid?
           split_defs << split_def
         end
 
-        source = @@sources[path] = {
+        probe = @@sources[path] = {
           :mtime => mtime,
           :cutters => cutters,
-          :origin => origin,
-          :sizes => sizes,
-          :min_sizes => min_sizes,
+          :content_bounds => Geom::BoundingBox.new.add(content_bounds.min, content_bounds.max),
+          :compression_distances => compression_distances,
+          :no_scale_axes => no_scale_axes,
+          :curve_intersect_axes => curve_intersect_axes,
           :split_defs => split_defs,
         }.merge(_get_source_preview(split_defs))
 
       rescue Exception => e
         PLUGIN.dump_exception(e)
         @tool.notify_errors([ [ 'tool.smart_build.error.module_file_invalid', { :file => @@source_ref } ] ])
-        source = nil
+        probe = nil
       ensure
         model.abort_operation
       end
 
-      source
+      probe
+    end
+
+    # The probe completed by the module bounds in the source space : the
+    # content bounds - extended to the source file origin when the option asks
+    # for it, the gap between them then kept whatever the stretch - as
+    # :origin (min corner), :sizes and :min_sizes (sizes minus the max
+    # compression distance of each axis), and the :locked_axes - kept at their
+    # source size.
+    def _get_source_with_bounds(probe)
+      bounds = Geom::BoundingBox.new.add(probe[:content_bounds].min, probe[:content_bounds].max)
+      bounds.add(ORIGIN) if _fetch_option_include_origin?
+      sizes = [ bounds.width, bounds.height, bounds.depth ]
+      probe.merge(
+        :origin => bounds.min,
+        :sizes => sizes,
+        :min_sizes => sizes.each_with_index.map { |size, index| [ size - probe[:compression_distances][index], 0 ].max },
+        :locked_axes => probe[:no_scale_axes].zip(probe[:curve_intersect_axes]).map { |no_scale, curve_intersect| no_scale || curve_intersect },
+        :gaps => sizes.zip([ probe[:content_bounds].width, probe[:content_bounds].height, probe[:content_bounds].depth ]).map { |size, content_size| size - content_size },
+      )
     end
 
     # The edges of the source content - read while it's loaded, the preview
@@ -1492,12 +1583,14 @@ module Ladb::OpenCutList
 
         # Stretch it to the box sizes, axis by axis
         [ X_AXIS, Y_AXIS, Z_AXIS ].each_with_index do |axis, index|
+          next if @source[:locked_axes][index]  # Kept at the source size
 
           et = PathUtils.get_transformation(active_path + [ group ], IDENTITY)
           split_def = _split(Sketchup::InstancePath.new(active_path + [ group ]), et, axis, @source[:cutters][axis])
           raise "Failed to split" unless split_def.is_a?(StretchSplitDef) && split_def.sections_valid?
 
-          distance = box[:sizes][index] - _get_split_size(split_def)
+          # The gap between the content and the source origin (if included) is kept
+          distance = box[:sizes][index] - @source[:gaps][index] - _get_split_size(split_def)
           next if distance.to_l == 0
 
           stretch_def = split_def.stretch_def_by_distance(distance)
