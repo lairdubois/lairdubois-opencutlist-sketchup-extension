@@ -2430,6 +2430,7 @@ tool:
     action_0_state_1_arrows_status: "Flèches = Verrouiller sur un axe (→ X, ← Y, ↑ Z)"
     action_0_state_2_status: Cliquez pour définir la profondeur du module (axe Y)
     action_0_state_2_lock_status: Verrouiller sur la profondeur du fichier source
+    action_0_state_2_arrows_status: "Flèches = Verrouiller la normale du plan XY sur un axe (→ X, ← Y, ↑ Z)"
     action_0_state_3_status: Cliquez pour définir la hauteur du module (axe Z)
     action_0_state_3_lock_status: Verrouiller sur la hauteur du fichier source
     action_0_flip_status: Inverser la façade et le dos

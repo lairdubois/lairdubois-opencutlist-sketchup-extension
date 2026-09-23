@@ -75,12 +75,6 @@ module Ladb::OpenCutList
 
     ACTIONS = [
       {
-        :action => ACTION_BUILD_MODULE,
-        :options => {
-          ACTION_OPTION_ANCHOR => [ ACTION_OPTION_ANCHOR_CENTER_X, ACTION_OPTION_ANCHOR_CENTER_Y, ACTION_OPTION_ANCHOR_CENTER_Z, ACTION_OPTION_ANCHOR_ORIGIN ]
-        }
-      },
-      {
         :action => ACTION_BUILD_DIVIDER,
         :options => {
           ACTION_OPTION_THICKNESS => [ ACTION_OPTION_THICKNESS_THICKNESS ],
@@ -110,6 +104,17 @@ module Ladb::OpenCutList
         }
       }
     ]
+
+    if Sketchup.debug_mode?
+      ACTIONS = [
+                 {
+                   :action => ACTION_BUILD_MODULE,
+                   :options => {
+                     ACTION_OPTION_ANCHOR => [ ACTION_OPTION_ANCHOR_CENTER_X, ACTION_OPTION_ANCHOR_CENTER_Y, ACTION_OPTION_ANCHOR_CENTER_Z, ACTION_OPTION_ANCHOR_ORIGIN ]
+                   }
+                 }
+               ] + ACTIONS
+    end
 
     # -----
 
@@ -444,6 +449,10 @@ module Ladb::OpenCutList
     STATE_Y = 2
     STATE_Z = 3
 
+    # The least sine between X and an XY plane normal locked by the arrow
+    # keys : a 10 degree threshold.
+    LOCKED_XY_NORMAL_MIN_SINE = 0.17
+
     LAYER_3D_BOX_PREVIEW = 200
 
     LAYER_2D_DIMENSIONS = 100
@@ -474,6 +483,7 @@ module Ladb::OpenCutList
       @origin_directions = []   # Directions of the edges and clines touching the picked origin
       @locked_x_axis = nil      # X direction locked by the arrow keys
       @snapped_x_axis = nil     # X direction the mouse is snapped on (locked or auto)
+      @locked_xy_normal = nil   # XY plane normal locked by the arrow keys
 
       @source = nil
 
@@ -523,7 +533,7 @@ module Ladb::OpenCutList
                ' | ' + PLUGIN.get_i18n_string('default.constrain_key') + ' = ' + PLUGIN.get_i18n_string("tool.smart_build.action_#{@action}_state_#{state}_lock_status") + '.' +
                ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_build.action_#{@action}_flip_status") + '.' +
                ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_build.action_#{@action}_flip_up_status") + '.' +
-               (state == STATE_X ? ' | ' + PLUGIN.get_i18n_string("tool.smart_build.action_#{@action}_state_#{state}_arrows_status") + '.' : '')
+               (state == STATE_X || state == STATE_Y ? ' | ' + PLUGIN.get_i18n_string("tool.smart_build.action_#{@action}_state_#{state}_arrows_status") + '.' : '')
       end
 
       super
@@ -559,6 +569,7 @@ module Ladb::OpenCutList
         set_state(STATE_ORIGIN)
       when STATE_Y
         @picked_x_point = nil
+        @locked_xy_normal = nil
         set_state(STATE_X)
       when STATE_Z
         @picked_y_point = nil
@@ -650,6 +661,22 @@ module Ladb::OpenCutList
           return true
         end
       end
+      if @state == STATE_Y
+        axis = { VK_RIGHT => _get_active_x_axis, VK_LEFT => _get_active_y_axis, VK_UP => _get_active_z_axis }[key]
+        unless axis.nil?
+          if @locked_xy_normal == axis
+            @locked_xy_normal = nil
+          else
+            if _get_locked_y_axis(axis).nil?
+              UI.beep  # Along X : can't be the XY plane normal
+              return true
+            end
+            @locked_xy_normal = axis
+          end
+          _refresh
+          return true
+        end
+      end
       false
     end
 
@@ -720,6 +747,7 @@ module Ladb::OpenCutList
       @origin_directions = []
       @locked_x_axis = nil
       @snapped_x_axis = nil
+      @locked_xy_normal = nil
       super
       _setup_library_panel  # Cleared with all the 2D layers
       set_state(STATE_ORIGIN)
@@ -796,10 +824,24 @@ module Ladb::OpenCutList
       (_get_x_axis * _get_y_axis).normalize
     end
 
-    # The Y unit direction while Y isn't drawn : the active horizontal
-    # direction perpendicular to X - making XY the active horizontal plane if
-    # X is horizontal. X being vertical : the one facing the camera.
+    # The Y line direction the given XY plane normal (the locked one by
+    # default) leaves once X is drawn : perpendicular to both. Only the
+    # normal's part perpendicular to X counts, a normal too close to X (under
+    # 10 degrees) giving nil. Its side is the mouse's.
+    def _get_locked_y_axis(normal = @locked_xy_normal, x_axis = nil)
+      return nil unless normal.is_a?(Geom::Vector3d) && normal.valid?
+      y_axis = normal * (x_axis || _get_x_axis)
+      return nil if y_axis.length.to_f < LOCKED_XY_NORMAL_MIN_SINE
+      y_axis.normalize
+    end
+
+    # The Y unit direction while Y isn't drawn : the one the locked XY plane
+    # normal leaves, else the active horizontal direction perpendicular to X -
+    # making XY the active horizontal plane if X is horizontal. X being
+    # vertical : the one facing the camera.
     def _get_default_y_axis(x_axis)
+      y_axis = _get_locked_y_axis(@locked_xy_normal, x_axis)
+      return y_axis unless y_axis.nil?
       y_axis = _get_active_z_axis * x_axis
       y_axis = x_axis * Sketchup.active_model.active_view.camera.direction unless y_axis.valid?
       y_axis = x_axis.axes[1] unless y_axis.valid?
@@ -909,13 +951,21 @@ module Ladb::OpenCutList
           point = p
           @snapped_x_axis = direction
         end
+      else
+        # Snapped by SketchUp (on the origin edge itself, its other end, an
+        # inference along it…) : the origin direction it lies on, if any
+        @snapped_x_axis = @origin_directions.find { |direction| point.on_line?([ @picked_origin, direction ]) }
       end
       @mouse_ip.clear unless @snapped_x_axis.nil? || @mouse_ip.degrees_of_freedom < 2
       @mouse_snap_point = _lock_on_source_size(point, 0)
     end
 
     def _snap_y(x, y, view)
-      if @mouse_ip.degrees_of_freedom > 2
+      if (y_axis = _get_locked_y_axis)
+        # Locked by the arrow keys : on the line perpendicular to X and the normal
+        point = _snap_on_origin_line(y_axis, x, y, view)
+        @mouse_ip.clear unless @mouse_ip.degrees_of_freedom < 2
+      elsif @mouse_ip.degrees_of_freedom > 2
         # Free : on the plane holding the X edge and the default Y direction
         x_axis = _get_x_axis
         point = Geom.intersect_line_plane(view.pickray(x, y), [ @picked_origin, x_axis * _get_default_y_axis(x_axis) ])
@@ -963,6 +1013,16 @@ module Ladb::OpenCutList
         @tool.append_3d(k_line, LAYER_3D_BOX_PREVIEW)
       end
 
+      # The line the Y edge is locked on, in the color of the locked normal
+      if @state == STATE_Y && (y_axis = _get_locked_y_axis)
+        k_line = Kuix::Line.new
+        k_line.position = @picked_origin
+        k_line.direction = y_axis
+        k_line.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+        k_line.color = _get_vector_color(@locked_xy_normal, Kuix::COLOR_MAGENTA)
+        @tool.append_3d(k_line, LAYER_3D_BOX_PREVIEW)
+      end
+
       return if (box = _get_box(*points)).nil?
 
       t = box[:t]
@@ -972,31 +1032,41 @@ module Ladb::OpenCutList
       box_complete = _get_box(*points, complete: true)
       _preview_box_complete(view, box_complete)
 
-      # Solid : the X, Y and Z edges measured by the labels, in their axis color
+      # Solid : the current edge, in its axis color
       corner = Geom::Point3d.new(w, 0, 0)
-      edges = [ [ ORIGIN, corner, Kuix::COLOR_X ] ]
-      edges << [ corner, Geom::Point3d.new(w, d, 0), Kuix::COLOR_Y ] if d > 0
-      edges << [ corner, Geom::Point3d.new(w, 0, h), Kuix::COLOR_Z ] if h > 0
-      edges.each do |p1, p2, color|
-        k_segments = Kuix::Segments.new
-        k_segments.add_segments([ p1, p2 ])
-        k_segments.line_width = 2
-        k_segments.color = color
-        k_segments.transformation = t
-        @tool.append_3d(k_segments, LAYER_3D_BOX_PREVIEW)
+      p1, p2, color = {
+        STATE_X => [ ORIGIN, corner, Kuix::COLOR_X ],
+        STATE_Y => [ corner, Geom::Point3d.new(w, d, 0), Kuix::COLOR_Y ],
+        STATE_Z => [ corner, Geom::Point3d.new(w, 0, h), Kuix::COLOR_Z ]
+      }[@state]
+      if p1 != p2
+
+        k_edge = Kuix::EdgeMotif3d.new
+        k_edge.start.copy!(p1)
+        k_edge.end.copy!(p2)
+        k_edge.line_width = 1.5
+        k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+        k_edge.color = color
+        k_edge.transformation = t
+        @tool.append_3d(k_edge, LAYER_3D_BOX_PREVIEW)
+
       end
 
-      locked = @tool.is_key_shift_down?
-      labels = [ [ Geom::Point3d.new(w / 2, 0, 0), w, Kuix::COLOR_X, STATE_X ] ]
-      labels << [ Geom::Point3d.new(w, d / 2, 0), d, Kuix::COLOR_Y, STATE_Y ] if d > 0
-      labels << [ Geom::Point3d.new(w, 0, h / 2), h, Kuix::COLOR_Z, STATE_Z ] if h > 0
-      labels.each do |point, measure, color, state|
+      # The label of the current edge
+      point, measure, color = {
+        STATE_X => [ Geom::Point3d.new(w / 2, 0, 0), w, Kuix::COLOR_X ],
+        STATE_Y => [ Geom::Point3d.new(w, d / 2, 0), d, Kuix::COLOR_Y ],
+        STATE_Z => [ Geom::Point3d.new(w, 0, h / 2), h, Kuix::COLOR_Z ]
+      }[@state]
+      if measure > 0
+
         @tool.append_2d(_create_floating_label(
                           snap_point: point.transform(t),
                           text: measure,
                           text_color: color,
-                          border_color: locked && state == @state || @source[:locked_axes][state - 1] ? Kuix::COLOR_MAGENTA : color
+                          border_color: @tool.is_key_shift_down? || @source[:locked_axes][@state - 1] ? Kuix::COLOR_MAGENTA : color
                         ), LAYER_2D_DIMENSIONS)
+
       end
 
       Sketchup.set_status_text(box[:sizes][@state - 1].to_l.to_s, SB_VCB_VALUE)
