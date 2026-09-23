@@ -2422,6 +2422,18 @@ tool:
       part_created_plural: "{{ count }} new parts created: {{ name }}"
   smart_build:
     title: Build
+    action_0: Place a Module
+    action_0_status: Place a module imported from an SKP file, scaled to the dimensions of the drawn box
+    action_0_state_0_status: Click to set the module's origin
+    action_0_state_1_status: Click to set the width of the module (X-axis)
+    action_0_state_1_lock_status: Lock to the width of the source file
+    action_0_state_1_arrows_status: "Arrows = Lock to an axis (→ X, ← Y, ↑ Z)"
+    action_0_state_2_status: Click to set the module's depth (Y-axis)
+    action_0_state_2_lock_status: Lock to the depth of the source file
+    action_0_state_3_status: Click to set the module's height (Z-axis)
+    action_0_state_3_lock_status: Lock to the height of the source file
+    action_0_flip_status: Flip the front and back
+    action_0_flip_up_status: Flip top and bottom
     action_1: Build Divider
     action_1_status: Build a divider in a cavity formed by a group of existing parts
     action_1_state_0_status: Click on a wall to build a divider
@@ -2440,6 +2452,7 @@ tool:
     action_option_group_overlay: Overlay
     action_option_group_axes: Axes
     action_option_group_measure_type: Measure
+    action_option_group_anchor: Anchoring
     action_option_group_options: Options
     action_option_offset_front_panel_offset: Clearance
     action_option_offset_front_panel_offset_status: "Defines the clearance left on each side of the front panel"
@@ -2472,6 +2485,10 @@ tool:
     action_option_options_ask_name_status: Enter part names manually
     action_option_options_layer_name: Layer
     action_option_options_layer_name_status: Name of the layer on which the parts are placed
+    action_option_anchor_center_x_status:  Centered in X
+    action_option_anchor_center_y_status:  Centered on Y
+    action_option_anchor_center_z_status:  Centered on Z
+    action_option_anchor_origin_status: Origin of the component
     detecting_cavities: "Cavity detection..."
     error:
       invalid_divider_seed: This type of part does not allow for the construction of a divider
@@ -2493,8 +2510,14 @@ tool:
       front_panel_number_overflow: "It is not possible to distribute {{ number }} fronts across this opening"
       back_panel_number_overflow: "Impossible to distribute {{ number }} backs across this opening"
       back_panel_severs_parts: "The groove would cut all the way through: {{ names }}. Reduce its depth"
+      module_file_not_found: "Cabinet file not found: **{{ file }}**"
+      module_file_invalid: "Unable to load the cabinet file: **{{ file }}**"
+      module_stretch_failed: "Impossible to stretch the cabinet to these dimensions"
     warning:
       no_back_panel_machining: "No groove could be machined: there are no adjacent parts bordering the back at this depth"
+      no_module_file: No .skp files in this folder
+      module_axis_no_scale: "Module cannot be scaled along the {{ axis }}: blocked by the component's behavior"
+      module_axis_curve_intersect: "Non-scalable module along {{ axis }}: one of the cross-sectional planes passes through a non-scalable curve"
     success:
       part_created: "New part created: {{ name }}"
       part_created_plural: "{{ count }} new parts created: {{ name }}"
