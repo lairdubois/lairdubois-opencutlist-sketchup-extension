@@ -31,6 +31,7 @@ module Ladb::OpenCutList
     ACTION_OPTION_MEASURE_TYPE = 'measure_type'
     ACTION_OPTION_OVERLAY = 'overlay'
     ACTION_OPTION_AXES = 'axes'
+    ACTION_OPTION_ANCHOR = 'anchor'
     ACTION_OPTION_OPTIONS = 'options'
 
     ACTION_OPTION_THICKNESS_THICKNESS = 'thickness'
@@ -51,13 +52,17 @@ module Ladb::OpenCutList
     ACTION_OPTION_AXES_ACTIVE = 'active'
     ACTION_OPTION_AXES_CONTEXT = 'context'
 
+    ACTION_OPTION_ANCHOR_CENTER_X = 'center_x'
+    ACTION_OPTION_ANCHOR_CENTER_Y = 'center_y'
+    ACTION_OPTION_ANCHOR_CENTER_Z = 'center_z'
+    ACTION_OPTION_ANCHOR_ORIGIN = 'origin'
+
     ACTION_OPTION_OPTIONS_MEASURE_REVERSED = 'measure_reversed'
     ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE = 'reduce_envelope'
     ACTION_OPTION_OPTIONS_REUSE_DEFINITION = 'reuse_definition'
     ACTION_OPTION_OPTIONS_MIRROR = 'mirror'
     ACTION_OPTION_OPTIONS_ASK_NAME = 'ask_name'
     ACTION_OPTION_OPTIONS_LAYER_NAME = 'layer_name'
-    ACTION_OPTION_OPTIONS_INCLUDE_ORIGIN = 'include_origin'
 
     # The library folder the module SKP files are picked in
     MODULES_LIBRARY_REF = '$LIB/components/modules'
@@ -72,7 +77,7 @@ module Ladb::OpenCutList
       {
         :action => ACTION_BUILD_MODULE,
         :options => {
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_INCLUDE_ORIGIN ]
+          ACTION_OPTION_ANCHOR => [ ACTION_OPTION_ANCHOR_CENTER_X, ACTION_OPTION_ANCHOR_CENTER_Y, ACTION_OPTION_ANCHOR_CENTER_Z, ACTION_OPTION_ANCHOR_ORIGIN ]
         }
       },
       {
@@ -270,6 +275,17 @@ module Ladb::OpenCutList
         when ACTION_OPTION_AXES_CONTEXT
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.167,0V.833H1M0,.167L.167,0L.333,.167M.833,.667L1,.833L.833,1M.5,.083V.5H.917V.083Z'))
         end
+      when ACTION_OPTION_ANCHOR
+        case option
+        when ACTION_OPTION_ANCHOR_CENTER_X
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.062,.313H.687V.938H.062ZM.687,.313L1,0M.063,.938L.375,.625M.687,.938L1,.625M.063,.313L.375,0M1,0V.625M.375,0V.625M.375,0H1M.375,.625H1M.313,.875H.438V1H.313Z'))
+        when ACTION_OPTION_ANCHOR_CENTER_Y
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.062,.313H.687V.938H.062ZM.687,.313L1,0M.063,.938L.375,.625M.687,.938L1,.625M.063,.313L.375,0M1,0V.625M.375,0V.625M.375,0H1M.375,.625H1M.188,.688H.313V.813H.188Z'))
+        when ACTION_OPTION_ANCHOR_CENTER_Z
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.062,.313H.687V.938H.062ZM.687,.313L1,0M.063,.938L.375,.625M.687,.938L1,.625M.063,.313L.375,0M1,0V.625M.375,0V.625M.375,0H1M.375,.625H1M0,.563H.125V.688H0Z'))
+        when ACTION_OPTION_ANCHOR_ORIGIN
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.25,0V.75H1M.083,.167L.25,0L.417,.167M.833,.583L1,.75L.833,.917M.125,.625L.375,.875M.125,.875L.375,.625'))
+        end
       when ACTION_OPTION_OVERLAY
         case option
         when ACTION_OPTION_OVERLAY_INSET
@@ -299,8 +315,6 @@ module Ladb::OpenCutList
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,.333H.667V1H0ZM.333,.333V0H1V.667H.667'))
         when ACTION_OPTION_OPTIONS_MIRROR
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path(MIRROR_MOTIF_VERTICAL_PATH))
-        when ACTION_OPTION_OPTIONS_INCLUDE_ORIGIN
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.25,0V.75H1M.083,.167L.25,0L.417,.167M.833,.583L1,.75L.833,.917M.042,.5V.958H.5V.5Z'))
         end
       end
 
@@ -326,6 +340,11 @@ module Ladb::OpenCutList
         case option
         when ACTION_OPTION_GROOVE_DEPTH, ACTION_OPTION_GROOVE_SETBACK, ACTION_OPTION_GROOVE_THROUGH
           return fetch_action_option_boolean(action, ACTION_OPTION_OVERLAY, ACTION_OPTION_OVERLAY_FULL_OVERLAY)
+        end
+      when ACTION_OPTION_ANCHOR
+        case option
+        when ACTION_OPTION_ANCHOR_CENTER_X, ACTION_OPTION_ANCHOR_CENTER_Y, ACTION_OPTION_ANCHOR_CENTER_Z
+          return fetch_action_option_boolean(action, ACTION_OPTION_ANCHOR, ACTION_OPTION_ANCHOR_ORIGIN)  # The origin anchor overrides them
         end
       when ACTION_OPTION_OPTIONS
         case option
@@ -599,16 +618,18 @@ module Ladb::OpenCutList
     # The first click of the double click already picked its point.
     def onToolLButtonDoubleClick(tool, flags, x, y, view)
       return false if @source.nil?
+      x_size = nil
       case @state
       when STATE_X
         points = [ _get_default_x_point(@picked_origin) ]
+        x_size = @source[:sizes][0]
       when STATE_Y
         points = [ @picked_x_point ]
       when STATE_Z
         points = [ @picked_x_point, @picked_y_point ]
       end
       return false if points.nil?
-      return UI.beep if (box = _get_box(*points, complete: true)).nil?
+      return UI.beep if (box = _get_box(*points, complete: true, x_size: x_size)).nil?
       @double_click_time = Time.now
       _create_module(box)
       _reset
@@ -660,7 +681,9 @@ module Ladb::OpenCutList
       length = _read_user_text_length(tool, text, base)
       return true if length.nil?
 
-      _pick(@picked_origin.offset(direction, length))
+      # The typed value is the box size : the edge to the dragged face
+      measure = _get_anchor_measure(@picked_origin.offset(direction, length), length.abs)
+      _pick(@picked_origin.offset(direction, length < 0 ? -measure : measure))
       _refresh
 
       true
@@ -669,12 +692,8 @@ module Ladb::OpenCutList
     def onToolActionOptionStored(tool, action, option_group, option)
 
       case option_group
-      when SmartBuildTool::ACTION_OPTION_OPTIONS
-        case option
-        when SmartBuildTool::ACTION_OPTION_OPTIONS_INCLUDE_ORIGIN
-          @source = _get_source
-          _reset  # The box drawn so far was clamped on the previous sizes
-        end
+      when SmartBuildTool::ACTION_OPTION_ANCHOR
+        _refresh  # The center buttons are disabled by the origin one
       end
 
     end
@@ -795,7 +814,57 @@ module Ladb::OpenCutList
       return point unless @tool.is_key_shift_down? && !@source.nil? && !point.nil?
       direction, length = _get_edge_direction_and_length(point)
       return point if direction.nil?
-      @picked_origin.offset(direction, @source[:sizes][index] * (length < 0 ? -1 : 1))
+      measure = _get_anchor_measure(point, @source[:sizes][index])
+      @picked_origin.offset(direction, length < 0 ? -measure : measure)
+    end
+
+    # The anchor of each box axis in the drawing frame : :edge (the origin on
+    # its min or max face), :center or :origin (the source file origin).
+    def _get_anchor_modes
+      return [ :origin ] * 3 if @tool.fetch_action_option_boolean(@action, SmartBuildTool::ACTION_OPTION_ANCHOR, SmartBuildTool::ACTION_OPTION_ANCHOR_ORIGIN)
+      [ SmartBuildTool::ACTION_OPTION_ANCHOR_CENTER_X, SmartBuildTool::ACTION_OPTION_ANCHOR_CENTER_Y, SmartBuildTool::ACTION_OPTION_ANCHOR_CENTER_Z ].map { |option|
+        @tool.fetch_action_option_boolean(@action, SmartBuildTool::ACTION_OPTION_ANCHOR, option) ? :center : :edge
+      }
+    end
+
+    # The edge points drawn so far, the given one on the current state
+    def _get_state_points(point)
+      case @state
+      when STATE_X
+        [ point ]
+      when STATE_Y
+        [ @picked_x_point, point ]
+      when STATE_Z
+        [ @picked_x_point, @picked_y_point, point ]
+      end
+    end
+
+    # The distance from the origin to the dragged face - the current edge
+    # measure - making a box of the given size along the current axis, the
+    # given point giving the side.
+    def _get_anchor_measure(point, size)
+      index = @state - 1
+      case _get_anchor_modes[index]
+      when :center
+        size / 2.0
+      when :origin
+        return size if (points = _get_state_points(point)).nil? || (box = _get_box(*points)).nil?
+        return size if (g = _get_anchor_face_coefs(*box[:origin_coefs][index], box[:measures][index] < 0)).nil?
+        g0, g1 = g
+        g0 + g1 * size
+      else
+        size
+      end
+    end
+
+    # The distance from the source file origin - at o0 + o1 * S from the box
+    # min - to the face the mouse drags for a box size S : [ g0, g1 ] giving
+    # g0 + g1 * S. The max face, the min one if 'negative'. Nil if that face is
+    # bound to the origin (its section moving with it) : the mouse can't drag
+    # it, the box then goes between the origin and the mouse.
+    def _get_anchor_face_coefs(o0, o1, negative)
+      g = negative ? [ o0, o1 ] : [ -o0, 1 - o1 ]
+      g.last.abs > 1e-6 ? g : nil
     end
 
     # The directions of the edges and clines the mouse input point touches -
@@ -881,6 +950,9 @@ module Ladb::OpenCutList
       end
       return if points.nil?
 
+      # The first clicked point
+      @tool.append_3d(_create_floating_points(points: [ @picked_origin ], style: Kuix::POINT_STYLE_PLUS, stroke_color: Kuix::COLOR_DARK_GREY), LAYER_3D_BOX_PREVIEW)
+
       # The line the X edge is snapped on
       if @state == STATE_X && !@snapped_x_axis.nil?
         k_line = Kuix::Line.new
@@ -935,7 +1007,7 @@ module Ladb::OpenCutList
     # point along the active X axis.
     def _preview_source(view)
       return if @mouse_snap_point.nil? || @source.nil?
-      box_complete = _get_box(_get_default_x_point(@mouse_snap_point), complete: true, origin: @mouse_snap_point)
+      box_complete = _get_box(_get_default_x_point(@mouse_snap_point), complete: true, origin: @mouse_snap_point, x_size: @source[:sizes][0])
       _preview_box_complete(view, box_complete) unless box_complete.nil?
     end
 
@@ -998,28 +1070,27 @@ module Ladb::OpenCutList
 
     # The box drawn so far, sizes raised to the source minimal sizes : its
     # frame (origin on the box min corner) and its sizes along the frame axes.
-    # 'px', 'py', 'pz' are the X, Y and Z edge points ('py' and 'pz' optional).
-    # 'complete' gives the source sizes to the edges not drawn yet. 'origin'
+    # 'px', 'py' and 'pz' are the X, Y and Z edge points ('py' and 'pz'
+    # optional) : the distance from the origin to the dragged face, whose
+    # position depends on the anchor of the axis (see _get_anchor_modes).
+    # 'complete' gives the source sizes to the edges not drawn yet, 'x_size'
+    # overrides the X size (then anchored as an edge not drawn). 'origin'
     # overrides the picked origin.
     # The content is set in the box by ':content_t' : with its front (-Y) on
     # the box side facing the camera - or 180° rotated around Z - and turned
     # upside down (180° rotated around Y, front kept) if the user asked so.
-    def _get_box(px, py = nil, pz = nil, complete: false, origin: @picked_origin)
+    # ':measures' are the signed edge measures along the frame axes (nil if
+    # not drawn), ':origin_coefs' the [ o0, o1 ] giving the source file origin
+    # on each frame axis from the box min for a box size S : o0 + o1 * S.
+    def _get_box(px, py = nil, pz = nil, complete: false, origin: @picked_origin, x_size: nil)
       return nil if origin.nil? || px.nil? || @source.nil?
 
       vx = origin.vector_to(px)
       return nil unless vx.valid?
       x_axis = vx.normalize
 
-      # Raised to the minimal size, or set to the source size on a locked axis
-      fn_clamp = lambda { |value, index|
-        size = @source[:locked_axes][index] ? @source[:sizes][index] : [ value.abs, @source[:min_sizes][index] ].max
-        value < 0 ? -size : size
-      }
-
-      dx = fn_clamp.call(vx.length, 0)
-      dy = 0
-      dz = 0
+      measures = [ x_size.nil? ? vx.length : nil, nil, nil ]
+      anchor_modes = _get_anchor_modes
 
       # The part of the Y point perpendicular to X, nil while there is none
       unless py.nil?
@@ -1033,35 +1104,93 @@ module Ladb::OpenCutList
         # Y not drawn yet : the default Y direction
         y_axis = _get_default_y_axis(x_axis)
         z_axis = x_axis * y_axis
-        if complete
-          dy = @source[:sizes][1]
-          dz = @source[:sizes][2]
-        end
 
       else
 
-        # Z on the side of the Z point, Y deduced to keep the frame right-handed
+        # Z upward while not drawn - the frame then matches the whole box one.
+        # Drawn : on the side of the Z point anchored on an edge, else kept
+        # upward - the anchor holding the box, the Z point giving its face.
+        # Y deduced to keep the frame right-handed.
         z_axis = (x_axis * vy).normalize
-        if pz.nil?
-          if complete
-            # Z not drawn yet : upward
-            z_axis = z_axis.reverse if z_axis % _get_active_z_axis < 0
-            dz = @source[:sizes][2]
-          end
-        else
+        z_axis = z_axis.reverse if (pz.nil? || anchor_modes[2] != :edge) && z_axis % _get_active_z_axis < 0
+        unless pz.nil?
           dz = origin.vector_to(pz) % z_axis
-          z_axis = z_axis.reverse if dz < 0
-          dz = fn_clamp.call(dz.abs, 2)
+          if anchor_modes[2] == :edge
+            z_axis = z_axis.reverse if dz < 0
+            dz = dz.abs
+          end
+          measures[2] = dz
         end
         y_axis = z_axis * x_axis
 
-        dy = fn_clamp.call(vy % y_axis, 1)
+        measures[1] = vy % y_axis
 
       end
 
-      t = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis) * Geom::Transformation.translation(Geom::Vector3d.new(0, [ dy, 0 ].min, 0))
-      sizes = [ dx, dy.abs, dz ]
-      flipped = _is_front_on_y_max?(t, sizes, dy >= 0) != @front_flipped
+      # Raised to the minimal size, or set to the source size on a locked axis
+      fn_clamp = lambda { |value, index|
+        @source[:locked_axes][index] ? @source[:sizes][index] : [ value, @source[:min_sizes][index] ].max
+      }
+
+      # The front side from the box anchored on its edges - the anchor then
+      # slides it a little, not enough to turn it
+      edge_sizes = measures.each_with_index.map { |measure, index|
+        next fn_clamp.call(measure.abs, index) unless measure.nil?
+        next x_size if index == 0
+        complete ? @source[:sizes][index] : 0
+      }
+      edge_t = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis) * Geom::Transformation.translation(Geom::Vector3d.new(0, measures[1].to_f < 0 ? -edge_sizes[1] : 0, 0))
+      flipped = _is_front_on_y_max?(edge_t, edge_sizes, measures[1].to_f >= 0) != @front_flipped
+
+      # The source file origin on each frame axis : the content axis runs
+      # backward on the X axis if the content is turned once, on the Y axis if
+      # flipped, on the Z axis if upside down
+      reversed = [ flipped != @up_flipped, flipped, @up_flipped ]
+      origin_coefs = @source[:origin_coefs].each_with_index.map { |(a, k), index|
+        c0 = a - k * @source[:sizes][index]  # c(S) = c0 + k * S, from the content min
+        reversed[index] ? [ -c0, 1 - k ] : [ c0, k ]
+      }
+
+      # The size of each axis and its min from the origin. An axis not drawn
+      # yet - flat while not complete - lies on the whole box min face.
+      sizes = []
+      mins = []
+      measures.each_with_index do |measure, index|
+        o0, o1 = origin_coefs[index]
+        if measure.nil?
+          size = edge_sizes[index]
+          complete_size = index == 0 ? size : @source[:sizes][index]
+          min = case anchor_modes[index]
+                when :center then -complete_size / 2.0
+                when :origin then -(o0 + o1 * complete_size)
+                else 0
+                end
+        else
+          case anchor_modes[index]
+          when :center
+            size = fn_clamp.call(2 * measure.abs, index)
+            min = -size / 2.0
+          when :origin
+            if (g = _get_anchor_face_coefs(o0, o1, measure < 0)).nil?
+              # That face bound to the origin : the box between the origin and the mouse
+              size = fn_clamp.call(measure.abs, index)
+              min = measure < 0 ? -size : 0
+            else
+              # The dragged face at the measure : g0 + g1 * S = |measure|
+              g0, g1 = g
+              size = fn_clamp.call((measure.abs - g0) / g1, index)
+              min = -(o0 + o1 * size)
+            end
+          else
+            size = fn_clamp.call(measure.abs, index)
+            min = measure < 0 ? -size : 0
+          end
+        end
+        sizes << size
+        mins << min
+      end
+
+      t = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis) * Geom::Transformation.translation(Geom::Vector3d.new(*mins))
       content_t = flipped ? t * Geom::Transformation.translation(Geom::Vector3d.new(sizes[0], sizes[1], 0)) * Geom::Transformation.rotation(ORIGIN, Z_AXIS, Math::PI) : t
       content_t = content_t * Geom::Transformation.translation(Geom::Vector3d.new(sizes[0], 0, sizes[2])) * Geom::Transformation.rotation(ORIGIN, Y_AXIS, Math::PI) if @up_flipped
       {
@@ -1069,7 +1198,9 @@ module Ladb::OpenCutList
         :sizes => sizes,
         :flipped => flipped,
         :up_flipped => @up_flipped,
-        :content_t => content_t
+        :content_t => content_t,
+        :measures => measures,
+        :origin_coefs => origin_coefs
       }
     end
 
@@ -1287,10 +1418,6 @@ module Ladb::OpenCutList
       @@source_ref.nil? ? nil : PLUGIN.resolve_library_ref(@@source_ref)
     end
 
-    def _fetch_option_include_origin?
-      @tool.fetch_action_option_boolean(@action, SmartBuildTool::ACTION_OPTION_OPTIONS, SmartBuildTool::ACTION_OPTION_OPTIONS_INCLUDE_ORIGIN)
-    end
-
     # Loads the source SKP file in the given model and returns its definition.
     # Must run inside an operation.
     def _load_source_definition(model, path)
@@ -1414,21 +1541,32 @@ module Ladb::OpenCutList
     end
 
     # The probe completed by the module bounds in the source space : the
-    # content bounds - extended to the source file origin when the option asks
-    # for it, the gap between them then kept whatever the stretch - as
-    # :origin (min corner), :sizes and :min_sizes (sizes minus the max
-    # compression distance of each axis), and the :locked_axes - kept at their
-    # source size.
+    # content bounds - as :origin (min corner), :sizes and :min_sizes (sizes minus the max
+    # compression distance of each axis), the :locked_axes - kept at their
+    # source size - and the :origin_coefs - the [ a, k ] placing the source
+    # file origin on each axis from the bounds min for a size S :
+    # a + k * (S - source size), the origin moving with its section - the
+    # nearest one when out of the content, its gap to the content then kept.
     def _get_source_with_bounds(probe)
-      bounds = Geom::BoundingBox.new.add(probe[:content_bounds].min, probe[:content_bounds].max)
-      bounds.add(ORIGIN) if _fetch_option_include_origin?
+      bounds = probe[:content_bounds]
       sizes = [ bounds.width, bounds.height, bounds.depth ]
+      origin_coefs = [ X_AXIS, Y_AXIS, Z_AXIS ].each_with_index.map { |axis, index|
+        split_def = probe[:split_defs][index]
+        xyz = ORIGIN.send(split_def.xyz_method)
+        k = 0.0
+        distance = [ sizes[index], 1.0 ].max  # The stretch is linear : any distance gives the ratio
+        if (stretch_def = split_def.stretch_def_by_distance(distance)).is_a?(StretchDef)
+          section_def = split_def.section_defs.min_by { |section_def| [ section_def.min_xyz - xyz, xyz - section_def.max_xyz, 0 ].max }
+          stretch_def.edvs.each { |edv_section_def, edv| k = (edv % axis) / distance if edv_section_def == section_def }
+        end
+        [ -bounds.min.to_a[index], k ]
+      }
       probe.merge(
+        :origin_coefs => origin_coefs,
         :origin => bounds.min,
         :sizes => sizes,
         :min_sizes => sizes.each_with_index.map { |size, index| [ size - probe[:compression_distances][index], 0 ].max },
         :locked_axes => probe[:no_scale_axes].zip(probe[:curve_intersect_axes]).map { |no_scale, curve_intersect| no_scale || curve_intersect },
-        :gaps => sizes.zip([ probe[:content_bounds].width, probe[:content_bounds].height, probe[:content_bounds].depth ]).map { |size, content_size| size - content_size },
       )
     end
 
@@ -1596,8 +1734,7 @@ module Ladb::OpenCutList
           split_def = _split(Sketchup::InstancePath.new(active_path + [ group ]), et, axis, @source[:cutters][axis])
           raise "Failed to split" unless split_def.is_a?(StretchSplitDef) && split_def.sections_valid?
 
-          # The gap between the content and the source origin (if included) is kept
-          distance = box[:sizes][index] - @source[:gaps][index] - _get_split_size(split_def)
+          distance = box[:sizes][index] - _get_split_size(split_def)
           next if distance.to_l == 0
 
           stretch_def = split_def.stretch_def_by_distance(distance)
