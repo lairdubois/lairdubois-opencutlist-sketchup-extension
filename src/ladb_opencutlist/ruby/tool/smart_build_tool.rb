@@ -6865,7 +6865,7 @@ module Ladb::OpenCutList
       return nil if mouth_paths.nil?
 
       delta = _cut_growth_delta
-      return mouth_paths if delta.nil? || delta <= 0
+      return _weld_rpaths(mouth_paths) if delta.nil? || delta <= 0
 
       # Every path kept, unlike the panel's own contour : a merge of
       # compartments too far apart to grow into one another cuts in two
@@ -6877,15 +6877,24 @@ module Ladb::OpenCutList
         miter_limit: 100.0
       )
       return nil if grown_paths.empty?
-      return grown_paths if extension_paths.empty?
+      return _weld_rpaths(grown_paths) if extension_paths.empty?
 
       united_paths, _ = Fiddle::Clippy.execute_union(closed_subjects: grown_paths + extension_paths)
-      return grown_paths if united_paths.empty?
+      return _weld_rpaths(grown_paths) if united_paths.empty?
 
-      # The union leaves vertices a hair apart where several contours meet on
-      # one corner, and #add_face refuses any two closer than SketchUp's own
-      # tolerance.
-      united_paths.map { |path| _weld_rpath(path, SolidMeshDef::TOLERANCE) }.select { |path| path.length >= 6 }
+      _weld_rpaths(united_paths)
+    end
+
+    # +rpaths+ welded (see #_weld_rpath), those left with fewer than 3 vertices
+    # dropped.
+    #
+    # On EVERY contour the cut is built on, not only an extended one : a union
+    # leaves vertices a hair apart wherever several contours meet on one corner
+    # - the mouths of a merge and the dividers closing them do, off by a few
+    # millionths of an inch - and #add_face refuses any two closer than
+    # SketchUp's own tolerance.
+    def _weld_rpaths(rpaths)
+      rpaths.map { |rpath| _weld_rpath(rpath, SolidMeshDef::TOLERANCE) }.select { |rpath| rpath.length >= 6 }
     end
 
     # The MOUTHS the cut is grown from, in the opening's frame, unioned - every
