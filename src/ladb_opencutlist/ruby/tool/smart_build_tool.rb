@@ -412,6 +412,8 @@ module Ladb::OpenCutList
   # the box extends to.
   class SmartBuildModuleActionHandler < SmartBuildActionHandler
 
+    include MaterialAttributesCachingHelper
+
     STATE_ORIGIN = 0
     STATE_X = 1
     STATE_Y = 2
@@ -1412,21 +1414,53 @@ module Ladb::OpenCutList
     # Gives every container of the given entities - recursively - its own
     # definition. Component instances sharing a definition keep sharing the
     # new one ; groups are made unique one by one.
-    def _make_unique_containers(entities, definitions_map = {})
+    # HARDWARE components keep their definition, shared with the other
+    # modules : the stretch makes unique the ones it deforms.
+    def _make_unique_containers(entities, definitions_map = {}, inherited_material = nil)
       entities.each do |entity|
+        next unless entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance)
+        material = _get_non_virtual_material(entity) || inherited_material
         if entity.is_a?(Sketchup::Group)
           entity.make_unique
-          _make_unique_containers(entity.definition.entities, definitions_map)
-        elsif entity.is_a?(Sketchup::ComponentInstance)
+          _make_unique_containers(entity.definition.entities, definitions_map, material)
+        elsif !_hardware_component?(entity, inherited_material)
           if (new_definition = definitions_map[entity.definition])
             entity.definition = new_definition
           else
             definition = entity.definition
             definitions_map[definition] = entity.make_unique.definition
-            _make_unique_containers(entity.definition.entities, definitions_map)
+            _make_unique_containers(entity.definition.entities, definitions_map, material)
           end
         end
       end
+    end
+
+    # Whether the cutlist sees the given component instance as a HARDWARE
+    # part : its material resolved as CutlistGenerateWorker#_get_material does
+    # - its own, else the dominant one of its children, else the inherited one.
+    def _hardware_component?(instance, inherited_material)
+      material = _get_non_virtual_material(instance) || _get_dominant_child_material(instance) || inherited_material
+      _get_material_attributes(material).type == MaterialAttributes::TYPE_HARDWARE
+    end
+
+    # See CutlistGenerateWorker#_get_dominant_child_material
+    def _get_dominant_child_material(entity, level = 0)
+      if entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance) && (level == 0 || entity.definition.behavior.cuts_opening?)
+        counts = Hash.new(0)
+        entity.definition.entities.each do |child_entity|
+          child_material = _get_dominant_child_material(child_entity, level + 1)
+          counts[child_material] += 1 unless child_material.nil?
+        end
+        return counts.min_by { |material, count| [ -count, MaterialAttributes.type_order(_get_material_attributes(material).type) ] }.first if counts.any?
+        return _get_non_virtual_material(entity) if level > 0
+      elsif entity.is_a?(Sketchup::Face)
+        return _get_non_virtual_material(entity)
+      end
+      nil
+    end
+
+    def _get_non_virtual_material(entity)
+      entity.material unless MaterialAttributes.is_virtual?(_get_material_attributes(entity.material))
     end
 
     def _create_module(box)
@@ -1473,6 +1507,7 @@ module Ladb::OpenCutList
             stretch_def,
             selection_path: active_path,
             selection_instances: [ group ],
+            make_unique: true,   # Never propagate to the shared HARDWARE definitions' extern instances
             wrap_operation: false
           ).run
           raise "Failed to stretch : #{result_def.errors}" unless result_def.success?
