@@ -2422,20 +2422,20 @@ tool:
       part_created_plural: "{{ count }} neu erstellte Teile: {{ name }}"
   smart_build:
     title: Bauen
-    action_0: Raumteiler bauen
-    action_0_status: "Einen Raumteiler in einem Fach errichten, das aus einer Gruppe bestehender Teile gebildet wird"
-    action_0_state_0_status: "Klicken Sie auf eine Wand, um einen Raumteiler zu errichten"
-    action_0_state_1_status: "Klicken Sie auf eine Wand, um Raumteiler zu errichten"
-    action_1: Frontteil bauen
-    action_1_status: "Ein Frontteil in einem Fach bauen, das durch eine Gruppe bestehender Teile gebildet wird"
-    action_1_state_0_status: "Klicken Sie in ein Fach, um ein Frontteil an dessen Öffnung zu errichten"
-    action_1_state_0_merge_status: "Ziehen Sie die Elemente in die benachbarten Felder, um eine gemeinsames Frontteil zu bilden"
-    action_2: Rückwand bauen
-    action_2_status: "Eine Rückwand in einem Fach errichten, das durch eine Gruppe bestehender Teile gebildet wird"
-    action_2_state_0_status: "Klicken Sie in ein Fach, um eine Rückwand an dessen Öffnung zu errichten"
-    action_2_state_0_merge_status: "Ziehen Sie bis zu den benachbarten Fächern, um eine gemeinsame Rückwand zu erhalten"
+    action_1: Raumteiler bauen
+    action_1_status: "Einen Raumteiler in einem Fach errichten, das aus einer Gruppe bestehender Teile gebildet wird"
+    action_1_state_0_status: "Klicken Sie auf eine Wand, um einen Raumteiler zu errichten"
+    action_1_state_1_status: "Klicken Sie auf eine Wand, um Raumteiler zu errichten"
+    action_2: Frontteil bauen
+    action_2_status: "Ein Frontteil in einem Fach bauen, das durch eine Gruppe bestehender Teile gebildet wird"
+    action_2_state_0_status: "Klicken Sie in ein Fach, um ein Frontteil an dessen Öffnung zu errichten"
+    action_2_state_0_merge_status: "Ziehen Sie die Elemente in die benachbarten Felder, um eine gemeinsames Frontteil zu bilden"
+    action_3: Rückwand bauen
+    action_3_status: "Eine Rückwand in einem Fach errichten, das durch eine Gruppe bestehender Teile gebildet wird"
+    action_3_state_0_status: "Klicken Sie in ein Fach, um eine Rückwand an dessen Öffnung zu errichten"
+    action_3_state_0_merge_status: "Ziehen Sie bis zu den benachbarten Fächern, um eine gemeinsame Rückwand zu erhalten"
     action_option_group_groove: Nut
-    action_1_option_group_offset: Abstand
+    action_2_option_group_offset: Abstand
     action_option_group_thickness: Dicke
     action_option_group_overlay: Anschlagsart
     action_option_group_axes: Achsen
@@ -2452,9 +2452,9 @@ tool:
     action_option_thickness_thickness: Dicke
     action_option_thickness_thickness_status: Definiert die Dicke der Platten
     action_option_overlay_inset_status: "Innenanschlag: Frontteil liegt komplett in der Öffnung, bündig mit der Vorderkante des Korpus"
-    action_2_option_overlay_inset_status: "Eingenutete Rückwand: Eingesetzt in eine Nut, die in die den Korpus begrenzenden Teile eingefräst ist"
+    action_3_option_overlay_inset_status: "Eingenutete Rückwand: Eingesetzt in eine Nut, die in die den Korpus begrenzenden Teile eingefräst ist"
     action_option_overlay_full_overlay_status: "Eckanschlag: Frontteil verdeckt die Öffnung komplett, bedeckt die Außenkante des Korpus und die Innenkanten bis zur halben Dicke"
-    action_2_option_overlay_full_overlay_status: "Aufgesetzte Rückwand: Auf der Korpusrückseite montiert, deckt die Aussenseiten bündig ab und reicht bei Mittelseiten bis zur halben Plattendicke, komplett ohne Fräsung"
+    action_3_option_overlay_full_overlay_status: "Aufgesetzte Rückwand: Auf der Korpusrückseite montiert, deckt die Aussenseiten bündig ab und reicht bei Mittelseiten bis zur halben Plattendicke, komplett ohne Fräsung"
     action_option_measure_type_inside_status: Dicke innerhalb des Zielpunkts positionieren
     action_option_measure_type_centered_status: Dicke auf den Zielpunkt ausrichten
     action_option_measure_type_outside_status: Dicke außerhalb des Zielpunkts positionieren

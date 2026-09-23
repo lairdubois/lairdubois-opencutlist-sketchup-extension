@@ -2422,20 +2422,20 @@ tool:
       part_created_plural: "{{ count }} new parts created: {{ name }}"
   smart_build:
     title: Build
-    action_0: Build Divider
-    action_0_status: Build a divider in a cavity formed by a group of existing parts
-    action_0_state_0_status: Click on a wall to build a divider
-    action_0_state_1_status: Click on a wall to build dividers
-    action_1: Build Front
-    action_1_status: Build a front in a cavity formed by a group of existing parts
-    action_1_state_0_status: Click inside a cavity to build a front across its opening
-    action_1_state_0_merge_status: "Slide to the adjacent cavities to create a shared front"
-    action_2: Build Back
-    action_2_status: Build a back in a cavity formed by a group of existing parts
-    action_2_state_0_status: Click inside a cavity to build a back wall at the opening opposite the view
-    action_2_state_0_merge_status: "Slide to the adjacent cavities to create a shared back"
+    action_1: Build Divider
+    action_1_status: Build a divider in a cavity formed by a group of existing parts
+    action_1_state_0_status: Click on a wall to build a divider
+    action_1_state_1_status: Click on a wall to build dividers
+    action_2: Build Front
+    action_2_status: Build a front in a cavity formed by a group of existing parts
+    action_2_state_0_status: Click inside a cavity to build a front across its opening
+    action_2_state_0_merge_status: "Slide to the adjacent cavities to create a shared front"
+    action_3: Build Back
+    action_3_status: Build a back in a cavity formed by a group of existing parts
+    action_3_state_0_status: Click inside a cavity to build a back wall at the opening opposite the view
+    action_3_state_0_merge_status: "Slide to the adjacent cavities to create a shared back"
     action_option_group_groove: Groove
-    action_1_option_group_offset: Clearance
+    action_2_option_group_offset: Clearance
     action_option_group_thickness: Thickness
     action_option_group_overlay: Overlay
     action_option_group_axes: Axes
@@ -2452,9 +2452,9 @@ tool:
     action_option_thickness_thickness: Thickness
     action_option_thickness_thickness_status: Defines the thickness of the panels
     action_option_overlay_inset_status: "Full inset: installed in the opening, flush with the front surface"
-    action_2_option_overlay_inset_status: "Groove-mounted: fitted into a groove machined into the parts bordering the opening"
+    action_3_option_overlay_inset_status: "Groove-mounted: fitted into a groove machined into the parts bordering the opening"
     action_option_overlay_full_overlay_status: "Full overlay: installed in front of the front face, covering the sides up to the outer edge of the cabinet and extending to half the thickness of the interior separators"
-    action_2_option_overlay_full_overlay_status: "Surface-mounted bottom panel: installed on the back of the cabinet, covering the panels up to the outer edge and extending halfway through the thickness of the interior panels, without any machining"
+    action_3_option_overlay_full_overlay_status: "Surface-mounted bottom panel: installed on the back of the cabinet, covering the panels up to the outer edge and extending halfway through the thickness of the interior panels, without any machining"
     action_option_measure_type_inside_status: Position the thickness inside the target point
     action_option_measure_type_centered_status: Center the thickness on the target point
     action_option_measure_type_outside_status: Position the thickness inside the target point

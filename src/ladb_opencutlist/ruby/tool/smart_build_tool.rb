@@ -20,10 +20,10 @@ module Ladb::OpenCutList
 
   class SmartBuildTool < SmartTool
 
-    ACTION_BUILD_DIVIDER = 0
-    ACTION_BUILD_FRONT_PANEL = 1
-    ACTION_BUILD_BACK_PANEL = 2
-    ACTION_BUILD_CABINET = 3
+    ACTION_BUILD_MODULE = 0
+    ACTION_BUILD_DIVIDER = 1
+    ACTION_BUILD_FRONT_PANEL = 2
+    ACTION_BUILD_BACK_PANEL = 3
 
     ACTION_OPTION_THICKNESS = 'thickness'
     ACTION_OPTION_OFFSET = 'offset'
@@ -58,7 +58,7 @@ module Ladb::OpenCutList
     ACTION_OPTION_OPTIONS_ASK_NAME = 'ask_name'
     ACTION_OPTION_OPTIONS_LAYER_NAME = 'layer_name'
 
-    # The library folder the cabinet SKP files are picked in
+    # The library folder the module SKP files are picked in
     CABINETS_LIBRARY_REF = '$LIB/components/cabinets'
 
     # The mirror motif - a dashed axis, a triangle on each side pointing at it
@@ -69,7 +69,7 @@ module Ladb::OpenCutList
 
     ACTIONS = [
       {
-        :action => ACTION_BUILD_CABINET,
+        :action => ACTION_BUILD_MODULE,
       },
       {
         :action => ACTION_BUILD_DIVIDER,
@@ -135,7 +135,7 @@ module Ladb::OpenCutList
           return SmartCursorManager.cursor_pencil_front_panel
       when ACTION_BUILD_BACK_PANEL
           return SmartCursorManager.cursor_pencil_back_panel
-      when ACTION_BUILD_CABINET
+      when ACTION_BUILD_MODULE
           return SmartCursorManager.cursor_pencil_rectangle
       end
 
@@ -344,14 +344,14 @@ module Ladb::OpenCutList
     def onActionChanged(action)
 
       case action
+      when ACTION_BUILD_MODULE
+        set_action_handler(SmartBuildModuleActionHandler.new(self))
       when ACTION_BUILD_DIVIDER
         set_action_handler(SmartBuildDividerActionHandler.new(self))
       when ACTION_BUILD_FRONT_PANEL
         set_action_handler(SmartBuildFrontPanelActionHandler.new(self))
       when ACTION_BUILD_BACK_PANEL
         set_action_handler(SmartBuildBackPanelActionHandler.new(self))
-      when ACTION_BUILD_CABINET
-        set_action_handler(SmartBuildCabinetActionHandler.new(self))
       end
 
       super
@@ -399,7 +399,7 @@ module Ladb::OpenCutList
 
   end
 
-  # Builds a cabinet imported from an SKP file - picked in the bottom bar among
+  # Builds a module imported from an SKP file - picked in the bottom bar among
   # the files of SmartBuildTool::CABINETS_LIBRARY_REF and its sub folders -
   # by drawing its bounding box in 4 clicks : its origin, then its X, Y and Z
   # edges - Y perpendicular to X, Z normal to the XY plane. SHIFT locks the
@@ -407,10 +407,10 @@ module Ladb::OpenCutList
   # new group, then resized axis by axis with the Stretch workers, cut where the
   # 'stretch_cutters' of the SKP definition (as SmartReshape stores them) say.
   #
-  # The cabinet is never mirrored : X and the Z side give its orientation, Y is
+  # The module is never mirrored : X and the Z side give its orientation, Y is
   # deduced (right-handed) and the Y click only gives the depth and the side
   # the box extends to.
-  class SmartBuildCabinetActionHandler < SmartBuildActionHandler
+  class SmartBuildModuleActionHandler < SmartBuildActionHandler
 
     STATE_ORIGIN = 0
     STATE_X = 1
@@ -432,7 +432,7 @@ module Ladb::OpenCutList
     @@sources = {}
 
     def initialize(tool, previous_action_handler = nil)
-      super(SmartBuildTool::ACTION_BUILD_CABINET, tool, previous_action_handler)
+      super(SmartBuildTool::ACTION_BUILD_MODULE, tool, previous_action_handler)
 
       @mouse_ip = SmartInputPoint.new(tool)
       @mouse_snap_point = nil
@@ -448,6 +448,8 @@ module Ladb::OpenCutList
       @snapped_x_axis = nil     # X direction the mouse is snapped on (locked or auto)
 
       @source = nil
+
+      @double_click_time = nil  # To ignore the button up closing a double click
 
     end
 
@@ -479,6 +481,9 @@ module Ladb::OpenCutList
     def get_state_status(state)
 
       case state
+      when STATE_ORIGIN
+        return super +
+               ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_build.action_#{@action}_flip_status") + '.'
       when STATE_X, STATE_Y, STATE_Z
         return PLUGIN.get_i18n_string("tool.smart_build.action_#{@action}_state_#{state}_status") + '.' +
                ' | ' + PLUGIN.get_i18n_string('default.constrain_key') + ' = ' + PLUGIN.get_i18n_string("tool.smart_build.action_#{@action}_state_#{state}_lock_status") + '.' +
@@ -535,6 +540,7 @@ module Ladb::OpenCutList
       case @state
       when STATE_ORIGIN
         @mouse_snap_point = @mouse_ip.position
+        _preview_source(view)
       when STATE_X
         _snap_x(x, y, view)
         _preview_box(view)
@@ -560,9 +566,33 @@ module Ladb::OpenCutList
     end
 
     def onToolLButtonUp(tool, flags, x, y, view)
+      # The button up closing a double click, if the platform sends one
+      double_click_time, @double_click_time = @double_click_time, nil
+      return if !double_click_time.nil? && Time.now - double_click_time < 0.5
       return UI.beep if @mouse_snap_point.nil? || @source.nil?
       _pick(@mouse_snap_point)
       _refresh
+    end
+
+    # Builds the module at once, the edges not drawn yet at the source sizes.
+    # The first click of the double click already picked its point.
+    def onToolLButtonDoubleClick(tool, flags, x, y, view)
+      return false if @source.nil?
+      case @state
+      when STATE_X
+        points = [ _get_default_x_point(@picked_origin) ]
+      when STATE_Y
+        points = [ @picked_x_point ]
+      when STATE_Z
+        points = [ @picked_x_point, @picked_y_point ]
+      end
+      return false if points.nil?
+      return UI.beep if (box = _get_box(*points, complete: true)).nil?
+      @double_click_time = Time.now
+      _create_module(box)
+      _reset
+      _refresh
+      true
     end
 
     def onToolKeyDown(tool, key, repeat, flags, view)
@@ -586,7 +616,7 @@ module Ladb::OpenCutList
         _refresh
         return true
       end
-      if tool.is_key_ctrl_or_option?(key) && is_quick && @state != STATE_ORIGIN
+      if tool.is_key_ctrl_or_option?(key) && is_quick
         @front_flipped = !@front_flipped
         _refresh
         return true
@@ -661,7 +691,7 @@ module Ladb::OpenCutList
         set_state(STATE_Z)
       when STATE_Z
         return UI.beep if (box = _get_box(@picked_x_point, @picked_y_point, point)).nil?
-        _create_cabinet(box)
+        _create_module(box)
         _reset
       end
     end
@@ -685,6 +715,11 @@ module Ladb::OpenCutList
         return [ n, v % n ]
       end
       [ nil, 0 ]
+    end
+
+    # The X edge end at the source size along the active X axis
+    def _get_default_x_point(origin)
+      origin.offset(_get_active_x_axis.normalize, @source[:sizes][0])
     end
 
     def _get_x_axis
@@ -823,31 +858,14 @@ module Ladb::OpenCutList
 
       # Dotted : the whole box, the edges not drawn yet at the source sizes
       box_complete = _get_box(*points, complete: true)
-
-      k_segments = Kuix::Segments.new
-      k_segments.add_segments(_get_box_segments(*box_complete[:sizes]))
-      k_segments.line_width = 1
-      k_segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-      k_segments.color = Kuix::COLOR_DARK_GREY
-      k_segments.transformation = box_complete[:t]
-      @tool.append_3d(k_segments, LAYER_3D_BOX_PREVIEW)
+      _preview_box_complete(view, box_complete)
 
       k_segments = Kuix::Segments.new
       k_segments.add_segments(_get_box_segments(w, d, h))
-      k_segments.line_width = 1.5
+      k_segments.line_width = 2
       k_segments.color = Kuix::COLOR_BLACK
       k_segments.transformation = t
       @tool.append_3d(k_segments, LAYER_3D_BOX_PREVIEW)
-
-      # The front face of the whole box
-      cw, cd, ch = box_complete[:sizes]
-      fy = box_complete[:flipped] ? cd : 0
-      front = [ [ 0, fy, 0 ], [ cw, fy, 0 ], [ cw, fy, ch ], [ 0, fy, ch ] ].map { |coords| Geom::Point3d.new(coords) }
-      k_mesh = Kuix::Mesh.new
-      k_mesh.add_quads(front)
-      k_mesh.background_color = ColorUtils.color_translucent(Kuix::COLOR_DARK_GREY, 0.3)
-      k_mesh.transformation = box_complete[:t]
-      @tool.append_3d(k_mesh, LAYER_3D_BOX_PREVIEW)
 
       locked = @tool.is_key_shift_down?
       labels = [ [ Geom::Point3d.new(w / 2, 0, 0), w, Kuix::COLOR_X, STATE_X ] ]
@@ -866,18 +884,67 @@ module Ladb::OpenCutList
 
     end
 
+    # The source content at its own sizes, its X edge starting at the mouse
+    # point along the active X axis.
+    def _preview_source(view)
+      return if @mouse_snap_point.nil? || @source.nil?
+      box_complete = _get_box(_get_default_x_point(@mouse_snap_point), complete: true, origin: @mouse_snap_point)
+      _preview_box_complete(view, box_complete) unless box_complete.nil?
+    end
+
+    # The source content stretched to the given whole box, its dotted edges
+    # and an arrow out of its front.
+    def _preview_box_complete(view, box_complete)
+
+      if @source[:preview_points].any?
+        k_segments = Kuix::Segments.new
+        k_segments.add_segments(_get_source_preview_points(box_complete[:sizes]))
+        k_segments.line_width = 1
+        k_segments.color = Kuix::COLOR_DARK_GREY
+        k_segments.transformation = box_complete[:content_t] * Geom::Transformation.translation(@source[:origin].vector_to(ORIGIN))
+        @tool.append_3d(k_segments, LAYER_3D_BOX_PREVIEW)
+      end
+
+      k_segments = Kuix::Segments.new
+      k_segments.add_segments(_get_box_segments(*box_complete[:sizes]))
+      k_segments.line_width = 1
+      k_segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+      k_segments.color = Kuix::COLOR_DARK_GREY
+      k_segments.transformation = box_complete[:t]
+      k_segments.on_top = true
+      @tool.append_3d(k_segments, LAYER_3D_BOX_PREVIEW)
+
+      # An arrow out of the front face center of the whole box
+      unit = @tool.get_unit(view)
+      cw, cd, ch = box_complete[:sizes]
+      front_center = Geom::Point3d.new(cw / 2, box_complete[:flipped] ? cd : 0, ch / 2)
+      length = view.pixels_to_model(unit * 10, front_center.transform(box_complete[:t]))
+      k_edge = Kuix::EdgeMotif3d.new
+      k_edge.start.copy!(front_center)
+      k_edge.end.copy!(front_center.offset(Y_AXIS, box_complete[:flipped] ? length : -length))
+      k_edge.end_arrow = true
+      k_edge.arrow_size = unit * 1.5
+      k_edge.line_width = 1.5
+      k_edge.color = Kuix::COLOR_DARK_GREY
+      k_edge.transformation = box_complete[:t]
+      k_edge.on_top = true
+      @tool.append_3d(k_edge, LAYER_3D_BOX_PREVIEW)
+
+    end
+
     # -----
 
     # The box drawn so far, sizes raised to the source minimal sizes : its
     # frame (origin on the box min corner) and its sizes along the frame axes.
     # 'px', 'py', 'pz' are the X, Y and Z edge points ('py' and 'pz' optional).
-    # 'complete' gives the source sizes to the edges not drawn yet.
+    # 'complete' gives the source sizes to the edges not drawn yet. 'origin'
+    # overrides the picked origin.
     # The content is set in the box by ':content_t' : with its front (-Y) on
     # the box side facing the camera - or 180° rotated around Z.
-    def _get_box(px, py = nil, pz = nil, complete: false)
-      return nil if @picked_origin.nil? || px.nil? || @source.nil?
+    def _get_box(px, py = nil, pz = nil, complete: false, origin: @picked_origin)
+      return nil if origin.nil? || px.nil? || @source.nil?
 
-      vx = @picked_origin.vector_to(px)
+      vx = origin.vector_to(px)
       return nil unless vx.valid?
       x_axis = vx.normalize
 
@@ -890,7 +957,7 @@ module Ladb::OpenCutList
 
       # The part of the Y point perpendicular to X, nil while there is none
       unless py.nil?
-        vy = @picked_origin.vector_to(py)
+        vy = origin.vector_to(py)
         vy = vy - Geom::Vector3d.linear_combination(vy % x_axis, x_axis, 0, x_axis)
         vy = nil unless vy.valid? && vy.length > 0.001
       end
@@ -916,7 +983,7 @@ module Ladb::OpenCutList
             dz = @source[:sizes][2]
           end
         else
-          dz = @picked_origin.vector_to(pz) % z_axis
+          dz = origin.vector_to(pz) % z_axis
           z_axis = z_axis.reverse if dz < 0
           dz = fn_clamp.call(dz.abs, min_sizes[2])
         end
@@ -926,7 +993,7 @@ module Ladb::OpenCutList
 
       end
 
-      t = Geom::Transformation.axes(@picked_origin, x_axis, y_axis, z_axis) * Geom::Transformation.translation(Geom::Vector3d.new(0, [ dy, 0 ].min, 0))
+      t = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis) * Geom::Transformation.translation(Geom::Vector3d.new(0, [ dy, 0 ].min, 0))
       sizes = [ dx, dy.abs, dz ]
       flipped = _is_front_on_y_max?(t, sizes, dy >= 0) != @front_flipped
       {
@@ -964,18 +1031,25 @@ module Ladb::OpenCutList
 
     # -- Library --
 
-    # Falls back on the library root if the browsed folder is gone, and on the
-    # first file of the browsed folder if the picked file is gone.
+    # Falls back on the library root and its first file if the browsed folder
+    # is gone (or on first use), and on the first file of the browsed folder if
+    # the picked file is gone. No file picked in a browsed folder stays so.
     def _check_library_refs
       dir = @@dir_ref.nil? ? nil : PLUGIN.resolve_library_ref(@@dir_ref)
-      @@dir_ref = SmartBuildTool::CABINETS_LIBRARY_REF unless dir.is_a?(String) && File.directory?(dir)
+      if dir.is_a?(String) && File.directory?(dir)
+        return if @@source_ref.nil?
+      else
+        @@dir_ref = SmartBuildTool::CABINETS_LIBRARY_REF
+        @@source_ref = nil
+      end
       path = _get_source_path
       @@source_ref = PLUGIN.list_library_files(@@dir_ref, '.skp').first unless path.is_a?(String) && File.file?(path)
     end
 
+    # Browses the given folder, with no file picked
     def _browse_library_dir(dir_ref)
       @@dir_ref = dir_ref
-      _setup_library_panel
+      _select_source(nil)
     end
 
     def _select_source(source_ref)
@@ -1003,9 +1077,9 @@ module Ladb::OpenCutList
 
       # Both rows share the same columns
       num_dirs = dir_refs.length + (@@dir_ref == root_ref ? 0 : 1)
-      num_cols = [[ num_dirs, file_refs.length, 5 ].max, 10 ].min
+      num_cols = [ [ num_dirs, file_refs.length, 5 ].max, 10 ].min
 
-      fn_create_btn = lambda { |text, color, selected|
+      fn_create_btn = lambda { |text, color, selected, disabled = false|
         btn = Kuix::Button.new
         btn.layout = Kuix::StaticLayout.new
         btn.min_size.set!(unit * 20, unit * 8)
@@ -1016,13 +1090,16 @@ module Ladb::OpenCutList
         btn.set_style_attribute(:border_color, color.blend(Kuix::COLOR_BLACK, 0.7), :hover)
         btn.set_style_attribute(:border_color, SmartTool::COLOR_BRAND, :selected)
         btn.append_static_label(text, text_size)
+           .set_style_attribute(:color, ColorUtils.color_is_dark?(color) ? Kuix::COLOR_WHITE : Kuix::COLOR_BLACK)
         btn.selected = selected
+        btn.disabled = disabled
         btn
       }
 
       panel = Kuix::Panel.new
       panel.layout_data = Kuix::StaticLayoutData.new(0, 1.0, 1.0, -1, Kuix::Anchor.new(Kuix::Anchor::BOTTOM_LEFT))
-      panel.layout = Kuix::BorderLayout.new
+      panel.layout = Kuix::BorderLayout.new(0, unit)
+      panel.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_DARK)
       @tool.append_2d(panel, LAYER_2D_LIBRARY)
 
       # Folders
@@ -1031,18 +1108,23 @@ module Ladb::OpenCutList
 
         dirs_panel = Kuix::ScrollPanel.new
         dirs_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
-        dirs_panel.set_style_attribute(:background_color, Kuix::COLOR_MEDIUM_GREY)
+        dirs_panel.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
         panel.append(dirs_panel)
 
-          if @@dir_ref != root_ref
-            parent_ref = File.dirname(@@dir_ref)
-            btn = fn_create_btn.call("↑ #{File.basename(@@dir_ref)}", Kuix::COLOR_MEDIUM_GREY, false)
-            btn.on(:click) { _browse_library_dir(parent_ref) }
-            dirs_panel.append(btn)
+          if @@dir_ref == root_ref
+            root_btn_text = "ROOT"
+            root_btn_disabled = true
+          else
+            root_btn_text = "↑ #{File.basename(@@dir_ref)}"
+            root_btn_disabled = false
           end
+          parent_ref = File.dirname(@@dir_ref)
+          btn = fn_create_btn.call(root_btn_text, SmartTool::COLOR_BRAND_DARK, false, root_btn_disabled)
+          btn.on(:click) { _browse_library_dir(parent_ref) }
+          dirs_panel.append(btn)
 
           dir_refs.each do |dir_ref|
-            btn = fn_create_btn.call("#{File.basename(dir_ref)} /", Kuix::COLOR_MEDIUM_GREY, !@@source_ref.nil? && @@source_ref.start_with?("#{dir_ref}/"))
+            btn = fn_create_btn.call(File.basename(dir_ref), Kuix::COLOR_MEDIUM_GREY, !@@source_ref.nil? && @@source_ref.start_with?("#{dir_ref}/"))
             btn.on(:click) { _browse_library_dir(dir_ref) }
             dirs_panel.append(btn)
           end
@@ -1053,60 +1135,61 @@ module Ladb::OpenCutList
 
       # Files
 
-      files_panel = Kuix::ScrollPanel.new
-      files_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
-      files_panel.set_style_attribute(:background_color, Kuix::COLOR_DARK_GREY)
-      panel.append(files_panel)
+      if file_refs.empty?
 
-        if file_refs.empty?
+        lbl = Kuix::Label.new
+        lbl.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
+        lbl.text = PLUGIN.get_i18n_string('tool.smart_build.warning.no_module_file')
+        lbl.text_size = text_size
+        lbl.padding.set_all!(unit * 3)
+        lbl.set_style_attribute(:color, Kuix::COLOR_WHITE)
+        panel.append(lbl)
 
-          lbl = Kuix::Label.new
-          lbl.text = PLUGIN.get_i18n_string('tool.smart_build.warning.no_cabinet_file')
-          lbl.text_size = text_size
-          lbl.padding.set_all!(unit * 2)
-          lbl.set_style_attribute(:color, Kuix::COLOR_WHITE)
-          files_panel.append(lbl)
+      else
 
-        end
+        files_panel = Kuix::ScrollPanel.new(num_cols, [ [ (file_refs.length / num_cols.to_f).ceil, 1 ].max, 2 ].min)
+        files_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
+        files_panel.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_DARK)
+        panel.append(files_panel)
 
-        file_refs.each do |file_ref|
-          btn = fn_create_btn.call(File.basename(file_ref, '.*'), Kuix::COLOR_LIGHT_GREY, file_ref == @@source_ref)
-          btn.on(:click) { _select_source(file_ref) unless file_ref == @@source_ref }
-          files_panel.append(btn)
-        end
+          file_refs.each do |file_ref|
+            btn = fn_create_btn.call(File.basename(file_ref, '.*'), Kuix::COLOR_LIGHT_GREY, file_ref == @@source_ref)
+            btn.on(:click) { _select_source(file_ref) unless file_ref == @@source_ref }
+            files_panel.append(btn)
+          end
 
-      files_panel.set_viewport(num_cols, [[ (file_refs.length / num_cols.to_f).ceil, 1 ].max, 2 ].min)
+        # Scroll buttons, if the files overflow the 2 rows
 
-      # Scroll buttons, if the files overflow the 2 rows
+        scroll_btns = Kuix::Panel.new
+        scroll_btns.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
+        scroll_btns.layout = Kuix::GridLayout.new(1, 2)
+        scroll_btns.visible = file_refs.length > num_cols * 2
+        panel.append(scroll_btns)
+        files_panel.bind_scroll_btns_panel(scroll_btns)
 
-      scroll_btns = Kuix::Panel.new
-      scroll_btns.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
-      scroll_btns.layout = Kuix::GridLayout.new(1, 2)
-      scroll_btns.visible = file_refs.length > num_cols * 2
-      panel.append(scroll_btns)
-      files_panel.bind_scroll_btns_panel(scroll_btns)
+          [ [ 'M0,1L1,1L0.5,0L0,1Z', -1 ], [ 'M0,0L1,0L0.5,1L0,0Z', 1 ] ].each do |path, delta|
 
-        [ [ 'M0,1L1,1L0.5,0L0,1Z', -1 ], [ 'M0,0L1,0L0.5,1L0,0Z', 1 ] ].each do |path, delta|
+            btn = Kuix::Button.new
+            btn.layout = Kuix::StaticLayout.new
+            btn.min_size.set!(unit * 8, unit * 8)
+            btn.set_style_attribute(:background_color, Kuix::COLOR_DARK_GREY)
+            btn.set_style_attribute(:background_color, Kuix::COLOR_MEDIUM_GREY, :hover)
+            scroll_btns.append(btn)
+            delta < 0 ? files_panel.bind_scroll_up_btn(btn) : files_panel.bind_scroll_down_btn(btn)
 
-          btn = Kuix::Button.new
-          btn.layout = Kuix::StaticLayout.new
-          btn.min_size.set!(unit * 8, unit * 8)
-          btn.set_style_attribute(:background_color, Kuix::COLOR_DARK_GREY)
-          btn.set_style_attribute(:background_color, Kuix::COLOR_MEDIUM_GREY, :hover)
-          scroll_btns.append(btn)
-          delta < 0 ? files_panel.bind_scroll_up_btn(btn) : files_panel.bind_scroll_down_btn(btn)
+              motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path(path))
+              motif.padding.set_all!(unit * 2)
+              motif.min_size.set_all!(unit * 6)
+              motif.line_width = unit <= 4 ? 1 : 2
+              motif.set_style_attribute(:color, Kuix::COLOR_LIGHT_GREY)
+              motif.set_style_attribute(:color, Kuix::COLOR_MEDIUM_GREY, :disabled)
+              btn.append(motif)
 
-            motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path(path))
-            motif.padding.set_all!(unit * 2)
-            motif.min_size.set_all!(unit * 6)
-            motif.line_width = unit <= 4 ? 1 : 2
-            motif.set_style_attribute(:color, Kuix::COLOR_LIGHT_GREY)
-            motif.set_style_attribute(:color, Kuix::COLOR_MEDIUM_GREY, :disabled)
-            btn.append(motif)
+          end
 
-        end
+        files_panel.scroll(0)
 
-      files_panel.scroll(0)
+      end
 
     end
 
@@ -1123,7 +1206,7 @@ module Ladb::OpenCutList
     end
 
     # The 'stretch_cutters' of the source definition - or of its single
-    # top level container, when the file holds the cabinet as a group - as
+    # top level container, when the file holds the module as a group - as
     # { axis => ratios }, 0.5 on a missing axis.
     def _read_cutters(definition)
       data = PLUGIN.get_attribute(definition, 'stretch_cutters')
@@ -1150,7 +1233,7 @@ module Ladb::OpenCutList
       return nil if @@source_ref.nil?  # No file in the library : the bar says it
       path = _get_source_path
       unless path.is_a?(String) && File.exist?(path)
-        @tool.notify_errors([ [ 'tool.smart_build.error.cabinet_file_not_found', { :file => @@source_ref } ] ])
+        @tool.notify_errors([ [ 'tool.smart_build.error.module_file_not_found', { :file => @@source_ref } ] ])
         return nil
       end
 
@@ -1159,7 +1242,7 @@ module Ladb::OpenCutList
       return source if !source.nil? && source[:mtime] == mtime
 
       model = Sketchup.active_model
-      model.start_operation('OCL Probe Cabinet', true)
+      model.start_operation('OCL Probe Module', true)
       begin
 
         definition = _load_source_definition(model, path)
@@ -1171,6 +1254,7 @@ module Ladb::OpenCutList
         origin = nil
         sizes = []
         min_sizes = []
+        split_defs = []
         [ X_AXIS, Y_AXIS, Z_AXIS ].each do |axis|
           split_def = _split(Sketchup::InstancePath.new([ instance ]), IDENTITY, axis, cutters[axis])
           raise "Failed to split #{path}" unless split_def.is_a?(StretchSplitDef)
@@ -1178,6 +1262,7 @@ module Ladb::OpenCutList
           origin = split_def.eb.min
           sizes << size
           min_sizes << [ size - split_def.max_compression_distance, 0 ].max
+          split_defs << split_def
         end
 
         source = @@sources[path] = {
@@ -1186,17 +1271,77 @@ module Ladb::OpenCutList
           :origin => origin,
           :sizes => sizes,
           :min_sizes => min_sizes,
-        }
+          :split_defs => split_defs,
+        }.merge(_get_source_preview(split_defs))
 
       rescue Exception => e
         PLUGIN.dump_exception(e)
-        @tool.notify_errors([ [ 'tool.smart_build.error.cabinet_file_invalid', { :file => @@source_ref } ] ])
+        @tool.notify_errors([ [ 'tool.smart_build.error.module_file_invalid', { :file => @@source_ref } ] ])
         source = nil
       ensure
         model.abort_operation
       end
 
       source
+    end
+
+    # The edges of the source content - read while it's loaded, the preview
+    # outlives it - and the section of each of their ends on each axis :
+    # { :preview_points => [ Point3d ] (segment ends), :preview_section_indices
+    # => [ [ index ] ] (by axis, by point) }. Soft edges are left out.
+    def _get_source_preview(split_defs)
+
+      fn_key = lambda { |edge_def| [ edge_def.edge, edge_def.transformation.to_a.map { |value| value.round(6) } ] }
+
+      # The section indices by axis of each edge end, keyed on the edge and its transformation
+      axes_indices = split_defs.map { |split_def|
+        split_def.container_defs.flat_map(&:edge_defs).map { |edge_def|
+          [ fn_key.call(edge_def), [ edge_def.start_section_def.index, edge_def.end_section_def.index ] ]
+        }.to_h
+      }
+
+      # The nearest section of a point, for the edges a split left out
+      fn_nearest_index = lambda { |split_def, point|
+        xyz = point.send(split_def.xyz_method)
+        split_def.section_defs.min_by { |section_def| [ section_def.min_xyz - xyz, xyz - section_def.max_xyz, 0 ].max }.index
+      }
+
+      points = []
+      section_indices = [ [], [], [] ]
+      split_defs.first.container_defs.flat_map(&:edge_defs).each do |edge_def|
+        edge = edge_def.edge
+        next if edge.soft? || edge.hidden?
+        key = fn_key.call(edge_def)
+        ends = [ edge.start.position.transform(edge_def.transformation), edge.end.position.transform(edge_def.transformation) ]
+        points.concat(ends)
+        split_defs.each_with_index do |split_def, axis_index|
+          indices = axes_indices[axis_index][key] || ends.map { |point| fn_nearest_index.call(split_def, point) }
+          section_indices[axis_index].concat(indices)
+        end
+      end
+
+      {
+        :preview_points => points,
+        :preview_section_indices => section_indices,
+      }
+    end
+
+    # The source edges stretched to the given sizes, in the source space
+    def _get_source_preview_points(sizes)
+      offsets = [ X_AXIS, Y_AXIS, Z_AXIS ].each_with_index.map { |axis, index|
+        split_def = @source[:split_defs][index]
+        coefs = Array.new(split_def.section_defs.length, 0.0)
+        distance = sizes[index] - @source[:sizes][index]
+        if distance.to_l != 0 && (stretch_def = split_def.stretch_def_by_distance(distance)).is_a?(StretchDef)
+          stretch_def.edvs.each { |section_def, edv| coefs[section_def.index] = edv % axis }
+        end
+        coefs
+      }
+      ox, oy, oz = offsets
+      ix, iy, iz = @source[:preview_section_indices]
+      @source[:preview_points].each_with_index.map { |point, index|
+        Geom::Point3d.new(point.x + ox[ix[index]], point.y + oy[iy[index]], point.z + oz[iz[index]])
+      }
     end
 
     def _split(ipath, et, axis, ratios)
@@ -1237,13 +1382,13 @@ module Ladb::OpenCutList
       end
     end
 
-    def _create_cabinet(box)
+    def _create_module(box)
       return UI.beep if box[:sizes].any? { |size| size <= 0 }
 
       path = _get_source_path
 
       model = Sketchup.active_model
-      model.start_operation('OCL Build Cabinet', true, false, !active?)
+      model.start_operation('OCL Build Module', true, false, !active?)
       begin
 
         definition = _load_source_definition(model, path)
@@ -1304,7 +1449,7 @@ module Ladb::OpenCutList
       rescue Exception => e
         PLUGIN.dump_exception(e)
         model.abort_operation
-        @tool.notify_errors([ [ 'tool.smart_build.error.cabinet_stretch_failed' ] ])
+        @tool.notify_errors([ [ 'tool.smart_build.error.module_stretch_failed' ] ])
       end
 
     end
