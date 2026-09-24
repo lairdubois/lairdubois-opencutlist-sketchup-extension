@@ -195,8 +195,16 @@ module Ladb::OpenCutList
       @library_dir = File.join(root.to_s.gsub('\\', '/'), 'OpenCutList', LIBRARY_DIR_NAME)
     end
 
-    def ensure_library_dir
-      dir = library_dir
+    # Creates the library root - or the library folder of the given '$LIB/…'
+    # ref - if missing, and returns its path (nil if the ref isn't valid).
+    def ensure_library_dir(dir_ref = nil)
+      if dir_ref.nil?
+        dir = library_dir
+      else
+        return nil unless library_ref?(dir_ref)
+        dir = resolve_library_ref(dir_ref)
+        return nil if dir.nil?
+      end
       FileUtils.mkdir_p(dir) unless Dir.exist?(dir)
       dir
     end

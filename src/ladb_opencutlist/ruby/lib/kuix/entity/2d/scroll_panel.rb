@@ -20,6 +20,11 @@ module Ladb::OpenCutList::Kuix
 
     # -- PROPERTIES --
 
+    def hittable?(event = nil)
+      return @hittable if event == :wheel  # Scrollable even without background or border
+      super
+    end
+
     def set_viewport(num_cols, num_rows, horizontal_gap = 0, vertical_gap = 0)
       self.layout = GridLayout.new(num_cols, num_rows, horizontal_gap, vertical_gap)
       self.scroll(0)

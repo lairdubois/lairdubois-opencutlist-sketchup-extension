@@ -11,6 +11,7 @@ module Ladb::OpenCutList
   require_relative '../model/solid/solid_mesh_def'
   require_relative '../model/solid/solid_boolean_result_def'
   require_relative '../utils/component_utils'
+  require_relative '../utils/file_path_utils'
   require_relative '../utils/path_utils'
   require_relative '../utils/transformation_utils'
   require_relative '../worker/common/common_drawing_decomposition_worker'
@@ -567,8 +568,10 @@ module Ladb::OpenCutList
       super
 
       case @state
-      when STATE_SOURCE, STATE_ORIGIN
+      when STATE_SOURCE
         _reset
+      when STATE_ORIGIN
+        _select_source(nil)  # Unpicks the file, back to STATE_SOURCE
       when STATE_X
         @picked_origin = nil
         @origin_directions = []
@@ -590,6 +593,8 @@ module Ladb::OpenCutList
 
     def onToolMouseMove(tool, flags, x, y, view)
       super
+
+      return if @state == STATE_SOURCE
 
       @mouse_ip.pick(view, x, y, _get_previous_input_point)
       @mouse_snap_point = nil
@@ -661,14 +666,21 @@ module Ladb::OpenCutList
     end
 
     def onToolKeyDown(tool, key, repeat, flags, view)
-      if key == Kuix::VK_ADD && repeat == 1
-        @state == STATE_ADD ? _leave_add_mode : _enter_add_mode  # As the add button
-        return true
+
+      if tool.is_key_alt_or_command?(key)
+        return true # Block default behavior for the ALT key on Windows
       end
+
       if tool.is_key_shift?(key) && [ STATE_X, STATE_Y, STATE_Z ].include?(@state)
         _refresh
         return true
       end
+
+      if key == Kuix::VK_ADD && repeat == 1
+        @state == STATE_ADD ? _leave_add_mode : _enter_add_mode  # As the add button
+        return true
+      end
+
       if @state == STATE_X
         axis = { VK_RIGHT => _get_active_x_axis, VK_LEFT => _get_active_y_axis, VK_UP => _get_active_z_axis }[key]
         unless axis.nil?
@@ -693,6 +705,7 @@ module Ladb::OpenCutList
           return true
         end
       end
+
       false
     end
 
@@ -745,7 +758,7 @@ module Ladb::OpenCutList
 
     def draw(view)
       super
-      @mouse_ip.draw(view) if @mouse_ip.valid? && @state != STATE_ADD
+      @mouse_ip.draw(view) if @mouse_ip.valid? && ![ STATE_SOURCE, STATE_ADD ].include?(@state)
     end
 
     # -----
@@ -1427,7 +1440,7 @@ module Ladb::OpenCutList
     def _save_add_instance
       instance = @add_instance
       dir = PLUGIN.resolve_library_ref(@@dir_ref)
-      return UI.beep unless dir.is_a?(String) && File.directory?(dir)
+      return UI.beep unless dir.is_a?(String)
 
       name = instance.is_a?(Sketchup::Group) && !instance.name.empty? ? instance.name : instance.definition.name
       path = nil
@@ -1435,13 +1448,21 @@ module Ladb::OpenCutList
         input = UI.inputbox([ PLUGIN.get_i18n_string('tool.smart_build.action_0_add_name') ], [ name ], PLUGIN.get_i18n_string('tool.smart_build.action_0_add_title'))
         return unless input.is_a?(Array)
         name = input[0].to_s.strip
-        if name.empty? || name.start_with?('.') || name.end_with?('~') || name =~ /[\/\\:*?"<>|]/  # Hidden and backup files aren't listed
+        name = File.basename(FilePathUtils.sanitize_file_name("#{name}.skp"), '.skp') unless name.empty?  # Forbidden characters are replaced
+        if name.empty? || name.start_with?('.') || name.end_with?('~')  # Hidden and backup files aren't listed
           UI.messagebox(PLUGIN.get_i18n_string('tool.smart_build.error.module_file_invalid_name', { :name => name }))
           next
         end
         path = File.join(dir, "#{name}.skp")
         break unless File.exist?(path)
         break if UI.messagebox(PLUGIN.get_i18n_string('tool.smart_build.action_0_add_overwrite', { :name => name }), MB_YESNO) == IDYES
+      end
+
+      # The browsed folder may not exist yet (e.g. the library root on first use)
+      begin
+        PLUGIN.ensure_library_dir(@@dir_ref)
+      rescue SystemCallError
+        # save_as fails below and reports it
       end
 
       if instance.valid? && instance.definition.save_as(path)
@@ -1469,23 +1490,26 @@ module Ladb::OpenCutList
       num_dirs = dir_refs.length + 1
       num_cols = [ [ num_dirs, file_refs.length, 5 ].max, 10 ].min
 
-      fn_create_btn = lambda { |text, color, selected, disabled = false, hover_background = true|
+      fn_create_btn = lambda { |text, color, selected, disabled = false, hover_background = true, &block|
 
         bg_color = color
-        bg_active_color = color.blend(Kuix::COLOR_BLACK, 0.7)
+        bg_active_color = ColorUtils.color_darken(color, 0.1)
         text_color = ColorUtils.color_is_dark?(bg_color) ? Kuix::COLOR_WHITE : Kuix::COLOR_BLACK
 
         btn = Kuix::Button.new
-        btn.layout = Kuix::StaticLayout.new
         btn.min_size.set!(unit * 20, unit * 10)
         btn.set_style_attribute(:background_color, bg_color)
         btn.set_style_attribute(:background_color, bg_active_color, :active)
         btn.set_style_attribute(:background_color, bg_active_color, :hover) if hover_background
         btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND, :selected)
-        btn.append_static_label(text, text_size)
-           .set_style_attribute(:color, text_color)
-           .set_style_attribute(:color, text_color, :hover)
-           .set_style_attribute(:color, Kuix::COLOR_WHITE, :selected)
+        if block
+          block.call(btn)
+        else
+          btn.append_static_label(text, text_size)
+             .set_style_attribute(:color, text_color)
+             .set_style_attribute(:color, text_color, :hover)
+             .set_style_attribute(:color, Kuix::COLOR_WHITE, :selected)
+        end
         btn.selected = selected
         btn.disabled = disabled
         btn
@@ -1513,8 +1537,8 @@ module Ladb::OpenCutList
             btn.layout = Kuix::StaticLayout.new
             btn.min_size.set!(unit * 8, unit * 8)
             btn.visible = overflow
-            btn.set_style_attribute(:background_color, Kuix::COLOR_DARK_GREY)
-            btn.set_style_attribute(:background_color, Kuix::COLOR_MEDIUM_GREY, :hover)
+            btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_DARK)
+            btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_LIGHT, :hover)
             scroll_btns.append(btn)
             delta < 0 ? scroll_panel.bind_scroll_up_btn(btn) : scroll_panel.bind_scroll_down_btn(btn)
 
@@ -1522,7 +1546,8 @@ module Ladb::OpenCutList
               motif.padding.set_all!(unit * 2)
               motif.min_size.set_all!(unit * 6)
               motif.line_width = unit <= 4 ? 1 : 2
-              motif.set_style_attribute(:color, Kuix::COLOR_LIGHT_GREY)
+              motif.set_style_attribute(:color, SmartTool::COLOR_BRAND_LIGHT)
+              motif.set_style_attribute(:color, SmartTool::COLOR_BRAND_DARK, :hover)
               motif.set_style_attribute(:color, Kuix::COLOR_MEDIUM_GREY, :disabled)
               btn.append(motif)
 
@@ -1552,20 +1577,36 @@ module Ladb::OpenCutList
           dirs_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
           dirs_row.append(dirs_panel)
 
-            if @@dir_ref == root_ref
-              root_btn_text = "#{File.basename(@@dir_ref)}"
-              root_btn_disabled = true
-            else
-              root_btn_text = "↑ #{File.basename(@@dir_ref)}"
-              root_btn_disabled = false
-            end
+            root_btn_text = "#{File.basename(@@dir_ref)}"
+            root_btn_disabled = @@dir_ref == root_ref
             parent_ref = File.dirname(@@dir_ref)
-            btn = fn_create_btn.call(root_btn_text, SmartTool::COLOR_BRAND_DARK, false, root_btn_disabled, true)
+            btn = fn_create_btn.call(root_btn_text, SmartTool::COLOR_BRAND_DARK, false, root_btn_disabled, true) { |btn|
+
+              btn.layout = Kuix::BorderLayout.new
+
+              lbl = Kuix::Label.new(root_btn_text.capitalize)
+              lbl.text_size = text_size + 1
+              lbl.text_bold = true
+              lbl.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
+              lbl.set_style_attribute(:color, Kuix::COLOR_WHITE)
+              btn.append(lbl)
+
+              unless root_btn_disabled
+                motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M1,.917H.5V.083M.25,.333L.5,.083L.75,.333'))
+                motif.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
+                motif.padding.set_all!(unit * 2)
+                motif.min_size.set_all!(unit * 6)
+                motif.line_width = unit <= 4 ? 1 : 2
+                motif.set_style_attribute(:color, Kuix::COLOR_WHITE)
+                btn.append(motif)
+              end
+
+            }
             btn.on(:click) { _browse_library_dir(parent_ref) }
             dirs_panel.append(btn)
 
             dir_refs.each do |dir_ref|
-              btn = fn_create_btn.call(File.basename(dir_ref), Kuix::COLOR_MEDIUM_GREY, !@@source_ref.nil? && @@source_ref.start_with?("#{dir_ref}/"), false, true)
+              btn = fn_create_btn.call(File.basename(dir_ref), ColorUtils.color_lighten(SmartTool::COLOR_BRAND_DARK, 0.3), !@@source_ref.nil? && @@source_ref.start_with?("#{dir_ref}/"), false, true)
               btn.on(:click) { _browse_library_dir(dir_ref) }
               dirs_panel.append(btn)
             end
@@ -1576,7 +1617,13 @@ module Ladb::OpenCutList
           dirs_explore_btn.min_size.set!(unit * 8, unit * 8)
           dirs_explore_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_DARK)
           dirs_explore_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_LIGHT, :hover)
-          dirs_explore_btn.on(:click) { PLUGIN.open_dir(PLUGIN.resolve_library_ref(@@dir_ref)) }
+          dirs_explore_btn.on(:click) {
+            begin
+              PLUGIN.open_dir(PLUGIN.ensure_library_dir(@@dir_ref))  # The browsed folder may not exist yet
+            rescue SystemCallError
+              UI.beep
+            end
+          }
           dirs_row.append(dirs_explore_btn)
 
             dirs_explore_btn_motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.875,.417V.208H.5L.375,.083H0V.917H.792L1,.417H.208L0,.917'))
@@ -1615,7 +1662,7 @@ module Ladb::OpenCutList
           files_row.append(files_panel)
 
             file_refs.each do |file_ref|
-              btn = fn_create_btn.call(File.basename(file_ref, '.*'), Kuix::COLOR_LIGHT_GREY, file_ref == @@source_ref)
+              btn = fn_create_btn.call(File.basename(file_ref, '.*'), ColorUtils.color_darken(SmartTool::COLOR_BRAND_LIGHT, 0.1), file_ref == @@source_ref)
               btn.on(:click) { _select_source(file_ref) unless file_ref == @@source_ref }
               files_panel.append(btn)
             end
