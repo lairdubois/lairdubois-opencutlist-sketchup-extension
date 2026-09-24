@@ -467,6 +467,11 @@ module Ladb::OpenCutList
     @@dir_ref = nil
     @@source_ref = nil
 
+    # The first visible row of the folders and files rows of the library
+    # panel, for the folder browsed : { :dir_ref, :dirs, :files }. Kept across
+    # handlers to find the panel scrolled as it was left.
+    @@library_scroll = nil
+
     # Source probes, by file path : { :mtime, :cutters, :content_bounds, :compression_distances, … }.
     # Kept across handlers to probe a file only once while it is unchanged.
     @@sources = {}
@@ -1359,7 +1364,11 @@ module Ladb::OpenCutList
       end
       @@source_ref = source_ref
       @source = _get_source
-      _setup_library_panel
+      if source_ref.nil?
+        _setup_library_panel
+      else
+        _update_library_panel_selection  # Same folder : the panel is kept as is, and so its scroll
+      end
       if @source.nil?
         _reset
       else
@@ -1477,7 +1486,14 @@ module Ladb::OpenCutList
     # The bottom bar : a row of the sub folders of the browsed folder - led by
     # its parent below the library root - above the buttons of its SKP files.
     def _setup_library_panel
+      _save_library_scroll
       @tool.clear_2d(LAYER_2D_LIBRARY)
+      @library_file_btns = {}
+      @library_add_btn = nil
+
+      # The scroll is kept while the browsed folder is
+      scroll = !@@library_scroll.nil? && @@library_scroll[:dir_ref] == @@dir_ref ? @@library_scroll : {}
+      @library_dir_ref = @@dir_ref
 
       unit = @tool.get_unit
       text_size = unit * 3 * @tool.get_text_unit_factor
@@ -1522,7 +1538,7 @@ module Ladb::OpenCutList
       # A scroll buttons column on the right of a row : reserved on both rows
       # as soon as one overflows, to keep their columns aligned, with its
       # buttons only on the rows that overflow.
-      fn_append_scroll_btns = lambda { |row, scroll_panel, overflow|
+      fn_append_scroll_btns = lambda { |row, scroll_panel, overflow, start_row|
 
         scroll_btns = Kuix::Panel.new
         scroll_btns.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
@@ -1553,7 +1569,8 @@ module Ladb::OpenCutList
 
           end
 
-        scroll_panel.scroll(0)
+        scroll_panel.layout.start_row = start_row.to_i
+        scroll_panel.scroll(0)  # Clamped, and the buttons enabled accordingly
 
       }
 
@@ -1634,7 +1651,8 @@ module Ladb::OpenCutList
             dirs_explore_btn_motif.set_style_attribute(:color, SmartTool::COLOR_BRAND_DARK, :hover)
             dirs_explore_btn.append(dirs_explore_btn_motif)
 
-          fn_append_scroll_btns.call(dirs_row, dirs_panel, dirs_overflow)
+          fn_append_scroll_btns.call(dirs_row, dirs_panel, dirs_overflow, scroll[:dirs])
+          @library_dirs_panel = dirs_panel
 
       end
 
@@ -1665,9 +1683,11 @@ module Ladb::OpenCutList
               btn = fn_create_btn.call(File.basename(file_ref, '.*'), ColorUtils.color_darken(SmartTool::COLOR_BRAND_LIGHT, 0.1), file_ref == @@source_ref)
               btn.on(:click) { _select_source(file_ref) unless file_ref == @@source_ref }
               files_panel.append(btn)
+              @library_file_btns[file_ref] = btn
             end
 
-          fn_append_scroll_btns.call(files_row, files_panel, files_overflow)
+          fn_append_scroll_btns.call(files_row, files_panel, files_overflow, scroll[:files])
+          @library_files_panel = files_panel
 
         end
 
@@ -1681,6 +1701,7 @@ module Ladb::OpenCutList
         files_add_btn.selected = @state == STATE_ADD
         files_add_btn.on(:click) { @state == STATE_ADD ? _leave_add_mode : _enter_add_mode }
         files_row.append(files_add_btn)
+        @library_add_btn = files_add_btn
 
           files_add_btn_motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.5L0.5,0.5L0.5,0L0.5,0.5L1,0.5L0.5,0.5L0.5,1'))
           files_add_btn_motif.padding.set_all!(unit * 2)
@@ -1691,6 +1712,27 @@ module Ladb::OpenCutList
           files_add_btn_motif.set_style_attribute(:color, SmartTool::COLOR_BRAND_DARK, :selected)
           files_add_btn.append(files_add_btn_motif)
 
+    end
+
+    # Read off the panel about to be rebuilt - by this handler or, on a
+    # restart, by the one it replaces.
+    def _save_library_scroll
+      return if @library_dirs_panel.nil? && @library_files_panel.nil?
+      @@library_scroll = {
+        :dir_ref => @library_dir_ref,
+        :dirs => @library_dirs_panel.nil? ? 0 : @library_dirs_panel.layout.start_row,
+        :files => @library_files_panel.nil? ? 0 : @library_files_panel.layout.start_row
+      }
+      @library_dirs_panel = nil
+      @library_files_panel = nil
+    end
+
+    # Picking a file of the browsed folder only moves the selection : the
+    # panel is not rebuilt, which would scroll its rows back to the top.
+    def _update_library_panel_selection
+      return _setup_library_panel if @library_file_btns.nil?
+      @library_file_btns.each { |file_ref, btn| btn.selected = file_ref == @@source_ref }
+      @library_add_btn.selected = @state == STATE_ADD unless @library_add_btn.nil?
     end
 
     # -----
@@ -2481,7 +2523,7 @@ module Ladb::OpenCutList
                                                      time_budget: CAVITIES_TIME_BUDGET
       ).run
 
-      cavities_def = CavitiesDef.new(container_path, result_def, drawing_defs, own_panel_drawing_defs, options_key)
+      cavities_def = CavitiesDef.new(container_path, result_def, drawing_defs, own_panel_drawing_defs, options_key, front_panel_drawing_defs)
       @cavities_defs.unshift(cavities_def)
       @cavities_defs.pop while @cavities_defs.length > CAVITIES_CACHE_SIZE
 
@@ -2616,7 +2658,11 @@ module Ladb::OpenCutList
     #
     # +options_key+ : the reading they were detected with, see
     # SmartBuildPanelActionHandler#_cavities_options_key.
-    CavitiesDef = Struct.new(:container_path, :result_def, :drawing_defs, :own_panel_drawing_defs, :options_key) do
+    #
+    # +recess_panel_drawing_defs+ : the APPLIED PANELS the openings were made
+    # to RECEDE behind - see #_cavities_recess_panel_types. The wall a recess
+    # leaves is a cap like any opening, and they are what stands behind it.
+    CavitiesDef = Struct.new(:container_path, :result_def, :drawing_defs, :own_panel_drawing_defs, :options_key, :recess_panel_drawing_defs) do
       def valid?
         result_def.is_a?(SolidBooleanResultDef) && result_def.success?
       end
@@ -2662,11 +2708,20 @@ module Ladb::OpenCutList
           # no panel can be read behind (a cap, or geometry with no
           # provenance) is passed over rather than fatal : the next one along
           # the ray is just as much in the compartment.
+          #
+          # A cap PAST the mouth is no wall either, unless an applied panel
+          # stands behind it : an opening receded to the back of the panel
+          # fitted in it is closed by that panel, and aiming at it through the
+          # front is aiming at a wall of the compartment.
           point = nil
           plane_manipulator = nil
-          hits.each do |_distance, hit_point, triangle_index|
-            next if fragment_def.triangle_face_id(triangle_index).to_i == 0
-            plane_manipulator = _wall_plane_manipulator(fragment_def, triangle_index, hit_point)
+          hits.each_with_index do |(_distance, hit_point, triangle_index), hit_index|
+            if fragment_def.triangle_face_id(triangle_index).to_i == 0
+              next if hit_index == 0   # The mouth the ray came in by, or the eye inside : the wall behind the eye
+              plane_manipulator = _recess_plane_manipulator(fragment_def, triangle_index, hit_point)
+            else
+              plane_manipulator = _wall_plane_manipulator(fragment_def, triangle_index, hit_point)
+            end
             next if plane_manipulator.nil?
             point = hit_point
             break
@@ -2728,6 +2783,27 @@ module Ladb::OpenCutList
         # plane back to the world through the transformation it is given.
         ti = transformation.inverse
         PlaneManipulator.new([ point.transform(ti), normal.transform(ti) ], transformation)
+      end
+
+      # The wall a ray hit on a RECESSED opening, read as #_wall_plane_manipulator
+      # reads a panel's : carried by the transformation of the recess panel the
+      # hit point lies on - the cap stands against its back. nil when none
+      # does : the cap is a real opening.
+      def _recess_plane_manipulator(fragment_def, triangle_index, point)
+        return nil unless recess_panel_drawing_defs.is_a?(Array)
+        normal = fragment_def.triangle_normal(triangle_index)
+        return nil if normal.nil?
+        margin = SolidMeshDef::TOLERANCE * 10
+        recess_panel_drawing_defs.each do |drawing_def|
+          next unless drawing_def.is_a?(DrawingDef) && (transformation = drawing_def.transformation).is_a?(Geom::Transformation)
+          bounds = drawing_def.bounds
+          next if bounds.empty?
+          ti = transformation.inverse
+          local_point = point.transform(ti)
+          next unless (0..2).all? { |axis| local_point[axis] >= bounds.min[axis] - margin && local_point[axis] <= bounds.max[axis] + margin }
+          return PlaneManipulator.new([ local_point, normal.transform(ti) ], transformation)
+        end
+        nil
       end
 
     end

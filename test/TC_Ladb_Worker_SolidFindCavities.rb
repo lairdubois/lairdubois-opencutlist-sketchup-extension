@@ -242,6 +242,73 @@ class TC_Ladb_Worker_SolidFindCavities < TestUp::TestCase
 
   end
 
+  # -- Standing parts --
+
+  # Feet under the bottom stand beyond its underside, which nothing else
+  # crosses : they are offered as ONE group - removing a single foot would leave
+  # the others closing the pocket under the case. The sides standing on the
+  # bottom's upper face are offered too : only the trial tells them apart.
+  def test_standing_positions_offers_the_feet_under_a_case
+
+    feet = [
+      _box_mesh_def(0.0, 0.0, -2.0, 1.0, 1.0, 0.0),
+      _box_mesh_def(9.0, 9.0, -2.0, 10.0, 10.0, 0.0)
+    ]
+
+    assert_equal([ [ 1, 2 ], [ 3, 4 ] ], _standing(_case_mesh_defs + feet))
+
+  end
+
+  # In a closed case the sides run the full height : every face plane of the
+  # top, the bottom or a shelf is crossed by them, and nothing is offered - the
+  # shelves under the top are no standing part.
+  def test_standing_positions_ignores_the_panels_of_a_closed_case
+
+    closed_case = [
+      _box_mesh_def(0.0, 0.0, 0.0, 1.0, 10.0, 10.0),   # left side
+      _box_mesh_def(9.0, 0.0, 0.0, 10.0, 10.0, 10.0),  # right side
+      _box_mesh_def(1.0, 0.0, 0.0, 9.0, 10.0, 1.0),    # bottom
+      _box_mesh_def(1.0, 0.0, 9.0, 9.0, 10.0, 10.0),   # top
+      _box_mesh_def(1.0, 0.0, 5.0, 9.0, 10.0, 6.0)     # shelf
+    ]
+
+    assert_equal([], _standing(closed_case))
+
+  end
+
+  # The plane a standing group is offered with points TO it : down, under the
+  # bottom the feet stand on.
+  def test_standing_positions_gives_the_plane_facing_the_feet
+
+    feet = [
+      _box_mesh_def(0.0, 0.0, -2.0, 1.0, 1.0, 0.0),
+      _box_mesh_def(9.0, 9.0, -2.0, 10.0, 10.0, 0.0)
+    ]
+    groups = @worker.send(:_standing_positions, (_case_mesh_defs + feet).each_with_index.map { |mesh_def, index| [ mesh_def, index ] })
+    _positions, plane = groups.find { |positions, _plane| positions == [ 3, 4 ] }
+
+    assert_in_delta(-1.0, plane[2], DELTA)
+    assert_in_delta(0.0, plane[3], DELTA)
+
+  end
+
+  # The space between the feet, against the bottom's underside, is a pocket
+  # of theirs ; a cavity reaching past the plane, or standing off it, is not -
+  # and nothing is a pocket beyond a plane that does not face down : the
+  # compartment of a bottomless case stacked on another stands against the
+  # lower one's top.
+  def test_standing_pocket_is_under_and_against_the_plane
+
+    down = [ 0.0, 0.0, -1.0, 0.0 ]
+    up = [ 0.0, 0.0, 1.0, 10.0 ]
+
+    assert_equal(true, @worker.send(:_standing_pocket?, _box_fragment(1.0, 1.0, -2.0, 9.0, 9.0, 0.0), down))
+    assert_equal(false, @worker.send(:_standing_pocket?, _box_fragment(1.0, 1.0, -2.0, 9.0, 9.0, -0.5), down))
+    assert_equal(false, @worker.send(:_standing_pocket?, _box_fragment(1.0, 1.0, -2.0, 9.0, 9.0, 1.0), down))
+    assert_equal(false, @worker.send(:_standing_pocket?, _box_fragment(1.0, 1.0, 10.0, 9.0, 9.0, 15.0), up))
+
+  end
+
   # Two boxes side by side, a world apart : two components.
   def test_panel_components_splits_two_disjoint_boxes
 
@@ -367,6 +434,10 @@ class TC_Ladb_Worker_SolidFindCavities < TestUp::TestCase
 
   def _applied(mesh_defs)
     @worker.send(:_applied_panel_positions, mesh_defs.each_with_index.map { |mesh_def, index| [ mesh_def, index ] })
+  end
+
+  def _standing(mesh_defs)
+    @worker.send(:_standing_positions, mesh_defs.each_with_index.map { |mesh_def, index| [ mesh_def, index ] }).map(&:first)
   end
 
   # A U shaped case - a bottom carrying two sides - i.e. ONE part of the

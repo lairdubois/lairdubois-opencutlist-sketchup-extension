@@ -136,6 +136,33 @@ module Ladb::OpenCutList
   # Nothing geometric separates the two — only what the part is FOR does —
   # which is why this is an option and not the rule.
   #
+  # STANDING PARTS : the feet a case stands on, the plinth under it, the crown
+  # laid on its top touch it — no component of their own — and inflate the
+  # hull all the same : between four feet, the hull closes a POCKET under the
+  # bottom. Harmless while the pocket stays sealed, but the case only has to
+  # leak into it to be lost : the side grooves a back slides in, cut THROUGH,
+  # run down past the bottom and open right into it (T36). Compartment and
+  # pocket then make up one fragment, opening on too many planes to be kept,
+  # and the case yields nothing at all.
+  #
+  # Such parts are offered to the trial above as a GROUP, on a condition read
+  # off the dominant faces again : a panel's face plane that the rest of the
+  # assembly does not cross, with some of it beyond — the plane of the bottom's
+  # underside, with the feet below and everything else above. Removing a
+  # single foot would leave the others closing the pocket, hence the group.
+  # When the whole assembly found nothing, the first group whose removal finds
+  # something is dropped, as the split components are ; otherwise the group
+  # goes through #_essential_mesh_defs with the others. See
+  # #_standing_positions.
+  #
+  # Sealed, the pocket is no better : once the envelope is reduced, the feet's
+  # own faces clip it into cavities of its own — and a divider is offered
+  # between the feet. A standing group's trial therefore does not ask for the
+  # POCKETS under the assembly back : the cavities lying wholly beyond its
+  # plane and against it, when that plane faces down. Down, because a bottomless
+  # case stacked on another has its compartment against the lower one's top
+  # just the same, and that one is a compartment. See #_standing_pocket?.
+  #
   # INSET FRONT PANELS (front_panel_drawing_defs option) : a front panel
   # fitted INTO an opening rather than laid over it OCCUPIES the front of the
   # compartment it closes, and a part fitted in that compartment afterwards
@@ -567,6 +594,11 @@ module Ladb::OpenCutList
     # moves by when the hull it is eroded from loses a few points.
     KEPT_CAVITY_MAX_VOLUME_RATIO = 1.01
 
+    # How squarely a standing plane has to face DOWN for the cavities against
+    # it to be pockets under the assembly — see #_standing_pocket?. Some 8°
+    # of play : a case is drawn upright, its feet with it.
+    STANDING_DOWN_MIN_DOT = 0.99
+
     def initialize(panel_drawing_defs,
 
                    envelope: ENVELOPE_HULL,
@@ -670,23 +702,46 @@ module Ladb::OpenCutList
           overall_fragment_defs = split_overall_fragment_defs
         end
 
-      elsif !compartment_fragment_defs.empty?
+      end
 
-        # What may be taken off : the DETACHED components, and — when the
-        # caller asks for it — the panels merely LAID ON the assembly, which
-        # are jointive and so form no component of their own.
-        candidates = components.length > 1 ? components : []
-        candidates += _applied_panel_positions(indexed_mesh_defs) if @ignore_applied_panels
+      if compartment_fragment_defs.empty?
+
+        # Still nothing : the STANDING parts may be what closes a pocket the
+        # enclosure leaks into — see the class doc, STANDING PARTS. Nothing to
+        # protect either, so the first group whose removal finds something
+        # wins.
+        _standing_positions(indexed_mesh_defs).each do |positions, _plane|
+          break if _budget_exhausted?
+          trial_mesh_defs = indexed_mesh_defs.reject.with_index { |_entry, position| positions.include?(position) }
+          trial_result_def = SolidBooleanResultDef.new
+          trial_fragment_defs, trial_overall_fragment_defs = _run_clusters([ trial_mesh_defs ], trial_result_def, validate: false, overall: @overall_cavity)
+          next unless trial_result_def.success? && !trial_fragment_defs.empty?
+          compartment_fragment_defs = trial_fragment_defs
+          overall_fragment_defs = trial_overall_fragment_defs
+          break
+        end
+
+      else
+
+        # What may be taken off : the DETACHED components, the STANDING parts
+        # and — when the caller asks for it — the panels merely LAID ON the
+        # assembly, which are jointive and so form no component of their own.
+        # Each one [ positions, plane ] : the plane a standing group stands
+        # beyond, nil for the others.
+        candidates = components.length > 1 ? components.map { |positions| [ positions, nil ] } : []
+        candidates += _standing_positions(indexed_mesh_defs)
+        candidates += _applied_panel_positions(indexed_mesh_defs).map { |positions| [ positions, nil ] } if @ignore_applied_panels
 
         unless candidates.empty?
-          essential_mesh_defs = _essential_mesh_defs(indexed_mesh_defs, candidates, compartment_fragment_defs)
+          essential_mesh_defs, protected_fragment_defs = _essential_mesh_defs(indexed_mesh_defs, candidates, compartment_fragment_defs)
           unless essential_mesh_defs.equal?(indexed_mesh_defs)
             # Read once more as a whole, and kept only if it still holds every
-            # cavity the reference had : what was true of each removal apart
-            # has to be true of them together.
+            # cavity the reference had — but the pockets under the standing
+            # parts removed : what was true of each removal apart has to be
+            # true of them together.
             kept_result_def = SolidBooleanResultDef.new
             kept_fragment_defs, kept_overall_fragment_defs = _run_clusters([ essential_mesh_defs ], kept_result_def, validate: false, overall: @overall_cavity)
-            if kept_result_def.success? && _cavities_kept?(compartment_fragment_defs, kept_fragment_defs)
+            if kept_result_def.success? && _cavities_kept?(protected_fragment_defs, kept_fragment_defs)
               compartment_fragment_defs = kept_fragment_defs
               overall_fragment_defs = kept_overall_fragment_defs
             end
@@ -816,20 +871,29 @@ module Ladb::OpenCutList
     # +indexed_mesh_defs+ ITSELF when they all earn their keep, which is the
     # caller's signal that there is nothing to recompute.
     #
-    # +candidates+ is a list of position lists : the detached components, and
-    # the panels merely laid on the assembly when the caller asked for those
-    # too (see #_applied_panel_positions). Both are weighed the same way, and
-    # for the same reason — they may be inflating the envelope without
-    # enclosing anything.
+    # +candidates+ is a list of [ position list, plane ] : the detached
+    # components, the standing groups (see #_standing_positions) and the
+    # panels merely laid on the assembly when the caller asked for those too
+    # (see #_applied_panel_positions). All are weighed the same way, and for
+    # the same reason — they may be inflating the envelope without enclosing
+    # anything.
     #
     # +reference_fragment_defs+ are the cavities of the whole assembly : each
     # candidate is weighed against them, never against what an earlier removal
-    # left standing, so that one detached part cannot decide for another.
+    # left standing, so that one detached part cannot decide for another. Bar
+    # one exception : the POCKETS a standing group closes UNDER the assembly
+    # are its own, not the assembly's (see #_standing_pocket?), and its trial
+    # does not ask for them back.
+    #
+    # Returns [ panels left, cavities to protect ] : the reference, less the
+    # pockets of the standing groups granted — what the caller checks the
+    # final pass against.
     def _essential_mesh_defs(indexed_mesh_defs, candidates, reference_fragment_defs)
       hull_planes = _hull_planes(indexed_mesh_defs.inject([]) { |vertices, (mesh_def, _panel_index)| vertices.concat(mesh_def.vertices) })
       superfluous_positions = []
+      pocket_fragment_defs = []
 
-      candidates.each do |positions|
+      candidates.each do |positions, plane|
         break if _budget_exhausted?
         next if positions.length == indexed_mesh_defs.length
         next if positions.any? { |position| superfluous_positions.include?(position) }
@@ -853,11 +917,34 @@ module Ladb::OpenCutList
         trial_fragment_defs, _overall_fragment_defs = _run_clusters([ trial_mesh_defs ], trial_result_def, validate: false, overall: false)
         next unless trial_result_def.success?
 
-        superfluous_positions = dropped_positions if _cavities_kept?(reference_fragment_defs, trial_fragment_defs)
+        pockets = plane.nil? ? [] : reference_fragment_defs.select { |fragment_def| _standing_pocket?(fragment_def, plane) }
+        next unless _cavities_kept?(reference_fragment_defs - pockets, trial_fragment_defs)
+        superfluous_positions = dropped_positions
+        pocket_fragment_defs.concat(pockets)
       end
 
-      return indexed_mesh_defs if superfluous_positions.empty?
-      indexed_mesh_defs.reject.with_index { |_entry, position| superfluous_positions.include?(position) }
+      return [ indexed_mesh_defs, reference_fragment_defs ] if superfluous_positions.empty?
+      [
+        indexed_mesh_defs.reject.with_index { |_entry, position| superfluous_positions.include?(position) },
+        reference_fragment_defs - pocket_fragment_defs
+      ]
+    end
+
+    # Whether the given cavity is a POCKET under the assembly : lying wholly
+    # beyond the given standing plane, and against it — the space between the
+    # feet, walled by the bottom's underside, the feet and the hull. See the
+    # class doc, STANDING PARTS.
+    #
+    # UNDER only, the world's Z telling which way is down : a case is drawn
+    # standing on its feet, and what it stands on is no part of it. Two cases
+    # stacked are the same thing upside down — the upper one standing beyond
+    # the lower one's top — but a bottomless upper case has its compartment
+    # against that very plane, and it is no pocket.
+    def _standing_pocket?(fragment_def, plane)
+      nx, ny, nz, d = plane
+      return false if nz > -STANDING_DOWN_MIN_DOT
+      min, _max = _projection_range(fragment_def.vertices, [ nx, ny, nz ])
+      !min.nil? && (min - d).abs <= SolidMeshDef::TOLERANCE
     end
 
     # Whether every one of +reference_fragment_defs+ is still there in
@@ -978,6 +1065,65 @@ module Ladb::OpenCutList
                                      others_max <= own_min + SolidMeshDef::TOLERANCE
       end
       positions
+    end
+
+    # The groups of panels STANDING beyond a face of another — the feet under a
+    # bottom, a plinth, a crown — one [ position list, plane ] per group, ready
+    # for the removal trial. The plane is the face's, as an outward
+    # [ nx, ny, nz, d ] pointing to the group. See the class doc, STANDING
+    # PARTS.
+    #
+    # A panel's dominant face planes, at either end of its thickness, are read
+    # against the rest of the assembly : a plane that no other panel CROSSES,
+    # with some of them beyond it, separates those from everything else — the
+    # panel itself included. A group holding every other panel is left out :
+    # that is a panel laid on the rest, the business of
+    # #_applied_panel_positions, and trying it would only leave that panel
+    # alone.
+    #
+    # Like there, this is only a NECESSARY condition : the shelves under a top
+    # are beyond the top's underside too — but so are the sides crossing it,
+    # which is why the plane is refused. And a group that passes is only
+    # offered : two cases stacked one on the other separate on such a plane,
+    # and the trial keeps each of them, its removal losing its compartments.
+    def _standing_positions(indexed_mesh_defs)
+      count = indexed_mesh_defs.length
+      return [] if count < 3
+
+      dominant_normals = _panel_dominant_normals(indexed_mesh_defs.map { |mesh_def, _panel_index|
+        { :vertices => mesh_def.vertices, :face_indices => mesh_def.face_indices }
+      })
+
+      groups = []
+      count.times do |position|
+        normal = dominant_normals[position]
+        next if normal.nil?
+
+        ranges = indexed_mesh_defs.map { |mesh_def, _panel_index| _projection_range(mesh_def.vertices, normal) }
+        own_min, own_max = ranges[position]
+        next if own_min.nil?
+
+        # +way+ turns each side into the far side of its own plane : a panel
+        # is beyond when its nearest point is, across when its farthest is
+        [ [ own_max, 1.0 ], [ own_min, -1.0 ] ].each do |d, way|
+          beyond = []
+          crossed = false
+          ranges.each_with_index do |(min, max), other_position|
+            next if other_position == position || min.nil?
+            nearest, farthest = way > 0 ? [ min, max ] : [ -max, -min ]
+            if nearest >= way * d - SolidMeshDef::TOLERANCE
+              beyond << other_position
+            elsif farthest > way * d + SolidMeshDef::TOLERANCE
+              crossed = true
+              break
+            end
+          end
+          next if crossed || beyond.empty? || beyond.length == count - 1
+          next if groups.any? { |positions, _plane| positions == beyond }
+          groups << [ beyond, [ way * normal[0], way * normal[1], way * normal[2], way * d ] ]
+        end
+      end
+      groups
     end
 
     # [ lowest, highest ] projection of the given flat vertex array on the
