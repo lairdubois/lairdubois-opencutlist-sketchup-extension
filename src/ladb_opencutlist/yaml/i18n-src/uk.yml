@@ -112,6 +112,7 @@ core:
       unhide_part_instance: Показати екземпляр
       edit_part_instance_properties: Редагувати властивості екземпляра
       smart_draw: $t(core.toolbar.command.smart_draw)
+      smart_build: $t(core.toolbar.command.smart_build)
       smart_handle: $t(core.toolbar.command.smart_handle)
       smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
@@ -125,6 +126,7 @@ core:
     command:
       dialog: OpenCutList
       smart_draw: Креслення деталей
+      smart_build: Створити деталі
       smart_handle: Обробка деталей
       smart_reshape: Редагування деталей
       smart_paint: Нанесення матеріалів на деталі
@@ -2385,37 +2387,13 @@ tool:
     action_2_status: Малювання об'єму на основі багатокутної форми
     action_2_state_1_status: "Натисніть, щоб встановити нову точку або ввести відстань"
     action_x_state_2_status: "Натисніть, щоб встановити висоту або ввести відстань"
-    action_3: Малювання роздільника
-    action_3_status: "Намалюйте роздільник у порожнині, утвореній групою існуючих деталей"
-    action_3_state_0_status: "Натисніть на боковину, щоб намалювати розділювач"
-    action_3_state_1_status: "Натисніть на боковину, щоб намалювати роздільники"
-    action_4: Фасади
-    action_4_status: "Намалюйте фасад у порожнині, утвореній групою існуючих деталей"
-    action_4_state_0_status: "Натисніть на порожнину, щоб намалювати фасад на її лиці"
-    action_4_state_0_merge_status: "Пересувайтеся до сусідніх порожнин для загального фасаду"
     action_option_group_offset: Відступ
     action_option_group_segments: Сегменти
-    action_option_group_thickness: Товщина
-    action_option_group_clearance: Зазор
-    action_option_group_overlay: Монтаж
-    action_option_group_axes: Осі
-    action_option_group_measure_type: Вимірювання
     action_option_group_options: Опції
     action_option_offset_shape_offset: Зміщення
     action_option_offset_shape_offset_status: Дозволяє застосувати зсув до контуру намальованої фігури
-    action_option_offset_front_panel_offset: Зазор
-    action_option_offset_front_panel_offset_status: "Визначає зазор, що залишився на кожному краю фасаду"
     action_option_segments_segment_count: Кількість сегментів
     action_option_segments_segment_count_status: Дозволяє задати кількість сегментів в колі
-    action_option_thickness_thickness: Товщина
-    action_option_thickness_thickness_status: Визначає товщину панелей
-    action_option_overlay_inset_status: "Вкладний фасад: встановлюється в отвір, виходить на лицьову сторону"
-    action_option_overlay_full_overlay_status: "Фасад для поверхневого монтажу (накладний): розміщений перед передньою стороною, покриваючи панелі до зовнішньої поверхні коробки та до середини товщини внутрішніх панелей"
-    action_option_measure_type_inside_status: Розташувати товщину всередині цільової точки
-    action_option_measure_type_centered_status: Відцентрувати товщину на цільовій точці
-    action_option_measure_type_outside_status: Розмістити товщину за межами цільової точки
-    action_option_axes_active_status: Маніпулювати вздовж активних осей
-    action_option_axes_context_status: Маніпулювати вздовж осей хост-групи або компонента
     action_option_options_construction: Конструктивні особливості
     action_option_options_construction_status: Намалювати у вигляді будівельних ліній
     action_option_options_rectangle_centered: Прямокутник від центру
@@ -2435,20 +2413,68 @@ tool:
     action_option_options_draw_in_0: Малювати в активному елементі
     action_option_options_draw_in_1: Намалювати деталь у батьківському контейнері у початковій точці
     action_option_options_draw_in_status: "Намалювати деталь у батьківському контейнері, на який вказує перша точка"
+    action_option_options_ask_name: Найменування деталей
+    action_option_options_ask_name_status: Введення назв деталей вручну
+    action_toggle_move_copy_status: Чергування копіювання/переміщення
+    action_change_move_anchor_status: Зміна опорної точки
+    success:
+      part_created: "Створено нову деталь: {{ name }}"
+      part_created_plural: "Створено {{ count }} нових деталей: {{ name }}"
+  smart_build:
+    title: Створити
+    action_0: Створити розділювачі
+    action_0_status: "Побудуйте розділювач у порожнині, утвореній групою наявних деталей"
+    action_0_state_0_status: "Натисніть на стінку, щоб створити перегородку"
+    action_0_state_1_status: "Натисніть на стінку, щоб створити перегородки"
+    action_1: Створити фасад
+    action_1_status: "Побудуйте фасад у порожнині, утвореній групою існуючих деталей"
+    action_1_state_0_status: "Натисніть на порожнину, щоб побудувати фасад на її отворі"
+    action_1_state_0_merge_status: "Пересувайтеся до сусідніх порожнин для загального фасаду"
+    action_2: Створити задню стінку
+    action_2_status: "Побудуйте задню стінку в порожнині, утвореній групою існуючих деталей"
+    action_2_state_0_status: "Клацніть у порожнині, щоб створити задню стінку на її отворі навпроти виду"
+    action_2_state_0_merge_status: "Посуньтеся до сусідніх порожнин для спільної задньої стінки"
+    action_option_group_groove: Паз
+    action_1_option_group_offset: Зазор
+    action_option_group_thickness: Товщина
+    action_option_group_overlay: Монтаж
+    action_option_group_axes: Осі
+    action_option_group_measure_type: Вимірювання
+    action_option_group_options: Опції
+    action_option_offset_front_panel_offset: Зазор
+    action_option_offset_front_panel_offset_status: "Визначає зазор, що залишився на кожному краю фасаду"
+    action_option_groove_groove_depth: Глибина пазу
+    action_option_groove_groove_depth_status: "Визначає глибину пазу, в яку заходить задня стінка"
+    action_option_groove_groove_setback: Відступ
+    action_option_groove_groove_setback_status: "Визначає, наскільки задня стінка рухається назад у напрямку до внутрішньої частини коробки, і, отже, місце обробки паза"
+    action_option_groove_groove_through: Паз на всю довжину
+    action_option_groove_groove_through_status: "Продовжити прохідний паз до кінця корпусу, якщо він прихований сусідньою деталлю"
+    action_option_thickness_thickness: Товщина
+    action_option_thickness_thickness_status: Визначає товщину панелей
+    action_option_overlay_inset_status: "Вкладний фасад: встановлюється в отвір, виходить на лицьову сторону"
+    action_2_option_overlay_inset_status: "Задня стінка в паз: стінка вставляється в паз, відфрезерований у деталях, що обрамляють отвір"
+    action_option_overlay_full_overlay_status: "Фасад для поверхневого монтажу (накладний): розміщений перед передньою стороною, покриваючи панелі до зовнішньої поверхні коробки та до середини товщини внутрішніх панелей"
+    action_2_option_overlay_full_overlay_status: "Основа для поверхневого монтажу: розміщена на задній частині коробки, охоплюючи панелі до зовнішньої поверхні та до середини товщини внутрішніх панелей, без будь-якої механічної обробки"
+    action_option_measure_type_inside_status: Розташувати товщину всередині цільової точки
+    action_option_measure_type_centered_status: Відцентрувати товщину на цільовій точці
+    action_option_measure_type_outside_status: Розмістити товщину за межами цільової точки
+    action_option_axes_active_status: Маніпулювати вздовж активних осей
+    action_option_axes_context_status: Маніпулювати вздовж осей хост-групи або компонента
+    action_option_options_measure_reversed: Реверсивне вимірювання
+    action_option_options_measure_reversed_status: Зворотне вимірювання
     action_option_options_reduce_envelope: Заглиблення деталей
     action_option_options_reduce_envelope_status: Враховувати втоплені деталі
     action_option_options_reuse_definition: Повторне використання деталей
     action_option_options_reuse_definition_status: "Повторно використовувати наявну деталь тієї самої форми та в тій самій зоні, а не створювати нову"
     action_option_options_mirror: Встановити дзеркально
-    action_option_options_mirror_status: ""
+    action_option_options_mirror_status: Розмістіть кожен фасад парного ряду дзеркало сусіднього
     action_option_options_ask_name: Найменування деталей
     action_option_options_ask_name_status: Введення назв деталей вручну
     action_option_options_layer_name: Тег
-    action_option_options_layer_name_status: "Назва тега, на якому розміщені фасади"
-    action_toggle_move_copy_status: Чергування копіювання/переміщення
-    action_change_move_anchor_status: Зміна опорної точки
+    action_option_options_layer_name_status: "Назва шару, на якому розміщені деталі"
+    detecting_cavities: "Виявлення порожнини..."
     error:
-      invalid_divider_seed: Цей тип деталі не допускає конструкції розділювача
+      invalid_divider_seed: Цей тип деталі не допускає будівництва розділювачів
       invalid_divider_container: "Ця деталь ізольована: вона не має спільної групи чи компонента з іншими деталями"
       invalid_divider_cavity: "У цій позиції немає порожнини"
       no_divider_cavity: У цій групі або компоненті не було виявлено жодних порожнин
@@ -2456,8 +2482,19 @@ tool:
       invalid_front_panel_container: "Ця деталь ізольована: вона не має спільної групи чи компонента з іншими деталями"
       invalid_front_panel_cavity: "У цьому положенні жодна порожнина не відкрита до вас"
       no_front_panel_cavity: У цій групі або компоненті не було виявлено жодних порожнин
+      invalid_back_panel_seed: Цей тип деталі не дозволяє побудувати задню стінку
+      invalid_back_panel_container: "Ця деталь ізольована: вона не має спільної групи чи компонента з іншими деталями"
+      invalid_back_panel_cavity: "У цій позиції немає відкритої порожнини, спрямованої вбік від огляду"
+      no_back_panel_cavity: У цій групі або компоненті не було виявлено жодних порожнин
+      too_complex_cavity: "Геометрія занадто складна для виявлення порожнин"
+      closed_front_panel_opening: "Цей отвір вже закритий фасадом"
+      closed_back_panel_opening: "Цей отвір вже закрито задньою стінкою"
       divider_number_overflow: "Неможливо розподілити {{ number }} розділювачів у цій порожнині"
       front_panel_number_overflow: "Неможливо розподілити {{ number }} фасадів на цьому отворі"
+      back_panel_number_overflow: "Не вдалося розподілити {{ number }} задні стінки у цьому отворі"
+      back_panel_severs_parts: "Паз прорізає наскрізь деталі: {{ names }}. Зменшіть його глибину"
+    warning:
+      no_back_panel_machining: "Фрезерування не вдалося: жодна сусідня деталь не межує із задньою стінкою на цій глибині"
     success:
       part_created: "Створено нову деталь: {{ name }}"
       part_created_plural: "Створено {{ count }} нових деталей: {{ name }}"
