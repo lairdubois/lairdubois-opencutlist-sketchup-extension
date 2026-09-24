@@ -441,7 +441,7 @@ module Ladb::OpenCutList
         # -- NOTIFICATION
 
         @notification_panel = Kuix::Panel.new
-        @notification_panel.layout = Kuix::InlineLayout.new(false, unit)
+        @notification_panel.layout = Kuix::InlineLayout.new(false, unit, Kuix::Anchor.new(Kuix::Anchor::CENTER))
         @notification_panel.margin.bottom = unit * 2
         @notification_panel.visible = false
         @bottom_panel.append(@notification_panel)
@@ -583,13 +583,18 @@ module Ladb::OpenCutList
       k_btn
     end
 
-    def create_2d(layer = 0)
+    def create_2d(layer = 0, location = :canvas)
       @layers_2d[layer] ||= begin
         k_layer = @layers_2d[layer] = Kuix::Panel.new
         k_layer.layout_data = Kuix::StaticLayoutData.new(0, 0, 1.0, 1.0)
         k_layer.layout = Kuix::StaticLayout.new
         k_layer.hittable = false
-        @canvas.append(k_layer)
+        case location
+        when :bottom
+          @bottom_panel.append(k_layer)
+        else
+          @canvas.append(k_layer)
+        end
         k_layer
       end
     end
@@ -602,7 +607,6 @@ module Ladb::OpenCutList
 
     def clear_2d(layers = 0)
       layers = Array(layers)
-      return unless layers.is_a?(Array)
       layers.each do |layer|
         k_layer = @layers_2d[layer]
         k_layer.clear unless k_layer.nil?
@@ -638,7 +642,6 @@ module Ladb::OpenCutList
 
     def clear_3d(layers = 0)
       layers = Array(layers)
-      return unless layers.is_a?(Array)
       layers.each do |layer|
         k_layer = @layers_3d[layer]
         k_layer.clear unless k_layer.nil?

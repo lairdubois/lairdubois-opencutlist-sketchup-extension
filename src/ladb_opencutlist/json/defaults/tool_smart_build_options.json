@@ -10,7 +10,8 @@
     "center_x": false,
     "center_y": false,
     "center_z": false,
-    "origin": false
+    "origin": false,
+    "ask_name": false
   },
   "action_1": { /* ACTION_BUILD_DIVIDER */
     "thickness": { "metric": "18mm", "imperial": "1/2\"" },

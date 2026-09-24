@@ -112,7 +112,8 @@ module Ladb::OpenCutList
                  {
                    :action => ACTION_BUILD_MODULE,
                    :options => {
-                     ACTION_OPTION_ANCHOR => [ ACTION_OPTION_ANCHOR_CENTER_X, ACTION_OPTION_ANCHOR_CENTER_Y, ACTION_OPTION_ANCHOR_CENTER_Z, ACTION_OPTION_ANCHOR_ORIGIN ]
+                     ACTION_OPTION_ANCHOR => [ ACTION_OPTION_ANCHOR_CENTER_X, ACTION_OPTION_ANCHOR_CENTER_Y, ACTION_OPTION_ANCHOR_CENTER_Z, ACTION_OPTION_ANCHOR_ORIGIN ],
+                     ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_ASK_NAME ]
                    }
                  }
                ] + ACTIONS
@@ -201,7 +202,7 @@ module Ladb::OpenCutList
       when ACTION_OPTION_OPTIONS
         case option
         when ACTION_OPTION_OPTIONS_ASK_NAME
-          return [ ACTION_BUILD_DIVIDER, ACTION_BUILD_FRONT_PANEL, ACTION_BUILD_BACK_PANEL ]
+          return [ ACTION_BUILD_MODULE, ACTION_BUILD_DIVIDER, ACTION_BUILD_FRONT_PANEL, ACTION_BUILD_BACK_PANEL ]
         end
       end
 
@@ -499,6 +500,8 @@ module Ladb::OpenCutList
       @add_instance = nil  # Instance hovered in STATE_ADD
 
       @double_click_time = nil  # To ignore the button up closing a double click
+
+      tool.create_2d(LAYER_2D_LIBRARY, :bottom)
 
     end
 
@@ -1486,7 +1489,9 @@ module Ladb::OpenCutList
     # The bottom bar : a row of the sub folders of the browsed folder - led by
     # its parent below the library root - above the buttons of its SKP files.
     def _setup_library_panel
+
       _save_library_scroll
+
       @tool.clear_2d(LAYER_2D_LIBRARY)
       @library_file_btns = {}
       @library_add_btn = nil
@@ -2083,6 +2088,37 @@ module Ladb::OpenCutList
           'y' => @source[:cutters][Y_AXIS],
           'z' => @source[:cutters][Z_AXIS],
         })
+
+        if active?
+
+          fn_ask_name = lambda {
+            unless group.deleted?
+              if (data = UI.inputbox([ PLUGIN.get_i18n_string('tab.cutlist.edit_part.name') ], [ group.name ], PLUGIN.get_i18n_string('default.rename')))
+                name = data.first
+                if name.empty?
+                  UI.beep
+                else
+                  group.name = name
+                end
+              end
+            end
+          }
+
+          if _fetch_option_ask_name?
+            fn_ask_name.call
+          else
+            @tool.notify_success(
+              PLUGIN.get_i18n_string('tool.smart_build.success.module_created', { :name => group.name }),
+              [
+                {
+                  :label => PLUGIN.get_i18n_string('default.rename'),
+                  :block => fn_ask_name,
+                }
+              ]
+            )
+          end
+
+        end
 
         model.commit_operation
 

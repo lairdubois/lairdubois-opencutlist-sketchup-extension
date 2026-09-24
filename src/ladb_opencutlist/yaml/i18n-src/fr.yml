@@ -2531,7 +2531,8 @@ tool:
       part_created_plural: "{{ count }} nouvelles pièces créées : {{ name }}"
       part_reused: "Nouvelle occurrence de la pièce existante : {{ name }}"
       part_reused_plural: "{{ count }} nouvelles occurrences de la pièce existante : {{ name }}"
-      module_file_saved: "Module enregistré : **{{ name }}.skp**"
+      module_file_saved: "Module enregistré : {{ name }}.skp"
+      module_created: "Nouveau module placé : {{ name }}"
   smart_handle:
     title: Manipuler
     action_0: Sélectionner
