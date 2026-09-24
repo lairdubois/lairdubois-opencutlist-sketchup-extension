@@ -19,7 +19,40 @@ module Ladb::OpenCutList::Geometrix
 
       # Scale relative epsilon : points closer than this to a face plane are
       # considered on it (never "outside"), which guarantees termination on
-      # coplanar clusters.
+      # coplanar clusters. Well above the noise of SketchUp coordinates read
+      # through transformations (two panel corners meant to coincide, a few
+      # 1e-9 relative apart), which would otherwise raise sliver faces - and
+      # still far below SketchUp's own tolerance.
+      #
+      # Quickhull without face merging is still not bulletproof when distinct
+      # points cluster within a few epsilons of a face : the hull may come out
+      # with duplicated or open edges. It is checked, and computed again with
+      # a coarser epsilon in that case - a point it ignores is at most that
+      # far outside the hull.
+      [ 1e-7, 1e-6, 1e-5 ].each do |relative_epsilon|
+        triangles = _find_convex_hull_triangle_indices(pts, relative_epsilon)
+        return nil if triangles.nil?
+        return triangles if _closed_manifold?(triangles)
+      end
+
+      nil
+    end
+
+    # True if every directed edge appears exactly once, paired with its
+    # reverse : a watertight, consistently oriented triangle mesh.
+    def self._closed_manifold?(triangles)
+      directed_edges = {}
+      triangles.each do |a, b, c|
+        [ [ a, b ], [ b, c ], [ c, a ] ].each do |edge|
+          return false if directed_edges.key?(edge)
+          directed_edges[edge] = true
+        end
+      end
+      directed_edges.keys.all? { |a, b| directed_edges.key?([ b, a ]) }
+    end
+
+    def self._find_convex_hull_triangle_indices(pts, relative_epsilon)
+
       mins = [ Float::INFINITY ] * 3
       maxs = [ -Float::INFINITY ] * 3
       pts.each do |p|
@@ -30,7 +63,7 @@ module Ladb::OpenCutList::Geometrix
       end
       extent = 3.times.map { |i| maxs[i] - mins[i] }.max
       return nil if extent <= 0
-      epsilon = extent * 1e-9
+      epsilon = extent * relative_epsilon
 
       fn_sub = lambda { |a, b| [ a[0] - b[0], a[1] - b[1], a[2] - b[2] ] }
       fn_cross = lambda { |a, b| [ a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0] ] }
@@ -80,11 +113,16 @@ module Ladb::OpenCutList::Geometrix
 
       # Face = { :indices => [ a, b, c ], :normal, :d, :outside => [ point indices ],
       #          :far_index, :far_distance, :alive }
-      fn_new_face = lambda { |a, b, c|
+      #
+      # Only the initial tetrahedron is oriented against the interior point : a
+      # face raised on a horizon edge inherits its winding from that edge, which
+      # the interior test could only get wrong - on a sliver face, whose normal
+      # is mostly noise.
+      fn_new_face = lambda { |a, b, c, orient = false|
         normal = fn_cross.call(fn_sub.call(pts[b], pts[a]), fn_sub.call(pts[c], pts[a]))
         length = Math.sqrt(fn_dot.call(normal, normal))
         normal = length > 0 ? normal.map { |v| v / length } : [ 0.0, 0.0, 0.0 ]
-        if fn_dot.call(normal, interior) - fn_dot.call(normal, pts[a]) > 0
+        if orient && fn_dot.call(normal, interior) - fn_dot.call(normal, pts[a]) > 0
           b, c = c, b
           normal = normal.map { |v| -v }
         end
@@ -112,10 +150,10 @@ module Ladb::OpenCutList::Geometrix
       }
 
       faces = [
-        fn_new_face.call(i0, i1, i2),
-        fn_new_face.call(i0, i1, i3),
-        fn_new_face.call(i0, i2, i3),
-        fn_new_face.call(i1, i2, i3)
+        fn_new_face.call(i0, i1, i2, true),
+        fn_new_face.call(i0, i1, i3, true),
+        fn_new_face.call(i0, i2, i3, true),
+        fn_new_face.call(i1, i2, i3, true)
       ]
       remaining = (0...pts.length).to_a - [ i0, i1, i2, i3 ]
       faces.each do |face|
@@ -131,7 +169,32 @@ module Ladb::OpenCutList::Geometrix
         next unless face[:alive] && !face[:far_index].nil?
         apex = face[:far_index]
 
-        visible_faces = faces.select { |candidate| candidate[:alive] && fn_distance.call(candidate, apex) > epsilon }
+        # Visible region : grown from the seed face across shared edges, never
+        # picked face by face. A sliver face (a point that landed a hair above
+        # an existing face) has a noisy plane, and the apex may "see" it from
+        # afar although it is not adjacent to the region : a disconnected
+        # region has several horizon loops, and the hull comes out with
+        # duplicated and open edges.
+        face_by_edge = {}
+        faces.each do |candidate|
+          next unless candidate[:alive]
+          a, b, c = candidate[:indices]
+          face_by_edge[[ a, b ]] = face_by_edge[[ b, c ]] = face_by_edge[[ c, a ]] = candidate
+        end
+        visible_faces = [ face ]
+        visited = { face.object_id => true }
+        stack = [ face ]
+        until stack.empty?
+          a, b, c = stack.pop[:indices]
+          [ [ b, a ], [ c, b ], [ a, c ] ].each do |reverse_edge|
+            neighbor = face_by_edge[reverse_edge]
+            next if neighbor.nil? || visited[neighbor.object_id]
+            visited[neighbor.object_id] = true
+            next unless fn_distance.call(neighbor, apex) > epsilon
+            visible_faces << neighbor
+            stack << neighbor
+          end
+        end
 
         # Horizon : directed edges of the visible region whose reverse edge is
         # not in the region
