@@ -2424,15 +2424,20 @@ tool:
     title: Construire
     action_0: Placer un Module
     action_0_status: Placer un module importé d'un fichier SKP, étiré aux dimensions de la boîte dessinée
-    action_0_state_0_status: Cliquez pour placer l'origine du module
-    action_0_state_1_status: Cliquez pour définir la largeur du module (axe X)
-    action_0_state_1_lock_status: Verrouiller sur la largeur du fichier source
-    action_0_state_1_arrows_status: "Flèches = Verrouiller sur un axe (→ X, ← Y, ↑ Z)"
-    action_0_state_2_status: Cliquez pour définir la profondeur du module (axe Y)
-    action_0_state_2_lock_status: Verrouiller sur la profondeur du fichier source
-    action_0_state_2_arrows_status: "Flèches = Verrouiller la normale du plan XY sur un axe (→ X, ← Y, ↑ Z)"
-    action_0_state_3_status: Cliquez pour définir la hauteur du module (axe Z)
-    action_0_state_3_lock_status: Verrouiller sur la hauteur du fichier source
+    action_0_state_0_status: Sélectionnez un fichier de module dans la bibliothèque
+    action_0_state_1_status: Cliquez pour placer l'origine du module
+    action_0_state_2_status: Cliquez pour définir la largeur du module (axe X)
+    action_0_state_2_lock_status: Verrouiller sur la largeur du fichier source
+    action_0_state_2_arrows_status: "Flèches = Verrouiller sur un axe (→ X, ← Y, ↑ Z)"
+    action_0_state_3_status: Cliquez pour définir la profondeur du module (axe Y)
+    action_0_state_3_lock_status: Verrouiller sur la profondeur du fichier source
+    action_0_state_3_arrows_status: "Flèches = Verrouiller la normale du plan XY sur un axe (→ X, ← Y, ↑ Z)"
+    action_0_state_4_status: Cliquez pour définir la hauteur du module (axe Z)
+    action_0_state_4_lock_status: Verrouiller sur la hauteur du fichier source
+    action_0_state_5_status: Cliquez sur un groupe ou un composant pour l'enregistrer comme module dans le dossier courant
+    action_0_add_title: Ajouter un module
+    action_0_add_name: Nom du fichier
+    action_0_add_overwrite: "Le fichier « {{ name }}.skp » existe déjà. Voulez-vous le remplacer ?"
     action_0_flip_status: Inverser la façade et le dos
     action_0_flip_up_status: Inverser le haut et le bas
     action_1: Construire un Séparateur
@@ -2513,6 +2518,8 @@ tool:
       back_panel_severs_parts: "La rainure couperait de part en part : {{ names }}. Réduisez sa profondeur"
       module_file_not_found: "Fichier de caisson introuvable : **{{ file }}**"
       module_file_invalid: "Impossible de charger le fichier de caisson : **{{ file }}**"
+      module_file_invalid_name: "Nom de fichier invalide : « {{ name }} »"
+      module_file_save_failed: "Impossible d'enregistrer le fichier de module : **{{ name }}.skp**"
       module_stretch_failed: "Impossible d'étirer le caisson à ces dimensions"
     warning:
       no_back_panel_machining: "Aucune rainure n'a pu être usinée : aucune pièce voisine ne borde le fond à cette profondeur"
@@ -2524,6 +2531,7 @@ tool:
       part_created_plural: "{{ count }} nouvelles pièces créées : {{ name }}"
       part_reused: "Nouvelle occurrence de la pièce existante : {{ name }}"
       part_reused_plural: "{{ count }} nouvelles occurrences de la pièce existante : {{ name }}"
+      module_file_saved: "Module enregistré : **{{ name }}.skp**"
   smart_handle:
     title: Manipuler
     action_0: Sélectionner

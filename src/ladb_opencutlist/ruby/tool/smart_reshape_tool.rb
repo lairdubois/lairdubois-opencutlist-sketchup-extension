@@ -1139,14 +1139,17 @@ module Ladb::OpenCutList
       eb = _get_drawing_def_edit_bounds(drawing_def, et)
       keb = Kuix::Bounds3d.new.copy!(eb)
 
-      @locked_axis = nil if @locked_axis && keb.dim_by_axis(@locked_axis) == 0
+      stretchable_axes = _get_stretchable_axes(keb, et)
+
+      @locked_axis = nil if @locked_axis && !stretchable_axes.include?(@locked_axis)
       @picked_axis = @locked_axis unless @locked_axis.nil?
+      @picked_axis = nil if @picked_axis && !stretchable_axes.include?(@picked_axis)   # A carried over axis may be forbidden here
 
       ph = view.pick_helper(x, y)
 
       # Snap to grip?
 
-      [ X_AXIS, Y_AXIS, Z_AXIS ].select { |axis| (@locked_axis.nil? || axis == @locked_axis) && keb.dim_by_axis(axis) > 0 }.each do |axis|
+      stretchable_axes.select { |axis| @locked_axis.nil? || axis == @locked_axis }.each do |axis|
         grip_indices = Kuix::Bounds3d.faces_by_axis(axis)
         grip_indices.each do |grip_index|
           p = keb.face_center(grip_index).to_p.transform(et)
@@ -1565,7 +1568,7 @@ module Ladb::OpenCutList
 
       if @locked_axis.nil?
 
-        axes = [ X_AXIS, Y_AXIS, Z_AXIS ].delete_if { |axis| axis == @picked_axis || keb.dim_by_axis(axis) == 0 }
+        axes = _get_stretchable_axes(keb, et).delete_if { |axis| axis == @picked_axis }
 
         axes.map { |axis| Kuix::Bounds3d.faces_by_axis(axis).map { |face| keb.face_center(face).to_p } }.each do |p0, p1|
 
@@ -2100,6 +2103,27 @@ module Ladb::OpenCutList
         eb: _get_drawing_def_edit_bounds(drawing_def, et),
         root_split: !get_active_selection_instances.one?
       ).run
+    end
+
+    # The edit axes that can be stretched : the bounds have a thickness along them, and no selected
+    # instance's definition forbids to scale along them ('no_scale_mask' bits 0, 1 and 2 : red, green
+    # and blue local axes). Stretching along an edit axis scales every local axis not perpendicular
+    # to it, so an oblique edit axis is forbidden as soon as it leans on a forbidden local axis.
+    def _get_stretchable_axes(keb, et)
+      axes = [ X_AXIS, Y_AXIS, Z_AXIS ].select { |axis| keb.dim_by_axis(axis) > 0 }
+      return axes if @active_selection_path.nil? || !(instances = get_active_selection_instances).is_a?(Array)
+
+      forbidden_local_axes = instances.flat_map { |instance|
+        next [] unless instance.respond_to?(:definition) && (mask = instance.definition.behavior.no_scale_mask?) & 0b111 != 0
+        t = PathUtils.get_transformation(@active_selection_path + [ instance ], IDENTITY)
+        [ t.xaxis, t.yaxis, t.zaxis ].select.with_index { |_, bit| mask & (1 << bit) != 0 }
+      }
+      return axes if forbidden_local_axes.empty?
+
+      axes.select { |axis|
+        direction = axis.transform(et)
+        forbidden_local_axes.all? { |local_axis| !local_axis.valid? || direction.perpendicular?(local_axis) }
+      }
     end
 
     # The interior handle candidates for the picked axis, expressed in the global space : a point on

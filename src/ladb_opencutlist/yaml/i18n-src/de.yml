@@ -2424,14 +2424,14 @@ tool:
     title: Bauen
     action_0: Modul platzieren
     action_0_status: Ein aus einer SKP-Datei importiertes Modul platzieren und auf die Abmessungen des gezeichneten Rahmens skalieren
-    action_0_state_0_status: Klicken Sie hier, um den Ursprung des Moduls festzulegen
-    action_0_state_1_status: Klicken Sie hier, um die Breite des Moduls (X-Achse) festzulegen
-    action_0_state_1_lock_status:  An die Breite der Quelldatei anpassen
-    action_0_state_1_arrows_status: "Arrows = Lock to an axis (→ X, ← Y, ↑ Z)"
-    action_0_state_2_status: Klicken Sie hier, um die Tiee des Moduls (Y-Achse) festzulegen
-    action_0_state_2_lock_status: An die Tiefe der Quelldatei anpassen
-    action_0_state_3_status: Klicken Sie hier, um die Höhe des Moduls (Z-Achse) festzulegen
-    action_0_state_3_lock_status: An die Höhe der Quelldatei anpassen
+    action_0_state_1_status: Klicken Sie hier, um den Ursprung des Moduls festzulegen
+    action_0_state_2_status: Klicken Sie hier, um die Breite des Moduls (X-Achse) festzulegen
+    action_0_state_2_lock_status:  An die Breite der Quelldatei anpassen
+    action_0_state_2_arrows_status: "Arrows = Lock to an axis (→ X, ← Y, ↑ Z)"
+    action_0_state_3_status: Klicken Sie hier, um die Tiee des Moduls (Y-Achse) festzulegen
+    action_0_state_3_lock_status: An die Tiefe der Quelldatei anpassen
+    action_0_state_4_status: Klicken Sie hier, um die Höhe des Moduls (Z-Achse) festzulegen
+    action_0_state_4_lock_status: An die Höhe der Quelldatei anpassen
     action_0_flip_status: Vorder- und Rückseite austauschen
     action_0_flip_up_status: Oben und unten austauschen
     action_1: Raumteiler bauen

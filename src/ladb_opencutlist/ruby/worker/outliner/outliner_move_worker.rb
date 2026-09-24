@@ -1,5 +1,7 @@
 module Ladb::OpenCutList
 
+  require_relative '../../utils/component_utils'
+
   class OutlinerMoveWorker
 
     def initialize(outliner_def,
@@ -91,13 +93,7 @@ module Ladb::OpenCutList
       dst_instance.receives_shadows = src_instance.receives_shadows?
       dst_instance.locked = src_instance.locked?
       dst_instance.visible = src_instance.visible?
-      unless src_instance.attribute_dictionaries.nil?
-        src_instance.attribute_dictionaries.each do |attribute_dictionary|
-          attribute_dictionary.each do |key, value|
-            dst_instance.set_attribute(attribute_dictionary.name, key, value)
-          end
-        end
-      end
+      ComponentUtils.copy_attributes(src_instance, dst_instance)
     end
 
   end

@@ -140,6 +140,7 @@ module Ladb::OpenCutList::Kuix
     def invalidate
       @invalidated = true
       @parent.invalidate if @parent && !@parent.invalidated?
+      self
     end
 
     # -- RENDER --

@@ -397,6 +397,14 @@ module Ladb::OpenCutList
       path_key
     end
 
+    # Opens the given folder in the Finder (macOS) or the File Explorer (Windows)
+    def open_dir(dir)
+      return unless dir.is_a?(String) && File.directory?(dir)
+      url = dir.gsub('\\', '/')
+      url = "/#{url}" unless url.start_with?('/')   # Windows drive letter
+      UI.openURL("file://#{URI::DEFAULT_PARSER.escape(url)}")
+    end
+
     def open_docs_page(page)
 
       url = IS_DEV ? DOCS_DEV_URL : DOCS_URL
@@ -1959,9 +1967,7 @@ module Ladb::OpenCutList
         dump_exception(e)
         return { :errors => [ [ 'tab.settings.presets.error.failed_to_open_library_dir', { :error => e.message } ] ] }
       end
-      url = dir.gsub('\\', '/')
-      url = "/#{url}" unless url.start_with?('/')   # Windows drive letter
-      UI.openURL("file://#{URI::DEFAULT_PARSER.escape(url)}")
+      open_dir(dir)
       { :success => true }
     end
 

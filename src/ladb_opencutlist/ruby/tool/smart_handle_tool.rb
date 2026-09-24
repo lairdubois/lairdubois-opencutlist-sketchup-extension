@@ -10,6 +10,7 @@ module Ladb::OpenCutList
   require_relative '../manipulator/cline_manipulator'
   require_relative '../helper/user_text_helper'
   require_relative '../worker/common/common_drawing_decomposition_worker'
+  require_relative '../utils/component_utils'
 
   class SmartHandleTool < SmartTool
 
@@ -720,13 +721,7 @@ module Ladb::OpenCutList
         # Copy glued_to attribute only if dst_instance origin in on the same plane as glued to src_instance face.
         dst_instance.glued_to = src_instance.glued_to
       end
-      unless src_instance.attribute_dictionaries.nil?
-        src_instance.attribute_dictionaries.each do |attribute_dictionary|
-          attribute_dictionary.each do |key, value|
-            dst_instance.set_attribute(attribute_dictionary.name, key, value)
-          end
-        end
-      end
+      ComponentUtils.copy_attributes(src_instance, dst_instance)
     end
 
   end

@@ -4055,6 +4055,10 @@ module Ladb::OpenCutList
       create_cursor('pencil-polygon', 0, 31)
     end
 
+    def cursor_pencil_module
+      create_cursor('pencil-module', 0, 31)
+    end
+
     def cursor_pencil_divider
       create_cursor('pencil-divider', 0, 31)
     end

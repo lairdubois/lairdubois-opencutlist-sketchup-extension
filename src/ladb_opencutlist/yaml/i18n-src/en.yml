@@ -2424,14 +2424,14 @@ tool:
     title: Build
     action_0: Place a Module
     action_0_status: Place a module imported from an SKP file, scaled to the dimensions of the drawn box
-    action_0_state_0_status: Click to set the module's origin
-    action_0_state_1_status: Click to set the width of the module (X-axis)
-    action_0_state_1_lock_status: Lock to the width of the source file
-    action_0_state_1_arrows_status: "Arrows = Lock to an axis (→ X, ← Y, ↑ Z)"
-    action_0_state_2_status: Click to set the module's depth (Y-axis)
-    action_0_state_2_lock_status: Lock to the depth of the source file
-    action_0_state_3_status: Click to set the module's height (Z-axis)
-    action_0_state_3_lock_status: Lock to the height of the source file
+    action_0_state_1_status: Click to set the module's origin
+    action_0_state_2_status: Click to set the width of the module (X-axis)
+    action_0_state_2_lock_status: Lock to the width of the source file
+    action_0_state_2_arrows_status: "Arrows = Lock to an axis (→ X, ← Y, ↑ Z)"
+    action_0_state_3_status: Click to set the module's depth (Y-axis)
+    action_0_state_3_lock_status: Lock to the depth of the source file
+    action_0_state_4_status: Click to set the module's height (Z-axis)
+    action_0_state_4_lock_status: Lock to the height of the source file
     action_0_flip_status: Flip the front and back
     action_0_flip_up_status: Flip top and bottom
     action_1: Build Divider
