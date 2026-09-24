@@ -2424,14 +2424,20 @@ tool:
     title: Bauen
     action_0: Modul platzieren
     action_0_status: Ein aus einer SKP-Datei importiertes Modul platzieren und auf die Abmessungen des gezeichneten Rahmens skalieren
+    action_0_state_0_status: Wählen Sie eine Moduldatei aus der Bibliothek aus
     action_0_state_1_status: Klicken Sie hier, um den Ursprung des Moduls festzulegen
     action_0_state_2_status: Klicken Sie hier, um die Breite des Moduls (X-Achse) festzulegen
     action_0_state_2_lock_status:  An die Breite der Quelldatei anpassen
-    action_0_state_2_arrows_status: "Arrows = Lock to an axis (→ X, ← Y, ↑ Z)"
+    action_0_state_2_arrows_status: "Pfeiltaste = An einer Achse fixieren (→ X, ← Y, ↑ Z)"
     action_0_state_3_status: Klicken Sie hier, um die Tiee des Moduls (Y-Achse) festzulegen
     action_0_state_3_lock_status: An die Tiefe der Quelldatei anpassen
+    action_0_state_3_arrows_status: "Pfeiltasten = Normale der XY-Ebene auf eine Achse fixieren (→ X, ← Y, ↑ Z)"
     action_0_state_4_status: Klicken Sie hier, um die Höhe des Moduls (Z-Achse) festzulegen
     action_0_state_4_lock_status: An die Höhe der Quelldatei anpassen
+    action_0_state_5_status: Klicken Sie auf eine Gruppe oder eine Komponente, um sie als Modul im aktuellen Ordner zu speichern
+    action_0_add_title: Modul hinzufügen
+    action_0_add_name: Dateiname
+    action_0_add_overwrite: "Die Datei « {{ name }}.skp » existiert bereits. Möchten Sie sie ersetzen?"
     action_0_flip_status: Vorder- und Rückseite austauschen
     action_0_flip_up_status: Oben und unten austauschen
     action_1: Raumteiler bauen
@@ -2510,8 +2516,10 @@ tool:
       front_panel_number_overflow: "Es ist nicht möglich, {{ number }} Frontteile auf diese Öffnung zu verteilen"
       back_panel_number_overflow: "Die Zuweisung von {{ number }} Teilern zu diesem Fach ist nicht möglich"
       back_panel_severs_parts: "Die Nut würde durchgehend verlaufen: {{ names }}. Verringern Sie ihre Tiefe"
-      module_file_not_found: "Korpusdatei nicht gefunden: **{{ file }}**"
-      module_file_invalid: "Korpusdatei konnte nicht geladen werden: **{{ file }}**"
+      module_file_not_found: "Korpusdatei nicht gefunden: {{ file }}"
+      module_file_invalid: "Korpusdatei konnte nicht geladen werden: {{ file }}"
+      module_file_invalid_name: "Ungültiger Dateiname: {{ name }}"
+      module_file_save_failed: "Korpusdatei konnte nicht gespeichert werden: {{ name }}.skp"
       module_stretch_failed: "Unmöglich, den Korpus auf diese Maße zu skalieren"
     warning:
       no_back_panel_machining: "Es konnte keine Nut gefräst werden: In dieser Tiefe grenzt kein benachbartes Teil an die Rückwand an"
@@ -2523,6 +2531,8 @@ tool:
       part_created_plural: "{{ count }} neu erstellte Teile: {{ name }}"
       part_reused: "Neues Vorkommen des vorhandenen Teils: {{ name }}"
       part_reused_plural: "{{ count }} neue Vorkommen des vorhandenen Teils: {{ name }}"
+      module_file_saved: "Modul gespeichert: {{ name }}.skp"
+      module_created: "Neues Modul platziert: {{ name }}"
   smart_handle:
     title: Bearbeiten
     action_0: Auswählen

@@ -2424,14 +2424,20 @@ tool:
     title: Build
     action_0: Place a Module
     action_0_status: Place a module imported from an SKP file, scaled to the dimensions of the drawn box
+    action_0_state_0_status: Select a module file from the library
     action_0_state_1_status: Click to set the module's origin
     action_0_state_2_status: Click to set the width of the module (X-axis)
     action_0_state_2_lock_status: Lock to the width of the source file
     action_0_state_2_arrows_status: "Arrows = Lock to an axis (→ X, ← Y, ↑ Z)"
     action_0_state_3_status: Click to set the module's depth (Y-axis)
     action_0_state_3_lock_status: Lock to the depth of the source file
+    action_0_state_3_arrows_status: "Arrows = Lock the XY-plane normal to an axis (→ X, ← Y, ↑ Z)"
     action_0_state_4_status: Click to set the module's height (Z-axis)
     action_0_state_4_lock_status: Lock to the height of the source file
+    action_0_state_5_status: Click on a group or component to save it as a module in the current folder
+    action_0_add_title: Add a module
+    action_0_add_name: Filename
+    action_0_add_overwrite: "The file « {{ name }}.skp » already exists. Would you like to replace it?"
     action_0_flip_status: Flip the front and back
     action_0_flip_up_status: Flip top and bottom
     action_1: Build Divider
@@ -2510,8 +2516,10 @@ tool:
       front_panel_number_overflow: "It is not possible to distribute {{ number }} fronts across this opening"
       back_panel_number_overflow: "Impossible to distribute {{ number }} backs across this opening"
       back_panel_severs_parts: "The groove would cut all the way through: {{ names }}. Reduce its depth"
-      module_file_not_found: "Cabinet file not found: **{{ file }}**"
-      module_file_invalid: "Unable to load the cabinet file: **{{ file }}**"
+      module_file_not_found: "Cabinet file not found: {{ file }}"
+      module_file_invalid: "Unable to load the cabinet file: {{ file }}"
+      module_file_invalid_name: "Invalid file name: {{ name }}"
+      module_file_save_failed: "Unable to save the module file: {{ name }}.skp"
       module_stretch_failed: "Impossible to stretch the cabinet to these dimensions"
     warning:
       no_back_panel_machining: "No groove could be machined: there are no adjacent parts bordering the back at this depth"
@@ -2523,6 +2531,8 @@ tool:
       part_created_plural: "{{ count }} new parts created: {{ name }}"
       part_reused: "New instance of the existing part: {{ name }}"
       part_reused_plural: "{{ count }} new instances of the existing part: {{ name }}"
+      module_file_saved: "Module saved: {{ name }}.skp"
+      module_created: "New module placed: {{ name }}"
   smart_handle:
     title: Handle
     action_0: Select
