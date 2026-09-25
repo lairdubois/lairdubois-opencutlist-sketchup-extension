@@ -506,6 +506,7 @@ module Ladb::OpenCutList
       @source = nil
 
       @add_instance = nil  # Instance hovered in STATE_ADD
+      @add_tooltip_instance = nil  # Instance the STATE_ADD tooltip describes
 
       @double_click_time = nil  # To ignore the button up closing a double click
 
@@ -539,7 +540,7 @@ module Ladb::OpenCutList
       when STATE_Z
         return SmartCursorManager.cursor_pull
       when STATE_ADD
-        return SmartCursorManager.cursor_select_part_plus
+        return SmartCursorManager.cursor_select_module_plus
       end
 
       super
@@ -576,6 +577,11 @@ module Ladb::OpenCutList
     def onStateChanged(old_state, new_state)
       super
       _show_locked_axis_message
+      @tool.notify(get_state_status(new_state)) if new_state == STATE_ADD  # Hidden on leave by _show_locked_axis_message
+      if old_state == STATE_ADD
+        @add_tooltip_instance = nil
+        @tool.remove_tooltip
+      end
     end
 
     # -- Events --
@@ -647,6 +653,10 @@ module Ladb::OpenCutList
       @tool.clear_2d(LAYER_2D_DIMENSIONS)
       @mouse_ip.clear
       view.tooltip = ''
+      if @state == STATE_ADD
+        @add_instance = @add_tooltip_instance = nil
+        @tool.remove_tooltip
+      end
       super
     end
 
@@ -1524,6 +1534,7 @@ module Ladb::OpenCutList
       entity = ph.best_picked
       active_parent = model.active_path.nil? ? model : model.active_path.last.definition
       @add_instance = (entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance)) && entity.parent == active_parent ? entity : nil
+      _show_add_instance_tooltip
       return if @add_instance.nil?
 
       kb = Kuix::Bounds3d.new.copy!(@add_instance.definition.bounds).inflate_all!(1)
@@ -1546,10 +1557,29 @@ module Ladb::OpenCutList
       k_box.transformation = t
       @tool.append_3d(k_box, LAYER_3D_BOX_PREVIEW)
 
-      k_axes = Kuix::AxesHelper.new
+      k_axes = Kuix::AxesHelper.new(20)
       k_axes.transformation = t
       @tool.append_3d(k_axes, LAYER_3D_BOX_PREVIEW)
 
+    end
+
+    # The name proposed to save the given instance : the instance name of a
+    # group, the definition name of a component.
+    def _get_add_instance_name(instance)
+      instance.is_a?(Sketchup::Group) && !instance.name.empty? ? instance.name : instance.definition.name
+    end
+
+    # The hovered instance's proposed name and definition sizes - what the file
+    # will hold - in a tooltip. Rebuilt only once the hovered instance changed.
+    def _show_add_instance_tooltip
+      return if @add_instance == @add_tooltip_instance
+      @add_tooltip_instance = @add_instance
+      return @tool.remove_tooltip if @add_instance.nil?
+      bounds = @add_instance.definition.bounds
+      @tool.show_tooltip([
+        "##{_get_add_instance_name(@add_instance)}",
+        "#{bounds.width.to_l} x #{bounds.height.to_l} x #{bounds.depth.to_l}"
+      ])
     end
 
     # Saves the hovered instance's definition as a file of the browsed folder,
@@ -1561,7 +1591,7 @@ module Ladb::OpenCutList
       dir = PLUGIN.resolve_library_ref(@@dir_ref)
       return UI.beep unless dir.is_a?(String)
 
-      name = instance.is_a?(Sketchup::Group) && !instance.name.empty? ? instance.name : instance.definition.name
+      name = _get_add_instance_name(instance)
       path = nil
       loop do
         input = UI.inputbox([ PLUGIN.get_i18n_string('tool.smart_build.action_0_add_name') ], [ name ], PLUGIN.get_i18n_string('tool.smart_build.action_0_add_title'))
@@ -1631,10 +1661,9 @@ module Ladb::OpenCutList
         return
       end
       axis = %w[X Y Z][index]
-      texts = [ [ :no_scale_axes, 'module_axis_no_scale' ], [ :curve_intersect_axes, 'module_axis_curve_intersect' ] ].select { |key, _| @source[key][index] }.map { |_, warning|
-        PLUGIN.get_i18n_string("tool.smart_build.warning.#{warning}", { :axis => axis })
-      }
-      @tool.show_message("⚠ #{texts.join(' | ')}", SmartTool::MESSAGE_TYPE_WARNING)
+      # Manual lock (component behavior) takes precedence over the curve intersection
+      warning = @source[:no_scale_axes][index] ? 'module_axis_no_scale' : 'module_axis_curve_intersect'
+      @tool.show_message("⚠ #{PLUGIN.get_i18n_string("tool.smart_build.warning.#{warning}", { :axis => axis })}", SmartTool::MESSAGE_TYPE_WARNING)
     end
 
     # Probes the source file : its cutters, its content bounds (as the stretch
@@ -2241,7 +2270,7 @@ module Ladb::OpenCutList
       when :center
         size / 2.0
       when :origin
-        return size if (g = _get_anchor_face_coefs(*box[:origin_coefs][index], box[:measures][index] < 0)).nil?
+        return size if (g = _get_anchor_face_coefs(*box[:origin_coefs][index], box[:measures][index].to_f < 0)).nil?  # Nil measure : Y point still on the X line
         g0, g1 = g
         g0 + g1 * size
       else

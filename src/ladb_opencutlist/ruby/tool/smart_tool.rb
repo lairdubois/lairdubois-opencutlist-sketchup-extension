@@ -4045,6 +4045,10 @@ module Ladb::OpenCutList
       create_cursor('select-intersect-b')
     end
 
+    def cursor_select_module_plus
+      create_cursor('select-module-plus')
+    end
+
 
     def cursor_move
       create_cursor('move', 16, 16)
