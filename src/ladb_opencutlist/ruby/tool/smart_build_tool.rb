@@ -482,6 +482,8 @@ module Ladb::OpenCutList
 
       @mouse_ip = SmartInputPoint.new(tool)
       @mouse_snap_point = nil
+      @source_size_point = nil      # Current edge end at the source size, nil if none
+      @source_size_snapped = false  # The mouse is snapped on it
 
       @picked_origin = nil
       @picked_x_point = nil
@@ -606,6 +608,8 @@ module Ladb::OpenCutList
 
       @mouse_ip.pick(view, x, y, _get_previous_input_point)
       @mouse_snap_point = nil
+      @source_size_point = nil
+      @source_size_snapped = false
 
       @tool.clear_3d(LAYER_3D_BOX_PREVIEW)
       @tool.clear_2d(LAYER_2D_DIMENSIONS)
@@ -774,6 +778,8 @@ module Ladb::OpenCutList
     def _reset
       @mouse_ip.clear
       @mouse_snap_point = nil
+      @source_size_point = nil
+      @source_size_snapped = false
       @picked_origin = nil
       @picked_x_point = nil
       @picked_y_point = nil
@@ -791,6 +797,7 @@ module Ladb::OpenCutList
     # -- Snap --
 
     def _snap_x(x, y, view)
+      on_geometry = _is_mouse_on_geometry?
       @snapped_x_axis = nil
       point = @mouse_ip.position
       if @locked_x_axis
@@ -815,10 +822,11 @@ module Ladb::OpenCutList
         @snapped_x_axis = @origin_directions.find { |direction| point.on_line?([ @picked_origin, direction ]) }
       end
       @mouse_ip.clear unless @snapped_x_axis.nil? || @mouse_ip.degrees_of_freedom < 2
-      @mouse_snap_point = _lock_on_source_size(point, 0)
+      @mouse_snap_point = _lock_on_source_size(_snap_on_source_size(point, on_geometry, x, y, view))
     end
 
     def _snap_y(x, y, view)
+      on_geometry = _is_mouse_on_geometry?
       if (y_axis = _get_locked_y_axis)
         # Locked by the arrow keys : on the line perpendicular to X and the normal
         point = _snap_on_origin_line(y_axis, x, y, view)
@@ -830,18 +838,19 @@ module Ladb::OpenCutList
       else
         point = @mouse_ip.position
       end
-      @mouse_snap_point = _lock_on_source_size(point, 1)
+      @mouse_snap_point = _lock_on_source_size(_snap_on_source_size(point, on_geometry, x, y, view))
     end
 
     def _snap_z(x, y, view)
-      line = [ @picked_origin, _get_xy_normal ]
+      on_geometry = _is_mouse_on_geometry?
+      line = [ _get_z_edge_base, _get_xy_normal ]  # Along the Z edge as drawn
       if @mouse_ip.degrees_of_freedom > 2 || @mouse_ip.position.on_plane?([ @picked_origin, _get_xy_normal ])
         point, _ = Geom.closest_points(line, view.pickray(x, y))
         @mouse_ip.clear
       else
         point = @mouse_ip.position.project_to_line(line)
       end
-      @mouse_snap_point = _lock_on_source_size(point, 2)
+      @mouse_snap_point = _lock_on_source_size(_snap_on_source_size(point, on_geometry, x, y, view))
     end
 
     # The closest point to the mouse ray on the line through the origin along
@@ -855,12 +864,44 @@ module Ladb::OpenCutList
 
     # Replaces the length of the given snapped point along the current edge by
     # the source size if SHIFT is down.
-    def _lock_on_source_size(point, index)
-      return point unless @tool.is_key_shift_down? && !@source.nil? && !point.nil?
+    def _lock_on_source_size(point)
+      return point unless @tool.is_key_shift_down?
+      _get_source_size_point(point) || point
+    end
+
+    # The mouse input point snapped by SketchUp on some geometry (a vertex, an
+    # edge, a cline) - not on a mere inference line (an axis…).
+    def _is_mouse_on_geometry?
+      @mouse_ip.degrees_of_freedom < 2 && !(@mouse_ip.vertex.nil? && @mouse_ip.edge.nil? && @mouse_ip.cline.nil?)
+    end
+
+    # Keeps the current edge end at the source size - on the mouse side - in
+    # '@source_size_point', on the edge as drawn (not on an axis locked at the
+    # source size), and snaps the given point on it if the mouse isn't snapped
+    # by SketchUp on some geometry and is a few pixels away from it.
+    def _snap_on_source_size(point, on_geometry, x, y, view)
+      return point if @source.nil? || @source[:locked_axes][@state - STATE_X]
+      return point if (source_size_point = _get_source_size_point(point)).nil?
+      return point if (box = _get_box(*_get_state_points(point))).nil?
+      index = @state - STATE_X
+      @source_size_point = source_size_point.project_to_line([ _get_current_edge(box).first.transform(box[:t]), [ box[:t].xaxis, box[:t].yaxis, box[:t].zaxis ][index] ])
+      return point if on_geometry
+      sp = view.screen_coords(@source_size_point)
+      return point unless Math.hypot(sp.x - x, sp.y - y) < 10
+      @mouse_ip.clear
+      @source_size_snapped = true
+      source_size_point
+    end
+
+    # The current edge end making the box its source size along the current
+    # axis, on the side of the given point. Y and Z edges start at the X point,
+    # as drawn - only their part along their direction counts.
+    def _get_source_size_point(point)
+      return nil if @source.nil? || point.nil?
       direction, length = _get_edge_direction_and_length(point)
-      return point if direction.nil?
-      measure = _get_anchor_measure(point, @source[:sizes][index])
-      @picked_origin.offset(direction, length < 0 ? -measure : measure)
+      return nil if direction.nil?
+      measure = _get_anchor_measure(point, @source[:sizes][@state - STATE_X])
+      (@state == STATE_X ? @picked_origin : @picked_x_point).offset(direction, length < 0 ? -measure : measure)
     end
 
     # -- Preview --
@@ -900,6 +941,18 @@ module Ladb::OpenCutList
         @tool.append_3d(k_line, LAYER_3D_BOX_PREVIEW)
       end
 
+      # The current edge end at the source size, filled once the mouse snaps on it
+      unless @source_size_point.nil?
+        color = [ Kuix::COLOR_X, Kuix::COLOR_Y, Kuix::COLOR_Z ][@state - STATE_X]
+        @tool.append_3d(_create_floating_points(
+                          points: [ @source_size_point ],
+                          style: Kuix::POINT_STYLE_CIRCLE,
+                          fill_color: color,
+                          stroke_color: nil,
+                          size: 1.5
+                        ), LAYER_3D_BOX_PREVIEW)
+      end
+
       return if (box = _get_box(*points)).nil?
 
       t = box[:t]
@@ -910,12 +963,8 @@ module Ladb::OpenCutList
       _preview_box_complete(view, box_complete)
 
       # Solid : the current edge, in its axis color
-      corner = Geom::Point3d.new(w, 0, 0)
-      p1, p2, color = {
-        STATE_X => [ ORIGIN, corner, Kuix::COLOR_X ],
-        STATE_Y => [ corner, Geom::Point3d.new(w, d, 0), Kuix::COLOR_Y ],
-        STATE_Z => [ corner, Geom::Point3d.new(w, 0, h), Kuix::COLOR_Z ]
-      }[@state]
+      p1, p2 = _get_current_edge(box)
+      color = [ Kuix::COLOR_X, Kuix::COLOR_Y, Kuix::COLOR_Z ][@state - STATE_X]
       if p1 != p2
 
         k_edge = Kuix::EdgeMotif3d.new
@@ -930,14 +979,11 @@ module Ladb::OpenCutList
       end
 
       # The label of the current edge
-      point, measure, color = {
-        STATE_X => [ Geom::Point3d.new(w / 2, 0, 0), w, Kuix::COLOR_X ],
-        STATE_Y => [ Geom::Point3d.new(w, d / 2, 0), d, Kuix::COLOR_Y ],
-        STATE_Z => [ Geom::Point3d.new(w, 0, h / 2), h, Kuix::COLOR_Z ]
-      }[@state]
+      point = Geom.linear_combination(0.5, p1, 0.5, p2)
+      measure = [ w, d, h ][@state - STATE_X]
       if measure > 0
 
-        length_locked = @tool.is_key_shift_down? || @source[:locked_axes][@state - STATE_X]
+        length_locked = @tool.is_key_shift_down? || @source[:locked_axes][@state - STATE_X] || @source_size_snapped
 
         @tool.append_2d(_create_floating_label(
                           snap_point: point.transform(t),
@@ -951,6 +997,23 @@ module Ladb::OpenCutList
 
       Sketchup.set_status_text(box[:sizes][@state - STATE_X].to_l.to_s, SB_VCB_VALUE)
 
+    end
+
+    # The current edge as drawn, in the box frame : the X edge along the box
+    # min Y and Z, the Y edge from the X end, and the Z edge rising from the
+    # corner the Y edge ends on - on the Y face picked, whichever way the frame
+    # turned since.
+    def _get_current_edge(box)
+      w, d, h = box[:sizes]
+      case @state
+      when STATE_X
+        [ ORIGIN, Geom::Point3d.new(w, 0, 0) ]
+      when STATE_Y
+        [ Geom::Point3d.new(w, 0, 0), Geom::Point3d.new(w, d, 0) ]
+      when STATE_Z
+        y = @picked_y_point.transform(box[:t].inverse).y < d / 2.0 ? 0 : d
+        [ Geom::Point3d.new(w, y, 0), Geom::Point3d.new(w, y, h) ]
+      end
     end
 
     # The source content at its own sizes, its X edge starting at the mouse
@@ -1895,6 +1958,13 @@ module Ladb::OpenCutList
 
     def _get_xy_normal
       (_get_x_axis * _get_y_axis).normalize
+    end
+
+    # The corner the Z edge rises from : the X end, on the Y face picked
+    def _get_z_edge_base
+      x_axis = _get_x_axis
+      v = @picked_origin.vector_to(@picked_y_point)
+      @picked_x_point.offset(v - Geom::Vector3d.linear_combination(v % x_axis, x_axis, 0, x_axis))
     end
 
     # The Y line direction the given XY plane normal (the locked one by
