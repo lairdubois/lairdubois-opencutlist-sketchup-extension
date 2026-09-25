@@ -2487,6 +2487,10 @@ tool:
     action_option_options_reuse_definition_status: Réutiliser la pièce existante de même forme et de même voisinage plutôt que d'en créer une nouvelle
     action_option_options_mirror: Pose en miroir
     action_option_options_mirror_status: Poser chaque façade de rang pair en miroir de sa voisine
+    action_option_options_face_camera: Face à la caméra
+    action_option_options_face_camera_status: Tourner automatiquement la façade du module vers la caméra
+    action_option_options_top_up: Haut vers Z+
+    action_option_options_top_up_status: Tourner automatiquement le haut du module au mieux vers le haut (Z+)
     action_option_options_ask_name: Nommage des pièces
     action_option_options_ask_name_status: Saisir manuellement le nom des pièces
     action_option_options_layer_name: Calque

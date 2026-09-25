@@ -11,6 +11,8 @@
     "center_y": false,
     "center_z": false,
     "origin": false,
+    "face_camera": true,
+    "top_up": true,
     "ask_name": false
   },
   "action_1": { /* ACTION_BUILD_DIVIDER */

@@ -63,6 +63,8 @@ module Ladb::OpenCutList
     ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE = 'reduce_envelope'
     ACTION_OPTION_OPTIONS_REUSE_DEFINITION = 'reuse_definition'
     ACTION_OPTION_OPTIONS_MIRROR = 'mirror'
+    ACTION_OPTION_OPTIONS_FACE_CAMERA = 'face_camera'
+    ACTION_OPTION_OPTIONS_TOP_UP = 'top_up'
     ACTION_OPTION_OPTIONS_ASK_NAME = 'ask_name'
     ACTION_OPTION_OPTIONS_LAYER_NAME = 'layer_name'
 
@@ -113,7 +115,7 @@ module Ladb::OpenCutList
                    :action => ACTION_BUILD_MODULE,
                    :options => {
                      ACTION_OPTION_ANCHOR => [ ACTION_OPTION_ANCHOR_CENTER_X, ACTION_OPTION_ANCHOR_CENTER_Y, ACTION_OPTION_ANCHOR_CENTER_Z, ACTION_OPTION_ANCHOR_ORIGIN ],
-                     ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_ASK_NAME ]
+                     ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_FACE_CAMERA, ACTION_OPTION_OPTIONS_TOP_UP, ACTION_OPTION_OPTIONS_ASK_NAME ]
                    }
                  }
                ] + ACTIONS
@@ -323,6 +325,10 @@ module Ladb::OpenCutList
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,.333H.667V1H0ZM.333,.333V0H1V.667H.667'))
         when ACTION_OPTION_OPTIONS_MIRROR
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path(MIRROR_MOTIF_VERTICAL_PATH))
+        when ACTION_OPTION_OPTIONS_FACE_CAMERA
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.688,.375L.875,.25V.625L.688,.5V.625H.375V.25H.687ZM.125,0V.875H1M0,.125L.125,0L.25,.125M.875,.75L1,.875L.875,1'))
+        when ACTION_OPTION_OPTIONS_TOP_UP
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.125,0V1M0,.125L.125,0L.25,.125M.375,.25H.75L.375,.75H.75M.875,.375V.625M.75,.5H1'))
         end
       end
 
@@ -760,6 +766,11 @@ module Ladb::OpenCutList
       case option_group
       when SmartBuildTool::ACTION_OPTION_ANCHOR
         _refresh  # The center buttons are disabled by the origin one
+      when SmartBuildTool::ACTION_OPTION_OPTIONS
+        case option
+        when SmartBuildTool::ACTION_OPTION_OPTIONS_FACE_CAMERA, SmartBuildTool::ACTION_OPTION_OPTIONS_TOP_UP
+          _refresh  # The content turns in the box
+        end
       end
 
     end
@@ -867,10 +878,10 @@ module Ladb::OpenCutList
     # source size), and snaps the given point on it if the mouse isn't snapped
     # by SketchUp on some geometry and is a few pixels away from it.
     def _snap_on_source_size(point, on_geometry, x, y, view)
-      return point if @source.nil? || @source[:locked_axes][@state - STATE_X]
-      return point if (source_size_point = _get_source_size_point(point)).nil?
-      return point if (box = _get_box(*_get_state_points(point))).nil?
+      return point if @source.nil? || (box = _get_box(*_get_state_points(point))).nil?
       index = @state - STATE_X
+      return point if @source[:locked_axes][box[:source_indices][index]]
+      return point if (source_size_point = _get_source_size_point(point)).nil?
       @source_size_point = source_size_point.project_to_line([ _get_current_edge(box).first.transform(box[:t]), [ box[:t].xaxis, box[:t].yaxis, box[:t].zaxis ][index] ])
       return point if on_geometry
       sp = view.screen_coords(@source_size_point)
@@ -900,7 +911,7 @@ module Ladb::OpenCutList
       return nil if @source.nil? || point.nil?
       direction, length = _get_edge_direction_and_length(point)
       return nil if direction.nil?
-      measure = _get_anchor_measure(point, @source[:sizes][@state - STATE_X])
+      measure = _get_anchor_measure(point, @source[:sizes][_get_current_source_index(point)])
       (@state == STATE_X ? @picked_origin : @picked_x_point).offset(direction, length < 0 ? -measure : measure)
     end
 
@@ -934,6 +945,8 @@ module Ladb::OpenCutList
       end
 
       return if (box = _get_box(*points)).nil?
+
+      _show_locked_axis_message(box)  # The content may have turned
 
       t = box[:t]
       w, d, h = box[:sizes].map { |size| size.to_l }
@@ -975,7 +988,7 @@ module Ladb::OpenCutList
       measure = [ w, d, h ][@state - STATE_X]
       if measure > 0
 
-        length_locked = @tool.is_key_shift_down? || @source[:locked_axes][@state - STATE_X] || @source_size_snapped
+        length_locked = @tool.is_key_shift_down? || @source[:locked_axes][box[:source_indices][@state - STATE_X]] || @source_size_snapped
 
         @tool.append_2d(_create_floating_label(
                           snap_point: point.transform(t),
@@ -1000,12 +1013,14 @@ module Ladb::OpenCutList
     end
 
     # The source content stretched to the given whole box, its dotted edges
-    # and an arrow out of its front.
+    # and arrows out of its front, top and X+ faces.
     def _preview_box_complete(view, box_complete)
+
+      unit = @tool.get_unit(view)
 
       if @source[:preview_points].any?
         k_segments = Kuix::Segments.new
-        k_segments.add_segments(_get_source_preview_points(box_complete[:sizes]))
+        k_segments.add_segments(_get_source_preview_points(box_complete[:content_sizes]))
         k_segments.line_width = 1
         k_segments.color = Kuix::COLOR_DARK_GREY
         k_segments.transformation = box_complete[:content_t] * Geom::Transformation.translation(@source[:origin].vector_to(ORIGIN))
@@ -1022,7 +1037,6 @@ module Ladb::OpenCutList
       @tool.append_3d(k_segments, LAYER_3D_BOX_PREVIEW)
 
       # An arrow out of the front face center of the whole box (Y color)
-      unit = @tool.get_unit(view)
       cw, cd, ch = box_complete[:sizes]
       front_center = Geom::Point3d.new(cw / 2, box_complete[:flipped] ? cd : 0, ch / 2)
       length = view.pixels_to_model(unit * 10, front_center.transform(box_complete[:t]))
@@ -1038,12 +1052,13 @@ module Ladb::OpenCutList
       @tool.append_3d(k_edge, LAYER_3D_BOX_PREVIEW)
 
       # An arrow out of the content's top face center (Z color) : the box
-      # bottom face while the content is upside down
-      top_center = Geom::Point3d.new(cw / 2, cd / 2, box_complete[:up_flipped] ? 0 : ch)
+      # face its top turned to
+      top = box_complete[:top]
+      top_center = Geom::Point3d.new(cw * (1 + top.x) / 2, cd * (1 + top.y) / 2, ch * (1 + top.z) / 2)
       length = view.pixels_to_model(unit * 10, top_center.transform(box_complete[:t]))
       k_edge = Kuix::EdgeMotif3d.new
       k_edge.start.copy!(top_center)
-      k_edge.end.copy!(top_center.offset(Z_AXIS, box_complete[:up_flipped] ? -length : length))
+      k_edge.end.copy!(top_center.offset(top, length))
       k_edge.end_arrow = true
       k_edge.arrow_size = unit * 1.5
       k_edge.line_width = 1.5
@@ -1602,10 +1617,15 @@ module Ladb::OpenCutList
       _get_source_with_bounds(probe)
     end
 
-    # Why the axis of the current state can't be stretched, in the message
-    # panel - hidden on the other states.
-    def _show_locked_axis_message
+    # Why the source axis the current edge measures - the given box's, the
+    # content possibly turned - can't be stretched, in the message panel -
+    # hidden on the other states. Shown again only once that axis changed.
+    def _show_locked_axis_message(box = nil)
       index = [ STATE_X, STATE_Y, STATE_Z ].index(@state)
+      index = box[:source_indices][index] unless index.nil? || box.nil?
+      key = [ @state, index, @source.nil? ? nil : @source[:locked_axes] ]
+      return if !box.nil? && key == @locked_axis_message_key
+      @locked_axis_message_key = key
       if index.nil? || @source.nil? || !@source[:locked_axes][index]
         @tool.hide_message
         return
@@ -1812,7 +1832,7 @@ module Ladb::OpenCutList
           split_def = _split(Sketchup::InstancePath.new(active_path + [ group ]), et, axis, @source[:cutters][axis])
           raise "Failed to split" unless split_def.is_a?(StretchSplitDef) && split_def.sections_valid?
 
-          distance = box[:sizes][index] - _get_split_size(split_def)
+          distance = box[:content_sizes][index] - _get_split_size(split_def)
           next if distance.to_l == 0
 
           stretch_def = split_def.stretch_def_by_distance(distance)
@@ -1993,12 +2013,17 @@ module Ladb::OpenCutList
     # 'complete' gives the source sizes to the edges not drawn yet, 'x_size'
     # overrides the X size (then anchored as an edge not drawn). 'origin'
     # overrides the picked origin.
-    # The content is set in the box by ':content_t' : with its front (-Y) on
-    # the box side facing the camera - or 180° rotated around Z - and turned
-    # upside down (180° rotated around Y, front kept) if the user asked so.
+    # The content is set in the box by ':content_t' : its front (-Y) on a box
+    # Y side - the one facing the camera, see _is_front_on_y_max? - and its top
+    # (+Z) on a box Z side, or X side if turned a quarter around its front
+    # axis to face upward (see _get_top_axis), then turned upside down if the
+    # user asked so. ':top' is the frame axis its top follows,
+    # ':source_indices' the source axis index along each frame axis,
+    # ':content_sizes' the box sizes along the source axes.
     # ':measures' are the signed edge measures along the frame axes (nil if
     # not drawn), ':origin_coefs' the [ o0, o1 ] giving the source file origin
-    # on each frame axis from the box min for a box size S : o0 + o1 * S.
+    # on each frame axis from the box min for a box size S : o0 + o1 * S,
+    # ':anchor_modes' the anchor of each frame axis.
     def _get_box(px, py = nil, pz = nil, complete: false, origin: @picked_origin, x_size: nil)
       return nil if origin.nil? || px.nil? || @source.nil?
 
@@ -2007,7 +2032,6 @@ module Ladb::OpenCutList
       x_axis = vx.normalize
 
       measures = [ x_size.nil? ? vx.length : nil, nil, nil ]
-      anchor_modes = _get_anchor_modes
 
       # The part of the Y point perpendicular to X, nil while there is none
       unless py.nil?
@@ -2016,19 +2040,28 @@ module Ladb::OpenCutList
         vy = nil unless vy.valid? && vy.length > 0.001
       end
 
+      # Y not drawn yet : the default Y direction. Drawn : Z normal to the XY
+      # plane, its side set below.
       if vy.nil?
-
-        # Y not drawn yet : the default Y direction
         y_axis = _get_default_y_axis(x_axis)
         z_axis = x_axis * y_axis
-
       else
+        z_axis = (x_axis * vy).normalize
+      end
+
+      # The content's top axis - its side doesn't matter to the frame one -
+      # gives the source axis along each frame axis, and so their anchors
+      top_on_x = _get_top_axis(x_axis, z_axis).x != 0
+      source_indices = top_on_x ? [ 2, 1, 0 ] : [ 0, 1, 2 ]
+      source_anchor_modes = _get_anchor_modes
+      anchor_modes = source_indices.map { |source_index| source_anchor_modes[source_index] }
+
+      unless vy.nil?
 
         # Z upward while not drawn - the frame then matches the whole box one.
         # Drawn : on the side of the Z point anchored on an edge, else kept
         # upward - the anchor holding the box, the Z point giving its face.
         # Y deduced to keep the frame right-handed.
-        z_axis = (x_axis * vy).normalize
         z_axis = z_axis.reverse if (pz.nil? || anchor_modes[2] != :edge) && z_axis % _get_active_z_axis < 0
         unless pz.nil?
           dz = origin.vector_to(pz) % z_axis
@@ -2046,7 +2079,8 @@ module Ladb::OpenCutList
 
       # Raised to the minimal size, or set to the source size on a locked axis
       fn_clamp = lambda { |value, index|
-        @source[:locked_axes][index] ? @source[:sizes][index] : [ value, @source[:min_sizes][index] ].max
+        source_index = source_indices[index]
+        @source[:locked_axes][source_index] ? @source[:sizes][source_index] : [ value, @source[:min_sizes][source_index] ].max
       }
 
       # The front side from the box anchored on its edges - the anchor then
@@ -2054,17 +2088,25 @@ module Ladb::OpenCutList
       edge_sizes = measures.each_with_index.map { |measure, index|
         next fn_clamp.call(measure.abs, index) unless measure.nil?
         next x_size if index == 0
-        complete ? @source[:sizes][index] : 0
+        complete ? @source[:sizes][source_indices[index]] : 0
       }
       edge_t = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis) * Geom::Transformation.translation(Geom::Vector3d.new(0, measures[1].to_f < 0 ? -edge_sizes[1] : 0, 0))
       flipped = _is_front_on_y_max?(edge_t, edge_sizes, measures[1].to_f >= 0) != @front_flipped
 
-      # The source file origin on each frame axis : the content axis runs
-      # backward on the X axis if the content is turned once, on the Y axis if
-      # flipped, on the Z axis if upside down
-      reversed = [ flipped != @up_flipped, flipped, @up_flipped ]
-      origin_coefs = @source[:origin_coefs].each_with_index.map { |(a, k), index|
-        c0 = a - k * @source[:sizes][index]  # c(S) = c0 + k * S, from the content min
+      # The source axes in the frame : Y backward if flipped (the front on the
+      # box max Y side), Z on the top axis - reversed if upside down - and X
+      # keeping them right-handed
+      top = _get_top_axis(x_axis, z_axis)
+      top = top.reverse if @up_flipped
+      content_axes = [ nil, flipped ? Y_AXIS.reverse : Y_AXIS.clone, top ]
+      content_axes[0] = content_axes[1] * content_axes[2]
+
+      # The source file origin on each frame axis : the source axis running
+      # backward along it or not
+      reversed = source_indices.each_with_index.map { |source_index, index| content_axes[source_index].to_a[index] < 0 }
+      origin_coefs = source_indices.each_with_index.map { |source_index, index|
+        a, k = @source[:origin_coefs][source_index]
+        c0 = a - k * @source[:sizes][source_index]  # c(S) = c0 + k * S, from the content min
         reversed[index] ? [ -c0, 1 - k ] : [ c0, k ]
       }
 
@@ -2076,7 +2118,7 @@ module Ladb::OpenCutList
         o0, o1 = origin_coefs[index]
         if measure.nil?
           size = edge_sizes[index]
-          complete_size = index == 0 ? size : @source[:sizes][index]
+          complete_size = index == 0 ? size : @source[:sizes][source_indices[index]]
           min = case anchor_modes[index]
                 when :center then -complete_size / 2.0
                 when :origin then -(o0 + o1 * complete_size)
@@ -2107,24 +2149,50 @@ module Ladb::OpenCutList
         mins << min
       end
 
+      # The content min corner on the box max side of each frame axis a source
+      # axis runs backward along
       t = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis) * Geom::Transformation.translation(Geom::Vector3d.new(*mins))
-      content_t = flipped ? t * Geom::Transformation.translation(Geom::Vector3d.new(sizes[0], sizes[1], 0)) * Geom::Transformation.rotation(ORIGIN, Z_AXIS, Math::PI) : t
-      content_t = content_t * Geom::Transformation.translation(Geom::Vector3d.new(sizes[0], 0, sizes[2])) * Geom::Transformation.rotation(ORIGIN, Y_AXIS, Math::PI) if @up_flipped
+      content_t = t * Geom::Transformation.translation(Geom::Vector3d.new(*sizes.each_with_index.map { |size, index| reversed[index] ? size : 0 })) * Geom::Transformation.axes(ORIGIN, *content_axes)
       {
         :t => t,
         :sizes => sizes,
+        :content_sizes => (0..2).map { |source_index| sizes[source_indices.index(source_index)] },
+        :source_indices => source_indices,
         :flipped => flipped,
-        :up_flipped => @up_flipped,
+        :top => top,
         :content_t => content_t,
         :measures => measures,
-        :origin_coefs => origin_coefs
+        :origin_coefs => origin_coefs,
+        :anchor_modes => anchor_modes
       }
     end
 
+    # The frame axis the content's top follows - before any upside down turn -
+    # given the frame X and Z axes (unit vectors) : Z while the 'top up'
+    # option is off. On, the one of X and Z the most vertical - on its upward
+    # side - if it is also more vertical than Y, the content then turned a
+    # quarter around its front axis for X. Y the most vertical - the front
+    # axis, which the content doesn't turn around - leaves it on Z.
+    def _get_top_axis(x_axis, z_axis)
+      return Z_AXIS.clone unless _fetch_option_top_up?
+      up = _get_active_z_axis.normalize
+      y_axis = z_axis * x_axis
+      dx, dy, dz = [ x_axis, y_axis, z_axis ].map { |axis| axis % up }
+      if dx.abs > dz.abs
+        return Z_AXIS.clone if dy.abs >= dx.abs
+        dx < 0 ? X_AXIS.reverse : X_AXIS.clone
+      else
+        return Z_AXIS.clone if dy.abs >= dz.abs
+        dz < 0 ? Z_AXIS.reverse : Z_AXIS.clone
+      end
+    end
+
     # Whether the box front is its max Y side : the Y side facing the camera
-    # the most. Seen from above (no side clearly facing it), the one away from
-    # the X edge - 'x_edge_on_y_min' - as the X edge is drawn along the back.
+    # the most - with the 'face camera' option on. Seen from above (no side
+    # clearly facing it), or with the option off, the one away from the X edge
+    # - 'x_edge_on_y_min' - as the X edge is drawn along the back.
     def _is_front_on_y_max?(t, sizes, x_edge_on_y_min)
+      return x_edge_on_y_min unless _fetch_option_face_camera?
       camera = Sketchup.active_model.active_view.camera
       v = camera.perspective? ? Geom::Point3d.new(sizes[0] / 2, sizes[1] / 2, sizes[2] / 2).transform(t).vector_to(camera.eye) : camera.direction.reverse
       return x_edge_on_y_min unless v.valid?
@@ -2133,8 +2201,9 @@ module Ladb::OpenCutList
       cos > 0
     end
 
-    # The anchor of each box axis in the drawing frame : :edge (the origin on
-    # its min or max face), :center or :origin (the source file origin).
+    # The anchor of each source axis : :edge (the origin on its min or max
+    # face), :center or :origin (the source file origin). The box reads them
+    # along its frame axes (see _get_box).
     def _get_anchor_modes
       return [ :origin ] * 3 if @tool.fetch_action_option_boolean(@action, SmartBuildTool::ACTION_OPTION_ANCHOR, SmartBuildTool::ACTION_OPTION_ANCHOR_ORIGIN)
       [ SmartBuildTool::ACTION_OPTION_ANCHOR_CENTER_X, SmartBuildTool::ACTION_OPTION_ANCHOR_CENTER_Y, SmartBuildTool::ACTION_OPTION_ANCHOR_CENTER_Z ].map { |option|
@@ -2154,16 +2223,24 @@ module Ladb::OpenCutList
       end
     end
 
+    # The source axis index the current edge measures, the given point on it :
+    # the content may be turned in the box (see _get_box).
+    def _get_current_source_index(point)
+      index = @state - STATE_X
+      return index if (points = _get_state_points(point)).nil? || (box = _get_box(*points)).nil?
+      box[:source_indices][index]
+    end
+
     # The distance from the origin to the dragged face - the current edge
     # measure - making a box of the given size along the current axis, the
     # given point giving the side.
     def _get_anchor_measure(point, size)
       index = @state - STATE_X
-      case _get_anchor_modes[index]
+      return size if (points = _get_state_points(point)).nil? || (box = _get_box(*points)).nil?
+      case box[:anchor_modes][index]
       when :center
         size / 2.0
       when :origin
-        return size if (points = _get_state_points(point)).nil? || (box = _get_box(*points)).nil?
         return size if (g = _get_anchor_face_coefs(*box[:origin_coefs][index], box[:measures][index] < 0)).nil?
         g0, g1 = g
         g0 + g1 * size
@@ -2228,6 +2305,16 @@ module Ladb::OpenCutList
 
     def _get_non_virtual_material(entity)
       entity.material unless MaterialAttributes.is_virtual?(_get_material_attributes(entity.material))
+    end
+
+    # -- Options --
+
+    def _fetch_option_face_camera?
+      @tool.fetch_action_option_boolean(@action, SmartBuildTool::ACTION_OPTION_OPTIONS, SmartBuildTool::ACTION_OPTION_OPTIONS_FACE_CAMERA)
+    end
+
+    def _fetch_option_top_up?
+      @tool.fetch_action_option_boolean(@action, SmartBuildTool::ACTION_OPTION_OPTIONS, SmartBuildTool::ACTION_OPTION_OPTIONS_TOP_UP)
     end
 
   end
