@@ -61,6 +61,7 @@ module Ladb::OpenCutList
 
     ACTION_OPTION_OPTIONS_MEASURE_REVERSED = 'measure_reversed'
     ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE = 'reduce_envelope'
+    ACTION_OPTION_OPTIONS_PICK_MATERIAL = 'pick_material'
     ACTION_OPTION_OPTIONS_REUSE_DEFINITION = 'reuse_definition'
     ACTION_OPTION_OPTIONS_MIRROR = 'mirror'
     ACTION_OPTION_OPTIONS_FACE_CAMERA = 'face_camera'
@@ -79,12 +80,19 @@ module Ladb::OpenCutList
 
     ACTIONS = [
       {
+        :action => ACTION_BUILD_MODULE,
+        :options => {
+          ACTION_OPTION_ANCHOR => [ ACTION_OPTION_ANCHOR_CENTER_X, ACTION_OPTION_ANCHOR_CENTER_Y, ACTION_OPTION_ANCHOR_CENTER_Z, ACTION_OPTION_ANCHOR_ORIGIN ],
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_FACE_CAMERA, ACTION_OPTION_OPTIONS_TOP_UP, ACTION_OPTION_OPTIONS_ASK_NAME ]
+        }
+      },
+      {
         :action => ACTION_BUILD_DIVIDER,
         :options => {
           ACTION_OPTION_THICKNESS => [ ACTION_OPTION_THICKNESS_THICKNESS ],
           ACTION_OPTION_MEASURE_TYPE => [ ACTION_OPTION_MEASURE_TYPE_INSIDE, ACTION_OPTION_MEASURE_TYPE_CENTERED, ACTION_OPTION_MEASURE_TYPE_OUTSIDE ],
           ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_CONTEXT ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, ACTION_OPTION_OPTIONS_REUSE_DEFINITION, ACTION_OPTION_OPTIONS_ASK_NAME ]
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, ACTION_OPTION_OPTIONS_PICK_MATERIAL, ACTION_OPTION_OPTIONS_REUSE_DEFINITION, ACTION_OPTION_OPTIONS_ASK_NAME ]
         }
       },
       {
@@ -94,7 +102,7 @@ module Ladb::OpenCutList
           ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_FRONT_PANEL_OFFSET ],
           ACTION_OPTION_OVERLAY => [ ACTION_OPTION_OVERLAY_INSET, ACTION_OPTION_OVERLAY_FULL_OVERLAY ],
           ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_CONTEXT ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, ACTION_OPTION_OPTIONS_REUSE_DEFINITION, ACTION_OPTION_OPTIONS_MIRROR, ACTION_OPTION_OPTIONS_ASK_NAME ]
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, ACTION_OPTION_OPTIONS_PICK_MATERIAL, ACTION_OPTION_OPTIONS_REUSE_DEFINITION, ACTION_OPTION_OPTIONS_MIRROR, ACTION_OPTION_OPTIONS_ASK_NAME ]
         }
       },
       {
@@ -104,22 +112,10 @@ module Ladb::OpenCutList
           ACTION_OPTION_GROOVE => [ ACTION_OPTION_GROOVE_DEPTH, ACTION_OPTION_GROOVE_SETBACK, ACTION_OPTION_GROOVE_THROUGH ],
           ACTION_OPTION_OVERLAY => [ ACTION_OPTION_OVERLAY_INSET, ACTION_OPTION_OVERLAY_FULL_OVERLAY ],
           ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_CONTEXT ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, ACTION_OPTION_OPTIONS_REUSE_DEFINITION, ACTION_OPTION_OPTIONS_ASK_NAME ]
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, ACTION_OPTION_OPTIONS_PICK_MATERIAL, ACTION_OPTION_OPTIONS_REUSE_DEFINITION, ACTION_OPTION_OPTIONS_ASK_NAME ]
         }
       }
     ]
-
-    if Sketchup.debug_mode?
-      ACTIONS = [
-                 {
-                   :action => ACTION_BUILD_MODULE,
-                   :options => {
-                     ACTION_OPTION_ANCHOR => [ ACTION_OPTION_ANCHOR_CENTER_X, ACTION_OPTION_ANCHOR_CENTER_Y, ACTION_OPTION_ANCHOR_CENTER_Z, ACTION_OPTION_ANCHOR_ORIGIN ],
-                     ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_FACE_CAMERA, ACTION_OPTION_OPTIONS_TOP_UP, ACTION_OPTION_OPTIONS_ASK_NAME ]
-                   }
-                 }
-               ] + ACTIONS
-    end
 
     # -----
 
@@ -162,6 +158,14 @@ module Ladb::OpenCutList
     end
 
     def get_action_option_status(action, option_group, option)
+
+      # The material the parts about to be created take, named after the
+      # option - the button itself shows its color, see
+      # SmartBuildPanelActionHandler#_refresh_pick_material_btn
+      if option_group == ACTION_OPTION_OPTIONS && option == ACTION_OPTION_OPTIONS_PICK_MATERIAL &&
+         @action_handler.respond_to?(:get_picked_material) && (material = @action_handler.get_picked_material).is_a?(Sketchup::Material)
+        return "#{super} : #{material.display_name.strip}"
+      end
 
       case action
       when ACTION_BUILD_BACK_PANEL
@@ -321,6 +325,8 @@ module Ladb::OpenCutList
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,.25H1V.75H0ZM.438,.313V.688M.125,.625V.375L.313,.625V.375'))
         when ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0V1H1V0ZM0,.625H.625V.375H0'))
+        when ACTION_OPTION_OPTIONS_PICK_MATERIAL
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.125,.75L0,1L.25,.875L.75,.375L.813,.438L.938,.313L.875,.25L1,.125L.875,0L.75,.125L.688,.063L.563,.188L.625,.25ZM.625,.25L.75,.375'))
         when ACTION_OPTION_OPTIONS_REUSE_DEFINITION
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,.333H.667V1H0ZM.333,.333V0H1V.667H.667'))
         when ACTION_OPTION_OPTIONS_MIRROR
@@ -2442,7 +2448,14 @@ module Ladb::OpenCutList
 
     def stop
       _cancel_cavities_dwell
+      _refresh_pick_material_btn(nil)
       super
+    end
+
+    # The material the parts about to be created take, as the pick material
+    # option button shows it - nil when none.
+    def get_picked_material
+      @pick_material_btn_material
     end
 
     # -----
@@ -2512,6 +2525,39 @@ module Ladb::OpenCutList
 
     def _fetch_option_axes_context?
       @tool.fetch_action_option_boolean(@action, SmartBuildTool::ACTION_OPTION_AXES, SmartBuildTool::ACTION_OPTION_AXES_CONTEXT)
+    end
+
+    def _fetch_option_pick_material?
+      @tool.fetch_action_option_boolean(@action, SmartBuildTool::ACTION_OPTION_OPTIONS, SmartBuildTool::ACTION_OPTION_OPTIONS_PICK_MATERIAL)
+    end
+
+    # -----
+
+    # The material the parts about to be created are painted with, when the
+    # pick material option is on : the one the cutlist resolves for the part
+    # under the mouse - its own, else inherited or dominant child's - unless
+    # virtual. To be read BEFORE the creation operation starts : preparing
+    # the panels may reset the active part (see
+    # SmartBuildMouthPanelActionHandler#_prepare_panels!).
+    def _get_picked_material
+      return nil unless _fetch_option_pick_material?
+      return nil unless (part = get_active_part).is_a?(Part)
+      return nil if part.group.material_is_virtual || part.group.material_name.empty?
+      Sketchup.active_model.materials[part.group.material_name]
+    end
+
+    # Paints the pick material option button with the material the parts
+    # about to be created take - back to white when there is none. Restyled
+    # only when that material changes : this follows every pick.
+    def _refresh_pick_material_btn(material = _get_picked_material)
+      return if defined?(@pick_material_btn_material) && material == @pick_material_btn_material
+      @pick_material_btn_material = material
+      return unless (btn = @tool.get_action_option_btn(@action, SmartBuildTool::ACTION_OPTION_OPTIONS, SmartBuildTool::ACTION_OPTION_OPTIONS_PICK_MATERIAL)).is_a?(Kuix::Button)
+      color = material.nil? ? Kuix::COLOR_WHITE : material.color
+      btn.set_style_attribute(:background_color, color, :selected)
+      if (motif = btn.children.first).is_a?(Kuix::Motif2d)
+        motif.set_style_attribute(:color, ColorUtils.color_is_dark?(color) ? Kuix::COLOR_WHITE : Kuix::COLOR_BLACK)
+      end
     end
 
     # -----
@@ -3335,6 +3381,7 @@ module Ladb::OpenCutList
 
       when STATE_PLACE, STATE_DISTRIBUTE
         _pick_part(picker, view)
+        _refresh_pick_material_btn
         if has_active_part?
           if _snap_point(picker) || _cavities_pending?  # Pending : nothing to say of this position yet, either way
             @tool.remove_tooltip
@@ -3366,6 +3413,8 @@ module Ladb::OpenCutList
         when SmartBuildTool::ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE
           _reset_cavities_def
           _refresh
+        when SmartBuildTool::ACTION_OPTION_OPTIONS_PICK_MATERIAL
+          _refresh_pick_material_btn
         end
       end
 
@@ -3709,6 +3758,8 @@ module Ladb::OpenCutList
         container_path = []
       end
 
+      material = _get_picked_material
+
       model = Sketchup.active_model
       model.start_operation('OCL Create Separator', true, false, !active?)
       begin
@@ -3801,6 +3852,8 @@ module Ladb::OpenCutList
               reused_definition = definition
 
             end
+
+            instance.material = material unless material.nil?
 
             sibling_part_defs << _get_divider_part_def(container_path, instance, world_transformation) if _fetch_option_reuse_definition?
 
@@ -5063,6 +5116,7 @@ module Ladb::OpenCutList
           _merge_pick(picker, view)
         else
           _pick_part(picker, view)
+          _refresh_pick_material_btn
           if has_active_part?
             snapped = _snap_point(picker)
             if !snapped && _cavities_pending?
@@ -5103,6 +5157,7 @@ module Ladb::OpenCutList
          (option_group == SmartBuildTool::ACTION_OPTION_OPTIONS && option == SmartBuildTool::ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE)
         _reset_cavities_def
       end
+      _refresh_pick_material_btn if option_group == SmartBuildTool::ACTION_OPTION_OPTIONS && option == SmartBuildTool::ACTION_OPTION_OPTIONS_PICK_MATERIAL
       _refresh
     end
 
@@ -7160,6 +7215,8 @@ module Ladb::OpenCutList
     def _create_entity(point, view)
       return false unless (panel_defs = _compute_panel_defs(point, view)).is_a?(Array) && !panel_defs.empty?
 
+      material = _get_picked_material
+
       model = Sketchup.active_model
       model.start_operation(_panel_operation_name, true, false, !active?)
       begin
@@ -7277,6 +7334,7 @@ module Ladb::OpenCutList
           # carcass bare - see SmartBuildPanelActionHandler#_get_cavities_def and
           # LayerAttributes.
           instance.layer = LayerAttributes.fetch_or_create_layer(model, _panel_layer_type, _fetch_option_layer_name)
+          instance.material = material unless material.nil?
 
           created_entity_count += 1
 

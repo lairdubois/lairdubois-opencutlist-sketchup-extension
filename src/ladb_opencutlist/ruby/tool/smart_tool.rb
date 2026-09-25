@@ -1161,6 +1161,14 @@ module Ladb::OpenCutList
       true
     end
 
+    # The button of an action option in the options panel, to restyle it
+    # after it was built. nil when the panel does not show it.
+    def get_action_option_btn(action, option_group, option)
+      return nil if @actions_options_panels.nil?
+      return nil unless (actions_options_panel = @actions_options_panels.find { |panel| panel.data[:action] == action })
+      actions_options_panel.children.find { |child| child.is_a?(Kuix::Button) && child.data.is_a?(Hash) && child.data[:option_group] == option_group && child.data[:option] == option }
+    end
+
     def get_action_option_btn_child(action, option_group, option)
       nil
     end
