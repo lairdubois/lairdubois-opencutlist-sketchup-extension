@@ -575,16 +575,6 @@ module Ladb::OpenCutList
       super
     end
 
-    def onStateChanged(old_state, new_state)
-      super
-      _show_locked_axis_message
-      @tool.notify(get_state_status(new_state)) if new_state == STATE_ADD  # Hidden on leave by _show_locked_axis_message
-      if old_state == STATE_ADD
-        @add_tooltip_instance = nil
-        @tool.remove_tooltip
-      end
-    end
-
     # -- Events --
 
     def onToolCancel(tool, reason, view)
@@ -773,6 +763,20 @@ module Ladb::OpenCutList
       false
     end
 
+    def onStateChanged(old_state, new_state)
+      super
+      _show_locked_axis_message
+      if [ STATE_SOURCE, STATE_ADD ].include?(new_state)
+        @tool.show_status(get_state_status(new_state))
+      else
+        @tool.hide_status
+      end
+      if old_state == STATE_ADD
+        @add_tooltip_instance = nil
+        @tool.remove_tooltip
+      end
+    end
+
     def onToolActionOptionStored(tool, action, option_group, option)
 
       case option_group
@@ -788,6 +792,10 @@ module Ladb::OpenCutList
     end
 
     # -----
+
+    def enableVCB?
+      ![ STATE_SOURCE, STATE_ADD ].include?(@state)
+    end
 
     def draw(view)
       super

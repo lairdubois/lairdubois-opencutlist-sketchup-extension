@@ -454,6 +454,20 @@ module Ladb::OpenCutList
         @validation_panel.visible = false
         @bottom_panel.append(@validation_panel)
 
+        # -- Status
+
+        @status_panel = Kuix::Panel.new
+        @status_panel.layout = Kuix::InlineLayout.new(false, unit, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+        @status_panel.padding.set_all!(unit * 2)
+        @status_panel.hittable = false
+        @status_panel.visible = false
+        @bottom_panel.append(@status_panel)
+
+          @status_lbl = Kuix::Label.new
+          @status_lbl.padding.set!(unit * 1.5, unit * 2, unit, unit * 2)
+          @status_lbl.text_size = unit * 3 * get_text_unit_factor
+          @status_panel.append(@status_lbl)
+
     end
 
     def setup_highlighted_part_helper(part, instance_paths = nil)
@@ -695,6 +709,35 @@ module Ladb::OpenCutList
 
     def hide_message
       @message_panel.visible = false
+    end
+
+    def show_status(text, type = MESSAGE_TYPE_WARNING)
+      return unless @status_panel && text.is_a?(String)
+
+      case type
+      when MESSAGE_TYPE_ERROR
+        background_color = COLOR_MESSAGE_BACKGROUND_ERROR
+        text_color = COLOR_MESSAGE_TEXT_ERROR
+      when MESSAGE_TYPE_WARNING
+        background_color = COLOR_MESSAGE_BACKGROUND_WARNING
+        text_color = COLOR_MESSAGE_TEXT_WARNING
+      when MESSAGE_TYPE_SUCCESS
+        background_color = COLOR_MESSAGE_BACKGROUND_SUCCESS
+        text_color = COLOR_MESSAGE_TEXT_SUCCESS
+      else
+        background_color = COLOR_MESSAGE_BACKGROUND
+        text_color = COLOR_MESSAGE_TEXT
+      end
+
+      @status_panel.visible = !text.empty?
+      @status_lbl.text = text
+      @status_lbl.set_style_attribute(:color, text_color)
+      @status_lbl.set_style_attribute(:background_color, ColorUtils.color_translucent(background_color, 0.3))
+
+    end
+
+    def hide_status
+      @status_panel.visible = false
     end
 
     def show_tooltip(items, type = MESSAGE_TYPE_DEFAULT)
