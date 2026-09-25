@@ -790,184 +790,7 @@ module Ladb::OpenCutList
       set_state(get_startup_state)
     end
 
-    # -----
-
-    def _get_previous_input_point
-      return Sketchup::InputPoint.new(@picked_origin) unless @picked_origin.nil?
-      nil
-    end
-
-    # Picks the given point for the current state, or beeps if it doesn't make
-    # a valid edge.
-    def _pick(point)
-      case @state
-      when STATE_ORIGIN
-        @picked_origin = point
-        @origin_directions = _get_origin_directions
-        set_state(STATE_X)
-      when STATE_X
-        return UI.beep if _get_edge_direction_and_length(point).first.nil?
-        @picked_x_point = point
-        set_state(STATE_Y)
-      when STATE_Y
-        return UI.beep if _get_edge_direction_and_length(point).last == 0
-        @picked_y_point = point
-        set_state(STATE_Z)
-      when STATE_Z
-        return UI.beep if (box = _get_box(@picked_x_point, @picked_y_point, point)).nil?
-        _create_module(box)
-        _reset
-      end
-    end
-
-    # The unit direction of the current edge and the signed length of the
-    # given point along it : the X direction itself, the part of the point
-    # perpendicular to X, the normal to the XY plane.
-    def _get_edge_direction_and_length(point)
-      v = @picked_origin.vector_to(point)
-      case @state
-      when STATE_X
-        return [ nil, 0 ] unless v.valid?
-        return [ v.normalize, v.length ]
-      when STATE_Y
-        x_axis = _get_x_axis
-        v = v - Geom::Vector3d.linear_combination(v % x_axis, x_axis, 0, x_axis)
-        return [ _get_default_y_axis(x_axis), 0 ] unless v.valid? && v.length > 0.001
-        return [ v.normalize, v.length ]
-      when STATE_Z
-        n = _get_xy_normal
-        return [ n, v % n ]
-      end
-      [ nil, 0 ]
-    end
-
-    # The X edge end at the source size along the active X axis
-    def _get_default_x_point(origin)
-      origin.offset(_get_active_x_axis.normalize, @source[:sizes][0])
-    end
-
-    def _get_x_axis
-      @picked_origin.vector_to(@picked_x_point).normalize
-    end
-
-    # The Y unit direction as picked : the part of the Y point perpendicular to X
-    def _get_y_axis
-      x_axis = _get_x_axis
-      v = @picked_origin.vector_to(@picked_y_point)
-      (v - Geom::Vector3d.linear_combination(v % x_axis, x_axis, 0, x_axis)).normalize
-    end
-
-    def _get_xy_normal
-      (_get_x_axis * _get_y_axis).normalize
-    end
-
-    # The Y line direction the given XY plane normal (the locked one by
-    # default) leaves once X is drawn : perpendicular to both. Only the
-    # normal's part perpendicular to X counts, a normal too close to X (under
-    # 10 degrees) giving nil. Its side is the mouse's.
-    def _get_locked_y_axis(normal = @locked_xy_normal, x_axis = nil)
-      return nil unless normal.is_a?(Geom::Vector3d) && normal.valid?
-      y_axis = normal * (x_axis || _get_x_axis)
-      return nil if y_axis.length.to_f < LOCKED_XY_NORMAL_MIN_SINE
-      y_axis.normalize
-    end
-
-    # The Y unit direction while Y isn't drawn : the one the locked XY plane
-    # normal leaves, else the active horizontal direction perpendicular to X -
-    # making XY the active horizontal plane if X is horizontal. X being
-    # vertical : the one facing the camera.
-    def _get_default_y_axis(x_axis)
-      y_axis = _get_locked_y_axis(@locked_xy_normal, x_axis)
-      return y_axis unless y_axis.nil?
-      y_axis = _get_active_z_axis * x_axis
-      y_axis = x_axis * Sketchup.active_model.active_view.camera.direction unless y_axis.valid?
-      y_axis = x_axis.axes[1] unless y_axis.valid?
-      y_axis.normalize
-    end
-
-    # -----
-
-    # Replaces the length of the given snapped point along the current edge by
-    # the source size if SHIFT is down.
-    def _lock_on_source_size(point, index)
-      return point unless @tool.is_key_shift_down? && !@source.nil? && !point.nil?
-      direction, length = _get_edge_direction_and_length(point)
-      return point if direction.nil?
-      measure = _get_anchor_measure(point, @source[:sizes][index])
-      @picked_origin.offset(direction, length < 0 ? -measure : measure)
-    end
-
-    # The anchor of each box axis in the drawing frame : :edge (the origin on
-    # its min or max face), :center or :origin (the source file origin).
-    def _get_anchor_modes
-      return [ :origin ] * 3 if @tool.fetch_action_option_boolean(@action, SmartBuildTool::ACTION_OPTION_ANCHOR, SmartBuildTool::ACTION_OPTION_ANCHOR_ORIGIN)
-      [ SmartBuildTool::ACTION_OPTION_ANCHOR_CENTER_X, SmartBuildTool::ACTION_OPTION_ANCHOR_CENTER_Y, SmartBuildTool::ACTION_OPTION_ANCHOR_CENTER_Z ].map { |option|
-        @tool.fetch_action_option_boolean(@action, SmartBuildTool::ACTION_OPTION_ANCHOR, option) ? :center : :edge
-      }
-    end
-
-    # The edge points drawn so far, the given one on the current state
-    def _get_state_points(point)
-      case @state
-      when STATE_X
-        [ point ]
-      when STATE_Y
-        [ @picked_x_point, point ]
-      when STATE_Z
-        [ @picked_x_point, @picked_y_point, point ]
-      end
-    end
-
-    # The distance from the origin to the dragged face - the current edge
-    # measure - making a box of the given size along the current axis, the
-    # given point giving the side.
-    def _get_anchor_measure(point, size)
-      index = @state - STATE_X
-      case _get_anchor_modes[index]
-      when :center
-        size / 2.0
-      when :origin
-        return size if (points = _get_state_points(point)).nil? || (box = _get_box(*points)).nil?
-        return size if (g = _get_anchor_face_coefs(*box[:origin_coefs][index], box[:measures][index] < 0)).nil?
-        g0, g1 = g
-        g0 + g1 * size
-      else
-        size
-      end
-    end
-
-    # The distance from the source file origin - at o0 + o1 * S from the box
-    # min - to the face the mouse drags for a box size S : [ g0, g1 ] giving
-    # g0 + g1 * S. The max face, the min one if 'negative'. Nil if that face is
-    # bound to the origin (its section moving with it) : the mouse can't drag
-    # it, the box then goes between the origin and the mouse.
-    def _get_anchor_face_coefs(o0, o1, negative)
-      g = negative ? [ o0, o1 ] : [ -o0, 1 - o1 ]
-      g.last.abs > 1e-6 ? g : nil
-    end
-
-    # The directions of the edges and clines the mouse input point touches -
-    # read when the origin is picked on it.
-    def _get_origin_directions
-      return [] unless @mouse_ip.valid?
-      directions = []
-      if @mouse_ip.vertex
-        directions += @mouse_ip.vertex.edges.map { |edge| EdgeManipulator.new(edge, @mouse_ip.transformation).direction }
-      elsif @mouse_ip.edge
-        directions << EdgeManipulator.new(@mouse_ip.edge, @mouse_ip.transformation).direction
-      end
-      directions << ClineManipulator.new(@mouse_ip.cline, @mouse_ip.transformation).direction if @mouse_ip.cline
-      directions.select(&:valid?).each_with_object([]) { |direction, uniques| uniques << direction unless uniques.any? { |unique| unique.parallel?(direction) } }
-    end
-
-    # The closest point to the mouse ray on the line through the origin along
-    # the given direction : its projection when the input point is snapped.
-    def _snap_on_origin_line(direction, x, y, view)
-      line = [ @picked_origin, direction ]
-      return @mouse_ip.position.project_to_line(line) if @mouse_ip.degrees_of_freedom < 2
-      point, _ = Geom.closest_points(line, view.pickray(x, y))
-      point
-    end
+    # -- Snap --
 
     def _snap_x(x, y, view)
       @snapped_x_axis = nil
@@ -1023,7 +846,26 @@ module Ladb::OpenCutList
       @mouse_snap_point = _lock_on_source_size(point, 2)
     end
 
-    # -----
+    # The closest point to the mouse ray on the line through the origin along
+    # the given direction : its projection when the input point is snapped.
+    def _snap_on_origin_line(direction, x, y, view)
+      line = [ @picked_origin, direction ]
+      return @mouse_ip.position.project_to_line(line) if @mouse_ip.degrees_of_freedom < 2
+      point, _ = Geom.closest_points(line, view.pickray(x, y))
+      point
+    end
+
+    # Replaces the length of the given snapped point along the current edge by
+    # the source size if SHIFT is down.
+    def _lock_on_source_size(point, index)
+      return point unless @tool.is_key_shift_down? && !@source.nil? && !point.nil?
+      direction, length = _get_edge_direction_and_length(point)
+      return point if direction.nil?
+      measure = _get_anchor_measure(point, @source[:sizes][index])
+      @picked_origin.offset(direction, length < 0 ? -measure : measure)
+    end
+
+    # -- Preview --
 
     def _preview_box(view)
 
@@ -1173,156 +1015,6 @@ module Ladb::OpenCutList
 
     end
 
-    # -----
-
-    # The box drawn so far, sizes raised to the source minimal sizes : its
-    # frame (origin on the box min corner) and its sizes along the frame axes.
-    # 'px', 'py' and 'pz' are the X, Y and Z edge points ('py' and 'pz'
-    # optional) : the distance from the origin to the dragged face, whose
-    # position depends on the anchor of the axis (see _get_anchor_modes).
-    # 'complete' gives the source sizes to the edges not drawn yet, 'x_size'
-    # overrides the X size (then anchored as an edge not drawn). 'origin'
-    # overrides the picked origin.
-    # The content is set in the box by ':content_t' : with its front (-Y) on
-    # the box side facing the camera - or 180° rotated around Z - and turned
-    # upside down (180° rotated around Y, front kept) if the user asked so.
-    # ':measures' are the signed edge measures along the frame axes (nil if
-    # not drawn), ':origin_coefs' the [ o0, o1 ] giving the source file origin
-    # on each frame axis from the box min for a box size S : o0 + o1 * S.
-    def _get_box(px, py = nil, pz = nil, complete: false, origin: @picked_origin, x_size: nil)
-      return nil if origin.nil? || px.nil? || @source.nil?
-
-      vx = origin.vector_to(px)
-      return nil unless vx.valid?
-      x_axis = vx.normalize
-
-      measures = [ x_size.nil? ? vx.length : nil, nil, nil ]
-      anchor_modes = _get_anchor_modes
-
-      # The part of the Y point perpendicular to X, nil while there is none
-      unless py.nil?
-        vy = origin.vector_to(py)
-        vy = vy - Geom::Vector3d.linear_combination(vy % x_axis, x_axis, 0, x_axis)
-        vy = nil unless vy.valid? && vy.length > 0.001
-      end
-
-      if vy.nil?
-
-        # Y not drawn yet : the default Y direction
-        y_axis = _get_default_y_axis(x_axis)
-        z_axis = x_axis * y_axis
-
-      else
-
-        # Z upward while not drawn - the frame then matches the whole box one.
-        # Drawn : on the side of the Z point anchored on an edge, else kept
-        # upward - the anchor holding the box, the Z point giving its face.
-        # Y deduced to keep the frame right-handed.
-        z_axis = (x_axis * vy).normalize
-        z_axis = z_axis.reverse if (pz.nil? || anchor_modes[2] != :edge) && z_axis % _get_active_z_axis < 0
-        unless pz.nil?
-          dz = origin.vector_to(pz) % z_axis
-          if anchor_modes[2] == :edge
-            z_axis = z_axis.reverse if dz < 0
-            dz = dz.abs
-          end
-          measures[2] = dz
-        end
-        y_axis = z_axis * x_axis
-
-        measures[1] = vy % y_axis
-
-      end
-
-      # Raised to the minimal size, or set to the source size on a locked axis
-      fn_clamp = lambda { |value, index|
-        @source[:locked_axes][index] ? @source[:sizes][index] : [ value, @source[:min_sizes][index] ].max
-      }
-
-      # The front side from the box anchored on its edges - the anchor then
-      # slides it a little, not enough to turn it
-      edge_sizes = measures.each_with_index.map { |measure, index|
-        next fn_clamp.call(measure.abs, index) unless measure.nil?
-        next x_size if index == 0
-        complete ? @source[:sizes][index] : 0
-      }
-      edge_t = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis) * Geom::Transformation.translation(Geom::Vector3d.new(0, measures[1].to_f < 0 ? -edge_sizes[1] : 0, 0))
-      flipped = _is_front_on_y_max?(edge_t, edge_sizes, measures[1].to_f >= 0) != @front_flipped
-
-      # The source file origin on each frame axis : the content axis runs
-      # backward on the X axis if the content is turned once, on the Y axis if
-      # flipped, on the Z axis if upside down
-      reversed = [ flipped != @up_flipped, flipped, @up_flipped ]
-      origin_coefs = @source[:origin_coefs].each_with_index.map { |(a, k), index|
-        c0 = a - k * @source[:sizes][index]  # c(S) = c0 + k * S, from the content min
-        reversed[index] ? [ -c0, 1 - k ] : [ c0, k ]
-      }
-
-      # The size of each axis and its min from the origin. An axis not drawn
-      # yet - flat while not complete - lies on the whole box min face.
-      sizes = []
-      mins = []
-      measures.each_with_index do |measure, index|
-        o0, o1 = origin_coefs[index]
-        if measure.nil?
-          size = edge_sizes[index]
-          complete_size = index == 0 ? size : @source[:sizes][index]
-          min = case anchor_modes[index]
-                when :center then -complete_size / 2.0
-                when :origin then -(o0 + o1 * complete_size)
-                else 0
-                end
-        else
-          case anchor_modes[index]
-          when :center
-            size = fn_clamp.call(2 * measure.abs, index)
-            min = -size / 2.0
-          when :origin
-            if (g = _get_anchor_face_coefs(o0, o1, measure < 0)).nil?
-              # That face bound to the origin : the box between the origin and the mouse
-              size = fn_clamp.call(measure.abs, index)
-              min = measure < 0 ? -size : 0
-            else
-              # The dragged face at the measure : g0 + g1 * S = |measure|
-              g0, g1 = g
-              size = fn_clamp.call((measure.abs - g0) / g1, index)
-              min = -(o0 + o1 * size)
-            end
-          else
-            size = fn_clamp.call(measure.abs, index)
-            min = measure < 0 ? -size : 0
-          end
-        end
-        sizes << size
-        mins << min
-      end
-
-      t = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis) * Geom::Transformation.translation(Geom::Vector3d.new(*mins))
-      content_t = flipped ? t * Geom::Transformation.translation(Geom::Vector3d.new(sizes[0], sizes[1], 0)) * Geom::Transformation.rotation(ORIGIN, Z_AXIS, Math::PI) : t
-      content_t = content_t * Geom::Transformation.translation(Geom::Vector3d.new(sizes[0], 0, sizes[2])) * Geom::Transformation.rotation(ORIGIN, Y_AXIS, Math::PI) if @up_flipped
-      {
-        :t => t,
-        :sizes => sizes,
-        :flipped => flipped,
-        :up_flipped => @up_flipped,
-        :content_t => content_t,
-        :measures => measures,
-        :origin_coefs => origin_coefs
-      }
-    end
-
-    # Whether the box front is its max Y side : the Y side facing the camera
-    # the most. Seen from above (no side clearly facing it), the one away from
-    # the X edge - 'x_edge_on_y_min' - as the X edge is drawn along the back.
-    def _is_front_on_y_max?(t, sizes, x_edge_on_y_min)
-      camera = Sketchup.active_model.active_view.camera
-      v = camera.perspective? ? Geom::Point3d.new(sizes[0] / 2, sizes[1] / 2, sizes[2] / 2).transform(t).vector_to(camera.eye) : camera.direction.reverse
-      return x_edge_on_y_min unless v.valid?
-      cos = t.yaxis.normalize % v.normalize
-      return x_edge_on_y_min if cos.abs < 0.15
-      cos > 0
-    end
-
     # The edges of a box of the given sizes, in its frame : the X edge alone
     # while it's flat on Y, its bottom rectangle while it's flat on Z.
     def _get_box_segments(w, d, h)
@@ -1334,7 +1026,67 @@ module Ladb::OpenCutList
       segments + top.zip(top.rotate).flatten(1) + bottom.zip(top).flatten(1)
     end
 
-    # -----
+    # The source edges stretched to the given sizes, in the source space
+    def _get_source_preview_points(sizes)
+      offsets = [ X_AXIS, Y_AXIS, Z_AXIS ].each_with_index.map { |axis, index|
+        split_def = @source[:split_defs][index]
+        coefs = Array.new(split_def.section_defs.length, 0.0)
+        distance = sizes[index] - @source[:sizes][index]
+        if distance.to_l != 0 && (stretch_def = split_def.stretch_def_by_distance(distance)).is_a?(StretchDef)
+          stretch_def.edvs.each { |section_def, edv| coefs[section_def.index] = edv % axis }
+        end
+        coefs
+      }
+      ox, oy, oz = offsets
+      ix, iy, iz = @source[:preview_section_indices]
+      @source[:preview_points].each_with_index.map { |point, index|
+        Geom::Point3d.new(point.x + ox[ix[index]], point.y + oy[iy[index]], point.z + oz[iz[index]])
+      }
+    end
+
+    # -- Pick --
+
+    def _get_previous_input_point
+      return Sketchup::InputPoint.new(@picked_origin) unless @picked_origin.nil?
+      nil
+    end
+
+    # Picks the given point for the current state, or beeps if it doesn't make
+    # a valid edge.
+    def _pick(point)
+      case @state
+      when STATE_ORIGIN
+        @picked_origin = point
+        @origin_directions = _get_origin_directions
+        set_state(STATE_X)
+      when STATE_X
+        return UI.beep if _get_edge_direction_and_length(point).first.nil?
+        @picked_x_point = point
+        set_state(STATE_Y)
+      when STATE_Y
+        return UI.beep if _get_edge_direction_and_length(point).last == 0
+        @picked_y_point = point
+        set_state(STATE_Z)
+      when STATE_Z
+        return UI.beep if (box = _get_box(@picked_x_point, @picked_y_point, point)).nil?
+        _create_module(box)
+        _reset
+      end
+    end
+
+    # The directions of the edges and clines the mouse input point touches -
+    # read when the origin is picked on it.
+    def _get_origin_directions
+      return [] unless @mouse_ip.valid?
+      directions = []
+      if @mouse_ip.vertex
+        directions += @mouse_ip.vertex.edges.map { |edge| EdgeManipulator.new(edge, @mouse_ip.transformation).direction }
+      elsif @mouse_ip.edge
+        directions << EdgeManipulator.new(@mouse_ip.edge, @mouse_ip.transformation).direction
+      end
+      directions << ClineManipulator.new(@mouse_ip.cline, @mouse_ip.transformation).direction if @mouse_ip.cline
+      directions.select(&:valid?).each_with_object([]) { |direction, uniques| uniques << direction unless uniques.any? { |unique| unique.parallel?(direction) } }
+    end
 
     # -- Library --
 
@@ -1378,112 +1130,6 @@ module Ladb::OpenCutList
         set_state(STATE_ORIGIN) if @state == STATE_SOURCE
         _refresh
       end
-    end
-
-    # -- Add --
-
-    # The picked file - and any drawing in progress - is dropped.
-    def _enter_add_mode
-      @@source_ref = nil
-      @source = nil
-      _reset
-      @add_instance = nil
-      set_state(STATE_ADD)
-      _setup_library_panel  # The add button selected
-      _refresh
-    end
-
-    # Back to STATE_SOURCE, in the browsed folder.
-    def _leave_add_mode
-      @add_instance = nil
-      @tool.clear_3d(LAYER_3D_BOX_PREVIEW)
-      set_state(get_startup_state)
-      _setup_library_panel
-      _refresh
-    end
-
-    def _browse_add_dir
-      @@source_ref = nil
-      _setup_library_panel
-      _refresh
-    end
-
-    # The top level instance of the active context under the mouse, framed.
-    def _pick_add_instance(x, y, view)
-
-      model = Sketchup.active_model
-      ph = view.pick_helper
-      ph.do_pick(x, y)
-      entity = ph.best_picked
-      active_parent = model.active_path.nil? ? model : model.active_path.last.definition
-      @add_instance = (entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance)) && entity.parent == active_parent ? entity : nil
-      return if @add_instance.nil?
-
-      kb = Kuix::Bounds3d.new.copy!(@add_instance.definition.bounds).inflate_all!(1)
-      t = PathUtils.get_transformation(model.active_path.to_a + [ @add_instance ], IDENTITY)
-
-      k_box = Kuix::BoxCornersMotif3d.new
-      k_box.bounds.copy!(kb)
-      k_box.corner_size = 20
-      k_box.color = Kuix::COLOR_BLUE
-      k_box.line_width = 2.0
-      k_box.line_stipple = Kuix::LINE_STIPPLE_SOLID
-      k_box.transformation = t
-      @tool.append_3d(k_box, LAYER_3D_BOX_PREVIEW)
-
-      k_box = Kuix::BoxMotif3d.new
-      k_box.bounds.copy!(kb)
-      k_box.color = Kuix::COLOR_BLUE
-      k_box.line_width = 1.5
-      k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
-      k_box.transformation = t
-      @tool.append_3d(k_box, LAYER_3D_BOX_PREVIEW)
-
-      k_axes = Kuix::AxesHelper.new
-      k_axes.transformation = t
-      @tool.append_3d(k_axes, LAYER_3D_BOX_PREVIEW)
-
-    end
-
-    # Saves the hovered instance's definition as a file of the browsed folder,
-    # named in an input box - the instance name of a group, the definition
-    # name of a component - and back to STATE_SOURCE. A cancelled input box
-    # stays in STATE_ADD.
-    def _save_add_instance
-      instance = @add_instance
-      dir = PLUGIN.resolve_library_ref(@@dir_ref)
-      return UI.beep unless dir.is_a?(String)
-
-      name = instance.is_a?(Sketchup::Group) && !instance.name.empty? ? instance.name : instance.definition.name
-      path = nil
-      loop do
-        input = UI.inputbox([ PLUGIN.get_i18n_string('tool.smart_build.action_0_add_name') ], [ name ], PLUGIN.get_i18n_string('tool.smart_build.action_0_add_title'))
-        return unless input.is_a?(Array)
-        name = input[0].to_s.strip
-        name = File.basename(FilePathUtils.sanitize_file_name("#{name}.skp"), '.skp') unless name.empty?  # Forbidden characters are replaced
-        if name.empty? || name.start_with?('.') || name.end_with?('~')  # Hidden and backup files aren't listed
-          UI.messagebox(PLUGIN.get_i18n_string('tool.smart_build.error.module_file_invalid_name', { :name => name }))
-          next
-        end
-        path = File.join(dir, "#{name}.skp")
-        break unless File.exist?(path)
-        break if UI.messagebox(PLUGIN.get_i18n_string('tool.smart_build.action_0_add_overwrite', { :name => name }), MB_YESNO) == IDYES
-      end
-
-      # The browsed folder may not exist yet (e.g. the library root on first use)
-      begin
-        PLUGIN.ensure_library_dir(@@dir_ref)
-      rescue SystemCallError
-        # save_as fails below and reports it
-      end
-
-      if instance.valid? && instance.definition.save_as(path)
-        @tool.notify_success(PLUGIN.get_i18n_string('tool.smart_build.success.module_file_saved', { :name => name }))
-      else
-        @tool.notify_errors([ [ 'tool.smart_build.error.module_file_save_failed', { :name => name } ] ])
-      end
-      _leave_add_mode
-
     end
 
     # The bottom bar : a row of the sub folders of the browsed folder - led by
@@ -1740,47 +1386,116 @@ module Ladb::OpenCutList
       @library_add_btn.selected = @state == STATE_ADD unless @library_add_btn.nil?
     end
 
-    # -----
+    # -- Add --
+
+    # The picked file - and any drawing in progress - is dropped.
+    def _enter_add_mode
+      @@source_ref = nil
+      @source = nil
+      _reset
+      @add_instance = nil
+      set_state(STATE_ADD)
+      _setup_library_panel  # The add button selected
+      _refresh
+    end
+
+    # Back to STATE_SOURCE, in the browsed folder.
+    def _leave_add_mode
+      @add_instance = nil
+      @tool.clear_3d(LAYER_3D_BOX_PREVIEW)
+      set_state(get_startup_state)
+      _setup_library_panel
+      _refresh
+    end
+
+    def _browse_add_dir
+      @@source_ref = nil
+      _setup_library_panel
+      _refresh
+    end
+
+    # The top level instance of the active context under the mouse, framed.
+    def _pick_add_instance(x, y, view)
+
+      model = Sketchup.active_model
+      ph = view.pick_helper
+      ph.do_pick(x, y)
+      entity = ph.best_picked
+      active_parent = model.active_path.nil? ? model : model.active_path.last.definition
+      @add_instance = (entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance)) && entity.parent == active_parent ? entity : nil
+      return if @add_instance.nil?
+
+      kb = Kuix::Bounds3d.new.copy!(@add_instance.definition.bounds).inflate_all!(1)
+      t = PathUtils.get_transformation(model.active_path.to_a + [ @add_instance ], IDENTITY)
+
+      k_box = Kuix::BoxCornersMotif3d.new
+      k_box.bounds.copy!(kb)
+      k_box.corner_size = 20
+      k_box.color = Kuix::COLOR_BLUE
+      k_box.line_width = 2.0
+      k_box.line_stipple = Kuix::LINE_STIPPLE_SOLID
+      k_box.transformation = t
+      @tool.append_3d(k_box, LAYER_3D_BOX_PREVIEW)
+
+      k_box = Kuix::BoxMotif3d.new
+      k_box.bounds.copy!(kb)
+      k_box.color = Kuix::COLOR_BLUE
+      k_box.line_width = 1.5
+      k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+      k_box.transformation = t
+      @tool.append_3d(k_box, LAYER_3D_BOX_PREVIEW)
+
+      k_axes = Kuix::AxesHelper.new
+      k_axes.transformation = t
+      @tool.append_3d(k_axes, LAYER_3D_BOX_PREVIEW)
+
+    end
+
+    # Saves the hovered instance's definition as a file of the browsed folder,
+    # named in an input box - the instance name of a group, the definition
+    # name of a component - and back to STATE_SOURCE. A cancelled input box
+    # stays in STATE_ADD.
+    def _save_add_instance
+      instance = @add_instance
+      dir = PLUGIN.resolve_library_ref(@@dir_ref)
+      return UI.beep unless dir.is_a?(String)
+
+      name = instance.is_a?(Sketchup::Group) && !instance.name.empty? ? instance.name : instance.definition.name
+      path = nil
+      loop do
+        input = UI.inputbox([ PLUGIN.get_i18n_string('tool.smart_build.action_0_add_name') ], [ name ], PLUGIN.get_i18n_string('tool.smart_build.action_0_add_title'))
+        return unless input.is_a?(Array)
+        name = input[0].to_s.strip
+        name = File.basename(FilePathUtils.sanitize_file_name("#{name}.skp"), '.skp') unless name.empty?  # Forbidden characters are replaced
+        if name.empty? || name.start_with?('.') || name.end_with?('~')  # Hidden and backup files aren't listed
+          UI.messagebox(PLUGIN.get_i18n_string('tool.smart_build.error.module_file_invalid_name', { :name => name }))
+          next
+        end
+        path = File.join(dir, "#{name}.skp")
+        break unless File.exist?(path)
+        break if UI.messagebox(PLUGIN.get_i18n_string('tool.smart_build.action_0_add_overwrite', { :name => name }), MB_YESNO) == IDYES
+      end
+
+      # The browsed folder may not exist yet (e.g. the library root on first use)
+      begin
+        PLUGIN.ensure_library_dir(@@dir_ref)
+      rescue SystemCallError
+        # save_as fails below and reports it
+      end
+
+      if instance.valid? && instance.definition.save_as(path)
+        @tool.notify_success(PLUGIN.get_i18n_string('tool.smart_build.success.module_file_saved', { :name => name }))
+      else
+        @tool.notify_errors([ [ 'tool.smart_build.error.module_file_save_failed', { :name => name } ] ])
+      end
+      _leave_add_mode
+
+    end
+
+    # -- Source --
 
     def _get_source_path
       @@source_ref.nil? ? nil : PLUGIN.resolve_library_ref(@@source_ref)
-    end
-
-    # Loads the source SKP file in the given model and returns its definition.
-    # Must run inside an operation.
-    def _load_source_definition(model, path)
-      Sketchup.version_number >= 2100000000 ? model.definitions.load(path, allow_newer: true) : model.definitions.load(path)
-    end
-
-    # The source definition, followed by the definition of its single top
-    # level container when the file holds the module as a group.
-    def _get_module_definitions(definition)
-      definitions = [ definition ]
-      containers = definition.entities.select { |entity| entity.respond_to?(:definition) }
-      definitions << containers.first.definition if containers.one? && definition.entities.count { |entity| entity.is_a?(Sketchup::Face) || entity.is_a?(Sketchup::Edge) } == 0
-      definitions
-    end
-
-    # The 'stretch_cutters' of the module definitions - the first holding
-    # them - as { axis => ratios }, 0.5 on a missing axis.
-    def _read_cutters(definition)
-      data = _get_module_definitions(definition).map { |module_definition| PLUGIN.get_attribute(module_definition, 'stretch_cutters') }.compact.first
-      fn_ratios = lambda { |xyz|
-        ratios = data.is_a?(Hash) && data[xyz].is_a?(Array) ? data[xyz].map(&:to_f).select { |ratio| ratio > 0 && ratio < 1.0 } : []
-        ratios.empty? ? [ 0.5 ] : ratios
-      }
-      {
-        X_AXIS => fn_ratios.call('x'),
-        Y_AXIS => fn_ratios.call('y'),
-        Z_AXIS => fn_ratios.call('z'),
-      }
-    end
-
-    # The axes the module definitions' behavior forbids to scale along
-    # ('no_scale_mask' bits 0, 1 and 2 : red, green and blue), as booleans.
-    def _read_no_scale_axes(definition)
-      mask = _get_module_definitions(definition).map { |module_definition| module_definition.behavior.no_scale_mask? }.reduce(0, :|)
-      (0..2).map { |bit| mask & (1 << bit) != 0 }
     end
 
     # The selected source - probed once while its file is unchanged - with its
@@ -1939,93 +1654,44 @@ module Ladb::OpenCutList
       }
     end
 
-    # The source edges stretched to the given sizes, in the source space
-    def _get_source_preview_points(sizes)
-      offsets = [ X_AXIS, Y_AXIS, Z_AXIS ].each_with_index.map { |axis, index|
-        split_def = @source[:split_defs][index]
-        coefs = Array.new(split_def.section_defs.length, 0.0)
-        distance = sizes[index] - @source[:sizes][index]
-        if distance.to_l != 0 && (stretch_def = split_def.stretch_def_by_distance(distance)).is_a?(StretchDef)
-          stretch_def.edvs.each { |section_def, edv| coefs[section_def.index] = edv % axis }
-        end
-        coefs
+    # Loads the source SKP file in the given model and returns its definition.
+    # Must run inside an operation.
+    def _load_source_definition(model, path)
+      Sketchup.version_number >= 2100000000 ? model.definitions.load(path, allow_newer: true) : model.definitions.load(path)
+    end
+
+    # The source definition, followed by the definition of its single top
+    # level container when the file holds the module as a group.
+    def _get_module_definitions(definition)
+      definitions = [ definition ]
+      containers = definition.entities.select { |entity| entity.respond_to?(:definition) }
+      definitions << containers.first.definition if containers.one? && definition.entities.count { |entity| entity.is_a?(Sketchup::Face) || entity.is_a?(Sketchup::Edge) } == 0
+      definitions
+    end
+
+    # The 'stretch_cutters' of the module definitions - the first holding
+    # them - as { axis => ratios }, 0.5 on a missing axis.
+    def _read_cutters(definition)
+      data = _get_module_definitions(definition).map { |module_definition| PLUGIN.get_attribute(module_definition, 'stretch_cutters') }.compact.first
+      fn_ratios = lambda { |xyz|
+        ratios = data.is_a?(Hash) && data[xyz].is_a?(Array) ? data[xyz].map(&:to_f).select { |ratio| ratio > 0 && ratio < 1.0 } : []
+        ratios.empty? ? [ 0.5 ] : ratios
       }
-      ox, oy, oz = offsets
-      ix, iy, iz = @source[:preview_section_indices]
-      @source[:preview_points].each_with_index.map { |point, index|
-        Geom::Point3d.new(point.x + ox[ix[index]], point.y + oy[iy[index]], point.z + oz[iz[index]])
+      {
+        X_AXIS => fn_ratios.call('x'),
+        Y_AXIS => fn_ratios.call('y'),
+        Z_AXIS => fn_ratios.call('z'),
       }
     end
 
-    def _split(ipath, et, axis, ratios)
-      CommonStretchSplitWorker.new(
-        [ ipath ],
-        et: et,
-        axis: axis,
-        grip_index: Kuix::Bounds3d.faces_by_axis(axis).last,  # Pull the max face : the min corner stays in place
-        ratios: ratios
-      ).run
+    # The axes the module definitions' behavior forbids to scale along
+    # ('no_scale_mask' bits 0, 1 and 2 : red, green and blue), as booleans.
+    def _read_no_scale_axes(definition)
+      mask = _get_module_definitions(definition).map { |module_definition| module_definition.behavior.no_scale_mask? }.reduce(0, :|)
+      (0..2).map { |bit| mask & (1 << bit) != 0 }
     end
 
-    # The content size along the split axis, in the split edit space
-    def _get_split_size(split_def)
-      eb = split_def.eb
-      [ eb.width, eb.height, eb.depth ][[ X_AXIS, Y_AXIS, Z_AXIS ].index(split_def.axis)]
-    end
-
-    # -----
-
-    # Gives every container of the given entities - recursively - its own
-    # definition. Component instances sharing a definition keep sharing the
-    # new one ; groups are made unique one by one.
-    # HARDWARE components keep their definition, shared with the other
-    # modules : the stretch makes unique the ones it deforms.
-    def _make_unique_containers(entities, definitions_map = {}, inherited_material = nil)
-      entities.each do |entity|
-        next unless entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance)
-        material = _get_non_virtual_material(entity) || inherited_material
-        if entity.is_a?(Sketchup::Group)
-          entity.make_unique
-          _make_unique_containers(entity.definition.entities, definitions_map, material)
-        elsif !_hardware_component?(entity, inherited_material)
-          if (new_definition = definitions_map[entity.definition])
-            entity.definition = new_definition
-          else
-            definition = entity.definition
-            definitions_map[definition] = entity.make_unique.definition
-            _make_unique_containers(entity.definition.entities, definitions_map, material)
-          end
-        end
-      end
-    end
-
-    # Whether the cutlist sees the given component instance as a HARDWARE
-    # part : its material resolved as CutlistGenerateWorker#_get_material does
-    # - its own, else the dominant one of its children, else the inherited one.
-    def _hardware_component?(instance, inherited_material)
-      material = _get_non_virtual_material(instance) || _get_dominant_child_material(instance) || inherited_material
-      _get_material_attributes(material).type == MaterialAttributes::TYPE_HARDWARE
-    end
-
-    # See CutlistGenerateWorker#_get_dominant_child_material
-    def _get_dominant_child_material(entity, level = 0)
-      if entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance) && (level == 0 || entity.definition.behavior.cuts_opening?)
-        counts = Hash.new(0)
-        entity.definition.entities.each do |child_entity|
-          child_material = _get_dominant_child_material(child_entity, level + 1)
-          counts[child_material] += 1 unless child_material.nil?
-        end
-        return counts.min_by { |material, count| [ -count, MaterialAttributes.type_order(_get_material_attributes(material).type) ] }.first if counts.any?
-        return _get_non_virtual_material(entity) if level > 0
-      elsif entity.is_a?(Sketchup::Face)
-        return _get_non_virtual_material(entity)
-      end
-      nil
-    end
-
-    def _get_non_virtual_material(entity)
-      entity.material unless MaterialAttributes.is_virtual?(_get_material_attributes(entity.material))
-    end
+    # -- Create --
 
     def _create_module(box)
       return UI.beep if box[:sizes].any? { |size| size <= 0 }
@@ -2131,6 +1797,344 @@ module Ladb::OpenCutList
         @tool.notify_errors([ [ 'tool.smart_build.error.module_stretch_failed' ] ])
       end
 
+    end
+
+    # Gives every container of the given entities - recursively - its own
+    # definition. Component instances sharing a definition keep sharing the
+    # new one ; groups are made unique one by one.
+    # HARDWARE components keep their definition, shared with the other
+    # modules : the stretch makes unique the ones it deforms.
+    def _make_unique_containers(entities, definitions_map = {}, inherited_material = nil)
+      entities.each do |entity|
+        next unless entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance)
+        material = _get_non_virtual_material(entity) || inherited_material
+        if entity.is_a?(Sketchup::Group)
+          entity.make_unique
+          _make_unique_containers(entity.definition.entities, definitions_map, material)
+        elsif !_hardware_component?(entity, inherited_material)
+          if (new_definition = definitions_map[entity.definition])
+            entity.definition = new_definition
+          else
+            definition = entity.definition
+            definitions_map[definition] = entity.make_unique.definition
+            _make_unique_containers(entity.definition.entities, definitions_map, material)
+          end
+        end
+      end
+    end
+
+    # -- Utils : axes --
+
+    # The unit direction of the current edge and the signed length of the
+    # given point along it : the X direction itself, the part of the point
+    # perpendicular to X, the normal to the XY plane.
+    def _get_edge_direction_and_length(point)
+      v = @picked_origin.vector_to(point)
+      case @state
+      when STATE_X
+        return [ nil, 0 ] unless v.valid?
+        return [ v.normalize, v.length ]
+      when STATE_Y
+        x_axis = _get_x_axis
+        v = v - Geom::Vector3d.linear_combination(v % x_axis, x_axis, 0, x_axis)
+        return [ _get_default_y_axis(x_axis), 0 ] unless v.valid? && v.length > 0.001
+        return [ v.normalize, v.length ]
+      when STATE_Z
+        n = _get_xy_normal
+        return [ n, v % n ]
+      end
+      [ nil, 0 ]
+    end
+
+    # The X edge end at the source size along the active X axis
+    def _get_default_x_point(origin)
+      origin.offset(_get_active_x_axis.normalize, @source[:sizes][0])
+    end
+
+    def _get_x_axis
+      @picked_origin.vector_to(@picked_x_point).normalize
+    end
+
+    # The Y unit direction as picked : the part of the Y point perpendicular to X
+    def _get_y_axis
+      x_axis = _get_x_axis
+      v = @picked_origin.vector_to(@picked_y_point)
+      (v - Geom::Vector3d.linear_combination(v % x_axis, x_axis, 0, x_axis)).normalize
+    end
+
+    def _get_xy_normal
+      (_get_x_axis * _get_y_axis).normalize
+    end
+
+    # The Y line direction the given XY plane normal (the locked one by
+    # default) leaves once X is drawn : perpendicular to both. Only the
+    # normal's part perpendicular to X counts, a normal too close to X (under
+    # 10 degrees) giving nil. Its side is the mouse's.
+    def _get_locked_y_axis(normal = @locked_xy_normal, x_axis = nil)
+      return nil unless normal.is_a?(Geom::Vector3d) && normal.valid?
+      y_axis = normal * (x_axis || _get_x_axis)
+      return nil if y_axis.length.to_f < LOCKED_XY_NORMAL_MIN_SINE
+      y_axis.normalize
+    end
+
+    # The Y unit direction while Y isn't drawn : the one the locked XY plane
+    # normal leaves, else the active horizontal direction perpendicular to X -
+    # making XY the active horizontal plane if X is horizontal. X being
+    # vertical : the one facing the camera.
+    def _get_default_y_axis(x_axis)
+      y_axis = _get_locked_y_axis(@locked_xy_normal, x_axis)
+      return y_axis unless y_axis.nil?
+      y_axis = _get_active_z_axis * x_axis
+      y_axis = x_axis * Sketchup.active_model.active_view.camera.direction unless y_axis.valid?
+      y_axis = x_axis.axes[1] unless y_axis.valid?
+      y_axis.normalize
+    end
+
+    # -- Utils : box / anchor --
+
+    # The box drawn so far, sizes raised to the source minimal sizes : its
+    # frame (origin on the box min corner) and its sizes along the frame axes.
+    # 'px', 'py' and 'pz' are the X, Y and Z edge points ('py' and 'pz'
+    # optional) : the distance from the origin to the dragged face, whose
+    # position depends on the anchor of the axis (see _get_anchor_modes).
+    # 'complete' gives the source sizes to the edges not drawn yet, 'x_size'
+    # overrides the X size (then anchored as an edge not drawn). 'origin'
+    # overrides the picked origin.
+    # The content is set in the box by ':content_t' : with its front (-Y) on
+    # the box side facing the camera - or 180° rotated around Z - and turned
+    # upside down (180° rotated around Y, front kept) if the user asked so.
+    # ':measures' are the signed edge measures along the frame axes (nil if
+    # not drawn), ':origin_coefs' the [ o0, o1 ] giving the source file origin
+    # on each frame axis from the box min for a box size S : o0 + o1 * S.
+    def _get_box(px, py = nil, pz = nil, complete: false, origin: @picked_origin, x_size: nil)
+      return nil if origin.nil? || px.nil? || @source.nil?
+
+      vx = origin.vector_to(px)
+      return nil unless vx.valid?
+      x_axis = vx.normalize
+
+      measures = [ x_size.nil? ? vx.length : nil, nil, nil ]
+      anchor_modes = _get_anchor_modes
+
+      # The part of the Y point perpendicular to X, nil while there is none
+      unless py.nil?
+        vy = origin.vector_to(py)
+        vy = vy - Geom::Vector3d.linear_combination(vy % x_axis, x_axis, 0, x_axis)
+        vy = nil unless vy.valid? && vy.length > 0.001
+      end
+
+      if vy.nil?
+
+        # Y not drawn yet : the default Y direction
+        y_axis = _get_default_y_axis(x_axis)
+        z_axis = x_axis * y_axis
+
+      else
+
+        # Z upward while not drawn - the frame then matches the whole box one.
+        # Drawn : on the side of the Z point anchored on an edge, else kept
+        # upward - the anchor holding the box, the Z point giving its face.
+        # Y deduced to keep the frame right-handed.
+        z_axis = (x_axis * vy).normalize
+        z_axis = z_axis.reverse if (pz.nil? || anchor_modes[2] != :edge) && z_axis % _get_active_z_axis < 0
+        unless pz.nil?
+          dz = origin.vector_to(pz) % z_axis
+          if anchor_modes[2] == :edge
+            z_axis = z_axis.reverse if dz < 0
+            dz = dz.abs
+          end
+          measures[2] = dz
+        end
+        y_axis = z_axis * x_axis
+
+        measures[1] = vy % y_axis
+
+      end
+
+      # Raised to the minimal size, or set to the source size on a locked axis
+      fn_clamp = lambda { |value, index|
+        @source[:locked_axes][index] ? @source[:sizes][index] : [ value, @source[:min_sizes][index] ].max
+      }
+
+      # The front side from the box anchored on its edges - the anchor then
+      # slides it a little, not enough to turn it
+      edge_sizes = measures.each_with_index.map { |measure, index|
+        next fn_clamp.call(measure.abs, index) unless measure.nil?
+        next x_size if index == 0
+        complete ? @source[:sizes][index] : 0
+      }
+      edge_t = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis) * Geom::Transformation.translation(Geom::Vector3d.new(0, measures[1].to_f < 0 ? -edge_sizes[1] : 0, 0))
+      flipped = _is_front_on_y_max?(edge_t, edge_sizes, measures[1].to_f >= 0) != @front_flipped
+
+      # The source file origin on each frame axis : the content axis runs
+      # backward on the X axis if the content is turned once, on the Y axis if
+      # flipped, on the Z axis if upside down
+      reversed = [ flipped != @up_flipped, flipped, @up_flipped ]
+      origin_coefs = @source[:origin_coefs].each_with_index.map { |(a, k), index|
+        c0 = a - k * @source[:sizes][index]  # c(S) = c0 + k * S, from the content min
+        reversed[index] ? [ -c0, 1 - k ] : [ c0, k ]
+      }
+
+      # The size of each axis and its min from the origin. An axis not drawn
+      # yet - flat while not complete - lies on the whole box min face.
+      sizes = []
+      mins = []
+      measures.each_with_index do |measure, index|
+        o0, o1 = origin_coefs[index]
+        if measure.nil?
+          size = edge_sizes[index]
+          complete_size = index == 0 ? size : @source[:sizes][index]
+          min = case anchor_modes[index]
+                when :center then -complete_size / 2.0
+                when :origin then -(o0 + o1 * complete_size)
+                else 0
+                end
+        else
+          case anchor_modes[index]
+          when :center
+            size = fn_clamp.call(2 * measure.abs, index)
+            min = -size / 2.0
+          when :origin
+            if (g = _get_anchor_face_coefs(o0, o1, measure < 0)).nil?
+              # That face bound to the origin : the box between the origin and the mouse
+              size = fn_clamp.call(measure.abs, index)
+              min = measure < 0 ? -size : 0
+            else
+              # The dragged face at the measure : g0 + g1 * S = |measure|
+              g0, g1 = g
+              size = fn_clamp.call((measure.abs - g0) / g1, index)
+              min = -(o0 + o1 * size)
+            end
+          else
+            size = fn_clamp.call(measure.abs, index)
+            min = measure < 0 ? -size : 0
+          end
+        end
+        sizes << size
+        mins << min
+      end
+
+      t = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis) * Geom::Transformation.translation(Geom::Vector3d.new(*mins))
+      content_t = flipped ? t * Geom::Transformation.translation(Geom::Vector3d.new(sizes[0], sizes[1], 0)) * Geom::Transformation.rotation(ORIGIN, Z_AXIS, Math::PI) : t
+      content_t = content_t * Geom::Transformation.translation(Geom::Vector3d.new(sizes[0], 0, sizes[2])) * Geom::Transformation.rotation(ORIGIN, Y_AXIS, Math::PI) if @up_flipped
+      {
+        :t => t,
+        :sizes => sizes,
+        :flipped => flipped,
+        :up_flipped => @up_flipped,
+        :content_t => content_t,
+        :measures => measures,
+        :origin_coefs => origin_coefs
+      }
+    end
+
+    # Whether the box front is its max Y side : the Y side facing the camera
+    # the most. Seen from above (no side clearly facing it), the one away from
+    # the X edge - 'x_edge_on_y_min' - as the X edge is drawn along the back.
+    def _is_front_on_y_max?(t, sizes, x_edge_on_y_min)
+      camera = Sketchup.active_model.active_view.camera
+      v = camera.perspective? ? Geom::Point3d.new(sizes[0] / 2, sizes[1] / 2, sizes[2] / 2).transform(t).vector_to(camera.eye) : camera.direction.reverse
+      return x_edge_on_y_min unless v.valid?
+      cos = t.yaxis.normalize % v.normalize
+      return x_edge_on_y_min if cos.abs < 0.15
+      cos > 0
+    end
+
+    # The anchor of each box axis in the drawing frame : :edge (the origin on
+    # its min or max face), :center or :origin (the source file origin).
+    def _get_anchor_modes
+      return [ :origin ] * 3 if @tool.fetch_action_option_boolean(@action, SmartBuildTool::ACTION_OPTION_ANCHOR, SmartBuildTool::ACTION_OPTION_ANCHOR_ORIGIN)
+      [ SmartBuildTool::ACTION_OPTION_ANCHOR_CENTER_X, SmartBuildTool::ACTION_OPTION_ANCHOR_CENTER_Y, SmartBuildTool::ACTION_OPTION_ANCHOR_CENTER_Z ].map { |option|
+        @tool.fetch_action_option_boolean(@action, SmartBuildTool::ACTION_OPTION_ANCHOR, option) ? :center : :edge
+      }
+    end
+
+    # The edge points drawn so far, the given one on the current state
+    def _get_state_points(point)
+      case @state
+      when STATE_X
+        [ point ]
+      when STATE_Y
+        [ @picked_x_point, point ]
+      when STATE_Z
+        [ @picked_x_point, @picked_y_point, point ]
+      end
+    end
+
+    # The distance from the origin to the dragged face - the current edge
+    # measure - making a box of the given size along the current axis, the
+    # given point giving the side.
+    def _get_anchor_measure(point, size)
+      index = @state - STATE_X
+      case _get_anchor_modes[index]
+      when :center
+        size / 2.0
+      when :origin
+        return size if (points = _get_state_points(point)).nil? || (box = _get_box(*points)).nil?
+        return size if (g = _get_anchor_face_coefs(*box[:origin_coefs][index], box[:measures][index] < 0)).nil?
+        g0, g1 = g
+        g0 + g1 * size
+      else
+        size
+      end
+    end
+
+    # The distance from the source file origin - at o0 + o1 * S from the box
+    # min - to the face the mouse drags for a box size S : [ g0, g1 ] giving
+    # g0 + g1 * S. The max face, the min one if 'negative'. Nil if that face is
+    # bound to the origin (its section moving with it) : the mouse can't drag
+    # it, the box then goes between the origin and the mouse.
+    def _get_anchor_face_coefs(o0, o1, negative)
+      g = negative ? [ o0, o1 ] : [ -o0, 1 - o1 ]
+      g.last.abs > 1e-6 ? g : nil
+    end
+
+    # -- Utils : stretch --
+
+    def _split(ipath, et, axis, ratios)
+      CommonStretchSplitWorker.new(
+        [ ipath ],
+        et: et,
+        axis: axis,
+        grip_index: Kuix::Bounds3d.faces_by_axis(axis).last,  # Pull the max face : the min corner stays in place
+        ratios: ratios
+      ).run
+    end
+
+    # The content size along the split axis, in the split edit space
+    def _get_split_size(split_def)
+      eb = split_def.eb
+      [ eb.width, eb.height, eb.depth ][[ X_AXIS, Y_AXIS, Z_AXIS ].index(split_def.axis)]
+    end
+
+    # -- Utils : materials --
+
+    # Whether the cutlist sees the given component instance as a HARDWARE
+    # part : its material resolved as CutlistGenerateWorker#_get_material does
+    # - its own, else the dominant one of its children, else the inherited one.
+    def _hardware_component?(instance, inherited_material)
+      material = _get_non_virtual_material(instance) || _get_dominant_child_material(instance) || inherited_material
+      _get_material_attributes(material).type == MaterialAttributes::TYPE_HARDWARE
+    end
+
+    # See CutlistGenerateWorker#_get_dominant_child_material
+    def _get_dominant_child_material(entity, level = 0)
+      if entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance) && (level == 0 || entity.definition.behavior.cuts_opening?)
+        counts = Hash.new(0)
+        entity.definition.entities.each do |child_entity|
+          child_material = _get_dominant_child_material(child_entity, level + 1)
+          counts[child_material] += 1 unless child_material.nil?
+        end
+        return counts.min_by { |material, count| [ -count, MaterialAttributes.type_order(_get_material_attributes(material).type) ] }.first if counts.any?
+        return _get_non_virtual_material(entity) if level > 0
+      elsif entity.is_a?(Sketchup::Face)
+        return _get_non_virtual_material(entity)
+      end
+      nil
+    end
+
+    def _get_non_virtual_material(entity)
+      entity.material unless MaterialAttributes.is_virtual?(_get_material_attributes(entity.material))
     end
 
   end
