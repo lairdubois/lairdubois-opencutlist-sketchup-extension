@@ -349,6 +349,13 @@ module Ladb::OpenCutList
       @picked_grip_index = nil
       @picked_interior_handle = nil
 
+      # While SHIFT is held over an interior handle, the handle stays picked and its stretch start
+      # point can be taken anywhere, projected on the handle axis.
+      @interior_handle_locked = false
+
+      # SHIFT still held when the stretch starts must not trigger the last measure lock
+      @stretch_shift_ignored = false
+
       # An end grip stretch leaves the mouse right on the grip it moved, so the next mouse move
       # picks its axis again by itself. An interior one leaves it on its handle, which is only
       # pickable once an axis is active : carry the axis over so the stretch can be chained.
@@ -804,6 +811,13 @@ module Ladb::OpenCutList
           _refresh
           return true
         end
+        if tool.is_key_shift?(key)
+          unless @picked_interior_handle.nil? || @interior_handle_locked
+            @interior_handle_locked = true
+            _refresh
+          end
+          return true
+        end
         unless @picked_axis.nil?
           if tool.is_key_ctrl_or_option?(key)
             set_state(STATE_STRETCH_CUTTER_ADD)
@@ -820,6 +834,7 @@ module Ladb::OpenCutList
       when STATE_STRETCH
 
         if tool.is_key_shift?(key)
+          return true if @stretch_shift_ignored
           UI.beep if _fetch_last_stretch_measure == 0
           _refresh
           return true
@@ -841,6 +856,15 @@ module Ladb::OpenCutList
 
       case @state
 
+      when STATE_STRETCH_START
+        if tool.is_key_shift?(key)
+          if @interior_handle_locked
+            @interior_handle_locked = false
+            _refresh
+          end
+          return true
+        end
+
       when STATE_STRETCH_CUTTER_ADD, STATE_STRETCH_CUTTER_REMOVE
         if tool.is_key_ctrl_or_option?(key)
           @snap_ratio = nil
@@ -861,6 +885,7 @@ module Ladb::OpenCutList
           return true
         end
         if tool.is_key_shift?(key)
+          @stretch_shift_ignored = false
           _refresh  # Release the measure lock
           return true
         end
@@ -897,6 +922,9 @@ module Ladb::OpenCutList
 
     def onStateChanged(old_state, new_state)
       super
+
+      @interior_handle_locked = false
+      @stretch_shift_ignored = new_state == STATE_STRETCH && @tool.is_key_shift_down?
 
       case old_state
 
@@ -981,6 +1009,7 @@ module Ladb::OpenCutList
       @picked_axis = nil
       @picked_grip_index = nil
       @picked_interior_handle = nil
+      @interior_handle_locked = false
       @picked_cutter_index = nil
       @extern_instances_ref_positions = {}
       super
@@ -1128,6 +1157,11 @@ module Ladb::OpenCutList
 
     def _snap_stretch_start(flags, x, y, view)
 
+      if @interior_handle_locked && !@picked_interior_handle.nil?
+        _snap_stretch_start_locked_interior_handle(view, x, y)
+        return true
+      end
+
       @picked_grip_index = nil
       @picked_interior_handle = nil
       @picked_cutter_index = nil
@@ -1227,6 +1261,29 @@ module Ladb::OpenCutList
 
       @mouse_snap_point = @mouse_ip.position if @mouse_snap_point.nil?
 
+    end
+
+    # The locked interior handle keeps its axis and grip : only its grab point follows the mouse,
+    # free to be taken anywhere and projected on the - unbounded - handle axis. The inference it is
+    # taken from stays displayed.
+    def _snap_stretch_start_locked_interior_handle(view, x, y)
+      handle_def = @picked_interior_handle
+      line = [ handle_def[:points].first, handle_def[:points].first.vector_to(handle_def[:points].last) ]
+      return unless line[1].valid?
+
+      @mouse_ip.pick(view, x, y)
+      if _stretch_ip_stable_along?(line[1])
+        handle_def[:target] = @mouse_ip.position
+        handle_def[:point] = @mouse_ip.position.project_to_line(line)
+        handle_def[:magnetized] = true
+      else
+        handle_def[:target] = nil
+        handle_def[:point], _ = Geom.closest_points(line, view.pickray(x, y))
+        handle_def[:magnetized] = false
+        @mouse_ip.clear   # An unused inference isn't displayed
+      end
+
+      @mouse_snap_point = handle_def[:point]
     end
 
     def _snap_stretch_cutter_move(flags, x, y, view)
@@ -1411,7 +1468,7 @@ module Ladb::OpenCutList
 
       # Lock on the last stretch measure. Only its magnitude is locked : the way stays driven by
       # the mouse, like the SmartDraw pull lock.
-      if @tool.is_key_shift_down? && (measure = _fetch_last_stretch_measure) != 0
+      if !@stretch_shift_ignored && @tool.is_key_shift_down? && (measure = _fetch_last_stretch_measure) != 0
         measure_def = _get_stretch_measure_def(measure.abs)
         unless measure_def.nil?
           @mouse_snap_point = measure_def[:end_point]
@@ -1632,6 +1689,18 @@ module Ladb::OpenCutList
           size: size
         )
         @tool.append_3d(k_points, LAYER_3D_GRIPS_PREVIEW)
+
+        # A grab point taken away from the handle axis : link it to its projection
+        target = @picked_interior_handle[:target]
+        if @interior_handle_locked && !target.nil? && target != @picked_interior_handle[:point]
+          k_edge = Kuix::EdgeMotif3d.new
+          k_edge.start.copy!(target)
+          k_edge.end.copy!(@picked_interior_handle[:point])
+          k_edge.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+          k_edge.color = color
+          k_edge.on_top = true
+          @tool.append_3d(k_edge, LAYER_3D_GRIPS_PREVIEW)
+        end
       end
 
     end
