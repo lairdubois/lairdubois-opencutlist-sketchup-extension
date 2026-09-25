@@ -76,8 +76,7 @@
     # The model's material called +name+, created with +type+ (and +color+, if
     # it has to be created) when the model holds none.
     #
-    # Looked up by NAME, where LayerAttributes.fetch_or_create_layer looks its
-    # layer up by MARKING : a material IS its name to the user - it is what the
+    # Looked up by NAME : a material IS its name to the user - it is what the
     # cutlist groups parts by, and renaming one is renaming the material - so
     # the name is the identity here, and the type is only what a new one starts
     # out as. An existing material is left exactly as it is, type included : it
