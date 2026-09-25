@@ -1289,6 +1289,16 @@ module Ladb::OpenCutList
       @action_handler
     end
 
+    # -- VCB --
+
+    # True while the user is typing a value in the VCB, from its first printable
+    # key not consumed as a shortcut until ENTER or ESC : a shortcut on a key the
+    # VCB also accepts ("+", "-", ...) must then let the key go to the VCB.
+    # BACKSPACE doesn't reach the tool : erasing the whole text keeps it true.
+    def is_vcb_typing?
+      @vcb_typing == true
+    end
+
     # -- Menu --
 
     def getMenu(menu, flags, x, y, view)
@@ -1416,6 +1426,8 @@ module Ladb::OpenCutList
       # Store tool ID
       self.class.tool_id = view.model.tools.active_tool_id
 
+      @vcb_typing = false
+
       # Create pick helpers
       @pick_helper = view.pick_helper
 
@@ -1495,7 +1507,11 @@ module Ladb::OpenCutList
 
     def onKeyDown(key, repeat, flags, view)
       return true if super
-      @action_handler.onToolKeyDown(self, key, repeat, flags, view) if !@action_handler.nil? && @action_handler.respond_to?(:onToolKeyDown)
+      @vcb_typing = false if key == Kuix::VK_ESCAPE  # ESC clears the VCB, without "onCancel" on SU 2027 if it wasn't empty
+      return true if !@action_handler.nil? && @action_handler.respond_to?(:onToolKeyDown) && @action_handler.onToolKeyDown(self, key, repeat, flags, view)
+      # Not consumed : a printable key goes to the VCB (CTRL + ALT = ALTGR on Windows)
+      @vcb_typing = true if is_key_printable?(key) && is_key_ctrl_or_option_down?(flags) == is_key_alt_or_command_down?(flags)
+      false
     end
 
     def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
@@ -1620,6 +1636,7 @@ module Ladb::OpenCutList
     end
 
     def onUserText(text, view)
+      @vcb_typing = false
       @action_handler.onToolUserText(self, text, view) if !@action_handler.nil? && @action_handler.respond_to?(:onToolUserText)
     end
 

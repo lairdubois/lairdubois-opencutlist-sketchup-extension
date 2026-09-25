@@ -894,7 +894,7 @@ module Ladb::OpenCutList
       return true if super
       return if @state != STATE_HANDLE
 
-      if tool.is_key_shift_down?
+      if tool.is_key_shift_down? && !tool.is_vcb_typing?
         if key == Kuix::VK_ADD
           _warn_if_mirrored(@number + 1) if @number == 1
           @number += 1
@@ -1535,7 +1535,7 @@ module Ladb::OpenCutList
       return true if super
       return if @state != STATE_HANDLE
 
-      if tool.is_key_shift_down?
+      if tool.is_key_shift_down? && !tool.is_vcb_typing?
         if key == Kuix::VK_ADD
           _warn_if_mirrored(@number_x + 1, @number_y + 1) if @number_x == 1 && @number_y == 1
           @number_x += 1
@@ -2750,7 +2750,7 @@ module Ladb::OpenCutList
         return true
       end
 
-      if tool.is_key_shift_down?
+      if tool.is_key_shift_down? && !tool.is_vcb_typing?
         if key == Kuix::VK_ADD
           @number += 1
           _refresh

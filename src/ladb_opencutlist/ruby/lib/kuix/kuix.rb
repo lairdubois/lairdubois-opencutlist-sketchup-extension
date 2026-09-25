@@ -6,6 +6,7 @@ module Ladb::OpenCutList
 
     VK_TAB = 9
     VK_ENTER = 13
+    VK_ESCAPE = 27
     if Sketchup.platform == :platform_osx && Sketchup.version_number < 2700000000
       VK_NUMPAD0 = 48
       VK_NUMPAD1 = 49
@@ -36,6 +37,25 @@ module Ladb::OpenCutList
       VK_ADD = 0x6B
       VK_SUBTRACT = 0x6D
       VK_DIVIDE = 0x6F
+    end
+    # Keys typing a char in the VCB, SPACE excluded
+    vk_oem_ranges = [
+      0xBA..0xC0,   # OEM ; = , - . / `
+      0xDB..0xDF,   # OEM [ \ ] ' §
+      0xE2..0xE2,   # OEM < > (ISO keyboards)
+    ]
+    if Sketchup.platform == :platform_osx
+      if Sketchup.version_number < 2700000000
+        VK_PRINTABLE_RANGES = [ 33..126 ].freeze  # Character codes
+      else
+        VK_PRINTABLE_RANGES = ([ 33..126 ] + vk_oem_ranges).freeze  # Virtual key codes, or character codes for chars without one ( @ " ...), arrows are 63232+
+      end
+    else
+      VK_PRINTABLE_RANGES = ([
+        0x30..0x39,   # Digits
+        0x41..0x5A,   # Letters
+        0x60..0x6F,   # Numpad
+      ] + vk_oem_ranges).freeze  # Virtual key codes
     end
 
     # Color constants
@@ -276,6 +296,10 @@ module Ladb::OpenCutList
 
       def is_key_ctrl_or_option?(key)
         key == COPY_MODIFIER_KEY
+      end
+
+      def is_key_printable?(key)
+        VK_PRINTABLE_RANGES.any? { |range| range.include?(key) }
       end
 
       def is_key_down?(key)

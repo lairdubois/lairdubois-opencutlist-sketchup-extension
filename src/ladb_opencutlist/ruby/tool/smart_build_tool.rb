@@ -684,7 +684,7 @@ module Ladb::OpenCutList
         return true
       end
 
-      if key == Kuix::VK_ADD && repeat == 1
+      if key == Kuix::VK_ADD && repeat == 1 && !tool.is_vcb_typing?
         @state == STATE_ADD ? _leave_add_mode : _enter_add_mode  # As the add button
         return true
       end
@@ -737,20 +737,18 @@ module Ladb::OpenCutList
 
     def onToolUserText(tool, text, view)
       return true if super
-      return false if ![ STATE_X, STATE_Y, STATE_Z ].include?(@state) || @mouse_snap_point.nil?
 
-      direction, base = _get_edge_direction_and_length(@mouse_snap_point)
-      return true if direction.nil?
+      case @state
 
-      length = _read_user_text_length(tool, text, base)
-      return true if length.nil?
+      when STATE_ORIGIN
+        return _read_origin(tool, text, view)
 
-      # The typed value is the box size : the edge to the dragged face
-      measure = _get_anchor_measure(@picked_origin.offset(direction, length), length.abs)
-      _pick(@picked_origin.offset(direction, length < 0 ? -measure : measure))
-      _refresh
+      when STATE_X, STATE_Y, STATE_Z
+        return _read_edge(tool, text, view)
 
-      true
+      end
+
+      false
     end
 
     def onToolActionOptionStored(tool, action, option_group, option)
@@ -1044,6 +1042,36 @@ module Ladb::OpenCutList
       }
     end
 
+    # -- Read --
+
+    # An absolute [x,y,z] or relative <x,y,z> coordinate, relative to the active axes origin
+    def _read_origin(tool, text, view)
+      point = _read_user_text_point(tool, text, @mouse_snap_point || ORIGIN)
+      return false if point.nil?
+
+      _pick(point)
+      _refresh
+
+      true
+    end
+
+    # The typed value is the box size : the edge to the dragged face
+    def _read_edge(tool, text, view)
+      return false if @mouse_snap_point.nil?
+
+      direction, base = _get_edge_direction_and_length(@mouse_snap_point)
+      return true if direction.nil?
+
+      length = _read_user_text_length(tool, text, base)
+      return true if length.nil?
+
+      measure = _get_anchor_measure(@picked_origin.offset(direction, length), length.abs)
+      _pick(@picked_origin.offset(direction, length < 0 ? -measure : measure))
+      _refresh
+
+      true
+    end
+
     # -- Pick --
 
     def _get_previous_input_point
@@ -1057,7 +1085,7 @@ module Ladb::OpenCutList
       case @state
       when STATE_ORIGIN
         @picked_origin = point
-        @origin_directions = _get_origin_directions
+        @origin_directions = @mouse_ip.valid? && @mouse_ip.position == point ? _get_origin_directions : []  # Not on the mouse if typed
         set_state(STATE_X)
       when STATE_X
         return UI.beep if _get_edge_direction_and_length(point).first.nil?
@@ -2972,7 +3000,7 @@ module Ladb::OpenCutList
 
       when STATE_PLACE, STATE_DISTRIBUTE
 
-        if tool.is_key_shift_down?
+        if tool.is_key_shift_down? && !tool.is_vcb_typing?
           if key == Kuix::VK_ADD
             _set_distribution(@number + 1, @spacings, tool, view)
             return true
@@ -4715,7 +4743,7 @@ module Ladb::OpenCutList
 
       when STATE_PLACE
 
-        if tool.is_key_shift_down?
+        if tool.is_key_shift_down? && !tool.is_vcb_typing?
           if key == Kuix::VK_ADD
             _set_distribution(@number + 1, @widths, tool, view)
             return true
