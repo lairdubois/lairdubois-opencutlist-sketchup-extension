@@ -937,11 +937,14 @@ module Ladb::OpenCutList
       }[@state]
       if measure > 0
 
+        length_locked = @tool.is_key_shift_down? || @source[:locked_axes][@state - STATE_X]
+
         @tool.append_2d(_create_floating_label(
                           snap_point: point.transform(t),
                           text: measure,
-                          text_color: color,
-                          border_color: @tool.is_key_shift_down? || @source[:locked_axes][@state - STATE_X] ? Kuix::COLOR_MAGENTA : color
+                          text_color: length_locked ? Kuix::COLOR_WHITE : color,
+                          background_color: length_locked ? color : Kuix::COLOR_WHITE,
+                          border_color: color
                         ), LAYER_2D_DIMENSIONS)
 
       end

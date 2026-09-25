@@ -2129,6 +2129,7 @@ module Ladb::OpenCutList
       anchor_position: Kuix::Anchor::CENTER,
       text:,
       text_color: Kuix::COLOR_BLACK,
+      background_color: Kuix::COLOR_WHITE,
       border_color: Kuix::COLOR_BLACK
     )
 
@@ -2138,7 +2139,7 @@ module Ladb::OpenCutList
       k_label.text = text.to_s
       k_label.layout_data = Kuix::StaticLayoutDataWithSnap.new(snap_point, -1, -1, Kuix::Anchor.new(anchor_position))
       k_label.set_style_attribute(:color, text_color)
-      k_label.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
+      k_label.set_style_attribute(:background_color, background_color)
       k_label.set_style_attribute(:border_color, border_color)
       k_label.border.set_all!(unit * 0.25)
       k_label.padding.set!(unit * 0.5, unit * 0.5, unit * 0.3, unit * 0.5)
