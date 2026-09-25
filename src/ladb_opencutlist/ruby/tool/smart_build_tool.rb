@@ -862,19 +862,6 @@ module Ladb::OpenCutList
       point
     end
 
-    # Replaces the length of the given snapped point along the current edge by
-    # the source size if SHIFT is down.
-    def _lock_on_source_size(point)
-      return point unless @tool.is_key_shift_down?
-      _get_source_size_point(point) || point
-    end
-
-    # The mouse input point snapped by SketchUp on some geometry (a vertex, an
-    # edge, a cline) - not on a mere inference line (an axis…).
-    def _is_mouse_on_geometry?
-      @mouse_ip.degrees_of_freedom < 2 && !(@mouse_ip.vertex.nil? && @mouse_ip.edge.nil? && @mouse_ip.cline.nil?)
-    end
-
     # Keeps the current edge end at the source size - on the mouse side - in
     # '@source_size_point', on the edge as drawn (not on an axis locked at the
     # source size), and snaps the given point on it if the mouse isn't snapped
@@ -891,6 +878,19 @@ module Ladb::OpenCutList
       @mouse_ip.clear
       @source_size_snapped = true
       source_size_point
+    end
+
+    # Replaces the length of the given snapped point along the current edge by
+    # the source size if SHIFT is down.
+    def _lock_on_source_size(point)
+      return point unless @tool.is_key_shift_down?
+      _get_source_size_point(point) || point
+    end
+
+    # The mouse input point snapped by SketchUp on some geometry (a vertex, an
+    # edge, a cline) - not on a mere inference line (an axis…).
+    def _is_mouse_on_geometry?
+      @mouse_ip.degrees_of_freedom < 2 && !(@mouse_ip.vertex.nil? && @mouse_ip.edge.nil? && @mouse_ip.cline.nil?)
     end
 
     # The current edge end making the box its source size along the current
@@ -921,26 +921,6 @@ module Ladb::OpenCutList
       # The first clicked point
       @tool.append_3d(_create_floating_points(points: [ @picked_origin ], style: Kuix::POINT_STYLE_PLUS, stroke_color: Kuix::COLOR_DARK_GREY), LAYER_3D_BOX_PREVIEW)
 
-      # The line the X edge is snapped on
-      if @state == STATE_X && !@snapped_x_axis.nil?
-        k_line = Kuix::Line.new
-        k_line.position = @picked_origin
-        k_line.direction = @snapped_x_axis
-        k_line.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-        k_line.color = @snapped_x_axis == @locked_x_axis ? _get_vector_color(@snapped_x_axis) : Kuix::COLOR_MAGENTA
-        @tool.append_3d(k_line, LAYER_3D_BOX_PREVIEW)
-      end
-
-      # The line the Y edge is locked on, in the color of the locked normal
-      if @state == STATE_Y && (y_axis = _get_locked_y_axis)
-        k_line = Kuix::Line.new
-        k_line.position = @picked_origin
-        k_line.direction = y_axis
-        k_line.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-        k_line.color = _get_vector_color(@locked_xy_normal, Kuix::COLOR_MAGENTA)
-        @tool.append_3d(k_line, LAYER_3D_BOX_PREVIEW)
-      end
-
       # The current edge end at the source size, filled once the mouse snaps on it
       unless @source_size_point.nil?
         color = [ Kuix::COLOR_X, Kuix::COLOR_Y, Kuix::COLOR_Z ][@state - STATE_X]
@@ -962,16 +942,28 @@ module Ladb::OpenCutList
       box_complete = _get_box(*points, complete: true)
       _preview_box_complete(view, box_complete)
 
-      # Solid : the current edge, in its axis color
       p1, p2 = _get_current_edge(box)
       color = [ Kuix::COLOR_X, Kuix::COLOR_Y, Kuix::COLOR_Z ][@state - STATE_X]
+      direction = [ X_AXIS, Y_AXIS, Z_AXIS ][@state - STATE_X]
+      axis_color = _get_vector_color(direction.transform(t), nil)  # Color of the active axis the current edge follows, if any
+
+      # Thin dotted : the line the current edge lies on, in the color of the axis it follows, black otherwise
+      k_line = Kuix::Line.new
+      k_line.position = p1
+      k_line.direction = direction
+      k_line.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+      k_line.color = axis_color || Kuix::COLOR_BLACK
+      k_line.transformation = t
+      @tool.append_3d(k_line, LAYER_3D_BOX_PREVIEW)
+
+      # The current edge, in its axis color : solid if aligned on an active axis, long dashes otherwise
       if p1 != p2
 
         k_edge = Kuix::EdgeMotif3d.new
         k_edge.start.copy!(p1)
         k_edge.end.copy!(p2)
         k_edge.line_width = 2
-        k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+        k_edge.line_stipple = axis_color.nil? ? Kuix::LINE_STIPPLE_LONG_DASHES : Kuix::LINE_STIPPLE_SOLID
         k_edge.color = color
         k_edge.transformation = t
         @tool.append_3d(k_edge, LAYER_3D_BOX_PREVIEW)
@@ -997,23 +989,6 @@ module Ladb::OpenCutList
 
       Sketchup.set_status_text(box[:sizes][@state - STATE_X].to_l.to_s, SB_VCB_VALUE)
 
-    end
-
-    # The current edge as drawn, in the box frame : the X edge along the box
-    # min Y and Z, the Y edge from the X end, and the Z edge rising from the
-    # corner the Y edge ends on - on the Y face picked, whichever way the frame
-    # turned since.
-    def _get_current_edge(box)
-      w, d, h = box[:sizes]
-      case @state
-      when STATE_X
-        [ ORIGIN, Geom::Point3d.new(w, 0, 0) ]
-      when STATE_Y
-        [ Geom::Point3d.new(w, 0, 0), Geom::Point3d.new(w, d, 0) ]
-      when STATE_Z
-        y = @picked_y_point.transform(box[:t].inverse).y < d / 2.0 ? 0 : d
-        [ Geom::Point3d.new(w, y, 0), Geom::Point3d.new(w, y, h) ]
-      end
     end
 
     # The source content at its own sizes, its X edge starting at the mouse
@@ -1077,6 +1052,23 @@ module Ladb::OpenCutList
       k_edge.on_top = true
       @tool.append_3d(k_edge, LAYER_3D_BOX_PREVIEW)
 
+    end
+
+    # The current edge as drawn, in the box frame : the X edge along the box
+    # min Y and Z, the Y edge from the X end, and the Z edge rising from the
+    # corner the Y edge ends on - on the Y face picked, whichever way the frame
+    # turned since.
+    def _get_current_edge(box)
+      w, d, h = box[:sizes]
+      case @state
+      when STATE_X
+        [ ORIGIN, Geom::Point3d.new(w, 0, 0) ]
+      when STATE_Y
+        [ Geom::Point3d.new(w, 0, 0), Geom::Point3d.new(w, d, 0) ]
+      when STATE_Z
+        y = @picked_y_point.transform(box[:t].inverse).y < d / 2.0 ? 0 : d
+        [ Geom::Point3d.new(w, y, 0), Geom::Point3d.new(w, y, h) ]
+      end
     end
 
     # The edges of a box of the given sizes, in its frame : the X edge alone
