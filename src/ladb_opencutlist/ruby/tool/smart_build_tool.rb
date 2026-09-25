@@ -499,6 +499,7 @@ module Ladb::OpenCutList
       @up_flipped = false     # The user turned the content upside down
 
       @origin_directions = []   # Directions of the edges and clines touching the picked origin
+      @origin_segments = []     # The edge each origin direction comes from, as a world segment - nil for a cline
       @locked_x_axis = nil      # X direction locked by the arrow keys
       @snapped_x_axis = nil     # X direction the mouse is snapped on (locked or auto)
       @locked_xy_normal = nil   # XY plane normal locked by the arrow keys
@@ -597,6 +598,7 @@ module Ladb::OpenCutList
       when STATE_X
         @picked_origin = nil
         @origin_directions = []
+        @origin_segments = []
         @locked_x_axis = nil
         set_state(STATE_ORIGIN)
       when STATE_Y
@@ -807,6 +809,7 @@ module Ladb::OpenCutList
       @front_flipped = false
       @up_flipped = false
       @origin_directions = []
+      @origin_segments = []
       @locked_x_axis = nil
       @snapped_x_axis = nil
       @locked_xy_normal = nil
@@ -969,24 +972,37 @@ module Ladb::OpenCutList
       color = [ Kuix::COLOR_X, Kuix::COLOR_Y, Kuix::COLOR_Z ][@state - STATE_X]
       direction = [ X_AXIS, Y_AXIS, Z_AXIS ][@state - STATE_X]
       axis_color = _get_vector_color(direction.transform(t), nil)  # Color of the active axis the current edge follows, if any
+      edge_snapped = @state == STATE_X && !@snapped_x_axis.nil?  # Along a neighbor edge (or an axis locked by the arrow keys)
 
-      # Thin dotted : the line the current edge lies on, in the color of the axis it follows, black otherwise
+      # The neighbor edge the X direction is snapped on - or perpendicular to - highlighted
+      if edge_snapped && (index = @origin_directions.index { |direction| direction.equal?(@snapped_x_axis) }) && (segment = @origin_segments[index])
+
+        k_segments = Kuix::Segments.new
+        k_segments.add_segments(segment)
+        k_segments.line_width = 1.5
+        k_segments.color = Kuix::COLOR_MAGENTA
+        k_segments.on_top = true
+        @tool.append_3d(k_segments, LAYER_3D_BOX_PREVIEW)
+
+      end
+
+      # Thin dotted : the line the current edge lies on, in the color of the axis it follows, magenta if snapped on a neighbor edge, black otherwise
       k_line = Kuix::Line.new
       k_line.position = p1
       k_line.direction = direction
       k_line.line_stipple = Kuix::LINE_STIPPLE_DOTTED
-      k_line.color = axis_color || Kuix::COLOR_BLACK
+      k_line.color = axis_color || (edge_snapped ? Kuix::COLOR_MAGENTA : Kuix::COLOR_BLACK)
       k_line.transformation = t
       @tool.append_3d(k_line, LAYER_3D_BOX_PREVIEW)
 
-      # The current edge, in its axis color : solid if aligned on an active axis, long dashes otherwise
+      # The current edge, in its axis color : solid if aligned on an active axis or snapped on a neighbor edge, long dashes otherwise
       if p1 != p2
 
         k_edge = Kuix::EdgeMotif3d.new
         k_edge.start.copy!(p1)
         k_edge.end.copy!(p2)
         k_edge.line_width = 2
-        k_edge.line_stipple = axis_color.nil? ? Kuix::LINE_STIPPLE_LONG_DASHES : Kuix::LINE_STIPPLE_SOLID
+        k_edge.line_stipple = axis_color.nil? && !edge_snapped ? Kuix::LINE_STIPPLE_LONG_DASHES : Kuix::LINE_STIPPLE_SOLID
         k_edge.color = color
         k_edge.transformation = t
         @tool.append_3d(k_edge, LAYER_3D_BOX_PREVIEW)
@@ -1168,7 +1184,9 @@ module Ladb::OpenCutList
       case @state
       when STATE_ORIGIN
         @picked_origin = point
-        @origin_directions = @mouse_ip.valid? && @mouse_ip.position == point ? _get_origin_directions : []  # Not on the mouse if typed
+        origin_directions = @mouse_ip.valid? && @mouse_ip.position == point ? _get_origin_directions : []  # Not on the mouse if typed
+        @origin_directions = origin_directions.map(&:first)
+        @origin_segments = origin_directions.map(&:last)
         set_state(STATE_X)
       when STATE_X
         return UI.beep if _get_edge_direction_and_length(point).first.nil?
@@ -1185,18 +1203,57 @@ module Ladb::OpenCutList
       end
     end
 
-    # The directions of the edges and clines the mouse input point touches -
-    # read when the origin is picked on it.
+    # The directions of the edges the mouse input point touches and of the
+    # clines passing through it - read when the origin is picked on it - and
+    # their perpendiculars in the horizontal plane (none for a vertical one),
+    # each as a [ direction, segment ] pair : the world segment of the edge or
+    # cline it comes from, nil for an infinite cline.
     def _get_origin_directions
       return [] unless @mouse_ip.valid?
-      directions = []
+      edges = []
       if @mouse_ip.vertex
-        directions += @mouse_ip.vertex.edges.map { |edge| EdgeManipulator.new(edge, @mouse_ip.transformation).direction }
+        edges += @mouse_ip.vertex.edges
       elsif @mouse_ip.edge
-        directions << EdgeManipulator.new(@mouse_ip.edge, @mouse_ip.transformation).direction
+        edges << @mouse_ip.edge
       end
-      directions << ClineManipulator.new(@mouse_ip.cline, @mouse_ip.transformation).direction if @mouse_ip.cline
-      directions.select(&:valid?).each_with_object([]) { |direction, uniques| uniques << direction unless uniques.any? { |unique| unique.parallel?(direction) } }
+      pairs = edges.map do |edge|
+        manipulator = EdgeManipulator.new(edge, @mouse_ip.transformation)
+        [ manipulator.direction, manipulator.segment ]
+      end
+      pairs += _get_origin_clines.map do |cline, transformation|
+        manipulator = ClineManipulator.new(cline, transformation)
+        [ manipulator.direction, cline.start.nil? || cline.end.nil? ? nil : manipulator.segment ]
+      end
+      pairs = pairs.select { |direction, _| direction.valid? }
+      z_axis = _get_active_z_axis
+      pairs += pairs.map { |direction, segment| [ z_axis * direction, segment ] }.select { |direction, _| direction.valid? }
+      pairs.each_with_object([]) { |(direction, segment), uniques| uniques << [ direction.normalize, segment ] unless uniques.any? { |unique, _| unique.parallel?(direction) } }
+    end
+
+    # The clines passing through the mouse input point, as [ cline,
+    # transformation ] pairs : searched in the context of the entity it is
+    # picked on, and in the active context. That entity is read on the input
+    # point's path first : on a cline end, snapped by SketchUp itself, the
+    # cline is only there - and a face may be reported from another context.
+    def _get_origin_clines
+      model = Sketchup.active_model
+      origin = @mouse_ip.position
+      entity = @mouse_ip.instance_path.leaf
+      entity = @mouse_ip.vertex || @mouse_ip.edge || @mouse_ip.cline || @mouse_ip.face if entity.nil? || entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance)
+      contexts = []
+      contexts << [ entity.parent.entities, @mouse_ip.transformation ] unless entity.nil?
+      contexts << [ model.active_entities, model.edit_transform ] unless contexts.any? { |entities, _| entities == model.active_entities }
+      contexts.flat_map do |entities, transformation|
+        entities.grep(Sketchup::ConstructionLine).select do |cline|
+          direction = cline.direction.transform(transformation)
+          next false unless origin.on_line?([ cline.position.transform(transformation), direction ])
+          s = cline.start.nil? ? nil : cline.start.transform(transformation)
+          e = cline.end.nil? ? nil : cline.end.transform(transformation)
+          next false if !s.nil? && origin != s && (origin - s).dot(direction) < 0  # Before its start
+          next false if !e.nil? && origin != e && (e - origin).dot(direction) < 0  # After its end
+          true
+        end.map { |cline| [ cline, transformation ] }
+      end
     end
 
     # -- Library --
