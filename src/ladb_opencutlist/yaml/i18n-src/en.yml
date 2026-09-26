@@ -660,6 +660,7 @@ tab:
       veneer_material_names_filter: Filter by veneer material
       names_filter: Filter by designations
       tags_filter: Filter by badges
+      tags_filter_any: All badges
       dimensions_help: Dimensions explained
       summary: Summary
       material_type: Type
@@ -2095,6 +2096,7 @@ tab:
         info_1: You'll have the option to specify its location in the active model.
         materials: Materials
         layers: Tags
+        geometry: Geometry
         option_parts_formula: Formula
         option_parts_formula_help: The formula allows you to customize the name of the imported parts.
         option_part_wood_material_name: Wood
@@ -2105,6 +2107,8 @@ tab:
         option_part_glass_material_name_help: Material to be applied to **glass** parts.
         option_front_part_layer_name: Fronts
         option_front_part_layer_name_help: Tag to be applied to front parts.
+        option_back_part_layer_name: Back
+        option_back_part_layer_name_help: Tag to be applied to back parts.
         option_machining_material_name: Machining
         option_machining_material_name_help: Material to be applied to **machining**.
         option_machining_layer_name: Machining
@@ -2116,6 +2120,10 @@ tab:
         option_no_material_help: "*Leave this field blank to skip the application of material*."
         option_default_material_help: "*If this field is left blank, a default material will be created*."
         option_no_layer_help: "*Leave this field blank to skip the application of any tag*."
+        option_subtract_machinings: Perform machining operations on the parts
+        option_subtract_machinings_help: The **grooves**, **rebates**, and **chamfers** of parts, including those associated with accessories, are subtracted from their volume rather than being drawn. The holes remain drawn.
+        warning:
+          subtract_machinings_failed: "The machining features could not be milled into these parts; instead, they are drawn: {{ names }}"
         old_name: Original name
         new_name: New name
         count: Qty.
@@ -2434,10 +2442,14 @@ tool:
     action_0_state_3_arrows_status: "Arrows = Lock the XY-plane normal to an axis (→ X, ← Y, ↑ Z)"
     action_0_state_4_status: Click to set the module's height (Z-axis)
     action_0_state_4_lock_status: Lock to the height of the source file
-    action_0_state_5_status: Click on a group or component to save it as a module in the current folder
+    action_0_state_5_status: Click the instance you want to add
+    action_0_state_6_status: Click on the FRONT side of the module
+    action_0_state_7_status: Click on the TOP side of the module
     action_0_add_title: Add a module
     action_0_add_name: Filename
     action_0_add_overwrite: "The file « {{ name }}.skp » already exists. Would you like to replace it?"
+    action_0_add_front_label: FRONT
+    action_0_add_up_label: TOP
     action_0_flip_status: Flip the front and back
     action_0_flip_up_status: Flip top and bottom
     action_1: Build Divider
@@ -2487,6 +2499,12 @@ tool:
     action_option_options_reuse_definition_status: "Rather than creating a new one, reuse the existing part which has the same shape and is located in the same area"
     action_option_options_mirror: Mirror Layout
     action_option_options_mirror_status: Place each even-numbered front as a mirror image of its neighbor
+    action_option_options_pick_material: Color picker
+    action_option_options_pick_material_status: Apply the material of the selected part to the created parts
+    action_option_options_face_camera: In front of the camera
+    action_option_options_face_camera_status: Automatically rotate the module's front panel toward the camera
+    action_option_options_top_up: Up towards Z+
+    action_option_options_top_up_status: Automatically orient the top of the module so that it faces upward (Z+)
     action_option_options_ask_name: Part Naming
     action_option_options_ask_name_status: Enter part names manually
     action_option_options_layer_name: Layer
@@ -2495,6 +2513,7 @@ tool:
     action_option_anchor_center_y_status:  Centered on Y
     action_option_anchor_center_z_status:  Centered on Z
     action_option_anchor_origin_status: Origin of the component
+    action_option_no_layer_help: "*Leave this field blank to omit the tag*."
     detecting_cavities: "Cavity detection..."
     error:
       invalid_divider_seed: This type of part does not allow for the construction of a divider
