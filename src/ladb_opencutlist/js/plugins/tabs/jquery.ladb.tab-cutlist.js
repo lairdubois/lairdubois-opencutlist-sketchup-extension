@@ -299,11 +299,17 @@
                         const tokens = $(this).tokenfield('getTokens');
                         if (Array.isArray(tokens)) {
                             $.each(tokens, function (index, token) {
-                                if (token.label === e.attrs.label) {
+                                if (token.value.substring(1) === e.attrs.value.substring(1)) {
                                     e.preventDefault();
                                     return false;
                                 }
                             })
+                        }
+
+                        // "*" = any tag
+                        if (e.attrs.value.substring(1) === '*') {
+                            e.attrs.label = i18next.t('tab.cutlist.list.tags_filter_any');
+                            return;
                         }
 
                         // Used token only
@@ -316,7 +322,7 @@
                     .on('tokenfield:createdtoken', function (e) {
                         const $okoBtn = $('<a href="#" class="oko" data-toggle="tooltip" title="' + i18next.t('tab.cutlist.tooltip.oko_label_filter') + '"></a>')
                             .on('click', function () {
-                                e.attrs.value = (e.attrs.oko === '+' ? '-' : '+') + e.attrs.label;
+                                e.attrs.value = (e.attrs.oko === '+' ? '-' : '+') + e.attrs.value.substring(1);
                                 fnGenerateWithTagsFilter();
                             })
                             .insertBefore($('.close', e.relatedTarget))
@@ -331,7 +337,7 @@
                     })
                     .tokenfield($.extend({
                         autocomplete: {
-                            source: that.usedTags,
+                            source: [ '*' ].concat(that.usedTags),
                             delay: 100
                         },
                         showAutocompleteOnFocus: false

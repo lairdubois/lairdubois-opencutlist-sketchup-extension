@@ -110,7 +110,7 @@
                             <div class="no-screen">
                                 <ul class="ladb-cutlist-tags-filters-printable">
                                     {% for tag in generateFilters.tags_filter %}
-                                        <li>{{ tag }}</li>
+                                        <li>{% if tag|slice(1) == '*' %}{{ tag|slice(0, 1) }}{{ 'tab.cutlist.list.tags_filter_any'|i18next }}{% else %}{{ tag }}{% endif %}</li>
                                     {% endfor %}
                                 </ul>
                             </div>

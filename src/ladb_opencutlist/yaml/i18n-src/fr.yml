@@ -660,6 +660,7 @@ tab:
       veneer_material_names_filter: Matières de placage à filtrer
       names_filter: Désignations à filtrer
       tags_filter: Badges à filtrer
+      tags_filter_any: Tous les badges
       dimensions_help: Comprendre les dimensions
       summary: Récapitulatif
       material_type: Type

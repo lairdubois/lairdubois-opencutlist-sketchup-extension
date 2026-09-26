@@ -37,6 +37,8 @@ module Ladb::OpenCutList
     MATERIAL_ORIGIN_INHERITED = 2
     MATERIAL_ORIGIN_CHILD = 3
 
+    ANY_TAG_FILTER = '*'.freeze
+
     def initialize(
 
                    auto_orient: true,
@@ -93,6 +95,8 @@ module Ladb::OpenCutList
                                                      .compact
                                                      .partition { |sign, _| sign == '+' }
                                                      .map { |a| a.map(&:last) }
+      @ok_any_tag = !@ok_tags_filter.delete(ANY_TAG_FILTER).nil?  # "+*" = at least one tag
+      @ko_any_tag = !@ko_tags_filter.delete(ANY_TAG_FILTER).nil?  # "-*" = no tag at all
       @edge_material_names_filter = edge_material_names_filter
       @veneer_material_names_filter = veneer_material_names_filter
 
@@ -211,7 +215,8 @@ module Ladb::OpenCutList
 
         # Tags filter
         unless @tags_filter.empty?
-          if !@ok_tags_filter.empty? && !definition_attributes.has_all_tags?(@ok_tags_filter) || !@ko_tags_filter.empty? && definition_attributes.has_any_tags?(@ko_tags_filter)
+          if @ok_any_tag && definition_attributes.tags.empty? || @ko_any_tag && !definition_attributes.tags.empty? ||
+             !@ok_tags_filter.empty? &&!definition_attributes.has_all_tags?(@ok_tags_filter) || !@ko_tags_filter.empty? && definition_attributes.has_any_tags?(@ko_tags_filter)
             cutlist.ignored_instance_count += 1
             next
           end
