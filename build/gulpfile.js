@@ -148,6 +148,7 @@ var MODAL_JS_FILES = withBase(JS_BASE, [
     'plugins/modals/jquery.ladb.modal-smart-reshape-tool-action-1.js',
     'plugins/modals/jquery.ladb.modal-smart-join-tool-action-0.js',
     'plugins/modals/jquery.ladb.modal-smart-join-tool-action-2.js',
+    'plugins/modals/jquery.ladb.modal-smart-join-tool-action-4.js',
     'plugins/modals/jquery.ladb.modal-smart-export-tool-action-0.js',
     'plugins/modals/jquery.ladb.modal-smart-export-tool-action-1.js',
     'plugins/modals/jquery.ladb.modal-smart-export-tool-action-2.js',

@@ -2748,6 +2748,9 @@ tool:
     action_3_state_0_status: Cliquez sur la face de référence d'une pièce A pour effacer les raccords qu'elle partage avec une pièce voisine
     action_3_state_1_status: Cliquez sur la face de référence d'une pièce B pour effacer les raccords qu'elle partage avec la pièce A
     action_3_only_one_status: Limiter à un seul raccord
+    action_4: Ajouter des charnières
+    action_4_status: Ajouter des charnières pour articuler une façade
+    action_4_state_0_status: Survolez une façade près du bord sur lequel elle pivote et cliquez pour ajouter ses charnières
     action_option_group_height: Hauteur
     action_option_group_offsets: Décalages
     action_option_group_spacings: Entraxes
@@ -2763,13 +2766,19 @@ tool:
     action_option_hardware_connector_b: Connecteur B
     action_option_hardware_fitting_a: Raccord A
     action_option_hardware_fitting_b: Raccord B
+    action_option_hardware_hinge_a: Charnière (applique)
+    action_option_hardware_hinge_inset_a: Charnière (encastrée)
+    action_option_hardware_hinge_b: Embase
     action_option_machining_a: Usinage A
     action_option_machining_b: Usinage B
+    action_option_machining_inset_a: Usinage A (encastrée)
     action_option_hardware_connector_material_name: Matière des Connecteurs
     action_option_hardware_fitting_material_name: Matière des Raccords
+    action_option_hardware_hinge_material_name: Matière des Charnières
     action_option_machining_material_name: Matière des Usinages
     action_option_hardware_connector_layer_name: Balise des Connecteurs
     action_option_hardware_fitting_layer_name: Balise des Raccords
+    action_option_hardware_hinge_layer_name: Balise des Charnières
     action_option_machining_layer_name: Balise des Usinages
     measures: Mesures
     geometries: Géométries
@@ -2780,6 +2789,11 @@ tool:
       invalid_min_spacing: "L'entraxe min {{ value }} est invalide"
       invalid_max_spacing: "L'entraxe max {{ value }} est invalide"
       not_assemblable: Ce type de pièce ne peut pas être assemblé
+      not_front_panel: La pièce ciblée n'est pas une façade
+      no_hinge_cavity: Aucune cavité trouvée derrière cette façade
+      no_hinge_side: Aucun montant ne borde ce côté de la façade
+      hinge_rejected_anchors: "{{ count }} charnière écartée : elle tomberait sur une tablette"
+      hinge_rejected_anchors_plural: "{{ count }} charnières écartées : elles tomberaient sur une tablette"
       no_valid_join: Aucune surface de contact ne permet de satisfaire les contraintes d'assemblage
       occupied_anchors: "{{ count }} connecteur en conflit de position avec des connecteurs existants"
       occupied_anchors_plural: "{{ count }} connecteurs en conflit de position avec des connecteurs existants"

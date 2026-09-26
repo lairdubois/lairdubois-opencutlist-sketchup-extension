@@ -7,6 +7,8 @@ module Ladb::OpenCutList
   require_relative '../lib/fiddle/clippy/clippy'
   require_relative '../lib/fiddle/skpy/skpy'
   require_relative '../helper/user_text_helper'
+  require_relative '../helper/smart_action_handler_cavities_helper'
+  require_relative '../model/door/door_def'
 
   class SmartJoinTool < SmartTool
 
@@ -14,6 +16,7 @@ module Ladb::OpenCutList
     ACTION_REMOVE_CONNECTORS = 1
     ACTION_ADD_FITTINGS = 2
     ACTION_REMOVE_FITTINGS = 3
+    ACTION_ADD_HINGES = 4
 
     ACTION_OPTION_HEIGHT = 'height'
     ACTION_OPTION_OFFSETS = 'offsets'
@@ -34,6 +37,8 @@ module Ladb::OpenCutList
     ACTION_OPTION_GEOMETRY_HARDWARE_B = 'hardware_b'
     ACTION_OPTION_GEOMETRY_MACHINING_A = 'machining_a'
     ACTION_OPTION_GEOMETRY_MACHINING_B = 'machining_b'
+    ACTION_OPTION_GEOMETRY_HARDWARE_INSET_A = 'hardware_inset_a'
+    ACTION_OPTION_GEOMETRY_MACHINING_INSET_A = 'machining_inset_a'
     ACTION_OPTION_GEOMETRY_HARDWARE_MATERIAL_NAME = 'hardware_material_name'
     ACTION_OPTION_GEOMETRY_MACHINING_MATERIAL_NAME = 'machining_material_name'
     ACTION_OPTION_GEOMETRY_HARDWARE_LAYER_NAME = 'hardware_layer_name'
@@ -64,6 +69,14 @@ module Ladb::OpenCutList
         :action => ACTION_REMOVE_FITTINGS,
         :options => {
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_OPPOSITE ],
+        }
+      },
+      {
+        :action => ACTION_ADD_HINGES,
+        :options => {
+          ACTION_OPTION_OFFSETS => [ ACTION_OPTION_OFFSETS_START_OFFSET, ACTION_OPTION_OFFSETS_END_OFFSET ],
+          ACTION_OPTION_SPACINGS => [ ACTION_OPTION_SPACINGS_MIN_SPACING, ACTION_OPTION_SPACINGS_MAX_SPACING ],
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_MAKE_UNIQUE ],
         }
       }
     ].freeze
@@ -108,6 +121,8 @@ module Ladb::OpenCutList
       when ACTION_ADD_CONNECTORS
         return true
       when ACTION_ADD_FITTINGS
+        return true
+      when ACTION_ADD_HINGES
         return true
       end
 
@@ -221,7 +236,7 @@ module Ladb::OpenCutList
         case fetch_action
         when ACTION_ADD_CONNECTORS
           push_action(ACTION_REMOVE_CONNECTORS)
-        when ACTION_ADD_FITTINGS
+        when ACTION_ADD_FITTINGS, ACTION_ADD_HINGES
           push_action(ACTION_REMOVE_FITTINGS)
         end
         return true
@@ -252,6 +267,8 @@ module Ladb::OpenCutList
         set_action_handler(SmartJoinAddFittingsActionHandler.new(self))
       when ACTION_REMOVE_FITTINGS
         set_action_handler(SmartJoinRemoveFittingsActionHandler.new(self))
+      when ACTION_ADD_HINGES
+        set_action_handler(SmartJoinAddHingesActionHandler.new(self))
       end
 
       super
@@ -2722,8 +2739,11 @@ module Ladb::OpenCutList
 
     include UserTextHelper
 
-    def initialize(tool, previous_action_handler = nil)
-      super(SmartJoinTool::ACTION_ADD_FITTINGS, tool, previous_action_handler)
+    COLOR_DOOR_OPENING_PREVIEW = Kuix::COLOR_MAGENTA
+    DOOR_OPENING_ARC_STEP = 5.0 # Degrees between two points of an opening arc
+
+    def initialize(tool, previous_action_handler = nil, action = SmartJoinTool::ACTION_ADD_FITTINGS)
+      super(action, tool, previous_action_handler)
     end
 
     # -----
@@ -2800,13 +2820,20 @@ module Ladb::OpenCutList
 
     def _snap_ref_point_b(picker)
       return false if (neighborhood_def = _get_neighborhood_def).nil?
+      return false unless (snap_origin_point = _get_snap_origin_point(picker)).is_a?(Geom::Point3d)
 
       line_def = neighborhood_def.neighbor_def.line_def
 
-      snap_start_point = [ line_def.start_point, line_def.end_point ].min { |p1, p2| p1.distance(picker.picked_point) <=> p2.distance(picker.picked_point) }
+      snap_start_point = [ line_def.start_point, line_def.end_point ].min { |p1, p2| p1.distance(snap_origin_point) <=> p2.distance(snap_origin_point) }
 
       # Returns true if changed
       (@snap_start_point != snap_start_point).tap { @snap_start_point = snap_start_point }
+    end
+
+    # The point the fittings are counted from the nearest end of the joint
+    # line of - see #_snap_ref_point_b.
+    def _get_snap_origin_point(picker)
+      picker.picked_point
     end
 
     def _preview_join(picker)
@@ -2828,10 +2855,10 @@ module Ladb::OpenCutList
       )
       @tool.append_3d(k_points, LAYER_3D_JOIN_PREVIEW)
 
-      if @snap_start_point.is_a?(Geom::Point3d)
+      if @snap_start_point.is_a?(Geom::Point3d) && (snap_origin_point = _get_snap_origin_point(picker)).is_a?(Geom::Point3d)
 
         k_edge = Kuix::EdgeMotif3d.new
-        k_edge.start.copy!(picker.picked_point)
+        k_edge.start.copy!(snap_origin_point)
         k_edge.end.copy!(@snap_start_point)
         k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
         k_edge.line_width = 1
@@ -2928,6 +2955,10 @@ module Ladb::OpenCutList
 
         end
 
+        # -- Door opening --
+
+        _preview_door_opening(_get_propagation_def(neighborhood_def, joinery_def), geometries_def)
+
       end
 
       k_points = _create_floating_points(
@@ -2947,6 +2978,93 @@ module Ladb::OpenCutList
         @tool.show_message(PLUGIN.get_i18n_string('tool.smart_join.error.no_valid_join'), SmartTool::MESSAGE_TYPE_ERROR)
       end
 
+    end
+
+    # Previews how the part turns on the hinges being added, when the hardware
+    # is a hinge (see DoorDef) : its axis, the arcs its far corners sweep, and
+    # the part itself wide open. Read off the first picked placement of the
+    # hinge's role - the others lie on the same joint line, so on the same axis.
+    def _preview_door_opening(propagation_def, geometries_def)
+
+      [ [ :a, geometries_def.hardware_a ], [ :b, geometries_def.hardware_b ] ].each do |role, hardware|
+        next if hardware.empty?
+
+        placement = propagation_def.placements.find { |p| p.role == role && !p.seed_transformation.nil? }
+        next if placement.nil?
+        next if (hinge_def = DoorHingeDef.from_definition(hardware.definition, placement.transformation)).nil?
+        next if (drawing_def = _get_door_drawing_def(placement.definition)).nil?
+
+        t = placement.seed_transformation   # Door definition space -> world
+        pivot, axis = hinge_def.axis_line
+        max_angle = hinge_def.max_angle
+
+        fn_rotation = lambda { |angle| Geom::Transformation.rotation(pivot, axis, angle.degrees) }
+
+        # The corners of the door, along the axis and around it
+        corners = (0..7).map { |i| drawing_def.bounds.corner(i) }
+        positions = corners.map { |point| (point - pivot) % axis }
+
+        # Axis
+
+        k_edge = Kuix::EdgeMotif3d.new
+        k_edge.start.copy!(pivot.offset(axis, positions.min).transform(t))
+        k_edge.end.copy!(pivot.offset(axis, positions.max).transform(t))
+        k_edge.line_stipple = Kuix::LINE_STIPPLE_DASH_DOT_DASH
+        k_edge.line_width = 1.5
+        k_edge.color = COLOR_DOOR_OPENING_PREVIEW
+        k_edge.on_top = true
+        @tool.append_3d(k_edge, LAYER_3D_JOIN_PREVIEW)
+
+        # Arcs swept by the farthest corner at each end of the axis
+
+        steps = [ (max_angle / DOOR_OPENING_ARC_STEP).ceil, 1 ].max
+        [ positions.min, positions.max ].each do |position|
+          corner = corners.select.with_index { |_, i| (positions[i] - position).abs < 1.0.mm }
+                          .max_by { |point| point.distance_to_line([ pivot, axis ]) }
+          next if corner.nil?
+
+          k_polyline = Kuix::Polyline.new
+          k_polyline.add_points((0..steps).map { |i| corner.transform(fn_rotation.call(max_angle * i / steps)).transform(t) })
+          k_polyline.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+          k_polyline.line_width = 1.5
+          k_polyline.color = COLOR_DOOR_OPENING_PREVIEW
+          k_polyline.on_top = true
+          @tool.append_3d(k_polyline, LAYER_3D_JOIN_PREVIEW)
+
+        end
+
+        # The door wide open
+
+        k_segments = Kuix::Segments.new
+        k_segments.add_segments(
+          drawing_def.edge_manipulators.flat_map(&:segment) +
+          drawing_def.curve_manipulators.flat_map(&:segments)
+        )
+        k_segments.color = COLOR_DOOR_OPENING_PREVIEW
+        k_segments.line_width = 1
+        k_segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+        k_segments.transformation = t * fn_rotation.call(max_angle)
+        k_segments.on_top = true
+        @tool.append_3d(k_segments, LAYER_3D_JOIN_PREVIEW)
+
+      end
+
+    end
+
+    # The outline of the door - the given definition - without the fittings
+    # glued into it, in its own space. Memoized for the last definition asked.
+    def _get_door_drawing_def(definition)
+      return @door_drawing_def[1] if @door_drawing_def.is_a?(Array) && @door_drawing_def[0] == definition
+      drawing_def = CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new([ definition ]) ],
+                                                         ignore_surfaces: true,
+                                                         ignore_faces: true,
+                                                         ignore_edges: false,
+                                                         ignore_soft_edges: true,
+                                                         container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART_WITHOUT_MACHININGS
+      ).run
+      drawing_def = nil unless drawing_def.is_a?(DrawingDef) && drawing_def.bounds.valid? && !drawing_def.bounds.empty?
+      @door_drawing_def = [ definition, drawing_def ]
+      drawing_def
     end
 
     # -----
@@ -3301,6 +3419,472 @@ module Ladb::OpenCutList
 
     AddJoineryDef = Struct.new(:at_a, :at_b, :join_def)
     AddJoineryJoinDef = Struct.new(:anchor_points_3d, :occupied_anchor_points_3d, :start_point_3d, :end_point_3d)
+
+  end
+
+  # HINGES : the fittings of a door (see DoorDef), laid by HOVERING the
+  # FRONT PANEL near the edge it turns on, and a click.
+  #
+  # The side of the carcass the door turns on is read off the CAVITIES of the
+  # carcass rather than off the model (see CavitiesDef#pick_ray) : the front
+  # panel stands in the mouth, in front of everything it could turn on, and
+  # an applied panel is no wall of the cavities it closes. A probe ray is
+  # cast into them, past the hovered edge, from in front of the door ; the
+  # wall it lands on, facing that edge, is the side's inner face (B) - and
+  # the back of the door, the face turned towards the cavities, is A. A
+  # being the door is what sets the fitting frame the hinge data are read in.
+  #
+  # The edge is the one nearest the cursor, the LONG edges favoured - the
+  # sides of an ordinary door - without being the only ones : a square door,
+  # a flap turning on its top edge, a door of more than four edges.
+  #
+  # Whether the door is laid ON the carcass or IN its mouth is read off the
+  # same two faces - an inset door's back stands behind the front of the
+  # side - and picks the hardware and machining of A accordingly.
+  class SmartJoinAddHingesActionHandler < SmartJoinAddFittingsActionHandler
+
+    include SmartActionHandlerCavitiesHelper
+
+    # How far the door may stand PAST the inner face of the side it turns on -
+    # an applique covers the side's edge - and how far SHORT of it - an inset
+    # door leaves a gap. Beyond, the side is no edge of that door : a divider
+    # it runs across, a side of the neighbouring compartment.
+    HINGE_SIDE_MAX_OVERHANG = 50.mm
+    HINGE_SIDE_MAX_GAP = 10.mm
+
+    # How far behind the front of the side the back of the door has to stand
+    # to be read as INSET.
+    INSET_MIN_DEPTH = 1.mm
+
+    # How squarely a cavity's mouth has to face the door for the cavity to be
+    # one the door closes - about 8°. The same goes for the wall the probe ray
+    # lands on, against the edge it was cast past.
+    HINGE_MOUTH_MIN_DOT = 0.99
+
+    # How deep, behind the door, a cavity's wall has to run along the side for
+    # a hinge base to be screwed on it : the sliver a setback plinth leaves
+    # behind the front plane is open towards the door too.
+    HINGE_CAVITY_MIN_DEPTH = 20.mm
+
+    # The probe ray (see #_probe_hinge_side) starts HINGE_PROBE_REACH in front
+    # of the door's back and twice that inside its edge, and runs at 45°
+    # towards the edge : it crosses the mouth HINGE_PROBE_REACH inside the
+    # edge, clear of a side an applique covers, and meets the side as far
+    # behind the mouth. Cast again further along the edge when it finds no
+    # cavity - a fixed shelf, a plinth at the height of the cursor : by
+    # HINGE_PROBE_STEP either way, then at the middle and the quarters of
+    # the edge.
+    HINGE_PROBE_REACH = 100.mm
+    HINGE_PROBE_STEP = 60.mm
+
+    def initialize(tool, previous_action_handler = nil)
+      super(tool, previous_action_handler, SmartJoinTool::ACTION_ADD_HINGES)
+    end
+
+    def stop
+      _cancel_cavities_dwell
+      super
+    end
+
+    # -----
+
+    # -- STATE --
+
+    def get_state_status(state)
+      PLUGIN.get_i18n_string("tool.smart_join.action_#{@action}_state_#{state}_status") + '.' +
+        ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_join.action_3") + '.'
+    end
+
+    def get_state_cursor(state)
+      SmartCursorManager.cursor_select_join_plus
+    end
+
+    # -----
+
+    # A pick on the move only designates carcasses in passing, see
+    # SmartActionHandlerCavitiesHelper#_defer_cavities.
+    def onToolMouseMove(tool, flags, x, y, view)
+      _defer_cavities { super }
+    end
+
+    def onToolLButtonUp(tool, flags, x, y, view)
+      return true if _flush_cavities_dwell   # Still waiting for the cavities : the click asks for them
+      if _has_active_part_b? && (neighborhood_def = _get_neighborhood_def) && (joinery_def = _get_add_joinery_def(neighborhood_def)) && !joinery_def.join_def.anchor_points_3d.empty?
+        _add_fittings
+        _restart
+      else
+        UI.beep
+      end
+      true
+    end
+
+    def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
+      false # No opposite face here : both faces are deduced
+    end
+
+    def onPickerChanged(picker, view)
+      @tool.clear_3d([ LAYER_3D_JOIN_PREVIEW, LAYER_3D_SNAP_POINT_PREVIEW, LAYER_3D_PART_B_PREVIEW ])
+      @tool.hide_message
+      _pick_part(picker, view)
+      _reset_neighborhood_def if _pick_hinge_side(picker)
+      _reset_joinery_def if _snap_ref_point_b(picker)
+      if _has_active_part_b?
+        _preview_part(@active_part_entity_path_b, @active_part_b, LAYER_3D_PART_B_PREVIEW)
+        _preview_ref_face_a
+        _preview_join(picker)
+      elsif @hinge_side_error.is_a?(String)
+        @tool.show_message(PLUGIN.get_i18n_string(@hinge_side_error), SmartTool::MESSAGE_TYPE_ERROR)
+      end
+      true
+    end
+
+    def onToolGlobalPresetChanged(tool, dictionary, section)
+      @geometries_defs = nil
+      super
+    end
+
+    def onToolTransactionUndo(tool, model)
+      _reset_cavities_def
+      @door_face_manipulators = nil
+    end
+
+    # -----
+
+    protected
+
+    def _reset
+      super
+      @hinge_side_error = nil
+      @hinge_pick_point = nil
+      @hinge_inset = false
+    end
+
+    # -----
+
+    def _can_activate_part?(part_entity_path, part)
+      can_activate, error_key, error_vars = super
+      return [ can_activate, error_key, error_vars ] unless can_activate
+      return [ false, 'tool.smart_join.error.not_front_panel' ] if part_entity_path.is_a?(Array) && DefinitionAttributes.role_of(part_entity_path.last) != DefinitionAttributes::ROLE_FRONT_PANEL   # Nil path : a reset, always allowed
+      true
+    end
+
+    # -----
+
+    # Nothing to lean the cavities on but the back panels : the front panel
+    # the side is aimed through, laid on or in the mouth, has to leave that
+    # mouth open - see CommonSolidFindCavitiesWorker, APPLIED PANELS. A back
+    # set back in its groove still closes the compartment, as it does for
+    # SmartBuildTool's front panels.
+    def _cavities_recess_panel_types
+      [ DefinitionAttributes::ROLE_BACK_PANEL ]
+    end
+
+    # The cavities of the door's carcass - nil while they wait for the pick
+    # to dwell there, see SmartActionHandlerCavitiesHelper#_get_cavities_def.
+    def _get_door_cavities_def
+      return nil unless _has_active_part_a?
+      _get_cavities_def(@active_part_entity_path_a, @active_part_a)
+    end
+
+    # -----
+
+    # The side the hovered door turns on, and both faces of the joint - see
+    # the class comment. Fills @active_part_entity_path_b, @active_part_b,
+    # @active_face_manipulator_a and _b and @hinge_inset, or clears them and
+    # names the reason in @hinge_side_error. Returns whether the joint
+    # changed.
+    def _pick_hinge_side(picker)
+
+      side = nil
+      @hinge_side_error = nil
+      @hinge_pick_point = nil
+
+      catch(:done) do
+
+        throw :done unless (cavities_def = _get_door_cavities_def).is_a?(CavitiesDef) && cavities_def.valid?
+        throw :done unless (cursor = picker.picked_point).is_a?(Geom::Point3d)
+
+        @hinge_side_error = 'tool.smart_join.error.no_hinge_cavity'
+        throw :done unless (face_manipulator_a = _get_door_back_face_manipulator(cavities_def)).is_a?(FaceManipulator)
+
+        @hinge_side_error = 'tool.smart_join.error.no_hinge_side'
+        @hinge_pick_point = cursor.project_to_plane(face_manipulator_a.plane)
+
+        # The edges, nearest the cursor first - the distance to an edge
+        # stretched by how much shorter it is than the longest one
+        edges = _get_face_edges(face_manipulator_a)
+        max_length = edges.map { |p1, p2| p1.distance(p2) }.max
+        edges.map { |p1, p2|
+          length = p1.distance(p2)
+          point = _closest_point_on_segment(@hinge_pick_point, p1, p2)
+          [ @hinge_pick_point.distance(point) * max_length / length, p1, p2, point ]
+        }.sort_by(&:first).each do |_, p1, p2, point|
+          side = _probe_hinge_side(cavities_def, face_manipulator_a, p1, p2, point)
+          break unless side.nil?
+        end
+        throw :done if side.nil?
+
+        @hinge_side_error = nil
+
+      end
+
+      part_entity_path_b, part_b, face_manipulator_a, face_manipulator_b, inset = side
+
+      changed = @active_face_manipulator_a != face_manipulator_a || @active_face_manipulator_b != face_manipulator_b || @active_part_entity_path_b != part_entity_path_b || @hinge_inset != (inset == true)
+
+      @active_part_entity_path_b = part_entity_path_b
+      @active_part_b = part_b
+      @active_face_manipulator_a = face_manipulator_a
+      @active_face_manipulator_b = face_manipulator_b
+      @hinge_inset = inset == true
+
+      changed
+    end
+
+    # The side the door would turn on along the given edge of its back -
+    # [ part_entity_path_b, part_b, face_manipulator_a, face_manipulator_b,
+    # inset ] - or nil when the probe ray cast past it finds none.
+    def _probe_hinge_side(cavities_def, face_manipulator_a, p1, p2, point)
+
+      na = face_manipulator_a.normal
+      length = p1.distance(p2)
+      direction = p1.vector_to(p2).normalize
+      inward = (na * direction).normalize
+      inward.reverse! unless _is_point_on_face?(face_manipulator_a, Geom.linear_combination(0.5, p1, 0.5, p2).offset(inward, 1.mm))
+
+      position = (point - p1) % direction
+      [ position, position + HINGE_PROBE_STEP, position - HINGE_PROBE_STEP, length * 0.5, length * 0.25, length * 0.75 ].each do |probe_position|
+        next unless probe_position >= 0 && probe_position <= length
+        origin = p1.offset(direction, probe_position).offset(inward, HINGE_PROBE_REACH * 2).offset(na, -HINGE_PROBE_REACH)
+        picked = cavities_def.pick_ray(origin, Geom::Vector3d.linear_combination(-1, inward, 1, na).normalize)
+        next if picked.nil?
+
+        _, wall_point, plane_manipulator, wall_drawing_def = picked
+        next unless plane_manipulator.is_a?(PlaneManipulator)
+        next unless wall_drawing_def.is_a?(DrawingDef) && (wall_path = wall_drawing_def.container_path).is_a?(Array) && !wall_path.empty?
+        next unless (wall_part = cavities_def.part_of(wall_drawing_def)).is_a?(Part)
+
+        # B : the face of the side the wall was read from, facing the edge
+        wall_normal = plane_manipulator.normal
+        face_manipulator_b = _get_part_face_manipulators(wall_path).find { |fm|
+          fm.normal.parallel?(wall_normal) &&
+            wall_point.distance_to_plane(fm.plane).to_f < 0.01.mm &&
+            _is_point_on_face?(fm, wall_point)
+        }
+        next if face_manipulator_b.nil?
+        next unless face_manipulator_b.normal % inward > HINGE_MOUTH_MIN_DOT
+
+        # The side must be an EDGE of the door : the door ends near its inner face
+        pb = face_manipulator_b.position
+        nb = face_manipulator_b.normal
+        overhang = face_manipulator_a.outer_loop_manipulator.points.map { |p| (pb - p) % nb }.max
+        next unless overhang < HINGE_SIDE_MAX_OVERHANG && overhang > -HINGE_SIDE_MAX_GAP
+
+        # INSET when the front of the side stands in front of the door's back
+        pa = face_manipulator_a.position
+        inset = face_manipulator_b.outer_loop_manipulator.points.map { |p| (p - pa) % na }.min < -INSET_MIN_DEPTH
+
+        return [ wall_path, wall_part, face_manipulator_a, face_manipulator_b, inset ]
+      end
+
+      nil
+    end
+
+    # The BACK of the door : its broadest face turned towards the cavities -
+    # a point a little in front of it lies in one. nil when none is.
+    def _get_door_back_face_manipulator(cavities_def)
+      _get_part_face_manipulators(@active_part_entity_path_a).sort_by { |fm| -fm.face.area }.first(4).find { |fm|
+        cavities_def.fragment_defs_for_point(fm.centroid.offset(fm.normal, HINGE_CAVITY_MIN_DEPTH)).any?
+      }
+    end
+
+    # The edges of the outer loop of the given face, in world space, as
+    # [ start, end ] pairs - consecutive collinear segments merged.
+    def _get_face_edges(face_manipulator)
+      points = face_manipulator.outer_loop_manipulator.points
+      edges = []
+      points.each_with_index do |point, index|
+        next_point = points[(index + 1) % points.length]
+        next if point == next_point
+        if !edges.empty? && edges.last[0].vector_to(edges.last[1]).parallel?(point.vector_to(next_point))
+          edges.last[1] = next_point
+        else
+          edges << [ point, next_point ]
+        end
+      end
+      if edges.length > 1 && edges.last[0].vector_to(edges.last[1]).parallel?(edges.first[0].vector_to(edges.first[1]))
+        edges.first[0] = edges.pop[0]
+      end
+      edges
+    end
+
+    def _closest_point_on_segment(point, p1, p2)
+      v = p1.vector_to(p2)
+      t = [ [ (point - p1) % v / (v % v), 0.0 ].max, 1.0 ].min
+      Geom.linear_combination(1 - t, p1, t, p2)
+    end
+
+    # The joint line, cut down to the CAVITIES the door closes : the part of
+    # the side's inner face that is a wall of a compartment behind the door.
+    # A side runs past its compartments - over the top and the bottom, down
+    # to the floor under a plinth - and the door past them too, over the
+    # panels' edges : neither is where a hinge base can be screwed.
+    def _get_neighborhood_def(tolerance = 0.001)
+      return @neighborhood_def unless @neighborhood_def.nil?
+      return nil if (neighborhood_def = super).nil?
+
+      line_def = neighborhood_def.neighbor_def.line_def
+      if (ranges = _get_hinge_cavity_ranges(line_def))
+        start_point = line_def.start_point
+        direction = start_point.vector_to(line_def.end_point).normalize
+        @hinge_cavity_spans = ranges.map { |min, max| [ start_point.offset(direction, min), start_point.offset(direction, max) ] }
+        line_def.end_point = @hinge_cavity_spans.last.last
+        line_def.start_point = @hinge_cavity_spans.first.first
+      else
+        @hinge_cavity_spans = nil
+        @neighborhood_def = nil
+      end
+
+      @neighborhood_def
+    end
+
+    # The hinges that would land BETWEEN two of the cavities - on the edge of
+    # a fixed shelf, of a rail - are left out : only a hinge whose footprint
+    # along the joint line stands whole against one cavity wall is kept.
+    #
+    # The anchors left out are kept in @hinge_rejected_anchor_points, to be
+    # shown.
+    def _get_add_joinery_def(neighborhood_def)
+      return @joinery_def unless @joinery_def.nil?
+      @hinge_rejected_anchor_points = []
+      return nil if (joinery_def = super).nil?
+      return joinery_def unless @hinge_cavity_spans.is_a?(Array) && @hinge_cavity_spans.length > 1
+
+      origin = @hinge_cavity_spans.first.first
+      direction = origin.vector_to(@hinge_cavity_spans.last.last).normalize
+      spans = @hinge_cavity_spans.map { |p_min, p_max| [ (p_min - origin) % direction, (p_max - origin) % direction ] }
+      half_width = _get_geometries_def.bounds.width / 2
+
+      joinery_def.join_def.anchor_points_3d.delete_if do |point|
+        position = (point - origin) % direction
+        rejected = spans.none? { |min, max| position - half_width >= min - 0.01.mm && position + half_width <= max + 0.01.mm }
+        @hinge_rejected_anchor_points << point if rejected
+        rejected
+      end
+
+      joinery_def
+    end
+
+    # The spans, along the joint line from its start point, of the cavity
+    # walls the side's inner face bears under the door - sorted, overlapping
+    # ones merged - nil when there is none.
+    #
+    # Only the cavities OPEN towards the door count, and DEEP enough behind
+    # it : the void behind a plinth runs along the side under the door as
+    # well, but the plinth is what closes it - and the sliver it leaves when
+    # set back is no room for a hinge base.
+    def _get_hinge_cavity_ranges(line_def)
+      return nil unless (cavities_def = _get_door_cavities_def).is_a?(CavitiesDef) && cavities_def.valid?
+
+      start_point = line_def.start_point
+      length = start_point.distance(line_def.end_point)
+      return nil if length <= 0
+      direction = start_point.vector_to(line_def.end_point).normalize
+
+      fm_b = line_def.neighbor_face_manipulator
+      wall_normal = fm_b.normal.reverse                         # A cavity's walls face out of it : into the side
+      mouth_normal = line_def.face_manipulator.normal.reverse   # And its mouth towards the door
+
+      ranges = []
+      cavities_def.fragment_defs.each do |fragment_def|
+        next unless fragment_def.opening_defs.any? { |opening_def| opening_def.normal % mouth_normal > HINGE_MOUTH_MIN_DOT }
+        points = fragment_def.wall_loops_on_plane(wall_normal, fm_b.position).flatten(1)
+        next if points.empty?
+        depths = points.map { |point| (point - start_point) % mouth_normal }
+        next if depths.max - depths.min < HINGE_CAVITY_MIN_DEPTH
+        positions = points.map { |point| (point - start_point) % direction }
+        f_min = [ positions.min, 0 ].max
+        f_max = [ positions.max, length ].min
+        next if f_max - f_min < 1.mm   # A compartment the door does not cover
+        ranges << [ f_min, f_max ]
+      end
+      return nil if ranges.empty?
+
+      ranges.sort_by(&:first).each_with_object([]) do |(min, max), merged|
+        if !merged.empty? && min <= merged.last.last + 0.01.mm
+          merged.last[1] = [ merged.last.last, max ].max
+        else
+          merged << [ min, max ]
+        end
+      end
+    end
+
+    # The faces of the given part, in world space, memoized per path.
+    def _get_part_face_manipulators(part_entity_path)
+      @door_face_manipulators = {} unless @door_face_manipulators.is_a?(Hash)
+      key = PathUtils.serialize_path(part_entity_path)
+      return @door_face_manipulators[key] if @door_face_manipulators.key?(key)
+      drawing_def = CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new(part_entity_path) ], **_get_drawing_def_parameters).run
+      if drawing_def.is_a?(DrawingDef)
+        drawing_def.transform!(drawing_def.transformation.inverse)  # Face manipulators to 'world' space (same normalization as _raytest_part_face)
+        face_manipulators = drawing_def.face_manipulators
+      else
+        face_manipulators = []
+      end
+      @door_face_manipulators[key] = face_manipulators
+    end
+
+    def _get_snap_origin_point(picker)
+      @hinge_pick_point
+    end
+
+    def _preview_join(picker)
+      super
+      return if @joinery_def.nil? || !@hinge_rejected_anchor_points.is_a?(Array) || @hinge_rejected_anchor_points.empty?
+
+      k_points = _create_floating_points(
+        points: @hinge_rejected_anchor_points,
+        style: Kuix::POINT_STYLE_CROSS,
+        stroke_color: Kuix::COLOR_RED,
+        stroke_width: 2
+      )
+      @tool.append_3d(k_points, LAYER_3D_JOIN_PREVIEW)
+
+      # Occupied anchors say more : what is already there
+      return unless @joinery_def.join_def.occupied_anchor_points_3d.empty?
+      @tool.show_message(
+        PLUGIN.get_i18n_string('tool.smart_join.error.hinge_rejected_anchors', { :count => @hinge_rejected_anchor_points.length }),
+        @joinery_def.join_def.anchor_points_3d.empty? ? SmartTool::MESSAGE_TYPE_ERROR : SmartTool::MESSAGE_TYPE_WARNING
+      )
+    end
+
+    # Making the door or the side unique replaces the definition the faces
+    # read so far belong to.
+    def _add_fittings
+      super
+      @door_face_manipulators = nil
+    end
+
+    # -----
+
+    # The hardware and machining of A - the door - are the INSET ones when the
+    # door stands in the mouth.
+    def _fetch_option_hardware_a
+      return super unless @hinge_inset
+      @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_HARDWARE_INSET_A)
+    end
+
+    def _fetch_option_machining_a
+      return super unless @hinge_inset
+      @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_MACHINING_INSET_A)
+    end
+
+    # One set of geometries per kind of door, both kept.
+    def _get_geometries_def
+      @geometries_defs = {} unless @geometries_defs.is_a?(Hash)
+      @geometries_def = @geometries_defs[@hinge_inset == true]
+      @geometries_defs[@hinge_inset == true] = super
+    end
 
   end
 

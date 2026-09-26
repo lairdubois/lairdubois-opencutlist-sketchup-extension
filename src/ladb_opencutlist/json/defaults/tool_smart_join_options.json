@@ -40,5 +40,22 @@
   },
   "action_3": {  /* ACTION_REMOVE_FITTINGS */
     "opposite": false
+  },
+  "action_4": {  /* ACTION_ADD_HINGES */
+    "start_offset": { "metric": "68mm", "imperial": "2.75\"" },
+    "end_offset": { "metric": "68mm", "imperial": "2.75\"" },
+    "min_spacing": "0",
+    "max_spacing": { "metric": "800mm", "imperial": "32\"" },
+    "make_unique": false,
+    "hardware_a": "$LIB/components/fittings/clip-top.skp",
+    "hardware_inset_a": "$LIB/components/fittings/clip-top.encastree.skp",
+    "hardware_b": "$LIB/components/fittings/clip-top.embase.skp",
+    "machining_a": "$LIB/components/fittings/clip-top.machining.skp",
+    "machining_inset_a": "$LIB/components/fittings/clip-top.encastree.machining.skp",
+    "machining_b": "$LIB/components/fittings/clip-top.embase.machining.skp",
+    "hardware_material_name": null,
+    "machining_material_name": null,
+    "hardware_layer_name": null,
+    "machining_layer_name": null
   }
 }

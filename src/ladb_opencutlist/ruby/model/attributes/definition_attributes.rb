@@ -31,7 +31,13 @@ module Ladb::OpenCutList
     ROLE_FRONT_PANEL = 'front_panel'.freeze
     ROLE_BACK_PANEL = 'back_panel'.freeze
 
-    ROLES = [ ROLE_FRONT_PANEL, ROLE_BACK_PANEL ].freeze
+    # A hinge : a fitting (see SmartJoinTool, ACTION_ADD_FITTINGS) that makes
+    # the part it is glued into turn. Borne by the definition of the hardware
+    # in its library SKP, set in the fitting frame : X along the joint line,
+    # +Y towards the hinged edge, +Z into the carcass.
+    ROLE_HINGE = 'hinge'.freeze
+
+    ROLES = [ ROLE_FRONT_PANEL, ROLE_BACK_PANEL, ROLE_HINGE ].freeze
 
     # The roles of a panel LAID ON its container rather than part of it - what
     # the cavity detection has to leave out of the carcass. A separate role

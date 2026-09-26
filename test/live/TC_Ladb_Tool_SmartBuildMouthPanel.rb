@@ -162,7 +162,7 @@ module MouthPanelRegression
     handler.instance_variable_set(:@active_part, part)
 
     cavities_def = handler.send(:_get_cavities_def)
-    raise "no cavities (#{cavities_def.inspect[0, 200]})" unless cavities_def.is_a?(OCL::SmartBuildPanelActionHandler::CavitiesDef) && cavities_def.valid?
+    raise "no cavities (#{cavities_def.inspect[0, 200]})" unless cavities_def.is_a?(OCL::CavitiesDef) && cavities_def.valid?
 
     ray = lambda { |r|
       origin = pnt(r['origin'], t)
