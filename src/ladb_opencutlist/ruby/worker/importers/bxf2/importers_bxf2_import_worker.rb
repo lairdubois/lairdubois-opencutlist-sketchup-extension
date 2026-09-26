@@ -10,6 +10,10 @@ module Ladb::OpenCutList
     NODE_UP_TRANSFORM = Geom::Transformation.rotation(ORIGIN, X_AXIS, 90.degrees)
     COMPONENT_UP_TRANSFORM = Geom::Transformation.axes(ORIGIN, X_AXIS, Z_AXIS.reverse, Y_AXIS)
 
+    # Cabinet groups use SketchUp axes (Up = Z+) instead of BXF axes (Up = Y+)
+    CABINET_UP_TRANSFORM = COMPONENT_UP_TRANSFORM
+    CABINET_UP_TRANSFORM_INVERSE = CABINET_UP_TRANSFORM.inverse
+
     PART_FRONT_BACK_SWAP_TRANSFORM = Geom::Transformation.axes(ORIGIN, X_AXIS, Y_AXIS.reverse, Z_AXIS.reverse)
     PART_FRONT_BACK_SWAP_TRANSFORM_INVERSE = PART_FRONT_BACK_SWAP_TRANSFORM.inverse
 
@@ -227,11 +231,11 @@ module Ladb::OpenCutList
         else
           cabinet_group_links_group = entities.add_group
           cabinet_group_links_group.name = cabinet_group_link.description if cabinet_group_link.description
-          cabinet_group_links_group.transformation = transformation * cabinet_group_link.transformations.to_t
+          cabinet_group_links_group.transformation = transformation * cabinet_group_link.transformations.to_t * CABINET_UP_TRANSFORM
           cabinet_group_links_entities = cabinet_group_links_group.entities
         end
 
-        _process_cabinet_links(cabinet_group.cabinet_links, cabinet_group_links_entities, project_wrapper: project_wrapper)
+        _process_cabinet_links(cabinet_group.cabinet_links, cabinet_group_links_entities, transformation: CABINET_UP_TRANSFORM_INVERSE, project_wrapper: project_wrapper)
 
       end
 
@@ -244,24 +248,28 @@ module Ladb::OpenCutList
         cabinet = cabinet_link.cabinet
         cabinet_link_wrapper = ImportersBxf2CabinetLinkFormulaWrapper.new(cabinet_link)
 
+        # Cabinet local axes : Up = Z+ and origin moved from BXF back-left-bottom to front-left-bottom
+        cabinet_up_transform = Geom::Transformation.translation(Geom::Vector3d.new(0, 0, cabinet_link_wrapper.depth.to_f)) * CABINET_UP_TRANSFORM
+        cabinet_up_transform_inverse = cabinet_up_transform.inverse
+
         if @dry_run
           cabinet_links_entities = nil
         else
           cabinet_links_group = entities.add_group
           cabinet_links_group.name = cabinet_link.description if cabinet_link.description
-          cabinet_links_group.transformation = transformation * cabinet_link.transformations.to_t
+          cabinet_links_group.transformation = transformation * cabinet_link.transformations.to_t * cabinet_up_transform
           cabinet_links_entities = cabinet_links_group.entities
         end
 
-        _process_part_links(cabinet.part_links, cabinet_links_entities, project_wrapper: project_wrapper, cabinet_link_wrapper: cabinet_link_wrapper)
-        _process_container_links(cabinet.container_links, cabinet_links_entities, project_wrapper: project_wrapper, cabinet_link_wrapper: cabinet_link_wrapper)
-        _process_function_unit_links(cabinet.function_unit_links, cabinet_links_entities, project_wrapper: project_wrapper, cabinet_link_wrapper: cabinet_link_wrapper)
+        _process_part_links(cabinet.part_links, cabinet_links_entities, transformation: cabinet_up_transform_inverse, project_wrapper: project_wrapper, cabinet_link_wrapper: cabinet_link_wrapper)
+        _process_container_links(cabinet.container_links, cabinet_links_entities, transformation: cabinet_up_transform_inverse, project_wrapper: project_wrapper, cabinet_link_wrapper: cabinet_link_wrapper)
+        _process_function_unit_links(cabinet.function_unit_links, cabinet_links_entities, transformation: cabinet_up_transform_inverse, project_wrapper: project_wrapper, cabinet_link_wrapper: cabinet_link_wrapper)
 
       end
 
     end
 
-    def _process_part_links(part_links, entities, project_wrapper: nil, cabinet_link_wrapper: nil, function_unit_wrapper: nil)
+    def _process_part_links(part_links, entities, transformation: IDENTITY, project_wrapper: nil, cabinet_link_wrapper: nil, function_unit_wrapper: nil)
 
       part_links.each do |part_link|
 
@@ -321,7 +329,7 @@ module Ladb::OpenCutList
                                                                           definition
                                                                         end
 
-          instance = entities.add_instance(definition, part_link.transformations.to_t * PART_FRONT_BACK_SWAP_TRANSFORM)
+          instance = entities.add_instance(definition, transformation * part_link.transformations.to_t * PART_FRONT_BACK_SWAP_TRANSFORM)
           instance.layer = _get_front_part_layer if part.model_key.start_with?('H-FRON')
           instance.material = _get_part_material(part.material)
 
