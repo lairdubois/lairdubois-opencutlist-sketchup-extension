@@ -19,6 +19,10 @@ module Ladb::OpenCutList
     CABINET_UP_TRANSFORM = COMPONENT_UP_TRANSFORM
     CABINET_UP_TRANSFORM_INVERSE = CABINET_UP_TRANSFORM.inverse
 
+    # Function unit groups use SketchUp axes (Up = Z+) instead of BXF axes (Up = Y+)
+    FUNCTION_UNIT_UP_TRANSFORM = COMPONENT_UP_TRANSFORM
+    FUNCTION_UNIT_UP_TRANSFORM_INVERSE = FUNCTION_UNIT_UP_TRANSFORM.inverse
+
     PART_FRONT_BACK_SWAP_TRANSFORM = Geom::Transformation.axes(ORIGIN, X_AXIS, Y_AXIS.reverse, Z_AXIS.reverse)
     PART_FRONT_BACK_SWAP_TRANSFORM_INVERSE = PART_FRONT_BACK_SWAP_TRANSFORM.inverse
 
@@ -414,13 +418,13 @@ module Ladb::OpenCutList
           function_unit_group = entities.add_group
           function_unit_group.name = "#{('A'..'Z').take(function_unit_link.zone.column + 1).last}/#{function_unit_link.zone.row + 1}"
           function_unit_group.definition.description = function_unit.description if function_unit.description
-          function_unit_group.transformation = transformation * function_unit_link.transformations.to_t
+          function_unit_group.transformation = transformation * function_unit_link.transformations.to_t * FUNCTION_UNIT_UP_TRANSFORM
           function_unit_entities = function_unit_group.entities
         end
 
         function_unit_wrapper = ImportersBxf2FunctionUnitLinkFormulaWrapper.new(function_unit_link)
 
-        _process_part_links(function_unit.part_links, function_unit_entities, project_wrapper: project_wrapper, cabinet_link_wrapper: cabinet_link_wrapper, function_unit_wrapper: function_unit_wrapper)
+        _process_part_links(function_unit.part_links, function_unit_entities, transformation: FUNCTION_UNIT_UP_TRANSFORM_INVERSE, project_wrapper: project_wrapper, cabinet_link_wrapper: cabinet_link_wrapper, function_unit_wrapper: function_unit_wrapper)
 
         unless @dry_run
 
@@ -445,7 +449,7 @@ module Ladb::OpenCutList
 
           end
 
-          _process_component_links(function_unit.component_links, function_unit_entities, article_entities_stacks)
+          _process_component_links(function_unit.component_links, function_unit_entities, transformation: FUNCTION_UNIT_UP_TRANSFORM_INVERSE, article_entities_stacks: article_entities_stacks)
 
         end
 
@@ -453,7 +457,7 @@ module Ladb::OpenCutList
 
     end
 
-    def _process_component_links(component_links, entities, article_entities_stacks = {})
+    def _process_component_links(component_links, entities, transformation: IDENTITY, article_entities_stacks: {})
 
       component_links.each do |component_link|
 
@@ -525,7 +529,7 @@ module Ladb::OpenCutList
                                                                    definition
                                                                  end
 
-        t = component_link.transformations.to_t
+        t = transformation * component_link.transformations.to_t
 
         # Special case for "Cut" machining that is applyed as scale transformation on the instance
         if (cut_machining_link = component.machining_links.find { |link| link.machining.is_a?(Bxf::BxfMachiningCut) })
