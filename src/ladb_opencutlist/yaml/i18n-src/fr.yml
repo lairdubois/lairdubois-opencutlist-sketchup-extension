@@ -2508,6 +2508,7 @@ tool:
     action_option_anchor_center_y_status: Centré en Y
     action_option_anchor_center_z_status: Centré en Z
     action_option_anchor_origin_status: Origine du composant
+    action_option_no_layer_help: "*Laissez ce champ vide pour ne pas appliquer de balise*."
     detecting_cavities: "Détection des cavités..."
     error:
       invalid_divider_seed: Ce type de pièce ne permet pas la construction d'un séparateur

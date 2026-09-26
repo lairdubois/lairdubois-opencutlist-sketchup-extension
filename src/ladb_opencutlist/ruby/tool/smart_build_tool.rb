@@ -7336,8 +7336,9 @@ module Ladb::OpenCutList
           # the panels of a kind at once : looked up by NAME, created if missing,
           # and none at all for a blank name.
           InstanceAttributes.write_role(instance, _panel_role)
-          layer_name = _fetch_option_layer_name
-          instance.layer = model.layers.add(layer_name) if layer_name.is_a?(String) && !layer_name.strip.empty?
+          if (layer_name = _fetch_option_layer_name).is_a?(String) && !layer_name.strip.empty?
+            instance.layer = model.layers.add(layer_name)
+          end
           instance.material = material unless material.nil?
 
           created_entity_count += 1

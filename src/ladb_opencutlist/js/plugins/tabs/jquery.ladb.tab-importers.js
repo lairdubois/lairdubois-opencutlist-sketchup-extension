@@ -294,6 +294,7 @@
             $inputMachiningMaterialName.ladbTextinputText(fnMaterialTextinputOptions(7));
             $inputHardwareMaterialName.ladbTextinputText(fnMaterialTextinputOptions(5));
             $inputFrontPartLayerName.ladbTextinputText(TEXTINPUT_LAYERS_OPTIONS);
+            $inputBackPartLayerName.ladbTextinputText(TEXTINPUT_LAYERS_OPTIONS);
             $inputMachiningLayerName.ladbTextinputText(TEXTINPUT_LAYERS_OPTIONS);
             $inputHardwareLayerName.ladbTextinputText(TEXTINPUT_LAYERS_OPTIONS);
 

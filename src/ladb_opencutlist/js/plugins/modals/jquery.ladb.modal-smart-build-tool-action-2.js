@@ -70,6 +70,7 @@
             $selectMeasureReversed.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
             $selectReduceEnvelope.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
             $selectAskName.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
+            $inputLayerName.ladbTextinputText({});
 
             fnFillInputs(options);
 
