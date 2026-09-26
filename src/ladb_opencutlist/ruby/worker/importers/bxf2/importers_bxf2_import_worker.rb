@@ -26,7 +26,7 @@ module Ladb::OpenCutList
     PART_FRONT_BACK_SWAP_TRANSFORM = Geom::Transformation.axes(ORIGIN, X_AXIS, Y_AXIS.reverse, Z_AXIS.reverse)
     PART_FRONT_BACK_SWAP_TRANSFORM_INVERSE = PART_FRONT_BACK_SWAP_TRANSFORM.inverse
 
-    # Blum part model keys telling what a part is FOR (see InstanceAttributes, ROLE) : any front ("H-FRON-Tuer",
+    # Blum part model keys telling what a part is FOR (see DefinitionAttributes, ROLE) : any front ("H-FRON-Tuer",
     # "H-FRON-Blende", "H-FRON-HK", ...) and the carcass back ("Korpusrueckwand"). A drawer back ("H-RUEW-*") belongs
     # to its drawer box and has no role.
     FRONT_PANEL_MODEL_KEY_PREFIX = 'H-FRON'.freeze
@@ -361,6 +361,7 @@ module Ladb::OpenCutList
 
                                                                           da = DefinitionAttributes.new(definition)
                                                                           da.orientation_locked_on_axis = true
+                                                                          da.role = _get_part_role(part)
                                                                           da.write_to_attributes
 
                                                                           # Process machinings : grooves, rabbets and chamfers are subtracted if possible
@@ -381,10 +382,9 @@ module Ladb::OpenCutList
                                                                         end
 
           instance = entities.add_instance(definition, transformation * part_link.transformations.to_t * PART_FRONT_BACK_SWAP_TRANSFORM)
-          if (role = _get_part_role(part))
-            InstanceAttributes.write_role(instance, role)
-            instance.layer = _get_front_part_layer if role == InstanceAttributes::ROLE_FRONT_PANEL
-            instance.layer = _get_back_part_layer if role == InstanceAttributes::ROLE_BACK_PANEL
+          if (role = DefinitionAttributes.role_of(definition))
+            instance.layer = _get_front_part_layer if role == DefinitionAttributes::ROLE_FRONT_PANEL
+            instance.layer = _get_back_part_layer if role == DefinitionAttributes::ROLE_BACK_PANEL
           end
           instance.material = _get_part_material(part.material)
 
@@ -1032,8 +1032,8 @@ module Ladb::OpenCutList
 
     def _get_part_role(part)
       model_key = part.model_key.to_s
-      return InstanceAttributes::ROLE_FRONT_PANEL if model_key.start_with?(FRONT_PANEL_MODEL_KEY_PREFIX)
-      return InstanceAttributes::ROLE_BACK_PANEL if model_key == BACK_PANEL_MODEL_KEY
+      return DefinitionAttributes::ROLE_FRONT_PANEL if model_key.start_with?(FRONT_PANEL_MODEL_KEY_PREFIX)
+      return DefinitionAttributes::ROLE_BACK_PANEL if model_key == BACK_PANEL_MODEL_KEY
       nil
     end
 

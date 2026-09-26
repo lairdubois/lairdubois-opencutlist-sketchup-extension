@@ -2863,7 +2863,7 @@ module Ladb::OpenCutList
       false
     end
 
-    # Which kinds of APPLIED PANEL already drawn (see InstanceAttributes::
+    # Which kinds of APPLIED PANEL already drawn (see DefinitionAttributes::
     # ROLES_APPLIED_PANEL) make the openings they fill recede - see
     # CommonSolidFindCavitiesWorker, INSET FRONT PANELS. None here : a handler
     # that fits a panel ONTO an opening has to read that opening as the
@@ -3017,7 +3017,7 @@ module Ladb::OpenCutList
     # -----
 
     # The paths of the APPLIED PANELS the given container holds - a front
-    # panel or a back, see InstanceAttributes::ROLES_APPLIED_PANEL - of the given TYPES,
+    # panel or a back, see DefinitionAttributes::ROLES_APPLIED_PANEL - of the given TYPES,
     # at any depth and WHATEVER its visibility.
     #
     # A panel of a type NOT asked for is skipped, never descended into : it is
@@ -3039,8 +3039,8 @@ module Ladb::OpenCutList
         next unless entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance)
         next if entity.definition.behavior.always_face_camera?
         entity_path = container_path + [ entity ]
-        role = InstanceAttributes.role_of(entity)
-        if InstanceAttributes.applied_panel_role?(role)
+        role = DefinitionAttributes.role_of(entity)
+        if DefinitionAttributes.applied_panel_role?(role)
           applied_panel_entity_paths << entity_path if types.include?(role)   # An applied panel is read WHOLE : what it holds is its own business, and a panel inside a panel is none
         else
           _fetch_applied_panel_entity_paths(entity, entity_path, types, applied_panel_entity_paths)
@@ -3101,7 +3101,7 @@ module Ladb::OpenCutList
                      .flat_map { |group| group.get_parts }
 
       # The APPLIED PANELS - a front panel or a back, see
-      # InstanceAttributes::ROLES_APPLIED_PANEL - are held apart from the panels of the
+      # DefinitionAttributes::ROLES_APPLIED_PANEL - are held apart from the panels of the
       # carcass : one is laid ON the carcass, and read as a panel of it, it
       # pushes the envelope forward over the part of itself it covers - the
       # openings that are left then read on a slanted, oversized cap, and the
@@ -3130,7 +3130,7 @@ module Ladb::OpenCutList
       panel_instance_infos = parts.flat_map { |container_part|
         container_part.def.instance_infos.values
       }.reject { |instance_info|
-        InstanceAttributes.applied_panel_role?(InstanceAttributes.role_of(instance_info.entity))
+        DefinitionAttributes.applied_panel_role?(DefinitionAttributes.role_of(instance_info.entity))
       }
 
       drawing_defs = panel_instance_infos.map { |instance_info| _decompose_cavity_panel(instance_info.path, false) }
@@ -3148,7 +3148,7 @@ module Ladb::OpenCutList
       own_panel_drawing_defs = []
       unless recess_panel_types.empty? && own_panel_types.empty?
         _fetch_applied_panel_entity_paths(container, container_path, recess_panel_types + own_panel_types).each do |entity_path|
-          role = InstanceAttributes.role_of(entity_path.last)
+          role = DefinitionAttributes.role_of(entity_path.last)
           drawing_def = _decompose_cavity_panel(entity_path, true)
           front_panel_drawing_defs << drawing_def if recess_panel_types.include?(role)
           own_panel_drawing_defs << drawing_def if own_panel_types.include?(role)
@@ -4004,7 +4004,7 @@ module Ladb::OpenCutList
     # which the worker reads off the cavities themselves : there is nothing to
     # tell it here.
     def _cavities_recess_panel_types
-      InstanceAttributes::ROLES_APPLIED_PANEL
+      DefinitionAttributes::ROLES_APPLIED_PANEL
     end
 
     # -----
@@ -5709,7 +5709,7 @@ module Ladb::OpenCutList
     end
 
     # The ROLE the panels are marked with, which is the only thing that
-    # says what a panel is FOR - see InstanceAttributes. Read both ways : it
+    # says what a panel is FOR - see DefinitionAttributes. Read both ways : it
     # marks what this handler builds, and it recognises what it must not build
     # on top of (see #_picked_on_existing_panel?). Abstract, and for the very
     # reason the marking exists : geometry cannot answer it.
@@ -5771,7 +5771,7 @@ module Ladb::OpenCutList
       _fetch_option_reduce_envelope? && !_fetch_option_overlay_full_overlay?
     end
 
-    # The OTHER kind of panel, never its own - see InstanceAttributes.
+    # The OTHER kind of panel, never its own - see DefinitionAttributes.
     #
     # A panel of the other kind is a wall of the compartment being faced : a
     # back set back in its groove closes the carcass a board's thickness -
@@ -5791,7 +5791,7 @@ module Ladb::OpenCutList
     # a panel is fitted onto has to be read as the CARCASS leaves it, or the
     # next panel would be laid against the back of the one already there.
     def _cavities_recess_panel_types
-      InstanceAttributes::ROLES_APPLIED_PANEL - [ _panel_role ]
+      DefinitionAttributes::ROLES_APPLIED_PANEL - [ _panel_role ]
     end
 
     # Its OWN kind, and only it : the panels the cavities are blind to are
@@ -5813,7 +5813,7 @@ module Ladb::OpenCutList
     # stands. #_get_panel_opening_def cannot catch it either : it only reads
     # what the pick resolved TO, never what actually stopped the ray. Only the
     # pick itself still knows that, off the face it hit - marked, like every
-    # panel, by its ROLE alone (see InstanceAttributes).
+    # panel, by its ROLE alone (see DefinitionAttributes).
     #
     # Its OWN kind of panel, never every kind : a back panel already drawn is
     # the most natural thing in the world to hover when a front panel is being
@@ -5829,7 +5829,7 @@ module Ladb::OpenCutList
     # that is wide open. See #_panel_fills_mouth?.
     def _picked_on_existing_panel?(picker, view)
       return false unless (picked_face_path = picker.picked_face_path).is_a?(Array)
-      return false if (index = picked_face_path.index { |entity| InstanceAttributes.role_of(entity) == _panel_role }).nil?
+      return false if (index = picked_face_path.index { |entity| DefinitionAttributes.role_of(entity) == _panel_role }).nil?
 
       # Nothing to tell where it stands : refused, as any panel of its kind was
       return true unless @picked_point.is_a?(Geom::Point3d)
@@ -7320,7 +7320,7 @@ module Ladb::OpenCutList
 
         # A panel already laid on the carcass is not carcass : a panel never runs
         # across another back, nor across a front.
-        next false if InstanceAttributes.applied_panel_role?(InstanceAttributes.role_of(drawing_def.container))
+        next false if DefinitionAttributes.applied_panel_role?(DefinitionAttributes.role_of(drawing_def.container))
 
         footprint_paths = _get_panel_footprint_paths(drawing_def, opening_def, ti)
         next false if footprint_paths.nil? || footprint_paths.empty?
@@ -7639,10 +7639,10 @@ module Ladb::OpenCutList
 
           # Marked as a panel, so that the cavity detection can go on reading the
           # carcass bare - see SmartBuildPanelActionHandler#_get_cavities_def and
-          # InstanceAttributes, ROLE. The tag is only there to show or hide
+          # DefinitionAttributes, ROLE. The tag is only there to show or hide
           # the panels of a kind at once : looked up by NAME, created if missing,
           # and none at all for a blank name.
-          InstanceAttributes.write_role(instance, _panel_role)
+          DefinitionAttributes.write_role(instance.definition, _panel_role)
           if (layer_name = _fetch_option_layer_name).is_a?(String) && !layer_name.strip.empty?
             instance.layer = model.layers.add(layer_name)
           end
@@ -8004,7 +8004,7 @@ module Ladb::OpenCutList
     # into another back, or into a front.
     def _cut_slot_drawing_defs(cavities_def, slot, ti)
       cavities_def.drawing_defs.select { |drawing_def|
-        next false if InstanceAttributes.applied_panel_role?(InstanceAttributes.role_of(drawing_def.container))
+        next false if DefinitionAttributes.applied_panel_role?(DefinitionAttributes.role_of(drawing_def.container))
         z_min, z_max = _drawing_def_plane_extent(drawing_def, ti)
         !z_min.nil? && z_max > slot[0] + SolidMeshDef::TOLERANCE && z_min < slot[1] - SolidMeshDef::TOLERANCE
       }
@@ -8668,7 +8668,7 @@ module Ladb::OpenCutList
     end
 
     def _panel_role
-      InstanceAttributes::ROLE_FRONT_PANEL
+      DefinitionAttributes::ROLE_FRONT_PANEL
     end
 
     def _panel_operation_name
@@ -8846,7 +8846,7 @@ module Ladb::OpenCutList
   # compartment AWAY from the user - the back of a carcass.
   #
   # Shaped exactly like a front panel, and that is the whole difficulty : only
-  # what the part is FOR tells the two apart (see InstanceAttributes). What it
+  # what the part is FOR tells the two apart (see DefinitionAttributes). What it
   # really does differently is how it is HELD :
   #
   #   INSET   : a back is not laid in its mouth, it is let into a GROOVE cut
@@ -8887,7 +8887,7 @@ module Ladb::OpenCutList
     end
 
     def _panel_role
-      InstanceAttributes::ROLE_BACK_PANEL
+      DefinitionAttributes::ROLE_BACK_PANEL
     end
 
     def _panel_operation_name

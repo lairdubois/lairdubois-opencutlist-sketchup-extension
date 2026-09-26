@@ -9,12 +9,46 @@ module Ladb::OpenCutList
     CUMULABLE_LENGTH = 1
     CUMULABLE_WIDTH = 2
 
+    # -- ROLE --
+    #
+    # What a part IS FOR, where nothing in its geometry says so - see
+    # CommonSolidFindCavitiesWorker, APPLIED PANELS : a front panel laid on its
+    # carcass and a back laid on the same way are shaped exactly alike, and
+    # only what the part is FOR tells the two apart.
+    #
+    # It is borne by the DEFINITION : the part itself, which is what the
+    # cutlist counts. What makes a part a front - its hinges, their
+    # machinings - is drawn into the definition, and every occurrence of it
+    # is that same front. SketchUp copies the attributes of a definition onto
+    # the new one when an occurrence is made unique (explicitly, or by
+    # editing a copied group), and DefinitionList#load keeps them on the
+    # definitions of a module loaded from another SKP file - where it drops
+    # those of the TAGS it brings in. The tag the panels are put on is only
+    # there to show or hide them at once.
+    #
+    # Stored as a plain String under 'role'.
+
+    ROLE_FRONT_PANEL = 'front_panel'.freeze
+    ROLE_BACK_PANEL = 'back_panel'.freeze
+
+    ROLES = [ ROLE_FRONT_PANEL, ROLE_BACK_PANEL ].freeze
+
+    # The roles of a panel LAID ON its container rather than part of it - what
+    # the cavity detection has to leave out of the carcass. A separate role
+    # each rather than one "applied panel" role for both, because what the two
+    # are FOR is exactly what has to be told apart : a handler draws its own
+    # role, and must not offer to draw a second one where one already stands -
+    # while the OTHER role is the most natural wall in the world to lean a pick
+    # on (see SmartBuildMouthPanelActionHandler#_picked_on_existing_panel?).
+    ROLES_APPLIED_PANEL = [ ROLE_FRONT_PANEL, ROLE_BACK_PANEL ].freeze
+
     attr_accessor :uuid,
                   :url, :tags,
                   :cumulable, :instance_count_by_part,
                   :mass, :price,
                   :length_increase, :width_increase, :thickness_increase,
-                  :symmetrical, :ignore_grain_direction, :follow_grain_direction, :orientation_locked_on_axis, :thickness_layer_count
+                  :symmetrical, :ignore_grain_direction, :follow_grain_direction, :orientation_locked_on_axis, :thickness_layer_count,
+                  :role
     attr_reader :definition
 
     @@cached_uuids = {}
@@ -70,6 +104,29 @@ module Ladb::OpenCutList
         end
       end
       return []
+    end
+
+    def self.valid_role(role)
+      ROLES.include?(role) ? role : nil
+    end
+
+    # Whether the given role marks a panel LAID ON its container - see
+    # ROLES_APPLIED_PANEL.
+    def self.applied_panel_role?(role)
+      ROLES_APPLIED_PANEL.include?(role)
+    end
+
+    # The role of the given entity - a definition, or an instance read
+    # through its definition - nil when it has none : what an entity of an
+    # untouched model, or any entity that is neither, answers.
+    def self.role_of(entity)
+      entity = entity.definition if entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance)
+      return nil unless entity.is_a?(Sketchup::ComponentDefinition)
+      valid_role(entity.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'role'))
+    end
+
+    def self.write_role(definition, role)
+      definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'role', role)
     end
 
     # -----
@@ -175,6 +232,7 @@ module Ladb::OpenCutList
         @follow_grain_direction = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'follow_grain_direction', false)
         @orientation_locked_on_axis = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'orientation_locked_on_axis', false)
         @thickness_layer_count = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'thickness_layer_count', 1)
+        @role = DefinitionAttributes.role_of(@definition)
       end
     end
 
@@ -201,6 +259,11 @@ module Ladb::OpenCutList
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'follow_grain_direction', @follow_grain_direction)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'orientation_locked_on_axis', @orientation_locked_on_axis)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'thickness_layer_count', @thickness_layer_count)
+        if @role.nil?
+          @definition.delete_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'role') unless @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'role').nil?
+        else
+          DefinitionAttributes.write_role(@definition, @role)
+        end
       end
     end
 

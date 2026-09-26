@@ -155,7 +155,7 @@ module MouthPanelRegression
       handler.define_singleton_method(:_panel_opening_facing_vector) { |_view| [ facing.x, facing.y, facing.z ] }
     end
 
-    part_path = [ case_instance, case_instance.definition.entities.grep(Sketchup::ComponentInstance).find { |instance| !OCL::InstanceAttributes.applied_panel_role?(OCL::InstanceAttributes.role_of(instance)) } ]
+    part_path = [ case_instance, case_instance.definition.entities.grep(Sketchup::ComponentInstance).find { |instance| !OCL::DefinitionAttributes.applied_panel_role?(OCL::DefinitionAttributes.role_of(instance)) } ]
     part = handler.send(:_generate_part_from_path, part_path)
     raise 'no part' unless part.is_a?(OCL::Part)
     handler.instance_variable_set(:@active_part_entity_path, part_path)
