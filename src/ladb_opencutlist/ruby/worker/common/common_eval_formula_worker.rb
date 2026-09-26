@@ -10,6 +10,10 @@ module Ladb::OpenCutList
     # runaway loops or heavy recursion hanging SketchUp, since eval() itself has no such limit.
     MAX_EVAL_STEPS = 200_000
 
+    # A formula that only reads a variable (ex : the default "@part") can't loop : evaluated without the step
+    # limit guard, whose TracePoint costs ~30 ms to enable (:c_call tracing touches all the loaded Ruby code).
+    TRIVIAL_FORMULA_REGEX = /\A\s*@\w+\s*\z/
+
     def initialize(
 
                   formula:,
@@ -38,7 +42,11 @@ module Ladb::OpenCutList
 
       begin
 
-        value = _eval_with_step_limit(@formula, @data.get_binding)  # Discussed here : https://forums.sketchup.com/t/how-to-secure-ruby-code-passed-to-eval/
+        value = if @formula =~ TRIVIAL_FORMULA_REGEX
+                  eval(@formula, @data.get_binding)
+                else
+                  _eval_with_step_limit(@formula, @data.get_binding)
+                end  # Discussed here : https://forums.sketchup.com/t/how-to-secure-ruby-code-passed-to-eval/
         value = value.export if value.is_a?(FormulaWrapper)
 
       rescue Exception => e

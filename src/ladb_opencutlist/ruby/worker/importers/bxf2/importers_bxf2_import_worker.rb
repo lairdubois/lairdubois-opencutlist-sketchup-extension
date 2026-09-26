@@ -168,7 +168,7 @@ module Ladb::OpenCutList
     def _import_at(transformation, &callback)
 
       model = Sketchup.active_model
-      model.start_operation('Import BXF2', false)
+      model.start_operation('Import BXF2', true)
 
         begin
 
