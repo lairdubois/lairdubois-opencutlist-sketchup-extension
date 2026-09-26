@@ -16,6 +16,7 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added Smart Join Tool **(DEV team only)**
   * Added Grain Continuity support
   * Added Cutlist part names filter
+  * Added Cutlist "All badges" filter
   * Added RO translations
   * Added SHIFT + (+/-) shortcuts in Smart Handle Tools to change copies during preview
   * Added CSV importer in File menu
@@ -33,6 +34,7 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 ### 2026-09-26
  * Improved Smart Build Tools UI/UX
  * Improved Smart Stretch Tool by adding SHIFT key to lock the section move and snap starting point elsewhere
+ * Improved BXF2 importer
  * Added "All badges" filter to Parts List
 ### 2026-09-25
  * Improved Smart Build Tools
