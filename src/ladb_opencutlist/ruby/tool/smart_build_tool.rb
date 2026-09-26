@@ -2455,7 +2455,7 @@ module Ladb::OpenCutList
         complete ? @source[:sizes][source_indices[index]] : 0
       }
       edge_t = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis) * Geom::Transformation.translation(Geom::Vector3d.new(0, measures[1].to_f < 0 ? -edge_sizes[1] : 0, 0))
-      flipped = _is_front_on_y_max?(edge_t, edge_sizes, measures[1].to_f >= 0) != @front_flipped
+      flipped = _is_front_on_y_max?(edge_t, edge_sizes, measures[1].to_f < 0) != @front_flipped
 
       # The source axes in the frame : Y backward if flipped (the front on the
       # box max Y side), Z on the top axis - reversed if upside down - and X
@@ -2553,15 +2553,16 @@ module Ladb::OpenCutList
 
     # Whether the box front is its max Y side : the Y side facing the camera
     # the most - with the 'face camera' option on. Seen from above (no side
-    # clearly facing it), or with the option off, the one away from the X edge
-    # - 'x_edge_on_y_min' - as the X edge is drawn along the back.
-    def _is_front_on_y_max?(t, sizes, x_edge_on_y_min)
-      return x_edge_on_y_min unless _fetch_option_face_camera?
+    # clearly facing it), or with the option off, the one along the X edge
+    # - 'x_edge_on_y_max' - as the X edge is drawn along the front : a box drawn
+    # along the active X and Y axes then matches them.
+    def _is_front_on_y_max?(t, sizes, x_edge_on_y_max)
+      return x_edge_on_y_max unless _fetch_option_face_camera?
       camera = Sketchup.active_model.active_view.camera
       v = camera.perspective? ? Geom::Point3d.new(sizes[0] / 2, sizes[1] / 2, sizes[2] / 2).transform(t).vector_to(camera.eye) : camera.direction.reverse
-      return x_edge_on_y_min unless v.valid?
+      return x_edge_on_y_max unless v.valid?
       cos = t.yaxis.normalize % v.normalize
-      return x_edge_on_y_min if cos.abs < 0.15
+      return x_edge_on_y_max if cos.abs < 0.15
       cos > 0
     end
 
