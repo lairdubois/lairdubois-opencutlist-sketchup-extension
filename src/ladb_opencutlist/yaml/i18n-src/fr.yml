@@ -2441,10 +2441,14 @@ tool:
     action_0_state_3_arrows_status: "Flèches = Verrouiller la normale du plan XY sur un axe (→ X, ← Y, ↑ Z)"
     action_0_state_4_status: Cliquez pour définir la hauteur du module (axe Z)
     action_0_state_4_lock_status: Verrouiller sur la hauteur du fichier source
-    action_0_state_5_status: Cliquez sur un groupe ou un composant pour l'enregistrer comme module dans le dossier courant
+    action_0_state_5_status: Cliquez l'instance à ajouter
+    action_0_state_6_status: Cliquez la face AVANT du module
+    action_0_state_7_status: Cliquez la face du HAUT du module
     action_0_add_title: Ajouter un module
     action_0_add_name: Nom du fichier
     action_0_add_overwrite: "Le fichier « {{ name }}.skp » existe déjà. Voulez-vous le remplacer ?"
+    action_0_add_front_label: AVANT
+    action_0_add_up_label: HAUT
     action_0_flip_status: Inverser la façade et le dos
     action_0_flip_up_status: Inverser le haut et le bas
     action_1: Construire un Séparateur

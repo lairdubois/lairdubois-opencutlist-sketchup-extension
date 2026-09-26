@@ -773,23 +773,32 @@ module Ladb::OpenCutList
       k_box.set_style_attribute(:background_color, background_color)
       k_box.set_style_attribute(:border_color, border_color)
 
-        fn_create_lbl = lambda do |item|
+        fn_create_lbl = lambda do |item, row_index|
 
           is_title = item.start_with?('#')
           item = item[1..-1] if is_title
+          is_inverted = item.start_with?('!')
+          item = item[1..-1] if is_inverted
 
           k_lbl = Kuix::Label.new
           k_lbl.text = item
           k_lbl.text_bold = true if is_title
           k_lbl.text_size = unit * (is_title || items.one? ? 3 : 2.5) * get_text_unit_factor
+          k_lbl.text_size = unit * (row_index == 0 ? 3 : 2.5) * get_text_unit_factor
           k_lbl.text_align = TextAlignLeft
-          k_lbl.set_style_attribute(:color, text_color)
+          if is_inverted
+            k_lbl.padding.set!(unit / 2.0, unit / 2.0, 0, unit / 2.0)
+            k_lbl.set_style_attribute(:background_color, text_color)
+            k_lbl.set_style_attribute(:color, background_color)
+          else
+            k_lbl.set_style_attribute(:color, text_color)
+          end
 
           return k_lbl
         end
 
         items = [ items ] if items.is_a?(String)
-        items.each do |item|
+        items.each_with_index do |item, index|
           next if item.nil?
 
           if item.is_a?(String)
@@ -805,17 +814,17 @@ module Ladb::OpenCutList
               next
             end
 
-            k_box.append(fn_create_lbl.call(item))
+            k_box.append(fn_create_lbl.call(item, index))
 
           elsif item.is_a?(Array)
 
             k_panel = Kuix::Panel.new
-            k_panel.layout = Kuix::InlineLayout.new(true, @unit * 1.5)
+            k_panel.layout = Kuix::InlineLayout.new(true, @unit * 1.5, Kuix::Anchor.new(Kuix::Anchor::LEFT))
 
             item.each do |sub_item|
 
               if sub_item.is_a?(String)
-                k_panel.append(fn_create_lbl.call(sub_item))
+                k_panel.append(fn_create_lbl.call(sub_item, index))
               elsif sub_item.is_a?(Kuix::Motif2d)
                 sub_item.padding.set_all!(@unit)
                 sub_item.min_size.set_all!(@unit * get_text_unit_factor * 3)

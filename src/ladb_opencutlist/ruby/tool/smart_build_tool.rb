@@ -464,7 +464,11 @@ module Ladb::OpenCutList
     STATE_X = 2
     STATE_Y = 3
     STATE_Z = 4
-    STATE_ADD = 5     # Picking an instance to save as a file of the browsed folder
+    STATE_ADD_SELECT = 5  # Picking an instance to save as a file of the browsed folder
+    STATE_ADD_FRONT = 6   # Picking the bounds face that becomes the module front (-Y)
+    STATE_ADD_UP = 7      # Picking the bounds face that becomes the module top (+Z)
+
+    ADD_STATES = [ STATE_ADD_SELECT, STATE_ADD_FRONT, STATE_ADD_UP ]
 
     # The least sine between X and an XY plane normal locked by the arrow
     # keys : a 10 degree threshold.
@@ -512,8 +516,12 @@ module Ladb::OpenCutList
 
       @source = nil
 
-      @add_instance = nil  # Instance hovered in STATE_ADD
-      @add_tooltip_instance = nil  # Instance the STATE_ADD tooltip describes
+      @add_instance = nil  # Instance hovered in STATE_ADD_SELECT, then picked
+      @add_tooltip_key = nil  # What the add tooltip shows, to rebuild it only once changed
+      @add_hover_face = nil  # Bounds face (Kuix::Bounds3d::FRONT…) hovered in STATE_ADD_FRONT or STATE_ADD_UP
+      @add_refused_face = nil  # Bounds face hovered in STATE_ADD_UP that can't be the top (on the front axis)
+      @add_front_face = nil  # Bounds face picked as the module front
+      @add_up_face = nil     # Bounds face picked as the module top, while its file is named
 
       @double_click_time = nil  # To ignore the button up closing a double click
 
@@ -546,7 +554,7 @@ module Ladb::OpenCutList
       case state
       when STATE_Z
         return SmartCursorManager.cursor_pull
-      when STATE_ADD
+      when *ADD_STATES
         return SmartCursorManager.cursor_select_module_plus
       end
 
@@ -604,8 +612,19 @@ module Ladb::OpenCutList
       when STATE_Z
         @picked_y_point = nil
         set_state(STATE_Y)
-      when STATE_ADD
+      when STATE_ADD_SELECT
         _leave_add_mode
+      when STATE_ADD_FRONT
+        @add_instance = nil
+        @add_hover_face = nil
+        @tool.clear_3d(LAYER_3D_BOX_PREVIEW)
+        @tool.clear_2d(LAYER_2D_DIMENSIONS)  # The face labels
+        set_state(STATE_ADD_SELECT)
+      when STATE_ADD_UP
+        @add_front_face = nil
+        @add_hover_face = nil
+        set_state(STATE_ADD_FRONT)
+        _preview_add_instance
       end
       _refresh
 
@@ -637,11 +656,13 @@ module Ladb::OpenCutList
       when STATE_Z
         _snap_z(x, y, view)
         _preview_box(view)
-      when STATE_ADD
+      when STATE_ADD_SELECT
         _pick_add_instance(x, y, view)
+      when STATE_ADD_FRONT, STATE_ADD_UP
+        _pick_add_face(x, y, view)
       end
 
-      view.tooltip = @state == STATE_ADD ? '' : @mouse_ip.tooltip
+      view.tooltip = ADD_STATES.include?(@state) ? '' : @mouse_ip.tooltip
       view.invalidate
 
     end
@@ -651,10 +672,15 @@ module Ladb::OpenCutList
       @tool.clear_2d(LAYER_2D_DIMENSIONS)
       @mouse_ip.clear
       view.tooltip = ''
-      if @state == STATE_ADD
-        @add_instance = @add_tooltip_instance = nil
-        @tool.remove_tooltip
+      case @state
+      when STATE_ADD_SELECT
+        @add_instance = nil
+        _preview_add_instance
+      when STATE_ADD_FRONT, STATE_ADD_UP
+        @add_hover_face = @add_refused_face = nil
+        _preview_add_instance
       end
+      _remove_add_tooltip
       super
     end
 
@@ -662,7 +688,7 @@ module Ladb::OpenCutList
       # The button up closing a double click, if the platform sends one
       double_click_time, @double_click_time = @double_click_time, nil
       return if !double_click_time.nil? && Time.now - double_click_time < 0.5
-      return (@add_instance.nil? ? UI.beep : _save_add_instance) if @state == STATE_ADD
+      return _pick_add(view) if ADD_STATES.include?(@state)
       return UI.beep if @mouse_snap_point.nil? || @source.nil?
       _pick(@mouse_snap_point)
       _refresh
@@ -703,7 +729,7 @@ module Ladb::OpenCutList
       end
 
       if key == Kuix::VK_ADD && repeat == 1 && !tool.is_vcb_typing?
-        @state == STATE_ADD ? _leave_add_mode : _enter_add_mode  # As the add button
+        ADD_STATES.include?(@state) ? _leave_add_mode : _enter_add_mode  # As the add button
         return true
       end
 
@@ -772,15 +798,12 @@ module Ladb::OpenCutList
     def onStateChanged(old_state, new_state)
       super
       _show_locked_axis_message
-      if [ STATE_SOURCE, STATE_ADD ].include?(new_state)
+      if [ STATE_SOURCE ].include?(new_state)
         @tool.show_status(get_state_status(new_state))
       else
         @tool.hide_status
       end
-      if old_state == STATE_ADD
-        @add_tooltip_instance = nil
-        @tool.remove_tooltip
-      end
+      _remove_add_tooltip if ADD_STATES.include?(old_state)
     end
 
     def onToolActionOptionStored(tool, action, option_group, option)
@@ -800,12 +823,12 @@ module Ladb::OpenCutList
     # -----
 
     def enableVCB?
-      ![ STATE_SOURCE, STATE_ADD ].include?(@state)
+      !([ STATE_SOURCE ] + ADD_STATES).include?(@state)
     end
 
     def draw(view)
       super
-      @mouse_ip.draw(view) if @mouse_ip.valid? && ![ STATE_SOURCE, STATE_ADD ].include?(@state)
+      @mouse_ip.draw(view) if @mouse_ip.valid? && !([ STATE_SOURCE ] + ADD_STATES).include?(@state)
     end
 
     # -----
@@ -1291,12 +1314,15 @@ module Ladb::OpenCutList
       _select_source(nil)
     end
 
-    # Browsing a folder in STATE_ADD stays in it, picking a file leaves it.
+    # Browsing a folder in an add state stays in it, picking a file leaves it.
     def _select_source(source_ref)
-      if @state == STATE_ADD
+      if ADD_STATES.include?(@state)
         return _browse_add_dir if source_ref.nil?
         @add_instance = nil
+        @add_hover_face = nil
+        @add_front_face = nil
         @tool.clear_3d(LAYER_3D_BOX_PREVIEW)
+        @tool.clear_2d(LAYER_2D_DIMENSIONS)  # The face labels
         set_state(STATE_SOURCE)
       end
       @@source_ref = source_ref
@@ -1531,8 +1557,8 @@ module Ladb::OpenCutList
         files_add_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_DARK)
         files_add_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_LIGHT, :hover)
         files_add_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND, :selected)
-        files_add_btn.selected = @state == STATE_ADD
-        files_add_btn.on(:click) { @state == STATE_ADD ? _leave_add_mode : _enter_add_mode }
+        files_add_btn.selected = ADD_STATES.include?(@state)
+        files_add_btn.on(:click) { ADD_STATES.include?(@state) ? _leave_add_mode : _enter_add_mode }
         files_row.append(files_add_btn)
         @library_add_btn = files_add_btn
 
@@ -1565,7 +1591,7 @@ module Ladb::OpenCutList
     def _update_library_panel_selection
       return _setup_library_panel if @library_file_btns.nil?
       @library_file_btns.each { |file_ref, btn| btn.selected = file_ref == @@source_ref }
-      @library_add_btn.selected = @state == STATE_ADD unless @library_add_btn.nil?
+      @library_add_btn.selected = ADD_STATES.include?(@state) unless @library_add_btn.nil?
     end
 
     # -- Add --
@@ -1576,7 +1602,9 @@ module Ladb::OpenCutList
       @source = nil
       _reset
       @add_instance = nil
-      set_state(STATE_ADD)
+      @add_hover_face = nil
+      @add_front_face = nil
+      set_state(STATE_ADD_SELECT)
       _setup_library_panel  # The add button selected
       _refresh
     end
@@ -1584,7 +1612,10 @@ module Ladb::OpenCutList
     # Back to STATE_SOURCE, in the browsed folder.
     def _leave_add_mode
       @add_instance = nil
+      @add_hover_face = nil
+      @add_front_face = nil
       @tool.clear_3d(LAYER_3D_BOX_PREVIEW)
+      @tool.clear_2d(LAYER_2D_DIMENSIONS)  # The face labels
       set_state(get_startup_state)
       _setup_library_panel
       _refresh
@@ -1605,14 +1636,82 @@ module Ladb::OpenCutList
       entity = ph.best_picked
       active_parent = model.active_path.nil? ? model : model.active_path.last.definition
       @add_instance = (entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance)) && entity.parent == active_parent ? entity : nil
-      _show_add_instance_tooltip
-      return if @add_instance.nil?
+      _show_add_tooltip
+      _preview_add_instance
 
-      kb = Kuix::Bounds3d.new.copy!(@add_instance.definition.bounds).inflate_all!(1)
-      t = PathUtils.get_transformation(model.active_path.to_a + [ @add_instance ], IDENTITY)
+    end
+
+    # The face of the picked instance's bounds - inflated as drawn - under the mouse -
+    # the nearest along the pick ray. In STATE_ADD_UP, the faces of the front
+    # axis can't be the top : one of them hovered is refused.
+    def _pick_add_face(x, y, view)
+
+      # The picked instance is gone (undo…) : pick another
+      unless @add_instance.is_a?(Sketchup::Drawingelement) && @add_instance.valid?
+        @add_instance = nil
+        @add_hover_face = @add_refused_face = nil
+        @add_front_face = nil
+        set_state(STATE_ADD_SELECT)
+        return _pick_add_instance(x, y, view)
+      end
+
+      kb = _get_add_instance_bounds
+      ti = _get_add_instance_transformation.inverse
+      ray = view.pickray(x, y)
+      origin = ray[0].transform(ti)
+      direction = ray[1].transform(ti)
+      mins = [ kb.x_min, kb.y_min, kb.z_min ]
+      maxs = [ kb.x_max, kb.y_max, kb.z_max ]
+      refused_faces = @state == STATE_ADD_UP ? Kuix::Bounds3d.faces_by_axis(Kuix::Bounds3d.axis_by_face(@add_front_face)) : []
+
+      @add_hover_face = nil
+      best_distance = nil
+      [ [ Kuix::Bounds3d::LEFT, Kuix::Bounds3d::RIGHT ], [ Kuix::Bounds3d::FRONT, Kuix::Bounds3d::BACK ], [ Kuix::Bounds3d::BOTTOM, Kuix::Bounds3d::TOP ] ].each_with_index do |faces, index|
+        next if direction.to_a[index].abs < 1e-9  # Ray parallel to the faces
+        [ mins[index], maxs[index] ].zip(faces).each do |value, face|
+          distance = (value - origin.to_a[index]) / direction.to_a[index]
+          next if distance <= 0 || (!best_distance.nil? && distance >= best_distance)
+          point = origin.offset(direction, distance * direction.length)
+          next unless (0..2).all? { |i| i == index || (point.to_a[i] >= mins[i] - 1e-3 && point.to_a[i] <= maxs[i] + 1e-3) }
+          best_distance = distance
+          @add_hover_face = face
+        end
+      end
+      @add_refused_face = refused_faces.include?(@add_hover_face) ? @add_hover_face : nil
+      @add_hover_face = nil unless @add_refused_face.nil?
+
+      _show_add_tooltip
+      _preview_add_instance
+
+    end
+
+    # The picked instance's definition bounds, inflated as drawn : the faces
+    # are picked on what the preview shows.
+    def _get_add_instance_bounds
+      Kuix::Bounds3d.new.copy!(@add_instance.definition.bounds).inflate_all!(1)
+    end
+
+    # The instance transformation from the model root
+    def _get_add_instance_transformation
+      PathUtils.get_transformation(Sketchup.active_model.active_path.to_a + [ @add_instance ], IDENTITY)
+    end
+
+    # The picked instance framed, the front face picked and the hovered face
+    # highlighted with an arrow out of their center : Y color for the front,
+    # Z color for the top.
+    def _preview_add_instance
+
+      @tool.clear_3d(LAYER_3D_BOX_PREVIEW)
+      @tool.clear_2d(LAYER_2D_DIMENSIONS)
+      return if @add_instance.nil? || !@add_instance.valid?
+
+      view = Sketchup.active_model.active_view
+      unit = @tool.get_unit(view)
+      t = _get_add_instance_transformation
+      ikb = _get_add_instance_bounds
 
       k_box = Kuix::BoxCornersMotif3d.new
-      k_box.bounds.copy!(kb)
+      k_box.bounds.copy!(ikb)
       k_box.corner_size = 20
       k_box.color = Kuix::COLOR_BLUE
       k_box.line_width = 2.0
@@ -1621,7 +1720,7 @@ module Ladb::OpenCutList
       @tool.append_3d(k_box, LAYER_3D_BOX_PREVIEW)
 
       k_box = Kuix::BoxMotif3d.new
-      k_box.bounds.copy!(kb)
+      k_box.bounds.copy!(ikb)
       k_box.color = Kuix::COLOR_BLUE
       k_box.line_width = 1.5
       k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
@@ -1632,6 +1731,74 @@ module Ladb::OpenCutList
       k_axes.transformation = t
       @tool.append_3d(k_axes, LAYER_3D_BOX_PREVIEW)
 
+      fn_preview_face = lambda { |face, color, label|
+
+        quad = ikb.get_quad(face)  # On the inflated box : no z-fighting with the content
+
+        k_mesh = Kuix::Mesh.new
+        k_mesh.add_triangles([ quad[0], quad[1], quad[2], quad[0], quad[2], quad[3] ])
+        k_mesh.background_color = ColorUtils.color_translucent(color, 80)
+        k_mesh.transformation = t
+        @tool.append_3d(k_mesh, LAYER_3D_BOX_PREVIEW)
+
+        center = ikb.face_center(face)
+        center = Geom::Point3d.new(center.x, center.y, center.z)
+        normal = Kuix::Bounds3d.normal_by_face(face).transform(t)
+        world_center = center.transform(t)
+
+        k_edge = Kuix::EdgeMotif3d.new
+        k_edge.start.copy!(world_center)
+        k_edge.end.copy!(world_center.offset(normal, view.pixels_to_model(unit * 10, world_center)))
+        k_edge.end_arrow = true
+        k_edge.arrow_size = unit * 1.5
+        k_edge.line_width = 1.5
+        k_edge.color = color
+        k_edge.on_top = true
+        @tool.append_3d(k_edge, LAYER_3D_BOX_PREVIEW)
+
+        # Its name beyond the arrow end
+        @tool.append_2d(_create_floating_label(
+                          snap_point: world_center.offset(normal, view.pixels_to_model(unit * 16, world_center)),
+                          text: PLUGIN.get_i18n_string("tool.smart_build.action_0_add_#{label}_label"),
+                          text_color: Kuix::COLOR_WHITE,
+                          background_color: color,
+                          border_color: color
+                        ), LAYER_2D_DIMENSIONS)
+
+      }
+
+      fn_preview_face.call(@add_front_face, Kuix::COLOR_Y, 'front') unless @add_front_face.nil?
+      return fn_preview_face.call(@add_up_face, Kuix::COLOR_Z, 'up') unless @add_up_face.nil?  # The hovered face is left out while naming the file
+      fn_preview_face.call(@add_hover_face, @state == STATE_ADD_UP ? Kuix::COLOR_Z : Kuix::COLOR_Y, @state == STATE_ADD_UP ? 'up' : 'front') unless @add_hover_face.nil?
+
+    end
+
+    # A click in an add state : picks the instance, then its front face, then
+    # its top face - and saves it.
+    def _pick_add(view)
+      case @state
+      when STATE_ADD_SELECT
+        return UI.beep if @add_instance.nil?
+        @add_hover_face = nil
+        set_state(STATE_ADD_FRONT)
+      when STATE_ADD_FRONT
+        return UI.beep if @add_hover_face.nil?
+        @add_front_face = @add_hover_face
+        @add_hover_face = nil
+        set_state(STATE_ADD_UP)
+      when STATE_ADD_UP
+        return UI.beep if @add_hover_face.nil?
+        # Kept on screen while the input box asks the file name
+        @add_up_face = @add_hover_face
+        _preview_add_instance
+        view.invalidate
+        _save_add_instance(@add_front_face, @add_up_face)
+        @add_up_face = nil
+        return unless @state == STATE_ADD_UP  # Saved
+        # The input box cancelled : pick the top again
+      end
+      _preview_add_instance
+      _refresh
     end
 
     # The name proposed to save the given instance : the instance name of a
@@ -1640,24 +1807,77 @@ module Ladb::OpenCutList
       instance.is_a?(Sketchup::Group) && !instance.name.empty? ? instance.name : instance.definition.name
     end
 
-    # The hovered instance's proposed name and definition sizes - what the file
-    # will hold - in a tooltip. Rebuilt only once the hovered instance changed.
-    def _show_add_instance_tooltip
-      return if @add_instance == @add_tooltip_instance
-      @add_tooltip_instance = @add_instance
-      return @tool.remove_tooltip if @add_instance.nil?
-      bounds = @add_instance.definition.bounds
-      @tool.show_tooltip([
-        "##{_get_add_instance_name(@add_instance)}",
-        "#{bounds.width.to_l} x #{bounds.height.to_l} x #{bounds.depth.to_l}"
-      ])
+    # What is expected at the current add step, in a tooltip following the
+    # mouse - the hovered instance's proposed name and definition sizes (what
+    # the file will hold) in STATE_ADD_SELECT, a warning on a refused top
+    # face. Rebuilt only once changed.
+    def _show_add_tooltip
+      key = [ @state, @add_instance, @add_refused_face.nil? ]
+      return if key == @add_tooltip_key
+      @add_tooltip_key = key
+
+      step = ADD_STATES.index(@state) + 1
+      step_text = "!#{step}/#{ADD_STATES.length}"
+      case @state
+      when STATE_ADD_SELECT
+        items = [ [ step_text, "#{PLUGIN.get_i18n_string('tool.smart_build.action_0_state_5_status')}"] ]
+        unless @add_instance.nil?
+          bounds = @add_instance.definition.bounds
+          items += [ '-', "##{_get_add_instance_name(@add_instance)}", "#{bounds.width.to_l} x #{bounds.height.to_l} x #{bounds.depth.to_l}" ]
+        end
+        @tool.show_tooltip(items)
+      when STATE_ADD_FRONT
+        @tool.show_tooltip([ [ step_text, "#{PLUGIN.get_i18n_string('tool.smart_build.action_0_state_6_status')}" ] ])
+      when STATE_ADD_UP
+        @tool.show_tooltip([ [ step_text, "#{PLUGIN.get_i18n_string('tool.smart_build.action_0_state_7_status')}" ] ], @add_refused_face.nil? ? SmartTool::MESSAGE_TYPE_DEFAULT : SmartTool::MESSAGE_TYPE_ERROR)
+      end
     end
 
-    # Saves the hovered instance's definition as a file of the browsed folder,
+    def _remove_add_tooltip
+      @add_tooltip_key = nil
+      @tool.remove_tooltip
+    end
+
+    # The rotation of the definition space - around its origin - that turns
+    # the given bounds faces to the module front (-Y) and top (+Z).
+    def _get_add_rotation(front_face, up_face)
+      y_axis = Kuix::Bounds3d.normal_by_face(front_face).reverse
+      z_axis = Kuix::Bounds3d.normal_by_face(up_face)
+      Geom::Transformation.axes(ORIGIN, y_axis * z_axis, y_axis, z_axis).inverse
+    end
+
+    # The source axis index and direction of each rotated axis, as
+    # [ [ index, reversed ] ] : the rotation only permutes and flips the axes.
+    def _get_add_rotation_axes(r)
+      ri = r.inverse
+      [ X_AXIS, Y_AXIS, Z_AXIS ].map { |axis|
+        v = axis.transform(ri).to_a
+        index = (0..2).max_by { |i| v[i].abs }
+        [ index, v[index] < 0 ]
+      }
+    end
+
+    # The given cutters ({ axis => ratios }) of the rotated space : the
+    # ratios run from the bounds min, so they are mirrored on a flipped axis.
+    def _rotate_cutters(cutters, r)
+      axes = [ X_AXIS, Y_AXIS, Z_AXIS ]
+      _get_add_rotation_axes(r).each_with_index.map { |(index, reversed), new_index|
+        ratios = cutters[axes[index]]
+        [ axes[new_index], reversed ? ratios.map { |ratio| 1.0 - ratio }.sort : ratios ]
+      }.to_h
+    end
+
+    # The given no scale axes (booleans) of the rotated space.
+    def _rotate_no_scale_axes(no_scale_axes, r)
+      _get_add_rotation_axes(r).map { |index, _| no_scale_axes[index] }
+    end
+
+    # Saves the picked instance's content as a file of the browsed folder,
     # named in an input box - the instance name of a group, the definition
-    # name of a component - and back to STATE_SOURCE. A cancelled input box
-    # stays in STATE_ADD.
-    def _save_add_instance
+    # name of a component - turned for the given faces to be the module front
+    # and top, and back to STATE_SOURCE. A cancelled input box
+    # stays in STATE_ADD_UP.
+    def _save_add_instance(front_face, up_face)
       instance = @add_instance
       dir = PLUGIN.resolve_library_ref(@@dir_ref)
       return UI.beep unless dir.is_a?(String)
@@ -1685,7 +1905,51 @@ module Ladb::OpenCutList
         # save_as fails below and reports it
       end
 
-      if instance.valid? && instance.definition.save_as(path)
+      saved = false
+      if instance.valid?
+
+        # The content is turned in an aborted operation : the model is left as is
+        model = Sketchup.active_model
+        source = instance.definition
+        source_definitions = _get_module_definitions(source)
+        inner_definitions = source_definitions[1..-1]
+        no_scale_masks = inner_definitions.map { |module_definition| module_definition.behavior.no_scale_mask? }  # The abort doesn't restore them
+        model.start_operation('OCL Save Module', true)
+        begin
+
+          r = _get_add_rotation(front_face, up_face)
+          has_cutters = source_definitions.any? { |module_definition| !PLUGIN.get_attribute(module_definition, 'stretch_cutters').nil? }
+          cutters = _rotate_cutters(_read_cutters(source), r)
+          no_scale_axes = _rotate_no_scale_axes(_read_no_scale_axes(source), r)
+
+          # A new definition holding the turned content : the file must not
+          # share the source GUID - loaded in this model, SketchUp would give
+          # back the source definition, not turned.
+          definition = model.definitions.add(name)
+          definition.description = source.description
+          (source.attribute_dictionaries || []).each do |dictionary|
+            next if dictionary.name.start_with?('SU_', 'GSU_')  # SketchUp's own
+            dictionary.each_pair { |key, value| definition.set_attribute(dictionary.name, key, value) }
+          end
+          definition.entities.add_instance(source, r).explode
+
+          # Read first on the saved definition : it takes precedence
+          PLUGIN.set_attribute(definition, 'stretch_cutters', { 'x' => cutters[X_AXIS], 'y' => cutters[Y_AXIS], 'z' => cutters[Z_AXIS] }) if has_cutters
+          inner_definitions.each { |module_definition| module_definition.behavior.no_scale_mask = 0 }  # OR-ed on read
+          definition.behavior.no_scale_mask = no_scale_axes.each_with_index.map { |no_scale, bit| no_scale ? 1 << bit : 0 }.reduce(0, :|)
+
+          saved = definition.save_as(path)
+
+        rescue Exception => e
+          PLUGIN.dump_exception(e)
+        ensure
+          model.abort_operation
+          inner_definitions.zip(no_scale_masks).each { |module_definition, mask| module_definition.behavior.no_scale_mask = mask if module_definition.valid? }
+        end
+
+      end
+
+      if saved
         @tool.notify_success(PLUGIN.get_i18n_string('tool.smart_build.success.module_file_saved', { :name => name }))
       else
         @tool.notify_errors([ [ 'tool.smart_build.error.module_file_save_failed', { :name => name } ] ])
