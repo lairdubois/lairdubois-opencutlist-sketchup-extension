@@ -2095,6 +2095,7 @@ tab:
         info_1: Vous allez avoir le choix de définir son emplacement dans la modèle actif.
         materials: Matières
         layers: Balises
+        geometry: Géométrie
         option_parts_formula: Formule
         option_parts_formula_help: La formule vous permet de personnaliser le nom des pièces importées.
         option_part_wood_material_name: Bois
@@ -2116,6 +2117,10 @@ tab:
         option_no_material_help: "*Laissez ce champ vide pour ne pas appliquer de matière*."
         option_default_material_help: "*Une matière par défaut sera créée si ce champ est vide*."
         option_no_layer_help: "*Laissez ce champ vide pour ne pas appliquer de balise*."
+        option_subtract_machinings: Creuser les usinages dans les pièces
+        option_subtract_machinings_help: Les **rainures**, **feuillures** et **chanfreins** des pièces, y compris ceux liés aux accessoires, sont soustraits de leur volume au lieu d'être dessinés. Les perçages restent dessinés.
+        warning:
+          subtract_machinings_failed: "Les usinages n'ont pas pu être creusés dans ces pièces, ils sont dessinés à la place : {{ names }}"
         old_name: Nom d'origine
         new_name: Nouveau nom
         count: Nb.

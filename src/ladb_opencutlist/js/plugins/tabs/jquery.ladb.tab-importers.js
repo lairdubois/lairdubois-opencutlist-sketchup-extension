@@ -135,6 +135,7 @@
             const $inputMachiningLayerName = $('#ladb_importer_import_input_machining_layer_name', $modal);
             const $inputHardwareMaterialName = $('#ladb_importer_import_input_hardware_material_name', $modal);
             const $inputHardwareLayerName = $('#ladb_importer_import_input_hardware_layer_name', $modal);
+            const $inputSubtractMachinings = $('#ladb_importer_import_input_subtract_machinings', $modal);
             const $panelPreview = $('#ladb_panel_preview', $modal);
             const $panelPreviewContent = $('#ladb_panel_preview_content', $modal);
             const $panelPreviewContentTbody = $('tbody', $panelPreviewContent);
@@ -155,6 +156,7 @@
                 options.front_part_layer_name = $inputFrontPartLayerName.val();
                 options.machining_layer_name = $inputMachiningLayerName.val();
                 options.hardware_layer_name = $inputHardwareLayerName.val();
+                options.subtract_machinings = $inputSubtractMachinings.is(':checked');
             };
             const fnFillInputs = function (options) {
                 $textareaPartsFormula.ladbTextinputCode('val', [ typeof options.parts_formula == 'string' ? options.parts_formula : '' ]);
@@ -166,6 +168,7 @@
                 $inputFrontPartLayerName.val(options.front_part_layer_name);
                 $inputMachiningLayerName.val(options.machining_layer_name);
                 $inputHardwareLayerName.val(options.hardware_layer_name);
+                $inputSubtractMachinings.prop('checked', options.subtract_machinings !== false);
                 filled = true;
             };
             const fnConvertToVariableDefs = function (vars) {
@@ -399,6 +402,11 @@
                     that.dialog.notifyErrors(parameters.errors);
                 } else {
                     that.close();
+                    if (Array.isArray(parameters.warnings)) {
+                        for (const warning of parameters.warnings) {
+                            that.dialog.notify('<i class="ladb-opencutlist-icon-warning"></i> ' + i18next.t(warning[0], warning[1]), 'warning', [], false);
+                        }
+                    }
                 }
             }
         });

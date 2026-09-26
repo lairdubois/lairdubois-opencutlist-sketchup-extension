@@ -14,6 +14,7 @@
         <li role="presentation"{% if tab == 'formula' %} class="active"{% endif %}><a href="#tab_import_options_formula" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-formula"></i> {{ 'tab.importers.bxf2.import.option_parts_formula'|i18next }}</a></li>
         <li role="presentation"{% if tab == 'materials' %} class="active"{% endif %}><a href="#tab_import_options_materials" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-materials"></i> {{ 'tab.importers.bxf2.import.materials'|i18next }}</a></li>
         <li role="presentation"{% if tab == 'layers' %} class="active"{% endif %}><a href="#tab_import_options_layers" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-layer"></i> {{ 'tab.importers.bxf2.import.layers'|i18next }}</a></li>
+        <li role="presentation"{% if tab == 'geometry' %} class="active"{% endif %}><a href="#tab_import_options_geometry" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-settings"></i> {{ 'tab.importers.bxf2.import.geometry'|i18next }}</a></li>
     </ul>
 {% endblock %}
 
@@ -111,6 +112,20 @@
                     <label class="control-label col-xs-3">{{ 'tab.importers.bxf2.import.option_hardware_layer_name'|i18next }}</label>
                     <div class="col-xs-7">
                         <input type="text" class="form-control" id="ladb_importer_import_input_hardware_layer_name">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div role="tabpanel" class="tab-pane{% if tab == 'geometry' %} active{% endif %}" id="tab_import_options_geometry">
+            <div class="form row">
+                <div class="form-group">
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.importers.bxf2.import.option_subtract_machinings_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <div class="col-xs-offset-1 col-xs-10">
+                        <div class="checkbox" style="padding-left: 10px;">
+                            <label>
+                                <input type="checkbox" id="ladb_importer_import_input_subtract_machinings"> <span>{{ 'tab.importers.bxf2.import.option_subtract_machinings'|i18next }}</span>
+                            </label>
+                        </div>
                     </div>
                 </div>
             </div>

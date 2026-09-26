@@ -1,9 +1,13 @@
 module Ladb::OpenCutList
 
   require_relative '../../../lib/geometrix/geometrix'
+  require_relative '../../../lib/rubybxf/bxf'
   require_relative '../../../model/attributes/material_attributes'
   require_relative '../../../model/formula/formula_data'
   require_relative '../../../worker/common/common_eval_formula_worker'
+  require_relative '../../../worker/common/common_drawing_decomposition_worker'
+  require_relative '../../../worker/common/common_solid_boolean_worker'
+  require_relative '../../../worker/common/common_solid_boolean_apply_worker'
 
   class ImportersBxf2ImportWorker
 
@@ -22,6 +26,28 @@ module Ladb::OpenCutList
     ALUMINIUM_MATERIAL_COLOR = Sketchup::Color.new(204, 204, 204).freeze
     GLASS_MATERIAL_COLOR = Sketchup::Color.new(196, 232, 254, 0.5).freeze
 
+    # The part's machinings (own or inherited from a hardware component) that
+    # remove material along a panel edge or face : subtracted from the part
+    # when subtract_machinings is on. Drillings and glue are always drawn.
+    SUBTRACTABLE_MACHINING_CLASSES = [
+      Bxf::BxfMachiningGroove,
+      Bxf::BxfMachiningRoundedGroove,
+      Bxf::BxfMachiningRabbet,
+      Bxf::BxfMachiningChamfer
+    ].freeze
+
+    # Same reading as the Smart tools' booleans : container tree preserved,
+    # the part's drawn machinings (drillings…) left out of the operand.
+    SUBTRACT_DRAWING_DEF_PARAMETERS = {
+      ignore_surfaces: true,
+      ignore_faces: false,
+      ignore_edges: true,
+      ignore_soft_edges: true,
+      ignore_clines: true,
+      container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART_WITHOUT_MACHININGS,
+      flatten: false
+    }.freeze
+
     attr_reader :bxf_model
 
     def initialize(bxf_model,
@@ -34,6 +60,7 @@ module Ladb::OpenCutList
 
                    machining_material_name: nil,
                    machining_layer_name: nil,
+                   subtract_machinings: true,
 
                    hardware_material_name: nil,
                    hardware_layer_name: nil,
@@ -52,6 +79,7 @@ module Ladb::OpenCutList
 
       @machining_material_name = machining_material_name.is_a?(String) && !machining_material_name.empty? ? machining_material_name : PLUGIN.get_i18n_string('tab.materials.type_7')
       @machining_layer_name = machining_layer_name
+      @subtract_machinings = subtract_machinings != false
 
       @hardware_material_name = hardware_material_name.is_a?(String) && !hardware_material_name.empty? ? hardware_material_name : PLUGIN.get_i18n_string('tab.materials.type_5')
       @hardware_layer_name = hardware_layer_name
@@ -61,6 +89,7 @@ module Ladb::OpenCutList
       # -- internals
 
       @_cad_data_dir = nil
+      @_subtract_failed_part_names = []
 
     end
 
@@ -109,13 +138,13 @@ module Ladb::OpenCutList
           else
 
             # Process importation
-            _import_at(transformation) do |cancelled, errors|
+            _import_at(transformation) do |cancelled, errors, warnings = []|
 
               # Deactivate tool
               model.select_tool(nil)
 
-              # Invoke dialog callback
-              PLUGIN.execute_tabs_dialog_command_on_tab('importers_bxf2', 'import_callback', { errors: errors }.to_json, nil, !cancelled)
+              # Invoke dialog callback (brought to front when there is something to tell)
+              PLUGIN.execute_tabs_dialog_command_on_tab('importers_bxf2', 'import_callback', { errors: errors, warnings: warnings }.to_json, nil, !cancelled && warnings.empty?)
 
             end
 
@@ -191,7 +220,10 @@ module Ladb::OpenCutList
 
       model.commit_operation
 
-      callback.call(false, []) if callback
+      warnings = []
+      warnings << [ 'tab.importers.bxf2.import.warning.subtract_machinings_failed', { :names => @_subtract_failed_part_names.uniq.join(', ') } ] unless @_subtract_failed_part_names.empty?
+
+      callback.call(false, [], warnings) if callback
 
     end
 
@@ -318,10 +350,16 @@ module Ladb::OpenCutList
                                                                           da.orientation_locked_on_axis = true
                                                                           da.write_to_attributes
 
-                                                                          # Process machinings
-                                                                          _process_inherited_machinings(part.inherited_machinings, definition.entities)
-                                                                          _process_machining_group_links(part.machining_group_links, definition.entities)
-                                                                          _process_machining_links(part.machining_links, definition.entities)
+                                                                          # Process machinings : grooves, rabbets and chamfers are subtracted if possible
+                                                                          cut_defs = @subtract_machinings ? [] : nil
+                                                                          _process_inherited_machinings(part.inherited_machinings, definition.entities, cut_defs: cut_defs)
+                                                                          _process_machining_group_links(part.machining_group_links, definition.entities, cut_defs: cut_defs)
+                                                                          _process_machining_links(part.machining_links, definition.entities, cut_defs: cut_defs)
+                                                                          unless cut_defs.nil? || cut_defs.empty? || _subtract_machinings(definition, cut_defs)
+                                                                            # Fallback : keep the part intact and draw its machinings as usual
+                                                                            cut_defs.each { |bxf_machining, transformation, entities| _draw_machining(entities, bxf_machining, transformation) }
+                                                                            @_subtract_failed_part_names << part_name
+                                                                          end
 
                                                                           # Transform definition's entities
                                                                           definition.entities.transform_entities(PART_FRONT_BACK_SWAP_TRANSFORM_INVERSE, definition.entities.to_a)
@@ -514,7 +552,7 @@ module Ladb::OpenCutList
 
     end
 
-    def _process_inherited_machinings(inherited_machinings, entities)
+    def _process_inherited_machinings(inherited_machinings, entities, cut_defs: nil)
 
       inherited_machinings.each do |inherited_machining|
 
@@ -522,16 +560,16 @@ module Ladb::OpenCutList
         component = component_link.component
 
         machining_group_links = inherited_machining.machining_group_link_references.map { |reference| component.related_machining_group_links.find { |link| link.id == reference.reference_id } }
-        _process_machining_group_links(machining_group_links, entities, transformation: component_link.transformations.to_t)
+        _process_machining_group_links(machining_group_links, entities, transformation: component_link.transformations.to_t, cut_defs: cut_defs)
 
         machining_links = inherited_machining.machining_link_references.map { |reference| component.related_machining_links.find { |link| link.id == reference.reference_id } }
-        _process_machining_links(machining_links, entities, transformation: component_link.transformations.to_t)
+        _process_machining_links(machining_links, entities, transformation: component_link.transformations.to_t, cut_defs: cut_defs)
 
       end
 
     end
 
-    def _process_machining_group_links(machining_group_links, entities, transformation: IDENTITY)
+    def _process_machining_group_links(machining_group_links, entities, transformation: IDENTITY, cut_defs: nil)
 
       machining_group_links.each do |machining_group_link|
 
@@ -560,7 +598,7 @@ module Ladb::OpenCutList
               y = row_index * row_distance
               t1 = Geom::Transformation.translation(Geom::Vector3d.new(x, y, 0))
 
-              _process_machining_links(machining_group.machining_links, machining_group_links_entities, transformation: t0 * t1)
+              _process_machining_links(machining_group.machining_links, machining_group_links_entities, transformation: t0 * t1, cut_defs: cut_defs)
 
             end
 
@@ -568,18 +606,71 @@ module Ladb::OpenCutList
 
         else
 
-          _process_machining_links(machining_group.machining_links, machining_group_links_entities, transformation: transformation * machining_group_link.transformations.to_t)
+          _process_machining_links(machining_group.machining_links, machining_group_links_entities, transformation: transformation * machining_group_link.transformations.to_t, cut_defs: cut_defs)
 
+        end
+
+        # All the group's machinings went to the cuts : drop the empty group, a failed subtraction draws them in the parent entities
+        if machining_group_links_entities.length == 0
+          cut_defs.each { |cut_def| cut_def[2] = entities if cut_def[2] == machining_group_links_entities } unless cut_defs.nil?
+          machining_group_links_group.erase!
         end
 
       end
 
     end
 
-    def _process_machining_links(machining_links, entities, transformation: IDENTITY)
+    def _process_machining_links(machining_links, entities, transformation: IDENTITY, cut_defs: nil)
 
       machining_links.each do |machining_link|
-        _draw_machining(entities, machining_link.machining, transformation * machining_link.transformations.to_t)
+        t = transformation * machining_link.transformations.to_t
+        if !cut_defs.nil? && SUBTRACTABLE_MACHINING_CLASSES.any? { |clazz| machining_link.machining.is_a?(clazz) }
+          cut_defs << [ machining_link.machining, t, entities ]
+        else
+          _draw_machining(entities, machining_link.machining, t)
+        end
+      end
+
+    end
+
+    # Subtracts the given machinings from the part +definition+ (still in its
+    # BXF local space). The operation runs on a temporary instance of the
+    # definition at the model root, with one temporary cut group per machining,
+    # rebuilding the definition in place (make_unique: false). Answers true on
+    # success ; on failure the definition is left untouched.
+    def _subtract_machinings(definition, cut_defs)
+
+      entities = Sketchup.active_model.entities
+      part_instance = entities.add_instance(definition, IDENTITY)
+      cut_groups = cut_defs.map { |bxf_machining, transformation, _|
+        group = entities.add_group
+        group.transformation = transformation
+        _draw_machining_content(group, bxf_machining)
+        group
+      }
+
+      begin
+
+        src_drawing_defs = [ CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new([ part_instance ]) ], **SUBTRACT_DRAWING_DEF_PARAMETERS).run ]
+        cut_drawing_defs = cut_groups.map { |group| CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new([ group ]) ], **SUBTRACT_DRAWING_DEF_PARAMETERS).run }
+        return false unless (src_drawing_defs + cut_drawing_defs).all? { |drawing_def| drawing_def.is_a?(DrawingDef) }
+
+        result_def = CommonSolidBooleanApplyWorker.new(
+          src_drawing_defs,
+          cut_drawing_defs,
+          operation: CommonSolidBooleanWorker::OPERATION_SUBTRACTION,
+          make_unique: false,
+          wrap_operation: false
+        ).run
+
+        result_def.success?
+
+      rescue Exception => e
+        PLUGIN.dump_exception(e)
+        false
+      ensure
+        cut_groups.each { |group| group.erase! if group.valid? }
+        part_instance.erase! if part_instance.valid?
       end
 
     end
@@ -666,179 +757,185 @@ module Ladb::OpenCutList
         @machining_factory[bxf_machining] = group
 
         # Draw content
-        if bxf_machining.is_a?(Bxf::BxfMachiningDrilling)
-
-          group.name = 'MACHINING-DRILLING'
-
-          radius = bxf_machining.radius.to_l
-          depth = bxf_machining.depth.to_l
-
-          depth_v = bxf_machining.depth_orientation.to_v
-
-          num_segments = _num_segments_by_radius(radius, max_num_segments: 12)
-
-          b_edges = group.entities.add_circle(ORIGIN, depth_v, radius, num_segments)
-          z_edges = group.entities.add_circle(ORIGIN.offset(depth_v, depth), depth_v, radius, num_segments)
-
-          b_face = group.entities.add_face(b_edges)
-          b_face.reverse! if b_face.normal.samedirection?(depth_v)
-          z_face = group.entities.add_face(z_edges)
-          z_face.reverse! unless z_face.normal.samedirection?(depth_v)
-
-          b_edges.zip(z_edges).each do |b_edge, z_edge|
-            edge = group.entities.add_line(b_edge.start.position, z_edge.start.position)
-            if edge
-              edge.smooth = edge.soft = true
-              edge.find_faces
-            end
-          end
-
-        elsif bxf_machining.is_a?(Bxf::BxfMachiningRounding)
-
-          # TODO : Currently invalid in the input BXF2 file
-
-          # group.name = 'MACHINING-ROUNDING'
-          #
-          # radius = bxf_machining.radius.to_l
-          # length = bxf_machining.length.to_l
-          #
-          # length_v = bxf_machining.length_orientation.to_v
-          #
-          # num_segments = _num_segments_by_radius(radius, min_num_segments: 4, max_num_segments: 12, arc_angle: Geometrix::HALF_PI)
-          #
-          # btm_arc_origin = ORIGIN
-          #                    .offset(X_AXIS, -radius)
-          #                    .offset(Z_AXIS, -radius)
-          # top_arc_origin = btm_arc_origin.offset(length_v, length)
-          # btm_corner = ORIGIN
-          # top_corner = ORIGIN.offset(length_v, length)
-          #
-          # btm_edge1, _ = group.entities.add_arc(btm_arc_origin, X_AXIS, length_v, radius, -Geometrix::HALF_PI, 0, num_segments)
-          # top_edge1, _ = group.entities.add_arc(top_arc_origin, X_AXIS, length_v, radius, -Geometrix::HALF_PI, 0, num_segments)
-          #
-          # btn_vertices = btm_edge1.curve.vertices
-          # top_vertices = top_edge1.curve.vertices
-          #
-          # group.entities.add_face(btn_vertices.map(&:position) + [ btm_corner ])
-          # group.entities.add_face(top_vertices.map(&:position) + [ top_corner ]).reverse!
-          # group.entities.add_line(btm_corner, top_corner)
-          #
-          # last_index = btn_vertices.size - 1
-          # btn_vertices.each_with_index do |btm_vertex, index|
-          #   top_vertex = top_vertices[index]
-          #   smooth_soft = index > 0 && index < last_index
-          #   edge = group.entities.add_line(btm_vertex.position, top_vertex.position)
-          #   if edge
-          #     edge.smooth = edge.soft = smooth_soft
-          #     edge.find_faces
-          #   end
-          # end
-
-        elsif bxf_machining.is_a?(Bxf::BxfMachiningRabbet)
-
-          group.name = 'MACHINING-RABBET'
-
-          radius = bxf_machining.radius.to_l
-          length = bxf_machining.length.to_l
-          depth = bxf_machining.depth.to_l
-
-          length_v = bxf_machining.length_orientation.to_v
-          depth_v = bxf_machining.depth_orientation.to_v
-          width_v = length_v.cross(depth_v)
-
-          bounds = Geom::BoundingBox.new
-          bounds.add(
-            ORIGIN.offset(width_v, -radius), # P0
-            ORIGIN.offset(width_v, radius)
-                  .offset(depth_v, depth)
-                  .offset(length_v, length)  # P2+Z
-          )
-
-          _draw_box(group.entities, bounds)
-
-        elsif bxf_machining.is_a?(Bxf::BxfMachiningGroove)
-
-          group.name = 'MACHINING-GROOVE'
-
-          length_v = bxf_machining.length_orientation.to_v
-          depth_v = bxf_machining.depth_orientation.to_v
-          width_v = length_v.cross(depth_v)
-
-          bounds = Geom::BoundingBox.new
-          bounds.add(
-            ORIGIN.offset(width_v, -bxf_machining.radius.to_l), # P0
-            ORIGIN.offset(width_v, bxf_machining.radius.to_l)
-                  .offset(depth_v, bxf_machining.depth.to_l)
-                  .offset(length_v, bxf_machining.length.to_l)  # P2+Z
-          )
-
-          _draw_box(group.entities, bounds)
-
-        elsif bxf_machining.is_a?(Bxf::BxfMachiningRoundedGroove)
-
-          # TODO : Create a real rounded groove
-
-          group.name = 'MACHINING-ROUNDED-GROOVE'
-
-          length_v = bxf_machining.length_orientation.to_v
-          depth_v = bxf_machining.depth_orientation.to_v
-          width_v = length_v.cross(depth_v)
-
-          bounds = Geom::BoundingBox.new
-          bounds.add(
-            ORIGIN.offset(width_v, -bxf_machining.radius.to_l), # P0
-            ORIGIN.offset(width_v, bxf_machining.radius.to_l)
-                  .offset(depth_v, bxf_machining.depth.to_l)
-                  .offset(length_v, bxf_machining.length.to_l)  # P2+Z
-          )
-
-          _draw_box(group.entities, bounds)
-
-        elsif bxf_machining.is_a?(Bxf::BxfMachiningGlue)
-
-          group.name = 'MACHINING-GLUE'
-
-          length_v = bxf_machining.length_orientation.to_v
-          thickness_v = bxf_machining.thickness_orientation.to_v
-          width_v = length_v.cross(thickness_v)
-
-          radius = bxf_machining.width.to_l / 2
-
-          bounds = Geom::BoundingBox.new
-          bounds.add(
-            ORIGIN.offset(width_v, -radius), # P0
-            ORIGIN.offset(width_v, radius)
-                  .offset(thickness_v, bxf_machining.thickness.to_l)
-                  .offset(length_v, bxf_machining.length.to_l)  # P2+Z
-          )
-
-          _draw_box(group.entities, bounds)
-
-        elsif bxf_machining.is_a?(Bxf::BxfMachiningChamfer)
-
-          group.name = 'MACHINING-CHAMFER'
-
-          length_v = bxf_machining.length_orientation.to_v
-          length = bxf_machining.length.to_l
-
-          pts0 = [
-            ORIGIN,
-            ORIGIN.offset(bxf_machining.distance1_orientation.to_v, bxf_machining.distance1.to_l),
-            ORIGIN.offset(bxf_machining.distance2_orientation.to_v, bxf_machining.distance2.to_l)
-          ]
-          pts1 = pts0.map { |pt| pt.offset(length_v, length) }
-
-          group.entities.add_face(pts0)
-          group.entities.add_face(pts1)
-          pts0.zip(pts1).each { |pt0, pt1| group.entities.add_edges(pt0, pt1).each(&:find_faces) }
-
-        end
+        _draw_machining_content(group, bxf_machining)
 
       else
         group = entities.add_instance(ref_group.definition, transformation)
         group.name = ref_group.name
         group.layer = ref_group.layer
         group.material = ref_group.material
+      end
+
+    end
+
+    def _draw_machining_content(group, bxf_machining)
+
+      if bxf_machining.is_a?(Bxf::BxfMachiningDrilling)
+
+        group.name = 'MACHINING-DRILLING'
+
+        radius = bxf_machining.radius.to_l
+        depth = bxf_machining.depth.to_l
+
+        depth_v = bxf_machining.depth_orientation.to_v
+
+        num_segments = _num_segments_by_radius(radius, max_num_segments: 12)
+
+        b_edges = group.entities.add_circle(ORIGIN, depth_v, radius, num_segments)
+        z_edges = group.entities.add_circle(ORIGIN.offset(depth_v, depth), depth_v, radius, num_segments)
+
+        b_face = group.entities.add_face(b_edges)
+        b_face.reverse! if b_face.normal.samedirection?(depth_v)
+        z_face = group.entities.add_face(z_edges)
+        z_face.reverse! unless z_face.normal.samedirection?(depth_v)
+
+        b_edges.zip(z_edges).each do |b_edge, z_edge|
+          edge = group.entities.add_line(b_edge.start.position, z_edge.start.position)
+          if edge
+            edge.smooth = edge.soft = true
+            edge.find_faces
+          end
+        end
+
+      elsif bxf_machining.is_a?(Bxf::BxfMachiningRounding)
+
+        # TODO : Currently invalid in the input BXF2 file
+
+        # group.name = 'MACHINING-ROUNDING'
+        #
+        # radius = bxf_machining.radius.to_l
+        # length = bxf_machining.length.to_l
+        #
+        # length_v = bxf_machining.length_orientation.to_v
+        #
+        # num_segments = _num_segments_by_radius(radius, min_num_segments: 4, max_num_segments: 12, arc_angle: Geometrix::HALF_PI)
+        #
+        # btm_arc_origin = ORIGIN
+        #                    .offset(X_AXIS, -radius)
+        #                    .offset(Z_AXIS, -radius)
+        # top_arc_origin = btm_arc_origin.offset(length_v, length)
+        # btm_corner = ORIGIN
+        # top_corner = ORIGIN.offset(length_v, length)
+        #
+        # btm_edge1, _ = group.entities.add_arc(btm_arc_origin, X_AXIS, length_v, radius, -Geometrix::HALF_PI, 0, num_segments)
+        # top_edge1, _ = group.entities.add_arc(top_arc_origin, X_AXIS, length_v, radius, -Geometrix::HALF_PI, 0, num_segments)
+        #
+        # btn_vertices = btm_edge1.curve.vertices
+        # top_vertices = top_edge1.curve.vertices
+        #
+        # group.entities.add_face(btn_vertices.map(&:position) + [ btm_corner ])
+        # group.entities.add_face(top_vertices.map(&:position) + [ top_corner ]).reverse!
+        # group.entities.add_line(btm_corner, top_corner)
+        #
+        # last_index = btn_vertices.size - 1
+        # btn_vertices.each_with_index do |btm_vertex, index|
+        #   top_vertex = top_vertices[index]
+        #   smooth_soft = index > 0 && index < last_index
+        #   edge = group.entities.add_line(btm_vertex.position, top_vertex.position)
+        #   if edge
+        #     edge.smooth = edge.soft = smooth_soft
+        #     edge.find_faces
+        #   end
+        # end
+
+      elsif bxf_machining.is_a?(Bxf::BxfMachiningRabbet)
+
+        group.name = 'MACHINING-RABBET'
+
+        radius = bxf_machining.radius.to_l
+        length = bxf_machining.length.to_l
+        depth = bxf_machining.depth.to_l
+
+        length_v = bxf_machining.length_orientation.to_v
+        depth_v = bxf_machining.depth_orientation.to_v
+        width_v = length_v.cross(depth_v)
+
+        bounds = Geom::BoundingBox.new
+        bounds.add(
+          ORIGIN.offset(width_v, -radius), # P0
+          ORIGIN.offset(width_v, radius)
+                .offset(depth_v, depth)
+                .offset(length_v, length)  # P2+Z
+        )
+
+        _draw_box(group.entities, bounds)
+
+      elsif bxf_machining.is_a?(Bxf::BxfMachiningGroove)
+
+        group.name = 'MACHINING-GROOVE'
+
+        length_v = bxf_machining.length_orientation.to_v
+        depth_v = bxf_machining.depth_orientation.to_v
+        width_v = length_v.cross(depth_v)
+
+        bounds = Geom::BoundingBox.new
+        bounds.add(
+          ORIGIN.offset(width_v, -bxf_machining.radius.to_l), # P0
+          ORIGIN.offset(width_v, bxf_machining.radius.to_l)
+                .offset(depth_v, bxf_machining.depth.to_l)
+                .offset(length_v, bxf_machining.length.to_l)  # P2+Z
+        )
+
+        _draw_box(group.entities, bounds)
+
+      elsif bxf_machining.is_a?(Bxf::BxfMachiningRoundedGroove)
+
+        # TODO : Create a real rounded groove
+
+        group.name = 'MACHINING-ROUNDED-GROOVE'
+
+        length_v = bxf_machining.length_orientation.to_v
+        depth_v = bxf_machining.depth_orientation.to_v
+        width_v = length_v.cross(depth_v)
+
+        bounds = Geom::BoundingBox.new
+        bounds.add(
+          ORIGIN.offset(width_v, -bxf_machining.radius.to_l), # P0
+          ORIGIN.offset(width_v, bxf_machining.radius.to_l)
+                .offset(depth_v, bxf_machining.depth.to_l)
+                .offset(length_v, bxf_machining.length.to_l)  # P2+Z
+        )
+
+        _draw_box(group.entities, bounds)
+
+      elsif bxf_machining.is_a?(Bxf::BxfMachiningGlue)
+
+        group.name = 'MACHINING-GLUE'
+
+        length_v = bxf_machining.length_orientation.to_v
+        thickness_v = bxf_machining.thickness_orientation.to_v
+        width_v = length_v.cross(thickness_v)
+
+        radius = bxf_machining.width.to_l / 2
+
+        bounds = Geom::BoundingBox.new
+        bounds.add(
+          ORIGIN.offset(width_v, -radius), # P0
+          ORIGIN.offset(width_v, radius)
+                .offset(thickness_v, bxf_machining.thickness.to_l)
+                .offset(length_v, bxf_machining.length.to_l)  # P2+Z
+        )
+
+        _draw_box(group.entities, bounds)
+
+      elsif bxf_machining.is_a?(Bxf::BxfMachiningChamfer)
+
+        group.name = 'MACHINING-CHAMFER'
+
+        length_v = bxf_machining.length_orientation.to_v
+        length = bxf_machining.length.to_l
+
+        pts0 = [
+          ORIGIN,
+          ORIGIN.offset(bxf_machining.distance1_orientation.to_v, bxf_machining.distance1.to_l),
+          ORIGIN.offset(bxf_machining.distance2_orientation.to_v, bxf_machining.distance2.to_l)
+        ]
+        pts1 = pts0.map { |pt| pt.offset(length_v, length) }
+
+        group.entities.add_face(pts0)
+        group.entities.add_face(pts1)
+        pts0.zip(pts1).each { |pt0, pt1| group.entities.add_edges(pt0, pt1).each(&:find_faces) }
+
       end
 
     end
