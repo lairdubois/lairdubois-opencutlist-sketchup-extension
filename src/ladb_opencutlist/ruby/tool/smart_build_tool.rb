@@ -2500,6 +2500,7 @@ module Ladb::OpenCutList
     def _reset_picked_cavity
       @picked_fragment_def = nil
       @picked_plane_manipulator = nil
+      @picked_wall_part = nil
     end
 
     # -----
@@ -2539,9 +2540,15 @@ module Ladb::OpenCutList
     # virtual. To be read BEFORE the creation operation starts : preparing
     # the panels may reset the active part (see
     # SmartBuildMouthPanelActionHandler#_prepare_panels!).
+    #
+    # A pick read THROUGH the panels (see #_snap_point_through_cavities) is on
+    # the part whose wall the ray landed on, not on the one under the mouse :
+    # that one is merely what stands in the mouth - a front panel in front of
+    # the back it is aiming at.
     def _get_picked_material
       return nil unless _fetch_option_pick_material?
-      return nil unless (part = get_active_part).is_a?(Part)
+      part = @picked_wall_part.is_a?(Part) ? @picked_wall_part : get_active_part
+      return nil unless part.is_a?(Part)
       return nil if part.group.material_is_virtual || part.group.material_name.empty?
       Sketchup.active_model.materials[part.group.material_name]
     end
@@ -2654,8 +2661,8 @@ module Ladb::OpenCutList
     # ray under the cursor is cast at the compartments, and the compartment it
     # enters through a mouth, the point where it first meets a wall of it, and
     # that wall are kept in @picked_fragment_def, @picked_point and
-    # @picked_plane_manipulator (see CavitiesDef#pick_ray) ; true when it
-    # really lands in one.
+    # @picked_plane_manipulator (see CavitiesDef#pick_ray), and the part that
+    # wall belongs to in @picked_wall_part ; true when it really lands in one.
     #
     # What stands in a mouth stands between the cursor and the compartment : a
     # front panel, a drawer front, a plinth, the neighbouring carcass. Reading
@@ -2672,6 +2679,7 @@ module Ladb::OpenCutList
       @picked_point = nil
       @picked_fragment_def = nil
       @picked_plane_manipulator = nil
+      @picked_wall_part = nil
 
       return false unless has_active_part?
       return false unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef) && cavities_def.valid?
@@ -2683,7 +2691,8 @@ module Ladb::OpenCutList
       picked = cavities_def.pick_ray(ray[0], ray[1])
       return false if picked.nil?
 
-      @picked_fragment_def, @picked_point, @picked_plane_manipulator = picked
+      @picked_fragment_def, @picked_point, @picked_plane_manipulator, wall_drawing_def = picked
+      @picked_wall_part = cavities_def.part_of(wall_drawing_def)
 
       true
     end
@@ -2845,6 +2854,14 @@ module Ladb::OpenCutList
       # CommonSolidFindCavitiesWorker, INSET FRONT PANELS). Aside also means read
       # aside : #_fetch_applied_panel_entity_paths goes and gets them from the
       # container itself, where the ones the model hides are still there.
+      # The part each panel is read from, by the path of its instance - the
+      # one a wall of the cavities is then told to belong to (see
+      # CavitiesDef#part_of).
+      panel_parts = {}
+      parts.each do |container_part|
+        container_part.def.instance_infos.each_value { |instance_info| panel_parts[instance_info.path] = container_part }
+      end
+
       panel_instance_infos = parts.flat_map { |container_part|
         container_part.def.instance_infos.values
       }.reject { |instance_info|
@@ -2883,7 +2900,7 @@ module Ladb::OpenCutList
                                                      time_budget: CAVITIES_TIME_BUDGET
       ).run
 
-      cavities_def = CavitiesDef.new(container_path, result_def, drawing_defs, own_panel_drawing_defs, options_key, front_panel_drawing_defs)
+      cavities_def = CavitiesDef.new(container_path, result_def, drawing_defs, own_panel_drawing_defs, options_key, front_panel_drawing_defs, panel_parts)
       @cavities_defs.unshift(cavities_def)
       @cavities_defs.pop while @cavities_defs.length > CAVITIES_CACHE_SIZE
 
@@ -3022,7 +3039,10 @@ module Ladb::OpenCutList
     # +recess_panel_drawing_defs+ : the APPLIED PANELS the openings were made
     # to RECEDE behind - see #_cavities_recess_panel_types. The wall a recess
     # leaves is a cap like any opening, and they are what stands behind it.
-    CavitiesDef = Struct.new(:container_path, :result_def, :drawing_defs, :own_panel_drawing_defs, :options_key, :recess_panel_drawing_defs) do
+    #
+    # +panel_parts+ : the Part of each panel of +drawing_defs+, by the path of
+    # its instance - see #part_of.
+    CavitiesDef = Struct.new(:container_path, :result_def, :drawing_defs, :own_panel_drawing_defs, :options_key, :recess_panel_drawing_defs, :panel_parts) do
       def valid?
         result_def.is_a?(SolidBooleanResultDef) && result_def.success?
       end
@@ -3038,10 +3058,19 @@ module Ladb::OpenCutList
         result_def.fragment_defs_for_point(point)
       end
 
+      # The Part the given panel DrawingDef - a wall #pick_ray landed on - was
+      # read from. nil when there is none : no wall, or one of an applied
+      # panel, which the cutlist of the cavities leaves out.
+      def part_of(drawing_def)
+        return nil unless drawing_def.is_a?(DrawingDef) && panel_parts.is_a?(Hash)
+        panel_parts[drawing_def.container_path]
+      end
+
       # What a RAY designates in these cavities : [ fragment_def, point,
-      # plane_manipulator ] - the compartment it enters, where it first meets
-      # a wall of it, and that wall read as the picker would have read the
-      # face behind it. nil when it designates none.
+      # plane_manipulator, drawing_def ] - the compartment it enters, where it
+      # first meets a wall of it, that wall read as the picker would have read
+      # the face behind it, and the panel it belongs to (nil on a receded
+      # opening). nil when it designates none.
       #
       # Picking the cavities rather than the model is what lets a part be
       # fitted in a compartment something else stands in front of - a front panel,
@@ -3075,6 +3104,7 @@ module Ladb::OpenCutList
           # front is aiming at a wall of the compartment.
           point = nil
           plane_manipulator = nil
+          drawing_def = nil
           hits.each_with_index do |(_distance, hit_point, triangle_index), hit_index|
             if fragment_def.triangle_face_id(triangle_index).to_i == 0
               next if hit_index == 0   # The mouth the ray came in by, or the eye inside : the wall behind the eye
@@ -3084,6 +3114,7 @@ module Ladb::OpenCutList
             end
             next if plane_manipulator.nil?
             point = hit_point
+            drawing_def = _wall_drawing_def(fragment_def, triangle_index)
             break
           end
           next if point.nil?   # A cavity crossed through its mouths only : nothing to lean the pick on
@@ -3092,14 +3123,12 @@ module Ladb::OpenCutList
           # user is looking into is settled at its opening, and a shallow one
           # in front of a deep one is the one they see.
           next unless picked.nil? || hits.first[0] < picked[0]
-          picked = [ hits.first[0], fragment_def, point, plane_manipulator ]
+          picked = [ hits.first[0], fragment_def, point, plane_manipulator, drawing_def ]
 
         end
         return nil if picked.nil?
 
-        _distance, fragment_def, point, plane_manipulator = picked
-
-        [ fragment_def, point, plane_manipulator ]
+        picked[1..-1]
       end
 
       private
@@ -3128,12 +3157,7 @@ module Ladb::OpenCutList
       # SolidBooleanResultDef#fragment_defs_for_face). nil for a wall no panel
       # stands behind, an opening cap included.
       def _wall_plane_manipulator(fragment_def, triangle_index, point)
-        face_id = fragment_def.triangle_face_id(triangle_index)
-        return nil if face_id.nil? || face_id == 0
-        face_info_def = fragment_def.face_info_defs[face_id]
-        return nil if face_info_def.nil?
-        drawing_def = face_info_def.container_def
-        return nil unless drawing_def.is_a?(DrawingDef)
+        return nil unless (drawing_def = _wall_drawing_def(fragment_def, triangle_index)).is_a?(DrawingDef)
         transformation = drawing_def.transformation
         return nil unless transformation.is_a?(Geom::Transformation)
         normal = fragment_def.triangle_normal(triangle_index)
@@ -3143,6 +3167,17 @@ module Ladb::OpenCutList
         # plane back to the world through the transformation it is given.
         ti = transformation.inverse
         PlaneManipulator.new([ point.transform(ti), normal.transform(ti) ], transformation)
+      end
+
+      # The panel DrawingDef the given triangle of a cavity wall comes from,
+      # see #_wall_plane_manipulator. nil for a cap.
+      def _wall_drawing_def(fragment_def, triangle_index)
+        face_id = fragment_def.triangle_face_id(triangle_index)
+        return nil if face_id.nil? || face_id == 0
+        face_info_def = fragment_def.face_info_defs[face_id]
+        return nil if face_info_def.nil?
+        drawing_def = face_info_def.container_def
+        drawing_def.is_a?(DrawingDef) ? drawing_def : nil
       end
 
       # The wall a ray hit on a RECESSED opening, read as #_wall_plane_manipulator
@@ -3381,7 +3416,6 @@ module Ladb::OpenCutList
 
       when STATE_PLACE, STATE_DISTRIBUTE
         _pick_part(picker, view)
-        _refresh_pick_material_btn
         if has_active_part?
           if _snap_point(picker) || _cavities_pending?  # Pending : nothing to say of this position yet, either way
             @tool.remove_tooltip
@@ -3390,7 +3424,10 @@ module Ladb::OpenCutList
             @tool.show_tooltip(PLUGIN.get_i18n_string('tool.smart_build.error.invalid_divider_cavity'), SmartTool::MESSAGE_TYPE_ERROR)
             @tool.push_cursor(SmartCursorManager.cursor_select_error)
           end
+        else
+          @picked_wall_part = nil
         end
+        _refresh_pick_material_btn  # After the snap : the material is read on the wall it lands on
         _preview_divider(view)
         _preview_cavity
       end
@@ -3435,6 +3472,7 @@ module Ladb::OpenCutList
       @picked_point = nil
       @picked_fragment_def = nil
       @picked_plane_manipulator = nil
+      @picked_wall_part = nil
       @locked_normal = nil
       @number = 0
       @spacings = []
@@ -5116,7 +5154,7 @@ module Ladb::OpenCutList
           _merge_pick(picker, view)
         else
           _pick_part(picker, view)
-          _refresh_pick_material_btn
+          @picked_wall_part = nil unless has_active_part?
           if has_active_part?
             snapped = _snap_point(picker)
             if !snapped && _cavities_pending?
@@ -5138,6 +5176,7 @@ module Ladb::OpenCutList
               @tool.pop_cursor(SmartCursorManager.cursor_select_error)
             end
           end
+          _refresh_pick_material_btn  # After the snap : the material is read on the wall it lands on
         end
         _preview_panel(view)
         _preview_cavity
@@ -6870,7 +6909,10 @@ module Ladb::OpenCutList
     def _merge_pick(picker, view)
 
       picked_point, picked_fragment_def, picked_plane_manipulator = @picked_point, @picked_fragment_def, @picked_plane_manipulator
-      unless _snap_point(picker)
+      picked_wall_part = @picked_wall_part
+      snapped = _snap_point(picker)
+      @picked_wall_part = picked_wall_part   # The material is the one the drag started on, as the pick material button shows it
+      unless snapped
         # A pick on nothing is not a pick : the cavity preview keeps the point it had
         @picked_point, @picked_fragment_def, @picked_plane_manipulator = picked_point, picked_fragment_def, picked_plane_manipulator
         return
