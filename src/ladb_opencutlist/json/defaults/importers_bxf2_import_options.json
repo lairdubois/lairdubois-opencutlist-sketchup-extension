@@ -7,6 +7,7 @@
     "machining_material_name": { "i18n": "tab.materials.type_7" },
     "hardware_material_name": "Blum",
     "front_part_layer_name": null,
+    "back_part_layer_name": null,
     "machining_layer_name": null,
     "hardware_layer_name": null,
     "subtract_machinings": true

@@ -131,6 +131,7 @@
             const $inputPartAluminiumMaterialName = $('#ladb_importer_import_input_part_aluminium_material_name', $modal);
             const $inputPartGlassMaterialName = $('#ladb_importer_import_input_part_glass_material_name', $modal);
             const $inputFrontPartLayerName = $('#ladb_importer_import_input_front_part_layer_name', $modal);
+            const $inputBackPartLayerName = $('#ladb_importer_import_input_back_part_layer_name', $modal);
             const $inputMachiningMaterialName = $('#ladb_importer_import_input_machining_material_name', $modal);
             const $inputMachiningLayerName = $('#ladb_importer_import_input_machining_layer_name', $modal);
             const $inputHardwareMaterialName = $('#ladb_importer_import_input_hardware_material_name', $modal);
@@ -154,6 +155,7 @@
                 options.machining_material_name = $inputMachiningMaterialName.val();
                 options.hardware_material_name = $inputHardwareMaterialName.val();
                 options.front_part_layer_name = $inputFrontPartLayerName.val();
+                options.back_part_layer_name = $inputBackPartLayerName.val();
                 options.machining_layer_name = $inputMachiningLayerName.val();
                 options.hardware_layer_name = $inputHardwareLayerName.val();
                 options.subtract_machinings = $inputSubtractMachinings.is(':checked');
@@ -166,6 +168,7 @@
                 $inputMachiningMaterialName.val(options.machining_material_name);
                 $inputHardwareMaterialName.val(options.hardware_material_name);
                 $inputFrontPartLayerName.val(options.front_part_layer_name);
+                $inputBackPartLayerName.val(options.back_part_layer_name);
                 $inputMachiningLayerName.val(options.machining_layer_name);
                 $inputHardwareLayerName.val(options.hardware_layer_name);
                 $inputSubtractMachinings.prop('checked', options.subtract_machinings !== false);

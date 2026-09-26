@@ -2106,6 +2106,8 @@ tab:
         option_part_glass_material_name_help: Matière à appliquer aux pièces en **verre**.
         option_front_part_layer_name: Façades
         option_front_part_layer_name_help: Balise à appliquer aux pièces de façade.
+        option_back_part_layer_name: Fonds
+        option_back_part_layer_name_help: Balise à appliquer aux fonds de caisson.
         option_machining_material_name: Usinages
         option_machining_material_name_help: Matière à appliquer aux **usinages**.
         option_machining_layer_name: Usinages

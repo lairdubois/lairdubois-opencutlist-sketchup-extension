@@ -2,6 +2,7 @@ module Ladb::OpenCutList
 
   require_relative '../../../lib/geometrix/geometrix'
   require_relative '../../../lib/rubybxf/bxf'
+  require_relative '../../../model/attributes/instance_attributes'
   require_relative '../../../model/attributes/material_attributes'
   require_relative '../../../model/formula/formula_data'
   require_relative '../../../worker/common/common_eval_formula_worker'
@@ -20,6 +21,12 @@ module Ladb::OpenCutList
 
     PART_FRONT_BACK_SWAP_TRANSFORM = Geom::Transformation.axes(ORIGIN, X_AXIS, Y_AXIS.reverse, Z_AXIS.reverse)
     PART_FRONT_BACK_SWAP_TRANSFORM_INVERSE = PART_FRONT_BACK_SWAP_TRANSFORM.inverse
+
+    # Blum part model keys telling what a part is FOR (see InstanceAttributes, ROLE) : any front ("H-FRON-Tuer",
+    # "H-FRON-Blende", "H-FRON-HK", ...) and the carcass back ("Korpusrueckwand"). A drawer back ("H-RUEW-*") belongs
+    # to its drawer box and has no role.
+    FRONT_PANEL_MODEL_KEY_PREFIX = 'H-FRON'.freeze
+    BACK_PANEL_MODEL_KEY = 'KRW'.freeze
 
     BLUM_COLOR = Sketchup::Color.new('#ff671f').freeze
     WOOD_MATERIAL_COLOR = Sketchup::Color.new(209, 197, 173).freeze
@@ -57,6 +64,7 @@ module Ladb::OpenCutList
                    part_aluminium_material_name: nil,
                    part_glass_material_name: nil,
                    front_part_layer_name: nil,
+                   back_part_layer_name: nil,
 
                    machining_material_name: nil,
                    machining_layer_name: nil,
@@ -76,6 +84,7 @@ module Ladb::OpenCutList
       @part_aluminium_material_name = part_aluminium_material_name
       @part_glass_material_name = part_glass_material_name
       @front_part_layer_name = front_part_layer_name
+      @back_part_layer_name = back_part_layer_name
 
       @machining_material_name = machining_material_name.is_a?(String) && !machining_material_name.empty? ? machining_material_name : PLUGIN.get_i18n_string('tab.materials.type_7')
       @machining_layer_name = machining_layer_name
@@ -368,7 +377,11 @@ module Ladb::OpenCutList
                                                                         end
 
           instance = entities.add_instance(definition, transformation * part_link.transformations.to_t * PART_FRONT_BACK_SWAP_TRANSFORM)
-          instance.layer = _get_front_part_layer if part.model_key.start_with?('H-FRON')
+          if (role = _get_part_role(part))
+            InstanceAttributes.write_role(instance, role)
+            instance.layer = _get_front_part_layer if role == InstanceAttributes::ROLE_FRONT_PANEL
+            instance.layer = _get_back_part_layer if role == InstanceAttributes::ROLE_BACK_PANEL
+          end
           instance.material = _get_part_material(part.material)
 
         end
@@ -1011,6 +1024,15 @@ module Ladb::OpenCutList
       material
     end
 
+    # -- Roles --
+
+    def _get_part_role(part)
+      model_key = part.model_key.to_s
+      return InstanceAttributes::ROLE_FRONT_PANEL if model_key.start_with?(FRONT_PANEL_MODEL_KEY_PREFIX)
+      return InstanceAttributes::ROLE_BACK_PANEL if model_key == BACK_PANEL_MODEL_KEY
+      nil
+    end
+
     # -- Layers --
 
     def _get_front_part_layer
@@ -1020,6 +1042,18 @@ module Ladb::OpenCutList
 
         layer = Sketchup.active_model.layers.add(@front_part_layer_name)
         layer.color = '#05d6a0'
+
+      end
+      layer
+    end
+
+    def _get_back_part_layer
+      return nil unless @back_part_layer_name.is_a?(String) && !@back_part_layer_name.empty?
+      layer = Sketchup.active_model.layers[@back_part_layer_name]
+      if layer.nil?
+
+        layer = Sketchup.active_model.layers.add(@back_part_layer_name)
+        layer.color = '#9b59b6'
 
       end
       layer
@@ -1168,7 +1202,7 @@ module Ladb::OpenCutList
     end
 
     def front?
-      model_key.to_s.start_with?('H-FRON')
+      model_key.to_s.start_with?(ImportersBxf2ImportWorker::FRONT_PANEL_MODEL_KEY_PREFIX)
     end
 
     def function_unit
