@@ -202,6 +202,35 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     assert_equal({}, _def(SLIDES).options)
   end
 
+  def test_attributes_merge_variant_over_component
+    data = JSON.parse(JSON.generate(HINGE))
+    data['components']['a']['attributes'] = { 'role' => 'hinge', 'hinge_max_angle' => 110, 'hinge_pivot' => [ 0, 0 ] }
+    data['components']['a']['variants']['items']['inset']['attributes'] = { 'hinge_pivot' => [ -4, -26 ] }
+    descriptor = _def(data)
+    assert(descriptor.valid?, descriptor.errors.inspect)
+    assert_equal({ 'role' => 'hinge', 'hinge_max_angle' => 110, 'hinge_pivot' => [ -4, -26 ] }, descriptor.resolve_component('a', 'hinge_kind' => 'inset').attributes)
+    assert_equal({ 'role' => 'hinge', 'hinge_max_angle' => 110, 'hinge_pivot' => [ 0, 0 ] }, descriptor.resolve_component('a', 'hinge_kind' => 'overlay').attributes)
+    assert_equal({}, descriptor.resolve_component('b').attributes)
+  end
+
+  def test_attributes_follow_links
+    data = JSON.parse(JSON.generate(SLIDES))
+    data['components']['a']['attributes'] = { 'role' => 'slide' }
+    assert_equal({ 'role' => 'slide' }, _def(data).resolve_component('b', 'depth' => 400.0 / 25.4).attributes)
+  end
+
+  def test_invalid_attributes
+    data = JSON.parse(JSON.generate(HINGE))
+    data['components']['b']['attributes'] = [ 'role' ]
+    _assert_error(data, "component 'b' attributes is not an object")
+    data['components']['b']['attributes'] = { 'hinge_pivot' => [ [ 1, 2 ] ], 'more' => { 'a' => 1 } }
+    _assert_error(data, "attribute 'hinge_pivot' is neither")
+    _assert_error(data, "attribute 'more' is neither")
+    data = JSON.parse(JSON.generate(SLIDES))
+    data['components']['b']['attributes'] = { 'role' => 'slide' }
+    _assert_error(data, "component 'b' links to another role and has attributes")
+  end
+
   # -----
 
   private

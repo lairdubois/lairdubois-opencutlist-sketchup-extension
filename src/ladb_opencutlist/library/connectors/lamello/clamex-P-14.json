@@ -13,7 +13,7 @@
     ]
   },
   "components": {
-    "a": { "hardware": "$OCL/components/connectors/clamex-P-14.skp", "machining": "$OCL/components/connectors/clamex-P-14.machining.skp" }
+    "a": { "hardware": "$OCL/components/connectors/lamello/clamex-P-14.skp", "machining": "$OCL/components/connectors/lamello/clamex-P-14.machining.skp" }
   },
   "options": { "height": "10mm", "start_offset": "60mm", "end_offset": "60mm", "min_spacing": "80mm", "max_spacing": "300mm" }
 }

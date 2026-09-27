@@ -15,17 +15,18 @@
   },
   "components": {
     "a": {
+      "attributes": { "role": "hinge", "hinge_max_angle": 110, "hinge_pivot_approximate": true },
       "variants": {
         "select": { "by": "hinge_kind" },
         "fallback": "overlay",
         "items": {
-          "overlay":      { "hardware": "$OCL/components/hinges/clip-top-applique.skp",  "machining": "$OCL/components/hinges/clip-top-applique.machining.skp" },
-          "half_overlay": { "hardware": "$OCL/components/hinges/clip-top-jumelee.skp",   "machining": "$OCL/components/hinges/clip-top-jumelee.machining.skp" },
-          "inset":        { "hardware": "$OCL/components/hinges/clip-top-encastree.skp", "machining": "$OCL/components/hinges/clip-top-encastree.machining.skp" }
+          "overlay":      { "hardware": "$OCL/components/hinges/blum/clip-top-overlay.skp", "machining": "$OCL/components/hinges/blum/clip-top-overlay.machining.skp", "attributes": { "hinge_pivot": [ 17, -29 ] } },
+          "half_overlay": { "hardware": "$OCL/components/hinges/blum/clip-top-half-overlay.skp", "machining": "$OCL/components/hinges/blum/clip-top-half-overlay.machining.skp", "attributes": { "hinge_pivot": [ -4, -26 ] } },
+          "inset":        { "hardware": "$OCL/components/hinges/blum/clip-top-inset.skp", "machining": "$OCL/components/hinges/blum/clip-top-inset.machining.skp", "attributes": { "hinge_pivot": [ -4, -26 ] } }
         }
       }
     },
-    "b": { "hardware": "$OCL/components/hinges/clip-top.embase.skp", "machining": "$OCL/components/hinges/clip-top.embase.machining.skp" }
+    "b": { "hardware": "$OCL/components/hinges/blum/clip-top.mounting-plate.skp", "machining": "$OCL/components/hinges/blum/clip-top.mounting-plate.machining.skp" }
   },
   "options": { "start_offset": "68mm", "end_offset": "68mm", "max_spacing": "800mm" }
 }

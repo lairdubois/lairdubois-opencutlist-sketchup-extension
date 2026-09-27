@@ -22,11 +22,18 @@ module Ladb::OpenCutList
   #  }
   #
   # A <component> is either :
-  #  - { "hardware": <ref>, "machining": <ref> | { "holes": [ … ] }, "stretch": { … } }
+  #  - { "hardware": <ref>, "machining": <ref> | { "holes": [ … ] }, "stretch": { … }, "attributes": { … } }
   #  - { "same_as": "<role>" } / { "mirror_of": "<role>" }
   #  - { "variants": { "select": { "by": "<measure>", "mode": "exact" | "max_le", "ratio": <Float> },
-  #                    "fallback": "<key>", "items": { "<key>": <component> | null } } }
+  #                    "fallback": "<key>", "items": { "<key>": <component> | null } },
+  #      "attributes": { … } }
   #  - null : the role is left empty (a one sided fitting)
+  #
+  # "attributes" are written as is in the OCL dictionary of the laid hardware
+  # definition - over those its SKP bears : { "role": "hinge",
+  # "hinge_max_angle": 110, "hinge_pivot": [ -8.5, 4.2 ] }. Values are
+  # scalars or arrays of scalars. Those of a variant override those of the
+  # component holding the variants.
   #
   # Refs are '$LIB/…' / '$OCL/…' refs of a library, './…' paths relative to the
   # descriptor, or anything else _get_geometries_def understands (a
@@ -69,8 +76,9 @@ module Ladb::OpenCutList
     #  - hardware, machining : ref String, nil - or a Hash of primitives for machining ;
     #  - mirror : true when the geometry is laid mirrored (mirror_of) ;
     #  - stretch : the component's "stretch" Hash, or nil ;
-    #  - variant : the key of the picked variant, or nil.
-    HardwareComponentDef = Struct.new(:role, :hardware, :machining, :mirror, :stretch, :variant)
+    #  - variant : the key of the picked variant, or nil ;
+    #  - attributes : the Hash of the definition attributes, maybe empty.
+    HardwareComponentDef = Struct.new(:role, :hardware, :machining, :mirror, :stretch, :variant, :attributes)
 
     attr_reader :path, :data, :errors
 
@@ -181,8 +189,9 @@ module Ladb::OpenCutList
       _resolve_value(role, components[role], context, mirror, visited)
     end
 
-    def _resolve_value(role, value, context, mirror, visited, variant = nil)
+    def _resolve_value(role, value, context, mirror, visited, variant = nil, attributes = {})
       return nil unless value.is_a?(Hash)
+      attributes = attributes.merge(value['attributes']) if value['attributes'].is_a?(Hash)
       if value.key?('same_as')
         resolved = _resolve_component(value['same_as'].to_s, context, mirror, visited)
       elsif value.key?('mirror_of')
@@ -190,11 +199,11 @@ module Ladb::OpenCutList
       elsif value.key?('variants')
         key = _select_variant(value['variants'], context)
         return nil if key.nil?
-        return _resolve_value(role, value['variants']['items'][key], context, mirror, visited, key)
+        return _resolve_value(role, value['variants']['items'][key], context, mirror, visited, key, attributes)
       else
         machining = value['machining']
         machining = _resolve_ref(machining) unless machining.is_a?(Hash)
-        return HardwareComponentDef.new(role, _resolve_ref(value['hardware']), machining, mirror, value['stretch'], variant)
+        return HardwareComponentDef.new(role, _resolve_ref(value['hardware']), machining, mirror, value['stretch'], variant, attributes)
       end
       return nil if resolved.nil?
       resolved.role = role
@@ -276,7 +285,7 @@ module Ladb::OpenCutList
       if @data.key?('options')
         if @data['options'].is_a?(Hash)
           @data['options'].each do |name, value|
-            errors << "option '#{name}' is not a scalar" unless value.is_a?(String) || value.is_a?(Numeric) || value == true || value == false
+            errors << "option '#{name}' is not a scalar" unless _scalar?(value)
           end
         else
           errors << 'options is not an object'
@@ -292,7 +301,9 @@ module Ladb::OpenCutList
         errors << "component '#{path}' is not an object"
         return
       end
+      _validate_attributes(path, value['attributes'], errors) if value.key?('attributes')
       if value.key?('same_as') || value.key?('mirror_of')
+        errors << "component '#{path}' links to another role and has attributes" if value.key?('attributes')
         target = value.key?('same_as') ? value['same_as'] : value['mirror_of']
         errors << "component '#{path}' links to unknown role #{target.inspect}" unless roles.include?(target)
         errors << "component '#{path}' links to itself" if target == path
@@ -316,6 +327,21 @@ module Ladb::OpenCutList
         has_machining = value['machining'].is_a?(Hash) || value['machining'].is_a?(String) && !value['machining'].empty?
         errors << "component '#{path}' has neither hardware nor machining" unless has_hardware || has_machining
       end
+    end
+
+    def _validate_attributes(path, attributes, errors)
+      unless attributes.is_a?(Hash)
+        errors << "component '#{path}' attributes is not an object"
+        return
+      end
+      attributes.each do |name, value|
+        next if _scalar?(value) || value.is_a?(Array) && value.all? { |item| _scalar?(item) }
+        errors << "component '#{path}' attribute '#{name}' is neither a scalar nor an array of scalars"
+      end
+    end
+
+    def _scalar?(value)
+      value.is_a?(String) || value.is_a?(Numeric) || value == true || value == false
     end
 
   end

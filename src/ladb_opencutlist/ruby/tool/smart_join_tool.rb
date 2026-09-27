@@ -66,20 +66,20 @@ module Ladb::OpenCutList
       {
         :action => ACTION_REMOVE_CONNECTORS
       },
-      {
-        :action => ACTION_ADD_FITTINGS,
-        :options => {
-          ACTION_OPTION_OFFSETS => [ ACTION_OPTION_OFFSETS_START_OFFSET, ACTION_OPTION_OFFSETS_END_OFFSET ],
-          ACTION_OPTION_SPACINGS => [ ACTION_OPTION_SPACINGS_MIN_SPACING, ACTION_OPTION_SPACINGS_MAX_SPACING ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_OPPOSITE, ACTION_OPTION_OPTIONS_MAKE_UNIQUE ],
-        }
-      },
-      {
-        :action => ACTION_REMOVE_FITTINGS,
-        :options => {
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_OPPOSITE ],
-        }
-      },
+      # {
+      #   :action => ACTION_ADD_FITTINGS,
+      #   :options => {
+      #     ACTION_OPTION_OFFSETS => [ ACTION_OPTION_OFFSETS_START_OFFSET, ACTION_OPTION_OFFSETS_END_OFFSET ],
+      #     ACTION_OPTION_SPACINGS => [ ACTION_OPTION_SPACINGS_MIN_SPACING, ACTION_OPTION_SPACINGS_MAX_SPACING ],
+      #     ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_OPPOSITE, ACTION_OPTION_OPTIONS_MAKE_UNIQUE ],
+      #   }
+      # },
+      # {
+      #   :action => ACTION_REMOVE_FITTINGS,
+      #   :options => {
+      #     ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_OPPOSITE ],
+      #   }
+      # },
       {
         :action => ACTION_ADD_HINGES,
         :options => {
@@ -626,11 +626,16 @@ module Ladb::OpenCutList
     end
 
     # Marks the given hardware definition as the given role's component of the
-    # picked descriptor, and gives it the unit price of that component.
+    # picked descriptor, and gives it the attributes and the unit price of
+    # that component. The definition is shared by every occurrence : the
+    # attributes of the last one laid are those of all.
     def _write_hardware_attributes(definition, role)
       return unless definition.is_a?(Sketchup::ComponentDefinition)
       return if (descriptor = _get_hardware_descriptor_def).nil?
       return if (component = _get_hardware_component(role)).nil?
+      component.attributes.each do |name, value|
+        definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, name, value) unless definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, name) == value
+      end
       definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, HardwareDescriptorDef::DEFINITION_ATTRIBUTE_ID, descriptor.id)
       definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, HardwareDescriptorDef::DEFINITION_ATTRIBUTE_COMPONENT, component.role)
       definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, HardwareDescriptorDef::DEFINITION_ATTRIBUTE_VARIANT, component.variant)
