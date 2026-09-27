@@ -112,6 +112,7 @@ core:
       unhide_part_instance: Onthul de instantie
       edit_part_instance_properties: Instance-eigenschappen bewerken
       smart_draw: $t(core.toolbar.command.smart_draw)
+      smart_build: $t(core.toolbar.command.smart_build)
       smart_handle: $t(core.toolbar.command.smart_handle)
       smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
@@ -125,6 +126,7 @@ core:
     command:
       dialog: OpenCutList
       smart_draw: Onderdelen tekenen
+      smart_build: Onderdelen opbouwen
       smart_handle: Onderdelen hanteren
       smart_reshape: Onderdelen aanpassen
       smart_paint: Kleur de onderdelen
@@ -211,16 +213,21 @@ core:
       *Door een persoonlijke voorinstelling te maken, kunt u de huidige formulierinstellingen globaal behouden, zodat u ze in al uw modellen opnieuw kunt gebruiken.*
 
       Voer de naam van de preset in:
+    rename_prompt_title: Hernoemen
+    rename_prompt: "Voer de nieuwe naam van de voorinstelling **\"{{ name }}\"** in"
     delete_confirm_title: verwijdering
     delete_confirm: "Weet u zeker dat u de preset **\"{{ name }}\"** wilt verwijderen?"
     override_confirm_title: Bijwerken
     override_confirm: "Bevestig je dat je de voorinstelling **\"{{ name }}\"** wil bijwerken met de inhoud van het formulier?"
+    new_error: "Niet mogelijk, er bestaat al een voorinstelling **\"{{ name }}\"**"
     new_success: "Voorinstelling **\"{{ name }}\"** aangemaakt"
     override_success: "Voorinstelling **\"{{ name }}\"** bijgewerkt"
     restore_success: "Het formulier werd ingevuld met de voorinstelling **\"{{ name }}\"**"
+    rename_success: "Voorinstelling **\"{{ name }}\"** hernoemd naar **\"{{ new_name }}\"**"
     delete_success: "Voorinstelling **\"{{ name }}\"** verwijderd"
     tooltip:
       save_to: "Voorinstelling '{{ name }}' bijwerken"
+      rename: "Voorinstelling '{{ name }}' hernoemen"
       delete: "Voorinstelling '{{ name }}' verwijderen"
     dictionary:
       component_textinput_color: Kleurenpalet
@@ -239,16 +246,20 @@ core:
       cutlist_estimate_options: $t(tab.cutlist.label) / $t(tab.cutlist.estimate.title)
       cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
       cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
-      importer_import_options: $t(tab.importer.label) / $t(default.import)
-      importer_load_options: $t(tab.importer.label) / $t(default.open)
+      importers_csv_import_options: $t(tab.importers.csv.label) / $t(default.import)
+      importers_csv_load_options: $t(tab.importers.csv.label) / $t(default.open)
+      importers_bxf2_import_options: $t(tab.importers.bxf2.label) / $t(default.import)
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       outliner_options: $t(tab.outliner.label) / $t(default.options)
+      outliner_deep_rename_parts_options: $t(tab.outliner.label) / $t(tab.outliner.deep_rename_parts.title)
       settings_model: $t(tab.settings.label) / Model
       tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
       tool_smart_handle_options: $t(core.toolbar.command.smart_handle)
+      tool_smart_reshape_options: $t(core.toolbar.command.smart_reshape)
       tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
       tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
+      tool_smart_join_options: $t(core.toolbar.command.smart_join)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
   progress:
     please_wait: Berekening van een wereld van vrede
@@ -260,7 +271,10 @@ core:
       remove: Kleur vergeten
     textinput_code:
       snippets: Formulevoorbeelden
-      help: Druk op **@** om de lijst met gegevensvariabelen te openen.
+      help: Typ **@** om de lijst met gegevensvariabelen te openen.
+    textinput_file:
+      browse: Bladeren
+      browse_library: Bladeren en kopiëren naar de bibliotheek
     textinput_size:
       quantity: Aant.
     three_viewer:
@@ -282,6 +296,23 @@ core:
       failed_to_load: |
         Kan de documentatie niet openen.
         Controleer of u verbonden bent met het internet.
+  solid:
+    error:
+      empty: Het volume bevat geen geometrie
+      empty_named: "« {{ name }} » bevat geen geometrie"
+      non_manifold_edges: "Het volume bevat {{ count }} niet-manifold rand"
+      non_manifold_edges_plural: "Het volume bevat {{ count }} niet-manifold randen"
+      non_manifold_edges_named: "‘{{ name }}’ bevat {{ count }} niet-manifold rand"
+      non_manifold_edges_named_plural: "\"{{ name }}\" bevat {{ count }} niet-manifold randen"
+      open_edges: "Het volume bevat {{ count }} open randen"
+      open_edges_plural: "Het volume bevat {{ count }} open randen"
+      open_edges_named: "« {{ name }} » bevat {{ count }} open rand"
+      open_edges_named_plural: "« {{ name }} » bevat {{ count }} open randen"
+      locked_instances: "De bewerking kan een vergrendelde instantie niet wijzigen: {{ list }}"
+    rebuild:
+      error:
+        no_segment: Geen bruikbare constructielijn in de selectie
+        no_face: Er kon geen gesloten coplanaire lus worden gereconstrueerd
 tab:
   cutlist:
     label: Onderdelen
@@ -358,6 +389,7 @@ tab:
       flipped: Dit component is gespiegeld ten opzichte van het origineel
       symmetrical: Gespiegelde herkenning staat uit voor dit onderdeel
       ignore_grain_direction: De nerfrichting wordt op dit onderdeel genegeerd
+      follow_grain_direction: Detectie van nerfcontinuïteit is ingeschakeld voor dit onderdeel
       auto_oriented: De oriëntatie van dit component is automatisch aangepast
       oko_label_filter: "Deze badge opnemen/uitsluiten"
       add_label_filter: "Filter op '{{ label }}'"
@@ -481,11 +513,11 @@ tab:
         *OpenCutList zal dan 2 stukken van 19mm dikte tellen in plaats van 1 stuk van 38mm dikte.*
       cut_options: $t(tab.materials.edit_material.cut_options)
       length_increase: $t(tab.materials.edit_material.length_increase)
-      length_increase_help: Overmaat toegepast op de netto lengte van het onderdeel om de **zaaglengte** te bepalen.  # TODO: singular version of tab.materials.edit_material.length_increase
+      length_increase_help: $t(tab.materials.edit_material.length_increase_help)
       width_increase: $t(tab.materials.edit_material.width_increase)
-      width_increase_help: Overmaat toegepast op de netto breedte van het onderdeel om de **zaagbreedte** te bepalen. # TODO: singular version of tab.materials.edit_material.width_increase
+      width_increase_help: $t(tab.materials.edit_material.width_increase_help)
       thickness_increase: $t(tab.materials.edit_material.thickness_increase)
-      thickness_increase_help: Overmaat toegepast op de netto dikte van het onderdeel om de **zaagdikte** te bepalen. # TODO: singular version of tab.materials.edit_material.thickness_increase
+      thickness_increase_help: $t(tab.materials.edit_material.thickness_increase_help)
       description: Beschrijving
       description_help: |
         In de *Beschrijving* kunt u persoonlijke informatie invoeren voor elke sub-definitie.
@@ -510,9 +542,21 @@ tab:
       symmetrical: Schakel detectie van gespiegelde onderdelen op dit deel uit
       symmetrical_help: |
         Indien dit vakje is aangevinkt, zal de detectie van een *gespiegeld deel* geen effect hebben op dit deel.
-      ignore_grain_direction: Negeer de nerfrichting op dit onderdeel
+      ignore_grain_direction: Nerf
       ignore_grain_direction_help: |
-        Als dit vakje is aangevinkt, wordt de nerfrichting van het materiaal voor dit onderdeel genegeerd.
+        Met deze optie kan voor dit onderdeel de nerfrichting die voor het materiaal is ingesteld, worden genegeerd.
+      ignore_grain_direction_0: De nerf volgt de lengte
+      ignore_grain_direction_1: Negeer de nerfrichting op dit onderdeel
+      follow_grain_direction: Nerfcontinuïteit
+      follow_grain_direction_help: |
+        Wanneer deze optie is ingeschakeld, kunnen exemplaren van dit onderdeel worden beschouwd als onderdelen met doorlopende nerf ten opzichte van aangrenzende onderdelen die hetzelfde hebben:
+        - dezelfde *Nerfcontinuïteitsgroep*
+        - hetzelfde vlak
+        - dezelfde oriëntatie
+        - hetzelfde materiaal met nerfrichting
+        - dezelfde dikte
+      follow_grain_direction_0: $t(default.no)
+      follow_grain_direction_1: Detectie van nerfcontinuïteit ingeschakeld
       axes: Assen
       axes_help: Herschik de afmetingen zodat ze overeenkomen met de gewenste askleuren in uw onderdeel.
       axes_tip: |
@@ -1069,8 +1113,19 @@ tab:
       option_rectangleguillotine_first_stage_orientation_horizontal: Horizontaal
       option_rectangleguillotine_first_stage_orientation_vertical: Verticaal
       option_rectangleguillotine_first_stage_orientation_any: Elke
+      option_rectangleguillotine_sort_subplates_criteria: Sortering van niveaus
+      option_rectangleguillotine_sort_subplates_criteria_help: |
+        Bepaalt de sorteercriteria voor de onderdelen op elk niveau.
+      option_rectangleguillotine_sort_subplates_criteria_l1l2: Op aflopende grootte
+      option_rectangleguillotine_sort_subplates_criteria_dl2l1:  Op aflopende dichtheid
       option_rectangleguillotine_keep: Minimale valgrootte
       option_rectangleguillotine_keep_help: Rest met twee afmetingen groter dan de minimumgrootte worden gemarkeerd met **om te bewaren**.
+      option_rectangle_leftover_mode:  Leg-/spreidingsrichting
+      option_rectangle_leftover_mode_help: |
+        Bepaalt de spreidingsrichting van de onderdelen op de laatste niet-volledig benutte plaat.
+      option_rectangle_leftover_mode_area: Automatisch
+      option_rectangle_leftover_mode_x: Over de breedte van de plaat
+      option_rectangle_leftover_mode_y:  Over de lengte van de plaat
       option_irregular_allowed_rotations: Toegestane rotaties
       option_irregular_allowed_rotations_help: |
         Bepaalt de stapgrootte van de mogelijke rotatiehoeken van het stuk voor de plaatsing.
@@ -1085,6 +1140,12 @@ tab:
         Bepaalt of het spiegelen van het stuk is toegestaan voor de plaatsing.
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
+      option_irregular_leftover_mode:  Leg-/spreidingsrichting
+      option_irregular_leftover_mode_help: |
+        Bepaalt de spreidingsrichting van de onderdelen op de laatste niet-volledig benutte plaat.
+      option_irregular_leftover_mode_bottom_left: Automatisch
+      option_irregular_leftover_mode_left: Over de breedte van de plaat
+      option_irregular_leftover_mode_bottom:  Over de lengte van de plaat
       option_spacing: Afstand
       option_spacing_help: |
         Minimale afstand tussen elk stuk.
@@ -1144,6 +1205,7 @@ tab:
       option_hide_edges_preview_1: Verborgen in het zaagschema
       option_hide_edges_preview_help: Hiermee kunt u de visuele weergave van de kantenbanden voor elk onderdeel in het zaagschema tonen of verbergen.
       option_zoom_threshold: Zoomdrempel
+      # TODO find a better explanation
       option_zoom_threshold_help: |
         Hiermee kunt u de diagrambreedte instellen waaronder diagrammen automatisch worden vergroot.
 
@@ -1151,6 +1213,11 @@ tab:
       option_time_limit: Tijdslimiet
       option_time_limit_help: |
         Stelt de toegestane tijd voor de berekening in
+      grain_groups:
+        title: "{{ count }} nerfcontinuïteitsgroep"
+        title_plural: "{{ count }} nerfcontinuïteitsgroepen"
+        name: Beschrijving
+        item_count: Σ Onderdelen
       tooltip:
         scroll_to_block_1d: Scroll naar de eerste plank of kantenband
         scroll_to_block_2d: Scroll naar het eerste paneel of de eerste plaat
@@ -1249,7 +1316,8 @@ tab:
         no_solution: Er is geen oplossing gevonden om **alle stukken** in het beschikbare materiaal te plaatsen.
         unplaced_parts: "**1 stuk** kon niet worden geplaatst."
         unplaced_parts_plural: "**{{ count }} stukken** konden niet worden geplaatst."
-        unusable_part: Stuk te groot
+        unusable_part_1: Stuk te groot
+        unusable_part_2: Nerfcontinuïteitsgroep is te groot
       warning:
         is_part_selection: Het zaagplan beperkt zich tot **geselecteerde onderdelen**.
         cutting_dimensions: Dit zaagplan gebruikt de **ruwe afmetingen** van de onderdelen.
@@ -1462,6 +1530,13 @@ tab:
 
         - De **Lagen**-structuur tekent alle lijnen plat, waarbij de verschillende soorten lijnen alleen in lagen worden onderscheiden. *Deze structuur biedt betere compatibiliteit met software van derden.*
         - De structuur **Lagen + Blokken** maakt één blok per stuk en voegt deze blokken net zo vaak in als de stukken worden herhaald. *Deze structuur biedt meer flexibiliteit bij het bewerken van het bestand.*
+      option_dxf_depth_to_z: Dieptes in Z
+      option_dxf_depth_to_z_0: $t(default.no)
+      option_dxf_depth_to_z_1: Laagdieptes verdelen over de Z-as
+      option_dxf_depth_to_z_help: |
+        Hiermee worden de lagen volgens hun diepte verdeeld over de Z-as.
+
+        Schakel deze optie uit om alleen een 2D-DXF te exporteren.
       option_unit: Eenheid
       option_unit_help: |
         Hiermee kunt u de eenheid kiezen die in het geëxporteerde bestand wordt gebruikt.
@@ -1634,11 +1709,14 @@ tab:
 
         *Als er geen eenheid is opgegeven, wordt de eenheid van het model toegepast.*
       length_increase: Lengte overmaat
-      length_increase_help: Overschot toegepast op de verwerkbare lengte van de stukken om hun **zaaglengte** te bepalen.
+      length_increase_help: Overmaat toegepast op de netto lengte van het onderdeel om de **zaaglengte** te bepalen.
+      length_increase_help_plural: Overschot toegepast op de verwerkbare lengte van de stukken om hun **zaaglengte** te bepalen.
       width_increase: Breedte overmaat
-      width_increase_help: Overschot toegepast op de **bewerkbare breedte** van de stukken om hun zaagbreedte te bepalen.
+      width_increase_help: Overmaat toegepast op de netto breedte van het onderdeel om de **zaagbreedte** te bepalen.
+      width_increase_help_plural: Overschot toegepast op de **bewerkbare breedte** van de stukken om hun zaagbreedte te bepalen.
       thickness_increase: Dikte overmaat
-      thickness_increase_help: Overschot toegepast op de **bewerkbare dikte** van de stukken om hun zaagdikte te bepalen.
+      thickness_increase_help: Overmaat toegepast op de netto dikte van het onderdeel om de **zaagdikte** te bepalen.
+      thickness_increase_help_plural: Overschot toegepast op de **bewerkbare dikte** van de stukken om hun zaagdikte te bepalen.
       std_lengths: Standaard lengtes
       std_lengths_help: |
         Beschikbare standaardlengtes voor dit materiaal.
@@ -1771,6 +1849,8 @@ tab:
       name: Beschrijving
       instance_name: Instantie
       material: Materiaal
+      is_grain_group: Instellen als **Nerfcontinuïteitsgroep**
+      is_grain_group_help: "Wanneer deze optie is ingeschakeld, kan deze instantie worden beschouwd als een **Nerfcontinuïteitsgroep** voor de onderdelen die ze bevat en waarvoor *nerfcontinuïteit* is ingeschakeld."
       definition_name: Definitie
       description: Beschrijving
       url: URL
@@ -2165,12 +2245,16 @@ tab:
       export_global_presets: Voorinstellingen exporteren
       export_global_presets_help: |
         Met deze functie kunt u uw voorinstellingen exporteren naar een **.json**-bestand.
-         Selecteer daar de presets die u wilt exporteren.
+        Selecteer de voorinstellingen die u wilt exporteren.
+        Als de geselecteerde voorinstellingen verwijzen naar **.skp**- of **.skm**-bestanden, worden deze opgenomen in een **.oclp**-archief zodat het exportbestand direct kan worden gedeeld.
       export_global_presets_success: De presets zijn succesvol geëxporteerd.
+      export_global_presets_success_with_assets: "De voorinstellingen zijn succesvol geëxporteerd, samen met {{ count }} bijbehorend(e) bestand(en)."
       import_global_presets: Voorinstellingen importeren
       import_global_presets_help: |
-        Selecteer de voorinstellingen in het **.json**-bestand dat u wilt importeren
-        Let op: als er al een preset met een identieke naam bestaat, wordt deze vervangen door de geïmporteerde versie.
+        Selecteer de voorinstellingen uit het **.json**- of **.oclp**-bestand die u wilt importeren.
+        Let op: als er al een voorinstelling met dezelfde naam bestaat, wordt deze vervangen door de geïmporteerde versie.
+        Bestanden in een **.oclp**-archief worden naar uw bibliotheek gekopieerd, op dezelfde locatie als in de bibliotheek van de afzender.
+      open_library_dir: Bibliotheekmap openen
       import_global_presets_success: |
         De *OpenCutList*-voorinstellingen zijn succesvol geïmporteerd.
         Om rekening te houden met de wijzigingen, moet u het OpenCutList-venster **sluiten** en **heropenen**.
@@ -2195,6 +2279,8 @@ tab:
       error:
         no_preset_to_export: Geen voorinstellingen om te exporteren.
         no_preset_to_import: Geen voorinstellingen om te importeren.
+        failed_to_export: "Kan de voorinstellingen niet exporteren: **{{ error }}**."
+        failed_to_open_library_dir: "Kan de bibliotheekmap niet openen: **{{ error }}**."
         failed_to_import: "Kan voorinstellingen niet importeren: **{{ error }}**."
         failed_to_import_invalid_hexdigest: Dit bestand is gewijzigd. Het kan niet worden geïmporteerd.
         failed_to_import_bad_file_format: Ongeldig bestandsformaat.
@@ -2250,6 +2336,8 @@ tool:
     vcb_radius: Radius
     vcb_diameter: Diameter
     vcb_distance: Afstand
+    vcb_spacings: Kolomwit
+    locked_on_last_measure_status: Vergrendelen op de laatste meting  # TODO : Moved from tool.smart_draw.action_measure_locked_status
     error:
       no_direction: Geef een richting aan met de cursor
       invalid_length: "De lengte {{ value }} is ongeldig"
@@ -2268,18 +2356,21 @@ tool:
       locked_part: Dit onderdeel is vergrendeld
       not_sibling_part: Dit onderdeel bevindt zich niet in dezelfde groep of component als de rest van de selectie
       selection_contains_locked_entities: De selectie bevat vergrendelde onderdelen
+      wrong_material_type: "Het beoogde deel moet van het type '{{ type }}' zijn"
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_select:
     state_0_status: Klik op een stuk om het te selecteren
     state_0_to_6_status: Selecteer een bovenliggend element
+    state_0_to_7_status: Meervoudige selectie
     state_4_status: Sleep naar een identiek onderdeel met dezelfde bovenliggende component om het aan de selectie toe te voegen en laat vervolgens los om door te gaan
     state_5_status: Veeg om toe te voegen aan selectie en laat los om door te gaan
     state_6_status: Selecteer een element uit de lijst
     state_7_status: Klik op een onderdeel om het aan de selectie toe te voegen of eruit te verwijderen
     warning:
       no_active_part: U moet eerst met de muis over een onderdeel gaan
+      no_parent_group: Het onderdeel onder de muis heeft geen bovenliggende groep of component
   smart_draw:
     title: Tekenen
     action_0: Teken een rechthoek
@@ -2324,11 +2415,91 @@ tool:
     action_option_options_draw_in_status: Tekenen in het bovenliggende element van het onderdeel van het eerste punt
     action_option_options_ask_name: Naamgeving van de stukken
     action_option_options_ask_name_status: De naam van de stukken handmatig invoeren
-    action_measure_locked_status: Vergrendelen op de laatste meting
     action_toggle_move_copy_status: Wisselen tussen kopiëren en verplaatsen
     action_change_move_anchor_status: Het ankerpunt wijzigen
     success:
       part_created: "Nieuw stuk aangemaakt: {{ name }}"
+      part_created_plural: "{{ count }} nieuwe onderdelen aangemaakt: {{ name }}"
+  smart_build:
+    title: Opbouwen
+    action_0: Een scheidingswand opbouwen
+    action_0_status: Een scheidingswand opbouwen in een ruimte die wordt gevormd door een groep bestaande onderdelen
+    action_0_state_0_status: Klik op een wand om een scheidingswand op te bouwen
+    action_0_state_1_status: Klik op een wand om scheidingswanden op te bouwen
+    action_1: Een front opbouwen
+    action_1_status: Een front opbouwen in een ruimte die wordt gevormd door een groep bestaande onderdelen
+    action_1_state_0_status: Klik in een ruimte om een front op de opening op te bouwen
+    action_1_state_0_merge_status: "Sleep naar aangrenzende ruimtes voor één gemeenschappelijk front"
+    action_2: Een front opbouwen
+    action_2_status: Een achterwand opbouwen in een ruimte die wordt gevormd door een groep bestaande onderdelen
+    action_2_state_0_status: Klik in een ruimte om een achterwand op te bouwen aan de opening tegenover de kijkrichting
+    action_2_state_0_merge_status: "Sleep naar aangrenzende ruimtes voor één gemeenschappelijke achterwand"
+    action_option_group_groove: Groef
+    action_1_option_group_offset: Speling
+    action_option_group_thickness: Dikte
+    action_option_group_overlay: Plaatsing
+    action_option_group_axes: Assen
+    action_option_group_measure_type: Meten
+    action_option_group_options: Opties
+    action_option_offset_front_panel_offset: Speling
+    action_option_offset_front_panel_offset_status: "Bepaalt de speling aan elke rand van het front"
+    action_option_groove_groove_depth: Groefdiepte
+    action_option_groove_groove_depth_status: "Bepaalt de diepte van de groef waarin de achterwand wordt geplaatst"
+    action_option_groove_groove_setback: Terugsprong
+    action_option_groove_groove_setback_status: "Bepaalt hoeveel de achterwand naar binnen inspringt in de kastromp, en dus waar de groef wordt gefreesd"
+    action_option_groove_groove_through: Doorlopende groef
+    action_option_groove_groove_through_status: "Verleng de groef tot aan het einde van de onderdelen die het aangrenzende onderdeel overlappen, wanneer de groef daar uitkomt zonder zichtbaar te zijn"
+    action_option_thickness_thickness: Dikte
+    action_option_thickness_thickness_status: Bepaalt de dikte van de panelen
+    action_option_overlay_inset_status: "Inliggend front: geplaatst in de opening, gelijk met de voorzijde"
+    action_2_option_overlay_inset_status: "Achterwand in groef: geplaatst in een gefreesde groef in de onderdelen rond de opening"
+    action_option_overlay_full_overlay_status: "Opliggend front: vóór de voorzijde geplaatst, waarbij de panelen worden overlapt tot aan de buitenzijde van de kastromp en tot halverwege de dikte van de binnenpanelen"
+    action_2_option_overlay_full_overlay_status: "Opliggende achterwand: tegen de achterzijde van de kastromp geplaatst, waarbij de panelen worden overlapt tot aan de buitenzijde en tot halverwege de dikte van de binnenpanelen, zonder bewerking"
+    action_option_measure_type_inside_status: Plaats de dikte aan de binnenzijde van het gekozen punt
+    action_option_measure_type_centered_status: Centreer de dikte op het gekozen punt
+    action_option_measure_type_outside_status: Plaats de dikte aan de buitenzijde van het gekozen punt
+    action_option_axes_active_status: Verplaatsen langs de actieve assen
+    action_option_axes_context_status: Bewerken langs de assen van de bovenliggende groep of component
+    action_option_options_measure_reversed: omgekeerde meting
+    action_option_options_measure_reversed_status: De meting omkeren
+    action_option_options_reduce_envelope: Terugliggende onderdelen
+    action_option_options_reduce_envelope_status: Rekening houden met terugliggende onderdelen
+    action_option_options_reuse_definition: Onderdelen hergebruiken
+    action_option_options_reuse_definition_status: Gebruik het bestaande onderdeel met dezelfde vorm en dezelfde aangrenzende onderdelen opnieuw in plaats van een nieuw onderdeel aan te maken
+    action_option_options_mirror: Spiegelplaatsing
+    action_option_options_mirror_status: Plaats elk even genummerd front gespiegeld ten opzichte van het aangrenzende front
+    action_option_options_ask_name: Naamgeving van de stukken
+    action_option_options_ask_name_status: De naam van de stukken handmatig invoeren
+    action_option_options_layer_name: Laag
+    action_option_options_layer_name_status: Naam van de laag waarop de onderdelen worden geplaatst
+    detecting_cavities: "Ruimtes detecteren..."
+    error:
+      invalid_divider_seed: Dit type onderdeel laat het opbouwen van een scheidingswand niet toe
+      invalid_divider_container: "Dit onderdeel staat op zichzelf: het deelt geen groep of component met andere onderdelen"
+      invalid_divider_cavity: "Geen ruimte op deze positie"
+      no_divider_cavity: Er is geen ruimte gedetecteerd in deze groep of component
+      invalid_front_panel_seed: Dit type onderdeel laat het opbouwen van een front niet toe
+      invalid_front_panel_container: "Dit onderdeel staat op zichzelf: het deelt geen groep of component met andere onderdelen"
+      invalid_front_panel_cavity: "Geen naar u toe geopende ruimte op deze positie"
+      no_front_panel_cavity: Er is geen ruimte gedetecteerd in deze groep of component
+      invalid_back_panel_seed: Dit type onderdeel laat het opbouwen van een achterwand niet toe
+      invalid_back_panel_container: "Dit onderdeel staat op zichzelf: het deelt geen groep of component met andere onderdelen"
+      invalid_back_panel_cavity: "Geen ruimte met een opening tegenover de kijkrichting op deze positie"
+      no_back_panel_cavity: Er is geen ruimte gedetecteerd in deze groep of component
+      too_complex_cavity: "Geometrie te complex om ruimtes te detecteren"
+      closed_front_panel_opening: "Deze opening is al afgesloten door een front"
+      closed_back_panel_opening: "Deze opening is al afgesloten door een achterwand"
+      divider_number_overflow: "Kan {{ number }} scheidingswanden niet over deze ruimte verdelen"
+      front_panel_number_overflow: "Kan {{ number }} fronten niet over deze opening verdelen"
+      back_panel_number_overflow: "Kan {{ number }} achterwanden niet over deze opening verdelen"
+      back_panel_severs_parts: "De groef zou volledig doorlopen door: {{ names }}. Verminder de groefdiepte"
+    warning:
+      no_back_panel_machining: "Er kon geen groef worden gefreesd: geen aangrenzend onderdeel grenst op deze diepte aan de achterwand"
+    success:
+      part_created: "Nieuw stuk aangemaakt: {{ name }}"
+      part_created_plural: "{{ count }} nieuwe onderdelen aangemaakt: {{ name }}"
+      part_reused: "Nieuwe instantie van het bestaande onderdeel: {{ name }}"
+      part_reused_plural: "{{ count }} nieuwe instanties van het bestaande onderdeel: {{ name }}"
   smart_handle:
     title: bewerken
     action_0: Selecteren
@@ -2369,17 +2540,30 @@ tool:
     action_0_state_1a_status: Klik op een doorsnedevlak om het te verplaatsen
     action_0_state_1b_status: Een doorsnedevlak toevoegen
     action_0_state_1c_status: Een doorsnedevlak wissen
+    action_0_state_1d_status: Klik om de geometrie tussen de twee snijvlakken te verplaatsen
     action_0_state_10_status: Sleep het doorsnedevlak om het te verplaatsen
     action_0_state_11_status: Klik om het doorsnedevlak toe te voegen
     action_0_state_12_status: Klik op een doorsnedevlak om het te verwijderen
     action_0_state_2_status: Klik om het uitrekken te bevestigen of voer een afstand in
     action_1: Opdelen in panelen
-    action_1_status: Een reeks onderdelen maken vanuit een gesloten volume
-    action_1_state_0_status: Klik op een gesloten volume om de referentiegeometrie te bepalen
+    action_1_status: Een reeks onderdelen maken op basis van een gesloten volume of een tekening met constructielijnen
+    action_1_state_0_status: Klik op een gesloten volume of op een groep constructielijnen om de referentiegeometrie te bepalen
     action_1_state_1_status: Selecteer de vlakken om te extruderen
-    # CSG = Constructive Solid Geometry
-    action_2: CSG
-    action_2_status: Naar het oneindige en verder
+    action_1_rollover_face_status: Vlak onder de muis
+    action_1_select_similar_status: Alle vlakken met dezelfde vorm selecteren
+    action_1_select_all_edges_status: Alle aangrenzende randen selecteren
+    action_2: Samenvoegen
+    action_2_status: Meerdere onderdelen samenvoegen tot één onderdeelSélectionnez la pièce A
+    action_2_state_0_status: Selecteer onderdeel A
+    action_2_state_1_status: Selecteer onderdeel B
+    action_3: ""
+    action_3_status: Een onderdeel uitsnijden met een ander onderdeel
+    action_3_state_0_status: Selecteer onderdeel A
+    action_3_state_1_status: Selecteer onderdeel B
+    action_4: Doorsnede maken
+    action_4_status: Een onderdeel maken uit de doorsnede van meerdere onderdelen
+    action_4_state_0_status: Selecteer onderdeel A
+    action_4_state_1_status: Selecteer onderdeel B
     action_option_group_thickness: Dikte
     action_option_group_stretch_measure_type: Meten
     action_option_group_axes: Assen
@@ -2398,8 +2582,20 @@ tool:
     action_option_paneling_joint_type_miter_status: Verstek
     action_option_paneling_direction_inward_status: Binnen
     action_option_paneling_direction_outward_status: Buiten
-    action_option_options_centred_status: Centraal plaatsen op gestrekte elementen
-    action_option_options_make_unique_status: Rekbare elementen uniek maken
+    action_option_options_centered_status: Centraal plaatsen op gestrekte elementen
+    action_option_options_make_unique_status: Gewijzigde onderdelen uniek maken
+    action_option_options_keep_a: A behouden
+    action_option_options_keep_a_status: Instanties A na de bewerking behouden en het resultaat in een nieuw onderdeel plaatsen
+    action_option_options_keep_b: B behouden
+    action_option_options_keep_b_status: Instanties B na de bewerking behouden
+    action_option_options_remove_unused_definitions_status: Componentdefinities verwijderen die na de bewerking niet meer worden gebruikt
+    action_option_options_reuse_definition: Onderdelen hergebruiken
+    action_option_options_reuse_definition_status: Dezelfde componentdefinitie gebruiken voor panelen met dezelfde vorm
+    action_option_options_reuse_definition_mirrored: Spiegelplaatsing
+    action_option_options_reuse_definition_mirrored_status: Spiegelplaatsing voor tegenover elkaar liggende panelen met dezelfde vorm
+    notify:
+      validate_a: Bevestig om verder te gaan naar de selectie van B
+      validate_b: Bevestig om de bewerking toe te passen
     error:
       curve_intersect: Een van de snijvlakken snijdt een niet-rekbare curve
   smart_paint:
@@ -2451,7 +2647,6 @@ tool:
       not_part: Het beoogde object is geen onderdeel (component)
       not_edge: Het doelvlak is geen paneelrand
       not_face: Het doelvlak is geen paneelvlak
-      wrong_material_type: "Het beoogde deel moet van het type '{{ type }}' zijn"
   smart_axes:
     title: Oriënteren
     action_0: Terugkeren
@@ -2464,6 +2659,10 @@ tool:
     action_3_status: Richt op een gebied van een onderdeel en klik op een rand om de assen aan te passen
     action_4: Oorsprong verplaatsen
     action_4_status: Richt op een vlak van een onderdeel en klik op een punt om de oorsprong daar te plaatsen
+    action_5: Nerfcontinuïteit instellen
+    action_5_status: Klik op een onderdeel om de detectie van nerfcontinuïteit in of uit te schakelen
+    action_5_to_state_10_status: Nerfcontinuïteitsgroep kiezen
+    action_5_state_10_status: Klik op een element in de lijst om de status van de nerfcontinuïteitsgroep te wijzigen
     action_option_group_direction: Richting
     action_option_direction_0: LO
     action_option_direction_1: La
@@ -2476,10 +2675,72 @@ tool:
     error:
       not_part: Het beoogde object is geen onderdeel (component)
       not_orientable: Het type van dit onderdeel maakt het niet mogelijk om het te oriënteren
+      not_grained: Het geselecteerde onderdeel heeft geen nerfrichting
+      not_single_thickness_layer: Het geselecteerde onderdeel moet uit één laag bestaan
+  # TODO: It's currently just for dev purposes
   smart_join:
     title: Samenvoegen
-    action_0: Aansluitend tegen elkaar # TODO: It's currently just for dev purposes
-    action_0_status: TBD # TODO
+    action_0: Verbinders toevoegen
+    action_0_status: Verbinders toevoegen om onderdelen samen te stellen
+    action_0_state_0_status: Klik op het referentievlak van een onderdeel om verbinders toe te voegen met aangrenzende onderdelen die ermee in contact staan
+    action_1: Verbinders verwijderen
+    action_1_status: Verbinders voor de montage van onderdelen verwijderen
+    action_1_state_0_status: Klik op het referentievlak van een onderdeel om de verbinders te verwijderen die het deelt met aangrenzende onderdelen
+    action_1_only_one_status: Beperken tot één verbinder
+    action_2: Verbindingen toevoegen
+    action_2_status: Verbindingen toevoegen om onderdelen samen te stellen
+    action_2_state_0_status: Klik op het referentievlak van onderdeel A om verbindingen toe te voegen met een aangrenzend onderdeel
+    action_2_state_1_status: Klik op het referentievlak van onderdeel B om verbindingen toe te voegen met onderdeel A
+    action_3: Verbindingen verwijderen
+    action_3_status: Verbindingen voor de montage van onderdelen verwijderen
+    action_3_state_0_status: Klik op het referentievlak van onderdeel A om de verbindingen te verwijderen die het deelt met een aangrenzend onderdeel
+    action_3_state_1_status: Klik op het referentievlak van onderdeel B om de verbindingen te verwijderen die het deelt met onderdeel A
+    action_3_only_one_status: Beperken tot één verbinding
+    action_option_group_height: Hoogte
+    action_option_group_offsets: Offsets
+    action_option_group_spacings: Hartafstanden
+    action_option_group_options: Opties
+    action_option_height: Hoogte
+    action_option_offsets_start_offset: Start
+    action_option_offsets_end_offset: Einde
+    action_option_spacings_min_spacing: Min
+    action_option_spacings_max_spacing: Max
+    action_option_options_opposite_status: Tegenoverliggend vlak selecteren
+    action_option_options_make_unique_status: Samengestelde onderdelen uniek maken
+    action_option_hardware_connector_a: Verbinder A
+    action_option_hardware_connector_b: Verbinder B
+    action_option_hardware_fitting_a: Verbinding A
+    action_option_hardware_fitting_b: Verbinding B
+    action_option_machining_a: Bewerking A
+    action_option_machining_b: Bewerking B
+    action_option_hardware_connector_material_name: ""
+    action_option_hardware_fitting_material_name: ""
+    action_option_machining_material_name: ""
+    action_option_hardware_connector_layer_name: ""
+    action_option_hardware_fitting_layer_name: ""
+    action_option_machining_layer_name: ""
+    measures: ""
+    geometries: ""
+    error:
+      invalid_height: ""
+      invalid_start_offset: ""
+      invalid_end_offset: ""
+      invalid_min_spacing: ""
+      invalid_max_spacing: ""
+      not_assemblable: ""
+      no_valid_join: ""
+      occupied_anchors: ""
+      occupied_anchors_plural: ""
+      failed_to_load_skp_file: |
+      unsupported_skp_version: |
+    warning:
+      no_connector_to_remove: ""
+      x_connectors_to_remove: ""
+      x_connectors_to_remove_plural: ""
+      no_fitting_to_remove: ""
+      x_fittings_to_remove: ""
+      x_fittings_to_remove_plural: ""
+      different_file_name: ""
   smart_export:
     title: Exporteren
     action_0: Exporteer een 3D-onderdeel
