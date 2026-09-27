@@ -3428,64 +3428,6 @@ module Ladb::OpenCutList
     # How long, in seconds, a door takes to swing by 90° when animated.
     SWING_DURATION_90 = 0.4
 
-    # One door moving : its instance, where it started from, its transformation
-    # closed, the axis it turns around, the angle it goes from and to, in
-    # degrees.
-    DoorMotion = Struct.new(:instance, :start_transformation, :closed_transformation, :axis_line, :from_angle, :to_angle) do
-
-      def transformation_at(angle)
-        return closed_transformation unless angle > 0
-        closed_transformation * Geom::Transformation.rotation(axis_line[0], axis_line[1], angle.degrees)
-      end
-
-    end
-
-    # Swings the given motions, eased, then calls the given block. Stopped
-    # before its end - another animation, the tool deactivated - it jumps to
-    # the end.
-    class DoorSwingAnimation
-
-      def initialize(motions, duration, &on_done)
-        @motions = motions
-        @duration = duration
-        @on_done = on_done
-        @start_time = nil
-        @done = false
-      end
-
-      def nextFrame(view)
-        return false if @done
-        @start_time = Time.now if @start_time.nil?
-        progress = @duration > 0 ? [ (Time.now - @start_time) / @duration, 1.0 ].min : 1.0
-        eased = progress * progress * (3 - 2 * progress)  # Smoothstep
-        @motions.each { |motion| motion.instance.move!(motion.transformation_at(motion.from_angle + (motion.to_angle - motion.from_angle) * eased)) }
-        view.show_frame
-        _finish if progress >= 1.0
-        !@done
-      end
-
-      def stop
-        _finish
-      end
-
-      def done?
-        @done
-      end
-
-      def motions
-        @motions
-      end
-
-      private
-
-      def _finish
-        return if @done
-        @done = true
-        @on_done.call(@motions) unless @on_done.nil?
-      end
-
-    end
-
     def initialize(tool, previous_action_handler = nil)
       super(SmartHandleTool::ACTION_INTERACT, tool, previous_action_handler)
 
@@ -3631,6 +3573,10 @@ module Ladb::OpenCutList
       end
 
       super
+    end
+
+    def onToolLButtonDoubleClick(tool, flags, x, y, view)
+      onToolLButtonUp(tool, flags, x, y, view)
     end
 
     def onActivePartChanged(part_entity_path, part, highlighted = false)
@@ -3978,6 +3924,66 @@ module Ladb::OpenCutList
         _preview_door_swing(t * Geom::Transformation.rotation(axis_line[0], axis_line[1], -angle.degrees), axis_line, angle, 0, drawing_def, LAYER_3D_DOOR_PREVIEW, with_door: false, with_axis: false, single_arc: true)
       elsif (door_def = _door_def_of(instance))
         _preview_door_swing(t, door_def.axis_line, 0, door_def.max_angle, drawing_def, LAYER_3D_DOOR_PREVIEW, with_door: false, with_axis: false, single_arc: true)
+      end
+
+    end
+
+    # -----
+
+    # One door moving : its instance, where it started from, its transformation
+    # closed, the axis it turns around, the angle it goes from and to, in
+    # degrees.
+    DoorMotion = Struct.new(:instance, :start_transformation, :closed_transformation, :axis_line, :from_angle, :to_angle) do
+
+      def transformation_at(angle)
+        return closed_transformation unless angle > 0
+        closed_transformation * Geom::Transformation.rotation(axis_line[0], axis_line[1], angle.degrees)
+      end
+
+    end
+
+    # Swings the given motions, eased, then calls the given block. Stopped
+    # before its end - another animation, the tool deactivated - it jumps to
+    # the end.
+    class DoorSwingAnimation
+
+      def initialize(motions, duration, &on_done)
+        @motions = motions
+        @duration = duration
+        @on_done = on_done
+        @start_time = nil
+        @done = false
+      end
+
+      def nextFrame(view)
+        return false if @done
+        @start_time = Time.now if @start_time.nil?
+        progress = @duration > 0 ? [ (Time.now - @start_time) / @duration, 1.0 ].min : 1.0
+        eased = progress * progress * (3 - 2 * progress)  # Smoothstep
+        @motions.each { |motion| motion.instance.move!(motion.transformation_at(motion.from_angle + (motion.to_angle - motion.from_angle) * eased)) }
+        view.show_frame
+        _finish if progress >= 1.0
+        !@done
+      end
+
+      def stop
+        _finish
+      end
+
+      def done?
+        @done
+      end
+
+      def motions
+        @motions
+      end
+
+      private
+
+      def _finish
+        return if @done
+        @done = true
+        @on_done.call(@motions) unless @on_done.nil?
       end
 
     end
