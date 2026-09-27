@@ -18,6 +18,7 @@ module Ladb::OpenCutList
     ACTION_ADD_FITTINGS = 2
     ACTION_REMOVE_FITTINGS = 3
     ACTION_ADD_HINGES = 4
+    ACTION_REMOVE_HINGES = 5
 
     ACTION_OPTION_HEIGHT = 'height'
     ACTION_OPTION_OFFSETS = 'offsets'
@@ -83,6 +84,9 @@ module Ladb::OpenCutList
           ACTION_OPTION_SPACINGS => [ ACTION_OPTION_SPACINGS_MIN_SPACING, ACTION_OPTION_SPACINGS_MAX_SPACING ],
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_MAKE_UNIQUE ],
         }
+      },
+      {
+        :action => ACTION_REMOVE_HINGES
       }
     ].freeze
 
@@ -241,8 +245,10 @@ module Ladb::OpenCutList
         case fetch_action
         when ACTION_ADD_CONNECTORS
           push_action(ACTION_REMOVE_CONNECTORS)
-        when ACTION_ADD_FITTINGS, ACTION_ADD_HINGES
+        when ACTION_ADD_FITTINGS
           push_action(ACTION_REMOVE_FITTINGS)
+        when ACTION_ADD_HINGES
+          push_action(ACTION_REMOVE_HINGES)
         end
         return true
       end
@@ -274,6 +280,8 @@ module Ladb::OpenCutList
         set_action_handler(SmartJoinRemoveFittingsActionHandler.new(self))
       when ACTION_ADD_HINGES
         set_action_handler(SmartJoinAddHingesActionHandler.new(self))
+      when ACTION_REMOVE_HINGES
+        set_action_handler(SmartJoinRemoveHingesActionHandler.new(self))
       end
 
       super
@@ -744,8 +752,8 @@ module Ladb::OpenCutList
     # instances - connectors - are resolved through 'glued_to' ; the source part
     # and already rejected parts are walked past), decomposes each candidate part
     # to 'world' space and returns its first face manipulator accepted by the
-    # block, or nil.
-    def _raytest_part_face(ray_point, ray_vector, source_path, max_hits = 10)
+    # block, or nil - or [ face_manipulator, part_path ] with 'with_path'.
+    def _raytest_part_face(ray_point, ray_vector, source_path, max_hits = 10, with_path: false)
 
       model = Sketchup.active_model
 
@@ -777,7 +785,7 @@ module Ladb::OpenCutList
             drawing_def.transform!(drawing_def.transformation.inverse)
 
             fm = drawing_def.face_manipulators.find { |face_manipulator| yield(face_manipulator) }
-            return fm unless fm.nil?
+            return with_path ? [ fm, part_path ] : fm unless fm.nil?
 
           end
 
@@ -796,8 +804,9 @@ module Ladb::OpenCutList
     # bounded by point containment (only the parts whose world bounds contain
     # the point are candidates - the mate face passes through it). Used when a
     # ray misses the mate because its face is shadowed by a coplanar face of
-    # another part (raytest reports a single arbitrary face per hit).
-    def _find_part_face_at(world_point, source_path, tolerance)
+    # another part (raytest reports a single arbitrary face per hit). Returns
+    # [ face_manipulator, part_path ] with 'with_path'.
+    def _find_part_face_at(world_point, source_path, tolerance, with_path: false)
 
       model = Sketchup.active_model
 
@@ -844,7 +853,7 @@ module Ladb::OpenCutList
         drawing_def.transform!(drawing_def.transformation.inverse)
 
         fm = drawing_def.face_manipulators.find { |face_manipulator| yield(face_manipulator) }
-        return fm unless fm.nil?
+        return with_path ? [ fm, part_path ] : fm unless fm.nil?
 
       end
 
@@ -2514,6 +2523,13 @@ module Ladb::OpenCutList
       end
     end
 
+    # B, previewed while A is still the active part - the hinge handlers pick
+    # both at once.
+    def _get_path_part_preview_color(path, part, highlighted = false)
+      return COLOR_PART_B if !path.nil? && path == @active_part_entity_path_b && path != @active_part_entity_path
+      super
+    end
+
     # -----
 
     def _has_active_part_a?
@@ -3458,7 +3474,7 @@ module Ladb::OpenCutList
 
     def get_state_status(state)
       PLUGIN.get_i18n_string("tool.smart_join.action_#{@action}_state_#{state}_status") + '.' +
-        ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_join.action_3") + '.'
+        ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_join.action_#{SmartJoinTool::ACTION_REMOVE_HINGES}") + '.'
     end
 
     def get_state_cursor(state)
@@ -4014,8 +4030,8 @@ module Ladb::OpenCutList
 
   class SmartJoinRemoveFittingsActionHandler < SmartJoinFittingsActionHandler
 
-    def initialize(tool, previous_action_handler = nil)
-      super(SmartJoinTool::ACTION_REMOVE_FITTINGS, tool, previous_action_handler)
+    def initialize(tool, previous_action_handler = nil, action = SmartJoinTool::ACTION_REMOVE_FITTINGS)
+      super(action, tool, previous_action_handler)
     end
 
     # -----
@@ -4172,13 +4188,7 @@ module Ladb::OpenCutList
 
       end
 
-      count = anchors.length
-
-      if count > 0
-        @tool.show_message(PLUGIN.get_i18n_string('tool.smart_join.warning.x_fittings_to_remove', { :count => count }), SmartTool::MESSAGE_TYPE_WARNING)
-      else
-        @tool.show_message(PLUGIN.get_i18n_string('tool.smart_join.warning.no_fitting_to_remove'), SmartTool::MESSAGE_TYPE_WARNING)
-      end
+      _show_remove_count_message(anchors.length)
 
       if @mouse_snap_point.is_a?(Geom::Point3d) && @snap_anchor.is_a?(Geom::Point3d)
 
@@ -4193,6 +4203,14 @@ module Ladb::OpenCutList
 
       end
 
+    end
+
+    def _show_remove_count_message(count)
+      if count > 0
+        @tool.show_message(PLUGIN.get_i18n_string('tool.smart_join.warning.x_fittings_to_remove', { :count => count }), SmartTool::MESSAGE_TYPE_WARNING)
+      else
+        @tool.show_message(PLUGIN.get_i18n_string('tool.smart_join.warning.no_fitting_to_remove'), SmartTool::MESSAGE_TYPE_WARNING)
+      end
     end
 
     # -----
@@ -4316,6 +4334,321 @@ module Ladb::OpenCutList
     # Data Structs -----
 
     RemoveJoineryDef = Struct.new(:grouped_glued_instances_a, :grouped_glued_instances_b)
+
+  end
+
+  # HINGES removal : the hinges of a door (see DoorDef), removed by HOVERING
+  # the door and a click - its whole hinged edge, or the hinge nearest the
+  # cursor with Shift.
+  #
+  # The joint is read off the hinges themselves, not off the cavities as
+  # SmartJoinAddHingesActionHandler does : each hinge is glued to the door's
+  # back (A) with its frame origin on the joint line, X along it, +Z into the
+  # carcass. The side's inner face (B) is the part face through that line,
+  # facing +/-Y, found by probing just behind it. The mating fittings of B
+  # stand at the same anchors : B's own glued instances there are removed too,
+  # and so are those the contact graph reaches through the shared
+  # definitions. When B is not found - a side moved away, a hinge without any
+  # fitting on B - the hinges of the door are removed alone.
+  class SmartJoinRemoveHingesActionHandler < SmartJoinRemoveFittingsActionHandler
+
+    # How far a mating fitting may stand from a hinge anchor, and a face plane
+    # from that anchor, to be read as the same joint.
+    HINGE_ANCHOR_TOLERANCE = 0.01.mm
+
+    # How far behind the door's back (+Z) the side's inner face is probed.
+    HINGE_SIDE_PROBE_DEPTHS = [ 1.mm, 10.mm ].freeze
+
+    def initialize(tool, previous_action_handler = nil)
+      super(tool, previous_action_handler, SmartJoinTool::ACTION_REMOVE_HINGES)
+    end
+
+    # -----
+
+    # -- STATE --
+
+    def get_state_cursor(state)
+      SmartCursorManager.cursor_select_join_minus
+    end
+
+    def get_state_status(state)
+      PLUGIN.get_i18n_string("tool.smart_join.action_#{@action}_state_#{state}_status") + '.' +
+        ' | ' + PLUGIN.get_i18n_string("default.constrain_key") + ' = ' + PLUGIN.get_i18n_string("tool.smart_join.action_#{@action}_only_one_status") + '.'
+    end
+
+    # -----
+
+    def onToolLButtonUp(tool, flags, x, y, view)
+      if (neighborhood_def = _get_neighborhood_def) && (joinery_def = _get_remove_joinery_def(neighborhood_def)) && !joinery_def.grouped_glued_instances_a.empty?
+        _remove_fittings
+        if @tool.is_key_shift_down?
+          _refresh
+        else
+          _restart
+        end
+      else
+        UI.beep
+      end
+      true
+    end
+
+    def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
+      if tool.is_key_shift?(key)
+        _refresh
+        return true
+      end
+      false # No opposite face here : both faces are read off the hinges
+    end
+
+    def onPickerChanged(picker, view)
+      @tool.clear_3d([ LAYER_3D_JOIN_PREVIEW, LAYER_3D_SNAP_POINT_PREVIEW, LAYER_3D_PART_B_PREVIEW ])
+      @tool.hide_message
+      _pick_part(picker, view)
+      @mouse_snap_point = picker.picked_point
+      _reset_neighborhood_def if _pick_hinge_joint(picker)
+      _snap_ref_point_b(picker)
+      _preview_part(@active_part_entity_path_b, @active_part_b, LAYER_3D_PART_B_PREVIEW) if _has_active_part_b?
+      unless @hinge_joint.nil?
+        _preview_ref_face_a
+        _preview_join(picker)
+      end
+      true
+    end
+
+    def onToolTransactionUndo(tool, model)
+      @hinge_joints = nil
+    end
+
+    # -----
+
+    protected
+
+    def _reset
+      super
+      @hinge_joints = nil
+      @hinge_joint = nil
+    end
+
+    # -----
+
+    def _can_activate_part?(part_entity_path, part)
+      can_activate, error_key, error_vars = super
+      return [ can_activate, error_key, error_vars ] unless can_activate
+      return [ false, 'tool.smart_join.error.no_hinge_to_remove' ] if part_entity_path.is_a?(Array) && DoorDef.from(part_entity_path.last).nil?   # Nil path : a reset, always allowed
+      true
+    end
+
+    # -----
+
+    # The joint of the hovered door nearest the cursor - its hinges usually
+    # run along a single edge. Fills @hinge_joint, @active_face_manipulator_a
+    # and _b, @active_part_entity_path_b and @active_part_b. Returns whether
+    # the joint changed.
+    def _pick_hinge_joint(picker)
+
+      hinge_joint = nil
+      if (point = picker.picked_point).is_a?(Geom::Point3d)
+        hinge_joint = _get_hinge_joints.min_by { |joint| point.distance_to_line([ joint.anchors.first, joint.direction ]) }
+      end
+      _resolve_hinge_side(hinge_joint) unless hinge_joint.nil?
+
+      changed = !hinge_joint.equal?(@hinge_joint)
+
+      @hinge_joint = hinge_joint
+      @active_face_manipulator_a = hinge_joint.nil? ? nil : hinge_joint.face_manipulator_a
+      @active_face_manipulator_b = hinge_joint.nil? ? nil : hinge_joint.face_manipulator_b
+      @active_part_entity_path_b = hinge_joint.nil? ? nil : hinge_joint.part_entity_path_b
+      @active_part_b = hinge_joint.nil? ? nil : hinge_joint.part_b
+
+      changed
+    end
+
+    # The hinges of the active door grouped by joint : by face and by line.
+    # Memoized per door - the side of each joint is resolved on demand.
+    def _get_hinge_joints
+      return [] unless _has_active_part_a?
+
+      key = PathUtils.serialize_path(@active_part_entity_path_a)
+      @hinge_joints = {} unless @hinge_joints.is_a?(Hash)
+      return @hinge_joints[key] if @hinge_joints.key?(key)
+
+      joints = []
+      if (door_def = DoorDef.from(@active_part_entity_path_a.last))
+
+        t = PathUtils.get_transformation(@active_part_entity_path_a, IDENTITY)
+
+        door_def.hinge_defs.each do |hinge_def|
+          next if (hinge = hinge_def.instance).nil?
+          next if (face = _get_hinge_face(hinge)).nil?
+
+          ht = t * hinge.transformation
+          anchor = ORIGIN.transform(ht)
+          direction = (ht.yaxis * ht.zaxis).normalize   # X of the fitting frame, direct even on a mirrored hinge
+
+          joint = joints.find { |j| j.face_manipulator_a.face == face && anchor.distance_to_line([ j.anchors.first, j.direction ]).to_f < HINGE_ANCHOR_TOLERANCE.to_f }
+          if joint.nil?
+            joint = HingeJointDef.new(FaceManipulator.new(face, t), nil, nil, nil, direction, [], false)
+            joints << joint
+          end
+          joint.anchors << anchor
+
+        end
+
+        # Anchors sorted along the joint line
+        joints.each { |joint| joint.anchors.sort_by! { |anchor| (anchor - joint.anchors.first) % joint.direction } }
+
+      end
+
+      @hinge_joints[key] = joints
+    end
+
+    # The face of the door the given hinge is glued to - or, the glue lost,
+    # the face its frame lies on : origin on its plane, +Z along its normal.
+    def _get_hinge_face(hinge)
+      return hinge.glued_to if hinge.glued_to.is_a?(Sketchup::Face)
+
+      origin = hinge.transformation.origin
+      normal = hinge.transformation.zaxis.normalize
+      hinge.parent.entities.grep(Sketchup::Face).find { |face|
+        face.normal.samedirection?(normal) &&
+          origin.distance_to_plane(face.plane).to_f < HINGE_ANCHOR_TOLERANCE.to_f &&
+          [ Sketchup::Face::PointInside, Sketchup::Face::PointOnVertex, Sketchup::Face::PointOnEdge ].include?(face.classify_point(origin))
+      }
+    end
+
+    # Finds, once, the side's inner face (B) of the given joint : the part
+    # face whose plane holds the joint line, facing +/-Y of the fitting frame,
+    # probed just behind the door's back (+Z) abreast of each anchor in turn.
+    def _resolve_hinge_side(joint)
+      return if joint.side_resolved
+      joint.side_resolved = true
+
+      fm_a = joint.face_manipulator_a
+      z = fm_a.normal
+      y = (z * joint.direction).normalize
+
+      joint.anchors.each do |anchor|
+        HINGE_SIDE_PROBE_DEPTHS.each do |depth|
+          probe_point = anchor.offset(z, depth)
+
+          fn_accept = lambda do |fm|
+            fm.normal.parallel?(y) &&
+              anchor.distance_to_plane(fm.plane).to_f < HINGE_ANCHOR_TOLERANCE.to_f &&
+              _is_point_on_face?(fm, probe_point)
+          end
+
+          [ y, y.reverse ].each do |normal|
+            found = _raytest_part_face(probe_point.offset(normal, HINGE_ANCHOR_TOLERANCE), normal.reverse, @active_part_entity_path_a, with_path: true, &fn_accept)
+            return _set_hinge_side(joint, *found) unless found.nil?
+          end
+
+          found = _find_part_face_at(probe_point, @active_part_entity_path_a, HINGE_ANCHOR_TOLERANCE, with_path: true, &fn_accept)
+          return _set_hinge_side(joint, *found) unless found.nil?
+
+        end
+      end
+
+    end
+
+    def _set_hinge_side(joint, face_manipulator_b, part_entity_path_b)
+      joint.face_manipulator_b = face_manipulator_b
+      joint.part_entity_path_b = part_entity_path_b
+      joint.part_b = _generate_part_from_path(part_entity_path_b)
+    end
+
+    # -----
+
+    def _get_neighborhood_def(tolerance = 0.001)
+      return @neighborhood_def unless @neighborhood_def.nil?
+      return nil if (joint = @hinge_joint).nil?
+
+      start_point = joint.anchors.first
+      end_point = joint.anchors.last
+
+      @neighborhood_def = NeighborhoodDef.new(
+        @active_part_entity_path_a,
+        NeighborhoodNeighborDef.new(
+          joint.part_entity_path_b,
+          NeighborhoodLineDef.new(
+            joint.face_manipulator_a,
+            joint.face_manipulator_b,
+            LineManipulator.new([ start_point, joint.direction ]),
+            start_point,
+            end_point
+          )
+        )
+      )
+    end
+
+    # Only what stands at the hinge anchors : the hinges and their machining
+    # on A, the mating fittings on B.
+    def _get_remove_joinery_def(neighborhood_def)
+      return nil if (joint = @hinge_joint).nil?
+
+      RemoveJoineryDef.new(
+        _get_anchored_instances(joint.face_manipulator_a, joint.anchors),
+        joint.face_manipulator_b.nil? ? {} : _get_anchored_instances(joint.face_manipulator_b, joint.anchors)
+      )
+    end
+
+    # The fittings of the given face's definition anchored at the given world
+    # points, grouped by anchor coords - the glue alone is not relied on : a
+    # reshape may have lost it.
+    def _get_anchored_instances(face_manipulator, anchors)
+      ti = face_manipulator.transformation.inverse
+      instances = face_manipulator.face.parent.entities.grep(Sketchup::ComponentInstance).select { |instance|
+        instance.glued_to.is_a?(Sketchup::Face) || DefinitionAttributes.role_of(instance.definition) == DefinitionAttributes::ROLE_HINGE
+      }
+      anchors.each_with_object({}) do |anchor, groups|
+        local_anchor = anchor.transform(ti)
+        anchored = instances.select { |instance| instance.transformation.origin.distance(local_anchor).to_f < HINGE_ANCHOR_TOLERANCE.to_f }
+        groups[anchor.to_a] = anchored unless anchored.empty?
+      end
+    end
+
+    # -- Propagation --
+
+    # Without B, the hinges of the door alone : on every instance of its
+    # definition, but no mate to walk to.
+    def _get_propagation_def(neighborhood_def, joinery_def)
+      return super unless neighborhood_def.neighbor_def.line_def.neighbor_face_manipulator.nil?
+
+      signature = _get_propagation_signature(neighborhood_def, joinery_def)
+      return @propagation_def if @propagation_def.is_a?(PropagationDef) && @propagation_signature == signature
+
+      fm = neighborhood_def.neighbor_def.line_def.face_manipulator
+      seeds = []
+      joinery_def.grouped_glued_instances_a.each do |anchor_coords, glued_instances|
+        next unless _is_snap_anchor?(Geom::Point3d.new(anchor_coords))
+        seeds << PropagationPlacementDef.new(fm.face.parent, fm.face, glued_instances.first.transformation, :a, [ fm.transformation ], fm.transformation, glued_instances)
+      end
+
+      @propagation_signature = signature
+      @propagation_def = PropagationDef.new(_walk_contact_graph(seeds) { nil })
+    end
+
+    def _get_propagation_signature(neighborhood_def, joinery_def)
+      instance_a = neighborhood_def.instance_a
+      fm_b = neighborhood_def.neighbor_def.line_def.neighbor_face_manipulator
+      sig = [ instance_a.entityID, instance_a.definition.entityID, fm_b.nil? ? nil : fm_b.face.entityID, @snap_anchor ]
+      sig.concat(joinery_def.grouped_glued_instances_a.keys)
+      sig.concat(joinery_def.grouped_glued_instances_b.keys)
+      sig
+    end
+
+    # -----
+
+    def _show_remove_count_message(count)
+      if count > 0
+        @tool.show_message(PLUGIN.get_i18n_string('tool.smart_join.warning.x_hinges_to_remove', { :count => count }), SmartTool::MESSAGE_TYPE_WARNING)
+      else
+        @tool.show_message(PLUGIN.get_i18n_string('tool.smart_join.warning.no_hinge_to_remove'), SmartTool::MESSAGE_TYPE_WARNING)
+      end
+    end
+
+    # Data Structs -----
+
+    HingeJointDef = Struct.new(:face_manipulator_a, :face_manipulator_b, :part_entity_path_b, :part_b, :direction, :anchors, :side_resolved)
 
   end
 

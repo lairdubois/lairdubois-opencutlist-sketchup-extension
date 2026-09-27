@@ -2761,6 +2761,10 @@ tool:
     action_4: Ajouter des charnières
     action_4_status: Ajouter des charnières pour articuler une façade
     action_4_state_0_status: Survolez une façade près du bord sur lequel elle pivote et cliquez pour ajouter ses charnières
+    action_5: Effacer des charnières
+    action_5_status: Effacer les charnières d'une façade
+    action_5_state_0_status: Survolez une façade près du bord sur lequel elle pivote et cliquez pour effacer ses charnières
+    action_5_only_one_status: Limiter à une seule charnière
     action_option_group_height: Hauteur
     action_option_group_offsets: Décalages
     action_option_group_spacings: Entraxes
@@ -2807,6 +2811,7 @@ tool:
       hinged_side_lost: Le côté sur lequel cette façade pivote déjà n'est plus bordé par un montant
       no_hinge_side: Aucun montant ne borde ce côté de la façade
       door_already_hinged: Cette façade a déjà ses charnières
+      no_hinge_to_remove: Cette pièce n'a aucune charnière
       occupied_hinges: "{{ count }} charnière en conflit de position avec une charnière existante"
       occupied_hinges_plural: "{{ count }} charnières en conflit de position avec des charnières existantes"
       hinge_rejected_anchors: "{{ count }} charnière écartée : elle tomberait sur une tablette"
@@ -2825,6 +2830,9 @@ tool:
       no_fitting_to_remove: Aucun raccord à effacer
       x_fittings_to_remove: "{{ count }} raccord à effacer"
       x_fittings_to_remove_plural: "{{ count }} raccords à effacer"
+      no_hinge_to_remove: Aucune charnière à effacer
+      x_hinges_to_remove: "{{ count }} charnière à effacer"
+      x_hinges_to_remove_plural: "{{ count }} charnières à effacer"
       shared_definition: "Le fichier SKP ({{ file_name }}) contient la même définition que {{ definition_name }}, déjà chargée : c'est cette dernière qui est utilisée"
   smart_export:
     title: Exporter
