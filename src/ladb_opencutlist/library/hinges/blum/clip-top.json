@@ -1,0 +1,31 @@
+{
+  "format": "ocl-hardware",
+  "version": 1,
+  "id": "a36a4fb5-a9f0-483f-8dd3-f8b9b81829f1",
+  "type": "hinge",
+  "category": "hinge",
+  "name": "Clip Top 110°",
+  "meta": {
+    "supplier": "Blum",
+    "url": "https://www.blum.com",
+    "items": [
+      { "component": "a", "name": "Charnière Clip Top", "quantity": 1 },
+      { "component": "b", "name": "Embase Clip", "quantity": 1 }
+    ]
+  },
+  "components": {
+    "a": {
+      "variants": {
+        "select": { "by": "hinge_kind" },
+        "fallback": "overlay",
+        "items": {
+          "overlay":      { "hardware": "$OCL/components/hinges/clip-top-applique.skp",  "machining": "$OCL/components/hinges/clip-top-applique.machining.skp" },
+          "half_overlay": { "hardware": "$OCL/components/hinges/clip-top-jumelee.skp",   "machining": "$OCL/components/hinges/clip-top-jumelee.machining.skp" },
+          "inset":        { "hardware": "$OCL/components/hinges/clip-top-encastree.skp", "machining": "$OCL/components/hinges/clip-top-encastree.machining.skp" }
+        }
+      }
+    },
+    "b": { "hardware": "$OCL/components/hinges/clip-top.embase.skp", "machining": "$OCL/components/hinges/clip-top.embase.machining.skp" }
+  },
+  "options": { "start_offset": "68mm", "end_offset": "68mm", "max_spacing": "800mm" }
+}

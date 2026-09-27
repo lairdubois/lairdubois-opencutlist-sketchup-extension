@@ -1,0 +1,19 @@
+{
+  "format": "ocl-hardware",
+  "version": 1,
+  "id": "ea4817cd-8ca7-4327-9012-d51940728637",
+  "type": "connector",
+  "category": "domino",
+  "name": "Domino 5×30",
+  "meta": {
+    "supplier": "Festool",
+    "url": "https://www.festool.com",
+    "items": [
+      { "component": "a", "name": "Domino 5×30", "quantity": 1 }
+    ]
+  },
+  "components": {
+    "a": { "hardware": "$OCL/components/connectors/domino-5x30-S.skp", "machining": "$OCL/components/connectors/domino-5x30-S.machining.skp" }
+  },
+  "options": { "height": "/2", "start_offset": "37mm", "end_offset": "37mm", "max_spacing": "500mm" }
+}

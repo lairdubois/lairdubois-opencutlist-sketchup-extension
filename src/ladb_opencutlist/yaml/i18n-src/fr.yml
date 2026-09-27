@@ -2347,6 +2347,10 @@ tool:
     vcb_spacings: Espacements
     vcb_angle: Angle
     locked_on_last_measure_status: Verrouiller sur la dernière mesure  # TODO : Moved from tool.smart_draw.action_measure_locked_status
+    library_libraries: Bibliothèques
+    library_user: Ma Bibliothèque
+    library_bundled: Bibliothèque OCL
+    library_choose: Choisissez une bibliothèque
     error:
       no_direction: Veuillez indiquer une direction avec la souris
       invalid_length: "La longueur {{ value }} est invalide"
@@ -2758,6 +2762,7 @@ tool:
     action_3_state_0_status: Cliquez sur la face de référence d'une pièce A pour effacer les raccords qu'elle partage avec une pièce voisine
     action_3_state_1_status: Cliquez sur la face de référence d'une pièce B pour effacer les raccords qu'elle partage avec la pièce A
     action_3_only_one_status: Limiter à un seul raccord
+    select_hardware_status: Sélectionnez une quincaillerie dans la bibliothèque
     action_4: Ajouter des charnières
     action_4_status: Ajouter des charnières pour articuler une façade
     action_4_state_0_status: Survolez une façade près du bord sur lequel elle pivote et cliquez pour ajouter ses charnières
@@ -2776,19 +2781,9 @@ tool:
     action_option_spacings_max_spacing: Max
     action_option_options_opposite_status: Capturer la face opposée
     action_option_options_make_unique_status: Rendre unique les pièces assemblées
-    action_option_hardware_connector_a: Connecteur A
-    action_option_hardware_connector_b: Connecteur B
-    action_option_hardware_fitting_a: Raccord A
-    action_option_hardware_fitting_b: Raccord B
     action_option_hardware_hinge_overlay_a: Charnière (en applique)
     action_option_hardware_hinge_inset_a: Charnière (encastrée)
     action_option_hardware_hinge_half_overlay_a: Charnière (jumelée)
-    action_option_hardware_hinge_b: Embase
-    action_option_machining_a: Usinage A
-    action_option_machining_b: Usinage B
-    action_option_machining_overlay_a: Usinage A (en applique)
-    action_option_machining_inset_a: Usinage A (encastrée)
-    action_option_machining_half_overlay_a: Usinage A (jumelée)
     action_option_hardware_connector_material_name: Matière des Connecteurs
     action_option_hardware_fitting_material_name: Matière des Raccords
     action_option_hardware_hinge_material_name: Matière des Charnières
@@ -2823,6 +2818,11 @@ tool:
         Impossible de charger le fichier SKP : {{ file }}
       unsupported_skp_version: |
         Le fichier SKP a été créé avec une version plus récente de SketchUp : {{ version }}
+      failed_to_load_hardware: |
+        Impossible de charger la quincaillerie : {{ file }}
+      invalid_hardware: |
+        Quincaillerie invalide ({{ file }}) : {{ error }}
+      unsupported_hardware_type: La quincaillerie {{ name }} ({{ type }}) ne peut pas être posée par cette action
     warning:
       no_connector_to_remove: Aucun connecteur à effacer
       x_connectors_to_remove: "{{ count }} connecteur à effacer"
@@ -2831,6 +2831,7 @@ tool:
       x_fittings_to_remove: "{{ count }} raccord à effacer"
       x_fittings_to_remove_plural: "{{ count }} raccords à effacer"
       no_hinge_to_remove: Aucune charnière à effacer
+      no_hardware_file: Aucune quincaillerie dans ce dossier
       x_hinges_to_remove: "{{ count }} charnière à effacer"
       x_hinges_to_remove_plural: "{{ count }} charnières à effacer"
       shared_definition: "Le fichier SKP ({{ file_name }}) contient la même définition que {{ definition_name }}, déjà chargée : c'est cette dernière qui est utilisée"

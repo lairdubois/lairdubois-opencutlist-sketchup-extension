@@ -35,10 +35,6 @@
             const $inputEndOffset = $('#ladb_input_end_offset', that.$element);
             const $inputMinSpacing = $('#ladb_input_min_spacing', that.$element);
             const $inputMaxSpacing = $('#ladb_input_max_spacing', that.$element);
-            const $inputHardwareA = $('#ladb_input_hardware_a', that.$element);
-            const $inputHardwareB = $('#ladb_input_hardware_b', that.$element);
-            const $inputMachiningA = $('#ladb_input_machining_a', that.$element);
-            const $inputMachiningB = $('#ladb_input_machining_b', that.$element);
             const $inputHardwareMaterialName = $('#ladb_input_hardware_material_name', that.$element);
             const $inputMachiningMaterialName = $('#ladb_input_machining_material_name', that.$element);
             const $inputHardwareLayerName = $('#ladb_input_hardware_layer_name', that.$element);
@@ -51,10 +47,6 @@
                 options.end_offset = $inputEndOffset.val();
                 options.min_spacing = $inputMinSpacing.val();
                 options.max_spacing = $inputMaxSpacing.val();
-                options.hardware_a = $inputHardwareA.val();
-                options.hardware_b = $inputHardwareB.val();
-                options.machining_a = $inputMachiningA.val();
-                options.machining_b = $inputMachiningB.val();
                 options.hardware_material_name = $inputHardwareMaterialName.val();
                 options.machining_material_name = $inputMachiningMaterialName.val();
                 options.hardware_layer_name = $inputHardwareLayerName.val();
@@ -66,10 +58,6 @@
                 $inputEndOffset.val(options.end_offset);
                 $inputMinSpacing.val(options.min_spacing);
                 $inputMaxSpacing.val(options.max_spacing);
-                $inputHardwareA.ladbTextinputFile('val', options.hardware_a ? options.hardware_a : '');
-                $inputHardwareB.ladbTextinputFile('val', options.hardware_b ? options.hardware_b : '');
-                $inputMachiningA.ladbTextinputFile('val', options.machining_a ? options.machining_a : '');
-                $inputMachiningB.ladbTextinputFile('val', options.machining_b ? options.machining_b : '');
                 $inputHardwareMaterialName.ladbTextinputFile('val', options.hardware_material_name ? options.hardware_material_name : '');
                 $inputMachiningMaterialName.ladbTextinputFile('val', options.machining_material_name ? options.machining_material_name : '');
                 $inputHardwareLayerName.val(options.hardware_layer_name);
@@ -88,10 +76,6 @@
             $inputEndOffset.ladbTextinputDimension();
             $inputMinSpacing.ladbTextinputDimension();
             $inputMaxSpacing.ladbTextinputDimension();
-            $inputHardwareA.ladbTextinputFile({ library: true });
-            $inputHardwareB.ladbTextinputFile({ library: true });
-            $inputMachiningA.ladbTextinputFile({ library: true });
-            $inputMachiningB.ladbTextinputFile({ library: true });
             $inputHardwareMaterialName.ladbTextinputFile({ library: true });
             $inputMachiningMaterialName.ladbTextinputFile({ library: true });
             $inputHardwareLayerName.ladbTextinputText();
@@ -116,10 +100,6 @@
             // Bond tab
             $tabs.on('shown.bs.tab', function (e) {
                 if ($(e.target).attr('href') === '#tab_geometries') {
-                    $inputHardwareA.ladbTextinputFile('scrollToTheEnd');
-                    $inputHardwareB.ladbTextinputFile('scrollToTheEnd');
-                    $inputMachiningA.ladbTextinputFile('scrollToTheEnd');
-                    $inputMachiningB.ladbTextinputFile('scrollToTheEnd');
                     $inputHardwareMaterialName.ladbTextinputFile('scrollToTheEnd');
                     $inputMachiningMaterialName.ladbTextinputFile('scrollToTheEnd');
                 }

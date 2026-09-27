@@ -37,6 +37,7 @@ module Ladb::OpenCutList
 
     LIBRARY_DIR_NAME = 'library'.freeze
     LIBRARY_REF_PREFIX = '$LIB/'.freeze
+    LIBRARY_BUNDLED_REF_PREFIX = '$OCL/'.freeze   # The library shipped with the extension
     LIBRARY_SUB_DIR_COMPONENTS = 'components'.freeze
     LIBRARY_SUB_DIR_MATERIALS = 'materials'.freeze
 
@@ -196,7 +197,8 @@ module Ladb::OpenCutList
     end
 
     # Creates the library root - or the library folder of the given '$LIB/…'
-    # ref - if missing, and returns its path (nil if the ref isn't valid).
+    # ref - if missing, and returns its path (nil if the ref isn't valid). The
+    # shipped library is never written.
     def ensure_library_dir(dir_ref = nil)
       if dir_ref.nil?
         dir = library_dir
@@ -205,47 +207,67 @@ module Ladb::OpenCutList
         dir = resolve_library_ref(dir_ref)
         return nil if dir.nil?
       end
-      FileUtils.mkdir_p(dir) unless Dir.exist?(dir)
+      FileUtils.mkdir_p(dir) unless Dir.exist?(dir) || library_readonly_ref?(dir_ref)
       dir
     end
 
-    # Returns true if the given value is a '$LIB/…' library ref
+    # Returns true if the given value is a ref of a library : the user's one
+    # ('$LIB/…') or the shipped one ('$OCL/…')
     def library_ref?(value)
-      value.is_a?(String) && value.start_with?(LIBRARY_REF_PREFIX)
+      value.is_a?(String) && (value.start_with?(LIBRARY_REF_PREFIX) || value.start_with?(LIBRARY_BUNDLED_REF_PREFIX))
     end
 
-    # Converts a path located inside the library into a portable '$LIB/…' ref.
-    # Returns the given value unchanged if it points elsewhere.
+    # The library shipped with the extension : read only, replaced at each
+    # update, and laid out like the user's one. Its refs are '$OCL/…'.
+    def bundled_library_dir
+      File.join(PLUGIN_DIR, LIBRARY_DIR_NAME)
+    end
+
+    # Returns true if the given ref points into the shipped library
+    def library_readonly_ref?(value)
+      value.is_a?(String) && value.start_with?(LIBRARY_BUNDLED_REF_PREFIX)
+    end
+
+    # The shipped library's counterpart of the given '$LIB/…' ref :
+    # '$LIB/hinges' -> '$OCL/hinges'. Returns the given value unchanged if it
+    # isn't a user's library ref.
+    def bundled_library_ref(value)
+      return value unless value.is_a?(String) && value.start_with?(LIBRARY_REF_PREFIX)
+      LIBRARY_BUNDLED_REF_PREFIX + value[LIBRARY_REF_PREFIX.length..-1]
+    end
+
+    # Converts a path located inside a library into a portable '$LIB/…' - or
+    # '$OCL/…' - ref. Returns the given value unchanged if it points elsewhere.
     def library_ref_from_path(path)
       return path unless path.is_a?(String) && !path.empty?
       absolute = File.expand_path(path.gsub('\\', '/'))
-      root = File.expand_path(library_dir)
-      if Sketchup.platform == :platform_win
-        return path unless absolute.downcase.start_with?("#{root.downcase}/")
-      else
-        return path unless absolute.start_with?("#{root}/")
+      [ [ bundled_library_dir, LIBRARY_BUNDLED_REF_PREFIX ], [ library_dir, LIBRARY_REF_PREFIX ] ].each do |dir, prefix|
+        root = File.expand_path(dir)
+        inside = Sketchup.platform == :platform_win ? absolute.downcase.start_with?("#{root.downcase}/") : absolute.start_with?("#{root}/")
+        return prefix + absolute[(root.length + 1)..-1] if inside
       end
-      LIBRARY_REF_PREFIX + absolute[(root.length + 1)..-1]
+      path
     end
 
-    # Inverse of library_ref_from_path : converts a '$LIB/…' ref into an absolute
-    # path. Returns the given value unchanged if it isn't a library ref, and nil
-    # if the ref tries to escape the library.
+    # Inverse of library_ref_from_path : converts a '$LIB/…' or '$OCL/…' ref
+    # into an absolute path. Returns the given value unchanged if it isn't a
+    # library ref, and nil if the ref tries to escape the library.
     def resolve_library_ref(value)
       return value unless library_ref?(value)
-      relative = value[LIBRARY_REF_PREFIX.length..-1].to_s
+      readonly = library_readonly_ref?(value)
+      relative = value[(readonly ? LIBRARY_BUNDLED_REF_PREFIX : LIBRARY_REF_PREFIX).length..-1].to_s
       return nil if relative.empty? || relative.split('/').include?('..')
-      File.join(library_dir, relative)
+      File.join(readonly ? bundled_library_dir : library_dir, relative)
     end
 
-    # The '$LIB/…' refs of the sub folders of the given library folder ref,
-    # sorted by name. Hidden folders are skipped. Returns an empty array if the
-    # folder doesn't exist.
+    # The refs of the sub folders of the given library folder ref, sorted by
+    # name. Hidden folders are skipped. Returns an empty array if the folder
+    # doesn't exist.
     def list_library_dirs(dir_ref)
       _list_library_entries(dir_ref) { |path| File.directory?(path) }
     end
 
-    # The '$LIB/…' refs of the files of the given library folder ref - not
+    # The refs of the files of the given library folder ref - not
     # recursive - sorted by name, optionally filtered by extensions (as
     # '.skp', case insensitive). Hidden files and backups ('…~.skp') are
     # skipped. Returns an empty array if the folder doesn't exist.
@@ -256,7 +278,7 @@ module Ladb::OpenCutList
       }
     end
 
-    # The '$LIB/…' refs of the entries of the given library folder ref the
+    # The refs of the entries of the given library folder ref the
     # block accepts (given their absolute path), sorted by name.
     def _list_library_entries(dir_ref)
       dir = resolve_library_ref(dir_ref)

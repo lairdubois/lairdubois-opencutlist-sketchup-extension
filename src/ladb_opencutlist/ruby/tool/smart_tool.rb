@@ -10,6 +10,7 @@ module Ladb::OpenCutList
   require_relative '../worker/common/common_drawing_decomposition_worker'
   require_relative '../worker/common/common_solid_boolean_apply_worker'
   require_relative '../worker/common/common_stretch_split_worker'
+  require_relative '../utils/color_utils'
   require_relative '../utils/dimension_utils'
   require_relative '../utils/hash_utils'
   require_relative '../utils/view_utils'
@@ -4357,6 +4358,333 @@ module Ladb::OpenCutList
       )
         super
       end
+    end
+
+  end
+
+  # -----
+
+  # The bottom bar of a Smart action browsing a folder of the asset library : a
+  # row of the sub folders of the browsed folder - led by its parent below the
+  # library root - above the buttons of its files.
+  #
+  # A root is browsed in two libraries : the user's one ('$LIB/…', "Ma
+  # Bibliothèque") and the one shipped with the extension ('$OCL/…',
+  # "Bibliothèque OCL", read only). Both are the sub folders of a virtual
+  # parent, LIBRARIES_REF ("Bibliothèques"), which holds no file.
+  #
+  # The bar only draws : what is browsed and picked stays the owner's, given
+  # at each setup, and a click is handed back to it (on_browse, on_select).
+  #
+  # The scroll of both rows is kept by key, across handlers, while the browsed
+  # folder is : the panel is rebuilt - on a restart, by a new handler - scrolled
+  # as it was left.
+  class SmartLibraryPanel
+
+    # The virtual parent of both libraries - not a library ref
+    LIBRARIES_REF = '$LIBS'.freeze
+
+    # Scrolled panels, by key : { :dir_ref, :dirs_panel, :files_panel }
+    @@scrolls = {}
+
+    # A button of the files row : its ref, its label, and whether it is shown
+    # as missing - a picked file gone from the library.
+    FileItem = Struct.new(:ref, :label, :missing)
+
+    COLOR_MISSING = Sketchup::Color.new('#d9534f').freeze
+
+    MOTIF_PARENT_PATH = 'M1,.917H.5V.083M.25,.333L.5,.083L.75,.333'.freeze
+    MOTIF_EXPLORE_PATH = 'M.875,.417V.208H.5L.375,.083H0V.917H.792L1,.417H.208L0,.917'.freeze
+    MOTIF_ADD_PATH = 'M0,0.5L0.5,0.5L0.5,0L0.5,0.5L1,0.5L0.5,0.5L0.5,1'.freeze
+
+    # Can the given folder be browsed below the given root - a '$LIB/…' ref ?
+    # LIBRARIES_REF, both libraries' roots - even missing - and their existing
+    # sub folders can.
+    def self.browsable?(root_ref, dir_ref)
+      return true if dir_ref == LIBRARIES_REF
+      return false unless dir_ref.is_a?(String)
+      [ root_ref, PLUGIN.bundled_library_ref(root_ref) ].any? { |ref|
+        dir_ref == ref || dir_ref.start_with?("#{ref}/") && File.directory?(PLUGIN.resolve_library_ref(dir_ref).to_s)
+      }
+    end
+
+    # Is the given folder one files can be added to - a folder of the user's library ?
+    def self.writable?(dir_ref)
+      PLUGIN.library_ref?(dir_ref) && !PLUGIN.library_readonly_ref?(dir_ref)
+    end
+
+    def initialize(tool, layer, key)
+      @tool = tool
+      @layer = layer
+      @key = key
+      @file_btns = {}
+      @add_btn = nil
+      tool.create_2d(layer, :bottom)
+    end
+
+    # Rebuilds the bar.
+    #  - root_ref : the '$LIB/…' folder above which nothing is browsed - its
+    #    '$OCL/…' counterpart too ;
+    #  - dir_ref : the browsed folder, or LIBRARIES_REF ;
+    #  - selected_ref : the picked file, nil if none ;
+    #  - files : the FileItems of the files row, in order - the owner filters ;
+    #  - empty_text : shown when there is no file ;
+    #  - on_browse(dir_ref), on_select(file_ref) : the clicks - a click on the
+    #    picked file is ignored ;
+    #  - add_btn : { :selected, :on_click } for a toggle button left of the
+    #    files - disabled out of the user's library - nil for none.
+    def setup(root_ref:, dir_ref:, selected_ref:, files:, empty_text:, on_browse:, on_select:, add_btn: nil)
+
+      # The scroll is kept while the browsed folder is
+      scroll = @@scrolls[@key]
+      scroll = !scroll.nil? && scroll[:dir_ref] == dir_ref ? {
+        :dirs => scroll[:dirs_panel].nil? ? 0 : scroll[:dirs_panel].layout.start_row,
+        :files => scroll[:files_panel].nil? ? 0 : scroll[:files_panel].layout.start_row
+      } : {}
+      @@scrolls[@key] = { :dir_ref => dir_ref }
+
+      @tool.clear_2d(@layer)
+      @file_btns = {}
+      @add_btn = nil
+
+      unit = @tool.get_unit
+      text_size = unit * 3 * @tool.get_text_unit_factor
+
+      libraries = dir_ref == LIBRARIES_REF
+      bundled_root_ref = PLUGIN.bundled_library_ref(root_ref)
+      writable = SmartLibraryPanel.writable?(dir_ref)
+      fn_dir_label = lambda { |ref|
+        case ref
+        when LIBRARIES_REF then PLUGIN.get_i18n_string('tool.default.library_libraries')
+        when root_ref then PLUGIN.get_i18n_string('tool.default.library_user')
+        when bundled_root_ref then PLUGIN.get_i18n_string('tool.default.library_bundled')
+        else File.basename(ref).sub(/\A./) { |c| c.upcase }  # Only the first letter : capitalize would lower the rest
+        end
+      }
+
+      dir_refs = libraries ? [ root_ref, bundled_root_ref ] : PLUGIN.list_library_dirs(dir_ref)
+      files = [] if libraries
+
+      # Both rows share the same columns
+      num_dirs = dir_refs.length + 1
+      num_cols = [ [ num_dirs, files.length, 5 ].max, 10 ].min
+
+      fn_create_btn = lambda { |text, color, selected, disabled = false, hover_background = true, &block|
+
+        bg_color = color
+        bg_active_color = ColorUtils.color_darken(color, 0.1)
+        text_color = ColorUtils.color_is_dark?(bg_color) ? Kuix::COLOR_WHITE : Kuix::COLOR_BLACK
+
+        btn = Kuix::Button.new
+        btn.min_size.set!(unit * 20, unit * 10)
+        btn.set_style_attribute(:background_color, bg_color)
+        btn.set_style_attribute(:background_color, bg_active_color, :active)
+        btn.set_style_attribute(:background_color, bg_active_color, :hover) if hover_background
+        btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND, :selected)
+        if block
+          block.call(btn)
+        else
+          btn.append_static_label(text, text_size)
+             .set_style_attribute(:color, text_color)
+             .set_style_attribute(:color, text_color, :hover)
+             .set_style_attribute(:color, Kuix::COLOR_WHITE, :selected)
+        end
+        btn.selected = selected
+        btn.disabled = disabled
+        btn
+      }
+
+      fn_create_motif = lambda { |path|
+        motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path(path))
+        motif.padding.set_all!(unit * 2)
+        motif.min_size.set_all!(unit * 6)
+        motif.line_width = unit <= 4 ? 1 : 2
+        motif
+      }
+
+      # Each row overflows its 2 lines of buttons
+      dirs_overflow = num_dirs > num_cols * 2
+      files_overflow = files.length > num_cols * 2
+
+      # A scroll buttons column on the right of a row : reserved on both rows
+      # as soon as one overflows, to keep their columns aligned, with its
+      # buttons only on the rows that overflow.
+      fn_append_scroll_btns = lambda { |row, scroll_panel, overflow, start_row|
+
+        scroll_btns = Kuix::Panel.new
+        scroll_btns.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
+        scroll_btns.layout = Kuix::GridLayout.new(1, 2)
+        scroll_btns.min_size.set!(unit * 8, 0)
+        scroll_btns.visible = dirs_overflow || files_overflow
+        row.append(scroll_btns)
+
+        [ [ 'M0,1L1,1L0.5,0L0,1Z', -1 ], [ 'M0,0L1,0L0.5,1L0,0Z', 1 ] ].each do |path, delta|
+
+          btn = Kuix::Button.new
+          btn.layout = Kuix::StaticLayout.new
+          btn.min_size.set!(unit * 8, unit * 8)
+          btn.visible = overflow
+          btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_DARK)
+          btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_LIGHT, :hover)
+          scroll_btns.append(btn)
+          delta < 0 ? scroll_panel.bind_scroll_up_btn(btn) : scroll_panel.bind_scroll_down_btn(btn)
+
+          motif = fn_create_motif.call(path)
+          motif.set_style_attribute(:color, SmartTool::COLOR_BRAND_LIGHT)
+          motif.set_style_attribute(:color, SmartTool::COLOR_BRAND_DARK, :hover)
+          motif.set_style_attribute(:color, Kuix::COLOR_MEDIUM_GREY, :disabled)
+          btn.append(motif)
+
+        end
+
+        scroll_panel.layout.start_row = start_row.to_i
+        scroll_panel.scroll(0)  # Clamped, and the buttons enabled accordingly
+
+      }
+
+      panel = Kuix::Panel.new
+      panel.layout_data = Kuix::StaticLayoutData.new(0, 1.0, 1.0, -1, Kuix::Anchor.new(Kuix::Anchor::BOTTOM_LEFT))
+      panel.layout = Kuix::BorderLayout.new(0, unit)
+      panel.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_DARK)
+      @tool.append_2d(panel, @layer)
+
+      # Folders
+
+      dirs_row = Kuix::Panel.new
+      dirs_row.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
+      dirs_row.layout = Kuix::BorderLayout.new
+      dirs_row.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
+      panel.append(dirs_row)
+
+      dirs_panel = Kuix::ScrollPanel.new(num_cols, [ (num_dirs / num_cols.to_f).ceil, 2 ].min, 1, 1)
+      dirs_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
+      dirs_row.append(dirs_panel)
+
+      folder_btn_text = fn_dir_label.call(dir_ref)
+      folder_btn_disabled = libraries
+      parent_ref = dir_ref == root_ref || dir_ref == bundled_root_ref ? LIBRARIES_REF : File.dirname(dir_ref)
+      btn = fn_create_btn.call(folder_btn_text, SmartTool::COLOR_BRAND_DARK, false, folder_btn_disabled, true) { |btn|
+
+        btn.layout = Kuix::BorderLayout.new
+
+        lbl = Kuix::Label.new(folder_btn_text)
+        lbl.text_size = text_size + 1
+        lbl.text_bold = true
+        lbl.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
+        lbl.set_style_attribute(:color, Kuix::COLOR_WHITE)
+        btn.append(lbl)
+
+        unless folder_btn_disabled
+          motif = fn_create_motif.call(MOTIF_PARENT_PATH)
+          motif.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
+          motif.set_style_attribute(:color, Kuix::COLOR_WHITE)
+          btn.append(motif)
+        end
+
+      }
+      btn.on(:click) { on_browse.call(parent_ref) }
+      dirs_panel.append(btn)
+
+      dir_refs.each do |sub_dir_ref|
+        btn = fn_create_btn.call(fn_dir_label.call(sub_dir_ref), ColorUtils.color_lighten(SmartTool::COLOR_BRAND_DARK, 0.3), false, false, true)
+        btn.on(:click) { on_browse.call(sub_dir_ref) }
+        dirs_panel.append(btn)
+      end
+
+      dirs_explore_btn = Kuix::Button.new
+      dirs_explore_btn.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::WEST)
+      dirs_explore_btn.layout = Kuix::StaticLayout.new
+      dirs_explore_btn.min_size.set!(unit * 8, unit * 8)
+      dirs_explore_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_DARK)
+      dirs_explore_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_LIGHT, :hover)
+      dirs_explore_btn.disabled = !writable
+      dirs_explore_btn.on(:click) {
+        begin
+          PLUGIN.open_dir(PLUGIN.ensure_library_dir(dir_ref))  # The browsed folder may not exist yet
+        rescue SystemCallError
+          UI.beep
+        end
+      }
+      dirs_row.append(dirs_explore_btn)
+
+      dirs_explore_btn_motif = fn_create_motif.call(MOTIF_EXPLORE_PATH)
+      dirs_explore_btn_motif.set_style_attribute(:color, Kuix::COLOR_LIGHT_GREY)
+      dirs_explore_btn_motif.set_style_attribute(:color, SmartTool::COLOR_BRAND_DARK, :hover)
+      dirs_explore_btn_motif.set_style_attribute(:color, Kuix::COLOR_MEDIUM_GREY, :disabled)
+      dirs_explore_btn.append(dirs_explore_btn_motif)
+
+      fn_append_scroll_btns.call(dirs_row, dirs_panel, dirs_overflow, scroll[:dirs])
+      @@scrolls[@key][:dirs_panel] = dirs_panel
+
+      # Files
+
+      files_row = Kuix::Panel.new
+      files_row.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
+      files_row.layout = Kuix::BorderLayout.new
+      panel.append(files_row)
+
+      if files.empty?
+
+        lbl = Kuix::Label.new
+        lbl.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
+        lbl.text = libraries ? PLUGIN.get_i18n_string('tool.default.library_choose') : empty_text
+        lbl.text_size = text_size
+        lbl.padding.set_all!(unit * 3)
+        lbl.set_style_attribute(:color, Kuix::COLOR_WHITE)
+        files_row.append(lbl)
+
+      else
+
+        files_panel = Kuix::ScrollPanel.new(num_cols, [ [ (files.length / num_cols.to_f).ceil, 1 ].max, 2 ].min, 1, 1)
+        files_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
+        files_row.append(files_panel)
+
+        files.each do |file|
+          btn = fn_create_btn.call(file.label, file.missing ? COLOR_MISSING : ColorUtils.color_darken(SmartTool::COLOR_BRAND_LIGHT, 0.1), file.ref == selected_ref)
+          btn.on(:click) { |button| on_select.call(file.ref) unless button.selected? }
+          files_panel.append(btn)
+          @file_btns[file.ref] = btn
+        end
+
+        fn_append_scroll_btns.call(files_row, files_panel, files_overflow, scroll[:files])
+        @@scrolls[@key][:files_panel] = files_panel
+
+      end
+
+      unless add_btn.nil?
+
+        files_add_btn = Kuix::Button.new
+        files_add_btn.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::WEST)
+        files_add_btn.layout = Kuix::StaticLayout.new
+        files_add_btn.min_size.set!(unit * 8, unit * 8)
+        files_add_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_DARK)
+        files_add_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_LIGHT, :hover)
+        files_add_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND, :selected)
+        files_add_btn.selected = add_btn[:selected]
+        files_add_btn.disabled = !writable
+        files_add_btn.on(:click) { add_btn[:on_click].call }
+        files_row.append(files_add_btn)
+        @add_btn = files_add_btn
+
+        files_add_btn_motif = fn_create_motif.call(MOTIF_ADD_PATH)
+        files_add_btn_motif.set_style_attribute(:color, SmartTool::COLOR_BRAND_LIGHT)
+        files_add_btn_motif.set_style_attribute(:color, SmartTool::COLOR_BRAND_DARK, :hover)
+        files_add_btn_motif.set_style_attribute(:color, SmartTool::COLOR_BRAND_DARK, :selected)
+        files_add_btn_motif.set_style_attribute(:color, Kuix::COLOR_MEDIUM_GREY, :disabled)
+        files_add_btn.append(files_add_btn_motif)
+
+      end
+
+    end
+
+    # Moves the selection to the given file - and the add button - without
+    # rebuilding the bar, which would scroll its rows back to the top. Returns
+    # false if the bar doesn't show that file : it has to be set up again.
+    def update_selection(selected_ref, add_selected = false)
+      return false unless selected_ref.nil? || @file_btns.key?(selected_ref)
+      @file_btns.each { |file_ref, btn| btn.selected = file_ref == selected_ref }
+      @add_btn.selected = add_selected unless @add_btn.nil?
+      true
     end
 
   end

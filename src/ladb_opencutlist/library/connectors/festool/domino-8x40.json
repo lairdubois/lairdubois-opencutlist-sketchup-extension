@@ -1,0 +1,20 @@
+{
+  "format": "ocl-hardware",
+  "version": 1,
+  "id": "0051d9d2-804e-4aa1-8a9d-04da2e286d42",
+  "type": "connector",
+  "category": "domino",
+  "name": "Domino 8×40",
+  "meta": {
+    "supplier": "Festool",
+    "url": "https://www.festool.com",
+    "items": [
+      { "component": "a", "name": "Domino 8×40", "quantity": 1 }
+    ]
+  },
+  "components": {
+    "a": { "hardware": "$OCL/components/connectors/domino-8x40-S.skp", "machining": "$OCL/components/connectors/domino-8x40-S.machining.skp" },
+    "b": { "machining": "$OCL/components/connectors/domino-8x40-S.machining.skp" }
+  },
+  "options": { "height": "/2", "start_offset": "37mm", "end_offset": "37mm", "max_spacing": "500mm" }
+}

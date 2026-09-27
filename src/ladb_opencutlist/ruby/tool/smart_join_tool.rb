@@ -10,6 +10,7 @@ module Ladb::OpenCutList
   require_relative '../helper/smart_action_handler_cavities_helper'
   require_relative '../helper/smart_action_handler_door_helper'
   require_relative '../model/door/door_def'
+  require_relative '../model/hardware/hardware_descriptor_def'
 
   class SmartJoinTool < SmartTool
 
@@ -35,20 +36,22 @@ module Ladb::OpenCutList
     ACTION_OPTION_OPTIONS_OPPOSITE = 'opposite'
     ACTION_OPTION_OPTIONS_MAKE_UNIQUE = 'make_unique'
 
-    ACTION_OPTION_GEOMETRY_HARDWARE_A = 'hardware_a'
-    ACTION_OPTION_GEOMETRY_HARDWARE_B = 'hardware_b'
-    ACTION_OPTION_GEOMETRY_MACHINING_A = 'machining_a'
-    ACTION_OPTION_GEOMETRY_MACHINING_B = 'machining_b'
-    ACTION_OPTION_GEOMETRY_HARDWARE_INSET_A = 'hardware_inset_a'
-    ACTION_OPTION_GEOMETRY_MACHINING_INSET_A = 'machining_inset_a'
-    ACTION_OPTION_GEOMETRY_HARDWARE_OVERLAY_A = 'hardware_overlay_a'
-    ACTION_OPTION_GEOMETRY_MACHINING_OVERLAY_A = 'machining_overlay_a'
-    ACTION_OPTION_GEOMETRY_HARDWARE_HALF_OVERLAY_A = 'hardware_half_overlay_a'
-    ACTION_OPTION_GEOMETRY_MACHINING_HALF_OVERLAY_A = 'machining_half_overlay_a'
+    ACTION_OPTION_GEOMETRY_HARDWARE = 'hardware'   # The HardwareDescriptorDef ref of the hardware laid - the last one picked
     ACTION_OPTION_GEOMETRY_HARDWARE_MATERIAL_NAME = 'hardware_material_name'
     ACTION_OPTION_GEOMETRY_MACHINING_MATERIAL_NAME = 'machining_material_name'
     ACTION_OPTION_GEOMETRY_HARDWARE_LAYER_NAME = 'hardware_layer_name'
     ACTION_OPTION_GEOMETRY_MACHINING_LAYER_NAME = 'machining_layer_name'
+
+    # The user's library folder the hardware descriptors of each type are
+    # picked in - its '$OCL/…' counterpart holds the ones shipped with the
+    # extension
+    HARDWARE_LIBRARY_REFS = {
+      HardwareDescriptorDef::TYPE_CONNECTOR => '$LIB/connectors',
+      HardwareDescriptorDef::TYPE_FITTING => '$LIB/fittings',
+      HardwareDescriptorDef::TYPE_HINGE => '$LIB/hinges',
+      HardwareDescriptorDef::TYPE_FACE => '$LIB/faces',
+      HardwareDescriptorDef::TYPE_SPAN => '$LIB/spans',
+    }.freeze
 
     ACTIONS = [
       {
@@ -334,8 +337,17 @@ module Ladb::OpenCutList
     LAYER_3D_PART_A_PREVIEW = 10
     LAYER_3D_PART_B_PREVIEW = 20
 
+    LAYER_2D_HARDWARE_LIBRARY = 110
+
     TRANSFORMATION_FLIP_X = Geom::Transformation.axes(ORIGIN, X_AXIS.reverse, Y_AXIS, Z_AXIS).freeze
     TRANSFORMATION_FLIP_Z = Geom::Transformation.axes(ORIGIN, X_AXIS, Y_AXIS, Z_AXIS.reverse).freeze
+
+    # The library folder browsed, by action. Remembered for the session only.
+    @@hardware_dir_refs = {}
+
+    # The descriptors listed in the library bar, by path : [ mtime, HardwareDescriptorDef ].
+    # Kept across handlers to read a file only once while it is unchanged.
+    @@listed_hardware_descriptor_defs = {}
 
     # -----
 
@@ -350,6 +362,16 @@ module Ladb::OpenCutList
       tool.create_3d(LAYER_3D_HARDWARE_PREVIEW)
       tool.create_3d(LAYER_3D_SNAP_POINT_PREVIEW)
 
+      # The hardware library bar, for the actions that lay hardware
+      @hardware_library_panel = _get_hardware_types.empty? ? nil : SmartLibraryPanel.new(tool, LAYER_2D_HARDWARE_LIBRARY, "smart_join_hardware_#{action}")
+
+    end
+
+    # -----
+
+    def start
+      _setup_hardware_library_panel
+      super
     end
 
     # -----
@@ -359,8 +381,15 @@ module Ladb::OpenCutList
       super
     end
 
+    def onStateChanged(old_state, new_state)
+      super
+      _update_hardware_picker
+    end
+
     def onToolGlobalPresetChanged(tool, dictionary, section)
       @geometries_def = nil
+      _update_hardware_library_panel_selection  # The picked descriptor may have changed with the preset
+      _update_hardware_picker
       _refresh
     end
 
@@ -382,6 +411,13 @@ module Ladb::OpenCutList
 
     def _preview_all_instances?
       false
+    end
+
+    # -----
+
+    def _reset
+      super
+      _setup_hardware_library_panel  # Cleared with all the 2D layers
     end
 
     # -----
@@ -467,23 +503,31 @@ module Ladb::OpenCutList
       @tool.fetch_action_option_boolean(@action, SmartJoinTool::ACTION_OPTION_OPTIONS, SmartJoinTool::ACTION_OPTION_OPTIONS_MAKE_UNIQUE)
     end
 
+    def _fetch_option_hardware
+      @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_HARDWARE)
+    end
+
+    # The geometries of the picked hardware descriptor's components
     def _fetch_option_hardware_a
-      @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_HARDWARE_A)
+      _get_hardware_component_ref(:a, :hardware)
     end
 
     def _fetch_option_hardware_b
-      @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_HARDWARE_B)
+      _get_hardware_component_ref(:b, :hardware)
     end
 
     def _fetch_option_machining_a
-      @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_MACHINING_A)
+      _get_hardware_component_ref(:a, :machining)
     end
 
     def _fetch_option_machining_b
-      @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_MACHINING_B)
+      _get_hardware_component_ref(:b, :machining)
     end
 
     def _fetch_option_hardware_material_name
+      if (descriptor = _get_hardware_descriptor_def) && (material = descriptor.hardware_material)
+        return material
+      end
       @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_HARDWARE_MATERIAL_NAME)
     end
 
@@ -499,6 +543,195 @@ module Ladb::OpenCutList
       @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_MACHINING_LAYER_NAME)
     end
 
+    # -- Hardware --
+
+    # The types of hardware descriptor the action lays - see
+    # HardwareDescriptorDef::TYPES.
+    def _get_hardware_types
+      []
+    end
+
+    # The library folder the action's descriptors are picked in : the one of
+    # its first type.
+    def _get_hardware_library_ref
+      SmartJoinTool::HARDWARE_LIBRARY_REFS[_get_hardware_types.first]
+    end
+
+    # Is a hardware descriptor picked - usable or not ?
+    def _hardware?
+      ref = _fetch_option_hardware
+      ref.is_a?(String) && !ref.strip.empty?
+    end
+
+    # The picked hardware descriptor, nil when there is none or it can't be
+    # used - the error is notified once. Read again when its file changes.
+    def _get_hardware_descriptor_def
+      return nil unless _hardware?
+      ref = _fetch_option_hardware
+      path = PLUGIN.resolve_library_ref(ref)
+      key = [ ref, path.is_a?(String) && File.file?(path) ? File.mtime(path) : nil ]
+      return @hardware_descriptor_def if @hardware_descriptor_def_key == key
+      @hardware_descriptor_def_key = key
+      @hardware_descriptor_def = HardwareDescriptorDef.load(path)
+      if @hardware_descriptor_def.nil?
+        @tool.notify_errors([ [ 'tool.smart_join.error.failed_to_load_hardware', { file: ref } ] ])
+      elsif !@hardware_descriptor_def.valid?
+        @tool.notify_errors([ [ 'tool.smart_join.error.invalid_hardware', { file: ref, error: @hardware_descriptor_def.errors.first } ] ])
+        @hardware_descriptor_def = nil
+      elsif !_get_hardware_types.include?(@hardware_descriptor_def.type)
+        @tool.notify_errors([ [ 'tool.smart_join.error.unsupported_hardware_type', { name: @hardware_descriptor_def.name, type: @hardware_descriptor_def.type } ] ])
+        @hardware_descriptor_def = nil
+      end
+      @hardware_descriptor_def
+    end
+
+    # Picks the given hardware descriptor ref : its options become the
+    # action's, where the action has them. Returns false if the descriptor
+    # can't be used.
+    def _select_hardware(ref)
+      descriptor = HardwareDescriptorDef.load(ref)
+      return false if descriptor.nil? || !descriptor.valid? || !_get_hardware_types.include?(descriptor.type)
+      action_def = @tool.get_action_defs.find { |action_def| action_def[:action] == @action }
+      option_groups = action_def.nil? || action_def[:options].nil? ? {} : action_def[:options]
+      descriptor.options.each do |name, value|
+        option_group, _ = option_groups.find { |_, options| options.include?(name) }
+        @tool.store_action_option_value(@action, option_group, name, value) unless option_group.nil?
+      end
+      @tool.store_action_option_value(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_HARDWARE, ref, fire_event: true)
+      true
+    end
+
+    # Unpicks the hardware : nothing can be laid until another one is picked.
+    def _deselect_hardware
+      @tool.store_action_option_value(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_HARDWARE, nil, fire_event: true)
+    end
+
+    # The measures the variants of the hardware components are selected by -
+    # see HardwareDescriptorDef#resolve_component.
+    def _get_hardware_context
+      {}
+    end
+
+    def _get_hardware_component(role)
+      return nil if (descriptor = _get_hardware_descriptor_def).nil?
+      descriptor.resolve_component(role, _get_hardware_context)
+    end
+
+    # The ref of the given part - :hardware or :machining - of the given role's
+    # component. Machinings given as primitives are not laid yet.
+    def _get_hardware_component_ref(role, part)
+      return nil if (component = _get_hardware_component(role)).nil?
+      ref = component.send(part)
+      ref.is_a?(String) ? ref : nil
+    end
+
+    # Marks the given hardware definition as the given role's component of the
+    # picked descriptor, and gives it the unit price of that component.
+    def _write_hardware_attributes(definition, role)
+      return unless definition.is_a?(Sketchup::ComponentDefinition)
+      return if (descriptor = _get_hardware_descriptor_def).nil?
+      return if (component = _get_hardware_component(role)).nil?
+      definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, HardwareDescriptorDef::DEFINITION_ATTRIBUTE_ID, descriptor.id)
+      definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, HardwareDescriptorDef::DEFINITION_ATTRIBUTE_COMPONENT, component.role)
+      definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, HardwareDescriptorDef::DEFINITION_ATTRIBUTE_VARIANT, component.variant)
+      unless (price = descriptor.unit_price(role)).nil?
+        definition.set_attribute(Plugin::SU_ATTRIBUTE_DICTIONARY, Plugin::SU_PRICE_ATTRIBUTE_KEY, price.round(4).to_s)
+      end
+    end
+
+    # -- Hardware library --
+
+    # The action lays hardware, and none usable is picked : nothing can be
+    # picked in the model until one is, in the library bar.
+    def _hardware_missing?
+      !@hardware_library_panel.nil? && _get_hardware_descriptor_def.nil?
+    end
+
+    # No picker while the hardware is missing, and the status says why.
+    def _update_hardware_picker
+      return if @hardware_library_panel.nil?
+      if _hardware_missing?
+        @picker = nil
+        @tool.clear_3d([ LAYER_3D_PART_A_PREVIEW, LAYER_3D_PART_B_PREVIEW, LAYER_3D_JOIN_PREVIEW, LAYER_3D_MACHINING_PREVIEW, LAYER_3D_HARDWARE_PREVIEW, LAYER_3D_SNAP_POINT_PREVIEW ])
+        Sketchup.set_status_text(PLUGIN.get_i18n_string('tool.smart_join.select_hardware_status') + '.', SB_PROMPT)
+      elsif @picker.nil?
+        @picker = get_state_picker(@state)
+        Sketchup.set_status_text(get_state_status(@state), SB_PROMPT)
+      end
+    end
+
+    # The bottom bar : the browsed folder of the hardware library, its sub
+    # folders and the descriptors the action lays - led by the picked one
+    # when it is gone or can't be used.
+    def _setup_hardware_library_panel
+      return if @hardware_library_panel.nil?
+      selected_ref = _hardware? ? _fetch_option_hardware : nil
+      dir_ref = _get_hardware_library_dir_ref
+      files = []
+      if !selected_ref.nil? && _get_listed_hardware_descriptor_def(selected_ref).nil?
+        files << SmartLibraryPanel::FileItem.new(selected_ref, File.basename(selected_ref, '.*'), true)
+      end
+      PLUGIN.list_library_files(dir_ref, '.json').each do |file_ref|
+        descriptor = _get_listed_hardware_descriptor_def(file_ref)
+        files << SmartLibraryPanel::FileItem.new(file_ref, descriptor.name) unless descriptor.nil?  # The unusable picked one is already in
+      end
+      @hardware_library_panel.setup(
+        root_ref: _get_hardware_library_ref,
+        dir_ref: dir_ref,
+        selected_ref: selected_ref,
+        files: files,
+        empty_text: PLUGIN.get_i18n_string('tool.smart_join.warning.no_hardware_file'),
+        on_browse: lambda { |ref|
+          @@hardware_dir_refs[@action] = ref
+          _deselect_hardware  # The pick only lives in its folder
+          _restart
+        },
+        on_select: lambda { |ref|
+          if _select_hardware(ref)
+            _restart  # What was picked was for the previous hardware
+          else
+            UI.beep
+          end
+        },
+        add_btn: {
+          :selected => false,
+          :on_click => lambda {}  # TODO : add a hardware to the library
+        }
+      )
+    end
+
+    # Picking a descriptor of the browsed folder only moves the selection.
+    def _update_hardware_library_panel_selection
+      return if @hardware_library_panel.nil?
+      selected_ref = _hardware? ? _fetch_option_hardware : nil
+      _setup_hardware_library_panel unless @hardware_library_panel.update_selection(selected_ref)
+    end
+
+    # The browsed folder : the one of the picked descriptor - a pick only
+    # lives in its folder - else the last one browsed while it can still be,
+    # else the virtual parent of both libraries.
+    def _get_hardware_library_dir_ref
+      root_ref = _get_hardware_library_ref
+      ref = _hardware? ? _fetch_option_hardware : nil
+      dir_ref = ref.nil? ? nil : File.dirname(ref)
+      dir_ref = @@hardware_dir_refs[@action] unless SmartLibraryPanel.browsable?(root_ref, dir_ref)
+      dir_ref = SmartLibraryPanel::LIBRARIES_REF unless SmartLibraryPanel.browsable?(root_ref, dir_ref)
+      @@hardware_dir_refs[@action] = dir_ref
+    end
+
+    # The descriptor of the given ref the action can lay, nil if the file is
+    # gone, isn't a descriptor, is invalid or of another type.
+    def _get_listed_hardware_descriptor_def(ref)
+      path = PLUGIN.resolve_library_ref(ref)
+      return nil unless path.is_a?(String) && File.file?(path)
+      mtime = File.mtime(path)
+      cached = @@listed_hardware_descriptor_defs[path]
+      @@listed_hardware_descriptor_defs[path] = cached = [ mtime, HardwareDescriptorDef.load(path) ] if cached.nil? || cached[0] != mtime
+      descriptor = cached[1]
+      return nil if descriptor.nil? || !descriptor.valid? || !_get_hardware_types.include?(descriptor.type)
+      descriptor
+    end
+
     # -----
 
     def _get_geometries_def
@@ -510,7 +743,7 @@ module Ladb::OpenCutList
 
         fn_get_definition = lambda do |ref|
           return nil if !ref.is_a?(String) || ref.strip.empty?
-          ref = PLUGIN.resolve_library_ref(ref)   # '$LIB/…' refs point to a file of the asset library
+          ref = PLUGIN.resolve_library_ref(ref)   # '$LIB/…' and '$OCL/…' refs point to a file of a library
           return nil if ref.nil?
           if (extname = File.extname(ref)).downcase == '.skp'
             name = File.basename(ref, extname)
@@ -562,6 +795,9 @@ module Ladb::OpenCutList
         machining_a_definition = fn_get_definition.call(_fetch_option_machining_a)
         machining_b_definition = fn_get_definition.call(_fetch_option_machining_b)
 
+        _write_hardware_attributes(hardware_a_definition, :a)
+        _write_hardware_attributes(hardware_b_definition, :b)
+
         fn_get_drawing_def = lambda do |definition|
           return nil if definition.nil?
           CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new([ definition ]) ],
@@ -580,7 +816,7 @@ module Ladb::OpenCutList
 
         fn_get_material = lambda do |ref, default_color = nil, default_type = nil|
           return nil if !ref.is_a?(String) || ref.strip.empty?
-          ref = PLUGIN.resolve_library_ref(ref)   # '$LIB/…' refs point to a file of the asset library
+          ref = PLUGIN.resolve_library_ref(ref)   # '$LIB/…' and '$OCL/…' refs point to a file of a library
           return nil if ref.nil?
           if File.extname(ref).downcase == '.skm'
             material = model.materials.load(ref)
@@ -1362,6 +1598,10 @@ module Ladb::OpenCutList
     # -----
 
     protected
+
+    def _get_hardware_types
+      [ HardwareDescriptorDef::TYPE_CONNECTOR ]
+    end
 
     # -----
 
@@ -2846,6 +3086,10 @@ module Ladb::OpenCutList
 
     protected
 
+    def _get_hardware_types
+      [ HardwareDescriptorDef::TYPE_FITTING ]
+    end
+
     def _reset
       super
       @snap_start_point = nil
@@ -3536,6 +3780,15 @@ module Ladb::OpenCutList
 
     protected
 
+    def _get_hardware_types
+      [ HardwareDescriptorDef::TYPE_HINGE ]
+    end
+
+    # The kind of the door selects the variant of A.
+    def _get_hardware_context
+      { 'hinge_kind' => @hinge_kind.to_s }
+    end
+
     def _reset
       super
       @hinge_side_error = nil
@@ -3985,39 +4238,6 @@ module Ladb::OpenCutList
     end
 
     # -----
-
-    # The hardware and machining of A - the door - are the INSET ones when the
-    # door stands in the mouth, the HALF overlay ones when it shares the side
-    # with another door - the full overlay ones while those are left empty.
-    def _fetch_option_hardware_a
-      case @hinge_kind
-      when HINGE_KIND_INSET
-        @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_HARDWARE_INSET_A)
-      when HINGE_KIND_HALF_OVERLAY
-        return @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_HARDWARE_OVERLAY_A) if _half_overlay_fallback?
-        @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_HARDWARE_HALF_OVERLAY_A)
-      else
-        @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_HARDWARE_OVERLAY_A)
-      end
-    end
-
-    def _fetch_option_machining_a
-      case @hinge_kind
-      when HINGE_KIND_INSET
-        @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_MACHINING_INSET_A)
-      when HINGE_KIND_HALF_OVERLAY
-        return @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_MACHINING_OVERLAY_A) if _half_overlay_fallback?
-        @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_MACHINING_HALF_OVERLAY_A)
-      else
-        @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_MACHINING_OVERLAY_A)
-      end
-    end
-
-    # No half overlay hinge set : the full overlay one, and its machining.
-    def _half_overlay_fallback?
-      hardware = @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_HARDWARE_HALF_OVERLAY_A)
-      hardware.nil? || hardware.empty?
-    end
 
     # One set of geometries per kind of door, all kept.
     def _get_geometries_def
