@@ -3614,6 +3614,13 @@ module Ladb::OpenCutList
         # stretched by how much shorter it is than the longest one
         edges = _get_face_edges(face_manipulator_a)
         max_length = edges.map { |p1, p2| p1.distance(p2) }.max
+
+        # A door already hung turns on one side only : the edge its hinges
+        # run along
+        unless (hinged_edge = _get_hinged_edge(edges)).nil?
+          @hinge_side_error = 'tool.smart_join.error.hinged_side_lost'
+          edges = [ hinged_edge ]
+        end
         edges.map { |p1, p2|
           length = p1.distance(p2)
           point = _closest_point_on_segment(@hinge_pick_point, p1, p2)
@@ -3639,6 +3646,20 @@ module Ladb::OpenCutList
       @hinge_inset = inset == true
 
       changed
+    end
+
+    # The edge, among the given ones of the door's back, its hinges already
+    # run along - parallel to their joint lines, nearest their origins - nil
+    # when the door has none yet.
+    def _get_hinged_edge(edges)
+      return nil if (door_def = DoorDef.from(@active_part_entity_path_a.last)).nil?
+
+      t = PathUtils.get_transformation(@active_part_entity_path_a, IDENTITY)
+      hinge_transformations = door_def.hinge_defs.map { |hinge_def| t * hinge_def.instance.transformation }
+      direction = hinge_transformations.first.xaxis
+      edges.select { |p1, p2| p1.vector_to(p2).parallel?(direction) }.min_by { |p1, p2|
+        hinge_transformations.map { |ht| ht.origin.distance_to_line([ p1, p2 ]) }.max
+      }
     end
 
     # The side the door would turn on along the given edge of its back -
@@ -3840,7 +3861,20 @@ module Ladb::OpenCutList
 
     def _preview_join(picker)
       super
-      return if @joinery_def.nil? || !@hinge_rejected_anchor_points.is_a?(Array) || @hinge_rejected_anchor_points.empty?
+      return if @joinery_def.nil?
+
+      # The fittings in the way are hinges, and those of THIS door : it
+      # turns on one side only (see #_get_hinged_edge)
+      join_def = @joinery_def.join_def
+      unless join_def.occupied_anchor_points_3d.empty?
+        if join_def.anchor_points_3d.empty?
+          @tool.show_message(PLUGIN.get_i18n_string('tool.smart_join.error.door_already_hinged'), SmartTool::MESSAGE_TYPE_ERROR)
+        else
+          @tool.show_message(PLUGIN.get_i18n_string('tool.smart_join.error.occupied_hinges', { :count => join_def.occupied_anchor_points_3d.length }), SmartTool::MESSAGE_TYPE_ERROR)
+        end
+      end
+
+      return if !@hinge_rejected_anchor_points.is_a?(Array) || @hinge_rejected_anchor_points.empty?
 
       k_points = _create_floating_points(
         points: @hinge_rejected_anchor_points,

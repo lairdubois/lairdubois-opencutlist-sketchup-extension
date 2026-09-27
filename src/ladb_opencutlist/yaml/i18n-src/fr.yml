@@ -2791,7 +2791,11 @@ tool:
       not_assemblable: Ce type de pièce ne peut pas être assemblé
       not_front_panel: La pièce ciblée n'est pas une façade
       no_hinge_cavity: Aucune cavité trouvée derrière cette façade
+      hinged_side_lost: Le côté sur lequel cette façade pivote déjà n'est plus bordé par un montant
       no_hinge_side: Aucun montant ne borde ce côté de la façade
+      door_already_hinged: Cette façade a déjà ses charnières
+      occupied_hinges: "{{ count }} charnière en conflit de position avec une charnière existante"
+      occupied_hinges_plural: "{{ count }} charnières en conflit de position avec des charnières existantes"
       hinge_rejected_anchors: "{{ count }} charnière écartée : elle tomberait sur une tablette"
       hinge_rejected_anchors_plural: "{{ count }} charnières écartées : elles tomberaient sur une tablette"
       no_valid_join: Aucune surface de contact ne permet de satisfaire les contraintes d'assemblage
