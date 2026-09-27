@@ -17,6 +17,7 @@ module Ladb::OpenCutList
   require_relative '../utils/file_path_utils'
   require_relative '../model/geom/size3d'
   require_relative '../model/cutlist/cutlist'
+  require_relative '../model/door/door_def'
   require_relative '../manipulator/face_manipulator'
   require_relative '../manipulator/edge_manipulator'
   require_relative '../manipulator/line_manipulator'
@@ -1289,6 +1290,13 @@ module Ladb::OpenCutList
       fetch_action.nil? ? get_action_defs.first[:action] : fetch_action
     end
 
+    # Whether the doors standing open in the model are closed back when the
+    # tool activates (see DoorDef) : a tool that reshapes, joins or builds
+    # parts works on closed doors only.
+    def close_doors_on_activate?
+      true
+    end
+
     def set_action(action)
 
       # Hide possible modal
@@ -1497,6 +1505,9 @@ module Ladb::OpenCutList
 
       # Create pick helpers
       @pick_helper = view.pick_helper
+
+      # Close open doors
+      DoorDef.close_all(view.model) if close_doors_on_activate?
 
       # Set startup cursor
       set_root_action(get_startup_action)
@@ -2669,7 +2680,7 @@ module Ladb::OpenCutList
             else
               _reset_active_part
               @tool.show_tooltip(PLUGIN.get_i18n_string(error_key, error_vars), SmartTool::MESSAGE_TYPE_ERROR) if error_key.is_a?(String)
-              @tool.push_cursor(SmartCursorManager.cursor_select_error)
+              @tool.push_cursor(_get_part_error_cursor)
             end
             return
           end
@@ -2694,7 +2705,7 @@ module Ladb::OpenCutList
               _add_part_twin(picked_part_entity_path, picked_part) if picked_part.id == @active_part.id
             else
               @tool.show_tooltip(PLUGIN.get_i18n_string(error_key, error_vars), SmartTool::MESSAGE_TYPE_ERROR) if error_key.is_a?(String)
-              @tool.push_cursor(SmartCursorManager.cursor_select_error)
+              @tool.push_cursor(_get_part_error_cursor)
               return
             end
           end
@@ -2963,6 +2974,11 @@ module Ladb::OpenCutList
 
     # --
 
+    # The cursor shown over a part that cannot be activated.
+    def _get_part_error_cursor
+      SmartCursorManager.cursor_select_error
+    end
+
     def _can_activate_part?(part_entity_path, part)
       return [ false, 'tool.default.error.locked_part' ] unless _can_activate_locked? || part.nil? || part_entity_path.nil? || part_entity_path.none?(&:locked?)
       [ true, nil ]
@@ -2992,7 +3008,7 @@ module Ladb::OpenCutList
 
         unless silent
           @tool.show_tooltip(PLUGIN.get_i18n_string(error_key, error_vars), SmartTool::MESSAGE_TYPE_ERROR) if error_key.is_a?(String)
-          @tool.push_cursor(SmartCursorManager.cursor_select_error)
+          @tool.push_cursor(_get_part_error_cursor)
         end
 
       end
@@ -4204,6 +4220,15 @@ module Ladb::OpenCutList
 
     def cursor_picker
       create_cursor('picker')
+    end
+
+
+    def cursor_hand
+      create_cursor('hand', 7, 2)
+    end
+
+    def cursor_hand_error
+      create_cursor('hand-error', 7, 2)
     end
 
   end

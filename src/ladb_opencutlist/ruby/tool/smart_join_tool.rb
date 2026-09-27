@@ -8,6 +8,7 @@ module Ladb::OpenCutList
   require_relative '../lib/fiddle/skpy/skpy'
   require_relative '../helper/user_text_helper'
   require_relative '../helper/smart_action_handler_cavities_helper'
+  require_relative '../helper/smart_action_handler_door_helper'
   require_relative '../model/door/door_def'
 
   class SmartJoinTool < SmartTool
@@ -2752,9 +2753,7 @@ module Ladb::OpenCutList
   class SmartJoinAddFittingsActionHandler < SmartJoinFittingsActionHandler
 
     include UserTextHelper
-
-    COLOR_DOOR_OPENING_PREVIEW = Kuix::COLOR_MAGENTA
-    DOOR_OPENING_ARC_STEP = 5.0 # Degrees between two points of an opening arc
+    include SmartActionHandlerDoorHelper
 
     def initialize(tool, previous_action_handler = nil, action = SmartJoinTool::ACTION_ADD_FITTINGS)
       super(action, tool, previous_action_handler)
@@ -3008,77 +3007,11 @@ module Ladb::OpenCutList
         next if (hinge_def = DoorHingeDef.from_definition(hardware.definition, placement.transformation)).nil?
         next if (drawing_def = _get_door_drawing_def(placement.definition)).nil?
 
-        t = placement.seed_transformation   # Door definition space -> world
-        pivot, axis = hinge_def.axis_line
-        max_angle = hinge_def.max_angle
-
-        fn_rotation = lambda { |angle| Geom::Transformation.rotation(pivot, axis, angle.degrees) }
-
-        # The corners of the door, along the axis and around it
-        corners = (0..7).map { |i| drawing_def.bounds.corner(i) }
-        positions = corners.map { |point| (point - pivot) % axis }
-
-        # Axis
-
-        k_edge = Kuix::EdgeMotif3d.new
-        k_edge.start.copy!(pivot.offset(axis, positions.min).transform(t))
-        k_edge.end.copy!(pivot.offset(axis, positions.max).transform(t))
-        k_edge.line_stipple = Kuix::LINE_STIPPLE_DASH_DOT_DASH
-        k_edge.line_width = 1.5
-        k_edge.color = COLOR_DOOR_OPENING_PREVIEW
-        k_edge.on_top = true
-        @tool.append_3d(k_edge, LAYER_3D_JOIN_PREVIEW)
-
-        # Arcs swept by the farthest corner at each end of the axis
-
-        steps = [ (max_angle / DOOR_OPENING_ARC_STEP).ceil, 1 ].max
-        [ positions.min, positions.max ].each do |position|
-          corner = corners.select.with_index { |_, i| (positions[i] - position).abs < 1.0.mm }
-                          .max_by { |point| point.distance_to_line([ pivot, axis ]) }
-          next if corner.nil?
-
-          k_polyline = Kuix::Polyline.new
-          k_polyline.add_points((0..steps).map { |i| corner.transform(fn_rotation.call(max_angle * i / steps)).transform(t) })
-          k_polyline.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-          k_polyline.line_width = 1.5
-          k_polyline.color = COLOR_DOOR_OPENING_PREVIEW
-          k_polyline.on_top = true
-          @tool.append_3d(k_polyline, LAYER_3D_JOIN_PREVIEW)
-
-        end
-
-        # The door wide open
-
-        k_segments = Kuix::Segments.new
-        k_segments.add_segments(
-          drawing_def.edge_manipulators.flat_map(&:segment) +
-          drawing_def.curve_manipulators.flat_map(&:segments)
-        )
-        k_segments.color = COLOR_DOOR_OPENING_PREVIEW
-        k_segments.line_width = 1
-        k_segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-        k_segments.transformation = t * fn_rotation.call(max_angle)
-        k_segments.on_top = true
-        @tool.append_3d(k_segments, LAYER_3D_JOIN_PREVIEW)
+        # Door definition space -> world, from closed to wide open
+        _preview_door_swing(placement.seed_transformation, hinge_def.axis_line, 0, hinge_def.max_angle, drawing_def, LAYER_3D_JOIN_PREVIEW)
 
       end
 
-    end
-
-    # The outline of the door - the given definition - without the fittings
-    # glued into it, in its own space. Memoized for the last definition asked.
-    def _get_door_drawing_def(definition)
-      return @door_drawing_def[1] if @door_drawing_def.is_a?(Array) && @door_drawing_def[0] == definition
-      drawing_def = CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new([ definition ]) ],
-                                                         ignore_surfaces: true,
-                                                         ignore_faces: true,
-                                                         ignore_edges: false,
-                                                         ignore_soft_edges: true,
-                                                         container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART_WITHOUT_MACHININGS
-      ).run
-      drawing_def = nil unless drawing_def.is_a?(DrawingDef) && drawing_def.bounds.valid? && !drawing_def.bounds.empty?
-      @door_drawing_def = [ definition, drawing_def ]
-      drawing_def
     end
 
     # -----

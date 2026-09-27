@@ -2345,6 +2345,7 @@ tool:
     vcb_diameter: Diamètre
     vcb_distance: Distance
     vcb_spacings: Espacements
+    vcb_angle: Angle
     locked_on_last_measure_status: Verrouiller sur la dernière mesure  # TODO : Moved from tool.smart_draw.action_measure_locked_status
     error:
       no_direction: Veuillez indiquer une direction avec la souris
@@ -2353,6 +2354,7 @@ tool:
       invalid_multiplicator: "Le multiplicateur {{ value }} est invalide"
       invalid_divider: "Le diviseur {{ value }} est invalide"
       invalid_offset: "Le décalage {{ value }} est invalide"
+      invalid_angle: "L'angle {{ value }} est invalide"
       invalid_segment_count: "Le nombre de segments {{ value }} est invalide. Il doit être compris entre 3 et 999."
       syntax_error: "Erreur de syntaxe : {{ error }}"
       unexpected_close_parenthesis: "Parenthèse fermante inattendue"
@@ -2570,6 +2572,11 @@ tool:
     action_4_status: Répartir une pièce le long d'un axe
     action_4_state_1_status: Cliquez pour déterminer le premier point de mesure
     action_4_state_2_status: Cliquez pour déterminer le second point de mesure ou entrez une distance
+    action_5: Interagir
+    action_5_status: Ouvrir ou fermer une porte
+    action_5_state_0_status: Cliquez sur une porte pour l'ouvrir ou la fermer, ou faites-la glisser pour régler son ouverture
+    action_5_state_0_amend_status: Saisissez un angle pour corriger l'ouverture, ou cliquez sur une porte pour l'ouvrir ou la fermer
+    action_5_state_20_status: Faites glisser pour régler l'ouverture de la porte et relâchez pour valider
     action_option_group_copy_measure_type: Mesure
     action_option_group_move_measure_type: Mesure
     action_option_group_axes: Axes
@@ -2584,6 +2591,9 @@ tool:
     action_toggle_raytest_status: Projeter sur le prochain point
     warning:
       copies_disable_mirror: La copie multiple désactive l'option '$t(tool.smart_handle.action_option_options_mirror_status)'
+    error:
+      not_door: Cette pièce n'est pas une porte équipée de charnières
+      incoherent_door: Les charnières de cette porte ne tournent pas autour d'un même axe
   smart_reshape:
     title: Remodeler
     action_0: Etirer

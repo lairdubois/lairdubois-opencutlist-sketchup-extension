@@ -11,6 +11,8 @@ module Ladb::OpenCutList
   require_relative '../helper/user_text_helper'
   require_relative '../worker/common/common_drawing_decomposition_worker'
   require_relative '../utils/component_utils'
+  require_relative '../model/door/door_def'
+  require_relative '../helper/smart_action_handler_door_helper'
 
   class SmartHandleTool < SmartTool
 
@@ -19,6 +21,7 @@ module Ladb::OpenCutList
     ACTION_COPY_GRID = 2
     ACTION_MOVE_LINE = 3
     ACTION_DISTRIBUTE = 4
+    ACTION_INTERACT = 5
 
     ACTION_OPTION_COPY_MEASURE_TYPE = 'copy_measure_type'
     ACTION_OPTION_AXES = 'axes'
@@ -66,6 +69,9 @@ module Ladb::OpenCutList
           ACTION_OPTION_COPY_MEASURE_TYPE => [ ACTION_OPTION_COPY_MEASURE_TYPE_CENTERED, ACTION_OPTION_COPY_MEASURE_TYPE_INSIDE ],
           ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_CONTEXT, ACTION_OPTION_AXES_ENTITY ]
         }
+      },
+      {
+        :action => ACTION_INTERACT,
       }
     ].freeze
 
@@ -86,6 +92,12 @@ module Ladb::OpenCutList
       'handle'
     end
 
+    # Moving or copying an open door keeps it open, and ACTION_INTERACT is
+    # what opens it.
+    def close_doors_on_activate?
+      false
+    end
+
     # -- Actions --
 
     def get_action_defs
@@ -97,6 +109,8 @@ module Ladb::OpenCutList
       case action
       when ACTION_COPY_LINE, ACTION_COPY_GRID, ACTION_MOVE_LINE, ACTION_DISTRIBUTE
           return SmartCursorManager.cursor_select
+      when ACTION_INTERACT
+          return SmartCursorManager.cursor_hand
       end
 
       super
@@ -192,6 +206,8 @@ module Ladb::OpenCutList
         set_action_handler(SmartHandleMoveLineActionHandler.new(self, fetch_action_handler))
       when ACTION_DISTRIBUTE
         set_action_handler(SmartHandleDistributeActionHandler.new(self, fetch_action_handler))
+      when ACTION_INTERACT
+        set_action_handler(SmartHandleInteractActionHandler.new(self, fetch_action_handler))
       end
 
       super
@@ -3389,6 +3405,573 @@ module Ladb::OpenCutList
         mpe: mpe,
         mvs: mvs
       }
+    end
+
+  end
+
+  # INTERACT : makes the moving parts move. For now the DOORS (see DoorDef) :
+  # a click opens a closed door wide - by its hinges' max angle - or closes an
+  # open one, animated. A rectangle selection does the same to every door in
+  # it : closes them all when one at least is open, opens them all otherwise.
+  # Dragging a door turns it to the angle the mouse sets.
+  #
+  # The door instance really turns, its opening kept on the instance (see
+  # DoorDef.set_opening) - a hinge or a machining hovered picks its door. While
+  # it moves - animated or dragged - it is only MOVED (Entity#move!, out of the
+  # undo stack), then set once, in a single operation, where it ends.
+  class SmartHandleInteractActionHandler < SmartSelectActionHandler
+
+    include SmartActionHandlerDoorHelper
+
+    STATE_DRAG = 20
+
+    LAYER_3D_DOOR_PREVIEW = 10
+
+    # How far, in pixels, the mouse has to move, button down on a door, to
+    # drag it rather than click it.
+    DRAG_THRESHOLD = 4
+
+    # How long, in seconds, a door takes to swing by 90° when animated.
+    SWING_DURATION_90 = 0.4
+
+    # One door moving : its instance, where it started from, its transformation
+    # closed, the axis it turns around, the angle it goes from and to, in
+    # degrees.
+    DoorMotion = Struct.new(:instance, :start_transformation, :closed_transformation, :axis_line, :from_angle, :to_angle) do
+
+      def transformation_at(angle)
+        return closed_transformation unless angle > 0
+        closed_transformation * Geom::Transformation.rotation(axis_line[0], axis_line[1], angle.degrees)
+      end
+
+    end
+
+    # Swings the given motions, eased, then calls the given block. Stopped
+    # before its end - another animation, the tool deactivated - it jumps to
+    # the end.
+    class DoorSwingAnimation
+
+      def initialize(motions, duration, &on_done)
+        @motions = motions
+        @duration = duration
+        @on_done = on_done
+        @start_time = nil
+        @done = false
+      end
+
+      def nextFrame(view)
+        return false if @done
+        @start_time = Time.now if @start_time.nil?
+        progress = @duration > 0 ? [ (Time.now - @start_time) / @duration, 1.0 ].min : 1.0
+        eased = progress * progress * (3 - 2 * progress)  # Smoothstep
+        @motions.each { |motion| motion.instance.move!(motion.transformation_at(motion.from_angle + (motion.to_angle - motion.from_angle) * eased)) }
+        view.show_frame
+        _finish if progress >= 1.0
+        !@done
+      end
+
+      def stop
+        _finish
+      end
+
+      def done?
+        @done
+      end
+
+      private
+
+      def _finish
+        return if @done
+        @done = true
+        @on_done.call(@motions) unless @on_done.nil?
+      end
+
+    end
+
+    def initialize(tool, previous_action_handler = nil)
+      super(SmartHandleTool::ACTION_INTERACT, tool, previous_action_handler)
+
+      tool.create_3d(LAYER_3D_PART_PREVIEW)
+      tool.create_3d(LAYER_3D_DOOR_PREVIEW)
+
+    end
+
+    # -- STATE --
+
+    def get_state_cursor(state)
+
+      case state
+      when STATE_SELECT
+        return SmartCursorManager.cursor_hand_error   # Nothing to interact with, until a door is hovered
+      when STATE_DRAG
+        return SmartCursorManager.cursor_hand
+      end
+
+      super
+    end
+
+    def get_state_status(state)
+
+      case state
+      when STATE_SELECT
+        return PLUGIN.get_i18n_string("tool.smart_handle.action_#{@action}_state_#{state}_amend_status") + '.' unless _get_last_motions.nil?
+        return PLUGIN.get_i18n_string("tool.smart_handle.action_#{@action}_state_#{state}_status") + '.'
+      when STATE_DRAG
+        return PLUGIN.get_i18n_string("tool.smart_handle.action_#{@action}_state_#{state}_status") + '.'
+      end
+
+      super
+    end
+
+    def get_state_vcb_label(state)
+
+      case state
+      when STATE_SELECT
+        return _get_last_motions.nil? ? '' : PLUGIN.get_i18n_string('tool.default.vcb_angle')   # An angle can be typed after a swing only
+      when STATE_DRAG
+        return PLUGIN.get_i18n_string('tool.default.vcb_angle')
+      end
+
+      super
+    end
+
+    # -----
+
+    def stop
+      _cancel_drag
+      @animation.stop unless @animation.nil?
+      super
+    end
+
+    # -----
+
+    def onToolCancel(tool, reason, view)
+
+      case @state
+      when STATE_DRAG
+        _cancel_drag
+        set_state(STATE_SELECT)
+        _refresh
+        return true
+      end
+
+      @drag_start_point_2d = nil
+      _forget_last_motions
+      super
+    end
+
+    def onToolUserText(tool, text, view)
+
+      case @state
+      when STATE_SELECT
+        return true if _read_angle(tool, text, view)
+      end
+
+      super
+    end
+
+    def onToolResume(tool, view)
+      super
+      _update_status
+      true
+    end
+
+    def onToolMouseMove(tool, flags, x, y, view)
+      return true if _animating?
+
+      case @state
+
+      when STATE_SELECT
+        _forget_last_motions if !@last_motions.nil? && _get_last_motions.nil?   # Moved otherwise since : undone...
+        if !@drag_start_point_2d.nil? && @drag_start_point_2d.distance(Geom::Point3d.new(x, y)) > DRAG_THRESHOLD
+          _start_drag(view)
+          set_state(STATE_DRAG) unless @drag_motion.nil?
+          @drag_start_point_2d = nil
+        end
+
+      when STATE_DRAG
+        _drag(x, y, view)
+        return true
+
+      end
+
+      super
+    end
+
+    def onToolLButtonDown(tool, flags, x, y, view)
+      return true if _animating?
+
+      if @state == STATE_SELECT && has_active_part?
+        @drag_start_point_2d = Geom::Point3d.new(x, y)
+        return true
+      end
+
+      super
+    end
+
+    def onToolLButtonUp(tool, flags, x, y, view)
+      return true if _animating?
+
+      case @state
+
+      when STATE_DRAG
+        _end_drag
+        set_state(STATE_SELECT)
+        _reset
+        _refresh
+        _update_status
+        return true
+
+      when STATE_SELECT
+        unless @drag_start_point_2d.nil?
+          @drag_start_point_2d = nil
+          onSelected
+          return true
+        end
+
+      end
+
+      super
+    end
+
+    def onActivePartChanged(part_entity_path, part, highlighted = false)
+      super
+      @tool.clear_3d(LAYER_3D_DOOR_PREVIEW)
+      if part_entity_path.is_a?(Array)
+        _forget_last_motions unless @last_motions.is_a?(Array) && @last_motions.any? { |motion, _| motion.instance == part_entity_path.last }
+        @tool.push_cursor(SmartCursorManager.cursor_hand)
+        _preview_door_swing_to_come(part_entity_path)
+      else
+        @tool.pop_cursor(SmartCursorManager.cursor_hand)
+      end
+      false
+    end
+
+    def onSelected
+
+      instances = has_active_part? ? [ get_active_part_entity_path.last ] : get_active_selection_instances.to_a
+      instances = instances.select { |instance| DoorDef.open?(instance) || _door_def_of(instance) }
+
+      Sketchup.active_model.selection.clear
+      _reset
+
+      if instances.any?
+
+        close = instances.any? { |instance| DoorDef.open?(instance) }
+        motions = instances.map { |instance|
+          if (opening = DoorDef.opening_of(instance))
+            from_angle, axis_line = opening
+          else
+            from_angle = 0.0
+            axis_line = _door_def_of(instance).axis_line
+          end
+          to_angle = close ? 0.0 : _door_def_of(instance).max_angle
+          DoorMotion.new(instance, instance.transformation, DoorDef.closed_transformation(instance), axis_line, from_angle, to_angle)
+        }
+        motions.reject! { |motion| motion.from_angle == motion.to_angle }
+
+        unless motions.empty?
+          _animate_motions(motions)
+          return
+        end
+
+      end
+
+      _refresh
+
+    end
+
+    # -----
+
+    # An angle can be typed after a swing only - see #_read_angle.
+    def enableVCB?
+      @state == STATE_SELECT && !_animating? && !_get_last_motions.nil?
+    end
+
+    # -----
+
+    protected
+
+    def _start_with_model_selection?
+      false
+    end
+
+    def _clear_selection_on_start?
+      true
+    end
+
+    def _can_activate_locked?
+      false
+    end
+
+    def _get_part_error_cursor
+      SmartCursorManager.cursor_hand_error
+    end
+
+    def _can_activate_part?(part_entity_path, part)
+      can_activate, error_key, error_vars = super
+      return [ can_activate, error_key, error_vars ] unless can_activate && part_entity_path.is_a?(Array)
+
+      instance = part_entity_path.last
+      return [ true, nil ] if DoorDef.open?(instance)   # Hinges gone or changed : still closable
+      return [ false, 'tool.smart_handle.error.not_door' ] if (door_def = DoorDef.from(instance)).nil?
+      return [ false, 'tool.smart_handle.error.incoherent_door' ] unless door_def.coherent?
+
+      [ true, nil ]
+    end
+
+    # -----
+
+    # A hinge or a machining glued into a door picks the door.
+    def _pick_part(picker, view)
+      if (picked_path = picker.picked_face_path).is_a?(Array) &&
+         (index = picked_path.rindex { |entity| DoorDef.open?(entity) || !DoorDef.from(entity).nil? })
+
+        door_path = picked_path[0..index]
+        _make_unique_groups_in_path(door_path)
+        if (part = _generate_part_from_path(door_path)).is_a?(Part)
+          _set_active_part(door_path, part)
+          return
+        end
+
+      end
+      super
+    end
+
+    # The door the given instance is, nil unless it can open.
+    def _door_def_of(instance)
+      door_def = DoorDef.from(instance)
+      door_def && door_def.coherent? ? door_def : nil
+    end
+
+    def _animating?
+      !@animation.nil? && !@animation.done?
+    end
+
+    # Swings the given motions, then commits them - amending the last
+    # operation when amend.
+    def _animate_motions(motions, amend = false)
+      _forget_last_motions
+      sweep = motions.map { |motion| (motion.to_angle - motion.from_angle).abs }.max
+      @animation = DoorSwingAnimation.new(motions, SWING_DURATION_90 * sweep / 90.0) { |done_motions|
+        _commit_motions(done_motions, amend)
+        @animation = nil
+        _refresh
+        _update_status
+      }
+      Sketchup.active_model.active_view.animation = @animation
+    end
+
+    # Sets, in a single operation, the given motions where they end - put
+    # back where they started first : the operation has to see them move.
+    # When amend, the operation merges into the previous one : the angle typed
+    # after a swing corrects that swing.
+    def _commit_motions(motions, amend = false)
+      motions = motions.reject { |motion| motion.instance.deleted? }
+      return if motions.empty?
+
+      motions.each { |motion| motion.instance.move!(motion.start_transformation) }
+
+      model = Sketchup.active_model
+      model.start_operation('OCL Interact', true, false, amend)
+      motions.each { |motion| DoorDef.set_opening(motion.instance, motion.to_angle, motion.axis_line) }
+      model.commit_operation
+
+      # Kept, with where each door ended, for an angle typed afterwards
+      @last_motions = motions.map { |motion| [ motion, motion.instance.transformation.to_a ] }
+
+    end
+
+    # The motions of the last swing, while none of their doors moved since.
+    def _get_last_motions
+      return nil unless @last_motions.is_a?(Array)
+      return nil unless @last_motions.all? { |motion, transformation| motion.instance.valid? && motion.instance.transformation.to_a == transformation }
+      @last_motions.map(&:first)
+    end
+
+    def _forget_last_motions
+      return if @last_motions.nil?
+      @last_motions = nil
+      _update_status
+    end
+
+    # Updates the prompt and the VCB of STATE_SELECT : after a swing, they
+    # invite to type an angle and show the one its doors ended at - when they
+    # all share it.
+    def _update_status
+      return unless @state == STATE_SELECT
+      Sketchup.set_status_text(get_state_status(@state), SB_PROMPT)
+      Sketchup.set_status_text(get_state_vcb_label(@state), SB_VCB_LABEL)
+      if (motions = _get_last_motions).nil?
+        Sketchup.set_status_text('', SB_VCB_VALUE)
+      else
+        angles = motions.map { |motion| motion.to_angle.round(1) }.uniq
+        Sketchup.set_status_text(angles.length == 1 ? "#{angles.first}°" : '', SB_VCB_VALUE)
+      end
+    end
+
+    # -- Drag --
+
+    # Grabs the hovered door where the mouse button went down.
+    def _start_drag(view)
+      @drag_motion = nil
+      return unless (part_entity_path = get_active_part_entity_path).is_a?(Array)
+
+      instance = part_entity_path.last
+      if (opening = DoorDef.opening_of(instance))
+        angle, axis_line = opening
+      elsif (door_def = _door_def_of(instance))
+        angle, axis_line = 0.0, door_def.axis_line
+      else
+        return
+      end
+      door_def = _door_def_of(instance)
+      max_angle = door_def.nil? ? angle : door_def.max_angle   # Hinges gone : it can only close
+
+      # The world -> door definition space, the door closed
+      parent_transformation = PathUtils.get_transformation(part_entity_path[0...-1], IDENTITY)
+      closed_transformation = DoorDef.closed_transformation(instance)
+      inverse_transformation = (parent_transformation * closed_transformation).inverse
+
+      # The mouse turns in the plane square to the axis through the point
+      # grabbed - through the axis' middle when the door is not under it
+      pivot, axis = axis_line
+      input_point = view.inputpoint(@drag_start_point_2d.x, @drag_start_point_2d.y)
+      if input_point.valid?
+        grabbed_point = input_point.position.transform(inverse_transformation)   # Turned with the door when it is open, but only its position along the axis matters
+      else
+        grabbed_point = _get_door_drawing_def(instance.definition).bounds.center
+      end
+      plane = [ pivot.offset(axis, (grabbed_point - pivot) % axis), axis ]
+
+      motion = DoorMotion.new(instance, instance.transformation, closed_transformation, axis_line, angle, angle)
+      mouse_angle = _get_mouse_angle(@drag_start_point_2d.x, @drag_start_point_2d.y, view, inverse_transformation, plane)
+      return if mouse_angle.nil?
+
+      @drag_motion = motion
+      @drag_max_angle = max_angle
+      @drag_inverse_transformation = inverse_transformation
+      @drag_start_mouse_angle = mouse_angle
+      @drag_plane = plane
+
+      @tool.clear_3d(LAYER_3D_DOOR_PREVIEW)
+      @tool.clear_3d(LAYER_3D_PART_PREVIEW)
+
+    end
+
+    # Turns the grabbed door by as much as the mouse turned around its axis
+    # since it was grabbed.
+    def _drag(x, y, view)
+      return if @drag_motion.nil?
+      return if (mouse_angle = _get_mouse_angle(x, y, view, @drag_inverse_transformation, @drag_plane)).nil?
+
+      delta = (mouse_angle - @drag_start_mouse_angle + 540.0) % 360.0 - 180.0
+      angle = [ [ @drag_motion.from_angle + delta, 0.0 ].max, @drag_max_angle ].min
+
+      @drag_motion.to_angle = angle
+      @drag_motion.instance.move!(@drag_motion.transformation_at(angle))
+      Sketchup.set_status_text("#{angle.round(1)}°", SB_VCB_VALUE)
+      view.invalidate
+
+    end
+
+    # Sets the dragged door where it was dropped.
+    def _end_drag
+      return if @drag_motion.nil?
+      motion = @drag_motion
+      @drag_motion = nil
+      _commit_motions([ motion ]) unless motion.to_angle == motion.from_angle
+    end
+
+    # Puts the dragged door back where it was grabbed.
+    def _cancel_drag
+      return if @drag_motion.nil?
+      @drag_motion.instance.move!(@drag_motion.start_transformation) unless @drag_motion.instance.deleted?
+      @drag_motion = nil
+    end
+
+    # The angle, in degrees, of the mouse around the axis the given plane is
+    # square to - [ point of the axis, axis ] : where its ray crosses the
+    # plane, read in the door definition space (see the given inverse
+    # transformation), from a fixed direction square to the axis - only
+    # differences of it make sense. nil when the ray runs along the plane.
+    def _get_mouse_angle(x, y, view, inverse_transformation, plane)
+      pivot, axis = plane
+      origin, direction = view.pickray(x, y)
+      origin = origin.transform(inverse_transformation)
+      direction = direction.transform(inverse_transformation)
+      return nil unless direction.valid?
+
+      point = Geom.intersect_line_plane([ origin, direction ], [ pivot, axis ])
+      return nil if point.nil?
+      vector = pivot.vector_to(point)
+      return nil unless vector.valid?
+
+      reference = axis.axes.first
+      Math.atan2((reference * vector) % axis, reference % vector).radians
+    end
+
+    # -- Read --
+
+    # An angle typed after a swing : sets the doors of that swing to it,
+    # amending it. Absolute ('45'), relative ('+10', '-10') or the widest
+    # ('max', '*'), in degrees, clamped to each door's widest opening.
+    def _read_angle(tool, text, view)
+      return false if _animating?
+      return false if (motions = _get_last_motions).nil?
+
+      value = text.to_s.strip.downcase.delete('°').tr(',', '.')
+      if value == 'max' || value == '*'
+        operator, number = nil, nil
+      elsif (match = value.match(/\A([+-])?\s*(\d+(?:\.\d*)?|\.\d+)\z/))
+        operator, number = match[1], match[2].to_f
+      else
+        UI.beep
+        tool.notify_errors([ [ 'tool.default.error.invalid_angle', { :value => text } ] ])
+        return true
+      end
+
+      motions = motions.map { |last_motion|
+        instance = last_motion.instance
+        door_def = _door_def_of(instance)
+        from_angle = last_motion.to_angle
+        max_angle = door_def.nil? ? from_angle : door_def.max_angle   # Hinges gone : it can only close
+        axis_line = last_motion.axis_line
+        axis_line = door_def.axis_line if from_angle == 0 && !door_def.nil?
+        to_angle = case operator
+                   when '+' then from_angle + number
+                   when '-' then from_angle - number
+                   else number.nil? ? max_angle : number
+                   end
+        to_angle = [ [ to_angle, 0.0 ].max, max_angle ].min
+        DoorMotion.new(instance, instance.transformation, DoorDef.closed_transformation(instance), axis_line, from_angle, to_angle)
+      }
+
+      if motions.all? { |motion| motion.from_angle == motion.to_angle }
+        _update_status
+        return true
+      end
+
+      _animate_motions(motions, true)
+      true
+    end
+
+    # -----
+
+    # The swing a click on the hovered door would make : from closed to wide
+    # open, or from where it stands open back to closed.
+    def _preview_door_swing_to_come(part_entity_path)
+      instance = part_entity_path.last
+      return if (drawing_def = _get_door_drawing_def(instance.definition)).nil?
+
+      t = PathUtils.get_transformation(part_entity_path, IDENTITY)   # Door definition space -> world, as it stands
+      if (opening = DoorDef.opening_of(instance))
+        angle, axis_line = opening
+        _preview_door_swing(t * Geom::Transformation.rotation(axis_line[0], axis_line[1], -angle.degrees), axis_line, angle, 0, drawing_def, LAYER_3D_DOOR_PREVIEW, with_door: false, with_axis: false, single_arc: true)
+      elsif (door_def = _door_def_of(instance))
+        _preview_door_swing(t, door_def.axis_line, 0, door_def.max_angle, drawing_def, LAYER_3D_DOOR_PREVIEW, with_door: false, with_axis: false, single_arc: true)
+      end
+
     end
 
   end

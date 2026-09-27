@@ -29,6 +29,14 @@ module Ladb::OpenCutList
     HINGE_ATTRIBUTE_PIVOT = 'hinge_pivot'.freeze
     HINGE_ATTRIBUTE_PIVOT_APPROXIMATE = 'hinge_pivot_approximate'.freeze
 
+    # How far a door stands open is a state of each OCCURRENCE : it lives on
+    # the INSTANCE, as [ angle, px, py, pz, vx, vy, vz ] Floats - the angle in
+    # degrees and the axis it was turned around, in the door definition's
+    # coordinates (inches). The axis is kept rather than read again off the
+    # hinges, so the door can always be closed back whatever became of them.
+    # The instance really turns : scenes, exports and renders show it open.
+    INSTANCE_ATTRIBUTE_OPENING = 'door_opening'.freeze
+
     # How far apart two hinges' pivots may lie and still turn on the same axis.
     AXIS_TOLERANCE = 0.1.mm
 
@@ -48,6 +56,98 @@ module Ladb::OpenCutList
       return nil if hinge_defs.empty?
 
       DoorDef.new(definition, hinge_defs)
+    end
+
+    # -- Opening state --
+
+    # How far the given instance stands open - [ angle, [ point, vector ] ],
+    # the axis in its definition's coordinates - nil when it is closed.
+    def self.opening_of(instance)
+      return nil unless instance.is_a?(Sketchup::ComponentInstance)
+      values = instance.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, INSTANCE_ATTRIBUTE_OPENING)
+      return nil unless values.is_a?(Array) && values.length == 7 && values.all? { |v| v.is_a?(Numeric) }
+      return nil unless values[0] > 0
+      vector = Geom::Vector3d.new(values[4..6])
+      return nil unless vector.valid?
+      [ values[0].to_f, [ Geom::Point3d.new(values[1..3]), vector.normalize ] ]
+    end
+
+    def self.open?(instance)
+      !opening_of(instance).nil?
+    end
+
+    # The transformation the given instance has once closed back.
+    def self.closed_transformation(instance)
+      transformation = instance.transformation
+      return transformation if (opening = opening_of(instance)).nil?
+      angle, axis_line = opening
+      transformation * Geom::Transformation.rotation(axis_line[0], axis_line[1], -angle.degrees)
+    end
+
+    # The transformation the given instance has once open by the given angle
+    # in degrees around the given axis - see #set_opening.
+    def self.opened_transformation(instance, angle, axis_line)
+      transformation = closed_transformation(instance)
+      return transformation unless angle.to_f > 0
+      transformation * Geom::Transformation.rotation(axis_line[0], axis_line[1], angle.to_f.degrees)
+    end
+
+    # Turns the given instance so that it stands open by the given angle in
+    # degrees around the given axis - [ point, vector ] in its definition's
+    # coordinates - closing it back first if it was open. An angle of 0, or no
+    # axis while it was closed, leaves it closed. To call inside an operation.
+    def self.set_opening(instance, angle, axis_line = nil)
+      return false unless instance.is_a?(Sketchup::ComponentInstance)
+
+      opening = opening_of(instance)
+      axis_line = opening[1] if axis_line.nil? && !opening.nil?
+
+      angle = angle.to_f
+      if angle > 0 && axis_line.is_a?(Array)
+        transformation = opened_transformation(instance, angle, axis_line)
+        point, vector = axis_line
+        instance.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, INSTANCE_ATTRIBUTE_OPENING, [ angle ] + point.to_a.map(&:to_f) + vector.to_a.map(&:to_f))
+      elsif opening.nil?
+        return false
+      else
+        transformation = closed_transformation(instance)
+        instance.delete_attribute(Plugin::ATTRIBUTE_DICTIONARY, INSTANCE_ATTRIBUTE_OPENING)
+      end
+
+      instance.transformation = transformation
+      true
+    end
+
+    # Closes the given instance back, whether it is a door or not any more.
+    # Returns whether it was open. To call inside an operation.
+    def self.close(instance)
+      set_opening(instance, 0)
+    end
+
+    # The instances standing open in the given model. Only the definitions
+    # hinges are glued into are searched : a door is found through its hinges'
+    # instances, whose parent is its definition.
+    def self.open_instances(model)
+      return [] unless model.is_a?(Sketchup::Model)
+      model.definitions
+           .select { |definition| DefinitionAttributes.role_of(definition) == DefinitionAttributes::ROLE_HINGE }
+           .flat_map(&:instances)
+           .map(&:parent)
+           .grep(Sketchup::ComponentDefinition)
+           .uniq
+           .flat_map(&:instances)
+           .select { |instance| open?(instance) }
+    end
+
+    # Closes back all the instances standing open in the given model, in an
+    # operation of its own. Returns how many were closed.
+    def self.close_all(model)
+      instances = open_instances(model)
+      return 0 if instances.empty?
+      model.start_operation('OCL Close Doors', true)
+      instances.each { |instance| close(instance) }
+      model.commit_operation
+      instances.length
     end
 
     def initialize(definition, hinge_defs)
