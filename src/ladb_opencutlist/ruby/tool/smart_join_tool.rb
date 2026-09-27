@@ -39,8 +39,10 @@ module Ladb::OpenCutList
     ACTION_OPTION_GEOMETRY_MACHINING_B = 'machining_b'
     ACTION_OPTION_GEOMETRY_HARDWARE_INSET_A = 'hardware_inset_a'
     ACTION_OPTION_GEOMETRY_MACHINING_INSET_A = 'machining_inset_a'
-    ACTION_OPTION_GEOMETRY_HARDWARE_HALF_A = 'hardware_half_a'
-    ACTION_OPTION_GEOMETRY_MACHINING_HALF_A = 'machining_half_a'
+    ACTION_OPTION_GEOMETRY_HARDWARE_OVERLAY_A = 'hardware_overlay_a'
+    ACTION_OPTION_GEOMETRY_MACHINING_OVERLAY_A = 'machining_overlay_a'
+    ACTION_OPTION_GEOMETRY_HARDWARE_HALF_OVERLAY_A = 'hardware_half_overlay_a'
+    ACTION_OPTION_GEOMETRY_MACHINING_HALF_OVERLAY_A = 'machining_half_overlay_a'
     ACTION_OPTION_GEOMETRY_HARDWARE_MATERIAL_NAME = 'hardware_material_name'
     ACTION_OPTION_GEOMETRY_MACHINING_MATERIAL_NAME = 'machining_material_name'
     ACTION_OPTION_GEOMETRY_HARDWARE_LAYER_NAME = 'hardware_layer_name'
@@ -4037,10 +4039,10 @@ module Ladb::OpenCutList
       when HINGE_KIND_INSET
         @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_HARDWARE_INSET_A)
       when HINGE_KIND_HALF_OVERLAY
-        return super if _half_overlay_fallback?
-        @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_HARDWARE_HALF_A)
+        return @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_HARDWARE_OVERLAY_A) if _half_overlay_fallback?
+        @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_HARDWARE_HALF_OVERLAY_A)
       else
-        super
+        @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_HARDWARE_OVERLAY_A)
       end
     end
 
@@ -4049,16 +4051,16 @@ module Ladb::OpenCutList
       when HINGE_KIND_INSET
         @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_MACHINING_INSET_A)
       when HINGE_KIND_HALF_OVERLAY
-        return super if _half_overlay_fallback?
-        @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_MACHINING_HALF_A)
+        return @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_MACHINING_OVERLAY_A) if _half_overlay_fallback?
+        @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_MACHINING_HALF_OVERLAY_A)
       else
-        super
+        @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_MACHINING_OVERLAY_A)
       end
     end
 
     # No half overlay hinge set : the full overlay one, and its machining.
     def _half_overlay_fallback?
-      hardware = @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_HARDWARE_HALF_A)
+      hardware = @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_HARDWARE_HALF_OVERLAY_A)
       hardware.nil? || hardware.empty?
     end
 
