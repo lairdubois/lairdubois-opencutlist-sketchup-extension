@@ -660,6 +660,7 @@ tab:
       veneer_material_names_filter: Zu filternde Furniere
       names_filter: Zu filternde Bezeichnungen
       tags_filter: Zu filternde Badges
+      tags_filter_any: Alle Badges
       dimensions_help: Erklärung zu den Dimensionen
       summary: Übersicht
       material_type: Typ
@@ -2095,6 +2096,7 @@ tab:
         info_1: "Sie können nun festlegen, wo sie im aktiven Modell platziert werden soll."
         materials: Materialien
         layers: Tags
+        geometry: Geometrie
         option_parts_formula: Formel
         option_parts_formula_help: Mit dieser Formel können Sie die Namen der importierten Teile individuell anpassen.
         option_part_wood_material_name: Holz
@@ -2105,6 +2107,8 @@ tab:
         option_part_glass_material_name_help: Material zum Auftragen auf **Glasteile**.
         option_front_part_layer_name: Frontteile
         option_front_part_layer_name_help: Tag für Frontteile.
+        option_back_part_layer_name: Rückseite
+        option_back_part_layer_name_help: Tag für Rückseiten.
         option_machining_material_name: Bearbeitungen
         option_machining_material_name_help: Material zum Auftragen auf **Bearbeitungen**.
         option_machining_layer_name: Bearbeitungen
@@ -2116,6 +2120,10 @@ tab:
         option_no_material_help: "*Lassen Sie dieses Feld leer, wenn Sie kein Material auftragen möchten*."
         option_default_material_help: "*Wenn dieses Feld leer ist, wird ein Standardmaterial erstellt*."
         option_no_layer_help: "*Lassen Sie dieses Feld leer, um kein Tag einzufügen*."
+        option_subtract_machinings: Bearbeitungen in die Werkstücke einarbeiten
+        option_subtract_machinings_help: Die **Nuten**, **Falze** und **Fasen** der Teile, einschließlich derjenigen, die mit Zubehörteilen zusammenhängen, werden aus ihrem Volumen abgezogen, anstatt gezeichnet zu werden. Die Bohrungen bleiben gezeichnet.
+        warning:
+          subtract_machinings_failed: "Die Bearbeitungsstellen konnten in diese Teile nicht eingearbeitet werden, sie sind stattdessen eingezeichnet: {{ names }}"
         old_name: Ursprünglicher Name
         new_name: Neuer Name
         count: Anz.
@@ -2434,12 +2442,16 @@ tool:
     action_0_state_3_arrows_status: "Pfeiltasten = Normale der XY-Ebene auf eine Achse fixieren (→ X, ← Y, ↑ Z)"
     action_0_state_4_status: Klicken Sie hier, um die Höhe des Moduls (Z-Achse) festzulegen
     action_0_state_4_lock_status: An die Höhe der Quelldatei anpassen
-    action_0_state_5_status: Klicken Sie auf eine Gruppe oder eine Komponente, um sie als Modul im aktuellen Ordner zu speichern
+    action_0_state_5_status: Klicken Sie auf die Instanz, die Sie hinzufügen möchten
+    action_0_state_6_status: Klicken Sie auf die VORDERSEITE des Moduls
+    action_0_state_7_status: Klicken Sie auf die OBERSEITE des Moduls
     action_0_add_title: Modul hinzufügen
     action_0_add_name: Dateiname
     action_0_add_overwrite: "Die Datei « {{ name }}.skp » existiert bereits. Möchten Sie sie ersetzen?"
-    action_0_flip_status: Vorder- und Rückseite austauschen
-    action_0_flip_up_status: Oben und unten austauschen
+    action_0_add_front_label: VORDERSEITE
+    action_0_add_up_label: OBERSEITE
+    action_0_flip_status: Vorder- und Rückseite vertauschen
+    action_0_flip_up_status: Ober- und Unterseite vertauschen
     action_1: Raumteiler bauen
     action_1_status: "Einen Raumteiler in einem Fach errichten, das aus einer Gruppe bestehender Teile gebildet wird"
     action_1_state_0_status: "Klicken Sie auf eine Wand, um einen Raumteiler zu errichten"
@@ -2487,6 +2499,12 @@ tool:
     action_option_options_reuse_definition_status: "Das vorhandene Teil mit derselben Form und in derselben Umgebung wiederverwenden, anstatt ein neues zu erstellen"
     action_option_options_mirror: Spiegelbildliche Anordnung
     action_option_options_mirror_status: Jede Frontteil einer geraden Reihe spiegelbildlich zur benachbarten anbringen
+    action_option_options_pick_material: Pipette
+    action_option_options_pick_material_status: Das Material des überflogenen Teils auf die erstellten Teile anwenden
+    action_option_options_face_camera: Mit Blick in die Kamera
+    action_option_options_face_camera_status: Vorderseite des Moduls automatisch zur Kamera ausrichten
+    action_option_options_top_up: Oberseite in Richtung Z+
+    action_option_options_top_up_status: Die Oberseite des Moduls automatisch so gut wie möglich nach oben drehen (Z+)
     action_option_options_ask_name: Benennung der Teile
     action_option_options_ask_name_status: Namen der Teile manuell eingeben
     action_option_options_layer_name: Layer
@@ -2494,7 +2512,8 @@ tool:
     action_option_anchor_center_x_status: Zentriert in X
     action_option_anchor_center_y_status: Zentriert in Y
     action_option_anchor_center_z_status: Zentriert in Z
-    action_option_anchor_origin_status: Origin of the component
+    action_option_anchor_origin_status: Ursprung der Komponente
+    action_option_no_layer_help: "*Lassen Sie dieses Feld leer, wenn Sie kein Tag einfügen möchten*."
     detecting_cavities: "Erkennung von Fächern..."
     error:
       invalid_divider_seed: Mit dieser Art von Bauteil ist der Einbau eines Raumteilers nicht möglich
