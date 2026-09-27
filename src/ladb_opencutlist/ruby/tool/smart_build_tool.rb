@@ -2700,6 +2700,14 @@ module Ladb::OpenCutList
       super
     end
 
+    # -----
+
+    def close_doors_on_start?
+      true
+    end
+
+    # -----
+
     def stop
       _cancel_cavities_dwell
       _refresh_pick_material_btn(nil)

@@ -2292,6 +2292,12 @@ module Ladb::OpenCutList
 
     # -----
 
+    def close_doors_on_start?
+      true
+    end
+
+    # -----
+
     # -- STATE --
 
     def get_state_status(state)

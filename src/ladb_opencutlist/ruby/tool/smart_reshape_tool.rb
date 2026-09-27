@@ -309,7 +309,17 @@ module Ladb::OpenCutList
 
   # -----
 
-  class SmartReshapeStretchActionHandler < SmartSelectActionHandler
+  class SmartReshapeActionHandler < SmartSelectActionHandler
+
+    def close_doors_on_start?
+      true
+    end
+
+  end
+
+  # -----
+
+  class SmartReshapeStretchActionHandler < SmartReshapeActionHandler
 
     include UserTextHelper
 
@@ -2236,7 +2246,7 @@ module Ladb::OpenCutList
 
   end
 
-  class SmartReshapeSolidActionHandler < SmartActionHandler
+  class SmartReshapeSolidActionHandler < SmartReshapeActionHandler
 
     include SmartActionHandlerPartHelper
     include SmartActionHandlerSolidBooleanHelper
@@ -2742,7 +2752,7 @@ module Ladb::OpenCutList
 
   end
 
-  class SmartReshapePanelingActionHandler < SmartActionHandler
+  class SmartReshapePanelingActionHandler < SmartReshapeActionHandler
 
     include UserTextHelper
     include FaceMatcherHelper

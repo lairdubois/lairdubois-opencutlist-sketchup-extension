@@ -1290,13 +1290,6 @@ module Ladb::OpenCutList
       fetch_action.nil? ? get_action_defs.first[:action] : fetch_action
     end
 
-    # Whether the doors standing open in the model are closed back when the
-    # tool activates (see DoorDef) : a tool that reshapes, joins or builds
-    # parts works on closed doors only.
-    def close_doors_on_activate?
-      true
-    end
-
     def set_action(action)
 
       # Hide possible modal
@@ -1357,7 +1350,10 @@ module Ladb::OpenCutList
     def set_action_handler(action_handler)
       @action_handler.stop if @action_handler.is_a?(SmartActionHandler)
       @action_handler = action_handler
-      @action_handler.start if @action_handler.is_a?(SmartActionHandler)
+      if @action_handler.is_a?(SmartActionHandler)
+        DoorDef.close_all(Sketchup.active_model) if @action_handler.close_doors_on_start?
+        @action_handler.start
+      end
     end
 
     def fetch_action_handler
@@ -1505,9 +1501,6 @@ module Ladb::OpenCutList
 
       # Create pick helpers
       @pick_helper = view.pick_helper
-
-      # Close open doors
-      DoorDef.close_all(view.model) if close_doors_on_activate?
 
       # Set startup cursor
       set_root_action(get_startup_action)
@@ -2022,6 +2015,15 @@ module Ladb::OpenCutList
       @_model_edit_transformation = IDENTITY
       @_model_axes_transformation = IDENTITY
 
+    end
+
+    # -----
+
+    # Whether the doors standing open in the model are closed back before the
+    # handler starts (see DoorDef) : an action that reshapes, joins or builds
+    # parts works on closed doors only.
+    def close_doors_on_start?
+      false
     end
 
     # -----

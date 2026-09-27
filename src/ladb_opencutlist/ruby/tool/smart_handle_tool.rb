@@ -92,12 +92,6 @@ module Ladb::OpenCutList
       'handle'
     end
 
-    # Moving or copying an open door keeps it open, and ACTION_INTERACT is
-    # what opens it.
-    def close_doors_on_activate?
-      false
-    end
-
     # -- Actions --
 
     def get_action_defs
@@ -3478,6 +3472,10 @@ module Ladb::OpenCutList
         @done
       end
 
+      def motions
+        @motions
+      end
+
       private
 
       def _finish
@@ -3514,7 +3512,7 @@ module Ladb::OpenCutList
 
       case state
       when STATE_SELECT
-        return PLUGIN.get_i18n_string("tool.smart_handle.action_#{@action}_state_#{state}_amend_status") + '.' unless _get_last_motions.nil?
+        return PLUGIN.get_i18n_string("tool.smart_handle.action_#{@action}_state_#{state}_amend_status") + '.' if _amendable?
         return PLUGIN.get_i18n_string("tool.smart_handle.action_#{@action}_state_#{state}_status") + '.'
       when STATE_DRAG
         return PLUGIN.get_i18n_string("tool.smart_handle.action_#{@action}_state_#{state}_status") + '.'
@@ -3527,7 +3525,7 @@ module Ladb::OpenCutList
 
       case state
       when STATE_SELECT
-        return _get_last_motions.nil? ? '' : PLUGIN.get_i18n_string('tool.default.vcb_angle')   # An angle can be typed after a swing only
+        return _amendable? ? PLUGIN.get_i18n_string('tool.default.vcb_angle') : ''   # An angle can be typed after a swing only
       when STATE_DRAG
         return PLUGIN.get_i18n_string('tool.default.vcb_angle')
       end
@@ -3617,6 +3615,7 @@ module Ladb::OpenCutList
       when STATE_DRAG
         _end_drag
         set_state(STATE_SELECT)
+        _set_active_part(nil, nil)   # Hovered again where it stands now
         _reset
         _refresh
         _update_status
@@ -3685,7 +3684,7 @@ module Ladb::OpenCutList
 
     # An angle can be typed after a swing only - see #_read_angle.
     def enableVCB?
-      @state == STATE_SELECT && !_animating? && !_get_last_motions.nil?
+      @state == STATE_SELECT && _amendable?
     end
 
     # -----
@@ -3752,6 +3751,7 @@ module Ladb::OpenCutList
     # operation when amend.
     def _animate_motions(motions, amend = false)
       _forget_last_motions
+      _set_active_part(nil, nil)   # Its highlight would stay where it stood - hovered again once done
       sweep = motions.map { |motion| (motion.to_angle - motion.from_angle).abs }.max
       @animation = DoorSwingAnimation.new(motions, SWING_DURATION_90 * sweep / 90.0) { |done_motions|
         _commit_motions(done_motions, amend)
@@ -3760,6 +3760,13 @@ module Ladb::OpenCutList
         _update_status
       }
       Sketchup.active_model.active_view.animation = @animation
+      _update_status   # An angle can be typed while it swings already
+    end
+
+    # Whether an angle typed now would amend a swing : the one going on, or
+    # the last one while none of its doors moved since.
+    def _amendable?
+      _animating? || !_get_last_motions.nil?
     end
 
     # Sets, in a single operation, the given motions where they end - put
@@ -3802,7 +3809,8 @@ module Ladb::OpenCutList
       return unless @state == STATE_SELECT
       Sketchup.set_status_text(get_state_status(@state), SB_PROMPT)
       Sketchup.set_status_text(get_state_vcb_label(@state), SB_VCB_LABEL)
-      if (motions = _get_last_motions).nil?
+      motions = _animating? ? @animation.motions : _get_last_motions
+      if motions.nil?
         Sketchup.set_status_text('', SB_VCB_VALUE)
       else
         angles = motions.map { |motion| motion.to_angle.round(1) }.uniq
@@ -3917,7 +3925,7 @@ module Ladb::OpenCutList
     # amending it. Absolute ('45'), relative ('+10', '-10') or the widest
     # ('max', '*'), in degrees, clamped to each door's widest opening.
     def _read_angle(tool, text, view)
-      return false if _animating?
+      @animation.stop if _animating?   # Jumps to its end, committed
       return false if (motions = _get_last_motions).nil?
 
       value = text.to_s.strip.downcase.delete('°').tr(',', '.')
