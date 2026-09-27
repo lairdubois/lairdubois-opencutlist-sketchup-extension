@@ -39,6 +39,8 @@ module Ladb::OpenCutList
     ACTION_OPTION_GEOMETRY_MACHINING_B = 'machining_b'
     ACTION_OPTION_GEOMETRY_HARDWARE_INSET_A = 'hardware_inset_a'
     ACTION_OPTION_GEOMETRY_MACHINING_INSET_A = 'machining_inset_a'
+    ACTION_OPTION_GEOMETRY_HARDWARE_HALF_A = 'hardware_half_a'
+    ACTION_OPTION_GEOMETRY_MACHINING_HALF_A = 'machining_half_a'
     ACTION_OPTION_GEOMETRY_HARDWARE_MATERIAL_NAME = 'hardware_material_name'
     ACTION_OPTION_GEOMETRY_MACHINING_MATERIAL_NAME = 'machining_material_name'
     ACTION_OPTION_GEOMETRY_HARDWARE_LAYER_NAME = 'hardware_layer_name'
@@ -519,9 +521,19 @@ module Ladb::OpenCutList
                   end
                 end
 
+                existing_definitions = model.definitions.to_a
                 definition = Sketchup.version_number >= 2100000000 ? model.definitions.load(ref.gsub('\\', '/'), allow_newer: true) : model.definitions.load(ref.gsub('\\', '/'))
                 if definition && definition.name != name
-                  @tool.notify_warnings([ [ 'tool.smart_join.warning.different_file_name', { file_name: name, definition_name: definition.name } ] ])
+                  # Named after the file - as SmartBuildTool does - for the
+                  # lookup above to find it next time. Unless the load
+                  # reused a definition already in the model - same GUID,
+                  # another file copied from this one - whose name the
+                  # other file is found by.
+                  if existing_definitions.include?(definition)
+                    @tool.notify_warnings([ [ 'tool.smart_join.warning.shared_definition', { file_name: name, definition_name: definition.name } ] ])
+                  else
+                    definition.name = name
+                  end
                 end
 
               rescue Exception => e
@@ -3440,7 +3452,10 @@ module Ladb::OpenCutList
   #
   # Whether the door is laid ON the carcass or IN its mouth is read off the
   # same two faces - an inset door's back stands behind the front of the
-  # side - and picks the hardware and machining of A accordingly.
+  # side. A door covering no more than half the front edge of the side - the
+  # middle side two doors share, whatever the other one is - or laid on a
+  # side ANOTHER front panel is laid on too, is a HALF overlay one. The kind
+  # picks the hardware and machining of A.
   class SmartJoinAddHingesActionHandler < SmartJoinAddFittingsActionHandler
 
     include SmartActionHandlerCavitiesHelper
@@ -3455,6 +3470,14 @@ module Ladb::OpenCutList
     # How far behind the front of the side the back of the door has to stand
     # to be read as INSET.
     INSET_MIN_DEPTH = 1.mm
+
+    # How far from the door's back plane the back of a neighbouring front
+    # panel laid on the same side may stand - a slight misalignment.
+    HALF_OVERLAY_MAX_OFFSET = 10.mm
+
+    HINGE_KIND_OVERLAY = :overlay
+    HINGE_KIND_HALF_OVERLAY = :half_overlay
+    HINGE_KIND_INSET = :inset
 
     # How squarely a cavity's mouth has to face the door for the cavity to be
     # one the door closes - about 8°. The same goes for the wall the probe ray
@@ -3480,6 +3503,8 @@ module Ladb::OpenCutList
     def initialize(tool, previous_action_handler = nil)
       super(tool, previous_action_handler, SmartJoinTool::ACTION_ADD_HINGES)
     end
+
+    # -----
 
     def stop
       _cancel_cavities_dwell
@@ -3532,8 +3557,10 @@ module Ladb::OpenCutList
         _preview_part(@active_part_entity_path_b, @active_part_b, LAYER_3D_PART_B_PREVIEW)
         _preview_ref_face_a
         _preview_join(picker)
-      elsif @hinge_side_error.is_a?(String)
-        @tool.show_message(PLUGIN.get_i18n_string(@hinge_side_error), SmartTool::MESSAGE_TYPE_ERROR)
+        _show_hinge_kind_tooltip
+      else
+        _remove_hinge_kind_tooltip
+        @tool.show_message(PLUGIN.get_i18n_string(@hinge_side_error), SmartTool::MESSAGE_TYPE_ERROR) if @hinge_side_error.is_a?(String)
       end
       true
     end
@@ -3556,7 +3583,7 @@ module Ladb::OpenCutList
       super
       @hinge_side_error = nil
       @hinge_pick_point = nil
-      @hinge_inset = false
+      @hinge_kind = HINGE_KIND_OVERLAY
     end
 
     # -----
@@ -3590,7 +3617,7 @@ module Ladb::OpenCutList
 
     # The side the hovered door turns on, and both faces of the joint - see
     # the class comment. Fills @active_part_entity_path_b, @active_part_b,
-    # @active_face_manipulator_a and _b and @hinge_inset, or clears them and
+    # @active_face_manipulator_a and _b and @hinge_kind, or clears them and
     # names the reason in @hinge_side_error. Returns whether the joint
     # changed.
     def _pick_hinge_side(picker)
@@ -3635,15 +3662,16 @@ module Ladb::OpenCutList
 
       end
 
-      part_entity_path_b, part_b, face_manipulator_a, face_manipulator_b, inset = side
+      part_entity_path_b, part_b, face_manipulator_a, face_manipulator_b, kind = side
+      kind = HINGE_KIND_OVERLAY if kind.nil?
 
-      changed = @active_face_manipulator_a != face_manipulator_a || @active_face_manipulator_b != face_manipulator_b || @active_part_entity_path_b != part_entity_path_b || @hinge_inset != (inset == true)
+      changed = @active_face_manipulator_a != face_manipulator_a || @active_face_manipulator_b != face_manipulator_b || @active_part_entity_path_b != part_entity_path_b || @hinge_kind != kind
 
       @active_part_entity_path_b = part_entity_path_b
       @active_part_b = part_b
       @active_face_manipulator_a = face_manipulator_a
       @active_face_manipulator_b = face_manipulator_b
-      @hinge_inset = inset == true
+      @hinge_kind = kind
 
       changed
     end
@@ -3664,7 +3692,7 @@ module Ladb::OpenCutList
 
     # The side the door would turn on along the given edge of its back -
     # [ part_entity_path_b, part_b, face_manipulator_a, face_manipulator_b,
-    # inset ] - or nil when the probe ray cast past it finds none.
+    # kind ] - or nil when the probe ray cast past it finds none.
     def _probe_hinge_side(cavities_def, face_manipulator_a, p1, p2, point)
 
       na = face_manipulator_a.normal
@@ -3703,12 +3731,112 @@ module Ladb::OpenCutList
 
         # INSET when the front of the side stands in front of the door's back
         pa = face_manipulator_a.position
-        inset = face_manipulator_b.outer_loop_manipulator.points.map { |p| (p - pa) % na }.min < -INSET_MIN_DEPTH
+        if face_manipulator_b.outer_loop_manipulator.points.map { |p| (p - pa) % na }.min < -INSET_MIN_DEPTH
+          kind = HINGE_KIND_INSET
+        elsif _is_half_overlay?(wall_path, face_manipulator_a, face_manipulator_b, overhang, [ p1.offset(direction, probe_position), p1.offset(direction, length * 0.5) ])
+          kind = HINGE_KIND_HALF_OVERLAY
+        else
+          kind = HINGE_KIND_OVERLAY
+        end
 
-        return [ wall_path, wall_part, face_manipulator_a, face_manipulator_b, inset ]
+        return [ wall_path, wall_part, face_manipulator_a, face_manipulator_b, kind ]
       end
 
       nil
+    end
+
+    # Whether the door is a half overlay one : it covers no more than half the
+    # front edge of the side - room left for another door, laid on or set in
+    # the next mouth alike - or another front panel is laid on that edge, past
+    # the door's edge - the other door of a pair sharing a middle side. The
+    # ray is cast forward - against the back's normal, which points into the
+    # carcass - from just behind the door's back plane, at the middle of what
+    # the door leaves uncovered of the side's front edge, abreast of each of
+    # the given points of the joint, up to HINGE_PROBE_REACH. The first front
+    # panel it meets counts if its back lies on the door's back plane : the
+    # ray may well miss that back, coplanar with the side's front edge -
+    # raytest reports a single face per hit - and meet its front instead. A
+    # door covering the whole edge leaves no room for one : a full overlay.
+    def _is_half_overlay?(wall_path, face_manipulator_a, face_manipulator_b, overhang, points)
+
+      na = face_manipulator_a.normal
+      pa = face_manipulator_a.position
+      pb = face_manipulator_b.position
+      nb = face_manipulator_b.normal
+      forward = na.reverse
+
+      # The side's outer face : the farthest from its inner face, back to back
+      outer_distance = _get_part_face_manipulators(wall_path).select { |fm| fm.normal.samedirection?(nb.reverse) }.map { |fm| (pb - fm.position) % nb }.max
+      return false if outer_distance.nil?
+      uncovered = outer_distance.to_f - overhang.to_f
+      return false if uncovered < 1.mm.to_f
+      return true if overhang.to_f <= outer_distance.to_f / 2
+
+      offset = overhang.to_f + uncovered / 2
+      door_serialized = PathUtils.serialize_path(@active_part_entity_path_a)
+      model = Sketchup.active_model
+
+      points.any? do |point|
+
+        # On the door's back plane, 'offset' outside the side's inner face
+        origin = point.project_to_plane(face_manipulator_b.plane).offset(nb, -offset).project_to_plane(face_manipulator_a.plane).offset(forward, -INSET_MIN_DEPTH)
+        found = false
+        10.times do
+          hit_point, hit_path = model.raytest([ origin, forward ])
+          break if hit_path.nil? || ((hit_point - pa) % forward).to_f > HINGE_PROBE_REACH.to_f
+
+          part_path = _get_part_entity_path_from_path(hit_path)
+          while part_path.is_a?(Array) && part_path.length > 1 && part_path.last.respond_to?(:glued_to) && !part_path.last.glued_to.nil?
+            part_path = _get_part_entity_path_from_path(part_path[0...-1])
+          end
+          if part_path.is_a?(Array) && !part_path.empty? &&
+             PathUtils.serialize_path(part_path) != door_serialized &&
+             DefinitionAttributes.role_of(part_path.last) == DefinitionAttributes::ROLE_FRONT_PANEL
+            found = _get_part_face_manipulators(part_path).any? { |fm| fm.normal.samedirection?(na) && ((fm.position - pa) % na).abs < HALF_OVERLAY_MAX_OFFSET.to_f }
+            break
+          end
+
+          origin = hit_point.offset(forward, 0.01.mm)
+        end
+        found
+      end
+
+    end
+
+    # The kind of the door - see the class comment - and the hinge it gets,
+    # next to the cursor. Rebuilt only when either changes, or when another
+    # tooltip took its place.
+    def _show_hinge_kind_tooltip
+      hardware = _fetch_option_hardware_a
+      key = [ @hinge_kind, hardware ]
+      return if key == @hinge_kind_tooltip_key && @tool.current_tooltip?(@hinge_kind_tooltip_box)
+      items = [ [ _get_hinge_kind_motif, "#" + PLUGIN.get_i18n_string("tool.smart_join.action_option_hardware_hinge_#{@hinge_kind}_a") ] ]
+      items << File.basename(hardware, '.*') if hardware.is_a?(String) && !hardware.empty?
+      @hinge_kind_tooltip_key = key
+      @hinge_kind_tooltip_box = @tool.show_tooltip(items)
+    end
+
+    # The kind of the door seen from above, the front down - drawn as
+    # SmartBuildTool draws its overlay options : the hatched side, and the
+    # door laid on its whole edge, sharing it with another, or set beside it.
+    def _get_hinge_kind_motif
+      case @hinge_kind
+      when HINGE_KIND_INSET
+        path = 'M0,.75V1H.625V.75ZM.75,0V1H1V0M.875,0L1,.125M.75,.875L.875,1M.75,.375L1,.625M.75,.625L1,.875M.75,.125L1,.375'
+      when HINGE_KIND_HALF_OVERLAY
+        path = 'M0,.75V1H.438V.75ZM.563,.75V1H1V.75ZM.375,0V.625H.625V0M.5,0L.625,.125M.375,.375L.625,.625M.375,.125L.625,.375'
+      else
+        path = 'M0,.75V1H1V.75ZM.75,0V.625H1V0M.875,0L1,.125M.75,.375L1,.625M.75,.125L1,.375'
+      end
+      Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path(path))
+    end
+
+    # Removes the tooltip of #_show_hinge_kind_tooltip - not another one, the
+    # error of a part that cannot be picked.
+    def _remove_hinge_kind_tooltip
+      @tool.remove_tooltip if @tool.current_tooltip?(@hinge_kind_tooltip_box)
+      @hinge_kind_tooltip_key = nil
+      @hinge_kind_tooltip_box = nil
     end
 
     # The BACK of the door : its broadest face turned towards the cavities -
@@ -3902,22 +4030,43 @@ module Ladb::OpenCutList
     # -----
 
     # The hardware and machining of A - the door - are the INSET ones when the
-    # door stands in the mouth.
+    # door stands in the mouth, the HALF overlay ones when it shares the side
+    # with another door - the full overlay ones while those are left empty.
     def _fetch_option_hardware_a
-      return super unless @hinge_inset
-      @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_HARDWARE_INSET_A)
+      case @hinge_kind
+      when HINGE_KIND_INSET
+        @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_HARDWARE_INSET_A)
+      when HINGE_KIND_HALF_OVERLAY
+        return super if _half_overlay_fallback?
+        @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_HARDWARE_HALF_A)
+      else
+        super
+      end
     end
 
     def _fetch_option_machining_a
-      return super unless @hinge_inset
-      @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_MACHINING_INSET_A)
+      case @hinge_kind
+      when HINGE_KIND_INSET
+        @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_MACHINING_INSET_A)
+      when HINGE_KIND_HALF_OVERLAY
+        return super if _half_overlay_fallback?
+        @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_MACHINING_HALF_A)
+      else
+        super
+      end
     end
 
-    # One set of geometries per kind of door, both kept.
+    # No half overlay hinge set : the full overlay one, and its machining.
+    def _half_overlay_fallback?
+      hardware = @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_HARDWARE_HALF_A)
+      hardware.nil? || hardware.empty?
+    end
+
+    # One set of geometries per kind of door, all kept.
     def _get_geometries_def
       @geometries_defs = {} unless @geometries_defs.is_a?(Hash)
-      @geometries_def = @geometries_defs[@hinge_inset == true]
-      @geometries_defs[@hinge_inset == true] = super
+      @geometries_def = @geometries_defs[@hinge_kind]
+      @geometries_defs[@hinge_kind] = super
     end
 
   end

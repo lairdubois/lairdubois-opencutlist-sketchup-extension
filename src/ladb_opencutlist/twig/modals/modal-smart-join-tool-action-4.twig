@@ -1,6 +1,7 @@
 {% extends 'modals/modal-smart-join-tool-action.twig' %}
 
 {% set hardware_name = 'hinge' %}
+{% set hardware_a_name = 'hinge_overlay' %}
 
 {% block optionHeight %}{% endblock %}
 
@@ -18,6 +19,21 @@
         <label class="control-label col-xs-4">{{ 'tool.smart_join.action_option_machining_inset_a'|i18next }}</label>
         <div class="col-xs-7">
             <input type="text" class="form-control" id="ladb_input_machining_inset_a">
+        </div>
+    </div>
+    <hr>
+    <div class="form-group">
+        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_join.action_option_hardware_hinge_half_overlay_a_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+        <label class="control-label col-xs-4">{{ 'tool.smart_join.action_option_hardware_hinge_half_overlay_a'|i18next }}</label>
+        <div class="col-xs-7">
+            <input type="text" class="form-control" id="ladb_input_hardware_half_a">
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_join.action_option_machining_half_a_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+        <label class="control-label col-xs-4">{{ 'tool.smart_join.action_option_machining_half_a'|i18next }}</label>
+        <div class="col-xs-7">
+            <input type="text" class="form-control" id="ladb_input_machining_half_a">
         </div>
     </div>
 {% endblock %}

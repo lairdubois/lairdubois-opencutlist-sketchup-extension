@@ -855,6 +855,13 @@ module Ladb::OpenCutList
 
       @canvas.append(k_box)
 
+      k_box
+    end
+
+    # Whether the given tooltip box - what #show_tooltip returned - is still
+    # the one shown : another tooltip may have replaced it, or removed it.
+    def current_tooltip?(box)
+      !box.nil? && @tooltip_box.equal?(box)
     end
 
     def remove_tooltip

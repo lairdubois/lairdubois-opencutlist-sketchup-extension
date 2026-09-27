@@ -39,6 +39,8 @@
             const $inputMachiningA = $('#ladb_input_machining_a', that.$element);
             const $inputHardwareInsetA = $('#ladb_input_hardware_inset_a', that.$element);
             const $inputMachiningInsetA = $('#ladb_input_machining_inset_a', that.$element);
+            const $inputHardwareHalfA = $('#ladb_input_hardware_half_a', that.$element);
+            const $inputMachiningHalfA = $('#ladb_input_machining_half_a', that.$element);
             const $inputMachiningB = $('#ladb_input_machining_b', that.$element);
             const $inputHardwareMaterialName = $('#ladb_input_hardware_material_name', that.$element);
             const $inputMachiningMaterialName = $('#ladb_input_machining_material_name', that.$element);
@@ -56,6 +58,8 @@
                 options.machining_a = $inputMachiningA.val();
                 options.hardware_inset_a = $inputHardwareInsetA.val();
                 options.machining_inset_a = $inputMachiningInsetA.val();
+                options.hardware_half_a = $inputHardwareHalfA.val();
+                options.machining_half_a = $inputMachiningHalfA.val();
                 options.machining_b = $inputMachiningB.val();
                 options.hardware_material_name = $inputHardwareMaterialName.val();
                 options.machining_material_name = $inputMachiningMaterialName.val();
@@ -72,6 +76,8 @@
                 $inputMachiningA.ladbTextinputFile('val', options.machining_a ? options.machining_a : '');
                 $inputHardwareInsetA.ladbTextinputFile('val', options.hardware_inset_a ? options.hardware_inset_a : '');
                 $inputMachiningInsetA.ladbTextinputFile('val', options.machining_inset_a ? options.machining_inset_a : '');
+                $inputHardwareHalfA.ladbTextinputFile('val', options.hardware_half_a ? options.hardware_half_a : '');
+                $inputMachiningHalfA.ladbTextinputFile('val', options.machining_half_a ? options.machining_half_a : '');
                 $inputMachiningB.ladbTextinputFile('val', options.machining_b ? options.machining_b : '');
                 $inputHardwareMaterialName.ladbTextinputFile('val', options.hardware_material_name ? options.hardware_material_name : '');
                 $inputMachiningMaterialName.ladbTextinputFile('val', options.machining_material_name ? options.machining_material_name : '');
@@ -95,6 +101,8 @@
             $inputMachiningA.ladbTextinputFile({ library: true });
             $inputHardwareInsetA.ladbTextinputFile({ library: true });
             $inputMachiningInsetA.ladbTextinputFile({ library: true });
+            $inputHardwareHalfA.ladbTextinputFile({ library: true });
+            $inputMachiningHalfA.ladbTextinputFile({ library: true });
             $inputMachiningB.ladbTextinputFile({ library: true });
             $inputHardwareMaterialName.ladbTextinputFile({ library: true });
             $inputMachiningMaterialName.ladbTextinputFile({ library: true });
@@ -125,6 +133,8 @@
                     $inputMachiningA.ladbTextinputFile('scrollToTheEnd');
                     $inputHardwareInsetA.ladbTextinputFile('scrollToTheEnd');
                     $inputMachiningInsetA.ladbTextinputFile('scrollToTheEnd');
+                    $inputHardwareHalfA.ladbTextinputFile('scrollToTheEnd');
+                    $inputMachiningHalfA.ladbTextinputFile('scrollToTheEnd');
                     $inputMachiningB.ladbTextinputFile('scrollToTheEnd');
                     $inputHardwareMaterialName.ladbTextinputFile('scrollToTheEnd');
                     $inputMachiningMaterialName.ladbTextinputFile('scrollToTheEnd');
