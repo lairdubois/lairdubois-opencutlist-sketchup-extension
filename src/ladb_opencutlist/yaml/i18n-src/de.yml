@@ -2734,19 +2734,19 @@ tool:
     title: Zusammenfügen
     action_0: Verbinder hinzufügen
     action_0_status: Verbindungselemente zum Zusammenfügen von Teilen anbringen
-    action_0_state_0_status: "Klicken Sie auf die Referenzfläche eines Teils, um Verbindungen zu benachbarten Teilen hinzuzufügen, die sich in Kontakt befinden"
+    action_0_state_1_status: "Klicken Sie auf die Referenzfläche eines Teils, um Verbindungen zu benachbarten Teilen hinzuzufügen, die sich in Kontakt befinden"
     action_1: Verbinder löschen
     action_1_status: Verbindungselemente von Teilen löschen
-    action_1_state_0_status: "Klicken Sie auf die Referenzfläche eines Teils, um die Verbinder zu löschen, die es mit benachbarten Teilen teilt"
+    action_1_state_1_status: "Klicken Sie auf die Referenzfläche eines Teils, um die Verbinder zu löschen, die es mit benachbarten Teilen teilt"
     action_1_only_one_status: Auf ein Verbindungselement beschränken
     action_2: Bechläge hinzufungen
     action_2_status: Beschläge zum Verbinden von Teilen hinzufügen
-    action_2_state_0_status: "Klicken Sie auf die Referenzfläche eines Teils A, um einen Beschläge zu einem benachbarten Teil hinzuzufügen"
-    action_2_state_1_status: "Klicken Sie auf die Referenzfläche eines Teils B, um Beschläge zu Teil A hinzuzufügen"
+    action_2_state_1_status: "Klicken Sie auf die Referenzfläche eines Teils A, um einen Beschläge zu einem benachbarten Teil hinzuzufügen"
+    action_2_state_2_status: "Klicken Sie auf die Referenzfläche eines Teils B, um Beschläge zu Teil A hinzuzufügen"
     action_3: Beschläge löschen
     action_3_status: Beschlägen zwischen Bauteilen löschen
-    action_3_state_0_status: "Klicken Sie auf die Referenzfläche eines Teils A, um die Beschläge zu löschen, die es mit einem benachbarten Teil teilt"
-    action_3_state_1_status: "Klicken Sie auf die Referenzfläche eines Teils B, um die Beschläge zu löschen, die es mit Teil A teilt"
+    action_3_state_1_status: "Klicken Sie auf die Referenzfläche eines Teils A, um die Beschläge zu löschen, die es mit einem benachbarten Teil teilt"
+    action_3_state_2_status: "Klicken Sie auf die Referenzfläche eines Teils B, um die Beschläge zu löschen, die es mit Teil A teilt"
     action_3_only_one_status: Auf einen Beschlag beschränken
     action_option_group_height: Höhe
     action_option_group_offsets: Versätze

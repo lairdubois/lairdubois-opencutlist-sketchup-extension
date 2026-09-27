@@ -342,6 +342,11 @@ module Ladb::OpenCutList
     TRANSFORMATION_FLIP_X = Geom::Transformation.axes(ORIGIN, X_AXIS.reverse, Y_AXIS, Z_AXIS).freeze
     TRANSFORMATION_FLIP_Z = Geom::Transformation.axes(ORIGIN, X_AXIS, Y_AXIS, Z_AXIS.reverse).freeze
 
+    # No usable hardware picked in the library : nothing can be picked in the
+    # model until one is - as SmartBuildModuleActionHandler. The subclasses'
+    # states follow.
+    STATE_SOURCE = 0
+
     # The library folder browsed, by action. Remembered for the session only.
     @@hardware_dir_refs = {}
 
@@ -374,6 +379,27 @@ module Ladb::OpenCutList
       super
     end
 
+    def stop
+      @tool.hide_status
+      super
+    end
+
+    # -- STATE --
+
+    def get_startup_state
+      _hardware_missing? ? STATE_SOURCE : _get_select_state
+    end
+
+    def get_state_picker(state)
+      return nil if state == STATE_SOURCE
+      SmartPicker.new(tool: @tool, observer: self, pick_point: true, drawable: false, lockable: false)
+    end
+
+    def get_state_status(state)
+      return PLUGIN.get_i18n_string('tool.smart_join.select_hardware_status') + '.' if state == STATE_SOURCE
+      super
+    end
+
     # -----
 
     def onPickerChanged(picker, view)
@@ -381,15 +407,26 @@ module Ladb::OpenCutList
       super
     end
 
+    # Nothing in progress : unpicks the hardware, back to STATE_SOURCE - as
+    # SmartBuildModule unpicks its file.
+    def onToolCancel(tool, reason, view)
+      super
+      _deselect_hardware if !@hardware_library_panel.nil? && @state != STATE_SOURCE && @state == get_startup_state
+    end
+
     def onStateChanged(old_state, new_state)
       super
-      _update_hardware_picker
+      if new_state == STATE_SOURCE
+        @tool.show_status(get_state_status(new_state))
+      else
+        @tool.hide_status
+      end
     end
 
     def onToolGlobalPresetChanged(tool, dictionary, section)
       @geometries_def = nil
       _update_hardware_library_panel_selection  # The picked descriptor may have changed with the preset
-      _update_hardware_picker
+      _update_hardware_state
       _refresh
     end
 
@@ -405,6 +442,13 @@ module Ladb::OpenCutList
 
     def _clear_selection_on_start?
       true
+    end
+
+    # -----
+
+    # The state the work starts in, once a hardware is picked.
+    def _get_select_state
+      raise NotImplementedError
     end
 
     # -----
@@ -652,16 +696,15 @@ module Ladb::OpenCutList
       !@hardware_library_panel.nil? && _get_hardware_descriptor_def.nil?
     end
 
-    # No picker while the hardware is missing, and the status says why.
-    def _update_hardware_picker
-      return if @hardware_library_panel.nil?
+    # To STATE_SOURCE - dropping what was picked - when the hardware went
+    # missing, out of it when it is back.
+    def _update_hardware_state
       if _hardware_missing?
-        @picker = nil
-        @tool.clear_3d([ LAYER_3D_PART_A_PREVIEW, LAYER_3D_PART_B_PREVIEW, LAYER_3D_JOIN_PREVIEW, LAYER_3D_MACHINING_PREVIEW, LAYER_3D_HARDWARE_PREVIEW, LAYER_3D_SNAP_POINT_PREVIEW ])
-        Sketchup.set_status_text(PLUGIN.get_i18n_string('tool.smart_join.select_hardware_status') + '.', SB_PROMPT)
-      elsif @picker.nil?
-        @picker = get_state_picker(@state)
-        Sketchup.set_status_text(get_state_status(@state), SB_PROMPT)
+        return if @state == STATE_SOURCE
+        _reset
+        set_state(STATE_SOURCE) unless @state == STATE_SOURCE  # The subclass' reset may have done it
+      elsif @state == STATE_SOURCE
+        set_state(get_startup_state)
       end
     end
 
@@ -1203,20 +1246,10 @@ module Ladb::OpenCutList
 
     Clippy = Fiddle::Clippy
 
+    STATE_SELECT = 1
+
     def initialize(action, tool, previous_action_handler = nil)
       super
-    end
-
-    # -----
-
-    # -- STATE --
-
-    def get_state_status(state)
-      PLUGIN.get_i18n_string("tool.smart_#{@tool.get_stripped_name}.action_#{@action}_state_#{state}_status") + '.'
-    end
-
-    def get_state_picker(state)
-      SmartPicker.new(tool: @tool, observer: self, pick_point: true, drawable: false, lockable: false)
     end
 
     # -----
@@ -1237,6 +1270,10 @@ module Ladb::OpenCutList
     # -----
 
     protected
+
+    def _get_select_state
+      STATE_SELECT
+    end
 
     def _reset
       super
@@ -1565,10 +1602,12 @@ module Ladb::OpenCutList
     # -- STATE --
 
     def get_state_cursor(state)
+      return super if state == STATE_SOURCE
       SmartCursorManager.cursor_select_join_plus
     end
 
     def get_state_status(state)
+      return super if state == STATE_SOURCE
       super +
         ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_join.action_1") + '.'
     end
@@ -1597,7 +1636,7 @@ module Ladb::OpenCutList
     # -----
 
     def enableVCB?
-      true
+      @state != STATE_SOURCE
     end
 
     # -----
@@ -2530,8 +2569,8 @@ module Ladb::OpenCutList
 
   class SmartJoinFittingsActionHandler < SmartJoinActionHandler
 
-    STATE_SELECT_A = 0
-    STATE_SELECT_B = 1
+    STATE_SELECT_A = 1
+    STATE_SELECT_B = 2
 
     def initialize(action, tool, previous_action_handler = nil)
       super
@@ -2555,12 +2594,9 @@ module Ladb::OpenCutList
     # -- STATE --
 
     def get_state_status(state)
+      return super if state == STATE_SOURCE
       PLUGIN.get_i18n_string("tool.smart_#{@tool.get_stripped_name}.action_#{@action}_state_#{state}_status") + '.' +
         ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_join.action_option_options_opposite_status") + '.'
-    end
-
-    def get_state_picker(state)
-      SmartPicker.new(tool: @tool, observer: self, pick_point: true, drawable: false, lockable: false)
     end
 
     def get_state_cursor(state)
@@ -2657,13 +2693,17 @@ module Ladb::OpenCutList
 
     protected
 
+    def _get_select_state
+      STATE_SELECT_A
+    end
+
     def _reset
       super
       @mouse_snap_point = nil
       _reset_active_part_a
       _reset_active_part_b
       _reset_neighborhood_def
-      set_state(STATE_SELECT_A)
+      set_state(get_startup_state)
     end
 
     def _reset_active_part_a
@@ -3039,6 +3079,7 @@ module Ladb::OpenCutList
     end
 
     def get_state_status(state)
+      return super if state == STATE_SOURCE
       super +
         ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_join.action_3") + '.'
     end
@@ -3084,7 +3125,7 @@ module Ladb::OpenCutList
     # -----
 
     def enableVCB?
-      true
+      @state != STATE_SOURCE
     end
 
     # -----
@@ -3666,6 +3707,10 @@ module Ladb::OpenCutList
 
     include SmartActionHandlerCavitiesHelper
 
+    # One pick : the door, near the side it turns on - handled as the
+    # fittings' part A.
+    STATE_SELECT = STATE_SELECT_A
+
     # How far the door may stand PAST the inner face of the side it turns on -
     # an applique covers the side's edge - and how far SHORT of it - an inset
     # door leaves a gap. Beyond, the side is no edge of that door : a divider
@@ -3722,11 +3767,13 @@ module Ladb::OpenCutList
     # -- STATE --
 
     def get_state_status(state)
+      return super if state == STATE_SOURCE
       PLUGIN.get_i18n_string("tool.smart_join.action_#{@action}_state_#{state}_status") + '.' +
         ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_join.action_#{SmartJoinTool::ACTION_REMOVE_HINGES}") + '.'
     end
 
     def get_state_cursor(state)
+      return super if state == STATE_SOURCE
       SmartCursorManager.cursor_select_join_plus
     end
 
@@ -3784,6 +3831,10 @@ module Ladb::OpenCutList
     # -----
 
     protected
+
+    def _get_select_state
+      STATE_SELECT
+    end
 
     def _get_hardware_types
       [ HardwareDescriptorDef::TYPE_HINGE ]
@@ -4577,6 +4628,10 @@ module Ladb::OpenCutList
   # fitting on B - the hinges of the door are removed alone.
   class SmartJoinRemoveHingesActionHandler < SmartJoinRemoveFittingsActionHandler
 
+    # One pick : the door, near the side it turns on - handled as the
+    # fittings' part A.
+    STATE_SELECT = STATE_SELECT_A
+
     # How far a mating fitting may stand from a hinge anchor, and a face plane
     # from that anchor, to be read as the same joint.
     HINGE_ANCHOR_TOLERANCE = 0.01.mm
@@ -4647,6 +4702,10 @@ module Ladb::OpenCutList
     # -----
 
     protected
+
+    def _get_select_state
+      STATE_SELECT
+    end
 
     def _reset
       super

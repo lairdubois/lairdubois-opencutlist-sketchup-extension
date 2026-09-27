@@ -2748,27 +2748,27 @@ tool:
     title: Assembler
     action_0: Ajouter des connecteurs
     action_0_status: Ajouter des connecteurs pour assembler des pièces
-    action_0_state_0_status: Cliquez sur la face de référence d'une pièce pour ajouter des connecteurs avec les pièces voisines en contact
+    action_0_state_1_status: Cliquez sur la face de référence d'une pièce pour ajouter des connecteurs avec les pièces voisines en contact
     action_1: Effacer des connecteurs
     action_1_status: Effacer des connecteurs d'assemblage de pièces
-    action_1_state_0_status: Cliquez sur la face de référence d'une pièce pour effacer les connecteurs qu'elle partage avec les pièces voisines
+    action_1_state_1_status: Cliquez sur la face de référence d'une pièce pour effacer les connecteurs qu'elle partage avec les pièces voisines
     action_1_only_one_status: Limiter à un seul connecteur
     action_2: Ajouter des raccords
     action_2_status: Ajouter des raccords pour assembler des pièces
-    action_2_state_0_status: Cliquez sur la face de référence d'une pièce A pour ajouter des raccords avec une pièce voisine
-    action_2_state_1_status: Cliquez sur la face de référence d'une pièce B pour ajouter des raccords avec la pièce A
+    action_2_state_1_status: Cliquez sur la face de référence d'une pièce A pour ajouter des raccords avec une pièce voisine
+    action_2_state_2_status: Cliquez sur la face de référence d'une pièce B pour ajouter des raccords avec la pièce A
     action_3: Effacer des raccords
     action_3_status: Effacer des raccords d'assemblage de pièces
-    action_3_state_0_status: Cliquez sur la face de référence d'une pièce A pour effacer les raccords qu'elle partage avec une pièce voisine
-    action_3_state_1_status: Cliquez sur la face de référence d'une pièce B pour effacer les raccords qu'elle partage avec la pièce A
+    action_3_state_1_status: Cliquez sur la face de référence d'une pièce A pour effacer les raccords qu'elle partage avec une pièce voisine
+    action_3_state_2_status: Cliquez sur la face de référence d'une pièce B pour effacer les raccords qu'elle partage avec la pièce A
     action_3_only_one_status: Limiter à un seul raccord
     select_hardware_status: Sélectionnez une quincaillerie dans la bibliothèque
     action_4: Ajouter des charnières
     action_4_status: Ajouter des charnières pour articuler une façade
-    action_4_state_0_status: Survolez une façade près du bord sur lequel elle pivote et cliquez pour ajouter ses charnières
+    action_4_state_1_status: Survolez une façade près du bord sur lequel elle pivote et cliquez pour ajouter ses charnières
     action_5: Effacer des charnières
     action_5_status: Effacer les charnières d'une façade
-    action_5_state_0_status: Survolez une façade près du bord sur lequel elle pivote et cliquez pour effacer ses charnières
+    action_5_state_1_status: Survolez une façade près du bord sur lequel elle pivote et cliquez pour effacer ses charnières
     action_5_only_one_status: Limiter à une seule charnière
     action_option_group_height: Hauteur
     action_option_group_offsets: Décalages
