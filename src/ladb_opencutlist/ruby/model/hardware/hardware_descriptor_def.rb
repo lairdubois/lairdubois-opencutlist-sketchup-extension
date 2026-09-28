@@ -58,11 +58,22 @@ module Ladb::OpenCutList
   #    along Z, from one height to the other.
   # A mortise or an oblong is a slot with round ends, its length along X -
   # ends included - and its width along Y.
+  # A drilling or a cylinder can widen at one end, in one solid with it :
+  #  - "countersink": { "diameter": "8.5mm", "angle": 90, … } a cone, the
+  #    head of a countersunk screw, angle in degrees - 90 by default ;
+  #  - "counterbore": { "diameter": "10mm", "depth": "4mm", … } a step.
+  # The end is "face": "contact" | "opposite" for a drilling - the face it is
+  # laid on, or the other one, then its depth must be "through" - and "end":
+  # "from" | "to" for a cylinder. A screw through the part it is laid on, its
+  # head on the other face :
+  #    { "cylinders": [ { "diameter": "4mm", "from": "-@thickness_max_a", "to": "@embed",
+  #                       "countersink": { "diameter": "8mm", "end": "from" } } ] }
   # A length can be an expression of the measures the tool takes where it
   # lays the part - see measures - : "@thickness - 2mm", "@thickness / 2",
   # "min(@thickness_a - 5mm; 20mm)". Its literals bear a unit as SketchUp
   # reads it - mm, cm, m, ", ', yd - bare numbers are factors. See
-  # LengthExpressionUtils. "through" is "@thickness".
+  # LengthExpressionUtils. "through" is "@thickness_max" - "@thickness"
+  # when it isn't given.
   #
   # "variables" names expressions, evaluated in order : each can use the
   # measures and the variables above it, and the lengths of the components
@@ -148,14 +159,31 @@ module Ladb::OpenCutList
 
     DRILLING_DEPTH_THROUGH = 'through'.freeze
 
+    # How a drilling or a cylinder widens at one end - see PrimitiveCylinderDef#profile
+    HEAD_COUNTERSINK = 'countersink'.freeze
+    HEAD_COUNTERBORE = 'counterbore'.freeze
+    HEADS = [ HEAD_COUNTERSINK, HEAD_COUNTERBORE ].freeze
+    HEAD_DEFAULT_ANGLE = 90
+
+    # The end it widens at : 'face' of a drilling, 'end' of a cylinder -
+    # the first of each is its top, z_max.
+    HEAD_FACES = %w[contact opposite].freeze
+    HEAD_ENDS = %w[to from].freeze
+
     # The measures the lengths can use, taken by the tool where it lays a
     # part - see measures :
     #  - thickness : how far the part goes behind the face - toward -Z ;
-    #  - thickness_<slot> : the one of the part the given slot is laid on, for
+    #  - thickness_min, thickness_max : how far the other face of the part
+    #    is, right behind the solids of the slot - their centers and
+    #    outlines - the nearest and the farthest. They differ when the faces
+    #    aren't parallel there : "@thickness_max_a - @thickness_min_a <= 0.2mm" ;
+    #  - <measure>_<slot> : the one of the part the given slot is laid on, for
     #    the types that join two parts - JOIN_TYPES. An expression then reads
     #    the same from either slot.
     VARIABLE_THICKNESS = 'thickness'.freeze
-    VARIABLES = [ VARIABLE_THICKNESS ].freeze
+    VARIABLE_THICKNESS_MIN = 'thickness_min'.freeze
+    VARIABLE_THICKNESS_MAX = 'thickness_max'.freeze
+    VARIABLES = [ VARIABLE_THICKNESS, VARIABLE_THICKNESS_MIN, VARIABLE_THICKNESS_MAX ].freeze
 
     JOIN_TYPES = [ TYPE_CONNECTOR, TYPE_FITTING, TYPE_HINGE ].freeze
 
@@ -170,9 +198,15 @@ module Ladb::OpenCutList
     # - resolved for the measures of where it is laid, its lengths in inches :
     # a slot with round ends along Z, from z_min to z_max, diameter wide
     # along Y and length long along X - a cylinder when length is diameter.
-    PrimitiveCylinderDef = Struct.new(:x, :y, :diameter, :z_min, :z_max, :length) do
+    # profile : when it widens at one end - a round one only - its outline
+    # as [ radius, z ] from z_max down to z_min, nil otherwise.
+    PrimitiveCylinderDef = Struct.new(:x, :y, :diameter, :z_min, :z_max, :length, :profile) do
       def round?
         length.nil? || length <= diameter
+      end
+      # Its widest radius
+      def radius
+        profile.nil? ? diameter / 2 : profile.map(&:first).max
       end
     end
 
@@ -237,8 +271,9 @@ module Ladb::OpenCutList
       names = []
       _primitive_items(primitives).each do |_, item|
         item.each do |key, value|
-          names << VARIABLE_THICKNESS if key == 'depth' && value == DRILLING_DEPTH_THROUGH
+          names << VARIABLE_THICKNESS_MAX if key == 'depth' && value == DRILLING_DEPTH_THROUGH
           names.concat(value.scan(VARIABLE_PATTERN).flatten) if value.is_a?(String)
+          names.concat(value.values.select { |v| v.is_a?(String) }.flat_map { |v| v.scan(VARIABLE_PATTERN).flatten }) if value.is_a?(Hash)
         end
       end
       names.uniq
@@ -264,7 +299,8 @@ module Ladb::OpenCutList
           length = nil
         end
         if key == MACHINING_DRILLINGS || key == MACHINING_MORTISES
-          depth = to_length(item['depth'] == DRILLING_DEPTH_THROUGH ? "@#{VARIABLE_THICKNESS}" : item['depth'], false, variables)
+          through = variables.key?(VARIABLE_THICKNESS_MAX) ? VARIABLE_THICKNESS_MAX : VARIABLE_THICKNESS
+          depth = to_length(item['depth'] == DRILLING_DEPTH_THROUGH ? "@#{through}" : item['depth'], false, variables)
           z_min = depth.nil? ? nil : -depth
           z_max = 0.0
         else
@@ -272,9 +308,45 @@ module Ladb::OpenCutList
           z_max = to_length(item['to'], true, variables)
         end
         next nil if [ x, y, diameter, z_min, z_max ].any?(&:nil?) || z_max <= z_min
-        PrimitiveCylinderDef.new(x, y, diameter, z_min, z_max, length.nil? || length <= diameter ? nil : length)
+        profile = nil
+        if (head_key = HEADS.find { |k| item.key?(k) })
+          profile = _head_profile(head_key, item[head_key], key == MACHINING_DRILLINGS ? HEAD_FACES : HEAD_ENDS, diameter, z_min, z_max, variables)
+          next nil if profile.nil?
+        end
+        PrimitiveCylinderDef.new(x, y, diameter, z_min, z_max, length.nil? || length <= diameter ? nil : length, profile)
       }.compact
     end
+
+    # The profile - [ [ radius, z ] ] from z_max down to z_min - of a solid
+    # of the given diameter widened by the given head at one end - see
+    # HEADS. sides : its names of the top end and of the bottom one. nil if
+    # it can't be resolved, or is as long as the solid.
+    def self._head_profile(head_key, head, sides, diameter, z_min, z_max, variables)
+      return nil unless head.is_a?(Hash)
+      r = diameter / 2
+      head_diameter = to_length(head['diameter'], false, variables)
+      return nil if head_diameter.nil? || head_diameter / 2 <= r
+      big_r = head_diameter / 2
+      if head_key == HEAD_COUNTERSINK
+        angle = head['angle'].nil? ? HEAD_DEFAULT_ANGLE : head['angle']
+        return nil unless angle.is_a?(Numeric) && angle > 0 && angle < 180
+        height = (big_r - r) / Math.tan(angle * Math::PI / 360)
+      else
+        height = to_length(head['depth'], false, variables)
+        return nil if height.nil?
+      end
+      return nil if height >= z_max - z_min - 1e-6
+      side = head[sides.equal?(HEAD_FACES) ? 'face' : 'end']
+      top = side.nil? || side == sides[0]
+      if top
+        points = head_key == HEAD_COUNTERSINK ? [ [ big_r, z_max ] ] : [ [ big_r, z_max ], [ big_r, z_max - height ] ]
+        points + [ [ r, z_max - height ], [ r, z_min ] ]
+      else
+        points = head_key == HEAD_COUNTERSINK ? [ [ big_r, z_min ] ] : [ [ big_r, z_min + height ], [ big_r, z_min ] ]
+        [ [ r, z_max ], [ r, z_min + height ] ] + points
+      end
+    end
+    private_class_method :_head_profile
 
     # The given length in inches - a string with a unit, an expression of
     # variables, or a number of millimeters - nil if it isn't one or uses a
@@ -400,7 +472,7 @@ module Ladb::OpenCutList
     # The measures its lengths can use - see VARIABLES.
     def measures
       return VARIABLES unless JOIN_TYPES.include?(type)
-      VARIABLES + slots.map { |slot| "#{VARIABLE_THICKNESS}_#{slot}" }
+      VARIABLES + VARIABLES.flat_map { |name| slots.map { |slot| "#{name}_#{slot}" } }
     end
 
     # The measures its lengths - of primitives, variables and asserts - use :
@@ -409,7 +481,7 @@ module Ladb::OpenCutList
       @used_measures ||= begin
         text = JSON.generate(@data)
         names = text.scan(VARIABLE_PATTERN).flatten
-        names << VARIABLE_THICKNESS if text.include?("\"#{DRILLING_DEPTH_THROUGH}\"")
+        names << VARIABLE_THICKNESS_MAX if text.include?("\"#{DRILLING_DEPTH_THROUGH}\"")
         measures & names
       end
     end
@@ -792,10 +864,63 @@ module Ladb::OpenCutList
         # Checkable only without variables : they change with where it is laid
         errors << "#{label} to is not above from" if !from.nil? && !to.nil? && to <= from && !_variable_lengths?(item['from'], item['to'])
       end
-      _validate_primitive_list(path, part, value, MACHINING_DRILLINGS, 'drilling', %w[x y diameter depth], %w[diameter], errors, &fn_depth)
+      _validate_primitive_list(path, part, value, MACHINING_DRILLINGS, 'drilling', %w[x y diameter depth] + HEADS, %w[diameter], errors) do |item, label|
+        fn_depth.call(item, label)
+        _validate_head(item, label, 'face', HEAD_FACES, errors)
+      end
       _validate_primitive_list(path, part, value, MACHINING_MORTISES, 'mortise', %w[x y length width depth], %w[length width], errors, &fn_depth)
-      _validate_primitive_list(path, part, value, HARDWARE_CYLINDERS, 'cylinder', %w[x y diameter from to], %w[diameter], errors, &fn_from_to)
+      _validate_primitive_list(path, part, value, HARDWARE_CYLINDERS, 'cylinder', %w[x y diameter from to] + HEADS, %w[diameter], errors) do |item, label|
+        fn_from_to.call(item, label)
+        _validate_head(item, label, 'end', HEAD_ENDS, errors)
+      end
       _validate_primitive_list(path, part, value, HARDWARE_OBLONGS, 'oblong', %w[x y length width from to], %w[length width], errors, &fn_from_to)
+    end
+
+    # Validates the head a drilling or a cylinder widens by at one end - see
+    # HEADS. side_key : 'face' or 'end', sides : its values.
+    def _validate_head(item, label, side_key, sides, errors)
+      head_keys = HEADS.select { |k| item.key?(k) }
+      return if head_keys.empty?
+      if head_keys.length > 1
+        errors << "#{label} has both #{head_keys.join(' and ')}"
+        return
+      end
+      head_key = head_keys.first
+      head = item[head_key]
+      label = "#{label} #{head_key}"
+      unless head.is_a?(Hash)
+        errors << "#{label} is not an object"
+        return
+      end
+      keys = %w[diameter] + (head_key == HEAD_COUNTERSINK ? %w[angle] : %w[depth]) + [ side_key ]
+      (head.keys - keys).each do |k|
+        errors << "#{label} has an unknown key '#{k}'"
+      end
+      head.each do |k, v|
+        next unless v.is_a?(String)
+        _unknown_variables(v).each do |name|
+          errors << "#{label} #{k} uses the unknown variable @#{name}"
+        end
+      end
+      diameter = _to_checked_length(head['diameter'], false)
+      if diameter.nil?
+        errors << "#{label} diameter is not a positive length"
+      else
+        own = _to_checked_length(item['diameter'], false)
+        errors << "#{label} diameter is not above the one of the #{side_key == 'face' ? 'drilling' : 'cylinder'}" if !own.nil? && diameter <= own && !_variable_lengths?(head['diameter'], item['diameter'])
+      end
+      if head_key == HEAD_COUNTERSINK
+        angle = head['angle']
+        errors << "#{label} angle is not an angle between 0 and 180" unless angle.nil? || angle.is_a?(Numeric) && angle > 0 && angle < 180
+      else
+        errors << "#{label} depth is not a positive length" if _to_checked_length(head['depth'], false).nil?
+      end
+      if side_key == 'end' && !head.key?(side_key)
+        errors << "#{label} has no end - #{sides.map(&:inspect).join(' or ')}"
+      elsif head.key?(side_key) && !sides.include?(head[side_key])
+        errors << "#{label} #{side_key} is neither #{sides.map(&:inspect).join(' nor ')}"
+      end
+      errors << "#{label} is on the opposite face of a drilling that isn't through" if side_key == 'face' && head[side_key] == sides[1] && item['depth'] != DRILLING_DEPTH_THROUGH
     end
 
     # Do the given lengths depend on where they are laid ?

@@ -1002,7 +1002,7 @@ module Ladb::OpenCutList
       bounds = Geom::BoundingBox.new
       variables = _resolve_hardware_variables(Hash[HardwareDescriptorDef.primitive_variables(primitives).map { |name| [ name, 0.0 ] }])
       HardwareDescriptorDef.primitive_cylinders(primitives, variables).each do |cylinder|
-        r = cylinder.diameter / 2
+        r = cylinder.radius
         h = cylinder.round? ? r : cylinder.length / 2
         x = mirror ? -cylinder.x : cylinder.x
         bounds.add(Geom::Point3d.new(x - h, cylinder.y - r, cylinder.z_min))
@@ -1018,11 +1018,22 @@ module Ladb::OpenCutList
       return placement.variables unless placement.variables.nil?
       measures = {}
       descriptor = _get_hardware_descriptor_def
+      local_thicknesses = {}
+      fn_measure = lambda do |target, variable|
+        if variable == HardwareDescriptorDef::VARIABLE_THICKNESS
+          _get_placement_thickness(target)
+        else
+          local_thicknesses[target] ||= _get_placement_local_thicknesses(target)
+          local_thicknesses[target][variable == HardwareDescriptorDef::VARIABLE_THICKNESS_MIN ? 0 : 1]
+        end
+      end
       (descriptor.nil? ? [] : descriptor.used_measures).each do |name|
-        if name == HardwareDescriptorDef::VARIABLE_THICKNESS || name == "#{HardwareDescriptorDef::VARIABLE_THICKNESS}_#{placement.role}"
-          measures[name] = _get_placement_thickness(placement)
-        elsif name.start_with?("#{HardwareDescriptorDef::VARIABLE_THICKNESS}_") && !placement.partner.nil? && name == "#{HardwareDescriptorDef::VARIABLE_THICKNESS}_#{placement.partner.role}"
-          measures[name] = _get_placement_thickness(placement.partner)
+        HardwareDescriptorDef::VARIABLES.each do |variable|
+          if name == variable || name == "#{variable}_#{placement.role}"
+            measures[name] = fn_measure.call(placement, variable)
+          elsif !placement.partner.nil? && name == "#{variable}_#{placement.partner.role}"
+            measures[name] = fn_measure.call(placement.partner, variable)
+          end
         end
       end
       placement.variables = _resolve_hardware_variables(measures)
@@ -1077,17 +1088,86 @@ module Ladb::OpenCutList
       -min_z
     end
 
+    # How far the other face of the part of the given placement is, right
+    # behind the solids of its slot - their centers and outlines - toward -Z
+    # of the laying frame : [ nearest, farthest ]. The points off the face
+    # or behind which nothing is found are skipped ; none left : its
+    # thickness - see _get_placement_thickness - twice.
+    def _get_placement_local_thicknesses(placement)
+      t = placement.transformation
+      direction = Z_AXIS.reverse.transform(t).normalize
+      faces = placement.definition.entities.grep(Sketchup::Face)
+      on_face = [ Sketchup::Face::PointInside, Sketchup::Face::PointOnEdge, Sketchup::Face::PointOnVertex ]
+      depths = _get_placement_footprint(placement).map { |x, y|
+        origin = Geom::Point3d.new(x, y, 0).transform(t)
+        next nil unless on_face.include?(placement.face.classify_point(origin))
+        # The nearest face the ray leaves the part by
+        faces.map { |face|
+          next nil if face == placement.face
+          point = Geom.intersect_line_plane([ origin, direction ], face.plane)
+          next nil if point.nil?
+          distance = (point - origin) % direction
+          next nil if distance <= 1e-3 || !on_face.include?(face.classify_point(point))
+          distance
+        }.compact.min
+      }.compact
+      if depths.empty?
+        thickness = _get_placement_thickness(placement)
+        return [ thickness, thickness ]
+      end
+      [ depths.min, depths.max ]
+    end
+
+    # The points, in the laying frame - [ x, y ] - the solids of the slot of
+    # the given placement stand on : the anchor, and the centers and outlines
+    # of its primitives, or the corners of its SKPs.
+    def _get_placement_footprint(placement)
+      geometries_def = _get_geometries_def
+      return [ [ 0.0, 0.0 ] ] if geometries_def.nil?
+      geometries = placement.role == :a ? [ geometries_def.hardware_a, geometries_def.machining_a ] : [ geometries_def.hardware_b, geometries_def.machining_b ]
+      # The measures the outlines depend on aren't known yet : the thicknesses
+      thicknesses = { placement.role => _get_placement_thickness(placement) }
+      thicknesses[placement.partner.role] = _get_placement_thickness(placement.partner) unless placement.partner.nil?
+      measures = {}
+      HardwareDescriptorDef::VARIABLES.each do |variable|
+        measures[variable] = thicknesses[placement.role]
+        thicknesses.each { |role, thickness| measures["#{variable}_#{role}"] = thickness }
+      end
+      variables = _resolve_hardware_variables(measures)
+      points = [ [ 0.0, 0.0 ] ]
+      geometries.each do |geometry|
+        sign = geometry.mirror ? -1 : 1
+        if geometry.drawing_def
+          bounds = geometry.drawing_def.bounds
+          [ bounds.min.x, bounds.max.x ].product([ bounds.min.y, bounds.max.y ]).each { |x, y| points << [ sign * x, y ] }
+        elsif geometry.primitives
+          HardwareDescriptorDef.primitive_cylinders(geometry.primitives, variables).each do |cylinder|
+            points << [ sign * cylinder.x, cylinder.y ]
+            r = cylinder.radius
+            h = cylinder.round? ? 0.0 : cylinder.length / 2 - r
+            8.times do |i|
+              a = Math::PI * i / 4
+              points << [ sign * (cylinder.x + r * Math.cos(a) + (Math.cos(a) > 1e-6 ? h : Math.cos(a) < -1e-6 ? -h : 0.0)), cylinder.y + r * Math.sin(a) ]
+            end
+          end
+        end
+      end
+      points.uniq
+    end
+
     # The solids of the given primitives resolved at the given placement, as
-    # [ x, y, diameter, z_min, z_max ] - and length for an oblong one - in
-    # inches, rounded : the key of their
+    # [ x, y, diameter, z_min, z_max ] - and length for an oblong one, nil
+    # and the profile for a widened one - in inches, rounded : the key of their
     # geometry. Centered, shifted along Z by their offset - see
     # _get_primitives_offset - before rounding.
     def _get_primitives_dimensions(primitives, placement, centered = false)
       offset = centered ? _get_primitives_offset(primitives, placement) : 0.0
+      fn_round = lambda { |v| v.to_f.round(6) + 0.0 }  # + 0.0 : no -0.0 in the key
       HardwareDescriptorDef.primitive_cylinders(primitives, _get_placement_variables(placement)).map { |cylinder|
-        values = [ cylinder.x, cylinder.y, cylinder.diameter, cylinder.z_min - offset, cylinder.z_max - offset ]
-        values << cylinder.length unless cylinder.round?
-        values.map { |v| v.to_f.round(6) + 0.0 }  # + 0.0 : no -0.0 in the key
+        values = [ cylinder.x, cylinder.y, cylinder.diameter, cylinder.z_min - offset, cylinder.z_max - offset ].map(&fn_round)
+        values << fn_round.call(cylinder.length) unless cylinder.round?
+        values << nil << cylinder.profile.map { |r, z| [ fn_round.call(r), fn_round.call(z - offset) ] } unless cylinder.profile.nil?
+        values
       }
     end
 
@@ -1120,7 +1200,11 @@ module Ladb::OpenCutList
     # frame : both outlines and four generatrices of each solid.
     def _get_primitives_segments(dimensions)
       segments = []
-      dimensions.each do |x, y, diameter, z_min, z_max, length|
+      dimensions.each do |x, y, diameter, z_min, z_max, length, profile|
+        unless profile.nil?
+          segments.concat(_get_profile_segments(x, y, profile))
+          next
+        end
         points = _get_primitive_outline(x, y, diameter, length)
         step = [ points.length / 4, 1 ].max
         points.each_with_index do |(px, py), i|
@@ -1128,6 +1212,26 @@ module Ladb::OpenCutList
           segments << Geom::Point3d.new(px, py, z_max) << Geom::Point3d.new(nx, ny, z_max)
           segments << Geom::Point3d.new(px, py, z_min) << Geom::Point3d.new(nx, ny, z_min)
           segments << Geom::Point3d.new(px, py, z_max) << Geom::Point3d.new(px, py, z_min) if i % step == 0
+        end
+      end
+      segments
+    end
+
+    # The edges of a solid of the given profile - see
+    # HardwareDescriptorDef::PrimitiveCylinderDef#profile - around the given
+    # axis : a circle at each of its points and four generatrices.
+    def _get_profile_segments(x, y, profile)
+      segments = []
+      count = _get_primitive_num_segments(2 * profile.map(&:first).max)
+      step = [ count / 4, 1 ].max
+      fn_point = lambda { |r, z, i| a = 2 * Math::PI * i / count; Geom::Point3d.new(x + r * Math.cos(a), y + r * Math.sin(a), z) }
+      count.times do |i|
+        profile.each do |r, z|
+          segments << fn_point.call(r, z, i) << fn_point.call(r, z, i + 1)
+        end
+        next unless i % step == 0
+        profile.each_cons(2) do |(r0, z0), (r1, z1)|
+          segments << fn_point.call(r0, z0, i) << fn_point.call(r1, z1, i)
         end
       end
       segments
@@ -1196,8 +1300,12 @@ module Ladb::OpenCutList
       definition = model.definitions.find { |d| d.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, HardwareDescriptorDef::DEFINITION_ATTRIBUTE_PRIMITIVES) == key }
       if definition.nil?
         definition = model.definitions.add(name.is_a?(String) && !name.empty? ? name : geometry.part.to_s)
-        dimensions.each do |x, y, diameter, z_min, z_max, length|
-          _add_primitive_solid(definition.entities, x, y, diameter, z_min, z_max, length)
+        dimensions.each do |x, y, diameter, z_min, z_max, length, profile|
+          if profile.nil?
+            _add_primitive_solid(definition.entities, x, y, diameter, z_min, z_max, length)
+          else
+            _add_profile_solid(definition.entities, x, y, profile)
+          end
         end
         definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, HardwareDescriptorDef::DEFINITION_ATTRIBUTE_PRIMITIVES, key)
       end
@@ -1226,6 +1334,23 @@ module Ladb::OpenCutList
       return if face.nil?
       face.reverse! if face.normal.z > 0
       face.pushpull(z_max - z_min)  # Along its normal : toward -Z
+    end
+
+    # A solid of the given profile - see
+    # HardwareDescriptorDef::PrimitiveCylinderDef#profile - turned around
+    # the vertical axis at x, y : a drilling or a cylinder widened at one end.
+    def _add_profile_solid(entities, x, y, profile)
+      r_top, z_top = profile.first
+      count = _get_primitive_num_segments(2 * profile.map(&:first).max)
+      points = [ Geom::Point3d.new(x, y, z_top) ] +
+               profile.map { |r, z| Geom::Point3d.new(x + r, y, z) } +
+               [ Geom::Point3d.new(x, y, profile.last.last) ]
+      path = entities.add_circle(Geom::Point3d.new(x, y, z_top), Z_AXIS, r_top, count)
+      face = entities.add_face(points)
+      return if face.nil?
+      face.followme(path)
+      # The path, where it isn't an edge of the solid
+      entities.erase_entities(path.select { |edge| edge.valid? && edge.faces.length < 2 })
     end
 
     # -- UTILS --
@@ -2499,6 +2624,7 @@ module Ladb::OpenCutList
             placement_b = fn_seed.call(face_b, dti_b * Geom::Transformation.translation(pt_b) * join_def.at_b, :b, fm_b.transformation)
             placement_a.partner = placement_b
             placement_b.partner = placement_a
+            placement_a, placement_b = _orient_placements(placement_a, placement_b)
             seeds << placement_a if has_geometry_a
             seeds << placement_b if has_geometry_b
 
@@ -2542,6 +2668,24 @@ module Ladb::OpenCutList
 
       @propagation_signature = signature
       @propagation_def = _check_hardware_asserts(placements)
+    end
+
+    # The given seed placements - a on the active part, b on its neighbor -
+    # or, when the hardware's asserts refuse them and accept the other way
+    # round, the swapped ones : a screw goes through the part it can, the
+    # active one or not. [ placement_a, placement_b ].
+    def _orient_placements(placement_a, placement_b)
+      descriptor = _get_hardware_descriptor_def
+      return [ placement_a, placement_b ] if descriptor.nil? || descriptor.asserts.empty?
+      fn_accepted = lambda { |placements| placements.all? { |placement| descriptor.failed_asserts(_get_placement_variables(placement)).empty? } }
+      return [ placement_a, placement_b ] if fn_accepted.call([ placement_a, placement_b ])
+      # Each role keeps its handedness - world direct for a, indirect for b - see _walk_contact_graph
+      fn_swap = lambda { |placement, role| PropagationPlacementDef.new(placement.definition, placement.face, placement.transformation * TRANSFORMATION_FLIP_X, role, placement.instance_transformations, placement.seed_transformation) }
+      swapped_a = fn_swap.call(placement_b, :a)
+      swapped_b = fn_swap.call(placement_a, :b)
+      swapped_a.partner = swapped_b
+      swapped_b.partner = swapped_a
+      fn_accepted.call([ swapped_a, swapped_b ]) ? [ swapped_a, swapped_b ] : [ placement_a, placement_b ]
     end
 
     # Lightweight fingerprint of the joinery inputs (active part + neighbors + anchors).

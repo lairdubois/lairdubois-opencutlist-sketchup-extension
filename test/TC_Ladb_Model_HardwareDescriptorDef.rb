@@ -192,8 +192,8 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
       { 'x' => '-64mm', 'y' => 0, 'diameter' => '5mm', 'depth' => 'through' },
       { 'x' => 64, 'diameter' => 8, 'depth' => '18mm' },
     ] }
-    assert_equal([ 'thickness' ], HardwareDescriptorDef.primitive_variables(machining))
-    drillings = HardwareDescriptorDef.primitive_cylinders(machining, 'thickness' => 19 / 25.4)
+    assert_equal([ 'thickness_max' ], HardwareDescriptorDef.primitive_variables(machining))
+    drillings = HardwareDescriptorDef.primitive_cylinders(machining, 'thickness' => 19 / 25.4)   # No thickness_max : through is thickness
     assert_equal(2, drillings.length)
     assert_in_delta(-64 / 25.4, drillings[0].x, 1e-9)
     assert_in_delta(0.0, drillings[0].y, 1e-9)
@@ -204,6 +204,7 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     assert_in_delta(8 / 25.4, drillings[1].diameter, 1e-9)
     assert_in_delta(-18 / 25.4, drillings[1].z_min, 1e-9)
     assert_equal(1, HardwareDescriptorDef.primitive_cylinders(machining).length)  # No thickness : the through one is left out
+    assert_in_delta(-17 / 25.4, HardwareDescriptorDef.primitive_cylinders(machining, 'thickness' => 19 / 25.4, 'thickness_max' => 17 / 25.4)[0].z_min, 1e-9)
     assert_nil(HardwareDescriptorDef.primitive_cylinders('$LIB/cup.skp'))
     assert_nil(HardwareDescriptorDef.primitive_cylinders(nil))
   end
@@ -477,12 +478,12 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
   }.freeze
 
   def test_measures
-    assert_equal(%w[thickness thickness_a thickness_b], _def(DOWEL).measures)
-    assert_equal(%w[thickness], _def(SLIDES).measures)
+    assert_equal(%w[thickness thickness_min thickness_max thickness_a thickness_b thickness_min_a thickness_min_b thickness_max_a thickness_max_b], _def(DOWEL).measures)
+    assert_equal(%w[thickness thickness_min thickness_max], _def(SLIDES).measures)
     assert_equal(%w[thickness_a thickness_b], _def(DOWEL).used_measures)
     assert_equal([], _def(HINGE).used_measures)
     through = _with(HINGE, 'components' => { 'a' => { 'machining' => { 'drillings' => [ { 'diameter' => 5, 'depth' => 'through' } ] } } })
-    assert_equal(%w[thickness], _def(through).used_measures)
+    assert_equal(%w[thickness_max], _def(through).used_measures)
   end
 
   def test_variables_and_asserts
@@ -584,7 +585,7 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     mortise = HardwareDescriptorDef.primitive_cylinders(machining, 'thickness' => 19 / 25.4).first
     assert_in_delta(2 / 25.4, mortise.x, 1e-9)
     assert_in_delta(-19 / 25.4, mortise.z_min, 1e-9)
-    assert_equal([ 'thickness' ], HardwareDescriptorDef.primitive_variables(machining))
+    assert_equal([ 'thickness_max' ], HardwareDescriptorDef.primitive_variables(machining))
     # As long as wide : a cylinder
     assert(HardwareDescriptorDef.primitive_cylinders({ 'oblongs' => [ { 'length' => 5, 'width' => 5, 'from' => 0, 'to' => 1 } ] }).first.round?)
   end
@@ -601,6 +602,72 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
 
   # The bundled Dominos : depths on the steps of the machine - 12, 15, 20,
   # 25, 28 mm - the tenon shifted toward the deeper mortise.
+  def test_heads
+    mm = lambda { |v| v / 25.4 }
+    fn_profile = lambda { |cylinder| cylinder.profile.map { |r, z| [ (r * 25.4).round(6), (z * 25.4).round(6) ] } }
+    machining = { 'drillings' => [
+      { 'diameter' => '4mm', 'depth' => 'through', 'countersink' => { 'diameter' => '8mm', 'face' => 'opposite' } },
+      { 'diameter' => '4mm', 'depth' => '10mm', 'countersink' => { 'diameter' => '8mm', 'angle' => 90 } },
+      { 'diameter' => '4mm', 'depth' => '10mm', 'counterbore' => { 'diameter' => '10mm', 'depth' => '3mm', 'face' => 'contact' } },
+      { 'diameter' => '4mm', 'depth' => 'through', 'counterbore' => { 'diameter' => '10mm', 'depth' => '3mm', 'face' => 'opposite' } },
+      { 'diameter' => '4mm', 'depth' => '1mm', 'countersink' => { 'diameter' => '8mm' } },   # Deeper than the drilling : left out
+    ] }
+    drillings = HardwareDescriptorDef.primitive_cylinders(machining, 'thickness_max' => mm.call(19))
+    assert_equal(4, drillings.length)
+    assert_equal([ [ 2, 0 ], [ 2, -17 ], [ 4, -19 ] ], fn_profile.call(drillings[0]))
+    assert_equal([ [ 4, 0 ], [ 2, -2 ], [ 2, -10 ] ], fn_profile.call(drillings[1]))
+    assert_equal([ [ 5, 0 ], [ 5, -3 ], [ 2, -3 ], [ 2, -10 ] ], fn_profile.call(drillings[2]))
+    assert_equal([ [ 2, 0 ], [ 2, -16 ], [ 5, -16 ], [ 5, -19 ] ], fn_profile.call(drillings[3]))
+    assert_in_delta(mm.call(5), drillings[3].radius, 1e-9)
+    assert_in_delta(mm.call(2), HardwareDescriptorDef.primitive_cylinders({ 'drillings' => [ { 'diameter' => 4, 'depth' => 5 } ] }).first.radius, 1e-9)
+    # A countersink of 60° is deeper
+    sharp = HardwareDescriptorDef.primitive_cylinders({ 'drillings' => [ { 'diameter' => 4, 'depth' => 10, 'countersink' => { 'diameter' => 8, 'angle' => 60 } } ] }).first
+    assert_in_delta(-mm.call(2 * Math.sqrt(3)), sharp.profile[1][1], 1e-9)
+    # A countersunk screw, its head at the from end
+    screw = HardwareDescriptorDef.primitive_cylinders({ 'cylinders' => [ { 'diameter' => 4, 'from' => -19, 'to' => 21, 'countersink' => { 'diameter' => 8, 'end' => 'from' } } ] }).first
+    assert_equal([ [ 2, 21 ], [ 2, -17 ], [ 4, -19 ] ], fn_profile.call(screw))
+    # Its variables
+    assert_equal(%w[thickness_max head], HardwareDescriptorDef.primitive_variables({ 'drillings' => [ { 'diameter' => 4, 'depth' => 'through', 'counterbore' => { 'diameter' => '@head', 'depth' => 2 } } ] }))
+  end
+
+  def test_invalid_heads
+    fn = lambda { |part, value| _with(HINGE, 'components' => { 'a' => { part => value } }) }
+    fn_drilling = lambda { |head| fn.call('machining', { 'drillings' => [ { 'diameter' => 4, 'depth' => 10 }.merge(head) ] }) }
+    _assert_error(fn_drilling.call('countersink' => 8), 'drilling 1 countersink is not an object')
+    _assert_error(fn_drilling.call('countersink' => { 'diameter' => 8 }, 'counterbore' => { 'diameter' => 8, 'depth' => 2 }), 'drilling 1 has both countersink and counterbore')
+    _assert_error(fn_drilling.call('countersink' => { 'diameter' => 3 }), 'drilling 1 countersink diameter is not above the one of the drilling')
+    _assert_error(fn_drilling.call('countersink' => { 'diameter' => 8, 'angle' => 180 }), 'drilling 1 countersink angle is not an angle between 0 and 180')
+    _assert_error(fn_drilling.call('countersink' => { 'diameter' => 8, 'depth' => 2 }), "drilling 1 countersink has an unknown key 'depth'")
+    _assert_error(fn_drilling.call('counterbore' => { 'diameter' => 8 }), 'drilling 1 counterbore depth is not a positive length')
+    _assert_error(fn_drilling.call('countersink' => { 'diameter' => 8, 'face' => 'back' }), 'drilling 1 countersink face is neither "contact" nor "opposite"')
+    _assert_error(fn_drilling.call('countersink' => { 'diameter' => 8, 'face' => 'opposite' }), "drilling 1 countersink is on the opposite face of a drilling that isn't through")
+    _assert_error(fn_drilling.call('countersink' => { 'diameter' => '@nope' }), 'drilling 1 countersink diameter uses the unknown variable @nope')
+    _assert_error(fn.call('machining', { 'mortises' => [ { 'length' => 19, 'width' => 5, 'depth' => 10, 'countersink' => { 'diameter' => 8 } } ] }), "mortise 1 has an unknown key 'countersink'")
+    fn_cylinder = lambda { |head| fn.call('hardware', { 'cylinders' => [ { 'diameter' => 4, 'from' => 0, 'to' => 30 }.merge(head) ] }) }
+    _assert_error(fn_cylinder.call('countersink' => { 'diameter' => 8 }), 'cylinder 1 countersink has no end - "to" or "from"')
+    _assert_error(fn_cylinder.call('countersink' => { 'diameter' => 8, 'face' => 'opposite' }), "cylinder 1 countersink has an unknown key 'face'")
+    assert(_def(fn_cylinder.call('counterbore' => { 'diameter' => 8, 'depth' => 3, 'end' => 'to' })).valid?)
+  end
+
+  def test_bundled_screw
+    descriptor = HardwareDescriptorDef.new(JSON.parse(File.read(File.expand_path('../src/ladb_opencutlist/library/connectors/generic/screw-4x40.json', __dir__))))
+    assert(descriptor.valid?, descriptor.errors.inspect)
+    assert_equal(%w[thickness_max thickness_b thickness_min_a thickness_max_a], descriptor.used_measures)   # through : the own thickness_max
+    fn = lambda { |min_a, max_a, tb| descriptor.resolve_variables('thickness_max' => max_a / 25.4, 'thickness_min_a' => min_a / 25.4, 'thickness_max_a' => max_a / 25.4, 'thickness_b' => tb / 25.4) }
+    variables = fn.call(19, 19, 300)   # Flat on an edge
+    assert_equal([], descriptor.failed_asserts(variables))
+    screw = HardwareDescriptorDef.primitive_cylinders(descriptor.resolve_component('a').hardware, variables).first
+    hole = HardwareDescriptorDef.primitive_cylinders(descriptor.resolve_component('a').machining, variables).first
+    assert_in_delta(-19 / 25.4, screw.z_min, 1e-9)                 # Its head on the other face
+    assert_in_delta(21 / 25.4, screw.z_max, 1e-9)
+    assert_in_delta(4 / 25.4, screw.profile.last.first, 1e-9)
+    assert_in_delta(-19 / 25.4, hole.z_min, 1e-9)
+    assert_in_delta(4.25 / 25.4, hole.profile.last.first, 1e-9)
+    assert_equal([ '@thickness_max_a - @thickness_min_a <= 0.2mm' ], descriptor.failed_asserts(fn.call(17, 19, 300)))   # Faces not parallel
+    assert(descriptor.failed_asserts(fn.call(19, 19, 19)).any?)     # Comes out of b
+    assert(descriptor.failed_asserts(fn.call(30, 30, 300)).any?)    # Too short
+  end
+
   def test_bundled_dominos
     dir = File.expand_path('../src/ladb_opencutlist/library/connectors/festool', __dir__)
     {

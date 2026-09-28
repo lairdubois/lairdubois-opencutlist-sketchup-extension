@@ -1,0 +1,21 @@
+{
+  "format": "ocl-hardware",
+  "version": 1,
+  "id": "97185a3d-0716-45f5-8a18-abcba752038b",
+  "type": "connector",
+  "name": "Screw 4x40",
+  "variables": {
+    "embed": "40mm - @thickness_max_a"
+  },
+  "asserts": [ "@thickness_max_a - @thickness_min_a <= 0.2mm", "@embed >= 15mm", "@embed <= @thickness_b - 3mm" ],
+  "components": {
+    "a": {
+      "name": "Screw 4x40",
+      "hardware": { "cylinders": [ { "diameter": "4mm", "from": "-@thickness_max_a", "to": "@embed", "countersink": { "diameter": "8mm", "angle": 90, "end": "from" } } ] },
+      "machining": { "drillings": [ { "diameter": "4.5mm", "depth": "through", "countersink": { "diameter": "8.5mm", "angle": 90, "face": "opposite" } } ] },
+      "attributes": { "symmetrical":  true }
+    },
+    "b": { "machining": { "drillings": [ { "diameter": "2.5mm", "depth": "@embed" } ] } }
+  },
+  "options": { "height": "/2", "start_offset": "50mm", "end_offset": "50mm", "max_spacing": "300mm" }
+}
