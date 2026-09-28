@@ -5,7 +5,12 @@
   "type": "connector",
   "name": "Dowel 8x40",
   "components": {
-    "a": { "name": "Dowel 8x40", "hardware": true, "machining": true, "attributes": { "symmetrical":  true } },
+    "a": {
+      "name": "Dowel 8x40",
+      "hardware": { "cylinders": [ {"x": "0", "y": "0", "diameter": "8mm", "from": "-20mm", "to": "20mm"} ] },
+      "machining": { "drillings": [ {"x": "0", "y": "0", "diameter": "8mm", "depth": "21mm"} ] },
+      "attributes": { "symmetrical":  true }
+    },
     "b": { "machining": { "same_as": "a" } }
   },
   "options": { "height": "/2", "start_offset": "37mm", "end_offset": "37mm", "max_spacing": "500mm" }

@@ -694,22 +694,6 @@ module Ladb::OpenCutList
 
     # -- Drawing --
 
-    def _num_segments_by_radius(radius,
-                                min_num_segments: 8,
-                                max_num_segments: 24,
-                                max_segment_length: 2.mm,
-                                arc_angle: Geometrix::TWO_PI
-    )
-      segments = (arc_angle / (2 * Math.asin(max_segment_length / (radius * 2))))
-                   .ceil
-
-      # Compat Ruby 2.2 (no Numeric#clamp)
-      segments = [ [ segments, min_num_segments ].max, max_num_segments ].min
-
-      segments += 1 if segments.odd?
-      segments
-    end
-
     def _draw_box(entities, bounds)
 
       kb = Kuix::Bounds3d.new.copy!(bounds)
@@ -741,7 +725,7 @@ module Ladb::OpenCutList
       radius = bxf_cylinder.radius.to_l
       z_value = bxf_cylinder.z_value.to_l
 
-      num_segments = _num_segments_by_radius(radius)
+      num_segments = Geometrix::ArcUtils.num_segments_by_radius(radius)
 
       b_edges = entities.add_circle(ORIGIN, Z_AXIS, radius, num_segments)
       z_edges = entities.add_circle(ORIGIN.offset(Z_AXIS, z_value), Z_AXIS, radius, num_segments)
@@ -796,7 +780,7 @@ module Ladb::OpenCutList
 
         depth_v = bxf_machining.depth_orientation.to_v
 
-        num_segments = _num_segments_by_radius(radius, max_num_segments: 12)
+        num_segments = Geometrix::ArcUtils.num_segments_by_radius(radius, max_num_segments: 12)
 
         b_edges = group.entities.add_circle(ORIGIN, depth_v, radius, num_segments)
         z_edges = group.entities.add_circle(ORIGIN.offset(depth_v, depth), depth_v, radius, num_segments)
@@ -825,7 +809,7 @@ module Ladb::OpenCutList
         #
         # length_v = bxf_machining.length_orientation.to_v
         #
-        # num_segments = _num_segments_by_radius(radius, min_num_segments: 4, max_num_segments: 12, arc_angle: Geometrix::HALF_PI)
+        # num_segments = Geometrix::ArcUtils.num_segments_by_radius(radius, min_num_segments: 4, max_num_segments: 12, arc_angle: Geometrix::HALF_PI)
         #
         # btm_arc_origin = ORIGIN
         #                    .offset(X_AXIS, -radius)

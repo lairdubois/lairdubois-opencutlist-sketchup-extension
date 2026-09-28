@@ -1,17 +1,9 @@
 module Ladb::OpenCutList
 
   require_relative '../utils/dimension_utils'
+  require_relative '../utils/length_expression_utils'
 
   module UserTextHelper
-
-    # Operators and their precedence (larger = higher priority)
-    OPERATOR_PRECEDENCE = {
-      "+" => 1,
-      "-" => 1,
-      "*" => 2,
-      "/" => 2,
-      "±" => 3
-    }.freeze
 
     # Read length from 'text'
     # Examples :
@@ -24,6 +16,7 @@ module Ladb::OpenCutList
     #  @*3      → 'targeted_length' * 3
     #  @/2      → 'targeted_length' / 2
     #  2m*(2+3) → 10m
+    # Computed in model units : a bare number is a length as well as a factor.
     def _read_user_text_length(tool, text, targeted_length = 0)
       return targeted_length if text.nil? || text.empty?
 
@@ -31,129 +24,25 @@ module Ladb::OpenCutList
       targeted_length = targeted_length.abs
       targeted_length = DimensionUtils.value_to_model_unit_float(targeted_length.to_l)
 
-      # Step 1: Tokenization
-      # --------------------
-
-      # 1. Add | around each token to make them easier to split it
-      tokens_string = text.gsub(/(@|\d+'(?:\s*\d\s+)?(?:\d+\/)?\d+"*|\d+'*\s+(?:\d+\/)?\d+"*|\d+\/\d+"*|(?:\d+(?:[.,]\d+)*|[.,]\d+)(?:\s*(?:mm|cm|m|"|'))?)/i, '|\1|')
-                          .gsub(/([()])/, '|\1|')
-                          .gsub(/(-)/, '|\1|')
-
-      # 2. Split tokens by '|'
-      tokens = tokens_string.downcase.split(/\|+/).map { |token| token.strip unless token.nil? || token.empty? }.compact
-
-      # 3. Manage 'negative' operator
-      tokens.each_with_index do |token, index|
-        if token == '-'
-          if index == 0 ||
-             tokens[index - 1] == '(' ||
-             tokens[index - 1] == '+' || tokens[index - 1] == '-' || tokens[index - 1] == '*' || tokens[index - 1] == '/'
-            tokens[index] = '±'
-          elsif tokens[index - 1] == '±'
-            tokens[index - 1] = nil
-            tokens[index] = nil
-          end
-        end
-      end
-      tokens.compact!
-
-      # Step 2 : Converting to RPN
-      # --------------------------
-
-      rpn_tokens = []
-      operator_stack = []
-
-      tokens.each do |token|
-        if OPERATOR_PRECEDENCE.key?(token) # It's an operator
-          # Pops operators of greater than or equal precedence
-          while operator_stack.any? &&
-                OPERATOR_PRECEDENCE.key?(operator_stack.last) &&
-                OPERATOR_PRECEDENCE[operator_stack.last] >= OPERATOR_PRECEDENCE[token]
-            rpn_tokens << operator_stack.pop
-          end
-          operator_stack << token
-        elsif token == "("
-          operator_stack << token
-        elsif token == ")"
-          # Pops all operators until the matching opening parenthesis is found
-          while operator_stack.any? && operator_stack.last != "("
-            rpn_tokens << operator_stack.pop
-          end
-          # If the stack is empty or the opening parenthesis was not found
-          raise PLUGIN.get_i18n_string('tool.default.error.unexpected_close_parenthesis') unless operator_stack.pop == "("
-        else
-          rpn_tokens << token
-        end
-      end
-
-      # Pops all remaining operators into the output
-      while operator_stack.any?
-        # If we find an opening parenthesis here, it means that a closing parenthesis is missing.
-        raise PLUGIN.get_i18n_string('tool.default.error.missing_close_parenthesis') if operator_stack.last == "("
-        rpn_tokens << operator_stack.pop
-      end
-
-      # Step 3: Evaluate RPN tokens
-      # ---------------------------
-
-      stack = []
-
-      rpn_tokens.each do |token|
-        if OPERATOR_PRECEDENCE.key?(token) # It's an operator
-
-          if token == "±"
-
-            right = stack.pop
-
-            raise PLUGIN.get_i18n_string('tool.default.error.missing_operand') unless right
-
-            right = DimensionUtils.value_to_model_unit_float(right)
-            result = -right
-
-            stack << result
-          else
-
-            right = stack.pop
-            left = stack.pop
-
-            raise PLUGIN.get_i18n_string('tool.default.error.missing_operand') unless left && right
-
-            left = DimensionUtils.value_to_model_unit_float(left)
-            right = DimensionUtils.value_to_model_unit_float(right)
-
-            case token
-            when "+"
-              result = left + right
-            when "-"
-              result = left - right
-            when "*"
-              result = left * right
-            when "/"
-              raise ZeroDivisionError.new(PLUGIN.get_i18n_string('tool.default.error.zero_division')) if right == 0.0
-              result = left / right
-            end
-
-            stack << result
-          end
-
-        elsif token == '@'
-          stack << DimensionUtils.value_to_model_unit_float(targeted_length)
-        else
-          stack << token
-        end
-      end
-
-      # Stack should contain only one value
-      raise "" unless stack.size == 1
+      value, _ = LengthExpressionUtils.evaluate(
+        text,
+        read_literal: lambda { |literal| [ DimensionUtils.value_to_model_unit_float(literal.downcase), nil ] },
+        read_variable: lambda { |name|
+          raise LengthExpressionUtils::LengthExpressionError.new('syntax_error', { :error => "@#{name}" }, "@#{name}") unless name.empty?
+          [ targeted_length, nil ]
+        }
+      )
 
       # Use base_factor to return the length with a sign corresponding to the base_length
-      (DimensionUtils.model_unit_float_to_length(DimensionUtils.value_to_model_unit_float(stack.first)) * base_factor).to_l
+      (DimensionUtils.model_unit_float_to_length(value.to_f) * base_factor).to_l
 
     rescue => e
       UI.beep
       errors = [ [ 'tool.default.error.invalid_length', { :value => text } ] ]
-      if e.is_a?(ZeroDivisionError)
-        errors << [ "tool.default.error.zero_division" ]
+      if e.is_a?(LengthExpressionUtils::LengthExpressionError) && e.key == 'zero_division'
+        errors << [ 'tool.default.error.zero_division' ]
+      elsif e.is_a?(LengthExpressionUtils::LengthExpressionError) && e.key != 'syntax_error'
+        errors << [ 'tool.default.error.syntax_error', { :error => PLUGIN.get_i18n_string("tool.default.error.#{e.key}") } ]
       elsif !e.message.empty?
         errors << [ 'tool.default.error.syntax_error', { :error => e.message } ]
       end

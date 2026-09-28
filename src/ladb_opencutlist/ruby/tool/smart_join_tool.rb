@@ -5,6 +5,7 @@ module Ladb::OpenCutList
   require_relative '../utils/mass_utils'
   require_relative '../utils/path_utils'
   require_relative '../utils/transformation_utils'
+  require_relative '../lib/geometrix/geometrix'
   require_relative '../lib/fiddle/clippy/clippy'
   require_relative '../lib/fiddle/skpy/skpy'
   require_relative '../helper/user_text_helper'
@@ -663,11 +664,20 @@ module Ladb::OpenCutList
     end
 
     # The ref of the given part - :hardware or :machining - of the given slot's
-    # component. Machinings given as primitives are not laid yet.
+    # component. nil for a machining given as primitives - see
+    # _get_hardware_component_primitives.
     def _get_hardware_component_ref(slot, part)
       return nil if (component = _get_hardware_component(slot)).nil?
       ref = component.send(part)
       ref.is_a?(String) ? ref : nil
+    end
+
+    # The primitives of the given part - :hardware or :machining - of the
+    # given slot's component when it is given as such, nil otherwise.
+    def _get_hardware_component_primitives(slot, part)
+      return nil if (component = _get_hardware_component(slot)).nil?
+      primitives = component.send(part)
+      HardwareDescriptorDef.primitives?(primitives) ? primitives : nil
     end
 
     # The name the definition of the given part - :hardware or :machining - of
@@ -701,7 +711,10 @@ module Ladb::OpenCutList
     def _name_hardware_definition(model, definition, name)
       return unless definition.is_a?(Sketchup::ComponentDefinition) && name.is_a?(String) && !name.empty?
       return if definition.name == name || definition.name =~ /\A#{Regexp.escape(name)}#\d+\z/
-      definition.name = model.definitions[name].nil? ? name : model.definitions.unique_name(name)
+      unique_name = name
+      index = 1
+      unique_name = "#{name}##{index += 1}" until model.definitions[unique_name].nil?  # Not unique_name : it eats a trailing number - "M8" -> "M#2"
+      definition.name = unique_name
     end
 
     # Gives the given hardware definition the attributes of the given slot's
@@ -900,6 +913,11 @@ module Ladb::OpenCutList
         machining_a_drawing_def = fn_get_drawing_def.call(machining_a_definition)
         machining_b_drawing_def = fn_get_drawing_def.call(machining_b_definition)
 
+        hardware_a_primitives = hardware_a_definition.nil? ? _get_hardware_component_primitives(:a, :hardware) : nil
+        hardware_b_primitives = hardware_b_definition.nil? ? _get_hardware_component_primitives(:b, :hardware) : nil
+        machining_a_primitives = machining_a_definition.nil? ? _get_hardware_component_primitives(:a, :machining) : nil
+        machining_b_primitives = machining_b_definition.nil? ? _get_hardware_component_primitives(:b, :machining) : nil
+
         fn_get_material = lambda do |ref, default_color = nil, default_type = nil|
           return nil if !ref.is_a?(String) || ref.strip.empty?
           ref = PLUGIN.resolve_library_ref(ref)   # '$LIB/…' and '$OCL/…' refs point to a file of a library
@@ -949,18 +967,144 @@ module Ladb::OpenCutList
       bounds.add(hardware_b_drawing_def.bounds) unless hardware_b_drawing_def.nil?
       bounds.add(machining_a_drawing_def.bounds) unless machining_a_drawing_def.nil?
       bounds.add(machining_b_drawing_def.bounds) unless machining_b_drawing_def.nil?
+      [ hardware_a_primitives, hardware_b_primitives, machining_a_primitives, machining_b_primitives ].compact.each do |primitives|
+        bounds.add(_get_primitives_bounds(primitives))
+      end
 
       @geometries_def = GeometriesDef.new(
-        GeometriesEntityDef.new(hardware_a_definition, hardware_a_drawing_def),
-        GeometriesEntityDef.new(hardware_b_definition, hardware_b_drawing_def),
-        GeometriesEntityDef.new(machining_a_definition, machining_a_drawing_def),
-        GeometriesEntityDef.new(machining_b_definition, machining_b_drawing_def),
+        GeometriesEntityDef.new(hardware_a_definition, hardware_a_drawing_def, hardware_a_primitives, :a, :hardware),
+        GeometriesEntityDef.new(hardware_b_definition, hardware_b_drawing_def, hardware_b_primitives, :b, :hardware),
+        GeometriesEntityDef.new(machining_a_definition, machining_a_drawing_def, machining_a_primitives, :a, :machining),
+        GeometriesEntityDef.new(machining_b_definition, machining_b_drawing_def, machining_b_primitives, :b, :machining),
         hardware_material,
         machining_material,
         hardware_layer,
         machining_layer,
         bounds,
       )
+    end
+
+    # -- Primitives --
+
+    # The bounds of the given primitives in the laying frame, their
+    # variables at 0 - what depends on them isn't known yet.
+    def _get_primitives_bounds(primitives)
+      bounds = Geom::BoundingBox.new
+      variables = Hash[HardwareDescriptorDef.primitive_variables(primitives).map { |name| [ name, 0.0 ] }]
+      HardwareDescriptorDef.primitive_cylinders(primitives, variables).each do |cylinder|
+        r = cylinder.diameter / 2
+        bounds.add(Geom::Point3d.new(cylinder.x - r, cylinder.y - r, cylinder.z_min))
+        bounds.add(Geom::Point3d.new(cylinder.x + r, cylinder.y + r, cylinder.z_max))
+      end
+      bounds
+    end
+
+    # The variables the given primitives use, measured at the given
+    # placement - see HardwareDescriptorDef::VARIABLES.
+    def _get_primitives_variables(primitives, placement)
+      variables = {}
+      HardwareDescriptorDef.primitive_variables(primitives).each do |name|
+        case name
+        when HardwareDescriptorDef::VARIABLE_THICKNESS
+          variables[name] = _get_placement_thickness(placement)
+        end
+      end
+      variables
+    end
+
+    # How far the part of the given placement goes toward -Z of the laying
+    # frame.
+    def _get_placement_thickness(placement)
+      ti = placement.transformation.inverse
+      min_z = 0.0
+      placement.definition.entities.each do |entity|
+        next unless entity.is_a?(Sketchup::Edge)
+        entity.vertices.each do |vertex|
+          z = vertex.position.transform(ti).z.to_f
+          min_z = z if z < min_z
+        end
+      end
+      -min_z
+    end
+
+    # The solids of the given primitives resolved at the given placement, as
+    # [ x, y, diameter, z_min, z_max ] in inches, rounded : the key of their
+    # geometry.
+    def _get_primitives_dimensions(primitives, placement)
+      HardwareDescriptorDef.primitive_cylinders(primitives, _get_primitives_variables(primitives, placement)).map { |cylinder|
+        [ cylinder.x, cylinder.y, cylinder.diameter, cylinder.z_min, cylinder.z_max ].map { |v| v.to_f.round(6) }
+      }
+    end
+
+    # The segments of the circle of a primitive of the given diameter.
+    def _get_primitive_num_segments(diameter)
+      Geometrix::ArcUtils.num_segments_by_radius(diameter / 2)
+    end
+
+    # The edges of the given primitives dimensions, as segments in the laying
+    # frame : both circles and four generatrices of each cylinder.
+    def _get_primitives_segments(dimensions)
+      segments = []
+      dimensions.each do |x, y, diameter, z_min, z_max|
+        count = _get_primitive_num_segments(diameter)
+        r = diameter / 2
+        step = [ count / 4, 1 ].max
+        points = (0...count).map { |i| a = 2 * Math::PI * i / count; [ x + r * Math.cos(a), y + r * Math.sin(a) ] }
+        points.each_with_index do |(px, py), i|
+          nx, ny = points[(i + 1) % points.length]
+          segments << Geom::Point3d.new(px, py, z_max) << Geom::Point3d.new(nx, ny, z_max)
+          segments << Geom::Point3d.new(px, py, z_min) << Geom::Point3d.new(nx, ny, z_min)
+          segments << Geom::Point3d.new(px, py, z_max) << Geom::Point3d.new(px, py, z_min) if i % step == 0
+        end
+      end
+      segments
+    end
+
+    # The segments to preview the given geometry - hardware or machining -
+    # with at the given placement, nil when there is none.
+    def _get_geometry_preview_segments(geometry, placement)
+      if geometry.drawing_def
+        return geometry.drawing_def.edge_manipulators.flat_map(&:segment) + geometry.drawing_def.curve_manipulators.flat_map(&:segments)
+      end
+      return nil if geometry.primitives.nil?
+      _get_primitives_segments(_get_primitives_dimensions(geometry.primitives, placement))
+    end
+
+    # The definition of the given geometry - hardware or machining - to lay
+    # at the given placement : its SKP's one, or the one generated from its
+    # primitives - one per set of measures they use, a part thickness -
+    # found by the key of its geometry. To be called in an operation.
+    def _get_geometry_definition(geometry, placement)
+      return geometry.definition unless geometry.definition.nil?
+      return nil if geometry.primitives.nil?
+
+      model = Sketchup.active_model
+      dimensions = _get_primitives_dimensions(geometry.primitives, placement)
+      return nil if dimensions.empty?
+      key = "#{geometry.part}:#{dimensions.to_json}"
+      name = _get_hardware_definition_name(geometry.slot, geometry.part)
+
+      definition = model.definitions.find { |d| d.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, HardwareDescriptorDef::DEFINITION_ATTRIBUTE_PRIMITIVES) == key }
+      if definition.nil?
+        definition = model.definitions.add(name.is_a?(String) && !name.empty? ? name : geometry.part.to_s)
+        dimensions.each do |x, y, diameter, z_min, z_max|
+          _add_primitive_cylinder(definition.entities, x, y, diameter, z_min, z_max)
+        end
+        definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, HardwareDescriptorDef::DEFINITION_ATTRIBUTE_PRIMITIVES, key)
+      end
+      _name_hardware_definition(model, definition, name)
+      _write_hardware_attributes(definition, geometry.slot) if geometry.part == :hardware
+      definition
+    end
+
+    # A solid cylinder along Z, from z_min to z_max.
+    def _add_primitive_cylinder(entities, x, y, diameter, z_min, z_max)
+      return if z_max <= z_min
+      edges = entities.add_circle(Geom::Point3d.new(x, y, z_max), Z_AXIS, diameter / 2, _get_primitive_num_segments(diameter))
+      face = entities.add_face(edges)
+      return if face.nil?
+      face.reverse! if face.normal.z > 0
+      face.pushpull(z_max - z_min)  # Along its normal : toward -Z
     end
 
     # -- UTILS --
@@ -1242,9 +1386,11 @@ module Ladb::OpenCutList
           (machining_layer.nil? || machining_layer.valid?)
       end
     end
-    GeometriesEntityDef = Struct.new(:definition, :drawing_def) do
+    # primitives : the Hash of the part given as primitives - generated where
+    # it is laid - instead of a definition ; slot, part : whose it is.
+    GeometriesEntityDef = Struct.new(:definition, :drawing_def, :primitives, :slot, :part) do
       def empty?
-        definition.nil? || !valid?
+        definition.nil? && primitives.nil? || !valid?
       end
       def valid?
         definition.nil? || definition.valid?
@@ -1761,6 +1907,8 @@ module Ladb::OpenCutList
 
           hardware = placement.role == :a ? hardware_a : hardware_b
           machining = placement.role == :a ? machining_a : machining_b
+          machining_segments = _get_geometry_preview_segments(machining, placement)
+          hardware_segments = _get_geometry_preview_segments(hardware, placement)
 
           placement.instance_transformations.each do |instance_transformation|
 
@@ -1769,23 +1917,23 @@ module Ladb::OpenCutList
 
             # -- Hardware --
 
-            _preview_join_drawing_def(
-              hardware.drawing_def,
+            _preview_join_segments(
+              hardware_segments,
               t,
               picked ? COLOR_HARDWARE_PREVIEW : COLOR_HARDWARE_PROPAGATED_PREVIEW,
               1,
               LAYER_3D_HARDWARE_PREVIEW,
-            ) if hardware.drawing_def
+            ) if hardware_segments
 
             # -- Machinings --
 
-            _preview_join_drawing_def(
-              machining.drawing_def,
+            _preview_join_segments(
+              machining_segments,
               t,
               picked ? COLOR_MACHINING_PREVIEW : COLOR_MACHINING_PROPAGATED_PREVIEW,
               0.5,
               LAYER_3D_MACHINING_PREVIEW
-            ) if machining.drawing_def
+            ) if machining_segments
 
           end
 
@@ -1832,13 +1980,10 @@ module Ladb::OpenCutList
 
     end
 
-    def _preview_join_drawing_def(drawing_def, transformation, color, line_width, layer)
+    def _preview_join_segments(segments, transformation, color, line_width, layer)
 
       k_segments = Kuix::Segments.new
-      k_segments.add_segments(
-        drawing_def.edge_manipulators.flat_map(&:segment) +
-        drawing_def.curve_manipulators.flat_map(&:segments)
-      )
+      k_segments.add_segments(segments)
       k_segments.color = color
       k_segments.line_width = line_width
       k_segments.transformation = transformation
@@ -1977,8 +2122,8 @@ module Ladb::OpenCutList
           machining = placement.role == :a ? machining_a : machining_b
           entities = placement.entities
 
-          _add_glued_instance(hardware.definition, hardware_material, hardware_layer, placement.face, entities, placement.transformation, ORIGIN, IDENTITY)
-          _add_glued_instance(machining.definition, machining_material, machining_layer, placement.face, entities, placement.transformation, ORIGIN, IDENTITY)
+          _add_glued_instance(_get_geometry_definition(hardware, placement), hardware_material, hardware_layer, placement.face, entities, placement.transformation, ORIGIN, IDENTITY)
+          _add_glued_instance(_get_geometry_definition(machining, placement), machining_material, machining_layer, placement.face, entities, placement.transformation, ORIGIN, IDENTITY)
 
         end
 
@@ -3269,13 +3414,10 @@ module Ladb::OpenCutList
         machining_a = geometries_def.machining_a
         machining_b = geometries_def.machining_b
 
-        fn_preview_join_drawing_def = lambda do |drawing_def, transformation, color, line_width|
+        fn_preview_join_segments = lambda do |segments, transformation, color, line_width|
 
           k_segments = Kuix::Segments.new
-          k_segments.add_segments(
-            drawing_def.edge_manipulators.flat_map(&:segment) +
-            drawing_def.curve_manipulators.flat_map(&:segments)
-          )
+          k_segments.add_segments(segments)
           k_segments.color = color
           k_segments.line_width = line_width
           k_segments.transformation = transformation
@@ -3290,6 +3432,8 @@ module Ladb::OpenCutList
 
           hardware = placement.role == :a ? hardware_a : hardware_b
           machining = placement.role == :a ? machining_a : machining_b
+          machining_segments = _get_geometry_preview_segments(machining, placement)
+          hardware_segments = _get_geometry_preview_segments(hardware, placement)
 
           placement.instance_transformations.each do |instance_transformation|
 
@@ -3298,21 +3442,21 @@ module Ladb::OpenCutList
 
             # -- Machinings --
 
-            fn_preview_join_drawing_def.call(
-              machining.drawing_def,
+            fn_preview_join_segments.call(
+              machining_segments,
               t,
               picked ? COLOR_MACHINING_PREVIEW : COLOR_MACHINING_PROPAGATED_PREVIEW,
               0.5
-            ) if machining.drawing_def
+            ) if machining_segments
 
             # -- Hardware --
 
-            fn_preview_join_drawing_def.call(
-              hardware.drawing_def,
+            fn_preview_join_segments.call(
+              hardware_segments,
               t,
               picked ? COLOR_HARDWARE_PREVIEW : COLOR_HARDWARE_PROPAGATED_PREVIEW,
               1
-            ) if hardware.drawing_def
+            ) if hardware_segments
 
           end
 
@@ -3479,8 +3623,8 @@ module Ladb::OpenCutList
           machining = placement.role == :a ? machining_a : machining_b
           entities = placement.entities
 
-          _add_glued_instance(hardware.definition, hardware_material, hardware_layer, placement.face, entities, placement.transformation, ORIGIN, IDENTITY)
-          _add_glued_instance(machining.definition, machining_material, machining_layer, placement.face, entities, placement.transformation, ORIGIN, IDENTITY)
+          _add_glued_instance(_get_geometry_definition(hardware, placement), hardware_material, hardware_layer, placement.face, entities, placement.transformation, ORIGIN, IDENTITY)
+          _add_glued_instance(_get_geometry_definition(machining, placement), machining_material, machining_layer, placement.face, entities, placement.transformation, ORIGIN, IDENTITY)
 
         end
 

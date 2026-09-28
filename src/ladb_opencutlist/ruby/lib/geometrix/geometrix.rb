@@ -24,6 +24,7 @@ module Ladb::OpenCutList
 
     require_relative 'approximator/ellipse_approximator'
 
+    require_relative 'utils/arc_utils'
     require_relative 'utils/distance_utils'
 
   end

@@ -96,7 +96,7 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
   end
 
   def test_machining_only_component_is_valid
-    descriptor = _def(_with(HINGE, 'components' => { 'a' => { 'machining' => { 'holes' => [] } } }))
+    descriptor = _def(_with(HINGE, 'components' => { 'a' => { 'machining' => { 'drillings' => [ { 'diameter' => '5mm', 'depth' => '12mm' } ] } } }))
     assert(descriptor.valid?, descriptor.errors.inspect)
   end
 
@@ -180,9 +180,104 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
   end
 
   def test_primitive_machining_is_kept
-    holes = { 'holes' => [ { 'x' => '0', 'y' => '0', 'diameter' => '5mm', 'depth' => 'through' } ] }
-    descriptor = _def(_with(HINGE, 'components' => { 'a' => { 'hardware' => 'h.skp', 'machining' => holes } }))
-    assert_equal(holes, descriptor.resolve_component('a').machining)
+    drillings = { 'drillings' => [ { 'x' => '0', 'y' => '0', 'diameter' => '5mm', 'depth' => 'through' } ] }
+    descriptor = _def(_with(HINGE, 'components' => { 'a' => { 'hardware' => 'h.skp', 'machining' => drillings } }))
+    assert_equal(drillings, descriptor.resolve_component('a').machining)
+  end
+
+  # -- Machining primitives --
+
+  def test_drillings
+    machining = { 'drillings' => [
+      { 'x' => '-64mm', 'y' => 0, 'diameter' => '5mm', 'depth' => 'through' },
+      { 'x' => 64, 'diameter' => 8, 'depth' => '18mm' },
+    ] }
+    assert_equal([ 'thickness' ], HardwareDescriptorDef.primitive_variables(machining))
+    drillings = HardwareDescriptorDef.primitive_cylinders(machining, 'thickness' => 19 / 25.4)
+    assert_equal(2, drillings.length)
+    assert_in_delta(-64 / 25.4, drillings[0].x, 1e-9)
+    assert_in_delta(0.0, drillings[0].y, 1e-9)
+    assert_in_delta(5 / 25.4, drillings[0].diameter, 1e-9)
+    assert_in_delta(-19 / 25.4, drillings[0].z_min, 1e-9)
+    assert_in_delta(0.0, drillings[0].z_max, 1e-9)
+    assert_in_delta(64 / 25.4, drillings[1].x, 1e-9)
+    assert_in_delta(8 / 25.4, drillings[1].diameter, 1e-9)
+    assert_in_delta(-18 / 25.4, drillings[1].z_min, 1e-9)
+    assert_equal(1, HardwareDescriptorDef.primitive_cylinders(machining).length)  # No thickness : the through one is left out
+    assert_nil(HardwareDescriptorDef.primitive_cylinders('$LIB/cup.skp'))
+    assert_nil(HardwareDescriptorDef.primitive_cylinders(nil))
+  end
+
+  # -- Length expressions --
+
+  def test_length_expressions
+    v = { 'thickness' => 19 / 25.4 }
+    fn = lambda { |expression, negative_allowed = true| HardwareDescriptorDef.to_length(expression, negative_allowed, v) }
+    assert_in_delta(19 / 25.4, fn.call('@thickness'), 1e-9)
+    assert_in_delta(17 / 25.4, fn.call('@thickness - 2mm'), 1e-9)
+    assert_in_delta(17 / 25.4, fn.call('@thickness-2mm'), 1e-9)
+    assert_in_delta(9.5 / 25.4, fn.call('@thickness / 2'), 1e-9)
+    assert_in_delta(9.5 / 25.4, fn.call('0.5 * @thickness'), 1e-9)
+    assert_in_delta(9.5 / 25.4, fn.call('0,5*@thickness'), 1e-9)
+    assert_in_delta(-19 / 25.4, fn.call('-@thickness'), 1e-9)
+    assert_in_delta(-9 / 25.4, fn.call('-(@thickness - 1cm)'), 1e-9)
+    assert_in_delta(19 / 25.4 + 1, fn.call('@thickness + 1"'), 1e-9)
+    assert_nil(fn.call('@thickness + 1in'))        # SketchUp reads no 'in'
+    assert_in_delta(19 / 25.4 + 18, fn.call("@thickness + 1' 6\""), 1e-9)
+    assert_in_delta(19 / 25.4 + 0.75, fn.call('@thickness + 3/4"'), 1e-9)
+    assert_in_delta(19 / 25.4 / 4 * 10, fn.call('@thickness * 10/4'), 1e-9)
+    assert_in_delta(19 / 25.4 + 12, fn.call("@thickness + 1'"), 1e-9)
+    assert_nil(fn.call('@thickness + 2'))          # A length plus a factor
+    assert_nil(fn.call('@thickness * @thickness')) # An area
+    assert_nil(fn.call('@thickness / 1mm'))        # A factor
+    assert_nil(fn.call('@thickness / 0'))
+    assert_nil(fn.call('@thickness - '))
+    assert_nil(fn.call('(@thickness'))
+    assert_nil(fn.call('@thickness; exit'))
+    assert_nil(fn.call('@depth'))                  # Not given
+    assert_nil(fn.call('2mm - @thickness', false)) # Negative
+    assert_nil(HardwareDescriptorDef.to_length('@thickness'))  # No variables
+  end
+
+  def test_expressions_in_primitives
+    hardware = { 'cylinders' => [ { 'diameter' => '@thickness / 2', 'from' => '-@thickness', 'to' => '5mm' } ] }
+    descriptor = _def(_with(HINGE, 'components' => { 'a' => { 'hardware' => hardware } }))
+    assert(descriptor.valid?, descriptor.errors.inspect)
+    assert_equal([ 'thickness' ], HardwareDescriptorDef.primitive_variables(hardware))
+    cylinders = HardwareDescriptorDef.primitive_cylinders(hardware, 'thickness' => 20 / 25.4)
+    assert_in_delta(10 / 25.4, cylinders[0].diameter, 1e-9)
+    assert_in_delta(-20 / 25.4, cylinders[0].z_min, 1e-9)
+    assert_in_delta(5 / 25.4, cylinders[0].z_max, 1e-9)
+    fn = lambda { |cylinder| _with(HINGE, 'components' => { 'a' => { 'hardware' => { 'cylinders' => [ cylinder ] } } }) }
+    _assert_error(fn.call({ 'diameter' => 8, 'from' => '-@depth', 'to' => 5 }), 'cylinder 1 from uses the unknown variable @depth')
+    _assert_error(fn.call({ 'diameter' => 8, 'from' => '-@thickness +', 'to' => 5 }), 'cylinder 1 from is not a length')
+    _assert_error(fn.call({ 'diameter' => '@thickness * 2 - 1m', 'from' => 0, 'to' => 5 }), 'cylinder 1 diameter is not a positive length')
+    descriptor = _def(fn.call({ 'diameter' => 8, 'from' => '@thickness', 'to' => 5 }))
+    assert(descriptor.valid?, descriptor.errors.inspect)  # Depends on where it is laid
+  end
+
+  def test_drillings_follow_links
+    machining = { 'drillings' => [ { 'diameter' => '5mm', 'depth' => '12mm' } ] }
+    descriptor = _def(_with(HINGE, 'components' => { 'a' => { 'hardware' => 'h.skp', 'machining' => machining }, 'b' => { 'machining' => { 'same_as' => 'a' } } }))
+    assert(descriptor.valid?, descriptor.errors.inspect)
+    component = descriptor.resolve_component('b')
+    assert_equal(machining, component.machining)
+    assert_equal('a', component.part_slots['machining'])
+  end
+
+  def test_invalid_drillings
+    fn = lambda { |machining| _with(HINGE, 'components' => { 'a' => { 'machining' => machining } }) }
+    _assert_error(fn.call({ 'holes' => [] }), "machining has an unknown primitive 'holes'")
+    _assert_error(fn.call({ 'cylinders' => [ { 'diameter' => '8mm', 'from' => 0, 'to' => 5 } ] }), "machining has an unknown primitive 'cylinders'")
+    _assert_error(fn.call({ 'drillings' => [] }), 'machining drillings is not a list of drillings')
+    _assert_error(fn.call({ 'drillings' => [ 'x' ] }), 'drilling 1 is not an object')
+    _assert_error(fn.call({ 'drillings' => [ { 'depth' => '5mm' } ] }), 'drilling 1 diameter is not a positive length')
+    _assert_error(fn.call({ 'drillings' => [ { 'diameter' => '-5mm', 'depth' => '5mm' } ] }), 'drilling 1 diameter is not a positive length')
+    _assert_error(fn.call({ 'drillings' => [ { 'diameter' => '5mm' } ] }), 'drilling 1 depth is neither "through" nor a positive length')
+    _assert_error(fn.call({ 'drillings' => [ { 'diameter' => '5mm', 'depth' => 'deep' } ] }), 'drilling 1 depth is neither')
+    _assert_error(fn.call({ 'drillings' => [ { 'x' => [ 1 ], 'diameter' => '5mm', 'depth' => '5mm' } ] }), 'drilling 1 x is not a length')
+    _assert_error(fn.call({ 'drillings' => [ { 'diameter' => '5mm', 'depth' => '5mm', 'angle' => 90 } ] }), "drilling 1 has an unknown key 'angle'")
+    _assert_error(fn.call({ 'drillings' => [ { 'diameter' => '5mm', 'depth' => '5mm', 'segments' => 12 } ] }), "drilling 1 has an unknown key 'segments'")
   end
 
   def test_load
@@ -243,7 +338,7 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
   def test_invalid_parts
     _assert_error(_with(CONVENTION, 'components' => { 'a' => { 'hardware' => false } }), 'neither hardware nor machining')
     _assert_error(_with(CONVENTION, 'components' => { 'a' => { 'hardware' => 3 } }), 'hardware is neither true, a path nor a link')
-    _assert_error(_with(CONVENTION, 'components' => { 'a' => { 'hardware' => { 'holes' => [] } } }), 'hardware is neither true, a path nor a link')
+    _assert_error(_with(CONVENTION, 'components' => { 'a' => { 'hardware' => { 'holes' => [] } } }), "hardware has an unknown primitive 'holes'")
     _assert_error(_with(CONVENTION, 'components' => { 'a' => { 'machining' => { 'same_as' => 'a' } } }), 'machining links to itself')
     _assert_error(_with(CONVENTION, 'components' => { 'a' => { 'machining' => { 'same_as' => 'z' } } }), 'machining links to unknown slot')
   end
@@ -327,6 +422,39 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     data = JSON.parse(JSON.generate(SLIDES))
     data['components']['b']['attributes'] = { 'role' => 'slide' }
     _assert_error(data, "component 'b' links to another slot and has attributes")
+  end
+
+  def test_cylinders
+    hardware = { 'cylinders' => [ { 'diameter' => '8mm', 'from' => '-20mm', 'to' => 20 }, { 'x' => '10mm', 'y' => -5, 'diameter' => 4, 'from' => 0, 'to' => '3mm' } ] }
+    descriptor = _def(_with(HINGE, 'components' => { 'a' => { 'hardware' => hardware } }))
+    assert(descriptor.valid?, descriptor.errors.inspect)
+    component = descriptor.resolve_component('a')
+    assert_equal(hardware, component.hardware)
+    assert_equal('a', component.part_slots['hardware'])
+    assert_equal([], HardwareDescriptorDef.primitive_variables(hardware))
+    cylinders = HardwareDescriptorDef.primitive_cylinders(component.hardware)
+    assert_equal(2, cylinders.length)
+    assert_in_delta(0.0, cylinders[0].x, 1e-9)
+    assert_in_delta(8 / 25.4, cylinders[0].diameter, 1e-9)
+    assert_in_delta(-20 / 25.4, cylinders[0].z_min, 1e-9)
+    assert_in_delta(20 / 25.4, cylinders[0].z_max, 1e-9)
+    assert_in_delta(10 / 25.4, cylinders[1].x, 1e-9)
+    assert_in_delta(-5 / 25.4, cylinders[1].y, 1e-9)
+    assert_in_delta(0.0, cylinders[1].z_min, 1e-9)
+    assert_nil(HardwareDescriptorDef.primitive_cylinders('$LIB/dowel.skp'))
+  end
+
+  def test_invalid_cylinders
+    fn = lambda { |hardware| _with(HINGE, 'components' => { 'a' => { 'hardware' => hardware } }) }
+    _assert_error(fn.call({}), "component 'a' hardware is neither true, a path nor a link")
+    _assert_error(fn.call({ 'drillings' => [ { 'diameter' => '5mm', 'depth' => '5mm' } ] }), "hardware has an unknown primitive 'drillings'")
+    _assert_error(fn.call({ 'cylinders' => [] }), 'hardware cylinders is not a list of cylinders')
+    _assert_error(fn.call({ 'cylinders' => [ 1 ] }), 'cylinder 1 is not an object')
+    _assert_error(fn.call({ 'cylinders' => [ { 'from' => 0, 'to' => 5 } ] }), 'cylinder 1 diameter is not a positive length')
+    _assert_error(fn.call({ 'cylinders' => [ { 'diameter' => 8, 'to' => 5 } ] }), 'cylinder 1 from is not a length')
+    _assert_error(fn.call({ 'cylinders' => [ { 'diameter' => 8, 'from' => 0 } ] }), 'cylinder 1 to is not a length')
+    _assert_error(fn.call({ 'cylinders' => [ { 'diameter' => 8, 'from' => '5mm', 'to' => '5mm' } ] }), 'cylinder 1 to is not above from')
+    _assert_error(fn.call({ 'cylinders' => [ { 'diameter' => 8, 'from' => 0, 'to' => 5, 'depth' => 3 } ] }), "cylinder 1 has an unknown key 'depth'")
   end
 
   # -----

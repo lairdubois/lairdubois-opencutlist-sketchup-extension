@@ -19,7 +19,7 @@
         }
       }
     },
-    "b": { "name": "Embase Clip", "hardware": true, "machining": true }
+    "b": { "name": "Embase Clip", "hardware": true, "machining": { "drillings": [ {"x": "-16mm", "y": "37mm", "diameter": "5mm", "depth": "12mm"}, {"x": "16mm", "y": "37mm", "diameter": "5mm", "depth": "12mm"} ] } }
   },
   "options": { "start_offset": "68mm", "end_offset": "68mm", "max_spacing": "800mm" }
 }

@@ -3,6 +3,7 @@ module Ladb::OpenCutList
   require 'json'
   require_relative '../data_container'
   require_relative '../../utils/dimension_utils'
+  require_relative '../../utils/length_expression_utils'
 
   # A HARDWARE of the asset library : a JSON descriptor - data - whose
   # geometries are SKP files of the same library, possibly shared with other
@@ -21,7 +22,7 @@ module Ladb::OpenCutList
   #
   # A <component> is either :
   #  - { "name", "description", "price", "url", "mass",
-  #      "hardware": <part>, "machining": <part> | { "holes": [ … ] }, "stretch": { … }, "attributes": { … } }
+  #      "hardware": <part> | <primitives>, "machining": <part> | <primitives>, "stretch": { … }, "attributes": { … } }
   #  - { "same_as": "<slot>" } / { "mirror_of": "<slot>" }
   #  - { "name", …, "variants": { "select": { "by": "<measure>", "mode": "exact" | "max_le", "ratio": <Float> },
   #                               "fallback": "<key>", "items": { "<key>": <component> | null } },
@@ -36,6 +37,23 @@ module Ladb::OpenCutList
   #  - { "same_as": "<slot>" } : the same part of another slot ;
   #  - absent, null or false : none.
   # '$LIB/…', '$OCL/…' and './…' refs - and definition names - are still read.
+  #
+  # A part can instead be given as <primitives>, the tool generates its
+  # geometry, in the laying frame of the type - the face at z = 0, the part
+  # toward -Z. Lengths are strings with a unit, or numbers in millimeters ;
+  # x and y default to 0.
+  #  - a machining, as operations - for what a fixed SKP can't adapt, a
+  #    through hole in a part of any thickness :
+  #    { "drillings": [ { "x": "-64mm", "y": 0, "diameter": "5mm", "depth": "through" | "12mm" } ] }
+  #    from the face into the part ;
+  #  - a hardware, as shapes - a dowel :
+  #    { "cylinders": [ { "x": 0, "y": 0, "diameter": "8mm", "from": "-20mm", "to": "20mm" } ] }
+  #    along Z, from one height to the other.
+  # A length can be an expression of the measures the tool takes where it
+  # lays the part - VARIABLES - : "@thickness - 2mm", "@thickness / 2". Its
+  # literals bear a unit as SketchUp reads it - mm, cm, m, ", ', yd - bare
+  # numbers are factors. See LengthExpressionUtils.
+  # "through" is "@thickness".
   #
   # "name", "description", "price", "url" and "mass" are what the cut list
   # reads of the laid hardware definition. Those of a variant override those
@@ -88,10 +106,38 @@ module Ladb::OpenCutList
     # attribute dictionary : the portable ref of its file, it is found by.
     DEFINITION_ATTRIBUTE_SOURCE = 'hardware_source'.freeze
 
+    # What a definition generated from primitives bears - in the OCL
+    # attribute dictionary : the key of its geometry, it is found by.
+    DEFINITION_ATTRIBUTE_PRIMITIVES = 'hardware_primitives'.freeze
+
+    MACHINING_DRILLINGS = 'drillings'.freeze
+    HARDWARE_CYLINDERS = 'cylinders'.freeze
+
+    # The primitives each part can be given as
+    PRIMITIVES = {
+      PART_HARDWARE => [ HARDWARE_CYLINDERS ],
+      PART_MACHINING => [ MACHINING_DRILLINGS ],
+    }.freeze
+
+    DRILLING_DEPTH_THROUGH = 'through'.freeze
+
+    # The measures the lengths of primitives can use, taken by the tool where
+    # it lays the part :
+    #  - thickness : how far the part goes behind the face - toward -Z.
+    VARIABLE_THICKNESS = 'thickness'.freeze
+    VARIABLES = [ VARIABLE_THICKNESS ].freeze
+
+    VARIABLE_PATTERN = /@([A-Za-z_]\w*)/
+
+    # A solid of primitives - a drilling or a cylinder - resolved for the
+    # measures of where it is laid, its lengths in inches : a cylinder along
+    # Z, from z_min to z_max.
+    PrimitiveCylinderDef = Struct.new(:x, :y, :diameter, :z_min, :z_max)
+
     # A component resolved for a context : the refs to load, and how to lay them.
     #  - slot : the slot asked for ; source_slot : the one whose component
     #    it is - they differ through same_as / mirror_of ;
-    #  - hardware, machining : ref String, nil - or a Hash of primitives for machining ;
+    #  - hardware, machining : ref String, nil - or a Hash of primitives ;
     #  - mirror : true when the geometry is laid mirrored (mirror_of) ;
     #  - stretch : the component's "stretch" Hash, or nil ;
     #  - variant : the key of the picked variant, or nil ;
@@ -133,6 +179,104 @@ module Ladb::OpenCutList
     def self.library_ref?(value)
       value.is_a?(String) && LIBRARY_REF_PREFIXES.any? { |prefix| value.start_with?(prefix) }
     end
+
+    # Is the given resolved part - see HardwareComponentDef#hardware and
+    # #machining - given as primitives ?
+    def self.primitives?(part)
+      part.is_a?(Hash) && (part[MACHINING_DRILLINGS].is_a?(Array) || part[HARDWARE_CYLINDERS].is_a?(Array))
+    end
+
+    # The variables the lengths of the given primitives use - "through"
+    # uses thickness.
+    def self.primitive_variables(primitives)
+      return [] unless primitives?(primitives)
+      names = []
+      _primitive_items(primitives).each do |_, item|
+        item.each do |key, value|
+          names << VARIABLE_THICKNESS if key == 'depth' && value == DRILLING_DEPTH_THROUGH
+          names.concat(value.scan(VARIABLE_PATTERN).flatten) if value.is_a?(String)
+        end
+      end
+      names.uniq
+    end
+
+    # The solids of the given primitives, resolved for the given variables -
+    # { 'thickness' => <inches> } - as PrimitiveCylinderDefs : a drilling
+    # goes from the face into the part, a cylinder from one height to the
+    # other. Those a length can't be resolved for are left out. nil when it
+    # isn't given as primitives.
+    def self.primitive_cylinders(primitives, variables = {})
+      return nil unless primitives?(primitives)
+      variables = Hash[variables.map { |k, v| [ k.to_s, v ] }]
+      _primitive_items(primitives).map { |key, item|
+        x = item['x'].nil? ? 0.0 : to_length(item['x'], true, variables)
+        y = item['y'].nil? ? 0.0 : to_length(item['y'], true, variables)
+        diameter = to_length(item['diameter'], false, variables)
+        if key == MACHINING_DRILLINGS
+          depth = to_length(item['depth'] == DRILLING_DEPTH_THROUGH ? "@#{VARIABLE_THICKNESS}" : item['depth'], false, variables)
+          z_min = depth.nil? ? nil : -depth
+          z_max = 0.0
+        else
+          z_min = to_length(item['from'], true, variables)
+          z_max = to_length(item['to'], true, variables)
+        end
+        next nil if [ x, y, diameter, z_min, z_max ].any?(&:nil?) || z_max <= z_min
+        PrimitiveCylinderDef.new(x, y, diameter, z_min, z_max)
+      }.compact
+    end
+
+    # The given length in inches - a string with a unit, an expression of
+    # variables, or a number of millimeters - nil if it isn't one or uses a
+    # variable not given. 0 is only a length where negative ones are allowed.
+    def self.to_length(value, negative_allowed = false, variables = {})
+      if value.is_a?(Numeric)
+        length = value / 25.4
+      elsif value.is_a?(String) && value =~ VARIABLE_PATTERN
+        length = _evaluate_length(value, variables)
+        return nil if length.nil?
+      elsif value.is_a?(String) && !value.strip.empty?
+        length = DimensionUtils.str_to_ifloat(value, negative_allowed).to_l.to_f
+      else
+        return nil
+      end
+      return nil if length <= 0 && !negative_allowed
+      length.to_f
+    rescue StandardError
+      nil
+    end
+
+    # [ [ primitive key, item Hash ] ] of the given primitives.
+    def self._primitive_items(primitives)
+      [ MACHINING_DRILLINGS, HARDWARE_CYLINDERS ].flat_map { |key|
+        items = primitives[key]
+        items.is_a?(Array) ? items.select { |item| item.is_a?(Hash) }.map { |item| [ key, item ] } : []
+      }
+    end
+    private_class_method :_primitive_items
+
+    # The value of the given length expression in inches - "@thickness -
+    # 2mm" - nil if it can't be read, isn't a length, or uses a variable not
+    # given. Unlike the VCB, a bare number is a factor : a descriptor can't
+    # depend on the units of the model it is used in.
+    def self._evaluate_length(expression, variables)
+      value, dimension = LengthExpressionUtils.evaluate(
+        expression,
+        read_literal: lambda { |literal|
+          next [ literal.include?('/') ? literal.split('/').map { |v| v.tr(',', '.').to_f }.reduce(:/) : literal.tr(',', '.').to_f, 0 ] if LengthExpressionUtils.bare_number?(literal)
+          [ LengthExpressionUtils.literal_to_inches(literal), 1 ]
+        },
+        read_variable: lambda { |name|
+          value = variables[name]
+          raise LengthExpressionUtils::LengthExpressionError.new('syntax_error') unless value.is_a?(Numeric)
+          [ value.to_f, 1 ]
+        }
+      )
+      return nil unless dimension == 1 && value.finite?
+      value
+    rescue LengthExpressionUtils::LengthExpressionError, ZeroDivisionError
+      nil
+    end
+    private_class_method :_evaluate_length
 
     # The file name of the given part of the given slot's component - or of
     # its given variant : "a.skp", "a.overlay.machining.skp".
@@ -287,7 +431,7 @@ module Ladb::OpenCutList
         return nil if dir.nil?
         return "#{dir}/#{self.class.part_file_name(slot, variant, part)}"
       end
-      return part == PART_MACHINING ? value : nil if value.is_a?(Hash)   # Primitives
+      return value if value.is_a?(Hash)   # Primitives
       return nil unless value.is_a?(String) && !value.strip.empty?
       return _resolve_ref(value) if value.start_with?('./') || self.class.library_ref?(value) || File.extname(value).downcase != '.skp'
       if @ref.is_a?(String)   # A file shared in the components folder of the library
@@ -436,9 +580,73 @@ module Ladb::OpenCutList
         errors << "component '#{path}' #{part} links to itself" if value['same_as'] == slot
         return true
       end
-      return true if part == PART_MACHINING && value.is_a?(Hash)   # Primitives
+      if value.is_a?(Hash)
+        _validate_primitives(path, part, value, errors)
+        return true
+      end
       errors << "component '#{path}' #{part} is neither true, a path nor a link"
       true
+    end
+
+    def _validate_primitives(path, part, value, errors)
+      if value.empty?
+        errors << "component '#{path}' #{part} is neither true, a path nor a link"
+        return
+      end
+      (value.keys - PRIMITIVES[part]).each do |key|
+        errors << "component '#{path}' #{part} has an unknown primitive '#{key}'"
+      end
+      _validate_primitive_list(path, part, value, MACHINING_DRILLINGS, 'drilling', %w[x y diameter depth], errors) do |drilling, label|
+        unless drilling['depth'] == DRILLING_DEPTH_THROUGH || !_to_checked_length(drilling['depth'], false).nil?
+          errors << "#{label} depth is neither \"#{DRILLING_DEPTH_THROUGH}\" nor a positive length"
+        end
+      end
+      _validate_primitive_list(path, part, value, HARDWARE_CYLINDERS, 'cylinder', %w[x y diameter from to], errors) do |cylinder, label|
+        from = _to_checked_length(cylinder['from'], true)
+        to = _to_checked_length(cylinder['to'], true)
+        errors << "#{label} from is not a length" if from.nil?
+        errors << "#{label} to is not a length" if to.nil?
+        # Checkable only without variables : they change with where it is laid
+        errors << "#{label} to is not above from" if !from.nil? && !to.nil? && to <= from && [ cylinder['from'], cylinder['to'] ].none? { |v| v.is_a?(String) && v =~ VARIABLE_PATTERN }
+      end
+    end
+
+    # The given length checked as a descriptor holds it : its variables set
+    # to a typical measure - 18 mm - nil if it isn't one.
+    def _to_checked_length(value, negative_allowed)
+      self.class.to_length(value, negative_allowed, Hash[VARIABLES.map { |name| [ name, 18 / 25.4 ] }])
+    end
+
+    # Validates the list of the given primitive - x, y and diameter - then
+    # yields each item and the label of its errors for what is its own.
+    def _validate_primitive_list(path, part, value, key, name, keys, errors)
+      return unless PRIMITIVES[part].include?(key) && value.key?(key)
+      items = value[key]
+      unless items.is_a?(Array) && !items.empty?
+        errors << "component '#{path}' #{part} #{key} is not a list of #{key}"
+        return
+      end
+      items.each_with_index do |item, index|
+        label = "component '#{path}' #{name} #{index + 1}"
+        unless item.is_a?(Hash)
+          errors << "#{label} is not an object"
+          next
+        end
+        (item.keys - keys).each do |k|
+          errors << "#{label} has an unknown key '#{k}'"
+        end
+        item.each do |k, v|
+          next unless v.is_a?(String)
+          (v.scan(VARIABLE_PATTERN).flatten - VARIABLES).uniq.each do |name|
+            errors << "#{label} #{k} uses the unknown variable @#{name}"
+          end
+        end
+        %w[x y].each do |k|
+          errors << "#{label} #{k} is not a length" if item.key?(k) && !item[k].nil? && _to_checked_length(item[k], true).nil?
+        end
+        errors << "#{label} diameter is not a positive length" if _to_checked_length(item['diameter'], false).nil?
+        yield(item, label)
+      end
     end
 
     def _validate_info(path, value, errors)
