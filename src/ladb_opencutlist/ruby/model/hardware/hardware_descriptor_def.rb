@@ -23,7 +23,9 @@ module Ladb::OpenCutList
   # A <component> is either :
   #  - { "name", "description", "price", "url", "mass",
   #      "hardware": <part> | <primitives>, "machining": <part> | <primitives>, "stretch": { … }, "attributes": { … } }
-  #  - { "same_as": "<slot>" } / { "mirror_of": "<slot>" }
+  #  - { "same_as": "<slot>" } / { "mirror_of": "<slot>" } : the other slot's
+  #    component, laid mirrored across the YZ plane of the laying frame - x
+  #    negated - for mirror_of ;
   #  - { "name", …, "variants": { "select": { "by": "<measure>", "mode": "exact" | "max_le", "ratio": <Float> },
   #                               "fallback": "<key>", "items": { "<key>": <component> | null } },
   #      "attributes": { … } }

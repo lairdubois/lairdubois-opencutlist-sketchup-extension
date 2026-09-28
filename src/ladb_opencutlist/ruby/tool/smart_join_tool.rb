@@ -962,20 +962,30 @@ module Ladb::OpenCutList
         return nil
       end
 
+      component_a = _get_hardware_component(:a)
+      component_b = _get_hardware_component(:b)
+      mirror_a = !component_a.nil? && component_a.mirror
+      mirror_b = !component_b.nil? && component_b.mirror
+
+      geometries = [
+        GeometriesEntityDef.new(hardware_a_definition, hardware_a_drawing_def, hardware_a_primitives, :a, :hardware, mirror_a),
+        GeometriesEntityDef.new(hardware_b_definition, hardware_b_drawing_def, hardware_b_primitives, :b, :hardware, mirror_b),
+        GeometriesEntityDef.new(machining_a_definition, machining_a_drawing_def, machining_a_primitives, :a, :machining, mirror_a),
+        GeometriesEntityDef.new(machining_b_definition, machining_b_drawing_def, machining_b_primitives, :b, :machining, mirror_b),
+      ]
+
       bounds = Geom::BoundingBox.new
-      bounds.add(hardware_a_drawing_def.bounds) unless hardware_a_drawing_def.nil?
-      bounds.add(hardware_b_drawing_def.bounds) unless hardware_b_drawing_def.nil?
-      bounds.add(machining_a_drawing_def.bounds) unless machining_a_drawing_def.nil?
-      bounds.add(machining_b_drawing_def.bounds) unless machining_b_drawing_def.nil?
-      [ hardware_a_primitives, hardware_b_primitives, machining_a_primitives, machining_b_primitives ].compact.each do |primitives|
-        bounds.add(_get_primitives_bounds(primitives))
+      geometries.each do |geometry|
+        if geometry.drawing_def
+          mt = _get_geometry_mirror_transformation(geometry)
+          bounds.add(geometry.drawing_def.bounds.min.transform(mt), geometry.drawing_def.bounds.max.transform(mt))
+        elsif geometry.primitives
+          bounds.add(_get_primitives_bounds(geometry.primitives, geometry.mirror))
+        end
       end
 
       @geometries_def = GeometriesDef.new(
-        GeometriesEntityDef.new(hardware_a_definition, hardware_a_drawing_def, hardware_a_primitives, :a, :hardware),
-        GeometriesEntityDef.new(hardware_b_definition, hardware_b_drawing_def, hardware_b_primitives, :b, :hardware),
-        GeometriesEntityDef.new(machining_a_definition, machining_a_drawing_def, machining_a_primitives, :a, :machining),
-        GeometriesEntityDef.new(machining_b_definition, machining_b_drawing_def, machining_b_primitives, :b, :machining),
+        *geometries,
         hardware_material,
         machining_material,
         hardware_layer,
@@ -987,14 +997,15 @@ module Ladb::OpenCutList
     # -- Primitives --
 
     # The bounds of the given primitives in the laying frame, their
-    # variables at 0 - what depends on them isn't known yet.
-    def _get_primitives_bounds(primitives)
+    # variables at 0 - what depends on them isn't known yet -, mirrored or not.
+    def _get_primitives_bounds(primitives, mirror = false)
       bounds = Geom::BoundingBox.new
       variables = Hash[HardwareDescriptorDef.primitive_variables(primitives).map { |name| [ name, 0.0 ] }]
       HardwareDescriptorDef.primitive_cylinders(primitives, variables).each do |cylinder|
         r = cylinder.diameter / 2
-        bounds.add(Geom::Point3d.new(cylinder.x - r, cylinder.y - r, cylinder.z_min))
-        bounds.add(Geom::Point3d.new(cylinder.x + r, cylinder.y + r, cylinder.z_max))
+        x = mirror ? -cylinder.x : cylinder.x
+        bounds.add(Geom::Point3d.new(x - r, cylinder.y - r, cylinder.z_min))
+        bounds.add(Geom::Point3d.new(x + r, cylinder.y + r, cylinder.z_max))
       end
       bounds
     end
@@ -1068,6 +1079,13 @@ module Ladb::OpenCutList
       end
       return nil if geometry.primitives.nil?
       _get_primitives_segments(_get_primitives_dimensions(geometry.primitives, placement))
+    end
+
+    # The transformation, in the laying frame, a geometry is laid with : the
+    # mirror across the YZ plane - x negated - of a mirror_of component, its
+    # definition - SKP or primitives - shared with the mirrored slot.
+    def _get_geometry_mirror_transformation(geometry)
+      geometry.mirror ? Geom::Transformation.scaling(ORIGIN, -1, 1, 1) : IDENTITY
     end
 
     # The definition of the given geometry - hardware or machining - to lay
@@ -1387,8 +1405,9 @@ module Ladb::OpenCutList
       end
     end
     # primitives : the Hash of the part given as primitives - generated where
-    # it is laid - instead of a definition ; slot, part : whose it is.
-    GeometriesEntityDef = Struct.new(:definition, :drawing_def, :primitives, :slot, :part) do
+    # it is laid - instead of a definition ; slot, part : whose it is ;
+    # mirror : laid mirrored - mirror_of -, see _get_geometry_mirror_transformation.
+    GeometriesEntityDef = Struct.new(:definition, :drawing_def, :primitives, :slot, :part, :mirror) do
       def empty?
         definition.nil? && primitives.nil? || !valid?
       end
@@ -1919,7 +1938,7 @@ module Ladb::OpenCutList
 
             _preview_join_segments(
               hardware_segments,
-              t,
+              t * _get_geometry_mirror_transformation(hardware),
               picked ? COLOR_HARDWARE_PREVIEW : COLOR_HARDWARE_PROPAGATED_PREVIEW,
               1,
               LAYER_3D_HARDWARE_PREVIEW,
@@ -1929,7 +1948,7 @@ module Ladb::OpenCutList
 
             _preview_join_segments(
               machining_segments,
-              t,
+              t * _get_geometry_mirror_transformation(machining),
               picked ? COLOR_MACHINING_PREVIEW : COLOR_MACHINING_PROPAGATED_PREVIEW,
               0.5,
               LAYER_3D_MACHINING_PREVIEW
@@ -2122,8 +2141,8 @@ module Ladb::OpenCutList
           machining = placement.role == :a ? machining_a : machining_b
           entities = placement.entities
 
-          _add_glued_instance(_get_geometry_definition(hardware, placement), hardware_material, hardware_layer, placement.face, entities, placement.transformation, ORIGIN, IDENTITY)
-          _add_glued_instance(_get_geometry_definition(machining, placement), machining_material, machining_layer, placement.face, entities, placement.transformation, ORIGIN, IDENTITY)
+          _add_glued_instance(_get_geometry_definition(hardware, placement), hardware_material, hardware_layer, placement.face, entities, placement.transformation, ORIGIN, _get_geometry_mirror_transformation(hardware))
+          _add_glued_instance(_get_geometry_definition(machining, placement), machining_material, machining_layer, placement.face, entities, placement.transformation, ORIGIN, _get_geometry_mirror_transformation(machining))
 
         end
 
@@ -3444,7 +3463,7 @@ module Ladb::OpenCutList
 
             fn_preview_join_segments.call(
               machining_segments,
-              t,
+              t * _get_geometry_mirror_transformation(machining),
               picked ? COLOR_MACHINING_PREVIEW : COLOR_MACHINING_PROPAGATED_PREVIEW,
               0.5
             ) if machining_segments
@@ -3453,7 +3472,7 @@ module Ladb::OpenCutList
 
             fn_preview_join_segments.call(
               hardware_segments,
-              t,
+              t * _get_geometry_mirror_transformation(hardware),
               picked ? COLOR_HARDWARE_PREVIEW : COLOR_HARDWARE_PROPAGATED_PREVIEW,
               1
             ) if hardware_segments
@@ -3623,8 +3642,8 @@ module Ladb::OpenCutList
           machining = placement.role == :a ? machining_a : machining_b
           entities = placement.entities
 
-          _add_glued_instance(_get_geometry_definition(hardware, placement), hardware_material, hardware_layer, placement.face, entities, placement.transformation, ORIGIN, IDENTITY)
-          _add_glued_instance(_get_geometry_definition(machining, placement), machining_material, machining_layer, placement.face, entities, placement.transformation, ORIGIN, IDENTITY)
+          _add_glued_instance(_get_geometry_definition(hardware, placement), hardware_material, hardware_layer, placement.face, entities, placement.transformation, ORIGIN, _get_geometry_mirror_transformation(hardware))
+          _add_glued_instance(_get_geometry_definition(machining, placement), machining_material, machining_layer, placement.face, entities, placement.transformation, ORIGIN, _get_geometry_mirror_transformation(machining))
 
         end
 
