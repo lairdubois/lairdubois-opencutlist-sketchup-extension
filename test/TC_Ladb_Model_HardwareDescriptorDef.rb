@@ -457,6 +457,175 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     _assert_error(fn.call({ 'cylinders' => [ { 'diameter' => 8, 'from' => 0, 'to' => 5, 'depth' => 3 } ] }), "cylinder 1 has an unknown key 'depth'")
   end
 
+  # A dowel between a panel lying flat - drilled in its face, no deeper than
+  # its thickness - and one on edge : the dowel shifts toward the edge.
+  DOWEL = {
+    'format' => 'ocl-hardware', 'version' => 1,
+    'id' => 'dowel-1', 'type' => 'connector', 'name' => 'Dowel 8x40',
+    'variables' => {
+      'depth_a' => 'min(@thickness_a - 5mm; max(20mm; 40mm - (@thickness_b - 5mm)))',
+      'depth_b' => '40mm - @depth_a',
+    },
+    'asserts' => [ '@depth_a <= @thickness_a - 5mm', '@depth_b <= @thickness_b - 5mm' ],
+    'components' => {
+      'a' => {
+        'hardware' => { 'cylinders' => [ { 'diameter' => '8mm', 'from' => '-@depth_a', 'to' => '@depth_b' } ] },
+        'machining' => { 'drillings' => [ { 'diameter' => '8mm', 'depth' => '@depth_a + 1mm' } ] }
+      },
+      'b' => { 'machining' => { 'drillings' => [ { 'diameter' => '8mm', 'depth' => '@depth_b + 1mm' } ] } }
+    }
+  }.freeze
+
+  def test_measures
+    assert_equal(%w[thickness thickness_a thickness_b], _def(DOWEL).measures)
+    assert_equal(%w[thickness], _def(SLIDES).measures)
+    assert_equal(%w[thickness_a thickness_b], _def(DOWEL).used_measures)
+    assert_equal([], _def(HINGE).used_measures)
+    through = _with(HINGE, 'components' => { 'a' => { 'machining' => { 'drillings' => [ { 'diameter' => 5, 'depth' => 'through' } ] } } })
+    assert_equal(%w[thickness], _def(through).used_measures)
+  end
+
+  def test_variables_and_asserts
+    descriptor = _def(DOWEL)
+    assert(descriptor.valid?, descriptor.errors.inspect)
+    mm = lambda { |v| v / 25.4 }
+    {
+      [ 300, 300 ] => [ 20, 20, [] ],     # Both on edge : centered
+      [ 19, 300 ] => [ 14, 26, [] ],      # a flat
+      [ 300, 19 ] => [ 26, 14, [] ],      # b flat
+      [ 19, 19 ] => [ 14, 26, [ '@depth_b <= @thickness_b - 5mm' ] ],  # Both flat : no room
+    }.each do |(ta, tb), (da, db, failed)|
+      variables = descriptor.resolve_variables('thickness_a' => mm.call(ta), 'thickness_b' => mm.call(tb))
+      assert_in_delta(mm.call(da), variables['depth_a'], 1e-9, "#{ta}/#{tb}")
+      assert_in_delta(mm.call(db), variables['depth_b'], 1e-9, "#{ta}/#{tb}")
+      assert_equal(failed, descriptor.failed_asserts(variables), "#{ta}/#{tb}")
+      cylinder = HardwareDescriptorDef.primitive_cylinders(descriptor.resolve_component('a').hardware, variables).first
+      assert_in_delta(mm.call(-da), cylinder.z_min, 1e-9)
+      assert_in_delta(mm.call(db), cylinder.z_max, 1e-9)
+      drilling = HardwareDescriptorDef.primitive_cylinders(descriptor.resolve_component('b').machining, variables).first
+      assert_in_delta(mm.call(-db - 1), drilling.z_min, 1e-9)
+    end
+    # Measures missing : nothing resolves, every assert fails
+    variables = descriptor.resolve_variables({})
+    assert(!variables.key?('depth_a'))
+    assert_equal(2, descriptor.failed_asserts(variables).length)
+  end
+
+  def test_asserts
+    variables = { 'thickness' => 19 / 25.4 }
+    assert_equal(true, HardwareDescriptorDef.assert?('@thickness <= 19mm', variables))
+    assert_equal(false, HardwareDescriptorDef.assert?('@thickness < 19mm', variables))
+    assert_equal(true, HardwareDescriptorDef.assert?('@thickness >= 1.9cm', variables))
+    assert_equal(true, HardwareDescriptorDef.assert?('@thickness = 19mm', variables))
+    assert_equal(true, HardwareDescriptorDef.assert?('@thickness > 18mm', variables))
+    assert_equal(true, HardwareDescriptorDef.assert?('min(@thickness; 10mm) = 10mm', variables))
+    assert_nil(HardwareDescriptorDef.assert?('@thickness', variables))
+    assert_nil(HardwareDescriptorDef.assert?('@depth <= 2mm', variables))
+    assert_nil(HardwareDescriptorDef.assert?('@thickness <= @thickness * @thickness', variables))
+  end
+
+  def test_invalid_variables_and_asserts
+    _assert_error(_with(DOWEL, 'variables' => [ 'x' ]), 'variables is not an object')
+    _assert_error(_with(DOWEL, 'variables' => { 'a b' => '2mm' }), "variable 'a b' is not a valid name")
+    _assert_error(_with(DOWEL, 'variables' => { 'thickness_a' => '2mm' }), "variable 'thickness_a' is a measure")
+    _assert_error(_with(DOWEL, 'variables' => { 'x' => true }), "variable 'x' is not a length")
+    _assert_error(_with(DOWEL, 'variables' => { 'x' => '@thickness + 2' }), "variable 'x' is not a length")
+    _assert_error(_with(DOWEL, 'variables' => { 'x' => '@y', 'y' => '2mm' }), "variable 'x' uses the unknown variable @y")
+    _assert_error(_with(DOWEL, 'variables' => {}), "cylinder 1 from uses the unknown variable @depth_a")
+    _assert_error(_with(DOWEL, 'asserts' => '@depth_a <= 2mm'), 'asserts is not a list')
+    _assert_error(_with(DOWEL, 'asserts' => [ '@depth_a' ]), 'assert 1 is not a comparison')
+    _assert_error(_with(DOWEL, 'asserts' => [ '2mm <= @nope' ]), 'assert 1 uses the unknown variable @nope')
+    _assert_error(_with(DOWEL, 'asserts' => [ '@depth_a <= @depth_a * @depth_a' ]), 'assert 1 is not a comparison of lengths')
+    _assert_error(_with(SLIDES, 'variables' => { 'x' => '@thickness_a' }), "variable 'x' uses the unknown variable @thickness_a")
+  end
+
+  def test_z_offset
+    data = JSON.parse(JSON.generate(DOWEL))
+    data['components']['a']['hardware'] = '$LIB/fluted_dowel.skp'
+    data['components']['a']['z_offset'] = '(@depth_b - @depth_a) / 2'
+    descriptor = _def(data)
+    assert(descriptor.valid?, descriptor.errors.inspect)
+    component = descriptor.resolve_component('a')
+    assert_equal('(@depth_b - @depth_a) / 2', component.z_offset)
+    assert_nil(descriptor.resolve_component('b').z_offset)
+    variables = descriptor.resolve_variables('thickness_a' => 19 / 25.4, 'thickness_b' => 300 / 25.4)
+    assert_in_delta(6 / 25.4, HardwareDescriptorDef.to_length(component.z_offset, true, variables), 1e-9)
+    # Variant over the component holding the variants, and links follow
+    variants = _with(HINGE, 'components' => {
+      'a' => { 'z_offset' => '2mm', 'variants' => { 'select' => { 'by' => 'hinge_kind' }, 'items' => {
+        'overlay' => { 'hardware' => '$LIB/h.skp' },
+        'inset' => { 'hardware' => '$LIB/h.skp', 'z_offset' => -3 } } } },
+      'b' => { 'mirror_of' => 'a' } })
+    descriptor = _def(variants)
+    assert(descriptor.valid?, descriptor.errors.inspect)
+    assert_equal('2mm', descriptor.resolve_component('a', 'hinge_kind' => 'overlay').z_offset)
+    assert_equal(-3, descriptor.resolve_component('a', 'hinge_kind' => 'inset').z_offset)
+    assert_equal('2mm', descriptor.resolve_component('b', 'hinge_kind' => 'overlay').z_offset)
+  end
+
+  def test_invalid_z_offset
+    fn = lambda { |z_offset| _with(DOWEL, 'components' => DOWEL['components'].merge('a' => DOWEL['components']['a'].merge('z_offset' => z_offset))) }
+    _assert_error(fn.call(true), "component 'a' z_offset is not a length")
+    _assert_error(fn.call('@depth_a * @depth_a'), "component 'a' z_offset is not a length")
+    _assert_error(fn.call('@nope'), "component 'a' z_offset uses the unknown variable @nope")
+    _assert_error(_with(DOWEL, 'components' => DOWEL['components'].merge('b' => { 'mirror_of' => 'a', 'z_offset' => '2mm' })), "component 'b' links to another slot and has z_offset")
+  end
+
+  def test_oblongs_and_mortises
+    hardware = { 'oblongs' => [ { 'length' => '19mm', 'width' => '5mm', 'from' => '-15mm', 'to' => '15mm' } ] }
+    machining = { 'mortises' => [ { 'x' => '2mm', 'length' => '19mm', 'width' => '5mm', 'depth' => 'through' } ] }
+    descriptor = _def(_with(HINGE, 'components' => { 'a' => { 'hardware' => hardware, 'machining' => machining } }))
+    assert(descriptor.valid?, descriptor.errors.inspect)
+    oblong = HardwareDescriptorDef.primitive_cylinders(hardware).first
+    assert(!oblong.round?)
+    assert_in_delta(19 / 25.4, oblong.length, 1e-9)
+    assert_in_delta(5 / 25.4, oblong.diameter, 1e-9)
+    assert_in_delta(-15 / 25.4, oblong.z_min, 1e-9)
+    mortise = HardwareDescriptorDef.primitive_cylinders(machining, 'thickness' => 19 / 25.4).first
+    assert_in_delta(2 / 25.4, mortise.x, 1e-9)
+    assert_in_delta(-19 / 25.4, mortise.z_min, 1e-9)
+    assert_equal([ 'thickness' ], HardwareDescriptorDef.primitive_variables(machining))
+    # As long as wide : a cylinder
+    assert(HardwareDescriptorDef.primitive_cylinders({ 'oblongs' => [ { 'length' => 5, 'width' => 5, 'from' => 0, 'to' => 1 } ] }).first.round?)
+  end
+
+  def test_invalid_oblongs_and_mortises
+    fn = lambda { |part, value| _with(HINGE, 'components' => { 'a' => { part => value } }) }
+    _assert_error(fn.call('hardware', { 'mortises' => [] }), "hardware has an unknown primitive 'mortises'")
+    _assert_error(fn.call('machining', { 'oblongs' => [] }), "machining has an unknown primitive 'oblongs'")
+    _assert_error(fn.call('hardware', { 'oblongs' => [ { 'width' => 5, 'from' => 0, 'to' => 1 } ] }), 'oblong 1 length is not a positive length')
+    _assert_error(fn.call('hardware', { 'oblongs' => [ { 'length' => 4, 'width' => 5, 'from' => 0, 'to' => 1 } ] }), 'oblong 1 length is below its width')
+    _assert_error(fn.call('hardware', { 'oblongs' => [ { 'length' => 5, 'width' => 5, 'diameter' => 5, 'from' => 0, 'to' => 1 } ] }), "oblong 1 has an unknown key 'diameter'")
+    _assert_error(fn.call('machining', { 'mortises' => [ { 'length' => 19, 'width' => 5 } ] }), 'mortise 1 depth is neither "through" nor a positive length')
+  end
+
+  # The bundled Dominos : depths on the steps of the machine - 12, 15, 20,
+  # 25, 28 mm - the tenon shifted toward the deeper mortise.
+  def test_bundled_dominos
+    dir = File.expand_path('../src/ladb_opencutlist/library/connectors/festool', __dir__)
+    {
+      'domino-5x30.json' => { [ 300, 300 ] => [ 15, 15 ], [ 19, 300 ] => [ 12, 20 ], [ 300, 19 ] => [ 20, 12 ], [ 19, 19 ] => nil, [ 15, 300 ] => nil },
+      'domino-8x40.json' => { [ 300, 300 ] => [ 20, 20 ], [ 19, 300 ] => [ 12, 28 ], [ 300, 19 ] => [ 28, 12 ], [ 19, 19 ] => nil },
+    }.each do |file, cases|
+      descriptor = HardwareDescriptorDef.new(JSON.parse(File.read(File.join(dir, file))))
+      assert(descriptor.valid?, "#{file} #{descriptor.errors.inspect}")
+      length = file == 'domino-5x30.json' ? 30 : 40
+      cases.each do |(ta, tb), depths|
+        variables = descriptor.resolve_variables('thickness_a' => ta / 25.4, 'thickness_b' => tb / 25.4)
+        if depths.nil?
+          assert(descriptor.failed_asserts(variables).any?, "#{file} #{ta}/#{tb} should be refused")
+          next
+        end
+        assert_equal([], descriptor.failed_asserts(variables), "#{file} #{ta}/#{tb}")
+        assert_in_delta(depths[0] / 25.4, variables['depth_a'], 1e-9, "#{file} #{ta}/#{tb}")
+        assert_in_delta(depths[1] / 25.4, variables['depth_b'], 1e-9, "#{file} #{ta}/#{tb}")
+        tenon = HardwareDescriptorDef.primitive_cylinders(descriptor.resolve_component('a').hardware, variables).first
+        assert_in_delta(length / 25.4, tenon.z_max - tenon.z_min, 1e-9)
+        assert(-tenon.z_min <= variables['depth_a'] + 1e-9 && tenon.z_max <= variables['depth_b'] + 1e-9, "#{file} #{ta}/#{tb} tenon in its mortises")
+      end
+    end
+  end
+
   # -----
 
   private

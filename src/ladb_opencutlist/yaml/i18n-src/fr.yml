@@ -2370,6 +2370,8 @@ tool:
       missing_close_parenthesis: "Parenthèse fermante manquante"
       missing_operand: "Opérande manquante"
       zero_division: "Division par zéro"
+      invalid_argument_count: "Une fonction min, max, floor ou ceil demande au moins deux valeurs"
+      no_matching_value: "Aucune des valeurs proposées ne convient"
       lt_min_distance: La distance {{ value1 }} est inférieure à la distance minimale de {{ value2 }}
       gt_max_distance: La distance {{ value1 }} est supérieure à la distance maximale de {{ value2 }}
       locked_part: Cette pièce est verrouillée
@@ -2819,6 +2821,8 @@ tool:
       no_valid_join: Aucune surface de contact ne permet de satisfaire les contraintes d'assemblage
       occupied_anchors: "{{ count }} connecteur en conflit de position avec des connecteurs existants"
       occupied_anchors_plural: "{{ count }} connecteurs en conflit de position avec des connecteurs existants"
+      refused_anchors: "{{ count }} position écartée : la quincaillerie n'y respecte pas {{ asserts }}"
+      refused_anchors_plural: "{{ count }} positions écartées : la quincaillerie n'y respecte pas {{ asserts }}"
       failed_to_load_skp_file: |
         Impossible de charger le fichier SKP : {{ file }}
       unsupported_skp_version: |

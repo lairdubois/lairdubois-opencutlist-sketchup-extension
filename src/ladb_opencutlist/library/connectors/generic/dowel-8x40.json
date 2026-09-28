@@ -4,14 +4,19 @@
   "id": "a41e6b27-9c58-4d03-8f1a-6b2d5e7c9034",
   "type": "connector",
   "name": "Dowel 8x40",
+  "variables": {
+    "depth_a": "min(@thickness_a - 5mm; max(20mm; 40mm - (@thickness_b - 5mm)))",
+    "depth_b": "40mm - @depth_a"
+  },
+  "asserts": [ "@depth_a <= @thickness_a - 5mm", "@depth_b <= @thickness_b - 5mm" ],
   "components": {
     "a": {
       "name": "Dowel 8x40",
-      "hardware": { "cylinders": [ {"x": "0", "y": "0", "diameter": "8mm", "from": "-20mm", "to": "20mm"} ] },
-      "machining": { "drillings": [ {"x": "0", "y": "0", "diameter": "8mm", "depth": "21mm"} ] },
+      "hardware": { "cylinders": [ {"x": "0", "y": "0", "diameter": "8mm", "from": "-@depth_a", "to": "@depth_b"} ] },
+      "machining": { "drillings": [ {"x": "0", "y": "0", "diameter": "8mm", "depth": "@depth_a + 1mm"} ] },
       "attributes": { "symmetrical":  true }
     },
-    "b": { "machining": { "same_as": "a" } }
+    "b": { "machining": { "drillings": [ {"x": "0", "y": "0", "diameter": "8mm", "depth": "@depth_b + 1mm"} ] } }
   },
   "options": { "height": "/2", "start_offset": "37mm", "end_offset": "37mm", "max_spacing": "500mm" }
 }

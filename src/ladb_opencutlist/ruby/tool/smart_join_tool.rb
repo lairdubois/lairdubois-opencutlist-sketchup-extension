@@ -997,30 +997,69 @@ module Ladb::OpenCutList
     # -- Primitives --
 
     # The bounds of the given primitives in the laying frame, their
-    # variables at 0 - what depends on them isn't known yet -, mirrored or not.
+    # measures at 0 - what depends on them isn't known yet -, mirrored or not.
     def _get_primitives_bounds(primitives, mirror = false)
       bounds = Geom::BoundingBox.new
-      variables = Hash[HardwareDescriptorDef.primitive_variables(primitives).map { |name| [ name, 0.0 ] }]
+      variables = _resolve_hardware_variables(Hash[HardwareDescriptorDef.primitive_variables(primitives).map { |name| [ name, 0.0 ] }])
       HardwareDescriptorDef.primitive_cylinders(primitives, variables).each do |cylinder|
         r = cylinder.diameter / 2
+        h = cylinder.round? ? r : cylinder.length / 2
         x = mirror ? -cylinder.x : cylinder.x
-        bounds.add(Geom::Point3d.new(x - r, cylinder.y - r, cylinder.z_min))
-        bounds.add(Geom::Point3d.new(x + r, cylinder.y + r, cylinder.z_max))
+        bounds.add(Geom::Point3d.new(x - h, cylinder.y - r, cylinder.z_min))
+        bounds.add(Geom::Point3d.new(x + h, cylinder.y + r, cylinder.z_max))
       end
       bounds
     end
 
-    # The variables the given primitives use, measured at the given
-    # placement - see HardwareDescriptorDef::VARIABLES.
-    def _get_primitives_variables(primitives, placement)
-      variables = {}
-      HardwareDescriptorDef.primitive_variables(primitives).each do |name|
-        case name
-        when HardwareDescriptorDef::VARIABLE_THICKNESS
-          variables[name] = _get_placement_thickness(placement)
+    # The variables of the hardware at the given placement : the measures its
+    # lengths use, taken there - see HardwareDescriptorDef#measures - then its
+    # own variables. Cached on the placement.
+    def _get_placement_variables(placement)
+      return placement.variables unless placement.variables.nil?
+      measures = {}
+      descriptor = _get_hardware_descriptor_def
+      (descriptor.nil? ? [] : descriptor.used_measures).each do |name|
+        if name == HardwareDescriptorDef::VARIABLE_THICKNESS || name == "#{HardwareDescriptorDef::VARIABLE_THICKNESS}_#{placement.role}"
+          measures[name] = _get_placement_thickness(placement)
+        elsif name.start_with?("#{HardwareDescriptorDef::VARIABLE_THICKNESS}_") && !placement.partner.nil? && name == "#{HardwareDescriptorDef::VARIABLE_THICKNESS}_#{placement.partner.role}"
+          measures[name] = _get_placement_thickness(placement.partner)
         end
       end
-      variables
+      placement.variables = _resolve_hardware_variables(measures)
+    end
+
+    # The given measures completed by the hardware's own variables.
+    def _resolve_hardware_variables(measures)
+      descriptor = _get_hardware_descriptor_def
+      descriptor.nil? ? measures : descriptor.resolve_variables(measures)
+    end
+
+    # The propagation of the given placements, less those where the
+    # hardware's asserts fail - see HardwareDescriptorDef#asserts.
+    def _check_hardware_asserts(placements)
+      descriptor = _get_hardware_descriptor_def
+      return PropagationDef.new(placements, [], []) if descriptor.nil? || descriptor.asserts.empty?
+      failed_asserts = []
+      refused, placements = placements.partition { |placement|
+        failed = descriptor.failed_asserts(_get_placement_variables(placement))
+        failed_asserts.concat(failed)
+        failed.any?
+      }
+      PropagationDef.new(placements, refused, failed_asserts.uniq)
+    end
+
+    # Shows why anchors of the given propagation are refused. Is there any ?
+    def _show_refused_anchors(propagation_def)
+      return false if propagation_def.nil? || (count = propagation_def.refused_count) == 0
+      k_points = _create_floating_points(
+        points: propagation_def.refused.flat_map { |placement| (placement.instance_transformations || []).map { |t| ORIGIN.transform(t * placement.transformation) } },
+        style: Kuix::POINT_STYLE_CROSS,
+        stroke_color: Kuix::COLOR_RED,
+        stroke_width: 2
+      )
+      @tool.append_3d(k_points, LAYER_3D_JOIN_PREVIEW)
+      @tool.show_message(PLUGIN.get_i18n_string('tool.smart_join.error.refused_anchors', { :count => count, :asserts => propagation_def.failed_asserts.join(', ') }), SmartTool::MESSAGE_TYPE_ERROR)
+      true
     end
 
     # How far the part of the given placement goes toward -Z of the laying
@@ -1039,12 +1078,24 @@ module Ladb::OpenCutList
     end
 
     # The solids of the given primitives resolved at the given placement, as
-    # [ x, y, diameter, z_min, z_max ] in inches, rounded : the key of their
-    # geometry.
-    def _get_primitives_dimensions(primitives, placement)
-      HardwareDescriptorDef.primitive_cylinders(primitives, _get_primitives_variables(primitives, placement)).map { |cylinder|
-        [ cylinder.x, cylinder.y, cylinder.diameter, cylinder.z_min, cylinder.z_max ].map { |v| v.to_f.round(6) }
+    # [ x, y, diameter, z_min, z_max ] - and length for an oblong one - in
+    # inches, rounded : the key of their
+    # geometry. Centered, shifted along Z by their offset - see
+    # _get_primitives_offset - before rounding.
+    def _get_primitives_dimensions(primitives, placement, centered = false)
+      offset = centered ? _get_primitives_offset(primitives, placement) : 0.0
+      HardwareDescriptorDef.primitive_cylinders(primitives, _get_placement_variables(placement)).map { |cylinder|
+        values = [ cylinder.x, cylinder.y, cylinder.diameter, cylinder.z_min - offset, cylinder.z_max - offset ]
+        values << cylinder.length unless cylinder.round?
+        values.map { |v| v.to_f.round(6) + 0.0 }  # + 0.0 : no -0.0 in the key
       }
+    end
+
+    # The Z center of the given primitives resolved at the given placement.
+    def _get_primitives_offset(primitives, placement)
+      cylinders = HardwareDescriptorDef.primitive_cylinders(primitives, _get_placement_variables(placement))
+      return 0.0 if cylinders.empty?
+      (cylinders.map(&:z_min).min + cylinders.map(&:z_max).max) / 2
     end
 
     # The segments of the circle of a primitive of the given diameter.
@@ -1052,15 +1103,26 @@ module Ladb::OpenCutList
       Geometrix::ArcUtils.num_segments_by_radius(diameter / 2)
     end
 
+    # The outline of a primitive, as [ x, y ] points : a circle, or a slot
+    # with round ends - length along X - when length is given.
+    def _get_primitive_outline(x, y, diameter, length = nil)
+      count = _get_primitive_num_segments(diameter)
+      r = diameter / 2
+      return (0...count).map { |i| a = 2 * Math::PI * i / count; [ x + r * Math.cos(a), y + r * Math.sin(a) ] } if length.nil?
+      h = (length - diameter) / 2
+      half = count / 2
+      right = (0..half).map { |i| a = -Math::PI / 2 + Math::PI * i / half; [ x + h + r * Math.cos(a), y + r * Math.sin(a) ] }
+      left = (0..half).map { |i| a = Math::PI / 2 + Math::PI * i / half; [ x - h + r * Math.cos(a), y + r * Math.sin(a) ] }
+      right + left
+    end
+
     # The edges of the given primitives dimensions, as segments in the laying
-    # frame : both circles and four generatrices of each cylinder.
+    # frame : both outlines and four generatrices of each solid.
     def _get_primitives_segments(dimensions)
       segments = []
-      dimensions.each do |x, y, diameter, z_min, z_max|
-        count = _get_primitive_num_segments(diameter)
-        r = diameter / 2
-        step = [ count / 4, 1 ].max
-        points = (0...count).map { |i| a = 2 * Math::PI * i / count; [ x + r * Math.cos(a), y + r * Math.sin(a) ] }
+      dimensions.each do |x, y, diameter, z_min, z_max, length|
+        points = _get_primitive_outline(x, y, diameter, length)
+        step = [ points.length / 4, 1 ].max
         points.each_with_index do |(px, py), i|
           nx, ny = points[(i + 1) % points.length]
           segments << Geom::Point3d.new(px, py, z_max) << Geom::Point3d.new(nx, ny, z_max)
@@ -1075,10 +1137,15 @@ module Ladb::OpenCutList
     # with at the given placement, nil when there is none.
     def _get_geometry_preview_segments(geometry, placement)
       if geometry.drawing_def
-        return geometry.drawing_def.edge_manipulators.flat_map(&:segment) + geometry.drawing_def.curve_manipulators.flat_map(&:segments)
+        segments = geometry.drawing_def.edge_manipulators.flat_map(&:segment) + geometry.drawing_def.curve_manipulators.flat_map(&:segments)
+      elsif geometry.primitives
+        segments = _get_primitives_segments(_get_primitives_dimensions(geometry.primitives, placement))
+      else
+        return nil
       end
-      return nil if geometry.primitives.nil?
-      _get_primitives_segments(_get_primitives_dimensions(geometry.primitives, placement))
+      z_offset = _get_geometry_z_offset(geometry, placement)
+      return segments if z_offset == 0
+      segments.map { |point| Geom::Point3d.new(point.x, point.y, point.z + z_offset) }
     end
 
     # The transformation, in the laying frame, a geometry is laid with : the
@@ -1088,16 +1155,40 @@ module Ladb::OpenCutList
       geometry.mirror ? Geom::Transformation.scaling(ORIGIN, -1, 1, 1) : IDENTITY
     end
 
+    # How far along Z of the laying frame the given geometry is laid off its
+    # definition : a hardware is shifted by its z_offset, and one of
+    # primitives is generated centered - see _get_geometry_definition - the
+    # measures only shift it. 0 for a machining : it starts at the face.
+    def _get_geometry_offset(geometry, placement)
+      return 0.0 unless geometry.part == :hardware
+      offset = _get_geometry_z_offset(geometry, placement)
+      offset += _get_primitives_offset(geometry.primitives, placement) if geometry.definition.nil? && !geometry.primitives.nil?
+      offset
+    end
+
+    # The z_offset the descriptor declares for the given hardware, evaluated
+    # at the given placement - see HardwareDescriptorDef. 0 when there is
+    # none, or it can't be evaluated there.
+    def _get_geometry_z_offset(geometry, placement)
+      return 0.0 unless geometry.part == :hardware
+      component = _get_hardware_component(geometry.slot)
+      return 0.0 if component.nil? || component.z_offset.nil?
+      HardwareDescriptorDef.to_length(component.z_offset, true, _get_placement_variables(placement)) || 0.0
+    end
+
     # The definition of the given geometry - hardware or machining - to lay
     # at the given placement : its SKP's one, or the one generated from its
     # primitives - one per set of measures they use, a part thickness -
-    # found by the key of its geometry. To be called in an operation.
+    # found by the key of its geometry. A hardware - a shape - is generated
+    # centered on Z, so that the same dowel shifted by the measures stays one
+    # definition - one part in the cut list - see _add_geometry. To be called
+    # in an operation.
     def _get_geometry_definition(geometry, placement)
       return geometry.definition unless geometry.definition.nil?
       return nil if geometry.primitives.nil?
 
       model = Sketchup.active_model
-      dimensions = _get_primitives_dimensions(geometry.primitives, placement)
+      dimensions = _get_primitives_dimensions(geometry.primitives, placement, geometry.part == :hardware)
       return nil if dimensions.empty?
       key = "#{geometry.part}:#{dimensions.to_json}"
       name = _get_hardware_definition_name(geometry.slot, geometry.part)
@@ -1105,8 +1196,8 @@ module Ladb::OpenCutList
       definition = model.definitions.find { |d| d.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, HardwareDescriptorDef::DEFINITION_ATTRIBUTE_PRIMITIVES) == key }
       if definition.nil?
         definition = model.definitions.add(name.is_a?(String) && !name.empty? ? name : geometry.part.to_s)
-        dimensions.each do |x, y, diameter, z_min, z_max|
-          _add_primitive_cylinder(definition.entities, x, y, diameter, z_min, z_max)
+        dimensions.each do |x, y, diameter, z_min, z_max, length|
+          _add_primitive_solid(definition.entities, x, y, diameter, z_min, z_max, length)
         end
         definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, HardwareDescriptorDef::DEFINITION_ATTRIBUTE_PRIMITIVES, key)
       end
@@ -1115,10 +1206,22 @@ module Ladb::OpenCutList
       definition
     end
 
-    # A solid cylinder along Z, from z_min to z_max.
-    def _add_primitive_cylinder(entities, x, y, diameter, z_min, z_max)
+    # A solid along Z, from z_min to z_max : a cylinder, or a slot with round
+    # ends - length along X - when length is given. Its ends are arcs, to
+    # soften its sides.
+    def _add_primitive_solid(entities, x, y, diameter, z_min, z_max, length = nil)
       return if z_max <= z_min
-      edges = entities.add_circle(Geom::Point3d.new(x, y, z_max), Z_AXIS, diameter / 2, _get_primitive_num_segments(diameter))
+      r = diameter / 2
+      count = _get_primitive_num_segments(diameter)
+      if length.nil?
+        edges = entities.add_circle(Geom::Point3d.new(x, y, z_max), Z_AXIS, r, count)
+      else
+        h = (length - diameter) / 2
+        edges = entities.add_arc(Geom::Point3d.new(x + h, y, z_max), X_AXIS, Z_AXIS, r, -Math::PI / 2, Math::PI / 2, count / 2) +
+                entities.add_arc(Geom::Point3d.new(x - h, y, z_max), X_AXIS, Z_AXIS, r, Math::PI / 2, 3 * Math::PI / 2, count / 2)
+        edges << entities.add_line(Geom::Point3d.new(x + h, y + r, z_max), Geom::Point3d.new(x - h, y + r, z_max))
+        edges << entities.add_line(Geom::Point3d.new(x - h, y - r, z_max), Geom::Point3d.new(x + h, y - r, z_max))
+      end
       face = entities.add_face(edges)
       return if face.nil?
       face.reverse! if face.normal.z > 0
@@ -1164,6 +1267,31 @@ module Ladb::OpenCutList
 
         glued_instance_bounds.intersect(new_instance_bounds).valid?
       }
+    end
+
+    # Lays the given geometry - hardware or machining - at the given
+    # placement, glued to its face. Off its definition - see
+    # _get_geometry_offset - it is laid in a group glued in its place, that
+    # holds the offset : SketchUp puts a glued instance back on the plane of
+    # its face when the model is reopened.
+    def _add_geometry(geometry, placement, material, layer)
+      definition = _get_geometry_definition(geometry, placement)
+      return unless definition.is_a?(Sketchup::ComponentDefinition)
+      mt = _get_geometry_mirror_transformation(geometry)
+      offset = _get_geometry_offset(geometry, placement)
+      if offset.abs < 1e-6
+        _add_glued_instance(definition, material, layer, placement.face, placement.entities, placement.transformation, ORIGIN, mt)
+        return
+      end
+      wrapper = placement.entities.add_group
+      wrapper.transformation = placement.transformation
+      instance = wrapper.entities.add_instance(definition, mt * Geom::Transformation.translation([ 0, 0, offset ]))
+      instance.material = material if material.is_a?(Sketchup::Material)
+      instance.layer = layer if layer.is_a?(Sketchup::Layer)
+      wrapper.layer = layer if layer.is_a?(Sketchup::Layer)
+      wrapper.definition.behavior.no_scale_mask = 0b1111111
+      wrapper.definition.behavior.is2d = true       # Gluing behavior
+      wrapper.glued_to = placement.face if wrapper.respond_to?(:glued_to=) # Sketchup::Group#glued_to= requires SketchUp >= 2021.1
     end
 
     def _add_glued_instance(definition, material, layer, face, entities, dti, pt, at)
@@ -1426,8 +1554,19 @@ module Ladb::OpenCutList
     # couple's placements (seeds), nil on the placements discovered by walking
     # the contact graph ; 'glued_instances' holds the existing glued instances at
     # the anchor when the placement targets them (remove).
-    PropagationDef = Struct.new(:placements)
-    PropagationPlacementDef = Struct.new(:definition, :face, :transformation, :role, :instance_transformations, :seed_transformation, :glued_instances) do
+    # 'refused' holds the placements left out because the hardware's asserts
+    # fail there, 'failed_asserts' those asserts.
+    PropagationDef = Struct.new(:placements, :refused, :failed_asserts) do
+      # The refused anchors : a refused couple counts once.
+      def refused_count
+        return 0 if refused.nil?
+        refused.count { |placement| placement.role == :a || placement.partner.nil? || !refused.include?(placement.partner) }
+      end
+    end
+    # 'partner' is the placement of the other slot at the same anchor - laid
+    # or not - on the other part of the joint ; 'variables' caches the
+    # measures taken there, see _get_placement_variables.
+    PropagationPlacementDef = Struct.new(:definition, :face, :transformation, :role, :instance_transformations, :seed_transformation, :glued_instances, :partner, :variables) do
       def entities
         face.parent.entities
       end
@@ -1960,6 +2099,7 @@ module Ladb::OpenCutList
 
         if occupied_anchor_count > 0
           @tool.show_message(PLUGIN.get_i18n_string('tool.smart_join.error.occupied_anchors', { :count => occupied_anchor_count }), SmartTool::MESSAGE_TYPE_ERROR)
+        elsif _show_refused_anchors(_get_propagation_def(neighborhood_def, joinery_def))
         elsif no_valid_join
           @tool.show_message(PLUGIN.get_i18n_string('tool.smart_join.error.no_valid_join'), SmartTool::MESSAGE_TYPE_ERROR)
         end
@@ -2139,10 +2279,9 @@ module Ladb::OpenCutList
 
           hardware = placement.role == :a ? hardware_a : hardware_b
           machining = placement.role == :a ? machining_a : machining_b
-          entities = placement.entities
 
-          _add_glued_instance(_get_geometry_definition(hardware, placement), hardware_material, hardware_layer, placement.face, entities, placement.transformation, ORIGIN, _get_geometry_mirror_transformation(hardware))
-          _add_glued_instance(_get_geometry_definition(machining, placement), machining_material, machining_layer, placement.face, entities, placement.transformation, ORIGIN, _get_geometry_mirror_transformation(machining))
+          _add_geometry(hardware, placement, hardware_material, hardware_layer)
+          _add_geometry(machining, placement, machining_material, machining_layer)
 
         end
 
@@ -2326,8 +2465,9 @@ module Ladb::OpenCutList
       # A placement targets the entities that own the face (face.parent). Expressing
       # the transformation as 'face.transformation.inverse * world_frame' matches the
       # existing add path (dti * translation(pt) * at) and also handles nested faces.
+      # Both slots' placements are made - partners - even when only one is laid.
       fn_seed = lambda do |face, mt, role, owner_t|
-        seeds << PropagationPlacementDef.new(face.parent, face, mt, role, [ owner_t ], owner_t)
+        PropagationPlacementDef.new(face.parent, face, mt, role, [ owner_t ], owner_t)
       end
 
       # 1. Seed with the picked couple's placements
@@ -2353,14 +2493,14 @@ module Ladb::OpenCutList
 
           join_def.anchor_points_3d.each do |point|
 
-            if has_geometry_a
-              pt_a = point.transform(ti_a).project_to_plane(face_a.plane)
-              fn_seed.call(face_a, dti_a * Geom::Transformation.translation(pt_a) * join_def.at_a, :a, fm_a.transformation)
-            end
-            if has_geometry_b
-              pt_b = point.transform(ti_b).project_to_plane(face_b.plane)
-              fn_seed.call(face_b, dti_b * Geom::Transformation.translation(pt_b) * join_def.at_b, :b, fm_b.transformation)
-            end
+            pt_a = point.transform(ti_a).project_to_plane(face_a.plane)
+            pt_b = point.transform(ti_b).project_to_plane(face_b.plane)
+            placement_a = fn_seed.call(face_a, dti_a * Geom::Transformation.translation(pt_a) * join_def.at_a, :a, fm_a.transformation)
+            placement_b = fn_seed.call(face_b, dti_b * Geom::Transformation.translation(pt_b) * join_def.at_b, :b, fm_b.transformation)
+            placement_a.partner = placement_b
+            placement_b.partner = placement_a
+            seeds << placement_a if has_geometry_a
+            seeds << placement_b if has_geometry_b
 
           end
 
@@ -2395,13 +2535,13 @@ module Ladb::OpenCutList
           # Skip if the neighbor anchor is already physically occupied by a glued instance
           next nil if _get_glued_instances_at(nfm.face, mt_n, geometries_bounds).any?
 
-          PropagationPlacementDef.new(nfm.face.parent, nfm.face, mt_n, role_n)
+          PropagationPlacementDef.new(nfm.face.parent, nfm.face, mt_n, role_n, nil, nil, nil, placement)
         end
 
       end
 
       @propagation_signature = signature
-      @propagation_def = PropagationDef.new(placements)
+      @propagation_def = _check_hardware_asserts(placements)
     end
 
     # Lightweight fingerprint of the joinery inputs (active part + neighbors + anchors).
@@ -3500,6 +3640,7 @@ module Ladb::OpenCutList
 
       if occupied_anchor_count > 0
         @tool.show_message(PLUGIN.get_i18n_string('tool.smart_join.error.occupied_anchors', { :count => occupied_anchor_count }), SmartTool::MESSAGE_TYPE_ERROR)
+      elsif !no_valid_join && _show_refused_anchors(_get_propagation_def(neighborhood_def, joinery_def))
       elsif no_valid_join
         @tool.show_message(PLUGIN.get_i18n_string('tool.smart_join.error.no_valid_join'), SmartTool::MESSAGE_TYPE_ERROR)
       end
@@ -3640,10 +3781,9 @@ module Ladb::OpenCutList
 
           hardware = placement.role == :a ? hardware_a : hardware_b
           machining = placement.role == :a ? machining_a : machining_b
-          entities = placement.entities
 
-          _add_glued_instance(_get_geometry_definition(hardware, placement), hardware_material, hardware_layer, placement.face, entities, placement.transformation, ORIGIN, _get_geometry_mirror_transformation(hardware))
-          _add_glued_instance(_get_geometry_definition(machining, placement), machining_material, machining_layer, placement.face, entities, placement.transformation, ORIGIN, _get_geometry_mirror_transformation(machining))
+          _add_geometry(hardware, placement, hardware_material, hardware_layer)
+          _add_geometry(machining, placement, machining_material, machining_layer)
 
         end
 
@@ -3696,16 +3836,17 @@ module Ladb::OpenCutList
 
       seeds = []
 
+      # Both slots' placements are made - partners - even when only one is laid.
       joinery_def.join_def.anchor_points_3d.each do |point|
 
-        if has_geometry_a
-          pt_a = point.transform(ti_a).project_to_plane(face_a.plane)
-          seeds << PropagationPlacementDef.new(face_a.parent, face_a, dti_a * Geom::Transformation.translation(pt_a) * joinery_def.at_a, :a, [ fm_a.transformation ], fm_a.transformation)
-        end
-        if has_geometry_b
-          pt_b = point.transform(ti_b).project_to_plane(face_b.plane)
-          seeds << PropagationPlacementDef.new(face_b.parent, face_b, dti_b * Geom::Transformation.translation(pt_b) * joinery_def.at_b, :b, [ fm_b.transformation ], fm_b.transformation)
-        end
+        pt_a = point.transform(ti_a).project_to_plane(face_a.plane)
+        pt_b = point.transform(ti_b).project_to_plane(face_b.plane)
+        placement_a = PropagationPlacementDef.new(face_a.parent, face_a, dti_a * Geom::Transformation.translation(pt_a) * joinery_def.at_a, :a, [ fm_a.transformation ], fm_a.transformation)
+        placement_b = PropagationPlacementDef.new(face_b.parent, face_b, dti_b * Geom::Transformation.translation(pt_b) * joinery_def.at_b, :b, [ fm_b.transformation ], fm_b.transformation)
+        placement_a.partner = placement_b
+        placement_b.partner = placement_a
+        seeds << placement_a if has_geometry_a
+        seeds << placement_b if has_geometry_b
 
       end
 
@@ -3738,13 +3879,13 @@ module Ladb::OpenCutList
           # Skip if the neighbor anchor is already physically occupied by a glued instance
           next nil if _get_glued_instances_at(nfm.face, mt_n, geometries_bounds).any?
 
-          PropagationPlacementDef.new(nfm.face.parent, nfm.face, mt_n, from_a ? :b : :a)
+          PropagationPlacementDef.new(nfm.face.parent, nfm.face, mt_n, from_a ? :b : :a, nil, nil, nil, placement)
         end
 
       end
 
       @propagation_signature = signature
-      @propagation_def = PropagationDef.new(placements)
+      @propagation_def = _check_hardware_asserts(placements)
     end
 
     # Lightweight fingerprint of the joinery inputs (picked couple + anchors).
@@ -5081,8 +5222,8 @@ module Ladb::OpenCutList
     # reshape may have lost it.
     def _get_anchored_instances(face_manipulator, anchors)
       ti = face_manipulator.transformation.inverse
-      instances = face_manipulator.face.parent.entities.grep(Sketchup::ComponentInstance).select { |instance|
-        instance.glued_to.is_a?(Sketchup::Face) || DefinitionAttributes.role_of(instance.definition) == DefinitionAttributes::ROLE_HINGE
+      instances = face_manipulator.face.parent.entities.select { |entity| entity.is_a?(Sketchup::ComponentInstance) || entity.is_a?(Sketchup::Group) && entity.respond_to?(:glued_to) }.select { |instance|
+        instance.glued_to.is_a?(Sketchup::Face) || instance.is_a?(Sketchup::ComponentInstance) && DefinitionAttributes.role_of(instance.definition) == DefinitionAttributes::ROLE_HINGE
       }
       anchors.each_with_object({}) do |anchor, groups|
         local_anchor = anchor.transform(ti)

@@ -78,7 +78,41 @@ class TC_Ladb_Utils_LengthExpressionUtils < TestUp::TestCase
     _assert_error('missing_operand') { _unchecked('5 +') }
     _assert_error('zero_division') { _unchecked('5/(2-2)') }
     _assert_error('syntax_error') { _unchecked('abc') }
-    _assert_error('syntax_error') { _unchecked('5; exit') }
+    _assert_error('syntax_error') { _unchecked('5 exit') }
+  end
+
+  def test_functions
+    assert_equal(10.0, _unchecked('min(10; 20)'))
+    assert_equal(20.0, _unchecked('max(10; 20)'))
+    assert_equal(5.0, _unchecked('min(10; 20; 5)'))
+    assert_equal(25.0, _unchecked('MAX(5; 3) * 5'))
+    assert_equal(30.0, _unchecked('max(min(10; 20); 30)'))
+    assert_equal(-10.0, _unchecked('-max(10; 5)'))
+    assert_equal(10.5, _unchecked('min(10,5; 20)'))              # ',' right in a number : a decimal separator
+    assert_equal(10.0, _unchecked('min(10, 20)'))                # ',' right after an argument : a separator
+    assert_equal([ 14.0, 1 ], _checked('min(@thickness - 5mm, 20mm)'))
+    assert_equal([ 20.0, 1 ], _checked('max(20mm; 40mm - @thickness - 5mm)'))
+    assert(LengthExpressionUtils.functions?('min(2mm; 3mm)'))
+    assert(!LengthExpressionUtils.functions?('2mm'))
+    _assert_error('invalid_argument_count') { _unchecked('min(10)') }
+    _assert_error('invalid_dimension') { _checked('min(@thickness; 2)') }
+    _assert_error('missing_close_parenthesis') { _unchecked('min(10; 20') }
+    _assert_error('unexpected_close_parenthesis') { _unchecked('min(10;)') }
+    _assert_error('missing_operand') { _unchecked('10; 20') }
+    _assert_error('syntax_error') { _unchecked('sqrt(10; 20)') }
+  end
+
+  def test_steps
+    assert_equal(12.0, _unchecked('floor(14; 12; 15; 20)'))
+    assert_equal(15.0, _unchecked('floor(15; 12; 15; 20)'))
+    assert_equal(20.0, _unchecked('ceil(18; 12; 15; 20)'))
+    assert_equal(15.0, _unchecked('ceil(30 - 15; 20; 15; 12)'))   # Unordered steps
+    assert_equal(12.0, _unchecked('floor(100; 12)'))
+    assert_equal([ 12.0, 1 ], _checked('floor(@thickness - 5mm; 12mm; 15mm)'))
+    _assert_error('no_matching_value') { _unchecked('floor(10; 12; 15)') }
+    _assert_error('no_matching_value') { _unchecked('ceil(30; 12; 15)') }
+    _assert_error('invalid_argument_count') { _unchecked('ceil(30)') }
+    _assert_error('invalid_dimension') { _checked('floor(@thickness; 12)') }
   end
 
   def test_literals

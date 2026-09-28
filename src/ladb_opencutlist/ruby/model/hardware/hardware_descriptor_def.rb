@@ -17,12 +17,15 @@ module Ladb::OpenCutList
   #    "supplier": "…", "url": "…",
   #    "hardware_material": "…",
   #    "components": { "<slot>": <component> },
+  #    "variables": { "<name>": "<length expression>" },
+  #    "asserts": [ "<length expression> <= <length expression>" ],
   #    "options": { "<name>": "<value>" }   defaults of the tool's options
   #  }
   #
   # A <component> is either :
   #  - { "name", "description", "price", "url", "mass",
-  #      "hardware": <part> | <primitives>, "machining": <part> | <primitives>, "stretch": { … }, "attributes": { … } }
+  #      "hardware": <part> | <primitives>, "machining": <part> | <primitives>, "z_offset": "<length>",
+  #      "stretch": { … }, "attributes": { … } }
   #  - { "same_as": "<slot>" } / { "mirror_of": "<slot>" } : the other slot's
   #    component, laid mirrored across the YZ plane of the laying frame - x
   #    negated - for mirror_of ;
@@ -46,16 +49,34 @@ module Ladb::OpenCutList
   # x and y default to 0.
   #  - a machining, as operations - for what a fixed SKP can't adapt, a
   #    through hole in a part of any thickness :
-  #    { "drillings": [ { "x": "-64mm", "y": 0, "diameter": "5mm", "depth": "through" | "12mm" } ] }
+  #    { "drillings": [ { "x": "-64mm", "y": 0, "diameter": "5mm", "depth": "through" | "12mm" } ],
+  #      "mortises": [ { "x": 0, "y": 0, "length": "19mm", "width": "5mm", "depth": "15mm" } ] }
   #    from the face into the part ;
-  #  - a hardware, as shapes - a dowel :
-  #    { "cylinders": [ { "x": 0, "y": 0, "diameter": "8mm", "from": "-20mm", "to": "20mm" } ] }
+  #  - a hardware, as shapes - a dowel, a Domino tenon :
+  #    { "cylinders": [ { "x": 0, "y": 0, "diameter": "8mm", "from": "-20mm", "to": "20mm" } ],
+  #      "oblongs": [ { "x": 0, "y": 0, "length": "19mm", "width": "5mm", "from": "-15mm", "to": "15mm" } ] }
   #    along Z, from one height to the other.
+  # A mortise or an oblong is a slot with round ends, its length along X -
+  # ends included - and its width along Y.
   # A length can be an expression of the measures the tool takes where it
-  # lays the part - VARIABLES - : "@thickness - 2mm", "@thickness / 2". Its
-  # literals bear a unit as SketchUp reads it - mm, cm, m, ", ', yd - bare
-  # numbers are factors. See LengthExpressionUtils.
-  # "through" is "@thickness".
+  # lays the part - see measures - : "@thickness - 2mm", "@thickness / 2",
+  # "min(@thickness_a - 5mm; 20mm)". Its literals bear a unit as SketchUp
+  # reads it - mm, cm, m, ", ', yd - bare numbers are factors. See
+  # LengthExpressionUtils. "through" is "@thickness".
+  #
+  # "variables" names expressions, evaluated in order : each can use the
+  # measures and the variables above it, and the lengths of the components
+  # can use them all - "@depth_a".
+  #
+  # "asserts" are comparisons - <=, >=, <, >, = - the measures must satisfy
+  # for the hardware to be laid : "@depth_b <= @thickness_b - 5mm". The tool
+  # refuses the anchors where one fails.
+  #
+  # "z_offset" shifts the hardware along Z of the laying frame - the face
+  # normal, the only axis whose sense the descriptor knows - a length
+  # expression : "(@depth_b - @depth_a) / 2". The machining always starts
+  # at the face. The one of a variant overrides the one of the component
+  # holding the variants.
   #
   # "name", "description", "price", "url" and "mass" are what the cut list
   # reads of the laid hardware definition. Those of a variant override those
@@ -93,6 +114,8 @@ module Ladb::OpenCutList
     # What the cut list reads of a laid hardware definition
     INFO_KEYS = %w[name description price url mass].freeze
 
+    Z_OFFSET = 'z_offset'.freeze
+
     SELECT_MODE_EXACT = 'exact'.freeze
     SELECT_MODE_MAX_LE = 'max_le'.freeze   # The largest key <= the measure
 
@@ -113,28 +136,45 @@ module Ladb::OpenCutList
     DEFINITION_ATTRIBUTE_PRIMITIVES = 'hardware_primitives'.freeze
 
     MACHINING_DRILLINGS = 'drillings'.freeze
+    MACHINING_MORTISES = 'mortises'.freeze
     HARDWARE_CYLINDERS = 'cylinders'.freeze
+    HARDWARE_OBLONGS = 'oblongs'.freeze
 
     # The primitives each part can be given as
     PRIMITIVES = {
-      PART_HARDWARE => [ HARDWARE_CYLINDERS ],
-      PART_MACHINING => [ MACHINING_DRILLINGS ],
+      PART_HARDWARE => [ HARDWARE_CYLINDERS, HARDWARE_OBLONGS ],
+      PART_MACHINING => [ MACHINING_DRILLINGS, MACHINING_MORTISES ],
     }.freeze
 
     DRILLING_DEPTH_THROUGH = 'through'.freeze
 
-    # The measures the lengths of primitives can use, taken by the tool where
-    # it lays the part :
-    #  - thickness : how far the part goes behind the face - toward -Z.
+    # The measures the lengths can use, taken by the tool where it lays a
+    # part - see measures :
+    #  - thickness : how far the part goes behind the face - toward -Z ;
+    #  - thickness_<slot> : the one of the part the given slot is laid on, for
+    #    the types that join two parts - JOIN_TYPES. An expression then reads
+    #    the same from either slot.
     VARIABLE_THICKNESS = 'thickness'.freeze
     VARIABLES = [ VARIABLE_THICKNESS ].freeze
 
-    VARIABLE_PATTERN = /@([A-Za-z_]\w*)/
+    JOIN_TYPES = [ TYPE_CONNECTOR, TYPE_FITTING, TYPE_HINGE ].freeze
 
-    # A solid of primitives - a drilling or a cylinder - resolved for the
-    # measures of where it is laid, its lengths in inches : a cylinder along
-    # Z, from z_min to z_max.
-    PrimitiveCylinderDef = Struct.new(:x, :y, :diameter, :z_min, :z_max)
+    VARIABLE_PATTERN = /@([A-Za-z_]\w*)/
+    VARIABLE_NAME_PATTERN = /\A[A-Za-z_]\w*\z/
+
+    # A comparison of two lengths : the tolerance it is checked with, in inches.
+    ASSERT_PATTERN = /\A(.+?)(<=|>=|<|>|=)(.+)\z/
+    ASSERT_TOLERANCE = 1e-5
+
+    # A solid of primitives - a drilling, a mortise, a cylinder or an oblong
+    # - resolved for the measures of where it is laid, its lengths in inches :
+    # a slot with round ends along Z, from z_min to z_max, diameter wide
+    # along Y and length long along X - a cylinder when length is diameter.
+    PrimitiveCylinderDef = Struct.new(:x, :y, :diameter, :z_min, :z_max, :length) do
+      def round?
+        length.nil? || length <= diameter
+      end
+    end
 
     # A component resolved for a context : the refs to load, and how to lay them.
     #  - slot : the slot asked for ; source_slot : the one whose component
@@ -148,9 +188,11 @@ module Ladb::OpenCutList
     #    nil when it has none ;
     #  - description, price, url, mass : as written, the variant's over the component's ;
     #  - part_slots : the slot whose component each part - 'hardware',
-    #    'machining' - comes from, another one when the part is linked.
+    #    'machining' - comes from, another one when the part is linked ;
+    #  - z_offset : the length expression the hardware is shifted by along
+    #    Z, nil when none - see to_length.
     HardwareComponentDef = Struct.new(:slot, :source_slot, :hardware, :machining, :mirror, :stretch, :variant, :attributes,
-                                      :name, :variant_name, :description, :price, :url, :mass, :part_slots)
+                                      :name, :variant_name, :description, :price, :url, :mass, :part_slots, :z_offset)
 
     attr_reader :path, :ref, :data, :errors
 
@@ -185,7 +227,7 @@ module Ladb::OpenCutList
     # Is the given resolved part - see HardwareComponentDef#hardware and
     # #machining - given as primitives ?
     def self.primitives?(part)
-      part.is_a?(Hash) && (part[MACHINING_DRILLINGS].is_a?(Array) || part[HARDWARE_CYLINDERS].is_a?(Array))
+      part.is_a?(Hash) && PRIMITIVES.values.flatten.any? { |key| part[key].is_a?(Array) }
     end
 
     # The variables the lengths of the given primitives use - "through"
@@ -213,8 +255,15 @@ module Ladb::OpenCutList
       _primitive_items(primitives).map { |key, item|
         x = item['x'].nil? ? 0.0 : to_length(item['x'], true, variables)
         y = item['y'].nil? ? 0.0 : to_length(item['y'], true, variables)
-        diameter = to_length(item['diameter'], false, variables)
-        if key == MACHINING_DRILLINGS
+        if key == MACHINING_MORTISES || key == HARDWARE_OBLONGS
+          diameter = to_length(item['width'], false, variables)
+          length = to_length(item['length'], false, variables)
+          next nil if length.nil? || !diameter.nil? && length < diameter
+        else
+          diameter = to_length(item['diameter'], false, variables)
+          length = nil
+        end
+        if key == MACHINING_DRILLINGS || key == MACHINING_MORTISES
           depth = to_length(item['depth'] == DRILLING_DEPTH_THROUGH ? "@#{VARIABLE_THICKNESS}" : item['depth'], false, variables)
           z_min = depth.nil? ? nil : -depth
           z_max = 0.0
@@ -223,7 +272,7 @@ module Ladb::OpenCutList
           z_max = to_length(item['to'], true, variables)
         end
         next nil if [ x, y, diameter, z_min, z_max ].any?(&:nil?) || z_max <= z_min
-        PrimitiveCylinderDef.new(x, y, diameter, z_min, z_max)
+        PrimitiveCylinderDef.new(x, y, diameter, z_min, z_max, length.nil? || length <= diameter ? nil : length)
       }.compact
     end
 
@@ -233,7 +282,7 @@ module Ladb::OpenCutList
     def self.to_length(value, negative_allowed = false, variables = {})
       if value.is_a?(Numeric)
         length = value / 25.4
-      elsif value.is_a?(String) && value =~ VARIABLE_PATTERN
+      elsif value.is_a?(String) && (value =~ VARIABLE_PATTERN || LengthExpressionUtils.functions?(value))
         length = _evaluate_length(value, variables)
         return nil if length.nil?
       elsif value.is_a?(String) && !value.strip.empty?
@@ -247,9 +296,27 @@ module Ladb::OpenCutList
       nil
     end
 
+    # Does the given comparison - "@depth_b <= @thickness_b - 5mm" - hold
+    # for the given variables ? nil if it isn't a comparison of lengths, or
+    # uses a variable not given.
+    def self.assert?(expression, variables = {})
+      return nil unless expression.is_a?(String) && (match = ASSERT_PATTERN.match(expression.strip))
+      variables = Hash[variables.map { |k, v| [ k.to_s, v ] }]
+      left = to_length(match[1].strip, true, variables)
+      right = to_length(match[3].strip, true, variables)
+      return nil if left.nil? || right.nil?
+      case match[2]
+      when '<=' then left <= right + ASSERT_TOLERANCE
+      when '>=' then left >= right - ASSERT_TOLERANCE
+      when '<' then left < right - ASSERT_TOLERANCE
+      when '>' then left > right + ASSERT_TOLERANCE
+      else (left - right).abs <= ASSERT_TOLERANCE
+      end
+    end
+
     # [ [ primitive key, item Hash ] ] of the given primitives.
     def self._primitive_items(primitives)
-      [ MACHINING_DRILLINGS, HARDWARE_CYLINDERS ].flat_map { |key|
+      PRIMITIVES.values.flatten.flat_map { |key|
         items = primitives[key]
         items.is_a?(Array) ? items.select { |item| item.is_a?(Hash) }.map { |item| [ key, item ] } : []
       }
@@ -330,6 +397,50 @@ module Ladb::OpenCutList
       TYPES[type] || []
     end
 
+    # The measures its lengths can use - see VARIABLES.
+    def measures
+      return VARIABLES unless JOIN_TYPES.include?(type)
+      VARIABLES + slots.map { |slot| "#{VARIABLE_THICKNESS}_#{slot}" }
+    end
+
+    # The measures its lengths - of primitives, variables and asserts - use :
+    # the ones the tool has to take.
+    def used_measures
+      @used_measures ||= begin
+        text = JSON.generate(@data)
+        names = text.scan(VARIABLE_PATTERN).flatten
+        names << VARIABLE_THICKNESS if text.include?("\"#{DRILLING_DEPTH_THROUGH}\"")
+        measures & names
+      end
+    end
+
+    # Its own variables : { name => length expression }, in order.
+    def variables
+      @data['variables'].is_a?(Hash) ? @data['variables'] : {}
+    end
+
+    # Its asserts : the comparisons of lengths the measures must satisfy.
+    def asserts
+      @data['asserts'].is_a?(Array) ? @data['asserts'] : []
+    end
+
+    # The given measures - { 'thickness' => <inches>, … } - completed by its
+    # variables, in inches. A variable that can't be evaluated is left out.
+    def resolve_variables(measures)
+      resolved = Hash[measures.map { |k, v| [ k.to_s, v ] }]
+      variables.each do |name, expression|
+        value = self.class.to_length(expression, true, resolved)
+        resolved[name] = value unless value.nil?
+      end
+      resolved
+    end
+
+    # Its asserts that fail - or can't be evaluated - for the given resolved
+    # variables - see resolve_variables.
+    def failed_asserts(variables)
+      asserts.reject { |expression| self.class.assert?(expression, variables) }
+    end
+
     # The defaults of the tool's options, as their raw strings.
     def options
       @data['options'].is_a?(Hash) ? @data['options'] : {}
@@ -388,7 +499,9 @@ module Ladb::OpenCutList
       elsif value.key?('variants')
         key = _select_variant(value['variants'], context)
         return nil if key.nil?
-        return _resolve_value(slot, value['variants']['items'][key], context, mirror, visited, key, attributes, info.merge(_info(value)))
+        info = info.merge(_info(value))
+        info[Z_OFFSET] = value[Z_OFFSET] unless value[Z_OFFSET].nil?
+        return _resolve_value(slot, value['variants']['items'][key], context, mirror, visited, key, attributes, info)
       else
         own_info = _info(value)
         merged_info = info.merge(own_info)   # The variant's over the component's
@@ -401,7 +514,8 @@ module Ladb::OpenCutList
           variant.nil? ? own_info['name'] : info['name'],
           variant.nil? ? nil : own_info['name'],
           merged_info['description'], merged_info['price'], merged_info['url'], merged_info['mass'],
-          { PART_HARDWARE => hardware_slot, PART_MACHINING => machining_slot }
+          { PART_HARDWARE => hardware_slot, PART_MACHINING => machining_slot },
+          value[Z_OFFSET].nil? ? info[Z_OFFSET] : value[Z_OFFSET]
         )
       end
       return nil if resolved.nil?
@@ -508,6 +622,8 @@ module Ladb::OpenCutList
         errors << "#{key} is not a string" if @data.key?(key) && !@data[key].nil? && !@data[key].is_a?(String)
       end
 
+      _validate_variables(errors)
+
       components = @data['components']
       if components.is_a?(Hash)
         components.each do |slot, value|
@@ -518,6 +634,8 @@ module Ladb::OpenCutList
       else
         errors << 'missing components'
       end
+
+      _validate_asserts(errors)
 
       if @data.key?('options')
         if @data['options'].is_a?(Hash)
@@ -532,6 +650,68 @@ module Ladb::OpenCutList
       errors
     end
 
+    # Sets the names the lengths can use and the values they are checked
+    # with - see _to_checked_length.
+    def _validate_variables(errors)
+      @checked_variables = Hash[measures.map { |name| [ name, 18 / 25.4 ] }]
+      @variable_names = measures.dup
+      return unless @data.key?('variables')
+      unless @data['variables'].is_a?(Hash)
+        errors << 'variables is not an object'
+        return
+      end
+      @data['variables'].each do |name, expression|
+        label = "variable '#{name}'"
+        if name !~ VARIABLE_NAME_PATTERN
+          errors << "#{label} is not a valid name"
+          next
+        end
+        if measures.include?(name)
+          errors << "#{label} is a measure"
+          next
+        end
+        unless expression.is_a?(String) || expression.is_a?(Numeric)
+          errors << "#{label} is not a length"
+          next
+        end
+        unknown = _unknown_variables(expression)
+        unknown.each do |unknown_name|
+          errors << "#{label} uses the unknown variable @#{unknown_name}"
+        end
+        value = self.class.to_length(expression, true, @checked_variables)
+        errors << "#{label} is not a length" if value.nil? && unknown.empty?
+        @checked_variables[name] = value unless value.nil?
+        @variable_names << name   # Known below, even if it can't be evaluated
+      end
+    end
+
+    def _validate_asserts(errors)
+      return unless @data.key?('asserts')
+      unless @data['asserts'].is_a?(Array)
+        errors << 'asserts is not a list'
+        return
+      end
+      @data['asserts'].each_with_index do |expression, index|
+        label = "assert #{index + 1}"
+        unless expression.is_a?(String) && expression =~ ASSERT_PATTERN
+          errors << "#{label} is not a comparison"
+          next
+        end
+        unknown = _unknown_variables(expression)
+        unknown.each do |name|
+          errors << "#{label} uses the unknown variable @#{name}"
+        end
+        errors << "#{label} is not a comparison of lengths" if unknown.empty? && self.class.assert?(expression, @checked_variables).nil?
+      end
+    end
+
+    # The variables the given expression uses that are neither measures nor
+    # variables declared above.
+    def _unknown_variables(expression)
+      return [] unless expression.is_a?(String)
+      (expression.scan(VARIABLE_PATTERN).flatten - @variable_names).uniq
+    end
+
     # path : the slot, then the variant's key - 'a', 'a/inset'.
     def _validate_component(path, value, errors)
       return if value.nil?
@@ -541,9 +721,10 @@ module Ladb::OpenCutList
       end
       _validate_attributes(path, value['attributes'], errors) if value.key?('attributes')
       _validate_info(path, value, errors)
+      _validate_z_offset(path, value, errors)
       if value.key?('same_as') || value.key?('mirror_of')
         errors << "component '#{path}' links to another slot and has attributes" if value.key?('attributes')
-        errors << "component '#{path}' links to another slot and has #{(value.keys & INFO_KEYS).join(', ')}" unless (value.keys & INFO_KEYS).empty?
+        errors << "component '#{path}' links to another slot and has #{(value.keys & (INFO_KEYS + [ Z_OFFSET ])).join(', ')}" unless (value.keys & (INFO_KEYS + [ Z_OFFSET ])).empty?
         target = value.key?('same_as') ? value['same_as'] : value['mirror_of']
         errors << "component '#{path}' links to unknown slot #{target.inspect}" unless slots.include?(target)
         errors << "component '#{path}' links to itself" if target == path
@@ -598,30 +779,39 @@ module Ladb::OpenCutList
       (value.keys - PRIMITIVES[part]).each do |key|
         errors << "component '#{path}' #{part} has an unknown primitive '#{key}'"
       end
-      _validate_primitive_list(path, part, value, MACHINING_DRILLINGS, 'drilling', %w[x y diameter depth], errors) do |drilling, label|
-        unless drilling['depth'] == DRILLING_DEPTH_THROUGH || !_to_checked_length(drilling['depth'], false).nil?
+      fn_depth = lambda do |item, label|
+        unless item['depth'] == DRILLING_DEPTH_THROUGH || !_to_checked_length(item['depth'], false).nil?
           errors << "#{label} depth is neither \"#{DRILLING_DEPTH_THROUGH}\" nor a positive length"
         end
       end
-      _validate_primitive_list(path, part, value, HARDWARE_CYLINDERS, 'cylinder', %w[x y diameter from to], errors) do |cylinder, label|
-        from = _to_checked_length(cylinder['from'], true)
-        to = _to_checked_length(cylinder['to'], true)
+      fn_from_to = lambda do |item, label|
+        from = _to_checked_length(item['from'], true)
+        to = _to_checked_length(item['to'], true)
         errors << "#{label} from is not a length" if from.nil?
         errors << "#{label} to is not a length" if to.nil?
         # Checkable only without variables : they change with where it is laid
-        errors << "#{label} to is not above from" if !from.nil? && !to.nil? && to <= from && [ cylinder['from'], cylinder['to'] ].none? { |v| v.is_a?(String) && v =~ VARIABLE_PATTERN }
+        errors << "#{label} to is not above from" if !from.nil? && !to.nil? && to <= from && !_variable_lengths?(item['from'], item['to'])
       end
+      _validate_primitive_list(path, part, value, MACHINING_DRILLINGS, 'drilling', %w[x y diameter depth], %w[diameter], errors, &fn_depth)
+      _validate_primitive_list(path, part, value, MACHINING_MORTISES, 'mortise', %w[x y length width depth], %w[length width], errors, &fn_depth)
+      _validate_primitive_list(path, part, value, HARDWARE_CYLINDERS, 'cylinder', %w[x y diameter from to], %w[diameter], errors, &fn_from_to)
+      _validate_primitive_list(path, part, value, HARDWARE_OBLONGS, 'oblong', %w[x y length width from to], %w[length width], errors, &fn_from_to)
     end
 
-    # The given length checked as a descriptor holds it : its variables set
-    # to a typical measure - 18 mm - nil if it isn't one.
+    # Do the given lengths depend on where they are laid ?
+    def _variable_lengths?(*values)
+      values.any? { |v| v.is_a?(String) && (v =~ VARIABLE_PATTERN || LengthExpressionUtils.functions?(v)) }
+    end
+
+    # The given length checked as a descriptor holds it : its measures set
+    # to a typical one - 18 mm - nil if it isn't one.
     def _to_checked_length(value, negative_allowed)
-      self.class.to_length(value, negative_allowed, Hash[VARIABLES.map { |name| [ name, 18 / 25.4 ] }])
+      self.class.to_length(value, negative_allowed, @checked_variables)
     end
 
-    # Validates the list of the given primitive - x, y and diameter - then
+    # Validates the list of the given primitive - x, y and its size - then
     # yields each item and the label of its errors for what is its own.
-    def _validate_primitive_list(path, part, value, key, name, keys, errors)
+    def _validate_primitive_list(path, part, value, key, name, keys, size_keys, errors)
       return unless PRIMITIVES[part].include?(key) && value.key?(key)
       items = value[key]
       unless items.is_a?(Array) && !items.empty?
@@ -639,16 +829,36 @@ module Ladb::OpenCutList
         end
         item.each do |k, v|
           next unless v.is_a?(String)
-          (v.scan(VARIABLE_PATTERN).flatten - VARIABLES).uniq.each do |name|
+          _unknown_variables(v).each do |name|
             errors << "#{label} #{k} uses the unknown variable @#{name}"
           end
         end
         %w[x y].each do |k|
           errors << "#{label} #{k} is not a length" if item.key?(k) && !item[k].nil? && _to_checked_length(item[k], true).nil?
         end
-        errors << "#{label} diameter is not a positive length" if _to_checked_length(item['diameter'], false).nil?
+        sizes = size_keys.map { |k| _to_checked_length(item[k], false) }
+        size_keys.each_with_index do |k, i|
+          errors << "#{label} #{k} is not a positive length" if sizes[i].nil?
+        end
+        if size_keys.length == 2 && sizes.none?(&:nil?) && sizes[0] < sizes[1] && !_variable_lengths?(item['length'], item['width'])
+          errors << "#{label} length is below its width"
+        end
         yield(item, label)
       end
+    end
+
+    def _validate_z_offset(path, value, errors)
+      return if !value.key?(Z_OFFSET) || value.key?('same_as') || value.key?('mirror_of')
+      z_offset = value[Z_OFFSET]
+      unless z_offset.is_a?(String) || z_offset.is_a?(Numeric)
+        errors << "component '#{path}' z_offset is not a length"
+        return
+      end
+      unknown = _unknown_variables(z_offset)
+      unknown.each do |name|
+        errors << "component '#{path}' z_offset uses the unknown variable @#{name}"
+      end
+      errors << "component '#{path}' z_offset is not a length" if unknown.empty? && _to_checked_length(z_offset, true).nil?
     end
 
     def _validate_info(path, value, errors)
