@@ -31,6 +31,9 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
+### 2026-09-28
+ * Changed the way Hardware are configured to be used by Smart Joint Tool **(DEV team only)**
+ * Embed "Example" library of modules and hardware
 ### 2026-09-26
  * Improved Smart Build Tools UI/UX
  * Improved Smart Stretch Tool by adding SHIFT key to lock the section move and snap starting point elsewhere
