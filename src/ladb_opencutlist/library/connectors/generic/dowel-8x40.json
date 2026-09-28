@@ -1,0 +1,12 @@
+{
+  "format": "ocl-hardware",
+  "version": 1,
+  "id": "a41e6b27-9c58-4d03-8f1a-6b2d5e7c9034",
+  "type": "connector",
+  "name": "Dowel 8x40",
+  "components": {
+    "a": { "name": "Dowel 8x40", "hardware": true, "machining": true, "attributes": { "symmetrical":  true } },
+    "b": { "machining": { "same_as": "a" } }
+  },
+  "options": { "height": "/2", "start_offset": "37mm", "end_offset": "37mm", "max_spacing": "500mm" }
+}

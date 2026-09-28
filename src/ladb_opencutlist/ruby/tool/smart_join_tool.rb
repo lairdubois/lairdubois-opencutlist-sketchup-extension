@@ -2,6 +2,7 @@ module Ladb::OpenCutList
 
   require_relative 'smart_tool'
   require_relative '../utils/color_utils'
+  require_relative '../utils/mass_utils'
   require_relative '../utils/path_utils'
   require_relative '../utils/transformation_utils'
   require_relative '../lib/fiddle/clippy/clippy'
@@ -656,35 +657,72 @@ module Ladb::OpenCutList
       {}
     end
 
-    def _get_hardware_component(role)
+    def _get_hardware_component(slot)
       return nil if (descriptor = _get_hardware_descriptor_def).nil?
-      descriptor.resolve_component(role, _get_hardware_context)
+      descriptor.resolve_component(slot, _get_hardware_context)
     end
 
-    # The ref of the given part - :hardware or :machining - of the given role's
+    # The ref of the given part - :hardware or :machining - of the given slot's
     # component. Machinings given as primitives are not laid yet.
-    def _get_hardware_component_ref(role, part)
-      return nil if (component = _get_hardware_component(role)).nil?
+    def _get_hardware_component_ref(slot, part)
+      return nil if (component = _get_hardware_component(slot)).nil?
       ref = component.send(part)
       ref.is_a?(String) ? ref : nil
     end
 
-    # Marks the given hardware definition as the given role's component of the
-    # picked descriptor, and gives it the attributes and the unit price of
-    # that component. The definition is shared by every occurrence : the
-    # attributes of the last one laid are those of all.
-    def _write_hardware_attributes(definition, role)
+    # The name the definition of the given part - :hardware or :machining - of
+    # the given slot's component gets in the model, the one of the part in the
+    # cut list : the component's name - or its variant's own one - then its
+    # variant and part - "Charnière Clip Top (En applique, Usinage)". Without
+    # a name, the hardware's one - the slot told for other slots than the
+    # first : "Mine (b, Usinage)". A linked part is named after the slot it
+    # comes from. nil when there is no such component.
+    def _get_hardware_definition_name(slot, part)
+      return nil if (descriptor = _get_hardware_descriptor_def).nil?
+      return nil if (component = _get_hardware_component(slot)).nil?
+      source_slot = (component.source_slot || slot).to_s
+      part_slot = component.part_slots[part.to_s]
+      return _get_hardware_definition_name(part_slot, part) if !part_slot.nil? && part_slot != source_slot  # A linked part : the file - and the definition - of another slot
+      details = []
+      name = component.variant_name || component.name
+      if !name.is_a?(String) || name.strip.empty?
+        name = descriptor.name
+        details << source_slot unless source_slot == descriptor.slots.first
+      end
+      if !component.variant.nil? && component.variant_name.nil?
+        details << PLUGIN.get_i18n_string("core.hardware_descriptor.variant_#{component.variant}").sub(/\Acore\.hardware_descriptor\.variant_/, '')  # Unknown variants by their key
+      end
+      details << PLUGIN.get_i18n_string('core.hardware_descriptor.part_machining') if part == :machining
+      details.empty? ? name.strip : "#{name.strip} (#{details.join(', ')})"
+    end
+
+    # Gives the given definition the given name - made unique. Left as is when
+    # it already has it, possibly made unique.
+    def _name_hardware_definition(model, definition, name)
+      return unless definition.is_a?(Sketchup::ComponentDefinition) && name.is_a?(String) && !name.empty?
+      return if definition.name == name || definition.name =~ /\A#{Regexp.escape(name)}#\d+\z/
+      definition.name = model.definitions[name].nil? ? name : model.definitions.unique_name(name)
+    end
+
+    # Gives the given hardware definition the attributes of the given slot's
+    # component of the picked descriptor, and what the cut list reads :
+    # description, price, url, mass. The definition is shared by every
+    # occurrence : the attributes of the last one laid are those of all.
+    def _write_hardware_attributes(definition, slot)
       return unless definition.is_a?(Sketchup::ComponentDefinition)
-      return if (descriptor = _get_hardware_descriptor_def).nil?
-      return if (component = _get_hardware_component(role)).nil?
+      return if (component = _get_hardware_component(slot)).nil?
       component.attributes.each do |name, value|
         definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, name, value) unless definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, name) == value
       end
-      definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, HardwareDescriptorDef::DEFINITION_ATTRIBUTE_ID, descriptor.id)
-      definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, HardwareDescriptorDef::DEFINITION_ATTRIBUTE_COMPONENT, component.role)
-      definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, HardwareDescriptorDef::DEFINITION_ATTRIBUTE_VARIANT, component.variant)
-      unless (price = descriptor.unit_price(role)).nil?
-        definition.set_attribute(Plugin::SU_ATTRIBUTE_DICTIONARY, Plugin::SU_PRICE_ATTRIBUTE_KEY, price.round(4).to_s)
+      definition.description = component.description if component.description.is_a?(String) && definition.description != component.description
+      unless component.price.nil?
+        price = component.price.is_a?(Numeric) ? component.price.round(4).to_s : component.price.to_s
+        definition.set_attribute(Plugin::SU_ATTRIBUTE_DICTIONARY, Plugin::SU_PRICE_ATTRIBUTE_KEY, price)
+      end
+      definition.set_attribute(Plugin::SU_ATTRIBUTE_DICTIONARY, 'Url', component.url) if component.url.is_a?(String)
+      unless component.mass.nil?
+        mass = component.mass.is_a?(Numeric) ? "#{component.mass} #{MassUtils::UNIT_SYMBOL_KILOGRAM}" : component.mass.to_s  # A number in kg
+        definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'mass', mass)
       end
     end
 
@@ -789,13 +827,17 @@ module Ladb::OpenCutList
       model.start_operation('OCL Loading Geometry', true)
       begin
 
-        fn_get_definition = lambda do |ref|
+        # A definition loaded from a SKP bears the portable ref of its file
+        # and is found by it : its name is the one of the part - see
+        # _get_hardware_definition_name - and the files of the components
+        # folders are too plainly named - "a.skp" - to be told apart.
+        fn_get_definition = lambda do |ref, definition_name|
           return nil if !ref.is_a?(String) || ref.strip.empty?
           ref = PLUGIN.resolve_library_ref(ref)   # '$LIB/…' and '$OCL/…' refs point to a file of a library
           return nil if ref.nil?
           if (extname = File.extname(ref)).downcase == '.skp'
-            name = File.basename(ref, extname)
-            definition = model.definitions[name]  # Try to get definition from DefinitionList first
+            source = PLUGIN.library_ref_from_path(ref)
+            definition = model.definitions.find { |d| d.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, HardwareDescriptorDef::DEFINITION_ATTRIBUTE_SOURCE) == source }
             if definition.nil?
               begin
 
@@ -815,33 +857,29 @@ module Ladb::OpenCutList
 
                 existing_definitions = model.definitions.to_a
                 definition = Sketchup.version_number >= 2100000000 ? model.definitions.load(ref.gsub('\\', '/'), allow_newer: true) : model.definitions.load(ref.gsub('\\', '/'))
-                if definition && definition.name != name
-                  # Named after the file - as SmartBuildTool does - for the
-                  # lookup above to find it next time. Unless the load
-                  # reused a definition already in the model - same GUID,
-                  # another file copied from this one - whose name the
-                  # other file is found by.
-                  if existing_definitions.include?(definition)
-                    @tool.notify_warnings([ [ 'tool.smart_join.warning.shared_definition', { file_name: name, definition_name: definition.name } ] ])
-                  else
-                    definition.name = name
-                  end
+                if definition && existing_definitions.include?(definition) && !definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, HardwareDescriptorDef::DEFINITION_ATTRIBUTE_SOURCE).nil?
+                  # The load reused a definition already in the model - same
+                  # GUID - loaded from another file copied from this one.
+                  @tool.notify_warnings([ [ 'tool.smart_join.warning.shared_definition', { file_name: File.basename(ref, extname), definition_name: definition.name } ] ])
+                  return definition
                 end
+                definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, HardwareDescriptorDef::DEFINITION_ATTRIBUTE_SOURCE, source) unless definition.nil?
 
               rescue Exception => e
                 @tool.notify_errors([ [ 'tool.smart_join.error.failed_to_load_skp_file', { file: ref } ] ])
               end
             end
+            _name_hardware_definition(model, definition, definition_name)
           else
             definition = model.definitions[ref]
           end
           definition
         end
 
-        hardware_a_definition = fn_get_definition.call(_fetch_option_hardware_a)
-        hardware_b_definition = fn_get_definition.call(_fetch_option_hardware_b)
-        machining_a_definition = fn_get_definition.call(_fetch_option_machining_a)
-        machining_b_definition = fn_get_definition.call(_fetch_option_machining_b)
+        hardware_a_definition = fn_get_definition.call(_fetch_option_hardware_a, _get_hardware_definition_name(:a, :hardware))
+        hardware_b_definition = fn_get_definition.call(_fetch_option_hardware_b, _get_hardware_definition_name(:b, :hardware))
+        machining_a_definition = fn_get_definition.call(_fetch_option_machining_a, _get_hardware_definition_name(:a, :machining))
+        machining_b_definition = fn_get_definition.call(_fetch_option_machining_b, _get_hardware_definition_name(:b, :machining))
 
         _write_hardware_attributes(hardware_a_definition, :a)
         _write_hardware_attributes(hardware_b_definition, :b)
@@ -4077,7 +4115,7 @@ module Ladb::OpenCutList
       key = [ @hinge_kind, hardware ]
       return if key == @hinge_kind_tooltip_key && @tool.current_tooltip?(@hinge_kind_tooltip_box)
       items = [ [ _get_hinge_kind_motif, "#" + PLUGIN.get_i18n_string("tool.smart_join.action_option_hardware_hinge_#{@hinge_kind}_a") ] ]
-      items << File.basename(hardware, '.*') if hardware.is_a?(String) && !hardware.empty?
+      items << _get_hardware_definition_name(:a, :hardware) if hardware.is_a?(String) && !hardware.empty?
       @hinge_kind_tooltip_key = key
       @hinge_kind_tooltip_box = @tool.show_tooltip(items)
     end

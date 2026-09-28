@@ -5,40 +5,47 @@ module Ladb::OpenCutList
   require_relative '../../utils/dimension_utils'
 
   # A HARDWARE of the asset library : a JSON descriptor - data - whose
-  # geometries are SKP files it refers to, possibly shared with other
+  # geometries are SKP files of the same library, possibly shared with other
   # hardware. See the spec "Bibliothèque de quincailleries Smart".
   #
   #  {
   #    "format": "ocl-hardware", "version": 1,
   #    "id": "<uuid>",              stable identity, whatever the file's path
   #    "type": "hinge",             how the tool finds where to lay it (TYPES)
-  #    "category": "…",             free, for filtering
-  #    "name": "…", "thumbnail": "./….png",
-  #    "meta": { "reference", "supplier", "url",
-  #              "items": [ { "component": "a", "reference", "name", "quantity", "unit_price" } ] },
+  #    "name": "…",
+  #    "supplier": "…", "url": "…",
   #    "hardware_material": "…",
-  #    "components": { "<role>": <component> },
+  #    "components": { "<slot>": <component> },
   #    "options": { "<name>": "<value>" }   defaults of the tool's options
   #  }
   #
   # A <component> is either :
-  #  - { "hardware": <ref>, "machining": <ref> | { "holes": [ … ] }, "stretch": { … }, "attributes": { … } }
-  #  - { "same_as": "<role>" } / { "mirror_of": "<role>" }
-  #  - { "variants": { "select": { "by": "<measure>", "mode": "exact" | "max_le", "ratio": <Float> },
-  #                    "fallback": "<key>", "items": { "<key>": <component> | null } },
+  #  - { "name", "description", "price", "url", "mass",
+  #      "hardware": <part>, "machining": <part> | { "holes": [ … ] }, "stretch": { … }, "attributes": { … } }
+  #  - { "same_as": "<slot>" } / { "mirror_of": "<slot>" }
+  #  - { "name", …, "variants": { "select": { "by": "<measure>", "mode": "exact" | "max_le", "ratio": <Float> },
+  #                               "fallback": "<key>", "items": { "<key>": <component> | null } },
   #      "attributes": { … } }
-  #  - null : the role is left empty (a one sided fitting)
+  #  - null : the slot is left empty (a one sided fitting)
+  #
+  # A <part> is declared explicitly - a missing file stays an error :
+  #  - true : the file named after the slot, in the components folder of the
+  #    descriptor - see components_dir_ref and part_file_name ;
+  #  - "<path>.skp" : a shared file, relative to the components folder of the
+  #    descriptor's library ;
+  #  - { "same_as": "<slot>" } : the same part of another slot ;
+  #  - absent, null or false : none.
+  # '$LIB/…', '$OCL/…' and './…' refs - and definition names - are still read.
+  #
+  # "name", "description", "price", "url" and "mass" are what the cut list
+  # reads of the laid hardware definition. Those of a variant override those
+  # of the component holding the variants.
   #
   # "attributes" are written as is in the OCL dictionary of the laid hardware
   # definition - over those its SKP bears : { "role": "hinge",
   # "hinge_max_angle": 110, "hinge_pivot": [ -8.5, 4.2 ] }. Values are
   # scalars or arrays of scalars. Those of a variant override those of the
   # component holding the variants.
-  #
-  # Refs are '$LIB/…' / '$OCL/…' refs of a library, './…' paths relative to the
-  # descriptor, or anything else _get_geometries_def understands (a
-  # definition name). './…' refs are made absolute here, library ones are
-  # left to their consumer.
   class HardwareDescriptorDef < DataContainer
 
     FORMAT = 'ocl-hardware'.freeze
@@ -50,7 +57,7 @@ module Ladb::OpenCutList
     TYPE_FACE = 'face'.freeze
     TYPE_SPAN = 'span'.freeze
 
-    # The roles of the components each type lays
+    # The slots each type lays a component in
     TYPES = {
       TYPE_CONNECTOR => %w[a b],
       TYPE_FITTING => %w[a b],
@@ -59,28 +66,45 @@ module Ladb::OpenCutList
       TYPE_SPAN => %w[a b span],
     }.freeze
 
+    PART_HARDWARE = 'hardware'.freeze
+    PART_MACHINING = 'machining'.freeze
+    PARTS = [ PART_HARDWARE, PART_MACHINING ].freeze
+
+    # What the cut list reads of a laid hardware definition
+    INFO_KEYS = %w[name description price url mass].freeze
+
     SELECT_MODE_EXACT = 'exact'.freeze
     SELECT_MODE_MAX_LE = 'max_le'.freeze   # The largest key <= the measure
 
     # How much the measure may fall short of a key and still take it
     MAX_LE_EPSILON = 1e-6
 
-    # What a hardware definition laid from a descriptor bears - in the OCL
-    # attribute dictionary : the descriptor's id, the role of the component it
-    # is, and the key of its variant (nil when it has none).
-    DEFINITION_ATTRIBUTE_ID = 'hardware_id'.freeze
-    DEFINITION_ATTRIBUTE_COMPONENT = 'hardware_component'.freeze
-    DEFINITION_ATTRIBUTE_VARIANT = 'hardware_variant'.freeze
+    # The folder of a library the SKP files of its descriptors live in
+    COMPONENTS_DIR_NAME = 'components'.freeze
+
+    LIBRARY_REF_PREFIXES = %w[$LIB/ $OCL/].freeze
+
+    # What a definition loaded from a hardware SKP bears - in the OCL
+    # attribute dictionary : the portable ref of its file, it is found by.
+    DEFINITION_ATTRIBUTE_SOURCE = 'hardware_source'.freeze
 
     # A component resolved for a context : the refs to load, and how to lay them.
+    #  - slot : the slot asked for ; source_slot : the one whose component
+    #    it is - they differ through same_as / mirror_of ;
     #  - hardware, machining : ref String, nil - or a Hash of primitives for machining ;
     #  - mirror : true when the geometry is laid mirrored (mirror_of) ;
     #  - stretch : the component's "stretch" Hash, or nil ;
     #  - variant : the key of the picked variant, or nil ;
-    #  - attributes : the Hash of the definition attributes, maybe empty.
-    HardwareComponentDef = Struct.new(:role, :hardware, :machining, :mirror, :stretch, :variant, :attributes)
+    #  - attributes : the Hash of the definition attributes, maybe empty ;
+    #  - name : the component's name ; variant_name : the variant's own one,
+    #    nil when it has none ;
+    #  - description, price, url, mass : as written, the variant's over the component's ;
+    #  - part_slots : the slot whose component each part - 'hardware',
+    #    'machining' - comes from, another one when the part is linked.
+    HardwareComponentDef = Struct.new(:slot, :source_slot, :hardware, :machining, :mirror, :stretch, :variant, :attributes,
+                                      :name, :variant_name, :description, :price, :url, :mass, :part_slots)
 
-    attr_reader :path, :data, :errors
+    attr_reader :path, :ref, :data, :errors
 
     # -- Loading --
 
@@ -88,15 +112,17 @@ module Ladb::OpenCutList
     # the file can't be read or isn't a hardware descriptor. An invalid one is
     # returned, see valid? and errors.
     def self.load(ref)
-      path = defined?(PLUGIN) && PLUGIN.respond_to?(:resolve_library_ref) ? PLUGIN.resolve_library_ref(ref) : ref
+      plugin = defined?(PLUGIN) ? PLUGIN : nil
+      path = plugin && plugin.respond_to?(:resolve_library_ref) ? plugin.resolve_library_ref(ref) : ref
       return nil unless path.is_a?(String) && File.file?(path)
+      ref = plugin.library_ref_from_path(path) if !library_ref?(ref) && plugin && plugin.respond_to?(:library_ref_from_path)
       begin
         data = JSON.parse(File.read(path, mode: 'r:UTF-8'))
       rescue JSON::ParserError, SystemCallError
         return nil
       end
       return nil unless descriptor?(data)
-      new(data, path)
+      new(data, path, library_ref?(ref) ? ref : nil)
     end
 
     # Is the given parsed JSON a hardware descriptor - of any version ?
@@ -104,9 +130,23 @@ module Ladb::OpenCutList
       data.is_a?(Hash) && data['format'] == FORMAT
     end
 
-    def initialize(data, path = nil)
+    def self.library_ref?(value)
+      value.is_a?(String) && LIBRARY_REF_PREFIXES.any? { |prefix| value.start_with?(prefix) }
+    end
+
+    # The file name of the given part of the given slot's component - or of
+    # its given variant : "a.skp", "a.overlay.machining.skp".
+    def self.part_file_name(slot, variant, part)
+      [ slot, variant, part == PART_MACHINING ? PART_MACHINING : nil ].compact.join('.') + '.skp'
+    end
+
+    # path : the file the descriptor was read from ; ref : its '$LIB/…' or
+    # '$OCL/…' ref when it lives in a library - its parts are then refs of
+    # that library.
+    def initialize(data, path = nil, ref = nil)
       @data = data
       @path = path
+      @ref = ref
       @errors = _validate
     end
 
@@ -124,23 +164,23 @@ module Ladb::OpenCutList
       @data['type']
     end
 
-    def category
-      @data['category']
-    end
-
     def name
       @data['name']
     end
 
-    def thumbnail
-      _resolve_ref(@data['thumbnail'])
+    def supplier
+      @data['supplier']
+    end
+
+    def url
+      @data['url']
     end
 
     def hardware_material
       _resolve_ref(@data['hardware_material'])
     end
 
-    def roles
+    def slots
       TYPES[type] || []
     end
 
@@ -154,42 +194,45 @@ module Ladb::OpenCutList
       value.nil? ? nil : value.to_s
     end
 
-    def meta_items
-      meta = @data['meta']
-      meta.is_a?(Hash) && meta['items'].is_a?(Array) ? meta['items'].select { |item| item.is_a?(Hash) } : []
-    end
-
-    # The unit price of one instance of the given role's component : the sum
-    # of the items it bears - nil when it bears none, or none priced.
-    def unit_price(role)
-      items = meta_items.select { |item| item['component'] == role.to_s && item['unit_price'].is_a?(Numeric) }
-      return nil if items.empty?
-      items.inject(0.0) { |sum, item| sum + (item['quantity'].is_a?(Numeric) ? item['quantity'] : 1) * item['unit_price'] }
+    # The folder the files of the parts declared true live in : the
+    # descriptor's place mirrored under the components folder of its library
+    # - '$LIB/hinges/blum/Mine.json' -> '$LIB/components/hinges/blum/Mine'.
+    # Out of a library, a folder named after the descriptor next to it. nil
+    # when the descriptor has no file.
+    def components_dir_ref
+      if @ref.is_a?(String)
+        prefix = LIBRARY_REF_PREFIXES.find { |p| @ref.start_with?(p) }
+        relative = @ref[prefix.length..-1]
+        return prefix + COMPONENTS_DIR_NAME + '/' + relative.sub(/#{Regexp.escape(File.extname(relative))}\z/, '')
+      end
+      return nil unless @path.is_a?(String)
+      File.join(File.dirname(@path), File.basename(@path, File.extname(@path)))
     end
 
     # -- Resolution --
 
-    # The component of the given role, resolved for the given context - the
+    # The component of the given slot, resolved for the given context - the
     # measures the tool took, keyed by the "by" of the variants they select :
-    # { 'hinge_kind' => 'inset', 'depth' => <Length>, … }. nil when the role is
+    # { 'hinge_kind' => 'inset', 'depth' => <Length>, … }. nil when the slot is
     # empty, or no variant fits.
-    def resolve_component(role, context = {})
-      _resolve_component(role.to_s, _stringify_keys(context), false, [])
+    def resolve_component(slot, context = {})
+      _resolve_component(slot.to_s, _stringify_keys(context), false, [])
     end
 
     # -----
 
     private
 
-    def _resolve_component(role, context, mirror, visited)
-      return nil if visited.include?(role)   # Cycle
-      visited = visited + [ role ]
+    def _resolve_component(slot, context, mirror, visited)
+      return nil if visited.include?(slot)   # Cycle
+      visited = visited + [ slot ]
       components = @data['components']
       return nil unless components.is_a?(Hash)
-      _resolve_value(role, components[role], context, mirror, visited)
+      _resolve_value(slot, components[slot], context, mirror, visited)
     end
 
-    def _resolve_value(role, value, context, mirror, visited, variant = nil, attributes = {})
+    # slot : the one whose component value is - the source slot.
+    def _resolve_value(slot, value, context, mirror, visited, variant = nil, attributes = {}, info = {})
       return nil unless value.is_a?(Hash)
       attributes = attributes.merge(value['attributes']) if value['attributes'].is_a?(Hash)
       if value.key?('same_as')
@@ -199,15 +242,60 @@ module Ladb::OpenCutList
       elsif value.key?('variants')
         key = _select_variant(value['variants'], context)
         return nil if key.nil?
-        return _resolve_value(role, value['variants']['items'][key], context, mirror, visited, key, attributes)
+        return _resolve_value(slot, value['variants']['items'][key], context, mirror, visited, key, attributes, info.merge(_info(value)))
       else
-        machining = value['machining']
-        machining = _resolve_ref(machining) unless machining.is_a?(Hash)
-        return HardwareComponentDef.new(role, _resolve_ref(value['hardware']), machining, mirror, value['stretch'], variant, attributes)
+        own_info = _info(value)
+        merged_info = info.merge(own_info)   # The variant's over the component's
+        hardware, hardware_slot = _resolve_part(slot, variant, PART_HARDWARE, value[PART_HARDWARE], context, visited)
+        machining, machining_slot = _resolve_part(slot, variant, PART_MACHINING, value[PART_MACHINING], context, visited)
+        return HardwareComponentDef.new(
+          slot, slot,
+          hardware, machining,
+          mirror, value['stretch'], variant, attributes,
+          variant.nil? ? own_info['name'] : info['name'],
+          variant.nil? ? nil : own_info['name'],
+          merged_info['description'], merged_info['price'], merged_info['url'], merged_info['mass'],
+          { PART_HARDWARE => hardware_slot, PART_MACHINING => machining_slot }
+        )
       end
       return nil if resolved.nil?
-      resolved.role = role
+      resolved.slot = slot
       resolved
+    end
+
+    # The fields the cut list reads the given component value gives.
+    def _info(value)
+      value.select { |key, _| INFO_KEYS.include?(key) && !value[key].nil? }
+    end
+
+    # The ref of the given part of the given slot's component - or of its
+    # given variant - nil when there is none, and the slot whose component
+    # the part comes from : [ ref, slot ].
+    def _resolve_part(slot, variant, part, value, context, visited)
+      if value.is_a?(Hash) && value.key?('same_as')
+        resolved = _resolve_component(value['same_as'].to_s, context, false, visited)
+        return [ nil, nil ] if resolved.nil?
+        return [ resolved.send(part), resolved.part_slots[part] ]
+      end
+      ref = _resolve_part_ref(slot, variant, part, value)
+      [ ref, ref.nil? ? nil : slot ]
+    end
+
+    def _resolve_part_ref(slot, variant, part, value)
+      if value == true
+        dir = components_dir_ref
+        return nil if dir.nil?
+        return "#{dir}/#{self.class.part_file_name(slot, variant, part)}"
+      end
+      return part == PART_MACHINING ? value : nil if value.is_a?(Hash)   # Primitives
+      return nil unless value.is_a?(String) && !value.strip.empty?
+      return _resolve_ref(value) if value.start_with?('./') || self.class.library_ref?(value) || File.extname(value).downcase != '.skp'
+      if @ref.is_a?(String)   # A file shared in the components folder of the library
+        prefix = LIBRARY_REF_PREFIXES.find { |p| @ref.start_with?(p) }
+        return prefix + COMPONENTS_DIR_NAME + '/' + value
+      end
+      return value unless @path.is_a?(String)   # Nowhere to look from
+      File.join(File.dirname(@path), value)
     end
 
     # The key of the variant the context selects, nil if none. A missing key
@@ -270,14 +358,17 @@ module Ladb::OpenCutList
       errors << 'missing id' unless @data['id'].is_a?(String) && !@data['id'].empty?
       errors << "unknown type #{@data['type'].inspect}" unless TYPES.key?(@data['type'])
       errors << 'missing name' unless @data['name'].is_a?(String) && !@data['name'].empty?
+      %w[supplier url].each do |key|
+        errors << "#{key} is not a string" if @data.key?(key) && !@data[key].nil? && !@data[key].is_a?(String)
+      end
 
       components = @data['components']
       if components.is_a?(Hash)
-        components.each do |role, value|
-          errors << "unknown role '#{role}'" unless roles.include?(role)
-          _validate_component(role, value, errors)
+        components.each do |slot, value|
+          errors << "unknown slot '#{slot}'" unless slots.include?(slot)
+          _validate_component(slot, value, errors)
         end
-        errors << 'no component' if TYPES.key?(@data['type']) && roles.all? { |role| components[role].nil? }
+        errors << 'no component' if TYPES.key?(@data['type']) && slots.all? { |slot| components[slot].nil? }
       else
         errors << 'missing components'
       end
@@ -295,6 +386,7 @@ module Ladb::OpenCutList
       errors
     end
 
+    # path : the slot, then the variant's key - 'a', 'a/inset'.
     def _validate_component(path, value, errors)
       return if value.nil?
       unless value.is_a?(Hash)
@@ -302,10 +394,12 @@ module Ladb::OpenCutList
         return
       end
       _validate_attributes(path, value['attributes'], errors) if value.key?('attributes')
+      _validate_info(path, value, errors)
       if value.key?('same_as') || value.key?('mirror_of')
-        errors << "component '#{path}' links to another role and has attributes" if value.key?('attributes')
+        errors << "component '#{path}' links to another slot and has attributes" if value.key?('attributes')
+        errors << "component '#{path}' links to another slot and has #{(value.keys & INFO_KEYS).join(', ')}" unless (value.keys & INFO_KEYS).empty?
         target = value.key?('same_as') ? value['same_as'] : value['mirror_of']
-        errors << "component '#{path}' links to unknown role #{target.inspect}" unless roles.include?(target)
+        errors << "component '#{path}' links to unknown slot #{target.inspect}" unless slots.include?(target)
         errors << "component '#{path}' links to itself" if target == path
       elsif value.key?('variants')
         variants = value['variants']
@@ -319,13 +413,40 @@ module Ladb::OpenCutList
           errors << "component '#{path}' falls back on unknown variant #{variants['fallback'].inspect}"
         end
         variants['items'].each do |key, item|
-          errors << "component '#{path}' variant '#{key}' links to another role" if item.is_a?(Hash) && (item.key?('same_as') || item.key?('mirror_of') || item.key?('variants'))
+          errors << "component '#{path}' variant '#{key}' links to another slot" if item.is_a?(Hash) && (item.key?('same_as') || item.key?('mirror_of') || item.key?('variants'))
           _validate_component("#{path}/#{key}", item, errors)
         end
       else
-        has_hardware = value['hardware'].is_a?(String) && !value['hardware'].empty?
-        has_machining = value['machining'].is_a?(Hash) || value['machining'].is_a?(String) && !value['machining'].empty?
-        errors << "component '#{path}' has neither hardware nor machining" unless has_hardware || has_machining
+        present = PARTS.select { |part| _validate_part(path, part, value[part], errors) }
+        errors << "component '#{path}' has neither hardware nor machining" if present.empty?
+      end
+    end
+
+    # Is the given part declared - valid or not ?
+    def _validate_part(path, part, value, errors)
+      return false if value.nil? || value == false
+      return true if value == true
+      if value.is_a?(String)
+        errors << "component '#{path}' #{part} is an empty path" if value.strip.empty?
+        return !value.strip.empty?
+      end
+      if value.is_a?(Hash) && value.key?('same_as')
+        slot = path.split('/').first
+        errors << "component '#{path}' #{part} links to unknown slot #{value['same_as'].inspect}" unless slots.include?(value['same_as'])
+        errors << "component '#{path}' #{part} links to itself" if value['same_as'] == slot
+        return true
+      end
+      return true if part == PART_MACHINING && value.is_a?(Hash)   # Primitives
+      errors << "component '#{path}' #{part} is neither true, a path nor a link"
+      true
+    end
+
+    def _validate_info(path, value, errors)
+      %w[name description url].each do |key|
+        errors << "component '#{path}' #{key} is not a string" if value.key?(key) && !value[key].nil? && !value[key].is_a?(String)
+      end
+      %w[price mass].each do |key|
+        errors << "component '#{path}' #{key} is neither a number nor a string" if value.key?(key) && !value[key].nil? && !value[key].is_a?(Numeric) && !value[key].is_a?(String)
       end
     end
 

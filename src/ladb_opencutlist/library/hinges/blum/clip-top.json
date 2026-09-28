@@ -3,16 +3,9 @@
   "version": 1,
   "id": "a36a4fb5-a9f0-483f-8dd3-f8b9b81829f1",
   "type": "hinge",
-  "category": "hinge",
   "name": "Clip Top 110°",
-  "meta": {
-    "supplier": "Blum",
-    "url": "https://www.blum.com",
-    "items": [
-      { "component": "a", "name": "Charnière Clip Top", "quantity": 1 },
-      { "component": "b", "name": "Embase Clip", "quantity": 1 }
-    ]
-  },
+  "supplier": "Blum",
+  "url": "https://www.blum.com",
   "components": {
     "a": {
       "attributes": { "role": "hinge", "hinge_max_angle": 110, "hinge_pivot_approximate": true },
@@ -20,13 +13,13 @@
         "select": { "by": "hinge_kind" },
         "fallback": "overlay",
         "items": {
-          "overlay":      { "hardware": "$OCL/components/hinges/blum/clip-top-overlay.skp", "machining": "$OCL/components/hinges/blum/clip-top-overlay.machining.skp", "attributes": { "hinge_pivot": [ 17, -29 ] } },
-          "half_overlay": { "hardware": "$OCL/components/hinges/blum/clip-top-half-overlay.skp", "machining": "$OCL/components/hinges/blum/clip-top-half-overlay.machining.skp", "attributes": { "hinge_pivot": [ -4, -26 ] } },
-          "inset":        { "hardware": "$OCL/components/hinges/blum/clip-top-inset.skp", "machining": "$OCL/components/hinges/blum/clip-top-inset.machining.skp", "attributes": { "hinge_pivot": [ -4, -26 ] } }
+          "overlay":      { "name": "Clip Top 110° en applique", "hardware": true, "machining": true, "attributes": { "hinge_pivot": [ 17, -29 ] } },
+          "half_overlay": { "name": "Clip Top 110° jumelée", "hardware": true, "machining": true, "attributes": { "hinge_pivot": [ -4, -26 ] } },
+          "inset":        { "name": "Clip Top 110° encastrée", "hardware": true, "machining": true, "attributes": { "hinge_pivot": [ -4, -26 ] } }
         }
       }
     },
-    "b": { "hardware": "$OCL/components/hinges/blum/clip-top.mounting-plate.skp", "machining": "$OCL/components/hinges/blum/clip-top.mounting-plate.machining.skp" }
+    "b": { "name": "Embase Clip", "hardware": true, "machining": true }
   },
   "options": { "start_offset": "68mm", "end_offset": "68mm", "max_spacing": "800mm" }
 }

@@ -313,6 +313,11 @@ core:
       error:
         no_segment: Aucune ligne de construction exploitable dans la sélection
         no_face: Aucune boucle fermée coplanaire n'a pu être reconstruite
+  hardware_descriptor:
+    variant_overlay: En applique
+    variant_half_overlay: Jumelée
+    variant_inset: Encastrée
+    part_machining: Usinage
 tab:
   cutlist:
     label: Débit

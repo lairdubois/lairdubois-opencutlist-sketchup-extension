@@ -4610,7 +4610,7 @@ module Ladb::OpenCutList
       dirs_explore_btn_motif = fn_create_motif.call(MOTIF_EXPLORE_PATH)
       dirs_explore_btn_motif.set_style_attribute(:color, Kuix::COLOR_LIGHT_GREY)
       dirs_explore_btn_motif.set_style_attribute(:color, SmartTool::COLOR_BRAND_DARK, :hover)
-      dirs_explore_btn_motif.set_style_attribute(:color, Kuix::COLOR_MEDIUM_GREY, :disabled)
+      dirs_explore_btn_motif.set_style_attribute(:color, SmartTool::COLOR_BRAND_DARK, :disabled)  # Invisible
       dirs_explore_btn.append(dirs_explore_btn_motif)
 
       fn_append_scroll_btns.call(dirs_row, dirs_panel, dirs_overflow, scroll[:dirs])
@@ -4670,7 +4670,7 @@ module Ladb::OpenCutList
         files_add_btn_motif.set_style_attribute(:color, SmartTool::COLOR_BRAND_LIGHT)
         files_add_btn_motif.set_style_attribute(:color, SmartTool::COLOR_BRAND_DARK, :hover)
         files_add_btn_motif.set_style_attribute(:color, SmartTool::COLOR_BRAND_DARK, :selected)
-        files_add_btn_motif.set_style_attribute(:color, Kuix::COLOR_MEDIUM_GREY, :disabled)
+        files_add_btn_motif.set_style_attribute(:color, SmartTool::COLOR_BRAND_DARK, :disabled) # Invisible
         files_add_btn.append(files_add_btn_motif)
 
       end

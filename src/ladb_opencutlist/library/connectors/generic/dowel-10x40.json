@@ -1,0 +1,12 @@
+{
+  "format": "ocl-hardware",
+  "version": 1,
+  "id": "3c8779d8-591d-4150-8599-1856dc788d61",
+  "type": "connector",
+  "name": "Dowel 10x40",
+  "components": {
+    "a": { "name": "Dowel 10x40", "hardware": true, "machining": true, "attributes": { "symmetrical":  true } },
+    "b": { "machining": { "same_as": "a" } }
+  },
+  "options": { "height": "/2", "start_offset": "37mm", "end_offset": "37mm", "max_spacing": "500mm" }
+}

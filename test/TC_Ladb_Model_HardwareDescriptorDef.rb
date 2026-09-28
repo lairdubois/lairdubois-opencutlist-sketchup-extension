@@ -5,7 +5,7 @@ require 'tmpdir'
 require_relative '../src/ladb_opencutlist/ruby/model/hardware/hardware_descriptor_def'
 
 # The hardware descriptor of the asset library : validation, and the
-# resolution of a role's component - links, variants, './' refs - for the
+# resolution of a slot's component - links, variants, parts, refs - for the
 # measures a tool took. Nothing here reads the model.
 class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
 
@@ -13,28 +13,23 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
 
   HINGE = {
     'format' => 'ocl-hardware', 'version' => 1,
-    'id' => 'hinge-1', 'type' => 'hinge', 'category' => 'hinge',
+    'id' => 'hinge-1', 'type' => 'hinge',
     'name' => 'Clip Top 110',
-    'meta' => {
-      'items' => [
-        { 'component' => 'a', 'name' => 'Hinge', 'quantity' => 1, 'unit_price' => 4.5 },
-        { 'component' => 'a', 'name' => 'Screw', 'quantity' => 2, 'unit_price' => 0.1 },
-        { 'component' => 'b', 'name' => 'Plate', 'quantity' => 1, 'unit_price' => 1.2 },
-      ]
-    },
+    'supplier' => 'Blum', 'url' => 'https://www.blum.com',
     'components' => {
       'a' => {
+        'name' => 'Hinge', 'description' => 'Blum 71B3550', 'price' => 4.5,
         'variants' => {
           'select' => { 'by' => 'hinge_kind' },
           'fallback' => 'overlay',
           'items' => {
             'overlay' => { 'hardware' => '$LIB/hinge_0.skp', 'machining' => '$LIB/cup.skp' },
-            'inset' => { 'hardware' => '$LIB/hinge_18.skp', 'machining' => '$LIB/cup.skp' },
+            'inset' => { 'name' => 'Inset hinge', 'price' => 4.9, 'hardware' => '$LIB/hinge_18.skp', 'machining' => '$LIB/cup.skp' },
             'half_overlay' => nil,
           }
         }
       },
-      'b' => { 'hardware' => './plate.skp', 'machining' => './plate_holes.skp' }
+      'b' => { 'name' => 'Plate', 'hardware' => './plate.skp', 'machining' => './plate_holes.skp' }
     },
     'options' => { 'start_offset' => '100mm', 'end_offset' => '100mm' }
   }.freeze
@@ -58,11 +53,30 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     }
   }.freeze
 
+  CONVENTION = {
+    'format' => 'ocl-hardware', 'version' => 1,
+    'id' => 'hinge-2', 'type' => 'hinge', 'name' => 'Clip Top',
+    'components' => {
+      'a' => {
+        'variants' => {
+          'select' => { 'by' => 'hinge_kind' },
+          'fallback' => 'overlay',
+          'items' => {
+            'overlay' => { 'hardware' => true, 'machining' => true },
+            'inset' => { 'hardware' => true, 'machining' => true },
+          }
+        }
+      },
+      'b' => { 'hardware' => true, 'machining' => false }
+    }
+  }.freeze
+
   # -- Validation --
 
   def test_valid_descriptors
     assert(_def(HINGE).valid?, _def(HINGE).errors.inspect)
     assert(_def(SLIDES).valid?, _def(SLIDES).errors.inspect)
+    assert(_def(CONVENTION).valid?, _def(CONVENTION).errors.inspect)
   end
 
   def test_not_a_descriptor
@@ -74,7 +88,7 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     _assert_error(_with(HINGE, 'type' => 'drawer'), 'unknown type')
     _assert_error(_with(HINGE, 'version' => 2), 'unsupported version')
     _assert_error(_with(HINGE, 'id' => nil), 'missing id')
-    _assert_error(_with(HINGE, 'components' => { 'main' => { 'hardware' => 'x.skp' } }), "unknown role 'main'")
+    _assert_error(_with(HINGE, 'components' => { 'main' => { 'hardware' => 'x.skp' } }), "unknown slot 'main'")
     _assert_error(_with(HINGE, 'components' => { 'a' => { 'same_as' => 'a' } }), 'links to itself')
     _assert_error(_with(HINGE, 'components' => { 'a' => { 'hardware' => '' } }), 'neither hardware nor machining')
     _assert_error(_with(HINGE, 'components' => { 'a' => nil, 'b' => nil }), 'no component')
@@ -92,7 +106,7 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     component = _def(HINGE).resolve_component(:a, hinge_kind: 'inset')
     assert_equal('$LIB/hinge_18.skp', component.hardware)
     assert_equal('inset', component.variant)
-    assert_equal('a', component.role)
+    assert_equal('a', component.slot)
   end
 
   def test_missing_variant_falls_back
@@ -136,7 +150,8 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
   def test_mirror_of
     component = _def(SLIDES).resolve_component('b', 'depth' => 360.mm)
     assert_equal('$LIB/slide_350.skp', component.hardware)
-    assert_equal('b', component.role)
+    assert_equal('b', component.slot)
+    assert_equal('a', component.source_slot)
     assert(component.mirror)
   end
 
@@ -152,7 +167,7 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     assert_nil(descriptor.resolve_component('a'))
   end
 
-  def test_empty_role
+  def test_empty_slot
     assert_nil(_def(SLIDES).resolve_component('span'))
   end
 
@@ -186,13 +201,96 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     assert_nil(HardwareDescriptorDef.load('/nowhere.json'))
   end
 
+  # -- Parts --
+
+  def test_true_parts_follow_the_naming_convention_in_the_library
+    descriptor = _def(CONVENTION, nil, '$OCL/hinges/blum/clip-top.json')
+    assert_equal('$OCL/components/hinges/blum/clip-top', descriptor.components_dir_ref)
+    component = descriptor.resolve_component('a', 'hinge_kind' => 'inset')
+    assert_equal('$OCL/components/hinges/blum/clip-top/a.inset.skp', component.hardware)
+    assert_equal('$OCL/components/hinges/blum/clip-top/a.inset.machining.skp', component.machining)
+    assert_equal('$OCL/components/hinges/blum/clip-top/b.skp', descriptor.resolve_component('b').hardware)
+    assert_nil(descriptor.resolve_component('b').machining)   # false
+  end
+
+  def test_true_parts_out_of_a_library
+    descriptor = _def(CONVENTION, '/somewhere/clip-top.json')
+    assert_equal('/somewhere/clip-top/b.skp', descriptor.resolve_component('b').hardware)
+    assert_nil(_def(CONVENTION).resolve_component('b').hardware)   # No file, no folder
+  end
+
+  def test_shared_part_is_relative_to_the_components_folder
+    data = _with(CONVENTION, 'components' => { 'a' => { 'hardware' => true, 'machining' => 'hinges/blum/cup-35.skp' } })
+    assert_equal('$LIB/components/hinges/blum/cup-35.skp', _def(data, nil, '$LIB/hinges/blum/mine.json').resolve_component('a').machining)
+    assert_equal('/somewhere/hinges/blum/cup-35.skp', _def(data, '/somewhere/mine.json').resolve_component('a').machining)
+  end
+
+  def test_part_same_as_takes_the_other_slot_part
+    data = _with(CONVENTION, 'type' => 'connector', 'components' => {
+      'a' => { 'name' => 'Domino', 'hardware' => true, 'machining' => true },
+      'b' => { 'machining' => { 'same_as' => 'a' } }
+    })
+    descriptor = _def(data, nil, '$OCL/connectors/festool/domino-5x30.json')
+    assert(descriptor.valid?, descriptor.errors.inspect)
+    component = descriptor.resolve_component('b')
+    assert_nil(component.hardware)
+    assert_equal('$OCL/components/connectors/festool/domino-5x30/a.machining.skp', component.machining)
+    assert_equal('b', component.source_slot)
+    assert_equal({ 'hardware' => nil, 'machining' => 'a' }, component.part_slots)
+    assert_nil(component.name)
+  end
+
+  def test_invalid_parts
+    _assert_error(_with(CONVENTION, 'components' => { 'a' => { 'hardware' => false } }), 'neither hardware nor machining')
+    _assert_error(_with(CONVENTION, 'components' => { 'a' => { 'hardware' => 3 } }), 'hardware is neither true, a path nor a link')
+    _assert_error(_with(CONVENTION, 'components' => { 'a' => { 'hardware' => { 'holes' => [] } } }), 'hardware is neither true, a path nor a link')
+    _assert_error(_with(CONVENTION, 'components' => { 'a' => { 'machining' => { 'same_as' => 'a' } } }), 'machining links to itself')
+    _assert_error(_with(CONVENTION, 'components' => { 'a' => { 'machining' => { 'same_as' => 'z' } } }), 'machining links to unknown slot')
+  end
+
   # -- Data --
 
-  def test_unit_price_per_component
+  def test_root_data
     descriptor = _def(HINGE)
-    assert_in_delta(4.7, descriptor.unit_price('a'), 1e-9)
-    assert_in_delta(1.2, descriptor.unit_price(:b), 1e-9)
-    assert_nil(_def(SLIDES).unit_price('a'))
+    assert_equal('Blum', descriptor.supplier)
+    assert_equal('https://www.blum.com', descriptor.url)
+    assert_equal(%w[a b], descriptor.slots)
+  end
+
+  def test_variant_data_over_component_data
+    descriptor = _def(HINGE)
+    overlay = descriptor.resolve_component('a', 'hinge_kind' => 'overlay')
+    assert_equal('Hinge', overlay.name)
+    assert_nil(overlay.variant_name)
+    assert_equal('Blum 71B3550', overlay.description)
+    assert_equal(4.5, overlay.price)
+    inset = descriptor.resolve_component('a', 'hinge_kind' => 'inset')
+    assert_equal('Hinge', inset.name)
+    assert_equal('Inset hinge', inset.variant_name)
+    assert_equal('Blum 71B3550', inset.description)
+    assert_equal(4.9, inset.price)
+    assert_equal('Plate', descriptor.resolve_component('b').name)
+  end
+
+  def test_data_follows_links
+    data = JSON.parse(JSON.generate(SLIDES))
+    data['components']['a']['name'] = 'Slide'
+    data['components']['a']['mass'] = 0.4
+    component = _def(data).resolve_component('b', 'depth' => 400.mm)
+    assert_equal('Slide', component.name)
+    assert_equal(0.4, component.mass)
+  end
+
+  def test_invalid_data
+    _assert_error(_with(HINGE, 'supplier' => 3), 'supplier is not a string')
+    data = JSON.parse(JSON.generate(HINGE))
+    data['components']['b']['price'] = [ 1 ]
+    _assert_error(data, "component 'b' price is neither a number nor a string")
+    data['components']['b']['name'] = 1
+    _assert_error(data, "component 'b' name is not a string")
+    data = JSON.parse(JSON.generate(SLIDES))
+    data['components']['b']['name'] = 'Left slide'
+    _assert_error(data, "component 'b' links to another slot and has name")
   end
 
   def test_options
@@ -228,15 +326,15 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     _assert_error(data, "attribute 'more' is neither")
     data = JSON.parse(JSON.generate(SLIDES))
     data['components']['b']['attributes'] = { 'role' => 'slide' }
-    _assert_error(data, "component 'b' links to another role and has attributes")
+    _assert_error(data, "component 'b' links to another slot and has attributes")
   end
 
   # -----
 
   private
 
-  def _def(data, path = nil)
-    HardwareDescriptorDef.new(JSON.parse(JSON.generate(data)), path)
+  def _def(data, path = nil, ref = nil)
+    HardwareDescriptorDef.new(JSON.parse(JSON.generate(data)), path, ref)
   end
 
   def _with(data, changes)
