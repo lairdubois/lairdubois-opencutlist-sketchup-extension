@@ -2468,11 +2468,11 @@ tool:
     action_1_state_0_status: Cliquez sur une paroi pour construire un séparateur
     action_1_state_1_status: Cliquez sur une paroi pour construire des séparateurs
     action_2: Construire une Façade
-    action_2_status: Construire une façade dans une cavité formée par un groupe de pièces existantes
+    action_2_status: Construire une façade fermant une cavité formée par un groupe de pièces existantes
     action_2_state_0_status: Cliquez dans une cavité pour construire une façade sur son ouverture
     action_2_state_0_merge_status: "Glissez jusqu'aux cavités voisines pour une façade commune"
     action_3: Construire un Fond
-    action_3_status: Construire un fond dans une cavité formée par un groupe de pièces existantes
+    action_3_status: Construire un fond fermant une cavité formée par un groupe de pièces existantes
     action_3_state_0_status: Cliquez dans une cavité pour construire un fond sur son ouverture opposée à la vue
     action_3_state_0_merge_status: "Glissez jusqu'aux cavités voisines pour un fond commun"
     action_option_group_groove: Rainure
