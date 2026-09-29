@@ -2759,7 +2759,6 @@ tool:
     action_1: Effacer des connecteurs
     action_1_status: Effacer des connecteurs d'assemblage de pièces
     action_1_state_1_status: Cliquez sur la face de référence d'une pièce pour effacer les connecteurs qu'elle partage avec les pièces voisines
-    action_1_only_one_status: Limiter à un seul connecteur
     action_2: Ajouter des raccords
     action_2_status: Ajouter des raccords pour assembler des pièces
     action_2_state_1_status: Cliquez sur la face de référence d'une pièce A pour ajouter des raccords avec une pièce voisine
@@ -2768,24 +2767,35 @@ tool:
     action_3_status: Effacer des raccords d'assemblage de pièces
     action_3_state_1_status: Cliquez sur la face de référence d'une pièce A pour effacer les raccords qu'elle partage avec une pièce voisine
     action_3_state_2_status: Cliquez sur la face de référence d'une pièce B pour effacer les raccords qu'elle partage avec la pièce A
-    action_3_only_one_status: Limiter à un seul raccord
-    select_hardware_status: Sélectionnez une quincaillerie dans la bibliothèque
     action_4: Ajouter des charnières
     action_4_status: Ajouter des charnières pour articuler une façade
     action_4_state_1_status: Survolez une façade près du bord sur lequel elle pivote et cliquez pour ajouter ses charnières
     action_5: Effacer des charnières
     action_5_status: Effacer les charnières d'une façade
     action_5_state_1_status: Survolez une façade près du bord sur lequel elle pivote et cliquez pour effacer ses charnières
-    action_5_only_one_status: Limiter à une seule charnière
     action_option_group_height: Hauteur
     action_option_group_offsets: Décalages
     action_option_group_spacings: Entraxes
     action_option_group_options: Options
+    action_option_group_distribution: Répartition
+    action_remove_option_group_distribution: Selection
     action_option_height: Hauteur
     action_option_offsets_start_offset: Début
     action_option_offsets_end_offset: Fin
     action_option_spacings_min_spacing: Min
     action_option_spacings_max_spacing: Max
+    action_0_option_distribution_auto_status: Répartir les connecteurs selon les décalages et les entraxes
+    action_1_option_distribution_auto_status: Effacer tous les connecteurs de l'assemblage ciblé
+    action_2_option_distribution_auto_status: Répartir les raccords selon les décalages et les entraxes
+    action_3_option_distribution_auto_status: Effacer tous les raccords de l'assemblage ciblé
+    action_4_option_distribution_auto_status: Répartir les charnières selon les décalages et les entraxes
+    action_5_option_distribution_auto_status: Effacer toutes les charnières de la porte ciblée
+    action_0_option_distribution_free_status: Poser un seul connecteur à la position du curseur
+    action_1_option_distribution_free_status: Effacer un seul connecteur
+    action_2_option_distribution_free_status: Poser un seul raccord à la position du curseur
+    action_3_option_distribution_free_status: Effacer un seul raccord
+    action_4_option_distribution_free_status: Poser une seule charnière à la position du curseur
+    action_5_option_distribution_free_status: Effacer une seule charnière
     action_option_options_opposite_status: Capturer la face opposée
     action_option_options_make_unique_status: Rendre unique les pièces assemblées
     action_option_hardware_hinge_overlay_a: Charnière (en applique)
@@ -2799,6 +2809,7 @@ tool:
     action_option_hardware_fitting_layer_name: Balise des Raccords
     action_option_hardware_hinge_layer_name: Balise des Charnières
     action_option_machining_layer_name: Balise des Usinages
+    select_hardware_status: Sélectionnez une quincaillerie dans la bibliothèque
     measures: Mesures
     geometries: Géométries
     error:

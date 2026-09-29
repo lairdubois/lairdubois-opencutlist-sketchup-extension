@@ -27,6 +27,7 @@ module Ladb::OpenCutList
     ACTION_OPTION_OFFSETS = 'offsets'
     ACTION_OPTION_SPACINGS = 'spacings'
     ACTION_OPTION_OPTIONS = 'options'
+    ACTION_OPTION_DISTRIBUTION = 'distribution'
     ACTION_OPTION_GEOMETRY = 'geometry'
 
     ACTION_OPTION_OFFSETS_START_OFFSET = 'start_offset'
@@ -37,6 +38,9 @@ module Ladb::OpenCutList
 
     ACTION_OPTION_OPTIONS_OPPOSITE = 'opposite'
     ACTION_OPTION_OPTIONS_MAKE_UNIQUE = 'make_unique'
+
+    ACTION_OPTION_DISTRIBUTION_FREE = 'free'   # Only one, at the mouse position
+    ACTION_OPTION_DISTRIBUTION_AUTO = 'auto'   # Every hardware of the joint
 
     ACTION_OPTION_GEOMETRY_HARDWARE = 'hardware'   # The HardwareDescriptorDef ref of the hardware laid - the last one picked
     ACTION_OPTION_GEOMETRY_HARDWARE_MATERIAL_NAME = 'hardware_material_name'
@@ -59,6 +63,7 @@ module Ladb::OpenCutList
       {
         :action => ACTION_ADD_CONNECTORS,
         :options => {
+          ACTION_OPTION_DISTRIBUTION => [ ACTION_OPTION_DISTRIBUTION_FREE, ACTION_OPTION_DISTRIBUTION_AUTO ],
           ACTION_OPTION_HEIGHT => [ ACTION_OPTION_HEIGHT ],
           ACTION_OPTION_OFFSETS => [ ACTION_OPTION_OFFSETS_START_OFFSET, ACTION_OPTION_OFFSETS_END_OFFSET ],
           ACTION_OPTION_SPACINGS => [ ACTION_OPTION_SPACINGS_MIN_SPACING, ACTION_OPTION_SPACINGS_MAX_SPACING ],
@@ -66,11 +71,15 @@ module Ladb::OpenCutList
         }
       },
       {
-        :action => ACTION_REMOVE_CONNECTORS
+        :action => ACTION_REMOVE_CONNECTORS,
+        :options => {
+          ACTION_OPTION_DISTRIBUTION => [ ACTION_OPTION_DISTRIBUTION_FREE, ACTION_OPTION_DISTRIBUTION_AUTO ],
+        }
       },
       # {
       #   :action => ACTION_ADD_FITTINGS,
       #   :options => {
+      #     ACTION_OPTION_DISTRIBUTION => [ ACTION_OPTION_DISTRIBUTION_FREE, ACTION_OPTION_DISTRIBUTION_AUTO ],
       #     ACTION_OPTION_OFFSETS => [ ACTION_OPTION_OFFSETS_START_OFFSET, ACTION_OPTION_OFFSETS_END_OFFSET ],
       #     ACTION_OPTION_SPACINGS => [ ACTION_OPTION_SPACINGS_MIN_SPACING, ACTION_OPTION_SPACINGS_MAX_SPACING ],
       #     ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_OPPOSITE, ACTION_OPTION_OPTIONS_MAKE_UNIQUE ],
@@ -79,21 +88,36 @@ module Ladb::OpenCutList
       # {
       #   :action => ACTION_REMOVE_FITTINGS,
       #   :options => {
+      #     ACTION_OPTION_DISTRIBUTION => [ ACTION_OPTION_DISTRIBUTION_FREE, ACTION_OPTION_DISTRIBUTION_AUTO ],
       #     ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_OPPOSITE ],
       #   }
       # },
       {
         :action => ACTION_ADD_HINGES,
         :options => {
+          ACTION_OPTION_DISTRIBUTION => [ ACTION_OPTION_DISTRIBUTION_FREE, ACTION_OPTION_DISTRIBUTION_AUTO ],
           ACTION_OPTION_OFFSETS => [ ACTION_OPTION_OFFSETS_START_OFFSET, ACTION_OPTION_OFFSETS_END_OFFSET ],
           ACTION_OPTION_SPACINGS => [ ACTION_OPTION_SPACINGS_MIN_SPACING, ACTION_OPTION_SPACINGS_MAX_SPACING ],
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_MAKE_UNIQUE ],
         }
       },
       {
-        :action => ACTION_REMOVE_HINGES
+        :action => ACTION_REMOVE_HINGES,
+        :options => {
+          ACTION_OPTION_DISTRIBUTION => [ ACTION_OPTION_DISTRIBUTION_FREE, ACTION_OPTION_DISTRIBUTION_AUTO ],
+        }
       }
     ].freeze
+
+    # The actions sharing the distribution option : an add action and its
+    # remove counterpart
+    DISTRIBUTION_SYNC_ACTIONS = [
+      [ ACTION_ADD_CONNECTORS, ACTION_REMOVE_CONNECTORS ],
+      [ ACTION_ADD_FITTINGS, ACTION_REMOVE_FITTINGS ],
+      [ ACTION_ADD_HINGES, ACTION_REMOVE_HINGES ],
+    ].freeze
+
+    REMOVE_ACTIONS = [ ACTION_REMOVE_CONNECTORS, ACTION_REMOVE_FITTINGS, ACTION_REMOVE_HINGES ].freeze
 
     # -----
 
@@ -119,6 +143,16 @@ module Ladb::OpenCutList
       ACTIONS
     end
 
+    def get_action_option_status(action, option_group, option)
+
+      case option_group
+      when ACTION_OPTION_DISTRIBUTION
+        return PLUGIN.get_i18n_string("tool.smart_join.action_#{action}_option_distribution_#{option}_status")
+      end
+
+      super
+    end
+
     def get_action_cursor(action)
 
       case action
@@ -126,6 +160,11 @@ module Ladb::OpenCutList
         return SmartCursorManager.cursor_select_join
       end
 
+      super
+    end
+
+    def get_action_option_group_title(action, option_group)
+      return PLUGIN.get_i18n_string("tool.smart_#{get_stripped_name}.action_remove_option_group_#{option_group}") if REMOVE_ACTIONS.index(action)
       super
     end
 
@@ -137,6 +176,16 @@ module Ladb::OpenCutList
       when ACTION_ADD_FITTINGS
         return true
       when ACTION_ADD_HINGES
+        return true
+      end
+
+      super
+    end
+
+    def get_action_option_group_unique?(action, option_group)
+
+      case option_group
+      when ACTION_OPTION_DISTRIBUTION
         return true
       end
 
@@ -184,10 +233,32 @@ module Ladb::OpenCutList
       super
     end
 
+    # A free distribution lays one hardware : no max spacing. The min spacing
+    # still keeps it away from the hardware already there.
+    def get_action_option_btn_disabled?(action, option_group, option, free = fetch_action_option_distribution_free?(action))
+
+      case option_group
+      when ACTION_OPTION_SPACINGS
+        case option
+        when ACTION_OPTION_SPACINGS_MAX_SPACING
+          return free
+        end
+      end
+
+      super(action, option_group, option)
+    end
+
     def get_action_option_btn_child(action, option_group, option)
 
       case option_group
 
+      when ACTION_OPTION_DISTRIBUTION
+        case option
+        when ACTION_OPTION_DISTRIBUTION_FREE
+          return Kuix::Label.new('1')
+        when ACTION_OPTION_DISTRIBUTION_AUTO
+          return Kuix::Label.new('∞')
+        end
       when ACTION_OPTION_HEIGHT
         case option
         when ACTION_OPTION_HEIGHT
@@ -238,6 +309,12 @@ module Ladb::OpenCutList
       super
     end
 
+    # The distribution in effect : the stored one, inverted while SHIFT is held
+    # - but for typing in the VCB : SHIFT gives the digits of some keyboards.
+    def fetch_action_option_distribution_free?(action, shift_down = is_key_shift_down? && !is_vcb_typing?)
+      fetch_action_option_boolean(action, ACTION_OPTION_DISTRIBUTION, ACTION_OPTION_DISTRIBUTION_FREE) != shift_down
+    end
+
     # -- Events --
 
     def onActivate(view)
@@ -245,6 +322,7 @@ module Ladb::OpenCutList
     end
 
     def onKeyDown(key, repeat, flags, view)
+      _refresh_distribution_btns(!is_vcb_typing?) if is_key_shift?(key)  # SHIFT is known as down only once super is called
       return true if super
       if is_key_alt_or_command?(key)
         case fetch_action
@@ -261,6 +339,7 @@ module Ladb::OpenCutList
     end
 
     def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
+      _refresh_distribution_btns(false) if is_key_shift?(key)
       return true if super
       if is_key_alt_or_command?(key)
         pop_action
@@ -302,6 +381,23 @@ module Ladb::OpenCutList
       refresh
     end
 
+    # -----
+
+    private
+
+    # Selects the distribution buttons of the current action as the
+    # distribution in effect : SHIFT inverts the stored one while held.
+    def _refresh_distribution_btns(shift_down)
+      action = fetch_action
+      free = fetch_action_option_distribution_free?(action, shift_down)
+      { ACTION_OPTION_DISTRIBUTION_AUTO => !free, ACTION_OPTION_DISTRIBUTION_FREE => free }.each do |option, selected|
+        btn = get_action_option_btn(action, ACTION_OPTION_DISTRIBUTION, option)
+        btn.selected = selected if btn.is_a?(Kuix::Button)
+      end
+      btn = get_action_option_btn(action, ACTION_OPTION_SPACINGS, ACTION_OPTION_SPACINGS_MAX_SPACING)
+      btn.disabled = get_action_option_btn_disabled?(action, ACTION_OPTION_SPACINGS, ACTION_OPTION_SPACINGS_MAX_SPACING, free) if btn.is_a?(Kuix::Button)
+    end
+
   end
 
   class SmartJoinActionHandler < SmartActionHandler
@@ -309,6 +405,15 @@ module Ladb::OpenCutList
     Skpy = Fiddle::Skpy
 
     include SmartActionHandlerPartHelper
+
+    # The mouse position of a free hardware along its joint is rounded to this
+    # step : the preview - and the propagation it resolves - is not computed
+    # again on every pixel.
+    FREE_POSITION_STEP = 1.mm
+
+    # The end of the joint a free hardware is measured from sticks until the
+    # mouse comes this close to the other one, in pixels.
+    FREE_ORIGIN_SWITCH_PIXELS = 20
 
     COLOR_DEFAULT_HARDWARE_MATERIAL = Sketchup::Color.new('#999999').freeze
     COLOR_DEFAULT_MACHINING_MATERIAL = Sketchup::Color.new('#0068ff').freeze
@@ -339,6 +444,7 @@ module Ladb::OpenCutList
     LAYER_3D_PART_A_PREVIEW = 10
     LAYER_3D_PART_B_PREVIEW = 20
 
+    LAYER_2D_DIMENSIONS = 100
     LAYER_2D_HARDWARE_LIBRARY = 110
 
     TRANSFORMATION_FLIP_X = Geom::Transformation.axes(ORIGIN, X_AXIS.reverse, Y_AXIS, Z_AXIS).freeze
@@ -409,6 +515,12 @@ module Ladb::OpenCutList
 
     def get_state_status(state)
       return PLUGIN.get_i18n_string('tool.smart_join.select_hardware_status') + '.' if state == STATE_SOURCE
+      super +
+        ' | ' + PLUGIN.get_i18n_string("default.constrain_key") + ' = ' + @tool.get_action_option_status(@action, SmartJoinTool::ACTION_OPTION_DISTRIBUTION, _fetch_option_distribution_free? ? SmartJoinTool::ACTION_OPTION_DISTRIBUTION_AUTO : SmartJoinTool::ACTION_OPTION_DISTRIBUTION_FREE) + '.'
+    end
+
+    def get_state_vcb_label(state)
+      return PLUGIN.get_i18n_string('tool.default.vcb_distance') if state != STATE_SOURCE && _fetch_option_distribution_free? && !SmartJoinTool::REMOVE_ACTIONS.include?(@action)
       super
     end
 
@@ -440,6 +552,10 @@ module Ladb::OpenCutList
       _update_hardware_library_panel_selection  # The picked descriptor may have changed with the preset
       _update_hardware_state
       _refresh
+      if @state != STATE_SOURCE  # The SHIFT status and the VCB label follow the distribution
+        Sketchup.set_status_text(get_state_status(@state), SB_PROMPT)
+        Sketchup.set_status_text(get_state_vcb_label(@state), SB_VCB_LABEL)
+      end
     end
 
     # -----
@@ -559,6 +675,11 @@ module Ladb::OpenCutList
       @tool.fetch_action_option_boolean(@action, SmartJoinTool::ACTION_OPTION_OPTIONS, SmartJoinTool::ACTION_OPTION_OPTIONS_MAKE_UNIQUE)
     end
 
+    # SHIFT held included - see SmartJoinTool#fetch_action_option_distribution_free?
+    def _fetch_option_distribution_free?
+      @tool.fetch_action_option_distribution_free?(@action)
+    end
+
     def _fetch_option_hardware
       @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_HARDWARE)
     end
@@ -597,6 +718,131 @@ module Ladb::OpenCutList
 
     def _fetch_option_machining_layer_name
       @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_MACHINING_LAYER_NAME)
+    end
+
+    # -- Free distribution --
+
+    # SHIFT inverts the distribution while held : the statuses and the preview
+    # follow. The pick is replayed rather than refreshed : the active part
+    # has to survive the SHIFT that types the digits of some keyboards in the
+    # VCB, without a mouse move to pick it again.
+    def _on_shift_changed
+      return if @tool.is_vcb_typing?
+      Sketchup.set_status_text(get_state_status(@state), SB_PROMPT)
+      Sketchup.set_status_text(get_state_vcb_label(@state), SB_VCB_LABEL)
+      Sketchup.set_status_text('', SB_VCB_VALUE)
+      onPickerChanged(@picker, Sketchup.active_model.active_view) if @picker.is_a?(SmartPicker)
+    end
+
+    # The position of 'point' along a joint running from 'origin' in
+    # 'direction', rounded to FREE_POSITION_STEP. nil without a point.
+    def _get_free_position(origin, direction, point)
+      return nil unless origin.is_a?(Geom::Point3d) && point.is_a?(Geom::Point3d)
+      position = (point - origin) % direction.normalize
+      ((position / FREE_POSITION_STEP).round * FREE_POSITION_STEP).to_l
+    end
+
+    # Whether the mouse at 'point' is close enough to 'end_point' to measure
+    # from it - see FREE_ORIGIN_SWITCH_PIXELS.
+    def _is_free_origin_switch?(point, end_point)
+      point.distance(end_point) <= Sketchup.active_model.active_view.pixels_to_model(FREE_ORIGIN_SWITCH_PIXELS, end_point)
+    end
+
+    # Length#== raises against nil : positions are compared as floats.
+    def _same_free_position?(position_1, position_2)
+      return position_1.nil? && position_2.nil? if position_1.nil? || position_2.nil?
+      position_1.to_f == position_2.to_f
+    end
+
+    # The [ min, max ] coords a free hardware may take on a joint of
+    # 'total_length' : between the offsets, and far enough from the ends for
+    # the hardware to fit. nil when there is no room.
+    def _get_free_range(total_length, start_offset_length, end_offset_length, half_width)
+      min = [ start_offset_length, half_width ].max
+      max = total_length - [ end_offset_length, half_width ].max
+      return nil if min > max
+      [ min, max ]
+    end
+
+    # The coord of the one hardware laid at 'position' : held in the free
+    # range - see #_get_free_range. nil when there is no room.
+    def _get_free_coord(position, total_length, start_offset_length, end_offset_length, half_width)
+      return nil if (range = _get_free_range(total_length, start_offset_length, end_offset_length, half_width)).nil?
+      [ [ position, range.first ].max, range.last ].min
+    end
+
+    # Whether 'coord' stands closer than the min spacing to one of the
+    # 'existing_coords' - the hardware already on the joint.
+    def _is_free_coord_too_close?(coord, existing_coords)
+      min_spacing = _fetch_option_min_spacing.to_f
+      return false unless min_spacing > 0
+      existing_coords.any? { |existing_coord| (existing_coord.to_f - coord.to_f).abs < min_spacing - 0.01.mm.to_f }
+    end
+
+    # The bounds of the free range, marked as the distributed anchors are,
+    # and the point the free position is measured from.
+    def _preview_free_range_bounds(join_def)
+
+      @tool.append_3d(_create_floating_points(
+                        points: [ join_def.start_point_3d, join_def.end_point_3d ],
+                        style: Kuix::POINT_STYLE_PLUS,
+                        stroke_color: Kuix::COLOR_MAGENTA
+                      ), LAYER_3D_JOIN_PREVIEW)
+
+      return unless join_def.origin_point_3d.is_a?(Geom::Point3d)
+
+      @tool.append_3d(_create_floating_points(
+                        points: join_def.origin_point_3d,
+                        style: Kuix::POINT_STYLE_CIRCLE,
+                        fill_color: Kuix::COLOR_MAGENTA,
+                        stroke_color: nil,
+                        size: 1.5
+                      ), LAYER_3D_JOIN_PREVIEW)
+
+    end
+
+    # Shows the position of the free hardware at 'point', from 'origin' : in
+    # the VCB, and in a label on the laying line - through 'point' along
+    # 'direction' - centered between 'point' and the projection of 'origin'.
+    # The origin of the connectors, a vertex of the active edge, stands off
+    # that line by the height.
+    def _preview_free_position(origin, direction, point)
+
+      direction = direction.normalize
+      position = ((point - origin) % direction).to_l
+
+      Sketchup.set_status_text(position.to_s, SB_VCB_VALUE)
+
+      return unless position > 0
+
+      @tool.append_2d(_create_floating_label(
+                        snap_point: point.offset(direction.reverse, position / 2),
+                        text: position,
+                        text_color: Kuix::COLOR_MAGENTA,
+                        border_color: Kuix::COLOR_MAGENTA
+                      ), LAYER_2D_DIMENSIONS)
+
+    end
+
+    # A position typed while free : lays one hardware there, from the origin of
+    # the hovered joint - see #_add_at_free_position. false when the text is
+    # not one position.
+    def _read_free_position(tool, text, view)
+      return false unless _fetch_option_distribution_free?
+      return false if _split_user_text(text).length > 1  # Measures
+
+      position = _read_user_text_length(tool, text, @free_position.nil? ? 0 : @free_position)
+      return true if position.nil?
+
+      @typed_free_position = position
+      _add_at_free_position
+      @typed_free_position = nil
+      Sketchup.set_status_text('', SB_VCB_VALUE)
+
+      true
+    end
+
+    def _add_at_free_position
     end
 
     # -- Hardware --
@@ -1910,6 +2156,7 @@ module Ladb::OpenCutList
     def _preview_join
 
       @tool.clear_3d([ LAYER_3D_PART_B_PREVIEW, LAYER_3D_JOIN_PREVIEW, LAYER_3D_HARDWARE_PREVIEW, LAYER_3D_MACHINING_PREVIEW ])
+      @tool.clear_2d(LAYER_2D_DIMENSIONS)
       @tool.hide_message
 
       return true if (neighborhood_def = _get_neighborhood_def).nil?
@@ -2165,9 +2412,30 @@ module Ladb::OpenCutList
       super
     end
 
+    def onToolKeyDown(tool, key, repeat, flags, view)
+
+      if tool.is_key_shift?(key)
+        _on_shift_changed if repeat == 1
+        return true
+      end
+
+      false
+    end
+
+    def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
+
+      if tool.is_key_shift?(key)
+        _on_shift_changed
+        return true
+      end
+
+      false
+    end
+
     def onToolUserText(tool, text, view)
       return true if super
 
+      return true if _read_free_position(tool, text, view)
       return true if _read_measures(tool, text, view)
 
       false
@@ -2185,6 +2453,61 @@ module Ladb::OpenCutList
 
     def _get_hardware_types
       [ HardwareDescriptorDef::TYPE_CONNECTOR ]
+    end
+
+    def _reset
+      super
+      @free_position = nil
+    end
+
+    # -----
+
+    # The joint frame the connectors are laid in : from the active vertex,
+    # along the active edge. [ origin, x_axis ]
+    def _get_free_axis
+      origin = @active_vertex_manipulator_a.point
+      x_axis = @active_edge_manipulator_a.direction
+      x_axis = x_axis.reverse if origin == @active_edge_manipulator_a.end_point
+      [ origin, x_axis ]
+    end
+
+    # Free : the connector follows the mouse along the active edge, measured
+    # from the same vertex until the mouse comes close to the other one.
+    def _pick_join
+      previous_face_manipulator = @active_face_manipulator_a
+      previous_edge_manipulator = @active_edge_manipulator_a
+      previous_vertex_manipulator = @active_vertex_manipulator_a
+
+      context_changed = super
+
+      if _fetch_option_distribution_free? &&
+         @active_vertex_manipulator_a.is_a?(VertexManipulator) && previous_vertex_manipulator.is_a?(VertexManipulator) &&
+         @active_edge_manipulator_a == previous_edge_manipulator && @active_vertex_manipulator_a != previous_vertex_manipulator &&
+         @mouse_snap_point.is_a?(Geom::Point3d) && !_is_free_origin_switch?(@mouse_snap_point, @active_vertex_manipulator_a.point)
+        @active_vertex_manipulator_a = previous_vertex_manipulator
+        context_changed = @active_face_manipulator_a != previous_face_manipulator
+      end
+
+      if _fetch_option_distribution_free? && @active_edge_manipulator_a.is_a?(EdgeManipulator) && @active_vertex_manipulator_a.is_a?(VertexManipulator)
+        origin, x_axis = _get_free_axis
+        free_position = _get_free_position(origin, x_axis, @mouse_snap_point)
+      else
+        free_position = nil
+      end
+
+      (context_changed || !_same_free_position?(@free_position, free_position)).tap { @free_position = free_position }
+    end
+
+    def _add_at_free_position
+      if has_active_part? &&
+         (neighborhood_def = _get_neighborhood_def) &&
+         (joinery_def = _get_add_joinery_def(neighborhood_def)) &&
+         joinery_def.neighbor_join_defs.any? { |neighbor_join_def| neighbor_join_def.join_defs.any? { |join_def| !join_def.anchor_points_3d.empty? } }
+        _add_connectors
+        _restart
+      else
+        UI.beep
+      end
     end
 
     # -----
@@ -2240,13 +2563,15 @@ module Ladb::OpenCutList
             unless join_def.anchor_points_3d.empty?
 
               k_edge = Kuix::EdgeMotif3d.new
-              k_edge.start.copy!(join_def.start_point_3d)
+              k_edge.start.copy!(join_def.origin_point_3d || join_def.start_point_3d)
               k_edge.end.copy!(join_def.end_point_3d)
               k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
               k_edge.line_width = 1
               k_edge.color = Kuix::COLOR_MAGENTA
               k_edge.on_top = true
               @tool.append_3d(k_edge, LAYER_3D_JOIN_PREVIEW)
+
+              _preview_free_range_bounds(join_def) if _fetch_option_distribution_free?
 
             end
 
@@ -2302,6 +2627,13 @@ module Ladb::OpenCutList
           @tool.show_message(PLUGIN.get_i18n_string('tool.smart_join.error.no_valid_join'), SmartTool::MESSAGE_TYPE_ERROR)
         end
 
+      end
+
+      if _fetch_option_distribution_free? && @active_edge_manipulator_a.is_a?(EdgeManipulator) && @active_vertex_manipulator_a.is_a?(VertexManipulator) &&
+         !joinery_def.nil? &&
+         (anchor_points_3d = joinery_def.neighbor_join_defs.flat_map { |neighbor_join_def| neighbor_join_def.join_defs.flat_map(&:anchor_points_3d) }).length == 1
+        origin, x_axis = _get_free_axis
+        _preview_free_position(origin, x_axis, anchor_points_3d.first)
       end
 
       if @active_vertex_manipulator_a.is_a?(VertexManipulator)
@@ -2509,6 +2841,30 @@ module Ladb::OpenCutList
       geometries_def = _get_geometries_def
       geometries_bounds = geometries_def.bounds
 
+      fn_select_touching_defs = lambda do |neighbor_def|
+        neighbor_def.touching_defs.select { |touching_def|
+          touching_def.face_manipulator.face != @active_face_manipulator_a.face &&
+          touching_def.face_manipulator.face.edges.any? { |edge| edge == @active_edge_manipulator_a.edge }
+        }
+      end
+
+      # Free : one connector at the mouse position, on the touching poly
+      # under the mouse - or the nearest one
+      free = _fetch_option_distribution_free?
+      free_position = @typed_free_position || @free_position
+      if free && !free_position.nil?
+        origin, x_axis = _get_free_axis
+        free_touching_poly = neighborhood_def.neighbor_defs
+                                             .flat_map { |neighbor_def| fn_select_touching_defs.call(neighbor_def).flat_map(&:touching_polys) }
+                                             .min_by { |touching_poly|
+                                               xs = touching_poly.map { |point| (point - origin) % x_axis }
+                                               gap = [ xs.min - free_position, free_position - xs.max, 0 ].max
+                                               [ gap.to_f, @mouse_snap_point.is_a?(Geom::Point3d) ? touching_poly.map { |point| point.distance(@mouse_snap_point).to_f }.min : 0 ]
+                                             }
+      else
+        free_touching_poly = nil
+      end
+
       neighbor_join_defs = []
 
       neighborhood_def.neighbor_defs.each do |neighbor_def|
@@ -2518,16 +2874,9 @@ module Ladb::OpenCutList
 
         join_defs = []
 
-        neighbor_def.touching_defs
-                    .select { |touching_def|
-                      touching_def.face_manipulator.face != @active_face_manipulator_a.face &&
-                      touching_def.face_manipulator.face.edges.any? { |edge| edge == @active_edge_manipulator_a.edge }
-                    }
-                    .each do |touching_def|
+        fn_select_touching_defs.call(neighbor_def).each do |touching_def|
 
-          origin = @active_vertex_manipulator_a.point
-          x_axis = @active_edge_manipulator_a.direction
-          x_axis = x_axis.reverse if origin == @active_edge_manipulator_a.end_point
+          origin, x_axis = _get_free_axis
           z_axis = touching_def.face_manipulator.normal
           y_axis = z_axis * x_axis
           at = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis)
@@ -2552,6 +2901,9 @@ module Ladb::OpenCutList
             if total_length < geometries_bounds.width
               # Touching face is not large enough to contain at least one join
               coords = []
+            elsif free
+              coord = touching_poly.equal?(free_touching_poly) ? _get_free_coord(free_position - touching_poly_bounds.min.x, total_length, start_offset_length, end_offset_length, geometries_bounds.width / 2) : nil
+              coords = coord.nil? ? [] : [ coord ]
             else
               if total_length > start_offset_length + min_spacing_length + end_offset_length
                 middle_length = total_length - start_offset_length - end_offset_length
@@ -2605,16 +2957,28 @@ module Ladb::OpenCutList
               at_b *= TRANSFORMATION_ROTATION_Z_180
             end
 
+            # A free connector keeps the min spacing away from the ones already there
+            existing_coords = free ? (grouped_glued_instances_a.keys + grouped_glued_instances_b.keys).map { |coords_3d| (Geom::Point3d.new(coords_3d) - origin) % x_axis } : []
+
             occupied_anchor_points_3d = []
             anchor_points_3d.delete_if do |point|
               occupied = grouped_glued_instances_a.any? { |_, glued_instances| _is_geometries_intersect_glued_instances?(geometries_bounds, point, glued_instances, touching_def.face_manipulator, t_a, ti_a, at_a) } ||
-                         grouped_glued_instances_b.any? { |_, glued_instances| _is_geometries_intersect_glued_instances?(geometries_bounds, point, glued_instances, touching_def.neighbor_face_manipulator, t_b, ti_b, at_b)  }
+                         grouped_glued_instances_b.any? { |_, glued_instances| _is_geometries_intersect_glued_instances?(geometries_bounds, point, glued_instances, touching_def.neighbor_face_manipulator, t_b, ti_b, at_b)  } ||
+                         _is_free_coord_too_close?((point - origin) % x_axis, existing_coords)
               occupied_anchor_points_3d << point if occupied
               occupied
             end
 
-            start_point_3d = ORIGIN.offset(X_AXIS, touching_poly_bounds.min.x + (anchor_points_3d.length > 1 ? start_offset_length : 0)).offset!(touching_vy, ly).transform!(at)
-            end_point_3d = ORIGIN.offset(X_AXIS, touching_poly_bounds.min.x + touching_poly_bounds.width - (anchor_points_3d.length > 1 ? end_offset_length : 0)).offset!(touching_vy, ly).transform!(at)
+            if free && touching_poly.equal?(free_touching_poly) && total_length >= geometries_bounds.width &&
+               (free_range = _get_free_range(total_length, start_offset_length, end_offset_length, geometries_bounds.width / 2))
+              start_point_3d = ORIGIN.offset(X_AXIS, touching_poly_bounds.min.x + free_range.first).offset!(touching_vy, ly).transform!(at)
+              end_point_3d = ORIGIN.offset(X_AXIS, touching_poly_bounds.min.x + free_range.last).offset!(touching_vy, ly).transform!(at)
+              origin_point_3d = ORIGIN.offset(touching_vy, ly).transform!(at)  # The active vertex, projected on the laying line
+            else
+              origin_point_3d = nil
+              start_point_3d = ORIGIN.offset(X_AXIS, touching_poly_bounds.min.x + (anchor_points_3d.length > 1 ? start_offset_length : 0)).offset!(touching_vy, ly).transform!(at)
+              end_point_3d = ORIGIN.offset(X_AXIS, touching_poly_bounds.min.x + touching_poly_bounds.width - (anchor_points_3d.length > 1 ? end_offset_length : 0)).offset!(touching_vy, ly).transform!(at)
+            end
 
             join_defs << AddJoineryJoinDef.new(touching_poly,
                                                touching_def,
@@ -2623,7 +2987,8 @@ module Ladb::OpenCutList
                                                start_point_3d,
                                                end_point_3d,
                                                at_a,
-                                               at_b
+                                               at_b,
+                                               origin_point_3d
             )
 
           end
@@ -2783,7 +3148,7 @@ module Ladb::OpenCutList
 
     AddJoineryDef = Struct.new(:neighbor_join_defs)
     AddJoineryNeighborJoinDef = Struct.new(:neighbor_def, :join_defs)
-    AddJoineryJoinDef = Struct.new(:touching_poly, :touching_def, :anchor_points_3d, :occupied_anchor_points_3d, :start_point_3d, :end_point_3d, :at_a, :at_b)
+    AddJoineryJoinDef = Struct.new(:touching_poly, :touching_def, :anchor_points_3d, :occupied_anchor_points_3d, :start_point_3d, :end_point_3d, :at_a, :at_b, :origin_point_3d) # origin_point_3d : where a free position is measured from, nil when distributed
 
   end
 
@@ -2801,18 +3166,17 @@ module Ladb::OpenCutList
       SmartCursorManager.cursor_select_join_minus
     end
 
-    def get_state_status(state)
-      super +
-        ' | ' + PLUGIN.get_i18n_string("default.constrain_key") + ' = ' + PLUGIN.get_i18n_string("tool.smart_join.action_1_only_one_status") + '.'
-    end
-
     # -----
 
     def onToolLButtonUp(tool, flags, x, y, view)
 
       if has_active_part?
         _remove_connectors
-        _restart
+        if _fetch_option_distribution_free?
+          _refresh  # Stays on the joint, to remove the next one
+        else
+          _restart
+        end
         return true
       end
 
@@ -2853,7 +3217,7 @@ module Ladb::OpenCutList
     def _pick_join
       context_changed = super
 
-      if @tool.is_key_shift_down? &&
+      if _fetch_option_distribution_free? &&
          @mouse_snap_point.is_a?(Geom::Point3d) &&
          (neighborhood_def = _get_neighborhood_def) &&
          (joinery_def = _get_remove_joinery_def(neighborhood_def))
@@ -3213,6 +3577,7 @@ module Ladb::OpenCutList
 
       when STATE_SELECT_B
         @tool.clear_3d([ LAYER_3D_JOIN_PREVIEW, LAYER_3D_SNAP_POINT_PREVIEW ])
+        @tool.clear_2d(LAYER_2D_DIMENSIONS)
         @tool.hide_message
         if _pick_ref_face_b(picker)
           _reset_neighborhood_def
@@ -3648,6 +4013,7 @@ module Ladb::OpenCutList
     def onToolUserText(tool, text, view)
       return true if super
 
+      return true if _read_free_position(tool, text, view)
       return true if _read_measures(tool, text, view)
 
       false
@@ -3671,8 +4037,22 @@ module Ladb::OpenCutList
       super
     end
 
+    def onToolKeyDown(tool, key, repeat, flags, view)
+
+      if tool.is_key_shift?(key)
+        _on_shift_changed if repeat == 1
+        return true
+      end
+
+      false
+    end
+
     def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
 
+      if tool.is_key_shift?(key)
+        _on_shift_changed
+        return true
+      end
       if tool.is_key_ctrl_or_option?(key)
         @tool.store_action_option_value(@action, SmartJoinTool::ACTION_OPTION_OPTIONS, SmartJoinTool::ACTION_OPTION_OPTIONS_OPPOSITE, !_fetch_option_opposite?, fire_event: true)
         return true
@@ -3698,6 +4078,20 @@ module Ladb::OpenCutList
     def _reset
       super
       @snap_start_point = nil
+      @free_position = nil
+    end
+
+    # -----
+
+    def _add_at_free_position
+      _reset_joinery_def
+      if _has_active_part_b? && (neighborhood_def = _get_neighborhood_def) && (joinery_def = _get_add_joinery_def(neighborhood_def)) && !joinery_def.join_def.anchor_points_3d.empty?
+        _add_fittings
+        _restart
+      else
+        _reset_joinery_def
+        UI.beep
+      end
     end
 
     # -----
@@ -3710,8 +4104,23 @@ module Ladb::OpenCutList
 
       snap_start_point = [ line_def.start_point, line_def.end_point ].min { |p1, p2| p1.distance(snap_origin_point) <=> p2.distance(snap_origin_point) }
 
+      # Free : measured from the same end until the mouse comes close to the other one
+      if _fetch_option_distribution_free? && @snap_start_point.is_a?(Geom::Point3d) && snap_start_point != @snap_start_point &&
+         [ line_def.start_point, line_def.end_point ].include?(@snap_start_point) &&
+         !_is_free_origin_switch?(snap_origin_point, snap_start_point)
+        snap_start_point = @snap_start_point == line_def.start_point ? line_def.start_point : line_def.end_point
+      end
+
+      snap_end_point = snap_start_point == line_def.start_point ? line_def.end_point : line_def.start_point
+
+      # Free : the hardware follows the mouse along the line
+      free_position = _fetch_option_distribution_free? ? _get_free_position(snap_start_point, snap_start_point.vector_to(snap_end_point), snap_origin_point) : nil
+
       # Returns true if changed
-      (@snap_start_point != snap_start_point).tap { @snap_start_point = snap_start_point }
+      (@snap_start_point != snap_start_point || !_same_free_position?(@free_position, free_position)).tap {
+        @snap_start_point = snap_start_point
+        @free_position = free_position
+      }
     end
 
     # The point the fittings are counted from the nearest end of the joint
@@ -3762,18 +4171,25 @@ module Ladb::OpenCutList
 
       join_def = joinery_def.join_def
 
+      if _fetch_option_distribution_free? && @snap_start_point.is_a?(Geom::Point3d) && join_def.anchor_points_3d.length == 1
+        snap_end_point = @snap_start_point == line_def.start_point ? line_def.end_point : line_def.start_point
+        _preview_free_position(@snap_start_point, @snap_start_point.vector_to(snap_end_point), join_def.anchor_points_3d.first)
+      end
+
       unless join_def.anchor_points_3d.empty?
 
         # Preview anchors
 
         k_edge = Kuix::EdgeMotif3d.new
-        k_edge.start.copy!(join_def.start_point_3d)
+        k_edge.start.copy!(join_def.origin_point_3d || join_def.start_point_3d)
         k_edge.end.copy!(join_def.end_point_3d)
         k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
         k_edge.line_width = 1.5
         k_edge.color = Kuix::COLOR_MAGENTA
         k_edge.on_top = true
         @tool.append_3d(k_edge, LAYER_3D_JOIN_PREVIEW)
+
+        _preview_free_range_bounds(join_def) if _fetch_option_distribution_free?
 
         k_points = _create_floating_points(
           points: join_def.anchor_points_3d,
@@ -4149,9 +4565,15 @@ module Ladb::OpenCutList
 
       min_spacing_length = [ min_spacing, geometries_bounds.width ].max
 
+      free = _fetch_option_distribution_free?
+      free_position = @typed_free_position || @free_position
+
       if total_length < geometries_bounds.width
         # Touching face is not large enough to contain at least one join
         coords = []
+      elsif free
+        coord = free_position.nil? ? nil : _get_free_coord(free_position, total_length, start_offset_length, end_offset_length, geometries_bounds.width / 2)
+        coords = coord.nil? ? [] : [ coord ]
       else
         if total_length > start_offset_length + min_spacing_length + end_offset_length
           middle_length = total_length - start_offset_length - end_offset_length
@@ -4210,16 +4632,27 @@ module Ladb::OpenCutList
       grouped_glued_instances_a = _get_grouped_glued_instances(line_def.face_manipulator, poly_3d)
       grouped_glued_instances_b = _get_grouped_glued_instances(line_def.neighbor_face_manipulator, poly_3d)
 
+      # A free hardware keeps the min spacing away from the ones already there
+      existing_coords = free ? (grouped_glued_instances_a.keys + grouped_glued_instances_b.keys).map { |coords_3d| (Geom::Point3d.new(coords_3d) - ps) % v.normalize } : []
+
       occupied_anchor_points_3d = []
       anchor_points_3d.delete_if do |point|
         occupied = grouped_glued_instances_a.any? { |_, glued_instances| _is_geometries_intersect_glued_instances?(geometries_bounds, point, glued_instances, line_def.face_manipulator, t_a, ti_a, at_a) } ||
-                   grouped_glued_instances_b.any? { |_, glued_instances| _is_geometries_intersect_glued_instances?(geometries_bounds, point, glued_instances, line_def.neighbor_face_manipulator, t_b, ti_b, at_b)  }
+                   grouped_glued_instances_b.any? { |_, glued_instances| _is_geometries_intersect_glued_instances?(geometries_bounds, point, glued_instances, line_def.neighbor_face_manipulator, t_b, ti_b, at_b)  } ||
+                   _is_free_coord_too_close?((point - ps) % v.normalize, existing_coords)
         occupied_anchor_points_3d << point if occupied
         occupied
       end
 
-      start_point_3d = ps.offset(v, anchor_points_3d.length > 1 ? start_offset_length : 0)
-      end_point_3d = pe.offset(v.reverse, anchor_points_3d.length > 1 ? end_offset_length : 0)
+      if free && total_length >= geometries_bounds.width && (free_range = _get_free_range(total_length, start_offset_length, end_offset_length, geometries_bounds.width / 2))
+        start_point_3d = ps.offset(v, free_range.first)
+        end_point_3d = ps.offset(v, free_range.last)
+        origin_point_3d = ps
+      else
+        origin_point_3d = nil
+        start_point_3d = ps.offset(v, anchor_points_3d.length > 1 ? start_offset_length : 0)
+        end_point_3d = pe.offset(v.reverse, anchor_points_3d.length > 1 ? end_offset_length : 0)
+      end
 
       @joinery_def = AddJoineryDef.new(
         at_a,
@@ -4228,7 +4661,8 @@ module Ladb::OpenCutList
           anchor_points_3d,
           occupied_anchor_points_3d,
           start_point_3d,
-          end_point_3d
+          end_point_3d,
+          origin_point_3d
         )
       )
     end
@@ -4236,7 +4670,7 @@ module Ladb::OpenCutList
     # Data Structs -----
 
     AddJoineryDef = Struct.new(:at_a, :at_b, :join_def)
-    AddJoineryJoinDef = Struct.new(:anchor_points_3d, :occupied_anchor_points_3d, :start_point_3d, :end_point_3d)
+    AddJoineryJoinDef = Struct.new(:anchor_points_3d, :occupied_anchor_points_3d, :start_point_3d, :end_point_3d, :origin_point_3d) # origin_point_3d : where a free position is measured from, nil when distributed
 
   end
 
@@ -4327,7 +4761,7 @@ module Ladb::OpenCutList
 
     def get_state_status(state)
       return super if state == STATE_SOURCE
-      PLUGIN.get_i18n_string("tool.smart_join.action_#{@action}_state_#{state}_status") + '.' +
+      super +
         ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_join.action_#{SmartJoinTool::ACTION_REMOVE_HINGES}") + '.'
     end
 
@@ -4356,11 +4790,16 @@ module Ladb::OpenCutList
     end
 
     def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
+      if tool.is_key_shift?(key)
+        _on_shift_changed
+        return true
+      end
       false # No opposite face here : both faces are deduced
     end
 
     def onPickerChanged(picker, view)
       @tool.clear_3d([ LAYER_3D_JOIN_PREVIEW, LAYER_3D_SNAP_POINT_PREVIEW, LAYER_3D_PART_B_PREVIEW ])
+      @tool.clear_2d(LAYER_2D_DIMENSIONS)
       @tool.hide_message
       _pick_part(picker, view)
       _reset_neighborhood_def if _pick_hinge_side(picker)
@@ -4927,16 +5366,6 @@ module Ladb::OpenCutList
       super
     end
 
-    def get_state_status(state)
-      case state
-      when STATE_SELECT_B
-        super +
-          ' | ' + PLUGIN.get_i18n_string("default.constrain_key") + ' = ' + PLUGIN.get_i18n_string("tool.smart_join.action_3_only_one_status") + '.'
-      else
-        super
-      end
-    end
-
     # -----
 
     def onToolLButtonUp(tool, flags, x, y, view)
@@ -4946,7 +5375,7 @@ module Ladb::OpenCutList
       when STATE_SELECT_B
         if _has_active_part_b?
           _remove_fittings
-          if @tool.is_key_shift_down?
+          if _fetch_option_distribution_free?
             _refresh
           else
             _restart
@@ -5003,7 +5432,7 @@ module Ladb::OpenCutList
 
     def _snap_ref_point_b(picker = nil)
 
-      if @tool.is_key_shift_down? &&
+      if _fetch_option_distribution_free? &&
          @mouse_snap_point.is_a?(Geom::Point3d) &&
          (neighborhood_def = _get_neighborhood_def) &&
          (joinery_def = _get_remove_joinery_def(neighborhood_def))
@@ -5256,17 +5685,12 @@ module Ladb::OpenCutList
       SmartCursorManager.cursor_select_join_minus
     end
 
-    def get_state_status(state)
-      PLUGIN.get_i18n_string("tool.smart_join.action_#{@action}_state_#{state}_status") + '.' +
-        ' | ' + PLUGIN.get_i18n_string("default.constrain_key") + ' = ' + PLUGIN.get_i18n_string("tool.smart_join.action_#{@action}_only_one_status") + '.'
-    end
-
     # -----
 
     def onToolLButtonUp(tool, flags, x, y, view)
       if (neighborhood_def = _get_neighborhood_def) && (joinery_def = _get_remove_joinery_def(neighborhood_def)) && !joinery_def.grouped_glued_instances_a.empty?
         _remove_fittings
-        if @tool.is_key_shift_down?
+        if _fetch_option_distribution_free?
           _refresh
         else
           _restart

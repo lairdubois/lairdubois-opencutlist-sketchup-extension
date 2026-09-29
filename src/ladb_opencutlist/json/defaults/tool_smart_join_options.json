@@ -13,11 +13,15 @@
     "min_spacing": "0",
     "max_spacing": { "metric": "300mm", "imperial": "12\"" },
     "make_unique": true,
+    "distribution": "auto", /* ACTION_OPTION_DISTRIBUTION_AUTO */
     "hardware": "$OCL/connectors/festool/domino-5x30.json",
     "hardware_material_name": null,
     "machining_material_name": null,
     "hardware_layer_name": null,
     "machining_layer_name": null
+  },
+  "action_1": {  /* ACTION_REMOVE_CONNECTORS */
+    "distribution": "auto" /* ACTION_OPTION_DISTRIBUTION_AUTO */
   },
   "action_2": {  /* ACTION_ADD_FITTINGS */
     "start_offset": "0",
@@ -26,6 +30,7 @@
     "max_spacing": { "metric": "300mm", "imperial": "12\"" },
     "opposite": false,
     "make_unique": true,
+    "distribution": "auto", /* ACTION_OPTION_DISTRIBUTION_AUTO */
     "hardware": null,
     "hardware_material_name": null,
     "machining_material_name": null,
@@ -33,7 +38,8 @@
     "machining_layer_name": null
   },
   "action_3": {  /* ACTION_REMOVE_FITTINGS */
-    "opposite": false
+    "opposite": false,
+    "distribution": "auto" /* ACTION_OPTION_DISTRIBUTION_AUTO */
   },
   "action_4": {  /* ACTION_ADD_HINGES */
     "start_offset": { "metric": "68mm", "imperial": "2.75\"" },
@@ -41,10 +47,14 @@
     "min_spacing": "0",
     "max_spacing": { "metric": "800mm", "imperial": "32\"" },
     "make_unique": false,
+    "distribution": "auto", /* ACTION_OPTION_DISTRIBUTION_AUTO */
     "hardware": "$OCL/hinges/blum/clip-top.json",
     "hardware_material_name": null,
     "machining_material_name": null,
     "hardware_layer_name": null,
     "machining_layer_name": null
+  },
+  "action_5": {  /* ACTION_REMOVE_HINGES */
+    "distribution": "auto" /* ACTION_OPTION_DISTRIBUTION_AUTO */
   }
 }
