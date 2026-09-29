@@ -12,7 +12,7 @@
     "a": {
       "name": "Screw 4x40",
       "hardware": { "cylinders": [ { "diameter": "4mm", "from": "-@thickness_max_a", "to": "@embed", "countersink": { "diameter": "8mm", "angle": 90, "end": "from" } } ] },
-      "machining": { "drillings": [ { "diameter": "4.5mm", "depth": "through", "countersink": { "diameter": "8.5mm", "angle": 90, "face": "opposite" } } ] },
+      "machining": { "drillings": [ { "diameter": "4mm", "depth": "through" } ] },
       "attributes": { "symmetrical":  true }
     },
     "b": { "machining": { "drillings": [ { "diameter": "2.5mm", "depth": "@embed" } ] } }
