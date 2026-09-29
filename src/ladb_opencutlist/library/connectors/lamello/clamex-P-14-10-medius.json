@@ -7,7 +7,11 @@
   "supplier": "Lamello",
   "url": "https://www.lamello.com",
   "components": {
-    "a": { "name": "Clamex P-14/10 Medius", "hardware": true, "machining": true, "attributes": { "symmetrical":  true } }
+    "a": {
+      "hardware": true,
+      "machining": { "drillings": [ { "axis": "y", "z": "-7.5mm", "diameter": "6mm", "depth": "@height" } ] },
+      "attributes": { "symmetrical":  true }
+    }
   },
   "options": { "height": "10mm", "start_offset": "60mm", "end_offset": "60mm", "min_spacing": "80mm", "max_spacing": "300mm" }
 }

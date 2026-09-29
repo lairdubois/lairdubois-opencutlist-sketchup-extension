@@ -15,7 +15,6 @@
   "asserts": [ "@depth_a + @depth_b >= 40mm" ],
   "components": {
     "a": {
-      "name": "Domino 8x40",
       "hardware": { "oblongs": [ { "length": "22mm", "width": "8mm", "from": "-(40mm + @depth_a - @depth_b) / 2", "to": "(40mm - @depth_a + @depth_b) / 2" } ] },
       "machining": { "mortises": [ { "length": "22mm", "width": "8mm", "depth": "@depth_a" } ] },
       "attributes": { "symmetrical":  true }

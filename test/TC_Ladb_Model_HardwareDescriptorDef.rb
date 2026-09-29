@@ -478,8 +478,8 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
   }.freeze
 
   def test_measures
-    assert_equal(%w[thickness thickness_min thickness_max thickness_a thickness_b thickness_min_a thickness_min_b thickness_max_a thickness_max_b], _def(DOWEL).measures)
-    assert_equal(%w[thickness thickness_min thickness_max], _def(SLIDES).measures)
+    assert_equal(%w[thickness thickness_min thickness_max height thickness_a thickness_b thickness_min_a thickness_min_b thickness_max_a thickness_max_b height_a height_b], _def(DOWEL).measures)
+    assert_equal(%w[thickness thickness_min thickness_max height], _def(SLIDES).measures)
     assert_equal(%w[thickness_a thickness_b], _def(DOWEL).used_measures)
     assert_equal([], _def(HINGE).used_measures)
     through = _with(HINGE, 'components' => { 'a' => { 'machining' => { 'drillings' => [ { 'diameter' => 5, 'depth' => 'through' } ] } } })
@@ -628,6 +628,48 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     assert_equal([ [ 2, 21 ], [ 2, -17 ], [ 4, -19 ] ], fn_profile.call(screw))
     # Its variables
     assert_equal(%w[thickness_max head], HardwareDescriptorDef.primitive_variables({ 'drillings' => [ { 'diameter' => 4, 'depth' => 'through', 'counterbore' => { 'diameter' => '@head', 'depth' => 2 } } ] }))
+  end
+
+  # Along Y : from the face +Y leads to - @height away - toward -Y, placed
+  # by x and z, given turned a quarter around X.
+  def test_axis_y
+    mm = lambda { |v| v / 25.4 }
+    machining = { 'drillings' => [
+      { 'axis' => 'y', 'x' => '3mm', 'z' => '-7mm', 'diameter' => '6mm', 'depth' => '@height + 2mm' },
+      { 'axis' => 'z', 'diameter' => '4mm', 'depth' => '10mm' },
+    ], 'mortises' => [ { 'axis' => 'y', 'z' => '-4mm', 'length' => '20mm', 'width' => '5mm', 'depth' => '8mm' } ] }
+    descriptor = _def(_with(HINGE, 'components' => { 'a' => { 'machining' => machining } }))
+    assert(descriptor.valid?, descriptor.errors.inspect)
+    assert_equal(%w[height], descriptor.used_measures)
+    assert_equal(%w[height], HardwareDescriptorDef.primitive_variables(machining))
+    drilling, plain, mortise = HardwareDescriptorDef.primitive_cylinders(machining, 'height' => mm.call(10))
+    assert_equal('y', drilling.axis)
+    assert_in_delta(mm.call(3), drilling.x, 1e-9)
+    assert_in_delta(mm.call(7), drilling.y, 1e-9)      # [ x, y, z ] -> [ x, z, -y ]
+    assert_in_delta(mm.call(10), drilling.z_max, 1e-9)  # The face, @height away
+    assert_in_delta(mm.call(-2), drilling.z_min, 1e-9)
+    assert_nil(plain.axis)
+    assert_in_delta(mm.call(-10), plain.z_min, 1e-9)
+    assert_equal('y', mortise.axis)
+    assert_in_delta(mm.call(20), mortise.length, 1e-9)
+    assert_in_delta(mm.call(2), mortise.z_min, 1e-9)
+    # No height measured : left out
+    assert_equal(1, HardwareDescriptorDef.primitive_cylinders(machining).length)
+    # A head on its face
+    head = HardwareDescriptorDef.primitive_cylinders({ 'drillings' => [ { 'axis' => 'y', 'diameter' => 4, 'depth' => 12, 'countersink' => { 'diameter' => 8 } } ] }, 'height' => mm.call(10)).first
+    assert_equal([ [ 4, 10 ], [ 2, 8 ], [ 2, -2 ] ], head.profile.map { |r, z| [ (r * 25.4).round(6), (z * 25.4).round(6) ] })
+  end
+
+  def test_invalid_axis_y
+    fn = lambda { |part, value| _with(HINGE, 'components' => { 'a' => { part => value } }) }
+    fn_drilling = lambda { |item| fn.call('machining', { 'drillings' => [ { 'diameter' => 6, 'depth' => 10 }.merge(item) ] }) }
+    _assert_error(fn_drilling.call('axis' => 'x'), 'drilling 1 axis is neither "z" nor "y"')
+    _assert_error(fn_drilling.call('axis' => 'y', 'y' => 2), 'drilling 1 is along Y and has a y - it is placed by x and z')
+    _assert_error(fn_drilling.call('axis' => 'y', 'depth' => 'through'), 'drilling 1 is along Y and through')
+    _assert_error(fn_drilling.call('z' => -7), "drilling 1 has a z but isn't along Y")
+    _assert_error(fn_drilling.call('axis' => 'y', 'z' => 'deep'), 'drilling 1 z is not a length')
+    _assert_error(fn.call('machining', { 'mortises' => [ { 'axis' => 'y', 'length' => 19, 'width' => 5, 'depth' => 'through' } ] }), 'mortise 1 is along Y and through')
+    _assert_error(fn.call('hardware', { 'cylinders' => [ { 'axis' => 'y', 'diameter' => 4, 'from' => 0, 'to' => 30 } ] }), "cylinder 1 has an unknown key 'axis'")
   end
 
   def test_invalid_heads

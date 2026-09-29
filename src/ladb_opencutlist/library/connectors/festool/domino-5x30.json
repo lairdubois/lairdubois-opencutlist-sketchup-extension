@@ -15,7 +15,6 @@
   "asserts": [ "@depth_a + @depth_b >= 30mm" ],
   "components": {
     "a": {
-      "name": "Domino 5x30",
       "hardware": { "oblongs": [ { "length": "19mm", "width": "5mm", "from": "-(30mm + @depth_a - @depth_b) / 2", "to": "(30mm - @depth_a + @depth_b) / 2" } ] },
       "machining": { "mortises": [ { "length": "19mm", "width": "5mm", "depth": "@depth_a" } ] },
       "attributes": { "symmetrical":  true }

@@ -11,7 +11,6 @@
   "asserts": [ "@depth_a <= @thickness_a - 5mm", "@depth_b <= @thickness_b - 5mm" ],
   "components": {
     "a": {
-      "name": "Dowel 8x40",
       "hardware": { "cylinders": [ {"x": "0", "y": "0", "diameter": "8mm", "from": "-@depth_a", "to": "@depth_b"} ] },
       "machining": { "drillings": [ {"x": "0", "y": "0", "diameter": "8mm", "depth": "@depth_a + 1mm"} ] },
       "attributes": { "symmetrical":  true }

@@ -52,6 +52,12 @@ module Ladb::OpenCutList
   #    { "drillings": [ { "x": "-64mm", "y": 0, "diameter": "5mm", "depth": "through" | "12mm" } ],
   #      "mortises": [ { "x": 0, "y": 0, "length": "19mm", "width": "5mm", "depth": "15mm" } ] }
   #    from the face into the part ;
+  #  - along Y - "axis": "y" - a drilling or a mortise goes from the face
+  #    of the part +Y of the laying frame leads to - @height away, see
+  #    measures - toward -Y. It is then placed by x and z - z toward -Z,
+  #    into the part - its depth is a length, and a mortise is width wide
+  #    along Z. The access hole of a Clamex, on the face next to the joint :
+  #    { "drillings": [ { "axis": "y", "z": "-7mm", "diameter": "6mm", "depth": "@height + 2mm" } ] }
   #  - a hardware, as shapes - a dowel, a Domino tenon :
   #    { "cylinders": [ { "x": 0, "y": 0, "diameter": "8mm", "from": "-20mm", "to": "20mm" } ],
   #      "oblongs": [ { "x": 0, "y": 0, "length": "19mm", "width": "5mm", "from": "-15mm", "to": "15mm" } ] }
@@ -159,6 +165,13 @@ module Ladb::OpenCutList
 
     DRILLING_DEPTH_THROUGH = 'through'.freeze
 
+    # The axis a drilling or a mortise goes along : Z - by default - from
+    # the face, or Y from the face of the part +Y leads to - see
+    # PrimitiveCylinderDef#axis and VARIABLE_HEIGHT.
+    AXIS_Z = 'z'.freeze
+    AXIS_Y = 'y'.freeze
+    AXES = [ AXIS_Z, AXIS_Y ].freeze
+
     # How a drilling or a cylinder widens at one end - see PrimitiveCylinderDef#profile
     HEAD_COUNTERSINK = 'countersink'.freeze
     HEAD_COUNTERBORE = 'counterbore'.freeze
@@ -177,13 +190,18 @@ module Ladb::OpenCutList
     #    is, right behind the solids of the slot - their centers and
     #    outlines - the nearest and the farthest. They differ when the faces
     #    aren't parallel there : "@thickness_max_a - @thickness_min_a <= 0.2mm" ;
+    #  - height : how far the part goes toward +Y from the anchor, just
+    #    behind the face - the face a drilling along Y starts on. For a
+    #    connector, the face of the edge it is laid from - its "height"
+    #    option away ;
     #  - <measure>_<slot> : the one of the part the given slot is laid on, for
     #    the types that join two parts - JOIN_TYPES. An expression then reads
     #    the same from either slot.
     VARIABLE_THICKNESS = 'thickness'.freeze
     VARIABLE_THICKNESS_MIN = 'thickness_min'.freeze
     VARIABLE_THICKNESS_MAX = 'thickness_max'.freeze
-    VARIABLES = [ VARIABLE_THICKNESS, VARIABLE_THICKNESS_MIN, VARIABLE_THICKNESS_MAX ].freeze
+    VARIABLE_HEIGHT = 'height'.freeze
+    VARIABLES = [ VARIABLE_THICKNESS, VARIABLE_THICKNESS_MIN, VARIABLE_THICKNESS_MAX, VARIABLE_HEIGHT ].freeze
 
     JOIN_TYPES = [ TYPE_CONNECTOR, TYPE_FITTING, TYPE_HINGE ].freeze
 
@@ -200,7 +218,10 @@ module Ladb::OpenCutList
     # along Y and length long along X - a cylinder when length is diameter.
     # profile : when it widens at one end - a round one only - its outline
     # as [ radius, z ] from z_max down to z_min, nil otherwise.
-    PrimitiveCylinderDef = Struct.new(:x, :y, :diameter, :z_min, :z_max, :length, :profile) do
+    # axis : AXIS_Y when it goes along Y, nil otherwise. It is then given in
+    # the laying frame turned a quarter around X - its Z along Y - : a point
+    # [ x, y, z ] of it is [ x, z, -y ] in the laying frame.
+    PrimitiveCylinderDef = Struct.new(:x, :y, :diameter, :z_min, :z_max, :length, :profile, :axis) do
       def round?
         length.nil? || length <= diameter
       end
@@ -265,13 +286,14 @@ module Ladb::OpenCutList
     end
 
     # The variables the lengths of the given primitives use - "through"
-    # uses thickness.
+    # uses thickness_max, a drilling along Y height.
     def self.primitive_variables(primitives)
       return [] unless primitives?(primitives)
       names = []
       _primitive_items(primitives).each do |_, item|
         item.each do |key, value|
           names << VARIABLE_THICKNESS_MAX if key == 'depth' && value == DRILLING_DEPTH_THROUGH
+          names << VARIABLE_HEIGHT if key == 'axis' && value == AXIS_Y
           names.concat(value.scan(VARIABLE_PATTERN).flatten) if value.is_a?(String)
           names.concat(value.values.select { |v| v.is_a?(String) }.flat_map { |v| v.scan(VARIABLE_PATTERN).flatten }) if value.is_a?(Hash)
         end
@@ -281,15 +303,22 @@ module Ladb::OpenCutList
 
     # The solids of the given primitives, resolved for the given variables -
     # { 'thickness' => <inches> } - as PrimitiveCylinderDefs : a drilling
-    # goes from the face into the part, a cylinder from one height to the
-    # other. Those a length can't be resolved for are left out. nil when it
-    # isn't given as primitives.
+    # goes from the face into the part - or from the one +Y leads to, see
+    # PrimitiveCylinderDef#axis - a cylinder from one height to the other.
+    # Those a length can't be resolved for are left out. nil when it isn't
+    # given as primitives.
     def self.primitive_cylinders(primitives, variables = {})
       return nil unless primitives?(primitives)
       variables = Hash[variables.map { |k, v| [ k.to_s, v ] }]
       _primitive_items(primitives).map { |key, item|
+        axis = item['axis'] == AXIS_Y && (key == MACHINING_DRILLINGS || key == MACHINING_MORTISES) ? AXIS_Y : nil
         x = item['x'].nil? ? 0.0 : to_length(item['x'], true, variables)
-        y = item['y'].nil? ? 0.0 : to_length(item['y'], true, variables)
+        if axis.nil?
+          y = item['y'].nil? ? 0.0 : to_length(item['y'], true, variables)
+        else
+          z = item['z'].nil? ? 0.0 : to_length(item['z'], true, variables)
+          y = z.nil? ? nil : -z
+        end
         if key == MACHINING_MORTISES || key == HARDWARE_OBLONGS
           diameter = to_length(item['width'], false, variables)
           length = to_length(item['length'], false, variables)
@@ -298,7 +327,11 @@ module Ladb::OpenCutList
           diameter = to_length(item['diameter'], false, variables)
           length = nil
         end
-        if key == MACHINING_DRILLINGS || key == MACHINING_MORTISES
+        if !axis.nil?
+          depth = item['depth'] == DRILLING_DEPTH_THROUGH ? nil : to_length(item['depth'], false, variables)
+          z_max = variables[VARIABLE_HEIGHT].is_a?(Numeric) ? variables[VARIABLE_HEIGHT].to_f : nil
+          z_min = depth.nil? || z_max.nil? ? nil : z_max - depth
+        elsif key == MACHINING_DRILLINGS || key == MACHINING_MORTISES
           through = variables.key?(VARIABLE_THICKNESS_MAX) ? VARIABLE_THICKNESS_MAX : VARIABLE_THICKNESS
           depth = to_length(item['depth'] == DRILLING_DEPTH_THROUGH ? "@#{through}" : item['depth'], false, variables)
           z_min = depth.nil? ? nil : -depth
@@ -313,7 +346,7 @@ module Ladb::OpenCutList
           profile = _head_profile(head_key, item[head_key], key == MACHINING_DRILLINGS ? HEAD_FACES : HEAD_ENDS, diameter, z_min, z_max, variables)
           next nil if profile.nil?
         end
-        PrimitiveCylinderDef.new(x, y, diameter, z_min, z_max, length.nil? || length <= diameter ? nil : length, profile)
+        PrimitiveCylinderDef.new(x, y, diameter, z_min, z_max, length.nil? || length <= diameter ? nil : length, profile, axis)
       }.compact
     end
 
@@ -482,6 +515,7 @@ module Ladb::OpenCutList
         text = JSON.generate(@data)
         names = text.scan(VARIABLE_PATTERN).flatten
         names << VARIABLE_THICKNESS_MAX if text.include?("\"#{DRILLING_DEPTH_THROUGH}\"")
+        names << VARIABLE_HEIGHT if text.include?("\"axis\":\"#{AXIS_Y}\"")
         measures & names
       end
     end
@@ -864,16 +898,35 @@ module Ladb::OpenCutList
         # Checkable only without variables : they change with where it is laid
         errors << "#{label} to is not above from" if !from.nil? && !to.nil? && to <= from && !_variable_lengths?(item['from'], item['to'])
       end
-      _validate_primitive_list(path, part, value, MACHINING_DRILLINGS, 'drilling', %w[x y diameter depth] + HEADS, %w[diameter], errors) do |item, label|
+      _validate_primitive_list(path, part, value, MACHINING_DRILLINGS, 'drilling', %w[axis x y z diameter depth] + HEADS, %w[diameter], errors) do |item, label|
         fn_depth.call(item, label)
+        _validate_axis(item, label, errors)
         _validate_head(item, label, 'face', HEAD_FACES, errors)
       end
-      _validate_primitive_list(path, part, value, MACHINING_MORTISES, 'mortise', %w[x y length width depth], %w[length width], errors, &fn_depth)
+      _validate_primitive_list(path, part, value, MACHINING_MORTISES, 'mortise', %w[axis x y z length width depth], %w[length width], errors) do |item, label|
+        fn_depth.call(item, label)
+        _validate_axis(item, label, errors)
+      end
       _validate_primitive_list(path, part, value, HARDWARE_CYLINDERS, 'cylinder', %w[x y diameter from to] + HEADS, %w[diameter], errors) do |item, label|
         fn_from_to.call(item, label)
         _validate_head(item, label, 'end', HEAD_ENDS, errors)
       end
       _validate_primitive_list(path, part, value, HARDWARE_OBLONGS, 'oblong', %w[x y length width from to], %w[length width], errors, &fn_from_to)
+    end
+
+    # Validates the axis a drilling or a mortise goes along - see AXES : one
+    # along Y is placed by x and z, and isn't through.
+    def _validate_axis(item, label, errors)
+      if item.key?('axis') && !AXES.include?(item['axis'])
+        errors << "#{label} axis is neither #{AXES.map(&:inspect).join(' nor ')}"
+        return
+      end
+      if item['axis'] == AXIS_Y
+        errors << "#{label} is along Y and has a y - it is placed by x and z" if item.key?('y')
+        errors << "#{label} is along Y and through" if item['depth'] == DRILLING_DEPTH_THROUGH
+      elsif item.key?('z')
+        errors << "#{label} has a z but isn't along Y"
+      end
     end
 
     # Validates the head a drilling or a cylinder widens by at one end - see
@@ -958,7 +1011,7 @@ module Ladb::OpenCutList
             errors << "#{label} #{k} uses the unknown variable @#{name}"
           end
         end
-        %w[x y].each do |k|
+        %w[x y z].each do |k|
           errors << "#{label} #{k} is not a length" if item.key?(k) && !item[k].nil? && _to_checked_length(item[k], true).nil?
         end
         sizes = size_keys.map { |k| _to_checked_length(item[k], false) }

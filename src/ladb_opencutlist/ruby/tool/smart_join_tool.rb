@@ -344,6 +344,14 @@ module Ladb::OpenCutList
     TRANSFORMATION_FLIP_X = Geom::Transformation.axes(ORIGIN, X_AXIS.reverse, Y_AXIS, Z_AXIS).freeze
     TRANSFORMATION_FLIP_Z = Geom::Transformation.axes(ORIGIN, X_AXIS, Y_AXIS, Z_AXIS.reverse).freeze
 
+    # The frame a primitive along Y is given in - see
+    # HardwareDescriptorDef::PrimitiveCylinderDef#axis : [ x, y, z ] -> [ x, z, -y ].
+    TRANSFORMATION_AXIS_Y = Geom::Transformation.axes(ORIGIN, X_AXIS, Z_AXIS.reverse, Y_AXIS).freeze
+
+    # How far behind the face _get_placement_height looks - toward -Z - off
+    # the edge the face may share with the one it finds.
+    PLACEMENT_HEIGHT_DEPTH = 0.1.mm
+
     # No usable hardware picked in the library : nothing can be picked in the
     # model until one is - as SmartBuildModuleActionHandler. The subclasses'
     # states follow.
@@ -1005,8 +1013,9 @@ module Ladb::OpenCutList
         r = cylinder.radius
         h = cylinder.round? ? r : cylinder.length / 2
         x = mirror ? -cylinder.x : cylinder.x
-        bounds.add(Geom::Point3d.new(x - h, cylinder.y - r, cylinder.z_min))
-        bounds.add(Geom::Point3d.new(x + h, cylinder.y + r, cylinder.z_max))
+        at = _get_primitive_axis_transformation(cylinder.axis)
+        bounds.add(Geom::Point3d.new(x - h, cylinder.y - r, cylinder.z_min).transform(at))
+        bounds.add(Geom::Point3d.new(x + h, cylinder.y + r, cylinder.z_max).transform(at))
       end
       bounds
     end
@@ -1022,6 +1031,8 @@ module Ladb::OpenCutList
       fn_measure = lambda do |target, variable|
         if variable == HardwareDescriptorDef::VARIABLE_THICKNESS
           _get_placement_thickness(target)
+        elsif variable == HardwareDescriptorDef::VARIABLE_HEIGHT
+          _get_placement_height(target)
         else
           local_thicknesses[target] ||= _get_placement_local_thicknesses(target)
           local_thicknesses[target][variable == HardwareDescriptorDef::VARIABLE_THICKNESS_MIN ? 0 : 1]
@@ -1088,6 +1099,24 @@ module Ladb::OpenCutList
       -min_z
     end
 
+    # How far the part of the given placement goes toward +Y of the laying
+    # frame from the anchor, just behind the face : where the nearest of its
+    # faces the ray leaves it by is. nil when none is found.
+    def _get_placement_height(placement)
+      t = placement.transformation
+      origin = Geom::Point3d.new(0, 0, -PLACEMENT_HEIGHT_DEPTH).transform(t)
+      direction = Y_AXIS.transform(t).normalize
+      on_face = [ Sketchup::Face::PointInside, Sketchup::Face::PointOnEdge, Sketchup::Face::PointOnVertex ]
+      placement.definition.entities.grep(Sketchup::Face).map { |face|
+        next nil if face == placement.face
+        point = Geom.intersect_line_plane([ origin, direction ], face.plane)
+        next nil if point.nil?
+        distance = (point - origin) % direction
+        next nil if distance <= 1e-3 || !on_face.include?(face.classify_point(point))
+        distance
+      }.compact.min
+    end
+
     # How far the other face of the part of the given placement is, right
     # behind the solids of its slot - their centers and outlines - toward -Z
     # of the laying frame : [ nearest, farthest ]. The points off the face
@@ -1142,6 +1171,7 @@ module Ladb::OpenCutList
           [ bounds.min.x, bounds.max.x ].product([ bounds.min.y, bounds.max.y ]).each { |x, y| points << [ sign * x, y ] }
         elsif geometry.primitives
           HardwareDescriptorDef.primitive_cylinders(geometry.primitives, variables).each do |cylinder|
+            next unless cylinder.axis.nil?   # Not on the face
             points << [ sign * cylinder.x, cylinder.y ]
             r = cylinder.radius
             h = cylinder.round? ? 0.0 : cylinder.length / 2 - r
@@ -1157,7 +1187,8 @@ module Ladb::OpenCutList
 
     # The solids of the given primitives resolved at the given placement, as
     # [ x, y, diameter, z_min, z_max ] - and length for an oblong one, nil
-    # and the profile for a widened one - in inches, rounded : the key of their
+    # and the profile for a widened one, then the axis for one along Y, the
+    # values before it nil if missing - in inches, rounded : the key of their
     # geometry. Centered, shifted along Z by their offset - see
     # _get_primitives_offset - before rounding.
     def _get_primitives_dimensions(primitives, placement, centered = false)
@@ -1167,6 +1198,7 @@ module Ladb::OpenCutList
         values = [ cylinder.x, cylinder.y, cylinder.diameter, cylinder.z_min - offset, cylinder.z_max - offset ].map(&fn_round)
         values << fn_round.call(cylinder.length) unless cylinder.round?
         values << nil << cylinder.profile.map { |r, z| [ fn_round.call(r), fn_round.call(z - offset) ] } unless cylinder.profile.nil?
+        values.fill(nil, values.length...7) << cylinder.axis unless cylinder.axis.nil?
         values
       }
     end
@@ -1176,6 +1208,12 @@ module Ladb::OpenCutList
       cylinders = HardwareDescriptorDef.primitive_cylinders(primitives, _get_placement_variables(placement))
       return 0.0 if cylinders.empty?
       (cylinders.map(&:z_min).min + cylinders.map(&:z_max).max) / 2
+    end
+
+    # The transformation a primitive along the given axis is laid with - see
+    # HardwareDescriptorDef::PrimitiveCylinderDef#axis.
+    def _get_primitive_axis_transformation(axis)
+      axis == HardwareDescriptorDef::AXIS_Y ? TRANSFORMATION_AXIS_Y : IDENTITY
     end
 
     # The segments of the circle of a primitive of the given diameter.
@@ -1200,19 +1238,22 @@ module Ladb::OpenCutList
     # frame : both outlines and four generatrices of each solid.
     def _get_primitives_segments(dimensions)
       segments = []
-      dimensions.each do |x, y, diameter, z_min, z_max, length, profile|
-        unless profile.nil?
-          segments.concat(_get_profile_segments(x, y, profile))
-          next
+      dimensions.each do |x, y, diameter, z_min, z_max, length, profile, axis|
+        solid_segments = []
+        if profile.nil?
+          points = _get_primitive_outline(x, y, diameter, length)
+          step = [ points.length / 4, 1 ].max
+          points.each_with_index do |(px, py), i|
+            nx, ny = points[(i + 1) % points.length]
+            solid_segments << Geom::Point3d.new(px, py, z_max) << Geom::Point3d.new(nx, ny, z_max)
+            solid_segments << Geom::Point3d.new(px, py, z_min) << Geom::Point3d.new(nx, ny, z_min)
+            solid_segments << Geom::Point3d.new(px, py, z_max) << Geom::Point3d.new(px, py, z_min) if i % step == 0
+          end
+        else
+          solid_segments = _get_profile_segments(x, y, profile)
         end
-        points = _get_primitive_outline(x, y, diameter, length)
-        step = [ points.length / 4, 1 ].max
-        points.each_with_index do |(px, py), i|
-          nx, ny = points[(i + 1) % points.length]
-          segments << Geom::Point3d.new(px, py, z_max) << Geom::Point3d.new(nx, ny, z_max)
-          segments << Geom::Point3d.new(px, py, z_min) << Geom::Point3d.new(nx, ny, z_min)
-          segments << Geom::Point3d.new(px, py, z_max) << Geom::Point3d.new(px, py, z_min) if i % step == 0
-        end
+        solid_segments.each { |point| point.transform!(TRANSFORMATION_AXIS_Y) } unless axis.nil?
+        segments.concat(solid_segments)
       end
       segments
     end
@@ -1300,11 +1341,12 @@ module Ladb::OpenCutList
       definition = model.definitions.find { |d| d.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, HardwareDescriptorDef::DEFINITION_ATTRIBUTE_PRIMITIVES) == key }
       if definition.nil?
         definition = model.definitions.add(name.is_a?(String) && !name.empty? ? name : geometry.part.to_s)
-        dimensions.each do |x, y, diameter, z_min, z_max, length, profile|
+        dimensions.each do |x, y, diameter, z_min, z_max, length, profile, axis|
+          at = _get_primitive_axis_transformation(axis)
           if profile.nil?
-            _add_primitive_solid(definition.entities, x, y, diameter, z_min, z_max, length)
+            _add_primitive_solid(definition.entities, x, y, diameter, z_min, z_max, length, at)
           else
-            _add_profile_solid(definition.entities, x, y, profile)
+            _add_profile_solid(definition.entities, x, y, profile, at)
           end
         end
         definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, HardwareDescriptorDef::DEFINITION_ATTRIBUTE_PRIMITIVES, key)
@@ -1316,36 +1358,43 @@ module Ladb::OpenCutList
 
     # A solid along Z, from z_min to z_max : a cylinder, or a slot with round
     # ends - length along X - when length is given. Its ends are arcs, to
-    # soften its sides.
-    def _add_primitive_solid(entities, x, y, diameter, z_min, z_max, length = nil)
+    # soften its sides. at : the transformation it is laid with - see
+    # _get_primitive_axis_transformation.
+    def _add_primitive_solid(entities, x, y, diameter, z_min, z_max, length = nil, at = IDENTITY)
       return if z_max <= z_min
       r = diameter / 2
       count = _get_primitive_num_segments(diameter)
+      fn_point = lambda { |px, py| Geom::Point3d.new(px, py, z_max).transform(at) }
+      x_axis = X_AXIS.transform(at)
+      z_axis = Z_AXIS.transform(at)
       if length.nil?
-        edges = entities.add_circle(Geom::Point3d.new(x, y, z_max), Z_AXIS, r, count)
+        edges = entities.add_circle(fn_point.call(x, y), z_axis, r, count)
       else
         h = (length - diameter) / 2
-        edges = entities.add_arc(Geom::Point3d.new(x + h, y, z_max), X_AXIS, Z_AXIS, r, -Math::PI / 2, Math::PI / 2, count / 2) +
-                entities.add_arc(Geom::Point3d.new(x - h, y, z_max), X_AXIS, Z_AXIS, r, Math::PI / 2, 3 * Math::PI / 2, count / 2)
-        edges << entities.add_line(Geom::Point3d.new(x + h, y + r, z_max), Geom::Point3d.new(x - h, y + r, z_max))
-        edges << entities.add_line(Geom::Point3d.new(x - h, y - r, z_max), Geom::Point3d.new(x + h, y - r, z_max))
+        edges = entities.add_arc(fn_point.call(x + h, y), x_axis, z_axis, r, -Math::PI / 2, Math::PI / 2, count / 2) +
+                entities.add_arc(fn_point.call(x - h, y), x_axis, z_axis, r, Math::PI / 2, 3 * Math::PI / 2, count / 2)
+        edges << entities.add_line(fn_point.call(x + h, y + r), fn_point.call(x - h, y + r))
+        edges << entities.add_line(fn_point.call(x - h, y - r), fn_point.call(x + h, y - r))
       end
       face = entities.add_face(edges)
       return if face.nil?
-      face.reverse! if face.normal.z > 0
+      face.reverse! if face.normal % z_axis > 0
       face.pushpull(z_max - z_min)  # Along its normal : toward -Z
     end
 
     # A solid of the given profile - see
     # HardwareDescriptorDef::PrimitiveCylinderDef#profile - turned around
     # the vertical axis at x, y : a drilling or a cylinder widened at one end.
-    def _add_profile_solid(entities, x, y, profile)
+    # at : the transformation it is laid with - see
+    # _get_primitive_axis_transformation.
+    def _add_profile_solid(entities, x, y, profile, at = IDENTITY)
       r_top, z_top = profile.first
       count = _get_primitive_num_segments(2 * profile.map(&:first).max)
       points = [ Geom::Point3d.new(x, y, z_top) ] +
                profile.map { |r, z| Geom::Point3d.new(x + r, y, z) } +
                [ Geom::Point3d.new(x, y, profile.last.last) ]
-      path = entities.add_circle(Geom::Point3d.new(x, y, z_top), Z_AXIS, r_top, count)
+      points.each { |point| point.transform!(at) }
+      path = entities.add_circle(Geom::Point3d.new(x, y, z_top).transform(at), Z_AXIS.transform(at), r_top, count)
       face = entities.add_face(points)
       return if face.nil?
       face.followme(path)
