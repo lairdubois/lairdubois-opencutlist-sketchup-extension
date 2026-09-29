@@ -1474,6 +1474,7 @@ module Ladb::OpenCutList
     def _add_geometry(geometry, placement, material, layer)
       definition = _get_geometry_definition(geometry, placement, material)
       return unless definition.is_a?(Sketchup::ComponentDefinition)
+      material = nil if geometry.part == :machining && !geometry.definition.nil? && definition.behavior.cuts_opening? # A SKP machining that cuts its opening is not painted
       mt = _get_geometry_mirror_transformation(geometry)
       offset = _get_geometry_offset(geometry, placement)
       if offset.abs < 1e-6
