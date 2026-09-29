@@ -347,6 +347,8 @@ module Ladb::OpenCutList
     # The frame a primitive along Y is given in - see
     # HardwareDescriptorDef::PrimitiveCylinderDef#axis : [ x, y, z ] -> [ x, z, -y ].
     TRANSFORMATION_AXIS_Y = Geom::Transformation.axes(ORIGIN, X_AXIS, Z_AXIS.reverse, Y_AXIS).freeze
+    # The one of a mortise along Y whose length goes along Z : [ x, y, z ] -> [ -y, z, -x ].
+    TRANSFORMATION_AXIS_Y_LENGTH_Z = Geom::Transformation.axes(ORIGIN, Z_AXIS.reverse, X_AXIS.reverse, Y_AXIS).freeze
 
     # How far behind the face _get_placement_height looks - toward -Z - off
     # the edge the face may share with the one it finds.
@@ -1012,10 +1014,14 @@ module Ladb::OpenCutList
       HardwareDescriptorDef.primitive_cylinders(primitives, variables).each do |cylinder|
         r = cylinder.radius
         h = cylinder.round? ? r : cylinder.length / 2
-        x = mirror ? -cylinder.x : cylinder.x
+        x = cylinder.x
+        y = cylinder.y
+        if mirror   # Across the YZ plane of the laying frame : its X is the solid's -Y along Z
+          cylinder.axis == HardwareDescriptorDef::AXIS_Y_LENGTH_Z ? y = -y : x = -x
+        end
         at = _get_primitive_axis_transformation(cylinder.axis)
-        bounds.add(Geom::Point3d.new(x - h, cylinder.y - r, cylinder.z_min).transform(at))
-        bounds.add(Geom::Point3d.new(x + h, cylinder.y + r, cylinder.z_max).transform(at))
+        bounds.add(Geom::Point3d.new(x - h, y - r, cylinder.z_min).transform(at))
+        bounds.add(Geom::Point3d.new(x + h, y + r, cylinder.z_max).transform(at))
       end
       bounds
     end
@@ -1213,7 +1219,14 @@ module Ladb::OpenCutList
     # The transformation a primitive along the given axis is laid with - see
     # HardwareDescriptorDef::PrimitiveCylinderDef#axis.
     def _get_primitive_axis_transformation(axis)
-      axis == HardwareDescriptorDef::AXIS_Y ? TRANSFORMATION_AXIS_Y : IDENTITY
+      case axis
+      when HardwareDescriptorDef::AXIS_Y
+        TRANSFORMATION_AXIS_Y
+      when HardwareDescriptorDef::AXIS_Y_LENGTH_Z
+        TRANSFORMATION_AXIS_Y_LENGTH_Z
+      else
+        IDENTITY
+      end
     end
 
     # The segments of the circle of a primitive of the given diameter.
@@ -1252,7 +1265,8 @@ module Ladb::OpenCutList
         else
           solid_segments = _get_profile_segments(x, y, profile)
         end
-        solid_segments.each { |point| point.transform!(TRANSFORMATION_AXIS_Y) } unless axis.nil?
+        at = _get_primitive_axis_transformation(axis)
+        solid_segments.each { |point| point.transform!(at) } unless axis.nil?
         segments.concat(solid_segments)
       end
       segments
@@ -1326,9 +1340,11 @@ module Ladb::OpenCutList
     # primitives - one per set of measures they use, a part thickness -
     # found by the key of its geometry. A hardware - a shape - is generated
     # centered on Z, so that the same dowel shifted by the measures stays one
-    # definition - one part in the cut list - see _add_geometry. To be called
-    # in an operation.
-    def _get_geometry_definition(geometry, placement)
+    # definition - one part in the cut list - see _add_geometry. A machining
+    # holds each of its operations in a group of its own, painted with the
+    # given material : an export tells them apart. To be called in an
+    # operation.
+    def _get_geometry_definition(geometry, placement, material = nil)
       return geometry.definition unless geometry.definition.nil?
       return nil if geometry.primitives.nil?
 
@@ -1343,10 +1359,17 @@ module Ladb::OpenCutList
         definition = model.definitions.add(name.is_a?(String) && !name.empty? ? name : geometry.part.to_s)
         dimensions.each do |x, y, diameter, z_min, z_max, length, profile, axis|
           at = _get_primitive_axis_transformation(axis)
-          if profile.nil?
-            _add_primitive_solid(definition.entities, x, y, diameter, z_min, z_max, length, at)
+          if geometry.part == :machining
+            group = definition.entities.add_group
+            group.material = material if material.is_a?(Sketchup::Material)
+            entities = group.entities
           else
-            _add_profile_solid(definition.entities, x, y, profile, at)
+            entities = definition.entities
+          end
+          if profile.nil?
+            _add_primitive_solid(entities, x, y, diameter, z_min, z_max, length, at)
+          else
+            _add_profile_solid(entities, x, y, profile, at)
           end
         end
         definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, HardwareDescriptorDef::DEFINITION_ATTRIBUTE_PRIMITIVES, key)
@@ -1449,7 +1472,7 @@ module Ladb::OpenCutList
     # holds the offset : SketchUp puts a glued instance back on the plane of
     # its face when the model is reopened.
     def _add_geometry(geometry, placement, material, layer)
-      definition = _get_geometry_definition(geometry, placement)
+      definition = _get_geometry_definition(geometry, placement, material)
       return unless definition.is_a?(Sketchup::ComponentDefinition)
       mt = _get_geometry_mirror_transformation(geometry)
       offset = _get_geometry_offset(geometry, placement)

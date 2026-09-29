@@ -55,15 +55,18 @@ module Ladb::OpenCutList
   #  - along Y - "axis": "y" - a drilling or a mortise goes from the face
   #    of the part +Y of the laying frame leads to - @height away, see
   #    measures - toward -Y. It is then placed by x and z - z toward -Z,
-  #    into the part - its depth is a length, and a mortise is width wide
-  #    along Z. The access hole of a Clamex, on the face next to the joint :
+  #    into the part - its depth is a length, and a mortise is length long
+  #    along X - the edge - and width wide along Z, or the other way round
+  #    with "length_axis": "z". The access hole of a Clamex, on the face
+  #    next to the joint, and the flush collar recess of a Cabineo :
   #    { "drillings": [ { "axis": "y", "z": "-7mm", "diameter": "6mm", "depth": "@height + 2mm" } ] }
+  #    { "mortises": [ { "axis": "y", "length_axis": "z", "z": "-13mm", "length": "42.7mm", "width": "16.7mm", "depth": "0.8mm" } ] }
   #  - a hardware, as shapes - a dowel, a Domino tenon :
   #    { "cylinders": [ { "x": 0, "y": 0, "diameter": "8mm", "from": "-20mm", "to": "20mm" } ],
   #      "oblongs": [ { "x": 0, "y": 0, "length": "19mm", "width": "5mm", "from": "-15mm", "to": "15mm" } ] }
   #    along Z, from one height to the other.
   # A mortise or an oblong is a slot with round ends, its length along X -
-  # ends included - and its width along Y.
+  # ends included - and its width along Y - but along Y, see above.
   # A drilling or a cylinder can widen at one end, in one solid with it :
   #  - "countersink": { "diameter": "8.5mm", "angle": 90, … } a cone, the
   #    head of a countersunk screw, angle in degrees - 90 by default ;
@@ -120,7 +123,7 @@ module Ladb::OpenCutList
       TYPE_CONNECTOR => %w[a b],
       TYPE_FITTING => %w[a b],
       TYPE_HINGE => %w[a b],
-      TYPE_FACE => %w[main],
+      TYPE_FACE => %w[a],
       TYPE_SPAN => %w[a b span],
     }.freeze
 
@@ -172,6 +175,15 @@ module Ladb::OpenCutList
     AXIS_Y = 'y'.freeze
     AXES = [ AXIS_Z, AXIS_Y ].freeze
 
+    # The axis the length of a mortise along Y goes along : X - by default
+    # - or Z. See AXIS_Y_LENGTH_Z.
+    AXIS_X = 'x'.freeze
+    LENGTH_AXES = [ AXIS_X, AXIS_Z ].freeze
+
+    # PrimitiveCylinderDef#axis of a mortise along Y whose length goes along
+    # Z - a value of its own, not one of the descriptor.
+    AXIS_Y_LENGTH_Z = 'y-z'.freeze
+
     # How a drilling or a cylinder widens at one end - see PrimitiveCylinderDef#profile
     HEAD_COUNTERSINK = 'countersink'.freeze
     HEAD_COUNTERBORE = 'counterbore'.freeze
@@ -220,7 +232,10 @@ module Ladb::OpenCutList
     # as [ radius, z ] from z_max down to z_min, nil otherwise.
     # axis : AXIS_Y when it goes along Y, nil otherwise. It is then given in
     # the laying frame turned a quarter around X - its Z along Y - : a point
-    # [ x, y, z ] of it is [ x, z, -y ] in the laying frame.
+    # [ x, y, z ] of it is [ x, z, -y ] in the laying frame. AXIS_Y_LENGTH_Z
+    # when it goes along Y and its length along Z : given in the laying frame
+    # turned so that its X goes along -Z and its Z along Y, a point
+    # [ x, y, z ] of it is [ -y, z, -x ] in the laying frame.
     PrimitiveCylinderDef = Struct.new(:x, :y, :diameter, :z_min, :z_max, :length, :profile, :axis) do
       def round?
         length.nil? || length <= diameter
@@ -312,12 +327,17 @@ module Ladb::OpenCutList
       variables = Hash[variables.map { |k, v| [ k.to_s, v ] }]
       _primitive_items(primitives).map { |key, item|
         axis = item['axis'] == AXIS_Y && (key == MACHINING_DRILLINGS || key == MACHINING_MORTISES) ? AXIS_Y : nil
+        axis = AXIS_Y_LENGTH_Z if axis == AXIS_Y && key == MACHINING_MORTISES && item['length_axis'] == AXIS_Z
         x = item['x'].nil? ? 0.0 : to_length(item['x'], true, variables)
         if axis.nil?
           y = item['y'].nil? ? 0.0 : to_length(item['y'], true, variables)
         else
           z = item['z'].nil? ? 0.0 : to_length(item['z'], true, variables)
-          y = z.nil? ? nil : -z
+          if axis == AXIS_Y_LENGTH_Z
+            x, y = (z.nil? ? nil : -z), (x.nil? ? nil : -x)
+          else
+            y = z.nil? ? nil : -z
+          end
         end
         if key == MACHINING_MORTISES || key == HARDWARE_OBLONGS
           diameter = to_length(item['width'], false, variables)
@@ -903,9 +923,16 @@ module Ladb::OpenCutList
         _validate_axis(item, label, errors)
         _validate_head(item, label, 'face', HEAD_FACES, errors)
       end
-      _validate_primitive_list(path, part, value, MACHINING_MORTISES, 'mortise', %w[axis x y z length width depth], %w[length width], errors) do |item, label|
+      _validate_primitive_list(path, part, value, MACHINING_MORTISES, 'mortise', %w[axis length_axis x y z length width depth], %w[length width], errors) do |item, label|
         fn_depth.call(item, label)
         _validate_axis(item, label, errors)
+        if item.key?('length_axis')
+          if !LENGTH_AXES.include?(item['length_axis'])
+            errors << "#{label} length_axis is neither #{LENGTH_AXES.map(&:inspect).join(' nor ')}"
+          elsif item['axis'] != AXIS_Y
+            errors << "#{label} has a length_axis but isn't along Y"
+          end
+        end
       end
       _validate_primitive_list(path, part, value, HARDWARE_CYLINDERS, 'cylinder', %w[x y diameter from to] + HEADS, %w[diameter], errors) do |item, label|
         fn_from_to.call(item, label)

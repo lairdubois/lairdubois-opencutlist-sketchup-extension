@@ -1,8 +1,10 @@
 # Library Cleaner — checks and normalizes the hardware SKP files of the
 # OpenCutList library.
 #
-# Each 'library/components/<type>/<supplier>/<hardware>/<file>.skp' is checked
-# against its descriptor 'library/<type>/<supplier>/<hardware>.json' :
+# Each 'library/components/…/<file>.skp' is checked against the descriptors
+# referring to it - a part set to true, or a shared path. A file no
+# descriptor refers to is an error. A shared file is named after the first
+# referring descriptor, by path :
 #   - model name = 'ocl-<descriptor id>-<file stem>' (dots become dashes) -
 #     the name SketchUp gives to the loaded definition, unique in the library
 #     and never clashing with the definitions of the user's model,
@@ -75,22 +77,25 @@ module Ladb
       error_count = 0
       saved = 0
 
+      referencing = _referencing_descriptors(library_dir)
+
       paths.each do |path|
         rel = _rel(path, library_dir)
 
-        json_path = File.join(library_dir, File.dirname(File.dirname(rel)), File.basename(File.dirname(rel)) + '.json')
-        unless File.exist?(json_path)
-          lines << "#{rel}\n    ERROR no descriptor #{_rel(json_path, library_dir)}"
+        descriptors = referencing[File.expand_path(path)] || []
+        if descriptors.empty?
+          lines << "#{rel}\n    ERROR referenced by no descriptor"
           error_count += 1
           next
         end
-        id = JSON.parse(File.read(json_path))['id']
-        if !id.is_a?(String) || id.empty?
-          lines << "#{rel}\n    ERROR no id in #{_rel(json_path, library_dir)}"
+        json_rel, id = descriptors.find { |_, descriptor_id| descriptor_id.is_a?(String) && !descriptor_id.empty? }
+        if id.nil?
+          lines << "#{rel}\n    ERROR no id in #{descriptors.map(&:first).join(', ')}"
           error_count += 1
           next
         end
         name = "ocl-#{id}-#{File.basename(rel, '.skp').tr('.', '-')}"
+        shared = descriptors.size > 1 ? "shared by #{descriptors.map(&:first).join(', ')}, named after #{json_rel}" : nil
 
         definition = model.definitions.load(path)
         issues = []
@@ -126,7 +131,7 @@ module Ladb
         guids[definition.guid] = rel
 
         ok_count += 1 if issues.empty?
-        lines << "#{rel}\n    #{issues.empty? ? 'ok' : issues.join("\n    ")}"
+        lines << "#{rel}\n    #{[ shared, issues.empty? ? 'ok' : issues.join("\n    ") ].compact.join("\n    ")}"
 
         _clear(model)
       end
@@ -207,6 +212,45 @@ module Ladb
     def self._clear(model)
       model.definitions.to_a.each { |d| model.definitions.remove(d) }
       model.layers.purge_unused
+    end
+
+    # { <absolute SKP path> => [ [ <descriptor rel path>, <descriptor id> ], … ] }
+    # for every SKP a descriptor of the library refers to, descriptors sorted
+    # by path : the first one with an id names a shared file.
+    def self._referencing_descriptors(library_dir)
+      referencing = Hash.new { |h, k| h[k] = [] }
+      json_paths = Dir.glob(File.join(library_dir, '**', '*.json')).reject { |p| p.start_with?(File.join(library_dir, 'components') + '/') }.sort
+      json_paths.each do |json_path|
+        data = JSON.parse(File.read(json_path)) rescue next
+        next unless data.is_a?(Hash) && data['components'].is_a?(Hash)
+        json_rel = _rel(json_path, library_dir)
+        components_dir = File.join(library_dir, 'components', json_rel.sub(/\.json\z/, ''))
+        skp_paths = []
+        data['components'].each do |slot, component|
+          next unless component.is_a?(Hash)
+          items = { nil => component }
+          items.merge!(component['variants']['items']) if component['variants'].is_a?(Hash) && component['variants']['items'].is_a?(Hash)
+          items.each do |variant, item|
+            next unless item.is_a?(Hash)
+            %w[hardware machining].each do |part|
+              value = item[part]
+              if value == true
+                skp_paths << File.join(components_dir, [ slot, variant, part == 'machining' ? part : nil ].compact.join('.') + '.skp')
+              elsif value.is_a?(String) && File.extname(value).downcase == '.skp'
+                skp_paths << if value.start_with?('./')
+                               File.join(File.dirname(json_path), value)
+                             elsif (prefix = %w[$LIB/ $OCL/].find { |p| value.start_with?(p) })
+                               File.join(library_dir, value[prefix.length..-1])
+                             else
+                               File.join(library_dir, 'components', value)   # Shared file
+                             end
+              end
+            end
+          end
+        end
+        skp_paths.map { |p| File.expand_path(p) }.uniq.each { |p| referencing[p] << [ json_rel, data['id'] ] }
+      end
+      referencing
     end
 
     def self._version_major(path)

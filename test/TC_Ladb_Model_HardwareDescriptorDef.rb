@@ -88,7 +88,7 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     _assert_error(_with(HINGE, 'type' => 'drawer'), 'unknown type')
     _assert_error(_with(HINGE, 'version' => 2), 'unsupported version')
     _assert_error(_with(HINGE, 'id' => nil), 'missing id')
-    _assert_error(_with(HINGE, 'components' => { 'main' => { 'hardware' => 'x.skp' } }), "unknown slot 'main'")
+    _assert_error(_with(HINGE, 'components' => { 'c' => { 'hardware' => 'x.skp' } }), "unknown slot 'c'")
     _assert_error(_with(HINGE, 'components' => { 'a' => { 'same_as' => 'a' } }), 'links to itself')
     _assert_error(_with(HINGE, 'components' => { 'a' => { 'hardware' => '' } }), 'neither hardware nor machining')
     _assert_error(_with(HINGE, 'components' => { 'a' => nil, 'b' => nil }), 'no component')
@@ -138,11 +138,11 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
 
   def test_max_le_ratio
     handle = _with(SLIDES, 'type' => 'face', 'components' => {
-      'main' => { 'variants' => { 'select' => { 'by' => 'width', 'mode' => 'max_le', 'ratio' => 0.6 },
+      'a' => { 'variants' => { 'select' => { 'by' => 'width', 'mode' => 'max_le', 'ratio' => 0.6 },
                                   'items' => { '96mm' => { 'hardware' => 'h96.skp' }, '128mm' => { 'hardware' => 'h128.skp' } } } }
     })
-    assert_equal('96mm', _def(handle).resolve_component('main', 'width' => 200.mm).variant)   # 120 mm available
-    assert_equal('128mm', _def(handle).resolve_component('main', 'width' => 300.mm).variant)  # 180 mm available
+    assert_equal('96mm', _def(handle).resolve_component('a', 'width' => 200.mm).variant)   # 120 mm available
+    assert_equal('128mm', _def(handle).resolve_component('a', 'width' => 300.mm).variant)  # 180 mm available
   end
 
   # -- Links --
@@ -658,6 +658,21 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     # A head on its face
     head = HardwareDescriptorDef.primitive_cylinders({ 'drillings' => [ { 'axis' => 'y', 'diameter' => 4, 'depth' => 12, 'countersink' => { 'diameter' => 8 } } ] }, 'height' => mm.call(10)).first
     assert_equal([ [ 4, 10 ], [ 2, 8 ], [ 2, -2 ] ], head.profile.map { |r, z| [ (r * 25.4).round(6), (z * 25.4).round(6) ] })
+    # A mortise whose length goes along Z : [ x, y, z ] -> [ -y, z, -x ]
+    recess = { 'mortises' => [ { 'axis' => 'y', 'length_axis' => 'z', 'x' => '2mm', 'z' => '-13mm', 'length' => '42.7mm', 'width' => '16.7mm', 'depth' => '0.8mm' } ] }
+    assert(_def(_with(HINGE, 'components' => { 'a' => { 'machining' => recess } })).valid?)
+    assert_equal(%w[height], HardwareDescriptorDef.primitive_variables(recess))
+    mortise = HardwareDescriptorDef.primitive_cylinders(recess, 'height' => mm.call(5.8)).first
+    assert_equal(HardwareDescriptorDef::AXIS_Y_LENGTH_Z, mortise.axis)
+    assert_in_delta(mm.call(13), mortise.x, 1e-9)
+    assert_in_delta(mm.call(-2), mortise.y, 1e-9)
+    assert_in_delta(mm.call(42.7), mortise.length, 1e-9)
+    assert_in_delta(mm.call(5), mortise.z_min, 1e-9)
+    # Along X, as without it
+    along_x = HardwareDescriptorDef.primitive_cylinders({ 'mortises' => [ recess['mortises'].first.merge('length_axis' => 'x') ] }, 'height' => mm.call(5.8)).first
+    assert_equal('y', along_x.axis)
+    assert_in_delta(mm.call(2), along_x.x, 1e-9)
+    assert_in_delta(mm.call(13), along_x.y, 1e-9)
   end
 
   def test_invalid_axis_y
@@ -670,6 +685,10 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     _assert_error(fn_drilling.call('axis' => 'y', 'z' => 'deep'), 'drilling 1 z is not a length')
     _assert_error(fn.call('machining', { 'mortises' => [ { 'axis' => 'y', 'length' => 19, 'width' => 5, 'depth' => 'through' } ] }), 'mortise 1 is along Y and through')
     _assert_error(fn.call('hardware', { 'cylinders' => [ { 'axis' => 'y', 'diameter' => 4, 'from' => 0, 'to' => 30 } ] }), "cylinder 1 has an unknown key 'axis'")
+    fn_mortise = lambda { |item| fn.call('machining', { 'mortises' => [ { 'length' => 19, 'width' => 5, 'depth' => 10 }.merge(item) ] }) }
+    _assert_error(fn_mortise.call('axis' => 'y', 'length_axis' => 'y'), 'mortise 1 length_axis is neither "x" nor "z"')
+    _assert_error(fn_mortise.call('length_axis' => 'z'), "mortise 1 has a length_axis but isn't along Y")
+    _assert_error(fn_drilling.call('axis' => 'y', 'length_axis' => 'z'), "drilling 1 has an unknown key 'length_axis'")
   end
 
   def test_invalid_heads

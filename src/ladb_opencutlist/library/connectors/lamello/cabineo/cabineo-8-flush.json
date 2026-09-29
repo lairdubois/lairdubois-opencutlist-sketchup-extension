@@ -1,0 +1,27 @@
+{
+  "format": "ocl-hardware",
+  "version": 1,
+  "id": "d9202bd7-1e1b-42be-9f7a-663efe4f07ea",
+  "type": "connector",
+  "name": "Cabineo 8 Flush",
+  "supplier": "Lamello",
+  "url": "https://lamello.com/products/drilling-system/cabineo-8",
+  "asserts": [ "@thickness_a >= 34.35mm", "@thickness_b >= 12mm" ],
+  "components": {
+    "a": {
+      "name": "Cabineo 8",
+      "hardware": "connectors/lamello/cabineo/cabineo-8.skp",
+      "machining": {
+        "drillings": [
+          { "axis": "y", "z": "-3.6mm", "diameter": "15mm", "depth": "11.5mm" },
+          { "axis": "y", "z": "-14.8mm", "diameter": "15mm", "depth": "11.5mm" },
+          { "axis": "y", "z": "-26mm", "diameter": "15mm", "depth": "11.5mm" }
+        ],
+        "mortises": [ { "axis": "y", "length_axis": "z", "z": "-13mm", "length": "42.7mm", "width": "16.7mm", "depth": "0.8mm" } ]
+      },
+      "attributes": { "symmetrical":  true }
+    },
+    "b": { "machining": { "drillings": [ { "diameter": "5mm", "depth": "8mm" } ] } }
+  },
+  "options": { "height": "5.8mm", "start_offset": "50mm", "end_offset": "50mm", "min_spacing": "80mm", "max_spacing": "300mm" }
+}
