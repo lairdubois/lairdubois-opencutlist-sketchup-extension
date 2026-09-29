@@ -9,7 +9,7 @@
   "asserts": [ "@thickness_a >= 33.5mm", "@thickness_b >= 12mm" ],
   "components": {
     "a": {
-      "hardware": "connectors/lamello/cabineo/cabineo-8.skp",
+      "hardware": "connectors/lamello/cabineo/shared/cabineo-8.skp",
       "machining": { "drillings": [
         { "axis": "y", "z": "-3.6mm", "diameter": "15mm", "depth": "11mm" },
         { "axis": "y", "z": "-14.8mm", "diameter": "15mm", "depth": "11mm" },

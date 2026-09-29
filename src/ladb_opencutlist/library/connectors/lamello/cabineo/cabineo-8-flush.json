@@ -10,7 +10,7 @@
   "components": {
     "a": {
       "name": "Cabineo 8",
-      "hardware": "connectors/lamello/cabineo/cabineo-8.skp",
+      "hardware": "connectors/lamello/cabineo/shared/cabineo-8.skp",
       "machining": {
         "drillings": [
           { "axis": "y", "z": "-3.6mm", "diameter": "15mm", "depth": "11.5mm" },
