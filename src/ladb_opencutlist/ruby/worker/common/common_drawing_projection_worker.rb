@@ -221,8 +221,9 @@ module Ladb::OpenCutList
       #   opening not covered by any deeper machining floor, where the
       #   machining does not stop inside the part. A through machining (floor
       #   below the part bottom, kept apart in through_machining_paths) pierces
-      #   the whole part even where a deeper machining floor crosses it : its
-      #   column is re-added to the through region where a top above is open, so
+      #   the part from its own top down even where a deeper machining floor
+      #   crosses it : its column is re-added to the through region where that
+      #   top is open, so
       #   a through hole nested in a blind pocket (a counterbore whose bore top
       #   is merged with the pocket top) is not masked by the pocket floor.
 
@@ -235,6 +236,23 @@ module Ladb::OpenCutList
         layer_def.machining_closed_paths, op = Clippy.execute_union(closed_subjects: layer_def.machining_closed_paths) if layer_def.machining_closed_paths.size > 1
       end
       through_machining_paths, op = Clippy.execute_union(closed_subjects: through_machining_paths) if through_machining_paths.size > 1
+
+      # Through machining columns are attributed to the deepest machining top
+      # covering them (their own volume top) : a column only pierces from that
+      # depth. A machining entering from the part bottom has its floor below the
+      # part too, but its column starts at its own top, it must not pierce the
+      # tops of other machinings above it (e.g. two blind holes facing each
+      # other from opposite faces).
+      through_column_paths = {} # depth => paths
+      remaining_paths = through_machining_paths
+      splds.reverse_each do |layer_def|
+        break if remaining_paths.empty?
+        next if layer_def.cutting_closed_paths.empty?
+        served_paths, op = Clippy.execute_intersection(closed_subjects: remaining_paths, clips: layer_def.cutting_closed_paths)
+        next if served_paths.empty?
+        remaining_paths, op = Clippy.execute_difference(closed_subjects: remaining_paths, clips: layer_def.cutting_closed_paths)
+        (through_column_paths[fn_rounded_depth.call(layer_def)] ||= []).concat(served_paths)
+      end
 
       top_records = []         # { :depth, :raw_paths, :open_paths } of the machining tops swept so far
       upper_through_paths = [] # Through cuts of the machining tops strictly above the current layer
@@ -310,12 +328,12 @@ module Ladb::OpenCutList
           else
             through_paths = top_paths
           end
-          # A through machining pierces the whole part, even a deeper machining
-          # floor it crosses : re-add its column where this layer's tops are open
-          # (a through hole nested in a blind pocket must not be masked by the
-          # pocket floor).
-          unless through_machining_paths.empty?
-            pierced_paths, op = Clippy.execute_intersection(closed_subjects: top_paths, clips: through_machining_paths)
+          # A through machining pierces the part from its top down, even a deeper
+          # machining floor it crosses : re-add the columns attributed to this
+          # layer's tops where they are open (a through hole nested in a blind
+          # pocket must not be masked by the pocket floor).
+          unless (column_paths = through_column_paths[depth]).nil?
+            pierced_paths, op = Clippy.execute_intersection(closed_subjects: top_paths, clips: column_paths)
             through_paths += pierced_paths if pierced_paths.any?
           end
           upper_through_paths += through_paths
