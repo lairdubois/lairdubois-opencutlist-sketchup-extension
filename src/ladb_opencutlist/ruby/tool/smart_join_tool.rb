@@ -4338,6 +4338,17 @@ module Ladb::OpenCutList
       @hinge_kind = HINGE_KIND_OVERLAY
     end
 
+    def _reset_joinery_def
+      super
+      @hinge_forced_make_unique = false
+    end
+
+    # Forced on when laying the hinges into the shared definitions would hang
+    # a door on more than one edge, see #_get_propagation_def.
+    def _fetch_option_make_unique?
+      @hinge_forced_make_unique == true || super
+    end
+
     # -----
 
     def _can_activate_part?(part_entity_path, part)
@@ -4743,9 +4754,14 @@ module Ladb::OpenCutList
       super
       return if @joinery_def.nil?
 
+      # The messages below say more : what is in the way
+      join_def = @joinery_def.join_def
+      if @hinge_forced_make_unique && !join_def.anchor_points_3d.empty? && @propagation_def.is_a?(PropagationDef) && @propagation_def.refused_count == 0
+        @tool.show_message(PLUGIN.get_i18n_string('tool.smart_join.warning.hinge_forced_make_unique'), SmartTool::MESSAGE_TYPE_WARNING)
+      end
+
       # The fittings in the way are hinges, and those of THIS door : it
       # turns on one side only (see #_get_hinged_edge)
-      join_def = @joinery_def.join_def
       unless join_def.occupied_anchor_points_3d.empty?
         if join_def.anchor_points_3d.empty?
           @tool.show_message(PLUGIN.get_i18n_string('tool.smart_join.error.door_already_hinged'), SmartTool::MESSAGE_TYPE_ERROR)
@@ -4770,6 +4786,36 @@ module Ladb::OpenCutList
         PLUGIN.get_i18n_string('tool.smart_join.error.hinge_rejected_anchors', { :count => @hinge_rejected_anchor_points.length }),
         @joinery_def.join_def.anchor_points_3d.empty? ? SmartTool::MESSAGE_TYPE_ERROR : SmartTool::MESSAGE_TYPE_WARNING
       )
+    end
+
+    # -- Propagation --
+
+    # Without make_unique, the hinges are written into the SHARED definitions
+    # and the walk hangs every door the side's other instances bear : the
+    # opposite side of the same carcass - its mirror, sharing the definition -
+    # gets base plates too, and the door cups on its other edge. A door turns
+    # on one edge only : when the walk would give one - the picked one or
+    # another - hinges on more than one edge, make_unique is forced on until
+    # the joint changes, and a warning says so.
+    def _get_propagation_def(neighborhood_def, joinery_def)
+      propagation_def = super
+      return propagation_def if _fetch_option_make_unique? || !_is_door_hinged_on_several_edges?(propagation_def.placements)
+      @hinge_forced_make_unique = true
+      super
+    end
+
+    # Whether the given placements give a door - hinges it already has
+    # included - hinges on more than one edge : their fitting frames, in the
+    # door definition's space, not all on one line along their X axis - the
+    # joint line.
+    def _is_door_hinged_on_several_edges?(placements)
+      placements.select { |placement| placement.role == :a }.group_by(&:definition).any? do |definition, door_placements|
+        transformations = door_placements.map(&:transformation)
+        door_def = DoorDef.from(definition)
+        transformations += door_def.hinge_defs.map { |hinge_def| hinge_def.instance.transformation } unless door_def.nil?
+        line = [ transformations.first.origin, transformations.first.xaxis ]
+        transformations.any? { |t| !t.xaxis.parallel?(line[1]) || t.origin.distance_to_line(line).to_f > DoorDef::AXIS_TOLERANCE.to_f }
+      end
     end
 
     # Making the door or the side unique replaces the definition the faces

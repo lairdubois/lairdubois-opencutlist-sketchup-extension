@@ -2843,6 +2843,7 @@ tool:
       no_hardware_file: Aucune quincaillerie dans ce dossier
       x_hinges_to_remove: "{{ count }} charnière à effacer"
       x_hinges_to_remove_plural: "{{ count }} charnières à effacer"
+      hinge_forced_make_unique: Pièces rendues uniques, sans quoi la façade aurait des charnières sur plusieurs côtés
       shared_definition: "Le fichier SKP ({{ file_name }}) contient la même définition que {{ definition_name }}, déjà chargée : c'est cette dernière qui est utilisée"
   smart_export:
     title: Exporter
