@@ -52,6 +52,7 @@ module Ladb::OpenCutList
       end
     rescue StandardError => e
       _cleanup
+      _restore_view(@view_state) unless @view_state.nil?   # Failed before its session
       _error('core.hardware_editor.error.edit_failed', { :error => HardwareSkpMeshWorker.error_message(e) })
     end
 
@@ -73,6 +74,14 @@ module Ladb::OpenCutList
       path = @source.is_a?(String) ? PLUGIN.resolve_library_ref(@source) : nil
       path = nil unless path.is_a?(String) && File.file?(path)
       return _error('core.hardware_editor.error.skp_is_open_model', { :name => File.basename(path) }) if !path.nil? && HardwareSkpMeshWorker.open_model?(model, path)
+
+      # The camera and the Smart Join tool - that steps aside - are given
+      # back once the part is done
+      @view_state = { :camera => _copy_camera(model.active_view.camera) }
+      if model.tools.respond_to?(:active_tool) && (active_tool = model.tools.active_tool).is_a?(SmartJoinTool)
+        @view_state[:smart_join_action] = active_tool.fetch_action
+        model.select_tool(nil)
+      end
 
       definitions = model.definitions.to_a
       model.start_operation('OCL Hardware Edit', true)
@@ -113,7 +122,9 @@ module Ladb::OpenCutList
         :bench => bench,
         :instance => instance,
         :definitions => definitions,
+        :view_state => @view_state,
       }
+      @view_state = nil
 
       # The part opened for edit
       if model.respond_to?(:active_path=)
@@ -152,7 +163,8 @@ module Ladb::OpenCutList
       { :path => path }
     end
 
-    # The bench leaves the model, with every definition it brought.
+    # The bench leaves the model, with every definition it brought, and the
+    # camera and the Smart Join tool it put aside come back.
     def _cleanup
       session = @@session
       @@session = nil
@@ -167,6 +179,27 @@ module Ladb::OpenCutList
         added.each { |definition| model.definitions.remove(definition) if definition.valid? && definition.instances.empty? }
       end
       model.commit_operation
+      _restore_view(session[:view_state]) if model == Sketchup.active_model
+    end
+
+    def _restore_view(view_state)
+      model = Sketchup.active_model
+      return if model.nil? || !view_state.is_a?(Hash)
+      model.active_view.camera = view_state[:camera] if view_state[:camera].is_a?(Sketchup::Camera)
+      # A new instance on the same action : a reactivated one doesn't rebuild its whole state
+      model.select_tool(SmartJoinTool.new(current_action: view_state[:smart_join_action])) unless view_state[:smart_join_action].nil?
+    end
+
+    # The view's camera moves with it : a detached copy.
+    def _copy_camera(camera)
+      copy = Sketchup::Camera.new(camera.eye, camera.target, camera.up)
+      copy.perspective = camera.perspective?
+      if camera.perspective?
+        copy.fov = camera.fov
+      else
+        copy.height = camera.height
+      end
+      copy
     end
 
     def _close_active(model)

@@ -139,6 +139,37 @@ module Ladb::OpenCutList
       measures.merge(_slot_measures(slot))
     end
 
+    # Where the measures of the joint are taken, to be shown : { 'thickness_a'
+    # => [ from, to ], … } - two points of the bench frame, on the end of
+    # their panel toward -X. A thickness across its panel - along Z of its
+    # laying frame - at its far edge, a height from the joint to that edge -
+    # along Y - on its outer face.
+    def measure_cotes
+      cotes = {}
+      panels.each do |panel|
+        matrix = slot_transformation(panel.slot)
+        height_axis = matrix[4, 3].index { |v| v != 0 }
+        height_sign = matrix[4 + height_axis]
+        thickness_axis = matrix[8, 3].index { |v| v != 0 }
+        base = [ panel.min[0], 0.0, 0.0 ]
+        _slot_measures(panel.slot).each do |name, value|
+          from = base.dup
+          to = base.dup
+          if name == HardwareDescriptorDef::VARIABLE_HEIGHT
+            outer = panel.min[thickness_axis].abs > panel.max[thickness_axis].abs ? panel.min[thickness_axis] : panel.max[thickness_axis]
+            from[thickness_axis] = to[thickness_axis] = outer
+            to[height_axis] = height_sign * value
+          else
+            from[height_axis] = to[height_axis] = height_sign > 0 ? panel.max[height_axis] : panel.min[height_axis]
+            from[thickness_axis] = panel.min[thickness_axis]
+            to[thickness_axis] = panel.max[thickness_axis]
+          end
+          cotes["#{name}_#{panel.slot}"] = [ from, to ]
+        end
+      end
+      cotes
+    end
+
     # -----
 
     private

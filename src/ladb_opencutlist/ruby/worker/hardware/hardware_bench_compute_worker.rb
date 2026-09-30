@@ -107,12 +107,14 @@ module Ladb::OpenCutList
 
     private
 
-    # The measures of the joint the descriptor uses - the thicknesses always.
+    # The measures of the joint the descriptor uses - the thicknesses always -,
+    # with where they are taken - see HardwareBenchDef#measure_cotes.
     def _measures(descriptor, bench_def)
       used = descriptor.used_measures
+      cotes = bench_def.measure_cotes
       bench_def.measures
                .select { |name, _| used.include?(name) || name =~ /\Athickness_[ab]\z/ }
-               .map { |name, value| { :name => name, :value => value, :text => _text(value) } }
+               .map { |name, value| { :name => name, :value => value, :text => _text(value), :cote => cotes[name] } }
     end
 
     def _settings(descriptor)

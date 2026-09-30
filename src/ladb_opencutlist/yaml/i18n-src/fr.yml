@@ -410,10 +410,8 @@ core:
     placement_help: Appliqué au fichier SKP à l'enregistrement, le JSON ne garde aucune transformation. Face d'appui à z = 0, corps vers −Z.
     settings_variables: Variables
     settings_tool_options: Options de l'outil
-    settings_tool_options_help: "Les valeurs que l'outil Assembler prend à la sélection de cette quincaillerie. Une longueur, ou une part de l'assemblage : /2, *0,25."
-    no_settings: |
-      Aucun réglage.
-      Dans le JSON, écrivez une variable en objet pour la proposer ici : `"diameter": { "value": "8mm", "label": "Diamètre" }`
+    settings_tool_options_help: Les valeurs que l'outil Assembler prend à la sélection de cette quincaillerie
+    no_settings: Aucune variable n'est publiée pour cette quincaillerie
     error:
       unresolved_variable: "Utilise @{{ name }}, non calculée"
       not_a_length: N'est pas une longueur

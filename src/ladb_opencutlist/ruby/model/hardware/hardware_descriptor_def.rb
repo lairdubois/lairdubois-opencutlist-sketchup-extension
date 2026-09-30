@@ -32,7 +32,8 @@ module Ladb::OpenCutList
   #  - { "name", …, "variants": { "select": { "by": "<measure>", "mode": "exact" | "max_le", "ratio": <Float> },
   #                               "fallback": "<key>", "items": { "<key>": <component> | null } },
   #      "attributes": { … } }
-  #  - null : the slot is left empty (a one sided fitting)
+  #  - null or {} : the slot is left empty (a one sided fitting) - {} keeps
+  #    the slot listed in the editor, ready to be filled.
   #
   # A <part> is declared explicitly - a missing file stays an error :
   #  - true : the file named after the slot, in the components folder of the
@@ -227,6 +228,10 @@ module Ladb::OpenCutList
     VARIABLE_PATTERN = /@([A-Za-z_]\w*)/
     VARIABLE_NAME_PATTERN = /\A[A-Za-z_]\w*\z/
 
+    # A zero written as a length - "0", "-0,0 mm" - : DimensionUtils reads
+    # anything it can't parse as 0 too.
+    ZERO_LENGTH_PATTERN = /\A\s*[-+]?(0+([.,]0*)?|[.,]0+)\s*(mm|cm|m|yd|'|")?\s*\z/
+
     # A comparison of two lengths : the tolerance it is checked with, in inches.
     ASSERT_PATTERN = /\A(.+?)(<=|>=|<|>|=)(.+)\z/
     ASSERT_TOLERANCE = 1e-5
@@ -300,6 +305,11 @@ module Ladb::OpenCutList
 
     def self.library_ref?(value)
       value.is_a?(String) && LIBRARY_REF_PREFIXES.any? { |prefix| value.start_with?(prefix) }
+    end
+
+    # Is the given component value an empty slot - null or {} - ?
+    def self.empty_component?(value)
+      value.nil? || value.is_a?(Hash) && value.empty?
     end
 
     # Is the given resolved part - see HardwareComponentDef#hardware and
@@ -420,6 +430,7 @@ module Ladb::OpenCutList
         return nil if length.nil?
       elsif value.is_a?(String) && !value.strip.empty?
         length = DimensionUtils.str_to_ifloat(value, negative_allowed).to_l.to_f
+        return nil if length == 0 && value !~ ZERO_LENGTH_PATTERN
       else
         return nil
       end
@@ -680,7 +691,7 @@ module Ladb::OpenCutList
 
     # slot : the one whose component value is - the source slot.
     def _resolve_value(slot, value, context, mirror, visited, variant = nil, attributes = {}, info = {})
-      return nil unless value.is_a?(Hash)
+      return nil unless value.is_a?(Hash) && !value.empty?
       attributes = attributes.merge(value['attributes']) if value['attributes'].is_a?(Hash)
       if value.key?('same_as')
         resolved = _resolve_component(value['same_as'].to_s, context, mirror, visited)
@@ -820,7 +831,7 @@ module Ladb::OpenCutList
           errors << "unknown slot '#{slot}'" unless slots.include?(slot)
           _validate_component(slot, value, errors)
         end
-        errors << 'no component' if TYPES.key?(@data['type']) && slots.all? { |slot| components[slot].nil? }
+        errors << 'no component' if TYPES.key?(@data['type']) && slots.all? { |slot| self.class.empty_component?(components[slot]) }
       else
         errors << 'missing components'
       end
@@ -946,7 +957,7 @@ module Ladb::OpenCutList
 
     # path : the slot, then the variant's key - 'a', 'a/inset'.
     def _validate_component(path, value, errors)
-      return if value.nil?
+      return if self.class.empty_component?(value)
       unless value.is_a?(Hash)
         errors << "component '#{path}' is not an object"
         return

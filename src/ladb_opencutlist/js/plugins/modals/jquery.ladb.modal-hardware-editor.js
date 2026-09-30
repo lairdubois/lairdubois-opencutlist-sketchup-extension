@@ -309,7 +309,9 @@
     };
 
     LadbModalHardwareEditor.prototype.renderComputations = function () {
+        const that = this;
 
+        this.showBenchMeasure(null);   // Its row is removed : no mouseleave
         this.$computations.empty();
         if (this.response.supported !== true) {
             return;
@@ -329,11 +331,23 @@
         if (measures.length > 0) {
             $table.append($('<tr class="ladb-hardware-editor-computations-header">').append($('<th colspan="3">').text(i18next.t('core.hardware_editor.measures'))));
             for (const measure of measures) {
-                $table.append($('<tr>')
+                const $row = $('<tr>')
                     .append($('<td class="ladb-hardware-editor-computation-name">').text('@' + measure.name))
                     .append($('<td>'))
-                    .append($('<td class="ladb-hardware-editor-computation-value">').text(measure.text))
-                );
+                    .append($('<td class="ladb-hardware-editor-computation-value">').text(measure.text));
+                if (measure.cote) {
+                    // Hovered : its cote in the viewer
+                    const slot = measure.name.slice(-1);
+                    $row
+                        .addClass('ladb-hardware-editor-measure')
+                        .on('mouseenter', function () {
+                            that.showBenchMeasure({ slot: slot, from: measure.cote[0], to: measure.cote[1], text: measure.text });
+                        })
+                        .on('mouseleave', function () {
+                            that.showBenchMeasure(null);
+                        });
+                }
+                $table.append($row);
             }
         }
 
@@ -433,7 +447,7 @@
 
             const raw = setting.raw;
             const $formGroup = $('<div class="form-group">');
-            const $label = $('<label class="control-label col-xs-5">').text(setting.label || setting.name);
+            const $label = $('<label class="control-label col-xs-4">').text(setting.label || setting.name);
             const $control = $('<div class="col-xs-7">');
             $formGroup
                 .append($label)
@@ -498,7 +512,7 @@
                 const $formGroup = $('<div class="form-group">');
                 const $control = $('<div class="col-xs-7 ladb-hardware-editor-tool-options">');
                 $formGroup
-                    .append($('<label class="control-label col-xs-5">').text(i18next.t('tool.smart_join.action_option_group_' + optionGroup.group)))
+                    .append($('<label class="control-label col-xs-4">').text(i18next.t('tool.smart_join.action_option_group_' + optionGroup.group)))
                     .append($control);
                 for (const name of optionGroup.options) {
                     const value = options[name] === undefined || options[name] === null ? '' : String(options[name]);
@@ -555,6 +569,15 @@
             .text(errors.length)
             .toggle(errors.length > 0);
 
+    };
+
+    // The cote of a measure in the viewer - its row hovered - : { slot, from,
+    // to, text }, null for none - see HardwareBenchDef#measure_cotes.
+    LadbModalHardwareEditor.prototype.showBenchMeasure = function (measure) {
+        const $threeViewer = $('.ladb-three-viewer', this.$viewer);
+        if ($threeViewer.length > 0 && $threeViewer.data('ladb.threeviewer').loaded) {
+            $threeViewer.ladbThreeViewer('callCommand', [ 'show_bench_measure', { measure: measure } ]);
+        }
     };
 
     // The label of the solid hovered in the viewer - { label, rect } - as a

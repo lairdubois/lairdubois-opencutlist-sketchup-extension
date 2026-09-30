@@ -92,6 +92,7 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     _assert_error(_with(HINGE, 'components' => { 'a' => { 'same_as' => 'a' } }), 'links to itself')
     _assert_error(_with(HINGE, 'components' => { 'a' => { 'hardware' => '' } }), 'neither hardware nor machining')
     _assert_error(_with(HINGE, 'components' => { 'a' => nil, 'b' => nil }), 'no component')
+    _assert_error(_with(HINGE, 'components' => { 'a' => {}, 'b' => nil }), 'no component')
     _assert_error(_with(HINGE, 'options' => { 'height' => [ 1 ] }), 'is not a scalar')
   end
 
@@ -169,6 +170,12 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
 
   def test_empty_slot
     assert_nil(_def(SLIDES).resolve_component('span'))
+  end
+
+  def test_empty_object_slot_is_an_empty_slot
+    data = _with(HINGE, 'components' => HINGE['components'].merge('b' => {}))
+    assert_equal([], _def(data).errors)
+    assert_nil(_def(data).resolve_component('b'))
   end
 
   # -- Refs --
@@ -547,6 +554,7 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     _assert_error(fn_with.call({ 'value' => '2mm', 'min' => '5mm', 'max' => '3mm' }), "variable 'x' min is above max")
     _assert_error(fn_with.call({ 'value' => '2mm', 'min' => '3mm', 'max' => '5mm' }), "variable 'x' value is out of min / max")
     assert(_def(fn_with.call({ 'value' => 0, 'min' => '-2mm', 'max' => '2mm' })).valid?)   # Numbers are millimeters, 0 and negatives allowed
+    assert(_def(fn_with.call({ 'value' => '0mm', 'min' => '-2mm', 'max' => '0' })).valid?)   # Zeros written as strings
   end
 
   def test_length_error
@@ -771,22 +779,24 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
   end
 
   def test_bundled_screw
-    descriptor = HardwareDescriptorDef.new(JSON.parse(File.read(File.expand_path('../src/ladb_opencutlist/library/connectors/generic/screw-4x40.json', __dir__))))
+    descriptor = HardwareDescriptorDef.new(JSON.parse(File.read(File.expand_path('../src/ladb_opencutlist/library/connectors/generic/screws/screw-4x50.json', __dir__))))
     assert(descriptor.valid?, descriptor.errors.inspect)
-    assert_equal(%w[thickness_max thickness_b thickness_min_a thickness_max_a], descriptor.used_measures)   # through : the own thickness_max
-    fn = lambda { |min_a, max_a, tb| descriptor.resolve_variables('thickness_max' => max_a / 25.4, 'thickness_min_a' => min_a / 25.4, 'thickness_max_a' => max_a / 25.4, 'thickness_b' => tb / 25.4) }
+    assert_equal(%w[thickness_max thickness_a thickness_min_b thickness_max_b], descriptor.used_measures)   # through : the own thickness_max
+    fn = lambda { |min_b, max_b, ta| descriptor.resolve_variables('thickness_max' => max_b / 25.4, 'thickness_a' => ta / 25.4, 'thickness_min_b' => min_b / 25.4, 'thickness_max_b' => max_b / 25.4) }
     variables = fn.call(19, 19, 300)   # Flat on an edge
     assert_equal([], descriptor.failed_asserts(variables))
     screw = HardwareDescriptorDef.primitive_cylinders(descriptor.resolve_component('a').hardware, variables).first
     hole = HardwareDescriptorDef.primitive_cylinders(descriptor.resolve_component('a').machining, variables).first
-    assert_in_delta(-19 / 25.4, screw.z_min, 1e-9)                 # Its head on the other face
-    assert_in_delta(21 / 25.4, screw.z_max, 1e-9)
-    assert_in_delta(4 / 25.4, screw.profile.last.first, 1e-9)
-    assert_in_delta(-19 / 25.4, hole.z_min, 1e-9)
-    assert_in_delta(4.25 / 25.4, hole.profile.last.first, 1e-9)
-    assert_equal([ '@thickness_max_a - @thickness_min_a <= 0.2mm' ], descriptor.failed_asserts(fn.call(17, 19, 300)))   # Faces not parallel
-    assert(descriptor.failed_asserts(fn.call(19, 19, 19)).any?)     # Comes out of b
-    assert(descriptor.failed_asserts(fn.call(30, 30, 300)).any?)    # Too short
+    clearance = HardwareDescriptorDef.primitive_cylinders(descriptor.resolve_component('b').machining, variables).first
+    assert_in_delta(-31 / 25.4, screw.z_min, 1e-9)                 # 50mm - 19mm embedded in a
+    assert_in_delta(19 / 25.4, screw.z_max, 1e-9)                  # Its head on the other face of b
+    assert_in_delta(4 / 25.4, screw.profile.first.first, 1e-9)     # Countersink radius
+    assert_in_delta(-31 / 25.4, hole.z_min, 1e-9)
+    assert_in_delta(3 / 25.4, hole.diameter, 1e-9)
+    assert_in_delta(4 / 25.4, clearance.diameter, 1e-9)
+    assert_equal([ '@thickness_max_b - @thickness_min_b <= 0.2mm' ], descriptor.failed_asserts(fn.call(17, 19, 300)))   # Faces not parallel
+    assert_equal([ '@embed <= @thickness_a - 3mm' ], descriptor.failed_asserts(fn.call(19, 19, 19)))   # Comes out of a
+    assert_equal([ '@embed >= 15mm' ], descriptor.failed_asserts(fn.call(40, 40, 300)))                # Too short
   end
 
   def test_bundled_dominos

@@ -223,6 +223,7 @@ let renderer,
     benchSolidMeshes,
     benchHoveredMesh,
     benchHoveredDimensions,
+    benchMeasureDimension,
     benchRaycaster
 ;
 
@@ -351,6 +352,10 @@ const fnAddListeners = function () {
 
                 case 'highlight_bench_panel':
                     fnHighlightBenchPanel(call.params.slot);
+                    break;
+
+                case 'show_bench_measure':
+                    fnShowBenchMeasure(call.params.measure);
                     break;
 
                 case 'set_zoom':
@@ -1159,6 +1164,7 @@ const BENCH_HOVERED_OPACITY = 0.9;
 const BENCH_AXIS_COLORS = { x: 0xff000f, y: 0x00bb00, z: 0x0032ff };   // As SketchUp draws them - see Kuix::COLOR_X, COLOR_Y, COLOR_Z
 const BENCH_DIMENSION_HEAD_LENGTH = 3 / 25.4;
 const BENCH_DIMENSION_RENDER_ORDER = 999;
+const BENCH_MEASURE_DARKEN = 0.4;   // Its panel's pin color darkened, to be seen over the panels
 
 const fnCreateBenchSolidGeometry = function (solidDef) {
 
@@ -1295,6 +1301,34 @@ const fnGetBenchScreenRect = function (mesh) {
     return { left: left, top: top, width: right - left, height: bottom - top };
 };
 
+// A cote : two arrows from its middle to its ends, its text at the middle.
+const fnAddBenchDimension = function (group, from, to, text, color) {
+    const length = from.distanceTo(to);
+    if (length < 1e-6) return;
+    const middle = from.clone().add(to).multiplyScalar(0.5);
+    const headLength = Math.min(BENCH_DIMENSION_HEAD_LENGTH, length / 3);
+    for (const [ start, end ] of [ [ middle, from ], [ middle, to ] ]) {
+        const arrow = new THREE.ArrowHelper(end.clone().sub(start).normalize(), start, length / 2, color, headLength, headLength * 0.5);
+        arrow.traverse(function (object) {
+            if (object.material) {
+                // Seen through the geometry : drawn last - with the transparent objects, after them - whatever the depth
+                object.material.depthTest = false;
+                object.material.depthWrite = false;
+                object.material.transparent = true;
+            }
+            object.renderOrder = BENCH_DIMENSION_RENDER_ORDER;
+        });
+        group.add(arrow);
+    }
+    const div = document.createElement('div');
+    div.className = 'dim bench-dim';
+    div.textContent = text;
+    div.style.color = '#' + new THREE.Color(color).getHexString();
+    const label = new THREE.CSS2DObject(div);
+    label.position.copy(middle);
+    group.add(label);
+};
+
 // The position of the given solid, as the descriptor gives it : its x, y
 // and z in the frame of its part - one cote along each axis, from the
 // origin to its axis, on the plane of the joint or its nearest end.
@@ -1304,39 +1338,12 @@ const fnAddBenchSolidDimensions = function (mesh) {
     const group = new THREE.Group();
     group.applyMatrix4(new THREE.Matrix4().fromArray(solidDef.part_transformation));
 
-    const fnAddDimension = function (from, to, text, color) {
-        const length = from.distanceTo(to);
-        if (length < 1e-6) return;
-        const middle = from.clone().add(to).multiplyScalar(0.5);
-        const headLength = Math.min(BENCH_DIMENSION_HEAD_LENGTH, length / 3);
-        for (const [ start, end ] of [ [ middle, from ], [ middle, to ] ]) {
-            const arrow = new THREE.ArrowHelper(end.clone().sub(start).normalize(), start, length / 2, color, headLength, headLength * 0.5);
-            arrow.traverse(function (object) {
-                if (object.material) {
-                    // Seen through the geometry : drawn last - with the transparent objects, after them - whatever the depth
-                    object.material.depthTest = false;
-                    object.material.depthWrite = false;
-                    object.material.transparent = true;
-                }
-                object.renderOrder = BENCH_DIMENSION_RENDER_ORDER;
-            });
-            group.add(arrow);
-        }
-        const div = document.createElement('div');
-        div.className = 'dim bench-dim';
-        div.textContent = text;
-        div.style.color = '#' + new THREE.Color(color).getHexString();
-        const label = new THREE.CSS2DObject(div);
-        label.position.copy(middle);
-        group.add(label);
-    };
-
     const position = new THREE.Vector3().fromArray(solidDef.cotes.position);
     const from = new THREE.Vector3().fromArray(solidDef.cotes.origin);
     for (const axis of [ 'x', 'y', 'z' ]) {
         const to = from.clone();
         to[axis] = position[axis];
-        fnAddDimension(from, to, solidDef.texts[axis], BENCH_AXIS_COLORS[axis]);   // Its axis' color
+        fnAddBenchDimension(group, from, to, solidDef.texts[axis], BENCH_AXIS_COLORS[axis]);   // Its axis' color
         from.copy(to);
     }
 
@@ -1399,6 +1406,22 @@ const fnOnBenchPointerMove = function (event) {
     fnHoverBenchSolid(intersects.length > 0 ? intersects[0].object : null);
 };
 
+// The cote of a measure of the joint - its row hovered - : { slot, from,
+// to, text }, points of the bench frame - see HardwareBenchDef#measure_cotes.
+// null : none.
+const fnShowBenchMeasure = function (measure) {
+    if (benchMeasureDimension) {
+        fnRemoveBenchObject(benchMeasureDimension);
+        benchMeasureDimension = null;
+    }
+    if (bench && measure) {
+        benchMeasureDimension = new THREE.Group();
+        fnAddBenchDimension(benchMeasureDimension, new THREE.Vector3().fromArray(measure.from), new THREE.Vector3().fromArray(measure.to), measure.text, new THREE.Color(BENCH_PANEL_PIN_COLORS[measure.slot] || '#000000').multiplyScalar(1 - BENCH_MEASURE_DARKEN));
+        bench.add(benchMeasureDimension);
+    }
+    fnRender();
+};
+
 // One panel stands out - its setting is hovered or edited -, or none.
 const fnHighlightBenchPanel = function (slot) {
     benchHighlightedSlot = slot || null;
@@ -1415,6 +1438,7 @@ const fnSetupBench = function (benchDef) {
 
     // No more hovered solid : its label hidden
     fnHoverBenchSolid(null);
+    fnShowBenchMeasure(null);
 
     // Drop the previous bench
     if (bench) {
