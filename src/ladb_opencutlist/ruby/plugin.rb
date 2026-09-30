@@ -1139,6 +1139,7 @@ module Ladb::OpenCutList
         require_relative 'controller/outliner_controller'
         require_relative 'controller/importers_controller'
         require_relative 'controller/settings_controller'
+        require_relative 'controller/hardware_controller'
 
         @controllers.push(MaterialsController.new)
         @controllers.push(CutlistController.new)
@@ -1146,6 +1147,7 @@ module Ladb::OpenCutList
         @controllers.push(ImportersCsvController.new)
         @controllers.push(ImportersBxf2Controller.new)
         @controllers.push(SettingsController.new)
+        @controllers.push(HardwareController.new)
 
         # -- Commands --
 
@@ -1453,7 +1455,7 @@ module Ladb::OpenCutList
 
     end
 
-    def create_modal_dialog(modal_name, params = nil)
+    def create_modal_dialog(modal_name, params = nil, width = MODAL_DIALOG_DEFAULT_WIDTH, height = MODAL_DIALOG_DEFAULT_HEIGHT)
 
       # Start
       start
@@ -1464,16 +1466,19 @@ module Ladb::OpenCutList
           :preferences_key => MODAL_DIALOG_PREF_KEY,
           :scrollable => true,
           :resizable => true,
-          :width => MODAL_DIALOG_DEFAULT_WIDTH,
-          :height => MODAL_DIALOG_DEFAULT_HEIGHT,
+          :width => width,
+          :height => height,
           :min_width => MODAL_DIALOG_DEFAULT_WIDTH,
           :min_height => MODAL_DIALOG_DEFAULT_HEIGHT,
           :style => UI::HtmlDialog::STYLE_UTILITY,
           :use_content_size => true,
         }
       )
+      @modal_dialog_name = modal_name
       @modal_dialog.set_on_closed {
         @modal_dialog = nil
+        @modal_dialog_name = nil
+        trigger_event(PluginObserver::ON_MODAL_DIALOG_CLOSED, { :modal_name => modal_name })
       }
 
       # Setup dialog page
@@ -1501,27 +1506,42 @@ module Ladb::OpenCutList
 
     end
 
-    def show_modal_dialog(modal_name = nil, params = nil)
+    # width, height : the size the dialog opens at - a modal that needs more
+    # room than the default one, never less.
+    def show_modal_dialog(modal_name = nil, params = nil, width = MODAL_DIALOG_DEFAULT_WIDTH, height = MODAL_DIALOG_DEFAULT_HEIGHT)
 
-      create_modal_dialog(modal_name, params) unless @modal_dialog
+      width = [ width, MODAL_DIALOG_DEFAULT_WIDTH ].max
+      height = [ height, MODAL_DIALOG_DEFAULT_HEIGHT ].max
+
+      create_modal_dialog(modal_name, params, width, height) unless @modal_dialog
 
       unless @modal_dialog.visible?
 
         # Show dialog
         @modal_dialog.show
-        @modal_dialog.set_size(MODAL_DIALOG_DEFAULT_WIDTH, MODAL_DIALOG_DEFAULT_HEIGHT)
+        @modal_dialog.set_size(width, height)
         @modal_dialog.center
 
       end
 
     end
 
-    def hide_modal_dialog
-      if @modal_dialog
+    # modal_name_pattern : only the modal whose name matches it - the one of
+    # a tool, not the hardware editor it opened.
+    def hide_modal_dialog(modal_name_pattern = nil)
+      if @modal_dialog && (modal_name_pattern.nil? || modal_name_pattern =~ @modal_dialog_name.to_s)
         @modal_dialog.close
         return true
       end
       false
+    end
+
+    # Resizes the open modal - keeping its position. Returns the size it had.
+    def resize_modal_dialog(width, height)
+      return nil unless @modal_dialog
+      size = @modal_dialog.get_size
+      @modal_dialog.set_size(width, height)
+      size
     end
 
     def toggle_modal_dialog

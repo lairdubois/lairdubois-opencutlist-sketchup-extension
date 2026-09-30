@@ -88,6 +88,13 @@ module Ladb::OpenCutList
   # measures and the variables above it, and the lengths of the components
   # can use them all - "@depth_a".
   #
+  # A variable given as an object is a SETTING - what the editor shows the
+  # user to set - its value a plain length, no variable nor function :
+  #    "diameter": { "value": "8mm", "label": "Diamètre", "steps": [ "6mm", "8mm", "10mm" ] }
+  #    "length": { "value": "40mm", "label": "Longueur", "min": "20mm", "max": "60mm" }
+  # "steps" - the values it can take - or "min" / "max" - its range - both
+  # optional, not together. Anywhere else, it reads as its value.
+  #
   # "asserts" are comparisons - <=, >=, <, >, = - the measures must satisfy
   # for the hardware to be laid : "@depth_b <= @thickness_b - 5mm". The tool
   # refuses the anchors where one fails.
@@ -421,22 +428,61 @@ module Ladb::OpenCutList
       nil
     end
 
+    # Why the given length can't be evaluated for the given variables - see
+    # to_length : [ key, params ], the key of LengthExpressionUtils'
+    # errors - 'no_matching_value', … - or 'unresolved_variable' { name }
+    # when it uses a variable not given, 'not_a_length' when it isn't one.
+    # nil when it can.
+    def self.length_error(value, negative_allowed = false, variables = {})
+      return nil unless to_length(value, negative_allowed, variables).nil?
+      if value.is_a?(String) && (value =~ VARIABLE_PATTERN || LengthExpressionUtils.functions?(value))
+        variables = Hash[variables.map { |k, v| [ k.to_s, v ] }]
+        missing = value.scan(VARIABLE_PATTERN).flatten.find { |name| !variables[name].is_a?(Numeric) }
+        return [ 'unresolved_variable', { :name => missing } ] unless missing.nil?
+        begin
+          _evaluate_length!(value, variables)
+        rescue LengthExpressionUtils::LengthExpressionError => e
+          return [ e.key, e.params ]
+        rescue ZeroDivisionError
+          return [ 'zero_division', {} ]
+        end
+      end
+      [ 'not_a_length', {} ]
+    end
+
     # Does the given comparison - "@depth_b <= @thickness_b - 5mm" - hold
     # for the given variables ? nil if it isn't a comparison of lengths, or
     # uses a variable not given.
     def self.assert?(expression, variables = {})
-      return nil unless expression.is_a?(String) && (match = ASSERT_PATTERN.match(expression.strip))
-      variables = Hash[variables.map { |k, v| [ k.to_s, v ] }]
-      left = to_length(match[1].strip, true, variables)
-      right = to_length(match[3].strip, true, variables)
+      left, operator, right = assert_sides(expression, variables)
       return nil if left.nil? || right.nil?
-      case match[2]
+      case operator
       when '<=' then left <= right + ASSERT_TOLERANCE
       when '>=' then left >= right - ASSERT_TOLERANCE
       when '<' then left < right - ASSERT_TOLERANCE
       when '>' then left > right + ASSERT_TOLERANCE
       else (left - right).abs <= ASSERT_TOLERANCE
       end
+    end
+
+    # The sides of the given comparison, evaluated for the given variables :
+    # [ left, operator, right ], a side nil when it can't be. nil if it isn't
+    # a comparison.
+    def self.assert_sides(expression, variables = {})
+      return nil unless expression.is_a?(String) && (match = ASSERT_PATTERN.match(expression.strip))
+      variables = Hash[variables.map { |k, v| [ k.to_s, v ] }]
+      [ to_length(match[1].strip, true, variables), match[2], to_length(match[3].strip, true, variables) ]
+    end
+
+    # The given variable's expression : a setting's value, or itself - see
+    # "variables".
+    def self.variable_expression(value)
+      value.is_a?(Hash) ? value['value'] : value
+    end
+
+    # Is the given variable a setting - see "variables" ?
+    def self.setting?(value)
+      value.is_a?(Hash)
     end
 
     # [ [ primitive key, item Hash ] ] of the given primitives.
@@ -453,6 +499,15 @@ module Ladb::OpenCutList
     # given. Unlike the VCB, a bare number is a factor : a descriptor can't
     # depend on the units of the model it is used in.
     def self._evaluate_length(expression, variables)
+      _evaluate_length!(expression, variables)
+    rescue LengthExpressionUtils::LengthExpressionError, ZeroDivisionError
+      nil
+    end
+    private_class_method :_evaluate_length
+
+    # As _evaluate_length, raising LengthExpressionUtils::LengthExpressionError
+    # instead of returning nil.
+    def self._evaluate_length!(expression, variables)
       value, dimension = LengthExpressionUtils.evaluate(
         expression,
         read_literal: lambda { |literal|
@@ -465,12 +520,11 @@ module Ladb::OpenCutList
           [ value.to_f, 1 ]
         }
       )
-      return nil unless dimension == 1 && value.finite?
+      raise LengthExpressionUtils::LengthExpressionError.new('invalid_dimension') unless dimension == 1
+      raise LengthExpressionUtils::LengthExpressionError.new('zero_division') unless value.finite?
       value
-    rescue LengthExpressionUtils::LengthExpressionError, ZeroDivisionError
-      nil
     end
-    private_class_method :_evaluate_length
+    private_class_method :_evaluate_length!
 
     # The file name of the given part of the given slot's component - or of
     # its given variant : "a.skp", "a.overlay.machining.skp".
@@ -540,9 +594,18 @@ module Ladb::OpenCutList
       end
     end
 
-    # Its own variables : { name => length expression }, in order.
+    # Its own variables : { name => length expression }, in order - a
+    # setting's value for a setting.
     def variables
-      @data['variables'].is_a?(Hash) ? @data['variables'] : {}
+      return {} unless @data['variables'].is_a?(Hash)
+      Hash[@data['variables'].map { |name, value| [ name, self.class.variable_expression(value) ] }]
+    end
+
+    # Its settings - the variables given as objects : { name => { 'value' =>
+    # …, 'label' => …, 'steps' | 'min' / 'max' => … } }, in order.
+    def settings
+      return {} unless @data['variables'].is_a?(Hash)
+      @data['variables'].select { |_, value| self.class.setting?(value) }
     end
 
     # Its asserts : the comparisons of lengths the measures must satisfy.
@@ -796,6 +859,10 @@ module Ladb::OpenCutList
           errors << "#{label} is a measure"
           next
         end
+        if self.class.setting?(expression)
+          _validate_setting(label, expression, errors)
+          expression = expression['value']
+        end
         unless expression.is_a?(String) || expression.is_a?(Numeric)
           errors << "#{label} is not a length"
           next
@@ -808,6 +875,44 @@ module Ladb::OpenCutList
         errors << "#{label} is not a length" if value.nil? && unknown.empty?
         @checked_variables[name] = value unless value.nil?
         @variable_names << name   # Known below, even if it can't be evaluated
+      end
+    end
+
+    # A setting - see "variables" - : its value is checked as a variable's,
+    # after this.
+    def _validate_setting(label, setting, errors)
+      plain = lambda { |value| !value.nil? && !(value.is_a?(String) && (value =~ VARIABLE_PATTERN || LengthExpressionUtils.functions?(value))) }
+      fn_length = lambda { |value| plain.call(value) ? self.class.to_length(value, true) : nil }
+      unless setting.key?('value')
+        errors << "#{label} has no value"
+        return
+      end
+      value = fn_length.call(setting['value'])
+      errors << "#{label} value is not a plain length" if value.nil? && !plain.call(setting['value'])
+      errors << "#{label} label is not a string" if setting.key?('label') && !setting['label'].is_a?(String)
+      if setting.key?('steps') && (setting.key?('min') || setting.key?('max'))
+        errors << "#{label} has both steps and min / max"
+        return
+      end
+      if setting.key?('steps')
+        steps = setting['steps'].is_a?(Array) ? setting['steps'].map { |step| fn_length.call(step) } : [ nil ]
+        if steps.empty? || steps.any?(&:nil?)
+          errors << "#{label} steps are not a list of plain lengths"
+        elsif !value.nil? && steps.none? { |step| (step - value).abs <= ASSERT_TOLERANCE }
+          errors << "#{label} value is not one of its steps"
+        end
+      end
+      bounds = %w[min max].map { |key|
+        next nil unless setting.key?(key)
+        bound = fn_length.call(setting[key])
+        errors << "#{label} #{key} is not a plain length" if bound.nil?
+        bound
+      }
+      min, max = bounds
+      if !min.nil? && !max.nil? && min > max + ASSERT_TOLERANCE
+        errors << "#{label} min is above max"
+      elsif !value.nil? && (!min.nil? && value < min - ASSERT_TOLERANCE || !max.nil? && value > max + ASSERT_TOLERANCE)
+        errors << "#{label} value is out of min / max"
       end
     end
 

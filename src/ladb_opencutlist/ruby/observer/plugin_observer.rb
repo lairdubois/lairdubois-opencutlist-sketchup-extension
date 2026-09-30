@@ -7,6 +7,9 @@ module Ladb::OpenCutList
 
     ON_GLOBAL_PRESET_CHANGED = 'on_global_preset_changed'.freeze
     ON_MODEL_PRESET_CHANGED = 'on_model_preset_changed'.freeze
+    ON_HARDWARE_SAVED = 'on_hardware_saved'.freeze   # A descriptor written by the hardware editor : { :ref }
+    ON_HARDWARE_DELETED = 'on_hardware_deleted'.freeze   # A descriptor deleted by the hardware editor : { :ref }
+    ON_MODAL_DIALOG_CLOSED = 'on_modal_dialog_closed'.freeze   # { :modal_name }
 
     def onGlobalPresetChanged(dictonary, section)
       # puts "onGlobalPresetChanged: #{dictonary}, #{section}"

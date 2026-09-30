@@ -215,7 +215,9 @@ let renderer,
     axesHelper,
 
     pinsGroup,
-    pinsOptions
+    pinsOptions,
+
+    bench
 ;
 
 let animating, animateRequestId;
@@ -326,6 +328,10 @@ const fnAddListeners = function () {
                     if (call.params.showBoxHelper) {
                         fnSetBoxHelperVisible(true);
                     }
+                    break;
+
+                case 'setup_bench':
+                    fnSetupBench(call.params.benchDef);
                     break;
 
                 case 'set_zoom':
@@ -1118,6 +1124,168 @@ const fnSetupModel = function(modelDef, partsColored, partsOpacity, pinsHidden, 
     }
 
 }
+
+// Bench (hardware editor) : fictional panels and the solids of the hardware
+// laid on them, rebuilt on each edit - the camera stays where it is.
+
+const BENCH_PANEL_COLORS = { a: 0xe8dcc4, b: 0xd9c9a8 };
+const BENCH_PART_COLORS = { hardware: 0x8c8c8c, machining: 0x2e7fd9 };
+
+const fnCreateBenchSolidGeometry = function (solidDef) {
+
+    const height = solidDef.z_max - solidDef.z_min;
+    const radius = solidDef.diameter / 2;
+    let geometry;
+
+    if (solidDef.profile) {
+
+        // A round solid widened at one end : its outline revolved around Z
+        const points = [ new THREE.Vector2(0, solidDef.profile[0][1]) ];
+        for (const point of solidDef.profile) {
+            points.push(new THREE.Vector2(point[0], point[1]));
+        }
+        points.push(new THREE.Vector2(0, solidDef.profile[solidDef.profile.length - 1][1]));
+        geometry = new THREE.LatheGeometry(points, 32);
+        geometry.rotateX(Math.PI / 2);   // Its axis from Y to Z
+
+    } else if (solidDef.length) {
+
+        // A slot with round ends, its length along X
+        const straight = solidDef.length / 2 - radius;
+        const shape = new THREE.Shape();
+        shape.moveTo(-straight, -radius);
+        shape.lineTo(straight, -radius);
+        shape.absarc(straight, 0, radius, -Math.PI / 2, Math.PI / 2, false);
+        shape.lineTo(-straight, radius);
+        shape.absarc(-straight, 0, radius, Math.PI / 2, Math.PI * 3 / 2, false);
+        geometry = new THREE.ExtrudeGeometry(shape, { depth: height, bevelEnabled: false, curveSegments: 16 });
+        geometry.translate(0, 0, solidDef.z_min);
+
+    } else {
+
+        geometry = new THREE.CylinderGeometry(radius, radius, height, 32);
+        geometry.rotateX(Math.PI / 2);   // Its axis from Y to Z
+        geometry.translate(0, 0, solidDef.z_min + height / 2);
+
+    }
+    geometry.translate(solidDef.x, solidDef.y, 0);
+
+    return geometry;
+};
+
+const fnAddBenchObject = function (parent, geometry, color, opacity) {
+
+    const mesh = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({
+        side: THREE.DoubleSide,
+        color: color,
+        transparent: opacity < 1,
+        opacity: opacity,
+        depthWrite: opacity >= 1,
+        polygonOffset: true,
+        polygonOffsetFactor: 1,
+        polygonOffsetUnits: 1,
+    }));
+    parent.add(mesh);
+
+    const edges = new THREE.LineSegments(new THREE.EdgesGeometry(geometry, 30), lineMaterial);
+    parent.add(edges);
+
+};
+
+const fnSetupBench = function (benchDef) {
+
+    // Drop the previous bench
+    if (bench) {
+        bench.traverse(function (object) {
+            if (object.geometry) object.geometry.dispose();
+            if (object.material && object.material !== lineMaterial) object.material.dispose();
+        });
+        scene.remove(bench);
+    }
+    const firstSetup = !bench;
+
+    bench = new THREE.Group();
+
+    // Panels
+    for (const panelDef of benchDef.panels || []) {
+        const min = new THREE.Vector3().fromArray(panelDef.min);
+        const max = new THREE.Vector3().fromArray(panelDef.max);
+        const size = max.clone().sub(min);
+        const geometry = new THREE.BoxGeometry(size.x, size.y, size.z);
+        geometry.translate(min.x + size.x / 2, min.y + size.y / 2, min.z + size.z / 2);
+        fnAddBenchObject(bench, geometry, BENCH_PANEL_COLORS[panelDef.slot] || 0xffffff, 0.45);
+    }
+
+    // Solids of the primitives, in the frame of their slot
+    for (const solidDef of benchDef.solids || []) {
+        const group = new THREE.Group();
+        group.applyMatrix4(new THREE.Matrix4().fromArray(solidDef.transformation));
+        fnAddBenchObject(group, fnCreateBenchSolidGeometry(solidDef), BENCH_PART_COLORS[solidDef.part], solidDef.part === 'machining' ? 0.5 : 1);
+        bench.add(group);
+    }
+
+    // SKP files : their triangles and hard edges, in the frame of their slot
+    for (const skpDef of benchDef.skps || []) {
+        const group = new THREE.Group();
+        group.applyMatrix4(new THREE.Matrix4().fromArray(skpDef.transformation));
+        const opacity = skpDef.part === 'machining' ? 0.5 : 1;
+        const facesGeometry = new THREE.BufferGeometry();
+        facesGeometry.setAttribute('position', new THREE.Float32BufferAttribute(skpDef.faces, 3));
+        group.add(new THREE.Mesh(facesGeometry, new THREE.MeshBasicMaterial({
+            side: THREE.DoubleSide,
+            color: BENCH_PART_COLORS[skpDef.part],
+            transparent: opacity < 1,
+            opacity: opacity,
+            depthWrite: opacity >= 1,
+            polygonOffset: true,
+            polygonOffsetFactor: 1,
+            polygonOffsetUnits: 1,
+        })));
+        const edgesGeometry = new THREE.BufferGeometry();
+        edgesGeometry.setAttribute('position', new THREE.Float32BufferAttribute(skpDef.edges, 3));
+        group.add(new THREE.LineSegments(edgesGeometry, lineMaterial));
+        bench.add(group);
+    }
+
+    scene.add(bench);
+
+    // Bench box properties - what zoom and views fit : centered on the
+    // origin of the joint, the views turn and zoom around it
+    const benchBox = new THREE.Box3().setFromObject(bench);
+    if (benchBox.isEmpty()) {
+        benchBox.set(new THREE.Vector3(-1, -1, -1), new THREE.Vector3(1, 1, 1));
+    }
+    const extent = benchBox.max.clone().max(benchBox.min.clone().negate());
+    baseModelSize = explodedModelSize = extent.clone().multiplyScalar(2);
+    baseModelCenter = explodedModelCenter = new THREE.Vector3();
+    baseModelRadius = explodedModelRadius = extent.length();
+    explodeFactor = 0;
+
+    camera.near = -baseModelRadius * 4;
+    camera.far = baseModelRadius * 8;
+    camera.updateProjectionMatrix();
+
+    // Axes of the joint, at its origin - shown until hidden
+    const axesVisible = axesHelper ? axesHelper.visible : true;
+    if (axesHelper) {
+        scene.remove(axesHelper);
+    }
+    axesHelper = new THREE.Group();
+    axesHelper.visible = axesVisible;
+    for (const [ direction, color ] of [ [ new THREE.Vector3(1, 0, 0), 0xff0000 ], [ new THREE.Vector3(0, 1, 0), 0x00dd00 ], [ new THREE.Vector3(0, 0, 1), 0x0000ff ] ]) {
+        axesHelper.add(new THREE.ArrowHelper(direction, new THREE.Vector3(), baseModelRadius * 1.5, color, 0));
+    }
+    scene.add(axesHelper);
+
+    if (firstSetup) {
+        fnSetView(THREE_CAMERA_VIEWS.isometric, false);
+        fnDispatchControlsChangedEvent('init');
+        fnDispatchHelpersChangedEvent();   // The axes button shows them
+    }
+
+    fnRender();
+
+};
 
 // Startup
 

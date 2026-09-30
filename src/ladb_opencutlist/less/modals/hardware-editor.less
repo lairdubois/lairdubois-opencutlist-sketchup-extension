@@ -1,0 +1,456 @@
+//
+// Hardware Editor
+//
+
+.modal .modal-body.ladb-hardware-editor {
+  display: flex;
+  padding: 0;
+  overflow: hidden;
+}
+
+.ladb-hardware-editor-bench {
+  flex: 0 0 50%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid @ladb-global-border;
+}
+
+.ladb-hardware-editor-trial {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 15px;
+  padding: 8px 10px;
+  border-bottom: 1px solid @ladb-global-border;
+
+  .form-group {
+    display: flex;
+    align-items: center;
+    margin: 0;
+
+    label {
+      margin: 0 5px 0 0;
+      font-weight: normal;
+      white-space: nowrap;
+    }
+
+    div.ladb-textinput {
+      width: 100px;
+    }
+
+  }
+
+}
+
+.ladb-hardware-editor-viewer {
+  flex: 1 1 60%;
+  min-height: 200px;
+  position: relative;
+
+  .ladb-three-viewer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    iframe {
+      height: 100%;
+    }
+
+  }
+
+}
+
+.ladb-hardware-editor-unsupported {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: @ladb-gutter;
+  text-align: center;
+  color: @ladb-global-light-color;
+}
+
+.ladb-hardware-editor-computations {
+  flex: 0 1 20%;
+  overflow-y: auto;
+  border-top: 1px solid @ladb-global-border;
+  padding: 10px;
+
+  &:empty {
+    display: none;
+  }
+
+  table.table {
+    margin: 0;
+    font-size: 12px;
+
+    > tbody > tr {
+
+      &.ladb-hardware-editor-computations-header > th {
+        background-color: #f9f9f9;
+        color: @ladb-global-light-color;
+        font-weight: normal;
+        text-transform: uppercase;
+        font-size: 11px;
+        letter-spacing: 0.05em;
+      }
+
+      > td {
+        vertical-align: top;
+      }
+
+    }
+
+  }
+
+  .ladb-hardware-editor-computation-name {
+    font-family: monospace;
+    white-space: nowrap;
+
+    i {
+      color: @ladb-brand-primary;
+    }
+
+  }
+
+  .ladb-hardware-editor-computation-expression {
+    font-family: monospace;
+    color: @ladb-global-light-color;
+    word-break: break-word;
+  }
+
+  .ladb-hardware-editor-computation-value {
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .ladb-hardware-editor-slots {
+    color: @ladb-global-light-color;
+    font-size: 90%;
+  }
+
+}
+
+.ladb-hardware-editor-editor {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+
+  > .nav-tabs {
+    margin-top: 8px;
+    padding: 0 10px;
+  }
+
+  > .tab-content {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+
+    > .tab-pane {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      padding: 15px 10px;
+
+      &#ladb_hardware_editor_tab_json.active {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        padding: 0;
+      }
+
+    }
+
+  }
+
+}
+
+.ladb-hardware-editor-json {
+  flex: 1 1 auto;
+  min-height: 0;
+  position: relative;
+
+  &.ladb-hardware-editor-json-readonly .CodeMirror {
+    background-color: #f5f5f5;
+    color: @ladb-global-light-color;
+  }
+
+  .CodeMirror {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: auto;
+    max-height: none;   // Not the 300px of the other editors
+    font-size: 12px;
+
+    .CodeMirror-scroll {
+      max-height: none;
+    }
+
+  }
+
+  .ladb-hardware-editor-error-line {
+    background-color: fade(@ladb-brand-danger, 15%);
+  }
+
+}
+
+.ladb-hardware-editor-errors {
+  flex: 0 0 auto;
+
+  .alert {
+    margin: 10px;
+    max-height: 150px;
+    overflow-y: auto;
+
+    ul {
+      margin: 0;
+      padding-left: 15px;
+    }
+
+  }
+
+}
+
+.ladb-hardware-editor-empty {
+  padding: @ladb-gutter;
+  text-align: center;
+  color: @ladb-global-light-color;
+
+  code {
+    white-space: nowrap;
+  }
+
+}
+
+// File
+
+.ladb-hardware-editor-file-bar {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 10px 0;
+  min-width: 0;
+
+  label {
+    flex: 0 0 auto;
+    min-width: 50px;
+    margin: 0 5px 0 0;
+  }
+
+  input.form-control {
+    flex: 1 1 auto;
+    min-width: 80px;
+    width: auto;
+    font-family: monospace;
+  }
+
+  &.ladb-hardware-editor-name-bar input.form-control {
+    font-family: inherit;
+  }
+
+}
+
+.ladb-hardware-editor-file-dir, .ladb-hardware-editor-file-ext {
+  font-family: monospace;
+  font-size: 12px;
+  color: @ladb-global-light-color;
+  white-space: nowrap;
+}
+
+.ladb-hardware-editor-file-dir {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  direction: rtl;   // The end of the path shows
+  text-align: left;
+}
+
+.ladb-hardware-editor-file-renamed {
+  padding: 3px 10px 0;
+  font-size: 11px;
+}
+
+.ladb-hardware-editor-readonly {
+  margin: 8px 10px 0;
+  padding: 6px 10px;
+}
+
+// Parts
+
+.ladb-hardware-editor-slot {
+  border: 1px solid @ladb-global-border;
+  border-radius: 4px;
+
+  & + & {
+    margin-top: 12px;
+  }
+
+}
+
+.ladb-hardware-editor-slot-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  padding: 7px 10px;
+  background-color: #f9f9f9;
+  border-bottom: 1px solid @ladb-global-border;
+  border-radius: 4px 4px 0 0;
+}
+
+.ladb-hardware-editor-slot-letter {
+  padding: 1px 7px;
+  border-radius: 3px;
+  background-color: @ladb-brand-dark;
+  color: #fff;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.ladb-hardware-editor-slot-name {
+  flex: 1;
+  min-width: 0;
+  font-weight: bold;
+  overflow-wrap: anywhere;
+}
+
+.ladb-hardware-editor-slot-note {
+  padding: 8px 10px;
+  color: @ladb-global-light-color;
+  font-size: 12px;
+}
+
+.ladb-hardware-editor-part {
+  display: grid;
+  grid-template-columns: 90px minmax(0, 1fr);
+  gap: 6px 10px;
+  align-items: start;
+  padding: 9px 10px;
+
+  & + & {
+    border-top: 1px solid #eee;
+  }
+
+  > .control-label {
+    padding-top: 5px;
+    font-size: 12px;
+  }
+
+}
+
+.ladb-hardware-editor-part-body {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.ladb-hardware-editor-part-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.ladb-hardware-editor-part-text {
+  font-size: 12px;
+}
+
+.ladb-hardware-editor-file {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  min-width: 0;
+
+  code {
+    font-size: 11px;
+    overflow-wrap: anywhere;
+    min-width: 0;
+  }
+
+}
+
+.ladb-hardware-editor-placement {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 7px 8px;
+  border-radius: 3px;
+  background-color: #f9f9f9;
+  font-size: 12px;
+}
+
+.ladb-hardware-editor-placement-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px 8px;
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    margin: 0;
+    font-weight: bold;
+    font-size: 11px;
+  }
+
+  input.form-control {
+    width: 65px;
+    height: 24px;
+    padding: 2px 5px;
+    text-align: right;
+  }
+
+}
+
+.ladb-hardware-editor-placement-label {
+  width: 75px;
+  color: @ladb-global-light-color;
+  font-size: 11px;
+}
+
+.ladb-hardware-editor-placement-unit, .ladb-hardware-editor-placement-foot {
+  color: @ladb-global-light-color;
+  font-size: 11px;
+}
+
+// Shaping - a part edited in SketchUp : the editor waits, small
+
+.ladb-hardware-editor-shaping-panel {
+  display: none;
+  flex: 1 1 auto;
+  flex-direction: column;
+  padding: 10px 15px;
+
+  .ladb-hardware-editor-shaping-name {
+    font-weight: bold;
+  }
+
+  .ladb-hardware-editor-shaping-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 5px;
+    margin-top: auto;
+  }
+}
+
+.modal.ladb-hardware-editor-shaping {
+  .ladb-hardware-editor-bench,
+  .ladb-hardware-editor-editor,
+  .modal-footer {
+    display: none;
+  }
+  .ladb-hardware-editor-shaping-panel {
+    display: flex;
+  }
+}

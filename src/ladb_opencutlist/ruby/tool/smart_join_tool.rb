@@ -10,6 +10,7 @@ module Ladb::OpenCutList
   require_relative '../lib/fiddle/skpy/skpy'
   require_relative '../helper/user_text_helper'
   require_relative '../helper/smart_action_handler_cavities_helper'
+  require_relative '../controller/hardware_controller'
   require_relative '../helper/smart_action_handler_door_helper'
   require_relative '../model/door/door_def'
   require_relative '../model/hardware/hardware_descriptor_def'
@@ -319,6 +320,23 @@ module Ladb::OpenCutList
 
     def onActivate(view)
       super
+
+      # A descriptor written by the hardware editor : picked at once
+      @hardware_saved_callback = PLUGIN.add_event_callback(PluginObserver::ON_HARDWARE_SAVED) do |params|
+        @action_handler.onToolHardwareSaved(self, params[:ref]) if !@action_handler.nil? && @action_handler.respond_to?(:onToolHardwareSaved)
+      end
+      @hardware_deleted_callback = PLUGIN.add_event_callback(PluginObserver::ON_HARDWARE_DELETED) do |params|
+        @action_handler.onToolHardwareDeleted(self, params[:ref]) if !@action_handler.nil? && @action_handler.respond_to?(:onToolHardwareDeleted)
+      end
+
+    end
+
+    def onDeactivate(view)
+      super
+      PLUGIN.remove_event_callback(PluginObserver::ON_HARDWARE_SAVED, @hardware_saved_callback) unless @hardware_saved_callback.nil?
+      @hardware_saved_callback = nil
+      PLUGIN.remove_event_callback(PluginObserver::ON_HARDWARE_DELETED, @hardware_deleted_callback) unless @hardware_deleted_callback.nil?
+      @hardware_deleted_callback = nil
     end
 
     def onKeyDown(key, repeat, flags, view)
@@ -545,6 +563,24 @@ module Ladb::OpenCutList
       else
         @tool.hide_status
       end
+    end
+
+    # A descriptor written by the hardware editor : picked if the action lays
+    # its type - its files may have changed, even if it already was.
+    def onToolHardwareSaved(tool, ref)
+      return if @hardware_library_panel.nil?
+      _select_hardware(ref)
+      onToolGlobalPresetChanged(tool, nil, nil)
+      _setup_hardware_library_panel   # The new file listed
+      _restart
+    end
+
+    # Unpicked by the delete worker if it was : the list follows.
+    def onToolHardwareDeleted(tool, ref)
+      return if @hardware_library_panel.nil?
+      onToolGlobalPresetChanged(tool, nil, nil)
+      _setup_hardware_library_panel
+      _restart
     end
 
     def onToolGlobalPresetChanged(tool, dictionary, section)
@@ -1050,8 +1086,17 @@ module Ladb::OpenCutList
         },
         add_btn: {
           :selected => false,
-          :on_click => lambda {}  # TODO : add a hardware to the library
-        }
+          :on_click => lambda {
+            HardwareController.show_editor(type: _get_hardware_types.first, dir_ref: dir_ref)
+          }
+        },
+        selected_file_btns: selected_ref.nil? ? [] : [
+          {
+            :motif => SmartLibraryPanel::MOTIF_EDIT_PATH,
+            :tooltip => PLUGIN.get_i18n_string(PLUGIN.library_readonly_ref?(selected_ref) ? 'tool.smart_join.hardware_view' : 'tool.smart_join.hardware_edit'),
+            :on_click => lambda { HardwareController.show_editor(ref: selected_ref) }
+          }
+        ]
       )
     end
 

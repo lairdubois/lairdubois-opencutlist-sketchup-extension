@@ -1293,8 +1293,8 @@ module Ladb::OpenCutList
 
     def set_action(action)
 
-      # Hide possible modal
-      PLUGIN.hide_modal_dialog
+      # Hide possible modal of the tool
+      PLUGIN.hide_modal_dialog(/\Asmart_/)
 
       # Store settings in class variable
       store_action(action)
@@ -1545,8 +1545,8 @@ module Ladb::OpenCutList
       # Unlock inférence
       view.lock_inference if view.inference_locked?
 
-      # Hide possible modal
-      PLUGIN.hide_modal_dialog
+      # Hide possible modal of the tool
+      PLUGIN.hide_modal_dialog(/\Asmart_/)
 
       # Remove event callbacks
       PLUGIN.remove_event_callback(PluginObserver::ON_GLOBAL_PRESET_CHANGED, @event_callback)
@@ -4396,6 +4396,7 @@ module Ladb::OpenCutList
     MOTIF_PARENT_PATH = 'M1,.917H.5V.083M.25,.333L.5,.083L.75,.333'.freeze
     MOTIF_EXPLORE_PATH = 'M.875,.417V.208H.5L.375,.083H0V.917H.792L1,.417H.208L0,.917'.freeze
     MOTIF_ADD_PATH = 'M0,0.5L0.5,0.5L0.5,0L0.5,0.5L1,0.5L0.5,0.5L0.5,1'.freeze
+    MOTIF_EDIT_PATH = 'M.7,.1L.9,.3L.35,.85L.1,.9L.15,.65L.7,.1M.6,.2L.8,.4'.freeze
 
     # Can the given folder be browsed below the given root - a '$LIB/…' ref ?
     # LIBRARIES_REF, both libraries' roots - even missing - and their existing
@@ -4418,6 +4419,7 @@ module Ladb::OpenCutList
       @layer = layer
       @key = key
       @file_btns = {}
+      @with_selected_file_btns = false
       @add_btn = nil
       tool.create_2d(layer, :bottom)
     end
@@ -4432,8 +4434,10 @@ module Ladb::OpenCutList
     #  - on_browse(dir_ref), on_select(file_ref) : the clicks - a click on the
     #    picked file is ignored ;
     #  - add_btn : { :selected, :on_click } for a toggle button left of the
-    #    files - disabled out of the user's library - nil for none.
-    def setup(root_ref:, dir_ref:, selected_ref:, files:, empty_text:, on_browse:, on_select:, add_btn: nil)
+    #    files - disabled out of the user's library - nil for none ;
+    #  - selected_file_btns : [ { :motif, :tooltip, :disabled, :on_click } ]
+    #    the buttons in the picked file's one - none by default.
+    def setup(root_ref:, dir_ref:, selected_ref:, files:, empty_text:, on_browse:, on_select:, add_btn: nil, selected_file_btns: nil)
 
       # The scroll is kept while the browsed folder is
       scroll = @@scrolls[@key]
@@ -4640,11 +4644,50 @@ module Ladb::OpenCutList
         files_row.append(files_panel)
 
         files.each do |file|
-          btn = fn_create_btn.call(file.label, file.missing ? COLOR_MISSING : ColorUtils.color_darken(SmartTool::COLOR_BRAND_LIGHT, 0.1), file.ref == selected_ref)
+          sub_btn_defs = file.ref == selected_ref && !file.missing ? selected_file_btns.to_a : []
+          btn = fn_create_btn.call(file.label, file.missing ? COLOR_MISSING : ColorUtils.color_darken(SmartTool::COLOR_BRAND_LIGHT, 0.1), file.ref == selected_ref, &(sub_btn_defs.empty? ? nil : lambda { |file_btn|
+
+            file_btn.layout = Kuix::BorderLayout.new
+
+            lbl = Kuix::Label.new(file.label)
+            lbl.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
+            lbl.text_size = text_size
+            lbl.set_style_attribute(:color, Kuix::COLOR_WHITE)
+            file_btn.append(lbl)
+
+            sub_btns_panel = Kuix::Panel.new
+            sub_btns_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
+            sub_btns_panel.layout = Kuix::GridLayout.new(sub_btn_defs.length, 1)
+            file_btn.append(sub_btns_panel)
+
+            # Buttons in the button : a click reaches the deepest hittable
+            # one only - a background makes it hittable - and a button doesn't
+            # pass its pseudo classes to a child button.
+            sub_btn_defs.each do |sub_btn_def|
+              sub_btn = Kuix::Button.new
+              sub_btn.layout = Kuix::StaticLayout.new
+              sub_btn.min_size.set!(unit * 10, unit * 10)  # Square : the height of a file button
+              sub_btn.set_style_attribute(:background_color, ColorUtils.color_translucent(Kuix::COLOR_WHITE, 0))  # Hittable
+              sub_btn.set_style_attribute(:background_color, ColorUtils.color_translucent(Kuix::COLOR_WHITE, 77), :hover)
+              sub_btn.disabled = sub_btn_def[:disabled]
+              sub_btn.on(:click) { sub_btn_def[:on_click].call }
+              unless sub_btn_def[:tooltip].nil?
+                sub_btn.on(:enter) { @tool.show_message(sub_btn_def[:tooltip]) }
+                sub_btn.on(:leave) { @tool.hide_message }
+              end
+              motif = fn_create_motif.call(sub_btn_def[:motif])  # Sized to fill the square button
+              motif.set_style_attribute(:color, Kuix::COLOR_WHITE)
+              motif.set_style_attribute(:color, ColorUtils.color_translucent(Kuix::COLOR_WHITE, 90), :disabled)
+              sub_btn.append(motif)
+              sub_btns_panel.append(sub_btn)
+            end
+
+          }))
           btn.on(:click) { |button| on_select.call(file.ref) unless button.selected? }
           files_panel.append(btn)
           @file_btns[file.ref] = btn
         end
+        @with_selected_file_btns = !selected_file_btns.to_a.empty?
 
         fn_append_scroll_btns.call(files_row, files_panel, files_overflow, scroll[:files])
         @@scrolls[@key][:files_panel] = files_panel
@@ -4682,6 +4725,7 @@ module Ladb::OpenCutList
     # false if the bar doesn't show that file : it has to be set up again.
     def update_selection(selected_ref, add_selected = false)
       return false unless selected_ref.nil? || @file_btns.key?(selected_ref)
+      return false if @with_selected_file_btns  # They move with the selection
       @file_btns.each { |file_ref, btn| btn.selected = file_ref == selected_ref }
       @add_btn.selected = add_selected unless @add_btn.nil?
       true

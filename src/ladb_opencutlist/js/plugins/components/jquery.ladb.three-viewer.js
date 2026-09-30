@@ -11,6 +11,8 @@
 
         this.$iframe = $('iframe', this.$element);
 
+        this.loaded = false;
+
     };
 
     LadbThreeViewer.DEFAULTS = {
@@ -60,6 +62,14 @@
         // Bind iframe
         this.$iframe
             .on('load', function () {
+
+                that.loaded = true;
+
+                // No model : the scene is given by commands - see 'loaded.ladb.threeviewer'
+                if (!that.options.modelDef) {
+                    that.$element.trigger('loaded.ladb.threeviewer');
+                    return;
+                }
 
                 that.callCommand(
                     'setup_model',
@@ -176,7 +186,7 @@
             that.callCommand(command, params);
         });
 
-        if (this.options.modelDef.part_instance_count <= 1) {
+        if (!this.options.modelDef || this.options.modelDef.part_instance_count <= 1) {
             $('[data-command="set_explode_factor"]', this.$element).closest('.ladb-three-viewer-explode-factor-slider-wrapper').hide();
         }
 

@@ -1,0 +1,78 @@
+{% extends 'core/_modal.twig' %}
+
+{% set id = 'ladb_modal_'~modalName %}
+{% set title = 'core.hardware_editor.title'|i18next~' <small class="ladb-hardware-editor-name"></small>' %}
+{% set bodyClasses = 'ladb-hardware-editor' %}
+
+{% block bodyInner %}
+    <div class="ladb-hardware-editor-bench">
+        <div class="ladb-hardware-editor-trial form-inline">
+            <div class="btn-group btn-group-sm ladb-hardware-editor-topologies" role="group"></div>
+            <div class="form-group form-group-sm">
+                <label>{{ 'core.hardware_editor.thickness_a'|i18next }}</label>
+                <input type="text" class="form-control" id="ladb_hardware_editor_input_thickness_a">
+            </div>
+            <div class="form-group form-group-sm">
+                <label>{{ 'core.hardware_editor.thickness_b'|i18next }}</label>
+                <input type="text" class="form-control" id="ladb_hardware_editor_input_thickness_b">
+            </div>
+        </div>
+        <div class="ladb-hardware-editor-viewer"></div>
+        <div class="ladb-hardware-editor-unsupported" style="display: none;"></div>
+        <div class="ladb-hardware-editor-computations"></div>
+    </div>
+    <div class="ladb-hardware-editor-editor">
+        <div class="ladb-hardware-editor-readonly alert alert-info" style="display: none;">
+            {{ 'core.hardware_editor.readonly_notice'|i18next }}
+        </div>
+        <div class="ladb-hardware-editor-file-bar ladb-hardware-editor-name-bar form-inline">
+            <label for="ladb_hardware_editor_input_name">{{ 'core.hardware_editor.name'|i18next }}</label>
+            <input type="text" class="form-control input-sm" id="ladb_hardware_editor_input_name">
+        </div>
+        <div class="ladb-hardware-editor-file-bar form-inline">
+            <label for="ladb_hardware_editor_input_file">{{ 'core.hardware_editor.file'|i18next }}</label>
+            <span class="ladb-hardware-editor-file-dir"></span>
+            <input type="text" class="form-control input-sm" id="ladb_hardware_editor_input_file" spellcheck="false">
+            <span class="ladb-hardware-editor-file-ext">.json</span>
+        </div>
+        <div class="ladb-hardware-editor-file-renamed text-muted" style="display: none;"></div>
+        <ul class="nav nav-tabs nav-justified" role="tablist">
+            <li role="presentation" class="active"><a href="#ladb_hardware_editor_tab_settings" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-settings"></i> {{ 'core.hardware_editor.tab_settings'|i18next }}</a></li>
+            <li role="presentation"><a href="#ladb_hardware_editor_tab_parts" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-component"></i> {{ 'core.hardware_editor.tab_parts'|i18next }}</a></li>
+            <li role="presentation"><a href="#ladb_hardware_editor_tab_json" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-snippets"></i> {{ 'core.hardware_editor.tab_json'|i18next }} <span class="badge ladb-hardware-editor-error-count" style="display: none;"></span></a></li>
+        </ul>
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="ladb_hardware_editor_tab_settings">
+                <div class="ladb-hardware-editor-settings form form-horizontal"></div>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="ladb_hardware_editor_tab_parts">
+                <div class="ladb-hardware-editor-parts"></div>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="ladb_hardware_editor_tab_json">
+                <div class="ladb-hardware-editor-json">
+                    <textarea id="ladb_hardware_editor_input_json"></textarea>
+                </div>
+                <div class="ladb-hardware-editor-errors"></div>
+            </div>
+        </div>
+    </div>
+    <div class="ladb-hardware-editor-shaping-panel">
+        <p class="ladb-hardware-editor-shaping-name"></p>
+        <p class="text-muted">{{ 'core.hardware_editor.shaping_help'|i18next }}</p>
+        <div class="ladb-hardware-editor-shaping-buttons">
+            <button class="btn btn-default" id="ladb_hardware_editor_btn_shaping_cancel">{{ 'default.cancel'|i18next }}</button>
+            <button class="btn btn-primary" id="ladb_hardware_editor_btn_shaping_finish">{{ 'core.hardware_editor.finish'|i18next }}</button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footerLeftInner %}
+    <button class="btn btn-danger" id="ladb_hardware_editor_btn_delete" style="display: none;">{{ 'default.delete'|i18next }}</button>
+    <span class="ladb-hardware-editor-status"></span>
+{% endblock %}
+
+{% block footerRightInner %}
+    <button class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
+    <button class="btn btn-primary" id="ladb_hardware_editor_btn_duplicate" style="display: none;">{{ 'core.hardware_editor.duplicate'|i18next }}</button>
+    <button class="btn btn-primary" id="ladb_hardware_editor_btn_validate">{{ 'default.validate'|i18next }}</button>
+{% endblock %}

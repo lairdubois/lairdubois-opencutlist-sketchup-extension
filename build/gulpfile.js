@@ -153,6 +153,7 @@ var MODAL_JS_FILES = withBase(JS_BASE, [
     'plugins/modals/jquery.ladb.modal-smart-export-tool-action-1.js',
     'plugins/modals/jquery.ladb.modal-smart-export-tool-action-2.js',
     'plugins/modals/jquery.ladb.modal-smart-export-tool-action-3.js',
+    'plugins/modals/jquery.ladb.modal-hardware-editor.js',
     'templates/components-twig-templates.js',
     'templates/core-twig-templates.js',
     'templates/modals-twig-templates.js',

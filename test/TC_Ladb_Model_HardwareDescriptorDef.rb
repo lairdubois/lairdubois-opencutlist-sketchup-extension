@@ -512,6 +512,66 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     assert_equal(2, descriptor.failed_asserts(variables).length)
   end
 
+  # A variable given as an object is a setting : it reads as its value.
+  def test_settings
+    data = _with(DOWEL, 'variables' => {
+      'diameter' => { 'value' => '8mm', 'label' => 'Diamètre', 'steps' => [ '6mm', '8mm', '10mm' ] },
+      'length' => { 'value' => '40mm', 'min' => '20mm', 'max' => '60mm' },
+      'depth_a' => 'min(@thickness_a - 5mm; max(20mm; @length - (@thickness_b - 5mm)))',
+      'depth_b' => '@length - @depth_a',
+    })
+    data['components'] = { 'a' => { 'hardware' => { 'cylinders' => [ { 'diameter' => '@diameter', 'from' => '-@depth_a', 'to' => '@depth_b' } ] } } }
+    descriptor = _def(data)
+    assert(descriptor.valid?, descriptor.errors.inspect)
+    assert_equal(%w[diameter length], descriptor.settings.keys)
+    assert_equal('Diamètre', descriptor.settings['diameter']['label'])
+    assert_equal('8mm', descriptor.variables['diameter'])
+    variables = descriptor.resolve_variables('thickness_a' => 19 / 25.4, 'thickness_b' => 300 / 25.4)
+    assert_in_delta(8 / 25.4, variables['diameter'], 1e-9)
+    assert_in_delta(26 / 25.4, variables['depth_b'], 1e-9)
+    cylinder = HardwareDescriptorDef.primitive_cylinders(descriptor.resolve_component('a').hardware, variables).first
+    assert_in_delta(8 / 25.4, cylinder.diameter, 1e-9)
+  end
+
+  def test_invalid_settings
+    fn_with = lambda { |setting| _with(DOWEL, 'variables' => DOWEL['variables'].merge('x' => setting)) }
+    _assert_error(fn_with.call({ 'label' => 'X' }), "variable 'x' has no value")
+    _assert_error(fn_with.call({ 'value' => '@thickness_a' }), "variable 'x' value is not a plain length")
+    _assert_error(fn_with.call({ 'value' => 'min(2mm; 3mm)' }), "variable 'x' value is not a plain length")
+    _assert_error(fn_with.call({ 'value' => '2mm', 'label' => 3 }), "variable 'x' label is not a string")
+    _assert_error(fn_with.call({ 'value' => '2mm', 'steps' => [ '2mm' ], 'min' => '1mm' }), "variable 'x' has both steps and min / max")
+    _assert_error(fn_with.call({ 'value' => '2mm', 'steps' => [] }), "variable 'x' steps are not a list of plain lengths")
+    _assert_error(fn_with.call({ 'value' => '2mm', 'steps' => [ '@thickness_a' ] }), "variable 'x' steps are not a list of plain lengths")
+    _assert_error(fn_with.call({ 'value' => '2mm', 'steps' => [ '3mm', '4mm' ] }), "variable 'x' value is not one of its steps")
+    _assert_error(fn_with.call({ 'value' => '2mm', 'min' => 'abc' }), "variable 'x' min is not a plain length")
+    _assert_error(fn_with.call({ 'value' => '2mm', 'min' => '5mm', 'max' => '3mm' }), "variable 'x' min is above max")
+    _assert_error(fn_with.call({ 'value' => '2mm', 'min' => '3mm', 'max' => '5mm' }), "variable 'x' value is out of min / max")
+    assert(_def(fn_with.call({ 'value' => 0, 'min' => '-2mm', 'max' => '2mm' })).valid?)   # Numbers are millimeters, 0 and negatives allowed
+  end
+
+  def test_length_error
+    variables = { 'thickness' => 19 / 25.4 }
+    assert_nil(HardwareDescriptorDef.length_error('@thickness - 2mm', false, variables))
+    assert_equal([ 'unresolved_variable', { :name => 'depth' } ], HardwareDescriptorDef.length_error('@depth + 2mm', false, variables))
+    assert_equal('no_matching_value', HardwareDescriptorDef.length_error('floor(@thickness; 20mm; 25mm)', false, variables).first)
+    assert_equal('invalid_dimension', HardwareDescriptorDef.length_error('@thickness * @thickness', false, variables).first)
+    assert_equal('invalid_dimension', HardwareDescriptorDef.length_error('@thickness + 2', false, variables).first)
+    assert_equal('not_a_length', HardwareDescriptorDef.length_error('@thickness - 30mm', false, variables).first)   # Negative
+    assert_equal('not_a_length', HardwareDescriptorDef.length_error(true).first)
+  end
+
+  def test_assert_sides
+    left, operator, right = HardwareDescriptorDef.assert_sides('@thickness - 4mm >= 2cm', 'thickness' => 19 / 25.4)
+    assert_in_delta(15 / 25.4, left, 1e-9)
+    assert_equal('>=', operator)
+    assert_in_delta(20 / 25.4, right, 1e-9)
+    left, operator, right = HardwareDescriptorDef.assert_sides('@depth <= 2mm', {})
+    assert_nil(left)
+    assert_equal('<=', operator)
+    assert_in_delta(2 / 25.4, right, 1e-9)
+    assert_nil(HardwareDescriptorDef.assert_sides('@depth', {}))
+  end
+
   def test_asserts
     variables = { 'thickness' => 19 / 25.4 }
     assert_equal(true, HardwareDescriptorDef.assert?('@thickness <= 19mm', variables))

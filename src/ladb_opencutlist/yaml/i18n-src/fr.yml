@@ -317,7 +317,103 @@ core:
     variant_overlay: En applique
     variant_half_overlay: Jumelée
     variant_inset: Encastrée
+    part_hardware: Quincaillerie
     part_machining: Usinage
+  hardware_editor:
+    title: Éditeur de quincaillerie
+    new_name: Nouvelle quincaillerie
+    tab_settings: Réglages
+    tab_parts: Pièces
+    tab_json: JSON
+    thickness_a: Épaisseur A
+    thickness_b: Épaisseur B
+    topology_flat_edge: En T
+    topology_edge_edge: Chant contre chant
+    topology_flat_flat: Face contre face
+    zoom_auto: Zoom automatique
+    measures: Mesures du banc
+    variables: Variables
+    asserts: Conditions
+    setting: Réglage
+    setting_bounds: "Entre {{ min }} et {{ max }}"
+    assert_unresolved: Non calculable
+    accepted: Joint accepté
+    refused: Joint refusé
+    readonly: Lecture seule
+    readonly_notice: |
+      Ce fichier est un exemple en lecture seule. 
+      Dupliquez cette quincaillerie dans **Ma Bibliothèque** pour la modifier.
+    duplicate: Dupliquer dans Ma Bibliothèque
+    name: Nom
+    file: Fichier
+    file_renamed: "Renommé à la validation, ainsi que le dossier de ses pièces (était {{ name }})"
+    duplicated: "Copié dans Ma Bibliothèque : {{ ref }}"
+    delete_confirm: "Supprimer {{ name }} de Ma Bibliothèque, avec le dossier de ses pièces ? Les quincailleries déjà posées dans le modèle restent."
+    no_descriptor: Ce texte n'est pas un descripteur de quincaillerie.
+    unsupported_type: "Pas encore de banc d'essai pour le type « {{ type }} »."
+    parts_no_component: "Aucun composant : rien n'est posé de ce côté."
+    parts_same_as: "Le même composant que {{ slot }}."
+    parts_mirror_of: "Le composant de {{ slot }} en miroir (x inversé dans le repère de pose)."
+    parts_no_variant: Aucune variante pour cet essai.
+    part_name: Nom
+    variant_name: Nom de la variante
+    part_kind_none: Aucune
+    part_kind_skp: Fichier SKP
+    part_kind_primitives: Primitives
+    part_kind_same_as: "Même que {{ slot }}"
+    part_same_as: "La même pièce que {{ slot }}, dans son propre repère."
+    primitive_cylinders: "{{ count }} cylindre"
+    primitive_cylinders_plural: "{{ count }} cylindres"
+    primitive_oblongs: "{{ count }} oblong"
+    primitive_oblongs_plural: "{{ count }} oblongs"
+    primitive_drillings: "{{ count }} perçage"
+    primitive_drillings_plural: "{{ count }} perçages"
+    primitive_mortises: "{{ count }} mortaise"
+    primitive_mortises_plural: "{{ count }} mortaises"
+    primitive_none: Aucune primitive
+    edit_in_json: Modifier dans l'onglet JSON
+    chip_bundled: Bibliothèque OCL
+    chip_user: Ma Bibliothèque
+    chip_loading: Chargement…
+    chip_missing: Fichier absent
+    chip_no_folder: Choisissez d'abord un dossier de Ma Bibliothèque
+    chip_imported: Importé · à enregistrer
+    chip_placed: Placement à enregistrer
+    chip_edited: Modifié · à enregistrer
+    choose_file: Choisir un fichier…
+    replace_file: Remplacer le fichier…
+    edit_in_sketchup: Modifier dans SketchUp
+    create_in_sketchup: Créer dans SketchUp
+    shaping: "{{ name }} est ouvert dans SketchUp"
+    shaping_help: Modifiez la pièce dans le modèle, sur le banc d'essai. Ses axes sont son repère de pose. Terminez pour la reprendre ici, le banc quitte alors le modèle.
+    finish: Terminer
+    choose_skp: Choisir un fichier SKP
+    placement_orientation: Orientation
+    placement_mirror: Miroir X
+    placement_translation: Déplacement
+    placement_center: "Centrer en {{ axis }}"
+    placement_reset: Réinitialiser
+    placement_help: Appliqué au fichier SKP à l'enregistrement, le JSON ne garde aucune transformation. Face d'appui à z = 0, corps vers −Z.
+    no_settings: |
+      Aucun réglage.
+      Dans le JSON, écrivez une variable en objet pour la proposer ici : `"diameter": { "value": "8mm", "label": "Diamètre" }`
+    error:
+      unresolved_variable: "Utilise @{{ name }}, non calculée"
+      not_a_length: N'est pas une longueur
+      invalid_json: "JSON invalide, ligne {{ line }} : {{ error }}"
+      file_not_found: "Fichier introuvable : {{ ref }}"
+      file_not_readable: "Impossible de lire {{ ref }} : {{ error }}"
+      readonly: La Bibliothèque OCL est en lecture seule
+      invalid_ref: "Emplacement invalide : {{ ref }}"
+      file_exists: "Un fichier existe déjà à cet emplacement : {{ ref }}. Changez le nom du fichier."
+      invalid_file_name: "Nom de fichier invalide : {{ name }}"
+      invalid_descriptor: "Le descripteur n'est pas valide : {{ error }}"
+      skp_is_open_model: "{{ name }} est le modèle ouvert dans SketchUp : il ne peut pas se charger lui-même. Ouvrez un autre modèle pour le choisir."
+      skp_not_written: "Impossible d'écrire {{ ref }} : {{ error }}"
+      not_saved: "Enregistrement impossible : {{ error }}"
+      edit_failed: "Impossible de modifier la pièce dans SketchUp : {{ error }}"
+      not_deleted: "Suppression impossible : {{ error }}"
+      edit_lost: La pièce n'est plus dans le modèle, la modification est perdue.
 tab:
   cutlist:
     label: Débit
@@ -2753,6 +2849,8 @@ tool:
   # TODO: It's currently just for dev purposes
   smart_join:
     title: Assembler
+    hardware_edit: Modifier cette quincaillerie
+    hardware_view: Voir cette quincaillerie (Bibliothèque OCL, lecture seule)
     action_0: Ajouter des connecteurs
     action_0_status: Ajouter des connecteurs pour assembler des pièces
     action_0_state_1_status: Cliquez sur la face de référence d'une pièce pour ajouter des connecteurs avec les pièces voisines en contact
