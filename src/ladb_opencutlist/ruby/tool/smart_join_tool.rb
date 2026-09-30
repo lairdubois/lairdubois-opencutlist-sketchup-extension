@@ -2495,12 +2495,10 @@ module Ladb::OpenCutList
     end
 
     def onToolUserText(tool, text, view)
-      return true if super
-
       return true if _read_free_position(tool, text, view)
       return true if _read_measures(tool, text, view)
 
-      false
+      super
     end
 
     # -----
@@ -4054,12 +4052,10 @@ module Ladb::OpenCutList
     # -----
 
     def onToolUserText(tool, text, view)
-      return true if super
-
       return true if _read_free_position(tool, text, view)
       return true if _read_measures(tool, text, view)
 
-      false
+      super
     end
 
     def onToolLButtonUp(tool, flags, x, y, view)
