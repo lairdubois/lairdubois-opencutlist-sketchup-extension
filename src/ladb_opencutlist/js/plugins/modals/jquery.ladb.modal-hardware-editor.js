@@ -39,9 +39,10 @@
         mirror: [ -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 ]
     };
 
-    // A new descriptor of the given type : empty, its slots to fill.
+    // A new descriptor of the given type : empty, its slots to fill - a
+    // hinge prefilled, see fnNewHingeComponents.
     const fnNewDescriptor = function (type) {
-        return {
+        const descriptor = {
             format: 'ocl-hardware',
             version: 1,
             id: fnUuid(),
@@ -52,6 +53,52 @@
             components: {
                 a: {},
                 b: {}
+            }
+        };
+        if (type === 'hinge') {
+            descriptor.components = fnNewHingeComponents();
+            descriptor.options = { start_offset: '100mm', end_offset: '100mm', max_spacing: '800mm' };
+        }
+        return descriptor;
+    };
+
+    // The components of a new hinge : a 35 mm cup hinge - valid, to be laid
+    // and removed as it is - whose variants set the cup by the kind of door
+    // - its y, the joint line 0 - and a plate at 37 mm from the side's front.
+    // Its pivot is left to fill : the door can't turn until it is.
+    const fnNewHingeComponents = function () {
+        const fnCup = function (y, screwsY) {
+            return {
+                hardware: { cylinders: [ { y: y, diameter: '35mm', from: '-11.5mm', to: '0mm' } ] },
+                machining: {
+                    drillings: [
+                        { y: y, diameter: '35mm', depth: '13mm' },
+                        { x: '-22.5mm', y: screwsY, diameter: '8mm', depth: '13mm' },
+                        { x: '22.5mm', y: screwsY, diameter: '8mm', depth: '13mm' }
+                    ]
+                }
+            };
+        };
+        return {
+            a: {
+                attributes: { hinge_max_angle: 110 },
+                variants: {
+                    select: { by: 'hinge_kind' },
+                    fallback: 'overlay',
+                    items: {
+                        overlay: fnCup('-6.5mm', '-16mm'),
+                        half_overlay: fnCup('-16mm', '-25.5mm'),
+                        inset: fnCup('-24.5mm', '-34mm')
+                    }
+                }
+            },
+            b: {
+                machining: {
+                    drillings: [
+                        { x: '-16mm', y: '37mm', diameter: '5mm', depth: '12mm' },
+                        { x: '16mm', y: '37mm', diameter: '5mm', depth: '12mm' }
+                    ]
+                }
             }
         };
     };
@@ -298,7 +345,8 @@
                     label: solid.slot.toUpperCase() + ' · ' + i18next.t('core.hardware_editor.solid_' + solid.kind, solid.texts)
                 });
             }),
-            skps: this.benchSkps()
+            skps: this.benchSkps(),
+            hinge: this.response.hinge || null
         };
         const $threeViewer = $('.ladb-three-viewer', this.$viewer);
         if ($threeViewer.length === 0) {
@@ -594,6 +642,15 @@
         const $threeViewer = $('.ladb-three-viewer', this.$viewer);
         if ($threeViewer.length > 0 && $threeViewer.data('ladb.threeviewer').loaded) {
             $threeViewer.ladbThreeViewer('callCommand', [ 'show_bench_measure', { measure: measure } ]);
+        }
+    };
+
+    // The cotes of the hinge's axis in the viewer - its pivot row hovered or
+    // edited - or none.
+    LadbModalHardwareEditor.prototype.showBenchHingeCotes = function (visible) {
+        const $threeViewer = $('.ladb-three-viewer', this.$viewer);
+        if ($threeViewer.length > 0 && $threeViewer.data('ladb.threeviewer').loaded) {
+            $threeViewer.ladbThreeViewer('callCommand', [ 'show_bench_hinge_cotes', { visible: visible } ]);
         }
     };
 
@@ -933,6 +990,17 @@
         if (this.readonly) {
             $('input', $pivot).prop('disabled', true);
         }
+        // Hovered or edited : where it is on the bench
+        let pivotHovered = false;
+        let pivotFocused = false;
+        const fnShowCotes = function () {
+            that.showBenchHingeCotes(pivotHovered || pivotFocused);
+        };
+        $pivot
+            .on('mouseenter', function () { pivotHovered = true; fnShowCotes(); })
+            .on('mouseleave', function () { pivotHovered = false; fnShowCotes(); })
+            .on('focusin', function () { pivotFocused = true; fnShowCotes(); })
+            .on('focusout', function () { pivotFocused = false; fnShowCotes(); });
         fnRow('hinge_pivot', $pivot);
 
         // A multi-link hinge, whose axis moves while it opens

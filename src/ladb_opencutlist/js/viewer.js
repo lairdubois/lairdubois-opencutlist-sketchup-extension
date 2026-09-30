@@ -224,6 +224,8 @@ let renderer,
     benchHoveredMesh,
     benchHoveredDimensions,
     benchMeasureDimension,
+    benchHingeDef,
+    benchHingeDimensions,
     benchRaycaster
 ;
 
@@ -356,6 +358,10 @@ const fnAddListeners = function () {
 
                 case 'show_bench_measure':
                     fnShowBenchMeasure(call.params.measure);
+                    break;
+
+                case 'show_bench_hinge_cotes':
+                    fnShowBenchHingeCotes(call.params.visible);
                     break;
 
                 case 'set_zoom':
@@ -1165,6 +1171,12 @@ const BENCH_AXIS_COLORS = { x: 0xff000f, y: 0x00bb00, z: 0x0032ff };   // As Ske
 const BENCH_DIMENSION_HEAD_LENGTH = 3 / 25.4;
 const BENCH_DIMENSION_RENDER_ORDER = 999;
 const BENCH_MEASURE_DARKEN = 0.4;   // Its panel's pin color darkened, to be seen over the panels
+const BENCH_HINGE_COLOR = 0xd9368f;
+const BENCH_HINGE_DOOR_OPACITY = 0.12;
+const BENCH_HINGE_AXIS_RADIUS = 0.75 / 25.4;
+const BENCH_HINGE_AXIS_OVERRUN = 15 / 25.4;   // Past the door, at each end
+const BENCH_HINGE_AXIS_DASH = 6 / 25.4;
+const BENCH_HINGE_ARC_SEGMENTS = 48;
 
 const fnCreateBenchSolidGeometry = function (solidDef) {
 
@@ -1406,6 +1418,95 @@ const fnOnBenchPointerMove = function (event) {
     fnHoverBenchSolid(intersects.length > 0 ? intersects[0].object : null);
 };
 
+// The door turning on its hinge - see HardwareBenchComputeWorker#_hinge - :
+// the axis - dashed when it only stands in for a moving one - the door at
+// its widest opening, and the arcs its hinged edge sweeps to get there, at
+// its end toward -X.
+const fnAddBenchHinge = function (parent, hingeDef, doorPanelDef) {
+
+    const origin = new THREE.Vector3().fromArray(hingeDef.origin);
+    const axis = new THREE.Vector3().fromArray(hingeDef.axis).normalize();
+    const angle = THREE.MathUtils.degToRad(hingeDef.max_angle);
+    const fnRotation = function (a) {
+        return new THREE.Matrix4().makeTranslation(origin.x, origin.y, origin.z)
+            .multiply(new THREE.Matrix4().makeRotationAxis(axis, a))
+            .multiply(new THREE.Matrix4().makeTranslation(-origin.x, -origin.y, -origin.z));
+    };
+    const material = new THREE.MeshBasicMaterial({ color: BENCH_HINGE_COLOR });
+    const lineMaterial = new THREE.LineBasicMaterial({ color: BENCH_HINGE_COLOR });
+
+    const min = doorPanelDef ? new THREE.Vector3().fromArray(doorPanelDef.min) : origin.clone();
+    const max = doorPanelDef ? new THREE.Vector3().fromArray(doorPanelDef.max) : origin.clone();
+    const corners = [];
+    for (let i = 0; i < 8; i++) {
+        corners.push(new THREE.Vector3(i & 1 ? max.x : min.x, i & 2 ? max.y : min.y, i & 4 ? max.z : min.z));
+    }
+
+    // The axis, along the door
+    let start = Infinity, end = -Infinity;
+    for (const corner of corners) {
+        const t = corner.clone().sub(origin).dot(axis);
+        start = Math.min(start, t);
+        end = Math.max(end, t);
+    }
+    start -= BENCH_HINGE_AXIS_OVERRUN;
+    end += BENCH_HINGE_AXIS_OVERRUN;
+    const dash = hingeDef.approximate ? BENCH_HINGE_AXIS_DASH : end - start;
+    const orientation = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), axis);
+    for (let t = start; t < end - 1e-9; t += dash * 2) {
+        const length = Math.min(dash, end - t);
+        const cylinder = new THREE.Mesh(new THREE.CylinderGeometry(BENCH_HINGE_AXIS_RADIUS, BENCH_HINGE_AXIS_RADIUS, length, 12), material);
+        cylinder.quaternion.copy(orientation);
+        cylinder.position.copy(origin).addScaledVector(axis, t + length / 2);
+        parent.add(cylinder);
+    }
+
+    if (!doorPanelDef) return;
+
+    // The door, wide open
+    const size = max.clone().sub(min);
+    const geometry = new THREE.BoxGeometry(size.x, size.y, size.z);
+    geometry.translate(min.x + size.x / 2, min.y + size.y / 2, min.z + size.z / 2);
+    geometry.applyMatrix4(fnRotation(angle));
+    parent.add(new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({
+        side: THREE.DoubleSide,
+        color: BENCH_HINGE_COLOR,
+        transparent: true,
+        opacity: BENCH_HINGE_DOOR_OPACITY,
+        depthWrite: false,
+    })));
+    parent.add(new THREE.LineSegments(new THREE.EdgesGeometry(geometry, 30), lineMaterial));
+
+    // The arcs of its hinged edge - toward +Y - at its end toward -X
+    for (const corner of corners.filter(function (c) { return c.x === min.x && c.y === max.y; })) {
+        const points = [];
+        for (let i = 0; i <= BENCH_HINGE_ARC_SEGMENTS; i++) {
+            points.push(corner.clone().applyMatrix4(fnRotation(angle * i / BENCH_HINGE_ARC_SEGMENTS)));
+        }
+        parent.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(points), lineMaterial));
+    }
+
+};
+
+// The position of the hinge's axis - its pivot row hovered - : its y and
+// z in the frame of the hardware, from its origin. false : hidden.
+const fnShowBenchHingeCotes = function (visible) {
+    if (benchHingeDimensions) {
+        fnRemoveBenchObject(benchHingeDimensions);
+        benchHingeDimensions = null;
+    }
+    if (bench && visible && benchHingeDef) {
+        const cotes = benchHingeDef.cotes;
+        const origin = new THREE.Vector3().fromArray(cotes.origin);
+        const y = new THREE.Vector3().fromArray(cotes.y);
+        benchHingeDimensions = new THREE.Group();
+        fnAddBenchDimension(benchHingeDimensions, origin, y, benchHingeDef.texts.y, BENCH_AXIS_COLORS.y);
+        fnAddBenchDimension(benchHingeDimensions, y, new THREE.Vector3().fromArray(cotes.position), benchHingeDef.texts.z, BENCH_AXIS_COLORS.z);
+        bench.add(benchHingeDimensions);
+    }
+    fnRender();
+};
+
 // The cote of a measure of the joint - its row hovered - : { slot, from,
 // to, text }, points of the bench frame - see HardwareBenchDef#measure_cotes.
 // null : none.
@@ -1439,6 +1540,7 @@ const fnSetupBench = function (benchDef) {
     // No more hovered solid : its label hidden
     fnHoverBenchSolid(null);
     fnShowBenchMeasure(null);
+    fnShowBenchHingeCotes(false);
 
     // Drop the previous bench
     if (bench) {
@@ -1507,6 +1609,12 @@ const fnSetupBench = function (benchDef) {
         edgesGeometry.setAttribute('position', new THREE.Float32BufferAttribute(skpDef.edges, 3));
         group.add(new THREE.LineSegments(edgesGeometry, lineMaterial));
         bench.add(group);
+    }
+
+    // The door turning on its hinge
+    benchHingeDef = benchDef.hinge || null;
+    if (benchHingeDef) {
+        fnAddBenchHinge(bench, benchHingeDef, (benchDef.panels || []).find(function (panelDef) { return panelDef.slot === 'a'; }));
     }
 
     // Shown as the bench says - its frame turned

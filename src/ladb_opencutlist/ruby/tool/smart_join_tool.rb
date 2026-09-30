@@ -1020,9 +1020,7 @@ module Ladb::OpenCutList
     def _write_hardware_attributes(definition, slot)
       return unless definition.is_a?(Sketchup::ComponentDefinition)
       return if (component = _get_hardware_component(slot)).nil?
-      component.attributes.each do |name, value|
-        definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, name, value) unless definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, name) == value
-      end
+      _write_component_attributes(definition, component)
       definition.description = component.description if component.description.is_a?(String) && definition.description != component.description
       unless component.price.nil?
         price = component.price.is_a?(Numeric) ? component.price.round(4).to_s : component.price.to_s
@@ -1646,7 +1644,7 @@ module Ladb::OpenCutList
       model = Sketchup.active_model
       dimensions = _get_primitives_dimensions(geometry.primitives, placement, geometry.part == :hardware)
       return nil if dimensions.empty?
-      key = "#{geometry.part}:#{dimensions.to_json}"
+      key = _get_geometry_definition_key(geometry, dimensions)
       name = _get_hardware_definition_name(geometry.slot, geometry.part)
 
       definition = model.definitions.find { |d| d.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, HardwareDescriptorDef::DEFINITION_ATTRIBUTE_PRIMITIVES) == key }
@@ -1672,6 +1670,21 @@ module Ladb::OpenCutList
       _name_hardware_definition(model, definition, name)
       _write_hardware_attributes(definition, geometry.slot) if geometry.part == :hardware
       definition
+    end
+
+    # Writes the "attributes" of the given resolved component in the OCL
+    # dictionary of the given definition.
+    def _write_component_attributes(definition, component)
+      component.attributes.each do |name, value|
+        definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, name, value) unless definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, name) == value
+      end
+    end
+
+    # The key the definition generated from the given primitives - resolved
+    # as the given dimensions - is found by : shared by any geometry of the
+    # same part and dimensions.
+    def _get_geometry_definition_key(geometry, dimensions)
+      "#{geometry.part}:#{dimensions.to_json}"
     end
 
     # A solid along Z, from z_min to z_max : a cylinder, or a slot with round
@@ -4316,12 +4329,12 @@ module Ladb::OpenCutList
     # hinge's role - the others lie on the same joint line, so on the same axis.
     def _preview_door_opening(propagation_def, geometries_def)
 
-      [ [ :a, geometries_def.hardware_a ], [ :b, geometries_def.hardware_b ] ].each do |role, hardware|
-        next if hardware.empty?
+      [ :a, :b ].each do |role|
+        next if (geometry = _get_hinge_geometry(geometries_def, role)).nil?
 
         placement = propagation_def.placements.find { |p| p.role == role && !p.seed_transformation.nil? }
         next if placement.nil?
-        next if (hinge_def = DoorHingeDef.from_definition(hardware.definition, placement.transformation)).nil?
+        next if (hinge_def = _get_preview_hinge_def(geometry, placement)).nil?
         next if (drawing_def = _get_door_drawing_def(placement.definition)).nil?
 
         # Door definition space -> world, from closed to wide open
@@ -4329,6 +4342,32 @@ module Ladb::OpenCutList
 
       end
 
+    end
+
+    # The geometry of the given slot bearing the hinge's attributes - see
+    # DoorDef - nil when that slot lays no hinge : its hardware, when its
+    # SKP or its descriptor gives it the hinge role.
+    def _get_hinge_geometry(geometries_def, slot)
+      hardware = slot == :a ? geometries_def.hardware_a : geometries_def.hardware_b
+      return nil if hardware.empty?
+      return hardware if DefinitionAttributes.role_of(hardware.definition) == DefinitionAttributes::ROLE_HINGE
+      component = _get_hardware_component(slot)
+      !component.nil? && DefinitionAttributes.valid_role(component.attributes['role']) == DefinitionAttributes::ROLE_HINGE ? hardware : nil
+    end
+
+    # The hinge the given geometry will be, laid at the given placement : its
+    # kinematics as they will be written - the descriptor's over those of its
+    # SKP - and its transformation as it will be laid - mirrored, shifted by
+    # its offset. nil when they lack a valid pivot or max angle.
+    def _get_preview_hinge_def(geometry, placement)
+      attributes = {}
+      if geometry.definition.is_a?(Sketchup::ComponentDefinition) && (dictionary = geometry.definition.attribute_dictionary(Plugin::ATTRIBUTE_DICTIONARY))
+        attributes = dictionary.to_h
+      end
+      component = _get_hardware_component(geometry.slot)
+      attributes = attributes.merge(component.attributes) unless component.nil?
+      transformation = placement.transformation * _get_geometry_mirror_transformation(geometry) * Geom::Transformation.translation([ 0, 0, _get_geometry_offset(geometry, placement) ])
+      DoorHingeDef.from_attributes(attributes, transformation)
     end
 
     # -----
@@ -4891,13 +4930,60 @@ module Ladb::OpenCutList
       @hinge_forced_make_unique == true || super
     end
 
-    # The hardware of A is the hinge : it bears the hinge role whatever its
+    # The hardware of A is the hinge.
+    def _write_hardware_attributes(definition, slot)
+      super
+      _write_hinge_attributes(definition) if slot == :a
+    end
+
+    # A hinge without hardware : the machining of A stands in for it, bearing
+    # the hinge's attributes - in a definition of its own when it is given as
+    # primitives, one of them being otherwise shared by any fitting drilled
+    # the same.
+    def _get_geometry_definition(geometry, placement, material = nil)
+      definition = super
+      if definition.is_a?(Sketchup::ComponentDefinition) && _hinge_machining?(geometry)
+        _write_component_attributes(definition, _get_hardware_component(:a))
+        _write_hinge_attributes(definition)
+      end
+      definition
+    end
+
+    # The geometry bearing the hinge's attributes - its hardware, or its
+    # machining without one - is found by them too : two hinges drilled the
+    # same may turn differently.
+    def _get_geometry_definition_key(geometry, dimensions)
+      return super unless geometry.slot == :a && (geometry.part == :hardware || _hinge_machining?(geometry))
+      "#{DefinitionAttributes::ROLE_HINGE}:#{_get_hardware_component(:a).attributes.to_json}:#{super}"
+    end
+
+    # The hardware of the hinge given as primitives is generated as they
+    # give it, not centered : its kinematics are given in that frame - the
+    # one the bench shows them in.
+    def _get_primitives_offset(primitives, placement)
+      return 0.0 if primitives == _get_hardware_component_primitives(:a, :hardware)
+      super
+    end
+
+    # A is the hinge : its hardware, or its machining without one.
+    def _get_hinge_geometry(geometries_def, slot)
+      return super unless slot == :a
+      geometries_def.hardware_a.empty? ? (geometries_def.machining_a.empty? ? nil : geometries_def.machining_a) : geometries_def.hardware_a
+    end
+
+    # Is the given geometry the machining of a hinge without hardware ?
+    def _hinge_machining?(geometry)
+      return false unless geometry.slot == :a && geometry.part == :machining
+      component = _get_hardware_component(:a)
+      !component.nil? && component.hardware.nil?
+    end
+
+    # The given definition is a hinge : it bears the hinge role whatever its
     # descriptor or its SKP say - what DoorDef finds the hinges of a door by.
     # Its pivot lengths without a unit are in the unit of the model it is
     # laid in : they are given it, to read the same wherever it goes.
-    def _write_hardware_attributes(definition, slot)
-      super
-      return unless slot == :a && definition.is_a?(Sketchup::ComponentDefinition)
+    def _write_hinge_attributes(definition)
+      return unless definition.is_a?(Sketchup::ComponentDefinition)
       DefinitionAttributes.write_role(definition, DefinitionAttributes::ROLE_HINGE) unless DefinitionAttributes.role_of(definition) == DefinitionAttributes::ROLE_HINGE
       pivot = definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, DoorDef::HINGE_ATTRIBUTE_PIVOT)
       unless HardwareDescriptorDef.hinge_pivot(pivot).nil?
@@ -5000,10 +5086,10 @@ module Ladb::OpenCutList
     # run along - parallel to their joint lines, nearest their origins - nil
     # when the door has none yet.
     def _get_hinged_edge(edges)
-      return nil if (door_def = DoorDef.from(@active_part_entity_path_a.last)).nil?
+      return nil if (hinges = DoorDef.hinge_instances(@active_part_entity_path_a.last)).empty?
 
       t = PathUtils.get_transformation(@active_part_entity_path_a, IDENTITY)
-      hinge_transformations = door_def.hinge_defs.map { |hinge_def| t * hinge_def.instance.transformation }
+      hinge_transformations = hinges.map { |hinge| t * hinge.transformation }
       direction = hinge_transformations.first.xaxis
       edges.select { |p1, p2| p1.vector_to(p2).parallel?(direction) }.min_by { |p1, p2|
         hinge_transformations.map { |ht| ht.origin.distance_to_line([ p1, p2 ]) }.max
@@ -5368,8 +5454,7 @@ module Ladb::OpenCutList
     def _is_door_hinged_on_several_edges?(placements)
       placements.select { |placement| placement.role == :a }.group_by(&:definition).any? do |definition, door_placements|
         transformations = door_placements.map(&:transformation)
-        door_def = DoorDef.from(definition)
-        transformations += door_def.hinge_defs.map { |hinge_def| hinge_def.instance.transformation } unless door_def.nil?
+        transformations += DoorDef.hinge_instances(definition).map(&:transformation)
         line = [ transformations.first.origin, transformations.first.xaxis ]
         transformations.any? { |t| !t.xaxis.parallel?(line[1]) || t.origin.distance_to_line(line).to_f > DoorDef::AXIS_TOLERANCE.to_f }
       end
@@ -5792,7 +5877,7 @@ module Ladb::OpenCutList
     def _can_activate_part?(part_entity_path, part)
       can_activate, error_key, error_vars = super
       return [ can_activate, error_key, error_vars ] unless can_activate
-      return [ false, 'tool.smart_join.error.no_hinge_to_remove' ] if part_entity_path.is_a?(Array) && DoorDef.from(part_entity_path.last).nil?   # Nil path : a reset, always allowed
+      return [ false, 'tool.smart_join.error.no_hinge_to_remove' ] if part_entity_path.is_a?(Array) && DoorDef.hinge_instances(part_entity_path.last).empty?   # Nil path : a reset, always allowed
       true
     end
 
@@ -5831,12 +5916,12 @@ module Ladb::OpenCutList
       return @hinge_joints[key] if @hinge_joints.key?(key)
 
       joints = []
-      if (door_def = DoorDef.from(@active_part_entity_path_a.last))
+      unless (hinges = DoorDef.hinge_instances(@active_part_entity_path_a.last)).empty?
 
         t = PathUtils.get_transformation(@active_part_entity_path_a, IDENTITY)
 
-        door_def.hinge_defs.each do |hinge_def|
-          next if (hinge = hinge_def.instance).nil?
+        # Whether they make it a door or not : a hinge without kinematics is removed too
+        hinges.each do |hinge|
           next if (face = _get_hinge_face(hinge)).nil?
 
           ht = t * hinge.transformation
@@ -5848,7 +5933,8 @@ module Ladb::OpenCutList
             joint = HingeJointDef.new(FaceManipulator.new(face, t), nil, nil, nil, direction, [], false)
             joints << joint
           end
-          joint.anchors << anchor
+          # Once per anchor : a hinge's hardware and its machining may both bear the role
+          joint.anchors << anchor if joint.anchors.none? { |a| a.distance(anchor).to_f < HINGE_ANCHOR_TOLERANCE.to_f }
 
         end
 

@@ -185,13 +185,15 @@ module Ladb::OpenCutList
           :mirror => component.mirror ? true : false,
         }
       }
+      hardware_z_offset = component.z_offset.nil? ? 0.0 : HardwareDescriptorDef.to_length(component.z_offset, true, variables) || 0.0
+      if bench_def.hinge? && slot == 'a'
+        # Borne by its hardware - whether its file is found or not
+        response[:hinge] = _hinge(component, _multiply(slot_matrix, _multiply(mirror, _translation(0, 0, hardware_z_offset))))
+      end
       HardwareDescriptorDef::PARTS.each do |part|
         value = component.send(part)
         next if value.nil?
-        z_offset = 0.0
-        if part == HardwareDescriptorDef::PART_HARDWARE && !component.z_offset.nil?
-          z_offset = HardwareDescriptorDef.to_length(component.z_offset, true, variables) || 0.0
-        end
+        z_offset = part == HardwareDescriptorDef::PART_HARDWARE ? hardware_z_offset : 0.0
         part_matrix = _multiply(slot_matrix, _multiply(mirror, _translation(0, 0, z_offset)))
         if HardwareDescriptorDef.primitives?(value)
           cylinders = HardwareDescriptorDef.primitive_cylinders(value, variables)
@@ -232,6 +234,35 @@ module Ladb::OpenCutList
           response[:skps] << { :slot => slot, :part => part, :ref => value, :variant => component.variant, :transformation => part_matrix }
         end
       end
+    end
+
+    # The axis the door turns around - see DoorHingeDef - given by the
+    # kinematics of the hinge in the frame of its hardware, the given
+    # matrix : { :origin, :axis, :max_angle, :approximate, :cotes, :texts }
+    # in the bench frame, the door opening by a positive rotation around
+    # :axis. :cotes : from the origin of the hardware to the axis, as its y
+    # and z give it. nil when its kinematics are incomplete.
+    def _hinge(component, matrix)
+      attributes = component.attributes
+      max_angle = attributes[HardwareDescriptorDef::ATTRIBUTE_HINGE_MAX_ANGLE]
+      pivot = HardwareDescriptorDef.hinge_pivot(attributes[HardwareDescriptorDef::ATTRIBUTE_HINGE_PIVOT])
+      return nil if pivot.nil? || !HardwareDescriptorDef.hinge_max_angle?(max_angle)
+      y, z = pivot
+      origin = _apply(matrix, [ 0.0, y, z ])
+      axis = _cross(matrix[4, 3], matrix[8, 3])
+      norm = Math.sqrt(axis.inject(0) { |sum, v| sum + v * v })
+      {
+        :origin => origin,
+        :axis => axis.map { |v| v / norm },
+        :max_angle => max_angle.to_f,
+        :approximate => attributes[HardwareDescriptorDef::ATTRIBUTE_HINGE_PIVOT_APPROXIMATE] == true,
+        :cotes => { :origin => _apply(matrix, [ 0.0, 0.0, 0.0 ]), :y => _apply(matrix, [ 0.0, y, 0.0 ]), :position => origin },
+        :texts => { :y => _text(y), :z => _text(z) },
+      }
+    end
+
+    def _cross(u, v)
+      [ u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0] ]
     end
 
     # The message of the given parse error : its first line, short - an old

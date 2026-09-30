@@ -51,13 +51,34 @@ module Ladb::OpenCutList
     # Only the hinges glued DIRECTLY into the definition count : that is where
     # SmartJoinTool lays them, next to the faces of the part.
     def self.from(entity)
-      definition = entity.respond_to?(:definition) ? entity.definition : entity
-      return nil unless definition.is_a?(Sketchup::ComponentDefinition)
-
-      hinge_defs = definition.entities.grep(Sketchup::ComponentInstance).map { |instance| DoorHingeDef.from(instance) }.compact
+      hinge_defs = hinge_instances(entity).map { |instance| DoorHingeDef.from(instance) }.compact
       return nil if hinge_defs.empty?
 
-      DoorDef.new(definition, hinge_defs)
+      DoorDef.new(hinge_defs.first.instance.parent, hinge_defs)
+    end
+
+    # The hinges glued into the given definition - or instance, read through
+    # its definition - whether their kinematics make it a door or not : what
+    # SmartJoinTool lays and removes. Each is the entity laid in the fitting
+    # frame : a ComponentInstance bearing ROLE_HINGE, or the Group wrapping
+    # one SmartJoinTool lays off that frame - a hardware with a z_offset, see
+    # SmartJoinActionHandler#_add_geometry.
+    def self.hinge_instances(entity)
+      definition = entity.respond_to?(:definition) ? entity.definition : entity
+      return [] unless definition.is_a?(Sketchup::ComponentDefinition)
+      definition.entities.select { |e| !hinge_frame(e).nil? }
+    end
+
+    # The hinge definition the given hinge entity - see hinge_instances - lays,
+    # and the transformation it lays it with in its parent : [ definition,
+    # transformation ], nil when it is no hinge.
+    def self.hinge_frame(entity)
+      fn_hinge = lambda { |e| e.is_a?(Sketchup::ComponentInstance) && DefinitionAttributes.role_of(e.definition) == DefinitionAttributes::ROLE_HINGE }
+      return [ entity.definition, entity.transformation ] if fn_hinge.call(entity)
+      return nil unless entity.is_a?(Sketchup::Group)
+      inner = entity.entities.select(&fn_hinge)
+      return nil unless inner.length == 1
+      [ inner.first.definition, entity.transformation * inner.first.transformation ]
     end
 
     # -- Opening state --
@@ -136,6 +157,7 @@ module Ladb::OpenCutList
            .flat_map(&:instances)
            .map(&:parent)
            .grep(Sketchup::ComponentDefinition)
+           .flat_map { |definition| definition.group? ? definition.instances.map(&:parent).grep(Sketchup::ComponentDefinition) : [ definition ] }   # Through the wrapper of a hinge laid off its frame
            .uniq
            .flat_map(&:instances)
            .select { |instance| open?(instance) }
@@ -206,31 +228,39 @@ module Ladb::OpenCutList
   # coordinates - or in whatever space the frame it is built from is given.
   class DoorHingeDef < DataContainer
 
-    attr_reader :instance,   # Sketchup::ComponentInstance, nil on a hinge only previewed
+    attr_reader :instance,   # The entity laid - see DoorDef.hinge_instances - nil on a hinge only previewed
                 :max_angle,  # Float, degrees
                 :pivot,      # Geom::Point3d, a point of the axis
                 :axis        # Geom::Vector3d, unit, along the axis, oriented to open by a positive rotation
 
-    # The hinge the given instance is, nil when its definition is no hinge or
-    # lacks a valid pivot or max angle.
+    # The hinge the given entity is - see DoorDef.hinge_instances - nil when it
+    # is no hinge or lacks a valid pivot or max angle.
     def self.from(instance)
-      return nil unless instance.is_a?(Sketchup::ComponentInstance)
-      from_definition(instance.definition, instance.transformation, instance)
+      return nil if (frame = DoorDef.hinge_frame(instance)).nil?
+      from_definition(frame[0], frame[1], instance)
     end
 
-    # The hinge the given definition would be once placed by the given fitting
-    # frame - what SmartJoinTool previews before gluing any instance - nil when
-    # it is no hinge or lacks a valid pivot or max angle.
+    # The hinge the given definition is once placed by the given
+    # transformation, nil when it is no hinge or lacks a valid pivot or max
+    # angle.
     def self.from_definition(definition, transformation, instance = nil)
       return nil unless definition.is_a?(Sketchup::ComponentDefinition)
       return nil unless DefinitionAttributes.role_of(definition) == DefinitionAttributes::ROLE_HINGE
+      dictionary = definition.attribute_dictionary(Plugin::ATTRIBUTE_DICTIONARY)
+      from_attributes(dictionary.nil? ? {} : dictionary.to_h, transformation, instance)
+    end
 
-      max_angle = definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, DoorDef::HINGE_ATTRIBUTE_MAX_ANGLE)
-      pivot = HardwareDescriptorDef.hinge_pivot(definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, DoorDef::HINGE_ATTRIBUTE_PIVOT))
+    # The hinge the given kinematics attributes - { 'hinge_max_angle' => …,
+    # … } - give once placed by the given transformation - what
+    # SmartJoinTool previews before laying any definition - nil when they
+    # lack a valid pivot or max angle.
+    def self.from_attributes(attributes, transformation, instance = nil)
+      max_angle = attributes[DoorDef::HINGE_ATTRIBUTE_MAX_ANGLE]
+      pivot = HardwareDescriptorDef.hinge_pivot(attributes[DoorDef::HINGE_ATTRIBUTE_PIVOT])
       return nil unless HardwareDescriptorDef.hinge_max_angle?(max_angle)
       return nil if pivot.nil?
 
-      approximate = definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, DoorDef::HINGE_ATTRIBUTE_PIVOT_APPROXIMATE) == true
+      approximate = attributes[DoorDef::HINGE_ATTRIBUTE_PIVOT_APPROXIMATE] == true
 
       DoorHingeDef.new(instance, transformation, max_angle.to_f, pivot[0], pivot[1], approximate)
     end
