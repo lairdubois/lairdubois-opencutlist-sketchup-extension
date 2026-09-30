@@ -15,8 +15,8 @@
     "make_unique": true,
     "distribution": "auto", /* ACTION_OPTION_DISTRIBUTION_AUTO */
     "hardware": "$OCL/connectors/festool/domino-5x30.json",
-    "hardware_material_name": null,
-    "machining_material_name": null,
+    "hardware_material_name": { "i18n": "tab.materials.type_5" },
+    "machining_material_name": { "i18n": "tab.materials.type_7" },
     "hardware_layer_name": null,
     "machining_layer_name": null
   },
@@ -32,8 +32,8 @@
     "make_unique": true,
     "distribution": "auto", /* ACTION_OPTION_DISTRIBUTION_AUTO */
     "hardware": null,
-    "hardware_material_name": null,
-    "machining_material_name": null,
+    "hardware_material_name": { "i18n": "tab.materials.type_5" },
+    "machining_material_name": { "i18n": "tab.materials.type_7" },
     "hardware_layer_name": null,
     "machining_layer_name": null
   },
@@ -49,8 +49,8 @@
     "make_unique": false,
     "distribution": "auto", /* ACTION_OPTION_DISTRIBUTION_AUTO */
     "hardware": "$OCL/hinges/blum/clip-top.json",
-    "hardware_material_name": null,
-    "machining_material_name": null,
+    "hardware_material_name": { "i18n": "tab.materials.type_5" },
+    "machining_material_name": { "i18n": "tab.materials.type_7" },
     "hardware_layer_name": null,
     "machining_layer_name": null
   },

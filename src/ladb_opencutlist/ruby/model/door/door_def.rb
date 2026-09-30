@@ -2,6 +2,7 @@ module Ladb::OpenCutList
 
   require_relative '../data_container'
   require_relative '../attributes/definition_attributes'
+  require_relative '../hardware/hardware_descriptor_def'
 
   # A DOOR : a part that turns on its hinges.
   #
@@ -17,17 +18,18 @@ module Ladb::OpenCutList
   # X along the joint line, +Y towards the hinged edge, +Z into the carcass,
   # the origin on the joint line on the door's back face.
   #  - 'hinge_max_angle' : Float, the widest opening in degrees ;
-  #  - 'hinge_pivot' : [ y, z ] Floats in mm, the fixed axis the door turns
-  #    around, parallel to X ;
+  #  - 'hinge_pivot' : [ y, z ] length Strings - "17mm" - the fixed axis the
+  #    door turns around, parallel to X - a length without a unit is in the
+  #    model's one ;
   #  - 'hinge_pivot_approximate' : true when that fixed axis only stands in for
   #    a multi-link hinge whose axis moves while it opens.
   #
   # Everything here is in the door DEFINITION's coordinates.
   class DoorDef < DataContainer
 
-    HINGE_ATTRIBUTE_MAX_ANGLE = 'hinge_max_angle'.freeze
-    HINGE_ATTRIBUTE_PIVOT = 'hinge_pivot'.freeze
-    HINGE_ATTRIBUTE_PIVOT_APPROXIMATE = 'hinge_pivot_approximate'.freeze
+    HINGE_ATTRIBUTE_MAX_ANGLE = HardwareDescriptorDef::ATTRIBUTE_HINGE_MAX_ANGLE
+    HINGE_ATTRIBUTE_PIVOT = HardwareDescriptorDef::ATTRIBUTE_HINGE_PIVOT
+    HINGE_ATTRIBUTE_PIVOT_APPROXIMATE = HardwareDescriptorDef::ATTRIBUTE_HINGE_PIVOT_APPROXIMATE
 
     # How far a door stands open is a state of each OCCURRENCE : it lives on
     # the INSTANCE, as [ angle, px, py, pz, vx, vy, vz ] Floats - the angle in
@@ -224,13 +226,13 @@ module Ladb::OpenCutList
       return nil unless DefinitionAttributes.role_of(definition) == DefinitionAttributes::ROLE_HINGE
 
       max_angle = definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, DoorDef::HINGE_ATTRIBUTE_MAX_ANGLE)
-      pivot = definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, DoorDef::HINGE_ATTRIBUTE_PIVOT)
-      return nil unless max_angle.is_a?(Numeric) && max_angle > 0
-      return nil unless pivot.is_a?(Array) && pivot.length == 2 && pivot.all? { |v| v.is_a?(Numeric) }
+      pivot = HardwareDescriptorDef.hinge_pivot(definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, DoorDef::HINGE_ATTRIBUTE_PIVOT))
+      return nil unless HardwareDescriptorDef.hinge_max_angle?(max_angle)
+      return nil if pivot.nil?
 
       approximate = definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, DoorDef::HINGE_ATTRIBUTE_PIVOT_APPROXIMATE) == true
 
-      DoorHingeDef.new(instance, transformation, max_angle.to_f, pivot[0].to_f.mm, pivot[1].to_f.mm, approximate)
+      DoorHingeDef.new(instance, transformation, max_angle.to_f, pivot[0], pivot[1], approximate)
     end
 
     def initialize(instance, transformation, max_angle, pivot_y, pivot_z, approximate)

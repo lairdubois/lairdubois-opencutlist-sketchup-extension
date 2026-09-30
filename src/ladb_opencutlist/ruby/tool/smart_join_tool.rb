@@ -741,7 +741,9 @@ module Ladb::OpenCutList
       if (descriptor = _get_hardware_descriptor_def) && (material = descriptor.hardware_material)
         return material
       end
-      @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_HARDWARE_MATERIAL_NAME)
+      name = @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_HARDWARE_MATERIAL_NAME)
+      return PLUGIN.get_i18n_string('tab.materials.type_5') if !name.is_a?(String) || name.strip.empty?
+      name
     end
 
     def _fetch_option_machining_material_name
@@ -4887,6 +4889,21 @@ module Ladb::OpenCutList
     # a door on more than one edge, see #_get_propagation_def.
     def _fetch_option_make_unique?
       @hinge_forced_make_unique == true || super
+    end
+
+    # The hardware of A is the hinge : it bears the hinge role whatever its
+    # descriptor or its SKP say - what DoorDef finds the hinges of a door by.
+    # Its pivot lengths without a unit are in the unit of the model it is
+    # laid in : they are given it, to read the same wherever it goes.
+    def _write_hardware_attributes(definition, slot)
+      super
+      return unless slot == :a && definition.is_a?(Sketchup::ComponentDefinition)
+      DefinitionAttributes.write_role(definition, DefinitionAttributes::ROLE_HINGE) unless DefinitionAttributes.role_of(definition) == DefinitionAttributes::ROLE_HINGE
+      pivot = definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, DoorDef::HINGE_ATTRIBUTE_PIVOT)
+      unless HardwareDescriptorDef.hinge_pivot(pivot).nil?
+        pivot_with_units = pivot.map { |value| DimensionUtils.get_unit_sign(value).nil? ? DimensionUtils.str_add_units(value, true) : value }
+        definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, DoorDef::HINGE_ATTRIBUTE_PIVOT, pivot_with_units) unless pivot_with_units == pivot
+      end
     end
 
     # -----

@@ -364,6 +364,18 @@ core:
     parts_no_variant: Aucune variante pour cet essai.
     part_name: Nom
     variant_name: Nom de la variante
+    hinge_kinematics: Cinématique de la charnière
+    hinge_kinematics_help: "Dans le repère de pose : Y vers le chant de rotation de la porte, Z vers le caisson, origine sur la face arrière de la porte."
+    hinge_kinematics_missing: "Sans angle max ni pivot, la porte ne pourra pas s'ouvrir."
+    hinge_max_angle: Angle max
+    hinge_pivot: Pivot
+    hinge_pivot_y: Y
+    hinge_pivot_z: Z
+    hinge_pivot_approximate: Approché
+    hinge_pivot_approximate_help: Charnière à axe mobile, le pivot n'en est qu'une approximation
+    hinge_scope_common: Commun à toutes les variantes
+    hinge_scope_variant: Propre à cette variante
+    hinge_apply_all: Appliquer à toutes les variantes
     part_kind_none: Aucune
     part_kind_skp: Fichier SKP
     part_kind_primitives: Primitives

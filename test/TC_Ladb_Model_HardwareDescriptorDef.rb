@@ -405,12 +405,12 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
 
   def test_attributes_merge_variant_over_component
     data = JSON.parse(JSON.generate(HINGE))
-    data['components']['a']['attributes'] = { 'role' => 'hinge', 'hinge_max_angle' => 110, 'hinge_pivot' => [ 0, 0 ] }
-    data['components']['a']['variants']['items']['inset']['attributes'] = { 'hinge_pivot' => [ -4, -26 ] }
+    data['components']['a']['attributes'] = { 'role' => 'hinge', 'hinge_max_angle' => 110, 'hinge_pivot' => [ '0mm', '0mm' ] }
+    data['components']['a']['variants']['items']['inset']['attributes'] = { 'hinge_pivot' => [ '-4mm', '-26mm' ] }
     descriptor = _def(data)
     assert(descriptor.valid?, descriptor.errors.inspect)
-    assert_equal({ 'role' => 'hinge', 'hinge_max_angle' => 110, 'hinge_pivot' => [ -4, -26 ] }, descriptor.resolve_component('a', 'hinge_kind' => 'inset').attributes)
-    assert_equal({ 'role' => 'hinge', 'hinge_max_angle' => 110, 'hinge_pivot' => [ 0, 0 ] }, descriptor.resolve_component('a', 'hinge_kind' => 'overlay').attributes)
+    assert_equal({ 'role' => 'hinge', 'hinge_max_angle' => 110, 'hinge_pivot' => [ '-4mm', '-26mm' ] }, descriptor.resolve_component('a', 'hinge_kind' => 'inset').attributes)
+    assert_equal({ 'role' => 'hinge', 'hinge_max_angle' => 110, 'hinge_pivot' => [ '0mm', '0mm' ] }, descriptor.resolve_component('a', 'hinge_kind' => 'overlay').attributes)
     assert_equal({}, descriptor.resolve_component('b').attributes)
   end
 
@@ -797,6 +797,50 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     assert_equal([ '@thickness_max_b - @thickness_min_b <= 0.2mm' ], descriptor.failed_asserts(fn.call(17, 19, 300)))   # Faces not parallel
     assert_equal([ '@embed <= @thickness_a - 3mm' ], descriptor.failed_asserts(fn.call(19, 19, 19)))   # Comes out of a
     assert_equal([ '@embed >= 15mm' ], descriptor.failed_asserts(fn.call(40, 40, 300)))                # Too short
+  end
+
+  # The kinematics of a hinge : optional, but checked when given - a pivot
+  # of length strings only, a number having no unit.
+  def test_hinge_kinematics
+    fn = lambda { |attributes| _with(HINGE, 'components' => HINGE['components'].merge('a' => HINGE['components']['a'].merge('attributes' => attributes))) }
+    descriptor = _def(fn.call('hinge_max_angle' => 110, 'hinge_pivot' => [ '17mm', '-29mm' ], 'hinge_pivot_approximate' => true))
+    assert(descriptor.valid?, descriptor.errors.inspect)
+    assert(_def(fn.call('hinge_pivot' => [ '0', '-1.5cm' ])).valid?)
+    _assert_error(fn.call('hinge_max_angle' => 0), "attribute 'hinge_max_angle' is not an angle in degrees")
+    _assert_error(fn.call('hinge_max_angle' => 270), "attribute 'hinge_max_angle' is not an angle in degrees")
+    _assert_error(fn.call('hinge_max_angle' => '110'), "attribute 'hinge_max_angle' is not an angle in degrees")
+    _assert_error(fn.call('hinge_pivot' => [ 17, -29 ]), "attribute 'hinge_pivot' is not two lengths")
+    _assert_error(fn.call('hinge_pivot' => [ '17mm' ]), "attribute 'hinge_pivot' is not two lengths")
+    _assert_error(fn.call('hinge_pivot' => [ '17mm', 'abc' ]), "attribute 'hinge_pivot' is not two lengths")
+    _assert_error(fn.call('hinge_pivot' => [ '@thickness_a', '0mm' ]), "attribute 'hinge_pivot' is not two lengths")
+    _assert_error(fn.call('hinge_pivot_approximate' => 'yes'), "attribute 'hinge_pivot_approximate' is not true or false")
+    # On a variant too, labelled by its path
+    variants = _with(HINGE, 'components' => HINGE['components'].merge('a' => HINGE['components']['a'].merge('variants' => HINGE['components']['a']['variants'].merge(
+      'items' => { 'overlay' => { 'hardware' => '$LIB/h.skp', 'attributes' => { 'hinge_pivot' => [ 1, 2 ] } } }))))
+    _assert_error(variants, "component 'a/overlay' attribute 'hinge_pivot' is not two lengths")
+  end
+
+  def test_hinge_pivot
+    pivot = HardwareDescriptorDef.hinge_pivot([ '17mm', '-2.9cm' ])
+    assert_in_delta(17 / 25.4, pivot[0], 1e-9)
+    assert_in_delta(-29 / 25.4, pivot[1], 1e-9)
+    assert_equal([ 0.0, 0.0 ], HardwareDescriptorDef.hinge_pivot([ '0mm', '0' ]))
+    assert_nil(HardwareDescriptorDef.hinge_pivot([ 17, -29 ]))
+    assert_nil(HardwareDescriptorDef.hinge_pivot('17mm'))
+    assert_nil(HardwareDescriptorDef.hinge_pivot(nil))
+  end
+
+  def test_bundled_hinges
+    dir = File.expand_path('../src/ladb_opencutlist/library/hinges', __dir__)
+    Dir.glob(File.join(dir, '**', '*.json')).each do |path|
+      descriptor = HardwareDescriptorDef.new(JSON.parse(File.read(path)))
+      assert(descriptor.valid?, "#{path} #{descriptor.errors.inspect}")
+      %w[overlay half_overlay inset].each do |kind|
+        attributes = descriptor.resolve_component('a', 'hinge_kind' => kind).attributes
+        assert(HardwareDescriptorDef.hinge_max_angle?(attributes['hinge_max_angle']), "#{path} #{kind} hinge_max_angle")
+        assert(!HardwareDescriptorDef.hinge_pivot(attributes['hinge_pivot']).nil?, "#{path} #{kind} hinge_pivot")
+      end
+    end
   end
 
   def test_bundled_dominos

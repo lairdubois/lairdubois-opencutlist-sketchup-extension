@@ -75,6 +75,23 @@
         return ref.substring(ref.lastIndexOf('/') + 1).replace(/\.json$/i, '');
     };
 
+    // The given value as JSON on one line, spaced as the descriptors are written.
+    const fnInlineJson = function (value) {
+        if (Array.isArray(value)) {
+            return value.length === 0 ? '[]' : '[ ' + value.map(fnInlineJson).join(', ') + ' ]';
+        }
+        if (value !== null && typeof value === 'object') {
+            const keys = Object.keys(value);
+            return keys.length === 0 ? '{}' : '{ ' + keys.map(function (key) { return JSON.stringify(key) + ': ' + fnInlineJson(value[key]); }).join(', ') + ' }';
+        }
+        return JSON.stringify(value);
+    };
+
+    // The given value if it is an object, else an empty one.
+    const fnObject = function (value) {
+        return value !== null && typeof value === 'object' && !Array.isArray(value) ? value : {};
+    };
+
     // The options of SmartJoin a descriptor of each type gives the defaults
     // of - its 'options' - by group, as the tool shows them.
     const TOOL_OPTION_GROUPS = {
@@ -705,6 +722,11 @@
                 $slot.append(this.renderPart(data, slot, path, target, part, slots));
             }
 
+            // A hinge : what the door turns by
+            if (this.response.type === 'hinge' && slot === 'a') {
+                this.renderHingeKinematics($slot, [ 'components', slot ], component, target === component ? null : path, target);
+            }
+
         }
 
     };
@@ -822,6 +844,147 @@
         }
 
         return $row;
+    };
+
+    // The kinematics of the hinge - see HardwareDescriptorDef::HINGE_ATTRIBUTES
+    // - of the component at the given path, and of its variant on the bench
+    // at the given path - null when it has no variants. What the variant
+    // doesn't give comes from the component ; what is typed goes to the
+    // variant, until applied to all.
+    LadbModalHardwareEditor.prototype.renderHingeKinematics = function ($slot, componentPath, component, variantPath, variant) {
+        const that = this;
+
+        const componentAttributes = fnObject(component.attributes);
+        const variantAttributes = variantPath === null ? componentAttributes : fnObject(variant.attributes);
+        const fnValue = function (name) {
+            return variantAttributes[name] !== undefined ? variantAttributes[name] : componentAttributes[name];
+        };
+        const fnSet = function (name, value) {
+            that.setHingeAttribute(componentPath, component, variantPath, name, value, false);
+        };
+
+        $slot
+            .append($('<div class="ladb-hardware-editor-slot-subtitle">').text(i18next.t('core.hardware_editor.hinge_kinematics')))
+            .append($('<div class="ladb-hardware-editor-slot-note">').text(i18next.t('core.hardware_editor.hinge_kinematics_help')));
+        if (fnValue('hinge_max_angle') === undefined || fnValue('hinge_pivot') === undefined) {
+            $slot.append($('<div class="ladb-hardware-editor-slot-note text-warning">').text(i18next.t('core.hardware_editor.hinge_kinematics_missing')));
+        }
+
+        // A row : its control, and - with variants - where its value comes from
+        const fnRow = function (name, $control) {
+            const $body = $('<div class="ladb-hardware-editor-part-body">').append($control);
+            if (variantPath !== null && fnValue(name) !== undefined) {
+                const own = variantAttributes[name] !== undefined;
+                const $scope = $('<div class="help-block ladb-hardware-editor-hinge-scope">').text(i18next.t('core.hardware_editor.hinge_scope_' + (own ? 'variant' : 'common')));
+                if (own && !that.readonly) {
+                    $scope
+                        .append(' · ')
+                        .append($('<a href="#">')
+                            .text(i18next.t('core.hardware_editor.hinge_apply_all'))
+                            .on('click', function (e) {
+                                e.preventDefault();
+                                that.setHingeAttribute(componentPath, component, variantPath, name, variantAttributes[name], true);
+                            })
+                        );
+                }
+                $body.append($scope);
+            }
+            $slot.append($('<div class="ladb-hardware-editor-part">')
+                .append($('<label class="control-label">').text(i18next.t('core.hardware_editor.' + name)))
+                .append($body)
+            );
+        };
+
+        // The widest opening, in degrees
+        const maxAngle = fnValue('hinge_max_angle');
+        const $maxAngle = $('<input type="number" min="1" max="180" step="1" class="form-control input-sm">')
+            .val(maxAngle === undefined ? '' : maxAngle)
+            .prop('disabled', this.readonly)
+            .on('change', function () {
+                const value = parseFloat($(this).val());
+                fnSet('hinge_max_angle', isFinite(value) ? value : undefined);
+            });
+        fnRow('hinge_max_angle', $('<div class="input-group input-group-sm">')
+            .append($maxAngle)
+            .append($('<span class="input-group-addon">').text('°'))
+        );
+
+        // The axis it turns around : [ y, z ] lengths
+        const pivot = fnValue('hinge_pivot');
+        const $pivot = $('<div class="ladb-hardware-editor-hinge-pivot">');
+        const $inputs = [ 0, 1 ].map(function (index) {
+            const raw = Array.isArray(pivot) && pivot[index] !== undefined && pivot[index] !== null ? String(pivot[index]) : '';
+            const $input = $('<input type="text" class="form-control input-sm">');
+            $pivot.append($('<div class="ladb-hardware-editor-hinge-pivot-coord">')
+                .append($input)
+                .append($('<div class="help-block">').text(i18next.t('core.hardware_editor.hinge_pivot_' + (index === 0 ? 'y' : 'z'))))
+            );
+            $input
+                .val(raw)
+                .ladbTextinputDimension({ resetValue: '' });
+            return $input;
+        });
+        for (const $input of $inputs) {
+            $input.on('change', function () {
+                const values = $inputs.map(function ($i) { return $i.val().trim(); });
+                fnSet('hinge_pivot', values[0] === '' && values[1] === '' ? undefined : values.map(function (v) { return v === '' ? '0' : v; }));
+            });
+        }
+        if (this.readonly) {
+            $('input', $pivot).prop('disabled', true);
+        }
+        fnRow('hinge_pivot', $pivot);
+
+        // A multi-link hinge, whose axis moves while it opens
+        const $approximate = $('<input type="checkbox">')
+            .prop('checked', fnValue('hinge_pivot_approximate') === true)
+            .prop('disabled', this.readonly)
+            .on('change', function () {
+                // Unchecked : false only to override the component's true
+                const inherited = variantPath === null ? undefined : componentAttributes['hinge_pivot_approximate'];
+                fnSet('hinge_pivot_approximate', $(this).is(':checked') ? true : (inherited === true ? false : undefined));
+            });
+        fnRow('hinge_pivot_approximate', $('<div class="checkbox">')
+            .append($('<label>')
+                .append($approximate)
+                .append(' ' + i18next.t('core.hardware_editor.hinge_pivot_approximate_help'))
+            )
+        );
+
+    };
+
+    // Sets - undefined removes - the given attribute of the hinge : on the
+    // variant at the given path, or on the component at the given path when
+    // it has no variants - variantPath null - or for all its variants, their
+    // own values then removed. An attributes object emptied goes too.
+    LadbModalHardwareEditor.prototype.setHingeAttribute = function (componentPath, component, variantPath, name, value, all) {
+        const that = this;
+
+        const fnSet = function (path, value) {
+            const attributesPath = path.concat([ 'attributes' ]);
+            that.setJsonMember(attributesPath, name, value);
+            if (value === undefined) {
+                const text = that.cm.getValue();
+                const range = that.findJsonValueRange(text, attributesPath);
+                if (range !== null && /^\{\s*\}$/.test(text.substring(range.start, range.end))) {
+                    that.setJsonMember(path, 'attributes', undefined);
+                }
+            }
+        };
+
+        if (variantPath === null || all) {
+            fnSet(componentPath, value);
+            const items = component.variants && component.variants.items ? fnObject(component.variants.items) : {};
+            for (const key of Object.keys(items)) {
+                if (fnObject(fnObject(items[key]).attributes)[name] !== undefined) {
+                    fnSet(componentPath.concat([ 'variants', 'items', key ]), undefined);
+                }
+            }
+        } else {
+            fnSet(variantPath, value);
+        }
+        this.compute(false);
+
     };
 
     // The name of the component - or variant - at the given path, edited in place.
@@ -1345,73 +1508,82 @@
     // Sets the given option of the tool in the JSON - see TOOL_OPTION_GROUPS -
     // the rest of the text as it is. An empty value removes it.
     LadbModalHardwareEditor.prototype.setOptionValue = function (name, value) {
+        if (this.setJsonMember([ 'options' ], name, value === '' ? undefined : value)) {
+            this.compute(false);
+        }
+    };
+
+    // Sets the member of the given name of the object at the given path in
+    // the JSON - undefined removes it - the rest of the text as it is. A
+    // missing object is created in its parent. Doesn't compute : false when
+    // nothing changed.
+    LadbModalHardwareEditor.prototype.setJsonMember = function (path, name, value) {
 
         const text = this.cm.getValue();
         const fnReplace = function (start, end, replacement) {
             this.cm.replaceRange(replacement, this.cm.posFromIndex(start), this.cm.posFromIndex(end));
         }.bind(this);
-        // Where the members of the object of the given range end : after its
-        // last non-space character, before its '}'
-        const fnMembersEnd = function (range) {
-            let end = range.end - 1;
-            while (end > range.start && /\s/.test(text[end - 1])) end--;
-            return end;
-        };
 
-        const range = this.findJsonValueRange(text, [ 'options', name ]);
-        if (range !== null) {
-            if (value !== '') {
-                fnReplace(range.start, range.end, JSON.stringify(value));
-            } else {
-                // The member removed, with a comma around it
-                let start = text.lastIndexOf(JSON.stringify(name), range.start);
-                let end = range.end;
-                let i = start;
-                while (i > 0 && /\s/.test(text[i - 1])) i--;
-                if (text[i - 1] === ',') {
-                    start = i - 1;
-                } else {
-                    let j = end;
-                    while (j < text.length && /\s/.test(text[j])) j++;
-                    if (text[j] === ',') {
-                        end = j + 1;
-                        while (end < text.length && /[ \t]/.test(text[end])) end++;
-                    } else {
-                        // The only one : the object emptied
-                        const optionsRange = this.findJsonValueRange(text, [ 'options' ]);
-                        start = optionsRange.start;
-                        end = optionsRange.end;
-                        fnReplace(start, end, '{}');
-                        this.compute(false);
-                        return;
-                    }
-                }
-                fnReplace(start, end, '');
+        const objectRange = this.findJsonValueRange(text, path);
+        if (objectRange === null) {
+            if (value === undefined || path.length === 0) {
+                return false;
             }
-        } else if (value !== '') {
-            const member = JSON.stringify(name) + ': ' + JSON.stringify(value);
-            const optionsRange = this.findJsonValueRange(text, [ 'options' ]);
-            if (optionsRange !== null && text[optionsRange.start] === '{') {
-                const end = fnMembersEnd(optionsRange);
-                if (end === optionsRange.start + 1) {
-                    fnReplace(optionsRange.start, optionsRange.end, '{ ' + member + ' }');
-                } else {
-                    fnReplace(end, end, ', ' + member);
-                }
-            } else if (optionsRange === null) {
-                const rootRange = this.findJsonValueRange(text, []);
-                if (rootRange === null || text[rootRange.start] !== '{') {
-                    return;
-                }
-                const end = fnMembersEnd(rootRange);
-                fnReplace(end, end, (end === rootRange.start + 1 ? '' : ',') + '\n  "options": { ' + member + ' }');
-            } else {
-                return;
-            }
-        } else {
-            return;
+            const object = {};
+            object[name] = value;
+            return this.setJsonMember(path.slice(0, -1), path[path.length - 1], object);
         }
-        this.compute(false);
+        if (text[objectRange.start] !== '{') {
+            return false;
+        }
+
+        const range = this.findJsonValueRange(text, path.concat([ name ]));
+        if (range !== null) {
+            if (value !== undefined) {
+                fnReplace(range.start, range.end, fnInlineJson(value));
+                return true;
+            }
+            // The member removed, with a comma around it
+            let start = text.lastIndexOf(JSON.stringify(name), range.start);
+            let end = range.end;
+            let i = start;
+            while (i > 0 && /\s/.test(text[i - 1])) i--;
+            if (text[i - 1] === ',') {
+                start = i - 1;
+            } else {
+                let j = end;
+                while (j < text.length && /\s/.test(text[j])) j++;
+                if (text[j] === ',') {
+                    end = j + 1;
+                    while (end < text.length && /\s/.test(text[end])) end++;
+                } else {
+                    // The only one : the object emptied
+                    start = objectRange.start;
+                    end = objectRange.end;
+                    fnReplace(start, end, '{}');
+                    return true;
+                }
+            }
+            fnReplace(start, end, '');
+            return true;
+        }
+        if (value === undefined) {
+            return false;
+        }
+
+        // Added after the last member : on a line of its own when they are
+        const member = JSON.stringify(name) + ': ' + fnInlineJson(value);
+        let end = objectRange.end - 1;
+        while (end > objectRange.start && /\s/.test(text[end - 1])) end--;
+        if (end === objectRange.start + 1) {
+            fnReplace(objectRange.start, objectRange.end, '{ ' + member + ' }');
+        } else if (text.substring(objectRange.start, objectRange.end).indexOf('\n') >= 0) {
+            const lineStart = text.lastIndexOf('\n', end - 1) + 1;
+            fnReplace(end, end, ',\n' + /^[ \t]*/.exec(text.substring(lineStart, end))[0] + member);
+        } else {
+            fnReplace(end, end, ', ' + member);
+        }
+        return true;
 
     };
 

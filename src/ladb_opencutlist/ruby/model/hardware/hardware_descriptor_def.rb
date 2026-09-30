@@ -111,10 +111,11 @@ module Ladb::OpenCutList
   # of the component holding the variants.
   #
   # "attributes" are written as is in the OCL dictionary of the laid hardware
-  # definition - over those its SKP bears : { "role": "hinge",
-  # "hinge_max_angle": 110, "hinge_pivot": [ -8.5, 4.2 ] }. Values are
-  # scalars or arrays of scalars. Those of a variant override those of the
-  # component holding the variants.
+  # definition - over those its SKP bears : { "hinge_max_angle": 110,
+  # "hinge_pivot": [ "-8.5mm", "4.2mm" ] }. Values are scalars or arrays of
+  # scalars. Those of a variant override those of the component holding the
+  # variants. The kinematics of a hinge - see HINGE_ATTRIBUTES and DoorDef -
+  # are checked : a length is a string, with a unit or in the model's one.
   class HardwareDescriptorDef < DataContainer
 
     FORMAT = 'ocl-hardware'.freeze
@@ -224,6 +225,15 @@ module Ladb::OpenCutList
     VARIABLES = [ VARIABLE_THICKNESS, VARIABLE_THICKNESS_MIN, VARIABLE_THICKNESS_MAX, VARIABLE_HEIGHT ].freeze
 
     JOIN_TYPES = [ TYPE_CONNECTOR, TYPE_FITTING, TYPE_HINGE ].freeze
+
+    # The attributes of the kinematics of a hinge - see DoorDef : the widest
+    # opening in degrees, the [ y, z ] lengths of the axis it turns around in
+    # the fitting frame, and whether that axis only stands in for a moving one.
+    ATTRIBUTE_HINGE_MAX_ANGLE = 'hinge_max_angle'.freeze
+    ATTRIBUTE_HINGE_PIVOT = 'hinge_pivot'.freeze
+    ATTRIBUTE_HINGE_PIVOT_APPROXIMATE = 'hinge_pivot_approximate'.freeze
+    HINGE_ATTRIBUTES = [ ATTRIBUTE_HINGE_MAX_ANGLE, ATTRIBUTE_HINGE_PIVOT, ATTRIBUTE_HINGE_PIVOT_APPROXIMATE ].freeze
+    HINGE_MAX_ANGLE_MAX = 180
 
     VARIABLE_PATTERN = /@([A-Za-z_]\w*)/
     VARIABLE_NAME_PATTERN = /\A[A-Za-z_]\w*\z/
@@ -438,6 +448,20 @@ module Ladb::OpenCutList
       length.to_f
     rescue StandardError
       nil
+    end
+
+    # The given hinge_pivot attribute - [ "y", "z" ] length strings - as [ y,
+    # z ] in inches, nil when it isn't one. A number isn't a length : its
+    # unit can't be known.
+    def self.hinge_pivot(value)
+      return nil unless value.is_a?(Array) && value.length == 2 && value.all? { |v| v.is_a?(String) }
+      pivot = value.map { |v| to_length(v, true) }
+      pivot.any?(&:nil?) ? nil : pivot
+    end
+
+    # Is the given hinge_max_angle attribute an opening angle in degrees ?
+    def self.hinge_max_angle?(value)
+      value.is_a?(Numeric) && value > 0 && value <= HINGE_MAX_ANGLE_MAX
     end
 
     # Why the given length can't be evaluated for the given variables - see
@@ -1198,8 +1222,18 @@ module Ladb::OpenCutList
         return
       end
       attributes.each do |name, value|
-        next if _scalar?(value) || value.is_a?(Array) && value.all? { |item| _scalar?(item) }
-        errors << "component '#{path}' attribute '#{name}' is neither a scalar nor an array of scalars"
+        unless _scalar?(value) || value.is_a?(Array) && value.all? { |item| _scalar?(item) }
+          errors << "component '#{path}' attribute '#{name}' is neither a scalar nor an array of scalars"
+          next
+        end
+        case name
+        when ATTRIBUTE_HINGE_MAX_ANGLE
+          errors << "component '#{path}' attribute '#{name}' is not an angle in degrees - above 0, up to #{HINGE_MAX_ANGLE_MAX}" unless self.class.hinge_max_angle?(value)
+        when ATTRIBUTE_HINGE_PIVOT
+          errors << "component '#{path}' attribute '#{name}' is not two lengths [ \"y\", \"z\" ]" if self.class.hinge_pivot(value).nil?
+        when ATTRIBUTE_HINGE_PIVOT_APPROXIMATE
+          errors << "component '#{path}' attribute '#{name}' is not true or false" unless value == true || value == false
+        end
       end
     end
 

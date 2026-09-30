@@ -8,14 +8,14 @@
   "url": "https://www.blum.com",
   "components": {
     "a": {
-      "attributes": { "role": "hinge", "hinge_max_angle": 110, "hinge_pivot_approximate": true },
+      "attributes": { "hinge_max_angle": 110, "hinge_pivot_approximate": true },
       "variants": {
         "select": { "by": "hinge_kind" },
         "fallback": "overlay",
         "items": {
-          "overlay":      { "name": "Clip Top 110° en applique", "hardware": true, "machining": { "drillings": [ { "y": "-6.5mm", "diameter": "35mm", "depth": "13mm" }, { "x": "-22.5mm", "y": "-16mm", "diameter": "8mm", "depth": "13mm" }, { "x": "22.5mm", "y": "-16mm", "diameter": "8mm", "depth": "13mm" } ] }, "attributes": { "hinge_pivot": [ 17, -29 ] } },
-          "half_overlay": { "name": "Clip Top 110° jumelée", "hardware": true, "machining": { "drillings": [ { "y": "-16mm", "diameter": "35mm", "depth": "13mm" }, { "x": "-22.5mm", "y": "-25.5mm", "diameter": "8mm", "depth": "13mm" }, { "x": "22.5mm", "y": "-25.5mm", "diameter": "8mm", "depth": "13mm" } ] }, "attributes": { "hinge_pivot": [ -4, -26 ] } },
-          "inset":        { "name": "Clip Top 110° encastrée", "hardware": true, "machining": { "drillings": [ { "y": "-24.5mm", "diameter": "35mm", "depth": "13mm" }, { "x": "-22.5mm", "y": "-34mm", "diameter": "8mm", "depth": "13mm" }, { "x": "22.5mm", "y": "-34mm", "diameter": "8mm", "depth": "13mm" } ] }, "attributes": { "hinge_pivot": [ -4, -26 ] } }
+          "overlay":      { "name": "Clip Top 110° en applique", "hardware": true, "machining": { "drillings": [ { "y": "-6.5mm", "diameter": "35mm", "depth": "13mm" }, { "x": "-22.5mm", "y": "-16mm", "diameter": "8mm", "depth": "13mm" }, { "x": "22.5mm", "y": "-16mm", "diameter": "8mm", "depth": "13mm" } ] }, "attributes": { "hinge_pivot": [ "17mm", "-29mm" ] } },
+          "half_overlay": { "name": "Clip Top 110° jumelée", "hardware": true, "machining": { "drillings": [ { "y": "-16mm", "diameter": "35mm", "depth": "13mm" }, { "x": "-22.5mm", "y": "-25.5mm", "diameter": "8mm", "depth": "13mm" }, { "x": "22.5mm", "y": "-25.5mm", "diameter": "8mm", "depth": "13mm" } ] }, "attributes": { "hinge_pivot": [ "-4mm", "-26mm" ] } },
+          "inset":        { "name": "Clip Top 110° encastrée", "hardware": true, "machining": { "drillings": [ { "y": "-24.5mm", "diameter": "35mm", "depth": "13mm" }, { "x": "-22.5mm", "y": "-34mm", "diameter": "8mm", "depth": "13mm" }, { "x": "22.5mm", "y": "-34mm", "diameter": "8mm", "depth": "13mm" } ] }, "attributes": { "hinge_pivot": [ "-4mm", "-26mm" ] } }
         }
       }
     },

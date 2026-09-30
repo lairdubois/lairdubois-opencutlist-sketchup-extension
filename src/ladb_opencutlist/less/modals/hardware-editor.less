@@ -503,6 +503,47 @@
   min-width: 0;
 }
 
+// Kinematics of a hinge
+
+.ladb-hardware-editor-slot-subtitle {
+  padding: 9px 10px 0;
+  border-top: 1px solid #eee;
+  color: @ladb-global-light-color;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+
+  + .ladb-hardware-editor-slot-note {
+    padding-top: 2px;
+  }
+
+}
+
+.ladb-hardware-editor-hinge-pivot {
+  display: flex;
+  gap: 8px;
+
+  .ladb-hardware-editor-hinge-pivot-coord {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+}
+
+.ladb-hardware-editor-part-body {
+
+  .help-block {
+    margin: 2px 0 0;
+    font-size: 11px;
+  }
+
+  .checkbox {
+    margin: 5px 0 0;
+    font-size: 12px;
+  }
+
+}
+
 .ladb-hardware-editor-part-buttons {
   display: flex;
   flex-wrap: wrap;
