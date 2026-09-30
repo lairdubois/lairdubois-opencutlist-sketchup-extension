@@ -6,7 +6,8 @@ module Ladb::OpenCutList
   # Copies a descriptor of the OCL library into the user's one, at the same
   # place - '$OCL/hinges/blum/x.json' -> '$LIB/hinges/blum/x.json' - with its
   # SKP files : its components folder and the shared files its parts name,
-  # at the same place too, since a part can't point to another library.
+  # at the same place too, since a part can't point to another library. Its
+  # parent - see "extends" - stays the OCL one : only its ref is rewritten.
   class HardwareDescriptorDuplicateWorker
 
     def initialize(ref:)
@@ -17,7 +18,7 @@ module Ladb::OpenCutList
 
     def run
 
-      return _error('core.hardware_editor.error.invalid_ref', { :ref => @ref }) unless PLUGIN.library_readonly_ref?(@ref)
+      return _error('core.hardware_editor.error.invalid_ref', { :ref => @ref }) unless PLUGIN.library_bundled_ref?(@ref)
       descriptor = HardwareDescriptorDef.load(@ref)
       return _error('core.hardware_editor.error.file_not_found', { :ref => @ref }) if descriptor.nil?
 
@@ -36,14 +37,18 @@ module Ladb::OpenCutList
           end
         end
       end
-      _shared_files(descriptor.data['components']).each do |relative|
+      _shared_files(descriptor.own_data['components']).each do |relative|
         source = File.join(PLUGIN.bundled_library_dir, HardwareDescriptorDef::COMPONENTS_DIR_NAME, relative)
         next unless File.file?(source)
         copied << _copy(source, File.join(PLUGIN.library_dir, HardwareDescriptorDef::COMPONENTS_DIR_NAME, relative))
       end
 
       FileUtils.mkdir_p(File.dirname(target_path))
-      FileUtils.cp(PLUGIN.resolve_library_ref(@ref), target_path)
+      text = File.read(PLUGIN.resolve_library_ref(@ref), mode: 'r:UTF-8')
+      # Its parent stays the OCL one
+      parent_ref = HardwareDescriptorDef.parent_ref(descriptor.own_data[HardwareDescriptorDef::EXTENDS], @ref)
+      text = HardwareDescriptorDef.replace_extends(text, parent_ref) unless parent_ref.nil?
+      File.write(target_path, text, mode: 'w:UTF-8')
 
       PLUGIN.trigger_event(PluginObserver::ON_HARDWARE_SAVED, { :ref => target_ref })
 

@@ -56,7 +56,7 @@ module Ladb::OpenCutList
       return { :errors => [ 'not an ocl-hardware descriptor' ], :supported => false } unless HardwareDescriptorDef.descriptor?(data)
 
       descriptor = HardwareDescriptorDef.new(data, nil, @ref)
-      response = { :errors => descriptor.errors.dup, :type => descriptor.type }
+      response = { :errors => descriptor.errors.dup, :type => descriptor.type, :abstract => descriptor.abstract?, :inheritance => _inheritance(descriptor) }
 
       unless HardwareBenchDef.supported?(descriptor.type)
         response[:supported] = false
@@ -117,10 +117,25 @@ module Ladb::OpenCutList
                .map { |name, value| { :name => name, :value => value, :text => _text(value), :cote => cotes[name] } }
     end
 
+    # What it inherits - see "extends" - : its parents, the nearest first,
+    # and its data merged with theirs. nil when it extends none.
+    def _inheritance(descriptor)
+      return nil if descriptor.parent_refs.empty?
+      { :parents => descriptor.parent_refs, :data => descriptor.data }
+    end
+
+    # Is the given variable its parents' only - not written in its own data ?
+    def _inherited_variable?(descriptor, name)
+      return false if descriptor.parent_refs.empty?
+      own = descriptor.own_data['variables']
+      !(own.is_a?(Hash) && own.key?(name))
+    end
+
     def _settings(descriptor)
       descriptor.settings.map do |name, setting|
         {
           :name => name,
+          :inherited => _inherited_variable?(descriptor, name),
           :label => setting['label'].is_a?(String) ? setting['label'] : nil,
           :raw => setting,
           :value => _length(setting['value']),
@@ -146,12 +161,14 @@ module Ladb::OpenCutList
           :name => name,
           :expression => expression.to_s,
           :setting => HardwareDescriptorDef.setting?(descriptor.data['variables'][name]),
+          :inherited => _inherited_variable?(descriptor, name),
           :results => _group(slots, results)
         }
       end
     end
 
     def _asserts(descriptor, slots, variables_by_slot)
+      own = descriptor.own_data['asserts'].is_a?(Array) ? descriptor.own_data['asserts'] : []
       descriptor.asserts.map do |expression|
         results = slots.map do |slot|
           left, operator, right = HardwareDescriptorDef.assert_sides(expression, variables_by_slot[slot])
@@ -162,7 +179,7 @@ module Ladb::OpenCutList
             :right => right, :right_text => _text(right),
           }
         end
-        { :expression => expression.to_s, :results => _group(slots, results) }
+        { :expression => expression.to_s, :inherited => !descriptor.parent_refs.empty? && !own.include?(expression), :results => _group(slots, results) }
       end
     end
 

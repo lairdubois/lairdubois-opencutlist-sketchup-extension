@@ -104,7 +104,7 @@ module Ladb::OpenCutList
 
     def _process_ref(ref, h_assets)
       return ref unless ASSET_EXTNAMES.include?(File.extname(ref).downcase)
-      return ref if PLUGIN.library_readonly_ref?(ref)   # Shipped with the extension : nothing to carry
+      return ref if PLUGIN.library_bundled_ref?(ref)   # Shipped with the extension : nothing to carry
 
       is_library_ref = PLUGIN.library_ref?(ref)
       path = is_library_ref ? PLUGIN.resolve_library_ref(ref) : ref

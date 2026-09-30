@@ -8,8 +8,9 @@ module Ladb::OpenCutList
   # Writes a descriptor edited in the hardware editor into the user's
   # library : its JSON as written, the SKP files of its parts - picked ones
   # copied, placements baked in - and the folder of its components kept tidy.
-  # Renamed, it moves with that folder. Only '$LIB/…' refs : the OCL library
-  # is read only.
+  # Renamed, it moves with that folder, and the descriptors that extend it
+  # follow. Only '$LIB/…' refs : the OCL library
+  # is read only - but to a dev build run from the sources.
   class HardwareDescriptorSaveWorker
 
     # The name a part file declared true may have : <slot>[.<variant>][.machining].skp
@@ -38,7 +39,7 @@ module Ladb::OpenCutList
     def run
 
       return _error('core.hardware_editor.error.readonly') if PLUGIN.library_readonly_ref?(@ref)
-      return _error('core.hardware_editor.error.invalid_ref', { :ref => @ref }) unless @ref.is_a?(String) && @ref.start_with?(Plugin::LIBRARY_REF_PREFIX) && File.extname(@ref).downcase == '.json'
+      return _error('core.hardware_editor.error.invalid_ref', { :ref => @ref }) unless PLUGIN.library_ref?(@ref) && File.extname(@ref).downcase == '.json'
       path = PLUGIN.resolve_library_ref(@ref)
       return _error('core.hardware_editor.error.invalid_ref', { :ref => @ref }) if path.nil?
       return _error('core.hardware_editor.error.file_exists', { :ref => @ref }) if @new && File.exist?(path)
@@ -58,7 +59,7 @@ module Ladb::OpenCutList
       unless @from.nil?
         return _error('core.hardware_editor.error.readonly') if PLUGIN.library_readonly_ref?(@from)
         from_path = PLUGIN.resolve_library_ref(@from)
-        return _error('core.hardware_editor.error.invalid_ref', { :ref => @from }) unless @from.is_a?(String) && @from.start_with?(Plugin::LIBRARY_REF_PREFIX) && File.dirname(@from) == File.dirname(@ref) && !from_path.nil?
+        return _error('core.hardware_editor.error.invalid_ref', { :ref => @from }) unless PLUGIN.library_ref?(@from) && File.dirname(@from) == File.dirname(@ref) && !from_path.nil?
         return _error('core.hardware_editor.error.file_not_found', { :ref => @from }) unless File.file?(from_path)
         return _error('core.hardware_editor.error.file_exists', { :ref => @ref }) if File.exist?(path) && !File.identical?(path, from_path)
         from_dir_ref = HardwareDescriptorDef.new(data, from_path, @from).components_dir_ref
@@ -73,16 +74,19 @@ module Ladb::OpenCutList
       # The SKP files to write : picked or placed, in the user's library
       skp_refs = (@imports.keys + @placements.keys.select { |ref| _placement(ref) }).uniq
       skp_refs.each do |ref|
-        return _error('core.hardware_editor.error.invalid_ref', { :ref => ref }) unless ref.start_with?(Plugin::LIBRARY_REF_PREFIX) && File.extname(ref).downcase == '.skp' && !PLUGIN.resolve_library_ref(ref).nil?
+        return _error('core.hardware_editor.error.invalid_ref', { :ref => ref }) unless PLUGIN.library_ref?(ref) && !PLUGIN.library_readonly_ref?(ref) && File.extname(ref).downcase == '.skp' && !PLUGIN.resolve_library_ref(ref).nil?
         source = @imports[ref] || PLUGIN.resolve_library_ref(@from.nil? ? ref : _moved_ref(ref, dir_ref, from_dir_ref))
         return _error('core.hardware_editor.error.file_not_found', { :ref => source }) unless source.is_a?(String) && File.file?(source)
       end
 
       # Renamed : same folder, so a rename - a change of case too
+      children = []
       unless @from.nil?
+        children = HardwareDescriptorDef.children_refs(@from, PLUGIN.library_dir, Plugin::LIBRARY_REF_PREFIX)
         File.rename(from_path, path)
         File.rename(from_dir, dir) if File.directory?(from_dir)
         _move_loaded_definitions(from_dir_ref, dir_ref)
+        _move_children(children)
       end
 
       # The JSON, as written
@@ -102,7 +106,7 @@ module Ladb::OpenCutList
 
       PLUGIN.trigger_event(PluginObserver::ON_HARDWARE_SAVED, { :ref => @ref })
 
-      { :ref => @ref, :renamed => !@from.nil?, :written => written, :removed => removed }
+      { :ref => @ref, :renamed => !@from.nil?, :written => written, :removed => removed, :children => children }
     rescue StandardError => e
       _error('core.hardware_editor.error.not_saved', { :error => HardwareSkpMeshWorker.error_message(e) })
     end
@@ -200,6 +204,16 @@ module Ladb::OpenCutList
       model.commit_operation
     end
 
+    # The descriptors that extended the renamed one extend it under its new
+    # ref - see "extends" : only that value of their text is rewritten.
+    def _move_children(children)
+      children.each do |child_ref|
+        child_path = PLUGIN.resolve_library_ref(child_ref)
+        text = File.read(child_path, mode: 'r:UTF-8')
+        File.write(child_path, HardwareDescriptorDef.replace_extends(text, HardwareDescriptorDef.extends_value(@ref, child_ref)), mode: 'w:UTF-8')
+      end
+    end
+
     # The files of the components folder named as a part declared true could
     # be - see CONVENTION_FILE_PATTERN - that none is any more : removed, the
     # folder too if left empty. Other files are left. Returns their names.
@@ -207,7 +221,7 @@ module Ladb::OpenCutList
       dir_ref = descriptor.components_dir_ref
       dir = dir_ref.nil? ? nil : PLUGIN.resolve_library_ref(dir_ref)
       return [] unless dir.is_a?(String) && File.directory?(dir)
-      declared = _declared_files(descriptor.data['components'])
+      declared = _declared_files(descriptor.own_data['components'])   # Inherited parts live in their parent's folder
       removed = []
       _children(dir).each do |name|
         next unless name =~ CONVENTION_FILE_PATTERN && File.file?(File.join(dir, name))

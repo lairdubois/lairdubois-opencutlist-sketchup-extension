@@ -4410,7 +4410,8 @@ module Ladb::OpenCutList
       }
     end
 
-    # Is the given folder one files can be added to - a folder of the user's library ?
+    # Is the given folder one files can be added to - a folder of the user's
+    # library, or of the shipped one in a dev build run from the sources ?
     def self.writable?(dir_ref)
       PLUGIN.library_ref?(dir_ref) && !PLUGIN.library_readonly_ref?(dir_ref)
     end

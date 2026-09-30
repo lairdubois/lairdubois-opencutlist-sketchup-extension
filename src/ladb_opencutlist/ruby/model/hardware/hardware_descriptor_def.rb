@@ -85,9 +85,10 @@ module Ladb::OpenCutList
   # LengthExpressionUtils. "through" is "@thickness_max" - "@thickness"
   # when it isn't given.
   #
-  # "variables" names expressions, evaluated in order : each can use the
-  # measures and the variables above it, and the lengths of the components
-  # can use them all - "@depth_a".
+  # "variables" names expressions, evaluated in the order of their
+  # dependencies : each can use the measures and the other variables,
+  # wherever they are written - a cycle is an error - and the lengths of the
+  # components can use them all - "@depth_a".
   #
   # A variable given as an object is a SETTING - what the editor shows the
   # user to set - its value a plain length, no variable nor function :
@@ -116,6 +117,20 @@ module Ladb::OpenCutList
   # scalars. Those of a variant override those of the component holding the
   # variants. The kinematics of a hinge - see HINGE_ATTRIBUTES and DoorDef -
   # are checked : a length is a string, with a unit or in the model's one.
+  #
+  # "extends" names the descriptor it inherits from - its path relative to
+  # the root of the same library, or a '$OCL/…' ref from the user's library
+  # - and it only declares what changes. The parent's data is merged into
+  # it as a JSON Merge Patch (RFC 7386) : objects merge key by key, arrays
+  # and scalars replace, null removes - but a variant set to null, that stays
+  # "unsupported". format, version, id, name, extends and abstract are never
+  # inherited ; type is, and can't change. "@super" as an element of an array
+  # stands for the parent's array ; in the expression of a redefined
+  # variable, for the parent's expression, in parentheses. A part declared
+  # true, a shared file or a './' ref inherited as is stay the ones of the
+  # descriptor that declares them. "abstract": true keeps a descriptor out of
+  # the listings : it is only validated merged into a child. See data -
+  # merged - and own_data - as written.
   class HardwareDescriptorDef < DataContainer
 
     FORMAT = 'ocl-hardware'.freeze
@@ -155,6 +170,17 @@ module Ladb::OpenCutList
     COMPONENTS_DIR_NAME = 'components'.freeze
 
     LIBRARY_REF_PREFIXES = %w[$LIB/ $OCL/].freeze
+    LIBRARY_REF_USER_PREFIX = '$LIB/'.freeze
+    LIBRARY_REF_BUNDLED_PREFIX = '$OCL/'.freeze
+
+    # Inheritance - see "extends"
+    EXTENDS = 'extends'.freeze
+    ABSTRACT = 'abstract'.freeze
+    OWN_KEYS = [ 'format', 'version', 'id', 'name', EXTENDS, ABSTRACT ].freeze
+    SUPER = 'super'.freeze
+    SUPER_ELEMENT = '@super'.freeze
+    SUPER_PATTERN = /@super(?!\w)/
+    MAX_INHERITANCE_DEPTH = 8
 
     # What a definition loaded from a hardware SKP bears - in the OCL
     # attribute dictionary : the portable ref of its file, it is found by.
@@ -287,7 +313,8 @@ module Ladb::OpenCutList
     HardwareComponentDef = Struct.new(:slot, :source_slot, :hardware, :machining, :mirror, :stretch, :variant, :attributes,
                                       :name, :variant_name, :description, :price, :url, :mass, :part_slots, :z_offset)
 
-    attr_reader :path, :ref, :data, :errors
+    # data : merged with its parents' - see "extends" ; own_data : as written.
+    attr_reader :path, :ref, :data, :own_data, :errors
 
     # -- Loading --
 
@@ -295,17 +322,74 @@ module Ladb::OpenCutList
     # the file can't be read or isn't a hardware descriptor. An invalid one is
     # returned, see valid? and errors.
     def self.load(ref)
-      plugin = defined?(PLUGIN) ? PLUGIN : nil
-      path = plugin && plugin.respond_to?(:resolve_library_ref) ? plugin.resolve_library_ref(ref) : ref
+      path = resolve_library_ref(ref)
       return nil unless path.is_a?(String) && File.file?(path)
-      ref = plugin.library_ref_from_path(path) if !library_ref?(ref) && plugin && plugin.respond_to?(:library_ref_from_path)
-      begin
-        data = JSON.parse(File.read(path, mode: 'r:UTF-8'))
-      rescue JSON::ParserError, SystemCallError
-        return nil
-      end
+      ref = library_ref_from_path(path) unless library_ref?(ref)
+      data = read_data(path)
       return nil unless descriptor?(data)
       new(data, path, library_ref?(ref) ? ref : nil)
+    end
+
+    # The parsed JSON of the given file, nil if it can't be read.
+    def self.read_data(path)
+      JSON.parse(File.read(path, mode: 'r:UTF-8'))
+    rescue JSON::ParserError, SystemCallError
+      nil
+    end
+
+    # The file of the given '$LIB/…' or '$OCL/…' ref - a path is itself.
+    # Tests set library_resolver : a lambda (ref) -> path.
+    def self.resolve_library_ref(ref)
+      return @library_resolver.call(ref) unless @library_resolver.nil?
+      plugin = defined?(PLUGIN) ? PLUGIN : nil
+      plugin && plugin.respond_to?(:resolve_library_ref) ? plugin.resolve_library_ref(ref) : ref
+    end
+
+    def self.library_ref_from_path(path)
+      return nil unless @library_resolver.nil?
+      plugin = defined?(PLUGIN) ? PLUGIN : nil
+      plugin && plugin.respond_to?(:library_ref_from_path) ? plugin.library_ref_from_path(path) : nil
+    end
+
+    class << self
+      attr_accessor :library_resolver
+    end
+
+    # The ref of the parent the given "extends" names, for a descriptor of
+    # the given ref : relative to the root of its library - the user's one
+    # when it has no ref, a new descriptor is written there - or a library
+    # ref itself. nil if it can't be one.
+    def self.parent_ref(extends, ref)
+      return nil unless extends.is_a?(String) && !extends.strip.empty?
+      return extends if library_ref?(extends)
+      return nil if extends.start_with?('/', './', '../') || extends =~ /\A[A-Za-z]:[\\\/]/
+      prefix = ref.is_a?(String) ? LIBRARY_REF_PREFIXES.find { |p| ref.start_with?(p) } : nil
+      (prefix || LIBRARY_REF_USER_PREFIX) + extends
+    end
+
+    # The given JSON text of a descriptor, its "extends" set to the given
+    # value - the rest of the text as it is.
+    def self.replace_extends(text, value)
+      text.sub(/("#{EXTENDS}"\s*:\s*)"(?:[^"\\]|\\.)*"/) { "#{$1}#{JSON.generate(value)}" }
+    end
+
+    # The "extends" a descriptor of the given ref writes to name the given
+    # parent ref : relative to the root of its library when they share it.
+    def self.extends_value(parent_ref, ref)
+      prefix = ref.is_a?(String) ? LIBRARY_REF_PREFIXES.find { |p| ref.start_with?(p) } : nil
+      !prefix.nil? && parent_ref.start_with?(prefix) ? parent_ref[prefix.length..-1] : parent_ref
+    end
+
+    # The descriptors - their refs - that extend the one of the given ref,
+    # directly, among the JSON files of the given library folder.
+    def self.children_refs(ref, library_dir, library_prefix)
+      return [] unless File.directory?(library_dir)
+      Dir.glob(File.join(library_dir, '**', '*.json')).map { |path|
+        child_ref = library_prefix + path[(library_dir.length + 1)..-1]
+        data = read_data(path)
+        next nil unless descriptor?(data) && parent_ref(data[EXTENDS], child_ref) == ref
+        child_ref
+      }.compact.sort
     end
 
     # Is the given parsed JSON a hardware descriptor - of any version ?
@@ -572,9 +656,13 @@ module Ladb::OpenCutList
     # '$OCL/…' ref when it lives in a library - its parts are then refs of
     # that library.
     def initialize(data, path = nil, ref = nil)
-      @data = data
+      @own_data = data
       @path = path
       @ref = ref
+      @parent_refs = []
+      @sources = path.is_a?(String) && File.file?(path) ? [ [ path, File.mtime(path) ] ] : []
+      @inheritance_errors = []
+      @data = _inherit(data)
       @errors = _validate
     end
 
@@ -582,6 +670,22 @@ module Ladb::OpenCutList
 
     def valid?
       @errors.empty?
+    end
+
+    # Is it only there to be extended - see "abstract" ?
+    def abstract?
+      @own_data.is_a?(Hash) && @own_data[ABSTRACT] == true
+    end
+
+    # The refs of its parents, the nearest first - see "extends".
+    def parent_refs
+      @parent_refs.dup
+    end
+
+    # Has one of the files it was read from - its own, its parents' - changed
+    # since ?
+    def stale?
+      @sources.any? { |path, mtime| !File.file?(path) || File.mtime(path) != mtime }
     end
 
     def id
@@ -653,8 +757,9 @@ module Ladb::OpenCutList
     # variables, in inches. A variable that can't be evaluated is left out.
     def resolve_variables(measures)
       resolved = Hash[measures.map { |k, v| [ k.to_s, v ] }]
-      variables.each do |name, expression|
-        value = self.class.to_length(expression, true, resolved)
+      expressions = variables
+      _variable_order.first.each do |name|
+        value = self.class.to_length(expressions[name], true, resolved)
         resolved[name] = value unless value.nil?
       end
       resolved
@@ -682,13 +787,17 @@ module Ladb::OpenCutList
     # Out of a library, a folder named after the descriptor next to it. nil
     # when the descriptor has no file.
     def components_dir_ref
-      if @ref.is_a?(String)
-        prefix = LIBRARY_REF_PREFIXES.find { |p| @ref.start_with?(p) }
-        relative = @ref[prefix.length..-1]
+      self.class.components_dir_ref(@path, @ref)
+    end
+
+    def self.components_dir_ref(path, ref)
+      if ref.is_a?(String)
+        prefix = LIBRARY_REF_PREFIXES.find { |p| ref.start_with?(p) }
+        relative = ref[prefix.length..-1]
         return prefix + COMPONENTS_DIR_NAME + '/' + relative.sub(/#{Regexp.escape(File.extname(relative))}\z/, '')
       end
-      return nil unless @path.is_a?(String)
-      File.join(File.dirname(@path), File.basename(@path, File.extname(@path)))
+      return nil unless path.is_a?(String)
+      File.join(File.dirname(path), File.basename(path, File.extname(path)))
     end
 
     # -- Resolution --
@@ -704,6 +813,169 @@ module Ladb::OpenCutList
     # -----
 
     private
+
+    # Its variables in the order of their dependencies, and those that depend
+    # on each other - left out : [ [ names ], [ cycle names ] ]. A variable
+    # that isn't one - a name or a length - comes in its written place.
+    def _variable_order
+      @variable_order ||= begin
+        expressions = variables
+        dependencies = Hash[expressions.map { |name, expression|
+          [ name, expression.is_a?(String) ? expression.scan(VARIABLE_PATTERN).flatten.uniq & expressions.keys - [ name ] : [] ]
+        }]
+        self_cycles = expressions.select { |name, expression| expression.is_a?(String) && expression.scan(VARIABLE_PATTERN).flatten.include?(name) }.keys
+        order = []
+        cycles = self_cycles.dup
+        states = {}   # name => :visiting | :done
+        fn_visit = lambda do |name, stack|
+          return if states[name] == :done
+          if states[name] == :visiting
+            cycles.concat(stack[stack.index(name)..-1])
+            return
+          end
+          states[name] = :visiting
+          dependencies[name].each { |dependency| fn_visit.call(dependency, stack + [ name ]) }
+          states[name] = :done
+          order << name
+        end
+        expressions.keys.each { |name| fn_visit.call(name, []) }
+        cycles.uniq!
+        # What depends on a cycle can't be evaluated either, it stays in order
+        [ order - cycles, cycles ]
+      end
+    end
+
+    # -- Inheritance --
+
+    # The given data merged with the one of its parents - see "extends".
+    def _inherit(own)
+      return own unless own.is_a?(Hash) && own.key?(EXTENDS)
+      parent = _ancestor_data(own[EXTENDS], @ref, @ref.nil? ? [] : [ @ref ], 1)
+      return own if parent.nil?   # Invalid, see @inheritance_errors
+      _merge_descriptor(parent, own)
+    end
+
+    # The data of the ancestor the given "extends" of a descriptor of the
+    # given ref names, merged with its own ancestors', its parts and refs
+    # made its own - see _localize. nil if it can't be read.
+    def _ancestor_data(extends, child_ref, visited, depth)
+      ref = self.class.parent_ref(extends, child_ref)
+      if ref.nil?
+        @inheritance_errors << "extends #{extends.inspect} is not a descriptor path"
+        return nil
+      end
+      if child_ref.is_a?(String) && child_ref.start_with?(LIBRARY_REF_BUNDLED_PREFIX) && ref.start_with?(LIBRARY_REF_USER_PREFIX)
+        @inheritance_errors << "extends #{ref} : the OCL library can't extend the user's one"
+        return nil
+      end
+      if visited.include?(ref)
+        @inheritance_errors << "extends #{ref} : inheritance cycle"
+        return nil
+      end
+      if depth > MAX_INHERITANCE_DEPTH
+        @inheritance_errors << "extends #{ref} : more than #{MAX_INHERITANCE_DEPTH} levels"
+        return nil
+      end
+      path = self.class.resolve_library_ref(ref)
+      data = path.is_a?(String) && File.file?(path) ? self.class.read_data(path) : nil
+      unless self.class.descriptor?(data)
+        @inheritance_errors << "extends #{ref} : parent not found"
+        return nil
+      end
+      @parent_refs << ref
+      @sources << [ path, File.mtime(path) ]
+      data = _localize(data, path, ref)
+      return data unless data.key?(EXTENDS)
+      grand_parent = _ancestor_data(data[EXTENDS], ref, visited + [ ref ], depth + 1)
+      return nil if grand_parent.nil?
+      _merge_descriptor(grand_parent, data)
+    end
+
+    # The given data of an ancestor read from the given file, what it names
+    # relatively - parts declared true, shared files, './' refs - made refs
+    # of its own place : they stay its own once inherited.
+    def _localize(data, path, ref)
+      data = Marshal.load(Marshal.dump(data))
+      dir_ref = self.class.components_dir_ref(path, ref)
+      prefix = LIBRARY_REF_PREFIXES.find { |p| ref.start_with?(p) }
+      fn_ref = lambda do |value|
+        return value unless value.is_a?(String) && value.start_with?('./')
+        File.join(File.dirname(ref), value[2..-1])
+      end
+      fn_part = lambda do |slot, variant, part, value|
+        return "#{dir_ref}/#{self.class.part_file_name(slot, variant, part)}" if value == true
+        return value unless value.is_a?(String) && !value.strip.empty?
+        return fn_ref.call(value) if value.start_with?('./')
+        return value if self.class.library_ref?(value) || File.extname(value).downcase != '.skp'
+        prefix + COMPONENTS_DIR_NAME + '/' + value
+      end
+      fn_component = lambda do |slot, variant, value|
+        return unless value.is_a?(Hash)
+        PARTS.each { |part| value[part] = fn_part.call(slot, variant, part, value[part]) if value.key?(part) }
+      end
+      material = data['hardware_material']
+      data['hardware_material'] = File.join(File.dirname(path), material[2..-1]) if material.is_a?(String) && material.start_with?('./')   # As _resolve_ref
+      if data['components'].is_a?(Hash)
+        data['components'].each do |slot, value|
+          next unless value.is_a?(Hash)
+          fn_component.call(slot, nil, value)
+          next unless value['variants'].is_a?(Hash) && value['variants']['items'].is_a?(Hash)
+          value['variants']['items'].each { |variant, item| fn_component.call(slot, variant, item) }
+        end
+      end
+      data
+    end
+
+    # The given own data merged into the given parent's - see "extends".
+    def _merge_descriptor(parent, own)
+      if own.key?('type') && parent.key?('type') && own['type'] != parent['type']
+        @inheritance_errors << "type #{own['type'].inspect} differs from its parent's #{parent['type'].inspect}"
+      end
+      merged = _merge(parent.reject { |key, _| OWN_KEYS.include?(key) }, own.reject { |key, _| OWN_KEYS.include?(key) }, [])
+      result = {}
+      OWN_KEYS.each { |key| result[key] = own[key] if own.key?(key) }
+      result.merge(merged)
+    end
+
+    # JSON Merge Patch of the given own value into the given parent's - with
+    # "@super" and null variants, see "extends". path : the keys down to them.
+    def _merge(parent, own, path)
+      if own.is_a?(Hash)
+        parent = {} unless parent.is_a?(Hash)
+        variants = path.length >= 2 && path[-2..-1] == %w[variants items]   # null is "unsupported" there
+        result = {}
+        parent.each { |key, value| result[key] = value unless own.key?(key) && own[key].nil? && !variants }
+        own.each do |key, value|
+          if value.nil?
+            result[key] = nil if variants
+            next
+          end
+          result[key] = path == [ 'variables' ] ? _merge_variable(key, parent[key], value) : _merge(parent[key], value, path + [ key ])
+        end
+        result
+      elsif own.is_a?(Array)
+        count = own.count(SUPER_ELEMENT)
+        @inheritance_errors << "#{path.join('/')} has #{SUPER_ELEMENT} more than once" if count > 1
+        return own if count == 0
+        own.flat_map { |value| value == SUPER_ELEMENT ? (parent.is_a?(Array) ? parent : []) : [ value ] }
+      else
+        own
+      end
+    end
+
+    # The given variable redefined : "@super" in its expression is the
+    # parent's, in parentheses.
+    def _merge_variable(name, parent, own)
+      return _merge(parent, own, [ 'variables', name ]) if own.is_a?(Hash)
+      return own unless own.is_a?(String) && own =~ SUPER_PATTERN
+      expression = self.class.variable_expression(parent)
+      expression = "#{expression}mm" if expression.is_a?(Numeric)
+      unless expression.is_a?(String) && !expression.strip.empty?
+        @inheritance_errors << "variable '#{name}' uses @#{SUPER} but its parent has no such variable"
+        return own
+      end
+      own.gsub(SUPER_PATTERN) { "(#{expression})" }
+    end
 
     def _resolve_component(slot, context, mirror, visited)
       return nil if visited.include?(slot)   # Cycle
@@ -841,8 +1113,12 @@ module Ladb::OpenCutList
       return [ 'not an ocl-hardware descriptor' ] unless self.class.descriptor?(@data)
       errors << "unsupported version #{@data['version'].inspect}" unless @data['version'].is_a?(Integer) && @data['version'] >= 1 && @data['version'] <= VERSION
       errors << 'missing id' unless @data['id'].is_a?(String) && !@data['id'].empty?
-      errors << "unknown type #{@data['type'].inspect}" unless TYPES.key?(@data['type'])
       errors << 'missing name' unless @data['name'].is_a?(String) && !@data['name'].empty?
+      errors << 'extends is not a string' if @own_data.key?(EXTENDS) && !@own_data[EXTENDS].is_a?(String)
+      errors << 'abstract is not true or false' if @own_data.key?(ABSTRACT) && @own_data[ABSTRACT] != true && @own_data[ABSTRACT] != false
+      errors.concat(@inheritance_errors)
+      return errors if abstract?   # Only validated merged into a child
+      errors << "unknown type #{@data['type'].inspect}" unless TYPES.key?(@data['type'])
       %w[supplier url].each do |key|
         errors << "#{key} is not a string" if @data.key?(key) && !@data[key].nil? && !@data[key].is_a?(String)
       end
@@ -885,22 +1161,32 @@ module Ladb::OpenCutList
         errors << 'variables is not an object'
         return
       end
+      names = @data['variables'].keys.select { |name| name =~ VARIABLE_NAME_PATTERN && name != SUPER && !measures.include?(name) }
+      @variable_names.concat(names)   # Known everywhere, even if it can't be evaluated
       @data['variables'].each do |name, expression|
         label = "variable '#{name}'"
         if name !~ VARIABLE_NAME_PATTERN
           errors << "#{label} is not a valid name"
-          next
-        end
-        if measures.include?(name)
+        elsif name == SUPER
+          errors << "#{label} is a reserved name"
+        elsif measures.include?(name)
           errors << "#{label} is a measure"
-          next
-        end
-        if self.class.setting?(expression)
+        elsif self.class.setting?(expression)
           _validate_setting(label, expression, errors)
-          expression = expression['value']
         end
+      end
+      order, cycles = _variable_order
+      if cycles.length == 1
+        errors << "variable '#{cycles.first}' depends on itself"
+      elsif cycles.length > 1
+        errors << "variables #{cycles.map { |name| "'#{name}'" }.join(', ')} depend on each other"
+      end
+      order.each do |name|
+        next unless names.include?(name)
+        label = "variable '#{name}'"
+        expression = self.class.variable_expression(@data['variables'][name])
         unless expression.is_a?(String) || expression.is_a?(Numeric)
-          errors << "#{label} is not a length"
+          errors << "#{label} is not a length" unless self.class.setting?(@data['variables'][name])   # Its setting says why
           next
         end
         unknown = _unknown_variables(expression)
@@ -908,9 +1194,10 @@ module Ladb::OpenCutList
           errors << "#{label} uses the unknown variable @#{unknown_name}"
         end
         value = self.class.to_length(expression, true, @checked_variables)
-        errors << "#{label} is not a length" if value.nil? && unknown.empty?
+        # One of its dependencies not evaluated has its own error
+        dependencies = expression.is_a?(String) ? expression.scan(VARIABLE_PATTERN).flatten : []
+        errors << "#{label} is not a length" if value.nil? && unknown.empty? && dependencies.all? { |dependency| @checked_variables.key?(dependency) }
         @checked_variables[name] = value unless value.nil?
-        @variable_names << name   # Known below, even if it can't be evaluated
       end
     end
 

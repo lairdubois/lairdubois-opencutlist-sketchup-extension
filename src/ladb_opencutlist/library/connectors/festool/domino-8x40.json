@@ -2,24 +2,10 @@
   "format": "ocl-hardware",
   "version": 1,
   "id": "0051d9d2-804e-4aa1-8a9d-04da2e286d42",
-  "type": "connector",
+  "extends": "connectors/festool/domino.json",
   "name": "Domino 8x40",
-  "supplier": "Festool",
-  "url": "https://www.festool.com",
   "variables": {
-    "cap_a": "floor(min(@thickness_a - 5mm; 20mm); 12mm; 15mm; 20mm; 25mm; 28mm)",
-    "cap_b": "floor(min(@thickness_b - 5mm; 20mm); 12mm; 15mm; 20mm; 25mm; 28mm)",
-    "depth_a": "min(floor(@thickness_a - 5mm; 12mm; 15mm; 20mm; 25mm; 28mm); ceil(40mm - @cap_b; 12mm; 15mm; 20mm; 25mm; 28mm))",
-    "depth_b": "min(floor(@thickness_b - 5mm; 12mm; 15mm; 20mm; 25mm; 28mm); ceil(40mm - @cap_a; 12mm; 15mm; 20mm; 25mm; 28mm))"
-  },
-  "asserts": [ "@depth_a + @depth_b >= 40mm" ],
-  "components": {
-    "a": {
-      "hardware": { "oblongs": [ { "length": "22mm", "width": "8mm", "from": "-(40mm + @depth_a - @depth_b) / 2", "to": "(40mm - @depth_a + @depth_b) / 2" } ] },
-      "machining": { "mortises": [ { "length": "22mm", "width": "8mm", "depth": "@depth_a" } ] },
-      "attributes": { "symmetrical":  true }
-    },
-    "b": { "machining": { "mortises": [ { "length": "22mm", "width": "8mm", "depth": "@depth_b" } ] } }
-  },
-  "options": { "height": "/2", "start_offset": "37mm", "end_offset": "37mm", "max_spacing": "500mm" }
+    "width": { "value": "8mm" },
+    "length": { "value": "40mm" }
+  }
 }

@@ -912,11 +912,15 @@ module Ladb::OpenCutList
       ref = _fetch_option_hardware
       path = PLUGIN.resolve_library_ref(ref)
       key = [ ref, path.is_a?(String) && File.file?(path) ? File.mtime(path) : nil ]
-      return @hardware_descriptor_def if @hardware_descriptor_def_key == key
+      # Its parents' files too - see HardwareDescriptorDef#stale?
+      return @hardware_descriptor_def if @hardware_descriptor_def_key == key && (@hardware_descriptor_def_loaded.nil? || !@hardware_descriptor_def_loaded.stale?)
       @hardware_descriptor_def_key = key
-      @hardware_descriptor_def = HardwareDescriptorDef.load(path)
+      @hardware_descriptor_def = @hardware_descriptor_def_loaded = HardwareDescriptorDef.load(path)
       if @hardware_descriptor_def.nil?
         @tool.notify_errors([ [ 'tool.smart_join.error.failed_to_load_hardware', { file: ref } ] ])
+      elsif @hardware_descriptor_def.abstract?
+        @tool.notify_errors([ [ 'tool.smart_join.error.invalid_hardware', { file: ref, error: 'abstract descriptor' } ] ])
+        @hardware_descriptor_def = nil
       elsif !@hardware_descriptor_def.valid?
         @tool.notify_errors([ [ 'tool.smart_join.error.invalid_hardware', { file: ref, error: @hardware_descriptor_def.errors.first } ] ])
         @hardware_descriptor_def = nil
@@ -932,7 +936,7 @@ module Ladb::OpenCutList
     # can't be used.
     def _select_hardware(ref)
       descriptor = HardwareDescriptorDef.load(ref)
-      return false if descriptor.nil? || !descriptor.valid? || !_get_hardware_types.include?(descriptor.type)
+      return false if descriptor.nil? || descriptor.abstract? || !descriptor.valid? || !_get_hardware_types.include?(descriptor.type)
       action_def = @tool.get_action_defs.find { |action_def| action_def[:action] == @action }
       option_groups = action_def.nil? || action_def[:options].nil? ? {} : action_def[:options]
       descriptor.options.each do |name, value|
@@ -1122,15 +1126,18 @@ module Ladb::OpenCutList
     end
 
     # The descriptor of the given ref the action can lay, nil if the file is
-    # gone, isn't a descriptor, is invalid or of another type.
+    # gone, isn't a descriptor, is abstract, invalid or of another type.
     def _get_listed_hardware_descriptor_def(ref)
       path = PLUGIN.resolve_library_ref(ref)
       return nil unless path.is_a?(String) && File.file?(path)
       mtime = File.mtime(path)
       cached = @@listed_hardware_descriptor_defs[path]
-      @@listed_hardware_descriptor_defs[path] = cached = [ mtime, HardwareDescriptorDef.load(path) ] if cached.nil? || cached[0] != mtime
+      # Its parents' files too - see HardwareDescriptorDef#stale?
+      if cached.nil? || cached[0] != mtime || !cached[1].nil? && cached[1].stale?
+        @@listed_hardware_descriptor_defs[path] = cached = [ mtime, HardwareDescriptorDef.load(path) ]
+      end
       descriptor = cached[1]
-      return nil if descriptor.nil? || !descriptor.valid? || !_get_hardware_types.include?(descriptor.type)
+      return nil if descriptor.nil? || descriptor.abstract? || !descriptor.valid? || !_get_hardware_types.include?(descriptor.type)
       descriptor
     end
 

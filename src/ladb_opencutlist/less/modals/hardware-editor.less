@@ -381,12 +381,22 @@
   text-align: left;
 }
 
+.ladb-hardware-editor-file-extends {
+  padding: 3px 10px 0 30px;
+  font-size: 12px;
+}
+
+.ladb-hardware-editor-file-extends-name {
+  font-family: monospace;
+  color: @ladb-global-light-color;
+}
+
 .ladb-hardware-editor-file-renamed {
   padding: 3px 10px 0;
   font-size: 11px;
 }
 
-.ladb-hardware-editor-readonly {
+.ladb-hardware-editor-readonly, .ladb-hardware-editor-abstract {
   margin: 8px 10px 0;
   padding: 6px 10px;
 }
@@ -642,5 +652,21 @@
   }
   .ladb-hardware-editor-shaping-panel {
     display: flex;
+  }
+}
+
+// Inherited from the parent - see "extends" : greyed
+.ladb-hardware-editor-inherited {
+  opacity: 0.5;
+}
+.ladb-hardware-editor-inherited .ladb-hardware-editor-inherited {
+  opacity: 1;   // Not twice
+}
+.ladb-hardware-editor-inheritance {
+  margin: 0 0 10px;
+  font-size: 12px;
+  .ladb-hardware-editor-inherited-sample {
+    opacity: 0.5;
+    font-style: italic;
   }
 }

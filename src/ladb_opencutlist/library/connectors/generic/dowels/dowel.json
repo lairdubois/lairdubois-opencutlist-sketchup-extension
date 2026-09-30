@@ -1,0 +1,26 @@
+{
+  "format": "ocl-hardware",
+  "version": 1,
+  "id": "24a05be3-c81b-4623-8761-eb61894d8f61",
+  "type": "connector",
+  "name": "Dowel",
+  "abstract": true,
+  "variables": {
+    "diameter": { "label": "Diameter" },
+    "length": { "value": "40mm", "label": "Length" },
+    "min_wall": { "value": "5mm", "label": "Minimum wall" },
+    "clearance": { "value": "1mm", "label": "Clearance" },
+    "depth_a": "min(@thickness_a - @min_wall; max(@length / 2; @length - (@thickness_b - @min_wall)))",
+    "depth_b": "@length - @depth_a"
+  },
+  "asserts": [ "@depth_a <= @thickness_a - @min_wall", "@depth_b <= @thickness_b - @min_wall" ],
+  "components": {
+    "a": {
+      "hardware": { "cylinders": [ {"x": "0", "y": "0", "diameter": "@diameter", "from": "-@depth_a", "to": "@depth_b"} ] },
+      "machining": { "drillings": [ {"x": "0", "y": "0", "diameter": "@diameter", "depth": "@depth_a + @clearance"} ] },
+      "attributes": { "symmetrical":  true }
+    },
+    "b": { "machining": { "drillings": [ {"x": "0", "y": "0", "diameter": "@diameter", "depth": "@depth_b + @clearance"} ] } }
+  },
+  "options": { "height": "/2", "start_offset": "10mm", "end_offset": "10mm", "max_spacing": "300mm" }
+}

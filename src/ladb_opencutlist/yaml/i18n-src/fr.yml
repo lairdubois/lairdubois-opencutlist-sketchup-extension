@@ -349,8 +349,18 @@ core:
     duplicate: Dupliquer dans Ma Bibliothèque
     name: Nom
     file: Fichier
+    abstract_notice: "Quincaillerie abstraite : elle ne se place pas, elle sert de base aux quincailleries qui en dérivent."
+    file_extends: "hérité de {{ name }}"
     file_renamed: "Renommé à la validation, ainsi que le dossier de ses pièces (était {{ name }})"
     duplicated: "Copié dans Ma Bibliothèque : {{ ref }}"
+    derive: Dériver
+    derive_help: Crée une quincaillerie qui hérite de celle-ci et ne déclare que ce qui change
+    derived_name: "{{ name }} (dérivée)"
+    derived: "Dérivée de {{ ref }} : ajustez ce qui change, puis validez."
+    inherited_from: "Hérité de {{ ref }}"
+    inherited_sample: Grisé
+    inheritance_help: ": valeur héritée du parent. Modifier une valeur la surcharge dans cette quincaillerie."
+    parts_inherited: Hérité tel quel. Pour le modifier, surchargez-le dans le JSON.
     delete_confirm: |
       Confirmez la suppression de **{{ name }}** de *Ma Bibliothèque*, avec le dossier de ses pièces ? 
       *Les quincailleries déjà posées dans le modèle restent.*
@@ -440,6 +450,7 @@ core:
       not_saved: "Enregistrement impossible : {{ error }}"
       edit_failed: "Impossible de modifier la pièce dans SketchUp : {{ error }}"
       not_deleted: "Suppression impossible : {{ error }}"
+      has_children: "Suppression impossible : d'autres quincailleries en héritent ({{ children }})."
       edit_lost: La pièce n'est plus dans le modèle, la modification est perdue.
 tab:
   cutlist:

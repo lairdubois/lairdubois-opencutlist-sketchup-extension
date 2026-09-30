@@ -32,6 +32,9 @@
         <div class="ladb-hardware-editor-readonly alert alert-info" style="display: none;">
             {{ 'core.hardware_editor.readonly_notice'|i18next }}
         </div>
+        <div class="ladb-hardware-editor-abstract alert alert-warning" style="display: none;">
+            {{ 'core.hardware_editor.abstract_notice'|i18next }}
+        </div>
         <div class="ladb-hardware-editor-file-bar ladb-hardware-editor-name-bar form-inline">
             <label for="ladb_hardware_editor_input_name">{{ 'core.hardware_editor.name'|i18next }}</label>
             <input type="text" class="form-control input-sm" id="ladb_hardware_editor_input_name">
@@ -42,6 +45,7 @@
             <input type="text" class="form-control input-sm" id="ladb_hardware_editor_input_file" spellcheck="false">
             <span class="ladb-hardware-editor-file-ext">.json</span>
         </div>
+        <div class="ladb-hardware-editor-file-extends" style="display: none;"><span data-toggle="tooltip"></span></div>
         <div class="ladb-hardware-editor-file-renamed text-muted" style="display: none;"></div>
         <ul class="nav nav-tabs nav-justified" role="tablist">
             <li role="presentation" class="active"><a href="#ladb_hardware_editor_tab_settings" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-settings"></i> {{ 'core.hardware_editor.tab_settings'|i18next }}</a></li>
@@ -80,6 +84,7 @@
 
 {% block footerRightInner %}
     <button class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
+    <button class="btn btn-default" id="ladb_hardware_editor_btn_derive" style="display: none;" title="{{ 'core.hardware_editor.derive_help'|i18next }}">{{ 'core.hardware_editor.derive'|i18next }}</button>
     <button class="btn btn-primary" id="ladb_hardware_editor_btn_duplicate" style="display: none;">{{ 'core.hardware_editor.duplicate'|i18next }}</button>
     <button class="btn btn-primary" id="ladb_hardware_editor_btn_validate">{{ 'default.validate'|i18next }}</button>
 {% endblock %}

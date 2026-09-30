@@ -199,7 +199,7 @@ module Ladb::OpenCutList
 
     # Creates the library root - or the library folder of the given '$LIB/…'
     # ref - if missing, and returns its path (nil if the ref isn't valid). The
-    # shipped library is never written.
+    # shipped library is never written - but by a dev build run from the sources.
     def ensure_library_dir(dir_ref = nil)
       if dir_ref.nil?
         dir = library_dir
@@ -225,8 +225,19 @@ module Ladb::OpenCutList
     end
 
     # Returns true if the given ref points into the shipped library
-    def library_readonly_ref?(value)
+    def library_bundled_ref?(value)
       value.is_a?(String) && value.start_with?(LIBRARY_BUNDLED_REF_PREFIX)
+    end
+
+    # The shipped library can be written by a dev build run from the sources :
+    # it is the one of the repository.
+    def library_bundled_writable?
+      IS_DEV && !IS_RBZ
+    end
+
+    # Returns true if the given ref points into a library that can't be written
+    def library_readonly_ref?(value)
+      library_bundled_ref?(value) && !library_bundled_writable?
     end
 
     # The shipped library's counterpart of the given '$LIB/…' ref :
@@ -255,10 +266,10 @@ module Ladb::OpenCutList
     # library ref, and nil if the ref tries to escape the library.
     def resolve_library_ref(value)
       return value unless library_ref?(value)
-      readonly = library_readonly_ref?(value)
-      relative = value[(readonly ? LIBRARY_BUNDLED_REF_PREFIX : LIBRARY_REF_PREFIX).length..-1].to_s
+      bundled = library_bundled_ref?(value)
+      relative = value[(bundled ? LIBRARY_BUNDLED_REF_PREFIX : LIBRARY_REF_PREFIX).length..-1].to_s
       return nil if relative.empty? || relative.split('/').include?('..')
-      File.join(readonly ? bundled_library_dir : library_dir, relative)
+      File.join(bundled ? bundled_library_dir : library_dir, relative)
     end
 
     # The refs of the sub folders of the given library folder ref, sorted by

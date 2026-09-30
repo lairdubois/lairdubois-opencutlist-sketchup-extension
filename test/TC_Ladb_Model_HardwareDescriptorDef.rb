@@ -1,6 +1,7 @@
 require 'testup/testcase'
 require 'json'
 require 'tmpdir'
+require 'fileutils'
 
 require_relative '../src/ladb_opencutlist/ruby/model/hardware/hardware_descriptor_def'
 
@@ -599,7 +600,10 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     _assert_error(_with(DOWEL, 'variables' => { 'thickness_a' => '2mm' }), "variable 'thickness_a' is a measure")
     _assert_error(_with(DOWEL, 'variables' => { 'x' => true }), "variable 'x' is not a length")
     _assert_error(_with(DOWEL, 'variables' => { 'x' => '@thickness + 2' }), "variable 'x' is not a length")
-    _assert_error(_with(DOWEL, 'variables' => { 'x' => '@y', 'y' => '2mm' }), "variable 'x' uses the unknown variable @y")
+    _assert_error(_with(DOWEL, 'variables' => { 'x' => '@y' }), "variable 'x' uses the unknown variable @y")
+    _assert_error(_with(DOWEL, 'variables' => { 'x' => '@y', 'y' => '@x' }), "variables 'x', 'y' depend on each other")
+    _assert_error(_with(DOWEL, 'variables' => { 'x' => '@x + 1mm' }), "variable 'x' depends on itself")
+    _assert_error(_with(DOWEL, 'variables' => { 'super' => '2mm' }), "variable 'super' is a reserved name")
     _assert_error(_with(DOWEL, 'variables' => {}), "cylinder 1 from uses the unknown variable @depth_a")
     _assert_error(_with(DOWEL, 'asserts' => '@depth_a <= 2mm'), 'asserts is not a list')
     _assert_error(_with(DOWEL, 'asserts' => [ '@depth_a' ]), 'assert 1 is not a comparison')
@@ -844,13 +848,13 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
   end
 
   def test_bundled_dominos
-    dir = File.expand_path('../src/ladb_opencutlist/library/connectors/festool', __dir__)
     {
       'domino-5x30.json' => { [ 300, 300 ] => [ 15, 15 ], [ 19, 300 ] => [ 12, 20 ], [ 300, 19 ] => [ 20, 12 ], [ 19, 19 ] => nil, [ 15, 300 ] => nil },
       'domino-8x40.json' => { [ 300, 300 ] => [ 20, 20 ], [ 19, 300 ] => [ 12, 28 ], [ 300, 19 ] => [ 28, 12 ], [ 19, 19 ] => nil },
     }.each do |file, cases|
-      descriptor = HardwareDescriptorDef.new(JSON.parse(File.read(File.join(dir, file))))
+      descriptor = _bundled("connectors/festool/#{file}")
       assert(descriptor.valid?, "#{file} #{descriptor.errors.inspect}")
+      assert_equal([ '$OCL/connectors/festool/domino.json' ], descriptor.parent_refs)
       length = file == 'domino-5x30.json' ? 30 : 40
       cases.each do |(ta, tb), depths|
         variables = descriptor.resolve_variables('thickness_a' => ta / 25.4, 'thickness_b' => tb / 25.4)
@@ -868,9 +872,223 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     end
   end
 
+  def test_bundled_dowels
+    assert(_bundled('connectors/generic/dowels/dowel.json').abstract?)
+    { 'dowel-8x40.json' => 8, 'dowel-10x40.json' => 10 }.each do |file, diameter|
+      descriptor = _bundled("connectors/generic/dowels/#{file}")
+      assert(descriptor.valid?, "#{file} #{descriptor.errors.inspect}")
+      assert_equal('connector', descriptor.type)
+      variables = descriptor.resolve_variables('thickness_a' => 19 / 25.4, 'thickness_b' => 300 / 25.4)
+      assert_in_delta(14 / 25.4, variables['depth_a'], 1e-9)
+      assert_in_delta(26 / 25.4, variables['depth_b'], 1e-9)
+      cylinder = HardwareDescriptorDef.primitive_cylinders(descriptor.resolve_component('a').hardware, variables).first
+      assert_in_delta(diameter / 25.4, cylinder.diameter, 1e-9)
+      assert(descriptor.failed_asserts(descriptor.resolve_variables('thickness_a' => 19 / 25.4, 'thickness_b' => 19 / 25.4)).any?)
+    end
+  end
+
+  # -- Inheritance --
+
+  # A dowel whose size is set : the one its children extend
+  DOWEL_BASE = {
+    'format' => 'ocl-hardware', 'version' => 1,
+    'id' => 'dowel-base', 'type' => 'connector', 'name' => 'Dowel',
+    'variables' => {
+      'diameter' => { 'value' => '8mm', 'label' => 'Diameter', 'steps' => [ '6mm', '8mm', '10mm' ] },
+      'length' => { 'value' => '40mm', 'label' => 'Length' },
+      'depth_a' => 'min(@thickness_a - 5mm; max(@length / 2; @length - (@thickness_b - 5mm)))',
+      'depth_b' => '@length - @depth_a',
+    },
+    'asserts' => [ '@depth_a <= @thickness_a - 5mm', '@depth_b <= @thickness_b - 5mm' ],
+    'components' => {
+      'a' => {
+        'name' => 'Dowel', 'price' => 0.1,
+        'hardware' => { 'cylinders' => [ { 'diameter' => '@diameter', 'from' => '-@depth_a', 'to' => '@depth_b' } ] },
+        'machining' => { 'drillings' => [ { 'diameter' => '@diameter', 'depth' => '@depth_a + 1mm' } ] }
+      },
+      'b' => { 'machining' => { 'drillings' => [ { 'diameter' => '@diameter', 'depth' => '@depth_b + 1mm' } ] } }
+    },
+    'options' => { 'start_offset' => '37mm', 'end_offset' => '37mm' }
+  }.freeze
+
+  def test_extends_merges_the_parent
+    _with_library('dowels/dowel.json' => DOWEL_BASE) do
+      child = _child('dowels/dowel.json', 'name' => 'Dowel 10x40', 'variables' => { 'diameter' => { 'value' => '10mm' } }, 'options' => { 'end_offset' => '50mm' })
+      descriptor = _def(child, nil, '$LIB/dowels/dowel-10x40.json')
+      assert(descriptor.valid?, descriptor.errors.inspect)
+      assert_equal([ '$LIB/dowels/dowel.json' ], descriptor.parent_refs)
+      assert_equal('child-1', descriptor.id)
+      assert_equal('Dowel 10x40', descriptor.name)
+      assert_equal('connector', descriptor.type)   # Inherited
+      assert_equal({ 'value' => '10mm', 'label' => 'Diameter', 'steps' => [ '6mm', '8mm', '10mm' ] }, descriptor.settings['diameter'])
+      assert_equal({ 'start_offset' => '37mm', 'end_offset' => '50mm' }, descriptor.options)
+      assert_equal(child, descriptor.own_data)
+      variables = descriptor.resolve_variables('thickness_a' => 19 / 25.4, 'thickness_b' => 300 / 25.4)
+      assert_in_delta(10 / 25.4, variables['diameter'], 1e-9)
+      assert_in_delta(14 / 25.4, variables['depth_a'], 1e-9)
+      assert_equal(0.1, descriptor.resolve_component('a').price)
+    end
+  end
+
+  def test_extends_never_inherits_its_identity
+    _with_library('dowel.json' => DOWEL_BASE.merge('abstract' => true, 'supplier' => 'Wood')) do
+      descriptor = _def(_child('dowel.json').reject { |k, _| k == 'name' }, nil, '$LIB/child.json')
+      assert(descriptor.errors.include?('missing name'), descriptor.errors.inspect)
+      assert(!descriptor.abstract?)
+      assert(!descriptor.data.key?('abstract'))
+      assert_equal('Wood', descriptor.supplier)
+    end
+  end
+
+  def test_extends_null_removes_but_a_null_variant_stays_unsupported
+    _with_library('hinge.json' => HINGE) do
+      child = _child('hinge.json', 'type' => 'hinge', 'options' => nil,
+                     'components' => { 'a' => { 'description' => nil, 'variants' => { 'items' => { 'inset' => nil } } }, 'b' => { 'machining' => nil } })
+      descriptor = _def(child, nil, '$LIB/child.json')
+      assert(descriptor.valid?, descriptor.errors.inspect)
+      assert_equal({}, descriptor.options)
+      assert_nil(descriptor.resolve_component('a', 'hinge_kind' => 'inset'))   # Unsupported, no fallback
+      assert_nil(descriptor.resolve_component('a', 'hinge_kind' => 'overlay').description)
+      assert_nil(descriptor.resolve_component('b').machining)
+      assert(!descriptor.resolve_component('b').hardware.nil?)
+    end
+  end
+
+  def test_extends_super
+    _with_library('dowel.json' => DOWEL_BASE) do
+      child = _child('dowel.json', 'variables' => { 'depth_b' => '@super + 0mm', 'wall' => '5mm', 'depth_a' => 'min(@super; @thickness_a - @wall)' },
+                     'asserts' => [ '@depth_a >= 10mm', '@super' ])
+      descriptor = _def(child, nil, '$LIB/child.json')
+      assert(descriptor.valid?, descriptor.errors.inspect)
+      assert_equal('(@length - @depth_a) + 0mm', descriptor.variables['depth_b'])
+      assert_equal([ '@depth_a >= 10mm' ] + DOWEL_BASE['asserts'], descriptor.asserts)
+      # depth_a uses wall, written after it : evaluated in the order of their dependencies
+      variables = descriptor.resolve_variables('thickness_a' => 19 / 25.4, 'thickness_b' => 300 / 25.4)
+      assert_in_delta(14 / 25.4, variables['depth_a'], 1e-9)
+      assert_in_delta(26 / 25.4, variables['depth_b'], 1e-9)
+
+      assert_equal([ 'x' ], _def(_child('dowel.json', 'asserts' => [ 'x' ]), nil, '$LIB/c.json').asserts)   # Replaced
+      _assert_errors(_child('dowel.json', 'asserts' => [ '@super', '@super' ]), 'asserts has @super more than once')
+      _assert_errors(_child('dowel.json', 'variables' => { 'nope' => '@super + 1mm' }), "variable 'nope' uses @super but its parent has no such variable")
+      _assert_errors(_child('dowel.json', 'variables' => { 'super' => '1mm' }), "variable 'super' is a reserved name")
+    end
+  end
+
+  def test_extends_parts_stay_the_ones_of_their_descriptor
+    parent = _with(CONVENTION, 'components' => {
+      'a' => CONVENTION['components']['a'],
+      'b' => { 'hardware' => true, 'machining' => 'hinges/blum/cup-35.skp' }
+    })
+    _with_library('$OCL/hinges/blum/clip-top.json' => parent) do
+      child = _child('$OCL/hinges/blum/clip-top.json', 'type' => 'hinge', 'components' => { 'a' => { 'variants' => { 'items' => { 'inset' => { 'hardware' => true } } } } })
+      descriptor = _def(child, nil, '$LIB/hinges/mine.json')
+      assert(descriptor.valid?, descriptor.errors.inspect)
+      assert_equal('$OCL/components/hinges/blum/clip-top/b.skp', descriptor.resolve_component('b').hardware)
+      assert_equal('$OCL/components/hinges/blum/cup-35.skp', descriptor.resolve_component('b').machining)
+      assert_equal('$LIB/components/hinges/mine/a.inset.skp', descriptor.resolve_component('a', 'hinge_kind' => 'inset').hardware)   # Redeclared
+      assert_equal('$OCL/components/hinges/blum/clip-top/a.inset.machining.skp', descriptor.resolve_component('a', 'hinge_kind' => 'inset').machining)
+    end
+  end
+
+  def test_extends_errors
+    _with_library('dowel.json' => DOWEL_BASE, 'loop_a.json' => _child('loop_b.json'), 'loop_b.json' => _child('loop_a.json'), '$LIB/user.json' => DOWEL_BASE) do
+      _assert_errors(_child('nowhere.json'), 'extends $LIB/nowhere.json : parent not found')
+      _assert_errors(_child('../dowel.json'), 'extends "../dowel.json" is not a descriptor path')
+      _assert_errors(_child('dowel.json', 'type' => 'hinge'), 'type "hinge" differs from its parent\'s "connector"')
+      _assert_errors(_child('loop_a.json'), 'extends $LIB/loop_a.json : inheritance cycle')
+      errors = _def(_child('$LIB/user.json'), nil, '$OCL/bundled.json').errors
+      assert(errors.include?('extends $LIB/user.json : the OCL library can\'t extend the user\'s one'), errors.inspect)
+      _assert_errors(_child('dowel.json').merge('extends' => 12), 'extends is not a string')
+    end
+    levels = Hash[(1..9).map { |i| [ "l#{i}.json", i == 9 ? DOWEL_BASE : _child("l#{i + 1}.json") ] }]
+    _with_library(levels) do
+      _assert_errors(_child('l1.json'), 'more than 8 levels')
+      assert(_def(_child('l2.json'), nil, '$LIB/c.json').valid?)   # 8 levels
+    end
+  end
+
+  def test_abstract
+    base = _with(DOWEL_BASE, 'abstract' => true, 'variables' => DOWEL_BASE['variables'].merge('diameter' => { 'label' => 'Diameter' }))
+    assert(_def(base).abstract?)
+    assert(_def(base).valid?, _def(base).errors.inspect)   # Only validated merged into a child
+    _with_library('base.json' => base) do
+      assert(!_def(_child('base.json'), nil, '$LIB/c.json').valid?)   # No diameter
+      descriptor = _def(_child('base.json', 'variables' => { 'diameter' => { 'value' => '6mm' } }), nil, '$LIB/c.json')
+      assert(descriptor.valid?, descriptor.errors.inspect)
+      assert(!descriptor.abstract?)
+    end
+  end
+
+  def test_extends_load_and_stale
+    _with_library('dowel.json' => DOWEL_BASE, 'dowel-10.json' => _child('dowel.json')) do |dir|
+      descriptor = HardwareDescriptorDef.load('$LIB/dowel-10.json')
+      assert(descriptor.valid?, descriptor.errors.inspect)
+      assert(!descriptor.stale?)
+      File.utime(Time.now + 10, Time.now + 10, File.join(dir, 'lib', 'dowel.json'))
+      assert(descriptor.stale?)   # Its parent changed
+    end
+  end
+
+  def test_extends_helpers
+    assert_equal('$LIB/a/b.json', HardwareDescriptorDef.parent_ref('a/b.json', '$LIB/x/y.json'))
+    assert_equal('$OCL/a/b.json', HardwareDescriptorDef.parent_ref('a/b.json', '$OCL/x/y.json'))
+    assert_equal('$OCL/a/b.json', HardwareDescriptorDef.parent_ref('$OCL/a/b.json', '$LIB/x/y.json'))
+    assert_equal('$LIB/a/b.json', HardwareDescriptorDef.parent_ref('a/b.json', nil))   # A new one is written in the user's library
+    assert_nil(HardwareDescriptorDef.parent_ref('/abs/b.json', nil))
+    assert_equal('a/b.json', HardwareDescriptorDef.extends_value('$LIB/a/b.json', '$LIB/x.json'))
+    assert_equal('$OCL/a/b.json', HardwareDescriptorDef.extends_value('$OCL/a/b.json', '$LIB/x.json'))
+    assert_equal(%({ "id": "x",\n  "extends": "new/p.json", "name": "a" }), HardwareDescriptorDef.replace_extends(%({ "id": "x",\n  "extends": "old/\\"p.json", "name": "a" }), 'new/p.json'))
+    assert_equal('{ "id": "x" }', HardwareDescriptorDef.replace_extends('{ "id": "x" }', 'p.json'))
+    _with_library('d/dowel.json' => DOWEL_BASE, 'd/c1.json' => _child('d/dowel.json'), 'c2.json' => _child('$LIB/d/dowel.json'), 'c3.json' => _child('c1.json')) do |dir|
+      assert_equal(%w[$LIB/c2.json $LIB/d/c1.json], HardwareDescriptorDef.children_refs('$LIB/d/dowel.json', File.join(dir, 'lib'), '$LIB/'))
+    end
+  end
+
   # -----
 
   private
+
+  # The descriptor of the OCL library at the given path, read as the plugin does.
+  def _bundled(relative)
+    dir = File.expand_path('../src/ladb_opencutlist/library', __dir__)
+    HardwareDescriptorDef.library_resolver = lambda { |ref| ref.start_with?('$OCL/') ? File.join(dir, ref[5..-1]) : ref }
+    HardwareDescriptorDef.load('$OCL/' + relative)
+  ensure
+    HardwareDescriptorDef.library_resolver = nil
+  end
+
+  # A descriptor extending the given parent - its ref, or a path in its library.
+  def _child(extends, changes = {})
+    { 'format' => 'ocl-hardware', 'version' => 1, 'id' => 'child-1', 'name' => 'Child', 'extends' => extends }.merge(changes)
+  end
+
+  # Runs the given block with the given files - { path in the user's library
+  # or '$OCL/…' ref => data } - as the libraries descriptors are read from.
+  def _with_library(files)
+    Dir.mktmpdir do |dir|
+      roots = { '$LIB/' => File.join(dir, 'lib'), '$OCL/' => File.join(dir, 'ocl') }
+      fn_path = lambda { |ref|
+        prefix = roots.keys.find { |p| ref.start_with?(p) }
+        prefix.nil? ? ref : File.join(roots[prefix], ref[prefix.length..-1])
+      }
+      files.each do |ref, data|
+        path = fn_path.call(roots.keys.any? { |p| ref.start_with?(p) } ? ref : '$LIB/' + ref)
+        FileUtils.mkdir_p(File.dirname(path))
+        File.write(path, JSON.generate(data))
+      end
+      HardwareDescriptorDef.library_resolver = fn_path
+      begin
+        yield(dir)
+      ensure
+        HardwareDescriptorDef.library_resolver = nil
+      end
+    end
+  end
+
+  def _assert_errors(data, message, ref = '$LIB/child.json')
+    errors = _def(data, nil, ref).errors
+    assert(errors.any? { |error| error.include?(message) }, "expected '#{message}' in #{errors.inspect}")
+  end
 
   def _def(data, path = nil, ref = nil)
     HardwareDescriptorDef.new(JSON.parse(JSON.generate(data)), path, ref)
