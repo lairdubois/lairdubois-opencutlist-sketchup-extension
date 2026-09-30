@@ -4395,6 +4395,7 @@ module Ladb::OpenCutList
 
     MOTIF_PARENT_PATH = 'M1,.917H.5V.083M.25,.333L.5,.083L.75,.333'.freeze
     MOTIF_EXPLORE_PATH = 'M.875,.417V.208H.5L.375,.083H0V.917H.792L1,.417H.208L0,.917'.freeze
+    MOTIF_HOME_PATH = 'M0,.5L.5,.083L1,.5M.167,.361V.917H.833V.361M.417,.917V.667H.583V.917'.freeze
     MOTIF_ADD_PATH = 'M0,0.5L0.5,0.5L0.5,0L0.5,0.5L1,0.5L0.5,0.5L0.5,1'.freeze
     MOTIF_EDIT_PATH = 'M.7,.1L.9,.3L.35,.85L.1,.9L.15,.65L.7,.1M.6,.2L.8,.4'.freeze
 
@@ -4464,6 +4465,9 @@ module Ladb::OpenCutList
         when bundled_root_ref then PLUGIN.get_i18n_string('tool.default.library_bundled')
         else File.basename(ref).sub(/\A./) { |c| c.upcase }  # Only the first letter : capitalize would lower the rest
         end
+      }
+      fn_parent_ref = lambda { |ref|
+        ref == root_ref || ref == bundled_root_ref ? LIBRARIES_REF : File.dirname(ref)
       }
 
       dir_refs = libraries ? [ root_ref, bundled_root_ref ] : PLUGIN.list_library_dirs(dir_ref)
@@ -4546,11 +4550,35 @@ module Ladb::OpenCutList
 
       }
 
+      wrapper = Kuix::Panel.new
+      wrapper.layout_data = Kuix::StaticLayoutData.new(0, 1.0, 1.0, -1, Kuix::Anchor.new(Kuix::Anchor::BOTTOM_LEFT))
+      wrapper.layout = Kuix::BorderLayout.new
+      @tool.append_2d(wrapper, @layer)
+
+      # Path : over the view, without background
+
+      # The ancestors only : the browsed folder is the first button below
+      path_refs = []
+      ref = libraries ? LIBRARIES_REF : fn_parent_ref.call(dir_ref)
+      until ref == LIBRARIES_REF || ref == File.dirname(ref)
+        path_refs.unshift(ref)
+        ref = fn_parent_ref.call(ref)
+      end
+
+      path_lbl = Kuix::Label.new(path_refs.map { |ref| fn_dir_label.call(ref) }.join(' / '))
+      path_lbl.visible = !path_refs.empty?
+      path_lbl.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
+      path_lbl.text_size = text_size
+      path_lbl.text_align = TextAlignLeft
+      path_lbl.padding.set!(unit, unit * 2, unit, unit * 2)
+      path_lbl.set_style_attribute(:color, SmartTool::COLOR_BRAND_DARK)
+      wrapper.append(path_lbl)
+
       panel = Kuix::Panel.new
-      panel.layout_data = Kuix::StaticLayoutData.new(0, 1.0, 1.0, -1, Kuix::Anchor.new(Kuix::Anchor::BOTTOM_LEFT))
+      panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
       panel.layout = Kuix::BorderLayout.new(0, unit)
       panel.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_DARK)
-      @tool.append_2d(panel, @layer)
+      wrapper.append(panel)
 
       # Folders
 
@@ -4566,7 +4594,7 @@ module Ladb::OpenCutList
 
       folder_btn_text = fn_dir_label.call(dir_ref)
       folder_btn_disabled = libraries
-      parent_ref = dir_ref == root_ref || dir_ref == bundled_root_ref ? LIBRARIES_REF : File.dirname(dir_ref)
+      parent_ref = fn_parent_ref.call(dir_ref)
       btn = fn_create_btn.call(folder_btn_text, SmartTool::COLOR_BRAND_DARK, false, folder_btn_disabled, true) { |btn|
 
         btn.layout = Kuix::BorderLayout.new
@@ -4579,10 +4607,37 @@ module Ladb::OpenCutList
         btn.append(lbl)
 
         unless folder_btn_disabled
+
+          if writable
+
+            # A button in the button : see the selected file's ones
+            explore_btn = Kuix::Button.new
+            explore_btn.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::WEST)
+            explore_btn.layout = Kuix::StaticLayout.new
+            explore_btn.min_size.set!(unit * 10, unit * 10)  # Square : the height of a folder button
+            explore_btn.set_style_attribute(:background_color, ColorUtils.color_translucent(Kuix::COLOR_WHITE, 0))  # Hittable
+            explore_btn.set_style_attribute(:background_color, ColorUtils.color_translucent(Kuix::COLOR_WHITE, 77), :hover)
+            explore_btn.on(:click) {
+              begin
+                PLUGIN.open_dir(PLUGIN.ensure_library_dir(dir_ref))  # The browsed folder may not exist yet
+              rescue SystemCallError
+                UI.beep
+              end
+            }
+            btn.append(explore_btn)
+
+            motif = fn_create_motif.call(MOTIF_EXPLORE_PATH)
+            motif.set_style_attribute(:color, SmartTool::COLOR_BRAND_LIGHT)
+            explore_btn.append(motif)
+
+          end
+
           motif = fn_create_motif.call(MOTIF_PARENT_PATH)
           motif.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
-          motif.set_style_attribute(:color, Kuix::COLOR_WHITE)
+          motif.set_style_attribute(:color, SmartTool::COLOR_BRAND_LIGHT)
+          motif.set_style_attribute(:color, Kuix::COLOR_WHITE, :hover)
           btn.append(motif)
+
         end
 
       }
@@ -4595,27 +4650,21 @@ module Ladb::OpenCutList
         dirs_panel.append(btn)
       end
 
-      dirs_explore_btn = Kuix::Button.new
-      dirs_explore_btn.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::WEST)
-      dirs_explore_btn.layout = Kuix::StaticLayout.new
-      dirs_explore_btn.min_size.set!(unit * 8, unit * 8)
-      dirs_explore_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_DARK)
-      dirs_explore_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_LIGHT, :hover)
-      dirs_explore_btn.disabled = !writable
-      dirs_explore_btn.on(:click) {
-        begin
-          PLUGIN.open_dir(PLUGIN.ensure_library_dir(dir_ref))  # The browsed folder may not exist yet
-        rescue SystemCallError
-          UI.beep
-        end
-      }
-      dirs_row.append(dirs_explore_btn)
+      dirs_home_btn = Kuix::Button.new
+      dirs_home_btn.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::WEST)
+      dirs_home_btn.layout = Kuix::StaticLayout.new
+      dirs_home_btn.min_size.set!(unit * 8, unit * 8)
+      dirs_home_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_DARK)
+      dirs_home_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_LIGHT, :hover)
+      dirs_home_btn.disabled = libraries
+      dirs_home_btn.on(:click) { on_browse.call(LIBRARIES_REF) }
+      dirs_row.append(dirs_home_btn)
 
-      dirs_explore_btn_motif = fn_create_motif.call(MOTIF_EXPLORE_PATH)
-      dirs_explore_btn_motif.set_style_attribute(:color, Kuix::COLOR_LIGHT_GREY)
-      dirs_explore_btn_motif.set_style_attribute(:color, SmartTool::COLOR_BRAND_DARK, :hover)
-      dirs_explore_btn_motif.set_style_attribute(:color, SmartTool::COLOR_BRAND_DARK, :disabled)  # Invisible
-      dirs_explore_btn.append(dirs_explore_btn_motif)
+      dirs_home_btn_motif = fn_create_motif.call(MOTIF_HOME_PATH)
+      dirs_home_btn_motif.set_style_attribute(:color, Kuix::COLOR_LIGHT_GREY)
+      dirs_home_btn_motif.set_style_attribute(:color, SmartTool::COLOR_BRAND_DARK, :hover)
+      dirs_home_btn_motif.set_style_attribute(:color, SmartTool::COLOR_BRAND_DARK, :disabled)  # Invisible
+      dirs_home_btn.append(dirs_home_btn_motif)
 
       fn_append_scroll_btns.call(dirs_row, dirs_panel, dirs_overflow, scroll[:dirs])
       @@scrolls[@key][:dirs_panel] = dirs_panel
