@@ -290,21 +290,21 @@
   },
   "b": { "machining": { "drillings": [ { "diameter": "8mm", "depth": "@depth_b + 1mm" } ] } }
 }</pre>
-<div class="note"><b>Échange a / b (connecteurs).</b> Quand les asserts refusent une position dans un sens et l'acceptent dans l'autre, l'outil échange les pièces A et B. Une vis traverse ainsi le panneau qu'elle peut traverser, quelle que soit la pièce sélectionnée en premier.</div>
-<p>Exemple (la <i>Screw 4x40</i> livrée) : vis qui traverse A, tête fraisée sur la face opposée, refusée si cette face n'est pas parallèle ou si la vis mord moins de 15 mm dans B :</p>
-<pre>"variables": { "embed": "40mm - @thickness_max_a" },
+<div class="note"><b>Slots a / b (connecteurs).</b> Les géométries du slot <code>a</code> sont toujours posées sur la pièce A de l'outil (celle dont on sélectionne l'arête, qui touche B par la face voisine), celles du slot <code>b</code> sur la pièce B. Un descripteur a donc un sens : quand ses asserts refusent la position, c'est la jonction qu'il faut prendre depuis l'autre pièce.</div>
+<p>Exemple (la <i>Screw 4x50</i> livrée) : vis qui se visse dans A à travers B, tête fraisée sur la face opposée de B, refusée si cette face n'est pas parallèle ou si la vis mord moins de 15 mm dans A :</p>
+<pre>"variables": { "embed": "50mm - @thickness_max_b" },
 "asserts": [
-  "@thickness_max_a - @thickness_min_a &lt;= 0.2mm",
+  "@thickness_max_b - @thickness_min_b &lt;= 0.2mm",
   "@embed &gt;= 15mm",
-  "@embed &lt;= @thickness_b - 3mm"
+  "@embed &lt;= @thickness_a - 3mm"
 ],
 "components": {
   "a": {
-    "hardware":  { "cylinders": [ { "diameter": "4mm", "from": "-@thickness_max_a", "to": "@embed",
-                                    "countersink": { "diameter": "8mm", "end": "from" } } ] },
-    "machining": { "drillings": [ { "diameter": "4mm", "depth": "through" } ] }
+    "hardware":  { "cylinders": [ { "diameter": "4mm", "from": "-@embed", "to": "@thickness_max_b",
+                                    "countersink": { "diameter": "8mm", "end": "to" } } ] },
+    "machining": { "drillings": [ { "diameter": "3mm", "depth": "@embed" } ] }
   },
-  "b": { "machining": { "drillings": [ { "diameter": "2.5mm", "depth": "@embed" } ] } }
+  "b": { "machining": { "drillings": [ { "diameter": "4mm", "depth": "through" } ] } }
 }</pre>
 
 <!-- ================================================================ -->
@@ -405,7 +405,7 @@
 <table>
   <tr><th style="width:42%">Fichier</th><th>Ce qu'il montre</th></tr>
   <tr><td><code class="nowrap">connectors/generic/dowel-8x40.json</code><br><code class="nowrap">connectors/generic/dowel-10x40.json</code></td><td>tourillon tout en primitives ; variables et asserts selon l'épaisseur des deux pièces</td></tr>
-  <tr><td><code class="nowrap">connectors/generic/screw-4x40.json</code></td><td>vis débouchante à tête fraisée sur la face opposée ; <code>@thickness_min</code> / <code>@thickness_max</code></td></tr>
+  <tr><td><code class="nowrap">connectors/generic/screws/screw-4x50.json</code></td><td>vis à travers B, tête fraisée sur la face opposée ; <code>@thickness_min</code> / <code>@thickness_max</code></td></tr>
   <tr><td><code class="nowrap">connectors/festool/domino-5x30.json</code><br><code class="nowrap">connectors/festool/domino-8x40.json</code></td><td>mortaises et tenon oblong ; crans de la machine avec <code>floor</code> / <code>ceil</code></td></tr>
   <tr><td><code>connectors/lamello/clamex/…</code></td><td>hardware en SKP, trou d'accès en perçage <code>"axis": "y"</code></td></tr>
   <tr><td><code>connectors/lamello/cabineo/…</code></td><td>perçages le long de Y, logement de collerette avec <code>"length_axis": "z"</code></td></tr>

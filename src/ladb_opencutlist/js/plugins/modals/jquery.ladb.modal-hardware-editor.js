@@ -75,6 +75,20 @@
         return ref.substring(ref.lastIndexOf('/') + 1).replace(/\.json$/i, '');
     };
 
+    // The options of SmartJoin a descriptor of each type gives the defaults
+    // of - its 'options' - by group, as the tool shows them.
+    const TOOL_OPTION_GROUPS = {
+        connector: [
+            { group: 'height', options: [ 'height' ] },
+            { group: 'offsets', options: [ 'start_offset', 'end_offset' ] },
+            { group: 'spacings', options: [ 'min_spacing', 'max_spacing' ] },
+        ],
+        hinge: [
+            { group: 'offsets', options: [ 'start_offset', 'end_offset' ] },
+            { group: 'spacings', options: [ 'min_spacing', 'max_spacing' ] },
+        ],
+    };
+
     // CodeMirror mode of the descriptor : JSON, its keys apart, the @variables
     // of its expressions spotted.
     CodeMirror.defineSimpleMode('ocl-hardware-json', {
@@ -108,6 +122,7 @@
         this.fileName = null;   // Typed : the file is written - renamed - with it
 
         this.topology = null;
+        this.swapped = false;
         this.response = null;
 
         this._computeTimeout = null;
@@ -115,6 +130,7 @@
         this._settingsSignature = null;
         this._benchDef = null;
         this._errorLine = null;
+        this._cleanGeneration = null;   // Of the JSON, as loaded
 
         // SKP files, by ref : their meshes - by source - the ones picked to
         // replace them, and the placement to bake into them at save.
@@ -152,7 +168,8 @@
             ref: this.ref || this.provisionalRef(),
             topology: this.topology,
             thickness_a: this.$inputThicknessA.val(),
-            thickness_b: this.$inputThicknessB.val()
+            thickness_b: this.$inputThicknessB.val(),
+            swapped: this.swapped
         }, function (response) {
             if (computeId !== that._computeId) {
                 return; // An older one, overtaken by an edit
@@ -236,6 +253,9 @@
         $('button', this.$topologies).each(function () {
             $(this).toggleClass('active', $(this).data('topology') === that.topology);
         });
+        this.$btnSwap
+            .toggle(this.response.swappable === true)
+            .toggleClass('active', this.response.swapped === true);
 
     };
 
@@ -253,21 +273,30 @@
         }
 
         this._benchDef = {
+            view: this.response.view_transformation,
             panels: this.response.panels,
-            solids: this.response.solids,
+            solids: (this.response.solids || []).map(function (solid) {
+                // What the viewer shows when it is hovered
+                return $.extend({}, solid, {
+                    label: solid.slot.toUpperCase() + ' · ' + i18next.t('core.hardware_editor.solid_' + solid.kind, solid.texts)
+                });
+            }),
             skps: this.benchSkps()
         };
         const $threeViewer = $('.ladb-three-viewer', this.$viewer);
         if ($threeViewer.length === 0) {
 
             // First bench : the viewer is created, the bench given once it is loaded
-            const $newThreeViewer = $(Twig.twig({ ref: 'modals/_hardware-editor-three-viewer.twig' }).render({
+            const $newThreeViewer = $(Twig.twig({ ref: 'components/_hardware-editor-three-viewer.twig' }).render({
                 THREE_CAMERA_VIEWS: THREE_CAMERA_VIEWS
             }));
             this.$viewer.append($newThreeViewer);
             $newThreeViewer
                 .on('loaded.ladb.threeviewer', function () {
                     $newThreeViewer.ladbThreeViewer('callCommand', [ 'setup_bench', { benchDef: that._benchDef } ]);
+                })
+                .on('hovered.bench', function (e, data) {
+                    that.showBenchHover(data);
                 })
                 .ladbThreeViewer({
                     dialog: this.dialog
@@ -369,7 +398,22 @@
         const that = this;
 
         const settings = this.response.settings || [];
-        const signature = JSON.stringify(settings.map(function (setting) { return [ setting.name, setting.raw ]; }));
+        let options = {};
+        try {
+            const data = JSON.parse(this.cm.getValue());
+            if (data.options !== null && typeof data.options === 'object' && !Array.isArray(data.options)) {
+                options = data.options;
+            }
+        } catch (e) {
+            // The JSON is being typed : the response's type says what to show
+        }
+        const optionGroups = TOOL_OPTION_GROUPS[this.response.type] || [];
+        const signature = JSON.stringify([
+            settings.map(function (setting) { return [ setting.name, setting.raw ]; }),
+            this.response.type,
+            options,
+            this.readonly
+        ]);
         if (signature === this._settingsSignature) {
             return;
         }
@@ -377,9 +421,12 @@
 
         this.$settings.empty();
 
+        if (optionGroups.length > 0) {
+            this.$settings.append($('<div class="ladb-hardware-editor-settings-title">').text(i18next.t('core.hardware_editor.settings_variables')));
+        }
+
         if (settings.length === 0) {
             this.$settings.append($('<div class="ladb-hardware-editor-empty">').html(i18next.t('core.hardware_editor.no_settings')));
-            return;
         }
 
         for (const setting of settings) {
@@ -442,6 +489,42 @@
 
         }
 
+        // The tool's options : their defaults, written in the JSON's 'options'
+        if (optionGroups.length > 0) {
+            this.$settings
+                .append($('<div class="ladb-hardware-editor-settings-title">').text(i18next.t('core.hardware_editor.settings_tool_options')))
+                .append($('<div class="help-block ladb-hardware-editor-settings-help">').text(i18next.t('core.hardware_editor.settings_tool_options_help')));
+            for (const optionGroup of optionGroups) {
+                const $formGroup = $('<div class="form-group">');
+                const $control = $('<div class="col-xs-7 ladb-hardware-editor-tool-options">');
+                $formGroup
+                    .append($('<label class="control-label col-xs-5">').text(i18next.t('tool.smart_join.action_option_group_' + optionGroup.group)))
+                    .append($control);
+                for (const name of optionGroup.options) {
+                    const value = options[name] === undefined || options[name] === null ? '' : String(options[name]);
+                    const $input = $('<input type="text" class="form-control">');
+                    const $option = $('<div class="ladb-hardware-editor-tool-option">').append($input);
+                    $input
+                        .val(value)
+                        .ladbTextinputDimension({ resetValue: '' })   // Reset : the option removed
+                        .on('change', function () {
+                            const newValue = $(this).val().trim();
+                            if (newValue !== value) {
+                                that.setOptionValue(name, newValue);
+                            }
+                        });
+                    if (this.readonly) {
+                        $('input', $option).prop('disabled', true);
+                    }
+                    if (optionGroup.options.length > 1) {
+                        $option.append($('<div class="help-block">').text(i18next.t('tool.smart_join.action_option_' + optionGroup.group + '_' + name)));
+                    }
+                    $control.append($option);
+                }
+                this.$settings.append($formGroup);
+            }
+        }
+
     };
 
     LadbModalHardwareEditor.prototype.renderErrors = function (errors) {
@@ -474,27 +557,55 @@
 
     };
 
+    // The label of the solid hovered in the viewer - { label, rect } - as a
+    // tooltip beside it - over it, under when there is no room - , or none.
+    LadbModalHardwareEditor.prototype.showBenchHover = function (data) {
+
+        if (!this.$benchHoverAnchor) {
+            const that = this;
+            this.$benchHoverAnchor = $('<span class="ladb-hardware-editor-hover-anchor">')
+                .appendTo(this.$viewer)
+                .tooltip({
+                    trigger: 'manual',
+                    container: this._$modal,   // Removed with it : never left behind
+                    placement: 'auto top',
+                    viewport: this.$viewer,   // Where 'auto' looks for room
+                    animation: false,
+                    title: function () { return that._benchHoverLabel; }
+                });
+        }
+
+        if (data) {
+            this._benchHoverLabel = data.label;
+            this.$benchHoverAnchor
+                .css(data.rect)   // Around the solid - the iframe fills the viewer
+                .tooltip('show');
+        } else {
+            this.$benchHoverAnchor.tooltip('hide');
+        }
+
+    };
+
     LadbModalHardwareEditor.prototype.renderStatus = function () {
 
         const $status = $('.ladb-hardware-editor-status', this.$element).empty();
         if (this.readonly) {
             $status.append($('<span class="label label-default">').text(i18next.t('core.hardware_editor.readonly')));
-            $status.append(' ');
         }
+
+        // The verdict, over the viewer
+        const $verdict = $('.ladb-hardware-editor-verdict', this.$element).empty();
         if (this.response.supported !== true) {
+            $verdict.hide();
             return;
         }
-        if (this.response.accepted) {
-            $status.append($('<span class="text-success">')
-                .append('<i class="ladb-opencutlist-icon-check-mark"></i> ')
-                .append($('<span>').text(i18next.t('core.hardware_editor.accepted')))
-            );
-        } else {
-            $status.append($('<span class="text-danger">')
-                .append('<i class="ladb-opencutlist-icon-warning"></i> ')
-                .append($('<span>').text(i18next.t('core.hardware_editor.refused')))
-            );
-        }
+        const accepted = this.response.accepted === true;
+        $verdict
+            .toggleClass('ladb-hardware-editor-verdict-accepted', accepted)
+            .toggleClass('ladb-hardware-editor-verdict-refused', !accepted)
+            .append(accepted ? '<i class="ladb-opencutlist-icon-check-mark"></i> ' : '<i class="ladb-opencutlist-icon-warning"></i> ')
+            .append($('<span>').text(i18next.t(accepted ? 'core.hardware_editor.accepted' : 'core.hardware_editor.refused')))
+            .show();
 
     };
 
@@ -749,6 +860,7 @@
             that.placements[ref] = matrix;
             that.renderBench();
             that.renderParts();
+            that.updateGuard();
         };
         const fnButton = function (label, onClick) {
             return $('<button type="button" class="btn btn-default btn-xs">')
@@ -930,7 +1042,7 @@
                 that.dialog.notifyErrors(response.errors);
                 return;
             }
-            that.dialog.hide();
+            that.dialog.hide(true);
         });
 
     };
@@ -964,7 +1076,7 @@
                     that.dialog.notifyErrors(response.errors);
                     return;
                 }
-                that.dialog.hide();
+                that.dialog.hide(true);
             });
         }, {
             confirmBtnType: 'danger',
@@ -1074,6 +1186,7 @@
             that.fetchMeshes();
             that.renderBench();
             that.renderParts();
+            that.updateGuard();
         });
     };
 
@@ -1093,6 +1206,7 @@
             placement: this.placements[ref] || IDENTITY,
             transformation: skp.transformation,
             panels: this.response.panels,
+            view: this.response.view_transformation,
             name: name.replace(/\.skp$/i, '')
         }, function (response) {
             if (response.errors) {
@@ -1100,6 +1214,7 @@
                 return;
             }
             that.shaping = { ref: ref, size: null };
+            that.updateGuard();
             $('.ladb-hardware-editor-shaping-name', that.$element).text(i18next.t('core.hardware_editor.shaping', { name: name }));
             that.$element.addClass('ladb-hardware-editor-shaping');
             rubyCallCommand('hardware_editor_resize', { width: SHAPING_WIDTH, height: SHAPING_HEIGHT }, function (response) {
@@ -1123,6 +1238,7 @@
         rubyCallCommand('hardware_skp_edit', { action: finish ? 'finish' : 'cancel' }, function (response) {
             that.shaping = null;
             that.$element.removeClass('ladb-hardware-editor-shaping');
+            that.updateGuard();
             rubyCallCommand('hardware_editor_resize', shaping.size || { width: 1100, height: 760 });
             if (response.errors) {
                 that.dialog.notifyErrors(response.errors);
@@ -1203,6 +1319,79 @@
 
     };
 
+    // Sets the given option of the tool in the JSON - see TOOL_OPTION_GROUPS -
+    // the rest of the text as it is. An empty value removes it.
+    LadbModalHardwareEditor.prototype.setOptionValue = function (name, value) {
+
+        const text = this.cm.getValue();
+        const fnReplace = function (start, end, replacement) {
+            this.cm.replaceRange(replacement, this.cm.posFromIndex(start), this.cm.posFromIndex(end));
+        }.bind(this);
+        // Where the members of the object of the given range end : after its
+        // last non-space character, before its '}'
+        const fnMembersEnd = function (range) {
+            let end = range.end - 1;
+            while (end > range.start && /\s/.test(text[end - 1])) end--;
+            return end;
+        };
+
+        const range = this.findJsonValueRange(text, [ 'options', name ]);
+        if (range !== null) {
+            if (value !== '') {
+                fnReplace(range.start, range.end, JSON.stringify(value));
+            } else {
+                // The member removed, with a comma around it
+                let start = text.lastIndexOf(JSON.stringify(name), range.start);
+                let end = range.end;
+                let i = start;
+                while (i > 0 && /\s/.test(text[i - 1])) i--;
+                if (text[i - 1] === ',') {
+                    start = i - 1;
+                } else {
+                    let j = end;
+                    while (j < text.length && /\s/.test(text[j])) j++;
+                    if (text[j] === ',') {
+                        end = j + 1;
+                        while (end < text.length && /[ \t]/.test(text[end])) end++;
+                    } else {
+                        // The only one : the object emptied
+                        const optionsRange = this.findJsonValueRange(text, [ 'options' ]);
+                        start = optionsRange.start;
+                        end = optionsRange.end;
+                        fnReplace(start, end, '{}');
+                        this.compute(false);
+                        return;
+                    }
+                }
+                fnReplace(start, end, '');
+            }
+        } else if (value !== '') {
+            const member = JSON.stringify(name) + ': ' + JSON.stringify(value);
+            const optionsRange = this.findJsonValueRange(text, [ 'options' ]);
+            if (optionsRange !== null && text[optionsRange.start] === '{') {
+                const end = fnMembersEnd(optionsRange);
+                if (end === optionsRange.start + 1) {
+                    fnReplace(optionsRange.start, optionsRange.end, '{ ' + member + ' }');
+                } else {
+                    fnReplace(end, end, ', ' + member);
+                }
+            } else if (optionsRange === null) {
+                const rootRange = this.findJsonValueRange(text, []);
+                if (rootRange === null || text[rootRange.start] !== '{') {
+                    return;
+                }
+                const end = fnMembersEnd(rootRange);
+                fnReplace(end, end, (end === rootRange.start + 1 ? '' : ',') + '\n  "options": { ' + member + ' }');
+            } else {
+                return;
+            }
+        } else {
+            return;
+        }
+        this.compute(false);
+
+    };
+
     // The range - { start, end } offsets - of the value at the given path of
     // the given JSON text, null if it isn't there or the JSON is invalid.
     LadbModalHardwareEditor.prototype.findJsonValueRange = function (text, path) {
@@ -1277,6 +1466,53 @@
         return found;
     };
 
+    // Close /////
+
+    // Something typed, picked, placed or shaped, not saved yet.
+    LadbModalHardwareEditor.prototype.isDirty = function () {
+        if (this.readonly) {
+            return false;
+        }
+        if (this.shaping) {
+            return true;
+        }
+        if (this._cleanGeneration !== null && !this.cm.isClean(this._cleanGeneration)) {
+            return true;
+        }
+        if (this.fileName !== null || Object.keys(this.imports).length > 0) {
+            return true;
+        }
+        for (const ref of Object.keys(this.placements)) {
+            if (!fnIsIdentity(this.placements[ref])) {
+                return true;
+            }
+        }
+        return false;
+    };
+
+    // Closing the window - its close button, or from Ruby - asks first.
+    LadbModalHardwareEditor.prototype.updateGuard = function () {
+        this.dialog.setGuarded(this.isDirty());
+    };
+
+    // Cancel, Escape or the close button of the window : unsaved changes
+    // are discarded once confirmed.
+    LadbModalHardwareEditor.prototype.confirmClose = function () {
+        const that = this;
+
+        if (!this.isDirty()) {
+            this.dialog.hide(true);
+            return;
+        }
+        this.dialog.confirm(i18next.t('default.caution'), i18next.t('core.hardware_editor.discard_confirm'), function () {
+            that.dialog.hide(true);
+        }, {
+            confirmBtnType: 'danger',
+            confirmBtnLabel: i18next.t('core.hardware_editor.discard')
+        });
+
+    };
+
     // Load /////
 
     // Edits the given text - of this.ref, or of a new descriptor.
@@ -1288,6 +1524,7 @@
         this.placements = {};
         this.cm.setValue(text);
         this.cm.clearHistory();
+        this._cleanGeneration = this.cm.changeGeneration();
         this.cm.setOption('readOnly', this.readonly);
         this.$btnValidate.toggle(!this.readonly);
         this.$btnValidate.prop('disabled', !this.ref && !this.options.dir_ref);
@@ -1295,6 +1532,7 @@
         $('.ladb-hardware-editor-readonly', this.$element).toggle(this.readonly);
         $('.ladb-hardware-editor-json', this.$element).toggleClass('ladb-hardware-editor-json-readonly', this.readonly);
         this.$btnDelete.toggle(!!this.ref && !this.readonly);
+        this.updateGuard();
         this.compute(false);
     };
 
@@ -1320,6 +1558,14 @@
 
         const that = this;
 
+        // Cancel - and Escape - : unsaved changes are discarded once confirmed
+        $('[data-dismiss="modal"]', this.$element)
+            .off('click')
+            .on('click', function () {
+                this.blur();
+                that.confirmClose();
+            });
+
         // Bind tabs
         $('a[data-toggle="tab"]', this.$element).on('shown.bs.tab', function (e) {
             if ($(e.target).attr('href') === '#ladb_hardware_editor_tab_json') {
@@ -1336,6 +1582,8 @@
 
         // Fetch UI elements
         this.$topologies = $('.ladb-hardware-editor-topologies', this.$element);
+        this.$btnBenchSettings = $('#ladb_hardware_editor_btn_bench_settings', this.$element);
+        this.$btnSwap = $('#ladb_hardware_editor_btn_swap', this.$element);
         this.$inputThicknessA = $('#ladb_hardware_editor_input_thickness_a', this.$element);
         this.$inputThicknessB = $('#ladb_hardware_editor_input_thickness_b', this.$element);
         this.$viewer = $('.ladb-hardware-editor-viewer', this.$element);
@@ -1378,6 +1626,7 @@
             .on('input', function () {
                 that.fileName = fnSanitizeFileName($(this).val()) || null;
                 that.renderFile();
+                that.updateGuard();
                 if (!that.ref) {
                     that.compute(true);   // Its parts are looked for in the folder named after it
                 }
@@ -1401,6 +1650,87 @@
         });
 
         // Trial thicknesses : not saved
+        // A and B swapped, where they play different parts
+        this.$btnSwap
+            .on('click', function () {
+                this.blur();
+                that.swapped = !that.swapped;
+                that.compute(false);
+            });
+
+        // Refused : a click on the verdict shows the first assert that fails
+        $('.ladb-hardware-editor-verdict', this.$element)
+            .on('click', function () {
+                const $row = $('tr.danger', that.$computations).first();
+                if ($row.length === 0) {
+                    return;
+                }
+                that.$computations.stop().animate({
+                    scrollTop: that.$computations.scrollTop() + $row.offset().top - that.$computations.offset().top - 10
+                }, 200);
+                $row.removeClass('ladb-hardware-editor-flash');
+                setTimeout(function () { $row.addClass('ladb-hardware-editor-flash'); }, 0);   // Restarted
+            });
+
+        // Settings of the bench, in a panel over the trial
+        const $benchSettings = $('.ladb-hardware-editor-bench-settings', this.$element);
+        const fnToggleBenchSettings = function (visible) {
+            $benchSettings.toggle(visible);
+            that.$btnBenchSettings.toggleClass('active', visible);
+            if (!visible && (hoveredSlot || focusedSlot)) {
+                hoveredSlot = focusedSlot = null;
+                fnHighlightBenchPanel();
+            }
+        };
+        this.$btnBenchSettings
+            .on('click', function () {
+                this.blur();
+                fnToggleBenchSettings(!$benchSettings.is(':visible'));
+            });
+        this.$element.on('mousedown', function (e) {
+            if ($benchSettings.is(':visible') && $(e.target).closest('.ladb-hardware-editor-trial').length === 0) {
+                fnToggleBenchSettings(false);
+            }
+        });
+        // The panel of the hovered or edited setting stands out in the viewer
+        let hoveredSlot = null;
+        let focusedSlot = null;
+        const fnHighlightBenchPanel = function () {
+            const $threeViewer = $('.ladb-three-viewer', that.$viewer);
+            if ($threeViewer.length > 0 && $threeViewer.data('ladb.threeviewer').loaded) {
+                $threeViewer.ladbThreeViewer('callCommand', [ 'highlight_bench_panel', { slot: focusedSlot || hoveredSlot } ]);
+            }
+        };
+        $('.ladb-hardware-editor-bench-setting', $benchSettings)
+            .on('mouseenter', function () {
+                hoveredSlot = $(this).data('slot');
+                fnHighlightBenchPanel();
+            })
+            .on('mouseleave', function () {
+                hoveredSlot = null;
+                fnHighlightBenchPanel();
+            })
+            .on('focusin', function () {
+                focusedSlot = $(this).data('slot');
+                fnHighlightBenchPanel();
+            })
+            .on('focusout', function () {
+                focusedSlot = null;
+                fnHighlightBenchPanel();
+            });
+
+        // A click in the 3D gives the focus to the viewer's iframe : this window loses it
+        $(window)
+            .off('blur.ladbHardwareEditor')
+            .on('blur.ladbHardwareEditor', function () {
+                if (!$.contains(document, $benchSettings.get(0))) {
+                    $(window).off('blur.ladbHardwareEditor');
+                    return;
+                }
+                if ($benchSettings.is(':visible') && $(document.activeElement).is('iframe') && $.contains(that.$viewer.get(0), document.activeElement)) {
+                    fnToggleBenchSettings(false);
+                }
+            });
         this.$inputThicknessA
             .val('19mm')
             .ladbTextinputDimension({ resetValue: '19mm' })
@@ -1427,6 +1757,7 @@
         this.cm.on('change', function (cm, change) {
             if (change.origin !== 'setValue') {
                 that.compute(true);
+                that.updateGuard();
             }
         });
 

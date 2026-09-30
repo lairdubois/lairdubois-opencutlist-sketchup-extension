@@ -217,7 +217,13 @@ let renderer,
     pinsGroup,
     pinsOptions,
 
-    bench
+    bench,
+    benchPanels,
+    benchHighlightedSlot,
+    benchSolidMeshes,
+    benchHoveredMesh,
+    benchHoveredDimensions,
+    benchRaycaster
 ;
 
 let animating, animateRequestId;
@@ -290,6 +296,15 @@ const fnInit = function() {
 
 const fnAddListeners = function () {
 
+    // Bench : a primitive hovered
+    cssRenderer.domElement.addEventListener('pointermove', fnOnBenchPointerMove);
+    cssRenderer.domElement.addEventListener('pointerleave', function () {
+        fnHoverBenchSolid(null);
+    });
+    controls.addEventListener('start', function () {
+        fnHoverBenchSolid(null);   // Orbiting, zooming : the label would be left behind
+    });
+
     // Controls listeners
     controls.addEventListener('change', function () {
         fnRender();
@@ -332,6 +347,10 @@ const fnAddListeners = function () {
 
                 case 'setup_bench':
                     fnSetupBench(call.params.benchDef);
+                    break;
+
+                case 'highlight_bench_panel':
+                    fnHighlightBenchPanel(call.params.slot);
                     break;
 
                 case 'set_zoom':
@@ -1128,8 +1147,18 @@ const fnSetupModel = function(modelDef, partsColored, partsOpacity, pinsHidden, 
 // Bench (hardware editor) : fictional panels and the solids of the hardware
 // laid on them, rebuilt on each edit - the camera stays where it is.
 
-const BENCH_PANEL_COLORS = { a: 0xe8dcc4, b: 0xd9c9a8 };
+const BENCH_PANEL_COLORS = { a: 0xf0c987, b: 0xa9d19e };
+const BENCH_PANEL_PIN_COLORS = { a: '#c98a1c', b: '#4e9442' };
+const BENCH_PANEL_OPACITY = 0.45;
+const BENCH_REFERENCE_DARKEN = 0.4;   // Its panel's color darkened, as SmartJoin shows it - see COLOR_REF_DARKEN_A
+const BENCH_REFERENCE_ARROW_LENGTH = 50 / 25.4;
+const BENCH_PANEL_HIGHLIGHTED_OPACITY = 0.85;
 const BENCH_PART_COLORS = { hardware: 0x8c8c8c, machining: 0x2e7fd9 };
+const BENCH_HOVERED_COLORS = { hardware: 0xe0a100, machining: 0xe0a100 };
+const BENCH_HOVERED_OPACITY = 0.9;
+const BENCH_AXIS_COLORS = { x: 0xff000f, y: 0x00bb00, z: 0x0032ff };   // As SketchUp draws them - see Kuix::COLOR_X, COLOR_Y, COLOR_Z
+const BENCH_DIMENSION_HEAD_LENGTH = 3 / 25.4;
+const BENCH_DIMENSION_RENDER_ORDER = 999;
 
 const fnCreateBenchSolidGeometry = function (solidDef) {
 
@@ -1190,37 +1219,246 @@ const fnAddBenchObject = function (parent, geometry, color, opacity) {
     const edges = new THREE.LineSegments(new THREE.EdgesGeometry(geometry, 30), lineMaterial);
     parent.add(edges);
 
+    return mesh;
+};
+
+// The reference face of a panel - [ axis, 'min' | 'max' ] - : an arrow
+// along its normal, from its center - as SmartJoin shows it.
+const fnAddBenchReferenceFace = function (parent, reference, min, max, color) {
+
+    const axis = reference[0];
+    const direction = new THREE.Vector3();
+    direction.setComponent(axis, reference[1] === 'max' ? 1 : -1);
+    const origin = min.clone().add(max).multiplyScalar(0.5);
+    origin.setComponent(axis, (reference[1] === 'max' ? max : min).getComponent(axis));
+
+    parent.add(new THREE.ArrowHelper(
+        direction,
+        origin,
+        BENCH_REFERENCE_ARROW_LENGTH,
+        new THREE.Color(color).multiplyScalar(1 - BENCH_REFERENCE_DARKEN),
+        BENCH_REFERENCE_ARROW_LENGTH * 0.25,
+        BENCH_REFERENCE_ARROW_LENGTH * 0.12
+    ));
+
+};
+
+// The pin of a panel : at the center of its face the farthest from the
+// joint - the origin - so it doesn't hide the hardware.
+const fnAddBenchPanelPin = function (parent, slot, min, max) {
+
+    const position = min.clone().add(max).multiplyScalar(0.5);
+    let farthest = -1;
+    for (const axis of [ 'x', 'y', 'z' ]) {
+        for (const value of [ min[axis], max[axis] ]) {
+            if (Math.abs(value) > farthest) {
+                farthest = Math.abs(value);
+                position.copy(min.clone().add(max).multiplyScalar(0.5));
+                position[axis] = value;
+            }
+        }
+    }
+
+    const pinDiv = document.createElement('div');
+    pinDiv.className = 'pin pin-rounded bench-pin';
+    pinDiv.textContent = slot.toUpperCase();
+    pinDiv.style.backgroundColor = BENCH_PANEL_PIN_COLORS[slot] || '#000000';
+    pinDiv.style.borderColor = BENCH_PANEL_PIN_COLORS[slot] || '#000000';
+
+    const pin = new THREE.CSS2DObject(pinDiv);
+    pin.position.copy(position);
+    parent.add(pin);
+
+    return pin;
+};
+
+// Where the given mesh is on the screen : the rectangle - in pixels of the
+// page - around its bounding box's corners.
+const fnGetBenchScreenRect = function (mesh) {
+    if (!mesh.geometry.boundingBox) mesh.geometry.computeBoundingBox();
+    const box = mesh.geometry.boundingBox;
+    const rect = renderer.domElement.getBoundingClientRect();
+    let left = Infinity, top = Infinity, right = -Infinity, bottom = -Infinity;
+    for (let i = 0; i < 8; i++) {
+        const corner = new THREE.Vector3(
+            i & 1 ? box.max.x : box.min.x,
+            i & 2 ? box.max.y : box.min.y,
+            i & 4 ? box.max.z : box.min.z
+        ).applyMatrix4(mesh.matrixWorld).project(camera);
+        const x = rect.left + (corner.x + 1) / 2 * rect.width;
+        const y = rect.top + (1 - corner.y) / 2 * rect.height;
+        left = Math.min(left, x);
+        right = Math.max(right, x);
+        top = Math.min(top, y);
+        bottom = Math.max(bottom, y);
+    }
+    return { left: left, top: top, width: right - left, height: bottom - top };
+};
+
+// The position of the given solid, as the descriptor gives it : its x, y
+// and z in the frame of its part - one cote along each axis, from the
+// origin to its axis, on the plane of the joint or its nearest end.
+const fnAddBenchSolidDimensions = function (mesh) {
+
+    const solidDef = mesh.userData.benchSolidDef;
+    const group = new THREE.Group();
+    group.applyMatrix4(new THREE.Matrix4().fromArray(solidDef.part_transformation));
+
+    const fnAddDimension = function (from, to, text, color) {
+        const length = from.distanceTo(to);
+        if (length < 1e-6) return;
+        const middle = from.clone().add(to).multiplyScalar(0.5);
+        const headLength = Math.min(BENCH_DIMENSION_HEAD_LENGTH, length / 3);
+        for (const [ start, end ] of [ [ middle, from ], [ middle, to ] ]) {
+            const arrow = new THREE.ArrowHelper(end.clone().sub(start).normalize(), start, length / 2, color, headLength, headLength * 0.5);
+            arrow.traverse(function (object) {
+                if (object.material) {
+                    // Seen through the geometry : drawn last - with the transparent objects, after them - whatever the depth
+                    object.material.depthTest = false;
+                    object.material.depthWrite = false;
+                    object.material.transparent = true;
+                }
+                object.renderOrder = BENCH_DIMENSION_RENDER_ORDER;
+            });
+            group.add(arrow);
+        }
+        const div = document.createElement('div');
+        div.className = 'dim bench-dim';
+        div.textContent = text;
+        div.style.color = '#' + new THREE.Color(color).getHexString();
+        const label = new THREE.CSS2DObject(div);
+        label.position.copy(middle);
+        group.add(label);
+    };
+
+    const position = new THREE.Vector3().fromArray(solidDef.cotes.position);
+    const from = new THREE.Vector3().fromArray(solidDef.cotes.origin);
+    for (const axis of [ 'x', 'y', 'z' ]) {
+        const to = from.clone();
+        to[axis] = position[axis];
+        fnAddDimension(from, to, solidDef.texts[axis], BENCH_AXIS_COLORS[axis]);   // Its axis' color
+        from.copy(to);
+    }
+
+    bench.add(group);
+
+    return group;
+};
+
+const fnRemoveBenchObject = function (object) {
+    object.traverse(function (child) {
+        if (child.geometry) child.geometry.dispose();
+        if (child.material && child.material !== lineMaterial) child.material.dispose();
+        // Its own 'removed' only fires when a CSS2DObject is removed itself, not its parent
+        if (child.isCSS2DObject && child.element.parentNode) child.element.parentNode.removeChild(child.element);
+    });
+    if (object.parent) object.parent.remove(object);
+};
+
+// The solid under the pointer - a primitive - stands out with its position
+// cotes, and the page
+// is told - 'hovered.bench' - to show its label beside it : { label, rect }
+// - see fnGetBenchScreenRect. null : none.
+const fnHoverBenchSolid = function (mesh) {
+    if (mesh === benchHoveredMesh) return;
+    if (benchHoveredMesh) {
+        benchHoveredMesh.material.color.setHex(benchHoveredMesh.userData.benchColor);
+        benchHoveredMesh.material.opacity = benchHoveredMesh.userData.benchOpacity;
+        benchHoveredMesh.material.transparent = benchHoveredMesh.userData.benchOpacity < 1;
+    }
+    if (benchHoveredDimensions) {
+        fnRemoveBenchObject(benchHoveredDimensions);
+        benchHoveredDimensions = null;
+    }
+    benchHoveredMesh = mesh;
+    if (mesh) {
+        mesh.material.color.setHex(mesh.userData.benchHoveredColor);
+        mesh.material.opacity = Math.max(mesh.userData.benchOpacity, BENCH_HOVERED_OPACITY);
+        mesh.material.transparent = mesh.material.opacity < 1;
+        benchHoveredDimensions = fnAddBenchSolidDimensions(mesh);
+    }
+    fnRender();
+    window.frameElement.dispatchEvent(new MessageEvent('hovered.bench', {
+        data: mesh ? { label: mesh.userData.benchLabel, rect: fnGetBenchScreenRect(mesh) } : null
+    }));
+};
+
+const fnOnBenchPointerMove = function (event) {
+    if (!bench || !benchSolidMeshes || benchSolidMeshes.length === 0 || event.buttons !== 0) {
+        fnHoverBenchSolid(null);   // None, or orbiting
+        return;
+    }
+    const rect = renderer.domElement.getBoundingClientRect();
+    const pointer = new THREE.Vector2(
+        (event.clientX - rect.left) / rect.width * 2 - 1,
+        -(event.clientY - rect.top) / rect.height * 2 + 1
+    );
+    if (!benchRaycaster) benchRaycaster = new THREE.Raycaster();
+    benchRaycaster.setFromCamera(pointer, camera);
+    const intersects = benchRaycaster.intersectObjects(benchSolidMeshes, false);
+    fnHoverBenchSolid(intersects.length > 0 ? intersects[0].object : null);
+};
+
+// One panel stands out - its setting is hovered or edited -, or none.
+const fnHighlightBenchPanel = function (slot) {
+    benchHighlightedSlot = slot || null;
+    if (!benchPanels) return;
+    for (const panelSlot in benchPanels) {
+        const highlighted = panelSlot === benchHighlightedSlot;
+        benchPanels[panelSlot].mesh.material.opacity = highlighted ? BENCH_PANEL_HIGHLIGHTED_OPACITY : BENCH_PANEL_OPACITY;
+        benchPanels[panelSlot].pin.element.classList.toggle('bench-pin-highlighted', highlighted);
+    }
+    fnRender();
 };
 
 const fnSetupBench = function (benchDef) {
 
+    // No more hovered solid : its label hidden
+    fnHoverBenchSolid(null);
+
     // Drop the previous bench
     if (bench) {
-        bench.traverse(function (object) {
-            if (object.geometry) object.geometry.dispose();
-            if (object.material && object.material !== lineMaterial) object.material.dispose();
-        });
-        scene.remove(bench);
+        fnRemoveBenchObject(bench);
     }
     const firstSetup = !bench;
 
     bench = new THREE.Group();
+    benchPanels = {};
+    benchSolidMeshes = [];
 
-    // Panels
+    // Panels, with their pins
     for (const panelDef of benchDef.panels || []) {
         const min = new THREE.Vector3().fromArray(panelDef.min);
         const max = new THREE.Vector3().fromArray(panelDef.max);
         const size = max.clone().sub(min);
         const geometry = new THREE.BoxGeometry(size.x, size.y, size.z);
         geometry.translate(min.x + size.x / 2, min.y + size.y / 2, min.z + size.z / 2);
-        fnAddBenchObject(bench, geometry, BENCH_PANEL_COLORS[panelDef.slot] || 0xffffff, 0.45);
+        const mesh = fnAddBenchObject(bench, geometry, BENCH_PANEL_COLORS[panelDef.slot] || 0xffffff, BENCH_PANEL_OPACITY);
+        if (panelDef.reference) {
+            fnAddBenchReferenceFace(bench, panelDef.reference, min, max, BENCH_PANEL_COLORS[panelDef.slot] || 0xffffff);
+        }
+        if (panelDef.slot) {
+            benchPanels[panelDef.slot] = {
+                mesh: mesh,
+                pin: fnAddBenchPanelPin(bench, panelDef.slot, min, max)
+            };
+        }
     }
 
     // Solids of the primitives, in the frame of their slot
     for (const solidDef of benchDef.solids || []) {
         const group = new THREE.Group();
         group.applyMatrix4(new THREE.Matrix4().fromArray(solidDef.transformation));
-        fnAddBenchObject(group, fnCreateBenchSolidGeometry(solidDef), BENCH_PART_COLORS[solidDef.part], solidDef.part === 'machining' ? 0.5 : 1);
+        const opacity = solidDef.part === 'machining' ? 0.5 : 1;
+        const mesh = fnAddBenchObject(group, fnCreateBenchSolidGeometry(solidDef), BENCH_PART_COLORS[solidDef.part], opacity);
+        if (solidDef.label) {
+            mesh.userData.benchLabel = solidDef.label;
+            mesh.userData.benchSolidDef = solidDef;
+            mesh.userData.benchColor = BENCH_PART_COLORS[solidDef.part];
+            mesh.userData.benchHoveredColor = BENCH_HOVERED_COLORS[solidDef.part];
+            mesh.userData.benchOpacity = opacity;
+            benchSolidMeshes.push(mesh);
+        }
         bench.add(group);
     }
 
@@ -1247,7 +1485,12 @@ const fnSetupBench = function (benchDef) {
         bench.add(group);
     }
 
+    // Shown as the bench says - its frame turned
+    const viewMatrix = benchDef.view ? new THREE.Matrix4().fromArray(benchDef.view) : new THREE.Matrix4();
+    bench.applyMatrix4(viewMatrix);
+
     scene.add(bench);
+    fnHighlightBenchPanel(benchHighlightedSlot);   // Kept through the rebuilds
 
     // Bench box properties - what zoom and views fit : centered on the
     // origin of the joint, the views turn and zoom around it
@@ -1272,7 +1515,8 @@ const fnSetupBench = function (benchDef) {
     }
     axesHelper = new THREE.Group();
     axesHelper.visible = axesVisible;
-    for (const [ direction, color ] of [ [ new THREE.Vector3(1, 0, 0), 0xff0000 ], [ new THREE.Vector3(0, 1, 0), 0x00dd00 ], [ new THREE.Vector3(0, 0, 1), 0x0000ff ] ]) {
+    axesHelper.applyMatrix4(viewMatrix);
+    for (const [ direction, color ] of [ [ new THREE.Vector3(1, 0, 0), BENCH_AXIS_COLORS.x ], [ new THREE.Vector3(0, 1, 0), BENCH_AXIS_COLORS.y ], [ new THREE.Vector3(0, 0, 1), BENCH_AXIS_COLORS.z ] ]) {
         axesHelper.add(new THREE.ArrowHelper(direction, new THREE.Vector3(), baseModelRadius * 1.5, color, 0));
     }
     scene.add(axesHelper);

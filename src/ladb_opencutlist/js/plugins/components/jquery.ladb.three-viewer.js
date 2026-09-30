@@ -132,6 +132,12 @@
             that.$element.trigger('changed.controls', [ e.data ]);
 
         });
+        this.$iframe.get(0).addEventListener('hovered.bench', function (e) {
+
+            // Forward event : { label, rect } in the iframe, or null
+            that.$element.trigger('hovered.bench', [ e.data ]);
+
+        });
         this.$iframe.get(0).addEventListener('changed.helpers', function (e) {
 
             // Update buttons status

@@ -31,6 +31,24 @@
             padding: 0 4px;
             min-width: 10px;
         }
+        .bench-pin {
+            font-size: 11px;
+            font-weight: bold;
+            color: #ffffff;
+            min-width: 18px;
+            padding: 0;
+            border-radius: 10px;
+            opacity: 0.85;
+            pointer-events: none;
+        }
+        .bench-pin-highlighted {   /* Not by transform : CSS2DRenderer sets it */
+            opacity: 1;
+            font-size: 13px;
+            min-width: 24px;
+            line-height: 24px;
+            border-radius: 13px;
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.2);
+        }
         .dim {
             font-family: sans-serif;
             font-size: 10px;
@@ -39,6 +57,9 @@
             line-height: 18px;
             padding: 0 4px;
             border-radius: 4px;
+        }
+        .bench-dim {
+            pointer-events: none;
         }
     </style>
     <link rel="stylesheet" href="../css/ladb-opencutlist-icons.min.css">

@@ -6,18 +6,25 @@
 
 {% block bodyInner %}
     <div class="ladb-hardware-editor-bench">
-        <div class="ladb-hardware-editor-trial form-inline">
-            <div class="btn-group btn-group-sm ladb-hardware-editor-topologies" role="group"></div>
-            <div class="form-group form-group-sm">
-                <label>{{ 'core.hardware_editor.thickness_a'|i18next }}</label>
-                <input type="text" class="form-control" id="ladb_hardware_editor_input_thickness_a">
-            </div>
-            <div class="form-group form-group-sm">
-                <label>{{ 'core.hardware_editor.thickness_b'|i18next }}</label>
-                <input type="text" class="form-control" id="ladb_hardware_editor_input_thickness_b">
+        <div class="ladb-hardware-editor-viewer">
+            <div class="ladb-hardware-editor-verdict" style="display: none;"></div>
+            <div class="ladb-hardware-editor-trial">
+                <div class="ladb-hardware-editor-bench-settings" style="display: none;">
+                    <div class="ladb-hardware-editor-bench-settings-title">{{ 'core.hardware_editor.bench_settings'|i18next }}</div>
+                    <div class="ladb-hardware-editor-bench-setting" data-slot="a">
+                        <label for="ladb_hardware_editor_input_thickness_a"><span class="ladb-hardware-editor-slot-pin ladb-hardware-editor-slot-pin-a">A</span> {{ 'core.hardware_editor.thickness_a'|i18next }}</label>
+                        <input type="text" class="form-control input-sm" id="ladb_hardware_editor_input_thickness_a">
+                    </div>
+                    <div class="ladb-hardware-editor-bench-setting" data-slot="b">
+                        <label for="ladb_hardware_editor_input_thickness_b"><span class="ladb-hardware-editor-slot-pin ladb-hardware-editor-slot-pin-b">B</span> {{ 'core.hardware_editor.thickness_b'|i18next }}</label>
+                        <input type="text" class="form-control input-sm" id="ladb_hardware_editor_input_thickness_b">
+                    </div>
+                </div>
+                <div class="btn-group btn-group-sm ladb-hardware-editor-topologies" role="group"></div>
+                <button type="button" class="btn btn-default btn-sm" id="ladb_hardware_editor_btn_swap" style="display: none;" data-toggle="tooltip" title="{{ 'core.hardware_editor.swap'|i18next }}"><i class="ladb-opencutlist-icon-swap"></i></button>
+                <button type="button" class="btn btn-default btn-sm" id="ladb_hardware_editor_btn_bench_settings" data-toggle="tooltip" title="{{ 'core.hardware_editor.bench_settings'|i18next }}"><i class="ladb-opencutlist-icon-settings"></i></button>
             </div>
         </div>
-        <div class="ladb-hardware-editor-viewer"></div>
         <div class="ladb-hardware-editor-unsupported" style="display: none;"></div>
         <div class="ladb-hardware-editor-computations"></div>
     </div>

@@ -327,18 +327,21 @@ core:
     tab_json: JSON
     thickness_a: Épaisseur A
     thickness_b: Épaisseur B
+    bench_settings: Réglages du banc d'essai
+    topology_corner: En L
     topology_flat_edge: En T
+    swap: Inverser A et B
     topology_edge_edge: Chant contre chant
     topology_flat_flat: Face contre face
     zoom_auto: Zoom automatique
-    measures: Mesures du banc
+    measures: Mesures du banc d'essai
     variables: Variables
     asserts: Conditions
     setting: Réglage
     setting_bounds: "Entre {{ min }} et {{ max }}"
     assert_unresolved: Non calculable
-    accepted: Joint accepté
-    refused: Joint refusé
+    accepted: Assemblage valide
+    refused: Assemblage invalide
     readonly: Lecture seule
     readonly_notice: |
       Ce fichier est un exemple en lecture seule. 
@@ -348,7 +351,11 @@ core:
     file: Fichier
     file_renamed: "Renommé à la validation, ainsi que le dossier de ses pièces (était {{ name }})"
     duplicated: "Copié dans Ma Bibliothèque : {{ ref }}"
-    delete_confirm: "Supprimer {{ name }} de Ma Bibliothèque, avec le dossier de ses pièces ? Les quincailleries déjà posées dans le modèle restent."
+    delete_confirm: |
+      Confirmez la suppression de **{{ name }}** de *Ma Bibliothèque*, avec le dossier de ses pièces ? 
+      *Les quincailleries déjà posées dans le modèle restent.*
+    discard_confirm: Les modifications non validées de cette quincaillerie seront perdues. Fermer quand même ?
+    discard: Fermer sans valider
     no_descriptor: Ce texte n'est pas un descripteur de quincaillerie.
     unsupported_type: "Pas encore de banc d'essai pour le type « {{ type }} »."
     parts_no_component: "Aucun composant : rien n'est posé de ce côté."
@@ -362,6 +369,10 @@ core:
     part_kind_primitives: Primitives
     part_kind_same_as: "Même que {{ slot }}"
     part_same_as: "La même pièce que {{ slot }}, dans son propre repère."
+    solid_drillings: "Perçage Ø{{ diameter }} × {{ depth }}"
+    solid_mortises: "Mortaise {{ length }} × {{ diameter }} × {{ depth }}"
+    solid_cylinders: "Cylindre Ø{{ diameter }} × {{ depth }}"
+    solid_oblongs: "Oblong {{ length }} × {{ diameter }} × {{ depth }}"
     primitive_cylinders: "{{ count }} cylindre"
     primitive_cylinders_plural: "{{ count }} cylindres"
     primitive_oblongs: "{{ count }} oblong"
@@ -374,9 +385,9 @@ core:
     edit_in_json: Modifier dans l'onglet JSON
     chip_bundled: Bibliothèque OCL
     chip_user: Ma Bibliothèque
-    chip_loading: Chargement…
+    chip_loading: Chargement...
     chip_missing: Fichier absent
-    chip_no_folder: Choisissez d'abord un dossier de Ma Bibliothèque
+    chip_no_folder: Choisissez d'abord un dossier de **Ma Bibliothèque**
     chip_imported: Importé · à enregistrer
     chip_placed: Placement à enregistrer
     chip_edited: Modifié · à enregistrer
@@ -385,7 +396,10 @@ core:
     edit_in_sketchup: Modifier dans SketchUp
     create_in_sketchup: Créer dans SketchUp
     shaping: "{{ name }} est ouvert dans SketchUp"
-    shaping_help: Modifiez la pièce dans le modèle, sur le banc d'essai. Ses axes sont son repère de pose. Terminez pour la reprendre ici, le banc quitte alors le modèle.
+    shaping_help: |
+      Modifiez la pièce dans le modèle, sur le banc d'essai. 
+      Ses axes sont son repère de pose. 
+      **Terminez** pour la reprendre ici, le banc quitte alors le modèle.
     finish: Terminer
     choose_skp: Choisir un fichier SKP
     placement_orientation: Orientation
@@ -394,6 +408,9 @@ core:
     placement_center: "Centrer en {{ axis }}"
     placement_reset: Réinitialiser
     placement_help: Appliqué au fichier SKP à l'enregistrement, le JSON ne garde aucune transformation. Face d'appui à z = 0, corps vers −Z.
+    settings_variables: Variables
+    settings_tool_options: Options de l'outil
+    settings_tool_options_help: "Les valeurs que l'outil Assembler prend à la sélection de cette quincaillerie. Une longueur, ou une part de l'assemblage : /2, *0,25."
     no_settings: |
       Aucun réglage.
       Dans le JSON, écrivez une variable en objet pour la proposer ici : `"diameter": { "value": "8mm", "label": "Diamètre" }`

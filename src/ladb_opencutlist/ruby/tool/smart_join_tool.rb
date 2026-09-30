@@ -3107,7 +3107,6 @@ module Ladb::OpenCutList
             placement_b = fn_seed.call(face_b, dti_b * Geom::Transformation.translation(pt_b) * join_def.at_b, :b, fm_b.transformation)
             placement_a.partner = placement_b
             placement_b.partner = placement_a
-            placement_a, placement_b = _orient_placements(placement_a, placement_b)
             seeds << placement_a if has_geometry_a
             seeds << placement_b if has_geometry_b
 
@@ -3151,24 +3150,6 @@ module Ladb::OpenCutList
 
       @propagation_signature = signature
       @propagation_def = _check_hardware_asserts(placements)
-    end
-
-    # The given seed placements - a on the active part, b on its neighbor -
-    # or, when the hardware's asserts refuse them and accept the other way
-    # round, the swapped ones : a screw goes through the part it can, the
-    # active one or not. [ placement_a, placement_b ].
-    def _orient_placements(placement_a, placement_b)
-      descriptor = _get_hardware_descriptor_def
-      return [ placement_a, placement_b ] if descriptor.nil? || descriptor.asserts.empty?
-      fn_accepted = lambda { |placements| placements.all? { |placement| descriptor.failed_asserts(_get_placement_variables(placement)).empty? } }
-      return [ placement_a, placement_b ] if fn_accepted.call([ placement_a, placement_b ])
-      # Each role keeps its handedness - world direct for a, indirect for b - see _walk_contact_graph
-      fn_swap = lambda { |placement, role| PropagationPlacementDef.new(placement.definition, placement.face, placement.transformation * TRANSFORMATION_FLIP_X, role, placement.instance_transformations, placement.seed_transformation) }
-      swapped_a = fn_swap.call(placement_b, :a)
-      swapped_b = fn_swap.call(placement_a, :b)
-      swapped_a.partner = swapped_b
-      swapped_b.partner = swapped_a
-      fn_accepted.call([ swapped_a, swapped_b ]) ? [ swapped_a, swapped_b ] : [ placement_a, placement_b ]
     end
 
     # Lightweight fingerprint of the joinery inputs (active part + neighbors + anchors).

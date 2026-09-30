@@ -18,8 +18,29 @@
 
     LadbDialogModal.DEFAULTS = {};
 
-    LadbDialogModal.prototype.hide = function () {
-        rubyCallCommand('core_modal_dialog_hide');
+    // force : closes even with unsaved changes (see setGuarded)
+    LadbDialogModal.prototype.hide = function (force) {
+        rubyCallCommand('core_modal_dialog_hide', { force: force === true });
+    };
+
+    // Unsaved changes : closing the window - its close button or from Ruby -
+    // goes through confirmClose instead.
+    LadbDialogModal.prototype.setGuarded = function (guarded) {
+        guarded = guarded === true;
+        if (guarded !== this._guarded) {
+            this._guarded = guarded;
+            rubyCallCommand('core_modal_dialog_set_guarded', { guarded: guarded });
+        }
+    };
+
+    // Asks the modal - if it knows how to - before closing.
+    LadbDialogModal.prototype.confirmClose = function () {
+        const jQueryPlugin = this.$modal ? this.$modal.data('ladb.modal.plugin') : null;
+        if (jQueryPlugin && typeof jQueryPlugin.confirmClose === 'function') {
+            jQueryPlugin.confirmClose();
+        } else {
+            this.hide(true);
+        }
     };
 
     LadbDialogModal.prototype.loadModal = function (modalName, params) {
@@ -73,6 +94,12 @@
 
                 // Bootstrap select detection
                 if ($(e.target).attr('role') === 'listbox' || $(e.target).attr('role') === 'combobox') {
+                    return;
+                }
+
+                if (that._$modal) {
+                    // A dialog modal (confirm, prompt...) is shown over, dismiss it only
+                    $('[data-dismiss="modal"]', that._$modal).first().click();
                     return;
                 }
 
@@ -151,7 +178,7 @@
     function Plugin(option, params) {
         return this.each(function () {
             const $this = $(this);
-            let data = $this.data('ladb.dialog-modal');
+            let data = $this.data('ladb.dialog');
             if (!data) {
                 const options = $.extend({}, LadbDialogModal.DEFAULTS, $this.data(), typeof option === 'object' && option);
                 $this.data('ladb.dialog', (data = new LadbDialogModal(this, options)));

@@ -142,6 +142,7 @@ module Ladb::OpenCutList
       @tabs_dialog_print_margin = read_default(SETTINGS_KEY_DIALOG_PRINT_MARGIN, TABS_DIALOG_DEFAULT_PRINT_MARGIN)
 
       @modal_dialog = nil
+      @modal_dialog_guarded = false   # Unsaved changes : closing asks the modal first
 
     end
 
@@ -1202,8 +1203,11 @@ module Ladb::OpenCutList
         register_command('core_tabs_dialog_set_position') do |params|
           tabs_dialog_set_position_command(**params)
         end
-        register_command('core_modal_dialog_hide') do
-          modal_dialog_hide_command
+        register_command('core_modal_dialog_hide') do |params|
+          modal_dialog_hide_command(**(params || {}))
+        end
+        register_command('core_modal_dialog_set_guarded') do |params|
+          modal_dialog_set_guarded_command(**params)
         end
         register_command('core_open_external_file') do |params|
           open_external_file_command(**params)
@@ -1478,7 +1482,13 @@ module Ladb::OpenCutList
       @modal_dialog.set_on_closed {
         @modal_dialog = nil
         @modal_dialog_name = nil
+        @modal_dialog_guarded = false
         trigger_event(PluginObserver::ON_MODAL_DIALOG_CLOSED, { :modal_name => modal_name })
+      }
+      @modal_dialog.set_can_close {
+        next true unless @modal_dialog_guarded
+        modal_dialog_request_close
+        false
       }
 
       # Setup dialog page
@@ -1528,12 +1538,23 @@ module Ladb::OpenCutList
 
     # modal_name_pattern : only the modal whose name matches it - the one of
     # a tool, not the hardware editor it opened.
-    def hide_modal_dialog(modal_name_pattern = nil)
+    # force : closes even with unsaved changes - else the modal asks first.
+    def hide_modal_dialog(modal_name_pattern = nil, force = false)
       if @modal_dialog && (modal_name_pattern.nil? || modal_name_pattern =~ @modal_dialog_name.to_s)
+        if @modal_dialog_guarded && !force
+          modal_dialog_request_close
+          return true
+        end
+        @modal_dialog_guarded = false
         @modal_dialog.close
         return true
       end
       false
+    end
+
+    # The modal decides : asks to discard its unsaved changes, then closes.
+    def modal_dialog_request_close
+      @modal_dialog.execute_script("$('body').ladbDialogModal('confirmClose');") if @modal_dialog
     end
 
     # Resizes the open modal - keeping its position. Returns the size it had.
@@ -1877,8 +1898,13 @@ module Ladb::OpenCutList
       nil
     end
 
-    def modal_dialog_hide_command
-      hide_modal_dialog
+    def modal_dialog_hide_command(force: false)
+      hide_modal_dialog(nil, force)
+    end
+
+    def modal_dialog_set_guarded_command(guarded:)
+      @modal_dialog_guarded = guarded == true
+      nil
     end
 
     def open_external_file_command(path:)    # Expected params = { path: PATH_TO_FILE }

@@ -24,13 +24,15 @@ module Ladb::OpenCutList
     # placement : column-major 4x4 matrix to bake in, inches ;
     # transformation : where the part lies on the bench - column-major ;
     # panels : [ { :min, :max } ] of the bench, inches ;
-    # name : of the part.
-    def initialize(action:, source: nil, placement: nil, transformation: nil, panels: [], name: nil)
+    # view : how the bench is shown - column-major, see
+    # HardwareBenchDef#view_transformation ; name : of the part.
+    def initialize(action:, source: nil, placement: nil, transformation: nil, panels: [], view: nil, name: nil)
       @action = action
       @source = source
       @placement = placement
       @transformation = transformation
       @panels = panels.is_a?(Array) ? panels : []
+      @view = view
       @name = name
     end
 
@@ -94,6 +96,7 @@ module Ladb::OpenCutList
           _make_unique(definition.entities)   # Shared by GUID with the model's own ones
         end
         instance = bench.entities.add_instance(definition, _transformation(@transformation))
+        bench.transform!(_transformation(@view))   # Its frame turned as the editor shows it
 
         others = Geom::BoundingBox.new
         model.entities.each { |entity| others.add(entity.bounds) unless entity == bench || !entity.respond_to?(:bounds) }

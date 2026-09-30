@@ -73,10 +73,10 @@ module Ladb::OpenCutList
   #  - "counterbore": { "diameter": "10mm", "depth": "4mm", … } a step.
   # The end is "face": "contact" | "opposite" for a drilling - the face it is
   # laid on, or the other one, then its depth must be "through" - and "end":
-  # "from" | "to" for a cylinder. A screw through the part it is laid on, its
-  # head on the other face :
-  #    { "cylinders": [ { "diameter": "4mm", "from": "-@thickness_max_a", "to": "@embed",
-  #                       "countersink": { "diameter": "8mm", "end": "from" } } ] }
+  # "from" | "to" for a cylinder. A screw driven into a, through b, its head
+  # on the far face of b :
+  #    { "cylinders": [ { "diameter": "4mm", "from": "-@embed", "to": "@thickness_max_b",
+  #                       "countersink": { "diameter": "8mm", "end": "to" } } ] }
   # A length can be an expression of the measures the tool takes where it
   # lays the part - see measures - : "@thickness - 2mm", "@thickness / 2",
   # "min(@thickness_a - 5mm; 20mm)". Its literals bear a unit as SketchUp
@@ -243,7 +243,8 @@ module Ladb::OpenCutList
     # when it goes along Y and its length along Z : given in the laying frame
     # turned so that its X goes along -Z and its Z along Y, a point
     # [ x, y, z ] of it is [ -y, z, -x ] in the laying frame.
-    PrimitiveCylinderDef = Struct.new(:x, :y, :diameter, :z_min, :z_max, :length, :profile, :axis) do
+    # key : the primitives it is one of - MACHINING_DRILLINGS, … .
+    PrimitiveCylinderDef = Struct.new(:x, :y, :diameter, :z_min, :z_max, :length, :profile, :axis, :key) do
       def round?
         length.nil? || length <= diameter
       end
@@ -373,7 +374,7 @@ module Ladb::OpenCutList
           profile = _head_profile(head_key, item[head_key], key == MACHINING_DRILLINGS ? HEAD_FACES : HEAD_ENDS, diameter, z_min, z_max, variables)
           next nil if profile.nil?
         end
-        PrimitiveCylinderDef.new(x, y, diameter, z_min, z_max, length.nil? || length <= diameter ? nil : length, profile, axis)
+        PrimitiveCylinderDef.new(x, y, diameter, z_min, z_max, length.nil? || length <= diameter ? nil : length, profile, axis, key)
       }.compact
     end
 

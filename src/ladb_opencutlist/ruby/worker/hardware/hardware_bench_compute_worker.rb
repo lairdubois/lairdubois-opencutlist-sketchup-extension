@@ -21,12 +21,15 @@ module Ladb::OpenCutList
     # found by - see HardwareDescriptorDef#components_dir_ref - nil for a new
     # one ; topology : one of HardwareBenchDef::TOPOLOGIES, nil for the
     # type's first ; thickness_a, thickness_b : lengths - numbers are
-    # millimeters, strings bear a unit - see HardwareDescriptorDef.to_length.
+    # millimeters, strings bear a unit - see HardwareDescriptorDef.to_length ;
+    # swapped : a and b swapped, where the topology can be - see
+    # HardwareBenchDef#swappable?.
     def initialize(descriptor:,
                    ref: nil,
                    topology: nil,
                    thickness_a: nil,
-                   thickness_b: nil
+                   thickness_b: nil,
+                   swapped: false
     )
 
       @descriptor = descriptor
@@ -34,6 +37,7 @@ module Ladb::OpenCutList
       @topology = topology
       @thickness_a = thickness_a
       @thickness_b = thickness_b
+      @swapped = swapped == true
 
     end
 
@@ -61,8 +65,11 @@ module Ladb::OpenCutList
 
       thickness_a = HardwareDescriptorDef.to_length(@thickness_a) || DEFAULT_THICKNESS
       thickness_b = HardwareDescriptorDef.to_length(@thickness_b) || DEFAULT_THICKNESS
-      bench_def = HardwareBenchDef.new(descriptor.type, @topology, thickness_a, thickness_b)
-      bench_def = HardwareBenchDef.new(descriptor.type, nil, thickness_a, thickness_b) unless bench_def.valid?
+      # 0 - or less - is a height the tool lays at, as it reads it : negative allowed
+      height = descriptor.option('height')
+      height = HardwareDescriptorDef.to_length(height, true) unless height.nil? || height.start_with?('/', '*')
+      bench_def = HardwareBenchDef.new(descriptor.type, @topology, thickness_a, thickness_b, @swapped, height)
+      bench_def = HardwareBenchDef.new(descriptor.type, nil, thickness_a, thickness_b, @swapped, height) unless bench_def.valid?
 
       slots = descriptor.slots & %w[a b]
       variables_by_slot = Hash[slots.map { |slot| [ slot, descriptor.resolve_variables(bench_def.slot_measures(slot)) ] }]
@@ -71,9 +78,12 @@ module Ladb::OpenCutList
         :supported => true,
         :topology => bench_def.topology,
         :topologies => HardwareBenchDef::TOPOLOGIES[descriptor.type],
+        :swappable => bench_def.swappable?,
+        :swapped => bench_def.swapped,
         :thickness_a => thickness_a,
         :thickness_b => thickness_b,
-        :panels => bench_def.panels.map { |panel_def| { :slot => panel_def.slot, :min => panel_def.min, :max => panel_def.max } },
+        :view_transformation => bench_def.view_transformation,
+        :panels => bench_def.panels.map { |panel_def| { :slot => panel_def.slot, :min => panel_def.min, :max => panel_def.max, :reference => panel_def.reference } },
         :measures => _measures(descriptor, bench_def),
         :settings => _settings(descriptor),
         :variables => _variables(descriptor, slots, variables_by_slot),
@@ -86,7 +96,6 @@ module Ladb::OpenCutList
       slots.each do |slot|
         _slot(descriptor, bench_def, slot, variables_by_slot[slot], response)
       end
-
       response[:accepted] = response[:asserts].all? { |assert| assert[:results].all? { |result| result[:ok] } }
 
       response
@@ -185,15 +194,34 @@ module Ladb::OpenCutList
         if HardwareDescriptorDef.primitives?(value)
           cylinders = HardwareDescriptorDef.primitive_cylinders(value, variables)
           cylinders.each do |cylinder|
+            axis_matrix = AXIS_MATRICES[cylinder.axis] || IDENTITY
+            # Its position cotes, in the frame of its part - its x, y, z as
+            # the descriptor gives them - : from the origin to its axis, on
+            # the plane of the joint or its nearest end
+            lift = [ [ 0.0, cylinder.z_min.to_f ].max, cylinder.z_max.to_f ].min
+            cotes_origin = _apply(axis_matrix, [ 0.0, 0.0, lift ])
+            cotes_position = _apply(axis_matrix, [ cylinder.x.to_f, cylinder.y.to_f, lift ])
             response[:solids] << {
               :slot => slot,
               :part => part,
-              :transformation => _multiply(part_matrix, AXIS_MATRICES[cylinder.axis] || IDENTITY),
+              :transformation => _multiply(part_matrix, axis_matrix),
+              :part_transformation => part_matrix,
+              :cotes => { :origin => cotes_origin, :position => cotes_position },
               :x => cylinder.x, :y => cylinder.y,
               :diameter => cylinder.diameter,
               :z_min => cylinder.z_min, :z_max => cylinder.z_max,
               :length => cylinder.length,
               :profile => cylinder.profile,
+              # What the viewer tells of it when hovered
+              :kind => cylinder.key,
+              :texts => {
+                :x => _text(cotes_position[0] - cotes_origin[0]),
+                :y => _text(cotes_position[1] - cotes_origin[1]),
+                :z => _text(cotes_position[2] - cotes_origin[2]),
+                :diameter => _text(cylinder.diameter),
+                :length => _text(cylinder.length),
+                :depth => _text(cylinder.z_max - cylinder.z_min),
+              },
             }
           end
           count = HardwareDescriptorDef::PRIMITIVES[part].inject(0) { |sum, key| sum + (value[key].is_a?(Array) ? value[key].count { |item| item.is_a?(Hash) } : 0) }
@@ -231,9 +259,11 @@ module Ladb::OpenCutList
       length.nil? ? nil : { :value => length, :text => _text(length) }
     end
 
+    # Not rounded to the model's precision - 42,7 mm, not ~ 43 mm - its
+    # trailing zeros dropped : 15 mm, not 15,000 mm.
     def _text(inches)
       return nil if inches.nil?
-      inches.to_l.to_s
+      DimensionUtils.to_ocl_precision_s(inches.to_l).sub(/([.,]\d*?)0+(?=\D*\z)/, '\\1').sub(/[.,](?=\D*\z)/, '')
     end
 
     # -- 4x4 matrices, column after column --
@@ -251,6 +281,11 @@ module Ladb::OpenCutList
 
     def _translation(x, y, z)
       [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, x, y, z, 1 ]
+    end
+
+    # The given point by the given column-major 4x4 matrix
+    def _apply(m, point)
+      (0...3).map { |row| m[row] * point[0] + m[4 + row] * point[1] + m[8 + row] * point[2] + m[12 + row] }
     end
 
     def _multiply(a, b)

@@ -7,16 +7,16 @@
   "variables": {
     "diameter": { "value": "4mm", "label": "Diameter" },
     "length": { "value": "50mm", "label": "Length" },
-    "embed": "@length - @thickness_max_a"
+    "embed": "@length - @thickness_max_b"
   },
-  "asserts": [ "@thickness_max_a - @thickness_min_a <= 0.2mm", "@embed >= 15mm", "@embed <= @thickness_b - 3mm" ],
+  "asserts": [ "@thickness_max_b - @thickness_min_b <= 0.2mm", "@embed >= 15mm", "@embed <= @thickness_a - 3mm" ],
   "components": {
     "a": {
-      "hardware": { "cylinders": [ { "diameter": "@diameter", "from": "-@thickness_max_a", "to": "@embed", "countersink": { "diameter": "@diameter * 2", "angle": 90, "end": "from" } } ] },
-      "machining": { "drillings": [ { "diameter": "@diameter", "depth": "through" } ] },
+      "hardware": { "cylinders": [ { "diameter": "@diameter", "from": "-@embed", "to": "@thickness_max_b", "countersink": { "diameter": "@diameter * 2", "angle": 90, "end": "to" } } ] },
+      "machining": { "drillings": [ { "diameter": "@diameter - 1mm", "depth": "@embed" } ] },
       "attributes": { "symmetrical":  true }
     },
-    "b": { "machining": { "drillings": [ { "diameter": "@diameter - 1mm", "depth": "@embed" } ] } }
+    "b": { "machining": { "drillings": [ { "diameter": "@diameter", "depth": "through" } ] } }
   },
-  "options": { "height": "/2", "start_offset": "50mm", "end_offset": "50mm", "min_spacing": "0", "max_spacing": "300mm" }
+  "options": { "height": "/2", "start_offset": "10mm", "end_offset": "10mm", "min_spacing": "0", "max_spacing": "300mm" }
 }
