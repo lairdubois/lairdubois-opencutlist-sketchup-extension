@@ -745,7 +745,9 @@ module Ladb::OpenCutList
     end
 
     def _fetch_option_machining_material_name
-      @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_MACHINING_MATERIAL_NAME)
+      name = @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_MACHINING_MATERIAL_NAME)
+      return PLUGIN.get_i18n_string('tab.materials.type_7') if !name.is_a?(String) || name.strip.empty?   # Same default as the BXF2 importer
+      name
     end
 
     def _fetch_option_hardware_layer_name
