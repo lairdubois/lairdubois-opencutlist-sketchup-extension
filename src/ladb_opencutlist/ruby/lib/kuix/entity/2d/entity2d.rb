@@ -2,6 +2,9 @@ module Ladb::OpenCutList::Kuix
 
   class Entity2d < Entity
 
+    # Style application order at equal specificity : the last one wins
+    PSEUDO_CLASS_PRIORITIES = [ :hover, :selected, :active, :disabled ].freeze
+
     attr_reader :bounds
     attr_reader :margin, :border, :padding, :gap
     attr_reader :min_size
@@ -111,8 +114,10 @@ module Ladb::OpenCutList::Kuix
       @active_pseudo_classes.include?(pseudo_class)
     end
 
+    # pseudo_class can be a Symbol (ex: :hover) or an Array of Symbols (ex: [ :selected, :hover ])
+    # to define a style applied only when all given pseudo classes are active.
     def set_style_attribute(attribute, value, pseudo_class = :default)
-      (@styles[pseudo_class] ||= {})[attribute] = value
+      (@styles[_normalize_style_key(pseudo_class)] ||= {})[attribute] = value
       invalidate
     end
 
@@ -123,14 +128,28 @@ module Ladb::OpenCutList::Kuix
       @border_color = @styles[:default][:border_color]
       @color = @styles[:default][:color]
 
-      @active_pseudo_classes.each do |pseudo_class|
-        if (style = @styles[pseudo_class])
-          @background_color = style[:background_color] if style.key?(:background_color)
-          @border_color = style[:border_color] if style.key?(:border_color)
-          @color = style[:color] if style.key?(:color)
-        end
+      return if @active_pseudo_classes.empty?
+
+      # Styles whose pseudo classes are all active, from the least to the most specific
+      keys = @styles.keys.select { |key| key != :default && Array(key).all? { |pseudo_class| @active_pseudo_classes.include?(pseudo_class) } }
+      keys.sort_by! { |key| [ Array(key).size, Array(key).map { |pseudo_class| _pseudo_class_priority(pseudo_class) }.max ] }
+      keys.each do |key|
+        style = @styles[key]
+        @background_color = style[:background_color] if style.key?(:background_color)
+        @border_color = style[:border_color] if style.key?(:border_color)
+        @color = style[:color] if style.key?(:color)
       end
 
+    end
+
+    def _pseudo_class_priority(pseudo_class)
+      PSEUDO_CLASS_PRIORITIES.index(pseudo_class) || PSEUDO_CLASS_PRIORITIES.length
+    end
+
+    def _normalize_style_key(pseudo_class)
+      return pseudo_class unless pseudo_class.is_a?(Array)
+      pseudo_classes = pseudo_class.uniq.sort_by { |pc| [ _pseudo_class_priority(pc), pc.to_s ] }
+      pseudo_classes.size == 1 ? pseudo_classes.first : pseudo_classes
     end
 
     # -- DOM --

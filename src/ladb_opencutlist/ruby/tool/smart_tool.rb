@@ -4489,6 +4489,7 @@ module Ladb::OpenCutList
         btn.set_style_attribute(:background_color, bg_active_color, :active)
         btn.set_style_attribute(:background_color, bg_active_color, :hover) if hover_background
         btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND, :selected)
+        btn.set_style_attribute(:background_color, ColorUtils.color_darken(SmartTool::COLOR_BRAND, 0.1), [ :hover, :selected ])
         if block
           block.call(btn)
         else
