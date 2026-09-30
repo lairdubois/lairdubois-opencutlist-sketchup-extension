@@ -161,6 +161,15 @@ var MODAL_JS_FILES = withBase(JS_BASE, [
     'dialog-modal.js',
 ]);
 
+// Loaded by html/viewer.html (the three.js iframe embedded by the three-viewer component)
+var VIEWER_JS_FILES = withBase(JS_BASE, [
+    'constants.js',
+    'lib/three.min.js',
+    'lib/three-orbit-controls.min.js',
+    'lib/three-css-2d-renderer.min.js',
+    'viewer.js',
+]);
+
 // Convert less to .css files
 gulp.task('less_compile', function () {
     return gulp.src('../src/ladb_opencutlist/less/ladb-opencutlist.less')
@@ -257,12 +266,19 @@ gulp.task('js_bundle_modal', function () {
         .pipe(gulp.dest(JS_BUNDLES_DEST));
 });
 
+// Concatenate the three.js viewer's libs + entry script
+gulp.task('js_bundle_viewer', function () {
+    return gulp.src(VIEWER_JS_FILES)
+        .pipe(concat('viewer-bundle.js', { newLine: ';\n' }))
+        .pipe(gulp.dest(JS_BUNDLES_DEST));
+});
+
 gulp.task('bundle', gulp.series(
     function cleanBundles(cb) {
         del.sync(JS_BUNDLES_DEST + '/*', { force: true });
         cb();
     },
-    gulp.parallel('css_bundle', 'js_bundle_common', 'js_bundle_tabs', 'js_bundle_modal')
+    gulp.parallel('css_bundle', 'js_bundle_common', 'js_bundle_tabs', 'js_bundle_modal', 'js_bundle_viewer')
 ));
 
 // Convert yaml i18n to .js files
@@ -432,11 +448,12 @@ gulp.task('rbz_create', function () {
         '!src/**/js/lib/**',
         '!src/**/js/templates/**',       // Bundled into js/bundles/tabs-bundle.js and modal-bundle.js
         '!src/**/js/plugins/**',         // Bundled into js/bundles/tabs-bundle.js and modal-bundle.js
-        '!src/**/js/constants.js',       // Bundled into js/bundles/common-bundle.js
+        '!src/**/js/constants.js',       // Bundled into js/bundles/common-bundle.js and viewer-bundle.js
         '!src/**/js/polyfills.js',       // Bundled into js/bundles/common-bundle.js
         '!src/**/js/dialog.js',          // Bundled into js/bundles/tabs-bundle.js and modal-bundle.js
         '!src/**/js/dialog-tabs.js',     // Bundled into js/bundles/tabs-bundle.js
         '!src/**/js/dialog-modal.js',    // Bundled into js/bundles/modal-bundle.js
+        '!src/**/js/viewer.js',          // Bundled into js/bundles/viewer-bundle.js
         '!src/**/less/**',
         '!src/**/twig/**',
         '!src/**/cpp/**',
