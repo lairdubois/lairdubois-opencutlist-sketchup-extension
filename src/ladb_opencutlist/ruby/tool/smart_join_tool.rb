@@ -5247,9 +5247,15 @@ module Ladb::OpenCutList
 
     # The BACK of the door : its broadest face turned towards the cavities -
     # a point a little in front of it lies in one. nil when none is.
+    #
+    # Not the centroid alone : a fixed shelf flush with the front, at mid
+    # height of the door, stands right in front of it. Halfway towards each
+    # corner too.
     def _get_door_back_face_manipulator(cavities_def)
       _get_part_face_manipulators(@active_part_entity_path_a).sort_by { |fm| -fm.face.area }.first(4).find { |fm|
-        cavities_def.fragment_defs_for_point(fm.centroid.offset(fm.normal, HINGE_CAVITY_MIN_DEPTH)).any?
+        centroid = fm.centroid
+        points = [ centroid ] + fm.outer_loop_manipulator.points.map { |point| Geom.linear_combination(0.5, centroid, 0.5, point) }.select { |point| _is_point_on_face?(fm, point) }
+        points.any? { |point| cavities_def.fragment_defs_for_point(point.offset(fm.normal, HINGE_CAVITY_MIN_DEPTH)).any? }
       }
     end
 

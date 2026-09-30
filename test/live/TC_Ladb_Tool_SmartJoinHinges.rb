@@ -13,7 +13,11 @@
 #  - machining   : a machining only - it bears the hinge ;
 #  - z_offset    : hardware shifted off its fitting frame - laid wrapped in a
 #                  group ;
-#  - clip_top    : the bundled Blum Clip Top, SKP files.
+#  - clip_top    : the bundled Blum Clip Top, SKP files ;
+#  - shelf       : "full" on a caisson with a fixed shelf flush with the
+#                  front right behind the centre of the door - and the
+#                  cursor : the back of the door is still found facing the
+#                  cavities, the hinges still laid one per compartment.
 # Every case lays then removes on a caisson of its own, in the same model :
 # the definitions of one are there for the next.
 #
@@ -41,6 +45,12 @@ module HingesRegression
     'machining' => HingeFixture.descriptor('machining', hardware: false),
     'z_offset' => HingeFixture.descriptor('z_offset', z_offset: '2mm'),
     'clip_top' => '$OCL/hinges/blum/clip-top.json',
+    'shelf' => HingeFixture.descriptor('shelf'),
+  }
+
+  # The options of HingeFixture.build of each case, none by default.
+  FIXTURE_OPTIONS = {
+    'shelf' => { shelf: true },
   }
 
   # What each case gives, once laid then once removed : the hinges on the
@@ -52,6 +62,7 @@ module HingesRegression
     'machining' => { 'laid' => { 'hinges' => 2, 'door' => true, 'door_entities' => 2, 'side_l' => 2, 'side_r' => 0 } },
     'z_offset' => { 'laid' => { 'hinges' => 2, 'door' => true, 'door_entities' => 4, 'side_l' => 2, 'side_r' => 0 } },
     'clip_top' => { 'laid' => { 'hinges' => 2, 'door' => true, 'door_entities' => 4, 'side_l' => 4, 'side_r' => 0 } },
+    'shelf' => { 'laid' => { 'hinges' => 2, 'door' => true, 'door_entities' => 4, 'side_l' => 2, 'side_r' => 0 } },
   }
   REMOVED = { 'hinges' => 0, 'door' => false, 'door_entities' => 0, 'side_l' => 0, 'side_r' => 0 }
 
@@ -66,9 +77,9 @@ module HingesRegression
     }
   end
 
-  def self.run_case(model, descriptor_ref)
+  def self.run_case(model, descriptor_ref, fixture_options = {})
     messages = []
-    fixture = HingeFixture.build(model)
+    fixture = HingeFixture.build(model, **fixture_options)
     HingeFixture.with_handler(model, OCL::SmartJoinTool::ACTION_ADD_HINGES, messages, descriptor_ref) do |handler, tool|
       HingeFixture.hover_and_click(model, handler, tool, fixture)
     end
@@ -89,7 +100,7 @@ module HingesRegression
       CASES.each do |id, descriptor|
         ref = descriptor.is_a?(Hash) ? HingeFixture.write_descriptor(dir, descriptor) : descriptor
         begin
-          results[id] = run_case(model, ref)
+          results[id] = run_case(model, ref, FIXTURE_OPTIONS.fetch(id, {}))
         rescue Exception => e
           results[id] = { 'error' => "#{e.class}: #{e.message} @ #{e.backtrace.first(2).join(' < ')}" }
         end

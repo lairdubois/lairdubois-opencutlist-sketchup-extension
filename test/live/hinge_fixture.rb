@@ -24,6 +24,10 @@ module HingeFixture
     'DOOR' => [ 2, -19, 2, 598, 0, 718 ],
   }
 
+  # A fixed shelf flush with the front, at mid height of the door : right
+  # behind its centre - and behind PICK_POINT.
+  SHELF = [ 18, 0, 351, 582, 542, 369 ]
+
   # Where the door is hovered : near its left edge, on its front face.
   PICK_POINT = [ 40, -19, 360 ]   # mm, caisson local
 
@@ -88,11 +92,13 @@ module HingeFixture
 
   # The caisson, as { 'caisson' => instance, 'DOOR' => instance, 'SIDE_L' => … }.
   # One at a time : the handlers probe the model, they would find the parts
-  # of another one standing at the same place - see erase.
-  def self.build(model)
+  # of another one standing at the same place - see erase. shelf : with the
+  # SHELF.
+  def self.build(model, shelf: false)
     caisson = model.definitions.add('HINGE_FIXTURE')
     instances = {}
-    PARTS.each do |name, (x0, y0, z0, x1, y1, z1)|
+    parts = shelf ? PARTS.merge('SHELF' => SHELF) : PARTS
+    parts.each do |name, (x0, y0, z0, x1, y1, z1)|
       definition = model.definitions.add("HINGE_FIXTURE_#{name}")
       face = definition.entities.add_face([ x0.mm, y0.mm, z0.mm ], [ x1.mm, y0.mm, z0.mm ], [ x1.mm, y1.mm, z0.mm ], [ x0.mm, y1.mm, z0.mm ])
       face.reverse! if face.normal.z < 0
