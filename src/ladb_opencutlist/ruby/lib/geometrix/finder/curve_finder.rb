@@ -68,6 +68,21 @@ module Ladb::OpenCutList::Geometrix
 
             if ellipse_edge_count >= MIN_ARC_POINT_COUNT
 
+              # The 5 points fit may lock onto a degenerate ellipse (ex: a thin ellipse fitting the first points of
+              # a large arc when the first one is slightly off). If the previous arc ends here and its points also
+              # fit this new ellipse, they belong to the same arc : merge them.
+              previous_portion = curve_def.portions.last
+              if previous_portion.is_a?(ArcCurvePortionDef) &&
+                 previous_portion.end_index == ellipse_start_index &&
+                 _ellipse_fit_points?(ellipse_def, twice_points[previous_portion.start_index..ellipse_start_index])
+
+                # Replace previous Arc portion by the merged one
+                curve_def.portions.pop
+                ellipse_edge_count += ellipse_start_index - previous_portion.start_index
+                ellipse_start_index = previous_portion.start_index
+
+              end
+
               # Append Arc portion
               curve_def.portions << ArcCurvePortionDef.new(curve_def, ellipse_start_index, ellipse_edge_count, ellipse_def)
 
@@ -102,6 +117,26 @@ module Ladb::OpenCutList::Geometrix
             # Only one arc : just subtract overlap
             last_portion.edge_count -= overlap
 
+          elsif overlap == 0
+
+            # No overlap : last arc ends where first portion starts, combine them if they fit the same ellipse
+            first_portion = curve_def.portions.first
+            if first_portion.is_a?(ArcCurvePortionDef)
+
+              ellipse_def = nil
+              if _ellipse_fit_points?(last_portion.ellipse_def, first_portion.points)
+                ellipse_def = last_portion.ellipse_def
+              elsif _ellipse_fit_points?(first_portion.ellipse_def, last_portion.points)
+                ellipse_def = first_portion.ellipse_def
+              end
+
+              if ellipse_def
+                curve_def.portions[-1] = ArcCurvePortionDef.new(curve_def, last_portion.start_index, last_portion.edge_count + first_portion.edge_count, ellipse_def)
+                curve_def.portions.shift
+              end
+
+            end
+
           else
 
             max_overlap_index = last_portion.end_index % points.length
@@ -117,11 +152,18 @@ module Ladb::OpenCutList::Geometrix
 
             elsif last_overlap_portion.is_a?(ArcCurvePortionDef)
 
+              combined_edge_count = last_portion.edge_count + overlap_portions.map(&:edge_count).inject(0, :+) - overlap  # .map(&:edge_count).inject(0, :+) == .sum { |portion| portion.edge_count } compatible with ruby < 2.4
+
               # Check ellipses similarity by checking if last arc includes last overlap arc end point
               if EllipseFinder.ellipse_include_point?(last_portion.ellipse_def, last_overlap_portion.end_point)
 
                 # Combine first ellipse to last
-                last_portion.edge_count = last_portion.edge_count + overlap_portions.map(&:edge_count).inject(0, :+) - overlap  # .map(&:edge_count).inject(0, :+) == .sum { |portion| portion.edge_count } compatible with ruby < 2.4
+                last_portion.edge_count = combined_edge_count
+
+              elsif _ellipse_fit_points?(last_overlap_portion.ellipse_def, last_portion.points)
+
+                # Last arc points fit the first ellipse (ex: last arc is a degenerate ellipse) : combine last ellipse to first
+                curve_def.portions[-1] = ArcCurvePortionDef.new(curve_def, last_portion.start_index, combined_edge_count, last_overlap_portion.ellipse_def)
 
               else
 
@@ -143,6 +185,26 @@ module Ladb::OpenCutList::Geometrix
       end
 
       curve_def
+    end
+
+    # -----
+
+    # Checks if all the given ordered points are on the ellipse with no angle step greater than MIN_ARC_DELTA_ANGLE
+    #
+    # @param [EllipseDef] ellipse_def
+    # @param [Array<Geom::Point3d>] points
+    #
+    # @return [Boolean]
+    #
+    def self._ellipse_fit_points?(ellipse_def, points)
+      va = nil
+      points.each do |p|
+        return false unless EllipseFinder.ellipse_include_point?(ellipse_def, p)
+        vaa = ellipse_def.xaxis.transform(Geom::Transformation.rotation(ellipse_def.center, Z_AXIS, EllipseFinder.ellipse_angle_at_point(ellipse_def, p)))
+        return false if va && va.angle_between(vaa).round(2) > MIN_ARC_DELTA_ANGLE
+        va = vaa
+      end
+      true
     end
 
   end

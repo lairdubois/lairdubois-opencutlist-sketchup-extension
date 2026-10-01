@@ -540,6 +540,7 @@ module Ladb::OpenCutList
           polylines = []
           pld.open_paths.each do |path|
             points = Clippy.rpath_to_points(path, z_max - pld.depth)
+            next if points.none? { |point| point != points.first } # Ignore degenerated paths (single point) left by clipping an edge to nothing
             if points.first == points.last
               points.reverse! unless Clippy.is_rpath_positive?(path)  # Force CCW
               polygons << DrawingProjectionPolygonDef.new(points[0...-1], true) # Closed paths are converted to polygon by removing the 'end point'
