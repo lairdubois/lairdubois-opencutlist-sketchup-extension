@@ -143,11 +143,17 @@ module Ladb::OpenCutList
 
     end
 
-    # The editor gets the given size - smaller while a part is shaped in
-    # SketchUp. Returns the size it had.
-    def editor_resize_command(width:, height:)
-      size = PLUGIN.resize_modal_dialog(width.to_i, height.to_i)
-      size.nil? ? {} : { :width => size[0], :height => size[1] }
+    # The editor gets the given size and position - smaller and in a corner
+    # while a part is shaped in SketchUp. Returns the size and position it had.
+    def editor_resize_command(width:, height:, left: nil, top: nil)
+      size = PLUGIN.modal_dialog_get_size
+      return {} if size.nil?
+      position = PLUGIN.modal_dialog_get_position
+      PLUGIN.modal_dialog_set_size(width.to_i, height.to_i)
+      PLUGIN.modal_dialog_set_position(left.to_i, top.to_i) unless left.nil? || top.nil? || position.nil?  # Only moved if it can be put back
+      response = { :width => size[0], :height => size[1] }
+      response.merge!({ :left => position[0], :top => position[1] }) unless position.nil?
+      response
     end
 
     # A SKP file picked by the user - to become a part of the descriptor.

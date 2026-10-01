@@ -6,9 +6,15 @@
 
     const COMPUTE_DELAY = 300;  // ms after the last edit
 
-    // The size of the editor while a part is shaped in SketchUp
+    // What Tab moves through in a panel - see captureFocus
+    const FOCUSABLE_SELECTOR = 'input:not([type="hidden"]), select, textarea, button, a[href]';
+
+    // The size and position of the editor while a part is shaped in SketchUp :
+    // top left of the screen, beside the minimized OpenCutList bar
     const SHAPING_WIDTH = 380;
-    const SHAPING_HEIGHT = 240;
+    const SHAPING_HEIGHT = 260;
+    const SHAPING_LEFT = 170;
+    const SHAPING_TOP = 100;
 
     const PARTS = [ 'hardware', 'machining' ];
     const PRIMITIVE_KEYS = [ 'cylinders', 'oblongs', 'drillings', 'mortises' ];
@@ -274,6 +280,48 @@
             that.fetchMeshes();
         });
 
+    };
+
+    // Focus /////
+
+    // The field focused in the given panel, before it is re-rendered : a
+    // field edited then left with Tab is computed once the focus is already
+    // on the next one, which the re-rendering destroys. Found again by its rank.
+    LadbModalHardwareEditor.prototype.captureFocus = function ($panel) {
+        const active = document.activeElement;
+        if (!active || !$.contains($panel[0], active)) {
+            return null;
+        }
+        const typed = active.value !== undefined && active.value !== $(active).data('ladb-focus-value');
+        return {
+            element: active,
+            $panel: $panel,
+            index: $(FOCUSABLE_SELECTOR, $panel).index(active),
+            value: typed ? active.value : undefined,   // Typed while computing : kept
+            selectionStart: typed ? active.selectionStart : null,
+            selectionEnd: typed ? active.selectionEnd : null
+        };
+    };
+
+    LadbModalHardwareEditor.prototype.restoreFocus = function (focus) {
+        if (focus === null || focus.index < 0 || $.contains(document.documentElement, focus.element)) {
+            return; // Nothing focused, or not re-rendered
+        }
+        const element = $(FOCUSABLE_SELECTOR, focus.$panel).get(focus.index);
+        if (!element || element.disabled || element.tagName !== focus.element.tagName || element.type !== focus.element.type) {
+            return; // Not the same field anymore
+        }
+        element.focus();
+        if (focus.value !== undefined && element.value !== focus.value) {
+            element.value = focus.value;
+            try {
+                element.setSelectionRange(focus.selectionStart, focus.selectionEnd);
+            } catch (e) {
+                // Not a text field
+            }
+        } else if (typeof element.select === 'function' && element.tagName === 'INPUT') {
+            element.select();   // As Tab leaves it
+        }
     };
 
     // Render /////
@@ -560,6 +608,7 @@
         }
         this._settingsSignature = signature;
 
+        const focus = this.captureFocus(this.$settings);
         this.destroyInheritedTooltips(this.$settings);
         this.$settings.empty();
 
@@ -682,6 +731,8 @@
                 this.$settings.append($formGroup);
             }
         }
+
+        this.restoreFocus(focus);
 
     };
 
@@ -811,6 +862,7 @@
         const components = data.components && typeof data.components === 'object' ? data.components : {};
         const slots = Object.keys(components);
 
+        const focus = this.captureFocus(this.$parts);
         this.destroyInheritedTooltips(this.$parts);
         this.$parts.empty();
         for (const slot of slots) {
@@ -886,6 +938,8 @@
             }
 
         }
+
+        this.restoreFocus(focus);
 
     };
 
@@ -1264,9 +1318,11 @@
 
         const fnApply = function (matrix) {
             that.placements[ref] = matrix;
-            that.renderBench();
-            that.renderParts();
-            that.updateGuard();
+            setTimeout(function () {    // Once Tab has moved the focus on - see captureFocus
+                that.renderBench();
+                that.renderParts();
+                that.updateGuard();
+            }, 0);
         };
         const fnButton = function (label, onClick) {
             return $('<button type="button" class="btn btn-default btn-xs">')
@@ -1695,7 +1751,7 @@
             that.updateGuard();
             $('.ladb-hardware-editor-shaping-name', that.$element).text(i18next.t('core.hardware_editor.shaping', { name: name }));
             that.$element.addClass('ladb-hardware-editor-shaping');
-            rubyCallCommand('hardware_editor_resize', { width: SHAPING_WIDTH, height: SHAPING_HEIGHT }, function (response) {
+            rubyCallCommand('hardware_editor_resize', { width: SHAPING_WIDTH, height: SHAPING_HEIGHT, left: SHAPING_LEFT, top: SHAPING_TOP }, function (response) {
                 if (that.shaping && response.width) {
                     that.shaping.size = response;
                 }
@@ -2085,6 +2141,11 @@
         this.$parts = $('.ladb-hardware-editor-parts', this.$element);
         this.$errors = $('.ladb-hardware-editor-errors', this.$element);
         this.$errorCount = $('.ladb-hardware-editor-error-count', this.$element);
+
+        // The value a field had when focused : what is typed since - see captureFocus
+        this.$settings.add(this.$parts).on('focusin', FOCUSABLE_SELECTOR, function () {
+            $(this).data('ladb-focus-value', this.value);
+        });
         this.$btnValidate = $('#ladb_hardware_editor_btn_validate', this.$element);
         this.$btnDuplicate = $('#ladb_hardware_editor_btn_duplicate', this.$element);
         this.$btnDerive = $('#ladb_hardware_editor_btn_derive', this.$element);

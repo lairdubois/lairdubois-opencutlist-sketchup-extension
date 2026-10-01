@@ -1563,23 +1563,32 @@ module Ladb::OpenCutList
       false
     end
 
+    def toggle_modal_dialog
+      unless hide_modal_dialog
+        show_modal_dialog
+      end
+    end
+
     # The modal decides : asks to discard its unsaved changes, then closes.
     def modal_dialog_request_close
       @modal_dialog.execute_script("$('body').ladbDialogModal('confirmClose');") if @modal_dialog
     end
 
-    # Resizes the open modal - keeping its position. Returns the size it had.
-    def resize_modal_dialog(width, height)
-      return nil unless @modal_dialog
-      size = @modal_dialog.get_size
-      @modal_dialog.set_size(width, height)
-      size
+    def modal_dialog_get_size
+      @modal_dialog.get_size if @modal_dialog
     end
 
-    def toggle_modal_dialog
-      unless hide_modal_dialog
-        show_modal_dialog
-      end
+    def modal_dialog_set_size(width, height)
+      @modal_dialog.set_size(width, height) if @modal_dialog
+    end
+
+    # nil when the position can't be read back (SketchUp < 2021.1)
+    def modal_dialog_get_position
+      @modal_dialog.get_position if @modal_dialog && @modal_dialog.respond_to?(:get_position)
+    end
+
+    def modal_dialog_set_position(left, top)
+      @modal_dialog.set_position(left, top) if @modal_dialog
     end
 
     # -- Devtool ---
