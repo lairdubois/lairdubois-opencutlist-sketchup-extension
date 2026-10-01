@@ -33,6 +33,9 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 ## Lab
 
 ### 2026-09-30
+ * Improved cavities detection and mouth panels tools
+ * Improved library panel UI
+### 2026-09-30
  * Added a Hardware Editor **(DEV team only)**
 ### 2026-09-29
  * Improved Hardware Libary Specs and "parametric" capabilities **(DEV team only)**
