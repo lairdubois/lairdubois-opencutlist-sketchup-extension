@@ -33,6 +33,7 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 ## Lab
 
 ### 2026-09-30
+ * Adding abstraction and inheritance for hardware descriptors.
  * Improved cavities detection and mouth panels tools
  * Improved library panel UI
 ### 2026-09-30
