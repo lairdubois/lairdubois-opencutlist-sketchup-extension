@@ -170,11 +170,19 @@ module Ladb::OpenCutList
 
     # -----
 
+    # The path of the entity whose container the cavities are read in - by
+    # default the ACTIVE part's. A handler for which the part stands for more
+    # than itself says so here : the door a stile belongs to, see
+    # SmartJoinAddHingesActionHandler.
+    def _get_cavities_part_entity_path
+      get_active_part_entity_path
+    end
+
     # The cavities of the given part's container - by default the ACTIVE
-    # part's. The explicit parameters exist for #_can_activate_part?, which
-    # runs BEFORE the part it examines is activated and so cannot rely on the
-    # active one.
-    def _get_cavities_def(part_entity_path = get_active_part_entity_path, part = get_active_part)
+    # part's, see #_get_cavities_part_entity_path. The explicit parameters
+    # exist for #_can_activate_part?, which runs BEFORE the part it examines
+    # is activated and so cannot rely on the active one.
+    def _get_cavities_def(part_entity_path = _get_cavities_part_entity_path, part = get_active_part)
       return nil unless part_entity_path.is_a?(Array) && part_entity_path.length > 1
 
       container_path = part_entity_path[0...-1]
@@ -358,7 +366,7 @@ module Ladb::OpenCutList
     # active part's - are PENDING : not known yet, and waiting for the pick to
     # dwell there (see #_schedule_cavities_def). Nothing can be said of a
     # position in them in the meantime, either way.
-    def _cavities_pending?(part_entity_path = get_active_part_entity_path)
+    def _cavities_pending?(part_entity_path = _get_cavities_part_entity_path)
       !@cavities_dwell.nil? && part_entity_path.is_a?(Array) && @cavities_dwell.first == part_entity_path[0...-1]
     end
 
@@ -387,7 +395,7 @@ module Ladb::OpenCutList
 
       # Only for the container the pick is still on : it may have left it for
       # nothing since, which armed no other count
-      part_entity_path = get_active_part_entity_path
+      part_entity_path = _get_cavities_part_entity_path
       return unless part_entity_path.is_a?(Array) && part_entity_path[0...-1] == container_path
 
       model = Sketchup.active_model

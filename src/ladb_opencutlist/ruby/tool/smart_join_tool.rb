@@ -3951,19 +3951,30 @@ module Ladb::OpenCutList
 
     # ------
 
+    # The part A of the joint - the one its face A belongs to : the active
+    # part A, unless the handler reads its face elsewhere.
+    def _get_joint_part_entity_path_a
+      @active_part_entity_path_a
+    end
+
+    # The points of the side A of the joint the joint line is bounded by : the
+    # outer loop of its face A, unless the handler reads more than that face.
+    def _get_joint_points_a
+      @active_face_manipulator_a.outer_loop_manipulator.points
+    end
+
     def _get_neighborhood_def(tolerance = 0.001)
       return @neighborhood_def unless @neighborhood_def.nil?
 
       return nil unless _has_active_part_a? && _has_active_part_b?
-      return nil if @active_part_entity_path_a == @active_part_entity_path_b
+      return nil if (part_entity_path_a = _get_joint_part_entity_path_a) == @active_part_entity_path_b
       return nil unless @active_face_manipulator_a.is_a?(FaceManipulator) && @active_face_manipulator_b.is_a?(FaceManipulator)
 
       if (line = Geom.intersect_plane_plane(@active_face_manipulator_a.plane, @active_face_manipulator_b.plane))
 
         line_manipulator = LineManipulator.new(line)
 
-        pos_a = @active_face_manipulator_a.outer_loop_manipulator
-                                        .points
+        pos_a = _get_joint_points_a
                                         .map { |point| p = point.project_to_line(line); [ (p - line_manipulator.position) % line_manipulator.direction, p ] }
                                         .sort_by! { |pos, _| pos }
         pos_b = @active_face_manipulator_b.outer_loop_manipulator
@@ -3996,7 +4007,7 @@ module Ladb::OpenCutList
       # Keep useful data
 
       @neighborhood_def = NeighborhoodDef.new(
-        @active_part_entity_path_a,
+        part_entity_path_a,
         neighbor_def
       )
     end
@@ -4361,8 +4372,10 @@ module Ladb::OpenCutList
     # The hinge the given geometry will be, laid at the given placement : its
     # kinematics as they will be written - the descriptor's over those of its
     # SKP - and its transformation as it will be laid - mirrored, shifted by
-    # its offset. nil when they lack a valid pivot or max angle.
-    def _get_preview_hinge_def(geometry, placement)
+    # its offset - set in the space the given transformation takes the
+    # placement's definition to, its own by default. nil when they lack a
+    # valid pivot or max angle.
+    def _get_preview_hinge_def(geometry, placement, outer_transformation = IDENTITY)
       attributes = {}
       if geometry.definition.is_a?(Sketchup::ComponentDefinition) && (dictionary = geometry.definition.attribute_dictionary(Plugin::ATTRIBUTE_DICTIONARY))
         attributes = dictionary.to_h
@@ -4370,7 +4383,7 @@ module Ladb::OpenCutList
       component = _get_hardware_component(geometry.slot)
       attributes = attributes.merge(component.attributes) unless component.nil?
       transformation = placement.transformation * _get_geometry_mirror_transformation(geometry) * Geom::Transformation.translation([ 0, 0, _get_geometry_offset(geometry, placement) ])
-      DoorHingeDef.from_attributes(attributes, transformation)
+      DoorHingeDef.from_attributes(attributes, outer_transformation * transformation)
     end
 
     # -----
@@ -4405,6 +4418,25 @@ module Ladb::OpenCutList
       return if (neighborhood_def = _get_neighborhood_def).nil?
       return if (joinery_def = _get_add_joinery_def(neighborhood_def)).nil?
 
+      model = Sketchup.active_model
+      model.start_operation('OCL Add Fittings', true)
+      begin
+
+        _add_joint_fittings(neighborhood_def, joinery_def)
+
+        model.commit_operation
+
+      rescue Exception => e
+        PLUGIN.dump_exception(e)
+        model.abort_operation
+      end
+
+    end
+
+    # Lays the fittings of the given joint - making its parts unique first
+    # when make_unique. To call inside an operation.
+    def _add_joint_fittings(neighborhood_def, joinery_def)
+
       neighbor_def = neighborhood_def.neighbor_def
       line_def = neighbor_def.line_def
 
@@ -4426,77 +4458,66 @@ module Ladb::OpenCutList
       hardware_layer = geometries_def.hardware_layer
       machining_layer = geometries_def.machining_layer
 
-      model = Sketchup.active_model
-      model.start_operation('OCL Add Fittings', true)
-      begin
+      if _fetch_option_make_unique?
 
-        if _fetch_option_make_unique?
+        if !hardware_a.empty? || !machining_a.empty?
 
-          if !hardware_a.empty? || !machining_a.empty?
+          # Make unique Part A (if necessary)
 
-            # Make unique Part A (if necessary)
+          u_instance_a = instance_a.make_unique
+          u_definition_a = u_instance_a.definition
+          if u_definition_a != definition_a
 
-            u_instance_a = instance_a.make_unique
-            u_definition_a = u_instance_a.definition
-            if u_definition_a != definition_a
+            u_entities_a = u_definition_a.entities
 
-              u_entities_a = u_definition_a.entities
-
-              face = line_def.face_manipulator.face
-              if face.parent == definition_a
-                face_index = entities_a.to_a.index(face)
-                u_face = u_entities_a[face_index]
-                if u_face
-                  line_def.face_manipulator = FaceManipulator.new(u_face, line_def.face_manipulator.transformation)
-                end
+            face = line_def.face_manipulator.face
+            if face.parent == definition_a
+              face_index = entities_a.to_a.index(face)
+              u_face = u_entities_a[face_index]
+              if u_face
+                line_def.face_manipulator = FaceManipulator.new(u_face, line_def.face_manipulator.transformation)
               end
-
-            end
-
-          end
-
-          if !hardware_b.empty? || !machining_b.empty?
-
-            # Make unique Part B (if necessary)
-
-            u_instance_b = instance_b.make_unique
-            u_definition_b = u_instance_b.definition
-            if u_definition_b != definition_b
-
-              u_entities_b = u_definition_b.entities
-
-              neighbor_face = line_def.neighbor_face_manipulator.face
-              if neighbor_face.parent == definition_b
-                neighbor_face_index = entities_b.to_a.index(neighbor_face)
-                u_neighbor_face = u_entities_b[neighbor_face_index]
-                if u_neighbor_face
-                  line_def.neighbor_face_manipulator = FaceManipulator.new(u_neighbor_face, line_def.neighbor_face_manipulator.transformation)
-                end
-              end
-
             end
 
           end
 
         end
 
-        # Add the fittings : only the picked couple's placements when make_unique
-        # is true, the whole contact graph (A -> B -> A' -> B' -> ...) otherwise.
-        _get_propagation_def(neighborhood_def, joinery_def).placements.each do |placement|
+        if !hardware_b.empty? || !machining_b.empty?
 
-          hardware = placement.role == :a ? hardware_a : hardware_b
-          machining = placement.role == :a ? machining_a : machining_b
+          # Make unique Part B (if necessary)
 
-          _add_geometry(hardware, placement, hardware_material, hardware_layer)
-          _add_geometry(machining, placement, machining_material, machining_layer)
+          u_instance_b = instance_b.make_unique
+          u_definition_b = u_instance_b.definition
+          if u_definition_b != definition_b
+
+            u_entities_b = u_definition_b.entities
+
+            neighbor_face = line_def.neighbor_face_manipulator.face
+            if neighbor_face.parent == definition_b
+              neighbor_face_index = entities_b.to_a.index(neighbor_face)
+              u_neighbor_face = u_entities_b[neighbor_face_index]
+              if u_neighbor_face
+                line_def.neighbor_face_manipulator = FaceManipulator.new(u_neighbor_face, line_def.neighbor_face_manipulator.transformation)
+              end
+            end
+
+          end
 
         end
 
-        model.commit_operation
+      end
 
-      rescue Exception => e
-        PLUGIN.dump_exception(e)
-        model.abort_operation
+      # Add the fittings : only the picked couple's placements when make_unique
+      # is true, the whole contact graph (A -> B -> A' -> B' -> ...) otherwise.
+      _get_propagation_def(neighborhood_def, joinery_def).placements.each do |placement|
+
+        hardware = placement.role == :a ? hardware_a : hardware_b
+        machining = placement.role == :a ? machining_a : machining_b
+
+        _add_geometry(hardware, placement, hardware_material, hardware_layer)
+        _add_geometry(machining, placement, machining_material, machining_layer)
+
       end
 
     end
@@ -4768,6 +4789,15 @@ module Ladb::OpenCutList
   # middle side two doors share, whatever the other one is - or laid on a
   # side ANOTHER front panel is laid on too, is a HALF overlay one. The kind
   # picks the hardware and machining of A.
+  #
+  # A door may be made of SEVERAL parts - the stiles and rails of a frame
+  # door - held by a group or a component bearing ROLE_FRONT_PANEL : any of
+  # them picks it. Its back is then the union of the backs of its parts
+  # lying on one plane (see DoorBackDef), and each hinge is laid into the
+  # part under it - one straddling two parts is left out. The joint gets one
+  # part A per part a hinge lands on (see #_get_hinge_joints), and making
+  # them unique goes down from the door (see #_make_unique_door_parts) : the
+  # door is the instance that turns (see DoorDef).
   class SmartJoinAddHingesActionHandler < SmartJoinAddFittingsActionHandler
 
     include SmartActionHandlerCavitiesHelper
@@ -4895,7 +4925,7 @@ module Ladb::OpenCutList
 
     def onToolTransactionUndo(tool, model)
       _reset_cavities_def
-      @door_face_manipulators = nil
+      _reset_door_caches
     end
 
     # -----
@@ -4920,17 +4950,31 @@ module Ladb::OpenCutList
       @hinge_side_error = nil
       @hinge_pick_point = nil
       @hinge_kind = HINGE_KIND_OVERLAY
+      @hinge_door_back = nil
+      @hinge_edge = nil
+      @hinge_part_entity_path_a = nil
     end
 
     def _reset_joinery_def
       super
-      @hinge_forced_make_unique = false
+      @hinge_forced_make_unique = nil
+      @hinge_anchor_members = nil
+      @hinge_joints = nil
+      @hinge_propagation_def = nil
+    end
+
+    # What the faces of the door are read from changes with the model.
+    def _reset_door_caches
+      @door_face_manipulators = nil
+      @door_part_entity_paths = nil
+      @door_backs = nil
     end
 
     # Forced on when laying the hinges into the shared definitions would hang
-    # a door on more than one edge, see #_get_propagation_def.
+    # a door on more than one edge, or a door made of several parts would get
+    # them on its other occurrences - see #_get_propagation_def.
     def _fetch_option_make_unique?
-      @hinge_forced_make_unique == true || super
+      !@hinge_forced_make_unique.nil? || super
     end
 
     # The hardware of A is the hinge.
@@ -5000,8 +5044,73 @@ module Ladb::OpenCutList
     def _can_activate_part?(part_entity_path, part)
       can_activate, error_key, error_vars = super
       return [ can_activate, error_key, error_vars ] unless can_activate
-      return [ false, 'tool.smart_join.error.not_front_panel' ] if part_entity_path.is_a?(Array) && DefinitionAttributes.role_of(part_entity_path.last) != DefinitionAttributes::ROLE_FRONT_PANEL   # Nil path : a reset, always allowed
+      return [ false, 'tool.smart_join.error.not_front_panel' ] if part_entity_path.is_a?(Array) && _get_door_entity_path(part_entity_path).nil?   # Nil path : a reset, always allowed
       true
+    end
+
+    # -- Door --
+
+    # The DOOR the given part belongs to : the path to the nearest entity of
+    # its path - the part itself, or a group or a component holding it -
+    # bearing ROLE_FRONT_PANEL. nil when there is none.
+    def _get_door_entity_path(part_entity_path = @active_part_entity_path_a)
+      return nil unless part_entity_path.is_a?(Array)
+      return nil if (index = part_entity_path.rindex { |entity| DefinitionAttributes.role_of(entity) == DefinitionAttributes::ROLE_FRONT_PANEL }).nil?
+      part_entity_path[0..index]
+    end
+
+    # The part hovered of a door made of several stands for the whole door :
+    # it is the whole door that is highlighted.
+    def _preview_part(part_entity_path, part, layer = LAYER_3D_PART_PREVIEW, highlighted: false, clear_before: true)
+      return super unless layer == LAYER_3D_PART_A_PREVIEW && part.is_a?(Part) && (door_entity_path = _get_door_entity_path(part_entity_path)).is_a?(Array) && door_entity_path.length < part_entity_path.length
+      @tool.clear_3d(layer) if clear_before
+      _preview_door_assembly(door_entity_path, _get_path_part_preview_color(part_entity_path, part, highlighted), _get_path_part_preview_offset(part_entity_path, part, highlighted), layer)
+    end
+
+    # Is the active door made of several parts - the active part being one of
+    # them ?
+    def _is_door_assembly?
+      !(door_entity_path = _get_door_entity_path).nil? && door_entity_path.length < @active_part_entity_path_a.length
+    end
+
+    # The paths of the parts the given door is made of : itself, or the
+    # components it holds - through the groups it holds too, as the cutlist
+    # reads them. Neither what is laid in them - hardware, machinings,
+    # hinges - nor a front or back panel held inside : a panel inside a panel
+    # is none.
+    def _get_door_part_entity_paths(door_entity_path)
+      return [ door_entity_path ] if door_entity_path == @active_part_entity_path_a
+      @door_part_entity_paths = {} unless @door_part_entity_paths.is_a?(Hash)
+      key = PathUtils.serialize_path(door_entity_path)
+      return @door_part_entity_paths[key] if @door_part_entity_paths.key?(key)
+
+      fn_collect = lambda { |path, paths|
+        path.last.definition.entities.each do |entity|
+          next unless entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance)
+          next if entity.definition.behavior.always_face_camera? || entity.definition.behavior.cuts_opening?
+          next unless DoorDef.hinge_frame(entity).nil?
+          next if DefinitionAttributes.applied_panel_role?(DefinitionAttributes.role_of(entity))
+          type = _get_material_attributes(entity.material).type
+          next if type == MaterialAttributes::TYPE_MACHINING || type == MaterialAttributes::TYPE_HARDWARE
+          if entity.is_a?(Sketchup::ComponentInstance)
+            paths << path + [ entity ]
+          else
+            fn_collect.call(path + [ entity ], paths)
+          end
+        end
+        paths
+      }
+      @door_part_entity_paths[key] = fn_collect.call(door_entity_path, [])
+    end
+
+    # The BACK of the door : the faces of its parts turned towards the
+    # cavities, on one plane - [ face_manipulator, part_entity_path ] pairs -
+    # and the outline of their union, the outer loop of the face of a door
+    # made of one part.
+    DoorBackDef = Struct.new(:normal, :position, :members, :points) do
+      def plane
+        [ position, normal ]
+      end
     end
 
     # -----
@@ -5015,11 +5124,18 @@ module Ladb::OpenCutList
       [ DefinitionAttributes::ROLE_BACK_PANEL ]
     end
 
+    # The cavities are the carcass' : the door's container, not the
+    # assembly a part of a frame door is held by.
+    def _get_cavities_part_entity_path
+      part_entity_path = get_active_part_entity_path
+      _get_door_entity_path(part_entity_path) || part_entity_path
+    end
+
     # The cavities of the door's carcass - nil while they wait for the pick
     # to dwell there, see SmartActionHandlerCavitiesHelper#_get_cavities_def.
     def _get_door_cavities_def
-      return nil unless _has_active_part_a?
-      _get_cavities_def(@active_part_entity_path_a, @active_part_a)
+      return nil unless _has_active_part_a? && (door_entity_path = _get_door_entity_path).is_a?(Array)
+      _get_cavities_def(door_entity_path, @active_part_a)
     end
 
     # -----
@@ -5032,6 +5148,7 @@ module Ladb::OpenCutList
     def _pick_hinge_side(picker)
 
       side = nil
+      door_back = nil
       @hinge_side_error = nil
       @hinge_pick_point = nil
 
@@ -5041,14 +5158,14 @@ module Ladb::OpenCutList
         throw :done unless (cursor = picker.picked_point).is_a?(Geom::Point3d)
 
         @hinge_side_error = 'tool.smart_join.error.no_hinge_cavity'
-        throw :done unless (face_manipulator_a = _get_door_back_face_manipulator(cavities_def)).is_a?(FaceManipulator)
+        throw :done unless (door_back = _get_door_back(cavities_def)).is_a?(DoorBackDef)
 
         @hinge_side_error = 'tool.smart_join.error.no_hinge_side'
-        @hinge_pick_point = cursor.project_to_plane(face_manipulator_a.plane)
+        @hinge_pick_point = cursor.project_to_plane(door_back.plane)
 
         # The edges, nearest the cursor first - the distance to an edge
         # stretched by how much shorter it is than the longest one
-        edges = _get_face_edges(face_manipulator_a)
+        edges = _get_loop_edges(door_back.points)
         max_length = edges.map { |p1, p2| p1.distance(p2) }.max
 
         # A door already hung turns on one side only : the edge its hinges
@@ -5062,7 +5179,7 @@ module Ladb::OpenCutList
           point = _closest_point_on_segment(@hinge_pick_point, p1, p2)
           [ @hinge_pick_point.distance(point) * max_length / length, p1, p2, point ]
         }.sort_by(&:first).each do |_, p1, p2, point|
-          side = _probe_hinge_side(cavities_def, face_manipulator_a, p1, p2, point)
+          side = _probe_hinge_side(cavities_def, door_back, p1, p2, point)
           break unless side.nil?
         end
         throw :done if side.nil?
@@ -5071,28 +5188,44 @@ module Ladb::OpenCutList
 
       end
 
-      part_entity_path_b, part_b, face_manipulator_a, face_manipulator_b, kind = side
+      part_entity_path_b, part_b, face_manipulator_a, face_manipulator_b, kind, part_entity_path_a, edge = side
       kind = HINGE_KIND_OVERLAY if kind.nil?
 
-      changed = @active_face_manipulator_a != face_manipulator_a || @active_face_manipulator_b != face_manipulator_b || @active_part_entity_path_b != part_entity_path_b || @hinge_kind != kind
+      changed = @active_face_manipulator_a != face_manipulator_a || @active_face_manipulator_b != face_manipulator_b || @active_part_entity_path_b != part_entity_path_b || @hinge_kind != kind || @hinge_part_entity_path_a != part_entity_path_a
 
       @active_part_entity_path_b = part_entity_path_b
       @active_part_b = part_b
       @active_face_manipulator_a = face_manipulator_a
       @active_face_manipulator_b = face_manipulator_b
       @hinge_kind = kind
+      @hinge_part_entity_path_a = part_entity_path_a
+      @hinge_door_back = side.nil? ? nil : door_back
+      @hinge_edge = edge
 
       changed
+    end
+
+    # The joint's part A is the part of the door its face A belongs to - the
+    # door itself, unless it is made of several.
+    def _get_joint_part_entity_path_a
+      @hinge_part_entity_path_a || super
+    end
+
+    # The joint line runs along the whole edge of the door, whatever part
+    # bears it.
+    def _get_joint_points_a
+      @hinge_door_back.is_a?(DoorBackDef) ? @hinge_door_back.points : super
     end
 
     # The edge, among the given ones of the door's back, its hinges already
     # run along - parallel to their joint lines, nearest their origins - nil
     # when the door has none yet.
     def _get_hinged_edge(edges)
-      return nil if (hinges = DoorDef.hinge_instances(@active_part_entity_path_a.last)).empty?
+      door_entity_path = _get_door_entity_path
+      return nil if (hinges = DoorDef.door_hinge_instances(door_entity_path.last)).empty?
 
-      t = PathUtils.get_transformation(@active_part_entity_path_a, IDENTITY)
-      hinge_transformations = hinges.map { |hinge| t * hinge.transformation }
+      t = PathUtils.get_transformation(door_entity_path, IDENTITY)
+      hinge_transformations = hinges.map { |hinge, transformation| t * transformation * hinge.transformation }
       direction = hinge_transformations.first.xaxis
       edges.select { |p1, p2| p1.vector_to(p2).parallel?(direction) }.min_by { |p1, p2|
         hinge_transformations.map { |ht| ht.origin.distance_to_line([ p1, p2 ]) }.max
@@ -5101,14 +5234,15 @@ module Ladb::OpenCutList
 
     # The side the door would turn on along the given edge of its back -
     # [ part_entity_path_b, part_b, face_manipulator_a, face_manipulator_b,
-    # kind ] - or nil when the probe ray cast past it finds none.
-    def _probe_hinge_side(cavities_def, face_manipulator_a, p1, p2, point)
+    # kind, part_entity_path_a, [ p1, p2, inward ] ] - or nil when the probe
+    # ray cast past it finds none.
+    def _probe_hinge_side(cavities_def, door_back, p1, p2, point)
 
-      na = face_manipulator_a.normal
+      na = door_back.normal
       length = p1.distance(p2)
       direction = p1.vector_to(p2).normalize
       inward = (na * direction).normalize
-      inward.reverse! unless _is_point_on_face?(face_manipulator_a, Geom.linear_combination(0.5, p1, 0.5, p2).offset(inward, 1.mm))
+      inward.reverse! unless _is_point_on_door_back?(door_back, Geom.linear_combination(0.5, p1, 0.5, p2).offset(inward, 1.mm))
 
       position = (point - p1) % direction
       [ position, position + HINGE_PROBE_STEP, position - HINGE_PROBE_STEP, length * 0.5, length * 0.25, length * 0.75 ].each do |probe_position|
@@ -5135,23 +5269,59 @@ module Ladb::OpenCutList
         # The side must be an EDGE of the door : the door ends near its inner face
         pb = face_manipulator_b.position
         nb = face_manipulator_b.normal
-        overhang = face_manipulator_a.outer_loop_manipulator.points.map { |p| (pb - p) % nb }.max
+        overhang = door_back.points.map { |p| (pb - p) % nb }.max
         next unless overhang < HINGE_SIDE_MAX_OVERHANG && overhang > -HINGE_SIDE_MAX_GAP
 
         # INSET when the front of the side stands in front of the door's back
-        pa = face_manipulator_a.position
+        pa = door_back.position
         if face_manipulator_b.outer_loop_manipulator.points.map { |p| (p - pa) % na }.min < -INSET_MIN_DEPTH
           kind = HINGE_KIND_INSET
-        elsif _is_half_overlay?(wall_path, face_manipulator_a, face_manipulator_b, overhang, [ p1.offset(direction, probe_position), p1.offset(direction, length * 0.5) ])
+        elsif _is_half_overlay?(wall_path, door_back, face_manipulator_b, overhang, [ p1.offset(direction, probe_position), p1.offset(direction, length * 0.5) ])
           kind = HINGE_KIND_HALF_OVERLAY
         else
           kind = HINGE_KIND_OVERLAY
         end
 
-        return [ wall_path, wall_part, face_manipulator_a, face_manipulator_b, kind ]
+        # A : the face of the part of the door bearing the most of the edge
+        face_manipulator_a, part_entity_path_a = _get_edge_door_member(door_back, p1, direction, inward, length)
+        next if face_manipulator_a.nil?
+
+        return [ wall_path, wall_part, face_manipulator_a, face_manipulator_b, kind, part_entity_path_a, [ p1, p2, inward ] ]
       end
 
       nil
+    end
+
+    # The member of the given door back - [ face_manipulator,
+    # part_entity_path ] - bearing the most of the given edge of it, read just
+    # inside it. nil when none does.
+    def _get_edge_door_member(door_back, p1, direction, inward, length)
+      return door_back.members.first if door_back.members.length == 1
+      counts = Hash.new(0)
+      (0..10).each do |i|
+        point = p1.offset(direction, length * (i + 0.5) / 11.0).offset(inward, 1.mm)
+        member = door_back.members.find { |fm, _| _is_point_on_face?(fm, point) }
+        counts[member] += 1 unless member.nil?
+      end
+      return nil if counts.empty?
+      counts.max_by { |_, count| count }.first
+    end
+
+    # The member of the door back - [ face_manipulator, part_entity_path ] -
+    # the given anchor of the joint lands on : the one bearing its whole
+    # width along the hinged edge, read just inside it. nil when the anchor
+    # straddles two parts.
+    def _get_anchor_door_member(point, half_width)
+      p1, p2, inward = @hinge_edge
+      direction = p1.vector_to(p2).normalize
+      origin = point.project_to_line([ p1, direction ]).offset(inward, 1.mm)
+      half_width = [ half_width.to_f - 0.1.mm.to_f, 0.0 ].max
+      points = [ origin, origin.offset(direction, half_width), origin.offset(direction, -half_width) ]
+      @hinge_door_back.members.find { |fm, _| points.all? { |p| _is_point_on_face?(fm, p) } }
+    end
+
+    def _is_point_on_door_back?(door_back, point)
+      door_back.members.any? { |fm, _| _is_point_on_face?(fm, point) }
     end
 
     # Whether the door is a half overlay one : it covers no more than half the
@@ -5166,10 +5336,10 @@ module Ladb::OpenCutList
     # ray may well miss that back, coplanar with the side's front edge -
     # raytest reports a single face per hit - and meet its front instead. A
     # door covering the whole edge leaves no room for one : a full overlay.
-    def _is_half_overlay?(wall_path, face_manipulator_a, face_manipulator_b, overhang, points)
+    def _is_half_overlay?(wall_path, door_back, face_manipulator_b, overhang, points)
 
-      na = face_manipulator_a.normal
-      pa = face_manipulator_a.position
+      na = door_back.normal
+      pa = door_back.position
       pb = face_manipulator_b.position
       nb = face_manipulator_b.normal
       forward = na.reverse
@@ -5182,13 +5352,13 @@ module Ladb::OpenCutList
       return true if overhang.to_f <= outer_distance.to_f / 2
 
       offset = overhang.to_f + uncovered / 2
-      door_serialized = PathUtils.serialize_path(@active_part_entity_path_a)
+      door_serialized = PathUtils.serialize_path(_get_door_entity_path)
       model = Sketchup.active_model
 
       points.any? do |point|
 
         # On the door's back plane, 'offset' outside the side's inner face
-        origin = point.project_to_plane(face_manipulator_b.plane).offset(nb, -offset).project_to_plane(face_manipulator_a.plane).offset(forward, -INSET_MIN_DEPTH)
+        origin = point.project_to_plane(face_manipulator_b.plane).offset(nb, -offset).project_to_plane(door_back.plane).offset(forward, -INSET_MIN_DEPTH)
         found = false
         10.times do
           hit_point, hit_path = model.raytest([ origin, forward ])
@@ -5199,8 +5369,8 @@ module Ladb::OpenCutList
             part_path = _get_part_entity_path_from_path(part_path[0...-1])
           end
           if part_path.is_a?(Array) && !part_path.empty? &&
-             PathUtils.serialize_path(part_path) != door_serialized &&
-             DefinitionAttributes.role_of(part_path.last) == DefinitionAttributes::ROLE_FRONT_PANEL
+             (other_door_path = _get_door_entity_path(part_path)).is_a?(Array) &&
+             PathUtils.serialize_path(other_door_path) != door_serialized
             found = _get_part_face_manipulators(part_path).any? { |fm| fm.normal.samedirection?(na) && ((fm.position - pa) % na).abs < HALF_OVERLAY_MAX_OFFSET.to_f }
             break
           end
@@ -5248,24 +5418,80 @@ module Ladb::OpenCutList
       @hinge_kind_tooltip_box = nil
     end
 
-    # The BACK of the door : its broadest face turned towards the cavities -
-    # a point a little in front of it lies in one. nil when none is.
+    # The BACK of the door (see DoorBackDef) : the broadest plane its parts
+    # have faces on - their areas summed - turned towards the cavities : a
+    # point a little in front of one of them lies in one. nil when none is.
+    # Memoized per door, for the cavities it was read against.
     #
     # Not the centroid alone : a fixed shelf flush with the front, at mid
     # height of the door, stands right in front of it. Halfway towards each
     # corner too.
-    def _get_door_back_face_manipulator(cavities_def)
-      _get_part_face_manipulators(@active_part_entity_path_a).sort_by { |fm| -fm.face.area }.first(4).find { |fm|
-        centroid = fm.centroid
-        points = [ centroid ] + fm.outer_loop_manipulator.points.map { |point| Geom.linear_combination(0.5, centroid, 0.5, point) }.select { |point| _is_point_on_face?(fm, point) }
-        points.any? { |point| cavities_def.fragment_defs_for_point(point.offset(fm.normal, HINGE_CAVITY_MIN_DEPTH)).any? }
+    #
+    # Not the broadest alone either : the panel of a frame door, recessed,
+    # may well be broader than the frame around it. The back is the plane
+    # turned the same way standing the deepest towards the cavities - as
+    # long as it is not a mere sliver of the door.
+    def _get_door_back(cavities_def)
+      door_entity_path = _get_door_entity_path
+      @door_backs = {} unless @door_backs.is_a?(Hash)
+      key = [ PathUtils.serialize_path(door_entity_path), cavities_def.object_id ]
+      return @door_backs[key] if @door_backs.key?(key)
+
+      planes = []
+      _get_door_part_entity_paths(door_entity_path).each do |part_entity_path|
+        _get_part_face_manipulators(part_entity_path).each do |fm|
+          plane = planes.find { |pl| pl[:normal].samedirection?(fm.normal) && fm.position.distance_to_plane([ pl[:position], pl[:normal] ]).to_f < 0.01.mm.to_f }
+          planes << (plane = { normal: fm.normal, position: fm.position, members: [], area: 0.0 }) if plane.nil?
+          plane[:members] << [ fm, part_entity_path ]
+          plane[:area] += fm.face.area(fm.transformation)
+        end
+      end
+
+      back = planes.sort_by { |pl| -pl[:area] }.first(4).find { |pl|
+        pl[:members].any? { |fm, _|
+          centroid = fm.centroid
+          points = [ centroid ] + fm.outer_loop_manipulator.points.map { |point| Geom.linear_combination(0.5, centroid, 0.5, point) }.select { |point| _is_point_on_face?(fm, point) }
+          points.any? { |point| cavities_def.fragment_defs_for_point(point.offset(fm.normal, HINGE_CAVITY_MIN_DEPTH)).any? }
+        }
       }
+      unless back.nil?
+        back = planes.select { |pl| pl[:normal].samedirection?(back[:normal]) && pl[:area] >= back[:area] * DOOR_BACK_MIN_AREA_RATIO }
+                     .max_by { |pl| (pl[:position] - back[:position]) % back[:normal] }
+      end
+      @door_backs[key] = back.nil? ? nil : DoorBackDef.new(back[:normal], back[:position], back[:members], _get_door_back_outline(back[:members], back[:position], back[:normal]))
     end
 
-    # The edges of the outer loop of the given face, in world space, as
-    # [ start, end ] pairs - consecutive collinear segments merged.
-    def _get_face_edges(face_manipulator)
-      points = face_manipulator.outer_loop_manipulator.points
+    # How broad, at least, a plane standing deeper than the broadest one has
+    # to be to be the back of the door - see #_get_door_back.
+    DOOR_BACK_MIN_AREA_RATIO = 0.1
+
+    # The outline of the union of the given faces, on the given plane, in
+    # world space : the outer loop of the broadest piece of it. Faces
+    # touching - the stiles and rails of a frame door - meet across a hair
+    # of a gap closed before, and opened again after.
+    DOOR_BACK_UNION_GAP = 0.1.mm
+
+    def _get_door_back_outline(members, position, normal)
+      return members.first.first.outer_loop_manipulator.points if members.length == 1
+
+      t = Geom::Transformation.new(position, normal)
+      ti = t.inverse
+      rpaths = members.map { |fm, _| fm.outer_loop_manipulator.points.flat_map { |point| point.transform(ti).to_a[0..1].map(&:to_f) } }
+
+      clippy = Fiddle::Clippy
+      gap = DOOR_BACK_UNION_GAP.to_f
+      rpaths = clippy.inflate_paths(paths: rpaths, delta: gap, join_type: clippy::JOIN_TYPE_MITER)
+      rpaths, _ = clippy.execute_union(closed_subjects: rpaths)
+      rpaths = clippy.inflate_paths(paths: rpaths, delta: -gap, join_type: clippy::JOIN_TYPE_MITER)
+      rpath = rpaths.max_by { |path| clippy.get_rpath_area(path).abs }
+      return members.max_by { |fm, _| fm.face.area(fm.transformation) }.first.outer_loop_manipulator.points if rpath.nil?
+
+      clippy.rpath_to_points(rpath).map { |point| point.transform(t) }
+    end
+
+    # The edges of the given loop, as [ start, end ] pairs - consecutive
+    # collinear segments merged.
+    def _get_loop_edges(points)
       edges = []
       points.each_with_index do |point, index|
         next_point = points[(index + 1) % points.length]
@@ -5314,7 +5540,10 @@ module Ladb::OpenCutList
 
     # The hinges that would land BETWEEN two of the cavities - on the edge of
     # a fixed shelf, of a rail - are left out : only a hinge whose footprint
-    # along the joint line stands whole against one cavity wall is kept.
+    # along the joint line stands whole against one cavity wall is kept. So
+    # is, on a door made of several parts, one straddling two of them : each
+    # hinge is laid into the part under it - see #_get_hinge_joints - and
+    # one already laid in another part than A's is in the way as well.
     #
     # The anchors left out are kept in @hinge_rejected_anchor_points, to be
     # shown.
@@ -5322,21 +5551,97 @@ module Ladb::OpenCutList
       return @joinery_def unless @joinery_def.nil?
       @hinge_rejected_anchor_points = []
       return nil if (joinery_def = super).nil?
-      return joinery_def unless @hinge_cavity_spans.is_a?(Array) && @hinge_cavity_spans.length > 1
 
-      origin = @hinge_cavity_spans.first.first
-      direction = origin.vector_to(@hinge_cavity_spans.last.last).normalize
-      spans = @hinge_cavity_spans.map { |p_min, p_max| [ (p_min - origin) % direction, (p_max - origin) % direction ] }
       half_width = _get_geometries_def.bounds.width / 2
 
-      joinery_def.join_def.anchor_points_3d.delete_if do |point|
-        position = (point - origin) % direction
-        rejected = spans.none? { |min, max| position - half_width >= min - 0.01.mm && position + half_width <= max + 0.01.mm }
-        @hinge_rejected_anchor_points << point if rejected
-        rejected
+      if @hinge_cavity_spans.is_a?(Array) && @hinge_cavity_spans.length > 1
+
+        origin = @hinge_cavity_spans.first.first
+        direction = origin.vector_to(@hinge_cavity_spans.last.last).normalize
+        spans = @hinge_cavity_spans.map { |p_min, p_max| [ (p_min - origin) % direction, (p_max - origin) % direction ] }
+
+        joinery_def.join_def.anchor_points_3d.delete_if do |point|
+          position = (point - origin) % direction
+          rejected = spans.none? { |min, max| position - half_width >= min - 0.01.mm && position + half_width <= max + 0.01.mm }
+          @hinge_rejected_anchor_points << point if rejected
+          rejected
+        end
+
+      end
+
+      if @hinge_door_back.is_a?(DoorBackDef) && @hinge_door_back.members.length > 1 && @hinge_edge.is_a?(Array)
+
+        line_def = neighborhood_def.neighbor_def.line_def
+        poly_3d = [ line_def.start_point, line_def.start_point, line_def.end_point ]
+        geometries_bounds = _get_geometries_def.bounds
+        main_face_manipulator = line_def.face_manipulator
+
+        @hinge_anchor_members = []
+        joinery_def.join_def.anchor_points_3d.delete_if do |point|
+          member = _get_anchor_door_member(point, half_width)
+          if member.nil?
+            @hinge_rejected_anchor_points << point
+            next true
+          end
+          fm, part_entity_path = member
+          unless fm.face == main_face_manipulator.face && fm.transformation.to_a == main_face_manipulator.transformation.to_a
+            t, ti, at = _get_joint_part_frame(part_entity_path, line_def)
+            if _get_grouped_glued_instances(fm, poly_3d).any? { |_, glued_instances| _is_geometries_intersect_glued_instances?(geometries_bounds, point, glued_instances, fm, t, ti, at) }
+              joinery_def.join_def.occupied_anchor_points_3d << point
+              next true
+            end
+          end
+          @hinge_anchor_members << [ point, member ]
+          false
+        end
+
       end
 
       joinery_def
+    end
+
+    # The transformation of the given part of the door, its inverse, and the
+    # fitting frame of A in its space - see
+    # SmartJoinAddFittingsActionHandler#_get_add_joinery_def.
+    def _get_joint_part_frame(part_entity_path, line_def)
+      t = PathUtils.get_transformation(part_entity_path, IDENTITY)
+      ti = t.inverse
+      x_axis = line_def.line_manipulator.direction
+      z_axis = line_def.face_manipulator.normal
+      at = Geom::Transformation.axes(ORIGIN, x_axis.transform(ti), (z_axis * x_axis).transform(ti), z_axis.transform(ti))
+      [ t, ti, at ]
+    end
+
+    # The joints the given one is laid as - [ neighborhood_def, joinery_def ]
+    # pairs : itself, unless its anchors land on several parts of the door,
+    # or on another one than its part A. Then one per part, the anchors that
+    # land on it and its face A.
+    def _get_hinge_joints(neighborhood_def, joinery_def)
+      return [ [ neighborhood_def, joinery_def ] ] unless neighborhood_def.equal?(@neighborhood_def) && joinery_def.equal?(@joinery_def) && @hinge_anchor_members.is_a?(Array)
+      return @hinge_joints if @hinge_joints.is_a?(Array)
+
+      line_def = neighborhood_def.neighbor_def.line_def
+      main_part_serialized = PathUtils.serialize_path(neighborhood_def.path)
+      groups = @hinge_anchor_members.group_by { |_, (_, part_entity_path)| PathUtils.serialize_path(part_entity_path) }
+
+      if groups.empty? || groups.keys == [ main_part_serialized ]
+        @hinge_joints = [ [ neighborhood_def, joinery_def ] ]
+      else
+        join_def = joinery_def.join_def
+        @hinge_joints = groups.values.map { |anchor_members|
+          fm, part_entity_path = anchor_members.first.last
+          sub_line_def = NeighborhoodLineDef.new(fm, line_def.neighbor_face_manipulator, line_def.line_manipulator, line_def.start_point, line_def.end_point)
+          sub_neighborhood_def = NeighborhoodDef.new(part_entity_path, NeighborhoodNeighborDef.new(neighborhood_def.neighbor_def.path, sub_line_def))
+          _, _, at_a = _get_joint_part_frame(part_entity_path, sub_line_def)
+          sub_joinery_def = AddJoineryDef.new(
+            at_a,
+            joinery_def.at_b,
+            AddJoineryJoinDef.new(anchor_members.map(&:first), [], join_def.start_point_3d, join_def.end_point_3d, join_def.origin_point_3d)
+          )
+          [ sub_neighborhood_def, sub_joinery_def ]
+        }
+      end
+      @hinge_joints
     end
 
     # The spans, along the joint line from its start point, of the cavity
@@ -5408,8 +5713,8 @@ module Ladb::OpenCutList
 
       # The messages below say more : what is in the way
       join_def = @joinery_def.join_def
-      if @hinge_forced_make_unique && !join_def.anchor_points_3d.empty? && @propagation_def.is_a?(PropagationDef) && @propagation_def.refused_count == 0
-        @tool.show_message(PLUGIN.get_i18n_string('tool.smart_join.warning.hinge_forced_make_unique'), SmartTool::MESSAGE_TYPE_WARNING)
+      if !@hinge_forced_make_unique.nil? && !join_def.anchor_points_3d.empty? && (propagation_def = _get_propagation_def(_get_neighborhood_def, @joinery_def)).is_a?(PropagationDef) && propagation_def.refused_count == 0
+        @tool.show_message(PLUGIN.get_i18n_string(@hinge_forced_make_unique == :shared_door ? 'tool.smart_join.warning.hinge_forced_make_unique_door' : 'tool.smart_join.warning.hinge_forced_make_unique'), SmartTool::MESSAGE_TYPE_WARNING)
       end
 
       # The fittings in the way are hinges, and those of THIS door : it
@@ -5449,11 +5754,42 @@ module Ladb::OpenCutList
     # on one edge only : when the walk would give one - the picked one or
     # another - hinges on more than one edge, make_unique is forced on until
     # the joint changes, and a warning says so.
+    #
+    # A door made of several parts is made unique down to them whenever one
+    # of them, or what holds them in the door, is shared : the hinges would
+    # otherwise appear on the other occurrences of the door - its twin
+    # elsewhere, the other stile when both share a definition.
+    #
+    # The propagation of a joint laid on several parts of the door is theirs
+    # put together - see #_get_hinge_joints.
     def _get_propagation_def(neighborhood_def, joinery_def)
+      joints = _get_hinge_joints(neighborhood_def, joinery_def)
+      if joints.length > 1 || !joints.first.first.equal?(neighborhood_def)
+        return @hinge_propagation_def[1] if @hinge_propagation_def.is_a?(Array) && @hinge_propagation_def[0] == _fetch_option_make_unique?
+        propagation_defs = joints.map { |sub_neighborhood_def, sub_joinery_def| _get_propagation_def(sub_neighborhood_def, sub_joinery_def) }
+        propagation_def = PropagationDef.new(
+          propagation_defs.flat_map(&:placements),
+          propagation_defs.flat_map { |pd| pd.refused || [] },
+          propagation_defs.flat_map { |pd| pd.failed_asserts || [] }.uniq
+        )
+        @hinge_propagation_def = [ _fetch_option_make_unique?, propagation_def ]
+        return propagation_def
+      end
+
+      @hinge_forced_make_unique = :shared_door if !_fetch_option_make_unique? && _is_door_assembly_shared?(neighborhood_def.path)
       propagation_def = super
       return propagation_def if _fetch_option_make_unique? || !_is_door_hinged_on_several_edges?(propagation_def.placements)
-      @hinge_forced_make_unique = true
+      @hinge_forced_make_unique = :several_edges
       super
+    end
+
+    # Whether the given part of the active door made of several, or anything
+    # between the door and it - the door included - is shared : its
+    # definition has other instances.
+    def _is_door_assembly_shared?(part_entity_path)
+      return false unless _is_door_assembly?
+      door_index = _get_door_entity_path.length - 1
+      part_entity_path[door_index..-1].any? { |entity| entity.definition.count_instances > 1 }
     end
 
     # Whether the given placements give a door - hinges it already has
@@ -5471,9 +5807,87 @@ module Ladb::OpenCutList
 
     # Making the door or the side unique replaces the definition the faces
     # read so far belong to.
+    #
+    # A joint laid on several parts of the door is laid as one joint per part
+    # - see #_get_hinge_joints - in one operation, the door made unique down
+    # to them first - see #_make_unique_door_parts. The side is made unique
+    # by the first one : the next ones are handed its face.
     def _add_fittings
-      super
-      @door_face_manipulators = nil
+      if _is_door_assembly? &&
+         (neighborhood_def = _get_neighborhood_def) &&
+         (joinery_def = _get_add_joinery_def(neighborhood_def)) &&
+         _get_propagation_def(neighborhood_def, joinery_def)   # Sets whether make_unique is forced
+
+        joints = _get_hinge_joints(neighborhood_def, joinery_def)
+
+        model = Sketchup.active_model
+        model.start_operation('OCL Add Fittings', true)
+        begin
+
+          _make_unique_door_parts(joints) if _fetch_option_make_unique?
+
+          previous_line_def = nil
+          joints.each do |sub_neighborhood_def, sub_joinery_def|
+            line_def = sub_neighborhood_def.neighbor_def.line_def
+            line_def.neighbor_face_manipulator = previous_line_def.neighbor_face_manipulator unless previous_line_def.nil?
+            _add_joint_fittings(sub_neighborhood_def, sub_joinery_def)
+            previous_line_def = line_def
+          end
+
+          model.commit_operation
+
+        rescue Exception => e
+          PLUGIN.dump_exception(e)
+          model.abort_operation
+        end
+
+      else
+        super
+      end
+      _reset_door_caches
+    end
+
+    # Makes the door unique, and everything between it and the parts of the
+    # given joints - not the parts themselves : #_add_joint_fittings does.
+    # The paths of the joints are set to the entities that took the place of
+    # the old ones, read at the same index in the new definitions.
+    def _make_unique_door_parts(joints)
+      door_index = _get_door_entity_path.length - 1
+      replacements = {}
+      joints.each do |neighborhood_def, _|
+        path = neighborhood_def.path.map { |entity| replacements[entity] || entity }
+        (door_index...(path.length - 1)).each do |index|
+          instance = path[index]
+          definition = instance.definition
+          instance.make_unique
+          next if instance.definition == definition
+          definition.entities.to_a.zip(instance.definition.entities.to_a).each { |old_entity, new_entity| replacements[old_entity] = new_entity }
+          path[index + 1] = replacements[path[index + 1]] || path[index + 1]
+        end
+        neighborhood_def.path = path
+      end
+    end
+
+    # The swing of a door made of several parts is the whole door's : the
+    # hinge, read in the space of the part it is laid in, is set in the
+    # door's.
+    def _preview_door_opening(propagation_def, geometries_def)
+      return super unless _is_door_assembly?
+      return if (geometry = _get_hinge_geometry(geometries_def, :a)).nil?
+
+      placement = propagation_def.placements.find { |p| p.role == :a && !p.seed_transformation.nil? }
+      return if placement.nil?
+
+      door_entity_path = _get_door_entity_path
+      return if (drawing_def = _get_door_drawing_def(door_entity_path.last.definition)).nil?
+
+      # Set in the door's space at once : the axis is read off the frame's
+      # axes, a part mirrored in the door turns it the other way
+      door_transformation = PathUtils.get_transformation(door_entity_path, IDENTITY)
+      t = door_transformation.inverse * placement.seed_transformation   # Part definition space -> door definition space
+      return if (hinge_def = _get_preview_hinge_def(geometry, placement, t)).nil?
+
+      _preview_door_swing(door_transformation, hinge_def.axis_line, 0, hinge_def.max_angle, drawing_def, LAYER_3D_JOIN_PREVIEW)
     end
 
     # -----
@@ -5799,7 +6213,14 @@ module Ladb::OpenCutList
   # and so are those the contact graph reaches through the shared
   # definitions. When B is not found - a side moved away, a hinge without any
   # fitting on B - the hinges of the door are removed alone.
+  #
+  # A door made of several parts (see DoorDef) is picked by any of them, and
+  # its hinges are read off all of them : a joint may run along several
+  # parts - a hinge in each rail of a frame door. It is then removed as one
+  # joint per part, put together (see #_get_part_joints).
   class SmartJoinRemoveHingesActionHandler < SmartJoinRemoveFittingsActionHandler
+
+    include SmartActionHandlerDoorHelper
 
     # One pick : the door, near the side it turns on - handled as the
     # fittings' part A.
@@ -5865,6 +6286,7 @@ module Ladb::OpenCutList
 
     def onToolTransactionUndo(tool, model)
       @hinge_joints = nil
+      @part_propagation_def = nil
     end
 
     # -----
@@ -5879,6 +6301,7 @@ module Ladb::OpenCutList
       super
       @hinge_joints = nil
       @hinge_joint = nil
+      @part_propagation_def = nil
     end
 
     # -----
@@ -5886,8 +6309,50 @@ module Ladb::OpenCutList
     def _can_activate_part?(part_entity_path, part)
       can_activate, error_key, error_vars = super
       return [ can_activate, error_key, error_vars ] unless can_activate
-      return [ false, 'tool.smart_join.error.no_hinge_to_remove' ] if part_entity_path.is_a?(Array) && DoorDef.hinge_instances(part_entity_path.last).empty?   # Nil path : a reset, always allowed
+      return [ false, 'tool.smart_join.error.no_hinge_to_remove' ] if part_entity_path.is_a?(Array) && _get_door_hinges(_get_door_entity_path(part_entity_path)).empty?   # Nil path : a reset, always allowed
       true
+    end
+
+    # -- Door --
+
+    # The DOOR the given part belongs to : the path to the nearest entity of
+    # its path bearing ROLE_FRONT_PANEL - the part itself, or a group or a
+    # component holding it - or the part itself when there is none.
+    def _get_door_entity_path(part_entity_path = @active_part_entity_path_a)
+      return nil unless part_entity_path.is_a?(Array)
+      return part_entity_path if (index = part_entity_path.rindex { |entity| DefinitionAttributes.role_of(entity) == DefinitionAttributes::ROLE_FRONT_PANEL }).nil?
+      part_entity_path[0..index]
+    end
+
+    # The part hovered of a door made of several stands for the whole door :
+    # it is the whole door that is highlighted.
+    def _preview_part(part_entity_path, part, layer = LAYER_3D_PART_PREVIEW, highlighted: false, clear_before: true)
+      return super unless layer == LAYER_3D_PART_A_PREVIEW && part.is_a?(Part) && (door_entity_path = _get_door_entity_path(part_entity_path)).is_a?(Array) && door_entity_path.length < part_entity_path.length
+      @tool.clear_3d(layer) if clear_before
+      _preview_door_assembly(door_entity_path, _get_path_part_preview_color(part_entity_path, part, highlighted), _get_path_part_preview_offset(part_entity_path, part, highlighted), layer)
+    end
+
+    # The hinges of the given door, as [ hinge, part_entity_path ] pairs, the
+    # path of the part each is glued into : the door itself, or - when it
+    # bears ROLE_FRONT_PANEL - any part it holds, see
+    # DoorDef.door_hinge_instances.
+    def _get_door_hinges(door_entity_path)
+      return [] unless door_entity_path.is_a?(Array)
+      hinges = DoorDef.hinge_instances(door_entity_path.last).map { |hinge| [ hinge, door_entity_path ] }
+      return hinges unless DefinitionAttributes.role_of(door_entity_path.last) == DefinitionAttributes::ROLE_FRONT_PANEL
+
+      fn_collect = lambda { |path|
+        path.last.definition.entities.each do |entity|
+          next unless entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance)
+          next unless DoorDef.hinge_frame(entity).nil?
+          next if DefinitionAttributes.applied_panel_role?(DefinitionAttributes.role_of(entity))
+          entity_path = path + [ entity ]
+          DoorDef.hinge_instances(entity).each { |hinge| hinges << [ hinge, entity_path ] }
+          fn_collect.call(entity_path)
+        end
+      }
+      fn_collect.call(door_entity_path)
+      hinges
     end
 
     # -----
@@ -5915,42 +6380,44 @@ module Ladb::OpenCutList
       changed
     end
 
-    # The hinges of the active door grouped by joint : by face and by line.
-    # Memoized per door - the side of each joint is resolved on demand.
+    # The hinges of the active door grouped by joint : by line, and by the
+    # side of it their faces stand - whatever part of the door each is glued
+    # into. Memoized per door - the side of each joint is resolved on demand.
     def _get_hinge_joints
-      return [] unless _has_active_part_a?
+      return [] unless _has_active_part_a? && (door_entity_path = _get_door_entity_path).is_a?(Array)
 
-      key = PathUtils.serialize_path(@active_part_entity_path_a)
+      key = PathUtils.serialize_path(door_entity_path)
       @hinge_joints = {} unless @hinge_joints.is_a?(Hash)
       return @hinge_joints[key] if @hinge_joints.key?(key)
 
       joints = []
-      unless (hinges = DoorDef.hinge_instances(@active_part_entity_path_a.last)).empty?
+      transformations = {}
 
-        t = PathUtils.get_transformation(@active_part_entity_path_a, IDENTITY)
+      # Whether they make it a door or not : a hinge without kinematics is removed too
+      _get_door_hinges(door_entity_path).each do |hinge, part_entity_path|
+        next if (face = _get_hinge_face(hinge)).nil?
 
-        # Whether they make it a door or not : a hinge without kinematics is removed too
-        hinges.each do |hinge|
-          next if (face = _get_hinge_face(hinge)).nil?
+        t = (transformations[part_entity_path] ||= PathUtils.get_transformation(part_entity_path, IDENTITY))
+        ht = t * hinge.transformation
+        anchor = ORIGIN.transform(ht)
+        direction = (ht.yaxis * ht.zaxis).normalize   # X of the fitting frame, direct even on a mirrored hinge
+        face_manipulator = FaceManipulator.new(face, t)
 
-          ht = t * hinge.transformation
-          anchor = ORIGIN.transform(ht)
-          direction = (ht.yaxis * ht.zaxis).normalize   # X of the fitting frame, direct even on a mirrored hinge
-
-          joint = joints.find { |j| j.face_manipulator_a.face == face && anchor.distance_to_line([ j.anchors.first, j.direction ]).to_f < HINGE_ANCHOR_TOLERANCE.to_f }
-          if joint.nil?
-            joint = HingeJointDef.new(FaceManipulator.new(face, t), nil, nil, nil, direction, [], false)
-            joints << joint
-          end
-          # Once per anchor : a hinge's hardware and its machining may both bear the role
-          joint.anchors << anchor if joint.anchors.none? { |a| a.distance(anchor).to_f < HINGE_ANCHOR_TOLERANCE.to_f }
-
+        joint = joints.find { |j| j.face_manipulator_a.normal.samedirection?(face_manipulator.normal) && anchor.distance_to_line([ j.anchors.first, j.direction ]).to_f < HINGE_ANCHOR_TOLERANCE.to_f }
+        if joint.nil?
+          joint = HingeJointDef.new(face_manipulator, nil, nil, nil, direction, [], false, [], part_entity_path)
+          joints << joint
+        end
+        # Once per anchor : a hinge's hardware and its machining may both bear the role
+        if joint.anchors.none? { |a| a.distance(anchor).to_f < HINGE_ANCHOR_TOLERANCE.to_f }
+          joint.anchors << anchor
+          joint.members << [ anchor, face_manipulator, part_entity_path ]
         end
 
-        # Anchors sorted along the joint line
-        joints.each { |joint| joint.anchors.sort_by! { |anchor| (anchor - joint.anchors.first) % joint.direction } }
-
       end
+
+      # Anchors sorted along the joint line
+      joints.each { |joint| joint.anchors.sort_by! { |anchor| (anchor - joint.anchors.first) % joint.direction } }
 
       @hinge_joints[key] = joints
     end
@@ -5991,11 +6458,11 @@ module Ladb::OpenCutList
           end
 
           [ y, y.reverse ].each do |normal|
-            found = _raytest_part_face(probe_point.offset(normal, HINGE_ANCHOR_TOLERANCE), normal.reverse, @active_part_entity_path_a, with_path: true, &fn_accept)
+            found = _raytest_part_face(probe_point.offset(normal, HINGE_ANCHOR_TOLERANCE), normal.reverse, joint.part_entity_path_a, with_path: true, &fn_accept)
             return _set_hinge_side(joint, *found) unless found.nil?
           end
 
-          found = _find_part_face_at(probe_point, @active_part_entity_path_a, HINGE_ANCHOR_TOLERANCE, with_path: true, &fn_accept)
+          found = _find_part_face_at(probe_point, joint.part_entity_path_a, HINGE_ANCHOR_TOLERANCE, with_path: true, &fn_accept)
           return _set_hinge_side(joint, *found) unless found.nil?
 
         end
@@ -6019,7 +6486,7 @@ module Ladb::OpenCutList
       end_point = joint.anchors.last
 
       @neighborhood_def = NeighborhoodDef.new(
-        @active_part_entity_path_a,
+        joint.part_entity_path_a,
         NeighborhoodNeighborDef.new(
           joint.part_entity_path_b,
           NeighborhoodLineDef.new(
@@ -6034,14 +6501,44 @@ module Ladb::OpenCutList
     end
 
     # Only what stands at the hinge anchors : the hinges and their machining
-    # on A, the mating fittings on B.
+    # on A - in whatever part of the door each is glued into - the mating
+    # fittings on B.
     def _get_remove_joinery_def(neighborhood_def)
       return nil if (joint = @hinge_joint).nil?
 
+      grouped_glued_instances_a = {}
+      joint.members.group_by(&:last).each_value do |members|
+        grouped_glued_instances_a.merge!(_get_anchored_instances(members.first[1], members.map(&:first)))
+      end
+
       RemoveJoineryDef.new(
-        _get_anchored_instances(joint.face_manipulator_a, joint.anchors),
+        grouped_glued_instances_a,
         joint.face_manipulator_b.nil? ? {} : _get_anchored_instances(joint.face_manipulator_b, joint.anchors)
       )
+    end
+
+    # The joints the given one is removed as - [ neighborhood_def,
+    # joinery_def ] pairs : itself, unless the hinges of the active joint are
+    # glued into several parts of the door, or into another one than its
+    # part A. Then one per part, its anchors and its face A.
+    def _get_part_joints(neighborhood_def, joinery_def)
+      return [ [ neighborhood_def, joinery_def ] ] unless neighborhood_def.equal?(@neighborhood_def) && (joint = @hinge_joint)
+      parts = joint.members.group_by(&:last)
+      return [ [ neighborhood_def, joinery_def ] ] if parts.keys == [ neighborhood_def.path ]
+
+      line_def = neighborhood_def.neighbor_def.line_def
+      parts.map { |part_entity_path, members|
+        face_manipulator = members.first[1]
+        keys = members.map { |anchor, _, _| anchor.to_a }
+        sub_line_def = NeighborhoodLineDef.new(face_manipulator, line_def.neighbor_face_manipulator, line_def.line_manipulator, line_def.start_point, line_def.end_point)
+        [
+          NeighborhoodDef.new(part_entity_path, NeighborhoodNeighborDef.new(neighborhood_def.neighbor_def.path, sub_line_def)),
+          RemoveJoineryDef.new(
+            joinery_def.grouped_glued_instances_a.select { |coords, _| keys.include?(coords) },
+            joinery_def.grouped_glued_instances_b.select { |coords, _| keys.include?(coords) }
+          )
+        ]
+      }
     end
 
     # The fittings of the given face's definition anchored at the given world
@@ -6063,7 +6560,20 @@ module Ladb::OpenCutList
 
     # Without B, the hinges of the door alone : on every instance of its
     # definition, but no mate to walk to.
+    #
+    # The propagation of a joint along several parts of the door is theirs
+    # put together - see #_get_part_joints.
     def _get_propagation_def(neighborhood_def, joinery_def)
+      joints = _get_part_joints(neighborhood_def, joinery_def)
+      if joints.length > 1 || !joints.first.first.equal?(neighborhood_def)
+        key = [ neighborhood_def.object_id, @snap_anchor.to_a, joinery_def.grouped_glued_instances_a.keys, joinery_def.grouped_glued_instances_b.keys ]
+        return @part_propagation_def[1] if @part_propagation_def.is_a?(Array) && @part_propagation_def[0] == key
+        placements = joints.flat_map { |sub_neighborhood_def, sub_joinery_def| _get_propagation_def(sub_neighborhood_def, sub_joinery_def).placements }
+        propagation_def = PropagationDef.new(placements)
+        @part_propagation_def = [ key, propagation_def ]
+        return propagation_def
+      end
+
       return super unless neighborhood_def.neighbor_def.line_def.neighbor_face_manipulator.nil?
 
       signature = _get_propagation_signature(neighborhood_def, joinery_def)
@@ -6101,7 +6611,10 @@ module Ladb::OpenCutList
 
     # Data Structs -----
 
-    HingeJointDef = Struct.new(:face_manipulator_a, :face_manipulator_b, :part_entity_path_b, :part_b, :direction, :anchors, :side_resolved)
+    # 'members' : [ anchor, face_manipulator, part_entity_path ] per anchor,
+    # the face and the part of the door its hinge is glued into ;
+    # 'part_entity_path_a' : the part of face_manipulator_a.
+    HingeJointDef = Struct.new(:face_manipulator_a, :face_manipulator_b, :part_entity_path_b, :part_b, :direction, :anchors, :side_resolved, :members, :part_entity_path_a)
 
   end
 

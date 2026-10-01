@@ -94,8 +94,23 @@ module Ladb::OpenCutList
 
     end
 
+    # Highlights on the given 3D layer the whole door at the end of the given
+    # path - the parts it holds included, a door made of several - where a
+    # Smart tool would highlight the part standing for it.
+    def _preview_door_assembly(door_entity_path, color, offset, layer)
+      definition = door_entity_path.last.definition
+      t = PathUtils.get_transformation(door_entity_path, IDENTITY)
+      k_mesh = Kuix::Mesh.new
+      k_mesh.add_triangles(_compute_children_faces_triangles(definition.entities, grab_sub_components: true))
+      k_mesh.background_color = color
+      k_mesh.offset = Sketchup.active_model.active_view.pixels_to_model(offset, definition.bounds.center.transform(t))
+      k_mesh.transformation = t
+      @tool.append_3d(k_mesh, layer)
+    end
+
     # The outline of the door - the given definition - without the fittings
-    # glued into it, in its own space. Memoized for the last definition asked.
+    # glued into it, in its own space - the parts it holds included, a door
+    # made of several. Memoized for the last definition asked.
     def _get_door_drawing_def(definition)
       return @door_drawing_def[1] if @door_drawing_def.is_a?(Array) && @door_drawing_def[0] == definition
       drawing_def = CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new([ definition ]) ],
@@ -103,7 +118,7 @@ module Ladb::OpenCutList
                                                          ignore_faces: true,
                                                          ignore_edges: false,
                                                          ignore_soft_edges: true,
-                                                         container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART_WITHOUT_MACHININGS
+                                                         container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_ASSEMBLY_WITHOUT_MACHININGS
       ).run
       drawing_def = nil unless drawing_def.is_a?(DrawingDef) && drawing_def.bounds.valid? && !drawing_def.bounds.empty?
       @door_drawing_def = [ definition, drawing_def ]

@@ -1,8 +1,9 @@
 # What the live tests of the SmartJoin hinges share : a caisson with an
-# overlay door built in the active model, hinge descriptors written to a
-# temporary folder, and the real action handlers driven without the mouse -
-# inside a model operation that is aborted afterwards. See
-# TC_Ladb_Tool_SmartJoinHinges and TC_Ladb_Tool_SmartJoinHingePreview.
+# overlay door - or a frame door, see FRAME_DOORS - built in the active
+# model, hinge descriptors written to a temporary folder, and the real action
+# handlers driven without the mouse - inside a model operation that is
+# aborted afterwards. See TC_Ladb_Tool_SmartJoinHinges,
+# TC_Ladb_Tool_SmartJoinHingePreview and TC_Ladb_Tool_SmartJoinFrameDoorHinges.
 require 'json'
 require 'tmpdir'
 
@@ -30,6 +31,23 @@ module HingeFixture
 
   # Where the door is hovered : near its left edge, on its front face.
   PICK_POINT = [ 40, -19, 360 ]   # mm, caisson local
+
+  # FRAME DOORS : the door made of several parts - stiles, rails and a
+  # recessed panel - held by a component bearing ROLE_FRONT_PANEL. Its box
+  # [ x0, y0, z0, x1, y1, z1 ] in mm, the width of its stiles and the height
+  # of its rails - the top one the bottom one's by default - the rails
+  # running between the stiles, or across the whole width when through. The
+  # right stile shares the left one's definition, turned half a turn around
+  # Y, and so does the top rail the bottom one's when they are alike - or,
+  # mirror, the left stile is the right one's mirrored. pick : where it is
+  # hovered, on the left stile.
+  FRAME_DOORS = {
+    'frame' => { box: [ 2, -19, 2, 598, 0, 718 ], stile: 60, rail_b: 60 },
+    'frame_through' => { box: [ 2, -19, 2, 598, 0, 718 ], stile: 60, rail_b: 150, through: true },
+    'frame_straddle' => { box: [ 2, -19, 2, 598, 0, 718 ], stile: 60, rail_b: 100, rail_t: 150, through: true },
+    'frame_inset' => { box: [ 20, 0, 20, 580, 19, 700 ], stile: 60, rail_b: 60, pick: [ 50, 0, 360 ] },
+    'frame_mirror' => { box: [ 2, -19, 2, 598, 0, 718 ], stile: 60, rail_b: 60, mirror: true },
+  }
 
   PIVOT = [ '17mm', '-29mm' ]   # y and z in the fitting frame
 
@@ -93,21 +111,86 @@ module HingeFixture
   # The caisson, as { 'caisson' => instance, 'DOOR' => instance, 'SIDE_L' => … }.
   # One at a time : the handlers probe the model, they would find the parts
   # of another one standing at the same place - see erase. shelf : with the
-  # SHELF.
-  def self.build(model, shelf: false)
+  # SHELF. frame : the FRAME_DOORS key of the door, its parts given too, as
+  # { 'STILE_L' => instance, … } under 'parts'.
+  def self.build(model, shelf: false, frame: nil)
     caisson = model.definitions.add('HINGE_FIXTURE')
     instances = {}
     parts = shelf ? PARTS.merge('SHELF' => SHELF) : PARTS
-    parts.each do |name, (x0, y0, z0, x1, y1, z1)|
-      definition = model.definitions.add("HINGE_FIXTURE_#{name}")
-      face = definition.entities.add_face([ x0.mm, y0.mm, z0.mm ], [ x1.mm, y0.mm, z0.mm ], [ x1.mm, y1.mm, z0.mm ], [ x0.mm, y1.mm, z0.mm ])
-      face.reverse! if face.normal.z < 0
-      face.pushpull((z1 - z0).mm)
+    parts = parts.reject { |name, _| name == 'DOOR' } unless frame.nil?
+    parts.each do |name, box|
+      definition = box_definition(model, "HINGE_FIXTURE_#{name}", box)
       OCL::DefinitionAttributes.write_role(definition, OCL::DefinitionAttributes::ROLE_FRONT_PANEL) if name == 'DOOR'
       instances[name] = caisson.entities.add_instance(definition, IDENTITY)
     end
+    unless frame.nil?
+      door = model.definitions.add('HINGE_FIXTURE_DOOR')
+      OCL::DefinitionAttributes.write_role(door, OCL::DefinitionAttributes::ROLE_FRONT_PANEL)
+      instances['parts'] = {}
+      frame_parts(FRAME_DOORS[frame]).each do |name, (box, source, mirror)|
+        if source.nil?
+          instances['parts'][name] = door.entities.add_instance(box_definition(model, "HINGE_FIXTURE_#{name}", box), IDENTITY)
+        else
+          source_box = frame_parts(FRAME_DOORS[frame])[source].first
+          if mirror
+            t = Geom::Transformation.translation([ (box[3] + source_box[0]).mm, 0, 0 ]) * Geom::Transformation.scaling(-1, 1, 1)
+          else
+            t = Geom::Transformation.translation([ (box[3] + source_box[0]).mm, 0, (box[5] + source_box[2]).mm ]) * Geom::Transformation.rotation(ORIGIN, Y_AXIS, 180.degrees)
+          end
+          instances['parts'][name] = door.entities.add_instance(instances['parts'][source].definition, t)
+        end
+      end
+      instances['DOOR'] = caisson.entities.add_instance(door, IDENTITY)
+    end
     instances['caisson'] = model.entities.add_instance(caisson, Geom::Transformation.translation(ORIGIN_OFFSET.map(&:mm)))
     instances
+  end
+
+  # A definition holding the given box [ x0, y0, z0, x1, y1, z1 ] in mm.
+  def self.box_definition(model, name, box)
+    x0, y0, z0, x1, y1, z1 = box
+    definition = model.definitions.add(name)
+    face = definition.entities.add_face([ x0.mm, y0.mm, z0.mm ], [ x1.mm, y0.mm, z0.mm ], [ x1.mm, y1.mm, z0.mm ], [ x0.mm, y1.mm, z0.mm ])
+    face.reverse! if face.normal.z < 0
+    face.pushpull((z1 - z0).mm)
+    definition
+  end
+
+  # The parts of the given frame door - see FRAME_DOORS - as { name =>
+  # [ box, source, mirror ] }, source the part whose definition it shares,
+  # nil for one of its own, mirror whether it is that part mirrored.
+  def self.frame_parts(spec)
+    x0, y0, z0, x1, y1, z1 = spec[:box]
+    stile = spec[:stile]
+    rail_b = spec[:rail_b]
+    rail_t = spec[:rail_t] || rail_b
+    rail_t_source = rail_t == rail_b ? 'RAIL_B' : nil
+    panel = [ y0 + 6, y1 - 6 ]
+    if spec[:through]
+      {
+        'RAIL_B' => [ [ x0, y0, z0, x1, y1, z0 + rail_b ], nil ],
+        'RAIL_T' => [ [ x0, y0, z1 - rail_t, x1, y1, z1 ], rail_t_source ],
+        'STILE_L' => [ [ x0, y0, z0 + rail_b, x0 + stile, y1, z1 - rail_t ], nil ],
+        'STILE_R' => [ [ x1 - stile, y0, z0 + rail_b, x1, y1, z1 - rail_t ], rail_b == rail_t ? 'STILE_L' : nil ],
+        'PANEL' => [ [ x0 + stile, panel[0], z0 + rail_b, x1 - stile, panel[1], z1 - rail_t ], nil ],
+      }
+    elsif spec[:mirror]
+      {
+        'STILE_R' => [ [ x1 - stile, y0, z0, x1, y1, z1 ], nil ],
+        'STILE_L' => [ [ x0, y0, z0, x0 + stile, y1, z1 ], 'STILE_R', true ],
+        'RAIL_B' => [ [ x0 + stile, y0, z0, x1 - stile, y1, z0 + rail_b ], nil ],
+        'RAIL_T' => [ [ x0 + stile, y0, z1 - rail_t, x1 - stile, y1, z1 ], rail_t_source ],
+        'PANEL' => [ [ x0 + stile, panel[0], z0 + rail_b, x1 - stile, panel[1], z1 - rail_t ], nil ],
+      }
+    else
+      {
+        'STILE_L' => [ [ x0, y0, z0, x0 + stile, y1, z1 ], nil ],
+        'STILE_R' => [ [ x1 - stile, y0, z0, x1, y1, z1 ], 'STILE_L' ],
+        'RAIL_B' => [ [ x0 + stile, y0, z0, x1 - stile, y1, z0 + rail_b ], nil ],
+        'RAIL_T' => [ [ x0 + stile, y0, z1 - rail_t, x1 - stile, y1, z1 ], rail_t_source ],
+        'PANEL' => [ [ x0 + stile, panel[0], z0 + rail_b, x1 - stile, panel[1], z1 - rail_t ], nil ],
+      }
+    end
   end
 
   # Erases the caisson of the given fixture - its definitions stay, and what
@@ -116,12 +199,16 @@ module HingeFixture
     fixture['caisson'].erase! if fixture['caisson'].valid?
   end
 
-  # The picker hovering the door of the given fixture near its left edge.
-  def self.picker(fixture)
+  # The picker hovering the door of the given fixture near its left edge -
+  # or the given part of a frame door, at the given point (mm, caisson
+  # local).
+  def self.picker(fixture, part = nil, point = PICK_POINT)
     door = fixture['DOOR']
+    path = [ fixture['caisson'], door ]
+    path << fixture['parts'][part] unless part.nil?
     picker = Picker.new
-    picker.picked_face_path = [ fixture['caisson'], door, door.definition.entities.grep(Sketchup::Face).find { |face| face.normal.y < -0.9 } ]
-    picker.picked_point = Geom::Point3d.new(PICK_POINT.map(&:mm)).transform(fixture['caisson'].transformation)
+    picker.picked_face_path = path + [ path.last.definition.entities.grep(Sketchup::Face).find { |face| face.normal.transform(path.last.transformation).y < -0.9 } ]
+    picker.picked_point = Geom::Point3d.new(point.map(&:mm)).transform(fixture['caisson'].transformation)
     picker
   end
 
@@ -150,9 +237,9 @@ module HingeFixture
     end
   end
 
-  # Hovers the door of the given fixture, then clicks.
-  def self.hover_and_click(model, handler, tool, fixture)
-    handler.onPickerChanged(picker(fixture), model.active_view)
+  # Hovers the door of the given fixture - or the given picker - then clicks.
+  def self.hover_and_click(model, handler, tool, fixture, picker = picker(fixture))
+    handler.onPickerChanged(picker, model.active_view)
     handler.onToolLButtonUp(tool, 0, 0, 0, model.active_view)
   end
 

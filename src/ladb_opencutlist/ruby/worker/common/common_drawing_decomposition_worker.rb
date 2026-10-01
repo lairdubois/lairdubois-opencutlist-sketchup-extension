@@ -10,6 +10,7 @@ module Ladb::OpenCutList
   require_relative '../../manipulator/face_manipulator'
   require_relative '../../manipulator/edge_manipulator'
   require_relative '../../manipulator/surface_manipulator'
+  require_relative '../../model/attributes/definition_attributes'
   require_relative '../../manipulator/curve_manipulator'
   require_relative '../../manipulator/snap_manipulator' if Object.const_defined?('Sketchup::Snap')
   require_relative '../../model/drawing/drawing_def'
@@ -41,6 +42,7 @@ module Ladb::OpenCutList
     CONTAINER_VALIDATOR_PART = 2
     CONTAINER_VALIDATOR_PART_WITHOUT_MACHININGS = 3
     CONTAINER_VALIDATOR_NO_SCALE = 4
+    CONTAINER_VALIDATOR_ASSEMBLY_WITHOUT_MACHININGS = 5   # The parts too, not what is laid in them : a door made of several - see DoorDef
 
     # Backward compatibility
     SketchupSnapClass = Object.const_defined?('Sketchup::Snap') ? Sketchup::Snap : nil
@@ -325,6 +327,16 @@ module Ladb::OpenCutList
           return false if depth != 0 && ma.type == MaterialAttributes::TYPE_HARDWARE && !container.name.strip.empty?
           return true if container.definition.behavior.cuts_opening?
           return false if container.is_a?(Sketchup::ComponentInstance)
+          true
+        }
+      when CONTAINER_VALIDATOR_ASSEMBLY_WITHOUT_MACHININGS
+        container_validator = lambda { |container, depth|
+          return false if container.definition.behavior.always_face_camera?
+          return true if _glued_cuts_opening?(container)
+          ma = _get_material_attributes(container.material)
+          return false if ma.type == MaterialAttributes::TYPE_MACHINING
+          return false if depth != 0 && ma.type == MaterialAttributes::TYPE_HARDWARE && !container.name.strip.empty?
+          return false if depth != 0 && DefinitionAttributes.role_of(container) == DefinitionAttributes::ROLE_HINGE
           true
         }
       when CONTAINER_VALIDATOR_NO_SCALE

@@ -13,6 +13,11 @@ module Ladb::OpenCutList
   # part whatever reshapes it, and a mirrored pair of doors gets opposite
   # hinged edges for free.
   #
+  # A door may also be made of several parts - the stiles, the rails and the
+  # panel of a frame door - held by a group or a component bearing
+  # ROLE_FRONT_PANEL : the hinges are glued into the parts they are screwed
+  # in, and that ASSEMBLY is the door, the one instance that turns.
+  #
   # Each hinge definition bears, in its library SKP, the data of its own
   # kinematics, in the FITTING FRAME (see SmartJoinTool#_get_add_joinery_def) :
   # X along the joint line, +Y towards the hinged edge, +Z into the carcass,
@@ -46,16 +51,42 @@ module Ladb::OpenCutList
                 :hinge_defs   # Array<DoorHingeDef>, never empty
 
     # The door the given definition - or instance, read through its definition -
-    # is, nil when no hinge is glued into it.
-    #
-    # Only the hinges glued DIRECTLY into the definition count : that is where
-    # SmartJoinTool lays them, next to the faces of the part.
+    # is, nil when it has no hinge - see door_hinge_instances.
     def self.from(entity)
-      hinge_defs = hinge_instances(entity).map { |instance| DoorHingeDef.from(instance) }.compact
+      definition = entity.respond_to?(:definition) ? entity.definition : entity
+      hinge_defs = door_hinge_instances(definition).map { |instance, transformation| DoorHingeDef.from(instance, transformation) }.compact
       return nil if hinge_defs.empty?
 
-      DoorDef.new(hinge_defs.first.instance.parent, hinge_defs)
+      DoorDef.new(definition, hinge_defs)
     end
+
+    # The hinges of the door the given definition - or instance, read through
+    # its definition - is, as [ entity, transformation ] pairs, the
+    # transformation taking the space of the entity's parent to the door
+    # definition's. The hinges glued DIRECTLY into it - that is where
+    # SmartJoinTool lays them, next to the faces of the part - and, when it
+    # bears ROLE_FRONT_PANEL, those glued into the parts it is made of, at any
+    # depth : the stiles of a frame door. A front or back panel held inside is
+    # no part of it - a panel inside a panel is none.
+    def self.door_hinge_instances(entity)
+      definition = entity.respond_to?(:definition) ? entity.definition : entity
+      return [] unless definition.is_a?(Sketchup::ComponentDefinition)
+      hinges = hinge_instances(definition).map { |instance| [ instance, IDENTITY ] }
+      _collect_part_hinge_instances(definition, IDENTITY, hinges) if DefinitionAttributes.role_of(definition) == DefinitionAttributes::ROLE_FRONT_PANEL
+      hinges
+    end
+
+    def self._collect_part_hinge_instances(definition, transformation, hinges)
+      definition.entities.each do |entity|
+        next unless entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance)
+        next unless hinge_frame(entity).nil?
+        next if DefinitionAttributes.applied_panel_role?(DefinitionAttributes.role_of(entity))
+        t = transformation * entity.transformation
+        hinge_instances(entity).each { |instance| hinges << [ instance, t ] }
+        _collect_part_hinge_instances(entity.definition, t, hinges)
+      end
+    end
+    private_class_method :_collect_part_hinge_instances
 
     # The hinges glued into the given definition - or instance, read through
     # its definition - whether their kinematics make it a door or not : what
@@ -148,19 +179,27 @@ module Ladb::OpenCutList
     end
 
     # The instances standing open in the given model. Only the definitions
-    # hinges are glued into are searched : a door is found through its hinges'
-    # instances, whose parent is its definition.
+    # hinges are glued into, and those holding them, are searched : a door is
+    # found through its hinges' instances, whose parent is its definition - or
+    # the definition of one of its parts, a door made of several.
     def self.open_instances(model)
       return [] unless model.is_a?(Sketchup::Model)
-      model.definitions
-           .select { |definition| DefinitionAttributes.role_of(definition) == DefinitionAttributes::ROLE_HINGE }
-           .flat_map(&:instances)
-           .map(&:parent)
-           .grep(Sketchup::ComponentDefinition)
-           .flat_map { |definition| definition.group? ? definition.instances.map(&:parent).grep(Sketchup::ComponentDefinition) : [ definition ] }   # Through the wrapper of a hinge laid off its frame
-           .uniq
-           .flat_map(&:instances)
-           .select { |instance| open?(instance) }
+      definitions = model.definitions
+                         .select { |definition| DefinitionAttributes.role_of(definition) == DefinitionAttributes::ROLE_HINGE }
+                         .flat_map(&:instances)
+                         .map(&:parent)
+                         .grep(Sketchup::ComponentDefinition)
+                         .uniq
+      seen = {}
+      until definitions.empty?
+        definition = definitions.shift
+        next if seen[definition]
+        seen[definition] = true
+        definitions.concat(definition.instances.map(&:parent).grep(Sketchup::ComponentDefinition))   # Up to the door, through the wrapper of a hinge laid off its frame or the parts of the door
+      end
+      seen.keys
+          .flat_map(&:instances)
+          .select { |instance| open?(instance) }
     end
 
     # Closes back all the instances standing open in the given model, in an
@@ -234,10 +273,12 @@ module Ladb::OpenCutList
                 :axis        # Geom::Vector3d, unit, along the axis, oriented to open by a positive rotation
 
     # The hinge the given entity is - see DoorDef.hinge_instances - nil when it
-    # is no hinge or lacks a valid pivot or max angle.
-    def self.from(instance)
+    # is no hinge or lacks a valid pivot or max angle. Set in the space of its
+    # parent, or in the one the given transformation takes it to - the door's,
+    # see DoorDef.door_hinge_instances.
+    def self.from(instance, transformation = IDENTITY)
       return nil if (frame = DoorDef.hinge_frame(instance)).nil?
-      from_definition(frame[0], frame[1], instance)
+      from_definition(frame[0], transformation * frame[1], instance)
     end
 
     # The hinge the given definition is once placed by the given

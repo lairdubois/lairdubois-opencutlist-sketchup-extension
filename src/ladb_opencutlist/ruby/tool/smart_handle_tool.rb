@@ -3667,20 +3667,35 @@ module Ladb::OpenCutList
 
     # -----
 
-    # A hinge or a machining glued into a door picks the door.
+    # A hinge or a machining glued into a door picks the door - and so does
+    # any part of a door made of several (see DoorDef), the outermost door of
+    # the path : its stiles bear hinges too. Such a door is no part : the
+    # part hovered stands for it.
     def _pick_part(picker, view)
       if (picked_path = picker.picked_face_path).is_a?(Array) &&
-         (index = picked_path.rindex { |entity| DoorDef.open?(entity) || !DoorDef.from(entity).nil? })
+         (index = picked_path.index { |entity| DoorDef.open?(entity) || !DoorDef.from(entity).nil? })
 
         door_path = picked_path[0..index]
         _make_unique_groups_in_path(door_path)
-        if (part = _generate_part_from_path(door_path)).is_a?(Part)
+        part = _generate_part_from_path(door_path)
+        if !part.is_a?(Part) && (part_path = _get_part_entity_path_from_path(picked_path)).is_a?(Array) && part_path.length > door_path.length && part_path[0...door_path.length] == door_path
+          part = _generate_part_from_path(part_path)
+        end
+        if part.is_a?(Part)
           _set_active_part(door_path, part)
           return
         end
 
       end
       super
+    end
+
+    # A door made of several parts is previewed whole, not as the part
+    # standing for it.
+    def _preview_part(part_entity_path, part, layer = LAYER_3D_PART_PREVIEW, highlighted: false, clear_before: true)
+      return super unless part.is_a?(Part) && part_entity_path.is_a?(Array) && part_entity_path.last.definition.name != part.def.definition_id
+      @tool.clear_3d(layer) if clear_before
+      _preview_door_assembly(part_entity_path, _get_path_part_preview_color(part_entity_path, part, highlighted), _get_path_part_preview_offset(part_entity_path, part, highlighted), layer)
     end
 
     # The door the given instance is, nil unless it can open.
