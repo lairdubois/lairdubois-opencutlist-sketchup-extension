@@ -311,7 +311,7 @@
         const parents = this.response && this.response.inheritance ? this.response.inheritance.parents : [];
         $('.ladb-hardware-editor-file-extends', this.$element).toggle(parents.length > 0);
         $('.ladb-hardware-editor-file-extends > span', this.$element)
-            .html(parents.length > 0 ? '↳ ' + i18next.t('core.hardware_editor.file_extends', { name: $('<a href="#" class="ladb-hardware-editor-file-extends-name">').text(fnFileStem(parents[0]) + '.json').prop('outerHTML'), interpolation: { escapeValue: false } }) : '')   // The name escaped by its span
+            .html(parents.length > 0 ? '↳ ' + i18next.t('core.hardware_editor.inherited_from', { ref: $('<a href="#" class="ladb-hardware-editor-file-extends-name">').text(fnFileStem(parents[0]) + '.json').prop('outerHTML'), interpolation: { escapeValue: false } }) : '')   // The name escaped by its span
             .attr('data-original-title', parents.map(function (ref) { return ref.replace(/\//g, '/\u200B'); }).join(' \u2190 '))   // The whole chain, nearest first - wrapping after its slashes
             .tooltip({ container: 'body' });
     };

@@ -15,6 +15,7 @@ default:
   stop: Arrêter
   validate: Valider
   confirm: Confirmer
+  finish: Terminer
   ok: Ok
   open: Ouvrir
   see: Voir
@@ -327,17 +328,17 @@ core:
     tab_json: JSON
     thickness_a: Épaisseur A
     thickness_b: Épaisseur B
-    bench_settings: Réglages du banc d'essai
     topology_corner: En L
     topology_flat_edge: En T
-    swap: Inverser A et B
     topology_edge_edge: Chant contre chant
     topology_flat_flat: Face contre face
+    swap: Inverser A et B
     zoom_auto: Zoom automatique
+    bench_settings: Réglages du banc d'essai
     measures: Mesures du banc d'essai
     variables: Variables
     asserts: Conditions
-    setting: Réglage
+    setting: Variable publiée
     setting_bounds: "Entre {{ min }} et {{ max }}"
     assert_unresolved: Non calculable
     accepted: Assemblage valide
@@ -346,13 +347,12 @@ core:
     readonly_notice: |
       Ce fichier est un exemple en lecture seule. 
       Dupliquez cette quincaillerie dans **Ma Bibliothèque** pour la modifier.
-    duplicate: Dupliquer dans Ma Bibliothèque
+    duplicate: Dupliquer dans **Ma Bibliothèque**
     name: Nom
     file: Fichier
     abstract_notice: "Quincaillerie abstraite : elle ne se place pas, elle sert de base aux quincailleries qui en dérivent."
-    file_extends: "hérité de {{ name }}"
     file_renamed: "Renommé à la validation, ainsi que le dossier de ses pièces (était {{ name }})"
-    duplicated: "Copié dans Ma Bibliothèque : {{ ref }}"
+    duplicated: "Copié dans **Ma Bibliothèque** : {{ ref }}"
     derive: Dériver
     derive_help: Crée une quincaillerie qui hérite de celle-ci et ne déclare que ce qui change
     derived_name: "{{ name }} (dérivée)"
@@ -422,7 +422,6 @@ core:
       Modifiez la pièce dans le modèle, sur le banc d'essai. 
       Ses axes sont son repère de pose. 
       **Terminez** pour la reprendre ici, le banc quitte alors le modèle.
-    finish: Terminer
     choose_skp: Choisir un fichier SKP
     placement_orientation: Orientation
     placement_mirror: Miroir X
