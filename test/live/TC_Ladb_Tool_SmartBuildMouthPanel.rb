@@ -10,9 +10,10 @@
 #   picks        JSON [ { kind, origin, target, facing | camera, options, merge: [ { origin, target } ] } ]
 #                (mm, case local).
 #                kind is 'back' (the default) or 'front' : the handler that
-#                draws. A new handler is made whenever the kind changes from
-#                one pick to the next, the way switching action does in the
-#                tool - the same one is kept while it does not.
+#                draws. A new handler is made whenever the kind - or the
+#                pick's own options - change from one pick to the next, the
+#                way switching action does in the tool - the same one is kept
+#                while they do not.
 #                A BACK pick is read through the panels, like the handler does
 #                (see SmartBuildPanelActionHandler#_snap_point_through_cavities) :
 #                the ray must enter the mouth and land on a wall of the cavity.
@@ -26,7 +27,10 @@
 #                between several openings the view sees at once.
 #                options, when given, overrides the case options for that pick.
 #   options      JSON { thickness, depth, setback (mm), through_groove, overlay (optional, false by default),
-#                       front_offset (mm, optional, 0 by default), mirror (optional, false by default) }
+#                       front_offset (mm, optional, 0 by default), mirror (optional, false by default),
+#                       reduce (optional, false by default : the envelope reduction),
+#                       against_protrusions (optional, false by default : the applique pose
+#                       stopped against what stands proud of the mouth, overlay implied) }
 #   expected     JSON, what is compared (see MouthPanelRegression::COMPARED) - written by record: true
 #
 # Through TestUp : add test/live as a test path, run TC_Ladb_Tool_SmartBuildMouthPanel.
@@ -92,6 +96,7 @@ module MouthPanelRegression
         'manifold' => instance.manifold?,
         'bad_edges' => edges.count { |edge| edge.faces.length != 2 },
         'faces' => instance.definition.entities.grep(Sketchup::Face).length,
+        'bounds' => [ instance.bounds.min, instance.bounds.max ].map { |point| point.to_a.map { |v| (v.to_f * 25.4).round(1) } },   # Case local mm
         'bad_edge_points' => edges.select { |edge| edge.faces.length != 2 }.first(6).map { |edge|
           [ edge.faces.length ] + [ edge.start, edge.end ].map { |vertex| vertex.position.transform(instance.transformation).to_a.map { |v| (v.to_f * 25.4).round(2) } }
         },
@@ -104,8 +109,9 @@ module MouthPanelRegression
     handler.singleton_class.send(:prepend, Probe)
     fixed = {
       :_fetch_option_thickness => options['thickness'].to_f.mm,
-      :_fetch_option_overlay_full_overlay? => options['overlay'] == true,
-      :_fetch_option_reduce_envelope? => false,
+      :_fetch_option_overlay_full_overlay? => options['overlay'] == true || options['against_protrusions'] == true,
+      :_fetch_option_overlay_against_protrusions? => options['against_protrusions'] == true,
+      :_fetch_option_reduce_envelope? => options['reduce'] == true,
       :_fetch_option_reuse_definition? => true,
       :_fetch_option_measure_reversed? => false,
       :_fetch_option_ask_name? => false,
@@ -217,21 +223,21 @@ module MouthPanelRegression
     tools = {}
     handlers = []
     handler = nil
-    handler_kind = nil
+    handler_key = nil
 
     before = Hash[part_stats(case_instance).map { |instance, stats| [ instance.name, stats ] }]
 
     refusals = picks.map { |pick|
       kind = pick['kind'] || 'back'
       begin
-        unless handler_kind == kind
+        unless handler_key == [ kind, pick['options'] ]
           tool = tools[kind] ||= OCL::SmartBuildTool.new(current_action: HANDLERS[kind].first).tap { |new_tool|
             [ :notify_success, :notify_warnings, :notify_errors, :notify, :show_tooltip, :remove_tooltip, :push_cursor, :pop_cursor ].each do |name|
               new_tool.define_singleton_method(name) { |*args| messages << [ name.to_s, args.first ].inspect unless [ :notify_success, :remove_tooltip, :push_cursor, :pop_cursor ].include?(name) }
             end
           }
           handler = make_handler(tool, kind, options.merge(pick['options'] || {}))
-          handler_kind = kind
+          handler_key = [ kind, pick['options'] ]
           handlers << handler
         end
         draw(handler, kind, view, case_instance, pick)
@@ -255,6 +261,7 @@ module MouthPanelRegression
       'grooved' => carcass.select { |stats| stats['volume'] < before[stats['name']]['volume'] }.map { |stats| stats['name'] }.sort,
       'removed_mm3' => Hash[carcass.map { |stats| [ stats['name'], before[stats['name']]['volume'] - stats['volume'] ] }.sort],
       'panels' => after.reject { |stats| before.key?(stats['name']) }.map { |stats| stats['volume'] }.sort,
+      'panel_bounds' => after.reject { |stats| before.key?(stats['name']) }.map { |stats| stats['bounds'] }.sort,
       'non_manifold' => after.reject { |stats| stats['manifold'] && stats['bad_edges'] == 0 }.map { |stats| "#{stats['name']}:#{stats['bad_edges']}" },
       'bad_edge_points' => Hash[after.reject { |stats| stats['bad_edge_points'].empty? }.map { |stats| [ stats['name'], stats['bad_edge_points'] ] }],
       'shared' => shared,
@@ -264,7 +271,9 @@ module MouthPanelRegression
 
   # What must match the expectation. Volumes are reported, not compared : a
   # tessellation change moves them by a few mm3 without anything being wrong.
-  COMPARED = %w[created refusals extensions passes grooved panels non_manifold shared]
+  # The new panels' bounds are : volumes say nothing of WHERE a panel stands,
+  # and a panel in applique laid on the wrong plane keeps its volume.
+  COMPARED = %w[created refusals extensions passes grooved panels panel_bounds non_manifold shared]
 
   MODEL_NAME = 'test_mouth_panels.skp'
 
@@ -329,7 +338,7 @@ if defined?(TestUp::TestCase)
 
   class TC_Ladb_Tool_SmartBuildMouthPanel < TestUp::TestCase
 
-    CASES = %w[B01 B02 B03 B04 B05 B06 B07 B08 B09 B10 B11 B12 B13 B14 B15 B16 B17 B18 B19 B20 F01 F02 F03 F04 F05]
+    CASES = %w[B01 B02 B03 B04 B05 B06 B07 B08 B09 B10 B11 B12 B13 B14 B15 B16 B17 B18 B19 B20 F01 F02 F03 F04 F05 F06 F07 F08 F09 F10 F11 F12 F13 F14 F15]
 
     def setup
       assert(MouthPanelRegression.model_ready?, "Live test : open docs/skp/#{MouthPanelRegression::MODEL_NAME} first (active model : #{Sketchup.active_model.path.inspect})")

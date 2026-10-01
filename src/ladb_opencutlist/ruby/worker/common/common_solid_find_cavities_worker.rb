@@ -282,6 +282,31 @@ module Ladb::OpenCutList
   # actually connects to, instead of on its own possibly-misleading aspect
   # ratio.
   #
+  # LONE RECESS : a single contour panel receding WHOLLY behind an opening,
+  # every other wall left standing — a case whose top rail stops short of its
+  # sides, leaving a notch open on top behind it — is exactly the
+  # concave/notched footprint all of the above is wary of, and none of it
+  # accepts the plane. It is only read on a candidate the opening filter
+  # turned down, hence lost without it, and what it cuts is the option's
+  # call : with the reduction ON, on its chant, like any recess (the cavity
+  # stops at the rail) ; on APPEAL, on the panel's own inner main face
+  # instead (the cavity keeps its whole depth, only the notch behind the rail
+  # is given up). That cut leaves the notch as a third opening on the kept
+  # side, which the opening budget does not hold against it. It is also read
+  # on a NOTCHED cavity the filters accepted (open on more than two planes,
+  # or on two that meet - a divider takes up to four, side by side) : the
+  # divider would else climb into the notch behind the rail. On appeal, that
+  # cut is the only one such a cavity gets.
+  #
+  # HOLES : an opening other than a cavity's biggest, whose caps touch no
+  # other opening's and which does not face that biggest one - the gap a top
+  # made of two rails leaves between them - is a hole in a side wall of the
+  # compartment, not one of its mouths (see
+  # SolidCavityFragmentDef#hole_planes). The pocket it opens is cut off at
+  # the panels it opens between (the underside of the rails), whatever the
+  # reduction : a divider stops under the rails rather than rising between
+  # them. Only when nothing but that hole lies beyond the cut.
+  #
   # That shape test is only a PROXY, though, for the question that actually
   # decides : does this chant make an OPENING recede, or does it cut ACROSS
   # the cavity ? Every candidate must answer the first — its plane has to be
@@ -345,6 +370,20 @@ module Ladb::OpenCutList
   # it turns out to hide being confirmed like any other — and one that
   # reaches a round with no plane of its own is that plain flare after all,
   # and is dropped.
+  #
+  # ENVELOPE REDUCTION ON APPEAL (hull mode, reduce_envelope OFF) : turning
+  # the reduction off asks for the mouths as the hull caps them - a front
+  # panel spanning the whole opening, a recessed shelf left behind it. It
+  # does not ask for the cavities to vanish, which is what the opening
+  # filter alone makes of an assembly receding on the FAR side : sides
+  # running past a case's top, bottom and dividers at the rear leave a slab
+  # between them the hull fills, every compartment opens onto it, and they
+  # all come out as ONE candidate open on four planes, dropped. So the
+  # candidates the filter turns down are reduced all the same, exactly as
+  # above, and nothing else is : an accepted cavity is never clipped, and a
+  # side a clip brings back within the budget is taken as it comes, no
+  # deeper recess read on it. A candidate no clip ever brings back is
+  # dropped, as it was.
   #
   # BEVELED EDGES (hull mode, reduce_envelope option) : an edge PROFILED at
   # an angle — a mitred front, a chamfer, a moulding — leaves the cavity
@@ -1227,8 +1266,9 @@ module Ladb::OpenCutList
 
       # Returns [ collected, deferred ] : the cavities this output yields, and
       # the candidates only the envelope reduction can still settle (see the
-      # opening filter below). The second list is empty unless
-      # @reduce_envelope, the caller feeding it back as PROVISIONAL fragments.
+      # opening filter below), the caller feeding them back as PROVISIONAL
+      # fragments - whether @reduce_envelope or not, see ENVELOPE REDUCTION
+      # ON APPEAL.
       fn_collect = lambda { |output, hermetic|
         collected = []
         deferred = []          # Candidates the opening filter turned down, pending reduction
@@ -1274,10 +1314,16 @@ module Ladb::OpenCutList
           # of them an opening of its own. Those are precisely what the
           # envelope reduction takes away — so a candidate the count turns
           # down is handed to it as PROVISIONAL rather than dropped, and has to
-          # earn its keep by coming out of a clip within the limit. With no
-          # reduction to appeal to, the count stands.
-          too_open = !hermetic && (fragment_def.opening_plane_count > @max_opening_planes || (@apart_opening_planes && !fragment_def.opening_planes_apart?))
-          next if too_open && !@reduce_envelope
+          # earn its keep by coming out of a clip within the limit. With the
+          # reduction off, it is still handed to it : see ENVELOPE REDUCTION
+          # ON APPEAL in the class doc.
+          #
+          # Asked to stand APART, the openings are past the budget only when
+          # some of them meet : an opening apart from every other is a HOLE in
+          # a wall of the compartment - the gap a top made of two rails leaves
+          # between them - not the corner a missing panel opens, which is
+          # what the budget is about.
+          too_open = !hermetic && (@apart_opening_planes ? !fragment_def.opening_planes_apart? : fragment_def.opening_plane_count > @max_opening_planes)
           # Enclosure filter : a compartment is hemmed in by its walls, a
           # concavity pocket only wraps a corner of the assembly — see
           # SolidCavityFragmentDef#enclosed_by_walls?. A candidate it turns
@@ -1394,19 +1440,42 @@ module Ladb::OpenCutList
           # confirmed like any other — and a provisional fragment reaching a
           # round with no plane of its own is that plain flare after all, and
           # is dropped.
-          if @reduce_envelope && !(open_fragment_defs.empty? && deferred_fragment_defs.empty?)
-            confirmed_fragment_defs = []
+          #
+          # With the reduction OFF, only the deferred candidates go through it
+          # (see ENVELOPE REDUCTION ON APPEAL) : the cavities the filters
+          # accepted are kept as they are, and so is any side a clip confirms.
+          #
+          # Except for a LONE recess, read on the NOTCHED cavities the filters
+          # accepted as well (see the class doc, LONE RECESS) : on appeal,
+          # those go through it too, and nothing but that cut applies to them.
+          notched_fragment_defs = open_fragment_defs.select { |fragment_def| _notched?(fragment_def) }
+          if @reduce_envelope ? !(open_fragment_defs.empty? && deferred_fragment_defs.empty?) : !(deferred_fragment_defs.empty? && notched_fragment_defs.empty?)
+            on_appeal = !@reduce_envelope
             # An untouched cavity is a cavity : the ones no reduction ever
-            # clips must reach the result, so they start out confirmed. The
-            # ones the opening filter deferred start out PROVISIONAL, on the
-            # contrary : they only exist here to be clipped, and a round that
-            # finds no plane on them drops them just like a plain flare.
-            active = open_fragment_defs.map { |fragment_def| [ fragment_def, false ] } +
+            # clips must reach the result, so they start out confirmed - and
+            # on appeal they are never clipped at all, but for the notched
+            # ones' lone recess. The ones the opening filter deferred start
+            # out PROVISIONAL, on the contrary : they only exist here to be
+            # clipped, and a round that finds no plane on them drops them just
+            # like a plain flare.
+            confirmed_fragment_defs = on_appeal ? open_fragment_defs - notched_fragment_defs : []
+            active = (on_appeal ? notched_fragment_defs : open_fragment_defs).map { |fragment_def| [ fragment_def, false ] } +
                      deferred_fragment_defs.map { |fragment_def| [ fragment_def, true ] }
             REDUCTION_MAX_PASSES.times do
               break if active.empty?
               return pass if _budget_exhausted?
-              reduction_planes_per_fragment = _detect_reduction_planes(active.map { |fragment_def, _provisional| fragment_def }, panel_id_ranges, panel_meshes, dominant_normals, envelope_mesh)
+              # A LONE recess (see #_detect_reduction_planes) is only read on
+              # a candidate that is lost without it, or a NOTCHED one : the cut
+              # it makes, the option decides
+              lone_recesses = active.map { |fragment_def, provisional| provisional || _notched?(fragment_def) ? (on_appeal ? :main : :chant) : nil }
+              reduction_planes_per_fragment = _detect_reduction_planes(active.map { |fragment_def, _provisional| fragment_def }, panel_id_ranges, panel_meshes, dominant_normals, envelope_mesh, lone_recesses)
+              # On appeal, an accepted cavity is only ever cut by its lone
+              # recess
+              if on_appeal
+                active.each_with_index do |(_fragment_def, provisional), index|
+                  reduction_planes_per_fragment[index] = @lone_main_planes_per_fragment[index] || [] unless provisional
+                end
+              end
               next_active = []
               clipped_any = false
               active.each_with_index do |(fragment_def, provisional), index|
@@ -1428,6 +1497,17 @@ module Ladb::OpenCutList
                 return pass if _report_errors(kept_output, result_def)
                 _restore_clipped_vertices(kept_output['fragments'], normal, d)
                 kept, kept_deferred_fragment_defs = fn_collect.call(kept_output, false)
+                # Cut off at a LONE board's inner face, the kept side still
+                # opens on the notch the board leaves behind it : that opening
+                # is what the cut gave up, not one the budget is about — see
+                # the class doc, LONE RECESS
+                lone_main = (@lone_main_planes_per_fragment[index] || []).any? { |lone_normal, lone_d|
+                  normal[0] * lone_normal[0] + normal[1] * lone_normal[1] + normal[2] * lone_normal[2] > 0.9999 && (d - lone_d).abs < REDUCTION_MIN_DEPTH
+                }
+                if lone_main
+                  kept += kept_deferred_fragment_defs
+                  kept_deferred_fragment_defs = []
+                end
 
                 if kept.empty? && kept_deferred_fragment_defs.empty?
                   # Nothing on the kept side : the reduction has nothing to
@@ -1439,8 +1519,10 @@ module Ladb::OpenCutList
 
                 clipped_any = true
                 # In place, so the cavity order stays the panel order the
-                # subtraction produced
-                kept.each { |kept_fragment_def| next_active << [ kept_fragment_def, false ] }
+                # subtraction produced. On appeal, a kept side within the
+                # budget is what the appeal was for : it is not reduced any
+                # further.
+                kept.each { |kept_fragment_def| on_appeal ? confirmed_fragment_defs << kept_fragment_def : next_active << [ kept_fragment_def, false ] }
                 # A kept side STILL over its opening budget is not a
                 # compartment yet : it goes back provisional, to be settled by
                 # a deeper clip or dropped
@@ -1471,11 +1553,95 @@ module Ladb::OpenCutList
             open_fragment_defs = confirmed_fragment_defs
           end
 
+          # Holes : the pocket a hole opens in a wall is given up - see the
+          # class doc, HOLES
+          open_fragment_defs = open_fragment_defs.flat_map { |fragment_def|
+            cut = _cut_hole_pockets(fragment_def, panel_id_ranges, dominant_normals, envelope_mesh, result_def, fn_collect)
+            return pass if cut.nil?
+            cut
+          }
+
           cavity_fragment_defs.concat(open_fragment_defs)
         end
       end
 
       pass
+    end
+
+    # The given open cavity with the POCKETS its holes open cut off - see the
+    # class doc, HOLES. Returns the resulting fragment defs (the cavity itself
+    # when nothing is cut), nil when a clip failed — the errors then are in
+    # +result_def+.
+    #
+    # A hole's pocket stops where the panels it opens between stop : the
+    # cavity faces lying on a MAIN face of their panel, parallel to the hole
+    # and facing the same way, behind it — the underside of the two rails
+    # around the gap. Cut at the deepest of them, and only if nothing but
+    # that hole's own caps lies beyond : the cut takes away a pocket, never
+    # a mouth.
+    def _cut_hole_pockets(fragment_def, panel_id_ranges, dominant_normals, envelope_mesh, result_def, fn_collect)
+      hole_planes = fragment_def.hole_planes
+      return [ fragment_def ] if hole_planes.empty? || fragment_def.face_ids.nil?
+
+      mesh_position_by_face_id = []
+      panel_id_ranges.each_with_index { |(id_range, _panel_index), mesh_position| id_range.each { |face_id| mesh_position_by_face_id[face_id] = mesh_position } }
+
+      current = fragment_def
+      hole_planes.each do |(hx, hy, hz), hole_d|
+        ceiling_d = nil
+        other_cap_beyond = false
+        current.face_indices.each_slice(3).with_index do |(a, b, c), triangle_index|
+          normal, _area2 = _triangle_normal(current.vertices, a, b, c)
+          next if normal.nil?
+          offset = normal[0] * current.vertices[a * 3] + normal[1] * current.vertices[a * 3 + 1] + normal[2] * current.vertices[a * 3 + 2]
+          face_id = current.face_ids[triangle_index]
+          next if face_id == 0
+          face_info_def = current.face_info_defs[face_id]
+          next if face_info_def && face_info_def.virtual?
+          next unless normal[0] * hx + normal[1] * hy + normal[2] * hz >= REDUCTION_MAIN_DOT
+          mesh_position = mesh_position_by_face_id[face_id]
+          next if mesh_position.nil? || (dominant_normal = dominant_normals[mesh_position]).nil?
+          next unless (dominant_normal[0] * hx + dominant_normal[1] * hy + dominant_normal[2] * hz).abs >= REDUCTION_MAIN_DOT
+          next unless offset < hole_d - REDUCTION_MIN_DEPTH
+          ceiling_d = offset if ceiling_d.nil? || offset < ceiling_d
+        end
+        next if ceiling_d.nil?
+        # Nothing but the hole beyond the cut : no other opening's cap
+        current.face_indices.each_slice(3).with_index do |(a, b, c), triangle_index|
+          next unless current.face_ids[triangle_index] == 0
+          normal, _area2 = _triangle_normal(current.vertices, a, b, c)
+          next if normal.nil? || normal[0] * hx + normal[1] * hy + normal[2] * hz >= REDUCTION_MAIN_DOT
+          beyond = [ a, b, c ].any? { |index| hx * current.vertices[index * 3] + hy * current.vertices[index * 3 + 1] + hz * current.vertices[index * 3 + 2] > ceiling_d + REDUCTION_MIN_DEPTH }
+          (other_cap_beyond = true ; break) if beyond
+        end
+        next if other_cap_beyond
+        # The kept side is the one AWAY from the hole
+        normal = [ -hx, -hy, -hz ]
+        d = -ceiling_d
+        return nil if _budget_exhausted?
+        kept_output = Meshy.operate(
+          :operation => Meshy::OPERATION_INTERSECTION,
+          :validate => false,
+          :tolerance => SolidMeshDef::TOLERANCE,
+          :src_meshes => [ _reduction_fragment_mesh(current) ],
+          :cut_meshes => [ _reduction_slab_mesh(normal, d, envelope_mesh) ]
+        )
+        return nil if _report_errors(kept_output, result_def)
+        _restore_clipped_vertices(kept_output['fragments'], normal, d)
+        kept, kept_deferred_fragment_defs = fn_collect.call(kept_output, false)
+        kept += kept_deferred_fragment_defs
+        next unless kept.length == 1  # A cut that does not leave the cavity whole is no pocket's
+        current = kept.first
+      end
+      [ current ]
+    end
+
+    # Whether the given open cavity is NOTCHED : open on more than two planes,
+    # or on two that meet - the shape a lone contour panel receding behind
+    # its neighbours leaves, the notch it opens on top of the mouths. Where a
+    # LONE recess is read on an accepted cavity, see the class doc.
+    def _notched?(fragment_def)
+      fragment_def.opening_plane_count > 2 || !fragment_def.opening_planes_apart?
     end
 
     # Panel indices (in @panel_drawing_defs) of the INTERNAL panels of the
@@ -1844,7 +2010,12 @@ module Ladb::OpenCutList
     # The lists are kept apart on purpose : a plane is evidence about the
     # cavity that exposed it and about no other, so it only ever clips that
     # one — see the class doc, ENVELOPE REDUCTION.
-    def _detect_reduction_planes(fragment_defs, panel_id_ranges, panel_meshes, dominant_normals, envelope_mesh)
+    #
+    # +lone_recesses+ (one entry per fragment def, nil by default) admits on
+    # that fragment the chant of a LONE panel receding wholly, which none of
+    # the evidence below accepts — see the class doc, LONE RECESS : :chant
+    # clips on that chant, :main on the panel's own main face instead.
+    def _detect_reduction_planes(fragment_defs, panel_id_ranges, panel_meshes, dominant_normals, envelope_mesh, lone_recesses = [])
       # The source planes are those of the panels this pass was given : they
       # outlive the reduction rounds, which only ever clip the CAVITIES
       face_planes = (@panel_face_planes ||= _panel_face_planes(panel_meshes))
@@ -1853,7 +2024,9 @@ module Ladb::OpenCutList
       # them would
       mesh_position_by_face_id = []
       panel_id_ranges.each_with_index { |(id_range, _panel_index), mesh_position| id_range.each { |face_id| mesh_position_by_face_id[face_id] = mesh_position } }
-      fragment_defs.map do |fragment_def|
+      @lone_main_planes_per_fragment = []
+      fragment_defs.each_with_index.map do |fragment_def, fragment_index|
+        lone_recess = lone_recesses[fragment_index]
         planes = {}
         vertices = fragment_def.vertices
         face_ids = fragment_def.face_ids
@@ -1864,6 +2037,10 @@ module Ladb::OpenCutList
         # each panel's own dominant axis) where that same panel bounds the
         # cavity on a MAIN face — front and back, when both are exposed
         main_plane_keys_by_panel = Hash.new { |h, k| h[k] = {} }
+        # ... and those main face planes themselves, as [ normal, d ] read off
+        # the cavity (the normal pointing into the panel) — the cut a LONE
+        # recess makes on appeal
+        main_planes_by_panel = Hash.new { |h, k| h[k] = {} }
         triangle_mesh_position = {}
         candidates = {}
         # Every panel bounding this cavity, by whatever kind of face — the
@@ -1931,6 +2108,7 @@ module Ladb::OpenCutList
             az = vertices[a * 3 + 2] - normal[2] * gap
             offset = dominant_normal[0] * ax + dominant_normal[1] * ay + dominant_normal[2] * az
             main_plane_keys_by_panel[mesh_position][(offset / SolidMeshDef::TOLERANCE).round] = true
+            main_planes_by_panel[mesh_position][normal.map { |v| (v * 1000).round } << (d / SolidMeshDef::TOLERANCE).round] ||= [ normal, d ]
             next
           end
           if dot.abs >= REDUCTION_EDGE_DOT  # Edge face TILTED on its own board
@@ -2112,6 +2290,48 @@ module Ladb::OpenCutList
               mesh_positions.all? { |mesh_position| _reduction_panel_side(normal, d, panel_meshes[mesh_position]) == :kept } &&
               bounding_mesh_positions.keys.none? { |mesh_position| _reduction_panel_side(normal, d, panel_meshes[mesh_position]) == :removed } &&
               fn_side_plane.call(mesh_positions)
+          end
+          # LONE recess : ONE panel, receding to this plane WHOLLY, every
+          # other wall left standing — the plural evidence above taken down to
+          # a single board, which is all a case whose top rail stops short of
+          # its sides has to show. That is the notched footprint all of the
+          # above guards against, too, so it is only read where the cavity
+          # is lost without it — see the class doc, LONE RECESS.
+          if !accepted && lone_recess
+            mesh_positions = mesh_positions_by_component.flatten.uniq
+            if mesh_positions.length == 1 &&
+               _reduction_panel_side(normal, d, panel_meshes[mesh_positions.first]) == :kept &&
+               bounding_mesh_positions.keys.none? { |mesh_position| _reduction_panel_side(normal, d, panel_meshes[mesh_position]) == :removed } &&
+               fn_side_plane.call(mesh_positions)
+              if lone_recess == :chant
+                accepted = true
+              else
+                # On appeal, the board is cut off at its INNER face instead :
+                # the cavity keeps its whole depth, only the notch the board
+                # leaves open behind it is given up. That face bounds the
+                # cavity alone, and the cut flips its normal, keeping the side
+                # AWAY from the board.
+                main_planes = main_planes_by_panel[mesh_positions.first].values
+                if main_planes.length == 1
+                  main_normal, main_d = main_planes.first
+                  main_normal = main_normal.map { |v| -v }
+                  main_d = -main_d
+                  main_key = main_normal.map { |v| (v * 1000).round } << (main_d / SolidMeshDef::TOLERANCE).round
+                  # A wall cut off with it is lost, unless it stands FLUSH on
+                  # that face too : the other rail of a top made of two, at
+                  # the same height, is cut off exactly as much as this one
+                  if _reduction_recedes_opening?(main_normal, main_d, opening_caps) &&
+                     bounding_mesh_positions.keys.none? { |mesh_position|
+                       next false if mesh_position == mesh_positions.first
+                       next false unless _reduction_panel_side(main_normal, main_d, panel_meshes[mesh_position]) == :removed
+                       _mesh_extent(panel_meshes[mesh_position], main_normal).last < main_d - REDUCTION_MIN_DEPTH
+                     }
+                    planes[main_key] ||= [ main_normal, main_d ]
+                    (@lone_main_planes_per_fragment[fragment_index] ||= []) << [ main_normal, main_d ]
+                  end
+                end
+              end
+            end
           end
           next unless accepted
           planes[key] = [ normal, d ]

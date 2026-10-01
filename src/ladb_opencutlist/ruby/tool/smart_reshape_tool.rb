@@ -309,17 +309,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class SmartReshapeActionHandler < SmartSelectActionHandler
-
-    def close_doors_on_start?
-      true
-    end
-
-  end
-
-  # -----
-
-  class SmartReshapeStretchActionHandler < SmartReshapeActionHandler
+  class SmartReshapeStretchActionHandler < SmartSelectActionHandler
 
     include UserTextHelper
 
@@ -408,6 +398,12 @@ module Ladb::OpenCutList
     def stop
       _unhide_instances
       super
+    end
+
+    # -----
+
+    def close_doors_on_start?
+      true
     end
 
     # -----
@@ -2246,7 +2242,7 @@ module Ladb::OpenCutList
 
   end
 
-  class SmartReshapeSolidActionHandler < SmartReshapeActionHandler
+  class SmartReshapeSolidActionHandler < SmartActionHandler
 
     include SmartActionHandlerPartHelper
     include SmartActionHandlerSolidBooleanHelper
@@ -2263,6 +2259,12 @@ module Ladb::OpenCutList
       @src_selection = Selection.new(LAYER_3D_SRC_PREVIEW)
       @cut_selection = Selection.new(LAYER_3D_CUT_PREVIEW)
 
+    end
+
+    # -----
+
+    def close_doors_on_start?
+      true
     end
 
     # -----
@@ -2752,7 +2754,7 @@ module Ladb::OpenCutList
 
   end
 
-  class SmartReshapePanelingActionHandler < SmartReshapeActionHandler
+  class SmartReshapePanelingActionHandler < SmartActionHandler
 
     include UserTextHelper
     include FaceMatcherHelper
@@ -2893,6 +2895,12 @@ module Ladb::OpenCutList
       _clear_edge_joint_types
       _reset_refused_drawing_def
       super
+    end
+
+    # -----
+
+    def close_doors_on_start?
+      true
     end
 
     # -----

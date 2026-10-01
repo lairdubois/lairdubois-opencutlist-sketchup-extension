@@ -344,6 +344,37 @@ module Ladb::OpenCutList
       cache[key] = _wall_loops_on_plane(nx, ny, nz, d)
     end
 
+    # The HOLES of the cavity, as [ unit normal ([ x, y, z ], pointing OUT of
+    # the cavity), offset ] : the openings other than its biggest - its MAIN
+    # mouth - whose caps touch no other plane's, and which do not FACE that
+    # mouth - the gap a top made of two rails leaves between them, a hole in
+    # a side wall of the compartment rather than one of its mouths. The one
+    # opposite the main mouth is the other mouth : the back of a through
+    # tube, or the hole a face frame leaves in front of an open back, where an
+    # inset door goes. See CommonSolidFindCavitiesWorker, HOLES. Memoized.
+    def hole_planes
+      @hole_planes ||= begin
+        plane_indices = _opening_plane_indices
+        if plane_indices.length <= 1
+          []
+        else
+          area_by_plane, normal_by_plane, origin_index_by_plane = _cap_area_by_plane
+          component_ids_by_plane = _cap_component_ids_by_plane
+          main_index, *other_indices = plane_indices.sort_by { |plane_index| -area_by_plane[plane_index] }
+          mx, my, mz = normal_by_plane[main_index]
+          other_indices.select { |plane_index|
+            nx, ny, nz = normal_by_plane[plane_index]
+            next false if mx * nx + my * ny + mz * nz <= OPENING_PLANES_OPPOSED_MAX_DOT
+            component_ids_by_plane.all? { |other_index, component_ids| other_index == plane_index || (component_ids & component_ids_by_plane[plane_index]).empty? }
+          }.map { |plane_index|
+            normal = normal_by_plane[plane_index]
+            origin = origin_index_by_plane[plane_index]
+            [ normal, normal[0] * @vertices[origin * 3] + normal[1] * @vertices[origin * 3 + 1] + normal[2] * @vertices[origin * 3 + 2] ]
+          }
+        end
+      end
+    end
+
     private
 
     # #wall_loops_on_plane once the plane is read as [ unit normal, offset ] —

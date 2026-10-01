@@ -51,6 +51,7 @@ module Ladb::OpenCutList
 
     ACTION_OPTION_OVERLAY_INSET = 'inset'
     ACTION_OPTION_OVERLAY_FULL_OVERLAY = 'full_overlay'
+    ACTION_OPTION_OVERLAY_AGAINST_PROTRUSIONS = 'against_protrusions'
 
     ACTION_OPTION_AXES_ACTIVE = 'active'
     ACTION_OPTION_AXES_CONTEXT = 'context'
@@ -101,7 +102,7 @@ module Ladb::OpenCutList
         :options => {
           ACTION_OPTION_THICKNESS => [ ACTION_OPTION_THICKNESS_THICKNESS ],
           ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_FRONT_PANEL_OFFSET ],
-          ACTION_OPTION_OVERLAY => [ ACTION_OPTION_OVERLAY_INSET, ACTION_OPTION_OVERLAY_FULL_OVERLAY ],
+          ACTION_OPTION_OVERLAY => [ ACTION_OPTION_OVERLAY_INSET, ACTION_OPTION_OVERLAY_FULL_OVERLAY, ACTION_OPTION_OVERLAY_AGAINST_PROTRUSIONS ],
           ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_CONTEXT ],
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, ACTION_OPTION_OPTIONS_PICK_MATERIAL, ACTION_OPTION_OPTIONS_REUSE_DEFINITION, ACTION_OPTION_OPTIONS_MIRROR, ACTION_OPTION_OPTIONS_ASK_NAME ]
         }
@@ -111,7 +112,7 @@ module Ladb::OpenCutList
         :options => {
           ACTION_OPTION_THICKNESS => [ ACTION_OPTION_THICKNESS_THICKNESS ],
           ACTION_OPTION_GROOVE => [ ACTION_OPTION_GROOVE_DEPTH, ACTION_OPTION_GROOVE_SETBACK, ACTION_OPTION_GROOVE_THROUGH ],
-          ACTION_OPTION_OVERLAY => [ ACTION_OPTION_OVERLAY_INSET, ACTION_OPTION_OVERLAY_FULL_OVERLAY ],
+          ACTION_OPTION_OVERLAY => [ ACTION_OPTION_OVERLAY_INSET, ACTION_OPTION_OVERLAY_FULL_OVERLAY, ACTION_OPTION_OVERLAY_AGAINST_PROTRUSIONS ],
           ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_CONTEXT ],
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, ACTION_OPTION_OPTIONS_PICK_MATERIAL, ACTION_OPTION_OPTIONS_REUSE_DEFINITION, ACTION_OPTION_OPTIONS_ASK_NAME ]
         }
@@ -317,6 +318,14 @@ module Ladb::OpenCutList
           else
             return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,.75V1H1V.75ZM.75,0V.625H1V0M.875,0L1,.125M.75,.375L1,.625M.75,.125L1,.375'))
           end
+        when ACTION_OPTION_OVERLAY_AGAINST_PROTRUSIONS
+          # The side running past the recessed rail, the panel laid on the rail and stopped against the side
+          case action
+          when ACTION_BUILD_BACK_PANEL
+            return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.75,.25V0H1V1H.75V.5M0,1V.5M0,.25V.5H.875V.25ZM.75,.125L.875,0M.875,.25L1,.125M.625,1L1,.625M.875,1L1,.875M0,.625L.125,.5M0,.875L.375,.5M.125,1L.625,.5M.375,1L1,.375'))
+          else
+            return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.75,0V1H1V0M0,0V.375H.625V0M0,.75V.5H.625V.75ZM.75,.875L.875,1M.75,.625L1,.875M.75,.375L1,.625M.75,.125L1,.375M.875,0L1,.125M0,.125L.25,.375M.125,0L.5,.375M.375,0L.625,.25'))
+          end
         end
       when ACTION_OPTION_OPTIONS
         case option
@@ -359,8 +368,12 @@ module Ladb::OpenCutList
 
       when ACTION_OPTION_GROOVE
         case option
-        when ACTION_OPTION_GROOVE_DEPTH, ACTION_OPTION_GROOVE_SETBACK, ACTION_OPTION_GROOVE_THROUGH
+        when ACTION_OPTION_GROOVE_DEPTH, ACTION_OPTION_GROOVE_THROUGH
+          # Against the protrusions, the panel is let into the parts standing proud of its mouth
           return fetch_action_option_boolean(action, ACTION_OPTION_OVERLAY, ACTION_OPTION_OVERLAY_FULL_OVERLAY)
+        when ACTION_OPTION_GROOVE_SETBACK
+          return fetch_action_option_boolean(action, ACTION_OPTION_OVERLAY, ACTION_OPTION_OVERLAY_FULL_OVERLAY) ||
+                 fetch_action_option_boolean(action, ACTION_OPTION_OVERLAY, ACTION_OPTION_OVERLAY_AGAINST_PROTRUSIONS)
         end
       when ACTION_OPTION_ANCHOR
         case option
@@ -4369,6 +4382,20 @@ module Ladb::OpenCutList
     # the compartment, not the panel closing it.
     OPENING_CLOSED_MIN_COVERAGE = 0.5
 
+    # The least area (square inches) of a part's footprint a panel in
+    # applique has to cover for that part to lift it - see #_get_overlay_lift.
+    # A strip a tenth of an inch long and a tolerance wide : what a part merely
+    # BUTTING on the contour scores is orders of magnitude under it, what a
+    # covered stile scores orders of magnitude over.
+    OVERLAY_LIFT_MIN_COVERED_AREA = SolidMeshDef::TOLERANCE * MERGE_MIN_SHARED_BORDER
+
+    # How far proud of its mouth a part has to stand for a panel in applique
+    # AGAINST THE PROTRUSIONS to stop against it rather than lie on it - see
+    # #_cut_protrusions. A tenth of a millimetre : over the hair the hull is
+    # eroded by, which leaves every part around a flush mouth that much proud
+    # of it, and under anything drawn on purpose.
+    OVERLAY_PROTRUSION_MIN_HEIGHT = SolidMeshDef::TOLERANCE * 4
+
     # Below this norm the picked face's normal, projected on the opening
     # plane, is no direction at all : the face is nearly PARALLEL to the
     # opening and says nothing about where the panels should meet. Both
@@ -4681,13 +4708,7 @@ module Ladb::OpenCutList
       # The lock holds an axis of the frame the option just changed : it no
       # longer stands for the one the user pointed at.
       @locked_direction = nil if option_group == SmartBuildTool::ACTION_OPTION_AXES
-      # OVERLAY is folded into #_cavities_reduce_envelope? itself (an applied
-      # panel never wants a receded mouth - see there), so flipping it can
-      # change what the cavities compute to just as much as the option does.
-      if option_group == SmartBuildTool::ACTION_OPTION_OVERLAY ||
-         (option_group == SmartBuildTool::ACTION_OPTION_OPTIONS && option == SmartBuildTool::ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE)
-        _reset_cavities_def
-      end
+      _reset_cavities_def if option_group == SmartBuildTool::ACTION_OPTION_OPTIONS && option == SmartBuildTool::ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE
       _refresh_pick_material_btn if option_group == SmartBuildTool::ACTION_OPTION_OPTIONS && option == SmartBuildTool::ACTION_OPTION_OPTIONS_PICK_MATERIAL
       _refresh
     end
@@ -4898,8 +4919,20 @@ module Ladb::OpenCutList
       @tool.fetch_action_option_length(@action, SmartBuildTool::ACTION_OPTION_THICKNESS, SmartBuildTool::ACTION_OPTION_THICKNESS_THICKNESS)
     end
 
+    # Whether the panel is laid in APPLIQUE - in front of the mouth, sharing
+    # out the container's front - whichever of the two applied poses : the
+    # plain one, or the one stopped against what stands proud of the mouth
+    # (see #_fetch_option_overlay_against_protrusions?).
     def _fetch_option_overlay_full_overlay?
-      @tool.fetch_action_option_boolean(@action, SmartBuildTool::ACTION_OPTION_OVERLAY, SmartBuildTool::ACTION_OPTION_OVERLAY_FULL_OVERLAY)
+      @tool.fetch_action_option_boolean(@action, SmartBuildTool::ACTION_OPTION_OVERLAY, SmartBuildTool::ACTION_OPTION_OVERLAY_FULL_OVERLAY) ||
+        _fetch_option_overlay_against_protrusions?
+    end
+
+    # Whether the panel in applique stops AGAINST the parts standing proud of
+    # its mouth instead of being lifted over them - see #_get_overlay_lift and
+    # #_cut_protrusions.
+    def _fetch_option_overlay_against_protrusions?
+      @tool.fetch_action_option_boolean(@action, SmartBuildTool::ACTION_OPTION_OVERLAY, SmartBuildTool::ACTION_OPTION_OVERLAY_AGAINST_PROTRUSIONS)
     end
 
     def _fetch_option_reuse_definition?
@@ -4957,18 +4990,23 @@ module Ladb::OpenCutList
     # compartment in the first place - with nothing left to select, there
     # would be no per-compartment panel to place.
     #
-    # OVERLAY is the exception, whatever the option says : an applied panel
-    # is read off the RECEDED mouth just the same (#_get_panel_nominal_points
-    # starts from opening_def.outer_loop before growing it), and everything
-    # #_get_overlay_points then builds - the frame the growth happens in, and
-    # the plane the panel is finally cut and placed on - inherits that same
-    # setback. The growth itself lands right, since #_compute_footprint_paths
-    # reads the UNREDUCED panels, but at the wrong depth : the panel ends up
-    # spanning the container's true outer silhouette - the untouched contour
-    # stiles included - while sitting flush with the recessed divider's edge,
-    # deep enough behind the case's own front to bury itself in the stiles'
-    # own material. INSET has no such trap : its panel IS the mouth, at
-    # whatever depth that mouth sits.
+    # OVERLAY included : an applied panel is read off the RECEDED mouth just
+    # the same, and its contour lands right - #_compute_footprint_paths reads
+    # the UNREDUCED panels, a projection blind to depth. Only its PLANE would
+    # not : flush with the recessed divider's edge, deep enough behind the
+    # case's own front to bury itself in the stiles' own material. It is
+    # lifted back onto that front instead - see #_get_overlay_lift.
+    #
+    # Turning the reduction off for an applied panel was the earlier answer,
+    # and a wrong one : it is not only the mouth a panel closes that recedes.
+    # Sides running past a case's top, bottom and dividers at the REAR leave
+    # a slab between them the unreduced hull fills, every compartment opens
+    # onto it, and they all come out as one cavity open on four planes - no
+    # compartment at all (see #_cavities_max_opening_planes).
+    def _cavities_reduce_envelope?
+      _fetch_option_reduce_envelope?
+    end
+
     # TWO at most : a front and a back, the mouth a panel closes and the one
     # facing it. A cavity open on a third side is not a compartment a front or
     # a back closes - the notch a U shaped carcass leaves between its legs,
@@ -4990,12 +5028,14 @@ module Ladb::OpenCutList
     # slanted hull cap all keep their front and their back - and a top made
     # of two rails, open between them, keeps its front, the front rail
     # standing between the two mouths.
+    #
+    # Asked to stand apart, the openings are held to the budget above only
+    # when some of them meet : the gap between those two rails, apart from
+    # the front AND the back, is a hole in the top, and the front and the back
+    # it opens between are still a compartment's - see
+    # CommonSolidFindCavitiesWorker, opening filter.
     def _cavities_apart_opening_planes?
       true
-    end
-
-    def _cavities_reduce_envelope?
-      _fetch_option_reduce_envelope? && !_fetch_option_overlay_full_overlay?
     end
 
     # The OTHER kind of panel, never its own - see DefinitionAttributes.
@@ -5070,7 +5110,7 @@ module Ladb::OpenCutList
       bounds = panel.definition.bounds
       z_min, z_max = _z_range((0..7).flat_map { |corner| bounds.corner(corner).to_a }, ti * PathUtils.get_transformation(picked_face_path[0..index], IDENTITY))
 
-      _panel_fills_mouth?(z_min, z_max, _z_range(fragment_def.vertices, ti).first)
+      _panel_fills_mouth?(z_min, z_max, _z_range(fragment_def.vertices, ti).first) { _get_mouth_overlay_lift(fragment_def, opening_def, ti) }
     end
 
     # Whether a panel reaching [ z_min, z_max ] along an opening's normal - in
@@ -5085,9 +5125,18 @@ module Ladb::OpenCutList
     # compartment closed at the far end by one of them still reads open right
     # through, its far end is that other mouth, and the panel filling it stands
     # INSIDE the cavity's depth.
+    #
+    # In front of the mouth means in front of where a panel in applique
+    # closing it would stand : the mouth itself on a flush front, the front
+    # it was pulled back from on a receded one (see #_get_overlay_lift) -
+    # that lift, the block answers. Asked only of a panel standing proud of
+    # the mouth, which takes Clipper to read.
     def _panel_fills_mouth?(z_min, z_max, cavity_z_min)
-      return false if z_min >= SolidMeshDef::TOLERANCE   # In front of the mouth : laid OVER it, not IN it
-      (z_min + z_max) / 2.0 > cavity_z_min / 2.0          # Nearer this mouth than the far end
+      if z_min >= SolidMeshDef::TOLERANCE
+        lift = block_given? ? yield : 0
+        return false if z_min >= lift + SolidMeshDef::TOLERANCE   # In front of the mouth : laid OVER it, not IN it
+      end
+      (z_min + z_max) / 2.0 > cavity_z_min / 2.0                  # Nearer this mouth than the far end
     end
 
     # Whether the pick is read THROUGH the panels standing in the way - see
@@ -5226,9 +5275,10 @@ module Ladb::OpenCutList
       return false if mouth_area <= 0
 
       cavity_z_min = _z_range(fragment_def.vertices, ti).first
+      lift = nil
 
       paths = own_panel_drawing_defs.flat_map { |drawing_def|
-        next [] unless _panel_fills_mouth?(*_drawing_def_z_range(drawing_def, ti), cavity_z_min)
+        next [] unless _panel_fills_mouth?(*_drawing_def_z_range(drawing_def, ti), cavity_z_min) { lift ||= _get_mouth_overlay_lift(fragment_def, opening_def, ti) }
         _get_panel_footprint_paths(drawing_def, opening_def, ti) || []
       }
       return false if paths.empty?
@@ -5395,6 +5445,7 @@ module Ladb::OpenCutList
       mouth_points = mouth.map { |point| point.transform(ti) }
 
       points = _fetch_option_overlay_full_overlay? ? _get_overlay_points(fragment_def, opening_def, mouth_points, ti) : mouth_points
+      points = _cut_protrusions(points, [ Fiddle::Clippy.points_to_rpath(mouth_points) ], opening_def, ti) if _fetch_option_overlay_full_overlay?
       return nil if points.nil? || points.length < 3
 
       _grow_nominal_points(points, opening_def, ti)
@@ -5425,6 +5476,110 @@ module Ladb::OpenCutList
     # the mirror test all read it the same.
     def _panel_outline_offset(opening_def)
       0
+    end
+
+    # How far IN FRONT of its mouth a panel covering +points+ - a contour of
+    # the opening's frame - lands, along the opening's outward normal : on
+    # the foremost face of the parts it covers. Never below zero.
+    #
+    # Zero, to the hair the hull is eroded by, on a mouth flush with the
+    # case's front. Not on one the envelope reduction pulled back behind a
+    # recessed divider or shelf (see #_cavities_reduce_envelope?) : that mouth
+    # lies on the recessed chant, and the stiles and rails around it - the
+    # ones a panel in applique covers - stand proud of it.
+    #
+    # Read on the parts whose FOOTPRINT the contour covers rather than on the
+    # whole container : a plinth or a cornice standing proud elsewhere on the
+    # plane is no reason to push the panel off the front it closes. A part
+    # covered whole - a back, the far side of a shelf - reaches no further
+    # forward than the front itself, and the foremost one wins anyway.
+    #
+    # AGAINST THE PROTRUSIONS (+against+), the parts standing proud of the
+    # mouth are not climbed over but stopped against (see #_cut_protrusions) :
+    # the panel stays on the mouth, on the parts flush with it - which leaves
+    # it no lift at all but the hull's hair.
+    def _get_overlay_lift(opening_def, points, ti, against = _fetch_option_overlay_against_protrusions?)
+      z_maxes = _get_covered_drawing_defs(opening_def, points, ti).map(&:last)
+      z_maxes = z_maxes.select { |z_max| z_max <= OVERLAY_PROTRUSION_MIN_HEIGHT } if against
+      [ z_maxes.max || 0.0, 0.0 ].max
+    end
+
+    # The parts of the container a panel covering +points+ - a contour of the
+    # opening's frame - lies over, as [ drawing_def, how far forward it reaches
+    # along the opening's normal ] : the ones whose footprint it covers over
+    # OVERLAY_LIFT_MIN_COVERED_AREA at least, a part merely butting on it
+    # being none of them.
+    def _get_covered_drawing_defs(opening_def, points, ti)
+      return [] if points.nil? || points.length < 3
+      return [] unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef)
+
+      clips = [ Fiddle::Clippy.points_to_rpath(points) ]
+      cavities_def.drawing_defs.map { |drawing_def|
+        footprint_paths = _get_panel_footprint_paths(drawing_def, opening_def, ti)
+        next if footprint_paths.nil? || footprint_paths.empty?
+        covered_paths, _ = Fiddle::Clippy.execute_intersection(closed_subjects: footprint_paths, clips: clips)
+        covered_area = covered_paths.inject(0.0) { |sum, covered_path| sum + Fiddle::Clippy.get_rpath_area(covered_path).abs }
+        next unless covered_area > OVERLAY_LIFT_MIN_COVERED_AREA
+        [ drawing_def, _get_panel_z_max(drawing_def, opening_def, ti) ]
+      }.compact
+    end
+
+    # +points+ - the contour of a panel in applique, in the opening's frame -
+    # cut AGAINST THE PROTRUSIONS : every part it covers that stands proud of
+    # the mouth (by more than OVERLAY_PROTRUSION_MIN_HEIGHT) takes its whole
+    # footprint out of it, so that the panel, laid on the parts flush with
+    # the mouth, stops against those - the clearance then opening the gap
+    # (see #_apply_panel_clearance). Sides running past a case's recessed
+    # back : the back is laid on the top, the bottom and the dividers, and
+    # fitted between the sides. Unchanged in the plain applique pose, and
+    # wherever nothing stands proud.
+    #
+    # The piece kept is the one the MOUTHS - +mouth_paths+ - fall in. nil when
+    # nothing of the contour is left.
+    def _cut_protrusions(points, mouth_paths, opening_def, ti)
+      return points unless _fetch_option_overlay_against_protrusions?
+      return points if points.nil? || points.length < 3
+
+      clips = _get_covered_drawing_defs(opening_def, points, ti).select { |_drawing_def, z_max| z_max > OVERLAY_PROTRUSION_MIN_HEIGHT }.flat_map { |drawing_def, _z_max|
+        _get_panel_footprint_paths(drawing_def, opening_def, ti) || []
+      }
+      return points if clips.empty?
+
+      polytree = Fiddle::Clippy.execute_polytree(clip_type: Fiddle::Clippy::CLIP_TYPE_DIFFERENCE, closed_subjects: [ Fiddle::Clippy.points_to_rpath(points) ], clips: clips)
+      best_path = _best_overlapping_path(Fiddle::Clippy.polytree_to_polyshapes(polytree).map { |polyshape| polyshape.paths.first }, mouth_paths)
+      return nil if best_path.nil?
+
+      Fiddle::Clippy.rpath_to_points(best_path)
+    end
+
+    # How far forward ONE part of the container reaches along the opening's
+    # normal, in the opening's frame - off its mesh, which its bounds would
+    # overstate on a part turned askew.
+    #
+    # Cached like #_get_panel_footprint_paths, per part and per plane.
+    def _get_panel_z_max(drawing_def, opening_def, ti)
+      return 0.0 unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef)
+
+      unless @panel_z_max_cache.is_a?(Hash) && @panel_z_max_container_path == cavities_def.container_path
+        @panel_z_max_container_path = cavities_def.container_path
+        @panel_z_max_cache = {}
+      end
+
+      key = [ drawing_def.object_id, _opening_plane_key(opening_def) ]
+      return @panel_z_max_cache[key] if @panel_z_max_cache.has_key?(key)
+
+      @panel_z_max_cache[key] = _z_range(SolidMeshDef.from_drawing_def(drawing_def).vertices, ti).last
+    end
+
+    # How far in front of +opening_def+ - the cavity's own mouth - a panel in
+    # applique closing it stands : the lift of the share it is entitled to
+    # (see #_get_overlay_lift). What a panel already standing there is read
+    # against, whatever the pose being drawn : #_panel_fills_mouth?.
+    #
+    # Read in the plain applique pose whatever the one being drawn : the
+    # farthest forward a panel closing that mouth may stand.
+    def _get_mouth_overlay_lift(fragment_def, opening_def, ti)
+      _get_overlay_lift(opening_def, _get_cavity_share_points(fragment_def, opening_def, ti), ti, false)
     end
 
     # The outlines the panels are cut to - one list per band, ordered along
@@ -5463,8 +5618,11 @@ module Ladb::OpenCutList
       end
 
       # The panels stand back along the opening's INWARD normal, so the offset
-      # is taken the other way round.
+      # is taken the other way round. A panel in applique is lifted the other
+      # way, off a receded mouth onto the front it covers - read on the WHOLE
+      # contour, the panels of a count are one front and stay flush.
       offset = _panel_outline_offset(context.opening_def)
+      offset -= _get_overlay_lift(context.opening_def, context.points, context.transformation.inverse) if _fetch_option_overlay_full_overlay?
       normal = context.opening_def.normal
 
       bands.map { |pieces|
@@ -6232,8 +6390,9 @@ module Ladb::OpenCutList
     # the opening's frame - the neighbours a panel in applique has to share
     # the frame with.
     #
-    # Same plane AND same side : a cavity opening the other way sits behind
-    # the panel and is no neighbour of this panel.
+    # Same plane - at any offset along it, see #_get_opening_defs_on_plane -
+    # AND same side : a cavity opening the other way sits behind the panel and
+    # is no neighbour of this panel.
     #
     # A neighbour CLOSED on this very plane - a real panel standing where an
     # opening could have been, e.g. the fitted back of one compartment while
@@ -6272,12 +6431,21 @@ module Ladb::OpenCutList
     # most one on a given panel in all but the twisted cases, but nothing
     # says so : an L shaped compartment may well show two separate mouths on
     # the same front.
+    #
+    # At ANY offset for a panel in applique : one front closes them all, and
+    # the envelope reduction (see #_cavities_reduce_envelope?) pulls the mouth
+    # of a compartment walled off by a recessed divider back behind its
+    # neighbours'. Read at its own depth only, it would be no neighbour of
+    # theirs, nothing would share the front out between them, and each panel
+    # would spread over the others. The front is lifted back where it belongs
+    # anyway, see #_get_overlay_lift.
     def _get_opening_defs_on_plane(fragment_def, opening_def)
       normal = opening_def.normal
       origin = opening_def.origin
+      any_offset = _fetch_option_overlay_full_overlay?
       fragment_def.opening_defs.select { |other_opening_def|
         other_opening_def.normal.dot(normal) >= OPENING_PLANE_MIN_DOT &&
-        (other_opening_def.origin - origin).dot(normal).abs <= SolidMeshDef::TOLERANCE
+        (any_offset || (other_opening_def.origin - origin).dot(normal).abs <= SolidMeshDef::TOLERANCE)
       }
     end
 
@@ -6454,7 +6622,7 @@ module Ladb::OpenCutList
       # standing there, see #_opening_already_panelled?. The drag simply does
       # not take that cavity - the seed was refused for the same reason before
       # it ever opened.
-      return false if _opening_already_panelled?(fragment_def, own_opening_def, ti)
+      return false if _opening_already_panelled?(fragment_def, own_opening_def, _get_opening_transformation(own_opening_def).inverse)
 
       mouth_points = _get_cavity_mouth_points(fragment_def, @merge_context.opening_def, ti)
       return false if mouth_points.nil? || mouth_points.length < 3
@@ -6500,7 +6668,10 @@ module Ladb::OpenCutList
     # piece of it left behind the panel is dropped (see #_drop_offcuts!), which
     # is exactly a divider stopped short of the panel.
     def _merge_nominal_points(share_paths, mouth_paths, opening_def, ti)
-      return _merge_points(share_paths) if _fetch_option_overlay_full_overlay?
+      if _fetch_option_overlay_full_overlay?
+        points = _cut_protrusions(_merge_points(share_paths), mouth_paths, opening_def, ti)
+        return points.nil? ? nil : _grow_nominal_points(points, opening_def, ti)
+      end
 
       crossed_paths = _get_crossed_drawing_defs(share_paths, opening_def, ti).flat_map { |drawing_def| _get_panel_footprint_paths(drawing_def, opening_def, ti) }
       points = _merge_points(mouth_paths + crossed_paths)
@@ -6970,6 +7141,13 @@ module Ladb::OpenCutList
     # whole operation, which is the only safe outcome once the model has been
     # touched.
     def _prepare_panels!(panel_defs)
+      @protrusion_cut = _compute_protrusion_cut(panel_defs)
+      _prepare_panels_cut!(panel_defs)
+    ensure
+      @protrusion_cut = nil
+    end
+
+    def _prepare_panels_cut!(panel_defs)
       container_path = panel_defs.first.container_path.dup
       opening_def = panel_defs.first.opening_def
 
@@ -7132,7 +7310,7 @@ module Ladb::OpenCutList
     # That second test is what keeps the list tight, and it matters - the
     # worker rebuilds every src it is given, changed by the operation or not.
     def _cut_host_defs(panel_defs, extension_defs)
-      return [] if _fetch_option_overlay_full_overlay?
+      return [] if _fetch_option_overlay_full_overlay? && @protrusion_cut.nil?
       return [] unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef) && cavities_def.valid?
 
       opening_def = panel_defs.first.opening_def
@@ -7402,6 +7580,8 @@ module Ladb::OpenCutList
     #
     # Answers nil when there is no contour to cut with.
     def _cut_contour_paths(opening_def, ti, extension_paths = [])
+      return @protrusion_cut[:paths] unless @protrusion_cut.nil?
+
       mouth_paths = _cut_mouth_paths(opening_def, ti)
       return nil if mouth_paths.nil?
 
@@ -7493,6 +7673,14 @@ module Ladb::OpenCutList
       []
     end
 
+    # The cut of a panel in applique AGAINST THE PROTRUSIONS let into them,
+    # as { paths:, slot: } - what #_cut_contour_paths and #_cut_slot_range
+    # answer while #_prepare_panels! runs. nil here : only a handler that
+    # grooves lets a panel into anything (see SmartBuildBackPanelActionHandler).
+    def _compute_protrusion_cut(panel_defs)
+      nil
+    end
+
     # The slot the panel occupies along the opening's normal : it stands back
     # by the setback and runs inwards by its thickness. [ z_low, z_high ], or
     # nil when there is no slot to speak of.
@@ -7502,6 +7690,8 @@ module Ladb::OpenCutList
     # there, so keeping the cut inside its host is work the operation already
     # does, and does in 3D rather than on a projection.
     def _cut_slot_range(opening_def)
+      return @protrusion_cut[:slot] unless @protrusion_cut.nil?
+
       thickness = _fetch_option_thickness
       return nil if thickness.nil? || thickness <= 0
       setback = _panel_outline_offset(opening_def).to_f
@@ -7920,7 +8110,7 @@ module Ladb::OpenCutList
     end
 
     def _fetch_option_mirror?
-      @tool.fetch_action_option_boolean(@action, SmartBuildTool::ACTION_OPTION_OPTIONS, SmartBuildTool::ACTION_OPTION_OPTIONS_MIRROR)
+      @tool.fetch_action_option_boolean(@action, SmartBuildTool::ACTION_OPTION_OPTIONS, SmartBuildTool::ACTION_OPTION_OPTIONS_MIRROR) && !@tool.get_action_option_btn_disabled?(@action, SmartBuildTool::ACTION_OPTION_OPTIONS, SmartBuildTool::ACTION_OPTION_OPTIONS_MIRROR)
     end
 
     # -----
@@ -8200,6 +8390,7 @@ module Ladb::OpenCutList
     # the contour that will be cut, and #_prepare_panels! finds no host to
     # groove on that edge, which is exactly right.
     def _grow_nominal_points(points, opening_def, ti)
+      return _grow_into_protrusions(points, opening_def, ti) if _fetch_option_overlay_against_protrusions?
       return points if _fetch_option_overlay_full_overlay?
 
       depth = _fetch_option_groove_depth
@@ -8226,12 +8417,41 @@ module Ladb::OpenCutList
       best_path.nil? ? nil : Fiddle::Clippy.rpath_to_points(best_path)
     end
 
+    # The contour of a back in applique AGAINST THE PROTRUSIONS (see
+    # #_cut_protrusions) grown by the groove depth INTO THE PROTRUSIONS ONLY :
+    # it is laid on the parts flush with its mouth, which leave it nothing to
+    # run into, and stops against the ones standing proud - which it is let
+    # into instead. Square to each edge a protrusion borders, and along that
+    # edge only (see #_protrusion_edge_bands) : a side running on past the
+    # panel's end, on to a foot, does not grow it a tab at the corner.
+    # Unchanged without a depth, or with nothing standing proud.
+    def _grow_into_protrusions(points, opening_def, ti)
+      depth = _fetch_option_groove_depth
+      return points if depth.nil? || depth <= 0
+
+      # The union normalizes the winding
+      paths, _ = Fiddle::Clippy.execute_union(closed_subjects: [ Fiddle::Clippy.points_to_rpath(points) ])
+      return points if paths.empty?
+
+      # Grown, only to reach the protrusions it stops against
+      reach_paths = Fiddle::Clippy.inflate_paths(paths: paths, delta: depth.to_f, join_type: Fiddle::Clippy::JOIN_TYPE_MITER, miter_limit: 100.0)
+      protrusions = _get_protrusion_footprints(opening_def, reach_paths, ti)
+      return points if protrusions.empty?
+
+      bands = _protrusion_edge_bands(paths, protrusions, depth.to_f, :panel)
+      return points if bands.empty?
+
+      united_paths, _ = Fiddle::Clippy.execute_union(closed_subjects: paths + bands)
+      best_path = _best_overlapping_path(united_paths, paths)
+      best_path.nil? ? points : Fiddle::Clippy.rpath_to_points(best_path)
+    end
+
     # The GROOVE DEPTH : how far the panel runs into the parts around its
     # mouth, and so exactly how much of them the cut has to take. The same
     # number #_grow_nominal_points grows the PANEL by - the panel and its
     # groove are one shape, read once.
     def _cut_growth_delta
-      return 0 if _fetch_option_overlay_full_overlay?
+      return 0 if _fetch_option_overlay_full_overlay? && !_fetch_option_overlay_against_protrusions?
       depth = _fetch_option_groove_depth
       depth.nil? ? 0 : depth
     end
@@ -8269,7 +8489,144 @@ module Ladb::OpenCutList
     # across the groove instead of opening it. The neighbour is not cut by it :
     # the host is cut in a pass of its own (see #_subtract_panel_cut! and
     # #_cut_pass_groups).
+    # The cut of a back in applique AGAINST THE PROTRUSIONS let into them -
+    # see #_cut_protrusions and #_grow_into_protrusions : { paths:, slot: }.
+    # nil in any other pose, or when nothing is let in.
+    #
+    # Read off the PANELS rather than off the mouths : the panel is laid on the
+    # parts flush with the mouth, and runs on over them to its share of the
+    # front - the whole length of a side running past them, where the mouth
+    # stops a rail's thickness short at each end.
+    #
+    # The contour is the panel's, short of the protrusions, grown by the depth
+    # in every direction as #_cut_contour_paths grows a mouth - its growth
+    # cleared off the protrusions by THROUGH_GROOVE_SPILL - plus the groove
+    # itself in each protrusion, square to the edges it borders (see
+    # #_protrusion_edge_bands). Wherever the growth lands on anything but a
+    # protrusion, there is nothing in the slot to cut ; and no side of the cut
+    # lies in the plane of a protrusion's face, the tie Meshy resolves into a
+    # membrane (see THROUGH_GROOVE_SPILL).
+    #
+    # The slot is where the panel really stands : its LIFT off the mouth (see
+    # #_get_overlay_lift), read off the outlines as built, then its thickness
+    # outwards. A part flush with the mouth reaches the bottom of it and no
+    # further, so that only the protrusions stand in it (see
+    # #_cut_slot_drawing_defs).
+    def _compute_protrusion_cut(panel_defs)
+      return nil unless _fetch_option_overlay_against_protrusions?
+      depth = _cut_growth_delta
+      return nil if depth.nil? || depth <= 0
+      thickness = _fetch_option_thickness
+      return nil if thickness.nil? || thickness <= 0
+
+      panel_def = panel_defs.first
+      opening_def = panel_def.opening_def
+      t = _get_opening_transformation(opening_def)
+      ti = t.inverse
+
+      outline_paths, _ = Fiddle::Clippy.execute_union(closed_subjects: panel_defs.map { |other_panel_def| Fiddle::Clippy.points_to_rpath(other_panel_def.plane_outline) })
+      return nil if outline_paths.empty?
+
+      protrusions = _get_protrusion_footprints(opening_def, outline_paths, ti)
+      return nil if protrusions.empty?
+
+      base_paths, _ = Fiddle::Clippy.execute_difference(closed_subjects: outline_paths, clips: protrusions.flatten(1))
+      return nil if base_paths.empty?
+
+      grown_paths = Fiddle::Clippy.inflate_paths(paths: base_paths, delta: depth.to_f, join_type: Fiddle::Clippy::JOIN_TYPE_MITER, miter_limit: 100.0)
+      spilled_paths = Fiddle::Clippy.inflate_paths(paths: protrusions.flatten(1), delta: THROUGH_GROOVE_SPILL, join_type: Fiddle::Clippy::JOIN_TYPE_MITER, miter_limit: 100.0)
+      clear_paths, _ = Fiddle::Clippy.execute_difference(closed_subjects: grown_paths, clips: spilled_paths)
+
+      bands = _protrusion_edge_bands(base_paths, protrusions, depth.to_f, _fetch_option_groove_through? ? :through : :cut)
+      cut_paths, _ = Fiddle::Clippy.execute_union(closed_subjects: clear_paths + bands)
+      return nil if cut_paths.empty?
+
+      lift = (panel_def.outline.first - panel_def.plane_outline.first.transform(t)).dot(opening_def.normal).to_f
+
+      { :paths => _weld_rpaths(cut_paths), :slot => [ lift, lift + thickness.to_f ] }
+    end
+
+    # The footprints of the parts +paths+ - contours of the opening's frame -
+    # cover and that stand PROUD of the mouth (see #_cut_protrusions), one list
+    # of paths per part.
+    def _get_protrusion_footprints(opening_def, paths, ti)
+      drawing_defs = paths.flat_map { |path|
+        _get_covered_drawing_defs(opening_def, Fiddle::Clippy.rpath_to_points(path), ti).select { |_drawing_def, z_max| z_max > OVERLAY_PROTRUSION_MIN_HEIGHT }.map(&:first)
+      }.uniq(&:object_id)
+      drawing_defs.map { |drawing_def| _get_panel_footprint_paths(drawing_def, opening_def, ti) || [] }.reject(&:empty?)
+    end
+
+    # The GROOVE along every edge of +base_paths+ - the panel's contour short of
+    # the protrusions - that one of +protrusions+ (each the list of its
+    # footprint paths) borders, as one rectangle per edge, +depth+ deep into
+    # that protrusion, square to the edge :
+    #
+    #   :panel   - the edge's own length : what the panel grows by.
+    #   :cut     - the same, run on over the protrusion's FACE by
+    #              THROUGH_GROOVE_SPILL, and over its END by as much wherever
+    #              it ends with the edge : no side of the cut lies in the plane
+    #              of one of its faces. A protrusion running on past the edge -
+    #              a side on to a foot - keeps a groove that stops there.
+    #   :through - run on far beyond both ends, and kept within the protrusion
+    #              grown by THROUGH_GROOVE_SPILL : the groove runs out at the
+    #              protrusion's own ends, the way it is cut on a table saw.
+    #
+    # An edge BORDERS a protrusion when the rectangle on one side of it
+    # overlaps it over half its area or more. One merely touching it, end on
+    # or at a corner, overlaps it over nothing.
+    def _protrusion_edge_bands(base_paths, protrusions, depth, mode)
+      reach = _paths_reach(base_paths + protrusions.flatten(1))
+      spill = THROUGH_GROOVE_SPILL
+      fn_area = lambda { |subject_path, clip_paths|
+        overlap_paths, _ = Fiddle::Clippy.execute_intersection(closed_subjects: [ subject_path ], clips: clip_paths)
+        overlap_paths.inject(0.0) { |sum, path| sum + Fiddle::Clippy.get_rpath_area(path).abs }
+      }
+
+      bands = []
+      protrusions.each do |footprint_paths|
+        spilled_paths = nil
+        base_paths.each do |base_path|
+          coords = base_path.each_slice(2).map { |x, y| [ x.to_f, y.to_f ] }
+          coords.each_with_index do |(ax, ay), index|
+            bx, by = coords[(index + 1) % coords.length]
+            length = Math.sqrt((bx - ax) ** 2 + (by - ay) ** 2)
+            next if length <= SolidMeshDef::TOLERANCE
+            ux, uy = (bx - ax) / length, (by - ay) / length
+
+            # [ along, across ] -> [ x, y ], across towards the protrusion
+            mx, my = nil, nil
+            fn_rect = lambda { |along0, along1, across0, across1|
+              [ [ along0, across0 ], [ along1, across0 ], [ along1, across1 ], [ along0, across1 ] ].flat_map { |along, across|
+                [ ax + ux * along + mx * across, ay + uy * along + my * across ]
+              }
+            }
+            [ [ -uy, ux ], [ uy, -ux ] ].each do |nx, ny|
+              mx, my = nx, ny
+              break if fn_area.call(fn_rect.call(0.0, length, 0.0, depth), footprint_paths) >= depth * length * 0.5
+              mx, my = nil, nil
+            end
+            next if mx.nil?
+
+            case mode
+            when :panel
+              bands << fn_rect.call(0.0, length, 0.0, depth)
+            when :cut
+              # Run on over the protrusion's end only where it ends with the edge
+              fn_ends = lambda { |along| fn_area.call(fn_rect.call(along - spill / 2.0, along + spill / 2.0, depth / 2.0 - spill / 2.0, depth / 2.0 + spill / 2.0), footprint_paths) <= 0.0 }
+              bands << fn_rect.call(fn_ends.call(-spill * 2.0) ? -spill : 0.0, fn_ends.call(length + spill * 2.0) ? length + spill : length, -spill, depth)
+            when :through
+              spilled_paths ||= Fiddle::Clippy.inflate_paths(paths: footprint_paths, delta: spill, join_type: Fiddle::Clippy::JOIN_TYPE_MITER, miter_limit: 100.0)
+              band_paths, _ = Fiddle::Clippy.execute_intersection(closed_subjects: [ fn_rect.call(-reach, length + reach, -spill, depth) ], clips: spilled_paths)
+              bands.concat(band_paths)
+            end
+          end
+        end
+      end
+      bands
+    end
+
     def _cut_extension_defs(opening_def, ti)
+      return [] if _fetch_option_overlay_full_overlay?   # Laid on the carcass, see #_compute_protrusion_cut instead
       return [] unless _fetch_option_groove_through?
       delta = _cut_growth_delta
       return [] if delta.nil? || delta <= 0
