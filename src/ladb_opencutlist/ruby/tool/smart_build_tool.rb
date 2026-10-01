@@ -2545,7 +2545,7 @@ module Ladb::OpenCutList
     # own axes rather than on the model's. Falls back to the active frame
     # while no part is picked yet, there being no container to read.
     def _get_edit_transformation
-      if _fetch_option_axes_context? && (part_entity_path = get_active_part_entity_path).is_a?(Array) && part_entity_path.length > 1
+      if _fetch_option_axes_context? && (part_entity_path = _get_cavities_part_entity_path).is_a?(Array) && part_entity_path.length > 1
         return PathUtils.get_transformation(part_entity_path[0...-1], IDENTITY)
       end
       super
@@ -5282,6 +5282,14 @@ module Ladb::OpenCutList
         _get_panel_footprint_paths(drawing_def, opening_def, ti) || []
       }
       return false if paths.empty?
+
+      # The HOLES dropped : a door whose middle is still empty - the frame
+      # of a glazed door, its stiles and rails read part by part - closes its
+      # mouth all the same.
+      paths, _ = Fiddle::Clippy.execute_union(closed_subjects: paths)
+      return false if paths.empty?
+      outer_positive = Fiddle::Clippy.is_rpath_positive?(paths.max_by { |path| Fiddle::Clippy.get_rpath_area(path).abs })
+      paths = paths.select { |path| Fiddle::Clippy.is_rpath_positive?(path) == outer_positive }
 
       covered_paths, _ = Fiddle::Clippy.execute_intersection(closed_subjects: paths, clips: [ mouth_path ])
       covered_area = covered_paths.inject(0.0) { |sum, covered_path| sum + Fiddle::Clippy.get_rpath_area(covered_path).abs }

@@ -34,6 +34,7 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ### 2026-09-xx
  * Added hinges on frame doors (several parts held by a front panel group or component) in Smart Join Tool and Smart Handle Interact
+ * Fixed Smart Build Divider, Front Panel and Back Panel tools through a front or back panel made of several parts (frame doors), and a second front or back panel no longer offered on an opening already closed by one
 ### 2026-09-30
  * Adding abstraction and inheritance for hardware descriptors.
  * Improved cavities detection and mouth panels tools

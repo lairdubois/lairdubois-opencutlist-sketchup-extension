@@ -1,6 +1,8 @@
 module Ladb::OpenCutList
 
   require_relative '../model/attributes/definition_attributes'
+  require_relative '../model/attributes/material_attributes'
+  require_relative 'material_attributes_caching_helper'
   require_relative '../model/solid/cavities_def'
   require_relative '../utils/hash_utils'
   require_relative '../worker/common/common_drawing_decomposition_worker'
@@ -19,6 +21,8 @@ module Ladb::OpenCutList
   # model may have changed under it. The _cavities_* hooks say how it reads
   # a container.
   module SmartActionHandlerCavitiesHelper
+
+    include MaterialAttributesCachingHelper
 
     # How many containers #_get_cavities_def keeps the cavities of at once.
     CAVITIES_CACHE_SIZE = 16
@@ -175,7 +179,18 @@ module Ladb::OpenCutList
     # than itself says so here : the door a stile belongs to, see
     # SmartJoinAddHingesActionHandler.
     def _get_cavities_part_entity_path
-      get_active_part_entity_path
+      _get_cavities_entity_path(get_active_part_entity_path)
+    end
+
+    # The given part path cut at the OUTERMOST applied panel it runs through
+    # (see DefinitionAttributes::ROLES_APPLIED_PANEL) - unchanged when there
+    # is none. A part of an applied panel made of several - the stile of a
+    # frame door - has the panel's assembly for container, which holds no
+    # cavity : the compartments are the carcass', the panel's own container.
+    def _get_cavities_entity_path(part_entity_path)
+      return part_entity_path unless part_entity_path.is_a?(Array)
+      return part_entity_path if (index = part_entity_path.index { |entity| DefinitionAttributes.applied_panel_role?(DefinitionAttributes.role_of(entity)) }).nil?
+      part_entity_path[0..index]
     end
 
     # The cavities of the given part's container - by default the ACTIVE
@@ -183,6 +198,7 @@ module Ladb::OpenCutList
     # exist for #_can_activate_part?, which runs BEFORE the part it examines
     # is activated and so cannot rely on the active one.
     def _get_cavities_def(part_entity_path = _get_cavities_part_entity_path, part = get_active_part)
+      part_entity_path = _get_cavities_entity_path(part_entity_path)
       return nil unless part_entity_path.is_a?(Array) && part_entity_path.length > 1
 
       container_path = part_entity_path[0...-1]
@@ -279,9 +295,9 @@ module Ladb::OpenCutList
       unless recess_panel_types.empty? && own_panel_types.empty?
         _fetch_applied_panel_entity_paths(container, container_path, recess_panel_types + own_panel_types).each do |entity_path|
           role = DefinitionAttributes.role_of(entity_path.last)
-          drawing_def = _decompose_cavity_panel(entity_path, true)
-          front_panel_drawing_defs << drawing_def if recess_panel_types.include?(role)
-          own_panel_drawing_defs << drawing_def if own_panel_types.include?(role)
+          panel_drawing_defs = _decompose_applied_panel(entity_path)
+          front_panel_drawing_defs.concat(panel_drawing_defs) if recess_panel_types.include?(role)
+          own_panel_drawing_defs.concat(panel_drawing_defs) if own_panel_types.include?(role)
         end
       end
 
@@ -326,6 +342,42 @@ module Ladb::OpenCutList
       ).run
     end
 
+    # An applied panel, the way #_get_cavities_def reads it : one drawing def
+    # per PART it is made of. A panel holding faces of its own is one part ;
+    # an ASSEMBLY - the stiles and rails of a frame door, held by a front
+    # panel group or component - is read part by part, the decomposition
+    # stopping at the components a part holds (its hardware, its hinges) and
+    # so handing back nothing for the assembly itself.
+    def _decompose_applied_panel(entity_path)
+      _get_applied_panel_part_entity_paths(entity_path).map { |part_entity_path| _decompose_cavity_panel(part_entity_path, true) }
+    end
+
+    # The paths of the parts the given applied panel is made of : itself when
+    # it holds faces, else the components it holds - through the groups it
+    # holds too, as the cutlist reads them. Neither what is laid in them -
+    # hardware, machinings, hinges - nor an applied panel held inside : a
+    # panel inside a panel is none.
+    def _get_applied_panel_part_entity_paths(entity_path)
+      return [ entity_path ] if entity_path.last.definition.entities.any? { |entity| entity.is_a?(Sketchup::Face) }
+      fn_collect = lambda { |path, paths|
+        path.last.definition.entities.each do |entity|
+          next unless entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance)
+          next if entity.definition.behavior.always_face_camera? || entity.definition.behavior.cuts_opening?
+          role = DefinitionAttributes.role_of(entity)
+          next if role == DefinitionAttributes::ROLE_HINGE || DefinitionAttributes.applied_panel_role?(role)
+          type = _get_material_attributes(entity.material).type
+          next if type == MaterialAttributes::TYPE_MACHINING || type == MaterialAttributes::TYPE_HARDWARE
+          if entity.is_a?(Sketchup::ComponentInstance) || entity.definition.entities.any? { |child| child.is_a?(Sketchup::Face) }
+            paths << path + [ entity ]
+          else
+            fn_collect.call(path + [ entity ], paths)
+          end
+        end
+        paths
+      }
+      fn_collect.call(entity_path, [])
+    end
+
     # Reads again, for every container kept, the applied panels of the
     # handler's OWN kinds (see #_cavities_own_panel_types) - and only them.
     #
@@ -341,7 +393,7 @@ module Ladb::OpenCutList
       @cavities_defs.each do |cavities_def|
         next unless cavities_def.valid?
         container_path = cavities_def.container_path
-        cavities_def.own_panel_drawing_defs = _fetch_applied_panel_entity_paths(container_path.last, container_path, own_panel_types).map { |entity_path| _decompose_cavity_panel(entity_path, true) }
+        cavities_def.own_panel_drawing_defs = _fetch_applied_panel_entity_paths(container_path.last, container_path, own_panel_types).flat_map { |entity_path| _decompose_applied_panel(entity_path) }
       end
     end
 
@@ -367,6 +419,7 @@ module Ladb::OpenCutList
     # dwell there (see #_schedule_cavities_def). Nothing can be said of a
     # position in them in the meantime, either way.
     def _cavities_pending?(part_entity_path = _get_cavities_part_entity_path)
+      part_entity_path = _get_cavities_entity_path(part_entity_path)
       !@cavities_dwell.nil? && part_entity_path.is_a?(Array) && @cavities_dwell.first == part_entity_path[0...-1]
     end
 

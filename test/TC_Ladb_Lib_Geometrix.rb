@@ -200,7 +200,7 @@ class TC_Ladb_Lib_Geometrix < TestUp::TestCase
     assert_curve(@loop_a.reverse, true, true, 3, false, false, 'loop_a.reverse')
     assert_curve(@loop_b, true, true, 3, false, false, 'loop_b')
     assert_curve(@loop_b.reverse, true, true, 3, false, false, 'loop_b.reverse')
-    assert_curve(@loop_c, true, true, 8, false, false, 'loop_c')
+    assert_curve(@loop_c, true, true, 7, false, false, 'loop_c')  # 8 until ellipse_include_point? epsilon went 1e-4 -> 1e-3 (2024-03-05) : the first 5 points of the big arc now fit an ellipse of their own
     assert_curve(@loop_d, true, true, nil, nil, nil, 'loop_d')  # This loop doesn't returns unique arc portion if starts at index 22
     assert_curve(@loop_e, true, true, nil, nil, nil, 'loop_e')
     assert_curve(@loop_f, true, true, 1, true, true, 'loop_f')

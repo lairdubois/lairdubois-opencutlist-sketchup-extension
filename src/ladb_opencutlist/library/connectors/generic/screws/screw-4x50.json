@@ -18,5 +18,5 @@
     },
     "b": { "machining": { "drillings": [ { "diameter": "@diameter", "depth": "through" } ] } }
   },
-  "options": { "height": "/2", "start_offset": "10mm", "end_offset": "10mm", "min_spacing": "0", "max_spacing": "300mm" }
+  "options": { "height": "/2", "start_offset": "37mm", "end_offset": "37mm", "min_spacing": "0", "max_spacing": "300mm" }
 }

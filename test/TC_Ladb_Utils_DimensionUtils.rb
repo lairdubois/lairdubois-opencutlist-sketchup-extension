@@ -22,6 +22,7 @@ class TC_Ladb_Utils_DimensionUtils < TestUp::TestCase
   def restore_options
     @units_options_provider['LengthUnit'] = @length_unit
     @units_options_provider['LengthPrecision'] = @length_precision
+    Ladb::OpenCutList::DimensionUtils.fetch_options
   end
 
   def test_str_add_units
@@ -69,8 +70,8 @@ class TC_Ladb_Utils_DimensionUtils < TestUp::TestCase
 
     # ...
 
+  ensure
     restore_options
-
   end
 
   def test_str_to_ifloat
@@ -81,76 +82,90 @@ class TC_Ladb_Utils_DimensionUtils < TestUp::TestCase
 
     @units_options_provider['LengthUnit'] = Length::Inches
     Ladb::OpenCutList::DimensionUtils.fetch_options
-    assert_equal_fn(fn, '3 /', '0')
-    assert_equal_fn(fn, '2/0', '0')
-    assert_equal_fn(fn, 'x', '0')
-    assert_equal_fn(fn, '0m', '0')
-    assert_equal_fn(fn, '-1', '0')
-    assert_equal_fn(fn, '-1m', '0')
-    assert_equal_fn(fn, '-1.0m', '0')
-    assert_equal_fn(fn, '1', '1' + @separator + '0"')
-    assert_equal_fn(fn, '--1', '1' + @separator + '0"')
-    assert_equal_fn(fn, '1.5', '1' + @separator + '5"')
-    assert_equal_fn(fn, '3 / 2 ', '1' + @separator + '5"')
-    assert_equal_fn(fn, '1 1/2', '1' + @separator + '5"')
-    assert_equal_fn(fn, '1\' 1"', '13' + @separator + '0"')
-    assert_equal_fn(fn, '1 \' 1 "', '13' + @separator + '0"')
-    assert_equal_fn(fn, '1.25\' 1"', '16' + @separator + '0"')
-    assert_equal_fn(fn, '1\' 3/4', '12' + @separator + '75"')
-    assert_equal_fn(fn, '1\' 1.75 \"', '13' + @separator + '75"')
-    assert_equal_fn(fn, '1\' 1 3/4', '13' + @separator + '75"')
-    assert_equal_fn(fn, '1.5 m', '59' + @separator + '05511811023622"')
-    assert_equal_fn(fn, '3/4 yd', '27' + @separator + '0"')
+    assert_ifloat_fn(fn, '3 /', '0')
+    assert_ifloat_fn(fn, '2/0', '0')
+    assert_ifloat_fn(fn, 'x', '0')
+    assert_ifloat_fn(fn, '0m', '0')
+    assert_ifloat_fn(fn, '-1', '0')
+    assert_ifloat_fn(fn, '-1m', '0')
+    assert_ifloat_fn(fn, '-1.0m', '0')
+    assert_ifloat_fn(fn, '1', '1' + @separator + '0"')
+    assert_ifloat_fn(fn, '--1', '1' + @separator + '0"')
+    assert_ifloat_fn(fn, '1.5', '1' + @separator + '5"')
+    assert_ifloat_fn(fn, '3 / 2 ', '1' + @separator + '5"')
+    assert_ifloat_fn(fn, '1 1/2', '1' + @separator + '5"')
+    assert_ifloat_fn(fn, '1\' 1"', '13' + @separator + '0"')
+    assert_ifloat_fn(fn, '1 \' 1 "', '13' + @separator + '0"')
+    assert_ifloat_fn(fn, '1.25\' 1"', '16' + @separator + '0"')
+    assert_ifloat_fn(fn, '1\' 3/4', '12' + @separator + '75"')
+    assert_ifloat_fn(fn, '1\' 1.75 \"', '13' + @separator + '75"')
+    assert_ifloat_fn(fn, '1\' 1 3/4', '13' + @separator + '75"')
+    assert_ifloat_fn(fn, '1.5 m', '59' + @separator + '05511811023622"')
+    assert_ifloat_fn(fn, '3/4 yd', '27' + @separator + '0"')
 
     @units_options_provider['LengthUnit'] = Length::Yard
     Ladb::OpenCutList::DimensionUtils.fetch_options
-    assert_equal_fn(fn, '1', '36' + @separator + '0"')
-    assert_equal_fn(fn, '1.5', '54' + @separator + '0"')
-    assert_equal_fn(fn, '1 1/2', '54' + @separator + '0"')
-    assert_equal_fn(fn, '2 yd', '72' + @separator + '0"')
-    assert_equal_fn(fn, '1m', '39' + @separator + '37007874015748"')
+    assert_ifloat_fn(fn, '1', '36' + @separator + '0"')
+    assert_ifloat_fn(fn, '1.5', '54' + @separator + '0"')
+    assert_ifloat_fn(fn, '1 1/2', '54' + @separator + '0"')
+    assert_ifloat_fn(fn, '2 yd', '72' + @separator + '0"')
+    assert_ifloat_fn(fn, '1m', '39' + @separator + '37007874015748"')
 
     @units_options_provider['LengthUnit'] = Length::Feet
     Ladb::OpenCutList::DimensionUtils.fetch_options
-    assert_equal_fn(fn, '1', '12' + @separator + '0"')
-    assert_equal_fn(fn, '1.5', '18' + @separator + '0"')
-    assert_equal_fn(fn, '1 1/2', '18' + @separator + '0"')
-    assert_equal_fn(fn, '2', '24' + @separator + '0"')
+    assert_ifloat_fn(fn, '1', '12' + @separator + '0"')
+    assert_ifloat_fn(fn, '1.5', '18' + @separator + '0"')
+    assert_ifloat_fn(fn, '1 1/2', '18' + @separator + '0"')
+    assert_ifloat_fn(fn, '2', '24' + @separator + '0"')
 
     @units_options_provider['LengthUnit'] = Length::Millimeter
     Ladb::OpenCutList::DimensionUtils.fetch_options
-    assert_equal_fn(fn, '1', '0' + @separator + '03937007874015748"')
-    assert_equal_fn(fn, '1.5', '0' + @separator + '05905511811023623"')
-    assert_equal_fn(fn, '1.5 mm', '0' + @separator + '05905511811023623"')
-    assert_equal_fn(fn, '1 1/2"', '1' + @separator + '5"')
-    assert_equal_fn(fn, '1 1/2mm', '0' + @separator + '05905511811023623"')
+    assert_ifloat_fn(fn, '1', '0' + @separator + '03937007874015748"')
+    assert_ifloat_fn(fn, '1.5', '0' + @separator + '05905511811023623"')
+    assert_ifloat_fn(fn, '1.5 mm', '0' + @separator + '05905511811023623"')
+    assert_ifloat_fn(fn, '1 1/2"', '1' + @separator + '5"')
+    assert_ifloat_fn(fn, '1 1/2mm', '0' + @separator + '05905511811023623"')
 
     @units_options_provider['LengthUnit'] = Length::Centimeter
     Ladb::OpenCutList::DimensionUtils.fetch_options
-    assert_equal_fn(fn, '1', '0' + @separator + '39370078740157477"')
-    assert_equal_fn(fn, '1.5', '0' + @separator + '5905511811023622"')
-    assert_equal_fn(fn, '1.5 m', '59' + @separator + '05511811023622"')
-    assert_equal_fn(fn, '3/2', '0' + @separator + '5905511811023622"')
-    assert_equal_fn(fn, '3/2m', '59' + @separator + '05511811023622"')
-    assert_equal_fn(fn, '3/2 mm', '0' + @separator + '05905511811023623"')
-    assert_equal_fn(fn, '1 "', '1' + @separator + '0"')
+    assert_ifloat_fn(fn, '1', '0' + @separator + '39370078740157477"')
+    assert_ifloat_fn(fn, '1.5', '0' + @separator + '5905511811023622"')
+    assert_ifloat_fn(fn, '1.5 m', '59' + @separator + '05511811023622"')
+    assert_ifloat_fn(fn, '3/2', '0' + @separator + '5905511811023622"')
+    assert_ifloat_fn(fn, '3/2m', '59' + @separator + '05511811023622"')
+    assert_ifloat_fn(fn, '3/2 mm', '0' + @separator + '05905511811023623"')
+    assert_ifloat_fn(fn, '1 "', '1' + @separator + '0"')
 
     @units_options_provider['LengthUnit'] = Length::Meter
     Ladb::OpenCutList::DimensionUtils.fetch_options
-    assert_equal_fn(fn, '1', '39' + @separator + '37007874015748"')
-    assert_equal_fn(fn, '1.5', '59' + @separator + '05511811023622"')
-    assert_equal_fn(fn, '3/2', '59' + @separator + '05511811023622"')
+    assert_ifloat_fn(fn, '1', '39' + @separator + '37007874015748"')
+    assert_ifloat_fn(fn, '1.5', '59' + @separator + '05511811023622"')
+    assert_ifloat_fn(fn, '3/2', '59' + @separator + '05511811023622"')
 
     # ...
 
+  ensure
     restore_options
-
   end
 
   private
 
   def assert_equal_fn(fn, input, expected)
     assert_equal(expected, Ladb::OpenCutList::DimensionUtils.send(fn, input))
+  end
+
+  # The inch float compared to a few ULPs : how String#to_l converts a metric
+  # length rounds the last digit differently across SketchUp versions
+  # (1.5 mm reads 0.05905511811023623" up to 2026, 0.05905511811023622" in 2027).
+  def assert_ifloat_fn(fn, input, expected)
+    actual = Ladb::OpenCutList::DimensionUtils.send(fn, input)
+    unless expected.end_with?('"') && actual.end_with?('"')
+      assert_equal(expected, actual, input)
+      return
+    end
+    expected_f = expected.chomp('"').tr(@separator, '.').to_f
+    actual_f = actual.chomp('"').tr(@separator, '.').to_f
+    assert_in_delta(expected_f, actual_f, expected_f.abs * 1e-14, "#{input} : #{expected} expected, #{actual} given")
   end
 
 end
