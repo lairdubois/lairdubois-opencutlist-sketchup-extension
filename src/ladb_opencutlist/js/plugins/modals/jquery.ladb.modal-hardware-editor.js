@@ -1461,7 +1461,7 @@
             const $field = fnField(itemPath, 'depth', false, null, null, defaults.depth);
             if (through) {
                 $field.addClass('ladb-hardware-editor-primitive-disabled');
-                $field.find('input').val('').prop('disabled', true);
+                $field.find('input').val('').ladbTextinputDimension('disable');
                 $field.find('.ladb-hardware-editor-primitive-value').remove();
             }
             const $through = $('<input type="checkbox">')
