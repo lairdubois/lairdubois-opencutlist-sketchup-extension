@@ -69,11 +69,16 @@ module Ladb::OpenCutList
           ACTION_OPTION_COPY_MEASURE_TYPE => [ ACTION_OPTION_COPY_MEASURE_TYPE_CENTERED, ACTION_OPTION_COPY_MEASURE_TYPE_INSIDE ],
           ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_CONTEXT, ACTION_OPTION_AXES_ENTITY ]
         }
-      },
-      {
-        :action => ACTION_INTERACT,
       }
     ].freeze
+
+    if Sketchup.debug_mode?
+      ACTIONS += [
+        {
+          :action => ACTION_INTERACT,
+        }
+      ]
+    end
 
     # -----
 
