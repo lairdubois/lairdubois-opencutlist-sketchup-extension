@@ -32,10 +32,9 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
-### 2026-10-xx
+### 2026-10-02
  * Fixed built-in upgrade leaving the previous version's obsolete files in the extension folder (the previous version is now restored if the install fails)
  * Improved Hardware Editor inheritance UI/UX
-### 2026-10-02
  * Added hinges on frame doors (several parts held by a front panel group or component) in Smart Join Tool and Smart Handle Interact
  * Fixed Smart Build Divider, Front Panel and Back Panel tools through a front or back panel made of several parts (frame doors), and a second front or back panel no longer offered on an opening already closed by one
  * Added Hardware primitive editor **(DEV team only)**
