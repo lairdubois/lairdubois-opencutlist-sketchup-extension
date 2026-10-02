@@ -41,6 +41,8 @@ module Ladb::OpenCutList
     LIBRARY_SUB_DIR_COMPONENTS = 'components'.freeze
     LIBRARY_SUB_DIR_MATERIALS = 'materials'.freeze
 
+    UPGRADE_BACKUP_SUFFIX = '.upgrade_backup'.freeze
+
     PRESETS_PREPROCESSOR_NONE = 0
     PRESETS_PREPROCESSOR_D = 1                   # 1D dimension
     PRESETS_PREPROCESSOR_D_NEGATIVE_ALLOWED = 5  # 1D dimension (negative value allowed)
@@ -999,6 +1001,9 @@ module Ladb::OpenCutList
 
     def setup
 
+      # Remove previous version files left by an upgrade that could not clean them
+      _upgrade_discard_backup if IS_RBZ
+
       fn_get_selected_component_entity = lambda do
         entity = (Sketchup.active_model.nil? || Sketchup.active_model.selection.length > 1) ? nil : Sketchup.active_model.selection.first
         return entity if entity.is_a?(Sketchup::ComponentInstance)
@@ -1628,6 +1633,58 @@ module Ladb::OpenCutList
       !@zzz
     end
 
+    # -- Upgrade ---
+
+    # Previous version files are moved next to the installed ones during an
+    # upgrade. The registrar is copied without the '.rb' extension to keep
+    # SketchUp from loading it.
+    def _upgrade_backup_paths
+      [ PLUGIN_DIR + UPGRADE_BACKUP_SUFFIX, "#{PLUGIN_DIR}.rb#{UPGRADE_BACKUP_SUFFIX}" ]
+    end
+
+    def _upgrade_archive_valid?(rbz_file)
+      require_relative 'lib/rubyzip/zip'
+      Zip::File.open(rbz_file) do |zip_file|
+        return !zip_file.find_entry("#{PLUGIN_ID}.rb").nil? && !zip_file.find_entry("#{PLUGIN_ID}/ruby/plugin.rb").nil?
+      end
+    rescue => e
+      puts "Upgrade : invalid archive (#{e.message})"
+      false
+    end
+
+    # Returns the backup dir, or nil if the installed files are left in place
+    # (dev run from the sources, or rename refused by the system)
+    def _upgrade_backup_installed_files
+      return nil unless IS_RBZ
+      backup_dir, registrar_backup = _upgrade_backup_paths
+      _upgrade_discard_backup
+      FileUtils.copy_file("#{PLUGIN_DIR}.rb", registrar_backup)
+      File.rename(PLUGIN_DIR, backup_dir)
+      backup_dir
+    rescue => e
+      puts "Upgrade : unable to backup installed files, stale files will be kept (#{e.message})"
+      nil
+    end
+
+    def _upgrade_restore_installed_files(backup_dir)
+      return if backup_dir.nil?
+      _, registrar_backup = _upgrade_backup_paths
+      FileUtils.rm_rf(PLUGIN_DIR) if File.exist?(PLUGIN_DIR)
+      File.rename(backup_dir, PLUGIN_DIR)
+      FileUtils.copy_file(registrar_backup, "#{PLUGIN_DIR}.rb")
+      File.unlink(registrar_backup)
+    rescue => e
+      puts "Upgrade : unable to restore installed files (#{e.message})"
+    end
+
+    def _upgrade_discard_backup
+      _upgrade_backup_paths.each do |path|
+        FileUtils.rm_rf(path) if File.exist?(path)
+      end
+    rescue => e
+      puts "Upgrade : unable to remove previous version files (#{e.message})"
+    end
+
     # -- Commands ---
 
     def set_update_status_command(manifest:, update_available:, update_muted:)    # Expected params = { manifest: MANIFEST, update_available: BOOL, update_muted: BOOL }
@@ -1690,14 +1747,25 @@ module Ladb::OpenCutList
             end
 
             success = false
+            backup = nil
 
             # Install the RBZ
             begin
+
+              # Check the archive before touching the installed files
+              raise 'Invalid archive' unless _upgrade_archive_valid?(rbz_file)
+
+              # Move the installed files aside : install_from_archive overwrites files but never removes stale ones
+              backup = _upgrade_backup_installed_files
+
               Sketchup.install_from_archive(rbz_file)
               success = true
+
             rescue Interrupt => e
+              _upgrade_restore_installed_files(backup)
               trigger_event('on_upgrade_cancelled', {})
             rescue Exception => e
+              _upgrade_restore_installed_files(backup)
               UI.beep
               UI.messagebox(get_i18n_string('core.upgrade.error.unzip') + "\n" + e.message)
               trigger_event('on_upgrade_cancelled', {})
@@ -1709,6 +1777,9 @@ module Ladb::OpenCutList
             end
 
             if success
+
+              # Remove the previous version files
+              _upgrade_discard_backup
 
               # Reset active tool
               Sketchup.active_model.select_tool(nil)
