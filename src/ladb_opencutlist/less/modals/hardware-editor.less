@@ -221,6 +221,11 @@
     white-space: nowrap;
   }
 
+  .ladb-hardware-editor-inheritance-cell {
+    width: 1%;
+    padding-left: 0;
+  }
+
   .ladb-hardware-editor-slots {
     color: @ladb-global-light-color;
     font-size: 90%;
@@ -385,8 +390,13 @@
 }
 
 .ladb-hardware-editor-file-extends {
-  padding: 3px 10px 0 30px;
+  padding: 3px 10px 0;
   font-size: 12px;
+
+  i {
+    font-size: 120%;
+  }
+
 }
 
 .ladb-hardware-editor-file-extends-name {
@@ -435,6 +445,12 @@
     .ladb-hardware-editor-tool-option {
       flex: 1 1 0;
       min-width: 0;
+
+      .ladb-hardware-editor-tool-option-field {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
 
       .help-block {
         margin: 2px 0 0;
@@ -493,7 +509,7 @@
 
 .ladb-hardware-editor-part {
   display: grid;
-  grid-template-columns: 90px minmax(0, 1fr);
+  grid-template-columns: 90px minmax(0, 1fr) auto;   // Its label, its controls, where they come from - see "extends"
   gap: 6px 10px;
   align-items: start;
   padding: 9px 10px;
@@ -1007,12 +1023,36 @@
   }
 }
 
-// Inherited from the parent - see "extends" : greyed
-.ladb-hardware-editor-inherited {
+// Inherited from the parent - see "extends" : greyed, but for its icon
+.ladb-hardware-editor-inherited > :not(.ladb-hardware-editor-inheritance-icon):not(.ladb-hardware-editor-inheritance-cell) {
   opacity: 0.5;
 }
-.ladb-hardware-editor-inherited .ladb-hardware-editor-inherited {
-  opacity: 1;   // Not twice
+.ladb-hardware-editor-inheritance-icon {
+  color: @ladb-global-light-color;
+  font-size: 12px;
+  line-height: 1;
+  a& {
+    cursor: pointer;
+    &:hover,
+    &:focus {
+      color: @ladb-brand-primary;
+      text-decoration: none;
+    }
+  }
+}
+.ladb-hardware-editor-part > .ladb-hardware-editor-inheritance-icon {
+  padding-top: 7px;
+}
+.ladb-hardware-editor-slot-note.ladb-hardware-editor-inheritance-row {
+  display: flex;
+  gap: 10px;
+  > span {
+    flex: 1;
+  }
+}
+.ladb-hardware-editor-settings .ladb-hardware-editor-inheritance-cell {
+  padding-top: 9px;
+  padding-left: 0;
 }
 .ladb-hardware-editor-inheritance {
   margin: 0 0 10px;

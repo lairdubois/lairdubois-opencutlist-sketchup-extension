@@ -460,6 +460,18 @@ i, span.ladb-opencutlist-icon:before {
 .ladb-opencutlist-icon-material-type-7:before {
     content: "\e9c5";
 }
+.ladb-opencutlist-icon-arrow-left-down-box-fill:before {
+    content: "\e9d0";
+}
+.ladb-opencutlist-icon-arrow-right-down-box-fill:before {
+    content: "\e9d1";
+}
+.ladb-opencutlist-icon-arrow-up-box-fill:before {
+    content: "\e9ce";
+}
+.ladb-opencutlist-icon-arrow-down-box-fill:before {
+    content: "\e9cf";
+}
 .ladb-opencutlist-icon-undo:before {
     content: "\e9cd";
 }

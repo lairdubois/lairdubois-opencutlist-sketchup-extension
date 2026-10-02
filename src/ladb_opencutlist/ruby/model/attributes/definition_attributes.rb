@@ -226,8 +226,8 @@ module Ladb::OpenCutList
         end
         @url = @definition.get_attribute(Plugin::SU_ATTRIBUTE_DICTIONARY, 'Url', '')
         @tags = DefinitionAttributes.valid_tags(@definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'tags', @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'labels', []))) # BC for "labels" key
-        @cumulable = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'cumulable', CUMULABLE_NONE)
-        @instance_count_by_part = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'instance_count_by_part', 1)
+        @cumulable = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'cumulable', CUMULABLE_NONE).to_i
+        @instance_count_by_part = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'instance_count_by_part', 1).to_i
         @mass = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'mass', '')
         @price = DefinitionAttributes.valid_price(@definition.get_attribute(Plugin::SU_ATTRIBUTE_DICTIONARY, Plugin::SU_PRICE_ATTRIBUTE_KEY, ''))
         @length_increase = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'length_increase', '0')
@@ -237,7 +237,7 @@ module Ladb::OpenCutList
         @ignore_grain_direction = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'ignore_grain_direction', false)
         @follow_grain_direction = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'follow_grain_direction', false)
         @orientation_locked_on_axis = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'orientation_locked_on_axis', false)
-        @thickness_layer_count = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'thickness_layer_count', 1)
+        @thickness_layer_count = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'thickness_layer_count', 1).to_i
         @role = DefinitionAttributes.role_of(@definition)
       end
     end

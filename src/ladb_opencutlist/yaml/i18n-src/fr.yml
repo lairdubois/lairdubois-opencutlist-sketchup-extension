@@ -360,8 +360,16 @@ core:
     derived: "Dérivée de {{ ref }} : ajustez ce qui change, puis validez."
     inherited_from: "Hérité de {{ ref }}"
     inherited_sample: Grisé
-    inheritance_help: ": valeur héritée du parent. Modifier une valeur la surcharge dans cette quincaillerie."
-    parts_inherited: Hérité tel quel. Pour le modifier, surchargez-le dans le JSON.
+    inherited_click: |
+      Valeur héritée de {{ ref }}.
+      
+      Cliquez pour la modifier dans cette quincaillerie.
+    overridden_from: "Remplace la valeur héritée de {{ ref }}"
+    overridden_click:
+      Remplace la valeur héritée de {{ ref }}. 
+      
+      Cliquez pour revenir à la valeur héritée.
+    inheritance_help: ": valeur héritée du parent. L'icône en bout de ligne la copie dans cette quincaillerie pour la modifier, puis rétablit la valeur héritée."
     delete_confirm: |
       Confirmez la suppression de **{{ name }}** de *Ma Bibliothèque*, avec le dossier de ses pièces ? 
       *Les quincailleries déjà posées dans le modèle restent.*

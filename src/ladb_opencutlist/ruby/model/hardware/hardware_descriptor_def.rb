@@ -313,8 +313,10 @@ module Ladb::OpenCutList
     HardwareComponentDef = Struct.new(:slot, :source_slot, :hardware, :machining, :mirror, :stretch, :variant, :attributes,
                                       :name, :variant_name, :description, :price, :url, :mass, :part_slots, :z_offset)
 
-    # data : merged with its parents' - see "extends" ; own_data : as written.
-    attr_reader :path, :ref, :data, :own_data, :errors
+    # data : merged with its parents' - see "extends" ; own_data : as written ;
+    # parent_data : its parents' merged, without its own - nil when it
+    # extends none.
+    attr_reader :path, :ref, :data, :own_data, :parent_data, :errors
 
     # -- Loading --
 
@@ -662,6 +664,7 @@ module Ladb::OpenCutList
       @parent_refs = []
       @sources = path.is_a?(String) && File.file?(path) ? [ [ path, File.mtime(path) ] ] : []
       @inheritance_errors = []
+      @parent_data = nil
       @data = _inherit(data)
       @errors = _validate
     end
@@ -852,6 +855,7 @@ module Ladb::OpenCutList
       return own unless own.is_a?(Hash) && own.key?(EXTENDS)
       parent = _ancestor_data(own[EXTENDS], @ref, @ref.nil? ? [] : [ @ref ], 1)
       return own if parent.nil?   # Invalid, see @inheritance_errors
+      @parent_data = parent
       _merge_descriptor(parent, own)
     end
 

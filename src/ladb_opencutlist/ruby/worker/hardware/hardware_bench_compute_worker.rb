@@ -118,10 +118,10 @@ module Ladb::OpenCutList
     end
 
     # What it inherits - see "extends" - : its parents, the nearest first,
-    # and its data merged with theirs. nil when it extends none.
+    # its data merged with theirs, and theirs alone. nil when it extends none.
     def _inheritance(descriptor)
       return nil if descriptor.parent_refs.empty?
-      { :parents => descriptor.parent_refs, :data => descriptor.data }
+      { :parents => descriptor.parent_refs, :data => descriptor.data, :parent_data => descriptor.parent_data }
     end
 
     # Is the given variable its parents' only - not written in its own data ?

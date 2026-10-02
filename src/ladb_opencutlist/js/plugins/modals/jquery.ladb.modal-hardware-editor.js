@@ -233,6 +233,31 @@
         return true;
     };
 
+    // The value at the given path of keys of the given data, undefined if none.
+    const fnPathValue = function (data, path) {
+        let value = data;
+        for (const key of path) {
+            value = fnObject(value)[key];
+            if (value === undefined) {
+                return undefined;
+            }
+        }
+        return value;
+    };
+
+    // The given value as JSON, laid out from the given indent : an object
+    // holding objects or arrays on several lines, the rest on one - as the
+    // descriptors are written.
+    const fnLaidOutJson = function (value, indent) {
+        const object = fnObject(value);
+        const keys = Object.keys(object);
+        if (value !== object || !keys.some(function (key) { return object[key] !== null && typeof object[key] === 'object' && Object.keys(object[key]).length > 0; })) {
+            return fnInlineJson(value);
+        }
+        const inner = indent + '  ';
+        return '{\n' + keys.map(function (key) { return inner + JSON.stringify(key) + ': ' + fnLaidOutJson(object[key], inner); }).join(',\n') + '\n' + indent + '}';
+    };
+
     // The options of SmartJoin a descriptor of each type gives the defaults
     // of - its 'options' - by group, as the tool shows them.
     const TOOL_OPTION_GROUPS = {
@@ -438,7 +463,7 @@
         const parents = this.response && this.response.inheritance ? this.response.inheritance.parents : [];
         $('.ladb-hardware-editor-file-extends', this.$element).toggle(parents.length > 0);
         $('.ladb-hardware-editor-file-extends > span', this.$element)
-            .html(parents.length > 0 ? '↳ ' + i18next.t('core.hardware_editor.inherited_from', { ref: $('<a href="#" class="ladb-hardware-editor-file-extends-name">').text(fnFileStem(parents[0]) + '.json').prop('outerHTML'), interpolation: { escapeValue: false } }) : '')   // The name escaped by its span
+            .html(parents.length > 0 ? '<i class="ladb-opencutlist-icon-arrow-right-down-box-fill"></i> ' + i18next.t('core.hardware_editor.inherited_from', { ref: $('<a href="#" class="ladb-hardware-editor-file-extends-name">').text(fnFileStem(parents[0]) + '.json').prop('outerHTML'), interpolation: { escapeValue: false } }) : '')   // The name escaped by its span
             .attr('data-original-title', parents.map(function (ref) { return ref.replace(/\//g, '/\u200B'); }).join(' \u2190 '))   // The whole chain, nearest first - wrapping after its slashes
             .tooltip({ container: 'body' });
     };
@@ -533,16 +558,93 @@
         return this.response && this.response.inheritance ? this.response.inheritance.data : null;
     };
 
-    // Greys the given element : what it shows comes from the parent - said
-    // by its tooltip.
-    LadbModalHardwareEditor.prototype.markInherited = function ($element) {
-        const parents = this.response && this.response.inheritance ? this.response.inheritance.parents : [];
+    // The data of its parents alone - see "extends" - null when it extends none.
+    LadbModalHardwareEditor.prototype.parentData = function () {
+        return this.response && this.response.inheritance ? this.response.inheritance.parent_data || null : null;
+    };
+
+    // Where the value at the given path comes from - see "extends" - , owned
+    // : written in its own data. 'inherited' : its parents' only ;
+    // 'overridden' : its own over its parents' ; null : its parents have none.
+    LadbModalHardwareEditor.prototype.inheritanceState = function (path, owned) {
+        const parentData = this.parentData();
+        if (parentData === null || !fnHasPath(parentData, path)) {
+            return null;
+        }
+        return owned ? 'overridden' : 'inherited';
+    };
+
+    // The icon at the end of the given row, for the given state - see
+    // inheritanceState - the row greyed when inherited. A click on it copies
+    // the inherited value at the given path into its own data - or removes
+    // the overriding one : inherited again. Without a path, it only tells.
+    LadbModalHardwareEditor.prototype.appendInheritanceIcon = function ($row, state, path) {
+        const that = this;
+
+        if (state === null) {
+            return null;
+        }
+        const parents = this.response.inheritance.parents;
         const ref = parents.length > 0 ? parents[0].replace(/\//g, '/\u200B') : '';   // Zero width spaces : the long ref wraps after its slashes
-        return $element
-            .addClass('ladb-hardware-editor-inherited')
+        const inherited = state === 'inherited';
+        const clickable = path && !this.readonly;
+        const title = i18next.t('core.hardware_editor.' + (inherited ? 'inherited' : 'overridden') + '_' + (clickable ? 'click' : 'from'), { ref: ref, interpolation: { escapeValue: false } });   // An attribute : set as text
+        const $icon = $(clickable ? '<a href="#">' : '<span>')
+            .addClass('ladb-hardware-editor-inheritance-icon')
+            .append($('<i>').addClass(inherited ? 'ladb-opencutlist-icon-arrow-left-down-box-fill' : 'ladb-opencutlist-icon-reset').addClass('ladb-opencutlist-icon-lg'))
             .attr('data-toggle', 'tooltip')
-            .attr('title', i18next.t('core.hardware_editor.inherited_from', { ref: ref, interpolation: { escapeValue: false } }))   // An attribute : set as text
+            .attr('data-html', 'true')
+            .attr('title', title)
             .tooltip({ container: 'body' });
+        if (clickable) {
+            $icon.on('click', function (e) {
+                e.preventDefault();
+                $(this).tooltip('hide');
+                if (inherited) {
+                    that.overrideInherited(path);
+                } else {
+                    that.resetInherited(path);
+                }
+            });
+        }
+        $row
+            .addClass('ladb-hardware-editor-inheritance-row')
+            .toggleClass('ladb-hardware-editor-inherited', inherited)
+            .append($icon);
+        return $icon;
+    };
+
+    // Copies the value its parents give at the given path into its own data
+    // - see "extends" - : edited from there on. A setting by its value alone.
+    LadbModalHardwareEditor.prototype.overrideInherited = function (path) {
+        let value = fnPathValue(this.parentData(), path);
+        if (value === undefined) {
+            return;
+        }
+        if (path.length === 2 && path[0] === 'variables' && fnObject(value).value !== undefined) {
+            value = { value: value.value };
+        }
+        if (this.writeJsonValue(path, value)) {
+            this.compute(false);
+        }
+    };
+
+    // Removes the value at the given path from its own data - see "extends"
+    // - : its parents' again. Its containers left empty go too.
+    LadbModalHardwareEditor.prototype.resetInherited = function (path) {
+        if (!this.setJsonMember(path.slice(0, -1), path[path.length - 1], undefined)) {
+            return;
+        }
+        for (let k = path.length - 1; k > 0; k--) {
+            const containerPath = path.slice(0, k);
+            const text = this.cm.getValue();
+            const range = this.findJsonValueRange(text, containerPath);
+            if (range === null || !/^\{\s*\}$/.test(text.substring(range.start, range.end))) {
+                break;
+            }
+            this.setJsonMember(containerPath.slice(0, -1), containerPath[k - 1], undefined);
+        }
+        this.compute(false);
     };
 
     // The tooltips of the given panel, before it is emptied : none stays
@@ -573,12 +675,13 @@
 
         // Measures of the bench
         if (measures.length > 0) {
-            $table.append($('<tr class="ladb-hardware-editor-computations-header">').append($('<th colspan="3">').text(i18next.t('core.hardware_editor.measures'))));
+            $table.append($('<tr class="ladb-hardware-editor-computations-header">').append($('<th colspan="4">').text(i18next.t('core.hardware_editor.measures'))));
             for (const measure of measures) {
                 const $row = $('<tr>')
                     .append($('<td class="ladb-hardware-editor-computation-name">').text('@' + measure.name))
                     .append($('<td>'))
-                    .append($('<td class="ladb-hardware-editor-computation-value">').text(measure.text));
+                    .append($('<td class="ladb-hardware-editor-computation-value">').text(measure.text))
+                    .append($('<td class="ladb-hardware-editor-inheritance-cell">'));
                 if (measure.cote) {
                     // Hovered : its cote in the viewer
                     const slot = measure.name.slice(-1);
@@ -597,7 +700,7 @@
 
         // Variables, per group of slots they are the same for
         if (variables.length > 0) {
-            $table.append($('<tr class="ladb-hardware-editor-computations-header">').append($('<th colspan="3">').text(i18next.t('core.hardware_editor.variables'))));
+            $table.append($('<tr class="ladb-hardware-editor-computations-header">').append($('<th colspan="4">').text(i18next.t('core.hardware_editor.variables'))));
             for (const variable of variables) {
                 const $value = $('<td class="ladb-hardware-editor-computation-value">');
                 for (const result of variable.results) {
@@ -612,9 +715,7 @@
                     $value.append($result);
                 }
                 const $variableRow = $('<tr>');
-                if (variable.inherited) {
-                    this.markInherited($variableRow);
-                }
+                const $inheritance = $('<td class="ladb-hardware-editor-inheritance-cell">');
                 $table.append($variableRow
                     .append($('<td class="ladb-hardware-editor-computation-name">')
                         .text('@' + variable.name)
@@ -622,13 +723,17 @@
                     )
                     .append($('<td class="ladb-hardware-editor-computation-expression">').text(variable.setting ? '' : variable.expression))
                     .append($value)
+                    .append($inheritance)
                 );
+                const variablePath = [ 'variables', variable.name ];
+                this.appendInheritanceIcon($inheritance, this.inheritanceState(variablePath, !variable.inherited), variablePath);
+                $variableRow.toggleClass('ladb-hardware-editor-inherited', $inheritance.hasClass('ladb-hardware-editor-inherited'));
             }
         }
 
         // Asserts, both sides in numbers
         if (asserts.length > 0) {
-            $table.append($('<tr class="ladb-hardware-editor-computations-header">').append($('<th colspan="3">').text(i18next.t('core.hardware_editor.asserts'))));
+            $table.append($('<tr class="ladb-hardware-editor-computations-header">').append($('<th colspan="4">').text(i18next.t('core.hardware_editor.asserts'))));
             for (const assert of asserts) {
                 const $value = $('<td class="ladb-hardware-editor-computation-value">');
                 let ok = true;
@@ -646,13 +751,16 @@
                     $value.append($result);
                 }
                 const $assertRow = $('<tr' + (ok ? '' : ' class="danger"') + '>');
-                if (assert.inherited) {
-                    this.markInherited($assertRow);
-                }
+                const $inheritance = $('<td class="ladb-hardware-editor-inheritance-cell">');
                 $table.append($assertRow
                     .append($('<td class="ladb-hardware-editor-computation-expression" colspan="2">').text(assert.expression))
                     .append($value)
+                    .append($inheritance)
                 );
+                if (assert.inherited) {
+                    this.appendInheritanceIcon($inheritance, 'inherited', null);   // An element of an array : overridden in the JSON only - see "@super"
+                    $assertRow.addClass('ladb-hardware-editor-inherited');
+                }
             }
         }
 
@@ -683,6 +791,7 @@
             options,
             inheritedOptions,
             inheritance ? inheritance.parents : null,
+            inheritance ? inheritance.parent_data : null,
             this.readonly
         ]);
         if (signature === this._settingsSignature) {
@@ -716,12 +825,14 @@
             const $formGroup = $('<div class="form-group">');
             const $label = $('<label class="control-label col-xs-4">').text(setting.label || setting.name);
             const $control = $('<div class="col-xs-7">');
+            const $inheritance = $('<div class="col-xs-1 ladb-hardware-editor-inheritance-cell">');
             $formGroup
                 .append($label)
-                .append($control);
-            if (setting.inherited) {
-                this.markInherited($formGroup);   // Set : overridden in its own data
-            }
+                .append($control)
+                .append($inheritance);
+            const settingPath = [ 'variables', setting.name ];
+            this.appendInheritanceIcon($inheritance, this.inheritanceState(settingPath, !setting.inherited), settingPath);   // Set : overridden in its own data
+            $formGroup.toggleClass('ladb-hardware-editor-inherited', $inheritance.hasClass('ladb-hardware-editor-inherited'));
 
             if (Array.isArray(raw.steps)) {
 
@@ -788,9 +899,10 @@
                     const value = options[name] === undefined || options[name] === null ? '' : String(options[name]);
                     const inheritedValue = inheritedOptions[name] === undefined || inheritedOptions[name] === null ? '' : String(inheritedOptions[name]);
                     const $input = $('<input type="text" class="form-control">');
-                    const $option = $('<div class="ladb-hardware-editor-tool-option">').append($input);
+                    const $field = $('<div class="ladb-hardware-editor-tool-option-field">').append($input);
+                    const $option = $('<div class="ladb-hardware-editor-tool-option">').append($field);
+                    this.appendInheritanceIcon($field, this.inheritanceState([ 'options', name ], options[name] !== undefined), [ 'options', name ]);
                     if (value === '' && inheritedValue !== '') {
-                        this.markInherited($option);
                         $input.attr('placeholder', inheritedValue);   // Typed : overridden
                     }
                     $input
@@ -931,7 +1043,7 @@
         }
 
         // Extends another : its merged data is shown, what it only inherits
-        // greyed - and read only, but for what an edit overrides as is.
+        // greyed - a part read only until overridden, see appendInheritanceIcon.
         const own = data;
         const inheritedData = this.inheritedData();
         if (inheritedData) {
@@ -950,11 +1062,7 @@
         for (const slot of slots) {
 
             const component = components[slot];
-            if (!fnOwns([ 'components', slot ])) {
-                // Inherited as a whole : shown as it is, nothing to edit
-                this.renderInheritedSlot(slot, component, data);
-                continue;
-            }
+            const slotPath = [ 'components', slot ];
             const slotResponse = (this.response.slots || {})[slot];
             const resolved = slotResponse ? slotResponse.component : null;
             const $slot = $('<div class="ladb-hardware-editor-slot">');
@@ -964,12 +1072,18 @@
             $slot.append($head);
             this.$parts.append($slot);
 
+            // Nothing to edit in it : said, and where from
+            const fnNote = function (text) {
+                const $note = $('<div class="ladb-hardware-editor-slot-note">').append($('<span>').text(text));
+                $slot.append($note);
+                that.appendInheritanceIcon($note, that.inheritanceState(slotPath, fnOwns(slotPath)) === 'inherited' ? 'inherited' : null, null);
+            };
             if (!component || typeof component !== 'object') {
-                $slot.append($('<div class="ladb-hardware-editor-slot-note">').text(i18next.t('core.hardware_editor.parts_no_component')));
+                fnNote(i18next.t('core.hardware_editor.parts_no_component'));
                 continue;
             }
             if (component.same_as || component.mirror_of) {
-                $slot.append($('<div class="ladb-hardware-editor-slot-note">').text(i18next.t('core.hardware_editor.parts_' + (component.same_as ? 'same_as' : 'mirror_of'), { slot: String(component.same_as || component.mirror_of).toUpperCase() })));
+                fnNote(i18next.t('core.hardware_editor.parts_' + (component.same_as ? 'same_as' : 'mirror_of'), { slot: String(component.same_as || component.mirror_of).toUpperCase() }));
                 continue;
             }
 
@@ -1006,10 +1120,12 @@
             }
 
             for (const part of PARTS) {
+                const partPath = path.concat([ part ]);
                 const $part = this.renderPart(data, slot, path, target, part, slots);
-                if (!fnOwns(path.concat([ part ])) && target[part] !== undefined) {
-                    this.markInherited($part);
-                    this.disableInherited($part);
+                const state = this.inheritanceState(partPath, fnOwns(partPath));
+                this.appendInheritanceIcon($part, state, partPath);
+                if (state === 'inherited') {
+                    this.disableInherited($('.ladb-hardware-editor-part-body', $part));   // Overridden first, by its icon
                 }
                 $slot.append($part);
             }
@@ -1027,44 +1143,8 @@
 
     };
 
-    // A slot the descriptor only inherits : its name and its parts as the
-    // parent gives them, greyed and read only.
-    LadbModalHardwareEditor.prototype.renderInheritedSlot = function (slot, component, data) {
-        const slotResponse = (this.response.slots || {})[slot];
-        const resolved = slotResponse ? slotResponse.component : null;
-        const $slot = $('<div class="ladb-hardware-editor-slot">')
-            .append($('<div class="ladb-hardware-editor-slot-head">')
-                .append($('<span class="ladb-hardware-editor-slot-letter">').text(slot.toUpperCase()))
-                .append($('<span class="ladb-hardware-editor-slot-name">').text(resolved && resolved.name ? resolved.name : (data.name || '')))
-            );
-        this.$parts.append($slot);
-        const $body = $('<div>');
-        $slot.append($body);
-        this.markInherited($body);
-        if (!component || typeof component !== 'object' || Object.keys(component).length === 0) {
-            $body.append($('<div class="ladb-hardware-editor-slot-note">').text(i18next.t('core.hardware_editor.parts_no_component')));
-            return;
-        }
-        if (component.same_as || component.mirror_of) {
-            $body.append($('<div class="ladb-hardware-editor-slot-note">').text(i18next.t('core.hardware_editor.parts_' + (component.same_as ? 'same_as' : 'mirror_of'), { slot: String(component.same_as || component.mirror_of).toUpperCase() })));
-            return;
-        }
-        let path = [ 'components', slot ];
-        let target = component;
-        if (component.variants && typeof component.variants === 'object') {
-            const variant = resolved ? resolved.variant : null;
-            target = variant && component.variants.items ? fnObject(component.variants.items[variant]) : {};
-            path = path.concat([ 'variants', 'items', variant ]);
-        }
-        for (const part of PARTS) {
-            $body.append(this.renderPart(data, slot, path, target, part, Object.keys(fnObject(data.components))));
-        }
-        $body.append($('<div class="ladb-hardware-editor-slot-note">').text(i18next.t('core.hardware_editor.parts_inherited')));
-        this.disableInherited($body);
-    };
-
     // Nothing to edit in the given element : what it shows is inherited -
-    // overridden only in the JSON.
+    // see appendInheritanceIcon.
     LadbModalHardwareEditor.prototype.disableInherited = function ($element) {
         $('input, select, button', $element).prop('disabled', true);
         $('select', $element).selectpicker('refresh');
@@ -1905,15 +1985,14 @@
 
     // The name of the component - or variant - at the given path, edited in place.
     // fnOwns : whether a path is written in its own data - see "extends" -
-    // an inherited name is greyed, and read only where its own data has no
-    // object to write it in.
+    // an inherited name is greyed, typed : overridden.
     LadbModalHardwareEditor.prototype.renderPartName = function (path, target, label, placeholder, fnOwns) {
         const that = this;
 
         const $input = $('<input type="text" class="form-control input-sm">')
             .val(typeof target.name === 'string' ? target.name : '')
             .attr('placeholder', placeholder)
-            .prop('disabled', this.readonly || (fnOwns && !fnOwns(path)))
+            .prop('disabled', this.readonly)
             .on('change', function () {
                 that.setPartName(path, $(this).val().trim());
             });
@@ -1921,20 +2000,28 @@
             .append($('<label class="control-label">').text(i18next.t('core.hardware_editor.' + label)))
             .append($('<div class="ladb-hardware-editor-part-body">').append($input));
         $input.ladbTextinputText();
-        if (fnOwns && typeof target.name === 'string' && !fnOwns(path.concat([ 'name' ]))) {
-            this.markInherited($row);
+        if (fnOwns) {
+            this.appendInheritanceIcon($row, this.inheritanceState(path.concat([ 'name' ]), fnOwns(path.concat([ 'name' ]))), path.concat([ 'name' ]));
         }
         return $row;
     };
 
     // Sets the name of the component - or variant - at the given path : only
-    // its text if it has one, else the component rewritten, its name first.
+    // its text if it has one, else the component rewritten, its name first -
+    // created when only inherited, see "extends".
     LadbModalHardwareEditor.prototype.setPartName = function (path, name) {
 
-        const range = this.findJsonValueRange(this.cm.getValue(), path.concat([ 'name' ]));
+        const text = this.cm.getValue();
+        const range = this.findJsonValueRange(text, path.concat([ 'name' ]));
         if (range !== null && name) {
             this.cm.replaceRange(JSON.stringify(name), this.cm.posFromIndex(range.start), this.cm.posFromIndex(range.end));
             this.compute(false);
+            return;
+        }
+        if (this.findJsonValueRange(text, path) === null) {
+            if (name && this.setJsonMember(path, 'name', name)) {
+                this.compute(false);
+            }
             return;
         }
 
@@ -2182,33 +2269,26 @@
     };
 
     // Sets the given part of the component at the given path to the given
-    // kind - rewriting only that component in the JSON.
+    // kind - rewriting only that part in the JSON. None : removed, or null
+    // over its parents' - see "extends".
     LadbModalHardwareEditor.prototype.setPartKind = function (path, part, kind) {
 
-        let data;
-        try {
-            data = JSON.parse(this.cm.getValue());
-        } catch (e) {
-            return;
-        }
-        let target = data;
-        for (const key of path) {
-            target = target[key];
-        }
-
+        let value;
         if (kind === 'none') {
-            delete target[part];
+            value = this.inheritanceState(path.concat([ part ]), false) === null ? undefined : null;
         } else if (kind === 'skp') {
-            target[part] = true;
+            value = true;
         } else if (kind === 'primitives') {
-            target[part] = part === 'hardware'
+            value = part === 'hardware'
                 ? { cylinders: [ { diameter: '8mm', from: '-10mm', to: '10mm' } ] }
                 : { drillings: [ { diameter: '8mm', depth: '10mm' } ] };
         } else if (kind.indexOf('same_as:') === 0) {
-            target[part] = { same_as: kind.substring(8) };
+            value = { same_as: kind.substring(8) };
         }
 
-        this.replaceJsonValue(path, target);
+        if (this.writeJsonValue(path.concat([ part ]), value)) {
+            this.compute(false);
+        }
 
     };
 
@@ -2706,6 +2786,37 @@
             fnReplace(end, end, ',\n' + /^[ \t]*/.exec(text.substring(lineStart, end))[0] + member);
         } else {
             fnReplace(end, end, ', ' + member);
+        }
+        return true;
+
+    };
+
+    // Writes the given value at the given path of the JSON - see
+    // setJsonMember - laid out from the first object of the path it creates.
+    // Doesn't compute : false when nothing changed.
+    LadbModalHardwareEditor.prototype.writeJsonValue = function (path, value) {
+
+        let text = this.cm.getValue();
+        let createdPath = path;
+        for (let k = 1; k < path.length; k++) {
+            if (this.findJsonValueRange(text, path.slice(0, k)) === null) {
+                createdPath = path.slice(0, k);
+                break;
+            }
+        }
+        if (!this.setJsonMember(path.slice(0, -1), path[path.length - 1], value)) {
+            return false;
+        }
+
+        text = this.cm.getValue();
+        const range = this.findJsonValueRange(text, createdPath);
+        if (range !== null) {
+            const lineStart = text.lastIndexOf('\n', range.start - 1) + 1;
+            const indent = /^[ \t]*/.exec(text.substring(lineStart, range.start))[0];
+            const laidOut = fnLaidOutJson(JSON.parse(text.substring(range.start, range.end)), indent);
+            if (laidOut !== text.substring(range.start, range.end)) {
+                this.cm.replaceRange(laidOut, this.cm.posFromIndex(range.start), this.cm.posFromIndex(range.end));
+            }
         }
         return true;
 
