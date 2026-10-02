@@ -1534,14 +1534,22 @@ module Ladb::OpenCutList
       Geometrix::ArcUtils.num_segments_by_radius(diameter / 2)
     end
 
+    # The segments of each half circle end of a slot primitive of the given
+    # diameter : at least 6, where a full circle has at least 8.
+    def _get_primitive_half_num_segments(diameter)
+      Geometrix::ArcUtils.num_segments_by_radius(diameter / 2, min_num_segments: 6, max_num_segments: 12, arc_angle: Math::PI)
+    end
+
     # The outline of a primitive, as [ x, y ] points : a circle, or a slot
     # with round ends - length along X - when length is given.
     def _get_primitive_outline(x, y, diameter, length = nil)
-      count = _get_primitive_num_segments(diameter)
       r = diameter / 2
-      return (0...count).map { |i| a = 2 * Math::PI * i / count; [ x + r * Math.cos(a), y + r * Math.sin(a) ] } if length.nil?
+      if length.nil?
+        count = _get_primitive_num_segments(diameter)
+        return (0...count).map { |i| a = 2 * Math::PI * i / count; [ x + r * Math.cos(a), y + r * Math.sin(a) ] }
+      end
       h = (length - diameter) / 2
-      half = count / 2
+      half = _get_primitive_half_num_segments(diameter)
       right = (0..half).map { |i| a = -Math::PI / 2 + Math::PI * i / half; [ x + h + r * Math.cos(a), y + r * Math.sin(a) ] }
       left = (0..half).map { |i| a = Math::PI / 2 + Math::PI * i / half; [ x - h + r * Math.cos(a), y + r * Math.sin(a) ] }
       right + left
@@ -1701,16 +1709,16 @@ module Ladb::OpenCutList
     def _add_primitive_solid(entities, x, y, diameter, z_min, z_max, length = nil, at = IDENTITY)
       return if z_max <= z_min
       r = diameter / 2
-      count = _get_primitive_num_segments(diameter)
       fn_point = lambda { |px, py| Geom::Point3d.new(px, py, z_max).transform(at) }
       x_axis = X_AXIS.transform(at)
       z_axis = Z_AXIS.transform(at)
       if length.nil?
-        edges = entities.add_circle(fn_point.call(x, y), z_axis, r, count)
+        edges = entities.add_circle(fn_point.call(x, y), z_axis, r, _get_primitive_num_segments(diameter))
       else
         h = (length - diameter) / 2
-        edges = entities.add_arc(fn_point.call(x + h, y), x_axis, z_axis, r, -Math::PI / 2, Math::PI / 2, count / 2) +
-                entities.add_arc(fn_point.call(x - h, y), x_axis, z_axis, r, Math::PI / 2, 3 * Math::PI / 2, count / 2)
+        half = _get_primitive_half_num_segments(diameter)
+        edges = entities.add_arc(fn_point.call(x + h, y), x_axis, z_axis, r, -Math::PI / 2, Math::PI / 2, half) +
+                entities.add_arc(fn_point.call(x - h, y), x_axis, z_axis, r, Math::PI / 2, 3 * Math::PI / 2, half)
         edges << entities.add_line(fn_point.call(x + h, y + r), fn_point.call(x - h, y + r))
         edges << entities.add_line(fn_point.call(x - h, y - r), fn_point.call(x + h, y - r))
       end
