@@ -1,8 +1,12 @@
 {% extends 'core/_modal.twig' %}
 
 {% set id = 'ladb_modal_'~modalName %}
-{% set title = 'core.hardware_editor.title'|i18next~' <small class="ladb-hardware-editor-name"></small>' %}
+{% set title = 'core.hardware_editor.title'|i18next~' <small class="ladb-hardware-editor-name"></small> <span class="label label-default ladb-hardware-editor-readonly-badge" style="display: none;">'~'core.hardware_editor.readonly'|i18next~'</span>' %}
 {% set bodyClasses = 'ladb-hardware-editor' %}
+
+{% block headerToolsInner %}
+    <button class="btn btn-default btn-xs" data-help-page="tool.smart-join"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
+{% endblock %}
 
 {% block bodyInner %}
     <div class="ladb-hardware-editor-bench">
@@ -79,7 +83,6 @@
 
 {% block footerLeftInner %}
     <button class="btn btn-danger" id="ladb_hardware_editor_btn_delete" style="display: none;">{{ 'default.delete'|i18next }}</button>
-    <span class="ladb-hardware-editor-status"></span>
 {% endblock %}
 
 {% block footerRightInner %}

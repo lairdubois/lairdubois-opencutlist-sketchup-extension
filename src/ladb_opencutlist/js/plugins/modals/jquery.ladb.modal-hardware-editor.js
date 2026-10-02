@@ -1009,10 +1009,7 @@
 
     LadbModalHardwareEditor.prototype.renderStatus = function () {
 
-        const $status = $('.ladb-hardware-editor-status', this.$element).empty();
-        if (this.readonly) {
-            $status.append($('<span class="label label-default">').text(i18next.t('core.hardware_editor.readonly')));
-        }
+        $('.ladb-hardware-editor-readonly-badge', this.$element).toggle(this.readonly);
 
         // The verdict, over the viewer
         const $verdict = $('.ladb-hardware-editor-verdict', this.$element).empty();
