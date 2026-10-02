@@ -213,8 +213,20 @@ module Ladb::OpenCutList
         z_offset = part == HardwareDescriptorDef::PART_HARDWARE ? hardware_z_offset : 0.0
         part_matrix = _multiply(slot_matrix, _multiply(mirror, _translation(0, 0, z_offset)))
         if HardwareDescriptorDef.primitives?(value)
-          cylinders = HardwareDescriptorDef.primitive_cylinders(value, variables)
-          cylinders.each do |cylinder|
+          # Each primitive alone : its solid known by its key and index
+          primitives = response[:slots][slot][:component][:primitives] ||= {}
+          primitives[part] = {}
+          cylinders = []
+          HardwareDescriptorDef::PRIMITIVES[part].each do |key|
+            next unless value[key].is_a?(Array)
+            primitives[part][key] = value[key].each_with_index.map do |item, index|
+              next nil unless item.is_a?(Hash)
+              cylinder = HardwareDescriptorDef.primitive_cylinders({ key => [ item ] }, variables).first
+              cylinders << [ cylinder, key, index ] unless cylinder.nil?
+              { :resolved => !cylinder.nil?, :fields => _primitive_fields(item, variables) }
+            end
+          end
+          cylinders.each do |cylinder, key, index|
             axis_matrix = AXIS_MATRICES[cylinder.axis] || IDENTITY
             # Its position cotes, in the frame of its part - its x, y, z as
             # the descriptor gives them - : from the origin to its axis, on
@@ -222,9 +234,19 @@ module Ladb::OpenCutList
             lift = [ [ 0.0, cylinder.z_min.to_f ].max, cylinder.z_max.to_f ].min
             cotes_origin = _apply(axis_matrix, [ 0.0, 0.0, lift ])
             cotes_position = _apply(axis_matrix, [ cylinder.x.to_f, cylinder.y.to_f, lift ])
+            texts = {
+              :x => _text(cotes_position[0] - cotes_origin[0]),
+              :y => _text(cotes_position[1] - cotes_origin[1]),
+              :z => _text(cotes_position[2] - cotes_origin[2]),
+              :diameter => _text(cylinder.diameter),
+              :length => _text(cylinder.length),
+              :depth => _text(cylinder.z_max - cylinder.z_min),
+            }
             response[:solids] << {
               :slot => slot,
               :part => part,
+              :key => key,
+              :index => index,
               :transformation => _multiply(part_matrix, axis_matrix),
               :part_transformation => part_matrix,
               :cotes => { :origin => cotes_origin, :position => cotes_position },
@@ -235,22 +257,56 @@ module Ladb::OpenCutList
               :profile => cylinder.profile,
               # What the viewer tells of it when hovered
               :kind => cylinder.key,
-              :texts => {
-                :x => _text(cotes_position[0] - cotes_origin[0]),
-                :y => _text(cotes_position[1] - cotes_origin[1]),
-                :z => _text(cotes_position[2] - cotes_origin[2]),
-                :diameter => _text(cylinder.diameter),
-                :length => _text(cylinder.length),
-                :depth => _text(cylinder.z_max - cylinder.z_min),
-              },
+              :axis => cylinder.axis.nil? ? HardwareDescriptorDef::AXIS_Z : HardwareDescriptorDef::AXIS_Y,  # As the descriptor gives it
+              :texts => texts,
             }
+            # The editor's row tells the same
+            primitives[part][key][index][:texts] = texts
           end
           count = HardwareDescriptorDef::PRIMITIVES[part].inject(0) { |sum, key| sum + (value[key].is_a?(Array) ? value[key].count { |item| item.is_a?(Hash) } : 0) }
           response[:slots][slot][:component][:"#{part}_unresolved"] = count - cylinders.length
+          # What their lengths can use, as the editor offers them - the
+          # slot's own measures unsuffixed only
+          joint_measures = bench_def.measures
+          response[:slots][slot][:names] ||= variables
+            .reject { |name, _| joint_measures.key?(name) && name.end_with?("_#{slot}") }
+            .map { |name, length| { :name => name, :text => _text(length) } }
         else
           response[:skps] << { :slot => slot, :part => part, :ref => value, :variant => component.variant, :transformation => part_matrix }
         end
       end
+    end
+
+    PRIMITIVE_LENGTH_FIELDS = %w[x y z diameter length width depth from to].freeze
+    PRIMITIVE_SIGNED_FIELDS = %w[x y z from to].freeze
+
+    # The lengths of the given primitive item, evaluated for the given
+    # variables : { field => { :text } | { :error => { :key, :params } } },
+    # its head's as 'head_diameter' and 'head_depth'. A "through" depth is
+    # the one it goes to.
+    def _primitive_fields(item, variables)
+      fields = {}
+      add_field = lambda do |name, value, signed|
+        if value == HardwareDescriptorDef::DRILLING_DEPTH_THROUGH
+          value = "@#{variables.key?(HardwareDescriptorDef::VARIABLE_THICKNESS_MAX) ? HardwareDescriptorDef::VARIABLE_THICKNESS_MAX : HardwareDescriptorDef::VARIABLE_THICKNESS}"
+        end
+        length = HardwareDescriptorDef.to_length(value, signed, variables)
+        if length.nil?
+          key, params = HardwareDescriptorDef.length_error(value, signed, variables)
+          fields[name] = { :error => { :key => key || 'not_a_length', :params => params || {} } }
+        else
+          fields[name] = { :text => _text(length) }
+        end
+      end
+      PRIMITIVE_LENGTH_FIELDS.each do |name|
+        add_field.call(name, item[name], PRIMITIVE_SIGNED_FIELDS.include?(name)) if item.key?(name)
+      end
+      head = HardwareDescriptorDef::HEADS.map { |key| item[key] }.find { |value| value.is_a?(Hash) }
+      unless head.nil?
+        add_field.call('head_diameter', head['diameter'], false) if head.key?('diameter')
+        add_field.call('head_depth', head['depth'], false) if head.key?('depth')
+      end
+      fields
     end
 
     # The axis the door turns around - see DoorHingeDef - given by the

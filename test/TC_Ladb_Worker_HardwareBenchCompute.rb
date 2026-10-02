@@ -75,6 +75,43 @@ class TC_Ladb_Worker_HardwareBenchCompute < TestUp::TestCase
     assert_equal([], response[:skps])
   end
 
+  # Each primitive alone, as the editor lists them : its lengths resolved -
+  # or why not - and its solid known by its key and index.
+  def test_primitive_fields
+    descriptor = JSON.parse(JSON.generate(DOWEL))
+    descriptor['components']['a']['machining'] = { 'drillings' => [
+      { 'x' => -32, 'diameter' => '@diameter', 'depth' => 'through', 'countersink' => { 'diameter' => '12mm' } },
+      { 'x' => '@nope', 'diameter' => '5mm', 'depth' => '10mm' },
+    ] }
+    response = _run(descriptor, topology: 'flat_edge', swapped: true, thickness_a: 19, thickness_b: 19)
+    drillings = response[:slots]['a'][:component][:primitives]['machining']['drillings']
+    assert_equal(2, drillings.length)
+
+    first = drillings[0]
+    assert(first[:resolved])
+    assert(first[:fields]['x'][:text] =~ /\A-32\D*\z/, first[:fields]['x'][:text])
+    assert(first[:fields]['depth'][:text] =~ /\A19\D*\z/, first[:fields]['depth'][:text])   # Through : the thickness
+    assert(first[:fields]['head_diameter'][:text] =~ /\A12\D*\z/, first[:fields]['head_diameter'][:text])
+    assert_nil(first[:fields]['y'])   # Not written
+
+    second = drillings[1]
+    assert(!second[:resolved])
+    assert_equal('unresolved_variable', second[:fields]['x'][:error][:key])
+    assert_equal('nope', second[:fields]['x'][:error][:params][:name])
+
+    solids = response[:solids].select { |solid| solid[:slot] == 'a' && solid[:part] == 'machining' }
+    assert_equal([ [ 'drillings', 0 ] ], solids.map { |solid| [ solid[:key], solid[:index] ] })
+    hardware = response[:solids].find { |solid| solid[:slot] == 'a' && solid[:part] == 'hardware' }
+    assert_equal([ 'cylinders', 0 ], [ hardware[:key], hardware[:index] ])
+
+    # What their lengths can use
+    names = response[:slots]['a'][:names].map { |name| name[:name] }
+    assert_includes(names, 'thickness')
+    assert_includes(names, 'embed_a')
+    refute_includes(names, 'thickness_a')   # Its own : unsuffixed
+    assert_includes(names, 'thickness_b')
+  end
+
   def test_refused_joint_gives_both_sides
     response = _run(DOWEL, topology: 'flat_flat', thickness_a: 19, thickness_b: 19)
     assert(!response[:accepted])
@@ -207,6 +244,9 @@ class TC_Ladb_Worker_HardwareBenchCompute < TestUp::TestCase
     mortise = response[:solids].find { |solid| solid[:kind] == 'mortises' }
     assert(mortise[:texts][:z] =~ /\A-13\D*\z/, mortise[:texts][:z])
     assert(mortise[:texts][:x] =~ /\A0\D*\z/, mortise[:texts][:x])
+    assert_equal('y', mortise[:axis])   # As the descriptor gives it - not its length axis
+    # The editor's row tells the same
+    assert_equal(mortise[:texts], response[:slots]['a'][:component][:primitives][mortise[:part]]['mortises'][mortise[:index]][:texts])
     assert_in_delta(-13 * MM, mortise[:cotes][:position][2], 1e-9)
     # On its nearest end : a's reference face, 0,8 mm deep
     assert_in_delta(5 * MM, mortise[:cotes][:origin][1], 1e-9)

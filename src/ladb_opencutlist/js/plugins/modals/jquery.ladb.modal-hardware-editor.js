@@ -19,6 +19,63 @@
     const PARTS = [ 'hardware', 'machining' ];
     const PRIMITIVE_KEYS = [ 'cylinders', 'oblongs', 'drillings', 'mortises' ];
 
+    // The primitives each part can be given as - see HardwareDescriptorDef::PRIMITIVES -
+    // and the one each starts as, once added.
+    const PART_PRIMITIVE_KEYS = {
+        hardware: [ 'cylinders', 'oblongs' ],
+        machining: [ 'drillings', 'mortises' ]
+    };
+    const PRIMITIVE_DEFAULTS = {
+        cylinders: { diameter: '8mm', from: '-10mm', to: '10mm' },
+        oblongs: { length: '19mm', width: '5mm', from: '-10mm', to: '10mm' },
+        drillings: { diameter: '5mm', depth: '12mm' },
+        mortises: { length: '19mm', width: '5mm', depth: '12mm' }
+    };
+    const PRIMITIVE_HEADS = [ 'countersink', 'counterbore' ];
+
+    // A primitive in a few words, from the texts of its lengths : '⌀D×L (X, Y)',
+    // 'L×W×D (X, Y)' for an elongated one - (X, Z) along Y.
+    const fnPrimitiveSummary = function (key, axis, texts) {
+        const sizes = key === 'mortises' || key === 'oblongs' ? [ texts.length, texts.diameter ] : [ '⌀' + texts.diameter ];
+        sizes.push(texts.depth);
+        return sizes.join('×') + ' (' + texts.x + ', ' + (axis === 'y' ? texts.z : texts.y) + ')';
+    };
+    const PRIMITIVE_HEAD_DEFAULT_ANGLE = 90;
+
+    // Its outline, in the color of its part
+    const PRIMITIVE_ICONS = {
+        cylinders: '<svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4"><ellipse cx="9" cy="4" rx="4" ry="1.6"/><path d="M5 4v10M13 4v10"/><path d="M5 14a4 1.6 0 0 0 8 0"/></svg>',
+        oblongs: '<svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="2.5" width="14" height="4" rx="2"/><path d="M2 4.5v9M16 4.5v9"/><path d="M2 13.5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2"/></svg>',
+        drillings: '<svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1.5 4h15" opacity=".5"/><path d="M6 4v11h6V4"/><path d="M6 15l3 2 3-2" opacity=".6"/></svg>',
+        mortises: '<svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1 4h16" opacity=".5"/><path d="M3 4v9a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4"/></svg>'
+    };
+
+    // The given element with a bootstrap tooltip - none without a title -,
+    // set up with its panel - see LadbAbstractDialog#setupTooltips.
+    const fnTooltip = function ($element, title) {
+        if (!title) return $element;
+        return $element
+            .attr('data-toggle', 'tooltip')
+            .attr('title', title);
+    };
+
+    // The given primitive length as the field shows it - a number is millimeters.
+    const fnPrimitiveText = function (value) {
+        return value === undefined || value === null ? '' : String(value);
+    };
+
+    // The given typed length as written in the JSON : a number alone is
+    // millimeters, written as a number - the rest as typed.
+    const fnPrimitiveValue = function (text) {
+        text = text.trim();
+        return /^-?\d+(?:[.,]\d+)?$/.test(text) ? parseFloat(text.replace(',', '.')) : text;
+    };
+
+    // The given primitive - { slot, part, key, index } - as a key
+    const fnPrimitiveId = function (primitive) {
+        return primitive ? [ primitive.slot, primitive.part, primitive.key, primitive.index ].join('/') : null;
+    };
+
     // 4x4 matrices, column after column - as THREE.Matrix4#fromArray
     const IDENTITY = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 ];
     const fnMultiply = function (a, b) {
@@ -243,6 +300,10 @@
 
         this.shaping = null;    // A part edited in SketchUp : { ref, size }
 
+        // The primitive edited - its row open - and the one hovered : { slot, part, key, index }
+        this.primitiveOpen = null;
+        this.primitiveHovered = null;
+
     };
     LadbModalHardwareEditor.prototype = Object.create(LadbAbstractModal.prototype);
 
@@ -308,7 +369,7 @@
         if (!active || !$.contains($panel[0], active)) {
             return null;
         }
-        const typed = active.value !== undefined && active.value !== $(active).data('ladb-focus-value');
+        const typed = active.value !== undefined && (active.value !== $(active).data('ladb-focus-value') || $(active).hasClass('ladb-hardware-editor-live'));
         return {
             element: active,
             $panel: $panel,
@@ -328,8 +389,10 @@
             return; // Not the same field anymore
         }
         element.focus();
-        if (focus.value !== undefined && element.value !== focus.value) {
-            element.value = focus.value;
+        if (focus.value !== undefined) {
+            if (element.value !== focus.value) {
+                element.value = focus.value;
+            }
             try {
                 element.setSelectionRange(focus.selectionStart, focus.selectionEnd);
             } catch (e) {
@@ -354,7 +417,7 @@
         if (!this.$inputName.is(':focus')) {
             this.$inputName.val(typeof name === 'string' ? name : '');
         }
-        this.$inputName.prop('disabled', this.readonly || typeof name !== 'string');
+        this.$inputName.ladbTextinputText(this.readonly || typeof name !== 'string' ? 'disable' : 'enable');
         this.renderFile();
     };
 
@@ -367,7 +430,7 @@
         if (!this.$inputFile.is(':focus')) {
             this.$inputFile.val(this.fileStem());
         }
-        this.$inputFile.prop('disabled', this.readonly || !dirRef);
+        this.$inputFile.ladbTextinputText(this.readonly || !dirRef ? 'disable' : 'enable');
         const renamed = this.ref && targetRef && targetRef !== this.ref;
         $('.ladb-hardware-editor-file-renamed', this.$element)
             .text(renamed ? i18next.t('core.hardware_editor.file_renamed', { name: fnFileStem(this.ref) + '.json' }) : '')
@@ -430,7 +493,7 @@
             solids: (this.response.solids || []).map(function (solid) {
                 // What the viewer shows when it is hovered
                 return $.extend({}, solid, {
-                    label: solid.slot.toUpperCase() + ' · ' + i18next.t('core.hardware_editor.solid_' + solid.kind, solid.texts)
+                    label: solid.slot.toUpperCase() + ' · ' + i18next.t('core.hardware_editor.primitive_type_' + solid.kind) + ' ' + fnPrimitiveSummary(solid.kind, solid.axis, solid.texts)
                 });
             }),
             skps: this.benchSkps(),
@@ -450,6 +513,9 @@
                 })
                 .on('hovered.bench', function (e, data) {
                     that.showBenchHover(data);
+                })
+                .on('clicked.bench', function (e, primitive) {
+                    that.openPrimitive(primitive);
                 })
                 .ladbThreeViewer({
                     dialog: this.dialog
@@ -479,17 +545,17 @@
             .tooltip({ container: 'body' });
     };
 
-    // The tooltips of the inherited elements of the given panel, before it
-    // is emptied : none stays open over nothing.
-    LadbModalHardwareEditor.prototype.destroyInheritedTooltips = function ($panel) {
-        $('.ladb-hardware-editor-inherited[data-toggle="tooltip"]', $panel).tooltip('destroy');
+    // The tooltips of the given panel, before it is emptied : none stays
+    // open over nothing.
+    LadbModalHardwareEditor.prototype.destroyTooltips = function ($panel) {
+        $('[data-toggle="tooltip"]', $panel).tooltip('destroy');
     };
 
     LadbModalHardwareEditor.prototype.renderComputations = function () {
         const that = this;
 
         this.showBenchMeasure(null);   // Its row is removed : no mouseleave
-        this.destroyInheritedTooltips(this.$computations);
+        this.destroyTooltips(this.$computations);
         this.$computations.empty();
         if (this.response.supported !== true) {
             return;
@@ -625,7 +691,7 @@
         this._settingsSignature = signature;
 
         const focus = this.captureFocus(this.$settings);
-        this.destroyInheritedTooltips(this.$settings);
+        this.destroyTooltips(this.$settings);
         this.$settings.empty();
 
         // Extends another : what is greyed comes from it
@@ -879,7 +945,7 @@
         const slots = Object.keys(components);
 
         const focus = this.captureFocus(this.$parts);
-        this.destroyInheritedTooltips(this.$parts);
+        this.destroyTooltips(this.$parts);
         this.$parts.empty();
         for (const slot of slots) {
 
@@ -956,6 +1022,8 @@
         }
 
         this.restoreFocus(focus);
+        this.dialog.setupTooltips(this.$parts);
+        this.showBenchPrimitive();
 
     };
 
@@ -1119,30 +1187,568 @@
 
         } else if (kind === 'primitives') {
 
-            const counts = [];
-            for (const key of PRIMITIVE_KEYS) {
-                if (Array.isArray(value[key]) && value[key].length > 0) {
-                    counts.push(i18next.t('core.hardware_editor.primitive_' + key, { count: value[key].length }));
-                }
-            }
-            $body.append($('<div class="ladb-hardware-editor-part-text">')
-                .text((counts.length > 0 ? counts.join(' · ') : i18next.t('core.hardware_editor.primitive_none')) + ' · ')
-                .append($('<a href="#">')
-                    .text(i18next.t('core.hardware_editor.edit_in_json'))
-                    .on('click', function (e) {
-                        e.preventDefault();
-                        that.showInJson(path.concat([ part ]));
-                    })
-                )
-            );
-
-        } else if (kind.indexOf('same_as:') === 0) {
-
-            $body.append($('<div class="ladb-hardware-editor-part-text">').text(i18next.t('core.hardware_editor.part_same_as', { slot: value.same_as.toUpperCase() })));
+            $body.append(this.renderPrimitives(slot, path.concat([ part ]), part, value));
 
         }
 
         return $row;
+    };
+
+    // Primitives /////
+
+    // The primitives of the given part - at the given path - : one row per
+    // primitive, the open one edited in place, then a button to add one of
+    // each kind the part can be given as.
+    LadbModalHardwareEditor.prototype.renderPrimitives = function (slot, partPath, part, value) {
+        const that = this;
+
+        const slotResponse = (this.response.slots || {})[slot];
+        const componentResponse = slotResponse && slotResponse.component ? slotResponse.component : {};
+        const partResponse = fnObject(fnObject(componentResponse.primitives)[part]);
+
+        const $primitives = $('<div class="ladb-hardware-editor-primitives">');
+        const $list = $('<div class="ladb-hardware-editor-primitive-list">');
+        for (const key of PART_PRIMITIVE_KEYS[part]) {
+            const items = Array.isArray(value[key]) ? value[key] : [];
+            const responses = Array.isArray(partResponse[key]) ? partResponse[key] : [];
+            let rank = 0;
+            items.forEach(function (item, index) {
+                if (!item || typeof item !== 'object' || Array.isArray(item)) {
+                    return;
+                }
+                rank++;
+                $list.append(that.renderPrimitive({ slot: slot, part: part, key: key, index: index }, partPath, item, responses[index] || null, rank, slotResponse ? slotResponse.names : null));
+            });
+        }
+        if ($list.children().length > 0) {
+            $primitives.append($list);
+        }
+
+        const $adds = $('<div class="ladb-hardware-editor-part-buttons">');
+        for (const key of PART_PRIMITIVE_KEYS[part]) {
+            $adds.append($('<button type="button" class="btn btn-default btn-xs">')
+                .append('+ ')
+                .append($('<span class="ladb-hardware-editor-primitive-icon">').addClass('ladb-hardware-editor-primitive-' + part).html(PRIMITIVE_ICONS[key]))
+                .append(' ' + i18next.t('core.hardware_editor.primitive_type_' + key))
+                .prop('disabled', this.readonly)
+                .on('click', function () {
+                    this.blur();
+                    that.addPrimitive(slot, partPath, part, key);
+                })
+            );
+        }
+        $primitives.append($adds);
+
+        return $primitives;
+    };
+
+    // The row of the given primitive : its head - name, what it resolves to
+    // on the bench, its tools - then, open, its fields.
+    LadbModalHardwareEditor.prototype.renderPrimitive = function (primitive, partPath, item, response, rank, names) {
+        const that = this;
+
+        const id = fnPrimitiveId(primitive);
+        const open = id === fnPrimitiveId(this.primitiveOpen);
+        const itemPath = partPath.concat([ primitive.key, primitive.index ]);
+        const fields = response ? fnObject(response.fields) : {};
+        const errorCount = Object.keys(fields).filter(function (name) { return fields[name].error; }).length;
+        const unresolved = response !== null && response.resolved !== true && errorCount === 0;
+
+        const $row = $('<div class="ladb-hardware-editor-primitive">')
+            .toggleClass('ladb-hardware-editor-primitive-open', open)
+            .attr('data-primitive', id);
+
+        // Head
+        const fnTool = function (icon, title, onClick) {
+            return fnTooltip($('<button type="button" class="btn btn-default btn-xs">'), title)
+                .append($('<i>').addClass('ladb-opencutlist-icon-' + icon))
+                .prop('disabled', that.readonly)
+                .on('click', function (e) {
+                    e.stopPropagation();
+                    this.blur();
+                    onClick();
+                });
+        };
+        const $head = $('<div class="ladb-hardware-editor-primitive-head">')
+            .append($('<span class="ladb-hardware-editor-primitive-caret">').text('▸'))
+            .append($('<span class="ladb-hardware-editor-primitive-icon">').addClass('ladb-hardware-editor-primitive-' + primitive.part).html(PRIMITIVE_ICONS[primitive.key]))
+            .append($('<span class="ladb-hardware-editor-primitive-name">').text(i18next.t('core.hardware_editor.primitive_type_' + primitive.key) + ' ' + rank))
+            .append($('<span class="ladb-hardware-editor-primitive-summary">').text(this.primitiveSummary(primitive.key, item, response, fields)));
+        if (errorCount > 0 || unresolved) {
+            $head.append($('<span class="ladb-hardware-editor-primitive-errors">').html('<i class="ladb-opencutlist-icon-warning"></i> ' + (errorCount || '')));
+        }
+        $head
+            .append($('<span class="ladb-hardware-editor-primitive-tools">')
+                .append(fnTool('copy', i18next.t('default.duplicate'), function () {
+                    that.duplicatePrimitive(primitive, partPath);
+                }))
+                .append(fnTool('clear', i18next.t('default.delete'), function () {
+                    that.deletePrimitive(primitive, partPath);
+                }))
+            )
+            .on('click', function () {
+                that.primitiveOpen = open ? null : primitive;
+                that.renderParts();
+            })
+            .on('mouseenter', function () {
+                that.primitiveHovered = primitive;
+                that.showBenchPrimitive();
+            })
+            .on('mouseleave', function () {
+                that.primitiveHovered = null;
+                that.showBenchPrimitive();
+            });
+        $row.append($head);
+
+        if (open) {
+            $row.append(this.renderPrimitiveEditor(primitive, itemPath, item, fields, unresolved, names));
+        }
+
+        return $row;
+    };
+
+    // What the given primitive is, in a few words : its sizes and position
+    // as resolved on the bench, worded as the bench tells it when hovered -
+    // '?' for what can't be.
+    LadbModalHardwareEditor.prototype.primitiveSummary = function (key, item, response, fields) {
+        if (response && response.texts) {
+            return fnPrimitiveSummary(key, item.axis, response.texts);
+        }
+        const fnText = function (name) {
+            if (fields[name] && fields[name].text) {
+                return fields[name].text;
+            }
+            return item[name] === undefined && /^[xyz]$/.test(name) ? '0' : '?';
+        };
+        return fnPrimitiveSummary(key, item.axis, {
+            diameter: fnText(key === 'mortises' || key === 'oblongs' ? 'width' : 'diameter'),
+            length: fnText('length'),
+            depth: fnText('depth'),
+            x: fnText('x'),
+            y: fnText('y'),
+            z: fnText('z')
+        });
+    };
+
+    // The fields of the given primitive : each length typed is written as
+    // it goes - the bench follows - its value on the bench beside it.
+    LadbModalHardwareEditor.prototype.renderPrimitiveEditor = function (primitive, itemPath, item, fields, unresolved, names) {
+        const that = this;
+
+        const key = primitive.key;
+        const machining = key === 'drillings' || key === 'mortises';
+        const alongY = machining && item.axis === 'y';
+
+        const $editor = $('<div class="ladb-hardware-editor-primitive-editor">')
+            .on('focusin focusout', function (e) {
+                // Its names offered while a length is typed - see .ladb-hardware-editor-primitive-names
+                $editor.toggleClass('ladb-hardware-editor-primitive-typing', e.type === 'focusin' && $(e.target).hasClass('ladb-hardware-editor-live'));
+            });
+
+        const fnLabel = function (label) {
+            $editor.append($('<div class="ladb-hardware-editor-primitive-label">').text(i18next.t('core.hardware_editor.' + label)));
+        };
+        const fnRow = function ($content) {
+            $editor.append($('<div class="ladb-hardware-editor-primitive-fields">').append($content));
+        };
+
+        // A length of the item - or of its head, at the given path - :
+        // written as typed, removed when emptied if it is optional.
+        const fnField = function (path, name, optional, axis, tag, resetValue) {
+            const responseName = path.length > itemPath.length ? 'head_' + name : name;
+            const field = fields[responseName] || null;
+            const $cell = $('<div class="ladb-hardware-editor-placement-cell ladb-hardware-editor-primitive-cell">')
+                .addClass(axis ? 'ladb-hardware-editor-placement-' + axis : 'ladb-hardware-editor-primitive-neutral')
+                .toggleClass('ladb-hardware-editor-primitive-invalid', !!(field && field.error));
+            if (tag) {
+                $cell.append($('<span class="ladb-hardware-editor-primitive-tag">').text(tag));
+            }
+            const $input = $('<input type="text" class="form-control input-sm ladb-hardware-editor-live" spellcheck="false">');
+            $cell.append($input);
+            let target = item;
+            for (const k of path.slice(itemPath.length)) {
+                target = fnObject(target[k]);
+            }
+            $input
+                .val(fnPrimitiveText(target[name]))
+                .attr('placeholder', optional ? '0' : '')
+                .ladbTextinputDimension({ resetValue: optional ? '' : resetValue })   // Reset : an optional one removed
+                .on('input change', function () {
+                    const text = $(this).val();
+                    that.setJsonMember(path, name, text.trim() === '' && optional ? undefined : fnPrimitiveValue(text));
+                })
+                .on('keydown', function (e) {
+                    // ↑ ↓ nudge a plain length - by 0.5 mm, 5 mm with Shift
+                    if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') {
+                        return;
+                    }
+                    const match = /^(-?\d+(?:[.,]\d+)?)(\s*mm)?$/.exec($(this).val().trim() || (optional ? '0' : ''));
+                    if (!match) {
+                        return;
+                    }
+                    e.preventDefault();
+                    const number = Math.round((parseFloat(match[1].replace(',', '.')) + (e.shiftKey ? 5 : 0.5) * (e.key === 'ArrowUp' ? 1 : -1)) * 100) / 100;
+                    $(this).val(String(number) + (match[2] || '')).trigger('input');
+                });
+            const $value = $('<span class="ladb-hardware-editor-primitive-value">');
+            if (field && field.error) {
+                $value.html('<i class="ladb-opencutlist-icon-warning"></i>');
+                fnTooltip($cell, that.errorLabel(field.error));
+            } else if (field && field.text && typeof target[name] === 'string' && !/^-?\d+(?:[.,]\d+)?\s*[a-z"']*$/i.test(target[name].trim())) {
+                $value.text('= ' + field.text);   // An expression : what it gives
+            }
+            $cell.append($value);
+            return $cell;
+        };
+
+        // Buttons, one pressed : the item - as written now, what was typed
+        // since this rendering included - rewritten by the one clicked. An
+        // axis one is its letter alone, in the axis color.
+        const fnSegments = function (options, current) {
+            const $group = $('<div class="btn-group btn-group-xs ladb-hardware-editor-primitive-segments">');
+            for (const option of options) {
+                $group.append(fnTooltip($('<button type="button" class="btn btn-default">'), option.help ? i18next.t('core.hardware_editor.' + option.help) : null)
+                    .append(option.axis
+                        ? $('<span class="ladb-hardware-editor-primitive-axis">').addClass('ladb-hardware-editor-placement-' + option.axis).text(option.axis.toUpperCase())
+                        : document.createTextNode(i18next.t('core.hardware_editor.' + option.label)))
+                    .toggleClass('active', option.value === current)
+                    .prop('disabled', that.readonly || option.disabled === true)
+                    .on('click', function () {
+                        this.blur();
+                        const written = that.primitiveItem(itemPath);
+                        if (option.value !== current && written !== null) {
+                            const newItem = $.extend(true, {}, written);
+                            option.apply(newItem);
+                            that.setPrimitive(itemPath, newItem);
+                        }
+                    })
+                );
+            }
+            return $group;
+        };
+
+        // Sizes
+        const defaults = PRIMITIVE_DEFAULTS[key];
+        if (key === 'cylinders' || key === 'drillings') {
+            fnLabel('primitive_diameter');
+            fnRow(fnField(itemPath, 'diameter', false, null, null, defaults.diameter));
+        } else {
+            fnLabel('primitive_size');
+            fnRow([
+                fnField(itemPath, 'length', false, null, 'L', defaults.length),
+                fnField(itemPath, 'width', false, null, 'l', defaults.width)
+            ]);
+            if (key === 'mortises' && alongY) {
+                fnLabel('primitive_length_axis');
+                fnRow(fnSegments([
+                    { value: 'x', axis: 'x', apply: function (newItem) { delete newItem.length_axis; } },
+                    { value: 'z', axis: 'z', apply: function (newItem) { newItem.length_axis = 'z'; } }
+                ], item.length_axis === 'z' ? 'z' : 'x'));
+            }
+        }
+
+        // Extent
+        if (key === 'cylinders' || key === 'oblongs') {
+            fnLabel('primitive_span');
+            fnRow([
+                fnField(itemPath, 'from', false, 'z', i18next.t('core.hardware_editor.primitive_from'), defaults.from),
+                fnField(itemPath, 'to', false, 'z', i18next.t('core.hardware_editor.primitive_to'), defaults.to)
+            ]);
+        } else if (key === 'drillings' && !alongY) {
+            const through = item.depth === 'through';
+            fnLabel('primitive_depth');
+            // The length, then through checked beside it : the length greyed, without value
+            const $field = fnField(itemPath, 'depth', false, null, null, defaults.depth);
+            if (through) {
+                $field.addClass('ladb-hardware-editor-primitive-disabled');
+                $field.find('input').val('').prop('disabled', true);
+                $field.find('.ladb-hardware-editor-primitive-value').remove();
+            }
+            const $through = $('<input type="checkbox">')
+                .prop('checked', through)
+                .prop('disabled', that.readonly)
+                .on('change', function () {
+                    const written = that.primitiveItem(itemPath);
+                    if (written !== null) {
+                        const newItem = $.extend(true, {}, written);
+                        if ($(this).is(':checked')) {
+                            newItem.depth = 'through';
+                        } else {
+                            newItem.depth = defaults.depth;
+                            for (const head of PRIMITIVE_HEADS) {
+                                if (newItem[head] && typeof newItem[head] === 'object') {
+                                    delete newItem[head].face;   // The opposite face needs it through
+                                }
+                            }
+                        }
+                        that.setPrimitive(itemPath, newItem);
+                    }
+                });
+            fnRow([
+                $field,
+                fnTooltip($('<div class="checkbox ladb-hardware-editor-primitive-through">'), i18next.t('core.hardware_editor.primitive_through_help'))
+                    .append($('<label>')
+                        .append($through)
+                        .append(' ' + i18next.t('core.hardware_editor.primitive_through'))
+                    )
+            ]);
+        } else {
+            fnLabel('primitive_depth');
+            fnRow(fnField(itemPath, 'depth', false, null, null, defaults.depth));
+        }
+
+        // Axis
+        if (machining) {
+            fnLabel('primitive_axis');
+            fnRow(fnSegments([
+                { value: 'z', axis: 'z', apply: function (newItem) {
+                    delete newItem.axis;
+                    delete newItem.z;
+                    delete newItem.length_axis;
+                } },
+                { value: 'y', axis: 'y', apply: function (newItem) {
+                    newItem.axis = 'y';
+                    delete newItem.y;
+                    if (newItem.depth === 'through') {
+                        newItem.depth = '@height';
+                    }
+                    for (const head of PRIMITIVE_HEADS) {
+                        delete newItem[head];   // Not along Y
+                    }
+                } }
+            ], alongY ? 'y' : 'z'));
+        }
+
+        // Position
+        fnLabel('primitive_position');
+        fnRow([
+            fnField(itemPath, 'x', true, 'x', 'X', '0'),
+            alongY ? fnField(itemPath, 'z', true, 'z', 'Z', '0') : fnField(itemPath, 'y', true, 'y', 'Y', '0')
+        ]);
+
+        // Head : a widened end of a drilling - not along Y - or a cylinder
+        if (key === 'cylinders' || key === 'drillings' && !alongY) {
+            const head = PRIMITIVE_HEADS.find(function (h) { return item[h] && typeof item[h] === 'object'; }) || null;
+            const fnSetHead = function (newHead) {
+                return function (newItem) {
+                    const previousHead = PRIMITIVE_HEADS.find(function (h) { return newItem[h] && typeof newItem[h] === 'object'; });
+                    const previous = previousHead ? newItem[previousHead] : {};
+                    for (const h of PRIMITIVE_HEADS) {
+                        delete newItem[h];
+                    }
+                    if (newHead) {
+                        const value = { diameter: previous.diameter !== undefined ? previous.diameter : '10mm' };
+                        if (newHead === 'counterbore') {
+                            value.depth = previous.depth !== undefined ? previous.depth : '3mm';
+                        } else if (previous.angle !== undefined) {
+                            value.angle = previous.angle;
+                        }
+                        if (key === 'cylinders') {
+                            value.end = previous.end || 'to';
+                        } else if (previous.face) {
+                            value.face = previous.face;
+                        }
+                        newItem[newHead] = value;
+                    }
+                };
+            };
+            $editor.append($('<div class="ladb-hardware-editor-primitive-separator">'));
+            fnLabel('primitive_head');
+            fnRow(fnSegments([
+                { value: null, label: 'primitive_head_none', apply: fnSetHead(null) },
+                { value: 'countersink', label: 'primitive_head_countersink', apply: fnSetHead('countersink') },
+                { value: 'counterbore', label: 'primitive_head_counterbore', apply: fnSetHead('counterbore') }
+            ], head));
+            if (head) {
+                const headPath = itemPath.concat([ head ]);
+                const headValue = item[head];
+                fnLabel('primitive_head_side');
+                if (key === 'drillings') {
+                    fnRow(fnSegments([
+                        { value: 'contact', label: 'primitive_face_contact', apply: function (newItem) { delete fnObject(newItem[head]).face; } },
+                        { value: 'opposite', label: 'primitive_face_opposite', help: 'primitive_face_opposite_help', disabled: item.depth !== 'through', apply: function (newItem) { fnObject(newItem[head]).face = 'opposite'; } }
+                    ], headValue.face === 'opposite' ? 'opposite' : 'contact'));
+                } else {
+                    fnRow(fnSegments([
+                        { value: 'to', label: 'primitive_end_to', apply: function (newItem) { fnObject(newItem[head]).end = 'to'; } },
+                        { value: 'from', label: 'primitive_end_from', apply: function (newItem) { fnObject(newItem[head]).end = 'from'; } }
+                    ], headValue.end === 'from' ? 'from' : 'to'));
+                }
+                fnLabel(head === 'countersink' ? 'primitive_head_diameter_angle' : 'primitive_head_diameter_depth');
+                const $second = head === 'countersink'
+                    ? this.renderPrimitiveAngle(headPath, headValue)
+                    : fnField(headPath, 'depth', false, null, null, '3mm');
+                fnRow([ fnField(headPath, 'diameter', false, null, 'Ø', '10mm'), $second ]);
+            }
+        }
+
+        // What its lengths can use, inserted where the caret is
+        if (!this.readonly && Array.isArray(names) && names.length > 0) {
+            const $names = $('<div class="ladb-hardware-editor-primitive-names">')
+                .append($('<span class="ladb-hardware-editor-primitive-names-title">').text(i18next.t('core.hardware_editor.primitive_variables')));
+            for (const variable of names) {
+                $names.append($('<button type="button" class="btn btn-default btn-xs">')
+                    .append($('<span>').text('@' + variable.name))
+                    .append(' ')
+                    .append($('<em>').text(variable.text || ''))
+                    .on('mousedown', function (e) {
+                        e.preventDefault();   // The field keeps the focus
+                    })
+                    .on('click', function () {
+                        const input = document.activeElement;
+                        if (!input || !$(input).hasClass('ladb-hardware-editor-live') || !$.contains($editor.get(0), input)) {
+                            return;
+                        }
+                        const text = '@' + variable.name;
+                        const start = input.selectionStart, end = input.selectionEnd;
+                        input.value = input.value.substring(0, start) + text + input.value.substring(end);
+                        input.setSelectionRange(start + text.length, start + text.length);
+                        $(input).trigger('input');
+                    })
+                );
+            }
+            $editor.append($names);
+        }
+
+        if (unresolved) {
+            $editor.append($('<div class="ladb-hardware-editor-primitive-error">').text(i18next.t('core.hardware_editor.primitive_unresolved')));
+        }
+
+        if (this.readonly) {
+            $('input', $editor).prop('disabled', true);
+        }
+
+        return $editor;
+    };
+
+    // The angle of a countersink, in degrees - 90 when it has none.
+    LadbModalHardwareEditor.prototype.renderPrimitiveAngle = function (headPath, head) {
+        const that = this;
+        const $cell = $('<div class="ladb-hardware-editor-placement-cell ladb-hardware-editor-primitive-cell ladb-hardware-editor-primitive-neutral">');
+        const $input = $('<input type="text" class="form-control input-sm ladb-hardware-editor-live" inputmode="decimal">')
+            .val(head.angle === undefined ? '' : String(head.angle))
+            .attr('placeholder', String(PRIMITIVE_HEAD_DEFAULT_ANGLE))
+            .on('input', function () {
+                const text = $(this).val().trim().replace(',', '.');
+                const angle = parseFloat(text);
+                if (text === '' || angle === PRIMITIVE_HEAD_DEFAULT_ANGLE) {
+                    that.setJsonMember(headPath, 'angle', undefined);
+                } else if (/^\d+(\.\d+)?$/.test(text)) {
+                    that.setJsonMember(headPath, 'angle', angle);
+                }
+            });
+        return $cell
+            .append($input)
+            .append($('<span class="ladb-hardware-editor-primitive-value">').text('°'));
+    };
+
+    // The primitive at the given path, as written - a copy - null when it isn't there.
+    LadbModalHardwareEditor.prototype.primitiveItem = function (itemPath) {
+        const items = this.primitiveItems(itemPath.slice(0, -2), itemPath[itemPath.length - 2]);
+        const item = items ? items[itemPath[itemPath.length - 1]] : null;
+        return item && typeof item === 'object' ? item : null;
+    };
+
+    // The primitives of the given kind in the part at the given path, as
+    // written - a copy - an empty list when it has none.
+    LadbModalHardwareEditor.prototype.primitiveItems = function (partPath, key) {
+        let data;
+        try {
+            data = JSON.parse(this.cm.getValue());
+        } catch (e) {
+            return null;
+        }
+        let target = data;
+        for (const k of partPath) {
+            target = fnObject(target)[k];
+        }
+        return Array.isArray(fnObject(target)[key]) ? $.extend(true, [], target[key]) : [];
+    };
+
+    // Writes the given primitives of the given kind in the part at the given
+    // path, on one line - a kind left without any removed, but the last one.
+    LadbModalHardwareEditor.prototype.setPrimitiveItems = function (partPath, key, items) {
+        let value = items;
+        if (items.length === 0) {
+            const text = this.cm.getValue();
+            const others = PRIMITIVE_KEYS.some(function (k) { return k !== key && this.findJsonValueRange(text, partPath.concat([ k ])) !== null; }, this);
+            value = others ? undefined : [];
+        }
+        if (this.setJsonMember(partPath, key, value)) {
+            this.compute(false);
+        }
+    };
+
+    // Replaces the primitive at the given path by the given one.
+    LadbModalHardwareEditor.prototype.setPrimitive = function (itemPath, item) {
+        const range = this.findJsonValueRange(this.cm.getValue(), itemPath);
+        if (range === null) {
+            return;
+        }
+        this.cm.replaceRange(fnInlineJson(item), this.cm.posFromIndex(range.start), this.cm.posFromIndex(range.end));
+        this.compute(false);
+    };
+
+    LadbModalHardwareEditor.prototype.addPrimitive = function (slot, partPath, part, key) {
+        const items = this.primitiveItems(partPath, key);
+        if (items === null) {
+            return;
+        }
+        items.push($.extend({}, PRIMITIVE_DEFAULTS[key]));
+        this.primitiveOpen = { slot: slot, part: part, key: key, index: items.length - 1 };
+        this.setPrimitiveItems(partPath, key, items);
+    };
+
+    // A copy of the given primitive after it.
+    LadbModalHardwareEditor.prototype.duplicatePrimitive = function (primitive, partPath) {
+        const items = this.primitiveItems(partPath, primitive.key);
+        if (items === null || !items[primitive.index]) {
+            return;
+        }
+        const copy = $.extend(true, {}, items[primitive.index]);
+        items.splice(primitive.index + 1, 0, copy);
+        this.primitiveOpen = $.extend({}, primitive, { index: primitive.index + 1 });
+        this.setPrimitiveItems(partPath, primitive.key, items);
+    };
+
+    LadbModalHardwareEditor.prototype.deletePrimitive = function (primitive, partPath) {
+        const items = this.primitiveItems(partPath, primitive.key);
+        if (items === null || !items[primitive.index]) {
+            return;
+        }
+        items.splice(primitive.index, 1);
+        const open = this.primitiveOpen;
+        if (open && open.slot === primitive.slot && open.part === primitive.part && open.key === primitive.key) {
+            if (open.index === primitive.index) {
+                this.primitiveOpen = null;
+            } else if (open.index > primitive.index) {
+                this.primitiveOpen = $.extend({}, open, { index: open.index - 1 });
+            }
+        }
+        this.primitiveHovered = null;
+        this.setPrimitiveItems(partPath, primitive.key, items);
+    };
+
+    // The given primitive - clicked in the viewer - edited : its row open.
+    LadbModalHardwareEditor.prototype.openPrimitive = function (primitive) {
+        if (!primitive || !primitive.key) {
+            return;
+        }
+        this.primitiveOpen = primitive;
+        $('a[href="#ladb_hardware_editor_tab_parts"]', this.$element).tab('show');
+        this.renderParts();
+        const $row = $('.ladb-hardware-editor-primitive[data-primitive="' + fnPrimitiveId(primitive) + '"]', this.$parts);
+        if ($row.length > 0) {
+            $row.get(0).scrollIntoView({ block: 'nearest' });
+        }
+    };
+
+    // The primitive hovered - else the one edited - stands out in the viewer.
+    LadbModalHardwareEditor.prototype.showBenchPrimitive = function () {
+        const $threeViewer = $('.ladb-three-viewer', this.$viewer);
+        if ($threeViewer.length > 0 && $threeViewer.data('ladb.threeviewer').loaded) {
+            $threeViewer.ladbThreeViewer('callCommand', [ 'select_bench_solid', { solid: this.primitiveHovered || this.primitiveOpen } ]);
+        }
     };
 
     // The kinematics of the hinge - see HardwareDescriptorDef::HINGE_ATTRIBUTES
@@ -1314,6 +1920,7 @@
         const $row = $('<div class="ladb-hardware-editor-part">')
             .append($('<label class="control-label">').text(i18next.t('core.hardware_editor.' + label)))
             .append($('<div class="ladb-hardware-editor-part-body">').append($input));
+        $input.ladbTextinputText();
         if (fnOwns && typeof target.name === 'string' && !fnOwns(path.concat([ 'name' ]))) {
             this.markInherited($row);
         }
@@ -1366,9 +1973,8 @@
 
         const $placement = $('<div class="ladb-hardware-editor-placement">');
         const $triad = $('<svg class="ladb-hardware-editor-placement-triad" width="28" height="28" viewBox="-14 -14 28 28">');
-        const $undo = $('<button type="button" class="btn btn-default btn-xs">')
-            .attr('title', i18next.t('core.hardware_editor.placement_undo'))
-            .text('↶');
+        const $undo = fnTooltip($('<button type="button" class="btn btn-default btn-xs">'), i18next.t('core.hardware_editor.placement_undo'))
+            .append($('<i class="ladb-opencutlist-icon-undo">'));
         const $inputs = [];
 
         // The part's own axes, as laid, seen from the front right
@@ -1420,10 +2026,9 @@
             fnApply(fnMultiply(by, fnMatrix()), fnMatrix());
         };
 
-        const fnButton = function (label, title, onClick) {
-            return $('<button type="button">')
-                .text(label)
-                .attr('title', title)
+        const fnButton = function (label, title, onClick) {   // label : a text or an element
+            return fnTooltip($('<button type="button">'), title)
+                .append(typeof label === 'string' ? document.createTextNode(label) : label)
                 .on('click', function () {
                     this.blur();
                     onClick();
@@ -1455,7 +2060,7 @@
                     fnApply(IDENTITY.slice(), fnMatrix());
                 })
             )
-            .append($('<i class="ladb-opencutlist-icon-info">').attr('title', i18next.t('core.hardware_editor.placement_help')))
+            .append(fnTooltip($('<i class="ladb-opencutlist-icon-info">'), i18next.t('core.hardware_editor.placement_help')))
         );
 
         const $grid = $('<div class="ladb-hardware-editor-placement-grid">');
@@ -1469,8 +2074,8 @@
         AXES.forEach(function (axis, index) {
             const params = { axis: axis.toUpperCase() };
             $grid.append(fnCell(axis)
-                .append(fnButton('↺ 90°', i18next.t('core.hardware_editor.placement_rotate_ccw', params), function () { fnTransform(fnQuarterTurn(index, 1)); }))
-                .append(fnButton('↻ 90°', i18next.t('core.hardware_editor.placement_rotate_cw', params), function () { fnTransform(fnQuarterTurn(index, -1)); }))
+                .append(fnButton($('<i class="ladb-opencutlist-icon-rotate-left">'), i18next.t('core.hardware_editor.placement_rotate_ccw', params), function () { fnTransform(fnQuarterTurn(index, 1)); }))
+                .append(fnButton($('<i class="ladb-opencutlist-icon-rotate-right">'), i18next.t('core.hardware_editor.placement_rotate_cw', params), function () { fnTransform(fnQuarterTurn(index, -1)); }))
             );
         });
 
@@ -1478,7 +2083,7 @@
         $grid.append(fnLabel('mirror'));
         AXES.forEach(function (axis, index) {
             $grid.append(fnCell(axis)
-                .append(fnButton('⇋', i18next.t('core.hardware_editor.placement_mirror_help', { axis: axis.toUpperCase() }), function () { fnTransform(fnMirror(index)); }))
+                .append(fnButton($('<i class="ladb-opencutlist-icon-flipped">'), i18next.t('core.hardware_editor.placement_mirror_help', { axis: axis.toUpperCase() }), function () { fnTransform(fnMirror(index)); }))
             );
         });
 
@@ -1625,17 +2230,6 @@
         );
         this.compute(false);
 
-    };
-
-    // Shows the value at the given path in the JSON tab, selected.
-    LadbModalHardwareEditor.prototype.showInJson = function (path) {
-        const range = this.findJsonValueRange(this.cm.getValue(), path);
-        $('a[href="#ladb_hardware_editor_tab_json"]', this.$element).tab('show');
-        if (range !== null) {
-            this.cm.setSelection(this.cm.posFromIndex(range.start), this.cm.posFromIndex(range.end));
-            this.cm.scrollIntoView({ from: this.cm.posFromIndex(range.start), to: this.cm.posFromIndex(range.end) }, 50);
-        }
-        this.cm.focus();
     };
 
     // Save /////
@@ -2332,9 +2926,11 @@
         this.$inputFile = $('#ladb_hardware_editor_input_file', this.$element);
         this.$inputName = $('#ladb_hardware_editor_input_name', this.$element);
 
-        // Name of the descriptor : only its text in the JSON
+        // Name of the descriptor : only its text in the JSON - emptied by its
+        // reset button, which only triggers 'change'
         this.$inputName
-            .on('input', function () {
+            .ladbTextinputText()
+            .on('input change', function () {
                 const range = that.findJsonValueRange(that.cm.getValue(), [ 'name' ]);
                 if (range !== null) {
                     that.cm.replaceRange(JSON.stringify($(this).val()), that.cm.posFromIndex(range.start), that.cm.posFromIndex(range.end));
@@ -2354,17 +2950,26 @@
             that.endShaping(false);
         });
 
-        // File name : renames at save - a new one follows its name until typed
+        // File name : renames at save - a new one follows its name until typed.
+        // Emptied - its reset button only triggers 'change' - : back to its
+        // own.
+        const fnSetFileName = function (text) {
+            that.fileName = fnSanitizeFileName(text) || null;
+            that.renderFile();
+            that.updateGuard();
+            if (!that.ref) {
+                that.compute(true);   // Its parts are looked for in the folder named after it
+            }
+        };
         this.$inputFile
+            .ladbTextinputText()
             .on('input', function () {
-                that.fileName = fnSanitizeFileName($(this).val()) || null;
-                that.renderFile();
-                that.updateGuard();
-                if (!that.ref) {
-                    that.compute(true);   // Its parts are looked for in the folder named after it
-                }
+                fnSetFileName($(this).val());
             })
             .on('change', function () {
+                if ($(this).val().trim() === '' && that.fileName !== null) {
+                    fnSetFileName('');
+                }
                 $(this).val(that.fileStem());
             });
 

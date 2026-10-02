@@ -146,6 +146,12 @@
             that.$element.trigger('hovered.bench', [ e.data ]);
 
         });
+        this.$iframe.get(0).addEventListener('clicked.bench', function (e) {
+
+            // Forward event : { slot, part, key, index } of the primitive clicked
+            that.$element.trigger('clicked.bench', [ e.data ]);
+
+        });
         this.$iframe.get(0).addEventListener('changed.helpers', function (e) {
 
             // Update buttons status
@@ -171,6 +177,17 @@
                 const $btn = $(el);
                 const params = $btn.data('params');
                 if (params.visible == null && e.data.axesHelperVisible) {
+                    $btn.addClass('active');
+                } else {
+                    $btn.removeClass('active');
+                }
+            });
+            $('[data-command="set_bench_slot_visible"]', that.$element).each(function (index, el) {
+                const $btn = $(el);
+                const params = $btn.data('params');
+                const slotVisible = e.data.benchSlotsVisible ? e.data.benchSlotsVisible[params.slot] : undefined;
+                $btn.toggle(slotVisible !== undefined);   // Only the slots on the bench
+                if (params.visible == null && slotVisible) {
                     $btn.addClass('active');
                 } else {
                     $btn.removeClass('active');

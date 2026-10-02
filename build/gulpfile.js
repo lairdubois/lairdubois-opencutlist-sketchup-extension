@@ -167,6 +167,7 @@ var VIEWER_JS_FILES = withBase(JS_BASE, [
     'lib/three.min.js',
     'lib/three-orbit-controls.min.js',
     'lib/three-css-2d-renderer.min.js',
+    'lib/three-fat-lines.min.js',
     'viewer.js',
 ]);
 

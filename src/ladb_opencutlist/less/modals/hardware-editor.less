@@ -13,7 +13,7 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  border-right: 1px solid @ladb-global-border;
+  border-right: 1px solid #ccc;
 }
 
 .ladb-hardware-editor-viewer {
@@ -97,7 +97,7 @@
     gap: 6px;
     padding: 10px;
     background: #fff;
-    border: 1px solid @ladb-global-border;
+    border: 1px solid #ccc;
     border-radius: 4px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 
@@ -158,9 +158,9 @@
 }
 
 .ladb-hardware-editor-computations {
-  flex: 0 1 20%;
+  flex: 1 1 20%;   // Grows into the height the viewer leaves
   overflow-y: auto;
-  border-top: 1px solid @ladb-global-border;
+  border-top: 1px solid #ccc;
   padding: 10px;
 
   &:empty {
@@ -255,7 +255,7 @@
     display: flex;
     flex-direction: column;
     background-color: #fff;
-    border-top: 1px solid @ladb-global-border;
+    border-top: 1px solid #ccc;
 
     > .tab-pane {
       flex: 1 1 auto;
@@ -352,10 +352,13 @@
     margin: 0 5px 0 0;
   }
 
-  input.form-control {
+  div.ladb-textinput {
     flex: 1 1 auto;
     min-width: 80px;
-    width: auto;
+  }
+
+  input.form-control {
+    width: 100%;
     font-family: monospace;
   }
 
@@ -408,7 +411,7 @@
   .ladb-hardware-editor-settings-title {
     margin: 0 0 10px;
     padding-bottom: 4px;
-    border-bottom: 1px solid @ladb-global-border;
+    border-bottom: 1px solid #ccc;
     color: @ladb-global-light-color;
     text-transform: uppercase;
     font-size: 11px;
@@ -447,7 +450,7 @@
 // Parts
 
 .ladb-hardware-editor-slot {
-  border: 1px solid @ladb-global-border;
+  border: 1px solid #ccc;
 
   & + & {
     margin-top: 12px;
@@ -462,7 +465,7 @@
   gap: 6px 10px;
   padding: 7px 10px;
   background-color: #f9f9f9;
-  border-bottom: 1px solid @ladb-global-border;
+  border-bottom: 1px solid #ccc;
   border-radius: 4px 4px 0 0;
 }
 
@@ -560,10 +563,6 @@
   gap: 5px;
 }
 
-.ladb-hardware-editor-part-text {
-  font-size: 12px;
-}
-
 .ladb-hardware-editor-file {
   display: flex;
   flex-wrap: wrap;
@@ -584,8 +583,7 @@
   flex-direction: column;
   gap: 6px;
   padding: 6px 8px 8px;
-  border: 1px solid @ladb-global-border;
-  border-radius: 3px;
+  border: 1px solid #ccc;
   background-color: #f9f9f9;
   font-size: 12px;
 }
@@ -640,7 +638,6 @@
 
 .ladb-hardware-editor-placement-axis {
   padding: 1px 0;
-  border-radius: 3px;
   background-color: var(--ladb-axis-color);
   color: #fff;
   font-size: 11px;
@@ -652,9 +649,8 @@
   display: flex;
   min-width: 0;
   height: 26px;
-  border: 1px solid @ladb-global-border;
+  border: 1px solid #ccc;
   border-left: 3px solid var(--ladb-axis-color);
-  border-radius: 3px;
   background-color: @ladb-global-bg;
   overflow: hidden;
 
@@ -674,7 +670,7 @@
     text-overflow: ellipsis;
 
     & + button {
-      border-left: 1px solid @ladb-global-border;
+      border-left: 1px solid #ccc;
     }
 
     &:hover {
@@ -724,6 +720,260 @@
   border-radius: 50%;
   background-color: @ladb-brand-warning;
   vertical-align: 1px;
+}
+
+// Primitives of a part : one row each, the open one edited in place
+
+.ladb-hardware-editor-primitives {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.ladb-hardware-editor-primitive-list {
+  border: 1px solid #ccc;
+}
+
+.ladb-hardware-editor-primitive {
+
+  & + & {
+    border-top: 1px solid #ccc;
+  }
+
+  &.ladb-hardware-editor-primitive-open > .ladb-hardware-editor-primitive-head {
+    background-color: #f5f5f5;
+
+    .ladb-hardware-editor-primitive-caret {
+      transform: rotate(90deg);
+    }
+
+  }
+
+}
+
+.ladb-hardware-editor-primitive-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  padding: 3px 4px 3px 6px;
+  font-size: 12px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #f5f5f5;
+  }
+
+}
+
+.ladb-hardware-editor-primitive-caret {
+  flex: none;
+  width: 9px;
+  color: @ladb-global-light-color;
+  font-size: 10px;
+  transition: transform .12s;
+}
+
+// In the color of its part on the bench
+.ladb-hardware-editor-primitive-icon {
+  display: inline-flex;
+  flex: none;
+  vertical-align: -3px;
+
+  &.ladb-hardware-editor-primitive-hardware { color: #8c8c8c; }
+  &.ladb-hardware-editor-primitive-machining { color: #2e7fd9; }
+
+}
+
+.ladb-hardware-editor-primitive-name {
+  flex: none;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.ladb-hardware-editor-primitive-summary {
+  flex: 1 1 auto;
+  min-width: 0;
+  color: @ladb-global-light-color;
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ladb-hardware-editor-primitive-errors {
+  flex: none;
+  color: @ladb-brand-danger;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.ladb-hardware-editor-primitive-tools {
+  display: flex;
+  flex: none;
+
+  > .btn {
+    border-color: transparent;
+    background: transparent;
+    color: @ladb-global-light-color;
+
+    &:hover:not([disabled]) {
+      border-color: #ccc;
+      background-color: @ladb-global-bg;
+      color: @ladb-global-color;
+    }
+
+  }
+
+}
+
+.ladb-hardware-editor-primitive-editor {
+  display: grid;
+  grid-template-columns: 90px minmax(0, 1fr);
+  gap: 6px 8px;
+  align-items: center;
+  padding: 8px 8px 8px 10px;
+  border-top: 1px dashed #ccc;
+  background-color: #f9f9f9;
+
+  // What its lengths can use : shown while one is typed - not when a button has the focus
+  &.ladb-hardware-editor-primitive-typing > .ladb-hardware-editor-primitive-names {
+    display: flex;
+  }
+
+}
+
+.ladb-hardware-editor-primitive-label {
+  color: @ladb-global-light-color;
+  font-size: 11px;
+}
+
+.ladb-hardware-editor-primitive-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  min-width: 0;
+}
+
+// Through : a checkbox beside the depth
+.ladb-hardware-editor-primitive-through {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  font-size: 12px;
+}
+
+.ladb-hardware-editor-primitive-segments {
+  display: flex;
+  grid-column: ~"1 / -1";
+  justify-self: start;
+}
+
+.ladb-hardware-editor-primitive-cell {
+  align-items: center;
+
+  &.ladb-hardware-editor-primitive-neutral {
+    --ladb-axis-color: #ccc;
+
+    &:focus-within {
+      border-color: @ladb-brand-primary;
+    }
+
+  }
+
+  // Greyed, without value - a through depth
+  &.ladb-hardware-editor-primitive-disabled {
+    background-color: #eee;
+  }
+
+  &.ladb-hardware-editor-primitive-invalid {
+    border-color: @ladb-brand-danger;
+    background-color: fade(@ladb-brand-danger, 8%);
+  }
+
+  > input.form-control {
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 24px;
+    padding: 2px 4px;
+    border: 0;
+    box-shadow: none;
+    background: transparent;
+    text-align: right;
+  }
+
+}
+
+// An axis segment : its letter in the axis color
+.ladb-hardware-editor-primitive-axis {
+  color: var(--ladb-axis-color);
+  font-weight: bold;
+}
+
+.ladb-hardware-editor-primitive-tag {
+  flex: none;
+  padding-left: 5px;
+  color: var(--ladb-axis-color);
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.ladb-hardware-editor-primitive-neutral .ladb-hardware-editor-primitive-tag {
+  color: @ladb-global-light-color;
+}
+
+// Its value on the bench, when it is an expression
+.ladb-hardware-editor-primitive-value {
+  flex: none;
+  padding: 0 5px 0 2px;
+  color: @ladb-global-light-color;
+  font-size: 11px;
+  white-space: nowrap;
+
+  .ladb-hardware-editor-primitive-invalid & {
+    color: @ladb-brand-danger;
+  }
+
+}
+
+.ladb-hardware-editor-primitive-separator {
+  grid-column: ~"1 / -1";
+  border-top: 1px solid #ccc;
+}
+
+.ladb-hardware-editor-primitive-names {
+  display: none;
+  grid-column: ~"1 / -1";
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  color: @ladb-global-light-color;
+  font-size: 11px;
+
+  // On its own line, the chips below
+  > .ladb-hardware-editor-primitive-names-title {
+    flex-basis: 100%;
+  }
+
+  > .btn {
+    padding: 0 7px;
+    border-radius: 10px;
+    font-size: 11px;
+
+    em {
+      color: @ladb-global-light-color;
+      font-style: normal;
+    }
+
+  }
+
+}
+
+.ladb-hardware-editor-primitive-error {
+  grid-column: ~"1 / -1";
+  color: @ladb-brand-danger;
+  font-size: 11px;
 }
 
 // Shaping - a part edited in SketchUp : the editor waits, small

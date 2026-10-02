@@ -334,6 +334,7 @@ core:
     topology_flat_flat: Face contre face
     swap: Inverser A et B
     zoom_auto: Zoom automatique
+    toggle_slot: "Afficher ou masquer {{ slot }}"
     bench_settings: Réglages du banc d'essai
     measures: Mesures du banc d'essai
     variables: Variables
@@ -390,31 +391,45 @@ core:
     part_kind_skp: Fichier SKP
     part_kind_primitives: Primitives
     part_kind_same_as: "Même que {{ slot }}"
-    part_same_as: "La même pièce que {{ slot }}, dans son propre repère."
-    solid_drillings: "Perçage Ø{{ diameter }} × {{ depth }}"
-    solid_mortises: "Mortaise {{ length }} × {{ diameter }} × {{ depth }}"
-    solid_cylinders: "Cylindre Ø{{ diameter }} × {{ depth }}"
-    solid_oblongs: "Oblong {{ length }} × {{ diameter }} × {{ depth }}"
-    primitive_cylinders: "{{ count }} cylindre"
-    primitive_cylinders_plural: "{{ count }} cylindres"
-    primitive_oblongs: "{{ count }} oblong"
-    primitive_oblongs_plural: "{{ count }} oblongs"
-    primitive_drillings: "{{ count }} perçage"
-    primitive_drillings_plural: "{{ count }} perçages"
-    primitive_mortises: "{{ count }} mortaise"
-    primitive_mortises_plural: "{{ count }} mortaises"
-    primitive_none: Aucune primitive
-    edit_in_json: Modifier dans l'onglet JSON
+    primitive_type_cylinders: Cylindre
+    primitive_type_oblongs: Oblong
+    primitive_type_drillings: Perçage
+    primitive_type_mortises: Mortaise
+    primitive_axis: Axe
+    primitive_position: Position
+    primitive_diameter: Diamètre
+    primitive_size: Dimensions
+    primitive_length_axis: Longueur selon
+    primitive_span: De → À (sur Z)
+    primitive_from: De
+    primitive_to: À
+    primitive_depth: Profondeur
+    primitive_through: Traversant
+    primitive_through_help: "Jusqu'à l'autre face de la pièce (@thickness_max)."
+    primitive_head: Tête
+    primitive_head_none: Aucune
+    primitive_head_countersink: Fraisure
+    primitive_head_counterbore: Lamage
+    primitive_head_side: Côté
+    primitive_face_contact: Face de contact
+    primitive_face_opposite: Face opposée
+    primitive_face_opposite_help: Le perçage doit être traversant.
+    primitive_end_to: Bout « À »
+    primitive_end_from: Bout « De »
+    primitive_head_diameter_angle: Ø | angle
+    primitive_head_diameter_depth: Ø | profondeur
+    primitive_variables: Variables
+    primitive_unresolved: "Pas de solide sur le banc : vérifier ses dimensions."
     chip_bundled: Bibliothèque OCL
     chip_user: Ma Bibliothèque
     chip_loading: Chargement...
     chip_missing: Fichier absent
     chip_no_folder: Choisissez d'abord un dossier de **Ma Bibliothèque**
-    chip_imported: Importé · à enregistrer
+    chip_imported: Importé | à enregistrer
     chip_placed: Placement à enregistrer
-    chip_edited: Modifié · à enregistrer
-    choose_file: Choisir un fichier…
-    replace_file: Remplacer le fichier…
+    chip_edited: Modifié | à enregistrer
+    choose_file: Choisir un fichier...
+    replace_file: Remplacer le fichier...
     edit_in_sketchup: Modifier dans SketchUp
     create_in_sketchup: Créer dans SketchUp
     shaping: "{{ name }} est ouvert dans SketchUp"
@@ -430,7 +445,7 @@ core:
     placement_rotate_ccw: "−90° autour de {{ axis }}"
     placement_rotate_cw: "+90° autour de {{ axis }}"
     placement_mirror: Miroir
-    placement_mirror_help: "Miroir selon {{ axis }}"
+    placement_mirror_help: "Miroir le long de {{ axis }}"
     placement_position: Position
     placement_align: Aligner
     placement_center: Centrer

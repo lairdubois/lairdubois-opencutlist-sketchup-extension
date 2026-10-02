@@ -18,4 +18,7 @@
 
 {% block uiRight %}
     {{ fn.btn_command('axes', 'set_axes_helper_visible', { visible:null }, 'core.component.three_viewer.toggle_axes_helper'|i18next, 'left') }}
+    {% for slot in [ 'a', 'b' ] %}
+        <button class="btn btn-default btn-sm" data-command="set_bench_slot_visible" data-params="{{ { slot:slot, visible:null }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="left" title="{{ 'core.hardware_editor.toggle_slot'|i18next({ 'slot':slot|upper }) }}">{{ slot|upper }}</button>
+    {% endfor %}
 {% endblock %}
