@@ -1,12 +1,12 @@
 {
   "format": "ocl-hardware",
   "version": 1,
-  "id": "97185a3d-0716-45f5-8a18-abcba752038b",
+  "id": "ad377027-0adf-40bc-be41-0fe9c35c04d6",
   "type": "connector",
   "extends": "connectors/generic/screws/screw.json",
-  "name": "Screw 4x50",
+  "name": "Screw 5x80",
   "variables": {
-    "diameter": { "value": "4mm" },
-    "length": { "value": "50mm" }
+    "diameter": { "value": "5mm" },
+    "length": { "value": "80mm" }
   }
 }
