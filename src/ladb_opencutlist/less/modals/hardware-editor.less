@@ -583,45 +583,147 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  padding: 7px 8px;
+  padding: 6px 8px 8px;
+  border: 1px solid @ladb-global-border;
   border-radius: 3px;
   background-color: #f9f9f9;
   font-size: 12px;
 }
 
-.ladb-hardware-editor-placement-row {
+.ladb-hardware-editor-placement-head {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: 5px 8px;
+  gap: 6px;
 
-  label {
-    display: flex;
-    align-items: center;
-    gap: 3px;
-    margin: 0;
-    font-weight: bold;
-    font-size: 11px;
+  strong {
+    flex: 1 1 auto;
   }
 
-  input.form-control {
-    width: 65px;
-    height: 24px;
-    padding: 2px 5px;
-    text-align: right;
+  i {
+    color: @ladb-global-light-color;
+    cursor: help;
   }
 
+}
+
+.ladb-hardware-editor-placement-triad {
+  flex: none;
+
+  line {
+    stroke-width: 2.4;
+    stroke-linecap: round;
+  }
+
+  circle {
+    fill: @ladb-global-light-color;
+  }
+
+}
+
+// The axis colors : X red, Y green, Z blue
+.ladb-hardware-editor-placement-x { --ladb-axis-color: @ladb-axis-x-color; --ladb-axis-soft-color: fade(@ladb-axis-x-color, 12%); stroke: @ladb-axis-x-color; }
+.ladb-hardware-editor-placement-y { --ladb-axis-color: @ladb-axis-y-color; --ladb-axis-soft-color: fade(@ladb-axis-y-color, 12%); stroke: @ladb-axis-y-color; }
+.ladb-hardware-editor-placement-z { --ladb-axis-color: @ladb-axis-z-color; --ladb-axis-soft-color: fade(@ladb-axis-z-color, 12%); stroke: @ladb-axis-z-color; }
+
+// A label column, then one column per axis
+.ladb-hardware-editor-placement-grid {
+  display: grid;
+  grid-template-columns: 60px repeat(3, minmax(0, 1fr));
+  gap: 5px 6px;
+  align-items: center;
 }
 
 .ladb-hardware-editor-placement-label {
-  width: 75px;
   color: @ladb-global-light-color;
   font-size: 11px;
 }
 
-.ladb-hardware-editor-placement-unit, .ladb-hardware-editor-placement-foot {
-  color: @ladb-global-light-color;
+.ladb-hardware-editor-placement-axis {
+  padding: 1px 0;
+  border-radius: 3px;
+  background-color: var(--ladb-axis-color);
+  color: #fff;
   font-size: 11px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.ladb-hardware-editor-placement-cell {
+  display: flex;
+  min-width: 0;
+  height: 26px;
+  border: 1px solid @ladb-global-border;
+  border-left: 3px solid var(--ladb-axis-color);
+  border-radius: 3px;
+  background-color: @ladb-global-bg;
+  overflow: hidden;
+
+  &:focus-within {
+    border-color: var(--ladb-axis-color);
+  }
+
+  > button {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 0 4px;
+    border: 0;
+    background: transparent;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    & + button {
+      border-left: 1px solid @ladb-global-border;
+    }
+
+    &:hover {
+      background-color: var(--ladb-axis-soft-color);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--ladb-axis-color);
+      outline-offset: -2px;
+    }
+
+  }
+
+  div.ladb-textinput {
+    flex: 1 1 auto;
+    min-width: 0;
+    align-items: center;
+    border: 0;
+
+    &:focus-within {
+      box-shadow: none;
+    }
+
+    > .ladb-textinput-input > input.form-control {
+      height: 24px;
+      padding: 2px 4px;
+      text-align: right;
+    }
+
+    > .ladb-textinput-tools {
+      display: flex;
+      align-items: center;
+      align-self: stretch;
+      line-height: 1.6;
+    }
+
+  }
+
+}
+
+// On the Transform button : the part is laid
+.ladb-hardware-editor-placement-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 5px;
+  border-radius: 50%;
+  background-color: @ladb-brand-warning;
+  vertical-align: 1px;
 }
 
 // Shaping - a part edited in SketchUp : the editor waits, small

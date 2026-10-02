@@ -37,13 +37,27 @@
     const fnIsIdentity = function (m) {
         return m.every(function (v, i) { return Math.abs(v - IDENTITY[i]) < 1e-9; });
     };
-    // A quarter turn around the given axis, or the mirror across YZ
-    const PLACEMENT_MATRICES = {
-        x: [ 1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1 ],
-        y: [ 0, 0, -1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1 ],
-        z: [ 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 ],
-        mirror: [ -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 ]
+    const fnIsSame = function (a, b) {
+        return a.every(function (v, i) { return Math.abs(v - b[i]) < 1e-9; });
     };
+    // A quarter turn around the given axis (0, 1, 2), counterclockwise if
+    // sign is 1 - looking down the axis.
+    const fnQuarterTurn = function (axis, sign) {
+        const m = IDENTITY.slice();
+        const i = (axis + 1) % 3, j = (axis + 2) % 3;
+        m[i * 4 + i] = 0;
+        m[i * 4 + j] = sign;
+        m[j * 4 + i] = -sign;
+        m[j * 4 + j] = 0;
+        return m;
+    };
+    // The mirror across the plane normal to the given axis
+    const fnMirror = function (axis) {
+        const m = IDENTITY.slice();
+        m[axis * 5] = -1;
+        return m;
+    };
+    const AXES = [ 'x', 'y', 'z' ];
 
     // A new descriptor of the given type : empty, its slots to fill - a
     // hinge prefilled, see fnNewHingeComponents.
@@ -224,6 +238,8 @@
         this.meshes = {};
         this.imports = {};
         this.placements = {};
+        this.placementHistories = {};   // The matrices it had, by ref - see renderPlacement
+        this.placementOpens = {};       // The transform panel shown, by ref
 
         this.shaping = null;    // A part edited in SketchUp : { ref, size }
 
@@ -1026,28 +1042,41 @@
             const imported = ref ? this.imports[ref] : null;
             const mesh = ref ? this.meshes[this.skpSource(ref)] : null;
             const missing = !mesh || mesh.error;
-            const placed = ref && this.placements[ref] && !fnIsIdentity(this.placements[ref]);
+            const placeable = ref && !this.readonly && mesh && !mesh.error && mesh !== 'loading';
 
             const $file = $('<div class="ladb-hardware-editor-file">');
             if (ref) {
                 $file.append($('<code>').text(imported ? imported.name : ref.split('/').pop()));
             }
-            let chip;
-            if (!ref) {
-                chip = [ 'danger', 'chip_no_folder' ];
-            } else if (imported) {
-                chip = [ 'warning', imported.edited ? 'chip_edited' : 'chip_imported' ];
-            } else if (mesh === undefined || mesh === 'loading') {
-                chip = [ 'default', 'chip_loading' ];
-            } else if (missing) {
-                chip = [ 'danger', 'chip_missing' ];
-            } else if (placed) {
-                chip = [ 'warning', 'chip_placed' ];
-            } else {
-                chip = [ 'default', ref.indexOf('$OCL/') === 0 ? 'chip_bundled' : 'chip_user' ];
-            }
-            $file.append($('<span class="label label-' + chip[0] + '">').text(i18next.t('core.hardware_editor.' + chip[1])));
+            const $chip = $('<span class="label">');
+            const $placedDot = $('<span class="ladb-hardware-editor-placement-dot">');
+            // Updated in place as the placement changes - see renderPlacement
+            const fnUpdateChip = function () {
+                const placed = ref && that.placements[ref] && !fnIsIdentity(that.placements[ref]);
+                let chip;
+                if (!ref) {
+                    chip = [ 'danger', 'chip_no_folder' ];
+                } else if (imported) {
+                    chip = [ 'warning', imported.edited ? 'chip_edited' : 'chip_imported' ];
+                } else if (mesh === undefined || mesh === 'loading') {
+                    chip = [ 'default', 'chip_loading' ];
+                } else if (missing) {
+                    chip = [ 'danger', 'chip_missing' ];
+                } else if (placed) {
+                    chip = [ 'warning', 'chip_placed' ];
+                } else {
+                    chip = [ 'default', ref.indexOf('$OCL/') === 0 ? 'chip_bundled' : 'chip_user' ];
+                }
+                $chip
+                    .attr('class', 'label label-' + chip[0])
+                    .text(i18next.t('core.hardware_editor.' + chip[1]));
+                $placedDot.toggle(!!placed);
+            };
+            fnUpdateChip();
+            $file.append($chip);
             $body.append($file);
+
+            let $placement = null;
 
             if (ref && !this.readonly) {
                 const $buttons = $('<div class="ladb-hardware-editor-part-buttons">');
@@ -1068,10 +1097,24 @@
                         })
                     );
                 }
+                if (placeable) {
+                    $buttons.append($('<button type="button" class="btn btn-default btn-xs">')
+                        .toggleClass('active', !!this.placementOpens[ref])
+                        .append($placedDot)
+                        .append(i18next.t('core.hardware_editor.placement_toggle'))
+                        .on('click', function () {
+                            this.blur();
+                            that.placementOpens[ref] = !that.placementOpens[ref];
+                            $(this).toggleClass('active', that.placementOpens[ref]);
+                            $placement.toggle(that.placementOpens[ref]);
+                        })
+                    );
+                }
                 $body.append($buttons);
             }
-            if (ref && !this.readonly && mesh && !mesh.error && mesh !== 'loading') {
-                $body.append(this.renderPlacement(ref));
+            if (placeable) {
+                $placement = this.renderPlacement(ref, fnUpdateChip).toggle(!!this.placementOpens[ref]);
+                $body.append($placement);
             }
 
         } else if (kind === 'primitives') {
@@ -1309,79 +1352,211 @@
     };
 
     // The tools to lay the SKP file of the given ref in its frame - baked
-    // into the file at save, never written in the JSON.
-    LadbModalHardwareEditor.prototype.renderPlacement = function (ref) {
+    // into the file at save, never written in the JSON. A grid : one column
+    // per axis, X red, Y green, Z blue. Updated in place, onChange told.
+    LadbModalHardwareEditor.prototype.renderPlacement = function (ref, onChange) {
         const that = this;
 
-        const placement = this.placements[ref] || IDENTITY;
-        const $placement = $('<div class="ladb-hardware-editor-placement">');
-
-        const fnApply = function (matrix) {
-            that.placements[ref] = matrix;
-            setTimeout(function () {    // Once Tab has moved the focus on - see captureFocus
-                that.renderBench();
-                that.renderParts();
-                that.updateGuard();
-            }, 0);
+        const fnMatrix = function () {
+            return that.placements[ref] || IDENTITY;
         };
-        const fnButton = function (label, onClick) {
-            return $('<button type="button" class="btn btn-default btn-xs">')
-                .html(label)
+        const fnHistory = function () {
+            return that.placementHistories[ref] || (that.placementHistories[ref] = []);
+        };
+
+        const $placement = $('<div class="ladb-hardware-editor-placement">');
+        const $triad = $('<svg class="ladb-hardware-editor-placement-triad" width="28" height="28" viewBox="-14 -14 28 28">');
+        const $undo = $('<button type="button" class="btn btn-default btn-xs">')
+            .attr('title', i18next.t('core.hardware_editor.placement_undo'))
+            .text('↶');
+        const $inputs = [];
+
+        // The part's own axes, as laid, seen from the front right
+        const fnRenderTriad = function () {
+            const matrix = fnMatrix();
+            const screens = [ [ 1, 0.35 ], [ 0.55, -0.5 ], [ 0, -1 ] ];     // Of X, Y, Z
+            const eye = [ 1, -1.5, 1 ];
+            const lines = AXES.map(function (axis, index) {
+                const d = [ matrix[index * 4], matrix[index * 4 + 1], matrix[index * 4 + 2] ];
+                return {
+                    axis: axis,
+                    x: (d[0] * screens[0][0] + d[1] * screens[1][0] + d[2] * screens[2][0]) * 11,
+                    y: (d[0] * screens[0][1] + d[1] * screens[1][1] + d[2] * screens[2][1]) * 11,
+                    depth: d[0] * eye[0] + d[1] * eye[1] + d[2] * eye[2]
+                };
+            });
+            lines.sort(function (a, b) { return a.depth - b.depth; });   // The farthest first
+            $triad.html(lines.map(function (line) {
+                return '<line class="ladb-hardware-editor-placement-' + line.axis + '" x1="0" y1="0" x2="' + line.x.toFixed(1) + '" y2="' + line.y.toFixed(1) + '"/>';
+            }).join('') + '<circle r="1.6"/>');
+        };
+
+        // The fields from the matrix - in model units - but the one typed in
+        const fnRefresh = function (typedInput) {
+            $undo.prop('disabled', fnHistory().length === 0);
+            fnRenderTriad();
+            const matrix = fnMatrix();
+            rubyCallCommand('hardware_float_to_length', { x: matrix[12], y: matrix[13], z: matrix[14] }, function (response) {
+                AXES.forEach(function (axis, index) {
+                    if ($inputs[index][0] !== typedInput) {
+                        $inputs[index].val(response[axis]);
+                    }
+                });
+            });
+        };
+
+        // Lays the part by the given matrix, previous - if any - kept to undo
+        const fnApply = function (matrix, previous, typedInput) {
+            if (previous && !fnIsSame(previous, matrix)) {
+                fnHistory().push(previous);
+            }
+            that.placements[ref] = matrix;
+            fnRefresh(typedInput);
+            that.renderBench();
+            that.updateGuard();
+            onChange();
+        };
+        const fnTransform = function (by) {
+            fnApply(fnMultiply(by, fnMatrix()), fnMatrix());
+        };
+
+        const fnButton = function (label, title, onClick) {
+            return $('<button type="button">')
+                .text(label)
+                .attr('title', title)
                 .on('click', function () {
                     this.blur();
                     onClick();
                 });
         };
+        const fnCell = function (axis) {
+            return $('<div class="ladb-hardware-editor-placement-cell ladb-hardware-editor-placement-' + axis + '">');
+        };
+        const fnLabel = function (key) {
+            return $('<div class="ladb-hardware-editor-placement-label">').text(i18next.t('core.hardware_editor.placement_' + key));
+        };
 
-        // Orientation
-        const $orientation = $('<div class="ladb-hardware-editor-placement-row">')
-            .append($('<span class="ladb-hardware-editor-placement-label">').text(i18next.t('core.hardware_editor.placement_orientation')));
-        for (const axis of [ 'x', 'y', 'z' ]) {
-            $orientation.append(fnButton(axis.toUpperCase() + ' +90°', function () {
-                fnApply(fnMultiply(PLACEMENT_MATRICES[axis], that.placements[ref] || IDENTITY));
-            }));
-        }
-        $orientation.append(fnButton(i18next.t('core.hardware_editor.placement_mirror'), function () {
-            fnApply(fnMultiply(PLACEMENT_MATRICES.mirror, that.placements[ref] || IDENTITY));
-        }));
-        $placement.append($orientation);
+        // Head
+        $undo.on('click', function () {
+            this.blur();
+            const previous = fnHistory().pop();
+            if (previous) {
+                fnApply(previous);
+            }
+        });
+        $placement.append($('<div class="ladb-hardware-editor-placement-head">')
+            .append($triad)
+            .append($('<strong>').text(i18next.t('core.hardware_editor.placement_title')))
+            .append($undo)
+            .append($('<button type="button" class="btn btn-default btn-xs">')
+                .text(i18next.t('core.hardware_editor.placement_reset'))
+                .on('click', function () {
+                    this.blur();
+                    fnApply(IDENTITY.slice(), fnMatrix());
+                })
+            )
+            .append($('<i class="ladb-opencutlist-icon-info">').attr('title', i18next.t('core.hardware_editor.placement_help')))
+        );
 
-        // Translation, in millimeters
-        const $translation = $('<div class="ladb-hardware-editor-placement-row">')
-            .append($('<span class="ladb-hardware-editor-placement-label">').text(i18next.t('core.hardware_editor.placement_translation')));
-        [ 'x', 'y', 'z' ].forEach(function (axis, index) {
-            const $input = $('<input type="number" step="0.5" class="form-control input-sm">')
-                .val(Math.round(placement[12 + index] * 25.4 * 100) / 100)
-                .on('change', function () {
-                    const value = parseFloat($(this).val());
-                    if (!isNaN(value)) {
-                        const matrix = (that.placements[ref] || IDENTITY).slice();
-                        matrix[12 + index] = value / 25.4;
-                        fnApply(matrix);
+        const $grid = $('<div class="ladb-hardware-editor-placement-grid">');
+        $grid.append($('<div>'));
+        AXES.forEach(function (axis) {
+            $grid.append($('<div class="ladb-hardware-editor-placement-axis ladb-hardware-editor-placement-' + axis + '">').text(axis.toUpperCase()));
+        });
+
+        // Rotation
+        $grid.append(fnLabel('rotation'));
+        AXES.forEach(function (axis, index) {
+            const params = { axis: axis.toUpperCase() };
+            $grid.append(fnCell(axis)
+                .append(fnButton('↺ 90°', i18next.t('core.hardware_editor.placement_rotate_ccw', params), function () { fnTransform(fnQuarterTurn(index, 1)); }))
+                .append(fnButton('↻ 90°', i18next.t('core.hardware_editor.placement_rotate_cw', params), function () { fnTransform(fnQuarterTurn(index, -1)); }))
+            );
+        });
+
+        // Mirror
+        $grid.append(fnLabel('mirror'));
+        AXES.forEach(function (axis, index) {
+            $grid.append(fnCell(axis)
+                .append(fnButton('⇋', i18next.t('core.hardware_editor.placement_mirror_help', { axis: axis.toUpperCase() }), function () { fnTransform(fnMirror(index)); }))
+            );
+        });
+
+        // Position : the bench follows the typing, ↑ ↓ nudge it - by 0.5 mm, 5 mm with Shift
+        $grid.append(fnLabel('position'));
+        AXES.forEach(function (axis, index) {
+            const $input = $('<input type="text" class="form-control input-sm">');
+            $grid.append(fnCell(axis).append($input));
+            $input.ladbTextinputDimension({ resetValue: '0' });
+            $inputs.push($input);
+
+            let typingFrom = null;     // The matrix before the typing
+            const fnTyped = function (done) {
+                const text = $input.val().trim();
+                if (text === '') {
+                    return;
+                }
+                rubyCallCommand('core_length_to_float', { value: text }, function (response) {
+                    if (typeof response.value !== 'number' || isNaN(response.value) || $input.val().trim() !== text) {
+                        return; // Not a length, or typed on since
+                    }
+                    if (typingFrom === null) {
+                        typingFrom = fnMatrix();
+                    }
+                    const matrix = fnMatrix().slice();
+                    matrix[12 + index] = response.value;
+                    if (done) {
+                        const previous = typingFrom;
+                        typingFrom = null;
+                        fnApply(matrix, previous);
+                    } else {
+                        fnApply(matrix, null, $input[0]);
                     }
                 });
-            $translation.append($('<label>').append($('<span>').text(axis.toUpperCase())).append($input));
+            };
+            $input
+                .on('input', function () {
+                    fnTyped(false);
+                })
+                .on('change', function () {
+                    fnTyped(true);
+                })
+                .on('keydown', function (e) {
+                    if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') {
+                        return;
+                    }
+                    e.preventDefault();
+                    const matrix = fnMatrix().slice();
+                    matrix[12 + index] = Math.round((matrix[12 + index] + (e.shiftKey ? 5 : 0.5) / 25.4 * (e.key === 'ArrowUp' ? 1 : -1)) * 1e9) / 1e9;
+                    const previous = typingFrom || fnMatrix();
+                    typingFrom = null;
+                    fnApply(matrix, previous);
+                });
         });
-        $translation.append($('<span class="ladb-hardware-editor-placement-unit">').text('mm'));
-        $placement.append($translation);
 
-        // Centering, reset
-        const $center = $('<div class="ladb-hardware-editor-placement-row">')
-            .append($('<span class="ladb-hardware-editor-placement-label">'));
-        [ 'x', 'y' ].forEach(function (axis, index) {
-            $center.append(fnButton(i18next.t('core.hardware_editor.placement_center', { axis: axis.toUpperCase() }), function () {
-                const matrix = (that.placements[ref] || IDENTITY).slice();
-                const box = that.meshBox(that.meshes[that.skpSource(ref)], matrix);
-                matrix[12 + index] -= (box.min[index] + box.max[index]) / 2;
-                fnApply(matrix);
-            }));
+        // Align : centered on the axis, or seated - its top on z = 0
+        $grid.append(fnLabel('align'));
+        AXES.forEach(function (axis, index) {
+            const $cell = fnCell(axis)
+                .append(fnButton(i18next.t('core.hardware_editor.placement_center'), i18next.t('core.hardware_editor.placement_center_help', { axis: axis.toUpperCase() }), function () {
+                    const matrix = fnMatrix().slice();
+                    const box = that.meshBox(that.meshes[that.skpSource(ref)], matrix);
+                    matrix[12 + index] -= (box.min[index] + box.max[index]) / 2;
+                    fnApply(matrix, fnMatrix());
+                }));
+            if (axis === 'z') {
+                $cell.append(fnButton(i18next.t('core.hardware_editor.placement_seat'), i18next.t('core.hardware_editor.placement_seat_help'), function () {
+                    const matrix = fnMatrix().slice();
+                    matrix[14] -= that.meshBox(that.meshes[that.skpSource(ref)], matrix).max[2];
+                    fnApply(matrix, fnMatrix());
+                }));
+            }
+            $grid.append($cell);
         });
-        $center.append(fnButton(i18next.t('core.hardware_editor.placement_reset'), function () {
-            fnApply(IDENTITY.slice());
-        }));
-        $placement.append($center);
 
-        $placement.append($('<div class="ladb-hardware-editor-placement-foot">').text(i18next.t('core.hardware_editor.placement_help')));
+        $placement.append($grid);
+
+        fnRefresh();
 
         return $placement;
     };
@@ -1543,6 +1718,7 @@
                 that.fileName = null;
                 that.imports = {};
                 that.placements = {};
+                that.placementHistories = {};
                 that.derive();
             }, {
                 confirmBtnType: 'danger',
@@ -1717,6 +1893,7 @@
             }
             that.imports[ref] = response;
             that.placements[ref] = IDENTITY.slice();
+            delete that.placementHistories[ref];
             that.fetchMeshes();
             that.renderBench();
             that.renderParts();
@@ -1781,6 +1958,7 @@
             if (finish && response.path) {
                 that.imports[shaping.ref] = { path: response.path, name: shaping.ref.split('/').pop(), edited: true };
                 that.placements[shaping.ref] = IDENTITY.slice();
+                delete that.placementHistories[shaping.ref];
                 that.fetchMeshes();
                 that.renderBench();
                 that.renderParts();
@@ -2069,6 +2247,7 @@
         this.fileName = null;
         this.imports = {};
         this.placements = {};
+        this.placementHistories = {};
         this.cm.setValue(text);
         this.cm.clearHistory();
         this._cleanGeneration = this.cm.changeGeneration();

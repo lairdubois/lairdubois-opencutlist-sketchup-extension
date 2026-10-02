@@ -59,46 +59,54 @@
     LadbThreeViewer.prototype.bind = function () {
         const that = this;
 
-        // Bind iframe
-        this.$iframe
-            .on('load', function () {
+        // The viewer ready : told by the viewer itself - the iframe 'load'
+        // alone is sometimes missed - , handled once per loaded document
+        const fnReady = function () {
 
-                that.loaded = true;
+            const contentWindow = that.$iframe.get(0).contentWindow;
+            if (!contentWindow || !contentWindow.ladbViewerReady || contentWindow.ladbViewerBound) {
+                return; // Not the viewer yet, or already handled
+            }
+            contentWindow.ladbViewerBound = true;
 
-                // No model : the scene is given by commands - see 'loaded.ladb.threeviewer'
-                if (!that.options.modelDef) {
-                    that.$element.trigger('loaded.ladb.threeviewer');
-                    return;
+            that.loaded = true;
+
+            // No model : the scene is given by commands - see 'loaded.ladb.threeviewer'
+            if (!that.options.modelDef) {
+                that.$element.trigger('loaded.ladb.threeviewer');
+                return;
+            }
+
+            that.callCommand(
+                'setup_model',
+                {
+                    modelDef: that.options.modelDef,
+                    partsColored: that.options.partsColored,
+                    partsOpacity: that.options.partsOpacity,
+                    pinsHidden: that.options.pinsHidden,
+                    pinsColored: that.options.pinsColored,
+                    pinsRounded: that.options.pinsRounded,
+                    pinsText: that.options.pinsText,
+                    pinsLength: that.options.pinsLength,
+                    pinsDirection: that.options.pinsDirection,
+                    cameraView: that.options.cameraView,
+                    cameraZoom: that.options.cameraZoom,
+                    cameraTarget: that.options.cameraTarget,
+                    explodeFactor: that.options.explodeFactor,
                 }
-
+            );
+            if (that.options.showBoxHelper) {
                 that.callCommand(
-                    'setup_model',
+                    'set_box_helper_visible',
                     {
-                        modelDef: that.options.modelDef,
-                        partsColored: that.options.partsColored,
-                        partsOpacity: that.options.partsOpacity,
-                        pinsHidden: that.options.pinsHidden,
-                        pinsColored: that.options.pinsColored,
-                        pinsRounded: that.options.pinsRounded,
-                        pinsText: that.options.pinsText,
-                        pinsLength: that.options.pinsLength,
-                        pinsDirection: that.options.pinsDirection,
-                        cameraView: that.options.cameraView,
-                        cameraZoom: that.options.cameraZoom,
-                        cameraTarget: that.options.cameraTarget,
-                        explodeFactor: that.options.explodeFactor,
+                        visible: true,
                     }
                 );
-                if (that.options.showBoxHelper) {
-                    that.callCommand(
-                        'set_box_helper_visible',
-                        {
-                            visible: true,
-                        }
-                    );
-                }
+            }
 
-            });
+        };
+        this.$iframe.on('load', fnReady);
+        this.$iframe.get(0).addEventListener('ready.viewer', fnReady);
 
         this.$iframe.get(0).addEventListener('changed.controls', function (e) {
 

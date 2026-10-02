@@ -318,7 +318,7 @@ core:
     variant_overlay: En applique
     variant_half_overlay: Jumelée
     variant_inset: Encastrée
-    part_hardware: Quincaillerie
+    part_hardware: Pièce
     part_machining: Usinage
   hardware_editor:
     title: Éditeur de quincaillerie
@@ -341,8 +341,8 @@ core:
     setting: Variable publiée
     setting_bounds: "Entre {{ min }} et {{ max }}"
     assert_unresolved: Non calculable
-    accepted: Assemblage valide
-    refused: Assemblage invalide
+    accepted: Assemblage accepté
+    refused: Assemblage rejeté
     readonly: Lecture seule
     readonly_notice: |
       Ce fichier est un exemple en lecture seule. 
@@ -423,10 +423,20 @@ core:
       Ses axes sont son repère de pose. 
       **Terminez** pour la reprendre ici, le banc quitte alors le modèle.
     choose_skp: Choisir un fichier SKP
-    placement_orientation: Orientation
-    placement_mirror: Miroir X
-    placement_translation: Déplacement
-    placement_center: "Centrer en {{ axis }}"
+    placement_toggle: Transformer
+    placement_title: Transformation
+    placement_undo: Annuler la dernière transformation
+    placement_rotation: Rotation
+    placement_rotate_ccw: "−90° autour de {{ axis }}"
+    placement_rotate_cw: "+90° autour de {{ axis }}"
+    placement_mirror: Miroir
+    placement_mirror_help: "Miroir selon {{ axis }}"
+    placement_position: Position
+    placement_align: Aligner
+    placement_center: Centrer
+    placement_center_help: "Centrer en {{ axis }}"
+    placement_seat: Poser
+    placement_seat_help: Poser le dessus de la pièce sur z = 0, corps vers −Z
     placement_reset: Réinitialiser
     placement_help: Appliqué au fichier SKP à l'enregistrement, le JSON ne garde aucune transformation. Face d'appui à z = 0, corps vers −Z.
     settings_variables: Variables

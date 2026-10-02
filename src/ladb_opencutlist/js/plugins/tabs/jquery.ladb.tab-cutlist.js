@@ -4576,7 +4576,7 @@
             $inputTags.ladbTextinputTokenfield({
                 unique: true,
                 autocomplete: {
-                    source: that.usedTags.concat(that.generateOptions.tags).unique(),
+                    source: that.usedTags.concat(that.generateOptions.tags).filter(function (tag, index, tags) { return tags.indexOf(tag) === index; }),
                     delay: 100
                 }
             });

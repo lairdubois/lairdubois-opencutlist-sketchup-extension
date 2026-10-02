@@ -115,7 +115,7 @@ function setDialogContext(type, encodedParams) {
         dialog_params: params,
         webgl_available: webglAvailable
     }, function (response) {
-        $('body')['ladbDialog' + type.capitalize()](response);
+        $('body')['ladbDialog' + type.charAt(0).toUpperCase() + type.slice(1)](response);
         rubyCallCommand('core_dialog_ready');
     });
 

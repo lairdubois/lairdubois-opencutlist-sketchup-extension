@@ -847,7 +847,7 @@ const fnCreateGroupPins = function (group, pinsColored, pinsRounded, pinsLength,
 
             const pinDiv = document.createElement('div');
             pinDiv.className = 'pin pin-' + pinClass;
-            pinDiv.innerHTML = pinText.striptags().nl2br();
+            pinDiv.textContent = pinText;   // Line breaks kept by the .pin "white-space: pre-line" - see viewer.html
             if (pinBackgroundColor) {
                 pinDiv.style.backgroundColor = pinBackgroundColor;
                 pinDiv.style.borderColor = pinBorderColor;
@@ -1666,3 +1666,9 @@ const fnSetupBench = function (benchDef) {
 // Startup
 
 fnInit();
+
+// Ready : told to the component - see LadbThreeViewer#bind
+window.ladbViewerReady = true;
+if (window.frameElement) {
+    window.frameElement.dispatchEvent(new MessageEvent('ready.viewer'));
+}

@@ -56,7 +56,9 @@
         const $modal = $('#ladb_modal_' + modalName, this.$wrapper);
 
         // Initialize modal (with its jQuery plugin)
-        const jQueryPluginFn = 'ladbModal' + modalName.camelize().capitalize();
+        const jQueryPluginFn = 'ladbModal' + modalName.toLowerCase().split(/[^a-z0-9]+/g).map(function (word) {
+            return word.charAt(0).toUpperCase() + word.slice(1);
+        }).join('');   // ex: 'hardware_editor' -> 'ladbModalHardwareEditor'
         $modal[jQueryPluginFn]($.extend({ dialog: this }, typeof params === 'object' && params));
 
         // Bind help buttons (if exist)

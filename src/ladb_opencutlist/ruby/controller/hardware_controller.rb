@@ -8,6 +8,7 @@ module Ladb::OpenCutList
   require_relative '../worker/hardware/hardware_descriptor_delete_worker'
   require_relative '../worker/hardware/hardware_skp_edit_worker'
   require_relative '../observer/plugin_observer'
+  require_relative '../utils/dimension_utils'
 
   # The hardware editor : a descriptor of the library, seen and checked on a
   # test bench - see HardwareBenchDef.
@@ -50,6 +51,9 @@ module Ladb::OpenCutList
       end
       PLUGIN.register_command('hardware_editor_resize') do |params|
         editor_resize_command(**params)
+      end
+      PLUGIN.register_command('hardware_float_to_length') do |params|
+        float_to_length_command(params)
       end
 
       # The editor closed while a part is shaped in SketchUp : the bench leaves
@@ -154,6 +158,18 @@ module Ladb::OpenCutList
       response = { :width => size[0], :height => size[1] }
       response.merge!({ :left => position[0], :top => position[1] }) unless position.nil?
       response
+    end
+
+    # The given inch floats, by key, as lengths in model units - at the
+    # OpenCutList precision, without trailing zeros (12,500 mm -> 12,5 mm).
+    def float_to_length_command(params)
+      lengths = {}
+      params.each do |key, f|
+        lengths[key] = DimensionUtils.to_ocl_precision_s(f.to_f.to_l)
+                                     .sub(/([.,]\d*?)0+(\D*)\z/) { "#{$1}#{$2}" }
+                                     .sub(/[.,](\D*)\z/) { $1 }
+      end
+      lengths
     end
 
     # A SKP file picked by the user - to become a part of the descriptor.
