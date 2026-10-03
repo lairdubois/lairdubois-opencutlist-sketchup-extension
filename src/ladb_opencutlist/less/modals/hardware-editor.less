@@ -221,11 +221,6 @@
     white-space: nowrap;
   }
 
-  .ladb-hardware-editor-inheritance-cell {
-    width: 1%;
-    padding-left: 0;
-  }
-
   .ladb-hardware-editor-slots {
     color: @ladb-global-light-color;
     font-size: 90%;
@@ -728,6 +723,11 @@
       align-items: center;
       align-self: stretch;
       line-height: 1.6;
+
+      &.ladb-textinput-tools-right .ladb-textinput-tool {
+        margin-right: 0;
+      }
+
     }
 
   }
@@ -880,6 +880,27 @@
   min-width: 0;
 }
 
+// A point of a prism's outline : its two lengths, the radius of its
+// rounding narrower, then its delete button
+.ladb-hardware-editor-primitive-point {
+  display: flex;
+  align-items: center;
+
+  > * {
+    flex: 3 1 0;
+    min-width: 0;
+  }
+
+  > :nth-child(3) {
+    flex-grow: 2;
+  }
+
+  > .btn {
+    flex: none;
+  }
+
+}
+
 // Through : a checkbox beside the depth
 .ladb-hardware-editor-primitive-through {
   display: flex;
@@ -901,7 +922,7 @@
     --ladb-axis-color: #ccc;
 
     &:focus-within {
-      border-color: @ladb-brand-primary;
+      border-color: #66afe9;
     }
 
   }
@@ -911,7 +932,8 @@
     background-color: #eee;
   }
 
-  &.ladb-hardware-editor-primitive-invalid {
+  &.ladb-hardware-editor-primitive-invalid,
+  &.ladb-hardware-editor-primitive-invalid:focus-within {   // Over the focus border of a neutral one
     border-color: @ladb-brand-danger;
     background-color: fade(@ladb-brand-danger, 8%);
   }
@@ -925,6 +947,11 @@
     box-shadow: none;
     background: transparent;
     text-align: right;
+  }
+
+  // A plain text value - a name - reads from the left
+  &.ladb-hardware-editor-primitive-text > input.form-control {
+    text-align: left;
   }
 
 }
@@ -950,7 +977,7 @@
 // Its value on the bench, when it is an expression
 .ladb-hardware-editor-primitive-value {
   flex: none;
-  padding: 0 5px 0 2px;
+  padding: 0 2px 0 2px;
   color: @ladb-global-light-color;
   font-size: 11px;
   white-space: nowrap;
@@ -1100,11 +1127,15 @@
 }
 
 .ladb-hardware-editor-article-key {
-  margin: 0;
 
   .help-block {
-    margin: 2px 0 0;
+    margin: 0;
     font-size: 11px;
+
+    &:not(:empty) {
+      margin-top: 2px;
+    }
+
   }
 
 }
@@ -1184,24 +1215,6 @@
 
   > .ladb-hardware-editor-empty {
     padding: 4px 8px;
-  }
-
-}
-
-// What the articles drill, under the slot's machining
-.ladb-hardware-editor-contributions {
-  margin-top: 6px;
-}
-
-.ladb-hardware-editor-contribution {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 2px 6px;
-  font-size: 12px;
-
-  &:hover {
-    background-color: #f5f5f5;
   }
 
 }

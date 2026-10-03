@@ -17,28 +17,45 @@
     const SHAPING_TOP = 100;
 
     const PARTS = [ 'hardware', 'machining' ];
-    const PRIMITIVE_KEYS = [ 'cylinders', 'oblongs', 'drillings', 'mortises' ];
+    const PRIMITIVE_KEYS = [ 'cylinders', 'oblongs', 'prisms', 'drillings', 'mortises' ];
 
     // The primitives each part can be given as - see HardwareDescriptorDef::PRIMITIVES -
     // and the one each starts as, once added.
     const PART_PRIMITIVE_KEYS = {
-        hardware: [ 'cylinders', 'oblongs' ],
+        hardware: [ 'cylinders', 'oblongs', 'prisms' ],
         machining: [ 'drillings', 'mortises' ]
     };
     const PRIMITIVE_DEFAULTS = {
         cylinders: { diameter: '8mm', from: '-10mm', to: '10mm' },
         oblongs: { length: '19mm', width: '5mm', from: '-10mm', to: '10mm' },
+        prisms: { from: '-1mm', to: '1mm', outline: [ { x: '-20mm', y: '-10mm' }, { x: '20mm', y: '-10mm' }, { x: '20mm', y: '10mm' }, { x: '-20mm', y: '10mm' } ] },
         drillings: { diameter: '5mm', depth: '12mm' },
         mortises: { length: '19mm', width: '5mm', depth: '12mm' }
     };
     const PRIMITIVE_HEADS = [ 'countersink', 'counterbore' ];
 
-    // A primitive in a few words, from the texts of its lengths : '⌀D×L (X, Y)',
-    // 'L×W×D (X, Y)' for an elongated one - (X, Z) along Y.
-    const fnPrimitiveSummary = function (key, axis, texts) {
-        const sizes = key === 'mortises' || key === 'oblongs' ? [ texts.length, texts.diameter ] : [ '⌀' + texts.diameter ];
+    // The axis a prism is extruded along, and the axes its points are given
+    // by - see HardwareDescriptorDef::PRISM_OUTLINE_KEYS.
+    const PRISM_AXES = [ 'x', 'y', 'z' ];
+    const PRISM_OUTLINE_KEYS = { z: [ 'x', 'y' ], x: [ 'y', 'z' ], y: [ 'x', 'z' ] };
+    const PRISM_MIN_POINTS = 3;
+
+    // The sizes of a primitive, from the texts of its lengths : '⌀D×L',
+    // 'L×W×D' for an elongated one or a prism - its outline extents then.
+    const fnPrimitiveSizes = function (key, texts) {
+        const sizes = key === 'mortises' || key === 'oblongs' || key === 'prisms' ? [ texts.length, texts.diameter ] : [ '⌀' + texts.diameter ];
         sizes.push(texts.depth);
-        return sizes.join('×') + ' (' + texts.x + ', ' + (axis === 'y' ? texts.z : texts.y) + ')';
+        return sizes.join('×');
+    };
+
+    // A primitive in a few words, from the texts of its lengths : its sizes
+    // and position - '(X, Y)', (X, Z) along Y - none for a prism, placed by
+    // its outline.
+    const fnPrimitiveSummary = function (key, axis, texts) {
+        if (key === 'prisms') {
+            return fnPrimitiveSizes(key, texts);
+        }
+        return fnPrimitiveSizes(key, texts) + ' (' + texts.x + ', ' + (axis === 'y' ? texts.z : texts.y) + ')';
     };
     const PRIMITIVE_HEAD_DEFAULT_ANGLE = 90;
 
@@ -46,6 +63,7 @@
     const PRIMITIVE_ICONS = {
         cylinders: '<svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4"><ellipse cx="9" cy="4" rx="4" ry="1.6"/><path d="M5 4v10M13 4v10"/><path d="M5 14a4 1.6 0 0 0 8 0"/></svg>',
         oblongs: '<svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="2.5" width="14" height="4" rx="2"/><path d="M2 4.5v9M16 4.5v9"/><path d="M2 13.5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2"/></svg>',
+        prisms: '<svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M15.2 12.9 8.5 16.8 8.5 13.9 12.7 11.4 12.7 6 15.2 4.6zM9.5 1.2 15.2 4.6 12.7 6 7 2.7zM7 8.1 12.7 11.4 12.7 6 7 2.7zM7 8.1 12.7 11.4 8.5 13.9 2.8 10.6zM2.8 13.4 8.5 16.8 8.5 13.9 2.8 10.6z"/></svg>',
         drillings: '<svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1.5 4h15" opacity=".5"/><path d="M6 4v11h6V4"/><path d="M6 15l3 2 3-2" opacity=".6"/></svg>',
         mortises: '<svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1 4h16" opacity=".5"/><path d="M3 4v9a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4"/></svg>'
     };
@@ -69,6 +87,15 @@
     const fnPrimitiveValue = function (text) {
         text = text.trim();
         return /^-?\d+(?:[.,]\d+)?$/.test(text) ? parseFloat(text.replace(',', '.')) : text;
+    };
+
+    // The millimeters of the given written length when it is a plain one - a
+    // number, or one with mm - null otherwise.
+    const fnPrismNumber = function (value) {
+        if (value === undefined) return 0;
+        if (typeof value === 'number') return value;
+        const match = /^\s*(-?\d+(?:[.,]\d+)?)\s*(mm)?\s*$/.exec(String(value));
+        return match ? parseFloat(match[1].replace(',', '.')) : null;
     };
 
     // The given primitive - { slot, part, key, index }, and the key of its
@@ -245,6 +272,13 @@
     };
 
     // The given value if it is an object, else an empty one.
+    // Is the given element a length typed in the given primitive editor -
+    // not in one nested in it, e.g. a primitive of an article : its own
+    // names offered only.
+    const fnTypedIn = function ($editor, element) {
+        return $(element).hasClass('ladb-hardware-editor-live') && $(element).closest('.ladb-hardware-editor-primitive-editor').is($editor);
+    };
+
     const fnObject = function (value) {
         return value !== null && typeof value === 'object' && !Array.isArray(value) ? value : {};
     };
@@ -555,10 +589,8 @@
                 // What the viewer shows when it is hovered
                 if (solid.article) {
                     // An article's : its name and size - see HardwareBenchComputeWorker#_articles
-                    const sizes = solid.kind === 'mortises' || solid.kind === 'oblongs' ? [ solid.texts.length, solid.texts.diameter ] : [ '⌀' + solid.texts.diameter ];
-                    sizes.push(solid.texts.depth);
                     return $.extend({}, solid, {
-                        label: solid.slot.toUpperCase() + ' · ' + that.articleName(solid.slot, solid.article) + ' · ' + sizes.join('×')
+                        label: solid.slot.toUpperCase() + ' · ' + that.articleName(solid.slot, solid.article) + ' · ' + fnPrimitiveSizes(solid.kind, solid.texts)
                     });
                 }
                 return $.extend({}, solid, {
@@ -719,13 +751,12 @@
 
         // Measures of the bench
         if (measures.length > 0) {
-            $table.append($('<tr class="ladb-hardware-editor-computations-header">').append($('<th colspan="4">').text(i18next.t('core.hardware_editor.measures'))));
+            $table.append($('<tr class="ladb-hardware-editor-computations-header">').append($('<th colspan="3">').text(i18next.t('core.hardware_editor.measures'))));
             for (const measure of measures) {
                 const $row = $('<tr>')
                     .append($('<td class="ladb-hardware-editor-computation-name">').text('@' + measure.name))
                     .append($('<td>'))
-                    .append($('<td class="ladb-hardware-editor-computation-value">').text(measure.text))
-                    .append($('<td class="ladb-hardware-editor-inheritance-cell">'));
+                    .append($('<td class="ladb-hardware-editor-computation-value">').text(measure.text));
                 if (measure.cote) {
                     // Hovered : its cote in the viewer
                     const slot = measure.name.slice(-1);
@@ -744,7 +775,7 @@
 
         // Variables, per group of slots they are the same for
         if (variables.length > 0) {
-            $table.append($('<tr class="ladb-hardware-editor-computations-header">').append($('<th colspan="4">').text(i18next.t('core.hardware_editor.variables'))));
+            $table.append($('<tr class="ladb-hardware-editor-computations-header">').append($('<th colspan="3">').text(i18next.t('core.hardware_editor.variables'))));
             for (const variable of variables) {
                 const $value = $('<td class="ladb-hardware-editor-computation-value">');
                 for (const result of variable.results) {
@@ -758,26 +789,20 @@
                     }
                     $value.append($result);
                 }
-                const $variableRow = $('<tr>');
-                const $inheritance = $('<td class="ladb-hardware-editor-inheritance-cell">');
-                $table.append($variableRow
+                $table.append($('<tr>')
                     .append($('<td class="ladb-hardware-editor-computation-name">')
                         .text('@' + variable.name)
                         .append(variable.setting ? ' <i class="ladb-opencutlist-icon-settings" title="' + i18next.t('core.hardware_editor.setting') + '"></i>' : '')
                     )
                     .append($('<td class="ladb-hardware-editor-computation-expression">').text(variable.setting ? '' : variable.expression))
                     .append($value)
-                    .append($inheritance)
                 );
-                const variablePath = [ 'variables', variable.name ];
-                this.appendInheritanceIcon($inheritance, this.inheritanceState(variablePath, !variable.inherited), variablePath);
-                $variableRow.toggleClass('ladb-hardware-editor-inherited', $inheritance.hasClass('ladb-hardware-editor-inherited'));
             }
         }
 
         // Asserts, both sides in numbers
         if (asserts.length > 0) {
-            $table.append($('<tr class="ladb-hardware-editor-computations-header">').append($('<th colspan="4">').text(i18next.t('core.hardware_editor.asserts'))));
+            $table.append($('<tr class="ladb-hardware-editor-computations-header">').append($('<th colspan="3">').text(i18next.t('core.hardware_editor.asserts'))));
             for (const assert of asserts) {
                 const $value = $('<td class="ladb-hardware-editor-computation-value">');
                 let ok = true;
@@ -794,17 +819,10 @@
                     $result.append(' <i class="ladb-opencutlist-icon-' + (result.ok ? 'check-mark' : 'warning') + '"></i>');
                     $value.append($result);
                 }
-                const $assertRow = $('<tr' + (ok ? '' : ' class="danger"') + '>');
-                const $inheritance = $('<td class="ladb-hardware-editor-inheritance-cell">');
-                $table.append($assertRow
+                $table.append($('<tr' + (ok ? '' : ' class="danger"') + '>')
                     .append($('<td class="ladb-hardware-editor-computation-expression" colspan="2">').text(assert.expression))
                     .append($value)
-                    .append($inheritance)
                 );
-                if (assert.inherited) {
-                    this.appendInheritanceIcon($inheritance, 'inherited', null);   // An element of an array : overridden in the JSON only - see "@super"
-                    $assertRow.addClass('ladb-hardware-editor-inherited');
-                }
             }
         }
 
@@ -1231,9 +1249,6 @@
         } else if (kind === 'articles') {
             $body.append(this.renderArticles(slot, path.concat([ part ]), value));
         }
-        if (part === 'machining') {
-            $body.append(this.renderContributions(slot));
-        }
 
         return $row;
     };
@@ -1286,7 +1301,7 @@
         if (ref && !this.readonly) {
             const $buttons = $('<div class="ladb-hardware-editor-part-buttons">');
             $buttons.append($('<button type="button" class="btn btn-default btn-xs">')
-                .text(i18next.t('core.hardware_editor.' + (missing && !imported ? 'choose_file' : 'replace_file')))
+                .append(i18next.t('default.' + (missing && !imported ? 'import' : 'replace')) + '...')
                 .on('click', function () {
                     this.blur();
                     that.chooseSkp(ref);
@@ -1501,7 +1516,7 @@
 
         const $editor = $('<div class="ladb-hardware-editor-primitive-editor ladb-hardware-editor-article-editor">')
             .on('focusin focusout', function (e) {
-                $editor.toggleClass('ladb-hardware-editor-primitive-typing', e.type === 'focusin' && $(e.target).hasClass('ladb-hardware-editor-live'));
+                $editor.toggleClass('ladb-hardware-editor-primitive-typing', e.type === 'focusin' && fnTypedIn($editor, e.target));
             });
         // The editor is 2 columns : a label, then its row - a title, and
         // what follows it, on both
@@ -1527,13 +1542,14 @@
 
         // Its key : names its SKP file, unique in the slot
         fnLabel('article_key');
-        const $help = $('<div class="help-block ladb-hardware-editor-article-help">');
+        const $help = $('<div class="help-block text-danger">');
+        const $keyCell = $('<div class="ladb-hardware-editor-placement-cell ladb-hardware-editor-primitive-cell ladb-hardware-editor-primitive-neutral ladb-hardware-editor-primitive-text">');
         const $key = $('<input type="text" class="form-control input-sm" spellcheck="false">')
             .val(key)
             .prop('disabled', this.readonly)
             .on('input', function () {
                 const error = that.articleKeyError($(this).val().trim(), key, articles);
-                $(this).closest('.form-group').toggleClass('has-error', error !== null);
+                $keyCell.toggleClass('ladb-hardware-editor-primitive-invalid', error !== null);
                 $help.text(error !== null ? i18next.t('core.hardware_editor.' + error) : '');
             })
             .on('change', function () {
@@ -1542,10 +1558,7 @@
                     that.renameArticle(slot, partPath, key, newKey);
                 }
             });
-        fnRow($('<div class="form-group ladb-hardware-editor-article-key">').append($key).append($help));
-        if (kind === 'skp' && article.skp === true) {
-            $help.text(i18next.t('core.hardware_editor.article_key_file', { file: slot + '.' + key + '.skp' }));
-        }
+        fnRow($('<div class="ladb-hardware-editor-article-key">').append($keyCell.append($key)).append($help));
 
         if (kind === 'connector') {
 
@@ -1667,8 +1680,8 @@
             for (const name of ARTICLE_INFO_KEYS) {
                 fnLabel('article_' + name);
                 fnRow($('<div class="ladb-hardware-editor-placement-cell ladb-hardware-editor-primitive-cell ladb-hardware-editor-primitive-neutral ladb-hardware-editor-article-info">')
+                    .toggleClass('ladb-hardware-editor-primitive-text', name === 'name')
                     .append($('<input type="text" class="form-control input-sm" spellcheck="false">')
-                        .attr('placeholder', i18next.t('core.hardware_editor.article_' + name))
                         .val(article[name] === undefined || article[name] === null ? '' : String(article[name]))
                         .prop('disabled', this.readonly)
                         .on('change', function () {
@@ -1745,6 +1758,9 @@
                 })
             )
         );
+
+        // What its lengths can use - see appendPrimitiveNames
+        this.appendPrimitiveNames($editor, fnObject((this.response.slots || {})[slot]).names);
 
         // Its asserts, as the bench measures them - at the end
         const asserts = kind === 'connector' && response && Array.isArray(response.asserts) ? response.asserts : [];
@@ -1927,43 +1943,6 @@
         return $browser;
     };
 
-    // What the articles of the given slot drill in its part - their
-    // connectors' machining on our side - merged in its machining : read only.
-    LadbModalHardwareEditor.prototype.renderContributions = function (slot) {
-        const that = this;
-
-        const solids = (this.response.solids || []).filter(function (solid) { return solid.slot === slot && solid.article && solid.part === 'machining' && solid.position === 0; });
-        if (solids.length === 0) {
-            return null;
-        }
-        const $contributions = $('<div class="ladb-hardware-editor-contributions">')
-            .append($('<div class="ladb-hardware-editor-primitive-label">').text(i18next.t('core.hardware_editor.article_contributions')));
-        const keys = [];
-        for (const solid of solids) {
-            if (keys.indexOf(solid.article) < 0) keys.push(solid.article);
-        }
-        for (const key of keys) {
-            const response = this.articleResponse(slot, key);
-            const count = response && Array.isArray(response.positions) ? response.positions.length : 1;
-            const texts = solids.filter(function (solid) { return solid.article === key; }).map(function (solid) {
-                return (solid.kind === 'mortises' ? solid.texts.length + '×' + solid.texts.diameter : '⌀' + solid.texts.diameter) + '×' + solid.texts.depth;
-            });
-            $contributions.append($('<div class="ladb-hardware-editor-contribution">')
-                .append($('<span class="ladb-hardware-editor-primitive-name">').text(this.articleName(slot, key) + (count > 1 ? ' × ' + count : '')))
-                .append($('<span class="ladb-hardware-editor-primitive-summary">').text(texts.join(', ')))
-                .on('mouseenter', function () {
-                    that.articleHovered = { slot: slot, key: key };
-                    that.showBenchPrimitive();
-                })
-                .on('mouseleave', function () {
-                    that.articleHovered = null;
-                    that.showBenchPrimitive();
-                })
-            );
-        }
-        return $contributions;
-    };
-
     // Primitives /////
 
     // The primitives of the given part - at the given path - : one row per
@@ -2115,7 +2094,7 @@
         const $editor = $('<div class="ladb-hardware-editor-primitive-editor">')
             .on('focusin focusout', function (e) {
                 // Its names offered while a length is typed - see .ladb-hardware-editor-primitive-names
-                $editor.toggleClass('ladb-hardware-editor-primitive-typing', e.type === 'focusin' && $(e.target).hasClass('ladb-hardware-editor-live'));
+                $editor.toggleClass('ladb-hardware-editor-primitive-typing', e.type === 'focusin' && fnTypedIn($editor, e.target));
             });
 
         const fnLabel = function (label) {
@@ -2128,7 +2107,12 @@
         // A length of the item - or of its head, at the given path - :
         // written as typed, removed when emptied if it is optional.
         const fnField = function (path, name, optional, axis, tag, resetValue) {
-            const responseName = path.length > itemPath.length ? 'head_' + name : name;
+            let responseName = name;
+            if (path[itemPath.length] === 'outline') {
+                responseName = 'outline_' + path[itemPath.length + 1] + '_' + name;   // A point of a prism
+            } else if (path.length > itemPath.length) {
+                responseName = 'head_' + name;
+            }
             const field = fields[responseName] || null;
             const $cell = $('<div class="ladb-hardware-editor-placement-cell ladb-hardware-editor-primitive-cell">')
                 .addClass(axis ? 'ladb-hardware-editor-placement-' + axis : 'ladb-hardware-editor-primitive-neutral')
@@ -2140,8 +2124,9 @@
             $cell.append($input);
             let target = item;
             for (const k of path.slice(itemPath.length)) {
-                target = fnObject(target[k]);
+                target = target !== null && typeof target === 'object' ? target[k] : undefined;   // Through the outline list
             }
+            target = fnObject(target);
             $input
                 .val(fnPrimitiveText(target[name]))
                 .attr('placeholder', optional ? '0' : '')
@@ -2202,7 +2187,9 @@
 
         // Sizes
         const defaults = PRIMITIVE_DEFAULTS[key];
-        if (key === 'cylinders' || key === 'drillings') {
+        if (key === 'prisms') {
+            this.renderPrismEditor($editor, itemPath, item, fnLabel, fnRow, fnField, fnSegments);
+        } else if (key === 'cylinders' || key === 'drillings') {
             fnLabel('primitive_diameter');
             fnRow(fnField(itemPath, 'diameter', false, null, null, defaults.diameter));
         } else {
@@ -2221,7 +2208,9 @@
         }
 
         // Extent
-        if (key === 'cylinders' || key === 'oblongs') {
+        if (key === 'prisms') {
+            // See renderPrismEditor
+        } else if (key === 'cylinders' || key === 'oblongs') {
             fnLabel('primitive_span');
             fnRow([
                 fnField(itemPath, 'from', false, 'z', i18next.t('core.hardware_editor.primitive_from'), defaults.from),
@@ -2292,12 +2281,14 @@
             ], alongY ? 'y' : 'z'));
         }
 
-        // Position
-        fnLabel('primitive_position');
-        fnRow([
-            fnField(itemPath, 'x', true, 'x', 'X', '0'),
-            alongY ? fnField(itemPath, 'z', true, 'z', 'Z', '0') : fnField(itemPath, 'y', true, 'y', 'Y', '0')
-        ]);
+        // Position - a prism's by its outline
+        if (key !== 'prisms') {
+            fnLabel('primitive_position');
+            fnRow([
+                fnField(itemPath, 'x', true, 'x', 'X', '0'),
+                alongY ? fnField(itemPath, 'z', true, 'z', 'Z', '0') : fnField(itemPath, 'y', true, 'y', 'Y', '0')
+            ]);
+        }
 
         // Head : a widened end of a drilling - not along Y - or a cylinder
         if (key === 'cylinders' || key === 'drillings' && !alongY) {
@@ -2355,33 +2346,7 @@
             }
         }
 
-        // What its lengths can use, inserted where the caret is
-        if (!this.readonly && Array.isArray(names) && names.length > 0) {
-            const $names = $('<div class="ladb-hardware-editor-primitive-names">')
-                .append($('<span class="ladb-hardware-editor-primitive-names-title">').text(i18next.t('core.hardware_editor.primitive_variables')));
-            for (const variable of names) {
-                $names.append($('<button type="button" class="btn btn-default btn-xs">')
-                    .append($('<span>').text('@' + variable.name))
-                    .append(' ')
-                    .append($('<em>').text(variable.text || ''))
-                    .on('mousedown', function (e) {
-                        e.preventDefault();   // The field keeps the focus
-                    })
-                    .on('click', function () {
-                        const input = document.activeElement;
-                        if (!input || !$(input).hasClass('ladb-hardware-editor-live') || !$.contains($editor.get(0), input)) {
-                            return;
-                        }
-                        const text = '@' + variable.name;
-                        const start = input.selectionStart, end = input.selectionEnd;
-                        input.value = input.value.substring(0, start) + text + input.value.substring(end);
-                        input.setSelectionRange(start + text.length, start + text.length);
-                        $(input).trigger('input');
-                    })
-                );
-            }
-            $editor.append($names);
-        }
+        this.appendPrimitiveNames($editor, names);
 
         if (unresolved) {
             $editor.append($('<div class="ladb-hardware-editor-primitive-error">').text(i18next.t('core.hardware_editor.primitive_unresolved')));
@@ -2392,6 +2357,140 @@
         }
 
         return $editor;
+    };
+
+    // What the lengths of the given editor can use, offered while one is
+    // typed - see .ladb-hardware-editor-primitive-typing - inserted where
+    // the caret is.
+    LadbModalHardwareEditor.prototype.appendPrimitiveNames = function ($editor, names) {
+        if (this.readonly || !Array.isArray(names) || names.length === 0) {
+            return;
+        }
+        const $names = $('<div class="ladb-hardware-editor-primitive-names">')
+            .append($('<span class="ladb-hardware-editor-primitive-names-title">').text(i18next.t('core.hardware_editor.primitive_variables')));
+        for (const variable of names) {
+            $names.append($('<button type="button" class="btn btn-default btn-xs">')
+                .append($('<span>').text('@' + variable.name))
+                .append(' ')
+                .append($('<em>').text(variable.text || ''))
+                .on('mousedown', function (e) {
+                    e.preventDefault();   // The field keeps the focus
+                })
+                .on('click', function () {
+                    const input = document.activeElement;
+                    if (!input || !fnTypedIn($editor, input)) {
+                        return;
+                    }
+                    const text = '@' + variable.name;
+                    const start = input.selectionStart, end = input.selectionEnd;
+                    input.value = input.value.substring(0, start) + text + input.value.substring(end);
+                    input.setSelectionRange(start + text.length, start + text.length);
+                    $(input).trigger('input');
+                })
+            );
+        }
+        $editor.append($names);
+    };
+
+    // The fields of a prism - see renderPrimitiveEditor and its helpers - :
+    // the axis it is extruded along, from where to where along it, then its
+    // outline, one row per point - by the two other axes, and the radius of
+    // its rounding - points added and removed whole.
+    LadbModalHardwareEditor.prototype.renderPrismEditor = function ($editor, itemPath, item, fnLabel, fnRow, fnField, fnSegments) {
+        const that = this;
+
+        const defaults = PRIMITIVE_DEFAULTS.prisms;
+        const axis = PRISM_OUTLINE_KEYS[item.axis] ? item.axis : 'z';
+        const keys = PRISM_OUTLINE_KEYS[axis];
+        const outline = Array.isArray(item.outline) ? item.outline : [];
+
+        // Its outline rewritten - as written now - by the given function
+        const fnWriteOutline = function (fn) {
+            const written = that.primitiveItem(itemPath);
+            if (written === null) {
+                return;
+            }
+            const newItem = $.extend(true, {}, written);
+            newItem.outline = (Array.isArray(newItem.outline) ? newItem.outline : []).map(function (point) { return $.extend({}, fnObject(point)); });
+            fn(newItem.outline);
+            that.setPrimitive(itemPath, newItem);
+        };
+
+        // Axis : its points keep their values, by the new axes
+        fnLabel('primitive_axis');
+        fnRow(fnSegments(PRISM_AXES.map(function (newAxis) {
+            return { value: newAxis, axis: newAxis, apply: function (newItem) {
+                if (newAxis === 'z') {
+                    delete newItem.axis;
+                } else {
+                    newItem.axis = newAxis;
+                }
+                const newKeys = PRISM_OUTLINE_KEYS[newAxis];
+                newItem.outline = (Array.isArray(newItem.outline) ? newItem.outline : []).map(function (point) {
+                    point = fnObject(point);
+                    const newPoint = {};
+                    keys.forEach(function (k, i) {
+                        if (point[k] !== undefined) newPoint[newKeys[i]] = point[k];
+                    });
+                    if (point.r !== undefined) newPoint.r = point.r;
+                    return newPoint;
+                });
+            } };
+        }), axis));
+
+        // Extent along it
+        $editor.append($('<div class="ladb-hardware-editor-primitive-label">').text(i18next.t('core.hardware_editor.primitive_prism_span', { axis: axis.toUpperCase() })));
+        fnRow([
+            fnField(itemPath, 'from', false, axis, i18next.t('core.hardware_editor.primitive_from'), defaults.from),
+            fnField(itemPath, 'to', false, axis, i18next.t('core.hardware_editor.primitive_to'), defaults.to)
+        ]);
+
+        // Outline
+        $editor.append($('<div class="ladb-hardware-editor-primitive-separator">'));
+        outline.forEach(function (point, index) {
+            const pointPath = itemPath.concat([ 'outline', index ]);
+            $editor.append($('<div class="ladb-hardware-editor-primitive-label">').text(index === 0 ? i18next.t('core.hardware_editor.primitive_outline') : ''));
+            const $radius = fnField(pointPath, 'r', true, null, 'R', '');
+            if (!$radius.attr('title')) {
+                fnTooltip($radius, i18next.t('core.hardware_editor.primitive_outline_radius_help'));   // Unless it tells its error
+            }
+            const $point = $('<div class="ladb-hardware-editor-primitive-fields ladb-hardware-editor-primitive-point">')
+                .append(keys.map(function (k) { return fnField(pointPath, k, true, k, k.toUpperCase(), '0'); }))
+                .append($radius);
+            if (!that.readonly) {
+                $point.append(fnTooltip($('<button type="button" class="btn btn-default btn-xs">'), i18next.t('default.delete'))
+                    .append($('<i class="ladb-opencutlist-icon-minus">'))
+                    .prop('disabled', outline.length <= PRISM_MIN_POINTS)
+                    .on('click', function () {
+                        this.blur();
+                        fnWriteOutline(function (points) { points.splice(index, 1); });
+                    })
+                );
+            }
+            $editor.append($point);
+        });
+        if (!this.readonly) {
+            // A point in the middle of the closing side : the outline stays as it is
+            $editor.append($('<div class="ladb-hardware-editor-part-buttons ladb-hardware-editor-add-buttons ladb-hardware-editor-article-wide">')
+                .append($('<button type="button" class="btn btn-default btn-xs">')
+                    .append('<i class="ladb-opencutlist-icon-plus"></i> ' + i18next.t('core.hardware_editor.primitive_outline_add'))
+                    .on('click', function () {
+                        this.blur();
+                        fnWriteOutline(function (points) {
+                            const point = {};
+                            const first = fnObject(points[0]);
+                            const last = fnObject(points[points.length - 1]);
+                            keys.forEach(function (k) {
+                                const a = fnPrismNumber(last[k]), b = fnPrismNumber(first[k]);
+                                point[k] = a !== null && b !== null ? Math.round((a + b) / 2 * 100) / 100 : last[k] === undefined ? 0 : last[k];
+                            });
+                            points.push(point);
+                        });
+                    })
+                )
+            );
+        }
+
     };
 
     // The angle of a countersink, in degrees - 90 when it has none.
@@ -2439,15 +2538,10 @@
     };
 
     // Writes the given primitives of the given kind in the part at the given
-    // path, on one line - a kind left without any removed, but the last one.
+    // path, on one line - a kind left without any removed : an empty list
+    // isn't valid.
     LadbModalHardwareEditor.prototype.setPrimitiveItems = function (partPath, key, items) {
-        let value = items;
-        if (items.length === 0) {
-            const text = this.cm.getValue();
-            const others = PRIMITIVE_KEYS.some(function (k) { return k !== key && this.findJsonValueRange(text, partPath.concat([ k ])) !== null; }, this);
-            value = others ? undefined : [];
-        }
-        if (this.setJsonMember(partPath, key, value)) {
+        if (this.setJsonMember(partPath, key, items.length === 0 ? undefined : items)) {
             this.compute(false);
         }
     };
@@ -2500,6 +2594,14 @@
             }
         }
         this.primitiveHovered = null;
+        if (items.length === 0 && !primitive.article) {
+            // The last one of a component's part : the part removed - an empty one isn't valid
+            const part = fnObject(this.jsonValue(partPath));
+            if (Object.keys(part).every(function (k) { return k === primitive.key; })) {
+                this.setPartKind(partPath.slice(0, -1), partPath[partPath.length - 1], 'none');
+                return;
+            }
+        }
         this.setPrimitiveItems(partPath, primitive.key, items);
     };
 

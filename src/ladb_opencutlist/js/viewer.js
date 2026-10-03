@@ -1216,7 +1216,14 @@ const fnCreateBenchSolidGeometry = function (solidDef) {
     const radius = solidDef.diameter / 2;
     let geometry;
 
-    if (solidDef.profile) {
+    if (solidDef.outline) {
+
+        // A prism : its outline extruded along Z
+        const shape = new THREE.Shape(solidDef.outline.map(function (point) { return new THREE.Vector2(point[0], point[1]); }));
+        geometry = new THREE.ExtrudeGeometry(shape, { depth: height, bevelEnabled: false });
+        geometry.translate(0, 0, solidDef.z_min);
+
+    } else if (solidDef.profile) {
 
         // A round solid widened at one end : its outline revolved around Z
         const points = [ new THREE.Vector2(0, solidDef.profile[0][1]) ];

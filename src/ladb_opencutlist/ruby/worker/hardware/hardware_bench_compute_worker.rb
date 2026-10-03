@@ -162,14 +162,12 @@ module Ladb::OpenCutList
           :name => name,
           :expression => expression.to_s,
           :setting => HardwareDescriptorDef.setting?(descriptor.data['variables'][name]),
-          :inherited => _inherited_variable?(descriptor, name),
           :results => _group(slots, results)
         }
       end
     end
 
     def _asserts(descriptor, slots, variables_by_slot)
-      own = descriptor.own_data['asserts'].is_a?(Array) ? descriptor.own_data['asserts'] : []
       descriptor.asserts.map do |expression|
         results = slots.map do |slot|
           left, operator, right = HardwareDescriptorDef.assert_sides(expression, variables_by_slot[slot])
@@ -180,7 +178,7 @@ module Ladb::OpenCutList
             :right => right, :right_text => _text(right),
           }
         end
-        { :expression => expression.to_s, :inherited => !descriptor.parent_refs.empty? && !own.include?(expression), :results => _group(slots, results) }
+        { :expression => expression.to_s, :results => _group(slots, results) }
       end
     end
 
@@ -201,7 +199,12 @@ module Ladb::OpenCutList
           :variant => component.variant,
           :name => component.variant_name || component.name,
           :mirror => component.mirror ? true : false,
-        }
+        },
+        # What the lengths of its primitives and articles can use, as the
+        # editor offers them - the slot's own measures unsuffixed only
+        :names => variables
+          .reject { |name, _| bench_def.measures.key?(name) && name.end_with?("_#{slot}") }
+          .map { |name, length| { :name => name, :text => _text(length) } }
       }
       hardware_z_offset = component.z_offset.nil? ? 0.0 : HardwareDescriptorDef.to_length(component.z_offset, true, variables) || 0.0
       if bench_def.hinge? && slot == 'a'
@@ -236,13 +239,15 @@ module Ladb::OpenCutList
             cotes_origin = _apply(axis_matrix, [ 0.0, 0.0, lift ])
             cotes_position = _apply(axis_matrix, [ cylinder.x.to_f, cylinder.y.to_f, lift ])
             texts = {
-              :x => _text(cotes_position[0] - cotes_origin[0]),
-              :y => _text(cotes_position[1] - cotes_origin[1]),
-              :z => _text(cotes_position[2] - cotes_origin[2]),
               :diameter => _text(cylinder.diameter),
               :length => _text(cylinder.length),
               :depth => _text(cylinder.z_max - cylinder.z_min),
             }
+            unless cylinder.prism?   # Placed by its outline : no position
+              texts[:x] = _text(cotes_position[0] - cotes_origin[0])
+              texts[:y] = _text(cotes_position[1] - cotes_origin[1])
+              texts[:z] = _text(cotes_position[2] - cotes_origin[2])
+            end
             response[:solids] << {
               :slot => slot,
               :part => part,
@@ -250,15 +255,16 @@ module Ladb::OpenCutList
               :index => index,
               :transformation => _multiply(part_matrix, axis_matrix),
               :part_transformation => part_matrix,
-              :cotes => { :origin => cotes_origin, :position => cotes_position },
+              :cotes => cylinder.prism? ? nil : { :origin => cotes_origin, :position => cotes_position },
               :x => cylinder.x, :y => cylinder.y,
               :diameter => cylinder.diameter,
               :z_min => cylinder.z_min, :z_max => cylinder.z_max,
               :length => cylinder.length,
               :profile => cylinder.profile,
+              :outline => _prism_outline(cylinder),
               # What the viewer tells of it when hovered
               :kind => cylinder.key,
-              :axis => cylinder.axis.nil? ? HardwareDescriptorDef::AXIS_Z : HardwareDescriptorDef::AXIS_Y,  # As the descriptor gives it
+              :axis => _descriptor_axis(cylinder),  # As the descriptor gives it
               :texts => texts,
             }
             # The editor's row tells the same
@@ -266,12 +272,6 @@ module Ladb::OpenCutList
           end
           count = HardwareDescriptorDef::PRIMITIVES[part].inject(0) { |sum, key| sum + (value[key].is_a?(Array) ? value[key].count { |item| item.is_a?(Hash) } : 0) }
           response[:slots][slot][:component][:"#{part}_unresolved"] = count - cylinders.length
-          # What their lengths can use, as the editor offers them - the
-          # slot's own measures unsuffixed only
-          joint_measures = bench_def.measures
-          response[:slots][slot][:names] ||= variables
-            .reject { |name, _| joint_measures.key?(name) && name.end_with?("_#{slot}") }
-            .map { |name, length| { :name => name, :text => _text(length) } }
         else
           response[:skps] << { :slot => slot, :part => part, :ref => value, :variant => component.variant, :transformation => part_matrix }
         end
@@ -419,12 +419,33 @@ module Ladb::OpenCutList
             :z_min => cylinder.z_min, :z_max => cylinder.z_max,
             :length => cylinder.length,
             :profile => cylinder.profile,
+            :outline => _prism_outline(cylinder),
             :kind => cylinder.key,
-            :axis => cylinder.axis.nil? ? HardwareDescriptorDef::AXIS_Z : HardwareDescriptorDef::AXIS_Y,
+            :axis => _descriptor_axis(cylinder),
             :texts => { :diameter => _text(cylinder.diameter), :length => _text(cylinder.length), :depth => _text(cylinder.z_max - cylinder.z_min) },
           }
         end
       end
+    end
+
+    # The axis of the given solid as the descriptor gives it - see
+    # HardwareDescriptorDef::PrimitiveCylinderDef#axis.
+    def _descriptor_axis(cylinder)
+      case cylinder.axis
+      when nil
+        HardwareDescriptorDef::AXIS_Z
+      when HardwareDescriptorDef::AXIS_PRISM_X
+        HardwareDescriptorDef::AXIS_X
+      else
+        HardwareDescriptorDef::AXIS_Y
+      end
+    end
+
+    # The points of the outline of the given prism - [ [ u, v ] ]
+    # counterclockwise, its roundings in segments - nil when it isn't one.
+    def _prism_outline(cylinder)
+      return nil unless cylinder.prism?
+      HardwareDescriptorDef.prism_points(HardwareDescriptorDef.prism_corners(cylinder.outline))
     end
 
     PRIMITIVE_LENGTH_FIELDS = %w[x y z diameter length width depth from to].freeze
@@ -450,6 +471,15 @@ module Ladb::OpenCutList
       end
       PRIMITIVE_LENGTH_FIELDS.each do |name|
         add_field.call(name, item[name], PRIMITIVE_SIGNED_FIELDS.include?(name)) if item.key?(name)
+      end
+      if item['outline'].is_a?(Array)
+        # A prism's points : 'outline_<index>_<key>'
+        item['outline'].each_with_index do |point, index|
+          next unless point.is_a?(Hash)
+          point.each do |key, value|
+            add_field.call("outline_#{index}_#{key}", value, key != HardwareDescriptorDef::PRISM_RADIUS_KEY)
+          end
+        end
       end
       head = HardwareDescriptorDef::HEADS.map { |key| item[key] }.find { |value| value.is_a?(Hash) }
       unless head.nil?
@@ -534,6 +564,8 @@ module Ladb::OpenCutList
     AXIS_MATRICES = {
       HardwareDescriptorDef::AXIS_Y => [ 1, 0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0, 0, 1 ].freeze,           # [ x, y, z ] -> [ x, z, -y ]
       HardwareDescriptorDef::AXIS_Y_LENGTH_Z => [ 0, 0, -1, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1 ].freeze,  # [ x, y, z ] -> [ -y, z, -x ]
+      HardwareDescriptorDef::AXIS_PRISM_X => [ 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1 ].freeze,      # [ u, v, w ] -> [ w, u, v ]
+      HardwareDescriptorDef::AXIS_PRISM_Y => [ 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1 ].freeze,      # [ u, v, w ] -> [ u, w, v ]
     }.freeze
 
     def _translation(x, y, z)

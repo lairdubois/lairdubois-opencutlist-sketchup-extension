@@ -672,6 +672,63 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     _assert_error(fn.call('machining', { 'mortises' => [ { 'length' => 19, 'width' => 5 } ] }), 'mortise 1 depth is neither "through" nor a positive length')
   end
 
+  # An angle bracket : an L extruded along X, its outline by y and z.
+  def test_prisms
+    mm = lambda { |v| v / 25.4 }
+    bracket = { 'axis' => 'x', 'from' => '-20mm', 'to' => '20mm', 'outline' => [
+      { 'y' => 0, 'z' => 0 }, { 'y' => 0, 'z' => 30 }, { 'y' => 2, 'z' => 30 },
+      { 'y' => 2, 'z' => 2, 'r' => '1mm' }, { 'y' => 30, 'z' => 2 }, { 'y' => 30, 'z' => '@thickness' }
+    ] }
+    hardware = { 'prisms' => [ bracket ] }
+    descriptor = _def(_with(HINGE, 'components' => { 'a' => { 'hardware' => hardware } }))
+    assert(descriptor.valid?, descriptor.errors.inspect)
+    assert_equal([ 'thickness' ], HardwareDescriptorDef.primitive_variables(hardware))
+    assert_equal([], HardwareDescriptorDef.primitive_cylinders(hardware))   # @thickness unknown : left out
+    prism = HardwareDescriptorDef.primitive_cylinders(hardware, 'thickness' => 0).first
+    assert(prism.prism?)
+    assert(!prism.round?)
+    assert_equal(HardwareDescriptorDef::AXIS_PRISM_X, prism.axis)
+    assert_in_delta(mm.call(-20), prism.z_min, 1e-9)
+    assert_in_delta(mm.call(30), prism.length, 1e-9)
+    assert_in_delta(mm.call(30), prism.diameter, 1e-9)
+    # Given clockwise : turned counterclockwise, the inner corner rounded
+    corners = HardwareDescriptorDef.prism_corners(prism.outline)
+    assert_equal(6, corners.length)
+    assert_equal([ [ mm.call(30), 0.0 ], [ mm.call(30), mm.call(2) ] ], corners[0, 2].map(&:start))   # Reversed
+    arc = corners.find(&:arc?)
+    assert_in_delta(mm.call(1), arc.radius, 1e-9)
+    assert_in_delta(-Math::PI / 2, arc.sweep, 1e-9)   # Inner : turns clockwise
+    assert_in_delta(mm.call(3), arc.center[0], 1e-9)
+    assert_in_delta(mm.call(3), arc.center[1], 1e-9)
+    points = HardwareDescriptorDef.prism_points(corners) { 4 }
+    assert_equal(5 + 5, points.length)
+    # A rounding as long as its side : the points along it once
+    square = { 'from' => 0, 'to' => 1, 'outline' => [ { 'x' => 0, 'y' => 0, 'r' => 5 }, { 'x' => 10, 'y' => 0, 'r' => 5 }, { 'x' => 10, 'y' => 10, 'r' => 5 }, { 'x' => 0, 'y' => 10, 'r' => 5 } ] }
+    disc = HardwareDescriptorDef.primitive_cylinders({ 'prisms' => [ square ] }).first
+    assert_nil(disc.axis)
+    assert_equal(4 * 4, HardwareDescriptorDef.prism_points(HardwareDescriptorDef.prism_corners(disc.outline)) { 4 }.length)
+    # Along Y : by x and z
+    assert_equal(HardwareDescriptorDef::AXIS_PRISM_Y, HardwareDescriptorDef.primitive_cylinders({ 'prisms' => [ { 'axis' => 'y', 'from' => 0, 'to' => 1, 'outline' => [ { 'x' => 0 }, { 'x' => 5 }, { 'z' => 5 } ] } ] }).first.axis)
+  end
+
+  def test_invalid_prisms
+    fn = lambda { |part, item| _with(HINGE, 'components' => { 'a' => { part => { 'prisms' => [ item ] } } }) }
+    triangle = [ { 'x' => 0, 'y' => 0 }, { 'x' => 10, 'y' => 0 }, { 'x' => 0, 'y' => 10 } ]
+    _assert_error(fn.call('machining', { 'from' => 0, 'to' => 1, 'outline' => triangle }), "machining has an unknown primitive 'prisms'")
+    _assert_error(fn.call('hardware', { 'outline' => triangle }), 'prism 1 from is not a length')
+    _assert_error(fn.call('hardware', { 'axis' => 'w', 'from' => 0, 'to' => 1, 'outline' => triangle }), 'prism 1 axis is neither "z" nor "x" nor "y"')
+    _assert_error(fn.call('hardware', { 'from' => 0, 'to' => 1, 'outline' => triangle.first(2) }), 'prism 1 outline is not a list of 3 points or more')
+    _assert_error(fn.call('hardware', { 'axis' => 'x', 'from' => 0, 'to' => 1, 'outline' => triangle }), "prism 1 point 2 has an unknown key 'x' - along X, a point is given by y and z")
+    _assert_error(fn.call('hardware', { 'from' => 0, 'to' => 1, 'outline' => triangle + [ { 'x' => 1, 'r' => -1 } ] }), 'prism 1 point 4 r is not a positive length')
+    _assert_error(fn.call('hardware', { 'from' => 0, 'to' => 1, 'outline' => triangle + [ { 'x' => '@nope' } ] }), 'prism 1 point 4 x uses the unknown variable @nope')
+    bowtie = [ { 'x' => 0, 'y' => 0 }, { 'x' => 10, 'y' => 10 }, { 'x' => 10, 'y' => 0 }, { 'x' => 0, 'y' => 10 } ]
+    _assert_error(fn.call('hardware', { 'from' => 0, 'to' => 1, 'outline' => bowtie }), 'prism 1 outline is flat, crosses itself')
+    rounded = triangle.map { |point| point.merge('r' => 6) }
+    _assert_error(fn.call('hardware', { 'from' => 0, 'to' => 1, 'outline' => rounded }), "prism 1 outline is flat, crosses itself or has a rounding its sides can't hold")
+    flat = [ { 'x' => 0 }, { 'x' => 5 }, { 'x' => 10 } ]
+    _assert_error(fn.call('hardware', { 'from' => 0, 'to' => 1, 'outline' => flat }), 'prism 1 outline is flat')
+  end
+
   # The bundled Dominos : depths on the steps of the machine - 12, 15, 20,
   # 25, 28 mm - the tenon shifted toward the deeper mortise.
   def test_heads

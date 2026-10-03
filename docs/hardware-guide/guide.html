@@ -56,7 +56,7 @@
 </ul>
 <p>Une partie se décrit de deux façons :</p>
 <ul>
-  <li><b>par des primitives</b>, directement dans le JSON : perçages et mortaises pour l'usinage, cylindres et oblongs pour la quincaillerie. OpenCutList génère la géométrie à la pose et l'adapte à l'épaisseur réelle des panneaux. Aucun SKP à dessiner : tourillons, Dominos, vis et Cabineo livrés sont faits ainsi ;</li>
+  <li><b>par des primitives</b>, directement dans le JSON : perçages et mortaises pour l'usinage, cylindres, oblongs et prismes pour la quincaillerie. OpenCutList génère la géométrie à la pose et l'adapte à l'épaisseur réelle des panneaux. Aucun SKP à dessiner : tourillons, Dominos, vis et Cabineo livrés sont faits ainsi ;</li>
   <li><b>par un fichier SKP</b>, pour une forme qu'on ne sait pas décrire en primitives (le corps d'une charnière, un Clamex).</li>
 </ul>
 <p>L'outil <b>Assembler</b> lit le descripteur et pose les composants sur chaque joint, répartis selon les options (décalages, espacement). Il mesure les panneaux là où il pose : le descripteur peut s'en servir dans des <b>variables</b> (profondeur de perçage selon l'épaisseur…) et refuser une position par des <b>asserts</b> (panneau trop mince…).</p>
@@ -217,7 +217,7 @@
 <table>
   <tr><th style="width:34%">Valeur</th><th>Signification</th></tr>
   <tr><td><code>{ "drillings": […], "mortises": […] }</code></td><td>usinage généré : perçages, mortaises (section 5)</td></tr>
-  <tr><td><code>{ "cylinders": […], "oblongs": […] }</code></td><td>quincaillerie générée : cylindres, oblongs (section 5)</td></tr>
+  <tr><td><code>{ "cylinders": […], "oblongs": […], "prisms": […] }</code></td><td>quincaillerie générée : cylindres, oblongs, prismes (section 5)</td></tr>
   <tr><td><code>true</code></td><td>le SKP conventionnel <code>&lt;slot&gt;[.&lt;variante&gt;][.machining].skp</code></td></tr>
   <tr><td><code>"chemin/fichier.skp"</code></td><td>un SKP partagé entre quincailleries, chemin relatif au dossier <code>components</code> de la bibliothèque, p. ex. <code>"hinges/hettich/cuvette-35.skp"</code></td></tr>
   <tr><td><code>{ "same_as": "a" }</code></td><td>la même partie que celle du slot <code>a</code></td></tr>
@@ -277,6 +277,7 @@
   <tr><td><code>mortises</code></td><td>machining</td><td><code>x</code>, <code>y</code>, <code>length</code>, <code>width</code>, <code>depth</code></td><td>mortaise à bouts ronds : <code>length</code> le long de X (bouts compris), <code>width</code> le long de Y</td></tr>
   <tr><td><code>cylinders</code></td><td>hardware</td><td><code>x</code>, <code>y</code>, <code>diameter</code>, <code>from</code>, <code>to</code></td><td>cylindre le long de Z, de <code>from</code> à <code>to</code> ; il peut traverser le plan du joint</td></tr>
   <tr><td><code>oblongs</code></td><td>hardware</td><td><code>x</code>, <code>y</code>, <code>length</code>, <code>width</code>, <code>from</code>, <code>to</code></td><td>tenon à bouts ronds (le pendant d'une mortaise), le long de Z</td></tr>
+  <tr><td><code>prisms</code></td><td>hardware</td><td><code>axis</code>, <code>from</code>, <code>to</code>, <code>outline</code></td><td>contour quelconque extrudé le long de son axe, de <code>from</code> à <code>to</code> : platine, équerre, biscuit (voir plus bas)</td></tr>
 </table>
 <pre>"hardware":  { "oblongs":  [ { "length": "19mm", "width": "5mm",
                                 "from": "-15mm", "to": "15mm" } ] },
@@ -288,7 +289,15 @@
 <pre>"machining": { "drillings": [
   { "axis": "y", "z": "-7.5mm", "diameter": "6mm", "depth": "@height" }
 ] }</pre>
-<p>La largeur d'une mortaise le long de Y se mesure alors le long de Z ; <code>"length_axis": "z"</code> met au contraire sa longueur le long de Z (le logement de collerette d'un Cabineo). Les primitives hardware restent le long de Z.</p>
+<p>La largeur d'une mortaise le long de Y se mesure alors le long de Z ; <code>"length_axis": "z"</code> met au contraire sa longueur le long de Z (le logement de collerette d'un Cabineo). Les cylindres et les oblongs restent le long de Z ; un prisme suit son propre <code>axis</code>.</p>
+
+<h3>Prismes : platines et équerres</h3>
+<p>Un prisme est un contour fermé extrudé le long de son <code>axis</code> : <code>"z"</code> par défaut, <code>"x"</code> ou <code>"y"</code>. Ses points se donnent par les deux autres axes : <code>x</code> et <code>y</code> le long de Z, <code>y</code> et <code>z</code> le long de X, <code>x</code> et <code>z</code> le long de Y (0 par défaut). <code>r</code> arrondit le coin d'un point, du rayon donné. Le sens de parcours est libre, mais le contour ne doit pas se croiser, et chaque arrondi doit tenir sur ses deux côtés. Il n'a pas de <code>x</code> ni de <code>y</code> propres : le contour le place. Une équerre de 30 × 30 mm, épaisse de 2 mm et large de 40 mm, son pli arrondi à l'intérieur :</p>
+<pre>"hardware": { "prisms": [ { "axis": "x", "from": "-20mm", "to": "20mm", "outline": [
+  { "y": 0, "z": 0 }, { "y": "30mm", "z": 0 }, { "y": "30mm", "z": "2mm" },
+  { "y": "2mm", "z": "2mm", "r": "1mm" }, { "y": "2mm", "z": "30mm" }, { "y": 0, "z": "30mm" }
+] } ] }</pre>
+<p class="small">Comme toute quincaillerie générée, un prisme est centré en Z à la pose : la même pièce décalée par les mesures reste une seule définition.</p>
 
 <h3>Têtes : fraisure et lamage</h3>
 <p>Un perçage ou un cylindre peut s'évaser à un bout, en un seul solide :</p>
@@ -425,7 +434,7 @@
 }</pre>
 <ul>
   <li><b>Clé</b> : lettres minuscules, chiffres, <code>-</code> et <code>_</code>, en commençant par une lettre, unique dans le slot ; pas le nom d'un champ d'article (<code>name</code>, <code>skp</code>, <code>use</code>, <code>at</code>…). Elle nomme le fichier d'un article <code>"skp": true</code> : <code>a.body.skp</code>.</li>
-  <li><b>Article propre</b> : ses champs de fiche de débit (<code>name</code>, <code>description</code>, <code>price</code>, <code>url</code>, <code>mass</code>) et sa géométrie, un SKP (<code>"skp"</code> : <code>true</code> ou un chemin partagé) ou des primitives (<code>cylinders</code>, <code>oblongs</code>).</li>
+  <li><b>Article propre</b> : ses champs de fiche de débit (<code>name</code>, <code>description</code>, <code>price</code>, <code>url</code>, <code>mass</code>) et sa géométrie, un SKP (<code>"skp"</code> : <code>true</code> ou un chemin partagé) ou des primitives (<code>cylinders</code>, <code>oblongs</code>, <code>prisms</code>).</li>
   <li><b>Article de bibliothèque</b> : <code>use</code> désigne un <code>connector</code> concret, par son chemin comme pour <code>extends</code>. Son nom, son prix et ses asserts sont ceux du connecteur, évalués à chaque position : un seul en échec refuse la position. <code>host</code> (<code>a</code> ou <code>b</code>) dit quel côté du connecteur est notre panneau ; l'autre côté est virtuel, <code>measures</code> donne son épaisseur (<code>thickness_b</code> ici : l'épaisseur de l'équerre). <code>variables</code> ne change que les valeurs de ses réglages. Son usinage côté <code>host</code> s'ajoute à celui du slot.</li>
   <li><b>Positions</b> : <code>at</code> liste des <code>{ x, y }</code> dans le repère du slot (longueurs ou expressions) ; absent, une position à l'origine. La géométrie d'un article est dessinée autour de sa propre origine.</li>
   <li>Seuls les types autres que <code>connector</code> peuvent utiliser un connecteur. Un connecteur utilisé ne peut pas être supprimé ; le renommer dans l'éditeur réécrit les <code>use</code> qui le désignent.</li>

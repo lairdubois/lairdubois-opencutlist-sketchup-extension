@@ -11,7 +11,16 @@
   "components": {
     "a": {
       "hardware": {
-        "body": { "skp": true },
+        "body": {
+          "prisms": [ { "axis": "x", "from": "-10mm", "to": "10mm", "outline": [
+            { "y": "-40mm", "z": 0 },
+            { "y": 0, "z": 0 },
+            { "y": 0, "z": "40mm" },
+            { "y": "-@bracket_thickness", "z": "40mm" },
+            { "y": "-@bracket_thickness", "z": "@bracket_thickness" },
+            { "y": "-40mm", "z": "@bracket_thickness" }
+          ] } ]
+        },
         "screws": {
           "use": "connectors/generic/screws/screw-4x16.json", "host": "a",
           "measures": { "thickness_b": "@bracket_thickness" },

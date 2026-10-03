@@ -28,6 +28,7 @@ default:
   export: Exporter
   import: Importer
   load: Charger
+  replace: Remplacer
   preview: Aperçu
   options: Options
   caution: Attention
@@ -405,9 +406,8 @@ core:
     article_add_connector: Connecteur
     article_kind_skp: SKP
     article_kind_primitives: Primitives
-    article_kind_connector: Bibliothèque
+    article_kind_connector: Connecteurs
     article_key: Clé
-    article_key_file: "Son fichier : {{ file }}"
     article_key_invalid: Lettres minuscules, chiffres, - et _, en commençant par une lettre
     article_key_reserved: Ce nom est réservé
     article_key_taken: Déjà utilisée par un autre article de ce composant
@@ -427,13 +427,13 @@ core:
     article_asserts: Contrôles
     article_positions: Positions
     article_position_add: Position
-    article_contributions: Apporté par les articles
     library_libraries: Bibliothèques
     library_user: Ma Bibliothèque
     library_bundled: Bibliothèque OCL
     library_empty: Aucun connecteur dans ce dossier.
     primitive_type_cylinders: Cylindre
     primitive_type_oblongs: Oblong
+    primitive_type_prisms: Prisme
     primitive_type_drillings: Perçage
     primitive_type_mortises: Mortaise
     primitive_axis: Axe
@@ -442,6 +442,10 @@ core:
     primitive_size: Dimensions
     primitive_length_axis: Longueur selon
     primitive_span: De → À (sur Z)
+    primitive_prism_span: "De → À (sur {{ axis }})"
+    primitive_outline: Contour
+    primitive_outline_add: Point
+    primitive_outline_radius_help: "Rayon de l'arrondi du coin, aucun si vide"
     primitive_from: De
     primitive_to: À
     primitive_depth: Profondeur
@@ -469,8 +473,6 @@ core:
     chip_imported: Importé | à enregistrer
     chip_placed: Placement à enregistrer
     chip_edited: Modifié | à enregistrer
-    choose_file: Choisir un fichier...
-    replace_file: Remplacer...
     edit_in_sketchup: Modifier
     create_in_sketchup: Créer
     shaping: "{{ name }} est ouvert dans SketchUp"

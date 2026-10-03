@@ -150,8 +150,6 @@ class TC_Ladb_Worker_HardwareBenchCompute < TestUp::TestCase
       assert_equal('10mm', response[:inheritance][:data]['options']['start_offset'])
       settings = Hash[response[:settings].map { |setting| [ setting[:name], setting[:inherited] ] }]
       assert_equal({ 'diameter' => true, 'length' => true, 'min_wall' => true, 'clearance' => false }, settings)
-      assert_equal(true, _variable(response, 'depth_a')[:inherited])
-      assert_equal([ true, true, false ], response[:asserts].map { |assert| assert[:inherited] })
       assert_nil(_run(DOWEL, topology: 'flat_edge')[:inheritance])
       assert_equal(false, response[:abstract])
       assert_equal(true, _run(File.read(File.join(LIBRARY_DIR, 'connectors/generic/dowels/dowel.json')), ref: '$OCL/connectors/generic/dowels/dowel.json', topology: 'flat_edge')[:abstract])

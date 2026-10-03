@@ -473,6 +473,10 @@ module Ladb::OpenCutList
     TRANSFORMATION_AXIS_Y = Geom::Transformation.axes(ORIGIN, X_AXIS, Z_AXIS.reverse, Y_AXIS).freeze
     # The one of a mortise along Y whose length goes along Z : [ x, y, z ] -> [ -y, z, -x ].
     TRANSFORMATION_AXIS_Y_LENGTH_Z = Geom::Transformation.axes(ORIGIN, Z_AXIS.reverse, X_AXIS.reverse, Y_AXIS).freeze
+    # The ones of a prism along X and along Y - see HardwareDescriptorDef::AXIS_PRISM_X :
+    # [ u, v, w ] -> [ w, u, v ], and [ u, v, w ] -> [ u, w, v ] - a mirror.
+    TRANSFORMATION_AXIS_PRISM_X = Geom::Transformation.axes(ORIGIN, Y_AXIS, Z_AXIS, X_AXIS).freeze
+    TRANSFORMATION_AXIS_PRISM_Y = Geom::Transformation.new([ 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1 ]).freeze
 
     # How far behind the face _get_placement_height looks - toward -Z - off
     # the edge the face may share with the one it finds.
@@ -1495,6 +1499,12 @@ module Ladb::OpenCutList
       bounds = Geom::BoundingBox.new
       variables ||= _resolve_hardware_variables(Hash[HardwareDescriptorDef.primitive_variables(primitives).map { |name| [ name, 0.0 ] }])
       HardwareDescriptorDef.primitive_cylinders(primitives, variables).each do |cylinder|
+        if cylinder.prism?
+          _get_prism_vertices(cylinder.outline, cylinder.z_min, cylinder.z_max, cylinder.axis).each do |point|
+            bounds.add(mirror ? Geom::Point3d.new(-point.x, point.y, point.z) : point)
+          end
+          next
+        end
         r = cylinder.radius
         h = cylinder.round? ? r : cylinder.length / 2
         x = cylinder.x
@@ -1676,6 +1686,10 @@ module Ladb::OpenCutList
           end
         elsif geometry.primitives
           HardwareDescriptorDef.primitive_cylinders(geometry.primitives, variables).each do |cylinder|
+            if cylinder.prism?
+              _get_prism_vertices(cylinder.outline, cylinder.z_min, cylinder.z_max, cylinder.axis).each { |point| points << [ sign * point.x, point.y ] }
+              next
+            end
             next unless cylinder.axis.nil?   # Not on the face
             points << [ sign * cylinder.x, cylinder.y ]
             r = cylinder.radius
@@ -1693,15 +1707,21 @@ module Ladb::OpenCutList
     # The solids of the given primitives resolved at the given placement, as
     # [ x, y, diameter, z_min, z_max ] - and length for an oblong one, nil
     # and the profile for a widened one, then the axis for one along Y, the
-    # values before it nil if missing - in inches, rounded : the key of their
-    # geometry. Centered, shifted along Z by their offset - see
+    # values before it nil if missing, then the outline of a prism - in
+    # inches, rounded : the key of their geometry. Centered, shifted along Z by their offset - see
     # _get_primitives_offset - before rounding.
     def _get_primitives_dimensions(primitives, placement, centered = false, variables = nil)
       variables ||= _get_placement_variables(placement)
       offset = centered ? _get_primitives_offset(primitives, placement, variables) : 0.0
       fn_round = lambda { |v| v.to_f.round(6) + 0.0 }  # + 0.0 : no -0.0 in the key
       HardwareDescriptorDef.primitive_cylinders(primitives, variables).map { |cylinder|
+        if cylinder.prism? && !cylinder.axis.nil?
+          # Along X or Y : its v along Z
+          outline = cylinder.outline.map { |u, v, r| [ u, v - offset, r ].map(&fn_round) }
+          next [ cylinder.x, cylinder.y, cylinder.diameter, cylinder.z_min, cylinder.z_max, cylinder.length ].map(&fn_round) + [ nil, cylinder.axis, outline ]
+        end
         values = [ cylinder.x, cylinder.y, cylinder.diameter, cylinder.z_min - offset, cylinder.z_max - offset ].map(&fn_round)
+        next values + [ fn_round.call(cylinder.length), nil, cylinder.axis, cylinder.outline.map { |point| point.map(&fn_round) } ] if cylinder.prism?
         values << fn_round.call(cylinder.length) unless cylinder.round?
         values << nil << cylinder.profile.map { |r, z| [ fn_round.call(r), fn_round.call(z - offset) ] } unless cylinder.profile.nil?
         values.fill(nil, values.length...7) << cylinder.axis unless cylinder.axis.nil?
@@ -1713,7 +1733,9 @@ module Ladb::OpenCutList
     def _get_primitives_offset(primitives, placement, variables = nil)
       cylinders = HardwareDescriptorDef.primitive_cylinders(primitives, variables || _get_placement_variables(placement))
       return 0.0 if cylinders.empty?
-      (cylinders.map(&:z_min).min + cylinders.map(&:z_max).max) / 2
+      # Along Z of the laying frame : the v of a prism along X or Y
+      ranges = cylinders.map { |cylinder| cylinder.prism? && !cylinder.axis.nil? ? cylinder.outline.map { |_, v, _| v }.minmax : [ cylinder.z_min, cylinder.z_max ] }
+      (ranges.map(&:first).min + ranges.map(&:last).max) / 2
     end
 
     # The transformation a primitive along the given axis is laid with - see
@@ -1724,6 +1746,10 @@ module Ladb::OpenCutList
         TRANSFORMATION_AXIS_Y
       when HardwareDescriptorDef::AXIS_Y_LENGTH_Z
         TRANSFORMATION_AXIS_Y_LENGTH_Z
+      when HardwareDescriptorDef::AXIS_PRISM_X
+        TRANSFORMATION_AXIS_PRISM_X
+      when HardwareDescriptorDef::AXIS_PRISM_Y
+        TRANSFORMATION_AXIS_PRISM_Y
       else
         IDENTITY
       end
@@ -1759,9 +1785,11 @@ module Ladb::OpenCutList
     # frame : both outlines and four generatrices of each solid.
     def _get_primitives_segments(dimensions)
       segments = []
-      dimensions.each do |x, y, diameter, z_min, z_max, length, profile, axis|
+      dimensions.each do |x, y, diameter, z_min, z_max, length, profile, axis, outline|
         solid_segments = []
-        if profile.nil?
+        if !outline.nil?
+          solid_segments = _get_prism_segments(outline, z_min, z_max)
+        elsif profile.nil?
           points = _get_primitive_outline(x, y, diameter, length)
           step = [ points.length / 4, 1 ].max
           points.each_with_index do |(px, py), i|
@@ -1796,6 +1824,47 @@ module Ladb::OpenCutList
         profile.each_cons(2) do |(r0, z0), (r1, z1)|
           segments << fn_point.call(r0, z0, i) << fn_point.call(r1, z1, i)
         end
+      end
+      segments
+    end
+
+    # The segments of each rounded corner of a prism of the given radius and
+    # angle : at most 12 a half turn.
+    def _get_prism_arc_num_segments(radius, sweep)
+      Geometrix::ArcUtils.num_segments_by_radius(radius, min_num_segments: 2, max_num_segments: [ (12 * sweep / Math::PI).ceil, 2 ].max, arc_angle: sweep)
+    end
+
+    # The points of the outline - see
+    # HardwareDescriptorDef::PrimitiveCylinderDef#outline - [ [ u, v ] ]
+    # counterclockwise, its roundings in segments. Empty if it is degenerate.
+    def _get_prism_points(outline)
+      corners = HardwareDescriptorDef.prism_corners(outline)
+      return [] if corners.nil?
+      HardwareDescriptorDef.prism_points(corners) { |radius, sweep| _get_prism_arc_num_segments(radius, sweep) }
+    end
+
+    # The points of both ends of a prism of the given outline, from z_min to
+    # z_max, in the laying frame - see _get_primitive_axis_transformation.
+    def _get_prism_vertices(outline, z_min, z_max, axis)
+      at = _get_primitive_axis_transformation(axis)
+      _get_prism_points(outline).flat_map { |u, v| [ Geom::Point3d.new(u, v, z_min).transform(at), Geom::Point3d.new(u, v, z_max).transform(at) ] }
+    end
+
+    # The edges of a prism of the given outline, from z_min to z_max : both
+    # ends and the edge at each corner - those of a rounding at its ends -
+    # in the frame of its outline.
+    def _get_prism_segments(outline, z_min, z_max)
+      corners = HardwareDescriptorDef.prism_corners(outline)
+      return [] if corners.nil?
+      segments = []
+      points = _get_prism_points(outline)
+      points.each_with_index do |(u, v), i|
+        nu, nv = points[(i + 1) % points.length]
+        segments << Geom::Point3d.new(u, v, z_max) << Geom::Point3d.new(nu, nv, z_max)
+        segments << Geom::Point3d.new(u, v, z_min) << Geom::Point3d.new(nu, nv, z_min)
+      end
+      corners.flat_map { |corner| corner.arc? ? [ corner.start, corner.finish ] : [ corner.start ] }.each do |u, v|
+        segments << Geom::Point3d.new(u, v, z_max) << Geom::Point3d.new(u, v, z_min)
       end
       segments
     end
@@ -1889,7 +1958,7 @@ module Ladb::OpenCutList
       definition = model.definitions.find { |d| d.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, HardwareDescriptorDef::DEFINITION_ATTRIBUTE_PRIMITIVES) == key }
       if definition.nil?
         definition = model.definitions.add(name.is_a?(String) && !name.empty? ? name : geometry.part.to_s)
-        dimensions.each do |x, y, diameter, z_min, z_max, length, profile, axis|
+        dimensions.each do |x, y, diameter, z_min, z_max, length, profile, axis, outline|
           at = _get_primitive_axis_transformation(axis)
           if geometry.part == :machining
             group = definition.entities.add_group
@@ -1898,7 +1967,9 @@ module Ladb::OpenCutList
           else
             entities = definition.entities
           end
-          if profile.nil?
+          if !outline.nil?
+            _add_prism_solid(entities, outline, z_min, z_max, at)
+          elsif profile.nil?
             _add_primitive_solid(entities, x, y, diameter, z_min, z_max, length, at)
           else
             _add_profile_solid(entities, x, y, profile, at)
@@ -1972,6 +2043,37 @@ module Ladb::OpenCutList
       face.followme(path)
       # The path, where it isn't an edge of the solid
       entities.erase_entities(path.select { |edge| edge.valid? && edge.faces.length < 2 })
+    end
+
+    # A prism of the given outline - see
+    # HardwareDescriptorDef::PrimitiveCylinderDef#outline - extruded along
+    # its Z from z_min to z_max. Its roundings are arcs, to soften its sides.
+    # at : the transformation it is laid with - see
+    # _get_primitive_axis_transformation - a mirror along Y.
+    def _add_prism_solid(entities, outline, z_min, z_max, at = IDENTITY)
+      return if z_max <= z_min
+      corners = HardwareDescriptorDef.prism_corners(outline)
+      return if corners.nil?
+      fn_point = lambda { |u, v| Geom::Point3d.new(u, v, z_max).transform(at) }
+      edges = []
+      corners.each_with_index do |corner, i|
+        if corner.arc?
+          sweep = corner.sweep.abs
+          x_axis = Geom::Vector3d.new(corner.start[0] - corner.center[0], corner.start[1] - corner.center[1], 0)
+          y_axis = (corner.sweep > 0 ? Z_AXIS : Z_AXIS.reverse) * x_axis   # Toward where it turns
+          x_axis = x_axis.transform(at)
+          normal = x_axis * y_axis.transform(at)
+          edges.concat(entities.add_arc(fn_point.call(*corner.center), x_axis, normal, corner.radius, 0, sweep, _get_prism_arc_num_segments(corner.radius, sweep)))
+        end
+        start = corner.finish
+        finish = corners[(i + 1) % corners.length].start
+        next if (start[0] - finish[0]).abs < 1e-9 && (start[1] - finish[1]).abs < 1e-9   # A rounding as long as its side
+        edges << entities.add_line(fn_point.call(*start), fn_point.call(*finish))
+      end
+      face = entities.add_face(edges.compact)
+      return if face.nil?
+      face.reverse! if face.normal % Z_AXIS.transform(at) > 0
+      face.pushpull(z_max - z_min)  # Along its normal : toward -Z
     end
 
     # -- UTILS --

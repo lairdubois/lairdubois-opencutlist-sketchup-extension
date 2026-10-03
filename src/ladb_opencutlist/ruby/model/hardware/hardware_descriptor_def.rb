@@ -59,7 +59,7 @@ module Ladb::OpenCutList
   # one of :
   #  - "skp" : true - the file named after the slot and its key, see
   #    article_file_name - or a shared path, as a part ;
-  #  - primitives : "cylinders", "oblongs" ;
+  #  - primitives : "cylinders", "oblongs", "prisms" ;
   #  - "use" : a concrete connector of the library - its path relative to
   #    the library's root, or a '$OCL/…' ref - reused as it is. "host" says
   #    which of its sides - "a" or "b" - the part is ; the other one is
@@ -93,6 +93,14 @@ module Ladb::OpenCutList
   #    { "cylinders": [ { "x": 0, "y": 0, "diameter": "8mm", "from": "-20mm", "to": "20mm" } ],
   #      "oblongs": [ { "x": 0, "y": 0, "length": "19mm", "width": "5mm", "from": "-15mm", "to": "15mm" } ] }
   #    along Z, from one height to the other.
+  #    A plate, an angle bracket - a prism : an outline extruded along its
+  #    axis - "z" by default, "x" or "y" - from one height to the other. Its
+  #    points are given by the two other axes - x and y along Z, y and z
+  #    along X, x and z along Y - 0 when absent, "r" rounds the corner :
+  #    { "prisms": [ { "axis": "x", "from": "-20mm", "to": "20mm",
+  #                    "outline": [ { "y": 0, "z": 0 }, { "y": "30mm", "z": 0 }, { "y": "30mm", "z": "2mm" },
+  #                                 { "y": "2mm", "z": "2mm", "r": "1mm" }, { "y": "2mm", "z": "30mm" }, { "y": 0, "z": "30mm" } ] } ] }
+  #    It doesn't cross itself, and each rounding fits its two sides.
   # A mortise or an oblong is a slot with round ends, its length along X -
   # ends included - and its width along Y - but along Y, see above.
   # A drilling or a cylinder can widen at one end, in one solid with it :
@@ -231,13 +239,14 @@ module Ladb::OpenCutList
     MACHINING_MORTISES = 'mortises'.freeze
     HARDWARE_CYLINDERS = 'cylinders'.freeze
     HARDWARE_OBLONGS = 'oblongs'.freeze
+    HARDWARE_PRISMS = 'prisms'.freeze
 
     # What an article can hold - its key can't be one of them
-    ARTICLE_FIELDS = (INFO_KEYS + [ ARTICLE_SKP, ARTICLE_AT ] + ARTICLE_USE_KEYS + [ HARDWARE_CYLINDERS, HARDWARE_OBLONGS ]).freeze
+    ARTICLE_FIELDS = (INFO_KEYS + [ ARTICLE_SKP, ARTICLE_AT ] + ARTICLE_USE_KEYS + [ HARDWARE_CYLINDERS, HARDWARE_OBLONGS, HARDWARE_PRISMS ]).freeze
 
     # The primitives each part can be given as
     PRIMITIVES = {
-      PART_HARDWARE => [ HARDWARE_CYLINDERS, HARDWARE_OBLONGS ],
+      PART_HARDWARE => [ HARDWARE_CYLINDERS, HARDWARE_OBLONGS, HARDWARE_PRISMS ],
       PART_MACHINING => [ MACHINING_DRILLINGS, MACHINING_MORTISES ],
     }.freeze
 
@@ -258,6 +267,23 @@ module Ladb::OpenCutList
     # PrimitiveCylinderDef#axis of a mortise along Y whose length goes along
     # Z - a value of its own, not one of the descriptor.
     AXIS_Y_LENGTH_Z = 'y-z'.freeze
+
+    # The axis a prism is extruded along - Z by default - and the axes its
+    # outline points are given by, in that order.
+    PRISM_AXES = [ AXIS_Z, AXIS_X, AXIS_Y ].freeze
+    PRISM_OUTLINE_KEYS = {
+      AXIS_Z => %w[x y],
+      AXIS_X => %w[y z],
+      AXIS_Y => %w[x z],
+    }.freeze
+    PRISM_RADIUS_KEY = 'r'.freeze
+
+    # PrimitiveCylinderDef#axis of a prism along X or Y - values of their
+    # own, not of the descriptor : its outline given by [ u, v ], extruded
+    # along w, a point [ u, v, w ] of it is [ w, u, v ] in the laying frame
+    # along X, [ u, w, v ] along Y.
+    AXIS_PRISM_X = 'prism-x'.freeze
+    AXIS_PRISM_Y = 'prism-y'.freeze
 
     # How a drilling or a cylinder widens at one end - see PrimitiveCylinderDef#profile
     HEAD_COUNTERSINK = 'countersink'.freeze
@@ -325,9 +351,17 @@ module Ladb::OpenCutList
     # turned so that its X goes along -Z and its Z along Y, a point
     # [ x, y, z ] of it is [ -y, z, -x ] in the laying frame.
     # key : the primitives it is one of - MACHINING_DRILLINGS, … .
-    PrimitiveCylinderDef = Struct.new(:x, :y, :diameter, :z_min, :z_max, :length, :profile, :axis, :key) do
+    # outline : a prism's - HARDWARE_PRISMS - [ [ u, v, r ] ] corners, r 0
+    # when it isn't rounded, see prism_corners. It is extruded along its Z
+    # from z_min to z_max, in the frame its axis - nil, AXIS_PRISM_X or
+    # AXIS_PRISM_Y - gives, x and y 0, length and diameter the extents of
+    # its outline along u and v.
+    PrimitiveCylinderDef = Struct.new(:x, :y, :diameter, :z_min, :z_max, :length, :profile, :axis, :key, :outline) do
+      def prism?
+        !outline.nil?
+      end
       def round?
-        length.nil? || length <= diameter
+        !prism? && (length.nil? || length <= diameter)
       end
       # Its widest radius
       def radius
@@ -582,12 +616,17 @@ module Ladb::OpenCutList
     def self.primitive_variables(primitives)
       return [] unless primitives?(primitives)
       names = []
-      _primitive_items(primitives).each do |_, item|
+      _primitive_items(primitives).each do |primitive_key, item|
         item.each do |key, value|
           names << VARIABLE_THICKNESS_MAX if key == 'depth' && value == DRILLING_DEPTH_THROUGH
-          names << VARIABLE_HEIGHT if key == 'axis' && value == AXIS_Y
+          names << VARIABLE_HEIGHT if key == 'axis' && value == AXIS_Y && primitive_key != HARDWARE_PRISMS
           names.concat(value.scan(VARIABLE_PATTERN).flatten) if value.is_a?(String)
           names.concat(value.values.select { |v| v.is_a?(String) }.flat_map { |v| v.scan(VARIABLE_PATTERN).flatten }) if value.is_a?(Hash)
+          if value.is_a?(Array)   # A prism's outline
+            value.select { |point| point.is_a?(Hash) }.each do |point|
+              names.concat(point.values.select { |v| v.is_a?(String) }.flat_map { |v| v.scan(VARIABLE_PATTERN).flatten })
+            end
+          end
         end
       end
       names.uniq
@@ -603,6 +642,7 @@ module Ladb::OpenCutList
       return nil unless primitives?(primitives)
       variables = Hash[variables.map { |k, v| [ k.to_s, v ] }]
       _primitive_items(primitives).map { |key, item|
+        next _primitive_prism(item, variables) if key == HARDWARE_PRISMS
         axis = item['axis'] == AXIS_Y && (key == MACHINING_DRILLINGS || key == MACHINING_MORTISES) ? AXIS_Y : nil
         axis = AXIS_Y_LENGTH_Z if axis == AXIS_Y && key == MACHINING_MORTISES && item['length_axis'] == AXIS_Z
         x = item['x'].nil? ? 0.0 : to_length(item['x'], true, variables)
@@ -646,6 +686,150 @@ module Ladb::OpenCutList
         PrimitiveCylinderDef.new(x, y, diameter, z_min, z_max, length.nil? || length <= diameter ? nil : length, profile, axis, key)
       }.compact
     end
+
+    # A corner of the outline of a prism - see prism_corners - from start
+    # to finish along it, [ u, v ] : a point when they are the same, else an
+    # arc around center - radius away - of the given signed angle,
+    # counterclockwise when positive.
+    PrismCornerDef = Struct.new(:start, :finish, :center, :radius, :sweep) do
+      def arc?
+        !center.nil?
+      end
+    end
+
+    # The corners of the given outline of a prism - [ [ u, v, r ] ], see
+    # PrimitiveCylinderDef#outline - as PrismCornerDefs, counterclockwise.
+    # nil when it is flat, crosses or touches itself, or a rounding doesn't
+    # fit its two sides.
+    def self.prism_corners(outline)
+      eps = 1e-6
+      fn_same = lambda { |p, q| (p[0] - q[0]).abs < eps && (p[1] - q[1]).abs < eps }
+      points = []
+      outline.each do |u, v, r|
+        point = [ u.to_f, v.to_f, r.to_f ]
+        points << point unless !points.empty? && fn_same.call(points.last, point)
+      end
+      points.pop while points.length > 1 && fn_same.call(points.last, points.first)
+      n = points.length
+      return nil if n < 3
+
+      area = 0.0
+      points.each_with_index do |(u0, v0), i|
+        u1, v1 = points[(i + 1) % n]
+        area += u0 * v1 - u1 * v0
+      end
+      return nil if area.abs / 2 < 1e-9
+      points.reverse! if area < 0
+
+      n.times do |i|
+        (i + 2...n).each do |j|
+          next if i == 0 && j == n - 1   # Adjacent across the closing side
+          return nil if _segments_touch?(points[i], points[(i + 1) % n], points[j], points[(j + 1) % n], eps)
+        end
+      end
+
+      tangents = Array.new(n, 0.0)
+      corners = points.each_with_index.map { |(u, v, r), i|
+        previous = points[i - 1]
+        following = points[(i + 1) % n]
+        d1 = _unit_vector(previous[0] - u, previous[1] - v)
+        d2 = _unit_vector(following[0] - u, following[1] - v)
+        cos = d1[0] * d2[0] + d1[1] * d2[1]
+        return nil if cos > 1 - 1e-9   # A spike : its two sides along each other
+        next PrismCornerDef.new([ u, v ], [ u, v ]) if r < eps || cos < -1 + 1e-9   # Sharp, or on a straight line
+        half = Math.acos(cos) / 2
+        t = r / Math.tan(half)
+        tangents[i] = t
+        bisector = _unit_vector(d1[0] + d2[0], d1[1] + d2[1])
+        distance = r / Math.sin(half)
+        start = [ u + d1[0] * t, v + d1[1] * t ]
+        finish = [ u + d2[0] * t, v + d2[1] * t ]
+        center = [ u + bisector[0] * distance, v + bisector[1] * distance ]
+        sweep = Math.atan2(finish[1] - center[1], finish[0] - center[0]) - Math.atan2(start[1] - center[1], start[0] - center[0])
+        sweep -= 2 * Math::PI while sweep > Math::PI
+        sweep += 2 * Math::PI while sweep <= -Math::PI
+        PrismCornerDef.new(start, finish, center, r, sweep)
+      }
+      n.times do |i|
+        following = points[(i + 1) % n]
+        side = Math.hypot(following[0] - points[i][0], following[1] - points[i][1])
+        return nil if tangents[i] + tangents[(i + 1) % n] > side + 1e-9
+      end
+      corners
+    end
+
+    # The points along the given corners - see prism_corners - [ [ u, v ] ]
+    # counterclockwise : each arc in as many segments as the given block
+    # tells for its radius and angle - one per 15° without it.
+    def self.prism_points(corners)
+      points = []
+      corners.each do |corner|
+        if corner.arc?
+          count = block_given? ? yield(corner.radius, corner.sweep.abs) : (corner.sweep.abs / (Math::PI / 12)).ceil
+          count = [ count, 1 ].max
+          a0 = Math.atan2(corner.start[1] - corner.center[1], corner.start[0] - corner.center[0])
+          (0..count).each do |k|
+            a = a0 + corner.sweep * k / count
+            points << [ corner.center[0] + corner.radius * Math.cos(a), corner.center[1] + corner.radius * Math.sin(a) ]
+          end
+        else
+          points << corner.start
+        end
+      end
+      # A rounding as long as its side ends where the next one starts
+      points.each_with_index.reject { |p, i| q = points[(i + 1) % points.length]; (p[0] - q[0]).abs < 1e-9 && (p[1] - q[1]).abs < 1e-9 }.map(&:first)
+    end
+
+    # The given prism - see HARDWARE_PRISMS - resolved for the given
+    # variables as a PrimitiveCylinderDef, nil if it can't be.
+    def self._primitive_prism(item, variables)
+      axis = item['axis'].nil? ? AXIS_Z : item['axis']
+      keys = PRISM_OUTLINE_KEYS[axis]
+      points = item['outline']
+      return nil if keys.nil? || !points.is_a?(Array) || points.length < 3
+      outline = []
+      points.each do |point|
+        return nil unless point.is_a?(Hash)
+        u, v = keys.map { |k| point[k].nil? ? 0.0 : to_length(point[k], true, variables) }
+        r = point[PRISM_RADIUS_KEY].nil? ? 0.0 : to_length(point[PRISM_RADIUS_KEY], false, variables)
+        return nil if u.nil? || v.nil? || r.nil?
+        outline << [ u, v, r ]
+      end
+      z_min = to_length(item['from'], true, variables)
+      z_max = to_length(item['to'], true, variables)
+      return nil if z_min.nil? || z_max.nil? || z_max <= z_min
+      return nil if prism_corners(outline).nil?
+      us = outline.map { |u, _, _| u }
+      vs = outline.map { |_, v, _| v }
+      internal_axis = axis == AXIS_X ? AXIS_PRISM_X : axis == AXIS_Y ? AXIS_PRISM_Y : nil
+      PrimitiveCylinderDef.new(0.0, 0.0, vs.max - vs.min, z_min, z_max, us.max - us.min, nil, internal_axis, HARDWARE_PRISMS, outline)
+    end
+    private_class_method :_primitive_prism
+
+    # Do the given segments - [ u, v ] ends - cross or touch, the given
+    # distance apart or less ?
+    def self._segments_touch?(a, b, c, d, eps)
+      fn_side = lambda { |p, q, r| (q[0] - p[0]) * (r[1] - p[1]) - (q[1] - p[1]) * (r[0] - p[0]) }
+      fn_near = lambda do |p, q, r|   # r on the segment pq
+        length = Math.hypot(q[0] - p[0], q[1] - p[1])
+        next Math.hypot(r[0] - p[0], r[1] - p[1]) <= eps if length < eps
+        t = ((r[0] - p[0]) * (q[0] - p[0]) + (r[1] - p[1]) * (q[1] - p[1])) / length
+        fn_side.call(p, q, r).abs / length <= eps && t >= -eps && t <= length + eps
+      end
+      s1 = fn_side.call(c, d, a)
+      s2 = fn_side.call(c, d, b)
+      s3 = fn_side.call(a, b, c)
+      s4 = fn_side.call(a, b, d)
+      return true if (s1 > 0) != (s2 > 0) && (s3 > 0) != (s4 > 0) && s1 != 0 && s2 != 0 && s3 != 0 && s4 != 0
+      fn_near.call(c, d, a) || fn_near.call(c, d, b) || fn_near.call(a, b, c) || fn_near.call(a, b, d)
+    end
+    private_class_method :_segments_touch?
+
+    def self._unit_vector(x, y)
+      length = Math.hypot(x, y)
+      [ x / length, y / length ]
+    end
+    private_class_method :_unit_vector
 
     # The profile - [ [ radius, z ] ] from z_max down to z_min - of a solid
     # of the given diameter widened by the given head at one end - see
@@ -1740,6 +1924,62 @@ module Ladb::OpenCutList
         _validate_head(item, label, 'end', HEAD_ENDS, errors)
       end
       _validate_primitive_list(path, part, value, HARDWARE_OBLONGS, 'oblong', %w[x y length width from to], %w[length width], errors, &fn_from_to)
+      _validate_primitive_list(path, part, value, HARDWARE_PRISMS, 'prism', %w[axis from to outline], [], errors) do |item, label|
+        fn_from_to.call(item, label)
+        _validate_prism_outline(item, label, errors)
+      end
+    end
+
+    # Validates the axis and the outline of a prism - see HARDWARE_PRISMS :
+    # its points given by the two other axes, the outline checked - not
+    # crossing itself, each rounding fitting its sides - when no length of
+    # it depends on where it is laid.
+    def _validate_prism_outline(item, label, errors)
+      axis = item['axis'].nil? ? AXIS_Z : item['axis']
+      keys = PRISM_OUTLINE_KEYS[axis]
+      if keys.nil?
+        errors << "#{label} axis is neither #{PRISM_AXES.map(&:inspect).join(' nor ')}"
+        return
+      end
+      points = item['outline']
+      unless points.is_a?(Array) && points.length >= 3
+        errors << "#{label} outline is not a list of 3 points or more"
+        return
+      end
+      outline = []
+      points.each_with_index do |point, index|
+        point_label = "#{label} point #{index + 1}"
+        unless point.is_a?(Hash)
+          errors << "#{point_label} is not an object"
+          outline = nil
+          next
+        end
+        (point.keys - keys - [ PRISM_RADIUS_KEY ]).each do |k|
+          errors << "#{point_label} has an unknown key '#{k}'#{k =~ /\A[xyz]\z/ ? " - along #{axis.upcase}, a point is given by #{keys.join(' and ')}" : ''}"
+        end
+        point.each do |k, v|
+          _unknown_variables(v).each do |name|
+            errors << "#{point_label} #{k} uses the unknown variable @#{name}"
+          end
+        end
+        u, v = keys.map do |k|
+          next 0.0 if point[k].nil?
+          length = _to_checked_length(point[k], true)
+          errors << "#{point_label} #{k} is not a length" if length.nil?
+          length
+        end
+        r = 0.0
+        unless point[PRISM_RADIUS_KEY].nil?
+          r = _to_checked_length(point[PRISM_RADIUS_KEY], false)
+          errors << "#{point_label} r is not a positive length" if r.nil?
+        end
+        if outline.nil? || u.nil? || v.nil? || r.nil? || _variable_lengths?(*point.values)
+          outline = nil
+        else
+          outline << [ u, v, r ]
+        end
+      end
+      errors << "#{label} outline is flat, crosses itself or has a rounding its sides can't hold" if !outline.nil? && self.class.prism_corners(outline).nil?
     end
 
     # Validates the axis a drilling or a mortise goes along - see AXES : one
