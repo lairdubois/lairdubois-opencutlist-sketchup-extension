@@ -221,7 +221,7 @@ module Ladb::OpenCutList
         HardwareDescriptorDef::VARIABLE_THICKNESS => thickness,
         HardwareDescriptorDef::VARIABLE_THICKNESS_MIN => thickness,
         HardwareDescriptorDef::VARIABLE_THICKNESS_MAX => thickness,
-        HardwareDescriptorDef::VARIABLE_HEIGHT => height > 0 ? height : nil,
+        HardwareDescriptorDef::VARIABLE_HEIGHT => height > -1e-9 ? [ height, 0.0 ].max : nil,   # 0 : laid on the face itself
       }.reject { |_, value| value.nil? }
     end
 

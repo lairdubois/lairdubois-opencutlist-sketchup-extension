@@ -1612,8 +1612,9 @@ module Ladb::OpenCutList
         point = Geom.intersect_line_plane([ origin, direction ], face.plane)
         next nil if point.nil?
         distance = (point - origin) % direction
-        next nil if distance <= 1e-3 || !on_face.include?(face.classify_point(point))
-        distance
+        # ~0 : the face is the one the anchor is laid on - a height option of 0
+        next nil if distance < -1e-3 || !on_face.include?(face.classify_point(point))
+        [ distance, 0.0 ].max
       }.compact.min
     end
 
