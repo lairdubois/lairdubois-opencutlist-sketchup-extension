@@ -1,0 +1,35 @@
+{
+  "format": "ocl-hardware",
+  "version": 1,
+  "id": "7e8d61fc-b9ef-458d-9463-068ee7f2a0ec",
+  "type": "fitting",
+  "name": "Angle bracket 40x40",
+  "variables": {
+    "hole_distance": { "value": "25mm", "label": "Hole distance" },
+    "bracket_thickness": "2mm"
+  },
+  "components": {
+    "a": {
+      "hardware": {
+        "body": { "skp": true },
+        "screws": {
+          "use": "connectors/generic/screws/screw-4x16.json", "host": "a",
+          "measures": { "thickness_b": "@bracket_thickness" },
+          "variables": { "embed_min": { "value": "10mm" } },
+          "at": [ { "y": "-@hole_distance" } ]
+        }
+      }
+    },
+    "b": {
+      "hardware": {
+        "screws": {
+          "use": "connectors/generic/screws/screw-4x16.json", "host": "a",
+          "measures": { "thickness_b": "@bracket_thickness" },
+          "variables": { "embed_min": { "value": "10mm" } },
+          "at": [ { "y": "@hole_distance" } ]
+        }
+      }
+    }
+  },
+  "options": { "start_offset": "50mm", "end_offset": "50mm", "min_spacing": "0", "max_spacing": "400mm" }
+}
