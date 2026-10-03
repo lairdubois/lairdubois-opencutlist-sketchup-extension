@@ -7,7 +7,8 @@ module Ladb::OpenCutList
   # place - '$OCL/hinges/blum/x.json' -> '$LIB/hinges/blum/x.json' - with its
   # SKP files : its components folder and the shared files its parts name,
   # at the same place too, since a part can't point to another library. Its
-  # parent - see "extends" - stays the OCL one : only its ref is rewritten.
+  # parent - see "extends" - and the connectors its articles use - see
+  # "use" - stay the OCL ones : only their refs are rewritten.
   class HardwareDescriptorDuplicateWorker
 
     def initialize(ref:)
@@ -48,6 +49,8 @@ module Ladb::OpenCutList
       # Its parent stays the OCL one
       parent_ref = HardwareDescriptorDef.parent_ref(descriptor.own_data[HardwareDescriptorDef::EXTENDS], @ref)
       text = HardwareDescriptorDef.replace_extends(text, parent_ref) unless parent_ref.nil?
+      # So do the connectors its articles use
+      text = HardwareDescriptorDef.replace_uses(text) { |value| HardwareDescriptorDef.library_ref?(value) ? nil : HardwareDescriptorDef.parent_ref(value, @ref) }
       File.write(target_path, text, mode: 'w:UTF-8')
 
       PLUGIN.trigger_event(PluginObserver::ON_HARDWARE_SAVED, { :ref => target_ref })
@@ -77,22 +80,34 @@ module Ladb::OpenCutList
       File.basename(target)
     end
 
-    # The shared files the parts name - "<path>.skp", relative to the
-    # components folder of the library.
-    def _shared_files(value, files = [])
+    # The shared files the parts and the articles of the given components
+    # name : "<path>.skp", relative to the components folder of the library.
+    def _shared_files(components)
+      files = _shared_part_files(components)
+      HardwareDescriptorDef.each_article(components) do |_, _, _, article|
+        files << article[HardwareDescriptorDef::ARTICLE_SKP] if _shared_file?(article[HardwareDescriptorDef::ARTICLE_SKP])
+      end
+      files.uniq
+    end
+
+    def _shared_part_files(value, files = [])
       case value
       when Hash
         value.each do |key, v|
-          if HardwareDescriptorDef::PARTS.include?(key) && v.is_a?(String) && File.extname(v).downcase == '.skp' && !v.start_with?('./') && !PLUGIN.library_ref?(v)
+          if HardwareDescriptorDef::PARTS.include?(key) && _shared_file?(v)
             files << v
           else
-            _shared_files(v, files)
+            _shared_part_files(v, files)
           end
         end
       when Array
-        value.each { |v| _shared_files(v, files) }
+        value.each { |v| _shared_part_files(v, files) }
       end
       files.uniq
+    end
+
+    def _shared_file?(value)
+      value.is_a?(String) && File.extname(value).downcase == '.skp' && !value.start_with?('./') && !PLUGIN.library_ref?(value)
     end
 
   end

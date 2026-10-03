@@ -1379,6 +1379,7 @@ const fnAddBenchDimension = function (group, from, to, text, color) {
 const fnAddBenchSolidDimensions = function (mesh) {
 
     const solidDef = mesh.userData.benchSolidDef;
+    if (!solidDef.cotes) return null;   // One of an article
     const group = new THREE.Group();
     group.applyMatrix4(new THREE.Matrix4().fromArray(solidDef.part_transformation));
 
@@ -1498,13 +1499,20 @@ const fnUpdateBenchOutline = function (mesh) {
 // HardwareBenchComputeWorker#_slot.
 const fnGetBenchSolidPrimitive = function (mesh) {
     const solidDef = mesh.userData.benchSolidDef;
-    return { slot: solidDef.slot, part: solidDef.part, key: solidDef.key, index: solidDef.index };
+    const primitive = { slot: solidDef.slot, part: solidDef.part, key: solidDef.key, index: solidDef.index };
+    if (solidDef.article) primitive.article = solidDef.article;
+    return primitive;
 };
 
+// Selected : the primitive, or any solid of the article - { slot, article }.
 const fnIsBenchSolidSelected = function (mesh) {
     if (!benchSelectedSolid) return false;
     const primitive = fnGetBenchSolidPrimitive(mesh);
+    if (benchSelectedSolid.article && benchSelectedSolid.key === undefined) {
+        return primitive.slot === benchSelectedSolid.slot && primitive.article === benchSelectedSolid.article;
+    }
     return primitive.slot === benchSelectedSolid.slot
+        && primitive.article === benchSelectedSolid.article
         && primitive.part === benchSelectedSolid.part
         && primitive.key === benchSelectedSolid.key
         && primitive.index === benchSelectedSolid.index;
@@ -1520,7 +1528,7 @@ const fnSelectBenchSolid = function (solid) {
     }
     for (const mesh of benchSolidMeshes || []) {
         fnPaintBenchSolid(mesh);
-        if (!benchSelectedDimensions && fnIsBenchSolidSelected(mesh)) {
+        if (!benchSelectedDimensions && fnIsBenchSolidSelected(mesh) && benchSelectedSolid.key !== undefined) {   // Not of a whole article
             benchSelectedDimensions = fnAddBenchSolidDimensions(mesh);
         }
     }

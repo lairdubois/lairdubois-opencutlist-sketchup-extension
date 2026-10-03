@@ -20,6 +20,9 @@ $LOADED_FEATURES << File.join(ROOT, 'src/ladb_opencutlist/ruby/utils/dimension_u
 require 'json'; require 'cgi'
 require File.join(ROOT, 'src/ladb_opencutlist/ruby/model/hardware/hardware_descriptor_def.rb')
 hd = Ladb::OpenCutList::HardwareDescriptorDef
+# "extends" and "use" refs : both libraries read from the OCL one of the sources
+LIBRARY = File.join(ROOT, 'src/ladb_opencutlist/library')
+hd.library_resolver = lambda { |ref| ref.sub(/\A\$(OCL|LIB)\//, LIBRARY + '/') }
 html = File.read(File.join(ROOT, 'docs/hardware-guide/guide.html'))
 pres = html.scan(%r{<pre>(.*?)</pre>}m).map { |(t)| CGI.unescapeHTML(t.gsub(/<[^>]+>/, '')) }
 env = { 'format' => 'ocl-hardware', 'version' => 1, 'id' => 'x', 'name' => 'X' }
@@ -28,13 +31,13 @@ pres.each_with_index do |t, i|
   data = begin
     if s.start_with?('{') then JSON.parse(s)
     elsif s.start_with?('"a": {') then env.merge('type' => 'hinge', 'components' => JSON.parse("{#{s}}"))
-    elsif s.start_with?('"variables"') then env.merge('type' => 'connector').merge(JSON.parse("{#{s}}"))
+    elsif s.start_with?('"variables"') then env.merge('type' => 'connector', 'components' => { 'a' => { 'machining' => { 'drillings' => [ { 'diameter' => '8mm', 'depth' => '10mm' } ] } } }).merge(JSON.parse("{#{s}}"))
     elsif s.start_with?('"hardware"') || s.start_with?('"machining"') then env.merge('type' => 'connector', 'components' => { 'a' => JSON.parse("{#{s}}") })
     end
   rescue JSON::ParserError => e
     puts "##{i} JSON ERROR #{e.message[0, 80]}"; next
   end
   next if data.nil?
-  d = hd.new(data)
+  d = hd.new(data, nil, '$LIB/guide/example.json')
   puts "##{i} #{s[0, 30].inspect} valid=#{d.valid?} #{d.errors.inspect}"
 end

@@ -1,11 +1,11 @@
 {
   "format": "ocl-hardware",
   "version": 1,
-  "id": "97185a3d-0716-45f5-8a18-abcba752038b",
+  "id": "bd36a533-b4ca-44f4-b149-557b6154f767",
   "extends": "connectors/generic/screws/screw.json",
-  "name": "Screw 4x50",
+  "name": "Screw 4x16",
   "variables": {
     "diameter": { "value": "4mm" },
-    "length": { "value": "50mm" }
+    "length": { "value": "16mm" }
   }
 }

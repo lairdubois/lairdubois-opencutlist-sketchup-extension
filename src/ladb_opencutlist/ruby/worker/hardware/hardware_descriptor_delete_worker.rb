@@ -4,7 +4,8 @@ module Ladb::OpenCutList
   require_relative '../../model/hardware/hardware_descriptor_def'
 
   # Deletes a descriptor of the user's library : its JSON and the folder of
-  # its components - refused while others extend it. The shared SKP files stay - others may use them - and so
+  # its components - refused while others extend it, or use it in their
+  # articles. The shared SKP files stay - others may use them - and so
   # do the parts laid in the model. The actions of SmartJoin that picked it
   # forget it.
   class HardwareDescriptorDeleteWorker
@@ -29,6 +30,8 @@ module Ladb::OpenCutList
       # Never under its children - only the user's library can extend it
       children = HardwareDescriptorDef.children_refs(@ref, PLUGIN.library_dir, Plugin::LIBRARY_REF_PREFIX)
       return _error('core.hardware_editor.error.has_children', { :children => children.map { |ref| File.basename(ref) }.join(', ') }) unless children.empty?
+      users = HardwareDescriptorDef.users_refs(@ref, PLUGIN.library_dir, Plugin::LIBRARY_REF_PREFIX)
+      return _error('core.hardware_editor.error.has_users', { :users => users.map { |ref| File.basename(ref) }.join(', ') }) unless users.empty?
 
       # The folder of its components - named after the file, whatever its JSON is
       dir_ref = HardwareDescriptorDef.new({}, path, @ref).components_dir_ref

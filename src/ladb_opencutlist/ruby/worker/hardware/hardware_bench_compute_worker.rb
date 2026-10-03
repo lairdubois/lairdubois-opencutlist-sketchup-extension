@@ -96,7 +96,8 @@ module Ladb::OpenCutList
       slots.each do |slot|
         _slot(descriptor, bench_def, slot, variables_by_slot[slot], response)
       end
-      response[:accepted] = response[:asserts].all? { |assert| assert[:results].all? { |result| result[:ok] } }
+      response[:accepted] = response[:asserts].all? { |assert| assert[:results].all? { |result| result[:ok] } } &&
+                            response[:slots].values.all? { |slot| slot[:component].nil? || (slot[:component][:articles] || []).all? { |article| article[:ok] != false } }
 
       response
     rescue StandardError => e
@@ -139,7 +140,7 @@ module Ladb::OpenCutList
           :label => setting['label'].is_a?(String) ? setting['label'] : nil,
           :raw => setting,
           :value => _length(setting['value']),
-          :steps => setting['steps'].is_a?(Array) ? setting['steps'].map { |step| _length(step) } : nil,
+          :steps => setting['steps'].is_a?(Array) ? setting['steps'].map { |step| (_length(step) || {}).merge(:raw => step) } : nil,
           :min => setting.key?('min') ? _length(setting['min']) : nil,
           :max => setting.key?('max') ? _length(setting['max']) : nil,
         }
@@ -275,6 +276,155 @@ module Ladb::OpenCutList
           response[:skps] << { :slot => slot, :part => part, :ref => value, :variant => component.variant, :transformation => part_matrix }
         end
       end
+      _articles(bench_def, slot, component, variables, _multiply(slot_matrix, mirror), response) unless component.articles.nil?
+    end
+
+    # The articles of the given component on the bench - see
+    # HardwareDescriptorDef "hardware" : what the editor tells of each, and
+    # their solids and SKP files at each of their positions - those of a
+    # used connector evaluated with its own variables, its virtual side Z
+    # reversed, its host side's machining drilled in the slot's part.
+    def _articles(bench_def, slot, component, variables, matrix, response)
+      response[:slots][slot][:component][:articles] = component.articles.map do |article|
+        positions = (article.at.is_a?(Array) ? article.at : [ {} ]).map { |item|
+          item = {} unless item.is_a?(Hash)
+          fields = {}
+          %w[x y].each do |k|
+            value = item[k].nil? ? 0 : item[k]
+            length = HardwareDescriptorDef.to_length(value, true, variables)
+            if length.nil?
+              key, params = HardwareDescriptorDef.length_error(value, true, variables)
+              fields[k.to_sym] = { :error => { :key => key || 'not_a_length', :params => params || {} } }
+            else
+              fields[k.to_sym] = { :value => length, :text => _text(length) }
+            end
+          end
+          fields
+        }
+        resolved = positions.select { |fields| !fields[:x][:value].nil? && !fields[:y][:value].nil? }.map { |fields| [ fields[:x][:value], fields[:y][:value] ] }
+        result = { :key => article.key, :name => article.name, :use => article.use, :positions => positions }
+        if article.use?
+          _used_article(bench_def, slot, article, variables, matrix, resolved, result, response)
+        else
+          result[:kind] = article.hardware.is_a?(String) ? 'skp' : 'primitives'
+          if HardwareDescriptorDef.primitives?(article.hardware)
+            # What the editor tells of each, as for the slot's - see _slot
+            result[:primitives] = Hash[HardwareDescriptorDef::PRIMITIVES[HardwareDescriptorDef::PART_HARDWARE].select { |k| article.hardware[k].is_a?(Array) }.map { |k|
+              [ k, article.hardware[k].map { |item|
+                next nil unless item.is_a?(Hash)
+                cylinder = HardwareDescriptorDef.primitive_cylinders({ k => [ item ] }, variables).first
+                fields = _primitive_fields(item, variables)
+                texts = cylinder.nil? ? nil : { :x => _text(cylinder.x), :y => _text(cylinder.y), :z => _text(cylinder.z_min),
+                                                :diameter => _text(cylinder.diameter), :length => _text(cylinder.length), :depth => _text(cylinder.z_max - cylinder.z_min) }
+                { :resolved => !cylinder.nil?, :fields => fields, :texts => texts }
+              } ]
+            }]
+          end
+          sub = { :hardware => article.hardware, :mirror => false, :z_offset => nil }
+          _article_geometry(slot, article.key, HardwareDescriptorDef::PART_HARDWARE, sub, variables, IDENTITY, matrix, resolved, response)
+        end
+        result
+      end
+    end
+
+    # A used connector's article - see _articles.
+    def _used_article(bench_def, slot, article, variables, matrix, positions, result, response)
+      result[:kind] = 'use'
+      result[:host] = article.host
+      used = article.descriptor
+      if used.nil?
+        result[:missing] = true
+        result[:ok] = false
+        return
+      end
+      result[:used_name] = used.name
+      expression = article.measures[HardwareDescriptorDef::VARIABLE_THICKNESS]
+      thickness = HardwareDescriptorDef.to_length(expression, false, variables)
+      if thickness.nil?
+        key, params = HardwareDescriptorDef.length_error(expression, false, variables)
+        result[:virtual] = { :measure => "thickness_#{article.other_slot}", :error => { :key => key || 'not_a_length', :params => params || {} } }
+        result[:ok] = false
+        return
+      end
+      result[:virtual] = { :measure => "thickness_#{article.other_slot}", :value => thickness, :text => _text(thickness) }
+      joint = article.joint_measures(bench_def.slot_measures(slot).reject { |name, _| name.end_with?('_a', '_b') }, variables)
+      # Each with the connector's own value : the one an override replaces
+      result[:settings] = used.settings.map { |name, setting|
+        overridden = article.overrides.key?(name)
+        own = overridden && used.parent_data.is_a?(Hash) && used.parent_data['variables'].is_a?(Hash) ? used.parent_data['variables'][name] : setting
+        {
+          :name => name, :label => setting['label'].is_a?(String) ? setting['label'] : nil,
+          :value => _length(setting['value']),
+          :default => _length(HardwareDescriptorDef.setting?(own) ? own['value'] : nil),
+          :overridden => overridden,
+          :steps => setting['steps'].is_a?(Array) ? setting['steps'].map { |step| _length(step) } : nil,
+        }
+      }
+      used_variables = used.resolve_variables(article.side_measures(joint, article.host))
+      result[:variables] = used.variables.keys.select { |name| used_variables.key?(name) }.map { |name| { :name => name, :value => used_variables[name], :text => _text(used_variables[name]) } }
+      result[:asserts] = used.asserts.map { |assert|
+        left, operator, right = HardwareDescriptorDef.assert_sides(assert, used_variables)
+        { :expression => assert, :ok => HardwareDescriptorDef.assert?(assert, used_variables) == true, :operator => operator,
+          :left => left, :left_text => _text(left), :right => right, :right_text => _text(right) }
+      }
+      result[:ok] = result[:asserts].all? { |assert| assert[:ok] }
+      [ article.host, article.other_slot ].each do |side|
+        used_component = used.resolve_component(side)
+        next if used_component.nil?
+        side_variables = used.resolve_variables(article.side_measures(joint, side))
+        side_matrix = side == article.host ? IDENTITY : FLIP_Z
+        sub = { :hardware => used_component.hardware, :mirror => used_component.mirror, :z_offset => used_component.z_offset }
+        _article_geometry(slot, article.key, HardwareDescriptorDef::PART_HARDWARE, sub, side_variables, side_matrix, matrix, positions, response)
+        next unless side == article.host && HardwareDescriptorDef.primitives?(used_component.machining)
+        sub = { :hardware => used_component.machining, :mirror => used_component.mirror, :z_offset => nil }
+        _article_geometry(slot, article.key, HardwareDescriptorDef::PART_MACHINING, sub, side_variables, IDENTITY, matrix, positions, response)
+      end
+    end
+
+    # The solids or SKP of one geometry of an article - its hardware ref or
+    # primitives, mirror and z_offset in sub - at each of the given positions
+    # [ x, y ] of the slot, by the given matrices : the side one in the
+    # article's frame, then the slot's.
+    def _article_geometry(slot, key, part, sub, variables, side_matrix, matrix, positions, response)
+      value = sub[:hardware]
+      return if value.nil?
+      z_offset = sub[:z_offset].nil? ? 0.0 : HardwareDescriptorDef.to_length(sub[:z_offset], true, variables) || 0.0
+      local = _multiply(side_matrix, _multiply(sub[:mirror] ? MIRROR_X : IDENTITY, _translation(0, 0, z_offset)))
+      cylinders = nil
+      if HardwareDescriptorDef.primitives?(value)
+        # Each primitive alone : its solid known by its key and index
+        cylinders = []
+        HardwareDescriptorDef::PRIMITIVES[part].each do |primitive_key|
+          next unless value[primitive_key].is_a?(Array)
+          value[primitive_key].each_with_index do |item, index|
+            next unless item.is_a?(Hash)
+            cylinder = HardwareDescriptorDef.primitive_cylinders({ primitive_key => [ item ] }, variables).first
+            cylinders << [ cylinder, index ] unless cylinder.nil?
+          end
+        end
+      end
+      positions.each_with_index do |(x, y), position|
+        position_matrix = _multiply(matrix, _multiply(_translation(x, y, 0), local))
+        if cylinders.nil?
+          response[:skps] << { :slot => slot, :part => part, :ref => value, :article => key, :position => position, :transformation => position_matrix } if value.is_a?(String)
+          next
+        end
+        cylinders.each do |cylinder, index|
+          response[:solids] << {
+            :slot => slot, :part => part, :article => key, :position => position, :index => index,
+            :transformation => _multiply(position_matrix, AXIS_MATRICES[cylinder.axis] || IDENTITY),
+            :part_transformation => position_matrix,
+            :x => cylinder.x, :y => cylinder.y,
+            :diameter => cylinder.diameter,
+            :z_min => cylinder.z_min, :z_max => cylinder.z_max,
+            :length => cylinder.length,
+            :profile => cylinder.profile,
+            :kind => cylinder.key,
+            :axis => cylinder.axis.nil? ? HardwareDescriptorDef::AXIS_Z : HardwareDescriptorDef::AXIS_Y,
+            :texts => { :diameter => _text(cylinder.diameter), :length => _text(cylinder.length), :depth => _text(cylinder.z_max - cylinder.z_min) },
+          }
+        end
+      end
     end
 
     PRIMITIVE_LENGTH_FIELDS = %w[x y z diameter length width depth from to].freeze
@@ -376,6 +526,7 @@ module Ladb::OpenCutList
 
     IDENTITY = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 ].freeze
     MIRROR_X = [ -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 ].freeze
+    FLIP_Z = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1 ].freeze   # The virtual side of a used connector
 
     # The frames the primitives along Y are given in - see
     # HardwareDescriptorDef::PrimitiveCylinderDef#axis and

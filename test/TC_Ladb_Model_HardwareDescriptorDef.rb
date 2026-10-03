@@ -1044,6 +1044,176 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     end
   end
 
+  def test_uses_helpers
+    components = {
+      'a' => { 'hardware' => { 'body' => { 'skp' => true }, 'screws' => { 'use' => 's.json' } } },
+      'b' => { 'variants' => { 'items' => { 'overlay' => { 'hardware' => { 'pins' => { 'use' => '$OCL/p.json' } } } } } },
+      'c' => { 'hardware' => { 'cylinders' => [] } }
+    }
+    articles = []
+    HardwareDescriptorDef.each_article(components) { |slot, variant, key, _| articles << [ slot, variant, key ] }
+    assert_equal([ [ 'a', nil, 'body' ], [ 'a', nil, 'screws' ], [ 'b', 'overlay', 'pins' ] ], articles)
+    assert_equal(%({ "use": "new.json", "host": "a", "use" : "$OCL/p.json" }), HardwareDescriptorDef.replace_uses(%({ "use": "s.json", "host": "a", "use" : "$OCL/p.json" })) { |value| value == 's.json' ? 'new.json' : nil })
+    fn_user = lambda { |use| _bracket({}, {}).tap { |data| data['components']['a']['hardware']['screws']['use'] = use; data['components']['b']['hardware']['screws']['use'] = use } }
+    _with_library('connectors/screw.json' => SCREW, 'f/u1.json' => fn_user.call('connectors/screw.json'), 'u2.json' => fn_user.call('$LIB/connectors/screw.json'), 'u3.json' => fn_user.call('$OCL/connectors/screw.json'), 'c.json' => _child('connectors/screw.json')) do |dir|
+      assert_equal(%w[$LIB/f/u1.json $LIB/u2.json], HardwareDescriptorDef.users_refs('$LIB/connectors/screw.json', File.join(dir, 'lib'), '$LIB/'))
+      assert_equal([], HardwareDescriptorDef.users_refs('$LIB/connectors/other.json', File.join(dir, 'lib'), '$LIB/'))
+    end
+  end
+
+  # -- Articles --
+
+  # A screw driven into a, through b : what an angle bracket uses.
+  SCREW = {
+    'format' => 'ocl-hardware', 'version' => 1,
+    'id' => 'screw-1', 'type' => 'connector', 'name' => 'Screw 4x20',
+    'variables' => {
+      'diameter' => { 'value' => '4mm', 'label' => 'Diameter' },
+      'length' => { 'value' => '20mm', 'label' => 'Length', 'min' => '10mm', 'max' => '100mm' },
+      'embed_min' => { 'value' => '15mm', 'label' => 'Embed min' },
+      'embed' => '@length - @thickness_max_b'
+    },
+    'asserts' => [ '@embed >= @embed_min', '@embed <= @thickness_a - 3mm' ],
+    'components' => {
+      'a' => {
+        'name' => 'Screw 4x20', 'price' => 0.02,
+        'hardware' => { 'cylinders' => [ { 'diameter' => '@diameter', 'from' => '-@embed', 'to' => '@thickness_max_b', 'countersink' => { 'diameter' => '@diameter * 2', 'end' => 'to' } } ] },
+        'machining' => { 'drillings' => [ { 'diameter' => '@diameter - 1mm', 'depth' => '@embed' } ] }
+      },
+      'b' => { 'machining' => { 'drillings' => [ { 'diameter' => '@diameter', 'depth' => 'through' } ] } }
+    }
+  }.freeze
+
+  def _bracket(a_changes = {}, root_changes = {})
+    screws = { 'use' => 'connectors/screw.json', 'host' => 'a', 'measures' => { 'thickness_b' => '@bracket_thickness' },
+               'at' => [ { 'x' => -8, 'y' => '-@hole_distance' }, { 'x' => 8, 'y' => '-@hole_distance' } ] }
+    {
+      'format' => 'ocl-hardware', 'version' => 1, 'id' => 'bracket-1', 'type' => 'fitting', 'name' => 'Angle bracket 40x40',
+      'variables' => { 'bracket_thickness' => { 'value' => '2mm', 'label' => 'Bracket thickness' }, 'hole_distance' => { 'value' => '25mm' } },
+      'components' => {
+        'a' => { 'hardware' => { 'body' => { 'name' => 'Angle bracket 40x40', 'price' => 0.3, 'skp' => true }, 'screws' => screws }.merge(a_changes) },
+        'b' => { 'hardware' => { 'screws' => screws.merge('at' => [ { 'y' => '@hole_distance' } ]) } }
+      }
+    }.merge(root_changes)
+  end
+
+  def test_articles_resolve
+    _with_library('connectors/screw.json' => SCREW) do
+      descriptor = _def(_bracket, nil, '$LIB/fittings/bracket.json')
+      assert(descriptor.valid?, descriptor.errors.inspect)
+      component = descriptor.resolve_component('a')
+      assert_nil(component.hardware)
+      assert_equal('a', component.part_slots['hardware'])
+      assert_equal(%w[body screws], component.articles.map(&:key))
+      body, screws = component.articles
+      assert(!body.use?)
+      assert_equal('$LIB/components/fittings/bracket/a.body.skp', body.hardware)
+      assert_equal([ [ 0, 0 ] ], body.positions)   # One at the origin
+      assert_equal(0.3, body.price)
+      assert(screws.use?)
+      assert_equal('$LIB/connectors/screw.json', screws.use)
+      assert_equal('Screw 4x20', screws.descriptor.name)
+      assert_equal('b', screws.other_slot)
+
+      # At a placement : 19 mm panel, 2 mm virtual wing
+      variables = descriptor.resolve_variables('thickness' => 19 / 25.4)
+      positions = screws.positions(variables)
+      assert_in_delta(-8 / 25.4, positions[0][0], 1e-9)
+      assert_in_delta(-25 / 25.4, positions[0][1], 1e-9)
+      joint = screws.joint_measures({ 'thickness' => 19 / 25.4, 'thickness_min' => 19 / 25.4, 'thickness_max' => 19 / 25.4 }, variables)
+      assert_in_delta(19 / 25.4, joint['thickness_a'], 1e-9)
+      assert_in_delta(2 / 25.4, joint['thickness_max_b'], 1e-9)
+      used_variables = screws.descriptor.resolve_variables(screws.side_measures(joint, 'a'))
+      assert_in_delta(18 / 25.4, used_variables['embed'], 1e-9)
+      assert_in_delta(19 / 25.4, used_variables['thickness'], 1e-9)   # Unsuffixed : side a's
+      assert_equal([ '@embed <= @thickness_a - 3mm' ], screws.descriptor.failed_asserts(used_variables))   # 18 > 16
+
+      b = descriptor.resolve_component('b').articles.first
+      assert_in_delta(25 / 25.4, b.positions(variables)[0][1], 1e-9)
+      assert_equal(0, b.positions(variables)[0][0])
+    end
+  end
+
+  def test_articles_override_setting_values
+    _with_library('connectors/screw.json' => SCREW) do
+      data = _bracket('screws' => { 'use' => 'connectors/screw.json', 'host' => 'a', 'measures' => { 'thickness_b' => '@bracket_thickness' }, 'variables' => { 'length' => { 'value' => '18mm' } } })
+      descriptor = _def(data, nil, '$LIB/fittings/bracket.json')
+      assert(descriptor.valid?, descriptor.errors.inspect)
+      used = descriptor.resolve_component('a').articles.last.descriptor
+      assert_equal({ 'value' => '18mm', 'label' => 'Length', 'min' => '10mm', 'max' => '100mm' }, used.settings['length'])
+      assert_equal('Screw 4x20', used.name)
+      assert_equal('screw-1', used.id)
+      joint = { 'thickness_a' => 19 / 25.4, 'thickness_b' => 2 / 25.4, 'thickness_min_b' => 2 / 25.4, 'thickness_max_b' => 2 / 25.4 }
+      assert_equal([], used.failed_asserts(used.resolve_variables(joint)))   # 16 <= 16
+      # Its part declared by the parent stays the parent's
+      assert(used.resolve_component('a').hardware.is_a?(Hash))
+    end
+  end
+
+  def test_articles_errors
+    with_screw = lambda { |screws| _bracket('screws' => { 'use' => 'connectors/screw.json', 'host' => 'a', 'measures' => { 'thickness_b' => '2mm' } }.merge(screws)) }
+    _with_library('connectors/screw.json' => SCREW, 'fittings/other.json' => _bracket, 'connectors/files.json' => _with(SCREW, 'components' => { 'a' => { 'hardware' => true, 'machining' => true } })) do
+      _assert_errors(_bracket('Body' => { 'skp' => true }), "article 'Body' key is not made of lowercase letters")
+      _assert_errors(_bracket('x' => { 'name' => 'X' }), "article 'x' has no geometry")
+      _assert_errors(_bracket('x' => { 'skp' => true, 'cylinders' => [ { 'diameter' => 4, 'from' => 0, 'to' => 1 } ] }), "article 'x' has more than one geometry")
+      _assert_errors(_bracket('x' => { 'skp' => 12 }), "article 'x' skp is neither true nor a path")
+      _assert_errors(_bracket('x' => { 'skp' => true, 'host' => 'a' }), "article 'x' has 'host' but uses no connector")
+      _assert_errors(_bracket('x' => { 'skp' => true, 'at' => [] }), "article 'x' at is not a list of positions")
+      _assert_errors(_bracket('x' => { 'skp' => true, 'at' => [ { 'x' => '@nope', 'z' => 1 } ] }), "position 1 x uses the unknown variable @nope")
+      _assert_errors(_bracket('x' => { 'skp' => true, 'at' => [ { 'z' => 1 } ] }), "position 1 has an unknown key 'z'")
+      _assert_errors(_bracket('x' => { 'cylinders' => [ { 'diameter' => -4, 'from' => 0, 'to' => 1 } ] }), "component 'a/x' cylinder 1 diameter is not a positive length")
+      _assert_errors(with_screw.call('use' => 'connectors/nope.json'), 'uses $LIB/connectors/nope.json : not found')
+      _assert_errors(with_screw.call('use' => 'fittings/other.json'), 'a fitting, not a connector')
+      _assert_errors(with_screw.call('use' => 'connectors/files.json'), "the machining of side a of Screw 4x20 is a file, it can't be merged")
+      _assert_errors(with_screw.call('host' => 'c'), 'host is neither "a" nor "b"')
+      _assert_errors(with_screw.call('measures' => { 'thickness_a' => '2mm' }), 'measures has no thickness_b')
+      _assert_errors(with_screw.call('measures' => { 'thickness_b' => '2mm', 'height_b' => '1mm' }), "measures has the unknown measure 'height_b'")
+      _assert_errors(with_screw.call('measures' => { 'thickness_b' => '-2mm' }), 'thickness_b is not a positive length')
+      _assert_errors(with_screw.call('variables' => { 'embed' => { 'value' => '1mm' } }), "variable 'embed' is not a setting of Screw 4x20")
+      _assert_errors(with_screw.call('variables' => { 'length' => { 'value' => '18mm', 'label' => 'L' } }), "variable 'length' overrides more than its value")
+      _assert_errors(with_screw.call('variables' => { 'length' => { 'value' => '200mm' } }), "variable 'length' value is out of min / max")
+      _assert_errors(_with(SCREW, 'components' => { 'a' => { 'hardware' => { 'x' => { 'use' => 'connectors/screw.json', 'host' => 'a', 'measures' => { 'thickness_b' => '2mm' } } } } }), "a connector can't use another hardware")
+      errors = _def(with_screw.call('use' => '$LIB/connectors/screw.json'), nil, '$OCL/fittings/bracket.json').errors
+      assert(errors.any? { |error| error.include?("the OCL library can't use the user's one") }, errors.inspect)
+    end
+    # An object with an article field is a single article - primitives here
+    _assert_error(_with(SCREW, 'components' => { 'a' => { 'hardware' => { 'name' => 'X', 'cylinders' => [] } } }), "has an unknown primitive 'name'")
+  end
+
+  def test_articles_inherited
+    parent = _bracket.merge('abstract' => false)
+    _with_library('$OCL/fittings/bracket.json' => parent, '$OCL/connectors/screw.json' => SCREW, '$LIB/connectors/screw-long.json' => _with(SCREW, 'name' => 'Screw long')) do
+      child = _child('$OCL/fittings/bracket.json', 'components' => { 'a' => { 'hardware' => { 'screws' => { 'use' => 'connectors/screw-long.json' }, 'nut' => { 'cylinders' => [ { 'diameter' => 8, 'from' => 0, 'to' => 3 } ] } } } })
+      descriptor = _def(child, nil, '$LIB/fittings/mine.json')
+      assert(descriptor.valid?, descriptor.errors.inspect)
+      body, screws, nut = descriptor.resolve_component('a').articles
+      assert_equal('$OCL/components/fittings/bracket/a.body.skp', body.hardware)   # Stays the parent's
+      assert_equal('$LIB/connectors/screw-long.json', screws.use)                  # Merged by key : the rest is the parent's
+      assert_equal('Screw long', screws.descriptor.name)
+      assert_equal(2, screws.at.length)
+      assert_equal('nut', nut.key)
+      assert(nut.hardware.is_a?(Hash))
+      assert_equal('$OCL/connectors/screw.json', descriptor.resolve_component('b').articles.first.use)   # The parent's, made a ref of its library
+
+      removed = _def(_child('$OCL/fittings/bracket.json', 'components' => { 'a' => { 'hardware' => { 'body' => nil } } }), nil, '$LIB/fittings/mine.json')
+      assert_equal(%w[screws], removed.resolve_component('a').articles.map(&:key))
+    end
+  end
+
+  def test_articles_linked
+    _with_library('connectors/screw.json' => SCREW) do
+      data = _bracket
+      data['components']['b'] = { 'hardware' => { 'same_as' => 'a' } }
+      descriptor = _def(data, nil, '$LIB/fittings/bracket.json')
+      assert(descriptor.valid?, descriptor.errors.inspect)
+      component = descriptor.resolve_component('b')
+      assert_equal(%w[body screws], component.articles.map(&:key))
+      assert_equal('a', component.part_slots['hardware'])
+      assert_equal('a.body.skp', HardwareDescriptorDef.article_file_name('a', nil, 'body'))
+      assert_equal('a.overlay.body.skp', HardwareDescriptorDef.article_file_name('a', 'overlay', 'body'))
+    end
+  end
+
   # -----
 
   private

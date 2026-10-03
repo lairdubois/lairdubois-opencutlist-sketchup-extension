@@ -9,18 +9,19 @@ module Ladb::OpenCutList
   # library : its JSON as written, the SKP files of its parts - picked ones
   # copied, placements baked in - and the folder of its components kept tidy.
   # Renamed, it moves with that folder, and the descriptors that extend it
-  # follow. Only '$LIB/…' refs : the OCL library
+  # - or whose articles use it - follow. Only '$LIB/…' refs : the OCL library
   # is read only - but to a dev build run from the sources.
   class HardwareDescriptorSaveWorker
 
-    # The name a part file declared true may have : <slot>[.<variant>][.machining].skp
-    CONVENTION_FILE_PATTERN = /\A[^.\/]+(\.[^.\/]+)?(\.machining)?\.skp\z/i
+    # The name a part file declared true may have : <slot>[.<variant>][.machining].skp,
+    # or an article's : <slot>[.<variant>].<key>.skp
+    CONVENTION_FILE_PATTERN = /\A[^.\/]+(\.[^.\/]+){0,2}(\.machining)?\.skp\z/i
 
     # ref : where to write the descriptor - its own file, or a new one that
     #   must not exist yet (new: true) ;
     # from : the ref it had, to rename it - in the same folder ;
     # text : the JSON, as edited ;
-    # imports : { <part ref> => <absolute path of the SKP file picked for it> } ;
+    # imports : { <part ref> => <absolute path - or library ref - of the SKP file picked for it> } ;
     # placements : { <part ref> => <column-major 4x4 matrix, inches> } to bake in.
     # Part refs are the ones of 'from' when renamed.
     def initialize(ref:, text:, new: false, from: nil, imports: {}, placements: {})
@@ -29,7 +30,8 @@ module Ladb::OpenCutList
       @text = text
       @new = new == true
       @from = @new || from == ref ? nil : from
-      @imports = imports.is_a?(Hash) ? Hash[imports.map { |k, v| [ k.to_s, v ] }] : {}
+      # A library ref : that file as it is - an article's renamed with its key
+      @imports = imports.is_a?(Hash) ? Hash[imports.map { |k, v| [ k.to_s, PLUGIN.library_ref?(v) ? PLUGIN.resolve_library_ref(v) : v ] }] : {}
       @placements = placements.is_a?(Hash) ? Hash[placements.map { |k, v| [ k.to_s, v ] }] : {}
 
     end
@@ -81,12 +83,15 @@ module Ladb::OpenCutList
 
       # Renamed : same folder, so a rename - a change of case too
       children = []
+      users = []
       unless @from.nil?
         children = HardwareDescriptorDef.children_refs(@from, PLUGIN.library_dir, Plugin::LIBRARY_REF_PREFIX)
+        users = HardwareDescriptorDef.users_refs(@from, PLUGIN.library_dir, Plugin::LIBRARY_REF_PREFIX)
         File.rename(from_path, path)
         File.rename(from_dir, dir) if File.directory?(from_dir)
         _move_loaded_definitions(from_dir_ref, dir_ref)
         _move_children(children)
+        _move_users(users)
       end
 
       # The JSON, as written
@@ -106,7 +111,7 @@ module Ladb::OpenCutList
 
       PLUGIN.trigger_event(PluginObserver::ON_HARDWARE_SAVED, { :ref => @ref })
 
-      { :ref => @ref, :renamed => !@from.nil?, :written => written, :removed => removed, :children => children }
+      { :ref => @ref, :renamed => !@from.nil?, :written => written, :removed => removed, :children => children, :users => users }
     rescue StandardError => e
       _error('core.hardware_editor.error.not_saved', { :error => HardwareSkpMeshWorker.error_message(e) })
     end
@@ -214,6 +219,19 @@ module Ladb::OpenCutList
       end
     end
 
+    # The descriptors whose articles used the renamed one use it under its
+    # new ref - see "use" : only those values of their text are rewritten.
+    def _move_users(users)
+      users.each do |user_ref|
+        user_path = PLUGIN.resolve_library_ref(user_ref)
+        text = File.read(user_path, mode: 'r:UTF-8')
+        text = HardwareDescriptorDef.replace_uses(text) do |value|
+          HardwareDescriptorDef.parent_ref(value, user_ref) == @from ? HardwareDescriptorDef.extends_value(@ref, user_ref) : nil
+        end
+        File.write(user_path, text, mode: 'w:UTF-8')
+      end
+    end
+
     # The files of the components folder named as a part declared true could
     # be - see CONVENTION_FILE_PATTERN - that none is any more : removed, the
     # folder too if left empty. Other files are left. Returns their names.
@@ -238,7 +256,7 @@ module Ladb::OpenCutList
       Dir.entries(dir) - %w[. ..]
     end
 
-    # The file names of the parts declared true.
+    # The file names of the parts - and articles - declared true.
     def _declared_files(components)
       names = []
       return names unless components.is_a?(Hash)
@@ -255,6 +273,9 @@ module Ladb::OpenCutList
         else
           fn_parts.call(slot, nil, value)
         end
+      end
+      HardwareDescriptorDef.each_article(components) do |slot, variant, key, article|
+        names << HardwareDescriptorDef.article_file_name(slot, variant, key) if article[HardwareDescriptorDef::ARTICLE_SKP] == true
       end
       names
     end

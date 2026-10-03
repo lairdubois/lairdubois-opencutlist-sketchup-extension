@@ -19,6 +19,10 @@ module Ladb::OpenCutList
     EDITOR_DIALOG_WIDTH = 1100
     EDITOR_DIALOG_HEIGHT = 760
 
+    # Where the connectors an article can use are browsed from - and their
+    # counterpart in the shipped library
+    CONNECTORS_LIBRARY_REF = '$LIB/connectors'.freeze
+
     def initialize()
       super('hardware')
     end
@@ -51,6 +55,9 @@ module Ladb::OpenCutList
       end
       PLUGIN.register_command('hardware_editor_resize') do |params|
         editor_resize_command(**params)
+      end
+      PLUGIN.register_command('hardware_library_list') do |params|
+        library_list_command(**params)
       end
       PLUGIN.register_command('hardware_float_to_length') do |params|
         float_to_length_command(params)
@@ -170,6 +177,35 @@ module Ladb::OpenCutList
                                      .sub(/[.,](\D*)\z/) { $1 }
       end
       lengths
+    end
+
+    # The given folder of the connectors library - both libraries' roots when
+    # none - : its sub folders and the concrete connectors it holds, each
+    # with the "use" a descriptor of the given ref writes to name it.
+    def library_list_command(dir_ref: nil, ref: nil)
+      roots = [ PLUGIN.bundled_library_ref(CONNECTORS_LIBRARY_REF), CONNECTORS_LIBRARY_REF ]
+      fn_root_name = lambda { |r| PLUGIN.get_i18n_string("core.hardware_editor.library_#{PLUGIN.library_bundled_ref?(r) ? 'bundled' : 'user'}") }
+      unless roots.any? { |root| dir_ref == root || dir_ref.is_a?(String) && dir_ref.start_with?("#{root}/") }
+        return {
+          :dir_ref => nil,
+          :dirs => roots.map { |r| { :ref => r, :name => fn_root_name.call(r) } },
+          :files => [],
+        }
+      end
+      root = roots.find { |r| dir_ref == r || dir_ref.start_with?("#{r}/") }
+      names = dir_ref == root ? [] : dir_ref[(root.length + 1)..-1].split('/')
+      {
+        :dir_ref => dir_ref,
+        :parent_ref => dir_ref == root ? nil : File.dirname(dir_ref),
+        # The folders to it, from the root
+        :path => [ { :ref => root, :name => fn_root_name.call(root) } ] + names.each_with_index.map { |name, index| { :ref => ([ root ] + names[0..index]).join('/'), :name => name } },
+        :dirs => PLUGIN.list_library_dirs(dir_ref).map { |r| { :ref => r, :name => File.basename(r) } },
+        :files => PLUGIN.list_library_files(dir_ref, '.json').map { |r|
+          descriptor = HardwareDescriptorDef.load(r)
+          next nil if descriptor.nil? || descriptor.type != HardwareDescriptorDef::TYPE_CONNECTOR || descriptor.abstract?
+          { :ref => r, :name => descriptor.name, :use => HardwareDescriptorDef.extends_value(r, ref.is_a?(String) ? ref : CONNECTORS_LIBRARY_REF), :valid => descriptor.valid? }
+        }.compact,
+      }
     end
 
     # A SKP file picked by the user - to become a part of the descriptor.

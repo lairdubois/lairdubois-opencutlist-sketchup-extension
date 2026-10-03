@@ -44,6 +44,33 @@ module Ladb::OpenCutList
   #  - absent, null or false : none.
   # '$LIB/…', '$OCL/…' and './…' refs - and definition names - are still read.
   #
+  # The hardware part can instead hold several ARTICLES - each its own part
+  # in the cut list - as an object keyed by short names, unique in the slot
+  # (ARTICLE_KEY_PATTERN, never one of ARTICLE_FIELDS - that tells it from
+  # a single article) :
+  #    "hardware": {
+  #      "body": { "name": "Angle bracket 40x40", "price": 0.30, "skp": true },
+  #      "screws": { "use": "connectors/generic/screws/screw-4x20.json", "host": "a",
+  #                  "measures": { "thickness_b": "@bracket_thickness" },
+  #                  "variables": { "length": { "value": "18mm" } },
+  #                  "at": [ { "x": -8, "y": "-@hole_distance" }, { "x": 8, "y": "-@hole_distance" } ] }
+  #    }
+  # An article gives its info fields - as a component - and its geometry,
+  # one of :
+  #  - "skp" : true - the file named after the slot and its key, see
+  #    article_file_name - or a shared path, as a part ;
+  #  - primitives : "cylinders", "oblongs" ;
+  #  - "use" : a concrete connector of the library - its path relative to
+  #    the library's root, or a '$OCL/…' ref - reused as it is. "host" says
+  #    which of its sides - "a" or "b" - the part is ; the other one is
+  #    VIRTUAL : "measures" gives its thickness - "thickness_<side>" - its
+  #    hardware is laid, its machining isn't. "variables" overrides the
+  #    VALUES of its settings, nothing else. Its asserts are checked at each
+  #    position. Its host side's machining is merged into the slot's.
+  # "at" lists its positions - x and y lengths in the laying frame of the
+  # slot - one at the origin when absent. Only a hardware that isn't a
+  # connector can use another one - a cycle can't be.
+  #
   # A part can instead be given as <primitives>, the tool generates its
   # geometry, in the laying frame of the type - the face at z = 0, the part
   # toward -Z. Lengths are strings with a unit, or numbers in millimeters ;
@@ -160,6 +187,16 @@ module Ladb::OpenCutList
 
     Z_OFFSET = 'z_offset'.freeze
 
+    # Articles - see "hardware" above
+    ARTICLE_SKP = 'skp'.freeze
+    ARTICLE_USE = 'use'.freeze
+    ARTICLE_HOST = 'host'.freeze
+    ARTICLE_MEASURES = 'measures'.freeze
+    ARTICLE_VARIABLES = 'variables'.freeze
+    ARTICLE_AT = 'at'.freeze
+    ARTICLE_USE_KEYS = [ ARTICLE_USE, ARTICLE_HOST, ARTICLE_MEASURES, ARTICLE_VARIABLES ].freeze
+    ARTICLE_KEY_PATTERN = /\A[a-z][a-z0-9_-]*\z/
+
     SELECT_MODE_EXACT = 'exact'.freeze
     SELECT_MODE_MAX_LE = 'max_le'.freeze   # The largest key <= the measure
 
@@ -194,6 +231,9 @@ module Ladb::OpenCutList
     MACHINING_MORTISES = 'mortises'.freeze
     HARDWARE_CYLINDERS = 'cylinders'.freeze
     HARDWARE_OBLONGS = 'oblongs'.freeze
+
+    # What an article can hold - its key can't be one of them
+    ARTICLE_FIELDS = (INFO_KEYS + [ ARTICLE_SKP, ARTICLE_AT ] + ARTICLE_USE_KEYS + [ HARDWARE_CYLINDERS, HARDWARE_OBLONGS ]).freeze
 
     # The primitives each part can be given as
     PRIMITIVES = {
@@ -310,8 +350,71 @@ module Ladb::OpenCutList
     #    'machining' - comes from, another one when the part is linked ;
     #  - z_offset : the length expression the hardware is shifted by along
     #    Z, nil when none - see to_length.
+    #  - articles : its hardware's articles - HardwareArticleDefs, hardware
+    #    then nil - or nil when the hardware is a single part.
     HardwareComponentDef = Struct.new(:slot, :source_slot, :hardware, :machining, :mirror, :stretch, :variant, :attributes,
-                                      :name, :variant_name, :description, :price, :url, :mass, :part_slots, :z_offset)
+                                      :name, :variant_name, :description, :price, :url, :mass, :part_slots, :z_offset, :articles)
+
+    # An article of a hardware - see "hardware" above :
+    #  - key : its key in the slot ;
+    #  - name, description, price, url, mass : as written ;
+    #  - hardware : its ref String or Hash of primitives - nil for a used one ;
+    #  - use : the ref of the connector it uses, nil for its own geometry ;
+    #  - descriptor : that connector's HardwareDescriptorDef - its settings
+    #    overridden - nil when it can't be read ;
+    #  - host : the side of the connector the part is ;
+    #  - measures : the expressions of its other side's measures, unsuffixed
+    #    - { 'thickness' => '@bracket_thickness' } ;
+    #  - at : its positions as written - [ { 'x' => …, 'y' => … } ] ;
+    #  - overrides : the settings of the used connector it overrides, as
+    #    written - { 'length' => { 'value' => '18mm' } }.
+    HardwareArticleDef = Struct.new(:key, :name, :description, :price, :url, :mass, :hardware, :use, :descriptor, :host, :measures, :at, :overrides) do
+      def use?
+        !use.nil?
+      end
+      # As a component's, for the definition it gives - see HardwareComponentDef
+      def attributes
+        {}
+      end
+      def z_offset
+        nil
+      end
+      # The virtual side of a used connector
+      def other_slot
+        host == 'a' ? 'b' : 'a'
+      end
+      # Its positions, evaluated with the given variables : [ [ x, y ] ] in
+      # inches - nil when one can't be.
+      def positions(variables = {})
+        items = at.is_a?(Array) ? at : [ {} ]
+        items.map { |item|
+          return nil unless item.is_a?(Hash)
+          %w[x y].map { |k|
+            v = item[k].nil? ? 0 : HardwareDescriptorDef.to_length(item[k], true, variables)
+            return nil if v.nil?
+            v
+          }
+        }
+      end
+      # The measures of the joint of the used connector : its host side's
+      # from the given measures of the slot - unsuffixed - its other side's
+      # evaluated with the given variables. nil when they can't be.
+      def joint_measures(slot_measures, variables = {})
+        thickness = HardwareDescriptorDef.to_length(measures.is_a?(Hash) ? measures[VARIABLE_THICKNESS] : nil, false, variables)
+        return nil if thickness.nil?
+        joint = {}
+        slot_measures.each { |name, value| joint["#{name}_#{host}"] = value if VARIABLES.include?(name.to_s) }
+        [ VARIABLE_THICKNESS, VARIABLE_THICKNESS_MIN, VARIABLE_THICKNESS_MAX ].each { |name| joint["#{name}_#{other_slot}"] = thickness }
+        joint
+      end
+      # The given joint measures and the unsuffixed ones of the given side
+      # of the used connector - see HardwareDescriptorDef::VARIABLES.
+      def side_measures(joint, side)
+        own = {}
+        joint.each { |name, value| own[name[0..-(side.length + 2)]] = value if name.end_with?("_#{side}") }
+        joint.merge(own)
+      end
+    end
 
     # data : merged with its parents' - see "extends" ; own_data : as written ;
     # parent_data : its parents' merged, without its own - nil when it
@@ -394,6 +497,54 @@ module Ladb::OpenCutList
       }.compact.sort
     end
 
+    # The articles of the given components - see "hardware" : yields the
+    # slot, the variant - nil if none - the key and the value of each.
+    def self.each_article(components)
+      return unless components.is_a?(Hash)
+      fn_articles = lambda do |slot, variant, value|
+        next unless value.is_a?(Hash) && articles?(value[PART_HARDWARE])
+        value[PART_HARDWARE].each { |key, article| yield(slot, variant, key, article) if article.is_a?(Hash) }
+      end
+      components.each do |slot, value|
+        next unless value.is_a?(Hash)
+        if value['variants'].is_a?(Hash) && value['variants']['items'].is_a?(Hash)
+          value['variants']['items'].each { |variant, item| fn_articles.call(slot, variant, item) }
+        else
+          fn_articles.call(slot, nil, value)
+        end
+      end
+    end
+
+    # The descriptors - their refs - whose articles use the one of the given
+    # ref - see "use" - among the JSON files of the given library folder.
+    def self.users_refs(ref, library_dir, library_prefix)
+      return [] unless File.directory?(library_dir)
+      Dir.glob(File.join(library_dir, '**', '*.json')).map { |path|
+        user_ref = library_prefix + path[(library_dir.length + 1)..-1]
+        next nil if user_ref == ref
+        data = read_data(path)
+        next nil unless descriptor?(data)
+        used = false
+        each_article(data['components']) { |_, _, _, article| used ||= parent_ref(article[ARTICLE_USE], user_ref) == ref }
+        used ? user_ref : nil
+      }.compact.sort
+    end
+
+    # The given JSON text of a descriptor, each "use" value of its articles
+    # replaced by the one the given block returns for it - kept if nil.
+    def self.replace_uses(text)
+      text.gsub(/("#{ARTICLE_USE}"\s*:\s*)("(?:[^"\\]|\\.)*")/) do
+        match = $~
+        value = begin
+          JSON.parse("[#{match[2]}]").first
+        rescue JSON::ParserError
+          nil
+        end
+        replacement = value.nil? ? nil : yield(value)
+        replacement.nil? || replacement == value ? match[0] : "#{match[1]}#{JSON.generate(replacement)}"
+      end
+    end
+
     # Is the given parsed JSON a hardware descriptor - of any version ?
     def self.descriptor?(data)
       data.is_a?(Hash) && data['format'] == FORMAT
@@ -406,6 +557,18 @@ module Ladb::OpenCutList
     # Is the given component value an empty slot - null or {} - ?
     def self.empty_component?(value)
       value.nil? || value.is_a?(Hash) && value.empty?
+    end
+
+    # Is the given hardware part value an object of articles - see "hardware" ?
+    def self.articles?(value)
+      value.is_a?(Hash) && !value.empty? && value.values.all? { |article| article.nil? || article.is_a?(Hash) } &&
+        (value.keys & (ARTICLE_FIELDS + PRIMITIVES.values.flatten + [ 'same_as' ])).empty?
+    end
+
+    # The file name of the given article of the given slot's component - or
+    # of its given variant : "a.body.skp", "a.overlay.body.skp".
+    def self.article_file_name(slot, variant, key)
+      [ slot, variant, key ].compact.join('.') + '.skp'
     end
 
     # Is the given resolved part - see HardwareComponentDef#hardware and
@@ -915,7 +1078,22 @@ module Ladb::OpenCutList
       end
       fn_component = lambda do |slot, variant, value|
         return unless value.is_a?(Hash)
-        PARTS.each { |part| value[part] = fn_part.call(slot, variant, part, value[part]) if value.key?(part) }
+        if self.class.articles?(value[PART_HARDWARE])
+          value[PART_HARDWARE].each do |key, article|
+            next unless article.is_a?(Hash)
+            if article[ARTICLE_SKP] == true
+              article[ARTICLE_SKP] = "#{dir_ref}/#{self.class.article_file_name(slot, variant, key)}"
+            elsif article.key?(ARTICLE_SKP)
+              article[ARTICLE_SKP] = fn_part.call(slot, variant, PART_HARDWARE, article[ARTICLE_SKP])
+            end
+            used = self.class.parent_ref(article[ARTICLE_USE], ref)   # Relative to its own library
+            article[ARTICLE_USE] = used unless used.nil?
+          end
+          fn_part_keys = [ PART_MACHINING ]
+        else
+          fn_part_keys = PARTS
+        end
+        fn_part_keys.each { |part| value[part] = fn_part.call(slot, variant, part, value[part]) if value.key?(part) }
       end
       material = data['hardware_material']
       data['hardware_material'] = File.join(File.dirname(path), material[2..-1]) if material.is_a?(String) && material.start_with?('./')   # As _resolve_ref
@@ -1006,7 +1184,7 @@ module Ladb::OpenCutList
       else
         own_info = _info(value)
         merged_info = info.merge(own_info)   # The variant's over the component's
-        hardware, hardware_slot = _resolve_part(slot, variant, PART_HARDWARE, value[PART_HARDWARE], context, visited)
+        hardware, hardware_slot, articles = _resolve_part(slot, variant, PART_HARDWARE, value[PART_HARDWARE], context, visited)
         machining, machining_slot = _resolve_part(slot, variant, PART_MACHINING, value[PART_MACHINING], context, visited)
         return HardwareComponentDef.new(
           slot, slot,
@@ -1016,7 +1194,8 @@ module Ladb::OpenCutList
           variant.nil? ? nil : own_info['name'],
           merged_info['description'], merged_info['price'], merged_info['url'], merged_info['mass'],
           { PART_HARDWARE => hardware_slot, PART_MACHINING => machining_slot },
-          value[Z_OFFSET].nil? ? info[Z_OFFSET] : value[Z_OFFSET]
+          value[Z_OFFSET].nil? ? info[Z_OFFSET] : value[Z_OFFSET],
+          articles
         )
       end
       return nil if resolved.nil?
@@ -1030,16 +1209,72 @@ module Ladb::OpenCutList
     end
 
     # The ref of the given part of the given slot's component - or of its
-    # given variant - nil when there is none, and the slot whose component
-    # the part comes from : [ ref, slot ].
+    # given variant - nil when there is none, the slot whose component the
+    # part comes from, and its articles - nil when it isn't made of some :
+    # [ ref, slot, articles ].
     def _resolve_part(slot, variant, part, value, context, visited)
       if value.is_a?(Hash) && value.key?('same_as')
         resolved = _resolve_component(value['same_as'].to_s, context, false, visited)
-        return [ nil, nil ] if resolved.nil?
-        return [ resolved.send(part), resolved.part_slots[part] ]
+        return [ nil, nil, nil ] if resolved.nil?
+        articles = part == PART_HARDWARE ? resolved.articles : nil
+        return [ resolved.send(part), resolved.part_slots[part], articles ]
+      end
+      if part == PART_HARDWARE && self.class.articles?(value)
+        articles = _resolve_articles(slot, variant, value)
+        return [ nil, articles.empty? ? nil : slot, articles ]
       end
       ref = _resolve_part_ref(slot, variant, part, value)
-      [ ref, ref.nil? ? nil : slot ]
+      [ ref, ref.nil? ? nil : slot, nil ]
+    end
+
+    # The articles of the given slot's component - or of its given variant -
+    # see "hardware" : HardwareArticleDefs, in order.
+    def _resolve_articles(slot, variant, value)
+      value.map { |key, article|
+        next nil unless article.is_a?(Hash)
+        info = _info(article)
+        if article.key?(ARTICLE_USE)
+          used = self.class.parent_ref(article[ARTICLE_USE], @ref)
+          host = article[ARTICLE_HOST].to_s
+          measures = article[ARTICLE_MEASURES].is_a?(Hash) ? Hash[article[ARTICLE_MEASURES].map { |name, expression| [ name.sub(/_[ab]\z/, ''), expression ] }] : {}
+          HardwareArticleDef.new(key, info['name'], info['description'], info['price'], info['url'], info['mass'],
+                                 nil, used, _used_descriptor(used, article[ARTICLE_VARIABLES]), host, measures, article[ARTICLE_AT],
+                                 article[ARTICLE_VARIABLES].is_a?(Hash) ? article[ARTICLE_VARIABLES] : {})
+        else
+          geometry = article[ARTICLE_SKP] == true ? true : article[ARTICLE_SKP]
+          geometry = article.select { |k, _| PRIMITIVES[PART_HARDWARE].include?(k) } if geometry.nil?
+          hardware = geometry == true ? _resolve_article_file(slot, variant, key) : _resolve_part_ref(slot, variant, PART_HARDWARE, geometry)
+          HardwareArticleDef.new(key, info['name'], info['description'], info['price'], info['url'], info['mass'],
+                                 hardware, nil, nil, nil, nil, article[ARTICLE_AT])
+        end
+      }.compact
+    end
+
+    def _resolve_article_file(slot, variant, key)
+      dir = components_dir_ref
+      dir.nil? ? nil : "#{dir}/#{self.class.article_file_name(slot, variant, key)}"
+    end
+
+    # The connector of the given ref, the VALUES of its settings overridden
+    # by the given variables - see "hardware" - nil when it can't be read.
+    def _used_descriptor(ref, overrides)
+      return nil unless ref.is_a?(String)
+      @used_descriptors ||= {}
+      cache_key = [ ref, overrides ].to_s
+      return @used_descriptors[cache_key] if @used_descriptors.key?(cache_key)
+      @used_descriptors[cache_key] = begin
+        if @ref.is_a?(String) && @ref.start_with?(LIBRARY_REF_BUNDLED_PREFIX) && ref.start_with?(LIBRARY_REF_USER_PREFIX)
+          nil   # The OCL library can't use the user's one
+        else
+          used = self.class.load(ref)
+          if !used.nil? && overrides.is_a?(Hash) && !overrides.empty?
+            # A child of it, its own variables the overrides
+            data = { 'format' => FORMAT, 'version' => VERSION, 'id' => used.id, 'name' => used.name, 'type' => used.type, EXTENDS => ref, 'variables' => overrides }
+            used = self.class.new(data)   # No ref : it would extend itself
+          end
+          used
+        end
+      end
     end
 
     def _resolve_part_ref(slot, variant, part, value)
@@ -1321,12 +1556,145 @@ module Ladb::OpenCutList
         errors << "component '#{path}' #{part} links to itself" if value['same_as'] == slot
         return true
       end
+      if part == PART_HARDWARE && self.class.articles?(value)
+        _validate_articles(path, value, errors)
+        return true
+      end
       if value.is_a?(Hash)
         _validate_primitives(path, part, value, errors)
         return true
       end
       errors << "component '#{path}' #{part} is neither true, a path nor a link"
       true
+    end
+
+    # The articles of a hardware - see "hardware".
+    def _validate_articles(path, articles, errors)
+      articles.each do |key, article|
+        label = "component '#{path}' article '#{key}'"
+        errors << "#{label} key is not made of lowercase letters, digits, - and _" unless key =~ ARTICLE_KEY_PATTERN
+        next if article.nil?   # Removed from an inherited one
+        unless article.is_a?(Hash)
+          errors << "#{label} is not an object"
+          next
+        end
+        (article.keys - ARTICLE_FIELDS).each do |k|
+          errors << "#{label} has an unknown key '#{k}'"
+        end
+        _validate_info("#{path}/#{key}", article, errors)
+        primitives = article.select { |k, _| PRIMITIVES[PART_HARDWARE].include?(k) }
+        geometries = [ article.key?(ARTICLE_USE), article.key?(ARTICLE_SKP), !primitives.empty? ].count(true)
+        if geometries == 0
+          errors << "#{label} has no geometry - skp, primitives or use"
+        elsif geometries > 1
+          errors << "#{label} has more than one geometry - skp, primitives or use"
+        end
+        if article.key?(ARTICLE_SKP) && !(article[ARTICLE_SKP] == true || article[ARTICLE_SKP].is_a?(String) && !article[ARTICLE_SKP].strip.empty?)
+          errors << "#{label} skp is neither true nor a path"
+        end
+        _validate_primitives("#{path}/#{key}", PART_HARDWARE, primitives, errors) unless primitives.empty?
+        if article.key?(ARTICLE_USE)
+          _validate_used(label, article, errors)
+        else
+          (article.keys & (ARTICLE_USE_KEYS - [ ARTICLE_USE ])).each do |k|
+            errors << "#{label} has '#{k}' but uses no connector"
+          end
+        end
+        _validate_at(label, article[ARTICLE_AT], errors) if article.key?(ARTICLE_AT)
+      end
+    end
+
+    # An article using a connector - see "use".
+    def _validate_used(label, article, errors)
+      errors << "#{label} : a connector can't use another hardware" if type == TYPE_CONNECTOR
+      ref = self.class.parent_ref(article[ARTICLE_USE], @ref)
+      if ref.nil?
+        errors << "#{label} use #{article[ARTICLE_USE].inspect} is not a descriptor path"
+        return
+      end
+      used = _used_descriptor(ref, nil)
+      if used.nil?
+        errors << (@ref.is_a?(String) && @ref.start_with?(LIBRARY_REF_BUNDLED_PREFIX) && ref.start_with?(LIBRARY_REF_USER_PREFIX) ? "#{label} uses #{ref} : the OCL library can't use the user's one" : "#{label} uses #{ref} : not found")
+        return
+      end
+      unless used.type == TYPE_CONNECTOR
+        errors << "#{label} uses #{ref} : a #{used.type}, not a connector"
+        return
+      end
+      errors << "#{label} uses #{ref} : it is abstract" if used.abstract?
+      errors << "#{label} uses #{ref} : #{used.errors.first}" unless used.abstract? || used.valid?
+      host = article[ARTICLE_HOST]
+      unless %w[a b].include?(host)
+        errors << "#{label} host is neither \"a\" nor \"b\""
+        return
+      end
+      other = host == 'a' ? 'b' : 'a'
+      measure = "#{VARIABLE_THICKNESS}_#{other}"
+      measures = article[ARTICLE_MEASURES]
+      if !measures.is_a?(Hash) || !measures.key?(measure)
+        errors << "#{label} measures has no #{measure} - the thickness of its virtual side"
+      end
+      if measures.is_a?(Hash)
+        measures.each do |name, expression|
+          if name != measure
+            errors << "#{label} measures has the unknown measure '#{name}'"
+            next
+          end
+          unknown = _unknown_variables(expression)
+          unknown.each { |n| errors << "#{label} #{name} uses the unknown variable @#{n}" }
+          errors << "#{label} #{name} is not a positive length" if unknown.empty? && _to_checked_length(expression, false).nil?
+        end
+      elsif article.key?(ARTICLE_MEASURES)
+        errors << "#{label} measures is not an object"
+      end
+      overrides = article[ARTICLE_VARIABLES]
+      if article.key?(ARTICLE_VARIABLES)
+        if overrides.is_a?(Hash)
+          settings = used.settings
+          overrides.each do |name, value|
+            if !settings.key?(name)
+              errors << "#{label} variable '#{name}' is not a setting of #{used.name}"
+            elsif !(value.is_a?(Hash) && value.keys == [ 'value' ])
+              errors << "#{label} variable '#{name}' overrides more than its value"
+            end
+          end
+          # Its own checks of the overridden settings - the rest is the connector's
+          overridden = _used_descriptor(ref, overrides)
+          unless overridden.nil?
+            overridden.errors.select { |error| overrides.keys.any? { |name| error.start_with?("variable '#{name}' ") } }.each do |error|
+              errors << "#{label} #{error}"
+            end
+          end
+        else
+          errors << "#{label} variables is not an object"
+        end
+      end
+      component = used.resolve_component(host)
+      if !component.nil? && component.machining.is_a?(String)
+        errors << "#{label} : the machining of side #{host} of #{used.name} is a file, it can't be merged"
+      end
+    end
+
+    # The positions of an article - see "at".
+    def _validate_at(label, at, errors)
+      unless at.is_a?(Array) && !at.empty?
+        errors << "#{label} at is not a list of positions"
+        return
+      end
+      at.each_with_index do |item, index|
+        position = "#{label} position #{index + 1}"
+        unless item.is_a?(Hash)
+          errors << "#{position} is not an object"
+          next
+        end
+        (item.keys - %w[x y]).each { |k| errors << "#{position} has an unknown key '#{k}'" }
+        %w[x y].each do |k|
+          next if item[k].nil?
+          unknown = _unknown_variables(item[k])
+          unknown.each { |n| errors << "#{position} #{k} uses the unknown variable @#{n}" }
+          errors << "#{position} #{k} is not a length" if unknown.empty? && _to_checked_length(item[k], true).nil?
+        end
+      end
     end
 
     def _validate_primitives(path, part, value, errors)
@@ -1338,7 +1706,8 @@ module Ladb::OpenCutList
         errors << "component '#{path}' #{part} has an unknown primitive '#{key}'"
       end
       fn_depth = lambda do |item, label|
-        unless item['depth'] == DRILLING_DEPTH_THROUGH || !_to_checked_length(item['depth'], false).nil?
+        # Its sign checkable only without variables : they change with where it is laid
+        unless item['depth'] == DRILLING_DEPTH_THROUGH || !_to_checked_length(item['depth'], _variable_lengths?(item['depth'])).nil?
           errors << "#{label} depth is neither \"#{DRILLING_DEPTH_THROUGH}\" nor a positive length"
         end
       end

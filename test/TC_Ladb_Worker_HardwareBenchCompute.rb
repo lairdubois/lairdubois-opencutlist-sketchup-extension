@@ -160,6 +160,54 @@ class TC_Ladb_Worker_HardwareBenchCompute < TestUp::TestCase
     end
   end
 
+  # An angle bracket whose screws use a connector : evaluated with the
+  # screw's variables, at each of their positions, its asserts refusing the
+  # bench where the panel is too thin.
+  def test_articles
+    Ladb::OpenCutList::HardwareDescriptorDef.library_resolver = lambda { |ref| ref.start_with?('$OCL/') ? File.join(LIBRARY_DIR, ref[5..-1]) : ref }
+    begin
+      text = File.read(File.join(LIBRARY_DIR, 'fittings/generic/angle-bracket-40x40.json'))
+      response = _run(text, ref: '$OCL/fittings/generic/angle-bracket-40x40.json', topology: 'corner', thickness_a: 19, thickness_b: 19)
+      assert_equal([], response[:errors])
+      assert(response[:accepted])
+      article = response[:slots]['a'][:component][:articles].first
+      assert_equal('screws', article[:key])
+      assert_equal('use', article[:kind])
+      assert_equal('Screw 4x16', article[:used_name])
+      assert_equal('a', article[:host])
+      assert_equal('thickness_b', article[:virtual][:measure])
+      assert_in_delta(2 * MM, article[:virtual][:value], 1e-9)
+      assert_in_delta(-25 * MM, article[:positions].first[:y][:value], 1e-9)
+      assert(article[:asserts].all? { |assert| assert[:ok] }, article[:asserts].inspect)
+      assert_in_delta(14 * MM, article[:variables].find { |v| v[:name] == 'embed' }[:value], 1e-9)
+      embed_min = article[:settings].find { |setting| setting[:name] == 'embed_min' }
+      assert(embed_min[:overridden])
+      assert_in_delta(10 * MM, embed_min[:value][:value], 1e-9)
+      assert_in_delta(15 * MM, embed_min[:default][:value], 1e-9)   # screw.json's
+      length = article[:settings].find { |setting| setting[:name] == 'length' }
+      assert(!length[:overridden])
+      assert_in_delta(16 * MM, length[:default][:value], 1e-9)
+      solids = response[:solids].select { |solid| solid[:slot] == 'a' && solid[:article] == 'screws' }
+      screw = solids.find { |solid| solid[:part] == 'hardware' }
+      pilot = solids.find { |solid| solid[:part] == 'machining' }
+      assert_in_delta(-14 * MM, screw[:z_min], 1e-9)
+      assert_in_delta(2 * MM, screw[:z_max], 1e-9)   # Through the 2 mm wing
+      assert_in_delta(-25 * MM, screw[:transformation][13], 1e-9)
+      assert_in_delta(3 * MM, pilot[:diameter], 1e-9)
+      assert_in_delta(14 * MM, pilot[:z_max] - pilot[:z_min], 1e-9)
+      # b's in its own frame : y along the bench's Z
+      b_screw = response[:solids].find { |solid| solid[:slot] == 'b' && solid[:article] == 'screws' && solid[:part] == 'hardware' }
+      assert_in_delta(25 * MM, b_screw[:transformation][14], 1e-9)
+
+      thin = _run(text, ref: '$OCL/fittings/generic/angle-bracket-40x40.json', topology: 'corner', thickness_a: 12, thickness_b: 19)
+      assert(!thin[:accepted])
+      assert_equal(false, thin[:slots]['a'][:component][:articles].first[:ok])
+      assert_equal(true, thin[:slots]['b'][:component][:articles].first[:ok])
+    ensure
+      Ladb::OpenCutList::HardwareDescriptorDef.library_resolver = nil
+    end
+  end
+
   # A step no value matches : the variable says why, those using it too.
   def test_variable_errors
     Ladb::OpenCutList::HardwareDescriptorDef.library_resolver = lambda { |ref| ref.start_with?('$OCL/') ? File.join(LIBRARY_DIR, ref[5..-1]) : ref }   # Its parent
@@ -281,13 +329,25 @@ class TC_Ladb_Worker_HardwareBenchCompute < TestUp::TestCase
     assert(!response[:supported])
     assert(response[:errors].first.start_with?('json:'))
     assert(!_run({ 'format' => 'other' })[:supported])
-    fitting = _run(DOWEL.merge('type' => 'fitting'))
-    assert(!fitting[:supported])
-    assert_equal('fitting', fitting[:type])
+    span = _run(DOWEL.merge('type' => 'span'))
+    assert(!span[:supported])
+    assert_equal('span', span[:type])
     # An invalid descriptor is still shown : its errors with it
     response = _run(DOWEL.merge('id' => nil))
     assert(response[:supported])
     assert(response[:errors].any? { |error| error.include?('missing id') })
+  end
+
+  # A fitting sits in the inner corner : b's frame is a hinge's, Z out of
+  # its face - toward the bench's -Y.
+  def test_fitting
+    response = _run(DOWEL.merge('type' => 'fitting'))
+    assert(response[:supported])
+    assert_equal('corner', response[:topology])
+    assert_equal(%w[corner flat_edge], response[:topologies])
+    assert(response[:swappable])
+    b = response[:slots]['b'][:transformation]
+    assert_equal([ 0, -1, 0 ], b[8..10])
   end
 
   def test_unknown_topology_falls_back

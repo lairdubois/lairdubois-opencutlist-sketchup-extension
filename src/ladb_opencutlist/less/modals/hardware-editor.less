@@ -577,6 +577,12 @@
   display: flex;
   flex-wrap: wrap;
   gap: 5px;
+
+  // The "+ ..." add buttons sit on the right
+  &.ladb-hardware-editor-add-buttons {
+    justify-content: flex-end;
+  }
+
 }
 
 .ladb-hardware-editor-file {
@@ -585,6 +591,7 @@
   align-items: center;
   gap: 4px 8px;
   min-width: 0;
+  justify-content: space-between;
 
   code {
     font-size: 11px;
@@ -749,6 +756,7 @@
 
 .ladb-hardware-editor-primitive-list {
   border: 1px solid #ccc;
+  background-color: #fff;
 }
 
 .ladb-hardware-editor-primitive {
@@ -956,6 +964,7 @@
 .ladb-hardware-editor-primitive-separator {
   grid-column: ~"1 / -1";
   border-top: 1px solid #ccc;
+  margin: 5px 0;
 }
 
 .ladb-hardware-editor-primitive-names {
@@ -1061,4 +1070,138 @@
     opacity: 0.5;
     font-style: italic;
   }
+}
+
+// Articles /////
+
+.ladb-hardware-editor-article-editor {
+
+  // Its rows : their fields side by side, a button at the end
+  > .ladb-hardware-editor-primitive-fields {
+    display: flex;
+    align-items: center;
+
+    > * {
+      flex: 1 1 0;
+      min-width: 0;
+    }
+
+    > .btn,
+    > .btn-group {
+      flex: none;
+    }
+
+  }
+
+}
+
+.ladb-hardware-editor-article-wide {
+  grid-column: ~"1 / -1";
+}
+
+.ladb-hardware-editor-article-key {
+  margin: 0;
+
+  .help-block {
+    margin: 2px 0 0;
+    font-size: 11px;
+  }
+
+}
+
+.ladb-hardware-editor-article-chip {
+  flex: none;
+}
+
+// A setting of the connector overridden for this use only
+.ladb-hardware-editor-article-overridden.ladb-hardware-editor-primitive-cell {
+  border-color: #8e5bd0;
+  background-color: fade(#8e5bd0, 6%);
+}
+
+.ladb-hardware-editor-article-setting-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ladb-hardware-editor-article-assert {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 11px;
+
+  // In the color of its state, not Bootstrap's
+  code {
+    padding: 0;
+    color: inherit;
+    background: none;
+    font-size: 11px;
+  }
+
+}
+
+.ladb-hardware-editor-article-assert-state {
+  flex: none;
+}
+
+.ladb-hardware-editor-article-assert-values {
+  color: @ladb-global-light-color;
+}
+
+// The connectors library, browsed for an article
+.ladb-hardware-editor-library {
+  grid-column: ~"1 / -1";
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  background-color: #fff;
+  font-size: 12px;
+}
+
+.ladb-hardware-editor-library-path {
+  padding: 4px 8px;
+  border-bottom: 1px solid #eee;
+  color: @ladb-global-light-color;
+}
+
+.ladb-hardware-editor-library-items {
+  display: flex;
+  flex-direction: column;
+  max-height: 180px;
+  padding: 2px 0;
+  overflow-y: auto;
+
+  > a {
+    padding: 2px 8px;
+    color: @ladb-global-color;
+
+    &:hover {
+      background-color: #f5f5f5;
+      text-decoration: none;
+    }
+
+  }
+
+  > .ladb-hardware-editor-empty {
+    padding: 4px 8px;
+  }
+
+}
+
+// What the articles drill, under the slot's machining
+.ladb-hardware-editor-contributions {
+  margin-top: 6px;
+}
+
+.ladb-hardware-editor-contribution {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 6px;
+  font-size: 12px;
+
+  &:hover {
+    background-color: #f5f5f5;
+  }
+
 }

@@ -343,7 +343,7 @@ core:
     setting_bounds: "Entre {{ min }} et {{ max }}"
     assert_unresolved: Non calculable
     accepted: Assemblage accepté
-    refused: Assemblage rejeté
+    refused: Assemblage refusé
     readonly: Lecture seule
     readonly_notice: |
       Ce fichier est un exemple en lecture seule. 
@@ -399,6 +399,39 @@ core:
     part_kind_skp: Fichier SKP
     part_kind_primitives: Primitives
     part_kind_same_as: "Même que {{ slot }}"
+    part_kind_articles: Articles
+    article_add_skp: Fichier SKP
+    article_add_primitives: Primitives
+    article_add_connector: Connecteur
+    article_kind_skp: SKP
+    article_kind_primitives: Primitives
+    article_kind_connector: Bibliothèque
+    article_key: Clé
+    article_key_file: "Son fichier : {{ file }}"
+    article_key_invalid: Lettres minuscules, chiffres, - et _, en commençant par une lettre
+    article_key_reserved: Ce nom est réservé
+    article_key_taken: Déjà utilisée par un autre article de ce composant
+    article_name: Nom
+    article_price: Prix
+    article_mass: Masse
+    article_file: Fichier
+    article_primitives: Primitives
+    article_connector: Connecteur
+    article_replace: Remplacer
+    article_missing: introuvable
+    article_refused: refusé
+    article_host: Notre panneau est le côté
+    article_virtual_thickness: "Épaisseur du côté virtuel ({{ slot }})"
+    article_settings: Réglages du connecteur
+    article_setting_default: "Connecteur : {{ value }}"
+    article_asserts: Contrôles
+    article_positions: Positions
+    article_position_add: Position
+    article_contributions: Apporté par les articles
+    library_libraries: Bibliothèques
+    library_user: Ma Bibliothèque
+    library_bundled: Bibliothèque OCL
+    library_empty: Aucun connecteur dans ce dossier.
     primitive_type_cylinders: Cylindre
     primitive_type_oblongs: Oblong
     primitive_type_drillings: Perçage
@@ -437,9 +470,9 @@ core:
     chip_placed: Placement à enregistrer
     chip_edited: Modifié | à enregistrer
     choose_file: Choisir un fichier...
-    replace_file: Remplacer le fichier...
-    edit_in_sketchup: Modifier dans SketchUp
-    create_in_sketchup: Créer dans SketchUp
+    replace_file: Remplacer...
+    edit_in_sketchup: Modifier
+    create_in_sketchup: Créer
     shaping: "{{ name }} est ouvert dans SketchUp"
     shaping_help: |
       Modifiez la pièce dans le modèle, sur le banc d'essai. 
@@ -483,6 +516,7 @@ core:
       edit_failed: "Impossible de modifier la pièce dans SketchUp : {{ error }}"
       not_deleted: "Suppression impossible : {{ error }}"
       has_children: "Suppression impossible : d'autres quincailleries en héritent ({{ children }})."
+      has_users: "Suppression impossible : d'autres quincailleries l'utilisent comme article ({{ users }})."
       edit_lost: La pièce n'est plus dans le modèle, la modification est perdue.
 tab:
   cutlist:

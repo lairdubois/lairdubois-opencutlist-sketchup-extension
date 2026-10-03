@@ -77,22 +77,22 @@ module Ladb::OpenCutList
           ACTION_OPTION_DISTRIBUTION => [ ACTION_OPTION_DISTRIBUTION_FREE, ACTION_OPTION_DISTRIBUTION_AUTO ],
         }
       },
-      # {
-      #   :action => ACTION_ADD_FITTINGS,
-      #   :options => {
-      #     ACTION_OPTION_DISTRIBUTION => [ ACTION_OPTION_DISTRIBUTION_FREE, ACTION_OPTION_DISTRIBUTION_AUTO ],
-      #     ACTION_OPTION_OFFSETS => [ ACTION_OPTION_OFFSETS_START_OFFSET, ACTION_OPTION_OFFSETS_END_OFFSET ],
-      #     ACTION_OPTION_SPACINGS => [ ACTION_OPTION_SPACINGS_MIN_SPACING, ACTION_OPTION_SPACINGS_MAX_SPACING ],
-      #     ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_OPPOSITE, ACTION_OPTION_OPTIONS_MAKE_UNIQUE ],
-      #   }
-      # },
-      # {
-      #   :action => ACTION_REMOVE_FITTINGS,
-      #   :options => {
-      #     ACTION_OPTION_DISTRIBUTION => [ ACTION_OPTION_DISTRIBUTION_FREE, ACTION_OPTION_DISTRIBUTION_AUTO ],
-      #     ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_OPPOSITE ],
-      #   }
-      # },
+      {
+        :action => ACTION_ADD_FITTINGS,
+        :options => {
+          ACTION_OPTION_DISTRIBUTION => [ ACTION_OPTION_DISTRIBUTION_FREE, ACTION_OPTION_DISTRIBUTION_AUTO ],
+          ACTION_OPTION_OFFSETS => [ ACTION_OPTION_OFFSETS_START_OFFSET, ACTION_OPTION_OFFSETS_END_OFFSET ],
+          ACTION_OPTION_SPACINGS => [ ACTION_OPTION_SPACINGS_MIN_SPACING, ACTION_OPTION_SPACINGS_MAX_SPACING ],
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_OPPOSITE, ACTION_OPTION_OPTIONS_MAKE_UNIQUE ],
+        }
+      },
+      {
+        :action => ACTION_REMOVE_FITTINGS,
+        :options => {
+          ACTION_OPTION_DISTRIBUTION => [ ACTION_OPTION_DISTRIBUTION_FREE, ACTION_OPTION_DISTRIBUTION_AUTO ],
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_OPPOSITE ],
+        }
+      },
       {
         :action => ACTION_ADD_HINGES,
         :options => {
@@ -165,7 +165,7 @@ module Ladb::OpenCutList
     end
 
     def get_action_option_group_title(action, option_group)
-      return PLUGIN.get_i18n_string("tool.smart_#{get_stripped_name}.action_remove_option_group_#{option_group}") if REMOVE_ACTIONS.index(action)
+      return PLUGIN.get_i18n_string("tool.smart_#{get_stripped_name}.action_remove_option_group_#{option_group}") if REMOVE_ACTIONS.index(action) && option_group != ACTION_OPTION_OPTIONS
       super
     end
 
@@ -1024,6 +1024,13 @@ module Ladb::OpenCutList
     def _write_hardware_attributes(definition, slot)
       return unless definition.is_a?(Sketchup::ComponentDefinition)
       return if (component = _get_hardware_component(slot)).nil?
+      _write_info_attributes(definition, component)
+    end
+
+    # Gives the given definition the attributes of the given component - or
+    # article - and what the cut list reads : description, price, url, mass.
+    def _write_info_attributes(definition, component)
+      return unless definition.is_a?(Sketchup::ComponentDefinition)
       _write_component_attributes(definition, component)
       definition.description = component.description if component.description.is_a?(String) && definition.description != component.description
       unless component.price.nil?
@@ -1228,6 +1235,9 @@ module Ladb::OpenCutList
         machining_a_primitives = machining_a_definition.nil? ? _get_hardware_component_primitives(:a, :machining) : nil
         machining_b_primitives = machining_b_definition.nil? ? _get_hardware_component_primitives(:b, :machining) : nil
 
+        articles_a, contributions_a = _get_articles_geometries(:a, fn_get_definition, fn_get_drawing_def)
+        articles_b, contributions_b = _get_articles_geometries(:b, fn_get_definition, fn_get_drawing_def)
+
         fn_get_material = lambda do |ref, default_color = nil, default_type = nil|
           return nil if !ref.is_a?(String) || ref.strip.empty?
           ref = PLUGIN.resolve_library_ref(ref)   # '$LIB/…' and '$OCL/…' refs point to a file of a library
@@ -1278,10 +1288,10 @@ module Ladb::OpenCutList
       mirror_b = !component_b.nil? && component_b.mirror
 
       geometries = [
-        GeometriesEntityDef.new(hardware_a_definition, hardware_a_drawing_def, hardware_a_primitives, :a, :hardware, mirror_a),
-        GeometriesEntityDef.new(hardware_b_definition, hardware_b_drawing_def, hardware_b_primitives, :b, :hardware, mirror_b),
-        GeometriesEntityDef.new(machining_a_definition, machining_a_drawing_def, machining_a_primitives, :a, :machining, mirror_a),
-        GeometriesEntityDef.new(machining_b_definition, machining_b_drawing_def, machining_b_primitives, :b, :machining, mirror_b),
+        GeometriesEntityDef.new(hardware_a_definition, hardware_a_drawing_def, hardware_a_primitives, :a, :hardware, mirror_a, nil, nil, nil, articles_a),
+        GeometriesEntityDef.new(hardware_b_definition, hardware_b_drawing_def, hardware_b_primitives, :b, :hardware, mirror_b, nil, nil, nil, articles_b),
+        GeometriesEntityDef.new(machining_a_definition, machining_a_drawing_def, machining_a_primitives, :a, :machining, mirror_a, nil, nil, nil, nil, contributions_a),
+        GeometriesEntityDef.new(machining_b_definition, machining_b_drawing_def, machining_b_primitives, :b, :machining, mirror_b, nil, nil, nil, nil, contributions_b),
       ]
 
       bounds = Geom::BoundingBox.new
@@ -1292,6 +1302,7 @@ module Ladb::OpenCutList
         elsif geometry.primitives
           bounds.add(_get_primitives_bounds(geometry.primitives, geometry.mirror))
         end
+        bounds.add(_get_articles_bounds(geometry)) unless geometry.articles.nil?
       end
 
       @geometries_def = GeometriesDef.new(
@@ -1304,13 +1315,185 @@ module Ladb::OpenCutList
       )
     end
 
+    # -- Articles --
+
+    # The geometries of the articles of the given slot's hardware - see
+    # HardwareDescriptorDef "hardware" - and what the connectors they use
+    # drill in its part : [ ArticleGeometryDefs or nil, ContributionDefs ].
+    # The given lambdas give the definition of a ref - fn_get_definition -
+    # and its drawing def. To call in an operation : SKPs may be loaded.
+    def _get_articles_geometries(slot, fn_get_definition, fn_get_drawing_def)
+      component = _get_hardware_component(slot)
+      return [ nil, [] ] if component.nil? || component.articles.nil?
+      descriptor = _get_hardware_descriptor_def
+      contributions = []
+      articles = component.articles.map { |article|
+        if article.use?
+          used = article.descriptor
+          next nil if used.nil?
+          subs = [ article.host, article.other_slot ].map { |side|
+            used_component = used.resolve_component(side)
+            next nil if used_component.nil?
+            variables_fn = lambda { |placement| _get_article_variables(article, side, placement) }
+            if side == article.host && HardwareDescriptorDef.primitives?(used_component.machining)
+              contributions << ContributionDef.new(article, used_component.machining, variables_fn)
+            end
+            hardware = used_component.hardware
+            next nil if hardware.nil?
+            name = _get_used_definition_name(used, used_component, side)
+            definition = hardware.is_a?(String) ? fn_get_definition.call(hardware, name) : nil
+            next nil if hardware.is_a?(String) && definition.nil?
+            _write_info_attributes(definition, used_component) unless definition.nil?
+            geometry = GeometriesEntityDef.new(definition, fn_get_drawing_def.call(definition), definition.nil? ? hardware : nil, slot, :hardware, used_component.mirror, name, used_component, variables_fn)
+            SubGeometryDef.new(geometry, side == article.host ? IDENTITY : TRANSFORMATION_FLIP_Z)
+          }.compact
+        else
+          name = article.name.is_a?(String) && !article.name.strip.empty? ? article.name.strip : "#{descriptor.name} (#{article.key})"
+          definition = article.hardware.is_a?(String) ? fn_get_definition.call(article.hardware, name) : nil
+          next nil if article.hardware.is_a?(String) && definition.nil?
+          _write_info_attributes(definition, article) unless definition.nil?
+          primitives = definition.nil? && HardwareDescriptorDef.primitives?(article.hardware) ? article.hardware : nil
+          next nil if definition.nil? && primitives.nil?
+          subs = [ SubGeometryDef.new(GeometriesEntityDef.new(definition, fn_get_drawing_def.call(definition), primitives, slot, :hardware, false, name, article), IDENTITY) ]
+        end
+        subs.empty? ? nil : ArticleGeometryDef.new(article, subs)
+      }.compact
+      [ articles, contributions ]
+    end
+
+    # The name of the definition of the given side's hardware of the given
+    # used connector : as it would be laid alone - see
+    # _get_hardware_definition_name.
+    def _get_used_definition_name(used, component, side)
+      name = component.variant_name || component.name
+      return name.strip if name.is_a?(String) && !name.strip.empty?
+      side == used.slots.first ? used.name : "#{used.name} (#{side})"
+    end
+
+    # The variables of the given side of the connector the given article
+    # uses, at the given placement : the measures of its joint - its host
+    # side's taken there, its other one's given - then its own variables.
+    # Cached on the placement.
+    def _get_article_variables(article, side, placement)
+      cache = (placement.article_variables ||= {})
+      key = [ article.key, article.use, side ]
+      return cache[key] if cache.key?(key)
+      joint = article.joint_measures(_get_placement_slot_measures(placement), _get_placement_variables(placement))
+      cache[key] = joint.nil? || article.descriptor.nil? ? {} : article.descriptor.resolve_variables(article.side_measures(joint, side))
+    end
+
+    # The measures of the part of the given placement, unsuffixed - see
+    # HardwareDescriptorDef::VARIABLES. Cached on the placement.
+    def _get_placement_slot_measures(placement)
+      cache = (placement.article_variables ||= {})
+      return cache[:slot_measures] if cache.key?(:slot_measures)
+      thickness_min, thickness_max = _get_placement_local_thicknesses(placement)
+      measures = {
+        HardwareDescriptorDef::VARIABLE_THICKNESS => _get_placement_thickness(placement),
+        HardwareDescriptorDef::VARIABLE_THICKNESS_MIN => thickness_min,
+        HardwareDescriptorDef::VARIABLE_THICKNESS_MAX => thickness_max,
+      }
+      height = _get_placement_height(placement)
+      measures[HardwareDescriptorDef::VARIABLE_HEIGHT] = height unless height.nil?
+      cache[:slot_measures] = measures
+    end
+
+    # The positions of the given article at the given placement - see
+    # HardwareDescriptorDef::HardwareArticleDef#positions - none when they
+    # can't be evaluated there.
+    def _get_article_positions(article, placement)
+      article.positions(_get_placement_variables(placement)) || []
+    end
+
+    # The asserts of the connectors the articles of the given placement's
+    # slot use that fail there, named after them.
+    def _get_articles_failed_asserts(placement)
+      component = _get_hardware_component(placement.role)
+      return [] if component.nil? || component.articles.nil?
+      component.articles.select { |article| article.use? && !article.descriptor.nil? }.flat_map { |article|
+        variables = _get_article_variables(article, article.host, placement)
+        article.descriptor.failed_asserts(variables).map { |expression| "#{article.descriptor.name} : #{expression}" }
+      }
+    end
+
+    # The bounds of the articles of the given geometry in the laying frame,
+    # the measures at 0 - see _get_primitives_bounds.
+    def _get_articles_bounds(geometry)
+      bounds = Geom::BoundingBox.new
+      variables = _resolve_hardware_variables({})
+      geometry.articles.each do |article_geometry|
+        positions = article_geometry.article.positions(variables) || [ [ 0.0, 0.0 ] ]
+        article_geometry.geometries.each do |sub|
+          sub_geometry = sub.geometry
+          if sub_geometry.drawing_def
+            sub_bounds = Geom::BoundingBox.new.add(sub_geometry.drawing_def.bounds.min, sub_geometry.drawing_def.bounds.max)
+          elsif sub_geometry.primitives
+            used = sub_geometry.component.is_a?(HardwareDescriptorDef::HardwareComponentDef) ? article_geometry.article.descriptor : nil
+            sub_variables = used.nil? ? nil : used.resolve_variables(Hash[used.measures.map { |name| [ name, 0.0 ] }])
+            sub_bounds = _get_primitives_bounds(sub_geometry.primitives, sub_geometry.mirror, sub_variables)
+          else
+            next
+          end
+          positions.each do |x, y|
+            t = Geom::Transformation.translation([ x, y, 0 ]) * sub.transformation
+            (0..7).each { |i| bounds.add(sub_bounds.corner(i).transform(t)) } if sub_bounds.valid?
+          end
+        end
+      end
+      bounds.add(_get_geometry_mirror_transformation(geometry) * bounds.min, _get_geometry_mirror_transformation(geometry) * bounds.max) if geometry.mirror && bounds.valid?
+      bounds
+    end
+
+    # The variables the lengths of the given geometry are evaluated with at
+    # the given placement : its own - a used connector's - or the hardware's.
+    def _get_geometry_variables(geometry, placement)
+      geometry.variables_fn.nil? ? _get_placement_variables(placement) : geometry.variables_fn.call(placement)
+    end
+
+    # The machining the connectors the articles use drill in the part of
+    # the given geometry, at the given placement : dimensions - see
+    # _get_primitives_dimensions - shifted to each position of the article.
+    def _get_contributions_dimensions(geometry, placement)
+      return [] if geometry.contributions.nil?
+      geometry.contributions.flat_map { |contribution|
+        dimensions = _get_primitives_dimensions(contribution.primitives, placement, false, contribution.variables_fn.call(placement))
+        _get_article_positions(contribution.article, placement).flat_map { |px, py|
+          dimensions.map { |values| _shift_primitive_dimensions(values, px, py) }
+        }
+      }
+    end
+
+    # The given dimensions of a primitive - see _get_primitives_dimensions -
+    # moved by the given x and y of the laying frame.
+    def _shift_primitive_dimensions(values, px, py)
+      fn_round = lambda { |v| v.to_f.round(6) + 0.0 }
+      values = values.dup
+      case values[7]
+      when HardwareDescriptorDef::AXIS_Y   # [ x, y, z ] is [ x, z, -y ] : y along -Z, z along Y
+        values[0] = fn_round.call(values[0] + px)
+        values[3] = fn_round.call(values[3] + py)
+        values[4] = fn_round.call(values[4] + py)
+        values[6] = values[6].map { |r, z| [ r, fn_round.call(z + py) ] } unless values[6].nil?
+      when HardwareDescriptorDef::AXIS_Y_LENGTH_Z   # [ x, y, z ] is [ -y, z, -x ]
+        values[1] = fn_round.call(values[1] - px)
+        values[3] = fn_round.call(values[3] + py)
+        values[4] = fn_round.call(values[4] + py)
+        values[6] = values[6].map { |r, z| [ r, fn_round.call(z + py) ] } unless values[6].nil?
+      else
+        values[0] = fn_round.call(values[0] + px)
+        values[1] = fn_round.call(values[1] + py)
+      end
+      values
+    end
+
     # -- Primitives --
 
     # The bounds of the given primitives in the laying frame, their
-    # measures at 0 - what depends on them isn't known yet -, mirrored or not.
-    def _get_primitives_bounds(primitives, mirror = false)
+    # measures at 0 - what depends on them isn't known yet -, mirrored or
+    # not. variables : to evaluate them with, the hardware's when nil.
+    def _get_primitives_bounds(primitives, mirror = false, variables = nil)
       bounds = Geom::BoundingBox.new
-      variables = _resolve_hardware_variables(Hash[HardwareDescriptorDef.primitive_variables(primitives).map { |name| [ name, 0.0 ] }])
+      variables ||= _resolve_hardware_variables(Hash[HardwareDescriptorDef.primitive_variables(primitives).map { |name| [ name, 0.0 ] }])
       HardwareDescriptorDef.primitive_cylinders(primitives, variables).each do |cylinder|
         r = cylinder.radius
         h = cylinder.round? ? r : cylinder.length / 2
@@ -1366,14 +1549,25 @@ module Ladb::OpenCutList
     # hardware's asserts fail - see HardwareDescriptorDef#asserts.
     def _check_hardware_asserts(placements)
       descriptor = _get_hardware_descriptor_def
-      return PropagationDef.new(placements, [], []) if descriptor.nil? || descriptor.asserts.empty?
+      return PropagationDef.new(placements, [], []) if descriptor.nil? || descriptor.asserts.empty? && !_uses_connectors?
       failed_asserts = []
       refused, placements = placements.partition { |placement|
-        failed = descriptor.failed_asserts(_get_placement_variables(placement))
+        failed = descriptor.failed_asserts(_get_placement_variables(placement)) + _get_articles_failed_asserts(placement)
         failed_asserts.concat(failed)
         failed.any?
       }
-      PropagationDef.new(placements, refused, failed_asserts.uniq)
+      # The hardware is refused as a whole : the other slot at a refused anchor too
+      partners, placements = placements.partition { |placement| refused.any? { |r| r.partner.equal?(placement) || placement.partner.equal?(r) } }
+      PropagationDef.new(placements, refused + partners, failed_asserts.uniq)
+    end
+
+    # Does an article of the hardware use a connector - its asserts are
+    # checked too ?
+    def _uses_connectors?
+      [ :a, :b ].any? { |slot|
+        component = _get_hardware_component(slot)
+        !component.nil? && !component.articles.nil? && component.articles.any?(&:use?)
+      }
     end
 
     # Shows why anchors of the given propagation are refused. Is there any ?
@@ -1475,6 +1669,10 @@ module Ladb::OpenCutList
         if geometry.drawing_def
           bounds = geometry.drawing_def.bounds
           [ bounds.min.x, bounds.max.x ].product([ bounds.min.y, bounds.max.y ]).each { |x, y| points << [ sign * x, y ] }
+        elsif !geometry.articles.nil?
+          geometry.articles.each do |article_geometry|
+            (article_geometry.article.positions(variables) || []).each { |x, y| points << [ sign * x, y ] }
+          end
         elsif geometry.primitives
           HardwareDescriptorDef.primitive_cylinders(geometry.primitives, variables).each do |cylinder|
             next unless cylinder.axis.nil?   # Not on the face
@@ -1497,10 +1695,11 @@ module Ladb::OpenCutList
     # values before it nil if missing - in inches, rounded : the key of their
     # geometry. Centered, shifted along Z by their offset - see
     # _get_primitives_offset - before rounding.
-    def _get_primitives_dimensions(primitives, placement, centered = false)
-      offset = centered ? _get_primitives_offset(primitives, placement) : 0.0
+    def _get_primitives_dimensions(primitives, placement, centered = false, variables = nil)
+      variables ||= _get_placement_variables(placement)
+      offset = centered ? _get_primitives_offset(primitives, placement, variables) : 0.0
       fn_round = lambda { |v| v.to_f.round(6) + 0.0 }  # + 0.0 : no -0.0 in the key
-      HardwareDescriptorDef.primitive_cylinders(primitives, _get_placement_variables(placement)).map { |cylinder|
+      HardwareDescriptorDef.primitive_cylinders(primitives, variables).map { |cylinder|
         values = [ cylinder.x, cylinder.y, cylinder.diameter, cylinder.z_min - offset, cylinder.z_max - offset ].map(&fn_round)
         values << fn_round.call(cylinder.length) unless cylinder.round?
         values << nil << cylinder.profile.map { |r, z| [ fn_round.call(r), fn_round.call(z - offset) ] } unless cylinder.profile.nil?
@@ -1510,8 +1709,8 @@ module Ladb::OpenCutList
     end
 
     # The Z center of the given primitives resolved at the given placement.
-    def _get_primitives_offset(primitives, placement)
-      cylinders = HardwareDescriptorDef.primitive_cylinders(primitives, _get_placement_variables(placement))
+    def _get_primitives_offset(primitives, placement, variables = nil)
+      cylinders = HardwareDescriptorDef.primitive_cylinders(primitives, variables || _get_placement_variables(placement))
       return 0.0 if cylinders.empty?
       (cylinders.map(&:z_min).min + cylinders.map(&:z_max).max) / 2
     end
@@ -1603,16 +1802,40 @@ module Ladb::OpenCutList
     # The segments to preview the given geometry - hardware or machining -
     # with at the given placement, nil when there is none.
     def _get_geometry_preview_segments(geometry, placement)
+      return _get_articles_preview_segments(geometry, placement) unless geometry.articles.nil?
       if geometry.drawing_def
         segments = geometry.drawing_def.edge_manipulators.flat_map(&:segment) + geometry.drawing_def.curve_manipulators.flat_map(&:segments)
       elsif geometry.primitives
-        segments = _get_primitives_segments(_get_primitives_dimensions(geometry.primitives, placement))
+        segments = _get_primitives_segments(_get_primitives_dimensions(geometry.primitives, placement, false, _get_geometry_variables(geometry, placement)))
       else
-        return nil
+        segments = nil
       end
-      z_offset = _get_geometry_z_offset(geometry, placement)
-      return segments if z_offset == 0
-      segments.map { |point| Geom::Point3d.new(point.x, point.y, point.z + z_offset) }
+      unless segments.nil?
+        z_offset = _get_geometry_z_offset(geometry, placement)
+        segments = segments.map { |point| Geom::Point3d.new(point.x, point.y, point.z + z_offset) } unless z_offset == 0
+      end
+      contributions = _get_contributions_dimensions(geometry, placement)
+      segments = (segments || []) + _get_primitives_segments(contributions) unless contributions.empty?
+      segments
+    end
+
+    # The segments of the articles of the given geometry at the given
+    # placement, each at its positions.
+    def _get_articles_preview_segments(geometry, placement)
+      segments = []
+      geometry.articles.each do |article_geometry|
+        positions = _get_article_positions(article_geometry.article, placement)
+        article_geometry.geometries.each do |sub|
+          sub_segments = _get_geometry_preview_segments(sub.geometry, placement)
+          next if sub_segments.nil?
+          mt = _get_geometry_mirror_transformation(sub.geometry)
+          positions.each do |x, y|
+            t = Geom::Transformation.translation([ x, y, 0 ]) * sub.transformation * mt
+            segments.concat(sub_segments.map { |point| point.transform(t) })
+          end
+        end
+      end
+      segments.empty? ? nil : segments
     end
 
     # The transformation, in the laying frame, a geometry is laid with : the
@@ -1629,7 +1852,7 @@ module Ladb::OpenCutList
     def _get_geometry_offset(geometry, placement)
       return 0.0 unless geometry.part == :hardware
       offset = _get_geometry_z_offset(geometry, placement)
-      offset += _get_primitives_offset(geometry.primitives, placement) if geometry.definition.nil? && !geometry.primitives.nil?
+      offset += _get_primitives_offset(geometry.primitives, placement, _get_geometry_variables(geometry, placement)) if geometry.definition.nil? && !geometry.primitives.nil?
       offset
     end
 
@@ -1638,9 +1861,9 @@ module Ladb::OpenCutList
     # none, or it can't be evaluated there.
     def _get_geometry_z_offset(geometry, placement)
       return 0.0 unless geometry.part == :hardware
-      component = _get_hardware_component(geometry.slot)
+      component = geometry.component || _get_hardware_component(geometry.slot)
       return 0.0 if component.nil? || component.z_offset.nil?
-      HardwareDescriptorDef.to_length(component.z_offset, true, _get_placement_variables(placement)) || 0.0
+      HardwareDescriptorDef.to_length(component.z_offset, true, _get_geometry_variables(geometry, placement)) || 0.0
     end
 
     # The definition of the given geometry - hardware or machining - to lay
@@ -1654,13 +1877,13 @@ module Ladb::OpenCutList
     # operation.
     def _get_geometry_definition(geometry, placement, material = nil)
       return geometry.definition unless geometry.definition.nil?
-      return nil if geometry.primitives.nil?
 
       model = Sketchup.active_model
-      dimensions = _get_primitives_dimensions(geometry.primitives, placement, geometry.part == :hardware)
+      dimensions = geometry.primitives.nil? ? [] : _get_primitives_dimensions(geometry.primitives, placement, geometry.part == :hardware, _get_geometry_variables(geometry, placement))
+      dimensions += _get_contributions_dimensions(geometry, placement)   # Merged into the machining
       return nil if dimensions.empty?
       key = _get_geometry_definition_key(geometry, dimensions)
-      name = _get_hardware_definition_name(geometry.slot, geometry.part)
+      name = geometry.name || _get_hardware_definition_name(geometry.slot, geometry.part)
 
       definition = model.definitions.find { |d| d.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, HardwareDescriptorDef::DEFINITION_ATTRIBUTE_PRIMITIVES) == key }
       if definition.nil?
@@ -1683,7 +1906,9 @@ module Ladb::OpenCutList
         definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, HardwareDescriptorDef::DEFINITION_ATTRIBUTE_PRIMITIVES, key)
       end
       _name_hardware_definition(model, definition, name)
-      _write_hardware_attributes(definition, geometry.slot) if geometry.part == :hardware
+      if geometry.part == :hardware
+        geometry.component.nil? ? _write_hardware_attributes(definition, geometry.slot) : _write_info_attributes(definition, geometry.component)
+      end
       definition
     end
 
@@ -1795,6 +2020,12 @@ module Ladb::OpenCutList
     # holds the offset : SketchUp puts a glued instance back on the plane of
     # its face when the model is reopened.
     def _add_geometry(geometry, placement, material, layer)
+      return _add_articles(geometry, placement, material, layer) unless geometry.articles.nil?
+      if !geometry.definition.nil? && !geometry.contributions.nil? && !geometry.contributions.empty?
+        # A SKP machining : what the used connectors drill is laid beside it
+        _add_geometry(GeometriesEntityDef.new(nil, nil, nil, geometry.slot, geometry.part, geometry.mirror, nil, nil, nil, nil, geometry.contributions), placement, material, layer)
+        geometry = GeometriesEntityDef.new(geometry.definition, geometry.drawing_def, nil, geometry.slot, geometry.part, geometry.mirror)
+      end
       definition = _get_geometry_definition(geometry, placement, material)
       return unless definition.is_a?(Sketchup::ComponentDefinition)
       material = nil if geometry.part == :machining && !geometry.definition.nil? && definition.behavior.cuts_opening? # A SKP machining that cuts its opening is not painted
@@ -1809,6 +2040,38 @@ module Ladb::OpenCutList
       instance = wrapper.entities.add_instance(definition, mt * Geom::Transformation.translation([ 0, 0, offset ]))
       instance.material = material if material.is_a?(Sketchup::Material)
       instance.layer = layer if layer.is_a?(Sketchup::Layer)
+      wrapper.layer = layer if layer.is_a?(Sketchup::Layer)
+      wrapper.definition.behavior.no_scale_mask = 0b1111111
+      wrapper.definition.behavior.is2d = true       # Gluing behavior
+      wrapper.glued_to = placement.face if wrapper.respond_to?(:glued_to=) # Sketchup::Group#glued_to= requires SketchUp >= 2021.1
+    end
+
+    # Lays the articles of the given geometry at the given placement - see
+    # HardwareDescriptorDef "hardware" - in one group glued to its face : an
+    # instance of each article's definition at each of its positions, each
+    # with its own material. The group bears none : the cut list counts what
+    # it holds.
+    def _add_articles(geometry, placement, material, layer)
+      wrapper = placement.entities.add_group
+      wrapper.transformation = placement.transformation
+      mt_slot = _get_geometry_mirror_transformation(geometry)
+      geometry.articles.each do |article_geometry|
+        positions = _get_article_positions(article_geometry.article, placement)
+        article_geometry.geometries.each do |sub|
+          definition = _get_geometry_definition(sub.geometry, placement, material)
+          next unless definition.is_a?(Sketchup::ComponentDefinition)
+          t_sub = sub.transformation * _get_geometry_mirror_transformation(sub.geometry) * Geom::Transformation.translation([ 0, 0, _get_geometry_offset(sub.geometry, placement) ])
+          positions.each do |x, y|
+            instance = wrapper.entities.add_instance(definition, mt_slot * Geom::Transformation.translation([ x, y, 0 ]) * t_sub)
+            instance.material = material if material.is_a?(Sketchup::Material)
+            instance.layer = layer if layer.is_a?(Sketchup::Layer)
+          end
+        end
+      end
+      if wrapper.entities.length == 0
+        wrapper.erase!
+        return
+      end
       wrapper.layer = layer if layer.is_a?(Sketchup::Layer)
       wrapper.definition.behavior.no_scale_mask = 0b1111111
       wrapper.definition.behavior.is2d = true       # Gluing behavior
@@ -2056,14 +2319,39 @@ module Ladb::OpenCutList
     # primitives : the Hash of the part given as primitives - generated where
     # it is laid - instead of a definition ; slot, part : whose it is ;
     # mirror : laid mirrored - mirror_of -, see _get_geometry_mirror_transformation.
-    GeometriesEntityDef = Struct.new(:definition, :drawing_def, :primitives, :slot, :part, :mirror) do
+    # Set on the geometries of articles - see HardwareDescriptorDef "hardware" :
+    #  - name : of its definition, the slot's one when nil ;
+    #  - component : what gives its info fields, attributes and z_offset -
+    #    the slot's component when nil ;
+    #  - variables_fn : lambda (placement) -> its variables there, the
+    #    hardware's when nil - see _get_geometry_variables ;
+    # Set on the geometries of a slot :
+    #  - articles : its hardware's articles - ArticleGeometryDefs - nil when
+    #    it is a single part ;
+    #  - contributions : what the connectors its articles use drill in its
+    #    part - ContributionDefs - merged into its machining.
+    GeometriesEntityDef = Struct.new(:definition, :drawing_def, :primitives, :slot, :part, :mirror, :name, :component, :variables_fn, :articles, :contributions) do
       def empty?
-        definition.nil? && primitives.nil? || !valid?
+        definition.nil? && primitives.nil? && (articles.nil? || articles.empty?) && (contributions.nil? || contributions.empty?) || !valid?
       end
       def valid?
-        definition.nil? || definition.valid?
+        (definition.nil? || definition.valid?) && (articles.nil? || articles.all?(&:valid?))
       end
     end
+    # An article laid in a slot : its geometries - SubGeometryDefs - laid at
+    # each of its positions.
+    ArticleGeometryDef = Struct.new(:article, :geometries) do
+      def valid?
+        geometries.all? { |sub| sub.geometry.valid? }
+      end
+    end
+    # A geometry of an article, and the transformation it is laid with in the
+    # article's frame : the side of a used connector that isn't the part's is
+    # its own frame, Z reversed.
+    SubGeometryDef = Struct.new(:geometry, :transformation)
+    # The machining of the host side of a used connector, at each position of
+    # the article.
+    ContributionDef = Struct.new(:article, :primitives, :variables_fn)
 
     # A joinery placement resolved once and applied to a shared definition
     # (so it propagates to all its instances). 'transformation' is the anchor
@@ -2087,7 +2375,9 @@ module Ladb::OpenCutList
     # 'partner' is the placement of the other slot at the same anchor - laid
     # or not - on the other part of the joint ; 'variables' caches the
     # measures taken there, see _get_placement_variables.
-    PropagationPlacementDef = Struct.new(:definition, :face, :transformation, :role, :instance_transformations, :seed_transformation, :glued_instances, :partner, :variables) do
+    # 'article_variables' caches those of the connectors its articles use, see
+    # _get_article_variables.
+    PropagationPlacementDef = Struct.new(:definition, :face, :transformation, :role, :instance_transformations, :seed_transformation, :glued_instances, :partner, :variables, :article_variables) do
       def entities
         face.parent.entities
       end
@@ -5015,7 +5305,7 @@ module Ladb::OpenCutList
     # The hardware of the hinge given as primitives is generated as they
     # give it, not centered : its kinematics are given in that frame - the
     # one the bench shows them in.
-    def _get_primitives_offset(primitives, placement)
+    def _get_primitives_offset(primitives, placement, variables = nil)
       return 0.0 if primitives == _get_hardware_component_primitives(:a, :hardware)
       super
     end

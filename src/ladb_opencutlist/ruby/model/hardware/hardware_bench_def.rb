@@ -10,6 +10,10 @@ module Ladb::OpenCutList
   #
   # The bench frame is the laying frame of slot a : the face of a at z = 0,
   # a toward -Z, the joint along X. Lengths are in inches.
+  #
+  # A fitting sits in the inner corner two panels make - on their faces,
+  # not in their thickness : the corner and the T of a connector, where
+  # the faces meet at a right angle.
   class HardwareBenchDef
 
     TOPOLOGY_CORNER = 'corner'.freeze         # b flat, a on its edge on it at b's end : b's edge flush with a's outer face
@@ -30,6 +34,7 @@ module Ladb::OpenCutList
     # The topologies of the types the bench can show, the first by default.
     TOPOLOGIES = {
       HardwareDescriptorDef::TYPE_CONNECTOR => [ TOPOLOGY_CORNER, TOPOLOGY_FLAT_EDGE, TOPOLOGY_EDGE_EDGE, TOPOLOGY_FLAT_FLAT ],
+      HardwareDescriptorDef::TYPE_FITTING => [ TOPOLOGY_CORNER, TOPOLOGY_FLAT_EDGE ],
       HardwareDescriptorDef::TYPE_HINGE => [ TOPOLOGY_OVERLAY, TOPOLOGY_HALF_OVERLAY, TOPOLOGY_INSET ],
     }.freeze
 
@@ -80,6 +85,10 @@ module Ladb::OpenCutList
       @type == HardwareDescriptorDef::TYPE_HINGE
     end
 
+    def fitting?
+      @type == HardwareDescriptorDef::TYPE_FITTING
+    end
+
     # What the variants are selected by - see HardwareDescriptorDef#resolve_component.
     def context
       hinge? ? { 'hinge_kind' => @topology } : {}
@@ -95,6 +104,23 @@ module Ladb::OpenCutList
           PanelDef.new('a', [ -l, -PANEL_DEPTH, -@thickness_a ], [ l, _door_edge, 0.0 ], [ 2, 'max' ]),
           PanelDef.new('b', [ -l, 0.0, _side_front ], [ l, @thickness_b, _side_front + SIDE_DEPTH ], [ 1, 'min' ])
         ]
+      elsif fitting?
+        # The faces whose planes meet on the joint line, in the inner corner :
+        # a's toward +Z, b's toward -Y - see SmartJoinAddFittingsActionHandler.
+        # The panel on its edge ends on the other's face, the flat one goes
+        # past it : to the outer face of the other in a corner, beyond in a T.
+        overhang = @topology == TOPOLOGY_CORNER ? 0.0 : PANEL_DEPTH / 2
+        if @swapped
+          [
+            PanelDef.new('a', [ -l, -PANEL_DEPTH, -@thickness_a ], [ l, @thickness_b + overhang, 0.0 ], [ 2, 'max' ]),
+            PanelDef.new('b', [ -l, 0.0, 0.0 ], [ l, @thickness_b, PANEL_DEPTH ], [ 1, 'min' ])
+          ]
+        else
+          [
+            PanelDef.new('a', [ -l, -PANEL_DEPTH, -@thickness_a ], [ l, 0.0, 0.0 ], [ 2, 'max' ]),
+            PanelDef.new('b', [ -l, 0.0, -@thickness_a - overhang ], [ l, @thickness_b, PANEL_DEPTH ], [ 1, 'min' ])
+          ]
+        end
       else
         [ _connector_panel('a', -1), _connector_panel('b', 1) ]
       end
@@ -105,7 +131,7 @@ module Ladb::OpenCutList
     # T and both of an edge to edge lie horizontal - bench Y up, Z toward
     # the view's -Y.
     def view_transformation
-      return _matrix([ 1, 0, 0 ], [ 0, 1, 0 ], [ 0, 0, 1 ]) if hinge? || @topology == TOPOLOGY_FLAT_FLAT
+      return _matrix([ 1, 0, 0 ], [ 0, 1, 0 ], [ 0, 0, 1 ]) if hinge? || fitting? || @topology == TOPOLOGY_FLAT_FLAT
       _matrix([ 1, 0, 0 ], [ 0, 0, 1 ], [ 0, -1, 0 ])
     end
 
@@ -114,11 +140,12 @@ module Ladb::OpenCutList
     # as Geom::Transformation#to_a and THREE.Matrix4#fromArray.
     #  - connector : b's is a's, Z reversed - a direct, b indirect, see
     #    SmartJoinConnectorsActionHandler ;
-    #  - hinge : both direct, X along the joint line - where the door's inner
-    #    face meets the side's inner one - Z out of each face, Y = Z × X.
+    #  - hinge, fitting : both direct, X along the joint line - where the
+    #    door's inner face meets the side's inner one, or the faces of the
+    #    inner corner - Z out of each face, Y = Z × X.
     def slot_transformation(slot)
       return _matrix([ 1, 0, 0 ], [ 0, 1, 0 ], [ 0, 0, 1 ]) unless slot == 'b'
-      return _matrix([ 1, 0, 0 ], [ 0, 0, 1 ], [ 0, -1, 0 ]) if hinge?
+      return _matrix([ 1, 0, 0 ], [ 0, 0, 1 ], [ 0, -1, 0 ]) if hinge? || fitting?
       _matrix([ 1, 0, 0 ], [ 0, 1, 0 ], [ 0, 0, -1 ])
     end
 
@@ -181,6 +208,10 @@ module Ladb::OpenCutList
         # How far toward +Y of its frame each panel goes from the joint line :
         # the door to its edge, the side to its back.
         height = slot == 'a' ? _door_edge : _side_front + SIDE_DEPTH
+      elsif fitting?
+        # How far toward +Y of its frame each panel goes from the joint line
+        panel = panels.find { |panel_def| panel_def.slot == slot }
+        height = slot == 'a' ? panel.max[1] : panel.max[2]
       else
         # To the far side of its panel : as the panels are laid
         thickness = PANEL_WIDTH unless _flat?(slot)

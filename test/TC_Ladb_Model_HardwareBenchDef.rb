@@ -13,13 +13,15 @@ class TC_Ladb_Model_HardwareBenchDef < TestUp::TestCase
   def test_supported_types
     assert(HardwareBenchDef.supported?('connector'))
     assert(HardwareBenchDef.supported?('hinge'))
-    assert(!HardwareBenchDef.supported?('fitting'))
+    assert(HardwareBenchDef.supported?('fitting'))
     assert(!HardwareBenchDef.supported?('span'))
   end
 
   def test_default_and_invalid_topology
     assert_equal('corner', HardwareBenchDef.new('connector', nil, 19 * MM, 19 * MM).topology)
     assert_equal('overlay', HardwareBenchDef.new('hinge', nil, 19 * MM, 19 * MM).topology)
+    assert_equal('corner', HardwareBenchDef.new('fitting', nil, 19 * MM, 19 * MM).topology)
+    assert(!HardwareBenchDef.new('fitting', 'edge_edge', 19 * MM, 19 * MM).valid?)
     assert(!HardwareBenchDef.new('connector', 'inset', 19 * MM, 19 * MM).valid?)
     assert(!HardwareBenchDef.new('connector', 'flat_edge', 0, 19 * MM).valid?)
     assert(!HardwareBenchDef.new('span', nil, 19 * MM, 19 * MM).valid?)
@@ -178,9 +180,51 @@ class TC_Ladb_Model_HardwareBenchDef < TestUp::TestCase
     end
   end
 
+  # The frames of a hinge : a fitting sits in the inner corner the same way.
+  def test_fitting_frames
+    bench_def = HardwareBenchDef.new('fitting', 'corner', 19 * MM, 22 * MM)
+    assert_equal([ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 ], bench_def.slot_transformation('a'))
+    assert_equal(HardwareBenchDef.new('hinge', 'overlay', 19 * MM, 22 * MM).slot_transformation('b'), bench_def.slot_transformation('b'))
+    assert_equal(1, _determinant(bench_def.slot_transformation('b')))
+    assert_equal([ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 ], bench_def.view_transformation)
+    assert_equal({}, bench_def.context)
+  end
+
+  # The panel on edge ends on the other's face, the flat one goes past it :
+  # to the outer face of the other in a corner, beyond in a T. Each is
+  # measured across its thickness - a fitting is laid on faces.
+  def test_fitting_panels_and_measures
+    {
+      [ 'corner', false ] => [ 0, -19, 0 ],
+      [ 'flat_edge', false ] => [ 0, -19 - 60, 0 ],
+      [ 'corner', true ] => [ 22, -19, 22 ],
+      [ 'flat_edge', true ] => [ 22 + 60, -19, 22 + 60 ],
+    }.each do |(topology, swapped), (a_max_y, b_min_z, height_a)|
+      label = "#{topology}#{swapped ? ' swapped' : ''}"
+      bench_def = HardwareBenchDef.new('fitting', topology, 19 * MM, 22 * MM, swapped)
+      assert_equal(swapped, bench_def.swapped, label)
+      a, b = bench_def.panels
+      assert_equal([ 2, 'max' ], a.reference, label)
+      assert_equal([ 1, 'min' ], b.reference, label)
+      assert_in_delta(0, a.max[2], 1e-9, label)   # a's face on the joint line
+      assert_in_delta(0, b.min[1], 1e-9, label)   # b's face on the joint line
+      assert_in_delta(a_max_y * MM, a.max[1], 1e-9, label)
+      assert_in_delta(swapped ? 0 : b_min_z * MM, b.min[2], 1e-9, label)
+      measures = bench_def.measures
+      assert_in_delta(19 * MM, measures['thickness_a'], 1e-9, label)
+      assert_in_delta(22 * MM, measures['thickness_b'], 1e-9, label)
+      assert_in_delta(HardwareBenchDef::PANEL_DEPTH, measures['height_b'], 1e-9, label)
+      if height_a > 0
+        assert_in_delta(height_a * MM, measures['height_a'], 1e-9, label)
+      else
+        assert(!measures.key?('height_a'), "#{label} : a ends on b's face")
+      end
+    end
+  end
+
   # Each measure has its cote, as long as it is, on the end of its panel.
   def test_measure_cotes
-    { 'connector' => %w[corner flat_edge edge_edge flat_flat], 'hinge' => %w[overlay half_overlay inset] }.each do |type, topologies|
+    { 'connector' => %w[corner flat_edge edge_edge flat_flat], 'hinge' => %w[overlay half_overlay inset], 'fitting' => %w[corner flat_edge] }.each do |type, topologies|
       topologies.each do |topology|
         bench_def = HardwareBenchDef.new(type, topology, 19 * MM, 22 * MM)
         measures = bench_def.measures

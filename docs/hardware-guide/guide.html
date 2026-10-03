@@ -44,7 +44,7 @@
 <body>
 
 <h1>Créer ses propres quincailleries</h1>
-<p class="byline">OpenCutList {{VERSION}} · Outil Smart Join (connecteurs, ferrures, charnières) · Descripteur JSON, géométrie paramétrique et fichiers SKP · macOS et Windows · mis à jour le {{DATE}}</p>
+<p class="byline">OpenCutList {{VERSION}} · Outil Assembler (connecteurs, raccords, charnières) · Éditeur, descripteur JSON, géométrie paramétrique, héritage, articles et fichiers SKP · macOS et Windows · mis à jour le {{DATE}}</p>
 
 <!-- ================================================================ -->
 <h2>1. Principe</h2>
@@ -59,11 +59,36 @@
   <li><b>par des primitives</b>, directement dans le JSON : perçages et mortaises pour l'usinage, cylindres et oblongs pour la quincaillerie. OpenCutList génère la géométrie à la pose et l'adapte à l'épaisseur réelle des panneaux. Aucun SKP à dessiner : tourillons, Dominos, vis et Cabineo livrés sont faits ainsi ;</li>
   <li><b>par un fichier SKP</b>, pour une forme qu'on ne sait pas décrire en primitives (le corps d'une charnière, un Clamex).</li>
 </ul>
-<p>L'outil Smart Join lit le descripteur et pose les composants sur chaque joint, répartis selon les options (décalages, espacement). Il mesure les panneaux là où il pose : le descripteur peut s'en servir dans des <b>variables</b> (profondeur de perçage selon l'épaisseur…) et refuser une position par des <b>asserts</b> (panneau trop mince…).</p>
+<p>L'outil <b>Assembler</b> lit le descripteur et pose les composants sur chaque joint, répartis selon les options (décalages, espacement). Il mesure les panneaux là où il pose : le descripteur peut s'en servir dans des <b>variables</b> (profondeur de perçage selon l'épaisseur…) et refuser une position par des <b>asserts</b> (panneau trop mince…).</p>
 <p>Chaque type de quincaillerie pose ses composants dans des emplacements (<i>slots</i>) : <code>a</code> pour la première pièce, <code>b</code> pour la pièce en vis-à-vis.</p>
+<p>Trois mécanismes évitent de tout réécrire : les <b>réglages</b> (une variable que l'éditeur propose de modifier, section 6), l'<b>héritage</b> (une quincaillerie qui n'écrit que ce qui change par rapport à une autre, section 7) et les <b>articles</b> (une quincaillerie faite de plusieurs pièces, dont des connecteurs de la bibliothèque, section 8).</p>
+<p>Le plus simple est de passer par l'<b>éditeur de quincailleries</b> (section 2) : il écrit le JSON et les SKP à ta place, et montre la quincaillerie posée sur un banc d'essai. Le reste du guide décrit le JSON qu'il produit, pour qui veut l'écrire ou le comprendre.</p>
 
 <!-- ================================================================ -->
-<h2>2. Où placer les fichiers</h2>
+<h2>2. L'éditeur de quincailleries</h2>
+<p>Dans l'outil <b>Assembler</b>, choisis l'action du bon type (Ajouter des connecteurs, des raccords ou des charnières). La barre de bibliothèque ouvre l'éditeur de deux façons :</p>
+<ul>
+  <li><b>+</b> dans un dossier de <b>Ma Bibliothèque</b> : une quincaillerie neuve, pré-remplie avec le type et les options de l'action ;</li>
+  <li>le bouton <b>Modifier cette quincaillerie</b> sur la quincaillerie choisie. Une quincaillerie de la <b>Bibliothèque OCL</b> s'ouvre en lecture seule.</li>
+</ul>
+<p>À gauche, le <b>banc d'essai</b> pose la quincaillerie sur deux panneaux fictifs (épaisseurs et assemblage réglables : en L, en T, chant contre chant, face contre face ; en applique, jumelée ou encastrée pour une charnière). Sous le banc, les <b>Calculs</b> donnent chaque variable et chaque condition : une seule fausse et l'assemblage est refusé. À droite, trois onglets :</p>
+<table>
+  <tr><th style="width:16%">Onglet</th><th>Contenu</th></tr>
+  <tr><td>Réglages</td><td>le nom, les réglages publiés (section 6) et les options de l'outil</td></tr>
+  <tr><td>Pièces</td><td>par slot, et par variante pour une charnière : <i>Aucune</i>, <i>Fichier SKP</i>, <i>Primitives</i>, <i>Articles</i> ou <i>Même que</i> l'autre slot. Pour un SKP : choisir un fichier, le transformer (rotations, miroir, centrage), ou le <b>Créer / Modifier</b> dans SketchUp</td></tr>
+  <tr><td>JSON</td><td>le descripteur entier ; chaque modification recalcule le banc et affiche les erreurs</td></tr>
+</table>
+<p><b>Créer / Modifier dans SketchUp</b> pose un banc temporaire à côté de ton modèle et ouvre la pièce en édition, ses axes étant le repère de pose (section 9). Une petite palette <b>Terminer / Annuler</b> remplace l'éditeur ; à la fin, le banc quitte le modèle et la pièce est enregistrée à la validation.</p>
+<table>
+  <tr><th style="width:22%">Bouton</th><th>Effet</th></tr>
+  <tr><td>Valider</td><td>écrit le JSON et les SKP de ses pièces dans Ma Bibliothèque. Changer le nom du fichier renomme aussi le dossier de ses pièces</td></tr>
+  <tr><td>Dupliquer dans Ma Bibliothèque</td><td>(Bibliothèque OCL) copie la quincaillerie et ses SKP au même chemin dans Ma Bibliothèque, pour la modifier</td></tr>
+  <tr><td>Dériver</td><td>ouvre une quincaillerie qui hérite de celle-ci et ne déclare que ce qui change (section 7)</td></tr>
+  <tr><td>Supprimer</td><td>supprime le JSON et le dossier de ses pièces ; refusé tant qu'une autre quincaillerie en hérite ou l'utilise comme article</td></tr>
+</table>
+
+<!-- ================================================================ -->
+<h2>3. Où placer les fichiers</h2>
 <p>La bibliothèque personnelle (<b>Ma Bibliothèque</b> dans l'outil) est un dossier du compte utilisateur :</p>
 <div class="cols">
   <div>
@@ -87,34 +112,40 @@
 │     ├─ tourillon-8x30.json            <span class="c">← tout en primitives : aucun SKP</span>
 │     └─ clamex-maison.json             <span class="c">← hardware en SKP, usinage en primitives</span>
 ├─ fittings/                            <span class="c">← type "fitting"</span>
+│  └─ equerre-40x40.json                <span class="c">← articles : un SKP et des vis</span>
 ├─ hinges/                              <span class="c">← type "hinge"</span>
 │  └─ hettich/
 │     └─ sensys-110.json
 └─ components/                          <span class="c">← les géométries SKP, et elles seules</span>
    ├─ connectors/mon-fournisseur/clamex-maison/
    │  └─ a.skp                          <span class="c">← hardware du slot a</span>
+   ├─ fittings/equerre-40x40/
+   │  └─ a.body.skp                     <span class="c">← article "body" du slot a</span>
    └─ hinges/hettich/sensys-110/
       ├─ a.overlay.skp                  <span class="c">← slot a, variante "overlay"</span>
       ├─ a.overlay.machining.skp
       ├─ …
       ├─ b.skp
       └─ b.machining.skp</pre>
-<p>Les sous-dossiers (<code>mon-fournisseur</code>, <code>hettich</code>…) sont libres : ils apparaissent tels quels dans la barre de bibliothèque de l'outil, sous <b>Bibliothèques › Ma Bibliothèque</b>. La <b>Bibliothèque OCL</b> (livrée avec l'extension) est en lecture seule : ne la modifie pas, elle est écrasée à chaque mise à jour.</p>
+<p>Les sous-dossiers (<code>mon-fournisseur</code>, <code>hettich</code>…) sont libres : ils apparaissent tels quels dans la barre de bibliothèque de l'outil <b>Assembler</b>, sous <b>Bibliothèques › Ma Bibliothèque</b>. La <b>Bibliothèque OCL</b> (livrée avec l'extension) est en lecture seule : ne la modifie pas, elle est écrasée à chaque mise à jour.</p>
 
 <h3>Nom des fichiers SKP</h3>
 <p>Quand une partie vaut <code>true</code> dans le JSON, OpenCutList cherche le fichier :</p>
 <pre>components/&lt;dossier du JSON&gt;/&lt;nom du JSON&gt;/&lt;slot&gt;[.&lt;variante&gt;][.machining].skp</pre>
+<p>Un article <code>"skp": true</code> (section 8) a le sien, nommé par sa clé : <code>&lt;slot&gt;[.&lt;variante&gt;].&lt;clé&gt;.skp</code>.</p>
 <table>
   <tr><th>Déclaration</th><th>Fichier attendu</th></tr>
   <tr><td>slot <code>a</code>, <code>"hardware": true</code></td><td><code>a.skp</code></td></tr>
   <tr><td>slot <code>a</code>, <code>"machining": true</code></td><td><code>a.machining.skp</code></td></tr>
   <tr><td>slot <code>a</code>, variante <code>inset</code>, <code>"machining": true</code></td><td><code>a.inset.machining.skp</code></td></tr>
   <tr><td>slot <code>b</code>, <code>"hardware": true</code></td><td><code>b.skp</code></td></tr>
+  <tr><td>slot <code>a</code>, article <code>body</code>, <code>"skp": true</code></td><td><code>a.body.skp</code></td></tr>
 </table>
-<div class="warn">Si tu renommes le JSON, renomme aussi son dossier dans <code>components</code>. Un fichier déclaré mais absent est une erreur : la quincaillerie apparaît en rouge « manquante » dans la barre.</div>
+<p>Ce dossier est géré par OpenCutList : à chaque validation dans l'éditeur, les fichiers qui suivent ces noms et qu'aucune partie ni aucun article ne déclare plus sont supprimés, puis le dossier s'il est vide. Les autres fichiers sont laissés. Renommer la quincaillerie, ou la clé d'un article, renomme son dossier ou son fichier.</p>
+<div class="warn">Hors de l'éditeur, si tu renommes le JSON, renomme aussi son dossier dans <code>components</code>. Un fichier déclaré mais absent est une erreur : la quincaillerie apparaît en rouge « manquante » dans la barre.</div>
 
 <!-- ================================================================ -->
-<h2 class="page">3. Le descripteur JSON</h2>
+<h2 class="page">4. Le descripteur JSON</h2>
 <p>Fichier texte encodé en <b>UTF-8</b>. Exemple minimal, un tourillon Ø8×30 décrit uniquement par des primitives :</p>
 <pre>{
   "format": "ocl-hardware",
@@ -137,7 +168,7 @@
     "height": "/2", "start_offset": "37mm", "end_offset": "37mm", "max_spacing": "500mm"
   }
 }</pre>
-<p>Le slot <code>a</code> pose le tourillon entier (un cylindre de −15 à +15 mm, qui traverse le joint) et son perçage de 16 mm dans la pièce A ; le slot <code>b</code> ne pose qu'un perçage, le même que celui de A, creusé dans B. La section 5 montre comment adapter les profondeurs à l'épaisseur des panneaux.</p>
+<p>Le slot <code>a</code> pose le tourillon entier (un cylindre de −15 à +15 mm, qui traverse le joint) et son perçage de 16 mm dans la pièce A ; le slot <code>b</code> ne pose qu'un perçage, le même que celui de A, creusé dans B. La section 6 montre comment adapter les profondeurs à l'épaisseur des panneaux.</p>
 
 <h3>Champs racine</h3>
 <table>
@@ -145,21 +176,23 @@
   <tr><td><code>format</code></td><td>oui</td><td>toujours <code>"ocl-hardware"</code></td></tr>
   <tr><td><code>version</code></td><td>oui</td><td>toujours <code>1</code></td></tr>
   <tr><td><code>id</code></td><td>oui</td><td>identifiant unique (UUID). macOS : Terminal, <code>uuidgen</code>. Windows : PowerShell, <code>[guid]::NewGuid()</code>. <b>Ne jamais copier l'id d'un autre fichier.</b></td></tr>
-  <tr><td><code>type</code></td><td>oui</td><td><code>connector</code>, <code>fitting</code> ou <code>hinge</code> : détermine l'action de Smart Join et le dossier racine</td></tr>
+  <tr><td><code>type</code></td><td>oui</td><td><code>connector</code>, <code>fitting</code> ou <code>hinge</code> : détermine l'action de l'outil Assembler et le dossier racine ; hérité du parent avec <code>extends</code></td></tr>
   <tr><td><code>name</code></td><td>oui</td><td>nom affiché dans la barre de bibliothèque</td></tr>
+  <tr><td><code>extends</code></td><td>non</td><td>la quincaillerie dont celle-ci hérite (section 7)</td></tr>
+  <tr><td><code>abstract</code></td><td>non</td><td><code>true</code> : une base d'héritage, ni listée ni posable (section 7)</td></tr>
   <tr><td><code>supplier</code>, <code>url</code></td><td>non</td><td>fournisseur, lien vers la gamme</td></tr>
   <tr><td><code>hardware_material</code></td><td>non</td><td>matière des pièces hardware posées : un nom de matière, ou une ref <code>$LIB/…/x.skm</code></td></tr>
-  <tr><td><code>variables</code></td><td>non</td><td>expressions nommées, calculées à chaque pose (section 5)</td></tr>
-  <tr><td><code>asserts</code></td><td>non</td><td>conditions à respecter, sinon la position est refusée (section 5)</td></tr>
+  <tr><td><code>variables</code></td><td>non</td><td>expressions nommées, calculées à chaque pose, et réglages (section 6)</td></tr>
+  <tr><td><code>asserts</code></td><td>non</td><td>conditions à respecter, sinon la position est refusée (section 6)</td></tr>
   <tr><td><code>components</code></td><td>oui</td><td>un objet par slot (voir ci-dessous)</td></tr>
   <tr><td><code>options</code></td><td>non</td><td>valeurs par défaut des options de l'outil, reprises quand on choisit la quincaillerie</td></tr>
 </table>
 
 <h3>Types et slots</h3>
 <table>
-  <tr><th>Type</th><th>Action Smart Join</th><th>Slot <code>a</code></th><th>Slot <code>b</code></th></tr>
+  <tr><th>Type</th><th>Action de l'outil Assembler</th><th>Slot <code>a</code></th><th>Slot <code>b</code></th></tr>
   <tr><td><code>connector</code></td><td>Ajouter des connecteurs</td><td>pièce A (face de contact)</td><td>pièce B, en vis-à-vis</td></tr>
-  <tr><td><code>fitting</code></td><td>Ajouter des ferrures</td><td>1ʳᵉ pièce cliquée</td><td>2ᵉ pièce cliquée</td></tr>
+  <tr><td><code>fitting</code></td><td>Ajouter des raccords</td><td>1ʳᵉ pièce cliquée</td><td>2ᵉ pièce cliquée</td></tr>
   <tr><td><code>hinge</code></td><td>Ajouter des charnières</td><td>la porte (cuvette)</td><td>le côté du caisson (embase)</td></tr>
 </table>
 <p class="small">Les types <code>face</code> (poignées) et <code>span</code> (coulisses, tringles) sont réservés, pas encore utilisables.</p>
@@ -172,7 +205,7 @@
   <tr><td><code>price</code></td><td>prix <b>unitaire</b> (nombre)</td></tr>
   <tr><td><code>mass</code></td><td>masse unitaire : nombre en kg, ou texte avec unité</td></tr>
   <tr><td><code>url</code></td><td>lien fiche produit</td></tr>
-  <tr><td><code>hardware</code></td><td>la partie objet (voir « parties »)</td></tr>
+  <tr><td><code>hardware</code></td><td>la partie objet (voir « parties ») ; ou des articles (section 8)</td></tr>
   <tr><td><code>machining</code></td><td>la partie usinage (voir « parties »)</td></tr>
   <tr><td><code>z_offset</code></td><td>décalage de la partie hardware le long de Z du repère de pose (expression de longueur) ; l'usinage part toujours de la face</td></tr>
   <tr><td><code>attributes</code></td><td>attributs écrits sur la pièce posée (valeurs simples ou listes de valeurs simples). <code>"symmetrical": true</code> : la pièce n'a ni gauche ni droite, la fiche de débit ne sépare pas les exemplaires posés en miroir</td></tr>
@@ -183,11 +216,12 @@
 <h3>Les parties <code>hardware</code> et <code>machining</code></h3>
 <table>
   <tr><th style="width:34%">Valeur</th><th>Signification</th></tr>
-  <tr><td><code>{ "drillings": […], "mortises": […] }</code></td><td>usinage généré : perçages, mortaises (section 4)</td></tr>
-  <tr><td><code>{ "cylinders": […], "oblongs": […] }</code></td><td>quincaillerie générée : cylindres, oblongs (section 4)</td></tr>
+  <tr><td><code>{ "drillings": […], "mortises": […] }</code></td><td>usinage généré : perçages, mortaises (section 5)</td></tr>
+  <tr><td><code>{ "cylinders": […], "oblongs": […] }</code></td><td>quincaillerie générée : cylindres, oblongs (section 5)</td></tr>
   <tr><td><code>true</code></td><td>le SKP conventionnel <code>&lt;slot&gt;[.&lt;variante&gt;][.machining].skp</code></td></tr>
   <tr><td><code>"chemin/fichier.skp"</code></td><td>un SKP partagé entre quincailleries, chemin relatif au dossier <code>components</code> de la bibliothèque, p. ex. <code>"hinges/hettich/cuvette-35.skp"</code></td></tr>
   <tr><td><code>{ "same_as": "a" }</code></td><td>la même partie que celle du slot <code>a</code></td></tr>
+  <tr><td><code>{ "body": {…}, "screws": {…} }</code></td><td>(hardware seulement) plusieurs articles, chacun sous sa clé (section 8)</td></tr>
   <tr><td>absente, <code>null</code>, <code>false</code></td><td>pas de cette partie</td></tr>
 </table>
 
@@ -209,9 +243,9 @@
     "fallback": "overlay",
     "items": {
       "overlay":      { "name": "Sensys 110° en applique", "hardware": true, "machining": true,
-                        "attributes": { "hinge_pivot": [ 17, -29 ] } },
+                        "attributes": { "hinge_pivot": [ "17mm", "-29mm" ] } },
       "half_overlay": { "name": "Sensys 110° jumelée",     "hardware": true, "machining": true,
-                        "attributes": { "hinge_pivot": [ -4, -26 ] } },
+                        "attributes": { "hinge_pivot": [ "-4mm", "-26mm" ] } },
       "inset": null
     }
   }
@@ -228,14 +262,14 @@
   <li>une variante à <code>null</code> signifie « non supportée » : pas de repli, la charnière n'est pas posée dans ce cas ;</li>
   <li>les <code>name</code>, <code>description</code>, <code>price</code>, <code>url</code>, <code>mass</code>, <code>z_offset</code>, <code>attributes</code> d'une variante complètent / remplacent ceux du composant.</li>
 </ul>
-<p>Attributs lus par l'action <b>Interagir</b> (ouvrir la porte) : <code>role</code> = <code>"hinge"</code>, <code>hinge_max_angle</code> (degrés), <code>hinge_pivot</code> = [x, y] en mm dans le repère de la charnière, <code>hinge_pivot_approximate</code> (booléen).</p>
+<p>Attributs lus par l'action <b>Interagir</b> (ouvrir la porte) : <code>role</code> = <code>"hinge"</code>, <code>hinge_max_angle</code> (degrés), <code>hinge_pivot</code> = [y, z], deux longueurs dans le repère de pose (Y vers le chant de rotation de la porte, Z vers le caisson) ; l'onglet Pièces de l'éditeur les règle sous « Cinématique de la charnière », <code>hinge_pivot_approximate</code> (booléen).</p>
 
 <h3>Nom des pièces dans la fiche de débit</h3>
 <p>La pièce posée prend le <code>name</code> du composant, remplacé par celui de la variante s'il existe ; une variante sans <code>name</code> ajoute son libellé entre parenthèses. L'usinage ajoute « (Usinage) ». Un composant sans <code>name</code> prend le nom de la quincaillerie, suivi du slot pour <code>b</code> : « Tourillon 8x30 (b, Usinage) ». Le nom est réappliqué à chaque pose : un renommage dans le JSON se propage au modèle.</p>
 
 <!-- ================================================================ -->
-<h2 class="page">4. Géométrie paramétrique</h2>
-<p>Les primitives sont décrites dans le <b>repère de pose</b> du composant (section 6) : la face de la pièce est à z = 0, la matière vers −Z. Les longueurs sont des textes avec unité ou des nombres en millimètres ; <code>x</code> et <code>y</code> valent 0 par défaut. Toute longueur peut être une expression de mesures et de variables (section 5).</p>
+<h2 class="page">5. Géométrie paramétrique</h2>
+<p>Les primitives sont décrites dans le <b>repère de pose</b> du composant (section 9) : la face de la pièce est à z = 0, la matière vers −Z. Les longueurs sont des textes avec unité ou des nombres en millimètres ; <code>x</code> et <code>y</code> valent 0 par défaut. Toute longueur peut être une expression de mesures et de variables (section 6).</p>
 
 <table>
   <tr><th style="width:16%">Primitive</th><th style="width:13%">Partie</th><th style="width:30%">Clés</th><th>Forme</th></tr>
@@ -265,7 +299,7 @@
 <p>Le bout se choisit par <code>"face": "contact" | "opposite"</code> dans la tête d'un perçage (<code>opposite</code> exige <code>"depth": "through"</code>) et par <code>"end": "from" | "to"</code>, obligatoire, dans celle d'un cylindre.</p>
 
 <!-- ================================================================ -->
-<h2>5. Mesures, variables et asserts</h2>
+<h2>6. Mesures, variables, réglages et asserts</h2>
 <p>À chaque position, l'outil mesure les pièces. Une longueur peut s'en servir : <code>"@thickness - 2mm"</code>, <code>"@thickness / 2"</code>. Les littéraux portent une unité (mm, cm, m, <code>"</code>, <code>'</code>, yd), un nombre nu est un facteur, et on n'additionne que des longueurs entre elles.</p>
 <table>
   <tr><th style="width:30%">Mesure</th><th>Ce que c'est</th></tr>
@@ -275,8 +309,8 @@
   <tr><td><code>@thickness_a</code>, <code>@height_b</code>…</td><td>la mesure de la pièce du slot <code>a</code> ou <code>b</code> : la même expression se lit depuis l'un ou l'autre slot</td></tr>
 </table>
 <p><b>Fonctions</b> (arguments séparés par <code>;</code>) : <code>min(…; …)</code>, <code>max(…; …)</code> ; <code>floor(x; v1; v2; …)</code> prend la plus grande valeur proposée qui ne dépasse pas x, <code>ceil(x; v1; v2; …)</code> la plus petite qui n'est pas en dessous : les crans d'une machine, p. ex. <code>floor(@thickness_a - 5mm; 12mm; 15mm; 20mm; 25mm; 28mm)</code> pour la Domino DF 500. Sans valeur qui convienne, l'expression échoue et la position est refusée.</p>
-<p><b><code>variables</code></b> (à la racine) nomme des expressions calculées dans l'ordre : chacune peut utiliser les mesures et les variables au-dessus d'elle. <b><code>asserts</code></b> liste des comparaisons (<code>&lt;=</code>, <code>&gt;=</code>, <code>&lt;</code>, <code>&gt;</code>, <code>=</code>) : là où l'une échoue, l'outil écarte la position, la marque d'une <b>croix rouge</b> et affiche la comparaison non respectée.</p>
-<p>Exemple (le <i>Dowel 8x40</i> livré) : un tourillon de 40 mm entre deux panneaux, jamais percé à moins de 5 mm de la face opposée. Entre un panneau à plat et un panneau sur chant, il s'enfonce plus dans le chant ; deux panneaux à plat n'offrent pas la place et sont refusés.</p>
+<p><b><code>variables</code></b> (à la racine) nomme des expressions : chacune peut utiliser les mesures et les autres variables, où qu'elles soient écrites ; elles sont calculées dans l'ordre de leurs dépendances (une boucle est une erreur). <b><code>asserts</code></b> liste des comparaisons (<code>&lt;=</code>, <code>&gt;=</code>, <code>&lt;</code>, <code>&gt;</code>, <code>=</code>) : là où l'une échoue, l'outil écarte la position, la marque d'une <b>croix rouge</b> et affiche la comparaison non respectée.</p>
+<p>Exemple (une version simplifiée du tourillon livré) : un tourillon de 40 mm entre deux panneaux, jamais percé à moins de 5 mm de la face opposée. Entre un panneau à plat et un panneau sur chant, il s'enfonce plus dans le chant ; deux panneaux à plat n'offrent pas la place et sont refusés.</p>
 <pre>"variables": {
   "depth_a": "min(@thickness_a - 5mm; max(20mm; 40mm - (@thickness_b - 5mm)))",
   "depth_b": "40mm - @depth_a"
@@ -291,7 +325,7 @@
   "b": { "machining": { "drillings": [ { "diameter": "8mm", "depth": "@depth_b + 1mm" } ] } }
 }</pre>
 <div class="note"><b>Slots a / b (connecteurs).</b> Les géométries du slot <code>a</code> sont toujours posées sur la pièce A de l'outil (celle dont on sélectionne l'arête, qui touche B par la face voisine), celles du slot <code>b</code> sur la pièce B. Un descripteur a donc un sens : quand ses asserts refusent la position, c'est la jonction qu'il faut prendre depuis l'autre pièce.</div>
-<p>Exemple (la <i>Screw 4x50</i> livrée) : vis qui se visse dans A à travers B, tête fraisée sur la face opposée de B, refusée si cette face n'est pas parallèle ou si la vis mord moins de 15 mm dans A :</p>
+<p>Exemple (une vis 4×50, version simplifiée des vis livrées) : vis qui se visse dans A à travers B, tête fraisée sur la face opposée de B, refusée si cette face n'est pas parallèle ou si la vis mord moins de 15 mm dans A :</p>
 <pre>"variables": { "embed": "50mm - @thickness_max_b" },
 "asserts": [
   "@thickness_max_b - @thickness_min_b &lt;= 0.2mm",
@@ -307,8 +341,98 @@
   "b": { "machining": { "drillings": [ { "diameter": "4mm", "depth": "through" } ] } }
 }</pre>
 
+<h3>Réglages</h3>
+<p>Une variable écrite en objet est un <b>réglage</b> : l'éditeur la montre dans l'onglet Réglages pour qu'on l'ajuste sans toucher aux expressions. Partout ailleurs, elle se lit comme sa valeur : <code>@diameter</code> vaut 8 mm.</p>
+<table>
+  <tr><th style="width:18%">Clé</th><th>Rôle</th></tr>
+  <tr><td><code>value</code></td><td>obligatoire : une longueur simple, sans <code>@</code> ni fonction</td></tr>
+  <tr><td><code>label</code></td><td>le libellé affiché</td></tr>
+  <tr><td><code>steps</code></td><td>les valeurs permises, choisies par boutons ; <code>value</code> doit en faire partie</td></tr>
+  <tr><td><code>min</code>, <code>max</code></td><td>bornent une saisie libre (pas avec <code>steps</code>)</td></tr>
+</table>
+<pre>"variables": {
+  "diameter": { "value": "8mm", "label": "Diamètre", "steps": [ "6mm", "8mm", "10mm" ] },
+  "length": { "value": "40mm", "label": "Longueur", "min": "20mm", "max": "60mm" },
+  "depth_a": "@length / 2"
+}</pre>
+
 <!-- ================================================================ -->
-<h2>6. Construire les fichiers SKP</h2>
+<h2>7. Héritage</h2>
+<p>Une quincaillerie peut en étendre une autre par <code>"extends"</code> et ne déclarer que ce qui change : tourillons 8×40 et 10×40, ou ta version d'une quincaillerie OCL, partagent une même logique. Dans l'éditeur, le bouton <b>Dériver</b> crée une telle quincaillerie, et les valeurs héritées y apparaissent grisées : modifier un réglage ou une option le surcharge.</p>
+<pre>{
+  "format": "ocl-hardware",
+  "version": 1,
+  "id": "6c0d2e8a-41f7-4b39-9a85-2f7e1c3b5d64",
+  "extends": "$OCL/connectors/generic/dowels/dowel.json",
+  "name": "Tourillon 8x40 hêtre",
+  "variables": {
+    "diameter": { "value": "8mm" },
+    "clearance": "2mm"
+  }
+}</pre>
+<ul>
+  <li><b>Parent.</b> Son chemin part de la racine de la même bibliothèque (<code>"connectors/x.json"</code>) ; <code>$OCL/…</code> désigne la Bibliothèque OCL depuis Ma Bibliothèque, jamais l'inverse. Huit niveaux au plus ; un parent introuvable ou une boucle rend la quincaillerie invalide.</li>
+  <li><b><code>"abstract": true</code></b> : le parent n'est ni listé ni posable. Il peut laisser un réglage sans <code>value</code>, que chaque enfant donne (le <i>Dowel</i> et la <i>Screw</i> livrés sont ainsi).</li>
+  <li><b>Fusion</b>, du parent le plus lointain à l'enfant : les objets fusionnent clé par clé, une liste ou une valeur simple remplace celle du parent, <code>null</code> supprime. Ne sont jamais hérités : <code>format</code>, <code>version</code>, <code>id</code>, <code>name</code>, <code>extends</code>, <code>abstract</code>. <code>type</code> est hérité et ne peut pas changer.</li>
+</ul>
+<table>
+  <tr><th style="width:44%">Écrit dans l'enfant</th><th>Effet</th></tr>
+  <tr><td><code>"diameter": { "value": "10mm" }</code></td><td>change la valeur du réglage, garde son libellé et ses crans</td></tr>
+  <tr><td><code>"clearance": "1mm"</code></td><td>fige le réglage : une variable simple, plus proposée dans l'éditeur</td></tr>
+  <tr><td><code>"b": { "machining": null }</code></td><td>retire l'usinage du slot <code>b</code></td></tr>
+  <tr><td><code>"asserts": [ … ]</code></td><td>remplace la liste du parent</td></tr>
+  <tr><td><code>"asserts": [ "@super", "@depth_a &gt;= 10mm" ]</code></td><td>la liste du parent, puis celle de l'enfant</td></tr>
+  <tr><td><code>"depth_a": "@super + 1mm"</code></td><td>l'expression du parent, entre parenthèses, plus 1 mm</td></tr>
+</table>
+<p>Une partie <code>true</code> héritée telle quelle se lit dans le dossier de pièces du parent ; redéclarée <code>true</code> dans l'enfant, dans celui de l'enfant. Renommer un parent dans l'éditeur réécrit l'<code>extends</code> de ses enfants ; le supprimer est refusé tant qu'il en a.</p>
+
+<!-- ================================================================ -->
+<h2>8. Composition : les articles</h2>
+<p>Une quincaillerie peut poser <b>plusieurs pièces par slot</b>, chacune sa propre ligne dans la fiche de débit : une équerre et ses vis donnent « Équerre 40x40 × 1 » et « Screw 4x16 × 4 ». La partie <code>hardware</code> d'un composant devient alors un objet d'<b>articles</b>, chacun sous une clé. Dans l'éditeur, c'est le choix <i>Articles</i> de l'onglet Pièces.</p>
+<pre>{
+  "format": "ocl-hardware",
+  "version": 1,
+  "id": "9b4e1f30-7a2c-4d8e-b6f5-0c3a9e2d7f18",
+  "type": "fitting",
+  "name": "Équerre 40x40",
+  "variables": {
+    "bracket_thickness": { "value": "2mm", "label": "Épaisseur de l'équerre" },
+    "hole_distance": { "value": "25mm", "label": "Entraxe des trous" }
+  },
+  "components": {
+    "a": {
+      "hardware": {
+        "body": { "name": "Équerre 40x40", "price": 0.30, "skp": true },
+        "screws": {
+          "use": "$OCL/connectors/generic/screws/screw-4x16.json", "host": "a",
+          "measures": { "thickness_b": "@bracket_thickness" },
+          "variables": { "embed_min": { "value": "10mm" } },
+          "at": [ { "x": "-8mm", "y": "-@hole_distance" }, { "x": "8mm", "y": "-@hole_distance" } ]
+        }
+      }
+    },
+    "b": {
+      "hardware": {
+        "screws": {
+          "use": "$OCL/connectors/generic/screws/screw-4x16.json", "host": "a",
+          "measures": { "thickness_b": "@bracket_thickness" },
+          "variables": { "embed_min": { "value": "10mm" } },
+          "at": [ { "x": "-8mm", "y": "@hole_distance" }, { "x": "8mm", "y": "@hole_distance" } ]
+        }
+      }
+    }
+  }
+}</pre>
+<ul>
+  <li><b>Clé</b> : lettres minuscules, chiffres, <code>-</code> et <code>_</code>, en commençant par une lettre, unique dans le slot ; pas le nom d'un champ d'article (<code>name</code>, <code>skp</code>, <code>use</code>, <code>at</code>…). Elle nomme le fichier d'un article <code>"skp": true</code> : <code>a.body.skp</code>.</li>
+  <li><b>Article propre</b> : ses champs de fiche de débit (<code>name</code>, <code>description</code>, <code>price</code>, <code>url</code>, <code>mass</code>) et sa géométrie, un SKP (<code>"skp"</code> : <code>true</code> ou un chemin partagé) ou des primitives (<code>cylinders</code>, <code>oblongs</code>).</li>
+  <li><b>Article de bibliothèque</b> : <code>use</code> désigne un <code>connector</code> concret, par son chemin comme pour <code>extends</code>. Son nom, son prix et ses asserts sont ceux du connecteur, évalués à chaque position : un seul en échec refuse la position. <code>host</code> (<code>a</code> ou <code>b</code>) dit quel côté du connecteur est notre panneau ; l'autre côté est virtuel, <code>measures</code> donne son épaisseur (<code>thickness_b</code> ici : l'épaisseur de l'équerre). <code>variables</code> ne change que les valeurs de ses réglages. Son usinage côté <code>host</code> s'ajoute à celui du slot.</li>
+  <li><b>Positions</b> : <code>at</code> liste des <code>{ x, y }</code> dans le repère du slot (longueurs ou expressions) ; absent, une position à l'origine. La géométrie d'un article est dessinée autour de sa propre origine.</li>
+  <li>Seuls les types autres que <code>connector</code> peuvent utiliser un connecteur. Un connecteur utilisé ne peut pas être supprimé ; le renommer dans l'éditeur réécrit les <code>use</code> qui le désignent.</li>
+</ul>
+
+<!-- ================================================================ -->
+<h2 class="page">9. Construire les fichiers SKP</h2>
 <h3>Le repère de pose</h3>
 <p>C'est le point essentiel, pour les SKP comme pour les primitives : OpenCutList pose chaque composant en faisant coïncider <b>son origine et ses axes</b> avec le repère de pose calculé sur le joint. La géométrie d'un SKP doit donc être dessinée par rapport à l'origine du modèle SketchUp.</p>
 <figure>
@@ -369,6 +493,7 @@
 <br>Windows : <code class="nowrap">%APPDATA%\SketchUp\SketchUp 20xx\SketchUp\Plugins\ladb_opencutlist\library\</code></div>
 
 <h3>Étapes dans SketchUp</h3>
+<p>Le plus simple : dans l'éditeur, onglet Pièces, <b>Créer</b> (ou <b>Modifier</b>) ouvre la pièce dans SketchUp directement dans le bon repère, à côté du banc d'essai, et l'enregistre au bon nom à la validation. À la main :</p>
 <ol>
   <li><b>Nouveau modèle vide</b>, en millimètres.</li>
   <li>Modélise la pièce <b>directement autour de l'origine</b> selon le repère ci-dessus (pas de groupe englobant nécessaire : le contenu du fichier devient le composant).</li>
@@ -380,9 +505,10 @@
 <div class="warn">Une géométrie déjà présente dans le modèle est réutilisée : un SKP modifié n'apparaît pas tant que l'ancienne définition y reste. Pour tester une modification, supprime les poses puis purge le modèle, ou travaille dans un nouveau modèle. Relance l'outil après avoir modifié les fichiers.</div>
 
 <!-- ================================================================ -->
-<h2>7. Vérifier et dépanner</h2>
+<h2>10. Vérifier et dépanner</h2>
+<p>Le banc d'essai de l'éditeur montre déjà la pose, les calculs et les conditions. Pour vérifier dans un vrai modèle :</p>
 <ol>
-  <li>Dans SketchUp, lance <b>Smart Join</b>, choisis l'action du bon type (connecteurs / ferrures / charnières).</li>
+  <li>Dans SketchUp, lance <b>Assembler</b>, choisis l'action du bon type (connecteurs / raccords / charnières).</li>
   <li>Dans la barre de bibliothèque : <b>Bibliothèques › Ma Bibliothèque</b>, puis ton sous-dossier ; clique la quincaillerie pour la choisir.</li>
   <li>Pose-la sur un joint de test et vérifie l'orientation (hardware dans le joint, usinage dans la matière). Essaie aussi des épaisseurs et des positions (à plat, sur chant) qui doivent être refusées.</li>
 </ol>
@@ -395,20 +521,23 @@
   <tr><td>Perçage « axis y » au mauvais endroit</td><td>option <code>height</code> du connecteur, ou <code>z</code> positif (il doit être négatif, dans la pièce)</td></tr>
   <tr><td>Charnière absente sur une porte encastrée</td><td>variante <code>inset</code> à <code>null</code>, ou absente sans <code>fallback</code></td></tr>
   <tr><td>Deux quincailleries se confondent</td><td>même <code>id</code> copié d'un autre fichier : en générer un nouveau</td></tr>
+  <tr><td>Suppression refusée</td><td>une autre quincaillerie en hérite (<code>extends</code>) ou l'utilise comme article (<code>use</code>) : le message les nomme</td></tr>
+  <tr><td>Un fichier SKP a disparu du dossier de pièces</td><td>il suivait la convention de nom sans plus être déclaré : supprimé à la validation</td></tr>
 </table>
-<div class="note">Pour valider la syntaxe d'un JSON, ouvre-le dans un éditeur qui signale les erreurs (VS Code, sur macOS comme sur Windows), ou colle-le dans un validateur JSON en ligne.</div>
+<div class="note">L'onglet JSON de l'éditeur signale les erreurs de syntaxe et de validation. Hors de l'éditeur, ouvre le fichier dans un éditeur de texte qui signale les erreurs (VS Code, sur macOS comme sur Windows), ou colle-le dans un validateur JSON en ligne.</div>
 
 <!-- ================================================================ -->
 <div class="keep">
-<h2>8. Exemples livrés</h2>
-<p>La Bibliothèque OCL contient des descripteurs complets à copier dans Ma Bibliothèque (change l'<code>id</code> de la copie) :</p>
+<h2>11. Exemples livrés</h2>
+<p>La Bibliothèque OCL contient des descripteurs complets à ouvrir dans l'éditeur, puis à <b>Dériver</b> ou <b>Dupliquer dans Ma Bibliothèque</b> :</p>
 <table>
-  <tr><th style="width:42%">Fichier</th><th>Ce qu'il montre</th></tr>
-  <tr><td><code class="nowrap">connectors/generic/dowel-8x40.json</code><br><code class="nowrap">connectors/generic/dowel-10x40.json</code></td><td>tourillon tout en primitives ; variables et asserts selon l'épaisseur des deux pièces</td></tr>
-  <tr><td><code class="nowrap">connectors/generic/screws/screw-4x50.json</code></td><td>vis à travers B, tête fraisée sur la face opposée ; <code>@thickness_min</code> / <code>@thickness_max</code></td></tr>
-  <tr><td><code class="nowrap">connectors/festool/domino-5x30.json</code><br><code class="nowrap">connectors/festool/domino-8x40.json</code></td><td>mortaises et tenon oblong ; crans de la machine avec <code>floor</code> / <code>ceil</code></td></tr>
+  <tr><th style="width:44%">Fichier</th><th>Ce qu'il montre</th></tr>
+  <tr><td><code class="nowrap">connectors/generic/dowels/dowel.json</code><br><code class="nowrap">connectors/generic/dowels/dowel-8x40.json</code>, <code>…-10x40</code></td><td>tourillon tout en primitives, base abstraite et réglages ; les tailles n'écrivent que leur diamètre ; variables et asserts selon l'épaisseur des deux pièces</td></tr>
+  <tr><td><code class="nowrap">connectors/generic/screws/screw.json</code><br><code class="nowrap">connectors/generic/screws/screw-4x16.json</code>, <code>…-4x50</code>, <code>…-5x80</code></td><td>vis à travers B, tête fraisée sur la face opposée ; <code>@thickness_min</code> / <code>@thickness_max</code> ; base abstraite</td></tr>
+  <tr><td><code class="nowrap">connectors/festool/domino.json</code><br><code class="nowrap">connectors/festool/domino-5x30.json</code>, <code>…-8x40</code></td><td>mortaises et tenon oblong ; crans de la machine avec <code>floor</code> / <code>ceil</code></td></tr>
   <tr><td><code>connectors/lamello/clamex/…</code></td><td>hardware en SKP, trou d'accès en perçage <code>"axis": "y"</code></td></tr>
   <tr><td><code>connectors/lamello/cabineo/…</code></td><td>perçages le long de Y, logement de collerette avec <code>"length_axis": "z"</code></td></tr>
+  <tr><td><code class="nowrap">fittings/generic/angle-bracket-40x40.json</code></td><td>articles : des vis <code>screw-4x16</code> utilisées comme connecteur, avec un côté virtuel</td></tr>
   <tr><td><code>hinges/blum/clip-top.json</code></td><td>charnière à variantes (SKP par type de pose), embase en SKP avec perçages en primitives, attributs pour « Interagir »</td></tr>
 </table>
 </div>

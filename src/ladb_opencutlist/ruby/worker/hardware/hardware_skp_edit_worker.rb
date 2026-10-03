@@ -96,8 +96,9 @@ module Ladb::OpenCutList
 
         # The part : a new definition - the file's content laid by its placement
         definition = model.definitions.add(@name.is_a?(String) && !@name.empty? ? @name : 'Part')
+        placeholder = nil
         if path.nil?
-          definition.entities.add_cpoint(ORIGIN)   # An empty definition doesn't stay
+          placeholder = definition.entities.add_cpoint(ORIGIN)   # An empty definition doesn't stay - not saved
         else
           loaded = HardwareSkpMeshWorker.load_definition(model, path)
           raise 'not loaded' if loaded.nil?
@@ -121,6 +122,7 @@ module Ladb::OpenCutList
         :model => model,
         :bench => bench,
         :instance => instance,
+        :placeholder => placeholder,
         :definitions => definitions,
         :view_state => @view_state,
       }
@@ -148,6 +150,14 @@ module Ladb::OpenCutList
       end
 
       _close_active(session[:model])
+
+      # The point that kept it while empty, once it isn't
+      placeholder = session[:placeholder]
+      if !placeholder.nil? && placeholder.valid? && instance.definition.entities.length > 1
+        session[:model].start_operation('OCL Hardware Edit', true, false, true)
+        placeholder.erase!
+        session[:model].commit_operation
+      end
 
       dir = File.join(PLUGIN.temp_dir, 'hardware')
       FileUtils.mkdir_p(dir)
