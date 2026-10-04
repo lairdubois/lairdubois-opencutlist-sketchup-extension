@@ -73,6 +73,7 @@ module Ladb::OpenCutList
       },
       {
         :action => ACTION_REMOVE_CONNECTORS,
+        :variant_of => ACTION_ADD_CONNECTORS,
         :options => {
           ACTION_OPTION_DISTRIBUTION => [ ACTION_OPTION_DISTRIBUTION_FREE, ACTION_OPTION_DISTRIBUTION_AUTO ],
         }
@@ -88,6 +89,7 @@ module Ladb::OpenCutList
       },
       {
         :action => ACTION_REMOVE_FITTINGS,
+        :variant_of => ACTION_ADD_FITTINGS,
         :options => {
           ACTION_OPTION_DISTRIBUTION => [ ACTION_OPTION_DISTRIBUTION_FREE, ACTION_OPTION_DISTRIBUTION_AUTO ],
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_OPPOSITE ],
@@ -104,6 +106,7 @@ module Ladb::OpenCutList
       },
       {
         :action => ACTION_REMOVE_HINGES,
+        :variant_of => ACTION_ADD_HINGES,
         :options => {
           ACTION_OPTION_DISTRIBUTION => [ ACTION_OPTION_DISTRIBUTION_FREE, ACTION_OPTION_DISTRIBUTION_AUTO ],
         }
@@ -287,6 +290,23 @@ module Ladb::OpenCutList
       super
     end
 
+    def get_action_variant_btn_child(root_action, action)
+
+      case action
+      when ACTION_ADD_CONNECTORS, ACTION_ADD_FITTINGS, ACTION_ADD_HINGES
+        return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.5,0V1M0,.5H1'))
+      when ACTION_REMOVE_CONNECTORS, ACTION_REMOVE_FITTINGS, ACTION_REMOVE_HINGES
+        return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,.5H1'))
+      end
+
+      super
+    end
+
+    def get_action_variant_color(action)
+      return Kuix::COLOR_DANGER if REMOVE_ACTIONS.include?(action)
+      super
+    end
+
     def get_action_option_btn_prefix(action, option_group, option)
 
       case option_group
@@ -343,13 +363,11 @@ module Ladb::OpenCutList
       _refresh_distribution_btns(!is_vcb_typing?) if is_key_shift?(key)  # SHIFT is known as down only once super is called
       return true if super
       if is_key_alt_or_command?(key)
-        case fetch_action
-        when ACTION_ADD_CONNECTORS
-          push_action(ACTION_REMOVE_CONNECTORS)
-        when ACTION_ADD_FITTINGS
-          push_action(ACTION_REMOVE_FITTINGS)
-        when ACTION_ADD_HINGES
-          push_action(ACTION_REMOVE_HINGES)
+        # Inverts the add / remove choice of the button, while held - once : the key repeats
+        if @action_stack.length == 1
+          action = fetch_action
+          root_action = get_action_root(action)
+          push_action(action == root_action ? get_action_variants(root_action).first : root_action)
         end
         return true
       end

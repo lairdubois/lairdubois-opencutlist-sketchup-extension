@@ -79,6 +79,10 @@ module Ladb::OpenCutList
     COLOR_SNAP_FILL = Sketchup::Color.new(68, 152, 212).freeze
     COLOR_SNAP_STROKE = Sketchup::Color.new(30, 64, 105).freeze
 
+    COLOR_DANGER = Sketchup::Color.new(217, 83, 79).freeze
+    COLOR_WARNING = Sketchup::Color.new(123, 116, 4).freeze
+    COLOR_SUCCESS = Sketchup::Color.new(86, 149, 83).freeze
+
     # Line stipple constants
 
     LINE_STIPPLE_SOLID = ''.freeze

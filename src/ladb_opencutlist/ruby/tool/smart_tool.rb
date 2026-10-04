@@ -47,9 +47,9 @@ module Ladb::OpenCutList
     COLOR_BRAND_LIGHT = Sketchup::Color.new(214, 212, 205).freeze
 
     COLOR_MESSAGE_TEXT = Kuix::COLOR_BLACK
-    COLOR_MESSAGE_TEXT_ERROR = Sketchup::Color.new('#d9534f').freeze
-    COLOR_MESSAGE_TEXT_WARNING = Sketchup::Color.new('#997404').freeze
-    COLOR_MESSAGE_TEXT_SUCCESS = Sketchup::Color.new('#569553').freeze
+    COLOR_MESSAGE_TEXT_ERROR = Kuix::COLOR_DANGER
+    COLOR_MESSAGE_TEXT_WARNING = Kuix::COLOR_WARNING
+    COLOR_MESSAGE_TEXT_SUCCESS = Kuix::COLOR_SUCCESS
     COLOR_MESSAGE_BACKGROUND = Sketchup::Color.new(255, 255, 255, 230).freeze
     COLOR_MESSAGE_BACKGROUND_ERROR = COLOR_MESSAGE_TEXT_ERROR.blend(Kuix::COLOR_WHITE, 0.2).freeze
     COLOR_MESSAGE_BACKGROUND_WARNING = Sketchup::Color.new('#ffe69c').freeze
@@ -208,42 +208,100 @@ module Ladb::OpenCutList
           actions_panel.append(actions_btns_panel)
 
           @action_buttons = []
+          @action_variant_buttons = []
           @actions_options_panels = []
           get_action_defs.each do |action_def|
 
             action = action_def[:action]
 
-            data = {
-              :action => action
-            }
+            # A variant has no action button of its own : it has a variant button inside its root action's one
+            if action_def[:variant_of].nil?
 
-            actions_btn = Kuix::Button.new
-            actions_btn.layout = Kuix::BorderLayout.new
-            actions_btn.border.set!(0, unit / 4, 0, unit / 4)
-            actions_btn.min_size.set_all!(unit * 10)
-            actions_btn.set_style_attribute(:border_color, COLOR_BRAND_DARK.blend(Kuix::COLOR_WHITE, 0.8))
-            actions_btn.set_style_attribute(:border_color, COLOR_BRAND_LIGHT, :hover)
-            actions_btn.set_style_attribute(:border_color, COLOR_BRAND, :selected)
-            actions_btn.set_style_attribute(:background_color, COLOR_BRAND_DARK)
-            actions_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :hover)
-            actions_btn.set_style_attribute(:background_color, COLOR_BRAND, :selected)
-            lbl = actions_btn.append_static_label(PLUGIN.get_i18n_string("tool.smart_#{get_stripped_name}.action_#{action}"), unit * 3 * get_text_unit_factor)
-            lbl.padding.set!(0, unit * 4, 0, unit * 4)
-            lbl.set_style_attribute(:color, COLOR_BRAND_LIGHT)
-            lbl.set_style_attribute(:color, COLOR_BRAND_DARK, :hover)
-            lbl.set_style_attribute(:color, Kuix::COLOR_WHITE, :selected)
-            actions_btn.data = data
-            actions_btn.on(:click) { |button|
-              set_root_action(action)
-            }
-            actions_btn.on(:enter) { |button|
-              show_message(PLUGIN.get_i18n_string("tool.smart_#{get_stripped_name}.action_#{action}_status"))
-            }
-            actions_btn.on(:leave) { |button|
-              hide_message
-            }
-            actions_btns_panel.append(actions_btn)
-            @action_buttons.push(actions_btn)
+              variant_actions = get_action_variants(action)
+
+              data = {
+                :action => action
+              }
+
+              actions_btn = Kuix::Button.new
+              actions_btn.layout = Kuix::BorderLayout.new(unit * 2)
+              actions_btn.border.set!(0, unit / 4, 0, unit / 4)
+              actions_btn.min_size.set_all!(unit * 10)
+              actions_btn.set_style_attribute(:border_color, COLOR_BRAND_DARK.blend(Kuix::COLOR_WHITE, 0.8))
+              actions_btn.set_style_attribute(:border_color, COLOR_BRAND_LIGHT, :hover)
+              actions_btn.set_style_attribute(:border_color, COLOR_BRAND, :selected)
+              actions_btn.set_style_attribute(:background_color, COLOR_BRAND_DARK)
+              actions_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :hover)
+              actions_btn.set_style_attribute(:background_color, COLOR_BRAND, :selected)
+              lbl = actions_btn.append_static_label(PLUGIN.get_i18n_string("tool.smart_#{get_stripped_name}.action_#{action}#{'_family' unless variant_actions.empty?}"), unit * 3 * get_text_unit_factor)
+              lbl.padding.set!(0, variant_actions.empty? ? unit * 4 : unit * 2, 0, unit * 4)
+              lbl.set_style_attribute(:color, COLOR_BRAND_LIGHT)
+              lbl.set_style_attribute(:color, COLOR_BRAND_DARK, :hover)
+              lbl.set_style_attribute(:color, Kuix::COLOR_WHITE, :selected)
+              actions_btn.data = data
+              actions_btn.on(:click) { |button|
+                set_root_action(fetch_action_family_last_action(action))
+              }
+              actions_btn.on(:enter) { |button|
+                show_message(get_action_status(fetch_action_family_last_action(action)))
+              }
+              actions_btn.on(:leave) { |button|
+                hide_message
+              }
+              actions_btns_panel.append(actions_btn)
+              @action_buttons.push(actions_btn)
+
+              # One variant button per action of the family : the root action and its variants
+
+              unless variant_actions.empty?
+
+                variants_panel = Kuix::Panel.new
+                variants_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
+                variants_panel.layout = Kuix::InlineLayout.new(true, unit * 0.5, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+                variants_panel.padding.set!(0, unit * 2, 0, 0)
+                actions_btn.append(variants_panel)
+
+                ([ action ] + variant_actions).each do |variant_action|
+
+                  variant_btn = Kuix::Button.new
+                  variant_btn.layout = Kuix::GridLayout.new
+                  variant_btn.min_size.set_all!(unit * 6)
+                  variant_btn.set_style_attribute(:background_color, ColorUtils.color_lighten(COLOR_BRAND_DARK, 0.1))
+                  variant_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :hover)
+                  variant_btn.set_style_attribute(:background_color, Kuix::COLOR_WHITE, :selected)
+                  variant_btn.data = { :action => variant_action }
+                  variant_btn.on(:click) { |button|
+                    set_root_action(variant_action)
+                  }
+                  variant_btn.on(:enter) { |button|
+                    show_message(get_action_status(variant_action))
+                  }
+                  variant_btn.on(:leave) { |button|
+                    hide_message
+                  }
+                  variants_panel.append(variant_btn)
+                  @action_variant_buttons.push(variant_btn)
+
+                    if (child = get_action_variant_btn_child(action, variant_action))
+                      if child.is_a?(Kuix::Label)
+                        child.text_size = unit * 3 * get_text_unit_factor if child.respond_to?(:text_size=)
+                        child.padding.set!(0, unit * 1.5, 0, unit * 1.5)
+                      elsif child.is_a?(Kuix::Motif2d)
+                        child.margin.set_all!(unit * 1.5)
+                        child.min_size.set_all!(unit * 3)
+                        child.line_width = unit * 0.4
+                      end
+                      child.set_style_attribute(:color, COLOR_BRAND_LIGHT)
+                      child.set_style_attribute(:color, COLOR_BRAND_DARK, :hover)
+                      child.set_style_attribute(:color, get_action_variant_color(variant_action), :selected)
+                      variant_btn.append(child)
+                    end
+
+                end
+
+              end
+
+            end
 
             # Options Panels
 
@@ -1132,8 +1190,28 @@ module Ladb::OpenCutList
 
     # -- Actions --
 
-    def get_action_defs  # Array<{ :action => THE_ACTION, :options => { OPTION_GROUP_1 => [ OPTION_1, OPTION_2 ] } }>
+    def get_action_defs  # Array<{ :action => THE_ACTION, :variant_of => ROOT_ACTION (optional), :options => { OPTION_GROUP_1 => [ OPTION_1, OPTION_2 ] } }>
       []
+    end
+
+    # The actions declared as :variant_of the given one
+    def get_action_variants(action)
+      get_action_defs.select { |action_def| action_def[:variant_of] == action }.map { |action_def| action_def[:action] }
+    end
+
+    # The action whose button shows the given one
+    def get_action_root(action)
+      action_def = get_action_defs.find { |action_def| action_def[:action] == action }
+      action_def.nil? || action_def[:variant_of].nil? ? action : action_def[:variant_of]
+    end
+
+    def get_action_variant_btn_child(root_action, action)
+      Kuix::Label.new(PLUGIN.get_i18n_string("tool.smart_#{get_stripped_name}.action_#{action}_variant"))
+    end
+
+    # The selected color of the action's variant button, and of its root button while it is the current action
+    def get_action_variant_color(action)
+      COLOR_BRAND
     end
 
     def get_action_status(action)
@@ -1301,7 +1379,15 @@ module Ladb::OpenCutList
 
       # Update buttons
       if @action_buttons
+        root_action = get_action_root(action)
         @action_buttons.each do |button|
+          button.selected = button.data[:action] == root_action
+          if button.selected? && !get_action_variants(root_action).empty?
+            button.set_style_attribute(:border_color, get_action_variant_color(action), :selected)
+            button.set_style_attribute(:background_color, get_action_variant_color(action), :selected)
+          end
+        end
+        @action_variant_buttons.each do |button|
           button.selected = button.data[:action] == action
         end
       end
@@ -1331,6 +1417,9 @@ module Ladb::OpenCutList
       # Select a default action
       action = get_action_defs.first[:action] if action.nil?
 
+      # Keep the family's last action : its button selects it back
+      (@action_family_last_actions ||= {})[get_action_root(action)] = action
+
       push_action(action)
     end
 
@@ -1359,6 +1448,10 @@ module Ladb::OpenCutList
 
     def fetch_action_handler
       @action_handler
+    end
+
+    def fetch_action_family_last_action(root_action)
+      (@action_family_last_actions ||= {})[root_action] || root_action
     end
 
     # -- VCB --
@@ -1638,11 +1731,12 @@ module Ladb::OpenCutList
 
           else
 
-            # Select next action
+            # Select next action button, on its family's last action
 
-            next_action_index = (action_index + (is_key_shift_down? ? -1 : 1)) % action_defs.length
-            next_action = action_defs[next_action_index][:action]
-            set_root_action(next_action)
+            root_actions = action_defs.select { |action_def| action_def[:variant_of].nil? }.map { |action_def| action_def[:action] }
+            root_action_index = root_actions.index(get_action_root(action))
+            next_root_action = root_actions[(root_action_index + (is_key_shift_down? ? -1 : 1)) % root_actions.length]
+            set_root_action(fetch_action_family_last_action(next_root_action))
 
             return true
           end
