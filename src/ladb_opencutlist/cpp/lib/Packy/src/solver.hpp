@@ -729,7 +729,7 @@ namespace Packy {
         ) {
 
             if (j.contains("objective")) {
-                Objective objective = Objective::Default;
+                Objective objective = Objective::BinPackingWithLeftovers;
                 std::stringstream ss(j.value("objective", "default"));
                 ss >> objective;
                 if (ss.fail()) {
