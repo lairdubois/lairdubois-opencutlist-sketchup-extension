@@ -6,6 +6,7 @@
   "name": "Screw 4x16",
   "variables": {
     "diameter": { "value": "4mm" },
-    "length": { "value": "16mm" }
+    "length": { "value": "16mm" },
+    "embed_min": { "value":  "10mm" }
   }
 }

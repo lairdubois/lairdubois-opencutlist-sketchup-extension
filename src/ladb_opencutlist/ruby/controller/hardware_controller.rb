@@ -184,7 +184,7 @@ module Ladb::OpenCutList
     # with the "use" a descriptor of the given ref writes to name it.
     def library_list_command(dir_ref: nil, ref: nil)
       roots = [ PLUGIN.bundled_library_ref(CONNECTORS_LIBRARY_REF), CONNECTORS_LIBRARY_REF ]
-      fn_root_name = lambda { |r| PLUGIN.get_i18n_string("core.hardware_editor.library_#{PLUGIN.library_bundled_ref?(r) ? 'bundled' : 'user'}") }
+      fn_root_name = lambda { |r| PLUGIN.get_i18n_string("core.library.#{PLUGIN.library_bundled_ref?(r) ? 'bundled' : 'user'}") }
       unless roots.any? { |root| dir_ref == root || dir_ref.is_a?(String) && dir_ref.start_with?("#{root}/") }
         return {
           :dir_ref => nil,

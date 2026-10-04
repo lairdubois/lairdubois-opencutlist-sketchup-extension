@@ -4553,12 +4553,13 @@ module Ladb::OpenCutList
       libraries = dir_ref == LIBRARIES_REF
       bundled_root_ref = PLUGIN.bundled_library_ref(root_ref)
       writable = SmartLibraryPanel.writable?(dir_ref)
+      fn_basename_label = lambda { |ref| File.basename(ref).sub(/\A./) { |c| c.upcase } }  # Only the first letter : capitalize would lower the rest
       fn_dir_label = lambda { |ref|
         case ref
-        when LIBRARIES_REF then PLUGIN.get_i18n_string('tool.default.library_libraries')
-        when root_ref then PLUGIN.get_i18n_string('tool.default.library_user')
-        when bundled_root_ref then PLUGIN.get_i18n_string('tool.default.library_bundled')
-        else File.basename(ref).sub(/\A./) { |c| c.upcase }  # Only the first letter : capitalize would lower the rest
+        when LIBRARIES_REF then PLUGIN.get_i18n_string('core.library.libraries')
+        when root_ref then PLUGIN.get_i18n_string('core.library.user')
+        when bundled_root_ref then PLUGIN.get_i18n_string('core.library.bundled')
+        else fn_basename_label.call(ref)
         end
       }
       fn_parent_ref = lambda { |ref|
@@ -4653,16 +4654,19 @@ module Ladb::OpenCutList
 
       # Path : over the view, without background
 
-      # The ancestors only : the browsed folder is the first button below
+      # The browsed folder and its ancestors
       path_refs = []
-      ref = libraries ? LIBRARIES_REF : fn_parent_ref.call(dir_ref)
+      ref = dir_ref
       until ref == LIBRARIES_REF || ref == File.dirname(ref)
         path_refs.unshift(ref)
         ref = fn_parent_ref.call(ref)
       end
 
-      path_lbl = Kuix::Label.new(path_refs.map { |ref| fn_dir_label.call(ref) }.join(' / '))
-      path_lbl.visible = !path_refs.empty?
+      # Headed by the libraries' family - the root folder's name if untranslated : which of their folders is browsed
+      family_key = "core.library.family_#{File.basename(root_ref)}"
+      family_label = PLUGIN.get_i18n_string(family_key)
+      family_label = fn_basename_label.call(root_ref) if family_label == family_key
+      path_lbl = Kuix::Label.new(([ family_label ] + path_refs.map { |ref| fn_dir_label.call(ref) }).join(' / '))
       path_lbl.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
       path_lbl.text_size = text_size
       path_lbl.text_align = TextAlignLeft

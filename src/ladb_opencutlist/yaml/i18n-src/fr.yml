@@ -315,12 +315,22 @@ core:
       error:
         no_segment: Aucune ligne de construction exploitable dans la sélection
         no_face: Aucune boucle fermée coplanaire n'a pu être reconstruite
+  library:
+    libraries: Bibliothèques
+    user: Ma Bibliothèque
+    bundled: Bibliothèque OCL
+    family_modules: Modules
+    family_connectors: Connecteurs
+    family_fittings: Ferrures
+    family_hinges: Charnières
+  # DEV only
   hardware_descriptor:
     variant_overlay: En applique
     variant_half_overlay: Jumelée
     variant_inset: Encastrée
     part_hardware: Pièce
     part_machining: Usinage
+  # DEV only
   hardware_editor:
     title: Éditeur de quincaillerie
     new_name: Nouvelle quincaillerie
@@ -348,13 +358,13 @@ core:
     readonly: Lecture seule
     readonly_notice: |
       Ce fichier est un exemple en lecture seule. 
-      Dupliquez cette quincaillerie dans **Ma Bibliothèque** pour la modifier.
-    duplicate: Dupliquer dans **Ma Bibliothèque**
+      Dupliquez cette quincaillerie dans **$t(core.library.user)** pour la modifier.
+    duplicate: Dupliquer dans **$t(core.library.user)**
     name: Nom
     file: Fichier
     abstract_notice: "Quincaillerie abstraite : elle ne se place pas, elle sert de base aux quincailleries qui en dérivent."
     file_renamed: "Renommé à la validation, ainsi que le dossier de ses pièces (était {{ name }})"
-    duplicated: "Copié dans **Ma Bibliothèque** : {{ ref }}"
+    duplicated: "Copié dans **$t(core.library.user)** : {{ ref }}"
     derive: Dériver
     derive_help: Crée une quincaillerie qui hérite de celle-ci et ne déclare que ce qui change
     derived_name: "{{ name }} (dérivée)"
@@ -372,7 +382,7 @@ core:
       Cliquez pour revenir à la valeur héritée.
     inheritance_help: ": valeur héritée du parent. L'icône en bout de ligne la copie dans cette quincaillerie pour la modifier, puis rétablit la valeur héritée."
     delete_confirm: |
-      Confirmez la suppression de **{{ name }}** de *Ma Bibliothèque*, avec le dossier de ses pièces ? 
+      Confirmez la suppression de **{{ name }}** de *$t(core.library.user)*, avec le dossier de ses pièces ? 
       *Les quincailleries déjà posées dans le modèle restent.*
     discard_confirm: Les modifications non validées de cette quincaillerie seront perdues. Fermer quand même ?
     discard: Fermer sans valider
@@ -427,9 +437,6 @@ core:
     article_asserts: Contrôles
     article_positions: Positions
     article_position_add: Position
-    library_libraries: Bibliothèques
-    library_user: Ma Bibliothèque
-    library_bundled: Bibliothèque OCL
     library_empty: Aucun connecteur dans ce dossier.
     primitive_type_cylinders: Cylindre
     primitive_type_oblongs: Oblong
@@ -469,7 +476,7 @@ core:
     chip_user: Ma Bibliothèque
     chip_loading: Chargement...
     chip_missing: Fichier absent
-    chip_no_folder: Choisissez d'abord un dossier de **Ma Bibliothèque**
+    chip_no_folder: Choisissez d'abord un dossier de **$t(core.library.user)**
     chip_imported: Importé | à enregistrer
     chip_placed: Placement à enregistrer
     chip_edited: Modifié | à enregistrer
@@ -507,7 +514,7 @@ core:
       invalid_json: "JSON invalide, ligne {{ line }} : {{ error }}"
       file_not_found: "Fichier introuvable : {{ ref }}"
       file_not_readable: "Impossible de lire {{ ref }} : {{ error }}"
-      readonly: La Bibliothèque OCL est en lecture seule
+      readonly: La $t(core.library.bundled) est en lecture seule
       invalid_ref: "Emplacement invalide : {{ ref }}"
       file_exists: "Un fichier existe déjà à cet emplacement : {{ ref }}. Changez le nom du fichier."
       invalid_file_name: "Nom de fichier invalide : {{ name }}"
@@ -2554,9 +2561,6 @@ tool:
     vcb_spacings: Espacements
     vcb_angle: Angle
     locked_on_last_measure_status: Verrouiller sur la dernière mesure  # TODO : Moved from tool.smart_draw.action_measure_locked_status
-    library_libraries: Bibliothèques
-    library_user: Ma Bibliothèque
-    library_bundled: Bibliothèque OCL
     library_choose: Choisissez une bibliothèque
     error:
       no_direction: Veuillez indiquer une direction avec la souris
@@ -2954,11 +2958,11 @@ tool:
       not_orientable: Le type de cette pièce ne permet pas de l'orienter
       not_grained: La pièce ciblée n'a pas de fil
       not_single_thickness_layer: La pièce ciblée doit être composée d'une seule couche
-  # TODO: It's currently just for dev purposes
+  # DEV only
   smart_join:
     title: Assembler
     hardware_edit: Modifier cette quincaillerie
-    hardware_view: Voir cette quincaillerie (Bibliothèque OCL, lecture seule)
+    hardware_view: Voir cette quincaillerie ($t(core.library.bundled), lecture seule)
     action_0_family: Connecteurs
     action_0: Ajouter des connecteurs
     action_0_status: Ajouter des connecteurs pour assembler des pièces

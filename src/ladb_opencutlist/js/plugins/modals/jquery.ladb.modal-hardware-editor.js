@@ -1914,7 +1914,7 @@
 
         const $browser = $('<div class="ladb-hardware-editor-library">');
         const $path = $('<div class="ladb-hardware-editor-library-path">')
-            .append($('<a href="#">').text(i18next.t('core.hardware_editor.library_libraries')).on('click', fnBrowse(null)));
+            .append($('<a href="#">').text(i18next.t('core.library.libraries')).on('click', fnBrowse(null)));
         for (const dir of listing.path || []) {
             $path.append(' / ').append($('<a href="#">').text(dir.name).on('click', fnBrowse(dir.ref)));
         }
