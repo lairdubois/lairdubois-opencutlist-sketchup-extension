@@ -1,0 +1,115 @@
+{
+  "format": "ocl-hardware",
+  "version": 1,
+  "id": "40b7ad55-9a2e-47ce-b4ce-1a1f1add8bef",
+  "type": "hinge",
+  "length_unit": "mm",
+  "name": "Flat hinge 40",
+  "variables": {
+    "leaf": { "value": "1.5mm", "label": "Leaf thickness", "steps": [ "1mm", "1.5mm", "2mm" ] },
+    "front": "-@thickness_a",
+    "knuckle_y": "@thickness_b + 2mm"
+  },
+  "components": {
+    "a": {
+      "attributes": { "hinge_max_angle": 180 },
+      "variants": {
+        "select": { "by": "hinge_kind" },
+        "fallback": "overlay",
+        "items": {
+          "overlay": {
+            "attributes": { "hinge_pivot": [ "20mm", "-1.5mm" ] },
+            "hardware": {
+              "body": {
+                "name": "Flat hinge 40x16",
+                "oblongs": [ { "y": "10mm", "length": "40mm", "width": "16mm", "from": "-2 * @leaf", "to": "-@leaf" } ],
+                "prisms": [ { "axis": "x", "from": "-20mm", "to": "20mm", "outline": [
+                  { "y": "@knuckle_y - 2mm", "z": "-@leaf - 2mm", "r": "1.99mm" },
+                  { "y": "@knuckle_y + 2mm", "z": "-@leaf - 2mm", "r": "1.99mm" },
+                  { "y": "@knuckle_y + 2mm", "z": "-@leaf + 2mm", "r": "1.99mm" },
+                  { "y": "@knuckle_y - 2mm", "z": "-@leaf + 2mm", "r": "1.99mm" }
+                ] } ]
+              },
+              "screws": {
+                "name": "Screw 3x16",
+                "cylinders": [ { "y": "10mm", "diameter": "3mm", "from": "-@leaf - 16mm", "to": "-@leaf", "countersink": { "diameter": "6mm", "end": "to" } } ],
+                "at": [ { "x": "-8mm" }, { "x": "8mm" } ]
+              }
+            },
+            "machining": {
+              "mortises": [ { "y": "10mm", "length": "40.5mm", "width": "16.5mm", "depth": "2 * @leaf" } ]
+            }
+          },
+          "inset": {
+            "attributes": { "hinge_pivot": [ "-1mm", "-21.5mm" ] },
+            "hardware": {
+              "body": {
+                "name": "Flat hinge 40x40",
+                "prisms": [
+                  { "from": "@front - @leaf", "to": "@front", "outline": [ { "x": "-20mm", "y": "-21mm" }, { "x": "20mm", "y": "-21mm" }, { "x": "20mm", "y": "-1mm" }, { "x": "-20mm", "y": "-1mm" } ] },
+                  { "axis": "x", "from": "-20mm", "to": "20mm", "outline": [
+                    { "y": "-3.5mm", "z": "@front - 5mm", "r": "2.49mm" },
+                    { "y": "1.5mm", "z": "@front - 5mm", "r": "2.49mm" },
+                    { "y": "1.5mm", "z": "@front", "r": "2.49mm" },
+                    { "y": "-3.5mm", "z": "@front", "r": "2.49mm" }
+                  ] }
+                ]
+              },
+              "screws": {
+                "name": "Screw 3x16",
+                "cylinders": [ { "diameter": "3mm", "from": "@front - @leaf", "to": "@front - @leaf + 16mm", "countersink": { "diameter": "6mm", "end": "from" } } ],
+                "at": [ { "x": "-12mm", "y": "-13mm" }, { "x": "12mm", "y": "-13mm" } ]
+              }
+            }
+          },
+          "half_overlay": null
+        }
+      }
+    },
+    "b": {
+      "variants": {
+        "select": { "by": "hinge_kind" },
+        "fallback": "overlay",
+        "items": {
+          "overlay": {
+            "hardware": {
+              "leaf": {
+                "name": "Flat hinge 40x16 (fixed leaf)",
+                "prisms": [ { "axis": "y", "from": "-@leaf", "to": "0mm", "outline": [
+                  { "x": "-20mm", "z": "-18mm", "r": "7.99mm" }, { "x": "20mm", "z": "-18mm", "r": "7.99mm" },
+                  { "x": "20mm", "z": "-2mm", "r": "7.99mm" }, { "x": "-20mm", "z": "-2mm", "r": "7.99mm" }
+                ] } ]
+              },
+              "screws": {
+                "name": "Screw 3x16",
+                "prisms": [ { "axis": "y", "from": "-@leaf", "to": "-@leaf + 16mm", "outline": [
+                  { "x": "-1.5mm", "z": "-11.5mm", "r": "1.49mm" }, { "x": "1.5mm", "z": "-11.5mm", "r": "1.49mm" },
+                  { "x": "1.5mm", "z": "-8.5mm", "r": "1.49mm" }, { "x": "-1.5mm", "z": "-8.5mm", "r": "1.49mm" }
+                ] } ],
+                "at": [ { "x": "-14mm" }, { "x": "14mm" } ]
+              }
+            }
+          },
+          "inset": {
+            "hardware": {
+              "leaf": {
+                "name": "Flat hinge 40x40 (fixed leaf)",
+                "prisms": [ { "axis": "y", "from": "@front - @leaf", "to": "@front", "outline": [ { "x": "-20mm", "z": "-17mm" }, { "x": "20mm", "z": "-17mm" }, { "x": "20mm", "z": "-1mm" }, { "x": "-20mm", "z": "-1mm" } ] } ]
+              },
+              "screws": {
+                "name": "Screw 3x16",
+                "prisms": [ { "axis": "y", "from": "@front - @leaf", "to": "@front - @leaf + 16mm", "outline": [
+                  { "x": "-1.5mm", "z": "-10.5mm", "r": "1.49mm" }, { "x": "1.5mm", "z": "-10.5mm", "r": "1.49mm" },
+                  { "x": "1.5mm", "z": "-7.5mm", "r": "1.49mm" }, { "x": "-1.5mm", "z": "-7.5mm", "r": "1.49mm" }
+                ] } ],
+                "at": [ { "x": "-12mm" }, { "x": "12mm" } ]
+              }
+            }
+          },
+          "half_overlay": null
+        }
+      }
+    }
+  },
+  "options": { "start_offset": "100mm", "end_offset": "100mm", "max_spacing": "800mm" }
+}

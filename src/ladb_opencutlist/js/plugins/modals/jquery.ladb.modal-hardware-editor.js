@@ -17,6 +17,17 @@
     const SHAPING_TOP = 100;
 
     const PARTS = [ 'hardware', 'machining' ];
+
+    // The units of "length_unit", with their label's index - see default.unit_*
+    const LENGTH_UNIT_OPTIONS = [
+        { unit: 'mm', index: 2 },
+        { unit: 'cm', index: 3 },
+        { unit: 'm', index: 4 },
+        { unit: 'in', index: 0 },
+        { unit: 'ft', index: 1 },
+        { unit: 'yd', index: 5 }
+    ];
+
     const PRIMITIVE_KEYS = [ 'cylinders', 'oblongs', 'prisms', 'drillings', 'mortises', 'pockets' ];
 
     // The primitives each part can be given as - see HardwareDescriptorDef::PRIMITIVES -
@@ -841,11 +852,13 @@
 
         const settings = this.response.settings || [];
         let options = {};
+        let ownUnit;
         try {
             const data = JSON.parse(this.cm.getValue());
             if (data.options !== null && typeof data.options === 'object' && !Array.isArray(data.options)) {
                 options = data.options;
             }
+            ownUnit = data.length_unit;
         } catch (e) {
             // The JSON is being typed : the response's type says what to show
         }
@@ -857,6 +870,7 @@
             settings.map(function (setting) { return [ setting.name, setting.raw, setting.inherited ]; }),
             this.response.type,
             options,
+            ownUnit,
             inheritedOptions,
             inheritance ? inheritance.parents : null,
             inheritance ? inheritance.parent_data : null,
@@ -879,9 +893,7 @@
             );
         }
 
-        if (optionGroups.length > 0) {
-            this.$settings.append($('<div class="ladb-hardware-editor-settings-title">').text(i18next.t('core.hardware_editor.settings_variables')));
-        }
+        this.$settings.append($('<div class="ladb-hardware-editor-settings-title">').text(i18next.t('core.hardware_editor.settings_variables')));
 
         if (settings.length === 0) {
             this.$settings.append($('<div class="ladb-hardware-editor-empty">').html(i18next.t('core.hardware_editor.no_settings')));
@@ -993,6 +1005,46 @@
                 this.$settings.append($formGroup);
             }
         }
+
+        // Its properties
+        this.$settings.append($('<div class="ladb-hardware-editor-settings-title">').text(i18next.t('core.hardware_editor.settings_properties')));
+
+        // Unit of its bare numbers - see "length_unit" - : read in it, not
+        // converted. Its parents' when they have one, which it can't change.
+        const parentUnit = fnObject(this.parentData()).length_unit;
+        const unitInherited = typeof parentUnit === 'string';
+        const unit = unitInherited ? parentUnit : (typeof ownUnit === 'string' ? ownUnit : '');
+        const $unitGroup = $('<div class="form-group">');
+        const $unitControl = $('<div class="col-xs-7">');
+        const $unitInheritance = $('<div class="col-xs-1 ladb-hardware-editor-inheritance-cell">');
+        $unitGroup
+            .append($('<label class="control-label col-xs-4">').text(i18next.t('core.hardware_editor.length_unit')))
+            .append($unitControl)
+            .append($unitInheritance);
+        this.appendInheritanceIcon($unitInheritance, unitInherited ? 'inherited' : null, null);   // Not clickable : it can't be overridden
+        $unitGroup.toggleClass('ladb-hardware-editor-inherited', unitInherited);
+        const $unitSelect = $('<select class="form-control">')
+            .append($('<option value="">').text(i18next.t('core.hardware_editor.length_unit_none')));
+        for (const unitOption of LENGTH_UNIT_OPTIONS) {
+            $unitSelect.append($('<option>').attr('value', unitOption.unit).text(i18next.t('default.unit_' + unitOption.index) + ' (' + unitOption.unit + ')'));
+        }
+        if (unit !== '' && !LENGTH_UNIT_OPTIONS.some(function (unitOption) { return unitOption.unit === unit; })) {
+            $unitSelect.append($('<option>').attr('value', unit).text(unit));   // Invalid : shown as is
+        }
+        $unitSelect
+            .val(unit)
+            .prop('disabled', this.readonly || unitInherited)
+            .on('change', function () {
+                const newUnit = $(this).val();
+                if (that.setJsonMember([], 'length_unit', newUnit === '' ? undefined : newUnit)) {
+                    that.compute(false);
+                }
+            });
+        $unitControl
+            .append($unitSelect)
+            .append($('<div class="help-block">').text(i18next.t('core.hardware_editor.length_unit_help')));
+        this.$settings.append($unitGroup);
+        $unitSelect.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
 
         this.restoreFocus(focus);
 

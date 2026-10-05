@@ -362,6 +362,9 @@ core:
     duplicate: Dupliquer dans **$t(core.library.user)**
     name: Nom
     file: Fichier
+    length_unit: Unité
+    length_unit_none: Aucune - chaque longueur porte la sienne
+    length_unit_help: Celle des nombres sans unité. Changer d'unité ne les convertit pas.
     abstract_notice: "Quincaillerie abstraite : elle ne se place pas, elle sert de base aux quincailleries qui en dérivent."
     file_renamed: "Renommé à la validation, ainsi que le dossier de ses pièces (était {{ name }})"
     duplicated: "Copié dans **$t(core.library.user)** : {{ ref }}"
@@ -507,6 +510,7 @@ core:
     settings_variables: Variables
     settings_tool_options: Options de l'outil
     settings_tool_options_help: Les valeurs que l'outil Assembler prend à la sélection de cette quincaillerie
+    settings_properties: Propriétés
     no_settings: Aucune variable n'est publiée pour cette quincaillerie
     error:
       unresolved_variable: "Utilise @{{ name }}, non calculée"
