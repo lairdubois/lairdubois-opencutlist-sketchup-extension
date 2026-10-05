@@ -333,6 +333,9 @@ core:
   # DEV only
   hardware_editor:
     title: Éditeur de quincaillerie
+    title_connector: Éditeur de connecteur
+    title_fitting: Éditeur de ferrure
+    title_hinge: Éditeur de charnière
     new_name: Nouvelle quincaillerie
     tab_settings: Réglages
     tab_parts: Pièces
@@ -363,8 +366,10 @@ core:
     name: Nom
     file: Fichier
     length_unit: Unité
-    length_unit_none: Aucune - chaque longueur porte la sienne
-    length_unit_help: Celle des nombres sans unité. Changer d'unité ne les convertit pas.
+    length_unit_none: Non définie - Chaque longueur porte la sienne
+    length_unit_help: |
+      Unité des nombres sans unité.
+      *Changer d'unité ne les convertit pas.*
     abstract_notice: "Quincaillerie abstraite : elle ne se place pas, elle sert de base aux quincailleries qui en dérivent."
     file_renamed: "Renommé à la validation, ainsi que le dossier de ses pièces (était {{ name }})"
     duplicated: "Copié dans **$t(core.library.user)** : {{ ref }}"

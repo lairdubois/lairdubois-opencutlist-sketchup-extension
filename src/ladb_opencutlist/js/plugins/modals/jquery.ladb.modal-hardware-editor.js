@@ -459,6 +459,7 @@
             that.topology = response.topology || that.topology;
             $('.ladb-hardware-editor-abstract', that.$element).toggle(response.abstract === true);
             that.renderName();
+            that.renderUnit();
             that.renderTopologies();
             that.renderBench();
             that.renderComputations();
@@ -517,6 +518,23 @@
 
     // Render /////
 
+    // Its length unit - see "length_unit" -, its parents' when they have one,
+    // over the viewer's top left corner. Kept while the JSON is being edited.
+    LadbModalHardwareEditor.prototype.renderUnit = function () {
+        let ownUnit;
+        try {
+            ownUnit = JSON.parse(this.cm.getValue()).length_unit;
+        } catch (e) {
+            return;
+        }
+        const parentUnit = fnObject(this.parentData()).length_unit;
+        const unit = typeof parentUnit === 'string' ? parentUnit : (typeof ownUnit === 'string' ? ownUnit : '');
+        const unitOption = LENGTH_UNIT_OPTIONS.find(function (unitOption) { return unitOption.unit === unit; });
+        $('.ladb-hardware-editor-unit', this.$element)
+            .text(unitOption ? i18next.t('default.unit_' + unitOption.index) : unit)   // Invalid : shown as is
+            .toggle(unit !== '');
+    };
+
     LadbModalHardwareEditor.prototype.renderName = function () {
         let name = null;
         try {
@@ -525,7 +543,8 @@
             // Keep the previous one while the JSON is being edited
             return;
         }
-        $('.ladb-hardware-editor-name', this.$element).text(typeof name === 'string' ? name : '');
+        const titleKey = 'core.hardware_editor.title_' + (this.response && this.response.type);
+        $('.ladb-hardware-editor-title', this.$element).text(i18next.exists(titleKey) ? i18next.t(titleKey) : i18next.t('core.hardware_editor.title'));   // Adapted to the type of hardware, when it has its own
         if (!this.$inputName.is(':focus')) {
             this.$inputName.val(typeof name === 'string' ? name : '');
         }
@@ -1042,7 +1061,7 @@
             });
         $unitControl
             .append($unitSelect)
-            .append($('<div class="help-block">').text(i18next.t('core.hardware_editor.length_unit_help')));
+            .append($('<div class="help-block">').append(i18next.t('core.hardware_editor.length_unit_help')));
         this.$settings.append($unitGroup);
         $unitSelect.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
 

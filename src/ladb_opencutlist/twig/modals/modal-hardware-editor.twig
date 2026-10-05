@@ -1,7 +1,7 @@
 {% extends 'core/_modal.twig' %}
 
 {% set id = 'ladb_modal_'~modalName %}
-{% set title = 'core.hardware_editor.title'|i18next~' <small class="ladb-hardware-editor-name"></small> <span class="label label-default ladb-hardware-editor-readonly-badge" style="display: none;">'~'core.hardware_editor.readonly'|i18next~'</span>' %}
+{% set title = '<span class="ladb-hardware-editor-title">'~'core.hardware_editor.title'|i18next~'</span> <span class="label label-default ladb-hardware-editor-readonly-badge" style="display: none;">'~'core.hardware_editor.readonly'|i18next~'</span>' %}
 {% set bodyClasses = 'ladb-hardware-editor' %}
 
 {% block headerToolsInner %}
@@ -11,6 +11,7 @@
 {% block bodyInner %}
     <div class="ladb-hardware-editor-bench">
         <div class="ladb-hardware-editor-viewer">
+            <div class="ladb-hardware-editor-unit" style="display: none;" data-toggle="tooltip" title="{{ 'core.hardware_editor.length_unit'|i18next }}"></div>
             <div class="ladb-hardware-editor-verdict" style="display: none;"></div>
             <div class="ladb-hardware-editor-trial">
                 <div class="ladb-hardware-editor-bench-settings" style="display: none;">
