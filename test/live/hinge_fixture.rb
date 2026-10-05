@@ -29,6 +29,15 @@ module HingeFixture
   # behind its centre - and behind PICK_POINT.
   SHELF = [ 18, 0, 351, 582, 542, 369 ]
 
+  # Three fixed shelves flush with the front, evenly spaced : right behind
+  # the centre of the door AND the points halfway towards its corners - the
+  # very points its back was once looked for at, all of them blocked.
+  SHELVES = [
+    [ 18, 0, 172, 582, 542, 190 ],
+    SHELF,
+    [ 18, 0, 530, 582, 542, 548 ],
+  ]
+
   # Where the door is hovered : near its left edge, on its front face.
   PICK_POINT = [ 40, -19, 360 ]   # mm, caisson local
 
@@ -65,8 +74,9 @@ module HingeFixture
   # A 35 mm cup hinge given as primitives - no SKP file - and a plate drilled
   # in the side. hardware : false for a hinge made of its machining only ;
   # pivot : false for one without its pivot - it can't turn ; z_offset : of
-  # its hardware.
-  def self.descriptor(id, hardware: true, pivot: true, z_offset: nil)
+  # its hardware ; articles : its hardware made of articles - the cup and its
+  # two pins, each a part of its own.
+  def self.descriptor(id, hardware: true, pivot: true, z_offset: nil, articles: false)
     cup = lambda do |y, screws_y|
       item = {
         'machining' => { 'drillings' => [
@@ -76,6 +86,13 @@ module HingeFixture
         ] },
       }
       item['hardware'] = { 'cylinders' => [ { 'y' => y, 'diameter' => '35mm', 'from' => '-11.5mm', 'to' => '0mm' } ] } if hardware
+      if articles
+        item['hardware'] = {
+          'cup' => item['hardware'],
+          'pins' => { 'cylinders' => [ { 'diameter' => '8mm', 'from' => '-11.5mm', 'to' => '0mm' } ],
+                      'at' => [ { 'x' => '-22.5mm', 'y' => screws_y }, { 'x' => '22.5mm', 'y' => screws_y } ] },
+        }
+      end
       item
     end
     attributes = { 'hinge_max_angle' => 110 }
@@ -111,12 +128,13 @@ module HingeFixture
   # The caisson, as { 'caisson' => instance, 'DOOR' => instance, 'SIDE_L' => … }.
   # One at a time : the handlers probe the model, they would find the parts
   # of another one standing at the same place - see erase. shelf : with the
-  # SHELF. frame : the FRAME_DOORS key of the door, its parts given too, as
+  # SHELF. shelves : with the SHELVES. frame : the FRAME_DOORS key of the door, its parts given too, as
   # { 'STILE_L' => instance, … } under 'parts'.
-  def self.build(model, shelf: false, frame: nil)
+  def self.build(model, shelf: false, shelves: false, frame: nil)
     caisson = model.definitions.add('HINGE_FIXTURE')
     instances = {}
     parts = shelf ? PARTS.merge('SHELF' => SHELF) : PARTS
+    parts = parts.merge(SHELVES.each_with_index.map { |box, index| [ "SHELF_#{index + 1}", box ] }.to_h) if shelves
     parts = parts.reject { |name, _| name == 'DOOR' } unless frame.nil?
     parts.each do |name, box|
       definition = box_definition(model, "HINGE_FIXTURE_#{name}", box)

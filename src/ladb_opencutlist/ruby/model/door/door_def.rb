@@ -9,7 +9,8 @@ module Ladb::OpenCutList
   # Nothing is stored on the door itself - see DefinitionAttributes, ROLE. A
   # part is a door because hinges are glued into its definition : fittings laid
   # by SmartJoinTool (ACTION_ADD_FITTINGS) whose hardware definition bears the
-  # ROLE_HINGE role. Where it turns is read off those hinges, so it follows the
+  # ROLE_HINGE role - or, for a hinge made of articles, the group holding them.
+  # Where it turns is read off those hinges, so it follows the
   # part whatever reshapes it, and a mirrored pair of doors gets opposite
   # hinged edges for free.
   #
@@ -91,9 +92,10 @@ module Ladb::OpenCutList
     # The hinges glued into the given definition - or instance, read through
     # its definition - whether their kinematics make it a door or not : what
     # SmartJoinTool lays and removes. Each is the entity laid in the fitting
-    # frame : a ComponentInstance bearing ROLE_HINGE, or the Group wrapping
-    # one SmartJoinTool lays off that frame - a hardware with a z_offset, see
-    # SmartJoinActionHandler#_add_geometry.
+    # frame : a ComponentInstance bearing ROLE_HINGE, the Group wrapping one
+    # SmartJoinTool lays off that frame - a hardware with a z_offset, see
+    # SmartJoinActionHandler#_add_geometry - or a Group bearing it itself, the
+    # one holding the articles of a hinge made of several.
     def self.hinge_instances(entity)
       definition = entity.respond_to?(:definition) ? entity.definition : entity
       return [] unless definition.is_a?(Sketchup::ComponentDefinition)
@@ -107,6 +109,8 @@ module Ladb::OpenCutList
       fn_hinge = lambda { |e| e.is_a?(Sketchup::ComponentInstance) && DefinitionAttributes.role_of(e.definition) == DefinitionAttributes::ROLE_HINGE }
       return [ entity.definition, entity.transformation ] if fn_hinge.call(entity)
       return nil unless entity.is_a?(Sketchup::Group)
+      return [ entity.definition, entity.transformation ] if DefinitionAttributes.role_of(entity) == DefinitionAttributes::ROLE_HINGE   # A hinge made of articles
+
       inner = entity.entities.select(&fn_hinge)
       return nil unless inner.length == 1
       [ inner.first.definition, entity.transformation * inner.first.transformation ]

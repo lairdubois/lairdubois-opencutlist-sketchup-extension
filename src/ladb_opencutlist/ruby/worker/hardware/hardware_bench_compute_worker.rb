@@ -188,7 +188,8 @@ module Ladb::OpenCutList
       component = descriptor.resolve_component(slot, bench_def.context)
       slot_matrix = bench_def.slot_transformation(slot)
       if component.nil?
-        response[:slots][slot] = { :transformation => slot_matrix, :component => nil }
+        # Its variant all the same : an empty one is edited as any other
+        response[:slots][slot] = { :transformation => slot_matrix, :component => nil, :variant => descriptor.selected_variant(slot, bench_def.context) }
         return
       end
       mirror = component.mirror ? MIRROR_X : IDENTITY
@@ -225,7 +226,7 @@ module Ladb::OpenCutList
             next unless value[key].is_a?(Array)
             primitives[part][key] = value[key].each_with_index.map do |item, index|
               next nil unless item.is_a?(Hash)
-              cylinder = HardwareDescriptorDef.primitive_cylinders({ key => [ item ] }, variables).first
+              cylinder = HardwareDescriptorDef.primitive_cylinders({ key => [ item ] }, variables, HardwareDescriptorDef.height_reversed?(bench_def.type, slot)).first
               cylinders << [ cylinder, key, index ] unless cylinder.nil?
               { :resolved => !cylinder.nil?, :fields => _primitive_fields(item, variables) }
             end
@@ -314,8 +315,12 @@ module Ladb::OpenCutList
                 next nil unless item.is_a?(Hash)
                 cylinder = HardwareDescriptorDef.primitive_cylinders({ k => [ item ] }, variables).first
                 fields = _primitive_fields(item, variables)
-                texts = cylinder.nil? ? nil : { :x => _text(cylinder.x), :y => _text(cylinder.y), :z => _text(cylinder.z_min),
-                                                :diameter => _text(cylinder.diameter), :length => _text(cylinder.length), :depth => _text(cylinder.z_max - cylinder.z_min) }
+                texts = nil
+                unless cylinder.nil?
+                  x, y, z = _descriptor_position(cylinder)
+                  texts = { :x => _text(x), :y => _text(y), :z => _text(z),
+                            :diameter => _text(cylinder.diameter), :length => _text(cylinder.length), :depth => _text(cylinder.z_max - cylinder.z_min) }
+                end
                 { :resolved => !cylinder.nil?, :fields => fields, :texts => texts }
               } ]
             }]
@@ -399,7 +404,7 @@ module Ladb::OpenCutList
           value[primitive_key].each_with_index do |item, index|
             next unless item.is_a?(Hash)
             cylinder = HardwareDescriptorDef.primitive_cylinders({ primitive_key => [ item ] }, variables).first
-            cylinders << [ cylinder, index ] unless cylinder.nil?
+            cylinders << [ cylinder, primitive_key, index ] unless cylinder.nil?
           end
         end
       end
@@ -409,9 +414,9 @@ module Ladb::OpenCutList
           response[:skps] << { :slot => slot, :part => part, :ref => value, :article => key, :position => position, :transformation => position_matrix } if value.is_a?(String)
           next
         end
-        cylinders.each do |cylinder, index|
+        cylinders.each do |cylinder, primitive_key, index|
           response[:solids] << {
-            :slot => slot, :part => part, :article => key, :position => position, :index => index,
+            :slot => slot, :part => part, :article => key, :position => position, :key => primitive_key, :index => index,
             :transformation => _multiply(position_matrix, AXIS_MATRICES[cylinder.axis] || IDENTITY),
             :part_transformation => position_matrix,
             :x => cylinder.x, :y => cylinder.y,
@@ -432,12 +437,32 @@ module Ladb::OpenCutList
     # HardwareDescriptorDef::PrimitiveCylinderDef#axis.
     def _descriptor_axis(cylinder)
       case cylinder.axis
-      when nil
+      when nil, HardwareDescriptorDef::AXIS_Z_LENGTH_Y
         HardwareDescriptorDef::AXIS_Z
-      when HardwareDescriptorDef::AXIS_PRISM_X
+      when HardwareDescriptorDef::AXIS_PRISM_X, HardwareDescriptorDef::AXIS_X_LENGTH_Z
         HardwareDescriptorDef::AXIS_X
       else
         HardwareDescriptorDef::AXIS_Y
+      end
+    end
+
+    # The [ x, y, z ] of the given solid of hardware as the descriptor gives
+    # them - its from along its axis - see
+    # HardwareDescriptorDef::PrimitiveCylinderDef#axis.
+    def _descriptor_position(cylinder)
+      case cylinder.axis
+      when HardwareDescriptorDef::AXIS_PRISM_X   # [ x, y, z ] is [ z, x, y ]
+        [ cylinder.z_min, cylinder.x, cylinder.y ]
+      when HardwareDescriptorDef::AXIS_X_LENGTH_Z   # [ x, y, z ] is [ z, -y, x ]
+        [ cylinder.z_min, -cylinder.y, cylinder.x ]
+      when HardwareDescriptorDef::AXIS_Y   # [ x, y, z ] is [ x, z, -y ]
+        [ cylinder.x, cylinder.z_min, -cylinder.y ]
+      when HardwareDescriptorDef::AXIS_Y_LENGTH_Z   # [ x, y, z ] is [ -y, z, -x ]
+        [ -cylinder.y, cylinder.z_min, -cylinder.x ]
+      when HardwareDescriptorDef::AXIS_Z_LENGTH_Y   # [ x, y, z ] is [ -y, x, z ]
+        [ -cylinder.y, cylinder.x, cylinder.z_min ]
+      else
+        [ cylinder.x, cylinder.y, cylinder.z_min ]
       end
     end
 
@@ -558,14 +583,16 @@ module Ladb::OpenCutList
     MIRROR_X = [ -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 ].freeze
     FLIP_Z = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1 ].freeze   # The virtual side of a used connector
 
-    # The frames the primitives along Y are given in - see
+    # The frames the primitives along Y - or turned on Z - are given in - see
     # HardwareDescriptorDef::PrimitiveCylinderDef#axis and
     # SmartJoinActionHandler::TRANSFORMATION_AXIS_Y.
     AXIS_MATRICES = {
       HardwareDescriptorDef::AXIS_Y => [ 1, 0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0, 0, 1 ].freeze,           # [ x, y, z ] -> [ x, z, -y ]
       HardwareDescriptorDef::AXIS_Y_LENGTH_Z => [ 0, 0, -1, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1 ].freeze,  # [ x, y, z ] -> [ -y, z, -x ]
+      HardwareDescriptorDef::AXIS_Z_LENGTH_Y => [ 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 ].freeze,   # [ x, y, z ] -> [ -y, x, z ]
       HardwareDescriptorDef::AXIS_PRISM_X => [ 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1 ].freeze,      # [ u, v, w ] -> [ w, u, v ]
       HardwareDescriptorDef::AXIS_PRISM_Y => [ 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1 ].freeze,      # [ u, v, w ] -> [ u, w, v ]
+      HardwareDescriptorDef::AXIS_X_LENGTH_Z => [ 0, 0, 1, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1 ].freeze,  # [ x, y, z ] -> [ z, -y, x ]
     }.freeze
 
     def _translation(x, y, z)

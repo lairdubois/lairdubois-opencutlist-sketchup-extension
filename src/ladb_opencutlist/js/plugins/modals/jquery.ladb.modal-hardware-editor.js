@@ -17,21 +17,25 @@
     const SHAPING_TOP = 100;
 
     const PARTS = [ 'hardware', 'machining' ];
-    const PRIMITIVE_KEYS = [ 'cylinders', 'oblongs', 'prisms', 'drillings', 'mortises' ];
+    const PRIMITIVE_KEYS = [ 'cylinders', 'oblongs', 'prisms', 'drillings', 'mortises', 'pockets' ];
 
     // The primitives each part can be given as - see HardwareDescriptorDef::PRIMITIVES -
     // and the one each starts as, once added.
     const PART_PRIMITIVE_KEYS = {
         hardware: [ 'cylinders', 'oblongs', 'prisms' ],
-        machining: [ 'drillings', 'mortises' ]
+        machining: [ 'drillings', 'mortises', 'pockets' ]
     };
     const PRIMITIVE_DEFAULTS = {
         cylinders: { diameter: '8mm', from: '-10mm', to: '10mm' },
         oblongs: { length: '19mm', width: '5mm', from: '-10mm', to: '10mm' },
         prisms: { from: '-1mm', to: '1mm', outline: [ { x: '-20mm', y: '-10mm' }, { x: '20mm', y: '-10mm' }, { x: '20mm', y: '10mm' }, { x: '-20mm', y: '10mm' } ] },
         drillings: { diameter: '5mm', depth: '12mm' },
-        mortises: { length: '19mm', width: '5mm', depth: '12mm' }
+        mortises: { length: '19mm', width: '5mm', depth: '12mm' },
+        pockets: { depth: '10mm', outline: [ { x: '-20mm', y: '-10mm' }, { x: '20mm', y: '-10mm' }, { x: '20mm', y: '10mm' }, { x: '-20mm', y: '10mm' } ] }
     };
+    // The primitives given as a prism - see HardwareDescriptorDef::PRISM_KEYS -
+    // a pocket hollowed out of the part, depth deep from the face.
+    const PRISM_KEYS = [ 'prisms', 'pockets' ];
     const PRIMITIVE_HEADS = [ 'countersink', 'counterbore' ];
 
     // The axis a prism is extruded along, and the axes its points are given
@@ -43,29 +47,31 @@
     // The sizes of a primitive, from the texts of its lengths : '⌀D×L',
     // 'L×W×D' for an elongated one or a prism - its outline extents then.
     const fnPrimitiveSizes = function (key, texts) {
-        const sizes = key === 'mortises' || key === 'oblongs' || key === 'prisms' ? [ texts.length, texts.diameter ] : [ '⌀' + texts.diameter ];
+        const sizes = key === 'mortises' || key === 'oblongs' || PRISM_KEYS.includes(key) ? [ texts.length, texts.diameter ] : [ '⌀' + texts.diameter ];
         sizes.push(texts.depth);
         return sizes.join('×');
     };
 
     // A primitive in a few words, from the texts of its lengths : its sizes
-    // and position - '(X, Y)', (X, Z) along Y - none for a prism, placed by
-    // its outline.
+    // and position by the two axes across the one it goes along - '(X, Y)',
+    // (X, Z) along Y, (Y, Z) along X - none for a prism, placed by its outline.
     const fnPrimitiveSummary = function (key, axis, texts) {
-        if (key === 'prisms') {
+        if (PRISM_KEYS.includes(key)) {
             return fnPrimitiveSizes(key, texts);
         }
-        return fnPrimitiveSizes(key, texts) + ' (' + texts.x + ', ' + (axis === 'y' ? texts.z : texts.y) + ')';
+        const keys = PRISM_OUTLINE_KEYS[axis] || PRISM_OUTLINE_KEYS.z;
+        return fnPrimitiveSizes(key, texts) + ' (' + texts[keys[0]] + ', ' + texts[keys[1]] + ')';
     };
     const PRIMITIVE_HEAD_DEFAULT_ANGLE = 90;
 
-    // Its outline, in the color of its part
+    // Its outline, in the color of its part : a machining seen from above
     const PRIMITIVE_ICONS = {
         cylinders: '<svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4"><ellipse cx="9" cy="4" rx="4" ry="1.6"/><path d="M5 4v10M13 4v10"/><path d="M5 14a4 1.6 0 0 0 8 0"/></svg>',
         oblongs: '<svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="2.5" width="14" height="4" rx="2"/><path d="M2 4.5v9M16 4.5v9"/><path d="M2 13.5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2"/></svg>',
         prisms: '<svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M15.2 12.9 8.5 16.8 8.5 13.9 12.7 11.4 12.7 6 15.2 4.6zM9.5 1.2 15.2 4.6 12.7 6 7 2.7zM7 8.1 12.7 11.4 12.7 6 7 2.7zM7 8.1 12.7 11.4 8.5 13.9 2.8 10.6zM2.8 13.4 8.5 16.8 8.5 13.9 2.8 10.6z"/></svg>',
-        drillings: '<svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1.5 4h15" opacity=".5"/><path d="M6 4v11h6V4"/><path d="M6 15l3 2 3-2" opacity=".6"/></svg>',
-        mortises: '<svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1 4h16" opacity=".5"/><path d="M3 4v9a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4"/></svg>'
+        drillings: '<svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="9" cy="9" r="5.5"/><path d="M9 7.2v3.6M7.2 9h3.6" opacity=".6"/></svg>',
+        mortises: '<svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1.5" y="6" width="15" height="6" rx="3"/></svg>',
+        pockets: '<svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M4 2.5h10a1.5 1.5 0 0 1 1.5 1.5v5a1.5 1.5 0 0 1-1.5 1.5h-3.5v4a1.5 1.5 0 0 1-1.5 1.5H4A1.5 1.5 0 0 1 2.5 14.5V4A1.5 1.5 0 0 1 4 2.5z"/></svg>'
     };
 
     // The given element with a bootstrap tooltip - none without a title -,
@@ -173,7 +179,7 @@
     const AXES = [ 'x', 'y', 'z' ];
 
     // A new descriptor of the given type : empty, its slots to fill - a
-    // hinge prefilled, see fnNewHingeComponents.
+    // hinge with its variants, see fnNewHingeComponents.
     const fnNewDescriptor = function (type) {
         const descriptor = {
             format: 'ocl-hardware',
@@ -195,23 +201,9 @@
         return descriptor;
     };
 
-    // The components of a new hinge : a 35 mm cup hinge - valid, to be laid
-    // and removed as it is - whose variants set the cup by the kind of door
-    // - its y, the joint line 0 - and a plate at 37 mm from the side's front.
-    // Its pivot is left to fill : the door can't turn until it is.
+    // The components of a new hinge : no hardware nor machining to start
+    // with, only the variants by the kind of door - the form can't add them.
     const fnNewHingeComponents = function () {
-        const fnCup = function (y, screwsY) {
-            return {
-                hardware: { cylinders: [ { y: y, diameter: '35mm', from: '-11.5mm', to: '0mm' } ] },
-                machining: {
-                    drillings: [
-                        { y: y, diameter: '35mm', depth: '13mm' },
-                        { x: '-22.5mm', y: screwsY, diameter: '8mm', depth: '13mm' },
-                        { x: '22.5mm', y: screwsY, diameter: '8mm', depth: '13mm' }
-                    ]
-                }
-            };
-        };
         return {
             a: {
                 attributes: { hinge_max_angle: 110 },
@@ -219,20 +211,13 @@
                     select: { by: 'hinge_kind' },
                     fallback: 'overlay',
                     items: {
-                        overlay: fnCup('-6.5mm', '-16mm'),
-                        half_overlay: fnCup('-16mm', '-25.5mm'),
-                        inset: fnCup('-24.5mm', '-34mm')
+                        overlay: {},
+                        half_overlay: {},
+                        inset: {}
                     }
                 }
             },
-            b: {
-                machining: {
-                    drillings: [
-                        { x: '-16mm', y: '37mm', diameter: '5mm', depth: '12mm' },
-                        { x: '16mm', y: '37mm', diameter: '5mm', depth: '12mm' }
-                    ]
-                }
-            }
+            b: {}
         };
     };
 
@@ -922,7 +907,7 @@
                 $control.append($input);
                 $input
                     .val(typeof raw.value === 'string' ? raw.value : '')
-                    .ladbTextinputDimension({ resetValue: typeof raw.value === 'string' ? raw.value : '' })
+                    .ladbTextinputDimension({ resetValue: '' })
                     .on('change', function () {
                         const value = $(this).val();
                         if (value !== raw.value) {
@@ -1153,7 +1138,7 @@
             let path = [ 'components', slot ];
             let target = component;
             if (component.variants && typeof component.variants === 'object') {
-                const variant = resolved ? resolved.variant : null;
+                const variant = resolved ? resolved.variant : slotResponse ? slotResponse.variant || null : null;   // Empty : not resolved, but on the bench
                 if (this.response.type === 'hinge' && component.variants.items) {
                     const $variants = $('<div class="btn-group btn-group-xs">');
                     for (const key of Object.keys(component.variants.items)) {
@@ -2090,6 +2075,10 @@
         const key = primitive.key;
         const machining = key === 'drillings' || key === 'mortises';
         const alongY = machining && item.axis === 'y';
+        // The axis a cylinder or an oblong goes along, the ones it is placed by - see HardwareDescriptorDef::PRISM_OUTLINE_KEYS
+        const shape = key === 'cylinders' || key === 'oblongs';
+        const shapeAxis = shape && PRISM_OUTLINE_KEYS[item.axis] ? item.axis : 'z';
+        const positionKeys = shape ? PRISM_OUTLINE_KEYS[shapeAxis] : alongY ? [ 'x', 'z' ] : [ 'x', 'y' ];
 
         const $editor = $('<div class="ladb-hardware-editor-primitive-editor">')
             .on('focusin focusout', function (e) {
@@ -2105,8 +2094,9 @@
         };
 
         // A length of the item - or of its head, at the given path - :
-        // written as typed, removed when emptied if it is optional.
-        const fnField = function (path, name, optional, axis, tag, resetValue) {
+        // written as typed, removed when emptied if it is optional. Reset :
+        // an optional one removed, a signed one 0, a positive one emptied.
+        const fnField = function (path, name, optional, axis, tag) {
             let responseName = name;
             if (path[itemPath.length] === 'outline') {
                 responseName = 'outline_' + path[itemPath.length + 1] + '_' + name;   // A point of a prism
@@ -2130,7 +2120,7 @@
             $input
                 .val(fnPrimitiveText(target[name]))
                 .attr('placeholder', optional ? '0' : '')
-                .ladbTextinputDimension({ resetValue: optional ? '' : resetValue })   // Reset : an optional one removed
+                .ladbTextinputDimension({ resetValue: !optional && (name === 'from' || name === 'to') ? '0' : '' })
                 .on('input change', function () {
                     const text = $(this).val();
                     that.setJsonMember(path, name, text.trim() === '' && optional ? undefined : fnPrimitiveValue(text));
@@ -2185,42 +2175,18 @@
             return $group;
         };
 
-        // Sizes
         const defaults = PRIMITIVE_DEFAULTS[key];
-        if (key === 'prisms') {
-            this.renderPrismEditor($editor, itemPath, item, fnLabel, fnRow, fnField, fnSegments);
-        } else if (key === 'cylinders' || key === 'drillings') {
-            fnLabel('primitive_diameter');
-            fnRow(fnField(itemPath, 'diameter', false, null, null, defaults.diameter));
-        } else {
-            fnLabel('primitive_size');
-            fnRow([
-                fnField(itemPath, 'length', false, null, 'L', defaults.length),
-                fnField(itemPath, 'width', false, null, 'l', defaults.width)
-            ]);
-            if (key === 'mortises' && alongY) {
-                fnLabel('primitive_length_axis');
-                fnRow(fnSegments([
-                    { value: 'x', axis: 'x', apply: function (newItem) { delete newItem.length_axis; } },
-                    { value: 'z', axis: 'z', apply: function (newItem) { newItem.length_axis = 'z'; } }
-                ], item.length_axis === 'z' ? 'z' : 'x'));
-            }
-        }
 
-        // Extent
-        if (key === 'prisms') {
-            // See renderPrismEditor
-        } else if (key === 'cylinders' || key === 'oblongs') {
-            fnLabel('primitive_span');
-            fnRow([
-                fnField(itemPath, 'from', false, 'z', i18next.t('core.hardware_editor.primitive_from'), defaults.from),
-                fnField(itemPath, 'to', false, 'z', i18next.t('core.hardware_editor.primitive_to'), defaults.to)
-            ]);
-        } else if (key === 'drillings' && !alongY) {
-            const through = item.depth === 'through';
+        // The depth of a machining from the face - through checked beside it
+        // when it can be, not along Y : the length greyed, without value.
+        const fnDepth = function (throughAllowed) {
             fnLabel('primitive_depth');
-            // The length, then through checked beside it : the length greyed, without value
-            const $field = fnField(itemPath, 'depth', false, null, null, defaults.depth);
+            const $field = fnField(itemPath, 'depth', false);
+            if (!throughAllowed) {
+                fnRow($field);
+                return;
+            }
+            const through = item.depth === 'through';
             if (through) {
                 $field.addClass('ladb-hardware-editor-primitive-disabled');
                 $field.find('input').val('').ladbTextinputDimension('disable');
@@ -2254,40 +2220,91 @@
                         .append(' ' + i18next.t('core.hardware_editor.primitive_through'))
                     )
             ]);
+        };
+
+        // Sizes
+        if (PRISM_KEYS.includes(key)) {
+            this.renderPrismEditor($editor, key, itemPath, item, fnLabel, fnRow, fnField, fnSegments, fnDepth);
+        } else if (key === 'cylinders' || key === 'drillings') {
+            fnLabel('primitive_diameter');
+            fnRow(fnField(itemPath, 'diameter', false));
         } else {
-            fnLabel('primitive_depth');
-            fnRow(fnField(itemPath, 'depth', false, null, null, defaults.depth));
+            fnLabel('primitive_size');
+            fnRow([
+                fnField(itemPath, 'length', false, null, 'L'),
+                fnField(itemPath, 'width', false, null, 'l')
+            ]);
+            // Along the first axis across the one it goes along, or the other one
+            const [ first, across ] = positionKeys;
+            fnLabel('primitive_length_axis');
+            fnRow(fnSegments([
+                { value: first, axis: first, apply: function (newItem) { delete newItem.length_axis; } },
+                { value: across, axis: across, apply: function (newItem) { newItem.length_axis = across; } }
+            ], item.length_axis === across ? across : first));
         }
 
         // Axis
         if (machining) {
             fnLabel('primitive_axis');
             fnRow(fnSegments([
-                { value: 'z', axis: 'z', apply: function (newItem) {
-                    delete newItem.axis;
-                    delete newItem.z;
-                    delete newItem.length_axis;
-                } },
                 { value: 'y', axis: 'y', apply: function (newItem) {
-                    newItem.axis = 'y';
-                    delete newItem.y;
-                    if (newItem.depth === 'through') {
-                        newItem.depth = '@height';
-                    }
-                    for (const head of PRIMITIVE_HEADS) {
-                        delete newItem[head];   // Not along Y
-                    }
-                } }
+                        newItem.axis = 'y';
+                        delete newItem.y;
+                        delete newItem.length_axis;
+                        if (newItem.depth === 'through') {
+                            newItem.depth = '@height';
+                        }
+                        for (const head of PRIMITIVE_HEADS) {
+                            delete newItem[head];   // Not along Y
+                        }
+                    } },
+                { value: 'z', axis: 'z', apply: function (newItem) {
+                        delete newItem.axis;
+                        delete newItem.z;
+                        delete newItem.length_axis;
+                    } }
             ], alongY ? 'y' : 'z'));
+        } else if (shape) {
+            // Its position keeps its values, by the new axes - an oblong long along the first
+            fnLabel('primitive_axis');
+            fnRow(fnSegments(PRISM_AXES.map(function (newAxis) {
+                return { value: newAxis, axis: newAxis, apply: function (newItem) {
+                        const values = positionKeys.map(function (k) { return newItem[k]; });
+                        for (const k of [ 'x', 'y', 'z' ]) {
+                            delete newItem[k];
+                        }
+                        delete newItem.length_axis;
+                        PRISM_OUTLINE_KEYS[newAxis].forEach(function (k, i) {
+                            if (values[i] !== undefined) newItem[k] = values[i];
+                        });
+                        if (newAxis === 'z') {
+                            delete newItem.axis;
+                        } else {
+                            newItem.axis = newAxis;
+                        }
+                    } };
+            }), shapeAxis));
+        }
+
+        // Extent
+        if (PRISM_KEYS.includes(key)) {
+            // See renderPrismEditor
+        } else if (shape) {
+            $editor.append($('<div class="ladb-hardware-editor-primitive-label">').text(i18next.t('core.hardware_editor.primitive_prism_span', { axis: shapeAxis.toUpperCase() })));
+            fnRow([
+                fnField(itemPath, 'from', false, shapeAxis, i18next.t('core.hardware_editor.primitive_from')),
+                fnField(itemPath, 'to', false, shapeAxis, i18next.t('core.hardware_editor.primitive_to'))
+            ]);
+        } else {
+            fnDepth(!alongY);
         }
 
         // Position - a prism's by its outline
-        if (key !== 'prisms') {
+        if (!PRISM_KEYS.includes(key)) {
             fnLabel('primitive_position');
-            fnRow([
-                fnField(itemPath, 'x', true, 'x', 'X', '0'),
-                alongY ? fnField(itemPath, 'z', true, 'z', 'Z', '0') : fnField(itemPath, 'y', true, 'y', 'Y', '0')
-            ]);
+            fnRow(positionKeys.map(function (k) {
+                return fnField(itemPath, k, true, k, k.toUpperCase());
+            }));
         }
 
         // Head : a widened end of a drilling - not along Y - or a cylinder
@@ -2341,8 +2358,8 @@
                 fnLabel(head === 'countersink' ? 'primitive_head_diameter_angle' : 'primitive_head_diameter_depth');
                 const $second = head === 'countersink'
                     ? this.renderPrimitiveAngle(headPath, headValue)
-                    : fnField(headPath, 'depth', false, null, null, '3mm');
-                fnRow([ fnField(headPath, 'diameter', false, null, 'Ø', '10mm'), $second ]);
+                    : fnField(headPath, 'depth', false);
+                fnRow([ fnField(headPath, 'diameter', false, null, 'Ø'), $second ]);
             }
         }
 
@@ -2393,14 +2410,15 @@
     };
 
     // The fields of a prism - see renderPrimitiveEditor and its helpers - :
-    // the axis it is extruded along, from where to where along it, then its
-    // outline, one row per point - by the two other axes, and the radius of
+    // the axis it is extruded along, from where to where along it - a
+    // pocket's depth from the face - then its outline, one row per point - by the two other axes, and the radius of
     // its rounding - points added and removed whole.
-    LadbModalHardwareEditor.prototype.renderPrismEditor = function ($editor, itemPath, item, fnLabel, fnRow, fnField, fnSegments) {
+    LadbModalHardwareEditor.prototype.renderPrismEditor = function ($editor, key, itemPath, item, fnLabel, fnRow, fnField, fnSegments, fnDepth) {
         const that = this;
 
-        const defaults = PRIMITIVE_DEFAULTS.prisms;
-        const axis = PRISM_OUTLINE_KEYS[item.axis] ? item.axis : 'z';
+        // A pocket goes along Z or Y, depth deep from the face, as a drilling or a mortise
+        const pocket = key === 'pockets';
+        const axis = PRISM_OUTLINE_KEYS[item.axis] && (!pocket || item.axis !== 'x') ? item.axis : 'z';
         const keys = PRISM_OUTLINE_KEYS[axis];
         const outline = Array.isArray(item.outline) ? item.outline : [];
 
@@ -2418,12 +2436,15 @@
 
         // Axis : its points keep their values, by the new axes
         fnLabel('primitive_axis');
-        fnRow(fnSegments(PRISM_AXES.map(function (newAxis) {
+        fnRow(fnSegments((pocket ? [ 'y', 'z' ] : PRISM_AXES).map(function (newAxis) {
             return { value: newAxis, axis: newAxis, apply: function (newItem) {
                 if (newAxis === 'z') {
                     delete newItem.axis;
                 } else {
                     newItem.axis = newAxis;
+                }
+                if (pocket && newAxis === 'y' && newItem.depth === 'through') {
+                    newItem.depth = '@height';   // Not through along Y
                 }
                 const newKeys = PRISM_OUTLINE_KEYS[newAxis];
                 newItem.outline = (Array.isArray(newItem.outline) ? newItem.outline : []).map(function (point) {
@@ -2438,24 +2459,28 @@
             } };
         }), axis));
 
-        // Extent along it
-        $editor.append($('<div class="ladb-hardware-editor-primitive-label">').text(i18next.t('core.hardware_editor.primitive_prism_span', { axis: axis.toUpperCase() })));
-        fnRow([
-            fnField(itemPath, 'from', false, axis, i18next.t('core.hardware_editor.primitive_from'), defaults.from),
-            fnField(itemPath, 'to', false, axis, i18next.t('core.hardware_editor.primitive_to'), defaults.to)
-        ]);
+        // Extent along it - a pocket's from the face
+        if (pocket) {
+            fnDepth(axis !== 'y');
+        } else {
+            $editor.append($('<div class="ladb-hardware-editor-primitive-label">').text(i18next.t('core.hardware_editor.primitive_prism_span', { axis: axis.toUpperCase() })));
+            fnRow([
+                fnField(itemPath, 'from', false, axis, i18next.t('core.hardware_editor.primitive_from')),
+                fnField(itemPath, 'to', false, axis, i18next.t('core.hardware_editor.primitive_to'))
+            ]);
+        }
 
         // Outline
         $editor.append($('<div class="ladb-hardware-editor-primitive-separator">'));
         outline.forEach(function (point, index) {
             const pointPath = itemPath.concat([ 'outline', index ]);
             $editor.append($('<div class="ladb-hardware-editor-primitive-label">').text(index === 0 ? i18next.t('core.hardware_editor.primitive_outline') : ''));
-            const $radius = fnField(pointPath, 'r', true, null, 'R', '');
+            const $radius = fnField(pointPath, 'r', true, null, 'R');
             if (!$radius.attr('title')) {
                 fnTooltip($radius, i18next.t('core.hardware_editor.primitive_outline_radius_help'));   // Unless it tells its error
             }
             const $point = $('<div class="ladb-hardware-editor-primitive-fields ladb-hardware-editor-primitive-point">')
-                .append(keys.map(function (k) { return fnField(pointPath, k, true, k, k.toUpperCase(), '0'); }))
+                .append(keys.map(function (k) { return fnField(pointPath, k, true, k, k.toUpperCase()); }))
                 .append($radius);
             if (!that.readonly) {
                 $point.append(fnTooltip($('<button type="button" class="btn btn-default btn-xs">'), i18next.t('default.delete'))
@@ -2561,7 +2586,7 @@
         if (items === null) {
             return;
         }
-        items.push($.extend({}, PRIMITIVE_DEFAULTS[key]));
+        items.push($.extend(true, {}, PRIMITIVE_DEFAULTS[key]));
         this.primitiveOpen = { slot: slot, part: part, key: key, index: items.length - 1 };
         if (article) this.primitiveOpen.article = article;
         this.setPrimitiveItems(partPath, key, items);
@@ -2594,15 +2619,7 @@
             }
         }
         this.primitiveHovered = null;
-        if (items.length === 0 && !primitive.article) {
-            // The last one of a component's part : the part removed - an empty one isn't valid
-            const part = fnObject(this.jsonValue(partPath));
-            if (Object.keys(part).every(function (k) { return k === primitive.key; })) {
-                this.setPartKind(partPath.slice(0, -1), partPath[partPath.length - 1], 'none');
-                return;
-            }
-        }
-        this.setPrimitiveItems(partPath, primitive.key, items);
+        this.setPrimitiveItems(partPath, primitive.key, items);   // The last one of a component's part : {} left, still primitives
     };
 
     // The given primitive - clicked in the viewer - edited : its row open.
@@ -3092,9 +3109,7 @@
         } else if (kind === 'skp') {
             value = true;
         } else if (kind === 'primitives') {
-            value = part === 'hardware'
-                ? { cylinders: [ { diameter: '8mm', from: '-10mm', to: '10mm' } ] }
-                : { drillings: [ { diameter: '8mm', depth: '10mm' } ] };
+            value = {};   // None yet : the one wanted added from its button
         } else if (kind === 'articles') {
             // What the part is given as becomes its first article
             const current = this.jsonValue(path.concat([ part ]));
@@ -3349,6 +3364,7 @@
                 continue;
             }
             skps.push({
+                slot: skp.slot,
                 part: skp.part,
                 transformation: fnMultiply(skp.transformation, this.placements[skp.ref] || IDENTITY),
                 faces: mesh.faces,

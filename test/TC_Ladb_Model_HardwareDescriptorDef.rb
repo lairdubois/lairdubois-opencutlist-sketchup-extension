@@ -453,9 +453,69 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     assert_nil(HardwareDescriptorDef.primitive_cylinders('$LIB/dowel.skp'))
   end
 
+  def test_lying_cylinders
+    hardware = { 'cylinders' => [ { 'axis' => 'x', 'y' => '3mm', 'z' => '-8mm', 'diameter' => 4, 'from' => -10, 'to' => 10 },
+                                  { 'axis' => 'y', 'x' => '5mm', 'z' => '-6mm', 'diameter' => 4, 'from' => 0, 'to' => 12 },
+                                  { 'axis' => 'z', 'x' => '1mm', 'diameter' => 4, 'from' => 0, 'to' => 12 } ] }
+    descriptor = _def(_with(HINGE, 'components' => { 'a' => { 'hardware' => hardware } }))
+    assert(descriptor.valid?, descriptor.errors.inspect)
+    assert_equal([], descriptor.used_measures)   # Along Y, a cylinder doesn't start on the face height away
+    assert_equal([], HardwareDescriptorDef.primitive_variables(hardware))
+    along_x, along_y, along_z = HardwareDescriptorDef.primitive_cylinders(hardware)
+    # Along X : [ x, y, z ] is [ z, x, y ]
+    assert_equal(HardwareDescriptorDef::AXIS_PRISM_X, along_x.axis)
+    assert_in_delta(3 / 25.4, along_x.x, 1e-9)
+    assert_in_delta(-8 / 25.4, along_x.y, 1e-9)
+    assert_in_delta(-10 / 25.4, along_x.z_min, 1e-9)
+    # Along Y : [ x, y, z ] is [ x, z, -y ]
+    assert_equal(HardwareDescriptorDef::AXIS_Y, along_y.axis)
+    assert_in_delta(5 / 25.4, along_y.x, 1e-9)
+    assert_in_delta(6 / 25.4, along_y.y, 1e-9)
+    assert_in_delta(12 / 25.4, along_y.z_max, 1e-9)
+    assert_nil(along_z.axis)
+    assert_in_delta(1 / 25.4, along_z.x, 1e-9)
+  end
+
+  def test_lying_oblongs
+    fn = lambda { |item| HardwareDescriptorDef.primitive_cylinders('oblongs' => [ { 'length' => 20, 'width' => 6, 'from' => 0, 'to' => 10 }.merge(item) ]).first }
+    # [ along, length_axis, item ] => [ axis, x, y ] : the frame - see SHAPE_FRAMES - and its x, y
+    {
+      [ {} ] => [ nil, 1, 2 ],
+      [ { 'length_axis' => 'y' } ] => [ HardwareDescriptorDef::AXIS_Z_LENGTH_Y, 2, -1 ],
+      [ { 'axis' => 'x' } ] => [ HardwareDescriptorDef::AXIS_PRISM_X, 2, 3 ],
+      [ { 'axis' => 'x', 'length_axis' => 'z' } ] => [ HardwareDescriptorDef::AXIS_X_LENGTH_Z, 3, -2 ],
+      [ { 'axis' => 'y' } ] => [ HardwareDescriptorDef::AXIS_Y, 1, -3 ],
+      [ { 'axis' => 'y', 'length_axis' => 'z' } ] => [ HardwareDescriptorDef::AXIS_Y_LENGTH_Z, -3, -1 ],
+    }.each do |(item), (axis, x, y)|
+      keys = HardwareDescriptorDef::PRISM_OUTLINE_KEYS[item['axis'] || 'z']
+      position = Hash[keys.map { |k| [ k, "#{{ 'x' => 1, 'y' => 2, 'z' => 3 }[k]}mm" ] }]
+      oblong = fn.call(item.merge(position))
+      assert_equal(axis, oblong.axis, item.inspect)
+      assert_in_delta(x / 25.4, oblong.x, 1e-9, item.inspect)
+      assert_in_delta(y / 25.4, oblong.y, 1e-9, item.inspect)
+      assert_in_delta(20 / 25.4, oblong.length, 1e-9)
+    end
+    descriptor = _def(_with(HINGE, 'components' => { 'a' => { 'hardware' => { 'oblongs' => [ { 'axis' => 'x', 'length_axis' => 'z', 'length' => 20, 'width' => 6, 'from' => 0, 'to' => 10 } ] } } }))
+    assert(descriptor.valid?, descriptor.errors.inspect)
+  end
+
+  # {} : primitives none yet - valid, nothing laid, as an empty slot.
+  def test_empty_primitives
+    descriptor = _def(_with(HINGE, 'components' => { 'a' => { 'hardware' => {}, 'machining' => { 'drillings' => [ { 'diameter' => '5mm', 'depth' => '5mm' } ] } } }))
+    assert(descriptor.valid?, descriptor.errors.inspect)
+    component = descriptor.resolve_component('a')
+    assert_nil(component.hardware)
+    assert(HardwareDescriptorDef.primitives?(component.machining))
+    descriptor = _def(_with(HINGE, 'components' => { 'a' => { 'hardware' => {}, 'machining' => {} } }))
+    assert(descriptor.valid?, descriptor.errors.inspect)
+    component = descriptor.resolve_component('a')
+    assert_nil(component.hardware)
+    assert_nil(component.machining)
+    assert(!HardwareDescriptorDef.primitives?({}))
+  end
+
   def test_invalid_cylinders
     fn = lambda { |hardware| _with(HINGE, 'components' => { 'a' => { 'hardware' => hardware } }) }
-    _assert_error(fn.call({}), "component 'a' hardware is neither true, a path nor a link")
     _assert_error(fn.call({ 'drillings' => [ { 'diameter' => '5mm', 'depth' => '5mm' } ] }), "hardware has an unknown primitive 'drillings'")
     _assert_error(fn.call({ 'cylinders' => [] }), 'hardware cylinders is not a list of cylinders')
     _assert_error(fn.call({ 'cylinders' => [ 1 ] }), 'cylinder 1 is not an object')
@@ -464,6 +524,11 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     _assert_error(fn.call({ 'cylinders' => [ { 'diameter' => 8, 'from' => 0 } ] }), 'cylinder 1 to is not a length')
     _assert_error(fn.call({ 'cylinders' => [ { 'diameter' => 8, 'from' => '5mm', 'to' => '5mm' } ] }), 'cylinder 1 to is not above from')
     _assert_error(fn.call({ 'cylinders' => [ { 'diameter' => 8, 'from' => 0, 'to' => 5, 'depth' => 3 } ] }), "cylinder 1 has an unknown key 'depth'")
+    _assert_error(fn.call({ 'cylinders' => [ { 'axis' => 'w', 'diameter' => 8, 'from' => 0, 'to' => 5 } ] }), 'cylinder 1 axis is neither "z" nor "x" nor "y"')
+    _assert_error(fn.call({ 'cylinders' => [ { 'axis' => 'x', 'x' => 2, 'diameter' => 8, 'from' => 0, 'to' => 5 } ] }), 'cylinder 1 is along X and has a x - it is placed by y and z')
+    _assert_error(fn.call({ 'cylinders' => [ { 'z' => 2, 'diameter' => 8, 'from' => 0, 'to' => 5 } ] }), 'cylinder 1 is along Z and has a z - it is placed by x and y')
+    _assert_error(fn.call({ 'oblongs' => [ { 'axis' => 'x', 'length_axis' => 'x', 'length' => 20, 'width' => 6, 'from' => 0, 'to' => 5 } ] }), 'oblong 1 length_axis is neither "y" nor "z"')
+    _assert_error(fn.call({ 'oblongs' => [ { 'axis' => 'y', 'y' => 2, 'length' => 20, 'width' => 6, 'from' => 0, 'to' => 5 } ] }), 'oblong 1 is along Y and has a y - it is placed by x and z')
   end
 
   # A dowel between a panel lying flat - drilled in its face, no deeper than
@@ -711,10 +776,42 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     assert_equal(HardwareDescriptorDef::AXIS_PRISM_Y, HardwareDescriptorDef.primitive_cylinders({ 'prisms' => [ { 'axis' => 'y', 'from' => 0, 'to' => 1, 'outline' => [ { 'x' => 0 }, { 'x' => 5 }, { 'z' => 5 } ] } ] }).first.axis)
   end
 
+  # A pocket : a machining prism, depth deep from the face into the part -
+  # or from the face +Y leads to, height away, along Y.
+  def test_machining_prisms
+    machining = { 'pockets' => [ { 'depth' => '@thickness / 2', 'outline' => [ { 'x' => -10, 'y' => -5 }, { 'x' => 10, 'y' => -5 }, { 'x' => 10, 'y' => 5, 'r' => 2 }, { 'x' => -10, 'y' => 5 } ] } ] }
+    descriptor = _def(_with(HINGE, 'components' => { 'a' => { 'machining' => machining } }))
+    assert(descriptor.valid?, descriptor.errors.inspect)
+    assert(HardwareDescriptorDef.primitives?(machining))
+    assert_equal([ 'thickness' ], HardwareDescriptorDef.primitive_variables(machining))
+    pocket = HardwareDescriptorDef.primitive_cylinders(machining, 'thickness' => 18 / 25.4).first
+    assert(pocket.prism?)
+    assert_equal(HardwareDescriptorDef::MACHINING_POCKETS, pocket.key)
+    assert_in_delta(-9 / 25.4, pocket.z_min, 1e-9)
+    assert_in_delta(0.0, pocket.z_max, 1e-9)
+    through = HardwareDescriptorDef.primitive_cylinders({ 'pockets' => [ { 'depth' => 'through', 'outline' => machining['pockets'][0]['outline'] } ] }, 'thickness' => 18 / 25.4).first
+    assert_in_delta(-18 / 25.4, through.z_min, 1e-9)
+    # Along Y : by x and z, from the face height away
+    along_y = { 'pockets' => [ { 'axis' => 'y', 'depth' => '5mm', 'outline' => [ { 'x' => 0 }, { 'x' => 10 }, { 'z' => -5 } ] } ] }
+    assert(_def(_with(HINGE, 'components' => { 'a' => { 'machining' => along_y } })).valid?)
+    assert_equal([ 'height' ], HardwareDescriptorDef.primitive_variables(along_y))
+    pocket = HardwareDescriptorDef.primitive_cylinders(along_y, 'height' => 20 / 25.4).first
+    assert_equal(HardwareDescriptorDef::AXIS_PRISM_Y, pocket.axis)
+    assert_in_delta(15 / 25.4, pocket.z_min, 1e-9)
+    assert_in_delta(20 / 25.4, pocket.z_max, 1e-9)
+    assert_empty(HardwareDescriptorDef.primitive_cylinders(along_y, {}))   # No height
+  end
+
   def test_invalid_prisms
     fn = lambda { |part, item| _with(HINGE, 'components' => { 'a' => { part => { 'prisms' => [ item ] } } }) }
     triangle = [ { 'x' => 0, 'y' => 0 }, { 'x' => 10, 'y' => 0 }, { 'x' => 0, 'y' => 10 } ]
     _assert_error(fn.call('machining', { 'from' => 0, 'to' => 1, 'outline' => triangle }), "machining has an unknown primitive 'prisms'")
+    _assert_error(_with(HINGE, 'components' => { 'a' => { 'hardware' => { 'pockets' => [ { 'from' => 0, 'to' => 1, 'outline' => triangle } ] } } }), "hardware has an unknown primitive 'pockets'")
+    fn_pocket = lambda { |item| _with(HINGE, 'components' => { 'a' => { 'machining' => { 'pockets' => [ item ] } } }) }
+    _assert_error(fn_pocket.call({ 'outline' => triangle }), 'pocket 1 depth is neither "through" nor a positive length')
+    _assert_error(fn_pocket.call({ 'from' => 0, 'to' => 1, 'outline' => triangle }), "pocket 1 has an unknown key 'from'")
+    _assert_error(fn_pocket.call({ 'axis' => 'x', 'depth' => 1, 'outline' => triangle }), 'pocket 1 axis is neither "z" nor "y"')
+    _assert_error(fn_pocket.call({ 'axis' => 'y', 'depth' => 'through', 'outline' => [ { 'x' => 0 }, { 'x' => 10 }, { 'z' => -5 } ] }), 'pocket 1 is along Y and through')
     _assert_error(fn.call('hardware', { 'outline' => triangle }), 'prism 1 from is not a length')
     _assert_error(fn.call('hardware', { 'axis' => 'w', 'from' => 0, 'to' => 1, 'outline' => triangle }), 'prism 1 axis is neither "z" nor "x" nor "y"')
     _assert_error(fn.call('hardware', { 'from' => 0, 'to' => 1, 'outline' => triangle.first(2) }), 'prism 1 outline is not a list of 3 points or more')
@@ -802,6 +899,44 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     assert_equal('y', along_x.axis)
     assert_in_delta(mm.call(2), along_x.x, 1e-9)
     assert_in_delta(mm.call(13), along_x.y, 1e-9)
+    # A mortise along Z whose length goes along Y : [ x, y, z ] -> [ -y, x, z ]
+    slot = { 'mortises' => [ { 'length_axis' => 'y', 'x' => '3mm', 'y' => '-6mm', 'length' => '12mm', 'width' => '6mm', 'depth' => '16mm' } ] }
+    assert(_def(_with(HINGE, 'components' => { 'a' => { 'machining' => slot } })).valid?)
+    assert_equal([], HardwareDescriptorDef.primitive_variables(slot))
+    mortise = HardwareDescriptorDef.primitive_cylinders(slot).first
+    assert_equal(HardwareDescriptorDef::AXIS_Z_LENGTH_Y, mortise.axis)
+    assert_in_delta(mm.call(-6), mortise.x, 1e-9)
+    assert_in_delta(mm.call(-3), mortise.y, 1e-9)
+    assert_in_delta(mm.call(12), mortise.length, 1e-9)
+    assert_in_delta(mm.call(-16), mortise.z_min, 1e-9)
+    assert_in_delta(0.0, mortise.z_max, 1e-9)
+  end
+
+  # On b of a hinge or a fitting : from the face -Y leads to - @height away
+  # - toward +Y, its head on that face.
+  def test_axis_y_height_reversed
+    mm = lambda { |v| v / 25.4 }
+    assert(HardwareDescriptorDef.height_reversed?('hinge', 'b'))
+    assert(HardwareDescriptorDef.height_reversed?('fitting', :b))
+    assert(!HardwareDescriptorDef.height_reversed?('hinge', 'a'))
+    assert(!HardwareDescriptorDef.height_reversed?('connector', 'b'))
+    machining = { 'drillings' => [
+      { 'axis' => 'y', 'x' => '3mm', 'z' => '-7mm', 'diameter' => '4mm', 'depth' => '12mm', 'countersink' => { 'diameter' => '8mm' } },
+      { 'axis' => 'z', 'diameter' => '4mm', 'depth' => '10mm' },
+    ], 'pockets' => [ { 'axis' => 'y', 'depth' => '2mm', 'outline' => [ { 'x' => -20, 'z' => -18 }, { 'x' => 20, 'z' => -18 }, { 'x' => 20, 'z' => -2 }, { 'x' => -20, 'z' => -2 } ] } ] }
+    drilling, plain, pocket = HardwareDescriptorDef.primitive_cylinders(machining, { 'height' => mm.call(19) }, true)
+    assert_in_delta(mm.call(-19), drilling.z_min, 1e-9)   # The face, @height away toward -Y
+    assert_in_delta(mm.call(-7), drilling.z_max, 1e-9)
+    assert_in_delta(mm.call(7), drilling.y, 1e-9)         # Placed as without it
+    assert_equal([ [ 2, -7 ], [ 2, -17 ], [ 4, -19 ] ], drilling.profile.map { |r, z| [ (r * 25.4).round(6), (z * 25.4).round(6) ] })
+    assert_in_delta(mm.call(-10), plain.z_min, 1e-9)       # Along Z : as without it
+    assert_in_delta(0.0, plain.z_max, 1e-9)
+    assert_in_delta(mm.call(-19), pocket.z_min, 1e-9)
+    assert_in_delta(mm.call(-17), pocket.z_max, 1e-9)
+    # Laid on the face itself
+    drilling = HardwareDescriptorDef.primitive_cylinders(machining, { 'height' => 0.0 }, true).first
+    assert_in_delta(0.0, drilling.z_min, 1e-9)
+    assert_in_delta(mm.call(12), drilling.z_max, 1e-9)
   end
 
   def test_invalid_axis_y
@@ -813,10 +948,10 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     _assert_error(fn_drilling.call('z' => -7), "drilling 1 has a z but isn't along Y")
     _assert_error(fn_drilling.call('axis' => 'y', 'z' => 'deep'), 'drilling 1 z is not a length')
     _assert_error(fn.call('machining', { 'mortises' => [ { 'axis' => 'y', 'length' => 19, 'width' => 5, 'depth' => 'through' } ] }), 'mortise 1 is along Y and through')
-    _assert_error(fn.call('hardware', { 'cylinders' => [ { 'axis' => 'y', 'diameter' => 4, 'from' => 0, 'to' => 30 } ] }), "cylinder 1 has an unknown key 'axis'")
+    _assert_error(fn.call('hardware', { 'cylinders' => [ { 'axis' => 'y', 'y' => 2, 'diameter' => 4, 'from' => 0, 'to' => 30 } ] }), 'cylinder 1 is along Y and has a y - it is placed by x and z')
     fn_mortise = lambda { |item| fn.call('machining', { 'mortises' => [ { 'length' => 19, 'width' => 5, 'depth' => 10 }.merge(item) ] }) }
     _assert_error(fn_mortise.call('axis' => 'y', 'length_axis' => 'y'), 'mortise 1 length_axis is neither "x" nor "z"')
-    _assert_error(fn_mortise.call('length_axis' => 'z'), "mortise 1 has a length_axis but isn't along Y")
+    _assert_error(fn_mortise.call('length_axis' => 'z'), 'mortise 1 length_axis is neither "x" nor "y"')
     _assert_error(fn_drilling.call('axis' => 'y', 'length_axis' => 'z'), "drilling 1 has an unknown key 'length_axis'")
   end
 

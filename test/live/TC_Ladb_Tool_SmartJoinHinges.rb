@@ -13,11 +13,17 @@
 #  - machining   : a machining only - it bears the hinge ;
 #  - z_offset    : hardware shifted off its fitting frame - laid wrapped in a
 #                  group ;
+#  - articles    : hardware made of articles - the cup, its pins - in a
+#                  group bearing the hinge ;
 #  - clip_top    : the bundled Blum Clip Top, SKP files ;
 #  - shelf       : "full" on a caisson with a fixed shelf flush with the
 #                  front right behind the centre of the door - and the
 #                  cursor : the back of the door is still found facing the
-#                  cavities, the hinges still laid one per compartment.
+#                  cavities, the hinges still laid one per compartment ;
+#  - shelves     : "full" behind three evenly spaced shelves flush with the
+#                  front, blocking the centre of the door and every point
+#                  halfway towards its corners : the back of the door is
+#                  still found, read off the section of the cavities.
 # Every case lays then removes on a caisson of its own, in the same model :
 # the definitions of one are there for the next.
 #
@@ -44,13 +50,16 @@ module HingesRegression
     'bare' => HingeFixture.descriptor('bare', pivot: false),
     'machining' => HingeFixture.descriptor('machining', hardware: false),
     'z_offset' => HingeFixture.descriptor('z_offset', z_offset: '2mm'),
+    'articles' => HingeFixture.descriptor('articles', articles: true),
     'clip_top' => '$OCL/hinges/blum/clip-top.json',
     'shelf' => HingeFixture.descriptor('shelf'),
+    'shelves' => HingeFixture.descriptor('shelves'),
   }
 
   # The options of HingeFixture.build of each case, none by default.
   FIXTURE_OPTIONS = {
     'shelf' => { shelf: true },
+    'shelves' => { shelves: true },
   }
 
   # What each case gives, once laid then once removed : the hinges on the
@@ -61,8 +70,10 @@ module HingesRegression
     'bare' => { 'laid' => { 'hinges' => 2, 'door' => false, 'door_entities' => 4, 'side_l' => 2, 'side_r' => 0 } },
     'machining' => { 'laid' => { 'hinges' => 2, 'door' => true, 'door_entities' => 2, 'side_l' => 2, 'side_r' => 0 } },
     'z_offset' => { 'laid' => { 'hinges' => 2, 'door' => true, 'door_entities' => 4, 'side_l' => 2, 'side_r' => 0 } },
+    'articles' => { 'laid' => { 'hinges' => 2, 'door' => true, 'door_entities' => 4, 'side_l' => 2, 'side_r' => 0 } },
     'clip_top' => { 'laid' => { 'hinges' => 2, 'door' => true, 'door_entities' => 4, 'side_l' => 4, 'side_r' => 0 } },
     'shelf' => { 'laid' => { 'hinges' => 2, 'door' => true, 'door_entities' => 4, 'side_l' => 2, 'side_r' => 0 } },
+    'shelves' => { 'laid' => { 'hinges' => 2, 'door' => true, 'door_entities' => 4, 'side_l' => 2, 'side_r' => 0 } },
   }
   REMOVED = { 'hinges' => 0, 'door' => false, 'door_entities' => 0, 'side_l' => 0, 'side_r' => 0 }
 

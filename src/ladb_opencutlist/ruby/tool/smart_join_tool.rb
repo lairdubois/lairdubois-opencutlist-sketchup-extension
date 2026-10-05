@@ -491,10 +491,24 @@ module Ladb::OpenCutList
     TRANSFORMATION_AXIS_Y = Geom::Transformation.axes(ORIGIN, X_AXIS, Z_AXIS.reverse, Y_AXIS).freeze
     # The one of a mortise along Y whose length goes along Z : [ x, y, z ] -> [ -y, z, -x ].
     TRANSFORMATION_AXIS_Y_LENGTH_Z = Geom::Transformation.axes(ORIGIN, Z_AXIS.reverse, X_AXIS.reverse, Y_AXIS).freeze
+    # The one of a mortise along Z whose length goes along Y : [ x, y, z ] -> [ -y, x, z ].
+    TRANSFORMATION_AXIS_Z_LENGTH_Y = Geom::Transformation.axes(ORIGIN, Y_AXIS, X_AXIS.reverse, Z_AXIS).freeze
     # The ones of a prism along X and along Y - see HardwareDescriptorDef::AXIS_PRISM_X :
     # [ u, v, w ] -> [ w, u, v ], and [ u, v, w ] -> [ u, w, v ] - a mirror.
     TRANSFORMATION_AXIS_PRISM_X = Geom::Transformation.axes(ORIGIN, Y_AXIS, Z_AXIS, X_AXIS).freeze
     TRANSFORMATION_AXIS_PRISM_Y = Geom::Transformation.new([ 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1 ]).freeze
+    # The one of an oblong along X whose length goes along Z : [ x, y, z ] -> [ z, -y, x ].
+    TRANSFORMATION_AXIS_X_LENGTH_Z = Geom::Transformation.axes(ORIGIN, Z_AXIS, Y_AXIS.reverse, X_AXIS).freeze
+
+    # The coordinate - 0 for x, 1 for y - of a cylinder or an oblong lying
+    # along X or Y that goes along Z of the laying frame, and its sign, by
+    # its axis - see HardwareDescriptorDef::SHAPE_FRAMES.
+    LYING_Z_COORDINATES = {
+      HardwareDescriptorDef::AXIS_PRISM_X => [ 1, 1 ],
+      HardwareDescriptorDef::AXIS_X_LENGTH_Z => [ 0, 1 ],
+      HardwareDescriptorDef::AXIS_Y => [ 1, -1 ],
+      HardwareDescriptorDef::AXIS_Y_LENGTH_Z => [ 0, -1 ],
+    }.freeze
 
     # How far behind the face _get_placement_height looks - toward -Z - off
     # the edge the face may share with the one it finds.
@@ -985,6 +999,13 @@ module Ladb::OpenCutList
       descriptor.resolve_component(slot, _get_hardware_context)
     end
 
+    # Does a machining along Y of the given slot of the hardware go from the
+    # face -Y leads to - see HardwareDescriptorDef.height_reversed? ?
+    def _height_reversed?(slot)
+      return false if (descriptor = _get_hardware_descriptor_def).nil?
+      HardwareDescriptorDef.height_reversed?(descriptor.type, slot)
+    end
+
     # The ref of the given part - :hardware or :machining - of the given slot's
     # component. nil for a machining given as primitives - see
     # _get_hardware_component_primitives.
@@ -1322,7 +1343,7 @@ module Ladb::OpenCutList
           mt = _get_geometry_mirror_transformation(geometry)
           bounds.add(geometry.drawing_def.bounds.min.transform(mt), geometry.drawing_def.bounds.max.transform(mt))
         elsif geometry.primitives
-          bounds.add(_get_primitives_bounds(geometry.primitives, geometry.mirror))
+          bounds.add(_get_primitives_bounds(geometry.primitives, geometry.mirror, nil, _height_reversed?(geometry.slot)))
         end
         bounds.add(_get_articles_bounds(geometry)) unless geometry.articles.nil?
       end
@@ -1478,7 +1499,8 @@ module Ladb::OpenCutList
     def _get_contributions_dimensions(geometry, placement)
       return [] if geometry.contributions.nil?
       geometry.contributions.flat_map { |contribution|
-        dimensions = _get_primitives_dimensions(contribution.primitives, placement, false, contribution.variables_fn.call(placement))
+        # A connector's : along Y from the face +Y leads to
+        dimensions = _get_primitives_dimensions(contribution.primitives, placement, false, contribution.variables_fn.call(placement), false)
         _get_article_positions(contribution.article, placement).flat_map { |px, py|
           dimensions.map { |values| _shift_primitive_dimensions(values, px, py) }
         }
@@ -1490,7 +1512,23 @@ module Ladb::OpenCutList
     def _shift_primitive_dimensions(values, px, py)
       fn_round = lambda { |v| v.to_f.round(6) + 0.0 }
       values = values.dup
+      unless values[8].nil?   # A prism : laid by its outline
+        u, v, w = { HardwareDescriptorDef::AXIS_PRISM_X => [ py, 0.0, px ], HardwareDescriptorDef::AXIS_PRISM_Y => [ px, 0.0, py ] }[values[7]] || [ px, py, 0.0 ]
+        values[3] = fn_round.call(values[3] + w)
+        values[4] = fn_round.call(values[4] + w)
+        values[8] = values[8].map { |pu, pv, r| [ fn_round.call(pu + u), fn_round.call(pv + v), r ] }
+        return values
+      end
       case values[7]
+      when HardwareDescriptorDef::AXIS_PRISM_X, HardwareDescriptorDef::AXIS_X_LENGTH_Z   # Along X - [ x, y, z ] is [ z, x, y ], or [ z, -y, x ]
+        if values[7] == HardwareDescriptorDef::AXIS_PRISM_X
+          values[0] = fn_round.call(values[0] + py)
+        else
+          values[1] = fn_round.call(values[1] - py)
+        end
+        values[3] = fn_round.call(values[3] + px)
+        values[4] = fn_round.call(values[4] + px)
+        values[6] = values[6].map { |r, z| [ r, fn_round.call(z + px) ] } unless values[6].nil?
       when HardwareDescriptorDef::AXIS_Y   # [ x, y, z ] is [ x, z, -y ] : y along -Z, z along Y
         values[0] = fn_round.call(values[0] + px)
         values[3] = fn_round.call(values[3] + py)
@@ -1501,6 +1539,9 @@ module Ladb::OpenCutList
         values[3] = fn_round.call(values[3] + py)
         values[4] = fn_round.call(values[4] + py)
         values[6] = values[6].map { |r, z| [ r, fn_round.call(z + py) ] } unless values[6].nil?
+      when HardwareDescriptorDef::AXIS_Z_LENGTH_Y   # [ x, y, z ] is [ -y, x, z ]
+        values[0] = fn_round.call(values[0] + py)
+        values[1] = fn_round.call(values[1] - px)
       else
         values[0] = fn_round.call(values[0] + px)
         values[1] = fn_round.call(values[1] + py)
@@ -1513,10 +1554,11 @@ module Ladb::OpenCutList
     # The bounds of the given primitives in the laying frame, their
     # measures at 0 - what depends on them isn't known yet -, mirrored or
     # not. variables : to evaluate them with, the hardware's when nil.
-    def _get_primitives_bounds(primitives, mirror = false, variables = nil)
+    # height_reversed : see HardwareDescriptorDef.height_reversed?.
+    def _get_primitives_bounds(primitives, mirror = false, variables = nil, height_reversed = false)
       bounds = Geom::BoundingBox.new
       variables ||= _resolve_hardware_variables(Hash[HardwareDescriptorDef.primitive_variables(primitives).map { |name| [ name, 0.0 ] }])
-      HardwareDescriptorDef.primitive_cylinders(primitives, variables).each do |cylinder|
+      HardwareDescriptorDef.primitive_cylinders(primitives, variables, height_reversed).each do |cylinder|
         if cylinder.prism?
           _get_prism_vertices(cylinder.outline, cylinder.z_min, cylinder.z_max, cylinder.axis).each do |point|
             bounds.add(mirror ? Geom::Point3d.new(-point.x, point.y, point.z) : point)
@@ -1527,12 +1569,21 @@ module Ladb::OpenCutList
         h = cylinder.round? ? r : cylinder.length / 2
         x = cylinder.x
         y = cylinder.y
-        if mirror   # Across the YZ plane of the laying frame : its X is the solid's -Y along Z
-          cylinder.axis == HardwareDescriptorDef::AXIS_Y_LENGTH_Z ? y = -y : x = -x
+        z_min = cylinder.z_min
+        z_max = cylinder.z_max
+        if mirror   # Across the YZ plane of the laying frame : its X is the solid's -Y along Z, its Z along X
+          case cylinder.axis
+          when HardwareDescriptorDef::AXIS_Y_LENGTH_Z, HardwareDescriptorDef::AXIS_Z_LENGTH_Y
+            y = -y
+          when HardwareDescriptorDef::AXIS_PRISM_X, HardwareDescriptorDef::AXIS_X_LENGTH_Z
+            z_min, z_max = -z_max, -z_min
+          else
+            x = -x
+          end
         end
         at = _get_primitive_axis_transformation(cylinder.axis)
-        bounds.add(Geom::Point3d.new(x - h, y - r, cylinder.z_min).transform(at))
-        bounds.add(Geom::Point3d.new(x + h, y + r, cylinder.z_max).transform(at))
+        bounds.add(Geom::Point3d.new(x - h, y - r, z_min).transform(at))
+        bounds.add(Geom::Point3d.new(x + h, y + r, z_max).transform(at))
       end
       bounds
     end
@@ -1628,12 +1679,14 @@ module Ladb::OpenCutList
     end
 
     # How far the part of the given placement goes toward +Y of the laying
-    # frame from the anchor, just behind the face : where the nearest of its
-    # faces the ray leaves it by is. nil when none is found.
+    # frame from the anchor - toward -Y for a slot whose height is
+    # reversed, see HardwareDescriptorDef.height_reversed? - just behind the
+    # face : where the nearest of its faces the ray leaves it by is. nil
+    # when none is found.
     def _get_placement_height(placement)
       t = placement.transformation
       origin = Geom::Point3d.new(0, 0, -PLACEMENT_HEIGHT_DEPTH).transform(t)
-      direction = Y_AXIS.transform(t).normalize
+      direction = (_height_reversed?(placement.role) ? Y_AXIS.reverse : Y_AXIS).transform(t).normalize
       on_face = [ Sketchup::Face::PointInside, Sketchup::Face::PointOnEdge, Sketchup::Face::PointOnVertex ]
       placement.definition.entities.grep(Sketchup::Face).map { |face|
         next nil if face == placement.face
@@ -1708,13 +1761,25 @@ module Ladb::OpenCutList
               _get_prism_vertices(cylinder.outline, cylinder.z_min, cylinder.z_max, cylinder.axis).each { |point| points << [ sign * point.x, point.y ] }
               next
             end
-            next unless cylinder.axis.nil?   # Not on the face
-            points << [ sign * cylinder.x, cylinder.y ]
+            at = _get_primitive_axis_transformation(cylinder.axis)
+            if _primitive_lying?(cylinder)
+              # Its shadow on the face : the corners of its box
+              r = cylinder.radius
+              h = cylinder.round? ? r : cylinder.length / 2
+              [ -h, h ].product([ -r, r ], [ cylinder.z_min, cylinder.z_max ]).each do |dx, dy, z|
+                point = Geom::Point3d.new(cylinder.x + dx, cylinder.y + dy, z).transform(at)
+                points << [ sign * point.x, point.y ]
+              end
+              next
+            end
+            next unless cylinder.axis.nil? || cylinder.axis == HardwareDescriptorDef::AXIS_Z_LENGTH_Y   # Not on the face
+            fn_point = lambda { |px, py| point = Geom::Point3d.new(px, py, 0).transform(at); [ sign * point.x, point.y ] }
+            points << fn_point.call(cylinder.x, cylinder.y)
             r = cylinder.radius
             h = cylinder.round? ? 0.0 : cylinder.length / 2 - r
             8.times do |i|
               a = Math::PI * i / 4
-              points << [ sign * (cylinder.x + r * Math.cos(a) + (Math.cos(a) > 1e-6 ? h : Math.cos(a) < -1e-6 ? -h : 0.0)), cylinder.y + r * Math.sin(a) ]
+              points << fn_point.call(cylinder.x + r * Math.cos(a) + (Math.cos(a) > 1e-6 ? h : Math.cos(a) < -1e-6 ? -h : 0.0), cylinder.y + r * Math.sin(a))
             end
           end
         end
@@ -1727,16 +1792,27 @@ module Ladb::OpenCutList
     # and the profile for a widened one, then the axis for one along Y, the
     # values before it nil if missing, then the outline of a prism - in
     # inches, rounded : the key of their geometry. Centered, shifted along Z by their offset - see
-    # _get_primitives_offset - before rounding.
-    def _get_primitives_dimensions(primitives, placement, centered = false, variables = nil)
+    # _get_primitives_offset - before rounding. height_reversed : see
+    # HardwareDescriptorDef.height_reversed?, the placement's slot's by default.
+    def _get_primitives_dimensions(primitives, placement, centered = false, variables = nil, height_reversed = _height_reversed?(placement.role))
       variables ||= _get_placement_variables(placement)
       offset = centered ? _get_primitives_offset(primitives, placement, variables) : 0.0
       fn_round = lambda { |v| v.to_f.round(6) + 0.0 }  # + 0.0 : no -0.0 in the key
-      HardwareDescriptorDef.primitive_cylinders(primitives, variables).map { |cylinder|
+      HardwareDescriptorDef.primitive_cylinders(primitives, variables, height_reversed).map { |cylinder|
         if cylinder.prism? && !cylinder.axis.nil?
           # Along X or Y : its v along Z
           outline = cylinder.outline.map { |u, v, r| [ u, v - offset, r ].map(&fn_round) }
           next [ cylinder.x, cylinder.y, cylinder.diameter, cylinder.z_min, cylinder.z_max, cylinder.length ].map(&fn_round) + [ nil, cylinder.axis, outline ]
+        end
+        if _primitive_lying?(cylinder)
+          # Along X or Y : its x or y along Z
+          index, z_sign = LYING_Z_COORDINATES[cylinder.axis]
+          xy = [ cylinder.x, cylinder.y ]
+          xy[index] -= z_sign * offset
+          values = (xy + [ cylinder.diameter, cylinder.z_min, cylinder.z_max ]).map(&fn_round)
+          values << fn_round.call(cylinder.length) unless cylinder.round?
+          values << nil << cylinder.profile.map { |r, z| [ fn_round.call(r), fn_round.call(z) ] } unless cylinder.profile.nil?
+          next values.fill(nil, values.length...7) << cylinder.axis
         end
         values = [ cylinder.x, cylinder.y, cylinder.diameter, cylinder.z_min - offset, cylinder.z_max - offset ].map(&fn_round)
         next values + [ fn_round.call(cylinder.length), nil, cylinder.axis, cylinder.outline.map { |point| point.map(&fn_round) } ] if cylinder.prism?
@@ -1752,8 +1828,25 @@ module Ladb::OpenCutList
       cylinders = HardwareDescriptorDef.primitive_cylinders(primitives, variables || _get_placement_variables(placement))
       return 0.0 if cylinders.empty?
       # Along Z of the laying frame : the v of a prism along X or Y
-      ranges = cylinders.map { |cylinder| cylinder.prism? && !cylinder.axis.nil? ? cylinder.outline.map { |_, v, _| v }.minmax : [ cylinder.z_min, cylinder.z_max ] }
+      ranges = cylinders.map { |cylinder|
+        if cylinder.prism? && !cylinder.axis.nil?
+          cylinder.outline.map { |_, v, _| v }.minmax
+        elsif _primitive_lying?(cylinder)
+          index, z_sign = LYING_Z_COORDINATES[cylinder.axis]
+          z = z_sign * [ cylinder.x, cylinder.y ][index]
+          h = index == 1 || cylinder.round? ? cylinder.radius : cylinder.length / 2
+          [ z - h, z + h ]
+        else
+          [ cylinder.z_min, cylinder.z_max ]
+        end
+      }
       (ranges.map(&:first).min + ranges.map(&:last).max) / 2
+    end
+
+    # Is the given solid - see HardwareDescriptorDef::PrimitiveCylinderDef -
+    # a cylinder or an oblong lying along X or Y, its own Z along the face ?
+    def _primitive_lying?(cylinder)
+      [ HardwareDescriptorDef::HARDWARE_CYLINDERS, HardwareDescriptorDef::HARDWARE_OBLONGS ].include?(cylinder.key) && LYING_Z_COORDINATES.key?(cylinder.axis)
     end
 
     # The transformation a primitive along the given axis is laid with - see
@@ -1764,8 +1857,12 @@ module Ladb::OpenCutList
         TRANSFORMATION_AXIS_Y
       when HardwareDescriptorDef::AXIS_Y_LENGTH_Z
         TRANSFORMATION_AXIS_Y_LENGTH_Z
+      when HardwareDescriptorDef::AXIS_Z_LENGTH_Y
+        TRANSFORMATION_AXIS_Z_LENGTH_Y
       when HardwareDescriptorDef::AXIS_PRISM_X
         TRANSFORMATION_AXIS_PRISM_X
+      when HardwareDescriptorDef::AXIS_X_LENGTH_Z
+        TRANSFORMATION_AXIS_X_LENGTH_Z
       when HardwareDescriptorDef::AXIS_PRISM_Y
         TRANSFORMATION_AXIS_PRISM_Y
       else
@@ -1936,9 +2033,10 @@ module Ladb::OpenCutList
     # How far along Z of the laying frame the given geometry is laid off its
     # definition : a hardware is shifted by its z_offset, and one of
     # primitives is generated centered - see _get_geometry_definition - the
-    # measures only shift it. 0 for a machining : it starts at the face.
+    # measures only shift it. 0 for a machining : it starts at the face. 0
+    # for articles : their group is laid at the face, each shifted in it.
     def _get_geometry_offset(geometry, placement)
-      return 0.0 unless geometry.part == :hardware
+      return 0.0 unless geometry.part == :hardware && geometry.articles.nil?
       offset = _get_geometry_z_offset(geometry, placement)
       offset += _get_primitives_offset(geometry.primitives, placement, _get_geometry_variables(geometry, placement)) if geometry.definition.nil? && !geometry.primitives.nil?
       offset
@@ -2139,7 +2237,8 @@ module Ladb::OpenCutList
     # placement, glued to its face. Off its definition - see
     # _get_geometry_offset - it is laid in a group glued in its place, that
     # holds the offset : SketchUp puts a glued instance back on the plane of
-    # its face when the model is reopened.
+    # its face when the model is reopened. Returns the group of the articles,
+    # see _add_articles.
     def _add_geometry(geometry, placement, material, layer)
       return _add_articles(geometry, placement, material, layer) unless geometry.articles.nil?
       if !geometry.definition.nil? && !geometry.contributions.nil? && !geometry.contributions.empty?
@@ -2171,7 +2270,7 @@ module Ladb::OpenCutList
     # HardwareDescriptorDef "hardware" - in one group glued to its face : an
     # instance of each article's definition at each of its positions, each
     # with its own material. The group bears none : the cut list counts what
-    # it holds.
+    # it holds. Returns the group, nil when nothing is laid.
     def _add_articles(geometry, placement, material, layer)
       wrapper = placement.entities.add_group
       wrapper.transformation = placement.transformation
@@ -2191,12 +2290,13 @@ module Ladb::OpenCutList
       end
       if wrapper.entities.length == 0
         wrapper.erase!
-        return
+        return nil
       end
       wrapper.layer = layer if layer.is_a?(Sketchup::Layer)
       wrapper.definition.behavior.no_scale_mask = 0b1111111
       wrapper.definition.behavior.is2d = true       # Gluing behavior
       wrapper.glued_to = placement.face if wrapper.respond_to?(:glued_to=) # Sketchup::Group#glued_to= requires SketchUp >= 2021.1
+      wrapper
     end
 
     def _add_glued_instance(definition, material, layer, face, entities, dti, pt, at)
@@ -5418,9 +5518,22 @@ module Ladb::OpenCutList
     # The geometry bearing the hinge's attributes - its hardware, or its
     # machining without one - is found by them too : two hinges drilled the
     # same may turn differently.
+    # Not the articles of A : their group bears them, see #_add_geometry.
     def _get_geometry_definition_key(geometry, dimensions)
-      return super unless geometry.slot == :a && (geometry.part == :hardware || _hinge_machining?(geometry))
+      return super unless geometry.slot == :a && geometry.component.nil? && (geometry.part == :hardware || _hinge_machining?(geometry))
       "#{DefinitionAttributes::ROLE_HINGE}:#{_get_hardware_component(:a).attributes.to_json}:#{super}"
+    end
+
+    # A hinge made of articles : the group laid holding them, in the fitting
+    # frame, bears the hinge's attributes - its pivot is read in that frame,
+    # whatever each article is shifted by. Its articles bear their own.
+    def _add_geometry(geometry, placement, material, layer)
+      group = super
+      if group.is_a?(Sketchup::Group) && geometry.slot == :a && geometry.part == :hardware && !geometry.articles.nil?
+        _write_component_attributes(group.definition, _get_hardware_component(:a))
+        _write_hinge_attributes(group.definition)
+      end
+      group
     end
 
     # The hardware of the hinge given as primitives is generated as they
@@ -5441,7 +5554,7 @@ module Ladb::OpenCutList
     def _hinge_machining?(geometry)
       return false unless geometry.slot == :a && geometry.part == :machining
       component = _get_hardware_component(:a)
-      !component.nil? && component.hardware.nil?
+      !component.nil? && component.hardware.nil? && component.articles.nil?
     end
 
     # The given definition is a hinge : it bears the hinge role whatever its
@@ -5843,8 +5956,8 @@ module Ladb::OpenCutList
     # Memoized per door, for the cavities it was read against.
     #
     # Not the centroid alone : a fixed shelf flush with the front, at mid
-    # height of the door, stands right in front of it. Halfway towards each
-    # corner too.
+    # height of the door, stands right in front of it - see
+    # #_is_face_turned_towards_cavities?.
     #
     # Not the broadest alone either : the panel of a frame door, recessed,
     # may well be broader than the frame around it. The back is the plane
@@ -5868,9 +5981,7 @@ module Ladb::OpenCutList
 
       back = planes.sort_by { |pl| -pl[:area] }.first(4).find { |pl|
         pl[:members].any? { |fm, _|
-          centroid = fm.centroid
-          points = [ centroid ] + fm.outer_loop_manipulator.points.map { |point| Geom.linear_combination(0.5, centroid, 0.5, point) }.select { |point| _is_point_on_face?(fm, point) }
-          points.any? { |point| cavities_def.fragment_defs_for_point(point.offset(fm.normal, HINGE_CAVITY_MIN_DEPTH)).any? }
+          _is_face_turned_towards_cavities?(fm, cavities_def)
         }
       }
       unless back.nil?
@@ -5883,6 +5994,55 @@ module Ladb::OpenCutList
     # How broad, at least, a plane standing deeper than the broadest one has
     # to be to be the back of the door - see #_get_door_back.
     DOOR_BACK_MIN_AREA_RATIO = 0.1
+
+    # Whether some cavity stands behind the given face of the door :
+    # HINGE_CAVITY_MIN_DEPTH in front of it, the plane parallel to it cuts
+    # both the face and the cavities, and the two overlap.
+    #
+    # A few points of the face first - the centroid, halfway towards each
+    # corner - which answer a plain door at once. They may all fall in fixed
+    # shelves flush with the front though : three evenly spaced ones stand
+    # right in front of every one of them, and so would some others in front
+    # of any other set of points. Past them, no sampling : the SECTION of the
+    # cavities by that plane crossing the face - a border between cavity and
+    # not - says some of it is cavity ; crossing it nowhere, the face is all
+    # cavity or all not, and the centroid already said which.
+    #
+    # The face is shrunk a little first : the section of the cavity beside
+    # the door runs along its edge, behind the side panel it overlays.
+    HINGE_SECTION_MARGIN = 1.mm
+
+    def _is_face_turned_towards_cavities?(fm, cavities_def)
+      centroid = fm.centroid
+      points = [ centroid ] + fm.outer_loop_manipulator.points.map { |point| Geom.linear_combination(0.5, centroid, 0.5, point) }.select { |point| _is_point_on_face?(fm, point) }
+      return true if points.any? { |point| cavities_def.fragment_defs_for_point(point.offset(fm.normal, HINGE_CAVITY_MIN_DEPTH)).any? }
+
+      # Everything brought to the cutting plane : z = 0
+      ti = Geom::Transformation.new(fm.position.offset(fm.normal, HINGE_CAVITY_MIN_DEPTH), fm.normal).inverse
+
+      clippy = Fiddle::Clippy
+      rpath = fm.outer_loop_manipulator.points.flat_map { |point| point.transform(ti).to_a[0..1].map(&:to_f) }
+      clips = clippy.inflate_paths(paths: [ rpath ], delta: -HINGE_SECTION_MARGIN.to_f, join_type: clippy::JOIN_TYPE_MITER)
+      return false if clips.empty?
+
+      segments = []
+      cavities_def.fragment_defs.each do |fragment_def|
+        zs = (0..7).map { |index| fragment_def.bounds.corner(index).transform(ti).z.to_f }
+        next if zs.all? { |z| z > 0 } || zs.all? { |z| z <= 0 }   # Not cut by the plane
+
+        local_points = fragment_def.points.map { |point| point.transform(ti).to_a.map(&:to_f) }
+        fragment_def.face_indices.each_slice(3) do |triangle|
+          crossings = triangle.each_with_index.map { |ia, index| [ local_points[ia], local_points[triangle[(index + 1) % 3]] ] }
+                              .select { |a, b| (a[2] > 0) != (b[2] > 0) }
+                              .map { |a, b| r = a[2] / (a[2] - b[2]) ; [ a[0] + (b[0] - a[0]) * r, a[1] + (b[1] - a[1]) * r ] }
+          segments << crossings.flatten if crossings.length == 2 && crossings[0] != crossings[1]
+        end
+      end
+      return false if segments.empty?
+
+      _, open_paths = clippy.execute_intersection(open_subjects: segments, clips: clips)
+      open_paths.any? { |path| path.length >= 4 }
+    end
 
     # The outline of the union of the given faces, on the given plane, in
     # world space : the outer loop of the broadest piece of it. Faces

@@ -232,6 +232,7 @@ let renderer,
     benchMeasureDimension,
     benchHingeDef,
     benchHingeDimensions,
+    benchViewMatrix,
     benchRaycaster
 ;
 
@@ -1543,7 +1544,25 @@ const fnSelectBenchSolid = function (solid) {
         fnRemoveBenchObject(benchHoveredDimensions);
         benchHoveredDimensions = null;
     }
+    fnUpdateBenchAxes();
     fnRender();
+};
+
+// The axes in the frame the coordinates of the selected primitive are read
+// in - its slot's, mirrored, offset, an article's - the bench's without one :
+// a z of b along Y, b's Z reversed, reads as it shows.
+const fnUpdateBenchAxes = function () {
+    if (!bench || !axesHelper || !benchViewMatrix) return;
+    const matrix = benchViewMatrix.clone();
+    if (benchSelectedSolid && benchSelectedSolid.key !== undefined) {   // Not of a whole article
+        const mesh = (benchSolidMeshes || []).find(fnIsBenchSolidSelected);
+        if (mesh && mesh.userData.benchSolidDef.part_transformation) {
+            matrix.multiply(new THREE.Matrix4().fromArray(mesh.userData.benchSolidDef.part_transformation));
+        }
+    }
+    axesHelper.matrixAutoUpdate = false;
+    axesHelper.matrix.copy(matrix);
+    axesHelper.matrixWorldNeedsUpdate = true;
 };
 
 // A solid clicked : the page is told - 'clicked.bench' - its primitive.
@@ -1832,6 +1851,7 @@ const fnSetupBench = function (benchDef) {
     // Shown as the bench says - its frame turned
     const viewMatrix = benchDef.view ? new THREE.Matrix4().fromArray(benchDef.view) : new THREE.Matrix4();
     bench.applyMatrix4(viewMatrix);
+    benchViewMatrix = viewMatrix;
 
     scene.add(bench);
     fnApplyBenchSlotsVisible();   // Hidden slots kept through the rebuilds
@@ -1854,18 +1874,18 @@ const fnSetupBench = function (benchDef) {
     camera.far = baseModelRadius * 8;
     camera.updateProjectionMatrix();
 
-    // Axes of the joint, at its origin - shown until hidden
+    // Axes of the joint, at its origin - or of the selected primitive's frame - shown until hidden
     const axesVisible = axesHelper ? axesHelper.visible : true;
     if (axesHelper) {
         scene.remove(axesHelper);
     }
     axesHelper = new THREE.Group();
     axesHelper.visible = axesVisible;
-    axesHelper.applyMatrix4(viewMatrix);
     for (const [ direction, color ] of [ [ new THREE.Vector3(1, 0, 0), BENCH_AXIS_COLORS.x ], [ new THREE.Vector3(0, 1, 0), BENCH_AXIS_COLORS.y ], [ new THREE.Vector3(0, 0, 1), BENCH_AXIS_COLORS.z ] ]) {
         axesHelper.add(new THREE.ArrowHelper(direction, new THREE.Vector3(), baseModelRadius * 1.5, color, 0));
     }
     scene.add(axesHelper);
+    fnUpdateBenchAxes();   // The selected primitive's frame, kept through the rebuilds
 
     if (firstSetup) {
         fnSetView(THREE_CAMERA_VIEWS.isometric, false);

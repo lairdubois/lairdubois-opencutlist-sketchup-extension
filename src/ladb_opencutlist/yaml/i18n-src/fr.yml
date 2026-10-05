@@ -443,12 +443,12 @@ core:
     primitive_type_prisms: Prisme
     primitive_type_drillings: Perçage
     primitive_type_mortises: Mortaise
+    primitive_type_pockets: Poche
     primitive_axis: Axe
     primitive_position: Position
     primitive_diameter: Diamètre
     primitive_size: Dimensions
     primitive_length_axis: Longueur selon
-    primitive_span: De → À (sur Z)
     primitive_prism_span: "De → À (sur {{ axis }})"
     primitive_outline: Contour
     primitive_outline_add: Point
@@ -2965,14 +2965,14 @@ tool:
     hardware_view: Voir cette quincaillerie ($t(core.library.bundled), lecture seule)
     action_0_family: Connecteurs
     action_0: Ajouter des connecteurs
-    action_0_status: Ajouter des connecteurs pour assembler des pièces
+    action_0_status: Ajouter des connecteurs pour assembler deux pièces en contact
     action_0_state_1_status: Cliquez sur la face de référence d'une pièce pour ajouter des connecteurs avec les pièces voisines en contact
     action_1: Effacer des connecteurs
     action_1_status: Effacer des connecteurs d'assemblage de pièces
     action_1_state_1_status: Cliquez sur la face de référence d'une pièce pour effacer les connecteurs qu'elle partage avec les pièces voisines
     action_2_family: Raccords
     action_2: Ajouter des raccords
-    action_2_status: Ajouter des raccords pour assembler des pièces
+    action_2_status: Ajouter des raccords pour assembler deux pièces
     action_2_state_1_status: Cliquez sur la face de référence d'une pièce A pour ajouter des raccords avec une pièce voisine
     action_2_state_2_status: Cliquez sur la face de référence d'une pièce B pour ajouter des raccords avec la pièce A
     action_3: Effacer des raccords

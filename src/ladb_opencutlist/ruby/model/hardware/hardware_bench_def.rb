@@ -170,13 +170,15 @@ module Ladb::OpenCutList
     # => [ from, to ], … } - two points of the bench frame, on the end of
     # their panel toward -X. A thickness across its panel - along Z of its
     # laying frame - at its far edge, a height from the joint to that edge -
-    # along Y - on its outer face.
+    # along Y, or -Y, see HardwareDescriptorDef.height_reversed? - on its
+    # outer face.
     def measure_cotes
       cotes = {}
       panels.each do |panel|
         matrix = slot_transformation(panel.slot)
         height_axis = matrix[4, 3].index { |v| v != 0 }
         height_sign = matrix[4 + height_axis]
+        height_sign = -height_sign if HardwareDescriptorDef.height_reversed?(@type, panel.slot)
         thickness_axis = matrix[8, 3].index { |v| v != 0 }
         base = [ panel.min[0], 0.0, 0.0 ]
         _slot_measures(panel.slot).each do |name, value|
@@ -205,13 +207,15 @@ module Ladb::OpenCutList
     def _slot_measures(slot)
       thickness = slot == 'a' ? @thickness_a : @thickness_b
       if hinge?
-        # How far toward +Y of its frame each panel goes from the joint line :
-        # the door to its edge, the side to its back.
-        height = slot == 'a' ? _door_edge : _side_front + SIDE_DEPTH
+        # How far each panel goes from the joint line toward +Y of its frame -
+        # the door to its edge - or toward -Y - the side to its front, see
+        # HardwareDescriptorDef.height_reversed?.
+        height = slot == 'a' ? _door_edge : -_side_front
       elsif fitting?
-        # How far toward +Y of its frame each panel goes from the joint line
+        # How far each panel goes from the joint line toward +Y of its frame
+        # - a - or toward -Y - b
         panel = panels.find { |panel_def| panel_def.slot == slot }
-        height = slot == 'a' ? panel.max[1] : panel.max[2]
+        height = slot == 'a' ? panel.max[1] : -panel.min[2]
       else
         # To the far side of its panel : as the panels are laid
         thickness = PANEL_WIDTH unless _flat?(slot)

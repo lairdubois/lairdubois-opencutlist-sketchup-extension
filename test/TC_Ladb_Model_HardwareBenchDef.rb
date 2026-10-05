@@ -171,7 +171,9 @@ class TC_Ladb_Model_HardwareBenchDef < TestUp::TestCase
       assert_in_delta(side_front * MM, side.min[2], 1e-9, kind)
       measures = bench_def.measures
       assert_in_delta(19 * MM, measures['thickness_a'], 1e-9, kind)
-      assert_in_delta(side_front * MM + HardwareBenchDef::SIDE_DEPTH, measures['height_b'], 1e-9, kind)
+      # b's from the joint line to the side's front, toward -Y of its frame
+      assert_in_delta(-side_front * MM, measures['height_b'], 1e-9, kind)
+      assert_in_delta(side_front * MM, bench_def.measure_cotes['height_b'][1][2], 1e-9, kind)
       if edge > 0
         assert_in_delta(edge * MM, measures['height_a'], 1e-9, kind)
       else
@@ -213,7 +215,8 @@ class TC_Ladb_Model_HardwareBenchDef < TestUp::TestCase
       measures = bench_def.measures
       assert_in_delta(19 * MM, measures['thickness_a'], 1e-9, label)
       assert_in_delta(22 * MM, measures['thickness_b'], 1e-9, label)
-      assert_in_delta(HardwareBenchDef::PANEL_DEPTH, measures['height_b'], 1e-9, label)
+      # b's from the joint line to its edge, toward -Y of its frame
+      assert_in_delta(swapped ? 0 : -b_min_z * MM, measures['height_b'], 1e-9, label)
       if height_a > 0
         assert_in_delta(height_a * MM, measures['height_a'], 1e-9, label)
       else

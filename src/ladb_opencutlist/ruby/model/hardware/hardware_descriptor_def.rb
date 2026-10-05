@@ -74,12 +74,14 @@ module Ladb::OpenCutList
   # A part can instead be given as <primitives>, the tool generates its
   # geometry, in the laying frame of the type - the face at z = 0, the part
   # toward -Z. Lengths are strings with a unit, or numbers in millimeters ;
-  # x and y default to 0.
+  # x and y default to 0. {} : none yet - nothing laid, the part kept
+  # listed in the editor, ready to be filled, as an empty slot.
   #  - a machining, as operations - for what a fixed SKP can't adapt, a
   #    through hole in a part of any thickness :
   #    { "drillings": [ { "x": "-64mm", "y": 0, "diameter": "5mm", "depth": "through" | "12mm" } ],
   #      "mortises": [ { "x": 0, "y": 0, "length": "19mm", "width": "5mm", "depth": "15mm" } ] }
-  #    from the face into the part ;
+  #    from the face into the part - a mortise length long along X and
+  #    width wide along Y, or the other way round with "length_axis": "y" ;
   #  - along Y - "axis": "y" - a drilling or a mortise goes from the face
   #    of the part +Y of the laying frame leads to - @height away, see
   #    measures - toward -Y. It is then placed by x and z - z toward -Z,
@@ -89,10 +91,19 @@ module Ladb::OpenCutList
   #    next to the joint, and the flush collar recess of a Cabineo :
   #    { "drillings": [ { "axis": "y", "z": "-7mm", "diameter": "6mm", "depth": "@height + 2mm" } ] }
   #    { "mortises": [ { "axis": "y", "length_axis": "z", "z": "-13mm", "length": "42.7mm", "width": "16.7mm", "depth": "0.8mm" } ] }
+  #    On b of a hinge or a fitting - its part going away from the joint
+  #    toward +Y - it goes the other way : from the face -Y leads to -
+  #    @height away - toward +Y. See height_reversed?.
   #  - a hardware, as shapes - a dowel, a Domino tenon :
   #    { "cylinders": [ { "x": 0, "y": 0, "diameter": "8mm", "from": "-20mm", "to": "20mm" } ],
   #      "oblongs": [ { "x": 0, "y": 0, "length": "19mm", "width": "5mm", "from": "-15mm", "to": "15mm" } ] }
-  #    along Z, from one height to the other.
+  #    along Z, from one height to the other. Either can lie along X or Y
+  #    - "axis": "x" or "y" - from one length to the other along it, then
+  #    placed by the two other axes, as the points of a prism : y and z
+  #    along X, x and z along Y. An oblong is long along the first of them
+  #    - x along Z or Y, y along X - or the second with "length_axis". A
+  #    screw across the joint :
+  #    { "cylinders": [ { "axis": "x", "z": "-8mm", "diameter": "4mm", "from": "-10mm", "to": "10mm" } ] }
   #    A plate, an angle bracket - a prism : an outline extruded along its
   #    axis - "z" by default, "x" or "y" - from one height to the other. Its
   #    points are given by the two other axes - x and y along Z, y and z
@@ -101,6 +112,13 @@ module Ladb::OpenCutList
   #                    "outline": [ { "y": 0, "z": 0 }, { "y": "30mm", "z": 0 }, { "y": "30mm", "z": "2mm" },
   #                                 { "y": "2mm", "z": "2mm", "r": "1mm" }, { "y": "2mm", "z": "30mm" }, { "y": 0, "z": "30mm" } ] } ] }
   #    It doesn't cross itself, and each rounding fits its two sides.
+  #  - a machining can be given pockets - an outline hollowed out of the
+  #    part : a groove, a recess, what a drilling or a mortise can't shape -
+  #    laid as they are, not centered. Like them, a pocket goes from the face
+  #    into the part, depth deep - or along Y, "axis": "y", from the face
+  #    +Y leads to - its points given by the two other axes, as a prism's :
+  #    x and y, x and z along Y - z toward -Z, into the part :
+  #    { "pockets": [ { "depth": "8mm", "outline": [ … ] } ] }
   # A mortise or an oblong is a slot with round ends, its length along X -
   # ends included - and its width along Y - but along Y, see above.
   # A drilling or a cylinder can widen at one end, in one solid with it :
@@ -152,6 +170,9 @@ module Ladb::OpenCutList
   # scalars. Those of a variant override those of the component holding the
   # variants. The kinematics of a hinge - see HINGE_ATTRIBUTES and DoorDef -
   # are checked : a length is a string, with a unit or in the model's one.
+  # Those of a hinge made of articles go to the group holding them, laid in
+  # the laying frame of its slot : its pivot is given in that frame,
+  # whatever each article is shifted by.
   #
   # "extends" names the descriptor it inherits from - its path relative to
   # the root of the same library, or a '$OCL/…' ref from the user's library
@@ -240,6 +261,11 @@ module Ladb::OpenCutList
     HARDWARE_CYLINDERS = 'cylinders'.freeze
     HARDWARE_OBLONGS = 'oblongs'.freeze
     HARDWARE_PRISMS = 'prisms'.freeze
+    MACHINING_POCKETS = 'pockets'.freeze
+
+    # The primitives given as a prism - see HARDWARE_PRISMS - a pocket is
+    # one hollowed out of the part, depth deep from the face like a drilling.
+    PRISM_KEYS = [ HARDWARE_PRISMS, MACHINING_POCKETS ].freeze
 
     # What an article can hold - its key can't be one of them
     ARTICLE_FIELDS = (INFO_KEYS + [ ARTICLE_SKP, ARTICLE_AT ] + ARTICLE_USE_KEYS + [ HARDWARE_CYLINDERS, HARDWARE_OBLONGS, HARDWARE_PRISMS ]).freeze
@@ -247,25 +273,31 @@ module Ladb::OpenCutList
     # The primitives each part can be given as
     PRIMITIVES = {
       PART_HARDWARE => [ HARDWARE_CYLINDERS, HARDWARE_OBLONGS, HARDWARE_PRISMS ],
-      PART_MACHINING => [ MACHINING_DRILLINGS, MACHINING_MORTISES ],
+      PART_MACHINING => [ MACHINING_DRILLINGS, MACHINING_MORTISES, MACHINING_POCKETS ],
     }.freeze
 
     DRILLING_DEPTH_THROUGH = 'through'.freeze
 
-    # The axis a drilling or a mortise goes along : Z - by default - from
-    # the face, or Y from the face of the part +Y leads to - see
-    # PrimitiveCylinderDef#axis and VARIABLE_HEIGHT.
+    # The axis a machining - a drilling, a mortise, a pocket - goes along :
+    # Z - by default - from the face, or Y from the face of the part +Y leads
+    # to - see PrimitiveCylinderDef#axis and VARIABLE_HEIGHT.
     AXIS_Z = 'z'.freeze
     AXIS_Y = 'y'.freeze
     AXES = [ AXIS_Z, AXIS_Y ].freeze
 
-    # The axis the length of a mortise along Y goes along : X - by default
-    # - or Z. See AXIS_Y_LENGTH_Z.
+    # The axes the length of a mortise can go along, by the axis it goes
+    # along : X - by default - or the other one across it. See
+    # AXIS_Z_LENGTH_Y and AXIS_Y_LENGTH_Z.
     AXIS_X = 'x'.freeze
-    LENGTH_AXES = [ AXIS_X, AXIS_Z ].freeze
+    LENGTH_AXES = {
+      AXIS_Z => [ AXIS_X, AXIS_Y ],
+      AXIS_Y => [ AXIS_X, AXIS_Z ],
+    }.freeze
 
-    # PrimitiveCylinderDef#axis of a mortise along Y whose length goes along
-    # Z - a value of its own, not one of the descriptor.
+    # PrimitiveCylinderDef#axis of a mortise along Z whose length goes along
+    # Y, and of one along Y whose length goes along Z - values of their own,
+    # not of the descriptor.
+    AXIS_Z_LENGTH_Y = 'z-y'.freeze
     AXIS_Y_LENGTH_Z = 'y-z'.freeze
 
     # The axis a prism is extruded along - Z by default - and the axes its
@@ -281,9 +313,28 @@ module Ladb::OpenCutList
     # PrimitiveCylinderDef#axis of a prism along X or Y - values of their
     # own, not of the descriptor : its outline given by [ u, v ], extruded
     # along w, a point [ u, v, w ] of it is [ w, u, v ] in the laying frame
-    # along X, [ u, w, v ] along Y.
+    # along X, [ u, w, v ] along Y. AXIS_PRISM_X - a turn, not a mirror -
+    # is also the one of a cylinder or an oblong along X, see SHAPE_FRAMES.
     AXIS_PRISM_X = 'prism-x'.freeze
     AXIS_PRISM_Y = 'prism-y'.freeze
+
+    # PrimitiveCylinderDef#axis of an oblong along X whose length goes along
+    # Z - a value of its own, not of the descriptor : a point [ x, y, z ] of
+    # it is [ z, -y, x ] in the laying frame.
+    AXIS_X_LENGTH_Z = 'x-z'.freeze
+
+    # The frame a cylinder or an oblong is given in - see
+    # PrimitiveCylinderDef#axis - by "<axis>-<length axis>", and its x and y
+    # in it from the [ u, v ] the descriptor places it by - see
+    # PRISM_OUTLINE_KEYS. Each is a turn - no mirror - its Z along the axis.
+    SHAPE_FRAMES = {
+      'z-x' => [ nil, lambda { |u, v| [ u, v ] } ],                    # [ x, y, z ]
+      'z-y' => [ AXIS_Z_LENGTH_Y, lambda { |u, v| [ v, -u ] } ],       # [ -y, x, z ]
+      'x-y' => [ AXIS_PRISM_X, lambda { |u, v| [ u, v ] } ],           # [ z, x, y ]
+      'x-z' => [ AXIS_X_LENGTH_Z, lambda { |u, v| [ v, -u ] } ],       # [ z, -y, x ]
+      'y-x' => [ AXIS_Y, lambda { |u, v| [ u, -v ] } ],                # [ x, z, -y ]
+      'y-z' => [ AXIS_Y_LENGTH_Z, lambda { |u, v| [ -v, -u ] } ],      # [ -y, z, -x ]
+    }.freeze
 
     # How a drilling or a cylinder widens at one end - see PrimitiveCylinderDef#profile
     HEAD_COUNTERSINK = 'countersink'.freeze
@@ -306,7 +357,8 @@ module Ladb::OpenCutList
     #  - height : how far the part goes toward +Y from the anchor, just
     #    behind the face - the face a drilling along Y starts on. For a
     #    connector, the face of the edge it is laid from - its "height"
-    #    option away ;
+    #    option away. Toward -Y on b of a hinge or a fitting - see
+    #    height_reversed? ;
     #  - <measure>_<slot> : the one of the part the given slot is laid on, for
     #    the types that join two parts - JOIN_TYPES. An expression then reads
     #    the same from either slot.
@@ -317,6 +369,12 @@ module Ladb::OpenCutList
     VARIABLES = [ VARIABLE_THICKNESS, VARIABLE_THICKNESS_MIN, VARIABLE_THICKNESS_MAX, VARIABLE_HEIGHT ].freeze
 
     JOIN_TYPES = [ TYPE_CONNECTOR, TYPE_FITTING, TYPE_HINGE ].freeze
+
+    # The types whose b goes away from the joint toward +Y of its laying
+    # frame - X along the joint line, Z out of its face, Y = Z × X - : the
+    # edge by the joint lies toward -Y. See height_reversed?.
+    HEIGHT_REVERSED_TYPES = [ TYPE_FITTING, TYPE_HINGE ].freeze
+    HEIGHT_REVERSED_SLOT = 'b'.freeze
 
     # The attributes of the kinematics of a hinge - see DoorDef : the widest
     # opening in degrees, the [ y, z ] lengths of the axis it turns around in
@@ -344,14 +402,19 @@ module Ladb::OpenCutList
     # along Y and length long along X - a cylinder when length is diameter.
     # profile : when it widens at one end - a round one only - its outline
     # as [ radius, z ] from z_max down to z_min, nil otherwise.
-    # axis : AXIS_Y when it goes along Y, nil otherwise. It is then given in
+    # axis : AXIS_Y when it goes along Y, AXIS_PRISM_X or AXIS_X_LENGTH_Z
+    # for a cylinder or an oblong along X - see SHAPE_FRAMES - nil
+    # otherwise - AXIS_Z_LENGTH_Y
+    # when it goes along Z and its length along Y : given in the laying
+    # frame turned a quarter around Z, a point [ x, y, z ] of it is
+    # [ -y, x, z ] in the laying frame. Along Y, it is given in
     # the laying frame turned a quarter around X - its Z along Y - : a point
     # [ x, y, z ] of it is [ x, z, -y ] in the laying frame. AXIS_Y_LENGTH_Z
     # when it goes along Y and its length along Z : given in the laying frame
     # turned so that its X goes along -Z and its Z along Y, a point
     # [ x, y, z ] of it is [ -y, z, -x ] in the laying frame.
     # key : the primitives it is one of - MACHINING_DRILLINGS, … .
-    # outline : a prism's - HARDWARE_PRISMS - [ [ u, v, r ] ] corners, r 0
+    # outline : a prism's - PRISM_KEYS - [ [ u, v, r ] ] corners, r 0
     # when it isn't rounded, see prism_corners. It is extruded along its Z
     # from z_min to z_max, in the frame its axis - nil, AXIS_PRISM_X or
     # AXIS_PRISM_Y - gives, x and y 0, length and diameter the extents of
@@ -605,6 +668,14 @@ module Ladb::OpenCutList
       [ slot, variant, key ].compact.join('.') + '.skp'
     end
 
+    # Does a machining along Y of the given slot - 'a', :b - of the given
+    # type start on the face -Y leads to, @height away, and go toward +Y -
+    # see HEIGHT_REVERSED_TYPES - rather than on the one +Y leads to, toward
+    # -Y ?
+    def self.height_reversed?(type, slot)
+      HEIGHT_REVERSED_TYPES.include?(type) && slot.to_s == HEIGHT_REVERSED_SLOT
+    end
+
     # Is the given resolved part - see HardwareComponentDef#hardware and
     # #machining - given as primitives ?
     def self.primitives?(part)
@@ -612,14 +683,14 @@ module Ladb::OpenCutList
     end
 
     # The variables the lengths of the given primitives use - "through"
-    # uses thickness_max, a drilling along Y height.
+    # uses thickness_max, a machining along Y height.
     def self.primitive_variables(primitives)
       return [] unless primitives?(primitives)
       names = []
       _primitive_items(primitives).each do |primitive_key, item|
         item.each do |key, value|
           names << VARIABLE_THICKNESS_MAX if key == 'depth' && value == DRILLING_DEPTH_THROUGH
-          names << VARIABLE_HEIGHT if key == 'axis' && value == AXIS_Y && primitive_key != HARDWARE_PRISMS
+          names << VARIABLE_HEIGHT if key == 'axis' && value == AXIS_Y && PRIMITIVES[PART_MACHINING].include?(primitive_key)
           names.concat(value.scan(VARIABLE_PATTERN).flatten) if value.is_a?(String)
           names.concat(value.values.select { |v| v.is_a?(String) }.flat_map { |v| v.scan(VARIABLE_PATTERN).flatten }) if value.is_a?(Hash)
           if value.is_a?(Array)   # A prism's outline
@@ -635,20 +706,38 @@ module Ladb::OpenCutList
     # The solids of the given primitives, resolved for the given variables -
     # { 'thickness' => <inches> } - as PrimitiveCylinderDefs : a drilling
     # goes from the face into the part - or from the one +Y leads to, see
-    # PrimitiveCylinderDef#axis - a cylinder from one height to the other.
+    # PrimitiveCylinderDef#axis - a cylinder from one length to the other
+    # along its axis. height_reversed : a machining along Y starts on the
+    # face -Y leads to and goes toward +Y - see height_reversed?.
     # Those a length can't be resolved for are left out. nil when it isn't
     # given as primitives.
-    def self.primitive_cylinders(primitives, variables = {})
+    def self.primitive_cylinders(primitives, variables = {}, height_reversed = false)
       return nil unless primitives?(primitives)
       variables = Hash[variables.map { |k, v| [ k.to_s, v ] }]
       _primitive_items(primitives).map { |key, item|
-        next _primitive_prism(item, variables) if key == HARDWARE_PRISMS
+        next _primitive_prism(key, item, variables, height_reversed) if PRISM_KEYS.include?(key)
         axis = item['axis'] == AXIS_Y && (key == MACHINING_DRILLINGS || key == MACHINING_MORTISES) ? AXIS_Y : nil
-        axis = AXIS_Y_LENGTH_Z if axis == AXIS_Y && key == MACHINING_MORTISES && item['length_axis'] == AXIS_Z
-        x = item['x'].nil? ? 0.0 : to_length(item['x'], true, variables)
-        if axis.nil?
+        along_y = !axis.nil?
+        if key == MACHINING_MORTISES
+          axis = AXIS_Y_LENGTH_Z if axis == AXIS_Y && item['length_axis'] == AXIS_Z
+          axis = AXIS_Z_LENGTH_Y if axis.nil? && item['length_axis'] == AXIS_Y
+        end
+        if key == HARDWARE_CYLINDERS || key == HARDWARE_OBLONGS
+          # Placed by the two axes across the one it goes along, an oblong
+          # long along the first by default - see SHAPE_FRAMES
+          along = PRISM_OUTLINE_KEYS.key?(item['axis']) ? item['axis'] : AXIS_Z
+          keys = PRISM_OUTLINE_KEYS[along]
+          u, v = keys.map { |k| item[k].nil? ? 0.0 : to_length(item[k], true, variables) }
+          next nil if u.nil? || v.nil?
+          length_axis = key == HARDWARE_OBLONGS && item['length_axis'] == keys[1] ? keys[1] : keys[0]
+          axis, fn_position = SHAPE_FRAMES["#{along}-#{length_axis}"]
+          x, y = fn_position.call(u, v)
+        elsif !along_y
+          x = item['x'].nil? ? 0.0 : to_length(item['x'], true, variables)
           y = item['y'].nil? ? 0.0 : to_length(item['y'], true, variables)
+          x, y = y, (x.nil? ? nil : -x) if axis == AXIS_Z_LENGTH_Y
         else
+          x = item['x'].nil? ? 0.0 : to_length(item['x'], true, variables)
           z = item['z'].nil? ? 0.0 : to_length(item['z'], true, variables)
           if axis == AXIS_Y_LENGTH_Z
             x, y = (z.nil? ? nil : -z), (x.nil? ? nil : -x)
@@ -664,10 +753,8 @@ module Ladb::OpenCutList
           diameter = to_length(item['diameter'], false, variables)
           length = nil
         end
-        if !axis.nil?
-          depth = item['depth'] == DRILLING_DEPTH_THROUGH ? nil : to_length(item['depth'], false, variables)
-          z_max = variables[VARIABLE_HEIGHT].is_a?(Numeric) ? variables[VARIABLE_HEIGHT].to_f : nil
-          z_min = depth.nil? || z_max.nil? ? nil : z_max - depth
+        if along_y
+          z_min, z_max = _along_y_range(item, variables, height_reversed)
         elsif key == MACHINING_DRILLINGS || key == MACHINING_MORTISES
           through = variables.key?(VARIABLE_THICKNESS_MAX) ? VARIABLE_THICKNESS_MAX : VARIABLE_THICKNESS
           depth = to_length(item['depth'] == DRILLING_DEPTH_THROUGH ? "@#{through}" : item['depth'], false, variables)
@@ -680,7 +767,7 @@ module Ladb::OpenCutList
         next nil if [ x, y, diameter, z_min, z_max ].any?(&:nil?) || z_max <= z_min
         profile = nil
         if (head_key = HEADS.find { |k| item.key?(k) })
-          profile = _head_profile(head_key, item[head_key], key == MACHINING_DRILLINGS ? HEAD_FACES : HEAD_ENDS, diameter, z_min, z_max, variables)
+          profile = _head_profile(head_key, item[head_key], key == MACHINING_DRILLINGS ? HEAD_FACES : HEAD_ENDS, diameter, z_min, z_max, variables, along_y && height_reversed)
           next nil if profile.nil?
         end
         PrimitiveCylinderDef.new(x, y, diameter, z_min, z_max, length.nil? || length <= diameter ? nil : length, profile, axis, key)
@@ -780,10 +867,13 @@ module Ladb::OpenCutList
       points.each_with_index.reject { |p, i| q = points[(i + 1) % points.length]; (p[0] - q[0]).abs < 1e-9 && (p[1] - q[1]).abs < 1e-9 }.map(&:first)
     end
 
-    # The given prism - see HARDWARE_PRISMS - resolved for the given
-    # variables as a PrimitiveCylinderDef, nil if it can't be.
-    def self._primitive_prism(item, variables)
+    # The given prism - see PRISM_KEYS, key its own - resolved for the given
+    # variables as a PrimitiveCylinderDef, nil if it can't be. A pocket goes
+    # depth deep from the face - along Z or Y, see AXES - a prism from one
+    # length to the other - see primitive_cylinders for height_reversed.
+    def self._primitive_prism(key, item, variables, height_reversed = false)
       axis = item['axis'].nil? ? AXIS_Z : item['axis']
+      return nil if key == MACHINING_POCKETS && !AXES.include?(axis)
       keys = PRISM_OUTLINE_KEYS[axis]
       points = item['outline']
       return nil if keys.nil? || !points.is_a?(Array) || points.length < 3
@@ -795,16 +885,37 @@ module Ladb::OpenCutList
         return nil if u.nil? || v.nil? || r.nil?
         outline << [ u, v, r ]
       end
-      z_min = to_length(item['from'], true, variables)
-      z_max = to_length(item['to'], true, variables)
+      if key != MACHINING_POCKETS
+        z_min = to_length(item['from'], true, variables)
+        z_max = to_length(item['to'], true, variables)
+      elsif axis == AXIS_Y
+        z_min, z_max = _along_y_range(item, variables, height_reversed)
+      else
+        through = variables.key?(VARIABLE_THICKNESS_MAX) ? VARIABLE_THICKNESS_MAX : VARIABLE_THICKNESS
+        depth = to_length(item['depth'] == DRILLING_DEPTH_THROUGH ? "@#{through}" : item['depth'], false, variables)
+        z_min = depth.nil? ? nil : -depth
+        z_max = 0.0
+      end
       return nil if z_min.nil? || z_max.nil? || z_max <= z_min
       return nil if prism_corners(outline).nil?
       us = outline.map { |u, _, _| u }
       vs = outline.map { |_, v, _| v }
       internal_axis = axis == AXIS_X ? AXIS_PRISM_X : axis == AXIS_Y ? AXIS_PRISM_Y : nil
-      PrimitiveCylinderDef.new(0.0, 0.0, vs.max - vs.min, z_min, z_max, us.max - us.min, nil, internal_axis, HARDWARE_PRISMS, outline)
+      PrimitiveCylinderDef.new(0.0, 0.0, vs.max - vs.min, z_min, z_max, us.max - us.min, nil, internal_axis, key, outline)
     end
     private_class_method :_primitive_prism
+
+    # The [ z_min, z_max ] of the given machining along Y - its Z along Y -
+    # resolved for the given variables : from the face height away, toward
+    # -Y - or from the one height away toward -Y, toward +Y, when
+    # height_reversed, see height_reversed?. nils when it can't be.
+    def self._along_y_range(item, variables, height_reversed)
+      depth = item['depth'] == DRILLING_DEPTH_THROUGH ? nil : to_length(item['depth'], false, variables)
+      height = variables[VARIABLE_HEIGHT].is_a?(Numeric) ? variables[VARIABLE_HEIGHT].to_f : nil
+      return [ nil, nil ] if depth.nil? || height.nil?
+      height_reversed ? [ -height, -height + depth ] : [ height - depth, height ]
+    end
+    private_class_method :_along_y_range
 
     # Do the given segments - [ u, v ] ends - cross or touch, the given
     # distance apart or less ?
@@ -833,9 +944,10 @@ module Ladb::OpenCutList
 
     # The profile - [ [ radius, z ] ] from z_max down to z_min - of a solid
     # of the given diameter widened by the given head at one end - see
-    # HEADS. sides : its names of the top end and of the bottom one. nil if
-    # it can't be resolved, or is as long as the solid.
-    def self._head_profile(head_key, head, sides, diameter, z_min, z_max, variables)
+    # HEADS. sides : its names of the top end and of the bottom one - the
+    # other way round when reversed. nil if it can't be resolved, or is as
+    # long as the solid.
+    def self._head_profile(head_key, head, sides, diameter, z_min, z_max, variables, reversed = false)
       return nil unless head.is_a?(Hash)
       r = diameter / 2
       head_diameter = to_length(head['diameter'], false, variables)
@@ -851,7 +963,7 @@ module Ladb::OpenCutList
       end
       return nil if height >= z_max - z_min - 1e-6
       side = head[sides.equal?(HEAD_FACES) ? 'face' : 'end']
-      top = side.nil? || side == sides[0]
+      top = (side.nil? || side == sides[0]) != reversed   # Reversed : the face it is laid on at z_min
       if top
         points = head_key == HEAD_COUNTERSINK ? [ [ big_r, z_max ] ] : [ [ big_r, z_max ], [ big_r, z_max - height ] ]
         points + [ [ r, z_max - height ], [ r, z_min ] ]
@@ -1079,7 +1191,7 @@ module Ladb::OpenCutList
         text = JSON.generate(@data)
         names = text.scan(VARIABLE_PATTERN).flatten
         names << VARIABLE_THICKNESS_MAX if text.include?("\"#{DRILLING_DEPTH_THROUGH}\"")
-        names << VARIABLE_HEIGHT if text.include?("\"axis\":\"#{AXIS_Y}\"")
+        names << VARIABLE_HEIGHT if _along_y_machining?(@data)
         measures & names
       end
     end
@@ -1158,6 +1270,16 @@ module Ladb::OpenCutList
     # empty, or no variant fits.
     def resolve_component(slot, context = {})
       _resolve_component(slot.to_s, _stringify_keys(context), false, [])
+    end
+
+    # The key of the variant of the given slot's own component the given
+    # context selects - see resolve_component - even when it is empty and
+    # the component then nil. nil when it has no variants, or none fits.
+    def selected_variant(slot, context = {})
+      components = @data['components']
+      value = components.is_a?(Hash) ? components[slot.to_s] : nil
+      return nil unless value.is_a?(Hash) && value.key?('variants')
+      _select_variant(value['variants'], _stringify_keys(context))
     end
 
     # -----
@@ -1467,7 +1589,7 @@ module Ladb::OpenCutList
         return nil if dir.nil?
         return "#{dir}/#{self.class.part_file_name(slot, variant, part)}"
       end
-      return value if value.is_a?(Hash)   # Primitives
+      return value.empty? ? nil : value if value.is_a?(Hash)   # Primitives - none yet when empty
       return nil unless value.is_a?(String) && !value.strip.empty?
       return _resolve_ref(value) if value.start_with?('./') || self.class.library_ref?(value) || File.extname(value).downcase != '.skp'
       if @ref.is_a?(String)   # A file shared in the components folder of the library
@@ -1882,10 +2004,7 @@ module Ladb::OpenCutList
     end
 
     def _validate_primitives(path, part, value, errors)
-      if value.empty?
-        errors << "component '#{path}' #{part} is neither true, a path nor a link"
-        return
-      end
+      return if value.empty?   # None yet : declared, nothing laid
       (value.keys - PRIMITIVES[part]).each do |key|
         errors << "component '#{path}' #{part} has an unknown primitive '#{key}'"
       end
@@ -1911,26 +2030,36 @@ module Ladb::OpenCutList
       _validate_primitive_list(path, part, value, MACHINING_MORTISES, 'mortise', %w[axis length_axis x y z length width depth], %w[length width], errors) do |item, label|
         fn_depth.call(item, label)
         _validate_axis(item, label, errors)
-        if item.key?('length_axis')
-          if !LENGTH_AXES.include?(item['length_axis'])
-            errors << "#{label} length_axis is neither #{LENGTH_AXES.map(&:inspect).join(' nor ')}"
-          elsif item['axis'] != AXIS_Y
-            errors << "#{label} has a length_axis but isn't along Y"
-          end
+        length_axes = LENGTH_AXES[item['axis'].nil? ? AXIS_Z : item['axis']]
+        if item.key?('length_axis') && !length_axes.nil? && !length_axes.include?(item['length_axis'])
+          errors << "#{label} length_axis is neither #{length_axes.map(&:inspect).join(' nor ')}"
         end
       end
-      _validate_primitive_list(path, part, value, HARDWARE_CYLINDERS, 'cylinder', %w[x y diameter from to] + HEADS, %w[diameter], errors) do |item, label|
+      _validate_primitive_list(path, part, value, HARDWARE_CYLINDERS, 'cylinder', %w[axis x y z diameter from to] + HEADS, %w[diameter], errors) do |item, label|
         fn_from_to.call(item, label)
+        _validate_cylinder_axis(item, label, errors)
         _validate_head(item, label, 'end', HEAD_ENDS, errors)
       end
-      _validate_primitive_list(path, part, value, HARDWARE_OBLONGS, 'oblong', %w[x y length width from to], %w[length width], errors, &fn_from_to)
+      _validate_primitive_list(path, part, value, HARDWARE_OBLONGS, 'oblong', %w[axis length_axis x y z length width from to], %w[length width], errors) do |item, label|
+        fn_from_to.call(item, label)
+        _validate_cylinder_axis(item, label, errors)
+        keys = PRISM_OUTLINE_KEYS[item['axis'].nil? ? AXIS_Z : item['axis']]
+        if item.key?('length_axis') && !keys.nil? && !keys.include?(item['length_axis'])
+          errors << "#{label} length_axis is neither #{keys.map(&:inspect).join(' nor ')}"
+        end
+      end
       _validate_primitive_list(path, part, value, HARDWARE_PRISMS, 'prism', %w[axis from to outline], [], errors) do |item, label|
         fn_from_to.call(item, label)
         _validate_prism_outline(item, label, errors)
       end
+      _validate_primitive_list(path, part, value, MACHINING_POCKETS, 'pocket', %w[axis depth outline], [], errors) do |item, label|
+        fn_depth.call(item, label)
+        _validate_axis(item, label, errors)
+        _validate_prism_outline(item, label, errors) if !item.key?('axis') || AXES.include?(item['axis'])
+      end
     end
 
-    # Validates the axis and the outline of a prism - see HARDWARE_PRISMS :
+    # Validates the axis and the outline of a prism - see PRISM_KEYS :
     # its points given by the two other axes, the outline checked - not
     # crossing itself, each rounding fitting its sides - when no length of
     # it depends on where it is laid.
@@ -1982,8 +2111,8 @@ module Ladb::OpenCutList
       errors << "#{label} outline is flat, crosses itself or has a rounding its sides can't hold" if !outline.nil? && self.class.prism_corners(outline).nil?
     end
 
-    # Validates the axis a drilling or a mortise goes along - see AXES : one
-    # along Y is placed by x and z, and isn't through.
+    # Validates the axis a machining goes along - see AXES : one along Y is
+    # placed by x and z, and isn't through.
     def _validate_axis(item, label, errors)
       if item.key?('axis') && !AXES.include?(item['axis'])
         errors << "#{label} axis is neither #{AXES.map(&:inspect).join(' nor ')}"
@@ -1994,6 +2123,35 @@ module Ladb::OpenCutList
         errors << "#{label} is along Y and through" if item['depth'] == DRILLING_DEPTH_THROUGH
       elsif item.key?('z')
         errors << "#{label} has a z but isn't along Y"
+      end
+    end
+
+    # Does the given value - its data or a part of it - hold a machining
+    # along Y : it starts on the face height away ? A cylinder or a prism
+    # along Y doesn't.
+    def _along_y_machining?(value)
+      case value
+      when Hash
+        PRIMITIVES[PART_MACHINING].any? { |key| value[key].is_a?(Array) && value[key].any? { |item| item.is_a?(Hash) && item['axis'] == AXIS_Y } } ||
+          value.values.any? { |v| _along_y_machining?(v) }
+      when Array
+        value.any? { |v| _along_y_machining?(v) }
+      else
+        false
+      end
+    end
+
+    # Validates the axis a cylinder or an oblong goes along - see
+    # PRISM_AXES : it is placed by the two other axes.
+    def _validate_cylinder_axis(item, label, errors)
+      axis = item['axis'].nil? ? AXIS_Z : item['axis']
+      keys = PRISM_OUTLINE_KEYS[axis]
+      if keys.nil?
+        errors << "#{label} axis is neither #{PRISM_AXES.map(&:inspect).join(' nor ')}"
+        return
+      end
+      (%w[x y z] - keys).select { |k| item.key?(k) }.each do |k|
+        errors << "#{label} is along #{axis.upcase} and has a #{k} - it is placed by #{keys.join(' and ')}"
       end
     end
 
