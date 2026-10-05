@@ -166,6 +166,22 @@ module Ladb::OpenCutList
       measures.merge(_slot_measures(slot))
     end
 
+    # How far the given slot's panel goes from its edge - the face a
+    # machining along Y starts on, see HardwareDescriptorDef::VARIABLE_HEIGHT
+    # - the way that machining goes : what an article along Y goes into, see
+    # HardwareDescriptorDef "axis". nil when it has no height.
+    def edge_depth(slot)
+      height = _slot_measures(slot)[HardwareDescriptorDef::VARIABLE_HEIGHT]
+      panel = panels.find { |panel_def| panel_def.slot == slot }
+      return nil if height.nil? || panel.nil?
+      sign = HardwareDescriptorDef.height_reversed?(@type, slot) ? 1 : -1
+      y_axis = slot_transformation(slot)[4, 3]   # No translation
+      far = [ panel.min[0], panel.max[0] ].product([ panel.min[1], panel.max[1] ], [ panel.min[2], panel.max[2] ]).map { |corner|
+        sign * (0...3).inject(0.0) { |sum, i| sum + corner[i] * y_axis[i] }
+      }.max
+      [ far, 0.0 ].max + height
+    end
+
     # Where the measures of the joint are taken, to be shown : { 'thickness_a'
     # => [ from, to ], … } - two points of the bench frame, on the end of
     # their panel toward -X. A thickness across its panel - along Z of its

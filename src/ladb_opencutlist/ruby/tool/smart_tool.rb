@@ -1383,7 +1383,6 @@ module Ladb::OpenCutList
         @action_buttons.each do |button|
           button.selected = button.data[:action] == root_action
           if button.selected? && !get_action_variants(root_action).empty?
-            button.set_style_attribute(:border_color, get_action_variant_color(action), :selected)
             button.set_style_attribute(:background_color, get_action_variant_color(action), :selected)
           end
         end

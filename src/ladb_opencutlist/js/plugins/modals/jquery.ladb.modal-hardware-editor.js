@@ -37,12 +37,12 @@
         machining: [ 'drillings', 'mortises', 'pockets' ]
     };
     const PRIMITIVE_DEFAULTS = {
-        cylinders: { diameter: '8mm', from: '-10mm', to: '10mm' },
-        oblongs: { length: '19mm', width: '5mm', from: '-10mm', to: '10mm' },
-        prisms: { from: '-1mm', to: '1mm', outline: [ { x: '-20mm', y: '-10mm' }, { x: '20mm', y: '-10mm' }, { x: '20mm', y: '10mm' }, { x: '-20mm', y: '10mm' } ] },
-        drillings: { diameter: '5mm', depth: '12mm' },
-        mortises: { length: '19mm', width: '5mm', depth: '12mm' },
-        pockets: { depth: '10mm', outline: [ { x: '-20mm', y: '-10mm' }, { x: '20mm', y: '-10mm' }, { x: '20mm', y: '10mm' }, { x: '-20mm', y: '10mm' } ] }
+        cylinders: { diameter: '8', from: '-10', to: '10' },
+        oblongs: { length: '19', width: '5', from: '-10', to: '10' },
+        prisms: { from: '-1', to: '1', outline: [ { x: '-20', y: '-10' }, { x: '20', y: '-10' }, { x: '20', y: '10' }, { x: '-20', y: '10' } ] },
+        drillings: { diameter: '5', depth: '12' },
+        mortises: { length: '19', width: '5', depth: '12' },
+        pockets: { depth: '10', outline: [ { x: '-20', y: '-10' }, { x: '20', y: '-10' }, { x: '20', y: '10' }, { x: '-20', y: '10' } ] }
     };
     // The primitives given as a prism - see HardwareDescriptorDef::PRISM_KEYS -
     // a pocket hollowed out of the part, depth deep from the face.
@@ -142,7 +142,7 @@
 
     // The keys an article can't be named by - see HardwareDescriptorDef::ARTICLE_FIELDS
     const ARTICLE_KEY_PATTERN = /^[a-z][a-z0-9_-]*$/;
-    const ARTICLE_RESERVED_KEYS = [ 'name', 'description', 'price', 'url', 'mass', 'skp', 'at', 'use', 'host', 'measures', 'variables', 'same_as' ].concat(PRIMITIVE_KEYS);
+    const ARTICLE_RESERVED_KEYS = [ 'name', 'description', 'price', 'url', 'mass', 'skp', 'at', 'use', 'host', 'measures', 'variables', 'axis', 'same_as' ].concat(PRIMITIVE_KEYS);
     const ARTICLE_INFO_KEYS = [ 'name', 'price', 'mass' ];
 
     // Is the given hardware part value its articles - an object of them by
@@ -212,13 +212,14 @@
     // length unit - the model's - : empty, its slots to fill - a hinge with
     // its variants, see fnNewHingeComponents.
     const fnNewDescriptor = function (type, lengthUnit) {
+        const nameKey = 'core.hardware_editor.new_name_' + type;
         const descriptor = {
             format: 'ocl-hardware',
             version: 1,
             id: fnUuid(),
             type: type,
             length_unit: lengthUnit || 'mm',
-            name: i18next.t('core.hardware_editor.new_name'),
+            name: i18next.exists(nameKey) ? i18next.t(nameKey) : i18next.t('core.hardware_editor.new_name'),   // Adapted to the type of hardware, when it has its own
             variables: {},
             asserts: [],
             components: {
@@ -1700,6 +1701,25 @@
             }
             fnRow($hosts);
 
+            // The axis it goes into our panel along : by its face, or its edge
+            const axis = article.axis === 'y' ? 'y' : 'z';
+            fnLabel('article_axis');
+            const $axes = $('<div class="btn-group btn-group-xs ladb-hardware-editor-primitive-segments">');
+            for (const value of [ 'z', 'y' ]) {
+                $axes.append($('<button type="button" class="btn btn-default">')
+                    .text(i18next.t('core.hardware_editor.article_axis_' + value))
+                    .toggleClass('active', value === axis)
+                    .prop('disabled', this.readonly)
+                    .on('click', function () {
+                        this.blur();
+                        if (value !== axis) {
+                            fnSet('axis', value === 'y' ? 'y' : undefined);
+                        }
+                    })
+                );
+            }
+            fnRow($axes);
+
             fnLabel('article_virtual_thickness', { slot: other.toUpperCase() });
             const measure = 'thickness_' + other;
             fnRow(this.renderArticleField(fnObject(article.measures)[measure], response ? response.virtual : null, function (text) {
@@ -1790,7 +1810,7 @@
 
         }
 
-        // Where it is laid : x, y on the face, one per position
+        // Where it is laid : x, y on the face, z off it, one per position
         const at = Array.isArray(article.at) ? article.at : [ {} ];
         const positions = response && Array.isArray(response.positions) ? response.positions : [];
         const fnWriteAt = function (fn) {
@@ -1804,7 +1824,7 @@
             item = fnObject(item);
             const fields = fnObject(positions[index]);
             fnLabel(index === 0 ? 'article_positions' : null);
-            const $position = fnRow([ 'x', 'y' ].map(function (axis) {
+            const $position = fnRow([ 'x', 'y', 'z' ].map(function (axis) {
                 return that.renderArticleField(item[axis], fields[axis], function (text) {
                     fnWriteAt(function (items) {
                         if (text === '') {
@@ -1850,7 +1870,7 @@
                     .addClass(assert.ok ? 'text-success' : 'text-danger')
                     .append($('<span class="ladb-hardware-editor-article-assert-state">').append($('<i>').addClass('ladb-opencutlist-icon-' + (assert.ok ? 'check-mark' : 'warning'))))
                     .append($('<code>').text(assert.expression))
-                    .append(assert.left_text && assert.right_text ? $('<span class="ladb-hardware-editor-article-assert-values">').text(assert.left_text + ' ' + assert.operator + ' ' + assert.right_text) : null)
+                    .append(assert.left_text && assert.right_text ? $('<span class="ladb-hardware-editor-article-assert-values">').text(assert.left_text + ' ' + assert.operator + ' ' + assert.right_text + (assert.z_text ? ' (' + (response.axis === 'y' ? 'Y' : 'Z') + ' ' + assert.z_text + ')' : '')) : null)
                 );
             }
             $editor.append($asserts);

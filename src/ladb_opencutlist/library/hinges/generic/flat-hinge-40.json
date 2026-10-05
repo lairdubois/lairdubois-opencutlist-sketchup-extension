@@ -1,0 +1,109 @@
+{
+  "format": "ocl-hardware",
+  "version": 1,
+  "id": "40b7ad55-9a2e-47ce-b4ce-1a1f1add8bef",
+  "type": "hinge",
+  "length_unit": "mm",
+  "name": "Flat hinge 40",
+  "variables": {
+    "leaf": { "value": "1.5", "label": "Leaf thickness", "steps": [ "1", "1.5", "2" ] },
+    "front": "-@thickness_a"
+  },
+  "components": {
+    "a": {
+      "attributes": { "hinge_max_angle": 180 },
+      "variants": {
+        "select": { "by": "hinge_kind" },
+        "fallback": "overlay",
+        "items": {
+          "overlay": {
+            "attributes": { "hinge_pivot": [ "20", "0" ] },
+            "hardware": {
+              "body": {
+                "name": "Flat hinge 40",
+                "prisms": [ { "from": "-@leaf", "to": "0", "outline": [ { "x": "-20", "y": "0" }, { "x": "20", "y": "0" }, { "x": "20", "y": "20" }, { "x": "-20", "y": "20" } ] } ],
+                "cylinders": [ { "diameter": "@leaf * 2", "from": -20, "to": 20, "axis": "x", "y": "20", "z": "0" } ]
+              },
+              "screw-4x16": {
+                "use": "connectors/generic/screws/screw-4x16.json",
+                "host": "a",
+                "measures": { "thickness_b": "@leaf" },
+                "at": [ { "x": -12, "y": 10, "z": "-@leaf" }, { "x": 12, "y": 10, "z": "-@leaf" } ]
+              }
+            },
+            "machining": {
+              "pockets": [ { "depth": "@leaf", "outline": [ { "x": "-20", "y": "0" }, { "x": "20", "y": "0" }, { "x": "20", "y": "20" }, { "x": "-20", "y": "20" } ] } ]
+            }
+          },
+          "inset": {
+            "attributes": { "hinge_pivot": [ "-1", "-21.5" ] },
+            "hardware": {
+              "body": {
+                "name": "Flat hinge 40x40",
+                "prisms": [
+                  { "from": "@front - @leaf", "to": "@front", "outline": [ { "x": "-20", "y": "-21" }, { "x": "20", "y": "-21" }, { "x": "20", "y": "-1" }, { "x": "-20", "y": "-1" } ] },
+                  { "axis": "x", "from": "-20", "to": "20", "outline": [
+                    { "y": "-3.5", "z": "@front - 5", "r": "2.49" },
+                    { "y": "1.5", "z": "@front - 5", "r": "2.49" },
+                    { "y": "1.5", "z": "@front", "r": "2.49" },
+                    { "y": "-3.5", "z": "@front", "r": "2.49" }
+                  ] }
+                ]
+              },
+              "screws": {
+                "name": "Screw 3x16",
+                "cylinders": [ { "diameter": "3", "from": "@front - @leaf", "to": "@front - @leaf + 16", "countersink": { "diameter": "6", "end": "from" } } ],
+                "at": [ { "x": "-12", "y": "-13" }, { "x": "12", "y": "-13" } ]
+              }
+            }
+          },
+          "half_overlay": null
+        }
+      }
+    },
+    "b": {
+      "variants": {
+        "select": { "by": "hinge_kind" },
+        "fallback": "overlay",
+        "items": {
+          "overlay": {
+            "hardware": {
+              "leaf": {
+                "name": "Flat hinge 40 (fixed leaf)",
+                "prisms": [ { "axis": "y", "from": "0", "to": "@leaf", "outline": [ { "x": "-20", "z": "-20" }, { "x": "20", "z": "-20" }, { "x": "20", "z": "0" }, { "x": "-20", "z": "0" } ] } ]
+              },
+              "screw-4x16": {
+                "use": "connectors/generic/screws/screw-4x16.json",
+                "host": "a",
+                "axis": "y",
+                "measures": { "thickness_b": "@leaf" },
+                "at": [ { "x": -12, "y": "@leaf", "z": -10 }, { "x": 12, "y": "@leaf", "z": -10 } ]
+              }
+            },
+            "machining": {
+              "pockets": [ { "axis": "y", "depth": "@leaf", "outline": [ { "x": "-20", "z": "-20" }, { "x": "20", "z": "-20" }, { "x": "20", "z": "0" }, { "x": "-20", "z": "0" } ] } ]
+            }
+          },
+          "inset": {
+            "hardware": {
+              "leaf": {
+                "name": "Flat hinge 40x40 (fixed leaf)",
+                "prisms": [ { "axis": "y", "from": "@front - @leaf", "to": "@front", "outline": [ { "x": "-20", "z": "-17" }, { "x": "20", "z": "-17" }, { "x": "20", "z": "-1" }, { "x": "-20", "z": "-1" } ] } ]
+              },
+              "screws": {
+                "name": "Screw 3x16",
+                "prisms": [ { "axis": "y", "from": "@front - @leaf", "to": "@front - @leaf + 16", "outline": [
+                  { "x": "-1.5", "z": "-10.5", "r": "1.49" }, { "x": "1.5", "z": "-10.5", "r": "1.49" },
+                  { "x": "1.5", "z": "-7.5", "r": "1.49" }, { "x": "-1.5", "z": "-7.5", "r": "1.49" }
+                ] } ],
+                "at": [ { "x": "-12" }, { "x": "12" } ]
+              }
+            }
+          },
+          "half_overlay": null
+        }
+      }
+    }
+  },
+  "options": { "start_offset": "100", "end_offset": "100", "max_spacing": "800" }
+}

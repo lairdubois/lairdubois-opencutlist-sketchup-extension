@@ -1358,7 +1358,7 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
       body, screws = component.articles
       assert(!body.use?)
       assert_equal('$LIB/components/fittings/bracket/a.body.skp', body.hardware)
-      assert_equal([ [ 0, 0 ] ], body.positions)   # One at the origin
+      assert_equal([ [ 0, 0, 0 ] ], body.positions)   # One at the origin
       assert_equal(0.3, body.price)
       assert(screws.use?)
       assert_equal('$LIB/connectors/screw.json', screws.use)
@@ -1384,6 +1384,56 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     end
   end
 
+  # A position off the face : sunk in a pocket, its host side's thicknesses
+  # lose the depth ; raised on a spacer, they don't
+  def test_articles_z
+    _with_library('connectors/screw.json' => SCREW) do
+      data = _bracket('screws' => { 'use' => 'connectors/screw.json', 'host' => 'a', 'measures' => { 'thickness_b' => '@bracket_thickness' },
+                                    'at' => [ { 'x' => -8, 'z' => '-@bracket_thickness' }, { 'x' => 8, 'z' => 3 } ] })
+      descriptor = _def(data, nil, '$LIB/fittings/bracket.json')
+      assert(descriptor.valid?, descriptor.errors.inspect)
+      screws = descriptor.resolve_component('a').articles.last
+      variables = descriptor.resolve_variables('thickness' => 19 / 25.4)
+      positions = screws.positions(variables)
+      assert_in_delta(-2 / 25.4, positions[0][2], 1e-9)
+      assert_in_delta(3 / 25.4, positions[1][2], 1e-9)
+      slot = { 'thickness' => 19 / 25.4, 'thickness_min' => 19 / 25.4, 'thickness_max' => 19 / 25.4 }
+      sunk = screws.joint_measures(slot, variables, positions[0][2])
+      assert_in_delta(17 / 25.4, sunk['thickness_a'], 1e-9)
+      assert_in_delta(17 / 25.4, sunk['thickness_min_a'], 1e-9)
+      assert_in_delta(17 / 25.4, sunk['thickness_max_a'], 1e-9)
+      assert_in_delta(2 / 25.4, sunk['thickness_b'], 1e-9)   # The virtual side as given
+      raised = screws.joint_measures(slot, variables, positions[1][2])
+      assert_in_delta(19 / 25.4, raised['thickness_a'], 1e-9)
+    end
+  end
+
+  # Along Y - by the edge - : its lift is its y off the edge, outward - +Y,
+  # or -Y when the height is reversed - and the slot's thicknesses given
+  # are taken along Y
+  def test_articles_axis_y
+    _with_library('connectors/screw.json' => SCREW) do
+      data = _bracket('screws' => { 'use' => 'connectors/screw.json', 'host' => 'a', 'axis' => 'y', 'measures' => { 'thickness_b' => '@bracket_thickness' },
+                                    'at' => [ { 'x' => -8, 'y' => '-@bracket_thickness', 'z' => -9 } ] })
+      descriptor = _def(data, nil, '$LIB/fittings/bracket.json')
+      assert(descriptor.valid?, descriptor.errors.inspect)
+      screws = descriptor.resolve_component('a').articles.last
+      assert(screws.along_y?)
+      variables = descriptor.resolve_variables('thickness' => 19 / 25.4)
+      position = screws.positions(variables)[0]
+      assert_in_delta(-2 / 25.4, screws.lift(position, 0.0, false), 1e-9)   # Sunk in the edge at +Y
+      assert_in_delta(2 / 25.4, screws.lift(position, 0.0, true), 1e-9)     # On a leaf off the edge at -Y
+      assert_in_delta(-7 / 25.4, screws.lift(position, 5 / 25.4, false), 1e-9)
+      assert_nil(screws.lift(position, nil, false))
+      slot = { 'thickness' => 150 / 25.4, 'thickness_min' => 150 / 25.4, 'thickness_max' => 150 / 25.4, 'height' => 0.0 }
+      joint = screws.joint_measures(slot, variables, screws.lift(position, 0.0, true))
+      assert_in_delta(150 / 25.4, joint['thickness_a'], 1e-9)
+      assert_in_delta(0.0, joint['height_a'], 1e-9)
+      # Along Z by default
+      refute(_def(_bracket('screws' => { 'use' => 'connectors/screw.json', 'host' => 'a', 'measures' => { 'thickness_b' => '2mm' } }), nil, '$LIB/fittings/bracket.json').resolve_component('a').articles.last.along_y?)
+    end
+  end
+
   def test_articles_override_setting_values
     _with_library('connectors/screw.json' => SCREW) do
       data = _bracket('screws' => { 'use' => 'connectors/screw.json', 'host' => 'a', 'measures' => { 'thickness_b' => '@bracket_thickness' }, 'variables' => { 'length' => { 'value' => '18mm' } } })
@@ -1402,7 +1452,12 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
 
   def test_articles_errors
     with_screw = lambda { |screws| _bracket('screws' => { 'use' => 'connectors/screw.json', 'host' => 'a', 'measures' => { 'thickness_b' => '2mm' } }.merge(screws)) }
-    _with_library('connectors/screw.json' => SCREW, 'fittings/other.json' => _bracket, 'connectors/files.json' => _with(SCREW, 'components' => { 'a' => { 'hardware' => true, 'machining' => true } })) do
+    pocketed = _with(SCREW, 'components' => { 'a' => { 'machining' => { 'pockets' => [ { 'depth' => '2mm', 'outline' => [ { 'x' => 0, 'y' => 0 }, { 'x' => 5, 'y' => 0 }, { 'x' => 5, 'y' => 5 } ] } ] } } })
+    edged = _with(SCREW, 'components' => { 'a' => { 'machining' => { 'drillings' => [ { 'diameter' => '3mm', 'depth' => '@embed', 'axis' => 'y' } ] } } })
+    _with_library('connectors/screw.json' => SCREW, 'fittings/other.json' => _bracket, 'connectors/files.json' => _with(SCREW, 'components' => { 'a' => { 'hardware' => true, 'machining' => true } }),
+                  'connectors/pocketed.json' => pocketed, 'connectors/edged.json' => edged) do
+      _assert_errors(with_screw.call('use' => 'connectors/pocketed.json', 'axis' => 'y'), 'goes along Y : the machining of side a of Screw 4x20 can only be drillings and mortises along Z')
+      _assert_errors(with_screw.call('use' => 'connectors/edged.json', 'axis' => 'y'), 'goes along Y : the machining of side a of Screw 4x20 can only be drillings and mortises along Z')
       _assert_errors(_bracket('Body' => { 'skp' => true }), "article 'Body' key is not made of lowercase letters")
       _assert_errors(_bracket('x' => { 'name' => 'X' }), "article 'x' has no geometry")
       _assert_errors(_bracket('x' => { 'skp' => true, 'cylinders' => [ { 'diameter' => 4, 'from' => 0, 'to' => 1 } ] }), "article 'x' has more than one geometry")
@@ -1410,12 +1465,15 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
       _assert_errors(_bracket('x' => { 'skp' => true, 'host' => 'a' }), "article 'x' has 'host' but uses no connector")
       _assert_errors(_bracket('x' => { 'skp' => true, 'at' => [] }), "article 'x' at is not a list of positions")
       _assert_errors(_bracket('x' => { 'skp' => true, 'at' => [ { 'x' => '@nope', 'z' => 1 } ] }), "position 1 x uses the unknown variable @nope")
-      _assert_errors(_bracket('x' => { 'skp' => true, 'at' => [ { 'z' => 1 } ] }), "position 1 has an unknown key 'z'")
+      _assert_errors(_bracket('x' => { 'skp' => true, 'at' => [ { 'z' => '@nope' } ] }), "position 1 z uses the unknown variable @nope")
+      _assert_errors(_bracket('x' => { 'skp' => true, 'at' => [ { 'w' => 1 } ] }), "position 1 has an unknown key 'w'")
       _assert_errors(_bracket('x' => { 'cylinders' => [ { 'diameter' => -4, 'from' => 0, 'to' => 1 } ] }), "component 'a/x' cylinder 1 diameter is not a positive length")
       _assert_errors(with_screw.call('use' => 'connectors/nope.json'), 'uses $LIB/connectors/nope.json : not found')
       _assert_errors(with_screw.call('use' => 'fittings/other.json'), 'a fitting, not a connector')
       _assert_errors(with_screw.call('use' => 'connectors/files.json'), "the machining of side a of Screw 4x20 is a file, it can't be merged")
       _assert_errors(with_screw.call('host' => 'c'), 'host is neither "a" nor "b"')
+      _assert_errors(with_screw.call('axis' => 'x'), 'axis is neither "z" nor "y"')
+      _assert_errors(_bracket('x' => { 'skp' => true, 'axis' => 'y' }), "article 'x' has 'axis' but uses no connector")
       _assert_errors(with_screw.call('measures' => { 'thickness_a' => '2mm' }), 'measures has no thickness_b')
       _assert_errors(with_screw.call('measures' => { 'thickness_b' => '2mm', 'height_b' => '1mm' }), "measures has the unknown measure 'height_b'")
       _assert_errors(with_screw.call('measures' => { 'thickness_b' => '-2mm' }), 'thickness_b is not a positive length')

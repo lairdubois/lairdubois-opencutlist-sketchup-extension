@@ -334,9 +334,12 @@ core:
   hardware_editor:
     title: Éditeur de quincaillerie
     title_connector: Éditeur de connecteur
-    title_fitting: Éditeur de ferrure
+    title_fitting: Éditeur de raccord
     title_hinge: Éditeur de charnière
     new_name: Nouvelle quincaillerie
+    new_name_connector: Nouveau connecteur
+    new_name_fitting: Nouveau raccord
+    new_name_hinge: Nouvelle charnière
     tab_settings: Réglages
     tab_parts: Pièces
     tab_json: JSON
@@ -439,6 +442,9 @@ core:
     article_missing: introuvable
     article_refused: refusé
     article_host: Notre panneau est le côté
+    article_axis: Entre dans notre panneau par
+    article_axis_z: Sa face (Z)
+    article_axis_y: Son chant (Y)
     article_virtual_thickness: "Épaisseur du côté virtuel ({{ slot }})"
     article_settings: Réglages du connecteur
     article_setting_default: "Connecteur : {{ value }}"

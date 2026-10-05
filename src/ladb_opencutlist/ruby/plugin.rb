@@ -234,7 +234,7 @@ module Ladb::OpenCutList
     # The shipped library can be written by a dev build run from the sources :
     # it is the one of the repository.
     def library_bundled_writable?
-      IS_DEV && !IS_RBZ
+      false #IS_DEV && !IS_RBZ
     end
 
     # Returns true if the given ref points into a library that can't be written

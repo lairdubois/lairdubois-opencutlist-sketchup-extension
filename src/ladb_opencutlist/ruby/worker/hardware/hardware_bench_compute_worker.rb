@@ -290,7 +290,7 @@ module Ladb::OpenCutList
         positions = (article.at.is_a?(Array) ? article.at : [ {} ]).map { |item|
           item = {} unless item.is_a?(Hash)
           fields = {}
-          %w[x y].each do |k|
+          HardwareDescriptorDef::ARTICLE_AT_KEYS.each do |k|
             value = item[k].nil? ? 0 : item[k]
             length = HardwareDescriptorDef.to_length(value, true, variables)
             if length.nil?
@@ -302,7 +302,8 @@ module Ladb::OpenCutList
           end
           fields
         }
-        resolved = positions.select { |fields| !fields[:x][:value].nil? && !fields[:y][:value].nil? }.map { |fields| [ fields[:x][:value], fields[:y][:value] ] }
+        # [ index, x, y, z ] : the index the editor knows the position by
+        resolved = positions.each_with_index.select { |fields, _| fields.values.all? { |field| !field[:value].nil? } }.map { |fields, index| [ index, fields[:x][:value], fields[:y][:value], fields[:z][:value] ] }
         result = { :key => article.key, :name => article.name, :use => article.use, :positions => positions }
         if article.use?
           _used_article(bench_def, slot, article, variables, matrix, resolved, result, response)
@@ -336,6 +337,7 @@ module Ladb::OpenCutList
     def _used_article(bench_def, slot, article, variables, matrix, positions, result, response)
       result[:kind] = 'use'
       result[:host] = article.host
+      result[:axis] = article.axis
       used = article.descriptor
       if used.nil?
         result[:missing] = true
@@ -352,7 +354,7 @@ module Ladb::OpenCutList
         return
       end
       result[:virtual] = { :measure => "thickness_#{article.other_slot}", :value => thickness, :text => _text(thickness) }
-      joint = article.joint_measures(bench_def.slot_measures(slot).reject { |name, _| name.end_with?('_a', '_b') }, variables)
+      slot_measures = bench_def.slot_measures(slot).reject { |name, _| name.end_with?('_a', '_b') }
       # Each with the connector's own value : the one an override replaces
       result[:settings] = used.settings.map { |name, setting|
         overridden = article.overrides.key?(name)
@@ -365,30 +367,59 @@ module Ladb::OpenCutList
           :steps => setting['steps'].is_a?(Array) ? setting['steps'].map { |step| _length(step) } : nil,
         }
       }
-      used_variables = used.resolve_variables(article.side_measures(joint, article.host))
-      result[:variables] = used.variables.keys.select { |name| used_variables.key?(name) }.map { |name| { :name => name, :value => used_variables[name], :text => _text(used_variables[name]) } }
-      result[:asserts] = used.asserts.map { |assert|
-        left, operator, right = HardwareDescriptorDef.assert_sides(assert, used_variables)
-        { :expression => assert, :ok => HardwareDescriptorDef.assert?(assert, used_variables) == true, :operator => operator,
-          :left => left, :left_text => _text(left), :right => right, :right_text => _text(right) }
-      }
-      result[:ok] = result[:asserts].all? { |assert| assert[:ok] }
-      [ article.host, article.other_slot ].each do |side|
-        used_component = used.resolve_component(side)
-        next if used_component.nil?
-        side_variables = used.resolve_variables(article.side_measures(joint, side))
-        side_matrix = side == article.host ? IDENTITY : FLIP_Z
-        sub = { :hardware => used_component.hardware, :mirror => used_component.mirror, :z_offset => used_component.z_offset }
-        _article_geometry(slot, article.key, HardwareDescriptorDef::PART_HARDWARE, sub, side_variables, side_matrix, matrix, positions, response)
-        next unless side == article.host && HardwareDescriptorDef.primitives?(used_component.machining)
-        sub = { :hardware => used_component.machining, :mirror => used_component.mirror, :z_offset => nil }
-        _article_geometry(slot, article.key, HardwareDescriptorDef::PART_MACHINING, sub, side_variables, IDENTITY, matrix, positions, response)
+      # Along Y : its thicknesses taken from the edge, see
+      # HardwareBenchDef#edge_depth
+      if article.along_y?
+        depth = bench_def.edge_depth(slot)
+        if depth.nil?
+          result[:ok] = false
+          return
+        end
+        slot_measures = slot_measures.merge(
+          HardwareDescriptorDef::VARIABLE_THICKNESS => depth,
+          HardwareDescriptorDef::VARIABLE_THICKNESS_MIN => depth,
+          HardwareDescriptorDef::VARIABLE_THICKNESS_MAX => depth
+        )
       end
+      height = slot_measures[HardwareDescriptorDef::VARIABLE_HEIGHT]
+      reversed = HardwareDescriptorDef.height_reversed?(bench_def.type, slot)
+      frame = article.along_y? ? (reversed ? AXIS_Y_REVERSED : AXIS_MATRICES[HardwareDescriptorDef::AXIS_Y]) : IDENTITY
+      # Its measures depend on how far each position lifts it off the face
+      # it goes in by - see HardwareArticleDef#lift : evaluated at each lift
+      # - the variables told at the first one, the asserts at each, the
+      # coordinate they fail at told when they differ
+      groups = positions.group_by { |position| article.lift(position[1, 3], height, reversed).to_f.round(6) }
+      groups = { 0.0 => [] } if groups.empty?
+      result[:asserts] = []
+      groups.each_with_index do |(lift, group), group_index|
+        joint = article.joint_measures(slot_measures, variables, lift)
+        used_variables = used.resolve_variables(article.side_measures(joint, article.host))
+        result[:variables] = used.variables.keys.select { |name| used_variables.key?(name) }.map { |name| { :name => name, :value => used_variables[name], :text => _text(used_variables[name]) } } if group_index == 0
+        used.asserts.each do |assert|
+          left, operator, right = HardwareDescriptorDef.assert_sides(assert, used_variables)
+          entry = { :expression => assert, :ok => HardwareDescriptorDef.assert?(assert, used_variables) == true, :operator => operator,
+                    :left => left, :left_text => _text(left), :right => right, :right_text => _text(right) }
+          entry[:z_text] = _text(group.first[article.along_y? ? 2 : 3]) if groups.length > 1 && !group.empty?
+          result[:asserts] << entry
+        end
+        [ article.host, article.other_slot ].each do |side|
+          used_component = used.resolve_component(side)
+          next if used_component.nil?
+          side_variables = used.resolve_variables(article.side_measures(joint, side))
+          side_matrix = side == article.host ? frame : _multiply(frame, FLIP_Z)
+          sub = { :hardware => used_component.hardware, :mirror => used_component.mirror, :z_offset => used_component.z_offset }
+          _article_geometry(slot, article.key, HardwareDescriptorDef::PART_HARDWARE, sub, side_variables, side_matrix, matrix, group, response)
+          next unless side == article.host && HardwareDescriptorDef.primitives?(used_component.machining)
+          sub = { :hardware => used_component.machining, :mirror => used_component.mirror, :z_offset => nil }
+          _article_geometry(slot, article.key, HardwareDescriptorDef::PART_MACHINING, sub, side_variables, frame, matrix, group, response)
+        end
+      end
+      result[:ok] = result[:asserts].all? { |assert| assert[:ok] }
     end
 
     # The solids or SKP of one geometry of an article - its hardware ref or
     # primitives, mirror and z_offset in sub - at each of the given positions
-    # [ x, y ] of the slot, by the given matrices : the side one in the
+    # [ index, x, y, z ] of the slot, by the given matrices : the side one in the
     # article's frame, then the slot's.
     def _article_geometry(slot, key, part, sub, variables, side_matrix, matrix, positions, response)
       value = sub[:hardware]
@@ -408,8 +439,8 @@ module Ladb::OpenCutList
           end
         end
       end
-      positions.each_with_index do |(x, y), position|
-        position_matrix = _multiply(matrix, _multiply(_translation(x, y, 0), local))
+      positions.each do |position, x, y, z|
+        position_matrix = _multiply(matrix, _multiply(_translation(x, y, z), local))
         if cylinders.nil?
           response[:skps] << { :slot => slot, :part => part, :ref => value, :article => key, :position => position, :transformation => position_matrix } if value.is_a?(String)
           next
@@ -590,6 +621,8 @@ module Ladb::OpenCutList
     IDENTITY = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 ].freeze
     MIRROR_X = [ -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 ].freeze
     FLIP_Z = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1 ].freeze   # The virtual side of a used connector
+    # An article along Y when the height is reversed : [ x, y, z ] -> [ x, -z, y ] - see SmartJoinTool::TRANSFORMATION_ARTICLE_AXIS_Y_REVERSED
+    AXIS_Y_REVERSED = [ 1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1 ].freeze
 
     # The frames the primitives along Y - or turned on Z - are given in - see
     # HardwareDescriptorDef::PrimitiveCylinderDef#axis and

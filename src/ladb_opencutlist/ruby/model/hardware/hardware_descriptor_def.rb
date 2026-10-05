@@ -68,9 +68,18 @@ module Ladb::OpenCutList
   #    hardware is laid, its machining isn't. "variables" overrides the
   #    VALUES of its settings, nothing else. Its asserts are checked at each
   #    position. Its host side's machining is merged into the slot's.
-  # "at" lists its positions - x and y lengths in the laying frame of the
-  # slot - one at the origin when absent. Only a hardware that isn't a
-  # connector can use another one - a cycle can't be.
+  #    "axis" - "z" by default, or "y" - is the one of the slot it goes into
+  #    the part along : "y" turns it a quarter around X, it goes into the
+  #    face a machining along Y starts on - the edge, see VARIABLE_HEIGHT.
+  #    Its host side's machining can then only be drillings and mortises
+  #    along Z, their length along X.
+  # "at" lists its positions - x, y and z lengths in the laying frame of the
+  # slot, 0 by default - one at the origin when absent. They shift the
+  # article off the face it goes in by - below it, sunk in a pocket, or
+  # above it, on a spacer - and with it the contact plane of a used
+  # connector : its host side's thickness - along its axis - loses what the
+  # position sinks, see HardwareArticleDef#lift. Only a hardware that isn't
+  # a connector can use another one - a cycle can't be.
   #
   # A part can instead be given as <primitives>, the tool generates its
   # geometry, in the laying frame of the type - the face at z = 0, the part
@@ -231,7 +240,9 @@ module Ladb::OpenCutList
     ARTICLE_MEASURES = 'measures'.freeze
     ARTICLE_VARIABLES = 'variables'.freeze
     ARTICLE_AT = 'at'.freeze
-    ARTICLE_USE_KEYS = [ ARTICLE_USE, ARTICLE_HOST, ARTICLE_MEASURES, ARTICLE_VARIABLES ].freeze
+    ARTICLE_AT_KEYS = %w[x y z].freeze
+    ARTICLE_AXIS = 'axis'.freeze
+    ARTICLE_USE_KEYS = [ ARTICLE_USE, ARTICLE_HOST, ARTICLE_MEASURES, ARTICLE_VARIABLES, ARTICLE_AXIS ].freeze
     ARTICLE_KEY_PATTERN = /\A[a-z][a-z0-9_-]*\z/
 
     SELECT_MODE_EXACT = 'exact'.freeze
@@ -478,10 +489,12 @@ module Ladb::OpenCutList
     #  - host : the side of the connector the part is ;
     #  - measures : the expressions of its other side's measures, unsuffixed
     #    - { 'thickness' => '@bracket_thickness' } ;
-    #  - at : its positions as written - [ { 'x' => …, 'y' => … } ] ;
+    #  - at : its positions as written - [ { 'x' => …, 'y' => …, 'z' => … } ] ;
     #  - overrides : the settings of the used connector it overrides, as
-    #    written - { 'length' => { 'value' => '18mm' } }.
-    HardwareArticleDef = Struct.new(:key, :name, :description, :price, :url, :mass, :hardware, :use, :descriptor, :host, :measures, :at, :overrides) do
+    #    written - { 'length' => { 'value' => '18mm' } } ;
+    #  - axis : the one of the slot it goes into the part along - AXIS_Z or
+    #    AXIS_Y, see "axis".
+    HardwareArticleDef = Struct.new(:key, :name, :description, :price, :url, :mass, :hardware, :use, :descriptor, :host, :measures, :at, :overrides, :axis) do
       def use?
         !use.nil?
       end
@@ -496,27 +509,48 @@ module Ladb::OpenCutList
       def other_slot
         host == 'a' ? 'b' : 'a'
       end
-      # Its positions, evaluated with the given variables : [ [ x, y ] ] in
-      # inches - nil when one can't be.
+      # Its positions, evaluated with the given variables : [ [ x, y, z ] ]
+      # in inches - nil when one can't be.
       def positions(variables = {})
         items = at.is_a?(Array) ? at : [ {} ]
         items.map { |item|
           return nil unless item.is_a?(Hash)
-          %w[x y].map { |k|
+          ARTICLE_AT_KEYS.map { |k|
             v = item[k].nil? ? 0 : HardwareDescriptorDef.to_length(item[k], true, variables)
             return nil if v.nil?
             v
           }
         }
       end
-      # The measures of the joint of the used connector : its host side's
-      # from the given measures of the slot - unsuffixed - its other side's
+      # Does it go into the part along Y - by the edge ?
+      def along_y?
+        axis == AXIS_Y
+      end
+      # How far the given position - see positions - lifts it off the face
+      # it goes in by, toward the outside - negative : sunk in it. Along Z,
+      # off the face : its z. Along Y, off the edge - the face given height
+      # away toward +Y, or toward -Y when height_reversed, see
+      # HardwareDescriptorDef.height_reversed? - nil when height is.
+      def lift(position, height = nil, height_reversed = false)
+        return position[2] unless along_y?
+        return nil if height.nil?
+        height_reversed ? -position[1] - height : position[1] - height
+      end
+      # The measures of the joint of the used connector at a position the
+      # given lift off the face it goes in by - see lift : its host side's
+      # from the given measures of the slot - unsuffixed, its thicknesses
+      # along its axis - less what a negative lift sinks, its other side's
       # evaluated with the given variables. nil when they can't be.
-      def joint_measures(slot_measures, variables = {})
+      def joint_measures(slot_measures, variables = {}, lift = 0.0)
         thickness = HardwareDescriptorDef.to_length(measures.is_a?(Hash) ? measures[VARIABLE_THICKNESS] : nil, false, variables)
         return nil if thickness.nil?
+        sunk = [ lift.to_f, 0.0 ].min
         joint = {}
-        slot_measures.each { |name, value| joint["#{name}_#{host}"] = value if VARIABLES.include?(name.to_s) }
+        slot_measures.each do |name, value|
+          next unless VARIABLES.include?(name.to_s)
+          value += sunk if sunk != 0 && !value.nil? && [ VARIABLE_THICKNESS, VARIABLE_THICKNESS_MIN, VARIABLE_THICKNESS_MAX ].include?(name.to_s)
+          joint["#{name}_#{host}"] = value
+        end
         [ VARIABLE_THICKNESS, VARIABLE_THICKNESS_MIN, VARIABLE_THICKNESS_MAX ].each { |name| joint["#{name}_#{other_slot}"] = thickness }
         joint
       end
@@ -1046,7 +1080,7 @@ module Ladb::OpenCutList
             value.each_value do |article|
               next unless article.is_a?(Hash)
               fn_primitives.call(article)
-              article[ARTICLE_AT].each { |position| fn_keys.call(position, %w[x y]) } if article[ARTICLE_AT].is_a?(Array)
+              article[ARTICLE_AT].each { |position| fn_keys.call(position, ARTICLE_AT_KEYS) } if article[ARTICLE_AT].is_a?(Array)
               fn_keys.call(article[ARTICLE_MEASURES], article[ARTICLE_MEASURES].keys) if article[ARTICLE_MEASURES].is_a?(Hash)
               article[ARTICLE_VARIABLES].each_value { |setting| fn_keys.call(setting, [ 'value' ]) } if article[ARTICLE_VARIABLES].is_a?(Hash)
             end
@@ -1634,7 +1668,7 @@ module Ladb::OpenCutList
           measures = article[ARTICLE_MEASURES].is_a?(Hash) ? Hash[article[ARTICLE_MEASURES].map { |name, expression| [ name.sub(/_[ab]\z/, ''), expression ] }] : {}
           HardwareArticleDef.new(key, info['name'], info['description'], info['price'], info['url'], info['mass'],
                                  nil, used, _used_descriptor(used, article[ARTICLE_VARIABLES]), host, measures, article[ARTICLE_AT],
-                                 article[ARTICLE_VARIABLES].is_a?(Hash) ? article[ARTICLE_VARIABLES] : {})
+                                 article[ARTICLE_VARIABLES].is_a?(Hash) ? article[ARTICLE_VARIABLES] : {}, article[ARTICLE_AXIS] == AXIS_Y ? AXIS_Y : AXIS_Z)
         else
           geometry = article[ARTICLE_SKP] == true ? true : article[ARTICLE_SKP]
           geometry = article.select { |k, _| PRIMITIVES[PART_HARDWARE].include?(k) } if geometry.nil?
@@ -2024,6 +2058,8 @@ module Ladb::OpenCutList
         errors << "#{label} host is neither \"a\" nor \"b\""
         return
       end
+      axis = article[ARTICLE_AXIS]
+      errors << "#{label} axis is neither #{AXES.map(&:inspect).join(' nor ')}" if article.key?(ARTICLE_AXIS) && !AXES.include?(axis)
       other = host == 'a' ? 'b' : 'a'
       measure = "#{VARIABLE_THICKNESS}_#{other}"
       measures = article[ARTICLE_MEASURES]
@@ -2068,7 +2104,22 @@ module Ladb::OpenCutList
       component = used.resolve_component(host)
       if !component.nil? && component.machining.is_a?(String)
         errors << "#{label} : the machining of side #{host} of #{used.name} is a file, it can't be merged"
+      elsif axis == AXIS_Y && !component.nil? && !_turnable_machining?(component.machining)
+        errors << "#{label} goes along Y : the machining of side #{host} of #{used.name} can only be drillings and mortises along Z, their length along X"
       end
+    end
+
+    # Can the given machining of a used connector be turned to go along Y -
+    # see "axis" : none, or only drillings and mortises along Z, their
+    # length along X ?
+    def _turnable_machining?(machining)
+      return true unless machining.is_a?(Hash)
+      return false if machining[MACHINING_POCKETS].is_a?(Array) && !machining[MACHINING_POCKETS].empty?
+      [ MACHINING_DRILLINGS, MACHINING_MORTISES ].all? { |key|
+        !machining[key].is_a?(Array) || machining[key].all? { |item|
+          item.is_a?(Hash) && [ nil, AXIS_Z ].include?(item['axis']) && [ nil, AXIS_X ].include?(item['length_axis'])
+        }
+      }
     end
 
     # The positions of an article - see "at".
@@ -2083,8 +2134,8 @@ module Ladb::OpenCutList
           errors << "#{position} is not an object"
           next
         end
-        (item.keys - %w[x y]).each { |k| errors << "#{position} has an unknown key '#{k}'" }
-        %w[x y].each do |k|
+        (item.keys - ARTICLE_AT_KEYS).each { |k| errors << "#{position} has an unknown key '#{k}'" }
+        ARTICLE_AT_KEYS.each do |k|
           next if item[k].nil?
           unknown = _unknown_variables(item[k])
           unknown.each { |n| errors << "#{position} #{k} uses the unknown variable @#{n}" }
