@@ -16,7 +16,7 @@ class TC_Ladb_Worker_HardwareBenchCompute < TestUp::TestCase
 
   DOWEL = {
     'format' => 'ocl-hardware', 'version' => 1,
-    'id' => 'dowel-1', 'type' => 'connector', 'name' => 'Dowel',
+    'id' => 'dowel-1', 'type' => 'connector', 'length_unit' => 'mm', 'name' => 'Dowel',
     'variables' => {
       'diameter' => { 'value' => '8mm', 'label' => 'Diamètre', 'steps' => [ '6mm', '8mm', '10mm' ] },
       'length' => { 'value' => '40mm', 'min' => '20mm', 'max' => '60mm' },

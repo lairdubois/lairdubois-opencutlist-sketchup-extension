@@ -15,6 +15,7 @@ module Ladb::OpenCutList
   #    "type": "hinge",             how the tool finds where to lay it (TYPES)
   #    "name": "…",
   #    "supplier": "…", "url": "…",
+  #    "length_unit": "mm",         the unit of its bare numbers - see below
   #    "hardware_material": "…",
   #    "components": { "<slot>": <component> },
   #    "variables": { "<name>": "<length expression>" },
@@ -73,8 +74,8 @@ module Ladb::OpenCutList
   #
   # A part can instead be given as <primitives>, the tool generates its
   # geometry, in the laying frame of the type - the face at z = 0, the part
-  # toward -Z. Lengths are strings with a unit, or numbers in millimeters ;
-  # x and y default to 0. {} : none yet - nothing laid, the part kept
+  # toward -Z. Lengths are strings or numbers - see "length_unit" ; x and
+  # y default to 0. {} : none yet - nothing laid, the part kept
   # listed in the editor, ready to be filled, as an empty slot.
   #  - a machining, as operations - for what a fixed SKP can't adapt, a
   #    through hole in a part of any thickness :
@@ -133,10 +134,17 @@ module Ladb::OpenCutList
   #                       "countersink": { "diameter": "8mm", "end": "to" } } ] }
   # A length can be an expression of the measures the tool takes where it
   # lays the part - see measures - : "@thickness - 2mm", "@thickness / 2",
-  # "min(@thickness_a - 5mm; 20mm)". Its literals bear a unit as SketchUp
-  # reads it - mm, cm, m, ", ', yd - bare numbers are factors. See
-  # LengthExpressionUtils. "through" is "@thickness_max" - "@thickness"
-  # when it isn't given.
+  # "min(@thickness_a - 5mm; 20mm)". See LengthExpressionUtils. "through"
+  # is "@thickness_max" - "@thickness" when it isn't given.
+  #
+  # "length_unit" - one of LengthExpressionUtils::LENGTH_UNITS - is the
+  # unit of the bare numbers of its lengths, as the VCB's are in the
+  # model's : "8", 8, "@thickness - 2" are millimeters with "mm", "@length
+  # / 2" stays a factor. Without it, a length bears its unit - "8mm",
+  # "3/4in", "1' 6\"" - and a bare number is a factor - but 0. Whatever the
+  # model it is used in, a descriptor means the same. It is inherited and
+  # can't change - see "extends". Read with each file - see
+  # with_length_unit - the data holds its lengths with their unit.
   #
   # "variables" names expressions, evaluated in the order of their
   # dependencies : each can use the measures and the other variables,
@@ -169,7 +177,7 @@ module Ladb::OpenCutList
   # "hinge_pivot": [ "-8.5mm", "4.2mm" ] }. Values are scalars or arrays of
   # scalars. Those of a variant override those of the component holding the
   # variants. The kinematics of a hinge - see HINGE_ATTRIBUTES and DoorDef -
-  # are checked : a length is a string, with a unit or in the model's one.
+  # are checked : "hinge_pivot" is two lengths.
   # Those of a hinge made of articles go to the group holding them, laid in
   # the laying frame of its slot : its pivot is given in that frame,
   # whatever each article is shifted by.
@@ -388,9 +396,17 @@ module Ladb::OpenCutList
     VARIABLE_PATTERN = /@([A-Za-z_]\w*)/
     VARIABLE_NAME_PATTERN = /\A[A-Za-z_]\w*\z/
 
-    # A zero written as a length - "0", "-0,0 mm" - : DimensionUtils reads
-    # anything it can't parse as 0 too.
-    ZERO_LENGTH_PATTERN = /\A\s*[-+]?(0+([.,]0*)?|[.,]0+)\s*(mm|cm|m|yd|'|")?\s*\z/
+    # The unit of the bare numbers of its lengths - see "length_unit".
+    LENGTH_UNIT = 'length_unit'.freeze
+
+    # The keys of the lengths of a primitive, of a point of its outline and
+    # of its head - see with_length_unit.
+    PRIMITIVE_LENGTH_KEYS = %w[x y z diameter length width depth from to].freeze
+    OUTLINE_LENGTH_KEYS = %w[x y z r].freeze
+    HEAD_LENGTH_KEYS = %w[diameter depth].freeze
+
+    # The tool's options that are lengths - or factors : "/2".
+    LENGTH_OPTIONS = %w[height start_offset end_offset min_spacing max_spacing].freeze
 
     # A comparison of two lengths : the tolerance it is checked with, in inches.
     ASSERT_PATTERN = /\A(.+?)(<=|>=|<|>|=)(.+)\z/
@@ -974,30 +990,100 @@ module Ladb::OpenCutList
     end
     private_class_method :_head_profile
 
-    # The given length in inches - a string with a unit, an expression of
-    # variables, or a number of millimeters - nil if it isn't one or uses a
-    # variable not given. 0 is only a length where negative ones are allowed.
+    # The given length in inches - an expression of literals with a unit and
+    # of variables, see LengthExpressionUtils - nil if it isn't one or uses
+    # a variable not given. A bare number is a factor, but 0 : the bare
+    # numbers of a descriptor got its "length_unit" when it was read - see
+    # with_length_unit. 0 is only a length where negative ones are allowed.
     def self.to_length(value, negative_allowed = false, variables = {})
-      if value.is_a?(Numeric)
-        length = value / 25.4
-      elsif value.is_a?(String) && (value =~ VARIABLE_PATTERN || LengthExpressionUtils.functions?(value))
-        length = _evaluate_length(value, variables)
-        return nil if length.nil?
-      elsif value.is_a?(String) && !value.strip.empty?
-        length = DimensionUtils.str_to_ifloat(value, negative_allowed).to_l.to_f
-        return nil if length == 0 && value !~ ZERO_LENGTH_PATTERN
-      else
-        return nil
-      end
-      return nil if length <= 0 && !negative_allowed
+      value = '0' if value.is_a?(Numeric) && value == 0
+      return nil unless value.is_a?(String) && !value.strip.empty?
+      length = _evaluate_length(value, variables)
+      return nil if length.nil? || length <= 0 && !negative_allowed
       length.to_f
     rescue StandardError
       nil
     end
 
-    # The given hinge_pivot attribute - [ "y", "z" ] length strings - as [ y,
-    # z ] in inches, nil when it isn't one. A number isn't a length : its
-    # unit can't be known.
+    # The given data - a descriptor file's own, as written - its bare
+    # numbers that stand for lengths - JSON numbers too - given the given
+    # unit - see "length_unit" and LengthExpressionUtils.with_unit - : a
+    # copy. The data itself when unit is none : its lengths bear their unit.
+    # What isn't a length expression - "through", "/2" - stays as it is.
+    def self.with_length_unit(data, unit)
+      return data unless data.is_a?(Hash) && LengthExpressionUtils::LENGTH_UNITS.include?(unit)
+      data = Marshal.load(Marshal.dump(data))
+      fn_length = lambda do |value|
+        text = value.is_a?(Numeric) ? (value == value.to_i ? value.to_i.to_s : value.to_s) : value
+        return value unless text.is_a?(String)
+        begin
+          LengthExpressionUtils.with_unit(text, unit)
+        rescue LengthExpressionUtils::LengthExpressionError
+          value
+        end
+      end
+      fn_keys = lambda do |hash, keys|
+        keys.each { |key| hash[key] = fn_length.call(hash[key]) if hash.key?(key) } if hash.is_a?(Hash)
+      end
+      fn_primitives = lambda do |primitives|
+        _primitive_items(primitives).each do |_, item|
+          fn_keys.call(item, PRIMITIVE_LENGTH_KEYS)
+          item['outline'].each { |point| fn_keys.call(point, OUTLINE_LENGTH_KEYS) } if item['outline'].is_a?(Array)
+          HEADS.each { |head| fn_keys.call(item[head], HEAD_LENGTH_KEYS) }
+        end
+      end
+      fn_component = lambda do |component|
+        next unless component.is_a?(Hash)
+        fn_keys.call(component, [ Z_OFFSET ])
+        attributes = component['attributes']
+        if attributes.is_a?(Hash) && attributes[ATTRIBUTE_HINGE_PIVOT].is_a?(Array)
+          attributes[ATTRIBUTE_HINGE_PIVOT] = attributes[ATTRIBUTE_HINGE_PIVOT].map { |value| fn_length.call(value) }
+        end
+        PARTS.each do |part|
+          value = component[part]
+          next unless value.is_a?(Hash)
+          if part == PART_HARDWARE && articles?(value)
+            value.each_value do |article|
+              next unless article.is_a?(Hash)
+              fn_primitives.call(article)
+              article[ARTICLE_AT].each { |position| fn_keys.call(position, %w[x y]) } if article[ARTICLE_AT].is_a?(Array)
+              fn_keys.call(article[ARTICLE_MEASURES], article[ARTICLE_MEASURES].keys) if article[ARTICLE_MEASURES].is_a?(Hash)
+              article[ARTICLE_VARIABLES].each_value { |setting| fn_keys.call(setting, [ 'value' ]) } if article[ARTICLE_VARIABLES].is_a?(Hash)
+            end
+          else
+            fn_primitives.call(value)
+          end
+        end
+        variants = component['variants']
+        next unless variants.is_a?(Hash) && variants['items'].is_a?(Hash)
+        variants['items'].each_value { |item| fn_component.call(item) }
+        if variants['select'].is_a?(Hash) && variants['select']['mode'] == SELECT_MODE_MAX_LE   # Its keys are lengths
+          variants['items'] = Hash[variants['items'].map { |key, item| [ fn_length.call(key), item ] }]
+        end
+      end
+      if data['variables'].is_a?(Hash)
+        data['variables'].each do |name, value|
+          if setting?(value)
+            fn_keys.call(value, %w[value min max])
+            value['steps'] = value['steps'].map { |step| fn_length.call(step) } if value['steps'].is_a?(Array)
+          else
+            data['variables'][name] = fn_length.call(value)
+          end
+        end
+      end
+      if data['asserts'].is_a?(Array)
+        data['asserts'] = data['asserts'].map { |expression|
+          match = expression.is_a?(String) ? ASSERT_PATTERN.match(expression) : nil
+          match.nil? ? expression : fn_length.call(match[1]) + match[2] + fn_length.call(match[3])
+        }
+      end
+      fn_keys.call(data['options'], LENGTH_OPTIONS)
+      data['components'].each_value { |component| fn_component.call(component) } if data['components'].is_a?(Hash)
+      data
+    end
+
+    # The given hinge_pivot attribute - [ "y", "z" ] lengths - as [ y, z ]
+    # in inches, nil when it isn't one.
     def self.hinge_pivot(value)
       return nil unless value.is_a?(Array) && value.length == 2 && value.all? { |v| v.is_a?(String) }
       pivot = value.map { |v| to_length(v, true) }
@@ -1016,7 +1102,7 @@ module Ladb::OpenCutList
     # nil when it can.
     def self.length_error(value, negative_allowed = false, variables = {})
       return nil unless to_length(value, negative_allowed, variables).nil?
-      if value.is_a?(String) && (value =~ VARIABLE_PATTERN || LengthExpressionUtils.functions?(value))
+      if value.is_a?(String) && !value.strip.empty?
         variables = Hash[variables.map { |k, v| [ k.to_s, v ] }]
         missing = value.scan(VARIABLE_PATTERN).flatten.find { |name| !variables[name].is_a?(Numeric) }
         return [ 'unresolved_variable', { :name => missing } ] unless missing.nil?
@@ -1078,7 +1164,7 @@ module Ladb::OpenCutList
     # The value of the given length expression in inches - "@thickness -
     # 2mm" - nil if it can't be read, isn't a length, or uses a variable not
     # given. Unlike the VCB, a bare number is a factor : a descriptor can't
-    # depend on the units of the model it is used in.
+    # depend on the units of the model it is used in - see "length_unit".
     def self._evaluate_length(expression, variables)
       _evaluate_length!(expression, variables)
     rescue LengthExpressionUtils::LengthExpressionError, ZeroDivisionError
@@ -1092,7 +1178,7 @@ module Ladb::OpenCutList
       value, dimension = LengthExpressionUtils.evaluate(
         expression,
         read_literal: lambda { |literal|
-          next [ literal.include?('/') ? literal.split('/').map { |v| v.tr(',', '.').to_f }.reduce(:/) : literal.tr(',', '.').to_f, 0 ] if LengthExpressionUtils.bare_number?(literal)
+          next [ LengthExpressionUtils.bare_number_value(literal), 0 ] if LengthExpressionUtils.bare_number?(literal)
           [ LengthExpressionUtils.literal_to_inches(literal), 1 ]
         },
         read_variable: lambda { |name|
@@ -1101,7 +1187,7 @@ module Ladb::OpenCutList
           [ value.to_f, 1 ]
         }
       )
-      raise LengthExpressionUtils::LengthExpressionError.new('invalid_dimension') unless dimension == 1
+      raise LengthExpressionUtils::LengthExpressionError.new('invalid_dimension') unless dimension == 1 || value == 0   # A bare 0 is a length
       raise LengthExpressionUtils::LengthExpressionError.new('zero_division') unless value.finite?
       value
     end
@@ -1321,11 +1407,11 @@ module Ladb::OpenCutList
 
     # The given data merged with the one of its parents - see "extends".
     def _inherit(own)
-      return own unless own.is_a?(Hash) && own.key?(EXTENDS)
+      return self.class.with_length_unit(own, own.is_a?(Hash) ? own[LENGTH_UNIT] : nil) unless own.is_a?(Hash) && own.key?(EXTENDS)
       parent = _ancestor_data(own[EXTENDS], @ref, @ref.nil? ? [] : [ @ref ], 1)
-      return own if parent.nil?   # Invalid, see @inheritance_errors
+      return self.class.with_length_unit(own, own[LENGTH_UNIT]) if parent.nil?   # Invalid, see @inheritance_errors
       @parent_data = parent
-      _merge_descriptor(parent, own)
+      _merge_descriptor(parent, self.class.with_length_unit(own, own[LENGTH_UNIT] || parent[LENGTH_UNIT]))
     end
 
     # The data of the ancestor the given "extends" of a descriptor of the
@@ -1358,10 +1444,10 @@ module Ladb::OpenCutList
       @parent_refs << ref
       @sources << [ path, File.mtime(path) ]
       data = _localize(data, path, ref)
-      return data unless data.key?(EXTENDS)
+      return self.class.with_length_unit(data, data[LENGTH_UNIT]) unless data.key?(EXTENDS)
       grand_parent = _ancestor_data(data[EXTENDS], ref, visited + [ ref ], depth + 1)
       return nil if grand_parent.nil?
-      _merge_descriptor(grand_parent, data)
+      _merge_descriptor(grand_parent, self.class.with_length_unit(data, data[LENGTH_UNIT] || grand_parent[LENGTH_UNIT]))
     end
 
     # The given data of an ancestor read from the given file, what it names
@@ -1419,6 +1505,9 @@ module Ladb::OpenCutList
       if own.key?('type') && parent.key?('type') && own['type'] != parent['type']
         @inheritance_errors << "type #{own['type'].inspect} differs from its parent's #{parent['type'].inspect}"
       end
+      if own.key?(LENGTH_UNIT) && parent.key?(LENGTH_UNIT) && own[LENGTH_UNIT] != parent[LENGTH_UNIT]
+        @inheritance_errors << "length_unit #{own[LENGTH_UNIT].inspect} differs from its parent's #{parent[LENGTH_UNIT].inspect}"
+      end
       merged = _merge(parent.reject { |key, _| OWN_KEYS.include?(key) }, own.reject { |key, _| OWN_KEYS.include?(key) }, [])
       result = {}
       OWN_KEYS.each { |key| result[key] = own[key] if own.key?(key) }
@@ -1457,7 +1546,7 @@ module Ladb::OpenCutList
       return _merge(parent, own, [ 'variables', name ]) if own.is_a?(Hash)
       return own unless own.is_a?(String) && own =~ SUPER_PATTERN
       expression = self.class.variable_expression(parent)
-      expression = "#{expression}mm" if expression.is_a?(Numeric)
+      expression = expression.to_s if expression.is_a?(Numeric)
       unless expression.is_a?(String) && !expression.strip.empty?
         @inheritance_errors << "variable '#{name}' uses @#{SUPER} but its parent has no such variable"
         return own
@@ -1634,9 +1723,7 @@ module Ladb::OpenCutList
 
     # A variant key as a length in inches, nil if it isn't one.
     def _to_length(key)
-      DimensionUtils.str_to_ifloat(key.to_s).to_l.to_f
-    rescue StandardError
-      nil
+      self.class.to_length(key.to_s, true)
     end
 
     def _resolve_ref(ref)
@@ -1664,6 +1751,9 @@ module Ladb::OpenCutList
       errors.concat(@inheritance_errors)
       return errors if abstract?   # Only validated merged into a child
       errors << "unknown type #{@data['type'].inspect}" unless TYPES.key?(@data['type'])
+      if @data.key?(LENGTH_UNIT) && !LengthExpressionUtils::LENGTH_UNITS.include?(@data[LENGTH_UNIT])
+        errors << "length_unit #{@data[LENGTH_UNIT].inspect} is none of #{LengthExpressionUtils::LENGTH_UNITS.join(', ')}"
+      end
       %w[supplier url].each do |key|
         errors << "#{key} is not a string" if @data.key?(key) && !@data[key].nil? && !@data[key].is_a?(String)
       end

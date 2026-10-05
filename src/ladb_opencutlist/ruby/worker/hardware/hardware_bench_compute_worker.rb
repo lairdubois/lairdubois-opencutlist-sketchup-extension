@@ -21,7 +21,7 @@ module Ladb::OpenCutList
     # found by - see HardwareDescriptorDef#components_dir_ref - nil for a new
     # one ; topology : one of HardwareBenchDef::TOPOLOGIES, nil for the
     # type's first ; thickness_a, thickness_b : lengths - numbers are
-    # millimeters, strings bear a unit - see HardwareDescriptorDef.to_length ;
+    # millimeters, strings as typed, a bare number in the model's unit ;
     # swapped : a and b swapped, where the topology can be - see
     # HardwareBenchDef#swappable?.
     def initialize(descriptor:,
@@ -63,8 +63,8 @@ module Ladb::OpenCutList
         return response
       end
 
-      thickness_a = HardwareDescriptorDef.to_length(@thickness_a) || DEFAULT_THICKNESS
-      thickness_b = HardwareDescriptorDef.to_length(@thickness_b) || DEFAULT_THICKNESS
+      thickness_a = HardwareDescriptorDef.to_length(_typed_length(@thickness_a)) || DEFAULT_THICKNESS
+      thickness_b = HardwareDescriptorDef.to_length(_typed_length(@thickness_b)) || DEFAULT_THICKNESS
       # 0 - or less - is a height the tool lays at, as it reads it : negative allowed
       height = descriptor.option('height')
       height = HardwareDescriptorDef.to_length(height, true) unless height.nil? || height.start_with?('/', '*')
@@ -562,6 +562,14 @@ module Ladb::OpenCutList
         end
       end
       groups.map { |g| { :slots => g[:slots] }.merge(g[:result]) }
+    end
+
+    # The given thickness as a length expression : a number in millimeters,
+    # a typed bare number in the model's unit - as the VCB reads it.
+    def _typed_length(value)
+      return "#{value}mm" if value.is_a?(Numeric)
+      return value unless value.is_a?(String) && !value.strip.empty? && LengthExpressionUtils.bare_number?(value.strip)
+      DimensionUtils.str_add_units(value)
     end
 
     # A plain length of a setting : { :value, :text }, nil if it isn't one.

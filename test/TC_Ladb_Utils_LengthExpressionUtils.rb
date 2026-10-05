@@ -125,6 +125,51 @@ class TC_Ladb_Utils_LengthExpressionUtils < TestUp::TestCase
                                    read_literal: lambda { |literal| literals << literal; [ 0.0, nil ] },
                                    read_variable: lambda { |_| [ 0.0, nil ] })
     assert_equal([ %q{1' 6"}, '1 1/2"', '3/4"', '2.5 cm', '1yd', '5' ], literals)
+    literals = []
+    LengthExpressionUtils.evaluate(%q{1ft 6in + 3/4in + 1'6 + 2″ + 1 1/2 + 3/4mm},
+                                   read_literal: lambda { |literal| literals << literal; [ 0.0, nil ] },
+                                   read_variable: lambda { |_| [ 0.0, nil ] })
+    assert_equal([ '1ft 6in', '3/4in', "1'6", '2″', '1 1/2', '3/4mm' ], literals)
+    assert(!LengthExpressionUtils.bare_number?('2″'))
+    assert_in_delta(1.5, LengthExpressionUtils.bare_number_value('1 1/2'), 1e-12)
+    assert_in_delta(2.5, LengthExpressionUtils.bare_number_value('2,5'), 1e-12)
+  end
+
+  # Whatever the model's unit and decimal separator
+  def test_literal_to_inches
+    { '10mm' => 10 / 25.4, '1,5mm' => 1.5 / 25.4, '1.5 cm' => 15 / 25.4, '1m' => 1000 / 25.4, '2yd' => 72.0,
+      '0.75in' => 0.75, '3/4"' => 0.75, '1 1/2in' => 1.5, '1″' => 1.0, '3/4 in' => 0.75,
+      "1'" => 12.0, '2′' => 24.0, '1.5ft' => 18.0, %q{1' 6"} => 18.0, "1'6" => 18.0, '1ft 6in' => 18.0, "1' 6 1/2\"" => 18.5 }.each do |literal, inches|
+      assert_in_delta(inches, LengthExpressionUtils.literal_to_inches(literal), 1e-12, literal)
+    end
+    assert_equal(30 / 25.4, LengthExpressionUtils.literal_to_inches('30mm'))   # Exactly as SketchUp reads it
+    [ '8', "1' 6mm", '1.2.3mm', '1/0in' ].each do |literal|
+      begin
+        LengthExpressionUtils.literal_to_inches(literal)
+        raise "#{literal} : expected an ArgumentError"
+      rescue ArgumentError
+      end
+    end
+  end
+
+  # A bare number stands for a length where the expression needs one
+  def test_with_unit
+    { '8' => '8mm', '-2' => '-2mm', '0' => '0mm', '1 1/2' => '1 1/2mm', '3/4' => '3/4mm',
+      '@t - 2' => '@t - 2mm', '@length / 2' => '@length / 2', '0.5 * @t' => '0.5 * @t', '@t * 2' => '@t * 2',
+      '(@a + 2) / 2' => '(@a + 2mm) / 2', '2 * 3' => '2mm * 3', '@a * @b / 2' => '@a * @b / 2mm',
+      'floor(@t - 5; 12; 15)' => 'floor(@t - 5mm; 12mm; 15mm)', 'max(@a - 5; 2 * @b)' => 'max(@a - 5mm; 2 * @b)',
+      '@t - 2mm' => '@t - 2mm', "1' 6" => "1' 6", '@super + 1' => '@super + 1mm' }.each do |text, expected|
+      assert_equal(expected, LengthExpressionUtils.with_unit(text, 'mm'), text)
+    end
+    assert_equal('3/4in', LengthExpressionUtils.with_unit('3/4', 'in'))
+    _assert_error('missing_operand') { LengthExpressionUtils.with_unit('/2', 'mm') }
+    _assert_error('syntax_error') { LengthExpressionUtils.with_unit('through', 'mm') }
+  end
+
+  def test_comma_separator
+    _assert_error('comma_argument_separator') { _unchecked('min(8,12)') }
+    _assert_error('comma_argument_separator') { _unchecked('min(10,5mm)') }
+    assert_equal(10.5, _unchecked('min(10,5; 20)'))
   end
 
 end

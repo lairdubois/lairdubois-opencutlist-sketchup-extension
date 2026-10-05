@@ -2577,6 +2577,8 @@ tool:
       missing_operand: "Opérande manquante"
       zero_division: "Division par zéro"
       invalid_argument_count: "Une fonction min, max, floor ou ceil demande au moins deux valeurs"
+      comma_argument_separator: "Séparez les valeurs par « ; » : la virgule est aussi le séparateur décimal"
+      invalid_dimension: "Une longueur ne s'ajoute qu'à une longueur : un nombre sans unité est un facteur"
       no_matching_value: "Aucune des valeurs proposées ne convient"
       lt_min_distance: La distance {{ value1 }} est inférieure à la distance minimale de {{ value2 }}
       gt_max_distance: La distance {{ value1 }} est supérieure à la distance maximale de {{ value2 }}

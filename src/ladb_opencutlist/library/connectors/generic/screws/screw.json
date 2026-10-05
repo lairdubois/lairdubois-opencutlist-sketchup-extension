@@ -3,22 +3,23 @@
   "version": 1,
   "id": "5ced51f2-66af-4eee-92d7-eb1a3db2114f",
   "type": "connector",
+  "length_unit": "mm",
   "name": "Screw",
   "abstract": true,
   "variables": {
     "diameter": { "label": "Diameter" },
     "length": { "label": "Length" },
-    "embed_min": { "value": "15mm", "label": "Embed min"},
+    "embed_min": { "value": "15", "label": "Embed min"},
     "embed": "@length - @thickness_max_b"
   },
-  "asserts": [ "@thickness_max_b - @thickness_min_b <= 0.2mm", "@embed >= @embed_min", "@embed <= @thickness_a - 3mm" ],
+  "asserts": [ "@thickness_max_b - @thickness_min_b <= 0.2", "@embed >= @embed_min", "@embed <= @thickness_a - 3" ],
   "components": {
     "a": {
       "hardware": { "cylinders": [ { "diameter": "@diameter", "from": "-@embed", "to": "@thickness_max_b", "countersink": { "diameter": "@diameter * 2", "angle": 90, "end": "to" } } ] },
-      "machining": { "drillings": [ { "diameter": "@diameter - 1mm", "depth": "@embed" } ] },
-      "attributes": { "symmetrical":  true }
+      "machining": { "drillings": [ { "diameter": "@diameter - 1", "depth": "@embed" } ] },
+      "attributes": { "syetrical":  true }
     },
     "b": { "machining": { "drillings": [ { "diameter": "@diameter", "depth": "through" } ] } }
   },
-  "options": { "height": "/2", "start_offset": "37mm", "end_offset": "37mm", "min_spacing": "0", "max_spacing": "300mm" }
+  "options": { "height": "/2", "start_offset": "37", "end_offset": "37", "min_spacing": "0", "max_spacing": "300" }
 }

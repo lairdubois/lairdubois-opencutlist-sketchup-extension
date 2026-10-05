@@ -26,7 +26,10 @@ module Ladb::OpenCutList
 
       value, _ = LengthExpressionUtils.evaluate(
         text,
-        read_literal: lambda { |literal| [ DimensionUtils.value_to_model_unit_float(literal.downcase), nil ] },
+        read_literal: lambda { |literal|
+          next [ LengthExpressionUtils.bare_number_value(literal), nil ] if LengthExpressionUtils.bare_number?(literal)
+          [ DimensionUtils.length_to_model_unit_float(LengthExpressionUtils.literal_to_inches(literal).to_l), nil ]
+        },
         read_variable: lambda { |name|
           raise LengthExpressionUtils::LengthExpressionError.new('syntax_error', { :error => "@#{name}" }, "@#{name}") unless name.empty?
           [ targeted_length, nil ]

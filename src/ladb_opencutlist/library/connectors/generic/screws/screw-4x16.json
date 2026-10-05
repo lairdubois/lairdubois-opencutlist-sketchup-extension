@@ -5,8 +5,8 @@
   "extends": "connectors/generic/screws/screw.json",
   "name": "Screw 4x16",
   "variables": {
-    "diameter": { "value": "4mm" },
-    "length": { "value": "16mm" },
-    "embed_min": { "value":  "10mm" }
+    "diameter": { "value": "4" },
+    "length": { "value": "16" },
+    "embed_min": { "value":  "10" }
   }
 }

@@ -83,16 +83,35 @@
             .attr('title', title);
     };
 
-    // The given primitive length as the field shows it - a number is millimeters.
-    const fnPrimitiveText = function (value) {
-        return value === undefined || value === null ? '' : String(value);
+    // The decimal separator lengths are shown with - the model's : the ','
+    // of a French numeric keypad - set at init. The JSON always gets '.'.
+    let decimalSeparator = '.';
+
+    // The given written length as a field shows it : its decimal separator
+    // the model's.
+    const fnLengthText = function (value) {
+        const text = value === undefined || value === null ? '' : String(value);
+        return decimalSeparator === '.' ? text : text.replace(/(\d)\.(?=\d)/g, '$1' + decimalSeparator);
     };
 
-    // The given typed length as written in the JSON : a number alone is
-    // millimeters, written as a number - the rest as typed.
+    // The given typed length as written in the JSON : its decimal commas
+    // made '.' - the ones between two digits, ', ' still separates the
+    // arguments of a function.
+    const fnLengthJson = function (text) {
+        return String(text).replace(/(\d),(?=\d)/g, '$1.');
+    };
+
+    // The given primitive length as the field shows it - a number is in
+    // the descriptor's length_unit.
+    const fnPrimitiveText = function (value) {
+        return fnLengthText(value);
+    };
+
+    // The given typed length as written in the JSON : a number alone is in
+    // the descriptor's length_unit, written as a number - the rest as typed.
     const fnPrimitiveValue = function (text) {
-        text = text.trim();
-        return /^-?\d+(?:[.,]\d+)?$/.test(text) ? parseFloat(text.replace(',', '.')) : text;
+        text = fnLengthJson(text.trim());
+        return /^-?\d+(?:\.\d+)?$/.test(text) ? parseFloat(text) : text;
     };
 
     // The millimeters of the given written length when it is a plain one - a
@@ -178,14 +197,16 @@
     };
     const AXES = [ 'x', 'y', 'z' ];
 
-    // A new descriptor of the given type : empty, its slots to fill - a
-    // hinge with its variants, see fnNewHingeComponents.
-    const fnNewDescriptor = function (type) {
+    // A new descriptor of the given type, its bare numbers in the given
+    // length unit - the model's - : empty, its slots to fill - a hinge with
+    // its variants, see fnNewHingeComponents.
+    const fnNewDescriptor = function (type, lengthUnit) {
         const descriptor = {
             format: 'ocl-hardware',
             version: 1,
             id: fnUuid(),
             type: type,
+            length_unit: lengthUnit || 'mm',
             name: i18next.t('core.hardware_editor.new_name'),
             variables: {},
             asserts: [],
@@ -906,10 +927,10 @@
                 const $input = $('<input type="text" class="form-control">');
                 $control.append($input);
                 $input
-                    .val(typeof raw.value === 'string' ? raw.value : '')
+                    .val(typeof raw.value === 'string' ? fnLengthText(raw.value) : '')
                     .ladbTextinputDimension({ resetValue: '' })
                     .on('change', function () {
-                        const value = $(this).val();
+                        const value = fnLengthJson($(this).val());
                         if (value !== raw.value) {
                             that.setSettingValue(setting.name, value);
                         }
@@ -950,13 +971,13 @@
                     const $option = $('<div class="ladb-hardware-editor-tool-option">').append($field);
                     this.appendInheritanceIcon($field, this.inheritanceState([ 'options', name ], options[name] !== undefined), [ 'options', name ]);
                     if (value === '' && inheritedValue !== '') {
-                        $input.attr('placeholder', inheritedValue);   // Typed : overridden
+                        $input.attr('placeholder', fnLengthText(inheritedValue));   // Typed : overridden
                     }
                     $input
-                        .val(value)
+                        .val(fnLengthText(value))
                         .ladbTextinputDimension({ resetValue: '' })   // Reset : the option removed - inherited again
                         .on('change', function () {
-                            const newValue = $(this).val().trim();
+                            const newValue = fnLengthJson($(this).val().trim());
                             if (newValue !== value) {
                                 that.setOptionValue(name, newValue);
                             }
@@ -2735,13 +2756,13 @@
                 .append($('<div class="help-block">').text(i18next.t('core.hardware_editor.hinge_pivot_' + (index === 0 ? 'y' : 'z'))))
             );
             $input
-                .val(raw)
+                .val(fnLengthText(raw))
                 .ladbTextinputDimension({ resetValue: '' });
             return $input;
         });
         for (const $input of $inputs) {
             $input.on('change', function () {
-                const values = $inputs.map(function ($i) { return $i.val().trim(); });
+                const values = $inputs.map(function ($i) { return fnLengthJson($i.val().trim()); });
                 fnSet('hinge_pivot', values[0] === '' && values[1] === '' ? undefined : values.map(function (v) { return v === '' ? '0' : v; }));
             });
         }
@@ -3865,6 +3886,8 @@
 
         const that = this;
 
+        decimalSeparator = this.dialog.options.decimal_separator || '.';
+
         // Fetch UI elements
         this.$topologies = $('.ladb-hardware-editor-topologies', this.$element);
         this.$btnBenchSettings = $('#ladb_hardware_editor_btn_bench_settings', this.$element);
@@ -4076,7 +4099,7 @@
             this.load(this.options.ref);
         } else {
             // A new one of the given type
-            this.start(JSON.stringify(fnNewDescriptor(this.options.type || 'connector'), null, 2));
+            this.start(JSON.stringify(fnNewDescriptor(this.options.type || 'connector', this.options.length_unit), null, 2));
         }
 
     };

@@ -3,15 +3,16 @@
   "version": 1,
   "id": "3f9c1d7a-8e42-4b6f-a5d3-2c7e9b041f68",
   "type": "connector",
+  "length_unit": "mm",
   "name": "Clamex P-14/10 Medius",
   "supplier": "Lamello",
   "url": "https://www.lamello.com",
   "components": {
     "a": {
       "hardware": true,
-      "machining": { "drillings": [ { "axis": "y", "z": "-7.5mm", "diameter": "6mm", "depth": "@height" } ] },
-      "attributes": { "symmetrical":  true }
+      "machining": { "drillings": [ { "axis": "y", "z": "-7.5", "diameter": "6", "depth": "@height" } ] },
+      "attributes": { "syetrical":  true }
     }
   },
-  "options": { "height": "10mm", "start_offset": "60mm", "end_offset": "60mm", "min_spacing": "80mm", "max_spacing": "300mm" }
+  "options": { "height": "10", "start_offset": "60", "end_offset": "60", "min_spacing": "80", "max_spacing": "300" }
 }

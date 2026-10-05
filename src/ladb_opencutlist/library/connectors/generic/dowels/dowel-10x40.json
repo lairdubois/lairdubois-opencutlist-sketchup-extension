@@ -5,6 +5,6 @@
   "extends": "connectors/generic/dowels/dowel.json",
   "name": "Dowel 10x40",
   "variables": {
-    "diameter": { "value": "10mm" }
+    "diameter": { "value": "10" }
   }
 }

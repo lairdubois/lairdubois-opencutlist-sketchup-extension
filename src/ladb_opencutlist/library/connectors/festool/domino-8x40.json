@@ -5,7 +5,7 @@
   "extends": "connectors/festool/domino.json",
   "name": "Domino 8x40",
   "variables": {
-    "width": { "value": "8mm" },
-    "length": { "value": "40mm" }
+    "width": { "value": "8" },
+    "length": { "value": "40" }
   }
 }

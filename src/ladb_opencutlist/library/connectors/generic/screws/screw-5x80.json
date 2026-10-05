@@ -5,7 +5,7 @@
   "extends": "connectors/generic/screws/screw.json",
   "name": "Screw 5x80",
   "variables": {
-    "diameter": { "value": "5mm" },
-    "length": { "value": "80mm" }
+    "diameter": { "value": "5" },
+    "length": { "value": "80" }
   }
 }

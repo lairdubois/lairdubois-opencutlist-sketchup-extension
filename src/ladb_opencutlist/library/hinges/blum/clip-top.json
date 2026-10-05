@@ -3,6 +3,7 @@
   "version": 1,
   "id": "a36a4fb5-a9f0-483f-8dd3-f8b9b81829f1",
   "type": "hinge",
+  "length_unit": "mm",
   "name": "Clip Top 110°",
   "supplier": "Blum",
   "url": "https://www.blum.com",
@@ -13,13 +14,13 @@
         "select": { "by": "hinge_kind" },
         "fallback": "overlay",
         "items": {
-          "overlay":      { "name": "Clip Top 110° en applique", "hardware": true, "machining": { "drillings": [ { "y": "-6.5mm", "diameter": "35mm", "depth": "13mm" }, { "x": "-22.5mm", "y": "-16mm", "diameter": "8mm", "depth": "13mm" }, { "x": "22.5mm", "y": "-16mm", "diameter": "8mm", "depth": "13mm" } ] }, "attributes": { "hinge_pivot": [ "17mm", "-29mm" ] } },
-          "half_overlay": { "name": "Clip Top 110° jumelée", "hardware": true, "machining": { "drillings": [ { "y": "-16mm", "diameter": "35mm", "depth": "13mm" }, { "x": "-22.5mm", "y": "-25.5mm", "diameter": "8mm", "depth": "13mm" }, { "x": "22.5mm", "y": "-25.5mm", "diameter": "8mm", "depth": "13mm" } ] }, "attributes": { "hinge_pivot": [ "-4mm", "-26mm" ] } },
-          "inset":        { "name": "Clip Top 110° encastrée", "hardware": true, "machining": { "drillings": [ { "y": "-24.5mm", "diameter": "35mm", "depth": "13mm" }, { "x": "-22.5mm", "y": "-34mm", "diameter": "8mm", "depth": "13mm" }, { "x": "22.5mm", "y": "-34mm", "diameter": "8mm", "depth": "13mm" } ] }, "attributes": { "hinge_pivot": [ "-4mm", "-26mm" ] } }
+          "overlay":      { "name": "Clip Top 110° en applique", "hardware": true, "machining": { "drillings": [ { "y": "-6.5", "diameter": "35", "depth": "13" }, { "x": "-22.5", "y": "-16", "diameter": "8", "depth": "13" }, { "x": "22.5", "y": "-16", "diameter": "8", "depth": "13" } ] }, "attributes": { "hinge_pivot": [ "17", "-29" ] } },
+          "half_overlay": { "name": "Clip Top 110° jumelée", "hardware": true, "machining": { "drillings": [ { "y": "-16", "diameter": "35", "depth": "13" }, { "x": "-22.5", "y": "-25.5", "diameter": "8", "depth": "13" }, { "x": "22.5", "y": "-25.5", "diameter": "8", "depth": "13" } ] }, "attributes": { "hinge_pivot": [ "-4", "-26" ] } },
+          "inset":        { "name": "Clip Top 110° encastrée", "hardware": true, "machining": { "drillings": [ { "y": "-24.5", "diameter": "35", "depth": "13" }, { "x": "-22.5", "y": "-34", "diameter": "8", "depth": "13" }, { "x": "22.5", "y": "-34", "diameter": "8", "depth": "13" } ] }, "attributes": { "hinge_pivot": [ "-4", "-26" ] } }
         }
       }
     },
-    "b": { "name": "Embase Clip", "hardware": true, "machining": { "drillings": [ {"x": "-16mm", "y": "37mm", "diameter": "5mm", "depth": "12mm"}, {"x": "16mm", "y": "37mm", "diameter": "5mm", "depth": "12mm"} ] } }
+    "b": { "name": "Embase Clip", "hardware": true, "machining": { "drillings": [ {"x": "-16", "y": "37", "diameter": "5", "depth": "12"}, {"x": "16", "y": "37", "diameter": "5", "depth": "12"} ] } }
   },
-  "options": { "start_offset": "60mm", "end_offset": "60mm", "max_spacing": "800mm" }
+  "options": { "start_offset": "60", "end_offset": "60", "max_spacing": "800" }
 }

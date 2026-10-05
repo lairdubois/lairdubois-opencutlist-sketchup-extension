@@ -5,7 +5,7 @@
   "extends": "connectors/generic/screws/screw.json",
   "name": "Screw 4x50",
   "variables": {
-    "diameter": { "value": "4mm" },
-    "length": { "value": "50mm" }
+    "diameter": { "value": "4" },
+    "length": { "value": "50" }
   }
 }

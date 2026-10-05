@@ -3,6 +3,7 @@
   "version": 1,
   "id": "f439655f-5cfd-4615-b193-8a23db1ad4ba",
   "type": "connector",
+  "length_unit": "mm",
   "name": "Domino",
   "abstract": true,
   "supplier": "Festool",
@@ -10,22 +11,22 @@
   "variables": {
     "width": { "label": "Width" },
     "length": { "label": "Length" },
-    "mortise_slot": { "value": "13mm", "label": "Mortise Slot", "step": [ "13mm", "19mm", "23mm" ]},
+    "mortise_slot": { "value": "13", "label": "Mortise Slot", "step": [ "13", "19", "23" ]},
     "mortise_length": "@width + @mortise_slot",
-    "min_wall": { "value": "5mm", "label": "Minimum wall" },
-    "cap_a": "floor(min(@thickness_a - @min_wall; @length / 2); 12mm; 15mm; 20mm; 25mm; 28mm)",
-    "cap_b": "floor(min(@thickness_b - @min_wall; @length / 2); 12mm; 15mm; 20mm; 25mm; 28mm)",
-    "depth_a": "min(floor(@thickness_a - @min_wall; 12mm; 15mm; 20mm; 25mm; 28mm); ceil(@length - @cap_b; 12mm; 15mm; 20mm; 25mm; 28mm))",
-    "depth_b": "min(floor(@thickness_b - @min_wall; 12mm; 15mm; 20mm; 25mm; 28mm); ceil(@length - @cap_a; 12mm; 15mm; 20mm; 25mm; 28mm))"
+    "min_wall": { "value": "5", "label": "Minimum wall" },
+    "cap_a": "floor(min(@thickness_a - @min_wall; @length / 2); 12; 15; 20; 25; 28)",
+    "cap_b": "floor(min(@thickness_b - @min_wall; @length / 2); 12; 15; 20; 25; 28)",
+    "depth_a": "min(floor(@thickness_a - @min_wall; 12; 15; 20; 25; 28); ceil(@length - @cap_b; 12; 15; 20; 25; 28))",
+    "depth_b": "min(floor(@thickness_b - @min_wall; 12; 15; 20; 25; 28); ceil(@length - @cap_a; 12; 15; 20; 25; 28))"
   },
   "asserts": [ "@depth_a + @depth_b >= @length" ],
   "components": {
     "a": {
       "hardware": { "oblongs": [ { "length": "@mortise_length", "width": "@width", "from": "-(@length + @depth_a - @depth_b) / 2", "to": "(@length - @depth_a + @depth_b) / 2" } ] },
       "machining": { "mortises": [ { "length": "@mortise_length", "width": "@width", "depth": "@depth_a" } ] },
-      "attributes": { "symmetrical":  true }
+      "attributes": { "syetrical":  true }
     },
     "b": { "machining": { "mortises": [ { "length": "@mortise_length", "width": "@width", "depth": "@depth_b" } ] } }
   },
-  "options": { "height": "/2", "start_offset": "37mm", "end_offset": "37mm", "max_spacing": "500mm" }
+  "options": { "height": "/2", "start_offset": "37", "end_offset": "37", "max_spacing": "500" }
 }

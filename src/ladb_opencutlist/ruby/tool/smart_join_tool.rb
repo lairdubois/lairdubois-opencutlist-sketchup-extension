@@ -5559,14 +5559,15 @@ module Ladb::OpenCutList
 
     # The given definition is a hinge : it bears the hinge role whatever its
     # descriptor or its SKP say - what DoorDef finds the hinges of a door by.
-    # Its pivot lengths without a unit are in the unit of the model it is
-    # laid in : they are given it, to read the same wherever it goes.
+    # Its pivot lengths without a unit - its SKP's own, a descriptor's bear
+    # one - are in the unit of the model it is laid in : they are given it,
+    # to read the same wherever it goes.
     def _write_hinge_attributes(definition)
       return unless definition.is_a?(Sketchup::ComponentDefinition)
       DefinitionAttributes.write_role(definition, DefinitionAttributes::ROLE_HINGE) unless DefinitionAttributes.role_of(definition) == DefinitionAttributes::ROLE_HINGE
       pivot = definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, DoorDef::HINGE_ATTRIBUTE_PIVOT)
-      unless HardwareDescriptorDef.hinge_pivot(pivot).nil?
-        pivot_with_units = pivot.map { |value| DimensionUtils.get_unit_sign(value).nil? ? DimensionUtils.str_add_units(value, true) : value }
+      if pivot.is_a?(Array) && pivot.length == 2 && pivot.all? { |value| value.is_a?(String) }
+        pivot_with_units = pivot.map { |value| LengthExpressionUtils.bare_number?(value.strip.sub(/\A[-+]/, '')) ? DimensionUtils.str_add_units(value, true) : value }
         definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, DoorDef::HINGE_ATTRIBUTE_PIVOT, pivot_with_units) unless pivot_with_units == pivot
       end
     end

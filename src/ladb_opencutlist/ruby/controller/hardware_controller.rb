@@ -72,9 +72,24 @@ module Ladb::OpenCutList
 
     # Opens the editor on the descriptor of the given ref, or on a new one
     # of the given type - to be written in the given library folder.
+    # length_unit : the one of a new descriptor, the model's - see
+    # HardwareDescriptorDef "length_unit".
     def self.show_editor(ref: nil, type: nil, dir_ref: nil)
-      PLUGIN.show_modal_dialog(EDITOR_MODAL_NAME, { :ref => ref, :type => type, :dir_ref => dir_ref }, EDITOR_DIALOG_WIDTH, EDITOR_DIALOG_HEIGHT)
+      PLUGIN.show_modal_dialog(EDITOR_MODAL_NAME, { :ref => ref, :type => type, :dir_ref => dir_ref, :length_unit => _model_length_unit }, EDITOR_DIALOG_WIDTH, EDITOR_DIALOG_HEIGHT)
     end
+
+    # The model's length unit, one of LengthExpressionUtils::LENGTH_UNITS.
+    def self._model_length_unit
+      {
+        DimensionUtils::INCHES => 'in',
+        DimensionUtils::FEET => 'ft',
+        DimensionUtils::YARD => 'yd',
+        DimensionUtils::MILLIMETER => 'mm',
+        DimensionUtils::CENTIMETER => 'cm',
+        DimensionUtils::METER => 'm',
+      }[DimensionUtils.length_unit] || 'mm'
+    end
+    private_class_method :_model_length_unit
 
     private
 

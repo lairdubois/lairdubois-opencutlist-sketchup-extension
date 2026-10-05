@@ -14,7 +14,7 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
 
   HINGE = {
     'format' => 'ocl-hardware', 'version' => 1,
-    'id' => 'hinge-1', 'type' => 'hinge',
+    'id' => 'hinge-1', 'type' => 'hinge', 'length_unit' => 'mm',
     'name' => 'Clip Top 110',
     'supplier' => 'Blum', 'url' => 'https://www.blum.com',
     'components' => {
@@ -37,7 +37,7 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
 
   SLIDES = {
     'format' => 'ocl-hardware', 'version' => 1,
-    'id' => 'slides-1', 'type' => 'span', 'name' => 'Slides',
+    'id' => 'slides-1', 'type' => 'span', 'length_unit' => 'mm', 'name' => 'Slides',
     'components' => {
       'a' => {
         'variants' => {
@@ -56,7 +56,7 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
 
   CONVENTION = {
     'format' => 'ocl-hardware', 'version' => 1,
-    'id' => 'hinge-2', 'type' => 'hinge', 'name' => 'Clip Top',
+    'id' => 'hinge-2', 'type' => 'hinge', 'length_unit' => 'mm', 'name' => 'Clip Top',
     'components' => {
       'a' => {
         'variants' => {
@@ -187,10 +187,56 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     assert_equal('/lib/hardware/blum/plate_holes.skp', component.machining)
   end
 
+  # -- Length unit --
+
+  def test_length_unit
+    hardware = { 'cylinders' => [ { 'x' => 3, 'diameter' => '8', 'from' => '-@thickness + 2', 'to' => '@thickness / 2' } ] }
+    descriptor = _def(_with(HINGE, 'components' => { 'a' => { 'hardware' => hardware } }))
+    assert(descriptor.valid?, descriptor.errors.inspect)
+    assert_equal({ 'cylinders' => [ { 'x' => '3mm', 'diameter' => '8mm', 'from' => '-@thickness + 2mm', 'to' => '@thickness / 2' } ] }, descriptor.resolve_component('a').hardware)
+    inches = _def(_with(HINGE, 'length_unit' => 'in', 'components' => { 'a' => { 'hardware' => { 'cylinders' => [ { 'diameter' => '3/8', 'from' => '-1 1/2', 'to' => 1 } ] } } }))
+    assert(inches.valid?, inches.errors.inspect)
+    cylinder = HardwareDescriptorDef.primitive_cylinders(inches.resolve_component('a').hardware).first
+    assert_in_delta(0.375, cylinder.diameter, 1e-9)
+    assert_in_delta(-1.5, cylinder.z_min, 1e-9)
+    assert_in_delta(1.0, cylinder.z_max, 1e-9)
+    # Variables, settings, asserts, options, z_offset, pivots, articles, variant keys
+    data = _with(DOWEL, 'variables' => DOWEL['variables'].merge('diameter' => { 'value' => 8, 'steps' => [ 6, 8, '10' ] }, 'depth' => '@thickness_a - 5'),
+                        'asserts' => [ '@depth >= 10' ], 'options' => { 'height' => '/2', 'start_offset' => 32, 'opposite' => true })
+    descriptor = _def(data)
+    assert(descriptor.valid?, descriptor.errors.inspect)
+    assert_equal({ 'value' => '8mm', 'steps' => %w[6mm 8mm 10mm] }, descriptor.settings['diameter'])
+    assert_equal('@thickness_a - 5mm', descriptor.variables['depth'])
+    assert_equal([ '@depth >= 10mm' ], descriptor.asserts)
+    assert_equal({ 'height' => '/2', 'start_offset' => '32mm', 'opposite' => true }, descriptor.options)
+    assert_equal(data['variables'], descriptor.own_data['variables'])   # As written
+    slides = _def(_with(SLIDES, 'components' => { 'a' => { 'variants' => { 'select' => { 'by' => 'depth', 'mode' => 'max_le' },
+                                                                             'items' => { '300' => { 'hardware' => '$LIB/s.skp' }, '400' => { 'hardware' => '$LIB/s.skp' } } } } }))
+    assert_equal('300mm', slides.resolve_component('a', 'depth' => 350.mm).variant)
+    # Without : lengths bear their unit
+    strict = HINGE.reject { |key, _| key == 'length_unit' }
+    _assert_error(_with(strict, 'components' => { 'a' => { 'hardware' => hardware } }), 'cylinder 1 diameter is not a positive length')
+    _assert_error(_with(strict, 'components' => { 'a' => { 'hardware' => hardware } }), 'cylinder 1 x is not a length')
+    assert(_def(_with(strict, 'components' => { 'a' => { 'hardware' => { 'cylinders' => [ { 'x' => 0, 'diameter' => '3/8in', 'from' => "-1' 6", 'to' => '@thickness / 2' } ] } } })).valid?)
+    _assert_error(_with(HINGE, 'length_unit' => 'inch'), 'length_unit "inch" is none of mm, cm, m, in, ft, yd')
+  end
+
+  def test_length_unit_inherited
+    parent = DOWEL.merge('id' => 'dowel-base', 'abstract' => true)
+    _with_library({ 'connectors/dowel.json' => parent }) do
+      child = _def({ 'format' => 'ocl-hardware', 'version' => 1, 'id' => 'c', 'name' => 'Child', 'extends' => 'connectors/dowel.json',
+                     'variables' => { 'depth_a' => '@super + 2' } }, nil, '$LIB/child.json')
+      assert_equal('mm', child.data['length_unit'])
+      assert(child.variables['depth_a'].end_with?(') + 2mm'), child.variables['depth_a'])
+      _assert_errors({ 'format' => 'ocl-hardware', 'version' => 1, 'id' => 'c', 'name' => 'Child', 'extends' => 'connectors/dowel.json', 'length_unit' => 'in' },
+                     'length_unit "in" differs from its parent\'s "mm"')
+    end
+  end
+
   def test_primitive_machining_is_kept
     drillings = { 'drillings' => [ { 'x' => '0', 'y' => '0', 'diameter' => '5mm', 'depth' => 'through' } ] }
     descriptor = _def(_with(HINGE, 'components' => { 'a' => { 'hardware' => 'h.skp', 'machining' => drillings } }))
-    assert_equal(drillings, descriptor.resolve_component('a').machining)
+    assert_equal(_mm(drillings), descriptor.resolve_component('a').machining)
   end
 
   # -- Machining primitives --
@@ -201,7 +247,7 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
       { 'x' => 64, 'diameter' => 8, 'depth' => '18mm' },
     ] }
     assert_equal([ 'thickness_max' ], HardwareDescriptorDef.primitive_variables(machining))
-    drillings = HardwareDescriptorDef.primitive_cylinders(machining, 'thickness' => 19 / 25.4)   # No thickness_max : through is thickness
+    drillings = _primitive_cylinders(machining, 'thickness' => 19 / 25.4)   # No thickness_max : through is thickness
     assert_equal(2, drillings.length)
     assert_in_delta(-64 / 25.4, drillings[0].x, 1e-9)
     assert_in_delta(0.0, drillings[0].y, 1e-9)
@@ -211,10 +257,10 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     assert_in_delta(64 / 25.4, drillings[1].x, 1e-9)
     assert_in_delta(8 / 25.4, drillings[1].diameter, 1e-9)
     assert_in_delta(-18 / 25.4, drillings[1].z_min, 1e-9)
-    assert_equal(1, HardwareDescriptorDef.primitive_cylinders(machining).length)  # No thickness : the through one is left out
-    assert_in_delta(-17 / 25.4, HardwareDescriptorDef.primitive_cylinders(machining, 'thickness' => 19 / 25.4, 'thickness_max' => 17 / 25.4)[0].z_min, 1e-9)
-    assert_nil(HardwareDescriptorDef.primitive_cylinders('$LIB/cup.skp'))
-    assert_nil(HardwareDescriptorDef.primitive_cylinders(nil))
+    assert_equal(1, _primitive_cylinders(machining).length)  # No thickness : the through one is left out
+    assert_in_delta(-17 / 25.4, _primitive_cylinders(machining, 'thickness' => 19 / 25.4, 'thickness_max' => 17 / 25.4)[0].z_min, 1e-9)
+    assert_nil(_primitive_cylinders('$LIB/cup.skp'))
+    assert_nil(_primitive_cylinders(nil))
   end
 
   # -- Length expressions --
@@ -231,7 +277,12 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     assert_in_delta(-19 / 25.4, fn.call('-@thickness'), 1e-9)
     assert_in_delta(-9 / 25.4, fn.call('-(@thickness - 1cm)'), 1e-9)
     assert_in_delta(19 / 25.4 + 1, fn.call('@thickness + 1"'), 1e-9)
-    assert_nil(fn.call('@thickness + 1in'))        # SketchUp reads no 'in'
+    assert_in_delta(19 / 25.4 + 1, fn.call('@thickness + 1in'), 1e-9)
+    assert_in_delta(19 / 25.4 + 18, fn.call('@thickness + 1ft 6in'), 1e-9)
+    assert_in_delta(19 / 25.4 + 18, fn.call("@thickness + 1'6"), 1e-9)   # Inches after feet, whatever the model's unit
+    assert_in_delta(19 / 25.4 + 1.5, fn.call('@thickness + 1 1/2in'), 1e-9)
+    assert_in_delta(19 / 25.4 + 1.5 / 25.4, fn.call('@thickness + 1.5mm'), 1e-9)
+    assert_in_delta(19 / 25.4 + 1.5 / 25.4, fn.call('@thickness + 1,5mm'), 1e-9)
     assert_in_delta(19 / 25.4 + 18, fn.call("@thickness + 1' 6\""), 1e-9)
     assert_in_delta(19 / 25.4 + 0.75, fn.call('@thickness + 3/4"'), 1e-9)
     assert_in_delta(19 / 25.4 / 4 * 10, fn.call('@thickness * 10/4'), 1e-9)
@@ -246,6 +297,11 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     assert_nil(fn.call('@depth'))                  # Not given
     assert_nil(fn.call('2mm - @thickness', false)) # Negative
     assert_nil(HardwareDescriptorDef.to_length('@thickness'))  # No variables
+    assert_nil(HardwareDescriptorDef.to_length('8'))           # A bare number is a factor, see length_unit
+    assert_nil(HardwareDescriptorDef.to_length(8))
+    assert_equal(0.0, HardwareDescriptorDef.to_length('0', true))
+    assert_equal(0.0, HardwareDescriptorDef.to_length(0, true))
+    assert_in_delta(8 / 25.4, HardwareDescriptorDef.to_length('8mm'), 1e-9)
   end
 
   def test_expressions_in_primitives
@@ -253,7 +309,7 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     descriptor = _def(_with(HINGE, 'components' => { 'a' => { 'hardware' => hardware } }))
     assert(descriptor.valid?, descriptor.errors.inspect)
     assert_equal([ 'thickness' ], HardwareDescriptorDef.primitive_variables(hardware))
-    cylinders = HardwareDescriptorDef.primitive_cylinders(hardware, 'thickness' => 20 / 25.4)
+    cylinders = _primitive_cylinders(hardware, 'thickness' => 20 / 25.4)
     assert_in_delta(10 / 25.4, cylinders[0].diameter, 1e-9)
     assert_in_delta(-20 / 25.4, cylinders[0].z_min, 1e-9)
     assert_in_delta(5 / 25.4, cylinders[0].z_max, 1e-9)
@@ -438,10 +494,10 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     descriptor = _def(_with(HINGE, 'components' => { 'a' => { 'hardware' => hardware } }))
     assert(descriptor.valid?, descriptor.errors.inspect)
     component = descriptor.resolve_component('a')
-    assert_equal(hardware, component.hardware)
+    assert_equal(_mm(hardware), component.hardware)
     assert_equal('a', component.part_slots['hardware'])
     assert_equal([], HardwareDescriptorDef.primitive_variables(hardware))
-    cylinders = HardwareDescriptorDef.primitive_cylinders(component.hardware)
+    cylinders = _primitive_cylinders(component.hardware)
     assert_equal(2, cylinders.length)
     assert_in_delta(0.0, cylinders[0].x, 1e-9)
     assert_in_delta(8 / 25.4, cylinders[0].diameter, 1e-9)
@@ -450,7 +506,7 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     assert_in_delta(10 / 25.4, cylinders[1].x, 1e-9)
     assert_in_delta(-5 / 25.4, cylinders[1].y, 1e-9)
     assert_in_delta(0.0, cylinders[1].z_min, 1e-9)
-    assert_nil(HardwareDescriptorDef.primitive_cylinders('$LIB/dowel.skp'))
+    assert_nil(_primitive_cylinders('$LIB/dowel.skp'))
   end
 
   def test_lying_cylinders
@@ -461,7 +517,7 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     assert(descriptor.valid?, descriptor.errors.inspect)
     assert_equal([], descriptor.used_measures)   # Along Y, a cylinder doesn't start on the face height away
     assert_equal([], HardwareDescriptorDef.primitive_variables(hardware))
-    along_x, along_y, along_z = HardwareDescriptorDef.primitive_cylinders(hardware)
+    along_x, along_y, along_z = _primitive_cylinders(hardware)
     # Along X : [ x, y, z ] is [ z, x, y ]
     assert_equal(HardwareDescriptorDef::AXIS_PRISM_X, along_x.axis)
     assert_in_delta(3 / 25.4, along_x.x, 1e-9)
@@ -477,7 +533,7 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
   end
 
   def test_lying_oblongs
-    fn = lambda { |item| HardwareDescriptorDef.primitive_cylinders('oblongs' => [ { 'length' => 20, 'width' => 6, 'from' => 0, 'to' => 10 }.merge(item) ]).first }
+    fn = lambda { |item| _primitive_cylinders('oblongs' => [ { 'length' => 20, 'width' => 6, 'from' => 0, 'to' => 10 }.merge(item) ]).first }
     # [ along, length_axis, item ] => [ axis, x, y ] : the frame - see SHAPE_FRAMES - and its x, y
     {
       [ {} ] => [ nil, 1, 2 ],
@@ -535,7 +591,7 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
   # its thickness - and one on edge : the dowel shifts toward the edge.
   DOWEL = {
     'format' => 'ocl-hardware', 'version' => 1,
-    'id' => 'dowel-1', 'type' => 'connector', 'name' => 'Dowel 8x40',
+    'id' => 'dowel-1', 'type' => 'connector', 'length_unit' => 'mm', 'name' => 'Dowel 8x40',
     'variables' => {
       'depth_a' => 'min(@thickness_a - 5mm; max(20mm; 40mm - (@thickness_b - 5mm)))',
       'depth_b' => '40mm - @depth_a',
@@ -573,10 +629,10 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
       assert_in_delta(mm.call(da), variables['depth_a'], 1e-9, "#{ta}/#{tb}")
       assert_in_delta(mm.call(db), variables['depth_b'], 1e-9, "#{ta}/#{tb}")
       assert_equal(failed, descriptor.failed_asserts(variables), "#{ta}/#{tb}")
-      cylinder = HardwareDescriptorDef.primitive_cylinders(descriptor.resolve_component('a').hardware, variables).first
+      cylinder = _primitive_cylinders(descriptor.resolve_component('a').hardware, variables).first
       assert_in_delta(mm.call(-da), cylinder.z_min, 1e-9)
       assert_in_delta(mm.call(db), cylinder.z_max, 1e-9)
-      drilling = HardwareDescriptorDef.primitive_cylinders(descriptor.resolve_component('b').machining, variables).first
+      drilling = _primitive_cylinders(descriptor.resolve_component('b').machining, variables).first
       assert_in_delta(mm.call(-db - 1), drilling.z_min, 1e-9)
     end
     # Measures missing : nothing resolves, every assert fails
@@ -602,7 +658,7 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     variables = descriptor.resolve_variables('thickness_a' => 19 / 25.4, 'thickness_b' => 300 / 25.4)
     assert_in_delta(8 / 25.4, variables['diameter'], 1e-9)
     assert_in_delta(26 / 25.4, variables['depth_b'], 1e-9)
-    cylinder = HardwareDescriptorDef.primitive_cylinders(descriptor.resolve_component('a').hardware, variables).first
+    cylinder = _primitive_cylinders(descriptor.resolve_component('a').hardware, variables).first
     assert_in_delta(8 / 25.4, cylinder.diameter, 1e-9)
   end
 
@@ -664,7 +720,8 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     _assert_error(_with(DOWEL, 'variables' => { 'a b' => '2mm' }), "variable 'a b' is not a valid name")
     _assert_error(_with(DOWEL, 'variables' => { 'thickness_a' => '2mm' }), "variable 'thickness_a' is a measure")
     _assert_error(_with(DOWEL, 'variables' => { 'x' => true }), "variable 'x' is not a length")
-    _assert_error(_with(DOWEL, 'variables' => { 'x' => '@thickness + 2' }), "variable 'x' is not a length")
+    _assert_error(_with(DOWEL, 'variables' => { 'x' => '@thickness * @thickness' }), "variable 'x' is not a length")
+    _assert_error(_with(DOWEL.reject { |key, _| key == 'length_unit' }, 'variables' => DOWEL['variables'].merge('x' => '@thickness + 2')), "variable 'x' is not a length")   # 2 is a factor
     _assert_error(_with(DOWEL, 'variables' => { 'x' => '@y' }), "variable 'x' uses the unknown variable @y")
     _assert_error(_with(DOWEL, 'variables' => { 'x' => '@y', 'y' => '@x' }), "variables 'x', 'y' depend on each other")
     _assert_error(_with(DOWEL, 'variables' => { 'x' => '@x + 1mm' }), "variable 'x' depends on itself")
@@ -697,7 +754,7 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     descriptor = _def(variants)
     assert(descriptor.valid?, descriptor.errors.inspect)
     assert_equal('2mm', descriptor.resolve_component('a', 'hinge_kind' => 'overlay').z_offset)
-    assert_equal(-3, descriptor.resolve_component('a', 'hinge_kind' => 'inset').z_offset)
+    assert_equal('-3mm', descriptor.resolve_component('a', 'hinge_kind' => 'inset').z_offset)   # Given its unit
     assert_equal('2mm', descriptor.resolve_component('b', 'hinge_kind' => 'overlay').z_offset)
   end
 
@@ -714,17 +771,17 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     machining = { 'mortises' => [ { 'x' => '2mm', 'length' => '19mm', 'width' => '5mm', 'depth' => 'through' } ] }
     descriptor = _def(_with(HINGE, 'components' => { 'a' => { 'hardware' => hardware, 'machining' => machining } }))
     assert(descriptor.valid?, descriptor.errors.inspect)
-    oblong = HardwareDescriptorDef.primitive_cylinders(hardware).first
+    oblong = _primitive_cylinders(hardware).first
     assert(!oblong.round?)
     assert_in_delta(19 / 25.4, oblong.length, 1e-9)
     assert_in_delta(5 / 25.4, oblong.diameter, 1e-9)
     assert_in_delta(-15 / 25.4, oblong.z_min, 1e-9)
-    mortise = HardwareDescriptorDef.primitive_cylinders(machining, 'thickness' => 19 / 25.4).first
+    mortise = _primitive_cylinders(machining, 'thickness' => 19 / 25.4).first
     assert_in_delta(2 / 25.4, mortise.x, 1e-9)
     assert_in_delta(-19 / 25.4, mortise.z_min, 1e-9)
     assert_equal([ 'thickness_max' ], HardwareDescriptorDef.primitive_variables(machining))
     # As long as wide : a cylinder
-    assert(HardwareDescriptorDef.primitive_cylinders({ 'oblongs' => [ { 'length' => 5, 'width' => 5, 'from' => 0, 'to' => 1 } ] }).first.round?)
+    assert(_primitive_cylinders({ 'oblongs' => [ { 'length' => 5, 'width' => 5, 'from' => 0, 'to' => 1 } ] }).first.round?)
   end
 
   def test_invalid_oblongs_and_mortises
@@ -748,8 +805,8 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     descriptor = _def(_with(HINGE, 'components' => { 'a' => { 'hardware' => hardware } }))
     assert(descriptor.valid?, descriptor.errors.inspect)
     assert_equal([ 'thickness' ], HardwareDescriptorDef.primitive_variables(hardware))
-    assert_equal([], HardwareDescriptorDef.primitive_cylinders(hardware))   # @thickness unknown : left out
-    prism = HardwareDescriptorDef.primitive_cylinders(hardware, 'thickness' => 0).first
+    assert_equal([], _primitive_cylinders(hardware))   # @thickness unknown : left out
+    prism = _primitive_cylinders(hardware, 'thickness' => 0).first
     assert(prism.prism?)
     assert(!prism.round?)
     assert_equal(HardwareDescriptorDef::AXIS_PRISM_X, prism.axis)
@@ -769,11 +826,11 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     assert_equal(5 + 5, points.length)
     # A rounding as long as its side : the points along it once
     square = { 'from' => 0, 'to' => 1, 'outline' => [ { 'x' => 0, 'y' => 0, 'r' => 5 }, { 'x' => 10, 'y' => 0, 'r' => 5 }, { 'x' => 10, 'y' => 10, 'r' => 5 }, { 'x' => 0, 'y' => 10, 'r' => 5 } ] }
-    disc = HardwareDescriptorDef.primitive_cylinders({ 'prisms' => [ square ] }).first
+    disc = _primitive_cylinders({ 'prisms' => [ square ] }).first
     assert_nil(disc.axis)
     assert_equal(4 * 4, HardwareDescriptorDef.prism_points(HardwareDescriptorDef.prism_corners(disc.outline)) { 4 }.length)
     # Along Y : by x and z
-    assert_equal(HardwareDescriptorDef::AXIS_PRISM_Y, HardwareDescriptorDef.primitive_cylinders({ 'prisms' => [ { 'axis' => 'y', 'from' => 0, 'to' => 1, 'outline' => [ { 'x' => 0 }, { 'x' => 5 }, { 'z' => 5 } ] } ] }).first.axis)
+    assert_equal(HardwareDescriptorDef::AXIS_PRISM_Y, _primitive_cylinders({ 'prisms' => [ { 'axis' => 'y', 'from' => 0, 'to' => 1, 'outline' => [ { 'x' => 0 }, { 'x' => 5 }, { 'z' => 5 } ] } ] }).first.axis)
   end
 
   # A pocket : a machining prism, depth deep from the face into the part -
@@ -784,22 +841,22 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     assert(descriptor.valid?, descriptor.errors.inspect)
     assert(HardwareDescriptorDef.primitives?(machining))
     assert_equal([ 'thickness' ], HardwareDescriptorDef.primitive_variables(machining))
-    pocket = HardwareDescriptorDef.primitive_cylinders(machining, 'thickness' => 18 / 25.4).first
+    pocket = _primitive_cylinders(machining, 'thickness' => 18 / 25.4).first
     assert(pocket.prism?)
     assert_equal(HardwareDescriptorDef::MACHINING_POCKETS, pocket.key)
     assert_in_delta(-9 / 25.4, pocket.z_min, 1e-9)
     assert_in_delta(0.0, pocket.z_max, 1e-9)
-    through = HardwareDescriptorDef.primitive_cylinders({ 'pockets' => [ { 'depth' => 'through', 'outline' => machining['pockets'][0]['outline'] } ] }, 'thickness' => 18 / 25.4).first
+    through = _primitive_cylinders({ 'pockets' => [ { 'depth' => 'through', 'outline' => machining['pockets'][0]['outline'] } ] }, 'thickness' => 18 / 25.4).first
     assert_in_delta(-18 / 25.4, through.z_min, 1e-9)
     # Along Y : by x and z, from the face height away
     along_y = { 'pockets' => [ { 'axis' => 'y', 'depth' => '5mm', 'outline' => [ { 'x' => 0 }, { 'x' => 10 }, { 'z' => -5 } ] } ] }
     assert(_def(_with(HINGE, 'components' => { 'a' => { 'machining' => along_y } })).valid?)
     assert_equal([ 'height' ], HardwareDescriptorDef.primitive_variables(along_y))
-    pocket = HardwareDescriptorDef.primitive_cylinders(along_y, 'height' => 20 / 25.4).first
+    pocket = _primitive_cylinders(along_y, 'height' => 20 / 25.4).first
     assert_equal(HardwareDescriptorDef::AXIS_PRISM_Y, pocket.axis)
     assert_in_delta(15 / 25.4, pocket.z_min, 1e-9)
     assert_in_delta(20 / 25.4, pocket.z_max, 1e-9)
-    assert_empty(HardwareDescriptorDef.primitive_cylinders(along_y, {}))   # No height
+    assert_empty(_primitive_cylinders(along_y, {}))   # No height
   end
 
   def test_invalid_prisms
@@ -838,19 +895,19 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
       { 'diameter' => '4mm', 'depth' => 'through', 'counterbore' => { 'diameter' => '10mm', 'depth' => '3mm', 'face' => 'opposite' } },
       { 'diameter' => '4mm', 'depth' => '1mm', 'countersink' => { 'diameter' => '8mm' } },   # Deeper than the drilling : left out
     ] }
-    drillings = HardwareDescriptorDef.primitive_cylinders(machining, 'thickness_max' => mm.call(19))
+    drillings = _primitive_cylinders(machining, 'thickness_max' => mm.call(19))
     assert_equal(4, drillings.length)
     assert_equal([ [ 2, 0 ], [ 2, -17 ], [ 4, -19 ] ], fn_profile.call(drillings[0]))
     assert_equal([ [ 4, 0 ], [ 2, -2 ], [ 2, -10 ] ], fn_profile.call(drillings[1]))
     assert_equal([ [ 5, 0 ], [ 5, -3 ], [ 2, -3 ], [ 2, -10 ] ], fn_profile.call(drillings[2]))
     assert_equal([ [ 2, 0 ], [ 2, -16 ], [ 5, -16 ], [ 5, -19 ] ], fn_profile.call(drillings[3]))
     assert_in_delta(mm.call(5), drillings[3].radius, 1e-9)
-    assert_in_delta(mm.call(2), HardwareDescriptorDef.primitive_cylinders({ 'drillings' => [ { 'diameter' => 4, 'depth' => 5 } ] }).first.radius, 1e-9)
+    assert_in_delta(mm.call(2), _primitive_cylinders({ 'drillings' => [ { 'diameter' => 4, 'depth' => 5 } ] }).first.radius, 1e-9)
     # A countersink of 60° is deeper
-    sharp = HardwareDescriptorDef.primitive_cylinders({ 'drillings' => [ { 'diameter' => 4, 'depth' => 10, 'countersink' => { 'diameter' => 8, 'angle' => 60 } } ] }).first
+    sharp = _primitive_cylinders({ 'drillings' => [ { 'diameter' => 4, 'depth' => 10, 'countersink' => { 'diameter' => 8, 'angle' => 60 } } ] }).first
     assert_in_delta(-mm.call(2 * Math.sqrt(3)), sharp.profile[1][1], 1e-9)
     # A countersunk screw, its head at the from end
-    screw = HardwareDescriptorDef.primitive_cylinders({ 'cylinders' => [ { 'diameter' => 4, 'from' => -19, 'to' => 21, 'countersink' => { 'diameter' => 8, 'end' => 'from' } } ] }).first
+    screw = _primitive_cylinders({ 'cylinders' => [ { 'diameter' => 4, 'from' => -19, 'to' => 21, 'countersink' => { 'diameter' => 8, 'end' => 'from' } } ] }).first
     assert_equal([ [ 2, 21 ], [ 2, -17 ], [ 4, -19 ] ], fn_profile.call(screw))
     # Its variables
     assert_equal(%w[thickness_max head], HardwareDescriptorDef.primitive_variables({ 'drillings' => [ { 'diameter' => 4, 'depth' => 'through', 'counterbore' => { 'diameter' => '@head', 'depth' => 2 } } ] }))
@@ -868,7 +925,7 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     assert(descriptor.valid?, descriptor.errors.inspect)
     assert_equal(%w[height], descriptor.used_measures)
     assert_equal(%w[height], HardwareDescriptorDef.primitive_variables(machining))
-    drilling, plain, mortise = HardwareDescriptorDef.primitive_cylinders(machining, 'height' => mm.call(10))
+    drilling, plain, mortise = _primitive_cylinders(machining, 'height' => mm.call(10))
     assert_equal('y', drilling.axis)
     assert_in_delta(mm.call(3), drilling.x, 1e-9)
     assert_in_delta(mm.call(7), drilling.y, 1e-9)      # [ x, y, z ] -> [ x, z, -y ]
@@ -880,22 +937,22 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     assert_in_delta(mm.call(20), mortise.length, 1e-9)
     assert_in_delta(mm.call(2), mortise.z_min, 1e-9)
     # No height measured : left out
-    assert_equal(1, HardwareDescriptorDef.primitive_cylinders(machining).length)
+    assert_equal(1, _primitive_cylinders(machining).length)
     # A head on its face
-    head = HardwareDescriptorDef.primitive_cylinders({ 'drillings' => [ { 'axis' => 'y', 'diameter' => 4, 'depth' => 12, 'countersink' => { 'diameter' => 8 } } ] }, 'height' => mm.call(10)).first
+    head = _primitive_cylinders({ 'drillings' => [ { 'axis' => 'y', 'diameter' => 4, 'depth' => 12, 'countersink' => { 'diameter' => 8 } } ] }, 'height' => mm.call(10)).first
     assert_equal([ [ 4, 10 ], [ 2, 8 ], [ 2, -2 ] ], head.profile.map { |r, z| [ (r * 25.4).round(6), (z * 25.4).round(6) ] })
     # A mortise whose length goes along Z : [ x, y, z ] -> [ -y, z, -x ]
     recess = { 'mortises' => [ { 'axis' => 'y', 'length_axis' => 'z', 'x' => '2mm', 'z' => '-13mm', 'length' => '42.7mm', 'width' => '16.7mm', 'depth' => '0.8mm' } ] }
     assert(_def(_with(HINGE, 'components' => { 'a' => { 'machining' => recess } })).valid?)
     assert_equal(%w[height], HardwareDescriptorDef.primitive_variables(recess))
-    mortise = HardwareDescriptorDef.primitive_cylinders(recess, 'height' => mm.call(5.8)).first
+    mortise = _primitive_cylinders(recess, 'height' => mm.call(5.8)).first
     assert_equal(HardwareDescriptorDef::AXIS_Y_LENGTH_Z, mortise.axis)
     assert_in_delta(mm.call(13), mortise.x, 1e-9)
     assert_in_delta(mm.call(-2), mortise.y, 1e-9)
     assert_in_delta(mm.call(42.7), mortise.length, 1e-9)
     assert_in_delta(mm.call(5), mortise.z_min, 1e-9)
     # Along X, as without it
-    along_x = HardwareDescriptorDef.primitive_cylinders({ 'mortises' => [ recess['mortises'].first.merge('length_axis' => 'x') ] }, 'height' => mm.call(5.8)).first
+    along_x = _primitive_cylinders({ 'mortises' => [ recess['mortises'].first.merge('length_axis' => 'x') ] }, 'height' => mm.call(5.8)).first
     assert_equal('y', along_x.axis)
     assert_in_delta(mm.call(2), along_x.x, 1e-9)
     assert_in_delta(mm.call(13), along_x.y, 1e-9)
@@ -903,7 +960,7 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     slot = { 'mortises' => [ { 'length_axis' => 'y', 'x' => '3mm', 'y' => '-6mm', 'length' => '12mm', 'width' => '6mm', 'depth' => '16mm' } ] }
     assert(_def(_with(HINGE, 'components' => { 'a' => { 'machining' => slot } })).valid?)
     assert_equal([], HardwareDescriptorDef.primitive_variables(slot))
-    mortise = HardwareDescriptorDef.primitive_cylinders(slot).first
+    mortise = _primitive_cylinders(slot).first
     assert_equal(HardwareDescriptorDef::AXIS_Z_LENGTH_Y, mortise.axis)
     assert_in_delta(mm.call(-6), mortise.x, 1e-9)
     assert_in_delta(mm.call(-3), mortise.y, 1e-9)
@@ -924,7 +981,7 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
       { 'axis' => 'y', 'x' => '3mm', 'z' => '-7mm', 'diameter' => '4mm', 'depth' => '12mm', 'countersink' => { 'diameter' => '8mm' } },
       { 'axis' => 'z', 'diameter' => '4mm', 'depth' => '10mm' },
     ], 'pockets' => [ { 'axis' => 'y', 'depth' => '2mm', 'outline' => [ { 'x' => -20, 'z' => -18 }, { 'x' => 20, 'z' => -18 }, { 'x' => 20, 'z' => -2 }, { 'x' => -20, 'z' => -2 } ] } ] }
-    drilling, plain, pocket = HardwareDescriptorDef.primitive_cylinders(machining, { 'height' => mm.call(19) }, true)
+    drilling, plain, pocket = _primitive_cylinders(machining, { 'height' => mm.call(19) }, true)
     assert_in_delta(mm.call(-19), drilling.z_min, 1e-9)   # The face, @height away toward -Y
     assert_in_delta(mm.call(-7), drilling.z_max, 1e-9)
     assert_in_delta(mm.call(7), drilling.y, 1e-9)         # Placed as without it
@@ -934,7 +991,7 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     assert_in_delta(mm.call(-19), pocket.z_min, 1e-9)
     assert_in_delta(mm.call(-17), pocket.z_max, 1e-9)
     # Laid on the face itself
-    drilling = HardwareDescriptorDef.primitive_cylinders(machining, { 'height' => 0.0 }, true).first
+    drilling = _primitive_cylinders(machining, { 'height' => 0.0 }, true).first
     assert_in_delta(0.0, drilling.z_min, 1e-9)
     assert_in_delta(mm.call(12), drilling.z_max, 1e-9)
   end
@@ -981,9 +1038,9 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     fn = lambda { |min_b, max_b, ta| descriptor.resolve_variables('thickness_max' => max_b / 25.4, 'thickness_a' => ta / 25.4, 'thickness_min_b' => min_b / 25.4, 'thickness_max_b' => max_b / 25.4) }
     variables = fn.call(19, 19, 300)   # Flat on an edge
     assert_equal([], descriptor.failed_asserts(variables))
-    screw = HardwareDescriptorDef.primitive_cylinders(descriptor.resolve_component('a').hardware, variables).first
-    hole = HardwareDescriptorDef.primitive_cylinders(descriptor.resolve_component('a').machining, variables).first
-    clearance = HardwareDescriptorDef.primitive_cylinders(descriptor.resolve_component('b').machining, variables).first
+    screw = _primitive_cylinders(descriptor.resolve_component('a').hardware, variables).first
+    hole = _primitive_cylinders(descriptor.resolve_component('a').machining, variables).first
+    clearance = _primitive_cylinders(descriptor.resolve_component('b').machining, variables).first
     assert_in_delta(-31 / 25.4, screw.z_min, 1e-9)                 # 50mm - 19mm embedded in a
     assert_in_delta(19 / 25.4, screw.z_max, 1e-9)                  # Its head on the other face of b
     assert_in_delta(4 / 25.4, screw.profile.first.first, 1e-9)     # Countersink radius
@@ -1005,14 +1062,15 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     _assert_error(fn.call('hinge_max_angle' => 0), "attribute 'hinge_max_angle' is not an angle in degrees")
     _assert_error(fn.call('hinge_max_angle' => 270), "attribute 'hinge_max_angle' is not an angle in degrees")
     _assert_error(fn.call('hinge_max_angle' => '110'), "attribute 'hinge_max_angle' is not an angle in degrees")
-    _assert_error(fn.call('hinge_pivot' => [ 17, -29 ]), "attribute 'hinge_pivot' is not two lengths")
+    assert(_def(fn.call('hinge_pivot' => [ 17, -29 ])).valid?)   # Millimeters : see length_unit
+    _assert_error(fn.call('hinge_pivot' => [ 17, -29 ]).reject { |key, _| key == 'length_unit' }, "attribute 'hinge_pivot' is not two lengths")
     _assert_error(fn.call('hinge_pivot' => [ '17mm' ]), "attribute 'hinge_pivot' is not two lengths")
     _assert_error(fn.call('hinge_pivot' => [ '17mm', 'abc' ]), "attribute 'hinge_pivot' is not two lengths")
     _assert_error(fn.call('hinge_pivot' => [ '@thickness_a', '0mm' ]), "attribute 'hinge_pivot' is not two lengths")
     _assert_error(fn.call('hinge_pivot_approximate' => 'yes'), "attribute 'hinge_pivot_approximate' is not true or false")
     # On a variant too, labelled by its path
     variants = _with(HINGE, 'components' => HINGE['components'].merge('a' => HINGE['components']['a'].merge('variants' => HINGE['components']['a']['variants'].merge(
-      'items' => { 'overlay' => { 'hardware' => '$LIB/h.skp', 'attributes' => { 'hinge_pivot' => [ 1, 2 ] } } }))))
+      'items' => { 'overlay' => { 'hardware' => '$LIB/h.skp', 'attributes' => { 'hinge_pivot' => [ 'a', 2 ] } } }))))
     _assert_error(variants, "component 'a/overlay' attribute 'hinge_pivot' is not two lengths")
   end
 
@@ -1057,7 +1115,7 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
         assert_equal([], descriptor.failed_asserts(variables), "#{file} #{ta}/#{tb}")
         assert_in_delta(depths[0] / 25.4, variables['depth_a'], 1e-9, "#{file} #{ta}/#{tb}")
         assert_in_delta(depths[1] / 25.4, variables['depth_b'], 1e-9, "#{file} #{ta}/#{tb}")
-        tenon = HardwareDescriptorDef.primitive_cylinders(descriptor.resolve_component('a').hardware, variables).first
+        tenon = _primitive_cylinders(descriptor.resolve_component('a').hardware, variables).first
         assert_in_delta(length / 25.4, tenon.z_max - tenon.z_min, 1e-9)
         assert(-tenon.z_min <= variables['depth_a'] + 1e-9 && tenon.z_max <= variables['depth_b'] + 1e-9, "#{file} #{ta}/#{tb} tenon in its mortises")
       end
@@ -1073,7 +1131,7 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
       variables = descriptor.resolve_variables('thickness_a' => 19 / 25.4, 'thickness_b' => 300 / 25.4)
       assert_in_delta(14 / 25.4, variables['depth_a'], 1e-9)
       assert_in_delta(26 / 25.4, variables['depth_b'], 1e-9)
-      cylinder = HardwareDescriptorDef.primitive_cylinders(descriptor.resolve_component('a').hardware, variables).first
+      cylinder = _primitive_cylinders(descriptor.resolve_component('a').hardware, variables).first
       assert_in_delta(diameter / 25.4, cylinder.diameter, 1e-9)
       assert(descriptor.failed_asserts(descriptor.resolve_variables('thickness_a' => 19 / 25.4, 'thickness_b' => 19 / 25.4)).any?)
     end
@@ -1280,7 +1338,7 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     screws = { 'use' => 'connectors/screw.json', 'host' => 'a', 'measures' => { 'thickness_b' => '@bracket_thickness' },
                'at' => [ { 'x' => -8, 'y' => '-@hole_distance' }, { 'x' => 8, 'y' => '-@hole_distance' } ] }
     {
-      'format' => 'ocl-hardware', 'version' => 1, 'id' => 'bracket-1', 'type' => 'fitting', 'name' => 'Angle bracket 40x40',
+      'format' => 'ocl-hardware', 'version' => 1, 'id' => 'bracket-1', 'type' => 'fitting', 'length_unit' => 'mm', 'name' => 'Angle bracket 40x40',
       'variables' => { 'bracket_thickness' => { 'value' => '2mm', 'label' => 'Bracket thickness' }, 'hole_distance' => { 'value' => '25mm' } },
       'components' => {
         'a' => { 'hardware' => { 'body' => { 'name' => 'Angle bracket 40x40', 'price' => 0.3, 'skp' => true }, 'screws' => screws }.merge(a_changes) },
@@ -1450,6 +1508,17 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
   def _assert_errors(data, message, ref = '$LIB/child.json')
     errors = _def(data, nil, ref).errors
     assert(errors.any? { |error| error.include?(message) }, "expected '#{message}' in #{errors.inspect}")
+  end
+
+  # The given primitives as a descriptor in millimeters holds them - see
+  # HardwareDescriptorDef.with_length_unit.
+  def _mm(primitives)
+    return primitives unless primitives.is_a?(Hash)
+    HardwareDescriptorDef.with_length_unit({ 'components' => { 'a' => { 'hardware' => primitives } } }, 'mm')['components']['a']['hardware']
+  end
+
+  def _primitive_cylinders(primitives, *args)
+    HardwareDescriptorDef.primitive_cylinders(_mm(primitives), *args)
   end
 
   def _def(data, path = nil, ref = nil)
