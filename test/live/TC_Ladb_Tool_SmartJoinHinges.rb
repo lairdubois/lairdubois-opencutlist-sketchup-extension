@@ -11,8 +11,6 @@
 #                  that turns ; laid after "full", whose cup is the same :
 #                  its kinematics must not leak into this one ;
 #  - machining   : a machining only - it bears the hinge ;
-#  - z_offset    : hardware shifted off its fitting frame - laid wrapped in a
-#                  group ;
 #  - articles    : hardware made of articles - the cup, its pins - in a
 #                  group bearing the hinge ;
 #  - clip_top    : the bundled Blum Clip Top, SKP files ;
@@ -49,7 +47,6 @@ module HingesRegression
     'full' => HingeFixture.descriptor('full'),
     'bare' => HingeFixture.descriptor('bare', pivot: false),
     'machining' => HingeFixture.descriptor('machining', hardware: false),
-    'z_offset' => HingeFixture.descriptor('z_offset', z_offset: '2mm'),
     'articles' => HingeFixture.descriptor('articles', articles: true),
     'clip_top' => '$OCL/hinges/blum/clip-top.json',
     'shelf' => HingeFixture.descriptor('shelf'),
@@ -69,7 +66,6 @@ module HingesRegression
     'full' => { 'laid' => { 'hinges' => 2, 'door' => true, 'door_entities' => 4, 'side_l' => 2, 'side_r' => 0 } },
     'bare' => { 'laid' => { 'hinges' => 2, 'door' => false, 'door_entities' => 4, 'side_l' => 2, 'side_r' => 0 } },
     'machining' => { 'laid' => { 'hinges' => 2, 'door' => true, 'door_entities' => 2, 'side_l' => 2, 'side_r' => 0 } },
-    'z_offset' => { 'laid' => { 'hinges' => 2, 'door' => true, 'door_entities' => 4, 'side_l' => 2, 'side_r' => 0 } },
     'articles' => { 'laid' => { 'hinges' => 2, 'door' => true, 'door_entities' => 4, 'side_l' => 2, 'side_r' => 0 } },
     'clip_top' => { 'laid' => { 'hinges' => 2, 'door' => true, 'door_entities' => 4, 'side_l' => 4, 'side_r' => 0 } },
     'shelf' => { 'laid' => { 'hinges' => 2, 'door' => true, 'door_entities' => 4, 'side_l' => 2, 'side_r' => 0 } },

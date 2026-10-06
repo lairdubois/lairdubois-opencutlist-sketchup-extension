@@ -207,7 +207,6 @@
   <tr><td><code>url</code></td><td>lien fiche produit</td></tr>
   <tr><td><code>hardware</code></td><td>la partie objet (voir « parties ») ; ou des articles (section 8)</td></tr>
   <tr><td><code>machining</code></td><td>la partie usinage (voir « parties »)</td></tr>
-  <tr><td><code>z_offset</code></td><td>décalage de la partie hardware le long de Z du repère de pose (expression de longueur) ; l'usinage part toujours de la face</td></tr>
   <tr><td><code>attributes</code></td><td>attributs écrits sur la pièce posée (valeurs simples ou listes de valeurs simples). <code>"symmetrical": true</code> : la pièce n'a ni gauche ni droite, la fiche de débit ne sépare pas les exemplaires posés en miroir</td></tr>
   <tr><td><code>variants</code></td><td>des versions différentes selon le contexte (voir « variantes »)</td></tr>
 </table>
@@ -260,7 +259,7 @@
 <ul>
   <li><code>fallback</code> : variante utilisée quand le cas détecté n'est pas listé ;</li>
   <li>une variante à <code>null</code> signifie « non supportée » : pas de repli, la charnière n'est pas posée dans ce cas ;</li>
-  <li>les <code>name</code>, <code>description</code>, <code>price</code>, <code>url</code>, <code>mass</code>, <code>z_offset</code>, <code>attributes</code> d'une variante complètent / remplacent ceux du composant.</li>
+  <li>les <code>name</code>, <code>description</code>, <code>price</code>, <code>url</code>, <code>mass</code>, <code>attributes</code> d'une variante complètent / remplacent ceux du composant.</li>
 </ul>
 <p>Attributs lus par l'action <b>Interagir</b> (ouvrir la porte) : <code>role</code> = <code>"hinge"</code>, <code>hinge_max_angle</code> (degrés), <code>hinge_pivot</code> = [y, z], deux longueurs dans le repère de pose (Y vers le chant de rotation de la porte, Z vers le caisson) ; l'onglet Pièces de l'éditeur les règle sous « Cinématique de la charnière », <code>hinge_pivot_approximate</code> (booléen).</p>
 
@@ -331,6 +330,7 @@
   <tr><td><code>@thickness</code></td><td>épaisseur de la pièce derrière la face, vers −Z (l'étendue de toute la pièce)</td></tr>
   <tr><td><code>@thickness_min</code>, <code>@thickness_max</code></td><td>distance de la face opposée juste derrière les primitives du slot, la plus proche et la plus lointaine ; elles diffèrent quand les faces ne sont pas parallèles. <code>"through"</code> = <code>@thickness_max</code></td></tr>
   <tr><td><code>@height</code></td><td>distance de l'ancre à la face de la pièce vers +Y (vers −Y sur le slot <code>b</code> d'une charnière ou d'une ferrure) : la face d'où part un perçage le long de Y. Pour un connecteur, c'est la hauteur de pose</td></tr>
+  <tr><td><code>@height_min</code>, <code>@height_max</code></td><td>le long de la même ligne, la première sortie de la pièce (= <code>@height</code>) et la dernière : <code>@height_max</code> franchit les vides traversés (une rainure au bord de l'ancre) jusqu'au chant de la pièce sur cette ligne. P. ex. <code>"at": [ { "y": "@height_max" } ]</code> pose une pièce au chant, rainure ou pas</td></tr>
   <tr><td><code>@thickness_a</code>, <code>@height_b</code>…</td><td>la mesure de la pièce du slot <code>a</code> ou <code>b</code> : la même expression se lit depuis l'un ou l'autre slot</td></tr>
 </table>
 <p><b>Fonctions</b> (arguments séparés par <code>;</code>) : <code>min(…; …)</code>, <code>max(…; …)</code> ; <code>floor(x; v1; v2; …)</code> prend la plus grande valeur proposée qui ne dépasse pas x, <code>ceil(x; v1; v2; …)</code> la plus petite qui n'est pas en dessous : les crans d'une machine, p. ex. <code>floor(@thickness_a - 5mm; 12mm; 15mm; 20mm; 25mm; 28mm)</code> pour la Domino DF 500. Sans valeur qui convienne, l'expression échoue et la position est refusée.</p>
@@ -452,7 +452,7 @@
   <li><b>Clé</b> : lettres minuscules, chiffres, <code>-</code> et <code>_</code>, en commençant par une lettre, unique dans le slot ; pas le nom d'un champ d'article (<code>name</code>, <code>skp</code>, <code>use</code>, <code>at</code>…). Elle nomme le fichier d'un article <code>"skp": true</code> : <code>a.body.skp</code>.</li>
   <li><b>Article propre</b> : ses champs de fiche de débit (<code>name</code>, <code>description</code>, <code>price</code>, <code>url</code>, <code>mass</code>) et sa géométrie, un SKP (<code>"skp"</code> : <code>true</code> ou un chemin partagé) ou des primitives (<code>cylinders</code>, <code>oblongs</code>, <code>prisms</code>).</li>
   <li><b>Article de bibliothèque</b> : <code>use</code> désigne un <code>connector</code> concret, par son chemin comme pour <code>extends</code>. Son nom, son prix et ses asserts sont ceux du connecteur, évalués à chaque position : un seul en échec refuse la position. <code>host</code> (<code>a</code> ou <code>b</code>) dit quel côté du connecteur est notre panneau ; l'autre côté est virtuel, <code>measures</code> donne son épaisseur (<code>thickness_b</code> ici : l'épaisseur de l'équerre). <code>variables</code> ne change que les valeurs de ses réglages. Son usinage côté <code>host</code> s'ajoute à celui du slot.</li>
-  <li><b>Positions</b> : <code>at</code> liste des <code>{ x, y }</code> dans le repère du slot (longueurs ou expressions) ; absent, une position à l'origine. La géométrie d'un article est dessinée autour de sa propre origine.</li>
+  <li><b>Positions</b> : <code>at</code> liste des <code>{ x, y, z }</code> dans le repère du slot (longueurs ou expressions, 0 par défaut) ; absent, une position à l'origine. La géométrie d'un article est dessinée autour de sa propre origine. <code>z</code> décale l'article hors de la face : négatif, il s'enfonce (dans une poche) ; positif, il se surélève (sur une cale). C'est ainsi qu'on décale une quincaillerie : un article unique avec son <code>at</code>. Pour un article de bibliothèque, l'épaisseur côté <code>host</code> perd ce qu'il s'enfonce.</li>
   <li>Seuls les types autres que <code>connector</code> peuvent utiliser un connecteur. Un connecteur utilisé ne peut pas être supprimé ; le renommer dans l'éditeur réécrit les <code>use</code> qui le désignent.</li>
 </ul>
 

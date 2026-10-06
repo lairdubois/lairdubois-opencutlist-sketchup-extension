@@ -515,7 +515,7 @@ module Ladb::OpenCutList
       HardwareDescriptorDef::AXIS_Y_LENGTH_Z => [ 0, -1 ],
     }.freeze
 
-    # How far behind the face _get_placement_height looks - toward -Z - off
+    # How far behind the face _get_placement_heights looks - toward -Z - off
     # the edge the face may share with the one it finds.
     PLACEMENT_HEIGHT_DEPTH = 0.1.mm
 
@@ -1479,8 +1479,12 @@ module Ladb::OpenCutList
         HardwareDescriptorDef::VARIABLE_THICKNESS_MIN => thickness_min,
         HardwareDescriptorDef::VARIABLE_THICKNESS_MAX => thickness_max,
       }
-      height = _get_placement_height(placement)
-      measures[HardwareDescriptorDef::VARIABLE_HEIGHT] = height unless height.nil?
+      heights = _get_placement_heights(placement)
+      unless heights.nil?
+        measures[HardwareDescriptorDef::VARIABLE_HEIGHT] = heights[0]
+        measures[HardwareDescriptorDef::VARIABLE_HEIGHT_MIN] = heights[0]
+        measures[HardwareDescriptorDef::VARIABLE_HEIGHT_MAX] = heights[1]
+      end
       cache[:slot_measures] = measures
     end
 
@@ -1700,8 +1704,11 @@ module Ladb::OpenCutList
       fn_measure = lambda do |target, variable|
         if variable == HardwareDescriptorDef::VARIABLE_THICKNESS
           _get_placement_thickness(target)
-        elsif variable == HardwareDescriptorDef::VARIABLE_HEIGHT
+        elsif variable == HardwareDescriptorDef::VARIABLE_HEIGHT || variable == HardwareDescriptorDef::VARIABLE_HEIGHT_MIN
           _get_placement_height(target)
+        elsif variable == HardwareDescriptorDef::VARIABLE_HEIGHT_MAX
+          heights = _get_placement_heights(target)
+          heights.nil? ? nil : heights[1]
         else
           local_thicknesses[target] ||= _get_placement_local_thicknesses(target)
           local_thicknesses[target][variable == HardwareDescriptorDef::VARIABLE_THICKNESS_MIN ? 0 : 1]
@@ -1782,14 +1789,17 @@ module Ladb::OpenCutList
     # How far the part of the given placement goes toward +Y of the laying
     # frame from the anchor - toward -Y for a slot whose height is
     # reversed, see HardwareDescriptorDef.height_reversed? - just behind the
-    # face : where the nearest of its faces the ray leaves it by is. nil
-    # when none is found.
-    def _get_placement_height(placement)
+    # face : where the ray leaves it by, the first time and the last - the
+    # voids it crosses skipped : [ nearest, farthest ]. nil when none is
+    # found. Cached on the placement.
+    def _get_placement_heights(placement)
+      cache = (placement.article_variables ||= {})
+      return cache[:heights] if cache.key?(:heights)
       t = placement.transformation
       origin = Geom::Point3d.new(0, 0, -PLACEMENT_HEIGHT_DEPTH).transform(t)
       direction = (_height_reversed?(placement.role) ? Y_AXIS.reverse : Y_AXIS).transform(t).normalize
       on_face = [ Sketchup::Face::PointInside, Sketchup::Face::PointOnEdge, Sketchup::Face::PointOnVertex ]
-      placement.definition.entities.grep(Sketchup::Face).map { |face|
+      distances = placement.definition.entities.grep(Sketchup::Face).map { |face|
         next nil if face == placement.face
         point = Geom.intersect_line_plane([ origin, direction ], face.plane)
         next nil if point.nil?
@@ -1797,7 +1807,15 @@ module Ladb::OpenCutList
         # ~0 : the face is the one the anchor is laid on - a height option of 0
         next nil if distance < -1e-3 || !on_face.include?(face.classify_point(point))
         [ distance, 0.0 ].max
-      }.compact.min
+      }.compact
+      cache[:heights] = distances.empty? ? nil : distances.minmax
+    end
+
+    # The nearest of the heights of the given placement - see
+    # _get_placement_heights. nil when there are none.
+    def _get_placement_height(placement)
+      heights = _get_placement_heights(placement)
+      heights.nil? ? nil : heights[0]
     end
 
     # How far the other face of the part of the given placement is, right
@@ -2097,10 +2115,6 @@ module Ladb::OpenCutList
       else
         segments = nil
       end
-      unless segments.nil?
-        z_offset = _get_geometry_z_offset(geometry, placement, lift)
-        segments = segments.map { |point| Geom::Point3d.new(point.x, point.y, point.z + z_offset) } unless z_offset == 0
-      end
       contributions = _get_contributions_dimensions(geometry, placement)
       segments = (segments || []) + _get_primitives_segments(contributions) unless contributions.empty?
       segments
@@ -2136,26 +2150,14 @@ module Ladb::OpenCutList
     end
 
     # How far along Z of the laying frame the given geometry is laid off its
-    # definition : a hardware is shifted by its z_offset, and one of
-    # primitives is generated centered - see _get_geometry_definition - the
-    # measures only shift it. 0 for a machining : it starts at the face. 0
-    # for articles : their group is laid at the face, each shifted in it.
+    # definition : a hardware of primitives is generated centered - see
+    # _get_geometry_definition - the measures only shift it. 0 for a SKP
+    # hardware and a machining : they start at the face. 0 for articles :
+    # their group is laid at the face, each shifted in it by its position.
     # lift : that of the position of an article - see _get_article_positions.
     def _get_geometry_offset(geometry, placement, lift = 0.0)
-      return 0.0 unless geometry.part == :hardware && geometry.articles.nil?
-      offset = _get_geometry_z_offset(geometry, placement, lift)
-      offset += _get_primitives_offset(geometry.primitives, placement, _get_geometry_variables(geometry, placement, lift)) if geometry.definition.nil? && !geometry.primitives.nil?
-      offset
-    end
-
-    # The z_offset the descriptor declares for the given hardware, evaluated
-    # at the given placement - see HardwareDescriptorDef. 0 when there is
-    # none, or it can't be evaluated there.
-    def _get_geometry_z_offset(geometry, placement, lift = 0.0)
-      return 0.0 unless geometry.part == :hardware
-      component = geometry.component || _get_hardware_component(geometry.slot)
-      return 0.0 if component.nil? || component.z_offset.nil?
-      HardwareDescriptorDef.to_length(component.z_offset, true, _get_geometry_variables(geometry, placement, lift)) || 0.0
+      return 0.0 unless geometry.part == :hardware && geometry.articles.nil? && geometry.definition.nil? && !geometry.primitives.nil?
+      _get_primitives_offset(geometry.primitives, placement, _get_geometry_variables(geometry, placement, lift))
     end
 
     # The definition of the given geometry - hardware or machining - to lay
@@ -2657,7 +2659,7 @@ module Ladb::OpenCutList
     # mirror : laid mirrored - mirror_of -, see _get_geometry_mirror_transformation.
     # Set on the geometries of articles - see HardwareDescriptorDef "hardware" :
     #  - name : of its definition, the slot's one when nil ;
-    #  - component : what gives its info fields, attributes and z_offset -
+    #  - component : what gives its info fields and attributes -
     #    the slot's component when nil ;
     #  - variables_fn : lambda (placement) -> its variables there, the
     #    hardware's when nil - see _get_geometry_variables ;

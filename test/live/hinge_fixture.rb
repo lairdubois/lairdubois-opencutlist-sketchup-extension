@@ -73,10 +73,10 @@ module HingeFixture
 
   # A 35 mm cup hinge given as primitives - no SKP file - and a plate drilled
   # in the side. hardware : false for a hinge made of its machining only ;
-  # pivot : false for one without its pivot - it can't turn ; z_offset : of
-  # its hardware ; articles : its hardware made of articles - the cup and its
-  # two pins, each a part of its own.
-  def self.descriptor(id, hardware: true, pivot: true, z_offset: nil, articles: false)
+  # pivot : false for one without its pivot - it can't turn ; articles : its
+  # hardware made of articles - the cup and its two pins, each a part of its
+  # own.
+  def self.descriptor(id, hardware: true, pivot: true, articles: false)
     cup = lambda do |y, screws_y|
       item = {
         'machining' => { 'drillings' => [
@@ -105,7 +105,6 @@ module HingeFixture
         'items' => { 'overlay' => cup.call('-6.5mm', '-16mm'), 'half_overlay' => cup.call('-16mm', '-25.5mm'), 'inset' => cup.call('-24.5mm', '-34mm') },
       },
     }
-    a['z_offset'] = z_offset unless z_offset.nil?
     {
       'format' => 'ocl-hardware', 'version' => 1,
       'id' => "hinge-fixture-#{id}", 'type' => 'hinge',

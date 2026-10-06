@@ -5,9 +5,8 @@
 #
 # What it checks : the opening SmartJoin previews while hinges are hovered
 # (SmartJoinAddFittingsActionHandler#_preview_door_opening) turns around the
-# axis the door gets once they are laid - the hinge's pivot shifted along Z of
-# its fitting frame by the z_offset of its hardware, a plain length or an
-# expression of the measures.
+# axis the door gets once they are laid, whatever the hinge's hardware is
+# made of - a single part, or articles whose group bears the hinge.
 #
 # The hinge is HingeFixture's : a cup given as primitives - no SKP file - its
 # pivot [ 17mm, -29mm ].
@@ -16,7 +15,7 @@
 #
 # From the Ruby console or the Claude Bridge, without TestUp :
 #   load 'test/live/TC_Ladb_Tool_SmartJoinHingePreview.rb'
-#   HingePreviewRegression.run                     # one line per z_offset
+#   HingePreviewRegression.run                     # one line per case
 require_relative 'hinge_fixture'
 begin
   require 'testup/testcase'
@@ -28,13 +27,10 @@ module HingePreviewRegression
 
   OCL = Ladb::OpenCutList
 
-  # The z_offsets of the hardware tried, and how far each shifts it : the
-  # door is 19 mm thick.
-  Z_OFFSETS = {
-    nil => 0.0,
-    '2mm' => 2.0,
-    '-3mm' => -3.0,
-    '@thickness_a * 4 / 19' => 4.0,
+  # Each case : whether the hardware of its hinge is made of articles.
+  CASES = {
+    'single' => false,
+    'articles' => true,
   }
 
   # How far two axes may lie apart and still be the same line.
@@ -71,32 +67,26 @@ module HingePreviewRegression
     HingeFixture.erase(fixture) unless fixture.nil?
   end
 
-  # The results by z_offset - computed, then undone.
+  # The results by case - computed, then undone.
   def self.results
     model = Sketchup.active_model
     results = {}
     HingeFixture.aborted(model) do |dir|
-      Z_OFFSETS.each_key.with_index do |z_offset, index|
-        path = HingeFixture.write_descriptor(dir, HingeFixture.descriptor("preview-#{index}", z_offset: z_offset))
-        results[z_offset] = run_case(model, path)
+      CASES.each do |name, articles|
+        path = HingeFixture.write_descriptor(dir, HingeFixture.descriptor("preview-#{name}", articles: articles))
+        results[name] = run_case(model, path)
       end
     end
     results
   end
 
   # Why the given result is wrong - the pivot previewed where the laid door
-  # turns, and that one the unshifted pivot moved along Z of the fitting frame
-  # by the given shift - nil when it is right. reference : the result without
-  # z_offset.
-  def self.failure(result, shift, reference)
+  # turns - nil when it is right.
+  def self.failure(result)
     previewed, laid = result['previewed'], result['laid']
     return 'no preview' if previewed.nil?
     return 'no door once laid' if laid.nil?
     return "previewed #{previewed.inspect} laid #{laid.inspect}" unless same_axis?(previewed, laid)
-    return nil if reference.nil? || reference['laid'].nil?
-    # Z of the fitting frame : into the carcass, from the door's back - +Y of the door definition
-    expected = [ reference['laid'][0].zip([ 0.0, shift, 0.0 ]).map { |v, d| v + d }, reference['laid'][1] ]
-    return "laid #{laid.inspect} expected on #{expected.inspect}" unless same_axis?(laid, expected)
     nil
   end
 
@@ -109,11 +99,9 @@ module HingePreviewRegression
   end
 
   def self.run
-    results = results()
-    reference = results[nil]
-    results.map { |z_offset, result|
-      failure = failure(result, Z_OFFSETS[z_offset], reference)
-      line = "z_offset #{z_offset.inspect} #{failure.nil? ? 'PASS' : "FAIL(#{failure})"} — previewed #{result['previewed'].inspect}"
+    results().map { |name, result|
+      failure = failure(result)
+      line = "#{name} #{failure.nil? ? 'PASS' : "FAIL(#{failure})"} — previewed #{result['previewed'].inspect}"
       line += "\n    messages: #{result['messages'].inspect}" unless result['messages'].empty?
       line
     }.join("\n")
@@ -125,12 +113,10 @@ if defined?(TestUp::TestCase)
 
   class TC_Ladb_Tool_SmartJoinHingePreview < TestUp::TestCase
 
-    def test_opening_preview_follows_z_offset
-      results = HingePreviewRegression.results
-      reference = results[nil]
-      HingePreviewRegression::Z_OFFSETS.each do |z_offset, shift|
-        failure = HingePreviewRegression.failure(results[z_offset], shift, reference)
-        assert(failure.nil?, "z_offset #{z_offset.inspect} : #{failure}\n#{results[z_offset].inspect}")
+    def test_opening_preview_turns_around_the_laid_axis
+      HingePreviewRegression.results.each do |name, result|
+        failure = HingePreviewRegression.failure(result)
+        assert(failure.nil?, "#{name} : #{failure}\n#{result.inspect}")
       end
     end
 

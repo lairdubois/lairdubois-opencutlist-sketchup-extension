@@ -168,8 +168,8 @@ class TC_Ladb_Worker_HardwareBenchCompute < TestUp::TestCase
       response = _run(text, ref: '$OCL/fittings/generic/angle-bracket-40x40.json', topology: 'corner', thickness_a: 19, thickness_b: 19)
       assert_equal([], response[:errors])
       assert(response[:accepted])
-      article = response[:slots]['a'][:component][:articles].first
-      assert_equal('screws', article[:key])
+      article = response[:slots]['a'][:component][:articles].find { |a| a[:key] == 'screws' }
+      refute_nil(article)
       assert_equal('use', article[:kind])
       assert_equal('Screw 4x16', article[:used_name])
       assert_equal('a', article[:host])
@@ -181,7 +181,7 @@ class TC_Ladb_Worker_HardwareBenchCompute < TestUp::TestCase
       embed_min = article[:settings].find { |setting| setting[:name] == 'embed_min' }
       assert(embed_min[:overridden])
       assert_in_delta(10 * MM, embed_min[:value][:value], 1e-9)
-      assert_in_delta(15 * MM, embed_min[:default][:value], 1e-9)   # screw.json's
+      assert_in_delta(10 * MM, embed_min[:default][:value], 1e-9)   # screw-4x16.json's
       length = article[:settings].find { |setting| setting[:name] == 'length' }
       assert(!length[:overridden])
       assert_in_delta(16 * MM, length[:default][:value], 1e-9)
@@ -199,8 +199,9 @@ class TC_Ladb_Worker_HardwareBenchCompute < TestUp::TestCase
 
       thin = _run(text, ref: '$OCL/fittings/generic/angle-bracket-40x40.json', topology: 'corner', thickness_a: 12, thickness_b: 19)
       assert(!thin[:accepted])
-      assert_equal(false, thin[:slots]['a'][:component][:articles].first[:ok])
-      assert_equal(true, thin[:slots]['b'][:component][:articles].first[:ok])
+      fn_screws = lambda { |slot| thin[:slots][slot][:component][:articles].find { |a| a[:key] == 'screws' } }
+      assert_equal(false, fn_screws.call('a')[:ok])
+      assert_equal(true, fn_screws.call('b')[:ok])
     ensure
       Ladb::OpenCutList::HardwareDescriptorDef.library_resolver = nil
     end
@@ -248,7 +249,7 @@ class TC_Ladb_Worker_HardwareBenchCompute < TestUp::TestCase
   end
 
   # A hinge's axis : its pivot in the frame of its hardware - the variant's
-  # over the component's - along X, the hardware shifted by its z_offset.
+  # over the component's - along X.
   def test_hinge_axis
     data = JSON.parse(File.read(File.join(LIBRARY_DIR, 'hinges/blum/clip-top.json')))
     hinge = _run(data, topology: 'overlay')[:hinge]
@@ -259,9 +260,6 @@ class TC_Ladb_Worker_HardwareBenchCompute < TestUp::TestCase
     [ 0, 17, 0 ].each_with_index { |v, i| assert_in_delta(v * MM, hinge[:cotes][:y][i], 1e-9) }
     hinge = _run(data, topology: 'inset')[:hinge]
     [ 0, -4, -26 ].each_with_index { |v, i| assert_in_delta(v * MM, hinge[:origin][i], 1e-9) }
-    # Shifted with its hardware
-    data['components']['a']['z_offset'] = '2mm'
-    assert_in_delta(-24 * MM, _run(data, topology: 'inset')[:hinge][:origin][2], 1e-9)
     # Incomplete : none
     data['components']['a'].delete('attributes')
     assert_nil(_run(data, topology: 'inset')[:hinge])
@@ -309,17 +307,15 @@ class TC_Ladb_Worker_HardwareBenchCompute < TestUp::TestCase
     assert_equal([ 0, 1, 0 ], drilling[:transformation][8..10])
   end
 
-  def test_mirror_and_z_offset
+  def test_mirror
     data = JSON.parse(JSON.generate(DOWEL))
-    data['components']['a']['z_offset'] = '2mm'
     data['components']['b'] = { 'mirror_of' => 'a' }
     response = _run(data, topology: 'edge_edge', thickness_a: 19, thickness_b: 19)
     dowel_a = response[:solids].find { |solid| solid[:slot] == 'a' && solid[:part] == 'hardware' }
     dowel_b = response[:solids].find { |solid| solid[:slot] == 'b' && solid[:part] == 'hardware' }
-    assert_in_delta(2 * MM, dowel_a[:transformation][14], 1e-9)
     assert(response[:slots]['b'][:component][:mirror])
+    assert_equal(1, dowel_a[:transformation][0])
     assert_equal(-1, dowel_b[:transformation][0])
-    assert_in_delta(-2 * MM, dowel_b[:transformation][14], 1e-9)   # Z reversed
   end
 
   def test_invalid_input

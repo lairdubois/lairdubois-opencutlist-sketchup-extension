@@ -93,7 +93,7 @@ module Ladb::OpenCutList
     # its definition - whether their kinematics make it a door or not : what
     # SmartJoinTool lays and removes. Each is the entity laid in the fitting
     # frame : a ComponentInstance bearing ROLE_HINGE, the Group wrapping one
-    # SmartJoinTool lays off that frame - a hardware with a z_offset, see
+    # SmartJoinTool lays off that frame - see
     # SmartJoinActionHandler#_add_geometry - or a Group bearing it itself, the
     # one holding the articles of a hinge made of several.
     def self.hinge_instances(entity)

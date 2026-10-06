@@ -200,7 +200,7 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     assert_in_delta(0.375, cylinder.diameter, 1e-9)
     assert_in_delta(-1.5, cylinder.z_min, 1e-9)
     assert_in_delta(1.0, cylinder.z_max, 1e-9)
-    # Variables, settings, asserts, options, z_offset, pivots, articles, variant keys
+    # Variables, settings, asserts, options, pivots, articles, variant keys
     data = _with(DOWEL, 'variables' => DOWEL['variables'].merge('diameter' => { 'value' => 8, 'steps' => [ 6, 8, '10' ] }, 'depth' => '@thickness_a - 5'),
                         'asserts' => [ '@depth >= 10' ], 'options' => { 'height' => '/2', 'start_offset' => 32, 'opposite' => true })
     descriptor = _def(data)
@@ -607,8 +607,8 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
   }.freeze
 
   def test_measures
-    assert_equal(%w[thickness thickness_min thickness_max height thickness_a thickness_b thickness_min_a thickness_min_b thickness_max_a thickness_max_b height_a height_b], _def(DOWEL).measures)
-    assert_equal(%w[thickness thickness_min thickness_max height], _def(SLIDES).measures)
+    assert_equal(%w[thickness thickness_min thickness_max height height_min height_max thickness_a thickness_b thickness_min_a thickness_min_b thickness_max_a thickness_max_b height_a height_b height_min_a height_min_b height_max_a height_max_b], _def(DOWEL).measures)
+    assert_equal(%w[thickness thickness_min thickness_max height height_min height_max], _def(SLIDES).measures)
     assert_equal(%w[thickness_a thickness_b], _def(DOWEL).used_measures)
     assert_equal([], _def(HINGE).used_measures)
     through = _with(HINGE, 'components' => { 'a' => { 'machining' => { 'drillings' => [ { 'diameter' => 5, 'depth' => 'through' } ] } } })
@@ -734,36 +734,12 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     _assert_error(_with(SLIDES, 'variables' => { 'x' => '@thickness_a' }), "variable 'x' uses the unknown variable @thickness_a")
   end
 
-  def test_z_offset
-    data = JSON.parse(JSON.generate(DOWEL))
-    data['components']['a']['hardware'] = '$LIB/fluted_dowel.skp'
-    data['components']['a']['z_offset'] = '(@depth_b - @depth_a) / 2'
-    descriptor = _def(data)
-    assert(descriptor.valid?, descriptor.errors.inspect)
-    component = descriptor.resolve_component('a')
-    assert_equal('(@depth_b - @depth_a) / 2', component.z_offset)
-    assert_nil(descriptor.resolve_component('b').z_offset)
-    variables = descriptor.resolve_variables('thickness_a' => 19 / 25.4, 'thickness_b' => 300 / 25.4)
-    assert_in_delta(6 / 25.4, HardwareDescriptorDef.to_length(component.z_offset, true, variables), 1e-9)
-    # Variant over the component holding the variants, and links follow
-    variants = _with(HINGE, 'components' => {
-      'a' => { 'z_offset' => '2mm', 'variants' => { 'select' => { 'by' => 'hinge_kind' }, 'items' => {
-        'overlay' => { 'hardware' => '$LIB/h.skp' },
-        'inset' => { 'hardware' => '$LIB/h.skp', 'z_offset' => -3 } } } },
-      'b' => { 'mirror_of' => 'a' } })
-    descriptor = _def(variants)
-    assert(descriptor.valid?, descriptor.errors.inspect)
-    assert_equal('2mm', descriptor.resolve_component('a', 'hinge_kind' => 'overlay').z_offset)
-    assert_equal('-3mm', descriptor.resolve_component('a', 'hinge_kind' => 'inset').z_offset)   # Given its unit
-    assert_equal('2mm', descriptor.resolve_component('b', 'hinge_kind' => 'overlay').z_offset)
-  end
-
-  def test_invalid_z_offset
-    fn = lambda { |z_offset| _with(DOWEL, 'components' => DOWEL['components'].merge('a' => DOWEL['components']['a'].merge('z_offset' => z_offset))) }
-    _assert_error(fn.call(true), "component 'a' z_offset is not a length")
-    _assert_error(fn.call('@depth_a * @depth_a'), "component 'a' z_offset is not a length")
-    _assert_error(fn.call('@nope'), "component 'a' z_offset uses the unknown variable @nope")
-    _assert_error(_with(DOWEL, 'components' => DOWEL['components'].merge('b' => { 'mirror_of' => 'a', 'z_offset' => '2mm' })), "component 'b' links to another slot and has z_offset")
+  # No more supported : refused, wherever it is - a hardware is shifted as
+  # an article, by its "at".
+  def test_z_offset_refused
+    message = "component 'a' has z_offset, no more supported : give its hardware as an article, shifted by its \"at\""
+    _assert_error(_with(DOWEL, 'components' => DOWEL['components'].merge('a' => DOWEL['components']['a'].merge('z_offset' => '2mm'))), message)
+    _assert_error(_with(DOWEL, 'components' => DOWEL['components'].merge('b' => { 'mirror_of' => 'a', 'z_offset' => '2mm' })), message.sub("'a'", "'b'"))
   end
 
   def test_oblongs_and_mortises
@@ -1032,7 +1008,7 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
   end
 
   def test_bundled_screw
-    descriptor = HardwareDescriptorDef.new(JSON.parse(File.read(File.expand_path('../src/ladb_opencutlist/library/connectors/generic/screws/screw-4x50.json', __dir__))))
+    descriptor = _bundled('connectors/generic/screws/screw-4x50.json')
     assert(descriptor.valid?, descriptor.errors.inspect)
     assert_equal(%w[thickness_max thickness_a thickness_min_b thickness_max_b], descriptor.used_measures)   # through : the own thickness_max
     fn = lambda { |min_b, max_b, ta| descriptor.resolve_variables('thickness_max' => max_b / 25.4, 'thickness_a' => ta / 25.4, 'thickness_min_b' => min_b / 25.4, 'thickness_max_b' => max_b / 25.4) }
@@ -1049,7 +1025,7 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     assert_in_delta(4 / 25.4, clearance.diameter, 1e-9)
     assert_equal([ '@thickness_max_b - @thickness_min_b <= 0.2mm' ], descriptor.failed_asserts(fn.call(17, 19, 300)))   # Faces not parallel
     assert_equal([ '@embed <= @thickness_a - 3mm' ], descriptor.failed_asserts(fn.call(19, 19, 19)))   # Comes out of a
-    assert_equal([ '@embed >= 15mm' ], descriptor.failed_asserts(fn.call(40, 40, 300)))                # Too short
+    assert_equal([ '@embed >= @embed_min' ], descriptor.failed_asserts(fn.call(40, 40, 300)))                # Too short
   end
 
   # The kinematics of a hinge : optional, but checked when given - a pivot
@@ -1087,9 +1063,11 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
   def test_bundled_hinges
     dir = File.expand_path('../src/ladb_opencutlist/library/hinges', __dir__)
     Dir.glob(File.join(dir, '**', '*.json')).each do |path|
-      descriptor = HardwareDescriptorDef.new(JSON.parse(File.read(path)))
+      descriptor = _bundled(path[(File.dirname(dir).length + 1)..-1])
       assert(descriptor.valid?, "#{path} #{descriptor.errors.inspect}")
-      %w[overlay half_overlay inset].each do |kind|
+      kinds = %w[overlay half_overlay inset].select { |kind| !descriptor.resolve_component('a', 'hinge_kind' => kind).nil? }   # null : a kind it doesn't offer
+      assert(!kinds.empty?, "#{path} no kind")
+      kinds.each do |kind|
         attributes = descriptor.resolve_component('a', 'hinge_kind' => kind).attributes
         assert(HardwareDescriptorDef.hinge_max_angle?(attributes['hinge_max_angle']), "#{path} #{kind} hinge_max_angle")
         assert(!HardwareDescriptorDef.hinge_pivot(attributes['hinge_pivot']).nil?, "#{path} #{kind} hinge_pivot")

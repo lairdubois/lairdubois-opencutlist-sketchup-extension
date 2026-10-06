@@ -200,7 +200,7 @@ module Ladb::OpenCutList
         _slot_measures(panel.slot).each do |name, value|
           from = base.dup
           to = base.dup
-          if name == HardwareDescriptorDef::VARIABLE_HEIGHT
+          if [ HardwareDescriptorDef::VARIABLE_HEIGHT, HardwareDescriptorDef::VARIABLE_HEIGHT_MIN, HardwareDescriptorDef::VARIABLE_HEIGHT_MAX ].include?(name)
             outer = panel.min[thickness_axis].abs > panel.max[thickness_axis].abs ? panel.min[thickness_axis] : panel.max[thickness_axis]
             from[thickness_axis] = to[thickness_axis] = outer
             to[height_axis] = height_sign * value
@@ -237,11 +237,15 @@ module Ladb::OpenCutList
         thickness = PANEL_WIDTH unless _flat?(slot)
         height = _connector_y_range(slot)[1] + _connector_y_shift
       end
+      height = height > -1e-9 ? [ height, 0.0 ].max : nil   # 0 : laid on the face itself
       {
         HardwareDescriptorDef::VARIABLE_THICKNESS => thickness,
         HardwareDescriptorDef::VARIABLE_THICKNESS_MIN => thickness,
         HardwareDescriptorDef::VARIABLE_THICKNESS_MAX => thickness,
-        HardwareDescriptorDef::VARIABLE_HEIGHT => height > -1e-9 ? [ height, 0.0 ].max : nil,   # 0 : laid on the face itself
+        # The panels are plain boxes : no void between the nearest and the farthest
+        HardwareDescriptorDef::VARIABLE_HEIGHT => height,
+        HardwareDescriptorDef::VARIABLE_HEIGHT_MIN => height,
+        HardwareDescriptorDef::VARIABLE_HEIGHT_MAX => height,
       }.reject { |_, value| value.nil? }
     end
 

@@ -19,7 +19,7 @@ module Ladb::OpenCutList
 
     # The modal of the editor, and the size it opens at : the bench needs room.
     EDITOR_MODAL_NAME = 'hardware_editor'.freeze
-    EDITOR_DIALOG_WIDTH = 1100
+    EDITOR_DIALOG_WIDTH = 1200
     EDITOR_DIALOG_HEIGHT = 760
 
     # Where the connectors an article can use are browsed from - and their

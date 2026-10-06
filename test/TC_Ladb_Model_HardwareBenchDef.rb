@@ -217,10 +217,12 @@ class TC_Ladb_Model_HardwareBenchDef < TestUp::TestCase
       assert_in_delta(22 * MM, measures['thickness_b'], 1e-9, label)
       # b's from the joint line to its edge, toward -Y of its frame
       assert_in_delta(swapped ? 0 : -b_min_z * MM, measures['height_b'], 1e-9, label)
-      if height_a > 0
-        assert_in_delta(height_a * MM, measures['height_a'], 1e-9, label)
-      else
-        assert(!measures.key?('height_a'), "#{label} : a ends on b's face")
+      # 0 when a ends on b's face : laid on the face itself
+      assert_in_delta(height_a * MM, measures['height_a'], 1e-9, label)
+      # Plain boxes : no void between the nearest and the farthest
+      %w[a b].each do |slot|
+        assert_equal(measures["height_#{slot}"], measures["height_min_#{slot}"], label)
+        assert_equal(measures["height_#{slot}"], measures["height_max_#{slot}"], label)
       end
     end
   end

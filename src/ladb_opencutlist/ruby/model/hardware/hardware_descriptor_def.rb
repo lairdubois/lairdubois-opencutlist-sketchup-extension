@@ -25,7 +25,7 @@ module Ladb::OpenCutList
   #
   # A <component> is either :
   #  - { "name", "description", "price", "url", "mass",
-  #      "hardware": <part> | <primitives>, "machining": <part> | <primitives>, "z_offset": "<length>",
+  #      "hardware": <part> | <primitives>, "machining": <part> | <primitives>,
   #      "stretch": { … }, "attributes": { … } }
   #  - { "same_as": "<slot>" } / { "mirror_of": "<slot>" } : the other slot's
   #    component, laid mirrored across the YZ plane of the laying frame - x
@@ -171,11 +171,9 @@ module Ladb::OpenCutList
   # for the hardware to be laid : "@depth_b <= @thickness_b - 5mm". The tool
   # refuses the anchors where one fails.
   #
-  # "z_offset" shifts the hardware along Z of the laying frame - the face
-  # normal, the only axis whose sense the descriptor knows - a length
-  # expression : "(@depth_b - @depth_a) / 2". The machining always starts
-  # at the face. The one of a variant overrides the one of the component
-  # holding the variants.
+  # A hardware is laid at the face : to shift it, give it as an article
+  # with its "at" - see "hardware" below. "z_offset" is no more : a
+  # component still having it is refused.
   #
   # "name", "description", "price", "url" and "mass" are what the cut list
   # reads of the laid hardware definition. Those of a variant override those
@@ -231,6 +229,7 @@ module Ladb::OpenCutList
     # What the cut list reads of a laid hardware definition
     INFO_KEYS = %w[name description price url mass].freeze
 
+    # A key no more supported : refused - see _validate_component
     Z_OFFSET = 'z_offset'.freeze
 
     # Articles - see "hardware" above
@@ -378,6 +377,9 @@ module Ladb::OpenCutList
     #    connector, the face of the edge it is laid from - its "height"
     #    option away. Toward -Y on b of a hinge or a fitting - see
     #    height_reversed? ;
+    #  - height_min, height_max : where the same line leaves the part, the
+    #    first time - height - and the last : the voids it crosses - a
+    #    groove by the anchor - skipped, to its far edge on that line ;
     #  - <measure>_<slot> : the one of the part the given slot is laid on, for
     #    the types that join two parts - JOIN_TYPES. An expression then reads
     #    the same from either slot.
@@ -385,7 +387,9 @@ module Ladb::OpenCutList
     VARIABLE_THICKNESS_MIN = 'thickness_min'.freeze
     VARIABLE_THICKNESS_MAX = 'thickness_max'.freeze
     VARIABLE_HEIGHT = 'height'.freeze
-    VARIABLES = [ VARIABLE_THICKNESS, VARIABLE_THICKNESS_MIN, VARIABLE_THICKNESS_MAX, VARIABLE_HEIGHT ].freeze
+    VARIABLE_HEIGHT_MIN = 'height_min'.freeze
+    VARIABLE_HEIGHT_MAX = 'height_max'.freeze
+    VARIABLES = [ VARIABLE_THICKNESS, VARIABLE_THICKNESS_MIN, VARIABLE_THICKNESS_MAX, VARIABLE_HEIGHT, VARIABLE_HEIGHT_MIN, VARIABLE_HEIGHT_MAX ].freeze
 
     JOIN_TYPES = [ TYPE_CONNECTOR, TYPE_FITTING, TYPE_HINGE ].freeze
 
@@ -472,12 +476,10 @@ module Ladb::OpenCutList
     #  - description, price, url, mass : as written, the variant's over the component's ;
     #  - part_slots : the slot whose component each part - 'hardware',
     #    'machining' - comes from, another one when the part is linked ;
-    #  - z_offset : the length expression the hardware is shifted by along
-    #    Z, nil when none - see to_length.
     #  - articles : its hardware's articles - HardwareArticleDefs, hardware
     #    then nil - or nil when the hardware is a single part.
     HardwareComponentDef = Struct.new(:slot, :source_slot, :hardware, :machining, :mirror, :stretch, :variant, :attributes,
-                                      :name, :variant_name, :description, :price, :url, :mass, :part_slots, :z_offset, :articles)
+                                      :name, :variant_name, :description, :price, :url, :mass, :part_slots, :articles)
 
     # An article of a hardware - see "hardware" above :
     #  - key : its key in the slot ;
@@ -501,9 +503,6 @@ module Ladb::OpenCutList
       # As a component's, for the definition it gives - see HardwareComponentDef
       def attributes
         {}
-      end
-      def z_offset
-        nil
       end
       # The virtual side of a used connector
       def other_slot
@@ -1068,7 +1067,6 @@ module Ladb::OpenCutList
       end
       fn_component = lambda do |component|
         next unless component.is_a?(Hash)
-        fn_keys.call(component, [ Z_OFFSET ])
         attributes = component['attributes']
         if attributes.is_a?(Hash) && attributes[ATTRIBUTE_HINGE_PIVOT].is_a?(Array)
           attributes[ATTRIBUTE_HINGE_PIVOT] = attributes[ATTRIBUTE_HINGE_PIVOT].map { |value| fn_length.call(value) }
@@ -1608,7 +1606,6 @@ module Ladb::OpenCutList
         key = _select_variant(value['variants'], context)
         return nil if key.nil?
         info = info.merge(_info(value))
-        info[Z_OFFSET] = value[Z_OFFSET] unless value[Z_OFFSET].nil?
         return _resolve_value(slot, value['variants']['items'][key], context, mirror, visited, key, attributes, info)
       else
         own_info = _info(value)
@@ -1623,7 +1620,6 @@ module Ladb::OpenCutList
           variant.nil? ? nil : own_info['name'],
           merged_info['description'], merged_info['price'], merged_info['url'], merged_info['mass'],
           { PART_HARDWARE => hardware_slot, PART_MACHINING => machining_slot },
-          value[Z_OFFSET].nil? ? info[Z_OFFSET] : value[Z_OFFSET],
           articles
         )
       end
@@ -1944,10 +1940,10 @@ module Ladb::OpenCutList
       end
       _validate_attributes(path, value['attributes'], errors) if value.key?('attributes')
       _validate_info(path, value, errors)
-      _validate_z_offset(path, value, errors)
+      errors << "component '#{path}' has z_offset, no more supported : give its hardware as an article, shifted by its \"at\"" if value.key?(Z_OFFSET)
       if value.key?('same_as') || value.key?('mirror_of')
         errors << "component '#{path}' links to another slot and has attributes" if value.key?('attributes')
-        errors << "component '#{path}' links to another slot and has #{(value.keys & (INFO_KEYS + [ Z_OFFSET ])).join(', ')}" unless (value.keys & (INFO_KEYS + [ Z_OFFSET ])).empty?
+        errors << "component '#{path}' links to another slot and has #{(value.keys & INFO_KEYS).join(', ')}" unless (value.keys & INFO_KEYS).empty?
         target = value.key?('same_as') ? value['same_as'] : value['mirror_of']
         errors << "component '#{path}' links to unknown slot #{target.inspect}" unless slots.include?(target)
         errors << "component '#{path}' links to itself" if target == path
@@ -2390,20 +2386,6 @@ module Ladb::OpenCutList
         end
         yield(item, label)
       end
-    end
-
-    def _validate_z_offset(path, value, errors)
-      return if !value.key?(Z_OFFSET) || value.key?('same_as') || value.key?('mirror_of')
-      z_offset = value[Z_OFFSET]
-      unless z_offset.is_a?(String) || z_offset.is_a?(Numeric)
-        errors << "component '#{path}' z_offset is not a length"
-        return
-      end
-      unknown = _unknown_variables(z_offset)
-      unknown.each do |name|
-        errors << "component '#{path}' z_offset uses the unknown variable @#{name}"
-      end
-      errors << "component '#{path}' z_offset is not a length" if unknown.empty? && _to_checked_length(z_offset, true).nil?
     end
 
     def _validate_info(path, value, errors)

@@ -208,16 +208,14 @@ module Ladb::OpenCutList
           .reject { |name, _| bench_def.measures.key?(name) && name.end_with?("_#{slot}") }
           .map { |name, length| { :name => name, :text => _text(length) } }
       }
-      hardware_z_offset = component.z_offset.nil? ? 0.0 : HardwareDescriptorDef.to_length(component.z_offset, true, variables) || 0.0
       if bench_def.hinge? && slot == 'a'
         # Borne by its hardware - whether its file is found or not
-        response[:hinge] = _hinge(component, _multiply(slot_matrix, _multiply(mirror, _translation(0, 0, hardware_z_offset))))
+        response[:hinge] = _hinge(component, _multiply(slot_matrix, mirror))
       end
       HardwareDescriptorDef::PARTS.each do |part|
         value = component.send(part)
         next if value.nil?
-        z_offset = part == HardwareDescriptorDef::PART_HARDWARE ? hardware_z_offset : 0.0
-        part_matrix = _multiply(slot_matrix, _multiply(mirror, _translation(0, 0, z_offset)))
+        part_matrix = _multiply(slot_matrix, mirror)
         if HardwareDescriptorDef.primitives?(value)
           # Each primitive alone : its solid known by its key and index
           primitives = response[:slots][slot][:component][:primitives] ||= {}
@@ -327,7 +325,7 @@ module Ladb::OpenCutList
               } ]
             }]
           end
-          sub = { :hardware => article.hardware, :mirror => false, :z_offset => nil }
+          sub = { :hardware => article.hardware, :mirror => false }
           _article_geometry(slot, article.key, HardwareDescriptorDef::PART_HARDWARE, sub, variables, IDENTITY, matrix, resolved, response)
         end
         result
@@ -408,10 +406,10 @@ module Ladb::OpenCutList
           next if used_component.nil?
           side_variables = used.resolve_variables(article.side_measures(joint, side))
           side_matrix = side == article.host ? frame : _multiply(frame, FLIP_Z)
-          sub = { :hardware => used_component.hardware, :mirror => used_component.mirror, :z_offset => used_component.z_offset }
+          sub = { :hardware => used_component.hardware, :mirror => used_component.mirror }
           _article_geometry(slot, article.key, HardwareDescriptorDef::PART_HARDWARE, sub, side_variables, side_matrix, matrix, group, response)
           next unless side == article.host && HardwareDescriptorDef.primitives?(used_component.machining)
-          sub = { :hardware => used_component.machining, :mirror => used_component.mirror, :z_offset => nil }
+          sub = { :hardware => used_component.machining, :mirror => used_component.mirror }
           _article_geometry(slot, article.key, HardwareDescriptorDef::PART_MACHINING, sub, side_variables, frame, matrix, group, response)
         end
       end
@@ -419,14 +417,13 @@ module Ladb::OpenCutList
     end
 
     # The solids or SKP of one geometry of an article - its hardware ref or
-    # primitives, mirror and z_offset in sub - at each of the given positions
+    # primitives and mirror in sub - at each of the given positions
     # [ index, x, y, z ] of the slot, by the given matrices : the side one in the
     # article's frame, then the slot's.
     def _article_geometry(slot, key, part, sub, variables, side_matrix, matrix, positions, response)
       value = sub[:hardware]
       return if value.nil?
-      z_offset = sub[:z_offset].nil? ? 0.0 : HardwareDescriptorDef.to_length(sub[:z_offset], true, variables) || 0.0
-      local = _multiply(side_matrix, _multiply(sub[:mirror] ? MIRROR_X : IDENTITY, _translation(0, 0, z_offset)))
+      local = _multiply(side_matrix, sub[:mirror] ? MIRROR_X : IDENTITY)
       cylinders = nil
       if HardwareDescriptorDef.primitives?(value)
         # Each primitive alone : its solid known by its key and index
