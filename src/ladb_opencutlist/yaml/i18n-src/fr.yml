@@ -415,15 +415,13 @@ core:
     hinge_scope_common: Commun à toutes les variantes
     hinge_scope_variant: Propre à cette variante
     hinge_apply_all: Appliquer à toutes les variantes
-    part_kind_none: Aucune
     part_kind_skp: Fichier SKP
-    part_kind_primitives: Primitives
     part_kind_same_as: "Même que {{ slot }}"
-    part_kind_articles: Articles
+    machining_skp_add: Fichier SKP
     article_add_skp: Fichier SKP
     article_add_primitives: Primitives
     article_add_connector: Connecteur
-    article_kind_skp: SKP
+    article_kind_skp: Fichier SKP
     article_kind_primitives: Primitives
     article_kind_connector: Connecteurs
     article_key: Clé

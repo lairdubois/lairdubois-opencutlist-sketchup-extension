@@ -248,6 +248,18 @@ class TC_Ladb_Worker_HardwareBenchCompute < TestUp::TestCase
     assert_equal([], _run(text, topology: 'inset')[:skps])
   end
 
+  # A machining given as a SKP and primitives : its file and its solids.
+  def test_machining_skp_beside_primitives
+    data = JSON.parse(JSON.generate(DOWEL))
+    data['components']['a']['machining'] = { 'skp' => true }.merge(data['components']['a']['machining'])
+    response = _run(data, ref: '$LIB/connectors/dowel.json', topology: 'flat_edge', swapped: true, thickness_a: 19, thickness_b: 19)
+    assert_equal([], response[:errors])
+    refs = response[:skps].map { |skp| [ skp[:slot], skp[:part], skp[:ref] ] }
+    assert_equal([ [ 'a', 'machining', '$LIB/components/connectors/dowel/a.machining.skp' ] ], refs)
+    assert_equal(3, response[:solids].length)   # Its drilling still there
+    assert_equal(1, response[:slots]['a'][:component][:primitives]['machining']['drillings'].length)
+  end
+
   # A hinge's axis : its pivot in the frame of its hardware - the variant's
   # over the component's - along X.
   def test_hinge_axis

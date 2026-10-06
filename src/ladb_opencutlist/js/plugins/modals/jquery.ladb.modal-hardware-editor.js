@@ -156,6 +156,26 @@
         });
     };
 
+    // The key of the article a hardware given in a short form - its SKP or
+    // its primitives - is - see LadbModalHardwareEditor#hardwareArticles
+    const SHORT_ARTICLE_KEY = 'body';
+
+    // The info of the article a short form is : its slot's - the name of the
+    // slot names it too, see SmartJoinTool#_get_hardware_definition_name
+    const SHORT_ARTICLE_INFO_KEYS = [ 'description', 'price', 'url', 'mass' ];
+
+    // Has the given machining nothing - no SKP, no primitives - ?
+    const fnIsEmptyMachining = function (value) {
+        if (value === undefined || value === null) return true;
+        if (fnIsSkp(value) || typeof value !== 'object') return false;
+        return Object.keys(value).every(function (key) { return key !== 'skp' && !(Array.isArray(value[key]) && value[key].length > 0); });
+    };
+
+    // Is the given machining SKP value one - true or a path - ?
+    const fnIsSkp = function (value) {
+        return value === true || typeof value === 'string';
+    };
+
     // The kind of the given article : 'connector' - one of the library, by its 'use' -, 'skp' or 'primitives'.
     const fnArticleKind = function (article) {
         if (article.use !== undefined) return 'connector';
@@ -419,6 +439,7 @@
         this.primitiveOpen = null;
         this.primitiveHovered = null;
         this.articleOpen = null;      // { slot, key }
+        this.skpRowClosed = {};       // The SKP rows of parts folded, by slot/part - open by default
         this.articleHovered = null;
         this.connectorBrowser = null; // The library browsed for an article : { slot, key, listing }
 
@@ -1006,6 +1027,7 @@
                         }
                         $input
                             .val(value)
+                            .ladbTextinputText({ resetValue: '' })
                             .on('change', function () {
                                 const newValue = $(this).val().trim();
                                 if (newValue !== value) {
@@ -1208,6 +1230,9 @@
         const slots = Object.keys(components);
 
         const focus = this.captureFocus(this.$parts);
+        // Emptied, its pane would scroll back to the top : put back where it was
+        const $scroller = this.$parts.closest('.tab-pane');
+        const scrollTop = $scroller.scrollTop();
         this.destroyTooltips(this.$parts);
         this.$parts.empty();
         for (const slot of slots) {
@@ -1288,6 +1313,7 @@
 
         }
 
+        $scroller.scrollTop(scrollTop);
         this.restoreFocus(focus);
         this.dialog.setupTooltips(this.$parts);
         this.showBenchPrimitive();
@@ -1302,44 +1328,151 @@
         $('a', $element).not(function () { return $(this).closest('.bootstrap-select').length > 0; }).remove();
     };
 
+    // The given part of a slot : its list - articles, or a machining - empty
+    // when it has none, else the slot it is the same as. Linked to another
+    // slot while it has nothing of its own.
     LadbModalHardwareEditor.prototype.renderPart = function (data, slot, path, target, part, slots) {
         const that = this;
 
         const value = target[part];
-        let kind = 'none';
-        if (value === true || typeof value === 'string') {
-            kind = 'skp';
-        } else if (value && typeof value === 'object') {
-            kind = value.same_as ? 'same_as:' + value.same_as : (part === 'hardware' && fnIsArticles(value) ? 'articles' : 'primitives');
-        }
+        const sameAs = value && typeof value === 'object' && value.same_as ? value.same_as : null;
 
         const $row = $('<div class="ladb-hardware-editor-part">');
         const $body = $('<div class="ladb-hardware-editor-part-body">');
-        const $select = $('<select class="form-control input-sm">');
-        const kinds = [ 'none', 'skp', 'primitives' ].concat(part === 'hardware' ? [ 'articles' ] : []).concat(slots.filter(function (s) { return s !== slot; }).map(function (s) { return 'same_as:' + s; }));
-        for (const k of kinds) {
-            $select.append($('<option>')
-                .attr('value', k)
-                .text(k.indexOf('same_as:') === 0 ? i18next.t('core.hardware_editor.part_kind_same_as', { slot: k.substring(8).toUpperCase() }) : i18next.t('core.hardware_editor.part_kind_' + k))
-            );
-        }
-        $select
-            .val(kind)
-            .prop('disabled', this.readonly)
-            .on('change', function () {
-                that.setPartKind(path, part, $(this).val());
-            });
         $row
             .append($('<label class="control-label">').text(i18next.t('core.hardware_descriptor.part_' + part)))
-            .append($body.append($select));
-        $select.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
+            .append($body);
 
-        if (kind === 'skp') {
-            this.renderSkpFile($body, (this.response.skps || []).find(function (skp) { return skp.slot === slot && skp.part === part && !skp.article; }));
-        } else if (kind === 'primitives') {
-            $body.append(this.renderPrimitives(slot, path.concat([ part ]), part, value));
-        } else if (kind === 'articles') {
+        const fnLink = function (other) {
+            return $('<button type="button" class="btn btn-default btn-xs ladb-hardware-editor-part-link">')
+                .append($('<i>').addClass(other === sameAs ? 'ladb-opencutlist-icon-check-box-with-check-sign' : 'ladb-opencutlist-icon-check-box')).append(' ')
+                .append(i18next.t('core.hardware_editor.part_kind_same_as', { slot: other.toUpperCase() }))
+                .toggleClass('active', other === sameAs)
+                .prop('disabled', that.readonly)
+                .on('click', function () {
+                    this.blur();
+                    that.setPartKind(path, part, other === sameAs ? 'none' : 'same_as:' + other);
+                });
+        };
+
+        if (sameAs !== null) {
+            $body.append($('<div class="ladb-hardware-editor-part-buttons">')
+                .append(fnLink(sameAs))
+            );
+            return $row;
+        }
+
+        if (part === 'machining') {
+            this.renderMachining($body, slot, path.concat([ part ]), value);
+        } else {
             $body.append(this.renderArticles(slot, path.concat([ part ]), value));
+        }
+
+        // Nothing of its own : the slots it can be the same as, after the adds
+        const empty = part === 'machining' ? fnIsEmptyMachining(value) : Object.keys(this.hardwareArticles(value).articles).length === 0;
+        if (empty) {
+            const $adds = $body.find('.ladb-hardware-editor-add-buttons').first();
+            for (const other of slots.filter(function (s) { return s !== slot; })) {
+                $adds.append(fnLink(other));
+            }
+        }
+
+        return $row;
+    };
+
+    // The machining at the given path : its primitives, its SKP file - when
+    // it has one - the first of their rows, the button adding one beside
+    // theirs.
+    LadbModalHardwareEditor.prototype.renderMachining = function ($body, slot, partPath, value) {
+        const that = this;
+
+        const skp = fnIsSkp(value) ? value : fnObject(value).skp;
+        const $primitives = this.renderPrimitives(slot, partPath, 'machining', fnObject(value));
+        if (fnIsSkp(skp)) {
+            let $list = $primitives.children('.ladb-hardware-editor-primitive-list');
+            if ($list.length === 0) {
+                $list = $('<div class="ladb-hardware-editor-primitive-list">');
+                $primitives.prepend($list);
+            }
+            $list.prepend(this.renderSkpRow(slot, 'machining', function () {
+                // null over its parents' : not inherited again
+                that.setMachiningMember(partPath, 'skp', that.inheritanceState(partPath.concat([ 'skp' ]), false) === null ? undefined : null);
+            }));
+        } else {
+            $('.ladb-hardware-editor-add-buttons', $primitives).prepend($('<button type="button" class="btn btn-default btn-xs">')
+                .append('<i class="ladb-opencutlist-icon-plus"></i> ')
+                .append(i18next.t('core.hardware_editor.machining_skp_add'))
+                .prop('disabled', this.readonly)
+                .on('click', function () {
+                    this.blur();
+                    that.setMachiningMember(partPath, 'skp', true);
+                })
+            );
+        }
+        $body.append($primitives);
+    };
+
+    // The row of the SKP file of the given part : its head - its name, where
+    // it stands, the X removing it by the given function - then, open - by
+    // default - what can be done of it, as an article's.
+    LadbModalHardwareEditor.prototype.renderSkpRow = function (slot, part, onRemove) {
+        const that = this;
+
+        const id = slot + '/' + part;
+        const open = !this.skpRowClosed[id];
+        const skp = (this.response.skps || []).find(function (skp) { return skp.slot === slot && skp.part === part && !skp.article; });
+        const ref = skp ? skp.ref : null;
+        const imported = ref ? this.imports[ref] : null;
+
+        const $row = $('<div class="ladb-hardware-editor-primitive ladb-hardware-editor-article">')
+            .toggleClass('ladb-hardware-editor-primitive-open', open);
+
+        // Its file, buttons and placement : the chip goes to the head
+        const $file = $('<div>');
+        this.renderSkpFile($file, skp);
+        const $chip = $file.find('.ladb-hardware-editor-file > .label').addClass('ladb-hardware-editor-article-chip');
+
+        // Head
+        const $head = $('<div class="ladb-hardware-editor-primitive-head">')
+            .append($('<span class="ladb-hardware-editor-primitive-caret">').text('▸'))
+            .append($('<span class="ladb-hardware-editor-primitive-name">').text(i18next.t('core.hardware_editor.part_kind_skp')))
+            .append($('<span class="ladb-hardware-editor-primitive-summary">')
+                // .append(ref ? $('<code>').text(imported ? imported.name : ref.split('/').pop()) : null)
+            )
+            .append($chip)
+            .append($('<span class="ladb-hardware-editor-primitive-tools">')
+                .append(fnTooltip($('<button type="button" class="btn btn-default btn-xs">'), i18next.t('default.delete'))
+                    .append($('<i class="ladb-opencutlist-icon-clear">'))
+                    .prop('disabled', this.readonly)
+                    .on('click', function (e) {
+                        e.stopPropagation();
+                        this.blur();
+                        onRemove();
+                    })
+                )
+            )
+            .on('click', function () {
+                that.skpRowClosed[id] = open;
+                that.renderParts();
+            });
+        $row.append($head);
+
+        if (open) {
+            // Its name and buttons in the fields column, its placement below, wide - see renderArticleEditor
+            const $editor = $('<div class="ladb-hardware-editor-primitive-editor ladb-hardware-editor-article-editor">');
+            $editor
+                .append($('<div class="ladb-hardware-editor-primitive-label">').text(i18next.t('core.hardware_editor.article_file')))
+                .append($file.children('.ladb-hardware-editor-file'));
+            const $buttons = $file.children('.ladb-hardware-editor-part-buttons');
+            if ($buttons.length > 0) {
+                $editor
+                    .append($('<div class="ladb-hardware-editor-primitive-label">'))
+                    .append($buttons);
+            }
+            if ($file.children().length > 0) {
+                $editor.append($file.addClass('ladb-hardware-editor-article-wide'));
+            }
+            $row.append($editor);
         }
 
         return $row;
@@ -1473,15 +1606,18 @@
     LadbModalHardwareEditor.prototype.renderArticles = function (slot, partPath, value) {
         const that = this;
 
+        const view = this.hardwareArticles(value);
         const $articles = $('<div class="ladb-hardware-editor-primitives">');
         const $list = $('<div class="ladb-hardware-editor-primitive-list">');
-        for (const key of Object.keys(value)) {
-            if (value[key] === null || typeof value[key] !== 'object') {
+        for (const key of Object.keys(view.articles)) {
+            if (view.articles[key] === null || typeof view.articles[key] !== 'object') {
                 continue;   // Removed from an inherited one
             }
-            $list.append(this.renderArticle(slot, partPath, key, value[key], value));
+            $list.append(this.renderArticle(slot, partPath, key, view.articles[key], view.articles, view.implicit));
         }
-        $articles.append($list);
+        if ($list.children().length > 0) {
+            $articles.append($list);
+        }
 
         const $adds = $('<div class="ladb-hardware-editor-part-buttons ladb-hardware-editor-add-buttons">');
         for (const kind of [ 'skp', 'primitives', 'connector' ]) {
@@ -1490,7 +1626,7 @@
                 .prop('disabled', this.readonly)
                 .on('click', function () {
                     this.blur();
-                    that.addArticle(slot, partPath, value, kind);
+                    that.addArticle(slot, partPath, kind);
                 })
             );
         }
@@ -1506,13 +1642,13 @@
 
     // The row of the given article : its head - name, kind, how many times
     // it is laid, whether the bench refuses it - then, open, its fields.
-    LadbModalHardwareEditor.prototype.renderArticle = function (slot, partPath, key, article, articles) {
+    LadbModalHardwareEditor.prototype.renderArticle = function (slot, partPath, key, article, articles, implicit) {
         const that = this;
 
         const id = fnArticleId({ slot: slot, key: key });
         const open = id === fnArticleId(this.articleOpen);
         const kind = fnArticleKind(article);
-        const response = this.articleResponse(slot, key);
+        const response = implicit ? null : this.articleResponse(slot, key);   // The bench tells of a short form as of a part
         const articlePath = partPath.concat([ key ]);
 
         const $row = $('<div class="ladb-hardware-editor-primitive ladb-hardware-editor-article">')
@@ -1521,10 +1657,10 @@
 
         // Head
         const count = Array.isArray(article.at) ? article.at.length : 1;
-        const name = article.name || (response ? response.used_name : null) || key;
+        const name = (implicit ? fnObject(this.jsonValue(partPath.slice(0, -1))).name : article.name) || (response ? response.used_name : null);   // A short form : its slot's
         const $head = $('<div class="ladb-hardware-editor-primitive-head">')
             .append($('<span class="ladb-hardware-editor-primitive-caret">').text('▸'))
-            .append($('<span class="ladb-hardware-editor-primitive-name">').text(name))
+            .append(name ? $('<span class="ladb-hardware-editor-primitive-name">').text(name) : null)   // Unnamed : the key alone tells it
             .append($('<span class="ladb-hardware-editor-primitive-summary">')
                 .append($('<code>').text(key))
                 .append(' · ' + i18next.t('core.hardware_editor.article_kind_' + kind) + (count > 1 ? ' × ' + count : ''))
@@ -1540,7 +1676,7 @@
                     .on('click', function (e) {
                         e.stopPropagation();
                         this.blur();
-                        that.deleteArticle(slot, partPath, key, articles);
+                        that.deleteArticle(slot, partPath, key);
                     })
                 )
             )
@@ -1560,7 +1696,7 @@
         $row.append($head);
 
         if (open) {
-            $row.append(this.renderArticleEditor(slot, partPath, key, article, articles, response));
+            $row.append(this.renderArticleEditor(slot, partPath, key, article, articles, response, implicit));
         }
 
         return $row;
@@ -1600,7 +1736,7 @@
 
     // The fields of the given article : its key, what it is - its own file
     // or primitives, or a connector of the library - and where it is laid.
-    LadbModalHardwareEditor.prototype.renderArticleEditor = function (slot, partPath, key, article, articles, response) {
+    LadbModalHardwareEditor.prototype.renderArticleEditor = function (slot, partPath, key, article, articles, response, implicit) {
         const that = this;
 
         const kind = fnArticleKind(article);
@@ -1627,9 +1763,7 @@
             $editor.append($('<div class="ladb-hardware-editor-primitive-separator">'));
         };
         const fnSet = function (name, value) {
-            if (that.setJsonMember(articlePath, name, value)) {
-                that.compute(false);
-            }
+            that.setArticleMember(partPath, key, name, value);
         };
 
         // Its key : names its SKP file, unique in the slot
@@ -1787,17 +1921,29 @@
 
         } else {
 
-            // Its own name, price and mass - for the cut list - one row each
+            // Its own name, price and mass - for the cut list - one row each.
+            // A short form's are its slot's : named above, the slot's name
+            const componentPath = partPath.slice(0, -1);
+            const info = implicit ? fnObject(this.jsonValue(componentPath)) : article;
             for (const name of ARTICLE_INFO_KEYS) {
+                if (implicit && name === 'name') {
+                    continue;
+                }
                 fnLabel('article_' + name);
                 fnRow($('<div class="ladb-hardware-editor-placement-cell ladb-hardware-editor-primitive-cell ladb-hardware-editor-primitive-neutral ladb-hardware-editor-article-info">')
                     .toggleClass('ladb-hardware-editor-primitive-text', name === 'name')
                     .append($('<input type="text" class="form-control input-sm" spellcheck="false">')
-                        .val(article[name] === undefined || article[name] === null ? '' : String(article[name]))
+                        .val(info[name] === undefined || info[name] === null ? '' : String(info[name]))
+                        .attr('placeholder', name === 'name' ? (fnObject(this.jsonValue(componentPath)).name || fnObject(this.jsonValue([])).name || '') + ' (' + key + ')' : '')   // Unnamed : its slot's name - see SmartJoinTool#_get_hardware_definition_name
                         .prop('disabled', this.readonly)
                         .on('change', function () {
                             const text = $(this).val().trim();
-                            fnSet(name, text === '' ? undefined : (name === 'name' ? text : fnPrimitiveValue(text)));
+                            const value = text === '' ? undefined : (name === 'name' ? text : fnPrimitiveValue(text));
+                            if (implicit) {
+                                that.setJsonMember(componentPath, name, value);
+                            } else {
+                                fnSet(name, value);
+                            }
                         })
                     )
                 );
@@ -1807,7 +1953,7 @@
                 // Its name and buttons in the fields column, its placement below, wide
                 fnLabel('article_file');
                 const $file = $('<div class="ladb-hardware-editor-article-wide">');
-                this.renderSkpFile($file, (this.response.skps || []).find(function (skp) { return skp.slot === slot && skp.article === key && skp.position === 0; }));
+                this.renderSkpFile($file, this.articleSkp(slot, key, implicit));
                 $editor.append($file.children('.ladb-hardware-editor-file'));
                 const $buttons = $file.children('.ladb-hardware-editor-part-buttons');
                 if ($buttons.length > 0) {
@@ -1819,7 +1965,8 @@
                 }
             } else {
                 fnTitle('article_primitives');
-                $editor.append(this.renderPrimitives(slot, articlePath, 'hardware', article, key, response).addClass('ladb-hardware-editor-article-wide'));
+                // A short form's : the part's own, as the bench tells them
+                $editor.append((implicit ? this.renderPrimitives(slot, partPath, 'hardware', article) : this.renderPrimitives(slot, articlePath, 'hardware', article, key, response)).addClass('ladb-hardware-editor-article-wide'));
             }
 
         }
@@ -1912,27 +2059,37 @@
     };
 
     // A new article of the given kind, open - one using a connector once it
-    // is chosen in the library.
-    LadbModalHardwareEditor.prototype.addArticle = function (slot, partPath, articles, kind) {
+    // is chosen in the library. The first one, a SKP or primitives, is
+    // written in its short form.
+    LadbModalHardwareEditor.prototype.addArticle = function (slot, partPath, kind) {
         const that = this;
+        const current = this.jsonValue(partPath);
+        if (current === undefined && this.findJsonValueRange(this.cm.getValue(), partPath) !== null) {
+            return;   // The JSON being typed
+        }
+        const view = this.hardwareArticles(current);
+        const empty = Object.keys(view.articles).length === 0;
         const fnAdd = function (key, article) {
             that.articleOpen = { slot: slot, key: key };
             that.connectorBrowser = null;
-            if (that.writeJsonValue(partPath.concat([ key ]), article)) {
+            const written = view.implicit
+                ? that.writeHardwareArticles(partPath, $.extend(true, {}, view.articles, { [key]: article }), view)
+                : that.writeJsonValue(partPath.concat([ key ]), article);
+            if (written) {
                 that.compute(false);
             }
         };
         if (kind === 'skp') {
-            fnAdd(this.freeArticleKey('body', articles), { skp: true });
+            fnAdd(empty ? SHORT_ARTICLE_KEY : this.freeArticleKey('body', view.articles), { skp: true });
         } else if (kind === 'primitives') {
-            fnAdd(this.freeArticleKey('part', articles), { cylinders: [ $.extend({}, PRIMITIVE_DEFAULTS.cylinders) ] });
+            fnAdd(empty ? SHORT_ARTICLE_KEY : this.freeArticleKey('part', view.articles), { cylinders: [ $.extend({}, PRIMITIVE_DEFAULTS.cylinders) ] });
         } else {
             this.articleOpen = null;
             this.browseConnectors(slot, null, null, function (file) {
                 const other = slot === 'a' ? 'b' : 'a';
                 const measures = {};
                 measures['thickness_' + other] = '2mm';
-                fnAdd(that.freeArticleKey(fnFileStem(file.ref).replace(/[^a-z0-9_-]+/g, '-').replace(/^[^a-z]+/, '') || 'connector', articles), {
+                fnAdd(that.freeArticleKey(fnFileStem(file.ref).replace(/[^a-z0-9_-]+/g, '-').replace(/^[^a-z]+/, '') || 'connector', view.articles), {
                     use: file.use,
                     host: slot,
                     measures: measures
@@ -1941,8 +2098,29 @@
         }
     };
 
-    // The given article renamed : its key in place, its row kept open.
+    // The given article renamed : its key in place, its row kept open - the
+    // short form left, or taken, as a whole.
     LadbModalHardwareEditor.prototype.renameArticle = function (slot, partPath, key, newKey) {
+        const current = this.jsonValue(partPath);
+        const view = this.hardwareArticles(current);
+        const fnOpen = function (that) {
+            if (that.articleOpen && that.articleOpen.slot === slot && that.articleOpen.key === key) {
+                that.articleOpen = { slot: slot, key: newKey };
+            }
+        };
+        const renamed = {};
+        for (const k of Object.keys(view.articles)) {
+            renamed[k === key ? newKey : k] = view.articles[k];
+        }
+        if (view.implicit || this.shortHardware(partPath, renamed) !== undefined) {
+            const renames = {};
+            renames[newKey] = key;
+            fnOpen(this);
+            if (this.writeHardwareArticles(partPath, renamed, view, renames)) {
+                this.compute(false);
+            }
+            return;
+        }
         const text = this.cm.getValue();
         const range = this.findJsonValueRange(text, partPath.concat([ key ]));
         if (range === null) {
@@ -1953,45 +2131,226 @@
             return;
         }
         // Its own SKP file follows it : written under its new name at the save
-        const skp = (this.response.skps || []).find(function (skp) { return skp.slot === slot && skp.article === key; });
-        if (skp && fnObject(this.jsonValue(partPath.concat([ key ]))).skp === true && /\.[^.\/]+\.skp$/i.test(skp.ref)) {
-            const newRef = skp.ref.replace(/\.[^.\/]+\.skp$/i, '.' + newKey + '.skp');
-            const mesh = this.meshes[this.skpSource(skp.ref)];
-            if (this.imports[skp.ref]) {
-                this.imports[newRef] = this.imports[skp.ref];
-            } else if (mesh && mesh !== 'loading' && !mesh.error) {
-                this.imports[newRef] = { path: skp.ref, name: newRef.split('/').pop() };   // The file as it is - see HardwareDescriptorSaveWorker
+        if (fnObject(view.articles[key]).skp === true) {
+            const ref = this.articleSkpRef(slot, key, false);
+            if (ref !== null) {
+                this.moveSkpRef(ref, ref.replace(new RegExp('\\.' + key + '\\.skp$', 'i'), '.' + newKey + '.skp'));
             }
-            delete this.imports[skp.ref];
-            if (this.placements[skp.ref]) {
-                this.placements[newRef] = this.placements[skp.ref];
-                delete this.placements[skp.ref];
-            }
-            this.updateGuard();
         }
         this.cm.replaceRange(JSON.stringify(newKey), this.cm.posFromIndex(start), this.cm.posFromIndex(start + JSON.stringify(key).length));
-        if (this.articleOpen && this.articleOpen.slot === slot && this.articleOpen.key === key) {
-            this.articleOpen = { slot: slot, key: newKey };
-        }
+        fnOpen(this);
         this.compute(false);
     };
 
-    // The given article removed - null when inherited - the part with it
-    // when it was the last.
-    LadbModalHardwareEditor.prototype.deleteArticle = function (slot, partPath, key, articles) {
-        const others = Object.keys(articles).filter(function (k) { return k !== key && articles[k] !== null; });
+    // The given article removed - null when inherited - the part left
+    // empty with the last.
+    LadbModalHardwareEditor.prototype.deleteArticle = function (slot, partPath, key) {
+        const current = this.jsonValue(partPath);
+        const view = this.hardwareArticles(current);
         this.articleHovered = null;
         if (this.articleOpen && this.articleOpen.slot === slot && this.articleOpen.key === key) {
             this.articleOpen = null;
         }
-        if (others.length === 0) {
-            this.setPartKind(partPath.slice(0, -1), 'hardware', 'none');
-            return;
-        }
         const path = partPath.concat([ key ]);
-        if (this.setJsonMember(partPath, key, this.inheritanceState(path, false) === null ? undefined : null)) {
+        let written;
+        const others = Object.keys(view.articles).filter(function (k) { return k !== key && view.articles[k] !== null; });
+        if (view.implicit || others.length === 0 && this.inheritanceState(path, false) === null) {
+            written = this.writeHardwareArticles(partPath, {}, view);   // The last : none
+        } else {
+            written = this.setJsonMember(partPath, key, this.inheritanceState(path, false) === null ? undefined : null);
+            this.collapseArticles(partPath);
+        }
+        if (written) {
             this.compute(false);
         }
+    };
+
+    // The articles of the given hardware value : its own, else the one its
+    // short form - a SKP, or primitives - is, keyed SHORT_ARTICLE_KEY, none
+    // when it gives no primitives. { articles, implicit }.
+    LadbModalHardwareEditor.prototype.hardwareArticles = function (value) {
+        if (fnIsArticles(value)) {
+            return { articles: value, implicit: false };
+        }
+        const articles = {};
+        if (fnIsSkp(value)) {
+            articles[SHORT_ARTICLE_KEY] = { skp: value };
+        } else if (value && typeof value === 'object' && PART_PRIMITIVE_KEYS.hardware.some(function (k) { return Array.isArray(value[k]) && value[k].length > 0; })) {
+            articles[SHORT_ARTICLE_KEY] = value;
+        }
+        return { articles: articles, implicit: true };
+    };
+
+    // The short form of the given articles of the hardware at the given
+    // path : the SKP or the primitives of its one article keyed
+    // SHORT_ARTICLE_KEY that gives nothing else, {} when there are none.
+    // undefined when they have none, or when the part overrides its
+    // parents', whose articles it would drop.
+    LadbModalHardwareEditor.prototype.shortHardware = function (partPath, articles) {
+        if (this.inheritanceState(partPath, false) !== null) {
+            return undefined;
+        }
+        const keys = Object.keys(articles);
+        if (keys.length === 0) {
+            return {};
+        }
+        if (keys.length > 1 || keys[0] !== SHORT_ARTICLE_KEY) {
+            return undefined;
+        }
+        const article = this.shortArticle(partPath, articles[SHORT_ARTICLE_KEY]);
+        if (article === null) {
+            return undefined;
+        }
+        const fields = Object.keys(article);
+        if (fnIsSkp(article.skp) && fields.length === 1) {
+            return article.skp;
+        }
+        if (fields.length > 0 && fields.every(function (field) { return PART_PRIMITIVE_KEYS.hardware.indexOf(field) >= 0; })) {
+            return article;
+        }
+        return undefined;
+    };
+
+    // The given article keyed SHORT_ARTICLE_KEY without the info its slot
+    // would hold in a short form - see SHORT_ARTICLE_INFO_KEYS - null when
+    // it isn't an object, or gives one the slot gives otherwise.
+    LadbModalHardwareEditor.prototype.shortArticle = function (partPath, article) {
+        if (!article || typeof article !== 'object' || Array.isArray(article)) {
+            return null;
+        }
+        const component = fnObject(this.jsonValue(partPath.slice(0, -1)));
+        const stripped = {};
+        for (const field of Object.keys(article)) {
+            if (SHORT_ARTICLE_INFO_KEYS.indexOf(field) < 0) {
+                stripped[field] = article[field];
+            } else if (component[field] !== undefined && JSON.stringify(component[field]) !== JSON.stringify(article[field])) {
+                return null;
+            }
+        }
+        return stripped;
+    };
+
+    // Writes the given articles as the hardware at the given path - in its
+    // short form when they can be - its articles before given by the given
+    // view - see hardwareArticles. The own SKP file of an article follows
+    // it - written under its new name at the save - renamed by the given
+    // renames : { new key: old key }.
+    LadbModalHardwareEditor.prototype.writeHardwareArticles = function (partPath, articles, view, renames) {
+        const slot = partPath[1];
+        const short = this.shortHardware(partPath, articles);
+        for (const key of Object.keys(articles)) {
+            const oldKey = renames && renames[key] !== undefined ? renames[key] : key;
+            if (fnObject(articles[key]).skp !== true || fnObject(view.articles[oldKey]).skp !== true) {
+                continue;
+            }
+            const oldRef = this.articleSkpRef(slot, oldKey, view.implicit);
+            if (oldRef === null) {
+                continue;
+            }
+            const base = view.implicit ? oldRef.replace(/\.skp$/i, '') : oldRef.replace(new RegExp('\\.' + oldKey + '\\.skp$', 'i'), '');
+            const newRef = base + (short !== undefined ? '' : '.' + key) + '.skp';
+            if (newRef !== oldRef) {
+                this.moveSkpRef(oldRef, newRef);
+            }
+        }
+        // The info of the short form's article is its slot's : it moves with it
+        const componentPath = partPath.slice(0, -1);
+        const body = articles[SHORT_ARTICLE_KEY];
+        if (short !== undefined && body && typeof body === 'object') {
+            for (const field of SHORT_ARTICLE_INFO_KEYS) {
+                if (body[field] !== undefined) {
+                    this.setJsonMember(componentPath, field, body[field]);
+                }
+            }
+        } else if (short === undefined && view.implicit && body && typeof body === 'object') {
+            const component = fnObject(this.jsonValue(componentPath));
+            articles = $.extend({}, articles);
+            articles[SHORT_ARTICLE_KEY] = $.extend({}, body);
+            for (const field of SHORT_ARTICLE_INFO_KEYS) {
+                if (component[field] !== undefined) {
+                    if (articles[SHORT_ARTICLE_KEY][field] === undefined) {
+                        articles[SHORT_ARTICLE_KEY][field] = component[field];
+                    }
+                    this.setJsonMember(componentPath, field, undefined);
+                }
+            }
+        }
+        if (short !== undefined && Object.keys(articles).length === 0) {
+            return this.writeJsonValue(partPath, this.inheritanceState(partPath, false) === null ? undefined : null);   // Nothing left : none
+        }
+        return this.writeJsonValue(partPath, short !== undefined ? short : articles);
+    };
+
+    // The hardware at the given path written in its short form, if its
+    // articles can be.
+    LadbModalHardwareEditor.prototype.collapseArticles = function (partPath) {
+        const current = this.jsonValue(partPath);
+        const view = this.hardwareArticles(current);
+        if (!view.implicit && this.shortHardware(partPath, view.articles) !== undefined) {
+            this.writeHardwareArticles(partPath, view.articles, view);
+        }
+    };
+
+    // Sets the given member of the given article of the hardware at the
+    // given path to the given value, undefined removing it - the short form
+    // left, or taken, when it changes.
+    LadbModalHardwareEditor.prototype.setArticleMember = function (partPath, key, name, value) {
+        const current = this.jsonValue(partPath);
+        if (current === undefined) {
+            return;   // The JSON being typed
+        }
+        const view = this.hardwareArticles(current);
+        let written;
+        if (view.implicit) {
+            const articles = $.extend(true, {}, view.articles);
+            const article = fnObject(articles[key]);
+            if (value === undefined) {
+                delete article[name];
+            } else {
+                article[name] = value;
+            }
+            articles[key] = article;
+            written = this.writeHardwareArticles(partPath, articles, view);
+        } else {
+            written = this.setJsonMember(partPath.concat([ key ]), name, value);
+            this.collapseArticles(partPath);
+        }
+        if (written) {
+            this.compute(false);
+        }
+    };
+
+    // The SKP of the given article on the bench - of the part when the
+    // given one is its short form's.
+    LadbModalHardwareEditor.prototype.articleSkp = function (slot, key, implicit) {
+        return (this.response.skps || []).find(function (skp) {
+            return skp.slot === slot && (implicit ? skp.part === 'hardware' && !skp.article : skp.article === key && skp.position === 0);
+        });
+    };
+
+    // The ref of the SKP of the given article - see articleSkp - null when
+    // the bench has none.
+    LadbModalHardwareEditor.prototype.articleSkpRef = function (slot, key, implicit) {
+        const skp = this.articleSkp(slot, key, implicit);
+        return skp && skp.ref ? skp.ref : null;
+    };
+
+    // The SKP file of the given ref, imported or as it is, and its
+    // placement, moved to the given ref : written under it at the save -
+    // see HardwareDescriptorSaveWorker.
+    LadbModalHardwareEditor.prototype.moveSkpRef = function (ref, newRef) {
+        const mesh = this.meshes[this.skpSource(ref)];
+        if (this.imports[ref]) {
+            this.imports[newRef] = this.imports[ref];
+        } else if (mesh && mesh !== 'loading' && !mesh.error) {
+            this.imports[newRef] = { path: ref, name: newRef.split('/').pop() };   // The file as it is
+        }
+        delete this.imports[ref];
+        if (this.placements[ref]) {
+            this.placements[newRef] = this.placements[ref];
+            delete this.placements[ref];
+        }
+        this.updateGuard();
     };
 
     // The connectors library browsed from the given folder - its roots when
@@ -2692,7 +3051,63 @@
     // path, on one line - a kind left without any removed : an empty list
     // isn't valid.
     LadbModalHardwareEditor.prototype.setPrimitiveItems = function (partPath, key, items) {
-        if (this.setJsonMember(partPath, key, items.length === 0 ? undefined : items)) {
+        if (partPath[partPath.length - 1] === 'machining') {
+            this.setMachiningMember(partPath, key, items.length === 0 ? undefined : items);
+        } else if (partPath.length > 1 && partPath[partPath.length - 2] === 'hardware') {
+            this.setArticleMember(partPath.slice(0, -1), partPath[partPath.length - 1], key, items.length === 0 ? undefined : items);
+        } else if (partPath[partPath.length - 1] === 'hardware') {
+            // The primitives of a short form : its article
+            const primitives = $.extend(true, {}, fnObject(this.jsonValue(partPath)));
+            if (items.length === 0) {
+                delete primitives[key];
+            } else {
+                primitives[key] = items;
+            }
+            const articles = {};
+            if (Object.keys(primitives).length > 0) articles[SHORT_ARTICLE_KEY] = primitives;
+            if (this.writeHardwareArticles(partPath, articles, this.hardwareArticles(this.jsonValue(partPath)))) {
+                this.compute(false);
+            }
+        } else if (this.setJsonMember(partPath, key, items.length === 0 ? undefined : items)) {
+            this.compute(false);
+        }
+    };
+
+    // Sets the given member - 'skp' or primitives - of the machining at the
+    // given path to the given value, undefined removing it. Written in its
+    // short form when it can be - see HardwareDescriptorDef "machining" -
+    // its SKP alone : true or its path, unless it overrides its parents'
+    // machining, whose primitives it would drop.
+    LadbModalHardwareEditor.prototype.setMachiningMember = function (partPath, name, value) {
+        const current = this.jsonValue(partPath);
+        if (current === undefined && this.findJsonValueRange(this.cm.getValue(), partPath) !== null) {
+            return;   // The JSON being typed
+        }
+        const machining = fnIsSkp(current) ? { skp: current } : $.extend(true, {}, fnObject(current));
+        if (value === undefined) {
+            delete machining[name];
+        } else {
+            machining[name] = value;
+        }
+        const keys = Object.keys(machining);
+        const short = keys.length === 1 && fnIsSkp(machining.skp) && this.inheritanceState(partPath, false) === null;
+        let written;
+        if (fnIsEmptyMachining(machining)) {
+            written = this.writeJsonValue(partPath, this.inheritanceState(partPath, false) === null ? undefined : null);   // Nothing left : none
+        } else if (short) {
+            written = this.writeJsonValue(partPath, machining.skp);
+        } else if (current !== null && typeof current === 'object' && !(name === 'skp' && value !== undefined && !Object.prototype.hasOwnProperty.call(current, 'skp'))) {
+            written = this.setJsonMember(partPath, name, value);   // Only that member rewritten
+        } else {
+            // Its SKP first, before its primitives
+            const ordered = {};
+            if (Object.prototype.hasOwnProperty.call(machining, 'skp')) ordered.skp = machining.skp;
+            for (const key of keys) {
+                if (key !== 'skp') ordered[key] = machining[key];
+            }
+            written = this.writeJsonValue(partPath, ordered);
+        }
+        if (written) {
             this.compute(false);
         }
     };
@@ -2769,6 +3184,9 @@
             }
         }
         this.primitiveOpen = primitive;
+        if (!primitive.article && primitive.part === 'hardware') {
+            this.articleOpen = { slot: primitive.slot, key: SHORT_ARTICLE_KEY };   // Its short form's
+        }
         $('a[href="#ladb_hardware_editor_tab_parts"]', this.$element).tab('show');
         this.renderParts();
         const $row = $('.ladb-hardware-editor-primitive[data-primitive="' + fnPrimitiveId(primitive) + '"]', this.$parts);
@@ -2781,8 +3199,12 @@
     LadbModalHardwareEditor.prototype.showBenchPrimitive = function () {
         const $threeViewer = $('.ladb-three-viewer', this.$viewer);
         if ($threeViewer.length > 0 && $threeViewer.data('ladb.threeviewer').loaded) {
-            // An article : all its solids
-            const fnArticle = function (article) { return article ? { slot: article.slot, article: article.key } : null; };
+            // An article : all its solids - its part's, of a short form
+            const that = this;
+            const fnArticle = function (article) {
+                if (!article) return null;
+                return that.hardwareArticles(that.jsonValue(that.articlesPath(article.slot))).implicit ? { slot: article.slot, part: 'hardware' } : { slot: article.slot, article: article.key };
+            };
             $threeViewer.ladbThreeViewer('callCommand', [ 'select_bench_solid', { solid: this.primitiveHovered || fnArticle(this.articleHovered) || this.primitiveOpen || fnArticle(this.articleOpen) } ]);
         }
     };
@@ -3232,24 +3654,6 @@
         let value;
         if (kind === 'none') {
             value = this.inheritanceState(path.concat([ part ]), false) === null ? undefined : null;
-        } else if (kind === 'skp') {
-            value = true;
-        } else if (kind === 'primitives') {
-            value = {};   // None yet : the one wanted added from its button
-        } else if (kind === 'articles') {
-            // What the part is given as becomes its first article
-            const current = this.jsonValue(path.concat([ part ]));
-            let article;
-            if (current === true || typeof current === 'string') {
-                article = { skp: current };
-            } else if (current && typeof current === 'object' && !current.same_as && PART_PRIMITIVE_KEYS[part].some(function (k) { return Array.isArray(current[k]); })) {
-                article = {};
-                PART_PRIMITIVE_KEYS[part].forEach(function (k) { if (Array.isArray(current[k])) article[k] = current[k]; });
-            } else {
-                article = { cylinders: [ $.extend({}, PRIMITIVE_DEFAULTS.cylinders) ] };
-            }
-            value = { body: article };
-            this.articleOpen = { slot: path[1], key: 'body' };
         } else if (kind.indexOf('same_as:') === 0) {
             value = { same_as: kind.substring(8) };
         }

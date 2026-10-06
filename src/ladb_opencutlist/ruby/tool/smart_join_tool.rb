@@ -1071,10 +1071,11 @@ module Ladb::OpenCutList
     end
 
     # The primitives of the given part - :hardware or :machining - of the
-    # given slot's component when it is given as such, nil otherwise.
+    # given slot's component when it is given as such, nil otherwise. Those
+    # of a machining, alone or beside its SKP.
     def _get_hardware_component_primitives(slot, part)
       return nil if (component = _get_hardware_component(slot)).nil?
-      primitives = component.send(part)
+      primitives = part == :machining ? component.machining_primitives : component.send(part)
       HardwareDescriptorDef.primitives?(primitives) ? primitives : nil
     end
 
@@ -1084,13 +1085,14 @@ module Ladb::OpenCutList
     # variant and part - "Charnière Clip Top (En applique, Usinage)". Without
     # a name, the hardware's one - the slot told for other slots than the
     # first : "Mine (b, Usinage)". A linked part is named after the slot it
-    # comes from. nil when there is no such component.
-    def _get_hardware_definition_name(slot, part)
+    # comes from. The given detail is told last - the key of an unnamed
+    # article : "Équerre (body)". nil when there is no such component.
+    def _get_hardware_definition_name(slot, part, detail = nil)
       return nil if (descriptor = _get_hardware_descriptor_def).nil?
       return nil if (component = _get_hardware_component(slot)).nil?
       source_slot = (component.source_slot || slot).to_s
       part_slot = component.part_slots[part.to_s]
-      return _get_hardware_definition_name(part_slot, part) if !part_slot.nil? && part_slot != source_slot  # A linked part : the file - and the definition - of another slot
+      return _get_hardware_definition_name(part_slot, part, detail) if !part_slot.nil? && part_slot != source_slot  # A linked part : the file - and the definition - of another slot
       details = []
       name = component.variant_name || component.name
       if !name.is_a?(String) || name.strip.empty?
@@ -1101,6 +1103,7 @@ module Ladb::OpenCutList
         details << PLUGIN.get_i18n_string("core.hardware_descriptor.variant_#{component.variant}").sub(/\Acore\.hardware_descriptor\.variant_/, '')  # Unknown variants by their key
       end
       details << PLUGIN.get_i18n_string('core.hardware_descriptor.part_machining') if part == :machining
+      details << detail unless detail.nil?
       details.empty? ? name.strip : "#{name.strip} (#{details.join(', ')})"
     end
 
@@ -1330,8 +1333,8 @@ module Ladb::OpenCutList
 
         hardware_a_primitives = hardware_a_definition.nil? ? _get_hardware_component_primitives(:a, :hardware) : nil
         hardware_b_primitives = hardware_b_definition.nil? ? _get_hardware_component_primitives(:b, :hardware) : nil
-        machining_a_primitives = machining_a_definition.nil? ? _get_hardware_component_primitives(:a, :machining) : nil
-        machining_b_primitives = machining_b_definition.nil? ? _get_hardware_component_primitives(:b, :machining) : nil
+        machining_a_primitives = _get_hardware_component_primitives(:a, :machining)   # Beside its SKP too
+        machining_b_primitives = _get_hardware_component_primitives(:b, :machining)
 
         articles_a, contributions_a = _get_articles_geometries(:a, fn_get_definition, fn_get_drawing_def)
         articles_b, contributions_b = _get_articles_geometries(:b, fn_get_definition, fn_get_drawing_def)
@@ -1397,7 +1400,8 @@ module Ladb::OpenCutList
         if geometry.drawing_def
           mt = _get_geometry_mirror_transformation(geometry)
           bounds.add(geometry.drawing_def.bounds.min.transform(mt), geometry.drawing_def.bounds.max.transform(mt))
-        elsif geometry.primitives
+        end
+        if geometry.primitives   # A machining's beside its SKP too
           bounds.add(_get_primitives_bounds(geometry.primitives, geometry.mirror, nil, _height_reversed?(geometry.slot)))
         end
         bounds.add(_get_articles_bounds(geometry)) unless geometry.articles.nil?
@@ -1423,7 +1427,6 @@ module Ladb::OpenCutList
     def _get_articles_geometries(slot, fn_get_definition, fn_get_drawing_def)
       component = _get_hardware_component(slot)
       return [ nil, [] ] if component.nil? || component.articles.nil?
-      descriptor = _get_hardware_descriptor_def
       contributions = []
       articles = component.articles.map { |article|
         if article.use?
@@ -1446,7 +1449,7 @@ module Ladb::OpenCutList
             SubGeometryDef.new(geometry, side == article.host ? IDENTITY : TRANSFORMATION_FLIP_Z)
           }.compact
         else
-          name = article.name.is_a?(String) && !article.name.strip.empty? ? article.name.strip : "#{descriptor.name} (#{article.key})"
+          name = article.name.is_a?(String) && !article.name.strip.empty? ? article.name.strip : _get_hardware_definition_name(slot, :hardware, article.key)   # Unnamed : its slot's name
           definition = article.hardware.is_a?(String) ? fn_get_definition.call(article.hardware, name) : nil
           next nil if article.hardware.is_a?(String) && definition.nil?
           _write_info_attributes(definition, article) unless definition.nil?
@@ -1920,7 +1923,8 @@ module Ladb::OpenCutList
         if geometry.drawing_def
           bounds = geometry.drawing_def.bounds
           [ bounds.min.x, bounds.max.x ].product([ bounds.min.y, bounds.max.y ]).each { |x, y| points << [ sign * x, y ] }
-        elsif !geometry.articles.nil?
+        end
+        if !geometry.articles.nil?
           geometry.articles.each do |article_geometry|
             # Along Y : off the face
             (article_geometry.article.positions(variables) || []).each { |x, y| points << [ sign * x, y ] } unless article_geometry.article.along_y?
@@ -2160,10 +2164,11 @@ module Ladb::OpenCutList
       return _get_articles_preview_segments(geometry, placement) unless geometry.articles.nil?
       if geometry.drawing_def
         segments = geometry.drawing_def.edge_manipulators.flat_map(&:segment) + geometry.drawing_def.curve_manipulators.flat_map(&:segments)
-      elsif geometry.primitives
-        segments = _get_primitives_segments(_get_primitives_dimensions(geometry.primitives, placement, false, _get_geometry_variables(geometry, placement, lift)))
       else
         segments = nil
+      end
+      if geometry.primitives   # A machining's beside its SKP too
+        segments = (segments || []) + _get_primitives_segments(_get_primitives_dimensions(geometry.primitives, placement, false, _get_geometry_variables(geometry, placement, lift)))
       end
       contributions = _get_contributions_dimensions(geometry, placement)
       segments = (segments || []) + _get_primitives_segments(contributions) unless contributions.empty?
@@ -2400,9 +2405,9 @@ module Ladb::OpenCutList
     # see _add_articles.
     def _add_geometry(geometry, placement, material, layer)
       return _add_articles(geometry, placement, material, layer) unless geometry.articles.nil?
-      if !geometry.definition.nil? && !geometry.contributions.nil? && !geometry.contributions.empty?
-        # A SKP machining : what the used connectors drill is laid beside it
-        _add_geometry(GeometriesEntityDef.new(nil, nil, nil, geometry.slot, geometry.part, geometry.mirror, nil, nil, nil, nil, geometry.contributions), placement, material, layer)
+      if !geometry.definition.nil? && (!geometry.primitives.nil? || !geometry.contributions.nil? && !geometry.contributions.empty?)
+        # A SKP machining : its primitives and what the used connectors drill are laid beside it
+        _add_geometry(GeometriesEntityDef.new(nil, nil, geometry.primitives, geometry.slot, geometry.part, geometry.mirror, nil, nil, nil, nil, geometry.contributions), placement, material, layer)
         geometry = GeometriesEntityDef.new(geometry.definition, geometry.drawing_def, nil, geometry.slot, geometry.part, geometry.mirror)
       end
       definition = _get_geometry_definition(geometry, placement, material)
@@ -5717,11 +5722,12 @@ module Ladb::OpenCutList
       geometries_def.hardware_a.empty? ? (geometries_def.machining_a.empty? ? nil : geometries_def.machining_a) : geometries_def.hardware_a
     end
 
-    # Is the given geometry the machining of a hinge without hardware ?
+    # Is the given geometry the machining of a hinge without hardware ? Of
+    # a machining given as a SKP and primitives, its SKP only : one hinge.
     def _hinge_machining?(geometry)
       return false unless geometry.slot == :a && geometry.part == :machining
       component = _get_hardware_component(:a)
-      !component.nil? && component.hardware.nil? && component.articles.nil?
+      !component.nil? && component.hardware.nil? && component.articles.nil? && (!geometry.definition.nil? || !component.machining.is_a?(String))
     end
 
     # The given definition is a hinge : it bears the hinge role whatever its

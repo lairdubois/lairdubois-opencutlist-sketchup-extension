@@ -550,6 +550,20 @@
   min-width: 0;
 }
 
+// The slots a part can be the same as : checked, not pressed - set apart after its add buttons
+.ladb-hardware-editor-part-link {
+
+  &.active {
+    background-color: #fff;
+    box-shadow: none;
+  }
+
+  .ladb-hardware-editor-add-buttons > :not(.ladb-hardware-editor-part-link) + & {
+    margin-left: 6px;
+  }
+
+}
+
 // Kinematics of a hinge
 
 .ladb-hardware-editor-slot-subtitle {

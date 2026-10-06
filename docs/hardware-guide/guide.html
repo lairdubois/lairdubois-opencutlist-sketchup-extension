@@ -75,7 +75,7 @@
 <table>
   <tr><th style="width:16%">Onglet</th><th>Contenu</th></tr>
   <tr><td>Réglages</td><td>le nom, les réglages publiés (section 6) et les options de l'outil</td></tr>
-  <tr><td>Pièces</td><td>par slot, et par variante pour une charnière : <i>Aucune</i>, <i>Fichier SKP</i>, <i>Primitives</i>, <i>Articles</i> ou <i>Même que</i> l'autre slot. Pour un SKP : choisir un fichier, le transformer (rotations, miroir, centrage), ou le <b>Créer / Modifier</b> dans SketchUp</td></tr>
+  <tr><td>Pièces</td><td>par slot, et par variante pour une charnière, deux listes sans menu de type : la <b>pièce</b>, une liste d'articles (section 8), et l'<b>usinage</b>, un SKP suivi de ses primitives. Une liste vide n'est pas posée ; tant qu'elle est vide, la case <i>Même que</i> la reprend de l'autre slot. Pour un SKP : choisir un fichier, le transformer (rotations, miroir, centrage), ou le <b>Créer / Modifier</b> dans SketchUp</td></tr>
   <tr><td>JSON</td><td>le descripteur entier ; chaque modification recalcule le banc et affiche les erreurs</td></tr>
 </table>
 <p><b>Créer / Modifier dans SketchUp</b> pose un banc temporaire à côté de ton modèle et ouvre la pièce en édition, ses axes étant le repère de pose (section 9). Une petite palette <b>Terminer / Annuler</b> remplace l'éditeur ; à la fin, le banc quitte le modèle et la pièce est enregistrée à la validation.</p>
@@ -221,6 +221,7 @@
   <tr><td><code>"chemin/fichier.skp"</code></td><td>un SKP partagé entre quincailleries, chemin relatif au dossier <code>components</code> de la bibliothèque, p. ex. <code>"hinges/hettich/cuvette-35.skp"</code></td></tr>
   <tr><td><code>{ "same_as": "a" }</code></td><td>la même partie que celle du slot <code>a</code></td></tr>
   <tr><td><code>{ "body": {…}, "screws": {…} }</code></td><td>(hardware seulement) plusieurs articles, chacun sous sa clé (section 8)</td></tr>
+  <tr><td><code>{ "skp": true, "drillings": […] }</code></td><td>(machining seulement) un SKP et des usinages générés, posés ensemble ; <code>"skp"</code> vaut <code>true</code> (le SKP conventionnel) ou un chemin partagé</td></tr>
   <tr><td>absente, <code>null</code>, <code>false</code></td><td>pas de cette partie</td></tr>
 </table>
 
@@ -264,7 +265,7 @@
 <p>Attributs lus par l'action <b>Interagir</b> (ouvrir la porte) : <code>role</code> = <code>"hinge"</code>, <code>hinge_max_angle</code> (degrés), <code>hinge_pivot</code> = [y, z], deux longueurs dans le repère de pose (Y vers le chant de rotation de la porte, Z vers le caisson) ; l'onglet Pièces de l'éditeur les règle sous « Cinématique de la charnière », <code>hinge_pivot_approximate</code> (booléen).</p>
 
 <h3>Nom des pièces dans la fiche de débit</h3>
-<p>La pièce posée prend le <code>name</code> du composant, remplacé par celui de la variante s'il existe ; une variante sans <code>name</code> ajoute son libellé entre parenthèses. L'usinage ajoute « (Usinage) ». Un composant sans <code>name</code> prend le nom de la quincaillerie, suivi du slot pour <code>b</code> : « Tourillon 8x30 (b, Usinage) ». Le nom est réappliqué à chaque pose : un renommage dans le JSON se propage au modèle.</p>
+<p>La pièce posée prend le <code>name</code> du composant, remplacé par celui de la variante s'il existe ; une variante sans <code>name</code> ajoute son libellé entre parenthèses. L'usinage ajoute « (Usinage) ». Un composant sans <code>name</code> prend le nom de la quincaillerie, suivi du slot pour <code>b</code> : « Tourillon 8x30 (b, Usinage) ». Un article sans <code>name</code> (section 8) prend le nom de son composant suivi de sa clé : « Équerre 40x40 (body) ». Le nom est réappliqué à chaque pose : un renommage dans le JSON se propage au modèle.</p>
 
 <!-- ================================================================ -->
 <h2 class="page">5. Géométrie paramétrique</h2>
@@ -413,7 +414,8 @@
 
 <!-- ================================================================ -->
 <h2>8. Composition : les articles</h2>
-<p>Une quincaillerie peut poser <b>plusieurs pièces par slot</b>, chacune sa propre ligne dans la fiche de débit : une équerre et ses vis donnent « Équerre 40x40 × 1 » et « Screw 4x16 × 4 ». La partie <code>hardware</code> d'un composant devient alors un objet d'<b>articles</b>, chacun sous une clé. Dans l'éditeur, c'est le choix <i>Articles</i> de l'onglet Pièces.</p>
+<p>Une quincaillerie peut poser <b>plusieurs pièces par slot</b>, chacune sa propre ligne dans la fiche de débit : une équerre et ses vis donnent « Équerre 40x40 × 1 » et « Screw 4x16 × 4 ». La partie <code>hardware</code> d'un composant devient alors un objet d'<b>articles</b>, chacun sous une clé.</p>
+<p>Dans l'onglet Pièces de l'éditeur, la pièce est <b>toujours une liste d'articles</b>. Une pièce simple (<code>true</code>, un chemin, des primitives) y apparaît comme un seul article <code>body</code>, et le JSON garde cette forme courte tant que l'article n'a ni position, ni nom propre, ni second article : la pièce est alors posée seule, sans groupe. Cet article n'a pas de champ Nom, il porte celui du composant, et ses prix et masse sont ceux du composant. Dès qu'il faut la forme longue, l'éditeur déplace la description, le prix, l'url et la masse du composant dans <code>body</code> (le groupe des articles n'en porte aucun), et les y remet au retour à la forme courte.</p>
 <pre>{
   "format": "ocl-hardware",
   "version": 1,
@@ -450,7 +452,7 @@
 }</pre>
 <ul>
   <li><b>Clé</b> : lettres minuscules, chiffres, <code>-</code> et <code>_</code>, en commençant par une lettre, unique dans le slot ; pas le nom d'un champ d'article (<code>name</code>, <code>skp</code>, <code>use</code>, <code>at</code>…). Elle nomme le fichier d'un article <code>"skp": true</code> : <code>a.body.skp</code>.</li>
-  <li><b>Article propre</b> : ses champs de fiche de débit (<code>name</code>, <code>description</code>, <code>price</code>, <code>url</code>, <code>mass</code>) et sa géométrie, un SKP (<code>"skp"</code> : <code>true</code> ou un chemin partagé) ou des primitives (<code>cylinders</code>, <code>oblongs</code>, <code>prisms</code>).</li>
+  <li><b>Article propre</b> : ses champs de fiche de débit (<code>name</code>, <code>description</code>, <code>price</code>, <code>url</code>, <code>mass</code> ; sans <code>name</code>, celui du composant suivi de la clé) et sa géométrie, un SKP (<code>"skp"</code> : <code>true</code> ou un chemin partagé) ou des primitives (<code>cylinders</code>, <code>oblongs</code>, <code>prisms</code>).</li>
   <li><b>Article de bibliothèque</b> : <code>use</code> désigne un <code>connector</code> concret, par son chemin comme pour <code>extends</code>. Son nom, son prix et ses asserts sont ceux du connecteur, évalués à chaque position : un seul en échec refuse la position. <code>host</code> (<code>a</code> ou <code>b</code>) dit quel côté du connecteur est notre panneau ; l'autre côté est virtuel, <code>measures</code> donne son épaisseur (<code>thickness_b</code> ici : l'épaisseur de l'équerre). <code>variables</code> ne change que les valeurs de ses réglages. Son usinage côté <code>host</code> s'ajoute à celui du slot.</li>
   <li><b>Positions</b> : <code>at</code> liste des <code>{ x, y, z }</code> dans le repère du slot (longueurs ou expressions, 0 par défaut) ; absent, une position à l'origine. La géométrie d'un article est dessinée autour de sa propre origine. <code>z</code> décale l'article hors de la face : négatif, il s'enfonce (dans une poche) ; positif, il se surélève (sur une cale). C'est ainsi qu'on décale une quincaillerie : un article unique avec son <code>at</code>. Pour un article de bibliothèque, l'épaisseur côté <code>host</code> perd ce qu'il s'enfonce.</li>
   <li>Seuls les types autres que <code>connector</code> peuvent utiliser un connecteur. Un connecteur utilisé ne peut pas être supprimé ; le renommer dans l'éditeur réécrit les <code>use</code> qui le désignent.</li>

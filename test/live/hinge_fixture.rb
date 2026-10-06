@@ -75,16 +75,20 @@ module HingeFixture
   # in the side. hardware : false for a hinge made of its machining only ;
   # pivot : false for one without its pivot - it can't turn ; articles : its
   # hardware made of articles - the cup and its two pins, each a part of its
-  # own.
-  def self.descriptor(id, hardware: true, pivot: true, articles: false)
+  # own ; machining_skp : the cup drilled by that SKP file - see
+  # write_machining_skp - beside its screw holes, given as primitives.
+  def self.descriptor(id, hardware: true, pivot: true, articles: false, machining_skp: nil)
     cup = lambda do |y, screws_y|
-      item = {
-        'machining' => { 'drillings' => [
-          { 'y' => y, 'diameter' => '35mm', 'depth' => '13mm' },
-          { 'x' => '-22.5mm', 'y' => screws_y, 'diameter' => '8mm', 'depth' => '13mm' },
-          { 'x' => '22.5mm', 'y' => screws_y, 'diameter' => '8mm', 'depth' => '13mm' },
-        ] },
-      }
+      drillings = [
+        { 'x' => '-22.5mm', 'y' => screws_y, 'diameter' => '8mm', 'depth' => '13mm' },
+        { 'x' => '22.5mm', 'y' => screws_y, 'diameter' => '8mm', 'depth' => '13mm' },
+      ]
+      if machining_skp.nil?
+        machining = { 'drillings' => [ { 'y' => y, 'diameter' => '35mm', 'depth' => '13mm' } ] + drillings }
+      else
+        machining = { 'skp' => machining_skp, 'drillings' => drillings }
+      end
+      item = { 'machining' => machining }
       item['hardware'] = { 'cylinders' => [ { 'y' => y, 'diameter' => '35mm', 'from' => '-11.5mm', 'to' => '0mm' } ] } if hardware
       if articles
         item['hardware'] = {
@@ -122,6 +126,24 @@ module HingeFixture
     path = File.join(dir, "#{data['id']}.json")
     File.write(path, JSON.generate(data))
     path
+  end
+
+  # Writes in the given folder the SKP file of a 35 mm cup drilling - 13 mm
+  # deep toward -Z, at the y of an overlay hinge - that cuts its opening :
+  # its name, the ref a descriptor of that folder gives it.
+  MACHINING_SKP = 'cup.machining.skp'
+
+  def self.write_machining_skp(model, dir)
+    definition = model.definitions.add('Hinge fixture cup')
+    edges = definition.entities.add_circle(Geom::Point3d.new(0, -6.5.mm, 0), Z_AXIS, 17.5.mm, 24)
+    face = definition.entities.add_face(edges)
+    face.reverse! if face.normal.z > 0
+    face.pushpull(13.mm)
+    definition.behavior.is2d = true
+    definition.behavior.cuts_opening = true
+    definition.save_as(File.join(dir, MACHINING_SKP))
+    model.definitions.remove(definition)   # Else its GUID would be reused when loaded
+    "./#{MACHINING_SKP}"
   end
 
   # The caisson, as { 'caisson' => instance, 'DOOR' => instance, 'SIDE_L' => … }.

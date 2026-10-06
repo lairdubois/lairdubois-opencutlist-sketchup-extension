@@ -13,6 +13,9 @@
 #  - machining   : a machining only - it bears the hinge ;
 #  - articles    : hardware made of articles - the cup, its pins - in a
 #                  group bearing the hinge ;
+#  - mixed       : a machining only, its cup a SKP file beside its screw
+#                  holes given as primitives - both laid, the SKP alone
+#                  bears the hinge ;
 #  - clip_top    : the bundled Blum Clip Top, SKP files ;
 #  - shelf       : "full" on a caisson with a fixed shelf flush with the
 #                  front right behind the centre of the door - and the
@@ -48,6 +51,7 @@ module HingesRegression
     'bare' => HingeFixture.descriptor('bare', pivot: false),
     'machining' => HingeFixture.descriptor('machining', hardware: false),
     'articles' => HingeFixture.descriptor('articles', articles: true),
+    'mixed' => HingeFixture.descriptor('mixed', hardware: false, machining_skp: "./#{HingeFixture::MACHINING_SKP}"),
     'clip_top' => '$OCL/hinges/blum/clip-top.json',
     'shelf' => HingeFixture.descriptor('shelf'),
     'shelves' => HingeFixture.descriptor('shelves'),
@@ -67,6 +71,7 @@ module HingesRegression
     'bare' => { 'laid' => { 'hinges' => 2, 'door' => false, 'door_entities' => 4, 'side_l' => 2, 'side_r' => 0 } },
     'machining' => { 'laid' => { 'hinges' => 2, 'door' => true, 'door_entities' => 2, 'side_l' => 2, 'side_r' => 0 } },
     'articles' => { 'laid' => { 'hinges' => 2, 'door' => true, 'door_entities' => 4, 'side_l' => 2, 'side_r' => 0 } },
+    'mixed' => { 'laid' => { 'hinges' => 2, 'door' => true, 'door_entities' => 4, 'side_l' => 2, 'side_r' => 0 } },
     'clip_top' => { 'laid' => { 'hinges' => 2, 'door' => true, 'door_entities' => 4, 'side_l' => 4, 'side_r' => 0 } },
     'shelf' => { 'laid' => { 'hinges' => 2, 'door' => true, 'door_entities' => 4, 'side_l' => 2, 'side_r' => 0 } },
     'shelves' => { 'laid' => { 'hinges' => 2, 'door' => true, 'door_entities' => 4, 'side_l' => 2, 'side_r' => 0 } },
@@ -104,6 +109,7 @@ module HingesRegression
     model = Sketchup.active_model
     results = {}
     HingeFixture.aborted(model) do |dir|
+      HingeFixture.write_machining_skp(model, dir)
       CASES.each do |id, descriptor|
         ref = descriptor.is_a?(Hash) ? HingeFixture.write_descriptor(dir, descriptor) : descriptor
         begin

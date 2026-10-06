@@ -408,6 +408,64 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     _assert_error(_with(CONVENTION, 'components' => { 'a' => { 'machining' => { 'same_as' => 'z' } } }), 'machining links to unknown slot')
   end
 
+  # -- Machining : a SKP and primitives --
+
+  def test_machining_skp_beside_primitives
+    drillings = { 'drillings' => [ { 'x' => -24, 'diameter' => 8, 'depth' => 10 } ] }
+    data = _with(CONVENTION, 'type' => 'connector', 'components' => {
+      'a' => { 'name' => 'Domino', 'hardware' => true, 'machining' => { 'skp' => true }.merge(drillings) },
+      'b' => { 'machining' => { 'same_as' => 'a' } }
+    })
+    descriptor = _def(data, nil, '$OCL/connectors/festool/domino-5x30.json')
+    assert(descriptor.valid?, descriptor.errors.inspect)
+    [ 'a', 'b' ].each do |slot|
+      component = descriptor.resolve_component(slot)
+      assert_equal('$OCL/components/connectors/festool/domino-5x30/a.machining.skp', component.machining)
+      assert_equal(_mm(drillings), component.machining_primitives)
+    end
+  end
+
+  def test_machining_short_forms
+    drillings = { 'drillings' => [ { 'diameter' => 5, 'depth' => 'through' } ] }
+    data = _with(CONVENTION, 'type' => 'connector', 'components' => {
+      'a' => { 'hardware' => true, 'machining' => drillings },
+      'b' => { 'hardware' => true, 'machining' => { 'skp' => 'connectors/cup.skp' } }
+    })
+    descriptor = _def(data, nil, '$LIB/connectors/mine.json')
+    assert(descriptor.valid?, descriptor.errors.inspect)
+    a = descriptor.resolve_component('a')
+    assert_equal(_mm(drillings), a.machining)   # Primitives alone : as before
+    assert_equal(_mm(drillings), a.machining_primitives)
+    b = descriptor.resolve_component('b')
+    assert_equal('$LIB/components/connectors/cup.skp', b.machining)
+    assert_nil(b.machining_primitives)
+  end
+
+  def test_machining_skp_is_inherited_by_key
+    parent = _with(CONVENTION, 'type' => 'connector', 'components' => {
+      'a' => { 'hardware' => true, 'machining' => { 'skp' => true, 'drillings' => [ { 'diameter' => 8, 'depth' => 10 } ] } },
+      'b' => { 'hardware' => true }
+    })
+    _with_library({ 'connectors/base.json' => parent }) do
+      redrilled = { 'drillings' => [ { 'diameter' => 5, 'depth' => 12 } ] }
+      child = _def(_child('connectors/base.json', 'components' => { 'a' => { 'machining' => redrilled } }), nil, '$LIB/child.json')
+      component = child.resolve_component('a')
+      assert_equal('$LIB/components/connectors/base/a.machining.skp', component.machining)   # The parent's file
+      assert_equal(_mm(redrilled), component.machining_primitives)
+      dropped = _def(_child('connectors/base.json', 'components' => { 'a' => { 'machining' => { 'skp' => nil } } }), nil, '$LIB/child.json')
+      component = dropped.resolve_component('a')
+      assert_equal(_mm('drillings' => [ { 'diameter' => 8, 'depth' => 10 } ]), component.machining)
+      assert_equal(component.machining, component.machining_primitives)
+    end
+  end
+
+  def test_invalid_machining_skp
+    _assert_error(_with(CONVENTION, 'components' => { 'a' => { 'machining' => { 'skp' => 3 } } }), 'machining skp is neither true nor a path')
+    _assert_error(_with(CONVENTION, 'components' => { 'a' => { 'machining' => { 'skp' => true, 'holes' => [] } } }), "machining has an unknown primitive 'holes'")
+    _assert_error(_with(CONVENTION, 'components' => { 'a' => { 'hardware' => { 'skp' => true, 'cylinders' => [ { 'diameter' => 8, 'from' => -10, 'to' => 10 } ] } } }),
+                  'hardware has a skp and primitives : give them as articles')
+  end
+
   # -- Data --
 
   def test_root_data

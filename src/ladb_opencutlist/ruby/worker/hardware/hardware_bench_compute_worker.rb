@@ -216,6 +216,10 @@ module Ladb::OpenCutList
         value = component.send(part)
         next if value.nil?
         part_matrix = _multiply(slot_matrix, mirror)
+        if value.is_a?(String)
+          response[:skps] << { :slot => slot, :part => part, :ref => value, :variant => component.variant, :transformation => part_matrix }
+          value = part == HardwareDescriptorDef::PART_MACHINING ? component.machining_primitives : nil   # Its primitives beside it
+        end
         if HardwareDescriptorDef.primitives?(value)
           # Each primitive alone : its solid known by its key and index
           primitives = response[:slots][slot][:component][:primitives] ||= {}
@@ -272,8 +276,6 @@ module Ladb::OpenCutList
           end
           count = HardwareDescriptorDef::PRIMITIVES[part].inject(0) { |sum, key| sum + (value[key].is_a?(Array) ? value[key].count { |item| item.is_a?(Hash) } : 0) }
           response[:slots][slot][:component][:"#{part}_unresolved"] = count - cylinders.length
-        else
-          response[:skps] << { :slot => slot, :part => part, :ref => value, :variant => component.variant, :transformation => part_matrix }
         end
       end
       _articles(bench_def, slot, component, variables, _multiply(slot_matrix, mirror), response) unless component.articles.nil?

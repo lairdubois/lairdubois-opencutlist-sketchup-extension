@@ -98,6 +98,8 @@ module Ladb::OpenCutList
         value.each do |key, v|
           if HardwareDescriptorDef::PARTS.include?(key) && _shared_file?(v)
             files << v
+          elsif key == HardwareDescriptorDef::PART_MACHINING && v.is_a?(Hash) && _shared_file?(v[HardwareDescriptorDef::MACHINING_SKP])
+            files << v[HardwareDescriptorDef::MACHINING_SKP]   # Beside its primitives
           else
             _shared_part_files(v, files)
           end

@@ -272,6 +272,10 @@ module Ladb::OpenCutList
         HardwareDescriptorDef::PARTS.each do |part|
           names << HardwareDescriptorDef.part_file_name(slot, variant, part) if value[part] == true
         end
+        machining = value[HardwareDescriptorDef::PART_MACHINING]
+        if machining.is_a?(Hash) && machining[HardwareDescriptorDef::MACHINING_SKP] == true   # Beside its primitives
+          names << HardwareDescriptorDef.part_file_name(slot, variant, HardwareDescriptorDef::PART_MACHINING)
+        end
       end
       components.each do |slot, value|
         next unless value.is_a?(Hash)

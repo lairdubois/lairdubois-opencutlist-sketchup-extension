@@ -46,6 +46,14 @@ module Ladb::OpenCutList
   #  - absent, null or false : none.
   # '$LIB/…', '$OCL/…' and './…' refs - and definition names - are still read.
   #
+  # A machining is a SKP and primitives at once - see <primitives> below :
+  # { "skp": <part>, "drillings": [ … ] } lays both, each glued to the face.
+  # "skp" is a <part> - true names "<slot>[.<variant>].machining.skp".
+  # true, a path or primitives alone are the short forms of it. Inherited,
+  # it merges by key : a child redefines the drillings, keeping its
+  # parent's SKP, or drops it with "skp": null. A hardware can't : its SKP
+  # and its primitives would be two parts, see ARTICLES.
+  #
   # The hardware part can instead hold several ARTICLES - each its own part
   # in the cut list - as an object keyed by short names, unique in the slot
   # (ARTICLE_KEY_PATTERN, never one of ARTICLE_FIELDS - that tells it from
@@ -57,8 +65,8 @@ module Ladb::OpenCutList
   #                  "variables": { "length": { "value": "18mm" } },
   #                  "at": [ { "x": -8, "y": "-@hole_distance" }, { "x": 8, "y": "-@hole_distance" } ] }
   #    }
-  # An article gives its info fields - as a component - and its geometry,
-  # one of :
+  # An article gives its info fields - as a component, unnamed : its slot's
+  # name and its key, "Angle bracket (body)" - and its geometry, one of :
   #  - "skp" : true - the file named after the slot and its key, see
   #    article_file_name - or a shared path, as a part ;
   #  - primitives : "cylinders", "oblongs", "prisms" ;
@@ -226,6 +234,9 @@ module Ladb::OpenCutList
     PART_HARDWARE = 'hardware'.freeze
     PART_MACHINING = 'machining'.freeze
     PARTS = [ PART_HARDWARE, PART_MACHINING ].freeze
+
+    # The SKP of a machining beside its primitives - see "machining" above
+    MACHINING_SKP = 'skp'.freeze
 
     # What the cut list reads of a laid hardware definition
     INFO_KEYS = %w[name description price url mass].freeze
@@ -471,6 +482,7 @@ module Ladb::OpenCutList
     #  - slot : the slot asked for ; source_slot : the one whose component
     #    it is - they differ through same_as / mirror_of ;
     #  - hardware, machining : ref String, nil - or a Hash of primitives ;
+    #    a machining given as a SKP and primitives is its SKP's ref ;
     #  - mirror : true when the geometry is laid mirrored (mirror_of) ;
     #  - stretch : the component's "stretch" Hash, or nil ;
     #  - variant : the key of the picked variant, or nil ;
@@ -481,9 +493,12 @@ module Ladb::OpenCutList
     #  - part_slots : the slot whose component each part - 'hardware',
     #    'machining' - comes from, another one when the part is linked ;
     #  - articles : its hardware's articles - HardwareArticleDefs, hardware
-    #    then nil - or nil when the hardware is a single part.
+    #    then nil - or nil when the hardware is a single part ;
+    #  - machining_primitives : the Hash of primitives of its machining -
+    #    alone or beside a SKP - nil when it has none.
     HardwareComponentDef = Struct.new(:slot, :source_slot, :hardware, :machining, :mirror, :stretch, :variant, :attributes,
-                                      :name, :variant_name, :description, :price, :url, :mass, :part_slots, :articles)
+                                      :name, :variant_name, :description, :price, :url, :mass, :part_slots, :articles,
+                                      :machining_primitives)
 
     # An article of a hardware - see "hardware" above :
     #  - key : its key in the slot ;
@@ -1522,6 +1537,10 @@ module Ladb::OpenCutList
           fn_part_keys = PARTS
         end
         fn_part_keys.each { |part| value[part] = fn_part.call(slot, variant, part, value[part]) if value.key?(part) }
+        machining = value[PART_MACHINING]
+        if machining.is_a?(Hash) && machining.key?(MACHINING_SKP)
+          machining[MACHINING_SKP] = fn_part.call(slot, variant, PART_MACHINING, machining[MACHINING_SKP])
+        end
       end
       if data['options'].is_a?(Hash)
         MATERIAL_OPTIONS.each { |name| data['options'][name] = fn_ref.call(data['options'][name]) if data['options'].key?(name) }
@@ -1616,7 +1635,7 @@ module Ladb::OpenCutList
         own_info = _info(value)
         merged_info = info.merge(own_info)   # The variant's over the component's
         hardware, hardware_slot, articles = _resolve_part(slot, variant, PART_HARDWARE, value[PART_HARDWARE], context, visited)
-        machining, machining_slot = _resolve_part(slot, variant, PART_MACHINING, value[PART_MACHINING], context, visited)
+        machining, machining_slot, _, machining_primitives = _resolve_part(slot, variant, PART_MACHINING, value[PART_MACHINING], context, visited)
         return HardwareComponentDef.new(
           slot, slot,
           hardware, machining,
@@ -1625,7 +1644,8 @@ module Ladb::OpenCutList
           variant.nil? ? nil : own_info['name'],
           merged_info['description'], merged_info['price'], merged_info['url'], merged_info['mass'],
           { PART_HARDWARE => hardware_slot, PART_MACHINING => machining_slot },
-          articles
+          articles,
+          machining_primitives
         )
       end
       return nil if resolved.nil?
@@ -1640,21 +1660,30 @@ module Ladb::OpenCutList
 
     # The ref of the given part of the given slot's component - or of its
     # given variant - nil when there is none, the slot whose component the
-    # part comes from, and its articles - nil when it isn't made of some :
-    # [ ref, slot, articles ].
+    # part comes from, its articles - nil when it isn't made of some - and
+    # the primitives of a machining - nil when it has none :
+    # [ ref, slot, articles, primitives ]. A machining given as a SKP and
+    # primitives has its SKP's ref - its primitives' Hash without one.
     def _resolve_part(slot, variant, part, value, context, visited)
       if value.is_a?(Hash) && value.key?('same_as')
         resolved = _resolve_component(value['same_as'].to_s, context, false, visited)
-        return [ nil, nil, nil ] if resolved.nil?
+        return [ nil, nil, nil, nil ] if resolved.nil?
         articles = part == PART_HARDWARE ? resolved.articles : nil
-        return [ resolved.send(part), resolved.part_slots[part], articles ]
+        primitives = part == PART_MACHINING ? resolved.machining_primitives : nil
+        return [ resolved.send(part), resolved.part_slots[part], articles, primitives ]
       end
       if part == PART_HARDWARE && self.class.articles?(value)
         articles = _resolve_articles(slot, variant, value)
-        return [ nil, articles.empty? ? nil : slot, articles ]
+        return [ nil, articles.empty? ? nil : slot, articles, nil ]
+      end
+      if part == PART_MACHINING && value.is_a?(Hash) && value.key?(MACHINING_SKP)
+        primitives = value.reject { |key, _| key == MACHINING_SKP }
+        primitives = nil if primitives.empty?
+        ref = _resolve_part_ref(slot, variant, part, value[MACHINING_SKP]) || primitives
+        return [ ref, ref.nil? ? nil : slot, nil, primitives ]
       end
       ref = _resolve_part_ref(slot, variant, part, value)
-      [ ref, ref.nil? ? nil : slot, nil ]
+      [ ref, ref.nil? ? nil : slot, nil, part == PART_MACHINING && ref.is_a?(Hash) ? ref : nil ]
     end
 
     # The articles of the given slot's component - or of its given variant -
@@ -1996,6 +2025,16 @@ module Ladb::OpenCutList
       end
       if part == PART_HARDWARE && self.class.articles?(value)
         _validate_articles(path, value, errors)
+        return true
+      end
+      if value.is_a?(Hash) && value.key?(MACHINING_SKP)
+        skp = value[MACHINING_SKP]
+        if part == PART_HARDWARE
+          errors << "component '#{path}' hardware has a skp and primitives : give them as articles"
+        elsif !(skp == true || skp.is_a?(String) && !skp.strip.empty?)
+          errors << "component '#{path}' machining skp is neither true nor a path"
+        end
+        _validate_primitives(path, part, value.reject { |key, _| key == MACHINING_SKP }, errors)
         return true
       end
       if value.is_a?(Hash)

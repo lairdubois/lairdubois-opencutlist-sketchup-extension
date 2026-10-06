@@ -1519,6 +1519,9 @@ const fnIsBenchSolidSelected = function (mesh) {
     if (benchSelectedSolid.article && benchSelectedSolid.key === undefined) {
         return primitive.slot === benchSelectedSolid.slot && primitive.article === benchSelectedSolid.article;
     }
+    if (!benchSelectedSolid.article && benchSelectedSolid.key === undefined) {   // A whole part - its short form's article
+        return primitive.slot === benchSelectedSolid.slot && !primitive.article && primitive.part === benchSelectedSolid.part;
+    }
     return primitive.slot === benchSelectedSolid.slot
         && primitive.article === benchSelectedSolid.article
         && primitive.part === benchSelectedSolid.part
