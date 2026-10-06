@@ -321,7 +321,7 @@ core:
     bundled: Bibliothèque OCL
     family_modules: Modules
     family_connectors: Connecteurs
-    family_fittings: Ferrures
+    family_fittings: Raccords
     family_hinges: Charnières
   # DEV only
   hardware_descriptor:
