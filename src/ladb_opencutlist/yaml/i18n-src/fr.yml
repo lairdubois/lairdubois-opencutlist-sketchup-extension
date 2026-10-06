@@ -518,7 +518,9 @@ core:
     placement_help: Appliqué au fichier SKP à l'enregistrement, le JSON ne garde aucune transformation. Face d'appui à z = 0, corps vers −Z.
     settings_variables: Variables
     settings_tool_options: Options de l'outil
-    settings_tool_options_help: Les valeurs que l'outil Assembler prend à la sélection de cette quincaillerie
+    settings_tool_options_help: Les valeurs que l'outil Assembler prend avec cette quincaillerie. Vide, l'outil garde la sienne ; retouchée dans l'outil, la valeur ne vaut que pour cette quincaillerie
+    tool_options_materials: Matières
+    tool_options_layers: Balises
     settings_properties: Propriétés
     no_settings: Aucune variable n'est publiée pour cette quincaillerie
     error:
@@ -3029,17 +3031,28 @@ tool:
     action_option_hardware_hinge_overlay_a: Charnière (en applique)
     action_option_hardware_hinge_inset_a: Charnière (encastrée)
     action_option_hardware_hinge_half_overlay_a: Charnière (jumelée)
-    action_option_hardware_connector_material_name: Matière des Connecteurs
-    action_option_hardware_fitting_material_name: Matière des Raccords
-    action_option_hardware_hinge_material_name: Matière des Charnières
-    action_option_machining_material_name: Matière des Usinages
-    action_option_hardware_connector_layer_name: Balise des Connecteurs
-    action_option_hardware_fitting_layer_name: Balise des Raccords
-    action_option_hardware_hinge_layer_name: Balise des Charnières
-    action_option_machining_layer_name: Balise des Usinages
+    action_option_hardware_material_name: Accessoires
+    action_option_hardware_material_name_status: Matière à appliquer aux accessoires de la quincaillerie
+    action_option_machining_material_name: Usinages
+    action_option_machining_material_name_status: Matière à appliquer aux usinages
+    action_option_hardware_layer_name: Accessoires
+    action_option_hardware_layer_name_status: Balise à appliquer aux accessoires de la quincaillerie
+    action_option_machining_layer_name: Usinages
+    action_option_machining_layer_name_status: Balise à appliquer aux usinages
+    action_option_hardware_value: valeur de la quincaillerie « {{ name }} »
+    action_option_hardware_value_help: |
+      Valeur de la quincaillerie « {{ name }} ». 
+      Valeur par défaut de l'outil : {{ base }}
+    action_option_hardware_override: retouchée, la quincaillerie « {{ name }} » donne {{ value }}
+    action_option_hardware_override_help: |
+      Retouchée pour « {{ name }} », qui donne {{ value }}.
+      Valeur par défaut de l'outil : {{ base }}
+    action_option_hardware_reset: Revenir à la valeur de la quincaillerie
+    action_option_hardware_none: aucune
     select_hardware_status: Sélectionnez une quincaillerie dans la bibliothèque
     measures: Mesures
-    geometries: Géométries
+    materials: Matières
+    layers: Balises
     error:
       invalid_height: "La hauteur {{ value }} est invalide"
       invalid_start_offset: "Le décalage de début {{ value }} est invalide"

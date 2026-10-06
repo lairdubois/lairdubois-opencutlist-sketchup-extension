@@ -340,21 +340,26 @@
     };
 
     // The options of SmartJoin a descriptor of each type gives the defaults
-    // of - its 'options' - by group, as the tool shows them.
+    // of - its 'options' - by group, as the tool shows them. A text group
+    // holds names - materials, layers - not lengths.
+    const TOOL_OPTION_TEXT_GROUPS = [
+        { group: 'materials', text: true, options: [ 'hardware_material_name', 'machining_material_name' ] },
+        { group: 'layers', text: true, options: [ 'hardware_layer_name', 'machining_layer_name' ] },
+    ];
     const TOOL_OPTION_GROUPS = {
         connector: [
             { group: 'height', options: [ 'height' ] },
             { group: 'offsets', options: [ 'start_offset', 'end_offset' ] },
             { group: 'spacings', options: [ 'min_spacing', 'max_spacing' ] },
-        ],
+        ].concat(TOOL_OPTION_TEXT_GROUPS),
         fitting: [
             { group: 'offsets', options: [ 'start_offset', 'end_offset' ] },
             { group: 'spacings', options: [ 'min_spacing', 'max_spacing' ] },
-        ],
+        ].concat(TOOL_OPTION_TEXT_GROUPS),
         hinge: [
             { group: 'offsets', options: [ 'start_offset', 'end_offset' ] },
             { group: 'spacings', options: [ 'min_spacing', 'max_spacing' ] },
-        ],
+        ].concat(TOOL_OPTION_TEXT_GROUPS),
     };
 
     // CodeMirror mode of the descriptor : JSON, its keys apart, the @variables
@@ -985,7 +990,7 @@
                 const $formGroup = $('<div class="form-group">');
                 const $control = $('<div class="col-xs-7 ladb-hardware-editor-tool-options">');
                 $formGroup
-                    .append($('<label class="control-label col-xs-4">').text(i18next.t('tool.smart_join.action_option_group_' + optionGroup.group)))
+                    .append($('<label class="control-label col-xs-4">').text(i18next.t(optionGroup.text ? 'core.hardware_editor.tool_options_' + optionGroup.group : 'tool.smart_join.action_option_group_' + optionGroup.group)))
                     .append($control);
                 for (const name of optionGroup.options) {
                     const value = options[name] === undefined || options[name] === null ? '' : String(options[name]);
@@ -994,22 +999,39 @@
                     const $field = $('<div class="ladb-hardware-editor-tool-option-field">').append($input);
                     const $option = $('<div class="ladb-hardware-editor-tool-option">').append($field);
                     this.appendInheritanceIcon($field, this.inheritanceState([ 'options', name ], options[name] !== undefined), [ 'options', name ]);
-                    if (value === '' && inheritedValue !== '') {
-                        $input.attr('placeholder', fnLengthText(inheritedValue));   // Typed : overridden
+                    if (optionGroup.text) {
+                        // A name : empty, the option removed - inherited again
+                        if (value === '' && inheritedValue !== '') {
+                            $input.attr('placeholder', inheritedValue);   // Typed : overridden
+                        }
+                        $input
+                            .val(value)
+                            .on('change', function () {
+                                const newValue = $(this).val().trim();
+                                if (newValue !== value) {
+                                    that.setOptionValue(name, newValue);
+                                }
+                            });
+                    } else {
+                        if (value === '' && inheritedValue !== '') {
+                            $input.attr('placeholder', fnLengthText(inheritedValue));   // Typed : overridden
+                        }
+                        $input
+                            .val(fnLengthText(value))
+                            .ladbTextinputDimension({ resetValue: '' })   // Reset : the option removed - inherited again
+                            .on('change', function () {
+                                const newValue = fnLengthJson($(this).val().trim());
+                                if (newValue !== value) {
+                                    that.setOptionValue(name, newValue);
+                                }
+                            });
                     }
-                    $input
-                        .val(fnLengthText(value))
-                        .ladbTextinputDimension({ resetValue: '' })   // Reset : the option removed - inherited again
-                        .on('change', function () {
-                            const newValue = fnLengthJson($(this).val().trim());
-                            if (newValue !== value) {
-                                that.setOptionValue(name, newValue);
-                            }
-                        });
                     if (this.readonly) {
                         $('input', $option).prop('disabled', true);
                     }
-                    if (optionGroup.options.length > 1) {
+                    if (optionGroup.text) {
+                        $option.append($('<div class="help-block">').text(i18next.t('tool.smart_join.action_option_' + name)));
+                    } else if (optionGroup.options.length > 1) {
                         $option.append($('<div class="help-block">').text(i18next.t('tool.smart_join.action_option_' + optionGroup.group + '_' + name)));
                     }
                     $control.append($option);

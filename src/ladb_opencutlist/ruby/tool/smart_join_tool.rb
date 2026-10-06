@@ -14,6 +14,7 @@ module Ladb::OpenCutList
   require_relative '../helper/smart_action_handler_door_helper'
   require_relative '../model/door/door_def'
   require_relative '../model/hardware/hardware_descriptor_def'
+  require_relative '../model/hardware/hardware_options_def'
 
   class SmartJoinTool < SmartTool
 
@@ -154,7 +155,16 @@ module Ladb::OpenCutList
         return PLUGIN.get_i18n_string("tool.smart_join.action_#{action}_option_distribution_#{option}_status")
       end
 
-      super
+      status = super
+      if HardwareOptionsDef.option?(option) && !(options_def = get_hardware_options_def(action)).descriptor.nil?
+        case options_def.source(option)
+        when HardwareOptionsDef::SOURCE_HARDWARE
+          status = "#{status} (#{PLUGIN.get_i18n_string('tool.smart_join.action_option_hardware_value', { :name => options_def.descriptor.name })})"
+        when HardwareOptionsDef::SOURCE_OVERRIDE
+          status = "#{status} (#{PLUGIN.get_i18n_string('tool.smart_join.action_option_hardware_override', { :name => options_def.descriptor.name, :value => options_def.hardware_values[option.to_s] })})"
+        end
+      end
+      status
     end
 
     def get_action_cursor(action)
@@ -330,10 +340,36 @@ module Ladb::OpenCutList
       super
     end
 
+    # The options a hardware can give the default of are read and written
+    # through HardwareOptionsDef : the user's override for the picked
+    # hardware, its value, the action's own.
+    def fetch_action_option_value(action, option_group, option = nil)
+      return get_hardware_options_def(action).value(option) if HardwareOptionsDef.option?(option)
+      super
+    end
+
+    def store_action_option_value(action, option_group, option, value = nil, fire_event: false, synchronize: true)
+      return super unless HardwareOptionsDef.option?(option)
+      dictionary, section = get_action_options_dictionary_and_section(action)
+      return if (preset = HardwareOptionsDef.new(section).store(option => value)).nil?
+      PLUGIN.set_global_preset(dictionary, preset, nil, section, fire_event)
+      onActionOptionStored(action, option_group, option)
+    end
+
+    def get_hardware_options_def(action)
+      _, section = get_action_options_dictionary_and_section(action)
+      HardwareOptionsDef.new(section)
+    end
+
     # The distribution in effect : the stored one, inverted while SHIFT is held
     # - but for typing in the VCB : SHIFT gives the digits of some keyboards.
     def fetch_action_option_distribution_free?(action, shift_down = is_key_shift_down? && !is_vcb_typing?)
       fetch_action_option_boolean(action, ACTION_OPTION_DISTRIBUTION, ACTION_OPTION_DISTRIBUTION_FREE) != shift_down
+    end
+
+    def setup_entities(view)
+      super
+      _refresh_hardware_option_btns
     end
 
     # -- Events --
@@ -412,6 +448,11 @@ module Ladb::OpenCutList
       refresh
     end
 
+    def onGlobalPresetChanged(dictionary, section)
+      super
+      _refresh_hardware_option_btns
+    end
+
     def onTransactionUndo(model)
       super
       refresh
@@ -420,6 +461,24 @@ module Ladb::OpenCutList
     # -----
 
     private
+
+    # Marks the option buttons whose value comes from the picked hardware -
+    # and a star on those the user overrode.
+    def _refresh_hardware_option_btns
+      return if @actions_options_panels.nil?
+      @actions_options_panels.each do |actions_options_panel|
+        action = actions_options_panel.data[:action]
+        options_def = nil
+        actions_options_panel.children.each do |btn|
+          next unless btn.is_a?(Kuix::Button) && btn.data.is_a?(Hash) && HardwareOptionsDef.option?(btn.data[:option])
+          next unless (lbl = btn.children.first).is_a?(Kuix::Label)
+          options_def ||= get_hardware_options_def(action)
+          source = options_def.source(btn.data[:option])
+          lbl.text = "#{options_def.value(btn.data[:option])}#{' *' if source == HardwareOptionsDef::SOURCE_OVERRIDE}"
+          lbl.set_style_attribute(:color, source == HardwareOptionsDef::SOURCE_BASE ? Kuix::COLOR_BLACK : COLOR_BRAND)
+        end
+      end
+    end
 
     # Selects the distribution buttons of the current action as the
     # distribution in effect : SHIFT inverts the stored one while held.
@@ -779,9 +838,6 @@ module Ladb::OpenCutList
     end
 
     def _fetch_option_hardware_material_name
-      if (descriptor = _get_hardware_descriptor_def) && (material = descriptor.hardware_material)
-        return material
-      end
       name = @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_HARDWARE_MATERIAL_NAME)
       return PLUGIN.get_i18n_string('tab.materials.type_5') if !name.is_a?(String) || name.strip.empty?
       name
@@ -972,18 +1028,12 @@ module Ladb::OpenCutList
       @hardware_descriptor_def
     end
 
-    # Picks the given hardware descriptor ref : its options become the
-    # action's, where the action has them. Returns false if the descriptor
-    # can't be used.
+    # Picks the given hardware descriptor ref - its options are read through
+    # it, nothing is copied : see HardwareOptionsDef. Returns false if
+    # the descriptor can't be used.
     def _select_hardware(ref)
       descriptor = HardwareDescriptorDef.load(ref)
       return false if descriptor.nil? || descriptor.abstract? || !descriptor.valid? || !_get_hardware_types.include?(descriptor.type)
-      action_def = @tool.get_action_defs.find { |action_def| action_def[:action] == @action }
-      option_groups = action_def.nil? || action_def[:options].nil? ? {} : action_def[:options]
-      descriptor.options.each do |name, value|
-        option_group, _ = option_groups.find { |_, options| options.include?(name) }
-        @tool.store_action_option_value(@action, option_group, name, value) unless option_group.nil?
-      end
       @tool.store_action_option_value(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_HARDWARE, ref, fire_event: true)
       true
     end

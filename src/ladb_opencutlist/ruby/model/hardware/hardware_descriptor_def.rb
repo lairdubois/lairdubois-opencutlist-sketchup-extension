@@ -16,11 +16,12 @@ module Ladb::OpenCutList
   #    "name": "…",
   #    "supplier": "…", "url": "…",
   #    "length_unit": "mm",         the unit of its bare numbers - see below
-  #    "hardware_material": "…",
   #    "components": { "<slot>": <component> },
   #    "variables": { "<name>": "<length expression>" },
   #    "asserts": [ "<length expression> <= <length expression>" ],
-  #    "options": { "<name>": "<value>" }   defaults of the tool's options
+  #    "options": { "<name>": "<value>" }   defaults of the tool's options -
+  #                                         lengths, materials, layers -
+  #                                         see HardwareOptionsDef
   #  }
   #
   # A <component> is either :
@@ -422,6 +423,9 @@ module Ladb::OpenCutList
 
     # The tool's options that are lengths - or factors : "/2".
     LENGTH_OPTIONS = %w[height start_offset end_offset min_spacing max_spacing].freeze
+
+    # The tool's options that are materials : a name, or a '.skm' ref.
+    MATERIAL_OPTIONS = %w[hardware_material_name machining_material_name].freeze
 
     # A comparison of two lengths : the tolerance it is checked with, in inches.
     ASSERT_PATTERN = /\A(.+?)(<=|>=|<|>|=)(.+)\z/
@@ -1288,10 +1292,6 @@ module Ladb::OpenCutList
       @data['url']
     end
 
-    def hardware_material
-      _resolve_ref(@data['hardware_material'])
-    end
-
     def slots
       TYPES[type] || []
     end
@@ -1351,9 +1351,13 @@ module Ladb::OpenCutList
       asserts.reject { |expression| self.class.assert?(expression, variables) }
     end
 
-    # The defaults of the tool's options, as their raw strings.
+    # The defaults of the tool's options, as their raw strings. A './'
+    # material ref is relative to the descriptor's file.
     def options
-      @data['options'].is_a?(Hash) ? @data['options'] : {}
+      return {} unless @data['options'].is_a?(Hash)
+      Hash[@data['options'].map { |name, value|
+        [ name, MATERIAL_OPTIONS.include?(name) && value.is_a?(String) && value.start_with?('./') ? _resolve_option_ref(value) : value ]
+      }]
     end
 
     def option(name)
@@ -1519,8 +1523,9 @@ module Ladb::OpenCutList
         end
         fn_part_keys.each { |part| value[part] = fn_part.call(slot, variant, part, value[part]) if value.key?(part) }
       end
-      material = data['hardware_material']
-      data['hardware_material'] = File.join(File.dirname(path), material[2..-1]) if material.is_a?(String) && material.start_with?('./')   # As _resolve_ref
+      if data['options'].is_a?(Hash)
+        MATERIAL_OPTIONS.each { |name| data['options'][name] = fn_ref.call(data['options'][name]) if data['options'].key?(name) }
+      end
       if data['components'].is_a?(Hash)
         data['components'].each do |slot, value|
           next unless value.is_a?(Hash)
@@ -1754,6 +1759,13 @@ module Ladb::OpenCutList
     # A variant key as a length in inches, nil if it isn't one.
     def _to_length(key)
       self.class.to_length(key.to_s, true)
+    end
+
+    # The given './' ref of an option : a ref of the descriptor's library
+    # when it has one, a path otherwise.
+    def _resolve_option_ref(ref)
+      return File.join(File.dirname(@ref), ref[2..-1]) if @ref.is_a?(String)
+      _resolve_ref(ref)
     end
 
     def _resolve_ref(ref)

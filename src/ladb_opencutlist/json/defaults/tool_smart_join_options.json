@@ -18,7 +18,8 @@
     "hardware_material_name": { "i18n": "tab.materials.type_5" },
     "machining_material_name": { "i18n": "tab.materials.type_7" },
     "hardware_layer_name": null,
-    "machining_layer_name": null
+    "machining_layer_name": null,
+    "hardware_options": {} /* { "<descriptor id>": { "<option>": "<value>" } } - see HardwareOptionsDef */
   },
   "action_1": {  /* ACTION_REMOVE_CONNECTORS */
     "distribution": "auto" /* ACTION_OPTION_DISTRIBUTION_AUTO */
@@ -35,7 +36,8 @@
     "hardware_material_name": { "i18n": "tab.materials.type_5" },
     "machining_material_name": { "i18n": "tab.materials.type_7" },
     "hardware_layer_name": null,
-    "machining_layer_name": null
+    "machining_layer_name": null,
+    "hardware_options": {} /* { "<descriptor id>": { "<option>": "<value>" } } - see HardwareOptionsDef */
   },
   "action_3": {  /* ACTION_REMOVE_FITTINGS */
     "opposite": false,
@@ -52,7 +54,8 @@
     "hardware_material_name": { "i18n": "tab.materials.type_5" },
     "machining_material_name": { "i18n": "tab.materials.type_7" },
     "hardware_layer_name": null,
-    "machining_layer_name": null
+    "machining_layer_name": null,
+    "hardware_options": {} /* { "<descriptor id>": { "<option>": "<value>" } } - see HardwareOptionsDef */
   },
   "action_5": {  /* ACTION_REMOVE_HINGES */
     "distribution": "auto" /* ACTION_OPTION_DISTRIBUTION_AUTO */

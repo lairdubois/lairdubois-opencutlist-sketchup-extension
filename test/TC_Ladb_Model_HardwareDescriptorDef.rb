@@ -460,6 +460,23 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     assert_equal({}, _def(SLIDES).options)
   end
 
+  def test_options_material_refs
+    data = _with(HINGE, 'options' => { 'hardware_material_name' => './steel.skm', 'machining_material_name' => 'Machining', 'hardware_layer_name' => './not-a-ref' })
+    descriptor = _def(data, '/lib/hinges/blum/clip-top.json', '$LIB/hinges/blum/clip-top.json')
+    assert_equal('$LIB/hinges/blum/steel.skm', descriptor.options['hardware_material_name'])
+    assert_equal('Machining', descriptor.options['machining_material_name'])
+    assert_equal('./not-a-ref', descriptor.options['hardware_layer_name'])   # A layer is a name
+    assert_equal('/lib/hinges/blum/steel.skm', _def(data, '/lib/hinges/blum/clip-top.json').options['hardware_material_name'])   # Out of a library
+  end
+
+  def test_options_material_refs_inherited
+    _with_library('hinges/base.json' => _with(HINGE, 'options' => { 'hardware_material_name' => './steel.skm' })) do
+      descriptor = _def(_child('hinges/base.json'), nil, '$LIB/other/child.json')
+      assert(descriptor.valid?, descriptor.errors.inspect)
+      assert_equal('$LIB/hinges/steel.skm', descriptor.options['hardware_material_name'])   # Its parent's place
+    end
+  end
+
   def test_attributes_merge_variant_over_component
     data = JSON.parse(JSON.generate(HINGE))
     data['components']['a']['attributes'] = { 'role' => 'hinge', 'hinge_max_angle' => 110, 'hinge_pivot' => [ '0mm', '0mm' ] }

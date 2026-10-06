@@ -9,6 +9,7 @@ module Ladb::OpenCutList
   require_relative '../worker/hardware/hardware_skp_edit_start_worker'
   require_relative '../worker/hardware/hardware_skp_edit_finish_worker'
   require_relative '../model/hardware/hardware_skp_edit_session'
+  require_relative '../model/hardware/hardware_options_def'
   require_relative '../observer/plugin_observer'
   require_relative '../observer/model_observer'
   require_relative '../utils/dimension_utils'
@@ -19,8 +20,8 @@ module Ladb::OpenCutList
 
     # The modal of the editor, and the size it opens at : the bench needs room.
     EDITOR_MODAL_NAME = 'hardware_editor'.freeze
-    EDITOR_DIALOG_WIDTH = 1200
-    EDITOR_DIALOG_HEIGHT = 760
+    EDITOR_DIALOG_WIDTH = 1350
+    EDITOR_DIALOG_HEIGHT = 800
 
     # Where the connectors an article can use are browsed from - and their
     # counterpart in the shipped library
@@ -70,6 +71,12 @@ module Ladb::OpenCutList
       end
       PLUGIN.register_command('hardware_float_to_length') do |params|
         float_to_length_command(params)
+      end
+      PLUGIN.register_command('hardware_action_options_get') do |params|
+        action_options_get_command(**params)
+      end
+      PLUGIN.register_command('hardware_action_options_set') do |params|
+        action_options_set_command(**params)
       end
 
       # The editor closed while a part is shaped in SketchUp : the bench leaves
@@ -121,6 +128,21 @@ module Ladb::OpenCutList
       }
     rescue SystemCallError => e
       { :errors => [ [ 'core.hardware_editor.error.file_not_readable', { :ref => ref, :error => e.message } ] ] }
+    end
+
+    # The options of the SmartJoin action of the given preset section : its
+    # base values, and what its picked hardware gives - see
+    # HardwareOptionsDef.
+    def action_options_get_command(section:)
+      HardwareOptionsDef.new(section).to_hash
+    end
+
+    # Stores the given values of the SmartJoin action of the given preset
+    # section, each at its level - see HardwareOptionsDef#store.
+    def action_options_set_command(section:, values:)
+      preset = HardwareOptionsDef.new(section).store(values)
+      PLUGIN.set_global_preset(HardwareOptionsDef::DICTIONARY, preset, nil, section, true) unless preset.nil?
+      nil
     end
 
     def descriptor_save_command(**params)
