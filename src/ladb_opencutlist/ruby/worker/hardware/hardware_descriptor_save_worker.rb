@@ -24,7 +24,14 @@ module Ladb::OpenCutList
     # imports : { <part ref> => <absolute path - or library ref - of the SKP file picked for it> } ;
     # placements : { <part ref> => <column-major 4x4 matrix, inches> } to bake in.
     # Part refs are the ones of 'from' when renamed.
-    def initialize(ref:, text:, new: false, from: nil, imports: {}, placements: {})
+    def initialize(ref:,
+
+                   text:,
+                   new: false,
+                   from: nil,
+                   imports: {},
+                   placements: {}
+    )
 
       @ref = ref
       @text = text

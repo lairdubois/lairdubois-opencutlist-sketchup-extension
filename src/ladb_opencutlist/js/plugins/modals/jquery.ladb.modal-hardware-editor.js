@@ -12,8 +12,8 @@
     // The size and position of the editor while a part is shaped in SketchUp :
     // top left of the screen, beside the minimized OpenCutList bar
     const SHAPING_WIDTH = 380;
-    const SHAPING_HEIGHT = 260;
-    const SHAPING_LEFT = 170;
+    const SHAPING_HEIGHT = 290;
+    const SHAPING_LEFT = 100;
     const SHAPING_TOP = 100;
 
     const PARTS = [ 'hardware', 'machining' ];
@@ -904,14 +904,6 @@
         const focus = this.captureFocus(this.$settings);
         this.destroyTooltips(this.$settings);
         this.$settings.empty();
-
-        // Extends another : what is greyed comes from it
-        if (inheritance) {
-            this.$settings.append($('<div class="help-block ladb-hardware-editor-inheritance">')
-                .append($('<span class="ladb-hardware-editor-inherited-sample">').text(i18next.t('core.hardware_editor.inherited_sample')))
-                .append(' ' + i18next.t('core.hardware_editor.inheritance_help'))
-            );
-        }
 
         this.$settings.append($('<div class="ladb-hardware-editor-settings-title">').text(i18next.t('core.hardware_editor.settings_variables')));
 
@@ -3550,8 +3542,7 @@
         const ref = skp.ref;
         const mesh = this.meshes[this.skpSource(ref)];
         const name = ref.split('/').pop();
-        rubyCallCommand('hardware_skp_edit', {
-            action: 'start',
+        rubyCallCommand('hardware_skp_edit_start', {
             source: mesh && !mesh.error ? this.skpSource(ref) : null,
             placement: this.placements[ref] || IDENTITY,
             transformation: skp.transformation,
@@ -3582,10 +3573,11 @@
         const that = this;
 
         const shaping = this.shaping;
-        if (!shaping) {
+        if (!shaping || shaping.ending) {
             return;
         }
-        rubyCallCommand('hardware_skp_edit', { action: finish ? 'finish' : 'cancel' }, function (response) {
+        shaping.ending = true;   // A button and the part left : once
+        rubyCallCommand(finish ? 'hardware_skp_edit_finish' : 'hardware_skp_edit_cancel', null, function (response) {
             that.shaping = null;
             that.$element.removeClass('ladb-hardware-editor-shaping');
             that.updateGuard();
@@ -4026,6 +4018,9 @@
         $('#ladb_hardware_editor_btn_shaping_cancel', this.$element).on('click', function () {
             this.blur();
             that.endShaping(false);
+        });
+        addEventCallback('on_hardware_skp_edit_part_left', function () {
+            that.endShaping(true);
         });
 
         // File name : renames at save - a new one follows its name until typed.

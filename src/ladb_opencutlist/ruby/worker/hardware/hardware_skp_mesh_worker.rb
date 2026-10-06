@@ -31,7 +31,9 @@ module Ladb::OpenCutList
 
     # refs : '$LIB/…' / '$OCL/…' refs or absolute paths.
     def initialize(refs:)
+
       @refs = refs.is_a?(Array) ? refs.select { |ref| ref.is_a?(String) } : []
+
     end
 
     # -----

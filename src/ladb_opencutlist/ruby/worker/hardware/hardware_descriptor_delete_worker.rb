@@ -15,7 +15,9 @@ module Ladb::OpenCutList
     SMART_JOIN_OPTION_HARDWARE = 'hardware'.freeze
 
     def initialize(ref:)
+
       @ref = ref
+
     end
 
     # -----

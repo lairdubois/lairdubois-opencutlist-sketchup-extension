@@ -12,7 +12,9 @@ module Ladb::OpenCutList
   class HardwareDescriptorDuplicateWorker
 
     def initialize(ref:)
+
       @ref = ref
+
     end
 
     # -----

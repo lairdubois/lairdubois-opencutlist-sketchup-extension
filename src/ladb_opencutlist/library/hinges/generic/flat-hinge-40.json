@@ -105,5 +105,5 @@
       }
     }
   },
-  "options": { "start_offset": "100", "end_offset": "100", "max_spacing": "800" }
+  "options": { "start_offset": "70", "end_offset": "70", "max_spacing": "500" }
 }

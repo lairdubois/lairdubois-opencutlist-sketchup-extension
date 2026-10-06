@@ -1,7 +1,7 @@
 {% extends 'core/_modal.twig' %}
 
 {% set id = 'ladb_modal_'~modalName %}
-{% set title = '<span class="ladb-hardware-editor-title">'~'core.hardware_editor.title'|i18next~'</span> <span class="label label-default ladb-hardware-editor-readonly-badge" style="display: none;">'~'core.hardware_editor.readonly'|i18next~'</span>' %}
+{% set title = '<span class="ladb-hardware-editor-title">'~'core.hardware_editor.title'|i18next~'</span> <span class="label label-default ladb-hardware-editor-readonly-badge" style="display: none;"><i class="ladb-opencutlist-icon-lock"></i> '~'core.hardware_editor.readonly'|i18next~'</span>' %}
 {% set bodyClasses = 'ladb-hardware-editor' %}
 
 {% block headerToolsInner %}

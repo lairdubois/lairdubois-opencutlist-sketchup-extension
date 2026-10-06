@@ -6,8 +6,11 @@ module Ladb::OpenCutList
   require_relative '../worker/hardware/hardware_descriptor_save_worker'
   require_relative '../worker/hardware/hardware_descriptor_duplicate_worker'
   require_relative '../worker/hardware/hardware_descriptor_delete_worker'
-  require_relative '../worker/hardware/hardware_skp_edit_worker'
+  require_relative '../worker/hardware/hardware_skp_edit_start_worker'
+  require_relative '../worker/hardware/hardware_skp_edit_finish_worker'
+  require_relative '../model/hardware/hardware_skp_edit_session'
   require_relative '../observer/plugin_observer'
+  require_relative '../observer/model_observer'
   require_relative '../utils/dimension_utils'
 
   # The hardware editor : a descriptor of the library, seen and checked on a
@@ -50,8 +53,14 @@ module Ladb::OpenCutList
       PLUGIN.register_command('hardware_skp_choose') do |params|
         skp_choose_command
       end
-      PLUGIN.register_command('hardware_skp_edit') do |params|
-        skp_edit_command(**params)
+      PLUGIN.register_command('hardware_skp_edit_start') do |params|
+        skp_edit_start_command(**params)
+      end
+      PLUGIN.register_command('hardware_skp_edit_finish') do |params|
+        skp_edit_finish_command
+      end
+      PLUGIN.register_command('hardware_skp_edit_cancel') do |params|
+        skp_edit_cancel_command
       end
       PLUGIN.register_command('hardware_editor_resize') do |params|
         editor_resize_command(**params)
@@ -65,7 +74,12 @@ module Ladb::OpenCutList
 
       # The editor closed while a part is shaped in SketchUp : the bench leaves
       PLUGIN.add_event_callback(PluginObserver::ON_MODAL_DIALOG_CLOSED) do
-        HardwareSkpEditWorker.new(action: 'cancel').run if HardwareSkpEditWorker.editing?
+        _skp_edit_close
+      end
+
+      # Out of the part shaped in SketchUp : the editor finishes it
+      PLUGIN.add_event_callback(ModelObserver::ON_ACTIVE_PATH_CHANGED) do
+        PLUGIN.trigger_event(HardwareSkpEditStartWorker::ON_PART_LEFT, nil) if @skp_edit_session && @skp_edit_session.part_left!
       end
 
     end
@@ -159,14 +173,40 @@ module Ladb::OpenCutList
 
     end
 
-    def skp_edit_command(**params)
+    def skp_edit_start_command(**params)
+
+      # Close the current session if it exists : one at a time
+      _skp_edit_close
 
       # Setup worker
-      worker = HardwareSkpEditWorker.new(**params)
+      worker = HardwareSkpEditStartWorker.new(**params)
+
+      # Run !
+      @skp_edit_session = worker.run
+
+      {}
+    rescue HardwareSkpEditStartWorker::Error => e
+      { :errors => [ [ e.key, e.params ] ] }
+    rescue StandardError => e
+      { :errors => [ [ 'core.hardware_editor.error.edit_failed', { :error => HardwareSkpMeshWorker.error_message(e) } ] ] }
+    end
+
+    def skp_edit_finish_command
+      session = @skp_edit_session
+      @skp_edit_session = nil
+      return { :errors => [ [ 'core.hardware_editor.error.edit_lost', {} ] ] } if session.nil?
+
+      # Setup worker
+      worker = HardwareSkpEditFinishWorker.new(session)
 
       # Run !
       worker.run
 
+    end
+
+    def skp_edit_cancel_command
+      _skp_edit_close
+      {}
     end
 
     # The editor gets the given size and position - smaller and in a corner
@@ -221,6 +261,15 @@ module Ladb::OpenCutList
           { :ref => r, :name => descriptor.name, :use => HardwareDescriptorDef.extends_value(r, ref.is_a?(String) ? ref : CONNECTORS_LIBRARY_REF), :valid => descriptor.valid? }
         }.compact,
       }
+    end
+
+    # -- Utils --
+
+    # The bench of the current SKP edit session - if any - leaves the model.
+    def _skp_edit_close
+      session = @skp_edit_session
+      @skp_edit_session = nil
+      session.close unless session.nil?
     end
 
     # A SKP file picked by the user - to become a part of the descriptor.

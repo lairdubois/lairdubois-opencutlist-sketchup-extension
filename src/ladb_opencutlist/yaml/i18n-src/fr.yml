@@ -325,11 +325,11 @@ core:
     family_hinges: Charnières
   # DEV only
   hardware_descriptor:
+    part_hardware: Pièce
+    part_machining: Usinage
     variant_overlay: En applique
     variant_half_overlay: Jumelée
     variant_inset: Encastrée
-    part_hardware: Pièce
-    part_machining: Usinage
   # DEV only
   hardware_editor:
     title: Éditeur de quincaillerie
@@ -381,7 +381,6 @@ core:
     derived_name: "{{ name }} (dérivée)"
     derived: "Dérivée de {{ ref }} : ajustez ce qui change, puis validez."
     inherited_from: "Hérité de {{ ref }}"
-    inherited_sample: Grisé
     inherited_click: |
       Valeur héritée de {{ ref }}.
       
@@ -391,7 +390,6 @@ core:
       Remplace la valeur héritée de {{ ref }}. 
       
       Cliquez pour revenir à la valeur héritée.
-    inheritance_help: ": valeur héritée du parent. L'icône en bout de ligne la copie dans cette quincaillerie pour la modifier, puis rétablit la valeur héritée."
     delete_confirm: |
       Confirmez la suppression de **{{ name }}** de *$t(core.library.user)*, avec le dossier de ses pièces ? 
       *Les quincailleries déjà posées dans le modèle restent.*

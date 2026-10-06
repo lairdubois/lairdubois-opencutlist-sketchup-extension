@@ -964,9 +964,9 @@ module Ladb::OpenCutList
           block.call(params)
         end
       end
-      if @tabs_dialog
-        @tabs_dialog.execute_script("triggerEvent('#{event}', '#{params.is_a?(Hash) ? Base64.strict_encode64(JSON.generate(params)) : ''}');")
-      end
+      script = "triggerEvent('#{event}', '#{params.is_a?(Hash) ? Base64.strict_encode64(JSON.generate(params)) : ''}');"
+      @tabs_dialog.execute_script(script) if @tabs_dialog
+      @modal_dialog.execute_script(script) if @modal_dialog
     end
 
     # -----

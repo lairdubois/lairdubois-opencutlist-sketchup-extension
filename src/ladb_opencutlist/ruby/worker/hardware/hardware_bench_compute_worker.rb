@@ -25,6 +25,7 @@ module Ladb::OpenCutList
     # swapped : a and b swapped, where the topology can be - see
     # HardwareBenchDef#swappable?.
     def initialize(descriptor:,
+
                    ref: nil,
                    topology: nil,
                    thickness_a: nil,
