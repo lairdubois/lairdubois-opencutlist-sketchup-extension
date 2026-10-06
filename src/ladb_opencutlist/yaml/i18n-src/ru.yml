@@ -97,6 +97,8 @@ default:
   thickness: Толщина
   height: Высота
   deprecated: Устаревшие
+  finish: Завершить
+  replace: Заменить
 core:
   menu:
     submenu: OpenCutList
@@ -313,6 +315,207 @@ core:
       error:
         no_segment: В выбранном элементе нет подходящих направляющих линий
         no_face: Не удалось собрать замкнутые контуры в одной плоскости
+  library:
+    libraries: Библиотеки
+    user: Моя библиотека
+    bundled: Библиотека OCL
+    family_modules: Модули
+    family_connectors: Крепеж
+    family_fittings: Соединения
+    family_hinges: Петли
+  hardware_descriptor:
+    variant_overlay: Накладная
+    variant_half_overlay: Полунакладная
+    variant_inset: Вкладная
+    part_hardware: Деталь
+    part_machining: Мехобработка
+  hardware_editor:
+    title: Редактор фурнитуры
+    new_name: Новая фурнитура
+    tab_settings: Настройки
+    tab_parts: Детали
+    tab_json: JSON
+    thickness_a: Толщина A
+    thickness_b: Толщина B
+    topology_corner: Г-образное соединение
+    topology_flat_edge: Т-образное соединение
+    topology_edge_edge: Торец к торцу
+    topology_flat_flat: Пласть к пласти
+    swap: Поменять A и B местами
+    zoom_auto: Автомасштаб
+    toggle_slot: Показать или скрыть {{ slot }}
+    bench_settings: Настройки испытательного стенда
+    measures: Измерения испытательного стенда
+    variables: Переменные
+    asserts: Условия
+    setting: Публикуемая переменная
+    setting_bounds: От {{ min }} до {{ max }}
+    assert_unresolved: Не вычисляется
+    accepted: Соединение допустимо
+    refused: Соединение недопустимо
+    readonly: Только чтение
+    readonly_notice: Этот образец фурнитуры доступен только для чтения.Создайте копию в **$t(core.library.user)** для редактирования.
+    duplicate: Дублировать в **$t(core.library.user)**
+    name: Наименование
+    file: Файл
+    length_unit: Единицы
+    length_unit_none: Не задана - каждая длина указывается со своей единицей
+    length_unit_help: Единица измерения для чисел без указания единицы. Смена единицы не пересчитывает значения.
+    abstract_notice: "Абстрактная фурнитура: не устанавливается непосредственно, а служит основой для производных элементов фурнитуры."
+    file_renamed: "При сохранении файл и папка его компонентов будут переименованы (прежнее имя: {{ name }})"
+    duplicated: "Скопировано в **$t(core.library.user)**: {{ ref }}"
+    derive: Создать производную
+    derive_help: Создает производную фурнитуру, которая наследует свойства текущей и содержит только отличающиеся параметры
+    derived_name: "{{ name }} (производная)"
+    derived: "Производная от {{ ref }}: измените необходимые параметры и сохраните."
+    inherited_from: Унаследовано от {{ ref }}
+    inherited_sample: Затемнено
+    inherited_click: Значение унаследовано от {{ ref }}.Нажмите, чтобы переопределить его в этой фурнитуре.
+    overridden_from: Заменяет значение, унаследованное от {{ ref }}
+    overridden_click: Это значение переопределяет унаследованное от {{ ref }}.Нажмите, чтобы вернуть унаследованное значение.
+    inheritance_help: Значение наследуется от родительской фурнитуры. Значок справа позволяет скопировать его в текущую фурнитуру для редактирования или вернуть унаследованное значение.
+    delete_confirm: Удалить фурнитуру **{{ name }}** из *$t(core.library.user)* вместе с папкой ее компонентов?*Уже установленная в модели фурнитура останется.*
+    discard_confirm: Все несохраненные изменения этой фурнитуры будут потеряны. Все равно закрыть?
+    discard: Закрыть без сохранения
+    no_descriptor: Этот текст не является дескриптором фурнитуры.
+    unsupported_type: Для типа «{{ type }}» испытательный стенд пока не реализован.
+    parts_no_component: "Компонент отсутствует: с этой стороны ничего не устанавливается."
+    parts_same_as: Используется тот же компонент, что и для {{ slot }}.
+    parts_mirror_of: Зеркальная копия компонента {{ slot }} (ось X инвертирована в системе координат установки).
+    parts_no_variant: Для этого испытания нет подходящего варианта.
+    part_name: Наименование
+    variant_name: Имя варианта
+    hinge_kinematics: Кинематика петли
+    hinge_kinematics_help: "В системе координат установки: Y направлена к кромке вращения фасада, Z - к корпусу, начало координат находится на внутренней пласти фасада."
+    hinge_kinematics_missing: Без максимального угла открытия и оси вращения фасад не сможет открываться.
+    hinge_max_angle: Максимальный угол
+    hinge_pivot: Ось вращения
+    hinge_pivot_y: Y
+    hinge_pivot_z: Z
+    hinge_pivot_approximate: Приблизительно
+    hinge_pivot_approximate_help: У петли с подвижной осью вращения указанная ось является приблизительной
+    hinge_scope_common: Общее для всех вариантов
+    hinge_scope_variant: Только для этого варианта
+    hinge_apply_all: Применить ко всем вариантам
+    part_kind_none: Отсутствует
+    part_kind_skp: Файл SKP
+    part_kind_primitives: Примитивы
+    part_kind_same_as: То же, что и {{ slot }}
+    part_kind_articles: Элементы
+    article_add_skp: Файл SKP
+    article_add_primitives: Примитивы
+    article_add_connector: Крепеж
+    article_kind_skp: SKP
+    article_kind_primitives: Примитивы
+    article_kind_connector: Крепеж
+    article_key: Ключ
+    article_key_invalid: Допустимы строчные латинские буквы, цифры, «-» и «_»; ключ должен начинаться с буквы
+    article_key_reserved: Это имя зарезервировано
+    article_key_taken: Этот ключ уже используется другим элементом данного компонента
+    article_name: Наименование
+    article_price: Цена
+    article_mass: Масса
+    article_file: Файл
+    article_primitives: Примитивы
+    article_connector: Крепеж
+    article_replace: Заменить
+    article_missing: не найдено
+    article_refused: отклонено
+    article_host: Несущая панель находится сбоку
+    article_virtual_thickness: Толщина виртуальной панели ({{ slot }})
+    article_settings: Настройки крепежа
+    article_setting_default: "Крепеж: {{ value }}"
+    article_asserts: Проверки
+    article_positions: Позиции
+    article_position_add: Положение
+    library_empty: В этой папке нет крепежа.
+    primitive_type_cylinders: Цилиндр
+    primitive_type_oblongs: Продолговатое отверстие
+    primitive_type_prisms: Призма
+    primitive_type_drillings: Сверление
+    primitive_type_mortises: Паз
+    primitive_type_pockets: Выборка
+    primitive_axis: Ось
+    primitive_position: Положение
+    primitive_diameter: Диаметр
+    primitive_size: Размеры
+    primitive_length_axis: Длина по оси
+    primitive_prism_span: От → До (по оси {{ axis }})
+    primitive_outline: Контур
+    primitive_outline_add: Точка
+    primitive_outline_radius_help: Радиус скругления угла. Оставьте поле пустым для угла без скругления
+    primitive_from: От
+    primitive_to: До
+    primitive_depth: Глубина
+    primitive_through: Сквозное
+    primitive_through_help: До противоположной пласти детали (@thickness_max).
+    primitive_head: Головка
+    primitive_head_none: Нет
+    primitive_head_countersink: Зенковка
+    primitive_head_counterbore: Цековка
+    primitive_head_side: Сторона
+    primitive_face_contact: Контактная пласть
+    primitive_face_opposite: Противоположная пласть
+    primitive_face_opposite_help: Отверстие должно быть сквозным.
+    primitive_end_to: Конец «До»
+    primitive_end_from: Конец «От»
+    primitive_head_diameter_angle: Ø | угол
+    primitive_head_diameter_depth: Ø | глубина
+    primitive_variables: Переменные
+    primitive_unresolved: "На испытательном стенде отсутствует твердое тело: проверьте его размеры."
+    chip_bundled: Библиотека OCL
+    chip_user: Моя библиотека
+    chip_loading: Загрузка...
+    chip_missing: Файл отсутствует
+    chip_no_folder: Сначала выберите папку в **$t(core.library.user)**
+    chip_imported: Импортировано | требуется сохранение
+    chip_placed: Размещение требует сохранения
+    chip_edited: Изменено | требуется сохранение
+    edit_in_sketchup: Изменить
+    create_in_sketchup: Создать
+    shaping: "{{ name }} открыт в SketchUp"
+    shaping_help: Отредактируйте компонент непосредственно в модели на испытательном стенде.Его оси задают систему координат установки.Нажмите **Завершить**, чтобы вернуть компонент в редактор; испытательный стенд будет удален из модели.
+    choose_skp: Выбрать файл SKP
+    placement_toggle: Преобразовать
+    placement_title: Преобразование
+    placement_undo: Отменить последнее преобразование
+    placement_rotation: Поворот
+    placement_rotate_ccw: −90° вокруг {{ axis }}
+    placement_rotate_cw: +90° вокруг {{ axis }}
+    placement_mirror: Зеркальное отражение
+    placement_mirror_help: Зеркально по оси {{ axis }}
+    placement_position: Положение
+    placement_align: Выровнять
+    placement_center: Центрировать
+    placement_center_help: Центрировать по оси {{ axis }}
+    placement_seat: Установить
+    placement_seat_help: Установить верхнюю сторону компонента на плоскость z = 0, направив его тело в сторону −Z
+    placement_reset: Сбросить
+    placement_help: Преобразование применяется к файлу SKP при сохранении; в JSON преобразование не записывается. Опорная пласть располагается на z = 0, тело направлено в сторону −Z.
+    settings_variables: Переменные
+    settings_tool_options: Настройки инструмента
+    settings_tool_options_help: Значения, которые инструмент «Сборка» применяет при выборе этой фурнитуры
+    settings_properties: Свойства
+    no_settings: Для этой фурнитуры не опубликовано ни одной переменной
+    error:
+      unresolved_variable: Используется переменная @{{ name }}, значение которой не вычислено
+      not_a_length: Значение не является линейным размером
+      invalid_json: "Некорректный JSON, строка {{ line }}: {{ error }}"
+      file_not_found: "Файл не найден: {{ ref }}"
+      file_not_readable: "Не удалось прочитать {{ ref }}: {{ error }}"
+      readonly: Библиотека $t(core.library.bundled) доступна только для чтения
+      invalid_ref: "Недопустимый путь: {{ ref }}"
+      file_exists: "По этому пути уже существует файл: {{ ref }}. Измените имя файла."
+      invalid_file_name: "Недопустимое имя файла: {{ name }}"
+      invalid_descriptor: "Некорректный дескриптор фурнитуры: {{ error }}"
+      skp_is_open_model: "{{ name }} является текущей открытой моделью SketchUp и не может быть загружен сам в себя. Откройте другую модель и повторите выбор."
+      skp_not_written: "Не удалось записать {{ ref }}: {{ error }}"
+      not_saved: "Не удалось сохранить: {{ error }}"
+      edit_failed: "Не удалось открыть компонент для редактирования в SketchUp: {{ error }}"
+      not_deleted: "Не удалось удалить: {{ error }}"
+      has_children: "Удаление невозможно: от этой фурнитуры наследуются другие элементы ({{ children }})."
+      has_users: "Удаление невозможно: эта фурнитура используется другими элементами как составная часть ({{ users }})."
+      edit_lost: Компонент удален из модели. Изменения потеряны.
 tab:
   cutlist:
     label: Раскрой
@@ -2357,6 +2560,13 @@ tool:
       not_sibling_part: "Деталь не входит в ту же группу или компонент, что и остальное выделение"
       selection_contains_locked_entities: Выделение содержит заблокированные объекты
       wrong_material_type: "Целевая деталь должна быть типа '{{ type }}'"
+      invalid_angle: Угол {{ value }} задан неверно
+      invalid_argument_count: Функции min, max, floor и ceil требуют не менее двух значений
+      comma_argument_separator: "Разделяйте значения знаком «;»: запятая также используется как десятичный разделитель"
+      invalid_dimension: К длине можно прибавлять только длину; число без единицы измерения считается коэффициентом
+      no_matching_value: Ни одно из предложенных значений не подходит
+    vcb_angle: Угол
+    library_choose: Выберите библиотеку
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2500,6 +2710,8 @@ tool:
       part_created_plural: "создано {{ count }} новых деталей: {{ name }}"
       part_reused: "Новый экземпляр существующей детали: {{ name }}"
       part_reused_plural: "Создано {{ count }} новых экземпляров существующей детали: {{ name }}"
+    action_option_overlay_against_protrusions_status: "Накладной фасад между выступающими боковинами: устанавливается на детали заподлицо с проемом и подгоняется между выступающими элементами"
+    action_3_option_overlay_against_protrusions_status: "Накладная задняя стенка между выступающими боковинами: устанавливается на детали заподлицо с проемом и подгоняется между выступающими элементами без обработки"
   smart_handle:
     title: Конструктор
     action_0: Выделить
@@ -2532,6 +2744,14 @@ tool:
     action_toggle_raytest_status: Проецировать на следующую точку
     warning:
       copies_disable_mirror: Многократное копирование не работает $t(tool.smart_handle.action_option_options_mirror_status)'
+    action_5: Открыть/закрыть
+    action_5_status: Открыть или закрыть фасад
+    action_5_state_0_status: Щелкните фасад, чтобы открыть или закрыть его, либо перетащите, чтобы задать угол открытия
+    action_5_state_0_amend_status: Введите угол, чтобы скорректировать открытие, либо щелкните фасад, чтобы открыть или закрыть его
+    action_5_state_20_status: Перетащите фасад, чтобы задать угол открытия, затем отпустите для подтверждения
+    error:
+      not_door: Эта деталь не является фасадом, установленным на петлях
+      incoherent_door: Петли этого фасада вращаются вокруг разных осей
   smart_reshape:
     title: Модификатор
     action_0: Растянуть
@@ -2735,6 +2955,21 @@ tool:
         Не удалось загрузить файл SKP: {{ file }}
       unsupported_skp_version: |
         Этот файл SKP был создан в более поздней версии SketchUp: {{ version }}
+      not_front_panel: Выбранная деталь не является фасадом
+      no_hinge_cavity: За этим фасадом не обнаружена полость корпуса
+      hinged_side_lost: Кромка вращения фасада больше не примыкает к боковине корпуса
+      no_hinge_side: С этой стороны фасада нет боковины для установки петель
+      door_already_hinged: На этом фасаде уже установлены петли
+      no_hinge_to_remove: На этой детали нет петель
+      occupied_hinges: "{{ count }} петля пересекается с уже установленной петлей"
+      occupied_hinges_plural: "{{ count }} петель пересекаются с уже установленными петлями"
+      hinge_rejected_anchors: "{{ count }} петля не установлена: ее положение совпало бы с полкой"
+      hinge_rejected_anchors_plural: "{{ count }} петель не установлены: их положение совпало бы с полкой"
+      refused_anchors: "{{ count }} позиция отклонена: в ней фурнитура не удовлетворяет условиям {{ asserts }}"
+      refused_anchors_plural: "{{ count }} позиций отклонены: в них фурнитура не удовлетворяет условиям {{ asserts }}"
+      failed_to_load_hardware: "Не удалось загрузить фурнитуру: {{ file }}"
+      invalid_hardware: "Некорректная фурнитура ({{ file }}): {{ error }}"
+      unsupported_hardware_type: Фурнитура {{ name }} ({{ type }}) не поддерживается этим действием
     warning:
       no_connector_to_remove: Нет крепежа для удаления
       x_connectors_to_remove: "{{ count }} крепеж для удаления"
@@ -2743,6 +2978,44 @@ tool:
       x_fittings_to_remove: "{{ count }} соединение для удаления"
       x_fittings_to_remove_plural: "{{ count }} соединений для удаления"
       different_file_name: "Имя файла SKP ({{ file_name }}) отличается от имени содержащегося в нём компонента ({{ definition_name }})"
+      no_hinge_to_remove: Нет петель для удаления
+      no_hardware_file: В этой папке нет фурнитуры
+      x_hinges_to_remove: Будет удалена {{ count }} петля
+      x_hinges_to_remove_plural: "Будет удалено петель: {{ count }}"
+      hinge_forced_make_unique: Детали сделаны уникальными, иначе петли появились бы на нескольких сторонах фасада
+      hinge_forced_make_unique_door: Фасад и сопряженные детали сделаны уникальными, иначе петли появились бы и на других экземплярах
+      shared_definition: Файл SKP ({{ file_name }}) содержит то же определение, что и уже загруженный компонент {{ definition_name }}; используется ранее загруженное определение
+    hardware_edit: Редактировать эту фурнитуру
+    hardware_view: Просмотреть эту фурнитуру ($t(core.library.bundled), только чтение)
+    action_0_family: Крепеж
+    action_2_family: Соединительная фурнитура
+    action_4_family: Петли
+    action_4: Установить петли
+    action_4_status: Установить петли на фасад
+    action_4_state_1_status: Наведите указатель на фасад возле кромки вращения и щелкните, чтобы установить петли
+    action_5: Удалить петли
+    action_5_status: Удалить петли с фасада
+    action_5_state_1_status: Наведите указатель на фасад возле кромки вращения и щелкните, чтобы удалить петли
+    action_option_group_distribution: Распределение
+    action_remove_option_group_distribution: Выбор
+    action_0_option_distribution_auto_status: Распределить крепеж с учетом отступов и межосевых расстояний
+    action_1_option_distribution_auto_status: Удалить весь крепеж выбранного соединения
+    action_2_option_distribution_auto_status: Распределить соединительную фурнитуру с учетом отступов и межосевых расстояний
+    action_3_option_distribution_auto_status: Удалить всю соединительную фурнитуру выбранного соединения
+    action_4_option_distribution_auto_status: Распределить петли с учетом отступов и межосевых расстояний
+    action_5_option_distribution_auto_status: Удалить все петли с выбранного фасада
+    action_0_option_distribution_free_status: Установить один крепеж в позиции указателя
+    action_1_option_distribution_free_status: Удалить один крепеж
+    action_2_option_distribution_free_status: Установить один элемент соединительной фурнитуры в позиции указателя
+    action_3_option_distribution_free_status: Удалить один элемент соединительной фурнитуры
+    action_4_option_distribution_free_status: Установить одну петлю в позиции указателя
+    action_5_option_distribution_free_status: Удалить одну петлю
+    action_option_hardware_hinge_overlay_a: Петля для накладного фасада
+    action_option_hardware_hinge_inset_a: Петля для вкладного фасада
+    action_option_hardware_hinge_half_overlay_a: Петля для полунакладного фасада
+    action_option_hardware_hinge_material_name: Материал петель
+    action_option_hardware_hinge_layer_name: Тег петель
+    select_hardware_status: Выберите фурнитуру в библиотеке
   smart_export:
     title: Экспорт
     action_0: Экспорт 3D-детали
