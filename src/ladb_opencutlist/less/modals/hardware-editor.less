@@ -1129,6 +1129,19 @@
 .ladb-hardware-editor-part > .ladb-hardware-editor-inheritance-icon {
   padding-top: 7px;
 }
+// An inherited hardware part : greyed but for the info of its articles,
+// overridden one by one
+.ladb-hardware-editor-part.ladb-hardware-editor-inherited > .ladb-hardware-editor-part-body.ladb-hardware-editor-part-body-own-info {
+  opacity: 1;
+  .ladb-hardware-editor-primitive-head,
+  .ladb-hardware-editor-part-buttons,
+  .ladb-hardware-editor-article-editor > :not(.ladb-hardware-editor-inheritance-own) {
+    opacity: 0.5;
+  }
+}
+.ladb-hardware-editor-article-editor > .ladb-hardware-editor-primitive-fields > .ladb-hardware-editor-inheritance-icon {
+  flex: none;
+}
 .ladb-hardware-editor-slot-note.ladb-hardware-editor-inheritance-row {
   display: flex;
   gap: 10px;
