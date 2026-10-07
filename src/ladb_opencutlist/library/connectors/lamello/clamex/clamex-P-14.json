@@ -11,7 +11,7 @@
     "a": {
       "hardware": true,
       "machining": { "drillings": [ { "axis": "y", "z": "-7.5", "diameter": "6", "depth": "@height" } ] },
-      "attributes": { "syetrical":  true }
+      "attributes": { "symmetrical":  true }
     }
   },
   "options": { "height": "10", "start_offset": "60", "end_offset": "60", "min_spacing": "80", "max_spacing": "300" }

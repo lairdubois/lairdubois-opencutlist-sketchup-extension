@@ -17,9 +17,9 @@
   "asserts": [ "@depth_a <= @thickness_a - @min_wall", "@depth_b <= @thickness_b - @min_wall" ],
   "components": {
     "a": {
-      "hardware": { "cylinders": [ {"x": "0", "y": "0", "diameter": "@diameter", "from": "-@depth_a", "to": "@depth_b"} ] },
+      "hardware": { "body": { "cylinders": [ { "diameter": "@diameter", "from": "-@length / 2", "to": "@length / 2" } ], "at": [ { "z": "(@depth_b - @depth_a) / 2" } ] } },
       "machining": { "drillings": [ {"x": "0", "y": "0", "diameter": "@diameter", "depth": "@depth_a + @clearance"} ] },
-      "attributes": { "syetrical":  true }
+      "attributes": { "symmetrical":  true }
     },
     "b": { "machining": { "drillings": [ {"x": "0", "y": "0", "diameter": "@diameter", "depth": "@depth_b + @clearance"} ] } }
   },

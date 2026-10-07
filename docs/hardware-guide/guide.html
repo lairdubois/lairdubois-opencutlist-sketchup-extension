@@ -308,8 +308,8 @@
   { "y": 0, "z": 0 }, { "y": "30mm", "z": 0 }, { "y": "30mm", "z": "2mm" },
   { "y": "2mm", "z": "2mm", "r": "1mm" }, { "y": "2mm", "z": "30mm" }, { "y": 0, "z": "30mm" }
 ] } ] }</pre>
-<p class="small">Comme toute quincaillerie générée, un prisme est centré en Z à la pose : la même pièce décalée par les mesures reste une seule définition.</p>
-<p>En usinage, une <b>poche</b> (<code>pockets</code>) est un contour creusé dans la pièce : ce qu'un perçage ou une mortaise ne sait pas former, une rainure, un logement de platine. Elle fonctionne comme eux : elle part de la face et s'enfonce de <code>depth</code> (<code>"through"</code> = débouchante), ou part du chant avec <code>"axis": "y"</code>. Son contour se donne comme celui d'un prisme : <code>x</code> et <code>y</code>, ou <code>x</code> et <code>z</code> le long de Y. Elle est posée telle quelle, sans recentrage. Une poche de 40 × 20 mm, ses coins arrondis, profonde de la moitié du panneau :</p>
+<p class="small">Comme toute quincaillerie générée, un prisme est posé tel qu'il est écrit, par rapport à l'origine : écrit ailleurs (ses <code>from</code>/<code>to</code> évalués autrement), c'est une autre définition, donc une autre ligne au débit. Seules les positions <code>at</code> d'un article posent plusieurs fois la même définition.</p>
+<p>En usinage, une <b>poche</b> (<code>pockets</code>) est un contour creusé dans la pièce : ce qu'un perçage ou une mortaise ne sait pas former, une rainure, un logement de platine. Elle fonctionne comme eux : elle part de la face et s'enfonce de <code>depth</code> (<code>"through"</code> = débouchante), ou part du chant avec <code>"axis": "y"</code>. Son contour se donne comme celui d'un prisme : <code>x</code> et <code>y</code>, ou <code>x</code> et <code>z</code> le long de Y. Elle est posée telle quelle. Une poche de 40 × 20 mm, ses coins arrondis, profonde de la moitié du panneau :</p>
 <pre>"machining": { "pockets": [ { "depth": "@thickness / 2", "outline": [
   { "x": "-20mm", "y": "-10mm", "r": "3mm" }, { "x": "20mm", "y": "-10mm", "r": "3mm" },
   { "x": "20mm", "y": "10mm", "r": "3mm" }, { "x": "-20mm", "y": "10mm", "r": "3mm" }

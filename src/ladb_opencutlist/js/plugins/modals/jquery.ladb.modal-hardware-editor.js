@@ -94,6 +94,29 @@
             .attr('title', title);
     };
 
+    // Buttons, one pressed - the option whose value is current -, onSelect
+    // told the option clicked when not already pressed. An axis one is its
+    // letter alone, in the axis color, an other one its label.
+    const fnSegments = function (options, current, readonly, onSelect) {
+        const $group = $('<div class="btn-group btn-group-xs ladb-hardware-editor-primitive-segments">');
+        for (const option of options) {
+            $group.append(fnTooltip($('<button type="button" class="btn btn-default">'), option.help ? i18next.t('core.hardware_editor.' + option.help) : null)
+                .append(option.axis
+                    ? $('<span class="ladb-hardware-editor-primitive-axis">').addClass('ladb-hardware-editor-placement-' + option.axis).text(option.axis.toUpperCase())
+                    : document.createTextNode(i18next.t('core.hardware_editor.' + option.label)))
+                .toggleClass('active', option.value === current)
+                .prop('disabled', readonly || option.disabled === true)
+                .on('click', function () {
+                    this.blur();
+                    if (option.value !== current) {
+                        onSelect(option);
+                    }
+                })
+            );
+        }
+        return $group;
+    };
+
     // The decimal separator lengths are shown with - the model's : the ','
     // of a French numeric keypad - set at init. The JSON always gets '.'.
     let decimalSeparator = '.';
@@ -651,13 +674,17 @@
             solids: (this.response.solids || []).map(function (solid) {
                 // What the viewer shows when it is hovered
                 if (solid.article) {
-                    // An article's : its name and size - see HardwareBenchComputeWorker#_articles
+                    // An article's : its name and size - see HardwareBenchComputeWorker#_articles -,
+                    // red when it is refused
                     return $.extend({}, solid, {
-                        label: solid.slot.toUpperCase() + ' · ' + that.articleName(solid.slot, solid.article) + ' · ' + fnPrimitiveSizes(solid.kind, solid.texts)
+                        label: solid.slot.toUpperCase() + ' · ' + that.articleName(solid.slot, solid.article) + ' · ' + fnPrimitiveSizes(solid.kind, solid.texts),
+                        refused: that.articleRefused(solid.slot, solid.article)
                     });
                 }
+                // The descriptor's own : red when its slot fails an assert
                 return $.extend({}, solid, {
-                    label: solid.slot.toUpperCase() + ' · ' + i18next.t('core.hardware_editor.primitive_type_' + solid.kind) + ' ' + fnPrimitiveSummary(solid.kind, solid.axis, solid.texts)
+                    label: solid.slot.toUpperCase() + ' · ' + i18next.t('core.hardware_editor.primitive_type_' + solid.kind) + ' ' + fnPrimitiveSummary(solid.kind, solid.axis, solid.texts),
+                    refused: that.slotRefused(solid.slot)
                 });
             }),
             skps: this.benchSkps(),
@@ -874,11 +901,7 @@
                     const $result = $('<div>')
                         .addClass(result.ok ? 'text-success' : 'text-danger')
                         .html(fnSlotsLabel(assert.results, result));
-                    if (result.left_text === null || result.right_text === null) {
-                        $result.append($('<span>').text(i18next.t('core.hardware_editor.assert_unresolved')));
-                    } else {
-                        $result.append($('<span>').text(result.left_text + ' ' + result.operator + ' ' + result.right_text));
-                    }
+                    $result.append($('<span>').text(this.assertText(result)));
                     $result.append(' <i class="ladb-opencutlist-icon-' + (result.ok ? 'check-mark' : 'warning') + '"></i>');
                     $value.append($result);
                 }
@@ -1355,9 +1378,18 @@
                 });
         };
 
+        // A row in place of a list : "None", or the slot it is the same as
+        const fnNoneList = function (text) {
+            return $('<div class="ladb-hardware-editor-primitive-list">')
+                .append($('<div class="ladb-hardware-editor-primitive-head ladb-hardware-editor-primitive-none">').text(text));
+        };
+
         if (sameAs !== null) {
-            $body.append($('<div class="ladb-hardware-editor-part-buttons">')
-                .append(fnLink(sameAs))
+            $body.append($('<div class="ladb-hardware-editor-primitives">')
+                .append(fnNoneList(i18next.t('core.hardware_editor.part_kind_same_as', { slot: sameAs.toUpperCase() })))
+                .append($('<div class="ladb-hardware-editor-part-buttons ladb-hardware-editor-add-buttons">')
+                    .append(fnLink(sameAs))
+                )
             );
             return $row;
         }
@@ -1368,13 +1400,16 @@
             $body.append(this.renderArticles(slot, path.concat([ part ]), value));
         }
 
-        // Nothing of its own : the slots it can be the same as, after the adds
+        // Nothing of its own : a "None" row in place of its list, the slots it
+        // can be the same as after the adds
         const empty = part === 'machining' ? fnIsEmptyMachining(value) : Object.keys(this.hardwareArticles(value).articles).length === 0;
         if (empty) {
-            const $adds = $body.find('.ladb-hardware-editor-add-buttons').first();
-            for (const other of slots.filter(function (s) { return s !== slot; })) {
-                $adds.append(fnLink(other));
+            const $primitives = $body.children('.ladb-hardware-editor-primitives').first();
+            if ($primitives.children('.ladb-hardware-editor-primitive-list').length === 0) {
+                $primitives.prepend(fnNoneList(i18next.t('core.hardware_editor.part_kind_none')));
             }
+            const $adds = $body.find('.ladb-hardware-editor-add-buttons').first();
+            $adds.append(slots.filter(function (s) { return s !== slot; }).map(fnLink));
         }
 
         return $row;
@@ -1621,6 +1656,9 @@
 
         const $adds = $('<div class="ladb-hardware-editor-part-buttons ladb-hardware-editor-add-buttons">');
         for (const kind of [ 'skp', 'primitives', 'connector' ]) {
+            if (kind === 'connector' && this.response && this.response.type === 'connector') {
+                continue;   // A connector can't use another one
+            }
             $adds.append($('<button type="button" class="btn btn-default btn-xs">')
                 .append('<i class="ladb-opencutlist-icon-plus"></i> ' + i18next.t('core.hardware_editor.article_add_' + kind))
                 .prop('disabled', this.readonly)
@@ -1852,21 +1890,11 @@
             // The axis it goes into our panel along : by its face, or its edge
             const axis = article.axis === 'y' ? 'y' : 'z';
             fnLabel('article_axis');
-            const $axes = $('<div class="btn-group btn-group-xs ladb-hardware-editor-primitive-segments">');
-            for (const value of [ 'z', 'y' ]) {
-                $axes.append($('<button type="button" class="btn btn-default">')
-                    .text(i18next.t('core.hardware_editor.article_axis_' + value))
-                    .toggleClass('active', value === axis)
-                    .prop('disabled', this.readonly)
-                    .on('click', function () {
-                        this.blur();
-                        if (value !== axis) {
-                            fnSet('axis', value === 'y' ? 'y' : undefined);
-                        }
-                    })
-                );
-            }
-            fnRow($axes);
+            fnRow(fnSegments([ 'z', 'y' ].map(function (value) {
+                return { value: value, axis: value };
+            }), axis, this.readonly, function (option) {
+                fnSet('axis', option.value === 'y' ? 'y' : undefined);
+            }));
 
             fnLabel('article_virtual_thickness', { slot: other.toUpperCase() });
             const measure = 'thickness_' + other;
@@ -2031,7 +2059,7 @@
                     .addClass(assert.ok ? 'text-success' : 'text-danger')
                     .append($('<span class="ladb-hardware-editor-article-assert-state">').append($('<i>').addClass('ladb-opencutlist-icon-' + (assert.ok ? 'check-mark' : 'warning'))))
                     .append($('<code>').text(assert.expression))
-                    .append(assert.left_text && assert.right_text ? $('<span class="ladb-hardware-editor-article-assert-values">').text(assert.left_text + ' ' + assert.operator + ' ' + assert.right_text + (assert.z_text ? ' (' + (response.axis === 'y' ? 'Y' : 'Z') + ' ' + assert.z_text + ')' : '')) : null)
+                    .append($('<span class="ladb-hardware-editor-article-assert-values">').text(this.assertText(assert, assert.z_text ? (response.axis === 'y' ? 'Y' : 'Z') + ' ' + assert.z_text : null)))
                 );
             }
             $editor.append($asserts);
@@ -2634,30 +2662,17 @@
             return $cell;
         };
 
-        // Buttons, one pressed : the item - as written now, what was typed
-        // since this rendering included - rewritten by the one clicked. An
-        // axis one is its letter alone, in the axis color.
-        const fnSegments = function (options, current) {
-            const $group = $('<div class="btn-group btn-group-xs ladb-hardware-editor-primitive-segments">');
-            for (const option of options) {
-                $group.append(fnTooltip($('<button type="button" class="btn btn-default">'), option.help ? i18next.t('core.hardware_editor.' + option.help) : null)
-                    .append(option.axis
-                        ? $('<span class="ladb-hardware-editor-primitive-axis">').addClass('ladb-hardware-editor-placement-' + option.axis).text(option.axis.toUpperCase())
-                        : document.createTextNode(i18next.t('core.hardware_editor.' + option.label)))
-                    .toggleClass('active', option.value === current)
-                    .prop('disabled', that.readonly || option.disabled === true)
-                    .on('click', function () {
-                        this.blur();
-                        const written = that.primitiveItem(itemPath);
-                        if (option.value !== current && written !== null) {
-                            const newItem = $.extend(true, {}, written);
-                            option.apply(newItem);
-                            that.setPrimitive(itemPath, newItem);
-                        }
-                    })
-                );
-            }
-            return $group;
+        // Segments rewriting the item - as written now, what was typed since
+        // this rendering included - by the one clicked
+        const fnItemSegments = function (options, current) {
+            return fnSegments(options, current, that.readonly, function (option) {
+                const written = that.primitiveItem(itemPath);
+                if (written !== null) {
+                    const newItem = $.extend(true, {}, written);
+                    option.apply(newItem);
+                    that.setPrimitive(itemPath, newItem);
+                }
+            });
         };
 
         const defaults = PRIMITIVE_DEFAULTS[key];
@@ -2709,7 +2724,7 @@
 
         // Sizes
         if (PRISM_KEYS.includes(key)) {
-            this.renderPrismEditor($editor, key, itemPath, item, fnLabel, fnRow, fnField, fnSegments, fnDepth);
+            this.renderPrismEditor($editor, key, itemPath, item, fnLabel, fnRow, fnField, fnItemSegments, fnDepth);
         } else if (key === 'cylinders' || key === 'drillings') {
             fnLabel('primitive_diameter');
             fnRow(fnField(itemPath, 'diameter', false));
@@ -2722,7 +2737,7 @@
             // Along the first axis across the one it goes along, or the other one
             const [ first, across ] = positionKeys;
             fnLabel('primitive_length_axis');
-            fnRow(fnSegments([
+            fnRow(fnItemSegments([
                 { value: first, axis: first, apply: function (newItem) { delete newItem.length_axis; } },
                 { value: across, axis: across, apply: function (newItem) { newItem.length_axis = across; } }
             ], item.length_axis === across ? across : first));
@@ -2731,7 +2746,7 @@
         // Axis
         if (machining) {
             fnLabel('primitive_axis');
-            fnRow(fnSegments([
+            fnRow(fnItemSegments([
                 { value: 'y', axis: 'y', apply: function (newItem) {
                         newItem.axis = 'y';
                         delete newItem.y;
@@ -2752,7 +2767,7 @@
         } else if (shape) {
             // Its position keeps its values, by the new axes - an oblong long along the first
             fnLabel('primitive_axis');
-            fnRow(fnSegments(PRISM_AXES.map(function (newAxis) {
+            fnRow(fnItemSegments(PRISM_AXES.map(function (newAxis) {
                 return { value: newAxis, axis: newAxis, apply: function (newItem) {
                         const values = positionKeys.map(function (k) { return newItem[k]; });
                         for (const k of [ 'x', 'y', 'z' ]) {
@@ -2820,7 +2835,7 @@
             };
             $editor.append($('<div class="ladb-hardware-editor-primitive-separator">'));
             fnLabel('primitive_head');
-            fnRow(fnSegments([
+            fnRow(fnItemSegments([
                 { value: null, label: 'primitive_head_none', apply: fnSetHead(null) },
                 { value: 'countersink', label: 'primitive_head_countersink', apply: fnSetHead('countersink') },
                 { value: 'counterbore', label: 'primitive_head_counterbore', apply: fnSetHead('counterbore') }
@@ -2830,12 +2845,12 @@
                 const headValue = item[head];
                 fnLabel('primitive_head_side');
                 if (key === 'drillings') {
-                    fnRow(fnSegments([
+                    fnRow(fnItemSegments([
                         { value: 'contact', label: 'primitive_face_contact', apply: function (newItem) { delete fnObject(newItem[head]).face; } },
                         { value: 'opposite', label: 'primitive_face_opposite', help: 'primitive_face_opposite_help', disabled: item.depth !== 'through', apply: function (newItem) { fnObject(newItem[head]).face = 'opposite'; } }
                     ], headValue.face === 'opposite' ? 'opposite' : 'contact'));
                 } else {
-                    fnRow(fnSegments([
+                    fnRow(fnItemSegments([
                         { value: 'to', label: 'primitive_end_to', apply: function (newItem) { fnObject(newItem[head]).end = 'to'; } },
                         { value: 'from', label: 'primitive_end_from', apply: function (newItem) { fnObject(newItem[head]).end = 'from'; } }
                     ], headValue.end === 'from' ? 'from' : 'to'));
@@ -2898,7 +2913,7 @@
     // the axis it is extruded along, from where to where along it - a
     // pocket's depth from the face - then its outline, one row per point - by the two other axes, and the radius of
     // its rounding - points added and removed whole.
-    LadbModalHardwareEditor.prototype.renderPrismEditor = function ($editor, key, itemPath, item, fnLabel, fnRow, fnField, fnSegments, fnDepth) {
+    LadbModalHardwareEditor.prototype.renderPrismEditor = function ($editor, key, itemPath, item, fnLabel, fnRow, fnField, fnItemSegments, fnDepth) {
         const that = this;
 
         // A pocket goes along Z or Y, depth deep from the face, as a drilling or a mortise
@@ -2921,7 +2936,7 @@
 
         // Axis : its points keep their values, by the new axes
         fnLabel('primitive_axis');
-        fnRow(fnSegments((pocket ? [ 'y', 'z' ] : PRISM_AXES).map(function (newAxis) {
+        fnRow(fnItemSegments((pocket ? [ 'y', 'z' ] : PRISM_AXES).map(function (newAxis) {
             return { value: newAxis, axis: newAxis, apply: function (newItem) {
                 if (newAxis === 'z') {
                     delete newItem.axis;
@@ -3896,6 +3911,7 @@
             skps.push({
                 slot: skp.slot,
                 part: skp.part,
+                refused: skp.article ? this.articleRefused(skp.slot, skp.article) : this.slotRefused(skp.slot),
                 transformation: fnMultiply(skp.transformation, this.placements[skp.ref] || IDENTITY),
                 faces: mesh.faces,
                 edges: mesh.edges
@@ -3907,11 +3923,35 @@
     // The name of the given article of the given slot on the bench : its
     // own, the one of the connector it uses, or its key.
     LadbModalHardwareEditor.prototype.articleName = function (slot, key) {
-        const slotDef = this.response && this.response.slots ? this.response.slots[slot] : null;
-        const articles = slotDef && slotDef.component ? slotDef.component.articles || [] : [];
-        const article = articles.find(function (article) { return article.key === key; });
+        const article = this.benchArticle(slot, key);
         if (!article) return key;
         return article.name || article.used_name || key;
+    };
+
+    // Is the given article of the given slot on the bench refused - its
+    // asserts failing, its connector missing ?
+    LadbModalHardwareEditor.prototype.articleRefused = function (slot, key) {
+        const article = this.benchArticle(slot, key);
+        return !!article && article.ok === false;
+    };
+
+    // Does the given slot on the bench fail one of the descriptor's own
+    // asserts - see HardwareBenchComputeWorker#_asserts ? Its articles'
+    // aren't : they are refused on their own, see articleRefused.
+    LadbModalHardwareEditor.prototype.slotRefused = function (slot) {
+        return (this.response && this.response.asserts || []).some(function (assert) {
+            return (assert.results || []).some(function (result) {
+                return !result.ok && (result.slots || []).indexOf(slot) >= 0;
+            });
+        });
+    };
+
+    // The given article of the given slot on the bench - see
+    // HardwareBenchComputeWorker#_articles -, undefined if none.
+    LadbModalHardwareEditor.prototype.benchArticle = function (slot, key) {
+        const slotDef = this.response && this.response.slots ? this.response.slots[slot] : null;
+        const articles = slotDef && slotDef.component ? slotDef.component.articles || [] : [];
+        return articles.find(function (article) { return article.key === key; });
     };
 
     // Loads the meshes of the SKP files the bench shows and doesn't have yet.
@@ -4066,6 +4106,25 @@
             default:
                 return i18next.t('tool.default.error.' + error.key, params);
         }
+    };
+
+    // The given evaluated assert - see HardwareBenchComputeWorker#_asserts -
+    // both sides in numbers, '?' for one that can't be, followed by why :
+    // the variable that fails, traced back. Where it is evaluated after.
+    LadbModalHardwareEditor.prototype.assertText = function (assert, where) {
+        if (!assert.operator) {
+            return i18next.t('core.hardware_editor.assert_unresolved');
+        }
+        let text = (assert.left_text || '?') + ' ' + assert.operator + ' ' + (assert.right_text || '?');
+        if (where) {
+            text += ' (' + where + ')';
+        }
+        if (assert.error) {
+            text += ' - ' + (assert.error.variable ? '@' + assert.error.variable + ' : ' : '') + this.errorLabel(assert.error);
+        } else if (!assert.left_text || !assert.right_text) {
+            text += ' - ' + i18next.t('core.hardware_editor.assert_unresolved');
+        }
+        return text;
     };
 
     // Edit /////

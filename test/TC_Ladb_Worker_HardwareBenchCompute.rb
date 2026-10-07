@@ -188,8 +188,10 @@ class TC_Ladb_Worker_HardwareBenchCompute < TestUp::TestCase
       solids = response[:solids].select { |solid| solid[:slot] == 'a' && solid[:article] == 'screws' }
       screw = solids.find { |solid| solid[:part] == 'hardware' }
       pilot = solids.find { |solid| solid[:part] == 'machining' }
-      assert_in_delta(-14 * MM, screw[:z_min], 1e-9)
-      assert_in_delta(2 * MM, screw[:z_max], 1e-9)   # Through the 2 mm wing
+      # Written centered - one definition - placed by the z of the screw's own article
+      assert_in_delta(-8 * MM, screw[:z_min], 1e-9)
+      assert_in_delta(8 * MM, screw[:z_max], 1e-9)
+      assert_in_delta(-6 * MM, screw[:transformation][14], 1e-9)   # From -14mm to 2mm : through the 2 mm wing
       assert_in_delta(-25 * MM, screw[:transformation][13], 1e-9)
       assert_in_delta(3 * MM, pilot[:diameter], 1e-9)
       assert_in_delta(14 * MM, pilot[:z_max] - pilot[:z_min], 1e-9)
@@ -221,8 +223,9 @@ class TC_Ladb_Worker_HardwareBenchCompute < TestUp::TestCase
     depth_b = _variable(response, 'depth_b')[:results].first
     assert_equal('unresolved_variable', depth_b[:error][:key])
     assert_equal('cap_a', depth_b[:error][:params][:name])
-    # The primitives using them aren't laid
-    assert(response[:slots]['a'][:component][:hardware_unresolved] > 0)
+    # The position of the tenon using them isn't laid
+    tenon = response[:slots]['a'][:component][:articles].find { |article| article[:key] == 'tenon' }
+    assert_equal('unresolved_variable', tenon[:positions].first[:z][:error][:key])
   end
 
   # A hinge : the kind selects the variant, parts declared true are SKP files

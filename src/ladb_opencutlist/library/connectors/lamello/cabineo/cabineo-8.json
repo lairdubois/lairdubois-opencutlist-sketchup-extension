@@ -16,7 +16,7 @@
         { "axis": "y", "z": "-14.8", "diameter": "15", "depth": "11" },
         { "axis": "y", "z": "-26", "diameter": "15", "depth": "11" }
       ] },
-      "attributes": { "syetrical":  true }
+      "attributes": { "symmetrical":  true }
     },
     "b": { "machining": { "drillings": [ { "diameter": "5", "depth": "8" } ] } }
   },

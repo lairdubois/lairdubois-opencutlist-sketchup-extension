@@ -1089,11 +1089,14 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
     fn = lambda { |min_b, max_b, ta| descriptor.resolve_variables('thickness_max' => max_b / 25.4, 'thickness_a' => ta / 25.4, 'thickness_min_b' => min_b / 25.4, 'thickness_max_b' => max_b / 25.4) }
     variables = fn.call(19, 19, 300)   # Flat on an edge
     assert_equal([], descriptor.failed_asserts(variables))
-    screw = _primitive_cylinders(descriptor.resolve_component('a').hardware, variables).first
+    article = descriptor.resolve_component('a').articles.first
+    screw = _primitive_cylinders(article.hardware, variables).first
+    z = article.positions(variables).first[2]   # Written centered - one definition - placed by its z
     hole = _primitive_cylinders(descriptor.resolve_component('a').machining, variables).first
     clearance = _primitive_cylinders(descriptor.resolve_component('b').machining, variables).first
-    assert_in_delta(-31 / 25.4, screw.z_min, 1e-9)                 # 50mm - 19mm embedded in a
-    assert_in_delta(19 / 25.4, screw.z_max, 1e-9)                  # Its head on the other face of b
+    assert_in_delta(-31 / 25.4, screw.z_min + z, 1e-9)             # 50mm - 19mm embedded in a
+    assert_in_delta(19 / 25.4, screw.z_max + z, 1e-9)              # Its head on the other face of b
+    assert_in_delta(0, screw.z_min + screw.z_max, 1e-9)
     assert_in_delta(4 / 25.4, screw.profile.first.first, 1e-9)     # Countersink radius
     assert_in_delta(-31 / 25.4, hole.z_min, 1e-9)
     assert_in_delta(3 / 25.4, hole.diameter, 1e-9)
@@ -1168,9 +1171,13 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
         assert_equal([], descriptor.failed_asserts(variables), "#{file} #{ta}/#{tb}")
         assert_in_delta(depths[0] / 25.4, variables['depth_a'], 1e-9, "#{file} #{ta}/#{tb}")
         assert_in_delta(depths[1] / 25.4, variables['depth_b'], 1e-9, "#{file} #{ta}/#{tb}")
-        tenon = _primitive_cylinders(descriptor.resolve_component('a').hardware, variables).first
+        # Written centered - one definition - placed by the z of its article
+        article = descriptor.resolve_component('a').articles.first
+        tenon = _primitive_cylinders(article.hardware, variables).first
+        z = article.positions(variables).first[2]
         assert_in_delta(length / 25.4, tenon.z_max - tenon.z_min, 1e-9)
-        assert(-tenon.z_min <= variables['depth_a'] + 1e-9 && tenon.z_max <= variables['depth_b'] + 1e-9, "#{file} #{ta}/#{tb} tenon in its mortises")
+        assert_in_delta(0, tenon.z_max + tenon.z_min, 1e-9)
+        assert(-(tenon.z_min + z) <= variables['depth_a'] + 1e-9 && tenon.z_max + z <= variables['depth_b'] + 1e-9, "#{file} #{ta}/#{tb} tenon in its mortises")
       end
     end
   end
@@ -1184,8 +1191,11 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
       variables = descriptor.resolve_variables('thickness_a' => 19 / 25.4, 'thickness_b' => 300 / 25.4)
       assert_in_delta(14 / 25.4, variables['depth_a'], 1e-9)
       assert_in_delta(26 / 25.4, variables['depth_b'], 1e-9)
-      cylinder = _primitive_cylinders(descriptor.resolve_component('a').hardware, variables).first
+      article = descriptor.resolve_component('a').articles.first
+      cylinder = _primitive_cylinders(article.hardware, variables).first
       assert_in_delta(diameter / 25.4, cylinder.diameter, 1e-9)
+      assert_in_delta(-14 / 25.4, cylinder.z_min + article.positions(variables).first[2], 1e-9)   # 14mm into a
+      assert_in_delta(26 / 25.4, cylinder.z_max + article.positions(variables).first[2], 1e-9)    # 26mm into b
       assert(descriptor.failed_asserts(descriptor.resolve_variables('thickness_a' => 19 / 25.4, 'thickness_b' => 19 / 25.4)).any?)
     end
   end
@@ -1572,6 +1582,20 @@ class TC_Ladb_Model_HardwareDescriptorDef < TestUp::TestCase
       assert_equal('a', component.part_slots['hardware'])
       assert_equal('a.body.skp', HardwareDescriptorDef.article_file_name('a', nil, 'body'))
       assert_equal('a.overlay.body.skp', HardwareDescriptorDef.article_file_name('a', 'overlay', 'body'))
+    end
+  end
+
+  # The definitions of the articles get their component's attributes - its
+  # hardware linked or not
+  def test_articles_attributes
+    _with_library('connectors/screw.json' => SCREW) do
+      data = _bracket
+      data['components']['a']['attributes'] = { 'symmetrical' => true }
+      data['components']['b'] = { 'hardware' => { 'same_as' => 'a' } }
+      descriptor = _def(data, nil, '$LIB/fittings/bracket.json')
+      assert(descriptor.valid?, descriptor.errors.inspect)
+      assert_equal([ { 'symmetrical' => true } ] * 2, descriptor.resolve_component('a').articles.map(&:attributes))
+      assert_equal([ {} ] * 2, descriptor.resolve_component('b').articles.map(&:attributes))
     end
   end
 

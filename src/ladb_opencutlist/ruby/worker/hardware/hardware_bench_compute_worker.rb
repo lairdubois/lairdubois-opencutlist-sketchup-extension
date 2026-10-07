@@ -177,10 +177,40 @@ module Ladb::OpenCutList
             :operator => operator,
             :left => left, :left_text => _text(left),
             :right => right, :right_text => _text(right),
+            :error => _assert_error(descriptor, expression, variables_by_slot[slot]),
           }
         end
         { :expression => expression.to_s, :results => _group(slots, results) }
       end
+    end
+
+    # Why the given assert can't be evaluated with the given resolved
+    # variables - see HardwareDescriptorDef#resolve_variables - : its first
+    # side that can't, its error traced back through the variables of the
+    # given descriptor it uses to the one that fails itself - "@cap_b : no
+    # matching value", not "uses @depth_a". nil when it can.
+    def _assert_error(descriptor, expression, variables)
+      match = expression.is_a?(String) ? HardwareDescriptorDef::ASSERT_PATTERN.match(expression.strip) : nil
+      return nil if match.nil?
+      [ match[1], match[3] ].each do |side|
+        error = _length_root_error(descriptor, side.strip, variables, [])
+        return error unless error.nil?
+      end
+      nil
+    end
+
+    def _length_root_error(descriptor, expression, variables, seen)
+      key, params = HardwareDescriptorDef.length_error(expression, true, variables)
+      return nil if key.nil?
+      if key == 'unresolved_variable'
+        name = params[:name]
+        own = descriptor.variables[name]
+        unless own.nil? || seen.include?(name)
+          error = _length_root_error(descriptor, own, variables, seen + [ name ])
+          return error.key?(:variable) ? error : error.merge(:variable => name) unless error.nil?
+        end
+      end
+      { :key => key, :params => params || {} }
     end
 
     # The component of the given slot on the bench : its solids and SKP
@@ -399,7 +429,8 @@ module Ladb::OpenCutList
         used.asserts.each do |assert|
           left, operator, right = HardwareDescriptorDef.assert_sides(assert, used_variables)
           entry = { :expression => assert, :ok => HardwareDescriptorDef.assert?(assert, used_variables) == true, :operator => operator,
-                    :left => left, :left_text => _text(left), :right => right, :right_text => _text(right) }
+                    :left => left, :left_text => _text(left), :right => right, :right_text => _text(right),
+                    :error => _assert_error(used, assert, used_variables) }
           entry[:z_text] = _text(group.first[article.along_y? ? 2 : 3]) if groups.length > 1 && !group.empty?
           result[:asserts] << entry
         end
@@ -410,6 +441,16 @@ module Ladb::OpenCutList
           side_matrix = side == article.host ? frame : _multiply(frame, FLIP_Z)
           sub = { :hardware => used_component.hardware, :mirror => used_component.mirror }
           _article_geometry(slot, article.key, HardwareDescriptorDef::PART_HARDWARE, sub, side_variables, side_matrix, matrix, group, response)
+          # Its own articles : each at its positions in its frame - mirrored as a whole
+          (used_component.articles || []).each do |used_article|
+            next if used_article.use?   # A connector uses none
+            mirror_matrix = _multiply(side_matrix, used_component.mirror ? MIRROR_X : IDENTITY)
+            used_frame = used_article.along_y? ? AXIS_MATRICES[HardwareDescriptorDef::AXIS_Y] : IDENTITY   # A connector's : height not reversed
+            (used_article.positions(side_variables) || []).each do |x, y, z|
+              sub = { :hardware => used_article.hardware, :mirror => false }
+              _article_geometry(slot, article.key, HardwareDescriptorDef::PART_HARDWARE, sub, side_variables, _multiply(mirror_matrix, _multiply(_translation(x, y, z), used_frame)), matrix, group, response)
+            end
+          end
           next unless side == article.host && HardwareDescriptorDef.primitives?(used_component.machining)
           sub = { :hardware => used_component.machining, :mirror => used_component.mirror }
           _article_geometry(slot, article.key, HardwareDescriptorDef::PART_MACHINING, sub, side_variables, frame, matrix, group, response)

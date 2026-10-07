@@ -133,7 +133,7 @@ module Ladb::OpenCutList
   #    It doesn't cross itself, and each rounding fits its two sides.
   #  - a machining can be given pockets - an outline hollowed out of the
   #    part : a groove, a recess, what a drilling or a mortise can't shape -
-  #    laid as they are, not centered. Like them, a pocket goes from the face
+  #    laid as they are. Like them, a pocket goes from the face
   #    into the part, depth deep - or along Y, "axis": "y", from the face
   #    +Y leads to - its points given by the two other axes, as a prism's :
   #    x and y, x and z along Y - z toward -Z, into the part :
@@ -183,6 +183,13 @@ module Ladb::OpenCutList
   # A hardware is laid at the face : to shift it, give it as an article
   # with its "at" - see "hardware" below. "z_offset" is no more : a
   # component still having it is refused.
+  #
+  # Shapes are generated as they are written, off the origin - the anchor,
+  # or the one of their article : the same shape written elsewhere - its
+  # "from" and "to" evaluated otherwise - is another definition, another
+  # part in the cut list. Only the positions of an article - its "at" -
+  # lay the same definition more than once : a tenon sunk as deep as a
+  # measure is written centered, and placed by the z of its "at".
   #
   # "name", "description", "price", "url" and "mass" are what the cut list
   # reads of the laid hardware definition. Those of a variant override those
@@ -514,14 +521,15 @@ module Ladb::OpenCutList
     #  - overrides : the settings of the used connector it overrides, as
     #    written - { 'length' => { 'value' => '18mm' } } ;
     #  - axis : the one of the slot it goes into the part along - AXIS_Z or
-    #    AXIS_Y, see "axis".
-    HardwareArticleDef = Struct.new(:key, :name, :description, :price, :url, :mass, :hardware, :use, :descriptor, :host, :measures, :at, :overrides, :axis) do
+    #    AXIS_Y, see "axis" ;
+    #  - attributes : those of its component - see HardwareComponentDef.
+    HardwareArticleDef = Struct.new(:key, :name, :description, :price, :url, :mass, :hardware, :use, :descriptor, :host, :measures, :at, :overrides, :axis, :attributes) do
       def use?
         !use.nil?
       end
       # As a component's, for the definition it gives - see HardwareComponentDef
       def attributes
-        {}
+        self[:attributes] || {}
       end
       # The virtual side of a used connector
       def other_slot
@@ -1635,6 +1643,7 @@ module Ladb::OpenCutList
         own_info = _info(value)
         merged_info = info.merge(own_info)   # The variant's over the component's
         hardware, hardware_slot, articles = _resolve_part(slot, variant, PART_HARDWARE, value[PART_HARDWARE], context, visited)
+        articles = articles.map { |article| article.dup.tap { |a| a.attributes = attributes } } unless articles.nil?   # The component's - its hardware linked or not
         machining, machining_slot, _, machining_primitives = _resolve_part(slot, variant, PART_MACHINING, value[PART_MACHINING], context, visited)
         return HardwareComponentDef.new(
           slot, slot,

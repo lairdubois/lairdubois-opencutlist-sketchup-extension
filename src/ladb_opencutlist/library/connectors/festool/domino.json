@@ -22,9 +22,9 @@
   "asserts": [ "@depth_a + @depth_b >= @length" ],
   "components": {
     "a": {
-      "hardware": { "oblongs": [ { "length": "@mortise_length", "width": "@width", "from": "-(@length + @depth_a - @depth_b) / 2", "to": "(@length - @depth_a + @depth_b) / 2" } ] },
+      "hardware": { "body": { "oblongs": [ { "length": "@mortise_length", "width": "@width", "from": "-@length / 2", "to": "@length / 2" } ], "at": [ { "z": "(@depth_b - @depth_a) / 2" } ] } },
       "machining": { "mortises": [ { "length": "@mortise_length", "width": "@width", "depth": "@depth_a" } ] },
-      "attributes": { "syetrical":  true }
+      "attributes": { "symmetrical":  true }
     },
     "b": { "machining": { "mortises": [ { "length": "@mortise_length", "width": "@width", "depth": "@depth_b" } ] } }
   },

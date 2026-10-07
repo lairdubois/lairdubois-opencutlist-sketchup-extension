@@ -325,7 +325,7 @@ core:
     family_hinges: Charnières
   # DEV only
   hardware_descriptor:
-    part_hardware: Pièce
+    part_hardware: Accessoire
     part_machining: Usinage
     variant_overlay: En applique
     variant_half_overlay: Jumelée
@@ -341,7 +341,7 @@ core:
     new_name_fitting: Nouveau raccord
     new_name_hinge: Nouvelle charnière
     tab_settings: Réglages
-    tab_parts: Pièces
+    tab_parts: Géométries
     tab_json: JSON
     thickness_a: Épaisseur A
     thickness_b: Épaisseur B
@@ -416,6 +416,7 @@ core:
     hinge_scope_variant: Propre à cette variante
     hinge_apply_all: Appliquer à toutes les variantes
     part_kind_skp: Fichier SKP
+    part_kind_none: Aucun
     part_kind_same_as: "Même que {{ slot }}"
     machining_skp_add: Fichier SKP
     article_add_skp: Fichier SKP
@@ -437,10 +438,8 @@ core:
     article_replace: Remplacer
     article_missing: introuvable
     article_refused: refusé
-    article_host: Notre panneau est le côté
-    article_axis: Entre dans notre panneau par
-    article_axis_z: Sa face (Z)
-    article_axis_y: Son chant (Y)
+    article_host: Le panneau est le côté
+    article_axis: Axe d'entrée dans le panneau
     article_virtual_thickness: "Épaisseur du côté virtuel ({{ slot }})"
     article_settings: Réglages du connecteur
     article_setting_default: "Connecteur : {{ value }}"

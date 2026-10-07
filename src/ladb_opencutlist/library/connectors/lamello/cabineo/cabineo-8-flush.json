@@ -20,7 +20,7 @@
         ],
         "mortises": [ { "axis": "y", "length_axis": "z", "z": "-13", "length": "42.7", "width": "16.7", "depth": "0.8" } ]
       },
-      "attributes": { "syetrical":  true }
+      "attributes": { "symmetrical":  true }
     },
     "b": { "machining": { "drillings": [ { "diameter": "5", "depth": "8" } ] } }
   },

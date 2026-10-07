@@ -1196,6 +1196,7 @@ const BENCH_REFERENCE_DARKEN = 0.4;   // Its panel's color darkened, as SmartJoi
 const BENCH_REFERENCE_ARROW_LENGTH = 50 / 25.4;
 const BENCH_PANEL_HIGHLIGHTED_OPACITY = 0.85;
 const BENCH_PART_COLORS = { hardware: 0x8c8c8c, machining: 0x2e7fd9 };
+const BENCH_REFUSED_COLOR = 0xd9534f;   // A refused article's parts, as Bootstrap's danger
 const BENCH_OUTLINE_COLOR = 0xffffff;
 const BENCH_OUTLINE_WIDTH = 1;
 const BENCH_OUTLINE_RENDER_ORDER = 1;
@@ -1808,7 +1809,7 @@ const fnSetupBench = function (benchDef) {
         const group = new THREE.Group();
         group.applyMatrix4(new THREE.Matrix4().fromArray(solidDef.transformation));
         const opacity = solidDef.part === 'machining' ? 0.5 : 1;
-        const mesh = fnAddBenchObject(group, fnCreateBenchSolidGeometry(solidDef), BENCH_PART_COLORS[solidDef.part], opacity);
+        const mesh = fnAddBenchObject(group, fnCreateBenchSolidGeometry(solidDef), solidDef.refused ? BENCH_REFUSED_COLOR : BENCH_PART_COLORS[solidDef.part], opacity);
         if (solidDef.label) {
             mesh.userData.benchLabel = solidDef.label;
             mesh.userData.benchSolidDef = solidDef;
@@ -1831,7 +1832,7 @@ const fnSetupBench = function (benchDef) {
         facesGeometry.setAttribute('position', new THREE.Float32BufferAttribute(skpDef.faces, 3));
         group.add(new THREE.Mesh(facesGeometry, new THREE.MeshBasicMaterial({
             side: THREE.DoubleSide,
-            color: BENCH_PART_COLORS[skpDef.part],
+            color: skpDef.refused ? BENCH_REFUSED_COLOR : BENCH_PART_COLORS[skpDef.part],
             transparent: opacity < 1,
             opacity: opacity,
             depthWrite: opacity >= 1,

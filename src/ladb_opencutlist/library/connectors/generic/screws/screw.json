@@ -15,9 +15,9 @@
   "asserts": [ "@thickness_max_b - @thickness_min_b <= 0.2", "@embed >= @embed_min", "@embed <= @thickness_a - 3" ],
   "components": {
     "a": {
-      "hardware": { "cylinders": [ { "diameter": "@diameter", "from": "-@embed", "to": "@thickness_max_b", "countersink": { "diameter": "@diameter * 2", "angle": 90, "end": "to" } } ] },
+      "hardware": { "body": { "cylinders": [ { "diameter": "@diameter", "from": "-@length / 2", "to": "@length / 2", "countersink": { "diameter": "@diameter * 2", "angle": 90, "end": "to" } } ], "at": [ { "z": "@thickness_max_b - @length / 2" } ] } },
       "machining": { "drillings": [ { "diameter": "@diameter - 1", "depth": "@embed" } ] },
-      "attributes": { "syetrical":  true }
+      "attributes": { "symmetrical":  true }
     },
     "b": { "machining": { "drillings": [ { "diameter": "@diameter", "depth": "through" } ] } }
   },
