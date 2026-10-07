@@ -2,17 +2,11 @@
   "format": "ocl-hardware",
   "version": 1,
   "id": "3f9c1d7a-8e42-4b6f-a5d3-2c7e9b041f68",
-  "type": "connector",
-  "length_unit": "mm",
+  "extends": "connectors/lamello/clamex/clamex-P-14.json",
   "name": "Clamex P-14/10 Medius",
-  "supplier": "Lamello",
-  "url": "https://www.lamello.com",
   "components": {
     "a": {
-      "hardware": true,
-      "machining": { "drillings": [ { "axis": "y", "z": "-7.5", "diameter": "6", "depth": "@height" } ] },
-      "attributes": { "symmetrical":  true }
+      "hardware": true
     }
-  },
-  "options": { "height": "10", "start_offset": "60", "end_offset": "60", "min_spacing": "80", "max_spacing": "300" }
+  }
 }

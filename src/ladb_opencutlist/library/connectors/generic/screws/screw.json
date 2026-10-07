@@ -7,8 +7,8 @@
   "name": "Screw",
   "abstract": true,
   "variables": {
-    "diameter": { "label": "Diameter" },
-    "length": { "label": "Length" },
+    "diameter": { "value": "4", "label": "Diameter" },
+    "length": { "value": "50", "label": "Length" },
     "embed_min": { "value": "15", "label": "Embed min"},
     "embed": "@length - @thickness_max_b"
   },

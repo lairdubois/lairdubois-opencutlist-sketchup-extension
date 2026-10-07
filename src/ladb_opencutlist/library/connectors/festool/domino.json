@@ -9,8 +9,8 @@
   "supplier": "Festool",
   "url": "https://www.festool.com",
   "variables": {
-    "width": { "label": "Width" },
-    "length": { "label": "Length" },
+    "width": { "value": "5", "label": "Width" },
+    "length": { "value": "30", "label": "Length" },
     "mortise_slot": { "value": "13", "label": "Mortise Slot", "step": [ "13", "19", "23" ]},
     "mortise_length": "@width + @mortise_slot",
     "min_wall": { "value": "5", "label": "Minimum wall" },

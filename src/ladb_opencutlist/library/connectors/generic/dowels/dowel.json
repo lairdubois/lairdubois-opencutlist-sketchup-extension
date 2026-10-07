@@ -7,7 +7,7 @@
   "name": "Dowel",
   "abstract": true,
   "variables": {
-    "diameter": { "label": "Diameter" },
+    "diameter": { "value": "8", "label": "Diameter" },
     "length": { "value": "40", "label": "Length" },
     "min_wall": { "value": "5", "label": "Minimum wall" },
     "clearance": { "value": "1", "label": "Clearance" },

@@ -13,7 +13,7 @@
     "a": {
       "hardware": {
         "body": {
-          "prisms": [ { "axis": "x", "from": "-10", "to": "10", "outline": [
+          "prisms": [ { "axis": "x", "from": -20, "to": 20, "outline": [
             { "y": "-40", "z": 0 },
             { "y": 0, "z": 0 },
             { "y": 0, "z": "40" },
