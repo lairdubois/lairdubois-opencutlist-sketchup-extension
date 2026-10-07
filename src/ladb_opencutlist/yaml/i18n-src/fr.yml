@@ -3076,6 +3076,9 @@ tool:
         Impossible de charger le fichier SKP : {{ file }}
       unsupported_skp_version: |
         Le fichier SKP a été créé avec une version plus récente de SketchUp : {{ version }}
+      failed_to_load_skm_file: |
+        Impossible de charger le fichier SKM : {{ file }}
+      unsupported_skm_load: Le chargement de matières SKM nécessite SketchUp 2019.2 ou plus récent
       failed_to_load_hardware: |
         Impossible de charger la quincaillerie : {{ file }}
       invalid_hardware: |

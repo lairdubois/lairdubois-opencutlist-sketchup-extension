@@ -1344,7 +1344,19 @@ module Ladb::OpenCutList
           ref = PLUGIN.resolve_library_ref(ref)   # '$LIB/…' and '$OCL/…' refs point to a file of a library
           return nil if ref.nil?
           if File.extname(ref).downcase == '.skm'
-            material = model.materials.load(ref)
+            unless model.materials.respond_to?(:load)   # Materials#load requires SketchUp 2019.2+
+              @tool.notify_errors([
+                                    [ 'tool.smart_join.error.failed_to_load_skm_file', { file: ref } ],
+                                    [ 'tool.smart_join.error.unsupported_skm_load' ]
+                                  ])
+              return nil
+            end
+            begin
+              material = model.materials.load(ref)
+            rescue Exception => e
+              @tool.notify_errors([ [ 'tool.smart_join.error.failed_to_load_skm_file', { file: ref } ] ])
+              return nil
+            end
           else
             material = model.materials[ref]
             if material.nil?

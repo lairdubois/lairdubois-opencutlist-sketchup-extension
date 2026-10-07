@@ -398,9 +398,10 @@
 
     // The options of SmartJoin a descriptor of each type gives the defaults
     // of - its 'options' - by group, as the tool shows them. A text group
-    // holds names - materials, layers - not lengths.
+    // holds names - materials, layers - not lengths. A file group's name can
+    // also be a ref to a file - a '.skm' material.
     const TOOL_OPTION_TEXT_GROUPS = [
-        { group: 'materials', text: true, options: [ 'hardware_material_name', 'machining_material_name' ] },
+        { group: 'materials', text: true, file: true, options: [ 'hardware_material_name', 'machining_material_name' ] },
         { group: 'layers', text: true, options: [ 'hardware_layer_name', 'machining_layer_name' ] },
     ];
     const TOOL_OPTION_GROUPS = {
@@ -1068,9 +1069,13 @@
                         if (value === '' && inheritedValue !== '') {
                             $input.attr('placeholder', inheritedValue);   // Typed : overridden
                         }
+                        $input.val(value);
+                        if (optionGroup.file) {
+                            $input.ladbTextinputFile({ library: true, resetValue: '' });
+                        } else {
+                            $input.ladbTextinputText({ resetValue: '' });
+                        }
                         $input
-                            .val(value)
-                            .ladbTextinputText({ resetValue: '' })
                             .on('change', function () {
                                 const newValue = $(this).val().trim();
                                 if (newValue !== value) {

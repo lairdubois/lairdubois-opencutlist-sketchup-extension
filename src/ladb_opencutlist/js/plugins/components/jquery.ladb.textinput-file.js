@@ -78,15 +78,28 @@
         const $browseBtn =
             $('<div class="ladb-textinput-tool ladb-textinput-tool-btn ladb-btn-browse" tabindex="-1" data-toggle="tooltip" title="' + i18next.t(that.options.library ? 'core.component.textinput_file.browse_library' : 'core.component.textinput_file.browse') + '"><i class="ladb-opencutlist-icon-folder-open"></i></div>')
                 .on('click', function() {
+                    if (that.$element.prop('disabled') || that.$element.prop('readonly')) {
+                        return;
+                    }
                     rubyCallCommand(that.options.library ? 'core_browse_library_file' : 'core_browse_file', {  title: i18next.t('default.open'),  file_path: that.val() }, function (response) {
                         if (response.file_path !== '') {
                            that.val(response.file_path);
+                           that.$element.trigger('change');
                         }
                     });
                 })
         ;
 
         $toolsContainer.append($browseBtn);
+
+        // Disabled or readonly - before or after init : no browsing
+        const fnToggleBrowseBtn = function () {
+            $browseBtn.toggle(!that.$element.prop('disabled') && !that.$element.prop('readonly'));
+        };
+        fnToggleBrowseBtn();
+        if (typeof MutationObserver !== 'undefined') {
+            new MutationObserver(fnToggleBrowseBtn).observe(this.$element[0], { attributes: true, attributeFilter: [ 'disabled', 'readonly' ] });
+        }
 
         LadbTextinputAbstract.prototype.appendRightTools.call(this, $toolsContainer);
     };
