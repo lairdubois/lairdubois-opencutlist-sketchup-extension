@@ -112,6 +112,7 @@ core:
       unhide_part_instance: Mostrar la instancia
       edit_part_instance_properties: Editar las propiedades del elemento
       smart_draw: $t(core.toolbar.command.smart_draw)
+      smart_build: ""
       smart_handle: $t(core.toolbar.command.smart_handle)
       smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
@@ -125,6 +126,7 @@ core:
     command:
       dialog: OpenCutList
       smart_draw: Dibujar piezas
+      smart_build: ""
       smart_handle: Manipular las piezas
       smart_reshape: Remodelar piezas
       smart_paint: Colorear piezas
@@ -211,16 +213,21 @@ core:
       *La creación de un preajuste personalizado le permite mantener la configuración actual del formulario de forma global para que pueda reutilizarla en todas sus plantillas más adelante.*
 
       Introduzca el nombre de la preselección:
+    rename_prompt_title: ""
+    rename_prompt: ""
     delete_confirm_title: Supresión
     delete_confirm: "¿Confirma la eliminación del preajuste **\"{{ name }}\"**?"
     override_confirm_title: Actualización
     override_confirm: "¿Confirmas la actualización del preajuste **\"{{ name }}\"** con los parámetros del formulario?"
+    new_error: ""
     new_success: "Preajuste **\"{{ name }}\"** creado"
     override_success: "Preajuste **\"{{ name }}\"** actualizado"
     restore_success: "El formulario se ha rellenado con el preajuste **\"{{ name }}\"**"
+    rename_success: ""
     delete_success: "Preajuste **\"{{ name }}\"** borrado"
     tooltip:
       save_to: "Actualizar la configuración de '{{ name }}'"
+      rename: ""
       delete: "Eliminar la configuración '{{ name }}'"
     dictionary:
       component_textinput_color: Paleta de colores
@@ -239,16 +246,20 @@ core:
       cutlist_estimate_options: $t(tab.cutlist.label) / $t(tab.cutlist.estimate.title)
       cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
       cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
-      importer_import_options: $t(tab.importer.label) / $t(default.import)
-      importer_load_options: $t(tab.importer.label) / $t(default.open)
+      importers_csv_import_options: ""
+      importers_csv_load_options: ""
+      importers_bxf2_import_options: ""
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       outliner_options: $t(tab.outliner.label) / $t(default.options)
+      outliner_deep_rename_parts_options: $t(tab.outliner.label) / $t(tab.outliner.deep_rename_parts.title)
       settings_model: $t(tab.settings.label) / Modelo
       tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
       tool_smart_handle_options: $t(core.toolbar.command.smart_handle)
+      tool_smart_reshape_options: $t(core.toolbar.command.smart_reshape)
       tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
       tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
+      tool_smart_join_options: $t(core.toolbar.command.smart_join)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
   progress:
     please_wait: Calculando un mundo pacífico
@@ -260,7 +271,10 @@ core:
       remove: Olvidar este color
     textinput_code:
       snippets: Ejemplos de fórmulas
-      help: Escriba **@** para abrir la lista de variables de datos.
+      help: ""
+    textinput_file:
+      browse: ""
+      browse_library: ""
     textinput_size:
       quantity: Cantidad
     three_viewer:
@@ -282,6 +296,23 @@ core:
       failed_to_load: |
         No se puede abrir la documentación.
         Compruebe que está conectado a Internet.
+  solid:
+    error:
+      empty: ""
+      empty_named: ""
+      non_manifold_edges: ""
+      non_manifold_edges_plural: ""
+      non_manifold_edges_named: ""
+      non_manifold_edges_named_plural: ""
+      open_edges: ""
+      open_edges_plural: ""
+      open_edges_named: ""
+      open_edges_named_plural: ""
+      locked_instances: ""
+    rebuild:
+      error:
+        no_segment: ""
+        no_face: ""
 tab:
   cutlist:
     label: Partes
@@ -358,6 +389,7 @@ tab:
       flipped: Esta parte se refleja en comparación con la definición de su componente
       symmetrical: La detección de piezas reflejadas está desactivada en esta pieza
       ignore_grain_direction: Se ignora la orientación de la veta en esta pieza
+      follow_grain_direction: ""
       auto_oriented: Esta parte se ha reorientado automáticamente
       oko_label_filter: "Incluir / Excluir esta etiqueta"
       add_label_filter: "Filtrar por '{{ label }}'"
@@ -475,11 +507,11 @@ tab:
         *OpenCutList contará entonces 2 piezas de 19mm de grosor en lugar de 1 pieza de 38mm.*
       cut_options: $t(tab.materials.edit_material.cut_options)
       length_increase: $t(tab.materials.edit_material.length_increase)
-      length_increase_help: ""  # TODO: singular version of tab.materials.edit_material.length_increase
+      length_increase_help: $t(tab.materials.edit_material.length_increase_help)
       width_increase: $t(tab.materials.edit_material.width_increase)
-      width_increase_help: "" # TODO: singular version of tab.materials.edit_material.width_increase
+      width_increase_help: $t(tab.materials.edit_material.width_increase_help)
       thickness_increase: $t(tab.materials.edit_material.thickness_increase)
-      thickness_increase_help: "" # TODO: singular version of tab.materials.edit_material.thickness_increase
+      thickness_increase_help: $t(tab.materials.edit_material.thickness_increase_help)
       description: Descripción
       description_help: |
         La *Descripción* le permite proporcionar información personalizada sobre la definición de cada pieza.
@@ -504,9 +536,14 @@ tab:
       symmetrical: Deshabilitar la detección de espejos en esta parte
       symmetrical_help: |
         Si esta casilla está marcada, la detección de *parte reflejada* no se aplicará a esta parte.
-      ignore_grain_direction: Ignora la orientación de la veta en esta pieza
+      ignore_grain_direction: Veta de la madera
       ignore_grain_direction_help: |
-        Si se selecciona esta opción, se ignorará la orientación de la veta del material para esta pieza.
+      ignore_grain_direction_0: La veta sigue la longitud
+      ignore_grain_direction_1: Ignora la orientación de la veta en esta pieza
+      follow_grain_direction: ""
+      follow_grain_direction_help: |
+      follow_grain_direction_0: $t(default.no)
+      follow_grain_direction_1: ""
       axes: Ejes
       axes_help: Organice las dimensiones para que coincidan con los colores de los ejes de su pieza.
       axes_tip: |
@@ -1063,8 +1100,17 @@ tab:
       option_rectangleguillotine_first_stage_orientation_horizontal: Horizontal
       option_rectangleguillotine_first_stage_orientation_vertical: Vertical
       option_rectangleguillotine_first_stage_orientation_any: Cualquier
+      option_rectangleguillotine_sort_subplates_criteria: ""
+      option_rectangleguillotine_sort_subplates_criteria_help: |
+      option_rectangleguillotine_sort_subplates_criteria_l1l2: ""
+      option_rectangleguillotine_sort_subplates_criteria_dl2l1: ""
       option_rectangleguillotine_keep: Tamaño mínimo de recorte
       option_rectangleguillotine_keep_help: Los recortes cuyas dos dimensiones sean mayores que el tamaño mínimo se marcarán con **conservar**.
+      option_rectangle_leftover_mode: ""
+      option_rectangle_leftover_mode_help: |
+      option_rectangle_leftover_mode_area: ""
+      option_rectangle_leftover_mode_x: ""
+      option_rectangle_leftover_mode_y: ""
       option_irregular_allowed_rotations: Rotaciones autorizadas
       option_irregular_allowed_rotations_help: |
         Define el paso de los ángulos de rotación posibles de la pieza para su ubicación.
@@ -1079,6 +1125,11 @@ tab:
         Indica si la simetría de la pieza es válida en la ubicación.
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
+      option_irregular_leftover_mode: ""
+      option_irregular_leftover_mode_help: |
+      option_irregular_leftover_mode_bottom_left: ""
+      option_irregular_leftover_mode_left: ""
+      option_irregular_leftover_mode_bottom: ""
       option_spacing: Espaciado
       option_spacing_help: |
         Espacio mínimo entre cada pieza.
@@ -1138,6 +1189,7 @@ tab:
       option_hide_edges_preview_1: Enmascarado en el diagrama
       option_hide_edges_preview_help: Permite mostrar u ocultar la indicación visual de los cantos para cada parte del diagrama.
       option_zoom_threshold: Umbral de zoom
+      # TODO find a better explanation
       option_zoom_threshold_help: |
         Permite definir el ancho del diagrama por debajo del cual los diagramas se amplían automáticamente.
 
@@ -1145,6 +1197,11 @@ tab:
       option_time_limit: Límite de tiempo
       option_time_limit_help: |
         Establece el tiempo permitido para el cálculo
+      grain_groups:
+        title: ""
+        title_plural: ""
+        name: Nombre
+        item_count: Σ Partes
       tooltip:
         scroll_to_block_1d: Desplazate al primer tabla o tiro de canto
         scroll_to_block_2d: Desplazarse al primer tablero o chapado
@@ -1243,7 +1300,8 @@ tab:
         no_solution: No se ha encontrado ninguna solución para colocar **todas las piezas** en el material disponible.
         unplaced_parts: "**1 parte** no pudo ser colocada."
         unplaced_parts_plural: "**{{ count }} partes** no se pudo colocar."
-        unusable_part: Pieza demasiado grande
+        unusable_part_1: Pieza demasiado grande
+        unusable_part_2: ""
       warning:
         is_part_selection: Este diagrama de corte se limita a las **piezas seleccionadas**.
         cutting_dimensions: Este diagrama de corte muestra las piezas con sus dimensiones en **bruto**.
@@ -1456,6 +1514,10 @@ tab:
 
         - La estructura **Calcos** dibuja todos los trazos en plano distinguiendo los diferentes tipos de trazo únicamente por los calcos. *Esta estructura ofrece una mejor compatibilidad con los programas de terceros.*
         - La estructura **Calcos + Bloques** crea un bloque por pieza e inserta estos bloques tantas veces como se repiten las piezas. *Esta estructura ofrece mayor flexibilidad para modificar el archivo.*
+      option_dxf_depth_to_z: ""
+      option_dxf_depth_to_z_0: $t(default.no)
+      option_dxf_depth_to_z_1: ""
+      option_dxf_depth_to_z_help: |
       option_unit: Unidad
       option_unit_help: |
         Permite elegir la unidad empleada en el archivo exportado.
@@ -1628,11 +1690,14 @@ tab:
 
         *Si no se indica ninguna unidad, se aplicará la del modelo.*
       length_increase: Longitud sobremedida
-      length_increase_help: Sobredimensionado aplicado a la longitud para definir la **longitud bruta**.
+      length_increase_help: ""
+      length_increase_help_plural: Sobredimensionado aplicado a la longitud para definir la **longitud bruta**.
       width_increase: Ancho sobremedida
-      width_increase_help: Sobredimensionado aplicado al ancho para definir el **ancho bruto**.
+      width_increase_help: ""
+      width_increase_help_plural: Sobredimensionado aplicado al ancho para definir el **ancho bruto**.
       thickness_increase: Espesor sobremedida
-      thickness_increase_help: Sobredimensionado aplicado al espesor para definir el **espesor bruto**.
+      thickness_increase_help: ""
+      thickness_increase_help_plural: Sobredimensionado aplicado al espesor para definir el **espesor bruto**.
       std_lengths: Longitudes estándar
       std_lengths_help: |
         Disponibles longitudes estándar para este material.
@@ -1765,6 +1830,8 @@ tab:
       name: Nombre
       instance_name: Instancia
       material: Material
+      is_grain_group: ""
+      is_grain_group_help: ""
       definition_name: Definición
       description: Descripción
       url: URL
@@ -2145,13 +2212,11 @@ tab:
     presets:
       export_global_presets: Exportar preajustes
       export_global_presets_help: |
-        Esta función le permite exportar sus preajustes a un archivo **.json**.
-        Seleccione los preajustes que desea exportar.
       export_global_presets_success: Los preajustes se han exportado correctamente.
+      export_global_presets_success_with_assets: ""
       import_global_presets: Importar preajustes
       import_global_presets_help: |
-        Seleccione los preajustes del archivo **.json** que desea importar.
-        Tenga en cuenta que si ya existe un preajuste con un nombre idéntico, será sustituido por la versión importada.
+      open_library_dir: ""
       import_global_presets_success: |
         Los preajustes *OpenCutList* se han importado correctamente.
         Para tener en cuenta los cambios, debe **cerrar** y **reabrir** la ventana OpenCutList.
@@ -2176,6 +2241,8 @@ tab:
       error:
         no_preset_to_export: No hay preajustes para exportar.
         no_preset_to_import: No hay preajustes para importar.
+        failed_to_export: ""
+        failed_to_open_library_dir: ""
         failed_to_import: "No se pueden importar preajustes: **{{ error }}**."
         failed_to_import_invalid_hexdigest: Este archivo ha sido modificado. No se puede importar.
         failed_to_import_bad_file_format: Formato de archivo no válido.
@@ -2231,6 +2298,8 @@ tool:
     vcb_radius: Radio
     vcb_diameter: Diámetro
     vcb_distance: Distancia
+    vcb_spacings: Separación
+    locked_on_last_measure_status: Bloquear con la última medida  # TODO : Moved from tool.smart_draw.action_measure_locked_status
     error:
       no_direction: Indique una dirección con el ratón
       invalid_length: "Longitud {{ value }} no es válida"
@@ -2249,18 +2318,21 @@ tool:
       locked_part: ""
       not_sibling_part: ""
       selection_contains_locked_entities: ""
+      wrong_material_type: "La pieza seleccionada debe ser del tipo '{{ type }}'"
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_select:
     state_0_status: Hacer clic sobre una pieza para seleccionarla
     state_0_to_6_status: Seleccionar un elemento principal
+    state_0_to_7_status: ""
     state_4_status: "Arrastra a una pieza idéntica con el mismo padre para añadirla a la selección y, a continuación, suelta para continuar"
     state_5_status: Desliza el dedo para añadir a la selección y suelta para continuar
     state_6_status: Seleccione un elemento de la lista
     state_7_status: ""
     warning:
       no_active_part: Primero debes pasar el cursor sobre una pieza
+      no_parent_group: ""
   smart_draw:
     title: Dibujar
     action_0: Dibujar un rectángulo
@@ -2305,11 +2377,91 @@ tool:
     action_option_options_draw_in_status: ""
     action_option_options_ask_name: Nombrado de las piezas
     action_option_options_ask_name_status: Elegir manualmente el número de piezas
-    action_measure_locked_status: Bloquear con la última medida
     action_toggle_move_copy_status: Alternar entre copiar / desplazar
     action_change_move_anchor_status: Cambiar el punto de inserción
     success:
       part_created: "Nueva pieza creada: {{ name }}"
+      part_created_plural: ""
+  smart_build:
+    title: ""
+    action_0: ""
+    action_0_status: ""
+    action_0_state_0_status: ""
+    action_0_state_1_status: ""
+    action_1: ""
+    action_1_status: ""
+    action_1_state_0_status: ""
+    action_1_state_0_merge_status: ""
+    action_2: ""
+    action_2_status: ""
+    action_2_state_0_status: ""
+    action_2_state_0_merge_status: ""
+    action_option_group_groove: ""
+    action_1_option_group_offset: ""
+    action_option_group_thickness: Grosor
+    action_option_group_overlay: ""
+    action_option_group_axes: Ejes
+    action_option_group_measure_type: Medida
+    action_option_group_options: Opciones
+    action_option_offset_front_panel_offset: ""
+    action_option_offset_front_panel_offset_status: ""
+    action_option_groove_groove_depth: ""
+    action_option_groove_groove_depth_status: ""
+    action_option_groove_groove_setback: ""
+    action_option_groove_groove_setback_status: ""
+    action_option_groove_groove_through: ""
+    action_option_groove_groove_through_status: ""
+    action_option_thickness_thickness: Grosor
+    action_option_thickness_thickness_status: ""
+    action_option_overlay_inset_status: ""
+    action_2_option_overlay_inset_status: ""
+    action_option_overlay_full_overlay_status: ""
+    action_2_option_overlay_full_overlay_status: ""
+    action_option_measure_type_inside_status: ""
+    action_option_measure_type_centered_status: ""
+    action_option_measure_type_outside_status: ""
+    action_option_axes_active_status: Cambiar la longitud de los ejes activos
+    action_option_axes_context_status: ""
+    action_option_options_measure_reversed: Medida inversa
+    action_option_options_measure_reversed_status: Invertir la medida
+    action_option_options_reduce_envelope: ""
+    action_option_options_reduce_envelope_status: ""
+    action_option_options_reuse_definition: ""
+    action_option_options_reuse_definition_status: ""
+    action_option_options_mirror: ""
+    action_option_options_mirror_status: ""
+    action_option_options_ask_name: Nombrado de las piezas
+    action_option_options_ask_name_status: Elegir manualmente el número de piezas
+    action_option_options_layer_name: ""
+    action_option_options_layer_name_status: ""
+    detecting_cavities: ""
+    error:
+      invalid_divider_seed: ""
+      invalid_divider_container: ""
+      invalid_divider_cavity: ""
+      no_divider_cavity: ""
+      invalid_front_panel_seed: ""
+      invalid_front_panel_container: ""
+      invalid_front_panel_cavity: ""
+      no_front_panel_cavity: ""
+      invalid_back_panel_seed: ""
+      invalid_back_panel_container: ""
+      invalid_back_panel_cavity: ""
+      no_back_panel_cavity: ""
+      too_complex_cavity: ""
+      closed_front_panel_opening: ""
+      closed_back_panel_opening: ""
+      divider_number_overflow: ""
+      front_panel_number_overflow: ""
+      back_panel_number_overflow: ""
+      back_panel_severs_parts: ""
+    warning:
+      no_back_panel_machining: ""
+    success:
+      part_created: "Nueva pieza creada: {{ name }}"
+      part_created_plural: ""
+      part_reused: ""
+      part_reused_plural: ""
   smart_handle:
     title: Editar
     action_0: Seleccione
@@ -2350,6 +2502,7 @@ tool:
     action_0_state_1a_status: Haga clic en un plano de corte para moverlo
     action_0_state_1b_status: Añadir un plano de corte
     action_0_state_1c_status: Borrar un plano de corte
+    action_0_state_1d_status: ""
     action_0_state_10_status: Arrastre el plano de corte para moverlo
     action_0_state_11_status: Haga clic para añadir el plano de corte
     action_0_state_12_status: Haga clic en un plano de corte para eliminarlo
@@ -2358,9 +2511,21 @@ tool:
     action_1_status: ""
     action_1_state_0_status: ""
     action_1_state_1_status: ""
-    # CSG = Constructive Solid Geometry
+    action_1_rollover_face_status: ""
+    action_1_select_similar_status: ""
+    action_1_select_all_edges_status: ""
     action_2: ""
     action_2_status: ""
+    action_2_state_0_status: ""
+    action_2_state_1_status: ""
+    action_3: ""
+    action_3_status: ""
+    action_3_state_0_status: ""
+    action_3_state_1_status: ""
+    action_4: ""
+    action_4_status: ""
+    action_4_state_0_status: ""
+    action_4_state_1_status: ""
     action_option_group_thickness: Grosor
     action_option_group_stretch_measure_type: Medida
     action_option_group_axes: Ejes
@@ -2379,8 +2544,20 @@ tool:
     action_option_paneling_joint_type_miter_status: ""
     action_option_paneling_direction_inward_status: ""
     action_option_paneling_direction_outward_status: ""
-    action_option_options_centred_status: Centrar en los elementos estirados
-    action_option_options_make_unique_status: Hacer únicos los elementos estirados
+    action_option_options_centered_status: Centrar en los elementos estirados
+    action_option_options_make_unique_status: ""
+    action_option_options_keep_a: ""
+    action_option_options_keep_a_status: ""
+    action_option_options_keep_b: ""
+    action_option_options_keep_b_status: ""
+    action_option_options_remove_unused_definitions_status: ""
+    action_option_options_reuse_definition: ""
+    action_option_options_reuse_definition_status: ""
+    action_option_options_reuse_definition_mirrored: ""
+    action_option_options_reuse_definition_mirrored_status: ""
+    notify:
+      validate_a: ""
+      validate_b: ""
     error:
       curve_intersect: Uno de los planos de corte cruza una curva no extensible
   smart_paint:
@@ -2432,7 +2609,6 @@ tool:
       not_part: El objeto seleccionado no es una pieza (componente)
       not_edge: La cara objetivo no es un borde de panel
       not_face: La cara objetivo no es una cara de panel
-      wrong_material_type: "La pieza seleccionada debe ser del tipo '{{ type }}'"
   smart_axes:
     title: Oriente
     action_0: Voltear
@@ -2445,6 +2621,10 @@ tool:
     action_3_status: Apunte a una cara de una pieza y haga clic en una arista para adaptar sus ejes
     action_4: Mover origen
     action_4_status: Apunte a una cara de una pieza y haga clic en un punto para colocar allí su origen
+    action_5: ""
+    action_5_status: ""
+    action_5_to_state_10_status: ""
+    action_5_state_10_status: ""
     action_option_group_direction: Dirección
     action_option_direction_0: L
     action_option_direction_1: A
@@ -2457,10 +2637,72 @@ tool:
     error:
       not_part: El objeto seleccionado no es una pieza (componente)
       not_orientable: El tipo de esta pieza no permite orientarla
+      not_grained: ""
+      not_single_thickness_layer: ""
+  # TODO: It's currently just for dev purposes
   smart_join:
     title: ""
-    action_0: "" # TODO: It's currently just for dev purposes
-    action_0_status: "" # TODO
+    action_0: ""
+    action_0_status: ""
+    action_0_state_0_status: ""
+    action_1: ""
+    action_1_status: ""
+    action_1_state_0_status: ""
+    action_1_only_one_status: ""
+    action_2: ""
+    action_2_status: ""
+    action_2_state_0_status: ""
+    action_2_state_1_status: ""
+    action_3: ""
+    action_3_status: ""
+    action_3_state_0_status: ""
+    action_3_state_1_status: ""
+    action_3_only_one_status: ""
+    action_option_group_height: Altura
+    action_option_group_offsets: ""
+    action_option_group_spacings: ""
+    action_option_group_options: Opciones
+    action_option_height: Altura
+    action_option_offsets_start_offset: Inicio
+    action_option_offsets_end_offset: Fin
+    action_option_spacings_min_spacing: ""
+    action_option_spacings_max_spacing: ""
+    action_option_options_opposite_status: ""
+    action_option_options_make_unique_status: ""
+    action_option_hardware_connector_a: ""
+    action_option_hardware_connector_b: ""
+    action_option_hardware_fitting_a: ""
+    action_option_hardware_fitting_b: ""
+    action_option_machining_a: ""
+    action_option_machining_b: ""
+    action_option_hardware_connector_material_name: ""
+    action_option_hardware_fitting_material_name: ""
+    action_option_machining_material_name: ""
+    action_option_hardware_connector_layer_name: ""
+    action_option_hardware_fitting_layer_name: ""
+    action_option_machining_layer_name: ""
+    measures: ""
+    geometries: ""
+    error:
+      invalid_height: ""
+      invalid_start_offset: ""
+      invalid_end_offset: ""
+      invalid_min_spacing: ""
+      invalid_max_spacing: ""
+      not_assemblable: ""
+      no_valid_join: ""
+      occupied_anchors: ""
+      occupied_anchors_plural: ""
+      failed_to_load_skp_file: |
+      unsupported_skp_version: |
+    warning:
+      no_connector_to_remove: ""
+      x_connectors_to_remove: ""
+      x_connectors_to_remove_plural: ""
+      no_fitting_to_remove: ""
+      x_fittings_to_remove: ""
+      x_fittings_to_remove_plural: ""
+      different_file_name: ""
   smart_export:
     title: Exportar
     action_0: Exportar una pieza 3D

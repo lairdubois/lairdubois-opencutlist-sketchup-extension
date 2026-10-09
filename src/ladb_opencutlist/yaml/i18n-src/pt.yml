@@ -112,6 +112,7 @@ core:
       unhide_part_instance: Revelar a instância
       edit_part_instance_properties: Editar propriedades da instância
       smart_draw: $t(core.toolbar.command.smart_draw)
+      smart_build: $t(core.toolbar.command.smart_build)
       smart_handle: $t(core.toolbar.command.smart_handle)
       smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
@@ -125,6 +126,7 @@ core:
     command:
       dialog: OpenCutList
       smart_draw: Desenhar Peças
+      smart_build: Construir peças
       smart_handle: Manipular Peças
       smart_reshape: Remodelar peças
       smart_paint: Pintar Peças
@@ -2385,37 +2387,13 @@ tool:
     action_2_status: Desenhar um volume com base em uma forma poligonal
     action_2_state_1_status: Clique para definir um novo ponto ou insira uma distância
     action_x_state_2_status: Clique para definir a elevação ou insira uma distância
-    action_3: Inserir uma Divisão
-    action_3_status: Desenhar uma divisória em uma cavidade formada por um grupo de peças existentes
-    action_3_state_0_status: Clique em uma parede para desenhar uma divisória
-    action_3_state_1_status: Clique em uma parede para desenhar divisórias
-    action_4: Desenhar uma Frente
-    action_4_status: Desenhar uma frente em uma cavidade formada por um grupo de peças existentes
-    action_4_state_0_status: Clique em uma cavidade para desenhar uma frente em seu vão
-    action_4_state_0_merge_status: "Arraste até as cavidades vizinhas para uma frente compartilhada"
     action_option_group_offset: Diferença
     action_option_group_segments: Segmentos
-    action_option_group_thickness: Espessura
-    action_option_group_clearance: Folga
-    action_option_group_overlay: Instalação
-    action_option_group_axes: Eixos
-    action_option_group_measure_type: Medida
     action_option_group_options: Opções
     action_option_offset_shape_offset: Diferença
     action_option_offset_shape_offset_status: Permite aplicar um deslocamento ao traçado da forma desenhada
-    action_option_offset_front_panel_offset: Folga
-    action_option_offset_front_panel_offset_status: "Define a folga deixada em cada borda da frente"
     action_option_segments_segment_count: Número de Segmentos
     action_option_segments_segment_count_status: Permite definir o número de segmentos do círculo
-    action_option_thickness_thickness: Espessura
-    action_option_thickness_thickness_status: Define a espessura das chapas
-    action_option_overlay_inset_status: "Frente embutida: instalada no vão, alinhada à face frontal"
-    action_option_overlay_full_overlay_status: "Frente sobreposta: instalada à frente da face frontal, cobrindo as chapas até a face externa da caixa e até a meia-espessura das chapas internas"
-    action_option_measure_type_inside_status: Posicionar a espessura no interior do ponto alvo
-    action_option_measure_type_centered_status: Centralizar a espessura no ponto alvo
-    action_option_measure_type_outside_status: Posicionar a espessura no exterior do ponto alvo
-    action_option_axes_active_status: Manipular ao longo dos eixos ativos
-    action_option_axes_context_status: Manipular ao longo dos eixos do grupo ou componente hospedeiro
     action_option_options_construction: Linhas de Construção
     action_option_options_construction_status: Desenhar com linhas de construção
     action_option_options_rectangle_centered: Retângulo Centralizado
@@ -2435,6 +2413,55 @@ tool:
     action_option_options_draw_in_0: Desenhar no elemento ativo
     action_option_options_draw_in_1: Desenhar no objeto pai da peça do primeiro ponto
     action_option_options_draw_in_status: Desenhar no objeto pai da peça alvo do primeiro ponto
+    action_option_options_ask_name: Nomeação das Peças
+    action_option_options_ask_name_status: Inserir manualmente o nome das peças
+    action_toggle_move_copy_status: Alternar entre copiar/mover
+    action_change_move_anchor_status: Alterar o ponto de ancoragem
+    success:
+      part_created: "Nova peça criada : {{ name }}"
+      part_created_plural: "{{ count }} novas peças criadas : {{ name }}"
+  smart_build:
+    title: Construir
+    action_0: Construir uma Divisória
+    action_0_status: Construir uma divisória numa cavidade formada por um grupo de peças existentes
+    action_0_state_0_status: Clique numa parede para construir uma divisória
+    action_0_state_1_status: Clique numa parede para construir divisórias
+    action_1: Construir uma Frente
+    action_1_status: Construir uma frente numa cavidade formada por um grupo de peças existentes
+    action_1_state_0_status: Clique numa cavidade para construir uma frente no seu vão
+    action_1_state_0_merge_status: "Arraste até as cavidades vizinhas para uma frente compartilhada"
+    action_2: Construir um Fundo
+    action_2_status: Construir um fundo numa cavidade formada por um grupo de peças existentes
+    action_2_state_0_status: Clique numa cavidade para construir um fundo no seu vão oposto à vista
+    action_2_state_0_merge_status: "Arraste até às cavidades vizinhas para um fundo comum"
+    action_option_group_groove: Ranhura
+    action_1_option_group_offset: Folga
+    action_option_group_thickness: Espessura
+    action_option_group_overlay: Instalação
+    action_option_group_axes: Eixos
+    action_option_group_measure_type: Medida
+    action_option_group_options: Opções
+    action_option_offset_front_panel_offset: Folga
+    action_option_offset_front_panel_offset_status: "Define a folga deixada em cada borda da frente"
+    action_option_groove_groove_depth: Profundidade da ranhura
+    action_option_groove_groove_depth_status: "Define a profundidade da ranhura na qual o fundo é encaixado"
+    action_option_groove_groove_setback: Recuo
+    action_option_groove_groove_setback_status: "Define quanto o fundo recua para o interior da caixa e, portanto, onde a ranhura é usinada"
+    action_option_groove_groove_through: Ranhura contínua
+    action_option_groove_groove_through_status: "Prolongar a ranhura até à extremidade das peças que cobrem a peça vizinha, quando desemboca sem ficar visível"
+    action_option_thickness_thickness: Espessura
+    action_option_thickness_thickness_status: Define a espessura das chapas
+    action_option_overlay_inset_status: "Frente embutida: instalada no vão, alinhada à face frontal"
+    action_2_option_overlay_inset_status: "Fundo em ranhura: encaixado numa ranhura usinada nas peças que delimitam o vão"
+    action_option_overlay_full_overlay_status: "Frente sobreposta: instalada à frente da face frontal, cobrindo as chapas até a face externa da caixa e até a meia-espessura das chapas internas"
+    action_2_option_overlay_full_overlay_status: "Fundo sobreposto: instalado na parte traseira da caixa, cobrindo as chapas até à face exterior e até à meia-espessura das chapas interiores, sem qualquer usinagem"
+    action_option_measure_type_inside_status: Posicionar a espessura no interior do ponto alvo
+    action_option_measure_type_centered_status: Centralizar a espessura no ponto alvo
+    action_option_measure_type_outside_status: Posicionar a espessura no exterior do ponto alvo
+    action_option_axes_active_status: Manipular ao longo dos eixos ativos
+    action_option_axes_context_status: Manipular ao longo dos eixos do grupo ou componente hospedeiro
+    action_option_options_measure_reversed: Medição Invertida
+    action_option_options_measure_reversed_status: Inverter a medição
     action_option_options_reduce_envelope: Peças em recuo
     action_option_options_reduce_envelope_status: Considerar as peças em recuo
     action_option_options_reuse_definition: Reutilizar as peças
@@ -2444,20 +2471,30 @@ tool:
     action_option_options_ask_name: Nomeação das Peças
     action_option_options_ask_name_status: Inserir manualmente o nome das peças
     action_option_options_layer_name: Camada
-    action_option_options_layer_name_status: Nome da camada na qual as frentes são inseridas
-    action_toggle_move_copy_status: Alternar entre copiar/mover
-    action_change_move_anchor_status: Alterar o ponto de ancoragem
+    action_option_options_layer_name_status: Nome da camada na qual as peças são colocadas
+    detecting_cavities: "Deteção de cavidades..."
     error:
-      invalid_divider_seed: Este tipo de peça não permite o desenho de uma divisória
+      invalid_divider_seed: Este tipo de peça não permite a construção de uma divisória
       invalid_divider_container: "Esta peça está isolada: ela não compartilha grupo ou componente com outras peças"
       invalid_divider_cavity: "Nenhuma cavidade nesta posição"
       no_divider_cavity: Nenhuma cavidade foi detectada neste grupo ou componente
-      invalid_front_panel_seed: Este tipo de peça não permite o desenho de uma frente
+      invalid_front_panel_seed: Este tipo de peça não permite a construção de uma frente
       invalid_front_panel_container: "Esta peça está isolada: ela não compartilha grupo ou componente com outras peças"
       invalid_front_panel_cavity: "Nenhuma cavidade voltada para você nesta posição"
       no_front_panel_cavity: Nenhuma cavidade foi detectada neste grupo ou componente
+      invalid_back_panel_seed: Este tipo de peça não permite a construção de um fundo
+      invalid_back_panel_container: "Esta peça está isolada: ela não compartilha grupo ou componente com outras peças"
+      invalid_back_panel_cavity: "Nenhuma cavidade aberta oposta à vista nesta posição"
+      no_back_panel_cavity: Nenhuma cavidade foi detectada neste grupo ou componente
+      too_complex_cavity: "Geometria demasiado complexa para detetar cavidades"
+      closed_front_panel_opening: "Este vão já está fechado por uma frente"
+      closed_back_panel_opening: "Este vão já está fechado por um fundo"
       divider_number_overflow: "Não foi possível distribuir {{ number }} divisórias nesta cavidade"
       front_panel_number_overflow: "Não foi possível distribuir {{ number }} frentes neste vão"
+      back_panel_number_overflow: "Não é possível distribuir {{ number }} fundos neste vão"
+      back_panel_severs_parts: "A ranhura cortaria de um lado ao outro: {{ names }}. Reduza a sua profundidade"
+    warning:
+      no_back_panel_machining: "Nenhuma ranhura pôde ser maquinada: nenhuma peça vizinha delimita o fundo a esta profundidade"
     success:
       part_created: "Nova peça criada : {{ name }}"
       part_created_plural: "{{ count }} novas peças criadas : {{ name }}"

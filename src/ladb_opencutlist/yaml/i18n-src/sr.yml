@@ -112,11 +112,12 @@ core:
       unhide_part_instance: Prikaži instancu
       edit_part_instance_properties: Izmeni podešavanja instance
       smart_draw: $t(core.toolbar.command.smart_draw)
+      smart_build: ""
       smart_handle: $t(core.toolbar.command.smart_handle)
       smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
-      smart_join: ""
+      smart_join: $t(core.toolbar.command.smart_join)
       smart_export: $t(core.toolbar.command.smart_export)
       reset_dialog_position: Resetuj položaj prozora
   toolbar:
@@ -125,6 +126,7 @@ core:
     command:
       dialog: OpenCutList
       smart_draw: Nacrtaj komade
+      smart_build: ""
       smart_handle: Upravljaj komadima
       smart_reshape: ""
       smart_paint: Oboji komade
@@ -211,16 +213,21 @@ core:
       *Snimanje prilagođenih podešavanja omogućava vam zadržavanje trenutnih podešavanja obrasca globalno kako biste ih mogli ponovo koristiti u svim svojim modelima.*
 
       Unesite ime za podešavanja:
+    rename_prompt_title: ""
+    rename_prompt: ""
     delete_confirm_title: Uklanjanje
     delete_confirm: "Da li ste sigurni da želite obrisati podešavanja **\"{{ name }}\"**?"
     override_confirm_title: Ažuriranje
     override_confirm: "Potvrđujete li izmenu podešavanja **\"{{ name }}\"** sa ovim parametrima?"
+    new_error: ""
     new_success: "Podešavanja **\"{{ name }}\"** su kreirana"
     override_success: "Podešavanja **\"{{ name }}\"** su izmenjena"
     restore_success: "Obrazac je popunjen sa unapred definisanim podešavanjima **\"{{ name }}\"**"
+    rename_success: ""
     delete_success: "Podešavanja **\"{{ name }}\"** su izbrisana"
     tooltip:
       save_to: "Ažurirajte podešavanja '{{ name }}'"
+      rename: ""
       delete: "Izbriši podešavanja '{{ name }}'"
     dictionary:
       component_textinput_color: Paleta boja
@@ -239,16 +246,20 @@ core:
       cutlist_estimate_options: $t(tab.cutlist.label) / $t(tab.cutlist.estimate.title)
       cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
       cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
-      importer_import_options: $t(tab.importer.label) / $t(default.import)
-      importer_load_options: $t(tab.importer.label) / $t(default.open)
+      importers_csv_import_options: ""
+      importers_csv_load_options: ""
+      importers_bxf2_import_options: ""
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       outliner_options: $t(tab.outliner.label) / $t(default.options)
+      outliner_deep_rename_parts_options: $t(tab.outliner.label) / $t(tab.outliner.deep_rename_parts.title)
       settings_model: $t(tab.settings.label) / Model
       tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
       tool_smart_handle_options: $t(core.toolbar.command.smart_handle)
+      tool_smart_reshape_options: $t(core.toolbar.command.smart_reshape)
       tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
       tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
+      tool_smart_join_options: $t(core.toolbar.command.smart_join)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
   progress:
     please_wait: Molimo pričekajte
@@ -260,7 +271,10 @@ core:
       remove: Ukloni boju
     textinput_code:
       snippets: Primeri formula
-      help: Unesite **@** za prikaz liste promenljivih podataka.
+      help: ""
+    textinput_file:
+      browse: ""
+      browse_library: ""
     textinput_size:
       quantity: Količina
     three_viewer:
@@ -282,6 +296,23 @@ core:
       failed_to_load: |
         Nije moguće otvoriti dokumentaciju.
         Proverite da li ste povezani na Internet.
+  solid:
+    error:
+      empty: ""
+      empty_named: ""
+      non_manifold_edges: ""
+      non_manifold_edges_plural: ""
+      non_manifold_edges_named: ""
+      non_manifold_edges_named_plural: ""
+      open_edges: ""
+      open_edges_plural: ""
+      open_edges_named: ""
+      open_edges_named_plural: ""
+      locked_instances: ""
+    rebuild:
+      error:
+        no_segment: ""
+        no_face: ""
 tab:
   cutlist:
     label: Delovi
@@ -358,6 +389,7 @@ tab:
       flipped: Ovaj komad je simetrično okrenut u odnosu na svoju definiciju
       symmetrical: Detekcija preslikanog dela je onemogućena na ovom delu
       ignore_grain_direction: Orijentacija teksture se na ovom komadu zanemaruje
+      follow_grain_direction: ""
       auto_oriented: Ovaj deo je automatski reorijentisan
       oko_label_filter: "Uključi / Isključi ovu oznaku"
       add_label_filter: "Filtriranje na '{{ label }}'"
@@ -475,11 +507,11 @@ tab:
         *OpenCutList će tada uračunati 2 komada debljine 19 mm umesto 1 komada debljine 38 mm.*
       cut_options: $t(tab.materials.edit_material.cut_options)
       length_increase: $t(tab.materials.edit_material.length_increase)
-      length_increase_help: ""  # TODO: singular version of tab.materials.edit_material.length_increase
+      length_increase_help: $t(tab.materials.edit_material.length_increase_help)
       width_increase: $t(tab.materials.edit_material.width_increase)
-      width_increase_help: "" # TODO: singular version of tab.materials.edit_material.width_increase
+      width_increase_help: $t(tab.materials.edit_material.width_increase_help)
       thickness_increase: $t(tab.materials.edit_material.thickness_increase)
-      thickness_increase_help: "" # TODO: singular version of tab.materials.edit_material.thickness_increase
+      thickness_increase_help: $t(tab.materials.edit_material.thickness_increase_help)
       description: Opis
       description_help: |
         Polje *Opis* omogućava unošenje prilagođenih informacija za svaku definiciju komada.
@@ -504,9 +536,14 @@ tab:
       symmetrical: Isključi detekciju simetrije na ovom komadu
       symmetrical_help: |
         Ako je ovo polje označeno, detekcija *simetrično okrenutog komada* neće biti primenjena na ovaj komad.
-      ignore_grain_direction: Zanemari pravac teksture
+      ignore_grain_direction: Pravac teksture
       ignore_grain_direction_help: |
-        Ako je ovo polje označeno, pravac teksture se zanemaruje za ovaj komad.
+      ignore_grain_direction_0: Šara prati dužinu
+      ignore_grain_direction_1: Zanemari pravac teksture
+      follow_grain_direction: ""
+      follow_grain_direction_help: |
+      follow_grain_direction_0: $t(default.no)
+      follow_grain_direction_1: ""
       axes: Ose
       axes_help: Reorganizujte dimenzije tako da odgovaraju željenim bojama ose u vašem delu.
       axes_tip: |
@@ -1063,8 +1100,17 @@ tab:
       option_rectangleguillotine_first_stage_orientation_horizontal: Horizontalno
       option_rectangleguillotine_first_stage_orientation_vertical: Vertikalno
       option_rectangleguillotine_first_stage_orientation_any: Bilo koji
+      option_rectangleguillotine_sort_subplates_criteria: ""
+      option_rectangleguillotine_sort_subplates_criteria_help: |
+      option_rectangleguillotine_sort_subplates_criteria_l1l2: ""
+      option_rectangleguillotine_sort_subplates_criteria_dl2l1: ""
       option_rectangleguillotine_keep: Minimalna veličina otpada
       option_rectangleguillotine_keep_help: Ostaci veći od minimalne veličine biće za **čuvanje**.
+      option_rectangle_leftover_mode: ""
+      option_rectangle_leftover_mode_help: |
+      option_rectangle_leftover_mode_area: ""
+      option_rectangle_leftover_mode_x: ""
+      option_rectangle_leftover_mode_y: ""
       option_irregular_allowed_rotations: Dozvoljene rotacije
       option_irregular_allowed_rotations_help: |
         Određuje korak uglova rotacije dela pri njegovom raspoređivanju.
@@ -1079,6 +1125,11 @@ tab:
         Određuje da li je dozvoljeno preslikavanje dela prilikom raspoređivanja.
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
+      option_irregular_leftover_mode: ""
+      option_irregular_leftover_mode_help: |
+      option_irregular_leftover_mode_bottom_left: ""
+      option_irregular_leftover_mode_left: ""
+      option_irregular_leftover_mode_bottom: ""
       option_spacing: Razmak
       option_spacing_help: |
         Minimalni razmak između svakog dela.
@@ -1138,10 +1189,16 @@ tab:
       option_hide_edges_preview_1: Ne prikazuj na dijagramu
       option_hide_edges_preview_help: Prikaži/sakrij oznake kantova za svaki deo.
       option_zoom_threshold: ""
+      # TODO find a better explanation
       option_zoom_threshold_help: |
       option_time_limit: Vremensko ograničenje
       option_time_limit_help: |
         Vreme proračuna
+      grain_groups:
+        title: ""
+        title_plural: ""
+        name: Naziv
+        item_count: Σ Delova
       tooltip:
         scroll_to_block_1d: Pomaknite se do prve ploče ili trake
         scroll_to_block_2d: Idi na prvu ploču/list
@@ -1240,7 +1297,8 @@ tab:
         no_solution: Nije pronađeno rešenje za **postavljanje svih delova** u raspoloživi materijal.
         unplaced_parts: "**1 deo** nije mogao biti postavljen."
         unplaced_parts_plural: "**{{ count }} delova** nije moglo biti postavljeno."
-        unusable_part: Prevelik deo
+        unusable_part_1: Prevelik deo
+        unusable_part_2: ""
       warning:
         is_part_selection: "**Šema slaganja samo za izabrane delove**."
         cutting_dimensions: Ova šema sečenja koristi dimenzije **umanjene** za kantovanje.
@@ -1453,6 +1511,10 @@ tab:
 
         - Struktura **Slojevi** crta sve linije u ravni i razlikuje vrste linija isključivo pomoću slojeva. *Ova struktura pruža bolju kompatibilnost sa drugim softverima.*
         - Struktura **Slojevi + Blokovi** kreira blok za svaki deo i ubacuje ga onoliko puta koliko se deo ponavlja. *Ova struktura pruža veću fleksibilnost pri izmeni fajla.*
+      option_dxf_depth_to_z: ""
+      option_dxf_depth_to_z_0: $t(default.no)
+      option_dxf_depth_to_z_1: ""
+      option_dxf_depth_to_z_help: |
       option_unit: Jedinica
       option_unit_help: |2
          Jedinica izvezenog fajla.
@@ -1578,7 +1640,7 @@ tab:
       type_4: Tip materijala $t(tab.materials.type_4)
       type_5: Tip materijala $t(tab.materials.type_5)
       type_6: Tip materijala '$t(tab.materials.type_6)'
-      type_7: ""
+      type_7: Tip materijala '$t(tab.materials.type_7)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Smer teksture
@@ -1625,11 +1687,14 @@ tab:
 
         *Ako jedinica nije navedena, koristiće se jedinica modela.*
       length_increase: Dodatak na dužinu
-      length_increase_help: Nadmera primenjena na iskoristivu dužinu delova radi određivanja njihove **dužine za isecanje**.
+      length_increase_help: ""
+      length_increase_help_plural: Nadmera primenjena na iskoristivu dužinu delova radi određivanja njihove **dužine za isecanje**.
       width_increase: Dodatak na širinu
-      width_increase_help: Nadmera primenjena na iskoristivu širinu delova radi određivanja njihove **širine za sečenje**.
+      width_increase_help: ""
+      width_increase_help_plural: Nadmera primenjena na iskoristivu širinu delova radi određivanja njihove **širine za sečenje**.
       thickness_increase: Dodatak na debljinu
-      thickness_increase_help: Prekoračenje debljine se dodaje na konačnu debljinu da bi se definisala **sirova debljina**.
+      thickness_increase_help: ""
+      thickness_increase_help_plural: Prekoračenje debljine se dodaje na konačnu debljinu da bi se definisala **sirova debljina**.
       std_lengths: Standardne dužine
       std_lengths_help: |
         Standardne dužine dostupne za ovaj materijal.
@@ -1762,6 +1827,8 @@ tab:
       name: Naziv
       instance_name: Instance
       material: Materijal
+      is_grain_group: ""
+      is_grain_group_help: ""
       definition_name: Definicija
       description: Opis
       url: URL
@@ -2141,13 +2208,11 @@ tab:
     presets:
       export_global_presets: Izvezi podešavanja
       export_global_presets_help: |
-        Omogućava izvoz vaših podešavanja u **.json**. datoteku.
-        Odaberite podešavanja za izvoz.
       export_global_presets_success: Podešavanja su uspešno izvezena.
+      export_global_presets_success_with_assets: ""
       import_global_presets: Uvezi podešavanja
       import_global_presets_help: |
-        Odaberite podešavanja iz **.json** datoteke za uvoz.
-        Upozorenje: postojeća podešavanja sa istim imenom biće zamenjena uvezenom verzijom.
+      open_library_dir: ""
       import_global_presets_success: |
         Podešavanja *OpenCutList* su uspešno uvezena.
         Za primenu promena, **zatvorite** i ponovo **otvorite** prozor OpenCutList.
@@ -2172,6 +2237,8 @@ tab:
       error:
         no_preset_to_export: Nema unapred podešenih vrednosti za izvoz.
         no_preset_to_import: Nema unapred podešenih vrednosti za uvoz.
+        failed_to_export: ""
+        failed_to_open_library_dir: ""
         failed_to_import: "Greška pri uvozu podešavanja : **{{ error }}**."
         failed_to_import_invalid_hexdigest: Datoteka je promenjena i nije moguće izvršiti uvoz.
         failed_to_import_bad_file_format: Format datoteke nije podržan.
@@ -2227,6 +2294,8 @@ tool:
     vcb_radius: Poluprečnik
     vcb_diameter: Prečnik
     vcb_distance: Udaljenost
+    vcb_spacings: Veličina razmaka
+    locked_on_last_measure_status: Zaključaj na poslednje merenje  # TODO : Moved from tool.smart_draw.action_measure_locked_status
     error:
       no_direction: Odredite smer mišem
       invalid_length: "Dužina {{ value }} nije validna"
@@ -2245,18 +2314,21 @@ tool:
       locked_part: ""
       not_sibling_part: ""
       selection_contains_locked_entities: ""
+      wrong_material_type: "Ciljani element mora biti tipa '{{ type }}'"
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_select:
     state_0_status: Kliknite na komad za izbor
     state_0_to_6_status: ""
+    state_0_to_7_status: ""
     state_4_status: ""
     state_5_status: ""
     state_6_status: ""
     state_7_status: ""
     warning:
       no_active_part: ""
+      no_parent_group: ""
   smart_draw:
     title: Crtaj
     action_0: Nacrtaj pravougaonik
@@ -2301,11 +2373,91 @@ tool:
     action_option_options_draw_in_status: ""
     action_option_options_ask_name: Imenovanje komada
     action_option_options_ask_name_status: Ručno unosite ime komada
-    action_measure_locked_status: Zaključaj na poslednje merenje
     action_toggle_move_copy_status: Menjaj između kopiraj/pomeraj
     action_change_move_anchor_status: Promeni tačku sidrenja
     success:
       part_created: "Kreiran novi komad : {{ name }}"
+      part_created_plural: ""
+  smart_build:
+    title: ""
+    action_0: ""
+    action_0_status: ""
+    action_0_state_0_status: ""
+    action_0_state_1_status: ""
+    action_1: ""
+    action_1_status: ""
+    action_1_state_0_status: ""
+    action_1_state_0_merge_status: ""
+    action_2: ""
+    action_2_status: ""
+    action_2_state_0_status: ""
+    action_2_state_0_merge_status: ""
+    action_option_group_groove: ""
+    action_1_option_group_offset: ""
+    action_option_group_thickness: Debljina
+    action_option_group_overlay: ""
+    action_option_group_axes: Ose
+    action_option_group_measure_type: Merenje
+    action_option_group_options: Opcije
+    action_option_offset_front_panel_offset: ""
+    action_option_offset_front_panel_offset_status: ""
+    action_option_groove_groove_depth: ""
+    action_option_groove_groove_depth_status: ""
+    action_option_groove_groove_setback: ""
+    action_option_groove_groove_setback_status: ""
+    action_option_groove_groove_through: ""
+    action_option_groove_groove_through_status: ""
+    action_option_thickness_thickness: Debljina
+    action_option_thickness_thickness_status: ""
+    action_option_overlay_inset_status: ""
+    action_2_option_overlay_inset_status: ""
+    action_option_overlay_full_overlay_status: ""
+    action_2_option_overlay_full_overlay_status: ""
+    action_option_measure_type_inside_status: ""
+    action_option_measure_type_centered_status: ""
+    action_option_measure_type_outside_status: ""
+    action_option_axes_active_status: Manipuliši po aktivnim osama
+    action_option_axes_context_status: ""
+    action_option_options_measure_reversed: Obrnuto merenje
+    action_option_options_measure_reversed_status: Obrni merenje
+    action_option_options_reduce_envelope: ""
+    action_option_options_reduce_envelope_status: ""
+    action_option_options_reuse_definition: ""
+    action_option_options_reuse_definition_status: ""
+    action_option_options_mirror: ""
+    action_option_options_mirror_status: ""
+    action_option_options_ask_name: Imenovanje komada
+    action_option_options_ask_name_status: Ručno unosite ime komada
+    action_option_options_layer_name: ""
+    action_option_options_layer_name_status: ""
+    detecting_cavities: ""
+    error:
+      invalid_divider_seed: ""
+      invalid_divider_container: ""
+      invalid_divider_cavity: ""
+      no_divider_cavity: ""
+      invalid_front_panel_seed: ""
+      invalid_front_panel_container: ""
+      invalid_front_panel_cavity: ""
+      no_front_panel_cavity: ""
+      invalid_back_panel_seed: ""
+      invalid_back_panel_container: ""
+      invalid_back_panel_cavity: ""
+      no_back_panel_cavity: ""
+      too_complex_cavity: ""
+      closed_front_panel_opening: ""
+      closed_back_panel_opening: ""
+      divider_number_overflow: ""
+      front_panel_number_overflow: ""
+      back_panel_number_overflow: ""
+      back_panel_severs_parts: ""
+    warning:
+      no_back_panel_machining: ""
+    success:
+      part_created: "Kreiran novi komad : {{ name }}"
+      part_created_plural: ""
+      part_reused: ""
+      part_reused_plural: ""
   smart_handle:
     title: Rukovati
     action_0: Odabrati
@@ -2346,6 +2498,7 @@ tool:
     action_0_state_1a_status: ""
     action_0_state_1b_status: ""
     action_0_state_1c_status: ""
+    action_0_state_1d_status: ""
     action_0_state_10_status: ""
     action_0_state_11_status: ""
     action_0_state_12_status: ""
@@ -2354,9 +2507,21 @@ tool:
     action_1_status: ""
     action_1_state_0_status: ""
     action_1_state_1_status: ""
-    # CSG = Constructive Solid Geometry
+    action_1_rollover_face_status: ""
+    action_1_select_similar_status: ""
+    action_1_select_all_edges_status: ""
     action_2: ""
     action_2_status: ""
+    action_2_state_0_status: ""
+    action_2_state_1_status: ""
+    action_3: ""
+    action_3_status: ""
+    action_3_state_0_status: ""
+    action_3_state_1_status: ""
+    action_4: ""
+    action_4_status: ""
+    action_4_state_0_status: ""
+    action_4_state_1_status: ""
     action_option_group_thickness: Debljina
     action_option_group_stretch_measure_type: Merenje
     action_option_group_axes: Ose
@@ -2375,8 +2540,20 @@ tool:
     action_option_paneling_joint_type_miter_status: ""
     action_option_paneling_direction_inward_status: ""
     action_option_paneling_direction_outward_status: ""
-    action_option_options_centred_status: ""
+    action_option_options_centered_status: ""
     action_option_options_make_unique_status: ""
+    action_option_options_keep_a: ""
+    action_option_options_keep_a_status: ""
+    action_option_options_keep_b: ""
+    action_option_options_keep_b_status: ""
+    action_option_options_remove_unused_definitions_status: ""
+    action_option_options_reuse_definition: ""
+    action_option_options_reuse_definition_status: ""
+    action_option_options_reuse_definition_mirrored: ""
+    action_option_options_reuse_definition_mirrored_status: ""
+    notify:
+      validate_a: ""
+      validate_b: ""
     error:
       curve_intersect: ""
   smart_paint:
@@ -2428,7 +2605,6 @@ tool:
       not_part: Odabrani objekat nije komad (komponenta)
       not_edge: Odabrana površina nije kant panela
       not_face: Odabrana površina nije površina panela
-      wrong_material_type: "Ciljani element mora biti tipa '{{ type }}'"
   smart_axes:
     title: Orijentisati
     action_0: Okrenuti
@@ -2441,6 +2617,10 @@ tool:
     action_3_status: Izaberite stranu elementa i kliknite na ivicu da uskladite ose
     action_4: Pomeri početnu tačku
     action_4_status: Izaberite stranu elementa i kliknite na tačku da postavite njegovu početnu poziciju
+    action_5: ""
+    action_5_status: ""
+    action_5_to_state_10_status: ""
+    action_5_state_10_status: ""
     action_option_group_direction: Pravac
     action_option_direction_0: Lo
     action_option_direction_1: La
@@ -2453,10 +2633,72 @@ tool:
     error:
       not_part: Odabrani objekat nije komad (komponenta)
       not_orientable: Ovaj tip elementa se ne može rotirati
+      not_grained: ""
+      not_single_thickness_layer: ""
+  # TODO: It's currently just for dev purposes
   smart_join:
     title: ""
-    action_0: "" # TODO: It's currently just for dev purposes
-    action_0_status: "" # TODO
+    action_0: ""
+    action_0_status: ""
+    action_0_state_0_status: ""
+    action_1: ""
+    action_1_status: ""
+    action_1_state_0_status: ""
+    action_1_only_one_status: ""
+    action_2: ""
+    action_2_status: ""
+    action_2_state_0_status: ""
+    action_2_state_1_status: ""
+    action_3: ""
+    action_3_status: ""
+    action_3_state_0_status: ""
+    action_3_state_1_status: ""
+    action_3_only_one_status: ""
+    action_option_group_height: Visina
+    action_option_group_offsets: ""
+    action_option_group_spacings: ""
+    action_option_group_options: Opcije
+    action_option_height: Visina
+    action_option_offsets_start_offset: ""
+    action_option_offsets_end_offset: ""
+    action_option_spacings_min_spacing: ""
+    action_option_spacings_max_spacing: ""
+    action_option_options_opposite_status: ""
+    action_option_options_make_unique_status: ""
+    action_option_hardware_connector_a: ""
+    action_option_hardware_connector_b: ""
+    action_option_hardware_fitting_a: ""
+    action_option_hardware_fitting_b: ""
+    action_option_machining_a: ""
+    action_option_machining_b: ""
+    action_option_hardware_connector_material_name: ""
+    action_option_hardware_fitting_material_name: ""
+    action_option_machining_material_name: ""
+    action_option_hardware_connector_layer_name: ""
+    action_option_hardware_fitting_layer_name: ""
+    action_option_machining_layer_name: ""
+    measures: ""
+    geometries: ""
+    error:
+      invalid_height: ""
+      invalid_start_offset: ""
+      invalid_end_offset: ""
+      invalid_min_spacing: ""
+      invalid_max_spacing: ""
+      not_assemblable: ""
+      no_valid_join: ""
+      occupied_anchors: ""
+      occupied_anchors_plural: ""
+      failed_to_load_skp_file: |
+      unsupported_skp_version: |
+    warning:
+      no_connector_to_remove: ""
+      x_connectors_to_remove: ""
+      x_connectors_to_remove_plural: ""
+      no_fitting_to_remove: ""
+      x_fittings_to_remove: ""
+      x_fittings_to_remove_plural: ""
+      different_file_name: ""
   smart_export:
     title: Izvoz
     action_0: Izvezi 3D element

@@ -112,6 +112,7 @@ core:
       unhide_part_instance: Hiện đối tượng
       edit_part_instance_properties: Sửa thuộc tính đối tượng
       smart_draw: $t(core.toolbar.command.smart_draw)
+      smart_build: ""
       smart_handle: $t(core.toolbar.command.smart_handle)
       smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
@@ -125,6 +126,7 @@ core:
     command:
       dialog: OpenCutList
       smart_draw: Vẽ các bộ phận
+      smart_build: ""
       smart_handle: Thao tác các bộ phận
       smart_reshape: Định hình lại các bộ phận
       smart_paint: Tô màu các bộ phận
@@ -211,16 +213,21 @@ core:
       *Tạo giá trị cài đặt trước tùy chỉnh cho phép bạn giữ toàn bộ cài đặt mẫu hiện tại để bạn có thể sử dụng lại chúng trong tất cả các mô hình của mình.*
 
       Nhập tên của mẫu cài đặt:
+    rename_prompt_title: ""
+    rename_prompt: ""
     delete_confirm_title: Xóa bỏ
     delete_confirm: "Bạn có chắc chắn muốn xóa mẫu cài đặt **\"{{ name }}\"**?"
     override_confirm_title: Cập nhật
     override_confirm: "Bạn có xác nhận cập nhật giá trị mẫu cài đặt **\"{{ name }}\"** với các tham số mẫu này không?"
+    new_error: ""
     new_success: "Mẫu cài đặt **\"{{ name }}\"** đã được tạo"
     override_success: "Mẫu cài đặt **\"{{ name }}\"** đã được cập nhật"
     restore_success: "Biễu mẫu đã được điền với mẫu cài đặt **\"{{ name }}\"**"
+    rename_success: ""
     delete_success: "Mẫu cài đặt **\"{{ name }}\"** đã được xóa bỏ"
     tooltip:
       save_to: "Cập nhật mẫu cài đặt '{{ name }}'"
+      rename: ""
       delete: "Xóa mẫu cài đặt '{{ name }}'"
     dictionary:
       component_textinput_color: Bảng màu
@@ -239,16 +246,20 @@ core:
       cutlist_estimate_options: $t(tab.cutlist.label) / $t(tab.cutlist.estimate.title)
       cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
       cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
-      importer_import_options: $t(tab.importer.label) / $t(default.import)
-      importer_load_options: $t(tab.importer.label) / $t(default.open)
+      importers_csv_import_options: ""
+      importers_csv_load_options: ""
+      importers_bxf2_import_options: ""
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       outliner_options: $t(tab.outliner.label) / $t(default.options)
+      outliner_deep_rename_parts_options: $t(tab.outliner.label) / $t(tab.outliner.deep_rename_parts.title)
       settings_model: $t(tab.settings.label) / Model
       tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
       tool_smart_handle_options: $t(core.toolbar.command.smart_handle)
+      tool_smart_reshape_options: $t(core.toolbar.command.smart_reshape)
       tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
       tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
+      tool_smart_join_options: $t(core.toolbar.command.smart_join)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
   progress:
     please_wait: Đang tính toán trong một thế giới hòa bình
@@ -260,7 +271,10 @@ core:
       remove: Xóa màu
     textinput_code:
       snippets: Công thức ví dụ
-      help: Nhập **@** để nhận danh sách các biến.
+      help: ""
+    textinput_file:
+      browse: ""
+      browse_library: ""
     textinput_size:
       quantity: Số lượng
     three_viewer:
@@ -282,6 +296,23 @@ core:
       failed_to_load: |
         Không thể mở tài liệu.
         Đảm bảo rằng bạn đã kết nối với Internet.
+  solid:
+    error:
+      empty: ""
+      empty_named: ""
+      non_manifold_edges: ""
+      non_manifold_edges_plural: ""
+      non_manifold_edges_named: ""
+      non_manifold_edges_named_plural: ""
+      open_edges: ""
+      open_edges_plural: ""
+      open_edges_named: ""
+      open_edges_named_plural: ""
+      locked_instances: ""
+    rebuild:
+      error:
+        no_segment: ""
+        no_face: ""
 tab:
   cutlist:
     label: Các bộ phận
@@ -358,6 +389,7 @@ tab:
       flipped: Bộ phận này được nhân đôi so với định nghĩa Component của nó
       symmetrical: Tính năng phát hiện bộ phận được nhân đôi bị tắt trên bộ phận này
       ignore_grain_direction: Hướng thớ gỗ được bỏ qua trên bộ phận này
+      follow_grain_direction: ""
       auto_oriented: Bộ phận này đã được định hướng lại tự động
       oko_label_filter: "Bao gồm / Loại trừ nhãn hiệu"
       add_label_filter: "Đang lọc trên '{{ label }}'"
@@ -481,11 +513,11 @@ tab:
         *OpenCutList sau đó sẽ đếm 2 phần có độ dày 19mm thay vì 1 phần 38mm.*
       cut_options: $t(tab.materials.edit_material.cut_options)
       length_increase: $t(tab.materials.edit_material.length_increase)
-      length_increase_help: Kích thước lớn hơn mức tiêu chuẩn được áp dụng cho chiều dài thành phẩm để xác định **chiều dài thô**.  # TODO: singular version of tab.materials.edit_material.length_increase
+      length_increase_help: $t(tab.materials.edit_material.length_increase_help)
       width_increase: $t(tab.materials.edit_material.width_increase)
-      width_increase_help: Kích thước lớn hơn quy định được áp dụng cho chiều rộng hoàn thiện để xác định **chiều rộng thô**. # TODO: singular version of tab.materials.edit_material.width_increase
+      width_increase_help: $t(tab.materials.edit_material.width_increase_help)
       thickness_increase: $t(tab.materials.edit_material.thickness_increase)
-      thickness_increase_help: Độ dày được điều chỉnh vượt quá kích thước tiêu chuẩn để xác định **độ dày thô**. # TODO: singular version of tab.materials.edit_material.thickness_increase
+      thickness_increase_help: $t(tab.materials.edit_material.thickness_increase_help)
       description: Mô tả
       description_help: |
         *Mô tả* cho phép bạn cung cấp thông tin được cá nhân hóa về từng định nghĩa bộ phận.
@@ -510,9 +542,14 @@ tab:
       symmetrical: Tắt tính năng phát hiện bộ phận được nhân đôi trên bộ phận này
       symmetrical_help: |
         Nếu hộp này được chọn, việc phát hiện *bộ phận được nhân đôi* sẽ không ảnh hưởng đến bộ phận đó.
-      ignore_grain_direction: Bỏ qua hướng thớ trên bộ phận này
+      ignore_grain_direction: Hướng thớ gỗ
       ignore_grain_direction_help: |
-        Nếu hộp này được chọn, hướng thớ gỗ của vật liệu sẽ bị bỏ qua cho bộ phận này.
+      ignore_grain_direction_0: Thớ dọc theo chiều dài
+      ignore_grain_direction_1: Bỏ qua hướng thớ trên bộ phận này
+      follow_grain_direction: ""
+      follow_grain_direction_help: |
+      follow_grain_direction_0: $t(default.no)
+      follow_grain_direction_1: ""
       axes: Trục
       axes_help: Sắp xếp lại các kích thước để khớp với màu trục mong muốn trong bộ phận của bạn.
       axes_tip: |
@@ -1069,8 +1106,17 @@ tab:
       option_rectangleguillotine_first_stage_orientation_horizontal: Nằm ngang
       option_rectangleguillotine_first_stage_orientation_vertical: Thẳng đứng
       option_rectangleguillotine_first_stage_orientation_any: Bất kỳ
+      option_rectangleguillotine_sort_subplates_criteria: ""
+      option_rectangleguillotine_sort_subplates_criteria_help: |
+      option_rectangleguillotine_sort_subplates_criteria_l1l2: ""
+      option_rectangleguillotine_sort_subplates_criteria_dl2l1: ""
       option_rectangleguillotine_keep: Kích thước phần thừa tối thiểu
       option_rectangleguillotine_keep_help: Phần còn lại lớn hơn chiều dài và chiều rộng tối thiểu sẽ được đánh dấu **để giữ lại**.
+      option_rectangle_leftover_mode: ""
+      option_rectangle_leftover_mode_help: |
+      option_rectangle_leftover_mode_area: ""
+      option_rectangle_leftover_mode_x: ""
+      option_rectangle_leftover_mode_y: ""
       option_irregular_allowed_rotations: Vòng quay cho phép
       option_irregular_allowed_rotations_help: |
         Thiết lập vòng quay cho phép để đặt bộ phận.
@@ -1085,6 +1131,11 @@ tab:
         Xác định xem việc đối xứng bộ phận có được phép để đặt hay không.
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
+      option_irregular_leftover_mode: ""
+      option_irregular_leftover_mode_help: |
+      option_irregular_leftover_mode_bottom_left: ""
+      option_irregular_leftover_mode_left: ""
+      option_irregular_leftover_mode_bottom: ""
       option_spacing: Khoảng cách
       option_spacing_help: |
         Khoảng cách tối thiểu giữa các bộ phận.
@@ -1144,6 +1195,7 @@ tab:
       option_hide_edges_preview_1: Ẩn trong sơ đồ cắt
       option_hide_edges_preview_help: Cho phép bạn hiển thị hoặc ẩn hiển thị trực quan của các dải cạnh cho từng bộ phận trong sơ đồ cắt.
       option_zoom_threshold: Ngưỡng thu phóng
+      # TODO find a better explanation
       option_zoom_threshold_help: |
         Cho phép bạn thiết lập chiều rộng sơ đồ để sơ đồ tự động được phóng to..
 
@@ -1151,6 +1203,11 @@ tab:
       option_time_limit: Giới hạn thời gian
       option_time_limit_help: |
         Sửa lỗi giới hạn thời gian tính toán
+      grain_groups:
+        title: ""
+        title_plural: ""
+        name: Tên
+        item_count: "# Các bộ phận"
       tooltip:
         scroll_to_block_1d: Cuộn đến bảng đầu tiên hoặc dải cạnh
         scroll_to_block_2d: Cuộn đến tấm đầu tiên hoặc tấm gỗ veneer
@@ -1249,7 +1306,8 @@ tab:
         no_solution: Chưa tìm ra giải pháp nào để đặt **tất cả các bộ phận** vào vật liệu có sẵn.
         unplaced_parts: "**1 bộ phận** không thể được đặt."
         unplaced_parts_plural: "**{{ count }} bộ phận** không thể được đặt."
-        unusable_part: Bộ phận quá lớn
+        unusable_part_1: Bộ phận quá lớn
+        unusable_part_2: ""
       warning:
         is_part_selection: Sơ đồ cắt này được giới hạn ở **các bộ phận đã chọn**.
         cutting_dimensions: Sơ đồ cắt này sử dụng kích thước **thô** của các bộ phận.
@@ -1462,6 +1520,10 @@ tab:
 
         - Cấu trúc **Layers** vẽ tất cả các đường thẳng, phân biệt giữa các loại đường khác nhau chỉ bằng cách sử dụng các layers. *Cấu trúc này mang lại khả năng tương thích cao hơn với phần mềm của bên thứ ba.*
         - Cấu trúc **Layers + Block** tạo một khối cho mỗi bộ phận và chèn các khối này nhiều lần khi các bộ phận được lặp lại. *Cấu trúc này mang lại sự linh hoạt hơn cho việc chỉnh sửa tệp.*
+      option_dxf_depth_to_z: ""
+      option_dxf_depth_to_z_0: $t(default.no)
+      option_dxf_depth_to_z_1: ""
+      option_dxf_depth_to_z_help: |
       option_unit: Đơn vị
       option_unit_help: |
         Cho phép chọn đơn vị khi xuất tập tin.
@@ -1587,7 +1649,7 @@ tab:
       type_4: Vật liệu loại '$t(tab.materials.type_4)'
       type_5: Vật liệu loại '$t(tab.materials.type_5)'
       type_6: Vật liệu loại '$t(tab.materials.type_6)'
-      type_7: ""
+      type_7: Vật liệu loại '$t(tab.materials.type_7)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Hướng thớ gỗ
@@ -1634,11 +1696,14 @@ tab:
 
         *Nếu không chỉ định đơn vị, đơn vị mô hình sẽ được áp dụng.*
       length_increase: Chiều dài quá khổ
-      length_increase_help: Áp dụng kích thước quá khổ cho chiều dài để xác định **chiều dài thô**.
+      length_increase_help: Kích thước lớn hơn mức tiêu chuẩn được áp dụng cho chiều dài thành phẩm để xác định **chiều dài thô**.
+      length_increase_help_plural: Áp dụng kích thước quá khổ cho chiều dài để xác định **chiều dài thô**.
       width_increase: Chiều rộng quá khổ
-      width_increase_help: Áp dụng kích thước quá khổ cho chiều rộng để xác định **chiều rộng thô**.
+      width_increase_help: Kích thước lớn hơn quy định được áp dụng cho chiều rộng hoàn thiện để xác định **chiều rộng thô**.
+      width_increase_help_plural: Áp dụng kích thước quá khổ cho chiều rộng để xác định **chiều rộng thô**.
       thickness_increase: Độ dày quá khổ
-      thickness_increase_help: Áp dụng kích thước quá khổ cho độ dày để xác định **độ dày thô**.
+      thickness_increase_help: Độ dày được điều chỉnh vượt quá kích thước tiêu chuẩn để xác định **độ dày thô**.
+      thickness_increase_help_plural: Áp dụng kích thước quá khổ cho độ dày để xác định **độ dày thô**.
       std_lengths: Chiều dài tiêu chuẩn
       std_lengths_help: |
         Có sẵn chiều dài tiêu chuẩn cho vật liệu này.
@@ -1771,6 +1836,8 @@ tab:
       name: Tên
       instance_name: Đối tượng
       material: Vật liệu
+      is_grain_group: ""
+      is_grain_group_help: ""
       definition_name: Định nghĩa
       description: Mô tả
       url: URL
@@ -2151,13 +2218,11 @@ tab:
     presets:
       export_global_presets: Xuất mẫu cài đặt trước
       export_global_presets_help: |
-        Tính năng này cho phép bạn xuất các mẫu cài đặt của mình sang tệp **.json**.
-        Chọn các mẫu cài đặt bạn muốn xuất sang.
       export_global_presets_success: Các mẫu cài đặt đã được xuất thành công.
+      export_global_presets_success_with_assets: ""
       import_global_presets: Nhập mẫu cài đặt
       import_global_presets_help: |
-        Chọn các mẫu cài đặt trong tệp **.json** mà bạn muốn nhập.
-        Xin lưu ý rằng cài đặt mẫu có cùng tên đã tồn tại sẽ được thay thế bằng phiên bản đã nhập.
+      open_library_dir: ""
       import_global_presets_success: |
         *OpenCutList* mẫu cài đặt đã được nhập thành công.
         Để nhìn thấy các thay đổi, bạn phải **đóng** và **mở lại** cửa sổ OpenCutList.
@@ -2182,6 +2247,8 @@ tab:
       error:
         no_preset_to_export: Không có mẫu cài đặt trước nào để xuất.
         no_preset_to_import: Không có mẫu cài đặt trước nào để nhập.
+        failed_to_export: ""
+        failed_to_open_library_dir: ""
         failed_to_import: "Không thể nhập các mẫu cài đặt trước: **{{ error }}**."
         failed_to_import_invalid_hexdigest: Tập tin này đã được sửa đổi. Nó không thể được nhập.
         failed_to_import_bad_file_format: Định dạng tập tin không hợp lệ.
@@ -2237,6 +2304,8 @@ tool:
     vcb_radius: Bán kính
     vcb_diameter: Đường kính
     vcb_distance: Khoảng cách
+    vcb_spacings: Kích thước khe
+    locked_on_last_measure_status: Khóa ở phép đo cuối cùng  # TODO : Moved from tool.smart_draw.action_measure_locked_status
     error:
       no_direction: Vui lòng chỉ ra hướng bằng chuột của bạn
       invalid_length: "Chiều dài {{ value }} không hợp lệ"
@@ -2255,18 +2324,21 @@ tool:
       locked_part: Bộ phận này bị khóa
       not_sibling_part: ""
       selection_contains_locked_entities: Lựa chọn này chứa các thực thể bị khóa.
+      wrong_material_type: "Bộ phận mục tiêu phải là của loại '{{ type }}'"
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_select:
     state_0_status: Nhấp vào một bộ phận để chọn nó
     state_0_to_6_status: Chọn một phần tử cha
+    state_0_to_7_status: ""
     state_4_status: "Kéo chuột vào một mảnh ghép giống hệt có cùng mảnh ghép cha để thêm nó vào vùng chọn, sau đó thả chuột để tiếp tục."
     state_5_status: Vuốt để thêm vào vùng chọn và thả ra để tiếp tục
     state_6_status: Chọn một phần tử từ danh sách
     state_7_status: Nhấp chuột vào một phần để thêm hoặc bớt phần đó khỏi vùng chọn.
     warning:
       no_active_part: Trước tiên bạn phải di chuột qua một bộ phận
+      no_parent_group: ""
   smart_draw:
     title: Vẽ
     action_0: Vẽ hình chữ nhật
@@ -2311,11 +2383,91 @@ tool:
     action_option_options_draw_in_status: Vẽ phần tử cha của phần tử được nhắm mục tiêu bởi điểm đầu tiên.
     action_option_options_ask_name: Đặt tên bộ phận
     action_option_options_ask_name_status: Nhập tên bộ phận theo cách thủ công
-    action_measure_locked_status: Khóa ở phép đo cuối cùng
     action_toggle_move_copy_status: Chuyển đổi giữa sao chép/di chuyển
     action_change_move_anchor_status: Thay đổi điểm neo
     success:
       part_created: "Phần mới được tạo: {{ name }}"
+      part_created_plural: ""
+  smart_build:
+    title: ""
+    action_0: ""
+    action_0_status: ""
+    action_0_state_0_status: ""
+    action_0_state_1_status: ""
+    action_1: ""
+    action_1_status: ""
+    action_1_state_0_status: ""
+    action_1_state_0_merge_status: ""
+    action_2: ""
+    action_2_status: ""
+    action_2_state_0_status: ""
+    action_2_state_0_merge_status: ""
+    action_option_group_groove: ""
+    action_1_option_group_offset: ""
+    action_option_group_thickness: Độ dày
+    action_option_group_overlay: ""
+    action_option_group_axes: Trục
+    action_option_group_measure_type: Đo lường
+    action_option_group_options: Tùy chọn
+    action_option_offset_front_panel_offset: ""
+    action_option_offset_front_panel_offset_status: ""
+    action_option_groove_groove_depth: ""
+    action_option_groove_groove_depth_status: ""
+    action_option_groove_groove_setback: ""
+    action_option_groove_groove_setback_status: ""
+    action_option_groove_groove_through: ""
+    action_option_groove_groove_through_status: ""
+    action_option_thickness_thickness: Độ dày
+    action_option_thickness_thickness_status: ""
+    action_option_overlay_inset_status: ""
+    action_2_option_overlay_inset_status: ""
+    action_option_overlay_full_overlay_status: ""
+    action_2_option_overlay_full_overlay_status: ""
+    action_option_measure_type_inside_status: ""
+    action_option_measure_type_centered_status: ""
+    action_option_measure_type_outside_status: ""
+    action_option_axes_active_status: Thao tác dọc theo các trục đang hoạt động
+    action_option_axes_context_status: ""
+    action_option_options_measure_reversed: Đo lường đảo ngược
+    action_option_options_measure_reversed_status: Đảo ngược phép đo
+    action_option_options_reduce_envelope: ""
+    action_option_options_reduce_envelope_status: ""
+    action_option_options_reuse_definition: ""
+    action_option_options_reuse_definition_status: ""
+    action_option_options_mirror: ""
+    action_option_options_mirror_status: ""
+    action_option_options_ask_name: Đặt tên bộ phận
+    action_option_options_ask_name_status: Nhập tên bộ phận theo cách thủ công
+    action_option_options_layer_name: ""
+    action_option_options_layer_name_status: ""
+    detecting_cavities: ""
+    error:
+      invalid_divider_seed: ""
+      invalid_divider_container: ""
+      invalid_divider_cavity: ""
+      no_divider_cavity: ""
+      invalid_front_panel_seed: ""
+      invalid_front_panel_container: ""
+      invalid_front_panel_cavity: ""
+      no_front_panel_cavity: ""
+      invalid_back_panel_seed: ""
+      invalid_back_panel_container: ""
+      invalid_back_panel_cavity: ""
+      no_back_panel_cavity: ""
+      too_complex_cavity: ""
+      closed_front_panel_opening: ""
+      closed_back_panel_opening: ""
+      divider_number_overflow: ""
+      front_panel_number_overflow: ""
+      back_panel_number_overflow: ""
+      back_panel_severs_parts: ""
+    warning:
+      no_back_panel_machining: ""
+    success:
+      part_created: "Phần mới được tạo: {{ name }}"
+      part_created_plural: ""
+      part_reused: ""
+      part_reused_plural: ""
   smart_handle:
     title: Xử lý
     action_0: Lựa chọn
@@ -2356,17 +2508,30 @@ tool:
     action_0_state_1a_status: Nhấp chuột vào mặt phẳng cắt để di chuyển nó.
     action_0_state_1b_status: Thêm một mặt phẳng cắt
     action_0_state_1c_status: Xóa một mặt phẳng cắt
+    action_0_state_1d_status: ""
     action_0_state_10_status: Kéo mặt phẳng cắt để di chuyển nó.
     action_0_state_11_status: Nhấp chuột để thêm mặt phẳng cắt
     action_0_state_12_status: Nhấp chuột vào mặt phẳng cắt để xóa nó.
     action_0_state_2_status: Nhấp chuột để xác nhận động tác kéo dài hoặc nhập khoảng cách.
     action_1: Tấm ốp
-    action_1_status: Tạo một loạt các chi tiết từ một khối rắn kín.
-    action_1_state_0_status: Nhấp chuột vào một khối rắn kín để xác định hình học tham chiếu.
+    action_1_status: ""
+    action_1_state_0_status: ""
     action_1_state_1_status: Chọn các mặt cần đùn
-    # CSG = Constructive Solid Geometry
+    action_1_rollover_face_status: ""
+    action_1_select_similar_status: ""
+    action_1_select_all_edges_status: ""
     action_2: ""
     action_2_status: ""
+    action_2_state_0_status: ""
+    action_2_state_1_status: ""
+    action_3: ""
+    action_3_status: ""
+    action_3_state_0_status: ""
+    action_3_state_1_status: ""
+    action_4: ""
+    action_4_status: ""
+    action_4_state_0_status: ""
+    action_4_state_1_status: ""
     action_option_group_thickness: Độ dày
     action_option_group_stretch_measure_type: Đo lường
     action_option_group_axes: Trục
@@ -2375,7 +2540,7 @@ tool:
     action_option_group_csg_operation: ""
     action_option_group_options: Tùy chọn
     action_option_thickness_thickness: Độ dày
-    action_option_thickness_thickness_status: Xác định độ dày của các tấm.
+    action_option_thickness_thickness_status: ""
     action_option_stretch_measure_type_outside_status: Đo lường bên ngoài
     action_option_stretch_measure_type_offset_status: Đo lường sự khác biệt
     action_option_axes_active_status: Thao tác dọc theo các trục đang hoạt động
@@ -2385,8 +2550,20 @@ tool:
     action_option_paneling_joint_type_miter_status: Khớp nối vát
     action_option_paneling_direction_inward_status: Hướng vào bên trong
     action_option_paneling_direction_outward_status: Hướng ra ngoài
-    action_option_options_centred_status: Tập trung vào các yếu tố bị kéo dài
-    action_option_options_make_unique_status: Làm cho các phần tử kéo dài trở nên độc lập
+    action_option_options_centered_status: Tập trung vào các yếu tố bị kéo dài
+    action_option_options_make_unique_status: ""
+    action_option_options_keep_a: ""
+    action_option_options_keep_a_status: ""
+    action_option_options_keep_b: ""
+    action_option_options_keep_b_status: ""
+    action_option_options_remove_unused_definitions_status: ""
+    action_option_options_reuse_definition: ""
+    action_option_options_reuse_definition_status: ""
+    action_option_options_reuse_definition_mirrored: ""
+    action_option_options_reuse_definition_mirrored_status: ""
+    notify:
+      validate_a: ""
+      validate_b: ""
     error:
       curve_intersect: Một trong các mặt phẳng cắt ngang một đường cong không co giãn.
   smart_paint:
@@ -2438,7 +2615,6 @@ tool:
       not_part: Đối tượng mục tiêu không phải là đối tượng của bộ phận (component)
       not_edge: Mặt mục tiêu không phải là cạnh bảng
       not_face: Mặt mục tiêu không phải là mặt bảng
-      wrong_material_type: "Bộ phận mục tiêu phải là của loại '{{ type }}'"
   smart_axes:
     title: Định hướng
     action_0: Lật
@@ -2451,6 +2627,10 @@ tool:
     action_3_status: Nhắm mục tiêu một mặt của một bộ phận và nhấp vào một cạnh để điều chỉnh trục của nó
     action_4: Di chuyển điểm gốc
     action_4_status: Nhắm mục tiêu một bề mặt của một bộ phận và nhấp vào một điểm để đặt điểm gốc của nó ở đó
+    action_5: ""
+    action_5_status: ""
+    action_5_to_state_10_status: ""
+    action_5_state_10_status: ""
     action_option_group_direction: Hướng
     action_option_direction_0: L
     action_option_direction_1: W
@@ -2463,10 +2643,72 @@ tool:
     error:
       not_part: Đối tượng mục tiêu không phải là đối tượng của bộ phận (component)
       not_orientable: Loại bộ phận này không cho phép định hướng nó
+      not_grained: ""
+      not_single_thickness_layer: ""
+  # TODO: It's currently just for dev purposes
   smart_join:
     title: Lắp ráp
-    action_0: Chạm-Chạm # TODO: It's currently just for dev purposes
-    action_0_status: "" # TODO
+    action_0: ""
+    action_0_status: ""
+    action_0_state_0_status: ""
+    action_1: ""
+    action_1_status: ""
+    action_1_state_0_status: ""
+    action_1_only_one_status: ""
+    action_2: ""
+    action_2_status: ""
+    action_2_state_0_status: ""
+    action_2_state_1_status: ""
+    action_3: ""
+    action_3_status: ""
+    action_3_state_0_status: ""
+    action_3_state_1_status: ""
+    action_3_only_one_status: ""
+    action_option_group_height: Chiều cao
+    action_option_group_offsets: ""
+    action_option_group_spacings: ""
+    action_option_group_options: Tùy chọn
+    action_option_height: Chiều cao
+    action_option_offsets_start_offset: ""
+    action_option_offsets_end_offset: ""
+    action_option_spacings_min_spacing: ""
+    action_option_spacings_max_spacing: ""
+    action_option_options_opposite_status: ""
+    action_option_options_make_unique_status: ""
+    action_option_hardware_connector_a: ""
+    action_option_hardware_connector_b: ""
+    action_option_hardware_fitting_a: ""
+    action_option_hardware_fitting_b: ""
+    action_option_machining_a: ""
+    action_option_machining_b: ""
+    action_option_hardware_connector_material_name: ""
+    action_option_hardware_fitting_material_name: ""
+    action_option_machining_material_name: ""
+    action_option_hardware_connector_layer_name: ""
+    action_option_hardware_fitting_layer_name: ""
+    action_option_machining_layer_name: ""
+    measures: ""
+    geometries: ""
+    error:
+      invalid_height: ""
+      invalid_start_offset: ""
+      invalid_end_offset: ""
+      invalid_min_spacing: ""
+      invalid_max_spacing: ""
+      not_assemblable: ""
+      no_valid_join: ""
+      occupied_anchors: ""
+      occupied_anchors_plural: ""
+      failed_to_load_skp_file: |
+      unsupported_skp_version: |
+    warning:
+      no_connector_to_remove: ""
+      x_connectors_to_remove: ""
+      x_connectors_to_remove_plural: ""
+      no_fitting_to_remove: ""
+      x_fittings_to_remove: ""
+      x_fittings_to_remove_plural: ""
+      different_file_name: ""
   smart_export:
     title: Xuất
     action_0: Xuất 3D bộ phận

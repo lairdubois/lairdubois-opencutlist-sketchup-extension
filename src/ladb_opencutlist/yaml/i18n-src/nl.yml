@@ -302,8 +302,8 @@ core:
       empty_named: "« {{ name }} » bevat geen geometrie"
       non_manifold_edges: "Het volume bevat {{ count }} niet-manifold rand"
       non_manifold_edges_plural: "Het volume bevat {{ count }} niet-manifold randen"
-      non_manifold_edges_named: "‘{{ name }}’ bevat {{ count }} niet-manifold rand"
-      non_manifold_edges_named_plural: "\"{{ name }}\" bevat {{ count }} niet-manifold randen"
+      non_manifold_edges_named: "« {{ name }} » bevat {{ count }} niet-manifold rand"
+      non_manifold_edges_named_plural: "« {{ name }} » bevat {{ count }} niet-manifold randen"
       open_edges: "Het volume bevat {{ count }} open randen"
       open_edges_plural: "Het volume bevat {{ count }} open randen"
       open_edges_named: "« {{ name }} » bevat {{ count }} open rand"
@@ -549,7 +549,7 @@ tab:
       ignore_grain_direction_1: Negeer de nerfrichting op dit onderdeel
       follow_grain_direction: Nerfcontinuïteit
       follow_grain_direction_help: |
-        Wanneer deze optie is ingeschakeld, kunnen exemplaren van dit onderdeel worden beschouwd als onderdelen met doorlopende nerf ten opzichte van aangrenzende onderdelen die hetzelfde hebben:
+        Wanneer deze optie is ingeschakeld, kunnen exemplaren van dit onderdeel worden beschouwd als onderdelen met **doorlopende nerf** ten opzichte van aangrenzende onderdelen die hetzelfde hebben:
         - dezelfde *Nerfcontinuïteitsgroep*
         - hetzelfde vlak
         - dezelfde oriëntatie
@@ -2556,7 +2556,7 @@ tool:
     action_2_status: Meerdere onderdelen samenvoegen tot één onderdeelSélectionnez la pièce A
     action_2_state_0_status: Selecteer onderdeel A
     action_2_state_1_status: Selecteer onderdeel B
-    action_3: ""
+    action_3: Uitsnijden
     action_3_status: Een onderdeel uitsnijden met een ander onderdeel
     action_3_state_0_status: Selecteer onderdeel A
     action_3_state_1_status: Selecteer onderdeel B
@@ -2713,34 +2713,36 @@ tool:
     action_option_hardware_fitting_b: Verbinding B
     action_option_machining_a: Bewerking A
     action_option_machining_b: Bewerking B
-    action_option_hardware_connector_material_name: ""
-    action_option_hardware_fitting_material_name: ""
-    action_option_machining_material_name: ""
-    action_option_hardware_connector_layer_name: ""
-    action_option_hardware_fitting_layer_name: ""
-    action_option_machining_layer_name: ""
-    measures: ""
-    geometries: ""
+    action_option_hardware_connector_material_name: Materiaal van de verbinders
+    action_option_hardware_fitting_material_name: Materiaal van de verbindingen
+    action_option_machining_material_name: Materiaal van de bewerkingen
+    action_option_hardware_connector_layer_name: Label van de verbinders
+    action_option_hardware_fitting_layer_name: Label van de verbindingen
+    action_option_machining_layer_name: Label van de bewerkingen
+    measures: Maten
+    geometries: Geometrieën
     error:
-      invalid_height: ""
-      invalid_start_offset: ""
-      invalid_end_offset: ""
-      invalid_min_spacing: ""
-      invalid_max_spacing: ""
-      not_assemblable: ""
-      no_valid_join: ""
-      occupied_anchors: ""
-      occupied_anchors_plural: ""
+      invalid_height: "De hoogte {{ value }} is ongeldig"
+      invalid_start_offset: "De beginverschuiving {{ value }} is ongeldig"
+      invalid_end_offset: "De eindverschuiving {{ value }} is ongeldig"
+      invalid_min_spacing: "De minimale hartafstand {{ value }} is ongeldig"
+      invalid_max_spacing: "De maximale hartafstand {{ value }} is ongeldig"
+      not_assemblable: Dit type onderdeel kan niet worden samengesteld
+      no_valid_join: Geen contactvlak voldoet aan de montagevoorwaarden
+      occupied_anchors: "{{ count }} verbinder heeft een positieconflict met bestaande verbinders"
+      occupied_anchors_plural: "{{ count }} verbinders hebben een positieconflict met bestaande verbinders"
       failed_to_load_skp_file: |
+        Kan het SKP-bestand niet laden: {{ file }}
       unsupported_skp_version: |
+        Het SKP-bestand is gemaakt met een nieuwere versie van SketchUp: {{ version }}
     warning:
-      no_connector_to_remove: ""
-      x_connectors_to_remove: ""
-      x_connectors_to_remove_plural: ""
-      no_fitting_to_remove: ""
-      x_fittings_to_remove: ""
-      x_fittings_to_remove_plural: ""
-      different_file_name: ""
+      no_connector_to_remove: Geen verbinder om te verwijderen
+      x_connectors_to_remove: "{{ count }} verbinder om te verwijderen"
+      x_connectors_to_remove_plural: "{{ count }} verbinders om te verwijderen"
+      no_fitting_to_remove: Geen verbinding om te verwijderen
+      x_fittings_to_remove: "{{ count }} verbinding om te verwijderen"
+      x_fittings_to_remove_plural: "{{ count }} verbindingen om te verwijderen"
+      different_file_name: "De naam van het SKP-bestand ({{ file_name }}) verschilt van de naam van de definitie die het bevat ({{ definition_name }})"
   smart_export:
     title: Exporteren
     action_0: Exporteer een 3D-onderdeel
