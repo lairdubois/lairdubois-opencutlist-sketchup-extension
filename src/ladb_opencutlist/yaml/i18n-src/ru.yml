@@ -15,6 +15,7 @@ default:
   stop: Прервать
   validate: Принять
   confirm: Подтвердить
+  finish: Завершить
   ok: Ok
   open: Открыть
   see: Просмотр
@@ -27,6 +28,7 @@ default:
   export: Экспорт
   import: Импорт
   load: Загрузка
+  replace: Заменить
   preview: Обзор
   options: Опции
   caution: Внимание!
@@ -660,6 +662,7 @@ tab:
       veneer_material_names_filter: Фильтр материалов шпона
       names_filter: Фильтр наименований
       tags_filter: Сортировка меток
+      tags_filter_any: Все этикетки
       dimensions_help: Иллюстрация размеров
       summary: Спецификация
       material_type: Тип
@@ -2095,6 +2098,7 @@ tab:
         info_1: Выберите место для размещения конфигурации в модели.
         materials: Материалы
         layers: Маяки
+        geometry: Геометрия
         option_parts_formula: Формула
         option_parts_formula_help: Данная формула позволяет вам корректировать имена импортируемых деталей.
         option_part_wood_material_name: Порода древесины
@@ -2105,6 +2109,8 @@ tab:
         option_part_glass_material_name_help: "Материал, применяемый к деталям из **Стекла**."
         option_front_part_layer_name: Фасады
         option_front_part_layer_name_help: "Маркер (тег), применяемый к деталям фасадов."
+        option_back_part_layer_name: Задние стенки
+        option_back_part_layer_name_help: "Метка, применяемая к задним стенкам корпуса."
         option_machining_material_name: Обработка
         option_machining_material_name_help: "Материал, требующий **Обработки**."
         option_machining_layer_name: Обработка
@@ -2116,6 +2122,10 @@ tab:
         option_no_material_help: "*Оставьте это поле пустым, чтобы не назначать материал*."
         option_default_material_help: "*Если это поле останется пустым, будет создан материал по умолчанию*."
         option_no_layer_help: "*Оставьте это поле пустым, чтобы не применять маркер (тег)*."
+        option_subtract_machinings: Вырезать пазы и отверстия в деталях
+        option_subtract_machinings_help: "**Пазы**, **четверти** и **фаски** деталей, включая связанные с фурнитурой, вычитаются из их объёма вместо отрисовки. Отверстия под сверление остаются отрисованными."
+        warning:
+          subtract_machinings_failed: "Не удалось вырезать элементы обработки в этих деталях, вместо этого они были просто отрисованы: {{ names }}"
         old_name: Исходное имя
         new_name: Новое имя
         count: К-во.
@@ -2337,7 +2347,9 @@ tool:
     vcb_diameter: Диаметр
     vcb_distance: Дистанция
     vcb_spacings: Интервалы
-    locked_on_last_measure_status: Фиксация результатов последнего измерения  # TODO : Moved from tool.smart_draw.action_measure_locked_status
+    vcb_angle: Угол
+    # TODO : Moved from tool.smart_draw.action_measure_locked_status
+    locked_on_last_measure_status: Фиксация результатов последнего измерения
     error:
       no_direction: "Пожалуйста, укажите направление с помощью курсора мыши"
       invalid_length: "Длина {{ value }} недопустима"
@@ -2345,12 +2357,17 @@ tool:
       invalid_multiplicator: "Множитель {{ value }} недопустим"
       invalid_divider: "Дробление {{ value }} недопустимо"
       invalid_offset: "Смещение {{ value }} недопустимо"
+      invalid_angle: "Угол {{ value }} является недопустимым"
       invalid_segment_count: "Количество сегментов {{ value }} недопустимо. Оно должно быть в диапазоне от 3 до 999."
       syntax_error: "Синтаксическая ошибка : {{ error }}"
       unexpected_close_parenthesis: "Недопустимая закрывающая скобка"
       missing_close_parenthesis: "Отсутствует закрывающая скобка"
       missing_operand: "Отсутствует операнд"
       zero_division: "Деление на ноль"
+      invalid_argument_count: "Функция min, max, floor или ceil требует как минимум два значения"
+      comma_argument_separator: "Разделяйте значения знаком « ; » : запятая также является десятичным разделителем"
+      invalid_dimension: "Длина складывается только с длиной: число без единицы измерения является коэффициентом"
+      no_matching_value: "Ни одно из предложенных значений не подходит"
       lt_min_distance: "Расстояние {{ value1 }} меньше минимального {{ value2 }}"
       gt_max_distance: "Расстояние {{ value1 }} превышает максимальное расстояние {{ value2 }}"
       locked_part: Эта деталь заблокирована
@@ -2518,6 +2535,11 @@ tool:
     action_4_status: Расположить деталь вдоль оси
     action_4_state_1_status: "Кликните, чтобы задать первую точку измерения"
     action_4_state_2_status: "Кликните, чтобы задать вторую точку измерения или введите нужное расстояние"
+    action_5: Взаимодействие
+    action_5_status: Открыть или закрыть дверцу
+    action_5_state_0_status: "Кликните на дверцу, чтобы открыть или закрыть её, или потяните, чтобы настроить степень её открытия"
+    action_5_state_0_amend_status: "Введите угол, чтобы скорректировать степень открытия, или кликните на дверцу, чтобы открыть или закрыть её"
+    action_5_state_20_status: "Потяните, чтобы настроить степень открытия дверцы, и отпустите для подтверждения"
     action_option_group_copy_measure_type: Отсчет
     action_option_group_move_measure_type: Отсчет
     action_option_group_axes: Оси
@@ -2532,6 +2554,9 @@ tool:
     action_toggle_raytest_status: Проецировать на следующую точку
     warning:
       copies_disable_mirror: Многократное копирование не работает $t(tool.smart_handle.action_option_options_mirror_status)'
+    error:
+      not_door: "Эта деталь не является дверцей, оснащённой петлями"
+      incoherent_door: Петли этой дверцы не соосны
   smart_reshape:
     title: Модификатор
     action_0: Растянуть
@@ -2677,7 +2702,7 @@ tool:
       not_orientable: Тип этой детали не позволяет сориентировать ее по осям
       not_grained: Выбранная деталь не содержит текстуру
       not_single_thickness_layer: Выбранная деталь должна состоять из одного слоя
-  # TODO: It's currently just for dev purposes
+  # Dev only
   smart_join:
     title: Сборка
     action_0: Добавить крепеж

@@ -15,6 +15,7 @@ default:
   stop: إيقاف
   validate: تطبيق
   confirm: تأكيد
+  finish: ""
   ok: موافق
   open: فتح
   see: معاينة
@@ -27,6 +28,7 @@ default:
   export: تصدير
   import: استيراد
   load: رفع
+  replace: ""
   preview: معاينة
   options: الخيارات
   caution: تحذير
@@ -112,6 +114,7 @@ core:
       unhide_part_instance: أظهر المثيل
       edit_part_instance_properties: عدّل خصائص المثيل
       smart_draw: $t(core.toolbar.command.smart_draw)
+      smart_build: $t(core.toolbar.command.smart_build)
       smart_handle: $t(core.toolbar.command.smart_handle)
       smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
@@ -125,6 +128,7 @@ core:
     command:
       dialog: OpenCutList
       smart_draw: ارسم قِطعا
+      smart_build: ""
       smart_handle: تعامل مع القِطع
       smart_reshape: إعادة تشكيل القِطع
       smart_paint: اصبغ القِطع
@@ -244,8 +248,9 @@ core:
       cutlist_estimate_options: $t(tab.cutlist.label) / $t(tab.cutlist.estimate.title)
       cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
       cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
-      importer_import_options: $t(tab.importer.label) / $t(default.import)
-      importer_load_options: $t(tab.importer.label) / $t(default.open)
+      importers_csv_import_options: ""
+      importers_csv_load_options: ""
+      importers_bxf2_import_options: ""
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       outliner_options: $t(tab.outliner.label) / $t(default.options)
@@ -271,6 +276,7 @@ core:
       help: اكتب **@** للحصول على قائمة المتغيرات
     textinput_file:
       browse: تصفح
+      browse_library: ""
     textinput_size:
       quantity: العدد
     three_viewer:
@@ -656,6 +662,7 @@ tab:
       veneer_material_names_filter: ترشيح وفقا لخامة قشرة الخشب
       names_filter: تصفية بالتسميات
       tags_filter: تصفية بالوسوم
+      tags_filter_any: ""
       dimensions_help: فهم الأبعاد
       summary: ملخص
       material_type: النوع
@@ -2091,6 +2098,7 @@ tab:
         info_1: ستتمكن من اختيار موضعها في النموذج النشط
         materials: الخامات
         layers: وسوم
+        geometry: ""
         option_parts_formula: الصيغة
         option_parts_formula_help: تتيح لك المعادلة تخصيص أسماء القِطع المستوردة
         option_part_wood_material_name: خشب
@@ -2101,6 +2109,8 @@ tab:
         option_part_glass_material_name_help: الخامة التي ستطبق على القِطع **الزجاجية**
         option_front_part_layer_name: الواجهات
         option_front_part_layer_name_help: الوسم الذي سيطبق على لقِطع الواجهة
+        option_back_part_layer_name: ""
+        option_back_part_layer_name_help: ""
         option_machining_material_name: التشغيل
         option_machining_material_name_help: الخامة التي ستطبق على عمليات **التشغيل**
         option_machining_layer_name: التشغيل
@@ -2112,6 +2122,10 @@ tab:
         option_no_material_help: "*اترك هذا الحقل فارغا لتجنب تطبيق أي خامة*"
         option_default_material_help: "*إن تُرك هذا الحقل فارغا، فيستم إنشاء خامة افتراضية*"
         option_no_layer_help: "*اترك هذا الحقل فارغا لتجنب تطبيق أي وسم*"
+        option_subtract_machinings: ""
+        option_subtract_machinings_help: ""
+        warning:
+          subtract_machinings_failed: ""
         old_name: الاسم الأصلي
         new_name: الاسم الجديد
         count: العدد
@@ -2240,13 +2254,11 @@ tab:
     presets:
       export_global_presets: تصدير الإعدادات المسبقة
       export_global_presets_help: |
-        **json.** تتيح لك هذه الخاصية تصدير إعداداتك المسبقة إلى ملف بصيغة 
-        حدد الإعدادات التي تريد تصديرها إليه
       export_global_presets_success: نجح تصدير الإعدادات المسبقة
+      export_global_presets_success_with_assets: ""
       import_global_presets: استيراد إعدادات مسبقة
       import_global_presets_help: |
-        **json.**حدد الإعدادات المسبقة التي تريد استيرادها من ملف الـ 
-        رجاء انتبه إلى أن الإعداد الموجود من قبل سيُستبدَلُ بالنسخة المستوردة إن كانا يحملان الاسم ذاته
+      open_library_dir: ""
       import_global_presets_success: |
         لقد استوردت إعدادات *OpenCutList* المسبقة بنجاح
         OpenCutList لأخذ التغييرات بالحسبان، عليك **غلق** و **إعادة فتح** نافذة
@@ -2271,6 +2283,8 @@ tab:
       error:
         no_preset_to_export: لا إعدادات مسبقة للتصدير
         no_preset_to_import: لا إعدادات مسبقة للاستيراد
+        failed_to_export: ""
+        failed_to_open_library_dir: ""
         failed_to_import: "يستحيل استيراد الإعدادات المسبقة : **{{ error }}**"
         failed_to_import_invalid_hexdigest: لقد عُدِّل على هذا الملف. لا يمكن استيراده.
         failed_to_import_bad_file_format: صيغة الملف غير صالحة
@@ -2327,7 +2341,9 @@ tool:
     vcb_diameter: القطر
     vcb_distance: المسافة
     vcb_spacings: حجم الفراغ
-    locked_on_last_measure_status: قفل على آخر قياس  # TODO : Moved from tool.smart_draw.action_measure_locked_status
+    vcb_angle: ""
+    # TODO : Moved from tool.smart_draw.action_measure_locked_status
+    locked_on_last_measure_status: قفل على آخر قياس
     error:
       no_direction: يرجى تحديد اتجاه باستخدام الفأرة
       invalid_length: "الطول {{ value }} غير صالح"
@@ -2335,12 +2351,17 @@ tool:
       invalid_multiplicator: "المعامل {{ value }} غير صالح"
       invalid_divider: "القاسم {{ value }} غير صالح"
       invalid_offset: "الإزاحة {{ value }} غير صالحة"
+      invalid_angle: ""
       invalid_segment_count: "عدد القطع {{ value }} غير صالح. يجب أن يكون بين 3 و999"
       syntax_error: "خطأ في بناء الجملة : {{ error }}"
       unexpected_close_parenthesis: "قوس إغلاق غير متوقع"
       missing_close_parenthesis: "قوس إغلاق مفقود"
       missing_operand: "متغير مفقود"
       zero_division: "القسمة على الصفر"
+      invalid_argument_count: ""
+      comma_argument_separator: ""
+      invalid_dimension: ""
+      no_matching_value: ""
       lt_min_distance: "المسافة {{ value1 }} أقل من المسافة الدنيا البالغة {{ value2 }}"
       gt_max_distance: "المسافة {{ value1 }} أكبر من المسافة القصوى {{ value2 }}"
       locked_part: هذه القِطعة مقفلة
@@ -2377,27 +2398,13 @@ tool:
     action_2_status: ارسم جسما أساسه مضلع
     action_2_state_1_status: انقر لتحديد نقطة جديدة أو أدخل مسافة
     action_x_state_2_status: انقر لتحديد الارتفاع أو أدخل مسافة
-    action_3: ارسم فاصلًا
-    action_3_status: ارسم فاصلًا داخل تجويف مكون من مجموعة قِطع موجودة
-    action_3_state_0_status: انقر على جدار لرسم فاصل
-    action_3_state_1_status: انقر على جدار لرسم فواصل
     action_option_group_offset: إزاحة
     action_option_group_segments: القِطع المستقيمة
-    action_option_group_thickness: السُمك
-    action_option_group_axes: المحاور
-    action_option_group_measure_type: القياس
     action_option_group_options: الخيارات
     action_option_offset_shape_offset: إزاحة
     action_option_offset_shape_offset_status: يسمح بتطبيق إزاحة على مسار الشكل المرسوم
     action_option_segments_segment_count: عدد القطع المستقيمة
     action_option_segments_segment_count_status: يسمح بتحديد عدد الخطوط المكونة للدائرة
-    action_option_thickness_thickness: السُمك
-    action_option_thickness_thickness_status: يحدد سُمك الألواح
-    action_option_measure_type_inside_status: وضع السُمك داخل النقطة المستهدفة
-    action_option_measure_type_centered_status: توسيط السُمك على النقطة المستهدفة
-    action_option_measure_type_outside_status: وضع السُمك خارج النقطة المستهدفة
-    action_option_axes_active_status: المعالجة على طول المحاور النشطة
-    action_option_axes_context_status: المعالجة على طول محاور المجموعة أو العنصر المضيف
     action_option_options_construction: الخطوط الإنشائية
     action_option_options_construction_status: الرسم بالخطوط الإنشائية
     action_option_options_rectangle_centered: مستطيل انطلاقا من المركز
@@ -2417,20 +2424,88 @@ tool:
     action_option_options_draw_in_0: الرسم داخل العنصر النشط
     action_option_options_draw_in_1: الرسم داخل العنصر "الأب" للقٍطعة التابعة للنقطة الأولى
     action_option_options_draw_in_status: الرسم داخل العنصر "الأب" للقِطعة المستهدفة بواسطة النقطة الأولى
-    action_option_options_reduce_envelope: قِطع غائرة
-    action_option_options_reduce_envelope_status: مراعاة القِطع الغائرة
-    action_option_options_reuse_definition: إعادة استخدام القِطع
-    action_option_options_reuse_definition_status: "بدلًا من إنشاء قطعة جديدة، أعد استخدام القطعة الموجودة التي لها نفس الشكل وتقع في نفس المنطقة "
     action_option_options_ask_name: تسمية القِطع
     action_option_options_ask_name_status: إدخال تسمية القِطع يدويًا
     action_toggle_move_copy_status: التبديل بين النسخ/النقل
     action_change_move_anchor_status: تغيير نقطة الإرساء
+    success:
+      part_created: "تم إنشاء قطعة جديدة: {{ name }}"
+      part_created_plural: "{{ count }} قِطع جديدة أُنشئت : {{ name }}"
+  smart_build:
+    title: ""
+    action_0: ""
+    action_0_status: ""
+    action_0_state_0_status: ""
+    action_0_state_1_status: ""
+    action_1: ""
+    action_1_status: ""
+    action_1_state_0_status: ""
+    action_1_state_0_merge_status: ""
+    action_2: ""
+    action_2_status: ""
+    action_2_state_0_status: ""
+    action_2_state_0_merge_status: ""
+    action_option_group_groove: ""
+    action_1_option_group_offset: ""
+    action_option_group_thickness: السُمك
+    action_option_group_overlay: ""
+    action_option_group_axes: المحاور
+    action_option_group_measure_type: القياس
+    action_option_group_options: الخيارات
+    action_option_offset_front_panel_offset: ""
+    action_option_offset_front_panel_offset_status: ""
+    action_option_groove_groove_depth: ""
+    action_option_groove_groove_depth_status: ""
+    action_option_groove_groove_setback: ""
+    action_option_groove_groove_setback_status: ""
+    action_option_groove_groove_through: ""
+    action_option_groove_groove_through_status: ""
+    action_option_thickness_thickness: السُمك
+    action_option_thickness_thickness_status: يحدد سُمك الألواح
+    action_option_overlay_inset_status: ""
+    action_2_option_overlay_inset_status: ""
+    action_option_overlay_full_overlay_status: ""
+    action_2_option_overlay_full_overlay_status: ""
+    action_option_measure_type_inside_status: وضع السُمك داخل النقطة المستهدفة
+    action_option_measure_type_centered_status: توسيط السُمك على النقطة المستهدفة
+    action_option_measure_type_outside_status: وضع السُمك خارج النقطة المستهدفة
+    action_option_axes_active_status: المعالجة على طول المحاور النشطة
+    action_option_axes_context_status: المعالجة على طول محاور المجموعة أو العنصر المضيف
+    action_option_options_measure_reversed: قياس معكوس
+    action_option_options_measure_reversed_status: عكس القياس
+    action_option_options_reduce_envelope: قِطع غائرة
+    action_option_options_reduce_envelope_status: مراعاة القِطع الغائرة
+    action_option_options_reuse_definition: إعادة استخدام القِطع
+    action_option_options_reuse_definition_status: "بدلًا من إنشاء قطعة جديدة، أعد استخدام القطعة الموجودة التي لها نفس الشكل وتقع في نفس المنطقة "
+    action_option_options_mirror: ""
+    action_option_options_mirror_status: ""
+    action_option_options_ask_name: تسمية القِطع
+    action_option_options_ask_name_status: إدخال تسمية القِطع يدويًا
+    action_option_options_layer_name: ""
+    action_option_options_layer_name_status: ""
+    detecting_cavities: ""
     error:
-      invalid_divider_seed: هذا النوع من القِطع لا يسمح بإنشاء فاصل
+      invalid_divider_seed: ""
       invalid_divider_container: "هذه القطعة معزولة : لا تشترك في أي مجموعة أو عنصر مع قِطع أخرى"
       invalid_divider_cavity: "لا يوجد تجويف في هذا الموضع"
       no_divider_cavity: لم يُكتشف أي تجويف في هذه المجموعة أو العنصر
+      invalid_front_panel_seed: ""
+      invalid_front_panel_container: "هذه القطعة معزولة : لا تشترك في أي مجموعة أو عنصر مع قِطع أخرى"
+      invalid_front_panel_cavity: ""
+      no_front_panel_cavity: لم يُكتشف أي تجويف في هذه المجموعة أو العنصر
+      invalid_back_panel_seed: ""
+      invalid_back_panel_container: "هذه القطعة معزولة : لا تشترك في أي مجموعة أو عنصر مع قِطع أخرى"
+      invalid_back_panel_cavity: ""
+      no_back_panel_cavity: لم يُكتشف أي تجويف في هذه المجموعة أو العنصر
+      too_complex_cavity: ""
+      closed_front_panel_opening: ""
+      closed_back_panel_opening: ""
       divider_number_overflow: "يتعذر وضع {{ number }} فواصل في هذا التجويف"
+      front_panel_number_overflow: ""
+      back_panel_number_overflow: ""
+      back_panel_severs_parts: ""
+    warning:
+      no_back_panel_machining: ""
     success:
       part_created: "تم إنشاء قطعة جديدة: {{ name }}"
       part_created_plural: "{{ count }} قِطع جديدة أُنشئت : {{ name }}"
@@ -2454,6 +2529,11 @@ tool:
     action_4_status: وزع قِطعة على محور معين
     action_4_state_1_status: انقر لتحديد نقطة القياس الأولى
     action_4_state_2_status: انقر لتحديد نقطة القياس الثانية أو أدخل مسافة معينة
+    action_5: ""
+    action_5_status: ""
+    action_5_state_0_status: ""
+    action_5_state_0_amend_status: ""
+    action_5_state_20_status: ""
     action_option_group_copy_measure_type: قياس
     action_option_group_move_measure_type: قياس
     action_option_group_axes: المحاور
@@ -2468,6 +2548,9 @@ tool:
     action_toggle_raytest_status: أسقط على النقطة التالية
     warning:
       copies_disable_mirror: النسخ المتعدد يعطل خيار '$t(tool.smart_handle.action_option_options_mirror_status)'
+    error:
+      not_door: ""
+      incoherent_door: ""
   smart_reshape:
     title: أعد التشكيل
     action_0: مدِّد
@@ -2476,6 +2559,7 @@ tool:
     action_0_state_1a_status: انقر على مستوٍ قاطعٍ لتحريكه
     action_0_state_1b_status: أضف مستويا قاطعا
     action_0_state_1c_status: احذف مستويا قاطعا
+    action_0_state_1d_status: ""
     action_0_state_10_status: اسحب مستويا قاطعا لتحريكه
     action_0_state_11_status: انقر لإضافة المستوي القاطع
     action_0_state_12_status: انقر على مستوٍ قاطعٍ لحذفه
@@ -2612,7 +2696,7 @@ tool:
       not_orientable: نوع هذه القِطعة لا يسمح بتوجيهها
       not_grained: ليس للقطعة المستهدفة اتجاه تعرّق للألياف
       not_single_thickness_layer: يجب أن تتكون القطعة المستهدفة من طبقة واحدة فقط
-  # TODO: It's currently just for dev purposes
+  # Dev only
   smart_join:
     title: تجميع
     action_0: إضافة موصلات

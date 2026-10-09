@@ -112,6 +112,7 @@ core:
       unhide_part_instance: חשוף פריט
       edit_part_instance_properties: ערוך מאפייני חלק
       smart_draw: $t(core.toolbar.command.smart_draw)
+      smart_build: ""
       smart_handle: $t(core.toolbar.command.smart_handle)
       smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
@@ -125,6 +126,7 @@ core:
     command:
       dialog: OpenCutList
       smart_draw: צייר חלקים
+      smart_build: ""
       smart_handle: עיבוד חלקים
       smart_reshape: עדכון חלקים
       smart_paint: צביעת חלקים
@@ -211,16 +213,21 @@ core:
       *יצירת הגדרה קבועה מראש מאפשרת לך לשמור על הגדרות נוכחיות בכל מקום, כך שתוכל לעשות בהן שימוש חוזר בכל התבניות שלך.*
 
       הזן את שם ההגדרה:
+    rename_prompt_title: ""
+    rename_prompt: ""
     delete_confirm_title: הסרה
     delete_confirm: "האם אתה בטוח שברצונך למחוק את ההגדרה **\"{{ name }}\"**?"
     override_confirm_title: עדכון
     override_confirm: "האם אתה מאשר לעדכן את ההגדרה **\"{{ name }}\"** בפרמטרים של הטופס?"
+    new_error: ""
     new_success: "הגדרה **\"{{ name }}\"** נוצרה"
     override_success: "הגדרה **\"{{ name }}\"** עודכנה"
     restore_success: "הטופס מולא עם ההגדרה **\"{{ name }}\"**"
+    rename_success: ""
     delete_success: "הגדרה **\"{{ name }}\"** נמחקה"
     tooltip:
       save_to: "עדכן הגדרה '{{ name }}'"
+      rename: ""
       delete: "למחק הגדרה '{{ name }}'"
     dictionary:
       component_textinput_color: פלטת צבע
@@ -239,16 +246,20 @@ core:
       cutlist_estimate_options: $t(tab.cutlist.label) / $t(tab.cutlist.estimate.title)
       cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
       cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
-      importer_import_options: $t(tab.importer.label) / $t(default.import)
-      importer_load_options: $t(tab.importer.label) / $t(default.open)
+      importers_csv_import_options: ""
+      importers_csv_load_options: ""
+      importers_bxf2_import_options: ""
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       outliner_options: $t(tab.outliner.label) / $t(default.options)
+      outliner_deep_rename_parts_options: ""
       settings_model: $t(tab.settings.label) / Modèle
       tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
       tool_smart_handle_options: $t(core.toolbar.command.smart_handle)
+      tool_smart_reshape_options: $t(core.toolbar.command.smart_reshape)
       tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
       tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
+      tool_smart_join_options: ""
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
   progress:
     please_wait: חישוב של עולם של שלום
@@ -260,7 +271,10 @@ core:
       remove: תשכח צבע
     textinput_code:
       snippets: דוגמאות לנוסחאות
-      help: "הקש **@**, כדי לפתוח את רשימת המשתנים."
+      help: ""
+    textinput_file:
+      browse: ""
+      browse_library: ""
     textinput_size:
       quantity: כמות
     three_viewer:
@@ -282,6 +296,23 @@ core:
       failed_to_load: |
         לא ניתן לפתוח את התיעוד.
         ודא שאתה מחובר לאינטרנט.
+  solid:
+    error:
+      empty: ""
+      empty_named: ""
+      non_manifold_edges: ""
+      non_manifold_edges_plural: ""
+      non_manifold_edges_named: ""
+      non_manifold_edges_named_plural: ""
+      open_edges: ""
+      open_edges_plural: ""
+      open_edges_named: ""
+      open_edges_named_plural: ""
+      locked_instances: ""
+    rebuild:
+      error:
+        no_segment: ""
+        no_face: ""
 tab:
   cutlist:
     label: מידת חיתוך
@@ -358,6 +389,7 @@ tab:
       flipped: החלק משתקף בהתאם להגדרות שלו
       symmetrical: בחלק הזה לא מופעל זיהוי חלק משתקף
       ignore_grain_direction: בחלק הזה מתעלמים מכיוון המרקם
+      follow_grain_direction: ""
       auto_oriented: החלק עבר הכוונה אוטומטית
       oko_label_filter: "תכלול/אל תכלול תג זה"
       add_label_filter: "לסנן לפי '{{ label }}'"
@@ -475,11 +507,11 @@ tab:
         *OpenCutList יספור 2 חתיכות בעובי 19 מ"מ במקום חתיכה אחת בעובי 38 מ"מ.*
       cut_options: $t(tab.materials.edit_material.cut_options)
       length_increase: $t(tab.materials.edit_material.length_increase)
-      length_increase_help: ""  # TODO: singular version of tab.materials.edit_material.length_increase
+      length_increase_help: ""
       width_increase: $t(tab.materials.edit_material.width_increase)
-      width_increase_help: "" # TODO: singular version of tab.materials.edit_material.width_increase
+      width_increase_help: ""
       thickness_increase: $t(tab.materials.edit_material.thickness_increase)
-      thickness_increase_help: "" # TODO: singular version of tab.materials.edit_material.thickness_increase
+      thickness_increase_help: ""
       description: תיאור
       description_help: |
         *התיאור* מאפשר לך לספק מידע מותאם אישית על כל הגדרת חלק.
@@ -504,9 +536,14 @@ tab:
       symmetrical: השבת זיהוי חלקים משתקפים
       symmetrical_help: |
         אם התיבה מסומנת, זיהוי *חלק משתקף* לא יופעל.
-      ignore_grain_direction: אל תשים לב על כיוון המרקם
+      ignore_grain_direction: כיוון סיבים
       ignore_grain_direction_help: |
-        אם תיבה זו מסומנת, כיוון המרקם בחלק זה מתעלם.
+      ignore_grain_direction_0: סיבים לאורך
+      ignore_grain_direction_1: אל תשים לב על כיוון המרקם
+      follow_grain_direction: ""
+      follow_grain_direction_help: |
+      follow_grain_direction_0: $t(default.no)
+      follow_grain_direction_1: ""
       axes: צירים
       axes_help: הגדר את המידות כך שיתאימו לצבעי הציר של החלק.
       axes_tip: |
@@ -1063,8 +1100,17 @@ tab:
       option_rectangleguillotine_first_stage_orientation_horizontal: אופקי
       option_rectangleguillotine_first_stage_orientation_vertical: אנכי
       option_rectangleguillotine_first_stage_orientation_any: כל
+      option_rectangleguillotine_sort_subplates_criteria: ""
+      option_rectangleguillotine_sort_subplates_criteria_help: |
+      option_rectangleguillotine_sort_subplates_criteria_l1l2: ""
+      option_rectangleguillotine_sort_subplates_criteria_dl2l1: ""
       option_rectangleguillotine_keep: גודל שאריות מינימלי
       option_rectangleguillotine_keep_help: שאריות גדולות מגודל המינימלי יסומנו כ-**לשמור**.
+      option_rectangle_leftover_mode: ""
+      option_rectangle_leftover_mode_help: |
+      option_rectangle_leftover_mode_area: ""
+      option_rectangle_leftover_mode_x: ""
+      option_rectangle_leftover_mode_y: ""
       option_irregular_allowed_rotations: סיבובים מותרים
       option_irregular_allowed_rotations_help: |
         מגדיר את זווית הסיבוב האפשרית עבור מיקום החלק.
@@ -1079,6 +1125,11 @@ tab:
         קובע האם מותר להציב את המראת החלק.
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
+      option_irregular_leftover_mode: ""
+      option_irregular_leftover_mode_help: |
+      option_irregular_leftover_mode_bottom_left: ""
+      option_irregular_leftover_mode_left: ""
+      option_irregular_leftover_mode_bottom: ""
       option_spacing: מרווחים
       option_spacing_help: |
         מרווח מינימלי בין כל חלק.
@@ -1137,10 +1188,16 @@ tab:
       option_hide_edges_preview_1: מוסתר בתוכנית החיתוך
       option_hide_edges_preview_help: מאפשר לך להציג או להסתיר את האינדיקציה החזותית של הקצוות לציפוי עבור כל חלק בתוכנית חיתוך.
       option_zoom_threshold: סף זום
+      # TODO find a better explanation
       option_zoom_threshold_help: |
       option_time_limit: מגבלת זמן
       option_time_limit_help: |
         קובע את הזמן המוקצב לחישוב
+      grain_groups:
+        title: ""
+        title_plural: ""
+        name: תיאור
+        item_count: סה"כ חלקים
       tooltip:
         scroll_to_block_1d: גלול ללוח או קאנט ראשון
         scroll_to_block_2d: גלילה לחלונית או לגיליון הראשונים
@@ -1238,7 +1295,8 @@ tab:
         no_solution: ""
         unplaced_parts: ""
         unplaced_parts_plural: ""
-        unusable_part: חלק גדול מדי
+        unusable_part_1: חלק גדול מדי
+        unusable_part_2: ""
       warning:
         is_part_selection: תוכנית חיתוך מוגבלת ל-**חלקים הנבחרים**.
         cutting_dimensions: תוכנית חיתוך זו משתמשת במידות **גולמיות** של החלקים.
@@ -1432,6 +1490,10 @@ tab:
 
         - מבנה **שכבות** משרטט את כל הקווים שטוחים, ומבדיל בין סוגי הקווים השונים רק לפי שכבות. *מבנה זה מספק תאימות טובה יותר לתוכנות של צד שלישי.*
         - המבנה **שכבות + בלוקים** יוצר בלוק אחד לכל חלק ומכניס את הבלוקים הללו כמה פעמים שהחלקים חוזרים על עצמם. *מבנה זה מספק יותר גמישות לעריכת הקובץ.*
+      option_dxf_depth_to_z: ""
+      option_dxf_depth_to_z_0: $t(default.no)
+      option_dxf_depth_to_z_1: ""
+      option_dxf_depth_to_z_help: |
       option_unit: יחידות
       option_unit_help: |
         מאפשר לבחור את היחידות מדידה המשמשות בקובץ המיוצא.
@@ -1587,11 +1649,14 @@ tab:
       thickness: עובי
       thickness_help: |
       length_increase: תוספת לאורך
-      length_increase_help: תוספת מוחלת על האורך בפועל לקביעת **אורך החיתוך**.
+      length_increase_help: ""
+      length_increase_help_plural: תוספת מוחלת על האורך בפועל לקביעת **אורך החיתוך**.
       width_increase: תוספת לרוחב
-      width_increase_help: תוספת מוחלת על הרוחב בפועל לקביעת **רוחב החיתוך**.
+      width_increase_help: ""
+      width_increase_help_plural: תוספת מוחלת על הרוחב בפועל לקביעת **רוחב החיתוך**.
       thickness_increase: תוספת לעובי
-      thickness_increase_help: תוספת מוחלת על העובי בפועל לקביעת **עובי החיתוך**.
+      thickness_increase_help: ""
+      thickness_increase_help_plural: תוספת מוחלת על העובי בפועל לקביעת **עובי החיתוך**.
       std_lengths: אורכים סטנדרטיים
       std_lengths_help: |
       std_widths: רוחבים סטנדרטיים
@@ -1700,6 +1765,8 @@ tab:
       name: תיאור
       instance_name: אדגם
       material: חומר
+      is_grain_group: ""
+      is_grain_group_help: ""
       definition_name: הגדרה
       description: תיאור
       url: קישור
@@ -1954,6 +2021,9 @@ tab:
         option_no_material_help: ""
         option_default_material_help: ""
         option_no_layer_help: ""
+        old_name: ""
+        new_name: ""
+        count: ""
         formula:
           part: חלק
           project: ""
@@ -2072,13 +2142,11 @@ tab:
     presets:
       export_global_presets: ייצא הגדרות קבועות מראש
       export_global_presets_help: |
-        תכונה זו מאפשרת לך לייצא את ההגדרות המוגדרות מראש שלך לקובץ **.json**.
-        בחר את ההגדרות המוגדרות מראש שברצונך לייצא לשם.
       export_global_presets_success: ההגדרות המוגדרות מראש יוצאו בהצלחה.
+      export_global_presets_success_with_assets: ""
       import_global_presets: ייבוא ​​הגדרות קבועות מראש
       import_global_presets_help: |
-        בחר את המוגדרות מראש הקיימות בקובץ **.json** שברצונך לייבא.
-        היזהר, אם כבר קיימת הגדרה מראש עם שם זהה, היא תוחלף בגרסה המיובאת.
+      open_library_dir: ""
       import_global_presets_success: |
         הגדרות קבועות מראש של *OpenCutList* יובאו בהצלחה.
         על מנת לקחת בחשבון את השינויים, עליך **לסגור** ו**לפתוח מחדש** את חלון OpenCutList.
@@ -2103,6 +2171,8 @@ tab:
       error:
         no_preset_to_export: אין הגדרות קבועות מראש לייצוא.
         no_preset_to_import: אין הגדרות קבועות מראש לייבוא.
+        failed_to_export: ""
+        failed_to_open_library_dir: ""
         failed_to_import: "ייבוא ​​הגדרות קבועות מראש נכשל: **{{ error }}**."
         failed_to_import_invalid_hexdigest: קובץ זה שונה. לא ניתן לייבא אותו.
         failed_to_import_bad_file_format: פורמט קובץ לא חוקי.
@@ -2158,6 +2228,8 @@ tool:
     vcb_radius: ""
     vcb_diameter: ""
     vcb_distance: ""
+    vcb_spacings: רווחים
+    locked_on_last_measure_status: ""  # TODO : Moved from tool.smart_draw.action_measure_locked_status
     error:
       no_direction: ""
       invalid_length: ""
@@ -2174,19 +2246,23 @@ tool:
       lt_min_distance: ""
       gt_max_distance: ""
       locked_part: ""
+      not_sibling_part: ""
       selection_contains_locked_entities: ""
+      wrong_material_type: "חלק היעד חייב להיות מסוג '{{ type }}'"
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_select:
     state_0_status: ""
     state_0_to_6_status: ""
+    state_0_to_7_status: ""
     state_4_status: ""
     state_5_status: ""
     state_6_status: ""
     state_7_status: ""
     warning:
       no_active_part: ""
+      no_parent_group: ""
   smart_draw:
     title: שרטוט
     action_0: ""
@@ -2231,11 +2307,93 @@ tool:
     action_option_options_draw_in_status: ""
     action_option_options_ask_name: ""
     action_option_options_ask_name_status: ""
-    action_measure_locked_status: ""
     action_toggle_move_copy_status: ""
     action_change_move_anchor_status: ""
     success:
       part_created: ""
+      part_created_plural: ""
+  smart_build:
+    title: ""
+    action_1: ""
+    action_1_status: ""
+    action_1_state_0_status: ""
+    action_1_state_1_status: ""
+    action_2: ""
+    action_2_status: ""
+    action_2_state_0_status: ""
+    action_2_state_0_merge_status: ""
+    action_3: ""
+    action_3_status: ""
+    action_3_state_0_status: ""
+    action_3_state_0_merge_status: ""
+    action_option_group_groove: ""
+    action_2_option_group_offset: ""
+    action_option_group_thickness: עובי
+    action_option_group_overlay: ""
+    action_option_group_axes: צירים
+    action_option_group_measure_type: ""
+    action_option_group_options: אפשרויות
+    action_option_offset_front_panel_offset: ""
+    action_option_offset_front_panel_offset_status: ""
+    action_option_groove_groove_depth: ""
+    action_option_groove_groove_depth_status: ""
+    action_option_groove_groove_setback: ""
+    action_option_groove_groove_setback_status: ""
+    action_option_groove_groove_through: ""
+    action_option_groove_groove_through_status: ""
+    action_option_thickness_thickness: עובי
+    action_option_thickness_thickness_status: ""
+    action_option_overlay_inset_status: ""
+    action_3_option_overlay_inset_status: ""
+    action_option_overlay_full_overlay_status: ""
+    action_3_option_overlay_full_overlay_status: ""
+    action_option_measure_type_inside_status: ""
+    action_option_measure_type_centered_status: ""
+    action_option_measure_type_outside_status: ""
+    action_option_axes_active_status: ""
+    action_option_axes_context_status: ""
+    action_option_options_construction: ""
+    action_option_options_construction_status: ""
+    action_option_options_measure_reversed: ""
+    action_option_options_measure_reversed_status: ""
+    action_option_options_reduce_envelope: ""
+    action_option_options_reduce_envelope_status: ""
+    action_option_options_reuse_definition: ""
+    action_option_options_reuse_definition_status: ""
+    action_option_options_mirror: ""
+    action_option_options_mirror_status: ""
+    action_option_options_ask_name: ""
+    action_option_options_ask_name_status: ""
+    action_option_options_layer_name: ""
+    action_option_options_layer_name_status: ""
+    detecting_cavities: ""
+    error:
+      invalid_divider_seed: ""
+      invalid_divider_container: ""
+      invalid_divider_cavity: ""
+      no_divider_cavity: ""
+      invalid_front_panel_seed: ""
+      invalid_front_panel_container: ""
+      invalid_front_panel_cavity: ""
+      no_front_panel_cavity: ""
+      invalid_back_panel_seed: ""
+      invalid_back_panel_container: ""
+      invalid_back_panel_cavity: ""
+      no_back_panel_cavity: ""
+      too_complex_cavity: ""
+      closed_front_panel_opening: ""
+      closed_back_panel_opening: ""
+      divider_number_overflow: ""
+      front_panel_number_overflow: ""
+      back_panel_number_overflow: ""
+      back_panel_severs_parts: ""
+    warning:
+      no_back_panel_machining: ""
+    success:
+      part_created: ""
+      part_created_plural: ""
+      part_reused: ""
+      part_reused_plural: ""
   smart_handle:
     title: ""
     action_0: ""
@@ -2276,6 +2434,7 @@ tool:
     action_0_state_1a_status: ""
     action_0_state_1b_status: ""
     action_0_state_1c_status: ""
+    action_0_state_1d_status: ""
     action_0_state_10_status: ""
     action_0_state_11_status: ""
     action_0_state_12_status: ""
@@ -2284,9 +2443,21 @@ tool:
     action_1_status: ""
     action_1_state_0_status: ""
     action_1_state_1_status: ""
-    # CSG = Constructive Solid Geometry
+    action_1_rollover_face_status: ""
+    action_1_select_similar_status: ""
+    action_1_select_all_edges_status: ""
     action_2: ""
     action_2_status: ""
+    action_2_state_0_status: ""
+    action_2_state_1_status: ""
+    action_3: ""
+    action_3_status: ""
+    action_3_state_0_status: ""
+    action_3_state_1_status: ""
+    action_4: ""
+    action_4_status: ""
+    action_4_state_0_status: ""
+    action_4_state_1_status: ""
     action_option_group_thickness: עובי
     action_option_group_stretch_measure_type: ""
     action_option_group_axes: צירים
@@ -2305,8 +2476,20 @@ tool:
     action_option_paneling_joint_type_miter_status: ""
     action_option_paneling_direction_inward_status: ""
     action_option_paneling_direction_outward_status: ""
-    action_option_options_centred_status: ""
+    action_option_options_centered_status: ""
     action_option_options_make_unique_status: ""
+    action_option_options_keep_a: ""
+    action_option_options_keep_a_status: ""
+    action_option_options_keep_b: ""
+    action_option_options_keep_b_status: ""
+    action_option_options_remove_unused_definitions_status: ""
+    action_option_options_reuse_definition: ""
+    action_option_options_reuse_definition_status: ""
+    action_option_options_reuse_definition_mirrored: ""
+    action_option_options_reuse_definition_mirrored_status: ""
+    notify:
+      validate_a: ""
+      validate_b: ""
     error:
       curve_intersect: ""
   smart_paint:
@@ -2358,7 +2541,6 @@ tool:
       not_part: אובייקט היעד אינו חלק (רכיב)
       not_edge: משטח היעד אינו קאנט הלוח
       not_face: משטח היעד אינה חזית הלוח
-      wrong_material_type: "חלק היעד חייב להיות מסוג '{{ type }}'"
   smart_axes:
     title: כוון
     action_0: להפוך
@@ -2371,6 +2553,10 @@ tool:
     action_3_status: בחר צלע של חלק ולחץ עליו כדי להתאים את הצירים שלו
     action_4: שנה ראשית הצירים
     action_4_status: בחר צד של חלק ולחץ על נקודה כדי למקם את הראשית הצירים שלו
+    action_5: ""
+    action_5_status: ""
+    action_5_to_state_10_status: ""
+    action_5_state_10_status: ""
     action_option_group_direction: כיוון
     action_option_direction_0: א'
     action_option_direction_1: ר'
@@ -2383,10 +2569,72 @@ tool:
     error:
       not_part: אובייקט היעד אינו חלק (רכיב)
       not_orientable: סוג החלק אינו מאפשר לכוון אותו
+      not_grained: ""
+      not_single_thickness_layer: ""
+  # TODO: It's currently just for dev purposes
   smart_join:
     title: ""
-    action_0: "" # TODO: It's currently just for dev purposes
-    action_0_status: "" # TODO
+    action_0: ""
+    action_0_status: ""
+    action_0_state_0_status: ""
+    action_1: ""
+    action_1_status: ""
+    action_1_state_0_status: ""
+    action_1_only_one_status: ""
+    action_2: ""
+    action_2_status: ""
+    action_2_state_0_status: ""
+    action_2_state_1_status: ""
+    action_3: ""
+    action_3_status: ""
+    action_3_state_0_status: ""
+    action_3_state_1_status: ""
+    action_3_only_one_status: ""
+    action_option_group_height: גובה
+    action_option_group_offsets: ""
+    action_option_group_spacings: ""
+    action_option_group_options: אפשרויות
+    action_option_height: גובה
+    action_option_offsets_start_offset: התחלה
+    action_option_offsets_end_offset: סוף
+    action_option_spacings_min_spacing: ""
+    action_option_spacings_max_spacing: ""
+    action_option_options_opposite_status: ""
+    action_option_options_make_unique_status: ""
+    action_option_hardware_connector_a: ""
+    action_option_hardware_connector_b: ""
+    action_option_hardware_fitting_a: ""
+    action_option_hardware_fitting_b: ""
+    action_option_machining_a: ""
+    action_option_machining_b: ""
+    action_option_hardware_connector_material_name: ""
+    action_option_hardware_fitting_material_name: ""
+    action_option_machining_material_name: ""
+    action_option_hardware_connector_layer_name: ""
+    action_option_hardware_fitting_layer_name: ""
+    action_option_machining_layer_name: ""
+    measures: ""
+    geometries: ""
+    error:
+      invalid_height: ""
+      invalid_start_offset: ""
+      invalid_end_offset: ""
+      invalid_min_spacing: ""
+      invalid_max_spacing: ""
+      not_assemblable: ""
+      no_valid_join: ""
+      occupied_anchors: ""
+      occupied_anchors_plural: ""
+      failed_to_load_skp_file: |
+      unsupported_skp_version: |
+    warning:
+      no_connector_to_remove: ""
+      x_connectors_to_remove: ""
+      x_connectors_to_remove_plural: ""
+      no_fitting_to_remove: ""
+      x_fittings_to_remove: ""
+      x_fittings_to_remove_plural: ""
+      different_file_name: ""
   smart_export:
     title: ייצוא
     action_0: ייצא חלק 3D

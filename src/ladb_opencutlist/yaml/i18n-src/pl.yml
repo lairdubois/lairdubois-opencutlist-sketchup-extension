@@ -112,6 +112,7 @@ core:
       unhide_part_instance: Ujawnij instancję
       edit_part_instance_properties: Edytuj właściwości instancji
       smart_draw: $t(core.toolbar.command.smart_draw)
+      smart_build: ""
       smart_handle: $t(core.toolbar.command.smart_handle)
       smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
@@ -125,6 +126,7 @@ core:
     command:
       dialog: OpenCutList
       smart_draw: Lista części
+      smart_build: ""
       smart_handle: Importuj części
       smart_reshape: Przebudować pomieszczenia
       smart_paint: Malowanie części
@@ -211,16 +213,21 @@ core:
       *Tworzenie własnych ustawień pozwala zachować aktualne ustawienia globalnie, abyś mógł użyć ich we wszystkich swoich modelach.*
 
       Wprowadź nazwę dla ustawień:
+    rename_prompt_title: ""
+    rename_prompt: ""
     delete_confirm_title: Usunięcie
     delete_confirm: "Czy na pewno chcesz usunąć ustawienia **\"{{ name }}\"**?"
     override_confirm_title: Aktualizacja
     override_confirm: "Czy na pewno chcesz zapisać aktualne parametry z formularza w ustawieniach **\"{{ name }}\"**?"
+    new_error: ""
     new_success: "Ustawienia **\"{{ name }}\"** zostały utworzone"
     override_success: "Zaktualizowano ustawienia **\"{{ name }}\"**"
     restore_success: "Do formularza wczytano parametry zapisane w ustawieniach **\"{{ name }}\"**"
+    rename_success: ""
     delete_success: "Ustawienia **\"{{ name }}\"** zostały usunięte"
     tooltip:
       save_to: "Zaktualizuj ustawienia '{{ name }}'"
+      rename: ""
       delete: "Usuń ustawienia '{{ name }}'"
     dictionary:
       component_textinput_color: Paleta kolorów
@@ -239,16 +246,20 @@ core:
       cutlist_estimate_options: $t(tab.cutlist.label) / $t(tab.cutlist.estimate.title)
       cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
       cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
-      importer_import_options: $t(tab.importer.label) / $t(default.import)
-      importer_load_options: $t(tab.importer.label) / $t(default.open)
+      importers_csv_import_options: ""
+      importers_csv_load_options: ""
+      importers_bxf2_import_options: ""
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       outliner_options: $t(tab.outliner.label) / $t(default.options)
+      outliner_deep_rename_parts_options: $t(tab.outliner.label) / $t(tab.outliner.deep_rename_parts.title)
       settings_model: $t(tab.settings.label) / Modelu
       tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
       tool_smart_handle_options: $t(core.toolbar.command.smart_handle)
+      tool_smart_reshape_options: $t(core.toolbar.command.smart_reshape)
       tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
       tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
+      tool_smart_join_options: $t(core.toolbar.command.smart_join)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
   progress:
     please_wait: Kalkulacja cięcia
@@ -260,7 +271,10 @@ core:
       remove: Usuń kolor
     textinput_code:
       snippets: Przykłady formuł
-      help: "Wpisz **@**, aby uzyskać listę zmiennych."
+      help: ""
+    textinput_file:
+      browse: ""
+      browse_library: ""
     textinput_size:
       quantity: Ilość
     three_viewer:
@@ -282,6 +296,23 @@ core:
       failed_to_load: |
         Dokumentacja nie może zostać otwarta.
         Sprawdź, czy jesteś podłączony do Internetu.
+  solid:
+    error:
+      empty: ""
+      empty_named: ""
+      non_manifold_edges: ""
+      non_manifold_edges_plural: ""
+      non_manifold_edges_named: ""
+      non_manifold_edges_named_plural: ""
+      open_edges: ""
+      open_edges_plural: ""
+      open_edges_named: ""
+      open_edges_named_plural: ""
+      locked_instances: ""
+    rebuild:
+      error:
+        no_segment: ""
+        no_face: ""
 tab:
   cutlist:
     label: Części
@@ -358,6 +389,7 @@ tab:
       flipped: Ta część jest lustrzana w porównaniu z definicją komponentu
       symmetrical: Wykrywanie lustrzanej części jest nieaktywne dla tej części
       ignore_grain_direction: Kierunek wzoru jest ignorowany na tej części
+      follow_grain_direction: ""
       auto_oriented: Ta część została automatycznie obrócona
       oko_label_filter: "Uwzględnij / Wyłącz ten identyfikator"
       add_label_filter: "Filtrowanie według '{{ label }}'"
@@ -475,11 +507,11 @@ tab:
         *Wtedy OpenCutList policzy 2 części o grubości 19mm zamiast 1 części o grubości 38mm.*
       cut_options: $t(tab.materials.edit_material.cut_options)
       length_increase: $t(tab.materials.edit_material.length_increase)
-      length_increase_help: ""  # TODO: singular version of tab.materials.edit_material.length_increase
+      length_increase_help: $t(tab.materials.edit_material.length_increase_help)
       width_increase: $t(tab.materials.edit_material.width_increase)
-      width_increase_help: "" # TODO: singular version of tab.materials.edit_material.width_increase
+      width_increase_help: $t(tab.materials.edit_material.width_increase_help)
       thickness_increase: $t(tab.materials.edit_material.thickness_increase)
-      thickness_increase_help: "" # TODO: singular version of tab.materials.edit_material.thickness_increase
+      thickness_increase_help: $t(tab.materials.edit_material.thickness_increase_help)
       description: Opis
       description_help: |
         Opcja *Opis* umożliwia podanie spersonalizowanych informacji na temat każdej definicji części.
@@ -504,9 +536,14 @@ tab:
       symmetrical: Wyłącz wykrywanie lustrzanych części dla tej części
       symmetrical_help: |
         Jeśli to pole jest zaznaczone, wykrywanie *lustrzanych części* nie będzie miało żadnego wpływu na część.
-      ignore_grain_direction: Ignoruj kierunek wzoru na tej części
+      ignore_grain_direction: Kierunek wzoru/tekstury
       ignore_grain_direction_help: |
-        Jeśli ta opcja jest zaznaczona, kierunek wzoru materiału będzie ignorowany dla tej części.
+      ignore_grain_direction_0: Wzór/tekstura wzdłuż Długości
+      ignore_grain_direction_1: Ignoruj kierunek wzoru na tej części
+      follow_grain_direction: ""
+      follow_grain_direction_help: |
+      follow_grain_direction_0: $t(default.no)
+      follow_grain_direction_1: ""
       axes: Osie
       axes_help: "Zmień kolejność wymiarów, aby dopasować je do żądanych kolorów osi w swojej części."
       axes_tip: |
@@ -1063,8 +1100,17 @@ tab:
       option_rectangleguillotine_first_stage_orientation_horizontal: Poziomo
       option_rectangleguillotine_first_stage_orientation_vertical: Pionowo
       option_rectangleguillotine_first_stage_orientation_any: Dowolny
+      option_rectangleguillotine_sort_subplates_criteria: ""
+      option_rectangleguillotine_sort_subplates_criteria_help: |
+      option_rectangleguillotine_sort_subplates_criteria_l1l2: ""
+      option_rectangleguillotine_sort_subplates_criteria_dl2l1: ""
       option_rectangleguillotine_keep: Minimalny rozmiar odpadów
       option_rectangleguillotine_keep_help: "Odpady, których oba wymiary są większe od minimalnego rozmiaru, będą oznaczone jako **do zachowania**."
+      option_rectangle_leftover_mode: ""
+      option_rectangle_leftover_mode_help: |
+      option_rectangle_leftover_mode_area: ""
+      option_rectangle_leftover_mode_x: ""
+      option_rectangle_leftover_mode_y: ""
       option_irregular_allowed_rotations: Dozwolone obroty
       option_irregular_allowed_rotations_help: |
         Określa dozwolone kąty obrotu elementu podczas jego umieszczania.
@@ -1079,6 +1125,11 @@ tab:
         Określa, czy odbicie lustrzane elementu jest dozwolone podczas umieszczania.
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
+      option_irregular_leftover_mode: ""
+      option_irregular_leftover_mode_help: |
+      option_irregular_leftover_mode_bottom_left: ""
+      option_irregular_leftover_mode_left: ""
+      option_irregular_leftover_mode_bottom: ""
       option_spacing: Odstęp
       option_spacing_help: |
         Minimalna odległość między każdym elementem.
@@ -1138,6 +1189,7 @@ tab:
       option_hide_edges_preview_1: Ukryte na schemacie cięcia
       option_hide_edges_preview_help: Umożliwia pokazanie lub ukrycie wizualnego wyświetlania obrzeży dla każdej części na schemacie cięcia.
       option_zoom_threshold: Próg powiększenia
+      # TODO find a better explanation
       option_zoom_threshold_help: |
         Pozwala określić szerokość diagramu, poniżej której diagramy są automatycznie powiększane.
 
@@ -1145,6 +1197,11 @@ tab:
       option_time_limit: Limit czasu
       option_time_limit_help: |
         Ustala czas przeznaczony na obliczenia
+      grain_groups:
+        title: ""
+        title_plural: ""
+        name: Nazwa
+        item_count: Σ Części
       tooltip:
         scroll_to_block_1d: Przewiń do pierwszej deski lub obrzeża
         scroll_to_block_2d: Przewiń do pierwszego panelu lub arkusza forniru
@@ -1243,7 +1300,8 @@ tab:
         no_solution: Nie znaleziono rozwiązania pozwalającego na umieszczenie **wszystkich części** w dostępnym materiale.
         unplaced_parts: "**1 element** nie mógł być umieszczony."
         unplaced_parts_plural: "Nie można umieścić **{{ count }} części**."
-        unusable_part: Zbyt duża część
+        unusable_part_1: Zbyt duża część
+        unusable_part_2: ""
       warning:
         is_part_selection: Ten schemat cięcia jest ograniczony do **wybranych części**.
         cutting_dimensions: Ten rozkrój używa **wstępnych** wymiarów części.
@@ -1456,6 +1514,10 @@ tab:
 
         - Struktura **Warstwy** rysuje wszystkie linie płasko, rozróżniając różne typy linii jedynie przez warstwy. *Ta struktura zapewnia lepszą kompatybilność z zewnętrznym oprogramowaniem.*
         - Struktura **Warstwy + Bloki** tworzy blok dla każdego elementu i wstawia te bloki tyle razy, ile elementy są powtarzane. *Ta struktura oferuje większą elastyczność w modyfikacji pliku.*
+      option_dxf_depth_to_z: ""
+      option_dxf_depth_to_z_0: $t(default.no)
+      option_dxf_depth_to_z_1: ""
+      option_dxf_depth_to_z_help: |
       option_unit: Jednostka
       option_unit_help: |
         Wybiera jednostkę używaną w eksportowanym pliku.
@@ -1581,7 +1643,7 @@ tab:
       type_4: Typ materiału '$t(tab.materials.type_4)'
       type_5: Typ materiału '$t(tab.materials.type_5)'
       type_6: Typ materiału '$t(tab.materials.type_6)'
-      type_7: ""
+      type_7: Typ materiału '$t(tab.materials.type_7)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Kierunek wzoru
@@ -1628,11 +1690,14 @@ tab:
 
         *Rozmiary bez jednostek są podane w jednostkach modelowych.*
       length_increase: Długość ponadwymiarowa
-      length_increase_help: Nadmiar dodany do długości aby określić **wstępną długość**.
+      length_increase_help: ""
+      length_increase_help_plural: Nadmiar dodany do długości aby określić **wstępną długość**.
       width_increase: Szerokość ponadwymiarowa
-      width_increase_help: Nadmiar dodany do szerokości aby określić **wstępną szerokość**.
+      width_increase_help: ""
+      width_increase_help_plural: Nadmiar dodany do szerokości aby określić **wstępną szerokość**.
       thickness_increase: Grubość ponadwymiarowa
-      thickness_increase_help: Nadmiar dodany do grubości aby określić **wstępną grubość**.
+      thickness_increase_help: ""
+      thickness_increase_help_plural: Nadmiar dodany do grubości aby określić **wstępną grubość**.
       std_lengths: Standardowe długości
       std_lengths_help: |
         Standardowe długości desek lub obrzeży.
@@ -1765,6 +1830,8 @@ tab:
       name: Nazwa
       instance_name: Instancja
       material: Materiał
+      is_grain_group: ""
+      is_grain_group_help: ""
       definition_name: Definicja
       description: Opis
       url: URL
@@ -2145,13 +2212,11 @@ tab:
     presets:
       export_global_presets: Eksportuj ustawienia wstępne
       export_global_presets_help: |
-        Ta funkcja umożliwia wyeksportowanie ustawień wstępnych do pliku **.json**.
-        Wybierz ustawienia wstępne, które chcesz do niego wyeksportować.
       export_global_presets_success: Ustawienia wstępne zostały pomyślnie wyeksportowane.
+      export_global_presets_success_with_assets: ""
       import_global_presets: Importuj ustawienia wstępne
       import_global_presets_help: |
-        Wybierz ustawienia wstępne w pliku **.json**, które chcesz zaimportować.
-        Pamiętaj, że istniejące ustawienie wstępne o identycznej nazwie zostanie zastąpione zaimportowaną wersją.
+      open_library_dir: ""
       import_global_presets_success: |
         Ustawienia wstępne *OpenCutList* zostały pomyślnie zaimportowane.
         Aby uwzględnić zmiany, należy **zamknąć** i **ponownie otworzyć** okno OpenCutList.
@@ -2176,6 +2241,8 @@ tab:
       error:
         no_preset_to_export: Brak gotowych ustawień do wyeksportowania.
         no_preset_to_import: Brak gotowych ustawień do zaimportowania.
+        failed_to_export: ""
+        failed_to_open_library_dir: ""
         failed_to_import: "Nie można zaimportować gotowych ustawień: **{{ error }}**."
         failed_to_import_invalid_hexdigest: Ten plik został zmodyfikowany. Nie można go importować.
         failed_to_import_bad_file_format: Nieprawidłowy format pliku.
@@ -2231,6 +2298,8 @@ tool:
     vcb_radius: Promień
     vcb_diameter: Średnica
     vcb_distance: Dystans
+    vcb_spacings: Odstęp
+    locked_on_last_measure_status: Zablokuj na ostatnim pomiarze  # TODO : Moved from tool.smart_draw.action_measure_locked_status
     error:
       no_direction: Proszę wskazać kierunek myszką
       invalid_length: "Długość {{ value }} jest nieprawidłowa"
@@ -2249,18 +2318,21 @@ tool:
       locked_part: ""
       not_sibling_part: ""
       selection_contains_locked_entities: ""
+      wrong_material_type: "Część docelowa musi być typu '{{ type }}'"
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_select:
     state_0_status: "Kliknij część, aby ją zaznaczyć"
     state_0_to_6_status: Wybierz element nadrzędny
+    state_0_to_7_status: ""
     state_4_status: ""
     state_5_status: ""
     state_6_status: Wybierz element z listy
     state_7_status: ""
     warning:
       no_active_part: ""
+      no_parent_group: ""
   smart_draw:
     title: Rysuj
     action_0: Rysowanie prostokąta
@@ -2305,11 +2377,91 @@ tool:
     action_option_options_draw_in_status: ""
     action_option_options_ask_name: Nadawanie nazw częściom
     action_option_options_ask_name_status: Ręczne wprowadzanie nazw części
-    action_measure_locked_status: Zablokuj na ostatnim pomiarze
     action_toggle_move_copy_status: Przełącz między kopiowaniem a przesuwaniem
     action_change_move_anchor_status: Zmień punkt kotwiczenia
     success:
       part_created: "Utworzono nową część: {{ name }}"
+      part_created_plural: ""
+  smart_build:
+    title: ""
+    action_0: ""
+    action_0_status: ""
+    action_0_state_0_status: ""
+    action_0_state_1_status: ""
+    action_1: ""
+    action_1_status: ""
+    action_1_state_0_status: ""
+    action_1_state_0_merge_status: ""
+    action_2: ""
+    action_2_status: ""
+    action_2_state_0_status: ""
+    action_2_state_0_merge_status: ""
+    action_option_group_groove: ""
+    action_1_option_group_offset: ""
+    action_option_group_thickness: Grubość
+    action_option_group_overlay: ""
+    action_option_group_axes: Osie
+    action_option_group_measure_type: Pomiary
+    action_option_group_options: Opcje
+    action_option_offset_front_panel_offset: ""
+    action_option_offset_front_panel_offset_status: ""
+    action_option_groove_groove_depth: ""
+    action_option_groove_groove_depth_status: ""
+    action_option_groove_groove_setback: ""
+    action_option_groove_groove_setback_status: ""
+    action_option_groove_groove_through: ""
+    action_option_groove_groove_through_status: ""
+    action_option_thickness_thickness: Grubość
+    action_option_thickness_thickness_status: ""
+    action_option_overlay_inset_status: ""
+    action_2_option_overlay_inset_status: ""
+    action_option_overlay_full_overlay_status: ""
+    action_2_option_overlay_full_overlay_status: ""
+    action_option_measure_type_inside_status: ""
+    action_option_measure_type_centered_status: ""
+    action_option_measure_type_outside_status: ""
+    action_option_axes_active_status: Manipuluj wzdłuż aktywnych osi
+    action_option_axes_context_status: ""
+    action_option_options_measure_reversed: Odwrócony pomiar
+    action_option_options_measure_reversed_status: Odwróć kierunek pomiaru
+    action_option_options_reduce_envelope: ""
+    action_option_options_reduce_envelope_status: ""
+    action_option_options_reuse_definition: ""
+    action_option_options_reuse_definition_status: ""
+    action_option_options_mirror: ""
+    action_option_options_mirror_status: ""
+    action_option_options_ask_name: Nadawanie nazw częściom
+    action_option_options_ask_name_status: Ręczne wprowadzanie nazw części
+    action_option_options_layer_name: ""
+    action_option_options_layer_name_status: ""
+    detecting_cavities: ""
+    error:
+      invalid_divider_seed: ""
+      invalid_divider_container: ""
+      invalid_divider_cavity: ""
+      no_divider_cavity: ""
+      invalid_front_panel_seed: ""
+      invalid_front_panel_container: ""
+      invalid_front_panel_cavity: ""
+      no_front_panel_cavity: ""
+      invalid_back_panel_seed: ""
+      invalid_back_panel_container: ""
+      invalid_back_panel_cavity: ""
+      no_back_panel_cavity: ""
+      too_complex_cavity: ""
+      closed_front_panel_opening: ""
+      closed_back_panel_opening: ""
+      divider_number_overflow: ""
+      front_panel_number_overflow: ""
+      back_panel_number_overflow: ""
+      back_panel_severs_parts: ""
+    warning:
+      no_back_panel_machining: ""
+    success:
+      part_created: "Utworzono nową część: {{ name }}"
+      part_created_plural: ""
+      part_reused: ""
+      part_reused_plural: ""
   smart_handle:
     title: Uchwyt
     action_0: Zaznacz
@@ -2350,6 +2502,7 @@ tool:
     action_0_state_1a_status: ""
     action_0_state_1b_status: ""
     action_0_state_1c_status: ""
+    action_0_state_1d_status: ""
     action_0_state_10_status: ""
     action_0_state_11_status: ""
     action_0_state_12_status: ""
@@ -2358,9 +2511,21 @@ tool:
     action_1_status: ""
     action_1_state_0_status: ""
     action_1_state_1_status: ""
-    # CSG = Constructive Solid Geometry
+    action_1_rollover_face_status: ""
+    action_1_select_similar_status: ""
+    action_1_select_all_edges_status: ""
     action_2: ""
     action_2_status: ""
+    action_2_state_0_status: ""
+    action_2_state_1_status: ""
+    action_3: ""
+    action_3_status: ""
+    action_3_state_0_status: ""
+    action_3_state_1_status: ""
+    action_4: ""
+    action_4_status: ""
+    action_4_state_0_status: ""
+    action_4_state_1_status: ""
     action_option_group_thickness: Grubość
     action_option_group_stretch_measure_type: Pomiary
     action_option_group_axes: Osie
@@ -2379,8 +2544,20 @@ tool:
     action_option_paneling_joint_type_miter_status: ""
     action_option_paneling_direction_inward_status: ""
     action_option_paneling_direction_outward_status: ""
-    action_option_options_centred_status: ""
+    action_option_options_centered_status: ""
     action_option_options_make_unique_status: ""
+    action_option_options_keep_a: ""
+    action_option_options_keep_a_status: ""
+    action_option_options_keep_b: ""
+    action_option_options_keep_b_status: ""
+    action_option_options_remove_unused_definitions_status: ""
+    action_option_options_reuse_definition: ""
+    action_option_options_reuse_definition_status: ""
+    action_option_options_reuse_definition_mirrored: ""
+    action_option_options_reuse_definition_mirrored_status: ""
+    notify:
+      validate_a: ""
+      validate_b: ""
     error:
       curve_intersect: ""
   smart_paint:
@@ -2432,7 +2609,6 @@ tool:
       not_part: Obiekt docelowy nie jest częścią (komponentem)
       not_edge: Powierzchnia docelowa nie jest krawędzią panelu
       not_face: Powierzchnia docelowa nie jest powierzchnią panelu
-      wrong_material_type: "Część docelowa musi być typu '{{ type }}'"
   smart_axes:
     title: Orientacja
     action_0: Zamień
@@ -2445,6 +2621,10 @@ tool:
     action_3_status: "Kliknij powierzchnię lub krawędź części, aby dostosować orientację osi"
     action_4: Przesuń początek
     action_4_status: "Kliknij powierzchnię lub krawędź części, aby umieścić tam jej początek"
+    action_5: ""
+    action_5_status: ""
+    action_5_to_state_10_status: ""
+    action_5_state_10_status: ""
     action_option_group_direction: Kierunek
     action_option_direction_0: D
     action_option_direction_1: Sz
@@ -2457,10 +2637,72 @@ tool:
     error:
       not_part: Obiekt docelowy nie jest częścią (komponentem)
       not_orientable: Typ tej części nie pozwala na jej orientację
+      not_grained: ""
+      not_single_thickness_layer: ""
+  # TODO: It's currently just for dev purposes
   smart_join:
     title: ""
-    action_0: "" # TODO: It's currently just for dev purposes
-    action_0_status: "" # TODO
+    action_0: ""
+    action_0_status: ""
+    action_0_state_0_status: ""
+    action_1: ""
+    action_1_status: ""
+    action_1_state_0_status: ""
+    action_1_only_one_status: ""
+    action_2: ""
+    action_2_status: ""
+    action_2_state_0_status: ""
+    action_2_state_1_status: ""
+    action_3: ""
+    action_3_status: ""
+    action_3_state_0_status: ""
+    action_3_state_1_status: ""
+    action_3_only_one_status: ""
+    action_option_group_height: Wysokość
+    action_option_group_offsets: ""
+    action_option_group_spacings: ""
+    action_option_group_options: Opcje
+    action_option_height: Wysokość
+    action_option_offsets_start_offset: Początek
+    action_option_offsets_end_offset: Koniec
+    action_option_spacings_min_spacing: ""
+    action_option_spacings_max_spacing: ""
+    action_option_options_opposite_status: ""
+    action_option_options_make_unique_status: ""
+    action_option_hardware_connector_a: ""
+    action_option_hardware_connector_b: ""
+    action_option_hardware_fitting_a: ""
+    action_option_hardware_fitting_b: ""
+    action_option_machining_a: ""
+    action_option_machining_b: ""
+    action_option_hardware_connector_material_name: ""
+    action_option_hardware_fitting_material_name: ""
+    action_option_machining_material_name: ""
+    action_option_hardware_connector_layer_name: ""
+    action_option_hardware_fitting_layer_name: ""
+    action_option_machining_layer_name: ""
+    measures: ""
+    geometries: ""
+    error:
+      invalid_height: ""
+      invalid_start_offset: ""
+      invalid_end_offset: ""
+      invalid_min_spacing: ""
+      invalid_max_spacing: ""
+      not_assemblable: ""
+      no_valid_join: ""
+      occupied_anchors: ""
+      occupied_anchors_plural: ""
+      failed_to_load_skp_file: |
+      unsupported_skp_version: |
+    warning:
+      no_connector_to_remove: ""
+      x_connectors_to_remove: ""
+      x_connectors_to_remove_plural: ""
+      no_fitting_to_remove: ""
+      x_fittings_to_remove: ""
+      x_fittings_to_remove_plural: ""
+      different_file_name: ""
   smart_export:
     title: Eksportuj
     action_0: Eksportuj część 3D
