@@ -323,14 +323,14 @@ core:
     family_connectors: Connecteurs
     family_fittings: Raccords
     family_hinges: Charnières
-  # DEV only
+  # @no-translate
   hardware_descriptor:
     part_hardware: Accessoire
     part_machining: Usinage
     variant_overlay: En applique
     variant_half_overlay: Jumelée
     variant_inset: Encastrée
-  # DEV only
+  # @no-translate
   hardware_editor:
     title: Éditeur de quincaillerie
     title_connector: Éditeur de connecteur
@@ -2972,7 +2972,7 @@ tool:
       not_orientable: Le type de cette pièce ne permet pas de l'orienter
       not_grained: La pièce ciblée n'a pas de fil
       not_single_thickness_layer: La pièce ciblée doit être composée d'une seule couche
-  # DEV only
+  # @no-translate
   smart_join:
     title: Assembler
     hardware_edit: Modifier cette quincaillerie
