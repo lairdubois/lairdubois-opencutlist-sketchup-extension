@@ -320,8 +320,11 @@ core:
     user: Ma Bibliothèque
     bundled: Bibliothèque OCL
     family_modules: Modules
+    # @no-translate
     family_connectors: Connecteurs
+    # @no-translate
     family_fittings: Raccords
+    # @no-translate
     family_hinges: Charnières
   # @no-translate
   hardware_descriptor:
