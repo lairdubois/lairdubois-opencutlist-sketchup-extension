@@ -6,8 +6,8 @@ _disabled_msg: |
 
   Para ajudar a finalizar a tradução, consulte a [OpenCutList Documentation](https://docs.opencutlist.org/for-translators/general).
 # the reload message will be displayed when a user switches to this language
-_reload_msg: "Para que as mudanças sejam efetivadas, é necessário **fechar** e **reabrir** a janela OpenCutList."
-_description: "Lista de Peças e Gerador de Plano de Corte de chapas e barras para marceneiros, carpinteiros e serralheiros. Código aberto, crowdfunded e fácil de usar ;)"
+_reload_msg: Para que as mudanças sejam efetivadas, é necessário **fechar** e **reabrir** a janela OpenCutList.
+_description: Lista de Peças e Gerador de Plano de Corte de chapas e barras para marceneiros, carpinteiros e serralheiros. Código aberto, crowdfunded e fácil de usar ;)
 default:
   minimize: Minimizar
   maximize: Maximizar
@@ -57,7 +57,7 @@ default:
   bad: Ruim
   by: por
   # date format in use for language
-  date_format: "d/m/A G:i"
+  date_format: d/m/A G:i
   # short date format in use for language
   date_format_short: d/m/Y
   decimal: Decimal
@@ -101,7 +101,7 @@ core:
   menu:
     submenu: OpenCutList
     item:
-      generate_cutlist:  Gerar a lista de peças
+      generate_cutlist: Gerar a lista de peças
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
@@ -139,7 +139,7 @@ core:
 
       Uma pasta com o mesmo nome já está na pasta {{ parent }}. Se você substituí-lo, o conteúdo original será perdido.
   savepanel:
-    export_to_file: "Exportar para o arquivo {{ file_format }}"
+    export_to_file: Exportar para o arquivo {{ file_format }}
   dialog:
     title: OpenCutList por L'Air du Bois
   leftbar:
@@ -164,13 +164,13 @@ core:
     exception: "Erro: **{{ error }}**"
     forbidden: "Não autorizado: **{{ error }}**"
     extern: "Erro externo : **{{ error }}**"
-    feature_unavailable: "Este recurso requer SketchUp {{ version }} ou superior"
+    feature_unavailable: Este recurso requer SketchUp {{ version }} ou superior
     failed_export_to: |
       Ocorreu um erro ao exportar para *{{ path }}*.
       **{{ error }}**
     unsupported_file_format: "Formato de arquivo não suportado : **{{ format }}**"
   success:
-    exported_to: "Exportação bem-sucedida para {{ path }}."
+    exported_to: Exportação bem-sucedida para {{ path }}.
     copied_to_clipboard: Copiado para a área de transferência
   event:
     model_change: O modelo ativo foi alterado.
@@ -189,11 +189,11 @@ core:
 
       *Patrocine este projeto para nos ajudar a acrescentar ainda mais funcionalidades!*
     downloading: Download em progresso
-    changelog: "O que há de novo?"
+    changelog: O que há de novo?
     ignore_update: Ignorar esta atualização
-    download_rescue: "Problemas para baixar?"
+    download_rescue: Problemas para baixar?
     manual_download: Baixar manualmente
-    zzz: "Atualmente estou descansando após a atualização. Para me acordar, você deve reiniciar o SketchUp."
+    zzz: Atualmente estou descansando após a atualização. Para me acordar, você deve reiniciar o SketchUp.
     success: |
       A atualização da OpenCutList foi concluída!
 
@@ -214,21 +214,21 @@ core:
 
       Digite o nome da predefinição
     rename_prompt_title: Renomeação
-    rename_prompt: "Insira o novo nome da predefinição **\"{{ name }}\"**"
+    rename_prompt: Insira o novo nome da predefinição **"{{ name }}"**
     delete_confirm_title: Remoção
-    delete_confirm: "Tem certeza que você quer apagar as definições **\"{{ name }}\"**?"
+    delete_confirm: Tem certeza que você quer apagar as definições **"{{ name }}"**?
     override_confirm_title: Atualizar
-    override_confirm: "Confirma a atualização das definições **\"{{ name }}\"** com os parâmetros do formulário?"
-    new_error: "Impossível, uma predefinição **\"{{ name }}\"** já existe"
-    new_success: "Predefinições **\"{{ name }}\"** criadas"
-    override_success: "Predefinições **\"{{ name }}\"** atualizadas"
-    restore_success: "O formulário foi preenchido com as definições **\"{{ name }}\"**"
-    rename_success: "Predefinição **\"{{ name }}\"** renomeada para **\"{{ new_name }}\"**"
-    delete_success: "Predefinições **\"{{ name }}\"** apagadas"
+    override_confirm: Confirma a atualização das definições **"{{ name }}"** com os parâmetros do formulário?
+    new_error: Impossível, uma predefinição **"{{ name }}"** já existe
+    new_success: Predefinições **"{{ name }}"** criadas
+    override_success: Predefinições **"{{ name }}"** atualizadas
+    restore_success: O formulário foi preenchido com as definições **"{{ name }}"**
+    rename_success: Predefinição **"{{ name }}"** renomeada para **"{{ new_name }}"**
+    delete_success: Predefinições **"{{ name }}"** apagadas
     tooltip:
-      save_to: "Atualizar as definições '{{ name }}'"
-      rename: "Renomear a predefinição '{{ name }}'"
-      delete: "Apagar as definições '{{ name }}'"
+      save_to: Atualizar as definições '{{ name }}'
+      rename: Renomear a predefinição '{{ name }}'
+      delete: Apagar as definições '{{ name }}'
     dictionary:
       component_textinput_color: Paleta de cores
       cutlist_cuttingdiagram1d_options: $t(default.deprecated)
@@ -286,7 +286,7 @@ core:
       view_back: Fundo
       view_left: Esquerda
       view_right: Direita
-      zoom: "Escala {{ zoom }}"
+      zoom: Escala {{ zoom }}
       explode_factor: Amplitude de explosão
       toggle_box_helper: Exibir/Ocultar Caixa Limitadora
       toggle_box_dimensions_helper: Exibir/Ocultar Dimensões
@@ -299,15 +299,15 @@ core:
   solid:
     error:
       empty: O sólido não contém nenhuma geometria
-      empty_named: "« {{ name }} » não contém nenhuma geometria"
-      non_manifold_edges: "O sólido contém {{ count }} aresta não-manifold"
-      non_manifold_edges_plural: "O sólido contém {{ count }} arestas não-manifold"
-      non_manifold_edges_named: "« {{ name }} » contém {{ count }} aresta não-manifold"
-      non_manifold_edges_named_plural: "« {{ name }} » contém {{ count }} arestas não-manifold"
-      open_edges: "O sólido contém {{ count }} arestas abertas"
-      open_edges_plural: "O sólido contém {{ count }} arestas abertas"
-      open_edges_named: "« {{ name }} » contém {{ count }} aresta aberta"
-      open_edges_named_plural: "« {{ name }} » contém {{ count }} arestas abertas"
+      empty_named: « {{ name }} » não contém nenhuma geometria
+      non_manifold_edges: O sólido contém {{ count }} aresta não-manifold
+      non_manifold_edges_plural: O sólido contém {{ count }} arestas não-manifold
+      non_manifold_edges_named: « {{ name }} » contém {{ count }} aresta não-manifold
+      non_manifold_edges_named_plural: « {{ name }} » contém {{ count }} arestas não-manifold
+      open_edges: O sólido contém {{ count }} arestas abertas
+      open_edges_plural: O sólido contém {{ count }} arestas abertas
+      open_edges_named: « {{ name }} » contém {{ count }} aresta aberta
+      open_edges_named_plural: « {{ name }} » contém {{ count }} arestas abertas
       locked_instances: "A operação não pode modificar uma instância bloqueada: {{ list }}"
     rebuild:
       error:
@@ -344,9 +344,9 @@ tab:
       show_hide_block: Mostrar / Ocultar este grupo
       show_hide_blocks: Mostrar / Ocultar todos os grupos
       scroll_to_block: Role para o grupo
-      not_available_std_width: "A largura *{{ std_dimension_real }}* não foi definida no material '{{ material_name }}'"
-      not_available_std_thickness: "A espessura *{{ std_dimension_real }}* não foi definida no material '{{ material_name }}'"
-      not_available_std_section: "A seção cruzada *{{ std_dimension_real }}* não foi definida no material '{{ material_name }}'"
+      not_available_std_width: A largura *{{ std_dimension_real }}* não foi definida no material '{{ material_name }}'
+      not_available_std_thickness: A espessura *{{ std_dimension_real }}* não foi definida no material '{{ material_name }}'
+      not_available_std_section: A seção cruzada *{{ std_dimension_real }}* não foi definida no material '{{ material_name }}'
       add_std_width_to_material: |
         Acrescentar largura *{{ std_dimension }}*
         ao material '{{ material_name }}'
@@ -383,7 +383,7 @@ tab:
       material_origin_3: O material considerado para esta peça está atualmente sendo extraído de seus elementos filhos
       orientation_locked_on_axis: A orientação desta peça está bloqueada em seu sistema de coordenadas
       number_saved: O número desta peça foi salvo
-      number_hidden: "O número salvo '{{ number }}' desta peça não pode ser usado porque já foi atribuído"
+      number_hidden: O número salvo '{{ number }}' desta peça não pode ser usado porque já foi atribuído
       number_generated: O número desta peça é gerado automaticamente
       resized: Esta peça foi redimensionada em relação à sua definição de componente
       flipped: Esta peça é espelhada em comparação com sua definição de componente
@@ -391,35 +391,35 @@ tab:
       ignore_grain_direction: A direção dos veios é ignorada nesta peça
       follow_grain_direction: A detecção de Continuidade do veio está ativada nesta peça
       auto_oriented: Esta peça foi reorientada automaticamente
-      oko_label_filter: "Incluir/Excluir este selo"
-      add_label_filter: "Filtrando em '{{ label }}'"
-      remove_label_filter: "Remova a filtragem em '{{ label }}'"
-      add_edge_material_name_filter: "Filtrar em '{{ material_name }}'"
-      remove_edge_material_name_filter: "Remover o filtro de '{{ material_name }}'"
-      add_veneer_material_name_filter: "Filtrar em '{{ material_name }}'"
-      remove_veneer_material_name_filter: "Remover o filtro de '{{ material_name }}'"
-      not_aligned_on_axes: "Cuidado, esta peça pode não estar orientada corretamente em relação aos seus eixos"
-      instance_count_by_part: "Esta parte é contada em conjuntos de **{{ count }}** unidades."
-      unused_instance_count: "Note-se que **{{ count }}** unidade do último conjunto não será utilizada."
-      unused_instance_count_plural: "Note-se que **{{ count }}** unidades do último conjunto não serão utilizadas."
+      oko_label_filter: Incluir/Excluir este selo
+      add_label_filter: Filtrando em '{{ label }}'
+      remove_label_filter: Remova a filtragem em '{{ label }}'
+      add_edge_material_name_filter: Filtrar em '{{ material_name }}'
+      remove_edge_material_name_filter: Remover o filtro de '{{ material_name }}'
+      add_veneer_material_name_filter: Filtrar em '{{ material_name }}'
+      remove_veneer_material_name_filter: Remover o filtro de '{{ material_name }}'
+      not_aligned_on_axes: Cuidado, esta peça pode não estar orientada corretamente em relação aos seus eixos
+      instance_count_by_part: Esta parte é contada em conjuntos de **{{ count }}** unidades.
+      unused_instance_count: Note-se que **{{ count }}** unidade do último conjunto não será utilizada.
+      unused_instance_count_plural: Note-se que **{{ count }}** unidades do último conjunto não serão utilizadas.
       used_instance_count: "**{{ count }}** / {{ total }} unidade utilizada"
       used_instance_count_plural: "**{{ count }}** / {{ total }} unidades utilizadas"
-      thickness_layer_count: "A peça final é composta de **{{ count }}** camadas em sua espessura"
-      thickness_layered: "A quantidade aqui representa o número de peças a serem cortadas para obter todas as camadas."
+      thickness_layer_count: A peça final é composta de **{{ count }}** camadas em sua espessura
+      thickness_layered: A quantidade aqui representa o número de peças a serem cortadas para obter todas as camadas.
       thickness_layered_equation: "**{{ count }}** *peça* x **{{ layerCount }}** *camada* = **{{ cuttingPartCount }}**"
       thickness_layered_equation_plural: "**{{ count }}** *peças* x **{{ layerCount }}** *camadas* = **{{ cuttingPartCount }}**"
-      multiple_content_layers: "Cuidado, esta peça é composta de subpeças presentes em {{ count }} camadas ou etiquetas diferentes:<br>{{ layers }}"
-      children_warnings: "Atenção, há {{ count }} alerta em partes agrupadas"
-      children_warnings_plural: "Atenção, existem {{ count }} alertas em peças agrupadas"
-      children_size_increase: "Esta dimensão foi aumentada por um superdimensionamento para {{ count }} peça agrupadas"
-      invalid_final_area: "Cuidado, a somatória desta área não pôde ser calculada porque {{ count }} peça (de {{ total }}) tem uma área inválida"
-      invalid_final_area_plural: "Cuidado, a somatória desta área não pôde ser calculada porque {{ count }} peças (de {{ total }}) têm uma área inválida"
+      multiple_content_layers: Cuidado, esta peça é composta de subpeças presentes em {{ count }} camadas ou etiquetas diferentes:<br>{{ layers }}
+      children_warnings: Atenção, há {{ count }} alerta em partes agrupadas
+      children_warnings_plural: Atenção, existem {{ count }} alertas em peças agrupadas
+      children_size_increase: Esta dimensão foi aumentada por um superdimensionamento para {{ count }} peça agrupadas
+      invalid_final_area: Cuidado, a somatória desta área não pôde ser calculada porque {{ count }} peça (de {{ total }}) tem uma área inválida
+      invalid_final_area_plural: Cuidado, a somatória desta área não pôde ser calculada porque {{ count }} peças (de {{ total }}) têm uma área inválida
       is_instance_name: A designação desta peça é extraída do nome da instância do grupo
       is_dynamic_attributes_name: Designação extraída do atributo 'Name' do componente dinâmico
-      has_edges: "Esta peça contém {{ count }} fitas de borda"
-      has_edges_plural: "Esta peça contém {{ count }} fitas de borda"
-      has_faces: "Esta peça contém {{ count }} superfície laminada"
-      has_faces_plural: "Esta peça contém {{ count }} superfícies laminadas"
+      has_edges: Esta peça contém {{ count }} fitas de borda
+      has_edges_plural: Esta peça contém {{ count }} fitas de borda
+      has_faces: Esta peça contém {{ count }} superfície laminada
+      has_faces_plural: Esta peça contém {{ count }} superfícies laminadas
       size_increased_0: |
         Acrescido da sobremedida do material
         ({{ increase_1 }})
@@ -429,7 +429,7 @@ tab:
       size_increased_2: |
         Acrescido da sobremedida do material e da peça
         ({{ increase_1 }} + {{ increase_2 }})
-      edge_decremented: "Reduzido pela espessura das fitas da borda ({{ decrement }})"
+      edge_decremented: Reduzido pela espessura das fitas da borda ({{ decrement }})
       edge_ymin: Comprimento da borda 1
       edge_ymax: Comprimento da borda 2
       edge_xmin: Largura da borda 1
@@ -442,9 +442,9 @@ tab:
       part_axes: Eixos internos da peça
       select_unselect_all_parts: Selecione / Desmarque todas as peças do grupo
       select_parts_in_cutlist: Selecione a peça na Lista de Peças
-      select_parts_in_cutlist_plural: "Selecione as peças {{ count }} na Lista de Peças"
-      setup_group_cuttingdiagram: "Defina o plano de corte para '{{ material_name }} & nbsp; / & nbsp; {{ std_dimension }}'"
-      setup_group_packing: "Defina o plano de corte para '{{ material_name }} & nbsp; / & nbsp; {{ std_dimension }}'"
+      select_parts_in_cutlist_plural: Selecione as peças {{ count }} na Lista de Peças
+      setup_group_cuttingdiagram: Defina o plano de corte para '{{ material_name }} & nbsp; / & nbsp; {{ std_dimension }}'
+      setup_group_packing: Defina o plano de corte para '{{ material_name }} & nbsp; / & nbsp; {{ std_dimension }}'
       open_part_url: Abrir URL da peça
     menu:
       show_all_groups: Mostrar todos os grupos
@@ -467,7 +467,7 @@ tab:
       group_labels: Imprimir as etiquetas das peças neste grupo
       group_export: Exportar o grupo
       group_estimate: Orçar o grupo
-      edit_material: "Editar material '{{ material_name }}'"
+      edit_material: Editar material '{{ material_name }}'
       expand_all: Expandir todas as linhas
       collapse_all: Recolher todas as linhas
       reset_prices: Redefinir os preços de todas as peças
@@ -477,11 +477,11 @@ tab:
         Confirmar para continuar.
       reset_prices_success: Os preços de todas as peças foram zerados.
     edit_part:
-      title: "Propriedades da peça '{{ name }}'"
+      title: Propriedades da peça '{{ name }}'
       title_multiple: Propriedades do grupo de peças
-      multiple_alert: "Propriedades comuns do grupo de {{ part_count }} peças."
+      multiple_alert: Propriedades comuns do grupo de {{ part_count }} peças.
       general: Geral
-      extra_help: "Lista de propriedades específicas do tipo de material \"**$t(tab.materials.type_{{ material_type }})**\"."
+      extra_help: Lista de propriedades específicas do tipo de material "**$t(tab.materials.type_{{ material_type }})**".
       edges: Fita de Borda
       faces: Faces
       name: Nome
@@ -588,41 +588,41 @@ tab:
       flipped_detection_help: |
         Se esta opção for ativada, as peças espelhadas serão detectadas e exibidas como peças novas.
       smart_material: Atribuição *inteligente* de material
-      smart_material_help: "Se esta opção estiver ativada, as peças sem um material definido podem ter o material principal de seus elementos filhos ou aquele herdado de seus elementos pais automaticamente atribuídos à elas."
+      smart_material_help: Se esta opção estiver ativada, as peças sem um material definido podem ter o material principal de seus elementos filhos ou aquele herdado de seus elementos pais automaticamente atribuídos à elas.
       dynamic_attributes_name: Use o atributo *Nome* dos componentes dinâmicos
       dynamic_attributes_name_help: |
         Se esta opção for ativada, a designação das peças que são componentes dinâmicos será retirada do atributo *Name*, se estiver definido.
 
         <i class='ladb-opencutlist-icon-warning'></i> Instâncias de peças com a mesma definição de componente serão separadas se o atributo *Nome* não tiver o mesmo valor.
       part_number_with_letters: Use letras para enumerar as peças
-      part_number_with_letters_help: "Se esta opção for selecionada, as peças são enumeradas usando letras (A, B, C, ... Z, AA, AB, ...)."
+      part_number_with_letters_help: Se esta opção for selecionada, as peças são enumeradas usando letras (A, B, C, ... Z, AA, AB, ...).
       part_number_sequence_by_group: Reinicie a enumeração de peças para cada grupo
-      part_number_sequence_by_group_help: "Se esta opção for selecionada, a enumeração das peças é reinicializada em 1 (ou A) para cada grupo (lista de peças do mesmo material e espessura)."
+      part_number_sequence_by_group_help: Se esta opção for selecionada, a enumeração das peças é reinicializada em 1 (ou A) para cada grupo (lista de peças do mesmo material e espessura).
       part_folding: Grupo de partes idênticas
       part_folding_help: |
         Se esta opção estiver ativada, as peças feitas de **Madeira maciça, Chapa ou Barra**, tendo o **mesmo tamanho bruto**, com as **mesmas identificações** e a **mesma superfície acabada** *(se a exibição desta superfície não estiver oculta)* serão agrupadas na mesma linha na *lista de peças*.
 
         As peças ainda serão consideradas diferentes para fins de etiquetagem e plano de corte.
       hide_entity_names: Ocultar nomes de instâncias
-      hide_entity_names_help: "Se esta opção for selecionada, **nomes de instância** de peças não serão exibidos."
+      hide_entity_names_help: Se esta opção for selecionada, **nomes de instância** de peças não serão exibidos.
       hide_descriptions: Ocultar descrições
-      hide_descriptions_help: "Se esta opção for ativada, as **descrições** colocadas sobre as peças não serão exibidas."
+      hide_descriptions_help: Se esta opção for ativada, as **descrições** colocadas sobre as peças não serão exibidas.
       hide_tags: Ocultar identificações
-      hide_tags_help: "Se esta opção for selecionada, **identificação** não será exibida."
+      hide_tags_help: Se esta opção for selecionada, **identificação** não será exibida.
       hide_cutting_dimensions: Ocultar dimensões aproximadas
-      hide_cutting_dimensions_help: "Se esta opção for selecionada, as dimensões **aproximadas** das peças serão ocultadas."
+      hide_cutting_dimensions_help: Se esta opção for selecionada, as dimensões **aproximadas** das peças serão ocultadas.
       hide_bbox_dimensions: Ocultar dimensões acabadas
-      hide_bbox_dimensions_help: "Se esta opção for selecionada, as dimensões **acabadas** das peças serão ocultadas."
+      hide_bbox_dimensions_help: Se esta opção for selecionada, as dimensões **acabadas** das peças serão ocultadas.
       hide_final_areas: Ocultar a área real das peças do tipo *Chapa*
-      hide_final_areas_help: "Se esta opção for selecionada, as **áreas reais** das peças do tipo *Chapa* serão ocultadas."
+      hide_final_areas_help: Se esta opção for selecionada, as **áreas reais** das peças do tipo *Chapa* serão ocultadas.
       hide_edges: Ocultar a coluna de Fitas de Borda
-      hide_edges_help: "Se esta opção for selecionada, as **colunas de Fita de Borda** de peças do tipo *Chapa* serão ocultadas."
+      hide_edges_help: Se esta opção for selecionada, as **colunas de Fita de Borda** de peças do tipo *Chapa* serão ocultadas.
       hide_faces: Ocultar as colunas dos laminados
-      hide_faces_help: "Se esta opção for selecionada, as **colunas face** das peças do tipo *Chapas* ficarão ocultas."
+      hide_faces_help: Se esta opção for selecionada, as **colunas face** das peças do tipo *Chapas* ficarão ocultas.
       hide_material_colors: Ocultar as cores dos materiais
-      hide_material_colors_help: "Se esta opção estiver habilitada, as cores do material não serão exibidas."
+      hide_material_colors_help: Se esta opção estiver habilitada, as cores do material não serão exibidas.
       minimize_on_highlight: Mimimize após *'$t(tab.cutlist.highlight_part) ...'*
-      minimize_on_highlight_help: "Se esta opção for selecionada, a janela OpenCutList será minimizada quando a função *'$t(tab.cutlist.highlight_part)'* for aplicada."
+      minimize_on_highlight_help: Se esta opção for selecionada, a janela OpenCutList será minimizada quando a função *'$t(tab.cutlist.highlight_part)'* for aplicada.
       general: Geral
       sorting: Classificação
       group_order_strategy: Classificação dos grupos
@@ -653,9 +653,9 @@ tab:
       tags_placeholder: Adicionar uma identificação
     list:
       filters: Filtros
-      filters_warning_0: "Este filtro mascara todas as partes!"
-      filters_warning: "Este filtro exibe apenas **{{ count }}** peça de um total de {{ total }}."
-      filters_warning_plural: "Este filtro exibe apenas **{{ count }}** peças de um total de {{ total }}."
+      filters_warning_0: Este filtro mascara todas as partes!
+      filters_warning: Este filtro exibe apenas **{{ count }}** peça de um total de {{ total }}.
+      filters_warning_plural: Este filtro exibe apenas **{{ count }}** peças de um total de {{ total }}.
       edge_material_names_filter: Filtrar por material de fita de borda
       veneer_material_names_filter: Filtrar por laminado
       names_filter: Designações a filtrar
@@ -765,7 +765,7 @@ tab:
       page_description: Descrição da cena
       placeholder:
         no_column_title: Introduza um título
-        no_column_formula_native: "Valor nativo da coluna '{{ col_name }}'"
+        no_column_formula_native: Valor nativo da coluna '{{ col_name }}'
         no_column_formula: Introduza uma fórmula
       warning:
         is_group_selection: As partes contidas nos **grupos ocultos** da sua Lista de Peças não serão exportadas.
@@ -797,7 +797,7 @@ tab:
         incompatible_unit: Unidade incompatível com as opções de orçamento de material
         multiplier_coefficient: Coeficiente multiplicador
       error:
-        no_typed_material_parts: "Nenhuma peça com o tipo de material definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** ou **$t(tab.materials.type_5)**) foi fornecida para gerar o orçamento."
+        no_typed_material_parts: Nenhuma peça com o tipo de material definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** ou **$t(tab.materials.type_5)**) foi fornecida para gerar o orçamento.
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erro**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erros**."
       warning:
@@ -849,7 +849,7 @@ tab:
       option_full_width_diagram: Exibir a largura total
       option_full_width_diagram_0: Não
       option_full_width_diagram_1: Sim
-      option_full_width_diagram_help: "Se esta opção for ativada, os planos são exibidos com toda a largura disponível. Caso contrário, sua largura é definida por um fator de escala fixo de seu tamanho real."
+      option_full_width_diagram_help: Se esta opção for ativada, os planos são exibidos com toda a largura disponível. Caso contrário, sua largura é definida por um fator de escala fixo de seu tamanho real.
       option_wrap_length: Comprimento do corte
       option_wrap_length_help: Comprimento máximo em que uma barra ou fita de borda será agrupada em mais de uma linha.
       option_hide_cross: Sobras
@@ -880,7 +880,7 @@ tab:
       option_trimming_help_1d: Margem em cada extremidade da barra ou fita de borda a ser considerada como sobra.
       option_trimming_help_2d: A quantidade de material ao redor da chapa a ser tratada como sobra.
       option_optimization: Nível de otimização
-      option_optimization_help: "O nível de otimização define o número de possibilidades computadas e, portanto, também o tempo de cálculo."
+      option_optimization_help: O nível de otimização define o número de possibilidades computadas e, portanto, também o tempo de cálculo.
       option_optimization_0: Médio
       option_optimization_1: Avançado
       option_stacking: Empilhar peças idênticas
@@ -1034,16 +1034,16 @@ tab:
         parameters: Os parâmetros são incorretos. A margem excede 25% da maior barra ou fita de borda.
         no_parts: Nenhuma peça.
         no_sheet: Os tamanhos de chapa padrão estão configurados incorretamente e não há cortes disponíveis.
-        no_placement_possible_1d: "Nenhuma peça pode ser colocada (barra padrão muito pequena, margem muito grande, lâmina de serra muito grossa, ...)."
-        no_placement_possible_2d: "Não foi possível colocar nenhuma peça (painel standard demasiado pequeno, margem demasiado grande, lâmina de serra demasiado grossa, ...)."
-        bad_error: "Erro de algoritmo. Favor entrar em contato com os desenvolvedores, pois você tem um caso interessante aqui."
+        no_placement_possible_1d: Nenhuma peça pode ser colocada (barra padrão muito pequena, margem muito grande, lâmina de serra muito grossa, ...).
+        no_placement_possible_2d: Não foi possível colocar nenhuma peça (painel standard demasiado pequeno, margem demasiado grande, lâmina de serra demasiado grossa, ...).
+        bad_error: Erro de algoritmo. Favor entrar em contato com os desenvolvedores, pois você tem um caso interessante aqui.
         unplaced_parts: "**1 peça** é muito grande para colocar."
         unplaced_parts_plural: "**{{ count }} peças** são grandes demais para serem colocadas."
       warning:
         is_part_selection: Este plano de corte é limitado a **peças selecionadas**.
         cutting_dimensions: Este layout mostra as peças em suas dimensões de **comprimento bruto**.
-        cutting_dimensions_increase_1d: "Dimensões aumentadas pelo acréscimo de comprimento (**{{ length_increase }}**) definido no material '{{ material_name }}'."
-        cutting_dimensions_increase_2d: "Dimensões aumentadas pelas sobras configuradas no material '{{ material_name }}' em comprimento (**{{ length_increase }}**) e largura (**{{ width_increase }}**)."
+        cutting_dimensions_increase_1d: Dimensões aumentadas pelo acréscimo de comprimento (**{{ length_increase }}**) definido no material '{{ material_name }}'.
+        cutting_dimensions_increase_2d: Dimensões aumentadas pelas sobras configuradas no material '{{ material_name }}' em comprimento (**{{ length_increase }}**) e largura (**{{ width_increase }}**).
         cutting_dimensions_edge_decrement: Dimensões reduzidas pela espessura da fita de borda. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     packing:
       title: Plano de Corte
@@ -1195,7 +1195,7 @@ tab:
       option_origin_corner_1: Canto inferior esquerdo
       option_origin_corner_2: Canto superior direito
       option_origin_corner_3: Canto inferior direito
-      option_origin_corner_help: "Permite escolher o canto de origem para o posicionamento das peças nas chapas, laminados, barras ou fitas de borda."
+      option_origin_corner_help: Permite escolher o canto de origem para o posicionamento das peças nas chapas, laminados, barras ou fitas de borda.
       option_highlight_primary_cuts: Cortes primários
       option_highlight_primary_cuts_0: Apenas ao passar o mouse
       option_highlight_primary_cuts_1: Sempre visível
@@ -1268,7 +1268,7 @@ tab:
         cut_primary: Corte primário
         cut_primary_plural: Cortes primários
         cut_none: Nenhum
-        cut_depth: "Nível {{ depth }}"
+        cut_depth: Nível {{ depth }}
       write:
         title: Exportação do layout
         info_0: |
@@ -1312,7 +1312,7 @@ tab:
         no_part: Nenhuma peça.
         no_bin_1d: Nenhuma barra ou fita padrão foi selecionada e nenhuma sobra foi definida.
         no_bin_2d: Nenhuma chapa ou laminado padrão foi selecionado e nenhuma sobra foi definida.
-        invalid_part_shapes: "A forma da peça '{{ name }}' é inválida."
+        invalid_part_shapes: A forma da peça '{{ name }}' é inválida.
         no_solution: Nenhuma solução foi encontrada para colocar **todas as peças** no material disponível.
         unplaced_parts: "**1 peça** não pôde ser posicionada."
         unplaced_parts_plural: "**{{ count }} peças** não puderam ser posicionadas."
@@ -1321,8 +1321,8 @@ tab:
       warning:
         is_part_selection: Este plano de corte é limitado a **peças selecionadas**.
         cutting_dimensions: Este layout mostra as peças em suas dimensões de **comprimento bruto**.
-        cutting_dimensions_increase_1d: "Dimensões aumentadas pelo acréscimo de comprimento (**{{ length_increase }}**) definido no material '{{ material_name }}'."
-        cutting_dimensions_increase_2d: "Dimensões aumentadas pelas sobras configuradas no material '{{ material_name }}' em comprimento (**{{ length_increase }}**) e largura (**{{ width_increase }}**)."
+        cutting_dimensions_increase_1d: Dimensões aumentadas pelo acréscimo de comprimento (**{{ length_increase }}**) definido no material '{{ material_name }}'.
+        cutting_dimensions_increase_2d: Dimensões aumentadas pelas sobras configuradas no material '{{ material_name }}' em comprimento (**{{ length_increase }}**) e largura (**{{ width_increase }}**).
         cutting_dimensions_edge_decrement: Dimensões reduzidas pela espessura da fita de borda. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
       title: Etiquetas
@@ -1627,11 +1627,11 @@ tab:
       no_component_in_selection: Nenhuma instância de um componente visível foi detectada em sua seleção.
       no_component_in_model: Nenhuma instância de um componente visível foi detectada em sua cena.
       unknow_part: A peça selecionada não existe na Lista de Peças.
-      obsolete_cutlist: "Impossível, a lista de peças está obsoleta. Gere novamente."
+      obsolete_cutlist: Impossível, a lista de peças está obsoleta. Gere novamente.
     warning:
       is_entity_selection: Somente os elementos selecionados em seu modelo foram levados em conta.
-      no_typed_materials_in_model: "Seu modelo não utiliza nenhum material com um tipo definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**)."
-      no_typed_materials_in_selection: "Sua seleção não utiliza nenhum material com um tipo definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**)."
+      no_typed_materials_in_model: Seu modelo não utiliza nenhum material com um tipo definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**).
+      no_typed_materials_in_selection: Sua seleção não utiliza nenhum material com um tipo definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**).
       export_empty: Sua exportação não contém nenhuma peça.
     success:
       part_selected: "{{ count }} Peça selecionada na lista de peças."
@@ -1641,8 +1641,8 @@ tab:
         As peças que você deseja que apareçam na *lista de peças* devem ser instâncias de **componente**.
         Se você usar apenas grupos, converta-os em componentes.
         Ao utilizar componentes para peças, elas podem ser replicadas sem serem duplicadas.
-      no_typed_materials: "Aplique um material nas peças que você deseja ver em sua lista de peças e defina o tipo deste material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**) na aba <i class=\"ladb-opencutlist-icon-materials\"></i> **Materiais**."
-    obsolete_base: "Para permanecer sincronizado, você deve gerar novamente a Lista de Peças."
+      no_typed_materials: Aplique um material nas peças que você deseja ver em sua lista de peças e defina o tipo deste material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**) na aba <i class="ladb-opencutlist-icon-materials"></i> **Materiais**.
+    obsolete_base: Para permanecer sincronizado, você deve gerar novamente a Lista de Peças.
   materials:
     label: Materiais
     title: Materiais
@@ -1671,8 +1671,8 @@ tab:
       texture_load: Carregar uma nova imagem
       texture_export: Exportar a imagem
       texture_clear: Remover textura
-      edit: "Edite as propriedades de '{{ name }}'"
-      set_current: "Colorir peças com '{{ name }}'"
+      edit: Edite as propriedades de '{{ name }}'
+      set_current: Colorir peças com '{{ name }}'
       open_url: Abrir a URL do material
       import_from_skm: Importar material (.skm)
     menu:
@@ -1691,7 +1691,7 @@ tab:
       color_warning: Cor inválida
       type: Tipo
     edit_material:
-      title: "Propriedades do material '{{ name }}'"
+      title: Propriedades do material '{{ name }}'
       general: Geral
       texture: Textura
       no_texture: Sem textura
@@ -1765,7 +1765,7 @@ tab:
       multiplier_coefficient_help: Permite indicar o coeficiente multiplicador aplicado sobre o volume bruto medido.
       std_attributes_dim_placeholder: Escolha um tamanho
       std_volumic_masses: Densidade
-      std_volumic_masses_help: "Permite definir a densidade para todas as dimensões, bem como para cada dimensão padrão do material."
+      std_volumic_masses_help: Permite definir a densidade para todas as dimensões, bem como para cada dimensão padrão do material.
       std_prices: Preço
       std_prices_help: Permite definir o preço para todos os tamanhos e também para cada tamanho padrão do material.
       std_cut_prices: Preço de corte
@@ -1793,7 +1793,7 @@ tab:
       title: Exportar para arquivo .skm
     option:
       minimize_on_smart_paint: Reduzir depois de *'Colorir peças com... '*
-      minimize_on_smart_paint_help: "Se esta opção estiver activada, a janela OpenCutList será minimizada quando a função *'Colorir peças com...'* for utilizada."
+      minimize_on_smart_paint_help: Se esta opção estiver activada, a janela OpenCutList será minimizada quando a função *'Colorir peças com...'* for utilizada.
       general: Geral
       material_order_strategy: Classificação de materiais
       material_order_strategy_help: |
@@ -1813,12 +1813,12 @@ tab:
       no_materials: O modelo não contém nenhum material.
       material_not_found: Nenhum material encontrado.
       no_texture: O material não possui textura.
-      failed_import_skm_file: "Ocorreu um erro ao importar do arquivo .skm. **{{ error }}**"
-      failed_export_skm_file: "Ocorreu um erro ao exportar para o arquivo .skm. **{{ error }}**"
-      failed_deleting_material: "Ocorreu um erro ao suprimir este material. **{{ error }}**"
-      failed_duplicating_material: "Ocorreu um erro ao tentar replicar o material. **{{ error }}**"
+      failed_import_skm_file: Ocorreu um erro ao importar do arquivo .skm. **{{ error }}**
+      failed_export_skm_file: Ocorreu um erro ao exportar para o arquivo .skm. **{{ error }}**
+      failed_deleting_material: Ocorreu um erro ao suprimir este material. **{{ error }}**
+      failed_duplicating_material: Ocorreu um erro ao tentar replicar o material. **{{ error }}**
       invalid_image_file: Imagem inválida
-    obsolete_base: "Para permanecer sincronizado, você deve atualizar a lista de materiais."
+    obsolete_base: Para permanecer sincronizado, você deve atualizar a lista de materiais.
   outliner:
     label: Estrutura
     title: Estrutura
@@ -1841,16 +1841,16 @@ tab:
       unselect_node: Desmarcar
       open_node_url: Abrir URL da peça
     edit_node:
-      title_model: "Propriedades do modelo"
-      title_instance: "Propriedades da instância **{{ name }}**"
-      title_instance_multiple: "Propriedades do grupo de instâncias"
-      multiple_alert: "Propriedades comuns do grupo de {{ node_count }} instâncias."
+      title_model: Propriedades do modelo
+      title_instance: Propriedades da instância **{{ name }}**
+      title_instance_multiple: Propriedades do grupo de instâncias
+      multiple_alert: Propriedades comuns do grupo de {{ node_count }} instâncias.
       general: Geral
       name: Nome
       instance_name: Instância
       material: Material
       is_grain_group: Definir como **Grupo de continuidade do veio**
-      is_grain_group_help: "Ao ativar esta opção, esta instância poderá ser considerada como um **Grupo de continuidade do veio** para as peças que ela contém que tenham a *Continuidade do veio* ativa."
+      is_grain_group_help: Ao ativar esta opção, esta instância poderá ser considerada como um **Grupo de continuidade do veio** para as peças que ela contém que tenham a *Continuidade do veio* ativa.
       definition_name: Definição
       description: Descrição
       url: URL
@@ -1874,9 +1874,9 @@ tab:
       no_scale_mask_5: Deformável no plano vermelho/verde (X+Y)
       no_scale_mask_6: Deformável a partir dos cantos (XYZ)
       explode: Explodir
-      explode_message: "Confirma a separação de **{{ name }}**?"
+      explode_message: Confirma a separação de **{{ name }}**?
       erase: Apagar
-      erase_message: "Confirma a eliminação de **{{ name }}** ?"
+      erase_message: Confirma a eliminação de **{{ name }}** ?
     deep_make_unique:
       title: Tornar único
     deep_rename_parts:
@@ -1888,18 +1888,18 @@ tab:
       new_name: Novo nome
       count: Qtd.
     create_container:
-      title_group: "Criar um grupo"
-      title_component: "Criar um componente"
+      title_group: Criar um grupo
+      title_component: Criar um componente
     option:
       general: Geral
       show_hidden_instances: Exibir as instâncias ocultas
-      show_hidden_instances_help: "Se esta opção estiver ativada, as instâncias ocultas no modelo serão exibidas na árvore de estrutura."
+      show_hidden_instances_help: Se esta opção estiver ativada, as instâncias ocultas no modelo serão exibidas na árvore de estrutura.
       hide_descriptions: Ocultar descrições
-      hide_descriptions_help: "Se esta opção for ativada, as **descrições** colocadas sobre as peças não serão exibidas."
+      hide_descriptions_help: Se esta opção for ativada, as **descrições** colocadas sobre as peças não serão exibidas.
       hide_tags: Ocultar identificações
-      hide_tags_help: "Se esta opção for selecionada, **identificação** não será exibida."
+      hide_tags_help: Se esta opção for selecionada, **identificação** não será exibida.
       minimize_on_set_active: Recolher após '$t(tab.outliner.tooltip.set_active_node)'
-      minimize_on_set_active_help: "Se esta opção estiver ativada, a janela do OpenCutList será recolhida quando a função *'$t(tab.outliner.tooltip.set_active_node)'* for utilizada."
+      minimize_on_set_active_help: Se esta opção estiver ativada, a janela do OpenCutList será recolhida quando a função *'$t(tab.outliner.tooltip.set_active_node)'* for utilizada.
     snippet:
       name_size: Nome - Tamanho
     error:
@@ -1908,12 +1908,12 @@ tab:
       node_not_found: Nó não encontrado
       entity_not_found: Instância não encontrada
       invalid_target: A instância visada não permite esta operação
-      obsolete_outliner: "Impossível, a estrutura gerada está ultrapassada. Regenere-a."
+      obsolete_outliner: Impossível, a estrutura gerada está ultrapassada. Regenere-a.
     tip:
       no_node: |
         Seu modelo não possui atualmente nenhuma instância para exibir aqui.
         Uma instância é um **grupo** ou um **componente** colocado na cena.
-    obsolete_base: "Para permanecer sincronizado, você deve regenerar a estrutura."
+    obsolete_base: Para permanecer sincronizado, você deve regenerar a estrutura.
   importer:
     label: Importar
     title: Importar peças
@@ -1951,7 +1951,7 @@ tab:
       options: |
         O modelo já contém *peças*, *definições* ou *materiais*.
         Selecione as opções de importação que você precisa.
-      option_remove_all_?: "O que vem a seguir?"
+      option_remove_all_?: O que vem a seguir?
       option_remove_all_false: Adicionar peças a peças existentes
       option_remove_all_true: Remover existente!
       option_keep_definitions_settings: Manter configurações de definição
@@ -1969,11 +1969,11 @@ tab:
       tags: Identificação
     tooltip:
       errors: Esta parte não será importada porque produziu os seguintes erros
-      warnings: "Esta parte será importada, mas produziu os seguintes avisos"
+      warnings: Esta parte será importada, mas produziu os seguintes avisos
     error:
       no_model: Nenhum modelo está aberto. Não é possível importar partes para o vazio;)
       file_not_found: "Arquivo não encontrado : **{{ filename }}**"
-      bad_extension: "O arquivo *{{ filename }}* não possui a extensão **.CSV** ou **.TSV**."
+      bad_extension: O arquivo *{{ filename }}* não possui a extensão **.CSV** ou **.TSV**.
       failed_to_load_csv_file: |
         Incapaz de carregar o arquivo CSV: **{{ error }}**
         *Verifique se você selecionou o separador de campo correto.*
@@ -1991,16 +1991,16 @@ tab:
       imported_title: Importação concluída
       imported_body: "{{ count }} peça foi importada com sucesso!"
       imported_body_plural: "{{ count }} peças foram importadas com sucesso!"
-    obsolete_base: "Para permanecer sincronizado, você deve recarregar o arquivo CSV."
+    obsolete_base: Para permanecer sincronizado, você deve recarregar o arquivo CSV.
   importers:
     default:
-      open_file: "Abrir um arquivo {{ extension }}"
+      open_file: Abrir um arquivo {{ extension }}
       import_to_model: Importar para o modelo
       error:
         no_data: Nenhum dado para importar.
         no_model: Nenhum modelo está aberto. É impossível importar para o vazio ;)
         file_not_found: "Arquivo não encontrado : **{{ filename }}**"
-        bad_extension: "O arquivo *{{ filename }}* não tem a extensão exigida (**{{ extensions }}**)."
+        bad_extension: O arquivo *{{ filename }}* não tem a extensão exigida (**{{ extensions }}**).
         failed_to_import: O processo de importação falhou.
       success:
         imported_title: Importação concluída
@@ -2040,7 +2040,7 @@ tab:
         options: |
           O modelo já contém *peças*, *definições* ou *materiais*.
           Escolha as opções de importação que correspondem às suas necessidades.
-        option_remove_all_?: "O que fazer?"
+        option_remove_all_?: O que fazer?
         option_remove_all_false: Adicionar as peças ao existente
         option_remove_all_true: Remover existente!
         option_keep_definitions_settings: Manter configurações de definição
@@ -2058,7 +2058,7 @@ tab:
         tags: Identificação
       tooltip:
         errors: Esta peça não será importada devido aos seguintes erros
-        warnings: "Esta peça será importada, mas contém os seguintes avisos"
+        warnings: Esta peça será importada, mas contém os seguintes avisos
       error:
         failed_to_load_csv_file: |
           Incapaz de carregar o arquivo CSV: **{{ error }}**
@@ -2075,7 +2075,7 @@ tab:
       success:
         imported_body: "{{ count }} peça foi importada com sucesso!"
         imported_body_plural: "{{ count }} peças foram importadas com sucesso!"
-      obsolete_base: "Para permanecer sincronizado, você deve recarregar o arquivo CSV."
+      obsolete_base: Para permanecer sincronizado, você deve recarregar o arquivo CSV.
     bxf2:
       label: BXF2
       title: Importar uma configuração Blum
@@ -2145,7 +2145,7 @@ tab:
         partial_support: |
           Você deve ter o **SketchUp 2021.1** ou uma versão posterior para aproveitar todos os recursos.
           As geometrias 3D das ferragens **não poderão ser importadas**.
-      obsolete_base: "Para manter a sincronização, você deve recarregar o arquivo BXF2."
+      obsolete_base: Para manter a sincronização, você deve recarregar o arquivo BXF2.
   tutorials:
     label: Tutoriais
     title: Tutoriais
@@ -2192,9 +2192,9 @@ tab:
     contribute: Contribuir
     backers: "{{ count }} contribuidor financeiro"
     backers_plural: "{{ count }} contribuidores financeiros"
-    ad: "OpenCutList não é gratuito"
+    ad: OpenCutList não é gratuito
     objective: Objetivo
-    objective_slogan: "OpenCutList somos todos nós"
+    objective_slogan: OpenCutList somos todos nós
     objective_title:
       default: Objetivo
       cuttingdiagram_export: Financiamento das exportações de planos de corte
@@ -2209,7 +2209,7 @@ tab:
       O desenvolvimento dos novos produtos será feito graças ao **Financiamento participativo** e poderá começar quando seu **Objetivo financeiro** for alcançado.
     objective_thanks: |
       Obrigado por sua contribuição!
-    objective_funded_progress: "financiado a {{ progress }}%"
+    objective_funded_progress: financiado a {{ progress }}%
   settings:
     label: Preferências
     title: Preferências
@@ -2248,7 +2248,7 @@ tab:
         Selecione as predefinições que deseja exportar.
         Se as predefinições selecionadas fizerem referência a arquivos **.skp** ou **.skm**, eles serão incluídos em um pacote **.oclp** para que a exportação possa ser compartilhada diretamente.
       export_global_presets_success: As predefinições foram exportadas com sucesso.
-      export_global_presets_success_with_assets: "As predefinições foram exportadas com sucesso, assim como {{ count }} arquivo(s) associado(s)."
+      export_global_presets_success_with_assets: As predefinições foram exportadas com sucesso, assim como {{ count }} arquivo(s) associado(s).
       import_global_presets: Importar predefinições
       import_global_presets_help: |
         Selecione as predefinições presentes no arquivo **.json** ou **.oclp** que deseja importar.
@@ -2337,26 +2337,26 @@ tool:
     vcb_diameter: Diâmetro
     vcb_distance: Distância
     vcb_spacings: Espaçamentos
-    locked_on_last_measure_status: Bloquear na última medida  # TODO : Moved from tool.smart_draw.action_measure_locked_status
+    locked_on_last_measure_status: Bloquear na última medida
     error:
       no_direction: Indique uma direção com o mouse
-      invalid_length: "O comprimento {{ value }} é inválido"
-      invalid_thickness: "A espessura {{ value }} é inválida"
-      invalid_multiplicator: "O multiplicador {{ value }} é inválido"
-      invalid_divider: "O divisor {{ value }} é inválido"
-      invalid_offset: "O deslocamento {{ value }} é inválido"
-      invalid_segment_count: "O número de segmentos {{ value }} é inválido. Ele deve estar entre 3 e 999."
+      invalid_length: O comprimento {{ value }} é inválido
+      invalid_thickness: A espessura {{ value }} é inválida
+      invalid_multiplicator: O multiplicador {{ value }} é inválido
+      invalid_divider: O divisor {{ value }} é inválido
+      invalid_offset: O deslocamento {{ value }} é inválido
+      invalid_segment_count: O número de segmentos {{ value }} é inválido. Ele deve estar entre 3 e 999.
       syntax_error: "Erro de sintaxe: {{ error }}"
-      unexpected_close_parenthesis: "Parêntese de fechamento inesperado"
-      missing_close_parenthesis: "Falta um parêntese de fechamento"
-      missing_operand: "Operando ausente"
-      zero_division: "Divisão por zero"
-      lt_min_distance: "A distância {{ value1 }} é menor que a distância mínima de {{ value2 }}"
-      gt_max_distance: "A distância {{ value1 }} é superior à distância máxima de {{ value2 }}"
+      unexpected_close_parenthesis: Parêntese de fechamento inesperado
+      missing_close_parenthesis: Falta um parêntese de fechamento
+      missing_operand: Operando ausente
+      zero_division: Divisão por zero
+      lt_min_distance: A distância {{ value1 }} é menor que a distância mínima de {{ value2 }}
+      gt_max_distance: A distância {{ value1 }} é superior à distância máxima de {{ value2 }}
       locked_part: Esta peça está bloqueada
       not_sibling_part: Esta peça não está no mesmo grupo ou componente que o restante da seleção
       selection_contains_locked_entities: A seleção contém entidades bloqueadas
-      wrong_material_type: "A peça de destino deve ser do tipo '{{ type }}'"
+      wrong_material_type: A peça de destino deve ser do tipo '{{ type }}'
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2369,7 +2369,7 @@ tool:
     state_6_status: Selecione um item da lista
     state_7_status: Clique em uma peça para adicioná-la ou removê-la da seleção
     warning:
-      no_active_part: "Primeiro, você deve passar o mouse sobre uma peça"
+      no_active_part: Primeiro, você deve passar o mouse sobre uma peça
       no_parent_group: A peça sob o cursor não possui um grupo ou componente pai
   smart_draw:
     title: Desenhar
@@ -2429,32 +2429,28 @@ tool:
     action_1: Construir uma Frente
     action_1_status: Construir uma frente numa cavidade formada por um grupo de peças existentes
     action_1_state_0_status: Clique numa cavidade para construir uma frente no seu vão
-    action_1_state_0_merge_status: "Arraste até as cavidades vizinhas para uma frente compartilhada"
     action_2: Construir um Fundo
     action_2_status: Construir um fundo numa cavidade formada por um grupo de peças existentes
     action_2_state_0_status: Clique numa cavidade para construir um fundo no seu vão oposto à vista
-    action_2_state_0_merge_status: "Arraste até às cavidades vizinhas para um fundo comum"
+    action_2_state_0_merge_status: Arraste até às cavidades vizinhas para um fundo comum
     action_option_group_groove: Ranhura
-    action_1_option_group_offset: Folga
     action_option_group_thickness: Espessura
     action_option_group_overlay: Instalação
     action_option_group_axes: Eixos
     action_option_group_measure_type: Medida
     action_option_group_options: Opções
     action_option_offset_front_panel_offset: Folga
-    action_option_offset_front_panel_offset_status: "Define a folga deixada em cada borda da frente"
+    action_option_offset_front_panel_offset_status: Define a folga deixada em cada borda da frente
     action_option_groove_groove_depth: Profundidade da ranhura
-    action_option_groove_groove_depth_status: "Define a profundidade da ranhura na qual o fundo é encaixado"
+    action_option_groove_groove_depth_status: Define a profundidade da ranhura na qual o fundo é encaixado
     action_option_groove_groove_setback: Recuo
-    action_option_groove_groove_setback_status: "Define quanto o fundo recua para o interior da caixa e, portanto, onde a ranhura é usinada"
+    action_option_groove_groove_setback_status: Define quanto o fundo recua para o interior da caixa e, portanto, onde a ranhura é usinada
     action_option_groove_groove_through: Ranhura contínua
-    action_option_groove_groove_through_status: "Prolongar a ranhura até à extremidade das peças que cobrem a peça vizinha, quando desemboca sem ficar visível"
+    action_option_groove_groove_through_status: Prolongar a ranhura até à extremidade das peças que cobrem a peça vizinha, quando desemboca sem ficar visível
     action_option_thickness_thickness: Espessura
     action_option_thickness_thickness_status: Define a espessura das chapas
     action_option_overlay_inset_status: "Frente embutida: instalada no vão, alinhada à face frontal"
-    action_2_option_overlay_inset_status: "Fundo em ranhura: encaixado numa ranhura usinada nas peças que delimitam o vão"
     action_option_overlay_full_overlay_status: "Frente sobreposta: instalada à frente da face frontal, cobrindo as chapas até a face externa da caixa e até a meia-espessura das chapas internas"
-    action_2_option_overlay_full_overlay_status: "Fundo sobreposto: instalado na parte traseira da caixa, cobrindo as chapas até à face exterior e até à meia-espessura das chapas interiores, sem qualquer usinagem"
     action_option_measure_type_inside_status: Posicionar a espessura no interior do ponto alvo
     action_option_measure_type_centered_status: Centralizar a espessura no ponto alvo
     action_option_measure_type_outside_status: Posicionar a espessura no exterior do ponto alvo
@@ -2472,26 +2468,26 @@ tool:
     action_option_options_ask_name_status: Inserir manualmente o nome das peças
     action_option_options_layer_name: Camada
     action_option_options_layer_name_status: Nome da camada na qual as peças são colocadas
-    detecting_cavities: "Deteção de cavidades..."
+    detecting_cavities: Deteção de cavidades...
     error:
       invalid_divider_seed: Este tipo de peça não permite a construção de uma divisória
       invalid_divider_container: "Esta peça está isolada: ela não compartilha grupo ou componente com outras peças"
-      invalid_divider_cavity: "Nenhuma cavidade nesta posição"
+      invalid_divider_cavity: Nenhuma cavidade nesta posição
       no_divider_cavity: Nenhuma cavidade foi detectada neste grupo ou componente
       invalid_front_panel_seed: Este tipo de peça não permite a construção de uma frente
       invalid_front_panel_container: "Esta peça está isolada: ela não compartilha grupo ou componente com outras peças"
-      invalid_front_panel_cavity: "Nenhuma cavidade voltada para você nesta posição"
+      invalid_front_panel_cavity: Nenhuma cavidade voltada para você nesta posição
       no_front_panel_cavity: Nenhuma cavidade foi detectada neste grupo ou componente
       invalid_back_panel_seed: Este tipo de peça não permite a construção de um fundo
       invalid_back_panel_container: "Esta peça está isolada: ela não compartilha grupo ou componente com outras peças"
-      invalid_back_panel_cavity: "Nenhuma cavidade aberta oposta à vista nesta posição"
+      invalid_back_panel_cavity: Nenhuma cavidade aberta oposta à vista nesta posição
       no_back_panel_cavity: Nenhuma cavidade foi detectada neste grupo ou componente
-      too_complex_cavity: "Geometria demasiado complexa para detetar cavidades"
-      closed_front_panel_opening: "Este vão já está fechado por uma frente"
-      closed_back_panel_opening: "Este vão já está fechado por um fundo"
-      divider_number_overflow: "Não foi possível distribuir {{ number }} divisórias nesta cavidade"
-      front_panel_number_overflow: "Não foi possível distribuir {{ number }} frentes neste vão"
-      back_panel_number_overflow: "Não é possível distribuir {{ number }} fundos neste vão"
+      too_complex_cavity: Geometria demasiado complexa para detetar cavidades
+      closed_front_panel_opening: Este vão já está fechado por uma frente
+      closed_back_panel_opening: Este vão já está fechado por um fundo
+      divider_number_overflow: Não foi possível distribuir {{ number }} divisórias nesta cavidade
+      front_panel_number_overflow: Não foi possível distribuir {{ number }} frentes neste vão
+      back_panel_number_overflow: Não é possível distribuir {{ number }} fundos neste vão
       back_panel_severs_parts: "A ranhura cortaria de um lado ao outro: {{ names }}. Reduza a sua profundidade"
     warning:
       no_back_panel_machining: "Nenhuma ranhura pôde ser maquinada: nenhuma peça vizinha delimita o fundo a esta profundidade"
@@ -2626,7 +2622,7 @@ tool:
     action_option_instances_0_status: Pintar apenas a instância da peça selecionada
     action_option_instances_1_status: Pintar todas as instâncias da peça selecionada
     action_option_edges_0_status: Pintar apenas a borda selecionada
-    action_option_edges_1_status: "Pintar a borda alvo, e a borda oposta da peça"
+    action_option_edges_1_status: Pintar a borda alvo, e a borda oposta da peça
     action_option_edges_2_status: Pintar os 4 cantos da peça selecionada
     action_option_faces_0_status: Pintar apenas a face selecionada
     action_option_faces_1_status: Pintar as 2 faces da peça selecionada
@@ -2642,7 +2638,7 @@ tool:
     face_zmax: Frente
     warning:
       no_material: Nenhum material definido
-      no_material_type: "Nenhum tipo de material '{{ type }}'"
+      no_material_type: Nenhum tipo de material '{{ type }}'
     error:
       not_part: O objeto de destino não é uma peça (componente)
       not_edge: A face selecionada não é a borda da peça
@@ -2677,25 +2673,19 @@ tool:
       not_orientable: O tipo desta peça não permite que a orientação seja modificada
       not_grained: A peça de destino não possui veio
       not_single_thickness_layer: A peça de destino deve ser composta por uma única camada
-  # TODO: It's currently just for dev purposes
+  # @no-translate
   smart_join:
     title: Montar
     action_0: Adicionar conectores
     action_0_status: Adicionar conectores para montar as peças
-    action_0_state_0_status: Clique na face de referência de uma peça para adicionar conectores com as peças vizinhas em contato
     action_1: Apagar conectores
     action_1_status: Apagar conectores de montagem das peças
-    action_1_state_0_status: Clique na face de referência de uma peça para apagar os conectores que ela compartilha com as peças vizinhas
-    action_1_only_one_status: Limitar a um único conector
     action_2: Adicionar conexões
     action_2_status: Adicionar conexões para montar as peças
-    action_2_state_0_status: Clique na face de referência de uma peça A para adicionar conexões com uma peça vizinha
     action_2_state_1_status: Clique na face de referência de uma peça B para adicionar conexões com a peça A
     action_3: Apagar conexões
     action_3_status: Apagar conexões de montagem das peças
-    action_3_state_0_status: Clique na face de referência de uma peça A para apagar os conexões que ela compartilha com uma peça vizinha
     action_3_state_1_status: Clique na face de referência de uma peça B para apagar as conexões que ela compartilha com a peça A
-    action_3_only_one_status: Limitar a uma única conexão
     action_option_group_height: Altura
     action_option_group_offsets: Desvios
     action_option_group_spacings: Distâncias entre eixos
@@ -2707,26 +2697,15 @@ tool:
     action_option_spacings_max_spacing: Máx
     action_option_options_opposite_status: Capturar a face oposta
     action_option_options_make_unique_status: Tornar únicas as peças montadas
-    action_option_hardware_connector_a: Conector A
-    action_option_hardware_connector_b: Conector B
-    action_option_hardware_fitting_a: Conexão A
-    action_option_hardware_fitting_b: Conexão B
-    action_option_machining_a: Usinagem A
-    action_option_machining_b: Usinagem B
-    action_option_hardware_connector_material_name: Material dos Conectores
-    action_option_hardware_fitting_material_name: Material das Conexões
     action_option_machining_material_name: Material das Usinagens
-    action_option_hardware_connector_layer_name: Etiqueta dos Conectores
-    action_option_hardware_fitting_layer_name: Etiqueta das Conexões
     action_option_machining_layer_name: Etiqueta das Usinagens
     measures: Medidas
-    geometries: Geometrias
     error:
-      invalid_height: "A altura {{ value }} é inválida"
-      invalid_start_offset: "O desvio de início {{ value }} é inválido"
-      invalid_end_offset: "O desvio de fim {{ value }} é inválido"
-      invalid_min_spacing: "A distância entre eixos mín {{ value }} é inválida"
-      invalid_max_spacing: "A distância entre eixos máx {{ value }} é inválida"
+      invalid_height: A altura {{ value }} é inválida
+      invalid_start_offset: O desvio de início {{ value }} é inválido
+      invalid_end_offset: O desvio de fim {{ value }} é inválido
+      invalid_min_spacing: A distância entre eixos mín {{ value }} é inválida
+      invalid_max_spacing: A distância entre eixos máx {{ value }} é inválida
       not_assemblable: Este tipo de peça não pode ser montado
       no_valid_join: Nenhuma superfície de contato permite satisfazer as restrições de montagem
       occupied_anchors: "{{ count }} conector em conflito de posição com conectores existentes"
@@ -2742,7 +2721,6 @@ tool:
       no_fitting_to_remove: Nenhuma conexão para apagar
       x_fittings_to_remove: "{{ count }} conexão para apagar"
       x_fittings_to_remove_plural: "{{ count }} conexões para apagar"
-      different_file_name: "O nome do arquivo SKP ({{ file_name }}) é diferente do nome da definição que ele contém ({{ definition_name }})"
   smart_export:
     title: Exportar
     action_0: Exportar uma Peça 3D

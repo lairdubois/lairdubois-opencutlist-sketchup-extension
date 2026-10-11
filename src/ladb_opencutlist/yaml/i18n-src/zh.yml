@@ -6,8 +6,8 @@ _disabled_msg: |
 
   为帮助完成翻译，请查阅 [OpenCutList 文档](https://docs.opencutlist.org/for-translators/general).
 # the reload message will be displayed when a user switches to this language
-_reload_msg: "要应用所有更改，您必须 **关闭** 并 **重新打开** 板材清单 窗口。"
-_description: "木工的切割清单和切割图生成器。 开源，众筹且易于使用 ;)"
+_reload_msg: 要应用所有更改，您必须 **关闭** 并 **重新打开** 板材清单 窗口。
+_description: 木工的切割清单和切割图生成器。 开源，众筹且易于使用 ;)
 default:
   minimize: 最小化
   maximize: 最大化
@@ -57,7 +57,7 @@ default:
   bad: 不好
   by: 通过
   # date format in use for language
-  date_format: "m/d/Y g:ia"
+  date_format: m/d/Y g:ia
   # short date format in use for language
   date_format_short: m/d/Y
   decimal: 十进制
@@ -101,7 +101,7 @@ core:
   menu:
     submenu: OpenCutList
     item:
-      generate_cutlist:  生成部件清单
+      generate_cutlist: 生成部件清单
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
@@ -112,7 +112,6 @@ core:
       unhide_part_instance: 显示实例
       edit_part_instance_properties: 编辑实例属性
       smart_draw: $t(core.toolbar.command.smart_draw)
-      smart_build: ""
       smart_handle: $t(core.toolbar.command.smart_handle)
       smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
@@ -126,12 +125,9 @@ core:
     command:
       dialog: OpenCutList
       smart_draw: 绘制部件
-      smart_build: ""
       smart_handle: 控制部件
-      smart_reshape: ""
       smart_paint: 部件材质
       smart_axes: 部件方向
-      smart_join: ""
       smart_export: 导出部件
   messagebox:
     dir_override: |
@@ -139,7 +135,7 @@ core:
 
       在 {{ parent }}文件夹中已经存在同名文件夹。如果您替换它，原始内容将会丢失。
   savepanel:
-    export_to_file: "导出到文件 {{ file_format }}"
+    export_to_file: 导出到文件 {{ file_format }}
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
@@ -161,16 +157,14 @@ core:
       报告错误: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
     not_available_in_context: 在此上下文中不可用公式
   error:
-    exception: ""
-    forbidden: ""
     extern: "外部错误 : **{{ error }}**"
-    feature_unavailable: "此功能需要 SketchUp {{ version }} 或更高版本"
+    feature_unavailable: 此功能需要 SketchUp {{ version }} 或更高版本
     failed_export_to: |
       在导出至 *{{ path }}*时发生错误。
       **{{ error }}**
     unsupported_file_format: "不支援档案格式 : **{{ format }}**"
   success:
-    exported_to: "成功导出到 {{ path }}."
+    exported_to: 成功导出到 {{ path }}.
     copied_to_clipboard: 已复制到剪贴板.
   event:
     model_change: 活动模型已更改.
@@ -189,11 +183,11 @@ core:
 
       *考虑赞助这个项目来帮助我们添加更多功能!*
     downloading: 下载正在进行中
-    changelog: "有什么新功能?"
+    changelog: 有什么新功能?
     ignore_update: 跳过本次更新
-    download_rescue: "下载出现问题了吗?"
+    download_rescue: 下载出现问题了吗?
     manual_download: 手动下载
-    zzz: "我目前正在休息, 等待更新. 要唤醒我, 您必须重新启动 SketchUp."
+    zzz: 我目前正在休息, 等待更新. 要唤醒我, 您必须重新启动 SketchUp.
     success: |
       OpenCutList 的更新已完成!
 
@@ -213,22 +207,17 @@ core:
       *创建自定义预设允许您全局保留当前表单设置, 以便您可以在所有模型中重复使用它们.*
 
       输入预设的名称:
-    rename_prompt_title: ""
-    rename_prompt: ""
     delete_confirm_title: 删除
-    delete_confirm: "您确定要删除预设 **\"{{ name }}\"** 吗?"
+    delete_confirm: 您确定要删除预设 **"{{ name }}"** 吗?
     override_confirm_title: 更新
-    override_confirm: "您确认要使用表单参数更新预设 **\"{{ name }}\"** 吗?"
-    new_error: ""
-    new_success: "预设 **\"{{ name }}\"** 已创建"
-    override_success: "预设 **\"{{ name }}\"** 已更新"
-    restore_success: "表单已经使用预设 **\"{{ name }}\"** 填写"
-    rename_success: ""
-    delete_success: "预设 **\"{{ name }}\"** 已删除"
+    override_confirm: 您确认要使用表单参数更新预设 **"{{ name }}"** 吗?
+    new_success: 预设 **"{{ name }}"** 已创建
+    override_success: 预设 **"{{ name }}"** 已更新
+    restore_success: 表单已经使用预设 **"{{ name }}"** 填写
+    delete_success: 预设 **"{{ name }}"** 已删除
     tooltip:
-      save_to: "更新预设 '{{ name }}'"
-      rename: ""
-      delete: "删除预设 '{{ name }}'"
+      save_to: 更新预设 '{{ name }}'
+      delete: 删除预设 '{{ name }}'
     dictionary:
       component_textinput_color: 调色板
       cutlist_cuttingdiagram1d_options: $t(default.deprecated)
@@ -246,9 +235,6 @@ core:
       cutlist_estimate_options: $t(tab.cutlist.label) / $t(tab.cutlist.estimate.title)
       cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
       cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
-      importers_csv_import_options: ""
-      importers_csv_load_options: ""
-      importers_bxf2_import_options: ""
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       outliner_options: $t(tab.outliner.label) / $t(default.options)
@@ -271,10 +257,6 @@ core:
       remove: 删除颜色
     textinput_code:
       snippets: 公式示例
-      help: ""
-    textinput_file:
-      browse: ""
-      browse_library: ""
     textinput_size:
       quantity: 数量
     three_viewer:
@@ -296,23 +278,6 @@ core:
       failed_to_load: |
         无法打开文档.
         确保您已连接到互联网.
-  solid:
-    error:
-      empty: ""
-      empty_named: ""
-      non_manifold_edges: ""
-      non_manifold_edges_plural: ""
-      non_manifold_edges_named: ""
-      non_manifold_edges_named_plural: ""
-      open_edges: ""
-      open_edges_plural: ""
-      open_edges_named: ""
-      open_edges_named_plural: ""
-      locked_instances: ""
-    rebuild:
-      error:
-        no_segment: ""
-        no_face: ""
 tab:
   cutlist:
     label: 部件
@@ -342,11 +307,10 @@ tab:
     part_drawing_type_7: 3D
     tooltip:
       show_hide_block: 显示 / 隐藏组
-      show_hide_blocks: ""
       scroll_to_block: 滚动至组
-      not_available_std_width: "宽度 *{{ std_dimension_real }}* 未在材质 '{{ material_name }}' 的标准宽度中定义"
-      not_available_std_thickness: "厚度 *{{ std_dimension_real }}* 未在材质 '{{ material_name }}' 的标准厚度中定义"
-      not_available_std_section: "截面 *{{ std_dimension_real }}* 未在材质 '{{ material_name }}' 的标准截面中定义"
+      not_available_std_width: 宽度 *{{ std_dimension_real }}* 未在材质 '{{ material_name }}' 的标准宽度中定义
+      not_available_std_thickness: 厚度 *{{ std_dimension_real }}* 未在材质 '{{ material_name }}' 的标准厚度中定义
+      not_available_std_section: 截面 *{{ std_dimension_real }}* 未在材质 '{{ material_name }}' 的标准截面中定义
       add_std_width_to_material: |
         添加宽度 *{{ std_dimension }}*
         到材质 '{{ material_name }}'
@@ -383,47 +347,42 @@ tab:
       material_origin_3: 此部件的材质是从其子元素之一提取的
       orientation_locked_on_axis: 此部件的方向被锁定在其坐标系统中
       number_saved: 此部件的编号已保存
-      number_hidden: "记录在此部件上的编号 '{{ number }}' 无法使用, 因为它已经被分配"
+      number_hidden: 记录在此部件上的编号 '{{ number }}' 无法使用, 因为它已经被分配
       number_generated: 此部件的编号是自动生成的
       resized: 此部件根据其组件定义调整了大小
       flipped: 此部件与其组件定义相比是镜像的
       symmetrical: 镜像部件检测在此部件上被禁用
       ignore_grain_direction: 此部件上忽略了纹理方向
-      follow_grain_direction: ""
       auto_oriented: 此部件已自动重新定向
-      oko_label_filter: "包含/排除此标志"
-      add_label_filter: "根据 '{{ label }}' 进行筛选"
-      remove_label_filter: "删除 '{{ label }}' 上的筛选"
-      add_edge_material_name_filter: "根据 '{{ material_name }}' 进行筛选"
-      remove_edge_material_name_filter: "删除 '{{ material_name }}' 上的筛选"
-      add_veneer_material_name_filter: "根据 '{{ material_name }}' 进行筛选"
-      remove_veneer_material_name_filter: "删除 '{{ material_name }}' 上的筛选"
-      not_aligned_on_axes: "注意, 此部件可能未与其坐标轴正确对齐"
-      instance_count_by_part: "此部件是以 **{{ count }}** 个包中进行计数."
-      unused_instance_count: "请注意, 来自最后一个包的 **{{ count }}** 个项目将不被使用."
-      unused_instance_count_plural: "请注意, 来自最后一个包的 **{{ count }}** 个项目将不被使用."
+      oko_label_filter: 包含/排除此标志
+      add_label_filter: 根据 '{{ label }}' 进行筛选
+      remove_label_filter: 删除 '{{ label }}' 上的筛选
+      add_edge_material_name_filter: 根据 '{{ material_name }}' 进行筛选
+      remove_edge_material_name_filter: 删除 '{{ material_name }}' 上的筛选
+      add_veneer_material_name_filter: 根据 '{{ material_name }}' 进行筛选
+      remove_veneer_material_name_filter: 删除 '{{ material_name }}' 上的筛选
+      not_aligned_on_axes: 注意, 此部件可能未与其坐标轴正确对齐
+      instance_count_by_part: 此部件是以 **{{ count }}** 个包中进行计数.
+      unused_instance_count: 请注意, 来自最后一个包的 **{{ count }}** 个项目将不被使用.
+      unused_instance_count_plural: 请注意, 来自最后一个包的 **{{ count }}** 个项目将不被使用.
       used_instance_count: "**{{ count }}** 个项目已使用, 共 {{ total }} 个"
       used_instance_count_plural: "**{{ count }}** 个项目已使用, 共 {{ total }} 个"
-      thickness_layer_count: "最终部件由 **{{ count }}** 层厚度组成"
-      thickness_layered: "这里的数量表示要切割以获得所有层的片数."
+      thickness_layer_count: 最终部件由 **{{ count }}** 层厚度组成
+      thickness_layered: 这里的数量表示要切割以获得所有层的片数.
       thickness_layered_equation: "**{{ count }}** *部件* x **{{ layerCount }}** *层数* = **{{ cuttingPartCount }}**"
       thickness_layered_equation_plural: "**{{ count }}** *部件* x **{{ layerCount }}** *层数* = **{{ cuttingPartCount }}**"
-      multiple_content_layers: "注意,这个部件由位于 {{ count }} 个不同的层或标签中的子部件组成:<br>{{ layers }}"
-      children_warnings: "注意,分组部件中有 {{ count }} 个警报"
-      children_warnings_plural: "注意,分组部件中有 {{ count }} 个警报"
-      children_size_increase: "此尺寸增加了 {{ count }} 个分组部件的尺寸超差"
-      invalid_final_area: "注意, 由于 {{ count }} 个部件 (共 {{ total }}) 存在无效面积, 因此无法计算此可求和面积"
-      invalid_final_area_plural: "注意, 由于 {{ count }} 个部件 (共 {{ total }}) 存在无效面积, 因此无法计算此可求和面积"
-      is_instance_name: ""
+      multiple_content_layers: 注意,这个部件由位于 {{ count }} 个不同的层或标签中的子部件组成:<br>{{ layers }}
+      children_warnings: 注意,分组部件中有 {{ count }} 个警报
+      children_warnings_plural: 注意,分组部件中有 {{ count }} 个警报
+      children_size_increase: 此尺寸增加了 {{ count }} 个分组部件的尺寸超差
+      invalid_final_area: 注意, 由于 {{ count }} 个部件 (共 {{ total }}) 存在无效面积, 因此无法计算此可求和面积
+      invalid_final_area_plural: 注意, 由于 {{ count }} 个部件 (共 {{ total }}) 存在无效面积, 因此无法计算此可求和面积
       is_dynamic_attributes_name: 此部件的名称是从动态组件的属性 'Name' 中提取的
-      has_edges: "此部件包含 {{ count }} 条封边"
-      has_edges_plural: "此部件包含 {{ count }} 条封边"
-      has_faces: "此部件包含 {{ count }} 片贴面"
-      has_faces_plural: "此部件包含 {{ count }} 片贴面"
-      size_increased_0: |
-      size_increased_1: |
-      size_increased_2: |
-      edge_decremented: "减去封边条的厚度 ({{ decrement }})"
+      has_edges: 此部件包含 {{ count }} 条封边
+      has_edges_plural: 此部件包含 {{ count }} 条封边
+      has_faces: 此部件包含 {{ count }} 片贴面
+      has_faces_plural: 此部件包含 {{ count }} 片贴面
+      edge_decremented: 减去封边条的厚度 ({{ decrement }})
       edge_ymin: 边缘长度 1
       edge_ymax: 边缘长度 2
       edge_xmin: 边缘宽度 1
@@ -436,9 +395,9 @@ tab:
       part_axes: 部件的内部轴
       select_unselect_all_parts: 选择 / 取消选择该组中的所有部件
       select_parts_in_cutlist: 在部件列表中选择部件
-      select_parts_in_cutlist_plural: "在部件列表中选择 {{ count }} 部件"
-      setup_group_cuttingdiagram: "配置 '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}' 的切割图"
-      setup_group_packing: "配置 '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}' 的切割图"
+      select_parts_in_cutlist_plural: 在部件列表中选择 {{ count }} 部件
+      setup_group_cuttingdiagram: 配置 '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}' 的切割图
+      setup_group_packing: 配置 '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}' 的切割图
       open_part_url: 打开部件 URL
     menu:
       show_all_groups: 显示所有组
@@ -461,7 +420,7 @@ tab:
       group_labels: 打印组内部件的标签
       group_export: 汇出群组
       group_estimate: 估算群組
-      edit_material: "编辑材质 '{{ material_name }}'"
+      edit_material: 编辑材质 '{{ material_name }}'
       expand_all: 展开所有行
       collapse_all: 折叠所有行
       reset_prices: 重置所有部件的价格
@@ -471,11 +430,11 @@ tab:
         确认以继续.
       reset_prices_success: 所有部件的价格已被重置.
     edit_part:
-      title: "部件 '{{ name }}' 的属性"
+      title: 部件 '{{ name }}' 的属性
       title_multiple: 部件组的属性
       multiple_alert: "{{ part_count }} 个部件的共享属性."
       general: 常规
-      extra_help: "特定于材料类型 \"**$t(tab.materials.type_{{ material_type }})**\" 的属性列表."
+      extra_help: 特定于材料类型 "**$t(tab.materials.type_{{ material_type }})**" 的属性列表.
       edges: 边缘
       faces: 面
       name: 名称
@@ -537,13 +496,9 @@ tab:
       symmetrical_help: |
         如果选中此框, 检测 *镜像部件* 对该部件无效.
       ignore_grain_direction: 纹理方向
-      ignore_grain_direction_help: |
       ignore_grain_direction_0: 纹理跟随长度
       ignore_grain_direction_1: 忽略该部件的纹理方向
-      follow_grain_direction: ""
-      follow_grain_direction_help: |
       follow_grain_direction_0: $t(default.no)
-      follow_grain_direction_1: ""
       axes: 坐标轴
       axes_help: 重新排列尺寸以匹配部件中所需的坐标轴颜色.
       axes_tip: |
@@ -575,41 +530,41 @@ tab:
       flipped_detection_help: |
         如果选择此选项, 将检测到镜像部件并将其显示为一个不同的部件.
       smart_material: "*智能* 材质分配"
-      smart_material_help: "如果选择此选项, 则可以为没有定义材质的部件分配指定给其父项或子项之一的材质."
+      smart_material_help: 如果选择此选项, 则可以为没有定义材质的部件分配指定给其父项或子项之一的材质.
       dynamic_attributes_name: 使用动态组件的属性 *名称*
       dynamic_attributes_name_help: |
         如果启用此选项, 则部件的名称将从 *Name* 属性中提取(如果已定义).
 
         <i class='ladb-opencutlist-icon-warning'></i> 如果 *Name* 属性的值不相同, 则将分隔具有相同定义的部件实例.
       part_number_with_letters: 使用字母列举部件
-      part_number_with_letters_help: "如果选择此选项, 将使用字母 (A, B, C, ... Z, AA, AB, ...) 对部件进行编号."
+      part_number_with_letters_help: 如果选择此选项, 将使用字母 (A, B, C, ... Z, AA, AB, ...) 对部件进行编号.
       part_number_sequence_by_group: 为每个组重新初始化部件的编号
-      part_number_sequence_by_group_help: "如果选择此选项, 对于每个组（具有相同的材质类型和厚度的部件清单）, 部件的编号将重新初始化为 1 (或 A)."
+      part_number_sequence_by_group_help: 如果选择此选项, 对于每个组（具有相同的材质类型和厚度的部件清单）, 部件的编号将重新初始化为 1 (或 A).
       part_folding: 将相似部件分组
       part_folding_help: |
         如果启用此选项, 由 **实木, 板材 或 尺寸** 制成, 具有 **相同的粗略尺寸**, **相同的标签** 和 **相同的完成面** *(如果未隐藏此面的显示)* 的部件将在 *部件清单* 中被分组到同一行.
 
         这些部件在标签和切割图的目的上仍然被视为不同的部件.
       hide_entity_names: 隐藏实例名称
-      hide_entity_names_help: "如果选择此选项, 将不会显示部件的 **实例名称** ."
+      hide_entity_names_help: 如果选择此选项, 将不会显示部件的 **实例名称** .
       hide_descriptions: 隐藏描述
-      hide_descriptions_help: "如果选择此选项, 将不会显示部件上的 **描述** ."
+      hide_descriptions_help: 如果选择此选项, 将不会显示部件上的 **描述** .
       hide_tags: 隐藏标签
-      hide_tags_help: "如果选择此选项, 将不会显示 **标签** ."
+      hide_tags_help: 如果选择此选项, 将不会显示 **标签** .
       hide_cutting_dimensions: 隐藏粗略尺寸
-      hide_cutting_dimensions_help: "如果选择此选项, 将隐藏部件的 **粗略** 尺寸."
+      hide_cutting_dimensions_help: 如果选择此选项, 将隐藏部件的 **粗略** 尺寸.
       hide_bbox_dimensions: 隐藏完成尺寸
-      hide_bbox_dimensions_help: "如果选择此选项, 将隐藏部件的 **完成** 尺寸."
+      hide_bbox_dimensions_help: 如果选择此选项, 将隐藏部件的 **完成** 尺寸.
       hide_final_areas: 隐藏 *板材* 类型部件的实际面积
-      hide_final_areas_help: "如果选择此选项, **板材** 类型部件的 *实际面积* 将被隐藏."
+      hide_final_areas_help: 如果选择此选项, **板材** 类型部件的 *实际面积* 将被隐藏.
       hide_edges: 隐藏边缘列
-      hide_edges_help: "如果选择此选项, **板材** 类型部件的 *封边列* 将被隐藏."
+      hide_edges_help: 如果选择此选项, **板材** 类型部件的 *封边列* 将被隐藏.
       hide_faces: 隐藏表面列
-      hide_faces_help: "如果选择此选项, **板材** 类型部件的 *面列* 将被隐藏."
+      hide_faces_help: 如果选择此选项, **板材** 类型部件的 *面列* 将被隐藏.
       hide_material_colors: 隐藏材质颜色
-      hide_material_colors_help: "如果启用此选项，则不会显示材质的颜色。"
+      hide_material_colors_help: 如果启用此选项，则不会显示材质的颜色。
       minimize_on_highlight: 在 *'$t(tab.cutlist.highlight_part)...'* 之后最小化
-      minimize_on_highlight_help: "如果选择此选项, 当使用 *'$t(tab.cutlist.highlight_part)'* 功能时, OpenCutList窗口将被最小化."
+      minimize_on_highlight_help: 如果选择此选项, 当使用 *'$t(tab.cutlist.highlight_part)'* 功能时, OpenCutList窗口将被最小化.
       general: 常规
       sorting: 排序
       group_order_strategy: 群組排序
@@ -640,12 +595,11 @@ tab:
       tags_placeholder: 添加标签
     list:
       filters: 筛选器
-      filters_warning_0: "此筛选屏蔽了所有部件!"
-      filters_warning: "此筛选仅显示 **{{ total }}** 个部件中的 {{ count }} 个."
-      filters_warning_plural: "此筛选仅显示 **{{ total }}** 个部件中的 {{ count }} 个."
+      filters_warning_0: 此筛选屏蔽了所有部件!
+      filters_warning: 此筛选仅显示 **{{ total }}** 个部件中的 {{ count }} 个.
+      filters_warning_plural: 此筛选仅显示 **{{ total }}** 个部件中的 {{ count }} 个.
       edge_material_names_filter: 按封边材质筛选
       veneer_material_names_filter: 按贴面材质筛选
-      names_filter: ""
       tags_filter: 按标签筛选
       dimensions_help: 了解尺寸
       summary: 摘要
@@ -752,7 +706,7 @@ tab:
       page_description: 场景描述
       placeholder:
         no_column_title: 输入标题
-        no_column_formula_native: "列 '{{ col_name }}' 的本地值"
+        no_column_formula_native: 列 '{{ col_name }}' 的本地值
         no_column_formula: 输入一个公式
       warning:
         is_group_selection: 部件列表中的 **隐藏群组** 内的部件将不会被导出.
@@ -784,7 +738,7 @@ tab:
         incompatible_unit: 与材料估算选项不兼容的单位
         multiplier_coefficient: 倍数系数
       error:
-        no_typed_material_parts: "未提供具有定义的材质类型 (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** 或 **$t(tab.materials.type_5)**) 以生成估算."
+        no_typed_material_parts: 未提供具有定义的材质类型 (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** 或 **$t(tab.materials.type_5)**) 以生成估算.
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} 错误**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} 错误**."
       warning:
@@ -823,7 +777,7 @@ tab:
       option_use_names: 部件标识
       option_use_names_0: 使用编号
       option_use_names_1: 使用名称
-      option_use_names_help: "允许您在 **编号** 和 **名称** 之间进行选择, 以识别切割图上的部件."
+      option_use_names_help: 允许您在 **编号** 和 **名称** 之间进行选择, 以识别切割图上的部件.
       option_origin_corner: 原点的位置
       option_origin_corner_1d_0: 从左侧
       option_origin_corner_1d_1: 从右侧
@@ -836,7 +790,7 @@ tab:
       option_full_width_diagram: 全宽显示
       option_full_width_diagram_0: 否
       option_full_width_diagram_1: 是
-      option_full_width_diagram_help: "如果选择了此选项, 切割图将使用可用宽度进行显示. 否则, 它们的宽度将由一个根据所有图表的缩放因子来定义."
+      option_full_width_diagram_help: 如果选择了此选项, 切割图将使用可用宽度进行显示. 否则, 它们的宽度将由一个根据所有图表的缩放因子来定义.
       option_wrap_length: 包裹长度
       option_wrap_length_help: 板材或边缘封边在超过最大长度后将被分成多行显示.
       option_hide_cross: 废料
@@ -867,11 +821,11 @@ tab:
       option_trimming_help_1d: 板材或边条两端要被视为废料的材料量.
       option_trimming_help_2d: 视为废料的板材边缘余量
       option_optimization: 优化级别
-      option_optimization_help: "优化级别定义了计算的可能性数量, 从而也影响计算时间."
+      option_optimization_help: 优化级别定义了计算的可能性数量, 从而也影响计算时间.
       option_optimization_0: 中等
       option_optimization_1: 高级
       option_stacking: 首选方向
-      option_stacking_help: "具有相同长度或宽度的部件的叠放方向, 如果需要多块面板, 则逐块面板确定."
+      option_stacking_help: 具有相同长度或宽度的部件的叠放方向, 如果需要多块面板, 则逐块面板确定.
       option_stacking_0: 没有偏好
       option_stacking_1: 沿着长度
       option_stacking_2: 沿着宽度
@@ -1016,16 +970,16 @@ tab:
         warning:
           is_sheet_selection: 不导出**隐藏面板**
       error:
-        no_bar_dimensional: "标准板材未正确配置, 并且没有定义余料."
-        no_bar_edge: "标准边缘封边未正确配置, 并且没有定义余料."
+        no_bar_dimensional: 标准板材未正确配置, 并且没有定义余料.
+        no_bar_edge: 标准边缘封边未正确配置, 并且没有定义余料.
         parameters: 参数不正确. 修边尺寸大于最长的板材或边缘封边的25%.
         no_parts: 没有部件.
-        no_sheet: "标准面板尺寸配置错误, 没有可用的余料."
-        no_placement_possible_1d: "无法放置 (标准板材太小, 修边尺寸太大, 锯缝太大, ...)."
-        no_placement_possible_2d: "无法放置 (标准面板太小, 修边尺寸太大, 锯缝太大, ...)."
-        bad_error: "算法错误. 请联系开发人员, 因为这是一个有趣的情况."
+        no_sheet: 标准面板尺寸配置错误, 没有可用的余料.
+        no_placement_possible_1d: 无法放置 (标准板材太小, 修边尺寸太大, 锯缝太大, ...).
+        no_placement_possible_2d: 无法放置 (标准面板太小, 修边尺寸太大, 锯缝太大, ...).
+        bad_error: 算法错误. 请联系开发人员, 因为这是一个有趣的情况.
         unplaced_parts: "**1 个部件** 无法放置, 因为它太大而无法容纳."
-        unplaced_parts_plural: "有 **{{ count }} 个部件** 无法放置, 因为它太大而无法容纳."
+        unplaced_parts_plural: 有 **{{ count }} 个部件** 无法放置, 因为它太大而无法容纳.
       warning:
         is_part_selection: 此切割图仅限于 **所选的部件**.
         cutting_dimensions: 切割图使用部件的 **原始** 尺寸.
@@ -1100,17 +1054,8 @@ tab:
       option_rectangleguillotine_first_stage_orientation_horizontal: 水平的
       option_rectangleguillotine_first_stage_orientation_vertical: 垂直的
       option_rectangleguillotine_first_stage_orientation_any: 任何
-      option_rectangleguillotine_sort_subplates_criteria: ""
-      option_rectangleguillotine_sort_subplates_criteria_help: |
-      option_rectangleguillotine_sort_subplates_criteria_l1l2: ""
-      option_rectangleguillotine_sort_subplates_criteria_dl2l1: ""
       option_rectangleguillotine_keep: 废料最小尺寸
       option_rectangleguillotine_keep_help: 两个尺寸大于最小尺寸的边角料将被标记为**保留**。
-      option_rectangle_leftover_mode: ""
-      option_rectangle_leftover_mode_help: |
-      option_rectangle_leftover_mode_area: ""
-      option_rectangle_leftover_mode_x: ""
-      option_rectangle_leftover_mode_y: ""
       option_irregular_allowed_rotations: 允许旋转
       option_irregular_allowed_rotations_help: |
         定义工件在排料时可旋转的角度间距。
@@ -1119,17 +1064,11 @@ tab:
       option_irregular_allowed_rotations_0: 无
       option_irregular_allowed_rotations_90: 间隔90°
       option_irregular_allowed_rotations_180: 间隔180°
-      option_irregular_allowed_rotations_free: ""
       option_irregular_allow_mirroring: 允许镜象
       option_irregular_allow_mirroring_help: |
         定义是否允许对部件进行镜像放置
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
-      option_irregular_leftover_mode: ""
-      option_irregular_leftover_mode_help: |
-      option_irregular_leftover_mode_bottom_left: ""
-      option_irregular_leftover_mode_left: ""
-      option_irregular_leftover_mode_bottom: ""
       option_spacing: 间距
       option_spacing_help: |
         每个部件之间的最小间距
@@ -1188,15 +1127,10 @@ tab:
       option_hide_edges_preview_0: 在切割图中显示
       option_hide_edges_preview_1: 在切割图中隐藏
       option_hide_edges_preview_help: 允许您在切割图中显示或隐藏部件的边条的可视显示.
-      option_zoom_threshold: ""
-      # TODO find a better explanation
-      option_zoom_threshold_help: |
       option_time_limit: 时限
       option_time_limit_help: |
         设置计算的时间限制
       grain_groups:
-        title: ""
-        title_plural: ""
         name: 名称
         item_count: "# 部件"
       tooltip:
@@ -1249,7 +1183,7 @@ tab:
         cut_primary: 初次切割
         cut_primary_plural: 主要切割
         cut_none: 无
-        cut_depth: "层级 {{ depth }}"
+        cut_depth: 层级 {{ depth }}
       write:
         title: 导出布局
         info_0: |
@@ -1293,12 +1227,11 @@ tab:
         no_part: 没有部件.
         no_bin_1d: 未选择标准板材或封边条，且无剩余料。
         no_bin_2d: 未选择标准板材或木皮，且无剩余料定义。
-        invalid_part_shapes: "部件 '{{ name }}' 的形状无效。"
+        invalid_part_shapes: 部件 '{{ name }}' 的形状无效。
         no_solution: 无法找到将**所有部件**安放在可用材料中的方案。
         unplaced_parts: "**1 个部件**未能安放"
-        unplaced_parts_plural: "有**{{ count }} 个部件**未能安放。"
+        unplaced_parts_plural: 有**{{ count }} 个部件**未能安放。
         unusable_part_1: 部件太大
-        unusable_part_2: ""
       warning:
         is_part_selection: 此切割图仅限于 **所选的部件**.
         cutting_dimensions: 切割图使用部件的 **原始** 尺寸.
@@ -1436,7 +1369,7 @@ tab:
       option_pins_direction_2: 沿蓝轴方向
       option_pins_direction_3: 指向父级组的中心
       option_pins_direction_4: 指向所选对象的中心
-      option_pins_direction_help: "选择引线指向标签的方向, 以获得更好的可读性."
+      option_pins_direction_help: 选择引线指向标签的方向, 以获得更好的可读性.
       option_page: 纸张尺寸
       option_page_format: 格式
       option_page_format_portrait: 纵向
@@ -1511,10 +1444,7 @@ tab:
 
         - **图层**结构将所有线条绘制成平面，仅使用图层区分不同的线条类型。*这种结构与第三方软件的兼容性更好。*
         - **图层 + 块**结构为每个零件创建一个块，并根据零件的重复次数插入这些块。*这种结构为编辑文件提供了更大的灵活性。*
-      option_dxf_depth_to_z: ""
       option_dxf_depth_to_z_0: $t(default.no)
-      option_dxf_depth_to_z_1: ""
-      option_dxf_depth_to_z_help: |
       option_unit: 单位
       option_unit_help: |
         选择导出文件中使用的单位
@@ -1605,11 +1535,11 @@ tab:
       no_component_in_selection: 在您的选择中没有检测到可见组件的实例.
       no_component_in_model: 在场景中未检测到可见组件的实例.
       unknow_part: 所选部件在部件列表中不存在.
-      obsolete_cutlist: "部件列表已过时, 请重新生成."
+      obsolete_cutlist: 部件列表已过时, 请重新生成.
     warning:
       is_entity_selection: 仅考虑模型中选定的部件.
-      no_typed_materials_in_model: "您的模型未使用任何定义的材质 (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** or **$t(tab.materials.type_5)**)."
-      no_typed_materials_in_selection: "该选择没有使用任何已定义的材质 (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** 或 **$t(tab.materials.type_5)**)."
+      no_typed_materials_in_model: 您的模型未使用任何定义的材质 (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** or **$t(tab.materials.type_5)**).
+      no_typed_materials_in_selection: 该选择没有使用任何已定义的材质 (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** 或 **$t(tab.materials.type_5)**).
       export_empty: 您导出的选择不包含任何部件.
     success:
       part_selected: "{{ count }} 零件列表中选中的零件."
@@ -1619,8 +1549,8 @@ tab:
         要包含在 *部件清单* 中的部件必须是 **组件** 的实例.
         如果你只使用了群组, 请将它们转换成组件.
         用组件使得可以复制相同的部件而不必重复定义它们.
-      no_typed_materials: "将材质应用于部件列表中要包含的部件, 并在 <i class=\"ladb-opencutlist-icon-materials\"></i> **材质** 选项卡上定义该材质的特性 (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** 或 **$t(tab.materials.type_5)**)."
-    obsolete_base: "为了保持同步, 必须重新生成部件清单."
+      no_typed_materials: 将材质应用于部件列表中要包含的部件, 并在 <i class="ladb-opencutlist-icon-materials"></i> **材质** 选项卡上定义该材质的特性 (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** 或 **$t(tab.materials.type_5)**).
+    obsolete_base: 为了保持同步, 必须重新生成部件清单.
   materials:
     label: 材质
     title: 材质
@@ -1631,7 +1561,6 @@ tab:
     type_4: 封边
     type_5: 五金
     type_6: 木皮
-    type_7: ""
     tooltip:
       type_0: 材质类型 '$t(tab.materials.type_0)'
       type_1: 材质类型 '$t(tab.materials.type_1)'
@@ -1649,8 +1578,8 @@ tab:
       texture_load: 读取新的图片
       texture_export: 汇出图片
       texture_clear: 删除纹理
-      edit: "编辑 '{{ name }}' 的属性"
-      set_current: "將部件上色為 '{{ name }}'"
+      edit: 编辑 '{{ name }}' 的属性
+      set_current: 將部件上色為 '{{ name }}'
       open_url: 打开材料 URL
       import_from_skm: 导入材质 (.skm)
     menu:
@@ -1669,7 +1598,7 @@ tab:
       color_warning: 颜色无效
       type: 类型
     edit_material:
-      title: "材质 '{{ name }}' 的属性"
+      title: 材质 '{{ name }}' 的属性
       general: 常规
       texture: 纹理
       no_texture: 无纹理
@@ -1687,13 +1616,10 @@ tab:
 
         *若未指定单位，则会套用模型的单位*
       length_increase: 长度尺寸超差
-      length_increase_help: ""
       length_increase_help_plural: 应用于长度以定义 **原始长度** 的尺寸超差.
       width_increase: 宽度尺寸超差
-      width_increase_help: ""
       width_increase_help_plural: 应用于宽度以定义 **原始宽度** 的尺寸超差.
       thickness_increase: 厚度尺寸超差
-      thickness_increase_help: ""
       thickness_increase_help_plural: 应用于厚度以定义 **原始厚度** 的尺寸超差.
       std_lengths: 标准长度
       std_lengths_help: |
@@ -1771,7 +1697,7 @@ tab:
       title: 导出到 .skm 文件
     option:
       minimize_on_smart_paint: " *'将部件上色为...'* 之后收合"
-      minimize_on_smart_paint_help: "如果启用此选项，当使用*'将部件上色为...'* 功能时，OpenCutList 视窗将会自动最小化"
+      minimize_on_smart_paint_help: 如果启用此选项，当使用*'将部件上色为...'* 功能时，OpenCutList 视窗将会自动最小化
       general: 常规
       material_order_strategy: 材质排序
       material_order_strategy_help: |
@@ -1791,12 +1717,12 @@ tab:
       no_materials: 您的模型不包含任何材质.
       material_not_found: 未找到任何材质.
       no_texture: 这物料没有纹理
-      failed_import_skm_file: "从 .skm 文件导入时发生错误. **{{ error }}**"
-      failed_export_skm_file: "导出到 .skm 文件时发生错误. **{{ error }}**"
-      failed_deleting_material: "删除此材质时发生错误. **{{ error }}**"
-      failed_duplicating_material: "复制此材质时发生错误. **{{ error }}**"
+      failed_import_skm_file: 从 .skm 文件导入时发生错误. **{{ error }}**
+      failed_export_skm_file: 导出到 .skm 文件时发生错误. **{{ error }}**
+      failed_deleting_material: 删除此材质时发生错误. **{{ error }}**
+      failed_duplicating_material: 复制此材质时发生错误. **{{ error }}**
       invalid_image_file: 图片无效
-    obsolete_base: "为了保持同步, 您需要更新材质列表."
+    obsolete_base: 为了保持同步, 您需要更新材质列表.
   outliner:
     label: 结构
     title: 结构
@@ -1814,83 +1740,50 @@ tab:
       is_active_node: 激活模型中的实例
       set_active_node: 在模型中编辑
       edit_node_properties: 编辑属性
-      select_active_nodes: ""
       select_node: 选择
       unselect_node: 取消选择
       open_node_url: 打开部件 URL
     edit_node:
-      title_model: "模型属性"
+      title_model: 模型属性
       title_instance: " **{{ name }}**实例属性"
-      title_instance_multiple: ""
-      multiple_alert: ""
       general: 常规
       name: 名称
       instance_name: 实例
       material: 材质
-      is_grain_group: ""
-      is_grain_group_help: ""
       definition_name: 定义
       description: 描述
       url: URL
       tags: 标签
       layer_name: 标签
-      snapto: ""
       snapto_none: 无
       snapto_0: 任何
       snapto_1: 水平的
       snapto_2: 垂直的
-      snapto_3: ""
-      cuts_opening: ""
-      always_face_camera: ""
-      shadows_face_sun: ""
-      no_scale_mask: ""
-      no_scale_mask_0: ""
-      no_scale_mask_1: ""
-      no_scale_mask_2: ""
-      no_scale_mask_3: ""
-      no_scale_mask_4: ""
-      no_scale_mask_5: ""
-      no_scale_mask_6: ""
       explode: 爆炸图
-      explode_message: ""
       erase: 清除
-      erase_message: ""
-    deep_make_unique:
-      title: ""
     deep_rename_parts:
-      title: ""
-      info_0: |
       formula: 公式
-      old_name: ""
-      new_name: ""
-      count: ""
-    create_container:
-      title_group: ""
-      title_component: ""
     option:
       general: 常规
       show_hidden_instances: 显示隐藏的实例
       show_hidden_instances_help: 如果启用此选项，模型中被隐藏的实例将在结构树中显示
       hide_descriptions: 隐藏描述
-      hide_descriptions_help: "如果选择此选项, 将不会显示部件上的 **描述** ."
+      hide_descriptions_help: 如果选择此选项, 将不会显示部件上的 **描述** .
       hide_tags: 隐藏标签
-      hide_tags_help: "如果选择此选项, 将不会显示 **标签** ."
+      hide_tags_help: 如果选择此选项, 将不会显示 **标签** .
       minimize_on_set_active: 完成后最小化'$t(tab.outliner.tooltip.set_active_node)'
-      minimize_on_set_active_help: "如果启用此选项，当使用功能*'$t(tab.outliner.tooltip.set_active_node)'*时，OpenCutList 窗口将被最小化"
-    snippet:
-      name_size: ""
+      minimize_on_set_active_help: 如果启用此选项，当使用功能*'$t(tab.outliner.tooltip.set_active_node)'*时，OpenCutList 窗口将被最小化
     error:
       no_model: 没有打开的模型. 您需要提供更多信息 ;)
       no_entities: 您的模型为空！
       node_not_found: 未找到节点
       entity_not_found: 未找到实例
-      invalid_target: ""
-      obsolete_outliner: "不可能，生成的结果已过期.请重新生成."
+      obsolete_outliner: 不可能，生成的结果已过期.请重新生成.
     tip:
       no_node: |
         您的模型不包含任何在此显示的实例。
         实例是场景中的一个**组**或一个**组件**
-    obsolete_base: "刷新以保持同步"
+    obsolete_base: 刷新以保持同步
   importer:
     label: 导入
     title: 导入部件
@@ -1928,7 +1821,7 @@ tab:
       options: |
         模型已包含 *部件*, *定义* 或 *材质*.
         请选择您需要的导入选项.
-      option_remove_all_?: "下一步怎么办?"
+      option_remove_all_?: 下一步怎么办?
       option_remove_all_false: 添加到现有的部件
       option_remove_all_true: 删除现有的!
       option_keep_definitions_settings: 保留定义设置
@@ -1945,17 +1838,17 @@ tab:
       material: 材质
       tags: 标签
     tooltip:
-      errors: "此部件将不会被导入, 因为它产生了以下错误"
-      warnings: "此部件将被导入, 但产生了以下警告"
+      errors: 此部件将不会被导入, 因为它产生了以下错误
+      warnings: 此部件将被导入, 但产生了以下警告
     error:
       no_model: 没有打开的模型. 无法将部件导入虚空中 ;)
       file_not_found: "文件未找到 : **{{ filename }}**"
-      bad_extension: "文件 *{{ filename }}* 没有扩展名 **.CSV** 或 **.TSV**."
+      bad_extension: 文件 *{{ filename }}* 没有扩展名 **.CSV** 或 **.TSV**.
       failed_to_load_csv_file: |
         无法加载 CSV 文件: **{{ error }}**
         *请验证您是否已选择了适当的字段分隔符.*
       empty_file: 文件似乎为空或无法解释.
-      no_importable_part: "无法导入任何部件, 请将必填字段分配给相应的列."
+      no_importable_part: 无法导入任何部件, 请将必填字段分配给相应的列.
       invalid_name: 无效的名称
       invalid_length: 长度无效
       invalid_width: 宽度无效
@@ -1968,23 +1861,16 @@ tab:
       imported_title: 导入完成
       imported_body: "{{ count }} 部件已成功导入!"
       imported_body_plural: "{{ count }} 部件已成功导入!"
-    obsolete_base: "要保持同步, 您必须重新加载 CSV 文件."
+    obsolete_base: 要保持同步, 您必须重新加载 CSV 文件.
   importers:
     default:
-      open_file: ""
       import_to_model: 导入到模型中
       error:
-        no_data: ""
-        no_model: ""
         file_not_found: "文件未找到 : **{{ filename }}**"
-        bad_extension: ""
-        failed_to_import: ""
       success:
         imported_title: 导入完成
     csv:
-      label: ""
       title: 导入部件
-      help: |
       load:
         title: 加载 CSV 文件
         info_0: |
@@ -2013,7 +1899,7 @@ tab:
         options: |
           模型已包含 *部件*, *定义* 或 *材质*.
           请选择您需要的导入选项.
-        option_remove_all_?: "下一步怎么办?"
+        option_remove_all_?: 下一步怎么办?
         option_remove_all_false: 添加到现有的部件
         option_remove_all_true: 删除现有的!
         option_keep_definitions_settings: 保留定义设置
@@ -2030,14 +1916,14 @@ tab:
         material: 材质
         tags: 标签
       tooltip:
-        errors: "此部件将不会被导入, 因为它产生了以下错误"
-        warnings: "此部件将被导入, 但产生了以下警告"
+        errors: 此部件将不会被导入, 因为它产生了以下错误
+        warnings: 此部件将被导入, 但产生了以下警告
       error:
         failed_to_load_csv_file: |
           无法加载 CSV 文件: **{{ error }}**
           *请验证您是否已选择了适当的字段分隔符.*
         empty_file: 文件似乎为空或无法解释.
-        no_importable_part: "无法导入任何部件, 请将必填字段分配给相应的列."
+        no_importable_part: 无法导入任何部件, 请将必填字段分配给相应的列.
         invalid_name: 无效的名称
         invalid_length: 长度无效
         invalid_width: 宽度无效
@@ -2048,68 +1934,22 @@ tab:
       success:
         imported_body: "{{ count }} 部件已成功导入!"
         imported_body_plural: "{{ count }} 部件已成功导入!"
-      obsolete_base: "要保持同步, 您必须重新加载 CSV 文件."
+      obsolete_base: 要保持同步, 您必须重新加载 CSV 文件.
     bxf2:
-      label: ""
-      title: ""
-      help: |
-      load:
-        title: ""
       import:
-        title: ""
-        info_0: |
-        info_0_plural: |
-        info_1: ""
         materials: 材质
         layers: 标签
         option_parts_formula: 公式
-        option_parts_formula_help: ""
-        option_part_wood_material_name: ""
-        option_part_wood_material_name_help: ""
-        option_part_aluminium_material_name: ""
-        option_part_aluminium_material_name_help: ""
-        option_part_glass_material_name: ""
-        option_part_glass_material_name_help: ""
-        option_front_part_layer_name: ""
-        option_front_part_layer_name_help: ""
-        option_machining_material_name: ""
-        option_machining_material_name_help: ""
-        option_machining_layer_name: ""
-        option_machining_layer_name_help: ""
-        option_hardware_material_name: ""
-        option_hardware_material_name_help: ""
-        option_hardware_layer_name: ""
-        option_hardware_layer_name_help: ""
-        option_no_material_help: ""
-        option_default_material_help: ""
-        option_no_layer_help: ""
-        old_name: ""
-        new_name: ""
-        count: ""
         formula:
           part: 部件
-          project: ""
-          cabinet: ""
-      model:
-        author: ""
-        date: ""
       cabinet:
-        list: ""
         description: 名称
         width: 阔度
         height: 高度
-        depth: ""
       article:
-        list: ""
         total_quantity: 数量
-        article_number: ""
         description: 描述
         material: 材质
-      error:
-        failed_to_load_bxf2_file: |
-      warning:
-        partial_support: |
-      obsolete_base: ""
   tutorials:
     label: 教程
     title: 教程
@@ -2156,9 +1996,9 @@ tab:
     contribute: 贡献
     backers: "{{ count }} 名资金贡献者"
     backers_plural: "{{ count }} 名资金贡献者"
-    ad: "OpenCutList 不是免费的"
+    ad: OpenCutList 不是免费的
     objective: 目标
-    objective_slogan: "OpenCutList 我们所有人的"
+    objective_slogan: OpenCutList 我们所有人的
     objective_title:
       default: 目标
       cuttingdiagram_export: 切割图导出的资金支持
@@ -2173,7 +2013,7 @@ tab:
       新功能的开发将通过 **筹款** 完成，并将在达到 **筹款目标** 时开始.
     objective_thanks: |
       感谢您的贡献!
-    objective_funded_progress: "已经获得 {{ progress }}%"
+    objective_funded_progress: 已经获得 {{ progress }}%
   settings:
     label: 偏好设置
     title: 偏好设置
@@ -2207,12 +2047,8 @@ tab:
     currency_precision: 精确度
     presets:
       export_global_presets: 导出预设
-      export_global_presets_help: |
       export_global_presets_success: 预设已成功导出.
-      export_global_presets_success_with_assets: ""
       import_global_presets: 导入预设
-      import_global_presets_help: |
-      open_library_dir: ""
       import_global_presets_success: |
         *OpenCutList* 预设已成功导入.
         为了应用这些更改, 您必须 **关闭** 然后 **重新打开** OpenCutList 窗口.
@@ -2237,8 +2073,6 @@ tab:
       error:
         no_preset_to_export: 没有要导出的预设.
         no_preset_to_import: 没有要导入的预设.
-        failed_to_export: ""
-        failed_to_open_library_dir: ""
         failed_to_import: "无法导入预设: **{{ error }}**."
         failed_to_import_invalid_hexdigest: 此文件已被修改. 无法导入.
         failed_to_import_bad_file_format: 文件格式无效.
@@ -2295,53 +2129,31 @@ tool:
     vcb_diameter: 直径
     vcb_distance: 距离
     vcb_spacings: 间隙大小
-    locked_on_last_measure_status: 锁定为上一次测量  # TODO : Moved from tool.smart_draw.action_measure_locked_status
+    locked_on_last_measure_status: 锁定为上一次测量
     error:
       no_direction: 请用鼠标指示一个方向
-      invalid_length: "长度 {{ value }} 无效"
-      invalid_thickness: ""
-      invalid_multiplicator: "倍数 {{ value }} 无效"
-      invalid_divider: "除数 {{ value }} 无效"
-      invalid_offset: "偏移 {{ value }} 无效"
-      invalid_segment_count: "段数 {{ value }} 无效。必须介于 3 到 999 之间"
-      syntax_error: ""
-      unexpected_close_parenthesis: ""
-      missing_close_parenthesis: ""
-      missing_operand: ""
-      zero_division: ""
-      lt_min_distance: "距离 {{ value1 }} 小于最小距离 {{ value2 }}"
-      gt_max_distance: ""
-      locked_part: ""
-      not_sibling_part: ""
-      selection_contains_locked_entities: ""
-      wrong_material_type: "目标部件的类型必须为 '{{ type }}'"
+      invalid_length: 长度 {{ value }} 无效
+      invalid_multiplicator: 倍数 {{ value }} 无效
+      invalid_divider: 除数 {{ value }} 无效
+      invalid_offset: 偏移 {{ value }} 无效
+      invalid_segment_count: 段数 {{ value }} 无效。必须介于 3 到 999 之间
+      lt_min_distance: 距离 {{ value1 }} 小于最小距离 {{ value2 }}
+      wrong_material_type: 目标部件的类型必须为 '{{ type }}'
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_select:
     state_0_status: 点击部件以选中它
-    state_0_to_6_status: ""
-    state_0_to_7_status: ""
-    state_4_status: ""
-    state_5_status: ""
-    state_6_status: ""
-    state_7_status: ""
-    warning:
-      no_active_part: ""
-      no_parent_group: ""
   smart_draw:
     title: 绘制
     action_0: 绘制矩形
     action_0_status: 在矩形形状的基础上绘制体积
-    action_0_state_0_status: ""
     action_0_state_1_status: 点击以定义对角点，或输入长度和宽度
     action_1: 绘制圆形
-    action_1_state_0_status: ""
     action_1_status: 在圆形的基础上绘制体积
     action_1_state_1_radius_status: 点击以设置半径，或输入距离
     action_1_state_1_diameter_status: 点击以设置直径，或输入距离
     action_2: 绘制多边形
-    action_2_state_0_status: ""
     action_2_status: 在多边形的基础上绘制体积
     action_2_state_1_status: 点击以定义一个新点，或输入距离
     action_x_state_2_status: 点击以设置高度，或输入距离
@@ -2366,114 +2178,36 @@ tool:
     action_option_options_measure_reversed_status: 反转测量
     action_option_options_pull_centered: 高度居中
     action_option_options_pull_centered_status: 以第一个点为基准居中高度
-    action_option_options_pull_locked_status: ""
-    action_option_options_draw_in: ""
-    action_option_options_draw_in_0: ""
-    action_option_options_draw_in_1: ""
-    action_option_options_draw_in_status: ""
     action_option_options_ask_name: 部件命名
     action_option_options_ask_name_status: 手动输入部件名称
     action_toggle_move_copy_status: 切换复制/移动
     action_change_move_anchor_status: 更改锚点
     success:
       part_created: "新建部件: {{ name }}"
-      part_created_plural: ""
   smart_build:
-    title: ""
-    action_0: ""
-    action_0_status: ""
-    action_0_state_0_status: ""
-    action_0_state_1_status: ""
-    action_1: ""
-    action_1_status: ""
-    action_1_state_0_status: ""
-    action_1_state_0_merge_status: ""
-    action_2: ""
-    action_2_status: ""
-    action_2_state_0_status: ""
-    action_2_state_0_merge_status: ""
-    action_option_group_groove: ""
-    action_1_option_group_offset: ""
     action_option_group_thickness: 厚度
-    action_option_group_overlay: ""
     action_option_group_axes: 坐标轴
     action_option_group_measure_type: 测量
     action_option_group_options: 选项
-    action_option_offset_front_panel_offset: ""
-    action_option_offset_front_panel_offset_status: ""
-    action_option_groove_groove_depth: ""
-    action_option_groove_groove_depth_status: ""
-    action_option_groove_groove_setback: ""
-    action_option_groove_groove_setback_status: ""
-    action_option_groove_groove_through: ""
-    action_option_groove_groove_through_status: ""
     action_option_thickness_thickness: 厚度
-    action_option_thickness_thickness_status: ""
-    action_option_overlay_inset_status: ""
-    action_2_option_overlay_inset_status: ""
-    action_option_overlay_full_overlay_status: ""
-    action_2_option_overlay_full_overlay_status: ""
-    action_option_measure_type_inside_status: ""
-    action_option_measure_type_centered_status: ""
-    action_option_measure_type_outside_status: ""
     action_option_axes_active_status: 沿活动轴操作
-    action_option_axes_context_status: ""
     action_option_options_measure_reversed: 反向测量
     action_option_options_measure_reversed_status: 反转测量
-    action_option_options_reduce_envelope: ""
-    action_option_options_reduce_envelope_status: ""
-    action_option_options_reuse_definition: ""
-    action_option_options_reuse_definition_status: ""
-    action_option_options_mirror: ""
-    action_option_options_mirror_status: ""
     action_option_options_ask_name: 部件命名
     action_option_options_ask_name_status: 手动输入部件名称
-    action_option_options_layer_name: ""
-    action_option_options_layer_name_status: ""
-    detecting_cavities: ""
-    error:
-      invalid_divider_seed: ""
-      invalid_divider_container: ""
-      invalid_divider_cavity: ""
-      no_divider_cavity: ""
-      invalid_front_panel_seed: ""
-      invalid_front_panel_container: ""
-      invalid_front_panel_cavity: ""
-      no_front_panel_cavity: ""
-      invalid_back_panel_seed: ""
-      invalid_back_panel_container: ""
-      invalid_back_panel_cavity: ""
-      no_back_panel_cavity: ""
-      too_complex_cavity: ""
-      closed_front_panel_opening: ""
-      closed_back_panel_opening: ""
-      divider_number_overflow: ""
-      front_panel_number_overflow: ""
-      back_panel_number_overflow: ""
-      back_panel_severs_parts: ""
-    warning:
-      no_back_panel_machining: ""
     success:
       part_created: "新建部件: {{ name }}"
-      part_created_plural: ""
-      part_reused: ""
-      part_reused_plural: ""
   smart_handle:
     title: 操控点
     action_0: 选择
-    action_0_status: ""
     action_1: 沿直线复制
-    action_1_status: ""
     action_1_state_2_status: 点击以放置部件复制或输入距离
     action_2: 以网格方式复制
-    action_2_status: ""
     action_2_state_2_status: 点击以放置部件复制或输入两个距离
     action_3: 移动
-    action_3_status: ""
     action_3_state_1_status: 点击以确定第一个测量点
     action_3_state_2_status: 点击以放置部件或输入距离
     action_4: 均分排列
-    action_4_status: ""
     action_4_state_1_status: 点击以确定第一个测量点
     action_4_state_2_status: 点击以确定第二个测量点或输入距离
     action_option_group_copy_measure_type: 测量
@@ -2487,75 +2221,19 @@ tool:
     action_option_axes_context_status: 沿群组轴或包含部件的组件的轴操作
     action_option_axes_entity_status: 沿部件轴操作
     action_option_options_mirror_status: 对称复制
-    action_toggle_raytest_status: ""
     warning:
       copies_disable_mirror: 多重复制会停用 '$t(tool.smart_handle.action_option_options_mirror_status)' 选项
   smart_reshape:
-    title: ""
-    action_0: ""
-    action_0_status: ""
-    action_0_state_1_status: ""
-    action_0_state_1a_status: ""
-    action_0_state_1b_status: ""
-    action_0_state_1c_status: ""
-    action_0_state_1d_status: ""
-    action_0_state_10_status: ""
-    action_0_state_11_status: ""
-    action_0_state_12_status: ""
-    action_0_state_2_status: ""
-    action_1: ""
-    action_1_status: ""
-    action_1_state_0_status: ""
-    action_1_state_1_status: ""
-    action_1_rollover_face_status: ""
-    action_1_select_similar_status: ""
-    action_1_select_all_edges_status: ""
-    action_2: ""
-    action_2_status: ""
-    action_2_state_0_status: ""
-    action_2_state_1_status: ""
-    action_3: ""
-    action_3_status: ""
-    action_3_state_0_status: ""
-    action_3_state_1_status: ""
-    action_4: ""
-    action_4_status: ""
-    action_4_state_0_status: ""
-    action_4_state_1_status: ""
     action_option_group_thickness: 厚度
     action_option_group_stretch_measure_type: 测量
     action_option_group_axes: 坐标轴
-    action_option_group_paneling_joint_type: ""
     action_option_group_paneling_direction: 方向
-    action_option_group_csg_operation: ""
     action_option_group_options: 选项
     action_option_thickness_thickness: 厚度
-    action_option_thickness_thickness_status: ""
     action_option_stretch_measure_type_outside_status: 外部测量
-    action_option_stretch_measure_type_offset_status: ""
     action_option_axes_active_status: 沿活动轴操作
     action_option_axes_context_status: 沿群组轴或包含部件的组件的轴操作
     action_option_axes_entity_status: 沿部件轴操作
-    action_option_paneling_joint_type_flat_status: ""
-    action_option_paneling_joint_type_miter_status: ""
-    action_option_paneling_direction_inward_status: ""
-    action_option_paneling_direction_outward_status: ""
-    action_option_options_centered_status: ""
-    action_option_options_make_unique_status: ""
-    action_option_options_keep_a: ""
-    action_option_options_keep_a_status: ""
-    action_option_options_keep_b: ""
-    action_option_options_keep_b_status: ""
-    action_option_options_remove_unused_definitions_status: ""
-    action_option_options_reuse_definition: ""
-    action_option_options_reuse_definition_status: ""
-    action_option_options_reuse_definition_mirrored: ""
-    action_option_options_reuse_definition_mirrored_status: ""
-    notify:
-      validate_a: ""
-      validate_b: ""
-    error:
-      curve_intersect: ""
   smart_paint:
     title: 绘制
     default_material: 无材质
@@ -2600,7 +2278,7 @@ tool:
     face_zmax: 正面
     warning:
       no_material: 无材质
-      no_material_type: "没有类型为 '{{ type }}' 的材质"
+      no_material_type: 没有类型为 '{{ type }}' 的材质
     error:
       not_part: 目标对象不是部件 (组件)
       not_edge: 目标面不是面板边缘
@@ -2617,10 +2295,6 @@ tool:
     action_3_status: 选择部件的一个面，并点击一条边以调整其轴
     action_4: 移动原点
     action_4_status: 选择部件的一个面，并点击一个点以将其原点放置于该处
-    action_5: ""
-    action_5_status: ""
-    action_5_to_state_10_status: ""
-    action_5_state_10_status: ""
     action_option_group_direction: 方向
     action_option_direction_0: L
     action_option_direction_1: W
@@ -2629,76 +2303,15 @@ tool:
     action_option_direction_1_status: 将部件在宽度方向上翻转
     action_option_direction_2_status: 将部件在厚度方向上翻转
     warning:
-      more_entities: "将修改 {{ count_used }} 个共享相同定义的实例"
+      more_entities: 将修改 {{ count_used }} 个共享相同定义的实例
     error:
       not_part: 目标对象不是部件 (组件)
       not_orientable: 此部件类型不允许进行定向操作
-      not_grained: ""
-      not_single_thickness_layer: ""
-  # TODO: It's currently just for dev purposes
+  # @no-translate
   smart_join:
-    title: ""
-    action_0: ""
-    action_0_status: ""
-    action_0_state_0_status: ""
-    action_1: ""
-    action_1_status: ""
-    action_1_state_0_status: ""
-    action_1_only_one_status: ""
-    action_2: ""
-    action_2_status: ""
-    action_2_state_0_status: ""
-    action_2_state_1_status: ""
-    action_3: ""
-    action_3_status: ""
-    action_3_state_0_status: ""
-    action_3_state_1_status: ""
-    action_3_only_one_status: ""
     action_option_group_height: 高度
-    action_option_group_offsets: ""
-    action_option_group_spacings: ""
     action_option_group_options: 选项
     action_option_height: 高度
-    action_option_offsets_start_offset: ""
-    action_option_offsets_end_offset: ""
-    action_option_spacings_min_spacing: ""
-    action_option_spacings_max_spacing: ""
-    action_option_options_opposite_status: ""
-    action_option_options_make_unique_status: ""
-    action_option_hardware_connector_a: ""
-    action_option_hardware_connector_b: ""
-    action_option_hardware_fitting_a: ""
-    action_option_hardware_fitting_b: ""
-    action_option_machining_a: ""
-    action_option_machining_b: ""
-    action_option_hardware_connector_material_name: ""
-    action_option_hardware_fitting_material_name: ""
-    action_option_machining_material_name: ""
-    action_option_hardware_connector_layer_name: ""
-    action_option_hardware_fitting_layer_name: ""
-    action_option_machining_layer_name: ""
-    measures: ""
-    geometries: ""
-    error:
-      invalid_height: ""
-      invalid_start_offset: ""
-      invalid_end_offset: ""
-      invalid_min_spacing: ""
-      invalid_max_spacing: ""
-      not_assemblable: ""
-      no_valid_join: ""
-      occupied_anchors: ""
-      occupied_anchors_plural: ""
-      failed_to_load_skp_file: |
-      unsupported_skp_version: |
-    warning:
-      no_connector_to_remove: ""
-      x_connectors_to_remove: ""
-      x_connectors_to_remove_plural: ""
-      no_fitting_to_remove: ""
-      x_fittings_to_remove: ""
-      x_fittings_to_remove_plural: ""
-      different_file_name: ""
   smart_export:
     title: 导出
     action_0: 导出3D模型
@@ -2735,4 +2348,3 @@ tool:
   smart_importers_bxf2:
     title: 导入
     action_0: $t(tab.importers.bxf2.title)
-    action_0_status: ""
