@@ -425,6 +425,94 @@ class TC_Ladb_Worker_SolidFindCavities < TestUp::TestCase
 
   end
 
+  # -- Reduction recedes opening --
+
+  # A front notched on both sides : the top, bottom and sides stop 30 mm short
+  # of the front, except between the two dividers, which reach it. The hull
+  # caps each outer compartment on a face SLANTED by about 4° - from the
+  # recessed corner to the divider's front edge - which the band still reads
+  # as antiparallel to the recess plane. Whether that opening lies beyond the
+  # plane must not depend on where the compartment sits : the two mirror
+  # images get the same answer, the one near the origin as much as the far one.
+  def test_reduction_recedes_opening_reads_a_slanted_cap_wherever_it_sits
+
+    recess_normal = [ 0.0, 1.0, 0.0 ]
+    recess_d = 30.mm.to_f
+
+    left_caps = _opening_caps(
+      _quad([ 0.0, 30.0, 19.0 ], [ 400.0, 0.0, 19.0 ], [ 400.0, 0.0, 781.0 ], [ 0.0, 30.0, 781.0 ]) +     # front, slanted
+      _quad([ 0.0, 472.0, 19.0 ], [ 0.0, 472.0, 781.0 ], [ 400.0, 472.0, 781.0 ], [ 400.0, 472.0, 19.0 ])  # back
+    )
+    right_caps = _opening_caps(
+      _quad([ 800.0, 0.0, 19.0 ], [ 1200.0, 30.0, 19.0 ], [ 1200.0, 30.0, 781.0 ], [ 800.0, 0.0, 781.0 ]) +     # front, slanted
+      _quad([ 800.0, 472.0, 19.0 ], [ 800.0, 472.0, 781.0 ], [ 1200.0, 472.0, 781.0 ], [ 1200.0, 472.0, 19.0 ])  # back
+    )
+
+    assert_equal(true, @worker.send(:_reduction_recedes_opening?, recess_normal, recess_d, left_caps))
+    assert_equal(true, @worker.send(:_reduction_recedes_opening?, recess_normal, recess_d, right_caps))
+
+    # In front of that same slanted opening, the plane recedes nothing
+    assert_equal(false, @worker.send(:_reduction_recedes_opening?, recess_normal, -5.mm.to_f, left_caps))
+    assert_equal(false, @worker.send(:_reduction_recedes_opening?, recess_normal, -5.mm.to_f, right_caps))
+
+  end
+
+  # The same notched front on a case 600 wide : the outer compartments are
+  # narrower, and the hull bridge from the recessed corner to the divider's
+  # front edge slants by about 9°, past the band an opening has to fit in.
+  # Every board is square to the opening, though : no face of the assembly
+  # lies in that cap, and the opening still recedes to the foot of the
+  # bridge - but not to a plane cutting across it, nor when a face does lie in
+  # the cap (a lectern's sloped chants).
+  def test_reduction_recedes_opening_lets_a_steep_hull_bridge_recede
+
+    recess_normal = [ 0.0, 1.0, 0.0 ]
+    triangles = _quad([ 0.0, 30.0, 19.0 ], [ 190.0, 0.0, 19.0 ], [ 190.0, 0.0, 781.0 ], [ 0.0, 30.0, 781.0 ]) +     # front, slanted
+                _quad([ 0.0, 472.0, 19.0 ], [ 0.0, 472.0, 781.0 ], [ 190.0, 472.0, 781.0 ], [ 190.0, 472.0, 19.0 ])  # back
+
+    bridge_caps = _opening_caps(triangles)
+    assert_equal(true, @worker.send(:_reduction_recedes_opening?, recess_normal, 30.mm.to_f, bridge_caps))
+    # Across the bridge, half way down the step
+    assert_equal(false, @worker.send(:_reduction_recedes_opening?, recess_normal, 15.mm.to_f, bridge_caps))
+
+    # A face lying in that cap makes it a slanted opening, no bridge
+    slanted_normal = bridge_caps.first[0]
+    lectern_caps = _opening_caps(triangles, { 1 => [ slanted_normal, bridge_caps.first[1] ] })
+    assert_nil(lectern_caps.first[3])
+    assert_equal(false, @worker.send(:_reduction_recedes_opening?, recess_normal, 30.mm.to_f, lectern_caps))
+
+  end
+
+  # -----
+
+  # #_reduction_opening_caps of the cap triangles given as flat coordinates (in
+  # mm), accumulated as #_detect_reduction_planes accumulates them, against
+  # the panel +face_planes+ ([ normal, d ] by face id) - none by default,
+  # every cap then being a hull bridge.
+  def _opening_caps(triangles, face_planes = {})
+    vertices = triangles.flatten.map { |coordinate| coordinate.mm.to_f }
+    cap_planes = {}
+    triangles.each_index do |triangle_index|
+      a, b, c = triangle_index * 3, triangle_index * 3 + 1, triangle_index * 3 + 2
+      normal, area2 = @worker.send(:_triangle_normal, vertices, a, b, c)
+      d = normal[0] * vertices[a * 3] + normal[1] * vertices[a * 3 + 1] + normal[2] * vertices[a * 3 + 2]
+      key = normal.map { |v| (v * 1000).round } << (d / TOLERANCE).round
+      cap_plane = cap_planes[key] ||= [ normal, d, 0.0, 0.0, 0.0, 0.0, [] ]
+      cap_plane[2] += area2 / 2.0
+      cap_plane[3] += area2 * (vertices[a * 3] + vertices[b * 3] + vertices[c * 3])
+      cap_plane[4] += area2 * (vertices[a * 3 + 1] + vertices[b * 3 + 1] + vertices[c * 3 + 1])
+      cap_plane[5] += area2 * (vertices[a * 3 + 2] + vertices[b * 3 + 2] + vertices[c * 3 + 2])
+      cap_plane[6] << a << b << c
+    end
+    @worker.send(:_reduction_opening_caps, cap_planes, face_planes, vertices)
+  end
+
+  # The two triangles of the planar quad a, b, c, d (counter clockwise seen
+  # from where its normal points).
+  def _quad(a, b, c, d)
+    [ a + b + c, a + c + d ]
+  end
+
   # -----
 
   # #_panel_components on the given mesh defs.

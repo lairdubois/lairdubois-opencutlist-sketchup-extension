@@ -598,11 +598,23 @@ module Ladb::OpenCutList
     # cap's normal for that plane to be read as RECEDING that opening : the
     # two must be ANTIPARALLEL — a cap normal points out of the cavity, a
     # reduction normal toward the kept side — within about 8°. A recess read
-    # against a SLANTED opening (a lectern's front, any non-flush hull cap)
-    # falls outside the band and is not reduced at all : an assembly whose
-    # opening is not flat gives no plane to recede it to.
+    # against a SLANTED opening (a lectern's front) falls outside the band
+    # and is not reduced at all : an assembly whose opening is not flat gives
+    # no plane to recede it to. A hull bridge is no such opening, see
+    # REDUCTION_BRIDGE_OPENING_DOT.
     # See #_reduction_recedes_opening?.
     REDUCTION_OPENING_DOT = -0.99
+
+    # The same, for an opening capped by a hull BRIDGE - a cap no face of the
+    # assembly lies in, spanning a step between panels that stop at different
+    # depths (see #_reduction_opening_caps) - within about 30°. Such a cap
+    # slants by the step's depth over the compartment's width, not by
+    # anything the assembly was drawn with : the opening is no lectern's, and
+    # the tilt says nothing against receding it. What still keeps a plane
+    # from cutting across the bridge is asked of the cap itself, not of its
+    # tilt : it must lie WHOLLY beyond the plane. 30° stays clear of a 45°
+    # mitre, whose full-thickness edges leave a bridge too.
+    REDUCTION_BRIDGE_OPENING_DOT = -0.866
 
     # Minimum share of a cavity's total cap area for one cap plane to be
     # treated as an OPENING a beveled edge may recede. A cavity leaking
@@ -2046,7 +2058,7 @@ module Ladb::OpenCutList
         # Every panel bounding this cavity, by whatever kind of face — the
         # walls a clip must not throw away, see #_reduction_panel_side
         bounding_mesh_positions = {}
-        # The cavity's openings ([ normal, offset, area ] per envelope cap
+        # The cavity's openings ([ normal, offset, area, centroid sums ] per envelope cap
         # plane), the edge faces TILTED on their own board
         # ([ triangle index, normal, area, offset, panel ]) and, once those
         # have been sorted out below, the ones among them that flare toward an
@@ -2062,8 +2074,14 @@ module Ladb::OpenCutList
           if face_id == 0  # Envelope cap : an opening of the cavity
             d = normal[0] * vertices[a * 3] + normal[1] * vertices[a * 3 + 1] + normal[2] * vertices[a * 3 + 2]
             key = normal.map { |v| (v * 1000).round } << (d / SolidMeshDef::TOLERANCE).round
-            cap_plane = cap_planes[key] ||= [ normal, d, 0.0 ]
+            cap_plane = cap_planes[key] ||= [ normal, d, 0.0, 0.0, 0.0, 0.0, [] ]
             cap_plane[2] += area2 / 2.0
+            # Area-weighted centroid sums : where the opening actually lies,
+            # see #_reduction_opening_caps
+            cap_plane[3] += area2 * (vertices[a * 3] + vertices[b * 3] + vertices[c * 3])
+            cap_plane[4] += area2 * (vertices[a * 3 + 1] + vertices[b * 3 + 1] + vertices[c * 3 + 1])
+            cap_plane[5] += area2 * (vertices[a * 3 + 2] + vertices[b * 3 + 2] + vertices[c * 3 + 2])
+            cap_plane[6] << a << b << c
             next
           end
           # A machining face says where a panel is DUG, never where it stops :
@@ -2138,7 +2156,7 @@ module Ladb::OpenCutList
         # class doc, BEVELED EDGES). The chants join the candidates they would
         # have been had their board been square to the assembly ; everything
         # else goes on to #_detect_bevel_planes.
-        opening_caps = _reduction_opening_caps(cap_planes)
+        opening_caps = _reduction_opening_caps(cap_planes, face_planes, vertices)
         tilted_triangles.each do |triangle_index, normal, area, d, mesh_position|
           unless _reduction_recedes_opening?(normal, d, opening_caps)
             bevel_triangles << [ triangle_index, normal, area ]
@@ -2980,10 +2998,17 @@ module Ladb::OpenCutList
 
     # Whether the given plane (unit normal pointing toward the KEPT side,
     # n.p = d) makes one of the cavity's own OPENINGS recede : a cap plane
-    # (cap_planes, [ normal, offset, area ] per distinct plane) antiparallel
-    # to it (REDUCTION_OPENING_DOT), lying on the REMOVED side, and weighing
-    # at least REDUCTION_BEVEL_CAP_RATIO of the cavity's whole cap area.
-    # Required of every reduction plane — see the class doc.
+    # antiparallel to it (REDUCTION_OPENING_DOT), lying on the REMOVED side,
+    # and weighing at least REDUCTION_BEVEL_CAP_RATIO of the cavity's whole
+    # cap area. Required of every reduction plane — see the class doc.
+    #
+    # Where the cap lies is read off its CENTROID, never off its own offset :
+    # the band admits a cap a few degrees off antiparallel (a hull face
+    # spanning a notched front, the rest of the compartment set back), and
+    # the offsets of two planes that are not parallel only compare at the
+    # origin. The error grows with the cavity's distance from it - 0.075 per
+    # unit on a 4° cap - so a recess was found on one compartment and missed
+    # on its mirror image, the one nearer the origin.
     #
     # This is what a recess IS — a panel set back BEHIND an opening — read
     # off the cavity itself rather than guessed from the panel's proportions,
@@ -2997,28 +3022,51 @@ module Ladb::OpenCutList
     # would justify receding the whole cross section on a plane the assembly
     # never asked for.
     #
+    # A hull BRIDGE (see #_reduction_opening_caps) is let through a wider
+    # band, REDUCTION_BRIDGE_OPENING_DOT : a notched front - dividers running
+    # out to the front, the rest of the case set back - caps each compartment
+    # on a face slanted by the step over the compartment's width, steeper the
+    # narrower the compartment, while every board is square to the opening.
+    # Past REDUCTION_OPENING_DOT, the WHOLE cap must then lie beyond the plane
+    # (on it at most) : the recess is the foot of the bridge, where it rests
+    # on the panel set back, never a plane cutting across it.
+    #
     # +opening_caps+ : the cavity's major caps, see #_reduction_opening_caps.
     def _reduction_recedes_opening?(normal, d, opening_caps)
-      opening_caps.any? { |cap_normal, cap_d|
+      opening_caps.any? { |cap_normal, _cap_d, cap_centroid, bridge_points|
         dot = normal[0] * cap_normal[0] + normal[1] * cap_normal[1] + normal[2] * cap_normal[2]
-        next false unless dot <= REDUCTION_OPENING_DOT
-        # The normals being antiparallel, the cap's own offset reads -cap_d on
-        # this plane's axis : the opening must sit beyond the plane, on the
-        # side the clip removes
-        -cap_d - d < -REDUCTION_MIN_DEPTH
+        next false unless dot <= (bridge_points ? REDUCTION_BRIDGE_OPENING_DOT : REDUCTION_OPENING_DOT)
+        # The opening must sit beyond the plane, on the side the clip removes
+        next false unless normal[0] * cap_centroid[0] + normal[1] * cap_centroid[1] + normal[2] * cap_centroid[2] - d < -REDUCTION_MIN_DEPTH
+        next true if dot <= REDUCTION_OPENING_DOT
+        bridge_points.all? { |x, y, z| normal[0] * x + normal[1] * y + normal[2] * z - d <= REDUCTION_MIN_DEPTH }
       }
     end
 
-    # The [ normal, offset ] of the cavity's MAJOR caps — at least
-    # REDUCTION_BEVEL_CAP_RATIO of the whole cap area, see
+    # The [ normal, offset, centroid, bridge points ] of the cavity's MAJOR
+    # caps — at least REDUCTION_BEVEL_CAP_RATIO of the whole cap area, see
     # #_reduction_recedes_opening? — out of its +cap_planes+ ([ normal,
-    # offset, area ] by plane key). Read once per cavity : the test asks it
+    # offset, area, area-weighted centroid sums x, y, z, vertex indices into
+    # +vertices+ ] by plane key). Read once per cavity : the test asks it
     # for every tilted triangle and every candidate plane.
-    def _reduction_opening_caps(cap_planes)
+    #
+    # A cap no face of the assembly lies in (+face_planes+, see
+    # #_panel_face_planes) is a hull BRIDGE : the hull only rests on panel
+    # EDGES there, spanning whatever lies between them. Its points ([ x, y, z ]
+    # each) come along, nil for a cap some face does lie in - the flush front
+    # of an ordinary case, the sloped chants of a lectern.
+    def _reduction_opening_caps(cap_planes, face_planes, vertices)
       total_area = cap_planes.values.reduce(0.0) { |sum, cap_plane| sum + cap_plane[2] }
       return [] if total_area <= 0
       cap_planes.values.reject { |_cap_normal, _cap_d, area| area / total_area < REDUCTION_BEVEL_CAP_RATIO }
-                       .map { |cap_normal, cap_d, _area| [ cap_normal, cap_d ] }
+                       .map { |cap_normal, cap_d, area, sx, sy, sz, vertex_indices|
+                         anchored = face_planes.each_value.any? { |face_normal, face_d|
+                           dot = cap_normal[0] * face_normal[0] + cap_normal[1] * face_normal[1] + cap_normal[2] * face_normal[2]
+                           dot.abs > 0.9999 && (dot > 0 ? face_d - cap_d : -face_d - cap_d).abs < REDUCTION_MIN_DEPTH
+                         }
+                         bridge_points = anchored ? nil : vertex_indices.uniq.map { |index| vertices[index * 3, 3] }
+                         [ cap_normal, cap_d, [ sx, sy, sz ].map { |sum| sum / (6.0 * area) }, bridge_points ]
+                       }
     end
 
     # The given cavities with the openings their FRONT PANELS fill receded behind

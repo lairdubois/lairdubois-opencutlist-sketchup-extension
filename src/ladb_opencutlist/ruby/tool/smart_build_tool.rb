@@ -5534,9 +5534,10 @@ module Ladb::OpenCutList
 
     # +points+ - the contour of a panel in applique, in the opening's frame -
     # cut AGAINST THE PROTRUSIONS : every part it covers that stands proud of
-    # the mouth (by more than OVERLAY_PROTRUSION_MIN_HEIGHT) takes its whole
-    # footprint out of it, so that the panel, laid on the parts flush with
-    # the mouth, stops against those - the clearance then opening the gap
+    # the mouth (by more than OVERLAY_PROTRUSION_MIN_HEIGHT) takes the
+    # footprint of what of it stands proud out of it (see
+    # #_get_panel_proud_footprint_paths), so that the panel, laid on the
+    # parts flush with the mouth, stops against those - the clearance then opening the gap
     # (see #_apply_panel_clearance). Sides running past a case's recessed
     # back : the back is laid on the top, the bottom and the dividers, and
     # fitted between the sides. Unchanged in the plain applique pose, and
@@ -5549,7 +5550,7 @@ module Ladb::OpenCutList
       return points if points.nil? || points.length < 3
 
       clips = _get_covered_drawing_defs(opening_def, points, ti).select { |_drawing_def, z_max| z_max > OVERLAY_PROTRUSION_MIN_HEIGHT }.flat_map { |drawing_def, _z_max|
-        _get_panel_footprint_paths(drawing_def, opening_def, ti) || []
+        _get_panel_proud_footprint_paths(drawing_def, opening_def, ti) || []
       }
       return points if clips.empty?
 
@@ -6306,6 +6307,28 @@ module Ladb::OpenCutList
       @panel_footprint_paths_cache[key] = _compute_footprint_paths([ drawing_def ], ti)
     end
 
+    # The footprint of what of ONE panel of the container stands PROUD of the
+    # mouth - over OVERLAY_PROTRUSION_MIN_HEIGHT in front of the opening
+    # plane - the way #_get_panel_footprint_paths reads the whole of it. What
+    # a panel in applique AGAINST THE PROTRUSIONS stops against (see
+    # #_cut_protrusions).
+    #
+    # Not the whole footprint of a part that stands proud SOMEWHERE : a top
+    # notched round dividers running out to the front is flush with the
+    # recessed mouth of the compartment beside them, and proud only between
+    # them. Taken whole, it would be cut out of the very front panel meant to
+    # cover it there.
+    #
+    # Cached with the footprints.
+    def _get_panel_proud_footprint_paths(drawing_def, opening_def, ti)
+      return nil if _get_panel_footprint_paths(drawing_def, opening_def, ti).nil?  # Sets the cache up
+
+      key = [ drawing_def.object_id, _opening_plane_key(opening_def), :proud ]
+      return @panel_footprint_paths_cache[key] if @panel_footprint_paths_cache.has_key?(key)
+
+      @panel_footprint_paths_cache[key] = _compute_footprint_paths([ drawing_def ], ti, OVERLAY_PROTRUSION_MIN_HEIGHT)
+    end
+
     # What identifies the PLANE an opening lies on, as a hash key : its
     # normal, and how far from the world origin it stands along it. Both read
     # coarsely enough that two mouths of the same panel answer the same
@@ -6320,7 +6343,10 @@ module Ladb::OpenCutList
       ]
     end
 
-    def _compute_footprint_paths(drawing_defs, ti)
+    # +min_z+, when given, keeps only what of the parts stands beyond that
+    # height on the opening's normal - each triangle clipped to it before it
+    # is projected (see #_get_panel_proud_footprint_paths).
+    def _compute_footprint_paths(drawing_defs, ti, min_z = nil)
 
       paths = []
       drawing_defs.each do |drawing_def|
@@ -6338,11 +6364,20 @@ module Ladb::OpenCutList
           }
           index += 3
 
+          unless min_z.nil?
+            points = _clip_points_above(points, min_z)
+            next if points.length < 3
+          end
+
           # Twice the signed projected area, and its sign is the winding :
           # the union runs on NON ZERO, so every path is turned the same way
-          # before it goes in.
-          area = ((points[1].x - points[0].x) * (points[2].y - points[0].y) -
-                  (points[1].y - points[0].y) * (points[2].x - points[0].x)).to_f
+          # before it goes in. Read on the whole polygon : a clipped triangle
+          # may have four corners.
+          area = 0.0
+          points.each_with_index do |point, point_index|
+            next_point = points[(point_index + 1) % points.length]
+            area += (point.x * next_point.y - next_point.x * point.y).to_f
+          end
           next if area.abs < FOOTPRINT_MIN_TRIANGLE_AREA
           points.reverse! if area < 0
 
@@ -6355,6 +6390,23 @@ module Ladb::OpenCutList
 
       footprint_paths, _ = Fiddle::Clippy.execute_union(closed_subjects: paths)
       _cleanup_footprint_paths(footprint_paths)
+    end
+
+    # The convex polygon +points+ (Geom::Point3d, in the opening's frame) cut
+    # down to what of it stands at +min_z+ or beyond - Sutherland-Hodgman on
+    # that one plane. Fewer than three points when nothing of it does.
+    def _clip_points_above(points, min_z)
+      return points if points.all? { |point| point.z >= min_z }
+      clipped = []
+      points.each_with_index do |point, point_index|
+        next_point = points[(point_index + 1) % points.length]
+        inside = point.z >= min_z
+        clipped << point if inside
+        next if inside == (next_point.z >= min_z)
+        ratio = (min_z - point.z) / (next_point.z - point.z)
+        clipped << Geom::Point3d.new(point.x + (next_point.x - point.x) * ratio, point.y + (next_point.y - point.y) * ratio, min_z)
+      end
+      clipped
     end
 
     # Grows the silhouette by a hair and shrinks it straight back.
@@ -8556,12 +8608,13 @@ module Ladb::OpenCutList
 
     # The footprints of the parts +paths+ - contours of the opening's frame -
     # cover and that stand PROUD of the mouth (see #_cut_protrusions), one list
-    # of paths per part.
+    # of paths per part - of what of each part stands proud, see
+    # #_get_panel_proud_footprint_paths.
     def _get_protrusion_footprints(opening_def, paths, ti)
       drawing_defs = paths.flat_map { |path|
         _get_covered_drawing_defs(opening_def, Fiddle::Clippy.rpath_to_points(path), ti).select { |_drawing_def, z_max| z_max > OVERLAY_PROTRUSION_MIN_HEIGHT }.map(&:first)
       }.uniq(&:object_id)
-      drawing_defs.map { |drawing_def| _get_panel_footprint_paths(drawing_def, opening_def, ti) || [] }.reject(&:empty?)
+      drawing_defs.map { |drawing_def| _get_panel_proud_footprint_paths(drawing_def, opening_def, ti) || [] }.reject(&:empty?)
     end
 
     # The GROOVE along every edge of +base_paths+ - the panel's contour short of
