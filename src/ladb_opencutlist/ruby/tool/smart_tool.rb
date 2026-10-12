@@ -360,7 +360,7 @@ module Ladb::OpenCutList
                   btn.set_style_attribute(:border_color, nil, :disabled)
                   btn.border.set_all!(unit * 0.5)
                   btn.data = { :option_group => option_group, :option => option }
-                  btn.selected = fetch_action_option_boolean(action, option_group, option)
+                  btn.selected = get_action_option_btn_selected?(action, option_group, option)
                   btn.disabled = get_action_option_btn_disabled?(action, option_group, option)
                   btn.on(:click) { |button|
                     if get_action_option_toggle?(action, option_group, option)
@@ -1273,6 +1273,12 @@ module Ladb::OpenCutList
       false
     end
 
+    # What a toggle button shows : its stored value, unless the tool forces
+    # another one (see #get_action_option_btn_disabled?).
+    def get_action_option_btn_selected?(action, option_group, option)
+      fetch_action_option_boolean(action, option_group, option)
+    end
+
     def get_action_option_btn_prefix(action, option_group, option)
       nil
     end
@@ -1835,7 +1841,7 @@ module Ladb::OpenCutList
             option = b.data[:option]
             if b.is_a?(Kuix::Button)
               b.children.first.text = fetch_action_option_string(action, option_group, option) if !get_action_option_toggle?(action, option_group, option) && b.children.first.is_a?(Kuix::Label)
-              b.selected = fetch_action_option_boolean(action, option_group, option)
+              b.selected = get_action_option_btn_selected?(action, option_group, option)
               b.disabled = get_action_option_btn_disabled?(action, option_group, option)
             end
           end

@@ -384,10 +384,24 @@ module Ladb::OpenCutList
         case option
         when ACTION_OPTION_OPTIONS_MIRROR
           return !fetch_action_option_boolean(action, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_REUSE_DEFINITION)
+        when ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE
+          return is_action_option_reduce_envelope_forced?(action)
         end
       end
 
       super
+    end
+
+    def get_action_option_btn_selected?(action, option_group, option)
+      return true if option_group == ACTION_OPTION_OPTIONS && option == ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE && is_action_option_reduce_envelope_forced?(action)
+      super
+    end
+
+    # Against the protrusions, the envelope reduction is forced : it is what
+    # pulls a mouth back behind the parts standing proud of it - unreduced, the
+    # mouth lies on their front and there is nothing to stop against.
+    def is_action_option_reduce_envelope_forced?(action)
+      get_action_options_modal?(action) && fetch_action_option_boolean(action, ACTION_OPTION_OVERLAY, ACTION_OPTION_OVERLAY_AGAINST_PROTRUSIONS)
     end
 
     # -- Events --
@@ -4469,7 +4483,7 @@ module Ladb::OpenCutList
         return super +
                (_merge_allowed? ? ' | ' + PLUGIN.get_i18n_string("tool.smart_#{@tool.get_stripped_name}.action_#{@action}_state_#{state}_merge_status") + '.' : '') +
                ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_build.action_option_options_measure_reversed_status') + '.' +
-               ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_build.action_option_options_reduce_envelope_status') + '.'
+               (_fetch_option_overlay_against_protrusions? ? '' : ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_build.action_option_options_reduce_envelope_status') + '.')
       end
 
       super
@@ -4646,7 +4660,7 @@ module Ladb::OpenCutList
           @tool.store_action_option_value(@action, SmartBuildTool::ACTION_OPTION_OPTIONS, SmartBuildTool::ACTION_OPTION_OPTIONS_MEASURE_REVERSED, !_fetch_option_measure_reversed?, fire_event: true)
           return true
         end
-        if tool.is_key_alt_or_command?(key) && is_quick
+        if tool.is_key_alt_or_command?(key) && is_quick && !_fetch_option_overlay_against_protrusions?
           @tool.store_action_option_value(@action, SmartBuildTool::ACTION_OPTION_OPTIONS, SmartBuildTool::ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, !_fetch_option_reduce_envelope?, fire_event: true)
           return true
         end
@@ -5003,8 +5017,13 @@ module Ladb::OpenCutList
     # a slab between them the unreduced hull fills, every compartment opens
     # onto it, and they all come out as one cavity open on four planes - no
     # compartment at all (see #_cavities_max_opening_planes).
+    #
+    # FORCED against the protrusions (see
+    # SmartBuildTool#is_action_option_reduce_envelope_forced?) : unreduced, a
+    # mouth lies on the front of the very parts standing proud of it, and
+    # there is nothing left to stop against.
     def _cavities_reduce_envelope?
-      _fetch_option_reduce_envelope?
+      _fetch_option_reduce_envelope? || _fetch_option_overlay_against_protrusions?
     end
 
     # TWO at most : a front and a back, the mouth a panel closes and the one
