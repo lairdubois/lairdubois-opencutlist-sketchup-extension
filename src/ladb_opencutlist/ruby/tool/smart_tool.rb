@@ -1273,8 +1273,6 @@ module Ladb::OpenCutList
       false
     end
 
-    # What a toggle button shows : its stored value, unless the tool forces
-    # another one (see #get_action_option_btn_disabled?).
     def get_action_option_btn_selected?(action, option_group, option)
       fetch_action_option_boolean(action, option_group, option)
     end

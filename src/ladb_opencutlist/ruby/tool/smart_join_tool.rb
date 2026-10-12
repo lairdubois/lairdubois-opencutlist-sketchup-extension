@@ -5512,10 +5512,17 @@ module Ladb::OpenCutList
     HINGE_KIND_HALF_OVERLAY = :half_overlay
     HINGE_KIND_INSET = :inset
 
-    # How squarely a cavity's mouth has to face the door for the cavity to be
-    # one the door closes - about 8°. The same goes for the wall the probe ray
-    # lands on, against the edge it was cast past.
+    # How squarely the wall the probe ray lands on has to face the edge it
+    # was cast past - about 8°.
     HINGE_MOUTH_MIN_DOT = 0.99
+
+    # How squarely a cavity's mouth has to face the door for the cavity to be
+    # one the door closes - about 30°, as CommonSolidFindCavitiesWorker
+    # accepts a hull BRIDGE (REDUCTION_BRIDGE_OPENING_DOT) : the mouth of a
+    # compartment whose panels stop at different depths - sides set back,
+    # dividers flush - is capped by a plane slanting by that step over the
+    # compartment's width, 30 mm over 190 already past 8°.
+    HINGE_OPENING_MIN_DOT = 0.866
 
     # How deep, behind the door, a cavity's wall has to run along the side for
     # a hinge base to be screwed on it : the sliver a setback plinth leaves
@@ -6407,7 +6414,7 @@ module Ladb::OpenCutList
 
       ranges = []
       cavities_def.fragment_defs.each do |fragment_def|
-        next unless fragment_def.opening_defs.any? { |opening_def| opening_def.normal % mouth_normal > HINGE_MOUTH_MIN_DOT }
+        next unless fragment_def.opening_defs.any? { |opening_def| opening_def.normal % mouth_normal > HINGE_OPENING_MIN_DOT }
         points = fragment_def.wall_loops_on_plane(wall_normal, fm_b.position).flatten(1)
         next if points.empty?
         depths = points.map { |point| (point - start_point) % mouth_normal }
