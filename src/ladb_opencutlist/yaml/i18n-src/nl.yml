@@ -1,4 +1,4 @@
-# this label must be in your language
+# this label must be your language
 _label: Nederlands
 # the disabled message will be displayed when the language is not fully translated
 _disabled_msg: |
@@ -48,17 +48,19 @@ default:
   "yes": Ja
   "no": Nee
   automatic: Automaat
+  # this is name of a new file saved by SketchUp
   empty_filename: geen bestandnaam.skp
   help: Help
+  # mild expression of frustration or disappointment, polite and family-friendly
   error: Oeps!
   warning: Let op
   tip: Tip
   good: Goed
   bad: Fout
   by: door
-  # date format in use for language
+  # date format in use in your language
   date_format: d/m/Y G:i
-  # short date format in use for language
+  # short date format in use in your language
   date_format_short: d/m/Y
   decimal: Decimaal
   fractional: Fractioneel
@@ -313,6 +315,10 @@ core:
       error:
         no_segment: Geen bruikbare constructielijn in de selectie
         no_face: Er kon geen gesloten coplanaire lus worden gereconstrueerd
+  library:
+    libraries: Bibliotheken
+    user: Mijn bibliotheek
+    bundled: OCL-bibliotheek
 tab:
   cutlist:
     label: Onderdelen
@@ -660,6 +666,7 @@ tab:
       veneer_material_names_filter: Te filteren lijst van fineer materiaal
       names_filter: Te filteren benamingen
       tags_filter: Te filteren Badges
+      tags_filter_any: Alle badges
       dimensions_help: Afmetingen begrijpen
       summary: Overzicht
       material_type: Type

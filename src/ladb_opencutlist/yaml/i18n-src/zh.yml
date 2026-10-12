@@ -1,4 +1,4 @@
-# this label must be in your language
+# this label must be your language
 _label: 简体中文
 # the disabled message will be displayed when the language is not fully translated
 _disabled_msg: |
@@ -48,17 +48,19 @@ default:
   "yes": 是
   "no": 否
   automatic: 自动
+  # this is name of a new file saved by SketchUp
   empty_filename: 无标题.skp
   help: 帮助
+  # mild expression of frustration or disappointment, polite and family-friendly
   error: 糟糕!
   warning: 警告
   tip: 提示
   good: 好
   bad: 不好
   by: 通过
-  # date format in use for language
+  # date format in use in your language
   date_format: m/d/Y g:ia
-  # short date format in use for language
+  # short date format in use in your language
   date_format_short: m/d/Y
   decimal: 十进制
   fractional: 分数
@@ -112,6 +114,7 @@ core:
       unhide_part_instance: 显示实例
       edit_part_instance_properties: 编辑实例属性
       smart_draw: $t(core.toolbar.command.smart_draw)
+      smart_build: $t(core.toolbar.command.smart_build)
       smart_handle: $t(core.toolbar.command.smart_handle)
       smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)

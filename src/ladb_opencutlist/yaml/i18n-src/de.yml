@@ -1,4 +1,4 @@
-# this label must be in your language
+# this label must be your language
 _label: Deutsch
 # the disabled message will be displayed when the language is not fully translated
 _disabled_msg: |
@@ -50,17 +50,19 @@ default:
   "yes": Ja
   "no": Nein
   automatic: Automatisch
+  # this is name of a new file saved by SketchUp
   empty_filename: Unbenannt.skp
   help: Hilfe
+  # mild expression of frustration or disappointment, polite and family-friendly
   error: Verflixt!
   warning: Vorsicht
   tip: Tipp
   good: Gut
   bad: Schlecht
   by: von
-  # date format in use for language
+  # date format in use in your language
   date_format: Y-m-d G:i
-  # short date format in use for language
+  # short date format in use in your language
   date_format_short: Y-m-d
   decimal: Dezimal
   fractional: Fraktional
@@ -168,9 +170,9 @@ core:
     extern: "Externer Fehler: **{{ error }}**"
     feature_unavailable: Diese Funktion erfordert SketchUp {{ version }} oder höher
     failed_export_to: |
-      Beim Exportieren in die Datei, *{{ path }}*, ist ein Fehler aufgetreten.
+      Beim Exportieren nach *{{ path }}* ist ein Fehler aufgetreten.
       **{{ error }}**
-    unsupported_file_format: "Nicht unterstütztes Dateiformat : **{{ format }}**"
+    unsupported_file_format: "Nicht unterstütztes Dateiformat: **{{ format }}**"
   success:
     exported_to: Erfolgreicher Export nach {{ path }}.
     copied_to_clipboard: In die Zwischenablage kopiert
@@ -225,7 +227,7 @@ core:
     new_success: Voreinstellung **"{{ name }}"** erstellt
     override_success: Voreinstellung **"{{ name }}"** aktualisiert
     restore_success: Das Formular wurde mit der Voreinstellung **"{{ name }}"** ausgefüllt
-    rename_success: Voreinstallung **"{{ name }}"** in **"{{ new_name }}"** umbenannt
+    rename_success: Voreinstellung **"{{ name }}"** in **"{{ new_name }}"** umbenannt
     delete_success: Voreinstellung **"{{ name }}"** gelöscht
     tooltip:
       save_to: Voreinstellung '{{ name }}' aktualisieren
@@ -328,12 +330,14 @@ core:
     part_machining: Bearbeitung
   # @no-translate
   hardware_editor:
+    tab_parts: Geometrien
     tab_json: JSON
     setting_bounds: Zwischen {{ min }} und {{ max }}
     name: Name
     file: Datei
     length_unit: Einheit
     discard: Schließen, ohne zu speichern
+    part_name: Name
     hinge_pivot_y: Y
     hinge_pivot_z: Z
     part_kind_skp: SKP File
@@ -1451,7 +1455,7 @@ tab:
       option_formula: Feld
       option_size: Grösse
       option_custom_formula: Formel
-      option_anchor: Anker
+      option_anchor: Verankerung
       option_anchor_start: Anfang - Unten
       option_anchor_middle: Mitte - Unten
       option_anchor_end: Ende - Unten
@@ -1639,15 +1643,15 @@ tab:
       option_faces_1: Alle Flächen des Teils verwenden
       option_faces_help: |
         Auswahl ob die Suche nach der Form des Teils auf allen Flächen oder nur auf der Zielfläche durchgeführt werden soll.
-      option_anchor: Ankerpunkt
+      option_anchor: Verankerungspunkt
       option_anchor_0: Automatisch
       option_anchor_1: Ursprung des Teils projizieren
       option_anchor_help: |
         **Automatisch**
-        Die linke untere Ecke der umschließenden Box der exportierten Geometrie wird als Ankerpunkt verwendet.
+        Die untere linke Ecke der Bounding Box der exportierten Geometrie wird als Ankerpunkt verwendet.
 
-        **Projektion des Achsenursprungs**
-        Hiermit wird die Projektion des Achsenursprungs des Teils als Ankerpunkt aktiviert.
+        **Bauteilursprung projizieren**
+        Projiziert den Achsenursprung des Bauteils als Ankerpunkt.
       option_switch_yz: Vertikale Achse
       option_switch_yz_0: Z vertikal
       option_switch_yz_1: Y vertikal
@@ -2578,6 +2582,8 @@ tool:
     action_3_option_overlay_inset_status: "Eingenutete Rückwand: Eingesetzt in eine Nut, die in die den Korpus begrenzenden Teile eingefräst ist"
     action_option_overlay_full_overlay_status: "Eckanschlag: Frontteil verdeckt die Öffnung komplett, bedeckt die Außenkante des Korpus und die Innenkanten bis zur halben Dicke"
     action_3_option_overlay_full_overlay_status: "Aufgesetzte Rückwand: Auf der Korpusrückseite montiert, deckt die Aussenseiten bündig ab und reicht bei Mittelseiten bis zur halben Plattendicke, komplett ohne Fräsung"
+    action_option_overlay_against_protrusions_status: "Aufschlagende Front an Vorsprüngen: aufschlagend auf die Platten bündig mit der Öffnung montiert und an die überstehenden Teile angepasst"
+    action_3_option_overlay_against_protrusions_status: "Aufschlagende Rückwand an Vorsprüngen: aufschlagend auf die Platten bündig mit der Öffnung montiert und zwischen den überstehenden Teilen (überstehende Seitenwände) eingepasst, ohne jegliche Bearbeitung"
     action_option_measure_type_inside_status: Dicke innerhalb des Zielpunkts positionieren
     action_option_measure_type_centered_status: Dicke auf den Zielpunkt ausrichten
     action_option_measure_type_outside_status: Dicke außerhalb des Zielpunkts positionieren
@@ -2666,6 +2672,7 @@ tool:
     action_5_status: Tür öffnen oder schließen
     action_5_state_0_status: Klicken Sie auf eine Tür, um sie zu öffnen oder zu schließen, oder ziehen Sie sie, um den Öffnungsgrad einzustellen
     action_5_state_0_amend_status: Geben Sie einen Winkel ein, um die Öffnung anzupassen, oder klicken Sie auf eine Tür, um sie zu öffnen oder zu schließen
+    action_5_state_20_status: Wischen zum Einstellen der Türöffnung, Loslassen zum Bestätigen
     action_option_group_copy_measure_type: Maß
     action_option_group_move_measure_type: Maß
     action_option_group_axes: Achsen
