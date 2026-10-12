@@ -1,4 +1,4 @@
-# this label must be in your language
+# this label must be your language
 _label: Русский
 # the disabled message will be displayed when the language is not fully translated
 _disabled_msg: |
@@ -50,17 +50,19 @@ default:
   "yes": Да
   "no": Нет
   automatic: Автоматически
+  # this is name of a new file saved by SketchUp
   empty_filename: Безымянный.skp
   help: Помощь
+  # mild expression of frustration or disappointment, polite and family-friendly
   error: Исправить!
   warning: Внимание!
   tip: Совет
   good: Хороший
   bad: Плохой
   by: фон
-  # date format in use for language
+  # date format in use in your language
   date_format: d/m/Y G:i
-  # short date format in use for language
+  # short date format in use in your language
   date_format_short: d/m/Y
   decimal: Десятичный
   fractional: Дробный
@@ -315,6 +317,11 @@ core:
       error:
         no_segment: В выбранном элементе нет подходящих направляющих линий
         no_face: Не удалось собрать замкнутые контуры в одной плоскости
+  library:
+    libraries: Библиотеки
+    user: Моя библиотека
+    bundled: Библиотека OCL
+    family_modules: Модули
 tab:
   cutlist:
     label: Раскрой
@@ -2349,6 +2356,7 @@ tool:
     vcb_spacings: Интервалы
     vcb_angle: Угол
     locked_on_last_measure_status: Фиксация результатов последнего измерения
+    library_choose: Выберите библиотеку
     error:
       no_direction: Пожалуйста, укажите направление с помощью курсора мыши
       invalid_length: Длина {{ value }} недопустима
@@ -2467,6 +2475,8 @@ tool:
     action_option_thickness_thickness_status: Ввод толщины окантовки
     action_option_overlay_inset_status: "Вкладной фасад: устанавливается внутри проема, заподлицо с передней кромкой"
     action_option_overlay_full_overlay_status: "Накладной фасад: устанавливается поверх передней кромки, полностью перекрывая внешние стенки и до половины толщины внутренних перегородок корпуса"
+    action_option_overlay_against_protrusions_status: "Накладной фасад между выступающими боковинами: устанавливается на детали заподлицо с проемом и подгоняется между выступающими элементами"
+    action_3_option_overlay_against_protrusions_status: "Накладная задняя стенка между выступающими боковинами: устанавливается на детали заподлицо с проемом и подгоняется между выступающими элементами без обработки"
     action_option_measure_type_inside_status: Размер без учета толщины перегородки
     action_option_measure_type_centered_status: Отсчет измерения до центра перегородки
     action_option_measure_type_outside_status: Размер с учетом толщины перегородки

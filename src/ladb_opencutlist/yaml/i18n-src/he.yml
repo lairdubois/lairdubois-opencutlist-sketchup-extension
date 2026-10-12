@@ -1,4 +1,4 @@
-# this label must be in your language
+# this label must be your language
 _label: עברית (experimental, no rtl)
 # the disabled message will be displayed when the language is not fully translated
 _disabled_msg: |
@@ -48,17 +48,19 @@ default:
   "yes": כן
   "no": לא
   automatic: אוטומטי
+  # this is name of a new file saved by SketchUp
   empty_filename: ללא שם.skp
   help: עזרה
+  # mild expression of frustration or disappointment, polite and family-friendly
   error: לתקן!
   warning: שים לב
   tip: עצה
   good: טוב
   bad: גרוע
   by: ע"י
-  # date format in use for language
+  # date format in use in your language
   date_format: d/m/Y G:i
-  # short date format in use for language
+  # short date format in use in your language
   date_format_short: d/m/Y
   decimal: עשרוני
   fractional: חלקי
@@ -112,10 +114,12 @@ core:
       unhide_part_instance: חשוף פריט
       edit_part_instance_properties: ערוך מאפייני חלק
       smart_draw: $t(core.toolbar.command.smart_draw)
+      smart_build: $t(core.toolbar.command.smart_build)
       smart_handle: $t(core.toolbar.command.smart_handle)
       smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
+      smart_join: $t(core.toolbar.command.smart_join)
       smart_export: $t(core.toolbar.command.smart_export)
       reset_dialog_position: אפס את מיקום החלון
   toolbar:
@@ -246,6 +250,7 @@ core:
       tool_smart_reshape_options: $t(core.toolbar.command.smart_reshape)
       tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
       tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
+      tool_smart_join_options: $t(core.toolbar.command.smart_join)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
   progress:
     please_wait: חישוב של עולם של שלום
@@ -467,8 +472,11 @@ tab:
         *OpenCutList יספור 2 חתיכות בעובי 19 מ"מ במקום חתיכה אחת בעובי 38 מ"מ.*
       cut_options: $t(tab.materials.edit_material.cut_options)
       length_increase: $t(tab.materials.edit_material.length_increase)
+      length_increase_help: $t(tab.materials.edit_material.length_increase_help)
       width_increase: $t(tab.materials.edit_material.width_increase)
+      width_increase_help: $t(tab.materials.edit_material.width_increase_help)
       thickness_increase: $t(tab.materials.edit_material.thickness_increase)
+      thickness_increase_help: $t(tab.materials.edit_material.thickness_increase_help)
       description: תיאור
       description_help: |
         *התיאור* מאפשר לך לספק מידע מותאם אישית על כל הגדרת חלק.
@@ -730,6 +738,7 @@ tab:
       type_4: $t(tab.materials.type_4)
       type_5: $t(tab.materials.type_5)
       type_6: $t(tab.materials.type_6)
+      type_7: $t(tab.materials.type_7)
       type_-1: $t(default.cut_plural)
       tooltip:
         incompatible_unit: היחידה לא תואמת לאפשרויות תחשיב החומר
@@ -2035,6 +2044,7 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
+    filter_7: $t(tab.materials.type_7)
     action_0: צביעת חלקים
     action_0_status: לחץ על חלק כדי לצבוע את הפריטים שלו
     action_1: צבע חלק
@@ -2138,3 +2148,4 @@ tool:
       incompatible_active_path: הנתיב הפעיל אינו מאפשר לייצא את החלק הזה
   smart_importers_bxf2:
     title: ייבוא
+    action_0: $t(tab.importers.bxf2.title)

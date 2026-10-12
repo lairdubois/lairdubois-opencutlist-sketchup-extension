@@ -1,4 +1,4 @@
-# this label must be in your language
+# this label must be your language
 _label: Português
 # the disabled message will be displayed when the language is not fully translated
 _disabled_msg: |
@@ -48,17 +48,19 @@ default:
   "yes": Sim
   "no": Não
   automatic: Automático
+  # this is name of a new file saved by SketchUp
   empty_filename: Sem nome.skp
   help: Ajuda
+  # mild expression of frustration or disappointment, polite and family-friendly
   error: Droga!
   warning: Atenção
   tip: Dica
   good: Bom
   bad: Ruim
   by: por
-  # date format in use for language
+  # date format in use in your language
   date_format: d/m/A G:i
-  # short date format in use for language
+  # short date format in use in your language
   date_format_short: d/m/Y
   decimal: Decimal
   fractional: Fracionário

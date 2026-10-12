@@ -1,4 +1,4 @@
-# this label must be in your language
+# this label must be your language
 _label: Polski
 # the disabled message will be displayed when the language is not fully translated
 _disabled_msg: |
@@ -48,17 +48,19 @@ default:
   "yes": Tak
   "no": Nie
   automatic: Automatyczny
+  # this is name of a new file saved by SketchUp
   empty_filename: Bez tytułu.skp
   help: Pomoc
+  # mild expression of frustration or disappointment, polite and family-friendly
   error: Uwaga!
   warning: Uwaga
   tip: Wskazówka
   good: Dobry
   bad: Zły
   by: przez
-  # date format in use for language
+  # date format in use in your language
   date_format: d.m.Y G:i
-  # short date format in use for language
+  # short date format in use in your language
   date_format_short: d.m.Y
   decimal: Dziesiętny
   fractional: Ułamkowy
@@ -112,6 +114,7 @@ core:
       unhide_part_instance: Ujawnij instancję
       edit_part_instance_properties: Edytuj właściwości instancji
       smart_draw: $t(core.toolbar.command.smart_draw)
+      smart_build: $t(core.toolbar.command.smart_build)
       smart_handle: $t(core.toolbar.command.smart_handle)
       smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)

@@ -1,4 +1,4 @@
-# this label must be in your language
+# this label must be your language
 _label: English
 # the disabled message will be displayed when the language is not fully translated
 _disabled_msg: |
@@ -6,7 +6,7 @@ _disabled_msg: |
 
   To help complete the translation, please visit the [OpenCutList Documentation](https://docs.opencutlist.org/for-translators/general).
 # the reload message will be displayed when a user switches to this language
-_reload_msg: To reflect all changes, you must **close** and **reopen** the OpenCutList window.
+_reload_msg: To apply all the changes, you must **close** and **reopen** the OpenCutList window.
 _description: Cutlist and Cutting Diagram Generator for Woodworkers. Open Source, crowdfunded and easy to use ;)
 default:
   minimize: Minimize
@@ -15,7 +15,7 @@ default:
   stop: Stop
   validate: Apply
   confirm: Confirm
-  finish: Terminate
+  finish: Finish
   ok: OK
   open: Open
   see: See
@@ -42,7 +42,7 @@ default:
   upgrade: Update
   copy: Copy
   select_all: Select all
-  unselect_all: Unselect all
+  unselect_all: Deselect all
   draw: Draw
   estimate: Estimate
   rename: Rename
@@ -50,17 +50,19 @@ default:
   "yes": "Yes"
   "no": "No"
   automatic: Automatic
+  # this is name of a new file saved by SketchUp
   empty_filename: Untitled.skp
   help: Help
+  # mild expression of frustration or disappointment, polite and family-friendly
   error: Oops!
   warning: Caution
   tip: Tip
   good: Good
   bad: Bad
   by: by
-  # date format in use for language
+  # date format in use in your language
   date_format: m/d/Y g:ia
-  # short date format in use for language
+  # short date format in use in your language
   date_format_short: m/d/Y
   decimal: Decimal
   fractional: Fractional
@@ -2619,6 +2621,8 @@ tool:
     action_3_option_overlay_inset_status: "Groove-mounted: fitted into a groove machined into the parts bordering the opening"
     action_option_overlay_full_overlay_status: "Full overlay: installed in front of the front face, covering the sides up to the outer edge of the cabinet and extending to half the thickness of the interior separators"
     action_3_option_overlay_full_overlay_status: "Surface-mounted bottom panel: installed on the back of the cabinet, covering the panels up to the outer edge and extending halfway through the thickness of the interior panels, without any machining"
+    action_option_overlay_against_protrusions_status: "Surface-mounted back panel between protrusions: surface-mounted flush with the opening framework and fitted against protruding panels"
+    action_3_option_overlay_against_protrusions_status: "Surface-mounted back panel between protrusions: face-mounted flush with the opening framework and fitted between protruding panels (extended gables) without any machining"
     action_option_measure_type_inside_status: Position the thickness inside the target point
     action_option_measure_type_centered_status: Center the thickness on the target point
     action_option_measure_type_outside_status: Position the thickness inside the target point
@@ -2931,9 +2935,9 @@ tool:
     action_0_status: Click on a part
     action_1: Export 2D Part
     action_1_status: Click on the face of a part
-    action_2: Export Face
+    action_2: Export face
     action_2_status: Click on a face
-    action_3: Export Path
+    action_3: Export a path
     action_3_status: Click on an edge
     action_option_group_file_format: Format
     action_option_group_unit: Unit
