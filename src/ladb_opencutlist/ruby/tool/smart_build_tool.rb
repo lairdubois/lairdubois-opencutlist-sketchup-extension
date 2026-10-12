@@ -6116,12 +6116,25 @@ module Ladb::OpenCutList
 
       reach = _paths_reach(subject_paths)
 
-      sibling_pieces = _get_sibling_mouth_points(fragment_def, opening_def, ti).flat_map { |sibling_points| _convex_pieces(sibling_points) }
+      # AGAINST THE PROTRUSIONS, a sibling whose mouth lies BEHIND ours shares
+      # nothing with us : its own panel stops against what stands proud of its
+      # mouth (see #_cut_protrusions) - the very panel between the two mouths,
+      # which reaches at least as far forward as ours. Halved, that panel would
+      # be left half bare. So the cut runs along the sibling's mouth instead,
+      # and ours covers it whole. In the plain applique pose the sibling's panel
+      # is lifted over it (see #_get_overlay_lift) : both stand on the same
+      # front, and the bisector holds.
+      mouth_depth = _points_mean_z(mouth_points)
+      against = _fetch_option_overlay_against_protrusions?
+      sibling_pieces = _get_sibling_mouth_points(fragment_def, opening_def, ti).flat_map { |sibling_points|
+        recessed = against && mouth_depth - _points_mean_z(sibling_points) > OVERLAY_PROTRUSION_MIN_HEIGHT
+        _convex_pieces(sibling_points).map { |sibling_piece| [ sibling_piece, recessed ] }
+      }
 
       share_paths = _convex_pieces(mouth_points).map { |piece|
 
         clips = []
-        sibling_pieces.each do |sibling_piece|
+        sibling_pieces.each do |sibling_piece, recessed|
           near_point, far_point = _loops_closest_points(piece, sibling_piece)
           next if near_point.nil?
           dx = (far_point.x - near_point.x).to_f
@@ -6130,7 +6143,8 @@ module Ladb::OpenCutList
           # Mouths that touch share no panel : there is nothing between them to
           # halve, and no direction to cut along either.
           next if gap <= SolidMeshDef::TOLERANCE
-          clips << _half_plane_path((near_point.x + far_point.x).to_f / 2.0, (near_point.y + far_point.y).to_f / 2.0, dx / gap, dy / gap, reach)
+          ratio = recessed ? 1.0 : 0.5
+          clips << _half_plane_path(near_point.x.to_f + dx * ratio, near_point.y.to_f + dy * ratio, dx / gap, dy / gap, reach)
         end
 
         polytree = Fiddle::Clippy.execute_polytree(
@@ -6153,6 +6167,11 @@ module Ladb::OpenCutList
       return nil if best_path.nil?
 
       Fiddle::Clippy.rpath_to_points(best_path)
+    end
+
+    # The mean depth of +points+ along the opening's normal, in its frame.
+    def _points_mean_z(points)
+      points.inject(0.0) { |sum, point| sum + point.z.to_f } / points.length
     end
 
     # +points+ - a closed contour of the opening's frame - as a list of CONVEX

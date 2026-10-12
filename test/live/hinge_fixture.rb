@@ -41,6 +41,21 @@ module HingeFixture
   # Where the door is hovered : near its left edge, on its front face.
   PICK_POINT = [ 40, -19, 360 ]   # mm, caisson local
 
+  # A NOTCHED caisson, narrow : its left side, top and bottom set back 30 mm,
+  # its right side flush with the front, the door laid on the left side and
+  # stopping short of the right one. The mouth of the compartment is capped
+  # by a hull BRIDGE spanning the step - slanting 30 mm over 164, past the
+  # 8° a cavity's mouth was once allowed off the door's back.
+  NOTCHED_PARTS = {
+    'SIDE_L' => [ 0, 30, 0, 18, 560, 720 ],
+    'SIDE_R' => [ 182, 0, 0, 200, 560, 720 ],
+    'BOTTOM' => [ 18, 30, 0, 182, 560, 18 ],
+    'TOP' => [ 18, 30, 702, 182, 560, 720 ],
+    'BACK' => [ 18, 542, 18, 182, 560, 702 ],
+    'DOOR' => [ 2, 11, 2, 180, 30, 718 ],
+  }
+  NOTCHED_PICK_POINT = [ 40, 11, 360 ]   # mm, caisson local
+
   # FRAME DOORS : the door made of several parts - stiles, rails and a
   # recessed panel - held by a component bearing ROLE_FRONT_PANEL. Its box
   # [ x0, y0, z0, x1, y1, z1 ] in mm, the width of its stiles and the height
@@ -149,12 +164,15 @@ module HingeFixture
   # The caisson, as { 'caisson' => instance, 'DOOR' => instance, 'SIDE_L' => … }.
   # One at a time : the handlers probe the model, they would find the parts
   # of another one standing at the same place - see erase. shelf : with the
-  # SHELF. shelves : with the SHELVES. frame : the FRAME_DOORS key of the door, its parts given too, as
+  # SHELF. shelves : with the SHELVES. notched : the NOTCHED_PARTS, where
+  # to hover the door given under 'PICK'. frame : the FRAME_DOORS key of the door, its parts given too, as
   # { 'STILE_L' => instance, … } under 'parts'.
-  def self.build(model, shelf: false, shelves: false, frame: nil)
+  def self.build(model, shelf: false, shelves: false, notched: false, frame: nil)
     caisson = model.definitions.add('HINGE_FIXTURE')
     instances = {}
-    parts = shelf ? PARTS.merge('SHELF' => SHELF) : PARTS
+    instances['PICK'] = NOTCHED_PICK_POINT if notched
+    parts = notched ? NOTCHED_PARTS : PARTS
+    parts = parts.merge('SHELF' => SHELF) if shelf
     parts = parts.merge(SHELVES.each_with_index.map { |box, index| [ "SHELF_#{index + 1}", box ] }.to_h) if shelves
     parts = parts.reject { |name, _| name == 'DOOR' } unless frame.nil?
     parts.each do |name, box|
@@ -240,8 +258,8 @@ module HingeFixture
 
   # The picker hovering the door of the given fixture near its left edge -
   # or the given part of a frame door, at the given point (mm, caisson
-  # local).
-  def self.picker(fixture, part = nil, point = PICK_POINT)
+  # local), the fixture's own by default.
+  def self.picker(fixture, part = nil, point = fixture['PICK'] || PICK_POINT)
     door = fixture['DOOR']
     path = [ fixture['caisson'], door ]
     path << fixture['parts'][part] unless part.nil?

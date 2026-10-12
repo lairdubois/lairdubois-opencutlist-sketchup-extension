@@ -24,7 +24,11 @@
 #  - shelves     : "full" behind three evenly spaced shelves flush with the
 #                  front, blocking the centre of the door and every point
 #                  halfway towards its corners : the back of the door is
-#                  still found, read off the section of the cavities.
+#                  still found, read off the section of the cavities ;
+#  - notched     : "full" on a narrow caisson whose left side, top and
+#                  bottom are set back while its right side is flush : the
+#                  compartment's mouth, a slanted hull bridge, still counts
+#                  as facing the door - the joint line is not lost.
 # Every case lays then removes on a caisson of its own, in the same model :
 # the definitions of one are there for the next.
 #
@@ -55,12 +59,14 @@ module HingesRegression
     'clip_top' => '$OCL/hinges/blum/clip-top.json',
     'shelf' => HingeFixture.descriptor('shelf'),
     'shelves' => HingeFixture.descriptor('shelves'),
+    'notched' => HingeFixture.descriptor('notched'),
   }
 
   # The options of HingeFixture.build of each case, none by default.
   FIXTURE_OPTIONS = {
     'shelf' => { shelf: true },
     'shelves' => { shelves: true },
+    'notched' => { notched: true },
   }
 
   # What each case gives, once laid then once removed : the hinges on the
@@ -75,6 +81,7 @@ module HingesRegression
     'clip_top' => { 'laid' => { 'hinges' => 2, 'door' => true, 'door_entities' => 4, 'side_l' => 4, 'side_r' => 0 } },
     'shelf' => { 'laid' => { 'hinges' => 2, 'door' => true, 'door_entities' => 4, 'side_l' => 2, 'side_r' => 0 } },
     'shelves' => { 'laid' => { 'hinges' => 2, 'door' => true, 'door_entities' => 4, 'side_l' => 2, 'side_r' => 0 } },
+    'notched' => { 'laid' => { 'hinges' => 2, 'door' => true, 'door_entities' => 4, 'side_l' => 2, 'side_r' => 0 } },
   }
   REMOVED = { 'hinges' => 0, 'door' => false, 'door_entities' => 0, 'side_l' => 0, 'side_r' => 0 }
 
