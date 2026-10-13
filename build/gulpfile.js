@@ -308,6 +308,20 @@ gulp.task('i18n_compile', function () {
     // Clean previously generated i18n js files
     del.sync('../src/ladb_opencutlist/js/i18n/*', { force: true });
 
+    // Index each string key of the source language, so zz numbers are shared by all languages
+    const sourceYmlDocument = yaml.load(fs.readFileSync(yamlSrcPath + sourceLanguage + '.yml'));
+    const zzIndexes = {};
+    let zzIndex = 0;
+    (function indexKeys(doc, prefix) {
+        for (let key in doc) {
+            if (typeof doc[key] === 'string') {
+                zzIndexes[prefix + key] = ++zzIndex;
+            } else if (typeof doc[key] === 'object') {
+                indexKeys(doc[key], prefix + key + '.');
+            }
+        }
+    })(sourceYmlDocument, '');
+
     globSync(yamlSrcPath + '*.yml').sort().forEach(function (ymlFile) {    // .sort() because glob >= 9 no longer sorts results
         const contents = fs.readFileSync(ymlFile);
         const ymlDocument = yaml.load(contents);
@@ -356,22 +370,25 @@ gulp.task('i18n_compile', function () {
 
         if (!isProd) {
 
+            if (language in languageLabels) {
+                languageLabels['zz_' + language] = 'ZZ ' + languageLabels[language];
+            }
+
             const destZzYmlDocument = JSON.parse(JSON.stringify(destYmlDocument));
-            let index = 0;
-            const fillZZValues = function (doc) {
+            const fillZZValues = function (doc, prefix) {
                 for (var key in doc) {
                     if (typeof doc[key] === 'string') {
-                        index++;
                         if (!doc[key].match(/^\$t\([a-z0-9_.]+\)$/i)) {
-                            doc[key] = index + ' - ' + doc[key];
+                            const index = zzIndexes[prefix + key];
+                            doc[key] = (index === undefined ? '?' : index) + ' - ' + doc[key];
                         }
                     } else if (typeof doc[key] === 'object') {
-                        fillZZValues(doc[key]);
+                        fillZZValues(doc[key], prefix + key + '.');
                     }
                 }
             }
 
-            fillZZValues(destZzYmlDocument);
+            fillZZValues(destZzYmlDocument, '');
 
             fs.writeFileSync(yamlDestPath + 'zz_' + language + '.yml', yaml.dump(destZzYmlDocument, {
                 lineWidth: -1,
