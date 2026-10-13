@@ -287,7 +287,7 @@ namespace Packy {
 
             // Write the instance to a file for debug purpose with PackingSolver format
             if (!instance_path_.empty()) {
-                instance.write(instance_path_);  // Export the instance to a file with PackingSolver 'write' method
+                write_instance(instance, instance_path_);
             }
 
             return post_process(process(instance));
@@ -811,6 +811,13 @@ namespace Packy {
          * Write
          */
 
+        virtual void write_instance(
+            Instance& instance,
+            std::string& instance_path
+        ) {
+            instance.write(instance_path);  // Export the instance to a file with PackingSolver 'write' method
+        }
+
         virtual void write_solution(
             json& j,
             const Solution& solution,
@@ -1154,6 +1161,13 @@ namespace Packy {
             const rectangle::Solution& solution
         ) override {
             return rectangle::group_identical_bins(solution).solution_pool.best();
+        }
+
+        void write_instance(
+            rectangle::Instance& instance,
+            std::string& instance_path
+        ) override {
+            instance.write(instance_path, InstanceFormat::Json);
         }
 
         void populate_best_solution_bin(
@@ -1530,6 +1544,13 @@ namespace Packy {
             return grouped_solution;
         }
 
+        void write_instance(
+            rectangleguillotine::Instance& instance,
+            std::string& instance_path
+        ) override {
+            instance.write(instance_path, InstanceFormat::Json);
+        }
+
         void populate_best_solution_bin(
             basic_json<>& j_bin,
             const BinPos bin_pos,
@@ -1843,6 +1864,13 @@ namespace Packy {
             const onedimensional::Solution& solution
         ) override {
             return onedimensional::group_identical_bins(solution).solution_pool.best();
+        }
+
+        void write_instance(
+            onedimensional::Instance& instance,
+            std::string& instance_path
+        ) override {
+            instance.write(instance_path, InstanceFormat::Json);
         }
 
         void populate_best_solution_bin(
