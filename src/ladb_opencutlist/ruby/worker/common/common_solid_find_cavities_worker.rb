@@ -371,6 +371,28 @@ module Ladb::OpenCutList
   # reaches a round with no plane of its own is that plain flare after all,
   # and is dropped.
   #
+  # BRIDGE FOOT : a case stepped IN PLAN - an L, one side shorter than the
+  # other, its top and bottom notched to follow it - is capped across the
+  # notch by a hull BRIDGE, slanted by the step over the compartment's width
+  # (43° for a 285 mm step over a 300 mm wide compartment), well past the band
+  # a bridge is otherwise read in (REDUCTION_BRIDGE_OPENING_DOT). The chant of
+  # the short side is where that bridge rests : its plane passes through the
+  # bridge's foot, the whole bridge lying beyond it. That alone says where the
+  # compartment's mouth is - the hull spans nothing but the notch in front of
+  # it - and it is read as evidence of its own, none of the tests above being
+  # able to see it : the notch chants of the top and bottom touch the side's,
+  # on the same plane, and the merged footprint they make spans the whole
+  # case. Only every wall of the cavity must be left standing, as for the
+  # other evidence read across a plane. See #_reduction_bridge_foot?.
+  #
+  # OPPOSED RECESSES : a plane exposed by chants facing BOTH ways - a divider
+  # stopping where a side starts, the two of them ending at one and the same
+  # depth from opposite ends of the case - parts two compartments, not a
+  # compartment from the flare in front of it. The side the clip leaves is
+  # then confirmed rather than provisional, as long as one of the panels
+  # facing back lies wholly on it : it is walled there by a panel of its own,
+  # which no flare is. See #_reduction_opposed_plane?.
+  #
   # ENVELOPE REDUCTION ON APPEAL (hull mode, reduce_envelope OFF) : turning
   # the reduction off asks for the mouths as the hull caps them - a front
   # panel spanning the whole opening, a recessed shelf left behind it. It
@@ -615,6 +637,12 @@ module Ladb::OpenCutList
     # tilt : it must lie WHOLLY beyond the plane. 30° stays clear of a 45°
     # mitre, whose full-thickness edges leave a bridge too.
     REDUCTION_BRIDGE_OPENING_DOT = -0.866
+
+    # The same, for a hull bridge the plane is the FOOT of - see the class
+    # doc, BRIDGE FOOT, and #_reduction_bridge_foot? - within 60°. The bridge
+    # resting on the plane is what keeps a plane from cutting across it here,
+    # not the tilt, which only follows the step's proportions.
+    REDUCTION_BRIDGE_FOOT_OPENING_DOT = -0.5
 
     # Minimum share of a cavity's total cap area for one cap plane to be
     # treated as an OPENING a beveled edge may recede. A cavity leaking
@@ -1540,17 +1568,42 @@ module Ladb::OpenCutList
                 # a deeper clip or dropped
                 kept_deferred_fragment_defs.each { |kept_fragment_def| next_active << [ kept_fragment_def, true ] }
 
-                beyond_output = Meshy.operate(
-                  :operation => Meshy::OPERATION_SUBTRACTION,
-                  :validate => false,
-                  :tolerance => SolidMeshDef::TOLERANCE,
-                  :src_meshes => [ _reduction_fragment_mesh(fragment_def) ],
-                  :cut_meshes => [ _reduction_slab_mesh(normal, d, envelope_mesh) ]
-                )
-                return pass if _report_errors(beyond_output, result_def)
-                _restore_clipped_vertices(beyond_output['fragments'], normal, d)
+                # Walled on the plane by a panel of its own, the side left
+                # behind is a compartment too - see the class doc, OPPOSED
+                # RECESSES. It is then cut like a kept side, by the slab of the
+                # reversed plane : the side left by a subtraction keeps the
+                # hair of erosion the kept side gave up, a membrane spread over
+                # the whole cross section that a flare, dropped in the end,
+                # never had to answer for.
+                opposed = (@opposed_planes_per_fragment[index] || []).any? { |opposed_normal, opposed_d|
+                  normal[0] * opposed_normal[0] + normal[1] * opposed_normal[1] + normal[2] * opposed_normal[2] > 0.9999 && (d - opposed_d).abs < REDUCTION_MIN_DEPTH
+                }
+                if opposed
+                  beyond_normal = normal.map { |v| -v }
+                  beyond_d = -d
+                  beyond_output = Meshy.operate(
+                    :operation => Meshy::OPERATION_INTERSECTION,
+                    :validate => false,
+                    :tolerance => SolidMeshDef::TOLERANCE,
+                    :src_meshes => [ _reduction_fragment_mesh(fragment_def) ],
+                    :cut_meshes => [ _reduction_slab_mesh(beyond_normal, beyond_d, envelope_mesh) ]
+                  )
+                  return pass if _report_errors(beyond_output, result_def)
+                  _restore_clipped_vertices(beyond_output['fragments'], beyond_normal, beyond_d)
+                else
+                  beyond_output = Meshy.operate(
+                    :operation => Meshy::OPERATION_SUBTRACTION,
+                    :validate => false,
+                    :tolerance => SolidMeshDef::TOLERANCE,
+                    :src_meshes => [ _reduction_fragment_mesh(fragment_def) ],
+                    :cut_meshes => [ _reduction_slab_mesh(normal, d, envelope_mesh) ]
+                  )
+                  return pass if _report_errors(beyond_output, result_def)
+                  _restore_clipped_vertices(beyond_output['fragments'], normal, d)
+                end
                 beyond, beyond_deferred_fragment_defs = fn_collect.call(beyond_output, false)
-                (beyond + beyond_deferred_fragment_defs).each { |beyond_fragment_def| next_active << [ beyond_fragment_def, true ] }
+                beyond.each { |beyond_fragment_def| next_active << [ beyond_fragment_def, !opposed ] }
+                beyond_deferred_fragment_defs.each { |beyond_fragment_def| next_active << [ beyond_fragment_def, true ] }
               end
               active = next_active
               # A clip strictly shrinks its cavity and takes away the very
@@ -2037,6 +2090,7 @@ module Ladb::OpenCutList
       mesh_position_by_face_id = []
       panel_id_ranges.each_with_index { |(id_range, _panel_index), mesh_position| id_range.each { |face_id| mesh_position_by_face_id[face_id] = mesh_position } }
       @lone_main_planes_per_fragment = []
+      @opposed_planes_per_fragment = []
       fragment_defs.each_with_index.map do |fragment_def, fragment_index|
         lone_recess = lone_recesses[fragment_index]
         planes = {}
@@ -2180,7 +2234,8 @@ module Ladb::OpenCutList
           # nothing beyond it justifies a cut) — see
           # #_reduction_recedes_opening?. Asked first : it only reads the few
           # opening caps, where the test below reads every vertex.
-          next unless _reduction_recedes_opening?(normal, d, opening_caps)
+          bridge_foot = _reduction_bridge_foot?(normal, d, opening_caps)
+          next unless bridge_foot || _reduction_recedes_opening?(normal, d, opening_caps)
           # The cavity must extend on both sides of the extended plane —
           # beyond the chant (removed side, negative distances) and behind
           # it (kept side, where the panel and the compartments lie)
@@ -2213,7 +2268,11 @@ module Ladb::OpenCutList
             merged_mesh = { :vertices => mesh_positions.flat_map { |mesh_position| panel_meshes[mesh_position][:vertices] } }
             _reduction_side_plane?(normal, merged_mesh)
           }
-          accepted = mesh_positions_by_component.any? { |mesh_positions|
+          # BRIDGE FOOT : the plane a hull bridge rests on - see the class doc.
+          # Every wall of the cavity left standing, as for the plural
+          # evidence below
+          accepted = bridge_foot && bounding_mesh_positions.keys.none? { |mesh_position| _reduction_panel_side(normal, d, panel_meshes[mesh_position]) == :removed }
+          accepted ||= mesh_positions_by_component.any? { |mesh_positions|
             # A genuine recessed panel (e.g. a shallow shelf) is exposed to
             # the cavity on BOTH its main faces — front and back, the two
             # compartments it separates ; a contour panel (side, top,
@@ -2353,6 +2412,7 @@ module Ladb::OpenCutList
           end
           next unless accepted
           planes[key] = [ normal, d ]
+          (@opposed_planes_per_fragment[fragment_index] ||= []) << [ normal, d ] if _reduction_opposed_plane?(normal, d, candidates, triangle_mesh_position, panel_meshes)
         end
 
         # Beveled edges : each opening recedes to the foot of the bevels
@@ -3040,6 +3100,45 @@ module Ladb::OpenCutList
         next false unless normal[0] * cap_centroid[0] + normal[1] * cap_centroid[1] + normal[2] * cap_centroid[2] - d < -REDUCTION_MIN_DEPTH
         next true if dot <= REDUCTION_OPENING_DOT
         bridge_points.all? { |x, y, z| normal[0] * x + normal[1] * y + normal[2] * z - d <= REDUCTION_MIN_DEPTH }
+      }
+    end
+
+    # Whether the given candidate plane (n.p = d, the normal pointing toward
+    # the kept side) is the FOOT of one of the cavity's hull bridges - see the
+    # class doc, BRIDGE FOOT : antiparallel to it within
+    # REDUCTION_BRIDGE_FOOT_OPENING_DOT, the whole bridge beyond the plane (on
+    # it at most), resting on it by at least one point and reaching past it
+    # by another. A bridge no point of which lies on the plane spans
+    # something else than the step this plane stands for.
+    #
+    # +opening_caps+ : the cavity's major caps, see #_reduction_opening_caps.
+    def _reduction_bridge_foot?(normal, d, opening_caps)
+      opening_caps.any? { |cap_normal, _cap_d, _cap_centroid, bridge_points|
+        next false if bridge_points.nil?
+        next false unless normal[0] * cap_normal[0] + normal[1] * cap_normal[1] + normal[2] * cap_normal[2] <= REDUCTION_BRIDGE_FOOT_OPENING_DOT
+        distances = bridge_points.map { |x, y, z| normal[0] * x + normal[1] * y + normal[2] * z - d }
+        distances.all? { |distance| distance <= REDUCTION_MIN_DEPTH } &&
+          distances.any? { |distance| distance.abs <= REDUCTION_MIN_DEPTH } &&
+          distances.any? { |distance| distance < -REDUCTION_MIN_DEPTH }
+      }
+    end
+
+    # Whether the given accepted plane (n.p = d, the normal pointing toward
+    # the kept side) is exposed by chants facing the OTHER way as well, one
+    # of whose panels lies wholly on the removed side - see the class doc,
+    # OPPOSED RECESSES.
+    #
+    # +candidates+ : the cavity's chant planes, as #_detect_reduction_planes
+    # gathers them ([ normal, d, area, triangle indices ] by plane key), and
+    # +triangle_mesh_position+ the panel of each of their triangles.
+    def _reduction_opposed_plane?(normal, d, candidates, triangle_mesh_position, panel_meshes)
+      candidates.each_value.any? { |other_normal, other_d, area, triangle_indices|
+        next false if area < REDUCTION_MIN_AREA
+        next false unless normal[0] * other_normal[0] + normal[1] * other_normal[1] + normal[2] * other_normal[2] < -0.9999
+        next false unless (d + other_d).abs < REDUCTION_MIN_DEPTH
+        triangle_indices.map { |triangle_index| triangle_mesh_position[triangle_index] }.uniq.any? { |mesh_position|
+          _reduction_panel_side(normal, d, panel_meshes[mesh_position]) == :removed
+        }
       }
     end
 

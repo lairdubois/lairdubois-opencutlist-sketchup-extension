@@ -6124,11 +6124,17 @@ module Ladb::OpenCutList
       # and ours covers it whole. In the plain applique pose the sibling's panel
       # is lifted over it (see #_get_overlay_lift) : both stand on the same
       # front, and the bisector holds.
+      #
+      # A sibling DEEPER than ours is read on the part of its mouth seen from
+      # ours only, see #_get_visible_sibling_points.
       mouth_depth = _points_mean_z(mouth_points)
       against = _fetch_option_overlay_against_protrusions?
       sibling_pieces = _get_sibling_mouth_points(fragment_def, opening_def, ti).flat_map { |sibling_points|
-        recessed = against && mouth_depth - _points_mean_z(sibling_points) > OVERLAY_PROTRUSION_MIN_HEIGHT
-        _convex_pieces(sibling_points).map { |sibling_piece| [ sibling_piece, recessed ] }
+        sibling_depth = _points_mean_z(sibling_points)
+        deeper = mouth_depth - sibling_depth > OVERLAY_PROTRUSION_MIN_HEIGHT
+        recessed = against && deeper
+        visible_points = deeper ? _get_visible_sibling_points(sibling_points, sibling_depth, mouth_paths, opening_def, ti) : [ sibling_points ]
+        visible_points.flat_map { |points| _convex_pieces(points).map { |sibling_piece| [ sibling_piece, recessed ] } }
       }
 
       share_paths = _convex_pieces(mouth_points).map { |piece|
@@ -6167,6 +6173,44 @@ module Ladb::OpenCutList
       return nil if best_path.nil?
 
       Fiddle::Clippy.rpath_to_points(best_path)
+    end
+
+    # The part of a DEEPER sibling mouth (+sibling_points+, at
+    # +sibling_depth+) seen from our mouth (+mouth_paths+) : what neither our
+    # mouth nor a panel standing in front of it hides, as a list of contours of
+    # the opening's frame - none when it is hidden altogether.
+    #
+    # Projected on the plane, a mouth set back behind ours may well run
+    # straight behind it : the rear compartment of a case stepped in plan,
+    # cut off from the front one by the divider's back chant and spanning the
+    # whole width behind it. The two mouths then overlap, read as touching,
+    # and touching mouths share no panel (see #_get_overlay_points) - nothing
+    # cuts our share, and it spreads over the whole silhouette. What of that
+    # mouth lies behind ours, or behind a panel in front of it (the divider's
+    # front chant), is no neighbour of our front : only the rest of it is,
+    # and that rest stands apart from our mouth by the very panel the two
+    # fronts share out. Slivers narrower than a panel are dropped, as the
+    # hidden edge rarely falls on the tolerance.
+    def _get_visible_sibling_points(sibling_points, sibling_depth, mouth_paths, opening_def, ti)
+      sibling_paths, _ = Fiddle::Clippy.execute_union(closed_subjects: [ Fiddle::Clippy.points_to_rpath(sibling_points) ])
+      return [] if sibling_paths.empty?
+
+      hiding_paths = mouth_paths + (_get_footprint_paths_above(opening_def, ti, sibling_depth + OVERLAY_PROTRUSION_MIN_HEIGHT) || [])
+      visible_paths, _ = Fiddle::Clippy.execute_difference(closed_subjects: sibling_paths, clips: hiding_paths)
+
+      _clean_pieces(visible_paths).map { |path| Fiddle::Clippy.rpath_to_points(path) }
+    end
+
+    # The footprint of what of the container's panels stands beyond +min_z+
+    # on the opening's normal - what hides a mouth that deep. Cached with the
+    # footprints, by plane and depth.
+    def _get_footprint_paths_above(opening_def, ti, min_z)
+      return nil if _get_footprint_paths(opening_def, ti).nil?  # Sets the cache up
+
+      key = [ _opening_plane_key(opening_def), :above, (min_z.to_f / SolidMeshDef::TOLERANCE).round ]
+      return @footprint_paths_cache[key] if @footprint_paths_cache.has_key?(key)
+
+      @footprint_paths_cache[key] = _compute_footprint_paths(_get_cavities_def.drawing_defs, ti, min_z)
     end
 
     # The mean depth of +points+ along the opening's normal, in its frame.

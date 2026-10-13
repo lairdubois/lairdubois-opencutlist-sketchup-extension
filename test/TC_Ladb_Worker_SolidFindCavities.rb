@@ -483,6 +483,64 @@ class TC_Ladb_Worker_SolidFindCavities < TestUp::TestCase
 
   end
 
+  # -- Reduction bridge foot --
+
+  # A case stepped in plan (T43) : the right side stops 284.9 short of the
+  # front, the top and bottom notched to follow it, the divider running out to
+  # the front. The hull bridges the notch from the divider's front edge to the
+  # side's front edge, slanted by about 43° - past every band an opening has
+  # to fit in. The side's chant is the foot of that bridge : the opening
+  # recedes to it, but not to a plane cutting across the bridge, nor to one
+  # the bridge stands wholly in front of without resting on it.
+  def test_reduction_bridge_foot_lets_a_notch_bridge_recede_to_its_foot
+
+    recess_normal = [ 0.0, 1.0, 0.0 ]
+    caps = _opening_caps(
+      _quad([ 300.0, 0.0, 19.0 ], [ 600.0, 284.9, 19.0 ], [ 600.0, 284.9, 781.0 ], [ 300.0, 0.0, 781.0 ]) +     # front, bridging the notch
+      _quad([ 300.0, 820.8, 19.0 ], [ 300.0, 820.8, 781.0 ], [ 600.0, 820.8, 781.0 ], [ 600.0, 820.8, 19.0 ])  # back
+    )
+
+    assert_equal(false, @worker.send(:_reduction_recedes_opening?, recess_normal, 284.9.mm.to_f, caps))
+    assert_equal(true, @worker.send(:_reduction_bridge_foot?, recess_normal, 284.9.mm.to_f, caps))
+    # Across the bridge, half way down the step
+    assert_equal(false, @worker.send(:_reduction_bridge_foot?, recess_normal, 150.mm.to_f, caps))
+    # Behind the bridge, which rests on nothing there
+    assert_equal(false, @worker.send(:_reduction_bridge_foot?, recess_normal, 400.mm.to_f, caps))
+
+    # A face lying in that cap makes it a slanted opening, no bridge
+    slanted_normal = caps.first[0]
+    lectern_caps = _opening_caps(_quad([ 300.0, 0.0, 19.0 ], [ 600.0, 284.9, 19.0 ], [ 600.0, 284.9, 781.0 ], [ 300.0, 0.0, 781.0 ]), { 1 => [ slanted_normal, caps.first[1] ] })
+    assert_nil(lectern_caps.first[3])
+    assert_equal(false, @worker.send(:_reduction_bridge_foot?, recess_normal, 284.9.mm.to_f, lectern_caps))
+
+  end
+
+  # -- Reduction opposed plane --
+
+  # A case stepped in plan (T42) : the divider stops 284.9 from the front,
+  # exactly where the right side starts. The divider's back chant recedes the
+  # back opening to that plane (kept side toward the front), and the side's
+  # front chant faces it back on the very same plane, its board wholly on the
+  # removed side : the side left behind is walled there by a panel of its own.
+  def test_reduction_opposed_plane_reads_a_chant_facing_back
+    normal = [ 0.0, -1.0, 0.0 ]
+    d = -284.9.mm.to_f
+    side = { :vertices => _box_vertices(*[ 581.0, 284.9, 19.0, 600.0, 820.8, 781.0 ].map { |v| v.mm.to_f }) }
+    top = { :vertices => _box_vertices(*[ 0.0, 0.0, 781.0, 600.0, 820.8, 800.0 ].map { |v| v.mm.to_f }) }
+    panel_meshes = [ side, top ]
+
+    opposed = { :a => [ [ 0.0, 1.0, 0.0 ], 284.9.mm.to_f, 1.0, [ 7 ] ] }
+    assert_equal(true, @worker.send(:_reduction_opposed_plane?, normal, d, opposed, { 7 => 0 }, panel_meshes))
+    # Facing back from a board crossing the plane only (a notched top) : no wall of its own
+    assert_equal(false, @worker.send(:_reduction_opposed_plane?, normal, d, opposed, { 7 => 1 }, panel_meshes))
+    # A chant facing the same way is no opposed recess
+    same = { :a => [ [ 0.0, -1.0, 0.0 ], -284.9.mm.to_f, 1.0, [ 7 ] ] }
+    assert_equal(false, @worker.send(:_reduction_opposed_plane?, normal, d, same, { 7 => 0 }, panel_meshes))
+    # Nor one facing back on another plane
+    elsewhere = { :a => [ [ 0.0, 1.0, 0.0 ], 300.mm.to_f, 1.0, [ 7 ] ] }
+    assert_equal(false, @worker.send(:_reduction_opposed_plane?, normal, d, elsewhere, { 7 => 0 }, panel_meshes))
+  end
+
   # -----
 
   # #_reduction_opening_caps of the cap triangles given as flat coordinates (in
