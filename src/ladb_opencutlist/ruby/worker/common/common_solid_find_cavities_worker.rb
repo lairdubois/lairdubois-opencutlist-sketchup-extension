@@ -184,11 +184,22 @@ module Ladb::OpenCutList
   # so the door of one compartment says nothing about the compartment beside
   # it, and a door says nothing about the open top its cavity may also have.
   #
-  # An opening recedes ONCE, to the DEEPEST of the front panels filling it. The
-  # clip is unbounded in its own plane (see #_reduction_slab_mesh), and that
-  # is precisely what is wanted here : a pair of doors meeting on a joint is
+  # An opening recedes ONCE, to the DEEPEST of the front panels filling it,
+  # over the WHOLE of that opening : a pair of doors meeting on a joint is
   # ONE closed front, and the cavity must reach neither into the joint between
   # them nor behind the shallower of two front panels of unequal thickness.
+  # Over that opening and NOTHING else, though : the recess comes before the
+  # envelope reduction, and until then the compartments of a case may well
+  # be ONE cavity — joined behind a back set in its grooves, around a
+  # divider standing short of the hull. The door of one compartment must not
+  # cut into the one beside it (see #_front_panel_recess_mesh).
+  #
+  # And it recedes to the plane of the front panel, not to one parallel to
+  # the opening : the opening is read on the HULL, which slants wherever the
+  # case's front is stepped — a top and a bottom set back over the outer
+  # compartments only, reaching the front between the dividers — while the
+  # door is laid square to the case all the same. Its back face is the
+  # compartment's front, whatever the hull says (02.skp, T44).
   #
   # MACHININGS : a panel drilled by glued cuts-opening components (a domino
   # mortise, a dowel hole) has its host face tessellation PUNCHED by SketchUp,
@@ -3195,21 +3206,21 @@ module Ladb::OpenCutList
             next
           end
 
-          # One operation for the lot : Meshy chains the cuts of an
-          # INTERSECTION together, so a cavity open on two sides, each closed
-          # by a front panel of its own, is clipped by both at once. They belong to
-          # different openings, so — unlike the reduction planes, which may
-          # well be about the same part of one cavity — neither can impose its
-          # depth on what the other recedes.
+          # One operation for the lot : a SUBTRACTION removes the union of its
+          # cuts, so a cavity open on two sides, each closed by a front panel
+          # of its own, is recessed by both at once. They belong to different
+          # openings, so — unlike the reduction planes, which may well be
+          # about the same part of one cavity — neither can impose its depth
+          # on what the other recedes.
           output = Meshy.operate(
-            :operation => Meshy::OPERATION_INTERSECTION,
+            :operation => Meshy::OPERATION_SUBTRACTION,
             :validate => false,
             :tolerance => SolidMeshDef::TOLERANCE,
             :src_meshes => [ _reduction_fragment_mesh(fragment_def) ],
-            :cut_meshes => planes.map { |normal, d| _reduction_slab_mesh(normal, d, envelope_mesh) }
+            :cut_meshes => planes.map { |normal, d, opening_def, front_panel_indices| _front_panel_recess_mesh(normal, d, opening_def, front_panel_indices, envelope_mesh) }
           )
           return nil if _report_errors(output, result_def)
-          planes.each { |normal, d| _restore_clipped_vertices(output['fragments'], normal, d) }
+          planes.each { |normal, d, _opening_def, _front_panel_indices| _restore_clipped_vertices(output['fragments'], normal, d) }
 
           recessed, recessed_deferred = fn_collect.call(output, false)
           recessed_fragment_defs.concat(recessed)
@@ -3222,12 +3233,14 @@ module Ladb::OpenCutList
     end
 
     # The planes the front panels filling the openings of the given cavity recede
-    # them to, as [ [ normal, d ], ... ] — the same contract as one entry of
-    # #_detect_reduction_planes (the normal pointing toward the KEPT side), so
-    # that they feed the very same clipping. Empty when no front panel intrudes,
-    # which is the ordinary answer : a front panel laid ON the front stands beyond
-    # the cap — the hull closes the mouth flush with the panel edges — and
-    # meets no cavity at all.
+    # them to, as [ [ normal, d, opening_def, front_panel_indices ], ... ] —
+    # the plane in the contract of one entry of #_detect_reduction_planes (the
+    # normal pointing toward the KEPT side), then the opening it recedes and
+    # the front panels filling it, which together bound the recess (see
+    # #_front_panel_recess_mesh). Empty when no front panel
+    # intrudes, which is the ordinary answer : a front panel laid ON the front
+    # stands beyond the cap — the hull closes the mouth flush with the panel
+    # edges — and meets no cavity at all.
     #
     # A front panel has a say on ONE opening : the one it stands SQUARE to (its own
     # dominant normal against the opening's, sign aside — see
@@ -3236,9 +3249,14 @@ module Ladb::OpenCutList
     # intrudes is then read off what of it is actually INSIDE the cavity, the
     # intersection answering "is it inset ?" and "by how much ?" at once.
     #
+    # Read along the front panel's OWN normal, not the opening's : square to
+    # it means within REDUCTION_OPENING_DOT, and a hull cap slanted over a
+    # stepped front stays within it - see the class doc, INSET FRONT PANELS.
+    #
     # One opening yields ONE plane, at the DEEPEST of the front panels filling it,
     # so that neither the joint between two doors nor the extra depth behind
-    # the shallower of two lets the cavity through.
+    # the shallower of two lets the cavity through. The first of them sets
+    # the normal the others are read along.
     def _front_panel_recess_planes(fragment_def)
 
       # Cheap reject first : a front panel whose bounds do not overlap the cavity's
@@ -3253,7 +3271,7 @@ module Ladb::OpenCutList
       return [] if opening_defs.empty?
 
       fragment_mesh = nil
-      depth_by_opening = {}
+      recess_by_opening = {}  # opening index => [ outward normal, depth, front panel indices ]
 
       front_panel_indices.each do |front_panel_index|
 
@@ -3279,7 +3297,15 @@ module Ladb::OpenCutList
         next if opening_index.nil?
 
         opening_def = opening_defs[opening_index]
-        normal = [ opening_def.normal.x.to_f, opening_def.normal.y.to_f, opening_def.normal.z.to_f ]
+        normal = recess_by_opening.key?(opening_index) ? recess_by_opening[opening_index].first : nil
+        if normal.nil?
+          normal = [ opening_def.normal.x.to_f, opening_def.normal.y.to_f, opening_def.normal.z.to_f ]
+          unless front_panel_normal.nil?
+            # The front panel's, turned OUT of the cavity like the opening's
+            sign = normal[0] * front_panel_normal[0] + normal[1] * front_panel_normal[1] + normal[2] * front_panel_normal[2] < 0 ? -1.0 : 1.0
+            normal = front_panel_normal.map { |v| v * sign }
+          end
+        end
 
         fragment_mesh ||= _reduction_fragment_mesh(fragment_def)
         output = Meshy.operate(
@@ -3303,21 +3329,69 @@ module Ladb::OpenCutList
         end
         next if depth.nil?
         # Deep enough to be a pose, not the wafer a boolean leaves where a
-        # front panel laid on the mouth touches it
-        next if _plane_offset(normal, opening_def.origin) - depth <= REDUCTION_MIN_DEPTH
+        # front panel laid on the mouth touches it - measured from the
+        # outermost point of the opening, which a slanted one does not hold
+        # at its origin
+        mouth = opening_def.loops.flatten(1).map { |point| _plane_offset(normal, point) }.max
+        next if mouth.nil? || mouth - depth <= REDUCTION_MIN_DEPTH
 
-        current_depth = depth_by_opening[opening_index]
-        depth_by_opening[opening_index] = depth if current_depth.nil? || depth < current_depth
+        current = recess_by_opening[opening_index]
+        if current.nil?
+          recess_by_opening[opening_index] = [ normal, depth, [ front_panel_index ] ]
+        else
+          current[1] = depth if depth < current[1]
+          current[2] << front_panel_index
+        end
 
       end
 
-      depth_by_opening.map { |opening_index, depth|
-        normal = opening_defs[opening_index].normal
+      recess_by_opening.map { |opening_index, (normal, depth, indices)|
         # The clip keeps the side its normal points to, and what is kept is
         # what stands BEHIND the front panel : the plane faces the cavity, i.e. the
         # other way round from the opening it recedes.
-        [ [ -normal.x.to_f, -normal.y.to_f, -normal.z.to_f ], -depth ]
+        [ normal.map { |v| -v }, -depth, opening_defs[opening_index], indices ]
       }
+    end
+
+    # The volume a front panel recess removes from a cavity : what lies on
+    # the REMOVED side of the given plane (unit normal toward the kept side,
+    # n.p = d) over the given opening only, as a box serialized like the
+    # envelope meshes (face id 0, so the faces it leaves are caps - an
+    # opening still).
+    #
+    # The box spans, in the plane, the opening's contours AND the given front
+    # panels, a hair wider, and runs from the plane out past the envelope : a
+    # pair of doors on one opening is recessed as one, the joint between them
+    # included, and the opening BESIDE it - the compartment next door, still
+    # part of the same cavity at this stage - is left alone. The panels count
+    # for what they hold BEYOND the opening's contours : a back slid in its
+    # grooves runs past them into the sides, and the grooves in front of its
+    # face - with the unbounded clip, cut away like the rest - would otherwise
+    # survive as a ring of a cavity of their own (T41). See the class doc,
+    # INSET FRONT PANELS.
+    def _front_panel_recess_mesh(normal, d, opening_def, front_panel_indices, envelope_mesh)
+
+      u, v = _reduction_plane_basis(normal)
+
+      points = opening_def.loops.flatten(1)
+      u0, u1 = points.map { |point| _plane_offset(u, point) }.minmax
+      v0, v1 = points.map { |point| _plane_offset(v, point) }.minmax
+      front_panel_indices.each do |front_panel_index|
+        vertices = @front_panel_meshes[front_panel_index][:vertices]
+        min, max = _projection_range(vertices, u)
+        u0 = min if !min.nil? && min < u0 ; u1 = max if !max.nil? && max > u1
+        min, max = _projection_range(vertices, v)
+        v0 = min if !min.nil? && min < v0 ; v1 = max if !max.nil? && max > v1
+      end
+      u0 -= REDUCTION_MIN_DEPTH ; u1 += REDUCTION_MIN_DEPTH
+      v0 -= REDUCTION_MIN_DEPTH ; v1 += REDUCTION_MIN_DEPTH
+
+      n0, _ = _mesh_extent(envelope_mesh, normal)
+      n0 -= ENVELOPE_MARGIN
+
+      # Cut a hair inside the kept side, as the reduction does - see
+      # REDUCTION_CLIP_EROSION
+      _basis_box_mesh(u, v, normal, u0, u1, v0, v1, n0, d + REDUCTION_CLIP_EROSION)
     end
 
     # Offset of the plane the given unit normal and point define : n.p on it.
@@ -3378,8 +3452,15 @@ module Ladb::OpenCutList
       v0 -= ENVELOPE_MARGIN ; v1 += ENVELOPE_MARGIN
       n1 += ENVELOPE_MARGIN
 
+      _basis_box_mesh(u, v, normal, u0, u1, v0, v1, d, n1)
+    end
+
+    # Box [ u0, u1 ] x [ v0, v1 ] x [ n0, n1 ] in the given orthonormal basis
+    # (u x v = n, see #_reduction_plane_basis), serialized like the envelope
+    # meshes (face id 0), its faces wound outward.
+    def _basis_box_mesh(u, v, normal, u0, u1, v0, v1, n0, n1)
       vertices = []
-      [ [ u0, v0, d ], [ u1, v0, d ], [ u1, v1, d ], [ u0, v1, d ],
+      [ [ u0, v0, n0 ], [ u1, v0, n0 ], [ u1, v1, n0 ], [ u0, v1, n0 ],
         [ u0, v0, n1 ], [ u1, v0, n1 ], [ u1, v1, n1 ], [ u0, v1, n1 ] ].each do |pu, pv, pn|
         vertices << u[0] * pu + v[0] * pv + normal[0] * pn
         vertices << u[1] * pu + v[1] * pv + normal[1] * pn
