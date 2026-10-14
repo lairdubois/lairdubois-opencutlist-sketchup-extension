@@ -3384,7 +3384,9 @@ module Ladb::OpenCutList
           return true
         else
 
-          pick_type = Sketchup::PickHelper::PICK_CROSSING # TODO : @mouse_down_point_2d.x < x ? Sketchup::PickHelper::PICK_INSIDE : Sketchup::PickHelper::PICK_CROSSING
+          # Left to right = window (inside), right to left = crossing (like SketchUp)
+          pick_inside = @mouse_down_point_2d.x < x
+          pick_type = pick_inside ? Sketchup::PickHelper::PICK_INSIDE : Sketchup::PickHelper::PICK_CROSSING
 
           ph = view.pick_helper(x, y)
           ph.window_pick(
@@ -3403,17 +3405,23 @@ module Ladb::OpenCutList
             active_path = model.active_path.to_a
             active_path_length = active_path.length
 
+            # Picked paths are absolute (from the model root) and stop at the highest entity fully inside the rect,
+            # at any depth. A partially crossed instance yields one of its leaves (crossing only).
+
             instances = Set[]
             (0...ph.count).each do |i|
               path = ph.path_at(i)
-              next if path.first(active_path_length) != active_path
-              if path == active_path
+              if path.length <= active_path_length && active_path.first(path.length) == path
+                # The active context itself or one of its ancestors is fully inside the rect
                 model.active_entities.each do |entity|
-                  instances << entity if entity.respond_to?(:transformation)
+                  instances << entity if entity.respond_to?(:transformation) && entity.visible? && entity.layer.visible?
                 end
                 next
               end
-              entity, _ = path[active_path_length, 1]
+              next if path.first(active_path_length) != active_path
+              # Inside : the active context child must be fully inside itself, not only one of its descendants
+              next if pick_inside && path.length > active_path_length + 1
+              entity = path[active_path_length]
               instances << entity if entity.respond_to?(:transformation)
             end
 
@@ -3783,7 +3791,7 @@ module Ladb::OpenCutList
       k_rect = _create_floating_rect(
         start_point_2d: @mouse_down_point_2d,
         end_point_2d: @mouse_move_point_2d,
-        line_stipple: Kuix::LINE_STIPPLE_LONG_DASHES # TODO : @mouse_down_point_2d.x < @mouse_move_point_2d.x ? Kuix::LINE_STIPPLE_SOLID : Kuix::LINE_STIPPLE_LONG_DASHES,
+        line_stipple: @mouse_down_point_2d.x < @mouse_move_point_2d.x ? Kuix::LINE_STIPPLE_SOLID : Kuix::LINE_STIPPLE_LONG_DASHES
       )
       @tool.append_2d(k_rect)
 
