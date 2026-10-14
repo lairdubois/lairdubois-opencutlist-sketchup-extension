@@ -18,6 +18,8 @@
 
     const PARTS = [ 'hardware', 'machining' ];
 
+    const SETTING_KEY_CLOSED_SLOTS = 'core.hardware_editor.closed_slots';
+
     // The units of "length_unit", with their label's index - see default.unit_*
     const LENGTH_UNIT_OPTIONS = [
         { unit: 'mm', index: 2 },
@@ -478,6 +480,7 @@
         this.primitiveHovered = null;
         this.articleOpen = null;      // { slot, key }
         this.skpRowClosed = {};       // The SKP rows of parts folded, by slot/part - open by default
+        this.slotClosed = {};         // The slots of the parts tab folded, by slot - open by default, kept from one opening to the next
         this.articleHovered = null;
         this.connectorBrowser = null; // The library browsed for an article : { slot, key, listing }
 
@@ -1289,10 +1292,18 @@
             const slotPath = [ 'components', slot ];
             const slotResponse = (this.response.slots || {})[slot];
             const resolved = slotResponse ? slotResponse.component : null;
-            const $slot = $('<div class="ladb-hardware-editor-slot">');
+            const open = !this.slotClosed[slot];
+            const $slot = $('<div class="ladb-hardware-editor-slot">')
+                .toggleClass('ladb-hardware-editor-slot-closed', !open);
             const $head = $('<div class="ladb-hardware-editor-slot-head">')
+                .append($('<span class="ladb-hardware-editor-primitive-caret">').text('▸'))
                 .append($('<span class="ladb-hardware-editor-slot-letter">').text(slot.toUpperCase()))
-                .append($('<span class="ladb-hardware-editor-slot-name">').text(resolved && resolved.name ? resolved.name : (data.name || '')));
+                .append($('<span class="ladb-hardware-editor-slot-name">').text(resolved && resolved.name ? resolved.name : (data.name || '')))
+                .on('click', function () {
+                    that.slotClosed[slot] = open;
+                    that.dialog.setSetting(SETTING_KEY_CLOSED_SLOTS, Object.keys(that.slotClosed).filter(function (key) { return that.slotClosed[key]; }));
+                    that.renderParts();
+                });
             $slot.append($head);
             this.$parts.append($slot);
 
@@ -1325,7 +1336,8 @@
                         $variants.append($('<button type="button" class="btn btn-default">')
                             .toggleClass('active', key === variant)
                             .text(this.topologyLabel(key))
-                            .on('click', function () {
+                            .on('click', function (e) {
+                                e.stopPropagation();   // Not folding its slot
                                 this.blur();
                                 that.topology = key;
                                 that.compute(false);
@@ -4510,6 +4522,17 @@
         const that = this;
 
         decimalSeparator = this.dialog.options.decimal_separator || '.';
+
+        // The slots folded the last time
+        this.dialog.pullSettings([ SETTING_KEY_CLOSED_SLOTS ], function () {
+            const closedSlots = that.dialog.getSetting(SETTING_KEY_CLOSED_SLOTS, []);
+            for (const slot of Array.isArray(closedSlots) ? closedSlots : []) {
+                that.slotClosed[slot] = true;
+            }
+            if (that.response) {
+                that.renderParts();
+            }
+        });
 
         // Fetch UI elements
         this.$topologies = $('.ladb-hardware-editor-topologies', this.$element);

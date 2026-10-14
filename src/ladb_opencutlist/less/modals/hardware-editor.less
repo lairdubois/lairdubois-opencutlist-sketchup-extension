@@ -490,6 +490,29 @@
     margin-top: 12px;
   }
 
+  > .ladb-hardware-editor-slot-head .ladb-hardware-editor-primitive-caret {
+    transform: rotate(90deg);
+  }
+
+  // Folded : its head only
+  &.ladb-hardware-editor-slot-closed {
+
+    > :not(.ladb-hardware-editor-slot-head) {
+      display: none;
+    }
+
+    > .ladb-hardware-editor-slot-head {
+      border-bottom: none;
+      border-radius: 4px;
+
+      .ladb-hardware-editor-primitive-caret {
+        transform: none;
+      }
+
+    }
+
+  }
+
 }
 
 .ladb-hardware-editor-slot-head {
@@ -501,6 +524,7 @@
   background-color: #f9f9f9;
   border-bottom: 1px solid #ccc;
   border-radius: 4px 4px 0 0;
+  cursor: pointer;
 }
 
 .ladb-hardware-editor-slot-letter {
