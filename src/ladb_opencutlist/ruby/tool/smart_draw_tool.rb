@@ -36,6 +36,7 @@ module Ladb::OpenCutList
     ACTION_OPTION_OPTIONS_MEASURE_FROM_DIAMETER = 'measure_from_diameter'
     ACTION_OPTION_OPTIONS_MEASURE_REVERSED = 'measure_reversed'
     ACTION_OPTION_OPTIONS_PULL_CENTRED = 'pull_centered'
+    ACTION_OPTION_OPTIONS_PICK_MATERIAL = 'pick_material'
     ACTION_OPTION_OPTIONS_ASK_NAME = 'ask_name'
 
     ACTIONS = [
@@ -43,7 +44,7 @@ module Ladb::OpenCutList
         :action => ACTION_DRAW_RECTANGLE,
         :options => {
           ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_SHAPE_OFFSET ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_DRAW_IN, ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED, ACTION_OPTION_OPTIONS_PULL_CENTRED, ACTION_OPTION_OPTIONS_ASK_NAME ]
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_DRAW_IN, ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED, ACTION_OPTION_OPTIONS_PULL_CENTRED, ACTION_OPTION_OPTIONS_PICK_MATERIAL, ACTION_OPTION_OPTIONS_ASK_NAME ]
         }
       },
       {
@@ -51,14 +52,14 @@ module Ladb::OpenCutList
         :options => {
           ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_SHAPE_OFFSET ],
           ACTION_OPTION_SEGMENTS => [ ACTION_OPTION_SEGMENTS_SEGMENT_COUNT ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_DRAW_IN, ACTION_OPTION_OPTIONS_SMOOTHING, ACTION_OPTION_OPTIONS_MEASURE_FROM_DIAMETER, ACTION_OPTION_OPTIONS_PULL_CENTRED, ACTION_OPTION_OPTIONS_ASK_NAME ]
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_DRAW_IN, ACTION_OPTION_OPTIONS_SMOOTHING, ACTION_OPTION_OPTIONS_MEASURE_FROM_DIAMETER, ACTION_OPTION_OPTIONS_PULL_CENTRED, ACTION_OPTION_OPTIONS_PICK_MATERIAL, ACTION_OPTION_OPTIONS_ASK_NAME ]
         }
       },
       {
         :action => ACTION_DRAW_POLYGON,
         :options => {
           ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_SHAPE_OFFSET ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_DRAW_IN, ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_PULL_CENTRED, ACTION_OPTION_OPTIONS_ASK_NAME ]
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_DRAW_IN, ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_PULL_CENTRED, ACTION_OPTION_OPTIONS_PICK_MATERIAL, ACTION_OPTION_OPTIONS_ASK_NAME ]
         }
       },
     ]
@@ -101,6 +102,19 @@ module Ladb::OpenCutList
       super
     end
 
+    def get_action_option_status(action, option_group, option)
+
+      # The material the part about to be created takes, named after the
+      # option - the button itself shows its color, see
+      # SmartDrawShapeActionHandler#_refresh_pick_material_btn
+      if option_group == ACTION_OPTION_OPTIONS && option == ACTION_OPTION_OPTIONS_PICK_MATERIAL &&
+         @action_handler.respond_to?(:get_picked_material) && (material = @action_handler.get_picked_material).is_a?(Sketchup::Material)
+        return "#{super} : #{material.display_name.strip}"
+      end
+
+      super
+    end
+
     def get_action_options_modal?(action)
       true
     end
@@ -117,7 +131,7 @@ module Ladb::OpenCutList
         case option
         when ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_ASK_NAME
           return [ ACTION_DRAW_RECTANGLE, ACTION_DRAW_CIRCLE, ACTION_DRAW_POLYGON ]
-        when ACTION_OPTION_OPTIONS_DRAW_IN, ACTION_OPTION_OPTIONS_PULL_CENTRED
+        when ACTION_OPTION_OPTIONS_DRAW_IN, ACTION_OPTION_OPTIONS_PULL_CENTRED, ACTION_OPTION_OPTIONS_PICK_MATERIAL
           return [ ACTION_DRAW_RECTANGLE, ACTION_DRAW_CIRCLE, ACTION_DRAW_POLYGON ]
         end
       end
@@ -173,6 +187,8 @@ module Ladb::OpenCutList
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1V.667H1V1ZM.25,.667V.833M.5,.667V.833M.75,.667V.833M.861,.292L.708,.139L.5,.083L.292,.139L.14,.292M.14,.083V.292H.333'))
         when ACTION_OPTION_OPTIONS_PULL_CENTRED
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1H.667L1,.667V0H.333L0,.333ZM0,.333H.667V1M.667,.333L1,0M.333,.5V.833M.167,.667H.5'))
+        when ACTION_OPTION_OPTIONS_PICK_MATERIAL
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.125,.75L0,1L.25,.875L.75,.375L.813,.438L.938,.313L.875,.25L1,.125L.875,0L.75,.125L.688,.063L.563,.188L.625,.25ZM.625,.25L.75,.375'))
         when ACTION_OPTION_OPTIONS_ASK_NAME
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,.25H1V.75H0ZM.438,.313V.688M.125,.625V.375L.313,.625V.375'))
         end
@@ -267,6 +283,10 @@ module Ladb::OpenCutList
       @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_ASK_NAME)
     end
 
+    def _fetch_option_pick_material?
+      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_PICK_MATERIAL)
+    end
+
   end
 
   class SmartDrawShapeActionHandler < SmartDrawActionHandler
@@ -319,6 +339,19 @@ module Ladb::OpenCutList
       tool.create_3d(LAYER_3D_DRAW_PREVIEW)
       tool.create_3d(LAYER_3D_PART_PREVIEW)
 
+    end
+
+    # -----
+
+    def stop
+      _refresh_pick_material_btn(nil)
+      super
+    end
+
+    # The material the part about to be created takes, as the pick material
+    # option button shows it - nil when none.
+    def get_picked_material
+      @pick_material_btn_material
     end
 
     # -- STATE --
@@ -772,11 +805,24 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_SHAPE_START
-        _pick_part(picker, view) if _fetch_option_draw_in?
+        _pick_part(picker, view) if _fetch_option_draw_in? || _fetch_option_pick_material?
+        _refresh_pick_material_btn
 
       end
 
       super
+    end
+
+    def onToolActionOptionStored(tool, action, option_group, option)
+      if option_group == SmartDrawTool::ACTION_OPTION_OPTIONS
+        case option
+        when SmartDrawTool::ACTION_OPTION_OPTIONS_DRAW_IN, SmartDrawTool::ACTION_OPTION_OPTIONS_PICK_MATERIAL
+          # The part under the mouse no longer means the same : picked again
+          # on the next move, which resets the container to draw in.
+          _reset_active_part if @state == STATE_SHAPE_START
+          _refresh_pick_material_btn
+        end
+      end
     end
 
     def onActivePartChanged(part_entity_path, part, highlighted = false)
@@ -786,6 +832,9 @@ module Ladb::OpenCutList
 
       # Reset active container path
       @active_container_path = nil
+
+      # A part picked for its material only is not the container to draw in
+      return unless _fetch_option_draw_in?
 
       if part_entity_path.is_a?(Array) && part_entity_path.length > 1
 
@@ -822,7 +871,7 @@ module Ladb::OpenCutList
     end
 
     def _preview_part_container?
-      true
+      _fetch_option_draw_in?
     end
 
     # -----
@@ -1503,6 +1552,8 @@ module Ladb::OpenCutList
 
       t, ps, pe, psb, pst, bt, tt = pull_def.values_at(:t, :ps, :pe, :psb, :pst, :bt, :tt)
 
+      material = _get_picked_material
+
       model = Sketchup.active_model
       model.start_operation('OCL Create Part', true, false, !active?)
       begin
@@ -1565,6 +1616,7 @@ module Ladb::OpenCutList
         end
 
         instance = group
+        instance.material = material unless material.nil? || _fetch_option_construction?
 
       else
 
@@ -1618,6 +1670,7 @@ module Ladb::OpenCutList
         end
 
         instance = active_entities.add_instance(definition, active_transformation.inverse * t)
+        instance.material = material unless material.nil?
 
         if active?
 
@@ -1668,6 +1721,33 @@ module Ladb::OpenCutList
       # Reset drawing def cache
       @drawing_def = nil
 
+    end
+
+    # --
+
+    # The material the part about to be created is painted with, when the
+    # pick material option is on : the one the cutlist resolves for the part
+    # picked at the shape start - its own, else inherited or dominant
+    # child's - unless virtual.
+    def _get_picked_material
+      return nil unless _fetch_option_pick_material?
+      return nil unless (part = get_active_part).is_a?(Part)
+      return nil if part.group.material_is_virtual || part.group.material_name.empty?
+      Sketchup.active_model.materials[part.group.material_name]
+    end
+
+    # Paints the pick material option button with the material the part
+    # about to be created takes - back to white when there is none. Restyled
+    # only when that material changes : this follows every pick.
+    def _refresh_pick_material_btn(material = _get_picked_material)
+      return if defined?(@pick_material_btn_material) && material == @pick_material_btn_material
+      @pick_material_btn_material = material
+      return unless (btn = @tool.get_action_option_btn(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_PICK_MATERIAL)).is_a?(Kuix::Button)
+      color = material.nil? ? Kuix::COLOR_WHITE : material.color
+      btn.set_style_attribute(:background_color, color, :selected)
+      if (motif = btn.children.first).is_a?(Kuix::Motif2d)
+        motif.set_style_attribute(:color, ColorUtils.color_is_dark?(color) ? Kuix::COLOR_WHITE : Kuix::COLOR_BLACK)
+      end
     end
 
     # --
