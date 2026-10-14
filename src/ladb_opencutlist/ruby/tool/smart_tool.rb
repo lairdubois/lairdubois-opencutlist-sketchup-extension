@@ -40,8 +40,6 @@ module Ladb::OpenCutList
 
     NOTIFICATION_MAX_COUNT = 4
 
-    ACTION_NONE = -1
-
     COLOR_BRAND = Sketchup::Color.new(247, 127, 0).freeze
     COLOR_BRAND_DARK = Sketchup::Color.new(62, 59, 51).freeze
     COLOR_BRAND_LIGHT = Sketchup::Color.new(214, 212, 205).freeze
@@ -1436,10 +1434,6 @@ module Ladb::OpenCutList
       set_action(@action_stack.last[:action])
     end
 
-    def is_action_none?
-      fetch_action == ACTION_NONE
-    end
-
     def set_action_handler(action_handler)
       @action_handler.stop if @action_handler.is_a?(SmartActionHandler)
       @action_handler = action_handler
@@ -1476,84 +1470,9 @@ module Ladb::OpenCutList
     end
 
     def populate_menu(menu)
-      if @active_part
-        active_part_id = @active_part.id
-        active_part_material_type = @active_part.group.material_type
-        item = menu.add_item(_get_active_part_name) {}
-        menu.set_validation_proc(item) { MF_GRAYED }
-        menu.add_separator
-        menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_part_properties')) {
-          _select_active_part_entity
-          PLUGIN.execute_tabs_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'general', dontGenerate: false }")
-        }
-        menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_part_axes_properties')) {
-          _select_active_part_entity
-          PLUGIN.execute_tabs_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'axes', dontGenerate: false }")
-        }
-        menu.set_validation_proc(item) {
-          if active_part_material_type == MaterialAttributes::TYPE_SOLID_WOOD ||
-            active_part_material_type == MaterialAttributes::TYPE_SHEET_GOOD ||
-            active_part_material_type == MaterialAttributes::TYPE_DIMENSIONAL
-            MF_ENABLED
-          else
-            MF_GRAYED
-          end
-        }
-        item = menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_part_edges_properties')) {
-          _select_active_part_entity
-          PLUGIN.execute_tabs_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'edges', dontGenerate: false }")
-        }
-        menu.set_validation_proc(item) {
-          if active_part_material_type == MaterialAttributes::TYPE_SHEET_GOOD
-            MF_ENABLED
-          else
-            MF_GRAYED
-          end
-        }
-        item = menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_part_faces_properties')) {
-          _select_active_part_entity
-          PLUGIN.execute_tabs_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'faces', dontGenerate: false }")
-        }
-        menu.set_validation_proc(item) {
-          if active_part_material_type == MaterialAttributes::TYPE_SHEET_GOOD
-            MF_ENABLED
-          else
-            MF_GRAYED
-          end
-        }
-        menu.add_separator
-        locked_validation_proc = Proc.new {
-          if @active_part_entity_path && @active_part_entity_path.find { |entity| entity.locked? }.nil?
-            MF_ENABLED
-          else
-            MF_GRAYED
-          end
-        }
-        item = menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_part_instance_properties')) {
-          require_relative '../model/outliner/outliner_node_def'
-          _select_active_part_entity
-          PLUGIN.execute_tabs_dialog_command_on_tab('outliner', 'edit_node', "{ node_id: '#{OutlinerNodeDef.generate_node_id(@active_part_entity_path)}', tab: 'general' }")
-        }
-        menu.set_validation_proc(item, &locked_validation_proc)
-        unless Sketchup.version_number < 2000000000
-          item = menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_part_instance')) {
-            Sketchup.active_model.active_path = @active_part_entity_path
-          }
-          menu.set_validation_proc(item, &locked_validation_proc)
-          item = menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_parent_part_instance')) {
-            Sketchup.active_model.active_path = @active_part_entity_path[0...-1]
-          }
-          menu.set_validation_proc(item, &locked_validation_proc)
-        end
-        item = menu.add_item(PLUGIN.get_i18n_string("core.menu.item.#{@active_part_entity_path.last.visible? ? "hide" : "unhide"}_part_instance")) {
-          @active_part_entity_path.last.visible = !@active_part_entity_path.last.visible?
-        }
-        menu.set_validation_proc(item, &locked_validation_proc)
-      else
-        menu.add_item(PLUGIN.get_i18n_string('default.close')) {
-          quit
-        }
-      end
+      menu.add_item(PLUGIN.get_i18n_string('default.close')) {
+        quit
+      }
     end
 
     # -- Tool stuff --
@@ -1595,9 +1514,6 @@ module Ladb::OpenCutList
       self.class.tool_id = view.model.tools.active_tool_id
 
       @vcb_typing = false
-
-      # Create pick helpers
-      @pick_helper = view.pick_helper
 
       # Set startup cursor
       set_root_action(get_startup_action)
@@ -1680,6 +1596,11 @@ module Ladb::OpenCutList
       # Not consumed : a printable key goes to the VCB (CTRL + ALT = ALTGR on Windows)
       @vcb_typing = true if is_key_printable?(key) && is_key_ctrl_or_option_down?(flags) == is_key_alt_or_command_down?(flags)
       false
+    end
+
+    def onKeyUp(key, repeat, flags, view)
+      return true if super
+      @action_handler.onToolKeyUp(self, key, repeat, flags, view) if !@action_handler.nil? && @action_handler.respond_to?(:onToolKeyUp)
     end
 
     def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
@@ -1797,10 +1718,7 @@ module Ladb::OpenCutList
 
     def onMouseWheel(flags, delta, x, y, view)
       return true if super
-      if flags & COPY_MODIFIER_MASK == COPY_MODIFIER_MASK
-        _pick_deeper(delta) if @active_part_entity_path
-        return true
-      end
+      return @action_handler.onToolMouseWheel(self, flags, delta, x, y, view) if !@action_handler.nil? && @action_handler.respond_to?(:onToolMouseWheel)
       false
     end
 
@@ -1867,231 +1785,6 @@ module Ladb::OpenCutList
       super
     end
     
-  end
-
-  class SmartToolLegacy < SmartTool
-
-    def initialize(
-
-                   quit_on_esc: true,
-                   quit_on_undo: false,
-
-                   tab_name_to_show_on_quit: nil,
-
-                   highlighted_parts: nil,
-
-                   current_action: nil
-
-    )
-
-      super
-
-      # Picker
-      @picker = nil
-
-    end
-
-    def get_action_picker(action)
-      nil
-    end
-
-    def set_action(action)
-
-      # Update picker
-      previous_picker = @picker
-      @picker = get_action_picker(action)
-      unless @picker.nil? || previous_picker.nil?
-        @picker.pick_position.x = previous_picker.pick_position.x
-        @picker.pick_position.y = previous_picker.pick_position.y
-      end
-
-      super
-    end
-
-    def draw(view)
-      super
-      @picker.draw(view) unless @picker.nil?
-    end
-
-    def onKeyUp(key, repeat, flags, view)
-      return true if super
-      @picker.onToolKeyUp(self, key, repeat, flags, view) unless @picker.nil?
-    end
-
-    def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
-      return true if super
-      if (key == VK_UP || key == VK_DOWN) && _can_pick_deeper?
-        _pick_deeper(key == VK_UP ? 1 : -1) if @active_part_entity_path
-        return true
-      end
-      false
-    end
-
-    def onMouseMove(flags, x, y, view)
-      return true if super
-      @picker.onToolMouseMove(self, flags, x, y, view) unless is_action_none? || @picker.nil?
-    end
-
-    def onMouseLeave(view)
-      return true if super
-      @picker.onToolMouseLeave(self, view) unless is_action_none? || @picker.nil?
-    end
-
-    def onMouseLeaveSpace(view)
-      return true if super
-      @picker.onToolMouseLeave(self, view) unless is_action_none? || @picker.nil?
-    end
-
-    def onActionChanged(action)
-      @picker.do_pick unless @picker.nil?
-      super
-    end
-
-    def onPickerChanged(picker, view)
-      # Implement in subclasses
-    end
-
-    # -----
-
-    protected
-
-    def _refresh_active_context(highlighted = false)
-      _set_active_context(@active_context_path, highlighted)
-    end
-
-    def _reset_active_context
-      _set_active_context(nil)
-    end
-
-    def _set_active_context(context_path, highlighted = false)
-
-      @active_context_path = context_path
-
-      _reset_ui
-
-    end
-
-    def _refresh_active_face(highlighted = false)
-      _set_active_face(@active_face_path, @active_face, highlighted)
-    end
-
-    def _reset_active_face
-      _set_active_face(nil, nil)
-    end
-
-    def _set_active_face(face_path, face, highlighted = false)
-
-      @active_face_path = face_path
-      @active_face = face
-
-      _reset_ui
-
-    end
-
-    def _refresh_active_part(highlighted = false)
-      _set_active_part(@active_part_entity_path, _generate_part_from_path(@active_part_entity_path), highlighted)
-    end
-
-    def _reset_active_part
-      _set_active_part(nil, nil)
-    end
-
-    def _set_active_part(part_entity_path, part, highlighted = false)
-
-      @active_part_entity_path = part_entity_path
-      @active_part = part
-
-      _reset_ui
-
-    end
-
-    def _get_active_part_name(sanitize_for_filename = false)
-      return nil unless @active_part.is_a?(Part)
-      "#{@active_part.saved_number && @active_part.number == @active_part.saved_number ? "#{@active_part.number} - " : ''}#{sanitize_for_filename ? FilePathUtils.sanitize_file_name(@active_part.name) : @active_part.name}"
-    end
-
-    def _get_active_part_size
-      return nil unless @active_part.is_a?(Part)
-      "#{@active_part.length} x #{@active_part.width} x #{@active_part.thickness}"
-    end
-
-    def _get_active_part_material_name
-      return nil unless @active_part.is_a?(Part) && !@active_part.material_name.empty?
-      "#{@active_part.material_name.strip} (#{PLUGIN.get_i18n_string("tab.materials.type_#{@active_part.group.material_type}")})"
-    end
-
-    def _get_active_part_icons
-      return nil unless @active_part.is_a?(Part)
-      if @active_part.flipped || @active_part.resized || @active_part.auto_oriented
-        icons = []
-        icons << Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.5,0L0.5,0.2 M0.5,0.4L0.5,0.6 M0.5,0.8L0.5,1 M0,0.2L0.3,0.5L0,0.8L0,0.2 M1,0.2L0.7,0.5L1,0.8L1,0.2')) if @active_part.flipped
-        icons << Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.6,0L0.4,0 M0.6,0.4L0.8,0.2L0.5,0.2 M0.8,0.2L0.8,0.5 M0.8,0L1,0L1,0.2 M1,0.4L1,0.6 M1,0.8L1,1L0.8,1 M0.2,0L0,0L0,0.2 M0,1L0,0.4L0.6,0.4L0.6,1L0,1')) if @active_part.resized
-        icons << Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.642,0.349L0.642,0.752 M0.541,0.45L0.642,0.349L0.743,0.45 M0.292,0.954L0.642,0.752 M0.43,0.991L0.292,0.954L0.329,0.816 M0.991,0.954L0.642,0.752 M0.853,0.991L0.991,0.954L0.954,0.816 M0.477,0.001L0.584,0.091L0.494,0.198 M0.001,0.477L0.091,0.584L0.198,0.494 M0.091,0.584L0.108,0.456L0.157,0.338L0.235,0.235L0.338,0.157L0.456,0.108L0.584,0.091')) if @active_part.auto_oriented
-        return icons
-      end
-      nil
-    end
-
-    def _select_active_part_entity
-      model = Sketchup.active_model
-      if model && @active_part_entity_path.is_a?(Array) && !@active_part_entity_path.empty?
-        selection = model.selection
-        selection.clear
-        selection.add(@active_part_entity_path.last)
-      end
-    end
-
-    def _can_pick_deeper?
-      !@pick_helper.nil? && !@active_part_entity_path.nil?
-    end
-
-    def _pick_deeper(delta = 1)
-      if _can_pick_deeper?
-
-        picked_paths = []
-        picked_part_entity_paths = []
-        @pick_helper.count.times do |index|
-          path = @pick_helper.path_at(index)
-          part_entity_path = _get_part_entity_path_from_path(path.clone)
-          unless part_entity_path.nil? || picked_part_entity_paths.include?(part_entity_path)
-            picked_paths << path
-            picked_part_entity_paths << part_entity_path
-          end
-        end
-
-        # Try to retrieve current index
-        active_index = picked_part_entity_paths.map(&:last).index(@active_part_entity_path.last)
-        if active_index
-
-          # Compute the new index
-          new_index = (active_index + delta) % picked_part_entity_paths.length
-
-          # Compute the new part
-          picked_part_entity_path = picked_part_entity_paths[new_index]
-          part = _generate_part_from_path(picked_part_entity_path)
-          if part
-            _set_active_part(picked_part_entity_path, part)
-          end
-
-        end
-
-      end
-    end
-
-    def _reset_ui
-
-      # Clear Overlay layer
-      @overlay_layer.clear
-
-      # Reset cursor
-      pop_to_root_cursor
-
-      # Hide previous overlays
-      hide_message
-      remove_tooltip
-
-    end
-
   end
 
   # -----
@@ -3805,6 +3498,21 @@ module Ladb::OpenCutList
           tool.clear_2d(LAYER_2D_FLOATING_TOOLS)
           set_state(STATE_SELECT)
           _refresh
+          return true
+        end
+
+      end
+
+      false
+    end
+
+    def onToolMouseWheel(tool, flags, delta, x, y, view)
+
+      case @state
+
+      when STATE_SELECT, STATE_SELECT_MULTIPLE, STATE_SELECT_TWINS
+        if flags & COPY_MODIFIER_MASK == COPY_MODIFIER_MASK && _can_pick_deeper?
+          _pick_deeper(delta > 0 ? 1 : -1)
           return true
         end
 

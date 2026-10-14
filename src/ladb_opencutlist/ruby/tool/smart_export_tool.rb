@@ -11,7 +11,7 @@ module Ladb::OpenCutList
   require_relative '../worker/common/common_drawing_projection_worker'
   require_relative '../observer/plugin_observer'
 
-  class SmartExportTool < SmartToolLegacy
+  class SmartExportTool < SmartTool
 
     ACTION_EXPORT_PART_3D = 0
     ACTION_EXPORT_PART_2D = 1
@@ -101,26 +101,6 @@ module Ladb::OpenCutList
       ACTIONS
     end
 
-    def get_action_status(action)
-
-      case action
-      when ACTION_EXPORT_PART_3D
-        return super +
-          ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_export.action_1') + '.'
-      when ACTION_EXPORT_PART_2D
-        return super +
-          ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_export.action_2') + '.'
-      when ACTION_EXPORT_FACE
-        return super +
-          ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_export.action_3') + '.'
-      when ACTION_EXPORT_PATHS
-        return super +
-          ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_export.action_0') + '.'
-      end
-
-      super
-    end
-
     def get_action_cursor(action)
 
       case action
@@ -150,20 +130,6 @@ module Ladb::OpenCutList
         elsif fetch_action_option_boolean(action, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
           return SmartCursorManager.cursor_select_dxf
         end
-      end
-
-      super
-    end
-
-    def get_action_picker(action)
-
-      case action
-      when ACTION_EXPORT_PART_3D
-        return SmartPicker.new(tool: self)
-      when ACTION_EXPORT_PART_2D, ACTION_EXPORT_FACE
-        return SmartPicker.new(tool: self, pick_edges: true, pick_clines: true, pick_axes: true)
-      when ACTION_EXPORT_PATHS
-        return SmartPicker.new(tool: self, pick_context_by_edge: true, pick_edges: true, pick_clines: true, pick_axes: true)
       end
 
       super
@@ -241,21 +207,6 @@ module Ladb::OpenCutList
       super
     end
 
-    def is_action_export_part_3d?
-      fetch_action == ACTION_EXPORT_PART_3D
-    end
-
-    def is_action_export_part_2d?
-      fetch_action == ACTION_EXPORT_PART_2D
-    end
-
-    def is_action_export_face?
-      fetch_action == ACTION_EXPORT_FACE
-    end
-
-    def is_action_export_paths?
-      fetch_action == ACTION_EXPORT_PATHS
-    end
 
     # -- Events --
 
@@ -267,49 +218,20 @@ module Ladb::OpenCutList
 
     end
 
-    def onKeyDown(key, repeat, flags, view)
-      return true if super
-      false
-    end
+    def onActionChanged(action)
 
-    def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
-      return true if super
-      false
-    end
-
-    def onLButtonDown(flags, x, y, view)
-      return true if super
-      unless is_action_none?
-        _handle_mouse_event(:l_button_down)
+      case action
+      when ACTION_EXPORT_PART_3D
+        set_action_handler(SmartExportPart3dActionHandler.new(self, fetch_action_handler))
+      when ACTION_EXPORT_PART_2D
+        set_action_handler(SmartExportPart2dActionHandler.new(self, fetch_action_handler))
+      when ACTION_EXPORT_FACE
+        set_action_handler(SmartExportFaceActionHandler.new(self, fetch_action_handler))
+      when ACTION_EXPORT_PATHS
+        set_action_handler(SmartExportPathsActionHandler.new(self, fetch_action_handler))
       end
-      false
-    end
 
-    def onLButtonUp(flags, x, y, view)
-      return true if super
-      unless is_action_none?
-        _handle_mouse_event(:l_button_up)
-      end
-      false
-    end
-
-    def onMouseLeave(view)
-      return true if super
-      _reset_active_part
-      _reset_active_face
-      false
-    end
-
-    def onMouseLeaveSpace(view)
-      return true if super
-      _reset_active_part
-      _reset_active_face
-      false
-    end
-
-    def onPickerChanged(picker, view)
       super
-      _handle_mouse_event(:move)
     end
 
     def onActionOptionStored(action, option_group, option)
@@ -317,752 +239,780 @@ module Ladb::OpenCutList
       set_root_cursor(get_action_cursor(fetch_action))
     end
 
+  end
+
+  # -----
+
+  # Shared by the export action handlers : the drawing def of the hovered
+  # target is computed when its key changes, then previewed in its own 3D layer.
+  module SmartExportActionHandlerHelper
+
+    LAYER_3D_ACTION_PREVIEW = 3
+
+    # -----
+
+    def stop
+      @tool.clear_all_3d
+      @tool.hide_message
+      @tool.remove_tooltip
+      super
+    end
+
+    # -----
+
+    def onToolActionOptionStored(tool, action, option_group, option)
+      @drawing_key = nil  # Options change the drawing def
+      _preview_action
+    end
+
+    def onToolTransactionUndo(tool, model)
+      _restart  # The drawing def is outdated
+    end
+
+    def onToolTransactionRedo(tool, model)
+      _restart  # The drawing def is outdated
+    end
+
     # -----
 
     protected
 
-    def _set_active_part(part_entity_path, part, highlighted = false)
-      super
+    def _preview_action(highlighted = false)
+      @previewed = true
+      @tool.clear_3d(LAYER_3D_ACTION_PREVIEW)
+      if (key = _get_drawing_key).nil?
+        @drawing_key = nil
+        @drawing_def = nil
+        @projection_def = nil
+        return
+      end
+      if key != @drawing_key
+        @drawing_key = key
+        @drawing_def = _compute_drawing_def
+        @drawing_def = nil unless @drawing_def.is_a?(DrawingDef)
+        @projection_def = @drawing_def.nil? ? nil : _compute_projection_def(@drawing_def)
+        @projection_def = nil unless @projection_def.is_a?(DrawingProjectionDef)
+      end
+      _preview_action_draw(highlighted)
+    end
 
-      if part
+    # The identity of the drawing def to export, nil if nothing to export
+    def _get_drawing_key
+      nil
+    end
 
-        if is_action_export_part_3d?
+    def _compute_drawing_def
+      nil
+    end
 
-          # Part 3D
+    def _compute_projection_def(drawing_def)
+      nil
+    end
 
-          @active_drawing_def = CommonDrawingDecompositionWorker.new(Sketchup::InstancePath.new(@active_part_entity_path),
-            origin_position: fetch_action_option_boolean(ACTION_EXPORT_PART_3D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR) ? CommonDrawingDecompositionWorker::ORIGIN_POSITION_DEFAULT : CommonDrawingDecompositionWorker::ORIGIN_POSITION_FACES_BOUNDS_MIN,
-            ignore_surfaces: true,
-            ignore_edges: true,
-            container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART,
-          ).run
-          if @active_drawing_def.is_a?(DrawingDef)
+    def _preview_action_draw(highlighted)
+      _preview_projection(highlighted) unless @projection_def.nil?
+    end
 
-            inch_offset = Sketchup.active_model.active_view.pixels_to_model(15, Geom::Point3d.new.transform(@active_drawing_def.transformation))
+    def _do_action
+      return UI.beep if @drawing_def.nil?
+      _write_drawing(_create_write_worker(@drawing_def))
+      _preview_action
+    end
 
-            k_group = Kuix::Group.new
-            k_group.transformation = @active_drawing_def.transformation
-            @overlay_layer.append(k_group)
+    def _create_write_worker(drawing_def)
+      nil
+    end
 
-              # Highlight faces
-              k_mesh = Kuix::Mesh.new
-              k_mesh.add_triangles(@active_drawing_def.face_manipulators.flat_map { |face_manipulator| face_manipulator.triangles })
-              k_mesh.background_color = highlighted ? COLOR_MESH_HIGHLIGHTED : COLOR_MESH
-              k_group.append(k_mesh)
+    # -----
 
-              # Box helper
-              k_box = Kuix::BoxMotif3d.new
-              k_box.bounds.copy!(@active_drawing_def.bounds)
-              k_box.bounds.inflate_all!(inch_offset)
-              k_box.color = Kuix::COLOR_BLACK
-              k_box.line_width = 1
-              k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-              k_group.append(k_box)
+    def _is_picked_face_curved?(picker)
+      face = picker.picked_face
+      !face.nil? && !face.edges.index { |edge| edge.soft? }.nil? && !SurfaceManipulator.new.populate_from_face(face).flat?
+    end
 
-              # Axes helper
-              k_axes_helper = Kuix::AxesHelper.new
-              k_group.append(k_axes_helper)
+    def _show_error(error_key)
+      @tool.show_tooltip("⚠ #{PLUGIN.get_i18n_string(error_key)}", SmartTool::MESSAGE_TYPE_ERROR)
+      @tool.push_cursor(SmartCursorManager.cursor_select_error)
+    end
 
+    def _fetch_option_smoothing
+      @tool.fetch_action_option_boolean(@action, SmartExportTool::ACTION_OPTION_OPTIONS, SmartExportTool::ACTION_OPTION_OPTIONS_SMOOTHING)
+    end
+
+    # -- Preview --
+
+    def _get_projection_box_offset
+      15
+    end
+
+    def _get_projection_layer_color(layer_def)
+      SmartExportTool::COLOR_PART_UPPER
+    end
+
+    def _get_projection_poly_line_stipple(layer_def, poly_def)
+      poly_def.is_a?(DrawingProjectionPolygonDef) && !poly_def.ccw? ? Kuix::LINE_STIPPLE_SHORT_DASHES : Kuix::LINE_STIPPLE_SOLID
+    end
+
+    def _preview_projection(highlighted)
+
+      drawing_def = @drawing_def
+      projection_def = @projection_def
+      smoothing = _fetch_option_smoothing
+      unit = @tool.get_unit
+
+      inch_offset = Sketchup.active_model.active_view.pixels_to_model(_get_projection_box_offset, Geom::Point3d.new.transform(drawing_def.transformation))
+
+      k_group = Kuix::Group.new
+      k_group.transformation = drawing_def.transformation * projection_def.transformation
+      @tool.append_3d(k_group, LAYER_3D_ACTION_PREVIEW)
+
+      fn_append_polyline = lambda do |points, color, line_width, line_stipple, closed|
+
+        k_polyline = Kuix::Polyline.new
+        k_polyline.add_points(points)
+        k_polyline.color = color
+        k_polyline.line_width = highlighted ? line_width + 1 : line_width
+        k_polyline.line_stipple = line_stipple
+        k_polyline.on_top = true
+        k_polyline.closed = closed
+        k_group.append(k_polyline)
+
+      end
+
+      projection_def.layer_defs.reverse.each do |layer_def| # reverse layer order to present from Bottom to Top
+
+        points_entities = []
+
+        color = _get_projection_layer_color(layer_def)
+
+        layer_def.poly_defs.each do |poly_def|
+
+          line_stipple = _get_projection_poly_line_stipple(layer_def, poly_def)
+
+          if smoothing && !poly_def.curve_def.nil?
+            poly_def.curve_def.portions.each do |portion|
+              fn_append_polyline.call(portion.points, color, portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2, line_stipple, false)
+            end
+          else
+            fn_append_polyline.call(poly_def.points, color, 2, line_stipple, poly_def.is_a?(DrawingProjectionPolygonDef))
           end
 
-        elsif is_action_export_part_2d?
+          if poly_def.is_a?(DrawingProjectionPolylineDef) && !layer_def.type_borders?
 
-          # Part 2D
+            # It's a polyline, create 'start' and 'end' points entities
 
-          local_x_axis = part.def.size.oriented_axis(X_AXIS)
-          local_y_axis = part.def.size.oriented_axis(Y_AXIS)
-          local_z_axis = part.def.size.oriented_axis(Z_AXIS)
+            k_points = Kuix::Points.new
+            k_points.add_points([ poly_def.points.first ])
+            k_points.size = 2 * unit
+            k_points.style = Kuix::POINT_STYLE_SQUARE
+            k_points.fill_color = Kuix::COLOR_MEDIUM_GREY
+            k_points.stroke_color = nil
+            points_entities << k_points
 
-          @active_drawing_def = CommonDrawingDecompositionWorker.new(Sketchup::InstancePath.new(@active_part_entity_path),
-            input_local_x_axis: local_x_axis,
-            input_local_y_axis: local_y_axis,
-            input_local_z_axis: local_z_axis,
-            input_plane_manipulator: @picker.picked_plane_manipulator,
-            input_line_manipulator: @picker.picked_line_manipulator,
-            face_validator: fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACES, ACTION_OPTION_FACES_ONE) ? CommonDrawingDecompositionWorker::FACE_VALIDATOR_ONE : CommonDrawingDecompositionWorker::FACE_VALIDATOR_ALL,
-            ignore_edges: !fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_INCLUDE_PATHS),
-            edge_validator: fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACES, ACTION_OPTION_FACES_ONE) ? CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY_COPLANAR : CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY,
-            container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART,
-          ).run
-          if @active_drawing_def.is_a?(DrawingDef)
-
-            inch_offset = Sketchup.active_model.active_view.pixels_to_model(30, Geom::Point3d.new.transform(@active_drawing_def.transformation))
-
-            projection_def = CommonDrawingProjectionWorker.new(@active_drawing_def,
-                                                               origin_position: fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR) ? CommonDrawingProjectionWorker::ORIGIN_POSITION_DEFAULT : CommonDrawingProjectionWorker::ORIGIN_POSITION_BOUNDS_MIN,
-                                                               merge_holes: fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_MERGE_HOLES),
-                                                               merge_holes_overflow: fetch_action_option_length(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_MERGE_HOLES_OVERFLOW),
-                                                               include_borders_layers: true
-            ).run
-            if projection_def.is_a?(DrawingProjectionDef)
-
-              k_group = Kuix::Group.new
-              k_group.transformation = @active_drawing_def.transformation * projection_def.transformation
-              @overlay_layer.append(k_group)
-
-              fn_append_polyline = lambda do |points, color, line_width, line_stipple, closed|
-
-                k_polyline = Kuix::Polyline.new
-                k_polyline.add_points(points)
-                k_polyline.color = color
-                k_polyline.line_width = highlighted ? line_width + 1 : line_width
-                k_polyline.line_stipple = line_stipple
-                k_polyline.on_top = true
-                k_polyline.closed = closed
-                k_group.append(k_polyline)
-
-              end
-
-              border_color = @active_part.group.def.material_color
-              border_color = COLOR_PART_BORDERS if border_color.nil?
-
-              projection_def.layer_defs.reverse.each do |layer_def| # reverse layer order to present from Bottom to Top
-
-                points_entities = []
-
-                if layer_def.type_upper?
-                  color = COLOR_PART_UPPER
-                elsif layer_def.type_holes?
-                  color = COLOR_PART_HOLES
-                elsif layer_def.type_paths?
-                  color = layer_def.has_color? ? layer_def.color : COLOR_PART_PATH
-                elsif layer_def.type_borders?
-                  color = border_color
-                else
-                  color = COLOR_PART_DEPTH
-                end
-
-                layer_def.poly_defs.each do |poly_def|
-
-                  line_stipple = if poly_def.is_a?(DrawingProjectionPolygonDef) && !poly_def.ccw?
-                                   Kuix::LINE_STIPPLE_SHORT_DASHES
-                                 else
-                                   layer_def.type_borders? ? Kuix::LINE_STIPPLE_LONG_DASHES : Kuix::LINE_STIPPLE_SOLID
-                                 end
-
-                  if fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
-                    poly_def.curve_def.portions.each do |portion|
-                      fn_append_polyline.call(portion.points, color, portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2, line_stipple, false)
-                    end
-                  else
-                    fn_append_polyline.call(poly_def.points, color, 2, line_stipple, poly_def.is_a?(DrawingProjectionPolygonDef))
-                  end
-
-                  if poly_def.is_a?(DrawingProjectionPolylineDef) && !layer_def.type_borders?
-
-                    # It's a polyline, create 'start' and 'end' points entities
-
-                    k_points = Kuix::Points.new
-                    k_points.add_points([ poly_def.points.first ])
-                    k_points.size = 2 * @unit
-                    k_points.style = Kuix::POINT_STYLE_SQUARE
-                    k_points.fill_color = Kuix::COLOR_MEDIUM_GREY
-                    k_points.stroke_color = nil
-                    points_entities << k_points
-
-                    k_points = Kuix::Points.new
-                    k_points.add_points([ poly_def.points.last ])
-                    k_points.size = 2.5 * @unit
-                    k_points.style = Kuix::POINT_STYLE_SQUARE
-                    k_points.stroke_color = Kuix::COLOR_DARK_GREY
-                    k_points.stroke_width = 2
-                    points_entities << k_points
-
-                  end
-
-                end
-
-                # Append points after to be on top of segments
-                points_entities.each { |entity| k_group.append(entity) }
-
-              end
-
-              # Box helper
-              k_box = Kuix::RectangleMotif3d.new
-              k_box.bounds.origin.copy!(projection_def.bounds.min)
-              k_box.bounds.size.copy!(projection_def.bounds)
-              k_box.bounds.inflate!(inch_offset, inch_offset, 0)
-              k_box.color = Kuix::COLOR_BLACK
-              k_box.line_width = 1
-              k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-              k_group.append(k_box)
-
-              if @active_drawing_def.input_line_manipulator.is_a?(EdgeManipulator)
-
-                # Highlight input edge
-                k_polyline = Kuix::Segments.new
-                k_polyline.transformation = projection_def.transformation.inverse
-                k_polyline.add_segments(@active_drawing_def.input_line_manipulator.segment)
-                k_polyline.color = COLOR_ACTION
-                k_polyline.line_width = 3
-                k_polyline.on_top = true
-                k_group.append(k_polyline)
-
-              elsif @active_drawing_def.input_line_manipulator.is_a?(LineManipulator)
-
-                # Highlight input line
-                k_line = Kuix::Line.new
-                k_line.transformation = projection_def.transformation.inverse
-                k_line.position = @active_drawing_def.input_line_manipulator.position
-                k_line.direction = @active_drawing_def.input_line_manipulator.direction
-                k_line.color = COLOR_ACTION
-                k_line.line_width = 2
-                k_group.append(k_line)
-
-              end
-
-              # Axes helper
-              k_axes_helper = Kuix::AxesHelper.new
-              k_axes_helper.box_0.visible = false
-              k_axes_helper.box_z.visible = false
-              k_group.append(k_axes_helper)
-
-            end
+            k_points = Kuix::Points.new
+            k_points.add_points([ poly_def.points.last ])
+            k_points.size = 2.5 * unit
+            k_points.style = Kuix::POINT_STYLE_SQUARE
+            k_points.stroke_color = Kuix::COLOR_DARK_GREY
+            k_points.stroke_width = 2
+            points_entities << k_points
 
           end
 
         end
 
-        # Show part infos
-        show_tooltip([ [ "##{_get_active_part_name}", @active_drawing_def.nil? || @active_drawing_def.input_view.nil? ? nil : "(#{PLUGIN.get_i18n_string("core.component.three_viewer.view_#{@active_drawing_def.input_view}")})" ], _get_active_part_material_name, '-', _get_active_part_size, _get_active_part_icons ])
-
-      else
-
-        @active_drawing_def = nil
+        # Append points after to be on top of segments
+        points_entities.each { |entity| k_group.append(entity) }
 
       end
+
+      # Box helper
+      k_rectangle = Kuix::RectangleMotif3d.new
+      k_rectangle.bounds.origin.copy!(projection_def.bounds.min)
+      k_rectangle.bounds.size.copy!(projection_def.bounds)
+      k_rectangle.bounds.inflate!(inch_offset, inch_offset, 0)
+      k_rectangle.color = Kuix::COLOR_BLACK
+      k_rectangle.line_width = 1
+      k_rectangle.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+      k_group.append(k_rectangle)
+
+      if drawing_def.input_line_manipulator.is_a?(EdgeManipulator)
+
+        # Highlight input edge
+        k_segments = Kuix::Segments.new
+        k_segments.transformation = projection_def.transformation.inverse
+        k_segments.add_segments(drawing_def.input_line_manipulator.segment)
+        k_segments.color = SmartExportTool::COLOR_ACTION
+        k_segments.line_width = 3
+        k_segments.on_top = true
+        k_group.append(k_segments)
+
+      elsif drawing_def.input_line_manipulator.is_a?(LineManipulator)
+
+        # Highlight input line
+        k_line = Kuix::Line.new
+        k_line.transformation = projection_def.transformation.inverse
+        k_line.position = drawing_def.input_line_manipulator.position
+        k_line.direction = drawing_def.input_line_manipulator.direction
+        k_line.color = SmartExportTool::COLOR_ACTION
+        k_line.line_width = 2
+        k_group.append(k_line)
+
+      end
+
+      # Axes helper
+      k_axes_helper = Kuix::AxesHelper.new
+      k_axes_helper.box_0.visible = false
+      k_axes_helper.box_z.visible = false
+      k_group.append(k_axes_helper)
 
     end
 
-    def _set_active_face(face_path, face, highlighted = false)
-      super
+    # -- Write --
 
-      if face
+    def _write_drawing(worker)
 
-        @active_drawing_def = CommonDrawingDecompositionWorker.new(Sketchup::InstancePath.new(@picker.picked_face_path),
-          input_plane_manipulator: @picker.picked_plane_manipulator,
-          input_line_manipulator: @picker.picked_line_manipulator,
-          ignore_edges: true,
-          container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART,
-        ).run
-        if @active_drawing_def.is_a?(DrawingDef)
+      response = worker.run
 
-          projection_def = CommonDrawingProjectionWorker.new(@active_drawing_def,
-            origin_position: CommonDrawingProjectionWorker::ORIGIN_POSITION_FACES_BOUNDS_MIN
-          ).run
-          if projection_def.is_a?(DrawingProjectionDef)
-
-            inch_offset = Sketchup.active_model.active_view.pixels_to_model(15, Geom::Point3d.new.transform(@active_drawing_def.transformation))
-
-            k_group = Kuix::Group.new
-            k_group.transformation = @active_drawing_def.transformation * projection_def.transformation
-            @overlay_layer.append(k_group)
-
-            fn_append_polyline = lambda do |points, line_width, line_stipple, closed|
-
-              k_polyline = Kuix::Polyline.new
-              k_polyline.add_points(points)
-              k_polyline.color = COLOR_PART_UPPER
-              k_polyline.line_width = highlighted ? line_width + 1 : line_width
-              k_polyline.line_stipple = line_stipple
-              k_polyline.on_top = true
-              k_polyline.closed = closed
-              k_group.append(k_polyline)
-
-            end
-
-            projection_def.layer_defs.reverse.each do |layer_def| # reverse layer order to present from Bottom to Top
-              layer_def.poly_defs.each do |poly_def|
-
-                line_stipple = poly_def.ccw? ? Kuix::LINE_STIPPLE_SOLID : Kuix::LINE_STIPPLE_SHORT_DASHES
-
-                if fetch_action_option_boolean(ACTION_EXPORT_FACE, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
-                  poly_def.curve_def.portions.each do |portion|
-                    fn_append_polyline.call(portion.points, portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2, line_stipple, false)
-                  end
-                else
-                  fn_append_polyline.call(poly_def.points, 2, line_stipple, true)
-                end
-
-              end
-            end
-
-            # if fetch_action_option_boolean(ACTION_EXPORT_FACE, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING) && projection_def.layer_defs.one?
-            #   layer_def = projection_def.layer_defs.first
-            #   if layer_def.poly_defs.one?
-            #     poly_def = layer_def.poly_defs.first
-            #     curve_def = poly_def.curve_def
-            #     if curve_def.ellipse?
-            #       portion_def = curve_def.portions.first
-            #       if curve_def.circle?
-            #         show_tooltip([ '#CIRCLE', "Radius = #{portion_def.ellipse_def.xradius.to_mm.round(3)} mm" ])
-            #       else
-            #         show_tooltip([ '#ELLIPSE', "Radius 1 = #{portion_def.ellipse_def.xradius.to_mm.round(3)} mm", "Radius 2 = #{portion_def.ellipse_def.yradius.to_mm.round(3)} mm", "Angle = #{portion_def.ellipse_def.angle.radians.round(3)}°" ])
-            #       end
-            #     else
-            #       show_tooltip('#POLYGON')
-            #     end
-            #   end
-            # end
-
-            # Box helper
-            k_rectangle = Kuix::RectangleMotif3d.new
-            k_rectangle.bounds.origin.copy!(projection_def.bounds.min)
-            k_rectangle.bounds.size.copy!(projection_def.bounds)
-            k_rectangle.bounds.inflate!(inch_offset, inch_offset, 0)
-            k_rectangle.color = Kuix::COLOR_BLACK
-            k_rectangle.line_width = 1
-            k_rectangle.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-            k_group.append(k_rectangle)
-
-            if @active_drawing_def.input_line_manipulator.is_a?(EdgeManipulator)
-
-              # Highlight input edge
-              k_segments = Kuix::Segments.new
-              k_segments.transformation = projection_def.transformation.inverse
-              k_segments.add_segments(@active_drawing_def.input_line_manipulator.segment)
-              k_segments.color = COLOR_ACTION
-              k_segments.line_width = 3
-              k_segments.on_top = true
-              k_group.append(k_segments)
-
-            elsif @active_drawing_def.input_line_manipulator.is_a?(LineManipulator)
-
-              # Highlight input line
-              k_line = Kuix::Line.new
-              k_line.transformation = projection_def.transformation.inverse
-              k_line.position = @active_drawing_def.input_line_manipulator.position
-              k_line.direction = @active_drawing_def.input_line_manipulator.direction
-              k_line.color = COLOR_ACTION
-              k_line.line_width = 2
-              k_group.append(k_line)
-
-            end
-
-            # Axes helper
-            k_axes_helper = Kuix::AxesHelper.new
-            k_axes_helper.box_0.visible = false
-            k_axes_helper.box_z.visible = false
-            k_group.append(k_axes_helper)
-
-          end
-
-        end
-
-      else
-
-        @active_edge = nil
-
+      if response[:errors]
+        @tool.notify_errors(response[:errors])
+      elsif response[:export_path]
+        @tool.notify_success(
+          PLUGIN.get_i18n_string('core.success.exported_to', { :path => File.basename(response[:export_path]) }),
+          [
+            {
+              :label => PLUGIN.get_i18n_string('default.open'),
+              :block => lambda { PLUGIN.execute_command('core_open_external_file', { 'path' => response[:export_path] }) }
+            }
+          ]
+        )
       end
+
+      # Focus SketchUp
+      Sketchup.focus if Sketchup.respond_to?(:focus)
 
     end
 
-    def _set_active_context(context_path, highlighted = false)
+  end
+
+  # -----
+
+  # Exports a part : picked like a selection, without rectangle, multiple or tree selections
+  class SmartExportPartActionHandler < SmartSelectActionHandler
+
+    include SmartExportActionHandlerHelper
+
+    def initialize(action, tool, previous_action_handler = nil)
       super
 
-      if context_path
+      # Create 3D layers
+      tool.create_3d(LAYER_3D_PART_PREVIEW)
+      tool.create_3d(LAYER_3D_ACTION_PREVIEW)
 
-        @active_drawing_def = CommonDrawingDecompositionWorker.new(Sketchup::InstancePath.new(context_path),
-          ignore_faces: true,
-          input_plane_manipulator: @picker.picked_plane_manipulator,
-          input_line_manipulator: @picker.picked_line_manipulator,
-          edge_validator: CommonDrawingDecompositionWorker::EDGE_VALIDATOR_COPLANAR,
-          container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_NONE,
-        ).run
-        if @active_drawing_def.is_a?(DrawingDef)
+    end
 
-          projection_def = CommonDrawingProjectionWorker.new(@active_drawing_def,
-            origin_position: CommonDrawingProjectionWorker::ORIGIN_POSITION_EDGES_BOUNDS_MIN
-          ).run
-          if projection_def.is_a?(DrawingProjectionDef)
+    # -- STATE --
 
-            inch_offset = Sketchup.active_model.active_view.pixels_to_model(15, Geom::Point3d.new.transform(@active_drawing_def.transformation))
+    def get_state_cursor(state)
 
-            k_group = Kuix::Group.new
-            k_group.transformation = @active_drawing_def.transformation * projection_def.transformation
-            @overlay_layer.append(k_group)
+      case state
 
-            fn_append_polyline = lambda do |points, color, line_width, line_stipple, closed|
+      when STATE_SELECT
+        return @tool.get_action_cursor(@action)
 
-              k_polyline = Kuix::Polyline.new
-              k_polyline.add_points(points)
-              k_polyline.color = color
-              k_polyline.line_width = highlighted ? line_width + 1 : line_width
-              k_polyline.line_stipple = line_stipple
-              k_polyline.on_top = true
-              k_polyline.closed = closed
-              k_group.append(k_polyline)
+      end
 
-            end
+      super
+    end
 
-            projection_def.layer_defs.reverse.each do |layer_def| # reverse layer order to present from Bottom to Top
+    # -----
 
-              points_entities = []
+    def onToolLButtonDown(tool, flags, x, y, view)
+      consumed = super
+      @mouse_down_point_2d = nil  # No rectangle selection on drag
+      _preview_action(true)
+      consumed
+    end
 
-              layer_def.poly_defs.each do |poly_def|
+    def onToolLButtonUp(tool, flags, x, y, view)
+      UI.beep if @state == STATE_SELECT && !has_active_part?
+      super
+    end
 
-                color = layer_def.has_color? ? layer_def.color : COLOR_PART_PATH
-                line_stipple = Kuix::LINE_STIPPLE_SOLID
+    def onPickerChanged(picker, view)
+      @previewed = false
+      super
+      _preview_action unless @previewed  # Already done if the active part changed
+    end
 
-                if fetch_action_option_boolean(ACTION_EXPORT_PATHS, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING) && !poly_def.curve_def.nil?
-                  poly_def.curve_def.portions.each do |portion|
-                    fn_append_polyline.call(portion.points, color, portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2, line_stipple, false)
-                  end
-                else
-                  fn_append_polyline.call(poly_def.points, color, 2, line_stipple, poly_def.is_a?(DrawingProjectionPolygonDef))
-                end
+    def onActivePartChanged(part_entity_path, part, highlighted = false)
+      super
+      _preview_action(highlighted)
+    end
 
-                if poly_def.is_a?(DrawingProjectionPolylineDef)
+    def onSelected
+      _do_action if has_active_part?
+    end
 
-                  # It's a polyline, create 'start' and 'end' points entities
+    # -----
 
-                  k_points = Kuix::Points.new
-                  k_points.add_points([ poly_def.points.first ])
-                  k_points.size = 2 * @unit
-                  k_points.style = Kuix::POINT_STYLE_SQUARE
-                  k_points.fill_color = Kuix::COLOR_MEDIUM_GREY
-                  k_points.stroke_color = nil
-                  points_entities << k_points
+    protected
 
-                  k_points = Kuix::Points.new
-                  k_points.add_points([ poly_def.points.last ])
-                  k_points.size = 2.5 * @unit
-                  k_points.style = Kuix::POINT_STYLE_SQUARE
-                  k_points.stroke_color = Kuix::COLOR_DARK_GREY
-                  k_points.stroke_width = 2
-                  points_entities << k_points
+    def _start_with_model_selection?
+      false
+    end
 
-                end
+    def _preview_part_mesh?
+      false # The action preview draws it
+    end
 
-              end
+    def _get_part_error_cursor
+      SmartCursorManager.cursor_select_error
+    end
 
-              # Append points after to be on top of segments
-              points_entities.each { |entity| k_group.append(entity) }
+    def _check_flat_face?
+      false
+    end
 
-            end
+    def _pick_part(picker, view)
+      if picker.picked_face_path.is_a?(Array)
 
-            # Box helper
-            k_rectangle = Kuix::RectangleMotif3d.new
-            k_rectangle.bounds.origin.copy!(projection_def.bounds.min)
-            k_rectangle.bounds.size.copy!(projection_def.bounds)
-            k_rectangle.bounds.inflate!(inch_offset, inch_offset, 0)
-            k_rectangle.color = Kuix::COLOR_BLACK
-            k_rectangle.line_width = 1
-            k_rectangle.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-            k_group.append(k_rectangle)
+        if _check_flat_face? && _is_picked_face_curved?(picker)
+          _reset_active_part
+          return _show_error('tool.smart_export.error.not_flat_face')
+        end
 
-            if @active_drawing_def.input_line_manipulator.is_a?(EdgeManipulator)
+        if (picked_part_entity_path = _get_part_entity_path_from_path(picker.picked_face_path)).is_a?(Array)
 
-              # Highlight input edge
-              k_segments = Kuix::Segments.new
-              k_segments.transformation = projection_def.transformation.inverse
-              k_segments.add_segments(@active_drawing_def.input_line_manipulator.segment)
-              k_segments.color = COLOR_ACTION
-              k_segments.line_width = 3
-              k_segments.on_top = true
-              k_group.append(k_segments)
+          active_path = Sketchup.active_model.active_path
+          if active_path &&
+             @tool.fetch_action_option_boolean(@action, SmartExportTool::ACTION_OPTION_OPTIONS, SmartExportTool::ACTION_OPTION_OPTIONS_ANCHOR) &&
+             active_path.length > picked_part_entity_path.length &&
+             active_path.last != picked_part_entity_path.last
+            _reset_active_part
+            return _show_error('tool.smart_export.error.incompatible_active_path')
+          end
 
-            elsif @active_drawing_def.input_line_manipulator.is_a?(LineManipulator)
-
-              # Highlight input line
-              k_line = Kuix::Line.new
-              k_line.transformation = projection_def.transformation.inverse
-              k_line.position = @active_drawing_def.input_line_manipulator.position
-              k_line.direction = @active_drawing_def.input_line_manipulator.direction
-              k_line.color = COLOR_ACTION
-              k_line.line_width = 2
-              k_group.append(k_line)
-
-            end
-
-            # Axes helper
-            k_axes_helper = Kuix::AxesHelper.new
-            k_axes_helper.box_0.visible = false
-            k_axes_helper.box_z.visible = false
-            k_group.append(k_axes_helper)
-
+          if (picked_part = _generate_part_from_path(picked_part_entity_path)).is_a?(Part)
+            _set_active_part(picked_part_entity_path, picked_part)
+            return
           end
 
         end
 
+        _reset_active_part
+        return _show_error('tool.smart_export.error.not_part')
       end
+      _reset_active_part
+    end
+
+    # -----
+
+    def _get_drawing_key
+      return nil unless has_active_part?
+      [ get_active_part_entity_path ]
+    end
+
+    def _preview_action(highlighted = false)
+      super
+      return unless has_active_part?
+      @tool.pop_to_root_cursor
+
+      # Show part infos
+      @tool.show_tooltip([ [ "##{_get_active_part_name}", @drawing_def.nil? || @drawing_def.input_view.nil? ? nil : "(#{PLUGIN.get_i18n_string("core.component.three_viewer.view_#{@drawing_def.input_view}")})" ], _get_active_part_material_name, '-', _get_active_part_size, _get_active_part_icons ])
+
+    end
+
+  end
+
+  class SmartExportPart3dActionHandler < SmartExportPartActionHandler
+
+    def initialize(tool, previous_action_handler = nil)
+      super(SmartExportTool::ACTION_EXPORT_PART_3D, tool, previous_action_handler)
+    end
+
+    # -- STATE --
+
+    def get_state_picker(state)
+
+      case state
+
+      when STATE_SELECT
+        return SmartPicker.new(tool: @tool, observer: self)
+
+      end
+
+      super
+    end
+
+    def get_state_status(state)
+
+      case state
+
+      when STATE_SELECT
+        return super +
+               ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_export.action_1') + '.'
+      end
+
+      super
+    end
+
+    # -----
+
+    protected
+
+    def _compute_drawing_def
+      CommonDrawingDecompositionWorker.new(Sketchup::InstancePath.new(get_active_part_entity_path),
+        origin_position: @tool.fetch_action_option_boolean(@action, SmartExportTool::ACTION_OPTION_OPTIONS, SmartExportTool::ACTION_OPTION_OPTIONS_ANCHOR) ? CommonDrawingDecompositionWorker::ORIGIN_POSITION_DEFAULT : CommonDrawingDecompositionWorker::ORIGIN_POSITION_FACES_BOUNDS_MIN,
+        ignore_surfaces: true,
+        ignore_edges: true,
+        container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART,
+      ).run
+    end
+
+    def _preview_action_draw(highlighted)
+      return if @drawing_def.nil?
+
+      inch_offset = Sketchup.active_model.active_view.pixels_to_model(15, Geom::Point3d.new.transform(@drawing_def.transformation))
+
+      k_group = Kuix::Group.new
+      k_group.transformation = @drawing_def.transformation
+      @tool.append_3d(k_group, LAYER_3D_ACTION_PREVIEW)
+
+        # Highlight faces
+        k_mesh = Kuix::Mesh.new
+        k_mesh.add_triangles(@drawing_def.face_manipulators.flat_map { |face_manipulator| face_manipulator.triangles })
+        k_mesh.background_color = highlighted ? SmartExportTool::COLOR_MESH_HIGHLIGHTED : SmartExportTool::COLOR_MESH
+        k_group.append(k_mesh)
+
+        # Box helper
+        k_box = Kuix::BoxMotif3d.new
+        k_box.bounds.copy!(@drawing_def.bounds)
+        k_box.bounds.inflate_all!(inch_offset)
+        k_box.color = Kuix::COLOR_BLACK
+        k_box.line_width = 1
+        k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+        k_group.append(k_box)
+
+        # Axes helper
+        k_axes_helper = Kuix::AxesHelper.new
+        k_group.append(k_axes_helper)
+
+    end
+
+    def _create_write_worker(drawing_def)
+      CommonWriteDrawing3dWorker.new(drawing_def,
+        file_name: _get_active_part_name(true),
+        file_format: @tool.fetch_action_option_value(@action, SmartExportTool::ACTION_OPTION_FILE_FORMAT),
+        unit: @tool.fetch_action_option_value(@action, SmartExportTool::ACTION_OPTION_UNIT),
+        switch_yz: @tool.fetch_action_option_boolean(@action, SmartExportTool::ACTION_OPTION_OPTIONS, SmartExportTool::ACTION_OPTION_OPTIONS_SWITCH_YZ)
+      )
+    end
+
+  end
+
+  class SmartExportPart2dActionHandler < SmartExportPartActionHandler
+
+    def initialize(tool, previous_action_handler = nil)
+      super(SmartExportTool::ACTION_EXPORT_PART_2D, tool, previous_action_handler)
+    end
+
+    # -- STATE --
+
+    def get_state_picker(state)
+
+      case state
+
+      when STATE_SELECT
+        return SmartPicker.new(tool: @tool, observer: self, pick_edges: true, pick_clines: true, pick_axes: true)
+
+      end
+
+      super
+    end
+
+    def get_state_status(state)
+
+      case state
+
+      when STATE_SELECT
+        return super +
+               ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_export.action_2') + '.'
+      end
+
+      super
+    end
+
+    # -----
+
+    protected
+
+    def _check_flat_face?
+      true
+    end
+
+    # The projection follows the picked face and line, not only the part
+    def _get_drawing_key
+      return nil unless has_active_part? && !@picker.nil?
+      [ get_active_part_entity_path, @picker.picked_face_path, @picker.picked_edge_path, @picker.picked_cline_path, @picker.picked_axes_path, @picker.picked_axes_line ]
+    end
+
+    def _compute_drawing_def
+      part = get_active_part
+      faces_one = @tool.fetch_action_option_boolean(@action, SmartExportTool::ACTION_OPTION_FACES, SmartExportTool::ACTION_OPTION_FACES_ONE)
+      CommonDrawingDecompositionWorker.new(Sketchup::InstancePath.new(get_active_part_entity_path),
+        input_local_x_axis: part.def.size.oriented_axis(X_AXIS),
+        input_local_y_axis: part.def.size.oriented_axis(Y_AXIS),
+        input_local_z_axis: part.def.size.oriented_axis(Z_AXIS),
+        input_plane_manipulator: @picker.picked_plane_manipulator,
+        input_line_manipulator: @picker.picked_line_manipulator,
+        face_validator: faces_one ? CommonDrawingDecompositionWorker::FACE_VALIDATOR_ONE : CommonDrawingDecompositionWorker::FACE_VALIDATOR_ALL,
+        ignore_edges: !@tool.fetch_action_option_boolean(@action, SmartExportTool::ACTION_OPTION_OPTIONS, SmartExportTool::ACTION_OPTION_OPTIONS_INCLUDE_PATHS),
+        edge_validator: faces_one ? CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY_COPLANAR : CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY,
+        container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART,
+      ).run
+    end
+
+    def _compute_projection_def(drawing_def)
+      CommonDrawingProjectionWorker.new(drawing_def,
+        origin_position: @tool.fetch_action_option_boolean(@action, SmartExportTool::ACTION_OPTION_OPTIONS, SmartExportTool::ACTION_OPTION_OPTIONS_ANCHOR) ? CommonDrawingProjectionWorker::ORIGIN_POSITION_DEFAULT : CommonDrawingProjectionWorker::ORIGIN_POSITION_BOUNDS_MIN,
+        merge_holes: @tool.fetch_action_option_boolean(@action, SmartExportTool::ACTION_OPTION_OPTIONS, SmartExportTool::ACTION_OPTION_OPTIONS_MERGE_HOLES),
+        merge_holes_overflow: @tool.fetch_action_option_length(@action, SmartExportTool::ACTION_OPTION_OPTIONS, SmartExportTool::ACTION_OPTION_OPTIONS_MERGE_HOLES_OVERFLOW),
+        include_borders_layers: true
+      ).run
+    end
+
+    def _get_projection_box_offset
+      30
+    end
+
+    def _get_projection_layer_color(layer_def)
+      if layer_def.type_upper?
+        SmartExportTool::COLOR_PART_UPPER
+      elsif layer_def.type_holes?
+        SmartExportTool::COLOR_PART_HOLES
+      elsif layer_def.type_paths?
+        layer_def.has_color? ? layer_def.color : SmartExportTool::COLOR_PART_PATH
+      elsif layer_def.type_borders?
+        border_color = get_active_part.group.def.material_color
+        border_color.nil? ? SmartExportTool::COLOR_PART_BORDERS : border_color
+      else
+        SmartExportTool::COLOR_PART_DEPTH
+      end
+    end
+
+    def _get_projection_poly_line_stipple(layer_def, poly_def)
+      return Kuix::LINE_STIPPLE_SHORT_DASHES if poly_def.is_a?(DrawingProjectionPolygonDef) && !poly_def.ccw?
+      layer_def.type_borders? ? Kuix::LINE_STIPPLE_LONG_DASHES : Kuix::LINE_STIPPLE_SOLID
+    end
+
+    def _create_write_worker(drawing_def)
+      file_name = _get_active_part_name(true)
+      file_name += " - #{PLUGIN.get_i18n_string("core.component.three_viewer.view_#{drawing_def.input_view}").upcase}" unless drawing_def.input_view.nil?
+      CommonWriteDrawing2dWorker.new(drawing_def,
+        file_name: file_name,
+        file_format: @tool.fetch_action_option_value(@action, SmartExportTool::ACTION_OPTION_FILE_FORMAT),
+        dxf_depth_to_z: @tool.fetch_action_option_boolean(@action, SmartExportTool::ACTION_OPTION_OPTIONS, 'dxf_depth_to_z'),
+        unit: @tool.fetch_action_option_value(@action, SmartExportTool::ACTION_OPTION_UNIT),
+        anchor: @tool.fetch_action_option_boolean(@action, SmartExportTool::ACTION_OPTION_OPTIONS, SmartExportTool::ACTION_OPTION_OPTIONS_ANCHOR),
+        smoothing: _fetch_option_smoothing,
+        merge_holes: @tool.fetch_action_option_boolean(@action, SmartExportTool::ACTION_OPTION_OPTIONS, SmartExportTool::ACTION_OPTION_OPTIONS_MERGE_HOLES),
+        merge_holes_overflow: @tool.fetch_action_option_length(@action, SmartExportTool::ACTION_OPTION_OPTIONS, SmartExportTool::ACTION_OPTION_OPTIONS_MERGE_HOLES_OVERFLOW),
+        parts_stroke_color: @tool.fetch_action_option_value(@action, SmartExportTool::ACTION_OPTION_OPTIONS, 'parts_stroke_color'),
+        parts_fill_color: @tool.fetch_action_option_value(@action, SmartExportTool::ACTION_OPTION_OPTIONS, 'parts_fill_color'),
+        parts_holes_stroke_color: @tool.fetch_action_option_value(@action, SmartExportTool::ACTION_OPTION_OPTIONS, 'parts_holes_stroke_color'),
+        parts_holes_fill_color: @tool.fetch_action_option_value(@action, SmartExportTool::ACTION_OPTION_OPTIONS, 'parts_holes_fill_color'),
+        parts_depths_stroke_color: @tool.fetch_action_option_value(@action, SmartExportTool::ACTION_OPTION_OPTIONS, 'parts_depths_stroke_color'),
+        parts_depths_fill_color: @tool.fetch_action_option_value(@action, SmartExportTool::ACTION_OPTION_OPTIONS, 'parts_depths_fill_color'),
+        parts_paths_stroke_color: @tool.fetch_action_option_value(@action, SmartExportTool::ACTION_OPTION_OPTIONS, 'parts_paths_stroke_color'),
+        parts_paths_fill_color: @tool.fetch_action_option_value(@action, SmartExportTool::ACTION_OPTION_OPTIONS, 'parts_paths_fill_color')
+      )
+    end
+
+  end
+
+  # -----
+
+  # Exports a drawing that isn't a part : a face or paths
+  class SmartExportDrawingActionHandler < SmartActionHandler
+
+    include SmartExportActionHandlerHelper
+
+    def initialize(action, tool, previous_action_handler = nil)
+      super
+
+      # Create 3D layers
+      tool.create_3d(LAYER_3D_ACTION_PREVIEW)
 
     end
 
     # -----
 
-    private
+    def onToolLButtonDown(tool, flags, x, y, view)
+      _preview_action(true)
+      true
+    end
 
-    def _handle_mouse_event(event = nil)
-      if event == :move
+    def onToolLButtonUp(tool, flags, x, y, view)
+      _do_action
+      true
+    end
 
-        if @picker.picked_face_path
+    def onPickerChanged(picker, view)
+      @tool.remove_tooltip
+      @tool.pop_to_root_cursor
+      if picker.picked_face_path.is_a?(Array) && _is_picked_face_curved?(picker)
+        @error = true
+        _show_error('tool.smart_export.error.not_flat_face')
+      else
+        @error = false
+      end
+      _preview_action
+      super
+    end
 
-          # Check if face is not curved
-          if (is_action_export_part_2d? || is_action_export_face? || is_action_export_paths?) && @picker.picked_face.edges.index { |edge| edge.soft? } && !SurfaceManipulator.new.populate_from_face(@picker.picked_face).flat?
-            _reset_active_part
-            show_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.smart_export.error.not_flat_face')}", MESSAGE_TYPE_ERROR)
-            push_cursor(SmartCursorManager.cursor_select_error)
-            return
-          end
+    # -----
 
-          if is_action_export_part_3d? || is_action_export_part_2d?
+    protected
 
-            picked_part_entity_path = _get_part_entity_path_from_path(@picker.picked_face_path)
-            if picked_part_entity_path
+    def _get_drawing_key
+      return nil if @error || @picker.nil? || (input_path = _get_input_path).nil?
+      [ input_path, @picker.picked_face_path, @picker.picked_edge_path, @picker.picked_cline_path, @picker.picked_axes_path, @picker.picked_axes_line ]
+    end
 
-              if Sketchup.active_model.active_path &&
-                fetch_action_option_value(fetch_action, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR) &&
-                Sketchup.active_model.active_path.length > picked_part_entity_path.length &&
-                Sketchup.active_model.active_path.last != picked_part_entity_path.last
+    # The path of the entity to decompose
+    def _get_input_path
+      nil
+    end
 
-                _reset_active_part
-                show_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.smart_export.error.incompatible_active_path')}", MESSAGE_TYPE_ERROR)
-                push_cursor(SmartCursorManager.cursor_select_error)
-                return
+  end
 
-              end
+  class SmartExportFaceActionHandler < SmartExportDrawingActionHandler
 
-              part = _generate_part_from_path(picked_part_entity_path)
-              if part
-                _set_active_part(picked_part_entity_path, part)
-              else
-                _reset_active_part
-                show_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.smart_export.error.not_part')}", MESSAGE_TYPE_ERROR)
-                push_cursor(SmartCursorManager.cursor_select_error)
-              end
-              return
+    def initialize(tool, previous_action_handler = nil)
+      super(SmartExportTool::ACTION_EXPORT_FACE, tool, previous_action_handler)
+    end
 
-            else
-              _reset_active_part
-              show_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.smart_export.error.not_part')}", MESSAGE_TYPE_ERROR)
-              push_cursor(SmartCursorManager.cursor_select_error)
-              return
-            end
+    # -- STATE --
 
-          elsif is_action_export_face?
+    def get_state_picker(state)
+      SmartPicker.new(tool: @tool, observer: self, pick_edges: true, pick_clines: true, pick_axes: true)
+    end
 
-            _set_active_face(@picker.picked_face_path, @picker.picked_face)
-            return
+    def get_state_status(state)
 
-          elsif is_action_export_paths?
+      case state
 
-            _set_active_context(@picker.picked_context_path)
-            return
-
-          end
-
-        elsif @picker.picked_edge_path
-
-          if is_action_export_paths?
-            _set_active_context(@picker.picked_context_path)
-            return
-          end
-
-        end
-        _reset_active_context  # No input
-        _reset_active_face  # No input
-        _reset_active_part  # No input
-
-      elsif event == :l_button_down
-
-        if is_action_export_part_3d?
-          _refresh_active_part(true)
-        elsif is_action_export_part_2d?
-          _refresh_active_part(true)
-        elsif is_action_export_face?
-          _refresh_active_face(true)
-        elsif is_action_export_paths?
-          _refresh_active_context(true)
-        end
-
-      elsif event == :l_button_up || event == :l_button_dblclick
-
-        if is_action_export_part_3d?
-
-          if @active_drawing_def.nil?
-            UI.beep
-            return
-          end
-
-          file_name = _get_active_part_name(true)
-          file_format = fetch_action_option_value(ACTION_EXPORT_PART_3D, ACTION_OPTION_FILE_FORMAT)
-          unit = fetch_action_option_value(ACTION_EXPORT_PART_3D, ACTION_OPTION_UNIT)
-          switch_yz = fetch_action_option_boolean(ACTION_EXPORT_PART_3D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SWITCH_YZ)
-
-          worker = CommonWriteDrawing3dWorker.new(@active_drawing_def,
-            file_name: file_name,
-            file_format: file_format,
-            unit: unit,
-            switch_yz: switch_yz
-          )
-          response = worker.run
-
-          if response[:errors]
-            notify_errors(response[:errors])
-          elsif response[:export_path]
-            notify_success(
-              PLUGIN.get_i18n_string('core.success.exported_to', { :path => File.basename(response[:export_path]) }),
-              [
-                {
-                  :label => PLUGIN.get_i18n_string('default.open'),
-                  :block => lambda { PLUGIN.execute_command('core_open_external_file', { 'path' => response[:export_path] }) }
-                }
-              ]
-            )
-          end
-
-          # Focus SketchUp
-          Sketchup.focus if Sketchup.respond_to?(:focus)
-
-        elsif is_action_export_part_2d?
-
-          if @active_drawing_def.nil?
-            UI.beep
-            return
-          end
-
-          file_name = _get_active_part_name(true)
-          file_name += " - #{PLUGIN.get_i18n_string("core.component.three_viewer.view_#{@active_drawing_def.input_view}").upcase}" unless @active_drawing_def.nil? || @active_drawing_def.input_view.nil?
-          file_format = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_FILE_FORMAT)
-          dxf_depth_to_z = fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'dxf_depth_to_z')
-          unit = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_UNIT)
-          anchor = fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR)
-          smoothing = fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
-          merge_holes = fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_MERGE_HOLES)
-          merge_holes_overflow = fetch_action_option_length(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_MERGE_HOLES_OVERFLOW)
-          parts_stroke_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_stroke_color')
-          parts_fill_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_fill_color')
-          parts_holes_stroke_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_holes_stroke_color')
-          parts_holes_fill_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_holes_fill_color')
-          parts_depths_stroke_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_depths_stroke_color')
-          parts_depths_fill_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_depths_fill_color')
-          parts_paths_stroke_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_paths_stroke_color')
-          parts_paths_fill_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_paths_fill_color')
-
-          worker = CommonWriteDrawing2dWorker.new(@active_drawing_def,
-                                                  file_name: file_name,
-                                                  file_format: file_format,
-                                                  dxf_depth_to_z: dxf_depth_to_z,
-                                                  unit: unit,
-                                                  anchor: anchor,
-                                                  smoothing: smoothing,
-                                                  merge_holes: merge_holes,
-                                                  merge_holes_overflow: merge_holes_overflow,
-                                                  parts_stroke_color: parts_stroke_color,
-                                                  parts_fill_color: parts_fill_color,
-                                                  parts_holes_stroke_color: parts_holes_stroke_color,
-                                                  parts_holes_fill_color: parts_holes_fill_color,
-                                                  parts_depths_stroke_color: parts_depths_stroke_color,
-                                                  parts_depths_fill_color: parts_depths_fill_color,
-                                                  parts_paths_stroke_color: parts_paths_stroke_color,
-                                                  parts_paths_fill_color: parts_paths_fill_color
-          )
-          response = worker.run
-
-          if response[:errors]
-            notify_errors(response[:errors])
-          elsif response[:export_path]
-            notify_success(
-              PLUGIN.get_i18n_string('core.success.exported_to', { :path => File.basename(response[:export_path]) }),
-              [
-                {
-                  :label => PLUGIN.get_i18n_string('default.open'),
-                  :block => lambda { PLUGIN.execute_command('core_open_external_file', { 'path' => response[:export_path] }) }
-                }
-              ]
-            )
-          end
-
-          # Focus SketchUp
-          Sketchup.focus if Sketchup.respond_to?(:focus)
-
-        elsif is_action_export_face?
-
-          if @active_drawing_def.nil?
-            UI.beep
-            return
-          end
-
-          file_name = 'FACE'
-          file_format = fetch_action_option_value(ACTION_EXPORT_FACE, ACTION_OPTION_FILE_FORMAT)
-          unit = fetch_action_option_value(ACTION_EXPORT_FACE, ACTION_OPTION_UNIT)
-          smoothing = fetch_action_option_value(ACTION_EXPORT_FACE, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
-          parts_stroke_color = fetch_action_option_value(ACTION_EXPORT_FACE, ACTION_OPTION_OPTIONS, 'parts_stroke_color')
-          parts_fill_color = fetch_action_option_value(ACTION_EXPORT_FACE, ACTION_OPTION_OPTIONS, 'parts_fill_color')
-
-          worker = CommonWriteDrawing2dWorker.new(@active_drawing_def,
-            file_name: file_name,
-            file_format: file_format,
-            unit: unit,
-            smoothing: smoothing,
-            parts_stroke_color: parts_stroke_color,
-            parts_fill_color: parts_fill_color
-          )
-          response = worker.run
-
-          if response[:errors]
-            notify_errors(response[:errors])
-          elsif response[:export_path]
-            notify_success(
-              PLUGIN.get_i18n_string('core.success.exported_to', { :path => File.basename(response[:export_path]) }),
-              [
-                {
-                  :label => PLUGIN.get_i18n_string('default.open'),
-                  :block => lambda { PLUGIN.execute_command('core_open_external_file', { 'path' => response[:export_path] }) }
-                }
-              ]
-            )
-          end
-
-          # Focus SketchUp
-          Sketchup.focus if Sketchup.respond_to?(:focus)
-
-        elsif is_action_export_paths?
-
-          if @active_drawing_def.nil?
-            UI.beep
-            return
-          end
-
-          file_name = 'PATHS'
-          file_format = fetch_action_option_value(ACTION_EXPORT_PATHS, ACTION_OPTION_FILE_FORMAT)
-          unit = fetch_action_option_value(ACTION_EXPORT_PATHS, ACTION_OPTION_UNIT)
-          smoothing = fetch_action_option_value(ACTION_EXPORT_PATHS, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
-          parts_paths_stroke_color = fetch_action_option_value(ACTION_EXPORT_PATHS, ACTION_OPTION_OPTIONS, 'parts_paths_stroke_color')
-          parts_paths_fill_color = fetch_action_option_value(ACTION_EXPORT_PATHS, ACTION_OPTION_OPTIONS, 'parts_paths_fill_color')
-
-          worker = CommonWriteDrawing2dWorker.new(@active_drawing_def,
-            file_name: file_name,
-            file_format: file_format,
-            unit: unit,
-            smoothing: smoothing,
-            parts_paths_stroke_color: parts_paths_stroke_color,
-            parts_paths_fill_color: parts_paths_fill_color
-          )
-          response = worker.run
-
-          if response[:errors]
-            notify_errors(response[:errors])
-          elsif response[:export_path]
-            notify_success(
-              PLUGIN.get_i18n_string('core.success.exported_to', { :path => File.basename(response[:export_path]) }),
-              [
-                {
-                  :label => PLUGIN.get_i18n_string('default.open'),
-                  :block => lambda { PLUGIN.execute_command('core_open_external_file', { 'path' => response[:export_path] }) }
-                }
-              ]
-            )
-          end
-
-          # Focus SketchUp
-          Sketchup.focus if Sketchup.respond_to?(:focus)
-
-        end
-
+      when STATE_SELECT
+        return super +
+               ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_export.action_3') + '.'
       end
 
+      super
+    end
+
+    # -----
+
+    protected
+
+    def _get_input_path
+      @picker.picked_face_path
+    end
+
+    def _compute_drawing_def
+      CommonDrawingDecompositionWorker.new(Sketchup::InstancePath.new(@picker.picked_face_path),
+        input_plane_manipulator: @picker.picked_plane_manipulator,
+        input_line_manipulator: @picker.picked_line_manipulator,
+        ignore_edges: true,
+        container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART,
+      ).run
+    end
+
+    def _compute_projection_def(drawing_def)
+      CommonDrawingProjectionWorker.new(drawing_def,
+        origin_position: CommonDrawingProjectionWorker::ORIGIN_POSITION_FACES_BOUNDS_MIN
+      ).run
+    end
+
+    def _create_write_worker(drawing_def)
+      CommonWriteDrawing2dWorker.new(drawing_def,
+        file_name: 'FACE',
+        file_format: @tool.fetch_action_option_value(@action, SmartExportTool::ACTION_OPTION_FILE_FORMAT),
+        unit: @tool.fetch_action_option_value(@action, SmartExportTool::ACTION_OPTION_UNIT),
+        smoothing: _fetch_option_smoothing,
+        parts_stroke_color: @tool.fetch_action_option_value(@action, SmartExportTool::ACTION_OPTION_OPTIONS, 'parts_stroke_color'),
+        parts_fill_color: @tool.fetch_action_option_value(@action, SmartExportTool::ACTION_OPTION_OPTIONS, 'parts_fill_color')
+      )
+    end
+
+  end
+
+  class SmartExportPathsActionHandler < SmartExportDrawingActionHandler
+
+    def initialize(tool, previous_action_handler = nil)
+      super(SmartExportTool::ACTION_EXPORT_PATHS, tool, previous_action_handler)
+    end
+
+    # -- STATE --
+
+    def get_state_picker(state)
+      SmartPicker.new(tool: @tool, observer: self, pick_context_by_edge: true, pick_edges: true, pick_clines: true, pick_axes: true)
+    end
+
+    def get_state_status(state)
+
+      case state
+
+      when STATE_SELECT
+        return super +
+               ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_export.action_0') + '.'
+      end
+
+      super
+    end
+
+    # -----
+
+    protected
+
+    def _get_input_path
+      return nil if @picker.picked_face_path.nil? && @picker.picked_edge_path.nil?
+      @picker.picked_context_path
+    end
+
+    def _compute_drawing_def
+      CommonDrawingDecompositionWorker.new(Sketchup::InstancePath.new(@picker.picked_context_path),
+        ignore_faces: true,
+        input_plane_manipulator: @picker.picked_plane_manipulator,
+        input_line_manipulator: @picker.picked_line_manipulator,
+        edge_validator: CommonDrawingDecompositionWorker::EDGE_VALIDATOR_COPLANAR,
+        container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_NONE,
+      ).run
+    end
+
+    def _compute_projection_def(drawing_def)
+      CommonDrawingProjectionWorker.new(drawing_def,
+        origin_position: CommonDrawingProjectionWorker::ORIGIN_POSITION_EDGES_BOUNDS_MIN
+      ).run
+    end
+
+    def _get_projection_layer_color(layer_def)
+      layer_def.has_color? ? layer_def.color : SmartExportTool::COLOR_PART_PATH
+    end
+
+    def _get_projection_poly_line_stipple(layer_def, poly_def)
+      Kuix::LINE_STIPPLE_SOLID
+    end
+
+    def _create_write_worker(drawing_def)
+      CommonWriteDrawing2dWorker.new(drawing_def,
+        file_name: 'PATHS',
+        file_format: @tool.fetch_action_option_value(@action, SmartExportTool::ACTION_OPTION_FILE_FORMAT),
+        unit: @tool.fetch_action_option_value(@action, SmartExportTool::ACTION_OPTION_UNIT),
+        smoothing: _fetch_option_smoothing,
+        parts_paths_stroke_color: @tool.fetch_action_option_value(@action, SmartExportTool::ACTION_OPTION_OPTIONS, 'parts_paths_stroke_color'),
+        parts_paths_fill_color: @tool.fetch_action_option_value(@action, SmartExportTool::ACTION_OPTION_OPTIONS, 'parts_paths_fill_color')
+      )
     end
 
   end
