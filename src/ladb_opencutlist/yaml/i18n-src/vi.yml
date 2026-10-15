@@ -147,8 +147,10 @@ core:
     import: Nhập
     more: Nhiều hơn
     more_docs: Tài liệu.
+    # this link only appears in the french version, points to https://www.lairdubois.fr/
     more_reviews: Nhận xét
     more_plans: Các kế hoạch
+    # only appears in the french version
     more_extensions: Tiện ích mở rộng
     more_update: Cập nhật
   bottombar:
@@ -343,6 +345,7 @@ tab:
         Tiết diện mặt cắt thực tế: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
+      # "Model Info" refers to the SketchUp menu to change the units
       rounded_std_footer: Điều chỉnh độ chính xác trong *Thông tin mô hình* hoặc kiểm tra kích thước của các bộ phận trong nhóm này.
       highlight_part: $t(tab.cutlist.highlight_part)
       highlight_parts: $t(tab.cutlist.highlight_parts)
@@ -672,6 +675,7 @@ tab:
       option_csv_col_sep_comma: Dấu phẩy
       option_csv_col_sep_semicolon: Dấu chấm phẩy
       option_csv_encoding: Mã hóa
+      # as described in https://www.rfc-editor.org/info/rfc4180/
       copy_all: Tiêu đề + Giá trị
       copy_values: Chỉ các giá trị
       number: No.

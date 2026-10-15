@@ -150,8 +150,10 @@ core:
     import: Importer
     more: Plus
     more_docs: Docs
+    # this link only appears in the french version, points to https://www.lairdubois.fr/
     more_reviews: Avis
     more_plans: Plans
+    # only appears in the french version
     more_extensions: Plugins
     more_update: Mise à jour
   bottombar:
@@ -184,7 +186,7 @@ core:
     layers_change: Les balises dans le modèle actif ont changées.
     drawing_change: Le dessin du modèle actif a été modifié.
   upgrade:
-    unavailable: Impossible de connaitre la dernière version d'*OpenCutList*.
+    unavailable: Impossible de connaître la dernière version d'*OpenCutList*.
     available: |
       Une nouvelle version d'*OpenCutList* est disponible.
       Mettez à jour pour disposer des dernières nouveautés !
@@ -304,6 +306,7 @@ core:
     error:
       empty: Le solide ne contient aucune géométrie
       empty_named: « {{ name }} » ne contient aucune géométrie
+      # an edge is considered manifold when it is shared by exactly two faces in a 3D mesh
       non_manifold_edges: Le solide contient {{ count }} arête non manifold
       non_manifold_edges_plural: Le solide contient {{ count }} arêtes non manifold
       non_manifold_edges_named: « {{ name }} » contient {{ count }} arête non manifold
@@ -601,6 +604,7 @@ tab:
         Section réelle : *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
+      # "Model Info" refers to the SketchUp menu to change the units
       rounded_std_footer: Adaptez la précision dans les *Infos sur le modèle* ou vérifiez les dimensions des pièces de ce groupe.
       highlight_part: $t(tab.cutlist.highlight_part)
       highlight_parts: $t(tab.cutlist.highlight_parts)
@@ -816,7 +820,7 @@ tab:
         - l'*épaisseur* sur l'axe <span style='color:blue'>bleu</span>
       flipped_detection: Détection des pièces en miroir
       flipped_detection_help: |
-        Si cette option est activée, les pièces en miroir seront détectés et affichées comme une nouvelle pièce.
+        Si cette option est activée, les pièces en miroir seront détectées et affichées comme une nouvelle pièce.
       smart_material: Attribution *intelligente* des matières
       smart_material_help: Si cette option est activée, les pièces n'ayant pas de matière définie peuvent se voir attribuer la matière principale de leurs éléments enfants ou celle héritée de leurs éléments parents.
       dynamic_attributes_name: Utiliser l'attribut *Name* des composants dynamiques
@@ -945,6 +949,7 @@ tab:
       option_csv_col_sep_comma: Virgule
       option_csv_col_sep_semicolon: Point virgule
       option_csv_encoding: Encodage
+      # as described in https://www.rfc-editor.org/info/rfc4180/
       copy_all: Titres + Valeurs
       copy_values: Valeurs seulement
       number: N°

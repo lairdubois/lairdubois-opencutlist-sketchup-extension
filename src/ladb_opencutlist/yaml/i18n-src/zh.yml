@@ -145,8 +145,10 @@ core:
     import: 导入
     more: 更多
     more_docs: 文档
+    # this link only appears in the french version, points to https://www.lairdubois.fr/
     more_reviews: 评论
     more_plans: 计划
+    # only appears in the french version
     more_extensions: 扩展
     more_update: 更新
   bottombar:
@@ -338,6 +340,7 @@ tab:
         实际截面: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
+      # "Model Info" refers to the SketchUp menu to change the units
       rounded_std_footer: 调整 *模型信息* 中的精度或检查该组中部件的尺寸.
       highlight_part: $t(tab.cutlist.highlight_part)
       highlight_parts: $t(tab.cutlist.highlight_parts)
@@ -658,6 +661,7 @@ tab:
       option_csv_col_sep_comma: 逗号
       option_csv_col_sep_semicolon: 分号
       option_csv_encoding: 编码
+      # as described in https://www.rfc-editor.org/info/rfc4180/
       copy_all: 标题 + 数值
       copy_values: 仅值
       number: 编号

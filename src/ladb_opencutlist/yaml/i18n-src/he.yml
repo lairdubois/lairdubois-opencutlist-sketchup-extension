@@ -146,8 +146,10 @@ core:
     import: ייבוא
     more: עוד
     more_docs: מסמכים
+    # this link only appears in the french version, points to https://www.lairdubois.fr/
     more_reviews: ביקורות
     more_plans: תוכניות
+    # only appears in the french version
     more_extensions: תוספים
     more_update: עדכונים
   bottombar:
@@ -341,6 +343,7 @@ tab:
         חתך בפועל: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
+      # "Model Info" refers to the SketchUp menu to change the units
       rounded_std_footer: התאם את הדיוק ב-*Model Info* או בדוק את מידות החלקים בקבוצה זו.
       highlight_part: $t(tab.cutlist.highlight_part)
       highlight_parts: $t(tab.cutlist.highlight_parts)
@@ -661,6 +664,7 @@ tab:
       option_csv_col_sep_comma: פסיק
       option_csv_col_sep_semicolon: נקודה פסיק
       option_csv_encoding: קדוד
+      # as described in https://www.rfc-editor.org/info/rfc4180/
       copy_all: כותרות + ערכים
       copy_values: רק ערכים
       number: מס'

@@ -146,8 +146,10 @@ core:
     import: Importálás
     more: Továbbiak
     more_docs: Dokumentáció
+    # this link only appears in the french version, points to https://www.lairdubois.fr/
     more_reviews: Értékelések
     more_plans: Tervek
+    # only appears in the french version
     more_extensions: Bővítmények
     more_update: Frissítés
   bottombar:
@@ -342,6 +344,7 @@ tab:
         Tényleges keresztmetszet: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
+      # "Model Info" refers to the SketchUp menu to change the units
       rounded_std_footer: Állítsa be a pontosságot a *Modell információk* menüben, vagy ellenőrizze az alkatrészek méreteit ebben a csoportban.
       highlight_part: $t(tab.cutlist.highlight_part)
       highlight_parts: $t(tab.cutlist.highlight_parts)
@@ -662,6 +665,7 @@ tab:
       option_csv_col_sep_comma: Vessző
       option_csv_col_sep_semicolon: Pontosvessző
       option_csv_encoding: Kódolás
+      # as described in https://www.rfc-editor.org/info/rfc4180/
       copy_all: Fejlécek + Értékek
       copy_values: Csak értékek
       number: Sorszám

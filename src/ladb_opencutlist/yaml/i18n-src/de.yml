@@ -150,8 +150,10 @@ core:
     import: Importieren
     more: Mehr
     more_docs: Doku
+    # this link only appears in the french version, points to https://www.lairdubois.fr/
     more_reviews: Meinungen
     more_plans: Pläne
+    # only appears in the french version
     more_extensions: Plugins
     more_update: Aktualisieren
   bottombar:
@@ -304,6 +306,7 @@ core:
     error:
       empty: Der Körper enthält keine Geometrie
       empty_named: « {{ name }} » enthält keine Geometrie
+      # an edge is considered manifold when it is shared by exactly two faces in a 3D mesh
       non_manifold_edges: Der Körper enthält {{ count }} nicht-mannigfaltige Kante
       non_manifold_edges_plural: Der Körper enthält {{ count }} nicht-mannigfaltige Kanten
       non_manifold_edges_named: « {{ name }} » enthält {{ count }} nicht mannigfaltige-Kante
@@ -460,6 +463,7 @@ tab:
         Tatsächlicher Querschnitt: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
+      # "Model Info" refers to the SketchUp menu to change the units
       rounded_std_footer: Stellen Sie die Genauigkeit in den *Modellinformationen* ein oder überprüfen Sie die Abmessungen der Teile in dieser Gruppe.
       highlight_part: $t(tab.cutlist.highlight_part)
       highlight_parts: $t(tab.cutlist.highlight_parts)
@@ -804,6 +808,7 @@ tab:
       option_csv_col_sep_comma: Komma
       option_csv_col_sep_semicolon: Semikolon
       option_csv_encoding: Kodierung
+      # as described in https://www.rfc-editor.org/info/rfc4180/
       copy_all: Überschriften + Werte
       copy_values: Nur Inhalt
       number: Nr.
@@ -2517,6 +2522,8 @@ tool:
     action_option_options_draw_in_0: Zeichnen im aktiven Element
     action_option_options_draw_in_1: Zeichnen im übergeordneten Teil des ersten Punktes
     action_option_options_draw_in_status: Zeichnen im übergeordneten Element des Teils, auf das der erste Punkt bezieht
+    action_option_options_pick_material: Pipette
+    action_option_options_pick_material_status: Das Material des durch den ersten Punkt ausgewählten Teils auf das erstellte Teil anwenden
     action_option_options_ask_name: Benennung der Teile
     action_option_options_ask_name_status: Namen der Teile manuell eingeben
     action_toggle_move_copy_status: Abwechselnd kopieren/verschieben

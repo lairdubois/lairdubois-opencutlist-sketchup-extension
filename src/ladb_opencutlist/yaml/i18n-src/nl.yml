@@ -15,6 +15,7 @@ default:
   stop: Stop
   validate: Bevestigen
   confirm: Bevestigen
+  finish: Voltooien
   ok: OK
   open: Openen
   see: Bekijken
@@ -27,6 +28,7 @@ default:
   export: Exporteren
   import: Importeren
   load: Laden
+  replace: Vervangen
   preview: In zicht
   options: Opties
   caution: Let op
@@ -148,8 +150,10 @@ core:
     import: Importeren
     more: Meer
     more_docs: Doc.
+    # this link only appears in the french version, points to https://www.lairdubois.fr/
     more_reviews: Recensies
     more_plans: Plans
+    # only appears in the french version
     more_extensions: plugin
     more_update: Bijwerken
   bottombar:
@@ -302,6 +306,7 @@ core:
     error:
       empty: Het volume bevat geen geometrie
       empty_named: « {{ name }} » bevat geen geometrie
+      # an edge is considered manifold when it is shared by exactly two faces in a 3D mesh
       non_manifold_edges: Het volume bevat {{ count }} niet-manifold rand
       non_manifold_edges_plural: Het volume bevat {{ count }} niet-manifold randen
       non_manifold_edges_named: « {{ name }} » bevat {{ count }} niet-manifold rand
@@ -377,6 +382,7 @@ tab:
         Werkelijke breedte: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
+      # "Model Info" refers to the SketchUp menu to change the units
       rounded_std_footer: Pas het aantal decimalen aan in *Model info* of controleer de maten van de componenten in deze groep.
       highlight_part: $t(tab.cutlist.highlight_part)
       highlight_parts: $t(tab.cutlist.highlight_parts)
@@ -504,7 +510,7 @@ tab:
         Onderdelen die gegroepeerd zijn in een pack moeten dezelfde definitie hebben.
 
         *Voorbeeld: Bereken 1 deel voor een paar ladegeleiders:
-        Pack = 2 eenheden / deel.*
+        Pack = 2 eenheden / deel*
       instance_count_by_part_1: 1 per onderdeel
       instance_count_by_part_2: 2 stuks per onderdeel
       mass: Massa
@@ -542,9 +548,9 @@ tab:
         Als dit vakje is aangevinkt, heeft de optie *Automatische oriëntatie onderdeel* geen effect op dit onderdeel.
 
         En dus,
-        - de *lengte* komt op de rode as
-        - de *breedte* op de groene as
-        - de *dikte* op de blauwe as
+        - de *lengte* komt op de <span style='color:red'>rode</span> as
+        - de *breedte* op de <span style='color:green'>groene</span> as
+        - de *dikte* op de <span style='color:blue'>blauwe</span> as
       symmetrical: Schakel detectie van gespiegelde onderdelen op dit deel uit
       symmetrical_help: |
         Indien dit vakje is aangevinkt, zal de detectie van een *gespiegeld deel* geen effect hebben op dit deel.
@@ -567,9 +573,9 @@ tab:
       axes_help: Herschik de afmetingen zodat ze overeenkomen met de gewenste askleuren in uw onderdeel.
       axes_tip: |
         Het is belangrijk op te merken dat als de optie *Automatische oriëntatie* niet is geactiveerd of als het onderdeel is *Vergrendeld op zijn assen*:
-        - de **lengte** komt op de <span style='color:red'>rode</span> as
-        - de **breedte** op de <span style='color:green'>groene</span> as
-        - de **dikte** op de <span style='color:blue'>blauwe</span> as
+        - de **lengte** komt op de <strong style='color:red'>rode</strong> as
+        - de **breedte** op de <strong style='color:green'>groene</strong> as
+        - de **dikte** op de <strong style='color:blue'>blauwe</strong> as
       axes_origin_position_none: Verander het nulpunt niet
       axes_origin_position_min: Plaats het nulpunt in een hoek
       axes_origin_position_center: Plaats het nulpunt in het midden
@@ -721,6 +727,7 @@ tab:
       option_csv_col_sep_comma: Komma
       option_csv_col_sep_semicolon: Punt komma
       option_csv_encoding: Encodering
+      # as described in https://www.rfc-editor.org/info/rfc4180/
       copy_all: Koppen + Waarden
       copy_values: Alleen waarden
       number: N°
@@ -1275,7 +1282,7 @@ tab:
         cut_primary: Primaire snedes
         cut_primary_plural: Primaire snedes
         cut_none: Geen
-        cut_depth: diepteniveau
+        cut_depth: Niveau {{ depth }}
       write:
         title: De lay-out exporteren
         info_0: |
@@ -1764,7 +1771,7 @@ tab:
         **Bruikbaar doorvoervolume**
         Het totale volume is de som van de doorvoervolumes van de onderdelen.
 
-        ** Eerst materiaalvolume nodig**
+        **Eerst materiaalvolume nodig**
         Het totale volume is de som van de volumes van de panelen, platen, staven of strips van de onderdelen na lay-out.
       raw_estimated_0: Nuttige debiet volume
       raw_estimated_1: Benodigd grondstof volume
@@ -2016,7 +2023,7 @@ tab:
       title: Onderdelen importeren
       help: |
         Op deze pagina kunt u een reeks ruwe stukken of panelen (met rechthoekige vorm) in uw model importeren vanuit een [CSV](https://nl.wikipedia.org/wiki/Kommagescheiden_bestand) bestand
-        Zo kunt u de kracht van de zaaglijst van **OpenCutList** gebruiken, terwijl u uw onderdelen aanmaakt met een ander programma dan SketchUp.Klik op de knop.
+        Zo kunt u de kracht van de zaaglijst van *OpenCutList* gebruiken, terwijl u uw onderdelen aanmaakt met een ander programma dan *SketchUp*.Klik op de knop.
 
         **Een CSV-bestand openen** om te starten.
       load:
@@ -2102,6 +2109,7 @@ tab:
         info_1: U krijgt de mogelijkheid om de plaats ervan te bepalen in het actieve model.
         materials: Materialen
         layers: Tags
+        geometry: Geometrie
         option_parts_formula: Formule
         option_parts_formula_help: Met de formule kunt u de naam van de geïmporteerde onderdelen personaliseren.
         option_part_wood_material_name: Hout
@@ -2112,6 +2120,8 @@ tab:
         option_part_glass_material_name_help: Materiaal dat moet worden toegepast op de onderdelen in **glas**.
         option_front_part_layer_name: Fronten
         option_front_part_layer_name_help: Tag die moet worden toegepast op de frontonderdelen.
+        option_back_part_layer_name: Achterwanden
+        option_back_part_layer_name_help: Label toe te passen op kastachterwanden.
         option_machining_material_name: Bewerkingen
         option_machining_material_name_help: Materiaal dat moet worden toegepast op de **bewerkingen**.
         option_machining_layer_name: Bewerkingen
@@ -2123,6 +2133,10 @@ tab:
         option_no_material_help: "*Laat dit veld leeg om geen materiaal toe te passen.*"
         option_default_material_help: "*Er wordt een standaardmateriaal aangemaakt als dit veld leeg is*."
         option_no_layer_help: "*Laat dit veld leeg om geen tag toe te passen.*"
+        option_subtract_machinings: Bewerkingen uitfrezen in onderdelen
+        option_subtract_machinings_help: De **groeven**, **sponningen** en **afschuiningen** van de onderdelen, ook die van accessoires, worden uit het volume verwijderd in plaats van getekend. Boorgaten blijven getekend.
+        warning:
+          subtract_machinings_failed: "De bewerkingen konden niet uit deze onderdelen worden uitgesneden en worden daarom getekend: {{ names }}"
         old_name: Naam van oorsprong
         new_name: Nieuwe naam
         count: Aant.
@@ -2344,6 +2358,7 @@ tool:
     vcb_diameter: Diameter
     vcb_distance: Afstand
     vcb_spacings: Kolomwit
+    vcb_angle: Hoek
     locked_on_last_measure_status: Vergrendelen op de laatste meting
     error:
       no_direction: Geef een richting aan met de cursor
@@ -2352,12 +2367,17 @@ tool:
       invalid_multiplicator: De vermenigvuldigingsfactor {{ value }} is ongeldig
       invalid_divider: De deler {{ value }} is ongeldig
       invalid_offset: De verschuiving {{ value }} is ongeldig
+      invalid_angle: De hoek {{ value }} is ongeldig
       invalid_segment_count: Het aantal segmenten {{ value }} is ongeldig. Het moet tussen 3 en 999 liggen.
-      syntax_error: Syntaxfout
+      syntax_error: "Syntaxfout: {{ error }}"
       unexpected_close_parenthesis: Onverwachte sluithaak
       missing_close_parenthesis: Sluitende haak ontbreekt
       missing_operand: Operand ontbreekt
       zero_division: Deling door nul
+      invalid_argument_count: Een functie min, max, floor of ceil vereist minstens twee waarden
+      comma_argument_separator: "Scheid de waarden met een « ; »: de komma wordt ook als decimaalteken gebruikt"
+      invalid_dimension: "Een lengte kan alleen bij een andere lengte worden opgeteld: een getal zonder eenheid is een vermenigvuldigingsfactor"
+      no_matching_value: Geen van de voorgestelde waarden is geschikt
       lt_min_distance: De afstand {{ value1 }} is kleiner dan de minimale afstand van {{ value2 }}
       gt_max_distance: De afstand {{ value1 }} is groter dan de maximale afstand van {{ value2 }}
       locked_part: Dit onderdeel is vergrendeld
@@ -2521,6 +2541,11 @@ tool:
     action_4_status: Een onderdeel langs een as verdelen
     action_4_state_1_status: Klik om het eerste meetpunt te bepalen
     action_4_state_2_status: Klik om het tweede meetpunt te bepalen of voer een afstand in
+    action_5: Interactie
+    action_5_status: Een deur openen of sluiten
+    action_5_state_0_status: Klik op een deur om ze te openen of te sluiten, of versleep ze om de openingshoek aan te passen
+    action_5_state_0_amend_status: Voer een hoek in om de openingshoek aan te passen, of klik op een deur om ze te openen of te sluiten
+    action_5_state_20_status: Versleep de deur om de openingshoek aan te passen en laat los om te bevestigen
     action_option_group_copy_measure_type: Meten
     action_option_group_move_measure_type: Meten
     action_option_group_axes: Assen
@@ -2535,6 +2560,9 @@ tool:
     action_toggle_raytest_status: Projectie naar het volgende punt
     warning:
       copies_disable_mirror: Het meervoudig kopiëren schakelt de optie '$t(tool.smart_handle.action_option_options_mirror_status)' uit
+    error:
+      not_door: Dit onderdeel is geen deur met scharnieren
+      incoherent_door: De scharnieren van deze deur draaien niet rond dezelfde as
   smart_reshape:
     title: Opnieuw vormgeven
     action_0: verlengen

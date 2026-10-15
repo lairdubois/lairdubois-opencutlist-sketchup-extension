@@ -88,9 +88,9 @@ default:
   reset_to_app_defaults: Восстановить исходные значения
   constrain_key: Shift
   copy_key_win: Ctrl
-  copy_key_mac: Вариант
+  copy_key_mac: Option
   alt_key_win: Alt
-  alt_key_mac: Команда
+  alt_key_mac: Command
   tab_key: Tab
   file: Файл
   file_plural: Файлы
@@ -150,8 +150,10 @@ core:
     import: Импорт
     more: Ещё
     more_docs: База
+    # this link only appears in the french version, points to https://www.lairdubois.fr/
     more_reviews: Обзоры
     more_plans: Проекты
+    # only appears in the french version
     more_extensions: Расширения
     more_update: Обновления
   bottombar:
@@ -304,6 +306,7 @@ core:
     error:
       empty: Твердое тело не содержит геометрии
       empty_named: « {{ name }} » не содержит геометрии
+      # an edge is considered manifold when it is shared by exactly two faces in a 3D mesh
       non_manifold_edges: Твердое тело содержит {{ count }} некорректных ребра (лишние грани)
       non_manifold_edges_plural: Твердое тело содержит {{ count }} некорректных рёбер (лишних граней)
       non_manifold_edges_named: « {{ name }} » содержит {{ count }} некорректное ребро
@@ -380,6 +383,7 @@ tab:
         фактическое Поперечное сечение: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
+      # "Model Info" refers to the SketchUp menu to change the units
       rounded_std_footer: Задайте точность в разделе *Данные модели* или проверьте размеры деталей, входящих в эту группу.
       highlight_part: $t(tab.cutlist.highlight_part)
       highlight_parts: $t(tab.cutlist.highlight_parts)
@@ -668,8 +672,8 @@ tab:
       edge_material_names_filter: Фильтр по материалу кромок
       veneer_material_names_filter: Фильтр материалов шпона
       names_filter: Фильтр наименований
-      tags_filter: Сортировка меток
-      tags_filter_any: Все этикетки
+      tags_filter: Фильтр маркеров
+      tags_filter_any: Все маркеры
       dimensions_help: Иллюстрация размеров
       summary: Спецификация
       material_type: Тип
@@ -724,6 +728,7 @@ tab:
       option_csv_col_sep_comma: Запятая
       option_csv_col_sep_semicolon: Точка с запятой
       option_csv_encoding: Кодировка
+      # as described in https://www.rfc-editor.org/info/rfc4180/
       copy_all: Название + Значение
       copy_values: Только значения
       number: N°
@@ -1928,9 +1933,9 @@ tab:
     label: Импорт
     title: Импорт деталей
     help: |
-      Этот раздел поможет вам импортировать детали (только в форме параллелепипеда) из [CSV](https://ru.wikipedia.org/wiki/CSV) файла в модель.
-      Затем вы можете использовать возможности *OpenCutList* для работы с импортированными деталями.
-      Кликните по клавише **Открыть CSV файл** для начала импорта.
+      Эта страница позволяет импортировать в вашу модель набор заготовок (в форме параллелепипеда) из файла [CSV](https://ru.wikipedia.org/wiki/CSV).
+      Таким образом, вы сможете использовать возможности карты раскроя *OpenCutList*, создавая детали в программе, отличной от *SketchUp*.
+      Нажмите кнопку **Открыть CSV-файл**, чтобы начать.
     open_csv: Открыть CSV файл
     import_to_model: Импорт в модель
     load:
@@ -2117,7 +2122,7 @@ tab:
         option_front_part_layer_name: Фасады
         option_front_part_layer_name_help: Маркер (тег), применяемый к деталям фасадов.
         option_back_part_layer_name: Задние стенки
-        option_back_part_layer_name_help: Метка, применяемая к задним стенкам корпуса.
+        option_back_part_layer_name_help: Тег, применяемый к задним стенкам корпуса.
         option_machining_material_name: Обработка
         option_machining_material_name_help: Материал, требующий **Обработки**.
         option_machining_layer_name: Обработка
@@ -2129,10 +2134,10 @@ tab:
         option_no_material_help: "*Оставьте это поле пустым, чтобы не назначать материал*."
         option_default_material_help: "*Если это поле останется пустым, будет создан материал по умолчанию*."
         option_no_layer_help: "*Оставьте это поле пустым, чтобы не применять маркер (тег)*."
-        option_subtract_machinings: Вырезать пазы и отверстия в деталях
-        option_subtract_machinings_help: "**Пазы**, **четверти** и **фаски** деталей, включая связанные с фурнитурой, вычитаются из их объёма вместо отрисовки. Отверстия под сверление остаются отрисованными."
+        option_subtract_machinings: Вычесть мехобработку из деталей
+        option_subtract_machinings_help: "**Пазы**, **четверти** и **фаски** деталей, включая связанные с фурнитурой, вычитаются из их объема, а не отрисовываются. Сверления по-прежнему отрисовываются."
         warning:
-          subtract_machinings_failed: "Не удалось вырезать элементы обработки в этих деталях, вместо этого они были просто отрисованы: {{ names }}"
+          subtract_machinings_failed: "Не удалось вычесть мехобработку из этих деталей, поэтому она отрисована: {{ names }}"
         old_name: Исходное имя
         new_name: Новое имя
         count: К-во.
@@ -2364,16 +2369,16 @@ tool:
       invalid_multiplicator: Множитель {{ value }} недопустим
       invalid_divider: Дробление {{ value }} недопустимо
       invalid_offset: Смещение {{ value }} недопустимо
-      invalid_angle: Угол {{ value }} является недопустимым
+      invalid_angle: Угол {{ value }} задан неверно
       invalid_segment_count: Количество сегментов {{ value }} недопустимо. Оно должно быть в диапазоне от 3 до 999.
       syntax_error: "Синтаксическая ошибка : {{ error }}"
       unexpected_close_parenthesis: Недопустимая закрывающая скобка
       missing_close_parenthesis: Отсутствует закрывающая скобка
       missing_operand: Отсутствует операнд
       zero_division: Деление на ноль
-      invalid_argument_count: Функция min, max, floor или ceil требует как минимум два значения
-      comma_argument_separator: "Разделяйте значения знаком « ; » : запятая также является десятичным разделителем"
-      invalid_dimension: "Длина складывается только с длиной: число без единицы измерения является коэффициентом"
+      invalid_argument_count: Функции min, max, floor и ceil требуют не менее двух значений
+      comma_argument_separator: "Разделяйте значения знаком «;»: запятая также используется как десятичный разделитель"
+      invalid_dimension: К длине можно прибавлять только длину; число без единицы измерения считается коэффициентом
       no_matching_value: Ни одно из предложенных значений не подходит
       lt_min_distance: Расстояние {{ value1 }} меньше минимального {{ value2 }}
       gt_max_distance: Расстояние {{ value1 }} превышает максимальное расстояние {{ value2 }}
@@ -2437,6 +2442,7 @@ tool:
     action_option_options_draw_in_0: Рисование в активном элементе
     action_option_options_draw_in_1: Рисовать от первой точки родительского элемента
     action_option_options_draw_in_status: Нарисовать в родительском элементе, на который указывает первая точка
+    action_option_options_pick_material: Пипетка
     action_option_options_ask_name: Задать имена деталям
     action_option_options_ask_name_status: Ввод названий деталей вручную
     action_toggle_move_copy_status: Переключение копировать/переместить
@@ -2450,18 +2456,43 @@ tool:
     action_0_status: Создать перегородку в нише, образованной группой смежных деталей, замкнутых в контур
     action_0_state_0_status: Кликните на одну из стенок, чтобы создать перегородку
     action_0_state_1_status: Кликните на стенку, чтобы создать перегородки
+    action_0_state_2_status: Щелкните, чтобы задать ширину модуля (ось X)
+    action_0_state_2_lock_status: Зафиксировать ширину исходного файла
+    action_0_state_2_arrows_status: Стрелки = зафиксировать по оси (→ X, ← Y, ↑ Z)
+    action_0_state_3_status: Щелкните, чтобы задать глубину модуля (ось Y)
+    action_0_state_3_lock_status: Зафиксировать глубину как в исходном файле
+    action_0_state_3_arrows_status: Стрелки = зафиксировать нормаль плоскости XY по оси (→ X, ← Y, ↑ Z)
+    action_0_state_4_status: Щелкните, чтобы задать высоту модуля (ось Z)
+    action_0_state_4_lock_status: Зафиксировать высоту как в исходном файле
+    action_0_state_5_status: Щелкните экземпляр, который нужно добавить
+    action_0_state_6_status: Щелкните по ПЕРЕДНЕЙ грани модуля
+    action_0_state_7_status: Щелкните по ВЕРХНЕЙ грани модуля
+    action_0_add_title: Добавить модуль
+    action_0_add_name: Имя файла
+    action_0_add_overwrite: Файл « {{ name }}.skp » уже существует. Заменить его?
+    action_0_add_front_label: ПЕРЕД
+    action_0_add_up_label: ВЕРХ
+    action_0_flip_status: Поменять местами переднюю и заднюю стороны
+    action_0_flip_up_status: Поменять местами верх и низ
     action_1: Создать фасад
     action_1_status: Моделировать фасад в нише, образованной группой смежных деталей
     action_1_state_0_status: Кликните внутри ниши, чтобы создать там фасад
+    action_1_state_1_status: Щелкните по стенке, чтобы создать перегородки
     action_2: Создать заднюю стенку
     action_2_status: Создание задней стенки внутри замкнутого контура из деталей, образующих корпус
     action_2_state_0_status: Кликните внутри ниши, чтобы создать заднюю стенку на стороне, противоположной лицевой
     action_2_state_0_merge_status: Перетащите указатель на соседние ниши для создания общей задней стенки
+    action_3: Создать заднюю стенку
+    action_3_status: Создать заднюю стенку, закрывающую полость, образованную группой существующих деталей
+    action_3_state_0_status: Щелкните внутри полости, чтобы создать заднюю стенку на стороне проема, противоположной виду
+    action_3_state_0_merge_status: Перетащите указатель на соседние полости, чтобы создать общую заднюю стенку
     action_option_group_groove: Паз
+    action_2_option_group_offset: Зазор
     action_option_group_thickness: Толщина
     action_option_group_overlay: Монтаж
     action_option_group_axes: Оси
     action_option_group_measure_type: Отсчет
+    action_option_group_anchor: Привязка
     action_option_group_options: Опции
     action_option_offset_front_panel_offset: Зазор
     action_option_offset_front_panel_offset_status: Зазор по периметру фасада
@@ -2474,7 +2505,9 @@ tool:
     action_option_thickness_thickness: Толщина
     action_option_thickness_thickness_status: Ввод толщины окантовки
     action_option_overlay_inset_status: "Вкладной фасад: устанавливается внутри проема, заподлицо с передней кромкой"
+    action_3_option_overlay_inset_status: "Задняя стенка в паз: вставляется в паз, обработанный в деталях, обрамляющих проем"
     action_option_overlay_full_overlay_status: "Накладной фасад: устанавливается поверх передней кромки, полностью перекрывая внешние стенки и до половины толщины внутренних перегородок корпуса"
+    action_3_option_overlay_full_overlay_status: "Накладная задняя стенка: устанавливается сзади корпуса, перекрывая панели до наружной пласти корпуса и до середины толщины внутренних панелей, без мехобработки"
     action_option_overlay_against_protrusions_status: "Накладной фасад между выступающими боковинами: устанавливается на детали заподлицо с проемом и подгоняется между выступающими элементами"
     action_3_option_overlay_against_protrusions_status: "Накладная задняя стенка между выступающими боковинами: устанавливается на детали заподлицо с проемом и подгоняется между выступающими элементами без обработки"
     action_option_measure_type_inside_status: Размер без учета толщины перегородки
@@ -2490,10 +2523,21 @@ tool:
     action_option_options_reuse_definition_status: Повторно использовать существующую деталь аналогичной формы и расположения вместо создания новой
     action_option_options_mirror: Зеркальное отображение
     action_option_options_mirror_status: Зеркально отражать каждый чётный фасад относительно соседнего
+    action_option_options_pick_material: Пипетка
+    action_option_options_pick_material_status: Применить материал детали под указателем к создаваемым деталям
+    action_option_options_face_camera: Лицевой стороной к камере
+    action_option_options_face_camera_status: Автоматически повернуть фасад модуля к камере
+    action_option_options_top_up: Верх к Z+
+    action_option_options_top_up_status: Автоматически повернуть верх модуля по возможности в направлении вверха (Z+)
     action_option_options_ask_name: Задать имена деталям
     action_option_options_ask_name_status: Ввод названий деталей вручную
     action_option_options_layer_name: Слой
     action_option_options_layer_name_status: Имя слоя, на котором размещаются детали
+    action_option_anchor_center_x_status: По центру X
+    action_option_anchor_center_y_status: По центру Y
+    action_option_anchor_center_z_status: По центру Z
+    action_option_anchor_origin_status: Начало координат компонента
+    action_option_no_layer_help: "*Оставьте это поле пустым, чтобы не применять тег*."
     detecting_cavities: Поиск ниш...
     error:
       invalid_divider_seed: Этот тип детали не поддерживает создание перегородки
@@ -2515,13 +2559,23 @@ tool:
       front_panel_number_overflow: Не размещено {{ number }} фас. в этом проеме
       back_panel_number_overflow: Не удалось распределить {{ number }} задних(е) стенок(ки) в этом проёме
       back_panel_severs_parts: "Паз прорежет насквозь детали: {{ names }}. Уменьшите его глубину"
+      module_file_not_found: "Файл корпуса не найден: {{ file }}"
+      module_file_invalid: "Не удалось загрузить файл корпуса: {{ file }}"
+      module_file_invalid_name: "Недопустимое имя файла: {{ name }}"
+      module_file_save_failed: "Не удалось сохранить файл модуля: {{ name }}.skp"
+      module_stretch_failed: Не удалось растянуть корпус до этих размеров
     warning:
       no_back_panel_machining: "Фрезеровка не удалась: ни одна соседняя деталь не граничит с задней стенкой на этой глубине"
+      no_module_file: В этой папке нет файлов .skp
+      module_axis_no_scale: "Модуль нельзя растянуть по оси {{ axis }}: это запрещено поведением компонента"
+      module_axis_curve_intersect: "Модуль нельзя растянуть по оси {{ axis }}: одна из плоскостей разреза пересекает нерастяжимую кривую"
     success:
       part_created: "Создан новый компонент: : {{ name }}"
       part_created_plural: "создано {{ count }} новых деталей: {{ name }}"
       part_reused: "Новый экземпляр существующей детали: {{ name }}"
       part_reused_plural: "Создано {{ count }} новых экземпляров существующей детали: {{ name }}"
+      module_file_saved: "Модуль сохранен: {{ name }}.skp"
+      module_created: "Новый модуль установлен: {{ name }}"
   smart_handle:
     title: Конструктор
     action_0: Выделить
@@ -2540,11 +2594,11 @@ tool:
     action_4_status: Расположить деталь вдоль оси
     action_4_state_1_status: Кликните, чтобы задать первую точку измерения
     action_4_state_2_status: Кликните, чтобы задать вторую точку измерения или введите нужное расстояние
-    action_5: Взаимодействие
-    action_5_status: Открыть или закрыть дверцу
-    action_5_state_0_status: Кликните на дверцу, чтобы открыть или закрыть её, или потяните, чтобы настроить степень её открытия
-    action_5_state_0_amend_status: Введите угол, чтобы скорректировать степень открытия, или кликните на дверцу, чтобы открыть или закрыть её
-    action_5_state_20_status: Потяните, чтобы настроить степень открытия дверцы, и отпустите для подтверждения
+    action_5: Открыть/закрыть
+    action_5_status: Открыть или закрыть фасад
+    action_5_state_0_status: Щелкните фасад, чтобы открыть или закрыть его, либо перетащите, чтобы задать угол открытия
+    action_5_state_0_amend_status: Введите угол, чтобы скорректировать открытие, либо щелкните фасад, чтобы открыть или закрыть его
+    action_5_state_20_status: Перетащите фасад, чтобы задать угол открытия, затем отпустите для подтверждения
     action_option_group_copy_measure_type: Отсчет
     action_option_group_move_measure_type: Отсчет
     action_option_group_axes: Оси
@@ -2560,8 +2614,8 @@ tool:
     warning:
       copies_disable_mirror: Многократное копирование не работает $t(tool.smart_handle.action_option_options_mirror_status)'
     error:
-      not_door: Эта деталь не является дверцей, оснащённой петлями
-      incoherent_door: Петли этой дверцы не соосны
+      not_door: Эта деталь не является фасадом, установленным на петлях
+      incoherent_door: Петли этого фасада вращаются вокруг разных осей
   smart_reshape:
     title: Модификатор
     action_0: Растянуть

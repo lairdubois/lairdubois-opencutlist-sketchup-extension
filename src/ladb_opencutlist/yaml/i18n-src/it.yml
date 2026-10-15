@@ -130,6 +130,7 @@ core:
     command:
       dialog: OpenCutList
       smart_draw: Disegnare parti
+      smart_build: Costruisci parti
       smart_handle: Gestire i pezzi
       smart_reshape: Rimodellare le parti
       smart_paint: Colorare parti
@@ -149,8 +150,10 @@ core:
     import: Importa
     more: Altro
     more_docs: Doc.
+    # this link only appears in the french version, points to https://www.lairdubois.fr/
     more_reviews: Recensioni
     more_plans: Progetti
+    # only appears in the french version
     more_extensions: Estensioni
     more_update: Aggiorna
   bottombar:
@@ -206,7 +209,7 @@ core:
       unzip: Si è verificato un errore durante l'espansione dell'archivio compresso.
   preset:
     label: Impostazioni
-    manage: Gestione configurazioni
+    manage: Gestione impostazioni
     save_to: Salva con nome
     restore_from: Ricarica da
     app_defaults: Impostazione originale
@@ -216,16 +219,21 @@ core:
       *La creazione di una configurazione personalizzata consente di mantenere le attuali impostazioni del modulo in modo da poterle riutilizzare in altri modelli.*
 
       Salva le impostazioni con nome :
+    rename_prompt_title: Rinominazione
+    rename_prompt: Inserisci il nuovo nome del'impostazione **"{{ name }}"**
     delete_confirm_title: Elimina
     delete_confirm: Sei sicuro di voler eliminare la configurazione **"{{ name }}"**
     override_confirm_title: Aggiorna
     override_confirm: Sei sicuro di voler aggiornare la configurazione **"{{ name }}"** con il contenuto del modulo ?
+    new_error: "Impossibile: esiste già un’impostazione predefinita **\"{{ name }}\"**"
     new_success: Configurazione **"{{ name }}"** creata
     override_success: Configurazione **"{{ name }}"** aggiornata
     restore_success: Il modulo è stato compilato con la configurazione **"{{ name }}"**
+    rename_success: L'impostazione predefinita **"{{ name }}"** è stata rinominata **"{{ new_name }}"**
     delete_success: Configurazione **"{{ name }}"** eliminata
     tooltip:
       save_to: Configurazione '{{ name }}' aggiornata
+      rename: Rinomina la configurazione '{{ name }}'
       delete: Elimina la configurazione '{{ name }}'
     dictionary:
       component_textinput_color: Tavolozza colori
@@ -269,6 +277,10 @@ core:
       remove: Rimuovi il colore
     textinput_code:
       snippets: Esempi di formule
+      help: Digita **@** per aprire l'elenco delle variabili.
+    textinput_file:
+      browse: Sfoglia
+      browse_library: Sfoglia e copia nella libreria
     textinput_size:
       quantity: Qtà
     three_viewer:
@@ -290,6 +302,29 @@ core:
       failed_to_load: |
         Impossibile aprire la documentazione.
         Verificare la connessione a Internet.
+  solid:
+    error:
+      empty: Il solido non presenta alcuna forma geometrica
+      empty_named: « {{ name }} » non contiene alcuna geometria
+      # an edge is considered manifold when it is shared by exactly two faces in a 3D mesh
+      non_manifold_edges: Il solido contiene {{ count }} spigoli non manifold
+      non_manifold_edges_plural: Il solido contiene {{ count }} spigoli non manifold
+      non_manifold_edges_named: « {{ name }} » contiene {{ count }} spigoli non manifold
+      non_manifold_edges_named_plural: « {{ name }} » contiene {{ count }} spigoli non manifold
+      open_edges: Il solido contiene {{ count }} spigolo aperto
+      open_edges_plural: Il solido contiene {{ count }} spigoli aperti
+      open_edges_named: « {{ name }} » contiene {{ count }} spigolo aperto
+      open_edges_named_plural: « {{ name }} » contiene {{ count }} spigoli aperti
+      locked_instances: "L'operazione non può modificare un'istanza bloccata: {{ list }}"
+    rebuild:
+      error:
+        no_segment: Nessuna linea di costruzione utilizzabile nella selezione
+        no_face: Non è stato possibile ricostruire alcun contorno chiuso complanare
+  library:
+    libraries: Librerie
+    user: La mia libreria
+    bundled: Libreria OCL
+    family_modules: Moduli
 tab:
   cutlist:
     label: Parti
@@ -348,6 +383,7 @@ tab:
         Sezione trasversale reale: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
+      # "Model Info" refers to the SketchUp menu to change the units
       rounded_std_footer: Impostare la precisione nelle *Informazioni modello* o controllare le dimensioni dei pezzi di questo gruppo.
       highlight_part: $t(tab.cutlist.highlight_part)
       highlight_parts: $t(tab.cutlist.highlight_parts)
@@ -366,6 +402,7 @@ tab:
       flipped: Questa parte è specchiata rispetto alla definizione del suo componente
       symmetrical: Il rilevamento della parte specchiata è disabilitato su questa parte
       ignore_grain_direction: La direzione della venatura è ignorata su questa parte
+      follow_grain_direction: Il rilevamento della continuità di venatura è attivo su questa parte
       auto_oriented: Questa parte è stata automaticamente re-orientata
       oko_label_filter: Includi / Escludi questo cartellino
       add_label_filter: Filtro su '{{ label }}'
@@ -390,6 +427,7 @@ tab:
       children_size_increase: Questa dimensione è stata aumentata con un maggiorazione in {{ count }} parti raggruppate
       invalid_final_area: Attenzione, l'area non può essere calcolata perché {{ count }} parte (di {{ total }}) ha l'area invalida
       invalid_final_area_plural: Attenzione, l'area non può essere calcolata perché {{ count }} parti (di {{ total }}) hanno l'area invalida
+      is_instance_name: La descrizione di questa parte è ricavata dal nome dell'istanza del gruppo
       is_dynamic_attributes_name: La designazione usa l'attributo 'Name' del componente dinamico
       has_edges: Questa parte contiene {{ count }} lati bordati
       has_edges_plural: Questa parte contiene {{ count }} lati bordati
@@ -518,9 +556,20 @@ tab:
       symmetrical_help: |
         Se questa casella è selezionata, il rilevamento della *parte specchiata* non avrà alcun effetto su questa parte.
       ignore_grain_direction: Direzione venatura
+      ignore_grain_direction_help: |
+        Questa opzione permette di ignorare, per questa parte, la direzione della venatura definita sul materiale.
       ignore_grain_direction_0: Venatura segue la lunghezza
       ignore_grain_direction_1: Ignora la direzione della venatura
+      follow_grain_direction: Continuità di venatura
+      follow_grain_direction_help: |
+        Attivando questa opzione, le istanze di questa parte potranno essere considerate come parti disposte in **Continuità di venatura** con le parti adiacenti che condividono:
+        - lo stesso *Gruppo di continuità di venatura*
+        - lo stesso Piano
+        - lo stesso Orientamento
+        - lo stesso Materiale con venatura
+        - lo stesso Spessore
       follow_grain_direction_0: $t(default.no)
+      follow_grain_direction_1: Rilevamento della continuità di venatura attivo
       axes: Assi
       axes_help: Riposiziona le dimensioni in modo da farle coincidere agli assi (colori) della parte.
       axes_tip: |
@@ -622,7 +671,9 @@ tab:
       filters_warning_plural: Questo filtro mostra solo **{{ count }}** parti su un totale di {{ total }}.
       edge_material_names_filter: Filtro su materiale delle bordature
       veneer_material_names_filter: Filtro sul materiale da impiallacciatura
+      names_filter: Descrizioni da filtrare
       tags_filter: Filtro sui tags
+      tags_filter_any: Tutti i badge
       dimensions_help: Schema delle dimensioni
       summary: Sommario
       material_type: Tipo
@@ -677,6 +728,7 @@ tab:
       option_csv_col_sep_comma: Virgola
       option_csv_col_sep_semicolon: Punto e virgola
       option_csv_encoding: Encoding
+      # as described in https://www.rfc-editor.org/info/rfc4180/
       copy_all: Nomi + valori
       copy_values: Solo valori
       number: N.
@@ -1076,8 +1128,19 @@ tab:
       option_rectangleguillotine_first_stage_orientation_horizontal: Orizzontale
       option_rectangleguillotine_first_stage_orientation_vertical: Verticale
       option_rectangleguillotine_first_stage_orientation_any: Qualunque
+      option_rectangleguillotine_sort_subplates_criteria: Ordinamento dei livelli
+      option_rectangleguillotine_sort_subplates_criteria_help: |
+        Definisce i criteri di ordinamento delle parti su ciascun livello.
+      option_rectangleguillotine_sort_subplates_criteria_l1l2: Per dimensione decrescente
+      option_rectangleguillotine_sort_subplates_criteria_dl2l1: Per densità decrescente
       option_rectangleguillotine_keep: Minima dimensione scarto
       option_rectangleguillotine_keep_help: Ritagli che sono piu grandi della lunghezza e larghezza minima vengono contrassegnati **da tenere**.
+      option_rectangle_leftover_mode: Direzione di distribuzione
+      option_rectangle_leftover_mode_help: |
+        Definisce la direzione in cui le parti vengono distribuite sull'ultimo pannello non completamente pieno.
+      option_rectangle_leftover_mode_area: Auto
+      option_rectangle_leftover_mode_x: Sulla larghezza del pannello
+      option_rectangle_leftover_mode_y: Sulla lunghezza del pannello
       option_irregular_allowed_rotations: Rotazioni consentite
       option_irregular_allowed_rotations_help: |
         Consente la rotazione degli elementi durante il posizionamento
@@ -1086,11 +1149,18 @@ tab:
       option_irregular_allowed_rotations_0: Nessuna
       option_irregular_allowed_rotations_90: Passi di 90°
       option_irregular_allowed_rotations_180: Passi di 180°
+      option_irregular_allowed_rotations_free: Libera
       option_irregular_allow_mirroring: Specchiatura consentita
       option_irregular_allow_mirroring_help: |
         Definisce se la specchiatura nel posizionamento degli elementi sia consentita.
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
+      option_irregular_leftover_mode: Direzione di distribuzione
+      option_irregular_leftover_mode_help: |
+        Definisce la direzione in cui le parti vengono distribuite sull'ultimo pannello non completamente pieno.
+      option_irregular_leftover_mode_bottom_left: Auto
+      option_irregular_leftover_mode_left: Sulla larghezza del pannello
+      option_irregular_leftover_mode_bottom: Sulla lunghezza del pannello
       option_spacing: Spaziatura
       option_spacing_help: |
         Distanza minima tra i pezzi
@@ -1159,6 +1229,8 @@ tab:
       option_time_limit_help: |
         Definisce il limite di tempo per l'ottimizzazione
       grain_groups:
+        title: "{{ count }} gruppo di continuità della venatura"
+        title_plural: "{{ count }} gruppi di continuità della venatura"
         name: Descrizione
         item_count: Σ Parti
       tooltip:
@@ -1260,6 +1332,7 @@ tab:
         unplaced_parts: "**1 elemento** non può essere posizionato."
         unplaced_parts_plural: "**{{ count }} elementi** non possono essere posizionati."
         unusable_part_1: Parte troppo grande
+        unusable_part_2: Gruppo di continuità della venatura troppo grande
       warning:
         is_part_selection: Lo schema di taglio mostra solo le **parti selezionate**.
         cutting_dimensions: Questo schema di taglio mostra le parti con le loro dimensioni **grezze**.
@@ -1472,7 +1545,13 @@ tab:
 
         - La struttura **Layer** disegna tutti i tracciati in piano distinguendo i diversi tipi di tratto solo tramite i calques. *Questa struttura offre una migliore compatibilità con i software di terze parti.*
         - La struttura **Layer + Blocks** crea un blocco per ogni pezzo e inserisce questi blocchi tante volte quanti sono i pezzi ripetuti. *Questa struttura offre maggiore flessibilità per modificare il file.*
+      option_dxf_depth_to_z: Profondità in Z
       option_dxf_depth_to_z_0: $t(default.no)
+      option_dxf_depth_to_z_1: Distribuisci le profondità dei layer lungo l'asse Z
+      option_dxf_depth_to_z_help: |
+        Consente di attivare la distribuzione dei layer lungo l'asse Z in base alla loro profondità.
+
+        Disattiva questa opzione per esportare un DXF solo in 2D.
       option_unit: Unità
       option_unit_help: |
         Seleziona l'unità di misura utilizzata nel file esportato.
@@ -1589,6 +1668,7 @@ tab:
     type_4: Bordatura
     type_5: Accessori
     type_6: Impiallacciatura
+    type_7: Lavorazione
     tooltip:
       type_0: Tipo di materiale '$t(tab.materials.type_0)'
       type_1: Tipo di materiale '$t(tab.materials.type_1)'
@@ -1784,6 +1864,8 @@ tab:
       name: Descrizione
       instance_name: Occorrenza
       material: Materiale
+      is_grain_group: Definisci come **Gruppo di continuità della venatura**
+      is_grain_group_help: Attivando questa opzione, questa istanza potrà essere considerata come un **Gruppo di continuità della venatura** per i pezzi che contiene e che hanno la *Continuità della venatura* attiva.
       definition_name: Definizione
       description: Descrizione
       url: URL
@@ -1927,15 +2009,24 @@ tab:
     obsolete_base: Ricaricare il file CSV per sincronizzare il modello.
   importers:
     default:
+      open_file: Apri un file {{ extension }}
       import_to_model: Importa nel modello
       error:
+        no_data: Nessun dato da importare.
+        no_model: Nessun modello è aperto. È impossibile importare nel nulla ;)
         file_not_found: "File mancante : **{{ filename }}**"
+        bad_extension: Il file *{{ filename }}* non ha l'estensione richiesta (**{{ extensions }}**).
         failed_to_import: Il processo di importazione è fallito.
       success:
         imported_title: Importazione eseguita
     csv:
       label: CSV
       title: Importa Parti
+      help: |
+        Questa pagina consente di importare una serie di pezzi (di forma parallelepipeda) nel tuo modello da un file [CSV](https://it.wikipedia.org/wiki/Comma-separated_values).
+        Potrai così sfruttare le funzionalità della distinta di taglio di *OpenCutList* generando i tuoi pezzi con un software diverso da *SketchUp*.
+
+        Clicca sul pulsante **Apri un file CSV** per iniziare.
       load:
         title: Caricamento del file CSV
         info_0: |
@@ -2002,23 +2093,81 @@ tab:
       obsolete_base: Ricaricare il file CSV per sincronizzare il modello.
     bxf2:
       label: BXF2
+      title: Importa una configurazione Blum
+      help: |
+        Questa pagina consente di importare una configurazione nel tuo modello da un file BXF2.
+        I file BXF2 possono essere creati con il [Configuratore di mobili](https://e-services.blum.com/) di [Blum](https://www.blum.com).
+
+        Clicca sul pulsante **Apri un file BXF2** per iniziare.
+      load:
+        title: Caricamento di un file BXF2
       import:
+        title: Importazione della configurazione nel modello
+        info_0: |
+          Stai per importare una configurazione di **{{ count }} mobile** nel modello.
+        info_0_plural: |
+          Stai per importare una configurazione di **{{ count }} mobili** nel modello.
+        info_1: Potrai scegliere la sua posizione nel modello attivo.
         materials: Materiali
         layers: Tag
+        geometry: Geometria
         option_parts_formula: Formula
+        option_parts_formula_help: La formula consente di personalizzare il nome dei pezzi importati.
+        option_part_wood_material_name: Legno
+        option_part_wood_material_name_help: Materiale da applicare ai pezzi in **legno**.
+        option_part_aluminium_material_name: Alluminio
+        option_part_aluminium_material_name_help: Materiale da applicare ai pezzi in **alluminio**.
+        option_part_glass_material_name: Vetro
+        option_part_glass_material_name_help: Materiale da applicare agli elementi in **vetro**.
+        option_front_part_layer_name: Frontali
+        option_front_part_layer_name_help: Tag da applicare agli elementi frontali.
+        option_back_part_layer_name: Schienali
+        option_back_part_layer_name_help: Tag da applicare agli schienali dei mobili.
+        option_machining_material_name: Lavorazioni
+        option_machining_material_name_help: Materiale da applicare alle **lavorazioni**.
+        option_machining_layer_name: Lavorazioni
+        option_machining_layer_name_help: Tag da applicare alle lavorazioni.
+        option_hardware_material_name: Accessori
+        option_hardware_material_name_help: Materiale da applicare agli **accessori**.
+        option_hardware_layer_name: Accessori
+        option_hardware_layer_name_help: Tag da applicare agli accessori.
+        option_no_material_help: "*Lascia vuoto questo campo per non applicare alcun materiale*."
+        option_default_material_help: "*Se questo campo è vuoto, verrà creato un materiale predefinito*."
+        option_no_layer_help: "*Lascia questo campo vuoto per non applicare alcun tag*."
+        option_subtract_machinings: Ricava le lavorazioni negli elementi
+        option_subtract_machinings_help: Le **scanalature**, le **battute** e gli **smussi** degli elementi, compresi quelli legati agli accessori, vengono sottratti dal loro volume invece di essere disegnati. Le forature restano disegnate.
+        warning:
+          subtract_machinings_failed: "Non è stato possibile ricavare le lavorazioni in questi elementi, sono state disegnate al loro posto: {{ names }}"
         old_name: Nome originale
         new_name: Nuovo nome
         count: Qtà
         formula:
           part: Elemento
+          project: Progetto
+          cabinet: Mobile
+      model:
+        author: Autore
+        date: Data
       cabinet:
+        list: Elenco dei mobili
         description: Descrizione
         width: Larghezza
         height: Altezza
+        depth: Profondità
       article:
+        list: Elenco degli articoli
         total_quantity: Qtà
+        article_number: Rif.
         description: Descrizione
         material: Materiale
+      error:
+        failed_to_load_bxf2_file: |
+          Impossibile caricare il file BXF2: **{{ error }}**
+      warning:
+        partial_support: |
+          È necessario disporre di **SketchUp 2021.1** o di una versione successiva per usufruire di tutte le funzionalità.
+          Le geometrie 3D della ferramenta **non potranno essere importate**.
+      obsolete_base: Per restare sincronizzato, è necessario ricaricare il file BXF2.
   tutorials:
     label: Lezioni
     title: Lezioni
@@ -2115,9 +2264,19 @@ tab:
     currency_symbol: Simbolo di valuta
     currency_precision: Precisione
     presets:
-      export_global_presets: Esporta la configurazione
-      export_global_presets_success: La configurazione è stata salvata.
+      export_global_presets: Esporta le impostazioni predefinite
+      export_global_presets_help: |
+        Questa funzione consente di esportare le impostazioni predefinite in un file **.json**.
+        Selezionare le impostazioni predefinite che si desidera esportare.
+        Se le impostazioni predefinite selezionate fanno riferimento a file **.skp** o **.skm**, questi vengono inclusi in un archivio **.oclp** in modo che l'esportazione possa essere condivisa così com'è.
+      export_global_presets_success: Le impostazioni predefinite sono state esportate con successo.
+      export_global_presets_success_with_assets: Le impostazioni predefinite sono state esportate con successo, insieme a {{ count }} file associati.
       import_global_presets: Importa la configurazione
+      import_global_presets_help: |
+        Selezionate i preset presenti nel file **.json** o **.oclp** che desiderate importare.
+        Attenzione: se esiste già un'impostazione predefinita con lo stesso nome, questa verrà sostituita dalla versione importata.
+        I file contenuti in un archivio **.oclp** vengono copiati nella vostra libreria, nella stessa posizione in cui si trovavano nella libreria del mittente.
+      open_library_dir: Apri la cartella della libreria
       import_global_presets_success: |
         La configurazione di *OpenCutList* è stata importata correttamente.
         Per rendere effettivi i cambiamenti, **chiudere** e **riaprire** la finestra di OpenCutList.
@@ -2142,9 +2301,11 @@ tab:
       error:
         no_preset_to_export: Nessuna configurazione da esportare.
         no_preset_to_import: Nessuna configurazione da importare.
-        failed_to_import: "Impossibile importare la configurazione: **{{ error }}**."
+        failed_to_export: "Impossibile esportare le impostazioni predefinite: **{{ error }}**."
+        failed_to_open_library_dir: "Impossibile aprire la cartella della libreria: **{{ error }}**."
+        failed_to_import: "Impossibile importare le impostazioni predefinite: **{{ error }}**."
         failed_to_import_invalid_hexdigest: Il file è stato modificato. Non può essere importato.
-        failed_to_import_bad_file_format: File invalido.
+        failed_to_import_bad_file_format: Formato file non valido.
   about:
     label: Info su
     title: Info su
@@ -2198,7 +2359,9 @@ tool:
     vcb_diameter: Diametro
     vcb_distance: Distanza
     vcb_spacings: Spaziatura
+    vcb_angle: Angolo
     locked_on_last_measure_status: Blocca sull'ultima misura
+    library_choose: Scegli una libreria
     error:
       no_direction: Indicate una direzione con il mouse
       invalid_length: La lunghezza {{ value }} non è valida
@@ -2206,15 +2369,21 @@ tool:
       invalid_multiplicator: Il moltiplicatore {{ value }} non è valido
       invalid_divider: Il divisore {{ value }} non è valido
       invalid_offset: L'offset {{ value }} non è valido
+      invalid_angle: L'angolo {{ value }} non è valido
       invalid_segment_count: Il numero di segmenti {{ value }} non è valido. Deve essere compreso tra 3 e 999.
       syntax_error: "Errore di sintassi: {{ error }}"
       unexpected_close_parenthesis: Parentesi chiusa inaspettata
       missing_close_parenthesis: Parentesi chiusa mancante
       missing_operand: Operando mancante
       zero_division: Divisione per zero
+      invalid_argument_count: Una funzione min, max, floor o ceil richiede almeno due valori
+      comma_argument_separator: "Separa i valori con « ; »: la virgola è anche il separatore decimale"
+      invalid_dimension: "Una lunghezza si somma solo a una lunghezza: un numero senza unità è un fattore"
+      no_matching_value: Nessuno dei valori proposti è adatto
       lt_min_distance: La distanza {{ value1 }} è inferiore alla distanza minima {{ value2 }}
       gt_max_distance: La distanza {{ value1 }} è superiore alla distanza massima di {{ value2 }}
       locked_part: Questo elemento è bloccato
+      not_sibling_part: Questo elemento non è nello stesso gruppo o componente del resto della selezione
       selection_contains_locked_entities: La selezione contiene elementi bloccati
       wrong_material_type: L'elemento di destinazione deve essere di tipo '{{ type }}'
   highlight:
@@ -2223,12 +2392,14 @@ tool:
   smart_select:
     state_0_status: Clicca su un elemento per selezionarlo
     state_0_to_6_status: Scegliere un elemento padre
+    state_0_to_7_status: Selezione multipla
     state_4_status: Trascina su un elemento identico con lo stesso genitore per aggiungerlo alla selezione, quindi rilascia per continuare
     state_5_status: Scorri per aggiungere alla selezione e rilascia per continuare
     state_6_status: Selezionare un elemento dall'elenco
     state_7_status: Clicca su un elemento per aggiungerlo o eliminarlo dalla selezione
     warning:
       no_active_part: Devi prima passare con il mouse su una parte
+      no_parent_group: La parte sotto il cursore non ha un gruppo o componente padre
   smart_draw:
     title: Disegna
     action_0: Disegnare un rettangolo
@@ -2267,6 +2438,12 @@ tool:
     action_option_options_pull_centered: Elevazione centrata
     action_option_options_pull_centered_status: Centra l'elevazione sul primo punto
     action_option_options_pull_locked_status: Bloccare l'elevazione su un asse
+    action_option_options_draw_in: Disegna in
+    action_option_options_draw_in_0: Disegna nell'elemento attivo
+    action_option_options_draw_in_1: Disegna nel padre della parte del primo punto
+    action_option_options_draw_in_status: Disegna nel padre della parte indicata dal primo punto
+    action_option_options_pick_material: Contagocce
+    action_option_options_pick_material_status: Applica il materiale della parte indicata dal primo punto alla parte creata
     action_option_options_ask_name: Nomenclatura delle parti
     action_option_options_ask_name_status: Definisci manualmente i nomi degli elementi
     action_toggle_move_copy_status: Commuta tra copia e sposta
@@ -2275,19 +2452,131 @@ tool:
       part_created: "Nuova parte creata: {{ name }}"
       part_created_plural: "{{ count }} nuovi parte creati: {{ name }}"
   smart_build:
+    title: Costruisci
+    action_0: Posiziona un modulo
+    action_0_status: Posiziona un modulo importato da un file SKP, ridimensionato alle dimensioni del box disegnato
+    action_0_state_0_status: Seleziona un file modulo dalla libreria
+    action_0_state_1_status: Clicca per posizionare l'origine del modulo
+    action_0_state_2_status: Clicca per definire la larghezza del modulo (asse X)
+    action_0_state_2_lock_status: Blocca sulla larghezza del file sorgente
+    action_0_state_2_arrows_status: Frecce = Blocca su un asse (→ X, ← Y, ↑ Z)
+    action_0_state_3_status: Clicca per definire la profondità del modulo (asse Y)
+    action_0_state_3_lock_status: Blocca sulla profondità del file sorgente
+    action_0_state_3_arrows_status: Frecce = Blocca la normale del piano XY su un asse (→ X, ← Y, ↑ Z)
+    action_0_state_4_status: Clicca per definire l'altezza del modulo (asse Z)
+    action_0_state_4_lock_status: Blocca sull'altezza del file sorgente
+    action_0_state_5_status: Clicca sull'istanza da aggiungere
+    action_0_state_6_status: Clicca sulla faccia ANTERIORE del modulo
+    action_0_state_7_status: Clicca sulla faccia SUPERIORE del modulo
+    action_0_add_title: Aggiungi un modulo
+    action_0_add_name: Nome del file
+    action_0_add_overwrite: Il file « {{ name }}.skp » esiste già. Vuoi sostituirlo?
+    action_0_add_front_label: ANTERIORE
+    action_0_add_up_label: SUPERIORE
+    action_0_flip_status: Inverti il fronte e il retro
+    action_0_flip_up_status: Inverti l'alto e il basso
+    action_1: Costruisci un divisorio
+    action_1_status: Costruisci un divisorio in una cavità formata da un gruppo di parti esistenti
+    action_1_state_0_status: Clicca su una parete per costruire un divisorio
+    action_1_state_1_status: Clicca su una parete per costruire dei divisori
+    action_2: Costruisci un frontale
+    action_2_status: Costruisci un frontale che chiude una cavità formata da un gruppo di parti esistenti
+    action_2_state_0_status: Clicca in una cavità per costruire un frontale sulla sua apertura
+    action_2_state_0_merge_status: Trascina fino alle cavità adiacenti per un frontale comune
+    action_3: Costruisci un fondo
+    action_3_status: Costruisci un fondo che chiude una cavità formata da un gruppo di parti esistenti
+    action_3_state_0_status: Clicca all'interno di una cavità per costruire un fondo sull'apertura opposta alla vista
+    action_3_state_0_merge_status: Trascina fino alle cavità adiacenti per un fondo comune
+    action_option_group_groove: Scanalatura
+    action_2_option_group_offset: Gioco
     action_option_group_thickness: Spessore
+    action_option_group_overlay: Montaggio
     action_option_group_axes: Assi
     action_option_group_measure_type: Misura
+    action_option_group_anchor: Ancoraggio
     action_option_group_options: Opzioni
+    action_option_offset_front_panel_offset: Gioco
+    action_option_offset_front_panel_offset_status: Definisce il gioco lasciato su ciascun bordo dell'anta
+    action_option_groove_groove_depth: Profondità della scanalatura
+    action_option_groove_groove_depth_status: Definisce la profondità della scanalatura in cui è inserito il fondo
+    action_option_groove_groove_setback: Arretramento
+    action_option_groove_groove_setback_status: Definisce di quanto il fondo arretra verso l'interno del mobile, e quindi dove viene lavorata la scanalatura
+    action_option_groove_groove_through: Scanalatura passante
+    action_option_groove_groove_through_status: Prolunga la scanalatura fino all'estremità delle parti che coprono quelle adiacenti, quando vi sbocca senza essere visibile
     action_option_thickness_thickness: Spessore
+    action_option_thickness_thickness_status: Definisce lo spessore dei pannelli
+    action_option_overlay_inset_status: "Frontale a filo: montato nell'apertura, a filo con la faccia anteriore"
+    action_3_option_overlay_inset_status: "Fondo in scanalatura: inserito in una scanalatura lavorata nelle parti che delimitano l'apertura"
+    action_option_overlay_full_overlay_status: "Frontale in appoggio: montato davanti alla faccia anteriore, copre i pannelli fino al filo esterno del mobile e fino a metà spessore dei pannelli interni"
+    action_3_option_overlay_full_overlay_status: "Fondo in appoggio: montato sul retro del mobile, copre i pannelli fino al filo esterno e fino a metà spessore dei pannelli interni, senza alcuna lavorazione"
+    action_option_overlay_against_protrusions_status: "Frontale in appoggio contro le sporgenze: montato in appoggio sui pannelli a filo dell'apertura e adattato contro quelli sporgenti"
+    action_3_option_overlay_against_protrusions_status: "Fondo in appoggio contro le sporgenze: montato in appoggio sui pannelli a filo dell'apertura e adattato tra quelli sporgenti (fianchi sporgenti), senza alcuna lavorazione"
+    action_option_measure_type_inside_status: Posiziona lo spessore all'interno del punto selezionato
+    action_option_measure_type_centered_status: Centra lo spessore sul punto selezionato
+    action_option_measure_type_outside_status: Posiziona lo spessore all'esterno del punto selezionato
     action_option_axes_active_status: Sposta lungo l'asse attivo
+    action_option_axes_context_status: Sposta lungo gli assi del gruppo o del componente ospite
     action_option_options_measure_reversed: Misurazione inversa
     action_option_options_measure_reversed_status: Invertire la misura
+    action_option_options_reduce_envelope: Parti arretrate
+    action_option_options_reduce_envelope_status: Considera le parti arretrate
+    action_option_options_reuse_definition: Riutilizza le parti
+    action_option_options_reuse_definition_status: Riutilizza la parte esistente con la stessa forma e lo stesso contesto invece di crearne una nuova
+    action_option_options_mirror: Montaggio a specchio
+    action_option_options_mirror_status: Monta ogni frontale di posizione pari a specchio rispetto a quello adiacente
+    action_option_options_pick_material: Contagocce
+    action_option_options_pick_material_status: Applica il materiale della parte sotto il cursore alle parti create
+    action_option_options_face_camera: Verso la telecamera
+    action_option_options_face_camera_status: Ruota automaticamente il fronte del modulo verso la telecamera
+    action_option_options_top_up: Alto verso Z+
+    action_option_options_top_up_status: Ruota automaticamente l'alto del modulo il più possibile verso l'alto (Z+)
     action_option_options_ask_name: Nomenclatura delle parti
     action_option_options_ask_name_status: Definisci manualmente i nomi degli elementi
+    action_option_options_layer_name: Livello
+    action_option_options_layer_name_status: Nome del livello su cui vengono posizionate le parti
+    action_option_anchor_center_x_status: Centrato in X
+    action_option_anchor_center_y_status: Centrato in Y
+    action_option_anchor_center_z_status: Centrato in Z
+    action_option_anchor_origin_status: Origine del componente
+    action_option_no_layer_help: "*Lascia questo campo vuoto per non applicare alcun tag*."
+    detecting_cavities: Rilevamento delle cavità...
+    error:
+      invalid_divider_seed: Questo tipo di parte non consente la costruzione di un divisorio
+      invalid_divider_container: "Questa parte è isolata: non condivide alcun gruppo o componente con altre parti"
+      invalid_divider_cavity: Nessuna cavità in questa posizione
+      no_divider_cavity: Nessuna cavità è stata rilevata in questo gruppo o componente
+      invalid_front_panel_seed: Questo tipo di parte non consente la costruzione di un frontale
+      invalid_front_panel_container: "Questa parte è isolata: non condivide alcun gruppo o componente con altre parti"
+      invalid_front_panel_cavity: Nessuna cavità aperta verso di te in questa posizione
+      no_front_panel_cavity: Nessuna cavità è stata rilevata in questo gruppo o componente
+      invalid_back_panel_seed: Questo tipo di parte non consente la costruzione di un fondo
+      invalid_back_panel_container: "Questa parte è isolata: non condivide alcun gruppo o componente con altre parti"
+      invalid_back_panel_cavity: Nessuna cavità aperta sul lato opposto alla vista in questa posizione
+      no_back_panel_cavity: Nessuna cavità è stata rilevata in questo gruppo o componente
+      too_complex_cavity: Geometria troppo complessa per rilevarvi delle cavità
+      closed_front_panel_opening: Questa apertura è già chiusa da un frontale
+      closed_back_panel_opening: Questa apertura è già chiusa da un fondo
+      divider_number_overflow: Impossibile distribuire {{ number }} divisori in questa cavità
+      front_panel_number_overflow: Impossibile distribuire {{ number }} frontali su questa apertura
+      back_panel_number_overflow: Impossibile distribuire {{ number }} fondi su questa apertura
+      back_panel_severs_parts: "La scanalatura taglierebbe da parte a parte: {{ names }}. Riducine la profondità"
+      module_file_not_found: "File del mobile non trovato: {{ file }}"
+      module_file_invalid: "Impossibile caricare il file del mobile: {{ file }}"
+      module_file_invalid_name: "Nome del file non valido: {{ name }}"
+      module_file_save_failed: "Impossibile salvare il file del modulo: {{ name }}.skp"
+      module_stretch_failed: Impossibile allungare il mobile a queste dimensioni
+    warning:
+      no_back_panel_machining: "Nessuna scanalatura ha potuto essere lavorata: nessuna parte adiacente confina con il fondo a questa profondità"
+      no_module_file: Nessun file .skp in questa cartella
+      module_axis_no_scale: "Modulo non allungabile lungo {{ axis }}: bloccato dal comportamento del componente"
+      module_axis_curve_intersect: "Modulo non allungabile lungo {{ axis }}: uno dei piani di taglio attraversa una curva non allungabile"
     success:
       part_created: Nuova parte creata: {{ name }}
       part_created_plural: "{{ count }} nuovi parte creati: {{ name }}"
+      part_reused: "Nuova istanza della parte esistente: {{ name }}"
+      part_reused_plural: "{{ count }} nuove istanze della parte esistente: {{ name }}"
+      module_file_saved: "Modulo salvato: {{ name }}.skp"
+      module_created: "Nuovo modulo posizionato: {{ name }}"
   smart_handle:
     title: Manipolare
     action_0: Seleziona
@@ -2306,6 +2595,11 @@ tool:
     action_4_status: Distribuire un elemento lungo un asse
     action_4_state_1_status: Seleziona il primo punto della misura
     action_4_state_2_status: Seleziona il secondo punto della misura o digita una distanza
+    action_5: Interagisci
+    action_5_status: Apri o chiudi un'anta
+    action_5_state_0_status: Clicca su un'anta per aprirla o chiuderla, oppure trascinala per regolarne l'apertura
+    action_5_state_0_amend_status: Inserisci un angolo per correggere l'apertura, oppure clicca su un'anta per aprirla o chiuderla
+    action_5_state_20_status: Trascina per regolare l'apertura dell'anta e rilascia per confermare
     action_option_group_copy_measure_type: Misura
     action_option_group_move_measure_type: Misura
     action_option_group_axes: Assi
@@ -2320,6 +2614,9 @@ tool:
     action_toggle_raytest_status: Proiettare sul punto successivo
     warning:
       copies_disable_mirror: La copia multipla disabilita l'opzione '$t(tool.smart_handle.action_option_options_mirror_status)'
+    error:
+      not_door: Questo elemento non è un'anta dotata di cerniere
+      incoherent_door: Le cerniere di quest'anta non ruotano attorno allo stesso asse
   smart_reshape:
     title: Rimodellare
     action_0: Allungare
@@ -2328,18 +2625,39 @@ tool:
     action_0_state_1a_status: Clicca su un piano di taglio per spostarlo
     action_0_state_1b_status: Aggiungere un piano di taglio
     action_0_state_1c_status: Cancellare un piano di taglio
+    action_0_state_1d_status: Clicca per spostare la geometria situata tra i due piani di taglio
     action_0_state_10_status: Trascinare il piano di taglio per spostarlo
     action_0_state_11_status: Clicca per aggiungere il piano di taglio
     action_0_state_12_status: Clicca su un piano di taglio per eliminarlo
     action_0_state_2_status: Clicca per confermare l'allungamento o inserisci una distanza
+    action_1: Pannellare
+    action_1_status: Crea una serie di elementi a partire da un solido chiuso o da un disegno con linee di costruzione
+    action_1_state_0_status: Clicca su un solido chiuso o su un gruppo di linee di costruzione per definire la geometria di riferimento
     action_1_state_1_status: Seleziona le facce da estrudere
+    action_1_rollover_face_status: Faccia sorvolata
+    action_1_select_similar_status: Seleziona tutte le facce di forma identica
+    action_1_select_all_edges_status: Seleziona tutti gli spigoli adiacenti
+    action_2: Saldare
+    action_2_status: Salda più elementi in uno solo
+    action_2_state_0_status: Seleziona l'elemento A
+    action_2_state_1_status: Seleziona l'elemento B
+    action_3: Ritagliare
+    action_3_status: Ritaglia un elemento con un altro
+    action_3_state_0_status: Seleziona l'elemento A
+    action_3_state_1_status: Seleziona l'elemento B
+    action_4: Intersecare
+    action_4_status: Crea un elemento corrispondente all'intersezione di più elementi
+    action_4_state_0_status: Seleziona l'elemento A
+    action_4_state_1_status: Seleziona l'elemento B
     action_option_group_thickness: Spessore
     action_option_group_stretch_measure_type: Misura
     action_option_group_axes: Assi
     action_option_group_paneling_joint_type: Giunzione
     action_option_group_paneling_direction: Direzione
+    action_option_group_csg_operation: Operazione
     action_option_group_options: Opzioni
     action_option_thickness_thickness: Spessore
+    action_option_thickness_thickness_status: Definisce lo spessore dei pannelli
     action_option_stretch_measure_type_outside_status: Misura esterna
     action_option_stretch_measure_type_offset_status: Misura la differenza
     action_option_axes_active_status: Sposta lungo l'asse attivo
@@ -2350,6 +2668,19 @@ tool:
     action_option_paneling_direction_inward_status: Verso l'interno
     action_option_paneling_direction_outward_status: Verso l'esterno
     action_option_options_centered_status: Centrare sugli elementi allungati
+    action_option_options_make_unique_status: Rendi unici gli elementi rimodellati
+    action_option_options_keep_a: Mantieni A
+    action_option_options_keep_a_status: Mantieni le istanze A dopo l'operazione e posiziona il risultato in un nuovo elemento
+    action_option_options_keep_b: Mantieni B
+    action_option_options_keep_b_status: Mantieni le istanze B dopo l'operazione
+    action_option_options_remove_unused_definitions_status: Elimina le definizioni di componente non più utilizzate dopo l'operazione
+    action_option_options_reuse_definition: Riutilizza le parti
+    action_option_options_reuse_definition_status: Condividi la stessa definizione di componente tra i pannelli di forma identica
+    action_option_options_reuse_definition_mirrored: Montaggio a specchio
+    action_option_options_reuse_definition_mirrored_status: Montaggio a specchio per i pannelli di forma identica posti uno di fronte all'altro
+    notify:
+      validate_a: Conferma per passare alla selezione di B
+      validate_b: Conferma per applicare l'operazione
     error:
       curve_intersect: Uno dei piani di taglio attraversa una curva non estensibile
   smart_paint:
@@ -2413,6 +2744,10 @@ tool:
     action_3_status: Seleziona una faccia o un bordo di un elemento per adattare gli assi
     action_4: Sposta l'origine
     action_4_status: Selezionare una faccia di una parte e fare clic su un punto per posizionarvi l'origine
+    action_5: Configura la Continuità della venatura
+    action_5_status: Clicca su un elemento per attivare o disattivare il rilevamento della Continuità della venatura
+    action_5_to_state_10_status: Scegli il Gruppo di continuità della venatura
+    action_5_state_10_status: Clicca su una voce dell'elenco per modificarne lo stato di Gruppo di continuità della venatura
     action_option_group_direction: Direzione
     action_option_direction_0: L
     action_option_direction_1: La
@@ -2425,6 +2760,8 @@ tool:
     error:
       not_part: La destinazione non è un elemento (componente)
       not_orientable: Questo elemento non consente di cambiarne l'orientamento
+      not_grained: L'elemento selezionato non ha una direzione della venatura
+      not_single_thickness_layer: L'elemento selezionato deve essere composto da un solo strato
   # @no-translate
   smart_join:
     action_option_group_height: Altezza
@@ -2468,3 +2805,4 @@ tool:
   smart_importers_bxf2:
     title: Importa
     action_0: $t(tab.importers.bxf2.title)
+    action_0_status: Posiziona la configurazione

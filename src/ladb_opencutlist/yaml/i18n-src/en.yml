@@ -83,7 +83,7 @@ default:
   cut_plural: cuts
   thickness_layer_single: layer
   thickness_layer_plural: layers
-  setup_model_units: Setup the model units
+  setup_model_units: Configure the model's units
   load_more: Load more
   reset_to_app_defaults: Restore to original settings
   constrain_key: Shift
@@ -111,7 +111,7 @@ core:
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       edit_part_instance: Edit Instance
-      edit_parent_part_instance: Modify group/component containing instance
+      edit_parent_part_instance: Modify group/component containing the instance
       hide_part_instance: Hide Instance
       unhide_part_instance: Show Instance
       edit_part_instance_properties: Edit Instance Properties
@@ -150,8 +150,10 @@ core:
     import: Import
     more: More
     more_docs: Doc.
+    # this link only appears in the french version, points to https://www.lairdubois.fr/
     more_reviews: Reviews
-    more_plans: Plans
+    more_plans: Models
+    # only appears in the french version
     more_extensions: Extensions
     more_update: Update
   bottombar:
@@ -180,7 +182,7 @@ core:
     model_change: The active model has changed.
     options_change: Options in the model have changed.
     material_change: At least one material has changed.
-    selection_change: Selection in the active model has changed.
+    selection_change: The selection in the active model has changed.
     layers_change: The tags in the active model have changed.
     drawing_change: The design of the active model has been modified.
   upgrade:
@@ -197,11 +199,11 @@ core:
     ignore_update: Skip this update
     download_rescue: Problems downloading?
     manual_download: Manual download
-    zzz: I'm currently resting following the update. To wake me up, you must restart SketchUp.
+    zzz: I'm currently resting following the update. To get me back in top shape, you must restart SketchUp.
     success: |
-      OpenCutList update completed!
+      The OpenCutList update is complete!
 
-      RELOAD SKETCHUP to activate the changes.
+      RESTART SKETCHUP for the changes to take effect.
     error:
       download: Error while downloading the archive.
       unzip: Error while decompressing the archive.
@@ -214,7 +216,7 @@ core:
     user_defaults: My default preset
     new: New preset
     new_prompt: |
-      *The creation of a custom preset allows you to retain the current form settings globally, so that you can reuse them in all your templates later.*
+      *Creating a custom preset allows you to save the form's current settings globally so you can reuse them later in all your templates.*
 
       Enter preset name:
     rename_prompt_title: Rename
@@ -226,7 +228,7 @@ core:
     new_error: Impossible, a preset **"{{ name }}"** already exists
     new_success: Preset **"{{ name }}"** created
     override_success: Preset **"{{ name }}"** updated
-    restore_success: The form has been filled with the preset **"{{ name }}"**
+    restore_success: The form was filled out using the **"{{ name }}"** preset
     rename_success: Preset **"{{ name }}"** renamed to **"{{ new_name }}"**
     delete_success: Preset **"{{ name }}"** deleted
     tooltip:
@@ -304,6 +306,7 @@ core:
     error:
       empty: The solid contains no geometry
       empty_named: « {{ name }} » does not contain any geometry
+      # an edge is considered manifold when it is shared by exactly two faces in a 3D mesh
       non_manifold_edges: The solid contains {{ count }} non-manifold edge
       non_manifold_edges_plural: The solid contains {{ count }} non-manifold edges
       non_manifold_edges_named: « {{ name }} » contains {{ count }} non manifold edge
@@ -469,7 +472,7 @@ tab:
     part_drawing_type_6: 2D Back View
     part_drawing_type_7: 3D
     tooltip:
-      show_hide_block: Show / Hide group
+      show_hide_block: Show / Hide this group
       show_hide_blocks: Show / Hide all groups
       scroll_to_block: Scroll to group
       not_available_std_width: The width *{{ std_dimension_real }}* is not defined in the standard widths of the material '{{ material_name }}'
@@ -499,6 +502,7 @@ tab:
         Actual cross section: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
+      # "Model Info" refers to the SketchUp menu to change the units
       rounded_std_footer: Adjust the precision in the *Model Info* or check the dimensions of the parts in this group.
       highlight_part: $t(tab.cutlist.highlight_part)
       highlight_parts: $t(tab.cutlist.highlight_parts)
@@ -511,9 +515,9 @@ tab:
       material_origin_3: The material considered for this part is extracted from one its child elements
       orientation_locked_on_axis: This part's orientation is locked on its axes
       number_saved: The part number is stored
-      number_hidden: The number '{{ number }}' stored on this part cannot be used because it has already been assigned
-      number_generated: The part number is generated automatically
-      resized: This part was resized with respect to its component definition
+      number_hidden: The number '{{ number }}' recorded on this part cannot be used because it has already been assigned
+      number_generated: The number for this part is generated automatically
+      resized: This part is resized with respect to its component definition
       flipped: This part is mirrored with respect to its component definition
       symmetrical: Mirrored part detection is disabled on this part
       ignore_grain_direction: Grain orientation is ignored on this part
@@ -526,14 +530,14 @@ tab:
       remove_edge_material_name_filter: Remove filtering on '{{ material_name }}'
       add_veneer_material_name_filter: Filter on '{{ material_name }}'
       remove_veneer_material_name_filter: Remove filtering on '{{ material_name }}'
-      not_aligned_on_axes: Caution, this part may not be correctly aligned on its axes
-      instance_count_by_part: This part is counted in packages of **{{ count }}** items.
-      unused_instance_count: Note that **{{ count }}** item from the last package will not be used.
-      unused_instance_count_plural: Note that **{{ count }}** items from the last package will not be used.
+      not_aligned_on_axes: Caution, this part may not be properly aligned along its axes
+      instance_count_by_part: This part is counted in packages of **{{ count }}** units.
+      unused_instance_count: Note that **{{ count }}** unit from the last package will not be used.
+      unused_instance_count_plural: Note that **{{ count }}** units from the last package will not be used.
       used_instance_count: "**{{ count }}** item of {{ total }} used"
       used_instance_count_plural: "**{{ count }}** items of {{ total }} used"
       thickness_layer_count: The final part is made of **{{ count }}** layers in thickness
-      thickness_layered: The quantity here represents the number of pieces to be cut to obtain all the layers.
+      thickness_layered: The quantity here refers to the number of pieces to be cut in order to obtain all the layers.
       thickness_layered_equation: "**{{ count }}** *part* x **{{ layerCount }}** *layers* = **{{ cuttingPartCount }}**"
       thickness_layered_equation_plural: "**{{ count }}** *parts* x **{{ layerCount }}** *layers* = **{{ cuttingPartCount }}**"
       multiple_content_layers: Caution, this part is composed of sub-parts present in {{ count }} different layers or tags:<br>{{ layers }}
@@ -578,12 +582,12 @@ tab:
       show_all_groups: Show all groups
       hide_all_other_groups: Hide all other groups
       numbers_save: Save part numbers
-      numbers_reset: Reset the part numbers
+      numbers_reset: Reset part numbers
       highlight_parts: $t(tab.cutlist.highlight_parts)
       labels_parts: Print labels
       write_2d: 2D Projection
       write_3d: 3D Geometry
-      write_2d_parts: Export 2D part projections
+      write_2d_parts: Export 2D part projection
       write_3d_parts: Export 3D part geometry
       group_write_2d_parts: Export 2D projection of parts in group
       group_write_3d_parts: Export 3D geometry of parts in group
@@ -596,8 +600,8 @@ tab:
       group_export: Export group
       group_estimate: Estimate group
       edit_material: Edit material '{{ material_name }}'
-      expand_all: Unfold all lines
-      collapse_all: Fold all lines
+      expand_all: Expand all rows
+      collapse_all: Collapse all rows
       reset_prices: Reset the prices of all parts
       reset_prices_confirm: |
         You are about to reset the prices of all parts in your model
@@ -677,7 +681,7 @@ tab:
       ignore_grain_direction_1: Ignore grain orientation
       follow_grain_direction: Grain continuity
       follow_grain_direction_help: |
-        By enabling this option, instances of this part will be treated as parts laid out in **Grain continuity** with their neighbors that share:
+        Enabling this option will treat instances of this part as parts laid out in **Grain continuity** with their neighbors that share:
         - the same *Grain continuity group*
         - the same Plane
         - the same Orientation
@@ -714,7 +718,7 @@ tab:
          - the *thickness* on the <span style='color:blue'>blue</span> axis
       flipped_detection: Detection of mirrored parts
       flipped_detection_help: |
-        If this option is selected, mirrored parts will be detected and displayed as distinct parts.
+        If this option is selected, mirrored parts will be detected and displayed like a new part.
       smart_material: "*Smart* assignment of material"
       smart_material_help: If this option is selected, parts without defined material may be assigned the material assigned to one of their parent or child.
       dynamic_attributes_name: Use the attribute *Name* of dynamic components
@@ -726,9 +730,9 @@ tab:
       part_number_with_letters_help: If this option is selected, parts are enumerated using letters (A, B, C, ... Z, AA, AB, ...).
       part_number_sequence_by_group: Reset the enumeration of parts for each group
       part_number_sequence_by_group_help: If this option is selected, the enumeration of parts is reset to 1 (or A) for each group (list of parts with same material type and thickness).
-      part_folding: Group similar parts
+      part_folding: Group identical parts
       part_folding_help: |
-        If this option is enabled, parts made of **Solid Wood, Sheet Goods or Dimensional**, having the **same raw size**, with the **same badges** and the **same finished surface** *(if the display of this surface is not hidden)* will be grouped on the same line in the *parts list*.
+        If this option is selected, parts made of **Solid Wood, Sheet Goods or Dimensional**, having the **same raw size**, with the **same badges** and the **same finished surface** *(if the display of this surface is not hidden)* will be grouped on the same line in the *parts list*.
 
         The parts will still be considered different for labeling and cutting diagram purposes.
       hide_entity_names: Hide instance names
@@ -753,17 +757,17 @@ tab:
       minimize_on_highlight_help: If this option is selected, the OpenCutList window will be minimized when the function *'$t(tab.cutlist.highlight_part)'* is used.
       general: General
       sorting: Sorting
-      group_order_strategy: Group Sorting
+      group_order_strategy: Sorting Groups
       group_order_strategy_help: |
-        Reorganize the tiles to define the sort order within each group.
-        Properties can be sorted in <i class="ladb-opencutlist-icon-sort-asc"></i> *ascending* or <i class="ladb-opencutlist-icon-sort-desc"></i> *descending* order.
-      part_order_strategy: Part Sorting
+        Reorder the following properties to define the group sorting strategy.
+        Each property can be sorted in <i class="ladb-opencutlist-icon-sort-asc"></i> *ascending* or <i class="ladb-opencutlist-icon-sort-desc"></i> *descending* order.
+      part_order_strategy: Sorting Parts
       part_order_strategy_help: |
-        Reorganize the tiles to define the sort order within each group of parts.
-        Properties can be sorted in <i class="ladb-opencutlist-icon-sort-asc"></i> *ascending* or <i class="ladb-opencutlist-icon-sort-desc"></i> *descending* order.
+        Reorder the following properties to define the sorting strategy for the parts in each group.
+        Each property can be sorted in <i class="ladb-opencutlist-icon-sort-asc"></i> *ascending* or <i class="ladb-opencutlist-icon-sort-desc"></i> *descending* order.
       dimension_column_order_strategy: Dimension Order
       dimension_column_order_strategy_help: |
-        Rearrange the following properties to define the display order of dimension columns.
+        Reorder the following properties to define the display order of dimension columns.
       property_material_type: Material type
       property_material_name: Material name
       property_std_width: Standard width
@@ -777,7 +781,7 @@ tab:
       property_tags: Badges
       property_thickness_layer_count: Number of layers
       tags: Badges
-      tags_help: Customized list of badges in the part properties window.
+      tags_help: Custom list of badges available in the part properties window.
       tags_placeholder: Add a badge
     list:
       filters: Filters
@@ -816,7 +820,7 @@ tab:
     export:
       title: Export
       info_0: |
-        This feature allows you to export data from the *Parts List* to the clipboard or to a [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) or [XLSX](https://en.wikipedia.org/wiki/Office_Open_XML) file.
+        This feature allows you to export data from the *Parts List* to the clipboard or to a file in [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) or [XLSX](https://en.wikipedia.org/wiki/Office_Open_XML) format.
       customize_help: |
         Reorder, Hide, Add, Remove or Select a column from the list to customize its **title** and the **formula** that will generate the values for each exported row.
       add_column: Add a column
@@ -843,8 +847,9 @@ tab:
       option_csv_col_sep_comma: Comma
       option_csv_col_sep_semicolon: Semicolon
       option_csv_encoding: Encoding
-      copy_all: Headings + Values
-      copy_values: Only values
+      # as described in https://www.rfc-editor.org/info/rfc4180/
+      copy_all: Header + Values
+      copy_values: Values only
       number: No.
       path: Path
       instance_name: Instance
@@ -863,7 +868,7 @@ tab:
       bbox_thickness: Thickness
       final_area: Area - final
       count: Quantity
-      part_count: Number of Parts
+      part_count: Number of parts
       material: Material
       material_type: Material type
       material_name: Material name
@@ -1771,7 +1776,7 @@ tab:
         If you use only groups, convert them into components.
         The use of components makes it possible to replicate identical parts without duplicating them.
       no_typed_materials: Apply a material to the parts to be included in the parts list and define the properties of this material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** or **$t(tab.materials.type_5)**) on the tab <i class="ladb-opencutlist-icon-materials"></i> **Materials**.
-    obsolete_base: To stay in sync, you need to refresh the parts list.
+    obsolete_base: To stay in sync, you need regenerate the parts list.
   materials:
     label: Materials
     title: Materials
@@ -1823,7 +1828,7 @@ tab:
       title: Properties of Material '{{ name }}'
       general: General
       texture: Texture
-      no_texture: Without texture
+      no_texture: No texture
       name: Name
       type: Type
       description: Description
@@ -1921,7 +1926,7 @@ tab:
     export_to_skm:
       title: Export to .skm file
     option:
-      minimize_on_smart_paint: Reduce after * 'Color parts with...'*
+      minimize_on_smart_paint: Minimize after *'Color parts with...'*
       minimize_on_smart_paint_help: If this option is selected, the OpenCutList window will be minimized when using the *'Color parts with...'* function.
       general: General
       material_order_strategy: Material Sorting
@@ -1979,7 +1984,7 @@ tab:
       instance_name: Instance
       material: Material
       is_grain_group: Define as **Grain continuity group**
-      is_grain_group_help: If you enable this option, this instance will be treated as a **Grain continuity group** for the parts it contains that have *Grain continuity* enabled.
+      is_grain_group_help: Enabling this option will treat this instance will as a **Grain continuity group** for the parts it contains that have *Grain continuity* enabled.
       definition_name: Definition
       description: Description
       url: URL
@@ -2026,9 +2031,9 @@ tab:
       hide_descriptions: Hide descriptions
       hide_descriptions_help: If this option is selected, the **descriptions** placed on the parts will not be displayed.
       hide_tags: Hide badges
-      hide_tags_help: If this option is enabled, the **badges** placed on the parts will not be displayed.
+      hide_tags_help: If this option is selected, the **badges** placed on the parts will not be displayed.
       minimize_on_set_active: Minimize after '$t(tab.outliner.tooltip.set_active_node)'
-      minimize_on_set_active_help: If this option is selected, the OpenCutList window will be minimized when the function *'$t(tab.outliner.tooltip.set_active_node)'* is used.
+      minimize_on_set_active_help: If this option is selected, the OpenCutList window will be minimized when the *'$t(tab.outliner.tooltip.set_active_node)'* function is used.
     snippet:
       name_size: Designation - Size
     error:
@@ -2036,12 +2041,12 @@ tab:
       no_entities: Your model is empty!
       node_not_found: Node not found
       entity_not_found: Instance not found
-      invalid_target: The targeted instance does not support this operation
+      invalid_target: This operation is not supported by the targeted instance
       obsolete_outliner: Impossible, the generated structure is obsolete. Please, regenerate it.
     tip:
       no_node: |
-        Your model does not contain any instance to be displayed here.
-        An instance is a **group** or a **component** in the scene.
+        Your model currently has no instances to display here.
+        An instance is a **group** or a **component** placed in the scene.
     obsolete_base: To stay in sync, you need to refresh the structure.
   importer:
     label: Import
@@ -2556,6 +2561,8 @@ tool:
     action_option_options_draw_in_0: Draw in the active element
     action_option_options_draw_in_1: Draw in the parent of the part of the first point
     action_option_options_draw_in_status: Draw in the parent of the part targeted by the first point
+    action_option_options_pick_material: Color picker
+    action_option_options_pick_material_status: Apply the material of the part targeted by the first point to the newly created part
     action_option_options_ask_name: Part Naming
     action_option_options_ask_name_status: Enter part names manually
     action_toggle_move_copy_status: Toggle between copy/move
