@@ -760,6 +760,7 @@ tab:
           A becslés helyes kiszámításához:
           - a felhasznált anyagoknak rendelkezniük kell legalább sűrűséggel és árral.
           - a felhasznált kiegészítőknek rendelkezniük kell legalább súllyal és árral.
+    # @no-translate
     cuttingdiagram:
       title: Szabásterv
       start_msg: Optimalizálás folyamatban
@@ -1818,6 +1819,7 @@ tab:
         A modell nem tartalmaz megjeleníthető alkatrészeket.
         Az alkatrész lehet **csoport** vagy **komponens** a jelenetben.
     obsolete_base: A friss adatokhoz újra kell generálni a szerkezetet.
+  # @no-translate
   importer:
     label: Importálás
     title: Alkatrészek importálása
@@ -2038,10 +2040,12 @@ tab:
     objective_slogan: Az OpenCutList mindannyiunké
     objective_title:
       default: Célkitűzések
+      # @no-translate
       cuttingdiagram_export: A vágási diagram exportálás finanszírozása
     objective_details:
       default: |
         Az *OpenCutList* folyamatos fejlesztése fontos számunkra, és a projektnek továbbra is szüksége van a segítségére a következő frissítéshez!
+      # @no-translate
       cuttingdiagram_export: |
         Fontos számunkra, hogy az *OpenCutList* alkalmazkodni tudjon a felhasználók nagyon különböző elvárásaihoz a *vágási diagram* funkció terén.
         A lehetőségek további bővítéséhez szeretnénk lehetővé tenni az elrendezési diagramok exportálását **SVG** és **DXF** formátumban.

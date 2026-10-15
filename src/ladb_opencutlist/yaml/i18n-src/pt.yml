@@ -823,6 +823,7 @@ tab:
           Para que este orçamento seja calculado corretamente:
           - Os materiais utilizados devem ter pelo menos um peso e preço configurados.
           - Os acessórios utilizados devem ter pelo menos um peso e um preço.
+    # @no-translate
     cuttingdiagram:
       title: Plano de Corte
       start_msg: Otimização em progresso
@@ -1929,6 +1930,7 @@ tab:
         Seu modelo não possui atualmente nenhuma instância para exibir aqui.
         Uma instância é um **grupo** ou um **componente** colocado na cena.
     obsolete_base: Para permanecer sincronizado, você deve regenerar a estrutura.
+  # @no-translate
   importer:
     label: Importar
     title: Importar peças
@@ -2219,10 +2221,12 @@ tab:
     objective_slogan: OpenCutList somos todos nós
     objective_title:
       default: Objetivo
+      # @no-translate
       cuttingdiagram_export: Financiamento das exportações de planos de corte
     objective_details:
       default: |
         A melhoria contínua da *OpenCutList* é importante para nós e o projeto continua precisando de sua ajuda para sua próxima atualização!
+      # @no-translate
       cuttingdiagram_export: |
         É importante para nós que o *OpenCutList* se possa adaptar à grande variedade de requisitos dos utilizadores para a função *Plano de Corte*.
         Para ampliar ainda mais as possibilidades, gostaríamos de poder exportar planos de layout nos formatos **SVG** e **DXF**.

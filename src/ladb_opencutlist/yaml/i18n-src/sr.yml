@@ -759,6 +759,7 @@ tab:
           Da bi se ova procena mogla ispravno izračunati:
           -Materijali koji se koriste moraju imati podešenu barem jednu gustinu i cenu.
           -Korišćeni dodaci moraju imati barem jednu masu i cenu.
+    # @no-translate
     cuttingdiagram:
       title: Dijagram rezanja
       start_msg: Optimizacija u toku
@@ -1793,6 +1794,7 @@ tab:
         Trenutno nema instanci u vašem modelu za prikaz.
         Instanca može biti **grupa** ili **komponenta** u sceni.
     obsolete_base: Za sinhronizaciju je potrebno ponovo generisati strukturu.
+  # @no-translate
   importer:
     label: Uvezi
     title: Uvezi delove
@@ -2012,10 +2014,12 @@ tab:
     objective_slogan: OpenCutList smo svi mi
     objective_title:
       default: Ciljevi
+      # @no-translate
       cuttingdiagram_export: Plaćanje za izvoz liste rezanja
     objective_details:
       default: |
         Stalno poboljšanje *OpenCutList* nam je važno i projekt će i dalje trebati vašu pomoć za svoje sledeće ažuriranje !
+      # @no-translate
       cuttingdiagram_export: |
         Cilj nam je da *OpenCutList* zadovolji različite potrebe korisnika u funkciji *calepinage*.
         Da bismo proširili opcije, želimo omogućiti izvoz dijagrama calepinage u **SVG** i **DXF** formatu.

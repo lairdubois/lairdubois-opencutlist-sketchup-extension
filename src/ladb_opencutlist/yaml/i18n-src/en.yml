@@ -216,7 +216,7 @@ core:
     user_defaults: My default preset
     new: New preset
     new_prompt: |
-      *Creating a custom preset allows you to save the form's current settings globally so you can reuse them later in all your templates.*
+      *Creating a custom preset allows you to save the form's current settings globally so you can reuse them later in all your models.*
 
       Enter preset name:
     rename_prompt_title: Rename
@@ -224,7 +224,7 @@ core:
     delete_confirm_title: Deletion
     delete_confirm: Are you sure you want to delete the preset **"{{ name }}"**?
     override_confirm_title: Update
-    override_confirm: Do you confirm preset **"{{ name }}"** update with the form parameters?
+    override_confirm: Are you sure you want to update the preset **"{{ name }}"** with the form parameters?
     new_error: Impossible, a preset **"{{ name }}"** already exists
     new_success: Preset **"{{ name }}"** created
     override_success: Preset **"{{ name }}"** updated
@@ -309,8 +309,8 @@ core:
       # an edge is considered manifold when it is shared by exactly two faces in a 3D mesh
       non_manifold_edges: The solid contains {{ count }} non-manifold edge
       non_manifold_edges_plural: The solid contains {{ count }} non-manifold edges
-      non_manifold_edges_named: « {{ name }} » contains {{ count }} non manifold edge
-      non_manifold_edges_named_plural: « {{ name }} » contains {{ count }} non manifold edges
+      non_manifold_edges_named: « {{ name }} » contains {{ count }} non-manifold edge
+      non_manifold_edges_named_plural: « {{ name }} » contains {{ count }} non-manifold edges
       open_edges: The solid contains {{ count }} open edge
       open_edges_plural: The solid contains {{ count }} open edges
       open_edges_named: « {{ name }} » contains {{ count }} open edge
@@ -449,15 +449,15 @@ tab:
     label: Parts
     title: Parts List
     help: |
-      Select the parts to be used for the parts list in the current scene and click **Generate**.
+      Select the root component of the cutlist in the current scene and click the **Generate** button.
       If no component is selected, all visible components on the scene will be considered.
     is_selection: Selection only
     select_part: Select part
     select_part_plural: Select parts
     material_undefined: Without material
-    not_available_std_width: Width undefined
-    not_available_std_thickness: Thickness undefined
-    not_available_std_section: Cross section undefined
+    not_available_std_width: Width non-standard
+    not_available_std_thickness: Thickness non-standard
+    not_available_std_section: Cross section non-standard
     highlight_part: Highlight part in the model
     highlight_parts: Highlight parts in the model
     edit_part_properties: Edit Part Properties
@@ -512,7 +512,7 @@ tab:
       folding_part: Unfold / Fold
       material_origin_1: The material considered for this part is defined on its instances
       material_origin_2: The material considered for this part is inherited from one of its parent elements
-      material_origin_3: The material considered for this part is extracted from one its child elements
+      material_origin_3: The material considered for this part is extracted from its child elements
       orientation_locked_on_axis: This part's orientation is locked on its axes
       number_saved: The part number is stored
       number_hidden: The number '{{ number }}' recorded on this part cannot be used because it has already been assigned
@@ -591,9 +591,9 @@ tab:
       write_3d_parts: Export 3D part geometry
       group_write_2d_parts: Export 2D projection of parts in group
       group_write_3d_parts: Export 3D geometry of parts in group
-      group_layout_parts: Draw overview of parts in group
+      group_layout_parts: Print overview drawing of the group's parts
       group_numbers_save: Save part numbers of this group
-      group_numbers_reset: Reinitialize the part numbers of this group
+      group_numbers_reset: Reset the part numbers of this group
       group_cuttingdiagram: Cutting Diagram
       group_packing: Cutting Diagram
       group_labels: Print labels of parts in group
@@ -604,14 +604,14 @@ tab:
       collapse_all: Collapse all rows
       reset_prices: Reset the prices of all parts
       reset_prices_confirm: |
-        You are about to reset the prices of all parts in your model
+        You are about to reset the prices of all parts in your model.
         This action is final. **All prices will be reset to zero.**
         Confirm to continue.
       reset_prices_success: The prices of all parts have been reset.
     edit_part:
       title: Properties of Part '{{ name }}'
       title_multiple: Properties of the Parts Group
-      multiple_alert: Shared properties of {{ part_count }} parts group.
+      multiple_alert: Common properties of the group of {{ part_count }} parts.
       general: General
       extra_help: List of properties specific to the type of material "**$t(tab.materials.type_{{ material_type }})**".
       edges: Edges
@@ -637,7 +637,7 @@ tab:
       mass_help: The weight of the part will be used when generating an **Estimate**.
       price: Price
       price_help: The price of the part will be used when generating an **Estimate**.
-      thickness_layer_count: Nb of Layers
+      thickness_layer_count: No. of Layers
       thickness_layer_count_help: |
         Define here the number of layers that divide the drawn part in its thickness.
 
@@ -652,7 +652,7 @@ tab:
       thickness_increase_help: $t(tab.materials.edit_material.thickness_increase_help)
       description: Description
       description_help: |
-        The *Description* provides a personalized information on each part definition.
+        The *Description* provides personalized information on each part definition.
       url: URL
       url_help: |
         The *URL* provides a personalized link to an external page on each part definition.
@@ -729,7 +729,7 @@ tab:
       part_number_with_letters: Use letters to enumerate parts
       part_number_with_letters_help: If this option is selected, parts are enumerated using letters (A, B, C, ... Z, AA, AB, ...).
       part_number_sequence_by_group: Reset the enumeration of parts for each group
-      part_number_sequence_by_group_help: If this option is selected, the enumeration of parts is reset to 1 (or A) for each group (list of parts with same material type and thickness).
+      part_number_sequence_by_group_help: If this option is selected, the enumeration of parts is reset to 1 (or A) for each group (list of parts with same material and raw thickness).
       part_folding: Group identical parts
       part_folding_help: |
         If this option is selected, parts made of **Solid Wood, Sheet Goods or Dimensional**, having the **same raw size**, with the **same badges** and the **same finished surface** *(if the display of this surface is not hidden)* will be grouped on the same line in the *parts list*.
@@ -796,8 +796,8 @@ tab:
       dimensions_help: Dimensions explained
       summary: Summary
       material_type: Type
-      material_thickness: Material / Thickness
-      part_count: Quantity
+      material_thickness: Material / Dimension
+      part_count: Nb. parts
       area: Area
       area_short: Area
       volume: Volume
@@ -843,7 +843,7 @@ tab:
       option_source_instances_list: List of Instances
       option_format: Format
       option_csv_col_sep: Separator
-      option_csv_col_sep_tab: Tabulator
+      option_csv_col_sep_tab: Tab
       option_csv_col_sep_comma: Comma
       option_csv_col_sep_semicolon: Semicolon
       option_csv_encoding: Encoding
@@ -941,7 +941,8 @@ tab:
         not_enough_data: |
           For this estimate to be calculated correctly:
           - the used materials must have at least a density and a price.
-          - the used fittings must have at least a weight and a price.
+          - the used hardware must have at least a weight and a price.
+    # @no-translate
     cuttingdiagram:
       title: Cutting Diagram
       start_msg: Optimization running
@@ -983,7 +984,7 @@ tab:
       option_full_width_diagram: Full Width Display
       option_full_width_diagram_0: "No"
       option_full_width_diagram_1: "Yes"
-      option_full_width_diagram_help: If this option is selected, the cutting diagrams are displayed using the available width. Otherwise, their width is defined by a scaling factor depending on all diagrams.
+      option_full_width_diagram_help: If this option is selected, the cutting diagrams are displayed using the available width. Otherwise, their width follows a fixed scale factor of their real size.
       option_wrap_length: Wrap Board Length
       option_wrap_length_help: Maximal length after which a board or edge banding will be wrapped over multiple lines.
       option_hide_cross: Off-cuts
@@ -991,7 +992,7 @@ tab:
       option_hide_cross_1: Dimensions Only
       option_hide_cross_help: Shows or hides the cross indicating parts defined as off-cuts on the diagram.
       option_highlight_primary_cuts: Primary Cuts
-      option_highlight_primary_cuts_0: Flyover only
+      option_highlight_primary_cuts_0: On hover only
       option_highlight_primary_cuts_1: Always visible
       option_highlight_primary_cuts_help: Allows you to always highlight primary cuts.
       option_hide_edges_preview: Display of Edge Bandings
@@ -1017,14 +1018,14 @@ tab:
       option_optimization_help: The optimization level defines the number of computed possibilities, and therefore also the calculation time.
       option_optimization_0: Medium
       option_optimization_1: Advanced
-      option_stacking: Preferred Direction
+      option_stacking: Stack Identical Parts
       option_stacking_help: Stacking direction for parts with a common length or width.
       option_stacking_0: No preference
       option_stacking_1: Lengthwise
       option_stacking_2: Widthwise
       option_stacking_3: All possibilities
       option_keep: Off-cuts minimal size
-      option_keep_help: Leftovers that are larger than the minimum length and width are marked **to be kept**.
+      option_keep_help: Off-cuts that are larger than the minimum length and width are marked **to be kept**.
       option_std_bar_dimensional: Standard Dimensional
       option_std_bar_edge: Standard Edge Banding
       option_std_bar_help: |
@@ -1054,7 +1055,7 @@ tab:
       option_scrap_sheet_sizes_placeholder: length x width x quantity ; ...
       option_scrap_sheet_sizes_help: |
         List all your off-cut sheet goods or veneers to be considered first in the cutting diagram.
-        Expected format: **L**x**W**x**Q**, where **L** and **W** represent the *length* and the *width* of the panel and **Q** the quantity.
+        Expected format: **L**x**W**x**Q**, where **L** and **W** represent the *length* and the *width* of the off-cut and **Q** the quantity.
         Quantity is optional.
         *Sizes without units are considered to be in model units.*
       tooltip:
@@ -1131,7 +1132,7 @@ tab:
         option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
         option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
         option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
-        option_sheet_good: Sheet Goods
+        option_sheet_good: Panel
         option_sheet_good_help: |
           Enables sheet good export and color selection.
         option_sheet_veneer: Veneer Sheet
@@ -1146,7 +1147,7 @@ tab:
         option_parts: Parts
         option_parts_help: |
           Enables part export and color selection.
-        option_parts_holes: Drillings
+        option_parts_holes: Holes
         option_parts_holes_help: |
           Selects the color of drillings.
         option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
@@ -1159,14 +1160,14 @@ tab:
           Enables export of off-cuts and color selection.
         option_cuts: Cuts
         option_cuts_help: |
-          Selects whether cuts are drawn, and select their color.
+          Enables export of cuts and color selection.
         warning:
           is_sheet_selection: The **hidden panels** will not be exported.
       error:
         no_bar_dimensional: The standard board is not configured correctly and no off-cut is available.
         no_bar_edge: The standard edge banding is not configured correctly and no off-cut is available.
         parameters: Parameters are incorrect. The trimming size is larger than 25% of the longest board or edge banding.
-        no_parts: No part.
+        no_parts: No parts.
         no_sheet: The standard panel is not configured correctly and no off-cut is available.
         no_placement_possible_1d: No placement possible (standard board too small, trimming size too large, saw kerf too large, ...).
         no_placement_possible_2d: No placement possible (standard panel too small, trimming size too large, saw kerf too large, ...).
@@ -1231,7 +1232,7 @@ tab:
         Sets the optimization mode, with or without time limit.
       option_objective: Objective
       option_objective_help: |
-        Sets the packing objectif.
+        Sets the packing objective.
       option_rectangleguillotine_cut_type: Cut Type
       option_rectangleguillotine_cut_type_help: |
         Sets the cut type.
@@ -1249,11 +1250,11 @@ tab:
       option_rectangleguillotine_first_stage_orientation_any: Any
       option_rectangleguillotine_sort_subplates_criteria: Sorting Stages
       option_rectangleguillotine_sort_subplates_criteria_help: |
-        Defines the criteria for sorting parts at each level.
+        Defines the criteria for sorting parts at each stage.
       option_rectangleguillotine_sort_subplates_criteria_l1l2: By decreasing size
       option_rectangleguillotine_sort_subplates_criteria_dl2l1: By decreasing density
       option_rectangleguillotine_keep: Minimal Size of Off-cuts
-      option_rectangleguillotine_keep_help: Leftovers that are larger than the minimum length and width are marked **to be kept**.
+      option_rectangleguillotine_keep_help: Off-cuts that are larger than the minimum length and width are marked **to be kept**.
       option_rectangle_leftover_mode: Spread Direction
       option_rectangle_leftover_mode_help: |
         Defines the direction in which parts are spread across the last partially filled panel.
@@ -1318,7 +1319,7 @@ tab:
         Show or hide the actual shapes of parts and their machining on the diagram.
 
         *This option must be enabled in order to export shapes.*
-      option_colorization: Paint Parts
+      option_colorization: Color Parts
       option_colorization_0: $t(default.no)
       option_colorization_1: $t(default.yes) - Screen
       option_colorization_2: $t(default.yes) - Screen and Print
@@ -1331,7 +1332,7 @@ tab:
       option_origin_corner_3: Bottom right corner
       option_origin_corner_help: Determines the location of the origin of the coordinate system for displaying parts on panels, veneer sheets, dimensional lumber or edge bandings.
       option_highlight_primary_cuts: Primary Cuts
-      option_highlight_primary_cuts_0: Flyover only
+      option_highlight_primary_cuts_0: On hover only
       option_highlight_primary_cuts_1: Always visible
       option_highlight_primary_cuts_help: Allows you to always highlight primary cuts.
       option_hide_edges_preview: Display of Edge Bandings
@@ -1409,7 +1410,7 @@ tab:
           This module lets you export the **geometry** of the *cutting diagram* as a list of files in [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) or [DXF](https://en.wikipedia.org/wiki/AutoCAD_DXF) format.
         option_bin_sheet_good: Panel
         option_bin_sheet_good_help: |
-          Enables sheet good export and color selection.
+          Enables panel export and color selection.
         option_bin_veneer: Veneer Sheet
         option_bin_veneer_help: |
           Enables veneer sheet export and color selection.
@@ -1443,8 +1444,8 @@ tab:
           overflow_gt_spacing: |
             The allowance ({{ overflow }}) must be smaller than or equal to the spacing ({{ spacing }}) configured in this cutting diagram.
       error:
-        no_part: No part.
-        no_bin_1d: No standard board or edge banding was selected and no off-cuts is available.
+        no_part: No parts.
+        no_bin_1d: No standard board or edge banding was selected and no off-cut is available.
         no_bin_2d: No standard panel or veneer sheet was selected and no off-cuts were available.
         invalid_part_shapes: The shape of part '{{ name }}' is invalid.
         no_solution: No solution was found for placing **all parts** within the available material.
@@ -1471,7 +1472,7 @@ tab:
       remove_all_elements: $t(default.remove_all)
       part_order_strategy_help: |
         Reorder the following properties to define the label sorting strategy.
-        Each property can be sorted in <i class="ladb-opencutlist-icon-sort-asc"></i> *increasing* or <i class="ladb-opencutlist-icon-sort-desc"></i> *decreasing* order.
+        Each property can be sorted in <i class="ladb-opencutlist-icon-sort-asc"></i> *ascending* or <i class="ladb-opencutlist-icon-sort-desc"></i> *descending* order.
       offset_help: |
         The *offset* defines the position of the **first label** to be printed on the **first page**.
         Select the box that corresponds to your choice.
@@ -1496,7 +1497,7 @@ tab:
       option_cutting_marks: Cutting Marks
       option_cutting_marks_0: None
       option_cutting_marks_1: Printed
-      option_formula: Fieldname
+      option_formula: Value
       option_size: Size
       option_custom_formula: Formula
       option_anchor: Anchor
@@ -1566,17 +1567,17 @@ tab:
       option_parts_opacity_0: Transparent
       option_parts_opacity_1: Opaque
       option_parts_opacity_help: Selects the opacity of the parts.
-      option_pins: Labels
+      option_pins: Pins
       option_pins_hidden: Display
-      option_pins_hidden_0: With labels
-      option_pins_hidden_1: No labels
-      option_pins_hidden_help: Shows or hides the part labels with number or designation.
+      option_pins_hidden_0: With pins
+      option_pins_hidden_1: No pins
+      option_pins_hidden_help: Shows or hides the part's pins with number or designation.
       option_pins_colored: Color
       option_pins_colored_0: Without color
       option_pins_colored_1: Color of the part
-      option_pins_colored_help: Selects the color of the labels.
+      option_pins_colored_help: Selects the color of the pins.
       option_pins_formula: Formula
-      option_pins_formula_help: Lets you write *Ruby* code to customize the label text.
+      option_pins_formula_help: Lets you write *Ruby* code to customize the pin's text.
       option_pins_length: Length
       option_pins_length_0: Without leader line
       option_pins_length_1: Short
@@ -1715,7 +1716,7 @@ tab:
         **Basic**
         The shape of the part is exported with the projection of each face onto a layer corresponding to its depth.
 
-        **Contour + Drillings + Allowance**
+        **Outline + Holes + Allowance**
         Activates the separation of the outer contour of parts from their holes, as well as the calculation of the machining allowance applied to surfaces bordering the contour and cavities.
       option_merge_holes_overflow: Machining Allowance
       option_merge_holes_overflow_help: |
@@ -1733,12 +1734,12 @@ tab:
         Allows you to choose the color of the part cavities.
 
         *By default, the color used is a gradient proportional to the depth of the cavity between the color of the parts and that of the holes.*
-      option_parts_holes: Drillings
+      option_parts_holes: Holes
       option_parts_holes_help: |
         Selects the color of drillings.
       option_parts_paths: Paths
       option_parts_paths_help: |
-        Allows you to choose plot colors.
+        Allows you to choose the path colors.
 
         *The fill color will only be used for closed paths.*
       error:
@@ -1751,21 +1752,21 @@ tab:
       number: Number
       name: Designation
       number_and_name: Number and Designation
-      number_without_hardware: Number (excluding fittings)
+      number_without_hardware: Number (excluding hardware)
       size: Dimension
       area: Area
       volume: Volume
     error:
-      no_model: No model is open. You will need to provide me with more information ;)
-      no_entities: Your model is empty. You will need to give me more information ;)
+      no_model: No model is open. You'll have to give me a bit more than that ;)
+      no_entities: Your model is empty. You'll have to give me a bit more than that ;)
       no_component_in_selection: No instance of a visible component was detected in your selection.
       no_component_in_model: No instance of a visible component was detected in your scene.
       unknow_part: The selected part does not exist in the Parts List.
       obsolete_cutlist: Impossible, the parts list is obsolete. Please, regenerate it.
     warning:
       is_entity_selection: Only the selected elements in your model have been taken into account.
-      no_typed_materials_in_model: Your model does not use any defined material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** or **$t(tab.materials.type_5)**).
-      no_typed_materials_in_selection: Your selection does not use any defined material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** or **$t(tab.materials.type_5)**).
+      no_typed_materials_in_model: Your model uses no material with a defined type (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** or **$t(tab.materials.type_5)**).
+      no_typed_materials_in_selection: Your selection uses no material with a defined type (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** or **$t(tab.materials.type_5)**).
       export_empty: Your export does not contain any part.
     success:
       part_selected: "{{ count }} part selected in the Parts List."
@@ -1775,8 +1776,8 @@ tab:
         The parts to be included in the *parts list* must be instances of a **component**.
         If you use only groups, convert them into components.
         The use of components makes it possible to replicate identical parts without duplicating them.
-      no_typed_materials: Apply a material to the parts to be included in the parts list and define the properties of this material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** or **$t(tab.materials.type_5)**) on the tab <i class="ladb-opencutlist-icon-materials"></i> **Materials**.
-    obsolete_base: To stay in sync, you need regenerate the parts list.
+      no_typed_materials: Apply a material to the parts to be included in the parts list and define the type of this material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** or **$t(tab.materials.type_5)**) on the tab <i class="ladb-opencutlist-icon-materials"></i> **Materials**.
+    obsolete_base: To stay in sync, you need to regenerate the parts list.
   materials:
     label: Materials
     title: Materials
@@ -1870,12 +1871,12 @@ tab:
       std_sections_help: |
         Standard cross sections available for this material.
 
-        *If no unit is specified, the model unit's will be applied.*
+        *If no unit is specified, the model's unit will be applied.*
       std_sizes: Standard Sizes
       std_sizes_help: |
         Standard sizes available for this material.
 
-        *If no unit is specified, the model unit's will be applied.*
+        *If no unit is specified, the model's unit will be applied.*
       grained: Grain
       grained_help: Selects the grain orientation in relation to the length of the panel.
       grained_0: No grain orientation
@@ -1902,7 +1903,7 @@ tab:
       std_volumic_masses_help: Allows to set the density for all sizes as well as for each standard material size.
       std_prices: Price
       std_prices_help: Allows you to define the price for all sizes as well as for each standard size of the material.
-      std_cut_prices: Standard Cut Price
+      std_cut_prices: Cutting Price
       std_cut_prices_help: |
         Allows you to define the cutting price of the material.
 
@@ -1943,14 +1944,14 @@ tab:
       message: |
         Choose the name of the new material copied from **{{ material_name }}**.
     error:
-      no_model: No model is open. You will need to provide me with more information ;)
+      no_model: No model is open. You'll have to give me a bit more than that ;)
       no_materials: Your model does not contain any material.
       material_not_found: No material found.
       no_texture: The material has no texture.
       failed_import_skm_file: An error occurred while importing from the .skm file. **{{ error }}**
       failed_export_skm_file: An error occurred while exporting to .skm file. **{{ error }}**
       failed_deleting_material: An error occurred while deleting the material. **{{ error }}**
-      failed_duplicating_material: An error occured while duplicating the material. **{{ error }}**
+      failed_duplicating_material: An error occurred while duplicating the material. **{{ error }}**
       invalid_image_file: Invalid image
     obsolete_base: To stay in sync, you need to refresh the material list.
   outliner:
@@ -1984,7 +1985,7 @@ tab:
       instance_name: Instance
       material: Material
       is_grain_group: Define as **Grain continuity group**
-      is_grain_group_help: Enabling this option will treat this instance will as a **Grain continuity group** for the parts it contains that have *Grain continuity* enabled.
+      is_grain_group_help: Enabling this option will treat this instance as a **Grain continuity group** for the parts it contains that have *Grain continuity* enabled.
       definition_name: Definition
       description: Description
       url: URL
@@ -2008,7 +2009,7 @@ tab:
       no_scale_mask_5: Stretchable on the red/green plane (X+Y)
       no_scale_mask_6: Stretchable from corners (XYZ)
       explode: Explode
-      explode_message: Do you confirm the breakup of **{{ name }}**?
+      explode_message: Do you confirm exploding **{{ name }}**?
       erase: Delete
       erase_message: Do you confirm the deletion of **{{ name }}**?
     deep_make_unique:
@@ -2037,7 +2038,7 @@ tab:
     snippet:
       name_size: Designation - Size
     error:
-      no_model: No model is open. You will need to provide me with more information ;)
+      no_model: No model is open. You'll have to give me a bit more than that ;)
       no_entities: Your model is empty!
       node_not_found: Node not found
       entity_not_found: Instance not found
@@ -2048,6 +2049,7 @@ tab:
         Your model currently has no instances to display here.
         An instance is a **group** or a **component** placed in the scene.
     obsolete_base: To stay in sync, you need to refresh the structure.
+  # @no-translate
   importer:
     label: Import
     title: Import Parts
@@ -2067,7 +2069,7 @@ tab:
         This unit will be used for dimensions without a specified unit*.
       options: Loading Options
       option_col_sep: Separator
-      option_col_sep_tab: Tabulator
+      option_col_sep_tab: Tab
       option_col_sep_comma: Comma
       option_col_sep_semicolon: Semicolon
       option_first_line_headers: Header Line
@@ -2086,8 +2088,8 @@ tab:
         The model already contains *parts*, *definitions* or *materials*.
         Select the desired import options.
       option_remove_all_?: "Select next step:"
-      option_remove_all_false: Add parts to the existing
-      option_remove_all_true: Remove existing!
+      option_remove_all_false: Add parts to the existing ones
+      option_remove_all_true: Remove everything!
       option_keep_definitions_settings: Keep definition settings
       option_keep_materials_settings: Keep material settings
     column:
@@ -2128,12 +2130,12 @@ tab:
     obsolete_base: To stay in sync, you need to reload the CSV file.
   importers:
     default:
-      open_file: Open a file {{ extension }}
+      open_file: Open {{ extension }} file
       import_to_model: Import into model
       error:
         no_data: No data to import.
         no_model: No model is open. It is impossible to import parts into the void ;)
-        file_not_found: "File not found : **{{ filename }}**"
+        file_not_found: "File not found: **{{ filename }}**"
         bad_extension: The file *{{ filename }}* does not have the required extension (**{{ extensions }}**).
         failed_to_import: The import failed.
       success:
@@ -2156,7 +2158,7 @@ tab:
           This unit will be used for dimensions without a specified unit*.
         options: Loading Options
         option_col_sep: Separator
-        option_col_sep_tab: Tabulator
+        option_col_sep_tab: Tab
         option_col_sep_comma: Comma
         option_col_sep_semicolon: Semicolon
         option_first_line_headers: Header Line
@@ -2175,7 +2177,7 @@ tab:
           The model already contains *parts*, *definitions* or *materials*.
           Select the desired import options.
         option_remove_all_?: "Select next step:"
-        option_remove_all_false: Add parts to the existing
+        option_remove_all_false: Add parts to the existing ones
         option_remove_all_true: Remove everything!
         option_keep_definitions_settings: Keep definition settings
         option_keep_materials_settings: Keep material settings
@@ -2246,15 +2248,15 @@ tab:
         option_machining_material_name_help: Material to be applied to **machining**.
         option_machining_layer_name: Machining
         option_machining_layer_name_help: Tag to be applied to machining.
-        option_hardware_material_name: Fittings
+        option_hardware_material_name: Hardware
         option_hardware_material_name_help: Material to be applied to **fittings**.
         option_hardware_layer_name: Fittings
         option_hardware_layer_name_help: Tag to be applied to fittings.
         option_no_material_help: "*Leave this field blank to skip the application of material*."
         option_default_material_help: "*If this field is left blank, a default material will be created*."
         option_no_layer_help: "*Leave this field blank to skip the application of any tag*."
-        option_subtract_machinings: Perform machining operations on the parts
-        option_subtract_machinings_help: The **grooves**, **rebates**, and **chamfers** of parts, including those associated with accessories, are subtracted from their volume rather than being drawn. The holes remain drawn.
+        option_subtract_machinings: Carve machinings into the parts
+        option_subtract_machinings_help: The **grooves**, **rebates**, and **chamfers** of parts, including those associated with hardware, are subtracted from their volume rather than being drawn. The holes remain drawn.
         warning:
           subtract_machinings_failed: "The machining features could not be milled into these parts; instead, they are drawn: {{ names }}"
         old_name: Original name
@@ -2321,14 +2323,14 @@ tab:
       To *start conversations* or *reply* you will need to create an account and log in.
       *It's free, no obligation and a simple email address is all it takes.*
 
-      Apply to continue.
+      Confirm to continue.
     error:
       fail_to_load_list: Unable to load the topic list.
   sponsor:
     label: Support
     title: Support
     description: |
-      **OpenCutList** is *Open Source* software supported by its users via the <a href="https://opencollective.com/" target="_blank">Open Collective</a> plateform.
+      **OpenCutList** is *Open Source* software supported by its users via the <a href="https://opencollective.com/" target="_blank">Open Collective</a> platform.
       Support this project by making a financial contribution!
     contribute: Contribute
     backers: "{{ count }} financial contributor"
@@ -2338,13 +2340,15 @@ tab:
     objective_slogan: OpenCutList is all of us
     objective_title:
       default: Objectives
+      # @no-translate
       cuttingdiagram_export: Funding of cutting diagram exports
     objective_details:
       default: |
         The ongoing improvement of *OpenCutList* is important to us and the project continues to need your help for its next update!
+      # @no-translate
       cuttingdiagram_export: |
         It is important to us that *OpenCutList* can be adapted to the very different expectations of the users for the *cutting diagram* function.
-        To further expand the possibilities, we would like to enable the export of layout diagrams in **SVG** and **DXF** format.
+        To further expand the possibilities, we would like to enable the export of cutting diagrams in **SVG** and **DXF** format.
         By providing us with the means to work on these exports, you are giving us the opportunity to help you get the most out of *OpenCutList*.
     objective_crowdfunding: |
       The development of new features will be done through **Fundraising** and will start when the **Financial Goal** is reached.
@@ -2431,7 +2435,7 @@ tab:
     version: Version
     credits: Technical Credits
     credits_authors: |
-      *OpenCutList* is developped by [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) and [Martin Müller](https://www.lairdubois.fr/@mobilarte). *List all [contributors](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+      *OpenCutList* is developed by [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) and [Martin Müller](https://www.lairdubois.fr/@mobilarte). *List all [contributors](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translations: Translations
     credits_translators: |
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*English*, *German*)
@@ -2451,14 +2455,14 @@ tab:
       - Zoltán Nagy, Roland Kovács (*Hungarian*)
       - Milan Divovic (*Serbian*)
     credits_description: |
-      The developpment of this extension is linked to the sharing plateform project [L'Air du Bois](https://www.lairdubois.fr).
+      The development of this extension is linked to the sharing plateform project [L'Air du Bois](https://www.lairdubois.fr).
       This extension is *Open Source* as well and available under [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) license on [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
     credits_runtime: Runtime
     credits_development: Development environment
     credits_vendors: |
       The adventure would not be possible without the work of the authors of the following *Open Source* components:
     credits_thanks: |
-      A special thank goes to:
+      A special thanks to:
       - [JetBrains](https://www.jetbrains.com) for their support to this project by their [Free Open Source License](https://www.jetbrains.com/buy/opensource/).
       - [Transifex](https://www.transifex.com) for their support of Open Source projects.
       - [GitBook](https://www.gitbook.com) for their support of Open Source projects.
@@ -2512,19 +2516,19 @@ tool:
     state_0_status: Click on a part to select it
     state_0_to_6_status: Select a parent element
     state_0_to_7_status: Multiple selection
-    state_4_status: Drag onto an identical piece with the same parent to add it to the selection and release to continue
-    state_5_status: Swipe to add to selection and release to continue
+    state_4_status: Drag onto an identical part with the same parent to add it to the selection and release to continue
+    state_5_status: Drag to add to selection and release to continue
     state_6_status: Select an element from the list
     state_7_status: Click on a part to add or subtract it from the selection
     warning:
       no_active_part: You must first hover over a part
-      no_parent_group: The part being inspected has no parent group or component
+      no_parent_group: The hovered part has no parent group or component
   smart_draw:
     title: Draw
     action_0: Draw Rectangle
     action_0_status: Draw a volume based on a rectangular shape
     action_0_state_0_status: Click to set the first point of the rectangle
-    action_0_state_1_status: Click to set the opposite angle, or enter length, width
+    action_0_state_1_status: Click to set the opposite corner, or enter length, width
     action_1: Draw Circle
     action_1_state_0_status: Click to set the center of the circle
     action_1_status: Draw a volume based on a circular shape
@@ -2619,7 +2623,7 @@ tool:
     action_option_groove_groove_depth: Depth of groove
     action_option_groove_groove_depth_status: Defines the depth of the groove into which the back is engaged
     action_option_groove_groove_setback: Setback
-    action_option_groove_groove_setback_status: Specifies how far the bottom recedes toward the inside of the box, and thus where the groove is machined
+    action_option_groove_groove_setback_status: Specifies how far the back recedes toward the inside of the box, and thus where the groove is machined
     action_option_groove_groove_through: Through groove
     action_option_groove_groove_through_status: Extend the groove to the ends of the pieces that overlap their neighbors, when the groove opens up there without being visible
     action_option_thickness_thickness: Thickness
@@ -2627,12 +2631,12 @@ tool:
     action_option_overlay_inset_status: "Full inset: installed in the opening, flush with the front surface"
     action_3_option_overlay_inset_status: "Groove-mounted: fitted into a groove machined into the parts bordering the opening"
     action_option_overlay_full_overlay_status: "Full overlay: installed in front of the front face, covering the sides up to the outer edge of the cabinet and extending to half the thickness of the interior separators"
-    action_3_option_overlay_full_overlay_status: "Surface-mounted bottom panel: installed on the back of the cabinet, covering the panels up to the outer edge and extending halfway through the thickness of the interior panels, without any machining"
-    action_option_overlay_against_protrusions_status: "Surface-mounted back panel between protrusions: surface-mounted flush with the opening framework and fitted against protruding panels"
+    action_3_option_overlay_full_overlay_status: "Surface-mounted back panel: installed on the back of the cabinet, covering the panels up to the outer edge and extending halfway through the thickness of the interior panels, without any machining"
+    action_option_overlay_against_protrusions_status: "Surface-mounted front panel between protrusions: surface-mounted flush with the opening framework and fitted against protruding panels"
     action_3_option_overlay_against_protrusions_status: "Surface-mounted back panel between protrusions: face-mounted flush with the opening framework and fitted between protruding panels (extended gables) without any machining"
     action_option_measure_type_inside_status: Position the thickness inside the target point
     action_option_measure_type_centered_status: Center the thickness on the target point
-    action_option_measure_type_outside_status: Position the thickness inside the target point
+    action_option_measure_type_outside_status: Position the thickness outside the target point
     action_option_axes_active_status: Manipulate along the active axes
     action_option_axes_context_status: Manipulate along the axes of the group or host component
     action_option_options_measure_reversed: Inverted Measure
@@ -2644,8 +2648,8 @@ tool:
     action_option_options_mirror: Mirror Layout
     action_option_options_mirror_status: Place each even-numbered front as a mirror image of its neighbor
     action_option_options_pick_material: Color picker
-    action_option_options_pick_material_status: Apply the material of the selected part to the created parts
-    action_option_options_face_camera: In front of the camera
+    action_option_options_pick_material_status: Apply the material of the hovered part to the created parts
+    action_option_options_face_camera: Face Camera
     action_option_options_face_camera_status: Automatically rotate the module's front panel toward the camera
     action_option_options_top_up: Up towards Z+
     action_option_options_top_up_status: Automatically orient the top of the module so that it faces upward (Z+)
@@ -2670,7 +2674,7 @@ tool:
       no_front_panel_cavity: No cavities were detected in this group or component
       invalid_back_panel_seed: This type of part does not allow for the construction of a back
       invalid_back_panel_container: "This part is isolated: it does not share any groups or components with other parts"
-      invalid_back_panel_cavity: No open cavities are visible opposite this position
+      invalid_back_panel_cavity: No cavity open on the side opposite the view at this position
       no_back_panel_cavity: No cavities were detected in this group or component
       too_complex_cavity: The geometry is too complex to detect cavities in it
       closed_front_panel_opening: This opening is already closed off by a front
@@ -2718,7 +2722,7 @@ tool:
     action_5_status: Open or close a door
     action_5_state_0_status: Click on a door to open or close it, or drag it to adjust how far it opens
     action_5_state_0_amend_status: Enter an angle to adjust the opening, or click on a door to open or close it
-    action_5_state_20_status: Swipe to adjust the door opening and release to confirm
+    action_5_state_20_status: Drag to adjust the door opening and release to confirm
     action_option_group_copy_measure_type: Measure
     action_option_group_move_measure_type: Measure
     action_option_group_axes: Axes
@@ -2757,11 +2761,11 @@ tool:
     action_1_select_similar_status: Select all faces of the same shape
     action_1_select_all_edges_status: Select all adjacent edges
     action_2: Weld
-    action_2_status: Welding multiple parts into a single part
+    action_2_status: Weld multiple parts into a single part
     action_2_state_0_status: Select part A
     action_2_state_1_status: Select part B
     action_3: Cut out
-    action_3_status: Cutting one part with another
+    action_3_status: Cut one part with another
     action_3_state_0_status: Select part A
     action_3_state_1_status: Select part B
     action_4: Intersect
@@ -2783,7 +2787,7 @@ tool:
     action_option_axes_context_status: Manipulate along the axes of the group or component containing the part
     action_option_axes_entity_status: Manipulate along the part's axes
     action_option_paneling_joint_type_flat_status: Flat joint
-    action_option_paneling_joint_type_miter_status: Mitre joint
+    action_option_paneling_joint_type_miter_status: Miter joint
     action_option_paneling_direction_inward_status: Inward direction
     action_option_paneling_direction_outward_status: Outward direction
     action_option_options_centered_status: Center on stretched elements
@@ -2798,8 +2802,8 @@ tool:
     action_option_options_reuse_definition_mirrored: Mirror Layout
     action_option_options_reuse_definition_mirrored_status: Mirror layout for panels of the same shape facing each other
     notify:
-      validate_a: Validate to proceed to the selection of B
-      validate_b: Validate to apply the operation
+      validate_a: Confirm to proceed to the selection of B
+      validate_b: Confirm to apply the operation
     error:
       curve_intersect: One of the cutting planes crosses a non-stretchable curve
   smart_paint:
@@ -2857,7 +2861,7 @@ tool:
     action_0_status: Click on a part to flip its instance along one of its dimensions
     action_1: Swap Length ↔ Width
     action_1_status: Click on a part to swap its Length with its Width
-    action_2: Swap Front ↔ Backside
+    action_2: Swap Frontside ↔ Backside
     action_2_status: Click on a part to swap its Front with its Backside
     action_3: Adapt Axes
     action_3_status: Target a face of a part and click on an edge to adapt its axes

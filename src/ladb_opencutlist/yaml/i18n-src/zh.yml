@@ -756,6 +756,7 @@ tab:
           为了正确计算这个估算值:
           - 使用的材质必须至少有密度和价格.
           - 使用的配件必须至少有密度和价格.
+    # @no-translate
     cuttingdiagram:
       title: 切割图
       start_msg: 正在运行优化
@@ -1791,6 +1792,7 @@ tab:
         您的模型不包含任何在此显示的实例。
         实例是场景中的一个**组**或一个**组件**
     obsolete_base: 刷新以保持同步
+  # @no-translate
   importer:
     label: 导入
     title: 导入部件
@@ -2008,10 +2010,12 @@ tab:
     objective_slogan: OpenCutList 我们所有人的
     objective_title:
       default: 目标
+      # @no-translate
       cuttingdiagram_export: 切割图导出的资金支持
     objective_details:
       default: |
         *OpenCutList* 的持续改进对我们很重要，该项目的下一次更新仍然需要您的帮助!
+      # @no-translate
       cuttingdiagram_export: |
         对于 *OpenCutList* 的用户来说, 能够适应不同的期望, 尤其是对于 *切割图* 功能, 这一点对我们非常重要.
         为了进一步拓展功能, 我们希望能够支持以 **SVG** 和 **DXF** 格式导出布局图.
