@@ -32,6 +32,10 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
+### 2026-10-15
+ * Improved Smart Tools rectangle selection
+ * "Smart Paint" and "Smart Export" tools rewritten using the new tool structure (no changes to how they are used)
+ * Removed unused code
 ### 2026-10-13
  * Improved Smart Build Tools and cavities detection
  * Updated PackingSolver dependency
