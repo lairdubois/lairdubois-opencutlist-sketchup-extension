@@ -3505,7 +3505,6 @@ module Ladb::OpenCutList
       when STATE_SELECT_TREE
         if tool.is_key_ctrl_or_option?(key)
           Sketchup.active_model.selection.clear
-          tool.clear_2d(LAYER_2D_FLOATING_TOOLS)
           set_state(STATE_SELECT)
           _refresh
           return true
