@@ -562,6 +562,7 @@ module Ladb::OpenCutList
     end
 
     def stop
+      @tool.hide_status
       @tool.hide_message
       super
     end

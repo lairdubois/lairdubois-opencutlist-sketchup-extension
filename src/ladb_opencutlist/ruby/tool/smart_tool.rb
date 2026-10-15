@@ -1402,8 +1402,10 @@ module Ladb::OpenCutList
         end
       end
 
-      # Update status text and root cursor
+      # Update status text
       Sketchup.set_status_text(get_action_status(action), SB_PROMPT)
+
+      # Update root cursor
       set_root_cursor(get_action_cursor(action))
       pop_to_root_cursor
 

@@ -76,30 +76,6 @@ module Ladb::OpenCutList
         write_parts_command(settings)
       end
 
-      PLUGIN.register_command("cutlist_group_cuttingdiagram1d_start") do |settings|
-        group_cuttingdiagram1d_start_command(settings)
-      end
-
-      PLUGIN.register_command("cutlist_group_cuttingdiagram1d_advance") do
-        group_cuttingdiagram1d_advance_command
-      end
-
-      PLUGIN.register_command("cutlist_cuttingdiagram1d_write") do |settings|
-        cuttingdiagram1d_write_command(settings)
-      end
-
-      PLUGIN.register_command("cutlist_group_cuttingdiagram2d_start") do |settings|
-        group_cuttingdiagram2d_start_command(settings)
-      end
-
-      PLUGIN.register_command("cutlist_group_cuttingdiagram2d_advance") do
-        group_cuttingdiagram2d_advance_command
-      end
-
-      PLUGIN.register_command("cutlist_cuttingdiagram2d_write") do |settings|
-        cuttingdiagram2d_write_command(settings)
-      end
-
       PLUGIN.register_command("cutlist_labels") do |settings|
         labels_command(settings)
       end
@@ -282,78 +258,6 @@ module Ladb::OpenCutList
 
       # Setup worker
       worker = CutlistWritePartsWorker.new(@cutlist, **settings)
-
-      # Run !
-      worker.run
-    end
-
-    def group_cuttingdiagram1d_start_command(settings)
-      require_relative '../worker/cutlist/cutlist_cuttingdiagram1d_worker'
-
-      # Setup worker
-      @cuttingdiagram1d_worker = CutlistCuttingdiagram1dWorker.new(@cutlist, **settings)
-
-      # Run !
-      cuttingdiagram1d = @cuttingdiagram1d_worker.run(true)
-
-      cuttingdiagram1d.to_hash
-    end
-
-    def group_cuttingdiagram1d_advance_command
-      return { :errors => [ 'default.error' ] } unless @cuttingdiagram1d_worker
-
-      # Run !
-      cuttingdiagram1d = @cuttingdiagram1d_worker.run(true)
-
-      if cuttingdiagram1d.bars.length > 0
-        @cuttingdiagram1d_worker = nil
-        @cuttingdiagram1d = cuttingdiagram1d
-      end
-
-      cuttingdiagram1d.to_hash
-    end
-
-    def cuttingdiagram1d_write_command(settings)
-      require_relative '../worker/cutlist/cutlist_cuttingdiagram1d_write_worker'
-
-      # Setup worker
-      worker = CutlistCuttingdiagram1dWriteWorker.new(@cutlist, @cuttingdiagram1d, **settings)
-
-      # Run !
-      worker.run
-    end
-
-    def group_cuttingdiagram2d_start_command(settings)
-      require_relative '../worker/cutlist/cutlist_cuttingdiagram2d_worker'
-
-      # Setup worker
-      @cuttingdiagram2d_worker = CutlistCuttingdiagram2dWorker.new(@cutlist, **settings)
-
-      # Run !
-      cuttingdiagram2d = @cuttingdiagram2d_worker.run(true)
-
-      cuttingdiagram2d.to_hash
-    end
-
-    def group_cuttingdiagram2d_advance_command
-      return { :errors => [ 'default.error' ] } unless @cuttingdiagram2d_worker
-
-      # Run !
-      cuttingdiagram2d = @cuttingdiagram2d_worker.run(true)
-
-      if cuttingdiagram2d.sheets.length > 0
-        @cuttingdiagram2d_worker = nil
-        @cuttingdiagram2d = cuttingdiagram2d
-      end
-
-      cuttingdiagram2d.to_hash
-    end
-
-    def cuttingdiagram2d_write_command(settings)
-      require_relative '../worker/cutlist/cutlist_cuttingdiagram2d_write_worker'
-
-      # Setup worker
-      worker = CutlistCuttingdiagram2dWriteWorker.new(@cutlist, @cuttingdiagram2d, **settings)
 
       # Run !
       worker.run
