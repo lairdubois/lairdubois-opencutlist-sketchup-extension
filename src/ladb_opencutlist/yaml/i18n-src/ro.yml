@@ -770,6 +770,7 @@ tab:
           Pentru ca această estimare să fie calculată corect:
           - materialele folosite trebuie să aibă cel puțin o densitate și un preț.
           - accesoriile folosite trebuie să aibă cel puțin o greutate și un preț.
+    # @no-translate
     cuttingdiagram:
       title: Diagramă de tăiere
       start_msg: Optimizarea rulează
@@ -1846,6 +1847,7 @@ tab:
         Modelul dvs. nu conține nicio instanță care să fie afișată aici.
         O instanță este un **grup** sau o **componentă** din scenă.
     obsolete_base: Pentru a rămâne sincronizat, trebuie să reîmprospătați structura.
+  # @no-translate
   importer:
     label: Import
     title: Importă Piese
@@ -2067,10 +2069,12 @@ tab:
     objective_slogan: OpenCutList suntem noi toți
     objective_title:
       default: Obiective
+      # @no-translate
       cuttingdiagram_export: Finanțarea exporturilor de diagrame de tăiere
     objective_details:
       default: |
         Îmbunătățirea continuă a *OpenCutList* este importantă pentru noi și proiectul continuă să aibă nevoie de ajutorul dvs. pentru următoarea sa actualizare!
+      # @no-translate
       cuttingdiagram_export: |
         Este important pentru noi ca *OpenCutList* să poată fi adaptat așteptărilor foarte diferite ale utilizatorilor pentru funcția de *diagramă de tăiere*.
         Pentru a extinde și mai mult posibilitățile, am dori să activăm exportul diagramelor în format **SVG** și **DXF**.

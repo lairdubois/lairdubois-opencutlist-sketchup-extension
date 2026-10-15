@@ -823,6 +823,7 @@ tab:
           Per calcolare correttamente il preventivo:
           - i materiali utilizzati devono aver impostato la densita e il prezzo.
           - gli accessori devono avere definito la massa e prezzo.
+    # @no-translate
     cuttingdiagram:
       title: Schema di taglio
       start_msg: Ottimizzazione in corso
@@ -1929,6 +1930,7 @@ tab:
         Il modello non contiene alcuna occorrenza da visualizzare qui
         un'occorrenza è un **gruppo** oppure un **componente** presente nella scena.
     obsolete_base: La stuttura deve essere rigenerata per rimanere aggiornata.
+  # @no-translate
   importer:
     label: Importa
     title: Importa Parti
@@ -2219,10 +2221,12 @@ tab:
     objective_slogan: OpenCutList è tutti noi
     objective_title:
       default: Obiettivi
+      # @no-translate
       cuttingdiagram_export: Finanziamento della possibilità di esportare lo schema di taglio
     objective_details:
       default: |
         Per noi il continuo miglioramento di *OpenCutList* è importante e il progetto continua ad avere bisogno del tuo aiuto per il prossimo aggiornamento!
+      # @no-translate
       cuttingdiagram_export: |
         Riteniamo importante che l'opzione *schema di taglio* di *OpenCutList* possa soddisfare le esigenze del maggior numero di utenti e per farlo vorremmo aggiungere la possibilità di esportare lo schema in formato **SVG** e **DXF**.
         Tale formato permette di riutilizzare gli schemi di taglio OCL da parte di altri sofware.

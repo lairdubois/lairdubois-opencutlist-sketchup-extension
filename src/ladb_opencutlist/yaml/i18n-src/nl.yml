@@ -822,6 +822,7 @@ tab:
           Om het schatting correct te berekenen,:
           - de gebruikte materialen hebben ten minste één dichtheid en één prijs.
           - de gebruikte accessoires hebben ten minste één dichtheid en één prijs.
+    # @no-translate
     cuttingdiagram:
       title: Zaagschema
       start_msg: Optimalisatie aan de gang
@@ -1928,6 +1929,7 @@ tab:
         Uw model heeft momenteel geen instanties om hier weer te geven.
         Een instantie is een **groep** of **component** die in de scène is geplaatst.
     obsolete_base: Om gesynchroniseerd te blijven, moet u de structuur opnieuw genereren.
+  # @no-translate
   importer:
     label: Importeren
     title: Onderdelen importeren
@@ -2218,10 +2220,12 @@ tab:
     objective_slogan: OpenCutList zijn we allemaal
     objective_title:
       default: Doelen
+      # @no-translate
       cuttingdiagram_export: Financiering van de uitvoer van zaagschema's
     objective_details:
       default: |
         De voortdurende verbetering van *OpenCutList* is belangrijk voor ons en het project heeft nog steeds uw hulp nodig voor de volgende update!
+      # @no-translate
       cuttingdiagram_export: |
         Wij vinden het belangrijk dat *OpenCutList* zich kan aanpassen aan de zeer uiteenlopende verwachtingen van gebruikers voor de *layout*-functie.
         Om de mogelijkheden verder uit te breiden, willen we het mogelijk maken om lay-outdiagrammen in **SVG**- en **DXF**-formaat te exporteren.

@@ -45,7 +45,7 @@ default:
   estimate: Estimar
   rename: Renombrar
   next: Siguiente
-  "yes": Si
+  "yes": Sí
   "no": "No"
   automatic: Automático
   # this is name of a new file saved by SketchUp
@@ -82,7 +82,7 @@ default:
   thickness_layer_single: capa
   thickness_layer_plural: capas
   setup_model_units: Configurar las unidades del modelo
-  load_more: Carga más
+  load_more: Cargar más
   reset_to_app_defaults: Restaurar a los valores originales
   constrain_key: Mayúsculas
   copy_key_win: Ctrl
@@ -244,6 +244,7 @@ core:
       cutlist_estimate_options: $t(tab.cutlist.label) / $t(tab.cutlist.estimate.title)
       cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
       cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
+      importers_bxf2_import_options: $t(tab.importers.bxf2.label) / $t(default.import)
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       outliner_options: $t(tab.outliner.label) / $t(default.options)
@@ -761,6 +762,7 @@ tab:
           Para que esta estimación se calcule correctamente:
           - Los materiales utilizados deben tener al menos una densidad y un precio configurados.
           - Los accesorios utilizados deben tener al menos una masa y un precio.
+    # @no-translate
     cuttingdiagram:
       title: Diagrama de corte
       start_msg: Optimización en curso
@@ -1338,7 +1340,7 @@ tab:
         thumbnail_proportional: Miniatura proporcional
         thumbnail_square: Miniatura cuadrada
         group_material: Espesor / Material
-        group_material_name: Miniatura proporcional
+        group_material_name: Nombre del material
         group_std_dimension: Dimensiones estándar
         filename: Nombre del archivo
         model_name: Nombre del modelo
@@ -1819,6 +1821,7 @@ tab:
         El modelo no dispone de momento de ningún elemento que listar aquí.
         Un elemento es un **grupo** o un **componente** situado en la escena.
     obsolete_base: Para mantener la sincronización debe regenerar la estructura.
+  # @no-translate
   importer:
     label: Importar
     title: Importar partes
@@ -2042,10 +2045,12 @@ tab:
     objective_slogan: OpenCutList somos todos
     objective_title:
       default: Objetivo
+      # @no-translate
       cuttingdiagram_export: Financiación de las exportaciones del diagrama de corte
     objective_details:
       default: |
         ¡La mejora continua de *OpenCutList* es muy importante para nosotros y el proyecto continúa necesitándote para su próxima actualización!
+      # @no-translate
       cuttingdiagram_export: |
         Es importante para nosotros que *OpenCutList* pueda adaptarse a las muy diferentes expectativas de los usuarios para la función de *diagrama de corte*.
         Para ampliar aún más las posibilidades, nos gustaría permitir la exportación de diagramas de corte en formato **SVG** y **DXF**.

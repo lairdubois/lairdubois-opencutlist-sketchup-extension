@@ -770,6 +770,7 @@ tab:
           Để ước tính này được tính toán chính xác:
           - các vật liệu được sử dụng ít nhất phải có tỉ trọng và giá cả.
           - các phụ kiện được sử dụng ít nhất phải có tỉ trọng và giá cả.
+    # @no-translate
     cuttingdiagram:
       title: Sơ đồ cắt
       start_msg: Chạy tối ưu hóa
@@ -1846,6 +1847,7 @@ tab:
         Mô hình của bạn không chứa đối tượng nào được hiển thị ở đây.
         Một đối tượng là **group** hoặc là **component** trong Scene.
     obsolete_base: Để luôn đồng bộ, bạn cần làm mới cấu trúc.
+  # @no-translate
   importer:
     label: Nhập
     title: Nhập các bộ phận
@@ -2066,10 +2068,12 @@ tab:
     objective_slogan: OpenCutList là tất cả của chúng ta
     objective_title:
       default: Mục tiêu
+      # @no-translate
       cuttingdiagram_export: Kinh phí của sơ đồ cắt được xuất
     objective_details:
       default: |
         Sự cải tiến liên tục của *OpenCutList* rất quan trọng đối với chúng tôi và dự án tiếp tục cần sự trợ giúp của bạn cho bản cập nhật tiếp theo!
+      # @no-translate
       cuttingdiagram_export: |
         Điều quan trọng đối với chúng tôi là *OpenCutList* có thể được điều chỉnh cho phù hợp với những kỳ vọng rất khác nhau của người dùng đối với chức năng *Sơ đồ cắt*.
         Để tiếp tục mở rộng các chức năng, chúng tôi muốn cho phép xuất sơ đồ cắt ở định dạng **SVG** và **DXF**.

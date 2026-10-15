@@ -1044,6 +1044,7 @@ tab:
           Pour que cette estimation puisse se calculer correctement :
           - Les matières utilisées doivent avoir au moins une masse volumique et un prix configurés.
           - Les accessoires utilisés doivent avoir au moins une masse et un prix.
+    # @no-translate
     cuttingdiagram:
       title: Calepinage
       start_msg: Optimisation en cours
@@ -2149,7 +2150,8 @@ tab:
       no_node: |
         Votre modèle ne dispose pour le moment d'aucune instance à afficher ici.
         Une instance est un **groupe** ou un **composant** placé dans la scène.
-    obsolete_base: Pour rester synchronisé, vous devez re-générer la structure.
+    obsolete_base: Pour rester synchronisé, vous devez rafraîchir la structure.
+  # @no-translate
   importer:
     label: Importer
     title: Importer des pièces
@@ -2440,10 +2442,12 @@ tab:
     objective_slogan: OpenCutList, c'est nous tous
     objective_title:
       default: Objectifs
+      # @no-translate
       cuttingdiagram_export: Financement des exports de calepinage
     objective_details:
       default: |
         L'amélioration en continue d'*OpenCutList* nous tient à coeur et le projet continue d'avoir besoin de vous pour sa prochaine mise à jour !
+      # @no-translate
       cuttingdiagram_export: |
         Il nous tient à coeur qu'*OpenCutList* puisse s'adapter aux attentes très variées des utilisateurs pour la fonction de *calepinage*.
         Pour élargir encore les possibilités, nous souhaitons permettre d'exporter les diagrammes de calepinage au format **SVG** et **DXF**.

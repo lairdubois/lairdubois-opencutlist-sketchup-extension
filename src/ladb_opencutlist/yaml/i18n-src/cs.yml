@@ -771,6 +771,7 @@ tab:
           Aby byl tento odhad správně vypočítán:
           - použité materiály musí mít minimálně hustotu a cenu.
           - použité příslušenství musí mít alespoň hustotu a cenu.
+    # @no-translate
     cuttingdiagram:
       title: Nářezový plán
       start_msg: Probíhá optimalizace
@@ -1847,6 +1848,7 @@ tab:
         Váš model neobsahuje žádnou instanci k zobrazení.
         Instance je **skupina** nebo **komponenta** ve scéně.
     obsolete_base: Chcete-li zůstat v synchronizaci, musíte obnovit strukturu.
+  # @no-translate
   importer:
     label: Import
     title: Importovat dílce
@@ -2069,10 +2071,12 @@ tab:
     objective_slogan: OpenCutList je pro všechny
     objective_title:
       default: Objekty
+      # @no-translate
       cuttingdiagram_export: Financování vývozu řezných diagramů
     objective_details:
       default: |
         Neustálé zlepšování *OpenCutList* je pro nás důležité, a proto projekt stále potřebuje vaši pomoc pro další aktualizaci!
+      # @no-translate
       cuttingdiagram_export: |
         Je pro nás důležité, aby *OpenCutList* bylo možné přizpůsobit velmi rozdílným očekáváním uživatelů od funkce *řezový diagram*.
         Pro další rozšíření možností bychom rádi umožnili export rozvrhových diagramů ve formátu **SVG** a **DXF**.
