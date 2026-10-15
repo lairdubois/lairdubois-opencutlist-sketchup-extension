@@ -148,8 +148,10 @@ core:
     import: Імпорт
     more: Ще
     more_docs: Документація
+    # this link only appears in the french version, points to https://www.lairdubois.fr/
     more_reviews: Огляди
     more_plans: Проєкти
+    # only appears in the french version
     more_extensions: Плагіни
     more_update: Оновлення
   bottombar:
@@ -302,6 +304,7 @@ core:
     error:
       empty: Об'єкт не містить жодної геометрії
       empty_named: « {{ name }} » не містить геометрії
+      # an edge is considered manifold when it is shared by exactly two faces in a 3D mesh
       non_manifold_edges: Об'єкт містить {{ count }} нерізноманітного краю
       non_manifold_edges_plural: Об'єкт містить {{ count }} нерізноманітних ребер
       non_manifold_edges_named: « {{ name }} » містить {{ count }} некоректне ребро
@@ -373,6 +376,7 @@ tab:
         Справжнє січення: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
+      # "Model Info" refers to the SketchUp menu to change the units
       rounded_std_footer: Задайте точність у параметрі *Інформація про модель* або перевірте розміри деталей у цій групі.
       highlight_part: $t(tab.cutlist.highlight_part)
       highlight_parts: $t(tab.cutlist.highlight_parts)
@@ -716,6 +720,7 @@ tab:
       option_csv_col_sep_comma: Кома
       option_csv_col_sep_semicolon: Крапка з комою
       option_csv_encoding: Кодування
+      # as described in https://www.rfc-editor.org/info/rfc4180/
       copy_all: Заголовки + Значення
       copy_values: Тільки значення
       number: N°

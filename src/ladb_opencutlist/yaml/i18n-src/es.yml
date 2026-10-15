@@ -147,8 +147,10 @@ core:
     import: Importar
     more: Más
     more_docs: Documentos
+    # this link only appears in the french version, points to https://www.lairdubois.fr/
     more_reviews: Advertencias
     more_plans: Planos
+    # only appears in the french version
     more_extensions: Extensiones
     more_update: Actualización
   bottombar:
@@ -343,6 +345,7 @@ tab:
         Sección transversal real: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
+      # "Model Info" refers to the SketchUp menu to change the units
       rounded_std_footer: Ajuste la precisión en la *Información del modelo* o verifique las dimensiones de las piezas en este grupo.
       highlight_part: $t(tab.cutlist.highlight_part)
       highlight_parts: $t(tab.cutlist.highlight_parts)
@@ -663,6 +666,7 @@ tab:
       option_csv_col_sep_comma: Coma
       option_csv_col_sep_semicolon: Punto y coma
       option_csv_encoding: Codificación
+      # as described in https://www.rfc-editor.org/info/rfc4180/
       copy_all: Títulos + valores
       copy_values: Sólo valores
       number: No.

@@ -145,8 +145,10 @@ core:
     import: Uvezi
     more: Više
     more_docs: Dokumenti
+    # this link only appears in the french version, points to https://www.lairdubois.fr/
     more_reviews: Recenzije
     more_plans: Planovi
+    # only appears in the french version
     more_extensions: Ekstenzije/Proširenja
     more_update: Ažuriranje
   bottombar:
@@ -341,6 +343,7 @@ tab:
         Stvarni presjek: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
+      # "Model Info" refers to the SketchUp menu to change the units
       rounded_std_footer: Podesite preciznost u *Informacije o modelu* ili proverite dimenzije delova u ovoj grupi.
       highlight_part: $t(tab.cutlist.highlight_part)
       highlight_parts: $t(tab.cutlist.highlight_parts)
@@ -661,6 +664,7 @@ tab:
       option_csv_col_sep_comma: Zarez
       option_csv_col_sep_semicolon: Tačka-zarez
       option_csv_encoding: Kodiranje
+      # as described in https://www.rfc-editor.org/info/rfc4180/
       copy_all: Naslovi + Vrednosti
       copy_values: Samo vrednosti
       number: Broj

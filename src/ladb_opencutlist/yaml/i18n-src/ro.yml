@@ -147,8 +147,10 @@ core:
     import: Import
     more: Mai multe
     more_docs: Doc.
+    # this link only appears in the french version, points to https://www.lairdubois.fr/
     more_reviews: Recenzii
     more_plans: Planuri
+    # only appears in the french version
     more_extensions: Extensii
     more_update: Actualizare
   bottombar:
@@ -343,6 +345,7 @@ tab:
         Secțiunea reală: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
+      # "Model Info" refers to the SketchUp menu to change the units
       rounded_std_footer: Ajustați precizia în *Model Info* sau verificați dimensiunile pieselor din acest grup.
       highlight_part: $t(tab.cutlist.highlight_part)
       highlight_parts: $t(tab.cutlist.highlight_parts)
@@ -672,6 +675,7 @@ tab:
       option_csv_col_sep_comma: Virgulă
       option_csv_col_sep_semicolon: Punct și virgulă
       option_csv_encoding: Codificare
+      # as described in https://www.rfc-editor.org/info/rfc4180/
       copy_all: Antet + Valori
       copy_values: Doar valori
       number: Nr.

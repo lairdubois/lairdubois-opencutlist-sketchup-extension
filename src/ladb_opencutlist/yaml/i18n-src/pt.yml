@@ -15,6 +15,7 @@ default:
   stop: Parar
   validate: Aplicar
   confirm: Confirmar
+  finish: Concluir
   ok: Ok
   open: Abrir
   see: Ver
@@ -27,6 +28,7 @@ default:
   export: Exportar
   import: Importar
   load: Carregar
+  replace: Substituir
   preview: Visão geral
   options: Opções
   caution: Atenção
@@ -148,8 +150,10 @@ core:
     import: Importar
     more: Mais
     more_docs: Docum.
+    # this link only appears in the french version, points to https://www.lairdubois.fr/
     more_reviews: Avaliações
     more_plans: Planos
+    # only appears in the french version
     more_extensions: Extensões
     more_update: Atualizar
   bottombar:
@@ -302,6 +306,7 @@ core:
     error:
       empty: O sólido não contém nenhuma geometria
       empty_named: « {{ name }} » não contém nenhuma geometria
+      # an edge is considered manifold when it is shared by exactly two faces in a 3D mesh
       non_manifold_edges: O sólido contém {{ count }} aresta não-manifold
       non_manifold_edges_plural: O sólido contém {{ count }} arestas não-manifold
       non_manifold_edges_named: « {{ name }} » contém {{ count }} aresta não-manifold
@@ -315,6 +320,11 @@ core:
       error:
         no_segment: Nenhuma linha de construção utilizável na seleção
         no_face: Nenhum contorno fechado coplanar pôde ser reconstruído
+  library:
+    libraries: Bibliotecas
+    user: Minha Biblioteca
+    bundled: Biblioteca OCL
+    family_modules: Módulos
 tab:
   cutlist:
     label: Peças
@@ -373,6 +383,7 @@ tab:
         Seção cruzada real: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
+      # "Model Info" refers to the SketchUp menu to change the units
       rounded_std_footer: Defina a precisão na *Informações do modelo* ou verifique as dimensões das peças deste grupo.
       highlight_part: $t(tab.cutlist.highlight_part)
       highlight_parts: $t(tab.cutlist.highlight_parts)
@@ -662,6 +673,7 @@ tab:
       veneer_material_names_filter: Filtrar por laminado
       names_filter: Designações a filtrar
       tags_filter: Filtrar por identificação da peça
+      tags_filter_any: Todos os emblemas
       dimensions_help: Compreendendo as dimensões
       summary: Resumo
       material_type: Tipo
@@ -716,6 +728,7 @@ tab:
       option_csv_col_sep_comma: Vírgula
       option_csv_col_sep_semicolon: Ponto e vírgula
       option_csv_encoding: Codificação
+      # as described in https://www.rfc-editor.org/info/rfc4180/
       copy_all: Títulos + Valores
       copy_values: Valores somente
       number: Nº
@@ -2097,6 +2110,7 @@ tab:
         info_1: Você poderá escolher definir sua localização no modelo ativo.
         materials: Materiais
         layers: Etiquetas
+        geometry: Geometria
         option_parts_formula: Fórmula
         option_parts_formula_help: A fórmula permite personalizar o nome das peças importadas.
         option_part_wood_material_name: Madeira
@@ -2107,6 +2121,8 @@ tab:
         option_part_glass_material_name_help: Material a aplicar às peças de **vidro**.
         option_front_part_layer_name: Frentes
         option_front_part_layer_name_help: Etiqueta a aplicar às peças de frente.
+        option_back_part_layer_name: Fundos
+        option_back_part_layer_name_help: Etiqueta a aplicar aos fundos da caixa.
         option_machining_material_name: Usinagens
         option_machining_material_name_help: Material a aplicar às **usinagens**.
         option_machining_layer_name: Usinagens
@@ -2118,6 +2134,10 @@ tab:
         option_no_material_help: "*Deixe este campo vazio para não aplicar nenhum material*."
         option_default_material_help: "*Um material padrão será criado se este campo estiver vazio*."
         option_no_layer_help: "*Deixe este campo vazio para não aplicar nenhuma etiqueta*."
+        option_subtract_machinings: Entalhar as usinagens nas peças
+        option_subtract_machinings_help: As **ranhuras**, **rebaixos** e **chanfros** das peças, incluindo os associados aos acessórios, são subtraídos ao seu volume em vez de serem desenhados. As furações continuam desenhadas.
+        warning:
+          subtract_machinings_failed: "Não foi possível entalhar as usinagens nestas peças, foram desenhadas em sua substituição: {{ names }}"
         old_name: Nome original
         new_name: Novo nome
         count: Qtd.
@@ -2339,7 +2359,9 @@ tool:
     vcb_diameter: Diâmetro
     vcb_distance: Distância
     vcb_spacings: Espaçamentos
+    vcb_angle: Ângulo
     locked_on_last_measure_status: Bloquear na última medida
+    library_choose: Escolha uma biblioteca
     error:
       no_direction: Indique uma direção com o mouse
       invalid_length: O comprimento {{ value }} é inválido
@@ -2347,12 +2369,17 @@ tool:
       invalid_multiplicator: O multiplicador {{ value }} é inválido
       invalid_divider: O divisor {{ value }} é inválido
       invalid_offset: O deslocamento {{ value }} é inválido
+      invalid_angle: O ângulo {{ value }} é inválido
       invalid_segment_count: O número de segmentos {{ value }} é inválido. Ele deve estar entre 3 e 999.
       syntax_error: "Erro de sintaxe: {{ error }}"
       unexpected_close_parenthesis: Parêntese de fechamento inesperado
       missing_close_parenthesis: Falta um parêntese de fechamento
       missing_operand: Operando ausente
       zero_division: Divisão por zero
+      invalid_argument_count: Uma função min, max, floor ou ceil requer pelo menos dois valores
+      comma_argument_separator: "Separe os valores por « ; »: a vírgula também é o separador decimal"
+      invalid_dimension: "Um comprimento só se adiciona a um comprimento: um número sem unidade é um fator"
+      no_matching_value: Nenhum dos valores sugeridos é adequado
       lt_min_distance: A distância {{ value1 }} é menor que a distância mínima de {{ value2 }}
       gt_max_distance: A distância {{ value1 }} é superior à distância máxima de {{ value2 }}
       locked_part: Esta peça está bloqueada
@@ -2415,6 +2442,8 @@ tool:
     action_option_options_draw_in_0: Desenhar no elemento ativo
     action_option_options_draw_in_1: Desenhar no objeto pai da peça do primeiro ponto
     action_option_options_draw_in_status: Desenhar no objeto pai da peça alvo do primeiro ponto
+    action_option_options_pick_material: Conta-gotas
+    action_option_options_pick_material_status: Aplicar o material da peça de destino indicada pelo primeiro ponto à peça criada
     action_option_options_ask_name: Nomeação das Peças
     action_option_options_ask_name_status: Inserir manualmente o nome das peças
     action_toggle_move_copy_status: Alternar entre copiar/mover
@@ -2428,18 +2457,43 @@ tool:
     action_0_status: Construir uma divisória numa cavidade formada por um grupo de peças existentes
     action_0_state_0_status: Clique numa parede para construir uma divisória
     action_0_state_1_status: Clique numa parede para construir divisórias
+    action_0_state_2_status: Clique para definir a largura do módulo (eixo X)
+    action_0_state_2_lock_status: Bloquear na largura do arquivo de origem
+    action_0_state_2_arrows_status: Setas = Bloquear num eixo (→ X, ← Y, ↑ Z)
+    action_0_state_3_status: Clique para definir a profundidade do módulo (eixo Y)
+    action_0_state_3_lock_status: Bloquear na profundidade do arquivo de origem
+    action_0_state_3_arrows_status: Setas = Bloquear a normal do plano XY num eixo (→ X, ← Y, ↑ Z)
+    action_0_state_4_status: Clique para definir a altura do módulo (eixo Z)
+    action_0_state_4_lock_status: Bloquear na altura do arquivo de origem
+    action_0_state_5_status: Clique na instância a adicionar
+    action_0_state_6_status: Clique na face FRONTAL do módulo
+    action_0_state_7_status: Clique na face SUPERIOR do módulo
+    action_0_add_title: Adicionar um módulo
+    action_0_add_name: Nome do arquivo
+    action_0_add_overwrite: O arquivo « {{ name }}.skp » já existe. Deseja substituí-lo?
+    action_0_add_front_label: FRENTE
+    action_0_add_up_label: SUPERIOR
+    action_0_flip_status: Inverter a frente e a traseira
+    action_0_flip_up_status: Inverter o topo e a base
     action_1: Construir uma Frente
     action_1_status: Construir uma frente numa cavidade formada por um grupo de peças existentes
     action_1_state_0_status: Clique numa cavidade para construir uma frente no seu vão
+    action_1_state_1_status: Clique em uma parede para construir divisórias
     action_2: Construir um Fundo
     action_2_status: Construir um fundo numa cavidade formada por um grupo de peças existentes
     action_2_state_0_status: Clique numa cavidade para construir um fundo no seu vão oposto à vista
     action_2_state_0_merge_status: Arraste até às cavidades vizinhas para um fundo comum
+    action_3: Construir um Fundo
+    action_3_status: Construir um fundo fechando uma cavidade formada por um grupo de peças existentes
+    action_3_state_0_status: Clique em uma cavidade para construir um fundo em seu vão oposto à vista
+    action_3_state_0_merge_status: Arraste até as cavidades vizinhas para um fundo comum
     action_option_group_groove: Ranhura
+    action_2_option_group_offset: Folga
     action_option_group_thickness: Espessura
     action_option_group_overlay: Instalação
     action_option_group_axes: Eixos
     action_option_group_measure_type: Medida
+    action_option_group_anchor: Âncora
     action_option_group_options: Opções
     action_option_offset_front_panel_offset: Folga
     action_option_offset_front_panel_offset_status: Define a folga deixada em cada borda da frente
@@ -2452,7 +2506,11 @@ tool:
     action_option_thickness_thickness: Espessura
     action_option_thickness_thickness_status: Define a espessura das chapas
     action_option_overlay_inset_status: "Frente embutida: instalada no vão, alinhada à face frontal"
+    action_3_option_overlay_inset_status: "Fundo em ranhura: encaixado em uma ranhura usinada nas peças que delimitam o vão"
     action_option_overlay_full_overlay_status: "Frente sobreposta: instalada à frente da face frontal, cobrindo as chapas até a face externa da caixa e até a meia-espessura das chapas internas"
+    action_3_option_overlay_full_overlay_status: "Fundo sobreposto: instalado na parte traseira da caixa, cobrindo os painéis até à face exterior e até à meia-espessura dos painéis interiores, sem qualquer usinagem"
+    action_option_overlay_against_protrusions_status: "Frente sobreposta contra as saliências: instalada de forma sobreposta nos painéis à face do vão, e ajustada contra os que sobressaem"
+    action_3_option_overlay_against_protrusions_status: "Fundo sobreposto contra as saliências: instalado de forma sobreposta nos painéis à face do vão, e ajustado entre os que sobressaem (ilhas/laterais salientes), sem qualquer usinagem"
     action_option_measure_type_inside_status: Posicionar a espessura no interior do ponto alvo
     action_option_measure_type_centered_status: Centralizar a espessura no ponto alvo
     action_option_measure_type_outside_status: Posicionar a espessura no exterior do ponto alvo
@@ -2466,10 +2524,21 @@ tool:
     action_option_options_reuse_definition_status: Reutilizar a peça existente de mesma forma e mesma vizinhança em vez de criar uma nova
     action_option_options_mirror: Posicionamento espelhado
     action_option_options_mirror_status: Instalar cada frente de ordem par de forma espelhada em relação à vizinha
+    action_option_options_pick_material: Conta-gotas
+    action_option_options_pick_material_status: Aplicar o material da peça sob o cursor às peças criadas
+    action_option_options_face_camera: Virado para a câmara
+    action_option_options_face_camera_status: Rodar automaticamente a frente do módulo para a câmara
+    action_option_options_top_up: Topo para Z+
+    action_option_options_top_up_status: Rodar automaticamente o topo do módulo o melhor possível para cima (Z+)
     action_option_options_ask_name: Nomeação das Peças
     action_option_options_ask_name_status: Inserir manualmente o nome das peças
     action_option_options_layer_name: Camada
     action_option_options_layer_name_status: Nome da camada na qual as peças são colocadas
+    action_option_anchor_center_x_status: Centrado em X
+    action_option_anchor_center_y_status: Centrado em Y
+    action_option_anchor_center_z_status: Centrado em Z
+    action_option_anchor_origin_status: Origem do componente
+    action_option_no_layer_help: "*Deixe este campo vazio para não aplicar nenhuma etiqueta*."
     detecting_cavities: Deteção de cavidades...
     error:
       invalid_divider_seed: Este tipo de peça não permite a construção de uma divisória
@@ -2491,13 +2560,23 @@ tool:
       front_panel_number_overflow: Não foi possível distribuir {{ number }} frentes neste vão
       back_panel_number_overflow: Não é possível distribuir {{ number }} fundos neste vão
       back_panel_severs_parts: "A ranhura cortaria de um lado ao outro: {{ names }}. Reduza a sua profundidade"
+      module_file_not_found: "Arquivo de caixa não encontrado: {{ file }}"
+      module_file_invalid: "Não foi possível carregar o arquivo de caixa: {{ file }}"
+      module_file_invalid_name: "Nome de arquivo inválido: {{ name }}"
+      module_file_save_failed: "Não foi possível guardar o arquivo do módulo: {{ name }}.skp"
+      module_stretch_failed: Não foi possível esticar o módulo para estas dimensões
     warning:
       no_back_panel_machining: "Nenhuma ranhura pôde ser maquinada: nenhuma peça vizinha delimita o fundo a esta profundidade"
+      no_module_file: Nenhum arquivo .skp nesta pasta
+      module_axis_no_scale: "Módulo não extensível ao longo de {{ axis }} : bloqueado pelo comportamento do componente"
+      module_axis_curve_intersect: "Módulo não extensível ao longo de {{ axis }} : um dos planos de corte atravessa uma curva não extensível"
     success:
       part_created: "Nova peça criada : {{ name }}"
       part_created_plural: "{{ count }} novas peças criadas : {{ name }}"
       part_reused: "Nova ocorrência da peça existente : {{ name }}"
       part_reused_plural: "{{ count }} novas ocorrências da peça existente : {{ name }}"
+      module_file_saved: "Módulo guardado: {{ name }}.skp"
+      module_created: "Novo módulo inserido: {{ name }}"
   smart_handle:
     title: Manipular
     action_0: Selecionar
@@ -2516,6 +2595,11 @@ tool:
     action_4_status: Distribuir uma peça ao longo de um eixo
     action_4_state_1_status: Clique para definir o primeiro ponto de medição
     action_4_state_2_status: Clique para definir o segundo ponto de medição ou insira uma distância
+    action_5: Interagir
+    action_5_status: Abrir ou fechar uma porta
+    action_5_state_0_status: Clique numa porta para a abrir ou fechar, ou arraste-a para regular a sua abertura
+    action_5_state_0_amend_status: Introduza um ângulo para corrigir a abertura, ou clique numa porta para a abrir ou fechar
+    action_5_state_20_status: Arraste para regular a abertura da porta e solte para confirmar
     action_option_group_copy_measure_type: Medida
     action_option_group_move_measure_type: Medida
     action_option_group_axes: Eixos
@@ -2530,6 +2614,9 @@ tool:
     action_toggle_raytest_status: Projetar no próximo ponto
     warning:
       copies_disable_mirror: A cópia múltipla desativa a opção '$t(tool.smart_handle.action_option_options_mirror_status)'
+    error:
+      not_door: Esta peça não é uma porta equipada com dobradiças
+      incoherent_door: As dobradiças desta porta não rodam em torno do mesmo eixo
   smart_reshape:
     title: Remodelar
     action_0: Esticar

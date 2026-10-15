@@ -147,8 +147,10 @@ core:
     import: استيراد
     more: المزيد
     more_docs: مستندات
+    # this link only appears in the french version, points to https://www.lairdubois.fr/
     more_reviews: ملاحظات
     more_plans: خطط
+    # only appears in the french version
     more_extensions: إضافات
     more_update: ترقية
   bottombar:
@@ -298,6 +300,7 @@ core:
     error:
       empty: لا يحتوي الجسم الصلب على أي هندسة
       empty_named: « {{ name }} » لا يحتوي على أي هندسة
+      # an edge is considered manifold when it is shared by exactly two faces in a 3D mesh
       non_manifold_edges: يحتوي الجسم الصلب على {{ count }} حافة غير متعددة الوجوه
       non_manifold_edges_plural: يحتوي الجسم الصلب على {{ count }} حواف غير متعددة الوجوه
       non_manifold_edges_named: « {{ name }} » يحتوي على {{ count }} حافة غير متعددة الوجوه
@@ -369,6 +372,7 @@ tab:
         *{{ std_dimension_real }}* :القطاع الحقيقي
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
+      # "Model Info" refers to the SketchUp menu to change the units
       rounded_std_footer: قوِّم الدقة في *Model Info* في سكاتش آب أو تفقّد قياسات القِطع في هذه المجموعة.
       highlight_part: $t(tab.cutlist.highlight_part)
       highlight_parts: $t(tab.cutlist.highlight_parts)
@@ -712,6 +716,7 @@ tab:
       option_csv_col_sep_comma: فاصلة
       option_csv_col_sep_semicolon: فاصة منقوطة
       option_csv_encoding: ترميز
+      # as described in https://www.rfc-editor.org/info/rfc4180/
       copy_all: العناوين والقيم
       copy_values: القيم فحسب
       number: الرقم
