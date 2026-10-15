@@ -32,6 +32,7 @@ module Ladb::OpenCutList
     ACTION_OPTION_OFFSET = 'offset'
     ACTION_OPTION_GROOVE = 'groove'
     ACTION_OPTION_MEASURE_TYPE = 'measure_type'
+    ACTION_OPTION_MEASURE_ORIGIN = 'measure_origin'
     ACTION_OPTION_OVERLAY = 'overlay'
     ACTION_OPTION_AXES = 'axes'
     ACTION_OPTION_ANCHOR = 'anchor'
@@ -48,6 +49,9 @@ module Ladb::OpenCutList
     ACTION_OPTION_MEASURE_TYPE_INSIDE = 'inside'
     ACTION_OPTION_MEASURE_TYPE_CENTERED = 'centered'
     ACTION_OPTION_MEASURE_TYPE_OUTSIDE = 'outside'
+
+    ACTION_OPTION_MEASURE_ORIGIN_WALL = 'wall'
+    ACTION_OPTION_MEASURE_ORIGIN_OVERALL = 'overall'
 
     ACTION_OPTION_OVERLAY_INSET = 'inset'
     ACTION_OPTION_OVERLAY_FULL_OVERLAY = 'full_overlay'
@@ -93,6 +97,7 @@ module Ladb::OpenCutList
         :options => {
           ACTION_OPTION_THICKNESS => [ ACTION_OPTION_THICKNESS_THICKNESS ],
           ACTION_OPTION_MEASURE_TYPE => [ ACTION_OPTION_MEASURE_TYPE_INSIDE, ACTION_OPTION_MEASURE_TYPE_CENTERED, ACTION_OPTION_MEASURE_TYPE_OUTSIDE ],
+          ACTION_OPTION_MEASURE_ORIGIN => [ ACTION_OPTION_MEASURE_ORIGIN_WALL, ACTION_OPTION_MEASURE_ORIGIN_OVERALL ],
           ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_CONTEXT ],
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE, ACTION_OPTION_OPTIONS_PICK_MATERIAL, ACTION_OPTION_OPTIONS_REUSE_DEFINITION, ACTION_OPTION_OPTIONS_ASK_NAME ]
         }
@@ -247,6 +252,8 @@ module Ladb::OpenCutList
         return true
       when ACTION_OPTION_MEASURE_TYPE
         return true
+      when ACTION_OPTION_MEASURE_ORIGIN
+        return true
       when ACTION_OPTION_AXES
         return true
       end
@@ -283,6 +290,13 @@ module Ladb::OpenCutList
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.655,.917V.583H.989V.917ZM0,.25H.833M0,.083V.417M.833,.083V.417'))
         when ACTION_OPTION_MEASURE_TYPE_INSIDE
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.655,.917V.583H.989V.917ZM0,.25H.667M0,.083V.417M.667,.083V.417'))
+        end
+      when ACTION_OPTION_MEASURE_ORIGIN
+        case option
+        when ACTION_OPTION_MEASURE_ORIGIN_WALL
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.25,1V.375H0V1M1,.625H.25V.375H1M.25,0V.25V.125H1M.125,.375L.25,.5M0,.5L.25,.75M0,.75L.25,1M1,.625L.75,.375M.75,.625L.5,.375M.5,.625L.25,.375'))
+        when ACTION_OPTION_MEASURE_ORIGIN_OVERALL
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.25,1V.375H0V1M1,.625H.25V.375H1M0,0V.25V.125H1M.125,.375L.25,.5M0,.5L.25,.75M0,.75L.25,1M1,.625L.75,.375M.75,.625L.5,.375M.5,.625L.25,.375'))
         end
       when ACTION_OPTION_AXES
         case option
@@ -375,6 +389,11 @@ module Ladb::OpenCutList
           return fetch_action_option_boolean(action, ACTION_OPTION_OVERLAY, ACTION_OPTION_OVERLAY_FULL_OVERLAY) ||
                  fetch_action_option_boolean(action, ACTION_OPTION_OVERLAY, ACTION_OPTION_OVERLAY_AGAINST_PROTRUSIONS)
         end
+      when ACTION_OPTION_MEASURE_TYPE
+        case option
+        when ACTION_OPTION_MEASURE_TYPE_OUTSIDE
+          return is_action_option_measure_type_outside_forbidden?(action)
+        end
       when ACTION_OPTION_ANCHOR
         case option
         when ACTION_OPTION_ANCHOR_CENTER_X, ACTION_OPTION_ANCHOR_CENTER_Y, ACTION_OPTION_ANCHOR_CENTER_Z
@@ -394,7 +413,20 @@ module Ladb::OpenCutList
 
     def get_action_option_btn_selected?(action, option_group, option)
       return true if option_group == ACTION_OPTION_OPTIONS && option == ACTION_OPTION_OPTIONS_REDUCE_ENVELOPE && is_action_option_reduce_envelope_forced?(action)
+      # The outside measure stays stored, but reads as the inside one meanwhile
+      if option_group == ACTION_OPTION_MEASURE_TYPE && is_action_option_measure_type_outside_forbidden?(action) && fetch_action_option_boolean(action, ACTION_OPTION_MEASURE_TYPE, ACTION_OPTION_MEASURE_TYPE_OUTSIDE)
+        return option == ACTION_OPTION_MEASURE_TYPE_INSIDE
+      end
       super
+    end
+
+    # A distribution measures each divider at its face or at its axis : at
+    # its outside face, it would count whole in the two segments it parts -
+    # see SmartBuildDividerActionHandler#_get_divider_slab_intervals. The
+    # handler reads the outside measure as the inside one, the buttons show
+    # it.
+    def is_action_option_measure_type_outside_forbidden?(action)
+      action == ACTION_BUILD_DIVIDER && @action_handler.is_a?(SmartBuildDividerActionHandler) && @action_handler.number > 0
     end
 
     # Against the protrusions, the envelope reduction is forced : it is what
@@ -2958,7 +2990,7 @@ module Ladb::OpenCutList
     def onToolActionOptionStored(tool, action, option_group, option)
 
       case option_group
-      when SmartBuildTool::ACTION_OPTION_MEASURE_TYPE
+      when SmartBuildTool::ACTION_OPTION_MEASURE_TYPE, SmartBuildTool::ACTION_OPTION_MEASURE_ORIGIN
         _refresh
       when SmartBuildTool::ACTION_OPTION_AXES
         @locked_normal = nil
@@ -3295,6 +3327,14 @@ module Ladb::OpenCutList
       @tool.fetch_action_option_boolean(@action, SmartBuildTool::ACTION_OPTION_MEASURE_TYPE, SmartBuildTool::ACTION_OPTION_MEASURE_TYPE_OUTSIDE)
     end
 
+    def _fetch_option_measure_type_centered?
+      @tool.fetch_action_option_boolean(@action, SmartBuildTool::ACTION_OPTION_MEASURE_TYPE, SmartBuildTool::ACTION_OPTION_MEASURE_TYPE_CENTERED)
+    end
+
+    def _fetch_option_measure_origin_overall?
+      @tool.fetch_action_option_boolean(@action, SmartBuildTool::ACTION_OPTION_MEASURE_ORIGIN, SmartBuildTool::ACTION_OPTION_MEASURE_ORIGIN_OVERALL)
+    end
+
     # -----
 
     # Rebuilds the divider fragments as real geometry inside the model,
@@ -3551,13 +3591,16 @@ module Ladb::OpenCutList
       @spacings = spacings
 
       if @number > 0 && !(context = _compute_divider_context(@picked_point, view)).nil?
-        _cavities_def, fragment_def, normal_3f = context
+        cavities_def, fragment_def, normal_3f = context
         n0, n1 = _get_divider_mesh_extent(fragment_def.vertices, normal_3f)
-        if _get_divider_slab_intervals(n0, n1, _fetch_option_thickness, @number, @spacings).nil?
+        o0, o1 = _get_divider_measure_origins(cavities_def, fragment_def, normal_3f, n0, n1)
+        if _get_divider_slab_intervals(n0, n1, _fetch_option_thickness, @number, @spacings, o0: o0, o1: o1, centered: _fetch_option_measure_type_centered?).nil?
           UI.beep
           tool.notify_errors([ [ 'tool.smart_build.error.divider_number_overflow', { :number => @number } ] ])
         end
       end
+
+      _refresh_measure_type_btns
 
       if @number > 0
         set_state(STATE_DISTRIBUTE) unless @state == STATE_DISTRIBUTE
@@ -3565,6 +3608,17 @@ module Ladb::OpenCutList
         set_state(STATE_PLACE) unless @state == STATE_PLACE
       end
       _refresh
+    end
+
+    # The outside measure is only offered to a free divider : the measure
+    # buttons follow the count - see
+    # SmartBuildTool#is_action_option_measure_type_outside_forbidden?
+    def _refresh_measure_type_btns
+      [ SmartBuildTool::ACTION_OPTION_MEASURE_TYPE_INSIDE, SmartBuildTool::ACTION_OPTION_MEASURE_TYPE_CENTERED, SmartBuildTool::ACTION_OPTION_MEASURE_TYPE_OUTSIDE ].each do |option|
+        next unless (btn = @tool.get_action_option_btn(@action, SmartBuildTool::ACTION_OPTION_MEASURE_TYPE, option)).is_a?(Kuix::Button)
+        btn.selected = @tool.get_action_option_btn_selected?(@action, SmartBuildTool::ACTION_OPTION_MEASURE_TYPE, option)
+        btn.disabled = @tool.get_action_option_btn_disabled?(@action, SmartBuildTool::ACTION_OPTION_MEASURE_TYPE, option)
+      end
     end
 
     # -----
@@ -3814,21 +3868,27 @@ module Ladb::OpenCutList
     # [ [ d0, d1 ], ... ] the +number+ distributed dividers span along the
     # normal, ordered, inside the cavity's own [ +n0+, +n1+ ] extent.
     #
-    # What is shared equally is the CLEAR OPENINGS, never the axis spacings -
-    # those would leave the openings unequal by one thickness as soon as the
-    # panels are not infinitely thin.
+    # What is shared equally is the SEGMENTS of a chain of measures running
+    # from +o0+ to +o1+ - the measure origins, see #_get_divider_measure_origins
+    # (the cavity's own walls by default) - and each divider is measured
+    # either at its FACES, where it takes its thickness out between two
+    # segments (the clear openings when the origins are the walls), or at
+    # its AXIS (+centered+), where the two segments it parts meet. Never at
+    # its outside face : it would then count whole in both.
     #
-    # +spacings+ PINS openings, from the ends inward : its leading run of
-    # valid lengths fixes the openings before the first dividers, its
+    # +spacings+ PINS segments, from the ends inward : its leading run of
+    # valid lengths fixes the segments before the first dividers, its
     # trailing run - whatever follows an invalid or empty entry, so "100;"
-    # pins the first opening and ";100" the last - fixes the openings after
+    # pins the first segment and ";100" the last - fixes the segments after
     # the last ones. Only the dividers LEFT IN THE MIDDLE share what
-    # remains, which is the whole cavity when the list is empty. Pins beyond
+    # remains, which is the whole chain when the list is empty. Pins beyond
     # the count are dropped : they have no divider to place.
     #
-    # nil when the layout does not fit : a middle share with no room left, or
-    # pinned dividers that overrun each other.
-    def _get_divider_slab_intervals(n0, n1, thickness, number, spacings)
+    # nil when the layout does not fit : a middle share with no room left,
+    # pinned dividers that overrun each other, or a divider pushed out of
+    # the cavity (an origin past the wall leaves the chain room the cavity
+    # does not have).
+    def _get_divider_slab_intervals(n0, n1, thickness, number, spacings, o0: n0, o1: n1, centered: false)
       return nil unless number > 0
 
       fn_valid_spacing = lambda { |spacing| spacing.is_a?(Length) && spacing >= 0 }
@@ -3842,32 +3902,38 @@ module Ladb::OpenCutList
         end_spacings = end_spacings.take(number - start_spacings.size)
       end
 
+      # A segment ends on a divider's near face, or on its axis : +near+ goes
+      # from that mark back to the near face, +step+ from the mark on to where
+      # the next segment starts
+      near = centered ? thickness / 2.0 : 0.0
+      step = centered ? 0.0 : thickness
+
       # Pinned from the near end, in order
-      start_d = n0
+      start_d = o0
       start_intervals = start_spacings.map { |spacing|
-        d0 = start_d + spacing
-        start_d = d0 + thickness
-        [ d0, start_d ]
+        mark = start_d + spacing
+        start_d = mark + step
+        [ mark - near, mark - near + thickness ]
       }
 
       # Pinned from the far end : +end_spacings+ reads outermost first, so
       # these come out in reverse
-      end_d = n1
+      end_d = o1
       end_intervals = end_spacings.map { |spacing|
-        d1 = end_d - spacing
-        end_d = d1 - thickness
-        [ end_d, d1 ]
+        mark = end_d - spacing
+        end_d = mark - step
+        [ mark + near - thickness, mark + near ]
       }.reverse
 
       middle_size = number - start_intervals.size - end_intervals.size
       if middle_size > 0
 
-        opening = ((end_d - start_d) - middle_size * thickness) / (middle_size + 1.0)
-        return nil if opening <= SolidMeshDef::TOLERANCE
+        segment = ((end_d - start_d) - middle_size * step) / (middle_size + 1.0)
+        return nil if segment <= SolidMeshDef::TOLERANCE
 
         middle_intervals = (1..middle_size).map { |index|
-          d0 = start_d + index * (opening + thickness) - thickness
-          [ d0, d0 + thickness ]
+          mark = start_d + index * segment + (index - 1) * step
+          [ mark - near, mark - near + thickness ]
         }
 
       else
@@ -3880,7 +3946,118 @@ module Ladb::OpenCutList
 
       end
 
-      start_intervals + middle_intervals + end_intervals
+      intervals = start_intervals + middle_intervals + end_intervals
+
+      # Measured from the walls at the faces, the shares above keep every
+      # divider in the cavity by construction. From further out, or at the
+      # axes, the chain no longer tells : a divider may land past a wall, or
+      # on its neighbour.
+      return nil if intervals.first[0] < n0 - SolidMeshDef::TOLERANCE || intervals.last[1] > n1 + SolidMeshDef::TOLERANCE
+      return nil if intervals.each_cons(2).any? { |(_, previous_d1), (next_d0, _)| next_d0 - previous_d1 < -SolidMeshDef::TOLERANCE }
+
+      intervals
+    end
+
+    # [ o0, o1 ] where the measures of the dividers start and end along the
+    # normal - see #_get_divider_slab_intervals. The cavity's own walls
+    # [ +n0+, +n1+ ] by default, the OVERALL ends of the assembly with the
+    # "overall" measure origin : past each wall, by the part closing the
+    # cavity there (see #_get_divider_end_offset).
+    def _get_divider_measure_origins(cavities_def, fragment_def, normal_3f, n0, n1)
+      return [ n0, n1 ] unless _fetch_option_measure_origin_overall?
+      [
+        n0 - _get_divider_end_offset(cavities_def, fragment_def, normal_3f, n0, -1),
+        n1 + _get_divider_end_offset(cavities_def, fragment_def, normal_3f, n1, 1)
+      ]
+    end
+
+    # How far past the cavity's wall at offset +n+ - its low end along the
+    # normal when +way+ is -1, its high end when 1 - the overall measure
+    # origin stands, read off the panel that wall belongs to :
+    #
+    # - a CONTOUR panel, with nothing past it : its outer face, i.e. its
+    #   whole thickness along the normal ;
+    # - an INTERNAL panel, another cavity of the container lying past it (a
+    #   divider, a shelf) : that panel is measured like the dividers about to
+    #   be placed - at its axis when they are measured centered, at its face
+    #   otherwise (its outer face for a free divider measured outside).
+    #
+    # The panel is the one carrying most of the wall area on that plane, and
+    # its thickness the extent of its bounds along the normal. 0 when no
+    # panel stands there (the cavity is open on that end).
+    def _get_divider_end_offset(cavities_def, fragment_def, normal_3f, n, way)
+
+      @divider_end_offsets = {} unless @divider_end_offsets_fragment_def.equal?(fragment_def)
+      @divider_end_offsets_fragment_def = fragment_def
+
+      centered = _fetch_option_measure_type_centered?
+      outside = @number == 0 && _fetch_option_measure_type_outside?
+      key = [ normal_3f, way, centered, outside ]
+      return @divider_end_offsets[key] if @divider_end_offsets.key?(key)
+
+      @divider_end_offsets[key] = begin
+
+        nx, ny, nz = normal_3f
+        min_dot = 1.0 - SolidFragmentDef::PLANE_NORMAL_TOLERANCE
+
+        # The wall : panel triangles lying on the end plane, facing out of the cavity there
+        area_by_drawing_def = Hash.new(0.0)
+        (0...fragment_def.triangle_count).each do |triangle_index|
+          next unless (drawing_def = _get_divider_wall_drawing_def(fragment_def, triangle_index)).is_a?(DrawingDef)
+          next if (normal = fragment_def.triangle_normal(triangle_index)).nil?
+          next unless (normal.x * nx + normal.y * ny + normal.z * nz) * way >= min_dot
+          a, b, c = fragment_def.face_indices[triangle_index * 3, 3].map { |index| fragment_def.points[index] }
+          next unless ((nx * a.x + ny * a.y + nz * a.z) - n).abs <= SolidMeshDef::TOLERANCE
+          area_by_drawing_def[drawing_def] += (b - a).cross(c - a).length / 2.0
+        end
+        drawing_def, _area = area_by_drawing_def.max_by { |_drawing_def, area| area }
+
+        if drawing_def.nil? || drawing_def.bounds.empty? || !drawing_def.transformation.is_a?(Geom::Transformation)
+          0.0
+        else
+
+          offsets = (0..7).map { |index|
+            corner = drawing_def.bounds.corner(index).transform(drawing_def.transformation)
+            nx * corner.x + ny * corner.y + nz * corner.z
+          }
+          thickness = [ way > 0 ? offsets.max - n : n - offsets.min, 0.0 ].max
+
+          # Internal : another cavity has a wall on this same panel, facing the other way
+          internal = cavities_def.fragment_defs.any? { |other_fragment_def|
+            next false if other_fragment_def.equal?(fragment_def)
+            next false if other_fragment_def.is_a?(SolidCavityFragmentDef) && other_fragment_def.overall?
+            (0...other_fragment_def.triangle_count).any? { |triangle_index|
+              other_drawing_def = _get_divider_wall_drawing_def(other_fragment_def, triangle_index)
+              next false unless other_drawing_def.is_a?(DrawingDef) && (other_drawing_def.equal?(drawing_def) || other_drawing_def.container_path == drawing_def.container_path)
+              next false if (normal = other_fragment_def.triangle_normal(triangle_index)).nil?
+              (normal.x * nx + normal.y * ny + normal.z * nz) * way <= -min_dot
+            }
+          }
+
+          if !internal
+            thickness
+          elsif centered
+            thickness / 2.0
+          elsif outside
+            thickness
+          else
+            0.0
+          end
+
+        end
+      end
+
+    end
+
+    # The panel DrawingDef a wall triangle of a cavity comes from - see
+    # CavitiesDef#_wall_drawing_def. nil for a cap.
+    def _get_divider_wall_drawing_def(fragment_def, triangle_index)
+      face_id = fragment_def.triangle_face_id(triangle_index)
+      return nil if face_id.nil? || face_id == 0
+      face_info_def = fragment_def.face_info_defs[face_id]
+      return nil if face_info_def.nil?
+      drawing_def = face_info_def.container_def
+      drawing_def.is_a?(DrawingDef) ? drawing_def : nil
     end
 
     # Computes the divider solids at the current pick : the intersection of
@@ -3908,34 +4085,40 @@ module Ladb::OpenCutList
 
       thickness = _fetch_option_thickness
       n0, n1 = _get_divider_mesh_extent(fragment_def.vertices, normal_3f)
+      o0, o1 = _get_divider_measure_origins(cavities_def, fragment_def, normal_3f, n0, n1)
       d = normal_3f[0] * point.x + normal_3f[1] * point.y + normal_3f[2] * point.z
 
       # [ d0, d1, reference offset, distance to measure ] per slab, all
       # expressed as offsets along the normal.
       if @number > 0
 
-        intervals = _get_divider_slab_intervals(n0, n1, thickness, @number, @spacings)
+        centered = _fetch_option_measure_type_centered?
+        intervals = _get_divider_slab_intervals(n0, n1, thickness, @number, @spacings, o0: o0, o1: o1, centered: centered)
         return nil if intervals.nil?
 
-        # The measured distance is the clear opening BEFORE each divider,
-        # so the reference offset is its near face : the preview then draws
-        # exactly the compartment the distribution just created - the pinned
-        # value where there is one, the computed share elsewhere.
-        previous_d = n0
+        # The measured distance is the segment BEFORE each divider, so the
+        # reference offset is where it ends - the divider's near face, or its
+        # axis : the preview then draws exactly the chain the distribution
+        # was computed on - the pinned value where there is one, the computed
+        # share elsewhere.
+        previous_d = o0
         slabs = intervals.map { |d0, d1|
-          opening = d0 - previous_d
-          previous_d = d1
-          [ d0, d1, d0, opening ]
+          reference_d = centered ? (d0 + d1) / 2.0 : d0
+          segment = reference_d - previous_d
+          previous_d = centered ? reference_d : d1
+          [ d0, d1, reference_d, segment ]
         }
+        trailing_d = previous_d
 
       else
 
         d0, d1 = _get_divider_slab_interval(d, thickness, n0, n1)
 
-        # Gap between the picked point and the cavity boundary "behind" it
-        # (n0, the low end of the cavity's own extent along the normal - never
-        # n1, so it's always >= 0, measured the same way +normal points).
-        slabs = [ [ d0, d1, d, d - n0 ] ]
+        # Gap between the picked point and the measure origin "behind" it
+        # (o0, at or past the low end of the cavity's own extent along the
+        # normal - never the high end, so it's always >= 0, measured the
+        # same way +normal points).
+        slabs = [ [ d0, d1, d, d - o0 ] ]
 
       end
 
@@ -3999,9 +4182,8 @@ module Ladb::OpenCutList
       # the cavity itself, and would otherwise be the only compartment with
       # no measure of its own.
       if @number > 0 && !divider_defs.empty?
-        last_d1 = slabs.last[1]
-        divider_defs.last.trailing_point = last_d1 == d ? point : point.offset(normal, last_d1 - d)
-        divider_defs.last.trailing_distance = (n1 - last_d1).to_l
+        divider_defs.last.trailing_point = trailing_d == d ? point : point.offset(normal, trailing_d - d)
+        divider_defs.last.trailing_distance = (o1 - trailing_d).to_l
       end
 
       divider_defs
@@ -4284,11 +4466,13 @@ module Ladb::OpenCutList
     # (see #_compute_dividers and #_create_entity). The measures below belong
     # to the slab as a whole, not to any one of its bodies.
     #
-    # +distance+ is the clear opening BEFORE the divider, measured from
-    # +point+ (its near face) back to +wall_point+. +trailing_distance+ is the
-    # one AFTER it, measured from +trailing_point+ (its far face) on to
+    # +distance+ is the segment BEFORE the divider, measured from +point+ (its
+    # near face, or its axis when measured centered) back to +wall_point+ -
+    # the previous divider, or the measure origin, which is past the cavity's
+    # wall when measured overall. +trailing_distance+ is the one AFTER it,
+    # measured from +trailing_point+ (its far face, or its axis) on to
     # +trailing_wall_point+ : only the LAST divider of a distribution
-    # carries it, since every other closing opening is the next divider's
+    # carries it, since every other closing segment is the next divider's
     # own +distance+.
     DividerDef = Struct.new(:cavity_def, :point, :normal_3f, :fragments, :fragment_def, :distance, :trailing_point, :trailing_distance) do
       def container_path

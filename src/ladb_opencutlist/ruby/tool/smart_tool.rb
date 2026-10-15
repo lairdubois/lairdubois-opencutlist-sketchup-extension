@@ -1629,23 +1629,20 @@ module Ladb::OpenCutList
 
                 modifier_options = action_defs[action_index][:options][modifier_option_group]
 
-                modifier_option = modifier_options.detect { |option| fetch_action_option_boolean(action, modifier_option_group, option) }
+                # The option the buttons SHOW as on - which may stand in for a
+                # stored one its button currently disables
+                modifier_option = modifier_options.detect { |option| get_action_option_btn_selected?(action, modifier_option_group, option) }
+                modifier_option = modifier_options.detect { |option| fetch_action_option_boolean(action, modifier_option_group, option) } if modifier_option.nil?
                 modifier_option_index = modifier_options.index(modifier_option)
                 unless modifier_option_index.nil?
 
-                  next_modifier_option_index = (modifier_option_index + (is_key_shift_down? ? -1 : 1)) % modifier_options.length
-                  next_modifier_option = modifier_options[next_modifier_option_index]
+                  # Cycle on to the next option whose button is enabled
+                  step = is_key_shift_down? ? -1 : 1
+                  next_modifier_option = (1...modifier_options.length).map { |offset| modifier_options[(modifier_option_index + offset * step) % modifier_options.length] }
+                                                                     .detect { |option| !get_action_option_btn_disabled?(action, modifier_option_group, option) }
 
-                  @actions_options_panels.each do |actions_options_panel|
-                    next unless actions_options_panel.data[:action] == action
-
-                    actions_options_panel.children.each do |b|
-                      if b.is_a?(Kuix::Button) && b.data[:option_group] == modifier_option_group && b.data[:option] == next_modifier_option
-                        b.fire(:click, flags)
-                        break
-                      end
-                    end
-
+                  if !next_modifier_option.nil? && (btn = get_action_option_btn(action, modifier_option_group, next_modifier_option)).is_a?(Kuix::Button)
+                    btn.fire(:click, flags)
                   end
 
                   return true
