@@ -3551,6 +3551,10 @@ module Ladb::OpenCutList
 
       @tool.remove_tooltip
 
+      if old_state == STATE_SELECT_TREE
+        @tool.clear_2d(LAYER_2D_FLOATING_TOOLS) # Close the dropup
+      end
+
       if has_active_selection?
 
         case new_state
