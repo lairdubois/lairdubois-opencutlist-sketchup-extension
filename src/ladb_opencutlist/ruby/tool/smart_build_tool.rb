@@ -3998,8 +3998,11 @@ module Ladb::OpenCutList
     #   otherwise (its outer face for a free divider measured outside).
     #
     # The panel is the one carrying most of the wall area on that plane, and
-    # its thickness the extent of its bounds along the normal. 0 when no
-    # panel stands there (the cavity is open on that end).
+    # its thickness the extent of its bounds along the normal. A plane
+    # carrying only a cap gets the panel closing it from past it instead
+    # (see #_get_divider_cap_drawing_def), and one that no panel closes the
+    # far end of the cavity's walls running along the normal - the outer end
+    # of the assembly all the same. 0 when nothing stands past the end.
     def _get_divider_end_offset(cavities_def, fragment_def, normal_3f, n, way)
 
       @divider_end_offsets = {} unless @divider_end_offsets_fragment_def.equal?(fragment_def)
@@ -4017,17 +4020,47 @@ module Ladb::OpenCutList
 
         # The wall : panel triangles lying on the end plane, facing out of the cavity there
         area_by_drawing_def = Hash.new(0.0)
+        cap_points = []
+        side_drawing_defs = {}
         (0...fragment_def.triangle_count).each do |triangle_index|
-          next unless (drawing_def = _get_divider_wall_drawing_def(fragment_def, triangle_index)).is_a?(DrawingDef)
           next if (normal = fragment_def.triangle_normal(triangle_index)).nil?
-          next unless (normal.x * nx + normal.y * ny + normal.z * nz) * way >= min_dot
+          dot = (normal.x * nx + normal.y * ny + normal.z * nz) * way
+          if dot.abs < min_dot && (drawing_def = _get_divider_wall_drawing_def(fragment_def, triangle_index)).is_a?(DrawingDef)
+            side_drawing_defs[drawing_def] = true   # A wall along the normal, see below
+          end
+          next unless dot >= min_dot
           a, b, c = fragment_def.face_indices[triangle_index * 3, 3].map { |index| fragment_def.points[index] }
           next unless ((nx * a.x + ny * a.y + nz * a.z) - n).abs <= SolidMeshDef::TOLERANCE
-          area_by_drawing_def[drawing_def] += (b - a).cross(c - a).length / 2.0
+          if (drawing_def = _get_divider_wall_drawing_def(fragment_def, triangle_index)).is_a?(DrawingDef)
+            area_by_drawing_def[drawing_def] += (b - a).cross(c - a).length / 2.0
+          else
+            cap_points.push(a, b, c)
+          end
         end
         drawing_def, _area = area_by_drawing_def.max_by { |_drawing_def, area| area }
 
-        if drawing_def.nil? || drawing_def.bounds.empty? || !drawing_def.transformation.is_a?(Geom::Transformation)
+        # No wall, only a CAP : the end is an opening as the cavity reads it -
+        # a reduced envelope, or a hull cap - and a panel may still close it
+        # past that plane (rails under the top of the uprights, the
+        # compartment's top stopping at their underside). That panel is the
+        # one of the container STARTING on the cap plane, lying past it, and
+        # covering most of the cap.
+        drawing_def = _get_divider_cap_drawing_def(cavities_def, normal_3f, n, way, cap_points) if drawing_def.nil? && !cap_points.empty?
+
+        if drawing_def.nil? && !cap_points.empty?
+
+          # An opening no panel closes : the assembly ends where the walls
+          # running along the normal do (the top of the uprights of a caisson
+          # with no top, past a reduced envelope stopping at its back).
+          side_drawing_defs.keys.map { |side_drawing_def|
+            next 0.0 if side_drawing_def.bounds.empty? || !side_drawing_def.transformation.is_a?(Geom::Transformation)
+            (0..7).map { |index|
+              corner = side_drawing_def.bounds.corner(index).transform(side_drawing_def.transformation)
+              ((nx * corner.x + ny * corner.y + nz * corner.z) - n) * way
+            }.max
+          }.push(0.0).max
+
+        elsif drawing_def.nil? || drawing_def.bounds.empty? || !drawing_def.transformation.is_a?(Geom::Transformation)
           0.0
         else
 
@@ -4062,6 +4095,46 @@ module Ladb::OpenCutList
         end
       end
 
+    end
+
+    # The panel of the container closing, past it, a CAP of the cavity lying
+    # on the end plane at offset +n+ (+way+ as in #_get_divider_end_offset) :
+    # one whose bounds start on that plane and extend past it, the one
+    # covering most of the cap's own extent in the plane (+cap_points+, its
+    # triangles' vertices). nil when none does - the cavity is really open
+    # there.
+    def _get_divider_cap_drawing_def(cavities_def, normal_3f, n, way, cap_points)
+      return nil unless cavities_def.drawing_defs.is_a?(Array)
+
+      nx, ny, nz = normal_3f
+      u, v = _get_divider_plane_uv_3f(normal_3f)
+      fn_project = lambda { |point| [
+        nx * point.x + ny * point.y + nz * point.z,
+        u[0] * point.x + u[1] * point.y + u[2] * point.z,
+        v[0] * point.x + v[1] * point.y + v[2] * point.z
+      ] }
+
+      _, cap_us, cap_vs = cap_points.map(&fn_project).transpose
+      cap_u0, cap_u1 = cap_us.minmax
+      cap_v0, cap_v1 = cap_vs.minmax
+
+      best_drawing_def = nil
+      best_area = 0.0
+      cavities_def.drawing_defs.each do |drawing_def|
+        next unless drawing_def.is_a?(DrawingDef) && !drawing_def.bounds.empty? && drawing_def.transformation.is_a?(Geom::Transformation)
+        ns, us, vs = (0..7).map { |index| fn_project.call(drawing_def.bounds.corner(index).transform(drawing_def.transformation)) }.transpose
+        near, far = way > 0 ? ns.minmax : ns.minmax.reverse
+        next unless (near - n).abs <= SolidMeshDef::TOLERANCE && (far - n) * way > SolidMeshDef::TOLERANCE
+        overlap_u = [ us.max, cap_u1 ].min - [ us.min, cap_u0 ].max
+        overlap_v = [ vs.max, cap_v1 ].min - [ vs.min, cap_v0 ].max
+        next unless overlap_u > SolidMeshDef::TOLERANCE && overlap_v > SolidMeshDef::TOLERANCE
+        area = overlap_u * overlap_v
+        next unless area > best_area
+        best_drawing_def = drawing_def
+        best_area = area
+      end
+
+      best_drawing_def
     end
 
     # The panel DrawingDef a wall triangle of a cavity comes from - see
