@@ -338,7 +338,7 @@ if defined?(TestUp::TestCase)
 
   class TC_Ladb_Tool_SmartBuildMouthPanel < TestUp::TestCase
 
-    CASES = %w[B01 B02 B03 B04 B05 B06 B07 B08 B09 B10 B11 B12 B13 B14 B15 B16 B17 B18 B19 B20 F01 F02 F03 F04 F05 F06 F07 F08 F09 F10 F11 F12 F13 F14 F15 F16 F17 F18]
+    CASES = %w[B01 B02 B03 B04 B05 B06 B07 B08 B09 B10 B11 B12 B13 B14 B15 B16 B17 B18 B19 B20 F01 F02 F03 F04 F05 F06 F07 F08 F09 F10 F11 F12 F13 F14 F15 F16 F17 F18 F19 F20 F21 F22]
 
     def setup
       assert(MouthPanelRegression.model_ready?, "Live test : open docs/skp/#{MouthPanelRegression::MODEL_NAME} first (active model : #{Sketchup.active_model.path.inspect})")

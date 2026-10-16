@@ -4610,6 +4610,12 @@ module Ladb::OpenCutList
     # of it, and under anything drawn on purpose.
     OVERLAY_PROTRUSION_MIN_HEIGHT = SolidMeshDef::TOLERANCE * 4
 
+    # How far inside the silhouette its border is read when telling whether a
+    # RECESS of the front reaches it - see #_get_border_recess_points. Ten
+    # tolerances : over the noise a union leaves on a shared edge, and far
+    # under the narrowest recess #_clean_pieces lets through.
+    OVERLAY_RECESS_BORDER_DEPTH = SolidMeshDef::TOLERANCE * 10
+
     # Below this norm the picked face's normal, projected on the opening
     # plane, is no direction at all : the face is nearly PARALLEL to the
     # opening and says nothing about where the panels should meet. Both
@@ -6329,13 +6335,25 @@ module Ladb::OpenCutList
       # ours only, see #_get_visible_sibling_points.
       mouth_depth = _points_mean_z(mouth_points)
       against = _fetch_option_overlay_against_protrusions?
-      sibling_pieces = _get_sibling_mouth_points(fragment_def, opening_def, ti).flat_map { |sibling_points|
+      sibling_points_list = _get_sibling_mouth_points(fragment_def, opening_def, ti)
+      sibling_pieces = sibling_points_list.flat_map { |sibling_points|
         sibling_depth = _points_mean_z(sibling_points)
         deeper = mouth_depth - sibling_depth > OVERLAY_PROTRUSION_MIN_HEIGHT
         recessed = against && deeper
         visible_points = deeper ? _get_visible_sibling_points(sibling_points, sibling_depth, mouth_paths, opening_def, ti) : [ sibling_points ]
         visible_points.flat_map { |points| _convex_pieces(points).map { |sibling_piece| [ sibling_piece, recessed ] } }
       }
+
+      # With the envelope REDUCTION, a recess of the front reaching its border
+      # - the toe kick under a case - is a neighbour no panel will ever close,
+      # and ours stops along it, covering whole the part in between (see
+      # #_get_border_recess_points). Unreduced, the panel spans it, the way it
+      # always did : a full height door hiding the toe kick.
+      if _cavities_reduce_envelope?
+        _get_border_recess_points(opening_def, mouth_depth, subject_paths, mouth_paths, sibling_points_list, ti).each do |recess_points|
+          _convex_pieces(recess_points).each { |recess_piece| sibling_pieces << [ recess_piece, true ] }
+        end
+      end
 
       share_paths = _convex_pieces(mouth_points).map { |piece|
 
@@ -6373,6 +6391,45 @@ module Ladb::OpenCutList
       return nil if best_path.nil?
 
       Fiddle::Clippy.rpath_to_points(best_path)
+    end
+
+    # The RECESSES of the front that reach the border of the silhouette
+    # (+silhouette_paths+), as a list of contours of the opening's frame -
+    # none when the front is flush all over.
+    #
+    # The silhouette is every panel of the container projected on the plane,
+    # however deep. A toe kick set back under the bottom, with the sides
+    # notched round it, still fills it : the kick board and the rear of the
+    # sides project right into the notch. No cavity stands there either - open
+    # in front and below, it is too open to be one - so no sibling cuts it
+    # away, and a panel in applique runs down to the floor.
+    #
+    # A recess is what of the silhouette nothing covers at the depth of our
+    # mouth or in front of it (see #_get_footprint_paths_above), once our
+    # mouth and the sibling mouths are taken out. Only a recess reaching the
+    # border counts : one inside the front lies between two mouths, and the
+    # bisector between them already shares it out. A recess touching our mouth
+    # - the edge of a recessed divider or top - cuts nothing, the way touching
+    # mouths do not (see #_get_overlay_points).
+    def _get_border_recess_points(opening_def, mouth_depth, silhouette_paths, mouth_paths, sibling_points_list, ti)
+      front_paths = _get_footprint_paths_above(opening_def, ti, mouth_depth - OVERLAY_PROTRUSION_MIN_HEIGHT) || []
+      sibling_paths = sibling_points_list.map { |sibling_points| Fiddle::Clippy.points_to_rpath(sibling_points) }
+
+      recess_paths, _ = Fiddle::Clippy.execute_difference(closed_subjects: silhouette_paths, clips: front_paths + mouth_paths + sibling_paths)
+      recess_paths = _clean_pieces(recess_paths)
+      return [] if recess_paths.empty?
+
+      inner_paths = Fiddle::Clippy.inflate_paths(
+        paths: silhouette_paths,
+        delta: -OVERLAY_RECESS_BORDER_DEPTH.to_f,
+        join_type: Fiddle::Clippy::JOIN_TYPE_MITER,
+        miter_limit: 100.0
+      )
+
+      recess_paths.select { |recess_path|
+        border_paths, _ = Fiddle::Clippy.execute_difference(closed_subjects: [ recess_path ], clips: inner_paths)
+        border_paths.any? { |border_path| Fiddle::Clippy.get_rpath_area(border_path).abs > 0 }
+      }.map { |recess_path| Fiddle::Clippy.rpath_to_points(recess_path) }
     end
 
     # The part of a DEEPER sibling mouth (+sibling_points+, at
