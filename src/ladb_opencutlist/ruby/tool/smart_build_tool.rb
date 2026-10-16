@@ -45,6 +45,8 @@ module Ladb::OpenCutList
     ACTION_OPTION_GROOVE_DEPTH = 'groove_depth'
     ACTION_OPTION_GROOVE_SETBACK = 'groove_setback'
     ACTION_OPTION_GROOVE_THROUGH = 'groove_through'
+    ACTION_OPTION_GROOVE_PANEL_REDUCTION = 'groove_panel_reduction'   # Modal only
+    ACTION_OPTION_GROOVE_WIDTH_CLEARANCE = 'groove_width_clearance'   # Modal only
 
     ACTION_OPTION_MEASURE_TYPE_INSIDE = 'inside'
     ACTION_OPTION_MEASURE_TYPE_CENTERED = 'centered'
@@ -8845,6 +8847,32 @@ module Ladb::OpenCutList
       @tool.fetch_action_option_boolean(@action, SmartBuildTool::ACTION_OPTION_OPTIONS, SmartBuildTool::ACTION_OPTION_GROOVE_THROUGH)
     end
 
+    # How much SMALLER than its grooves the panel is cut, on every grooved
+    # edge : it runs into them by the groove depth less this, which leaves that
+    # much room at the bottom of each groove. The groove itself is not changed.
+    def _fetch_option_groove_panel_reduction
+      @tool.fetch_action_option_length(@action, SmartBuildTool::ACTION_OPTION_GROOVE, SmartBuildTool::ACTION_OPTION_GROOVE_PANEL_REDUCTION)
+    end
+
+    # How much WIDER than the panel is thick the groove is cut - all of it on
+    # the OUTER side, towards the outside of the carcass : the panel's inner
+    # face stays the reference the setback is measured to.
+    def _fetch_option_groove_width_clearance
+      @tool.fetch_action_option_length(@action, SmartBuildTool::ACTION_OPTION_GROOVE, SmartBuildTool::ACTION_OPTION_GROOVE_WIDTH_CLEARANCE)
+    end
+
+    # How far the PANEL runs into its grooves : the groove depth less the
+    # panel reduction, never below zero - a reduction as deep as the groove
+    # leaves the panel flush with its mouth, the grooves still cut. Zero
+    # without a groove.
+    def _panel_engagement
+      depth = _fetch_option_groove_depth
+      return 0 if depth.nil? || depth <= 0
+      reduction = _fetch_option_groove_panel_reduction
+      return depth if reduction.nil? || reduction <= 0
+      reduction >= depth ? 0 : depth - reduction
+    end
+
     # -----
 
     # The mouth GROWN by the groove depth, on every edge - the contour the
@@ -8865,8 +8893,8 @@ module Ladb::OpenCutList
       return _grow_into_protrusions(points, opening_def, ti) if _fetch_option_overlay_against_protrusions?
       return points if _fetch_option_overlay_full_overlay?
 
-      depth = _fetch_option_groove_depth
-      return points if depth.nil? || depth <= 0
+      depth = _panel_engagement
+      return points if depth <= 0
 
       # The union normalizes the winding, and the winding is what decides which
       # side a positive delta grows towards.
@@ -8900,6 +8928,8 @@ module Ladb::OpenCutList
     def _grow_into_protrusions(points, opening_def, ti)
       depth = _fetch_option_groove_depth
       return points if depth.nil? || depth <= 0
+      engagement = _panel_engagement
+      return points if engagement <= 0
 
       # The union normalizes the winding
       paths, _ = Fiddle::Clippy.execute_union(closed_subjects: [ Fiddle::Clippy.points_to_rpath(points) ])
@@ -8910,7 +8940,7 @@ module Ladb::OpenCutList
       protrusions = _get_protrusion_footprints(opening_def, reach_paths, ti)
       return points if protrusions.empty?
 
-      bands = _protrusion_edge_bands(paths, protrusions, depth.to_f, :panel)
+      bands = _protrusion_edge_bands(paths, protrusions, engagement.to_f, :panel)
       return points if bands.empty?
 
       united_paths, _ = Fiddle::Clippy.execute_union(closed_subjects: paths + bands)
@@ -8918,10 +8948,9 @@ module Ladb::OpenCutList
       best_path.nil? ? points : Fiddle::Clippy.rpath_to_points(best_path)
     end
 
-    # The GROOVE DEPTH : how far the panel runs into the parts around its
-    # mouth, and so exactly how much of them the cut has to take. The same
-    # number #_grow_nominal_points grows the PANEL by - the panel and its
-    # groove are one shape, read once.
+    # The GROOVE DEPTH : how far the grooves run into the parts around the
+    # mouth, and so exactly how much of them the cut has to take. The PANEL
+    # runs into them by that much less its reduction - see #_panel_engagement.
     def _cut_growth_delta
       return 0 if _fetch_option_overlay_full_overlay? && !_fetch_option_overlay_against_protrusions?
       depth = _fetch_option_groove_depth
@@ -9273,6 +9302,18 @@ module Ladb::OpenCutList
       return 0 if _fetch_option_overlay_full_overlay?
       setback = _fetch_option_groove_setback
       setback.nil? || setback <= 0 ? 0 : setback
+    end
+
+    # The panel's slot WIDENED by the width clearance, on the OUTER side only (see
+    # #_fetch_option_groove_width_clearance) - the high end along the opening's
+    # normal, in a groove as against the protrusions. Only when there is a
+    # groove to widen : see #_cut_growth_delta.
+    def _cut_slot_range(opening_def)
+      slot = super
+      return slot if slot.nil? || _cut_growth_delta <= 0
+      width_clearance = _fetch_option_groove_width_clearance
+      return slot if width_clearance.nil? || width_clearance <= 0
+      [ slot[0], slot[1] + width_clearance.to_f ]
     end
 
   end

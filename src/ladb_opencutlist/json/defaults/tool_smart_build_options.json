@@ -4,7 +4,9 @@
     "shape_offset": 5, /* PRESETS_PREPROCESSOR_D_NEGATIVE_ALLOWED */
     "front_panel_offset": 1, /* PRESETS_PREPROCESSOR_D */
     "groove_depth": 1, /* PRESETS_PREPROCESSOR_D */
-    "groove_setback": 1 /* PRESETS_PREPROCESSOR_D */
+    "groove_setback": 1, /* PRESETS_PREPROCESSOR_D */
+    "groove_panel_reduction": 1, /* PRESETS_PREPROCESSOR_D */
+    "groove_width_clearance": 1 /* PRESETS_PREPROCESSOR_D */
   },
   "action_0": { /* ACTION_BUILD_MODULE */
     "center_x": false,
@@ -44,6 +46,8 @@
     "thickness": { "metric": "8mm", "imperial": "5/16\"" },
     "groove_depth": { "metric": "8mm", "imperial": "5/16\"" },
     "groove_setback": "0",
+    "groove_panel_reduction": "0",
+    "groove_width_clearance": "0",
     "groove_through": true,
     "overlay": "inset",
     "axes": "context",

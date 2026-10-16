@@ -26,10 +26,41 @@ LadbAbstractModal.prototype.init = function () {
     // Bind element
     this.bind();
 
+    // Mark the fields the toolbar does not edit
+    this.markModalOnlyFields();
+
     // Setup tooltips and popovers
     this.dialog.setupTooltips(this.$element);
     this.dialog.setupPopovers(this.$element);
 
+};
+
+// Fields /////
+
+// Badges the fields of a tool action modal that are not in the tool's
+// toolbar - only when the modal was opened with the toolbar's keys
+// (toolbar_option_keys). A field's key is read off its id
+// (ladb_input_<key>, ladb_select_<key>, ladb_textarea_<key>).
+LadbAbstractModal.prototype.markModalOnlyFields = function () {
+    const toolbarOptionKeys = this.options.toolbar_option_keys;
+    if (!Array.isArray(toolbarOptionKeys)) {
+        return;
+    }
+    $('.form-group', this.$element).each(function () {
+        const $formGroup = $(this);
+        const $field = $('[id^="ladb_input_"], [id^="ladb_select_"], [id^="ladb_textarea_"]', $formGroup).first();
+        if ($field.length === 0) {
+            return;
+        }
+        const key = $field.attr('id').replace(/^ladb_(input|select|textarea)_/, '');
+        if (toolbarOptionKeys.indexOf(key) >= 0) {
+            return;
+        }
+        $('.control-label', $formGroup).first().append(
+            $('<i class="ladb-opencutlist-icon-asterisk ladb-modal-only-badge" data-toggle="tooltip"></i>')
+                .attr('title', i18next.t('tool.default.modal_only_help'))
+        );
+    });
 };
 
 // Modal /////

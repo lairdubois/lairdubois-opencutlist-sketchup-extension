@@ -11,31 +11,7 @@
 {% block bodyInner %}
     <div class="tab-content">
         <div class="form form-horizontal" style="margin-top: 15px;">
-            {% block formInner %}
-                {% block optionOptionsMeasureReversed %}
-                    <div class="form-group">
-                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_build.action_option_options_measure_reversed_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                        <label class="control-label col-xs-4">{{ 'tool.smart_build.action_option_options_measure_reversed'|i18next }}</label>
-                        <div class="col-xs-7">
-                            <select class="form-control" id="ladb_select_measure_reversed">
-                                <option value="0" data-content="{{ 'default.no'|i18next }}"></option>
-                                <option value="1" data-content="{{ 'tool.smart_build.action_option_options_measure_reversed_status'|i18next }}"></option>
-                            </select>
-                        </div>
-                    </div>
-                {% endblock %}
-                {% block optionOptionsReduceEnvelope %}{% endblock %}
-                <div class="form-group">
-                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_build.action_option_options_ask_name_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                    <label class="control-label col-xs-4">{{ 'tool.smart_build.action_option_options_ask_name'|i18next }}</label>
-                    <div class="col-xs-7">
-                        <select class="form-control" id="ladb_select_ask_name">
-                            <option value="0" data-content={{ 'default.automatic'|i18next }}></option>
-                            <option value="1" data-content="{{ 'tool.smart_build.action_option_options_ask_name_status'|i18next }}"></option>
-                        </select>
-                    </div>
-                </div>
-            {% endblock %}
+            {% block formInner %}{% endblock %}
         </div>
     </div>
 {% endblock %}

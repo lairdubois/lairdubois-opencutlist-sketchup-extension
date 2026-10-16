@@ -2587,6 +2587,7 @@ tool:
     vcb_angle: Angle
     locked_on_last_measure_status: Verrouiller sur la dernière mesure
     library_choose: Choisissez une bibliothèque
+    modal_only_help: Réglage disponible uniquement dans cette fenêtre, absent de la barre d'outils
     error:
       no_direction: Veuillez indiquer une direction avec la souris
       invalid_length: La longueur {{ value }} est invalide
@@ -2725,6 +2726,10 @@ tool:
     action_option_offset_front_panel_offset_status: Définit le jeu laissé sur chaque bord de la façade
     action_option_groove_groove_depth: Profondeur de rainure
     action_option_groove_groove_depth_status: Définit la profondeur de la rainure dans laquelle le fond est engagé
+    action_option_groove_groove_panel_reduction: Réduction du panneau
+    action_option_groove_groove_panel_reduction_status: Définit de combien le fond est réduit sur chaque bord engagé dans une rainure, laissant ce jeu au fond de la rainure
+    action_option_groove_groove_width_clearance: Jeu de largeur
+    action_option_groove_groove_width_clearance_status: Définit de combien la rainure est usinée plus large que l'épaisseur du fond, entièrement du côté extérieur du caisson
     action_option_groove_groove_setback: Retrait
     action_option_groove_groove_setback_status: Définit de combien le fond recule vers l'intérieur du caisson, et donc où la rainure est usinée
     action_option_groove_groove_through: Rainure filante

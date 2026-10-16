@@ -31,29 +31,17 @@
             const $widgetPreset = $('.ladb-widget-preset', that.$element);
             const $inputFrontPanelOffset = $('#ladb_input_front_panel_offset', that.$element);
             const $inputThickness = $('#ladb_input_thickness', that.$element);
-            const $selectAxes = $('#ladb_select_axes', that.$element);
-            const $selectMeasureReversed = $('#ladb_select_measure_reversed', that.$element);
-            const $selectReduceEnvelope = $('#ladb_select_reduce_envelope', that.$element);
-            const $selectAskName = $('#ladb_select_ask_name', that.$element);
             const $inputLayerName = $('#ladb_input_layer_name', that.$element);
             const $btnValidate = $('#ladb_btn_validate', that.$element);
 
             const fnFetchOptions = function (options) {
                 options.front_panel_offset = $inputFrontPanelOffset.val();
                 options.thickness = $inputThickness.val();
-                options.axes = $selectAxes.val();
-                options.measure_reversed = $selectMeasureReversed.val() === '1';
-                options.reduce_envelope = $selectReduceEnvelope.val() === '1';
-                options.ask_name = $selectAskName.val() === '1';
                 options.layer_name = $inputLayerName.val();
             };
             const fnFillInputs = function (options) {
                 $inputThickness.val(options.thickness);
                 $inputFrontPanelOffset.val(options.front_panel_offset);
-                $selectAxes.selectpicker('val', options.axes);
-                $selectMeasureReversed.selectpicker('val', options.measure_reversed ? '1' : '0');
-                $selectReduceEnvelope.selectpicker('val', options.reduce_envelope ? '1' : '0');
-                $selectAskName.selectpicker('val', options.ask_name ? '1' : '0');
                 $inputLayerName.val(options.layer_name);
             };
 
@@ -66,10 +54,6 @@
             });
             $inputThickness.ladbTextinputDimension();
             $inputFrontPanelOffset.ladbTextinputDimension();
-            $selectAxes.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
-            $selectMeasureReversed.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
-            $selectReduceEnvelope.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
-            $selectAskName.selectpicker(SELECT_PICKER_MODAL_OPTIONS);
             $inputLayerName.ladbTextinputText({});
 
             fnFillInputs(options);

@@ -27,6 +27,7 @@
 #                between several openings the view sees at once.
 #                options, when given, overrides the case options for that pick.
 #   options      JSON { thickness, depth, setback (mm), through_groove, overlay (optional, false by default),
+#                       panel_reduction, width_clearance (mm, optional, 0 by default),
 #                       front_offset (mm, optional, 0 by default), mirror (optional, false by default),
 #                       reduce (optional, false by default : the envelope reduction),
 #                       against_protrusions (optional, false by default : the applique pose
@@ -120,6 +121,8 @@ module MouthPanelRegression
       fixed.merge!({
         :_fetch_option_groove_depth => options['depth'].to_f.mm,
         :_fetch_option_groove_setback => options['setback'].to_f.mm,
+        :_fetch_option_groove_panel_reduction => options['panel_reduction'].to_f.mm,
+        :_fetch_option_groove_width_clearance => options['width_clearance'].to_f.mm,
         :_fetch_option_groove_through? => options['through_groove'],
       })
     else
@@ -260,6 +263,7 @@ module MouthPanelRegression
       'passes' => handlers.flat_map { |h| h.instance_variable_get(:@probe_passes) || [] },
       'grooved' => carcass.select { |stats| stats['volume'] < before[stats['name']]['volume'] }.map { |stats| stats['name'] }.sort,
       'removed_mm3' => Hash[carcass.map { |stats| [ stats['name'], before[stats['name']]['volume'] - stats['volume'] ] }.sort],
+      'removed_cm3' => Hash[carcass.map { |stats| [ stats['name'], ((before[stats['name']]['volume'] - stats['volume']) / 1000.0).round(1) ] }.reject { |_name, cm3| cm3 == 0 }.sort],
       'panels' => after.reject { |stats| before.key?(stats['name']) }.map { |stats| stats['volume'] }.sort,
       'panel_bounds' => after.reject { |stats| before.key?(stats['name']) }.map { |stats| stats['bounds'] }.sort,
       'non_manifold' => after.reject { |stats| stats['manifold'] && stats['bad_edges'] == 0 }.map { |stats| "#{stats['name']}:#{stats['bad_edges']}" },
@@ -274,6 +278,16 @@ module MouthPanelRegression
   # The new panels' bounds are : volumes say nothing of WHERE a panel stands,
   # and a panel in applique laid on the wrong plane keeps its volume.
   COMPARED = %w[created refusals extensions passes grooved panels panel_bounds non_manifold shared]
+
+  # Compared only on the cases whose expectation holds them - recorded on
+  # every case from now on. The removed volumes, to 0.1 cm3 : what tells a
+  # groove WIDENED behind the panel, which neither the grooved parts nor the
+  # panel itself show (see B21).
+  OPTIONAL_COMPARED = %w[removed_cm3]
+
+  def self.compared_keys(expected)
+    COMPARED + OPTIONAL_COMPARED.select { |key| expected.key?(key) }
+  end
 
   MODEL_NAME = 'test_mouth_panels.skp'
 
@@ -318,12 +332,12 @@ module MouthPanelRegression
       case_instance = case_instances([ id ]).first
       if record
         model.start_operation('Record mouth panel expectations', true)
-        case_instance.set_attribute(DICT, 'expected', JSON.generate(result.select { |key, _| COMPARED.include?(key) }))
+        case_instance.set_attribute(DICT, 'expected', JSON.generate(result.select { |key, _| (COMPARED + OPTIONAL_COMPARED).include?(key) }))
         model.commit_operation
         status = 'RECORDED'
       else
         expected = expected(case_instance)
-        diffs = COMPARED.reject { |key| expected[key] == normalize(result[key]) }
+        diffs = compared_keys(expected).reject { |key| expected[key] == normalize(result[key]) }
         status = expected.empty? ? 'NO-EXPECTED' : (diffs.empty? ? 'PASS' : "FAIL(#{diffs.join(',')})")
       end
       lines << "#{id} #{status} — #{case_instance.get_attribute(DICT, 'description')}"
@@ -338,7 +352,7 @@ if defined?(TestUp::TestCase)
 
   class TC_Ladb_Tool_SmartBuildMouthPanel < TestUp::TestCase
 
-    CASES = %w[B01 B02 B03 B04 B05 B06 B07 B08 B09 B10 B11 B12 B13 B14 B15 B16 B17 B18 B19 B20 F01 F02 F03 F04 F05 F06 F07 F08 F09 F10 F11 F12 F13 F14 F15 F16 F17 F18 F19 F20 F21 F22]
+    CASES = %w[B01 B02 B03 B04 B05 B06 B07 B08 B09 B10 B11 B12 B13 B14 B15 B16 B17 B18 B19 B20 B21 F01 F02 F03 F04 F05 F06 F07 F08 F09 F10 F11 F12 F13 F14 F15 F16 F17 F18 F19 F20 F21 F22]
 
     def setup
       assert(MouthPanelRegression.model_ready?, "Live test : open docs/skp/#{MouthPanelRegression::MODEL_NAME} first (active model : #{Sketchup.active_model.path.inspect})")
@@ -353,7 +367,7 @@ if defined?(TestUp::TestCase)
 
         result = MouthPanelRegression.results([ id ])[id]
         description = case_instance.get_attribute(MouthPanelRegression::DICT, 'description')
-        MouthPanelRegression::COMPARED.each do |key|
+        MouthPanelRegression.compared_keys(expected).each do |key|
           details = result.reject { |detail_key, value| detail_key == key || ((detail_key == 'messages' || detail_key == 'bad_edge_points') && value.empty?) }
           assert_equal(expected[key], MouthPanelRegression.normalize(result[key]), "#{id} #{key} — #{description}\n#{details.inspect}")
         end

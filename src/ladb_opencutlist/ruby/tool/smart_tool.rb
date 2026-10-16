@@ -376,7 +376,7 @@ module Ladb::OpenCutList
                         store_action_option_value(action, option_group, option, button.selected?, fire_event: true)
                       end
                     else
-                      PLUGIN.show_modal_dialog("smart_#{get_stripped_name}_tool_action_#{action}", { :action => action, :focused_field => { :option_group => option_group, :option => option } })
+                      PLUGIN.show_modal_dialog("smart_#{get_stripped_name}_tool_action_#{action}", { :action => action, :toolbar_option_keys => get_action_toolbar_option_keys(action), :focused_field => { :option_group => option_group, :option => option } })
                     end
                   }
                   btn.on(:enter) { |button|
@@ -430,7 +430,7 @@ module Ladb::OpenCutList
                 btn.set_style_attribute(:background_color, COLOR_BRAND, :active)
                 btn.border.set_all!(unit * 0.5)
                 btn.on(:click) { |button|
-                  PLUGIN.show_modal_dialog("smart_#{get_stripped_name}_tool_action_#{action}", { :action => action })
+                  PLUGIN.show_modal_dialog("smart_#{get_stripped_name}_tool_action_#{action}", { :action => action, :toolbar_option_keys => get_action_toolbar_option_keys(action) })
                 }
                 actions_options_panel.append(btn)
 
@@ -1237,6 +1237,15 @@ module Ladb::OpenCutList
 
     def get_action_options_modal?(action)
       false
+    end
+
+    # The preset keys the toolbar edits for the given action - what the
+    # action's modal marks its other fields against. A unique group is stored
+    # under its own name, the options of any other group under theirs.
+    def get_action_toolbar_option_keys(action)
+      action_def = get_action_defs.find { |action_def| action_def[:action] == action }
+      return [] if action_def.nil? || !action_def[:options].is_a?(Hash)
+      action_def[:options].flat_map { |option_group, options| get_action_option_group_unique?(action, option_group) ? [ option_group ] : options }.map(&:to_s).uniq
     end
 
     def get_action_option_group_titled?(action, option_group)
