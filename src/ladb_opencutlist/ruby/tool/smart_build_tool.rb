@@ -3813,13 +3813,28 @@ module Ladb::OpenCutList
       end
     end
 
-    # WORLD bounds of the given definition, placed by the given WORLD
-    # transformation. The transformed corners of a box are the corners of the
-    # transformed box, so this stays exact whatever the rotation.
+    # WORLD bounds of the given definition's own vertices, placed by the given
+    # WORLD transformation - the same reading #_get_divider_fragment_bounds
+    # makes of the fragment, so two congruent solids give the same bounds
+    # whatever their rotation.
+    #
+    # The vertices, not the corners of definition.bounds : those are the
+    # corners of the LOCAL box, which only hug the solid when it is a box
+    # aligned on its own axes. Anything else (a trapezoid, a notch, an outline
+    # a hair off square) leaves them standing out of the material, and once
+    # the container is rotated, out of the fragment's world bounds too - the
+    # reuse then failed on a container drawn at an angle only. Falls back on
+    # those corners when the definition holds no vertex of its own (nested
+    # geometry only).
     def _get_definition_bounds(definition, transformation)
       bounds = Geom::BoundingBox.new
-      definition_bounds = definition.bounds
-      8.times { |index| bounds.add(definition_bounds.corner(index).transform(transformation)) }
+      vertices = definition.entities.grep(Sketchup::Edge).flat_map(&:vertices).uniq
+      if vertices.empty?
+        definition_bounds = definition.bounds
+        8.times { |index| bounds.add(definition_bounds.corner(index).transform(transformation)) }
+      else
+        vertices.each { |vertex| bounds.add(vertex.position.transform(transformation)) }
+      end
       bounds
     end
 

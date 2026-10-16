@@ -2003,20 +2003,32 @@ module Ladb::OpenCutList
     # vector, or nil when degenerate), used to tell a panel edge (chant) face
     # from a main face. The two main faces of a board are opposite : normals
     # are accumulated up to sign.
+    #
+    # The quantized key only BUCKETS the triangles : what is returned is the
+    # area-weighted mean of the bucket's true normals. The key itself is off
+    # by up to 5e-4 per component, which on a panel at an angle to the axes
+    # tilts whatever plane is built along it - an inset back recessed along
+    # it left the cavity 0.4 mm deeper at one end than the other.
     def _panel_dominant_normals(panel_meshes)
       panel_meshes.map do |mesh|
         vertices = mesh[:vertices]
-        area_by_direction = Hash.new(0.0)
+        accumulators = {}
         mesh[:face_indices].each_slice(3) do |a, b, c|
           normal, area2 = _triangle_normal(vertices, a, b, c)
           next if normal.nil?
           normal = normal.map { |v| -v } if normal[0] < 0 || (normal[0] == 0 && (normal[1] < 0 || (normal[1] == 0 && normal[2] < 0)))
           key = normal.map { |v| (v * 1000).round }
-          area_by_direction[key] += area2
+          accumulator = accumulators[key] ||= [ 0.0, 0.0, 0.0, 0.0 ]
+          accumulator[0] += area2 * normal[0]
+          accumulator[1] += area2 * normal[1]
+          accumulator[2] += area2 * normal[2]
+          accumulator[3] += area2
         end
-        max_entry = area_by_direction.max_by { |_, area2| area2 }
-        key = max_entry.nil? ? nil : max_entry.first
-        key.nil? ? nil : key.map { |v| v / 1000.0 }
+        max_entry = accumulators.max_by { |_, accumulator| accumulator[3] }
+        next nil if max_entry.nil?
+        nx, ny, nz, _ = max_entry.last
+        length = Math.sqrt(nx * nx + ny * ny + nz * nz)
+        length == 0 ? nil : [ nx / length, ny / length, nz / length ]
       end
     end
 
