@@ -900,15 +900,8 @@ module Ladb::OpenCutList
     end
 
     def get_state_status(state)
-
-      case state
-
-      when STATE_SELECT
-        return super +
-               ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_export.action_3') + '.'
-      end
-
-      super
+      super +
+        ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_export.action_3') + '.'
     end
 
     # -----
@@ -960,15 +953,8 @@ module Ladb::OpenCutList
     end
 
     def get_state_status(state)
-
-      case state
-
-      when STATE_SELECT
-        return super +
-               ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_export.action_0') + '.'
-      end
-
-      super
+      super +
+        ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_export.action_0') + '.'
     end
 
     # -----
