@@ -2963,6 +2963,7 @@ tool:
     warning:
       no_material: Aucune matière
       no_material_type: Aucune matière de type '{{ type }}'
+      selection_disable_instances_all: La sélection rectangle désactive l'option '$t(tool.smart_paint.action_option_instances_1_status)'
     error:
       not_part: L'objet ciblé n'est pas une pièce (composant)
       not_edge: La face ciblée n'est pas un chant de panneau

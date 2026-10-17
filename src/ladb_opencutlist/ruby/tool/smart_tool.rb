@@ -3177,6 +3177,7 @@ module Ladb::OpenCutList
 
       @mouse_down_point_2d = nil
       @mouse_move_point_2d = nil
+      @select_rect_canceled = false
 
       @startup_state = STATE_SELECT
 
@@ -3304,9 +3305,18 @@ module Ladb::OpenCutList
 
       case @state
 
-      when STATE_SELECT_TWINS, STATE_SELECT_RECT
+      when STATE_SELECT_TWINS
         @mouse_down_point_2d = nil
         @mouse_move_point_2d = nil
+
+      when STATE_SELECT_RECT
+        # The rectangle is dropped : the button release, still to come, must
+        # not select what it ends on
+        @mouse_down_point_2d = nil
+        @mouse_move_point_2d = nil
+        @select_rect_canceled = true
+        @tool.clear_all_2d
+        set_state(STATE_SELECT)
 
       end
 
@@ -3343,6 +3353,8 @@ module Ladb::OpenCutList
     def onToolLButtonDown(tool, flags, x, y, view)
       super
 
+      @select_rect_canceled = false  # Its release may have been missed - off the viewport
+
       case @state
 
       when STATE_SELECT
@@ -3362,6 +3374,12 @@ module Ladb::OpenCutList
       super
 
       @mouse_down_point = nil
+
+      # The release of a canceled rectangle
+      if @select_rect_canceled
+        @select_rect_canceled = false
+        return true
+      end
 
       case @state
 
@@ -3409,6 +3427,8 @@ module Ladb::OpenCutList
 
           @tool.clear_all_2d
           @select_rect_points_2d = [ @mouse_down_point_2d, Geom::Point3d.new(x, y) ]  # Kept for onSelected
+          @select_rect_pick_paths = (0...ph.count).map { |i| ph.path_at(i) }  # Kept for onSelected
+          @select_rect_pick_inside = pick_inside
           @mouse_down_point_2d = nil
           @mouse_move_point_2d = nil
 
@@ -3433,7 +3453,7 @@ module Ladb::OpenCutList
               end
               next if path.first(active_path_length) != active_path
               # Inside : the active context child must be fully inside itself, not only one of its descendants
-              next if pick_inside && path.length > active_path_length + 1
+              next if pick_inside && path.length > active_path_length + 1 && !_select_rect_deep_inside?
               entity = path[active_path_length]
               instances << entity if entity.respond_to?(:transformation)
             end
@@ -3702,6 +3722,13 @@ module Ladb::OpenCutList
     end
 
     def _allows_tree_selection?
+      false
+    end
+
+    # Does the rectangle selection keep the active context children holding a
+    # fully inside descendant ? The handler then reads the raw picked paths
+    # (@select_rect_pick_paths) to select at the descendants depth.
+    def _select_rect_deep_inside?
       false
     end
 
@@ -4075,10 +4102,16 @@ module Ladb::OpenCutList
   #    last row - their buttons and labels are kept in footer_btns, the
   #    owner updates them. MOTIF_CANCEL_PATH and MOTIF_VALIDATE_PATH draw the
   #    validation buttons ones.
+  # Beyond MAX_ROWS buttons, the list scrolls - by the wheel or by the up
+  # and down bars around it.
   class SmartDropup < Kuix::Panel
+
+    MAX_ROWS = 10
 
     MOTIF_CANCEL_PATH = 'M0,0L1,1 M0,1L1,0'.freeze
     MOTIF_VALIDATE_PATH = 'M0,0.5L0.375,1L1,0'.freeze
+    MOTIF_SCROLL_UP_PATH = 'M0,1L1,1L0.5,0L0,1Z'.freeze
+    MOTIF_SCROLL_DOWN_PATH = 'M0,0L1,0L0.5,1L0,0Z'.freeze
 
     # [ { :button => Kuix::Button, :label => Kuix::Label - nil for a motif } ] in footer_btn_defs order
     attr_reader :footer_btns
@@ -4089,7 +4122,8 @@ module Ladb::OpenCutList
       unit = tool.get_unit
 
       self.layout_data = Kuix::StaticLayoutData.new(tool.last_mouse_x, tool.last_mouse_y, -1, -1, Kuix::Anchor.new(anchor))
-      self.layout = Kuix::GridLayout.new(1, btn_defs.size + (title.nil? ? 0 : 1) + (footer_btn_defs.nil? || footer_btn_defs.empty? ? 0 : 1), 0, unit * 0.25)
+      self.layout_data.keep_inside = true
+      self.layout = Kuix::BorderLayout.new(0, unit * 0.25)
       self.border.set_all!(unit * 0.25)
       self.padding.set_all!(unit * 0.25)
       self.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_LIGHT)
@@ -4099,6 +4133,7 @@ module Ladb::OpenCutList
 
           # The title is the drag handle of the dropup
           k_title = Kuix::Label.new
+          k_title.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
           k_title.text = title
           k_title.text_size = unit * 3
           k_title.text_bold = true
@@ -4110,6 +4145,43 @@ module Ladb::OpenCutList
           self.append(k_title)
 
         end
+
+        k_list = Kuix::Panel.new
+        k_list.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
+        k_list.layout = Kuix::BorderLayout.new(0, unit * 0.25)
+        self.append(k_list)
+
+          k_rows = Kuix::ScrollPanel.new(1, [ btn_defs.size, MAX_ROWS ].min, 0, unit * 0.25)
+          k_rows.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
+          k_list.append(k_rows)
+
+          if btn_defs.size > MAX_ROWS
+            [
+              [ Kuix::BorderLayoutData::NORTH, MOTIF_SCROLL_UP_PATH ],
+              [ Kuix::BorderLayoutData::SOUTH, MOTIF_SCROLL_DOWN_PATH ]
+            ].each do |position, motif_path|
+
+              k_scroll_btn = Kuix::Button.new
+              k_scroll_btn.layout_data = Kuix::BorderLayoutData.new(position)
+              k_scroll_btn.layout = Kuix::InlineLayout.new(true, 0, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+              k_scroll_btn.padding.set_all!(unit)
+              k_scroll_btn.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
+              k_scroll_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND, :hover)
+              k_scroll_btn.set_style_attribute(:background_color, Kuix::COLOR_WHITE, :disabled)
+              k_list.append(k_scroll_btn)
+              position == Kuix::BorderLayoutData::NORTH ? k_rows.bind_scroll_up_btn(k_scroll_btn) : k_rows.bind_scroll_down_btn(k_scroll_btn)
+
+                k_scroll_motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path(motif_path))
+                k_scroll_motif.min_size.set!(unit * 3, unit * 1.5)
+                k_scroll_motif.filled = true
+                k_scroll_motif.hittable = false
+                k_scroll_motif.set_style_attribute(:color, Kuix::COLOR_DARK_GREY)
+                k_scroll_motif.set_style_attribute(:color, Kuix::COLOR_WHITE, :hover)
+                k_scroll_motif.set_style_attribute(:color, Kuix::COLOR_LIGHT_GREY, :disabled)
+                k_scroll_btn.append(k_scroll_motif)
+
+            end
+          end
 
         btn_defs.each do |btn_def|
 
@@ -4127,7 +4199,7 @@ module Ladb::OpenCutList
           k_btn.on(:enter) { btn_def.on_enter.call(k_btn) } unless btn_def.on_enter.nil?
           k_btn.on(:leave) { btn_def.on_leave.call(k_btn) } unless btn_def.on_leave.nil?
           k_btn.on(:click) { btn_def.on_click.call(k_btn) } unless btn_def.on_click.nil?
-          self.append(k_btn)
+          k_rows.append(k_btn)
 
             # The swatch is a full height bar on the left edge : the vertical
             # padding moves to the labels and the tick
@@ -4165,16 +4237,18 @@ module Ladb::OpenCutList
 
             unless btn_def.tick_def.nil?
 
-              # A V motif : ghost when unticked, brand colored when ticked
+              # A checkbox : empty light grey box when unticked, brand V motif in a medium grey box when ticked
               k_tick_btn = Kuix::Button.new
               k_tick_btn.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
               k_tick_btn.layout = Kuix::InlineLayout.new(true, 0, Kuix::Anchor.new(Kuix::Anchor::CENTER))
-              k_tick_btn.border.set_all!(unit * 0.5)
-              k_tick_btn.margin.set!(unit, 0, unit, 0) if swatch
+              k_tick_btn.border.set_all!(unit * 0.25)
+              k_tick_btn.padding.set_all!(unit * 0.5)
+              k_tick_btn.margin.set!(unit * 0.5, 0, unit * 0.5, 0) if swatch
               k_tick_btn.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
-              k_tick_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_LIGHT, :hover)
-              k_tick_btn.set_style_attribute(:border_color, Kuix::COLOR_WHITE)
-              k_tick_btn.set_style_attribute(:border_color, SmartTool::COLOR_BRAND_LIGHT, :hover)
+              k_tick_btn.set_style_attribute(:border_color, Kuix::COLOR_LIGHT_GREY)
+              k_tick_btn.set_style_attribute(:border_color, Kuix::COLOR_MEDIUM_GREY, :hover)
+              k_tick_btn.set_style_attribute(:border_color, Kuix::COLOR_MEDIUM_GREY, :selected)
+              k_tick_btn.set_style_attribute(:border_color, Kuix::COLOR_LIGHT_GREY, :disabled)
               k_tick_btn.selected = btn_def.tick_def.selected
               k_tick_btn.disabled = btn_def.disabled || btn_def.tick_def.disabled
               k_tick_btn.on(:click) { btn_def.tick_def.on_click.call(k_tick_btn) } unless btn_def.tick_def.on_click.nil?
@@ -4184,8 +4258,7 @@ module Ladb::OpenCutList
                 k_tick_motif.min_size.set_all!(unit * 3)  # Square, as high as a text line
                 k_tick_motif.line_width = unit * 0.5
                 k_tick_motif.hittable = false
-                k_tick_motif.set_style_attribute(:color, Kuix::COLOR_LIGHT_GREY)
-                k_tick_motif.set_style_attribute(:color, Kuix::COLOR_MEDIUM_GREY, :hover)
+                k_tick_motif.set_style_attribute(:color, Kuix::COLOR_WHITE)  # Invisible on the white box
                 k_tick_motif.set_style_attribute(:color, SmartTool::COLOR_BRAND, :selected)
                 k_tick_motif.set_style_attribute(:color, Kuix::COLOR_LIGHT_GREY, :disabled)
                 k_tick_btn.append(k_tick_motif)
@@ -4193,11 +4266,13 @@ module Ladb::OpenCutList
             end
 
         end
+        k_rows.scroll(0)  # The scroll bars enabled accordingly
 
         @footer_btns = []
         unless footer_btn_defs.nil? || footer_btn_defs.empty?
 
           k_footer = Kuix::Panel.new
+          k_footer.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::SOUTH)
           k_footer.layout = Kuix::GridLayout.new(footer_btn_defs.size, 1, unit * 0.25, 0)
           self.append(k_footer)
 
@@ -4256,12 +4331,13 @@ module Ladb::OpenCutList
     end
 
     # The anchor that keeps a dropup opened at the end of a drag from
-    # 'start_point_2d' to 'end_point_2d' inside the dragged rectangle.
-    def self.anchor_inside_drag(start_point_2d, end_point_2d)
+    # 'start_point_2d' to 'end_point_2d' beside the dragged rectangle :
+    # horizontally outside, not to hide it, and vertically inside.
+    def self.anchor_beside_drag(start_point_2d, end_point_2d)
       if end_point_2d.y >= start_point_2d.y
-        end_point_2d.x >= start_point_2d.x ? Kuix::Anchor::BOTTOM_RIGHT : Kuix::Anchor::BOTTOM_LEFT
+        end_point_2d.x >= start_point_2d.x ? Kuix::Anchor::BOTTOM_LEFT : Kuix::Anchor::BOTTOM_RIGHT
       else
-        end_point_2d.x >= start_point_2d.x ? Kuix::Anchor::TOP_RIGHT : Kuix::Anchor::TOP_LEFT
+        end_point_2d.x >= start_point_2d.x ? Kuix::Anchor::TOP_LEFT : Kuix::Anchor::TOP_RIGHT
       end
     end
 

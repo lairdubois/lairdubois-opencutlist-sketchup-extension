@@ -2,7 +2,8 @@ module Ladb::OpenCutList::Kuix
 
   class StaticLayoutData
 
-    attr_accessor :x, :y, :width, :height, :anchor
+    attr_accessor :x, :y, :width, :height, :anchor,
+                  :keep_inside  # Clamps the entity position to keep it inside its parent
 
     def initialize(x = 0, y = 0, width = -1, height = -1, anchor = nil)
       @x = x
@@ -10,6 +11,7 @@ module Ladb::OpenCutList::Kuix
       @width = width
       @height = height
       @anchor = anchor
+      @keep_inside = false
     end
 
     # --
@@ -115,6 +117,12 @@ module Ladb::OpenCutList::Kuix
             elsif entity.layout_data.anchor.horizontal_center?
               entity_bounds.origin.y -= entity_bounds.size.height / 2
             end
+          end
+
+          # Keep inside - the top left corner wins if the entity is larger than its parent
+          if entity.layout_data.keep_inside
+            entity_bounds.origin.x = [ [ entity_bounds.origin.x, available_width - entity_bounds.size.width ].min, 0 ].max
+            entity_bounds.origin.y = [ [ entity_bounds.origin.y, available_height - entity_bounds.size.height ].min, 0 ].max
           end
 
         else

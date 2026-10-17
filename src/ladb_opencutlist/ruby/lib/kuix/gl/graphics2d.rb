@@ -46,6 +46,14 @@ module Ladb::OpenCutList::Kuix
       @view.draw2d(GL_LINE_LOOP, points.map { |point| Geom::Point3d.new(@origin.x + point.x, @origin.y + point.y, 0) })
     end
 
+    def draw_triangles(
+      points:,
+      fill_color: nil
+    )
+      set_drawing_color(fill_color) if fill_color
+      @view.draw2d(GL_TRIANGLES, points.map { |point| Geom::Point3d.new(@origin.x + point.x, @origin.y + point.y, 0) })
+    end
+
     def draw_triangle(
       x1:,
       y1:,

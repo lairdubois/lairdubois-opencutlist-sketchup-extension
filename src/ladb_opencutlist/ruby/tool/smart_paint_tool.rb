@@ -900,7 +900,9 @@ module Ladb::OpenCutList
 
     # The parts of a rectangle selection sharing a material : their paths,
     # painted or not as the filter dropup ticks them.
-    SelectionMaterialEntry = Struct.new(:material_name, :display_name, :color, :type, :paths, :selected)
+    # A locked entry is the applied material : always painted, as a click
+    # would do - its parts may inherit it from a container.
+    SelectionMaterialEntry = Struct.new(:material_name, :display_name, :color, :type, :paths, :selected, :locked)
 
     # The GroupDef and MaterialAttributes properties GroupDef.group_order
     # reads, to sort the entries as the cut list groups
@@ -911,7 +913,11 @@ module Ladb::OpenCutList
       super
 
       @selection_material_entries = nil
+      @selection_part_paths = nil
       @hovered_selection_material_entry = nil
+      @instance_parts = {}
+      @select_rect_preview_part_paths = nil
+      @triangles_by_definition = {}
 
       # Create 3D layers
       tool.create_3d(LAYER_3D_PART_PREVIEW)
@@ -974,7 +980,7 @@ module Ladb::OpenCutList
         end
         return true
       end
-      UI.beep if @state == STATE_SELECT && !has_active_part?
+      UI.beep if @state == STATE_SELECT && !has_active_part? && !@select_rect_canceled
       super
     end
 
@@ -1012,6 +1018,8 @@ module Ladb::OpenCutList
         @selection_filter_validate_btn = nil
       end
 
+      _clear_select_rect_preview if old_state == STATE_SELECT_RECT && new_state != STATE_SELECT_FILTER
+
       if new_state == STATE_SELECT_FILTER
         @tool.clear_all_2d
         @tool.clear_all_3d
@@ -1047,8 +1055,9 @@ module Ladb::OpenCutList
         @selection_material_entries = _get_selection_material_entries
         if @selection_material_entries.empty?
           UI.beep
-        elsif @selection_material_entries.size > 1 || @selection_material_entries.any? { |entry| !entry.selected }
-          # Several materials, or one not painted by default : let the user choose
+        elsif (choice_entries = @selection_material_entries.reject(&:locked)).size > 1 || choice_entries.any? { |entry| !entry.selected }
+          # Several materials, or one not painted by default : let the user
+          # choose - the applied one isn't a choice
           set_state(STATE_SELECT_FILTER)
           return
         else
@@ -1175,15 +1184,23 @@ module Ladb::OpenCutList
       false
     end
 
+    # The parts are picked one by one, at any depth
+    def _select_rect_deep_inside?
+      true
+    end
+
     # The instances of the ticked parts of the rectangle selection, and the
     # instances between the selected ones and these parts - the selected ones
-    # included.
+    # included. A container holding a part left out is not one : the part
+    # would no more inherit its material.
     def _get_selection_part_instances_and_containers
       selection_path = get_active_selection_path
       part_paths = @selection_material_entries.select(&:selected).map(&:paths).flatten(1).uniq
+      part_path_set = part_paths.to_set
+      left_out_containers = @selection_part_paths.reject { |path| part_path_set.include?(path) }.map { |path| path[selection_path.length...-1] }.flatten.to_set
       [
         part_paths.map(&:last).uniq,
-        part_paths.map { |path| path[selection_path.length...-1] }.flatten.uniq
+        part_paths.map { |path| path[selection_path.length...-1] }.flatten.uniq.reject { |container| left_out_containers.include?(container) }
       ]
     end
 
@@ -1191,36 +1208,102 @@ module Ladb::OpenCutList
     # groups order. The parts are the cut list ones : a selected group or
     # component can hold several. Only the parts without material and the
     # materials of the applied material type are ticked, or all but the
-    # hardware if none is applied.
+    # hardware if none is applied. The applied material is ticked and locked.
+    # Drawn, the rectangle picks the parts themselves, not their containers :
+    # inside, the fully inside ones - or the ones of a fully inside container ;
+    # crossing, the touched ones.
     def _get_selection_material_entries
       selection_path = get_active_selection_path
+      parts = _get_selected_instances.map { |instance| _get_instance_parts(instance, selection_path) }.flatten(1)
+      @selection_part_paths = parts.map(&:last).uniq  # All the parts of the selected instances, picked or not
+      _get_material_entries(parts, _get_select_rect_fn_picked(@select_rect_pick_paths, @select_rect_pick_inside))
+    end
+
+    # The given [ group, path ] parts - the picked ones only if 'fn_picked'
+    # isn't nil - by material, in the cut list groups order.
+    def _get_material_entries(parts, fn_picked = nil)
       target_material = _get_preview_material
       target_type = target_material ? MaterialAttributes.new(target_material).type : nil
-      fn_selected = lambda { |group| group.material_name.empty? || (target_type.nil? ? group.material_type != MaterialAttributes::TYPE_HARDWARE : group.material_type == target_type) }
-      cutlist_options = PLUGIN.get_model_preset('cutlist_options')
+      fn_locked = lambda { |group| !target_material.nil? && group.material_name == target_material.name }
+      fn_selected = lambda { |group| fn_locked.call(group) || group.material_name.empty? || (target_type.nil? ? group.material_type != MaterialAttributes::TYPE_HARDWARE : group.material_type == target_type) }
       entries = {}
-      _get_selected_instances.each do |instance|
-        worker = CutlistGenerateWorker.new(**HashUtils.symbolize_keys(cutlist_options).merge({ active_entity: instance, active_path: selection_path, part_folding: false }))
-        cutlist = worker.run
-        cutlist.groups.each do |group|
-          entry = entries[group.material_name] ||= SelectionMaterialEntry.new(
-            group.material_name,
-            group.material_name.empty? ? PLUGIN.get_i18n_string('tab.cutlist.material_undefined') : group.material_display_name,
-            group.material_color.nil? ? nil : Sketchup::Color.new(group.material_color),
-            group.material_type,
-            [],
-            fn_selected.call(group)
-          )
-          group.parts.each { |part| entry.paths.concat(part.def.instance_infos.values.map(&:path)) }
-        end
+      parts.each do |group, path|
+        next unless fn_picked.nil? || fn_picked.call(path)
+        entry = entries[group.material_name] ||= SelectionMaterialEntry.new(
+          group.material_name,
+          group.material_name.empty? ? PLUGIN.get_i18n_string('tab.cutlist.material_undefined') : group.material_display_name,
+          group.material_color.nil? ? nil : Sketchup::Color.new(group.material_color),
+          group.material_type,
+          [],
+          fn_selected.call(group),
+          fn_locked.call(group)
+        )
+        entry.paths << path
       end
       entries.values.each { |entry| entry.paths.uniq! }
 
       # Sorted as the cut list groups : each selected instance has its own cut
       # list. An entry is a material, its groups' std dimensions don't apply.
-      group_order_strategy = cutlist_options['group_order_strategy']
+      group_order_strategy = PLUGIN.get_model_preset('cutlist_options')['group_order_strategy']
       fn_group_def = lambda { |entry| SelectionMaterialGroupDef.new(SelectionMaterialAttributes.new(entry.type), entry.material_name) }
       entries.values.sort { |entry_a, entry_b| GroupDef.group_order(fn_group_def.call(entry_a), fn_group_def.call(entry_b), group_order_strategy) }
+    end
+
+    # The cut list parts of the given instance as [ group, path ] - memoized :
+    # the rectangle preview and the selection share them.
+    def _get_instance_parts(instance, path)
+      @instance_parts[[ path, instance ]] ||= begin
+        worker = CutlistGenerateWorker.new(**HashUtils.symbolize_keys(PLUGIN.get_model_preset('cutlist_options')).merge({ active_entity: instance, active_path: path, part_folding: false }))
+        cutlist = worker.run
+        cutlist.groups.map { |group| group.parts.map { |part| part.def.instance_infos.values.map { |instance_info| [ group, instance_info.path ] } } }.flatten(2)
+      end
+    end
+
+    # Is the part at the given absolute path picked by the rectangle ? Picked
+    # paths are absolute too : inside, they stop at the highest fully inside
+    # entity ; crossing, they end at a touched leaf - or a fully inside
+    # entity. Looked up in sets : a rectangle preview runs it on every part
+    # at each move. nil without rectangle.
+    def _get_select_rect_fn_picked(pick_paths, pick_inside)
+      return nil if pick_paths.nil?
+      # A picked path or one of its ancestors is fully inside
+      pick_path_set = pick_paths.to_set
+      # Crossing : the part holds a touched leaf
+      pick_prefix_set = pick_inside ? Set[] : pick_paths.map { |pick_path| (1..pick_path.length).map { |n| pick_path.first(n) } }.flatten(1).to_set
+      lambda { |path| pick_prefix_set.include?(path) || (1..path.length).any? { |n| pick_path_set.include?(path.first(n)) } }
+    end
+
+    # -- Rect preview --
+
+    def _preview_select_rect(view)
+      super
+      _preview_select_rect_parts(view) if _allows_rect_selection?
+    end
+
+    # Draws the parts the rectangle picks as the filter would paint them by
+    # default - redrawn only when they change.
+    def _preview_select_rect_parts(view)
+      pick_inside = @mouse_down_point_2d.x < @mouse_move_point_2d.x
+      ph = view.pick_helper
+      ph.window_pick(@mouse_down_point_2d, @mouse_move_point_2d, pick_inside ? Sketchup::PickHelper::PICK_INSIDE : Sketchup::PickHelper::PICK_CROSSING)
+      fn_picked = _get_select_rect_fn_picked((0...ph.count).map { |i| ph.path_at(i) }, pick_inside)
+
+      model = Sketchup.active_model
+      active_path = model.active_path.to_a
+      parts = model.active_entities.select { |entity| entity.respond_to?(:definition) }.map { |instance| _get_instance_parts(instance, active_path) }.flatten(1)
+      parts = parts.select { |_group, path| fn_picked.call(path) }
+      part_paths = parts.map(&:last).to_set
+      return if part_paths == @select_rect_preview_part_paths
+      @select_rect_preview_part_paths = part_paths
+
+      @selection_material_entries = _get_material_entries(parts)
+      _preview_selection_filter
+    end
+
+    def _clear_select_rect_preview
+      @select_rect_preview_part_paths = nil
+      @selection_material_entries = nil
+      @tool.clear_3d(LAYER_3D_ACTION_PREVIEW)
     end
 
     # -- Filter --
@@ -1233,15 +1316,17 @@ module Ladb::OpenCutList
 
           text_defs = [
             SmartDropup::SmartDropupTextDef.new(entry.display_name, Kuix::COLOR_BLACK, true),
-            SmartDropup::SmartDropupTextDef.new("(#{entry.paths.size})", Kuix::COLOR_DARK_GREY)
+            SmartDropup::SmartDropupTextDef.new("(x#{entry.paths.size})", Kuix::COLOR_DARK_GREY)
           ]
 
           on_click = lambda { |k_btn|
+            next if entry.locked
             if (k_tick_btn = k_btn.children.find { |child| child.is_a?(Kuix::Button) })
               k_tick_btn.fire(:click)
             end
           }
           on_tick_click = lambda { |k_tick_btn|
+            next if entry.locked
             k_tick_btn.selected = entry.selected = !entry.selected
             _preview_selection_filter
           }
@@ -1263,13 +1348,14 @@ module Ladb::OpenCutList
             false,
             SmartDropup::SmartDropupTickDef.new(
               entry.selected,
-              on_tick_click
+              on_tick_click,
+              entry.locked
             ),
             entry.color.nil? ? Kuix::COLOR_WHITE : entry.color
           )
         },
         nil,
-        anchor: @select_rect_points_2d.nil? ? Kuix::Anchor::BOTTOM_RIGHT : SmartDropup.anchor_inside_drag(*@select_rect_points_2d),
+        anchor: @select_rect_points_2d.nil? ? Kuix::Anchor::BOTTOM_RIGHT : SmartDropup.anchor_beside_drag(*@select_rect_points_2d),
         title: PLUGIN.get_i18n_string('tool.smart_paint.select_filter_title'),
         footer_btn_defs: [
           SmartDropup::SmartDropupFooterBtnDef.new(nil, lambda { |k_btn| _restart }, SmartTool::MESSAGE_TYPE_ERROR, false, SmartDropup::MOTIF_CANCEL_PATH),
@@ -1287,13 +1373,12 @@ module Ladb::OpenCutList
       return if @selection_material_entries.nil?
 
       material = _get_preview_material
-      triangles_by_definition = {}
 
       @selection_material_entries.select(&:selected).each do |entry|
         hovered = entry == @hovered_selection_material_entry
         entry.paths.each do |path|
 
-          triangles = triangles_by_definition[path.last.definition] ||= _compute_children_faces_triangles(path.last.definition.entities)
+          triangles = @triangles_by_definition[path.last.definition] ||= _compute_children_faces_triangles(path.last.definition.entities)
 
           color = material ? material.color : MaterialUtils::get_color_from_path(_get_preview_color_path(path))
           color.alpha = hovered ? 255 : 200
@@ -1377,6 +1462,18 @@ module Ladb::OpenCutList
       super
     end
 
+    # -----
+
+    def onToolActionOptionStored(tool, action, option_group, option)
+      super
+      _warn_if_instances_all if option_group == SmartPaintTool::ACTION_OPTION_INSTANCES && fetch_state == STATE_SELECT_FILTER
+    end
+
+    def onSelected
+      _warn_if_instances_all if !has_active_part? && has_active_selection?
+      super
+    end
+
     protected
 
     def _preview_action_draw(highlighted)
@@ -1401,8 +1498,9 @@ module Ladb::OpenCutList
       _paint_instances(_get_instances)
     end
 
+    # The rectangle selection paints what it holds : the instances option
+    # doesn't apply
     def _do_selection_action(part_instances, containers)
-      part_instances = part_instances.map { |instance| instance.definition.instances }.flatten.uniq if _fetch_option_instances_all
       _paint_instances(part_instances)
     end
 
@@ -1426,6 +1524,10 @@ module Ladb::OpenCutList
 
     def _fetch_option_instances_all
       @tool.fetch_action_option_boolean(@action, SmartPaintTool::ACTION_OPTION_INSTANCES, SmartPaintTool::ACTION_OPTION_INSTANCES_ALL)
+    end
+
+    def _warn_if_instances_all
+      @tool.notify_warnings([ [ 'tool.smart_paint.warning.selection_disable_instances_all' ] ]) if _fetch_option_instances_all
     end
 
   end
