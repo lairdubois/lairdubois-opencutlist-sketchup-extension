@@ -61,7 +61,7 @@ default:
   bad: Schlecht
   by: von
   # date format in use in your language
-  date_format: Y-m-d G:i
+  date_format: d.m.Y G:i
   # short date format in use in your language
   date_format_short: Y-m-d
   decimal: Dezimal
@@ -139,7 +139,7 @@ core:
       smart_export: Teile exportieren
   messagebox:
     dir_override: |
-      « {{ target }} » existiert schon. Möchten Sie es ersetzen?
+      „{{ target }}“ existiert schon. Möchten Sie es ersetzen?
 
       Ein Verzeichnis mit diesem Namen befindet sich schon im Verzeichnis {{ parent }}. Wenn Sie es ersetzen, geht der ursprüngliche Inhalt verloren.
   savepanel:
@@ -284,14 +284,14 @@ core:
     textinput_size:
       quantity: Anz.
     three_viewer:
-      view: Ansicht {{ view }}
+      view: "{{ view }}"
       view_isometric: Isometrisch
       view_top: Draufsicht
       view_bottom: Untersicht
       view_front: Vorderansicht
       view_back: Rückansicht
-      view_left: Links
-      view_right: Rechts
+      view_left: Seitenansicht von Links
+      view_right: Seitenansicht von Rechts
       zoom: "{{ zoom }} Maßstab"
       explode_factor: Amplitude der Explosion
       toggle_box_helper: Begrenzungsrahmen ein- oder ausblenden
@@ -305,16 +305,16 @@ core:
   solid:
     error:
       empty: Der Körper enthält keine Geometrie
-      empty_named: « {{ name }} » enthält keine Geometrie
+      empty_named: „{{ name }}“ enthält keine Geometrie
       # an edge is considered manifold when it is shared by exactly two faces in a 3D mesh
       non_manifold_edges: Der Körper enthält {{ count }} nicht-mannigfaltige Kante
       non_manifold_edges_plural: Der Körper enthält {{ count }} nicht-mannigfaltige Kanten
-      non_manifold_edges_named: « {{ name }} » enthält {{ count }} nicht-mannigfaltige Kante
-      non_manifold_edges_named_plural: « {{ name }} » enthält {{ count }} nicht-mannigfaltige Kanten
+      non_manifold_edges_named: „{{ name }}“ enthält {{ count }} nicht-mannigfaltige Kante
+      non_manifold_edges_named_plural: „{{ name }}“ enthält {{ count }} nicht-mannigfaltige Kanten
       open_edges: Der Körper enthält {{ count }} offene Kante
       open_edges_plural: Der Körper enthält {{ count }} offene Kanten
-      open_edges_named: « {{ name }} » enthält {{ count }} offene Kante
-      open_edges_named_plural: « {{ name }} » enthält {{ count }} offene Kanten
+      open_edges_named: „{{ name }}“ enthält {{ count }} offene Kante
+      open_edges_named_plural: „{{ name }}“ enthält {{ count }} offene Kanten
       locked_instances: "Der Vorgang kann eine gesperrte Instanz nicht ändern: {{ list }}"
     rebuild:
       error:
@@ -426,9 +426,9 @@ tab:
     edit_part_edges_properties: Eigenschaften (Kanten) des Teils bearbeiten
     edit_part_faces_properties: Eigenschaften (Flächen) des Teils bearbeiten
     part_drawing_type_1: 2D Draufsicht
-    part_drawing_type_2: 2D Untersicht
-    part_drawing_type_3: 2D Ansicht links
-    part_drawing_type_4: 2D Seiterechts
+    part_drawing_type_2: 2D Rückansicht
+    part_drawing_type_3: 2D Seitenansicht von links
+    part_drawing_type_4: 2D Seitenansicht von rechts
     part_drawing_type_5: 2D Vorderansicht
     part_drawing_type_6: 2D Rückansicht
     part_drawing_type_7: 3D
@@ -527,7 +527,7 @@ tab:
       edge_ymax: Kantenband Länge 2
       edge_xmin: Kantenband Breite 1
       edge_xmax: Kantenband Breite 2
-      face_zmin: Gegenseite
+      face_zmin: Rückseite
       face_zmax: Ansichtsseite
       dblclick_to_copy_all_edges: Doppelklicken Sie hier, um diesen Wert auf die übrigen Kanten zu übertragen
       dblclick_to_copy_all_faces: Doppelklicken Sie hier, um diesen Wert auf die andere Fläche zu übertragen
@@ -642,7 +642,7 @@ tab:
       ignore_grain_direction_1: Faserverlauf ignorieren
       follow_grain_direction: Fortlaufende Maserung
       follow_grain_direction_help: |
-        Wenn diese Option aktiviert ist, werden die Instanzen dieses Bauteils als Teile betrachtet, die mit ihren Nachbarn, die die folgenden Eigenschaften teilen, in **Fortlaufende Maserungruppe** angeordnet sind:
+        Wenn diese Option aktiviert ist, können die Instanzen dieses Teils als Teile betrachtet, die mit ihren Nachbarn im Modus **Fortlaufende Maserungruppe** angeordnet sind, sofern sie Folgendes gemeinsam haben:
         - dieselbe *Fortlaufende Maserungsgruppe*
         - dieselbe Ebene
         - dieselbe Ausrichtung
@@ -927,8 +927,8 @@ tab:
       option_hide_part_list_2d_good_0: Anzeigen für jede Platte
       option_hide_part_list_2d_veneer_0: Anzeigen für jedes Furnierblatt
       option_hide_part_list_1: Ausgeblendet
-      option_hide_part_list_1d_help: Anzeigen oder Maskieren der Liste der Teile für jede Stange oder jedes Kantenband.
-      option_hide_part_list_2d_help: Anzeigen oder Maskieren der Liste der Teile für jede Platte oder jedes Furnierblatt.
+      option_hide_part_list_1d_help: Anzeigen oder Ausblenden der Liste der Teile für jede Stange oder jedes Kantenband.
+      option_hide_part_list_2d_help: Anzeigen oder Ausblenden der Liste der Teile für jede Platte oder jedes Furnierblatt.
       option_use_names: Identifizierung der Teile
       option_use_names_0: Nummer verwenden
       option_use_names_1: Bezeichnung verwenden
@@ -1203,7 +1203,7 @@ tab:
       option_rectangleguillotine_number_of_stages: Anzahl der Stufen
       option_rectangleguillotine_number_of_stages_help: |
         Legt die maximale Anzahl der Schnittstufen fest.
-      option_rectangleguillotine_first_stage_orientation: Erster Schnitt
+      option_rectangleguillotine_first_stage_orientation: Richtung erster Schnitt
       option_rectangleguillotine_first_stage_orientation_help: |
         Legt die Richtung des ersten Schnittes fest.
       option_rectangleguillotine_first_stage_orientation_horizontal: Horizontal
@@ -1215,7 +1215,7 @@ tab:
       option_rectangleguillotine_sort_subplates_criteria_l1l2: Nach absteigender Größe
       option_rectangleguillotine_sort_subplates_criteria_dl2l1: Nach absteigender Dichte
       option_rectangleguillotine_keep: Mindestgröße der Verschnitte
-      option_rectangleguillotine_keep_help: Verschnitte, die größer als die Mindestlänge und -breite sind, werden mit **zur Aufbewahrung** gekennzeichnet.
+      option_rectangleguillotine_keep_help: Verschnitte, bei denen beide Maße größer als die Mindestgröße sind, werden mit **aufbewahren** gekennzeichnet.
       option_rectangle_leftover_mode: Ausbreitungsrichtung der Teile
       option_rectangle_leftover_mode_help: |
         Legt die Ausbreitungsrichtung der Teile auf der letzten nicht vollständig ausgefüllten Platte fest.
@@ -1495,10 +1495,10 @@ tab:
         part_edge_ymax: Kantenband Länge 2
         part_edge_xmin: Kantenband Breite 1
         part_edge_xmax: Kantenband Breite 2
-        part_face_zmin: Furnier Gegenseite
+        part_face_zmin: Furnier Rückseite
         part_face_zmax: Furnier Ansichtsseite
         thumbnail_proportional_drawing: Miniaturbild (Frontansicht)
-        thumbnail_proportional_drawing_bottom: Miniaturbild (Untersicht)
+        thumbnail_proportional_drawing_bottom: Miniaturbild (Rückseite)
         thumbnail_proportional: Proportionales Miniaturbild
         thumbnail_square: Quadratisches Miniaturbild
         group_material: Material / Dimensionen
@@ -1628,9 +1628,9 @@ tab:
         - Die Struktur **Layers + Blöcke** erstellt einen Block pro Teil und fügt diese Blöcke so oft ein, wie die Teile wiederholt werden. *Diese Struktur bietet mehr Flexibilität beim Bearbeiten der Datei.*
       option_dxf_depth_to_z: Tiefen in Z
       option_dxf_depth_to_z_0: $t(default.no)
-      option_dxf_depth_to_z_1: Ebenentiefen auf Z verteilen
+      option_dxf_depth_to_z_1: Layertiefen auf Z verteilen
       option_dxf_depth_to_z_help: |
-        Ermöglicht die Verteilung der Ebenen entlang der Z-Achse entsprechend ihrer Tiefe.
+        Ermöglicht die Verteilung der Layers entlang der Z-Achse entsprechend ihrer Tiefe.
 
         Deaktivieren Sie diese Option, um eine reine 2D-DXF-Datei zu exportieren.
       option_unit: Einheit
@@ -1654,10 +1654,10 @@ tab:
       option_anchor_1: Ursprung des Teils projizieren
       option_anchor_help: |
         **Automatisch**
-        Die untere linke Ecke der Bounding Box der exportierten Geometrie wird als Ankerpunkt verwendet.
+        Die untere linke Ecke des Begrenzungsrahmens der exportierten Geometrie wird als Ankerpunkt verwendet.
 
-        **Bauteilursprung projizieren**
-        Projiziert den Achsenursprung des Bauteils als Ankerpunkt.
+        **Teilursprung projizieren**
+        Projiziert den Achsenursprung des Teils als Ankerpunkt.
       option_switch_yz: Vertikale Achse
       option_switch_yz_0: Z vertikal
       option_switch_yz_1: Y vertikal
@@ -1675,7 +1675,7 @@ tab:
       option_merge_holes_1: Kontur + Bohrungen + Überstand
       option_merge_holes_help: |
         **Einfach**
-        Die Bauteilform wird mit einer Ebene pro Tiefe exportiert.
+        Die Bauteilform wird mit einem Layer pro Tiefe exportiert.
 
         **Kontur + Bohrungen + Überstand**
         Aktiviert die Trennung der Außenkontur der Teile von ihren Durchbrüchen sowie die Berechnung des Bearbeitungsüberstands, der auf die Flächen angewendet wird, die sich am Rand der Kontur und der Vertiefungen befinden.
@@ -1690,11 +1690,11 @@ tab:
       option_parts: Teile
       option_parts_help: |
         Auswahl der Farbe der Teile.
-      option_parts_depths: Vertiefungen
+      option_parts_depths: Hohlräume
       option_parts_depths_help: |
-        Ermöglicht es Ihnen, die Farben der Hohlräume in den Teilen auszuwählen.
+        Ermöglicht die Auswahl der Farben für die Hohlräume der Teile.
 
-        *Standardmäßig wird eine zur Tiefe der Vertiefung proportionale Abstufung zwischen der Farbe der Teile und der Farbe der Bohrungen verwendet.*
+        *Standardmäßig wird ein Farbverlauf verwendet, der proportional zur Tiefe des Hohlraums zwischen der Farbe der Teile und der der Bohrungen verläuft.*
       option_parts_holes: Bohrungen
       option_parts_holes_help: |
         Auswahl der Farbe von Bohrungen.
@@ -2446,6 +2446,7 @@ tool:
     vcb_angle: Winkel
     locked_on_last_measure_status: Auf die letzte Messung fixieren
     library_choose: Wählen Sie eine Bibliothek aus
+    modal_only_help: Einstellung nur in diesem Fenster verfügbar, nicht in der Werkzeugleiste
     error:
       no_direction: Bitte mit der Maus eine Richtung angeben
       invalid_length: Die Länge {{ value }} ist ungültig
@@ -2461,7 +2462,7 @@ tool:
       missing_operand: Fehlender Operand
       zero_division: Division durch Null
       invalid_argument_count: Eine Funktion wie min, max, floor oder ceil benötigt mindestens zwei Werte
-      comma_argument_separator: "Trennen Sie die Werte durch « ; »: Das Komma dient gleichzeitig als Dezimaltrennzeichen"
+      comma_argument_separator: "Trennen Sie die Werte durch „;“: Das Komma dient gleichzeitig als Dezimaltrennzeichen"
       invalid_dimension: "Eine Länge kann nur zu einer Länge addiert werden: Eine Zahl ohne Einheit ist ein Faktor"
       no_matching_value: Keiner der vorgeschlagenen Werte passt
       lt_min_distance: Der Abstand {{ value1 }} ist kleiner als der Mindestabstand von {{ value2 }}
@@ -2554,7 +2555,7 @@ tool:
     action_0_state_7_status: Klicken Sie auf die OBERSEITE des Moduls
     action_0_add_title: Modul hinzufügen
     action_0_add_name: Dateiname
-    action_0_add_overwrite: Die Datei « {{ name }}.skp » existiert bereits. Möchten Sie sie ersetzen?
+    action_0_add_overwrite: Die Datei „{{ name }}.skp“ existiert bereits. Möchten Sie sie ersetzen?
     action_0_add_front_label: VORDERSEITE
     action_0_add_up_label: OBERSEITE
     action_0_flip_status: Vorder- und Rückseite vertauschen
@@ -2577,12 +2578,17 @@ tool:
     action_option_group_overlay: Anschlagsart
     action_option_group_axes: Achsen
     action_option_group_measure_type: Maß
+    action_option_group_measure_origin: Ursprung
     action_option_group_anchor: Verankerung
     action_option_group_options: Optionen
     action_option_offset_front_panel_offset: Abstand
     action_option_offset_front_panel_offset_status: Legt den Abstand fest, der an jedem Rand des Frontteils verbleibt
     action_option_groove_groove_depth: Nuttiefe
     action_option_groove_groove_depth_status: Legt die Tiefe der Nut fest, in die die Rückwand eingreift
+    action_option_groove_groove_panel_reduction: Plattenreduzierung
+    action_option_groove_groove_panel_reduction_status: Legt fest, um wie viel die Rückwand an jeder in eine Nut eingreifenden Kante verkleinert wird, sodass dieser Abstand am Nutgrund verbleibt
+    action_option_groove_groove_width_clearance: Breitenspiel
+    action_option_groove_groove_width_clearance_status: Legt fest, um wie viel breiter als die Dicke der Rückwand die Nut gefräst wird, vollständig zur Außenseite des Korpus hin
     action_option_groove_groove_setback: Rücksprung
     action_option_groove_groove_setback_status: Legt fest, um wie viel die Rückwand in Richtung des Korpuses zurückversetzt ist und somit, wo die Nut gefräst wird
     action_option_groove_groove_through: Durchlaufende Nut
@@ -2598,6 +2604,8 @@ tool:
     action_option_measure_type_inside_status: Dicke innerhalb des Zielpunkts positionieren
     action_option_measure_type_centered_status: Dicke auf den Zielpunkt ausrichten
     action_option_measure_type_outside_status: Dicke außerhalb des Zielpunkts positionieren
+    action_option_measure_origin_wall_status: Von den Innenwänden des Fachs aus messen
+    action_option_measure_origin_overall_status: Von den Außenseiten der Teile aus messen, die das Fach umschließen
     action_option_axes_active_status: Bearbeitung entlang der aktiven Achsen
     action_option_axes_context_status: Bearbeitung entlang der Achsen der Gruppe oder der Wirtskomponente
     action_option_options_measure_reversed: Invertierte Messung
@@ -2714,7 +2722,7 @@ tool:
     action_0_state_11_status: Klicken Sie, um die Schnittebene hinzuzufügen
     action_0_state_12_status: Klicken Sie auf eine Schnittebene, um sie zu löschen
     action_0_state_2_status: Klicken Sie, um die Dehnung zu bestätigen, oder geben Sie einen Abstand ein
-    action_1: Panellieren
+    action_1: Beplanken
     action_1_status: Eine Teileserie aus einem geschlossenen Volumenkörper oder einer Konstruktionslinienzeichnung erstellen
     action_1_state_0_status: Klicken Sie auf einen geschlossenen Volumenkörper oder auf eine Gruppe von Konstruktionslinien, um die Referenzgeometrie festzulegen
     action_1_state_1_status: Wählen Sie die zu extrudierenden Flächen aus
@@ -2783,7 +2791,7 @@ tool:
     action_0_status: Klicken Sie auf ein Teil, um die Instanz einzufärben
     action_1: Kanten einfärben
     action_1_status: Klicken Sie auf eine Plattenkante, um ein Material '$t(tab.materials.type_4)' anzuwenden
-    action_2: Flächen bemalen
+    action_2: Flächen einfärben
     action_2_status: Klicken Sie auf eine Plattenfläche, um ein Material '$t(tab.materials.type_6)' anzuwenden
     action_3: Entnehmen
     action_3_status: Klicken Sie auf eine Fläche, um eine Probe des Materials zu entnehmen
@@ -2828,10 +2836,10 @@ tool:
     action_3_status: Zielen Sie auf die Fläche eines Teils und klicken Sie auf eine Kante, um die Achsen des Teils anzupassen
     action_4: Ursprung verschieben
     action_4_status: Zielen Sie auf die Fläche eines Teils und klicken Sie auf einen Punkt, um den Ursprung dort zu platzieren
-    action_5: Faserverlauf konfigurieren
-    action_5_status: Klicken Sie auf ein Teil, um den Faserverlauf zu aktivieren oder zu deaktivieren
-    action_5_to_state_10_status: Faserverlaufgruppe auswählen
-    action_5_state_10_status: Klicken Sie auf ein Element in der Liste, um dessen Status als Faserverlaufgruppe zu ändern
+    action_5: Fortlaufende Maserung konfigurieren
+    action_5_status: Klicken Sie auf ein Teil, um die Erkennung der fortlaufenden Maserung zu aktivieren oder zu deaktivieren
+    action_5_to_state_10_status: Fortlaufende Maserungsgruppe auswählen
+    action_5_state_10_status: Klicken Sie auf ein Element in der Liste, um dessen Status als fortlaufende Maserungsgruppe zu ändern
     action_option_group_direction: Ausrichtung
     action_option_direction_0: L
     action_option_direction_1: B
@@ -2845,7 +2853,7 @@ tool:
       not_part: Das Zielobjekt ist kein Teil (Komponente)
       not_orientable: Der Typ dieses Teils lässt keine Orientierung zu
       not_grained: Das betreffende Teil hat keinen Faserverlauf
-      not_single_thickness_layer: Das Zielteil muss aus einer einzigen Schicht bestehen
+      not_single_thickness_layer: Das Zielteil muss aus einer einzigen Lage bestehen
   # @no-translate
   smart_join:
     title: Zusammenfügen

@@ -111,7 +111,7 @@ core:
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       edit_part_instance: Edit Instance
-      edit_parent_part_instance: Modify group/component containing the instance
+      edit_parent_part_instance: Edit group/component containing the instance
       hide_part_instance: Hide Instance
       unhide_part_instance: Show Instance
       edit_part_instance_properties: Edit Instance Properties
@@ -139,7 +139,7 @@ core:
       smart_export: Export Parts
   messagebox:
     dir_override: |
-      « {{ target }} » already exists. Would you like to replace it?
+      "{{ target }}" already exists. Would you like to replace it?
 
       A folder with the same name is already present in the folder {{ parent }}. If you replace it, the original content will be lost.
   savepanel:
@@ -305,17 +305,17 @@ core:
   solid:
     error:
       empty: The solid contains no geometry
-      empty_named: « {{ name }} » does not contain any geometry
+      empty_named: "\"{{ name }}\" does not contain any geometry"
       # an edge is considered manifold when it is shared by exactly two faces in a 3D mesh
       non_manifold_edges: The solid contains {{ count }} non-manifold edge
       non_manifold_edges_plural: The solid contains {{ count }} non-manifold edges
-      non_manifold_edges_named: « {{ name }} » contains {{ count }} non-manifold edge
-      non_manifold_edges_named_plural: « {{ name }} » contains {{ count }} non-manifold edges
+      non_manifold_edges_named: "\"{{ name }}\" contains {{ count }} non-manifold edge"
+      non_manifold_edges_named_plural: "\"{{ name }}\" contains {{ count }} non-manifold edges"
       open_edges: The solid contains {{ count }} open edge
       open_edges_plural: The solid contains {{ count }} open edges
-      open_edges_named: « {{ name }} » contains {{ count }} open edge
-      open_edges_named_plural: « {{ name }} » contains {{ count }} open edges
-      locked_instances: "The operation cannot modify a locked instance: {{ list }}"
+      open_edges_named: "\"{{ name }}\" contains {{ count }} open edge"
+      open_edges_named_plural: "\"{{ name }}\" contains {{ count }} open edges"
+      locked_instances: "The operation cannot edit a locked instance: {{ list }}"
     rebuild:
       error:
         no_segment: No usable construction lines in the selection
@@ -720,7 +720,7 @@ tab:
       flipped_detection_help: |
         If this option is selected, mirrored parts will be detected and displayed like a new part.
       smart_material: "*Smart* assignment of material"
-      smart_material_help: If this option is selected, parts without defined material may be assigned the material assigned to one of their parent or child.
+      smart_material_help: If this option is selected, parts without defined material may be assigned the main material of their child elements or the one inherited from their parent elements.
       dynamic_attributes_name: Use the attribute *Name* of dynamic components
       dynamic_attributes_name_help: |
         If this option is selected, the designation of parts will be extracted from the attribute *Name*, if defined.
@@ -732,7 +732,7 @@ tab:
       part_number_sequence_by_group_help: If this option is selected, the enumeration of parts is reset to 1 (or A) for each group (list of parts with same material and raw thickness).
       part_folding: Group identical parts
       part_folding_help: |
-        If this option is selected, parts made of **Solid Wood, Sheet Goods or Dimensional**, having the **same raw size**, with the **same badges** and the **same finished surface** *(if the display of this surface is not hidden)* will be grouped on the same line in the *parts list*.
+        If this option is selected, parts made of **Solid Wood, Sheet Goods or Dimensional**, having the **same finished size**, with the **same badges** and the **same finished surface** *(if the display of this surface is not hidden)* will be grouped on the same line in the *parts list*.
 
         The parts will still be considered different for labeling and cutting diagram purposes.
       hide_entity_names: Hide instance names
@@ -857,16 +857,16 @@ tab:
       total_cutting_length: Length total - raw
       total_cutting_area: Area total - raw
       total_cutting_volume: Volume total - raw
-      total_final_area: Area total - final
+      total_final_area: Total finished area
       cutting_length: Length - raw
       cutting_width: Width - raw
       cutting_thickness: Thickness - raw
       edge_cutting_length: Length edges - raw
       edge_cutting_width: Width edges - raw
-      bbox_length: Length
-      bbox_width: Width
-      bbox_thickness: Thickness
-      final_area: Area - final
+      bbox_length: Finished length
+      bbox_width: Finished width
+      bbox_thickness: Finished thickness
+      final_area: Finished area
       count: Quantity
       part_count: Number of parts
       material: Material
@@ -1026,7 +1026,7 @@ tab:
       option_stacking_3: All possibilities
       option_keep: Off-cuts minimal size
       option_keep_help: Off-cuts that are larger than the minimum length and width are marked **to be kept**.
-      option_std_bar_dimensional: Standard Dimensional
+      option_std_bar_dimensional: Standard board
       option_std_bar_edge: Standard Edge Banding
       option_std_bar_help: |
         Select the standard board or edge banding, which will be duplicated to contain all the parts.
@@ -1066,7 +1066,7 @@ tab:
         unplaced_parts: Unplaced Parts
         summary: Summary
         count: Qty.
-        bar: Dimensional
+        bar: Board
         sheet: Panel
         length: Length
         width: Width
@@ -1185,13 +1185,13 @@ tab:
       option_problem_type: Type
       option_problem_type_rectangle: Rectangle
       option_problem_type_rectangleguillotine: Guillotine
-      option_problem_type_onedimensional: One
+      option_problem_type_onedimensional: Board
       option_problem_type_irregular: Nesting
       options_material: Material
       options_config: Configuration
       options_display: Display
       options_tuning: Tuning
-      option_std_bin_1d_dimensional: Standard Dimensionals
+      option_std_bin_1d_dimensional: Standard Boards
       option_std_bin_1d_edge: Standard Edge Bandings
       option_std_bin_1d_help: |
         Select the sizes of the standard board or edge banding, which will be duplicated to contain all the parts.
@@ -1201,11 +1201,11 @@ tab:
         *Edit the material '{{ material_name }}' to update this list.*
       option_std_bin_1d_add: Add a size
       option_std_bin_1d_none: None
-      option_scrap_bin_1d_dimensional_sizes: Board Off-cuts
-      option_scrap_bin_1d_edge_sizes: Edge Banding Off-cuts
+      option_scrap_bin_1d_dimensional_sizes: Board Offcuts
+      option_scrap_bin_1d_edge_sizes: Edge Banding Offcuts
       option_scrap_bin_1d_sizes_placeholder: length x quantity ; ...
       option_scrap_bin_1d_sizes_help: |
-        List all your off-cut boards or edge bandings to be considered for the cutting diagram.
+        List all your offcut boards or edge bandings to be considered for the cutting diagram.
 
         *Sizes without units are considered to be in model units.*
       option_scrap_bin_1d_none: None
@@ -1219,11 +1219,11 @@ tab:
         *Edit the material '{{ material_name }}' to update this list.*
       option_std_bin_2d_add: Add a size
       option_std_bin_2d_none: None
-      option_scrap_bin_2d_sheet_good_sizes: Panel Off-cuts
-      option_scrap_bin_2d_veneer_sizes: Veneer Off-cuts
+      option_scrap_bin_2d_sheet_good_sizes: Panel Offcuts
+      option_scrap_bin_2d_veneer_sizes: Veneer Offcuts
       option_scrap_bin_2d_sizes_placeholder: length x width x quantity ; ...
       option_scrap_bin_2d_sizes_help: |
-        List all your off-cut sheet goods or veneers to be considered for the cutting diagram.
+        List all your offcut sheet goods or veneers to be considered for the cutting diagram.
 
         *Sizes without units are considered to be in model units.*
       option_scrap_bin_2d_none: None
@@ -1253,8 +1253,8 @@ tab:
         Defines the criteria for sorting parts at each stage.
       option_rectangleguillotine_sort_subplates_criteria_l1l2: By decreasing size
       option_rectangleguillotine_sort_subplates_criteria_dl2l1: By decreasing density
-      option_rectangleguillotine_keep: Minimal Size of Off-cuts
-      option_rectangleguillotine_keep_help: Off-cuts that are larger than the minimum length and width are marked **to be kept**.
+      option_rectangleguillotine_keep: Minimal Size of Offcuts
+      option_rectangleguillotine_keep_help: Offcuts with both dimensions greater than the minimum size will be marked **keep**.
       option_rectangle_leftover_mode: Spread Direction
       option_rectangle_leftover_mode_help: |
         Defines the direction in which parts are spread across the last partially filled panel.
@@ -1313,8 +1313,8 @@ tab:
       option_hide_part_list_2d_help: Display or hide the list of parts for each panel or veneer sheet.
       option_part_drawing_type: Shape of Parts
       option_part_drawing_type_0: Hidden
-      option_part_drawing_type_1: Displaying Front Face
-      option_part_drawing_type_2: Displaying Backside View
+      option_part_drawing_type_1: Drawn - Frontside View
+      option_part_drawing_type_2: Drawn - Backside View
       option_part_drawing_type_help: |
         Show or hide the actual shapes of parts and their machining on the diagram.
 
@@ -1376,27 +1376,27 @@ tab:
         total_cost: Σ Cost
         total_part_count: "# Parts"
         total_used: Total used
-        bin_1d_dimensional: Dimensional
-        bin_1d_dimensional_type_0: Standard Dimensional
-        bin_1d_dimensional_type_1: Board Off-cut
+        bin_1d_dimensional: Board
+        bin_1d_dimensional_type_0: Standard Board
+        bin_1d_dimensional_type_1: Board Offcut
         bin_1d_edge: Edge Banding
         bin_1d_edge_type_0: Standard Edge Banding
-        bin_1d_edge_type_1: Edge Banding Off-cut
+        bin_1d_edge_type_1: Edge Banding Offcut
         bin_2d_sheet_good: Panel
         bin_2d_sheet_good_type_0: Standard Panel
-        bin_2d_sheet_good_type_1: Panel Off-cut
+        bin_2d_sheet_good_type_1: Panel Offcut
         bin_2d_veneer: Veneer Sheet
         bin_2d_veneer_type_0: Standard Veneer Sheet
-        bin_2d_veneer_type_1: Veneer Sheet Off-cut
+        bin_2d_veneer_type_1: Veneer Sheet Offcut
         unused: Unused
         unplaced_parts: Unplaced Part
         unplaced_parts_plural: Unplaced Parts
         parts: Part
         parts_plural: Parts
-        leftovers: Off-cut
-        leftovers_plural: Off-cuts
-        leftovers_to_keep: Off-cut to Keep
-        leftovers_to_keep_plural: Off-cuts to Keep
+        leftovers: Offcut
+        leftovers_plural: Offcuts
+        leftovers_to_keep: Offcut to Keep
+        leftovers_to_keep_plural: Offcuts to keep
         cut: Cut
         cut_plural: Cuts
         cut_trimming: Trimming cut
@@ -1414,9 +1414,9 @@ tab:
         option_bin_veneer: Veneer Sheet
         option_bin_veneer_help: |
           Enables veneer sheet export and color selection.
-        option_bin_dimensional: Dimensional
+        option_bin_dimensional: Board
         option_bin_dimensional_help: |
-          Enables dimensional export and color selection.
+          Enables board export and color selection.
         option_bin_edge: Edge Banding
         option_bin_edge_help: |
           Enables edge banding export and color selection.
@@ -1432,9 +1432,9 @@ tab:
         option_texts: Identifiers
         option_texts_help: |
           Enables export of part identification texts and color selection.
-        option_leftovers: Off-cuts
+        option_leftovers: Offcuts
         option_leftovers_help: |
-          Enables export of off-cuts and color selection.
+          Allows you to enable the export of offcuts and select their colors.
         option_cuts: Cuts
         option_cuts_help: |
           Enables export of cuts and color selection.
@@ -1445,8 +1445,8 @@ tab:
             The allowance ({{ overflow }}) must be smaller than or equal to the spacing ({{ spacing }}) configured in this cutting diagram.
       error:
         no_part: No parts.
-        no_bin_1d: No standard board or edge banding was selected and no off-cut is available.
-        no_bin_2d: No standard panel or veneer sheet was selected and no off-cuts were available.
+        no_bin_1d: No standard board or edge banding was selected and no offcut is available.
+        no_bin_2d: No standard panel or veneer sheet was selected and no offcuts were available.
         invalid_part_shapes: The shape of part '{{ name }}' is invalid.
         no_solution: No solution was found for placing **all parts** within the available material.
         unplaced_parts: "**1 part** could not be placed."
@@ -1456,8 +1456,8 @@ tab:
       warning:
         is_part_selection: This cutting diagram is limited to the **selected parts**.
         cutting_dimensions: This cutting diagram uses the **raw** dimensions of the parts.
-        cutting_dimensions_increase_1d: "These raw dimensions have been configured on the material '{{ material_name }}': length oversize (**{{ length_increase }}**)."
-        cutting_dimensions_increase_2d: "These raw dimensions have been configured on the material '{{ material_name }}': length oversize (**{{ length_increase }}**) and width oversize (**{{ width_increase }}**)."
+        cutting_dimensions_increase_1d: "Dimensions increased by the length allowance on the material '{{ material_name }}': length oversize (**{{ length_increase }}**)."
+        cutting_dimensions_increase_2d: "Dimensions increased by the length and width allowances on the material '{{ material_name }}': length oversize (**{{ length_increase }}**) and width oversize (**{{ width_increase }}**)."
         cutting_dimensions_edge_decrement: Dimensions reduced by the thickness of the edge banding. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
       title: Labels
@@ -1524,10 +1524,10 @@ tab:
         part_edge_cutting_size: Edge dimensions
         part_edge_cutting_length: Length edges - raw
         part_edge_cutting_width: Width edges - raw
-        part_size: Dimension
-        part_length: Length
-        part_width: Width
-        part_thickness: Thickness
+        part_size: Finished size
+        part_length: Finished length
+        part_width: Finished width
+        part_thickness: Finished thickness
         part_tags: Badges
         part_batch: Batch
         part_edge_ymin: Edge length 1
@@ -1535,7 +1535,7 @@ tab:
         part_edge_xmin: Edge width 1
         part_edge_xmax: Edge width 2
         part_face_zmin: Veneer Backside
-        part_face_zmax: Veneer front
+        part_face_zmax: Veneer Frontside
         thumbnail_proportional_drawing: Thumbnail (Front View)
         thumbnail_proportional_drawing_bottom: Thumbnail (Backside View)
         thumbnail_proportional: Proportional thumbnail
@@ -1753,9 +1753,9 @@ tab:
       name: Designation
       number_and_name: Number and Designation
       number_without_hardware: Number (excluding hardware)
-      size: Dimension
-      area: Area
-      volume: Volume
+      size: Finished size
+      area: Finished area
+      volume: Finished volume
     error:
       no_model: No model is open. You'll have to give me a bit more than that ;)
       no_entities: Your model is empty. You'll have to give me a bit more than that ;)
@@ -1864,7 +1864,7 @@ tab:
         *If no unit is specified, the model's unit will be applied.*
       std_thicknesses: Standard Thicknesses
       std_thicknesses_help: |
-        Standard **rough** thicknesses available for this material.
+        Standard **raw** thicknesses available for this material.
 
         *If no unit is specified, the model unit's will be applied.*
       std_sections: Standard Cross Sections
@@ -2108,7 +2108,7 @@ tab:
       warnings: This part will be imported but it produced the following warnings
     error:
       no_model: No model is open. It is impossible to import parts into the void ;)
-      file_not_found: "File not found : **{{ filename }}**"
+      file_not_found: "File not found: **{{ filename }}**"
       bad_extension: The file *{{ filename }}* does not have the extension **.CSV** or **.TSV**.
       failed_to_load_csv_file: |
         Unable to load the CSV file: **{{ error }}**
@@ -2187,9 +2187,9 @@ tab:
         optional: Optional fields
         name: Designation
         count: Quantity
-        bbox_length: Length
-        bbox_width: Width
-        bbox_thickness: Thickness
+        bbox_length: Finished length
+        bbox_width: Finished width
+        bbox_thickness: Finished thickness
         material: Material
         tags: Badges
       tooltip:
@@ -2449,7 +2449,7 @@ tab:
       - Sergey Isupov (*Hebrew*), RTL interface not yet supported
       - Soul Issam (*Arabic*), RTL interface not yet supported
       - Nguyen Ngoc Tan (*Vietnamese*)
-      - Andriy Toporivsky, Kostyantyn Shcherbey (*Ukrainian*)
+      - Andrii Toporivskyi, Kostiantyn Shcherbey (*Ukrainian*)
       - [刘涛](https://www.liutao91.cn), Martin Pan Chiu Ng (*simplified Chinese*)
       - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*Dutch*)
       - Zoltán Nagy, Roland Kovács (*Hungarian*)
@@ -2485,6 +2485,7 @@ tool:
     vcb_angle: Angle
     locked_on_last_measure_status: Lock on last measurement
     library_choose: Choose a library
+    modal_only_help: Setting available only in this window, not in the toolbar
     error:
       no_direction: Please indicate a direction with your mouse
       invalid_length: Length {{ value }} is invalid
@@ -2500,7 +2501,7 @@ tool:
       missing_operand: Missing operand
       zero_division: Division by zero
       invalid_argument_count: A min, max, floor, or ceil function requires at least two values
-      comma_argument_separator: "Separate the values with a semicolon (;): the comma is also used as the decimal separator"
+      comma_argument_separator: "Separate the values with a semicolon \";\": the comma is also used as the decimal separator"
       invalid_dimension: "A length can only be added to another length: a number without a unit is a factor"
       no_matching_value: None of the suggested values are appropriate
       lt_min_distance: The distance {{ value1 }} is less than the minimum distance of {{ value2 }}
@@ -2593,7 +2594,7 @@ tool:
     action_0_state_7_status: Click on the TOP side of the module
     action_0_add_title: Add a module
     action_0_add_name: Filename
-    action_0_add_overwrite: The file « {{ name }}.skp » already exists. Would you like to replace it?
+    action_0_add_overwrite: The file "{{ name }}.skp" already exists. Would you like to replace it?
     action_0_add_front_label: FRONT
     action_0_add_up_label: TOP
     action_0_flip_status: Flip the front and back
@@ -2616,12 +2617,17 @@ tool:
     action_option_group_overlay: Overlay
     action_option_group_axes: Axes
     action_option_group_measure_type: Measure
+    action_option_group_measure_origin: Origin
     action_option_group_anchor: Anchoring
     action_option_group_options: Options
     action_option_offset_front_panel_offset: Clearance
     action_option_offset_front_panel_offset_status: Defines the clearance left on each side of the front panel
     action_option_groove_groove_depth: Depth of groove
     action_option_groove_groove_depth_status: Defines the depth of the groove into which the back is engaged
+    action_option_groove_groove_panel_reduction: Panel reduction
+    action_option_groove_groove_panel_reduction_status: Defines how much the back is reduced on each edge engaged in a groove, leaving this clearance at the bottom of the groove
+    action_option_groove_groove_width_clearance: Width clearance
+    action_option_groove_groove_width_clearance_status: Defines how much wider than the back's thickness the groove is machined, entirely on the outer side of the cabinet
     action_option_groove_groove_setback: Setback
     action_option_groove_groove_setback_status: Specifies how far the back recedes toward the inside of the box, and thus where the groove is machined
     action_option_groove_groove_through: Through groove
@@ -2637,6 +2643,8 @@ tool:
     action_option_measure_type_inside_status: Position the thickness inside the target point
     action_option_measure_type_centered_status: Center the thickness on the target point
     action_option_measure_type_outside_status: Position the thickness outside the target point
+    action_option_measure_origin_wall_status: Measure from the inner walls of the cavity
+    action_option_measure_origin_overall_status: Measure from the outer faces of the parts closing the cavity
     action_option_axes_active_status: Manipulate along the active axes
     action_option_axes_context_status: Manipulate along the axes of the group or host component
     action_option_options_measure_reversed: Inverted Measure
@@ -2870,7 +2878,7 @@ tool:
     action_5: Configure Grain continuity
     action_5_status: Click on a part to activate or deactivate the detection of grain continuity
     action_5_to_state_10_status: Select Grain continuity group
-    action_5_state_10_status: Click an item in the list to change its Grain continuity group status
+    action_5_state_10_status: Click an item in the list to edit its Grain continuity group status
     action_option_group_direction: Direction
     action_option_direction_0: L
     action_option_direction_1: W

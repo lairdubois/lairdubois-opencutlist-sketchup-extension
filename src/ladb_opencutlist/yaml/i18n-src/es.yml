@@ -15,6 +15,7 @@ default:
   stop: Detener
   validate: Aplicar
   confirm: Confirmar
+  finish: Terminar
   ok: Ok
   open: Abrir
   see: Ver
@@ -27,6 +28,7 @@ default:
   export: Exportar
   import: Importar
   load: Cargar
+  replace: Reemplazar
   preview: Vista previa
   options: Opciones
   caution: Advertencia
@@ -59,7 +61,7 @@ default:
   bad: Incorrecto
   by: por
   # date format in use in your language
-  date_format: d/m/Y g:ia
+  date_format: d/m/Y G:i
   # short date format in use in your language
   date_format_short: d/m/Y
   decimal: Decimal
@@ -148,7 +150,7 @@ core:
     more: Más
     more_docs: Documentos
     # this link only appears in the french version, points to https://www.lairdubois.fr/
-    more_reviews: Advertencias
+    more_reviews: Reseñas
     more_plans: Planos
     # only appears in the french version
     more_extensions: Extensiones
@@ -210,23 +212,28 @@ core:
     save_to: Guardar como
     restore_from: Restaurar desde
     app_defaults: Preajuste de fábrica
-    user_defaults: Mis ajustes por defecto
+    user_defaults: Mi preajuste por defecto
     new: Nuevo preajuste
     new_prompt: |
       *La creación de un preajuste personalizado le permite mantener la configuración actual del formulario de forma global para que pueda reutilizarla en todas sus plantillas más adelante.*
 
       Introduzca el nombre de la preselección:
+    rename_prompt_title: Renombrar
+    rename_prompt: Introduzca el nuevo nombre del preajuste **"{{ name }}"**
     delete_confirm_title: Supresión
     delete_confirm: ¿Confirma la eliminación del preajuste **"{{ name }}"**?
     override_confirm_title: Actualización
     override_confirm: ¿Confirmas la actualización del preajuste **"{{ name }}"** con los parámetros del formulario?
+    new_error: Imposible, ya existe un preajuste **"{{ name }}"**
     new_success: Preajuste **"{{ name }}"** creado
     override_success: Preajuste **"{{ name }}"** actualizado
     restore_success: El formulario se ha rellenado con el preajuste **"{{ name }}"**
+    rename_success: Preajuste **"{{ name }}"** renombrado a **"{{ new_name }}"**
     delete_success: Preajuste **"{{ name }}"** borrado
     tooltip:
-      save_to: Actualizar la configuración de '{{ name }}'
-      delete: Eliminar la configuración '{{ name }}'
+      save_to: Actualizar el preajuste '{{ name }}'
+      rename: Renombrar el preajuste '{{ name }}'
+      delete: Eliminar el preajuste '{{ name }}'
     dictionary:
       component_textinput_color: Paleta de colores
       cutlist_cuttingdiagram1d_options: $t(default.deprecated)
@@ -244,6 +251,8 @@ core:
       cutlist_estimate_options: $t(tab.cutlist.label) / $t(tab.cutlist.estimate.title)
       cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
       cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
+      importers_csv_import_options: $t(tab.importers.csv.label) / $t(default.import)
+      importers_csv_load_options: $t(tab.importers.csv.label) / $t(default.open)
       importers_bxf2_import_options: $t(tab.importers.bxf2.label) / $t(default.import)
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
@@ -267,6 +276,10 @@ core:
       remove: Olvidar este color
     textinput_code:
       snippets: Ejemplos de fórmulas
+      help: Escriba **@** para abrir la lista de variables de datos.
+    textinput_file:
+      browse: Examinar
+      browse_library: Examinar y copiar en la biblioteca
     textinput_size:
       quantity: Cantidad
     three_viewer:
@@ -288,6 +301,29 @@ core:
       failed_to_load: |
         No se puede abrir la documentación.
         Compruebe que está conectado a Internet.
+  solid:
+    error:
+      empty: El sólido no contiene ninguna geometría
+      empty_named: « {{ name }} » no contiene ninguna geometría
+      # an edge is considered manifold when it is shared by exactly two faces in a 3D mesh
+      non_manifold_edges: El sólido contiene {{ count }} arista no manifold
+      non_manifold_edges_plural: El sólido contiene {{ count }} aristas no manifold
+      non_manifold_edges_named: « {{ name }} » contiene {{ count }} arista no manifold
+      non_manifold_edges_named_plural: « {{ name }} » contiene {{ count }} aristas no manifold
+      open_edges: El sólido contiene {{ count }} arista abierta
+      open_edges_plural: El sólido contiene {{ count }} aristas abiertas
+      open_edges_named: « {{ name }} » contiene {{ count }} arista abierta
+      open_edges_named_plural: « {{ name }} » contiene {{ count }} aristas abiertas
+      locked_instances: "La operación no puede modificar una instancia bloqueada: {{ list }}"
+    rebuild:
+      error:
+        no_segment: Ninguna línea de construcción utilizable en la selección
+        no_face: No se ha podido reconstruir ningún bucle cerrado coplanario
+  library:
+    libraries: Bibliotecas
+    user: Mi biblioteca
+    bundled: Biblioteca OCL
+    family_modules: Módulos
 tab:
   cutlist:
     label: Partes
@@ -337,7 +373,7 @@ tab:
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
       rounded_std_thickness: |
-        El espessor *{{ std_dimension }}* se redondea por la precisión de las unidades del modelo.
+        El espesor *{{ std_dimension }}* se redondea por la precisión de las unidades del modelo.
         Espessor real: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
@@ -365,6 +401,7 @@ tab:
       flipped: Esta parte se refleja en comparación con la definición de su componente
       symmetrical: La detección de piezas reflejadas está desactivada en esta pieza
       ignore_grain_direction: Se ignora la orientación de la veta en esta pieza
+      follow_grain_direction: La detección de Continuidad de veta está activada en esta pieza
       auto_oriented: Esta parte se ha reorientado automáticamente
       oko_label_filter: Incluir / Excluir esta etiqueta
       add_label_filter: Filtrar por '{{ label }}'
@@ -385,15 +422,25 @@ tab:
       thickness_layered_equation_plural: "**{{ count }}** *partes* x **{{ layerCount }}** *capas* = **{{ cuttingPartCount }}**"
       multiple_content_layers: Atención, esta parte se compone de subpartes presentes en {{ count }} capas, etiquetas o tags, diferentes:<br>{{ layers }}
       children_warnings: Precaución, hay {{ count }} alerta en partes agrupadas
-      children_warnings_plural: Precauciones, hay {{ count }} alertas en partes agrupadas
+      children_warnings_plural: Atención, hay {{ count }} alertas en partes agrupadas
       children_size_increase: Esta dimensión se incrementa en un tamaño grande para {{ count }} partes agrupadas
       invalid_final_area: Atención, esta área sumable no se pudo calcular porque {{ count }} parte (de {{ total }}) tiene un área no válida
       invalid_final_area_plural: Precaución, esta área sumable no se pudo calcular porque {{ count }} partes (de {{ total }}) tienen un área no válida
+      is_instance_name: La designación de esta pieza se extrae del nombre de instancia del grupo
       is_dynamic_attributes_name: La designación de esta parte se extrae del atributo 'Name' del componente dinámico
       has_edges: Esta parte contiene {{ count }} tiras de los cantos
       has_edges_plural: Esta parte contiene {{ count }} tiras de los cantos
       has_faces: Esta parte contiene {{ count }} superficie chapada
       has_faces_plural: Esta parte contiene {{ count }} superficies chapadas
+      size_increased_0: |
+        Aumentado con la sobremedida del Material
+        ({{ increase_1 }})
+      size_increased_1: |
+        Aumentado con la sobremedida de la Pieza
+        ({{ increase_2 }})
+      size_increased_2: |
+        Aumentado con la sobremedida del Material y de la Pieza
+        ({{ increase_1 }} + {{ increase_2 }})
       edge_decremented: Reducido por el grosor de las tiras de los cantos ({{ decrement }})
       edge_ymin: Longitud del borde 1
       edge_ymax: Longitud del borde 2
@@ -470,7 +517,7 @@ tab:
       mass_help: La masa de la pieza se utilizará al generar un **Estimado**.
       price: Precio
       price_help: El precio de la pieza se utilizará al generar un **Estimado**.
-      thickness_layer_count: Nb de capas
+      thickness_layer_count: N.° de capas
       thickness_layer_count_help: |
         Defina aquí el número de capas que dividen la parte dibujada en su espesor.
 
@@ -508,9 +555,20 @@ tab:
       symmetrical_help: |
         Si esta casilla está marcada, la detección de *parte reflejada* no se aplicará a esta parte.
       ignore_grain_direction: Veta de la madera
+      ignore_grain_direction_help: |
+        Esta opción permite ignorar, para esta pieza, la dirección de la veta definida en el material.
       ignore_grain_direction_0: La veta sigue la longitud
       ignore_grain_direction_1: Ignora la orientación de la veta en esta pieza
+      follow_grain_direction: Continuidad de veta
+      follow_grain_direction_help: |
+        Al activar esta opción, las instancias de esta pieza podrán considerarse como piezas dispuestas en **Continuidad de veta** con sus vecinas que compartan:
+        - el mismo *Grupo de continuidad de veta*
+        - el mismo Plano
+        - la misma Orientación
+        - el mismo Material con veta
+        - el mismo Espesor
       follow_grain_direction_0: $t(default.no)
+      follow_grain_direction_1: Detección de Continuidad de veta activada
       axes: Ejes
       axes_help: Organice las dimensiones para que coincidan con los colores de los ejes de su pieza.
       axes_tip: |
@@ -612,7 +670,9 @@ tab:
       filters_warning_plural: Este filtro solo muestra **{{ count }}** partes de un total de {{ total }}.
       edge_material_names_filter: Material de borde de cantos a filtrar
       veneer_material_names_filter: Material de chapa de madera a filtrar
+      names_filter: Designaciones a filtrar
       tags_filter: Filtrar por etiquetas
+      tags_filter_any: Todas las etiquetas
       dimensions_help: Ilustración de las dimensiones
       summary: Resumen
       material_type: Tipo
@@ -626,9 +686,9 @@ tab:
       count: Cant.
       cutting: Ajustadas
       bbox: Finales
-      final: Actual
-      total_cutting: Σ Áspera
-      total_final: Σ Actual
+      final: Final
+      total_cutting: Σ Bruto
+      total_final: Σ Final
       length: Longitud
       length_short: L
       width: Anchura
@@ -1068,8 +1128,18 @@ tab:
       option_rectangleguillotine_first_stage_orientation_horizontal: Horizontal
       option_rectangleguillotine_first_stage_orientation_vertical: Vertical
       option_rectangleguillotine_first_stage_orientation_any: Cualquier
+      option_rectangleguillotine_sort_subplates_criteria: Orden de los niveles
+      option_rectangleguillotine_sort_subplates_criteria_help: |
+        Define los criterios de ordenación de las piezas en cada nivel.
+      option_rectangleguillotine_sort_subplates_criteria_l1l2: Por tamaño decreciente
       option_rectangleguillotine_keep: Tamaño mínimo de recorte
       option_rectangleguillotine_keep_help: Los recortes cuyas dos dimensiones sean mayores que el tamaño mínimo se marcarán con **conservar**.
+      option_rectangle_leftover_mode: Dirección de distribución
+      option_rectangle_leftover_mode_help: |
+        Define la dirección de distribución de las piezas en el último tablero no lleno.
+      option_rectangle_leftover_mode_area: Auto
+      option_rectangle_leftover_mode_x: A lo ancho del tablero
+      option_rectangle_leftover_mode_y: A lo largo del tablero
       option_irregular_allowed_rotations: Rotaciones autorizadas
       option_irregular_allowed_rotations_help: |
         Define el paso de los ángulos de rotación posibles de la pieza para su ubicación.
@@ -1078,11 +1148,18 @@ tab:
       option_irregular_allowed_rotations_0: Ninguna
       option_irregular_allowed_rotations_90: Pasos de 90°
       option_irregular_allowed_rotations_180: Pasos de 180°
+      option_irregular_allowed_rotations_free: Libre
       option_irregular_allow_mirroring: Simetría válida
       option_irregular_allow_mirroring_help: |
         Indica si la simetría de la pieza es válida en la ubicación.
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
+      option_irregular_leftover_mode: Dirección de distribución
+      option_irregular_leftover_mode_help: |
+        Define la dirección de distribución de las piezas en el último tablero no lleno.
+      option_irregular_leftover_mode_bottom_left: Auto
+      option_irregular_leftover_mode_left: A lo ancho del tablero
+      option_irregular_leftover_mode_bottom: A lo largo del tablero
       option_spacing: Espaciado
       option_spacing_help: |
         Espacio mínimo entre cada pieza.
@@ -1151,6 +1228,8 @@ tab:
       option_time_limit_help: |
         Establece el tiempo permitido para el cálculo
       grain_groups:
+        title: "{{ count }} grupo de continuidad de veta"
+        title_plural: "{{ count }} grupos de continuidad de veta"
         name: Nombre
         item_count: Σ Partes
       tooltip:
@@ -1252,6 +1331,7 @@ tab:
         unplaced_parts: "**1 parte** no pudo ser colocada."
         unplaced_parts_plural: "**{{ count }} partes** no se pudo colocar."
         unusable_part_1: Pieza demasiado grande
+        unusable_part_2: Grupo de continuidad de veta demasiado grande
       warning:
         is_part_selection: Este diagrama de corte se limita a las **piezas seleccionadas**.
         cutting_dimensions: Este diagrama de corte muestra las piezas con sus dimensiones en **bruto**.
@@ -1464,6 +1544,7 @@ tab:
 
         - La estructura **Calcos** dibuja todos los trazos en plano distinguiendo los diferentes tipos de trazo únicamente por los calcos. *Esta estructura ofrece una mejor compatibilidad con los programas de terceros.*
         - La estructura **Calcos + Bloques** crea un bloque por pieza e inserta estos bloques tantas veces como se repiten las piezas. *Esta estructura ofrece mayor flexibilidad para modificar el archivo.*
+      option_dxf_depth_to_z: Profundidades en Z
       option_dxf_depth_to_z_0: $t(default.no)
       option_unit: Unidad
       option_unit_help: |
@@ -1812,7 +1893,7 @@ tab:
     error:
       no_model: Ningún modelo está abierto. Necesitarás darme más información ;)
       no_entities: Su modelo se encuentra vacío
-      node_not_found: Nudo no encontrado
+      node_not_found: Nodo no encontrado
       entity_not_found: Elemento no encontrado
       invalid_target: La instancia de destino no permite esta operación
       obsolete_outliner: Imposible, la estructura generada ha quedado obsoleta. Regenérela.
@@ -1981,6 +2062,23 @@ tab:
         materials: Materiales
         layers: Etiquetas
         option_parts_formula: Fórmula
+        option_part_wood_material_name: Madera
+        option_part_wood_material_name_help: Material que se aplicará a las piezas de **madera**.
+        option_part_aluminium_material_name: Aluminio
+        option_part_aluminium_material_name_help: Material que se aplicará a las piezas de **aluminio**.
+        option_part_glass_material_name: Vidrio
+        option_part_glass_material_name_help: Material que se aplicará a las piezas de **vidrio**.
+        option_front_part_layer_name: Frentes
+        option_front_part_layer_name_help: Etiqueta que se aplicará a las piezas de frente.
+        option_back_part_layer_name: Fondos
+        option_back_part_layer_name_help: Etiqueta que se aplicará a los fondos de los cuerpos.
+        option_machining_material_name: Mecanizados
+        option_machining_material_name_help: Material que se aplicará a los **mecanizados**.
+        option_machining_layer_name: Mecanizados
+        option_machining_layer_name_help: Etiqueta que se aplicará a los mecanizados.
+        option_hardware_material_name: Accesorios
+        option_hardware_material_name_help: Material que se aplicará a los **accesorios**.
+        option_hardware_layer_name: Accesorios
         old_name: Nombre original
         new_name: Nuevo nombre
         count: Cant.

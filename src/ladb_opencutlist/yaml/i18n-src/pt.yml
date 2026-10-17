@@ -46,7 +46,7 @@ default:
   draw: Desenhar
   estimate: Orçar
   rename: Renomear
-  next: Proximo
+  next: Próximo
   "yes": Sim
   "no": Não
   automatic: Automático
@@ -61,13 +61,13 @@ default:
   bad: Ruim
   by: por
   # date format in use in your language
-  date_format: d/m/A G:i
+  date_format: d/m/Y G:i
   # short date format in use in your language
   date_format_short: d/m/Y
   decimal: Decimal
   fractional: Fracionário
   unit_0: Polegada
-  unit_1: Pés
+  unit_1: Pé
   unit_2: Milímetro
   unit_3: Centímetro
   unit_4: Metro
@@ -79,8 +79,8 @@ default:
   instance_plural: unidades
   part_single: peça
   part_plural: peças
-  cut_single: Corte
-  cut_plural: Cortes
+  cut_single: corte
+  cut_plural: cortes
   thickness_layer_single: camada
   thickness_layer_plural: camadas
   setup_model_units: Configure as unidades do modelo
@@ -797,9 +797,9 @@ tab:
       total_cost: Σ Custos
       total_count: Qtd.
       total_instance_count: Unidades
-      total_volume: Volumes
+      total_volume: Σ Volumes
       total_area: Σ Áreas
-      total_length: Comprimentos
+      total_length: Σ Comprimentos
       type_1: $t(tab.materials.type_1)
       type_2: $t(tab.materials.type_2)
       type_3: $t(tab.materials.type_3)
@@ -1255,7 +1255,7 @@ tab:
         total_length: Comprimentos
         total_area: Σ Áreas
         total_cost: Σ Custos
-        total_part_count: Peças
+        total_part_count: Σ Peças
         total_used: Total utilizado
         bin_1d_dimensional: Barra
         bin_1d_dimensional_type_0: Barra padrão
@@ -1274,7 +1274,7 @@ tab:
         unplaced_parts_plural: Peças não colocadas
         parts: Peça
         parts_plural: Peças
-        leftovers: Sobras
+        leftovers: Sobra
         leftovers_plural: Sobras
         leftovers_to_keep: Sobra a ser conservada
         leftovers_to_keep_plural: Sobras a serem conservadas
