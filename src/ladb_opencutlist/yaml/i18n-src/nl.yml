@@ -74,28 +74,28 @@ default:
   unit_5: Yard
   unit_mass_0: Kilogram
   unit_mass_1: Pond
-  unit_angle_0: Graad
+  unit_angle_0: Graden
   instance_single: eenheid
   instance_plural: eenheden
   part_single: deel
   part_plural: onderdelen
   cut_single: snede
   cut_plural: sneden
-  thickness_layer_single: Laag
-  thickness_layer_plural: Lagen
+  thickness_layer_single: laag
+  thickness_layer_plural: lagen
   setup_model_units: Configureer modeleenheden
   load_more: Meer laden
   reset_to_app_defaults: Terugzetten naar oorspronkelijke waarden
   constrain_key: Shift
   copy_key_win: Ctrl
-  copy_key_mac: Optie
+  copy_key_mac: Option
   alt_key_win: Alt
-  alt_key_mac: Opdracht
+  alt_key_mac: Command
   tab_key: Tab
-  file: bestand
-  file_plural: bestanden
-  stroke_color: lijnkleur
-  fill_color: opvulkeur
+  file: Bestand
+  file_plural: Bestanden
+  stroke_color: Lijnkleur
+  fill_color: Opvulkeur
   length: Lengte
   width: Breedte
   thickness: Dikte
@@ -113,7 +113,7 @@ core:
       edit_part_instance: De instantie wijzigen
       edit_parent_part_instance: De groep/component met de instantie wijzigen
       hide_part_instance: Instantie verbergen
-      unhide_part_instance: Onthul de instantie
+      unhide_part_instance: Instantie tonen
       edit_part_instance_properties: Instance-eigenschappen bewerken
       smart_draw: $t(core.toolbar.command.smart_draw)
       smart_build: $t(core.toolbar.command.smart_build)
@@ -126,15 +126,15 @@ core:
       reset_dialog_position: Raampositie opnieuw instellen
   toolbar:
     name: OpenCutList
-    tools: Werktuigen
+    tools: Gereedschappen
     command:
       dialog: OpenCutList
       smart_draw: Onderdelen tekenen
       smart_build: Onderdelen opbouwen
       smart_handle: Onderdelen hanteren
       smart_reshape: Onderdelen aanpassen
-      smart_paint: Kleur de onderdelen
-      smart_axes: Oriënt Onderdelen
+      smart_paint: Onderdelen kleuren
+      smart_axes: Onderdelen oriënteren
       smart_join: Onderdelen samenvoegen
       smart_export: Onderdelen exporteren
   messagebox:
@@ -373,13 +373,13 @@ tab:
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
       rounded_std_thickness: |
-        De breedte *{{ std_dimension }}* wordt afgerond zoals ingesteld in modelinfo.
-        Werkelijke breedte: *{{ std_dimension_real }}*
+        De dikte *{{ std_dimension }}* wordt afgerond zoals ingesteld in modelinfo.
+        Werkelijke dikte: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
       rounded_std_section: |
-        De breedte *{{ std_dimension }}* wordt afgerond zoals ingesteld in modelinfo.
-        Werkelijke breedte: *{{ std_dimension_real }}*
+        De doorsnede *{{ std_dimension }}* wordt afgerond zoals ingesteld in modelinfo.
+        Werkelijke doorsnede: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
       # "Model Info" refers to the SketchUp menu to change the units
