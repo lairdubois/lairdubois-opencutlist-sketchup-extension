@@ -27,11 +27,17 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added depth to Z option on DXF export
   * Improved Smart Draw Tool with sheared pull
   * Improved Smart Draw Tool with the "draw in" option
+  * Improved Smart Paint Tool by allowing rectangle selection
   * Improved Packing algorithms
+  * Rewrote Smart Paint Tool
+  * Rewrote Smart Export Tool
   * Rewrote Smart Axes Tool
 
 ## Lab
 
+### 2026-10-17
+ * Improved Smart Paint Tool by allowing rectangle selection
+ * Updated PackingSolver dependency
 ### 2026-10-15
  * Improved Smart Tools rectangle selection
  * "Smart Paint" and "Smart Export" tools rewritten using the new tool structure (no changes to how they are used)
