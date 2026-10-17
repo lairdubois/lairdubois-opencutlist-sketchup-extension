@@ -11,6 +11,10 @@ module Ladb::OpenCutList::Kuix
     attr_reader :background_color, :border_color, :color
     attr_accessor :layout, :layout_data
 
+    # The entity a mouse drag on this one moves - nil if it is not a drag
+    # handle - and the cursor shown over it - nil for the default one
+    attr_accessor :drag_target, :cursor
+
     def initialize(id = nil)
       super(id)
 
@@ -36,6 +40,9 @@ module Ladb::OpenCutList::Kuix
       @layout_data = nil
 
       @hittable = true
+
+      @drag_target = nil
+      @cursor = nil
 
     end
 
@@ -265,6 +272,14 @@ module Ladb::OpenCutList::Kuix
     end
 
     def onMouseWheel(flags, delta)
+    end
+
+    # Moves the entity by the given offset - a statically laid out one only
+    def onDragBy(dx, dy)
+      return unless @layout_data.is_a?(StaticLayoutData)
+      @layout_data.x += dx
+      @layout_data.y += dy
+      invalidate
     end
 
     # --

@@ -894,10 +894,24 @@ module Ladb::OpenCutList
 
   class SmartPaintActionHandler < SmartSelectActionHandler
 
+    STATE_SELECT_FILTER = 8
+
     LAYER_3D_ACTION_PREVIEW = 3
+
+    # The parts of a rectangle selection sharing a material : their paths,
+    # painted or not as the filter dropup ticks them.
+    SelectionMaterialEntry = Struct.new(:material_name, :display_name, :color, :type, :paths, :selected)
+
+    # The GroupDef and MaterialAttributes properties GroupDef.group_order
+    # reads, to sort the entries as the cut list groups
+    SelectionMaterialAttributes = Struct.new(:type)
+    SelectionMaterialGroupDef = Struct.new(:material_attributes, :material_name, :std_width, :std_thickness)
 
     def initialize(action, tool, previous_action_handler = nil)
       super
+
+      @selection_material_entries = nil
+      @hovered_selection_material_entry = nil
 
       # Create 3D layers
       tool.create_3d(LAYER_3D_PART_PREVIEW)
@@ -928,9 +942,22 @@ module Ladb::OpenCutList
       super
     end
 
+    def get_state_status(state)
+
+      case state
+
+      when STATE_SELECT_FILTER
+        return PLUGIN.get_i18n_string('tool.smart_paint.state_8_status') + '.'
+
+      end
+
+      super
+    end
+
     # -----
 
     def onToolLButtonDown(tool, flags, x, y, view)
+      return true if @state == STATE_SELECT_FILTER  # Handled on button up
       consumed = super
       @mouse_down_point_2d = nil unless _allows_rect_selection?  # No rectangle selection on drag
       _preview_action(true)
@@ -938,17 +965,60 @@ module Ladb::OpenCutList
     end
 
     def onToolLButtonUp(tool, flags, x, y, view)
+      if @state == STATE_SELECT_FILTER
+        # A click on a part to paint validates, anywhere else cancels
+        if _picked_selection_filter_part?(view, x, y)
+          _validate_selection_filter
+        else
+          _restart
+        end
+        return true
+      end
       UI.beep if @state == STATE_SELECT && !has_active_part?
       super
     end
 
+    def onToolCancel(tool, reason, view)
+      if @state == STATE_SELECT_FILTER
+        _restart
+        return true
+      end
+      super
+    end
+
+    def onToolValidate(tool, view)
+      _validate_selection_filter if @state == STATE_SELECT_FILTER
+    end
+
+    def onToolReturn(tool, view)
+      _validate_selection_filter if @state == STATE_SELECT_FILTER
+    end
 
     def onToolActionOptionStored(tool, action, option_group, option)
+      return _preview_selection_filter if @state == STATE_SELECT_FILTER
       _preview_action
     end
 
     def onToolCurrentMaterialChanged(tool)
+      return _preview_selection_filter if @state == STATE_SELECT_FILTER
       _preview_action
+    end
+
+    def onStateChanged(old_state, new_state)
+      super
+
+      if old_state == STATE_SELECT_FILTER
+        @tool.clear_2d(LAYER_2D_FLOATING_TOOLS) # Close the dropup
+        @selection_filter_validate_btn = nil
+      end
+
+      if new_state == STATE_SELECT_FILTER
+        @tool.clear_all_2d
+        @tool.clear_all_3d
+        _show_selection_filter_dropup
+        _preview_selection_filter
+      end
+
     end
 
     def onToolTransactionUndo(tool, model)
@@ -974,11 +1044,15 @@ module Ladb::OpenCutList
       if has_active_part?
         _do_action
       elsif has_active_selection? && _allows_rect_selection?
-        part_instances, containers = _get_selection_part_instances_and_containers
-        if part_instances.empty?
+        @selection_material_entries = _get_selection_material_entries
+        if @selection_material_entries.empty?
           UI.beep
+        elsif @selection_material_entries.size > 1 || @selection_material_entries.any? { |entry| !entry.selected }
+          # Several materials, or one not painted by default : let the user choose
+          set_state(STATE_SELECT_FILTER)
+          return
         else
-          _do_selection_action(part_instances, containers)
+          _do_selection_action(*_get_selection_part_instances_and_containers)
         end
       end
       _restart
@@ -1101,23 +1175,159 @@ module Ladb::OpenCutList
       false
     end
 
-    # The instances of the parts of the rectangle selection, and the instances
-    # between the selected ones and these parts - the selected ones included.
-    # The parts are the cut list ones : a selected group or component can hold
-    # several.
+    # The instances of the ticked parts of the rectangle selection, and the
+    # instances between the selected ones and these parts - the selected ones
+    # included.
     def _get_selection_part_instances_and_containers
       selection_path = get_active_selection_path
-      part_paths = _get_selected_instances.map { |instance| _get_part_paths(instance, selection_path) }.flatten(1).uniq
+      part_paths = @selection_material_entries.select(&:selected).map(&:paths).flatten(1).uniq
       [
         part_paths.map(&:last).uniq,
         part_paths.map { |path| path[selection_path.length...-1] }.flatten.uniq
       ]
     end
 
-    def _get_part_paths(instance, path)
-      worker = CutlistGenerateWorker.new(**HashUtils.symbolize_keys(PLUGIN.get_model_preset('cutlist_options')).merge({ active_entity: instance, active_path: path, part_folding: false }))
-      cutlist = worker.run
-      cutlist.groups.map { |group| group.parts.map { |part| part.def.instance_infos.values.map(&:path) } }.flatten(2)
+    # The parts of the rectangle selection, by material, in the cut list
+    # groups order. The parts are the cut list ones : a selected group or
+    # component can hold several. Only the parts without material and the
+    # materials of the applied material type are ticked, or all but the
+    # hardware if none is applied.
+    def _get_selection_material_entries
+      selection_path = get_active_selection_path
+      target_material = _get_preview_material
+      target_type = target_material ? MaterialAttributes.new(target_material).type : nil
+      fn_selected = lambda { |group| group.material_name.empty? || (target_type.nil? ? group.material_type != MaterialAttributes::TYPE_HARDWARE : group.material_type == target_type) }
+      cutlist_options = PLUGIN.get_model_preset('cutlist_options')
+      entries = {}
+      _get_selected_instances.each do |instance|
+        worker = CutlistGenerateWorker.new(**HashUtils.symbolize_keys(cutlist_options).merge({ active_entity: instance, active_path: selection_path, part_folding: false }))
+        cutlist = worker.run
+        cutlist.groups.each do |group|
+          entry = entries[group.material_name] ||= SelectionMaterialEntry.new(
+            group.material_name,
+            group.material_name.empty? ? PLUGIN.get_i18n_string('tab.cutlist.material_undefined') : group.material_display_name,
+            group.material_color.nil? ? nil : Sketchup::Color.new(group.material_color),
+            group.material_type,
+            [],
+            fn_selected.call(group)
+          )
+          group.parts.each { |part| entry.paths.concat(part.def.instance_infos.values.map(&:path)) }
+        end
+      end
+      entries.values.each { |entry| entry.paths.uniq! }
+
+      # Sorted as the cut list groups : each selected instance has its own cut
+      # list. An entry is a material, its groups' std dimensions don't apply.
+      group_order_strategy = cutlist_options['group_order_strategy']
+      fn_group_def = lambda { |entry| SelectionMaterialGroupDef.new(SelectionMaterialAttributes.new(entry.type), entry.material_name) }
+      entries.values.sort { |entry_a, entry_b| GroupDef.group_order(fn_group_def.call(entry_a), fn_group_def.call(entry_b), group_order_strategy) }
+    end
+
+    # -- Filter --
+
+    def _show_selection_filter_dropup
+
+      k_dropup = SmartDropup.new(
+        @tool,
+        @selection_material_entries.map { |entry|
+
+          text_defs = [
+            SmartDropup::SmartDropupTextDef.new(entry.display_name, Kuix::COLOR_BLACK, true),
+            SmartDropup::SmartDropupTextDef.new("(#{entry.paths.size})", Kuix::COLOR_DARK_GREY)
+          ]
+
+          on_click = lambda { |k_btn|
+            if (k_tick_btn = k_btn.children.find { |child| child.is_a?(Kuix::Button) })
+              k_tick_btn.fire(:click)
+            end
+          }
+          on_tick_click = lambda { |k_tick_btn|
+            k_tick_btn.selected = entry.selected = !entry.selected
+            _preview_selection_filter
+          }
+          on_enter = lambda { |k_btn|
+            @hovered_selection_material_entry = entry
+            _preview_selection_filter
+          }
+          on_leave = lambda { |k_btn|
+            @hovered_selection_material_entry = nil
+            _preview_selection_filter
+          }
+
+          SmartDropup::SmartDropupBtnDef.new(
+            text_defs,
+            on_click,
+            on_enter,
+            on_leave,
+            0,
+            false,
+            SmartDropup::SmartDropupTickDef.new(
+              entry.selected,
+              on_tick_click
+            ),
+            entry.color.nil? ? Kuix::COLOR_WHITE : entry.color
+          )
+        },
+        nil,
+        anchor: @select_rect_points_2d.nil? ? Kuix::Anchor::BOTTOM_RIGHT : SmartDropup.anchor_inside_drag(*@select_rect_points_2d),
+        title: PLUGIN.get_i18n_string('tool.smart_paint.select_filter_title'),
+        footer_btn_defs: [
+          SmartDropup::SmartDropupFooterBtnDef.new(nil, lambda { |k_btn| _restart }, SmartTool::MESSAGE_TYPE_ERROR, false, SmartDropup::MOTIF_CANCEL_PATH),
+          SmartDropup::SmartDropupFooterBtnDef.new(nil, lambda { |k_btn| _validate_selection_filter }, SmartTool::MESSAGE_TYPE_SUCCESS, false, SmartDropup::MOTIF_VALIDATE_PATH)
+        ]
+      )
+      @selection_filter_validate_btn = k_dropup.footer_btns.last
+      @tool.append_2d(k_dropup, LAYER_2D_FLOATING_TOOLS)
+
+    end
+
+    # Draws the ticked parts as painted - the hovered entry ones opaque.
+    def _preview_selection_filter
+      @tool.clear_3d(LAYER_3D_ACTION_PREVIEW)
+      return if @selection_material_entries.nil?
+
+      material = _get_preview_material
+      triangles_by_definition = {}
+
+      @selection_material_entries.select(&:selected).each do |entry|
+        hovered = entry == @hovered_selection_material_entry
+        entry.paths.each do |path|
+
+          triangles = triangles_by_definition[path.last.definition] ||= _compute_children_faces_triangles(path.last.definition.entities)
+
+          color = material ? material.color : MaterialUtils::get_color_from_path(_get_preview_color_path(path))
+          color.alpha = hovered ? 255 : 200
+
+          k_mesh = Kuix::Mesh.new
+          k_mesh.add_triangles(triangles)
+          k_mesh.background_color = color
+          k_mesh.transformation = PathUtils::get_transformation(path)
+          @tool.append_3d(k_mesh, LAYER_3D_ACTION_PREVIEW)
+
+        end
+      end
+
+      # Nothing to validate without a ticked material
+      @selection_filter_validate_btn[:button].disabled = @selection_material_entries.none?(&:selected) unless @selection_filter_validate_btn.nil?
+
+    end
+
+    # Is a ticked part under the given screen point ?
+    def _picked_selection_filter_part?(view, x, y)
+      instances = @selection_material_entries.select(&:selected).map { |entry| entry.paths.map(&:last) }.flatten.to_set
+      ph = view.pick_helper
+      ph.do_pick(x, y)
+      (0...ph.count).any? { |i| (ph.path_at(i) || []).any? { |entity| instances.include?(entity) } }
+    end
+
+    def _validate_selection_filter
+      part_instances, containers = _get_selection_part_instances_and_containers
+      if part_instances.empty?
+        UI.beep
+        return
+      end
+      _do_selection_action(part_instances, containers)
+      _restart
     end
 
     def _paint(operation_name)

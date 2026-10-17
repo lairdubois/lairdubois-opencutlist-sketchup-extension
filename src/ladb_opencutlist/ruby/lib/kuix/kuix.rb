@@ -166,6 +166,8 @@ module Ladb::OpenCutList
         # Internals
 
         @mouse_down_widget = nil
+        @mouse_down_point = nil
+        @mouse_dragging = false
         @mouse_hover_widget = nil
         @mouse_is_outside = true
 
@@ -388,6 +390,8 @@ module Ladb::OpenCutList
       def onLButtonDown(flags, x, y, view)
         hit_entity = @canvas.hit_entity(x, y)
         @mouse_down_widget = hit_entity
+        @mouse_down_point = Geom::Point3d.new(x, y)
+        @mouse_dragging = false
         if @mouse_down_widget
           @mouse_down_widget.onMouseDown(flags)
           return true
@@ -396,6 +400,13 @@ module Ladb::OpenCutList
       end
 
       def onLButtonUp(flags, x, y, view)
+        if @mouse_dragging
+          # The end of a drag : no click, and nothing for the tool
+          @mouse_down_widget.deactivate_pseudo_class(:active) if @mouse_down_widget
+          @mouse_down_widget = nil
+          @mouse_dragging = false
+          return true
+        end
         hit_entity = @canvas.hit_entity(x, y)
         if hit_entity && @mouse_down_widget == hit_entity
           @mouse_down_widget.onMouseClick(flags)
@@ -418,6 +429,19 @@ module Ladb::OpenCutList
       end
 
       def onMouseMove(flags, x, y, view)
+
+        # Drag of a drag handle : followed even out of it
+        if @mouse_down_widget && @mouse_down_widget.drag_target && @mouse_down_widget.in_dom?
+          point = Geom::Point3d.new(x, y)
+          @mouse_dragging = true if !@mouse_dragging && @mouse_down_point.distance(point) > 3  # px : below, a click
+          if @mouse_dragging
+            @mouse_down_widget.drag_target.onDragBy(x - @mouse_down_point.x, y - @mouse_down_point.y)
+            @mouse_down_point = point
+            view.invalidate
+          end
+          return true
+        end
+
         hit_entity = @canvas.hit_entity(x, y)
         if hit_entity
           onMouseLeaveSpace(view) if @mouse_hover_widget.nil? && !@mouse_is_outside
@@ -428,7 +452,7 @@ module Ladb::OpenCutList
             end
             @mouse_hover_widget = hit_entity
             @mouse_hover_widget.onMouseEnter(flags)
-            push_cursor(get_default_cursor)
+            push_cursor(@mouse_hover_widget.cursor || get_default_cursor)
           end
           @mouse_is_outside = false
           return true

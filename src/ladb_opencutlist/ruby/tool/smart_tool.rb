@@ -1600,6 +1600,10 @@ module Ladb::OpenCutList
       @action_handler.onToolValidate(self, view) if !@action_handler.nil? && @action_handler.respond_to?(:onToolValidate)
     end
 
+    def onReturn(view)
+      @action_handler.onToolReturn(self, view) if !@action_handler.nil? && @action_handler.respond_to?(:onToolReturn)
+    end
+
     def onKeyDown(key, repeat, flags, view)
       return true if super
       @vcb_typing = false if key == Kuix::VK_ESCAPE  # ESC clears the VCB, without "onCancel" on SU 2027 if it wasn't empty
@@ -3404,6 +3408,7 @@ module Ladb::OpenCutList
           )
 
           @tool.clear_all_2d
+          @select_rect_points_2d = [ @mouse_down_point_2d, Geom::Point3d.new(x, y) ]  # Kept for onSelected
           @mouse_down_point_2d = nil
           @mouse_move_point_2d = nil
 
@@ -4062,19 +4067,49 @@ module Ladb::OpenCutList
 
   # -----
 
+  # A floating list of buttons, anchored at the mouse - by its bottom right
+  # corner by default : it drops up and left.
+  #  - title : an optional first row, not clickable - the handle to drag the
+  #    dropup ;
+  #  - footer_btn_defs : optional SmartDropupFooterBtnDefs, side by side in a
+  #    last row - their buttons and labels are kept in footer_btns, the
+  #    owner updates them. MOTIF_CANCEL_PATH and MOTIF_VALIDATE_PATH draw the
+  #    validation buttons ones.
   class SmartDropup < Kuix::Panel
 
-    def initialize(tool, btn_defs, id = nil)
+    MOTIF_CANCEL_PATH = 'M0,0L1,1 M0,1L1,0'.freeze
+    MOTIF_VALIDATE_PATH = 'M0,0.5L0.375,1L1,0'.freeze
+
+    # [ { :button => Kuix::Button, :label => Kuix::Label - nil for a motif } ] in footer_btn_defs order
+    attr_reader :footer_btns
+
+    def initialize(tool, btn_defs, id = nil, anchor: Kuix::Anchor::BOTTOM_RIGHT, title: nil, footer_btn_defs: nil)
       super(id)
 
       unit = tool.get_unit
 
-      self.layout_data = Kuix::StaticLayoutData.new(tool.last_mouse_x, tool.last_mouse_y, -1, -1, Kuix::Anchor.new(Kuix::Anchor::BOTTOM_RIGHT))
-      self.layout = Kuix::GridLayout.new(1, btn_defs.size, 0, unit * 0.25)
+      self.layout_data = Kuix::StaticLayoutData.new(tool.last_mouse_x, tool.last_mouse_y, -1, -1, Kuix::Anchor.new(anchor))
+      self.layout = Kuix::GridLayout.new(1, btn_defs.size + (title.nil? ? 0 : 1) + (footer_btn_defs.nil? || footer_btn_defs.empty? ? 0 : 1), 0, unit * 0.25)
       self.border.set_all!(unit * 0.25)
       self.padding.set_all!(unit * 0.25)
       self.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_LIGHT)
       self.set_style_attribute(:border_color, ColorUtils.color_darken(SmartTool::COLOR_BRAND_LIGHT, 0.1))
+
+        unless title.nil?
+
+          # The title is the drag handle of the dropup
+          k_title = Kuix::Label.new
+          k_title.text = title
+          k_title.text_size = unit * 3
+          k_title.text_bold = true
+          k_title.padding.set_all!(unit)
+          k_title.drag_target = self
+          k_title.cursor = SmartCursorManager.cursor_move
+          k_title.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_LIGHT)  # Hittable
+          k_title.set_style_attribute(:color, Kuix::COLOR_BLACK)
+          self.append(k_title)
+
+        end
 
         btn_defs.each do |btn_def|
 
@@ -4094,9 +4129,26 @@ module Ladb::OpenCutList
           k_btn.on(:click) { btn_def.on_click.call(k_btn) } unless btn_def.on_click.nil?
           self.append(k_btn)
 
+            # The swatch is a full height bar on the left edge : the vertical
+            # padding moves to the labels and the tick
+            swatch = !btn_def.swatch_color.nil?
+            if swatch
+
+              k_btn.padding.set!(0, unit, 0, 0)
+
+              k_swatch = Kuix::Panel.new
+              k_swatch.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::WEST)
+              k_swatch.min_size.width = unit * 2
+              k_swatch.hittable = false
+              k_swatch.set_style_attribute(:background_color, btn_def.swatch_color)
+              k_btn.append(k_swatch)
+
+            end
+
             k_labels = Kuix::Panel.new
             k_labels.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
             k_labels.layout = Kuix::InlineLayout.new(true, unit * 0.5, Kuix::Anchor.new(Kuix::Anchor::LEFT))
+            k_labels.padding.set!(unit, 0, unit, 0) if swatch
             k_btn.append(k_labels)
 
               btn_def.text_defs.each do |text_def|
@@ -4113,25 +4165,122 @@ module Ladb::OpenCutList
 
             unless btn_def.tick_def.nil?
 
+              # A V motif : ghost when unticked, brand colored when ticked
               k_tick_btn = Kuix::Button.new
               k_tick_btn.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
+              k_tick_btn.layout = Kuix::InlineLayout.new(true, 0, Kuix::Anchor.new(Kuix::Anchor::CENTER))
               k_tick_btn.border.set_all!(unit * 0.5)
-              k_tick_btn.min_size.set_all!(unit * 3)
+              k_tick_btn.margin.set!(unit, 0, unit, 0) if swatch
               k_tick_btn.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
               k_tick_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_LIGHT, :hover)
-              k_tick_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND, :active)
-              k_tick_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND, :selected)
               k_tick_btn.set_style_attribute(:border_color, Kuix::COLOR_WHITE)
-              k_tick_btn.set_style_attribute(:border_color, SmartTool::COLOR_BRAND, :hover)
+              k_tick_btn.set_style_attribute(:border_color, SmartTool::COLOR_BRAND_LIGHT, :hover)
               k_tick_btn.selected = btn_def.tick_def.selected
               k_tick_btn.disabled = btn_def.disabled || btn_def.tick_def.disabled
               k_tick_btn.on(:click) { btn_def.tick_def.on_click.call(k_tick_btn) } unless btn_def.tick_def.on_click.nil?
               k_btn.append(k_tick_btn)
 
+                k_tick_motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path(MOTIF_VALIDATE_PATH))
+                k_tick_motif.min_size.set_all!(unit * 3)  # Square, as high as a text line
+                k_tick_motif.line_width = unit * 0.5
+                k_tick_motif.hittable = false
+                k_tick_motif.set_style_attribute(:color, Kuix::COLOR_LIGHT_GREY)
+                k_tick_motif.set_style_attribute(:color, Kuix::COLOR_MEDIUM_GREY, :hover)
+                k_tick_motif.set_style_attribute(:color, SmartTool::COLOR_BRAND, :selected)
+                k_tick_motif.set_style_attribute(:color, Kuix::COLOR_LIGHT_GREY, :disabled)
+                k_tick_btn.append(k_tick_motif)
+
             end
 
         end
 
+        @footer_btns = []
+        unless footer_btn_defs.nil? || footer_btn_defs.empty?
+
+          k_footer = Kuix::Panel.new
+          k_footer.layout = Kuix::GridLayout.new(footer_btn_defs.size, 1, unit * 0.25, 0)
+          self.append(k_footer)
+
+            footer_btn_defs.each do |footer_btn_def|
+
+              # Colored as the validation buttons : light background and colored
+              # text, inverted on hover
+              case footer_btn_def.type
+              when SmartTool::MESSAGE_TYPE_SUCCESS
+                color = SmartTool::COLOR_MESSAGE_BACKGROUND_SUCCESS
+                text_color = SmartTool::COLOR_MESSAGE_TEXT_SUCCESS
+              when SmartTool::MESSAGE_TYPE_ERROR
+                color = SmartTool::COLOR_MESSAGE_BACKGROUND_ERROR
+                text_color = SmartTool::COLOR_MESSAGE_TEXT_ERROR
+              else
+                color = Kuix::COLOR_WHITE
+                text_color = Kuix::COLOR_BLACK
+              end
+
+              k_btn = Kuix::Button.new
+              k_btn.layout = footer_btn_def.motif_path.nil? ? Kuix::GridLayout.new : Kuix::InlineLayout.new(true, 0, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+              k_btn.border.set_all!(unit * 0.5)
+              k_btn.padding.set_all!(unit)
+              k_btn.set_style_attribute(:background_color, color)
+              k_btn.set_style_attribute(:background_color, text_color, :hover)
+              k_btn.set_style_attribute(:background_color, Kuix::COLOR_LIGHT_GREY, :disabled)
+              k_btn.set_style_attribute(:border_color, color)
+              k_btn.set_style_attribute(:border_color, text_color, :hover)
+              k_btn.set_style_attribute(:border_color, Kuix::COLOR_LIGHT_GREY, :disabled)
+              k_btn.disabled = footer_btn_def.disabled
+              k_btn.on(:click) { footer_btn_def.on_click.call(k_btn) } unless footer_btn_def.on_click.nil?
+              k_footer.append(k_btn)
+
+                if footer_btn_def.motif_path.nil?
+                  k_content = Kuix::Label.new
+                  k_content.text = footer_btn_def.text
+                  k_content.text_size = unit * 3
+                  k_content.text_bold = !footer_btn_def.type.nil?
+                else
+                  k_content = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path(footer_btn_def.motif_path))
+                  k_content.min_size.set_all!(unit * 3)  # Square, as high as a text line
+                  k_content.line_width = unit * 0.5
+                  k_content.hittable = false
+                end
+                k_content.set_style_attribute(:color, text_color)
+                k_content.set_style_attribute(:color, color, :hover)
+                k_content.set_style_attribute(:color, Kuix::COLOR_MEDIUM_GREY, :disabled)
+                k_btn.append(k_content)
+
+              @footer_btns << { :button => k_btn, :label => footer_btn_def.motif_path.nil? ? k_content : nil }
+
+            end
+
+        end
+
+    end
+
+    # The anchor that keeps a dropup opened at the end of a drag from
+    # 'start_point_2d' to 'end_point_2d' inside the dragged rectangle.
+    def self.anchor_inside_drag(start_point_2d, end_point_2d)
+      if end_point_2d.y >= start_point_2d.y
+        end_point_2d.x >= start_point_2d.x ? Kuix::Anchor::BOTTOM_RIGHT : Kuix::Anchor::BOTTOM_LEFT
+      else
+        end_point_2d.x >= start_point_2d.x ? Kuix::Anchor::TOP_RIGHT : Kuix::Anchor::TOP_LEFT
+      end
+    end
+
+    SmartDropupFooterBtnDef = Struct.new(
+      :text,
+      :on_click,
+      :type,  # SmartTool::MESSAGE_TYPE_SUCCESS or MESSAGE_TYPE_ERROR to color it as a validation button, nil for none
+      :disabled,
+      :motif_path  # A Motif2d SVG path drawn instead of the text
+    ) do
+      def initialize(
+        text,
+        on_click = nil,
+        type = nil,
+        disabled = false,
+        motif_path = nil
+      )
+        super
+      end
     end
 
     SmartDropupBtnDef = Struct.new(
@@ -4141,7 +4290,8 @@ module Ladb::OpenCutList
       :on_leave,
       :indent,
       :disabled,
-      :tick_def
+      :tick_def,
+      :swatch_color
     ) do
       def initialize(
         text_defs = [],
@@ -4150,7 +4300,8 @@ module Ladb::OpenCutList
         on_leave = nil,
         indent = 0,
         disabled = false,
-        tick_def = nil
+        tick_def = nil,
+        swatch_color = nil
       )
         super
       end

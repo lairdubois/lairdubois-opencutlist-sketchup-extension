@@ -2948,6 +2948,8 @@ tool:
     action_option_edges_2_status: Colorier les 4 chants de la pièce ciblée
     action_option_faces_0_status: Colorier seulement la face ciblée
     action_option_faces_1_status: Colorier les 2 faces de la pièce ciblée
+    state_8_status: Cochez les matières à remplacer, puis validez
+    select_filter_title: Matières à remplacer
     edges: "{{ count }} chant"
     edges_plural: "{{ count }} chants"
     edge_ymin: Longueur 1
