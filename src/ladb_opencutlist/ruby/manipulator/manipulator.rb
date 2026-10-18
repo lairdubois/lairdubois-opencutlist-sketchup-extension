@@ -45,7 +45,7 @@ module Ladb::OpenCutList
 
     def ==(other)
       return false unless other.is_a?(Manipulator)
-      (@transformation * other.transformation.inverse).identity?
+      TransformationUtils.equal?(@transformation, other.transformation)
     end
 
     # -----

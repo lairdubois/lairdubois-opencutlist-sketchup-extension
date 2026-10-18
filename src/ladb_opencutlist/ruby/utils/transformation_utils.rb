@@ -242,6 +242,24 @@ module Ladb::OpenCutList
       v
     end
 
+    # Compares the matrix values : native +Geom::Transformation#==+ only compares
+    # objects, and (t1 * t2.inverse).identity? fails on SketchUp 2017 whose
+    # +identity?+ only answers an internal flag, never set on a product of non
+    # identity transformations.
+    #
+    # A plain while loop on purpose : as cheap as the native product + inverse,
+    # where an #all? block costs several times more.
+    def self.equal?(transformation1, transformation2, epsilon = 1e-10)
+      return true if transformation1.equal?(transformation2)
+      a1 = transformation1.to_a
+      a2 = transformation2.to_a
+      i = 0
+      while i < 16
+        return false if (a1[i] - a2[i]).abs > epsilon
+        i += 1
+      end
+      true
+    end
 
     def self.flipped?(transformation)
       AxisUtils.flipped?(transformation.xaxis, transformation.yaxis, transformation.zaxis)
