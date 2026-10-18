@@ -175,6 +175,8 @@ core:
       Une erreur s'est produite lors de l'exportation vers *{{ path }}*.
       **{{ error }}**
     unsupported_file_format: "Format de fichier non supporté : **{{ format }}**"
+    unsupported_skp_version: |
+      Le fichier SKP a été créé avec une version plus récente de SketchUp : {{ version }}
   success:
     exported_to: Export réussi vers {{ path }}.
     copied_to_clipboard: Copié dans le presse-papier
@@ -2793,11 +2795,11 @@ tool:
       front_panel_number_overflow: Impossible de répartir {{ number }} façades sur cette ouverture
       back_panel_number_overflow: Impossible de répartir {{ number }} fonds sur cette ouverture
       back_panel_severs_parts: "La rainure couperait de part en part : {{ names }}. Réduisez sa profondeur"
-      module_file_not_found: "Fichier de caisson introuvable : {{ file }}"
-      module_file_invalid: "Impossible de charger le fichier de caisson : {{ file }}"
+      module_file_not_found: "Fichier de module introuvable : {{ file }}"
+      module_file_invalid: "Impossible de charger le fichier de module : {{ file }}"
       module_file_invalid_name: "Nom de fichier invalide : {{ name }}"
       module_file_save_failed: "Impossible d'enregistrer le fichier de module : {{ name }}.skp"
-      module_stretch_failed: Impossible d'étirer le caisson à ces dimensions
+      module_stretch_failed: Impossible d'étirer le module à ces dimensions
     warning:
       no_back_panel_machining: "Aucune rainure n'a pu être usinée : aucune pièce voisine ne borde le fond à cette profondeur"
       no_module_file: Aucun fichier .skp dans ce dossier
@@ -3100,8 +3102,6 @@ tool:
       refused_anchors_plural: "{{ count }} positions écartées : la quincaillerie n'y respecte pas {{ asserts }}"
       failed_to_load_skp_file: |
         Impossible de charger le fichier SKP : {{ file }}
-      unsupported_skp_version: |
-        Le fichier SKP a été créé avec une version plus récente de SketchUp : {{ version }}
       failed_to_load_skm_file: |
         Impossible de charger le fichier SKM : {{ file }}
       unsupported_skm_load: Le chargement de matières SKM nécessite SketchUp 2019.2 ou plus récent

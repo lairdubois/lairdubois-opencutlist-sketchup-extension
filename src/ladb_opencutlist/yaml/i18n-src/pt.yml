@@ -29,19 +29,19 @@ default:
   import: Importar
   load: Carregar
   replace: Substituir
-  preview: Visão geral
+  preview: Pré-visualização
   options: Opções
   caution: Atenção
   remove: Remover
   remove_all: Remover tudo
-  delete: Remover
+  delete: Eliminar
   create: Criar
   duplicate: Duplicar
   ignore: Ignorar
   download: Baixar
   upgrade: Atualizar
   copy: Copiar
-  select_all: Selecione todos
+  select_all: Selecionar tudo
   unselect_all: Desmarcar tudo
   draw: Desenhar
   estimate: Orçar
@@ -88,7 +88,7 @@ default:
   reset_to_app_defaults: Restaurar os valores originais
   constrain_key: Shift
   copy_key_win: Ctrl
-  copy_key_mac: Opções
+  copy_key_mac: Option
   alt_key_win: Alt
   alt_key_mac: Comando
   tab_key: Tab
@@ -175,6 +175,8 @@ core:
       Ocorreu um erro ao exportar para *{{ path }}*.
       **{{ error }}**
     unsupported_file_format: "Formato de arquivo não suportado : **{{ format }}**"
+    unsupported_skp_version: |
+      O arquivo SKP foi criado com uma versão mais recente do SketchUp : {{ version }}
   success:
     exported_to: Exportação bem-sucedida para {{ path }}.
     copied_to_clipboard: Copiado para a área de transferência
@@ -184,7 +186,7 @@ core:
     material_change: Pelo menos um material foi alterado.
     selection_change: A seleção no modelo ativo foi alterada.
     layers_change: As tags no modelo ativo foram alteradas.
-    drawing_change: A conceção do modelo ativo foi alterada.
+    drawing_change: O desenho do modelo ativo foi alterado.
   upgrade:
     unavailable: Impossível encontrar a versão mais recente do *OpenCutList*.
     available: |
@@ -201,9 +203,9 @@ core:
     manual_download: Baixar manualmente
     zzz: Atualmente estou descansando após a atualização. Para me acordar, você deve reiniciar o SketchUp.
     success: |
-      A atualização da OpenCutList foi concluída!
+      A atualização do OpenCutList foi concluída!
 
-      REINICIE O SKETCHUP para as mudanças a serem ativadas.
+      REINICIE O SKETCHUP para que as alterações tenham efeito.
     error:
       download: Erro ao baixar o arquivo.
       unzip: Erro ao descompactar o arquivo.
@@ -212,9 +214,9 @@ core:
     manage: Gerenciar predefinições
     save_to: Salvar como
     restore_from: Restaurar a partir de
-    app_defaults: Definições de fábrica
-    user_defaults: Minhas definições padrão
-    new: Novas definições
+    app_defaults: Predefinição de fábrica
+    user_defaults: Minha predefinição padrão
+    new: Nova predefinição
     new_prompt: |
       *A criação de uma predefinição personalizada permite que você mantenha as configurações atuais do formulário de modo global para que você possa reutilizá-las em todos os seus modelos posteriormente.*
 
@@ -2457,9 +2459,9 @@ tool:
       part_created_plural: "{{ count }} novas peças criadas : {{ name }}"
   smart_build:
     title: Construir
-    action_0: Construir uma Divisória
-    action_0_status: Construir uma divisória numa cavidade formada por um grupo de peças existentes
-    action_0_state_0_status: Clique numa parede para construir uma divisória
+    action_0: Inserir um Módulo
+    action_0_status: Inserir um módulo importado de um arquivo SKP, esticado para as dimensões da caixa desenhada
+    action_0_state_0_status: Selecione um arquivo de módulo na biblioteca
     action_0_state_1_status: Clique numa parede para construir divisórias
     action_0_state_2_status: Clique para definir a largura do módulo (eixo X)
     action_0_state_2_lock_status: Bloquear na largura do arquivo de origem
@@ -2479,13 +2481,13 @@ tool:
     action_0_add_up_label: SUPERIOR
     action_0_flip_status: Inverter a frente e a traseira
     action_0_flip_up_status: Inverter o topo e a base
-    action_1: Construir uma Frente
-    action_1_status: Construir uma frente numa cavidade formada por um grupo de peças existentes
-    action_1_state_0_status: Clique numa cavidade para construir uma frente no seu vão
+    action_1: Construir uma Divisória
+    action_1_status: Construir uma divisória numa cavidade formada por um grupo de peças existentes
+    action_1_state_0_status: Clique numa parede para construir uma divisória
     action_1_state_1_status: Clique em uma parede para construir divisórias
-    action_2: Construir um Fundo
-    action_2_status: Construir um fundo numa cavidade formada por um grupo de peças existentes
-    action_2_state_0_status: Clique numa cavidade para construir um fundo no seu vão oposto à vista
+    action_2: Construir uma Frente
+    action_2_status: Construir uma frente fechando uma cavidade formada por um grupo de peças existentes
+    action_2_state_0_status: Clique numa cavidade para construir uma frente no seu vão
     action_2_state_0_merge_status: Arraste até às cavidades vizinhas para um fundo comum
     action_3: Construir um Fundo
     action_3_status: Construir um fundo fechando uma cavidade formada por um grupo de peças existentes
@@ -2805,8 +2807,6 @@ tool:
       occupied_anchors_plural: "{{ count }} conectores em conflito de posição com conectores existentes"
       failed_to_load_skp_file: |
         Não foi possível carregar o arquivo SKP : {{ file }}
-      unsupported_skp_version: |
-        O arquivo SKP foi criado com uma versão mais recente do SketchUp : {{ version }}
     warning:
       no_connector_to_remove: Nenhum conector para apagar
       x_connectors_to_remove: "{{ count }} conector para apagar"

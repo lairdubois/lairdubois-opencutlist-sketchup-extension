@@ -604,9 +604,9 @@ tab:
       smart_material_help: Selezionando questa opzione, le parti senza materiali definiti possono ricevere il materiale assegnato a uno dei genitori o dei figli.
       dynamic_attributes_name: Usa l'attributo *Name* dei componenti dinamici
       dynamic_attributes_name_help: |
-        Selezionando questa opzione, la classificazione delle parti sarà estratta, se esiste, dall'attributo *Name*.
+        Se questa opzione è attivata, la designazione delle parti che sono componenti dinamici verrà estratta dall'attributo *Name*, se definito.
 
-        <i class='ladb-opencutlist-icon-warning'></i> Occorrenze delle parti con la stessa definizione verranno separate se l'attributo *Name* è differente.
+        <i class='ladb-opencutlist-icon-warning'></i> Le istanze delle parti con la stessa definizione di componente verranno separate se l'attributo *Name* non ha lo stesso valore.
       part_number_with_letters: Usa le lettere per contrassegnare le parti
       part_number_with_letters_help: Selezionando questa opzione, le parti vengono contrassegnate utilizzando caratteri alfabetici (A, B, C, ... Z, AA, AB, ...).
       part_number_sequence_by_group: Fai ripartire la numerazione ad ogni gruppo
@@ -866,7 +866,7 @@ tab:
       option_full_width_diagram_0: "No"
       option_full_width_diagram_1: Si
       option_full_width_diagram_help: Selezionando questa opzione, i diagrammi di taglio verranno mostrati utilizzando le larghezze disponibili. Altrimenti, la loro larghezza viene definita da un fattore di scala calcolata su tutti i diagrammi.
-      option_wrap_length: Lunghezza massima della tavola
+      option_wrap_length: Lunghezza di interruzione
       option_wrap_length_help: Lunghezza massima dopo la quale una tavola o un bordo viene definita su linee multiple.
       option_hide_cross: Ritagli
       option_hide_cross_0: Dimensioni e croce
@@ -1021,7 +1021,7 @@ tab:
           Abilita l'esportazione dei fogli di piallacci e la selezione del colore.
         option_bar_dimensional: Barre
         option_bar_dimensional_help: |
-          Abilita l'esportazione delle dimensioni e del colore.
+          Consente di attivare l'esportazione della barra e di sceglierne i colori.
         option_bar_band: Bordo
         option_bar_band_help: |
           Abilita l'esportazione dei bordi e dei colori.
@@ -1045,8 +1045,8 @@ tab:
         warning:
           is_sheet_selection: I pannelli **mascherati** non vengono esportati.
       error:
-        no_bar_dimensional: La tavola predefinita non è stata correttamente configurata e non ci sono squadrature impostate.
-        no_bar_edge: La tavola predefinita non è stata correttamente configurata e non ci sono squadrature impostate.
+        no_bar_dimensional: La barra standard non è configurata correttamente e non è stato definito alcun ritaglio.
+        no_bar_edge: Il bordo standard non è configurato correttamente e non è stato definito alcun ritaglio.
         parameters: Impostazioni non corrette. La squadratura supera il 25% della tavola o del bordo più grande.
         no_parts: Nessuna parte.
         no_sheet: Le dimensioni dei pannelli non sono correttamente configurate e non ci sono ritagli disponibili.
@@ -1066,27 +1066,27 @@ tab:
       option_problem_type: Tipo
       option_problem_type_rectangle: Rettangolari
       option_problem_type_rectangleguillotine: Ghigliottina
-      option_problem_type_onedimensional: Barre
+      option_problem_type_onedimensional: Barra
       option_problem_type_irregular: Nesting forme
       options_material: Materiale
       options_config: Configurazione
       options_display: Visualizzazione
       options_tuning: Tuning
-      option_std_bin_1d_dimensional: Fasce standard
+      option_std_bin_1d_dimensional: Barre standard
       option_std_bin_1d_edge: Misura standard bordatura
       option_std_bin_1d_help: |
-        Seleziona le dimensioni standard dei pannelli o degli avanzi di pannello che verranno utilizzati per contenere tutti i pezzi nel miglior modo possibile.
+        Seleziona le dimensioni standard della barra o del bordo standard che verranno utilizzati per contenere al meglio tutti i pezzi.
 
         Questa lista è definita nel campo **$t(tab.materials.edit_material.std_lengths)** del materiale.
 
         *Modifica il materiale '{{ material_name }}' per aggiornare questa lista.*
       option_std_bin_1d_add: Aggiungi una lunghezza
       option_std_bin_1d_none: Nessuna
-      option_scrap_bin_1d_dimensional_sizes: Avanzi di tavole
+      option_scrap_bin_1d_dimensional_sizes: Avanzi di barra
       option_scrap_bin_1d_edge_sizes: Avanzi di bordatura
       option_scrap_bin_1d_sizes_placeholder: lunghezza x quantità ; ...
       option_scrap_bin_1d_sizes_help: |
-        Indica qui l'elenco dei pannelli o degli avanzi di pannello da utilizzare per l'impaginazione dei pezzi.
+        Indica qui l'elenco degli avanzi di barra o di bordo da considerare per l'impaginazione dei pezzi.
 
         *Se non verrà specificata nessuna unità, verrà utilizzata l'unità del modello.*
       option_scrap_bin_1d_none: Nessuna
@@ -1167,30 +1167,30 @@ tab:
         Distanza minima tra i pezzi
         Questo valore corrisponde allo spessore della lama o del dispositivo di taglio.
       option_trimming: Scarto perimetro
-      option_trimming_1d_help: Margine di tolleranza alle due estremità della barra o della striscia va considerato come scarto.
+      option_trimming_1d_help: Margine di tolleranza alle due estremità della barra o del bordo va considerato come scarto.
       option_trimming_2d_help: Margine perimetrale del pannello o del foglio da considerarsi come scarto.
       option_items_formula: Formula
       option_items_formula_help: |
         Permette di scrivere istruzioni in linguaggio *Ruby* per personalizzare il testo identificativo degli elementi nel diagramma di taglio.
-      option_bin_folding_1d_dimensional: Raggruppa tavole identiche
+      option_bin_folding_1d_dimensional: Raggruppa le barre identiche
       option_bin_folding_1d_edge: Raggruppa tavole o bordi identiche
       option_bin_folding_2d_sheet_good: Raggruppa pannelli identici
       option_bin_folding_2d_veneer: Raggruppa laminati identici
       option_bin_folding_0: $t(default.no)
       option_bin_folding_1: $t(default.yes)
       option_bin_folding_1d_help: |
-        Raggruppa tavole o bordi con dimensioni e tagli identici.
+        Raggruppa barre o bordi con dimensioni e tagli identici.
       option_bin_folding_2d_help: |
         Raggruppa pannelli o fogli con dimensioni e tagli identici.
       option_bin_folding_warning: |
         *Questa opzione sarà disattivata se si utilizzano proprietà di istanza nella formula di personalizzazione del testo di identificazione.*
       option_hide_part_list: Distinta
-      option_hide_part_list_1d_dimensional_0: Visualizza per ogni tavola
+      option_hide_part_list_1d_dimensional_0: Visualizzata per ogni barra
       option_hide_part_list_1d_edge_0: Visualizza per ogni bordo
       option_hide_part_list_2d_sheet_good_0: Visualizza per ogni pannello
       option_hide_part_list_2d_veneer_0: Visualizza per ogni foglio di impiallacciatura
       option_hide_part_list_1: Nascosta
-      option_hide_part_list_1d_help: Visualizza o nascondi la distinta per ogni tavola o bordo.
+      option_hide_part_list_1d_help: Visualizza o nascondi la distinta per ogni barra o bordo.
       option_hide_part_list_2d_help: Visualizza o nascondi la distinta per ogni pannello.
       option_part_drawing_type: Forma degli elementi
       option_part_drawing_type_0: Nascosto
@@ -1235,7 +1235,7 @@ tab:
         name: Descrizione
         item_count: Σ Parti
       tooltip:
-        scroll_to_block_1d: Scorri alla prima tavola o bordo
+        scroll_to_block_1d: Scorri fino alla prima barra o al primo bordo
         scroll_to_block_2d: Vai al primo pannello o piallaccio
       list:
         summary: Sommario
@@ -1257,9 +1257,9 @@ tab:
         total_cost: Σ Costi
         total_part_count: Σ Parti
         total_used: Totale utilizzato
-        bin_1d_dimensional: Barre
-        bin_1d_dimensional_type_0: Dimensioni Standard Barre
-        bin_1d_dimensional_type_1: Ritagli
+        bin_1d_dimensional: Barra
+        bin_1d_dimensional_type_0: Barra standard
+        bin_1d_dimensional_type_1: Ritagli di barra
         bin_1d_edge: Bordo
         bin_1d_edge_type_0: Bordatura Standard
         bin_1d_edge_type_1: Avanzi di bordatura
@@ -1295,9 +1295,9 @@ tab:
         option_bin_veneer: Impiallacciatura
         option_bin_veneer_help: |
           Abilita l'esportazione dei fogli di piallacci e la selezione del colore.
-        option_bin_dimensional: Barre
+        option_bin_dimensional: Barra
         option_bin_dimensional_help: |
-          Abilita l'esportazione delle dimensioni e del colore.
+          Consente di attivare l'esportazione della barra e di sceglierne i colori.
         option_bin_edge: Bordo
         option_bin_edge_help: |
           Abilita l'esportazione dei bordi e dei colori.
@@ -1326,7 +1326,7 @@ tab:
             L'abbondanza di lavorazione ({{ overflow }}) deve essere inferiore o uguale alla spaziatura ({{ spacing }}) configurata nelle proprietà della sezionatura.
       error:
         no_part: Nessuna parte.
-        no_bin_1d: Nessuna dimensione delle tavole o dei bordi disponibili è stata selezionata e non ci sono ritagli a disposizione.
+        no_bin_1d: Non è stata selezionata alcuna barra o bordo standard e non è stato definito alcun ritaglio.
         no_bin_2d: Nessuna dimensione dei pannelli o dei piallacci disponibili è stata selezionata e non ci sono ritagli a disposizione.
         invalid_part_shapes: La forma dell'elemento '{{ name }}' non è valida.
         no_solution: Non è stata trovata alcuna soluzione per collocare **tutte le parti** nel materiale disponibile.
@@ -1483,8 +1483,8 @@ tab:
       option_page_header_0: Nessuna
       option_page_header_1: Presente
       option_page_header_help: |
-        Stabilisce se stampare anche l'intestazione con il nome del documento, la descrizione e la data.
-        Senza intestazione, tutta la pagina verrà usata per il disegno.
+        Consente di scegliere se la pagina da stampare debba contenere un'intestazione con il nome del documento, la sua descrizione, la data, l'unità di misura e la scala.
+        Senza intestazione, il disegno d'insieme occuperà l'intera pagina.
       option_camera: Vista
       option_camera_view: Vista
       option_camera_view_custom: Personalizzato
@@ -1571,7 +1571,7 @@ tab:
         Consente di scegliere se la ricerca della forma degli elementi usa tutte le facce o solo la faccia di destinazione.
       option_anchor: Punto di aggancio
       option_anchor_0: Automatico
-      option_anchor_1: Proietta l'origine dell'elemento
+      option_anchor_1: Proietta l'origine del pezzo
       option_anchor_help: |
         **Automatico**
         L'angolo inferiore sinistro del perimetro che ingloba la geometria esportata è utilizzato come punto di aggancio.
@@ -1657,7 +1657,7 @@ tab:
         Le parti da inserire nella *distinta* devono essere di tipo **componenti**.
         Se ci sono solo gruppi, gli stessi devono essere convertiti in componenti.
         Usando componenti per le parti, gli stessi possono essere replicati senza inutili duplicazioni.
-      no_typed_materials: Applica il materiale alle parti che devono essere incluse nella distinta e definisci le proprietà del materiale come (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, o **$t(tab.materials.type_5)**) nella scheda <i class="ladb-opencutlist-icon-materials"></i> **Materiali**.
+      no_typed_materials: Applica un materiale alle parti che devono essere incluse nella distinta e definisci il tipo tale di questo materiale come (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, o **$t(tab.materials.type_5)**) nella scheda <i class="ladb-opencutlist-icon-materials"></i> **Materiali**.
     obsolete_base: Per rimanere aggiornata, la distinta parti va rigenerata.
   materials:
     label: Materiali
@@ -1665,7 +1665,7 @@ tab:
     type_0: Imprecisato
     type_1: Tavole
     type_2: Pannello
-    type_3: Barre
+    type_3: Barra
     type_4: Bordatura
     type_5: Accessori
     type_6: Impiallacciatura
@@ -1723,7 +1723,7 @@ tab:
       thickness_help: |
         Spessore finito del materiale.
 
-        *Dimensioni senza unità si intendono in unità di misura del modello.*
+        *Se non verrà specificata nessuna unità, verrà utilizzata l'unità del modello.*
       length_increase: Sovramateriale sulla lunghezza
       length_increase_help: Margine applicato alla lunghezza utile del pezzo per definirne la **lunghezza grezza**.
       length_increase_help_plural: Incremento della lunghezza per calcolare la **lunghezza grezza**.
@@ -1737,27 +1737,27 @@ tab:
       std_lengths_help: |
         Lunghezze standard disponibili per questo materiale.
 
-        *Dimensioni senza unità si intendono in unità del modello.*
+        *Se non verrà specificata nessuna unità, verrà utilizzata l'unità del modello.*
       std_widths: Larghezze predefinite
       std_widths_help: |
         Larghezze standard disponibili per questo materiale.
 
-        *Dimensioni senza unità si intendono in unità del modello.*
+        *Se non verrà specificata nessuna unità, verrà utilizzata l'unità del modello.*
       std_thicknesses: Spessori disponibili
       std_thicknesses_help: |
         Spessori **grezzi** standard disponibili per questo materiale.
 
-        *Dimensioni senza unità si intendono in unità del modello.*
+        *Se non verrà specificata nessuna unità, verrà utilizzata l'unità del modello.*
       std_sections: Sezioni disponibili
       std_sections_help: |
         Sezioni standard disponibili per questo materiale.
 
-        *Dimensioni senza unità si intendono in unità del modello.*
+        *Se non verrà specificata nessuna unità, verrà utilizzata l'unità del modello.*
       std_sizes: Dimensioni standard
       std_sizes_help: |
         Misure standard disponibili per questo materiale.
 
-        *Dimensioni senza unità si intendono in unità del modello.*
+        *Se non verrà specificata nessuna unità, verrà utilizzata l'unità del modello.*
       grained: Direzione venatura
       grained_help: Configura la direzione della venatura rispetto alla lunghezza del pannello.
       grained_0: Nessuna venatura
@@ -1872,12 +1872,12 @@ tab:
       url: URL
       tags: Badge
       layer_name: Tag
-      snapto: Giunzione
+      snapto: Collegamento
       snapto_none: Nessuna
       snapto_0: Qualunque
       snapto_1: Orizzontale
       snapto_2: Verticale
-      snapto_3: Inclinazione
+      snapto_3: Inclinata
       cuts_opening: Eseguire lo scasso
       always_face_camera: Sempre faccia alla camera
       shadows_face_sun: Ombre verso il sole
@@ -1885,7 +1885,7 @@ tab:
       no_scale_mask_0: Deformabile lungo l'asse rosso (X)
       no_scale_mask_1: Deformabile lungo l'asse verde (Y)
       no_scale_mask_2: Deformabile lungo l'asse blu (Z)
-      no_scale_mask_3: Deformabile lungo gli assi rosso/blu (X+Y)
+      no_scale_mask_3: Deformabile sul piano rosso/blu (X+Z)
       no_scale_mask_4: Deformabile lungo gli assi verde/blu (Y+Z)
       no_scale_mask_5: Deformabile lungo il piano rosso/verde (X+Y)
       no_scale_mask_6: Deformabile a partire dagli angoli (XYZ)
@@ -1962,7 +1962,7 @@ tab:
         Sto importando **{{ count }} parte** nel modello.
         Questa parte verrà posizionata all'origine della scena principale.
       info_0_plural: |
-        Sto importando **{{ count }} parti** nel modello.
+        Stai per importare **{{ count }} parti** nel modello.
         Queste parti verranno sovrapposte partendo dall'origine della scena principale.
       info_1: Seleziona **Importa** per confermare.
       options: |
@@ -2048,7 +2048,7 @@ tab:
       import:
         title: Importa le parti nel modello
         info_0: |
-          Sto importando **{{ count }} parte** nel modello.
+          Stai per importare **{{ count }} parte** nel modello.
           Questa parte verrà posizionata all'origine della scena principale.
         info_0_plural: |
           Stai per importare **{{ count }} parti** nel modello.
@@ -2727,6 +2727,8 @@ tool:
     action_option_edges_2_status: Colora i 4 bordi dell'elemento destinazione
     action_option_faces_0_status: Colora solo la faccia destinazione
     action_option_faces_1_status: Colora le 2 facce dell'elemento destinazione
+    state_8_status: Seleziona i materiali da sostituire, poi conferma
+    select_filter_title: Materiali da sostituire
     edges: "{{ count }} bordo"
     edges_plural: "{{ count }} bordi"
     edge_ymin: Lunghezza 1
@@ -2740,6 +2742,7 @@ tool:
     warning:
       no_material: Nessun materiale
       no_material_type: Nessun materiale di tipo '{{ type }}'
+      selection_disable_instances_all: La selezione rettangolare disabilita l'opzione '$t(tool.smart_paint.action_option_instances_1_status)'
     error:
       not_part: La destinazione non è un elemento (componente)
       not_edge: La faccia di destinazione non è un bordo

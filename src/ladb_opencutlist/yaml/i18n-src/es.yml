@@ -130,6 +130,7 @@ core:
     command:
       dialog: OpenCutList
       smart_draw: Dibujar piezas
+      smart_build: Construir piezas
       smart_handle: Manipular las piezas
       smart_reshape: Remodelar piezas
       smart_paint: Colorear piezas
@@ -175,7 +176,7 @@ core:
       **{{ error }}**
     unsupported_file_format: "Formato de archivo no compatible : **{{ format }}**"
   success:
-    exported_to: Exportación lograda {{ path }}.
+    exported_to: Exportación realizada a {{ path }}.
     copied_to_clipboard: Copiado al portapapeles
   event:
     model_change: Se ha cambiado el modelo activo.
@@ -542,7 +543,7 @@ tab:
         Puede agregar tantas etiquetas como desees.
         Las partes visibles de su lista de clientes se pueden filtrar de acuerdo con la lista de etiquetas.
       tags_multiple_info: Solo se muestran las etiquetas comunes
-      orientation: Orientaciónion
+      orientation: Orientación
       orientation_locked_on_axis: Bloquear orientación en ejes
       orientation_locked_on_axis_help: |
         Si se selecciona esta opción, la opción *Orientación automática de piezas* no tendrá ningún efecto en esta pieza,
@@ -644,7 +645,7 @@ tab:
       part_order_strategy: Clasificación de piezas
       part_order_strategy_help: |
         Reorganice las siguientes propiedades para definir el orden de clasificación dentro de cada grupo.
-        Las propiedades se pueden clasificar en orden <i class="ladb-opencutlist-icon-sort-asc"></i> *ascendente* o <i class="ladb-opencutlist-icon-sort-desc"></i> *desascendente*.
+        Las propiedades se pueden clasificar en orden <i class="ladb-opencutlist-icon-sort-asc"></i> *ascendente* o <i class="ladb-opencutlist-icon-sort-desc"></i> *descendente*.
       dimension_column_order_strategy: Pedido de dimensiones
       dimension_column_order_strategy_help: |
         Reorganice las siguientes propiedades de dimensión para definir el orden de clasificación de las columnas.
@@ -678,7 +679,7 @@ tab:
       material_type: Tipo
       material_thickness: Espesor / Material
       part_count: Cantidad
-      area: Area
+      area: Área
       area_short: Area
       volume: Volumen
       number: No.
@@ -787,7 +788,7 @@ tab:
     estimate:
       title: Estimación
       info_0: |
-        Esta función le permite generar una estimaciónde las **masas** y los **costes** de las **materias primas** necesarias para fabricar las piezas del *listado de partes*.
+        Esta función le permite generar una estimación de las **masas** y los **costes** de las **materias primas** necesarias para fabricar las piezas del *listado de partes*.
       options_general: General
       total: Total
       total_used: Usado
@@ -797,7 +798,7 @@ tab:
       total_count: Cant.
       total_instance_count: Σ Unidades
       total_volume: Σ Volúmenes
-      total_area: Σ Areas
+      total_area: Σ Áreas
       total_length: Σ Longitudes
       type_1: $t(tab.materials.type_1)
       type_2: $t(tab.materials.type_2)
@@ -831,14 +832,14 @@ tab:
       options_config: Configuración
       options_display: Visualización
       option_bar_folding_dimensional: Agrupar tableros similares
-      option_bar_folding_edge: Agrupar tiros de canto similares
+      option_bar_folding_edge: Agrupar tiras de canto similares
       option_bar_folding_0: "No"
       option_bar_folding_1: Si
       option_bar_folding_help: Agrupar tableros o tiros de canto que tengan las mismas partes y cortes.
       option_sheet_folding_good: Agrupar paneles similares
       option_sheet_folding_veneer: Agrupación de hojas idénticas
       option_sheet_folding_0: "No"
-      option_sheet_folding_1: Si
+      option_sheet_folding_1: Sí
       option_sheet_folding_help: Permite agrupar paneles u hojas que contengan las mismas piezas y cortes.
       option_hide_part_list: Lista de partes
       option_hide_part_list_1d_dimensional_0: Mostrado para cada tablero
@@ -863,7 +864,7 @@ tab:
       option_origin_corner_2d_help: Determina la posición del origen de coordenadas para la visualización de las piezas en los tableros.
       option_full_width_diagram: Pantalla de ancho total
       option_full_width_diagram_0: "No"
-      option_full_width_diagram_1: Si
+      option_full_width_diagram_1: Sí
       option_full_width_diagram_help: Si esta opción está activada, los diagramas de corte se muestran utilizando el ancho disponible. De lo contrario, su ancho se define mediante un factor de escala que depende de todos los diagramas.
       option_wrap_length: Longitud del tablero envolvente
       option_wrap_length_help: Longitud máxima después de la cual una tabla o una tira de canto se envolverá en varias líneas.
@@ -929,7 +930,7 @@ tab:
         Esta lista se define en el campo **$t(tab.materials.edit_material.std_sizes)** del material.
         Edita el material '{{ material_name }}' para actualizar esta lista.
       option_std_sheet_add: Agregar un tamaño de panel
-      option_std_sheet_none: "No"
+      option_std_sheet_none: Ninguno
       option_scrap_sheet_good_sizes: Productos en piezas cortadas
       option_scrap_sheet_veneer_sizes: Restos de hojas
       option_scrap_sheet_sizes_placeholder: largo x ancho x cantidad; ...
@@ -964,7 +965,7 @@ tab:
         leftover_to_keep: Recorte para conservar
         leftover_to_keep_plural: Recortes para conservar
         leftover_to_throw_away: Recorte para desechar
-        cut: Cortar
+        cut: Corte
         cut_plural: Cortes
         cut_trimming: Corte de limpieza
         cut_bounding: Corte primario (nivel 1)
@@ -1088,7 +1089,7 @@ tab:
         Indicar aquí la lista de los restos de listón o cantos para incluir en el despiece.
 
         *Si no se especifica ninguna unidad se aplicarán las unidades del modelo.*
-      option_scrap_bin_1d_none: "No"
+      option_scrap_bin_1d_none: Ninguno
       option_std_bin_2d_sheet_good: Tableros estándar
       option_std_bin_2d_veneer: Chapado estándar
       option_std_bin_2d_help: |
@@ -1106,7 +1107,7 @@ tab:
         Indicar aquí la lista de los restos de tablero o chapado para incluir en el despiece.
 
         *Si no se especifica ninguna unidad se aplicarán las del modelo.*
-      option_scrap_bin_2d_none: "No"
+      option_scrap_bin_2d_none: Ninguno
       option_optimization_mode: Modo de optimización
       option_optimization_mode_help: |
         Define el modo de optimización, con o sin límite de tiempo.
@@ -1127,7 +1128,7 @@ tab:
         Determina la dirección del primer corte.
       option_rectangleguillotine_first_stage_orientation_horizontal: Horizontal
       option_rectangleguillotine_first_stage_orientation_vertical: Vertical
-      option_rectangleguillotine_first_stage_orientation_any: Cualquier
+      option_rectangleguillotine_first_stage_orientation_any: Cualquiera
       option_rectangleguillotine_sort_subplates_criteria: Orden de los niveles
       option_rectangleguillotine_sort_subplates_criteria_help: |
         Define los criterios de ordenación de las piezas en cada nivel.
@@ -1171,7 +1172,7 @@ tab:
       option_items_formula_help: |
         Permite escribir código *Ruby* para personalizar el texto de identificación de las piezas en el diagrama.
       option_bin_folding_1d_dimensional: Agrupar tableros similares
-      option_bin_folding_1d_edge: Agrupar tiros de canto similares
+      option_bin_folding_1d_edge: Agrupar tiras de canto similares
       option_bin_folding_2d_sheet_good: Agrupar paneles similares
       option_bin_folding_2d_veneer: Agrupación de hojas idénticas
       option_bin_folding_0: $t(default.no)
@@ -1276,7 +1277,7 @@ tab:
         leftovers_plural: Desperdicios
         leftovers_to_keep: Recorte para conservar
         leftovers_to_keep_plural: Recortes para conservar
-        cut: Cortar
+        cut: Corte
         cut_plural: Cortes
         cut_trimming: Corte de limpieza
         cut_primary: Corte primario
@@ -1372,7 +1373,7 @@ tab:
       option_spacing_v: Vertical
       option_grid: Etiquetas por página
       option_col_count: Columnas
-      option_row_count: Líneas
+      option_row_count: Filas
       option_cutting_marks: Marcas de corte
       option_cutting_marks_0: "No"
       option_cutting_marks_1: Impreso
@@ -1636,7 +1637,7 @@ tab:
       no_component_in_selection: No se detectó ninguna instancia de un componente visible en su selección.
       no_component_in_model: No se detectó ninguna instancia de un componente visible en su escena.
       unknow_part: La pieza seleccionada no existe en la lista de piezas.
-      obsolete_cutlist: Imposible, la lista de piezas está obsoleta. Regenerarlo.
+      obsolete_cutlist: Imposible, la lista de piezas está obsoleta. Regenérela.
     warning:
       is_entity_selection: Esta lista de piezas es una representación parcial de su modelo, porque solo se basa en una selección de piezas.
       no_typed_materials_in_model: Su modelo no utiliza ningún material con un tipo definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** o **$t(tab.materials.type_5)**).
@@ -1768,7 +1769,7 @@ tab:
       raw_estimated_1: Volumen de materia prima necesaria
       multiplier_coefficient: Coeficiente multiplicador
       multiplier_coefficient_help: Permite indicar el coeficiente multiplicador aplicado al volumen bruto medido.
-      std_attributes_dim_placeholder: Elige una talla
+      std_attributes_dim_placeholder: Elige un tamaño
       std_volumic_masses: Densidad
       std_volumic_masses_help: Le permite definir la densidad para todos los tamaños y para cada tamaño estándar de material.
       std_prices: Precio
@@ -1789,7 +1790,7 @@ tab:
       title: Importar fichero .skm
       ask_replace: |
         El material "{{ name }}" ya existe.
-        ¿Quiere sustituirlo por que que está importando?
+        ¿Quiere sustituirlo por el que está importando?
 
         $t(default.yes) = Sustituir el material existente por el importado
         $t(default.no) = Guardar ambos materiales
@@ -1860,7 +1861,7 @@ tab:
       tags: Etiquetas
       layer_name: Etiqueta
       snapto_none: Ninguna
-      snapto_0: Cualquier
+      snapto_0: Cualquiera
       snapto_1: Horizontal
       snapto_2: Vertical
       explode: Desmontar
@@ -2011,7 +2012,7 @@ tab:
       import:
         title: Importar piezas al modelo
         info_0: |
-          Estás a punto de importar **{{ count }} partes** en el modelo.
+          Estás a punto de importar **{{ count }} parte** en el modelo.
           Esta parte se colocará en el origen de la escena principal.
         info_0_plural: |
           Estás a punto de importar **{{ count }} partes** en el modelo.
@@ -2053,8 +2054,8 @@ tab:
         invalid_count: Recuento inválido
         invalid_material: Material inválido
       success:
-        imported_body: "{{ count }} La pieza se importo correctamente!"
-        imported_body_plural: "{{ count }} ¡Las piezas se importaron con éxito!"
+        imported_body: "{{ count }} pieza importada correctamente!"
+        imported_body_plural: ¡{{ count }} piezas importadas correctamente!
       obsolete_base: Para permanecer sincronizado, debe volver a cargar el fichero CSV.
     bxf2:
       label: BXF2
@@ -2181,14 +2182,14 @@ tab:
     length_format: Formato
     length_format_0: $t(default.decimal)
     length_format_1: Arquitectura
-    length_format_2: Ingenería
+    length_format_2: Ingeniería
     length_format_3: $t(default.fractional)
-    length_precision: Precisón
+    length_precision: Precisión
     suppress_units_display: Muestra la unidad de longitud para cada valor
     mass_unit: Unidad de masa
-    mass_precision: Precisón
+    mass_precision: Precisión
     currency_symbol: Símbolo de moneda
-    currency_precision: Precisón
+    currency_precision: Precisión
     presets:
       export_global_presets: Exportar preajustes
       export_global_presets_success: Los preajustes se han exportado correctamente.
@@ -2246,7 +2247,7 @@ tab:
       - Zoltán Nagy, Roland Kovács (*húngaro*)
       - Milan Divovic (*serbio*)
     credits_description: |
-      El desarrollo de esta extensión está vinculado al proyecto de plataforma de intercambio. [L'Air du Bois](https://www.lairdubois.fr).
+      El desarrollo de esta extensión está vinculado al proyecto de plataforma de intercambio [L'Air du Bois](https://www.lairdubois.fr).
       Esta extensión también es de *código abierto* y está disponible en [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) licencia en [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
     credits_runtime: Tiempo de ejecución
     credits_development: Desarrollo
@@ -2322,7 +2323,7 @@ tool:
     action_option_offset_shape_offset: Desplazamiento
     action_option_offset_shape_offset_status: Permite aplicar un desfase al trazado de la forma dibujada
     action_option_segments_segment_count: Número de segmentos
-    action_option_segments_segment_count_status: Permite definir le número de segmentos del círculo
+    action_option_segments_segment_count_status: Permite definir el número de segmentos del círculo
     action_option_options_construction: Croquis
     action_option_options_construction_status: Dibujar croquis
     action_option_options_rectangle_centered: Rectángulo centrado
@@ -2458,13 +2459,13 @@ tool:
     face_zmax: Anverso
     warning:
       no_material: Su modelo no contiene ningún material!
-      no_material_type: No hay material '{{ type }}
+      no_material_type: Ningún material de tipo '{{ type }}'
     error:
       not_part: El objeto seleccionado no es una pieza (componente)
       not_edge: La cara objetivo no es un borde de panel
       not_face: La cara objetivo no es una cara de panel
   smart_axes:
-    title: Oriente
+    title: Orientar
     action_0: Voltear
     action_0_status: Haga clic en una pieza para voltear su instancia a lo largo de una de sus dimensiones
     action_1: Invertir Longitud ↔ Anchura
@@ -2483,7 +2484,7 @@ tool:
     action_option_direction_1_status: Volver la pieza a su anchura
     action_option_direction_2_status: Volver la pieza a su espesor
     warning:
-      more_entities: "{{ count_used }} se modificarán las instancias que compartan la misma definición"
+      more_entities: Se modificarán {{ count_used }} instancias que comparten la misma definición
     error:
       not_part: El objeto seleccionado no es una pieza (componente)
       not_orientable: El tipo de esta pieza no permite orientarla
@@ -2498,7 +2499,7 @@ tool:
     title: Exportar
     action_0: Exportar una pieza 3D
     action_0_status: Hacer click sobre una pieza
-    action_1: Exporar una pieza 2D
+    action_1: Exportar una pieza 2D
     action_1_status: Haga click sobre la cara de una pieza
     action_2: Exportar una cara
     action_2_status: Hacer click sobre una cara

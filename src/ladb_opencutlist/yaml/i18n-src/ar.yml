@@ -170,6 +170,8 @@ core:
     feature_unavailable: تتطلب هذه الخاصية توفر النسخة {{ version }} من SketchUp أو أعلى
     failed_export_to: " أثناء التصدير إلى *{{ path }}* حدث خطأ\n **{{ error }}**\n"
     unsupported_file_format: "صيغة الملف غير مدعومة : **{{ format }}**"
+    unsupported_skp_version: |
+      أُنشئ ملف SKP بنسخة أحدث من SketchUp : {{ version }}
   success:
     exported_to: نجح التصدير إلى {{ path }}.
     copied_to_clipboard: تم النسخ إلى الحافظة
@@ -2656,8 +2658,6 @@ tool:
       occupied_anchors_plural: "{{ count }} موصلات في تعارض موضع مع موصلات موجودة"
       failed_to_load_skp_file: |
         فشل تحميل ملف SKP : {{ file }}
-      unsupported_skp_version: |
-        أُنشئ ملف SKP بنسخة أحدث من SketchUp : {{ version }}
     warning:
       no_connector_to_remove: لا يوجد موصل لمسحه
       x_connectors_to_remove: "{{ count }} موصل لمسحه"

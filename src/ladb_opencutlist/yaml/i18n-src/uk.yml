@@ -173,6 +173,8 @@ core:
       Під час експортування до *{{ path }}* сталася помилка.
       **{{ error }}**
     unsupported_file_format: "Непідтримуваний формат файлу: **{{ format }}**"
+    unsupported_skp_version: |
+      Файл SKP створено за допомогою новішої версії SketchUp: {{ version }}
   success:
     exported_to: Експорт успішно виконано до {{ path }}.
     copied_to_clipboard: Скопійовано в буфер обміну
@@ -2723,8 +2725,6 @@ tool:
       occupied_anchors_plural: "{{ count }} кріплень у позиції конфліктують із наявними кріпленнями"
       failed_to_load_skp_file: |
         Не вдалося завантажити файл SKP: {{ file }}
-      unsupported_skp_version: |
-        Файл SKP створено за допомогою новішої версії SketchUp: {{ version }}
     warning:
       no_connector_to_remove: Немає кріплень для видалення
       x_connectors_to_remove: "{{ count }} кріплень для видалення"
