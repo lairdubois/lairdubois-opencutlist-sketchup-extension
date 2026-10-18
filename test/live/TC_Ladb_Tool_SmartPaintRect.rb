@@ -8,7 +8,8 @@
 # the PARTS, not the active context children holding them :
 #   - inside (left to right), the fully inside parts - or the parts of a fully
 #     inside container - at any depth ;
-#   - crossing (right to left), the touched parts only ;
+#   - crossing (right to left), the touched parts only - even the ones stored
+#     after a touched guide, see SelectRectRegression ;
 #   - Clean's containers : only the ones whose parts are all picked - a
 #     partially picked one is left as it is ;
 #   - the live preview, while dragging, draws the parts the release picks ;
@@ -48,6 +49,7 @@ module PaintRectRegression
     'root_crossing_partial' => { context: [], rect: [ -10, -10, 110, 240 ], type: :crossing, parts: %w[G1 LONG], containers: [] },
     'g2_inside_child' => { context: %w[G2], rect: [ 190, -10, 400, 110 ], type: :inside, parts: %w[G2a1], containers: %w[G2a] },
     'g2_crossing_child' => { context: %w[G2], rect: [ 190, -10, 400, 110 ], type: :crossing, parts: %w[C2b G2a1], containers: %w[G2a] },
+    'root_crossing_guide_first' => { context: [], rect: [ 540, 40, 650, 60 ], type: :crossing, parts: %w[C3a], containers: %w[G3] },
     'root_canceled' => { context: [], rect: [ -10, -10, 50, 50 ], type: :crossing, cancel: true, parts: [], containers: [] },
   }
 
@@ -148,11 +150,13 @@ module PaintRectRegression
       top_camera.height = 700.mm
       view.camera = top_camera
 
-      names.each do |name|
-        spec = CASES[name]
-        messages = []
-        parts, containers = run_case(model, instances, spec, messages)
-        results[name] = { 'expected' => [ spec[:parts].sort, spec[:containers].sort ], 'selected' => [ parts, containers ], 'messages' => messages }
+      FIXTURE.with_guides_shown(model) do
+        names.each do |name|
+          spec = CASES[name]
+          messages = []
+          parts, containers = run_case(model, instances, spec, messages)
+          results[name] = { 'expected' => [ spec[:parts].sort, spec[:containers].sort ], 'selected' => [ parts, containers ], 'messages' => messages }
+        end
       end
     ensure
       model.select_tool(nil)

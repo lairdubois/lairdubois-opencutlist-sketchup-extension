@@ -1284,9 +1284,7 @@ module Ladb::OpenCutList
     # default - redrawn only when they change.
     def _preview_select_rect_parts(view)
       pick_inside = @mouse_down_point_2d.x < @mouse_move_point_2d.x
-      ph = view.pick_helper
-      ph.window_pick(@mouse_down_point_2d, @mouse_move_point_2d, pick_inside ? Sketchup::PickHelper::PICK_INSIDE : Sketchup::PickHelper::PICK_CROSSING)
-      fn_picked = _get_select_rect_fn_picked((0...ph.count).map { |i| ph.path_at(i) }, pick_inside)
+      fn_picked = _get_select_rect_fn_picked(_window_pick_paths(view, @mouse_down_point_2d, @mouse_move_point_2d, pick_inside), pick_inside)
 
       model = Sketchup.active_model
       active_path = model.active_path.to_a

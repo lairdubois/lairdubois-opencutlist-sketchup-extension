@@ -3416,23 +3416,17 @@ module Ladb::OpenCutList
 
           # Left to right = window (inside), right to left = crossing (like SketchUp)
           pick_inside = @mouse_down_point_2d.x < x
-          pick_type = pick_inside ? Sketchup::PickHelper::PICK_INSIDE : Sketchup::PickHelper::PICK_CROSSING
 
-          ph = view.pick_helper(x, y)
-          ph.window_pick(
-            @mouse_down_point_2d,
-            Geom::Point3d.new(x, y),
-            pick_type
-          )
+          pick_paths = _window_pick_paths(view, @mouse_down_point_2d, Geom::Point3d.new(x, y), pick_inside)
 
           @tool.clear_all_2d
           @select_rect_points_2d = [ @mouse_down_point_2d, Geom::Point3d.new(x, y) ]  # Kept for onSelected
-          @select_rect_pick_paths = (0...ph.count).map { |i| ph.path_at(i) }  # Kept for onSelected
+          @select_rect_pick_paths = pick_paths  # Kept for onSelected
           @select_rect_pick_inside = pick_inside
           @mouse_down_point_2d = nil
           @mouse_move_point_2d = nil
 
-          if ph.count > 0
+          if pick_paths.any?
 
             model = Sketchup.active_model
             active_path = model.active_path.to_a
@@ -3442,8 +3436,7 @@ module Ladb::OpenCutList
             # at any depth. A partially crossed instance yields one of its leaves (crossing only).
 
             instances = Set[]
-            (0...ph.count).each do |i|
-              path = ph.path_at(i)
+            pick_paths.each do |path|
               if path.length <= active_path_length && active_path.first(path.length) == path
                 # The active context itself or one of its ancestors is fully inside the rect
                 model.active_entities.each do |entity|
@@ -3774,6 +3767,21 @@ module Ladb::OpenCutList
         end
 
       end
+    end
+
+    # The absolute paths a rectangle picks. Shown guides are hidden meanwhile :
+    # crossing, a guide the rectangle touches ends the walk of its container
+    # - the entities after it in the container are never picked (SketchUp 2026).
+    # Guides are no parts, nothing is lost.
+    def _window_pick_paths(view, point_a, point_b, pick_inside)
+      rendering_options = Sketchup.active_model.rendering_options
+      hide_construction_geometry = rendering_options['HideConstructionGeometry']
+      rendering_options['HideConstructionGeometry'] = true unless hide_construction_geometry
+      ph = view.pick_helper
+      ph.window_pick(point_a, point_b, pick_inside ? Sketchup::PickHelper::PICK_INSIDE : Sketchup::PickHelper::PICK_CROSSING)
+      (0...ph.count).map { |i| ph.path_at(i) }
+    ensure
+      rendering_options['HideConstructionGeometry'] = false unless hide_construction_geometry
     end
 
     # -----

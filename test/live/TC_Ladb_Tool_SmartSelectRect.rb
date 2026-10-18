@@ -13,7 +13,11 @@
 #   - each path stops at the highest entity fully inside the rectangle, at
 #     ANY depth : INSIDE must not turn G2 > G2a into G2 ;
 #   - a rectangle enclosing the edit context or one of its ancestors returns
-#     that ancestor's path only - shorter than the active path.
+#     that ancestor's path only - shorter than the active path ;
+#   - crossing, a shown guide the rectangle touches ends the walk of its
+#     container : the entities stored after it are never picked (SketchUp
+#     bug) - the handler hides the guides while it picks. G3 holds a guide
+#     stored before C3a, the guides shown while the cases run.
 #
 # The rectangle is driven through the real SmartHandleTool (move) - mouse
 # down, move, up - its onSelected stubbed to record the selected instances.
@@ -37,7 +41,9 @@ module SelectRectRegression
   ORIGIN_OFFSET = [ 50000, 50000, 0 ]   # mm
 
   # The groups, as boxes [ x0, y0, x1, y1 ] in mm, 50 mm high. G2 holds G2a -
-  # itself holding G2a1 - and C2b, an instance of a component.
+  # itself holding G2a1 - and C2b, an instance of a component. G3 holds a
+  # guide - the dotted line at x 550, stored first - and C3a, an instance of
+  # the same component.
   #
   #   y
   #   400 +-----+
@@ -46,17 +52,21 @@ module SelectRectRegression
   #   230 +------------------------------------+
   #       |               LONG                 |
   #   200 +------------------------------------+
-  #   100 +-----+     +-----+      +-----+
-  #       | G1  |     | G2a |      | C2b |     G2 = G2a + C2b
-  #     0 +-----+     +-----+      +-----+
-  #       0    100   200   300    350   450  x
+  #   100 +-----+     +-----+      +-----+    :  +-----+
+  #       | G1  |     | G2a |      | C2b |    :  | C3a |   G2 = G2a + C2b
+  #     0 +-----+     +-----+      +-----+    :  +-----+   G3 = guide + C3a
+  #       0    100   200   300    350   450  550 600  700  x
   BOXES = {
     'G1' => [ 0, 0, 100, 100 ],
     'G2a1' => [ 200, 0, 300, 100 ],
     'C2b' => [ 350, 0, 450, 100 ],
     'LONG' => [ 0, 200, 450, 230 ],
     'HID' => [ 0, 300, 100, 400 ],
+    'C3a' => [ 600, 0, 700, 100 ],
   }
+
+  # The G3 guide, as [ x0, y0, x1, y1 ] in mm
+  GUIDE = [ 550, -50, 550, 150 ]
 
   # Each case : the edit context (names), the rectangle [ x0, y0, x1, y1 ] in
   # mm, its direction - :inside = left to right, :crossing = right to left -
@@ -75,6 +85,7 @@ module SelectRectRegression
     'g2_inside_outside_context' => { context: %w[G2], rect: [ -10, -10, 110, 110 ], type: :inside, expected: [] },
     'g2a_inside_ancestor_enclosed' => { context: %w[G2 G2a], rect: [ 190, -10, 460, 110 ], type: :inside, expected: %w[G2a1] },
     'g2a_crossing_ancestor_enclosed' => { context: %w[G2 G2a], rect: [ 190, -10, 460, 110 ], type: :crossing, expected: %w[G2a1] },
+    'g3_crossing_guide_first' => { context: %w[G3], rect: [ 540, 40, 650, 60 ], type: :crossing, expected: %w[C3a] },
   }
 
   def self.point(x, y, z = 0)
@@ -111,7 +122,23 @@ module SelectRectRegression
     instances['LONG'] = add_box(entities, 'LONG', BOXES['LONG'])
     instances['HID'] = add_box(entities, 'HID', BOXES['HID'])
     instances['HID'].hidden = true
+    g3 = instances['G3'] = entities.add_group
+    g3.name = 'G3'
+    x0, y0, x1, y1 = GUIDE
+    g3.entities.add_cline(point(x0, y0), point(x1, y1))   # Stored before C3a
+    c3a = instances['C3a'] = g3.entities.add_instance(definition, Geom::Transformation.translation(point(*BOXES['C3a'].first(2))))
+    c3a.name = 'C3a'
     instances
+  end
+
+  # Shows the guides - the G3 cases need them - while the block runs.
+  def self.with_guides_shown(model)
+    rendering_options = model.rendering_options
+    hide_construction_geometry = rendering_options['HideConstructionGeometry']
+    rendering_options['HideConstructionGeometry'] = false
+    yield
+  ensure
+    rendering_options['HideConstructionGeometry'] = hide_construction_geometry
   end
 
   # The real move tool, its messages recorded, its onSelected recording the
@@ -188,11 +215,13 @@ module SelectRectRegression
       top_camera.height = 700.mm
       view.camera = top_camera
 
-      names.each do |name|
-        spec = CASES[name]
-        messages = []
-        selected = run_case(model, instances, spec, messages)
-        results[name] = { 'expected' => spec[:expected].sort, 'selected' => selected, 'messages' => messages }
+      with_guides_shown(model) do
+        names.each do |name|
+          spec = CASES[name]
+          messages = []
+          selected = run_case(model, instances, spec, messages)
+          results[name] = { 'expected' => spec[:expected].sort, 'selected' => selected, 'messages' => messages }
+        end
       end
     ensure
       model.select_tool(nil)
