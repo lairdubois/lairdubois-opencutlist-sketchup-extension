@@ -187,6 +187,9 @@ module Ladb::OpenCutList
           return
         end if material_type == MaterialAttributes::TYPE_HARDWARE && (!node_def.entity.definition.group? || !node_def.entity.name.strip.empty?)
 
+        # Faces are cached at node creation and not observed : refresh them if the geometry was rebuilt (ex: stretch)
+        node_def.faces.replace(node_def.entity.definition.entities.grep(Sketchup::Face)) if node_def.faces.any?(&:deleted?)
+
         points = node_def.faces.flat_map { |face| face.outer_loop.vertices.map { |vertex| t * vertex.position} }
         node_def.children.each do |child_node_def|
           child_points = fn_traverse.call(child_node_def, t)
