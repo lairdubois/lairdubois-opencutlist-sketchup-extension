@@ -3,6 +3,7 @@ module Ladb::OpenCutList
   require_relative 'smart_tool'
   require_relative '../lib/fiddle/clippy/clippy'
   require_relative '../lib/fiddle/meshy/meshy'
+  require_relative '../lib/fiddle/skpy/skpy'
   require_relative '../manipulator/face_manipulator'
   require_relative '../manipulator/plane_manipulator'
   require_relative '../helper/face_matcher_helper'
@@ -1837,6 +1838,20 @@ module Ladb::OpenCutList
     # a cutter crossing a curve the stretch would deform. The file is loaded
     # in an aborted operation : nothing is left in the model.
     def _probe_source(path, mtime)
+
+      # Before SketchUp 2021, a file from a newer version is checked before
+      # any load : the failed load corrupts the operation and its abort
+      # crashes SketchUp (seen on 2017).
+      if Sketchup.version_number < 2100000000
+        skp_version_info = Fiddle::Skpy.get_skp_version_info({ filepath: path })
+        if skp_version_info['error'] || skp_version_info['version_number'] > Sketchup.version_number
+          @tool.notify_errors([
+                                [ 'tool.smart_build.error.module_file_invalid', { :file => @@source_ref } ],
+                                skp_version_info['error'] ? nil : [ 'core.error.unsupported_skp_version', { :version => skp_version_info['version_label'] } ]
+                              ].compact)
+          return nil
+        end
+      end
 
       model = Sketchup.active_model
       model.start_operation('OCL Probe Module', true)
