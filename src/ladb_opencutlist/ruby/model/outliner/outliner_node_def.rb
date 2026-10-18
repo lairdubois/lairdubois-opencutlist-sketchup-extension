@@ -27,8 +27,7 @@ module Ladb::OpenCutList
                 :id,
                 :depth,
                 :entity, :entity_id,
-                :children,
-                :faces
+                :children
 
     # -----
 
@@ -58,8 +57,6 @@ module Ladb::OpenCutList
 
       @parent = nil
       @children = []
-
-      @faces = []
 
     end
 
@@ -169,8 +166,6 @@ module Ladb::OpenCutList
 
     attr_accessor :layer_def,
                   :material_def
-
-    attr_reader   :faces
 
     def initialize(path = [])
       super

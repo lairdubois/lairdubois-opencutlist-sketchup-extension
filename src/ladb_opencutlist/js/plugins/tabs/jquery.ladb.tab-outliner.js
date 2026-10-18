@@ -1305,7 +1305,7 @@
         this.$element
             .on('shown.ladb.tab', function () {
                 rubyCallCommand('outliner_start_observing');
-                if (this.rootNode != null) {
+                if (that.rootNode != null) {
                     that.generateOutliner();
                 }
             })

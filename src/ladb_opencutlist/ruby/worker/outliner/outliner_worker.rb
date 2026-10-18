@@ -169,6 +169,9 @@ module Ladb::OpenCutList
 
       fn_traverse = lambda do |node_def, transformation = IDENTITY|
 
+        # Exclude stale nodes
+        return if node_def.entity.deleted?
+
         # Exclude special behavior components
         return if node_def.always_face_camera?
 
@@ -187,10 +190,7 @@ module Ladb::OpenCutList
           return
         end if material_type == MaterialAttributes::TYPE_HARDWARE && (!node_def.entity.definition.group? || !node_def.entity.name.strip.empty?)
 
-        # Faces are cached at node creation and not observed : refresh them if the geometry was rebuilt (ex: stretch)
-        node_def.faces.replace(node_def.entity.definition.entities.grep(Sketchup::Face)) if node_def.faces.any?(&:deleted?)
-
-        points = node_def.faces.flat_map { |face| face.outer_loop.vertices.map { |vertex| t * vertex.position} }
+        points = node_def.entity.definition.entities.grep(Sketchup::Face).flat_map { |face| face.outer_loop.vertices.map { |vertex| t * vertex.position} }
         node_def.children.each do |child_node_def|
           child_points = fn_traverse.call(child_node_def, t)
           points += child_points if child_points
@@ -323,13 +323,8 @@ module Ladb::OpenCutList
     end
 
     def create_children_node_defs(node_def:, entities:, path: [])
-      node_def.faces.clear
       entities.each do |child_entity|
         case child_entity
-
-        when Sketchup::Face
-
-          node_def.faces << child_entity
 
         when Sketchup::Group, Sketchup::ComponentInstance
 

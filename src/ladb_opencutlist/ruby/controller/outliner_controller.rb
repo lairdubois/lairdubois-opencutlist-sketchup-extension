@@ -9,7 +9,7 @@ module Ladb::OpenCutList
     def initialize
       super('materials')
 
-      @observed_model_ids = Set.new
+      @observed_models = {}
       @observed_entities_ids = Set.new
 
       @observing = false
@@ -26,7 +26,14 @@ module Ladb::OpenCutList
                                   AppObserver::ON_ACTIVATE_MODEL
                                 ]) do |params|
 
-        start_observing_model(Sketchup.active_model) if @observing
+        if @observing
+          stop_observing_models
+          start_observing_model(Sketchup.active_model)
+        end
+
+        # Current outliner def belongs to the previous model
+        @outliner_def = nil
+        @worker = nil
 
       end
 
@@ -559,13 +566,13 @@ module Ladb::OpenCutList
 
     def start_observing_model(model)
       return if model.nil?
-      return if @observed_model_ids.include?(model.object_id)
+      return if @observed_models.key?(model.object_id)
       model.add_observer(self)
       model.selection.add_observer(self)
       model.materials.add_observer(self)
       model.layers.add_observer(self)
       model.definitions.add_observer(self)
-      @observed_model_ids.add(model.object_id)
+      @observed_models[model.object_id] = model
 
       # puts "start_observing_model (#{model.object_id})"
 
@@ -574,17 +581,23 @@ module Ladb::OpenCutList
 
     def stop_observing_model(model)
       return if model.nil?
-      return unless @observed_model_ids.include?(model.object_id)
+      return unless @observed_models.key?(model.object_id)
+      @observed_models.delete(model.object_id)
+      return unless model.valid?  # Closed model
       model.remove_observer(self)
       model.selection.remove_observer(self)
       model.materials.remove_observer(self)
       model.layers.remove_observer(self)
       model.definitions.remove_observer(self)
-      @observed_model_ids.delete(model.object_id)
 
       # puts 'stop_observing_model'
 
       stop_observing_entities(model)
+    end
+
+    def stop_observing_models
+      @observed_models.values.each { |model| stop_observing_model(model) }
+      @observed_entities_ids.clear  # Closed models entities can't be unobserved
     end
 
     def start_observing_entities(parent)
@@ -625,12 +638,18 @@ module Ladb::OpenCutList
     end
 
     def stop_observing_command
-      stop_observing_model(Sketchup.active_model)
+      stop_observing_models
       @observing = false
     end
 
     def generate_command(params)
       require_relative '../worker/outliner/outliner_generate_worker'
+
+      # Observe the generated model (model change events may not fire, ex: window switch on macOS)
+      if @observing
+        stop_observing_models
+        start_observing_model(Sketchup.active_model)
+      end
 
       # Setup worker
       worker = OutlinerGenerateWorker.new(**params)
@@ -644,7 +663,7 @@ module Ladb::OpenCutList
     end
 
     def refresh_command
-      return generate_command(nil) unless @outliner_def
+      return generate_command({}) unless @outliner_def
       @outliner_def.get_hashable.to_hash
     end
 
@@ -797,7 +816,7 @@ module Ladb::OpenCutList
 
       model.overlays.remove(@overlay) if @overlay && @overlay.valid?
 
-      if highlighted
+      if highlighted && @outliner_def
 
         highlight_defs = []
         ids.each do |id|
