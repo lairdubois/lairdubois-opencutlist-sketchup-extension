@@ -7204,6 +7204,42 @@ module Ladb::OpenCutList
       }
     end
 
+    # The parts standing INSIDE the mouth - their whole footprint within it -
+    # that the panel therefore runs straight across, exactly like a divider
+    # surrounded by a merge (see #_get_crossed_drawing_defs).
+    #
+    # An adjustable shelf is the case : kept clear of the sides it rests
+    # between, it does not split the compartment, and so stands as an island
+    # in the one mouth. Running on past the panel's slot, the cut severs it -
+    # which the grooving check would refuse - where what is wanted is the
+    # shelf ended at the panel, the piece left behind it dropped.
+    #
+    # A part bordering the mouth is never one : most of its footprint lies
+    # outside it, the cut only bites into it. A part that merely reaches into
+    # the slot comes out in one piece and nothing of it is dropped (see
+    # #_drop_offcuts!), so the test needs no reading of the depth.
+    def _get_island_drawing_defs(opening_def, ti)
+      return [] unless (cavities_def = _get_cavities_def).is_a?(CavitiesDef)
+
+      mouth_paths = _cut_mouth_paths(opening_def, ti)
+      return [] if mouth_paths.nil?
+
+      cavities_def.drawing_defs.select { |drawing_def|
+
+        # A panel already laid on the carcass is not carcass : a panel never runs
+        # across another back, nor across a front.
+        next false if DefinitionAttributes.applied_panel_role?(DefinitionAttributes.role_of(drawing_def.container))
+
+        footprint_paths = _get_panel_footprint_paths(drawing_def, opening_def, ti)
+        next false if footprint_paths.nil? || footprint_paths.empty?
+
+        outside_paths, _ = Fiddle::Clippy.execute_difference(closed_subjects: footprint_paths, clips: mouth_paths)
+        area = outside_paths.inject(0.0) { |sum, outside_path| sum + Fiddle::Clippy.get_rpath_area(outside_path).abs }
+        area <= MERGE_ADJACENCY_DELTA * MERGE_MIN_SHARED_BORDER
+
+      }
+    end
+
     # The contour the merged shares draw, in the opening's frame - nil when
     # they draw anything but ONE plain ring.
     #
@@ -7796,10 +7832,11 @@ module Ladb::OpenCutList
       slot = _cut_slot_range(opening_def)
       return [] if slot.nil?
 
-      # The parts the panel runs STRAIGHT ACROSS, over a merge : told apart
-      # here, once, because what ends them is not the cut but the drop that
-      # follows it.
+      # The parts the panel runs STRAIGHT ACROSS, over a merge or as islands
+      # in its mouth : told apart here, once, because what ends them is not
+      # the cut but the drop that follows it.
       crossed_drawing_defs = _get_crossed_drawing_defs(_merge_share_paths, opening_def, ti)
+      crossed_drawing_defs += _get_island_drawing_defs(opening_def, ti).reject { |drawing_def| crossed_drawing_defs.any? { |crossed_drawing_def| crossed_drawing_def.equal?(drawing_def) } }
 
       host_defs = []
       host_drawing_defs = []
