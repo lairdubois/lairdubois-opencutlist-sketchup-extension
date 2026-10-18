@@ -175,6 +175,8 @@ core:
       Er is een fout opgetreden tijdens het exporteren naar *{{ path }}*.
       **{{ error }}**
     unsupported_file_format: "Bestandsformaat wordt niet ondersteund: **{{ format }}**"
+    unsupported_skp_version: |
+      Het SKP-bestand is gemaakt met een nieuwere versie van SketchUp: {{ version }}
   success:
     exported_to: Succesvolle export naar {{ path }}.
     copied_to_clipboard: Gekopieerd naar het klembord
@@ -2751,8 +2753,6 @@ tool:
       occupied_anchors_plural: "{{ count }} verbinders hebben een positieconflict met bestaande verbinders"
       failed_to_load_skp_file: |
         Kan het SKP-bestand niet laden: {{ file }}
-      unsupported_skp_version: |
-        Het SKP-bestand is gemaakt met een nieuwere versie van SketchUp: {{ version }}
     warning:
       no_connector_to_remove: Geen verbinder om te verwijderen
       x_connectors_to_remove: "{{ count }} verbinder om te verwijderen"

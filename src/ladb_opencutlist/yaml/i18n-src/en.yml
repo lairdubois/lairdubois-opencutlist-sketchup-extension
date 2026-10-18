@@ -175,6 +175,8 @@ core:
       An error occurred while exporting to *{{ path }}*.
       **{{ error }}**
     unsupported_file_format: "Unsupported file format: **{{ format }}**"
+    unsupported_skp_version: |
+      The SKP file was created with a newer version of SketchUp: {{ version }}
   success:
     exported_to: Successful export to {{ path }}.
     copied_to_clipboard: Copied to clipboard
@@ -186,7 +188,7 @@ core:
     layers_change: The tags in the active model have changed.
     drawing_change: The design of the active model has been modified.
   upgrade:
-    unavailable: Unable to find out the latest version of *OpenCutList*.
+    unavailable: Unable to find the latest version of *OpenCutList*.
     available: |
       A newer version of *OpenCutList* is available.
       Update to get the latest features!
@@ -216,7 +218,7 @@ core:
     user_defaults: My default preset
     new: New preset
     new_prompt: |
-      *Creating a custom preset allows you to save the form's current settings globally so you can reuse them later in all your models.*
+      *Creating a custom preset saves the current settings of the form globally, allowing you to reuse them later in all your models.*
 
       Enter preset name:
     rename_prompt_title: Rename
@@ -293,7 +295,7 @@ core:
       view_left: Left
       view_right: Right
       zoom: "{{ zoom }} Scale"
-      explode_factor: Amplitude of exploded-view
+      explode_factor: Amplitude of the exploded-view
       toggle_box_helper: Show/Hide Bounding Box
       toggle_box_dimensions_helper: Show/Hide Dimensions
       toggle_axes_helper: Show/Hide Axes
@@ -2846,6 +2848,8 @@ tool:
     action_option_edges_2_status: Color the 4 edges of the target part
     action_option_faces_0_status: Color only the target face
     action_option_faces_1_status: Color the 2 faces of the target part
+    state_8_status: Check the materials to replace, then confirm
+    select_filter_title: Materials to replace
     edges: "{{ count }} edge"
     edges_plural: "{{ count }} edges"
     edge_ymin: Length 1
@@ -2859,6 +2863,7 @@ tool:
     warning:
       no_material: No material
       no_material_type: No material of type '{{ type }}'
+      selection_disable_instances_all: Rectangle selection disables the '$t(tool.smart_paint.action_option_instances_1_status)' option
     error:
       not_part: The targeted object is not a part (component)
       not_edge: The target face is not a panel edge
@@ -2939,8 +2944,6 @@ tool:
       occupied_anchors_plural: "{{ count }} connectors are in a position conflict with existing connectors"
       failed_to_load_skp_file: |
         Failed to load the SKP file : {{ file }}
-      unsupported_skp_version: |
-        The SKP file was created with a newer version of SketchUp: {{ version }}
     warning:
       no_connector_to_remove: No connector to erase
       x_connectors_to_remove: "{{ count }} connector to erase"

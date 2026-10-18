@@ -1280,7 +1280,7 @@ module Ladb::OpenCutList
                   if skp_version_info['version_number'] > Sketchup.version_number
                     @tool.notify_errors([
                                           [ 'tool.smart_join.error.failed_to_load_skp_file', { file: ref } ],
-                                          [ 'tool.smart_join.error.unsupported_skp_version', { version: skp_version_info['version_label'] } ]
+                                          [ 'core.error.unsupported_skp_version', { version: skp_version_info['version_label'] } ]
                                         ])
                     return nil
                   end

@@ -175,6 +175,8 @@ core:
       Beim Exportieren nach *{{ path }}* ist ein Fehler aufgetreten.
       **{{ error }}**
     unsupported_file_format: "Nicht unterstütztes Dateiformat: **{{ format }}**"
+    unsupported_skp_version: |
+      Die SKP-Datei wurde mit einer neueren Version von SketchUp erstellt: {{ version }}
   success:
     exported_to: Erfolgreicher Export nach {{ path }}.
     copied_to_clipboard: In die Zwischenablage kopiert
@@ -2807,6 +2809,8 @@ tool:
     action_option_edges_2_status: Einfärben der 4 Kanten des Zielteils
     action_option_faces_0_status: Nur die Zielfläche einfärben
     action_option_faces_1_status: Einfärben der 2 Zielflächen
+    state_8_status: Markieren Sie die zu ersetzenden Materialien und bestätigen Sie dann
+    select_filter_title: Zu ersetzende Materialien
     edges: "{{ count }} Kante"
     edges_plural: "{{ count }} Kanten"
     edge_ymin: Länge 1
@@ -2820,6 +2824,7 @@ tool:
     warning:
       no_material: Kein Material
       no_material_type: Kein Material des Typs '{{ type }}'
+      selection_disable_instances_all: Die Rechteckauswahl deaktiviert die Option '$t(tool.smart_paint.action_option_instances_1_status)'
     error:
       not_part: Das Zielobjekt ist kein Teil (Komponente)
       not_edge: Die Zielfläche ist keine Plattenkante
@@ -2904,8 +2909,6 @@ tool:
       occupied_anchors_plural: "{{ count }} Verbinder, deren Position mit der von vorhandenen Verbindungselementen kollidiert"
       failed_to_load_skp_file: |
         Die SKP-Datei {{ file }} kann nicht geladen werden
-      unsupported_skp_version: |
-        Die SKP-Datei wurde mit einer neueren Version von SketchUp erstellt: {{ version }}
     warning:
       no_connector_to_remove: Kein Verbinder zum Löschen
       x_connectors_to_remove: "{{ count }} Verbinder zum Löschen"
