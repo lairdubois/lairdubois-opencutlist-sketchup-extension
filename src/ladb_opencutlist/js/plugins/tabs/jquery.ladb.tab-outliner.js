@@ -259,11 +259,252 @@
                             }
                             items.push({ separator: true });
                             items.push({
+                                icon: 'input-field',
+                                text: i18next.t('tab.outliner.deep_rename_parts.title') + '...',
+                                callback: function () {
+
+                                    // Retrieve cutting diagram options
+                                    rubyCallCommand('core_get_model_preset', { dictionary: 'outliner_deep_rename_parts_options' }, function (response) {
+
+                                        const deepRenamePartsOptions = response.preset;
+
+                                        const $modal = that.appendModalInside('ladb_outliner_modal_deep_rename_parts', 'tabs/outliner/_modal-deep-rename-parts.twig', {});
+
+                                        // Fetch UI elements
+                                        const $widgetPreset = $('.ladb-widget-preset', $modal);
+                                        const $textareaFormula = $('#ladb_textarea_formula', $modal);
+                                        const $panelPreview = $('#ladb_panel_preview', $modal);
+                                        const $panelPreviewContent = $('#ladb_panel_preview_content', $modal);
+                                        const $panelPreviewContentTbody = $('tbody', $panelPreviewContent);
+                                        const $panelPreviewErrors = $('#ladb_panel_preview_errors', $modal);
+                                        const $btnRename = $('#ladb_outliner_deep_rename_parts', $modal);
+
+                                        // Define useful functions
+                                        const fnConvertToVariableDefs = function (vars) {
+
+                                            // Generate variableDefs for formula editor
+                                            const variableDefs = [];
+                                            for (let i = 0; i < vars.length; i++) {
+                                                variableDefs.push({
+                                                    text: vars[i].name,
+                                                    displayText: i18next.t('tab.cutlist.export.' + vars[i].name),
+                                                    type: vars[i].type
+                                                });
+                                            }
+
+                                            return variableDefs;
+                                        };
+                                        const fnFetchOptions = function (options) {
+                                            options.formula = $textareaFormula.val();
+                                        };
+                                        const fnFillInputs = function (options) {
+                                            $textareaFormula.ladbTextinputCode('val', [ typeof options.formula == 'string' ? options.formula : '' ]);
+                                        };
+
+                                        $widgetPreset.ladbWidgetPreset({
+                                            dialog: that.dialog,
+                                            dictionary: 'outliner_deep_rename_parts_options',
+                                            fnFetchOptions: fnFetchOptions,
+                                            fnFillInputs: fnFillInputs
+
+                                        });
+                                        $textareaFormula
+                                            .ladbTextinputCode({
+                                                variableDefs: fnConvertToVariableDefs([
+                                                    { name: 'path', type: 'path' },
+                                                    { name: 'instance_name', type: 'string' },
+                                                    { name: 'name', type: 'string' },
+                                                    { name: 'cutting_length', type: 'length' },
+                                                    { name: 'cutting_width', type: 'length' },
+                                                    { name: 'cutting_thickness', type: 'length' },
+                                                    { name: 'edge_cutting_length', type: 'length' },
+                                                    { name: 'edge_cutting_width', type: 'length' },
+                                                    { name: 'bbox_length', type: 'length' },
+                                                    { name: 'bbox_width', type: 'length' },
+                                                    { name: 'bbox_thickness', type: 'length' },
+                                                    { name: 'final_area', type: 'area' },
+                                                    { name: 'material', type: 'material' },
+                                                    { name: 'material_type', type: 'material-type' },
+                                                    { name: 'material_name', type: 'string' },
+                                                    { name: 'material_description', type: 'string' },
+                                                    { name: 'material_url', type: 'string' },
+                                                    { name: 'description', type: 'string' },
+                                                    { name: 'url', type: 'string' },
+                                                    { name: 'tags', type: 'array' },
+                                                    { name: 'edge_ymin', type: 'edge' },
+                                                    { name: 'edge_ymax', type: 'edge' },
+                                                    { name: 'edge_xmin', type: 'edge' },
+                                                    { name: 'edge_xmax', type: 'edge' },
+                                                    { name: 'face_zmax', type: 'veneer' },
+                                                    { name: 'face_zmin', type: 'veneer' },
+                                                    { name: 'layer', type: 'string' },
+                                                    { name: 'component_definition', type: 'component_definition' },
+                                                    { name: 'component_instance', type: 'component_instance' },
+                                                ])
+                                            })
+                                            .on('change', function () {
+
+                                                // Fetch options
+                                                fnFetchOptions(deepRenamePartsOptions);
+
+                                                rubyCallCommand('outliner_deep_rename_parts', $.extend({
+                                                    id: node.id,
+                                                    dry_run: true
+                                                }, deepRenamePartsOptions), function (response) {
+
+                                                    if (response.errors) {
+                                                        $panelPreview
+                                                            .show()
+                                                            .addClass('panel-danger')
+                                                            .removeClass('panel-default')
+                                                        ;
+                                                        $panelPreviewContent.hide();
+                                                        $panelPreviewErrors
+                                                            .empty()
+                                                            .show()
+                                                        ;
+                                                        $.each(response.errors, function (index, error) {
+                                                            $panelPreviewErrors.append($('<div>').html(i18next.t('core.error.' + error.error_type, error)));
+                                                        });
+                                                    } else if (response.preview) {
+                                                        $panelPreview
+                                                            .show()
+                                                            .addClass('panel-default')
+                                                            .removeClass('panel-danger')
+                                                        ;
+                                                        $panelPreviewErrors.hide();
+                                                        $panelPreviewContent.show();
+                                                        $panelPreviewContentTbody.empty();
+                                                        $.each(response.preview, function (index, row) {
+                                                            $panelPreviewContentTbody.append(Twig.twig({
+                                                                data: '<tr><td class="ladb-muted" width="50%">{{ old_name }}</td><td{% if new_name is empty %} class="ladb-muted"{% endif %}>{{ new_name ? new_name : old_name }}</td><td>{{ count }}</td></td></div>'
+                                                            }).render({
+                                                                old_name: row[0],
+                                                                new_name: row[1],
+                                                                count: row[2],
+                                                            }));
+                                                        });
+                                                    } else {
+                                                        $panelPreview.hide();
+                                                    }
+
+                                                });
+
+                                            })
+                                        ;
+
+                                        fnFillInputs(deepRenamePartsOptions);
+
+                                        // Bind buttons
+                                        $btnRename.on('click', function () {
+
+                                            // Fetch options
+                                            fnFetchOptions(deepRenamePartsOptions);
+
+                                            // Store options
+                                            rubyCallCommand('core_set_model_preset', { dictionary: 'outliner_deep_rename_parts_options', values: deepRenamePartsOptions });
+
+                                            rubyCallCommand('outliner_deep_rename_parts', $.extend({
+                                                id: node.id,
+                                            }, deepRenamePartsOptions), function (response) {
+
+                                                if (response.errors) {
+                                                    that.dialog.notifyErrors(response.errors);
+                                                }
+
+                                            });
+
+                                            // Hide modal
+                                            $modal.modal('hide');
+
+                                        });
+
+                                        // Show modal
+                                        $modal.modal('show');
+
+                                        // Autofocus textarea
+                                        $textareaFormula.ladbTextinputCode('focus');
+
+                                        // Setup popovers
+                                        that.dialog.setupPopovers();
+
+                                    });
+
+                                },
+                                disabled: node.computed_locked
+                            });
+                            items.push({
+                                icon: 'make-unique',
+                                text: i18next.t('tab.outliner.deep_make_unique.title'),
+                                callback: function () {
+                                    rubyCallCommand('outliner_deep_make_unique', { id: node.id }, function (response) {
+
+                                        if (response.errors) {
+                                            that.dialog.notifyErrors(response.errors);
+                                        }
+
+                                    });
+                                },
+                                disabled: node.computed_locked
+                            });
+                            items.push({ separator: true });
+                            if (node.selected) {
+                                items.push({
+                                    icon: 'group',
+                                    text: i18next.t('tab.outliner.create_container.title_group') + '...',
+                                    callback: function () {
+                                        that.dialog.prompt(i18next.t('tab.outliner.create_container.title_group'), i18next.t('tab.outliner.edit_node.instance_name'), null, function (name) {
+                                            rubyCallCommand('outliner_create_container', {
+                                                id: node.id,
+                                                name: name,
+                                                component: false
+                                            }, function (response) {
+
+                                                if (response.errors) {
+                                                    that.dialog.notifyErrors(response.errors);
+                                                }
+
+                                            });
+                                        }, { emptyValueAllowed: true });
+                                    },
+                                    disabled: node.computed_locked
+                                });
+                                items.push({
+                                    icon: 'component',
+                                    text: i18next.t('tab.outliner.create_container.title_component') + '...',
+                                    callback: function () {
+                                        that.dialog.prompt(i18next.t('tab.outliner.create_container.title_component'), i18next.t('tab.outliner.edit_node.definition_name'), i18next.t('tab.outliner.type_2'), function (name) {
+                                            rubyCallCommand('outliner_create_container', {
+                                                id: node.id,
+                                                name: name,
+                                                component: true
+                                            }, function (response) {
+
+                                                if (response.errors) {
+                                                    that.dialog.notifyErrors(response.errors);
+                                                }
+
+                                            });
+                                        });
+                                    },
+                                    disabled: node.computed_locked
+                                });
+                            }
+                            items.push({
                                 icon: 'bomb',
                                 text: i18next.t('tab.outliner.edit_node.explode') + '...',
-                                class: 'dropdown-item-danger',
                                 callback: function () {
                                     that.explodeNode(node);
+                                },
+                                disabled: node.computed_locked
+                            });
+                            items.push({ separator: true });
+                            items.push({
+                                icon: 'trash',
+                                text: i18next.t('tab.outliner.edit_node.erase') + '...',
+                                class: 'dropdown-item-danger',
+                                callback: function () {
+                                    that.eraseNode(node);
                                 },
                                 disabled: node.computed_locked
                             });
@@ -275,6 +516,46 @@
                         e.preventDefault();
                     })
                 ;
+
+                if (!node.computed_locked) {
+                    $row
+                        .attr('draggable', node.type > 0) // 0 = TYPE_MODEL
+                        .on('dragstart', function (e) {
+                            fnMouseLeave();
+                            let dataTransfer = e.originalEvent.dataTransfer;
+                            dataTransfer.effectAllowed = 'move';
+                            dataTransfer.clearData();
+                            dataTransfer.setData("text/plain", that.computeNodeDisplayName(node));
+                            dataTransfer.setData("node_id", node.id);
+                        })
+                        .on('dragenter', function (e) {
+                            $row.addClass('ladb-dragover-ok');
+                        })
+                        .on('dragleave', function (e) {
+                            $row.removeClass('ladb-dragover-ok');
+                        })
+                        .on('dragover', function (e) {
+                            e.preventDefault();
+                        })
+                        .on('drop', function (e) {
+                            e.preventDefault();
+                            $row.removeClass('ladb-dragover-ok');
+                            const draggedNodeId = e.originalEvent.dataTransfer.getData("node_id");
+                            if (draggedNodeId && draggedNodeId !== node.id) {
+                                const draggedNode = that.findNodeById(draggedNodeId);
+                                if (draggedNode) {
+                                    rubyCallCommand('outliner_move', { id: draggedNode.id, target_id: node.id }, function (response) {
+
+                                        if (response.errors) {
+                                            that.dialog.notifyErrors(response.errors);
+                                        }
+
+                                    });
+                                }
+                            }
+                        })
+                    ;
+                }
                 $('a.ladb-btn-node-toggle-folding', $row).on('click', function () {
                     $(this).blur();
 
@@ -437,6 +718,7 @@
                 const $inputDescription = $('#ladb_outliner_node_input_description', $modal);
                 const $inputUrl = $('#ladb_outliner_node_input_url', $modal);
                 const $inputTags = $('#ladb_outliner_node_input_tags', $modal);
+                const $btnErase = $('#ladb_outliner_node_erase', $modal);
                 const $btnExplode = $('#ladb_outliner_node_explode', $modal);
                 const $btnUpdate = $('#ladb_outliner_node_update', $modal);
 
@@ -488,6 +770,14 @@
                     });
 
                 // Bind buttons
+                $btnErase.on('click', function () {
+                    that.eraseNode(editedNode, function () {
+
+                        // Hide modal
+                        $modal.modal('hide');
+
+                    });
+                });
                 $btnExplode.on('click', function () {
                     that.explodeNode(editedNode, function () {
 
@@ -638,6 +928,35 @@
         }, {
             confirmBtnType: 'danger',
             confirmBtnLabel: i18next.t('tab.outliner.edit_node.explode')
+        });
+
+    };
+
+    LadbTabOutliner.prototype.eraseNode = function (node, callback = undefined) {
+        let that = this;
+
+        that.dialog.confirm(i18next.t('default.caution'), i18next.t('tab.outliner.edit_node.erase_message', {
+            name: node.selected ? that.getSelectedNodes().length + ' ' + i18next.t('tab.outliner.nodes') : this.computeNodeDisplayName(node)
+        }), function () {
+
+            rubyCallCommand('outliner_erase', { id: node.id }, function (response) {
+
+                if (response.errors) {
+                    that.dialog.notifyErrors(response.errors);
+                } else {
+
+                    // Callback
+                    if (typeof callback === 'function') {
+                        callback();
+                    }
+
+                }
+
+            });
+
+        }, {
+            confirmBtnType: 'danger',
+            confirmBtnLabel: i18next.t('tab.outliner.edit_node.erase')
         });
 
     };

@@ -2,16 +2,42 @@ module Ladb::OpenCutList
 
   class Manipulator
 
-    attr_accessor :data
+    attr_reader :transformation
 
-    def initialize()
-      @data = {}
+    def initialize(transformation = IDENTITY)
+      raise "transformation must be a Geom::Transformation." unless transformation.is_a?(Geom::Transformation)
+      @transformation = transformation
     end
 
     # -----
 
     def reset_cache
-      # TODO implement it in sub classes
+      @flipped = nil
+      @skewed = nil
+    end
+
+    # -----
+
+    def transformation=(transformation)
+      @transformation = transformation
+      reset_cache
+    end
+
+    def flipped?
+      @flipped ||= TransformationUtils.flipped?(@transformation)
+      @flipped
+    end
+
+    def skewed?
+      @skewed ||= TransformationUtils.skewed?(@transformation)
+      @skewed
+    end
+
+    # -----
+
+    def ==(other)
+      return false unless other.is_a?(Manipulator)
+      (@transformation * other.transformation.inverse).identity?
     end
 
   end

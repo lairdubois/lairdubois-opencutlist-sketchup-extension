@@ -28,7 +28,7 @@ module Ladb::OpenCutList
       node_def = @outliner_def.get_node_def_by_id(@id)
       return { :errors => [ 'tab.outliner.error.node_not_found' ] } unless node_def || node_def.entity.deleted?
 
-      # Start model modification operation
+      # Start a model modification operation
       model.start_operation('OCL Outliner Set Active', true, false, true)
 
 

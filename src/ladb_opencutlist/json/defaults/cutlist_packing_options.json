@@ -13,7 +13,8 @@
     "scrap_bin_2d_sizes": 4, /* PRESETS_PREPROCESSOR_DXDXQ */
     "rectangleguillotine_keep_size": 3, /* PRESETS_PREPROCESSOR_DXD */
     "spacing": 1, /* PRESETS_PREPROCESSOR_D */
-    "trimming": 1 /* PRESETS_PREPROCESSOR_D */
+    "trimming": 1, /* PRESETS_PREPROCESSOR_D */
+    "zoom_threshold": 1 /* PRESETS_PREPROCESSOR_D */
   },
   "0": {
     "std_bin_1d_sizes": "",
@@ -37,6 +38,7 @@
     "colorization": 1, /* COLORIZATION_SCREEN */
     "highlight_primary_cuts": false,
     "hide_edges_preview": true,
+    "zoom_threshold": { "metric": "1500mm", "imperial": "60\"" },
     "objective": "auto",
     "optimization_mode": "auto",
     "time_limit": 0,

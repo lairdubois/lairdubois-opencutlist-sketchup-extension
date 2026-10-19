@@ -19,22 +19,23 @@ module Ladb::OpenCutList::Kuix
 
       if style == POINT_STYLE_CIRCLE
 
+        segment_count = 12
+        delta = 2 * Math::PI / segment_count
+        half_size = size / 2.0
+
         points = [ points ] if points.is_a?(Geom::Point3d)
         points.each do |point|
 
           screen_point = screen_coords(point)
-          segment_count = 12
-          delta = 2 * Math::PI / segment_count
-          half_size = size / 2.0
           outer_points = Array.new(segment_count + 1) { |i| Geom::Point3d.new(screen_point.x + half_size * Math.cos(i * delta), screen_point.y + half_size * Math.sin(i * delta)) }
           triangles = outer_points.each_cons(2).to_a.flat_map { |p1, p2| [ p1, p2, screen_point ] }
 
-          set_line_stipple(LINE_STIPPLE_SOLID)
           unless fill_color.nil?
             set_drawing_color(fill_color)
             @view.draw2d(GL_TRIANGLES, triangles)
           end
           unless stroke_color.nil?
+            set_line_stipple(LINE_STIPPLE_SOLID)
             set_line_width(stroke_width)
             set_drawing_color(stroke_color)
             @view.draw2d(GL_LINE_LOOP, outer_points)
@@ -44,11 +45,12 @@ module Ladb::OpenCutList::Kuix
 
       elsif style == POINT_STYLE_DIAMOND
 
+        half_size = size / 2.0
+
         points = [ points ] if points.is_a?(Geom::Point3d)
         points.each do |point|
 
           screen_point = screen_coords(point)
-          half_size = size / 2.0
           quads = [
             Geom::Point3d.new(screen_point.x - half_size, screen_point.y),
             Geom::Point3d.new(screen_point.x, screen_point.y + half_size),
@@ -56,12 +58,12 @@ module Ladb::OpenCutList::Kuix
             Geom::Point3d.new(screen_point.x, screen_point.y - half_size),
           ]
 
-          set_line_stipple(LINE_STIPPLE_SOLID)
           unless fill_color.nil?
             set_drawing_color(fill_color)
             @view.draw2d(GL_QUADS, quads)
           end
           unless stroke_color.nil?
+            set_line_stipple(LINE_STIPPLE_SOLID)
             set_line_width(stroke_width)
             set_drawing_color(stroke_color)
             @view.draw2d(GL_LINE_LOOP, quads)

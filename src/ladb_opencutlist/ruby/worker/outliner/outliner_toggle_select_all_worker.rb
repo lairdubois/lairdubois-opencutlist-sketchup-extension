@@ -16,19 +16,20 @@ module Ladb::OpenCutList
       model = Sketchup.active_model
       return { :errors => [ 'tab.outliner.error.no_model' ] } unless model
 
-      # Start model modification operation
+      # Start a model modification operation
       model.start_operation('OCL Outliner Select All', true, false, false)
 
 
       begin
 
         if model.selection.empty?
-          model.selection.add(model.active_entities.to_a)
+          model.selection.invert if Sketchup.version_number >= 1920000000
         else
           model.selection.clear
         end
 
-      rescue
+      rescue => e
+        puts e
         return { :errors => [ 'default.error' ] }
       end
 

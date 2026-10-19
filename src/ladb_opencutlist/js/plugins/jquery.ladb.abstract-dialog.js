@@ -98,16 +98,24 @@ LadbAbstractDialog.prototype.setFontSize = function (font_size) {
     const $html = $('html');
     if (font_size === 1) {
         $html.removeClass('ladb-font-size-auto');
-        $html.addClass('ladb-font-size-small');
+        $html.addClass('ladb-font-size-normal');
+        $html.removeClass('ladb-font-size-small');
         $html.removeClass('ladb-font-size-tiny');
     } else if (font_size === 2) {
         $html.removeClass('ladb-font-size-auto');
+        $html.removeClass('ladb-font-size-normal');
+        $html.addClass('ladb-font-size-small');
+        $html.removeClass('ladb-font-size-tiny');
+    } else if (font_size === 3) {
+        $html.removeClass('ladb-font-size-auto');
+        $html.removeClass('ladb-font-size-normal');
         $html.removeClass('ladb-font-size-small');
         $html.addClass('ladb-font-size-tiny');
     } else {
         $html.addClass('ladb-font-size-auto');
         $html.removeClass('ladb-font-size-small');
         $html.removeClass('ladb-font-size-tiny');
+        $html.removeClass('ladb-font-size-normal');
     }
 };
 
@@ -320,14 +328,20 @@ LadbAbstractDialog.prototype.prompt = function (title, text, value, callback, op
         options: options
     });
 
+    options = $.extend({
+        emptyValueAllowed: false
+    }, options);
+
     // Fetch UI elements
     const $input = $('#ladb_prompt_input', $modal);
     const $btnValidate = $('#ladb_prompt_btn_validate', $modal);
 
     // Bind input
-    $input.on('keyup change', function () {
-        $btnValidate.prop('disabled', $(this).val().trim().length === 0);
-    });
+    if (options.emptyValueAllowed !== true) {
+        $input.on('keyup change', function () {
+            $btnValidate.prop('disabled', $(this).val().trim().length === 0);
+        });
+    }
 
     // Bind buttons
     $btnValidate.on('click', function() {
@@ -342,7 +356,9 @@ LadbAbstractDialog.prototype.prompt = function (title, text, value, callback, op
     });
 
     // State
-    $btnValidate.prop('disabled', $input.val().trim().length === 0);
+    if (options.emptyValueAllowed !== true) {
+        $btnValidate.prop('disabled', $input.val().trim().length === 0);
+    }
 
     // Show modal
     $modal.modal('show');
@@ -449,7 +465,7 @@ LadbAbstractDialog.prototype.showContextMenu = function (clientX, clientY, items
                                 item.callback();
                             }
                         })
-                        .html(Twig.twig({ data: "<i class='ladb-opencutlist-icon-{{ icon }}'></i>&nbsp;{{ text|escape('html') }}" }).render(item))
+                        .html(Twig.twig({ data: "<div style='width: 1.2rem; display: inline-block; text-align: center;'><i class='ladb-opencutlist-icon-{{ icon }}'></i></div>&nbsp;{{ text|escape('html') }}" }).render(item))
                 ).addClass(item.class).addClass(item.disabled ? 'disabled' : '')
             )
         } else if (item.separator) {

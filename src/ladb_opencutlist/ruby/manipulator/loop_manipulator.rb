@@ -1,8 +1,8 @@
 module Ladb::OpenCutList
 
-  require_relative 'transformation_manipulator'
+  require_relative 'manipulator'
 
-  class LoopManipulator < TransformationManipulator
+  class LoopManipulator < Manipulator
 
     attr_reader :loop
 
@@ -17,6 +17,7 @@ module Ladb::OpenCutList
     def reset_cache
       super
       @points = nil
+      @bounds = nil
       @segments = nil
       @vertex_manipulators = nil
     end
@@ -36,6 +37,11 @@ module Ladb::OpenCutList
         @points.reverse! if flipped?
       end
       @points
+    end
+
+    def bounds
+      @bounds ||= Geom::BoundingBox.new.add(points)
+      @bounds
     end
 
     def segments

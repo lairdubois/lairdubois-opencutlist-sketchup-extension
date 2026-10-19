@@ -1,0 +1,46 @@
+{% extends 'core/_modal.twig' %}
+
+{% set id = 'ladb_outliner_modal_deep_rename_parts' %}
+{% set title = 'tab.outliner.deep_rename_parts.title'|i18next %}
+
+{% block headerToolsInner %}
+    {% include 'components/_widget-preset.twig' %}
+    <button class="btn btn-default btn-xs" data-help-page="outliner.deep_rename_parts"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
+{% endblock %}
+
+{% block bodyInner %}
+    <div class="row">
+        <div class="col-xs-12 col-sm-push-1 col-sm-10">
+            {{ 'tab.outliner.deep_rename_parts.info_0'|i18next }}
+        </div>
+    </div>
+    <div class="form row">
+        <div class="form-group" style="padding-top: 10px;">
+            <label class="control-label col-xs-12 col-sm-offset-1 col-sm-11">{{ 'tab.outliner.deep_rename_parts.formula'|i18next }} <small style="font-weight: normal;">(Ruby)</small></label>
+            <div class="col-xs-12 col-sm-offset-1 col-sm-10">
+                <textarea id="ladb_textarea_formula" class="form-control" placeholder="{{ 'tab.cutlist.export.name'|i18next }}"></textarea>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-push-1 col-sm-10" style="margin-top: 20px;">
+            <div id="ladb_panel_preview" class="panel ladb-panel-preview" style="display: none;">
+                <div class="panel-heading">{{ 'default.preview'|i18next }}</div>
+                <div class="panel-body">
+                    <div id="ladb_panel_preview_content" class="ladb-panel-preview-content">
+                        <table class="table table-condensed">
+                            <thead><tr><th>{{ 'tab.outliner.deep_rename_parts.old_name'|i18next }}</th><th>{{ 'tab.outliner.deep_rename_parts.new_name'|i18next }}</th><th>{{ 'tab.outliner.deep_rename_parts.count'|i18next }}</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <div id="ladb_panel_preview_errors" class="ladb-panel-preview-errors"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footerRightInner %}
+    <button class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
+    <button class="btn btn-primary" id="ladb_outliner_deep_rename_parts">{{ 'default.rename'|i18next }}</button>
+{% endblock %}

@@ -1,8 +1,8 @@
 module Ladb::OpenCutList
 
-  require_relative 'transformation_manipulator'
+  require_relative 'manipulator'
 
-  class VertexManipulator < TransformationManipulator
+  class VertexManipulator < Manipulator
 
     attr_reader :vertex
 

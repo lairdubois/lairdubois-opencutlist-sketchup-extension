@@ -49,8 +49,7 @@
     end
 
     def self.persist_cached_uuid_of(material)
-      cached_uuid = fetch_cached_uuid(material)
-      if cached_uuid
+      if (cached_uuid = fetch_cached_uuid(material))
         material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', cached_uuid)
         MaterialAttributes.delete_cached_uuid(material)
       end
@@ -190,7 +189,10 @@
         @uuid = SecureRandom.uuid
 
         # Cache new UUID
-        MaterialAttributes.store_cached_uuid(@material, @uuid)
+        # MaterialAttributes.store_cached_uuid(@material, @uuid)
+
+        # Store UUID in material's attributes
+        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', @uuid)
 
       end
       @uuid
@@ -487,10 +489,10 @@
       if @material
 
         # Try to retrieve uuid from cached UUIDs
-        @uuid = MaterialAttributes.fetch_cached_uuid(@material)
+        # @uuid = MaterialAttributes.fetch_cached_uuid(@material)
 
         # Try to retrieve uuid from material's attributes
-        @uuid = @material.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', nil) if @uuid.nil?
+        @uuid = @material.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', nil)# if @uuid.nil?
 
         unless @uuid.nil?
           if force_unique_uuid && @@used_uuids.include?(@uuid)

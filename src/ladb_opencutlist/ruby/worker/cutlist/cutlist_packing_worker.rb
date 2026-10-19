@@ -66,13 +66,13 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _evaluate_item_text(formula, part, instance_info)
+    def _evaluate_item_text(formula, part, instance_info, thickness_layer, position_in_batch)
 
       data = PackingData.new(
 
         number: StringFormulaWrapper.new(part.number),
-        path: instance_info.nil? ? nil : PathFormulaWrapper.new(instance_info.named_path.split('.')),
-        instance_name: instance_info.nil? ? nil : StringFormulaWrapper.new(instance_info.entity.name),
+        path: instance_info.nil? ? nil : PathFormulaWrapper.new(instance_info.path[0...-1]),
+        instance_name: instance_info.nil? ? nil : StringFormulaWrapper.new("#{instance_info.entity.name}#{" // #{thickness_layer}" if part.def.thickness_layer_count > 1}"),
         name: StringFormulaWrapper.new(part.name),
         cutting_length: LengthFormulaWrapper.new(part.def.cutting_length),
         cutting_width: LengthFormulaWrapper.new(part.def.cutting_width),
@@ -97,6 +97,8 @@ module Ladb::OpenCutList
 
         component_definition: ComponentDefinitionFormulaWrapper.new(part.def.definition),
         component_instance: instance_info.nil? ? nil : ComponentInstanceFormulaWrapper.new(instance_info.entity),
+
+        batch: BatchFormulaWrapper.new(position_in_batch, part.count),
 
       )
 
@@ -137,8 +139,9 @@ module Ladb::OpenCutList
       layer:,
 
       component_definition:,
-      component_instance:
+      component_instance:,
 
+      batch:
 
     )
 
@@ -173,6 +176,8 @@ module Ladb::OpenCutList
 
       @component_definition = component_definition
       @component_instance = component_instance
+
+      @batch = batch
 
     end
 
@@ -240,6 +245,7 @@ module Ladb::OpenCutList
                    origin_corner: ORIGIN_CORNER_TOP_LEFT,
                    highlight_primary_cuts: false,
                    hide_edges_preview: true,
+                   zoom_threshold: 120,
 
                    rectangleguillotine_cut_type: Packy::RECTANGLEGUILLOTINE_CUT_TYPE_NON_EXACT,
                    rectangleguillotine_number_of_stages: 3,
@@ -277,7 +283,7 @@ module Ladb::OpenCutList
       @input_to_json_bin_dir = input_to_json_bin_dir
 
       @items_formula = items_formula.empty? ? '@number' : items_formula
-      @bin_folding = @items_formula.include?('@instance_name') || @items_formula.include?('@component_instance') ? false : bin_folding  # Disable bin folding if items_formula uses instance attribute.
+      @bin_folding = @items_formula.include?('@instance_name') || @items_formula.include?('@component_instance') || @items_formula.include?('@batch') ? false : bin_folding  # Disable bin folding if items_formula uses instance-dependent attributes.
       @hide_part_list = hide_part_list
       @part_drawing_type = part_drawing_type.to_i
       @colorization = colorization
@@ -292,6 +298,7 @@ module Ladb::OpenCutList
                             else
                               hide_edges_preview
                             end
+      @zoom_threshold = DimensionUtils.str_to_ifloat(DimensionUtils.str_add_units(zoom_threshold)).to_l.to_f
 
       @rectangleguillotine_cut_type = rectangleguillotine_cut_type
       @rectangleguillotine_number_of_stages = [ [ 2, rectangleguillotine_number_of_stages.to_i ].max, 3 ].min
@@ -325,7 +332,7 @@ module Ladb::OpenCutList
         model = Sketchup.active_model
         return _create_packing(errors: [ 'default.error' ]) unless model
 
-        parts = @cutlist.get_real_parts(@part_ids)
+        parts = @cutlist.get_parts(@part_ids)
         return _create_packing(errors: [ 'tab.cutlist.packing.error.no_part' ]) if parts.empty?
 
         parts_by_group = parts.group_by { |part| part.group }
@@ -459,13 +466,10 @@ module Ladb::OpenCutList
 
             part_def = part.def
             group_def = part.group.def
-            part_length_increase = part_def.length_increase
-            part_width_increase = part_def.width_increase
             material_length_increase = group_def.material_attributes.l_length_increase
             material_width_increase = group_def.material_attributes.l_width_increase
 
-            if part_length_increase > 0 || part_width_increase > 0 ||
-              material_length_increase > 0 || material_width_increase > 0
+            if material_length_increase > 0 || material_width_increase > 0
 
               # Part is oversized: use cutting rect instead of the real part shape
 
@@ -657,13 +661,26 @@ module Ladb::OpenCutList
 
       # Create PackingDef from the solution
 
-      instance_info_by_item_type_def = {}
+      instance_metas_by_item_type_def = {}
       @item_type_defs.each do |item_type_def|
-        instance_infos = []
-        item_type_def.part.def.thickness_layer_count.times do
-          instance_infos += item_type_def.part.def.instance_infos.values
+        part_def = item_type_def.part.def
+        instance_infos = part_def.instance_infos.values.sort_by! { |instance_info| instance_info.entity.name }
+        instance_count = part_def.count / part_def.thickness_layer_count
+        instance_metas = []
+        position_in_batch = 0
+        instance_count.times do |i|
+          thickness_layer = 0
+          part_def.thickness_layer_count.times do
+            thickness_layer += 1
+            position_in_batch += 1
+            instance_metas << {
+              instance_info: instance_infos[i],
+              thickness_layer: thickness_layer,
+              position_in_batch: position_in_batch
+            }
+          end
         end
-        instance_info_by_item_type_def[item_type_def] = instance_infos
+        instance_metas_by_item_type_def[item_type_def] = instance_metas
       end
 
       label_offsets_by_item_type_def = raw_solution['item_types_stats'].is_a?(Array) ? raw_solution['item_types_stats'].map { |raw_item_type_stats|
@@ -733,9 +750,12 @@ module Ladb::OpenCutList
                 item_defs: raw_bin['items'].is_a?(Array) ? raw_bin['items'].map { |raw_item|
                   item_type_def = @item_type_defs[raw_item['item_type_id']]
                   label_offset = label_offsets_by_item_type_def[item_type_def]
+                  instance_metas = instance_metas_by_item_type_def[item_type_def].is_a?(Array) ? instance_metas_by_item_type_def[item_type_def].shift : nil
                   PackingItemDef.new(
                     item_type_def: item_type_def,
-                    instance_info: instance_info_by_item_type_def[item_type_def].is_a?(Array) ? instance_info_by_item_type_def[item_type_def].shift : nil,
+                    instance_info: instance_metas[:instance_info],
+                    thickness_layer: instance_metas[:thickness_layer],
+                    position_in_batch: instance_metas[:position_in_batch],
                     x: _from_packy_length(raw_item.fetch('x', 0)),
                     y: _from_packy_length(raw_item.fetch('y', 0)),
                     angle: raw_item.fetch('angle', 0),
@@ -858,8 +878,9 @@ module Ladb::OpenCutList
       if light
         _set_pixel_to_inch_factor(200 / widest_bin_def.bin_type_def.width)
       else
-        if !longest_bin_def.nil? && !widest_bin_def.nil? && ((max_size = [ longest_bin_def.bin_type_def.length, widest_bin_def.bin_type_def.width ].max) * DEFAULT_PIXEL_TO_INCH_FACTOR) < 960
-          _set_pixel_to_inch_factor(960 / max_size)
+        px_zoom_threshold = @zoom_threshold * DEFAULT_PIXEL_TO_INCH_FACTOR
+        if !longest_bin_def.nil? && !widest_bin_def.nil? && ((max_size = [ longest_bin_def.bin_type_def.length, widest_bin_def.bin_type_def.width ].max) * DEFAULT_PIXEL_TO_INCH_FACTOR) < px_zoom_threshold
+          _set_pixel_to_inch_factor(px_zoom_threshold / max_size)
         else
           _set_pixel_to_inch_factor(DEFAULT_PIXEL_TO_INCH_FACTOR)
         end
@@ -1024,15 +1045,17 @@ module Ladb::OpenCutList
 
               end
 
-              item_text = _evaluate_item_text(@items_formula, part, item_def.instance_info)
+              item_text = _evaluate_item_text(@items_formula, part, item_def.instance_info, item_def.thickness_layer, item_def.position_in_batch)
               if item_text.is_a?(Hash)
-                item_text = "<tspan data-toggle='tooltip' title='#{CGI::escape_html(item_text[:error])}' fill='red'>!!</tspan>" # It's an error
+                item_text = "<tspan data-toggle='tooltip' title='#{CGI::escape_html(item_text[:error])}' fill='red'>!!️</tspan>" # It's an error
+                item_text_length = 2
               else
-                item_text = CGI::escape_html(item_text) # Normal text : escape HTML
+                item_text = CGI::escape_html(item_text) # Normal text: escape HTML
                 item_text += '*' if item_def.mirror
+                item_text_length = item_text.length
               end
 
-              label_font_size = [ [ px_node_label_font_size_max, px_item_width / 2, px_item_length / (item_text.length * 0.6) ].min, px_node_label_font_size_min ].max
+              label_font_size = [ [ px_node_label_font_size_max, px_item_width / 2, px_item_length / (item_text_length * 0.6) ].min, px_node_label_font_size_min ].max
 
               px_item_label_x = px_item_rect_half_width
               px_item_label_y = px_item_rect_half_height

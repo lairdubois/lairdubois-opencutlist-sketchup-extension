@@ -1,8 +1,8 @@
 module Ladb::OpenCutList
 
-  require_relative 'transformation_manipulator'
+  require_relative 'manipulator'
 
-  class PlaneManipulator < TransformationManipulator
+  class PlaneManipulator < Manipulator
 
     def initialize(plane, transformation = IDENTITY)
       super(transformation)

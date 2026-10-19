@@ -34,7 +34,7 @@ module Ladb::OpenCutList
       return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
 
       # Retrieve parts
-      parts = @cutlist.get_real_parts(@part_ids)
+      parts = @cutlist.get_parts(@part_ids)
       return { :errors => [ 'tab.cutlist.layout.error.no_part' ] } if parts.empty?
 
       worker = CutlistConvertToThreeWorker.new(parts,

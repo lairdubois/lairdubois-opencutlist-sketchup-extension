@@ -19,7 +19,7 @@ module Ladb::OpenCutList::Kuix
       text:,
       text_options:
     )
-      @view.draw_text(Geom::Point3d.new(@origin.x + x, @origin.y + y, 0), text, text_options)
+      @view.draw_text(Geom::Point3d.new(@origin.x + x, @origin.y + y, 0), text, text_options) if text.is_a?(String)
     end
 
     def draw_line_strip(

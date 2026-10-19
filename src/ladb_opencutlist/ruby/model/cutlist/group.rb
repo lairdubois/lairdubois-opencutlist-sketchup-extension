@@ -71,18 +71,10 @@ module Ladb::OpenCutList
       @parts.push(part)
     end
 
-    def get_parts(ids = nil)
+    def get_parts(ids = nil, real: true)
       parts = []
       @parts.each do |part|
-        parts << part unless ids && !ids.include?(part.id)
-      end
-      parts
-    end
-
-    def get_real_parts(ids = nil)
-      parts = []
-      @parts.each do |part|
-        if part.is_a?(FolderPart)
+        if real && part.is_a?(FolderPart)
           part.children.each do |child_part|
             parts << child_part unless ids && !ids.include?(child_part.id) && !ids.include?(part.id)
           end

@@ -35,7 +35,7 @@ module Ladb::OpenCutList
       materials = model.materials
       active_entities = model.active_entities
 
-      # Start model modification operation
+      # Start a model modification operation
       model.start_operation('OCL Importing Parts', true)
 
       # Remove all instances, definitions and materials if needed

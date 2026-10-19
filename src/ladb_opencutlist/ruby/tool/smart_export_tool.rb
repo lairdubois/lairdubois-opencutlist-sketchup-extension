@@ -316,10 +316,11 @@ module Ladb::OpenCutList
 
           # Part 3D
 
-          @active_drawing_def = CommonDrawingDecompositionWorker.new(@active_part_entity_path,
+          @active_drawing_def = CommonDrawingDecompositionWorker.new(Sketchup::InstancePath.new(@active_part_entity_path),
             origin_position: fetch_action_option_boolean(ACTION_EXPORT_PART_3D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR) ? CommonDrawingDecompositionWorker::ORIGIN_POSITION_DEFAULT : CommonDrawingDecompositionWorker::ORIGIN_POSITION_FACES_BOUNDS_MIN,
             ignore_surfaces: true,
-            ignore_edges: true
+            ignore_edges: true,
+            container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART,
           ).run
           if @active_drawing_def.is_a?(DrawingDef)
 
@@ -336,7 +337,7 @@ module Ladb::OpenCutList
               k_group.append(k_mesh)
 
               # Box helper
-              k_box = Kuix::BoxMotif.new
+              k_box = Kuix::BoxMotif3d.new
               k_box.bounds.copy!(@active_drawing_def.bounds)
               k_box.bounds.inflate_all!(inch_offset)
               k_box.color = Kuix::COLOR_BLACK
@@ -358,7 +359,7 @@ module Ladb::OpenCutList
           local_y_axis = part.def.size.oriented_axis(Y_AXIS)
           local_z_axis = part.def.size.oriented_axis(Z_AXIS)
 
-          @active_drawing_def = CommonDrawingDecompositionWorker.new(@active_part_entity_path,
+          @active_drawing_def = CommonDrawingDecompositionWorker.new(Sketchup::InstancePath.new(@active_part_entity_path),
             input_local_x_axis: local_x_axis,
             input_local_y_axis: local_y_axis,
             input_local_z_axis: local_z_axis,
@@ -366,7 +367,8 @@ module Ladb::OpenCutList
             input_line_manipulator: @picker.picked_line_manipulator,
             face_validator: fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACES, ACTION_OPTION_FACES_ONE) ? CommonDrawingDecompositionWorker::FACE_VALIDATOR_ONE : CommonDrawingDecompositionWorker::FACE_VALIDATOR_ALL,
             ignore_edges: !fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_INCLUDE_PATHS),
-            edge_validator: fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACES, ACTION_OPTION_FACES_ONE) ? CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY_COPLANAR : CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY
+            edge_validator: fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACES, ACTION_OPTION_FACES_ONE) ? CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY_COPLANAR : CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY,
+            container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART,
           ).run
           if @active_drawing_def.is_a?(DrawingDef)
 
@@ -462,7 +464,7 @@ module Ladb::OpenCutList
               end
 
               # Box helper
-              k_box = Kuix::RectangleMotif.new
+              k_box = Kuix::RectangleMotif3d.new
               k_box.bounds.origin.copy!(projection_def.bounds.min)
               k_box.bounds.size.copy!(projection_def.bounds)
               k_box.bounds.inflate!(inch_offset, inch_offset, 0)
@@ -523,10 +525,11 @@ module Ladb::OpenCutList
 
       if face
 
-        @active_drawing_def = CommonDrawingDecompositionWorker.new(@picker.picked_face_path,
+        @active_drawing_def = CommonDrawingDecompositionWorker.new(Sketchup::InstancePath.new(@picker.picked_face_path),
           input_plane_manipulator: @picker.picked_plane_manipulator,
           input_line_manipulator: @picker.picked_line_manipulator,
-          ignore_edges: true
+          ignore_edges: true,
+          container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART,
         ).run
         if @active_drawing_def.is_a?(DrawingDef)
 
@@ -589,7 +592,7 @@ module Ladb::OpenCutList
             # end
 
             # Box helper
-            k_rectangle = Kuix::RectangleMotif.new
+            k_rectangle = Kuix::RectangleMotif3d.new
             k_rectangle.bounds.origin.copy!(projection_def.bounds.min)
             k_rectangle.bounds.size.copy!(projection_def.bounds)
             k_rectangle.bounds.inflate!(inch_offset, inch_offset, 0)
@@ -645,12 +648,12 @@ module Ladb::OpenCutList
 
       if context_path
 
-        @active_drawing_def = CommonDrawingDecompositionWorker.new(context_path,
+        @active_drawing_def = CommonDrawingDecompositionWorker.new(Sketchup::InstancePath.new(context_path),
           ignore_faces: true,
           input_plane_manipulator: @picker.picked_plane_manipulator,
           input_line_manipulator: @picker.picked_line_manipulator,
           edge_validator: CommonDrawingDecompositionWorker::EDGE_VALIDATOR_COPLANAR,
-          edge_recursive: false
+          container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_NONE,
         ).run
         if @active_drawing_def.is_a?(DrawingDef)
 
@@ -725,7 +728,7 @@ module Ladb::OpenCutList
             end
 
             # Box helper
-            k_rectangle = Kuix::RectangleMotif.new
+            k_rectangle = Kuix::RectangleMotif3d.new
             k_rectangle.bounds.origin.copy!(projection_def.bounds.min)
             k_rectangle.bounds.size.copy!(projection_def.bounds)
             k_rectangle.bounds.inflate!(inch_offset, inch_offset, 0)

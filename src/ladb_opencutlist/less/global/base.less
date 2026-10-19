@@ -2,30 +2,35 @@
 // Base
 //
 
-@media screen and (min-width: @ladb-leftbar-width) and (max-height: 900px) {
-  html.ladb-dialog-tabs.ladb-font-size-auto {
-    font-size: 90%;
-  }
-}
+html {
 
-@media screen and (min-width: @ladb-leftbar-width) and (max-height: 700px) {
-  html.ladb-dialog-tabs.ladb-font-size-auto {
-    font-size: 80%;
-  }
-}
-
-@media screen and (max-width: @ladb-leftbar-width * 2) {
-  html {
+  @media (max-width: @ladb-leftbar-width * 2) {
     font-size: 100% !important;
   }
-}
 
-html.ladb-font-size-small {
-  font-size: 90%;
-}
+  &.ladb-font-size-auto:not(.ladb-dialog-modal) {
+    @media screen {
+      @media (min-width: @ladb-leftbar-width) and (max-height: 900px) {
+        font-size: 90%;
+      }
+      @media (min-width: @ladb-leftbar-width) and (max-height: 700px) {
+        font-size: 80%;
+      }
+    }
+  }
 
-html.ladb-font-size-tiny {
-  font-size: 80%;
+  &.ladb-font-size-normal {
+    font-size: 100%;
+  }
+
+  &.ladb-font-size-small {
+    font-size: 90%;
+  }
+
+  &.ladb-font-size-tiny {
+    font-size: 80%;
+  }
+
 }
 
 body {

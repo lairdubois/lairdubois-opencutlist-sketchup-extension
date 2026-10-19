@@ -227,8 +227,8 @@ module Ladb::OpenCutList
     STATE_SHAPE = 1
     STATE_PULL = 2
 
-    LAYER_2D_DIMENSIONS = 0
-    LAYER_2D_FLOATING_TOOLS = 1
+    LAYER_2D_DIMENSIONS = 10
+    LAYER_2D_FLOATING_TOOLS = 20
 
     @@last_pull_measure = 0
 
@@ -285,7 +285,7 @@ module Ladb::OpenCutList
       when STATE_SHAPE_START
         return super +
           ' | ' + PLUGIN.get_i18n_string("default.constrain_key") + ' + X = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_construction_status') + '.' +
-          ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_measure_from_vertex_status') + '.'
+          ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_measure_from_vertex_status') + '.'
 
       when STATE_SHAPE
         return PLUGIN.get_i18n_string("tool.smart_draw.action_#{@action}_state_#{state}_status") + '.'
@@ -335,6 +335,7 @@ module Ladb::OpenCutList
     end
 
     def onToolCancel(tool, reason, view)
+      super
 
       case @state
 
@@ -384,7 +385,7 @@ module Ladb::OpenCutList
       when STATE_SHAPE_START
         _snap_shape_start(flags, x, y, view)
         _preview_shape_start(view)
-        if !@mouse_down_point.nil? && @mouse_snap_point.distance(@mouse_down_point) > view.pixels_to_model(20, @mouse_snap_point)  # Drag handled only if distance is > 20px
+        if !@mouse_down_point.nil? && @mouse_snap_point.distance(@mouse_down_point) > view.pixels_to_model(20, @mouse_snap_point)  # Drag handled only if the distance is > 20px
           @picked_shape_start_point = @mouse_down_point
           @mouse_down_point = nil
           set_state(STATE_SHAPE)
@@ -507,12 +508,9 @@ module Ladb::OpenCutList
       when STATE_SHAPE_START, STATE_SHAPE
 
         if @state == STATE_SHAPE_START
-          if tool.is_key_shift?(key)
+          if tool.is_key_shift?(key) || tool.is_key_ctrl_or_option?(key) || tool.is_key_alt_or_command?(key)
             _refresh
-            return true
-          elsif tool.is_key_ctrl_or_option?(key)
-            _refresh
-            return true
+            return true # Block default behavior for the ALT key on Windows
           end
         end
 
@@ -561,6 +559,10 @@ module Ladb::OpenCutList
           _refresh
           return true
         end
+        if tool.is_key_ctrl_or_option?(key)
+          _refresh
+          return true
+        end
 
       end
 
@@ -573,33 +575,37 @@ module Ladb::OpenCutList
 
       when STATE_SHAPE_START
         if tool.is_key_shift?(key)
-          _refresh
-          return true
-        elsif tool.is_key_ctrl_or_option?(key) && is_quick
-          if tool.is_key_shift_down?
+          if is_quick && tool.is_key_ctrl_or_option_down?
             unless @mouse_snap_face_manipulator.nil?
               if _set_picked_points_from_face_manipulator(@mouse_snap_face_manipulator, view)
                 @mouse_snap_face_manipulator = nil
                 set_state(STATE_PULL)
-                _refresh
-                return true
               end
             end
-          else
-            @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_FROM_VERTEX, !_fetch_option_measure_from_vertex, true)
-            @previous_action_handler = nil
-            _remove_floating_tools
-            _refresh
-            return true
           end
+          _refresh
+          return true
+        end
+        if tool.is_key_alt_or_command?(key)
+          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_FROM_VERTEX, !_fetch_option_measure_from_vertex, true)
+          Sketchup.set_status_text('', SB_VCB_VALUE)
+          @previous_action_handler = nil
+          _remove_floating_tools
+          _refresh
+          return true
+        end
+        if tool.is_key_ctrl_or_option?(key)
+          _refresh
+          return true
         end
 
       when STATE_PULL
         if tool.is_key_shift?(key)
           _refresh
           return true
-        elsif tool.is_key_ctrl_or_option?(key) && is_quick
-          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_PULL_CENTRED, !_fetch_option_pull_centered, true)
+        end
+        if tool.is_key_ctrl_or_option?(key)
+          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_PULL_CENTRED, !_fetch_option_pull_centered, true) if is_quick
           _refresh
           return true
         end
@@ -798,9 +804,9 @@ module Ladb::OpenCutList
           degrees_of_freedom = @mouse_ip.degrees_of_freedom
           face = @mouse_ip.face
 
-          if @tool.is_key_shift_down?
+          if @tool.is_key_ctrl_or_option_down?
 
-            if @tool.is_key_ctrl_or_option_down?
+            if @tool.is_key_shift_down?
               @mouse_snap_face_manipulator = face_manipulator
             end
 
@@ -866,6 +872,12 @@ module Ladb::OpenCutList
         measure /= 2 if _fetch_option_pull_centered
         v = @picked_shape_end_point.vector_to(@mouse_snap_point)
         @mouse_snap_point = @picked_shape_end_point.offset(v, measure) if measure > 0 && v.valid?
+
+      # Raytest
+      elsif @tool.is_key_ctrl_or_option_down?
+        ray = [ @picked_shape_end_point, @picked_shape_end_point.vector_to(@mouse_snap_point) ]
+        position, entity = Sketchup.active_model.raytest(ray)
+        @mouse_snap_point = position unless position.nil?
       end
 
     end
@@ -902,7 +914,7 @@ module Ladb::OpenCutList
 
           if pp.one?
 
-            k_edge = Kuix::EdgeMotif.new
+            k_edge = Kuix::EdgeMotif3d.new
             k_edge.start.copy!(p)
             k_edge.end.copy!(p0)
             k_edge.line_width = 1
@@ -913,7 +925,7 @@ module Ladb::OpenCutList
 
           else
 
-            k_edge = Kuix::EdgeMotif.new
+            k_edge = Kuix::EdgeMotif3d.new
             k_edge.start.copy!(p0)
             k_edge.end.copy!(p)
             k_edge.line_width = 1
@@ -921,7 +933,7 @@ module Ladb::OpenCutList
             k_edge.color = Kuix::COLOR_BLACK
             @tool.append_3d(k_edge)
 
-            k_edge = Kuix::EdgeMotif.new
+            k_edge = Kuix::EdgeMotif3d.new
             k_edge.start.copy!(p)
             k_edge.end.copy!(pm)
             k_edge.line_width = 1
@@ -948,7 +960,7 @@ module Ladb::OpenCutList
               text_color: colors[index],
               border_color: colors[index]
             )
-            @tool.append_2d(k_label)
+            @tool.append_2d(k_label, LAYER_2D_DIMENSIONS)
 
           end
 
@@ -983,7 +995,7 @@ module Ladb::OpenCutList
         @tool.append_3d(k_point)
 
         # Draw line from first picked point to snap point
-        k_edge = Kuix::EdgeMotif.new
+        k_edge = Kuix::EdgeMotif3d.new
         k_edge.start.copy!(@picked_shape_start_point)
         k_edge.end.copy!(@mouse_snap_point)
         k_edge.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
@@ -1047,7 +1059,7 @@ module Ladb::OpenCutList
           text_color: Kuix::COLOR_Z,
           border_color: _get_normal_color
         )
-        @tool.append_2d(k_label)
+        @tool.append_2d(k_label, LAYER_2D_DIMENSIONS)
 
       end
 
@@ -1057,7 +1069,7 @@ module Ladb::OpenCutList
 
     def _read_offset(tool, text, view)
 
-      if (match = /^(.+)x$/.match(text))
+      if (match = /^(.+)x$/i.match(text))
 
         value = match[1]
 
@@ -1079,7 +1091,7 @@ module Ladb::OpenCutList
 
     def _read_shape_start(tool, text, view)
 
-      if @nearest_edge_manipulators.one?
+      if @nearest_edge_manipulators.is_a?(Array) && @nearest_edge_manipulators.one?
 
         p0 = @nearest_vertex_manipulator.point
         p1 = @mouse_snap_point.project_to_line(@nearest_edge_manipulators[0].line)
@@ -1094,7 +1106,7 @@ module Ladb::OpenCutList
         _refresh
 
         return true
-      else
+      elsif @nearest_vertex_manipulator
 
         d1, d2 = _split_user_text(text)
 
@@ -1110,6 +1122,20 @@ module Ladb::OpenCutList
           d2 = _read_user_text_length(tool, d2, n2.length)
 
           @picked_shape_start_point = Geom.intersect_line_line([ p0.offset(n1, d1), @nearest_edge_manipulators[0].direction], [ p0.offset(n2, d2), @nearest_edge_manipulators[1].direction])
+
+          set_state(STATE_SHAPE)
+          _refresh
+
+          return true
+        end
+
+      else
+
+        p = _read_user_text_point(tool, text, @mouse_snap_point)
+
+        if p
+
+          @picked_shape_start_point = p
 
           set_state(STATE_SHAPE)
           _refresh
@@ -1280,7 +1306,7 @@ module Ladb::OpenCutList
       # Remove previously created entity if exists
       if @definition.is_a?(Sketchup::ComponentDefinition)
         model.active_entities.erase_entities(@definition.instances)
-        model.definitions.remove(@definition)
+        model.definitions.remove(@definition) if Sketchup.version_number >= 1800000000
         @definition = nil
       end
 
@@ -1435,7 +1461,7 @@ module Ladb::OpenCutList
       instance = _get_instance
       instance_path = (model.active_path.nil? ? [] : model.active_path) + [ instance ]
 
-      @drawing_def = CommonDrawingDecompositionWorker.new(instance_path,
+      @drawing_def = CommonDrawingDecompositionWorker.new(Sketchup::InstancePath.new(instance_path),
         ignore_surfaces: true,
         ignore_faces: false,
         ignore_edges: true,
@@ -1575,11 +1601,11 @@ module Ladb::OpenCutList
         end
         k_panel.append(k_btn)
 
-        k_motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path(tool_def[:path]))
-        k_motif.min_size.set_all!(unit * 4)
-        k_motif.set_style_attribute(:color, Kuix::COLOR_BLACK)
-        k_motif.set_style_attribute(:color, Kuix::COLOR_WHITE, :active)
-        k_btn.append(k_motif)
+          k_motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path(tool_def[:path]))
+          k_motif.min_size.set_all!(unit * 4)
+          k_motif.set_style_attribute(:color, Kuix::COLOR_BLACK)
+          k_motif.set_style_attribute(:color, Kuix::COLOR_WHITE, :active)
+          k_btn.append(k_motif)
 
       end
 
@@ -1947,7 +1973,7 @@ module Ladb::OpenCutList
 
       if offset != 0
 
-        k_rectangle = Kuix::RectangleMotif.new
+        k_rectangle = Kuix::RectangleMotif3d.new
         k_rectangle.bounds.size.set!(width, height)
         k_rectangle.line_width = 1
         k_rectangle.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
@@ -1959,7 +1985,7 @@ module Ladb::OpenCutList
 
       end
 
-      k_rectangle = Kuix::RectangleMotif.new
+      k_rectangle = Kuix::RectangleMotif3d.new
       k_rectangle.bounds.origin.set!(-offset, -offset)
       k_rectangle.bounds.size.set!(width + 2 * offset, height + 2 * offset)
       k_rectangle.line_width = @locked_normal ? 3 : 1.5
@@ -2018,7 +2044,7 @@ module Ladb::OpenCutList
 
         if bounds.width == bounds.height && bounds.width != 0
 
-          k_edge = Kuix::EdgeMotif.new
+          k_edge = Kuix::EdgeMotif3d.new
           k_edge.start.copy!(_fetch_option_rectangle_centered ? @picked_shape_start_point.offset(@mouse_snap_point.vector_to(@picked_shape_start_point)) : @picked_shape_start_point)
           k_edge.end.copy!(@mouse_snap_point)
           k_edge.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
@@ -2037,7 +2063,7 @@ module Ladb::OpenCutList
 
           if bounds.width != bounds.height
 
-            k_edge = Kuix::EdgeMotif.new
+            k_edge = Kuix::EdgeMotif3d.new
             k_edge.start.copy!(@picked_shape_start_point)
             k_edge.end.copy!(@mouse_snap_point)
             k_edge.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
@@ -2057,7 +2083,7 @@ module Ladb::OpenCutList
               text_color: Kuix::COLOR_X,
               border_color: _get_normal_color
             )
-            @tool.append_2d(k_label)
+            @tool.append_2d(k_label, LAYER_2D_DIMENSIONS)
 
           end
 
@@ -2069,7 +2095,7 @@ module Ladb::OpenCutList
               text_color: Kuix::COLOR_Y,
               border_color: _get_normal_color
             )
-            @tool.append_2d(k_label)
+            @tool.append_2d(k_label, LAYER_2D_DIMENSIONS)
 
           end
 
@@ -2271,7 +2297,6 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_SHAPE
-
         if tool.is_key_shift?(key)
           UI.beep if @@last_radius_measure == 0
           _refresh
@@ -2288,6 +2313,10 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_SHAPE
+        if tool.is_key_shift?(key)
+          _refresh
+          return true
+        end
         if tool.is_key_ctrl_or_option?(key) && is_quick
           @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_FROM_DIAMETER, !_fetch_option_measure_from_diameter, true)
           Sketchup.set_status_text(get_state_status(fetch_state), SB_PROMPT)
@@ -2359,7 +2388,7 @@ module Ladb::OpenCutList
 
       if offset != 0
 
-        k_circle = Kuix::CircleMotif.new(_fetch_option_segment_count)
+        k_circle = Kuix::CircleMotif3d.new(_fetch_option_segment_count)
         k_circle.bounds.size.set_all!(diameter)
         k_circle.line_width = 1
         k_circle.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
@@ -2370,7 +2399,7 @@ module Ladb::OpenCutList
 
       end
 
-      k_circle = Kuix::CircleMotif.new(_fetch_option_segment_count)
+      k_circle = Kuix::CircleMotif3d.new(_fetch_option_segment_count)
       k_circle.bounds.size.set_all!(diameter + offset)
       k_circle.line_width = @locked_normal ? 3 : 1.5
       k_circle.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if _fetch_option_construction
@@ -2393,7 +2422,7 @@ module Ladb::OpenCutList
       )
       @tool.append_3d(k_points)
 
-      k_edge = Kuix::EdgeMotif.new
+      k_edge = Kuix::EdgeMotif3d.new
       k_edge.start.copy!(measure_start)
       k_edge.end.copy!(@mouse_snap_point)
       k_edge.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
@@ -2440,7 +2469,7 @@ module Ladb::OpenCutList
           text_color: Kuix::COLOR_X,
           border_color: _get_direction_color
         )
-        @tool.append_2d(k_label)
+        @tool.append_2d(k_label, LAYER_2D_DIMENSIONS)
 
       end
 
@@ -2490,7 +2519,7 @@ module Ladb::OpenCutList
     end
 
     def _read_segment_count(tool, text)
-      if (match = /^(.+)s$/.match(text))
+      if (match = /^(.+)s$/i.match(text))
 
         value = match[1]
         segment_count = value.to_i
@@ -3191,7 +3220,7 @@ module Ladb::OpenCutList
               )
               @tool.append_3d(k_points)
 
-              k_edge = Kuix::EdgeMotif.new
+              k_edge = Kuix::EdgeMotif3d.new
               k_edge.start.copy!(point)
               k_edge.end.copy!(pp)
               k_edge.line_stipple = Kuix::LINE_STIPPLE_DOTTED
@@ -3340,7 +3369,7 @@ module Ladb::OpenCutList
               text: measure,
               border_color: _get_normal_color
             )
-            @tool.append_2d(k_label)
+            @tool.append_2d(k_label, LAYER_2D_DIMENSIONS)
 
           end
 
@@ -3363,12 +3392,33 @@ module Ladb::OpenCutList
       return true if super
 
       measure_start = _fetch_option_measure_reversed ? @picked_points.first : @picked_points.last
-      measure_vector = measure_start.vector_to(@mouse_snap_point)
-      measure = measure_vector.length
-      measure = _read_user_text_length(tool, text, measure)
-      return true if measure.nil?
 
-      _add_picked_point(measure_start.offset(measure_vector, measure), view)
+      # Check if input is a point with <> and [] notation
+      p = _read_user_text_point(tool, text, @mouse_snap_point, measure_start)
+      if p
+
+        if @locked_normal || @picked_points.length >= 3
+          # Project the input point if picked points already form a plan
+          plane = [ @picked_shape_start_point, @normal ]
+          p = p.project_to_plane(plane)
+        elsif @picked_points.length >= 2
+          # Update normal
+          plane = Geom.fit_plane_to_points(@picked_points + [ p ])
+          @normal = PlaneManipulator.new(plane).normal
+        end
+
+      else
+
+        # Read a simple length
+        measure_vector = measure_start.vector_to(@mouse_snap_point)
+        measure = measure_vector.length
+        measure = _read_user_text_length(tool, text, measure)
+        return true if measure.nil?
+
+        p = measure_start.offset(measure_vector, measure)
+      end
+
+      _add_picked_point(p, view)
       _refresh
 
       true

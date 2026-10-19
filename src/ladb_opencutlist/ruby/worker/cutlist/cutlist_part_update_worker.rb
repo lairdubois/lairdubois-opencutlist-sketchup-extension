@@ -27,9 +27,6 @@ module Ladb::OpenCutList
         :ignore_grain_direction,
         :axes_order,
         :axes_origin_position,
-        :length_increase,
-        :width_increase,
-        :thickness_increase,
         :edge_material_names,
         :edge_entity_ids,
         :face_material_names,
@@ -70,9 +67,6 @@ module Ladb::OpenCutList
             part_data.fetch('ignore_grain_direction'),
             part_data.fetch('axes_order', nil),
             part_data.fetch('axes_origin_position', nil),
-            part_data.fetch('length_increase'),
-            part_data.fetch('width_increase'),
-            part_data.fetch('thickness_increase'),
             part_data.fetch('edge_material_names'),
             part_data.fetch('edge_entity_ids'),
             part_data.fetch('face_material_names'),
@@ -93,7 +87,7 @@ module Ladb::OpenCutList
       model = Sketchup.active_model
       return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
 
-      # Start model modification operation
+      # Start a model modification operation
       model.start_operation('OCL Part Update', true, false, true)
 
       definitions = model.definitions
@@ -134,10 +128,7 @@ module Ladb::OpenCutList
                 part_data.orientation_locked_on_axis != definition_attributes.orientation_locked_on_axis ||
                 part_data.symmetrical != definition_attributes.symmetrical ||
                 part_data.ignore_grain_direction != definition_attributes.ignore_grain_direction ||
-                part_data.tags != definition_attributes.tags ||
-                part_data.length_increase != definition_attributes.length_increase ||
-                part_data.width_increase != definition_attributes.width_increase ||
-                part_data.thickness_increase != definition_attributes.thickness_increase
+                part_data.tags != definition_attributes.tags
               definition_attributes.cumulable = part_data.cumulable
               definition_attributes.instance_count_by_part = part_data.instance_count_by_part
               definition_attributes.mass = part_data.mass
@@ -148,9 +139,6 @@ module Ladb::OpenCutList
               definition_attributes.orientation_locked_on_axis = part_data.orientation_locked_on_axis
               definition_attributes.symmetrical = part_data.symmetrical
               definition_attributes.ignore_grain_direction = part_data.ignore_grain_direction
-              definition_attributes.length_increase = part_data.length_increase
-              definition_attributes.width_increase = part_data.width_increase
-              definition_attributes.thickness_increase = part_data.thickness_increase
               definition_attributes.write_to_attributes
             end
 

@@ -90,9 +90,9 @@ module Ladb::OpenCutList
       face_manipulators.each do |face_manipulator|
 
         if face_manipulator.surface_manipulator
-          f_depth = (z_max - face_manipulator.surface_manipulator.z_max) # Faces sharing the same "surface" are considered as a unique "box"
+          f_depth = (z_max - face_manipulator.surface_manipulator.bounds.max.z) # Faces sharing the same "surface" are considered as a unique "box"
         else
-          f_depth = (z_max - face_manipulator.z_max)
+          f_depth = (z_max - face_manipulator.bounds.max.z)
         end
         if face_manipulator.has_cuts_opening?
           # Face has cuts opening components glued to. So we extract its paths from mesh triangulation instead of loops.
@@ -113,7 +113,7 @@ module Ladb::OpenCutList
       # Extract edges and curves
       edge_manipulators.each do |edge_manipulator|
 
-        e_depth = (z_max - edge_manipulator.z_max)
+        e_depth = (z_max - edge_manipulator.bounds.max.z)
         e_path = Clippy.points_to_rpath(edge_manipulator.points)
         e_su_layer = edge_manipulator.edge.layer == cached_layer0 ? nil : edge_manipulator.edge.layer
 
@@ -128,7 +128,7 @@ module Ladb::OpenCutList
       end
       curve_manipulators.each do |curve_manipulator|
 
-        c_depth = (z_max - curve_manipulator.z_max)
+        c_depth = (z_max - curve_manipulator.bounds.max.z)
         c_path = Clippy.points_to_rpath(curve_manipulator.points)
         c_su_layer = curve_manipulator.curve.first_edge.layer == cached_layer0 ? nil : curve_manipulator.curve.first_edge.layer
 

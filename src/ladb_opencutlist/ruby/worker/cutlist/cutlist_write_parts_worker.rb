@@ -73,7 +73,7 @@ module Ladb::OpenCutList
       return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
 
       # Retrieve part
-      parts = @cutlist.get_real_parts(@part_ids)
+      parts = @cutlist.get_parts(@part_ids)
       return { :errors => [ 'tab.cutlist.error.unknow_part' ] } if parts.empty?
 
       # Ask for output dir

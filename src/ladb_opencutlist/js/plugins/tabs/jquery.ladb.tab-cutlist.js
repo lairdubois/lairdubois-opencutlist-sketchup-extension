@@ -931,7 +931,8 @@
                     source: exportOptions.source,
                     col_defs: exportOptions.source_col_defs[exportOptions.source],
                     format: 'pasteable',
-                    no_header: noHeader
+                    no_header: noHeader,
+                    part_folding: that.generateOptions.part_folding
                 }, function (response) {
                     if (response.errors) {
                         that.dialog.notifyErrors(response.errors);
@@ -1110,7 +1111,8 @@
                     part_ids: partIds,
                     source: exportOptions.source,
                     col_defs: exportOptions.source_col_defs[exportOptions.source],
-                    format: 'table'
+                    format: 'table',
+                    part_folding: that.generateOptions.part_folding
                 }, function (response) {
 
                     if (response.errors) {
@@ -1182,7 +1184,8 @@
                     format: exportOptions.format,
                     col_sep: exportOptions.col_sep,
                     encoding: exportOptions.encoding,
-                    col_defs: exportOptions.source_col_defs[exportOptions.source]
+                    col_defs: exportOptions.source_col_defs[exportOptions.source],
+                    part_folding: that.generateOptions.part_folding
                 }, function (response) {
 
                     if (response.errors) {
@@ -2596,7 +2599,6 @@
                 const $selectRectangleguillotineCutType = $('#ladb_select_rectangleguillotine_cut_type', $modal);
                 const $selectRectangleguillotineNumberOfStages = $('#ladb_select_rectangleguillotine_number_of_stages', $modal);
                 const $inputRectangleguillotineKeepSize = $('#ladb_input_rectangleguillotine_keep_size', $modal);
-                const $btnExpert = $('.ladb-cutlist-packing-btn-expert', $modal)
                 const $selectIrregularAllowedRotations = $('#ladb_select_irregular_allowed_rotations', $modal);
                 const $selectIrregularAllowMirroring = $('#ladb_select_irregular_allow_mirroring', $modal);
                 const $inputSpacing = $('#ladb_input_spacing', $modal);
@@ -2609,12 +2611,14 @@
                 const $selectColorization = $('#ladb_select_colorization', $modal);
                 const $selectHighlightPrimaryCuts = $('#ladb_select_highlight_primary_cuts', $modal);
                 const $selectHideEdgesPreview = $('#ladb_select_hide_edges_preview', $modal);
+                const $inputZoomThreshold = $('#ladb_input_zoom_threshold', $modal);
                 const $selectObjective = $('#ladb_select_objective', $modal);
                 const $selectOptimizationMode = $('#ladb_select_optimization_mode', $modal);
                 const $inputTimeLimit = $('#ladb_input_time_limit', $modal);
                 const $inputNotAnytimeTreeSearchQueueSize = $('#ladb_input_not_anytime_tree_search_queue_size', $modal);
                 const $selectVerbosityLevel = $('#ladb_select_verbosity_level', $modal);
                 const $selectInputToJsonBinDir = $('#ladb_select_input_to_json_bin_dir', $modal);
+                const $btnsModalFooterCollapseHandle = $('.modal-footer-collapse-handle-btn', $modal)
                 const $btnEditMaterial = $('#ladb_btn_edit_material', $modal);
                 const $btnUnloadLib = $('#ladb_btn_unload_lib', $modal);
                 const $btnGenerate = $('#ladb_btn_generate', $modal);
@@ -2652,6 +2656,7 @@
                     options.colorization = that.toInt($selectColorization.val());
                     options.highlight_primary_cuts = $selectHighlightPrimaryCuts.val() === '1';
                     options.hide_edges_preview = $selectHideEdgesPreview.val() === '1';
+                    options.zoom_threshold = $inputZoomThreshold.val();
                     options.time_limit = that.toInt($inputTimeLimit.val());
                     options.not_anytime_tree_search_queue_size = that.toInt($inputNotAnytimeTreeSearchQueueSize.val());
                     options.verbosity_level = that.toInt($selectVerbosityLevel.val());
@@ -2677,6 +2682,7 @@
                     $selectColorization.selectpicker('val', options.colorization);
                     $selectHighlightPrimaryCuts.selectpicker('val', options.highlight_primary_cuts ? '1' : '0');
                     $selectHideEdgesPreview.selectpicker('val', options.hide_edges_preview ? '1' : '0');
+                    $inputZoomThreshold.val(options.zoom_threshold);
                     $inputTimeLimit.val(options.time_limit);
                     $inputNotAnytimeTreeSearchQueueSize.val(options.not_anytime_tree_search_queue_size);
                     $selectVerbosityLevel.selectpicker('val', options.verbosity_level);
@@ -3270,7 +3276,7 @@
                 $textareaItemsFormula.ladbTextinputCode({
                     variableDefs: fnConvertToVariableDefs([
                         { name: 'number', type: 'string' },
-                        { name: 'path', type: 'array' },
+                        { name: 'path', type: 'path' },
                         { name: 'instance_name', type: 'string' },
                         { name: 'name', type: 'string' },
                         { name: 'cutting_length', type: 'length' },
@@ -3299,6 +3305,7 @@
                         { name: 'layer', type: 'string' },
                         { name: 'component_definition', type: 'component_definition' },
                         { name: 'component_instance', type: 'component_instance' },
+                        { name: 'batch', type: 'batch' },
                     ]),
                     snippetDefs: [
                         { name: i18next.t('tab.cutlist.snippet.number'), value: '@number' },
@@ -3317,6 +3324,7 @@
                 $selectColorization.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectHighlightPrimaryCuts.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectHideEdgesPreview.selectpicker(SELECT_PICKER_OPTIONS);
+                $inputZoomThreshold.ladbTextinputDimension();
                 $selectObjective.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectOptimizationMode.selectpicker(SELECT_PICKER_OPTIONS)
                 $inputTimeLimit.ladbTextinputText();
@@ -3341,20 +3349,23 @@
                 });
 
                 // Bind collapses
-                $('#ladb-cutlist-packing-collapse-expert')
-                    .on('shown.bs.collapse', function () {
-                        $('i', $btnExpert)
-                            .removeClass('ladb-opencutlist-icon-plus')
-                            .addClass('ladb-opencutlist-icon-minus')
-                        ;
-                    })
-                    .on('hidden.bs.collapse', function () {
-                        $('i', $btnExpert)
-                            .addClass('ladb-opencutlist-icon-plus')
-                            .removeClass('ladb-opencutlist-icon-minus')
-                        ;
-                    })
-                ;
+                $btnsModalFooterCollapseHandle.each(function () {
+                    const $btn = $(this);
+                    $('#' + $btn.data('collapse-id'))
+                        .on('shown.bs.collapse', function () {
+                            $('i', $btn)
+                                .removeClass('ladb-opencutlist-icon-plus')
+                                .addClass('ladb-opencutlist-icon-minus')
+                            ;
+                        })
+                        .on('hidden.bs.collapse', function () {
+                            $('i', $btn)
+                                .addClass('ladb-opencutlist-icon-plus')
+                                .removeClass('ladb-opencutlist-icon-minus')
+                            ;
+                        })
+                    ;
+                })
 
                 // Bind clickable
                 $('.ladb-clickable[data-material-properties-tab]').on('click', function (e) {
@@ -3377,8 +3388,8 @@
                         }
                     });
                 });
-                $btnExpert.on('click', function () {
-                    $('#ladb-cutlist-packing-collapse-expert').collapse('toggle');
+                $btnsModalFooterCollapseHandle.on('click', function () {
+                    $('#' + $(this).data('collapse-id')).collapse('toggle');
                     $(this).blur();
                 })
                 $btnGenerate.on('click', function () {
@@ -3907,8 +3918,7 @@
     LadbTabCutlist.prototype.renderSelectionOnGroup = function (id) {
         const that = this;
         const $group = $('#ladb_group_' + id, this.$page);
-        const defs = [ 'packing', 'labels', 'layout' ];
-        $.each(defs, function () {
+        $.each([ 'packing', 'labels', 'layout' ], function () {
             const $btn = $('button.ladb-btn-group-' + this, $group);
             const $i = $('i', $btn);
             const clazz = 'ladb-opencutlist-icon-' + this + '-selection';
@@ -4113,15 +4123,6 @@
                 editedPart.tags = editedPart.tags.filter(function(tag) {  // Extract only commun tags
                     return -1 !== editedParts[i].tags.indexOf(tag);
                 });
-                if (editedPart.length_increase !== editedParts[i].length_increase) {
-                    editedPart.length_increase = MULTIPLE_VALUE;
-                }
-                if (editedPart.width_increase !== editedParts[i].width_increase) {
-                    editedPart.width_increase = MULTIPLE_VALUE;
-                }
-                if (editedPart.thickness_increase !== editedParts[i].thickness_increase) {
-                    editedPart.thickness_increase = MULTIPLE_VALUE;
-                }
                 if (editedPart.edge_material_names.ymin !== editedParts[i].edge_material_names.ymin) {
                     editedPart.edge_material_names.ymin = MULTIPLE_VALUE;
                 }
@@ -4192,9 +4193,6 @@
             const $sortablePartAxes = $('#ladb_sortable_part_axes', $modal);
             const $sortablePartAxesExtra = $('#ladb_sortable_part_axes_extra', $modal);
             const $selectPartAxesOriginPosition = $('#ladb_cutlist_part_select_axes_origin_position', $modal);
-            const $inputLengthIncrease = $('#ladb_cutlist_part_input_length_increase', $modal);
-            const $inputWidthIncrease = $('#ladb_cutlist_part_input_width_increase', $modal);
-            const $inputThicknessIncrease = $('#ladb_cutlist_part_input_thickness_increase', $modal);
             const $selectEdgeYmax = $('#ladb_cutlist_part_select_edge_ymax', $modal);
             const $selectEdgeYmin = $('#ladb_cutlist_part_select_edge_ymin', $modal);
             const $selectEdgeXmin = $('#ladb_cutlist_part_select_edge_xmin', $modal);
@@ -4318,18 +4316,6 @@
                     }
                 }
             };
-            const fnUpdateIncreasesPreview = function() {
-                if ($inputLengthIncrease.val() == null || $inputLengthIncrease.val().length === 0 || $inputLengthIncrease.val().match(/^0([.,]{0,1}[0]*)(m|cm|mm|yd|'|")*$/g)) {
-                    $rectIncreaseLength.removeClass('ladb-active');
-                } else {
-                    $rectIncreaseLength.addClass('ladb-active');
-                }
-                if ($inputWidthIncrease.val() == null || $inputWidthIncrease.val().length === 0 || $inputWidthIncrease.val().match(/^0([.,]{0,1}[0]*)(m|cm|mm|yd|'|")*$/g)) {
-                    $rectIncreaseWidth.removeClass('ladb-active');
-                } else {
-                    $rectIncreaseWidth.addClass('ladb-active');
-                }
-            };
             const fnNewCheck = function($select, type) {
                 if ($select.val() === 'new') {
                     that.dialog.executeCommandOnTab('materials', 'new_material', { type: type });
@@ -4448,7 +4434,6 @@
             }
 
             fnDisplayAxisDimensions();
-            fnUpdateIncreasesPreview();
 
             if (tab === 'general') {
                 fnLoadThumbnail();
@@ -4498,15 +4483,6 @@
                     delay: 100
                 }
             });
-            $inputLengthIncrease.on('change', function() {
-                fnUpdateIncreasesPreview();
-            });
-            $inputLengthIncrease.ladbTextinputDimension();
-            $inputWidthIncrease.on('change', function() {
-                fnUpdateIncreasesPreview();
-            });
-            $inputWidthIncrease.ladbTextinputDimension();
-            $inputThicknessIncrease.ladbTextinputDimension();
             $inputFaceZminTextureAngle
                 .ladbTextinputNumberWithUnit({
                     resetValue: 0,
@@ -4592,14 +4568,6 @@
                         fnUpdateFacesPreview();
                     }
                 });
-
-            // Bind increases
-            $rectIncreaseLength.on('click', function() {
-                $inputLengthIncrease.focus();
-            });
-            $rectIncreaseWidth.on('click', function() {
-                $inputWidthIncrease.focus();
-            });
 
             // Bind edges
             $rectEdgeYmin.on('click', function() {
@@ -4733,16 +4701,6 @@
                             return !editedPart.tags.includes(tag)
                         });
                         editedParts[i].tags = untouchTags.concat($inputTags.tokenfield('getTokensList').split(';'));
-
-                        if (!$inputLengthIncrease.ladbTextinputDimension('isMultiple')) {
-                            editedParts[i].length_increase = $inputLengthIncrease.val();
-                        }
-                        if (!$inputWidthIncrease.ladbTextinputDimension('isMultiple')) {
-                            editedParts[i].width_increase = $inputWidthIncrease.val();
-                        }
-                        if (!$inputThicknessIncrease.ladbTextinputDimension('isMultiple')) {
-                            editedParts[i].thickness_increase = $inputThicknessIncrease.val();
-                        }
 
                         if ($selectEdgeYmin.val() !== MULTIPLE_VALUE) {
                             editedParts[i].edge_material_names.ymin = $selectEdgeYmin.val();

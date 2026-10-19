@@ -1,8 +1,8 @@
 module Ladb::OpenCutList
 
-  require_relative 'transformation_manipulator'
+  require_relative 'manipulator'
 
-  class LineManipulator < TransformationManipulator
+  class LineManipulator < Manipulator
 
     def initialize(line, transformation = IDENTITY)
       super(transformation)

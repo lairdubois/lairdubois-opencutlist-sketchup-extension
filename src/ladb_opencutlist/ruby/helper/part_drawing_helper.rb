@@ -50,13 +50,14 @@ module Ladb::OpenCutList
         local_x_axis, local_y_axis, local_z_axis = local_x_axis.reverse, local_z_axis, local_y_axis
       end
 
-      drawing_def = CommonDrawingDecompositionWorker.new(instance_info.path,
+      drawing_def = CommonDrawingDecompositionWorker.new(Sketchup::InstancePath.new(instance_info.path),
         input_local_x_axis: local_x_axis,
         input_local_y_axis: local_y_axis,
         input_local_z_axis: local_z_axis,
         origin_position: origin_position,
         ignore_edges: ignore_edges,
-        edge_validator: ignore_edges ? nil : CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY
+        edge_validator: ignore_edges ? nil : CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY,
+        container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART,
       ).run
       if drawing_def.is_a?(DrawingDef)
         part.def.drawing_defs[cache_key] = drawing_def if use_cache

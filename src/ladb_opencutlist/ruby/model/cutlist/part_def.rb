@@ -15,11 +15,10 @@ module Ladb::OpenCutList
                   :material_name, :material_origins,
                   :cumulable, :instance_count_by_part, :mass, :price, :thickness_layer_count, :orientation_locked_on_axis,
                   :tags, :symmetrical, :ignore_grain_direction,
-                  :length_increase, :width_increase, :thickness_increase,
                   :edge_count, :edge_pattern, :edge_entity_ids, :edge_decrements, :edge_length_decrement, :edge_width_decrement, :edge_decremented,
                   :face_count, :face_pattern, :face_entity_ids, :face_decrements, :face_texture_angles, :face_thickness_decrement, :face_decremented,
-                  :length_increased, :width_increased, :thickness_increased, :auto_oriented, :not_aligned_on_axes, :unused_instance_count, :content_layers, :final_area,
-                  :children_warning_count, :children_length_increased_count, :children_width_increased_count, :children_thickness_increased_count
+                  :auto_oriented, :not_aligned_on_axes, :unused_instance_count, :content_layers, :final_area,
+                  :children_warning_count
     attr_reader :id, :virtual, :edge_material_names, :edge_material_colors, :edge_std_dimensions, :edge_errors, :face_material_names, :face_material_colors, :face_std_dimensions, :face_errors, :entity_ids, :entity_serialized_paths, :entity_names, :children, :instance_infos, :edge_materials, :edge_group_defs, :veneer_materials, :veneer_group_defs,
                 :drawing_defs, :projection_defs
 
@@ -49,9 +48,6 @@ module Ladb::OpenCutList
       @orientation_locked_on_axis = false
       @symmetrical = false
       @ignore_grain_direction = false
-      @length_increase = 0
-      @width_increase = 0
-      @thickness_increase = 0
       @edge_count = 0
       @edge_pattern = nil                 # A string from 0000 to 1111
       @edge_material_names = {}
@@ -77,9 +73,6 @@ module Ladb::OpenCutList
       @entity_ids = []                    # All unique entity ids (array count could be smaller than @count)
       @entity_serialized_paths = []       # All Serialized paths to each entity (array count should be egals to @count)
       @entity_names = {}                  # All non empty entity instance names (key = name, value = array of 'named path')
-      @length_increased = false
-      @width_increased = false
-      @thickness_increased = false
       @auto_oriented = false
       @not_aligned_on_axes = false
       @unused_instance_count = 0
@@ -87,9 +80,6 @@ module Ladb::OpenCutList
       @final_area = 0
 
       @children_warning_count = 0
-      @children_length_increased_count = 0
-      @children_width_increased_count = 0
-      @children_thickness_increased_count = 0
       @children = []
 
       # Internal
@@ -213,6 +203,10 @@ module Ladb::OpenCutList
 
     def get_one_instance_info
       @instance_infos.values.first
+    end
+
+    def merge_instance_infos(instance_infos)
+      @instance_infos.merge!(instance_infos)
     end
 
     # ---
