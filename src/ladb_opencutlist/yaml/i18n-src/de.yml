@@ -86,6 +86,7 @@ default:
   setup_model_units: Modelleinheiten konfigurieren
   load_more: Weitere laden
   reset_to_app_defaults: Originalwerte wiederherstellen
+  # this should be the name for the key as seen on the keyboard or if it is an arrow, the name used for it.
   constrain_key: Umschalttaste
   copy_key_win: Strg
   copy_key_mac: Option
@@ -161,8 +162,8 @@ core:
   warning:
     dev: |
       Sie verwenden eine **Entwicklerversion** von *OpenCutList*.
-      Diese Version ist nur zum Testen verfügbar.
-      Es wird nicht empfohlen, diese in der Produktion zu verwenden.
+      Diese Version dient ausschließlich zu Testzwecken.
+      Von einer Nutzung im Produktivbetrieb wird abgeraten.
 
       Um einen Fehler zu melden: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
     not_available_in_context: In diesem Kontext nicht verfügbar
@@ -188,14 +189,14 @@ core:
     layers_change: Tags im Modell wurden verändert.
     drawing_change: Die Zeichnung des aktiven Modells wurde geändert.
   upgrade:
-    unavailable: Die neueste Version von *OpenCutList* wurde nicht gefunden.
+    unavailable: Es ist nicht möglich, die aktuelle Version von *OpenCutList* zu ermitteln.
     available: |
       Eine neue Version von *OpenCutList* ist verfügbar.
       Aktualisieren Sie, um die neuesten Funktionen zu erhalten!
     up_to_date: |
-      Sie haben die neueste Version von *OpenCutList*.
+      Sie verfügen über die neueste Version von *OpenCutList*.
 
-      *Unterstützen Sie das Projekt finanziell, damit wir noch mehr Verbesserungen für Sie einbauen können!*
+      *Um uns dabei zu helfen, noch mehr Verbesserungen anzubieten, zögern Sie bitte nicht, das Projekt finanziell zu unterstützen!*
     downloading: Ladevorgang läuft
     changelog: Was gibt's Neues?
     ignore_update: Diese Aktualisierung überspringen
@@ -214,7 +215,7 @@ core:
     manage: Voreinstellungen verwalten
     save_to: Speichern als
     restore_from: Wiederherstellen aus
-    app_defaults: Ursprüngliche Einstellung
+    app_defaults: Ursprüngliche Voreinstellung
     user_defaults: Meine Voreinstellung
     new: Neue Voreinstellung
     new_prompt: |
@@ -328,38 +329,134 @@ core:
     bundled: OCL-Bibliothek
     family_modules: Module
     # @no-translate
+    family_connectors: Verbinder
+    # @no-translate
+    family_fittings: Beschläge
+    # @no-translate
     family_hinges: Scharniere
   # @no-translate
   hardware_descriptor:
     part_hardware: Zubehör
     part_machining: Bearbeitung
+    variant_overlay: Aufliegend
+    variant_half_overlay: Halb aufliegend
+    variant_inset: Innenliegend
   # @no-translate
   hardware_editor:
+    title: Beschlag-Editor
+    title_connector: Verbinder-Editor
+    title_fitting: Verbindungsbeschlag-Editor
+    title_hinge: Scharnier-Editor
+    new_name: Neuer Beschlag
+    new_name_connector: Neuer Verbinder
+    new_name_fitting: Neuer Verbindungsbeschlag
+    new_name_hinge: Neues Scharnier
+    tab_settings: Einstellungen
     tab_parts: Geometrien
     tab_json: JSON
+    thickness_a: Dicke A
+    thickness_b: Dicke B
+    topology_corner: L-förmig
+    topology_flat_edge: T-förmig
+    topology_edge_edge: Kante an Kante
+    topology_flat_flat: Fläche an Fläche
+    swap: A und B vertauschen
+    zoom_auto: Automatischer Zoom
+    toggle_slot: "{{ slot }} ein- oder ausblenden"
+    bench_settings: Prüfstand-Einstellungen
+    measures: Prüfstand-Maße
+    variables: Variablen
+    asserts: Bedingungen
+    setting: Veröffentlichte Variable
     setting_bounds: Zwischen {{ min }} und {{ max }}
+    assert_unresolved: Nicht berechenbar
+    accepted: Verbindung angenommen
+    refused: Verbindung abgelehnt
+    readonly: Schreibgeschützt
+    readonly_notice: |
+      Diese Datei ist ein schreibgeschütztes Beispiel. 
+      Duplizieren Sie diesen Beschlag in **$t(core.library.user)**, um ihn zu bearbeiten.
+    duplicate: In **$t(core.library.user)** duplizieren
     name: Name
     file: Datei
     length_unit: Einheit
+    length_unit_none: Nicht festgelegt - Jede Länge hat ihre eigene
+    length_unit_help: |
+      Einheit der Zahlen ohne Einheit.
+      *Ein Wechsel der Einheit rechnet sie nicht um.*
+    abstract_notice: "Abstrakter Beschlag: Er wird nicht platziert, sondern dient als Grundlage für die davon abgeleiteten Beschläge."
+    file_renamed: Beim Übernehmen umbenannt, ebenso wie der Ordner seiner Teile (war {{ name }})
+    duplicated: "In **$t(core.library.user)** kopiert: {{ ref }}"
+    derive: Ableiten
+    derive_help: Erstellt einen Beschlag, der von diesem erbt und nur festlegt, was sich ändert
+    derived_name: "{{ name }} (abgeleitet)"
+    derived: "Abgeleitet von {{ ref }}: Passen Sie an, was sich ändert, und übernehmen Sie dann."
+    inherited_from: Geerbt von {{ ref }}
+    inherited_click: |
+      Von {{ ref }} geerbter Wert.
+
+      Klicken Sie, um ihn in diesem Beschlag zu ändern.
+    overridden_from: Ersetzt den von {{ ref }} geerbten Wert
+    overridden_click: |-
+      Ersetzt den von {{ ref }} geerbten Wert.
+      Klicken Sie, um zum geerbten Wert zurückzukehren.
+    delete_confirm: |
+      Löschen von **{{ name }}** aus *$t(core.library.user)* samt dem Ordner seiner Teile bestätigen? 
+      *Bereits im Modell platzierte Beschläge bleiben erhalten.*
+    discard_confirm: Die nicht übernommenen Änderungen an diesem Beschlag gehen verloren. Trotzdem schließen?
     discard: Schließen, ohne zu speichern
+    no_descriptor: Dieser Text ist keine Beschlagsbeschreibung.
+    unsupported_type: Noch kein Prüfstand für den Typ „{{ type }}“.
+    parts_no_component: "Keine Komponente: Auf dieser Seite wird nichts platziert."
+    parts_same_as: Dieselbe Komponente wie {{ slot }}.
+    parts_mirror_of: Die Komponente von {{ slot }} gespiegelt (x umgekehrt im Einbau-Koordinatensystem).
+    parts_no_variant: Keine Variante für diesen Test.
     part_name: Name
+    variant_name: Name der Variante
+    hinge_kinematics: Kinematik des Scharniers
+    hinge_kinematics_help: "Im Einbau-Koordinatensystem: Y zur Drehkante der Tür, Z zum Korpus, Ursprung auf der Rückseite der Tür."
+    hinge_kinematics_missing: Ohne maximalen Winkel oder Drehpunkt kann sich die Tür nicht öffnen.
+    hinge_max_angle: Max. Winkel
+    hinge_pivot: Drehpunkt
     hinge_pivot_y: Y
     hinge_pivot_z: Z
+    hinge_pivot_approximate: Angenähert
+    hinge_pivot_approximate_help: Scharnier mit beweglicher Achse, der Drehpunkt ist nur eine Annäherung
+    hinge_scope_common: Gemeinsam für alle Varianten
+    hinge_scope_variant: Nur für diese Variante
+    hinge_apply_all: Auf alle Varianten anwenden
     part_kind_skp: SKP File
     part_kind_none: Keine
+    part_kind_same_as: Wie {{ slot }}
     machining_skp_add: SKP File
     article_add_skp: SKP File
+    article_add_primitives: Grundkörper
+    article_add_connector: Verbinder
     article_kind_skp: SKP File
+    article_kind_primitives: Grundkörper
+    article_kind_connector: Verbinder
+    article_key: Schlüssel
+    article_key_invalid: Kleinbuchstaben, Ziffern, - und _, beginnend mit einem Buchstaben
     article_key_reserved: Dieser Name ist reserviert
+    article_key_taken: Bereits von einem anderen Artikel dieser Komponente verwendet
     article_name: Name
     article_price: Preis
     article_mass: Masse
     article_file: Datei
+    article_primitives: Grundkörper
+    article_connector: Verbinder
     article_replace: Ersetzen
     article_missing: fehlend
     article_refused: abgelehnt
+    article_host: Die Platte ist die Seite
+    article_axis: Eintrittsachse in die Platte
+    article_virtual_thickness: Dicke der virtuellen Seite ({{ slot }})
+    article_settings: Verbinder-Einstellungen
+    article_setting_default: "Verbinder: {{ value }}"
+    article_asserts: Prüfungen
     article_positions: Positionen
     article_position_add: Position
+    library_empty: Kein Verbinder in diesem Ordner.
     primitive_type_cylinders: Zylinder
     primitive_type_oblongs: Länglich
     primitive_type_prisms: Prisma
@@ -370,42 +467,87 @@ core:
     primitive_position: Position
     primitive_diameter: Durchmesser
     primitive_size: Abmessungen
+    primitive_length_axis: Länge entlang
+    primitive_prism_span: Von → Bis (entlang {{ axis }})
+    primitive_outline: Kontur
     primitive_outline_add: Punkt
+    primitive_outline_radius_help: Radius der Eckenrundung, keine wenn leer
     primitive_from: Von
     primitive_to: Bis
     primitive_depth: Tiefe
+    primitive_through: Durchgehend
+    primitive_through_help: Bis zur anderen Fläche des Teils (@thickness_max).
+    primitive_head: Kopf
     primitive_head_none: Keine
+    primitive_head_countersink: Senkung
+    primitive_head_counterbore: Flachsenkung
+    primitive_head_side: Seite
+    primitive_face_contact: Kontaktfläche
+    primitive_face_opposite: Gegenüberliegende Fläche
+    primitive_face_opposite_help: Die Bohrung muss durchgehend sein.
+    primitive_end_to: Ende „Bis“
+    primitive_end_from: Ende „Von“
+    primitive_head_diameter_angle: Ø | Winkel
+    primitive_head_diameter_depth: Ø | Tiefe
+    primitive_variables: Variablen
+    primitive_unresolved: "Kein Körper auf dem Prüfstand: Abmessungen prüfen."
     chip_bundled: OCL-Bibliothek
     chip_user: Meine Bibliothek
     chip_loading: Wird geladen...
     chip_missing: Datei fehlt
+    chip_no_folder: Wählen Sie zuerst einen Ordner in **$t(core.library.user)**
     chip_imported: Importiert | Noch zu speichern
+    chip_placed: Platzierung noch zu speichern
     chip_edited: Bearbeitet | Noch zu speichern
     edit_in_sketchup: Bearbeiten
     create_in_sketchup: Anlegen
     shaping: "{{ name }} ist in SketchUp geöffnet"
+    shaping_help: |
+      Bearbeiten Sie das Teil im Modell, auf dem Prüfstand. 
+      Seine Achsen bilden sein Einbau-Koordinatensystem. 
+      **Beenden** Sie, um es hier zu übernehmen; der Prüfstand verlässt dann das Modell.
     choose_skp: Wählen Sie eine SKP-Datei aus
+    placement_toggle: Transformieren
+    placement_title: Transformation
+    placement_undo: Letzte Transformation rückgängig machen
     placement_rotation: Drehung
     placement_rotate_ccw: −90° um {{ axis }}
     placement_rotate_cw: +90° um {{ axis }}
+    placement_mirror: Spiegeln
+    placement_mirror_help: Entlang {{ axis }} spiegeln
     placement_position: Position
+    placement_align: Ausrichten
+    placement_center: Zentrieren
+    placement_center_help: Auf {{ axis }} zentrieren
+    placement_seat: Aufsetzen
+    placement_seat_help: Oberseite des Teils auf z = 0 aufsetzen, Körper Richtung −Z
     placement_reset: Zurücksetzen
+    placement_help: Beim Speichern auf die SKP-Datei angewendet, das JSON behält keine Transformation. Auflagefläche bei z = 0, Körper Richtung −Z.
+    settings_variables: Variablen
+    settings_tool_options: Werkzeugoptionen
+    settings_tool_options_help: Die Werte, die das Werkzeug Zusammenfügen mit diesem Beschlag übernimmt. Leer behält das Werkzeug seinen eigenen; im Werkzeug angepasst, gilt der Wert nur für diesen Beschlag
     tool_options_materials: Materialien
     tool_options_layers: Tags
     settings_properties: Eigenschaften
+    no_settings: Für diesen Beschlag ist keine Variable veröffentlicht
     error:
+      unresolved_variable: Verwendet @{{ name }}, nicht berechnet
       not_a_length: Ist keine Länge
       invalid_json: "Ungültiges JSON, Zeile {{ line }}: {{ error }}"
       file_not_found: "Datei nicht gefunden: {{ ref }}"
       file_not_readable: "{{ ref }} kann nicht gelesen werden: {{ error }}"
       readonly: $t(core.library.bundled) ist schreibgeschützt
       invalid_ref: "Ungültiger Ort: {{ ref }}"
+      file_exists: "An diesem Speicherort existiert bereits eine Datei: {{ ref }}. Ändern Sie den Dateinamen."
       invalid_file_name: "Ungültiger Dateiname: {{ name }}"
+      invalid_descriptor: "Die Beschreibung ist ungültig: {{ error }}"
       skp_is_open_model: "{{ name }} ist das derzeit in SketchUp geöffnete Modell: Es kann sich nicht selbst laden. Öffnen Sie ein anderes Modell, um es auszuwählen."
       skp_not_written: "{{ ref }} kann nicht geschrieben werden: {{ error }}"
       not_saved: "Speichern nicht möglich: {{ error }}"
       edit_failed: "Das Teil kann in SketchUp nicht bearbeitet werden: {{ error }}"
       not_deleted: "Kann nicht gelöscht werden: {{ error }}"
+      has_children: "Löschen nicht möglich: Andere Beschläge erben davon ({{ children }})."
+      has_users: "Löschen nicht möglich: Andere Beschläge verwenden ihn als Artikel ({{ users }})."
       edit_lost: Das Teil ist nicht mehr in der Baugruppe enthalten, die Änderung ist verloren gegangen.
 tab:
   cutlist:
@@ -490,9 +632,9 @@ tab:
       add_label_filter: Nach '{{ label }}' filtern
       remove_label_filter: Filter nach '{{ label }}' aufheben
       add_edge_material_name_filter: Nach '{{ material_name }}' filtern
-      remove_edge_material_name_filter: Filter nach '{{ material_name }}' aufheben
+      remove_edge_material_name_filter: Filter für '{{ material_name }}' aufheben
       add_veneer_material_name_filter: Nach '{{ material_name }}' filtern
-      remove_veneer_material_name_filter: Filtern nach '{{ material_name }}' aufheben
+      remove_veneer_material_name_filter: Filter für '{{ material_name }}' aufheben
       not_aligned_on_axes: Achtung, dieses Teil ist möglicherweise nicht korrekt auf seinen Achsen ausgerichtet
       instance_count_by_part: Dieses Teil wird in **{{ count }}** Einheiten pro Packung gezählt.
       unused_instance_count: Achtung, **{{ count }}** Einheit der letzten Packung wird nicht verwendet.
@@ -701,7 +843,7 @@ tab:
       hide_entity_names: Instanzbezeichnungen ausblenden
       hide_entity_names_help: Ist diese Option aktiv, werden **Instanzbezeichnungen** von Teilen nicht angezeigt.
       hide_descriptions: Beschreibungen ausblenden
-      hide_descriptions_help: Wenn diese Option aktiviert ist, werden die **Beschreibungen**, die auf den Teilen platziert sind, nicht angezeigt.
+      hide_descriptions_help: Wenn diese Option aktiviert ist, werden die **Beschreibungen** auf den Teilen nicht angezeigt.
       hide_tags: Badges ausblenden
       hide_tags_help: Ist diese Option aktiv, werden **Badges** nicht angezeigt.
       hide_cutting_dimensions: Rohmaße ausblenden
@@ -757,9 +899,9 @@ tab:
       tags_filter: Zu filternde Badges
       tags_filter_any: Alle Badges
       dimensions_help: Erklärung zu den Dimensionen
-      summary: Übersicht
+      summary: Zusammenfassung
       material_type: Typ
-      material_thickness: Material / Dicke
+      material_thickness: Material / Dimensionen
       part_count: Anzahl
       area: Fläche
       area_short: Fl.
@@ -1162,7 +1304,7 @@ tab:
         Diese Liste wird durch das Feld **$t(tab.materials.edit_material.std_lengths)** des Materials definiert.
 
         *Editieren Sie die Eigenschaften des Materials '{{ material_name }}' um diese Liste zu ergänzen.*
-      option_std_bin_1d_add: Länge hinzufügen
+      option_std_bin_1d_add: Größe hinzufügen
       option_std_bin_1d_none: Keine
       option_scrap_bin_1d_dimensional_sizes: Stangenreste
       option_scrap_bin_1d_edge_sizes: Kantenbandreste
@@ -1207,7 +1349,7 @@ tab:
         Legt die maximale Anzahl der Schnittstufen fest.
       option_rectangleguillotine_first_stage_orientation: Richtung erster Schnitt
       option_rectangleguillotine_first_stage_orientation_help: |
-        Legt die Richtung des ersten Schnittes fest.
+        Legt die Richtung des ersten Schnitts fest.
       option_rectangleguillotine_first_stage_orientation_horizontal: Horizontal
       option_rectangleguillotine_first_stage_orientation_vertical: Vertikal
       option_rectangleguillotine_first_stage_orientation_any: Beliebig
@@ -1247,7 +1389,7 @@ tab:
       option_spacing: Abstand
       option_spacing_help: |
         Mindestabstand zwischen den einzelnen Teilen.
-        Dieser Wert kann der Breite des Sägeblattes oder des Schneidewerkzeugs entsprechen.
+        Dieser Wert kann der Breite des Sägeblatts oder des Schneidewerkzeugs entsprechen.
       option_trimming: Randabfallbreite
       option_trimming_1d_help: Breite des Säuberungsschnittes an jedem Ende der Stange oder des Kantenbandes.
       option_trimming_2d_help: Breite des Säuberungsschnittes auf allen vier Seiten der Platte oder des Furnierblattes.
@@ -1297,7 +1439,7 @@ tab:
       option_highlight_primary_cuts: Primärschnitte
       option_highlight_primary_cuts_0: Nur beim Überfahren mit der Maus
       option_highlight_primary_cuts_1: Immer sichtbar
-      option_highlight_primary_cuts_help: Ermöglicht es Ihnen, Primärschnitte hervorzuheben.
+      option_highlight_primary_cuts_help: Ermöglicht es, die Primärschnitte stets sichtbar hervorzuheben.
       option_hide_edges_preview: Anzeige der Kantenbänder
       option_hide_edges_preview_0: Im Schnittplan angezeigt
       option_hide_edges_preview_1: Im Schnittplan ausgeblendet
@@ -1337,7 +1479,7 @@ tab:
         total_length: Σ Längen
         total_area: Σ Flächen
         total_cost: Σ Kosten
-        total_part_count: "# Teile"
+        total_part_count: Σ Teile
         total_used: Insgesamt verwendet
         bin_1d_dimensional: Stange
         bin_1d_dimensional_type_0: Standard-Stange
@@ -1405,7 +1547,7 @@ tab:
           is_bin_selection: "**Ausgeblendete Elemente** werden nicht exportiert."
         error:
           overflow_gt_spacing: |
-            Der Bearbeitungsüberstand ({{ overflow }}) muss kleiner oder gleich dem Abstand ({{ spacing }}) sein, der in diesem Schnittplan konfiguriert ist.
+            Der Bearbeitungs-Überlaufabstand ({{ overflow }}) muss kleiner oder gleich dem Abstand ({{ spacing }}) sein, der in diesem Schnittplan konfiguriert ist.
       error:
         no_part: Kein Teil.
         no_bin_1d: Keine Standard-Stange oder -Kantenband wurde ausgewählt und es stehen keine Reste zur Verfügung.
@@ -1530,20 +1672,21 @@ tab:
       option_parts_opacity_0: Durchsichtig
       option_parts_opacity_1: Blickdicht
       option_parts_opacity_help: Definiert die Deckkraft der Teile.
-      option_pins: Beschriftung
+      # A callout is a piece of descriptive text connected to a drawing element via a leader line.
+      option_pins: Hinweistext
       option_pins_hidden: Anzeige
-      option_pins_hidden_0: Mit Beschriftung
+      option_pins_hidden_0: Mit Hinweistext
       option_pins_hidden_1: Ohne Beschriftung
-      option_pins_hidden_help: Ein- oder Ausblenden der Beschriftung mit Nummer oder Bezeichnung.
+      option_pins_hidden_help: Ein- oder Ausblenden des Hinweistextes mit Nummer oder Bezeichnung.
       option_pins_colored: Farbe
       option_pins_colored_0: Ohne Farbe
       option_pins_colored_1: Farbe des Teils
-      option_pins_colored_help: Definiert die Farbe des Beschriftungsfeldes.
+      option_pins_colored_help: Definiert die Farbe des Hinweistextes.
       option_pins_formula: Formel
-      option_pins_formula_help: Ermöglicht das Schreiben von *Ruby*-Code, um den Text der Beschriftung anzupassen.
+      option_pins_formula_help: Ermöglicht das Schreiben von *Ruby*-Code, um den Text des Hinweistextes anzupassen.
       option_pins_length: Länge
       option_pins_length_0: Ohne Verweislinie
-      option_pins_length_1: Klein
+      option_pins_length_1: Kurz
       option_pins_length_2: Mittel
       option_pins_length_3: Lang
       option_pins_length_help: Definiert die Länge der Verweislinie.
@@ -1553,7 +1696,7 @@ tab:
       option_pins_direction_2: Längs der blauen Achse
       option_pins_direction_3: Zum Mittelpunkt der übergeordneten Gruppe
       option_pins_direction_4: Zum Mittelpunkt der Auswahl
-      option_pins_direction_help: Definiert die Platzierung der Beschriftung für eine bessere Lesbarkeit.
+      option_pins_direction_help: Definiert die Platzierung des Hinweistextes für eine bessere Lesbarkeit.
       option_page: Papierformat
       option_page_format: Format
       option_page_format_portrait: Hochformat
@@ -1674,16 +1817,16 @@ tab:
         *Diese Option erkennt keine anderen Kurventypen.*
       option_merge_holes: Zusammenführungsmodus
       option_merge_holes_0: Einfach
-      option_merge_holes_1: Kontur + Bohrungen + Überstand
+      option_merge_holes_1: Kontur + Bohrungen + Überlaufabstand
       option_merge_holes_help: |
         **Einfach**
         Die Bauteilform wird mit einem Layer pro Tiefe exportiert.
 
-        **Kontur + Bohrungen + Überstand**
-        Aktiviert die Trennung der Außenkontur der Teile von ihren Durchbrüchen sowie die Berechnung des Bearbeitungsüberstands, der auf die Flächen angewendet wird, die sich am Rand der Kontur und der Vertiefungen befinden.
-      option_merge_holes_overflow: Bearbeitungsüberstand
+        **Kontur + Bohrungen + Bearbeitungs-Überlaufabstand**
+        Aktiviert die Trennung der Außenkontur der Teile von ihren Durchbrüchen sowie die Berechnung des Bearbeitungs-Überlaufabstands, der auf die Flächen angewendet wird, die sich am Rand der Kontur und der Kavitäten befinden.
+      option_merge_holes_overflow: Bearbeitungs-Überlaufabstand
       option_merge_holes_overflow_help: |
-        Legt den Abstand des Bearbeitungsüberstands, der auf Flächen angewendet wird, die sich am Rand der Kontur und der Vertiefungen befinden fest.
+        Legt den Bearbeitungs-Überlaufabstand für Flächen an den Grenzen von Konturen und Kavitäten fest.
       option_include_paths: Pfade
       option_include_paths_0: $t(default.no)
       option_include_paths_1: Kanten verwenden, die nicht mit einer Fläche verbunden sind
@@ -1747,7 +1890,7 @@ tab:
     type_0: Unbestimmt
     type_1: Massivholz
     type_2: Platte
-    type_3: Stangenware
+    type_3: Stange
     type_4: Kantenband
     type_5: Zubehör
     type_6: Furnier
@@ -1793,7 +1936,7 @@ tab:
       general: Allgemein
       texture: Textur
       no_texture: Ohne Textur
-      name: Bezeichnung
+      name: Name
       type: Typ
       description: Beschreibung
       url: URL
@@ -1843,7 +1986,7 @@ tab:
       grained: Faserverlauf
       grained_help: Gibt die Ausrichtung der Faser in Bezug auf die Länge der Platte an.
       grained_0: Kein Faserverlauf
-      grained_1: Faserverlauf in Längsrichtung
+      grained_1: Die Faser verläuft in Längsrichtung
       edge_decremented: Reduzierung der Teile
       edge_decremented_help: Gibt an, ob die Maße der Teile der Holzliste um die Materialstärke der Kantenbänder reduziert werden sollen.
       edge_decremented_0: Keine Reduzierung
@@ -1898,7 +2041,7 @@ tab:
         Die Sortierreihenfolge der Materialien wird durch die Anordnung der folgenden Kacheln definiert.
         Eigenschaften können in <i class="ladb-opencutlist-icon-sort-asc"></i> *aufsteigender* oder <i class="ladb-opencutlist-icon-sort-desc"></i> *absteigender* Reihenfolge sortiert werden.
       property_type: Typ
-      property_name: Bezeichnung
+      property_name: Name
     delete:
       message: |
         Sie sind dabei das Material **{{ material_name }}** aus Ihrem Modell zu löschen.
@@ -1944,7 +2087,7 @@ tab:
       title_instance_multiple: Eigenschaften der Instanzgruppe
       multiple_alert: Gemeinsame Eigenschaften der Gruppe von {{ node_count }} Instanzen.
       general: Allgemein
-      name: Bezeichnung
+      name: Name
       instance_name: Instanz
       material: Material
       is_grain_group: Als **Fortlaufende Maserungsgruppe** definieren
@@ -1993,7 +2136,7 @@ tab:
       show_hidden_instances: Ausgeblendete Instanzen anzeigen
       show_hidden_instances_help: Wenn diese Option aktiviert ist, werden die in der Modellansicht ausgeblendeten Instanzen im Strukturbaum angezeigt.
       hide_descriptions: Beschreibungen ausblenden
-      hide_descriptions_help: Wenn diese Option aktiviert ist, werden die **Beschreibungen**, die auf den Teilen angebracht sind, nicht angezeigt.
+      hide_descriptions_help: Wenn diese Option aktiviert ist, werden die **Beschreibungen** auf den Teilen nicht angezeigt.
       hide_tags: Badges ausblenden
       hide_tags_help: Ist diese Option aktiv, werden **Badges** nicht angezeigt.
       minimize_on_set_active: Verkleinern nach '$t(tab.outliner.tooltip.set_active_node)'
@@ -2217,7 +2360,7 @@ tab:
         option_hardware_layer_name_help: Tag für Zubehör.
         option_no_material_help: "*Lassen Sie dieses Feld leer, wenn Sie kein Material auftragen möchten*."
         option_default_material_help: "*Wenn dieses Feld leer ist, wird ein Standardmaterial erstellt*."
-        option_no_layer_help: "*Lassen Sie dieses Feld leer, um kein Tag einzufügen*."
+        option_no_layer_help: "*Lassen Sie dieses Feld leer, wenn Sie kein Tag einfügen möchten*."
         option_subtract_machinings: Bearbeitungen in die Werkstücke einarbeiten
         option_subtract_machinings_help: Die **Nuten**, **Falze** und **Fasen** der Teile, einschließlich derjenigen, die mit Zubehörteilen zusammenhängen, werden aus ihrem Volumen abgezogen, anstatt gezeichnet zu werden. Die Bohrungen bleiben gezeichnet.
         warning:
@@ -2364,18 +2507,18 @@ tab:
         Die in einem **.oclp**-Archiv enthaltenen Dateien werden in Ihre Bibliothek kopiert, und zwar an denselben Speicherort, an dem sie sich in der Bibliothek des Absenders befanden.
       open_library_dir: Den Bibliotheksordner öffnen
       import_global_presets_success: |
-        Die Voreinstellungen *OpenCutList* wurden erfolgreich importiert.
-        Um die Änderungen zu berücksichtigen, müssen Sie das Fenster von OpenCutList **schließen** und **neu öffnen**.
+        Die *OpenCutList* Voreinstellungen wurden erfolgreich importiert.
+        Um die Änderungen zu berücksichtigen, müssen Sie das OpenCutList Fenster **schließen** und **neu öffnen**.
       dump_global_presets: Dump der Voreinstellungen
       dump_model_presets: Dump der Modell-Einstellungen
-      reset_global_presets: Voreinstellungen reinitialisieren
+      reset_global_presets: Voreinstellungen zurücksetzen
       reset_global_presets_confirm: |
         Sie sind dabei, alle Ihre gespeicherten *OpenCutList*-Voreinstellungen zurückzusetzen.
         Dieser Vorgang ist endgültig. **Alle Voreinstellungen gehen verloren**.
         Bestätigen Sie, um fortzufahren.
       reset_global_presets_success: |
         Die *OpenCutList*-Voreinstellungen wurden zurückgesetzt.
-        Um die Änderungen zu berücksichtigen, müssen Sie das Fenster von OpenCutList **schließen** und **neu öffnen**.
+        Um die Änderungen zu berücksichtigen, müssen Sie das OpenCutList Fenster von **schließen** und **neu öffnen**.
       reset_model_presets: Modell-Einstellungen zurücksetzen
       reset_model_presets_confirm: |
         Sie sind dabei, alle *OpenCutList*-Einstellungen für das aktuelle Modell zurückzusetzen.
@@ -2385,11 +2528,11 @@ tab:
         Die Einstellungen von *OpenCutList* für das aktuelle Modell wurden zurückgesetzt.
         Um die Änderungen zu berücksichtigen, müssen Sie das Fenster von OpenCutList **schließen** und **neu öffnen**.
       error:
-        no_preset_to_export: Keine Voreinstellungen zu exportieren.
-        no_preset_to_import: Keine Voreinstellungen zu importieren.
+        no_preset_to_export: Keine Voreinstellungen zum exportieren.
+        no_preset_to_import: Keine Voreinstellungen zum importieren.
         failed_to_export: "Die Voreinstellungen können nicht exportiert werden: **{{ error }}**."
         failed_to_open_library_dir: "Der Bibliotheksordner kann nicht geöffnet werden: **{{ error }}**."
-        failed_to_import: "Voreinstellungen konnten nicht importiert werden: **{{ error }}**."
+        failed_to_import: "Die Voreinstellungen konnten nicht importiert werden: **{{ error }}**."
         failed_to_import_invalid_hexdigest: Diese Datei wurde verändert. Sie kann nicht importiert werden.
         failed_to_import_bad_file_format: Ungültiges Dateiformat.
   about:
@@ -2636,7 +2779,7 @@ tool:
     detecting_cavities: Erkennung von Fächern...
     error:
       invalid_divider_seed: Mit dieser Art von Bauteil ist der Einbau einer Trennwand nicht möglich
-      invalid_divider_container: "Dieses Teil ist isoliert: s befindet sich in keiner Gruppe oder Komponente mit anderen Teilen"
+      invalid_divider_container: "Dieses Teil ist isoliert: Es befindet sich in keiner Gruppe oder Komponente mit anderen Teilen"
       invalid_divider_cavity: An dieser Stelle befindet sich kein Fach
       no_divider_cavity: In dieser Gruppe oder Komponente wurden keine Fächer festgestellt
       invalid_front_panel_seed: Mit dieser Art von Bauteil ist der Einbau eines Frontteils nicht möglich
@@ -2654,11 +2797,11 @@ tool:
       front_panel_number_overflow: Es ist nicht möglich, {{ number }} Frontteile auf diese Öffnung zu verteilen
       back_panel_number_overflow: Es ist nicht möglich, {{ number }} Rückwände auf diese Öffnung zu verteilen
       back_panel_severs_parts: "Die Nut würde durchgehend verlaufen: {{ names }}. Verringern Sie ihre Tiefe"
-      module_file_not_found: "Korpusdatei nicht gefunden: {{ file }}"
-      module_file_invalid: "Korpusdatei konnte nicht geladen werden: {{ file }}"
+      module_file_not_found: "Moduldatei nicht gefunden: {{ file }}"
+      module_file_invalid: "Moduldatei konnte nicht geladen werden: {{ file }}"
       module_file_invalid_name: "Ungültiger Dateiname: {{ name }}"
       module_file_save_failed: "Moduldatei konnte nicht gespeichert werden: {{ name }}.skp"
-      module_stretch_failed: Unmöglich, den Korpus auf diese Maße zu skalieren
+      module_stretch_failed: Unmöglich, das Modul auf diese Maße zu skalieren
     warning:
       no_back_panel_machining: "Es konnte keine Nut gefräst werden: In dieser Tiefe grenzt kein benachbartes Teil an die Rückwand an"
       no_module_file: In diesem Ordner befinden sich keine .skp-Dateien
@@ -2798,7 +2941,7 @@ tool:
     action_3: Entnehmen
     action_3_status: Klicken Sie auf eine Fläche, um eine Probe des Materials zu entnehmen
     action_4: Säubern
-    action_4_status: Klicken Sie auf ein Teil, um alle Materialien aus seiner Definition und aus allen Instanzen zu entfernen
+    action_4_status: Klicken Sie auf ein Teil, um alle Materialien aus seiner Definition und aus allen Instanzen zu löschen
     action_option_group_instances: Anzahl Instanzen
     action_option_group_edges: Anzahl Kantenbänder
     action_option_group_faces: Anzahl Flächen
@@ -2820,7 +2963,7 @@ tool:
     faces: "{{ count }} Fläche"
     faces_plural: "{{ count }} Flächen"
     face_zmin: Rückseite
-    face_zmax: Vorderseite
+    face_zmax: Vorderansicht
     warning:
       no_material: Kein Material
       no_material_type: Kein Material des Typs '{{ type }}'
@@ -2862,13 +3005,17 @@ tool:
   # @no-translate
   smart_join:
     title: Zusammenfügen
+    hardware_edit: Diesen Beschlag bearbeiten
+    hardware_view: Diesen Beschlag ansehen ($t(core.library.bundled), schreibgeschützt)
+    action_0_family: Verbinder
     action_0: Verbinder hinzufügen
     action_0_status: Verbindungselemente zum Zusammenfügen von Teilen anbringen
     action_0_state_1_status: Klicken Sie auf die Referenzfläche eines Teils, um Verbindungen zu benachbarten Teilen hinzuzufügen, die sich in Kontakt befinden
     action_1: Verbinder löschen
     action_1_status: Verbindungselemente von Teilen löschen
     action_1_state_1_status: Klicken Sie auf die Referenzfläche eines Teils, um die Verbinder zu löschen, die es mit benachbarten Teilen teilt
-    action_2: Bechläge hinzufungen
+    action_2_family: Beschläge
+    action_2: Bechläge hinzufügen
     action_2_status: Beschläge zum Verbinden von Teilen hinzufügen
     action_2_state_1_status: Klicken Sie auf die Referenzfläche eines Teils A, um einen Beschläge zu einem benachbarten Teil hinzuzufügen
     action_2_state_2_status: Klicken Sie auf die Referenzfläche eines Teils B, um Beschläge zu Teil A hinzuzufügen
@@ -2878,22 +3025,58 @@ tool:
     action_3_state_2_status: Klicken Sie auf die Referenzfläche eines Teils B, um die Beschläge zu löschen, die es mit Teil A teilt
     action_4_family: Scharniere
     action_4: Scharniere anbringen
+    action_4_status: Scharniere anbringen, um ein Frontteil schwenkbar zu machen
+    action_4_state_1_status: Fahren Sie über ein Frontteil nahe der Kante, um die es schwenkt, und klicken Sie, um seine Scharniere anzubringen
     action_5: Scharniere entfernen
+    action_5_status: Scharniere eines Frontteils löschen
+    action_5_state_1_status: Fahren Sie über ein Frontteil nahe der Kante, um die es schwenkt, und klicken Sie, um seine Scharniere zu löschen
     action_option_group_height: Höhe
     action_option_group_offsets: Versätze
     action_option_group_spacings: Achsabstände
     action_option_group_options: Optionen
+    action_option_group_distribution: Verteilung
+    action_remove_option_group_distribution: Auswahl
     action_option_height: Höhe
     action_option_offsets_start_offset: Anfang
     action_option_offsets_end_offset: Ende
     action_option_spacings_min_spacing: Min
     action_option_spacings_max_spacing: Max
+    action_0_option_distribution_auto_status: Verbinder nach Versätzen und Achsabständen verteilen
+    action_1_option_distribution_auto_status: Alle Verbinder der anvisierten Verbindung löschen
+    action_2_option_distribution_auto_status: Beschläge nach Versätzen und Achsabständen verteilen
+    action_3_option_distribution_auto_status: Alle Beschläge der anvisierten Verbindung löschen
+    action_4_option_distribution_auto_status: Scharniere nach Versätzen und Achsabständen verteilen
+    action_5_option_distribution_auto_status: Alle Scharniere der anvisierten Tür löschen
+    action_0_option_distribution_free_status: Einen einzelnen Verbinder an der Cursorposition platzieren
+    action_1_option_distribution_free_status: Einen einzelnen Verbinder löschen
+    action_2_option_distribution_free_status: Einen einzelnen Beschlag an der Cursorposition platzieren
+    action_3_option_distribution_free_status: Einen einzelnen Beschlag löschen
+    action_4_option_distribution_free_status: Ein einzelnes Scharnier an der Cursorposition platzieren
+    action_5_option_distribution_free_status: Ein einzelnes Scharnier löschen
     action_option_options_opposite_status: Gegenüberliegende Seite erfassen
     action_option_options_make_unique_status: Verbundene Elemente einzigartig machen
+    action_option_hardware_hinge_overlay_a: Scharnier (aufliegend)
+    action_option_hardware_hinge_inset_a: Scharnier (innenliegend)
+    action_option_hardware_hinge_half_overlay_a: Scharnier (halb aufliegend)
     action_option_hardware_material_name: Zubehöre
+    action_option_hardware_material_name_status: Material für das Zubehör des Beschlags
     action_option_machining_material_name: Material Bearbeitungen
+    action_option_machining_material_name_status: Material für die Bearbeitungen
     action_option_hardware_layer_name: Zubehöre
+    action_option_hardware_layer_name_status: Tag für das Zubehör des Beschlags
     action_option_machining_layer_name: Tag der Bearbeitungen
+    action_option_machining_layer_name_status: Tag für die Bearbeitungen
+    action_option_hardware_value: Wert des Beschlags „{{ name }}“
+    action_option_hardware_value_help: |
+      Wert des Beschlags „{{ name }}“.
+      Standardwert des Werkzeugs: {{ base }}
+    action_option_hardware_override: angepasst ergibt der Beschlag „{{ name }}“ {{ value }}
+    action_option_hardware_override_help: |
+      Angepasst für „{{ name }}“, ergibt {{ value }}.
+      Standardwert des Werkzeugs: {{ base }}
+    action_option_hardware_reset: Zurück zum Wert des Beschlags
+    action_option_hardware_none: keiner
+    select_hardware_status: Wählen Sie einen Beschlag aus der Bibliothek
     measures: Maße
     materials: Materialien
     layers: Tags
@@ -2904,11 +3087,31 @@ tool:
       invalid_min_spacing: Der minimale Achsabstand {{ value }} ist ungültig
       invalid_max_spacing: Der maximale Achsabstand {{ value }} ist ungültig
       not_assemblable: Dieser Teiletyp kann nicht zusammengefügt werden
+      not_front_panel: Das anvisierte Teil ist kein Frontteil
+      no_hinge_cavity: Hinter diesem Frontteil wurde kein Hohlraum gefunden
+      hinged_side_lost: Die Seite, um die dieses Frontteil bereits schwenkt, wird nicht mehr von einer Seitenwand begrenzt
+      no_hinge_side: Keine Seitenwand begrenzt diese Seite des Frontteils
+      door_already_hinged: Dieses Frontteil hat bereits seine Scharniere
+      no_hinge_to_remove: Dieses Teil hat keine Scharniere
+      occupied_hinges: "{{ count }} Scharnier im Positionskonflikt mit einem vorhandenen Scharnier"
+      occupied_hinges_plural: "{{ count }} Scharniere im Positionskonflikt mit vorhandenen Scharnieren"
+      hinge_rejected_anchors: "{{ count }} Scharnier verworfen: Es würde auf einen Fachboden treffen"
+      hinge_rejected_anchors_plural: "{{ count }} Scharniere verworfen: Sie würden auf einen Fachboden treffen"
       no_valid_join: Es gibt keine Kontaktfläche, die die Anforderungen an die Verbindung erfüllt
       occupied_anchors: "{{ count }} Verbinder, deren Position mit der von vorhandenen Verbindungselementen kollidiert"
       occupied_anchors_plural: "{{ count }} Verbinder, deren Position mit der von vorhandenen Verbindungselementen kollidiert"
+      refused_anchors: "{{ count }} Position verworfen: Der Beschlag erfüllt dort {{ asserts }} nicht"
+      refused_anchors_plural: "{{ count }} Positionen verworfen: Der Beschlag erfüllt dort {{ asserts }} nicht"
       failed_to_load_skp_file: |
         Die SKP-Datei {{ file }} kann nicht geladen werden
+      failed_to_load_skm_file: |
+        SKM-Datei kann nicht geladen werden: {{ file }}
+      unsupported_skm_load: Das Laden von SKM-Materialien erfordert SketchUp 2019.2 oder neuer
+      failed_to_load_hardware: |
+        Beschlag kann nicht geladen werden: {{ file }}
+      invalid_hardware: |
+        Ungültiger Beschlag ({{ file }}): {{ error }}
+      unsupported_hardware_type: Der Beschlag {{ name }} ({{ type }}) kann mit dieser Aktion nicht platziert werden
     warning:
       no_connector_to_remove: Kein Verbinder zum Löschen
       x_connectors_to_remove: "{{ count }} Verbinder zum Löschen"
@@ -2916,6 +3119,13 @@ tool:
       no_fitting_to_remove: Kein Beschlag zum Löschen
       x_fittings_to_remove: "{{ count }} Beschlag zum Löschen"
       x_fittings_to_remove_plural: "{{ count }} Beschläge zum Löschen"
+      no_hinge_to_remove: Kein Scharnier zum Löschen
+      no_hardware_file: Kein Beschlag in diesem Ordner
+      x_hinges_to_remove: "{{ count }} Scharnier zum Löschen"
+      x_hinges_to_remove_plural: "{{ count }} Scharniere zum Löschen"
+      hinge_forced_make_unique: Teile eindeutig gemacht, sonst hätte das Frontteil Scharniere an mehreren Seiten
+      hinge_forced_make_unique_door: Frontteil und Teile eindeutig gemacht, sonst würden die Scharniere auch an seinen anderen Vorkommen erscheinen
+      shared_definition: "Die SKP-Datei ({{ file_name }}) enthält dieselbe Definition wie das bereits geladene {{ definition_name }}: Letzteres wird verwendet"
   smart_export:
     title: Exportieren
     action_0: 3D Teil exportieren

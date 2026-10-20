@@ -29,7 +29,7 @@ default:
   import: Importeren
   load: Laden
   replace: Vervangen
-  preview: In zicht
+  preview: Voorbeeld
   options: Opties
   caution: Let op
   remove: Verwijder
@@ -39,26 +39,26 @@ default:
   duplicate: Kopiëren
   ignore: Negeren
   download: Downloaden
-  upgrade: Verversen
-  copy: Gekopieerd
+  upgrade: Bijwerken
+  copy: Kopiëren
   select_all: Selecteer alle
   unselect_all: Alles deselecteren
   draw: Tekenen
-  estimate: Schatting
+  estimate: Schatten
   rename: Hernoem
   next: Volgende
   "yes": Ja
   "no": Nee
-  automatic: Automaat
+  automatic: Automatisch
   # this is name of a new file saved by SketchUp
-  empty_filename: geen bestandnaam.skp
+  empty_filename: Naamloos.skp
   help: Help
   # mild expression of frustration or disappointment, polite and family-friendly
   error: Oeps!
   warning: Let op
   tip: Tip
   good: Goed
-  bad: Fout
+  bad: Slecht
   by: door
   # date format in use in your language
   date_format: d/m/Y G:i
@@ -77,7 +77,7 @@ default:
   unit_angle_0: Graden
   instance_single: eenheid
   instance_plural: eenheden
-  part_single: deel
+  part_single: onderdeel
   part_plural: onderdelen
   cut_single: snede
   cut_plural: sneden
@@ -86,6 +86,7 @@ default:
   setup_model_units: Configureer modeleenheden
   load_more: Meer laden
   reset_to_app_defaults: Terugzetten naar oorspronkelijke waarden
+  # this should be the name for the key as seen on the keyboard or if it is an arrow, the name used for it.
   constrain_key: Shift
   copy_key_win: Ctrl
   copy_key_mac: Option
@@ -105,7 +106,7 @@ core:
   menu:
     submenu: OpenCutList
     item:
-      generate_cutlist: Genereer materiaallijst
+      generate_cutlist: Onderdelenlijst genereren
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
@@ -114,7 +115,7 @@ core:
       edit_parent_part_instance: De groep/component met de instantie wijzigen
       hide_part_instance: Instantie verbergen
       unhide_part_instance: Instantie tonen
-      edit_part_instance_properties: Instance-eigenschappen bewerken
+      edit_part_instance_properties: Instantie-eigenschappen bewerken
       smart_draw: $t(core.toolbar.command.smart_draw)
       smart_build: $t(core.toolbar.command.smart_build)
       smart_handle: $t(core.toolbar.command.smart_handle)
@@ -123,7 +124,7 @@ core:
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_join: $t(core.toolbar.command.smart_join)
       smart_export: $t(core.toolbar.command.smart_export)
-      reset_dialog_position: Raampositie opnieuw instellen
+      reset_dialog_position: Vensterpositie herstellen
   toolbar:
     name: OpenCutList
     tools: Gereedschappen
@@ -181,10 +182,10 @@ core:
     exported_to: Succesvolle export naar {{ path }}.
     copied_to_clipboard: Gekopieerd naar het klembord
   event:
-    model_change: Er zijn veranderingen aangebracht.
+    model_change: Het actieve model is gewijzigd.
     options_change: Er zijn opties aangepast.
     material_change: Ten minste een materiaal is aangepast.
-    selection_change: De selectie is veranderd.
+    selection_change: De selectie in het actieve model is gewijzigd.
     layers_change: De tags in het actieve model zijn gewijzigd.
     drawing_change: Het ontwerp van het actieve model is aangepast.
   upgrade:
@@ -193,9 +194,9 @@ core:
       Er is een nieuwe versie van *OpenCutList* beschikbaar.
       Update deze voor de nieuwste functies!
     up_to_date: |
-      Je hebt al de laatste versie van *OpenCutList*
+      U beschikt over de nieuwste versie van *OpenCutList*.
 
-      *Wordt sponsor om ons te helpen nog meer functies toe te voegen!*
+      *Word sponsor om ons te helpen nog meer functies toe te voegen!*
     downloading: Download is bezig
     changelog: Wat is er nieuw?
     ignore_update: Sla deze update over
@@ -223,7 +224,7 @@ core:
       Voer de naam van de preset in:
     rename_prompt_title: Hernoemen
     rename_prompt: Voer de nieuwe naam van de voorinstelling **"{{ name }}"** in
-    delete_confirm_title: verwijdering
+    delete_confirm_title: Verwijderen
     delete_confirm: Weet u zeker dat u de preset **"{{ name }}"** wilt verwijderen?
     override_confirm_title: Bijwerken
     override_confirm: Bevestig je dat je de voorinstelling **"{{ name }}"** wil bijwerken met de inhoud van het formulier?
@@ -286,17 +287,17 @@ core:
     textinput_size:
       quantity: Aant.
     three_viewer:
-      view: Beeld {{ view }}
+      view: Aanzicht {{ view }}
       view_isometric: Isometrisch
       view_top: Bovenaanzicht
       view_bottom: Onderaanzicht
-      view_front: Voor
+      view_front: Vooraanzicht
       view_back: Achteraanzicht
       view_left: Links
       view_right: Rechts
       zoom: "{{ zoom }} Schaal"
-      explode_factor: Omvang van de explosie
-      toggle_box_helper: Toon of verberg een geschikte doos
+      explode_factor: Mate van de explosietekening
+      toggle_box_helper: Omhullende doos tonen of verbergen
       toggle_box_dimensions_helper: Afmetingen tonen of verbergen
       toggle_axes_helper: Toon of verberg de assen
   docs:
@@ -313,7 +314,7 @@ core:
       non_manifold_edges_plural: Het volume bevat {{ count }} niet-manifold randen
       non_manifold_edges_named: « {{ name }} » bevat {{ count }} niet-manifold rand
       non_manifold_edges_named_plural: « {{ name }} » bevat {{ count }} niet-manifold randen
-      open_edges: Het volume bevat {{ count }} open randen
+      open_edges: Het volume bevat {{ count }} open rand
       open_edges_plural: Het volume bevat {{ count }} open randen
       open_edges_named: « {{ name }} » bevat {{ count }} open rand
       open_edges_named_plural: « {{ name }} » bevat {{ count }} open randen
@@ -326,30 +327,31 @@ core:
     libraries: Bibliotheken
     user: Mijn bibliotheek
     bundled: OCL-bibliotheek
+    family_modules: Modules
 tab:
   cutlist:
     label: Onderdelen
     title: Onderdelenlijst
     help: |
-      Selecteer, in uw scene, de broncomponenten van uw onderdelenlijst. Klik dan op **Generate**.
+      Selecteer, in uw scene, het hoofdcomponent van uw onderdelenlijst. Klik dan op **Genereren**.
       Wanneer niets geselecteerd is worden alle zichtbare onderdelen van de scene gebruikt om de onderdelenlijst te genereren.
-    is_selection: Selectie alleen
-    select_part: Selecteer het stuk
-    select_part_plural: Selecteer de stukken
+    is_selection: Alleen selectie
+    select_part: Selecteer het onderdeel
+    select_part_plural: Selecteer de onderdelen
     material_undefined: Geen materiaal gedefinieerd
-    not_available_std_width: Breedte niet gedefinieerd
-    not_available_std_thickness: Dikte niet gedefinieerd
-    not_available_std_section: Doorsnede niet gedefinieerd
+    not_available_std_width: Niet-standaard breedte
+    not_available_std_thickness: Niet-standaard dikte
+    not_available_std_section: Niet-standaard doorsnede
     highlight_part: Toon een onderdeel in het model
     highlight_parts: Toon onderdelen in het model
     edit_part_properties: Bewerk eigenschappen van dit onderdeel
     edit_part_axes_properties: Bewerk de eigenschappen (assen) van het onderdeel
     edit_part_edges_properties: Bewerk de eigenschappen (randbanden) van het onderdeel
-    edit_part_faces_properties: Bewerk de eigenschappen (fineren) van het onderdeel
+    edit_part_faces_properties: Bewerk de eigenschappen (vlakken) van het onderdeel
     part_drawing_type_1: 2D aanzicht
     part_drawing_type_2: 2D aanzicht omgekeerd
     part_drawing_type_3: 2D Linkeraanzicht
-    part_drawing_type_4: 2D Rechteaansicht
+    part_drawing_type_4: 2D Rechteraanzicht
     part_drawing_type_5: 2D Vooraanzicht
     part_drawing_type_6: 2D Achteraanzicht
     part_drawing_type_7: 3D
@@ -428,8 +430,8 @@ tab:
       children_size_increase: Deze afmeting wordt vergroot met een overmaat voor {{ count }} gegroepeerde onderdelen
       invalid_final_area: Let op, de oppervlakte kan niet worden berekend omdat {{ count }} deel (van {{ total }}) een ongeldige oppervakte heeft
       invalid_final_area_plural: Opgelet, Dit cumulatief oppervlak kan niet berekend worden omdat {{ count }} onderdelen (van {{ total }}) een ongeldig oppervlak hebben
-      is_instance_name: De naam van dit onderdeel komt uit de instantienaam van de groep
-      is_dynamic_attributes_name: De beschrijving van dit onderdeel wordt overgenomen van het attribuut 'Name' van het dynamisch component
+      is_instance_name: De benaming van dit onderdeel komt uit de instantienaam van de groep
+      is_dynamic_attributes_name: De benaming van dit onderdeel wordt overgenomen van het attribuut 'Name' van het dynamisch component
       has_edges: Dit onderdeel bevat {{ count }} randafwerking
       has_edges_plural: Dit onderdeel bevat {{ count }} randafwerkingen
       has_faces: Dit deel bevat {{ count }} gefineerd oppervlak
@@ -455,7 +457,7 @@ tab:
       dblclick_to_sort_axes: Dubbelklik hier om de volgorde van de assen automatisch aan te passen aan de afmetingen van het onderdeel
       part_axes: Interne assen van het onderdeel
       select_unselect_all_parts: Selecteer / De-selecteer alle onderdelen van de groep
-      select_parts_in_cutlist: Selecteer het deel op het debetblad
+      select_parts_in_cutlist: Selecteer het onderdeel in de onderdelenlijst
       select_parts_in_cutlist_plural: Selecteer de {{ count }} delen op het debetblad
       setup_group_cuttingdiagram: Configureer het zaagplan van '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'
       setup_group_packing: Configureer het zaagplan van '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'
@@ -497,8 +499,8 @@ tab:
       general: Algemeen
       extra_help: Lijst van materiaalsoort-specifieke eigenschappen "**$t(tab.materials.type_{{ material_type }})**".
       edges: Randafwerkingen
-      faces: Fineren
-      name: Beschrijving
+      faces: Vlakken
+      name: Naam
       material: Materiaal
       cumulable: Cumulatief
       cumulable_help: |
@@ -513,10 +515,10 @@ tab:
 
         *Voorbeeld: Bereken 1 deel voor een paar ladegeleiders:
         Pack = 2 eenheden / deel*
-      instance_count_by_part_1: 1 per onderdeel
+      instance_count_by_part_1: 1 eenheid per onderdeel
       instance_count_by_part_2: 2 stuks per onderdeel
       mass: Massa
-      mass_help: De gewicht van het deel zal worden gebruikt bij het genereren van **Schatting**.
+      mass_help: Het massa van het onderdeel zal worden gebruikt bij het genereren van **Schatting**.
       price: Prijs
       price_help: De prijs van het deel zal worden gebruikt bij het genereren van **Schatting**.
       thickness_layer_count: Aantal lagen
@@ -594,7 +596,7 @@ tab:
       auto_orient_help: |
         Als dit vakje is aangevinkt, worden de drie afmetingen van de onderdelen gesorteerd zodat de grootste de *lengte* en de kleinste de *dikte* vertegenwoordigt.
 
-        En dus,
+        Anders,
         - de *lengte* komt op de <span style='color:red'>rode</span> as
         - de *breedte* op de <span style='color:green'>groene</span> as
         - de *dikte* op de <span style='color:blue'>blauwe</span> as
@@ -605,12 +607,12 @@ tab:
       smart_material_help: Als deze optie is geselecteerd, kunnen onderdelen zonder gedefinieerd materiaal worden toegewezen aan het materiaal dat is toegewezen aan een bovenliggend of ingesloten component.
       dynamic_attributes_name: Gebruik het *Name* attribuut van dynamische componenten
       dynamic_attributes_name_help: |
-        Als deze optie is geselecteerd, wordt de aanduiding van onderdelen geëxtraheerd uit het attribuut *Name*, indien gedefinieerd.
+        Als deze optie is geselecteerd, wordt de benaming van onderdelen geëxtraheerd uit het attribuut *Name*, indien gedefinieerd.
 
         <i class='ladb-opencutlist-icon-warning'></i>Instances van onderdelen met dezelfde definitie worden gescheiden als het attribuut *Name* niet dezelfde waarde heeft.
-      part_number_with_letters: Stel de onderdeel nummers opnieuw in
+      part_number_with_letters: Letters gebruiken voor de nummering van onderdelen
       part_number_with_letters_help: Als deze optie is geselecteerd, worden onderdelen genummerd met letters (A, B, C, ... Z, AA, AB, ...).
-      part_number_sequence_by_group: Stel de onderdeelnummers voor alle groepen opnieuw in
+      part_number_sequence_by_group: Onderdeelnummering per groep opnieuw beginnen
       part_number_sequence_by_group_help: Wanneer deze optie ingeschakeld is, dan wordt de nummering van de onderdelen hernomen van 1 (of A) voor elke groep (lijst van onderdelen van hetzelfde materiaal en dezelfde bruto dikte).
       part_folding: Groepeer identieke onderdelen
       part_folding_help: |
@@ -641,7 +643,7 @@ tab:
       sorting: Sortering
       group_order_strategy: Groepen sorteren
       group_order_strategy_help: |
-        Rangschik de volgende eigenschappen om de sorteervolgorde van de etiketten te bepalen.
+        Rangschik de volgende eigenschappen om de sorteervolgorde van de groepen te bepalen.
         Elke eigenschap kan <i class="ladb-opencutlist-icon-sort-asc"></i> *oplopend* of <i class="ladb-opencutlist-icon-sort-desc"></i> *aflopend* gesorteerd worden.
       part_order_strategy: Sortering van onderdelen
       part_order_strategy_help: |
@@ -657,7 +659,7 @@ tab:
       property_thickness: Dikte
       property_length: Lengte
       property_width: Breedte
-      property_name: Beschrijving
+      property_name: Benaming
       property_count: Hoeveelheid
       property_edge_pattern: Aantal kantenbanden
       property_tags: Badges
@@ -684,7 +686,7 @@ tab:
       area_short: Opp.
       volume: Volume
       number: N°
-      name: Beschrijving
+      name: Benaming
       count: Aant.
       cutting: Onderdelen
       bbox: Afgewerkt
@@ -705,7 +707,7 @@ tab:
         Met deze functie kunt u gegevens van het *stuklijst* exporteren naar het klembord of naar een bestand in [CSV](https://nl.wikipedia.org/wiki/Kommagescheiden_bestand) of [XLSX](https://nl.wikipedia.org/wiki/Office_Open_XML) formaat.
       customize_help: |
         Een kolom in de lijst opnieuw ordenen, verbergen, toevoegen, verwijderen of selecteren om de **titel** en de **formule** aan te passen die de weergegeven waarde voor elke geëxporteerde rij genereert.
-      add_column: Voeg een afmeting toe
+      add_column: Voeg een kolom toe
       add_native_columns: Voeg een kolom toe
       duplicate_column: $t(default.duplicate)
       remove_column: $t(default.remove)
@@ -735,7 +737,7 @@ tab:
       number: N°
       path: Pad
       instance_name: Instantie
-      name: Beschrijving
+      name: Benaming
       total_cutting_length: Lengte totaal - onbewerkt
       total_cutting_area: Oppervlakte totaal - onbewerkt
       total_cutting_volume: Volume totaal - onbewerkt
@@ -1068,7 +1070,7 @@ tab:
       option_problem_type_rectangle: Rechthoek
       option_problem_type_rectangleguillotine: Guillotine
       option_problem_type_onedimensional: Plank
-      option_problem_type_irregular: Genest
+      option_problem_type_irregular: Nesting
       options_material: Materiaal
       options_config: Configuratie
       options_display: Weergave
@@ -1394,10 +1396,10 @@ tab:
         custom: Formule
         custom_qr_code: QR-code
         part_number: Nummer
-        part_name: Beschrijving
+        part_name: Benaming
         part_description: Beschrijving
         part_entity_named_path: Instantie pad
-        part_entity_name: Naam onderdeel
+        part_entity_name: Instantienaam
         part_bin: Container
         part_cutting_size: Ruwe afmetingen
         part_cutting_length: Ruwe lengte
@@ -1434,7 +1436,7 @@ tab:
         invalid_size: De ingegeven paramaters laten niet toe om geldige label afmetingen in te stellen.
       warning:
         is_group_selection: De onderdelen in de **verborgen groepen** van je betaalpas hebben geen label.
-        is_part_selection: Deze labels zijn beperkt tot **geselecteerde onderdelen**.
+        is_part_selection: Deze etiketten zijn beperkt tot **geselecteerde onderdelen**.
     layout:
       title: Tekening
       to_layout: Exporteren naar Layout
@@ -1449,17 +1451,18 @@ tab:
       option_parts_opacity_0: Transparant
       option_parts_opacity_1: Opaak
       option_parts_opacity_help: Selecteer de opaciteit van de delen.
-      option_pins: Pinnen
+      # A callout is a piece of descriptive text connected to a drawing element via a leader line.
+      option_pins: Verwijzingen
       option_pins_hidden: Weergave
-      option_pins_hidden_0: Met pinnen
+      option_pins_hidden_0: Met verwijzingen
       option_pins_hidden_1: Zonder pinnen
-      option_pins_hidden_help: Toont of verbergt de labels die naar onderdelen wijzen om hun nummer of aanduiding aan te geven.
+      option_pins_hidden_help: Toont of verbergt de verwijzingen die naar onderdelen wijzen om hun nummer of benaming aan te geven.
       option_pins_colored: Kleur
       option_pins_colored_0: Zonder kleur
       option_pins_colored_1: stuk kleur
-      option_pins_colored_help: Hiermee kunt u de kleur van de label dots kiezen.
+      option_pins_colored_help: Hiermee kunt u de kleur van de pinbolletjes kiezen.
       option_pins_formula: Formule
-      option_pins_formula_help: Hiermee kunt u *Ruby*-code schrijven om de tekst van de label dots aan te passen.
+      option_pins_formula_help: Hiermee kunt u *Ruby*-code schrijven om de tekst van de pinbolletjes aan te passen.
       option_pins_length: Lengte
       option_pins_length_0: Zonder pijl
       option_pins_length_1: Klein
@@ -1472,7 +1475,7 @@ tab:
       option_pins_direction_2: Langs de Blauwe as
       option_pins_direction_3: Wijst naar het midden van de bovenliggende groep
       option_pins_direction_4: Wijst naar het midden van de selectie
-      option_pins_direction_help: Hiermee kunt u de richting van de labels kiezen om hun leesbaarheid aan te passen aan de tekening.
+      option_pins_direction_help: Hiermee kunt u de richting van de verwijzingen om hun leesbaarheid aan te passen aan de tekening.
       option_page: Papier
       option_page_format: Formaat
       option_page_format_portrait: Portret
@@ -1480,7 +1483,7 @@ tab:
       option_page_format_custom: Gepersonaliseerd
       option_page_width: Breedte
       option_page_height: Hoogte
-      option_page_header: In gedachten
+      option_page_header: Koptekst
       option_page_header_0: Zonder
       option_page_header_1: Met
       option_page_header_help: |
@@ -1490,14 +1493,14 @@ tab:
       option_camera_view: Weergave
       option_camera_view_custom: Gepersonaliseerd
       option_camera_zoom: Ladder
-      option_camera_zoom_auto: Automaat
+      option_camera_zoom_auto: Automatisch
       option_camera_zoom_custom: Gepersonaliseerd
       option_camera_target: Positie
-      option_camera_target_auto: Automaat
+      option_camera_target_auto: Automatisch
       option_camera_target_custom: Gepersonaliseerd
       option_explode: Sprankelend
       error:
-        no_part: Er is geen ruimte om te tekenen.
+        no_part: Er is geen onderdeel om te tekenen.
         failed_to_save_as_skp: Kan het SKP-bestand niet schrijven om naar Layout te verzenden.
         failed_to_layout: |
           Fout bij het schrijven van het Layout-bestand *{{ error }}*
@@ -1571,7 +1574,7 @@ tab:
       option_faces_help: |
         Hiermee kunt u kiezen of er naar de vorm van het onderdeel wordt gezocht op alle vlakken of alleen op het beoogde vlak.
       option_anchor: Anker
-      option_anchor_0: Automaat
+      option_anchor_0: Automatisch
       option_anchor_1: Projecteer de oorsprong van het onderdeel
       option_anchor_help: |
         **Automatisch**
@@ -1632,9 +1635,9 @@ tab:
     snippet:
       hello: Hallo
       number: Nummer
-      name: Beschrijving
-      number_and_name: Nummer en aanduiding
-      number_without_hardware: Aantal (zonder accessoires)
+      name: Benaming
+      number_and_name: Nummer en benaming
+      number_without_hardware: Nummer (zonder accessoires)
       size: Afmeting
       area: Geschikt oppervlakte
       volume: Geschikt volume
@@ -1687,7 +1690,7 @@ tab:
       colorized: Deze tint zal toegepast worden op de textuur van dit materiaal wanneer het in het model toegepast wordt
       texture_load: Een nieuwe afbeelding laden
       texture_export: De afbeelding exporteren
-      texture_clear: Heldere textuur
+      texture_clear: Textuur verwijderen
       edit: Wijzig de eigenschappen van '{{ name }}'
       set_current: Kleur onderdelen met '{{ name }}'
       open_url: Materiaal-URL openen
@@ -2067,7 +2070,7 @@ tab:
         unused: Niet gebruikt
         mandatory: Verplichte kolommen
         optional: Optionele kolommen
-        name: Beschrijving
+        name: Benaming
         count: Hoeveelheid
         bbox_length: Lengte
         bbox_width: Breedte
@@ -2083,7 +2086,7 @@ tab:
           *Controleer of u het juiste gegevensscheidingsteken hebt gekozen.*
         empty_file: Het bestand lijkt leeg te zijn of kon niet correct worden gelezen.
         no_importable_part: Er kunnen geen onderdelen worden ingevoerd. Wijs de gewenste velden toe aan de overeenkomstige kolommen.
-        invalid_name: Ongeldige beschrijving
+        invalid_name: Ongeldige benaming
         invalid_length: Ongeldige lengte
         invalid_width: Ongeldige breedte
         invalid_thickness: Ongeldige dikte
@@ -2242,7 +2245,7 @@ tab:
     title: Gebruikersinstellingen
     global_settings: Globale instellingen
     language: Taal
-    language_auto: Automaat
+    language_auto: Automatisch
     font_size: Lettergrootte
     font_size_auto: $t(default.automatic)
     font_size_normal: Normaal
@@ -2366,6 +2369,8 @@ tool:
     vcb_spacings: Kolomwit
     vcb_angle: Hoek
     locked_on_last_measure_status: Vergrendelen op de laatste meting
+    library_choose: Kies een bibliotheek
+    modal_only_help: Instelling alleen beschikbaar in dit venster, niet in de werkbalk
     error:
       no_direction: Geef een richting aan met de cursor
       invalid_length: De lengte {{ value }} is ongeldig
@@ -2446,6 +2451,8 @@ tool:
     action_option_options_draw_in_0: Tekenen in het actieve element
     action_option_options_draw_in_1: Tekenen in het bovenliggende element van het eerste punt
     action_option_options_draw_in_status: Tekenen in het bovenliggende element van het onderdeel van het eerste punt
+    action_option_options_pick_material: Pipet
+    action_option_options_pick_material_status: Het materiaal van het onderdeel dat door het eerste punt wordt aangewezen toepassen op het gemaakte onderdeel
     action_option_options_ask_name: Naamgeving van de stukken
     action_option_options_ask_name_status: De naam van de stukken handmatig invoeren
     action_toggle_move_copy_status: Wisselen tussen kopiëren en verplaatsen
@@ -2455,27 +2462,57 @@ tool:
       part_created_plural: "{{ count }} nieuwe onderdelen aangemaakt: {{ name }}"
   smart_build:
     title: Opbouwen
-    action_0: Een scheidingswand opbouwen
+    action_0: Een module plaatsen
     action_0_status: Een scheidingswand opbouwen in een ruimte die wordt gevormd door een groep bestaande onderdelen
     action_0_state_0_status: Klik op een wand om een scheidingswand op te bouwen
     action_0_state_1_status: Klik op een wand om scheidingswanden op te bouwen
+    action_0_state_2_status: Klik om de breedte van de module te bepalen (X-as)
+    action_0_state_2_lock_status: Vergrendelen op de breedte van het bronbestand
+    action_0_state_2_arrows_status: Pijlen = Vergrendelen op een as (→ X, ← Y, ↑ Z)
+    action_0_state_3_status: Klik om de diepte van de module te bepalen (Y-as)
+    action_0_state_3_lock_status: Vergrendelen op de diepte van het bronbestand
+    action_0_state_3_arrows_status: Pijlen = De normaal van het XY-vlak op een as vergrendelen (→ X, ← Y, ↑ Z)
+    action_0_state_4_status: Klik om de hoogte van de module te bepalen (Z-as)
+    action_0_state_4_lock_status: Vergrendelen op de hoogte van het bronbestand
+    action_0_state_5_status: Klik op de instantie die u wilt toevoegen
+    action_0_state_6_status: Klik op de VOORZIJDE van de module
+    action_0_state_7_status: Klik op de BOVENZIJDE van de module
+    action_0_add_title: Een module toevoegen
+    action_0_add_name: Bestandsnaam
+    action_0_add_overwrite: Het bestand '{{ name }}.skp' bestaat al. Wilt u het vervangen?
+    action_0_add_front_label: VOORZIJDE
+    action_0_add_up_label: BOVENZIJDE
+    action_0_flip_status: Voorzijde en achterzijde omwisselen
+    action_0_flip_up_status: Boven- en onderzijde omwisselen
     action_1: Een front opbouwen
     action_1_status: Een front opbouwen in een ruimte die wordt gevormd door een groep bestaande onderdelen
     action_1_state_0_status: Klik in een ruimte om een front op de opening op te bouwen
+    action_1_state_1_status: Klik op een wand om scheidingswanden op te bouwen
     action_2: Een front opbouwen
     action_2_status: Een achterwand opbouwen in een ruimte die wordt gevormd door een groep bestaande onderdelen
     action_2_state_0_status: Klik in een ruimte om een achterwand op te bouwen aan de opening tegenover de kijkrichting
     action_2_state_0_merge_status: Sleep naar aangrenzende ruimtes voor één gemeenschappelijke achterwand
+    action_3: Een achterwand opbouwen
+    action_3_status: Een achterwand opbouwen die een ruimte afsluit die wordt gevormd door een groep bestaande onderdelen
+    action_3_state_0_status: Klik in een ruimte om een achterwand op te bouwen op de opening tegenover het aanzicht
+    action_3_state_0_merge_status: Sleep naar aangrenzende ruimtes voor één gemeenschappelijke achterwand
     action_option_group_groove: Groef
+    action_2_option_group_offset: Speling
     action_option_group_thickness: Dikte
     action_option_group_overlay: Plaatsing
     action_option_group_axes: Assen
     action_option_group_measure_type: Meten
+    action_option_group_measure_origin: Oorsprong
+    action_option_group_anchor: Verankering
     action_option_group_options: Opties
     action_option_offset_front_panel_offset: Speling
     action_option_offset_front_panel_offset_status: Bepaalt de speling aan elke rand van het front
     action_option_groove_groove_depth: Groefdiepte
     action_option_groove_groove_depth_status: Bepaalt de diepte van de groef waarin de achterwand wordt geplaatst
+    action_option_groove_groove_panel_reduction: Paneelverkleining
+    action_option_groove_groove_panel_reduction_status: Bepaalt hoeveel de achterwand wordt verkleind aan elke rand die in een groef valt, waarbij deze speling op de bodem van de groef overblijft
+    action_option_groove_groove_width_clearance: Breedtespeling
+    action_option_groove_groove_width_clearance_status: Bepaalt hoeveel breder dan de dikte van de achterwand de groef wordt gefreesd, volledig aan de buitenzijde van de kastromp
     action_option_groove_groove_setback: Terugsprong
     action_option_groove_groove_setback_status: Bepaalt hoeveel de achterwand naar binnen inspringt in de kastromp, en dus waar de groef wordt gefreesd
     action_option_groove_groove_through: Doorlopende groef
@@ -2483,10 +2520,16 @@ tool:
     action_option_thickness_thickness: Dikte
     action_option_thickness_thickness_status: Bepaalt de dikte van de panelen
     action_option_overlay_inset_status: "Inliggend front: geplaatst in de opening, gelijk met de voorzijde"
+    action_3_option_overlay_inset_status: "Achterwand in groef: ingezet in een groef die is gefreesd in de onderdelen rond de opening"
     action_option_overlay_full_overlay_status: "Opliggend front: vóór de voorzijde geplaatst, waarbij de panelen worden overlapt tot aan de buitenzijde van de kastromp en tot halverwege de dikte van de binnenpanelen"
+    action_3_option_overlay_full_overlay_status: "Opliggende achterwand: op de achterzijde van de kastromp geplaatst, waarbij de panelen worden overlapt tot aan de buitenzijde en tot halverwege de dikte van de binnenpanelen, zonder enige bewerking"
+    action_option_overlay_against_protrusions_status: "Opliggend front tegen uitstekende delen: opliggend geplaatst op de panelen die gelijk liggen met de opening, en passend gemaakt tegen de panelen die uitsteken"
+    action_3_option_overlay_against_protrusions_status: "Opliggende achterwand tegen uitstekende delen: opliggend geplaatst op de panelen die gelijk liggen met de opening, en passend gemaakt tussen de panelen die uitsteken (doorlopende zijwanden), zonder enige bewerking"
     action_option_measure_type_inside_status: Plaats de dikte aan de binnenzijde van het gekozen punt
     action_option_measure_type_centered_status: Centreer de dikte op het gekozen punt
     action_option_measure_type_outside_status: Plaats de dikte aan de buitenzijde van het gekozen punt
+    action_option_measure_origin_wall_status: Meten vanaf de binnenwanden van de ruimte
+    action_option_measure_origin_overall_status: Meten vanaf de buitenzijden van de onderdelen die de ruimte afsluiten
     action_option_axes_active_status: Verplaatsen langs de actieve assen
     action_option_axes_context_status: Bewerken langs de assen van de bovenliggende groep of component
     action_option_options_measure_reversed: omgekeerde meting
@@ -2497,10 +2540,21 @@ tool:
     action_option_options_reuse_definition_status: Gebruik het bestaande onderdeel met dezelfde vorm en dezelfde aangrenzende onderdelen opnieuw in plaats van een nieuw onderdeel aan te maken
     action_option_options_mirror: Spiegelplaatsing
     action_option_options_mirror_status: Plaats elk even genummerd front gespiegeld ten opzichte van het aangrenzende front
+    action_option_options_pick_material: Pipet
+    action_option_options_pick_material_status: Het materiaal van het aangewezen onderdeel toepassen op de gemaakte onderdelen
+    action_option_options_face_camera: Naar de camera gericht
+    action_option_options_face_camera_status: Het front van de module automatisch naar de camera draaien
+    action_option_options_top_up: Bovenzijde naar Z+
+    action_option_options_top_up_status: De bovenzijde van de module automatisch zo goed mogelijk naar boven (Z+) draaien
     action_option_options_ask_name: Naamgeving van de stukken
     action_option_options_ask_name_status: De naam van de stukken handmatig invoeren
     action_option_options_layer_name: Laag
     action_option_options_layer_name_status: Naam van de laag waarop de onderdelen worden geplaatst
+    action_option_anchor_center_x_status: Gecentreerd op X
+    action_option_anchor_center_y_status: Gecentreerd op Y
+    action_option_anchor_center_z_status: Gecentreerd op Z
+    action_option_anchor_origin_status: Oorsprong van de component
+    action_option_no_layer_help: "*Laat dit veld leeg om geen tag toe te passen*."
     detecting_cavities: Ruimtes detecteren...
     error:
       invalid_divider_seed: Dit type onderdeel laat het opbouwen van een scheidingswand niet toe
@@ -2522,13 +2576,20 @@ tool:
       front_panel_number_overflow: Kan {{ number }} fronten niet over deze opening verdelen
       back_panel_number_overflow: Kan {{ number }} achterwanden niet over deze opening verdelen
       back_panel_severs_parts: "De groef zou volledig doorlopen door: {{ names }}. Verminder de groefdiepte"
+      module_file_invalid_name: "Ongeldige bestandsnaam: {{ name }}"
+      module_file_save_failed: "Kan het modulebestand niet opslaan: {{ name }}.skp"
     warning:
       no_back_panel_machining: "Er kon geen groef worden gefreesd: geen aangrenzend onderdeel grenst op deze diepte aan de achterwand"
+      no_module_file: Geen .skp-bestand in deze map
+      module_axis_no_scale: "Module niet uitrekbaar langs {{ axis }}: geblokkeerd door het gedrag van de component"
+      module_axis_curve_intersect: "Module niet uitrekbaar langs {{ axis }}: een van de doorsnedevlakken snijdt een niet-uitrekbare curve"
     success:
       part_created: "Nieuw stuk aangemaakt: {{ name }}"
       part_created_plural: "{{ count }} nieuwe onderdelen aangemaakt: {{ name }}"
       part_reused: "Nieuwe instantie van het bestaande onderdeel: {{ name }}"
       part_reused_plural: "{{ count }} nieuwe instanties van het bestaande onderdeel: {{ name }}"
+      module_file_saved: "Module opgeslagen: {{ name }}.skp"
+      module_created: "Nieuwe module geplaatst: {{ name }}"
   smart_handle:
     title: bewerken
     action_0: Selecteren
@@ -2667,6 +2728,8 @@ tool:
     action_option_edges_2_status: Kleur de 4 nummers van het beoogde stuk
     action_option_faces_0_status: Kleur alleen het beoogde aanzicht
     action_option_faces_1_status: Kleur 2 zijden van het beoogde stuk
+    state_8_status: Vink de te vervangen materialen aan en bevestig
+    select_filter_title: Te vervangen materialen
     edges: "{{ count }} nummer"
     edges_plural: "{{ count }} nummers"
     edge_ymin: Lengte 1
@@ -2680,6 +2743,7 @@ tool:
     warning:
       no_material: Uw model bevat geen materialen!
       no_material_type: Geen materiaal van type '{{ type }}'
+      selection_disable_instances_all: De rechthoekselectie schakelt de optie '$t(tool.smart_paint.action_option_instances_1_status)' uit
     error:
       not_part: Het beoogde object is geen onderdeel (component)
       not_edge: Het doelvlak is geen paneelrand

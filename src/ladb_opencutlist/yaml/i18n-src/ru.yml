@@ -86,6 +86,7 @@ default:
   setup_model_units: Установка единиц измерения
   load_more: Загрузить больше
   reset_to_app_defaults: Восстановить исходные значения
+  # this should be the name for the key as seen on the keyboard or if it is an arrow, the name used for it.
   constrain_key: Shift
   copy_key_win: Ctrl
   copy_key_mac: Option
@@ -182,11 +183,11 @@ core:
     copied_to_clipboard: Скопировано в буфер обмена
   event:
     model_change: Активная модель была изменена.
-    options_change: Опции данной модели измены.
+    options_change: Опции данной модели изменены.
     material_change: По крайней мере, один материал был изменен.
     selection_change: Выделение в активной модели было изменено.
     layers_change: Теги в активной модели изменились.
-    drawing_change: Состав активной модели была изменена.
+    drawing_change: Состав активной модели был изменён.
   upgrade:
     unavailable: Невозможно найти последнюю версию *OpenCutList*.
     available: |
@@ -1450,6 +1451,7 @@ tab:
       option_parts_opacity_0: Прозрачный
       option_parts_opacity_1: Матовый
       option_parts_opacity_help: Позволяет выбрать уровень прозрачности деталей на чертеже.
+      # A callout is a piece of descriptive text connected to a drawing element via a leader line.
       option_pins: Булавки
       option_pins_hidden: Просмотр
       option_pins_hidden_0: С булавками
@@ -2368,6 +2370,7 @@ tool:
     vcb_angle: Угол
     locked_on_last_measure_status: Фиксация результатов последнего измерения
     library_choose: Выберите библиотеку
+    modal_only_help: Параметр доступен только в этом окне и отсутствует на панели инструментов
     error:
       no_direction: Пожалуйста, укажите направление с помощью курсора мыши
       invalid_length: Длина {{ value }} недопустима
@@ -2407,7 +2410,7 @@ tool:
       no_active_part: Сначала вы должны выделить одну деталь
       no_parent_group: У выбранной детали отсутствует родительская группа или компонент
   smart_draw:
-    title: Моделировать
+    title: Объём
     action_0: Создать параллелепипед
     action_0_status: Построение объема по прямоугольнику
     action_0_state_0_status: Кликните, чтобы задать первую точку прямоугольника
@@ -2458,7 +2461,7 @@ tool:
       part_created: "Создан новый компонент: : {{ name }}"
       part_created_plural: "создано {{ count }} новых деталей: {{ name }}"
   smart_build:
-    title: Создать
+    title: Мебельщик
     action_0: Создать перегородку
     action_0_status: Создать перегородку в нише, образованной группой смежных деталей, замкнутых в контур
     action_0_state_0_status: Кликните на одну из стенок, чтобы создать перегородку
@@ -2499,12 +2502,17 @@ tool:
     action_option_group_overlay: Монтаж
     action_option_group_axes: Оси
     action_option_group_measure_type: Отсчет
+    action_option_group_measure_origin: Начало координат
     action_option_group_anchor: Привязка
     action_option_group_options: Опции
     action_option_offset_front_panel_offset: Зазор
     action_option_offset_front_panel_offset_status: Зазор по периметру фасада
     action_option_groove_groove_depth: Глубина паза
     action_option_groove_groove_depth_status: Задает параметр глубины паза, в который вставляется задняя стенка
+    action_option_groove_groove_panel_reduction: Обрезка по периметру
+    action_option_groove_groove_panel_reduction_status: Задает величину уменьшения панели с каждого края, заходящего в паз, для обеспечения технологического зазора на дне паза
+    action_option_groove_groove_width_clearance: Зазор по ширине
+    action_option_groove_groove_width_clearance_status: Определяет, на сколько паз фрезеруется шире толщины задней стенки (дна), полностью со внешней стороны корпуса
     action_option_groove_groove_setback: Отступ
     action_option_groove_groove_setback_status: Задает параметр смещения задней стенки внутрь корпуса, и, следовательно, место фрезировки паза
     action_option_groove_groove_through: Паз на всю длину
@@ -2520,6 +2528,8 @@ tool:
     action_option_measure_type_inside_status: Размер без учета толщины перегородки
     action_option_measure_type_centered_status: Отсчет измерения до центра перегородки
     action_option_measure_type_outside_status: Размер с учетом толщины перегородки
+    action_option_measure_origin_wall_status: Измерять от внутренних стенок ниши/полости
+    action_option_measure_origin_overall_status: Измерять от наружных граней деталей, образующих нишу
     action_option_axes_active_status: Перемещение вдоль активных осей
     action_option_axes_context_status: Перемещение вдоль осей родительской группы или компонента
     action_option_options_measure_reversed: Реверсивное измерение
@@ -2584,7 +2594,7 @@ tool:
       module_file_saved: "Модуль сохранен: {{ name }}.skp"
       module_created: "Новый модуль установлен: {{ name }}"
   smart_handle:
-    title: Конструктор
+    title: Манипулятор
     action_0: Выделить
     action_0_status: Выделите деталь
     action_1: Копирование по линии
@@ -2721,6 +2731,8 @@ tool:
     action_option_edges_2_status: Окрасить все 4 стороны в выделенной детали
     action_option_faces_0_status: Окрасить только лицевую часть
     action_option_faces_1_status: Окрасить 2 стороны выделенной детали
+    state_8_status: Выберите материалы для замены и подтвердите выбор
+    select_filter_title: Материалы для замены
     edges: "{{ count }} торец"
     edges_plural: "{{ count }} торцов"
     edge_ymin: Длина 1
@@ -2734,6 +2746,7 @@ tool:
     warning:
       no_material: Ваша модель не содержит материалов!
       no_material_type: Нет материала типа '{{ type }}'
+      selection_disable_instances_all: Прямоугольное выделение отключает опцию '$t(tool.smart_paint.action_option_instances_1_status)'
     error:
       not_part: Целевой объект не является деталью (компонентом)
       not_edge: Целевая поверхность не является торцом панели
