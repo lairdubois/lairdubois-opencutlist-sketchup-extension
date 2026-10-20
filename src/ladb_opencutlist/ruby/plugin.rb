@@ -23,9 +23,9 @@ module Ladb::OpenCutList
   class Plugin
     
     IS_RBZ = PLUGIN_DIR.start_with?(Sketchup.find_support_file('Plugins', ''))
-    IS_DEV = EXTENSION_VERSION.end_with?('-dev')
+    IS_LAB = EXTENSION_VERSION =~ /-[a-z]+\z/ ? true : false
 
-    require 'pp' if IS_DEV
+    require 'pp' if IS_LAB
 
     DEFAULT_SECTION = ATTRIBUTE_DICTIONARY = 'ladb_opencutlist'.freeze
 
@@ -96,7 +96,7 @@ module Ladb::OpenCutList
     MODAL_DIALOG_PREF_KEY = 'fr.lairdubois.opencutlist.modal'
 
     DOCS_URL = 'https://www.lairdubois.fr/opencutlist/docs'
-    DOCS_DEV_URL = 'https://www.lairdubois.fr/opencutlist/docs-dev'
+    DOCS_LAB_URL = 'https://www.lairdubois.fr/opencutlist/docs-lab'
 
     TABS_STRIPPED_NAMES = %w[materials cutlist outliner importers_csv importers_bxf2]
     if IS_RBZ && !Sketchup.debug_mode?
@@ -234,7 +234,7 @@ module Ladb::OpenCutList
     # The shipped library can be written by a dev build run from the sources :
     # it is the one of the repository.
     def library_bundled_writable?
-      false #IS_DEV && !IS_RBZ
+      false #IS_LAB && !IS_RBZ
     end
 
     # Returns true if the given ref points into a library that can't be written
@@ -377,7 +377,7 @@ module Ladb::OpenCutList
       available_languages = []
       Dir[File.join(PLUGIN_DIR, 'js', 'i18n', '*.js')].each { |file|
         language = File.basename(file, File.extname(file))
-        next if language.start_with?('zz') && !IS_DEV
+        next if language.start_with?('zz') && !IS_LAB
         available_languages.push(language)
       }
       available_languages.sort
@@ -385,7 +385,7 @@ module Ladb::OpenCutList
 
     # Get all languages as Hash where key is language and value is its enabled status
     def get_languages
-      get_available_languages.map { |language| [ language, ENABLED_LANGUAGES.include?(language) || language.start_with?('zz') && IS_DEV] }.to_h
+      get_available_languages.map { |language| [ language, ENABLED_LANGUAGES.include?(language) || language.start_with?('zz') && IS_LAB] }.to_h
     end
 
     def webgl_available?
@@ -451,7 +451,7 @@ module Ladb::OpenCutList
 
     def open_docs_page(page)
 
-      url = IS_DEV ? DOCS_DEV_URL : DOCS_URL
+      url = IS_LAB ? DOCS_LAB_URL : DOCS_URL
       url += "?v=#{EXTENSION_VERSION}&build=#{EXTENSION_BUILD}-#{(IS_RBZ ? 'rbz' : 'src')}&language=#{language}&locale=#{Sketchup.get_locale}"
       url += "&page=#{page}"
 
@@ -1139,7 +1139,7 @@ module Ladb::OpenCutList
     def start
 
       # Clear Ruby console if dev running
-      SKETCHUP_CONSOLE.clear if IS_DEV
+      SKETCHUP_CONSOLE.clear if IS_LAB
 
       # To minimize plugin initialization, start setup is called only once
       unless @started
@@ -1286,7 +1286,7 @@ module Ladb::OpenCutList
       # Create dialog instance
       @tabs_dialog = UI::HtmlDialog.new(
           {
-              :dialog_title => get_i18n_string('core.dialog.title') + ' - ' + EXTENSION_VERSION + (IS_DEV ? " ( build: #{EXTENSION_BUILD} )" : ''),
+              :dialog_title => get_i18n_string('core.dialog.title') + ' - ' + EXTENSION_VERSION + (IS_LAB ? " ( build: #{EXTENSION_BUILD} )" : ''),
               :preferences_key => TABS_DIALOG_PREF_KEY,
               :scrollable => true,
               :resizable => true,
@@ -1876,7 +1876,7 @@ module Ladb::OpenCutList
           :version => EXTENSION_VERSION,
           :build => EXTENSION_BUILD,
           :is_rbz => IS_RBZ,
-          :is_dev => IS_DEV,
+          :is_lab => IS_LAB,
           :sketchup_is_pro => Sketchup.is_pro?,
           :sketchup_version => Sketchup.version,
           :sketchup_version_number => Sketchup.version_number,

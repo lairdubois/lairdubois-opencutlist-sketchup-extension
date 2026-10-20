@@ -152,7 +152,7 @@ module Ladb::OpenCutList
 
       def initialize(quit_on_esc = true, quit_on_undo = false)
 
-        SKETCHUP_CONSOLE.clear if Plugin::IS_DEV
+        SKETCHUP_CONSOLE.clear if Plugin::IS_LAB
 
         # Determine if the tool is deactiveted when the user hit the ESC key
         @quit_on_esc = quit_on_esc

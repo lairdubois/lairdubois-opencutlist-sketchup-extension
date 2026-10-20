@@ -106,8 +106,6 @@ module Ladb::OpenCutList
       @layers_2d = {}
       @layers_3d = {}
 
-      # @unit = 6
-
     end
 
     def get_stripped_name
@@ -120,7 +118,21 @@ module Ladb::OpenCutList
       SmartCursorManager.cursor_select
     end
 
+    # Forced UI unit for every smart tool (nil = from the screen size, see get_unit).
+    # Video captures are made in a small viewport, where the computed unit gives a hard to read UI:
+    #   Ladb::OpenCutList::SmartTool.forced_unit = 5   # before the tool is selected
+    @@forced_unit = nil
+
+    def self.forced_unit
+      @@forced_unit
+    end
+
+    def self.forced_unit=(unit)
+      @@forced_unit = unit
+    end
+
     def get_unit(view = nil)
+      return @unit = @@forced_unit unless @@forced_unit.nil?   # @unit is also read directly
       return @unit unless @unit.nil?
       return 3 if view && Sketchup.active_model.nil?
       view = Sketchup.active_model.active_view if view.nil?

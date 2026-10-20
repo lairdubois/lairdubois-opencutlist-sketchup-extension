@@ -2745,7 +2745,7 @@
                     const isRectangleguillotine = $radiosProblemType.filter(':checked').val() === 'rectangleguillotine';
                     const isRectangle = $radiosProblemType.filter(':checked').val() === 'rectangle';
                     const isIrregular = $radiosProblemType.filter(':checked').val() === 'irregular';
-                    const isDebug = that.dialog.capabilities.is_dev && !that.dialog.capabilities.is_rbz;
+                    const isDebug = that.dialog.capabilities.is_lab && !that.dialog.capabilities.is_rbz;
                     if (isOnedimensional) $sectionNotOnedimensional.hide(); else $sectionNotOnedimensional.show();
                     if (isRectangleguillotine) $formGroupRectangleguillotine.show(); else $formGroupRectangleguillotine.hide();
                     if (isRectangle) $formGroupRectangle.show(); else $formGroupRectangle.hide();

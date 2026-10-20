@@ -7,7 +7,7 @@
     const EW_URL = 'https://www.lairdubois.fr/opencutlist';
 
     const MANIFEST_URL = 'https://www.lairdubois.fr/opencutlist/manifest'
-    const MANIFEST_DEV_URL = 'https://www.lairdubois.fr/opencutlist/manifest-dev'
+    const MANIFEST_LAB_URL = 'https://www.lairdubois.fr/opencutlist/manifest-lab'
 
     // How much of the dialog must stay within the screen for it to count as
     // reachable. Below that, it is pulled back into view on startup.
@@ -121,7 +121,7 @@
         const that = this;
 
         if (this.capabilities.manifest == null && this.capabilities.update_available == null) {
-            $.getJSON(this.appendOclMetasToUrlQueryParams(this.capabilities.is_dev ? MANIFEST_DEV_URL : MANIFEST_URL), function (data) {
+            $.getJSON(this.appendOclMetasToUrlQueryParams(this.capabilities.is_lab ? MANIFEST_LAB_URL : MANIFEST_URL), function (data) {
 
                 // Keep manifest data
                 that.capabilities.manifest = data;
@@ -856,7 +856,7 @@
                     }
 
                     // Dev alert
-                    if (that.capabilities.is_rbz && that.capabilities.is_dev) {
+                    if (that.capabilities.is_rbz && that.capabilities.is_lab) {
                         const fnShowDevAlert = function () {
                             that.notify(Twig.twig({ ref: 'core/_notify-dev.twig' }).render({ capabilities: that.capabilities }), 'warning', [], 10000, 'dialogTabsLeft');
                             that.$element.off('maximized.ladb.dialog', fnShowDevAlert);

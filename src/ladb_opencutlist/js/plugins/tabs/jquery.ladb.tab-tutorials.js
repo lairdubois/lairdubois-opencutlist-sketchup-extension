@@ -5,7 +5,7 @@
     // ======================
 
     const TUTORIALS_URL = 'https://www.lairdubois.fr/opencutlist/tutorials'
-    const TUTORIALS_DEV_URL = 'https://www.lairdubois.fr/opencutlist/tutorials-dev'
+    const TUTORIALS_LAB_URL = 'https://www.lairdubois.fr/opencutlist/tutorials-lab'
 
     // CLASS DEFINITION
     // ======================
@@ -27,7 +27,7 @@
     LadbTabTutorials.prototype.loadTutorials = function () {
         const that = this;
 
-        $.getJSON(this.dialog.appendOclMetasToUrlQueryParams(this.dialog.capabilities.is_dev ? TUTORIALS_DEV_URL : TUTORIALS_URL), function (data) {
+        $.getJSON(this.dialog.appendOclMetasToUrlQueryParams(this.dialog.capabilities.is_lab ? TUTORIALS_LAB_URL : TUTORIALS_URL), function (data) {
 
             that.tutorials = data.tutorials;
 

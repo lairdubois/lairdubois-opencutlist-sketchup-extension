@@ -4,10 +4,10 @@
 // ======================
 
 const DOCS_URL = 'https://www.lairdubois.fr/opencutlist/docs';
-const DOCS_DEV_URL = 'https://www.lairdubois.fr/opencutlist/docs-dev';
+const DOCS_LAB_URL = 'https://www.lairdubois.fr/opencutlist/docs-lab';
 
 const CHANGELOG_URL = 'https://www.lairdubois.fr/opencutlist/changelog';
-const CHANGELOG_DEV_URL = 'https://www.lairdubois.fr/opencutlist/changelog-dev';
+const CHANGELOG_LAB_URL = 'https://www.lairdubois.fr/opencutlist/changelog-lab';
 
 function LadbAbstractDialog(element, options) {
     this.options = options;
@@ -17,7 +17,7 @@ function LadbAbstractDialog(element, options) {
         version: options.version,
         build: options.build,
         is_rbz: options.is_rbz,
-        is_dev: options.is_dev,
+        is_lab: options.is_lab,
         sketchup_is_pro: options.sketchup_is_pro,
         sketchup_version: options.sketchup_version,
         sketchup_version_number: options.sketchup_version_number,
@@ -554,14 +554,14 @@ LadbAbstractDialog.prototype.appendOclMetasToUrlQueryParams = function (url, par
 
 LadbAbstractDialog.prototype.getDocsPageUrl = function (page) {
     return this.appendOclMetasToUrlQueryParams(
-        this.capabilities.is_dev ? DOCS_DEV_URL : DOCS_URL,
+        this.capabilities.is_lab ? DOCS_LAB_URL : DOCS_URL,
         (page && (typeof page  === "string")) ? { page: page } : null
     );
 }
 
 LadbAbstractDialog.prototype.getChangelogUrl = function () {
     return this.appendOclMetasToUrlQueryParams(
-        this.capabilities.is_dev ? CHANGELOG_DEV_URL : CHANGELOG_URL
+        this.capabilities.is_lab ? CHANGELOG_LAB_URL : CHANGELOG_URL
     );
 }
 
