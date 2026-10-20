@@ -1,7 +1,7 @@
 {
-  "version": "8.0.0-dev",
-  "build": "202610171630",
-  "url": "https://www.lairdubois.fr/opencutlist/download-dev",
+  "version": "8.0.0-lab",
+  "build": "202610201656",
+  "url": "https://www.lairdubois.fr/opencutlist/download-lab",
   "sponsor": {
     "objectiveName": "8.0",
     "objectiveGoal": 20000,
