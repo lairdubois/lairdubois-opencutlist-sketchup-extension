@@ -86,6 +86,7 @@ default:
   setup_model_units: Configurer les unités du modèle
   load_more: Charger la suite
   reset_to_app_defaults: Restaurer aux valeurs d'origine
+  # this should be the name for the key as seen on the keyboard or if it is an arrow, the name used for it.
   constrain_key: Maj
   copy_key_win: Ctrl
   copy_key_mac: Option
@@ -1671,7 +1672,8 @@ tab:
       option_parts_opacity_0: Transparente
       option_parts_opacity_1: Opaque
       option_parts_opacity_help: Permet de choisir l'opacité des pièces.
-      option_pins: Epingles
+      # A callout is a piece of descriptive text connected to a drawing element via a leader line.
+      option_pins: Épingles
       option_pins_hidden: Affichage
       option_pins_hidden_0: Avec épingles
       option_pins_hidden_1: Sans épingle
@@ -1684,9 +1686,9 @@ tab:
       option_pins_formula_help: Permet d'écrire du code *Ruby* pour personnaliser le texte des pastilles des épingles.
       option_pins_length: Longueur
       option_pins_length_0: Sans flèche
-      option_pins_length_1: Petite
+      option_pins_length_1: Courte
       option_pins_length_2: Moyenne
-      option_pins_length_3: Grande
+      option_pins_length_3: Longue
       option_pins_length_help: Permet de choisir la longueur de la flèche des épingles.
       option_pins_direction: Direction
       option_pins_direction_0: Le long de l'axe Rouge
@@ -3033,7 +3035,7 @@ tool:
     action_option_group_spacings: Entraxes
     action_option_group_options: Options
     action_option_group_distribution: Répartition
-    action_remove_option_group_distribution: Selection
+    action_remove_option_group_distribution: Sélection
     action_option_height: Hauteur
     action_option_offsets_start_offset: Début
     action_option_offsets_end_offset: Fin
@@ -3066,7 +3068,7 @@ tool:
     action_option_machining_layer_name_status: Balise à appliquer aux usinages
     action_option_hardware_value: valeur de la quincaillerie « {{ name }} »
     action_option_hardware_value_help: |
-      Valeur de la quincaillerie « {{ name }} ». 
+      Valeur de la quincaillerie « {{ name }} ».
       Valeur par défaut de l'outil : {{ base }}
     action_option_hardware_override: retouchée, la quincaillerie « {{ name }} » donne {{ value }}
     action_option_hardware_override_help: |

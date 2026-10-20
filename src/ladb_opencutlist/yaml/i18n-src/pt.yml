@@ -86,6 +86,7 @@ default:
   setup_model_units: Configure as unidades do modelo
   load_more: Carregue mais
   reset_to_app_defaults: Restaurar os valores originais
+  # this should be the name for the key as seen on the keyboard or if it is an arrow, the name used for it.
   constrain_key: Shift
   copy_key_win: Ctrl
   copy_key_mac: Option
@@ -220,7 +221,7 @@ core:
     new_prompt: |
       *A criação de uma predefinição personalizada permite que você mantenha as configurações atuais do formulário de modo global para que você possa reutilizá-las em todos os seus modelos posteriormente.*
 
-      Digite o nome da predefinição
+      Digite o nome da predefinição:
     rename_prompt_title: Renomeação
     rename_prompt: Insira o novo nome da predefinição **"{{ name }}"**
     delete_confirm_title: Remoção
@@ -445,10 +446,10 @@ tab:
         Acrescido da sobremedida do material e da peça
         ({{ increase_1 }} + {{ increase_2 }})
       edge_decremented: Reduzido pela espessura das fitas da borda ({{ decrement }})
-      edge_ymin: Comprimento da borda 1
-      edge_ymax: Comprimento da borda 2
-      edge_xmin: Largura da borda 1
-      edge_xmax: Largura da borda 2
+      edge_ymin: Comprimento da Borda 1
+      edge_ymax: Comprimento da Borda 2
+      edge_xmin: Largura da Borda 1
+      edge_xmax: Largura da Borda 2
       face_zmin: Verso
       face_zmax: Frente
       dblclick_to_copy_all_edges: Clique duas vezes aqui para duplicar este valor para todas as outras fitas de borda
@@ -679,7 +680,7 @@ tab:
       dimensions_help: Compreendendo as dimensões
       summary: Resumo
       material_type: Tipo
-      material_thickness: Espessura do material
+      material_thickness: Material / Dimensão
       part_count: Quantidade
       area: Área
       area_short: Área
@@ -757,7 +758,7 @@ tab:
       material_name: Nome do Material
       material_description: Descrição do material
       material_url: URL do material
-      material_std_dimension: Dimensões padrão
+      material_std_dimension: Dimensões Padrão
       entity_names: Nomes de instância
       description: Descrição
       url: URL
@@ -776,9 +777,9 @@ tab:
       component_instance: Instância de Componente
       component_instances: Instâncias de Componentes
       filename: Nome da pasta
-      model_name: Nome do modelo
+      model_name: Nome do Modelo
       model_description: Descrição do modelo
-      page_name: Nome da cena
+      page_name: Nome da Cena
       page_description: Descrição da cena
       placeholder:
         no_column_title: Introduza um título
@@ -1186,7 +1187,7 @@ tab:
         Permite agrupar painéis ou chapas contendo peças iguais ou os mesmos cortes.
       option_bin_folding_warning: |
         *Essa opção será desativada se você usar propriedades de instância na fórmula de personalização do texto de identificação.*
-      option_hide_part_list: Lista de peças
+      option_hide_part_list: Lista de Peças
       option_hide_part_list_1d_dimensional_0: Exibido para cada barra
       option_hide_part_list_1d_edge_0: Exibido para cada fita de borda
       option_hide_part_list_2d_sheet_good_0: Exibido para cada chapa
@@ -1235,7 +1236,7 @@ tab:
         title: "{{ count }} grupo de continuidade do veio"
         title_plural: "{{ count }} grupos de continuidade do veio"
         name: Nome
-        item_count: Total de peças
+        item_count: Σ Peças
       tooltip:
         scroll_to_block_1d: Ir até a primeira barra ou fita de borda
         scroll_to_block_2d: Rolar até a primeira chapa ou laminado
@@ -1254,7 +1255,7 @@ tab:
         count: Qtd.
         length: Comprimento
         width: Largura
-        total_length: Comprimentos
+        total_length: Σ Comprimentos
         total_area: Σ Áreas
         total_cost: Σ Custos
         total_part_count: Σ Peças
@@ -1405,8 +1406,8 @@ tab:
         part_cutting_width: Largura - Aproximada
         part_cutting_thickness: Espessura bruta
         part_edge_cutting_size: Tamanho das bordas a serem cortadas
-        part_edge_cutting_length: Comprimento das bordas a serem cortadas
-        part_edge_cutting_width: Largura das bordas a serem cortadas
+        part_edge_cutting_length: Comprimento da fita de borda
+        part_edge_cutting_width: Largura da fita de borda
         part_size: Tamanho
         part_length: Comprimento
         part_width: Largura
@@ -1423,7 +1424,7 @@ tab:
         thumbnail_proportional_drawing_bottom: Visualização em miniatura (Vista Traseira)
         thumbnail_proportional: Miniatura Proporcional
         thumbnail_square: Miniatura Quadrada
-        group_material: Espessura do Material
+        group_material: Material / Dimensão
         group_material_name: Nome do Material
         group_std_dimension: Dimensões Padrão
         filename: Nome do Arquivo
@@ -1450,6 +1451,7 @@ tab:
       option_parts_opacity_0: Transparente
       option_parts_opacity_1: Opaca
       option_parts_opacity_help: Selecione a transparência das peças.
+      # A callout is a piece of descriptive text connected to a drawing element via a leader line.
       option_pins: Etiquetas
       option_pins_hidden: Exibição
       option_pins_hidden_0: Com etiquetas
@@ -2436,7 +2438,7 @@ tool:
     action_option_options_smoothing: Suavização
     action_option_options_smoothing_status: Suavizar as Curvas
     action_option_options_measure_from_vertex_status: Medir em relação ao vértice mais próximo
-    action_option_options_measure_from_diameter: Medir
+    action_option_options_measure_from_diameter: Medida
     action_option_options_measure_from_diameter_status: Medir o círculo pelo seu diâmetro
     action_option_options_measure_from_radius_status: Medir o círculo pelo seu raio
     action_option_options_measure_reversed: Medição Invertida
@@ -2475,7 +2477,7 @@ tool:
     action_0_state_6_status: Clique na face FRONTAL do módulo
     action_0_state_7_status: Clique na face SUPERIOR do módulo
     action_0_add_title: Adicionar um módulo
-    action_0_add_name: Nome do arquivo
+    action_0_add_name: Nome do Arquivo
     action_0_add_overwrite: O arquivo « {{ name }}.skp » já existe. Deseja substituí-lo?
     action_0_add_front_label: FRENTE
     action_0_add_up_label: SUPERIOR
@@ -2712,7 +2714,7 @@ tool:
     action_4: Limpar
     action_4_status: Clique em uma peça para remover todos os materiais do desenho e de todas as suas instâncias
     action_option_group_instances: Nome da instância
-    action_option_group_edges: Número de bordas
+    action_option_group_edges: Número de fitas de borda
     action_option_group_faces: Número de faces
     action_option_instances_0_status: Pintar apenas a instância da peça selecionada
     action_option_instances_1_status: Pintar todas as instâncias da peça selecionada

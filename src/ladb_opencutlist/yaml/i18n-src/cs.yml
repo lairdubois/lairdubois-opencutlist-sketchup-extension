@@ -84,6 +84,7 @@ default:
   setup_model_units: Nakonfigurujte modelové jednotky
   load_more: Více
   reset_to_app_defaults: Obnovit původní hodnoty
+  # this should be the name for the key as seen on the keyboard or if it is an arrow, the name used for it.
   constrain_key: Shift
   copy_key_win: Ctrl
   copy_key_mac: Nastavení
@@ -1375,6 +1376,7 @@ tab:
       option_parts_opacity_0: Průhledný
       option_parts_opacity_1: Neprůhledný
       option_parts_opacity_help: Vyberte neprůhlednost dílů.
+      # A callout is a piece of descriptive text connected to a drawing element via a leader line.
       option_pins: Štítky
       option_pins_hidden: Zobrazit
       option_pins_hidden_0: Se štítky

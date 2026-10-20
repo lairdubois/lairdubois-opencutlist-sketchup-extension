@@ -84,6 +84,7 @@ default:
   setup_model_units: Налаштування одиниць виміру моделі
   load_more: Завантажити більше
   reset_to_app_defaults: Відновити до початкових значень
+  # this should be the name for the key as seen on the keyboard or if it is an arrow, the name used for it.
   constrain_key: Зміщення
   copy_key_win: Ctrl
   copy_key_mac: Опції
@@ -1442,6 +1443,7 @@ tab:
       option_parts_opacity_0: Прозорий
       option_parts_opacity_1: Непрозорий
       option_parts_opacity_help: Дозволяє вибрати прозорість деталей.
+      # A callout is a piece of descriptive text connected to a drawing element via a leader line.
       option_pins: Шпильки
       option_pins_hidden: Перегляд
       option_pins_hidden_0: Зі шпильками

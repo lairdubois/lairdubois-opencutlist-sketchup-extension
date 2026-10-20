@@ -84,6 +84,7 @@ default:
   setup_model_units: Podešavanje jedinice modela
   load_more: Učitaj više
   reset_to_app_defaults: Vrati na izvorne vrednosti
+  # this should be the name for the key as seen on the keyboard or if it is an arrow, the name used for it.
   constrain_key: Maj
   copy_key_win: Ctrl
   copy_key_mac: Opcije
@@ -1357,6 +1358,7 @@ tab:
       option_parts_opacity_0: Proziran
       option_parts_opacity_1: Neproziran
       option_parts_opacity_help: Providnost delova.
+      # A callout is a piece of descriptive text connected to a drawing element via a leader line.
       option_pins: Čiode
       option_pins_hidden: Prikaz
       option_pins_hidden_0: Sklopiti šrafovima
