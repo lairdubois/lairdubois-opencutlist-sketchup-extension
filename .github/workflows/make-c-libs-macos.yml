@@ -33,7 +33,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set reusable strings
         # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
@@ -63,7 +63,7 @@ jobs:
         # Install your program with the given configuration.
         run: cmake --install ${{ steps.strings.outputs.build_output_dir }} --config ${{ matrix.build_type }}
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.os }}-build-artifact
           path: ${{ steps.strings.outputs.src_dir }}/${{ matrix.install_dir }}

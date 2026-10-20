@@ -36,7 +36,7 @@ jobs:
           git config --global core.longpaths true
 
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Link for Windows
         # Hard-coded link, may fail in the future!
@@ -75,7 +75,7 @@ jobs:
         # Install your program with the given configuration.
         run: cmake --install ${{ steps.strings.outputs.build_output_dir }} --config ${{ matrix.build_type }}
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.os }}-build-artifact
           path: ${{ steps.strings.outputs.src_dir }}/${{ matrix.install_dir }}
