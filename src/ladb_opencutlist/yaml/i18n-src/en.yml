@@ -645,7 +645,7 @@ tab:
       thickness_layered: The quantity here refers to the number of pieces to be cut in order to obtain all the layers.
       thickness_layered_equation: "**{{ count }}** *part* x **{{ layerCount }}** *layers* = **{{ cuttingPartCount }}**"
       thickness_layered_equation_plural: "**{{ count }}** *parts* x **{{ layerCount }}** *layers* = **{{ cuttingPartCount }}**"
-      multiple_content_layers: Caution, this part is composed of sub-parts present in {{ count }} different layers or tags:<br>{{ layers }}
+      multiple_content_layers: Caution, this part is composed of sub-parts present in {{ count }} different tags:<br>{{ layers }}
       children_warnings: Caution, there is {{ count }} alert in grouped parts
       children_warnings_plural: Caution, there are {{ count }} alerts in grouped parts
       children_size_increase: This dimension is increased by an oversize for {{ count }} grouped parts
@@ -673,7 +673,7 @@ tab:
       edge_xmax: Edge Width 2
       face_zmin: Backside
       face_zmax: Frontside
-      dblclick_to_copy_all_edges: Double-click here to duplicate this value to the other edge bandings
+      dblclick_to_copy_all_edges: Double-click here to duplicate this value to the other edges
       dblclick_to_copy_all_faces: Double-click here to duplicate this value to the other face
       dblclick_to_sort_axes: Double-click here to automatically reorder the axes according to the dimensions of the part
       part_axes: Internal axes of the part
@@ -698,7 +698,7 @@ tab:
       group_write_3d_parts: Export 3D geometry of parts in group
       group_layout_parts: Print overview drawing of the group's parts
       group_numbers_save: Save part numbers of this group
-      group_numbers_reset: Reset the part numbers of this group
+      group_numbers_reset: Reset the part numbers for the group
       group_cuttingdiagram: Cutting Diagram
       group_packing: Cutting Diagram
       group_labels: Print labels of parts in group
@@ -3154,7 +3154,7 @@ tool:
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
     action_option_options_merge_holes_status: Isolate through-holes and merge depths for each cavity
-    action_option_options_include_paths_status: Export non-face edges contained in the part as a path
+    action_option_options_include_paths_status: Export the edges in the part that are not associated with a face as a path
     error:
       not_part: This face does not belong to a part (component)
       not_flat_face: This surface is not flat

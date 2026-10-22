@@ -542,9 +542,9 @@ tab:
         La *URL* permite proporcionar un vínculo personalizado a una página exterior de cada definición de pieza.
       tags: Etiquetas
       tags_help: |
-        Con las *Etiquetas*, puede agregar palabras claves para personalizar las definiciones de las piezas.
-        Puede agregar tantas etiquetas como desees.
-        Las partes visibles de su lista de clientes se pueden filtrar de acuerdo con la lista de etiquetas.
+        Con las *Etiquetas* se pueden agregar palabras clave personalizadas para las definiciones de las piezas.
+        Se pueden agregar tantas etiquetas como se desee.
+        Se pueden usar para filtrar las piezas visibles del presupuesto.
       tags_multiple_info: Solo se muestran las etiquetas comunes
       orientation: Orientación
       orientation_locked_on_axis: Bloquear orientación en ejes
@@ -747,7 +747,7 @@ tab:
       cutting_thickness: Espesor - crudo
       edge_cutting_length: Longitud cruda cantos
       edge_cutting_width: Ancho crudo cantos
-      bbox_length: Longitud
+      bbox_length: Longitud capaz
       bbox_width: Anchura
       bbox_thickness: Espesor
       final_area: Área - final
@@ -1170,8 +1170,8 @@ tab:
         Espacio mínimo entre cada pieza.
         Este valor puede corresponder a la anchura de la hoja o del útil de corte.
       option_trimming: Margen
-      option_trimming_1d_help: Margen de saneado en cada extremo del listón o canto que se considerará como desperdicio.
-      option_trimming_2d_help: Margen de saneado en todo el contorno del panel o chapado que se considerará como desperdicio.
+      option_trimming_1d_help: Margen de saneado en cada extremo del listón o canto que se considerará como recorte.
+      option_trimming_2d_help: Margen de saneado en todo el contorno del panel o chapado que se considerará como recorte.
       option_items_formula: Fórmula
       option_items_formula_help: |
         Permite escribir código *Ruby* para personalizar el texto de identificación de las piezas en el diagrama.
@@ -1192,7 +1192,7 @@ tab:
       option_hide_part_list_1d_edge_0: Mostrado para cada tira de canto
       option_hide_part_list_2d_sheet_good_0: Mostrado para cada panel
       option_hide_part_list_2d_veneer_0: Mostrado para cada hoja
-      option_hide_part_list_1: Enmascarado
+      option_hide_part_list_1: Ocultada
       option_hide_part_list_1d_help: Muestre o enmascare la lista de partes de cada listón o tira de canto.
       option_hide_part_list_2d_help: Muestre o enmascare la lista de partes de cada tablero o hoja.
       option_part_drawing_type: Forma de las piezas
@@ -1218,10 +1218,10 @@ tab:
       option_highlight_primary_cuts: Cortes primarios
       option_highlight_primary_cuts_0: Solo al pasar el cursor
       option_highlight_primary_cuts_1: Siempre visible
-      option_highlight_primary_cuts_help: Le permite resaltar cortes primarios.
+      option_highlight_primary_cuts_help: Permite resaltar cortes primarios para que estén siempre visibles.
       option_hide_edges_preview: Indicadores de cantos
       option_hide_edges_preview_0: Visualizado en el diagrama
-      option_hide_edges_preview_1: Enmascarado en el diagrama
+      option_hide_edges_preview_1: Ocultos en el diagrama
       option_hide_edges_preview_help: Permite mostrar u ocultar la indicación visual de los cantos para cada parte del diagrama.
       option_zoom_threshold: Umbral de zoom
       # TODO find a better explanation
@@ -1277,8 +1277,8 @@ tab:
         unplaced_parts_plural: Piezas no colocadas
         parts: Pieza
         parts_plural: Piezas
-        leftovers: Sobrante
-        leftovers_plural: Desperdicios
+        leftovers: Recorte
+        leftovers_plural: Recortes
         leftovers_to_keep: Recorte para conservar
         leftovers_to_keep_plural: Recortes para conservar
         cut: Corte
@@ -1316,7 +1316,7 @@ tab:
         option_texts: Identificaciones
         option_texts_help: |
           Permite activar la exportación de textos de identificación de las piezas, así como elegir su color.
-        option_leftovers: Desperdicios
+        option_leftovers: Recortes
         option_leftovers_help: |
           Permite activar la exportación de los recortes, así como elegir su color.
         option_cuts: Cortes
@@ -1340,8 +1340,8 @@ tab:
       warning:
         is_part_selection: Este diagrama de corte se limita a las **piezas seleccionadas**.
         cutting_dimensions: Este diagrama de corte muestra las piezas con sus dimensiones en **bruto**.
-        cutting_dimensions_increase_1d: "Estas dimensiones brutas se han configurado en el material '{{ material_name }}': longitud sobremedida (**{{ length_increase }}**)."
-        cutting_dimensions_increase_2d: "Estas dimensiones brutas se han configurado en el material '{{ material_name }}': longitud sobremedida (**{{ length_increase }}**) y ancho muy grande (**{{ width_increase }}**)."
+        cutting_dimensions_increase_1d: Dimensiones mayoradas por la sobredimensión de la longitud (**{{ length_increase }}**) configuradas en el material '{{ material_name }}'.
+        cutting_dimensions_increase_2d: Dimensiones mayoradas por la sobredimensión configuradas en el material '{{ material_name }}'en longitud (**{{ length_increase }}**) y anchura (**{{ width_increase }}**).
         cutting_dimensions_edge_decrement: Dimensiones reducidas por el grosor de las tiras del canto. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
       title: Etiquetas
@@ -1465,9 +1465,9 @@ tab:
       option_pins_formula_help: Permite escribir código *Ruby* para personalizar el texto de los marcadores.
       option_pins_length: Longitud
       option_pins_length_0: Sin línea de guía
-      option_pins_length_1: Pequeño
+      option_pins_length_1: Corta
       option_pins_length_2: Media
-      option_pins_length_3: Grande
+      option_pins_length_3: Larga
       option_pins_length_help: Seleccione la longitud de la línea guía de los marcadores.
       option_pins_direction: Dirección
       option_pins_direction_0: A lo largo del eje rojo
@@ -1507,7 +1507,7 @@ tab:
 
           **Asegúrese de que el archivo no está abierto en Layout.**
       warning:
-        is_group_selection: Las piezas dentro de **grupos enmascarados** de su lista de piezas no se dibujarán.
+        is_group_selection: Las piezas dentro de **grupos ocultos** de su lista de piezas no se dibujarán.
         is_part_selection: Este plano de conjunto se limita a las **piezas seleccionadas**.
       message:
         adding_new_page: |
@@ -1686,7 +1686,7 @@ tab:
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Orientación de la veta
-      raw_estimated_0: Estimado por el volumen debitado útil
+      raw_estimated_0: Estimado por el volumen útil en bruto
       colorized: Este tono se aplicará a la textura de este material cuando se renderice en el modelo
       texture_load: Carga una nueva imagen
       texture_export: Exporte la imagen
@@ -1774,12 +1774,12 @@ tab:
       raw_estimated_help: |
         Permite definir el volumen utilizado para estimar la masa y el costo total de las piezas de este material.
 
-        **Volumen útil debitado**
+        **Volumen útil en bruto**
         El volumen total será la suma de los volúmenes debitados de las piezas.
 
         **Volumen de materia prima necesario**
         El volumen total será la suma de los volúmenes de los paneles, hojas, barras o bandas de las piezas después del diagrama de corte.
-      raw_estimated_0: Volumen útil debitado
+      raw_estimated_0: Volumen útil en bruto
       raw_estimated_1: Volumen de materia prima necesaria
       multiplier_coefficient: Coeficiente multiplicador
       multiplier_coefficient_help: Permite indicar el coeficiente multiplicador aplicado al volumen bruto medido.
@@ -1817,8 +1817,8 @@ tab:
       general: General
       material_order_strategy: Clasificación de materiales
       material_order_strategy_help: |
-        Reorganice las siguientes propiedades para definir el orden de clasificación dentro de cada grupo.
-        Las propiedades se pueden ordenar en orden <i class="ladb-opencutlist-icon-sort-asc"></i> *ascendente* o <i class="ladb-opencutlist-icon-sort-desc"></i> *descendiente*.
+        Reorganice las siguientes propiedades para definir la estrategia de ordenación de los materiales en la lista.
+        Cada propiedad se puede ordenar de forma <i class="ladb-opencutlist-icon-sort-asc"></i> *ascendente* o <i class="ladb-opencutlist-icon-sort-desc"></i> *descendente*.
       property_type: Tipo
       property_name: Nombre
     delete:
@@ -1893,9 +1893,9 @@ tab:
       no_scale_mask_4: Deformable en el plano verde/azul (Y+Z)
       no_scale_mask_5: Deformable en el plano rojo/verde (X+Y)
       no_scale_mask_6: Deformable desde las esquinas (XYZ)
-      explode: Desmontar
-      explode_message: ¿Confirma la separación de **{{ name }}**?
-      erase: Borrar
+      explode: Explotar
+      explode_message: ¿Confirma hacer explotar **{{ name }}**?
+      erase: Eliminación
       erase_message: ¿Confirma la eliminación de **{{ name }}**?
     deep_make_unique:
       title: Hacer único
@@ -1933,7 +1933,7 @@ tab:
       no_node: |
         El modelo no dispone de momento de ninguna instancia que listar aquí.
         Una instancia es un **grupo** o un **componente** situado en la escena.
-    obsolete_base: Para mantener la sincronización debe regenerar la estructura.
+    obsolete_base: Para permanecer sincronizado, debe regenerar la estructura.
   # @no-translate
   importer:
     label: Importar
@@ -2173,7 +2173,7 @@ tab:
         partial_support: |
           Necesita **SketchUp 2021.1** o una versión posterior para disfrutar de todas las funcionalidades.
           Las geometrías 3D de los herrajes **no podrán importarse**.
-      obsolete_base: Para mantenerse sincronizado, debe volver a cargar el archivo BXF2.
+      obsolete_base: Para permanecer sincronizado, debe volver a cargar el archivo BXF2.
   tutorials:
     label: Tutoriales
     title: Tutoriales
@@ -2215,11 +2215,11 @@ tab:
     label: Apoyar
     title: Apoyar
     description: |
-      **OpenCutList** es un software de *código abierto* compatible con sus usuarios a través del <a href="https://opencollective.com/" target="_blank">Open Collective</a> plateform.
+      **OpenCutList** es un software de *código abierto* financiado por sus usuarios a través de la plataforma <a href="https://opencollective.com/" target="_blank">Open Collective</a>.
       ¡Apoye este proyecto haciendo una contribución financiera!
     contribute: Contribuir
     backers: "{{ count }} Contribuyente financiero"
-    backers_plural: "{{ count }} Contribuyentes financieros"
+    backers_plural: "{{ count }} colaboradores financieros"
     ad: OpenCutList no es gratuito
     objective: Objetivo
     objective_slogan: OpenCutList somos todos
@@ -2320,7 +2320,7 @@ tab:
     version: Versión
     credits: Créditos técnicos
     credits_authors: |
-      *OpenCutList* fue desarrollado por [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) y [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Liste todos los [contribuyentes](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+      *OpenCutList* fue desarrollado por [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) y [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Liste todos los [colaboradores](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translations: Traducciones
     credits_translators: |
       - Raquel Caballero Guillén, Leonardo Romero Giménez (*español*)
@@ -2594,7 +2594,7 @@ tool:
       module_file_saved: "Módulo guardado: {{ name }}.skp"
       module_created: "Nuevo módulo colocado: {{ name }}"
   smart_handle:
-    title: Editar
+    title: Manipular
     action_0: Seleccione
     action_0_status: Seleccionar una pieza
     action_1: Copiar en línea
@@ -2677,7 +2677,7 @@ tool:
     action_option_stretch_measure_type_outside_status: Medir por el exterior
     action_option_stretch_measure_type_offset_status: Medir la diferencia
     action_option_axes_active_status: Manipular a lo largo de los ejes activos
-    action_option_axes_context_status: Modificar la longitud de los ejes del grupo o componente que contienen la pieza
+    action_option_axes_context_status: Manipular a lo largo de los ejes del grupo o componente que contienen la pieza
     action_option_axes_entity_status: Manipular a lo largo de los ejes de la pieza
     action_option_paneling_joint_type_flat_status: Unión plana
     action_option_paneling_joint_type_miter_status: Corte a inglete
