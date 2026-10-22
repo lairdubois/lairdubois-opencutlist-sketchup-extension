@@ -729,7 +729,7 @@ tab:
       option_csv_col_sep: Scheidingsteken
       option_csv_col_sep_tab: TAB-teken
       option_csv_col_sep_comma: Komma
-      option_csv_col_sep_semicolon: Punt komma
+      option_csv_col_sep_semicolon: Puntkomma
       option_csv_encoding: Encodering
       # as described in https://www.rfc-editor.org/info/rfc4180/
       copy_all: Koppen + Waarden
@@ -1121,7 +1121,7 @@ tab:
       option_rectangleguillotine_cut_type_help: |
         Definieert het type snede.
       option_rectangleguillotine_cut_type_non_exact: Niet exact
-      option_rectangleguillotine_cut_type_exact: Nauwkeurig
+      option_rectangleguillotine_cut_type_exact: Exact
       option_rectangleguillotine_cut_type_homogenous: Gelijksoortig
       option_rectangleguillotine_number_of_stages: Aantal niveaus
       option_rectangleguillotine_number_of_stages_help: |
@@ -1189,7 +1189,7 @@ tab:
         *Deze optie wordt uitgeschakeld als u instantie-eigenschappen gebruikt in de formule voor het aanpassen van de identificatietekst.*
       option_hide_part_list: Onderdelen lijst
       option_hide_part_list_1d_dimensional_0: Weergegeven voor elke plank
-      option_hide_part_list_1d_edge_0: Toon voor alle kantenband
+      option_hide_part_list_1d_edge_0: Weergegeven voor elke kantenband
       option_hide_part_list_2d_sheet_good_0: Weergegeven voor elk paneel
       option_hide_part_list_2d_veneer_0: Displays voor elk fineervel
       option_hide_part_list_1: Verborgen
@@ -1284,7 +1284,7 @@ tab:
         cut: Snede
         cut_plural: Sneden
         cut_trimming: Zuivere snit
-        cut_primary: Primaire snedes
+        cut_primary: Primaire snede
         cut_primary_plural: Primaire snedes
         cut_none: Geen
         cut_depth: Niveau {{ depth }}
@@ -1433,7 +1433,7 @@ tab:
         length_unit: Eenheid
         generated_at: Datum en uur
       error:
-        invalid_size: De ingegeven paramaters laten niet toe om geldige label afmetingen in te stellen.
+        invalid_size: De ingegeven parameters laten niet toe om geldige geldige etiketafmetingen in te stellen.
       warning:
         is_group_selection: De onderdelen in de **verborgen groepen** van je betaalpas hebben geen label.
         is_part_selection: Deze etiketten zijn beperkt tot **geselecteerde onderdelen**.
@@ -1465,7 +1465,7 @@ tab:
       option_pins_formula_help: Hiermee kunt u *Ruby*-code schrijven om de tekst van de pinbolletjes aan te passen.
       option_pins_length: Lengte
       option_pins_length_0: Zonder pijl
-      option_pins_length_1: Klein
+      option_pins_length_1: Kort
       option_pins_length_2: Medium
       option_pins_length_3: Lang
       option_pins_length_help: Hiermee kunt u de lengte van de labelpijl kiezen.
@@ -1685,7 +1685,7 @@ tab:
       type_7: Materiaal type '$t(tab.materials.type_7)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
-      grain_direction: Nerf richting
+      grain_direction: Nerfrichting
       raw_estimated_0: Geschat op basis van het nuttige debiet volume
       colorized: Deze tint zal toegepast worden op de textuur van dit materiaal wanneer het in het model toegepast wordt
       texture_load: Een nieuwe afbeelding laden
@@ -1909,7 +1909,7 @@ tab:
       count: Aant.
     create_container:
       title_group: Een groep maken
-      title_component: een component maken
+      title_component: Een component maken
     option:
       general: Algemeen
       show_hidden_instances: Verborgen instanties weergeven
@@ -2218,7 +2218,7 @@ tab:
       **OpenCutList** is *Open Source* software ondersteund door zijn gebruikers via <a href="https://opencollective.com/" target="_blank">Open Collective</a>.
       Steun dit project door een financiële bijdrage te leveren!
     contribute: Bijdragen
-    backers: "{{ count }} financiele sponsor"
+    backers: "{{ count }} financiële sponsor"
     backers_plural: "{{ count }} financiele sponsors"
     ad: OpenCutList is niet gratis
     objective: Doel
@@ -2353,7 +2353,7 @@ tab:
       - [GitBook](https://www.gitbook.com) voor hun steun aan open source projecten.
 tool:
   default:
-    transparency: Transparant
+    transparency: Transparantie
     zoom_extents: Alles tonen
     toggle_depth: Onderdelen op de achtergrond
     more: Meer
@@ -2442,7 +2442,7 @@ tool:
     action_option_options_measure_from_diameter: Meten
     action_option_options_measure_from_diameter_status: De cirkel opmeten volgens de diameter
     action_option_options_measure_from_radius_status: De cirkel opmeten volgens de straal
-    action_option_options_measure_reversed: omgekeerde meting
+    action_option_options_measure_reversed: Omgekeerde meting
     action_option_options_measure_reversed_status: De meting omkeren
     action_option_options_pull_centered: Gecentreerde hoogte
     action_option_options_pull_centered_status: De hoogte centreren op het eerste punt
@@ -2532,7 +2532,7 @@ tool:
     action_option_measure_origin_overall_status: Meten vanaf de buitenzijden van de onderdelen die de ruimte afsluiten
     action_option_axes_active_status: Verplaatsen langs de actieve assen
     action_option_axes_context_status: Bewerken langs de assen van de bovenliggende groep of component
-    action_option_options_measure_reversed: omgekeerde meting
+    action_option_options_measure_reversed: Omgekeerde meting
     action_option_options_measure_reversed_status: De meting omkeren
     action_option_options_reduce_envelope: Terugliggende onderdelen
     action_option_options_reduce_envelope_status: Rekening houden met terugliggende onderdelen
@@ -2576,8 +2576,11 @@ tool:
       front_panel_number_overflow: Kan {{ number }} fronten niet over deze opening verdelen
       back_panel_number_overflow: Kan {{ number }} achterwanden niet over deze opening verdelen
       back_panel_severs_parts: "De groef zou volledig doorlopen door: {{ names }}. Verminder de groefdiepte"
+      module_file_not_found: "Modulebestand niet gevonden: {{ file }}"
+      module_file_invalid: "Het modulebestand kan niet worden geladen: {{ file }}"
       module_file_invalid_name: "Ongeldige bestandsnaam: {{ name }}"
       module_file_save_failed: "Kan het modulebestand niet opslaan: {{ name }}.skp"
+      module_stretch_failed: Het is onmogelijk om de module tot deze afmetingen uit te rekken
     warning:
       no_back_panel_machining: "Er kon geen groef worden gefreesd: geen aangrenzend onderdeel grenst op deze diepte aan de achterwand"
       no_module_file: Geen .skp-bestand in deze map
@@ -2632,7 +2635,7 @@ tool:
       incoherent_door: De scharnieren van deze deur draaien niet rond dezelfde as
   smart_reshape:
     title: Opnieuw vormgeven
-    action_0: verlengen
+    action_0: Uitrekken
     action_0_status: Een onderdeel uitrekken
     action_0_state_1_status: Klik op een handvat om uit te rekken / te verlengen
     action_0_state_1a_status: Klik op een doorsnedevlak om het te verplaatsen
@@ -2697,7 +2700,7 @@ tool:
     error:
       curve_intersect: Een van de snijvlakken snijdt een niet-rekbare curve
   smart_paint:
-    title: Kleur
+    title: Kleuren
     default_material: Geen materiaal gedefinieerd
     filters: Filters
     filter_0: Zonder type
@@ -2741,7 +2744,7 @@ tool:
     face_zmin: Achterkant
     face_zmax: Voorzijde
     warning:
-      no_material: Uw model bevat geen materialen!
+      no_material: Geen materiaal
       no_material_type: Geen materiaal van type '{{ type }}'
       selection_disable_instances_all: De rechthoekselectie schakelt de optie '$t(tool.smart_paint.action_option_instances_1_status)' uit
     error:

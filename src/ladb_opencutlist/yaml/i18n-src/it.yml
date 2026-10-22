@@ -1458,17 +1458,17 @@ tab:
       option_pins_hidden_1: Senza etichette
       option_pins_hidden_help: Mostra o nascondi i richiami che contengono il numero o la denominazione.
       option_pins_colored: Colore
-      option_pins_colored_0: Bianco e nero
+      option_pins_colored_0: Senza colore
       option_pins_colored_1: Colore del pezzo
       option_pins_colored_help: Seleziona il colore dei bollini dei richiami.
       option_pins_formula: Formula
-      option_pins_formula_help: Permette di scrivere codice *Ruby* per personalizzare il contenuto dell'etichetta.
+      option_pins_formula_help: Permette di scrivere codice *Ruby* per personalizzare il contenuto dei bollini dei richiami.
       option_pins_length: Lunghezza
       option_pins_length_0: Nessuna freccia
-      option_pins_length_1: Corto
-      option_pins_length_2: Medio
-      option_pins_length_3: Lungo
-      option_pins_length_help: Permette di stabilire la lunghezza dei connettori all'etichetta.
+      option_pins_length_1: Corta
+      option_pins_length_2: Media
+      option_pins_length_3: Lunga
+      option_pins_length_help: Permette di stabilire la lunghezza della freccia dei richiami.
       option_pins_direction: Direzione
       option_pins_direction_0: Lungo l'asse Rosso
       option_pins_direction_1: Lungo l'asse Verde

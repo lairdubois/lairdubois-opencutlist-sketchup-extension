@@ -229,11 +229,11 @@ core:
     override_confirm_title: Atualizar
     override_confirm: Confirma a atualização das definições **"{{ name }}"** com os parâmetros do formulário?
     new_error: Impossível, uma predefinição **"{{ name }}"** já existe
-    new_success: Predefinições **"{{ name }}"** criadas
-    override_success: Predefinições **"{{ name }}"** atualizadas
+    new_success: Predefinição **"{{ name }}"** criada
+    override_success: Predefinição **"{{ name }}"** atualizada
     restore_success: O formulário foi preenchido com as definições **"{{ name }}"**
     rename_success: Predefinição **"{{ name }}"** renomeada para **"{{ new_name }}"**
-    delete_success: Predefinições **"{{ name }}"** apagadas
+    delete_success: Predefinição **"{{ name }}"** apagada
     tooltip:
       save_to: Atualizar as definições '{{ name }}'
       rename: Renomear a predefinição '{{ name }}'
@@ -314,7 +314,7 @@ core:
       non_manifold_edges_plural: O sólido contém {{ count }} arestas não-manifold
       non_manifold_edges_named: « {{ name }} » contém {{ count }} aresta não-manifold
       non_manifold_edges_named_plural: « {{ name }} » contém {{ count }} arestas não-manifold
-      open_edges: O sólido contém {{ count }} arestas abertas
+      open_edges: O sólido contém {{ count }} aresta aberta
       open_edges_plural: O sólido contém {{ count }} arestas abertas
       open_edges_named: « {{ name }} » contém {{ count }} aresta aberta
       open_edges_named_plural: « {{ name }} » contém {{ count }} arestas abertas
@@ -408,7 +408,7 @@ tab:
       follow_grain_direction: A detecção de Continuidade do veio está ativada nesta peça
       auto_oriented: Esta peça foi reorientada automaticamente
       oko_label_filter: Incluir/Excluir este selo
-      add_label_filter: Filtrando em '{{ label }}'
+      add_label_filter: Filtrar em '{{ label }}'
       remove_label_filter: Remova a filtragem em '{{ label }}'
       add_edge_material_name_filter: Filtrar em '{{ material_name }}'
       remove_edge_material_name_filter: Remover o filtro de '{{ material_name }}'
@@ -432,7 +432,7 @@ tab:
       invalid_final_area_plural: Cuidado, a somatória desta área não pôde ser calculada porque {{ count }} peças (de {{ total }}) têm uma área inválida
       is_instance_name: A designação desta peça é extraída do nome da instância do grupo
       is_dynamic_attributes_name: Designação extraída do atributo 'Name' do componente dinâmico
-      has_edges: Esta peça contém {{ count }} fitas de borda
+      has_edges: Esta peça contém {{ count }} fita de borda
       has_edges_plural: Esta peça contém {{ count }} fitas de borda
       has_faces: Esta peça contém {{ count }} superfície laminada
       has_faces_plural: Esta peça contém {{ count }} superfícies laminadas
@@ -637,7 +637,7 @@ tab:
       hide_faces_help: Se esta opção for selecionada, as **colunas face** das peças do tipo *Chapas* ficarão ocultas.
       hide_material_colors: Ocultar as cores dos materiais
       hide_material_colors_help: Se esta opção estiver habilitada, as cores do material não serão exibidas.
-      minimize_on_highlight: Mimimize após *'$t(tab.cutlist.highlight_part) ...'*
+      minimize_on_highlight: Minimizar após *'$t(tab.cutlist.highlight_part) ...'*
       minimize_on_highlight_help: Se esta opção for selecionada, a janela OpenCutList será minimizada quando a função *'$t(tab.cutlist.highlight_part)'* for aplicada.
       general: Geral
       sorting: Classificação
@@ -688,7 +688,7 @@ tab:
       number: Nº
       name: Designação
       count: Qtd.
-      cutting: Peças
+      cutting: Bruto
       bbox: Acabado
       final: Real
       total_cutting: Σ Aproximada
@@ -720,7 +720,7 @@ tab:
       column_formula_help: |
         O campo **Fórmula** permite usar o código *Ruby* para personalizar o valor da coluna.
       options: Opções de exportação
-      options_customize: Nome do modelo
+      options_customize: Personalização
       option_source: Fonte
       option_source_summary: $t(tab.cutlist.list.summary)
       option_source_cutlist: Lista de Peças
@@ -1200,7 +1200,7 @@ tab:
       option_part_drawing_type_1: Vista Frontal Desenhada
       option_part_drawing_type_2: Vista Traseira Desenhada
       option_part_drawing_type_help: |
-        Permite exibir ou ocultar o formato das peças assim como suas usinagens no plano de corte..
+        Permite exibir ou ocultar o formato das peças assim como suas usinagens no plano de corte.
 
         *Esta opção deve estar ativada para que as formas possam ser exportadas.*
       option_colorization: Colorir as peças
@@ -1323,7 +1323,7 @@ tab:
         option_cuts_help: |
           Permite ativar a exportação dos cortes e escolher sua cor.
         warning:
-          is_bin_selection: Os **blocos ocultos** não serão exportados..
+          is_bin_selection: Os **blocos ocultos** não serão exportados.
         error:
           overflow_gt_spacing: |
             A sobra de usinagem ({{ overflow }}) deve ser menor ou igual ao espaçamento ({{ spacing }}) configurado neste plano de corte.
@@ -1389,7 +1389,7 @@ tab:
       option_anchor_middle: Meio - Fundo
       option_anchor_end: Fim - Fundo
       option_anchor_start_top: Início - Alto
-      option_anchor_middle_top: Melo - Alto
+      option_anchor_middle_top: Meio - Alto
       option_anchor_end_top: Fim - Alto
       option_color: Cor
       formula:
@@ -1472,7 +1472,7 @@ tab:
       option_pins_direction: Direção
       option_pins_direction_0: Na direção do eixo Vermelho
       option_pins_direction_1: Na direção do eixo Verde
-      option_pins_direction_2: A direção do eixo Azul
+      option_pins_direction_2: Na direção do eixo Azul
       option_pins_direction_3: Apontar na direção do centro do Grupo
       option_pins_direction_4: Apontar na direção do centro da seleção
       option_pins_direction_help: Selecione a direção das etiquetas para melhor legibilidade.
@@ -1737,27 +1737,27 @@ tab:
       thickness_increase: Superdimensionamento da espessura
       thickness_increase_help: Sobremedida aplicada à espessura útil da peça para definir sua **espessura de corte**.
       thickness_increase_help_plural: Sobremedida aplicada à espessura útil das peças para definir sua **espessura de corte**.
-      std_lengths: Comprimento Padrão
+      std_lengths: Comprimentos padrão
       std_lengths_help: |
         Comprimentos padrão disponíveis para este material.
 
         *Se nenhuma unidade for especificada, será aplicada a unidade do modelo.*
-      std_widths: Larguras Padrão
+      std_widths: Larguras padrão
       std_widths_help: |
         Larguras padrão disponíveis para este material.
 
         *Se nenhuma unidade for especificada, será aplicada a unidade do modelo.*
-      std_thicknesses: Espessuras Padrão
+      std_thicknesses: Espessuras padrão
       std_thicknesses_help: |
         Espessuras **brutas** padrão disponíveis para este material.
 
         *Se nenhuma unidade for especificada, será aplicada a unidade do modelo.*
-      std_sections: Seções Cruzadas Padrão
+      std_sections: Seções transversais padrão
       std_sections_help: |
-        Seções padrão disponíveis para este material.
+        Seções transversais padrão disponíveis para este material.
 
         *Se nenhuma unidade for especificada, será aplicada a unidade do modelo.*
-      std_sizes: Tamanhos de painel padrão
+      std_sizes: Tamanhos padrão
       std_sizes_help: |
         Tamanhos padrão disponíveis para este material.
 
@@ -1835,7 +1835,7 @@ tab:
       no_texture: O material não possui textura.
       failed_import_skm_file: Ocorreu um erro ao importar do arquivo .skm. **{{ error }}**
       failed_export_skm_file: Ocorreu um erro ao exportar para o arquivo .skm. **{{ error }}**
-      failed_deleting_material: Ocorreu um erro ao suprimir este material. **{{ error }}**
+      failed_deleting_material: Ocorreu um erro ao excluir este material. **{{ error }}**
       failed_duplicating_material: Ocorreu um erro ao tentar replicar o material. **{{ error }}**
       invalid_image_file: Imagem inválida
     obsolete_base: Para permanecer sincronizado, você deve atualizar a lista de materiais.
@@ -2224,7 +2224,7 @@ tab:
     objective: Objetivo
     objective_slogan: OpenCutList somos todos nós
     objective_title:
-      default: Objetivo
+      default: Objetivos
       # @no-translate
       cuttingdiagram_export: Financiamento das exportações de planos de corte
     objective_details:
@@ -2296,7 +2296,7 @@ tab:
         Esta ação é definitiva. **Todos os ajustes predefinidos serão perdidos.**
         Confirme para continuar.
       reset_global_presets_success: |
-        Aa predefinições do *OpenCutList* foram reajustadas.
+        As predefinições do *OpenCutList* foram reajustadas.
         Para efetivar as alterações, é necessário **fechar** e **reabrir** a janela do OpenCutList.
       reset_model_presets: Redefinir as predefinições do modelo
       reset_model_presets_confirm: |
@@ -2320,7 +2320,7 @@ tab:
     version: Versão
     credits: Créditos Técnicos
     credits_authors: |
-      *OpenCutList* é desenvolvido por [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) o [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Listar [colaboradores](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+      *OpenCutList* é desenvolvido por [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) e [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Listar [colaboradores](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translations: Traduções
     credits_translators: |
       - Henny Silva Ferreira, Nayton Sanches Barbosa, revisado e ampliado por Carlos Maciel ELT (*Português*)
@@ -2341,7 +2341,7 @@ tab:
       - Milan Divovic (*sérvio*)
     credits_description: |
       O desenvolvimento desta extensão faz parte do projeto da plataforma de compartilhamento [L'Air du Bois](https://www.lairdubois.fr).
-      E como tal, é também *Open Source* e está disponível sob licença [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) em seu [repositório GitHub].(https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
+      E como tal, é também *Open Source* e está disponível sob licença [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) em seu [repositório GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
     credits_runtime: Ambiente de execução
     credits_development: Desenvolvimento
     credits_vendors: |
@@ -2359,7 +2359,7 @@ tool:
     more: Mais
     end_point: Extremidade
     middle_point: Ponto médio
-    third_point: Ponto teceiro
+    third_point: Ponto a um terço
     vcb_length: Comprimento
     vcb_thickness: Espessura
     vcb_size: Cotações
@@ -2370,6 +2370,7 @@ tool:
     vcb_angle: Ângulo
     locked_on_last_measure_status: Bloquear na última medida
     library_choose: Escolha uma biblioteca
+    modal_only_help: Ajuste disponível apenas nesta janela, ausente da barra de ferramentas
     error:
       no_direction: Indique uma direção com o mouse
       invalid_length: O comprimento {{ value }} é inválido
@@ -2464,7 +2465,7 @@ tool:
     action_0: Inserir um Módulo
     action_0_status: Inserir um módulo importado de um arquivo SKP, esticado para as dimensões da caixa desenhada
     action_0_state_0_status: Selecione um arquivo de módulo na biblioteca
-    action_0_state_1_status: Clique numa parede para construir divisórias
+    action_0_state_1_status: Clique para definir a origem do módulo
     action_0_state_2_status: Clique para definir a largura do módulo (eixo X)
     action_0_state_2_lock_status: Bloquear na largura do arquivo de origem
     action_0_state_2_arrows_status: Setas = Bloquear num eixo (→ X, ← Y, ↑ Z)
@@ -2490,7 +2491,7 @@ tool:
     action_2: Construir uma Frente
     action_2_status: Construir uma frente fechando uma cavidade formada por um grupo de peças existentes
     action_2_state_0_status: Clique numa cavidade para construir uma frente no seu vão
-    action_2_state_0_merge_status: Arraste até às cavidades vizinhas para um fundo comum
+    action_2_state_0_merge_status: Arraste até as cavidades vizinhas para uma frente comum
     action_3: Construir um Fundo
     action_3_status: Construir um fundo fechando uma cavidade formada por um grupo de peças existentes
     action_3_state_0_status: Clique em uma cavidade para construir um fundo em seu vão oposto à vista
@@ -2501,12 +2502,17 @@ tool:
     action_option_group_overlay: Instalação
     action_option_group_axes: Eixos
     action_option_group_measure_type: Medida
+    action_option_group_measure_origin: Origem
     action_option_group_anchor: Âncora
     action_option_group_options: Opções
     action_option_offset_front_panel_offset: Folga
     action_option_offset_front_panel_offset_status: Define a folga deixada em cada borda da frente
     action_option_groove_groove_depth: Profundidade da ranhura
     action_option_groove_groove_depth_status: Define a profundidade da ranhura na qual o fundo é encaixado
+    action_option_groove_groove_panel_reduction: Redução do painel
+    action_option_groove_groove_panel_reduction_status: Define quanto o fundo é reduzido em cada borda encaixada numa ranhura, deixando essa folga no fundo da ranhura
+    action_option_groove_groove_width_clearance: Folga de largura
+    action_option_groove_groove_width_clearance_status: Define quanto a ranhura é usinada mais larga que a espessura do fundo, inteiramente do lado exterior da caixa
     action_option_groove_groove_setback: Recuo
     action_option_groove_groove_setback_status: Define quanto o fundo recua para o interior da caixa e, portanto, onde a ranhura é usinada
     action_option_groove_groove_through: Ranhura contínua
@@ -2522,6 +2528,8 @@ tool:
     action_option_measure_type_inside_status: Posicionar a espessura no interior do ponto alvo
     action_option_measure_type_centered_status: Centralizar a espessura no ponto alvo
     action_option_measure_type_outside_status: Posicionar a espessura no exterior do ponto alvo
+    action_option_measure_origin_wall_status: Medir a partir das paredes interiores da cavidade
+    action_option_measure_origin_overall_status: Medir a partir das faces exteriores das peças que fecham a cavidade
     action_option_axes_active_status: Manipular ao longo dos eixos ativos
     action_option_axes_context_status: Manipular ao longo dos eixos do grupo ou componente hospedeiro
     action_option_options_measure_reversed: Medição Invertida
@@ -2723,6 +2731,8 @@ tool:
     action_option_edges_2_status: Pintar os 4 cantos da peça selecionada
     action_option_faces_0_status: Pintar apenas a face selecionada
     action_option_faces_1_status: Pintar as 2 faces da peça selecionada
+    state_8_status: Marque os materiais a substituir e depois confirme
+    select_filter_title: Materiais a substituir
     edges: "{{ count }} canto"
     edges_plural: "{{ count }} cantos"
     edge_ymin: Comprimento 1
@@ -2736,10 +2746,11 @@ tool:
     warning:
       no_material: Nenhum material definido
       no_material_type: Nenhum tipo de material '{{ type }}'
+      selection_disable_instances_all: A seleção retangular desativa a opção '$t(tool.smart_paint.action_option_instances_1_status)'
     error:
       not_part: O objeto de destino não é uma peça (componente)
       not_edge: A face selecionada não é a borda da peça
-      not_face: A face selecionada não é a face da da peça
+      not_face: A face selecionada não é a face da peça
   smart_axes:
     title: Orientação
     action_0: Inverter
@@ -2844,7 +2855,7 @@ tool:
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
     action_option_options_merge_holes_status: Isolar os furos passantes e mesclar as profundidades para cada cavidade
-    action_option_options_include_paths_status: Exportar como traço as arestas não associadas a uma face contida na peça
+    action_option_options_include_paths_status: Exportar como traçado as arestas não associadas a uma face contida na peça
     error:
       not_part: Esta face não faz parte de uma peça (componente)
       not_flat_face: Esta superfície não é plana

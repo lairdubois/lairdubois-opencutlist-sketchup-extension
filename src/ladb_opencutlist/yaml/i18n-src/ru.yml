@@ -1078,7 +1078,7 @@ tab:
       option_std_bin_1d_dimensional: Стандартный погонаж
       option_std_bin_1d_edge: Стандартные размеры
       option_std_bin_1d_help: |
-        Выберите или задайте здесь стандартные размеры материала для последующего удобства расчета раскроя на деталию.
+        Выберите или задайте здесь стандартные размеры материала для последующего удобства расчета раскроя на детали.
 
         Этот список определяется полем **$t(tab.materials.edit_material.std_lengths)** материала.
 
@@ -1216,10 +1216,10 @@ tab:
       option_origin_corner_3: Правый нижний
       option_origin_corner_help: Выбор исходного угла для размещения деталей в панелях, листах, погонаже или кромках.
       option_highlight_primary_cuts: Очередность раскроя
-      option_highlight_primary_cuts_0: Свободная
+      option_highlight_primary_cuts_0: Только при наведении
       option_highlight_primary_cuts_1: Выделить
       option_highlight_primary_cuts_help: Выбор опции "Выделить" позволит наглядно оценить оптимальную очередность раскроя материала.
-      option_hide_edges_preview: Индикаторы облицовки
+      option_hide_edges_preview: Индикаторы кромки
       option_hide_edges_preview_0: Отображать на диаграмме
       option_hide_edges_preview_1: Скрывать на диаграмме
       option_hide_edges_preview_help: Позволяет отображать или скрывать визуальную индикацию краев поверхности, на которую необходимо нанести декоративное покрытие, для каждой детали на эскизе карты раскроя..
@@ -1787,7 +1787,7 @@ tab:
       std_volumic_masses: Плотность
       std_volumic_masses_help: Позволяет определить плотность для всех размеров, а также для каждого стандартного размера материала.
       std_prices: Цена
-      std_prices_help: "Позволяет задать стоимость материала в зависимости от расчета цены за единицу: объема, площади, штуки."
+      std_prices_help: "Позволяет рассчитать стоимость материала в зависимости от цены за единицу: объема, площади, штуки."
       std_cut_prices: Стоимость резки
       std_cut_prices_help: |
         Используется для определения стоимости резки материала.
@@ -2136,7 +2136,7 @@ tab:
         option_hardware_material_name: Комплектующие
         option_hardware_material_name_help: Материал, применяемый к **Комплектующим**.
         option_hardware_layer_name: Комплектующие
-        option_hardware_layer_name_help: Маркер, применяемый к комплектующим.
+        option_hardware_layer_name_help: Маркер (тег), применяемый к комплектующим.
         option_no_material_help: "*Оставьте это поле пустым, чтобы не назначать материал*."
         option_default_material_help: "*Если это поле останется пустым, будет создан материал по умолчанию*."
         option_no_layer_help: "*Оставьте это поле пустым, чтобы не применять маркер (тег)*."
@@ -2458,14 +2458,14 @@ tool:
     action_toggle_move_copy_status: Переключение копировать/переместить
     action_change_move_anchor_status: Изменить точку привязки
     success:
-      part_created: "Создан новый компонент: : {{ name }}"
+      part_created: "Создан новый компонент: {{ name }}"
       part_created_plural: "создано {{ count }} новых деталей: {{ name }}"
   smart_build:
     title: Мебельщик
     action_0: Создать перегородку
     action_0_status: Создать перегородку в нише, образованной группой смежных деталей, замкнутых в контур
-    action_0_state_0_status: Кликните на одну из стенок, чтобы создать перегородку
-    action_0_state_1_status: Кликните на стенку, чтобы создать перегородки
+    action_0_state_0_status: Выберите компонент из библиотеки
+    action_0_state_1_status: Кликните для указания расположения элемента
     action_0_state_2_status: Щелкните, чтобы задать ширину модуля (ось X)
     action_0_state_2_lock_status: Зафиксировать ширину исходного файла
     action_0_state_2_arrows_status: Стрелки = зафиксировать по оси (→ X, ← Y, ↑ Z)
@@ -2484,13 +2484,13 @@ tool:
     action_0_add_up_label: ВЕРХ
     action_0_flip_status: Поменять местами переднюю и заднюю стороны
     action_0_flip_up_status: Поменять местами верх и низ
-    action_1: Создать фасад
-    action_1_status: Моделировать фасад в нише, образованной группой смежных деталей
-    action_1_state_0_status: Кликните внутри ниши, чтобы создать там фасад
+    action_1: Создать перегородку
+    action_1_status: Создать перегородку в нише, образованной группой смежных деталей
+    action_1_state_0_status: Кликните внутри ниши, чтобы создать там перегородку
     action_1_state_1_status: Щелкните по стенке, чтобы создать перегородки
-    action_2: Создать заднюю стенку
-    action_2_status: Создание задней стенки внутри замкнутого контура из деталей, образующих корпус
-    action_2_state_0_status: Кликните внутри ниши, чтобы создать заднюю стенку на стороне, противоположной лицевой
+    action_2: Создать фасад
+    action_2_status: Создание фасада внутри замкнутого контура из деталей, образующих корпус
+    action_2_state_0_status: Кликните внутри ниши, чтобы создать там фасад
     action_2_state_0_merge_status: Перетащите указатель на соседние ниши для создания общей задней стенки
     action_3: Создать заднюю стенку
     action_3_status: Создать заднюю стенку, закрывающую полость, образованную группой существующих деталей
@@ -2564,11 +2564,11 @@ tool:
       invalid_front_panel_seed: Этот тип детали не поддерживает создание фасада
       invalid_front_panel_container: Эта деталь не входит в состав группы, образующей замкнутый контур
       invalid_front_panel_cavity: В этой позиции нет открытых проемов
-      no_front_panel_cavity: В этой группе или компоненте не обнаружено полости для перегородок
+      no_front_panel_cavity: В этой группе или компоненте не обнаружено полости
       invalid_back_panel_seed: Этот тип детали не позволяет создать заднюю стенку
       invalid_back_panel_container: Эта деталь не входит в состав группы, образующей замкнутый контур
       invalid_back_panel_cavity: В этой позиции нет открытой ниши, противоположной фасаду
-      no_back_panel_cavity: В этой группе или компоненте не обнаружено полости для перегородок
+      no_back_panel_cavity: В этой группе или компоненте не обнаружено полости
       too_complex_cavity: Геометрия слишком сложна для поиска ниш
       closed_front_panel_opening: Этот проём уже закрыт фасадом
       closed_back_panel_opening: Этот проём уже закрыт задней стенкой
@@ -2580,14 +2580,14 @@ tool:
       module_file_invalid: "Не удалось загрузить файл корпуса: {{ file }}"
       module_file_invalid_name: "Недопустимое имя файла: {{ name }}"
       module_file_save_failed: "Не удалось сохранить файл модуля: {{ name }}.skp"
-      module_stretch_failed: Не удалось растянуть корпус до этих размеров
+      module_stretch_failed: Не возможно растянуть корпус до этих размеров
     warning:
       no_back_panel_machining: "Фрезеровка не удалась: ни одна соседняя деталь не граничит с задней стенкой на этой глубине"
       no_module_file: В этой папке нет файлов .skp
       module_axis_no_scale: "Модуль нельзя растянуть по оси {{ axis }}: это запрещено поведением компонента"
       module_axis_curve_intersect: "Модуль нельзя растянуть по оси {{ axis }}: одна из плоскостей разреза пересекает нерастяжимую кривую"
     success:
-      part_created: "Создан новый компонент: : {{ name }}"
+      part_created: "Создан новый компонент: {{ name }}"
       part_created_plural: "создано {{ count }} новых деталей: {{ name }}"
       part_reused: "Новый экземпляр существующей детали: {{ name }}"
       part_reused_plural: "Создано {{ count }} новых экземпляров существующей детали: {{ name }}"
@@ -2777,7 +2777,7 @@ tool:
     warning:
       more_entities: "{{ count_used }} экземпляры, имеющие одинаковое определение, будут изменены"
     error:
-      not_part: Целевой объект не является частью (компонентом)
+      not_part: Целевой объект не является деталью (компонентом)
       not_orientable: Тип этой детали не позволяет сориентировать ее по осям
       not_grained: Выбранная деталь не содержит текстуру
       not_single_thickness_layer: Выбранная деталь должна состоять из одного слоя
@@ -2841,7 +2841,7 @@ tool:
     action_option_group_unit: Единицы
     action_option_group_faces: Лицевые
     action_option_group_options: Опции
-    action_option_file_format_dxf_status: Экспорт в DFX
+    action_option_file_format_dxf_status: Экспорт в DXF
     action_option_file_format_stl_status: Экспорт в STL
     action_option_file_format_obj_status: Экспорт в OBJ
     action_option_file_format_svg_status: Экспорт в SVG

@@ -293,8 +293,8 @@ core:
       view_bottom: Untersicht
       view_front: Vorderansicht
       view_back: Rückansicht
-      view_left: Seitenansicht von Links
-      view_right: Seitenansicht von Rechts
+      view_left: Links
+      view_right: Rechts
       zoom: "{{ zoom }} Maßstab"
       explode_factor: Amplitude der Explosion
       toggle_box_helper: Begrenzungsrahmen ein- oder ausblenden
@@ -672,7 +672,7 @@ tab:
       edge_xmin: Kantenband Breite 1
       edge_xmax: Kantenband Breite 2
       face_zmin: Rückseite
-      face_zmax: Ansichtsseite
+      face_zmax: Vorderansicht
       dblclick_to_copy_all_edges: Doppelklicken Sie hier, um diesen Wert auf die übrigen Kanten zu übertragen
       dblclick_to_copy_all_faces: Doppelklicken Sie hier, um diesen Wert auf die andere Fläche zu übertragen
       dblclick_to_sort_axes: Doppelklicken Sie hier, um die Achsen automatisch entsprechend den Abmessungen des Teils neu anzuordnen
@@ -698,7 +698,7 @@ tab:
       group_write_3d_parts: 3D-Geometrie der Teile in der Gruppe exportieren
       group_layout_parts: Gruppenübersicht zeichnen
       group_numbers_save: Nummern der Gruppenteile speichern
-      group_numbers_reset: Nummern der Gruppenteile neu zuweisen
+      group_numbers_reset: Teilenummern der Gruppe zurücksetzen
       group_cuttingdiagram: Schnittplan
       group_packing: Schnittplan
       group_labels: Etiketten der Gruppenteile drucken
@@ -989,7 +989,7 @@ tab:
       edge_xmin: Kantenband Breite 1
       edge_xmax: Kantenband Breite 2
       face_zmin: Rückseite
-      face_zmax: Vorderseite
+      face_zmax: Vorderansicht
       layer: Tag
       layers: Tags
       batch: Los
@@ -1390,7 +1390,7 @@ tab:
       option_spacing_help: |
         Mindestabstand zwischen den einzelnen Teilen.
         Dieser Wert kann der Breite des Sägeblatts oder des Schneidewerkzeugs entsprechen.
-      option_trimming: Randabfallbreite
+      option_trimming: Rand
       option_trimming_1d_help: Breite des Säuberungsschnittes an jedem Ende der Stange oder des Kantenbandes.
       option_trimming_2d_help: Breite des Säuberungsschnittes auf allen vier Seiten der Platte oder des Furnierblattes.
       option_items_formula: Formel
@@ -2890,7 +2890,7 @@ tool:
     action_option_group_stretch_measure_type: Maß
     action_option_group_axes: Achsen
     action_option_group_paneling_joint_type: Verbindung
-    action_option_group_paneling_direction: Richtung
+    action_option_group_paneling_direction: Ausrichtung
     action_option_group_csg_operation: Operation
     action_option_group_options: Optionen
     action_option_thickness_thickness: Dicke
