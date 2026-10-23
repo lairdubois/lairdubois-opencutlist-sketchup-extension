@@ -75,7 +75,38 @@ jobs:
         # Install your program with the given configuration.
         run: cmake --install ${{ steps.strings.outputs.build_output_dir }} --config ${{ matrix.build_type }}
 
+      - name: Upload unsigned artifact
+        id: upload-unsigned-artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ matrix.os }}-unsigned-build-artifact
+          path: ${{ steps.strings.outputs.src_dir }}/${{ matrix.install_dir }}
+
+      - name: Sign with SignPath
+        # Free code signing provided by SignPath.io, certificate by SignPath Foundation
+        uses: signpath/github-action-submit-signing-request@v3
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: ${{ vars.SIGNPATH_PROJECT_SLUG }}
+          signing-policy-slug: ${{ vars.SIGNPATH_SIGNING_POLICY_SLUG }}
+          artifact-configuration-slug: ${{ vars.SIGNPATH_ARTIFACT_CONFIGURATION_SLUG }}
+          github-artifact-id: ${{ steps.upload-unsigned-artifact.outputs.artifact-id }}
+          wait-for-completion: true
+          output-artifact-directory: ${{ steps.strings.outputs.build_output_dir }}/signed
+
+      - name: Verify signatures
+        shell: pwsh
+        run: |
+          $failed = $false
+          Get-ChildItem -Path "${{ steps.strings.outputs.build_output_dir }}/signed" -Filter *.dll -Recurse | ForEach-Object {
+            $signature = Get-AuthenticodeSignature $_.FullName
+            Write-Output "$($_.Name): $($signature.Status) - $($signature.SignerCertificate.Subject) - timestamp: $($signature.TimeStamperCertificate -ne $null)"
+            if ($signature.Status -ne 'Valid' -or $signature.TimeStamperCertificate -eq $null) { $failed = $true }
+          }
+          if ($failed) { exit 1 }
+
       - uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.os }}-build-artifact
-          path: ${{ steps.strings.outputs.src_dir }}/${{ matrix.install_dir }}
+          path: ${{ steps.strings.outputs.build_output_dir }}/signed

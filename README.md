@@ -94,6 +94,18 @@ Support this project with your organization. Your logo will show up here with a 
 <a href="https://opencollective.com/lairdubois-opencutlist-sketchup-extension/organization/8/website"><img src="https://opencollective.com/lairdubois-opencutlist-sketchup-extension/organization/8/avatar.svg"></a>
 <a href="https://opencollective.com/lairdubois-opencutlist-sketchup-extension/organization/9/website"><img src="https://opencollective.com/lairdubois-opencutlist-sketchup-extension/organization/9/avatar.svg"></a>
 
+## Code Signing Policy
+
+Free code signing provided by [SignPath.io](https://about.signpath.io), certificate by [SignPath Foundation](https://signpath.org).
+
+The Windows native libraries (`*.dll`) shipped with OpenCutList are built from this repository by GitHub Actions and signed through SignPath.
+
+Team roles:
+- Committers and reviewers: [Members team](https://github.com/orgs/lairdubois/people)
+- Approvers: [Owners](https://github.com/orgs/lairdubois/people?query=role%3Aowner)
+
+Privacy policy: OpenCutList only connects to [lairdubois.fr](https://www.lairdubois.fr) to check for updates and to [Open Collective](https://opencollective.com/lairdubois-opencutlist-sketchup-extension) to display sponsorship information. No personal data or model content is transferred to any networked system unless specifically requested by the user.
+
 ## License
 
 This code is under the **GNU GPLv3 license**.

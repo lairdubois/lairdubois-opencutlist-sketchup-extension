@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SignPath artifact configuration (copy into the SignPath project, slug: vars.SIGNPATH_ARTIFACT_CONFIGURATION_SLUG) -->
+<!-- The GitHub artifact is a ZIP of src/ladb_opencutlist/bin/win/lib -->
+<artifact-configuration xmlns="http://signpath.io/artifact-configuration/v1">
+  <zip-file>
+    <pe-file-set>
+      <include path="Clippy.dll" />
+      <include path="Imagy.dll" />
+      <include path="Meshy.dll" />
+      <include path="Packy.dll" />
+      <include path="Skpy.dll" />
+      <for-each>
+        <authenticode-sign />
+      </for-each>
+    </pe-file-set>
+  </zip-file>
+</artifact-configuration>
