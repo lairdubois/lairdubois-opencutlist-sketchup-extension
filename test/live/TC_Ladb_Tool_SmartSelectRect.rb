@@ -145,9 +145,9 @@ module SelectRectRegression
   # selected instances instead of starting the move.
   def self.with_handler(model, messages, selected)
     tool = OCL::SmartHandleTool.new(current_action: OCL::SmartHandleTool::ACTION_MOVE_LINE)
-    [ :notify_success, :notify_warnings, :notify_errors, :notify, :show_tooltip, :show_message ].each do |name|
+    [ :notify_success, :notify_warnings, :notify_errors, :notify, :set_root_tooltip, :show_message ].each do |name|
       tool.define_singleton_method(name) do |*args|
-        next if [ :notify_success, :show_tooltip, :show_message ].include?(name)
+        next if [ :notify_success, :set_root_tooltip, :show_message ].include?(name)
         messages << [ name.to_s, args.first ].inspect
       end
     end

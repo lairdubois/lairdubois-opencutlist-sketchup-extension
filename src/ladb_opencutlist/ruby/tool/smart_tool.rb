@@ -102,6 +102,10 @@ module Ladb::OpenCutList
       @last_mouse_x = -1
       @last_mouse_y = -1
 
+      # Tooltips stack : only the top one is shown. The root one (index 0, nil if
+      # none) tells about the 3D view, the pushed ones about the UI
+      @tooltip_boxes = [ nil ]
+
       # UI Layers
       @layers_2d = {}
       @layers_3d = {}
@@ -486,7 +490,7 @@ module Ladb::OpenCutList
         @top_panel.append(@message_panel)
 
           @message_lbl = Kuix::Label.new
-          @message_lbl.border.set_all!(unit / 4)
+          @message_lbl.border.set_all!(0.5)
           @message_lbl.padding.set!(unit * 1.5, unit * 2, unit, unit * 2)
           @message_lbl.text_size = unit * 3 * get_text_unit_factor
           @message_panel.append(@message_lbl)
@@ -523,20 +527,6 @@ module Ladb::OpenCutList
         @validation_panel.padding.set_all!(unit * 4)
         @validation_panel.visible = false
         @bottom_panel.append(@validation_panel)
-
-        # -- Status
-
-        @status_panel = Kuix::Panel.new
-        @status_panel.layout = Kuix::InlineLayout.new(false, unit, Kuix::Anchor.new(Kuix::Anchor::CENTER))
-        @status_panel.padding.set_all!(unit * 2)
-        @status_panel.hittable = false
-        @status_panel.visible = false
-        @bottom_panel.append(@status_panel)
-
-          @status_lbl = Kuix::Label.new
-          @status_lbl.padding.set!(unit * 1.5, unit * 2, unit, unit * 2)
-          @status_lbl.text_size = unit * 3 * get_text_unit_factor
-          @status_panel.append(@status_lbl)
 
     end
 
@@ -631,19 +621,19 @@ module Ladb::OpenCutList
     def setup_minitools_btns(view)
 
       # Transparency
-      @transparency_minitool_btn = append_minitool_btn('M0,0.2L0.6,0L1,0.2L0.4,0.4L0,0.2 M0.5,0.6333L0.6,0.6 M0.6,0.6L0.7,0.65 M0.6,0.1L0.6,0.2 M0.6,0.3L0.6,0.4 M0.6,0.5L0.6,0.6 M0.8,0.7L0.9,0.75 M0.4,0.6667L0.3,0.7 M0.2,0.7333L0.1,0.7667 M0.4,0.4L0.4,1 M0,0.2L0,0.8L0.4,1L1,0.8L1,0.2') { |button|
+      @transparency_minitool_btn = append_minitool_btn('M0,0.2L0.6,0L1,0.2L0.4,0.4L0,0.2 M0.5,0.6333L0.6,0.6 M0.6,0.6L0.7,0.65 M0.6,0.1L0.6,0.2 M0.6,0.3L0.6,0.4 M0.6,0.5L0.6,0.6 M0.8,0.7L0.9,0.75 M0.4,0.6667L0.3,0.7 M0.2,0.7333L0.1,0.7667 M0.4,0.4L0.4,1 M0,0.2L0,0.8L0.4,1L1,0.8L1,0.2', PLUGIN.get_i18n_string('tool.default.transparency')) { |button|
         view.model.rendering_options["ModelTransparency"] = !view.model.rendering_options["ModelTransparency"]
       }
       @transparency_minitool_btn.selected = view.model.rendering_options['ModelTransparency']
 
       # Zoom extends
-      append_minitool_btn('M0,0.3L0,0L0.3,0 M0.7,0L1,0L1,0.3 M1,0.7L1,1L0.7,1 M0.3,1L0,1L0,0.7 M0.2,0.3L0.5,0.2L0.8,0.3L0.5,0.4L0.2,0.3 M0.2,0.3L0.2,0.7L0.5,0.8L0.8,0.7L0.8,0.3 M0.5,0.4L0.5,0.8') { |button|
+      append_minitool_btn('M0,0.3L0,0L0.3,0 M0.7,0L1,0L1,0.3 M1,0.7L1,1L0.7,1 M0.3,1L0,1L0,0.7 M0.2,0.3L0.5,0.2L0.8,0.3L0.5,0.4L0.2,0.3 M0.2,0.3L0.2,0.7L0.5,0.8L0.8,0.7L0.8,0.3 M0.5,0.4L0.5,0.8', PLUGIN.get_i18n_string('tool.default.zoom_extents')) { |button|
         ViewUtils.zoom_active_entities(view)
       }
 
     end
 
-    def append_minitool_btn(icon, &block)
+    def append_minitool_btn(icon, tooltip = nil, &block)
 
       k_btn = Kuix::Button.new
       k_btn.layout = Kuix::GridLayout.new
@@ -658,6 +648,18 @@ module Ladb::OpenCutList
       k_btn.set_style_attribute(:border_color, COLOR_BRAND_LIGHT, :active)
       k_btn.set_style_attribute(:border_color, COLOR_BRAND, :selected)
       k_btn.on([ :click, :doubleclick ], &block)
+      unless tooltip.nil?
+        tooltip_box = nil
+        k_btn.on(:enter) {
+          pop_tooltip(tooltip_box)
+          anchor_point = k_btn.absolute_bounds.corner(Kuix::Bounds2d::CENTER_RIGHT)
+          tooltip_box = push_tooltip(tooltip, position: Kuix::Point2d.new(anchor_point.x + @unit, anchor_point.y), anchor: Kuix::Anchor::LEFT)
+        }
+        k_btn.on(:leave) {
+          pop_tooltip(tooltip_box)
+          tooltip_box = nil
+        }
+      end
       @minitool_panel.append(k_btn)
 
         motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path(icon))
@@ -745,7 +747,7 @@ module Ladb::OpenCutList
       end
     end
 
-    # -- Show --
+    # -- Message --
 
     def show_message(text, type = MESSAGE_TYPE_DEFAULT)
       return unless @message_panel && text.is_a?(String)
@@ -781,38 +783,95 @@ module Ladb::OpenCutList
       @message_panel.visible = false
     end
 
-    def show_status(text, type = MESSAGE_TYPE_WARNING)
-      return unless @status_panel && text.is_a?(String)
+    # -- Tooltips --
 
-      case type
-      when MESSAGE_TYPE_ERROR
-        background_color = COLOR_MESSAGE_BACKGROUND_ERROR
-        text_color = COLOR_MESSAGE_TEXT_ERROR
-      when MESSAGE_TYPE_WARNING
-        background_color = COLOR_MESSAGE_BACKGROUND_WARNING
-        text_color = COLOR_MESSAGE_TEXT_WARNING
-      when MESSAGE_TYPE_SUCCESS
-        background_color = COLOR_MESSAGE_BACKGROUND_SUCCESS
-        text_color = COLOR_MESSAGE_TEXT_SUCCESS
+    def set_root_tooltip(items, type = MESSAGE_TYPE_DEFAULT)
+
+      remove_root_tooltip
+
+      k_box = _create_tooltip_box(items, type)
+      @tooltip_boxes[0] = k_box
+      @canvas.append(k_box)
+
+      if @tooltip_boxes.length > 1
+        k_box.visible = false  # Under a pushed one
       else
-        background_color = COLOR_MESSAGE_BACKGROUND
-        text_color = COLOR_MESSAGE_TEXT
+        move_tooltip(@last_mouse_x, @last_mouse_y)
       end
 
-      @status_panel.visible = !text.empty?
-      @status_lbl.text = text
-      @status_lbl.set_style_attribute(:color, text_color)
-      @status_lbl.set_style_attribute(:background_color, ColorUtils.color_translucent(background_color, 0.3))
-
+      k_box
     end
 
-    def hide_status
-      @status_panel.visible = false
+    def remove_root_tooltip
+      return if @tooltip_boxes[0].nil?
+      @tooltip_boxes[0].remove
+      @tooltip_boxes[0] = nil
     end
 
-    def show_tooltip(items, type = MESSAGE_TYPE_DEFAULT)
+    def hide_root_tooltip
+      return if @tooltip_boxes[0].nil?
+      @tooltip_boxes[0].visible = false
+    end
 
-      remove_tooltip
+    def reveal_root_tooltip
+      return if @tooltip_boxes[0].nil? || @tooltip_boxes.length > 1
+      @tooltip_boxes[0].visible = true
+    end
+
+    def move_tooltip(x, y)
+      unless (k_box = @tooltip_boxes.last).nil? || !k_box.data.nil?  # A positioned one stays where it is
+        # Just below the cursor image, not its hot spot
+        @tooltip_cursor_id = @cursors.last.to_i
+        hot_x, hot_y = SmartCursorManager.hot_spot(@tooltip_cursor_id)
+        k_box.visible = true
+        k_box.layout_data.x = x + (10 - hot_x) * UI.scale_factor
+        k_box.layout_data.y = y + (SmartCursorManager::CURSOR_SIZE + 10 - hot_y) * UI.scale_factor
+        k_box.invalidate
+      end
+    end
+
+    # Shows a tooltip over the others, until #pop_tooltip. Returns its box.
+    # Without position, it follows the cursor. With a position (canvas coords),
+    # it stays there, its anchor point on it - eg. Kuix::Anchor::LEFT to show it
+    # on the right of a point.
+    def push_tooltip(items, type = MESSAGE_TYPE_DEFAULT, position: nil, anchor: Kuix::Anchor::TOP_LEFT)
+
+      @tooltip_boxes.last.visible = false unless @tooltip_boxes.last.nil?
+
+      k_box = _create_tooltip_box(items, type)
+      k_box.layout_data.anchor.set!(anchor)
+      k_box.data = position  # nil = follows the cursor
+      @tooltip_boxes.push(k_box)
+      @canvas.append(k_box)
+
+      if position.nil?
+        move_tooltip(@last_mouse_x, @last_mouse_y)
+      else
+        k_box.layout_data.x = position.x
+        k_box.layout_data.y = position.y
+      end
+
+      k_box
+    end
+
+    def pop_tooltip(box)
+      return if box.nil? || (index = @tooltip_boxes.index { |b| b.equal?(box) }).nil? || index == 0
+      box.remove
+      @tooltip_boxes.delete_at(index)
+      @tooltip_boxes.last.visible = true if @tooltip_boxes.length > 1  # The root one waits for the cursor back in the 3D view
+    end
+
+    def pop_to_root_tooltip
+      @tooltip_boxes.pop.remove while @tooltip_boxes.length > 1
+    end
+
+    # Whether the given tooltip box - what #set_root_tooltip returned - is still
+    # the root one : another tooltip may have replaced it, or removed it.
+    def current_root_tooltip?(box)
+      !box.nil? && @tooltip_boxes[0].equal?(box)
+    end
+
+    def _create_tooltip_box(items, type)
 
       unit = get_unit
       case type
@@ -836,9 +895,11 @@ module Ladb::OpenCutList
 
       k_box = Kuix::Panel.new
       k_box.layout_data = Kuix::StaticLayoutData.new(0, 0, -1, -1, Kuix::Anchor.new(Kuix::Anchor::TOP_LEFT))
+      k_box.layout_data.keep_inside = true
       k_box.layout = Kuix::InlineLayout.new(false, unit)
-      k_box.border.set_all!(unit / 4)
+      k_box.border.set_all!(0.5)
       k_box.padding.set_all!(unit * 1.5)
+      k_box.padding.bottom = unit * 1 if items.is_a?(String)  # Improvce vertical align of single label tooltip
       k_box.hittable = false
       k_box.set_style_attribute(:background_color, background_color)
       k_box.set_style_attribute(:border_color, border_color)
@@ -919,45 +980,11 @@ module Ladb::OpenCutList
 
         end
 
-      @tooltip_box = k_box
-
-      move_tooltip(@last_mouse_x, @last_mouse_y)
-
-      @canvas.append(k_box)
-
       k_box
     end
+    private :_create_tooltip_box
 
-    # Whether the given tooltip box - what #show_tooltip returned - is still
-    # the one shown : another tooltip may have replaced it, or removed it.
-    def current_tooltip?(box)
-      !box.nil? && @tooltip_box.equal?(box)
-    end
-
-    def remove_tooltip
-      return if @tooltip_box.nil?
-      @tooltip_box.remove
-      @tooltip_box = nil
-    end
-
-    def hide_tooltip
-      return if @tooltip_box.nil?
-      @tooltip_box.visible = false
-    end
-
-    def reveal_tooltip
-      return if @tooltip_box.nil?
-      @tooltip_box.visible = true
-    end
-
-    def move_tooltip(x, y)
-      unless @tooltip_box.nil?
-        @tooltip_box.visible = true
-        @tooltip_box.layout_data.x = x + 10 * UI.scale_factor
-        @tooltip_box.layout_data.y = y + (32 + 10) * UI.scale_factor
-        @tooltip_box.invalidate
-      end
-    end
+    # -- Notification --
 
     def notify(text, type = MESSAGE_TYPE_DEFAULT, button_defs = [], timeout = 5) # buttons = [ { :label => BTN_TEXT, :block => BTN_BLOCK } ]
       return unless @notification_panel && text.is_a?(String)
@@ -1135,6 +1162,8 @@ module Ladb::OpenCutList
       return unless @notification_panel
       @notification_panel.children.dup.each { |child| child.fire(:click) }
     end
+
+    # -- Validation --
 
     def show_validation
       return if @validation_panel.visible?
@@ -1617,9 +1646,12 @@ module Ladb::OpenCutList
     end
 
     def onKeyDown(key, repeat, flags, view)
+      @key_downs_consumed = {} if @key_downs_consumed.nil?
+      @key_downs_consumed[key] = true  # Until proven otherwise below
       return true if super
       @vcb_typing = false if key == Kuix::VK_ESCAPE  # ESC clears the VCB, without "onCancel" on SU 2027 if it wasn't empty
       return true if !@action_handler.nil? && @action_handler.respond_to?(:onToolKeyDown) && @action_handler.onToolKeyDown(self, key, repeat, flags, view)
+      @key_downs_consumed[key] = false
       # Not consumed : a printable key goes to the VCB (CTRL + ALT = ALTGR on Windows)
       @vcb_typing = true if is_key_printable?(key) && is_key_ctrl_or_option_down?(flags) == is_key_alt_or_command_down?(flags)
       false
@@ -1631,6 +1663,7 @@ module Ladb::OpenCutList
     end
 
     def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
+      key_down_consumed = @key_downs_consumed.nil? ? false : @key_downs_consumed.delete(key)
       return true if super
       if key == 9 || key == 25  # TAB key doesn't generate "onKeyDown" event and SHIFT + TAB = 25 on Mac
 
@@ -1692,7 +1725,11 @@ module Ladb::OpenCutList
         end
 
       end
-      @action_handler.onToolKeyUpExtended(self, key, repeat, flags, view, after_down, is_quick) if !@action_handler.nil? && @action_handler.respond_to?(:onToolKeyUpExtended)
+      return true if !@action_handler.nil? && @action_handler.respond_to?(:onToolKeyUpExtended) && @action_handler.onToolKeyUpExtended(self, key, repeat, flags, view, after_down, is_quick)
+      # Not consumed : UP / DOWN cycle the picked face through the depth - unless
+      # the handler already used the press (axis locks)
+      return true if (key == VK_UP || key == VK_DOWN) && !key_down_consumed && !@action_handler.nil? && @action_handler.pick_deeper(key == VK_UP ? 1 : -1)
+      false
     end
 
     def onMouseMove(flags, x, y, view)
@@ -1701,17 +1738,20 @@ module Ladb::OpenCutList
       @last_mouse_y = y
 
       if super
-        hide_tooltip
+        hide_root_tooltip                                  # It tells about the 3D view, not the UI
+        move_tooltip(x, y) if @tooltip_boxes.length > 1   # A pushed one follows the cursor
         return true
       end
 
       # Tooltip
+      pop_to_root_tooltip  # A UI tooltip whose :leave was missed
       move_tooltip(x, y)
 
       @action_handler.onToolMouseMove(self, flags, x, y, view) if !@action_handler.nil? && @action_handler.respond_to?(:onToolMouseMove)
     end
 
     def onMouseLeave(view)
+      hide_root_tooltip  # Out of the window, a kept one (eg. hidden over the UI) too. The next move reveals it.
       return true if super
       @action_handler.onToolMouseLeave(self, view) if !@action_handler.nil? && @action_handler.respond_to?(:onToolMouseLeave)
     end
@@ -1742,8 +1782,17 @@ module Ladb::OpenCutList
 
     def onMouseWheel(flags, delta, x, y, view)
       return true if super
-      return @action_handler.onToolMouseWheel(self, flags, delta, x, y, view) if !@action_handler.nil? && @action_handler.respond_to?(:onToolMouseWheel)
+      return true if !@action_handler.nil? && @action_handler.respond_to?(:onToolMouseWheel) && @action_handler.onToolMouseWheel(self, flags, delta, x, y, view)
+      # Not consumed : COPY modifier + wheel cycles the picked face through the depth
+      return true if flags & COPY_MODIFIER_MASK == COPY_MODIFIER_MASK && !@action_handler.nil? && @action_handler.pick_deeper(delta > 0 ? 1 : -1)
       false
+    end
+
+    def onSetCursor
+      if super
+        move_tooltip(@last_mouse_x, @last_mouse_y) if !(k_box = @tooltip_boxes.last).nil? && k_box.visible? && k_box.data.nil? && @cursors.last.to_i != @tooltip_cursor_id
+        true
+      end
     end
 
     def onUserText(text, view)
@@ -1956,6 +2005,14 @@ module Ladb::OpenCutList
 
     # -----
 
+    # Cycles the picker through the faces stacked under the cursor, front to
+    # back. Returns true if the picked face changed.
+    def pick_deeper(step)
+      !@picker.nil? && _can_pick_deeper? && @picker.pick_deeper(step)
+    end
+
+    # -----
+
     def draw(view)
       @picker.draw(view) unless @picker.nil?
     end
@@ -1967,6 +2024,10 @@ module Ladb::OpenCutList
     end
 
     protected
+
+    def _can_pick_deeper?
+      true
+    end
 
     def _refresh
       @tool.refresh
@@ -2175,7 +2236,7 @@ module Ladb::OpenCutList
       if _can_activate_selection?(path, instances)
 
         if @active_selection_path != path
-          @tool.remove_tooltip
+          @tool.remove_root_tooltip
         end
 
       else
@@ -2494,9 +2555,12 @@ module Ladb::OpenCutList
             can_activate, error_key, error_vars = _can_activate_part?(picked_part_entity_path, picked_part)
             if can_activate
               _set_active_part(picked_part_entity_path, picked_part)
+            elsif error_key.nil? && picker.pick_past_refused
+              # Silent refusal (eg. already selected) : the part is see-through,
+              # the picker moved on to the next face behind and fired again
             else
               _reset_active_part
-              @tool.show_tooltip(PLUGIN.get_i18n_string(error_key, error_vars), SmartTool::MESSAGE_TYPE_ERROR) if error_key.is_a?(String)
+              @tool.set_root_tooltip(PLUGIN.get_i18n_string(error_key, error_vars), SmartTool::MESSAGE_TYPE_ERROR) if error_key.is_a?(String)
               @tool.push_cursor(_get_part_error_cursor)
             end
             return
@@ -2521,14 +2585,14 @@ module Ladb::OpenCutList
             if can_activate
               _add_part_twin(picked_part_entity_path, picked_part) if picked_part.id == @active_part.id
             else
-              @tool.show_tooltip(PLUGIN.get_i18n_string(error_key, error_vars), SmartTool::MESSAGE_TYPE_ERROR) if error_key.is_a?(String)
+              @tool.set_root_tooltip(PLUGIN.get_i18n_string(error_key, error_vars), SmartTool::MESSAGE_TYPE_ERROR) if error_key.is_a?(String)
               @tool.push_cursor(_get_part_error_cursor)
               return
             end
           end
         end
       end
-      @tool.remove_tooltip
+      @tool.remove_root_tooltip
       @tool.pop_to_root_cursor
     end
 
@@ -2814,7 +2878,7 @@ module Ladb::OpenCutList
       if can_activate
 
         if @active_part_entity_path != part_entity_path || part.nil?
-          @tool.remove_tooltip
+          @tool.remove_root_tooltip
           @tool.pop_cursor
         end
 
@@ -2824,7 +2888,7 @@ module Ladb::OpenCutList
         part = nil
 
         unless silent
-          @tool.show_tooltip(PLUGIN.get_i18n_string(error_key, error_vars), SmartTool::MESSAGE_TYPE_ERROR) if error_key.is_a?(String)
+          @tool.set_root_tooltip(PLUGIN.get_i18n_string(error_key, error_vars), SmartTool::MESSAGE_TYPE_ERROR) if error_key.is_a?(String)
           @tool.push_cursor(_get_part_error_cursor)
         end
 
@@ -3524,10 +3588,6 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_SELECT, STATE_SELECT_MULTIPLE, STATE_SELECT_TWINS
-        if (key == VK_UP || key == VK_DOWN) && _can_pick_deeper?
-          _pick_deeper(key == VK_UP ? 1 : -1)
-          return true
-        end
         if @state == STATE_SELECT_MULTIPLE
           if tool.is_key_shift?(key)
             _reset_active_part
@@ -3543,21 +3603,6 @@ module Ladb::OpenCutList
           Sketchup.active_model.selection.clear
           set_state(STATE_SELECT)
           _refresh
-          return true
-        end
-
-      end
-
-      false
-    end
-
-    def onToolMouseWheel(tool, flags, delta, x, y, view)
-
-      case @state
-
-      when STATE_SELECT, STATE_SELECT_MULTIPLE, STATE_SELECT_TWINS
-        if flags & COPY_MODIFIER_MASK == COPY_MODIFIER_MASK && _can_pick_deeper?
-          _pick_deeper(delta > 0 ? 1 : -1)
           return true
         end
 
@@ -3584,7 +3629,7 @@ module Ladb::OpenCutList
     def onStateChanged(old_state, new_state)
       super
 
-      @tool.remove_tooltip
+      @tool.remove_root_tooltip
 
       if old_state == STATE_SELECT_TREE
         @tool.clear_2d(LAYER_2D_FLOATING_TOOLS) # Close the dropup
@@ -3809,44 +3854,6 @@ module Ladb::OpenCutList
       super
     end
 
-    def _can_pick_deeper?
-      !@picker.nil? && has_active_part?
-    end
-
-    def _pick_deeper(delta = 1)
-      if _can_pick_deeper?
-
-        ph = Sketchup.active_model.active_view.pick_helper(@picker.pick_position.x, @picker.pick_position.y)
-
-        picked_paths = []
-        picked_part_entity_paths = []
-        ph.count.times do |index|
-          path = ph.path_at(index)
-          part_entity_path = _get_part_entity_path_from_path(path.clone)
-          unless part_entity_path.nil? || picked_part_entity_paths.include?(part_entity_path)
-            picked_paths << path
-            picked_part_entity_paths << part_entity_path
-          end
-        end
-
-        # Try to retrieve the current index
-        active_index = picked_part_entity_paths.map(&:last).index(get_active_part_entity_path.last)
-        if active_index
-
-          # Compute the new index
-          new_index = (active_index + delta) % picked_part_entity_paths.length
-
-          # Compute the new part
-          picked_part_entity_path = picked_part_entity_paths[new_index]
-          unless (part = _generate_part_from_path(picked_part_entity_path)).nil?
-            _set_active_part(picked_part_entity_path, part) unless part.nil?
-          end
-
-        end
-
-      end
-    end
-
     # -----
 
     def _preview_select_rect(view)
@@ -3868,13 +3875,21 @@ module Ladb::OpenCutList
 
     extend self
 
+    CURSOR_SIZE = 32  # All cursor images are 32x32
+
     def create_cursor(name, hot_x = 0, hot_y = 0)
       (@cursors ||= {})[name] ||= begin
         cursor_id = 0
         cursor_path = File.join(PLUGIN_DIR, 'img', "cursor-#{name}.#{PLUGIN.platform_is_mac? ? 'pdf' : 'svg'}")
         cursor_id = UI.create_cursor(cursor_path, hot_x, hot_y) if File.exist?(cursor_path)
+        (@hot_spots ||= {})[cursor_id] = [ hot_x, hot_y ]
         cursor_id
       end
+    end
+
+    # Returns the [ hot_x, hot_y ] of the cursor image (unscaled), [ 0, 0 ] if unknown (eg. native cursors).
+    def hot_spot(cursor_id)
+      (@hot_spots ||= {}).fetch(cursor_id, [ 0, 0 ])
     end
 
     # -- CURSORS --
@@ -5110,6 +5125,9 @@ module Ladb::OpenCutList
 
   class SmartPicker
 
+    PICK_DEPTH_TOLERANCE = 3              # Screen pixels the cursor may move without losing the picked depth
+    PICK_DEPTH_COPLANAR_TOLERANCE = 0.001 # Inches between two faces at the same depth
+
     attr_reader :tool
     attr_reader :view
     attr_reader :pick_position
@@ -5161,6 +5179,15 @@ module Ladb::OpenCutList
       @fn_cline_filter = nil
 
       @invalidated = false
+
+      @regular_face = nil           # The face picked without depth
+      @regular_face_path = nil
+      @face_stack = nil             # [ face, path ] under the cursor, front to back, one per container - the regular pick first. Built on demand
+      @pick_depth_path = nil        # Container path of the face picked deeper - nil = the regular pick
+      @pick_depth_step = 1          # Direction of the last depth move
+      @pick_depth_position = nil    # Screen position the depth was picked at
+      @pick_depth_skip_start = nil  # Stack index a #pick_past_refused chain started from
+      @pick_depth_skipping = false
 
       @picked_face = nil
       @picked_face_path = nil
@@ -5221,6 +5248,7 @@ module Ladb::OpenCutList
     def onToolMouseMove(tool, flags, x, y, view)
       @pick_position.x = x
       @pick_position.y = y
+      _reset_pick_depth unless @pick_depth_position.nil? || @pick_depth_position.distance(@pick_position) <= PICK_DEPTH_TOLERANCE
       do_pick
       false
     end
@@ -5229,6 +5257,11 @@ module Ladb::OpenCutList
 
       @pick_position.x = 0
       @pick_position.y = 0
+
+      _reset_pick_depth
+      @regular_face = nil
+      @regular_face_path = nil
+      @face_stack = nil
 
       @pick_ip.clear if @pick_ip
 
@@ -5266,6 +5299,8 @@ module Ladb::OpenCutList
     # -- Pick --
 
     def do_pick
+
+      @pick_depth_skip_start = nil unless @pick_depth_skipping
 
       active_path = @view.model.active_path.to_a # Picker 'path_at' returns a path only in the active_path context
 
@@ -5320,6 +5355,28 @@ module Ladb::OpenCutList
           end
 
         end
+
+        @face_stack = nil
+        if @pick_context_by_face
+
+          @regular_face = picked_face
+          @regular_face_path = picked_face_path
+
+          # A face picked deeper : the stack is needed again to find it. The depth
+          # follows the picked container : the stack changes with the cursor, even
+          # within the tolerance
+          unless @pick_depth_path.nil?
+            @face_stack = _stack_faces(active_path)
+            if (depth = _get_pick_depth) > 0
+              picked_face, picked_face_path = @face_stack[depth]
+              best_picked = nil # The front entity no longer bounds the deeper face's edges
+            else
+              _reset_pick_depth
+            end
+          end
+
+        end
+
       end
 
       if !@pick_context || picked_face || picked_edge || picked_cline
@@ -5440,6 +5497,45 @@ module Ladb::OpenCutList
 
     # -----
 
+    # Moves the picked face <step> faces deeper (negative = shallower) in the
+    # stack under the cursor, cycling. Returns true if it moved.
+    def pick_deeper(step)
+      return false unless _ensure_face_stack
+      depth = _get_pick_depth
+      loop do
+        depth = (depth + step) % @face_stack.length
+        break unless @face_stack[depth][1].nil?  # Skip the "nothing" regular pick
+      end
+      _set_pick_depth(depth, step < 0 ? -1 : 1)
+      do_pick
+      true
+    end
+
+    # The observer refuses what is picked : moves on to the next face in the
+    # last depth direction, and fires again. Returns false once the whole stack
+    # was refused. Meant to be called from #onPickerChanged.
+    def pick_past_refused
+      return false unless _ensure_face_stack
+      depth = _get_pick_depth
+      @pick_depth_skip_start = depth if @pick_depth_skip_start.nil?
+      loop do
+        depth = (depth + @pick_depth_step) % @face_stack.length
+        return false if depth == @pick_depth_skip_start
+        break unless @face_stack[depth][1].nil?  # Skip the "nothing" regular pick
+      end
+      _set_pick_depth(depth, @pick_depth_step)
+      skipping = @pick_depth_skipping
+      @pick_depth_skipping = true
+      begin
+        do_pick
+      ensure
+        @pick_depth_skipping = skipping
+      end
+      true
+    end
+
+    # -----
+
     # Force the next #do_pick to fire its change event, whatever it picks.
     # The picked context (face, edge) is deliberately kept : SHIFT locks it and
     # #do_pick feeds it back to itself, so dropping it here would not refresh
@@ -5452,6 +5548,76 @@ module Ladb::OpenCutList
 
     def inspect
       self.class.inspect  # Simplify exception display
+    end
+
+    # -----
+
+    private
+
+    def _reset_pick_depth
+      @pick_depth_path = nil
+      @pick_depth_step = 1
+      @pick_depth_position = nil
+    end
+
+    def _set_pick_depth(depth, step)
+      @pick_depth_path = depth == 0 ? nil : @face_stack[depth][1][0...-1]
+      @pick_depth_step = step
+      @pick_depth_position = Geom::Point3d.new(@pick_position.x, @pick_position.y)
+    end
+
+    # The index in the face stack of the face picked deeper, 0 = the regular pick
+    def _get_pick_depth
+      return 0 if @pick_depth_path.nil? || @face_stack.nil?
+      @face_stack.index { |_, path| !path.nil? && path[0...-1] == @pick_depth_path } || 0
+    end
+
+    # Builds the face stack if not already there - a new pick, the pick helper
+    # holding the second stage's. Returns true if there is something to go through.
+    def _ensure_face_stack
+      return false if !@pick_context_by_face || @lockable && @tool.is_key_shift_down?
+      if @face_stack.nil?
+        @pick_helper.do_pick(@pick_position.x, @pick_position.y)
+        @face_stack = _stack_faces(@view.model.active_path.to_a)
+      end
+      @face_stack.length > 1
+    end
+
+    # Returns the regular pick, then the other faces under the cursor sorted by
+    # depth, the nearest one per container (a part's back face is the same part).
+    # Reads the pick helper as left by an aperture 0 pick.
+    def _stack_faces(active_path)
+
+      ray = @view.pickray(@pick_position.x, @pick_position.y)
+
+      nearests = {}  # container path => [ distance, face, path ]
+      @pick_helper.count.times do |index|
+
+        face = @pick_helper.leaf_at(index)
+        next unless face.is_a?(Sketchup::Face)
+
+        path = @pick_helper.path_at(index)
+        next unless @fn_face_filter.nil? || @fn_face_filter.call(path)
+
+        # Ray / face plane intersection, in the face's space
+        transformation = @pick_helper.transformation_at(index)
+        inverse = transformation.inverse
+        local_ray = [ ray[0].transform(inverse), ray[1].transform(inverse) ]
+        next if (local_point = Geom.intersect_line_plane(local_ray, face.plane)).nil?
+        distance = ray[0].vector_to(local_point.transform(transformation)) % ray[1]
+
+        path = active_path + path
+        container_path = path[0...-1]
+        nearest = nearests[container_path]
+        nearests[container_path] = [ distance, face, path, index ] if nearest.nil? || distance < nearest[0]
+
+      end
+
+      nearests.delete(@regular_face_path[0...-1]) unless @regular_face_path.nil?
+
+      # Coplanar faces tie : the pick order breaks it, to keep the order stable
+      # while the cursor moves
+      [ [ @regular_face, @regular_face_path ] ] + nearests.values.sort { |a, b| (a[0] - b[0]).abs <= PICK_DEPTH_COPLANAR_TOLERANCE ? a[3] <=> b[3] : a[0] <=> b[0] }.map { |_, face, path| [ face, path ] }
     end
 
   end

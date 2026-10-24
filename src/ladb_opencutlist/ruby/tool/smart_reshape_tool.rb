@@ -1082,11 +1082,11 @@ module Ladb::OpenCutList
       if part && fetch_state == STATE_SELECT
 
         # Show part infos
-        @tool.show_tooltip([ "##{_get_active_part_name}", _get_active_part_material_name, '-', _get_active_part_size, _get_active_part_icons ])
+        @tool.set_root_tooltip([ "##{_get_active_part_name}", _get_active_part_material_name, '-', _get_active_part_size, _get_active_part_icons ])
 
       else
 
-        @tool.remove_tooltip
+        @tool.remove_root_tooltip
 
       end
     end
@@ -3162,7 +3162,7 @@ module Ladb::OpenCutList
     def _reset_refused_drawing_def
       @refused_drawing_def = nil
       @refused_error = nil
-      @tool.remove_tooltip
+      @tool.remove_root_tooltip
       @tool.pop_cursor(SmartCursorManager.cursor_select_error)
     end
 
@@ -3478,7 +3478,7 @@ module Ladb::OpenCutList
     # state — goes through first.
     def _feedback_select
       return if @refused_error.nil?
-      @tool.show_tooltip(PLUGIN.get_i18n_string(@refused_error[0], @refused_error[1]), SmartTool::MESSAGE_TYPE_ERROR)
+      @tool.set_root_tooltip(PLUGIN.get_i18n_string(@refused_error[0], @refused_error[1]), SmartTool::MESSAGE_TYPE_ERROR)
       @tool.push_cursor(SmartCursorManager.cursor_select_error)
     end
 

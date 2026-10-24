@@ -69,9 +69,9 @@ module PaintRectRegression
   # containers to clean instead of painting.
   def self.with_handler(model, messages, selected)
     tool = OCL::SmartPaintTool.new(current_action: OCL::SmartPaintTool::ACTION_PAINT_CLEAN)
-    [ :notify_success, :notify_warnings, :notify_errors, :notify, :show_tooltip, :show_message ].each do |name|
+    [ :notify_success, :notify_warnings, :notify_errors, :notify, :set_root_tooltip, :show_message ].each do |name|
       tool.define_singleton_method(name) do |*args|
-        next if [ :notify_success, :show_tooltip, :show_message ].include?(name)
+        next if [ :notify_success, :set_root_tooltip, :show_message ].include?(name)
         messages << [ name.to_s, args.first ].inspect
       end
     end

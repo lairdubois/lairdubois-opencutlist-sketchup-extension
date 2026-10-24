@@ -563,14 +563,14 @@ module Ladb::OpenCutList
       if part && fetch_state == STATE_SELECT
 
         # Show part infos
-        @tool.show_tooltip([ "##{_get_active_part_name}", _get_active_part_material_name, '-', _get_active_part_size, _get_active_part_icons ])
+        @tool.set_root_tooltip([ "##{_get_active_part_name}", _get_active_part_material_name, '-', _get_active_part_size, _get_active_part_icons ])
 
         @tool.clear_3d(LAYER_3D_AXES_PREVIEW)
         _preview_edit_axes(true)
 
       else
 
-        @tool.remove_tooltip
+        @tool.remove_root_tooltip
         @tool.clear_3d(LAYER_3D_AXES_PREVIEW)
 
       end

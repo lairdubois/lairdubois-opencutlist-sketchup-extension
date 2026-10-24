@@ -274,9 +274,9 @@ module HingeFixture
   # appended to the given array.
   def self.with_handler(model, action, messages, descriptor_ref = nil)
     tool = OCL::SmartJoinTool.new(current_action: action)
-    [ :notify_success, :notify_warnings, :notify_errors, :notify, :show_tooltip, :show_message ].each do |name|
+    [ :notify_success, :notify_warnings, :notify_errors, :notify, :set_root_tooltip, :show_message ].each do |name|
       tool.define_singleton_method(name) do |*args|
-        next if [ :notify_success, :show_tooltip ].include?(name)
+        next if [ :notify_success, :set_root_tooltip ].include?(name)
         next if name == :show_message && args[1] != OCL::SmartTool::MESSAGE_TYPE_ERROR   # "2 hinges to remove"
         messages << [ name.to_s, args.first ].inspect
       end

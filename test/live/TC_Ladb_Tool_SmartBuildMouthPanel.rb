@@ -235,8 +235,8 @@ module MouthPanelRegression
       begin
         unless handler_key == [ kind, pick['options'] ]
           tool = tools[kind] ||= OCL::SmartBuildTool.new(current_action: HANDLERS[kind].first).tap { |new_tool|
-            [ :notify_success, :notify_warnings, :notify_errors, :notify, :show_tooltip, :remove_tooltip, :push_cursor, :pop_cursor ].each do |name|
-              new_tool.define_singleton_method(name) { |*args| messages << [ name.to_s, args.first ].inspect unless [ :notify_success, :remove_tooltip, :push_cursor, :pop_cursor ].include?(name) }
+            [ :notify_success, :notify_warnings, :notify_errors, :notify, :set_root_tooltip, :remove_root_tooltip, :push_cursor, :pop_cursor ].each do |name|
+              new_tool.define_singleton_method(name) { |*args| messages << [ name.to_s, args.first ].inspect unless [ :notify_success, :remove_root_tooltip, :push_cursor, :pop_cursor ].include?(name) }
             end
           }
           handler = make_handler(tool, kind, options.merge(pick['options'] || {}))

@@ -76,7 +76,7 @@ module FrameDoorCavitiesRegression
   def self.with_handler(model, kind, messages)
     action, _ = HANDLERS[kind]
     tool = OCL::SmartBuildTool.new(current_action: action)
-    [ :notify_success, :notify_warnings, :notify_errors, :notify, :show_tooltip, :remove_tooltip, :push_cursor, :pop_cursor ].each do |name|
+    [ :notify_success, :notify_warnings, :notify_errors, :notify, :set_root_tooltip, :remove_root_tooltip, :push_cursor, :pop_cursor ].each do |name|
       tool.define_singleton_method(name) { |*args| messages << [ kind, name.to_s, args.first ].inspect if [ :notify_warnings, :notify_errors, :notify ].include?(name) }
     end
     model.select_tool(tool)

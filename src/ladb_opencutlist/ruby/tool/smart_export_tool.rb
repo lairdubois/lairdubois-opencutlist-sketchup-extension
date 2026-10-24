@@ -254,7 +254,7 @@ module Ladb::OpenCutList
     def stop
       @tool.clear_all_3d
       @tool.hide_message
-      @tool.remove_tooltip
+      @tool.remove_root_tooltip
       super
     end
 
@@ -331,7 +331,7 @@ module Ladb::OpenCutList
     end
 
     def _show_error(error_key)
-      @tool.show_tooltip("⚠ #{PLUGIN.get_i18n_string(error_key)}", SmartTool::MESSAGE_TYPE_ERROR)
+      @tool.set_root_tooltip("⚠ #{PLUGIN.get_i18n_string(error_key)}", SmartTool::MESSAGE_TYPE_ERROR)
       @tool.push_cursor(SmartCursorManager.cursor_select_error)
     end
 
@@ -619,7 +619,7 @@ module Ladb::OpenCutList
       @tool.pop_to_root_cursor
 
       # Show part infos
-      @tool.show_tooltip([ [ "##{_get_active_part_name}", @drawing_def.nil? || @drawing_def.input_view.nil? ? nil : "(#{PLUGIN.get_i18n_string("core.component.three_viewer.view_#{@drawing_def.input_view}")})" ], _get_active_part_material_name, '-', _get_active_part_size, _get_active_part_icons ])
+      @tool.set_root_tooltip([ [ "##{_get_active_part_name}", @drawing_def.nil? || @drawing_def.input_view.nil? ? nil : "(#{PLUGIN.get_i18n_string("core.component.three_viewer.view_#{@drawing_def.input_view}")})" ], _get_active_part_material_name, '-', _get_active_part_size, _get_active_part_icons ])
 
     end
 
@@ -859,7 +859,7 @@ module Ladb::OpenCutList
     end
 
     def onPickerChanged(picker, view)
-      @tool.remove_tooltip
+      @tool.remove_root_tooltip
       @tool.pop_to_root_cursor
       if picker.picked_face_path.is_a?(Array) && _is_picked_face_curved?(picker)
         @error = true

@@ -456,11 +456,11 @@ module Ladb::OpenCutList
 
       # The detection freezes the view : the message is painted first
       # (View#refresh, SketchUp 2020+)
-      @tool.show_tooltip(PLUGIN.get_i18n_string('tool.smart_build.detecting_cavities'))
+      @tool.set_root_tooltip(PLUGIN.get_i18n_string('tool.smart_build.detecting_cavities'))
       model.active_view.refresh if model.active_view.respond_to?(:refresh)
 
       _get_cavities_def(part_entity_path, get_active_part)
-      @tool.remove_tooltip
+      @tool.remove_root_tooltip
       _refresh
     end
 

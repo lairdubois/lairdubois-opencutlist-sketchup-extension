@@ -930,7 +930,7 @@ module Ladb::OpenCutList
     def stop
       @tool.clear_all_3d
       @tool.hide_message
-      @tool.remove_tooltip
+      @tool.remove_root_tooltip
       super
     end
 
@@ -1100,14 +1100,14 @@ module Ladb::OpenCutList
               _set_active_part(picked_part_entity_path, picked_part)
             else
               _reset_active_part
-              @tool.show_tooltip(PLUGIN.get_i18n_string(error_key, error_vars), SmartTool::MESSAGE_TYPE_ERROR) if error_key.is_a?(String)
+              @tool.set_root_tooltip(PLUGIN.get_i18n_string(error_key, error_vars), SmartTool::MESSAGE_TYPE_ERROR) if error_key.is_a?(String)
               @tool.push_cursor(_get_part_error_cursor)
             end
             return
           end
         end
         _reset_active_part
-        @tool.show_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.smart_paint.error.not_part')}", SmartTool::MESSAGE_TYPE_ERROR)
+        @tool.set_root_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.smart_paint.error.not_part')}", SmartTool::MESSAGE_TYPE_ERROR)
         @tool.push_cursor(_get_part_error_cursor)
         return
       end
@@ -1480,7 +1480,7 @@ module Ladb::OpenCutList
       material = @tool.get_current_material
 
       # Show part infos
-      @tool.show_tooltip([ "##{_get_active_part_name}", _get_active_part_material_name ], material && material.name == part.material_name ? SmartTool::MESSAGE_TYPE_SUCCESS : SmartTool::MESSAGE_TYPE_DEFAULT)
+      @tool.set_root_tooltip([ "##{_get_active_part_name}", _get_active_part_material_name ], material && material.name == part.material_name ? SmartTool::MESSAGE_TYPE_SUCCESS : SmartTool::MESSAGE_TYPE_DEFAULT)
 
       _preview_instances(_get_instances, highlighted)
 
@@ -1557,7 +1557,7 @@ module Ladb::OpenCutList
       sides, faces = _get_sides_and_faces
 
       if faces.empty?
-        @tool.show_tooltip("⚠ #{PLUGIN.get_i18n_string(_get_no_side_error_key)}", SmartTool::MESSAGE_TYPE_ERROR)
+        @tool.set_root_tooltip("⚠ #{PLUGIN.get_i18n_string(_get_no_side_error_key)}", SmartTool::MESSAGE_TYPE_ERROR)
         @tool.push_cursor(SmartCursorManager.cursor_paint_error)
         @tool.hide_message
         return
@@ -1566,7 +1566,7 @@ module Ladb::OpenCutList
       material = @tool.get_current_material
 
       # Show sides infos
-      @tool.show_tooltip([
+      @tool.set_root_tooltip([
                            "##{_get_active_part_name}",
                            '-',
                            _get_sides_text(sides)
@@ -1744,7 +1744,7 @@ module Ladb::OpenCutList
     # -----
 
     def stop
-      @tool.remove_tooltip
+      @tool.remove_root_tooltip
       super
     end
 
@@ -1781,13 +1781,13 @@ module Ladb::OpenCutList
         # Display material infos
         material = MaterialUtils::get_material_from_path(picker.picked_face_path)
         if material
-          @tool.show_tooltip("##{material.name} (#{PLUGIN.get_i18n_string("tab.materials.type_#{MaterialAttributes.new(material).type}")})")
+          @tool.set_root_tooltip("##{material.name} (#{PLUGIN.get_i18n_string("tab.materials.type_#{MaterialAttributes.new(material).type}")})")
         else
-          @tool.show_tooltip("##{PLUGIN.get_i18n_string('tool.smart_paint.default_material')}")
+          @tool.set_root_tooltip("##{PLUGIN.get_i18n_string('tool.smart_paint.default_material')}")
         end
 
       else
-        @tool.remove_tooltip
+        @tool.remove_root_tooltip
       end
 
       super
@@ -1822,7 +1822,7 @@ module Ladb::OpenCutList
     def _preview_action_draw(highlighted)
 
       # Show part infos
-      @tool.show_tooltip([ "##{_get_active_part_name}", _get_active_part_material_name ])
+      @tool.set_root_tooltip([ "##{_get_active_part_name}", _get_active_part_material_name ])
 
       definition = get_active_part_entity_path.last.definition
       _preview_instances(definition.instances, highlighted)

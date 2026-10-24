@@ -2616,9 +2616,6 @@ tool:
       not_sibling_part: Cette pièce n'est pas dans le même groupe ou composant que le reste de la sélection
       selection_contains_locked_entities: La sélection contient des entités verrouillées
       wrong_material_type: La pièce ciblée doit être du type '{{ type }}'
-  highlight:
-    transparency: $t(tool.default.transparency)
-    zoom_extents: $t(tool.default.zoom_extents)
   smart_select:
     state_0_status: Cliquez sur une pièce pour la sélectionner
     state_0_to_6_status: Choisir un élément parent

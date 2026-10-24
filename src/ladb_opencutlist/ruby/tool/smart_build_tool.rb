@@ -597,7 +597,7 @@ module Ladb::OpenCutList
     end
 
     def stop
-      @tool.hide_status
+      _remove_source_tooltip
       @tool.hide_message
       super
     end
@@ -739,7 +739,7 @@ module Ladb::OpenCutList
         @add_hover_face = @add_refused_face = nil
         _preview_add_instance
       end
-      _remove_add_tooltip
+      _remove_add_tooltip if ADD_STATES.include?(@state)  # Not the source one : hidden over the library, not removed
       super
     end
 
@@ -857,10 +857,10 @@ module Ladb::OpenCutList
     def onStateChanged(old_state, new_state)
       super
       _show_locked_axis_message
-      if [ STATE_SOURCE ].include?(new_state)
-        @tool.show_status(get_state_status(new_state))
-      else
-        @tool.hide_status
+      if new_state == STATE_SOURCE
+        _show_source_tooltip
+      elsif old_state == STATE_SOURCE
+        _remove_source_tooltip
       end
       _remove_add_tooltip if ADD_STATES.include?(old_state)
     end
@@ -1655,17 +1655,26 @@ module Ladb::OpenCutList
           bounds = @add_instance.definition.bounds
           items += [ '-', "##{_get_add_instance_name(@add_instance)}", "#{bounds.width.to_l} x #{bounds.height.to_l} x #{bounds.depth.to_l}" ]
         end
-        @tool.show_tooltip(items)
+        @tool.set_root_tooltip(items)
       when STATE_ADD_FRONT
-        @tool.show_tooltip([ [ step_text, "#{PLUGIN.get_i18n_string('tool.smart_build.action_0_state_6_status')}" ] ])
+        @tool.set_root_tooltip([ [ step_text, "#{PLUGIN.get_i18n_string('tool.smart_build.action_0_state_6_status')}" ] ])
       when STATE_ADD_UP
-        @tool.show_tooltip([ [ step_text, "#{PLUGIN.get_i18n_string('tool.smart_build.action_0_state_7_status')}" ] ], @add_refused_face.nil? ? SmartTool::MESSAGE_TYPE_DEFAULT : SmartTool::MESSAGE_TYPE_ERROR)
+        @tool.set_root_tooltip([ [ step_text, "#{PLUGIN.get_i18n_string('tool.smart_build.action_0_state_7_status')}" ] ], @add_refused_face.nil? ? SmartTool::MESSAGE_TYPE_DEFAULT : SmartTool::MESSAGE_TYPE_ERROR)
       end
     end
 
     def _remove_add_tooltip
       @add_tooltip_key = nil
-      @tool.remove_tooltip
+      @tool.remove_root_tooltip
+    end
+
+    def _show_source_tooltip
+      @source_tooltip_box = @tool.set_root_tooltip(get_state_status(@state))  # Hidden over the library : where it sends to
+    end
+
+    def _remove_source_tooltip
+      @tool.remove_root_tooltip if @tool.current_root_tooltip?(@source_tooltip_box)
+      @source_tooltip_box = nil
     end
 
     # The rotation of the definition space - around its origin - that turns
@@ -2987,10 +2996,10 @@ module Ladb::OpenCutList
         _pick_part(picker, view)
         if has_active_part?
           if _snap_point(picker) || _cavities_pending?  # Pending : nothing to say of this position yet, either way
-            @tool.remove_tooltip
+            @tool.remove_root_tooltip
             @tool.pop_cursor(SmartCursorManager.cursor_select_error)
           else
-            @tool.show_tooltip(PLUGIN.get_i18n_string('tool.smart_build.error.invalid_divider_cavity'), SmartTool::MESSAGE_TYPE_ERROR)
+            @tool.set_root_tooltip(PLUGIN.get_i18n_string('tool.smart_build.error.invalid_divider_cavity'), SmartTool::MESSAGE_TYPE_ERROR)
             @tool.push_cursor(SmartCursorManager.cursor_select_error)
           end
         else
@@ -4988,20 +4997,20 @@ module Ladb::OpenCutList
             snapped = _snap_point(picker)
             if !snapped && _cavities_pending?
               # Not known yet : nothing to say of this position, either way
-              @tool.remove_tooltip
+              @tool.remove_root_tooltip
               @tool.pop_cursor(SmartCursorManager.cursor_select_error)
             elsif !snapped
-              @tool.show_tooltip(PLUGIN.get_i18n_string("tool.smart_build.error.invalid_#{_panel_i18n_key_suffix}_cavity"), SmartTool::MESSAGE_TYPE_ERROR)
+              @tool.set_root_tooltip(PLUGIN.get_i18n_string("tool.smart_build.error.invalid_#{_panel_i18n_key_suffix}_cavity"), SmartTool::MESSAGE_TYPE_ERROR)
               @tool.push_cursor(SmartCursorManager.cursor_select_error)
             elsif _picked_on_closed_opening?(view)
               # The cavity is a fine one, it is simply already closed on the
               # side this handler draws on - and says so rather than offering
               # a second panel on top of the one there (see
               # #_opening_already_panelled?).
-              @tool.show_tooltip(PLUGIN.get_i18n_string("tool.smart_build.error.closed_#{_panel_i18n_key_suffix}_opening"), SmartTool::MESSAGE_TYPE_ERROR)
+              @tool.set_root_tooltip(PLUGIN.get_i18n_string("tool.smart_build.error.closed_#{_panel_i18n_key_suffix}_opening"), SmartTool::MESSAGE_TYPE_ERROR)
               @tool.push_cursor(SmartCursorManager.cursor_select_error)
             else
-              @tool.remove_tooltip
+              @tool.remove_root_tooltip
               @tool.pop_cursor(SmartCursorManager.cursor_select_error)
             end
           end

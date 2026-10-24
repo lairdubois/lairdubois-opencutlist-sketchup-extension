@@ -286,7 +286,7 @@ module Ladb::OpenCutList
     def _preview_action_tooltip
 
       # Show part infos
-      @tool.show_tooltip([ "##{_get_active_part_name}", _get_active_part_material_name, '-', _get_active_part_size, _get_active_part_icons ], @tooltip_type) if has_active_part?
+      @tool.set_root_tooltip([ "##{_get_active_part_name}", _get_active_part_material_name, '-', _get_active_part_size, _get_active_part_icons ], @tooltip_type) if has_active_part?
 
     end
 

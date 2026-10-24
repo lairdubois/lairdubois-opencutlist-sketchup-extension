@@ -78,7 +78,7 @@ module DividerMeasureOriginRegression
   # origin and the given reduction forced.
   def self.with_handler(model, reduce)
     tool = OCL::SmartBuildTool.new(current_action: OCL::SmartBuildTool::ACTION_BUILD_DIVIDER)
-    [ :notify_success, :notify_warnings, :notify_errors, :notify, :show_tooltip, :remove_tooltip, :push_cursor, :pop_cursor ].each do |name|
+    [ :notify_success, :notify_warnings, :notify_errors, :notify, :set_root_tooltip, :remove_root_tooltip, :push_cursor, :pop_cursor ].each do |name|
       tool.define_singleton_method(name) { |*_args| }
     end
     model.select_tool(tool)

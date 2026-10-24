@@ -616,7 +616,7 @@ module Ladb::OpenCutList
     end
 
     def stop
-      @tool.hide_status
+      _remove_source_tooltip
       super
     end
 
@@ -659,9 +659,9 @@ module Ladb::OpenCutList
     def onStateChanged(old_state, new_state)
       super
       if new_state == STATE_SOURCE
-        @tool.show_status(get_state_status(new_state))
-      else
-        @tool.hide_status
+        _show_source_tooltip
+      elsif old_state == STATE_SOURCE
+        _remove_source_tooltip
       end
     end
 
@@ -855,6 +855,17 @@ module Ladb::OpenCutList
 
     def _fetch_option_machining_layer_name
       @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_MACHINING_LAYER_NAME)
+    end
+
+    # -----
+
+    def _show_source_tooltip
+      @source_tooltip_box = @tool.set_root_tooltip(get_state_status(@state))  # Hidden over the library : where it sends to
+    end
+
+    def _remove_source_tooltip
+      @tool.remove_root_tooltip if @tool.current_root_tooltip?(@source_tooltip_box)
+      @source_tooltip_box = nil
     end
 
     # -- Free distribution --
@@ -6089,11 +6100,11 @@ module Ladb::OpenCutList
     def _show_hinge_kind_tooltip
       hardware = _fetch_option_hardware_a
       key = [ @hinge_kind, hardware ]
-      return if key == @hinge_kind_tooltip_key && @tool.current_tooltip?(@hinge_kind_tooltip_box)
+      return if key == @hinge_kind_tooltip_key && @tool.current_root_tooltip?(@hinge_kind_tooltip_box)
       items = [ [ _get_hinge_kind_motif, "#" + PLUGIN.get_i18n_string("tool.smart_join.action_option_hardware_hinge_#{@hinge_kind}_a") ] ]
       items << _get_hardware_definition_name(:a, :hardware) if hardware.is_a?(String) && !hardware.empty?
       @hinge_kind_tooltip_key = key
-      @hinge_kind_tooltip_box = @tool.show_tooltip(items)
+      @hinge_kind_tooltip_box = @tool.set_root_tooltip(items)
     end
 
     # The kind of the door seen from above, the front down - drawn as
@@ -6114,7 +6125,7 @@ module Ladb::OpenCutList
     # Removes the tooltip of #_show_hinge_kind_tooltip - not another one, the
     # error of a part that cannot be picked.
     def _remove_hinge_kind_tooltip
-      @tool.remove_tooltip if @tool.current_tooltip?(@hinge_kind_tooltip_box)
+      @tool.remove_root_tooltip if @tool.current_root_tooltip?(@hinge_kind_tooltip_box)
       @hinge_kind_tooltip_key = nil
       @hinge_kind_tooltip_box = nil
     end

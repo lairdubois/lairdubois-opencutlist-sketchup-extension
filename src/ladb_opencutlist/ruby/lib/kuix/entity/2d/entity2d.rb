@@ -79,6 +79,20 @@ module Ladb::OpenCutList::Kuix
       size
     end
 
+    # The bounds in the root entity's space, margin excluded - as the hit test
+    # sees them. Valid once laid out.
+    def absolute_bounds
+      x = @bounds.x + @margin.left
+      y = @bounds.y + @margin.top
+      entity = @parent
+      while entity.is_a?(Entity2d)
+        x += entity.bounds.x + entity.margin.left + entity.border.left + entity.padding.left
+        y += entity.bounds.y + entity.margin.top + entity.border.top + entity.padding.top
+        entity = entity.parent
+      end
+      Bounds2d.new(x, y, @bounds.width - @margin.left - @margin.right, @bounds.height - @margin.top - @margin.bottom)
+    end
+
     def hittable=(value)
       @hittable = value
     end
