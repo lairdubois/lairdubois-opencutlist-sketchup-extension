@@ -1030,11 +1030,44 @@ module Ladb::OpenCutList
     # stacked are the same thing upside down — the upper one standing beyond
     # the lower one's top — but a bottomless upper case has its compartment
     # against that very plane, and it is no pocket.
+    #
+    # Nor is one FLOORED by a panel : the space between feet, inside a plinth,
+    # opens on the ground — the faces it turns down are the hull cap the feet
+    # stand on, or none at all where the hull slants from a foot up to a side
+    # (T36). A cavity whose downward faces are mostly a panel's is closed by a
+    # BOTTOM, the lowest shelf of a stack without sides, and that one is a
+    # compartment too - whether that shelf runs the full width (T46) or stops
+    # short, the hull then slanting from its end (T47). ALL the downward
+    # faces, and not only the lowest ones : on T47 the lowest point of the
+    # cavity is the edge at the foot of that slant, below the shelf's top.
     def _standing_pocket?(fragment_def, plane)
       nx, ny, nz, d = plane
       return false if nz > -STANDING_DOWN_MIN_DOT
       min, _max = _projection_range(fragment_def.vertices, [ nx, ny, nz ])
-      !min.nil? && (min - d).abs <= SolidMeshDef::TOLERANCE
+      return false if min.nil? || (min - d).abs > SolidMeshDef::TOLERANCE
+      envelope_area, panel_area = _facing_areas(fragment_def, [ nx, ny, nz ])
+      panel_area <= envelope_area
+    end
+
+    # [ envelope area, panel area ] of the triangles of the given fragment
+    # facing out along +normal+ - to STANDING_DOWN_MIN_DOT. Doubled areas :
+    # only their comparison matters.
+    def _facing_areas(fragment_def, normal)
+      vertices = fragment_def.vertices
+      envelope_area = 0.0
+      panel_area = 0.0
+      fragment_def.face_indices.each_slice(3).with_index do |(a, b, c), triangle_index|
+        ax, ay, az = vertices[a * 3], vertices[a * 3 + 1], vertices[a * 3 + 2]
+        ux = vertices[b * 3] - ax ; uy = vertices[b * 3 + 1] - ay ; uz = vertices[b * 3 + 2] - az
+        vx = vertices[c * 3] - ax ; vy = vertices[c * 3 + 1] - ay ; vz = vertices[c * 3 + 2] - az
+        cx = uy * vz - uz * vy
+        cy = uz * vx - ux * vz
+        cz = ux * vy - uy * vx
+        area2 = Math.sqrt(cx * cx + cy * cy + cz * cz)
+        next if area2 <= 0 || (cx * normal[0] + cy * normal[1] + cz * normal[2]) / area2 < STANDING_DOWN_MIN_DOT
+        fragment_def.triangle_face_id(triangle_index) == 0 ? envelope_area += area2 : panel_area += area2
+      end
+      [ envelope_area, panel_area ]
     end
 
     # Whether every one of +reference_fragment_defs+ is still there in

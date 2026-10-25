@@ -6489,7 +6489,112 @@ module Ladb::OpenCutList
       best_path = _best_overlapping_path(Fiddle::Clippy.polytree_to_polyshapes(polytree).map { |polyshape| polyshape.paths.first }, mouth_paths)
       return nil if best_path.nil?
 
-      Fiddle::Clippy.rpath_to_points(best_path)
+      Fiddle::Clippy.rpath_to_points(_clip_to_mouth_frame(best_path, mouth_points, mouth_paths))
+    end
+
+    # The share +share_path+ cut down to the FRAME of the mouth
+    # (+mouth_points+, +mouth_paths+) : the mouth with each of its edges pushed
+    # out by the depth the share runs beyond THAT edge - see
+    # #_get_mouth_edge_depth. The share itself when nothing of it lies outside.
+    #
+    # A panel in applique covers the chants of the parts framing its mouth,
+    # straight out from each edge, and never slides along them. Nothing in the
+    # partition says so : no sibling stands beside a top or a bottom running
+    # past the sides - a sideboard's top overhanging them, or open shelves
+    # carried on by the top and bottom beyond the uprights - so the share
+    # follows that chant to its end, and the panel grows ears a chant high.
+    #
+    # Read on the share AFTER the bisectors : between two mouths, the depth of
+    # the shared stile is the half the bisector left, and the frame takes
+    # nothing more away. On a plain carcass the frame is the outer contour of
+    # the share itself.
+    #
+    # The mouth is kept whole whatever the frame reads, and a frame that comes
+    # out degenerate leaves the share as it was.
+    def _clip_to_mouth_frame(share_path, mouth_points, mouth_paths)
+      coords = _flatten_outline(mouth_points).map { |point| [ point.x.to_f, point.y.to_f ] }
+      return share_path if coords.length < 3
+
+      signed_area = 0.0
+      coords.each_with_index { |(x, y), index| following_x, following_y = coords[(index + 1) % coords.length] ; signed_area += x * following_y - following_x * y }
+      coords.reverse! if signed_area < 0   # Counter clockwise : the outside is on the right of each edge
+
+      share_coords = share_path.each_slice(2).map { |x, y| [ x.to_f, y.to_f ] }
+
+      # Each edge as its offset line : [ origin, direction ]
+      lines = []
+      coords.each_with_index do |(x, y), index|
+        following_x, following_y = coords[(index + 1) % coords.length]
+        dx = following_x - x
+        dy = following_y - y
+        length = Math.sqrt(dx * dx + dy * dy)
+        return share_path if length <= SolidMeshDef::TOLERANCE
+        ux = dx / length
+        uy = dy / length
+        depth = _get_mouth_edge_depth(x, y, ux, uy, length, share_coords)
+        lines << [ [ x + uy * depth, y - ux * depth ], [ ux, uy ] ]
+      end
+
+      # Each corner where the offset lines of its two edges cross
+      frame_path = lines.each_index.flat_map { |index|
+        (ox1, oy1), (ux1, uy1) = lines[index - 1]
+        (ox2, oy2), (ux2, uy2) = lines[index]
+        cross = ux1 * uy2 - uy1 * ux2
+        next [ ox2, oy2 ] if cross.abs <= 1e-9
+        t = ((ox2 - ox1) * uy2 - (oy2 - oy1) * ux2) / cross
+        [ ox1 + ux1 * t, oy1 + uy1 * t ]
+      }
+
+      frame_paths, _ = Fiddle::Clippy.execute_union(closed_subjects: [ frame_path ] + mouth_paths)
+      return share_path if frame_paths.empty?
+
+      clipped_paths, _ = Fiddle::Clippy.execute_intersection(closed_subjects: [ share_path ], clips: frame_paths)
+      _best_overlapping_path(clipped_paths, mouth_paths) || share_path
+    end
+
+    # How far the share (+share_coords+, [ x, y ] Floats) runs out of the
+    # mouth beyond one of its edges - from ( +x+, +y+ ), along ( +ux+, +uy+ ),
+    # +length+ long, the outside on its right : the LEAST of what it runs
+    # straight out over the length of the edge. Zero on an edge nothing borders.
+    #
+    # The least, so that a part framing the edge over only part of its length -
+    # a plinth flush under half of a bottom - does not drag the panel over it :
+    # that would be an ear again. One flush along the whole edge is covered,
+    # the way it always was.
+    #
+    # The run only changes slope or jumps where a vertex of the share stands
+    # abreast, so it is read just either side of each of those, and a hair
+    # inside both ends of the edge - never right on one, where the ray would
+    # graze the very wall it is reading.
+    def _get_mouth_edge_depth(x, y, ux, uy, length, share_coords)
+      nx = uy
+      ny = -ux
+      epsilon = SolidMeshDef::TOLERANCE
+
+      stations = [ epsilon, length - epsilon ]
+      share_coords.each do |vx, vy|
+        station = (vx - x) * ux + (vy - y) * uy
+        next unless station > epsilon && station < length - epsilon
+        stations << station - epsilon << station + epsilon
+      end
+
+      stations.map { |station|
+        # The crossings of the ray with the share, from a hair outside the edge
+        ox = x + ux * station + nx * epsilon
+        oy = y + uy * station + ny * epsilon
+        ts = []
+        share_coords.each_with_index do |(ax, ay), index|
+          bx, by = share_coords[(index + 1) % share_coords.length]
+          ex = bx - ax
+          ey = by - ay
+          denominator = nx * ey - ny * ex
+          next if denominator.abs <= 1e-12
+          t = ((ax - ox) * ey - (ay - oy) * ex) / denominator
+          s = ((ax - ox) * ny - (ay - oy) * nx) / denominator
+          ts << t if t > 0 && s >= 0 && s < 1
+        end
+        ts.length.odd? ? epsilon + ts.min : 0.0   # Odd : the ray starts inside the share, and leaves it at the first crossing
+      }.min
     end
 
     # The RECESSES of the front that reach the border of the silhouette
