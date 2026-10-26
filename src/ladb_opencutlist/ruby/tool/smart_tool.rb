@@ -38,6 +38,8 @@ module Ladb::OpenCutList
     MESSAGE_TYPE_WARNING = 2
     MESSAGE_TYPE_SUCCESS = 3
 
+    STATUS_VCB_VALUE_DELAY = 0.15  # Seconds without mouse move before a live VCB value is written
+
     NOTIFICATION_MAX_COUNT = 4
 
     COLOR_BRAND = Sketchup::Color.new(247, 127, 0).freeze
@@ -783,6 +785,52 @@ module Ladb::OpenCutList
       @message_panel.visible = false
     end
 
+    # -- Status --
+
+    def set_status_prompt(text)
+      Sketchup.set_status_text(text.to_s, SB_PROMPT)
+    end
+
+    def set_status_vcb_label(text)
+      Sketchup.set_status_text(text.to_s, SB_VCB_LABEL)
+    end
+
+    # Writes the VCB value. A live write (value updated on each mouse move) is
+    # delayed until no other one came for STATUS_VCB_VALUE_DELAY seconds : since
+    # SU 2027, every change of a status text costs a slow frame, so a value
+    # rewritten on each move halves the frame rate. An immediate write drops the
+    # pending one.
+    def set_status_vcb_value(text, live = false)
+      if live
+        @status_vcb_value_pending = text.to_s
+        @status_vcb_value_pending_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+        @status_vcb_value_timer_id = UI.start_timer(STATUS_VCB_VALUE_DELAY, false) { _flush_status_vcb_value } if @status_vcb_value_timer_id.nil?
+      else
+        _cancel_status_vcb_value
+        Sketchup.set_status_text(text.to_s, SB_VCB_VALUE)
+      end
+    end
+
+    def _flush_status_vcb_value
+      @status_vcb_value_timer_id = nil
+      return if @status_vcb_value_pending.nil?
+      idle = Process.clock_gettime(Process::CLOCK_MONOTONIC) - @status_vcb_value_pending_time
+      if idle < STATUS_VCB_VALUE_DELAY
+        @status_vcb_value_timer_id = UI.start_timer(STATUS_VCB_VALUE_DELAY - idle, false) { _flush_status_vcb_value }  # Still moving
+      else
+        Sketchup.set_status_text(@status_vcb_value_pending, SB_VCB_VALUE)
+        @status_vcb_value_pending = nil
+      end
+    end
+    private :_flush_status_vcb_value
+
+    def _cancel_status_vcb_value
+      UI.stop_timer(@status_vcb_value_timer_id) unless @status_vcb_value_timer_id.nil?
+      @status_vcb_value_timer_id = nil
+      @status_vcb_value_pending = nil
+    end
+    private :_cancel_status_vcb_value
+
     # -- Tooltips --
 
     def set_root_tooltip(items, type = MESSAGE_TYPE_DEFAULT)
@@ -1453,7 +1501,7 @@ module Ladb::OpenCutList
       end
 
       # Update status text
-      Sketchup.set_status_text(get_action_status(action), SB_PROMPT)
+      set_status_prompt(get_action_status(action))
 
       # Update root cursor
       set_root_cursor(get_action_cursor(action))
@@ -1602,6 +1650,9 @@ module Ladb::OpenCutList
 
       # Stop observing rendering options events
       view.model.rendering_options.remove_observer(self)
+
+      # Drop a pending VCB value
+      _cancel_status_vcb_value
 
       # Reset tooltip
       view.tooltip = ''
@@ -1954,9 +2005,9 @@ module Ladb::OpenCutList
 
     def onToolResume(tool, view)
       @tool.set_root_cursor(get_state_cursor(@state))
-      Sketchup.set_status_text(get_state_status(@state), SB_PROMPT)
-      Sketchup.set_status_text(get_state_vcb_label(@state), SB_VCB_LABEL)
-      Sketchup.set_status_text('', SB_VCB_VALUE)
+      @tool.set_status_prompt(get_state_status(@state))
+      @tool.set_status_vcb_label(get_state_vcb_label(@state))
+      @tool.set_status_vcb_value('')
       _refresh
       true
     end
@@ -1994,9 +2045,9 @@ module Ladb::OpenCutList
     def onStateChanged(old_state, new_state)
       @tool.set_root_cursor(get_state_cursor(new_state))
       @picker = get_state_picker(new_state)
-      Sketchup.set_status_text(get_state_status(new_state), SB_PROMPT)
-      Sketchup.set_status_text(get_state_vcb_label(new_state), SB_VCB_LABEL)
-      Sketchup.set_status_text('', SB_VCB_VALUE)
+      @tool.set_status_prompt(get_state_status(new_state))
+      @tool.set_status_vcb_label(get_state_vcb_label(new_state))
+      @tool.set_status_vcb_value('')
     end
 
     def onPickerChanged(picker, view)

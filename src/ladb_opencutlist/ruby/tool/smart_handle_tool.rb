@@ -1208,7 +1208,7 @@ module Ladb::OpenCutList
 
       distance = dps.vector_to(dpe).length
 
-      Sketchup.set_status_text(distance, SB_VCB_VALUE)
+      @tool.set_status_vcb_value(distance, true)
 
       if distance > 0
 
@@ -1242,7 +1242,7 @@ module Ladb::OpenCutList
       @picked_handle_end_point = dps.offset(v, [ distance.abs, dmin ].max)
 
       _handle_entity
-      Sketchup.set_status_text('', SB_VCB_VALUE)
+      @tool.set_status_vcb_value('')
 
       true
     end
@@ -1280,7 +1280,7 @@ module Ladb::OpenCutList
 
         end
 
-        Sketchup.set_status_text('', SB_VCB_VALUE)
+        @tool.set_status_vcb_value('')
 
         return true
       end
@@ -1810,7 +1810,7 @@ module Ladb::OpenCutList
       distance_x = db_2d.width
       distance_y = db_2d.height
 
-      Sketchup.set_status_text("#{distance_x}#{Sketchup::RegionalSettings.list_separator} #{distance_y}", SB_VCB_VALUE)
+      @tool.set_status_vcb_value("#{distance_x}#{Sketchup::RegionalSettings.list_separator} #{distance_y}", true)
 
       if distance_x > 0
 
@@ -1874,7 +1874,7 @@ module Ladb::OpenCutList
         ).transform(ht))
 
         _handle_entity
-        Sketchup.set_status_text('', SB_VCB_VALUE)
+        @tool.set_status_vcb_value('')
 
         return true
       end
@@ -1925,7 +1925,7 @@ module Ladb::OpenCutList
 
         end
 
-        Sketchup.set_status_text('', SB_VCB_VALUE)
+        @tool.set_status_vcb_value('')
 
         return true
       end
@@ -2502,7 +2502,7 @@ module Ladb::OpenCutList
 
       distance = dps.vector_to(dpe).length
 
-      Sketchup.set_status_text(distance, SB_VCB_VALUE)
+      @tool.set_status_vcb_value(distance, true)
 
       if distance > 0
 
@@ -2530,7 +2530,7 @@ module Ladb::OpenCutList
       @picked_handle_end_point = @picked_handle_start_point.offset(dv, distance)
 
       _handle_entity
-      Sketchup.set_status_text('', SB_VCB_VALUE)
+      @tool.set_status_vcb_value('')
 
       true
     end
@@ -3129,7 +3129,7 @@ module Ladb::OpenCutList
 
       distance = lv.length
 
-      Sketchup.set_status_text(distance, SB_VCB_VALUE)
+      @tool.set_status_vcb_value(distance, true)
 
       if distance > 0
 
@@ -3157,7 +3157,7 @@ module Ladb::OpenCutList
       @picked_handle_end_point = @picked_handle_start_point.offset(v, distance)
 
       _handle_entity
-      Sketchup.set_status_text('', SB_VCB_VALUE)
+      @tool.set_status_vcb_value('')
 
       true
     end
@@ -3175,7 +3175,7 @@ module Ladb::OpenCutList
           _handle_entity
 
         end
-        Sketchup.set_status_text('', SB_VCB_VALUE)
+        @tool.set_status_vcb_value('')
 
         return true
       end
@@ -3210,7 +3210,7 @@ module Ladb::OpenCutList
           _handle_entity
 
         end
-        Sketchup.set_status_text('', SB_VCB_VALUE)
+        @tool.set_status_vcb_value('')
 
         return true
       end
@@ -3773,14 +3773,14 @@ module Ladb::OpenCutList
     # all share it.
     def _update_status
       return unless @state == STATE_SELECT
-      Sketchup.set_status_text(get_state_status(@state), SB_PROMPT)
-      Sketchup.set_status_text(get_state_vcb_label(@state), SB_VCB_LABEL)
+      @tool.set_status_prompt(get_state_status(@state))
+      @tool.set_status_vcb_label(get_state_vcb_label(@state))
       motions = _animating? ? @animation.motions : _get_last_motions
       if motions.nil?
-        Sketchup.set_status_text('', SB_VCB_VALUE)
+        @tool.set_status_vcb_value('')
       else
         angles = motions.map { |motion| motion.to_angle.round(1) }.uniq
-        Sketchup.set_status_text(angles.length == 1 ? "#{angles.first}°" : '', SB_VCB_VALUE)
+        @tool.set_status_vcb_value(angles.length == 1 ? "#{angles.first}°" : '')
       end
     end
 
@@ -3844,7 +3844,7 @@ module Ladb::OpenCutList
 
       @drag_motion.to_angle = angle
       @drag_motion.instance.move!(@drag_motion.transformation_at(angle))
-      Sketchup.set_status_text("#{angle.round(1)}°", SB_VCB_VALUE)
+      @tool.set_status_vcb_value("#{angle.round(1)}°", true)
       view.invalidate
 
     end

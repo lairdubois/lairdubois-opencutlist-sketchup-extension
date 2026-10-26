@@ -689,8 +689,8 @@ module Ladb::OpenCutList
       _update_hardware_state
       _refresh
       if @state != STATE_SOURCE  # The SHIFT status and the VCB label follow the distribution
-        Sketchup.set_status_text(get_state_status(@state), SB_PROMPT)
-        Sketchup.set_status_text(get_state_vcb_label(@state), SB_VCB_LABEL)
+        @tool.set_status_prompt(get_state_status(@state))
+        @tool.set_status_vcb_label(get_state_vcb_label(@state))
       end
     end
 
@@ -876,9 +876,9 @@ module Ladb::OpenCutList
     # VCB, without a mouse move to pick it again.
     def _on_shift_changed
       return if @tool.is_vcb_typing?
-      Sketchup.set_status_text(get_state_status(@state), SB_PROMPT)
-      Sketchup.set_status_text(get_state_vcb_label(@state), SB_VCB_LABEL)
-      Sketchup.set_status_text('', SB_VCB_VALUE)
+      @tool.set_status_prompt(get_state_status(@state))
+      @tool.set_status_vcb_label(get_state_vcb_label(@state))
+      @tool.set_status_vcb_value('')
       onPickerChanged(@picker, Sketchup.active_model.active_view) if @picker.is_a?(SmartPicker)
     end
 
@@ -959,7 +959,7 @@ module Ladb::OpenCutList
       direction = direction.normalize
       position = ((point - origin) % direction).to_l
 
-      Sketchup.set_status_text(position.to_s, SB_VCB_VALUE)
+      @tool.set_status_vcb_value(position.to_s, true)
 
       return unless position > 0
 
@@ -985,7 +985,7 @@ module Ladb::OpenCutList
       @typed_free_position = position
       _add_at_free_position
       @typed_free_position = nil
-      Sketchup.set_status_text('', SB_VCB_VALUE)
+      @tool.set_status_vcb_value('')
 
       true
     end
@@ -3470,7 +3470,7 @@ module Ladb::OpenCutList
         return true if _read_measure(tool, max_spacing, SmartJoinTool::ACTION_OPTION_SPACINGS, SmartJoinTool::ACTION_OPTION_SPACINGS_MAX_SPACING, 'tool.smart_join.error.invalid_max_spacing')
       end
 
-      Sketchup.set_status_text('', SB_VCB_VALUE)
+      @tool.set_status_vcb_value('')
       _refresh
 
       true
@@ -5104,7 +5104,7 @@ module Ladb::OpenCutList
         return true if _read_measure(tool, max_spacing, SmartJoinTool::ACTION_OPTION_SPACINGS, SmartJoinTool::ACTION_OPTION_SPACINGS_MAX_SPACING, 'tool.smart_join.error.invalid_max_spacing')
       end
 
-      Sketchup.set_status_text('', SB_VCB_VALUE)
+      @tool.set_status_vcb_value('')
       _refresh
 
       true

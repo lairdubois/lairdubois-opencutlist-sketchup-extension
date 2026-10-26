@@ -1122,7 +1122,7 @@ module Ladb::OpenCutList
 
       end
 
-      Sketchup.set_status_text(box[:sizes][@state - STATE_X].to_l.to_s, SB_VCB_VALUE)
+      @tool.set_status_vcb_value(box[:sizes][@state - STATE_X].to_l.to_s, true)
 
     end
 
@@ -3179,7 +3179,7 @@ module Ladb::OpenCutList
         distance = divider_def.distance
         if distance > 0
           fn_preview_measure.call(divider_def.wall_point, divider_def.point, distance)
-          Sketchup.set_status_text(distance, SB_VCB_VALUE) if index == 0 && @state == STATE_PLACE
+          @tool.set_status_vcb_value(distance, true) if index == 0 && @state == STATE_PLACE
         end
 
         trailing_distance = divider_def.trailing_distance
@@ -3207,7 +3207,7 @@ module Ladb::OpenCutList
       end
 
       _set_distribution(operator == '/' ? number - 1 : number, @spacings, tool, view)
-      Sketchup.set_status_text('', SB_VCB_VALUE)
+      @tool.set_status_vcb_value('')
 
       true
     end
@@ -3235,7 +3235,7 @@ module Ladb::OpenCutList
       number = [ @number, spacings.select { |spacing| spacing > 0 }.size ].max
 
       _set_distribution(number, spacings, tool, view)
-      Sketchup.set_status_text('', SB_VCB_VALUE)
+      @tool.set_status_vcb_value('')
 
       true
     end
@@ -3255,7 +3255,7 @@ module Ladb::OpenCutList
       end
 
       if _create_entity(divider_def.wall_point.offset(divider_def.normal, distance), view)
-        Sketchup.set_status_text('', SB_VCB_VALUE)
+        @tool.set_status_vcb_value('')
         _restart
         return true
       end
@@ -3281,7 +3281,7 @@ module Ladb::OpenCutList
       end
 
       @tool.store_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_THICKNESS, SmartReshapeTool::ACTION_OPTION_THICKNESS_THICKNESS, thickness.to_s, fire_event: true)
-      Sketchup.set_status_text('', SB_VCB_VALUE)
+      @tool.set_status_vcb_value('')
       _refresh
 
       true
@@ -5147,7 +5147,7 @@ module Ladb::OpenCutList
       end
 
       _set_distribution(number, @widths, tool, view)
-      Sketchup.set_status_text('', SB_VCB_VALUE)
+      @tool.set_status_vcb_value('')
 
       true
     end
@@ -5176,7 +5176,7 @@ module Ladb::OpenCutList
       number = [ @number, widths.select { |width| width > 0 }.size ].max
 
       _set_distribution(number, widths, tool, view)
-      Sketchup.set_status_text('', SB_VCB_VALUE)
+      @tool.set_status_vcb_value('')
 
       true
     end
@@ -5192,7 +5192,7 @@ module Ladb::OpenCutList
       end
 
       @tool.store_action_option_value(@action, SmartBuildTool::ACTION_OPTION_THICKNESS, SmartBuildTool::ACTION_OPTION_THICKNESS_THICKNESS, thickness.to_s, fire_event: true)
-      Sketchup.set_status_text('', SB_VCB_VALUE)
+      @tool.set_status_vcb_value('')
       _refresh
 
       true
@@ -5226,7 +5226,7 @@ module Ladb::OpenCutList
       end
 
       @tool.store_action_option_value(@action, SmartBuildTool::ACTION_OPTION_OFFSET, option, length.to_s, fire_event: true)
-      Sketchup.set_status_text('', SB_VCB_VALUE)
+      @tool.set_status_vcb_value('')
       _refresh
 
       true
@@ -7530,7 +7530,7 @@ module Ladb::OpenCutList
 
       _preview_panel_decorations(panel_defs, view, color)
 
-      Sketchup.set_status_text(panel_defs.first.thickness.to_l, SB_VCB_VALUE)
+      @tool.set_status_vcb_value(panel_defs.first.thickness.to_l, true)
 
     end
 

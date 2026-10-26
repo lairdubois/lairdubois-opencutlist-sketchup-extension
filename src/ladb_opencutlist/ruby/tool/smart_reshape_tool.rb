@@ -535,7 +535,7 @@ module Ladb::OpenCutList
 
           # The status differs when an interior handle is hovered
           if previous_interior_handle.nil? != @picked_interior_handle.nil?
-            Sketchup.set_status_text(get_state_status(@state), SB_PROMPT)
+            @tool.set_status_prompt(get_state_status(@state))
           end
 
         when STATE_STRETCH
@@ -1897,7 +1897,7 @@ module Ladb::OpenCutList
 
       distance = lps.distance(lpe)
 
-      Sketchup.set_status_text(distance, SB_VCB_VALUE)
+      @tool.set_status_vcb_value(distance, true)
 
       if distance > 0
 
@@ -1949,7 +1949,7 @@ module Ladb::OpenCutList
       @picked_stretch_end_point = end_point
 
       _stretch_entity
-      Sketchup.set_status_text('', SB_VCB_VALUE)
+      @tool.set_status_vcb_value('')
 
       true
     end
@@ -3500,7 +3500,7 @@ module Ladb::OpenCutList
       end
 
       @tool.store_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_THICKNESS, SmartReshapeTool::ACTION_OPTION_THICKNESS_THICKNESS, thickness.to_s, fire_event: true)
-      Sketchup.set_status_text('', SB_VCB_VALUE)
+      @tool.set_status_vcb_value('')
       _compute
       _refresh
 

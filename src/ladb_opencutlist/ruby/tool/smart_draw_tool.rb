@@ -736,7 +736,7 @@ module Ladb::OpenCutList
         end
         if tool.is_key_alt_or_command?(key) && is_quick
           @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_FROM_VERTEX, !_fetch_option_measure_from_vertex?, fire_event: true)
-          Sketchup.set_status_text('', SB_VCB_VALUE)
+          @tool.set_status_vcb_value('')
           @previous_action_handler = nil
           _remove_floating_tools
           _refresh
@@ -1185,7 +1185,7 @@ module Ladb::OpenCutList
         )
         @tool.append_3d(k_points, LAYER_3D_DRAW_PREVIEW)
 
-        Sketchup.set_status_text(dd.join("#{Sketchup::RegionalSettings.list_separator} "), SB_VCB_VALUE)
+        @tool.set_status_vcb_value(dd.join("#{Sketchup::RegionalSettings.list_separator} "), true)
 
       end
 
@@ -1305,7 +1305,7 @@ module Ladb::OpenCutList
 
       end
 
-      Sketchup.set_status_text(measure, SB_VCB_VALUE)
+      @tool.set_status_vcb_value(measure, true)
 
       if measure > 0
 
@@ -1332,7 +1332,7 @@ module Ladb::OpenCutList
         begin
           offset = value.to_l
           @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OFFSET, SmartDrawTool::ACTION_OPTION_OFFSET_SHAPE_OFFSET, offset.to_s, fire_event: true)
-          Sketchup.set_status_text('', SB_VCB_VALUE)
+          @tool.set_status_vcb_value('')
           _refresh
         rescue ArgumentError
           UI.beep
@@ -1428,7 +1428,7 @@ module Ladb::OpenCutList
       _create_entity
       _restart
 
-      Sketchup.set_status_text('', SB_VCB_VALUE)
+      @tool.set_status_vcb_value('')
 
       true
     end
@@ -2402,7 +2402,7 @@ module Ladb::OpenCutList
 
       end
 
-      Sketchup.set_status_text("#{bounds.width}#{Sketchup::RegionalSettings.list_separator} #{bounds.height}", SB_VCB_VALUE)
+      @tool.set_status_vcb_value("#{bounds.width}#{Sketchup::RegionalSettings.list_separator} #{bounds.height}", true)
 
       if bounds.valid?
 
@@ -2682,8 +2682,8 @@ module Ladb::OpenCutList
         end
         if tool.is_key_ctrl_or_option?(key) && is_quick
           @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_FROM_DIAMETER, !_fetch_option_measure_from_diameter?, fire_event: true)
-          Sketchup.set_status_text(get_state_status(fetch_state), SB_PROMPT)
-          Sketchup.set_status_text(get_state_vcb_label(fetch_state), SB_VCB_LABEL)
+          @tool.set_status_prompt(get_state_status(fetch_state))
+          @tool.set_status_vcb_label(get_state_vcb_label(fetch_state))
           _refresh
           return true
         end
@@ -2826,7 +2826,7 @@ module Ladb::OpenCutList
 
       end
 
-      Sketchup.set_status_text("#{measure}", SB_VCB_VALUE)
+      @tool.set_status_vcb_value("#{measure}", true)
 
       if measure > 0 && view.pixels_to_model(30, measure_start) < measure
 
@@ -2898,7 +2898,7 @@ module Ladb::OpenCutList
         end
 
         @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_SEGMENTS, SmartDrawTool::ACTION_OPTION_SEGMENTS_SEGMENT_COUNT, segment_count, fire_event: true)
-        Sketchup.set_status_text('', SB_VCB_VALUE)
+        @tool.set_status_vcb_value('')
         _refresh
 
         return true
@@ -3182,8 +3182,8 @@ module Ladb::OpenCutList
       when STATE_SHAPE
         if tool.is_key_ctrl_or_option?(key) && is_quick
           @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_REVERSED, !_fetch_option_measure_reversed?, fire_event: true)
-          Sketchup.set_status_text(get_state_status(fetch_state), SB_PROMPT)
-          Sketchup.set_status_text(get_state_vcb_label(fetch_state), SB_VCB_LABEL)
+          @tool.set_status_prompt(get_state_status(fetch_state))
+          @tool.set_status_vcb_label(get_state_vcb_label(fetch_state))
           if view.inference_locked?
             p = _fetch_option_measure_reversed? ? @picked_points.first : @picked_points.last
             view.lock_inference(Sketchup::InputPoint.new(p), Sketchup::InputPoint.new(p.offset(@locked_axis)))
@@ -3733,7 +3733,7 @@ module Ladb::OpenCutList
         measure_vector = measure_start.vector_to(@mouse_snap_point)
         measure = measure_vector.length
 
-        Sketchup.set_status_text("#{measure}", SB_VCB_VALUE)
+        @tool.set_status_vcb_value("#{measure}", true)
 
         k_points = _create_floating_points(
           points: measure_start,
