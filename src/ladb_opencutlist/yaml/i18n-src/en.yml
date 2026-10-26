@@ -81,8 +81,8 @@ default:
   part_plural: parts
   cut_single: cut
   cut_plural: cuts
-  thickness_layer_single: layer
-  thickness_layer_plural: layers
+  thickness_layer_single: ply
+  thickness_layer_plural: plies
   setup_model_units: Configure the model's units
   load_more: Load more
   reset_to_app_defaults: Restore to original settings
@@ -180,7 +180,7 @@ core:
       The SKP file was created with a newer version of SketchUp: {{ version }}
   success:
     exported_to: Successful export to {{ path }}.
-    copied_to_clipboard: Copied to clipboard
+    copied_to_clipboard: Copied to the clipboard
   event:
     model_change: The active model has changed.
     options_change: Options in the model have changed.
@@ -289,8 +289,8 @@ core:
     three_viewer:
       view: "{{ view }} View"
       view_isometric: Isometric
-      view_top: Top
-      view_bottom: Bottom
+      view_top: Top View
+      view_bottom: Bottom View
       view_front: Front
       view_back: Rear
       view_left: Left
@@ -569,10 +569,10 @@ tab:
     edit_part_axes_properties: Edit the properties (axes) of the part
     edit_part_edges_properties: Edit the properties (edges) of the part
     edit_part_faces_properties: Edit the properties (faces) of the part
-    part_drawing_type_1: 2D Front View
-    part_drawing_type_2: 2D Back View
-    part_drawing_type_3: 2D Left Side View
-    part_drawing_type_4: 2D Right Side View
+    part_drawing_type_1: 2D Frontside
+    part_drawing_type_2: 2D Backside
+    part_drawing_type_3: 2D Left-Side View
+    part_drawing_type_4: 2D Right-Side View
     part_drawing_type_5: 2D Front View
     part_drawing_type_6: 2D Rear View
     part_drawing_type_7: 3D
@@ -641,10 +641,10 @@ tab:
       unused_instance_count_plural: Note that **{{ count }}** units from the last package will not be used.
       used_instance_count: "**{{ count }}** item of {{ total }} used"
       used_instance_count_plural: "**{{ count }}** items of {{ total }} used"
-      thickness_layer_count: The final part is made of **{{ count }}** layers in thickness
-      thickness_layered: The quantity here refers to the number of pieces to be cut in order to obtain all the layers.
-      thickness_layered_equation: "**{{ count }}** *part* x **{{ layerCount }}** *layers* = **{{ cuttingPartCount }}**"
-      thickness_layered_equation_plural: "**{{ count }}** *parts* x **{{ layerCount }}** *layers* = **{{ cuttingPartCount }}**"
+      thickness_layer_count: The final part is made of **{{ count }}** plies in thickness
+      thickness_layered: The quantity here refers to the number of parts to be cut in order to obtain all the plies.
+      thickness_layered_equation: "**{{ count }}** *part* x **{{ layerCount }}** *plies* = **{{ cuttingPartCount }}**"
+      thickness_layered_equation_plural: "**{{ count }}** *parts* x **{{ layerCount }}** *plies* = **{{ cuttingPartCount }}**"
       multiple_content_layers: Caution, this part is composed of sub-parts present in {{ count }} different tags:<br>{{ layers }}
       children_warnings: Caution, there is {{ count }} alert in grouped parts
       children_warnings_plural: Caution, there are {{ count }} alerts in grouped parts
@@ -666,7 +666,7 @@ tab:
       size_increased_2: |
         Increased by the oversizes for the Material and the Part
         ({{ increase_1 }} + {{ increase_2 }})
-      edge_decremented: Reduced by the thickness of the edge banding ({{ decrement }})
+      edge_decremented: Reduced by the thickness of the edge bandings ({{ decrement }})
       edge_ymin: Edge Length 1
       edge_ymax: Edge Length 2
       edge_xmin: Edge Width 1
@@ -715,7 +715,7 @@ tab:
       reset_prices_success: The prices of all parts have been reset.
     edit_part:
       title: Properties of Part '{{ name }}'
-      title_multiple: Properties of the Parts Group
+      title_multiple: Part Group Properties
       multiple_alert: Common properties of the group of {{ part_count }} parts.
       general: General
       extra_help: List of properties specific to the type of material "**$t(tab.materials.type_{{ material_type }})**".
@@ -731,8 +731,8 @@ tab:
       cumulable_2: Cumulative over width
       instance_count_by_part: Packaging
       instance_count_by_part_help: |
-        Allows the part to be considered as a *package* of one or more *items*.
-        The quantity associated with the part in the parts list will therefore represent the number of whole packages needed to obtain the number of items actually present in the model.
+        Allows the part to be considered as a *package* of one or more *units*.
+        The quantity associated with the part in the parts list will therefore represent the number of whole packages needed to obtain the number of units actually present in the model.
 
         *Example: To count only 1 part for a pair of drawer runners:
         Packaging = 2 units / part*
@@ -742,12 +742,12 @@ tab:
       mass_help: The weight of the part will be used when generating an **Estimate**.
       price: Price
       price_help: The price of the part will be used when generating an **Estimate**.
-      thickness_layer_count: No. of Layers
+      thickness_layer_count: No. of plies
       thickness_layer_count_help: |
-        Define here the number of layers that divide the drawn part in its thickness.
+        Define the number of plies that divide the drawn part along its thickness.
 
-        *Example:* If you have a part designed with a thickness of *38mm* and you want to make it by gluing two panels of *19mm* together, enter **2** in this field.
-        *OpenCutList will then count 2 parts of 19mm thickness instead of 1 part of 38mm.*
+        *Example:* If you want to create a part that is *38 mm* thick by laminating two *19 mm* panels, enter **2** in this field.
+        *OpenCutList will then count 2 parts that are 19 mm thick instead of 1 part that is 38 mm thick.*
       cut_options: $t(tab.materials.edit_material.cut_options)
       length_increase: $t(tab.materials.edit_material.length_increase)
       length_increase_help: $t(tab.materials.edit_material.length_increase_help)
@@ -757,10 +757,10 @@ tab:
       thickness_increase_help: $t(tab.materials.edit_material.thickness_increase_help)
       description: Description
       description_help: |
-        The *Description* provides personalized information on each part definition.
+        The *Description* allows you to provide custom information for each part definition.
       url: URL
       url_help: |
-        The *URL* provides a personalized link to an external page on each part definition.
+        The *URL* allows you to include a custom link to an external page on each part definition.
       tags: Badges
       tags_help: |
         *Badges* are custom keywords that can be added to each part definition.
@@ -768,7 +768,7 @@ tab:
         You can then filter the visible parts in your Parts List according to these badges.
       tags_multiple_info: Only common badges are displayed
       orientation: Orientation
-      orientation_locked_on_axis: Lock orientation on axes
+      orientation_locked_on_axis: Lock the orientation to the part's axes
       orientation_locked_on_axis_help: |
         If this option is selected, the option *Automatic orientation of parts* will have no effect on this part
 
@@ -782,8 +782,8 @@ tab:
       ignore_grain_direction: Grain
       ignore_grain_direction_help: |
         If this option is selected, the grain orientation of the material will be ignored for this part.
-      ignore_grain_direction_0: Grain of the wood runs lengthwise
-      ignore_grain_direction_1: Ignore grain orientation
+      ignore_grain_direction_0: The grain direction runs lengthwise
+      ignore_grain_direction_1: Ignore grain direction
       follow_grain_direction: Grain continuity
       follow_grain_direction_help: |
         Enabling this option will treat instances of this part as parts laid out in **Grain continuity** with their neighbors that share:
@@ -884,7 +884,7 @@ tab:
       property_count: Quantity
       property_edge_pattern: Number of edge bandings
       property_tags: Badges
-      property_thickness_layer_count: Number of layers
+      property_thickness_layer_count: Number of plies
       tags: Badges
       tags_help: Custom list of badges available in the part properties window.
       tags_placeholder: Add a badge
@@ -902,7 +902,7 @@ tab:
       summary: Summary
       material_type: Type
       material_thickness: Material / Dimension
-      part_count: Nb. parts
+      part_count: No. of parts
       area: Area
       area_short: Area
       volume: Volume
@@ -1317,7 +1317,7 @@ tab:
       option_std_bin_2d_sheet_good: Standard Panels
       option_std_bin_2d_veneer: Standard Veneer Sheets
       option_std_bin_2d_help: |
-        Select the sizes of standard panel or veneer sheet, which will be duplicated to calculate the best possible placement.
+        Select the sizes of standard panel or veneer sheet, which will be duplicated to calculate the best possible placement of all parts.
 
         This list is defined in the field **$t(tab.materials.edit_material.std_sizes)** of the material.
 
@@ -1435,7 +1435,7 @@ tab:
       option_origin_corner_1: Bottom left corner
       option_origin_corner_2: Top right corner
       option_origin_corner_3: Bottom right corner
-      option_origin_corner_help: Determines the location of the origin of the coordinate system for displaying parts on panels, veneer sheets, dimensional lumber or edge bandings.
+      option_origin_corner_help: Allows you to choose the location of the origin of the coordinate system for displaying parts on panels, veneer sheets, dimensional lumber or edge bandings.
       option_highlight_primary_cuts: Primary Cuts
       option_highlight_primary_cuts_0: On hover only
       option_highlight_primary_cuts_1: Always visible
@@ -1667,11 +1667,11 @@ tab:
       option_parts_colored: Color
       option_parts_colored_0: Without color
       option_parts_colored_1: Color of the material
-      option_parts_colored_help: Selects the appearance of the parts.
+      option_parts_colored_help: Allows you to choose the appearance of the parts.
       option_parts_opacity: Opacity
       option_parts_opacity_0: Transparent
       option_parts_opacity_1: Opaque
-      option_parts_opacity_help: Selects the opacity of the parts.
+      option_parts_opacity_help: Allows you to choose the opacity of the parts.
       # A callout is a piece of descriptive text connected to a drawing element via a leader line.
       option_pins: Callouts
       option_pins_hidden: Display
@@ -1696,7 +1696,7 @@ tab:
       option_pins_direction_2: Along the Blue axis
       option_pins_direction_3: Pointing towards the center of the parent group
       option_pins_direction_4: Pointing towards the center of the selection
-      option_pins_direction_help: Allows you to choose the direction of the leader lines to labels for better readability.
+      option_pins_direction_help: Allows you to choose the direction of the leader lines to callouts for better readability.
       option_page: Paper Size
       option_page_format: Format
       option_page_format_portrait: Portrait
@@ -1762,12 +1762,12 @@ tab:
         This module lets you export the **3D geometry** of parts as files in [STL](https://wikipedia.org/wiki/STL_(file_format)) or [OBJ](https://wikipedia.org/wiki/Wavefront_.obj_file) format.
       option_file_format: Format
       option_file_format_help: |
-        Selects the format of the exported file.
+        Allows you to choose the format of the exported file.
       option_dxf_structure: DXF Structure
       option_dxf_structure_1: Layers
       option_dxf_structure_2: Layers + Blocks
       option_dxf_structure_help: |
-        Selects the DXF file structure.
+        Allows you to choose the DXF file structure.
 
         - The **Layers** structure draws all lines flat, distinguishing between different line types using layers only. *This structure offers greater compatibility with third-party software.*
         - The **Layers + Blocks** structure creates one block per part and inserts these blocks as many times as the parts are repeated. *This structure offers more flexibility for editing the file.*
@@ -1780,15 +1780,15 @@ tab:
         Disable this option to export as 2D DXF only.
       option_unit: Unit
       option_unit_help: |
-        Selects the unit used in the exported file.
+        Allows you to choose the unit used in the exported file.
       option_use_count: Quantity
       option_use_count_0: One file per part
       option_use_count_1: One file per part instance
       option_use_count_help: |
-        Selects whether the number of instances of a part is considered.
+        Allows you to choose whether the number of instances of a part is considered.
       option_part_drawing_type: Projection
       option_part_drawing_type_help: |
-        Selects the view to be exported.
+        Allows you to choose the view to be exported.
       option_faces: Faces
       option_faces_0: Use target face only
       option_faces_1: Use all faces of the part
@@ -1826,7 +1826,7 @@ tab:
         Activates the separation of the outer contour of parts from their holes, as well as the calculation of the machining allowance applied to surfaces bordering the contour and cavities.
       option_merge_holes_overflow: Machining Allowance
       option_merge_holes_overflow_help: |
-        Allows you to set the machining overhang distance applied to surfaces at the edges of contours and cavities.
+        Allows you to set the machining allowance distance applied to surfaces at the edge of contours and cavities.
       option_include_paths: Paths
       option_include_paths_0: $t(default.no)
       option_include_paths_1: Use edges not associated with a face
@@ -1834,7 +1834,7 @@ tab:
         Enables the use of edges not associated with a face and contained in the part, to export them as a path.
       option_parts: Parts
       option_parts_help: |
-        Selects the color of parts.
+        Allows you to choose the color of parts.
       option_parts_depths: Cavities
       option_parts_depths_help: |
         Allows you to choose the color of the part cavities.
@@ -1842,7 +1842,7 @@ tab:
         *By default, the color used is a gradient proportional to the depth of the cavity between the color of the parts and that of the holes.*
       option_parts_holes: Holes
       option_parts_holes_help: |
-        Selects the color of drillings.
+        Allows you to choose the colors of the drilled holes in the parts.
       option_parts_paths: Paths
       option_parts_paths_help: |
         Allows you to choose the path colors.
@@ -1999,7 +1999,7 @@ tab:
         The total volume will be the sum of the effective volumes of the parts, which is the bounding box including oversizes.
 
         **Volume of raw material required**
-        The total volume will be the sum of the volumes of the panels, sheets, boards or edge bandings of the parts after cutting.
+        The total volume will be the sum of the volumes of the panels, sheets, boards or edge bandings of the parts after computing the cutting diagram.
       raw_estimated_0: Effective volume
       raw_estimated_1: Volume of raw material required
       multiplier_coefficient: Coefficient
@@ -2048,7 +2048,7 @@ tab:
         Confirm to continue.
     duplicate:
       message: |
-        Choose the name of the new material copied from **{{ material_name }}**.
+        Choose a name of the new material, which is a copy of **{{ material_name }}**.
     error:
       no_model: No model is open. You'll have to give me a bit more than that ;)
       no_materials: Your model does not contain any material.
@@ -2349,7 +2349,7 @@ tab:
         option_front_part_layer_name: Fronts
         option_front_part_layer_name_help: Tag to be applied to front parts.
         option_back_part_layer_name: Back
-        option_back_part_layer_name_help: Tag to be applied to back parts.
+        option_back_part_layer_name_help: Tag to be applied to back parts cabinets.
         option_machining_material_name: Machining
         option_machining_material_name_help: Material to be applied to **machining**.
         option_machining_layer_name: Machining
@@ -2393,7 +2393,7 @@ tab:
       warning:
         partial_support: |
           You need **SketchUp 2021.1** or a later version to use all features.
-          The 3D geometries of the fittings **cannot be imported**.
+          The 3D geometries of the hardware parts **cannot be imported**.
       obsolete_base: To stay in sync, you need to reload the BXF2 file.
   tutorials:
     label: Tutorials
@@ -2616,9 +2616,6 @@ tool:
       not_sibling_part: This part is not in the same group or component as the rest of the selection
       selection_contains_locked_entities: The selection contains locked entities
       wrong_material_type: The target part must be of type '{{ type }}'
-  highlight:
-    transparency: $t(tool.default.transparency)
-    zoom_extents: $t(tool.default.zoom_extents)
   smart_select:
     state_0_status: Click on a part to select it
     state_0_to_6_status: Select a parent element
@@ -2735,14 +2732,14 @@ tool:
     action_option_groove_groove_width_clearance: Width clearance
     action_option_groove_groove_width_clearance_status: Defines how much wider than the back's thickness the groove is machined, entirely on the outer side of the cabinet
     action_option_groove_groove_setback: Setback
-    action_option_groove_groove_setback_status: Specifies how far the back recedes toward the inside of the box, and thus where the groove is machined
+    action_option_groove_groove_setback_status: Specifies how far the back recedes toward the inside of the cabinet, and thus where the groove is machined
     action_option_groove_groove_through: Through groove
-    action_option_groove_groove_through_status: Extend the groove to the ends of the pieces that overlap their neighbors, when the groove opens up there without being visible
+    action_option_groove_groove_through_status: Extend the groove to the ends of the parts that overlap their neighbors, when the groove opens up there without being visible
     action_option_thickness_thickness: Thickness
     action_option_thickness_thickness_status: Defines the thickness of the panels
     action_option_overlay_inset_status: "Full inset: installed in the opening, flush with the front surface"
     action_3_option_overlay_inset_status: "Groove-mounted: fitted into a groove machined into the parts bordering the opening"
-    action_option_overlay_full_overlay_status: "Full overlay: installed in front of the front face, covering the sides up to the outer edge of the cabinet and extending to half the thickness of the interior separators"
+    action_option_overlay_full_overlay_status: "Full overlay: installed in front of the front face, covering the sides up to the outer edge of the cabinet and extending to half the thickness of the interior panels"
     action_3_option_overlay_full_overlay_status: "Surface-mounted back panel: installed on the back of the cabinet, covering the panels up to the outer edge and extending halfway through the thickness of the interior panels, without any machining"
     action_option_overlay_against_protrusions_status: "Surface-mounted front panel between protrusions: surface-mounted flush with the opening framework and fitted against protruding panels"
     action_3_option_overlay_against_protrusions_status: "Surface-mounted back panel between protrusions: face-mounted flush with the opening framework and fitted between protruding panels (extended gables) without any machining"
@@ -2769,8 +2766,8 @@ tool:
     action_option_options_top_up_status: Automatically orient the top of the module so that it faces upward (Z+)
     action_option_options_ask_name: Part Naming
     action_option_options_ask_name_status: Enter part names manually
-    action_option_options_layer_name: Layer
-    action_option_options_layer_name_status: Name of the layer on which the parts are placed
+    action_option_options_layer_name: Tag
+    action_option_options_layer_name_status: Name of the tag on which the parts are placed
     action_option_anchor_center_x_status: Centered in X
     action_option_anchor_center_y_status: Centered on Y
     action_option_anchor_center_z_status: Centered on Z
@@ -2806,7 +2803,7 @@ tool:
       no_back_panel_machining: "No groove could be machined: there are no adjacent parts bordering the back at this depth"
       no_module_file: No .skp files in this folder
       module_axis_no_scale: "Module cannot be scaled along the {{ axis }}: blocked by the component's behavior"
-      module_axis_curve_intersect: "Non-scalable module along {{ axis }}: one of the cross-sectional planes passes through a non-scalable curve"
+      module_axis_curve_intersect: "Non-scalable module along {{ axis }}: one of the cutting planes passes through a non-scalable curve"
     success:
       part_created: "New part created: {{ name }}"
       part_created_plural: "{{ count }} new parts created: {{ name }}"
@@ -2935,9 +2932,9 @@ tool:
     action_0: Paint Parts
     action_0_status: Click on a part to apply material to its instance
     action_1: Paint Edges
-    action_1_status: Click on the edge of a panel to apply material '$t(tab.materials.type_4)'
+    action_1_status: Click on an edge of a panel part to apply the material '$t(tab.materials.type_4)'
     action_2: Paint Faces
-    action_2_status: Click on the face of a panel to apply material '$t(tab.materials.type_6)'
+    action_2_status: Click on the face of a panel part to apply the material '$t(tab.materials.type_6)'
     action_3: Sample
     action_3_status: Click on a face to sample its material
     action_4: Clean
@@ -3001,7 +2998,7 @@ tool:
       not_part: The targeted object is not a part (component)
       not_orientable: The type of this part does not allow orienting it
       not_grained: The targeted part has no grain orientation
-      not_single_thickness_layer: The target part must consist of a single layer
+      not_single_thickness_layer: The target part must consist of a single ply
   # @no-translate
   smart_join:
     title: Assemble

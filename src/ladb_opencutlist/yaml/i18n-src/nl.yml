@@ -211,21 +211,21 @@ core:
       download: Er ging iets mis bij het downloaden van het archief.
       unzip: Er ging iets mis bij het uitpakken van het archief.
   preset:
-    label: Voorkeuren
-    manage: Voorkeursinstellingen beheren
+    label: Voorinstelling
+    manage: Voorinstellingen beheren
     save_to: Opslaan als
     restore_from: Terugzetten vanaf
-    app_defaults: oorspronkelijke presets
-    user_defaults: Mijn standaard presets
-    new: nieuwe preset
+    app_defaults: Oorspronkelijke voorinstelling
+    user_defaults: Mijn standaard voorinstelling
+    new: nieuwe voorinstelling
     new_prompt: |
       *Door een persoonlijke voorinstelling te maken, kunt u de huidige formulierinstellingen globaal behouden, zodat u ze in al uw modellen opnieuw kunt gebruiken.*
 
-      Voer de naam van de preset in:
+      Voer de naam van de voorinstelling in:
     rename_prompt_title: Hernoemen
     rename_prompt: Voer de nieuwe naam van de voorinstelling **"{{ name }}"** in
     delete_confirm_title: Verwijderen
-    delete_confirm: Weet u zeker dat u de preset **"{{ name }}"** wilt verwijderen?
+    delete_confirm: Weet u zeker dat u de voorinstelling **"{{ name }}"** wilt verwijderen?
     override_confirm_title: Bijwerken
     override_confirm: Bevestig je dat je de voorinstelling **"{{ name }}"** wil bijwerken met de inhoud van het formulier?
     new_error: Niet mogelijk, er bestaat al een voorinstelling **"{{ name }}"**
@@ -346,10 +346,10 @@ tab:
     highlight_parts: Toon onderdelen in het model
     edit_part_properties: Bewerk eigenschappen van dit onderdeel
     edit_part_axes_properties: Bewerk de eigenschappen (assen) van het onderdeel
-    edit_part_edges_properties: Bewerk de eigenschappen (randbanden) van het onderdeel
+    edit_part_edges_properties: Bewerk de eigenschappen (kanten) van het onderdeel
     edit_part_faces_properties: Bewerk de eigenschappen (vlakken) van het onderdeel
-    part_drawing_type_1: 2D aanzicht
-    part_drawing_type_2: 2D aanzicht omgekeerd
+    part_drawing_type_1: 2D Bovenaanzicht
+    part_drawing_type_2: 2D Achteraanzicht
     part_drawing_type_3: 2D Linkeraanzicht
     part_drawing_type_4: 2D Rechteraanzicht
     part_drawing_type_5: 2D Vooraanzicht
@@ -387,26 +387,26 @@ tab:
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
       # "Model Info" refers to the SketchUp menu to change the units
-      rounded_std_footer: Pas het aantal decimalen aan in *Model info* of controleer de maten van de componenten in deze groep.
+      rounded_std_footer: Pas het aantal decimalen aan in *Model info* of controleer de maten van de onderdelen in deze groep.
       highlight_part: $t(tab.cutlist.highlight_part)
       highlight_parts: $t(tab.cutlist.highlight_parts)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_parts_properties: Bewerk eigenschappen van een groep onderdelen
       edit_material: $t(tab.cutlist.menu.edit_material)
       folding_part: Uitklappen / Inklappen
-      material_origin_1: Het materiaal van dit onderdeel is bepaald door de instances
+      material_origin_1: Het materiaal van dit onderdeel is bepaald door de instanties
       material_origin_2: Het materiaal van dit onderdeel is gekopieerd van een van de bovenliggende componenten
-      material_origin_3: Het materiaal van dit component wordt overgenomen van een van de onderliggende componenten
-      orientation_locked_on_axis: De oriëntatie van dit component is vergrendeld
-      number_saved: Het nummer van dit component is bewaard
+      material_origin_3: Het materiaal dat voor dit onderdeel wordt gebruikt, wordt momenteel afgeleid van de onderliggende elementen
+      orientation_locked_on_axis: De oriëntatie van dit onderdeel is vergrendeld op zijn assen
+      number_saved: Het nummer van dit onderdeel is bewaard
       number_hidden: Het nummer '{{ number }}' kan niet worden gebruikt want het is al in gebruik
-      number_generated: Het nummer van dit component is automatisch gegenereerd
-      resized: Dit component is aangepast aan de maten van de definitie
-      flipped: Dit component is gespiegeld ten opzichte van het origineel
+      number_generated: Het nummer van dit onderdeel is automatisch gegenereerd
+      resized: Dit onderdeel is van grootte veranderd ten opzichte van zijn definitie
+      flipped: Dit onderdeel is gespiegeld ten opzichte van zijn definitie
       symmetrical: Gespiegelde herkenning staat uit voor dit onderdeel
       ignore_grain_direction: De nerfrichting wordt op dit onderdeel genegeerd
       follow_grain_direction: Detectie van nerfcontinuïteit is ingeschakeld voor dit onderdeel
-      auto_oriented: De oriëntatie van dit component is automatisch aangepast
+      auto_oriented: De oriëntatie van dit onderdeel is automatisch aangepast
       oko_label_filter: Deze badge opnemen/uitsluiten
       add_label_filter: Filter op '{{ label }}'
       remove_label_filter: verwijder filter '{{ label }}'
@@ -414,7 +414,7 @@ tab:
       remove_edge_material_name_filter: verwijder filter '{{ material_name }}'
       add_veneer_material_name_filter: Filter op '{{ material_name }}'
       remove_veneer_material_name_filter: verwijder filter '{{ material_name }}'
-      not_aligned_on_axes: "Let op: dit component is wellicht niet goed georiënteerd ten opzichte van haar assen"
+      not_aligned_on_axes: "Let op: dit onderdeel is wellicht niet goed georiënteerd ten opzichte van zijn assen"
       instance_count_by_part: Dit onderdeel wordt geteld als set van **{{ count }}** eenheden.
       unused_instance_count: Let op, **{{ count }}** eenheid van het laatste pakket wordt niet gebruikt.
       unused_instance_count_plural: Let op, **{{ count }}** eenheden van het laatste pakket worden niet gebruikt.
@@ -422,11 +422,11 @@ tab:
       used_instance_count_plural: "**{{ count }}** / {{ total }} gebruikte eenheden"
       thickness_layer_count: Het afgewerkte onderdeel bestaat uit **{{ count }}** lagen in zijn dikte
       thickness_layered: De hier aangegeven hoeveelheid komt overeen met het aantal stukken dat moet worden gesneden om alle lagen te verkrijgen.
-      thickness_layered_equation: "**{{ count }}** *deel* x **{{ layerCount }}** *lagen* = **{{ cuttingPartCount }}**"
-      thickness_layered_equation_plural: "**{{ count }}** *delen* x **{{ layerCount }}** *lagen* = **{{ cuttingPartCount }}**"
-      multiple_content_layers: "Let op! dit component is opgebouwd uit onderdelen dit zich bevinden in {{ count }} verschillende lagen: <br>{{ layers }}"
-      children_warnings: Let op! Er zitten {{ count }} waarschuwingen in deze groep
-      children_warnings_plural: Let op! Er zitten {{ count }} waarschuwingen in deze groep
+      thickness_layered_equation: "**{{ count }}** *onderdeel* x **{{ layerCount }}** *lagen* = **{{ cuttingPartCount }}**"
+      thickness_layered_equation_plural: "**{{ count }}** *onderdelen* x **{{ layerCount }}** *lagen* = **{{ cuttingPartCount }}**"
+      multiple_content_layers: "Let op! dit component is opgebouwd uit onderdelen die zich bevinden in {{ count }} verschillende tags: <br>{{ layers }}"
+      children_warnings: "Let op: er zijn {{ count }} waarschuwingen in de gegroepeerde onderdelen"
+      children_warnings_plural: "Let op: er zijn {{ count }} waarschuwingen in de gegroepeerde onderdelen"
       children_size_increase: Deze afmeting wordt vergroot met een overmaat voor {{ count }} gegroepeerde onderdelen
       invalid_final_area: Let op, de oppervlakte kan niet worden berekend omdat {{ count }} deel (van {{ total }}) een ongeldige oppervakte heeft
       invalid_final_area_plural: Opgelet, Dit cumulatief oppervlak kan niet berekend worden omdat {{ count }} onderdelen (van {{ total }}) een ongeldig oppervlak hebben
@@ -434,8 +434,8 @@ tab:
       is_dynamic_attributes_name: De benaming van dit onderdeel wordt overgenomen van het attribuut 'Name' van het dynamisch component
       has_edges: Dit onderdeel bevat {{ count }} randafwerking
       has_edges_plural: Dit onderdeel bevat {{ count }} randafwerkingen
-      has_faces: Dit deel bevat {{ count }} gefineerd oppervlak
-      has_faces_plural: Dit deel bevat {{ count }} gefineerde oppervlakken
+      has_faces: Dit onderdeel bevat {{ count }} gefineerd oppervlak
+      has_faces_plural: Dit onderdeel bevat {{ count }} gefineerde oppervlakken
       size_increased_0: |
         Verhoogd met de overmaat van het materiaal
         ({{ increase_1 }})
@@ -458,7 +458,7 @@ tab:
       part_axes: Interne assen van het onderdeel
       select_unselect_all_parts: Selecteer / De-selecteer alle onderdelen van de groep
       select_parts_in_cutlist: Selecteer het onderdeel in de onderdelenlijst
-      select_parts_in_cutlist_plural: Selecteer de {{ count }} delen op het debetblad
+      select_parts_in_cutlist_plural: Selecteer de {{ count }} onderdelen in de onderdelenlijst
       setup_group_cuttingdiagram: Configureer het zaagplan van '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'
       setup_group_packing: Configureer het zaagplan van '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'
       open_part_url: Open onderdeel-URL
@@ -470,12 +470,12 @@ tab:
       highlight_parts: $t(tab.cutlist.highlight_parts)
       labels_parts: Etiketten afdrukken
       write_2d: 2D projectie
-      write_3d: 3D projectie
+      write_3d: 3D-geometrie
       write_2d_parts: Exporteer de 2D-projectie van de onderdelen
       write_3d_parts: Exporteer de 3D-onderdeelgeometrie
       group_write_2d_parts: Exporteer de 2D-projectie van de groepsonderdelen
       group_write_3d_parts: Exporteer 3D-geometrie van groepsonderdelen
-      group_layout_parts: Overzicht van onderdelen in groep tekenen
+      group_layout_parts: Overzichtstekening van de onderdelen in de groep afdrukken
       group_numbers_save: Bewaar de onderdeel nummers van deze groep
       group_numbers_reset: Stel de onderdeel nummers van deze groep opnieuw in
       group_cuttingdiagram: Zaagschema
@@ -504,13 +504,13 @@ tab:
       material: Materiaal
       cumulable: Cumulatief
       cumulable_help: |
-        Als deze optie is geselecteerd, wordt de **lengte** of de **breedte** beschouwd als **lengte eenheid** of **breedte eenheid** vermenigvuldigd met het aantal bij het sorteren van de stuklijst.
+        Als deze optie is geselecteerd, wordt de **lengte** of de **breedte** beschouwd als **lengte eenheid** of **breedte eenheid** vermenigvuldigd met het aantal bij het sorteren van de onderdelenlijst.
       cumulable_0: Niet cumuleerbaar
       cumulable_1: Cumuleerbaar over de lengte
       cumulable_2: Cumuleerbaar over de breedte
       instance_count_by_part: Verpakking
       instance_count_by_part_help: |
-        Maakt het mogelijk onderdelen te tellen volgens het aantal benodigde **pakketten** in plaats van de in het model aanwezige eenheden.
+        Maakt het mogelijk onderdelen te tellen volgens het aantal benodigde *pakketten* in plaats van de in het model aanwezige eenheden.
         Onderdelen die gegroepeerd zijn in een pack moeten dezelfde definitie hebben.
 
         *Voorbeeld: Bereken 1 deel voor een paar ladegeleiders:
@@ -520,7 +520,7 @@ tab:
       mass: Massa
       mass_help: Het massa van het onderdeel zal worden gebruikt bij het genereren van **Schatting**.
       price: Prijs
-      price_help: De prijs van het deel zal worden gebruikt bij het genereren van **Schatting**.
+      price_help: De prijs van het onderdeel zal worden gebruikt bij het genereren van **Schatting**.
       thickness_layer_count: Aantal lagen
       thickness_layer_count_help: |
         Definieer hier het aantal lagen dat de dikte van het getekende stuk verdeelt.
@@ -544,8 +544,8 @@ tab:
       tags_help: |
         Met *Badges* kunt u aangepaste trefwoorden toevoegen aan elke definitie van een onderdeel.
         U kunt zoveel badges toevoegen als u wilt.
-        De zichtbare delen van uw cutlist kunnen vervolgens worden gefilterd op basis van deze badges.
-      tags_multiple_info: Alleen algemene badges zijn zichtbaar
+        Vervolgens kunt u de zichtbare onderdelen in uw onderdelenlijst op basis van deze badges filteren.
+      tags_multiple_info: Alleen gemeenschappelijke badges worden getoond
       orientation: Oriëntatie
       orientation_locked_on_axis: Vergrendel orientatie op as
       orientation_locked_on_axis_help: |
@@ -557,7 +557,7 @@ tab:
         - de *dikte* op de <span style='color:blue'>blauwe</span> as
       symmetrical: Schakel detectie van gespiegelde onderdelen op dit deel uit
       symmetrical_help: |
-        Indien dit vakje is aangevinkt, zal de detectie van een *gespiegeld deel* geen effect hebben op dit deel.
+        Indien dit vakje is aangevinkt, zal de detectie van een *gespiegeld deel* geen effect hebben op dit onderdeel.
       ignore_grain_direction: Nerf
       ignore_grain_direction_help: |
         Met deze optie kan voor dit onderdeel de nerfrichting die voor het materiaal is ingesteld, worden genegeerd.
@@ -565,7 +565,7 @@ tab:
       ignore_grain_direction_1: Negeer de nerfrichting op dit onderdeel
       follow_grain_direction: Nerfcontinuïteit
       follow_grain_direction_help: |
-        Wanneer deze optie is ingeschakeld, kunnen exemplaren van dit onderdeel worden beschouwd als onderdelen met **doorlopende nerf** ten opzichte van aangrenzende onderdelen die hetzelfde hebben:
+        Wanneer deze optie is ingeschakeld, kunnen instantie van dit onderdeel worden beschouwd als onderdelen met **Nerfcontinuïteit** ten opzichte van aangrenzende onderdelen die hetzelfde hebben:
         - dezelfde *Nerfcontinuïteitsgroep*
         - hetzelfde vlak
         - dezelfde oriëntatie
@@ -600,7 +600,7 @@ tab:
         - de *lengte* komt op de <span style='color:red'>rode</span> as
         - de *breedte* op de <span style='color:green'>groene</span> as
         - de *dikte* op de <span style='color:blue'>blauwe</span> as
-      flipped_detection: Detectie van gespiegelde delen
+      flipped_detection: Detectie van gespiegelde onderdelen
       flipped_detection_help: |
         Als deze optie is geselecteerd, worden gespiegelde onderdelen gedetecteerd en weergegeven als een nieuw onderdeel.
       smart_material: "*Slimme* toekenning van materiaal"
@@ -670,7 +670,7 @@ tab:
     list:
       filters: Filters
       filters_warning_0: Dit filter verbergt alle onderdelen!
-      filters_warning: Dit filter geeft slechts **{{ count }}** onderdelen weer op een totaal van {{ total }}.
+      filters_warning: Dit filter geeft slechts **{{ count }}** onderdeel weer op een totaal van {{ total }}.
       filters_warning_plural: Dit filter geeft slechts **{{ count }}** onderdelen weer op een totaal van {{ total }}.
       edge_material_names_filter: Te filteren lijst van kantenband materiaal
       veneer_material_names_filter: Te filteren lijst van fineer materiaal
@@ -723,7 +723,7 @@ tab:
       options_customize: Personalisering
       option_source: Bron
       option_source_summary: $t(tab.cutlist.list.summary)
-      option_source_cutlist: Onderdelen lijst
+      option_source_cutlist: Onderdelenlijst
       option_source_instances_list: Instantielijst
       option_format: Formaat
       option_csv_col_sep: Scheidingsteken
@@ -759,7 +759,7 @@ tab:
       material_description: Beschrijving van het materiaal
       material_url: Materiaal-URL
       material_std_dimension: Standaard afmetingen
-      entity_names: Naam instance
+      entity_names: Instantienamen
       description: Beschrijving
       url: URL
       tags: Badges
@@ -786,12 +786,12 @@ tab:
         no_column_formula_native: Beginwaarde van kolom '{{ col_name }}'
         no_column_formula: Voer een formule in
       warning:
-        is_group_selection: Onderdelen in de **gemaskeerde groepen** van uw stuklijst worden niet geëxporteerd.
+        is_group_selection: Onderdelen in de **gemaskeerde groepen** van uw onderdelenlijst worden niet geëxporteerd.
         is_part_selection: Exporteren is beperkt tot **geselecteerde onderdelen**.
     estimate:
       title: Schatting
       info_0: |
-        Deze functionaliteit laat u toe om een schatting te genereren van de **massa's** en **kosten** van het **basis materiaal**, nodig voor de productie van de onderdelen in de *stuklijst*.
+        Deze functionaliteit laat u toe om een schatting te genereren van de **massa's** en **kosten** van het **basis materiaal**, nodig voor de productie van de onderdelen in de *onderdelenlijst*.
       options_general: Algemeen
       total: Totaal
       total_used: Gebruikt
@@ -819,7 +819,7 @@ tab:
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} fout**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} fouten**."
       warning:
-        is_group_selection: Onderdelen in de **gemaskeerde groepen** van uw stuklijst worden niet meegeteld.
+        is_group_selection: Onderdelen in de **gemaskeerde groepen** van uw onderdelenlijst worden niet meegeteld.
         is_part_selection: De schatting is beperkt tot **geselecteerde onderdelen**.
       tip:
         not_enough_data: |
@@ -1147,7 +1147,7 @@ tab:
       option_rectangle_leftover_mode_y:  Over de lengte van de plaat
       option_irregular_allowed_rotations: Toegestane rotaties
       option_irregular_allowed_rotations_help: |
-        Bepaalt de stapgrootte van de mogelijke rotatiehoeken van het stuk voor de plaatsing.
+        Bepaalt de stapgrootte van de mogelijke rotatiehoeken van het onderdeel voor de plaatsing.
 
         *Materialen met een nerf staan alleen stappen van 0° en 180° toe.*
       option_irregular_allowed_rotations_0: Geen
@@ -1156,7 +1156,7 @@ tab:
       option_irregular_allowed_rotations_free: Vrij in te vullen
       option_irregular_allow_mirroring: Spiegel toegestaan
       option_irregular_allow_mirroring_help: |
-        Bepaalt of het spiegelen van het stuk is toegestaan voor de plaatsing.
+        Bepaalt of het spiegelen van het onderdeel is toegestaan voor de plaatsing.
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
       option_irregular_leftover_mode:  Leg-/spreidingsrichting
@@ -1170,8 +1170,8 @@ tab:
         Minimale afstand tussen elk stuk.
         Deze waarde kan overeenkomen met de breedte van het zaagblad of het snijgereedschap.
       option_trimming: Marge
-      option_trimming_1d_help: Netto-marge aan elk uiteinde van de staaf of strook die als reststuk moet worden beschouwd.
-      option_trimming_2d_help: Netto-marge rondom het hele paneel of de hele plaat die als reststuk moet worden beschouwd.
+      option_trimming_1d_help: Netto-schoonzaagmarge aan elk uiteinde van de plank of kantenband die als reststuk moet worden beschouwd.
+      option_trimming_2d_help: Netto-schoonzaagmarge rondom het hele paneel of de hele fineervel die als reststuk moet worden beschouwd.
       option_items_formula: Formule
       option_items_formula_help: |
         Maakt het mogelijk om *Ruby*-code te schrijven om de identificatietekst van de stukken op het diagram aan te passen.
@@ -1235,7 +1235,7 @@ tab:
       grain_groups:
         title: "{{ count }} nerfcontinuïteitsgroep"
         title_plural: "{{ count }} nerfcontinuïteitsgroepen"
-        name: Beschrijving
+        name: Naam
         item_count: Σ Onderdelen
       tooltip:
         scroll_to_block_1d: Scroll naar de eerste plank of kantenband
@@ -1283,13 +1283,13 @@ tab:
         leftovers_to_keep_plural: Rest om te bewaren
         cut: Snede
         cut_plural: Sneden
-        cut_trimming: Zuivere snit
+        cut_trimming: Schoonzaagsnede
         cut_primary: Primaire snede
         cut_primary_plural: Primaire snedes
         cut_none: Geen
         cut_depth: Niveau {{ depth }}
       write:
-        title: De lay-out exporteren
+        title: De zaagschema exporteren
         info_0: |
           Met deze module kunt u de **geometrie** van de *lay-out* exporteren als een lijst met bestanden in [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) of [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
         option_bin_sheet_good: Paneel
@@ -1450,7 +1450,7 @@ tab:
       option_parts_opacity: Dekking
       option_parts_opacity_0: Transparant
       option_parts_opacity_1: Opaak
-      option_parts_opacity_help: Selecteer de opaciteit van de delen.
+      option_parts_opacity_help: Hiermee kunt u de opaciteit van de delen kiezen.
       # A callout is a piece of descriptive text connected to a drawing element via a leader line.
       option_pins: Verwijzingen
       option_pins_hidden: Weergave
@@ -1661,7 +1661,7 @@ tab:
         De onderdelen die u wil weergeven in de *stuklijst* moeten **component** instances zijn.
         Wanneer je enkel groepen gebruikt, zet die dan om in componenten.
         Het gebruik van componenten laat toe om identieke onderdelen te repliceren zonder ze te hoeven dupliceren.
-      no_typed_materials: Pas een materiaal toe op de onderdelen die je wil zien in je stuklijst en definieer het type van dat materiaal (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** of **$t(tab.materials.type_5)**) in de tab <i class="ladb-opencutlist-icon-materials"></i> **Materialen**.
+      no_typed_materials: Pas een materiaal toe op de onderdelen die je wil zien in je onderdelenlijst en definieer het type van dat materiaal (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** of **$t(tab.materials.type_5)**) in de tab <i class="ladb-opencutlist-icon-materials"></i> **Materialen**.
     obsolete_base: Om gesynchroniseerd te blijven moet je de stuklijst opnieuw genereren.
   materials:
     label: Materialen
@@ -1705,7 +1705,7 @@ tab:
       reset_prices_success: De prijzen van alle materialen zijn opnieuw vastgesteld.
     new_material:
       title: Maak een nieuw materiaal
-      name: Beschrijving
+      name: Naam
       name_warning: Ongeldige naam
       color: Kleur
       color_warning: Ongeldige kleur
@@ -1715,7 +1715,7 @@ tab:
       general: Algemeen
       texture: Textuur
       no_texture: Zonder textuur
-      name: Beschrijving
+      name: Naam
       type: Type
       description: Beschrijving
       url: URL
@@ -1820,7 +1820,7 @@ tab:
         Herschik de volgende kenmerken om de sorteer strategie te bepalen van de materialen in de lijst.
         Elk kenmerk kan in <i class="ladb-opencutlist-icon-sort-asc"></i> *oplopend* of <i class="ladb-opencutlist-icon-sort-desc"></i> *aflopend* gesorteerd worden.
       property_type: Type
-      property_name: Beschrijving
+      property_name: Naam
     delete:
       message: |
         U staat op het punt om het materiaal **{{ material_name }}** uit uw model te verwijderen.
@@ -1866,7 +1866,7 @@ tab:
       title_instance_multiple: Eigenschappen van de instantiegroep
       multiple_alert: Gemeenschappelijke eigenschappen van de groep van {{ node_count }} instanties.
       general: Algemeen
-      name: Beschrijving
+      name: Naam
       instance_name: Instantie
       material: Materiaal
       is_grain_group: Instellen als **Nerfcontinuïteitsgroep**
@@ -2128,7 +2128,7 @@ tab:
         option_front_part_layer_name: Fronten
         option_front_part_layer_name_help: Tag die moet worden toegepast op de frontonderdelen.
         option_back_part_layer_name: Achterwanden
-        option_back_part_layer_name_help: Label toe te passen op kastachterwanden.
+        option_back_part_layer_name_help: Tag toe te passen op kastachterwanden.
         option_machining_material_name: Bewerkingen
         option_machining_material_name_help: Materiaal dat moet worden toegepast op de **bewerkingen**.
         option_machining_layer_name: Bewerkingen
@@ -2144,11 +2144,11 @@ tab:
         option_subtract_machinings_help: De **groeven**, **sponningen** en **afschuiningen** van de onderdelen, ook die van accessoires, worden uit het volume verwijderd in plaats van getekend. Boorgaten blijven getekend.
         warning:
           subtract_machinings_failed: "De bewerkingen konden niet uit deze onderdelen worden uitgesneden en worden daarom getekend: {{ names }}"
-        old_name: Naam van oorsprong
+        old_name: Oorspronkelijke naam
         new_name: Nieuwe naam
         count: Aant.
         formula:
-          part: Stuk
+          part: Onderdeel
           project: Project
           cabinet: Meubel
       model:
@@ -2156,7 +2156,7 @@ tab:
         date: Datum
       cabinet:
         list: Lijst van meubels
-        description: Beschrijving
+        description: Naam
         width: Breedte
         height: Hoogte
         depth: Diepte
@@ -2251,7 +2251,7 @@ tab:
     font_size_normal: Normaal
     font_size_small: Klein
     font_size_tiny: Zeer klein
-    print_margin: Marges afdrukken
+    print_margin: Afdrukmarges
     print_margin_normal: Normale
     print_margin_small: Kleine
     table_row_size: Grootte van tabelrijen
@@ -2277,7 +2277,7 @@ tab:
         Met deze functie kunt u uw voorinstellingen exporteren naar een **.json**-bestand.
         Selecteer de voorinstellingen die u wilt exporteren.
         Als de geselecteerde voorinstellingen verwijzen naar **.skp**- of **.skm**-bestanden, worden deze opgenomen in een **.oclp**-archief zodat het exportbestand direct kan worden gedeeld.
-      export_global_presets_success: De presets zijn succesvol geëxporteerd.
+      export_global_presets_success: De voorinstelling zijn succesvol geëxporteerd.
       export_global_presets_success_with_assets: De voorinstellingen zijn succesvol geëxporteerd, samen met {{ count }} bijbehorend(e) bestand(en).
       import_global_presets: Voorinstellingen importeren
       import_global_presets_help: |
@@ -2395,9 +2395,6 @@ tool:
       not_sibling_part: Dit onderdeel bevindt zich niet in dezelfde groep of component als de rest van de selectie
       selection_contains_locked_entities: De selectie bevat vergrendelde onderdelen
       wrong_material_type: Het beoogde deel moet van het type '{{ type }}' zijn
-  highlight:
-    transparency: $t(tool.default.transparency)
-    zoom_extents: $t(tool.default.zoom_extents)
   smart_select:
     state_0_status: Klik op een stuk om het te selecteren
     state_0_to_6_status: Selecteer een bovenliggend element
@@ -2548,8 +2545,8 @@ tool:
     action_option_options_top_up_status: De bovenzijde van de module automatisch zo goed mogelijk naar boven (Z+) draaien
     action_option_options_ask_name: Naamgeving van de stukken
     action_option_options_ask_name_status: De naam van de stukken handmatig invoeren
-    action_option_options_layer_name: Laag
-    action_option_options_layer_name_status: Naam van de laag waarop de onderdelen worden geplaatst
+    action_option_options_layer_name: Tag
+    action_option_options_layer_name_status: Naam van de tag waarop de onderdelen worden geplaatst
     action_option_anchor_center_x_status: Gecentreerd op X
     action_option_anchor_center_y_status: Gecentreerd op Y
     action_option_anchor_center_z_status: Gecentreerd op Z
@@ -2680,7 +2677,7 @@ tool:
     action_option_axes_context_status: Verplaatsen langs de assen van de groep of component die het stuk bevat
     action_option_axes_entity_status: Verplaatsen langs de assen van het stuk
     action_option_paneling_joint_type_flat_status: Vlakke verbinding
-    action_option_paneling_joint_type_miter_status: Verstek
+    action_option_paneling_joint_type_miter_status: Verstekzaagsnede
     action_option_paneling_direction_inward_status: Binnen
     action_option_paneling_direction_outward_status: Buiten
     action_option_options_centered_status: Centraal plaatsen op gestrekte elementen
@@ -2757,7 +2754,7 @@ tool:
     action_0_status: Klik op een onderdeel om het exemplaar ervan langs een van de afmetingen te spiegelen
     action_1: Wissel lengte ↔ breedte
     action_1_status: Klik op een onderdeel om de lengte te verwisselen met de breedte
-    action_2: Wissel gezicht ↔ Tegengezicht
+    action_2: Wissel Voorzijde ↔ Achterzijde
     action_2_status: Klik op een stuk om de aflezing van de voorkant te verwisselen met de achterkant
     action_3: Pas de assen aan
     action_3_status: Richt op een gebied van een onderdeel en klik op een rand om de assen aan te passen

@@ -15,6 +15,7 @@ default:
   stop: إيقاف
   validate: تطبيق
   confirm: تأكيد
+  finish: إنهاء
   ok: موافق
   open: فتح
   see: معاينة
@@ -27,6 +28,7 @@ default:
   export: تصدير
   import: استيراد
   load: رفع
+  replace: استبدال
   preview: معاينة
   options: الخيارات
   caution: تحذير
@@ -129,6 +131,7 @@ core:
     command:
       dialog: OpenCutList
       smart_draw: ارسم قِطعا
+      smart_build: إنشاء قِطع
       smart_handle: تعامل مع القِطع
       smart_reshape: إعادة تشكيل القِطع
       smart_paint: اصبغ القِطع
@@ -278,6 +281,7 @@ core:
       help: اكتب **@** للحصول على قائمة المتغيرات
     textinput_file:
       browse: تصفح
+      browse_library: استعراض ونسخ إلى المكتبة
     textinput_size:
       quantity: العدد
     three_viewer:
@@ -317,6 +321,10 @@ core:
       error:
         no_segment: لا توجد خطوط إنشائية قابلة للاستخدام في التحديد
         no_face: تعذر إعادة بناء أي حلقة مغلقة مستوية
+  library:
+    libraries: المكتبات
+    user: مكتبتي
+    bundled: مكتبة OCL
 tab:
   cutlist:
     label: القِطع
@@ -2103,6 +2111,7 @@ tab:
         info_1: ستتمكن من اختيار موضعها في النموذج النشط
         materials: الخامات
         layers: وسوم
+        geometry: الشكل الهندسي
         option_parts_formula: الصيغة
         option_parts_formula_help: تتيح لك المعادلة تخصيص أسماء القِطع المستوردة
         option_part_wood_material_name: خشب
@@ -2254,6 +2263,7 @@ tab:
       export_global_presets: تصدير الإعدادات المسبقة
       export_global_presets_success: نجح تصدير الإعدادات المسبقة
       import_global_presets: استيراد إعدادات مسبقة
+      open_library_dir: فتح مجلد المكتبة
       import_global_presets_success: |
         لقد استوردت إعدادات *OpenCutList* المسبقة بنجاح
         OpenCutList لأخذ التغييرات بالحسبان، عليك **غلق** و **إعادة فتح** نافذة
@@ -2278,6 +2288,8 @@ tab:
       error:
         no_preset_to_export: لا إعدادات مسبقة للتصدير
         no_preset_to_import: لا إعدادات مسبقة للاستيراد
+        failed_to_export: "تعذّر تصدير الإعدادات المسبقة: **{{ error }}**."
+        failed_to_open_library_dir: "تعذّر فتح مجلد المكتبة: **{{ error }}**."
         failed_to_import: "يستحيل استيراد الإعدادات المسبقة : **{{ error }}**"
         failed_to_import_invalid_hexdigest: لقد عُدِّل على هذا الملف. لا يمكن استيراده.
         failed_to_import_bad_file_format: صيغة الملف غير صالحة
@@ -2334,7 +2346,10 @@ tool:
     vcb_diameter: القطر
     vcb_distance: المسافة
     vcb_spacings: حجم الفراغ
+    vcb_angle: الزاوية
     locked_on_last_measure_status: قفل على آخر قياس
+    library_choose: اختر مكتبة
+    modal_only_help: إعداد متاح فقط في هذه النافذة، غير موجود في شريط الأدوات
     error:
       no_direction: يرجى تحديد اتجاه باستخدام الفأرة
       invalid_length: الطول {{ value }} غير صالح
@@ -2348,15 +2363,15 @@ tool:
       missing_close_parenthesis: قوس إغلاق مفقود
       missing_operand: متغير مفقود
       zero_division: القسمة على الصفر
+      comma_argument_separator: افصل بين القيم بفاصلة منقوطة « ; » لأن الفاصلة تُستخدم فاصلًا عشريًاكذلك
+      invalid_dimension: "لا يُجمع الطول إلا مع طول آخر: العدد بلا وحدة هو معامل"
+      no_matching_value: لا قيمة من القيم المقترحة مناسبة
       lt_min_distance: المسافة {{ value1 }} أقل من المسافة الدنيا البالغة {{ value2 }}
       gt_max_distance: المسافة {{ value1 }} أكبر من المسافة القصوى {{ value2 }}
       locked_part: هذه القِطعة مقفلة
       not_sibling_part: هذه القِطعة ليست في نفس عنصر أو مجموعة بقية التحديد
       selection_contains_locked_entities: يحتوي التحديد على كيانات مقفلة
       wrong_material_type: يجب أن تكون القِطعة المستهدفة من النوع '{{ type }}'
-  highlight:
-    transparency: $t(tool.default.transparency)
-    zoom_extents: $t(tool.default.zoom_extents)
   smart_select:
     state_0_status: انقر على قطعة لتحديدها
     state_0_to_6_status: حدد عنصرا متبوعا
@@ -2418,6 +2433,10 @@ tool:
       part_created: "تم إنشاء قطعة جديدة: {{ name }}"
       part_created_plural: "{{ count }} قِطع جديدة أُنشئت : {{ name }}"
   smart_build:
+    title: إنشاء
+    action_0_add_name: اسم الملف
+    action_0_add_overwrite: الملف « {{ name }}.skp » موجود مسبقا. هل تريد استبداله؟
+    action_3: إنشاء ظهر
     action_option_group_thickness: السُمك
     action_option_group_axes: المحاور
     action_option_group_measure_type: القياس
@@ -2435,8 +2454,16 @@ tool:
     action_option_options_reduce_envelope_status: مراعاة القِطع الغائرة
     action_option_options_reuse_definition: إعادة استخدام القِطع
     action_option_options_reuse_definition_status: "بدلًا من إنشاء قطعة جديدة، أعد استخدام القطعة الموجودة التي لها نفس الشكل وتقع في نفس المنطقة "
+    action_option_options_pick_material: القطّارة
+    action_option_options_pick_material_status: تطبيق خامة القِطعة التي يمر فوقها المؤشر على القِطع المُنشأة
+    action_option_options_face_camera: مواجهة الكاميرا
+    action_option_options_top_up: إلى الأعلى نحو Z+
     action_option_options_ask_name: تسمية القِطع
     action_option_options_ask_name_status: إدخال تسمية القِطع يدويًا
+    action_option_anchor_center_x_status: توسيط على X
+    action_option_anchor_center_y_status: توسيط على Y
+    action_option_anchor_center_z_status: توسيط على Z
+    action_option_anchor_origin_status: مبدأ العنصر
     error:
       invalid_divider_container: "هذه القطعة معزولة : لا تشترك في أي مجموعة أو عنصر مع قِطع أخرى"
       invalid_divider_cavity: لا يوجد تجويف في هذا الموضع
@@ -2483,6 +2510,8 @@ tool:
     action_toggle_raytest_status: أسقط على النقطة التالية
     warning:
       copies_disable_mirror: النسخ المتعدد يعطل خيار '$t(tool.smart_handle.action_option_options_mirror_status)'
+    error:
+      not_door: هذه القِطعة ليست بابًا مزوّدًا بمفصلات
   smart_reshape:
     title: أعد التشكيل
     action_0: مدِّد
@@ -2574,6 +2603,8 @@ tool:
     action_option_edges_2_status: اصبغ حواشي القطعة المستهدفة الأربعة
     action_option_faces_0_status: اصبغ الوجه المستهدف فقط
     action_option_faces_1_status: اصبغ وجهي القِطعة المستهدفة
+    state_8_status: حدّد الخامات المراد استبدالها، ثم أكّد
+    select_filter_title: الخامات المراد استبدالها
     edges: حاشية {{ count }}
     edges_plural: " حواشٍ {{ count }}"
     edge_ymin: الطول 1

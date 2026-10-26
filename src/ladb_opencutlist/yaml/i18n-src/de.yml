@@ -6,8 +6,8 @@ _disabled_msg: |
 
   Um bei der Fertigstellung der Übersetzung zu helfen, konsultieren Sie bitte die [OpenCutList Documentation](https://docs.opencutlist.org/for-translators/general).
 # the reload message will be displayed when a user switches to this language
-_reload_msg: Um alle Änderungen zu berücksichtigen, müssen Sie dieses Fenster **schließen** und **wieder öffnen**.
-_description: Holzlistengenerator für Tischler/Schreiner/Zimmerer. Open Source, crowdfunded und einfach zu bedienen ;)
+_reload_msg: Um alle Änderungen zu berücksichtigen, müssen Sie das OpenCutList Fenster **schließen** und **wieder öffnen**.
+_description: Holzlisten- und Schnittplänegenerator für Platten und Stangen für Tischler/Schreiner/Zimmerer. Open Source, crowdfunded und einfach zu bedienen ;)
 default:
   minimize: Minimieren
   maximize: Maximieren
@@ -219,7 +219,7 @@ core:
     user_defaults: Meine Voreinstellung
     new: Neue Voreinstellung
     new_prompt: |
-      *Durch das Erstellen einer benutzerdefinierten Voreinstellung können Sie die aktuellen Formulareinstellungen global beibehalten, damit Sie diese in allen Ihren Modellen wiederverwenden können.*
+      *Durch das Erstellen einer benutzerdefinierten Voreinstellung können Sie die aktuellen Einstellungen des Formulars global beibehalten, damit Sie diese in allen Ihren Modellen wiederverwenden können.*
 
       Geben Sie den Namen der Voreinstellung ein:
     rename_prompt_title: Umbenennung
@@ -569,8 +569,8 @@ tab:
     edit_part_axes_properties: Eigenschaften (Achsen) des Teils bearbeiten
     edit_part_edges_properties: Eigenschaften (Kanten) des Teils bearbeiten
     edit_part_faces_properties: Eigenschaften (Flächen) des Teils bearbeiten
-    part_drawing_type_1: 2D Draufsicht
-    part_drawing_type_2: 2D Rückansicht
+    part_drawing_type_1: 2D Vorderseite
+    part_drawing_type_2: 2D Rückseite
     part_drawing_type_3: 2D Seitenansicht von links
     part_drawing_type_4: 2D Seitenansicht von rechts
     part_drawing_type_5: 2D Vorderansicht
@@ -645,7 +645,7 @@ tab:
       thickness_layered: Die hier angegebene Menge entspricht der Anzahl der zu schneidenden Teile, um alle Lagen zu erhalten.
       thickness_layered_equation: "**{{ count }}** *Teil* x **{{ layerCount }}** *Lagen* = **{{ cuttingPartCount }}**"
       thickness_layered_equation_plural: "**{{ count }}** *Teile* x **{{ layerCount }}** *Lagen* = **{{ cuttingPartCount }}**"
-      multiple_content_layers: Achtung, dieses Teil setzt sich aus Unterteilen zusammen, die sich in {{ count }} verschiedenen Ebenen, Tags oder Layers, befinden:<br>{{ layers }}
+      multiple_content_layers: Achtung, dieses Teil setzt sich aus Unterteilen zusammen, die sich in {{ count }} verschiedenen Tags befinden:<br>{{ layers }}
       children_warnings: Achtung, es gibt {{ count }} Warnung in den gruppierten Teilen
       children_warnings_plural: Achtung, es gibt {{ count }} Warnungen in den gruppierten Teilen
       children_size_increase: Diese Dimension enthält ein Übermaß für {{ count }} der gruppierten Teile
@@ -696,7 +696,7 @@ tab:
       write_3d_parts: 3D-Teilegeometrie exportieren
       group_write_2d_parts: 2D-Projektion der Teile in der Gruppe exportieren
       group_write_3d_parts: 3D-Geometrie der Teile in der Gruppe exportieren
-      group_layout_parts: Gruppenübersicht zeichnen
+      group_layout_parts: Gesamtzeichnung der Teile der Gruppe ausdrucken
       group_numbers_save: Nummern der Gruppenteile speichern
       group_numbers_reset: Teilenummern der Gruppe zurücksetzen
       group_cuttingdiagram: Schnittplan
@@ -742,7 +742,7 @@ tab:
       mass_help: Die Masse des Teils wird bei der Erstellung der **Kalkulation** verwendet.
       price: Preis
       price_help: Der Preis des Teils wird bei der Erstellung der **Kalkulation** verwendet.
-      thickness_layer_count: Anzahl Lagen
+      thickness_layer_count: Anz. Lagen
       thickness_layer_count_help: |
         Definieren Sie hier die Anzahl der Lagen, die das gezeichnete Teil in seiner Dicke unterteilen.
 
@@ -768,7 +768,7 @@ tab:
         Anschließend können Sie die Auswahl der sichtbaren Teile der Holzliste anhand dieser Badges einschränken.
       tags_multiple_info: Nur gemeinsame Badges werden angezeigt
       orientation: Ausrichtung
-      orientation_locked_on_axis: An das Koordinatensystem binden
+      orientation_locked_on_axis: Ausrichtung an den Achsen des Teils fixieren
       orientation_locked_on_axis_help: |
         Ist diese Option aktiv, hat die Option *Automatische Orientierung der Teile* keinen Einfluss auf dieses Teil.
 
@@ -781,7 +781,7 @@ tab:
         Wird dieses Kästchen aktiviert, hat die Erkennung von *Spiegelteilen* keine Auswirkung auf dieses Teil.
       ignore_grain_direction: Faserverlauf
       ignore_grain_direction_help: |
-        Wenn dieses Kästchen aktiviert ist, wird der Faserverlauf für dieses Bauteil ignoriert.
+        Wenn dieses Kästchen aktiviert ist, wird der auf dem Material definierte Faserverlauf für dieses Teil nicht berücksichtigt.
       ignore_grain_direction_0: Die Faser verläuft in Längsrichtung
       ignore_grain_direction_1: Faserverlauf ignorieren
       follow_grain_direction: Fortlaufende Maserung
@@ -808,14 +808,14 @@ tab:
       axes_origin_position_front_center: Ursprung in der Mitte der Vorderseite anlegen
       over_length: Der Länge nach
       over_width: Der Breite nach
-      edge_disabled_help: Diese Kante ist nicht konfigurierbar, weil dort im Modell keine materialtragende Fläche erkannt wurde.
-      face_disabled_help: Diese Fläche ist nicht konfigurierbar, weil dort im Modell keine materialtragende Fläche erkannt wurde.
+      edge_disabled_help: Diese Kante des Teils ist nicht konfigurierbar, weil dort im Modell keine materialtragende Fläche erkannt wurde.
+      face_disabled_help: Diese Fläche des Teils ist nicht konfigurierbar, weil dort im Modell keine materialtragende Fläche erkannt wurde.
       multiple_values: Mehrere Werte
       loading_preview: Vorschau wird geladen
     option:
       auto_orient: Automatische Ausrichtung der Teile
       auto_orient_help: |
-        Ist diese Option aktiv, werden die Maße so sortiert, dass der größte Wert die *Länge* darstellt und der kleinste Wert die *Dicke*.
+        Ist diese Option aktiv, werden die drei Maße der Teile so sortiert, dass der größte Wert die *Länge* darstellt und der kleinste Wert die *Dicke*.
 
         Ansonsten werden die Maße der lokalen Achsen übernommen, wobei:
         - die *Länge* auf der <span style='color:red'>roten</span> Achse ist,
@@ -845,7 +845,7 @@ tab:
       hide_descriptions: Beschreibungen ausblenden
       hide_descriptions_help: Wenn diese Option aktiviert ist, werden die **Beschreibungen** auf den Teilen nicht angezeigt.
       hide_tags: Badges ausblenden
-      hide_tags_help: Ist diese Option aktiv, werden **Badges** nicht angezeigt.
+      hide_tags_help: Ist diese Option aktiv, werden die **Badges** der Teile nicht angezeigt.
       hide_cutting_dimensions: Rohmaße ausblenden
       hide_cutting_dimensions_help: Ist diese Option aktiv, werden die **Rohmaße** der Teile nicht angezeigt.
       hide_bbox_dimensions: Fertigmaße ausblenden
@@ -902,7 +902,7 @@ tab:
       summary: Zusammenfassung
       material_type: Typ
       material_thickness: Material / Dimensionen
-      part_count: Anzahl
+      part_count: Anz. Teile
       area: Fläche
       area_short: Fl.
       volume: Volumen
@@ -1317,7 +1317,7 @@ tab:
       option_std_bin_2d_sheet_good: Standard-Platten
       option_std_bin_2d_veneer: Standard-Furnierblätter
       option_std_bin_2d_help: |
-        Wählen Sie die Größen der Standard-Platte oder des Standard-Furnierblatts, das dupliziert werden soll, um die bestmögliche Platzierung zu berechnen.
+        Wählen Sie die Größen der Standard-Platte oder des Standard-Furnierblatts, das dupliziert werden soll, um die bestmögliche Platzierung aller Teile zu berechnen.
 
         Diese Liste wird über das Feld **$t(tab.materials.edit_material.std_sizes)** des Materials konfiguriert.
 
@@ -1418,8 +1418,8 @@ tab:
       option_hide_part_list_2d_help: Anzeigen oder Ausblenden der Liste der Teile für jede Platte oder jedes Furnierblatt.
       option_part_drawing_type: Formen der Teile
       option_part_drawing_type_0: Ausgeblendet
-      option_part_drawing_type_1: Draufsicht
-      option_part_drawing_type_2: Untersicht
+      option_part_drawing_type_1: Vorderansicht
+      option_part_drawing_type_2: Rückansicht
       option_part_drawing_type_help: |
         Ermöglicht es, die tatsächliche Form der Teile sowie ihre Bearbeitungen im Diagramm ein- oder auszublenden.
 
@@ -1435,7 +1435,7 @@ tab:
       option_origin_corner_1: Untere linke Ecke
       option_origin_corner_2: Obere rechte Ecke
       option_origin_corner_3: Untere rechte Ecke
-      option_origin_corner_help: Bestimmt die Position des Koordinatenursprungs zur Darstellung der Teile auf Platten, Furnierblätter, Stangen oder Kantenbänder.
+      option_origin_corner_help: Ermöglicht die Auswahl der Position des Koordinatenursprungs zur Darstellung der Teile auf Platten, Furnierblätter, Stangen oder Kantenbänder.
       option_highlight_primary_cuts: Primärschnitte
       option_highlight_primary_cuts_0: Nur beim Überfahren mit der Maus
       option_highlight_primary_cuts_1: Immer sichtbar
@@ -1547,7 +1547,7 @@ tab:
           is_bin_selection: "**Ausgeblendete Elemente** werden nicht exportiert."
         error:
           overflow_gt_spacing: |
-            Der Bearbeitungs-Überlaufabstand ({{ overflow }}) muss kleiner oder gleich dem Abstand ({{ spacing }}) sein, der in diesem Schnittplan konfiguriert ist.
+            Der Bearbeitungszugabe ({{ overflow }}) muss kleiner oder gleich dem Abstand ({{ spacing }}) sein, der in diesem Schnittplan konfiguriert ist.
       error:
         no_part: Kein Teil.
         no_bin_1d: Keine Standard-Stange oder -Kantenband wurde ausgewählt und es stehen keine Reste zur Verfügung.
@@ -1561,8 +1561,8 @@ tab:
       warning:
         is_part_selection: Dieser Schnittplan beschränkt sich auf die **ausgewählten Teile**.
         cutting_dimensions: Dieser Schnittplan verwendet die **Rohmaße** der Teile.
-        cutting_dimensions_increase_1d: "Übermaß wurde auf dem Material '{{ material_name }}' konfiguriert: Längenzumaß von (**{{ length_increase }}**)."
-        cutting_dimensions_increase_2d: "Übermaße wurden auf dem Material '{{ material_name }}' konfiguriert: Längenzumaß (**{{ length_increase }}**) und Breitenzumaß (**{{ width_increase }}**)."
+        cutting_dimensions_increase_1d: "Übermaß wurde auf dem Material '{{ material_name }}' konfiguriert: Längenübermaß von (**{{ length_increase }}**)."
+        cutting_dimensions_increase_2d: "Übermaße wurden auf dem Material '{{ material_name }}' konfiguriert: Längenübermaß (**{{ length_increase }}**) und Breitenübermaß (**{{ width_increase }}**)."
         cutting_dimensions_edge_decrement: Maße reduziert um die Materialstärke der Kantenbänder. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
       title: Etiketten
@@ -1667,21 +1667,21 @@ tab:
       option_parts_colored: Farbe
       option_parts_colored_0: Ohne Farbe
       option_parts_colored_1: Farbe des Materials
-      option_parts_colored_help: Definiert das Erscheinungsbild der Teile.
+      option_parts_colored_help: Ermöglicht die Auswahl der Darstellung der Teile.
       option_parts_opacity: Opazität
       option_parts_opacity_0: Durchsichtig
       option_parts_opacity_1: Blickdicht
-      option_parts_opacity_help: Definiert die Deckkraft der Teile.
+      option_parts_opacity_help: Ermöglicht die Auswahl der Deckkraft der Teile.
       # A callout is a piece of descriptive text connected to a drawing element via a leader line.
-      option_pins: Hinweistext
+      option_pins: Hinweistexte
       option_pins_hidden: Anzeige
-      option_pins_hidden_0: Mit Hinweistext
-      option_pins_hidden_1: Ohne Beschriftung
-      option_pins_hidden_help: Ein- oder Ausblenden des Hinweistextes mit Nummer oder Bezeichnung.
+      option_pins_hidden_0: Mit Hinweistexten
+      option_pins_hidden_1: Ohne Hinweistext
+      option_pins_hidden_help: Ein- oder Ausblenden des Hinweistexte mit Nummer oder Bezeichnung.
       option_pins_colored: Farbe
       option_pins_colored_0: Ohne Farbe
       option_pins_colored_1: Farbe des Teils
-      option_pins_colored_help: Definiert die Farbe des Hinweistextes.
+      option_pins_colored_help: Ermöglicht die Auswahl der Farbe des Hinweistextes.
       option_pins_formula: Formel
       option_pins_formula_help: Ermöglicht das Schreiben von *Ruby*-Code, um den Text des Hinweistextes anzupassen.
       option_pins_length: Länge
@@ -1689,14 +1689,14 @@ tab:
       option_pins_length_1: Kurz
       option_pins_length_2: Mittel
       option_pins_length_3: Lang
-      option_pins_length_help: Definiert die Länge der Verweislinie.
+      option_pins_length_help: Ermöglicht die Auswahl der Länge der Verweislinie.
       option_pins_direction: Ausrichtung
       option_pins_direction_0: Längs der roten Achse
       option_pins_direction_1: Längs der grünen Achse
       option_pins_direction_2: Längs der blauen Achse
       option_pins_direction_3: Zum Mittelpunkt der übergeordneten Gruppe
       option_pins_direction_4: Zum Mittelpunkt der Auswahl
-      option_pins_direction_help: Definiert die Platzierung des Hinweistextes für eine bessere Lesbarkeit.
+      option_pins_direction_help: Ermöglicht die Auswahl der Richtung der Hinweistexte, um ihre Lesbarkeit an die Zeichnung anzupassen.
       option_page: Papierformat
       option_page_format: Format
       option_page_format_portrait: Hochformat
@@ -1708,8 +1708,8 @@ tab:
       option_page_header_0: Ohne
       option_page_header_1: Mit
       option_page_header_help: |
-        Wählen Sie, ob die zu druckende Seite eine Überschrift mit dem Namen des Dokuments, seiner Beschreibung, dem Datum, der Einheit und dem Maßstab enthält.
-        Ohne Überschrift nimmt die Übersichtszeichnung die gesamte Seite ein.
+        Ermöglicht die Auswahl, ob die zu druckende Seite eine Kopfzeile mit dem Namen des Dokuments, seiner Beschreibung, dem Datum, der Einheit und dem Maßstab enthält.
+        Ohne Kopfzeile nimmt die Gesamtzeichnung die ganze Seite ein.
       option_camera: Kamera
       option_camera_view: Ansicht
       option_camera_view_custom: Benutzerdefiniert
@@ -1762,12 +1762,12 @@ tab:
         Mit diesem Modul können Sie die **3D-Geometrie** von Teilen als Dateien im Format [STL](https://wikipedia.org/wiki/STL_(file_format)) oder [OBJ](https://wikipedia.org/wiki/Wavefront_.obj_file) exportieren.
       option_file_format: Format
       option_file_format_help: |
-        Auswahl des Dateiformats für die exportierte Datei.
+        Ermöglicht die Auswahl des Dateiformats für die exportierte Datei.
       option_dxf_structure: DXF Struktur
       option_dxf_structure_1: Layers
       option_dxf_structure_2: Layers + Blöcke
       option_dxf_structure_help: |
-        Auswahl der DXF-Dateistruktur.
+        Ermöglicht die Auswahl der DXF-Dateistruktur.
 
         - Die Struktur **Layers** zeichnet alle Linien flach und unterscheidet zwischen verschiedenen Linientypen nur durch Layers. *Diese Struktur bietet eine bessere Kompatibilität mit Software von Drittanbietern.*
         - Die Struktur **Layers + Blöcke** erstellt einen Block pro Teil und fügt diese Blöcke so oft ein, wie die Teile wiederholt werden. *Diese Struktur bietet mehr Flexibilität beim Bearbeiten der Datei.*
@@ -1780,20 +1780,20 @@ tab:
         Deaktivieren Sie diese Option, um eine reine 2D-DXF-Datei zu exportieren.
       option_unit: Einheit
       option_unit_help: |
-        Auswahl der in der exportierten Datei verwendeten Einheit.
+        Ermöglicht die Auswahl der in der exportierten Datei verwendeten Einheit.
       option_use_count: Anzahl
       option_use_count_0: Eine Datei pro Teil
       option_use_count_1: Eine Datei pro Teilinstanz
       option_use_count_help: |
-        Auswahl ob die Anzahl der Instanzen berücksichtigt wird.
+        Ermöglicht die Auswahl, ob die Anzahl der Instanzen eins Teils berücksichtigt wird.
       option_part_drawing_type: Projektion
       option_part_drawing_type_help: |
-        Auswahl der Ansicht, die exportiert werden soll.
+        Ermöglicht die Auswahl der exportierten Ansicht.
       option_faces: Flächen
       option_faces_0: Nur die Zielfläche verwenden
       option_faces_1: Alle Flächen des Teils verwenden
       option_faces_help: |
-        Auswahl ob die Suche nach der Form des Teils auf allen Flächen oder nur auf der Zielfläche durchgeführt werden soll.
+        Ermöglicht die Auswahl, ob die Suche nach der Form des Teils auf allen Flächen oder nur auf der anvisierten Fläche durchgeführt wird.
       option_anchor: Verankerungspunkt
       option_anchor_0: Automatisch
       option_anchor_1: Ursprung des Teils projizieren
@@ -1817,16 +1817,16 @@ tab:
         *Diese Option erkennt keine anderen Kurventypen.*
       option_merge_holes: Zusammenführungsmodus
       option_merge_holes_0: Einfach
-      option_merge_holes_1: Kontur + Bohrungen + Überlaufabstand
+      option_merge_holes_1: Kontur + Bohrungen + Bearbeitungszugabe
       option_merge_holes_help: |
         **Einfach**
         Die Bauteilform wird mit einem Layer pro Tiefe exportiert.
 
-        **Kontur + Bohrungen + Bearbeitungs-Überlaufabstand**
+        **Kontur + Bohrungen + Bearbeitungszugabe**
         Aktiviert die Trennung der Außenkontur der Teile von ihren Durchbrüchen sowie die Berechnung des Bearbeitungs-Überlaufabstands, der auf die Flächen angewendet wird, die sich am Rand der Kontur und der Kavitäten befinden.
-      option_merge_holes_overflow: Bearbeitungs-Überlaufabstand
+      option_merge_holes_overflow: Bearbeitungszugabe
       option_merge_holes_overflow_help: |
-        Legt den Bearbeitungs-Überlaufabstand für Flächen an den Grenzen von Konturen und Kavitäten fest.
+        Legt den Bearbeitungszugabe für Flächen an den Grenzen von Konturen und Kavitäten fest.
       option_include_paths: Pfade
       option_include_paths_0: $t(default.no)
       option_include_paths_1: Kanten verwenden, die nicht mit einer Fläche verbunden sind
@@ -1834,7 +1834,7 @@ tab:
         Aktiviert die Verwendung von im Teil enthaltenen, nicht mit einer Fläche verknüpften Kanten, um sie als Pfad zu exportieren.
       option_parts: Teile
       option_parts_help: |
-        Auswahl der Farbe der Teile.
+        Ermöglicht die Auswahl der Farbe der Teile.
       option_parts_depths: Hohlräume
       option_parts_depths_help: |
         Ermöglicht die Auswahl der Farben für die Hohlräume der Teile.
@@ -1842,10 +1842,10 @@ tab:
         *Standardmäßig wird ein Farbverlauf verwendet, der proportional zur Tiefe des Hohlraums zwischen der Farbe der Teile und der der Bohrungen verläuft.*
       option_parts_holes: Bohrungen
       option_parts_holes_help: |
-        Auswahl der Farbe von Bohrungen.
+        Ermöglicht die Auswahl der Farben für die Bohrungen der Teile.
       option_parts_paths: Pfade
       option_parts_paths_help: |
-        Auswahl der Pfadfarben.
+        Ermöglicht die Auswahl der Pfadfarben.
 
         *Die Füllfarbe wird nur bei geschlossenen Pfaden verwendet.*
       error:
@@ -1893,7 +1893,7 @@ tab:
     type_3: Stange
     type_4: Kantenband
     type_5: Zubehör
-    type_6: Furnier
+    type_6: Furnierblatt
     type_7: Bearbeitung
     tooltip:
       type_0: Materialtyp '$t(tab.materials.type_0)'
@@ -1949,13 +1949,13 @@ tab:
         Fertigmaß der Dicke des Materials.
 
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
-      length_increase: Längenzumaß
+      length_increase: Längenübermaß
       length_increase_help: Übermaß welches das **Längenrohmaß** des Teils vergrößert.
       length_increase_help_plural: Übermaß welches das **Längenrohmaß** der Teile vergrößert.
-      width_increase: Breitenzumaß
+      width_increase: Breitenübermaß
       width_increase_help: Übermaß welches das **Breitenrohmaß** des Teils vergrößert.
       width_increase_help_plural: Übermaß welches das **Breitenrohmaß** der Teile vergrößert.
-      thickness_increase: Dickenzumaß
+      thickness_increase: Dickenübermaß
       thickness_increase_help: Übermaß welches das **Dickerohmaß** des Teils vergrößert.
       thickness_increase_help_plural: Übermaß welches das **Dickerohmaß** der Teile vergrößert.
       std_lengths: Standardlängen
@@ -2616,9 +2616,6 @@ tool:
       not_sibling_part: Dieses Teil gehört nicht zur gleichen Gruppe oder Komponente wie der Rest der Auswahl
       selection_contains_locked_entities: Die Auswahl enthält gesperrte Entitäten
       wrong_material_type: Das Zielteil muss vom Typ '{{ type }}' sein
-  highlight:
-    transparency: $t(tool.default.transparency)
-    zoom_extents: $t(tool.default.zoom_extents)
   smart_select:
     state_0_status: Teil auswählen
     state_0_to_6_status: Übergeordnetes Element auswählen
@@ -2742,8 +2739,8 @@ tool:
     action_option_thickness_thickness_status: Definiert die Dicke der Platten
     action_option_overlay_inset_status: "Innenanschlag: Frontteil liegt komplett in der Öffnung, bündig mit der Vorderkante des Korpus"
     action_3_option_overlay_inset_status: "Eingenutete Rückwand: Eingesetzt in eine Nut, die in die den Korpus begrenzenden Teile eingefräst ist"
-    action_option_overlay_full_overlay_status: "Eckanschlag: Frontteil verdeckt die Öffnung komplett, bedeckt die Außenkante des Korpus und die Innenkanten bis zur halben Dicke"
-    action_3_option_overlay_full_overlay_status: "Aufgesetzte Rückwand: Auf der Korpusrückseite montiert, deckt die Aussenseiten bündig ab und reicht bei Mittelseiten bis zur halben Plattendicke, komplett ohne Fräsung"
+    action_option_overlay_full_overlay_status: "Eckanschlag: Frontteil verdeckt die Öffnung komplett, bedeckt die Außenkante des Korpus und die Innenkanten bis zur halben Dicke der Platten"
+    action_3_option_overlay_full_overlay_status: "Aufgesetzte Rückwand: Auf der Korpusrückseite montiert, deckt die Aussenseiten bündig ab und reicht bei Mittelseiten bis zur halben Plattendicke, komplett ohne Bearbeitung"
     action_option_overlay_against_protrusions_status: "Aufschlagende Front an Vorsprüngen: aufschlagend auf die Platten bündig mit der Öffnung montiert und an die überstehenden Teile angepasst"
     action_3_option_overlay_against_protrusions_status: "Aufschlagende Rückwand an Vorsprüngen: aufschlagend auf die Platten bündig mit der Öffnung montiert und zwischen den überstehenden Teilen (überstehende Seitenwände) eingepasst, ohne jegliche Bearbeitung"
     action_option_measure_type_inside_status: Dicke innerhalb des Zielpunkts positionieren
@@ -2764,13 +2761,13 @@ tool:
     action_option_options_pick_material: Pipette
     action_option_options_pick_material_status: Das Material des unter dem Mauszeiger liegenden Teils auf die erstellten Teile anwenden
     action_option_options_face_camera: Mit Blick in die Kamera
-    action_option_options_face_camera_status: Vorderseite des Moduls automatisch zur Kamera ausrichten
+    action_option_options_face_camera_status: Front des Moduls automatisch zur Kamera ausrichten
     action_option_options_top_up: Oberseite in Richtung Z+
     action_option_options_top_up_status: Die Oberseite des Moduls automatisch so gut wie möglich nach oben drehen (Z+)
     action_option_options_ask_name: Benennung der Teile
     action_option_options_ask_name_status: Namen der Teile manuell eingeben
-    action_option_options_layer_name: Layer
-    action_option_options_layer_name_status: Name der Layer, auf der die Teile platziert sind
+    action_option_options_layer_name: Tag
+    action_option_options_layer_name_status: Name des Tags, auf dem die Teile platziert sind
     action_option_anchor_center_x_status: Zentriert in X
     action_option_anchor_center_y_status: Zentriert in Y
     action_option_anchor_center_z_status: Zentriert in Z
@@ -2806,7 +2803,7 @@ tool:
       no_back_panel_machining: "Es konnte keine Nut gefräst werden: In dieser Tiefe grenzt kein benachbartes Teil an die Rückwand an"
       no_module_file: In diesem Ordner befinden sich keine .skp-Dateien
       module_axis_no_scale: "Das Modul kann entlang der {{ axis }} nicht skaliert werden: durch das Verhalten der Komponente verhindert"
-      module_axis_curve_intersect: "Nicht skalierbares Modul entlang der {{ axis }}: Eine der Querschnittsebenen verläuft durch eine nicht skalierbare Kurve"
+      module_axis_curve_intersect: "Nicht skalierbares Modul entlang der {{ axis }}: Eine der Schnittebenen verläuft durch eine nicht skalierbare Kurve"
     success:
       part_created: "Neu erstelltes Teil: {{ name }}"
       part_created_plural: "{{ count }} neu erstellte Teile: {{ name }}"
@@ -2901,7 +2898,7 @@ tool:
     action_option_axes_context_status: Bearbeitung entlang der Achsen der Gruppe oder Komponente, die das Teil enthält
     action_option_axes_entity_status: Bearbeitung entlang der Achsen des Teils
     action_option_paneling_joint_type_flat_status: Stumpf verbinden
-    action_option_paneling_joint_type_miter_status: Auf Gehrung verbinden
+    action_option_paneling_joint_type_miter_status: Gehrungsverbindung
     action_option_paneling_direction_inward_status: Nach innen
     action_option_paneling_direction_outward_status: Nach außen
     action_option_options_centered_status: Auf die gestreckten Elemente zentrieren
@@ -2933,11 +2930,11 @@ tool:
     filter_6: $t(tab.materials.type_6)
     filter_7: $t(tab.materials.type_7)
     action_0: Teile einfärben
-    action_0_status: Klicken Sie auf ein Teil, um die Instanz einzufärben
+    action_0_status: Klicken Sie auf ein Teil, um dessen Instanz mit einem Material zu versehen
     action_1: Kanten einfärben
-    action_1_status: Klicken Sie auf eine Plattenkante, um ein Material '$t(tab.materials.type_4)' anzuwenden
+    action_1_status: Klicken Sie auf eine Kante eines Plattenteils, um ein Material '$t(tab.materials.type_4)' anzuwenden
     action_2: Flächen einfärben
-    action_2_status: Klicken Sie auf eine Plattenfläche, um ein Material '$t(tab.materials.type_6)' anzuwenden
+    action_2_status: Klicken Sie auf eine Fläche eines Plattenteil, um ein Material '$t(tab.materials.type_6)' anzuwenden
     action_3: Entnehmen
     action_3_status: Klicken Sie auf eine Fläche, um eine Probe des Materials zu entnehmen
     action_4: Säubern
@@ -2948,10 +2945,10 @@ tool:
     action_option_instances_0_status: Nur die Instanz des ausgewählten Teils einfärben
     action_option_instances_1_status: Alle Instanzen des ausgewählten Teils einfärben
     action_option_edges_0_status: Nur die ausgewählte Kante einfärben
-    action_option_edges_1_status: Einfärben der Zielkante und der gegenüberliegenden Kante
+    action_option_edges_1_status: Einfärben der Zielkante und der gegenüberliegenden Kante des Teils
     action_option_edges_2_status: Einfärben der 4 Kanten des Zielteils
     action_option_faces_0_status: Nur die Zielfläche einfärben
-    action_option_faces_1_status: Einfärben der 2 Zielflächen
+    action_option_faces_1_status: Einfärben der 2 Flächen des Zielteils
     state_8_status: Markieren Sie die zu ersetzenden Materialien und bestätigen Sie dann
     select_filter_title: Zu ersetzende Materialien
     edges: "{{ count }} Kante"

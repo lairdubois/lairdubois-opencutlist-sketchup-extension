@@ -2219,9 +2219,6 @@ tool:
       locked_part: Bộ phận này bị khóa
       selection_contains_locked_entities: Lựa chọn này chứa các thực thể bị khóa.
       wrong_material_type: Bộ phận mục tiêu phải là của loại '{{ type }}'
-  highlight:
-    transparency: $t(tool.default.transparency)
-    zoom_extents: $t(tool.default.zoom_extents)
   smart_select:
     state_0_status: Nhấp vào một bộ phận để chọn nó
     state_0_to_6_status: Chọn một phần tử cha

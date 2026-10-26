@@ -2152,9 +2152,6 @@ tool:
       invalid_segment_count: 段数 {{ value }} 无效。必须介于 3 到 999 之间
       lt_min_distance: 距离 {{ value1 }} 小于最小距离 {{ value2 }}
       wrong_material_type: 目标部件的类型必须为 '{{ type }}'
-  highlight:
-    transparency: $t(tool.default.transparency)
-    zoom_extents: $t(tool.default.zoom_extents)
   smart_select:
     state_0_status: 点击部件以选中它
   smart_draw:

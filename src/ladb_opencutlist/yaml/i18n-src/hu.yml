@@ -15,6 +15,7 @@ default:
   stop: Stop
   validate: Alkalmaz
   confirm: Megerősít
+  finish: Befejezés
   ok: OK
   open: Megnyit
   see: Megnéz
@@ -27,6 +28,7 @@ default:
   export: Exportál
   import: Importál
   load: Betöltés
+  replace: Csere
   preview: Előnézet
   options: Beállítások
   caution: Figyelem
@@ -2188,9 +2190,6 @@ tool:
       lt_min_distance: "A(z) {{ value1 }} távolság nem éri el a minimálisan megengedett értéket ami: {{ value2 }}"
       gt_max_distance: Az {{ value1 }} távolság nagyobb, mint az {{ value2 }} maximális távolság
       wrong_material_type: A célalkatrésznek '{{ type }}' típusúnak kell lennie
-  highlight:
-    transparency: $t(tool.default.transparency)
-    zoom_extents: $t(tool.default.zoom_extents)
   smart_select:
     state_0_status: Kattintson egy alkatrészre a kijelöléséhez
   smart_draw:
