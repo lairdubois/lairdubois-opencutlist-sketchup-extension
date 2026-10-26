@@ -2190,9 +2190,6 @@ tool:
       lt_min_distance: Odległość {{ value1 }} jest mniejsza niż minimalna odległość {{ value2 }}
       gt_max_distance: Odległość {{ value1 }} jest większa niż maksymalna odległość {{ value2 }}
       wrong_material_type: Część docelowa musi być typu '{{ type }}'
-  highlight:
-    transparency: $t(tool.default.transparency)
-    zoom_extents: $t(tool.default.zoom_extents)
   smart_select:
     state_0_status: Kliknij część, aby ją zaznaczyć
     state_0_to_6_status: Wybierz element nadrzędny

@@ -2220,9 +2220,6 @@ tool:
       locked_part: Piesă blocată
       selection_contains_locked_entities: Selecția conține elemente blocate
       wrong_material_type: Piesa vizată trebuie să fie de tipul '{{ type }}'
-  highlight:
-    transparency: $t(tool.default.transparency)
-    zoom_extents: $t(tool.default.zoom_extents)
   smart_select:
     state_0_status: Faceți clic pe o piesă pentru a o selecta
     state_0_to_6_status: Selectați un element părinte

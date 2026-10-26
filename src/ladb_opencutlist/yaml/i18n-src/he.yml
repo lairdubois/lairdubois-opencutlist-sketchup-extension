@@ -2020,9 +2020,6 @@ tool:
     vcb_spacings: רווחים
     error:
       wrong_material_type: חלק היעד חייב להיות מסוג '{{ type }}'
-  highlight:
-    transparency: $t(tool.default.transparency)
-    zoom_extents: $t(tool.default.zoom_extents)
   smart_draw:
     title: שרטוט
     action_option_group_offset: קיזוז

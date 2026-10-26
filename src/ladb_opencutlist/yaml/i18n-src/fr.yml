@@ -645,7 +645,7 @@ tab:
       thickness_layered: La quantité représente ici le nombre de pièces à débiter pour obtenir toutes les couches.
       thickness_layered_equation: "**{{ count }}** *pièce* x **{{ layerCount }}** *couches* = **{{ cuttingPartCount }}**"
       thickness_layered_equation_plural: "**{{ count }}** *pièces* x **{{ layerCount }}** *couches* = **{{ cuttingPartCount }}**"
-      multiple_content_layers: Attention, cette pièce est composée de sous parties présentes dans {{ count }} calques différents :<br>{{ layers }}
+      multiple_content_layers: Attention, cette pièce est composée de sous parties présentes dans {{ count }} balises différentes :<br>{{ layers }}
       children_warnings: Attention, il y a {{ count }} alerte dans les pièces regroupées
       children_warnings_plural: Attention, il y a {{ count }} alertes dans les pièces regroupées
       children_size_increase: Cette dimension est majorée par une surcote pour {{ count }} des pièces regroupées
@@ -808,8 +808,8 @@ tab:
       axes_origin_position_front_center: Placer l'origine au centre de la face
       over_length: Sur la longueur
       over_width: Sur la largeur
-      edge_disabled_help: Ce chant n'est pas configurable parce qu'aucune face pouvant porter une matière n'a été détectée sur ce bord de la pièce dans le modèle.
-      face_disabled_help: Cette face n'est pas configurable parce qu'aucune face dessinée pouvant porter une matière n'a été détectée sur ce côté de la pièce dans le modèle.
+      edge_disabled_help: Ce chant n'est pas configurable, car aucune face pouvant porter une matière n'a été détectée sur ce bord de la pièce dans le modèle.
+      face_disabled_help: Cette face n'est pas configurable, car aucune face dessinée pouvant porter une matière n'a été détectée sur ce côté de la pièce dans le modèle.
       multiple_values: Valeurs multiples
       loading_preview: Chargement de l'aperçu
     option:
@@ -902,7 +902,7 @@ tab:
       summary: Récapitulatif
       material_type: Type
       material_thickness: Matière / Dimension
-      part_count: Nb. pièces
+      part_count: Nb pièces
       area: Surface
       area_short: Surf.
       volume: Volume
@@ -2299,8 +2299,8 @@ tab:
         material: Matière
         tags: Badges
       tooltip:
-        errors: Cette pièce ne sera pas importée car elle contient les erreurs suivantes
-        warnings: Cette pièce sera importée mais elle contient les avertissements suivants
+        errors: Cette pièce ne sera pas importée, car elle contient les erreurs suivantes
+        warnings: Cette pièce sera importée, mais elle contient les avertissements suivants
       error:
         failed_to_load_csv_file: |
           Impossible de charger le fichier CSV : **{{ error }}**
@@ -2622,7 +2622,7 @@ tool:
     state_0_to_7_status: Sélection multiple
     state_4_status: Glissez sur une pièce identique ayant le même parent pour l'ajouter à la sélection et relâchez pour continuer
     state_5_status: Faites glisser pour ajouter à la sélection et relâchez pour continuer
-    state_6_status: Choisisez un élément dans la liste
+    state_6_status: Choisissez un élément dans la liste
     state_7_status: Cliquez sur une pièce pour l'ajouter ou la soustraire à la sélection
     warning:
       no_active_part: Vous devez d'abord survoler une pièce
@@ -2766,8 +2766,8 @@ tool:
     action_option_options_top_up_status: Tourner automatiquement le haut du module au mieux vers le haut (Z+)
     action_option_options_ask_name: Nommage des pièces
     action_option_options_ask_name_status: Saisir manuellement le nom des pièces
-    action_option_options_layer_name: Calque
-    action_option_options_layer_name_status: Nom du calque sur lequel sont placées les pièces
+    action_option_options_layer_name: Balise
+    action_option_options_layer_name_status: Nom de la balise sur laquelle les pièces sont placées
     action_option_anchor_center_x_status: Centré en X
     action_option_anchor_center_y_status: Centré en Y
     action_option_anchor_center_z_status: Centré en Z

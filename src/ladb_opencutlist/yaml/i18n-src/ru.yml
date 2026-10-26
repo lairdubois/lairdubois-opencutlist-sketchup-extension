@@ -769,7 +769,7 @@ tab:
       edge_xmax: Кромка по ширине 2
       face_zmin: Тыльная
       face_zmax: Лицевая
-      layer: Маяк
+      layer: Метка
       layers: Маяки
       batch: Деталей в раскрое
       bin: Грубый размер
@@ -1125,7 +1125,7 @@ tab:
       option_rectangleguillotine_cut_type_homogenous: Однородный
       option_rectangleguillotine_number_of_stages: Варианты разреза
       option_rectangleguillotine_number_of_stages_help: |
-        Определяет максимальное количество вариантов резки.
+        Задает максимальное количество этапов раскроя
       option_rectangleguillotine_first_stage_orientation: Направление первого реза
       option_rectangleguillotine_first_stage_orientation_help: |
         Определяет направление первого разреза.
@@ -1208,7 +1208,7 @@ tab:
       option_colorization_1: $t(default.yes) - Просмотр
       option_colorization_2: $t(default.yes) - Просмотр и печать
       option_colorization_help: |
-        Определяет, используется ли случайный цвет для раскраски частей на диаграмме.
+        Определяет, используется ли случайный цвет для раскраски деталей на диаграмме.
       option_origin_corner: Исходный угол
       option_origin_corner_0: Левый верхний
       option_origin_corner_1: Левый нижний
@@ -1384,7 +1384,7 @@ tab:
       option_formula: Тип маркировки
       option_size: Размер
       option_custom_formula: Формула
-      option_anchor: Позиция привязки
+      option_anchor: Привязка
       option_anchor_start: От левого нижнего края
       option_anchor_middle: От середины нижнего края
       option_anchor_end: От правого нижнего края
@@ -1408,7 +1408,7 @@ tab:
         part_edge_cutting_size: Высота кромки
         part_edge_cutting_length: Длина кромки - пильная
         part_edge_cutting_width: Ширина кромки - пильная
-        part_size: Доступный размер
+        part_size: Полезный размер
         part_length: Пильная длина
         part_width: Ширина
         part_thickness: Толщина
@@ -1561,7 +1561,7 @@ tab:
       option_unit_help: |
         Позволяет выбрать единицы измерения, используемые в экспортируемом файле.
       option_use_count: Количество
-      option_use_count_0: Все в один файл
+      option_use_count_0: Каждой детали свой файл
       option_use_count_1: Для каждого экземпляра детали отдельный файл
       option_use_count_help: |
         Функция определяет, учитывать ли количество экземпляров детали.
@@ -1575,7 +1575,7 @@ tab:
         Позволяет задать, выполнять ли поиск формы детали на всех ее гранях или только на лицевой грани.
       option_anchor: Точка привязки
       option_anchor_0: Автоматически
-      option_anchor_1: Проецирование происхождения детали
+      option_anchor_1: Проецировать исходную точку детали
       option_anchor_help: |
         **Автоматически**
         В качестве точки привязки используется левый нижний угол экспортируемой геометрической границы.
@@ -1596,14 +1596,14 @@ tab:
         *Эта опция не позволяет определить другие типы кривых.*
       option_merge_holes: Разбивка
       option_merge_holes_0: Базовый
-      option_merge_holes_1: Контур + отверстия + выступ
+      option_merge_holes_1: Контур + отверстия + припуск
       option_merge_holes_help: |
         **Базовый**
         Форма детали экспортируется с проекцией каждой грани на слой, соответствующий ее глубине.
 
         **Контур + Отверстия + Выступ**
         Активирует отделение внешнего контура деталей от их отверстий, а также расчет выступа обработки, приходящегося на поверхности, граничащие с контуром и впадинами.
-      option_merge_holes_overflow: Обрабатываемый выступ
+      option_merge_holes_overflow: Припуск на обработку
       option_merge_holes_overflow_help: |
         Используется для определения расстояния выступа при обработке поверхностей на краях контуров и впадин.
       option_include_paths: Пути
@@ -1636,9 +1636,9 @@ tab:
       hello: Привет
       number: Номер
       name: Определение
-      number_and_name: Номер детали
-      number_without_hardware: Количество (без аксессуаров)
-      size: Доступный размер
+      number_and_name: № и наименование
+      number_without_hardware: Количество (без фурнитуры)
+      size: Полезный размер
       area: Расчетная площадь
       volume: Расчетный объем
     error:
@@ -1687,7 +1687,7 @@ tab:
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Направление волокон
       raw_estimated_0: Расчет полезного объема
-      colorized: Этот рисунок фактуры будет применен к текстуре этого материала, когда он будет отображен в модели
+      colorized: Этот оттенок будет применен к текстуре этого материала, когда он будет отображен в модели
       texture_load: Загрузить новое изображение
       texture_export: Экспорт изображения
       texture_clear: Очистить текстуру
@@ -2039,15 +2039,15 @@ tab:
           Выберите опции, необходимые для хорошего чтения файла:
           **{{ filename }}**.
         info_1: |
-          *Единицей измерения, заданной в шаблоне, является: **{{ unit }}**.
+          *Единицей измерения, заданной в модели, является: **{{ unit }}**.
           Данная единица будет применена для размеров, в которых единица измерения не указана*.
         options: Опции загрузки
         option_col_sep: Разделитель
         option_col_sep_tab: Табулятор
         option_col_sep_comma: Запятая
         option_col_sep_semicolon: Точка с запятой
-        option_first_line_headers: Заголовок строки
-        option_first_line_headers_0: Дата
+        option_first_line_headers: Строка заголовков
+        option_first_line_headers_0: Данные
         option_first_line_headers_1: Столбец заголовков
       import:
         title: Импорт деталей в модель
@@ -2056,7 +2056,7 @@ tab:
           Эта часть будет помещена в начало основной сцены.
         info_0_plural: |
           Вы собираетесь импортировать **{{ count }} деталей** в модель.
-          Эти части будут загружены в пакет, начиная с начала основной сцены.
+          Эти части будут размещены в группе, начиная с начала основной сцены.
         info_1: Нажмите на **Импорт**, чтобы подтвердить действие.
         options: |
           Модель уже содержит *детали*, *определения* или *материалы*.
@@ -2078,15 +2078,15 @@ tab:
         material: Материал
         tags: Маркеры
       tooltip:
-        errors: Эта часть не будет импортирована, так как она привела к следующим ошибкам
-        warnings: Эта часть будет импортирована, но она выдает следующие предупреждения
+        errors: Эта деталь не будет импортирована, так как она привела к следующим ошибкам
+        warnings: Эта деталь будет импортирована, но она выдает следующие предупреждения
       error:
         failed_to_load_csv_file: |
           Невозможно загрузить CSV файл : **{{ error }}**
           *Убедитесь, что вы выбрали правильный разделитель полей.*
         empty_file: Файл возможно пустой или имеет не читаемый формат.
         no_importable_part: Ни одна из деталей не может быть импортирована. Назначьте обязательные поля соответствующим столбцам.
-        invalid_name: Неверное описание
+        invalid_name: Недопустимое наименование
         invalid_length: Недопустимая длина
         invalid_width: Недопустимая ширина
         invalid_thickness: Недопустимая толщина
@@ -2101,21 +2101,21 @@ tab:
       label: BXF2
       title: Импортировать конфигурацию Blum
       help: |
-        На этой странице вы можете импортировать конфигурацию в свой шаблон из файла BXF2.
+        На этой странице вы можете импортировать конфигурацию в свою модель из файла BXF2.
         Файлы BXF2 могут быть созданы [Конфигуратором мебели](https://e-services.blum.com/) из [Blum](https://www.blum.com).
 
         Кликните **Открыть файл BXF2**, чтобы начать.
       load:
         title: Загрузка файла BXF2
       import:
-        title: Импорт конфигурации в шаблон
+        title: Импорт конфигурации в модель
         info_0: |
-          Вы собираетесь импортировать конфигурацию из **{{ count }} корпуса** в шаблон.
+          Вы собираетесь импортировать конфигурацию из **{{ count }} корпуса** в модель.
         info_0_plural: |
-          Вы собираетесь импортировать конфигурацию из **{{ count }} корпусов** в шаблон.
+          Вы собираетесь импортировать конфигурацию из **{{ count }} корпусов** в модель.
         info_1: Выберите место для размещения конфигурации в модели.
         materials: Материалы
-        layers: Маяки
+        layers: Метки
         geometry: Геометрия
         option_parts_formula: Формула
         option_parts_formula_help: Данная формула позволяет вам корректировать имена импортируемых деталей.
@@ -2395,9 +2395,6 @@ tool:
       not_sibling_part: Деталь не входит в ту же группу или компонент, что и остальное выделение
       selection_contains_locked_entities: Выделение содержит заблокированные объекты
       wrong_material_type: Целевая деталь должна быть типа '{{ type }}'
-  highlight:
-    transparency: $t(tool.default.transparency)
-    zoom_extents: $t(tool.default.zoom_extents)
   smart_select:
     state_0_status: Кликните на деталь, чтобы выделить ее
     state_0_to_6_status: Выбор родительского элемента
@@ -2462,8 +2459,8 @@ tool:
       part_created_plural: "создано {{ count }} новых деталей: {{ name }}"
   smart_build:
     title: Мебельщик
-    action_0: Создать перегородку
-    action_0_status: Создать перегородку в нише, образованной группой смежных деталей, замкнутых в контур
+    action_0: Создать фасад
+    action_0_status: Разместить модуль, импортированный из файла SKP, растянутый по размерам нарисованной габаритной рамки
     action_0_state_0_status: Выберите компонент из библиотеки
     action_0_state_1_status: Кликните для указания расположения элемента
     action_0_state_2_status: Щелкните, чтобы задать ширину модуля (ось X)
@@ -2488,12 +2485,12 @@ tool:
     action_1_status: Создать перегородку в нише, образованной группой смежных деталей
     action_1_state_0_status: Кликните внутри ниши, чтобы создать там перегородку
     action_1_state_1_status: Щелкните по стенке, чтобы создать перегородки
-    action_2: Создать фасад
-    action_2_status: Создание фасада внутри замкнутого контура из деталей, образующих корпус
+    action_2: Создать заднюю стенку 1
+    action_2_status: Создать заднюю стенку спереди внутри замкнутого контура из деталей, образующих корпус спереди
     action_2_state_0_status: Кликните внутри ниши, чтобы создать там фасад
     action_2_state_0_merge_status: Перетащите указатель на соседние ниши для создания общей задней стенки
-    action_3: Создать заднюю стенку
-    action_3_status: Создать заднюю стенку, закрывающую полость, образованную группой существующих деталей
+    action_3: Создать заднюю стенку 2
+    action_3_status: Создать заднюю стенку сзади внутри замкнутого контура из деталей, образующих корпус
     action_3_state_0_status: Щелкните внутри полости, чтобы создать заднюю стенку на стороне проема, противоположной виду
     action_3_state_0_merge_status: Перетащите указатель на соседние полости, чтобы создать общую заднюю стенку
     action_option_group_groove: Паз
@@ -2530,7 +2527,7 @@ tool:
     action_option_measure_type_outside_status: Размер с учетом толщины перегородки
     action_option_measure_origin_wall_status: Измерять от внутренних стенок ниши/полости
     action_option_measure_origin_overall_status: Измерять от наружных граней деталей, образующих нишу
-    action_option_axes_active_status: Перемещение вдоль активных осей
+    action_option_axes_active_status: Перемещение по активным осям
     action_option_axes_context_status: Перемещение вдоль осей родительской группы или компонента
     action_option_options_measure_reversed: Реверсивное измерение
     action_option_options_measure_reversed_status: Реверс отсчета
@@ -2548,19 +2545,19 @@ tool:
     action_option_options_top_up_status: Автоматически повернуть верх модуля по возможности в направлении вверха (Z+)
     action_option_options_ask_name: Задать имена деталям
     action_option_options_ask_name_status: Ввод названий деталей вручную
-    action_option_options_layer_name: Слой
+    action_option_options_layer_name: Метка
     action_option_options_layer_name_status: Имя слоя, на котором размещаются детали
     action_option_anchor_center_x_status: По центру X
     action_option_anchor_center_y_status: По центру Y
     action_option_anchor_center_z_status: По центру Z
     action_option_anchor_origin_status: Начало координат компонента
-    action_option_no_layer_help: "*Оставьте это поле пустым, чтобы не применять тег*."
+    action_option_no_layer_help: "*Оставьте это поле пустым, чтобы не применять маркер (тег)*."
     detecting_cavities: Поиск ниш...
     error:
       invalid_divider_seed: Этот тип детали не поддерживает создание перегородки
       invalid_divider_container: Эта деталь не входит в состав группы, образующей замкнутый контур
       invalid_divider_cavity: С этой стороны нет полости для перегородки
-      no_divider_cavity: В этой группе или компоненте не обнаружено полости для перегородок
+      no_divider_cavity: В этой группе или компоненте не обнаружено полости
       invalid_front_panel_seed: Этот тип детали не поддерживает создание фасада
       invalid_front_panel_container: Эта деталь не входит в состав группы, образующей замкнутый контур
       invalid_front_panel_cavity: В этой позиции нет открытых проемов
@@ -2620,7 +2617,7 @@ tool:
     action_option_group_move_measure_type: Отсчет
     action_option_group_axes: Оси
     action_option_group_options: Опции
-    action_option_copy_measure_type_outside_status: Внешнее измерение
+    action_option_copy_measure_type_outside_status: По внешнему контуру
     action_option_copy_measure_type_centered_status: Измерение между центрами
     action_option_copy_measure_type_inside_status: Измерение между деталями
     action_option_axes_active_status: Перемещение по активным осям
@@ -2658,7 +2655,7 @@ tool:
     action_2_state_0_status: Выберите деталь А
     action_2_state_1_status: Выберите деталь B
     action_3: Высечка
-    action_3_status: Создание уникальных вырезов вычетанием формы одной детали из массива другой
+    action_3_status: Создание уникальных вырезов вычитанием формы одной детали из массива другой
     action_3_state_0_status: Выберите деталь А
     action_3_state_1_status: Выберите деталь B
     action_4: Пересечение
@@ -2674,7 +2671,7 @@ tool:
     action_option_group_options: Опции
     action_option_thickness_thickness: Толщина
     action_option_thickness_thickness_status: Ввод толщины окантовки
-    action_option_stretch_measure_type_outside_status: Изменяемая длина
+    action_option_stretch_measure_type_outside_status: По внешнему контуру
     action_option_stretch_measure_type_offset_status: Дельта размера
     action_option_axes_active_status: Перемещение по активным осям
     action_option_axes_context_status: Перемещение по осям группы или компонента, содержащего деталь
@@ -2726,8 +2723,8 @@ tool:
     action_option_group_faces: Количество сторон
     action_option_instances_0_status: Раскрасить только целевую деталь
     action_option_instances_1_status: Раскрасить все экземпляры сходные с целевой деталью
-    action_option_edges_0_status: Окрасить только целевую композицию
-    action_option_edges_1_status: Окрасить лицевую и тыльную сторону в детали
+    action_option_edges_0_status: Окрасить только выбранную кромку
+    action_option_edges_1_status: Окрасить лицевую и тыльную кромку в детали
     action_option_edges_2_status: Окрасить все 4 стороны в выделенной детали
     action_option_faces_0_status: Окрасить только лицевую часть
     action_option_faces_1_status: Окрасить 2 стороны выделенной детали
@@ -2753,21 +2750,21 @@ tool:
       not_face: Целевая поверхность не является лицевой
   smart_axes:
     title: Ориентация осей
-    action_0: Отменить
-    action_0_status: Кликните на деталь, чтобы сориентировать ее экземпляр вдоль одного из размеров
+    action_0: Перевернуть
+    action_0_status: Кликните на деталь, чтобы перевернуть её вдоль одного из измерений
     action_1: Переключить Длина ↔ Ширина
     action_1_status: Кликните на детали, чтобы поменять ее длину на ширину
     action_2: Переключить Лицевая ↔ Обратная
     action_2_status: Кликните на деталь, чтобы перевернуть отображение лицевой стороны на тыльную сторону
     action_3: Адаптировать оси
-    action_3_status: Выберите грань детали и кликните по ней, чтобы изменить ее оси
+    action_3_status: Чтобы изменить оси, кликните по ребру детали
     action_4: Изменить начало координат
     action_4_status: Для перемещения начала координат выберите точку на детали и кликните по ней
     action_5: Настройка подбора текстуры
     action_5_status: Кликните по детали для включения или отключения подбора текстуры
     action_5_to_state_10_status: Выбор группы подбора текстуры
     action_5_state_10_status: Кликните по элементу в списке для изменения статуса группы подбора текстуры
-    action_option_group_direction: Измерение
+    action_option_group_direction: Направление
     action_option_direction_0: Дл
     action_option_direction_1: Шр
     action_option_direction_2: Тл
@@ -2836,7 +2833,7 @@ tool:
     action_2: Экспорт облицовки
     action_2_status: Кликните облицовку
     action_3: Экспорт путей SVG
-    action_3_status: Кликните на край
+    action_3_status: Кликните на ребро
     action_option_group_file_format: Формат
     action_option_group_unit: Единицы
     action_option_group_faces: Лицевые
@@ -2859,7 +2856,7 @@ tool:
     error:
       not_part: Эта грань не является частью детали (компонента)
       not_flat_face: Эта поверхность не является плоской
-      incompatible_active_path: Активный путь не позволяет экспортировать эту часть
+      incompatible_active_path: Активный путь не позволяет экспортировать эту деталь
   smart_importers_bxf2:
     title: Импорт
     action_0: $t(tab.importers.bxf2.title)

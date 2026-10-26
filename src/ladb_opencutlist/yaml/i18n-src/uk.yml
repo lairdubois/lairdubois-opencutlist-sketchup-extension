@@ -15,6 +15,7 @@ default:
   stop: Зупинити
   validate: Прийняти
   confirm: Підтвердити
+  finish: Завершити
   ok: Ok
   open: Відкрити
   see: Перегляд
@@ -27,6 +28,7 @@ default:
   export: Експорт
   import: Імпорт
   load: Завантаження
+  replace: Замінити
   preview: Огляд
   options: Опції
   caution: Увага!
@@ -308,11 +310,11 @@ core:
       empty: Об'єкт не містить жодної геометрії
       empty_named: « {{ name }} » не містить геометрії
       # an edge is considered manifold when it is shared by exactly two faces in a 3D mesh
-      non_manifold_edges: Об'єкт містить {{ count }} нерізноманітного краю
+      non_manifold_edges: Об'єкт містить {{ count }} нерізноманітних ребер
       non_manifold_edges_plural: Об'єкт містить {{ count }} нерізноманітних ребер
       non_manifold_edges_named: « {{ name }} » містить {{ count }} некоректне ребро
       non_manifold_edges_named_plural: « {{ name }} » містить {{ count }} некоректних ребер
-      open_edges: Об'єкт містить {{ count }} відкритий край
+      open_edges: Об'єкт містить {{ count }} відкритих ребер
       open_edges_plural: Об'єкт містить {{ count }} відкритих країв
       open_edges_named: « {{ name }} » містить {{ count }} відкрите ребро
       open_edges_named_plural: « {{ name }} » містить {{ count }} відкритих ребер
@@ -321,6 +323,11 @@ core:
       error:
         no_segment: У виборі немає придатних напрямних ліній
         no_face: Жоден копланарний замкнений контур не був реконструйований
+  library:
+    libraries: Бібліотеки
+    user: Моя бібліотека
+    bundled: Бібліотека OCL
+    family_modules: Модулі
 tab:
   cutlist:
     label: Звіт
@@ -558,7 +565,7 @@ tab:
       ignore_grain_direction_1: Не враховувати напрямок текстури
       follow_grain_direction: Безперервність текстури
       follow_grain_direction_help: |
-        Якщо ввімкнути цю опцію, екземпляри цієї деталі можна розглядати як частини, викладені в **Wire continuity** з їхніми сусідами, які спільно використовують:
+        Якщо ввімкнути цю опцію, екземпляри цієї деталі можна розглядати як частини, викладені в **Безперервність текстури** з їхніми сусідами, які спільно використовують:
         - те саме *Група безперервності текстури*
         - той же план
         - та сама орієнтація
@@ -669,6 +676,7 @@ tab:
       veneer_material_names_filter: Фільтр по матеріалу шпона
       names_filter: Позначення для фільтрації
       tags_filter: Фільтр по Міткам
+      tags_filter_any: Усі мітки
       dimensions_help: Ілюстрація розмірів
       summary: Звіт
       material_type: Тип
@@ -2108,6 +2116,7 @@ tab:
         info_1: Ви матимете можливість встановити його розташування в активній моделі.
         materials: Матеріали
         layers: Теги
+        geometry: Геометрія
         option_parts_formula: Формула
         option_parts_formula_help: Формула дозволяє налаштувати назву імпортованих деталей.
         option_part_wood_material_name: Дерево
@@ -2118,6 +2127,8 @@ tab:
         option_part_glass_material_name_help: Матеріал для **скляних** деталей.
         option_front_part_layer_name: Фасади
         option_front_part_layer_name_help: Тег для нанесення на деталі фасаду.
+        option_back_part_layer_name: Задні стінки
+        option_back_part_layer_name_help: Тег для застосування до задніх стінок корпусу.
         option_machining_material_name: Обробка
         option_machining_material_name_help: Матеріал для **механічної обробки**.
         option_machining_layer_name: Обробка
@@ -2129,6 +2140,10 @@ tab:
         option_no_material_help: "*Залиште це поле порожнім, щоб не застосовувати матеріал*."
         option_default_material_help: "*Якщо це поле порожнє, буде створено матеріал за замовчуванням*."
         option_no_layer_help: "*Сервіс тимчасово недоступний*."
+        option_subtract_machinings: Вирізати обробку в деталях
+        option_subtract_machinings_help: "**Пази**, **чверті** та **фаски** деталей, зокрема пов'язані з фурнітурою, віднімаються від їхнього об'єму, а не малюються. Отвори залишаються намальованими."
+        warning:
+          subtract_machinings_failed: "Не вдалося вирізати обробку в цих деталях, тому її намальовано: {{ names }}"
         old_name: Оригінальна назва
         new_name: Нове ім'я
         count: Примітка
@@ -2352,7 +2367,10 @@ tool:
     vcb_diameter: Діаметр
     vcb_distance: Відстань
     vcb_spacings: Інтервали
+    vcb_angle: Кут
     locked_on_last_measure_status: Фіксація під час останнього вимірювання
+    library_choose: Виберіть бібліотеку
+    modal_only_help: Параметр доступний лише в цьому вікні, відсутній на панелі інструментів
     error:
       no_direction: Будь ласка, вкажіть напрямок мишкою
       invalid_length: Довжина {{ value }} недійсна
@@ -2360,21 +2378,23 @@ tool:
       invalid_multiplicator: Коефіцієнт {{ value }} недійсний
       invalid_divider: Дільник {{ value }} недійсний
       invalid_offset: Зміщення {{ value }} недійсне
+      invalid_angle: Кут {{ value }} недійсний
       invalid_segment_count: Кількість сегментів {{ value }} недійсна. Вона повинна бути від 3 до 999.
       syntax_error: "Синтаксична помилка: {{ error }}"
       unexpected_close_parenthesis: Неочікувана закриваюча дужка
       missing_close_parenthesis: Відсутня закриваюча дужка
       missing_operand: Відсутній операнд
       zero_division: Ділення на нуль
+      invalid_argument_count: Функція min, max, floor або ceil потребує щонайменше двох значень
+      comma_argument_separator: "Розділяйте значення символом « ; »: кома також є десятковим роздільником"
+      invalid_dimension: "Довжину можна додати лише до довжини: число без одиниці є множником"
+      no_matching_value: Жодне із запропонованих значень не підходить
       lt_min_distance: Відстань {{ value1 }} менша за мінімальну відстань {{ value2 }}
       gt_max_distance: Відстань {{ value1 }} більша за максимальну відстань {{ value2 }}
       locked_part: Ця деталь заблокована
       not_sibling_part: Ця деталь не входить до тієї ж групи чи компонента, що й решта виділеного
       selection_contains_locked_entities: Вибір містить заблоковані функції
       wrong_material_type: Вказана деталь має бути типу '{{ type }}'
-  highlight:
-    transparency: $t(tool.default.transparency)
-    zoom_extents: $t(tool.default.zoom_extents)
   smart_select:
     state_0_status: Натисніть на деталь, щоб вибрати її
     state_0_to_6_status: Обрати батьківський елемент
@@ -2428,6 +2448,8 @@ tool:
     action_option_options_draw_in_0: Малювати в активному елементі
     action_option_options_draw_in_1: Намалювати деталь у батьківському контейнері у початковій точці
     action_option_options_draw_in_status: Намалювати деталь у батьківському контейнері, на який вказує перша точка
+    action_option_options_pick_material: Піпетка
+    action_option_options_pick_material_status: Застосувати матеріал деталі, на яку вказує перша точка, до створеної деталі
     action_option_options_ask_name: Найменування деталей
     action_option_options_ask_name_status: Введення назв деталей вручну
     action_toggle_move_copy_status: Чергування копіювання/переміщення
@@ -2441,23 +2463,53 @@ tool:
     action_0_status: Побудуйте розділювач у порожнині, утвореній групою наявних деталей
     action_0_state_0_status: Натисніть на стінку, щоб створити перегородку
     action_0_state_1_status: Натисніть на стінку, щоб створити перегородки
+    action_0_state_2_status: Натисніть, щоб задати ширину модуля (вісь X)
+    action_0_state_2_lock_status: Зафіксувати ширину вихідного файлу
+    action_0_state_2_arrows_status: Стрілки = Фіксація на осі (→ X, ← Y, ↑ Z)
+    action_0_state_3_status: Натисніть, щоб задати глибину модуля (вісь Y)
+    action_0_state_3_lock_status: Зафіксувати глибину вихідного файлу
+    action_0_state_3_arrows_status: Стрілки = Фіксація нормалі площини XY на осі (→ X, ← Y, ↑ Z)
+    action_0_state_4_status: Натисніть, щоб задати висоту модуля (вісь Z)
+    action_0_state_4_lock_status: Зафіксувати висоту вихідного файлу
+    action_0_state_5_status: Натисніть на екземпляр, який потрібно додати
+    action_0_state_6_status: Натисніть на ПЕРЕДНЮ грань модуля
+    action_0_state_7_status: Натисніть на ВЕРХНЮ грань модуля
+    action_0_add_title: Додати модуль
+    action_0_add_name: Ім'я файлу
+    action_0_add_overwrite: Файл « {{ name }}.skp » вже існує. Бажаєте замінити його?
+    action_0_add_front_label: ПЕРЕД
+    action_0_add_up_label: ВЕРХ
+    action_0_flip_status: Поміняти місцями перед і зад
+    action_0_flip_up_status: Поміняти місцями верх і низ
     action_1: Створити фасад
     action_1_status: Побудуйте фасад у порожнині, утвореній групою існуючих деталей
     action_1_state_0_status: Натисніть на порожнину, щоб побудувати фасад на її отворі
+    action_1_state_1_status: Натисніть на стінку, щоб побудувати роздільники
     action_2: Створити задню стінку
     action_2_status: Побудуйте задню стінку в порожнині, утвореній групою існуючих деталей
     action_2_state_0_status: Клацніть у порожнині, щоб створити задню стінку на її отворі навпроти виду
     action_2_state_0_merge_status: Посуньтеся до сусідніх порожнин для спільної задньої стінки
+    action_3: Побудувати задню стінку
+    action_3_status: Побудувати задню стінку, що закриває порожнину, утворену групою наявних деталей
+    action_3_state_0_status: Натисніть у порожнині, щоб побудувати задню стінку на її отворі, протилежному до виду
+    action_3_state_0_merge_status: Перетягніть до сусідніх порожнин для спільної задньої стінки
     action_option_group_groove: Паз
+    action_2_option_group_offset: Зазор
     action_option_group_thickness: Товщина
     action_option_group_overlay: Монтаж
     action_option_group_axes: Осі
     action_option_group_measure_type: Вимірювання
+    action_option_group_measure_origin: Початок відліку
+    action_option_group_anchor: Прив'язка
     action_option_group_options: Опції
     action_option_offset_front_panel_offset: Зазор
     action_option_offset_front_panel_offset_status: Визначає зазор, що залишився на кожному краю фасаду
     action_option_groove_groove_depth: Глибина пазу
     action_option_groove_groove_depth_status: Визначає глибину пазу, в яку заходить задня стінка
+    action_option_groove_groove_panel_reduction: Зменшення панелі
+    action_option_groove_groove_panel_reduction_status: Визначає, на скільки задня стінка зменшується з кожного краю, що входить у паз, залишаючи цей зазор на дні пазу
+    action_option_groove_groove_width_clearance: Зазор по ширині
+    action_option_groove_groove_width_clearance_status: Визначає, на скільки паз фрезерується ширшим за товщину задньої стінки, повністю із зовнішнього боку корпусу
     action_option_groove_groove_setback: Відступ
     action_option_groove_groove_setback_status: Визначає, наскільки задня стінка рухається назад у напрямку до внутрішньої частини коробки, і, отже, місце обробки паза
     action_option_groove_groove_through: Паз на всю довжину
@@ -2465,10 +2517,16 @@ tool:
     action_option_thickness_thickness: Товщина
     action_option_thickness_thickness_status: Визначає товщину панелей
     action_option_overlay_inset_status: "Вкладний фасад: встановлюється в отвір, виходить на лицьову сторону"
+    action_3_option_overlay_inset_status: "Задня стінка в пазу: вставлена в паз, виготовлений у деталях, що обрамлюють отвір"
     action_option_overlay_full_overlay_status: "Фасад для поверхневого монтажу (накладний): розміщений перед передньою стороною, покриваючи панелі до зовнішньої поверхні коробки та до середини товщини внутрішніх панелей"
+    action_3_option_overlay_full_overlay_status: "Накладна задня стінка: розміщена на задній частині корпусу, перекриває панелі до зовнішнього краю та до середини товщини внутрішніх панелей, без жодної обробки"
+    action_option_overlay_against_protrusions_status: "Накладний фасад упритул до виступів: накладений на панелі врівень з отвором і підігнаний упритул до тих, що виступають"
+    action_3_option_overlay_against_protrusions_status: "Накладна задня стінка між виступами: накладена на панелі врівень з отвором і підігнана між тими, що виступають (виступаючі боковини), без жодної обробки"
     action_option_measure_type_inside_status: Розташувати товщину всередині цільової точки
     action_option_measure_type_centered_status: Відцентрувати товщину на цільовій точці
     action_option_measure_type_outside_status: Розмістити товщину за межами цільової точки
+    action_option_measure_origin_wall_status: Вимірювати від внутрішніх стінок порожнини
+    action_option_measure_origin_overall_status: Вимірювати від зовнішніх граней деталей, що закривають порожнину
     action_option_axes_active_status: Маніпулювати вздовж активних осей
     action_option_axes_context_status: Маніпулювати вздовж осей хост-групи або компонента
     action_option_options_measure_reversed: Реверсивне вимірювання
@@ -2479,10 +2537,21 @@ tool:
     action_option_options_reuse_definition_status: Повторно використовувати наявну деталь тієї самої форми та в тій самій зоні, а не створювати нову
     action_option_options_mirror: Встановити дзеркально
     action_option_options_mirror_status: Розмістіть кожен фасад парного ряду дзеркало сусіднього
+    action_option_options_pick_material: Піпетка
+    action_option_options_pick_material_status: Застосувати матеріал деталі під курсором до створених деталей
+    action_option_options_face_camera: Лицем до камери
+    action_option_options_face_camera_status: Автоматично повертати фасад модуля до камери
+    action_option_options_top_up: Верх до Z+
+    action_option_options_top_up_status: Автоматично повертати верх модуля якнайближче догори (Z+)
     action_option_options_ask_name: Найменування деталей
     action_option_options_ask_name_status: Введення назв деталей вручну
     action_option_options_layer_name: Тег
     action_option_options_layer_name_status: Назва шару, на якому розміщені деталі
+    action_option_anchor_center_x_status: По центру за X
+    action_option_anchor_center_y_status: По центру за Y
+    action_option_anchor_center_z_status: По центру за Z
+    action_option_anchor_origin_status: Початок координат компонента
+    action_option_no_layer_help: "*Залиште це поле порожнім, щоб не застосовувати тег*."
     detecting_cavities: Виявлення порожнини...
     error:
       invalid_divider_seed: Цей тип деталі не допускає будівництва розділювачів
@@ -2504,13 +2573,23 @@ tool:
       front_panel_number_overflow: Неможливо розподілити {{ number }} фасадів на цьому отворі
       back_panel_number_overflow: Не вдалося розподілити {{ number }} задні стінки у цьому отворі
       back_panel_severs_parts: "Паз прорізає наскрізь деталі: {{ names }}. Зменшіть його глибину"
+      module_file_not_found: "Файл модуля не знайдено: {{ file }}"
+      module_file_invalid: "Неможливо завантажити файл модуля: {{ file }}"
+      module_file_invalid_name: "Неприпустиме ім'я файлу: {{ name }}"
+      module_file_save_failed: "Не вдалося зберегти файл модуля: {{ name }}.skp"
+      module_stretch_failed: Неможливо розтягнути модуль до таких розмірів
     warning:
       no_back_panel_machining: "Фрезерування не вдалося: жодна сусідня деталь не межує із задньою стінкою на цій глибині"
+      no_module_file: У цій папці немає файлів .skp
+      module_axis_no_scale: "Модуль не розтягується по {{ axis }}: заблоковано поведінкою компонента"
+      module_axis_curve_intersect: "Модуль не розтягується по {{ axis }}: одна з січних площин перетинає нерозтяжну криву"
     success:
       part_created: "Створено нову деталь: {{ name }}"
       part_created_plural: "Створено {{ count }} нових деталей: {{ name }}"
       part_reused: "Новий екземпляр існуючої деталі: {{ name }}"
       part_reused_plural: "{{ count }} нові випадки наявної деталі: {{ name }}"
+      module_file_saved: "Модуль збережено: {{ name }}.skp"
+      module_created: "Новий модуль розміщено: {{ name }}"
   smart_handle:
     title: Редагувати
     action_0: Обрати
@@ -2529,6 +2608,11 @@ tool:
     action_4_status: Розподілити деталь по осі
     action_4_state_1_status: Натисніть, щоб визначити першу точку вимірювання
     action_4_state_2_status: Натисніть, щоб визначити другу точку вимірювання або ввести відстань
+    action_5: Взаємодіяти
+    action_5_status: Відкрити або закрити двері
+    action_5_state_0_status: Натисніть на двері, щоб відкрити чи закрити їх, або перетягніть, щоб налаштувати їх відкриття
+    action_5_state_0_amend_status: Введіть кут, щоб виправити відкриття, або натисніть на двері, щоб відкрити чи закрити їх
+    action_5_state_20_status: Перетягніть, щоб налаштувати відкриття дверей, і відпустіть, щоб підтвердити
     action_option_group_copy_measure_type: Вимірювання
     action_option_group_move_measure_type: Вимірювання
     action_option_group_axes: Осі
@@ -2543,6 +2627,9 @@ tool:
     action_toggle_raytest_status: Проекція до наступної точки
     warning:
       copies_disable_mirror: Мультикопіювання вимикає опцію '$t(tool.smart_handle.action_option_options_mirror_status)'
+    error:
+      not_door: Ця деталь не є дверима з петлями
+      incoherent_door: Петлі цих дверей не обертаються навколо однієї осі
   smart_reshape:
     title: Трансформація
     action_0: Розтягнути
@@ -2641,6 +2728,8 @@ tool:
     action_option_edges_2_status: Покриття всіх 4 торців деталі, яку ви вибрали
     action_option_faces_0_status: Покриття лише цільової площини
     action_option_faces_1_status: Покриття 2 площин цільової деталі
+    state_8_status: Позначте матеріали для заміни, потім підтвердьте
+    select_filter_title: Матеріали для заміни
     edges: "{{ count }} торець"
     edges_plural: "{{ count }} торців"
     edge_ymin: Довжина 1
@@ -2654,6 +2743,7 @@ tool:
     warning:
       no_material: Ваша модель не містить матеріалів!
       no_material_type: Незалежно від типу '{{ type }}'
+      selection_disable_instances_all: Прямокутне виділення вимикає опцію '$t(tool.smart_paint.action_option_instances_1_status)'
     error:
       not_part: Об'єкт, на який наведено, не є деталлю (компонентом)
       not_edge: Вказана грань не є торцем панелі

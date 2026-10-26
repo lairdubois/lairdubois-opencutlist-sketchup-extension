@@ -2156,9 +2156,6 @@ tool:
       invalid_segment_count: "Broj segmenata {{ value }} nije validan, dozvoljeno: 3-999."
       lt_min_distance: Rastojanje {{ value1 }} je manje od minimalnog rastojanja {{ value2 }}
       wrong_material_type: Ciljani element mora biti tipa '{{ type }}'
-  highlight:
-    transparency: $t(tool.default.transparency)
-    zoom_extents: $t(tool.default.zoom_extents)
   smart_select:
     state_0_status: Kliknite na komad za izbor
   smart_draw:
