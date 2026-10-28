@@ -13,6 +13,7 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added Smart Stretch Tool
   * Added Smart Paneling Tool
   * Added Smart Boolean Tools
+  * Added Smart Slice Tool **(DEV team only)**
   * Added Smart Join Tool **(DEV team only)**
   * Added a Hardware Editor **(DEV team only)**
   * Added Grain Continuity support
@@ -35,6 +36,10 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
+### 2026-10-28
+ * Added Smart Slice Tool **(DEV team only)**
+ * Improved translations
+ * Updated PackingSolver dependency (improved nesting algorithm)
 ### 2026-10-22
  * Improved DLL loading on Windows
  * Improved translations
