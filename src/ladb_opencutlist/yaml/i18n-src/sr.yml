@@ -2199,6 +2199,8 @@ tool:
     success:
       part_created: "Kreiran novi komad : {{ name }}"
   smart_build:
+    action_0_state_2_arrows_status: Zaključaj na osu
+    action_0_state_3_arrows_status: Zaključaj normalu XY ravni na osu
     action_option_group_thickness: Debljina
     action_option_group_axes: Ose
     action_option_group_measure_type: Merenje

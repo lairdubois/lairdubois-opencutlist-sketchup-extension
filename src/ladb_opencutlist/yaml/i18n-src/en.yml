@@ -289,8 +289,8 @@ core:
     three_viewer:
       view: "{{ view }} View"
       view_isometric: Isometric
-      view_top: Top View
-      view_bottom: Bottom View
+      view_top: Top
+      view_bottom: Bottom
       view_front: Front
       view_back: Rear
       view_left: Left
@@ -648,7 +648,7 @@ tab:
       multiple_content_layers: Caution, this part is composed of sub-parts present in {{ count }} different tags:<br>{{ layers }}
       children_warnings: Caution, there is {{ count }} alert in grouped parts
       children_warnings_plural: Caution, there are {{ count }} alerts in grouped parts
-      children_size_increase: This dimension is increased by an oversize for {{ count }} grouped parts
+      children_size_increase: This dimension is increased by an oversize for {{ count }} of the grouped parts
       invalid_final_area: Caution, this summable area could not be computed because {{ count }} part (of {{ total }}) has an invalid area
       invalid_final_area_plural: Caution, this summable area could not be computed because {{ count }} parts (of {{ total }}) have an invalid area
       is_instance_name: The designation of this part is extracted from the group's instance name
@@ -773,9 +773,9 @@ tab:
         If this option is selected, the option *Automatic orientation of parts* will have no effect on this part
 
         Hence, in the local coordinate system:
-        - *length* is on the <span style='color:red'>red</span> axis,
-        - *width* on the <span style='color:green'>green</span> axis and
-        - *thickness* on the <span style='color:blue'>blue</span> axis
+        - the *length* is on the <span style='color:red'>red</span> axis,
+        - the *width* is on the <span style='color:green'>green</span> axis and
+        - the *thickness* is on the <span style='color:blue'>blue</span> axis
       symmetrical: Disable mirrored part detection on this part
       symmetrical_help: |
         If this option is selected, the detection of a *mirrored part* will have no effect on the part.
@@ -783,7 +783,7 @@ tab:
       ignore_grain_direction_help: |
         If this option is selected, the grain orientation of the material will be ignored for this part.
       ignore_grain_direction_0: The grain direction runs lengthwise
-      ignore_grain_direction_1: Ignore grain direction
+      ignore_grain_direction_1: Ignore the grain direction
       follow_grain_direction: Grain continuity
       follow_grain_direction_help: |
         Enabling this option will treat instances of this part as parts laid out in **Grain continuity** with their neighbors that share:
@@ -828,18 +828,18 @@ tab:
       smart_material_help: If this option is selected, parts without defined material may be assigned the main material of their child elements or the one inherited from their parent elements.
       dynamic_attributes_name: Use the attribute *Name* of dynamic components
       dynamic_attributes_name_help: |
-        If this option is selected, the designation of parts will be extracted from the attribute *Name*, if defined.
+        If this option is selected, the designation of parts that are dynamic components will be extracted from the attribute *Name*, if defined.
 
         <i class='ladb-opencutlist-icon-warning'></i> Part instances with the same component definition will be separated if the attribute *Name* does not have the same value.
       part_number_with_letters: Use letters to enumerate parts
       part_number_with_letters_help: If this option is selected, parts are enumerated using letters (A, B, C, ... Z, AA, AB, ...).
       part_number_sequence_by_group: Reset the enumeration of parts for each group
-      part_number_sequence_by_group_help: If this option is selected, the enumeration of parts is reset to 1 (or A) for each group (list of parts with same material and raw thickness).
+      part_number_sequence_by_group_help: If this option is selected, the enumeration of parts is reset to 1 (or A) for each group (list of parts with same material and rough thickness).
       part_folding: Group identical parts
       part_folding_help: |
-        If this option is selected, parts made of **Solid Wood, Sheet Goods or Dimensional**, having the **same finished size**, with the **same badges** and the **same finished surface** *(if the display of this surface is not hidden)* will be grouped on the same line in the *parts list*.
+        If this option is selected, parts made of **material Solid Wood, Sheet Goods or Dimensional**, having the **same finished size**, with the **same badges** and the **same finished surface** *(if the display of this surface is not hidden)* will be grouped on the same line in the *parts list*.
 
-        The parts will still be considered different for labeling and cutting diagram purposes.
+        The parts will still be considered different for labels and cutting diagram purposes.
       hide_entity_names: Hide instance names
       hide_entity_names_help: If this option is selected, **instance names** of parts will not be displayed.
       hide_descriptions: Hide descriptions
@@ -1396,10 +1396,10 @@ tab:
       option_items_formula: Formula
       option_items_formula_help: |
         Enables you to write *Ruby* code to customize the part identification text in the diagram.
-      option_bin_folding_1d_dimensional: Group Similar Boards
-      option_bin_folding_1d_edge: Group Similar Edge Bandings
-      option_bin_folding_2d_sheet_good: Group Similar Panels
-      option_bin_folding_2d_veneer: Group Similar Veneer Sheets
+      option_bin_folding_1d_dimensional: Group similar boards
+      option_bin_folding_1d_edge: Group similar edge bandings
+      option_bin_folding_2d_sheet_good: Group similar panels
+      option_bin_folding_2d_veneer: Group similar veneer sheets
       option_bin_folding_0: $t(default.no)
       option_bin_folding_1: $t(default.yes)
       option_bin_folding_1d_help: |
@@ -1547,7 +1547,7 @@ tab:
           is_bin_selection: The **hidden elements** will not be exported.
         error:
           overflow_gt_spacing: |
-            The allowance ({{ overflow }}) must be smaller than or equal to the spacing ({{ spacing }}) configured in this cutting diagram.
+            The machining allowance ({{ overflow }}) must be smaller than or equal to the spacing ({{ spacing }}) configured in this cutting diagram.
       error:
         no_part: No parts.
         no_bin_1d: No standard board or edge banding was selected and no offcut is available.
@@ -1676,7 +1676,7 @@ tab:
       option_pins: Callouts
       option_pins_hidden: Display
       option_pins_hidden_0: With callouts
-      option_pins_hidden_1: No pins
+      option_pins_hidden_1: No callouts
       option_pins_hidden_help: Shows or hides the part's callouts with number or designation.
       option_pins_colored: Color
       option_pins_colored_0: Without color
@@ -1986,7 +1986,7 @@ tab:
       grained: Grain
       grained_help: Selects the grain orientation in relation to the length of the panel.
       grained_0: No grain orientation
-      grained_1: Grain of the wood runs lengthwise
+      grained_1: The grain direction runs lengthwise
       edge_decremented: Reduce Dimensions
       edge_decremented_help: Allows you to indicate whether the dimensions of parts should be reduced by the thickness of the edge banding.
       edge_decremented_0: No Reduction
@@ -2686,10 +2686,10 @@ tool:
     action_0_state_1_status: Click to set the module's origin
     action_0_state_2_status: Click to set the width of the module (X-axis)
     action_0_state_2_lock_status: Lock to the width of the source file
-    action_0_state_2_arrows_status: Arrows = Lock to an axis (→ X, ← Y, ↑ Z)
+    action_0_state_2_arrows_status: Lock to an axis
     action_0_state_3_status: Click to set the module's depth (Y-axis)
     action_0_state_3_lock_status: Lock to the depth of the source file
-    action_0_state_3_arrows_status: Arrows = Lock the XY-plane normal to an axis (→ X, ← Y, ↑ Z)
+    action_0_state_3_arrows_status: Lock the XY-plane normal to an axis
     action_0_state_4_status: Click to set the module's height (Z-axis)
     action_0_state_4_lock_status: Lock to the height of the source file
     action_0_state_5_status: Click the instance you want to add

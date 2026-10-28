@@ -613,7 +613,7 @@ tab:
       part_number_with_letters: Utilizar letras para la numeración de piezas
       part_number_with_letters_help: Si se selecciona esta opción, las piezas numeran con letras (A, B, C, ... Z, AA, AB, ...).
       part_number_sequence_by_group: Restablecer los números de pieza por grupo
-      part_number_sequence_by_group_help: Si esta opción está activada, la numeración de las piezas se restablece a 1 (o A) para cada grupo (lista de piezas del mismo material y grosor bruto).
+      part_number_sequence_by_group_help: Si esta opción está activada, la numeración de las piezas se restablece a 1 (o A) para cada grupo (lista de piezas del mismo material y espesor bruto).
       part_folding: Agrupar piezas similares
       part_folding_help: |
         Si esta opción está habilitada, las piezas de **material Madera Maciza, Tablero o Liston** de **mismo tamaño**, con **los mismos distintivos** y **la misma superficie terminada** *(si la visualización de esta superficie no está oculta)* se agruparán en la misma línea en el *lista de piezas*.
@@ -688,7 +688,7 @@ tab:
       number: No.
       name: Designación
       count: Cant.
-      cutting: Ajustadas
+      cutting: Bruto
       bbox: Finales
       final: Final
       total_cutting: Σ Bruto
@@ -2465,10 +2465,10 @@ tool:
     action_0_state_1_status: Haga clic para colocar el origen del módulo
     action_0_state_2_status: Haga clic para definir el ancho del módulo (eje X)
     action_0_state_2_lock_status: Bloquear en el ancho del archivo de origen
-    action_0_state_2_arrows_status: Flechas = Bloquear en un eje (→ X, ← Y, ↑ Z)
+    action_0_state_2_arrows_status: Bloquear en un eje
     action_0_state_3_status: Haga clic para definir la profundidad del módulo (eje Y)
     action_0_state_3_lock_status: Bloquear en la profundidad del archivo de origen
-    action_0_state_3_arrows_status: Flechas = Bloquear la normal del plano XY en un eje (→ X, ← Y, ↑ Z)
+    action_0_state_3_arrows_status: Bloquear la normal del plano XY en un eje
     action_0_state_4_status: Haga clic para definir la altura del módulo (eje Z)
     action_0_state_4_lock_status: Bloquear en la altura del archivo de origen
     action_0_state_5_status: Haga clic en la instancia que desea añadir

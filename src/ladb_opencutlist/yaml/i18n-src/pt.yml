@@ -292,7 +292,7 @@ core:
       view_top: Superior
       view_bottom: Inferior
       view_front: Frontal
-      view_back: Fundo
+      view_back: Traseira
       view_left: Esquerda
       view_right: Direita
       zoom: Escala {{ zoom }}
@@ -407,7 +407,7 @@ tab:
       ignore_grain_direction: A direção dos veios é ignorada nesta peça
       follow_grain_direction: A detecção de Continuidade do veio está ativada nesta peça
       auto_oriented: Esta peça foi reorientada automaticamente
-      oko_label_filter: Incluir/Excluir este selo
+      oko_label_filter: Incluir/Excluir este identificação
       add_label_filter: Filtrar em '{{ label }}'
       remove_label_filter: Remova a filtragem em '{{ label }}'
       add_edge_material_name_filter: Filtrar em '{{ material_name }}'
@@ -424,7 +424,7 @@ tab:
       thickness_layered: A quantidade aqui representa o número de peças a serem cortadas para obter todas as camadas.
       thickness_layered_equation: "**{{ count }}** *peça* x **{{ layerCount }}** *camadas* = **{{ cuttingPartCount }}**"
       thickness_layered_equation_plural: "**{{ count }}** *peças* x **{{ layerCount }}** *camadas* = **{{ cuttingPartCount }}**"
-      multiple_content_layers: Cuidado, esta peça é composta de subpeças presentes em {{ count }} camadas ou etiquetas diferentes:<br>{{ layers }}
+      multiple_content_layers: Cuidado, esta peça é composta de subpeças presentes em {{ count }} etiquetas diferentes:<br>{{ layers }}
       children_warnings: Atenção, há {{ count }} alerta em peças agrupadas
       children_warnings_plural: Atenção, existem {{ count }} alertas em peças agrupadas
       children_size_increase: Esta dimensão foi aumentada por um superdimensionamento para {{ count }} peças agrupadas
@@ -613,7 +613,7 @@ tab:
       part_number_with_letters: Use letras para enumerar as peças
       part_number_with_letters_help: Se esta opção for selecionada, as peças são enumeradas usando letras (A, B, C, ... Z, AA, AB, ...).
       part_number_sequence_by_group: Reinicie a enumeração de peças para cada grupo
-      part_number_sequence_by_group_help: Se esta opção for selecionada, a enumeração das peças é reinicializada em 1 (ou A) para cada grupo (lista de peças do mesmo material e espessura).
+      part_number_sequence_by_group_help: Se esta opção for selecionada, a enumeração das peças é reinicializada em 1 (ou A) para cada grupo (lista de peças do mesmo material e espessura bruta).
       part_folding: Agrupar peças idênticas
       part_folding_help: |
         Se esta opção estiver ativada, as peças feitas de **Madeira maciça, Chapa ou Barra**, tendo o **mesmo tamanho bruto**, com as **mesmas identificações** e a **mesma superfície acabada** *(se a exibição desta superfície não estiver oculta)* serão agrupadas na mesma linha na *lista de peças*.
@@ -625,8 +625,8 @@ tab:
       hide_descriptions_help: Se esta opção for ativada, as **descrições** colocadas sobre as peças não serão exibidas.
       hide_tags: Ocultar identificações
       hide_tags_help: Se esta opção for selecionada, **identificação** não será exibida.
-      hide_cutting_dimensions: Ocultar dimensões aproximadas
-      hide_cutting_dimensions_help: Se esta opção for selecionada, as dimensões **aproximadas** das peças serão ocultadas.
+      hide_cutting_dimensions: Ocultar dimensões brutas
+      hide_cutting_dimensions_help: Se esta opção for selecionada, as dimensões **brutas** das peças serão ocultadas.
       hide_bbox_dimensions: Ocultar dimensões acabadas
       hide_bbox_dimensions_help: Se esta opção for selecionada, as dimensões **acabadas** das peças serão ocultadas.
       hide_final_areas: Ocultar a área real das peças do tipo *Chapa*
@@ -681,7 +681,7 @@ tab:
       summary: Resumo
       material_type: Tipo
       material_thickness: Material / Dimensão
-      part_count: Quantidade
+      part_count: N.º de peças
       area: Área
       area_short: Área
       volume: Volume
@@ -691,7 +691,7 @@ tab:
       cutting: Bruto
       bbox: Acabado
       final: Real
-      total_cutting: Σ Aproximada
+      total_cutting: Σ Bruta
       total_final: Σ Real
       length: Comprimento
       length_short: C
@@ -1070,7 +1070,7 @@ tab:
       option_problem_type_rectangle: Retangular
       option_problem_type_rectangleguillotine: Guilhotina
       option_problem_type_onedimensional: Barra
-      option_problem_type_irregular: Aninhado
+      option_problem_type_irregular: Aninhamento
       options_material: Material
       options_config: Configuração
       options_display: Exibição
@@ -1170,7 +1170,7 @@ tab:
         Espaçamento mínimo entre cada peça.
         Esse valor pode corresponder à largura da lâmina ou da ferramenta de corte.
       option_trimming: Apara
-      option_trimming_1d_help: Margem de segurança em cada extremidade da barra ou fita a ser considerada como sobra.
+      option_trimming_1d_help: Margem de segurança em cada extremidade da barra ou fita de borda a ser considerada como sobra.
       option_trimming_2d_help: Margem de segurança ao redor de toda a chapa ou laminado a ser considerada como sobra.
       option_items_formula: Fórmula
       option_items_formula_help: |
@@ -1326,10 +1326,10 @@ tab:
           is_bin_selection: Os **blocos ocultos** não serão exportados.
         error:
           overflow_gt_spacing: |
-            A sobremetal de usinagem ({{ overflow }}) deve ser menor ou igual ao espaçamento ({{ spacing }}) configurado neste plano de corte.
+            A sobramedida de usinagem ({{ overflow }}) deve ser menor ou igual ao espaçamento ({{ spacing }}) configurado neste plano de corte.
       error:
         no_part: Nenhuma peça.
-        no_bin_1d: Nenhuma barra ou fita padrão foi selecionada e nenhuma sobra foi definida.
+        no_bin_1d: Nenhuma barra ou fita de borda padrão foi selecionada e nenhuma sobra foi definida.
         no_bin_2d: Nenhuma chapa ou laminado padrão foi selecionado e nenhuma sobra foi definida.
         invalid_part_shapes: A forma da peça '{{ name }}' é inválida.
         no_solution: Nenhuma solução foi encontrada para colocar **todas as peças** no material disponível.
@@ -1339,7 +1339,7 @@ tab:
         unusable_part_2: Grupo de continuidade do veio muito grande
       warning:
         is_part_selection: Este plano de corte é limitado a **peças selecionadas**.
-        cutting_dimensions: Este layout mostra as peças em suas dimensões de **comprimento bruto**.
+        cutting_dimensions: Este plano de corte mostra as peças em suas dimensões **brutas**.
         cutting_dimensions_increase_1d: Dimensões aumentadas pelo acréscimo de comprimento (**{{ length_increase }}**) definido no material '{{ material_name }}'.
         cutting_dimensions_increase_2d: Dimensões aumentadas pelas sobremedidas configuradas no material '{{ material_name }}' em comprimento (**{{ length_increase }}**) e largura (**{{ width_increase }}**).
         cutting_dimensions_edge_decrement: Dimensões reduzidas pela espessura da fita de borda. <i class='ladb-opencutlist-icon-edge-decremented'></i>
@@ -1401,17 +1401,17 @@ tab:
         part_entity_named_path: Caminho da instância
         part_entity_name: Nome da instância
         part_bin: Contentor
-        part_cutting_size: Dimensões - Aproximadas
-        part_cutting_length: Comprimento - Aproximado
-        part_cutting_width: Largura - Aproximada
+        part_cutting_size: Dimensões brutas
+        part_cutting_length: Comprimento bruto
+        part_cutting_width: Largura bruta
         part_cutting_thickness: Espessura bruta
-        part_edge_cutting_size: Tamanho das bordas a serem cortadas
+        part_edge_cutting_size: Tamanho da fita de borda
         part_edge_cutting_length: Comprimento da fita de borda
         part_edge_cutting_width: Largura da fita de borda
         part_size: Tamanho
         part_length: Comprimento
         part_width: Largura
-        part_thickness: Espessura compatível
+        part_thickness: Espessura
         part_tags: Identificação
         part_batch: Lote
         part_edge_ymin: Comprimento da Borda 1
@@ -1596,16 +1596,16 @@ tab:
         *Esta opção não pode detectar outros tipos de curvas.*
       option_merge_holes: Decomposição
       option_merge_holes_0: Básico
-      option_merge_holes_1: Contorno + Furos + Sobra
+      option_merge_holes_1: Contorno + Furos + Sobramedida de usinagem
       option_merge_holes_help: |
         **Básico**
         A forma da peça é exportada com a projeção de cada face em uma camada correspondente à sua profundidade.
 
-        **Contorno + Furos + Sobra**
-        Ativa a separação do contorno externo das peças em relação aos seus furos, bem como o cálculo da sobra de usinagem aplicada às superfícies localizadas nas bordas do contorno e das cavidades.
-      option_merge_holes_overflow: Sobremetal de usinagem
+        **Contorno + Furos + Sobramedida de usinagem**
+        Ativa a separação do contorno externo das peças em relação aos seus furos, bem como o cálculo da sobramedida de usinagem aplicada às superfícies localizadas nas bordas do contorno e das cavidades.
+      option_merge_holes_overflow: Sobramedida de usinagem
       option_merge_holes_overflow_help: |
-        Permite definir a distância da sobra de usinagem aplicada às superfícies localizadas nas bordas do contorno e das cavidades.
+        Permite definir a distância da sobramedida de usinagem aplicada às superfícies localizadas nas bordas do contorno e das cavidades.
       option_include_paths: Traçados
       option_include_paths_0: $t(default.no)
       option_include_paths_1: Utilizar as arestas não associadas a uma face
@@ -1639,7 +1639,7 @@ tab:
       number_and_name: Número e designação
       number_without_hardware: Número (sem acessórios)
       size: Tamanho
-      area: Superfície disponível
+      area: Superfície
       volume: Volume
     error:
       no_model: Nenhum modelo está aberto. Você precisará me fornecer mais informações;)
@@ -1729,14 +1729,14 @@ tab:
 
         *Se nenhuma unidade for especificada, será aplicada a unidade do modelo.*
       length_increase: Sobremedida do comprimento
-      length_increase_help: Sobremedida aplicada ao comprimento útil da peça para definir seu **comprimento de corte**.
-      length_increase_help_plural: Sobremedida aplicada ao comprimento útil das peças para definir seu **comprimento de corte**.
+      length_increase_help: Sobremedida aplicada ao comprimento útil da peça para definir seu **comprimento bruto**.
+      length_increase_help_plural: Sobremedida aplicada ao comprimento útil das peças para definir seu **comprimento bruto**.
       width_increase: Sobremedida da largura
-      width_increase_help: Sobremedida aplicada à largura útil da peça para definir sua **largura de corte**.
-      width_increase_help_plural: Sobremedida aplicada à largura útil das peças para definir sua **largura de corte**.
+      width_increase_help: Sobremedida aplicada à largura útil da peça para definir sua **largura bruta**.
+      width_increase_help_plural: Sobremedida aplicada à largura útil das peças para definir sua **largura bruta**.
       thickness_increase: Sobremedida da espessura
-      thickness_increase_help: Sobremedida aplicada à espessura útil da peça para definir sua **espessura de corte**.
-      thickness_increase_help_plural: Sobremedida aplicada à espessura útil das peças para definir sua **espessura de corte**.
+      thickness_increase_help: Sobremedida aplicada à espessura útil da peça para definir sua **espessura bruta**.
+      thickness_increase_help_plural: Sobremedida aplicada à espessura útil das peças para definir sua **espessura bruta**.
       std_lengths: Comprimentos padrão
       std_lengths_help: |
         Comprimentos padrão disponíveis para este material.
@@ -2030,7 +2030,7 @@ tab:
       title: Importar peças
       help: |
         Esta página permite importar uma série de peças úteis (de formato paralelipípedo) para o seu modelo a partir de um arquivo [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
-        Assim, você poderá usar o poder da lista de corte do *OpenCutList* gerando suas peças em outro software que não seja o *SketchUp*.
+        Assim, você poderá usar o poder da lista de peças do *OpenCutList* gerando suas peças em outro software que não seja o *SketchUp*.
 
         Clique no botão **Abrir um arquivo CSV** para iniciar.
       load:
@@ -2074,7 +2074,7 @@ tab:
         count: Quantidade
         bbox_length: Comprimento
         bbox_width: Largura
-        bbox_thickness: Espessura compatível
+        bbox_thickness: Espessura
         material: Material
         tags: Identificação
       tooltip:
@@ -2205,10 +2205,10 @@ tab:
     tags: Tags
     redirection: |
       Você será redirecionado para a plataforma **Open Collective** que hospeda este fórum de discussão.
-      Para *iniciar conversas* ou *resposta* você precisará criar uma conta e fazer o login.
+      Para *iniciar conversas* ou *responder* você precisará criar uma conta e fazer o login.
       *É gratuito, sem compromisso e um simples endereço de e-mail é suficiente.*
 
-      Inscreva-se para continuar.
+      Confirme para continuar.
     error:
       fail_to_load_list: Incapaz de carregar a lista de tópicos.
   sponsor:
@@ -2300,11 +2300,11 @@ tab:
         Para efetivar as alterações, é necessário **fechar** e **reabrir** a janela do OpenCutList.
       reset_model_presets: Redefinir as configurações do modelo
       reset_model_presets_confirm: |
-        Você está prestes a redefinir todas as predefinições *OpenCutList* para o modelo atual.
-        Esta ação é definitiva. **Todas as definições serão restauradas aos valores originais.**
+        Você está prestes a redefinir todas as configurações *OpenCutList* para o modelo atual.
+        Esta ação é definitiva. **Todas as configurações serão restauradas aos valores originais.**
         Confirmar para continuar.
       reset_model_presets_success: |
-        As predefinições do modelo atual *OpenCutList* foram reajustadas.
+        As configurações do modelo atual *OpenCutList* foram redefinidas.
         Para efetivar as alterações, é necessário **fechar** e **reabrir** a janela do OpenCutList.
       error:
         no_preset_to_export: Não há predefinições para exportar.
@@ -2354,7 +2354,7 @@ tab:
 tool:
   default:
     transparency: Transparência
-    zoom_extents: Limite do zoom
+    zoom_extents: Zoom extensões
     toggle_depth: Peças de fundo
     more: Mais
     end_point: Extremidade
@@ -2362,7 +2362,7 @@ tool:
     third_point: Ponto a um terço
     vcb_length: Comprimento
     vcb_thickness: Espessura
-    vcb_size: Cotações
+    vcb_size: Dimensões
     vcb_radius: Raio
     vcb_diameter: Diâmetro
     vcb_distance: Distância
@@ -2422,10 +2422,10 @@ tool:
     action_2_status: Desenhar um volume com base em uma forma poligonal
     action_2_state_1_status: Clique para definir um novo ponto ou insira uma distância
     action_x_state_2_status: Clique para definir a elevação ou insira uma distância
-    action_option_group_offset: Diferença
+    action_option_group_offset: Deslocamento
     action_option_group_segments: Segmentos
     action_option_group_options: Opções
-    action_option_offset_shape_offset: Diferença
+    action_option_offset_shape_offset: Deslocamento
     action_option_offset_shape_offset_status: Permite aplicar um deslocamento ao traçado da forma desenhada
     action_option_segments_segment_count: Número de Segmentos
     action_option_segments_segment_count_status: Permite definir o número de segmentos do círculo
@@ -2465,10 +2465,10 @@ tool:
     action_0_state_1_status: Clique para definir a origem do módulo
     action_0_state_2_status: Clique para definir a largura do módulo (eixo X)
     action_0_state_2_lock_status: Bloquear na largura do arquivo de origem
-    action_0_state_2_arrows_status: Setas = Bloquear num eixo (→ X, ← Y, ↑ Z)
+    action_0_state_2_arrows_status: Bloquear num eixo
     action_0_state_3_status: Clique para definir a profundidade do módulo (eixo Y)
     action_0_state_3_lock_status: Bloquear na profundidade do arquivo de origem
-    action_0_state_3_arrows_status: Setas = Bloquear a normal do plano XY num eixo (→ X, ← Y, ↑ Z)
+    action_0_state_3_arrows_status: Bloquear a normal do plano XY num eixo
     action_0_state_4_status: Clique para definir a altura do módulo (eixo Z)
     action_0_state_4_lock_status: Bloquear na altura do arquivo de origem
     action_0_state_5_status: Clique na instância a adicionar
@@ -2539,8 +2539,8 @@ tool:
     action_option_options_mirror_status: Instalar cada frente de ordem par de forma espelhada em relação à vizinha
     action_option_options_pick_material: Conta-gotas
     action_option_options_pick_material_status: Aplicar o material da peça sob o cursor às peças criadas
-    action_option_options_face_camera: Virado para a câmara
-    action_option_options_face_camera_status: Rodar automaticamente a frente do módulo para a câmara
+    action_option_options_face_camera: Virado para a câmera
+    action_option_options_face_camera_status: Rodar automaticamente a frente do módulo para a câmera
     action_option_options_top_up: Topo para Z+
     action_option_options_top_up_status: Rodar automaticamente o topo do módulo o melhor possível para cima (Z+)
     action_option_options_ask_name: Nomeação das Peças
@@ -2717,7 +2717,7 @@ tool:
     action_3: Amostra
     action_3_status: Clique em uma face para obter uma amostra do material
     action_4: Limpar
-    action_4_status: Clique em uma peça para remover todos os materiais do desenho e de todas as suas instâncias
+    action_4_status: Clique em uma peça para remover todos os materiais de sua definição e de todas as suas instâncias
     action_option_group_instances: Nome de instâncias
     action_option_group_edges: Número de fitas de borda
     action_option_group_faces: Número de faces

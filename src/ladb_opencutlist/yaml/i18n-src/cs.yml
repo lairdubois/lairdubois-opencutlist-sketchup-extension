@@ -2464,10 +2464,10 @@ tool:
     action_0_state_1_status: Klikněte pro umístění počátku modulu
     action_0_state_2_status: Klikněte pro určení šířky modulu (osa X)
     action_0_state_2_lock_status: Zamknout na šířku zdrojového souboru
-    action_0_state_2_arrows_status: Šipky = Zamknout na osu (→ X, ← Y, ↑ Z)
+    action_0_state_2_arrows_status: Zamknout na osu
     action_0_state_3_status: Klikněte pro určení hloubky modulu (osa Y)
     action_0_state_3_lock_status: Zamknout na hloubku zdrojového souboru
-    action_0_state_3_arrows_status: Šipky = Zamknout normálu roviny XY na osu (→ X, ← Y, ↑ Z)
+    action_0_state_3_arrows_status: Zamknout normálu roviny XY na osu
     action_0_state_4_status: Klikněte pro určení výšky modulu (osa Z)
     action_0_state_4_lock_status: Zamknout na výšku zdrojového souboru
     action_0_state_5_status: Klikněte na instanci, kterou chcete přidat

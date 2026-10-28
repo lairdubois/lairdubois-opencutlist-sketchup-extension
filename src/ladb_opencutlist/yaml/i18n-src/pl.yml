@@ -15,6 +15,7 @@ default:
   stop: Stop
   validate: Zastosuj
   confirm: Potwierdź
+  finish: Zakończ
   ok: Ok
   open: Otwórz
   see: Zobacz
@@ -27,6 +28,7 @@ default:
   export: Eksportuj
   import: Importuj
   load: Załaduj
+  replace: Zastąp
   preview: Przegląd
   options: Opcje
   caution: Uwaga
@@ -52,7 +54,7 @@ default:
   empty_filename: Bez tytułu.skp
   help: Pomoc
   # mild expression of frustration or disappointment, polite and family-friendly
-  error: Uwaga!
+  error: Psiakość!
   warning: Uwaga
   tip: Wskazówka
   good: Dobry
@@ -85,9 +87,9 @@ default:
   load_more: Załaduj więcej
   reset_to_app_defaults: Przywróć oryginalne wartości
   # this should be the name for the key as seen on the keyboard or if it is an arrow, the name used for it.
-  constrain_key: Zmiana
+  constrain_key: Maj
   copy_key_win: Ctrl
-  copy_key_mac: Opcje
+  copy_key_mac: ⌥ Option
   alt_key_win: Alt
   alt_key_mac: Cmd
   tab_key: Tab
@@ -128,11 +130,13 @@ core:
     tools: Narzędzia
     command:
       dialog: OpenCutList
-      smart_draw: Lista części
+      smart_draw: Rysuj części
+      smart_build: Buduj części
       smart_handle: Importuj części
       smart_reshape: Przebudować pomieszczenia
       smart_paint: Malowanie części
       smart_axes: Orientuj części
+      smart_join: Łącz części
       smart_export: Eksportuj części
   messagebox:
     dir_override: |
@@ -164,7 +168,7 @@ core:
       Aby zgłosić błąd: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
     not_available_in_context: Formuła nie jest dostępna w tym kontekście
   error:
-    exception: "Błąd: : **{{ error }}**"
+    exception: "Błąd: **{{ error }}**"
     forbidden: "Błąd. Brak autoryzacji: **{{ error }}**"
     extern: "Błąd zewnętrzny : **{{ error }}**"
     feature_unavailable: Ta funkcja wymaga programu SketchUp {{ version }} lub nowszego
@@ -172,6 +176,8 @@ core:
       Wystąpił błąd podczas eksportowania do *{{ path }}*.
       **{{ error }}**
     unsupported_file_format: "Nie wspierany format pliku: **{{ format }}**"
+    unsupported_skp_version: |
+      Plik SKP został utworzony w nowszej wersji SketchUp: {{ version }}
   success:
     exported_to: Pomyślnie wyeksportowano do {{ path }}.
     copied_to_clipboard: Skopiowane do schowka
@@ -200,7 +206,7 @@ core:
     success: |
       Aktualizacja OpenCutList zakończona !
 
-      Uruchom ponownie SketchUp aby aktywowań zmiany.
+      Uruchom ponownie SketchUp aby aktywować zmiany.
     error:
       download: Błąd podczas pobierania archiwum.
       unzip: Błąd podczas dekompresji archiwum.
@@ -216,16 +222,21 @@ core:
       *Tworzenie własnych ustawień pozwala zachować aktualne ustawienia globalnie, abyś mógł użyć ich we wszystkich swoich modelach.*
 
       Wprowadź nazwę dla ustawień:
+    rename_prompt_title: Zmiana nazwy
+    rename_prompt: Wprowadź nową nazwę ustawienia **"{{ name }}"**
     delete_confirm_title: Usunięcie
     delete_confirm: Czy na pewno chcesz usunąć ustawienia **"{{ name }}"**?
     override_confirm_title: Aktualizacja
     override_confirm: Czy na pewno chcesz zapisać aktualne parametry z formularza w ustawieniach **"{{ name }}"**?
+    new_error: Niemożliwe, ustawienie **"{{ name }}"** już istnieje
     new_success: Ustawienia **"{{ name }}"** zostały utworzone
     override_success: Zaktualizowano ustawienia **"{{ name }}"**
     restore_success: Do formularza wczytano parametry zapisane w ustawieniach **"{{ name }}"**
+    rename_success: Ustawienie **"{{ name }}"** zmieniono na **"{{ new_name }}"**
     delete_success: Ustawienia **"{{ name }}"** zostały usunięte
     tooltip:
       save_to: Zaktualizuj ustawienia '{{ name }}'
+      rename: Zmień nazwę ustawienia '{{ name }}'
       delete: Usuń ustawienia '{{ name }}'
     dictionary:
       component_textinput_color: Paleta kolorów
@@ -244,6 +255,9 @@ core:
       cutlist_estimate_options: $t(tab.cutlist.label) / $t(tab.cutlist.estimate.title)
       cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
       cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
+      importers_csv_import_options: $t(tab.importers.csv.label) / $t(default.import)
+      importers_csv_load_options: $t(tab.importers.csv.label) / $t(default.open)
+      importers_bxf2_import_options: $t(tab.importers.bxf2.label) / $t(default.import)
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       outliner_options: $t(tab.outliner.label) / $t(default.options)
@@ -266,6 +280,10 @@ core:
       remove: Usuń kolor
     textinput_code:
       snippets: Przykłady formuł
+      help: Wpisz **@**, aby otworzyć listę zmiennych danych.
+    textinput_file:
+      browse: Przeglądaj
+      browse_library: Przeglądaj i kopiuj do biblioteki
     textinput_size:
       quantity: Ilość
     three_viewer:
@@ -287,6 +305,29 @@ core:
       failed_to_load: |
         Dokumentacja nie może zostać otwarta.
         Sprawdź, czy jesteś podłączony do Internetu.
+  solid:
+    error:
+      empty: Bryła nie zawiera żadnej geometrii
+      empty_named: „{{ name }}” nie zawiera żadnej geometrii
+      # an edge is considered manifold when it is shared by exactly two faces in a 3D mesh
+      non_manifold_edges: Bryła zawiera {{ count }} krawędź nierozmaitościową (non-manifold)
+      non_manifold_edges_plural: Bryła zawiera {{ count }} krawędzi nierozmaitościowych (non-manifold)
+      non_manifold_edges_named: „{{ name }}” zawiera {{ count }} krawędź nierozmaitościową (non-manifold)
+      non_manifold_edges_named_plural: „{{ name }}” zawiera {{ count }} krawędzi nierozmaitościowych (non-manifold)
+      open_edges: Bryła zawiera {{ count }} otwartą krawędź
+      open_edges_plural: Bryła zawiera {{ count }} otwartych krawędzi
+      open_edges_named: „{{ name }}” zawiera {{ count }} otwartą krawędź
+      open_edges_named_plural: „{{ name }}” zawiera {{ count }} otwartych krawędzi
+      locked_instances: "Operacja nie może zmienić zablokowanej instancji: {{ list }}"
+    rebuild:
+      error:
+        no_segment: W zaznaczeniu brak użytecznych linii konstrukcyjnych
+        no_face: Nie udało się odtworzyć żadnej zamkniętej współpłaszczyznowej pętli
+  library:
+    libraries: Biblioteki
+    user: Moja biblioteka
+    bundled: Biblioteka OCL
+    family_modules: Moduły
 tab:
   cutlist:
     label: Części
@@ -364,6 +405,7 @@ tab:
       flipped: Ta część jest lustrzana w porównaniu z definicją komponentu
       symmetrical: Wykrywanie lustrzanej części jest nieaktywne dla tej części
       ignore_grain_direction: Kierunek wzoru jest ignorowany na tej części
+      follow_grain_direction: Wykrywanie ciągłości wzoru jest włączone dla tej części
       auto_oriented: Ta część została automatycznie obrócona
       oko_label_filter: Uwzględnij / Wyłącz ten identyfikator
       add_label_filter: Filtrowanie według '{{ label }}'
@@ -388,11 +430,21 @@ tab:
       children_size_increase: Wymiar ten jest powiększony o naddatek dla {{ count }} zgrupowanych części
       invalid_final_area: Uwaga, nie można obliczyć tego sumarycznego obszaru, ponieważ część {{ count }} (z {{ total }}) ma nieprawidłowy obszar
       invalid_final_area_plural: Uwaga, nie można obliczyć tego sumarycznego obszaru, ponieważ {{ count }} części (z {{ total }}) mają nieprawidłowy obszar
+      is_instance_name: Oznaczenie tej części pochodzi z nazwy instancji grupy
       is_dynamic_attributes_name: Oznaczenie tej części pochodzi z atrybutu 'Name' elementu dynamicznego
       has_edges: Ten kawałek zawiera {{ count }} stronnie oklejoną krawędź
       has_edges_plural: Ten kawałek zawiera {{ count }} formirowane krawędzie
       has_faces: Ta część zawiera {{ count }} powierzchnię fornirowaną
       has_faces_plural: Ta część zawiera {{ count }} powierzchni fornirowanych
+      size_increased_0: |
+        Powiększono o naddatek Materiału
+        ({{ increase_1 }})
+      size_increased_1: |
+        Powiększono o naddatek Części
+        ({{ increase_2 }})
+      size_increased_2: |
+        Powiększono o naddatek Materiału i Części
+        ({{ increase_1 }} + {{ increase_2 }})
       edge_decremented: Zmniejszona o grubość obrzeża ({{ decrement }})
       edge_ymin: Długość krawędzi 1
       edge_ymax: Długość krawędzi 2
@@ -507,9 +559,20 @@ tab:
       symmetrical_help: |
         Jeśli to pole jest zaznaczone, wykrywanie *lustrzanych części* nie będzie miało żadnego wpływu na część.
       ignore_grain_direction: Kierunek wzoru/tekstury
+      ignore_grain_direction_help: |
+        Ta opcja pozwala zignorować dla tej części kierunek wzoru zdefiniowany w materiale.
       ignore_grain_direction_0: Wzór/tekstura wzdłuż Długości
       ignore_grain_direction_1: Ignoruj kierunek wzoru na tej części
+      follow_grain_direction: Ciągłość wzoru
+      follow_grain_direction_help: |
+        Po włączeniu tej opcji instancje tej części mogą być traktowane jako części rozmieszczone z **Ciągłością wzoru** względem sąsiadów, które mają:
+        - tę samą *Grupę ciągłości wzoru*
+        - tę samą Płaszczyznę
+        - tę samą Orientację
+        - ten sam Materiał z wzorem
+        - tę samą Grubość
       follow_grain_direction_0: $t(default.no)
+      follow_grain_direction_1: Wykrywanie ciągłości wzoru włączone
       axes: Osie
       axes_help: Zmień kolejność wymiarów, aby dopasować je do żądanych kolorów osi w swojej części.
       axes_tip: |
@@ -611,7 +674,9 @@ tab:
       filters_warning_plural: Ten filtr wyświetla tylko **{{ count }}** części z łącznej liczby {{ total }}.
       edge_material_names_filter: Filtruj według materiału do oklejania krawędzi
       veneer_material_names_filter: Filtruj według materiału okleiny (forniru)
+      names_filter: Oznaczenia do filtrowania
       tags_filter: Filtruj według plakietek
+      tags_filter_any: Wszystkie plakietki
       dimensions_help: Zrozumienie wymiarów
       summary: Podsumowanie
       material_type: Rodzaj
@@ -1067,8 +1132,19 @@ tab:
       option_rectangleguillotine_first_stage_orientation_horizontal: Poziomo
       option_rectangleguillotine_first_stage_orientation_vertical: Pionowo
       option_rectangleguillotine_first_stage_orientation_any: Dowolny
+      option_rectangleguillotine_sort_subplates_criteria: Sortowanie poziomów
+      option_rectangleguillotine_sort_subplates_criteria_help: |
+        Określa kryteria sortowania części na każdym poziomie.
+      option_rectangleguillotine_sort_subplates_criteria_l1l2: Według malejącego rozmiaru
+      option_rectangleguillotine_sort_subplates_criteria_dl2l1: Według malejącej gęstości
       option_rectangleguillotine_keep: Minimalny rozmiar odpadów
       option_rectangleguillotine_keep_help: Odpady, których oba wymiary są większe od minimalnego rozmiaru, będą oznaczone jako **do zachowania**.
+      option_rectangle_leftover_mode: Kierunek rozłożenia
+      option_rectangle_leftover_mode_help: |
+        Określa kierunek rozłożenia części na ostatnim niepełnym arkuszu.
+      option_rectangle_leftover_mode_area: Auto
+      option_rectangle_leftover_mode_x: Na szerokości arkusza
+      option_rectangle_leftover_mode_y: Na długości arkusza
       option_irregular_allowed_rotations: Dozwolone obroty
       option_irregular_allowed_rotations_help: |
         Określa dozwolone kąty obrotu elementu podczas jego umieszczania.
@@ -1077,11 +1153,18 @@ tab:
       option_irregular_allowed_rotations_0: Brak
       option_irregular_allowed_rotations_90: Obrót co 90°
       option_irregular_allowed_rotations_180: Obrót co 180°
+      option_irregular_allowed_rotations_free: Dowolny
       option_irregular_allow_mirroring: Odbicie lustrzane dozwolone
       option_irregular_allow_mirroring_help: |
         Określa, czy odbicie lustrzane elementu jest dozwolone podczas umieszczania.
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
+      option_irregular_leftover_mode: Kierunek rozłożenia
+      option_irregular_leftover_mode_help: |
+        Określa kierunek rozłożenia części na ostatnim niepełnym arkuszu.
+      option_irregular_leftover_mode_bottom_left: Auto
+      option_irregular_leftover_mode_left: Na szerokości arkusza
+      option_irregular_leftover_mode_bottom: Na długości arkusza
       option_spacing: Odstęp
       option_spacing_help: |
         Minimalna odległość między każdym elementem.
@@ -1150,6 +1233,8 @@ tab:
       option_time_limit_help: |
         Ustala czas przeznaczony na obliczenia
       grain_groups:
+        title: "{{ count }} grupa ciągłości wzoru"
+        title_plural: "{{ count }} grup ciągłości wzoru"
         name: Nazwa
         item_count: Σ Części
       tooltip:
@@ -1251,6 +1336,7 @@ tab:
         unplaced_parts: "**1 element** nie mógł być umieszczony."
         unplaced_parts_plural: Nie można umieścić **{{ count }} części**.
         unusable_part_1: Zbyt duża część
+        unusable_part_2: Grupa ciągłości wzoru jest zbyt duża
       warning:
         is_part_selection: Ten schemat cięcia jest ograniczony do **wybranych części**.
         cutting_dimensions: Ten rozkrój używa **wstępnych** wymiarów części.
@@ -1464,7 +1550,13 @@ tab:
 
         - Struktura **Warstwy** rysuje wszystkie linie płasko, rozróżniając różne typy linii jedynie przez warstwy. *Ta struktura zapewnia lepszą kompatybilność z zewnętrznym oprogramowaniem.*
         - Struktura **Warstwy + Bloki** tworzy blok dla każdego elementu i wstawia te bloki tyle razy, ile elementy są powtarzane. *Ta struktura oferuje większą elastyczność w modyfikacji pliku.*
+      option_dxf_depth_to_z: Głębokości w Z
       option_dxf_depth_to_z_0: $t(default.no)
+      option_dxf_depth_to_z_1: Rozmieść głębokości warstw wzdłuż osi Z
+      option_dxf_depth_to_z_help: |
+        Umożliwia włączenie rozmieszczenia warstw wzdłuż osi Z według ich głębokości.
+
+        Wyłącz tę opcję, aby eksportować wyłącznie DXF 2D.
       option_unit: Jednostka
       option_unit_help: |
         Wybiera jednostkę używaną w eksportowanym pliku.
@@ -1581,6 +1673,7 @@ tab:
     type_4: Okleina
     type_5: Dopasowywanie
     type_6: Fornir
+    type_7: Obróbka
     tooltip:
       type_0: Typ materiału '$t(tab.materials.type_0)'
       type_1: Typ materiału '$t(tab.materials.type_1)'
@@ -1636,10 +1729,13 @@ tab:
 
         *Rozmiary bez jednostek są podane w jednostkach modelowych.*
       length_increase: Długość ponadwymiarowa
+      length_increase_help: Naddatek dodawany do wymiaru gotowej długości części w celu określenia jej **długości wstępnej**.
       length_increase_help_plural: Nadmiar dodany do długości aby określić **wstępną długość**.
       width_increase: Szerokość ponadwymiarowa
+      width_increase_help: Naddatek dodawany do wymiaru gotowej szerokości części w celu określenia jej **szerokości wstępnej**.
       width_increase_help_plural: Nadmiar dodany do szerokości aby określić **wstępną szerokość**.
       thickness_increase: Grubość ponadwymiarowa
+      thickness_increase_help: Naddatek dodawany do wymiaru gotowej grubości części w celu określenia jej **grubości wstępnej**.
       thickness_increase_help_plural: Nadmiar dodany do grubości aby określić **wstępną grubość**.
       std_lengths: Standardowe długości
       std_lengths_help: |
@@ -1773,15 +1869,30 @@ tab:
       name: Nazwa
       instance_name: Instancja
       material: Materiał
+      is_grain_group: Zdefiniuj jako **Grupę ciągłości wzoru**
+      is_grain_group_help: Po włączeniu tej opcji ta instancja może być traktowana jako **Grupa ciągłości wzoru** dla zawartych w niej części, które mają włączoną *Ciągłość wzoru*.
       definition_name: Definicja
       description: Opis
       url: URL
       tags: Plakietki
       layer_name: Etykieta
+      snapto: Przyleganie
       snapto_none: Brak
       snapto_0: Dowolny
       snapto_1: Poziomo
       snapto_2: Pionowo
+      snapto_3: Nachylone
+      cuts_opening: Wytnij otwór
+      always_face_camera: Zawsze zwrócone do kamery
+      shadows_face_sun: Cień zwrócony do słońca
+      no_scale_mask: Skalowanie i rozciąganie
+      no_scale_mask_0: Rozciągalne wzdłuż osi czerwonej (X)
+      no_scale_mask_1: Rozciągalne wzdłuż osi zielonej (Y)
+      no_scale_mask_2: Rozciągalne wzdłuż osi niebieskiej (Z)
+      no_scale_mask_3: Rozciągalne w płaszczyźnie czerwonej/niebieskiej (X+Z)
+      no_scale_mask_4: Rozciągalne w płaszczyźnie zielonej/niebieskiej (Y+Z)
+      no_scale_mask_5: Rozciągalne w płaszczyźnie czerwonej/zielonej (X+Y)
+      no_scale_mask_6: Rozciągalne z narożników (XYZ)
       explode: Pękać
       explode_message: Czy potwierdzasz rozbicie **{{ name }}**?
       erase: Wyczyść
@@ -1809,6 +1920,8 @@ tab:
       hide_tags_help: Jeśli ta opcja jest zaznaczona, **plakietki** nie będą wyświetlane.
       minimize_on_set_active: Minimalizuj po '$t(tab.outliner.tooltip.set_active_nodet)'
       minimize_on_set_active_help: Jeśli ta opcja jest zaznaczona, okno OpenCutList zostanie zminimalizowane, gdy zostanie użyta funkcja *'$t(tab.outliner.tooltip.set_active_node)'*.
+    snippet:
+      name_size: Oznaczenie - Rozmiar
     error:
       no_model: Żaden model nie jest otwarty. Będziesz musiał podać mi więcej informacji;)
       no_entities: Twój model jest pusty!
@@ -1902,14 +2015,24 @@ tab:
     obsolete_base: Aby zachować synchronizację, musisz ponownie załadować plik CSV.
   importers:
     default:
+      open_file: Otwórz plik {{ extension }}
       import_to_model: Importuj do modelu
       error:
+        no_data: Brak danych do zaimportowania.
+        no_model: Żaden model nie jest otwarty. Nie da się importować w próżnię ;)
         file_not_found: "Nie znaleziono pliku: **{{ filename }}**"
+        bad_extension: Plik *{{ filename }}* nie ma wymaganego rozszerzenia (**{{ extensions }}**).
+        failed_to_import: Import nie powiódł się.
       success:
         imported_title: Import zakończony
     csv:
       label: CSV
       title: Importuj części
+      help: |
+        Ta strona pozwala zaimportować do modelu serię części (w kształcie prostopadłościanu) z pliku [CSV](https://pl.wikipedia.org/wiki/CSV_(format_pliku)).
+        Możesz w ten sposób wykorzystać możliwości listy cięć *OpenCutList* dla części utworzonych w innym programie niż *SketchUp*.
+
+        Kliknij przycisk **Otwórz plik CSV**, aby rozpocząć.
       load:
         title: Ładowanie pliku CSV
         info_0: |
@@ -1976,23 +2099,81 @@ tab:
       obsolete_base: Aby zachować synchronizację, musisz ponownie załadować plik CSV.
     bxf2:
       label: BXF2
+      title: Importuj konfigurację Blum
+      help: |
+        Ta strona pozwala zaimportować do modelu konfigurację z pliku BXF2.
+        Pliki BXF2 można utworzyć w [Konfiguratorze mebli](https://e-services.blum.com/) firmy [Blum](https://www.blum.com).
+
+        Kliknij przycisk **Otwórz plik BXF2**, aby rozpocząć.
+      load:
+        title: Wczytywanie pliku BXF2
       import:
+        title: Import konfiguracji do modelu
+        info_0: |
+          Zamierzasz zaimportować do modelu konfigurację **{{ count }} korpusu**.
+        info_0_plural: |
+          Zamierzasz zaimportować do modelu konfigurację **{{ count }} korpusów**.
+        info_1: Będziesz mieć możliwość określenia jej położenia w aktywnym modelu.
         materials: Materiały
         layers: Etykiety
+        geometry: Geometria
         option_parts_formula: Wzór
+        option_parts_formula_help: Formuła pozwala dostosować nazwy importowanych części.
+        option_part_wood_material_name: Drewno
+        option_part_wood_material_name_help: Materiał przypisywany częściom **drewnianym**.
+        option_part_aluminium_material_name: Aluminium
+        option_part_aluminium_material_name_help: Materiał przypisywany częściom **aluminiowym**.
+        option_part_glass_material_name: Szkło
+        option_part_glass_material_name_help: Materiał przypisywany częściom **szklanym**.
+        option_front_part_layer_name: Fronty
+        option_front_part_layer_name_help: Etykieta przypisywana częściom frontów.
+        option_back_part_layer_name: Plecy
+        option_back_part_layer_name_help: Etykieta przypisywana plecom korpusów.
+        option_machining_material_name: Obróbki
+        option_machining_material_name_help: Materiał przypisywany **obróbkom**.
+        option_machining_layer_name: Obróbki
+        option_machining_layer_name_help: Etykieta przypisywana obróbkom.
+        option_hardware_material_name: Okucia
+        option_hardware_material_name_help: Materiał przypisywany **okuciom**.
+        option_hardware_layer_name: Okucia
+        option_hardware_layer_name_help: Etykieta przypisywana okuciom.
+        option_no_material_help: "*Pozostaw to pole puste, aby nie przypisywać materiału*."
+        option_default_material_help: "*Jeśli to pole jest puste, zostanie utworzony materiał domyślny*."
+        option_no_layer_help: "*Pozostaw to pole puste, aby nie przypisywać etykiety*."
+        option_subtract_machinings: Wyfrezuj obróbki w częściach
+        option_subtract_machinings_help: "**Rowki**, **wręgi** i **fazy** części, w tym związane z okuciami, są odejmowane od ich objętości zamiast być rysowane. Otwory pozostają narysowane."
+        warning:
+          subtract_machinings_failed: "Nie udało się wyfrezować obróbek w tych częściach, zamiast tego zostały narysowane: {{ names }}"
         old_name: Pierwotna nazwa
         new_name: Nowa nazwa
         count: Liczba
         formula:
           part: Część
+          project: Projekt
+          cabinet: Mebel
+      model:
+        author: Autor
+        date: Data
       cabinet:
+        list: Lista mebli
         description: Nazwa
         width: Szerokość
         height: Wysokość
+        depth: Głębokość
       article:
+        list: Lista artykułów
         total_quantity: Ilość
+        article_number: Nr ref.
         description: Opis
         material: Materiał
+      error:
+        failed_to_load_bxf2_file: |
+          Nie można wczytać pliku BXF2: **{{ error }}**
+      warning:
+        partial_support: |
+          Aby korzystać ze wszystkich funkcji, potrzebujesz **SketchUp 2021.1** lub nowszej wersji.
+          Geometrie 3D okuć **nie będą mogły zostać zaimportowane**.
+      obsolete_base: Aby zachować synchronizację, musisz ponownie wczytać plik BXF2.
   tutorials:
     label: Instrukcje
     title: Instrukcje
@@ -2092,8 +2273,18 @@ tab:
     currency_precision: Precyzja
     presets:
       export_global_presets: Eksportuj ustawienia wstępne
+      export_global_presets_help: |
+        Ta funkcja pozwala wyeksportować ustawienia do pliku **.json**.
+        Wybierz ustawienia, które chcesz wyeksportować.
+        Jeśli wybrane ustawienia odwołują się do plików **.skp** lub **.skm**, są one dołączane do archiwum **.oclp**, aby eksport można było udostępnić w niezmienionej postaci.
       export_global_presets_success: Ustawienia wstępne zostały pomyślnie wyeksportowane.
+      export_global_presets_success_with_assets: Ustawienia zostały pomyślnie wyeksportowane wraz z powiązanymi plikami ({{ count }}).
       import_global_presets: Importuj ustawienia wstępne
+      import_global_presets_help: |
+        Wybierz ustawienia z pliku **.json** lub **.oclp**, które chcesz zaimportować.
+        Uwaga: jeśli ustawienie o tej samej nazwie już istnieje, zostanie zastąpione zaimportowaną wersją.
+        Pliki zawarte w archiwum **.oclp** są kopiowane do Twojej biblioteki, w to samo miejsce, które zajmowały w bibliotece nadawcy.
+      open_library_dir: Otwórz folder biblioteki
       import_global_presets_success: |
         Ustawienia wstępne *OpenCutList* zostały pomyślnie zaimportowane.
         Aby uwzględnić zmiany, należy **zamknąć** i **ponownie otworzyć** okno OpenCutList.
@@ -2118,6 +2309,8 @@ tab:
       error:
         no_preset_to_export: Brak gotowych ustawień do wyeksportowania.
         no_preset_to_import: Brak gotowych ustawień do zaimportowania.
+        failed_to_export: "Nie można wyeksportować ustawień: **{{ error }}**."
+        failed_to_open_library_dir: "Nie można otworzyć folderu biblioteki: **{{ error }}**."
         failed_to_import: "Nie można zaimportować gotowych ustawień: **{{ error }}**."
         failed_to_import_invalid_hexdigest: Ten plik został zmodyfikowany. Nie można go importować.
         failed_to_import_bad_file_format: Nieprawidłowy format pliku.
@@ -2174,36 +2367,58 @@ tool:
     vcb_diameter: Średnica
     vcb_distance: Dystans
     vcb_spacings: Odstęp
+    vcb_angle: Kąt
     locked_on_last_measure_status: Zablokuj na ostatnim pomiarze
+    library_choose: Wybierz bibliotekę
+    modal_only_help: Ustawienie dostępne tylko w tym oknie, nieobecne na pasku narzędzi
     error:
       no_direction: Proszę wskazać kierunek myszką
       invalid_length: Długość {{ value }} jest nieprawidłowa
+      invalid_thickness: Grubość {{ value }} jest nieprawidłowa
       invalid_multiplicator: Mnożnik {{ value }} jest nieprawidłowa
       invalid_divider: Iloraz {{ value }} jest nieprawidłowa
       invalid_offset: Przesunięcie {{ value }} jest nieprawidłowa
+      invalid_angle: Kąt {{ value }} jest nieprawidłowy
       invalid_segment_count: Liczba segmentów {{ value }} jest nieprawidłowa. Musi wynosić od 3 do 999.
       syntax_error: "Błąd składni: {{ error }}"
       unexpected_close_parenthesis: Nieoczekiwany nawias zamykający
       missing_close_parenthesis: Brakujący nawias zamykający
       missing_operand: Brak argumentu
       zero_division: Dzielenie przez zero
+      invalid_argument_count: Funkcja min, max, floor lub ceil wymaga co najmniej dwóch wartości
+      comma_argument_separator: "Oddziel wartości znakiem „;”: przecinek jest również separatorem dziesiętnym"
+      invalid_dimension: "Długość można dodać tylko do długości: liczba bez jednostki jest mnożnikiem"
+      no_matching_value: Żadna z proponowanych wartości nie pasuje
       lt_min_distance: Odległość {{ value1 }} jest mniejsza niż minimalna odległość {{ value2 }}
       gt_max_distance: Odległość {{ value1 }} jest większa niż maksymalna odległość {{ value2 }}
+      locked_part: Ta część jest zablokowana
+      not_sibling_part: Ta część nie znajduje się w tej samej grupie lub komponencie co reszta zaznaczenia
+      selection_contains_locked_entities: Zaznaczenie zawiera zablokowane elementy
       wrong_material_type: Część docelowa musi być typu '{{ type }}'
   smart_select:
     state_0_status: Kliknij część, aby ją zaznaczyć
     state_0_to_6_status: Wybierz element nadrzędny
+    state_0_to_7_status: Zaznaczanie wielokrotne
+    state_4_status: Przeciągnij na identyczną część o tym samym rodzicu, aby dodać ją do zaznaczenia, i zwolnij, aby kontynuować
+    state_5_status: Przeciągnij, aby dodać do zaznaczenia, i zwolnij, aby kontynuować
     state_6_status: Wybierz element z listy
+    state_7_status: Kliknij część, aby dodać ją do zaznaczenia lub z niego usunąć
+    warning:
+      no_active_part: Najpierw musisz wskazać część kursorem
+      no_parent_group: Wskazana część nie ma nadrzędnej grupy ani komponentu
   smart_draw:
     title: Rysuj
     action_0: Rysowanie prostokąta
     action_0_status: Utwórz bryłę na bazie prostokątnego kształtu
+    action_0_state_0_status: Kliknij, aby określić pierwszy punkt prostokąta
     action_0_state_1_status: Kliknij, aby zdefiniować przeciwległy kąt lub wprowadź długość i szerokość
     action_1: Rysowanie okręgu
+    action_1_state_0_status: Kliknij, aby określić środek okręgu
     action_1_status: Utwórz bryłę na bazie koła
     action_1_state_1_radius_status: Kliknij, aby ustawić promień lub wprowadź odległość
     action_1_state_1_diameter_status: Kliknij, aby ustawić średnicę lub wprowadź odległość
     action_2: Rysowanie wielokąta
+    action_2_state_0_status: Kliknij, aby określić pierwszy punkt wielokąta
     action_2_status: Narysuj bryłę na bazie wielokąta
     action_2_state_1_status: Kliknij, aby zdefiniować nowy punkt, lub wprowadź odległość
     action_x_state_2_status: Kliknij, aby ustawić wysokość lub wprowadź odległość
@@ -2228,39 +2443,174 @@ tool:
     action_option_options_measure_reversed_status: Odwróć kierunek pomiaru
     action_option_options_pull_centered: Wysokość wyśrodkowana
     action_option_options_pull_centered_status: Wyśrodkuj wysokość względem pierwszego punktu
+    action_option_options_pull_locked_status: Zablokuj wyniesienie na osi
+    action_option_options_draw_in: Rysuj w
+    action_option_options_draw_in_0: Rysuj w aktywnym elemencie
+    action_option_options_draw_in_1: Rysuj w elemencie nadrzędnym części pierwszego punktu
+    action_option_options_draw_in_status: Rysuj w elemencie nadrzędnym części wskazanej przez pierwszy punkt
+    action_option_options_pick_material: Pipeta
+    action_option_options_pick_material_status: Zastosuj materiał części wskazanej przez pierwszy punkt do utworzonej części
     action_option_options_ask_name: Nadawanie nazw częściom
     action_option_options_ask_name_status: Ręczne wprowadzanie nazw części
     action_toggle_move_copy_status: Przełącz między kopiowaniem a przesuwaniem
     action_change_move_anchor_status: Zmień punkt kotwiczenia
     success:
       part_created: "Utworzono nową część: {{ name }}"
+      part_created_plural: "Utworzono nowe części ({{ count }}): {{ name }}"
   smart_build:
+    title: Buduj
+    action_0: Umieść moduł
+    action_0_status: Umieść moduł zaimportowany z pliku SKP, rozciągnięty do wymiarów narysowanego prostopadłościanu
+    action_0_state_0_status: Wybierz plik modułu z biblioteki
+    action_0_state_1_status: Kliknij, aby umieścić początek modułu
+    action_0_state_2_status: Kliknij, aby określić szerokość modułu (oś X)
+    action_0_state_2_lock_status: Zablokuj na szerokości pliku źródłowego
+    action_0_state_2_arrows_status: Zablokuj na osi
+    action_0_state_3_status: Kliknij, aby określić głębokość modułu (oś Y)
+    action_0_state_3_lock_status: Zablokuj na głębokości pliku źródłowego
+    action_0_state_3_arrows_status: Zablokuj normalną płaszczyzny XY na osi
+    action_0_state_4_status: Kliknij, aby określić wysokość modułu (oś Z)
+    action_0_state_4_lock_status: Zablokuj na wysokości pliku źródłowego
+    action_0_state_5_status: Kliknij instancję, którą chcesz dodać
+    action_0_state_6_status: Kliknij PRZEDNIĄ ścianę modułu
+    action_0_state_7_status: Kliknij GÓRNĄ ścianę modułu
+    action_0_add_title: Dodaj moduł
+    action_0_add_name: Nazwa pliku
+    action_0_add_overwrite: Plik „{{ name }}.skp” już istnieje. Czy chcesz go zastąpić?
+    action_0_add_front_label: PRZÓD
+    action_0_add_up_label: GÓRA
+    action_0_flip_status: Zamień przód z tyłem
+    action_0_flip_up_status: Zamień górę z dołem
+    action_1: Buduj przegrodę
+    action_1_status: Zbuduj przegrodę we wnęce utworzonej przez grupę istniejących części
+    action_1_state_0_status: Kliknij ściankę, aby zbudować przegrodę
+    action_1_state_1_status: Kliknij ściankę, aby zbudować przegrody
+    action_2: Buduj front
+    action_2_status: Zbuduj front zamykający wnękę utworzoną przez grupę istniejących części
+    action_2_state_0_status: Kliknij we wnękę, aby zbudować front na jej otworze
+    action_2_state_0_merge_status: Przeciągnij do sąsiednich wnęk, aby utworzyć wspólny front
+    action_3: Buduj plecy
+    action_3_status: Zbuduj plecy zamykające wnękę utworzoną przez grupę istniejących części
+    action_3_state_0_status: Kliknij we wnękę, aby zbudować plecy na jej otworze po stronie przeciwnej do widoku
+    action_3_state_0_merge_status: Przeciągnij do sąsiednich wnęk, aby utworzyć wspólne plecy
+    action_option_group_groove: Rowek
+    action_2_option_group_offset: Luz
     action_option_group_thickness: Grubość
+    action_option_group_overlay: Montaż
     action_option_group_axes: Osie
     action_option_group_measure_type: Pomiary
+    action_option_group_measure_origin: Początek
     action_option_group_options: Opcje
+    action_option_offset_front_panel_offset: Luz
+    action_option_offset_front_panel_offset_status: Określa luz pozostawiany na każdej krawędzi frontu
+    action_option_groove_groove_depth: Głębokość rowka
+    action_option_groove_groove_depth_status: Określa głębokość rowka, w który wsunięte są plecy
+    action_option_groove_groove_panel_reduction: Zmniejszenie płyty
+    action_option_groove_groove_panel_reduction_status: Określa, o ile plecy są zmniejszane na każdej krawędzi wsuniętej w rowek, pozostawiając ten luz na dnie rowka
+    action_option_groove_groove_width_clearance: Luz na szerokości
+    action_option_groove_groove_width_clearance_status: Określa, o ile rowek jest frezowany szerszy niż grubość pleców, w całości po zewnętrznej stronie korpusu
+    action_option_groove_groove_setback: Cofnięcie
+    action_option_groove_groove_setback_status: Określa, o ile plecy są cofnięte w głąb korpusu, a tym samym gdzie frezowany jest rowek
+    action_option_groove_groove_through: Rowek przelotowy
+    action_option_groove_groove_through_status: Przedłuż rowek do końca części zakrywających sąsiednią część, gdy wychodzi tam niewidocznie
     action_option_thickness_thickness: Grubość
+    action_option_thickness_thickness_status: Określa grubość płyt
+    action_option_overlay_inset_status: "Front wpuszczany: montowany w otworze, w licu przedniej płaszczyzny"
+    action_3_option_overlay_inset_status: "Plecy we wpust: wsunięte w rowek wyfrezowany w częściach otaczających otwór"
+    action_option_overlay_full_overlay_status: "Front nakładany: montowany przed przednią płaszczyzną, zakrywa płyty do zewnętrznego lica korpusu i do połowy grubości płyt wewnętrznych"
+    action_3_option_overlay_full_overlay_status: "Plecy nakładane: montowane na tyle korpusu, zakrywają płyty do zewnętrznego lica i do połowy grubości płyt wewnętrznych, bez żadnej obróbki"
+    action_option_overlay_against_protrusions_status: "Front nakładany przy występach: nakładany na płyty w licu otworu i dopasowany do płyt wystających"
+    action_3_option_overlay_against_protrusions_status: "Plecy nakładane przy występach: nakładane na płyty w licu otworu i dopasowane między płytami wystającymi (wysunięte boki), bez żadnej obróbki"
+    action_option_measure_type_inside_status: Umieść grubość po wewnętrznej stronie wskazanego punktu
+    action_option_measure_type_centered_status: Wyśrodkuj grubość na wskazanym punkcie
+    action_option_measure_type_outside_status: Umieść grubość po zewnętrznej stronie wskazanego punktu
+    action_option_measure_origin_wall_status: Mierz od wewnętrznych ścianek wnęki
+    action_option_measure_origin_overall_status: Mierz od zewnętrznych ścianek części zamykających wnękę
     action_option_axes_active_status: Manipuluj wzdłuż aktywnych osi
+    action_option_axes_context_status: Manipuluj wzdłuż osi grupy lub komponentu nadrzędnego
     action_option_options_measure_reversed: Odwrócony pomiar
     action_option_options_measure_reversed_status: Odwróć kierunek pomiaru
+    action_option_options_reduce_envelope: Części cofnięte
+    action_option_options_reduce_envelope_status: Uwzględnij części cofnięte
+    action_option_options_reuse_definition: Użyj ponownie części
+    action_option_options_reuse_definition_status: Użyj ponownie istniejącej części o tym samym kształcie i sąsiedztwie zamiast tworzyć nową
+    action_option_options_mirror: Montaż lustrzany
+    action_option_options_mirror_status: Montuj każdy front o parzystym numerze jako lustrzane odbicie sąsiedniego
+    action_option_options_pick_material: Pipeta
+    action_option_options_pick_material_status: Zastosuj materiał wskazanej części do utworzonych części
+    action_option_options_face_camera: Przodem do kamery
+    action_option_options_face_camera_status: Automatycznie obracaj front modułu w stronę kamery
+    action_option_options_top_up: Góra w stronę Z+
+    action_option_options_top_up_status: Automatycznie obracaj górę modułu możliwie najbardziej ku górze (Z+)
     action_option_options_ask_name: Nadawanie nazw częściom
     action_option_options_ask_name_status: Ręczne wprowadzanie nazw części
+    action_option_options_layer_name: Etykieta
+    action_option_anchor_center_x_status: Wyśrodkowane w X
+    action_option_anchor_center_y_status: Wyśrodkowane w Y
+    action_option_anchor_center_z_status: Wyśrodkowane w Z
+    action_option_anchor_origin_status: Początek komponentu
+    action_option_no_layer_help: "*Pozostaw to pole puste, aby nie przypisywać etykiety*."
+    detecting_cavities: Wykrywanie wnęk...
+    error:
+      invalid_divider_seed: Ten typ części nie pozwala na zbudowanie przegrody
+      invalid_divider_container: "Ta część jest odizolowana: nie dzieli grupy ani komponentu z innymi częściami"
+      invalid_divider_cavity: Brak wnęki w tym miejscu
+      no_divider_cavity: W tej grupie lub komponencie nie wykryto żadnej wnęki
+      invalid_front_panel_seed: Ten typ części nie pozwala na zbudowanie frontu
+      invalid_front_panel_container: "Ta część jest odizolowana: nie dzieli grupy ani komponentu z innymi częściami"
+      invalid_front_panel_cavity: W tym miejscu brak wnęki otwartej w Twoją stronę
+      no_front_panel_cavity: W tej grupie lub komponencie nie wykryto żadnej wnęki
+      invalid_back_panel_seed: Ten typ części nie pozwala na zbudowanie pleców
+      invalid_back_panel_container: "Ta część jest odizolowana: nie dzieli grupy ani komponentu z innymi częściami"
+      invalid_back_panel_cavity: W tym miejscu brak wnęki otwartej po stronie przeciwnej do widoku
+      no_back_panel_cavity: W tej grupie lub komponencie nie wykryto żadnej wnęki
+      too_complex_cavity: Geometria jest zbyt złożona, aby wykryć w niej wnęki
+      closed_front_panel_opening: Ten otwór jest już zamknięty frontem
+      closed_back_panel_opening: Ten otwór jest już zamknięty plecami
+      divider_number_overflow: Nie można rozmieścić {{ number }} przegród w tej wnęce
+      front_panel_number_overflow: Nie można rozmieścić {{ number }} frontów na tym otworze
+      back_panel_number_overflow: Nie można rozmieścić {{ number }} pleców na tym otworze
+      back_panel_severs_parts: "Rowek przeciąłby na wylot: {{ names }}. Zmniejsz jego głębokość"
+      module_file_not_found: "Nie znaleziono pliku modułu: {{ file }}"
+      module_file_invalid: "Nie można wczytać pliku modułu: {{ file }}"
+      module_file_invalid_name: "Nieprawidłowa nazwa pliku: {{ name }}"
+      module_file_save_failed: "Nie można zapisać pliku modułu: {{ name }}.skp"
+      module_stretch_failed: Nie można rozciągnąć modułu do tych wymiarów
+    warning:
+      no_back_panel_machining: "Nie udało się wyfrezować żadnego rowka: na tej głębokości żadna sąsiednia część nie przylega do pleców"
+      no_module_file: Brak plików .skp w tym folderze
+      module_axis_no_scale: "Modułu nie można rozciągnąć wzdłuż {{ axis }}: blokuje to zachowanie komponentu"
+      module_axis_curve_intersect: "Modułu nie można rozciągnąć wzdłuż {{ axis }}: jedna z płaszczyzn cięcia przecina nierozciągalną krzywą"
     success:
       part_created: "Utworzono nową część: {{ name }}"
+      part_created_plural: "Utworzono nowe części ({{ count }}): {{ name }}"
+      part_reused: "Nowe wystąpienie istniejącej części: {{ name }}"
+      part_reused_plural: "Nowe wystąpienia istniejącej części ({{ count }}): {{ name }}"
+      module_file_saved: "Zapisano moduł: {{ name }}.skp"
+      module_created: "Umieszczono nowy moduł: {{ name }}"
   smart_handle:
     title: Uchwyt
     action_0: Zaznacz
     action_0_status: Wybierz część
     action_1: Kopiuj w linii
+    action_1_status: Kopiuj część wzdłuż osi
     action_1_state_2_status: Kliknij, aby umieścić kopię części lub wprowadź odległość
     action_2: Kopiuj w siatce
+    action_2_status: Kopiuj część wzdłuż siatki
     action_2_state_2_status: Kliknij, aby umieścić kopie części lub wprowadź dwie odległości
     action_3: Przesuń
+    action_3_status: Przesuń część wzdłuż osi
     action_3_state_1_status: Kliknij, aby ustawić pierwszy punkt pomiarowy
     action_3_state_2_status: Kliknij, aby umieścić część lub wprowadź odległość
     action_4: Rozmieść
+    action_4_status: Rozmieść część wzdłuż osi
     action_4_state_1_status: Kliknij, aby ustawić pierwszy punkt pomiarowy
     action_4_state_2_status: Kliknij, aby ustawić drugi punkt pomiarowy lub wprowadź odległość
+    action_5: Interakcja
+    action_5_status: Otwórz lub zamknij drzwi
+    action_5_state_0_status: Kliknij drzwi, aby je otworzyć lub zamknąć, albo przeciągnij, aby ustawić ich otwarcie
+    action_5_state_0_amend_status: Wpisz kąt, aby skorygować otwarcie, lub kliknij drzwi, aby je otworzyć lub zamknąć
+    action_5_state_20_status: Przeciągnij, aby ustawić otwarcie drzwi, i zwolnij, aby zatwierdzić
     action_option_group_copy_measure_type: Pomiary
     action_option_group_move_measure_type: Pomiary
     action_option_group_axes: Osie
@@ -2272,22 +2622,78 @@ tool:
     action_option_axes_context_status: Manipuluj wzdłuż osi grupy lub komponentu zawierającego element
     action_option_axes_entity_status: Manipuluj wzdłuż osi elementu
     action_option_options_mirror_status: Kopiowanie symetryczne
+    action_toggle_raytest_status: Rzutuj na następny punkt
     warning:
       copies_disable_mirror: Kopiowanie wielokrotne wyłącza opcję '$t(tool.smart_handle.action_option_options_mirror_status)'
+    error:
+      not_door: Ta część nie jest drzwiami wyposażonymi w zawiasy
+      incoherent_door: Zawiasy tych drzwi nie obracają się wokół tej samej osi
   smart_reshape:
     title: Przebudować
     action_0: Rozciągnąć
+    action_0_status: Rozciągnij część
+    action_0_state_1_status: Kliknij uchwyt, aby rozciągnąć
+    action_0_state_1a_status: Kliknij płaszczyznę cięcia, aby ją przesunąć
+    action_0_state_1b_status: Dodaj płaszczyznę cięcia
+    action_0_state_1c_status: Usuń płaszczyznę cięcia
+    action_0_state_1d_status: Kliknij, aby przesunąć geometrię znajdującą się między dwiema płaszczyznami cięcia
+    action_0_state_10_status: Przeciągnij płaszczyznę cięcia, aby ją przesunąć
+    action_0_state_11_status: Kliknij, aby dodać płaszczyznę cięcia
+    action_0_state_12_status: Kliknij płaszczyznę cięcia, aby ją usunąć
+    action_0_state_2_status: Kliknij, aby zatwierdzić rozciągnięcie, lub wpisz odległość
+    action_1: Panelowanie
+    action_1_status: Utwórz serię części z zamkniętej bryły lub rysunku z linii konstrukcyjnych
+    action_1_state_0_status: Kliknij zamkniętą bryłę lub grupę linii konstrukcyjnych, aby określić geometrię odniesienia
+    action_1_state_1_status: Wybierz ściany do wyciągnięcia
+    action_1_rollover_face_status: Wskazana ściana
+    action_1_select_similar_status: Zaznacz wszystkie ściany o identycznym kształcie
+    action_1_select_all_edges_status: Zaznacz wszystkie stykające się krawędzie
+    action_2: Scal
+    action_2_status: Scal kilka części w jedną
+    action_2_state_0_status: Wybierz część A
+    action_2_state_1_status: Wybierz część B
+    action_3: Wytnij
+    action_3_status: Wytnij jedną część drugą
+    action_3_state_0_status: Wybierz część A
+    action_3_state_1_status: Wybierz część B
+    action_4: Część wspólna
+    action_4_status: Utwórz część odpowiadającą części wspólnej kilku części
+    action_4_state_0_status: Wybierz część A
+    action_4_state_1_status: Wybierz część B
     action_option_group_thickness: Grubość
     action_option_group_stretch_measure_type: Pomiary
     action_option_group_axes: Osie
+    action_option_group_paneling_joint_type: Połączenie
     action_option_group_paneling_direction: Kierunek
+    action_option_group_csg_operation: Operacja
     action_option_group_options: Opcje
     action_option_thickness_thickness: Grubość
+    action_option_thickness_thickness_status: Określa grubość płyt
     action_option_stretch_measure_type_outside_status: Pomiar zewnętrzny
     action_option_stretch_measure_type_offset_status: Zmierz różnice
     action_option_axes_active_status: Manipuluj wzdłuż aktywnych osi
     action_option_axes_context_status: Manipuluj wzdłuż osi grupy lub komponentu zawierającego element
     action_option_axes_entity_status: Manipuluj wzdłuż osi elementu
+    action_option_paneling_joint_type_flat_status: Połączenie na płasko
+    action_option_paneling_joint_type_miter_status: Cięcie pod kątem (na ucios)
+    action_option_paneling_direction_inward_status: Do wewnątrz
+    action_option_paneling_direction_outward_status: Na zewnątrz
+    action_option_options_centered_status: Wyśrodkuj na rozciągniętych elementach
+    action_option_options_make_unique_status: Ustaw przebudowane elementy jako unikalne
+    action_option_options_keep_a: Zachowaj A
+    action_option_options_keep_a_status: Zachowaj instancje A po operacji i umieść wynik w nowej części
+    action_option_options_keep_b: Zachowaj B
+    action_option_options_keep_b_status: Zachowaj instancje B po operacji
+    action_option_options_remove_unused_definitions_status: Usuń definicje komponentów, które po operacji nie są już używane
+    action_option_options_reuse_definition: Użyj ponownie części
+    action_option_options_reuse_definition_status: Współdziel tę samą definicję komponentu między płytami o identycznym kształcie
+    action_option_options_reuse_definition_mirrored: Montaż lustrzany
+    action_option_options_reuse_definition_mirrored_status: Montaż lustrzany dla przeciwległych płyt o identycznym kształcie
+    notify:
+      validate_a: Zatwierdź, aby przejść do wyboru B
+      validate_b: Zatwierdź, aby zastosować operację
+    error:
+      curve_intersect: Jedna z płaszczyzn cięcia przecina nierozciągalną krzywą
   smart_paint:
     title: Farba
     default_material: Brak zdefiniowanego materiału
@@ -2320,6 +2726,8 @@ tool:
     action_option_edges_2_status: Pokoloruj tylko 4 wybrane
     action_option_faces_0_status: Pokoloruj tylko docelową warstwę
     action_option_faces_1_status: Pokoloruj 2 strony docelowego elementu
+    state_8_status: Zaznacz materiały do zastąpienia, a następnie zatwierdź
+    select_filter_title: Materiały do zastąpienia
     edges: "{{ count }} krawędź"
     edges_plural: "{{ count }} krawędzi"
     edge_ymin: Długość 1
@@ -2333,6 +2741,7 @@ tool:
     warning:
       no_material: Brak materiałów
       no_material_type: Brak materiału typu '{{ type }}'
+      selection_disable_instances_all: Zaznaczanie prostokątem wyłącza opcję '$t(tool.smart_paint.action_option_instances_1_status)'
     error:
       not_part: Obiekt docelowy nie jest częścią (komponentem)
       not_edge: Powierzchnia docelowa nie jest krawędzią panelu
@@ -2349,6 +2758,10 @@ tool:
     action_3_status: Kliknij powierzchnię lub krawędź części, aby dostosować orientację osi
     action_4: Przesuń początek
     action_4_status: Kliknij powierzchnię lub krawędź części, aby umieścić tam jej początek
+    action_5: Konfiguruj ciągłość wzoru
+    action_5_status: Kliknij część, aby włączyć lub wyłączyć wykrywanie ciągłości wzoru
+    action_5_to_state_10_status: Wybierz grupę ciągłości wzoru
+    action_5_state_10_status: Kliknij element na liście, aby zmienić jego status grupy ciągłości wzoru
     action_option_group_direction: Kierunek
     action_option_direction_0: D
     action_option_direction_1: Sz
@@ -2361,6 +2774,8 @@ tool:
     error:
       not_part: Obiekt docelowy nie jest częścią (komponentem)
       not_orientable: Typ tej części nie pozwala na jej orientację
+      not_grained: Wskazana część nie ma kierunku wzoru
+      not_single_thickness_layer: Wskazana część musi składać się z jednej warstwy
   # @no-translate
   smart_join:
     action_option_group_height: Wysokość
@@ -2404,3 +2819,4 @@ tool:
   smart_importers_bxf2:
     title: Importuj
     action_0: $t(tab.importers.bxf2.title)
+    action_0_status: Umieść konfigurację

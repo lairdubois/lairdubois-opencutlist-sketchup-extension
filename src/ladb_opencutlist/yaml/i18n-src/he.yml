@@ -2027,6 +2027,8 @@ tool:
     action_option_offset_shape_offset: קיזוז
     action_option_options_smoothing: החלקה
   smart_build:
+    action_0_state_2_arrows_status: נעילה על ציר
+    action_0_state_3_arrows_status: נעילת האנך למישור XY על ציר
     action_option_group_thickness: עובי
     action_option_group_axes: צירים
     action_option_group_options: אפשרויות

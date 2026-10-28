@@ -1275,7 +1275,7 @@ tab:
         unused: Ongebruikt
         unplaced_parts: Niet-geplaatst onderdeel
         unplaced_parts_plural: Ongeplaatste onderdelen
-        parts: Stuk
+        parts: Onderdeel
         parts_plural: Stukken
         leftovers: Overschot
         leftovers_plural: Overschot
@@ -1848,7 +1848,7 @@ tab:
     type_0: Model
     type_1: Groep
     type_2: Onderdeel
-    type_3: Stuk
+    type_3: Onderdeel
     tooltip:
       hide_node: Verbergen
       unhide_node: Weergeven
@@ -2465,10 +2465,10 @@ tool:
     action_0_state_1_status: Klik op een wand om scheidingswanden op te bouwen
     action_0_state_2_status: Klik om de breedte van de module te bepalen (X-as)
     action_0_state_2_lock_status: Vergrendelen op de breedte van het bronbestand
-    action_0_state_2_arrows_status: Pijlen = Vergrendelen op een as (→ X, ← Y, ↑ Z)
+    action_0_state_2_arrows_status: Vergrendelen op een as
     action_0_state_3_status: Klik om de diepte van de module te bepalen (Y-as)
     action_0_state_3_lock_status: Vergrendelen op de diepte van het bronbestand
-    action_0_state_3_arrows_status: Pijlen = De normaal van het XY-vlak op een as vergrendelen (→ X, ← Y, ↑ Z)
+    action_0_state_3_arrows_status: De normaal van het XY-vlak op een as vergrendelen
     action_0_state_4_status: Klik om de hoogte van de module te bepalen (Z-as)
     action_0_state_4_lock_status: Vergrendelen op de hoogte van het bronbestand
     action_0_state_5_status: Klik op de instantie die u wilt toevoegen

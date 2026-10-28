@@ -1,0 +1,135 @@
+core:
+  menu:
+    item:
+      edit_part_properties: $t(tab.cutlist.edit_part_properties)
+      edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
+      edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
+      edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
+      smart_draw: $t(core.toolbar.command.smart_draw)
+      smart_build: $t(core.toolbar.command.smart_build)
+      smart_handle: $t(core.toolbar.command.smart_handle)
+      smart_reshape: $t(core.toolbar.command.smart_reshape)
+      smart_paint: $t(core.toolbar.command.smart_paint)
+      smart_axes: $t(core.toolbar.command.smart_axes)
+      smart_join: $t(core.toolbar.command.smart_join)
+      smart_export: $t(core.toolbar.command.smart_export)
+  preset:
+    dictionary:
+      cutlist_cuttingdiagram1d_options: $t(default.deprecated)
+      cutlist_cuttingdiagram1d_write_options: $t(default.deprecated)
+      cutlist_cuttingdiagram2d_options: $t(default.deprecated)
+      cutlist_cuttingdiagram2d_write_options: $t(default.deprecated)
+      cutlist_report_options: $t(default.deprecated)
+      tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
+      tool_smart_handle_options: $t(core.toolbar.command.smart_handle)
+      tool_smart_reshape_options: $t(core.toolbar.command.smart_reshape)
+      tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
+      tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
+      tool_smart_join_options: $t(core.toolbar.command.smart_join)
+      tool_smart_export_options: $t(core.toolbar.command.smart_export)
+tab:
+  cutlist:
+    tooltip:
+      highlight_part: $t(tab.cutlist.highlight_part)
+      highlight_parts: $t(tab.cutlist.highlight_parts)
+      edit_part_properties: $t(tab.cutlist.edit_part_properties)
+      edit_material: $t(tab.cutlist.menu.edit_material)
+    menu:
+      highlight_parts: $t(tab.cutlist.highlight_parts)
+    edit_part:
+      cut_options: $t(tab.materials.edit_material.cut_options)
+      length_increase: $t(tab.materials.edit_material.length_increase)
+      length_increase_help: $t(tab.materials.edit_material.length_increase_help)
+      width_increase: $t(tab.materials.edit_material.width_increase)
+      width_increase_help: $t(tab.materials.edit_material.width_increase_help)
+      thickness_increase: $t(tab.materials.edit_material.thickness_increase)
+      thickness_increase_help: $t(tab.materials.edit_material.thickness_increase_help)
+      follow_grain_direction_0: $t(default.no)
+    export:
+      duplicate_column: $t(default.duplicate)
+      remove_column: $t(default.remove)
+      remove_all_columns: $t(default.remove_all)
+      option_source_summary: $t(tab.cutlist.list.summary)
+    estimate:
+      type_1: $t(tab.materials.type_1)
+      type_2: $t(tab.materials.type_2)
+      type_3: $t(tab.materials.type_3)
+      type_4: $t(tab.materials.type_4)
+      type_5: $t(tab.materials.type_5)
+      type_6: $t(tab.materials.type_6)
+      type_7: $t(tab.materials.type_7)
+      type_-1: $t(default.cut_plural)
+    # @no-translate
+    cuttingdiagram:
+      write:
+        option_file_format: $t(tab.cutlist.write.option_file_format)
+        option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
+        option_unit: $t(tab.cutlist.write.option_unit)
+        option_unit_help: $t(tab.cutlist.write.option_unit_help)
+        option_smoothing: $t(tab.cutlist.write.option_smoothing)
+        option_smoothing_0: $t(tab.cutlist.write.option_smoothing_0)
+        option_smoothing_1: $t(tab.cutlist.write.option_smoothing_1)
+        option_smoothing_help: $t(tab.cutlist.write.option_smoothing_help)
+        option_merge_holes: $t(tab.cutlist.write.option_merge_holes)
+        option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
+        option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
+        option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
+        option_include_paths: $t(tab.cutlist.write.option_include_paths)
+        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
+        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
+        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
+        option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
+        option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
+    packing:
+      option_irregular_allow_mirroring_0: $t(default.no)
+      option_irregular_allow_mirroring_1: $t(default.yes)
+      option_bin_folding_0: $t(default.no)
+      option_bin_folding_1: $t(default.yes)
+      option_colorization_0: $t(default.no)
+      write:
+        option_parts_depths: $t(tab.cutlist.write.option_parts_depths)
+        option_parts_depths_help: $t(tab.cutlist.write.option_parts_depths_help)
+        option_parts_holes: $t(tab.cutlist.write.option_parts_holes)
+        option_parts_holes_help: $t(tab.cutlist.write.option_parts_holes_help)
+        option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
+        option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
+    labels:
+      duplicate_element: $t(default.duplicate)
+      remove_element: $t(default.remove)
+      remove_all_elements: $t(default.remove_all)
+    write:
+      option_dxf_depth_to_z_0: $t(default.no)
+      option_smoothing_0: $t(default.no)
+      option_include_paths_0: $t(default.no)
+  materials:
+    tooltip:
+      grained_0: $t(tab.materials.edit_material.grained_0)
+      grained_1: $t(tab.materials.edit_material.grained_1)
+  settings:
+    font_size_auto: $t(default.automatic)
+    length_format_0: $t(default.decimal)
+    length_format_3: $t(default.fractional)
+tool:
+  smart_build:
+    action_0_state_2_arrows_status: zaključaj na os
+    action_0_state_3_arrows_status: zaključaj normalu ravnine XY na os
+  smart_paint:
+    filter_1: $t(tab.materials.type_1)
+    filter_2: $t(tab.materials.type_2)
+    filter_3: $t(tab.materials.type_3)
+    filter_4: $t(tab.materials.type_4)
+    filter_5: $t(tab.materials.type_5)
+    filter_6: $t(tab.materials.type_6)
+    filter_7: $t(tab.materials.type_7)
+  smart_export:
+    action_option_unit_0_status: $t(default.unit_0)
+    action_option_unit_1_status: $t(default.unit_1)
+    action_option_unit_2_status: $t(default.unit_2)
+    action_option_unit_3_status: $t(default.unit_3)
+    action_option_unit_4_status: $t(default.unit_4)
+    action_option_faces_0_status: $t(tab.cutlist.write.option_faces_0)
+    action_option_faces_1_status: $t(tab.cutlist.write.option_faces_1)
+    action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
+    action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
+  smart_importers_bxf2:
+    action_0: $t(tab.importers.bxf2.title)

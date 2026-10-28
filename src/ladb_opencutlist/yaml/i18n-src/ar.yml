@@ -2434,6 +2434,8 @@ tool:
       part_created_plural: "{{ count }} قِطع جديدة أُنشئت : {{ name }}"
   smart_build:
     title: إنشاء
+    action_0_state_2_arrows_status: القفل على محور
+    action_0_state_3_arrows_status: قفل العمودي على المستوى XY على محور
     action_0_add_name: اسم الملف
     action_0_add_overwrite: الملف « {{ name }}.skp » موجود مسبقا. هل تريد استبداله؟
     action_3: إنشاء ظهر
