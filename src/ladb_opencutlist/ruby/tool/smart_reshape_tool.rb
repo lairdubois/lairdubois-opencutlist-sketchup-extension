@@ -4423,16 +4423,18 @@ module Ladb::OpenCutList
     #
     # The parts sharing a definition and sliced at the same place in it form a
     # twin group : their pieces share a definition too. In make_unique: false
-    # mode, the definition being rebuilt in place, a definition can't be
-    # sliced at two different places.
+    # mode, the definition being rebuilt in place, a definition sliced at
+    # several places is split as the stretch does : every twin group but the
+    # last one moves to a definition of its own, the last one keeps it - with
+    # the unselected instances.
     #
     # The +removed_paths+ parts, wholly beyond the plane, are erased - their
     # instance only : in make_unique: false mode, every occurrence of the
     # assembly holding them.
     #
     # The +kept_paths+ parts, selected but not crossed, keep their shape : in
-    # make_unique: false mode, a twin group whose definition one of them uses
-    # moves - with the unselected instances - to a definition of its own.
+    # make_unique: false mode, the last twin group of their definition moves
+    # too - with the unselected instances.
     def _slice_parts(paths, plane, frame, extents, margin, slabs, path_slabs, make_unique, removed_paths = [], kept_paths = [])
       model = Sketchup.active_model
 
@@ -4444,34 +4446,64 @@ module Ladb::OpenCutList
         removed_paths = all_paths[paths.length..-1]
       end
 
+      # The twin groups, as indices in +paths+
       twin_groups = []
-      group_slabs = []
       paths.each_with_index do |path, path_index|
-        definition = path.last.definition
-        if (twin_group = twin_groups.find { |group| group.first.last.definition == definition && _same_local_plane?(group.first, path, plane) })
-          twin_group << path
-        elsif !make_unique && twin_groups.any? { |group| group.first.last.definition == definition }
-          return [ [ 'tool.smart_reshape.error.slice_shared_definition', { :name => definition.name } ] ]
+        if (twin_group = twin_groups.find { |group| paths[group.first].last.definition == path.last.definition && _same_local_plane?(paths[group.first], path, plane) })
+          twin_group << path_index
         else
-          twin_groups << [ path ]
-          group_slabs << path_slabs[path_index]
+          twin_groups << [ path_index ]
         end
       end
 
-      base_names = twin_groups.map { |twin_paths| twin_paths.map { |path| path.last.definition.name } }.flatten
+      # Read before any make_unique renames them
+      base_names = twin_groups.flatten.map { |index| paths[index].last.definition.name }
 
-      # Keep the shape of the selected parts the plane does not cross
       unless make_unique
+
+        definition_groups = twin_groups.group_by { |group| paths[group.first].last.definition }
         kept_instances = kept_paths.map(&:last)
-        twin_groups.each do |twin_paths|
-          instances = twin_paths.map(&:last)
-          definition = instances.first.definition
-          next unless kept_instances.any? { |instance| instance.definition == definition }
-          followers = definition.instances - instances - kept_instances
-          instances.first.make_unique
-          (instances[1..-1] + followers).each { |instance| instance.definition = instances.first.definition }
+        moving_groups = definition_groups.flat_map { |definition, groups| kept_instances.any? { |instance| instance.definition == definition } ? groups : groups[0...-1] }
+
+        # A moving part seen through another occurrence of an assembly - the
+        # same instance as a part of another group, or as a kept part - first
+        # gets an instance of its own : the assemblies holding it are made
+        # unique from where the two paths part
+        separations = []
+        moving_groups.each do |group|
+          others = definition_groups[paths[group.first].last.definition]
+          others = others[(others.index(group) + 1)..-1].flatten.map { |index| paths[index] } + kept_paths
+          group.each do |path_index|
+            path = paths[path_index]
+            depth = others.select { |other| other.last == path.last }.map { |other| _get_parting_depth(path, other) }.max
+            separations << [ path_index, depth ] unless depth.nil?
+          end
         end
+        if separations.any?
+          all_paths = _make_unique_parting_ancestors(paths + kept_paths + removed_paths, separations)
+          paths = all_paths[0...paths.length]
+          kept_paths = all_paths[paths.length, kept_paths.length]
+          removed_paths = all_paths[(paths.length + kept_paths.length)..-1]
+          kept_instances = kept_paths.map(&:last)
+        end
+
+        # Each moving group to a definition of its own, the unselected
+        # instances following the last group of their definition
+        definition_groups.each do |definition, groups|
+          followers = definition.instances - groups.flatten.map { |index| paths[index].last } - kept_instances
+          groups.each do |group|
+            next unless moving_groups.include?(group)
+            instances = group.map { |index| paths[index].last }.uniq
+            instances += followers if group.equal?(groups.last)
+            instances.first.make_unique
+            instances[1..-1].each { |instance| instance.definition = instances.first.definition }
+          end
+        end
+
       end
+
+      group_slabs = twin_groups.map { |group| path_slabs[group.first] }
+      twin_groups = twin_groups.map { |group| group.map { |index| paths[index] } }
 
       # The pieces beyond the first one are cut from clones laid BEFORE any
       # boolean : a boolean rebuilds the definition it cuts
@@ -4570,6 +4602,30 @@ module Ladb::OpenCutList
       end
     end
 
+    # The depth of the deepest instance two paths reaching the same instance
+    # hold apart : below it, both see the same entities.
+    def _get_parting_depth(path, other_path)
+      shared = 0
+      shared += 1 while shared < [ path.length, other_path.length ].min && path[-1 - shared] == other_path[-1 - shared]
+      path.length - 1 - shared
+    end
+
+    # Makes unique, for each [ path index, depth ] of the +separations+, the
+    # assemblies holding that path from that depth down - so its part gets an
+    # instance of its own. The paths are found again by POSITION, as in
+    # #_make_unique_ancestors.
+    def _make_unique_parting_ancestors(paths, separations)
+      index_paths = paths.map { |path| _get_index_path(path) }
+      separations.each do |path_index, depth|
+        index_path = index_paths[path_index]
+        (depth...index_path.length - 1).each do |entity_depth|
+          entity = _resolve_index_path(index_path)[entity_depth]
+          entity.make_unique if entity.definition.instances.length > 1
+        end
+      end
+      index_paths.map { |index_path| _resolve_index_path(index_path) }
+    end
+
     def _get_index_path(path)
       entities = Sketchup.active_model.entities
       path.map do |entity|
@@ -4604,20 +4660,24 @@ module Ladb::OpenCutList
     # A clone of each of the given twin parts, all sharing one new definition
     # - the piece to come. When the part definition is rebuilt in place, the
     # clone definition is laid beside every other instance of it too.
+    #
+    # Twin parts seen through several occurrences of an assembly are one
+    # instance : it gets one clone.
     def _clone_twin_parts(twin_paths, make_unique)
-      instances = twin_paths.map(&:last)
+      instances = twin_paths.map(&:last).uniq
       definition = instances.first.definition
 
       clone = _add_instance_beside(instances.first, definition)
       clone.make_unique
       clone_definition = clone.definition
 
-      clones = [ clone ] + instances[1..-1].map { |instance| _add_instance_beside(instance, clone_definition) }
+      clones = { instances.first => clone }
+      instances[1..-1].each { |instance| clones[instance] = _add_instance_beside(instance, clone_definition) }
       unless make_unique
         (definition.instances - instances).each { |other_instance| _add_instance_beside(other_instance, clone_definition) }
       end
 
-      twin_paths.zip(clones).map { |path, clone_instance| path[0...-1] + [ clone_instance ] }
+      twin_paths.map { |path| path[0...-1] + [ clones[path.last] ] }
     end
 
     def _add_instance_beside(src_instance, definition)

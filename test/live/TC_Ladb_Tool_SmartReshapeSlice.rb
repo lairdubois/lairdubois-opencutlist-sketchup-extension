@@ -21,6 +21,10 @@
 #     laid in an untyped wrapper group as SmartJoin does, the wrapper shared
 #     by the clones of a slice ;
 #   - the SmartTool validation buttons never show ;
+#   - make_unique off : instances of one definition sliced at different
+#     places in it - side by side or through two occurrences of an assembly -
+#     each get their own pieces, the unselected instances following one of
+#     them ;
 #   - the 3 points reference : a compound angle plane, its normal following
 #     the mouse, ESC removing the last point, the axis lock, ↓ back to the
 #     picked plane (face or 3 points) from an axis, then to its step.
@@ -51,7 +55,12 @@ module SliceRegression
 
   # Each case : its options, its steps, the pieces expected - [ x0, x1, z0, z1 ]
   # in mm, the board being [ 0, 1000, 0, 200 ] - and with fittings: true, the
-  # fittings each piece holds - [ kind, x ], in the pieces order. Steps :
+  # fittings each piece holds - [ kind, x ], in the pieces order. With
+  # make_unique: false, the make unique option off. With copies, other
+  # instances of the board - [ dy, dz, selected ] - and with assemblies, the
+  # board in an assembly, its instances [ dy, dz ] all selected : the pieces
+  # are then read inside them. With pieces_alternatives, the pieces may be any
+  # of those. Steps :
   #   [ :hover, x(, y, z) ] the mouse over that fixture point (default : on the board top)
   #   [ :click ] / [ :esc ] / [ :key, VK ] / [ :shift_add ] / [ :text, 'vcb' ]
   #   [ :option, group, option ]
@@ -167,6 +176,34 @@ module SliceRegression
       steps: POINTS + [ [ :esc ], [ :expect, HANDLER::STATE_SLICE_REFERENCE, 0 ], [ :expect_points, 0 ] ],
       pieces: [ [ 0, 1000, 0, 200 ] ],  # Not sliced
     },
+    'shared_definition_diverging' => {
+      make_unique: false,
+      copies: [ [ 50, 100, true ] ],
+      steps: [ [ :hover, 300, 150, 0 ], [ :click ], [ :hover, 300 ], [ :text, '150' ] ],
+      pieces: [ [ 0, 1000, 0, 150 ], [ 0, 1000, 150, 200 ], [ 0, 1000, 100, 150 ], [ 0, 1000, 150, 300 ] ],
+    },
+    'shared_definition_diverging_unselected_follows' => {
+      # The unselected instance follows the last group : either board, by the processing order
+      make_unique: false,
+      copies: [ [ 50, 100, true ], [ -50, 50, false ] ],
+      steps: [ [ :hover, 300, 150, 0 ], [ :click ], [ :hover, 300 ], [ :text, '150' ] ],
+      pieces_alternatives: [
+        [ [ 0, 1000, 0, 150 ], [ 0, 1000, 150, 200 ], [ 0, 1000, 100, 150 ], [ 0, 1000, 150, 300 ], [ 0, 1000, 50, 200 ], [ 0, 1000, 200, 250 ] ],
+        [ [ 0, 1000, 0, 150 ], [ 0, 1000, 150, 200 ], [ 0, 1000, 100, 150 ], [ 0, 1000, 150, 300 ], [ 0, 1000, 50, 100 ], [ 0, 1000, 100, 250 ] ],
+      ],
+    },
+    'shared_assembly_diverging' => {
+      make_unique: false,
+      assemblies: [ [ 0, 0 ], [ 50, 100 ] ],
+      steps: [ [ :hover, 300, 150, 0 ], [ :click ], [ :hover, 300 ], [ :text, '150' ] ],
+      pieces: [ [ 0, 1000, 0, 150 ], [ 0, 1000, 150, 200 ], [ 0, 1000, 100, 150 ], [ 0, 1000, 150, 300 ] ],
+    },
+    'shared_assembly_same_place' => {
+      make_unique: false,
+      assemblies: [ [ 0, 0 ], [ 50, 0 ] ],
+      steps: [ [ :hover, 300, 150, 0 ], [ :click ], [ :hover, 300 ], [ :text, '150' ] ],
+      pieces: [ [ 0, 1000, 0, 150 ], [ 0, 1000, 150, 200 ], [ 0, 1000, 0, 150 ], [ 0, 1000, 150, 200 ] ],
+    },
     'face_axis_then_down_back_to_face' => {
       steps: [ [ :hover, 300, 150, 0 ], [ :click ], [ :key, VK_RIGHT ], [ :expect, HANDLER::STATE_SLICE, 0, X_AXIS ], [ :key, VK_DOWN ], [ :expect, HANDLER::STATE_SLICE, 0 ], [ :expect_plane ], [ :hover, 300 ], [ :text, '50' ] ],
       pieces: [ [ 0, 1000, 0, 50 ], [ 0, 1000, 50, 200 ] ],
@@ -189,6 +226,22 @@ module SliceRegression
     reference = model.entities.add_face(point(0, 100, 0), point(LENGTH, 100, 0), point(LENGTH, 300, 0), point(0, 300, 0))
     reference.reverse! if reference.normal.z < 0
     [ board, reference ]
+  end
+
+  # The other instances of the board, or the board in assembly instances :
+  # the instances to select.
+  def self.add_copies(model, board, spec)
+    if spec[:assemblies]
+      assembly = model.definitions.add('Slice assembly')
+      assembly.entities.add_instance(board.definition, IDENTITY)
+      t = board.transformation
+      board.erase!
+      return spec[:assemblies].map { |dy, dz| model.entities.add_instance(assembly, Geom::Transformation.translation([ 0, dy.mm, dz.mm ]) * t) }
+    end
+    [ board ] + (spec[:copies] || []).map { |dy, dz, selected|
+      copy = model.entities.add_instance(board.definition, Geom::Transformation.translation([ 0, dy.mm, dz.mm ]) * board.transformation)
+      selected ? copy : nil
+    }.compact
   end
 
   # Machinings laid in the board, hardware each in a wrapper group bearing no
@@ -234,7 +287,7 @@ module SliceRegression
   end
 
   # The real slice tool, its messages recorded, the given board selected.
-  def self.with_handler(model, board, messages)
+  def self.with_handler(model, selection, messages)
     tool = RT.new(current_action: ACTION)
     [ :notify_success, :notify_warnings, :notify_errors, :notify, :set_root_tooltip, :show_message ].each do |name|
       tool.define_singleton_method(name) do |*args|
@@ -245,7 +298,7 @@ module SliceRegression
     model.select_tool(tool)
     begin
       handler = tool.instance_variable_get(:@action_handler)
-      handler.send(:_set_active_selection, [], [ board ])
+      handler.send(:_set_active_selection, [], selection)
       handler.onSelected
       yield tool
     ensure
@@ -300,15 +353,18 @@ module SliceRegression
 
   # The slice instances in the model root but the fixture ones, as [ x0, x1, z0, z1 ] in mm.
   def self.pieces(model, kept)
-    piece_instances(model, kept).map { |instance| piece_bounds(instance) }
+    (model.entities.grep(Sketchup::ComponentInstance) - kept).flat_map { |instance|
+      next [ piece_bounds(instance) ] unless instance.definition.name.start_with?('Slice assembly')
+      instance.definition.entities.grep(Sketchup::ComponentInstance).map { |piece| piece_bounds(piece, instance.transformation) }
+    }.sort
   end
 
   def self.piece_instances(model, kept)
     (model.entities.grep(Sketchup::ComponentInstance) - kept).sort_by { |instance| piece_bounds(instance) }
   end
 
-  def self.piece_bounds(instance)
-    b = instance.bounds
+  def self.piece_bounds(instance, t = IDENTITY)
+    b = Geom::BoundingBox.new.add(instance.bounds.min.transform(t), instance.bounds.max.transform(t))
     [ b.min.x.to_mm, b.max.x.to_mm, (b.min.z - Z0).to_mm, (b.max.z - Z0).to_mm ].map { |v| v.round(1) }
   end
 
@@ -322,15 +378,16 @@ module SliceRegression
 
   def self.same_pieces?(pieces, expected)
     pieces.size == expected.size &&
-      pieces.zip(expected.sort).all? { |piece, bounds| piece.zip(bounds).all? { |a, b| (a - b).abs <= TOLERANCE } }
+      pieces.sort.zip(expected.sort).all? { |piece, bounds| piece.zip(bounds).all? { |a, b| (a - b).abs <= TOLERANCE } }
   end
 
   def self.run_case(model, spec, messages)
     existing = model.entities.grep(Sketchup::ComponentInstance)
     board, reference = build(model, spec[:rotation] || 0)
     add_fittings(model, board) if spec[:fittings]
+    selection = add_copies(model, board, spec)
     model.active_view.refresh  # The picks read the last drawn frame
-    with_handler(model, board, messages) do |tool|
+    with_handler(model, selection, messages) do |tool|
       spec[:steps].each { |step| run_step(tool, step, messages) }
     end
     pieces = pieces(model, existing)
@@ -350,6 +407,7 @@ module SliceRegression
 
     options_tool = RT.new(current_action: ACTION)
     saved_options = [ RT::ACTION_OPTION_SLICE_MODE, RT::ACTION_OPTION_SLICE_REFERENCE, RT::ACTION_OPTION_AXES ].map { |group| [ group, options_tool.fetch_action_option_value(ACTION, group) ] }
+    saved_make_unique = options_tool.fetch_action_option_value(ACTION, RT::ACTION_OPTION_OPTIONS, RT::ACTION_OPTION_OPTIONS_MAKE_UNIQUE)
 
     results = {}
     model.start_operation('Slice fixture', true)
@@ -366,9 +424,11 @@ module SliceRegression
         options_tool.store_action_option_value(ACTION, RT::ACTION_OPTION_SLICE_MODE, RT::ACTION_OPTION_SLICE_MODE_SLICE)
         options_tool.store_action_option_value(ACTION, RT::ACTION_OPTION_SLICE_REFERENCE, RT::ACTION_OPTION_SLICE_REFERENCE_FACE)
         options_tool.store_action_option_value(ACTION, RT::ACTION_OPTION_AXES, RT::ACTION_OPTION_AXES_ACTIVE)
+        options_tool.store_action_option_value(ACTION, RT::ACTION_OPTION_OPTIONS, RT::ACTION_OPTION_OPTIONS_MAKE_UNIQUE, spec.fetch(:make_unique, true))
         messages = []
         pieces, fittings = run_case(model, spec, messages)
-        results[name] = { 'expected' => spec[:pieces], 'pieces' => pieces, 'messages' => messages }
+        expected = spec[:pieces_alternatives] ? spec[:pieces_alternatives].find { |alternative| same_pieces?(pieces, alternative) } || spec[:pieces_alternatives].first : spec[:pieces]
+        results[name] = { 'expected' => expected, 'pieces' => pieces, 'messages' => messages }
         results[name].merge!('fittings_expected' => spec[:fittings_expected], 'fittings' => fittings) if spec[:fittings]
       end
     ensure
@@ -377,6 +437,7 @@ module SliceRegression
       model.abort_operation
       view.camera = saved_camera
       saved_options.each { |group, option| options_tool.store_action_option_value(ACTION, group, option) }
+      options_tool.store_action_option_value(ACTION, RT::ACTION_OPTION_OPTIONS, RT::ACTION_OPTION_OPTIONS_MAKE_UNIQUE, saved_make_unique)
     end
     results
   end

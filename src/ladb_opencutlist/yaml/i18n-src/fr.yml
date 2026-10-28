@@ -2913,7 +2913,9 @@ tool:
     action_option_group_paneling_joint_type: Assemblage
     action_option_group_paneling_direction: Direction
     action_option_group_csg_operation: Operation
+    # @no-translate
     action_option_group_slice_mode: Mode
+    # @no-translate
     action_option_group_slice_reference: Référence
     action_option_group_options: Options
     action_option_thickness_thickness: Epaisseur
@@ -2951,8 +2953,8 @@ tool:
       validate_b: Validez pour appliquer l'opération
     error:
       curve_intersect: L'un des plans de coupe traverse une courbe non étirable
+      # @no-translate
       slice_number_overflow: Impossible de répartir {{ number }} morceaux sur la sélection
-      slice_shared_definition: "Les instances de {{ name }} ne sont pas tranchées au même endroit : activez l'option « Rendre unique »"
   smart_paint:
     title: Colorier
     default_material: Sans matière
