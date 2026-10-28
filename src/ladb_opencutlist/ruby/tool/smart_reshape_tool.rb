@@ -3331,6 +3331,8 @@ module Ladb::OpenCutList
 
       when STATE_SLICE_DISTRIBUTE
         @slice_plane = nil
+        # An axis reference read now : the distributed planes do not follow the mouse
+        _snap_slice_axis_reference(0, @tool.last_mouse_x, @tool.last_mouse_y, Sketchup.active_model.active_view) unless @reference_axis.nil?
 
       when STATE_SLICE_SIDE
         @slice_side = nil
@@ -3723,11 +3725,9 @@ module Ladb::OpenCutList
     # the closest to the reference to the other one, @spacings pinning the
     # pieces from both ends. nil when they do not fit.
     def _get_distributed_planes
-      return nil if @reference_plane.nil? || @number < 1
-      point, normal = @reference_plane
-      frame = _get_plane_frame(@reference_plane)
-      extents = _get_part_defs_extents(_get_slice_part_defs, frame)
-      return nil if extents.empty?
+      return nil if @number < 1
+      return nil if (frame, extents = _get_distribution_frame_extents).nil?
+      normal = @reference_plane[1]
       if extents.min.z.abs <= extents.max.z.abs
         z0, direction = extents.min.z, 1
       else
@@ -3735,6 +3735,16 @@ module Ladb::OpenCutList
       end
       return nil if (offsets = _get_distribution_offsets(extents.depth, @number, @spacings)).nil?
       offsets.map { |offset| [ Geom::Point3d.new(0, 0, z0 + direction * offset).transform(frame), normal ] }
+    end
+
+    # The reference plane frame and the selection extents in it, the room the
+    # distribution is shared over. nil without a reference plane or a part.
+    def _get_distribution_frame_extents
+      return nil if @reference_plane.nil?
+      frame = _get_plane_frame(@reference_plane)
+      extents = _get_part_defs_extents(_get_slice_part_defs, frame)
+      return nil if extents.empty?
+      [ frame, extents ]
     end
 
     # The +number+ plane offsets along a +length+, read as the Smart Build
@@ -3782,11 +3792,6 @@ module Ladb::OpenCutList
       @number = [ number, 0 ].max
       @spacings = spacings
 
-      if @number > 0 && _get_distributed_planes.nil?
-        UI.beep
-        @tool.notify_errors([ [ 'tool.smart_reshape.error.slice_number_overflow', { :number => @number + 1 } ] ])
-      end
-
       if @number > 0
         if @state == STATE_SLICE_DISTRIBUTE
           _refresh_status
@@ -3795,6 +3800,14 @@ module Ladb::OpenCutList
         end
       else
         set_state(STATE_SLICE) unless @state == STATE_SLICE
+      end
+
+      # Checked once in STATE_SLICE_DISTRIBUTE, its axis reference read.
+      # Overflow only when there is a room to share : without a reference
+      # plane or a part, the number is kept for when they come
+      if @number > 0 && !_get_distribution_frame_extents.nil? && _get_distributed_planes.nil?
+        UI.beep
+        @tool.notify_errors([ [ 'tool.smart_reshape.error.slice_number_overflow', { :number => @number + 1 } ] ])
       end
       _refresh
     end

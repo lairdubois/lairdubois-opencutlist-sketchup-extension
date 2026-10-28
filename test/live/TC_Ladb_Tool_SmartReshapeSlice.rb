@@ -21,6 +21,8 @@
 #     laid in an untyped wrapper group as SmartJoin does, the wrapper shared
 #     by the clones of a slice ;
 #   - the SmartTool validation buttons never show ;
+#   - the slice_number_overflow error : raised when the distribution does
+#     not fit, never for a number typed with no reference plane yet ;
 #   - make_unique off : instances of one definition sliced at different
 #     places in it - side by side or through two occurrences of an assembly -
 #     each get their own pieces, the unselected instances following one of
@@ -60,7 +62,8 @@ module SliceRegression
   # instances of the board - [ dy, dz, selected ] - and with assemblies, the
   # board in an assembly, its instances [ dy, dz ] all selected : the pieces
   # are then read inside them. With pieces_alternatives, the pieces may be any
-  # of those. Steps :
+  # of those. With errors, the error keys expected to be notified - any other
+  # message failing the case. Steps :
   #   [ :hover, x(, y, z) ] the mouse over that fixture point (default : on the board top)
   #   [ :click ] / [ :esc ] / [ :key, VK ] / [ :shift_add ] / [ :text, 'vcb' ]
   #   [ :option, group, option ]
@@ -68,6 +71,9 @@ module SliceRegression
   #   [ :point, x, y, z ] a reference point placed exactly there (3 points reference)
   #   [ :expect_points, n ] the number of reference points ; [ :expect_point, i, x, y, z ] one of them
   #   [ :expect_plane ] a plane reference (no axis) is set
+  #   [ :clear_plane ] the reference plane forgotten, the axis kept - the
+  #     axis plane is read again on any move or state change : no UI path
+  #     leaves STATE_SLICE without a plane today
   #
   # The 3 points plane (400, 0, 0), (600, 0, 200), (450, 18, 0) : x = 400 + 2.778 y + z,
   # 400 to 650 over the board ; its normal leans to -X, an offset of 50 along it is 155.9 in X.
@@ -208,6 +214,17 @@ module SliceRegression
       steps: [ [ :hover, 300, 150, 0 ], [ :click ], [ :key, VK_RIGHT ], [ :expect, HANDLER::STATE_SLICE, 0, X_AXIS ], [ :key, VK_DOWN ], [ :expect, HANDLER::STATE_SLICE, 0 ], [ :expect_plane ], [ :hover, 300 ], [ :text, '50' ] ],
       pieces: [ [ 0, 1000, 0, 50 ], [ 0, 1000, 50, 200 ] ],
     },
+    'distribution_overflow' => {
+      # A first piece as long as the board : its plane on the far end
+      steps: [ [ :hover, 100 ], [ :key, VK_RIGHT ], [ :text, '1000;' ], [ :expect, HANDLER::STATE_SLICE_DISTRIBUTE, 1 ], [ :click ] ],
+      pieces: [ [ 0, 1000, 0, 200 ] ],  # Not sliced
+      errors: [ 'tool.smart_reshape.error.slice_number_overflow' ],
+    },
+    'number_without_reference_no_overflow' => {
+      # The axis read again on entering STATE_SLICE_DISTRIBUTE : no error, the planes from the end the closest to the mouse
+      steps: [ [ :hover, 100 ], [ :key, VK_RIGHT ], [ :clear_plane ], [ :text, 'x3' ], [ :expect, HANDLER::STATE_SLICE_DISTRIBUTE, 3 ], [ :hover, 700 ], [ :click ] ],
+      pieces: [ [ 0, 250, 0, 200 ], [ 250, 500, 0, 200 ], [ 500, 750, 0, 200 ], [ 750, 1000, 0, 200 ] ],
+    },
   }
 
   FITTING_SIZE = 10
@@ -342,6 +359,8 @@ module SliceRegression
       unless handler.instance_variable_get(:@reference_axis).nil? && handler.instance_variable_get(:@reference_plane)
         messages << "#{step.inspect} got axis #{handler.instance_variable_get(:@reference_axis).inspect}, plane #{handler.instance_variable_get(:@reference_plane).inspect}"
       end
+    when :clear_plane
+      handler.instance_variable_set(:@reference_plane, nil)
     when :expect
       state, number, axis = step[1, 3]
       got = [ handler.fetch_state, handler.number ]
@@ -427,6 +446,11 @@ module SliceRegression
         options_tool.store_action_option_value(ACTION, RT::ACTION_OPTION_OPTIONS, RT::ACTION_OPTION_OPTIONS_MAKE_UNIQUE, spec.fetch(:make_unique, true))
         messages = []
         pieces, fittings = run_case(model, spec, messages)
+        (spec[:errors] || []).each do |key|
+          found = messages.select { |message| message.start_with?('["notify_errors"') && message.include?(key) }
+          messages << "#{key} not notified" if found.empty?
+          messages.replace(messages - found)
+        end
         expected = spec[:pieces_alternatives] ? spec[:pieces_alternatives].find { |alternative| same_pieces?(pieces, alternative) } || spec[:pieces_alternatives].first : spec[:pieces]
         results[name] = { 'expected' => expected, 'pieces' => pieces, 'messages' => messages }
         results[name].merge!('fittings_expected' => spec[:fittings_expected], 'fittings' => fittings) if spec[:fittings]
