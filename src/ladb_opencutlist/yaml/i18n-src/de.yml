@@ -23,7 +23,7 @@ default:
   clear: Löschen
   refresh: Aktualisieren
   generate: Generieren
-  regenerate: Regenerieren
+  regenerate: Neu generieren
   print: Drucken
   export: Exportieren
   import: Importieren
@@ -834,7 +834,7 @@ tab:
       part_number_with_letters: Buchstaben zur Aufzählung der Teile verwenden
       part_number_with_letters_help: Ist diese Option aktiv, werden Teile mittels Buchstaben (A, B, C, ... Z, AA, AB, ...) durchnummeriert.
       part_number_sequence_by_group: Teilenummerierung für jede Gruppe neu initialisieren
-      part_number_sequence_by_group_help: Ist diese Option aktiv, wird die Teilenummerierung bei jeder Gruppe (Liste von Teilen mit gleichem Material und gleicher Bruttodicke) auf 1 (oder A) zurückgesetzt.
+      part_number_sequence_by_group_help: Ist diese Option aktiv, wird die Teilenummerierung bei jeder Gruppe (Liste von Teilen mit gleichem Material und gleicher Rohdicke) auf 1 (oder A) zurückgesetzt.
       part_folding: Identische Teile zusammenfassen
       part_folding_help: |
         Ist diese Option aktiv, werden Teile aus dem Material **Massivholz, Platte oder Stange** mit **gleichen Rohmaßen** und mit **gleichen Badges** und **gleicher Fläche** *(sofern die Anzeige dieser Fläche nicht ausgeblendet ist)* in der *Holzliste* auf einer Zeile zusammengefasst .
@@ -1347,7 +1347,7 @@ tab:
       option_rectangleguillotine_number_of_stages: Anzahl der Stufen
       option_rectangleguillotine_number_of_stages_help: |
         Legt die maximale Anzahl der Schnittstufen fest.
-      option_rectangleguillotine_first_stage_orientation: Richtung erster Schnitt
+      option_rectangleguillotine_first_stage_orientation: Erste Schnittrichtung
       option_rectangleguillotine_first_stage_orientation_help: |
         Legt die Richtung des ersten Schnitts fest.
       option_rectangleguillotine_first_stage_orientation_horizontal: Horizontal
@@ -1396,10 +1396,10 @@ tab:
       option_items_formula: Formel
       option_items_formula_help: |
         Hier können Sie *Ruby*-Code schreiben, um den Text zur Identifizierung der Teile im Schnittplan anzupassen.
-      option_bin_folding_1d_dimensional: Gleiche Stangen zusammenfassen
-      option_bin_folding_1d_edge: Gleiche Kantenbänder zusammenfassen
-      option_bin_folding_2d_sheet_good: Gleiche Platten zusammenfassen
-      option_bin_folding_2d_veneer: Gleiche Furniere zusammenfassen
+      option_bin_folding_1d_dimensional: Identische Stangen zusammenfassen
+      option_bin_folding_1d_edge: Identische Kantenbänder zusammenfassen
+      option_bin_folding_2d_sheet_good: Identische Platten zusammenfassen
+      option_bin_folding_2d_veneer: Identische Furniere zusammenfassen
       option_bin_folding_0: $t(default.no)
       option_bin_folding_1: $t(default.yes)
       option_bin_folding_1d_help: |
@@ -1437,7 +1437,7 @@ tab:
       option_origin_corner_3: Untere rechte Ecke
       option_origin_corner_help: Ermöglicht die Auswahl der Position des Koordinatenursprungs zur Darstellung der Teile auf Platten, Furnierblätter, Stangen oder Kantenbänder.
       option_highlight_primary_cuts: Primärschnitte
-      option_highlight_primary_cuts_0: Nur beim Überfahren mit der Maus
+      option_highlight_primary_cuts_0: Nur beim Darüberfahren
       option_highlight_primary_cuts_1: Immer sichtbar
       option_highlight_primary_cuts_help: Ermöglicht es, die Primärschnitte stets sichtbar hervorzuheben.
       option_hide_edges_preview: Anzeige der Kantenbänder
@@ -2138,7 +2138,7 @@ tab:
       hide_descriptions: Beschreibungen ausblenden
       hide_descriptions_help: Wenn diese Option aktiviert ist, werden die **Beschreibungen** auf den Teilen nicht angezeigt.
       hide_tags: Badges ausblenden
-      hide_tags_help: Ist diese Option aktiv, werden **Badges** nicht angezeigt.
+      hide_tags_help: Ist diese Option aktiv, werden die **Badges** der Teile nicht angezeigt.
       minimize_on_set_active: Verkleinern nach '$t(tab.outliner.tooltip.set_active_node)'
       minimize_on_set_active_help: Wenn diese Option aktiviert ist, wird das OpenCutList-Fenster minimiert, wenn die Funktion *'$t(tab.outliner.tooltip.set_active_node)'* verwendet wird.
     snippet:
@@ -2686,10 +2686,10 @@ tool:
     action_0_state_1_status: Klicken Sie hier, um den Ursprung des Moduls festzulegen
     action_0_state_2_status: Klicken Sie hier, um die Breite des Moduls (X-Achse) festzulegen
     action_0_state_2_lock_status: An die Breite der Quelldatei anpassen
-    action_0_state_2_arrows_status: Pfeiltaste = An einer Achse fixieren (→ X, ← Y, ↑ Z)
+    action_0_state_2_arrows_status: An einer Achse fixieren
     action_0_state_3_status: Klicken Sie hier, um die Tiefe des Moduls (Y-Achse) festzulegen
     action_0_state_3_lock_status: An die Tiefe der Quelldatei anpassen
-    action_0_state_3_arrows_status: Pfeiltasten = Normale der XY-Ebene auf eine Achse fixieren (→ X, ← Y, ↑ Z)
+    action_0_state_3_arrows_status: Normale der XY-Ebene auf eine Achse fixieren
     action_0_state_4_status: Klicken Sie hier, um die Höhe des Moduls (Z-Achse) festzulegen
     action_0_state_4_lock_status: An die Höhe der Quelldatei anpassen
     action_0_state_5_status: Klicken Sie auf die Instanz, die Sie hinzufügen möchten
@@ -2856,13 +2856,13 @@ tool:
     action_0: Strecken
     action_0_status: Teil strecken
     action_0_state_1_status: Klicken Sie auf einen Griff, um zu strecken
-    action_0_state_1a_status: Klicken Sie auf eine Schnittebene, um sie zu verschieben
-    action_0_state_1b_status: Schnittebene hinzufügen
-    action_0_state_1c_status: Schnittebene löschen
+    action_0_state_1a_status: Klicken Sie auf eine Trennebene, um sie zu verschieben
+    action_0_state_1b_status: Trennebene hinzufügen
+    action_0_state_1c_status: Trennebene löschen
     action_0_state_1d_status: Klicken Sie hier, um die Geometrie zwischen den beiden Schnittebenen zu verschieben
-    action_0_state_10_status: Ziehen Sie die Schnittebene, um sie zu verschieben
-    action_0_state_11_status: Klicken Sie, um die Schnittebene hinzuzufügen
-    action_0_state_12_status: Klicken Sie auf eine Schnittebene, um sie zu löschen
+    action_0_state_10_status: Ziehen Sie die Trennebene, um sie zu verschieben
+    action_0_state_11_status: Klicken Sie, um die Trennebene hinzuzufügen
+    action_0_state_12_status: Klicken Sie auf eine Trennebene, um sie zu löschen
     action_0_state_2_status: Klicken Sie, um die Dehnung zu bestätigen, oder geben Sie einen Abstand ein
     action_1: Beplanken
     action_1_status: Eine Teileserie aus einem geschlossenen Volumenkörper oder einer Konstruktionslinienzeichnung erstellen

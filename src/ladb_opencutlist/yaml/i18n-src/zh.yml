@@ -2195,6 +2195,8 @@ tool:
     success:
       part_created: "新建部件: {{ name }}"
   smart_build:
+    action_0_state_2_arrows_status: 锁定到轴
+    action_0_state_3_arrows_status: 将 XY 平面的法线锁定到轴
     action_option_group_thickness: 厚度
     action_option_group_axes: 坐标轴
     action_option_group_measure_type: 测量

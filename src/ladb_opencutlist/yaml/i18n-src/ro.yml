@@ -2278,6 +2278,8 @@ tool:
     success:
       part_created: "Piesă nouă creată: {{ name }}"
   smart_build:
+    action_0_state_2_arrows_status: Blocare pe o axă
+    action_0_state_3_arrows_status: Blochează normala planului XY pe o axă
     action_option_group_thickness: Grosime
     action_option_group_axes: Axe
     action_option_group_measure_type: Măsurare

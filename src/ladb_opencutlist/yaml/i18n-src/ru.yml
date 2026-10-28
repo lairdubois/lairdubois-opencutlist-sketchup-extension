@@ -688,7 +688,7 @@ tab:
       number: N°
       name: Определение
       count: Кол-во
-      cutting: Пильный
+      cutting: Раскрой
       bbox: Габаритный
       final: Фактически
       total_cutting: Σ Пильный
@@ -758,7 +758,7 @@ tab:
       material_name: Имя материала
       material_description: Описание предмета
       material_url: URL материала
-      material_std_dimension: Измерительный стандарт
+      material_std_dimension: Стандартный формат
       entity_names: Название
       description: Описание
       url: URL
@@ -770,7 +770,7 @@ tab:
       face_zmin: Тыльная
       face_zmax: Лицевая
       layer: Метка
-      layers: Маяки
+      layers: Метки
       batch: Деталей в раскрое
       bin: Грубый размер
       component_definition: Описание компонента
@@ -1426,9 +1426,9 @@ tab:
         thumbnail_square: Квадратная
         group_material: Материал / Толщина
         group_material_name: Название материала
-        group_std_dimension: Стандартный размер
+        group_std_dimension: Стандартный формат
         filename: Имя файла
-        model_name: Имя модели
+        model_name: Название модели
         page_name: Имя сцены
         length_unit: Единицы
         generated_at: Дата и время
@@ -1705,7 +1705,7 @@ tab:
       reset_prices_success: Параметр цены для всех материалов был сброшен.
     new_material:
       title: Создать новый материал
-      name: Определение
+      name: Название
       name_warning: Недопустимое имя
       color: Цвет
       color_warning: Недопустимый цвет
@@ -1715,7 +1715,7 @@ tab:
       general: Общие
       texture: Текстура
       no_texture: Нет текстуры
-      name: Определение
+      name: Название
       type: Тип
       description: Описание
       url: URL
@@ -1820,7 +1820,7 @@ tab:
         Определение порядка сортировки свойств деталей внутри каждой группы.
         Свойства могут быть отсортированы в <i class="ladb-opencutlist-icon-sort-asc"></i> *по возрастанию* или <i class="ladb-opencutlist-icon-sort-desc"></i> *по убыванию*.
       property_type: Тип
-      property_name: Определение
+      property_name: Название
     delete:
       message: |
         Вы собираетесь удалить материал **{{ material_name }}** из вашей модели.
@@ -2132,7 +2132,7 @@ tab:
         option_machining_material_name: Обработка
         option_machining_material_name_help: Материал, требующий **Обработки**.
         option_machining_layer_name: Обработка
-        option_machining_layer_name_help: Маркер, применяемый к обработкам.
+        option_machining_layer_name_help: Метка, применяемая к элементам обработки.
         option_hardware_material_name: Комплектующие
         option_hardware_material_name_help: Материал, применяемый к **Комплектующим**.
         option_hardware_layer_name: Комплектующие
@@ -2156,12 +2156,12 @@ tab:
         date: Дата
       cabinet:
         list: Список мебели
-        description: Определение
+        description: Название
         width: Ширина
         height: Высота
         depth: Глубина
       article:
-        list: Список статей
+        list: Список позиций
         total_quantity: К-во
         article_number: Ссылка
         description: Описание
@@ -2245,7 +2245,7 @@ tab:
     title: Параметры
     global_settings: Общие настройки
     language: Язык
-    language_auto: Автоматический
+    language_auto: Автоматически
     font_size: Размер текста
     font_size_auto: $t(default.automatic)
     font_size_normal: Нормальный
@@ -2436,7 +2436,7 @@ tool:
     action_option_options_smoothing: Сглаживание
     action_option_options_smoothing_status: Плавные кривые
     action_option_options_measure_from_vertex_status: Измерение по отношению к ближайшей вершине
-    action_option_options_measure_from_diameter: Измерение
+    action_option_options_measure_from_diameter: Отсчет
     action_option_options_measure_from_diameter_status: Размер окружности по ее диаметру
     action_option_options_measure_from_radius_status: Измерить окружность по ее радиусу
     action_option_options_measure_reversed: Реверсивное измерение
@@ -2465,10 +2465,10 @@ tool:
     action_0_state_1_status: Кликните для указания расположения элемента
     action_0_state_2_status: Щелкните, чтобы задать ширину модуля (ось X)
     action_0_state_2_lock_status: Зафиксировать ширину исходного файла
-    action_0_state_2_arrows_status: Стрелки = зафиксировать по оси (→ X, ← Y, ↑ Z)
+    action_0_state_2_arrows_status: зафиксировать по оси
     action_0_state_3_status: Щелкните, чтобы задать глубину модуля (ось Y)
     action_0_state_3_lock_status: Зафиксировать глубину как в исходном файле
-    action_0_state_3_arrows_status: Стрелки = зафиксировать нормаль плоскости XY по оси (→ X, ← Y, ↑ Z)
+    action_0_state_3_arrows_status: зафиксировать нормаль плоскости XY по оси
     action_0_state_4_status: Щелкните, чтобы задать высоту модуля (ось Z)
     action_0_state_4_lock_status: Зафиксировать высоту как в исходном файле
     action_0_state_5_status: Щелкните экземпляр, который нужно добавить
@@ -2851,7 +2851,7 @@ tool:
     action_option_faces_1_status: $t(tab.cutlist.write.option_faces_1)
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
-    action_option_options_merge_holes_status: Определите сквозные отверстия и размеры слияния для каждой полости
+    action_option_options_merge_holes_status: Разделять сквозные отверстия и группировать глубины для каждой полости
     action_option_options_include_paths_status: Экспортировать как контур ребра, не связанные с гранью, содержащиеся в детали
     error:
       not_part: Эта грань не является частью детали (компонента)

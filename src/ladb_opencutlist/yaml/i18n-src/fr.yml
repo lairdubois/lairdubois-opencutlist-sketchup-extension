@@ -2686,10 +2686,10 @@ tool:
     action_0_state_1_status: Cliquez pour placer l'origine du module
     action_0_state_2_status: Cliquez pour définir la largeur du module (axe X)
     action_0_state_2_lock_status: Verrouiller sur la largeur du fichier source
-    action_0_state_2_arrows_status: Flèches = Verrouiller sur un axe (→ X, ← Y, ↑ Z)
+    action_0_state_2_arrows_status: Verrouiller sur un axe
     action_0_state_3_status: Cliquez pour définir la profondeur du module (axe Y)
     action_0_state_3_lock_status: Verrouiller sur la profondeur du fichier source
-    action_0_state_3_arrows_status: Flèches = Verrouiller la normale du plan XY sur un axe (→ X, ← Y, ↑ Z)
+    action_0_state_3_arrows_status: Verrouiller la normale du plan XY sur un axe
     action_0_state_4_status: Cliquez pour définir la hauteur du module (axe Z)
     action_0_state_4_lock_status: Verrouiller sur la hauteur du fichier source
     action_0_state_5_status: Cliquez l'instance à ajouter

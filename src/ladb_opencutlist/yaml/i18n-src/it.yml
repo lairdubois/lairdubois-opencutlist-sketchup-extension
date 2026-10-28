@@ -1117,9 +1117,9 @@ tab:
       option_objective: Obiettivo
       option_objective_help: |
         Definisce l'obiettivo dello schema di taglio.
-      option_rectangleguillotine_cut_type: Tipo di sezionatura
+      option_rectangleguillotine_cut_type: Tipo di taglio
       option_rectangleguillotine_cut_type_help: |
-        Definisce il tipo di sezionatura.
+        Definisce il tipo di taglio.
       option_rectangleguillotine_cut_type_non_exact: Approssimato
       option_rectangleguillotine_cut_type_exact: Esatto
       option_rectangleguillotine_cut_type_homogenous: Omogeneo
@@ -2465,10 +2465,10 @@ tool:
     action_0_state_1_status: Clicca per posizionare l'origine del modulo
     action_0_state_2_status: Clicca per definire la larghezza del modulo (asse X)
     action_0_state_2_lock_status: Blocca sulla larghezza del file sorgente
-    action_0_state_2_arrows_status: Frecce = Blocca su un asse (→ X, ← Y, ↑ Z)
+    action_0_state_2_arrows_status: Blocca su un asse
     action_0_state_3_status: Clicca per definire la profondità del modulo (asse Y)
     action_0_state_3_lock_status: Blocca sulla profondità del file sorgente
-    action_0_state_3_arrows_status: Frecce = Blocca la normale del piano XY su un asse (→ X, ← Y, ↑ Z)
+    action_0_state_3_arrows_status: Blocca la normale del piano XY su un asse
     action_0_state_4_status: Clicca per definire l'altezza del modulo (asse Z)
     action_0_state_4_lock_status: Blocca sull'altezza del file sorgente
     action_0_state_5_status: Clicca sull'istanza da aggiungere
