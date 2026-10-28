@@ -4,6 +4,11 @@ name: Make OpenCutList C/C++ Libs (Windows)
 
 on:
   workflow_dispatch:
+    inputs:
+      sign:
+        description: 'Sign DLLs with SignPath'
+        type: boolean
+        default: false
 
 jobs:
   build:
@@ -77,6 +82,7 @@ jobs:
 
       - name: Upload unsigned artifact
         id: upload-unsigned-artifact
+        if: ${{ inputs.sign }}
         uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.os }}-unsigned-build-artifact
@@ -84,6 +90,7 @@ jobs:
 
       - name: Sign with SignPath
         # Free code signing provided by SignPath.io, certificate by SignPath Foundation
+        if: ${{ inputs.sign }}
         uses: signpath/github-action-submit-signing-request@v3
         with:
           api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
@@ -96,6 +103,7 @@ jobs:
           output-artifact-directory: ${{ steps.strings.outputs.build_output_dir }}/signed
 
       - name: Verify signatures
+        if: ${{ inputs.sign }}
         shell: pwsh
         run: |
           $failed = $false
@@ -109,4 +117,4 @@ jobs:
       - uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.os }}-build-artifact
-          path: ${{ steps.strings.outputs.build_output_dir }}/signed
+          path: ${{ inputs.sign && format('{0}/signed', steps.strings.outputs.build_output_dir) || format('{0}/{1}', steps.strings.outputs.src_dir, matrix.install_dir) }}
