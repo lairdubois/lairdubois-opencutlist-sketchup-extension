@@ -597,7 +597,7 @@ module Ladb::OpenCutList
     end
 
     def stop
-      _remove_source_tooltip
+      @tool.remove_steps_bar
       @tool.hide_message
       super
     end
@@ -632,7 +632,7 @@ module Ladb::OpenCutList
                ' | ' + PLUGIN.get_i18n_string('default.constrain_key') + ' = ' + PLUGIN.get_i18n_string("tool.smart_build.action_#{@action}_state_#{state}_lock_status") + '.' +
                ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_build.action_#{@action}_flip_status") + '.' +
                ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_build.action_#{@action}_flip_up_status") + '.' +
-               (state == STATE_X || state == STATE_Y ? ' | ' + PLUGIN.get_i18n_string("tool.smart_build.action_#{@action}_state_#{state}_arrows_status") + '.' : '')
+               (state == STATE_X || state == STATE_Y ? ' | ←↑→ = ' + PLUGIN.get_i18n_string("tool.smart_build.action_#{@action}_state_#{state}_arrows_status") + '.' : '')
       end
 
       super
@@ -739,7 +739,7 @@ module Ladb::OpenCutList
         @add_hover_face = @add_refused_face = nil
         _preview_add_instance
       end
-      _remove_add_tooltip if ADD_STATES.include?(@state)  # Not the source one : hidden over the library, not removed
+      _remove_add_tooltip if ADD_STATES.include?(@state)
       super
     end
 
@@ -857,12 +857,14 @@ module Ladb::OpenCutList
     def onStateChanged(old_state, new_state)
       super
       _show_locked_axis_message
-      if new_state == STATE_SOURCE
-        _show_source_tooltip
-      elsif old_state == STATE_SOURCE
-        _remove_source_tooltip
-      end
       _remove_add_tooltip if ADD_STATES.include?(old_state)
+      if new_state == STATE_SOURCE
+        @tool.set_steps_bar(0, nil, PLUGIN.get_i18n_string("tool.smart_build.action_#{@action}_state_#{new_state}_status"))  # No steps : what to do, the library
+      elsif ADD_STATES.include?(new_state)
+        _show_add_steps_bar
+      elsif old_state == STATE_SOURCE || ADD_STATES.include?(old_state)
+        @tool.remove_steps_bar
+      end
     end
 
     def onToolActionOptionStored(tool, action, option_group, option)
@@ -1637,44 +1639,32 @@ module Ladb::OpenCutList
       instance.is_a?(Sketchup::Group) && !instance.name.empty? ? instance.name : instance.definition.name
     end
 
-    # What is expected at the current add step, in a tooltip following the
-    # mouse - the hovered instance's proposed name and definition sizes (what
-    # the file will hold) in STATE_ADD_SELECT, a warning on a refused top
-    # face. Rebuilt only once changed.
+    # What is expected at the current add step, at the bottom of the view
+    def _show_add_steps_bar
+      @tool.set_steps_bar(ADD_STATES.length, ADD_STATES.index(@state), PLUGIN.get_i18n_string("tool.smart_build.action_0_state_#{@state}_status"))
+    end
+
+    # The tooltip following the mouse - the hovered instance's proposed name
+    # and definition sizes (what the file will hold) in STATE_ADD_SELECT, a
+    # warning on a refused top face. Rebuilt only once changed.
     def _show_add_tooltip
       key = [ @state, @add_instance, @add_refused_face.nil? ]
       return if key == @add_tooltip_key
       @add_tooltip_key = key
 
-      step = ADD_STATES.index(@state) + 1
-      step_text = "!#{step}/#{ADD_STATES.length}"
-      case @state
-      when STATE_ADD_SELECT
-        items = [ [ step_text, "#{PLUGIN.get_i18n_string('tool.smart_build.action_0_state_5_status')}"] ]
-        unless @add_instance.nil?
-          bounds = @add_instance.definition.bounds
-          items += [ '-', "##{_get_add_instance_name(@add_instance)}", "#{bounds.width.to_l} x #{bounds.height.to_l} x #{bounds.depth.to_l}" ]
-        end
-        @tool.set_root_tooltip(items)
-      when STATE_ADD_FRONT
-        @tool.set_root_tooltip([ [ step_text, "#{PLUGIN.get_i18n_string('tool.smart_build.action_0_state_6_status')}" ] ])
-      when STATE_ADD_UP
-        @tool.set_root_tooltip([ [ step_text, "#{PLUGIN.get_i18n_string('tool.smart_build.action_0_state_7_status')}" ] ], @add_refused_face.nil? ? SmartTool::MESSAGE_TYPE_DEFAULT : SmartTool::MESSAGE_TYPE_ERROR)
+      if @state == STATE_ADD_SELECT && !@add_instance.nil?
+        bounds = @add_instance.definition.bounds
+        @tool.set_root_tooltip([ "##{_get_add_instance_name(@add_instance)}", "#{bounds.width.to_l} x #{bounds.height.to_l} x #{bounds.depth.to_l}" ])
+      elsif @state == STATE_ADD_UP && !@add_refused_face.nil?
+        @tool.set_root_tooltip(PLUGIN.get_i18n_string('tool.smart_build.action_0_state_7_status'), SmartTool::MESSAGE_TYPE_ERROR)
+      else
+        @tool.remove_root_tooltip
       end
     end
 
     def _remove_add_tooltip
       @add_tooltip_key = nil
       @tool.remove_root_tooltip
-    end
-
-    def _show_source_tooltip
-      @source_tooltip_box = @tool.set_root_tooltip(get_state_status(@state))  # Hidden over the library : where it sends to
-    end
-
-    def _remove_source_tooltip
-      @tool.remove_root_tooltip if @tool.current_root_tooltip?(@source_tooltip_box)
-      @source_tooltip_box = nil
     end
 
     # The rotation of the definition space - around its origin - that turns

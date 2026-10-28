@@ -522,6 +522,16 @@ module Ladb::OpenCutList
         @notification_panel.visible = false
         @bottom_panel.append(@notification_panel)
 
+        # -- STEPS
+
+        @steps_panel = Kuix::Panel.new
+        @steps_panel.layout = Kuix::InlineLayout.new(false, unit, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+        @steps_panel.margin.bottom = unit * 2
+        @steps_panel.hittable = false
+        @steps_panel.visible = false
+        @bottom_panel.append(@steps_panel)
+        @steps_bar_key = nil  # What the bar shows, to rebuild it only once changed
+
         # -- VALIDATION
 
         @validation_panel = Kuix::Panel.new
@@ -783,6 +793,108 @@ module Ladb::OpenCutList
 
     def hide_message
       @message_panel.visible = false
+    end
+
+    # -- Steps bar --
+
+    # Shows the steps the action goes through, at the bottom of the view : their
+    # numbers, the current one - +index+, 0 based - highlighted, then its +text+.
+    # With a +count+ of 0, the text alone. Rebuilt only once changed.
+    def set_steps_bar(count, index, text)
+      return unless @steps_panel
+      key = [ count, index, text ]
+      return if key == @steps_bar_key
+      @steps_bar_key = key
+
+      @steps_panel.clear
+      @steps_panel.visible = true
+
+      unit = get_unit
+
+      # The stepper above the text, both centered : the numbers stay in place
+      # whatever the text width. The text only is framed.
+      fn_create_box = lambda do |framed|
+        k_row = Kuix::Panel.new  # Stretched to the widest box, the box centered in it keeps its own width
+        k_row.layout = Kuix::InlineLayout.new(true, 0, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+        k_row.hittable = false
+        @steps_panel.append(k_row)
+
+        k_box = Kuix::Panel.new
+        k_box.hittable = false
+        if framed
+          k_box.padding.set!(unit * 1.5, unit * 2, unit, unit * 2)
+          k_box.set_style_attribute(:background_color, ColorUtils.color_translucent(COLOR_MESSAGE_BACKGROUND, 0.6))
+          k_box.set_style_attribute(:border_color, COLOR_MESSAGE_TEXT)
+        end
+        k_row.append(k_box)
+
+        k_box
+      end
+
+      # The stepper : none with no steps, the text alone
+      if count > 0
+
+        k_stepper = fn_create_box.call(false)
+        k_stepper.layout = Kuix::InlineLayout.new(true, 0, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+
+          count.times do |i|
+
+            # The link from the previous step, dark once reached
+            if i > 0
+              k_link = Kuix::Panel.new  # Stretched to the numbers height, the line centered in it
+              k_link.layout = Kuix::InlineLayout.new(true, 0, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+              k_link.hittable = false
+              k_stepper.append(k_link)
+
+                k_line = Kuix::Panel.new
+                k_line.border.top = unit / 4
+                k_line.min_size.width = unit * 4
+                k_line.hittable = false
+                k_line.set_style_attribute(:border_color, i <= index ? COLOR_MESSAGE_TEXT : Kuix::COLOR_MEDIUM_GREY)
+                k_link.append(k_line)
+
+            end
+
+            k_lbl = Kuix::Label.new
+            k_lbl.text = (i + 1).to_s
+            k_lbl.text_size = unit * 2.5 * get_text_unit_factor
+            k_lbl.padding.set!(unit / 2.0, unit, 0, unit)
+            k_lbl.border.set_all!(unit / 4)
+            k_lbl.hittable = false
+            if i == index
+              k_lbl.text_bold = true
+              k_lbl.set_style_attribute(:background_color, COLOR_MESSAGE_TEXT)
+              k_lbl.set_style_attribute(:border_color, COLOR_MESSAGE_TEXT)
+              k_lbl.set_style_attribute(:color, COLOR_MESSAGE_BACKGROUND)
+            else
+              color = i < index ? COLOR_MESSAGE_TEXT : Kuix::COLOR_MEDIUM_GREY  # The next ones dimmed
+              k_lbl.set_style_attribute(:background_color, COLOR_MESSAGE_BACKGROUND)  # Readable over the model
+              k_lbl.set_style_attribute(:border_color, color)
+              k_lbl.set_style_attribute(:color, color)
+            end
+            k_stepper.append(k_lbl)
+
+          end
+
+      end
+
+      k_text_box = fn_create_box.call(true)
+      k_text_box.layout = Kuix::InlineLayout.new(true, 0, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+
+        k_lbl = Kuix::Label.new
+        k_lbl.text = text
+        k_lbl.text_size = unit * 3 * get_text_unit_factor
+        k_lbl.hittable = false
+        k_lbl.set_style_attribute(:color, COLOR_MESSAGE_TEXT)
+        k_text_box.append(k_lbl)
+
+    end
+
+    def remove_steps_bar
+      return unless @steps_panel
+      @steps_bar_key = nil
+      @steps_panel.clear
+      @steps_panel.visible = false
     end
 
     # -- Status --
@@ -4097,6 +4209,10 @@ module Ladb::OpenCutList
 
     def cursor_pin_2
       create_cursor('pin-2', 11, 31)
+    end
+
+    def cursor_pin_3
+      create_cursor('pin-3', 11, 31)
     end
 
 

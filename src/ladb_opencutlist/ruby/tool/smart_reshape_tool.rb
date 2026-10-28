@@ -93,15 +93,6 @@ module Ladb::OpenCutList
         }
       },
       {
-        :action => ACTION_SLICE,
-        :options => {
-          ACTION_OPTION_SLICE_MODE => [ ACTION_OPTION_SLICE_MODE_SLICE, ACTION_OPTION_SLICE_MODE_CUT ],
-          ACTION_OPTION_SLICE_REFERENCE => [ ACTION_OPTION_SLICE_REFERENCE_FACE, ACTION_OPTION_SLICE_REFERENCE_POINTS ],
-          ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_CONTEXT, ACTION_OPTION_AXES_ENTITY ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_MAKE_UNIQUE ]
-        }
-      },
-      {
         :action => ACTION_PANELING,
         :options => {
           ACTION_OPTION_THICKNESS => [ ACTION_OPTION_THICKNESS_THICKNESS ],
@@ -110,7 +101,19 @@ module Ladb::OpenCutList
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_REUSE_DEFINITION, ACTION_OPTION_OPTIONS_REUSE_DEFINITION_MIRRORED ]
         }
       }
-    ].freeze
+    ]#.freeze
+
+    if Sketchup.debug_mode?
+      ACTIONS.insert(-2, {
+        :action => ACTION_SLICE,
+        :options => {
+          ACTION_OPTION_SLICE_MODE => [ ACTION_OPTION_SLICE_MODE_SLICE, ACTION_OPTION_SLICE_MODE_CUT ],
+          ACTION_OPTION_SLICE_REFERENCE => [ ACTION_OPTION_SLICE_REFERENCE_FACE, ACTION_OPTION_SLICE_REFERENCE_POINTS ],
+          ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_CONTEXT, ACTION_OPTION_AXES_ENTITY ],
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_MAKE_UNIQUE ]
+        }
+      })
+    end
 
     # -----
 
@@ -2307,6 +2310,13 @@ module Ladb::OpenCutList
 
     # -----
 
+    def stop
+      @tool.remove_steps_bar
+      super
+    end
+
+    # -----
+
     def get_state_cursor(state)
 
       case state
@@ -2457,6 +2467,10 @@ module Ladb::OpenCutList
       end
 
       super
+
+      # A then B : the state's own sentence, without the shortcut hints
+      @tool.set_steps_bar(2, new_state == STATE_SELECT_CUT ? 1 : 0, PLUGIN.get_i18n_string("tool.smart_reshape.action_#{@action}_state_#{new_state}_status"))
+
     end
 
     def onPickerChanged(picker, view)
@@ -2874,6 +2888,7 @@ module Ladb::OpenCutList
 
     def stop
       _unhide_slice_instances
+      @tool.remove_steps_bar
       super
     end
 
@@ -2883,8 +2898,11 @@ module Ladb::OpenCutList
 
       case state
       when STATE_SLICE_REFERENCE
-        return SmartCursorManager.cursor_pin_2 if _fetch_option_slice_reference_points? && @reference_points.any?
-        return SmartCursorManager.cursor_pin_1
+        if _fetch_option_slice_reference_points?
+          return SmartCursorManager.cursor_pin_2 if @reference_points.one?
+          return SmartCursorManager.cursor_pin_3 if @reference_points.any?
+          return SmartCursorManager.cursor_pin_1
+        end
       when STATE_SLICE, STATE_SLICE_SIDE, STATE_SLICE_DISTRIBUTE
         return SmartCursorManager.cursor_select_scissors
       end
@@ -2901,31 +2919,52 @@ module Ladb::OpenCutList
                ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_option_options_make_unique_status") + '.'
 
       when STATE_SLICE_REFERENCE
+        status = _get_state_main_status(state) + '.'
         if _fetch_option_slice_reference_points?
-          return PLUGIN.get_i18n_string("tool.smart_reshape.action_5_state_1c_status") + '.' if @reference_points.length >= 3
-          status = PLUGIN.get_i18n_string("tool.smart_reshape.action_5_state_1b_status", { :index => @reference_points.length + 1 }) + '.'
-          status += ' | ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_5_state_1b_arrows_status") + '.' if @reference_points.any?
+          status += ' | ←↑→ = ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_5_state_1b_arrows_status") + '.' if @reference_points.any? && @reference_points.length < 3
           return status
         end
-        return super +
-               ' | ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_5_state_1_arrows_status") + '.'
+        return status +
+               ' | ←↑→ = ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_5_state_1_arrows_status") + '.'
 
       when STATE_SLICE
-        if _fetch_option_slice_mode_cut?
-          status = PLUGIN.get_i18n_string("tool.smart_reshape.action_5_state_2a_status") + '.'
-        else
-          status = PLUGIN.get_i18n_string("tool.smart_reshape.action_5_state_2_status") + '.'
-        end
-        return status +
-               ' | ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_5_state_2_arrows_status") + '.' +
+        return _get_state_main_status(state) + '.' +
+               ' | ←↑→ = ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_5_state_2_arrows_status") + '.' +
                ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_option_options_make_unique_status") + '.'
 
-      when STATE_SLICE_DISTRIBUTE
-        return PLUGIN.get_i18n_string("tool.smart_reshape.action_5_state_4_status", { :number => @number + 1 }) + '.'
+      when STATE_SLICE_DISTRIBUTE, STATE_SLICE_SIDE
+        return _get_state_main_status(state) + '.'
 
       end
 
       super
+    end
+
+    # The state's own sentence, without the shortcut hints : the status starts
+    # with it, the steps bar shows it alone.
+    def _get_state_main_status(state)
+
+      case state
+
+      when STATE_SLICE_REFERENCE
+        if _fetch_option_slice_reference_points?
+          return PLUGIN.get_i18n_string("tool.smart_reshape.action_5_state_1c_status") if @reference_points.length >= 3
+          return PLUGIN.get_i18n_string("tool.smart_reshape.action_5_state_1b_status", { :index => @reference_points.length + 1 })
+        end
+        return PLUGIN.get_i18n_string("tool.smart_reshape.action_5_state_1_status")
+
+      when STATE_SLICE
+        return PLUGIN.get_i18n_string(_fetch_option_slice_mode_cut? ? "tool.smart_reshape.action_5_state_2a_status" : "tool.smart_reshape.action_5_state_2_status")
+
+      when STATE_SLICE_DISTRIBUTE
+        return PLUGIN.get_i18n_string("tool.smart_reshape.action_5_state_4_status", { :number => @number + 1 })
+
+      when STATE_SLICE_SIDE
+        return PLUGIN.get_i18n_string("tool.smart_reshape.action_5_state_3_status")
+
+      end
+
+      PLUGIN.get_i18n_string("tool.smart_select.state_#{state}_status")  # The selection ones
     end
 
     def get_state_vcb_label(state)
@@ -3003,6 +3042,7 @@ module Ladb::OpenCutList
     def onToolResume(tool, view)
       super
       _hide_slice_instances if @state == STATE_SLICE_SIDE
+      _show_steps_bar
     end
 
     def onToolMouseMove(tool, flags, x, y, view)
@@ -3147,7 +3187,7 @@ module Ladb::OpenCutList
           @reference_axis = axis
           _snap_slice_axis_reference(flags, tool.last_mouse_x, tool.last_mouse_y, view)  # Read now : the distributed planes do not follow the mouse
           if @state == STATE_SLICE
-            @tool.set_status_prompt(get_state_status(@state))
+            _refresh_status
             _refresh
           else
             _set_distribution(@number, @spacings)
@@ -3160,7 +3200,7 @@ module Ladb::OpenCutList
             @reference_axis = nil
             @reference_plane, @reference_face_manipulator = @picked_reference
             if @state == STATE_SLICE
-              @tool.set_status_prompt(get_state_status(@state))
+              _refresh_status
               _refresh
             else
               _set_distribution(@number, @spacings)
@@ -3242,6 +3282,8 @@ module Ladb::OpenCutList
         @reference_face_manipulator = nil
       end
 
+      _show_steps_bar  # The steps follow the options, the selection one too
+
       return unless @state > STATE_SELECT && @state <= STATE_SLICE_DISTRIBUTE
 
       case option_group
@@ -3268,7 +3310,7 @@ module Ladb::OpenCutList
 
       end
 
-      @tool.set_status_prompt(get_state_status(@state))
+      _refresh_status
       _refresh
     end
 
@@ -3315,6 +3357,8 @@ module Ladb::OpenCutList
         _hide_slice_instances if new_state == STATE_SLICE_SIDE
 
       end
+
+      _show_steps_bar
 
     end
 
@@ -3440,6 +3484,49 @@ module Ladb::OpenCutList
 
     def _fetch_option_options_make_unique?
       @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_MAKE_UNIQUE)
+    end
+
+    # -- Steps --
+
+    # The steps the bar guides through, by the active options : the 3
+    # points reference takes one per point and one to validate them, the cut
+    # mode one more to pick the kept side.
+    def _get_steps
+      steps = [ :select ]
+      steps += _fetch_option_slice_reference_points? ? [ :point_1, :point_2, :point_3, :points_validate ] : [ :reference ]
+      steps << :slice  # Or the distribution, its other face
+      steps << :side if _fetch_option_slice_mode_cut?
+      steps
+    end
+
+    def _get_current_step
+      case @state
+      when STATE_SLICE_REFERENCE
+        return :reference unless _fetch_option_slice_reference_points?
+        return :points_validate if @reference_points.length >= 3
+        "point_#{@reference_points.length + 1}".to_sym
+      when STATE_SLICE, STATE_SLICE_DISTRIBUTE
+        :slice
+      when STATE_SLICE_SIDE
+        :side
+      else
+        :select
+      end
+    end
+
+    # The status prompt and the steps bar, both telling the state
+    def _refresh_status
+      @tool.set_status_prompt(get_state_status(@state))
+      _show_steps_bar
+    end
+
+    def _show_steps_bar
+      steps = _get_steps
+      if (index = steps.index(_get_current_step)).nil?
+        @tool.remove_steps_bar  # A step the options no longer have
+      else
+        @tool.set_steps_bar(steps.length, index, _get_state_main_status(@state))
+      end
     end
 
     # -----
@@ -3607,7 +3694,7 @@ module Ladb::OpenCutList
       end
       _lock_reference_axis(nil)
       @tool.set_root_cursor(get_state_cursor(@state))
-      @tool.set_status_prompt(get_state_status(@state))
+      _refresh_status
       _refresh
     end
 
@@ -3621,7 +3708,7 @@ module Ladb::OpenCutList
       end
       _lock_reference_axis(nil)
       @tool.set_root_cursor(get_state_cursor(@state))
-      @tool.set_status_prompt(get_state_status(@state))
+      _refresh_status
     end
 
     # Locks the next reference point on +axis+ from the last one, or unlocks
@@ -3702,7 +3789,7 @@ module Ladb::OpenCutList
 
       if @number > 0
         if @state == STATE_SLICE_DISTRIBUTE
-          @tool.set_status_prompt(get_state_status(@state))
+          _refresh_status
         else
           set_state(STATE_SLICE_DISTRIBUTE)
         end

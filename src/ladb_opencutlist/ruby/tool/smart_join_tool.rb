@@ -616,7 +616,7 @@ module Ladb::OpenCutList
     end
 
     def stop
-      _remove_source_tooltip
+      @tool.remove_steps_bar
       super
     end
 
@@ -659,9 +659,9 @@ module Ladb::OpenCutList
     def onStateChanged(old_state, new_state)
       super
       if new_state == STATE_SOURCE
-        _show_source_tooltip
+        @tool.set_steps_bar(0, nil, PLUGIN.get_i18n_string('tool.smart_join.select_hardware_status'))  # No steps : what to do, the library
       elsif old_state == STATE_SOURCE
-        _remove_source_tooltip
+        @tool.remove_steps_bar
       end
     end
 
@@ -855,17 +855,6 @@ module Ladb::OpenCutList
 
     def _fetch_option_machining_layer_name
       @tool.fetch_action_option_string(@action, SmartJoinTool::ACTION_OPTION_GEOMETRY, SmartJoinTool::ACTION_OPTION_GEOMETRY_MACHINING_LAYER_NAME)
-    end
-
-    # -----
-
-    def _show_source_tooltip
-      @source_tooltip_box = @tool.set_root_tooltip(get_state_status(@state))  # Hidden over the library : where it sends to
-    end
-
-    def _remove_source_tooltip
-      @tool.remove_root_tooltip if @tool.current_root_tooltip?(@source_tooltip_box)
-      @source_tooltip_box = nil
     end
 
     # -- Free distribution --
