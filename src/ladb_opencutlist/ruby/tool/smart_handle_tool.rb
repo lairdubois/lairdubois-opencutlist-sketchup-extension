@@ -1174,16 +1174,10 @@ module Ladb::OpenCutList
       k_edge.end.copy!(dpe)
       k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
       k_edge.line_width = 1.5 unless @locked_axis.nil?
-      k_edge.color = ColorUtils.color_translucent(color, 60)
-      k_edge.on_top = true
-      @tool.append_3d(k_edge, LAYER_3D_HANDLE_PREVIEW)
-
-      k_edge = Kuix::EdgeMotif3d.new
-      k_edge.start.copy!(dps)
-      k_edge.end.copy!(dpe)
-      k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-      k_edge.line_width = 1.5 unless @locked_axis.nil?
       k_edge.color = color
+      k_edge.show_hidden_lines = true
+      k_edge.hidden_line_width = k_edge.line_width
+      k_edge.hidden_line_color = ColorUtils.color_translucent(color, 60)
       @tool.append_3d(k_edge, LAYER_3D_HANDLE_PREVIEW)
 
       @tool.append_3d(_create_floating_points(points: [ mps, mpe ], style: Kuix::POINT_STYLE_PLUS, stroke_color: Kuix::COLOR_DARK_GREY), LAYER_3D_HANDLE_PREVIEW)
@@ -1709,17 +1703,11 @@ module Ladb::OpenCutList
       k_rectangle.bounds.copy!(db_2d)
       k_rectangle.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
       k_rectangle.line_width = 1.5 unless @locked_normal.nil?
-      k_rectangle.color = ColorUtils.color_translucent(color, 60)
-      k_rectangle.on_top = true
-      k_rectangle.transformation = ht
-      @tool.append_3d(k_rectangle, LAYER_3D_HANDLE_PREVIEW)
-
-      k_rectangle = Kuix::RectangleMotif3d.new
-      k_rectangle.bounds.copy!(db_2d)
-      k_rectangle.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-      k_rectangle.line_width = 1.5 unless @locked_normal.nil?
       k_rectangle.color = color
       k_rectangle.transformation = ht
+      k_rectangle.show_hidden_lines = true
+      k_rectangle.hidden_line_width = k_rectangle.line_width
+      k_rectangle.hidden_line_color = ColorUtils.color_translucent(color, 60)
       @tool.append_3d(k_rectangle, LAYER_3D_HANDLE_PREVIEW)
 
       # Preview
@@ -2456,16 +2444,10 @@ module Ladb::OpenCutList
       k_edge.end.copy!(dpe)
       k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
       k_edge.line_width = 1.5 unless @locked_axis.nil?
-      k_edge.color = ColorUtils.color_translucent(color, 60)
-      k_edge.on_top = true
-      @tool.append_3d(k_edge, LAYER_3D_HANDLE_PREVIEW)
-
-      k_edge = Kuix::EdgeMotif3d.new
-      k_edge.start.copy!(dps)
-      k_edge.end.copy!(dpe)
-      k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-      k_edge.line_width = 1.5 unless @locked_axis.nil?
       k_edge.color = color
+      k_edge.show_hidden_lines = true
+      k_edge.hidden_line_width = k_edge.line_width
+      k_edge.hidden_line_color = ColorUtils.color_translucent(color, 60)
       @tool.append_3d(k_edge, LAYER_3D_HANDLE_PREVIEW)
 
       @tool.append_3d(_create_floating_points(points: [ mps, mpe ], style: Kuix::POINT_STYLE_PLUS, stroke_color: Kuix::COLOR_DARK_GREY), LAYER_3D_HANDLE_PREVIEW)
@@ -3111,16 +3093,10 @@ module Ladb::OpenCutList
       k_edge.end.copy!(lpe)
       k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
       k_edge.line_width = 1.5 unless @locked_axis.nil?
-      k_edge.color = ColorUtils.color_translucent(color, 60)
-      k_edge.on_top = true
-      @tool.append_3d(k_edge, LAYER_3D_HANDLE_PREVIEW)
-
-      k_edge = Kuix::EdgeMotif3d.new
-      k_edge.start.copy!(lps)
-      k_edge.end.copy!(lpe)
-      k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-      k_edge.line_width = 1.5 unless @locked_axis.nil?
       k_edge.color = color
+      k_edge.show_hidden_lines = true
+      k_edge.hidden_line_width = k_edge.line_width
+      k_edge.hidden_line_color = ColorUtils.color_translucent(color, 60)
       @tool.append_3d(k_edge, LAYER_3D_HANDLE_PREVIEW)
 
       @tool.append_3d(_create_floating_points(points: [ lps, lpe ], style: Kuix::POINT_STYLE_CIRCLE, fill_color: Kuix::COLOR_WHITE, stroke_color: color, size: 2), LAYER_3D_HANDLE_PREVIEW)

@@ -4569,19 +4569,9 @@ module Ladb::OpenCutList
         k_edge.end_arrow = true
         k_edge.arrow_size = arrow_size
         k_edge.color = darken_color
-        k_edge.on_top = false
-        @tool.append_3d(k_edge, LAYER_3D_JOIN_PREVIEW)
-
-        # Draw face normal arrow (dashed)
-        k_edge = Kuix::EdgeMotif3d.new
-        k_edge.start.copy!(face_manipulator.centroid)
-        k_edge.end.copy!(face_manipulator.centroid.offset(face_manipulator.normal, arrow_length))
-        k_edge.line_width = 1.5
-        k_edge.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-        k_edge.end_arrow = true
-        k_edge.arrow_size = arrow_size
-        k_edge.color = darken_color
-        k_edge.on_top = true
+        k_edge.show_hidden_lines = true
+        k_edge.hidden_line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+        k_edge.hidden_line_width = 1.5
         @tool.append_3d(k_edge, LAYER_3D_JOIN_PREVIEW)
 
         # --

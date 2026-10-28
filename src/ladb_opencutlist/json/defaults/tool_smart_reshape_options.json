@@ -32,5 +32,11 @@
     "keep_b": false,
     "make_unique": true,
     "remove_unused_definitions": true
+  },
+  "action_5": { /* ACTION_SLICE */
+    "slice_mode": "slice",
+    "slice_reference": "face",
+    "axes": "entity",
+    "make_unique": true
   }
 }

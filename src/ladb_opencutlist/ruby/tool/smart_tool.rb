@@ -4077,6 +4077,10 @@ module Ladb::OpenCutList
       create_cursor('select-module-plus')
     end
 
+    def cursor_select_scissors
+      create_cursor('select-scissors')
+    end
+
 
     def cursor_move
       create_cursor('move', 16, 16)
@@ -5070,7 +5074,7 @@ module Ladb::OpenCutList
         @position_type = POSITION_TYPE_NONE
         @cline = nil
       elsif o.is_a?(SmartInputPoint)
-        @ip.copy!(o.inputpoint)
+        @ip.copy!(o.ip)
         @degrees_of_freedom = o.degrees_of_freedom
         @position = o.position
         @position_type = o.position_type

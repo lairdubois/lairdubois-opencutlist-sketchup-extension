@@ -2,6 +2,9 @@ module Ladb::OpenCutList::Kuix
 
   class Segments < Entity3d
 
+    include HiddenLinesHelper
+    include DepthOffsetHelper
+
     attr_accessor :color
     attr_accessor :line_width, :line_stipple
     attr_accessor :on_top
@@ -47,8 +50,9 @@ module Ladb::OpenCutList::Kuix
           graphics.set_line_stipple(@line_stipple)
           graphics.view.draw2d(GL_LINES, points2d)
         else
+          paint_hidden_lines(graphics, GL_LINES, @_points)
           graphics.draw_lines(
-            points: @_points,
+            points: depth_offset_points(graphics.view, @_points),
             color: @color,
             line_width: @line_width,
             line_stipple: @line_stipple

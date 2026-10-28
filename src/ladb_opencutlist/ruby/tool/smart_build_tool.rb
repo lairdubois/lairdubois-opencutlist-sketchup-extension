@@ -2750,15 +2750,8 @@ module Ladb::OpenCutList
         k_segments = Kuix::Segments.new
         k_segments.add_segments(segments)
         k_segments.color = color
-        k_segments.line_width = 1
-        k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-        k_segments.on_top = true
-        @tool.append_3d(k_segments, LAYER_3D_CAVITY_PREVIEW)
-
-        k_segments = Kuix::Segments.new
-        k_segments.add_segments(segments)
-        k_segments.color = color
         k_segments.line_width = 1.5
+        k_segments.show_hidden_lines = true
         @tool.append_3d(k_segments, LAYER_3D_CAVITY_PREVIEW)
 
         fragment_def.each_triangle_batch do |_, triangles|
@@ -3113,15 +3106,8 @@ module Ladb::OpenCutList
           k_segments = Kuix::Segments.new
           k_segments.add_segments(segments)
           k_segments.color = color
-          k_segments.line_width = 1
-          k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-          k_segments.on_top = true
-          @tool.append_3d(k_segments, LAYER_3D_DIVIDER_PREVIEW)
-
-          k_segments = Kuix::Segments.new
-          k_segments.add_segments(segments)
-          k_segments.color = color
           k_segments.line_width = @locked_normal ? 2.5 : 1.5
+          k_segments.show_hidden_lines = true
           @tool.append_3d(k_segments, LAYER_3D_DIVIDER_PREVIEW)
 
         end
@@ -6489,13 +6475,14 @@ module Ladb::OpenCutList
       best_path = _best_overlapping_path(Fiddle::Clippy.polytree_to_polyshapes(polytree).map { |polyshape| polyshape.paths.first }, mouth_paths)
       return nil if best_path.nil?
 
-      Fiddle::Clippy.rpath_to_points(_clip_to_mouth_frame(best_path, mouth_points, mouth_paths))
+      Fiddle::Clippy.rpath_to_points(_clip_to_mouth_frame(best_path, subject_paths, mouth_points, mouth_paths))
     end
 
     # The share +share_path+ cut down to the FRAME of the mouth
     # (+mouth_points+, +mouth_paths+) : the mouth with each of its edges pushed
-    # out by the depth the share runs beyond THAT edge - see
-    # #_get_mouth_edge_depth. The share itself when nothing of it lies outside.
+    # out by the depth the silhouette (+subject_paths+) runs beyond THAT edge -
+    # see #_get_mouth_edge_depth. The share itself when nothing of it lies
+    # outside.
     #
     # A panel in applique covers the chants of the parts framing its mouth,
     # straight out from each edge, and never slides along them. Nothing in the
@@ -6504,22 +6491,29 @@ module Ladb::OpenCutList
     # carried on by the top and bottom beyond the uprights - so the share
     # follows that chant to its end, and the panel grows ears a chant high.
     #
-    # Read on the share AFTER the bisectors : between two mouths, the depth of
-    # the shared stile is the half the bisector left, and the frame takes
-    # nothing more away. On a plain carcass the frame is the outer contour of
-    # the share itself.
+    # Read on the silhouette BEFORE the bisectors, the share being clipped
+    # after them : between two mouths, the shared stile is cut down to its
+    # half by the bisector, and the frame takes nothing more away. Read on the
+    # share, a bisector cuts the edges it does not run along too : the mid
+    # plane of a divider meeting a side at an angle crosses the chant of that
+    # side, and the LEAST depth along the side, read a hair from that corner,
+    # is no longer the side's thickness - the panel stopped part way through
+    # an outer side no one else claims. On a plain carcass the frame is the
+    # outer contour of the share itself.
     #
     # The mouth is kept whole whatever the frame reads, and a frame that comes
     # out degenerate leaves the share as it was.
-    def _clip_to_mouth_frame(share_path, mouth_points, mouth_paths)
+    def _clip_to_mouth_frame(share_path, subject_paths, mouth_points, mouth_paths)
       coords = _flatten_outline(mouth_points).map { |point| [ point.x.to_f, point.y.to_f ] }
       return share_path if coords.length < 3
+
+      subject_path = _best_overlapping_path(subject_paths, mouth_paths) || share_path
 
       signed_area = 0.0
       coords.each_with_index { |(x, y), index| following_x, following_y = coords[(index + 1) % coords.length] ; signed_area += x * following_y - following_x * y }
       coords.reverse! if signed_area < 0   # Counter clockwise : the outside is on the right of each edge
 
-      share_coords = share_path.each_slice(2).map { |x, y| [ x.to_f, y.to_f ] }
+      subject_coords = subject_path.each_slice(2).map { |x, y| [ x.to_f, y.to_f ] }
 
       # Each edge as its offset line : [ origin, direction ]
       lines = []
@@ -6531,7 +6525,7 @@ module Ladb::OpenCutList
         return share_path if length <= SolidMeshDef::TOLERANCE
         ux = dx / length
         uy = dy / length
-        depth = _get_mouth_edge_depth(x, y, ux, uy, length, share_coords)
+        depth = _get_mouth_edge_depth(x, y, ux, uy, length, subject_coords)
         lines << [ [ x + uy * depth, y - ux * depth ], [ ux, uy ] ]
       end
 
@@ -7501,15 +7495,8 @@ module Ladb::OpenCutList
         k_segments = Kuix::Segments.new
         k_segments.add_segments(segments)
         k_segments.color = color
-        k_segments.line_width = 1
-        k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-        k_segments.on_top = true
-        @tool.append_3d(k_segments, LAYER_3D_PANEL_PREVIEW)
-
-        k_segments = Kuix::Segments.new
-        k_segments.add_segments(segments)
-        k_segments.color = color
         k_segments.line_width = locked ? 2.5 : 1.5
+        k_segments.show_hidden_lines = true
         @tool.append_3d(k_segments, LAYER_3D_PANEL_PREVIEW)
 
         # Each panel's own width, once the opening is shared : what the count

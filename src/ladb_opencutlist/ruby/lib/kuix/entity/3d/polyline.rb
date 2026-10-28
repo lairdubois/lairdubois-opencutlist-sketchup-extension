@@ -2,6 +2,9 @@ module Ladb::OpenCutList::Kuix
 
   class Polyline < Entity3d
 
+    include HiddenLinesHelper
+    include DepthOffsetHelper
+
     attr_accessor :color
     attr_accessor :line_width, :line_stipple
     attr_accessor :on_top
@@ -48,10 +51,11 @@ module Ladb::OpenCutList::Kuix
           graphics.set_line_stipple(@line_stipple)
           graphics.view.draw2d(@closed ? GL_LINE_LOOP : GL_LINE_STRIP, points2d)
         else
+          paint_hidden_lines(graphics, @closed ? GL_LINE_LOOP : GL_LINE_STRIP, @_points)
           graphics.set_drawing_color(@color) if @color.is_a?(Sketchup::Color)
           graphics.set_line_width(@line_width)
           graphics.set_line_stipple(@line_stipple)
-          graphics.view.draw(@closed ? GL_LINE_LOOP : GL_LINE_STRIP, @_points)
+          graphics.view.draw(@closed ? GL_LINE_LOOP : GL_LINE_STRIP, depth_offset_points(graphics.view, @_points))
         end
       end
       super

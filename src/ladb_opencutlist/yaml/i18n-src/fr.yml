@@ -2883,12 +2883,26 @@ tool:
     action_4_status: Créer une pièce correspondant à l'intersection de plusieurs pièces
     action_4_state_0_status: Sélectionnez la pièce A
     action_4_state_1_status: Sélectionnez la pièce B
+    action_5: Trancher
+    action_5_status: Trancher une ou plusieurs pièces par un plan
+    action_5_state_1_status: Cliquez sur la face de référence, n'importe où dans le modèle
+    action_5_state_1_arrows_status: Flèches = Trancher perpendiculairement à un axe depuis l'extrémité de la sélection (→ X, ← Y, ↑ Z)
+    action_5_state_1b_status: Cliquez pour placer le point {{ index }} sur 3 du plan de référence, n'importe où dans le modèle
+    action_5_state_1b_arrows_status: Flèches = Verrouiller sur un axe (→ X, ← Y, ↑ Z), ↓ = Déverrouiller
+    action_5_state_1c_status: Cliquez pour valider le plan de référence ou Échap pour retirer le dernier point
+    action_5_state_2_status: Cliquez pour trancher les pièces ou entrez une distance
+    action_5_state_2a_status: Cliquez pour placer le plan de coupe ou entrez une distance
+    action_5_state_2_arrows_status: Flèches = Changer d'axe (→ X, ← Y, ↑ Z), ↓ = Revenir au plan de référence
+    action_5_state_3_status: Cliquez du côté de la partie à conserver
+    action_5_state_4_status: Cliquez pour trancher les pièces en {{ number }} morceaux ou entrez des espacements
     action_option_group_thickness: Epaisseur
     action_option_group_stretch_measure_type: Mesure
     action_option_group_axes: Axes
     action_option_group_paneling_joint_type: Assemblage
     action_option_group_paneling_direction: Direction
     action_option_group_csg_operation: Operation
+    action_option_group_slice_mode: Mode
+    action_option_group_slice_reference: Référence
     action_option_group_options: Options
     action_option_thickness_thickness: Epaisseur
     action_option_thickness_thickness_status: Définit l'épaisseur des panneaux
@@ -2901,6 +2915,10 @@ tool:
     action_option_paneling_joint_type_miter_status: Coupe d'onglet
     action_option_paneling_direction_inward_status: Intérieure
     action_option_paneling_direction_outward_status: Extérieure
+    action_option_slice_mode_slice_status: Trancher les pièces et conserver toutes les parties
+    action_option_slice_mode_cut_status: Couper les pièces et ne conserver qu'une partie
+    action_option_slice_reference_face_status: Plan de référence pris sur une face
+    action_option_slice_reference_points_status: Plan de référence passant par 3 points
     action_option_options_centered_status: Centrer sur les éléments étirés
     action_option_options_make_unique_status: Rendre unique les éléments remodelés
     action_option_options_keep_a: Conserver A
@@ -2917,6 +2935,8 @@ tool:
       validate_b: Validez pour appliquer l'opération
     error:
       curve_intersect: L'un des plans de coupe traverse une courbe non étirable
+      slice_number_overflow: Impossible de répartir {{ number }} morceaux sur la sélection
+      slice_shared_definition: "Les instances de {{ name }} ne sont pas tranchées au même endroit : activez l'option « Rendre unique »"
   smart_paint:
     title: Colorier
     default_material: Sans matière

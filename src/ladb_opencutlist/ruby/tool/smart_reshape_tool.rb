@@ -11,6 +11,7 @@ module Ladb::OpenCutList
   require_relative '../helper/user_text_helper'
   require_relative '../helper/face_matcher_helper'
   require_relative '../utils/lock_utils'
+  require_relative '../utils/component_utils'
   require_relative '../worker/common/common_drawing_decomposition_worker'
   require_relative '../worker/common/common_solid_boolean_apply_worker'
   require_relative '../worker/common/common_solid_rebuild_from_clines_worker'
@@ -24,12 +25,15 @@ module Ladb::OpenCutList
     ACTION_SOLID_UNITE = 2
     ACTION_SOLID_SUBTRACT = 3
     ACTION_SOLID_INTERSECT = 4
+    ACTION_SLICE = 5
 
     ACTION_OPTION_THICKNESS = 'thickness'
     ACTION_OPTION_STRETCH_MEASURE_TYPE = 'stretch_measure_type'
     ACTION_OPTION_AXES = 'axes'
     ACTION_OPTION_PANELING_DIRECTION = 'paneling_direction'
     ACTION_OPTION_PANELING_JOINT_TYPE = 'paneling_joint_type'
+    ACTION_OPTION_SLICE_MODE = 'slice_mode'
+    ACTION_OPTION_SLICE_REFERENCE = 'slice_reference'
     ACTION_OPTION_OPTIONS = 'options'
 
     ACTION_OPTION_THICKNESS_THICKNESS = 'thickness'
@@ -46,6 +50,12 @@ module Ladb::OpenCutList
 
     ACTION_OPTION_PANELING_JOINT_TYPE_FLAT = 'flat'
     ACTION_OPTION_PANELING_JOINT_TYPE_MITER = 'miter'
+
+    ACTION_OPTION_SLICE_MODE_SLICE = 'slice'
+    ACTION_OPTION_SLICE_MODE_CUT = 'cut'
+
+    ACTION_OPTION_SLICE_REFERENCE_FACE = 'face'
+    ACTION_OPTION_SLICE_REFERENCE_POINTS = 'points'
 
     ACTION_OPTION_OPTIONS_CENTERED = 'centered'
     ACTION_OPTION_OPTIONS_MAKE_UNIQUE = 'make_unique'
@@ -80,6 +90,15 @@ module Ladb::OpenCutList
         :action => ACTION_SOLID_INTERSECT,
         :options => {
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_KEEP_A, ACTION_OPTION_OPTIONS_KEEP_B, ACTION_OPTION_OPTIONS_MAKE_UNIQUE, ACTION_OPTION_OPTIONS_REMOVE_UNUSED_DEFINITIONS ]
+        }
+      },
+      {
+        :action => ACTION_SLICE,
+        :options => {
+          ACTION_OPTION_SLICE_MODE => [ ACTION_OPTION_SLICE_MODE_SLICE, ACTION_OPTION_SLICE_MODE_CUT ],
+          ACTION_OPTION_SLICE_REFERENCE => [ ACTION_OPTION_SLICE_REFERENCE_FACE, ACTION_OPTION_SLICE_REFERENCE_POINTS ],
+          ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_CONTEXT, ACTION_OPTION_AXES_ENTITY ],
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_MAKE_UNIQUE ]
         }
       },
       {
@@ -129,6 +148,8 @@ module Ladb::OpenCutList
         return SmartCursorManager.cursor_select
       when ACTION_SOLID_INTERSECT
         return SmartCursorManager.cursor_select
+      when ACTION_SLICE
+        return SmartCursorManager.cursor_select
       end
 
       super
@@ -152,7 +173,7 @@ module Ladb::OpenCutList
         when ACTION_OPTION_OPTIONS_KEEP_A, ACTION_OPTION_OPTIONS_KEEP_B, ACTION_OPTION_OPTIONS_REMOVE_UNUSED_DEFINITIONS
           return [ ACTION_SOLID_UNITE, ACTION_SOLID_SUBTRACT, ACTION_SOLID_INTERSECT ]
         when ACTION_OPTION_OPTIONS_MAKE_UNIQUE
-          return [ ACTION_STRETCH, ACTION_SOLID_UNITE, ACTION_SOLID_SUBTRACT, ACTION_SOLID_INTERSECT ]
+          return [ ACTION_STRETCH, ACTION_SOLID_UNITE, ACTION_SOLID_SUBTRACT, ACTION_SOLID_INTERSECT, ACTION_SLICE ]
         end
       end
 
@@ -186,6 +207,12 @@ module Ladb::OpenCutList
         return true
 
       when ACTION_OPTION_PANELING_JOINT_TYPE
+        return true
+
+      when ACTION_OPTION_SLICE_MODE
+        return true
+
+      when ACTION_OPTION_SLICE_REFERENCE
         return true
 
       end
@@ -231,6 +258,20 @@ module Ladb::OpenCutList
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M1,0V1H.625V.375M1,0H0V.375H.625V0'))
         when ACTION_OPTION_PANELING_JOINT_TYPE_MITER
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0V.375H.625L1,0ZM1,0V1H.625V.375'))
+        end
+      when ACTION_OPTION_SLICE_MODE
+        case option
+        when ACTION_OPTION_SLICE_MODE_SLICE
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,.25H.375V.75H0ZM.625,.25H1V.75H.625ZM.5,0V.25M.5,.375V.625M.5,.75V1'))
+        when ACTION_OPTION_SLICE_MODE_CUT
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,.25H.375V.75H0ZM.75,.25H.625V.375M.875,.25H1V.375M.75,.75H.625V.625M.875,.75H1V.625M.5,0V.25M.5,.375V.625M.5,.75V1'))
+        end
+      when ACTION_OPTION_SLICE_REFERENCE
+        case option
+        when ACTION_OPTION_SLICE_REFERENCE_FACE
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.5,0L0,.5L.5,1L1,.5Z'))
+        when ACTION_OPTION_SLICE_REFERENCE_POINTS
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M.167,.833L.5,.167L.833,.833ZM.083,.75V.917H.25V.75ZM.417,.083V.25H.583V.083ZM.75,.75V.917H.917V.75Z'))
         end
       when ACTION_OPTION_OPTIONS
         case option
@@ -286,6 +327,8 @@ module Ladb::OpenCutList
         set_action_handler(SmartReshapeSolidSubtractActionHandler.new(self, fetch_action_handler))
       when ACTION_SOLID_INTERSECT
         set_action_handler(SmartReshapeSolidIntersectActionHandler.new(self, fetch_action_handler))
+      when ACTION_SLICE
+        set_action_handler(SmartReshapeSliceActionHandler.new(self, fetch_action_handler))
       end
 
       super
@@ -1879,15 +1922,10 @@ module Ladb::OpenCutList
       k_edge.start.copy!(lps)
       k_edge.end.copy!(lpe)
       k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-      k_edge.color = ColorUtils.color_translucent(color, 60)
-      k_edge.on_top = true
-      @tool.append_3d(k_edge, LAYER_3D_STRETCH_PREVIEW)
-
-      k_edge = Kuix::EdgeMotif3d.new
-      k_edge.start.copy!(lps)
-      k_edge.end.copy!(lpe)
-      k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
       k_edge.color = color
+      k_edge.show_hidden_lines = true
+      k_edge.hidden_line_width = k_edge.line_width
+      k_edge.hidden_line_color = ColorUtils.color_translucent(color, 60)
       @tool.append_3d(k_edge, LAYER_3D_STRETCH_PREVIEW)
 
       @tool.append_3d(_create_floating_points(points: [ lps, lpe ], style: Kuix::POINT_STYLE_CIRCLE, fill_color: Kuix::COLOR_WHITE, stroke_color: color, size: 2), LAYER_3D_STRETCH_PREVIEW)
@@ -2750,6 +2788,1814 @@ module Ladb::OpenCutList
 
     def _operate(operation = nil)
       super(Fiddle::Meshy::OPERATION_INTERSECTION)
+    end
+
+  end
+
+  # Slices the selected parts by a plane : into two pieces each - every piece
+  # its own definition, named after the part - or, in "cut" mode, keeping one
+  # side only.
+  #
+  # The plane is parallel to a reference face, picked anywhere in the model,
+  # at a distance from it ; or - an arrow key pressed (→ X, ← Y, ↑ Z, ↓ back
+  # to the face) - perpendicular to that axis, at a distance from the end of
+  # the selection closest to the mouse. Parts it does not cross are left
+  # untouched, assemblies are traversed down to their parts.
+  #
+  # Each piece is the part INTERSECTED with a box on its side of the plane (see
+  # SmartActionHandlerSolidBooleanHelper) : one boolean per side, the second
+  # side working on clones laid before anything is cut. In make_unique: false
+  # mode the definition is rebuilt in place, so every instance of a sliced
+  # definition is sliced too : the clones are laid beside each of them -
+  # except the selected parts the plane does not cross, which keep theirs.
+  class SmartReshapeSliceActionHandler < SmartSelectActionHandler
+
+    include UserTextHelper
+    include SmartActionHandlerSolidBooleanHelper
+
+    STATE_SLICE_REFERENCE = 1
+    STATE_SLICE = 2
+    STATE_SLICE_SIDE = 3
+    STATE_SLICE_DISTRIBUTE = 4
+
+    LAYER_3D_SLICE_PREVIEW = 10
+    LAYER_3D_SLICE_SELECTION_PREVIEW = 11
+
+    PX_INFLATE_VALUE = 50
+
+    COLOR_FACE_REFERENCE = Kuix::COLOR_MAGENTA
+    COLOR_REMOVED_PART = Sketchup::Color.new(120, 120, 120, 200).freeze
+    COLOR_SLICED_EDGE = Kuix::COLOR_BLACK
+
+    SlicePartDef = Struct.new(:path, :points, :triangles, :edges)  # WORLD coordinates, edges lazily read
+
+    attr_reader :number, :spacings
+
+    def initialize(tool, previous_action_handler = nil)
+      super(SmartReshapeTool::ACTION_SLICE, tool, previous_action_handler)
+
+      @mouse_ip = SmartInputPoint.new(tool)
+
+      @reference_axis = nil   # The edit axis the plane is perpendicular to, nil when it is parallel to a face
+
+      @reference_plane = nil  # [ point, normal ] WORLD : the reference face, or the selection end the distance is measured from
+      @slice_plane = nil      # [ point, normal ] WORLD : the reference normal, so the distance reads along it
+      @slice_side = nil       # 1 keeps the slice plane normal side, -1 the other one (cut mode)
+      @reference_face_manipulator = nil
+      @reference_points = []  # WORLD : the 3 points reference, the plane they define
+      @reference_ip = SmartInputPoint.new(tool)  # The last reference point, the inferences start from it
+      @locked_axis = nil      # The axis the next reference point is locked on
+      @reference_snap_point = nil  # WORLD : the next reference point, the mouse projected on the locked axis
+      @picked_reference = nil # [ plane, face_manipulator ] : the last plane picked at step 1, ↓ goes back to it from an axis
+
+      @slice_part_defs = nil
+      @sliced_previews = nil                    # side => [ edge segments, section segments ] WORLD
+
+      # xn / /n : the planes shared over the selection, pinned by @spacings - kept from the previous slice
+      @number = previous_action_handler.is_a?(self.class) ? previous_action_handler.number : 0
+      @spacings = previous_action_handler.is_a?(self.class) ? previous_action_handler.spacings : []
+      @unhide_slice_instances_transformations = nil
+
+      # Create 3D layers
+      tool.create_3d(LAYER_3D_SLICE_PREVIEW)
+      tool.create_3d(LAYER_3D_SLICE_SELECTION_PREVIEW)
+      tool.create_3d(LAYER_3D_PART_TWINS_PREVIEW)
+      tool.create_3d(LAYER_3D_PART_PREVIEW)
+
+    end
+
+    # -----
+
+    def close_doors_on_start?
+      true
+    end
+
+    # -----
+
+    def stop
+      _unhide_slice_instances
+      super
+    end
+
+    # -- STATE --
+
+    def get_state_cursor(state)
+
+      case state
+      when STATE_SLICE_REFERENCE
+        return SmartCursorManager.cursor_pin_2 if _fetch_option_slice_reference_points? && @reference_points.any?
+        return SmartCursorManager.cursor_pin_1
+      when STATE_SLICE, STATE_SLICE_SIDE, STATE_SLICE_DISTRIBUTE
+        return SmartCursorManager.cursor_select_scissors
+      end
+
+      super
+    end
+
+    def get_state_status(state)
+
+      case state
+
+      when STATE_SELECT
+        return super +
+               ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_option_options_make_unique_status") + '.'
+
+      when STATE_SLICE_REFERENCE
+        if _fetch_option_slice_reference_points?
+          return PLUGIN.get_i18n_string("tool.smart_reshape.action_5_state_1c_status") + '.' if @reference_points.length >= 3
+          status = PLUGIN.get_i18n_string("tool.smart_reshape.action_5_state_1b_status", { :index => @reference_points.length + 1 }) + '.'
+          status += ' | ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_5_state_1b_arrows_status") + '.' if @reference_points.any?
+          return status
+        end
+        return super +
+               ' | ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_5_state_1_arrows_status") + '.'
+
+      when STATE_SLICE
+        if _fetch_option_slice_mode_cut?
+          status = PLUGIN.get_i18n_string("tool.smart_reshape.action_5_state_2a_status") + '.'
+        else
+          status = PLUGIN.get_i18n_string("tool.smart_reshape.action_5_state_2_status") + '.'
+        end
+        return status +
+               ' | ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_5_state_2_arrows_status") + '.' +
+               ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_option_options_make_unique_status") + '.'
+
+      when STATE_SLICE_DISTRIBUTE
+        return PLUGIN.get_i18n_string("tool.smart_reshape.action_5_state_4_status", { :number => @number + 1 }) + '.'
+
+      end
+
+      super
+    end
+
+    def get_state_vcb_label(state)
+
+      case state
+
+      when STATE_SLICE
+        return PLUGIN.get_i18n_string("tool.default.vcb_distance")
+
+      when STATE_SLICE_DISTRIBUTE
+        return PLUGIN.get_i18n_string("tool.default.vcb_spacings")
+
+      end
+
+      super
+    end
+
+    # -----
+
+    def onToolCancel(tool, reason, view)
+      super
+
+      if @tool.callback_action_handler.nil?
+
+        case @state
+
+        when STATE_SLICE_SIDE
+          set_state(STATE_SLICE)
+          _refresh
+          return true
+
+        when STATE_SLICE_DISTRIBUTE
+          if @spacings.any?
+            _set_distribution(@number, [])
+          else
+            _set_distribution(0, [])
+          end
+          return true
+
+        when STATE_SLICE
+          # The remembered plane is forgotten : back to step 1 from scratch
+          @reference_axis = nil
+          @picked_reference = nil
+          @reference_face_manipulator = nil
+          @reference_points = []
+          @reference_ip.clear
+          set_state(STATE_SLICE_REFERENCE)
+          _refresh
+          return true
+
+        when STATE_SLICE_REFERENCE
+          if @reference_points.any?
+            _remove_last_reference_point
+            _refresh
+            return true
+          end
+
+        end
+
+        _reset
+        _refresh
+
+      else
+        Sketchup.active_model.tools.pop_tool
+      end
+
+      true
+    end
+
+    def onToolSuspend(tool, view)
+      super
+      _unhide_slice_instances if @state == STATE_SLICE_SIDE
+    end
+
+    def onToolResume(tool, view)
+      super
+      _hide_slice_instances if @state == STATE_SLICE_SIDE
+    end
+
+    def onToolMouseMove(tool, flags, x, y, view)
+      super
+
+      return true if x < 0 || y < 0
+
+      case @state
+
+      when STATE_SLICE_REFERENCE, STATE_SLICE, STATE_SLICE_SIDE, STATE_SLICE_DISTRIBUTE
+
+        if @state == STATE_SLICE_REFERENCE && @reference_points.any?
+          @mouse_ip.pick(view, x, y, @reference_ip)  # Inferences from the last point
+        else
+          @mouse_ip.pick(view, x, y)
+        end
+
+        @tool.clear_all_2d
+        @tool.clear_3d(LAYER_3D_SLICE_PREVIEW)
+
+        case @state
+        when STATE_SLICE_REFERENCE
+          _snap_slice_reference(flags, x, y, view)
+          _preview_slice_reference(view)
+        when STATE_SLICE
+          _snap_slice(flags, x, y, view)
+          _preview_slice(view)
+        when STATE_SLICE_SIDE
+          _snap_slice_side(flags, x, y, view)
+          _preview_slice_side(view)
+        when STATE_SLICE_DISTRIBUTE
+          _preview_slice_distribute(view)
+        end
+
+        view.invalidate
+
+      end
+
+      false
+    end
+
+    def onToolMouseLeave(tool, view)
+      return true if super
+      @tool.clear_all_2d
+      @tool.clear_3d(LAYER_3D_SLICE_PREVIEW)
+      @mouse_ip.clear
+      view.tooltip = ''
+    end
+
+    def onToolLButtonDown(tool, flags, x, y, view)
+
+      case @state
+
+      when STATE_SLICE_REFERENCE, STATE_SLICE, STATE_SLICE_SIDE, STATE_SLICE_DISTRIBUTE
+        return true  # The part picked by the selection must not be highlighted anymore
+
+      end
+
+      super
+    end
+
+    def onToolLButtonUp(tool, flags, x, y, view)
+
+      case @state
+
+      when STATE_SLICE_REFERENCE
+        if _fetch_option_slice_reference_points?
+          if @reference_points.length < 3
+            _snap_reference_point(x, y, view)
+            _add_reference_point(view)
+          end
+          return true if @reference_points.length < 3
+          _snap_slice_reference(flags, x, y, view)  # The plane of the 3 points, the mouse not involved
+        end
+        if @reference_plane.nil?
+          UI.beep
+        else
+          @picked_reference = [ @reference_plane, @reference_face_manipulator ]
+          _set_distribution(@number, @spacings)
+        end
+        return true
+
+      when STATE_SLICE
+        _validate_slice_plane
+        return true
+
+      when STATE_SLICE_SIDE
+        if @slice_side.nil?
+          UI.beep
+        else
+          _slice_entities([ @slice_plane ], @slice_side)
+        end
+        return true
+
+      when STATE_SLICE_DISTRIBUTE
+        _validate_slice_distribution  # The planes do not follow the mouse : the click applies them
+        return true
+
+      end
+
+      super
+    end
+
+    def onToolKeyDown(tool, key, repeat, flags, view)
+      return true if super
+
+      if tool.is_key_alt_or_command?(key) && (@state == STATE_SELECT || @state == STATE_SLICE)
+        return true # Block default behavior for the ALT key on Windows
+      end
+
+      # SHIFT + / - : one plane more or less
+      if (@state == STATE_SLICE || @state == STATE_SLICE_DISTRIBUTE) && !_fetch_option_slice_mode_cut? &&
+         tool.is_key_shift_down? && !tool.is_vcb_typing? && (key == Kuix::VK_ADD || key == Kuix::VK_SUBTRACT)
+        _set_distribution(@number + (key == Kuix::VK_ADD ? 1 : -1), @spacings)
+        return true
+      end
+
+      # 3 points reference : → X, ← Y, ↑ Z lock the next point on that axis, ↓ unlocks
+      if @state == STATE_SLICE_REFERENCE && _fetch_option_slice_reference_points?
+        axis = { VK_RIGHT => X_AXIS, VK_LEFT => Y_AXIS, VK_UP => Z_AXIS }[key]
+        if axis
+          if @reference_points.empty? || @reference_points.length >= 3
+            UI.beep
+          else
+            _lock_reference_axis(axis.transform(_get_edit_transformation))
+            _refresh
+          end
+          return true
+        end
+        if key == VK_DOWN
+          _lock_reference_axis(nil)
+          _refresh
+          return true
+        end
+        return false
+      end
+
+      # → X, ← Y, ↑ Z : the plane perpendicular to that axis ; ↓ : back to the picked plane, then to its step
+      if @state == STATE_SLICE_REFERENCE || @state == STATE_SLICE || @state == STATE_SLICE_DISTRIBUTE
+        axis = { VK_RIGHT => X_AXIS, VK_LEFT => Y_AXIS, VK_UP => Z_AXIS }[key]
+        if axis
+          @reference_axis = axis
+          _snap_slice_axis_reference(flags, tool.last_mouse_x, tool.last_mouse_y, view)  # Read now : the distributed planes do not follow the mouse
+          if @state == STATE_SLICE
+            @tool.set_status_prompt(get_state_status(@state))
+            _refresh
+          else
+            _set_distribution(@number, @spacings)
+          end
+          return true
+        end
+        if key == VK_DOWN
+          if !@reference_axis.nil? && !@picked_reference.nil? && @state != STATE_SLICE_REFERENCE
+            # From an axis : back to the last picked plane
+            @reference_axis = nil
+            @reference_plane, @reference_face_manipulator = @picked_reference
+            if @state == STATE_SLICE
+              @tool.set_status_prompt(get_state_status(@state))
+              _refresh
+            else
+              _set_distribution(@number, @spacings)
+            end
+          else
+            # From the plane : back to its step, the 3 points kept
+            @reference_axis = nil
+            set_state(STATE_SLICE_REFERENCE) unless @state == STATE_SLICE_REFERENCE
+            _refresh
+          end
+          return true
+        end
+      end
+
+      false
+    end
+
+    def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
+      return true if super
+
+      if tool.is_key_alt_or_command?(key) && is_quick && (@state == STATE_SELECT || @state == STATE_SLICE)
+        @tool.store_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_MAKE_UNIQUE, !_fetch_option_options_make_unique?, fire_event: true)
+        _refresh
+        return true
+      end
+
+      false
+    end
+
+    def onToolUserText(tool, text, view)
+      return true if super
+
+      case @state
+
+      when STATE_SLICE
+        return true if _read_slice_number(tool, text, view)
+        return true if _read_slice_spacings(tool, text, view)
+        return true if _read_slice(tool, text, view)
+
+      when STATE_SLICE_DISTRIBUTE
+        return true if _read_slice_number(tool, text, view)
+        return true if _read_slice_spacings(tool, text, view)
+
+      end
+
+      false
+    end
+
+    def onToolValidate(tool, view)
+
+      case @state
+
+      when STATE_SLICE_DISTRIBUTE
+        _validate_slice_distribution
+
+      end
+
+      false
+    end
+
+    def onToolReturn(tool, view)
+      onToolValidate(tool, view)
+    end
+
+    def onToolActionOptionStored(tool, action, option_group, option)
+
+      if option_group == SmartReshapeTool::ACTION_OPTION_SLICE_MODE
+        # The distribution kept from the previous slice is not the other mode's
+        @number = 0
+        @spacings = []
+      end
+
+      if option_group == SmartReshapeTool::ACTION_OPTION_SLICE_REFERENCE
+        # The other kind of reference : drawn again
+        _lock_reference_axis(nil)
+        @reference_points = []
+        @reference_ip.clear
+        @picked_reference = nil
+        @reference_face_manipulator = nil
+      end
+
+      return unless @state > STATE_SELECT && @state <= STATE_SLICE_DISTRIBUTE
+
+      case option_group
+
+      when SmartReshapeTool::ACTION_OPTION_SLICE_REFERENCE
+        @reference_axis = nil
+        if @state == STATE_SLICE_REFERENCE
+          @reference_plane = nil
+          @tool.set_root_cursor(get_state_cursor(@state))
+        else
+          set_state(STATE_SLICE_REFERENCE)
+        end
+
+      when SmartReshapeTool::ACTION_OPTION_SLICE_MODE
+        # The reference is kept : only the steps the other mode does not have are left
+        set_state(STATE_SLICE) if @state == STATE_SLICE_SIDE || @state == STATE_SLICE_DISTRIBUTE
+
+      when SmartReshapeTool::ACTION_OPTION_AXES
+        # An axis reference follows the new axes - read again on mouse move, but not by the fixed distributed planes
+        _snap_slice_axis_reference(0, tool.last_mouse_x, tool.last_mouse_y, Sketchup.active_model.active_view) if @state == STATE_SLICE_DISTRIBUTE && !@reference_axis.nil?
+
+      else
+        return
+
+      end
+
+      @tool.set_status_prompt(get_state_status(@state))
+      _refresh
+    end
+
+    def onStateChanged(old_state, new_state)
+      super
+
+      case new_state
+
+      when STATE_SLICE_REFERENCE
+        @reference_plane = nil
+        @slice_plane = nil
+        @slice_side = nil
+
+      when STATE_SLICE
+        @reference_plane = nil unless @reference_axis.nil?
+        @slice_plane = nil
+        @slice_side = nil
+
+      when STATE_SLICE_DISTRIBUTE
+        @slice_plane = nil
+
+      when STATE_SLICE_SIDE
+        @slice_side = nil
+        @sliced_previews = nil
+
+      end
+
+      case old_state
+
+      when STATE_SLICE_REFERENCE, STATE_SLICE, STATE_SLICE_SIDE, STATE_SLICE_DISTRIBUTE
+        @tool.clear_3d(LAYER_3D_SLICE_SELECTION_PREVIEW)
+        _unhide_slice_instances if old_state == STATE_SLICE_SIDE
+        _lock_reference_axis(nil) if old_state == STATE_SLICE_REFERENCE
+
+      end
+
+      case new_state
+
+      when STATE_SLICE_REFERENCE, STATE_SLICE, STATE_SLICE_SIDE, STATE_SLICE_DISTRIBUTE
+        Sketchup.active_model.selection.clear
+        @tool.clear_all_2d
+        @tool.clear_3d([ LAYER_3D_PART_PREVIEW, LAYER_3D_PART_TWINS_PREVIEW ])  # Remove part preview
+        _preview_slice_selection  # Before hiding : the instances are framed where they stand
+        _hide_slice_instances if new_state == STATE_SLICE_SIDE
+
+      end
+
+    end
+
+    def onSelected
+      return true if super
+
+      _reset_drawing_def
+      @slice_part_defs = nil
+
+      if _get_slice_part_defs.empty?
+        UI.beep
+        _reset
+        return
+      end
+
+      set_state(STATE_SLICE_REFERENCE)
+
+      _refresh
+
+    end
+
+    # -----
+
+    def draw(view)
+      super
+      @mouse_ip.draw(view) if @mouse_ip.valid? && (@locked_axis.nil? || @state != STATE_SLICE_REFERENCE)  # Locked : the projected point is the one shown
+    end
+
+    def enableVCB?
+      true
+    end
+
+    # -----
+
+    protected
+
+    def _reset
+      @mouse_ip.clear
+      @reference_axis = nil
+      @reference_plane = nil
+      @reference_face_manipulator = nil
+      @reference_points = []
+      @reference_ip.clear
+      @locked_axis = nil
+      @reference_snap_point = nil
+      @picked_reference = nil
+      @slice_plane = nil
+      @slice_side = nil
+      @slice_part_defs = nil
+      @sliced_previews = nil
+      @number = 0
+      @spacings = []
+      super
+    end
+
+    def _restart
+      if @tool.callback_action_handler.nil?
+        super
+      else
+        @tool.callback_action_handler.previous_action_handler = self
+        Sketchup.active_model.tools.pop_tool if active?
+      end
+    end
+
+    # -----
+
+    # The pieces are not the selection anymore : a restart starts from scratch
+    def _start_with_previous_selection?
+      false
+    end
+
+    def _allows_multiple_selections?
+      true
+    end
+
+    def _allows_tree_selection?
+      true
+    end
+
+    def _clear_selection_on_start?
+      true
+    end
+
+    # -----
+
+    def _can_activate_locked?
+      false
+    end
+
+    # -----
+
+    def _preview_part_box?
+      true
+    end
+
+    def _preview_part(part_entity_path, part, layer = 0, highlighted: false, clear_before: true)
+      super
+      if part && fetch_state == STATE_SELECT
+
+        # Show part infos
+        @tool.set_root_tooltip([ "##{_get_active_part_name}", _get_active_part_material_name, '-', _get_active_part_size, _get_active_part_icons ])
+
+      else
+
+        @tool.remove_root_tooltip
+
+      end
+    end
+
+    # -----
+
+    def _fetch_option_slice_mode_cut?
+      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_SLICE_MODE, SmartReshapeTool::ACTION_OPTION_SLICE_MODE_CUT)
+    end
+
+    def _fetch_option_slice_reference_points?
+      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_SLICE_REFERENCE, SmartReshapeTool::ACTION_OPTION_SLICE_REFERENCE_POINTS)
+    end
+
+    def _fetch_option_axes
+      @tool.fetch_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_AXES)
+    end
+
+    def _fetch_option_options_make_unique?
+      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_MAKE_UNIQUE)
+    end
+
+    # -----
+
+    def _get_edit_transformation
+      case _fetch_option_axes
+
+      when SmartReshapeTool::ACTION_OPTION_AXES_CONTEXT
+        t = _get_global_context_transformation(nil)
+        return t unless t.nil?
+
+      when SmartReshapeTool::ACTION_OPTION_AXES_ENTITY
+        t = _get_global_instance_transformation(nil)
+        return t unless t.nil?
+
+      end
+      super
+    end
+
+    # -----
+
+    # The parts of the selection, the selected instances being parts or
+    # assemblies : the cut list ones, hardware excluded. A part nested in
+    # another one follows it.
+    def _get_slice_part_defs
+      return @slice_part_defs unless @slice_part_defs.nil?
+      @slice_part_defs = []
+      return @slice_part_defs unless has_active_selection?
+
+      selection_path = get_active_selection_path
+      paths = get_active_selection_instances.map { |instance|
+        worker = CutlistGenerateWorker.new(**HashUtils.symbolize_keys(PLUGIN.get_model_preset('cutlist_options')).merge({ active_entity: instance, active_path: selection_path, part_folding: false }))
+        cutlist = worker.run
+        cutlist.groups
+               .reject { |group| group.material_type == MaterialAttributes::TYPE_HARDWARE }
+               .map { |group| group.parts.map { |part| part.def.instance_infos.values.map(&:path) } }
+      }.flatten(3).uniq
+      paths = paths.select { |path| path.last.is_a?(Sketchup::ComponentInstance) }
+      paths = paths.reject { |path| paths.any? { |other| other.length < path.length && path[0, other.length] == other } }
+
+      paths.each do |path|
+        drawing_def = _decompose_for_solid_boolean([ Sketchup::InstancePath.new(path) ]).first
+        next unless drawing_def.is_a?(DrawingDef)
+        mesh_def = SolidMeshDef.from_drawing_def(drawing_def)
+        next if mesh_def.nil? || mesh_def.empty?
+        points = mesh_def.vertices.each_slice(3).map { |x, y, z| Geom::Point3d.new(x, y, z) }
+        triangles = mesh_def.face_indices.map { |index| points[index] }
+        @slice_part_defs << SlicePartDef.new(path, points, triangles)
+      end
+
+      @slice_part_defs
+    end
+
+    # The parts the given plane really crosses : some of their geometry on
+    # either side of it.
+    def _get_crossed_part_defs(plane)
+      point, normal = plane
+      _get_slice_part_defs.select do |part_def|
+        below = false
+        above = false
+        part_def.points.each do |p|
+          d = point.vector_to(p).dot(normal)
+          below = true if d < -SolidMeshDef::TOLERANCE
+          above = true if d > SolidMeshDef::TOLERANCE
+          break if below && above
+        end
+        below && above
+      end
+    end
+
+    # The parts lying wholly on the side of the given plane opposite to +side+
+    # (1 = the plane normal side) - touching the plane at most : what a cut
+    # keeping +side+ erases.
+    def _get_removed_part_defs(plane, side)
+      point, normal = plane
+      _get_slice_part_defs.select do |part_def|
+        part_def.points.all? { |p| point.vector_to(p).dot(normal) * side < SolidMeshDef::TOLERANCE } &&
+          part_def.points.any? { |p| point.vector_to(p).dot(normal) * side < -SolidMeshDef::TOLERANCE }
+      end
+    end
+
+    # A frame on the given plane : its origin and normal (z), the x axis laid
+    # on the edit axis the most perpendicular to the normal, so a plane
+    # perpendicular to an axis displays square.
+    def _get_plane_frame(plane)
+      point, normal = plane
+      et = _get_edit_transformation
+      axis = [ X_AXIS, Y_AXIS, Z_AXIS ].map { |a| a.transform(et).normalize }.min_by { |a| a.dot(normal).abs }
+      u = normal.cross(axis).cross(normal).normalize
+      v = normal.cross(u).normalize
+      Geom::Transformation.axes(point, u, v, normal)
+    end
+
+    # The bounds of the given part defs, in the given frame.
+    def _get_part_defs_extents(part_defs, frame)
+      fti = frame.inverse
+      extents = Geom::BoundingBox.new
+      part_defs.each { |part_def| extents.add(part_def.points.map { |p| p.transform(fti) }) }
+      extents
+    end
+
+    # The part edges, read on demand, as segments.
+    def _get_slice_part_def_edges(part_def)
+      part_def.edges ||= begin
+        drawing_def = CommonDrawingDecompositionWorker.new([ Sketchup::InstancePath.new(part_def.path) ],
+          ignore_faces: true,
+          ignore_edges: false,
+          ignore_soft_edges: true,
+          container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART_WITHOUT_MACHININGS
+        ).run
+        if drawing_def.is_a?(DrawingDef)
+          t = drawing_def.transformation
+          segments = drawing_def.edge_manipulators.flat_map(&:segment)
+          segments += drawing_def.curve_manipulators.flat_map(&:segments)
+          segments.map { |p| p.transform(t) }
+        else
+          []
+        end
+      end
+    end
+
+    # -- Reference points --
+
+    # True when the reference plane is the 3 points one.
+    def _reference_points_plane?
+      @reference_axis.nil? && @reference_face_manipulator.nil? && @reference_points.length == 3
+    end
+
+    # The plane through the 3 reference points, nil until they are placed.
+    def _get_reference_points_plane
+      return nil unless @reference_points.length == 3
+      p0, p1, p2 = @reference_points
+      normal = p0.vector_to(p1).cross(p0.vector_to(p2))
+      return nil unless normal.valid?
+      [ p0, normal.normalize ]
+    end
+
+    # The mouse position, projected on the locked axis line from the last
+    # point - by hand : view.lock_inference ignores a direction that is not a
+    # model axis (~/DevProjects/sketchup-api-quirks/quirks/lock-inference-model-axes-only.md).
+    def _snap_reference_point(x, y, view)
+      @reference_snap_point = nil
+      return if @reference_points.length >= 3
+      if @locked_axis.nil? || @reference_points.empty?
+        @reference_snap_point = @mouse_ip.position if @mouse_ip.valid?
+      else
+        line = [ @reference_points.last, @locked_axis ]
+        if _mouse_ip_on_geometry?
+          @reference_snap_point = @mouse_ip.position.project_to_line(line)
+        else
+          @reference_snap_point, _ = Geom.closest_points(line, view.pickray(x, y))
+        end
+      end
+    end
+
+    def _add_reference_point(view)
+      return UI.beep if (point = @reference_snap_point).nil?
+      return UI.beep if @reference_points.any? { |p| p == point }
+      return UI.beep if @reference_points.length == 2 && @reference_points[0].vector_to(@reference_points[1]).parallel?(@reference_points[0].vector_to(point))  # Collinear
+      @reference_points << point
+      if @locked_axis.nil?
+        @reference_ip.copy!(@mouse_ip)
+      else
+        @reference_ip.copy!(point)  # Off the picked geometry
+      end
+      _lock_reference_axis(nil)
+      @tool.set_root_cursor(get_state_cursor(@state))
+      @tool.set_status_prompt(get_state_status(@state))
+      _refresh
+    end
+
+    def _remove_last_reference_point
+      @reference_points.pop
+      @reference_plane = nil
+      if @reference_points.empty?
+        @reference_ip.clear
+      else
+        @reference_ip.copy!(@reference_points.last)
+      end
+      _lock_reference_axis(nil)
+      @tool.set_root_cursor(get_state_cursor(@state))
+      @tool.set_status_prompt(get_state_status(@state))
+    end
+
+    # Locks the next reference point on +axis+ from the last one, or unlocks
+    # when +axis+ is nil or the locked one.
+    def _lock_reference_axis(axis)
+      @locked_axis = axis.nil? || @locked_axis == axis ? nil : axis
+    end
+
+    # -- Distribution --
+
+    # The /n planes : @number of them shared over the selection, from its end
+    # the closest to the reference to the other one, @spacings pinning the
+    # pieces from both ends. nil when they do not fit.
+    def _get_distributed_planes
+      return nil if @reference_plane.nil? || @number < 1
+      point, normal = @reference_plane
+      frame = _get_plane_frame(@reference_plane)
+      extents = _get_part_defs_extents(_get_slice_part_defs, frame)
+      return nil if extents.empty?
+      if extents.min.z.abs <= extents.max.z.abs
+        z0, direction = extents.min.z, 1
+      else
+        z0, direction = extents.max.z, -1
+      end
+      return nil if (offsets = _get_distribution_offsets(extents.depth, @number, @spacings)).nil?
+      offsets.map { |offset| [ Geom::Point3d.new(0, 0, z0 + direction * offset).transform(frame), normal ] }
+    end
+
+    # The +number+ plane offsets along a +length+, read as the Smart Build
+    # Divider reads its spacings - with no thickness : the leading run of
+    # valid +spacings+ pins the first pieces, the run after an invalid or
+    # empty entry the last ones, the planes left in the middle share what
+    # remains. nil when they do not fit.
+    def _get_distribution_offsets(length, number, spacings)
+      return nil unless number > 0
+
+      fn_valid_spacing = lambda { |spacing| spacing.is_a?(Length) && spacing >= 0 }
+      start_spacings = spacings.take_while(&fn_valid_spacing)
+      end_spacings = start_spacings.size == spacings.size ? [] : spacings.reverse.take_while(&fn_valid_spacing)
+
+      if start_spacings.size > number
+        start_spacings = start_spacings.take(number)
+        end_spacings = []
+      elsif start_spacings.size + end_spacings.size > number
+        end_spacings = end_spacings.take(number - start_spacings.size)
+      end
+
+      start_d = 0.0
+      start_offsets = start_spacings.map { |spacing| start_d += spacing }
+
+      end_d = length.to_f
+      end_offsets = end_spacings.map { |spacing| end_d -= spacing }.reverse
+
+      middle_size = number - start_offsets.size - end_offsets.size
+      if middle_size > 0
+        segment = (end_d - start_d) / (middle_size + 1.0)
+        return nil if segment <= SolidMeshDef::TOLERANCE
+        middle_offsets = (1..middle_size).map { |index| start_d + index * segment }
+      else
+        middle_offsets = []
+      end
+
+      offsets = start_offsets + middle_offsets + end_offsets
+      bounds = [ 0.0 ] + offsets + [ length.to_f ]
+      return nil if bounds.each_cons(2).any? { |a, b| b - a <= SolidMeshDef::TOLERANCE }
+
+      offsets
+    end
+
+    def _set_distribution(number, spacings)
+      @number = [ number, 0 ].max
+      @spacings = spacings
+
+      if @number > 0 && _get_distributed_planes.nil?
+        UI.beep
+        @tool.notify_errors([ [ 'tool.smart_reshape.error.slice_number_overflow', { :number => @number + 1 } ] ])
+      end
+
+      if @number > 0
+        if @state == STATE_SLICE_DISTRIBUTE
+          @tool.set_status_prompt(get_state_status(@state))
+        else
+          set_state(STATE_SLICE_DISTRIBUTE)
+        end
+      else
+        set_state(STATE_SLICE) unless @state == STATE_SLICE
+      end
+      _refresh
+    end
+
+    # -- Hide --
+
+    # The parts are hidden as the stretch hides its instances : scaled to
+    # nothing by move!, out of the undo stack. An instance is hidden only when
+    # all its occurrences are parts of the selection, the preview standing for
+    # them all.
+    def _hide_slice_instances
+      return if @unhide_slice_instances_transformations.is_a?(Hash)
+      occurrences = Hash.new(0)
+      _get_slice_part_defs.each do |part_def|
+        _get_slice_part_def_edges(part_def)  # Read while the instance still stands
+        occurrences[part_def.path.last] += 1
+      end
+      @unhide_slice_instances_transformations = {}
+      occurrences.each do |instance, count|
+        next if instance.deleted?
+        parent = instance.parent
+        next if parent.is_a?(Sketchup::ComponentDefinition) && parent.count_used_instances > count
+        @unhide_slice_instances_transformations[instance] = Geom::Transformation.new(instance.transformation)
+      end
+      @unhide_slice_instances_transformations.each_key { |instance| instance.move!(Geom::Transformation.scaling(0)) }
+    end
+
+    def _unhide_slice_instances
+      return unless @unhide_slice_instances_transformations.is_a?(Hash)
+      @unhide_slice_instances_transformations.each { |instance, transformation| instance.move!(transformation) unless instance.deleted? }
+      @unhide_slice_instances_transformations = nil
+    end
+
+    def _slice_instance_hidden?(part_def)
+      @unhide_slice_instances_transformations.is_a?(Hash) && @unhide_slice_instances_transformations.key?(part_def.path.last)
+    end
+
+    # -- Snap --
+
+    def _mouse_ip_on_geometry?
+      return false unless @mouse_ip.valid?  # Not picked yet : an axis key pressed before any mouse move
+      !(@mouse_ip.degrees_of_freedom > 2 || @mouse_ip.instance_path.empty? && @mouse_ip.degrees_of_freedom > 1)
+    end
+
+    def _snap_slice_reference(flags, x, y, view)
+      @reference_plane = nil
+      @reference_face_manipulator = nil
+      if _fetch_option_slice_reference_points?
+        _snap_reference_point(x, y, view)
+        return @reference_plane = _get_reference_points_plane
+      end
+      return if (face = @mouse_ip.face).nil?
+
+      face_manipulator = FaceManipulator.new(face, @mouse_ip.face_transformation)
+      normal = face_manipulator.normal.normalize
+      @reference_plane = [ @mouse_ip.position.project_to_plane(face_manipulator.plane), normal ]
+      @reference_face_manipulator = face_manipulator
+    end
+
+    def _snap_slice(flags, x, y, view)
+      _snap_slice_axis_reference(flags, x, y, view) unless @reference_axis.nil?
+      return @slice_plane = nil if @reference_plane.nil?
+
+      point, normal = @reference_plane
+      line = [ point, normal ]
+      if _mouse_ip_on_geometry?
+        p = @mouse_ip.position.project_to_line(line)
+      else
+        p, _ = Geom.closest_points(line, view.pickray(x, y))
+      end
+      if _reference_points_plane? && point.vector_to(p).dot(normal) < -SolidMeshDef::TOLERANCE
+        # A 3 points plane has no side of its own : its normal follows the mouse
+        normal = normal.reverse
+        @reference_plane = [ point, normal ]
+      end
+      @slice_plane = [ p, normal ]
+    end
+
+    # The axis reference, read on the bounds of the selected parts : the
+    # selection end the mouse is closest to, along the reference axis.
+    def _snap_slice_axis_reference(flags, x, y, view)
+      @reference_plane = nil
+
+      et = _get_edit_transformation
+      eti = et.inverse
+      eb = Geom::BoundingBox.new
+      _get_slice_part_defs.each { |part_def| eb.add(part_def.points.map { |p| p.transform(eti) }) }
+      return if eb.empty?
+      ecenter = eb.center
+      center = ecenter.transform(et)
+      half_dims = { X_AXIS => eb.width / 2, Y_AXIS => eb.height / 2, Z_AXIS => eb.depth / 2 }
+
+      axis = @reference_axis
+      direction = axis.transform(et).normalize
+      line = [ center, direction ]
+      if _mouse_ip_on_geometry?
+        p = @mouse_ip.position.project_to_line(line)
+      else
+        p, _ = Geom.closest_points(line, view.pickray(x, y))
+      end
+
+      sign = center.vector_to(p).dot(direction) >= 0 ? 1 : -1
+      reference_point = ecenter.offset(axis, sign * half_dims[axis]).transform(et)
+      @reference_plane = [ reference_point, sign > 0 ? direction.reverse : direction ]
+    end
+
+    def _snap_slice_side(flags, x, y, view)
+      @slice_side = nil
+      return if @slice_plane.nil?
+
+      point, normal = @slice_plane
+      if _mouse_ip_on_geometry?
+        p = @mouse_ip.position
+      else
+        p, _ = Geom.closest_points([ point, normal ], view.pickray(x, y))
+      end
+      d = point.vector_to(p).dot(normal)
+      @slice_side = d >= 0 ? 1 : -1 if d.abs > SolidMeshDef::TOLERANCE
+    end
+
+    # -- Preview --
+
+    # The selected instances framed as SmartBuild frames its picked instance,
+    # instead of the native selection.
+    def _preview_slice_selection
+      @tool.clear_3d(LAYER_3D_SLICE_SELECTION_PREVIEW)
+      return unless has_active_selection?
+
+      selection_path = get_active_selection_path
+      get_active_selection_instances.each do |instance|
+        next if instance.deleted?
+
+        kb = Kuix::Bounds3d.new.copy!(instance.definition.bounds).inflate_all!(1)
+        t = PathUtils.get_transformation(selection_path + [ instance ], IDENTITY)
+
+        k_box = Kuix::BoxCornersMotif3d.new
+        k_box.bounds.copy!(kb)
+        k_box.corner_size = 20
+        k_box.color = Kuix::COLOR_BLUE
+        k_box.line_width = 2.0
+        k_box.line_stipple = Kuix::LINE_STIPPLE_SOLID
+        k_box.transformation = t
+        @tool.append_3d(k_box, LAYER_3D_SLICE_SELECTION_PREVIEW)
+
+        k_box = Kuix::BoxMotif3d.new
+        k_box.bounds.copy!(kb)
+        k_box.color = Kuix::COLOR_BLUE
+        k_box.line_width = 1.5
+        k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+        k_box.transformation = t
+        @tool.append_3d(k_box, LAYER_3D_SLICE_SELECTION_PREVIEW)
+
+      end
+    end
+
+    def _preview_slice_reference(view)
+      return _preview_reference_points(view) if _fetch_option_slice_reference_points?
+      return if @reference_plane.nil?
+      _preview_reference_face(3)
+    end
+
+    # The points placed, the segment to the mouse, and the triangle once the
+    # 3 are known.
+    def _preview_reference_points(view)
+      points = @reference_points.dup
+      mouse_point = @reference_snap_point if @reference_points.length < 3
+      points << mouse_point unless mouse_point.nil?
+      return if points.empty?
+
+      # The sides but the one being drawn, left to the edge below : drawn twice, they flicker
+      if mouse_point.nil?
+        outline_points = points
+      else
+        outline_points = @reference_points.length == 2 ? [ mouse_point ] + @reference_points : []
+      end
+      if outline_points.length > 1
+        k_polyline = Kuix::Polyline.new
+        k_polyline.add_points(outline_points)
+        k_polyline.closed = mouse_point.nil? && outline_points.length == 3
+        k_polyline.line_width = 2
+        k_polyline.show_hidden_lines = true
+        k_polyline.depth_offset = 2  # Over the edges the points snap to
+        k_polyline.color = COLOR_FACE_REFERENCE
+        @tool.append_3d(k_polyline, LAYER_3D_SLICE_PREVIEW)
+      end
+
+      unless mouse_point.nil? || @reference_points.empty?
+        # The segment being drawn, in the color of the axis it follows
+        k_edge = Kuix::EdgeMotif3d.new
+        k_edge.start.copy!(@reference_points.last)
+        k_edge.end.copy!(mouse_point)
+        k_edge.line_width = @locked_axis.nil? ? 2 : 3
+        k_edge.show_hidden_lines = true
+        k_edge.color = _get_vector_color(@reference_points.last.vector_to(mouse_point), COLOR_FACE_REFERENCE)
+        k_edge.on_top = false
+        @tool.append_3d(k_edge, LAYER_3D_SLICE_PREVIEW)
+
+        # Locked : the mouse linked to its projection on the axis
+        if !@locked_axis.nil? && @mouse_ip.valid? && @mouse_ip.position != mouse_point
+          k_edge = Kuix::EdgeMotif3d.new
+          k_edge.start.copy!(@mouse_ip.position)
+          k_edge.end.copy!(mouse_point)
+          k_edge.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+          k_edge.color = _get_vector_color(@locked_axis, COLOR_FACE_REFERENCE)
+          k_edge.on_top = true
+          @tool.append_3d(k_edge, LAYER_3D_SLICE_PREVIEW)
+        end
+      end
+
+      if points.length == 3
+        k_mesh = Kuix::Mesh.new
+        k_mesh.add_triangles(points)
+        k_mesh.background_color = ColorUtils.color_translucent(COLOR_FACE_REFERENCE, 0.1)
+        @tool.append_3d(k_mesh, LAYER_3D_SLICE_PREVIEW)
+      end
+
+      @tool.append_3d(_create_floating_points(points: @reference_points, style: Kuix::POINT_STYLE_CIRCLE, fill_color: Kuix::COLOR_WHITE, stroke_color: COLOR_FACE_REFERENCE, size: 2), LAYER_3D_SLICE_PREVIEW) if @reference_points.any?
+
+    end
+
+    def _preview_slice(view)
+      return if @slice_plane.nil?
+
+      color = _get_slice_plane_color
+      crossed_part_defs = _get_crossed_part_defs(@slice_plane)
+
+      _preview_crossed_parts(crossed_part_defs)
+      _preview_slice_plane(view, @slice_plane, color, crossed_part_defs.any?)
+
+      # The distance to the reference
+
+      point, normal = @reference_plane
+      distance = point.vector_to(@slice_plane[0]).dot(normal)
+
+      if @reference_axis.nil?
+        _preview_reference_face
+      else
+        _preview_slice_plane(view, @reference_plane, color, false, true)
+      end
+
+      k_edge = Kuix::EdgeMotif3d.new
+      k_edge.start.copy!(point)
+      k_edge.end.copy!(@slice_plane[0])
+      k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+      k_edge.color = color
+      k_edge.on_top = true
+      @tool.append_3d(k_edge, LAYER_3D_SLICE_PREVIEW)
+
+      @tool.append_3d(_create_floating_points(points: [ point, @slice_plane[0] ], style: Kuix::POINT_STYLE_CIRCLE, fill_color: Kuix::COLOR_WHITE, stroke_color: color, size: 2), LAYER_3D_SLICE_PREVIEW)
+
+      @tool.set_status_vcb_value(distance.abs.to_l, true)
+
+      unless distance.abs < SolidMeshDef::TOLERANCE
+
+        k_label = _create_floating_label(
+          snap_point: Geom.linear_combination(0.5, point, 0.5, @slice_plane[0]),
+          text: distance.abs.to_l,
+          text_color: Kuix::COLOR_X,
+          border_color: color
+        )
+        @tool.append_2d(k_label)
+
+      end
+
+    end
+
+    def _preview_slice_distribute(view)
+      return if @reference_plane.nil?
+
+      color = _get_slice_plane_color
+
+      if @reference_axis.nil?
+        _preview_reference_face
+      else
+        _preview_slice_plane(view, @reference_plane, color, false, true)
+      end
+
+      return if (planes = _get_distributed_planes).nil?
+
+      _preview_crossed_parts(planes.flat_map { |plane| _get_crossed_part_defs(plane) }.uniq)
+      planes.each { |plane| _preview_slice_plane(view, plane, color, _get_crossed_part_defs(plane).any?) }
+
+      # The piece lengths, along the selection center
+
+      frame = _get_plane_frame(@reference_plane)
+      extents = _get_part_defs_extents(_get_slice_part_defs, frame)
+      fti = frame.inverse
+      zs = [ extents.min.z, extents.max.z ] + planes.map { |plane| plane[0].transform(fti).z }
+      zs.sort.each_cons(2) do |z0, z1|
+
+        k_label = _create_floating_label(
+          snap_point: Geom::Point3d.new(extents.center.x, extents.center.y, (z0 + z1) / 2.0).transform(frame),
+          text: (z1 - z0).to_l,
+          text_color: Kuix::COLOR_X,
+          border_color: color
+        )
+        @tool.append_2d(k_label)
+
+      end
+
+    end
+
+    def _preview_slice_side(view)
+      return if @slice_plane.nil?
+
+      color = _get_slice_plane_color
+      crossed_part_defs = _get_crossed_part_defs(@slice_plane)
+
+      _preview_sliced_parts(@slice_plane, @slice_side, color)
+      _preview_slice_plane(view, @slice_plane, color, true)
+
+      return if @slice_side.nil? || crossed_part_defs.empty?
+
+      removed_part_defs = _get_removed_part_defs(@slice_plane, @slice_side)
+      _preview_removed_parts(removed_part_defs.reject { |part_def| _slice_instance_hidden?(part_def) })
+
+      frame = _get_plane_frame(@slice_plane)
+      extents = _get_part_defs_extents(crossed_part_defs + removed_part_defs, frame)
+
+      # The kept side
+
+      center = Geom::Point3d.new(extents.center.x, extents.center.y, 0).transform(frame)
+      normal = @slice_plane[1]
+
+      k_edge = Kuix::EdgeMotif3d.new
+      k_edge.start.copy!(center)
+      k_edge.end.copy!(center.offset(@slice_side > 0 ? normal : normal.reverse, view.pixels_to_model(PX_INFLATE_VALUE * 1.5, center)))
+      k_edge.end_arrow = true
+      k_edge.arrow_size = @tool.get_unit * 2.0
+      k_edge.line_width = 2
+      k_edge.color = color
+      k_edge.on_top = true
+      @tool.append_3d(k_edge, LAYER_3D_SLICE_PREVIEW)
+
+    end
+
+    def _preview_crossed_parts(part_defs)
+      part_defs.each do |part_def|
+
+        k_mesh = Kuix::Mesh.new
+        k_mesh.add_triangles(part_def.triangles)
+        k_mesh.background_color = COLOR_PART
+        @tool.append_3d(k_mesh, LAYER_3D_SLICE_PREVIEW)
+
+      end
+    end
+
+    # The parts as the cut leaves them, in wireframe : their edges clipped to
+    # the kept +side+ (all of them while it is unknown) and the section contour.
+    # Computed once per side, the plane being fixed.
+    def _preview_sliced_parts(plane, side, color)
+      @sliced_previews ||= {}
+      edge_segments, section_segments = (@sliced_previews[side] ||= _compute_sliced_preview(plane, side))
+
+      unless edge_segments.empty?
+        k_segments = Kuix::Segments.new
+        k_segments.add_segments(edge_segments)
+        k_segments.line_width = 1.5
+        k_segments.color = COLOR_SLICED_EDGE
+        @tool.append_3d(k_segments, LAYER_3D_SLICE_PREVIEW)
+      end
+
+      unless section_segments.empty?
+        k_segments = Kuix::Segments.new
+        k_segments.add_segments(section_segments)
+        k_segments.line_width = 2
+        k_segments.color = color
+        @tool.append_3d(k_segments, LAYER_3D_SLICE_PREVIEW)
+      end
+
+    end
+
+    def _compute_sliced_preview(plane, side)
+      point, normal = plane
+      fn_distance = lambda { |p| point.vector_to(p).dot(normal) }
+
+      crossed_part_defs = _get_crossed_part_defs(plane)
+      removed_part_defs = side.nil? ? [] : _get_removed_part_defs(plane, side)
+
+      edge_segments = []
+      (_get_slice_part_defs - removed_part_defs).each do |part_def|
+        _get_slice_part_def_edges(part_def).each_slice(2) do |p0, p1|
+          unless side.nil?
+            d0 = fn_distance.call(p0) * side
+            d1 = fn_distance.call(p1) * side
+            next if d0 < SolidMeshDef::TOLERANCE && d1 < SolidMeshDef::TOLERANCE && (d0 < -SolidMeshDef::TOLERANCE || d1 < -SolidMeshDef::TOLERANCE)
+            if d0 < -SolidMeshDef::TOLERANCE
+              p0 = Geom.linear_combination(d1 / (d1 - d0), p0, -d0 / (d1 - d0), p1)
+            elsif d1 < -SolidMeshDef::TOLERANCE
+              p1 = Geom.linear_combination(d1 / (d1 - d0), p0, -d0 / (d1 - d0), p1)
+            end
+          end
+          edge_segments << p0 << p1
+        end
+      end
+
+      # Each triangle crossing the plane gives a segment of the contour
+      section_segments = []
+      crossed_part_defs.each do |part_def|
+        part_def.triangles.each_slice(3) do |triangle|
+          ds = triangle.map { |p| fn_distance.call(p) }
+          ss = ds.map { |d| d > SolidMeshDef::TOLERANCE ? 1 : (d < -SolidMeshDef::TOLERANCE ? -1 : 0) }
+          next if ss.all?(&:zero?)
+          ps = []
+          3.times do |i|
+            j = (i + 1) % 3
+            ps << triangle[i] if ss[i] == 0
+            ps << Geom.linear_combination(ds[j] / (ds[j] - ds[i]), triangle[i], -ds[i] / (ds[j] - ds[i]), triangle[j]) if ss[i] * ss[j] < 0
+          end
+          section_segments << ps[0] << ps[1] if ps.length == 2 && ps[0] != ps[1]
+        end
+      end
+
+      [ edge_segments, section_segments ]
+    end
+
+    def _preview_removed_parts(part_defs)
+      part_defs.each do |part_def|
+
+        k_mesh = Kuix::Mesh.new
+        k_mesh.add_triangles(part_def.triangles)
+        k_mesh.background_color = COLOR_REMOVED_PART
+        @tool.append_3d(k_mesh, LAYER_3D_SLICE_PREVIEW)
+
+      end
+    end
+
+    def _preview_reference_face(line_width = 2)
+      if @reference_face_manipulator.nil?
+        return unless _reference_points_plane?
+        points = @reference_points  # The 3 points triangle
+      else
+        points = @reference_face_manipulator.outer_loop_manipulator.points
+      end
+
+      k_polyline = Kuix::Polyline.new
+      k_polyline.add_points(points)
+      k_polyline.closed = true
+      k_polyline.line_width = line_width
+      k_polyline.color = COLOR_FACE_REFERENCE
+      k_polyline.show_hidden_lines = true
+      k_polyline.depth_offset = 2  # Over the face edges it lies on
+      @tool.append_3d(k_polyline, LAYER_3D_SLICE_PREVIEW)
+
+    end
+
+    # The plane displayed over the whole selection, inflated by a few pixels.
+    def _preview_slice_plane(view, plane, color, highlighted, reference = false)
+
+      frame = _get_plane_frame(plane)
+      extents = _get_part_defs_extents(_get_slice_part_defs, frame)
+      return if extents.empty?
+
+      inflate = view.pixels_to_model(PX_INFLATE_VALUE, plane[0])
+
+      k_rectangle = Kuix::RectangleMotif3d.new
+      k_rectangle.bounds.set!(extents.min.x - inflate, extents.min.y - inflate, 0, extents.width + inflate * 2, extents.height + inflate * 2, 0)
+      k_rectangle.line_width = highlighted ? 2 : 1
+      k_rectangle.line_stipple = reference || !highlighted ? Kuix::LINE_STIPPLE_SHORT_DASHES : Kuix::LINE_STIPPLE_SOLID
+      k_rectangle.color = color
+      k_rectangle.transformation = frame
+      @tool.append_3d(k_rectangle, LAYER_3D_SLICE_PREVIEW)
+
+      return if reference
+
+      k_rectangle_fill = Kuix::RectangleFillMotif3d.new
+      k_rectangle_fill.bounds.copy!(k_rectangle.bounds)
+      k_rectangle_fill.color = ColorUtils.color_translucent(color, highlighted ? 0.3 : 0.1)
+      k_rectangle_fill.transformation = frame
+      @tool.append_3d(k_rectangle_fill, LAYER_3D_SLICE_PREVIEW)
+
+    end
+
+    def _get_slice_plane_color
+      return COLOR_FACE_REFERENCE if @reference_plane.nil? || @reference_axis.nil?
+      _get_vector_color(@reference_plane[1], COLOR_FACE_REFERENCE)
+    end
+
+    # -- Read --
+
+    def _read_slice(tool, text, view)
+      return false if @reference_plane.nil?
+
+      point, normal = @reference_plane
+      distance = @slice_plane.nil? ? 0 : point.vector_to(@slice_plane[0]).dot(normal)
+
+      distance = _read_user_text_length(tool, text, distance)
+      return true if distance.nil?
+
+      @slice_plane = [ point.offset(distance < 0 ? normal.reverse : normal, distance.abs), normal ]
+      @tool.set_status_vcb_value('')
+      _validate_slice_plane
+
+      true
+    end
+
+    # xn : n planes, /n : n pieces (n - 1 planes), shared over the selection
+    # as the Smart Build Divider reads them. Slice mode only.
+    def _read_slice_number(tool, text, view)
+      return false if _fetch_option_slice_mode_cut?
+      return false unless text.is_a?(String) && (match = text.match(/^([x*\/])(\d+)$/))
+
+      operator, value = match[1, 2]
+      number = value.to_i
+
+      if operator == '/' && number < 2
+        UI.beep
+        tool.notify_errors([ [ 'tool.default.error.invalid_divider', { :value => value } ] ])
+        return true
+      end
+
+      _set_distribution(operator == '/' ? number - 1 : number, @spacings)
+      @tool.set_status_vcb_value('')
+
+      true
+    end
+
+    # A list of lengths - "600;300", "600;" pins the first piece, ";300" the
+    # last one - read as the Smart Build Divider spacings. Slice mode only.
+    def _read_slice_spacings(tool, text, view)
+      return false if _fetch_option_slice_mode_cut?
+
+      list = _split_user_text(text)
+      return false unless list.is_a?(Array) && list.size > 1
+
+      # An entry that is not a length at all marks the free middle
+      spacings = list.map { |spacing|
+        length = _read_user_text_length(tool, spacing, -1)
+        length.nil? || length == -1 ? -1 : length.abs.to_l
+      }
+
+      _set_distribution([ @number, spacings.select { |spacing| spacing > 0 }.size ].max, spacings)
+      @tool.set_status_vcb_value('')
+
+      true
+    end
+
+    # -----
+
+    def _validate_slice_plane
+      return UI.beep if @slice_plane.nil?
+      if _fetch_option_slice_mode_cut?
+        return UI.beep if _get_crossed_part_defs(@slice_plane).empty?
+        set_state(STATE_SLICE_SIDE)
+        _refresh
+      else
+        return UI.beep if _get_crossed_part_defs(@slice_plane).empty?
+        _slice_entities([ @slice_plane ])
+      end
+    end
+
+    def _validate_slice_distribution
+      return UI.beep if (planes = _get_distributed_planes).nil?
+      _slice_entities(planes)
+    end
+
+    # -- Apply --
+
+    # Slices the crossed parts by the given parallel planes : keeps all the
+    # pieces, or, with a single plane, only the +side+ one (1 = the plane
+    # normal side) when given.
+    def _slice_entities(planes, side = nil)
+      _unhide_slice_instances
+      planes = planes.select { |plane| _get_crossed_part_defs(plane).any? }
+      part_defs = planes.flat_map { |plane| _get_crossed_part_defs(plane) }.uniq
+      if part_defs.empty?
+        UI.beep
+        return
+      end
+      plane = planes.first
+
+      frame = _get_plane_frame(plane)
+      fti = frame.inverse
+      extents = _get_part_defs_extents(part_defs, frame)
+      margin = [ 1.0, extents.diagonal * 0.1 ].max
+      zmin = extents.min.z - margin
+      zmax = extents.max.z + margin
+      slabs = if side.nil?
+                zs = planes.map { |p| p[0].transform(fti).z.to_f }.sort
+                zs = zs.each_with_object([]) { |z, uniq_zs| uniq_zs << z if uniq_zs.empty? || z - uniq_zs.last > SolidMeshDef::TOLERANCE }
+                ([ zmin ] + zs + [ zmax ]).each_cons(2).to_a
+              else
+                [ side > 0 ? [ 0, zmax ] : [ zmin, 0 ] ]
+              end
+      removed_paths = side.nil? ? [] : _get_removed_part_defs(plane, side).map(&:path)
+      kept_paths = (_get_slice_part_defs - part_defs).map(&:path) - removed_paths
+
+      # The slabs each part really has material in
+      path_slabs = part_defs.map { |part_def|
+        zmin_part, zmax_part = part_def.points.map { |p| p.transform(fti).z.to_f }.minmax
+        (0...slabs.length).select { |index| [ zmax_part, slabs[index][1] ].min - [ zmin_part, slabs[index][0] ].max > SolidMeshDef::TOLERANCE }
+      }
+
+      errors = []
+
+      model = Sketchup.active_model
+      model.start_operation('OCL Slice Parts', true)
+      begin
+
+        errors = _slice_parts(part_defs.map(&:path), plane, frame, extents, margin, slabs, path_slabs, _fetch_option_options_make_unique?, removed_paths, kept_paths)
+        if errors.empty?
+          model.commit_operation
+        else
+          model.abort_operation
+        end
+
+      rescue Exception => e
+        PLUGIN.dump_exception(e)
+        model.abort_operation
+        errors = [ [ 'core.error.exception', { :error => e.message } ] ]
+      end
+
+      Sketchup.active_model.selection.clear
+      if errors.any?
+        _reset
+        @tool.notify_errors(errors)
+      else
+        _restart
+      end
+    end
+
+    # Runs inside the caller's operation, answers the errors - nothing to undo
+    # by the caller but its own operation. Each of the +slabs+ ([ zmin, zmax ]
+    # in +frame+) a part has material in - its +path_slabs+ indices - yields
+    # one piece of it.
+    #
+    # The parts sharing a definition and sliced at the same place in it form a
+    # twin group : their pieces share a definition too. In make_unique: false
+    # mode, the definition being rebuilt in place, a definition can't be
+    # sliced at two different places.
+    #
+    # The +removed_paths+ parts, wholly beyond the plane, are erased - their
+    # instance only : in make_unique: false mode, every occurrence of the
+    # assembly holding them.
+    #
+    # The +kept_paths+ parts, selected but not crossed, keep their shape : in
+    # make_unique: false mode, a twin group whose definition one of them uses
+    # moves - with the unselected instances - to a definition of its own.
+    def _slice_parts(paths, plane, frame, extents, margin, slabs, path_slabs, make_unique, removed_paths = [], kept_paths = [])
+      model = Sketchup.active_model
+
+      # Separate the assemblies holding the parts, so the pieces are laid in
+      # (and the removed parts erased from) this occurrence only
+      if make_unique
+        all_paths = _make_unique_ancestors(paths + removed_paths)
+        paths = all_paths[0...paths.length]
+        removed_paths = all_paths[paths.length..-1]
+      end
+
+      twin_groups = []
+      group_slabs = []
+      paths.each_with_index do |path, path_index|
+        definition = path.last.definition
+        if (twin_group = twin_groups.find { |group| group.first.last.definition == definition && _same_local_plane?(group.first, path, plane) })
+          twin_group << path
+        elsif !make_unique && twin_groups.any? { |group| group.first.last.definition == definition }
+          return [ [ 'tool.smart_reshape.error.slice_shared_definition', { :name => definition.name } ] ]
+        else
+          twin_groups << [ path ]
+          group_slabs << path_slabs[path_index]
+        end
+      end
+
+      base_names = twin_groups.map { |twin_paths| twin_paths.map { |path| path.last.definition.name } }.flatten
+
+      # Keep the shape of the selected parts the plane does not cross
+      unless make_unique
+        kept_instances = kept_paths.map(&:last)
+        twin_groups.each do |twin_paths|
+          instances = twin_paths.map(&:last)
+          definition = instances.first.definition
+          next unless kept_instances.any? { |instance| instance.definition == definition }
+          followers = definition.instances - instances - kept_instances
+          instances.first.make_unique
+          (instances[1..-1] + followers).each { |instance| instance.definition = instances.first.definition }
+        end
+      end
+
+      # The pieces beyond the first one are cut from clones laid BEFORE any
+      # boolean : a boolean rebuilds the definition it cuts
+      piece_paths = twin_groups.map { |twin_paths| twin_paths.map { |path| [ path ] } }
+      twin_groups.each_with_index do |twin_paths, group_index|
+        (1...group_slabs[group_index].length).each do
+          _clone_twin_parts(twin_paths, make_unique).each_with_index { |clone_path, index| piece_paths[group_index][index] << clone_path }
+        end
+      end
+      piece_slabs = twin_groups.each_with_index.map { |twin_paths, group_index| twin_paths.map { group_slabs[group_index] } }.flatten(1)
+      piece_paths = piece_paths.flatten(1)
+
+      slabs.each_with_index do |(zmin, zmax), slab_index|
+
+        # The piece each part has in this slab
+        slab_piece_paths = piece_paths.each_with_index.map { |pieces, index| (piece_index = piece_slabs[index].index(slab_index)).nil? ? nil : pieces[piece_index] }.compact
+        next if slab_piece_paths.empty?
+
+        box = _add_slab_box(frame, extents, margin, zmin, zmax)
+
+        src_drawing_defs = _decompose_for_solid_boolean(slab_piece_paths.map { |piece_path| Sketchup::InstancePath.new(piece_path) })
+        cut_drawing_defs = _decompose_for_solid_boolean([ Sketchup::InstancePath.new([ box ]) ])
+        return [ [ 'default.error' ] ] unless (src_drawing_defs + cut_drawing_defs).all? { |drawing_def| drawing_def.is_a?(DrawingDef) }
+
+        result_def = _apply_solid_boolean(
+          src_drawing_defs,
+          cut_drawing_defs,
+          operation: CommonSolidBooleanWorker::OPERATION_INTERSECTION,
+          make_unique: make_unique
+        )
+        return result_def.errors unless result_def.success?
+
+        slab_piece_paths.each { |piece_path| _erase_out_of_slab_machinings(piece_path, frame, zmin, zmax) }
+
+      end
+
+      removed_paths.map(&:last).select(&:valid?).group_by(&:parent).each { |parent, instances| parent.entities.erase_entities(instances) }
+
+      # Each piece named after its part
+      if slabs.length > 1
+        renamed = {}
+        piece_paths.each_with_index do |pieces, index|
+          next if pieces.length < 2
+          definitions = pieces.map { |piece_path| piece_path.last.valid? ? piece_path.last.definition : nil }.compact.uniq
+          next if definitions.empty? || definitions.any? { |definition| renamed[definition] }
+          definitions.each { |definition| renamed[definition] = true }
+          _name_pieces(base_names[index], definitions)
+        end
+      end
+
+      []
+    end
+
+    # Names the given piece definitions "Name #1", "Name #2"... numbered from
+    # the first number free for all of them - a part sliced again continues
+    # its numbering instead of piling suffixes up.
+    #
+    # SketchUp re-uniquifies any name it holds taken - the definition's own
+    # current one included, and ones only undone definitions bore - into one
+    # of its own making ("Name ", "Name #k", possibly a duplicate). So the
+    # pieces first get temporary names, out of each other's way, then each
+    # final name is read back, the numbering moving on until all hold.
+    def _name_pieces(base_name, definitions)
+      base_name = base_name.sub(/ #\d+\z/, '')
+      model_definitions = Sketchup.active_model.definitions
+      fn_free = lambda { |name| (definition = model_definitions[name]).nil? || definitions.include?(definition) }
+      start = 1
+      100.times do
+        names = (0...definitions.length).map { |offset| "#{base_name} ##{start + offset}" }
+        if names.all? { |name| fn_free.call(name) }
+          return if definitions.zip(names).all? { |definition, name| definition.name == name }
+          definitions.each { |definition| definition.name = "ocl-slice-#{definition.entityID}" }
+          definitions.zip(names).each { |definition, name| definition.name = name }
+          return if definitions.zip(names).all? { |definition, name| definition.name == name }
+        end
+        start += 1
+      end
+    end
+
+    # Makes unique every assembly holding the given parts that is displayed
+    # elsewhere - the active context excepted : editing it is editing all its
+    # occurrences. The parts are found again by POSITION, which is what
+    # survives a make_unique.
+    def _make_unique_ancestors(paths)
+      active_path = Sketchup.active_model.active_path.to_a
+      paths.map { |path| _get_index_path(path) }.map do |index_path|
+        path = _resolve_index_path(index_path)
+        (0...path.length - 1).each do |depth|
+          entity = path[depth]
+          next if active_path.include?(entity)
+          next if entity.definition.instances.length < 2
+          entity.make_unique
+          path = _resolve_index_path(index_path)
+        end
+        path
+      end
+    end
+
+    def _get_index_path(path)
+      entities = Sketchup.active_model.entities
+      path.map do |entity|
+        index = entities.to_a.index(entity)
+        entities = entity.definition.entities
+        index
+      end
+    end
+
+    def _resolve_index_path(index_path)
+      entities = Sketchup.active_model.entities
+      index_path.map do |index|
+        entity = entities.to_a[index]
+        entities = entity.definition.entities
+        entity
+      end
+    end
+
+    # Is the plane at the same place in both parts' definition ?
+    def _same_local_plane?(path_a, path_b, plane)
+      point_a, normal_a = _get_local_plane(path_a, plane)
+      point_b, normal_b = _get_local_plane(path_b, plane)
+      normal_a.samedirection?(normal_b) && point_b.on_plane?([ point_a, normal_a ])
+    end
+
+    def _get_local_plane(path, plane)
+      ti = PathUtils.get_transformation(path, IDENTITY).inverse
+      point, normal = plane
+      [ point.transform(ti), normal.transform(ti).normalize ]
+    end
+
+    # A clone of each of the given twin parts, all sharing one new definition
+    # - the piece to come. When the part definition is rebuilt in place, the
+    # clone definition is laid beside every other instance of it too.
+    def _clone_twin_parts(twin_paths, make_unique)
+      instances = twin_paths.map(&:last)
+      definition = instances.first.definition
+
+      clone = _add_instance_beside(instances.first, definition)
+      clone.make_unique
+      clone_definition = clone.definition
+
+      clones = [ clone ] + instances[1..-1].map { |instance| _add_instance_beside(instance, clone_definition) }
+      unless make_unique
+        (definition.instances - instances).each { |other_instance| _add_instance_beside(other_instance, clone_definition) }
+      end
+
+      twin_paths.zip(clones).map { |path, clone_instance| path[0...-1] + [ clone_instance ] }
+    end
+
+    def _add_instance_beside(src_instance, definition)
+      dst_instance = src_instance.parent.entities.add_instance(definition, src_instance.transformation)
+      dst_instance.material = src_instance.material
+      dst_instance.name = src_instance.name
+      dst_instance.layer = src_instance.layer
+      dst_instance.casts_shadows = src_instance.casts_shadows?
+      dst_instance.receives_shadows = src_instance.receives_shadows?
+      ComponentUtils.copy_attributes(src_instance, dst_instance)
+      dst_instance
+    end
+
+    # A closed box at the model root : the selection extents (+margin) in the
+    # frame plane, from +zmin+ to +zmax+ along its normal.
+    def _add_slab_box(frame, extents, margin, zmin, zmax)
+      xmin = extents.min.x - margin
+      xmax = extents.max.x + margin
+      ymin = extents.min.y - margin
+      ymax = extents.max.y + margin
+      corners = [
+        [ xmin, ymin, zmin ], [ xmax, ymin, zmin ], [ xmax, ymax, zmin ], [ xmin, ymax, zmin ],
+        [ xmin, ymin, zmax ], [ xmax, ymin, zmax ], [ xmax, ymax, zmax ], [ xmin, ymax, zmax ]
+      ].map { |coordinates| Geom::Point3d.new(coordinates).transform(frame) }
+
+      group = Sketchup.active_model.entities.add_group
+      [ [ 0, 3, 2, 1 ], [ 4, 5, 6, 7 ], [ 0, 1, 5, 4 ], [ 1, 2, 6, 5 ], [ 2, 3, 7, 6 ], [ 3, 0, 4, 7 ] ].each do |indices|
+        group.entities.add_face(indices.map { |index| corners[index] })
+      end
+      group
+    end
+
+    # The machinings and hardware a boolean leaves out of its operands stay
+    # in every piece : erase those lying beyond the piece slab. One the plane
+    # crosses stays in both pieces.
+    def _erase_out_of_slab_machinings(piece_path, frame, zmin, zmax)
+      instance = piece_path.last
+      return unless instance.valid?
+
+      _erase_out_of_slab_machinings_in(instance.definition.entities, frame.inverse * PathUtils.get_transformation(piece_path, IDENTITY), zmin, zmax)
+    end
+
+    # Searches the untyped groups too - the part's own sub groups, the group
+    # SmartJoin lays hardware articles in - and erases those it empties.
+    # Answers whether +entities+ was emptied.
+    #
+    # A group shared with another piece is made unique BEFORE being searched :
+    # an edit through the entities of a shared group lands on its sibling.
+    def _erase_out_of_slab_machinings_in(entities, t, zmin, zmax)
+      erasables = entities.select { |entity|
+        next false unless entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance)
+        type = _get_material_attributes(entity.material).type
+        if entity.definition.behavior.cuts_opening? || type == MaterialAttributes::TYPE_MACHINING || type == MaterialAttributes::TYPE_HARDWARE
+          z = entity.bounds.center.transform(t).z
+          z < zmin || z > zmax
+        elsif entity.is_a?(Sketchup::Group) && type == MaterialAttributes::TYPE_UNKNOWN
+          entity.make_unique if entity.definition.instances.length > 1
+          _erase_out_of_slab_machinings_in(entity.entities, t * entity.transformation, zmin, zmax)
+        else
+          false
+        end
+      }
+      return false if erasables.empty?
+      entities.erase_entities(erasables)
+      entities.length == 0
     end
 
   end

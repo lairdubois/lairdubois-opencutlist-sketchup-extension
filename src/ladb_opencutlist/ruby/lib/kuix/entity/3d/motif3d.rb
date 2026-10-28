@@ -2,6 +2,9 @@ module Ladb::OpenCutList::Kuix
 
   class Motif3d < Entity3d
 
+    include HiddenLinesHelper
+    include DepthOffsetHelper
+
     attr_accessor :patterns_transformation
     attr_accessor :color
     attr_accessor :line_width, :line_stipple
@@ -56,8 +59,9 @@ module Ladb::OpenCutList::Kuix
           graphics.set_line_stipple(@line_stipple)
           graphics.view.draw2d(GL_LINE_STRIP, points.map { |point| graphics.view.screen_coords(point) })
         else
+          paint_hidden_lines(graphics, GL_LINE_STRIP, points)
           graphics.draw_line_strip(
-            points: points,
+            points: depth_offset_points(graphics.view, points),
             color: @color,
             line_width: @line_width,
             line_stipple: @line_stipple
@@ -165,8 +169,12 @@ module Ladb::OpenCutList::Kuix
           p1_3d = Geom.intersect_line_plane(ray1, [ p_3d, ray1.last ])
           p2_3d = Geom.intersect_line_plane(ray2, [ p_3d, ray2.last ])
 
+          paint_hidden_lines(graphics, GL_LINE_STRIP, [ p1_3d, p_3d, p2_3d ])
           graphics.draw_line_strip(
-            points: [ p1_3d, p_3d, p2_3d ]
+            points: depth_offset_points(view, [ p1_3d, p_3d, p2_3d ]),
+            color: @color,
+            line_width: @line_width,
+            line_stipple: @line_stipple  # Not the hidden pass ones
           )
 
         end
@@ -411,8 +419,9 @@ module Ladb::OpenCutList::Kuix
 
       else
 
+        paint_hidden_lines(graphics, GL_LINES, points)
         graphics.draw_lines(
-          points: points,
+          points: depth_offset_points(view, points),
           color: @color,
           line_width: @line_width,
           line_stipple: @line_stipple
