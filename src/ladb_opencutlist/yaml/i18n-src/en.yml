@@ -2883,12 +2883,40 @@ tool:
     action_4_status: Create a part corresponding to the intersection of several parts
     action_4_state_0_status: Select part A
     action_4_state_1_status: Select part B
+    # @no-translate
+    action_5: Slice
+    # @no-translate
+    action_5_status: Slice one or more parts with a plane
+    # @no-translate
+    action_5_state_1_status: Click on the reference face, anywhere in the model
+    # @no-translate
+    action_5_state_1_arrows_status: Slice perpendicular to an axis from the end of the selection
+    # @no-translate
+    action_5_state_1b_status: Click to place point {{ index }} of 3 of the reference plane, anywhere in the model
+    # @no-translate
+    action_5_state_1b_arrows_status: Lock to an axis
+    # @no-translate
+    action_5_state_1c_status: Click to confirm the reference plane or press Esc to remove the last point
+    # @no-translate
+    action_5_state_2_status: Click to slice the parts or enter a distance
+    # @no-translate
+    action_5_state_2a_status: Click to place the cutting plane or enter a distance
+    # @no-translate
+    action_5_state_2_arrows_status: Change axis
+    # @no-translate
+    action_5_state_3_status: Click on the side of the piece to keep
+    # @no-translate
+    action_5_state_4_status: Click to slice the parts into {{ number }} pieces or enter spacings
     action_option_group_thickness: Thickness
     action_option_group_stretch_measure_type: Measure
     action_option_group_axes: Axes
     action_option_group_paneling_joint_type: Joint
     action_option_group_paneling_direction: Direction
     action_option_group_csg_operation: Operation
+    # @no-translate
+    action_option_group_slice_mode: Mode
+    # @no-translate
+    action_option_group_slice_reference: Reference
     action_option_group_options: Options
     action_option_thickness_thickness: Thickness
     action_option_thickness_thickness_status: Defines the thickness of the panels
@@ -2901,6 +2929,14 @@ tool:
     action_option_paneling_joint_type_miter_status: Miter joint
     action_option_paneling_direction_inward_status: Inward direction
     action_option_paneling_direction_outward_status: Outward direction
+    # @no-translate
+    action_option_slice_mode_slice_status: Slice the parts and keep all pieces
+    # @no-translate
+    action_option_slice_mode_cut_status: Cut the parts and keep only one piece
+    # @no-translate
+    action_option_slice_reference_face_status: Reference plane taken from a face
+    # @no-translate
+    action_option_slice_reference_points_status: Reference plane through 3 points
     action_option_options_centered_status: Center on stretched elements
     action_option_options_make_unique_status: Make reshaped elements unique
     action_option_options_keep_a: Keep A
@@ -2917,6 +2953,8 @@ tool:
       validate_b: Confirm to apply the operation
     error:
       curve_intersect: One of the cutting planes crosses a non-stretchable curve
+      # @no-translate
+      slice_number_overflow: Unable to distribute {{ number }} pieces over the selection
   smart_paint:
     title: Paint
     default_material: Without material
