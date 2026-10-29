@@ -184,8 +184,9 @@ gulp.task('css_minify', function () {
     return gulp.src('../src/ladb_opencutlist/css/**/!(*.min).css')
         .pipe(cleanCSS())
         .pipe(rename({ suffix: '.min' }))
-        .pipe(postcss([ pxtorem({ minPixelValue: 1, propList: [
-            'font', 'font-size',
+        .pipe(postcss([pxtorem({
+            minPixelValue: 1, propList: [
+                'font', 'font-size',
                 'line-height',
                 'letter-spacing',
                 'width', 'min-width',
@@ -195,7 +196,8 @@ gulp.task('css_minify', function () {
                 'top', 'right', 'bottom', 'left',
                 'border-width',
                 'gap'
-            ] }) ]))
+            ]
+        })]))
         .pipe(gulp.dest('../src/ladb_opencutlist/css'));
 });
 
@@ -316,8 +318,10 @@ gulp.task('i18n_compile', function () {
         for (let key in doc) {
             if (typeof doc[key] === 'string') {
                 zzIndexes[prefix + key] = ++zzIndex;
-            } else if (typeof doc[key] === 'object') {
+            } else if (doc[key] !== null && typeof doc[key] === 'object' && !Array.isArray(doc[key])) {
                 indexKeys(doc[key], prefix + key + '.');
+            } else {
+                throw new Error('Invalid translation value in ' + sourceLanguage + ' at "' + prefix + key + '": expected a string or mapping');
             }
         }
     })(sourceYmlDocument, '');
@@ -380,10 +384,15 @@ gulp.task('i18n_compile', function () {
                     if (typeof doc[key] === 'string') {
                         if (!doc[key].match(/^\$t\([a-z0-9_.]+\)$/i)) {
                             const index = zzIndexes[prefix + key];
-                            doc[key] = (index === undefined ? '?' : index) + ' - ' + doc[key];
+                            if (index === undefined) {
+                                throw new Error('Missing source translation key in ' + language + ' at "' + prefix + key + '"');
+                            }
+                            doc[key] = index + ' - ' + doc[key];
                         }
-                    } else if (typeof doc[key] === 'object') {
+                    } else if (doc[key] !== null && typeof doc[key] === 'object' && !Array.isArray(doc[key])) {
                         fillZZValues(doc[key], prefix + key + '.');
+                    } else {
+                        throw new Error('Invalid translation value in ' + language + ' at "' + prefix + key + '": expected a string or mapping');
                     }
                 }
             }
@@ -392,7 +401,8 @@ gulp.task('i18n_compile', function () {
 
             fs.writeFileSync(yamlDestPath + 'zz_' + language + '.yml', yaml.dump(destZzYmlDocument, {
                 lineWidth: -1,
-                quotingType: '"'
+                quotingType: '"',
+                forceQuotes: true
             }), (err) => {
                 if (err) {
                     console.log(err);
@@ -500,7 +510,7 @@ gulp.task('version', function () {
 
     // Compute build from the current date
     var nowISO = (new Date()).toISOString();
-    var build = nowISO.slice(0,10).replace(/-/g, "") + nowISO.slice(11,16).replace(/:/g, "");
+    var build = nowISO.slice(0, 10).replace(/-/g, "") + nowISO.slice(11, 16).replace(/:/g, "");
 
     if (options.manifest || options.manifest === undefined) {
         // Update version property in manifest.json
