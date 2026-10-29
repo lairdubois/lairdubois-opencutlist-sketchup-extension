@@ -2920,7 +2920,7 @@ tool:
     action_option_group_options: Options
     action_option_thickness_thickness: Thickness
     action_option_thickness_thickness_status: Defines the thickness of the panels
-    action_option_stretch_measure_type_outside_status: Edge-to-Edge measure
+    action_option_stretch_measure_type_outside_status: Measure edge-to-edge
     action_option_stretch_measure_type_offset_status: Measure difference
     action_option_axes_active_status: Manipulate along the active axes
     action_option_axes_context_status: Manipulate along the axes of the group or component containing the part
@@ -3159,7 +3159,7 @@ tool:
       x_hinges_to_remove: "{{ count }} hinge to erase"
       x_hinges_to_remove_plural: "{{ count }} hinges to erase"
       hinge_forced_make_unique: Parts made unique; otherwise, the front would have hinges on several sides
-      hinge_forced_make_unique_door: Front and parts made unique; otherwise, the hinges would also appear on its other occurences
+      hinge_forced_make_unique_door: Front and parts made unique; otherwise, the hinges would also appear on its other occurrences
       shared_definition: "The SKP file ({{ file_name }}) contains the same definition as {{ definition_name }}, which has already been loaded: the latter is the one that is used"
   smart_export:
     title: Export
