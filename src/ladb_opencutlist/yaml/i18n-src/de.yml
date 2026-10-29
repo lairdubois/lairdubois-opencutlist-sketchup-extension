@@ -503,8 +503,8 @@ core:
     create_in_sketchup: Anlegen
     shaping: "{{ name }} ist in SketchUp geöffnet"
     shaping_help: |
-      Bearbeiten Sie das Teil im Modell, auf dem Prüfstand. 
-      Seine Achsen bilden sein Einbau-Koordinatensystem. 
+      Bearbeiten Sie das Teil im Modell, auf dem Prüfstand.
+      Seine Achsen bilden sein Einbau-Koordinatensystem.
       **Beenden** Sie, um es hier zu übernehmen; der Prüfstand verlässt dann das Modell.
     choose_skp: Wählen Sie eine SKP-Datei aus
     placement_toggle: Transformieren
@@ -548,7 +548,7 @@ core:
       not_deleted: "Kann nicht gelöscht werden: {{ error }}"
       has_children: "Löschen nicht möglich: Andere Beschläge erben davon ({{ children }})."
       has_users: "Löschen nicht möglich: Andere Beschläge verwenden ihn als Artikel ({{ users }})."
-      edit_lost: Das Teil ist nicht mehr in der Baugruppe enthalten, die Änderung ist verloren gegangen.
+      edit_lost: Das Teil ist nicht mehr im Modell enthalten, die Änderung ist verloren gegangen.
 tab:
   cutlist:
     label: Holzliste
@@ -1076,7 +1076,7 @@ tab:
       option_use_names: Identifizierung der Teile
       option_use_names_0: Nummer verwenden
       option_use_names_1: Bezeichnung verwenden
-      option_use_names_help: Wählen Sie zwischen **Nummer** und **Bezeichnung**, um die Teile auf dem Schnittdiagramm zu identifizieren.
+      option_use_names_help: Ermöglicht die Auswahl zwischen **Nummer** und **Bezeichnung**, um die Teile auf dem Schnittplan zu identifizieren.
       option_origin_corner: Position des Ursprungs
       option_origin_corner_1d_0: Links
       option_origin_corner_1d_1: Rechts
@@ -2686,7 +2686,7 @@ tool:
     action_0_state_1_status: Klicken Sie hier, um den Ursprung des Moduls festzulegen
     action_0_state_2_status: Klicken Sie hier, um die Breite des Moduls (X-Achse) festzulegen
     action_0_state_2_lock_status: An die Breite der Quelldatei anpassen
-    action_0_state_2_arrows_status: An einer Achse fixieren
+    action_0_state_2_arrows_status: Auf eine Achse fixieren
     action_0_state_3_status: Klicken Sie hier, um die Tiefe des Moduls (Y-Achse) festzulegen
     action_0_state_3_lock_status: An die Tiefe der Quelldatei anpassen
     action_0_state_3_arrows_status: Normale der XY-Ebene auf eine Achse fixieren

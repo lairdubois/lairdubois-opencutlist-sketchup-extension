@@ -503,8 +503,8 @@ core:
     create_in_sketchup: Créer
     shaping: "{{ name }} est ouvert dans SketchUp"
     shaping_help: |
-      Modifiez la pièce dans le modèle, sur le banc d'essai. 
-      Ses axes sont son repère de pose. 
+      Modifiez la pièce dans le modèle, sur le banc d'essai.
+      Ses axes sont son repère de pose.
       **Terminez** pour la reprendre ici, le banc quitte alors le modèle.
     choose_skp: Choisir un fichier SKP
     placement_toggle: Transformer
