@@ -2883,12 +2883,40 @@ tool:
     action_4_status: Ein Teil erstellen, das der Schnittmenge mehrerer Teile entspricht
     action_4_state_0_status: Wählen Sie Teil A aus
     action_4_state_1_status: Wählen Sie Teil B aus
+    # @no-translate
+    action_5: Trennen
+    # @no-translate
+    action_5_status: Ein oder mehrere Teile durch eine Ebene trennen
+    # @no-translate
+    action_5_state_1_status: Klicken Sie auf die Referenzfläche, an beliebiger Stelle im Modell
+    # @no-translate
+    action_5_state_1_arrows_status: Senkrecht zu einer Achse vom Ende der Auswahl aus trennen
+    # @no-translate
+    action_5_state_1b_status: Klicken Sie, um Punkt {{ index }} von 3 der Referenzebene zu setzen, an beliebiger Stelle im Modell
+    # @no-translate
+    action_5_state_1b_arrows_status: Auf eine Achse fixieren
+    # @no-translate
+    action_5_state_1c_status: Klicken Sie, um die Referenzebene zu bestätigen, oder drücken Sie Esc, um den letzten Punkt zu entfernen
+    # @no-translate
+    action_5_state_2_status: Klicken Sie, um die Teile zu trennen, oder geben Sie eine Distanz ein
+    # @no-translate
+    action_5_state_2a_status: Klicken Sie, um die Trennebene zu platzieren, oder geben Sie eine Distanz ein
+    # @no-translate
+    action_5_state_2_arrows_status: Achse wechseln
+    # @no-translate
+    action_5_state_3_status: Klicken Sie auf die Seite des Stücks, das erhalten bleiben soll
+    # @no-translate
+    action_5_state_4_status: Klicken Sie, um die Teile in {{ number }} Stücke zu trennen, oder geben Sie Abstände ein
     action_option_group_thickness: Dicke
     action_option_group_stretch_measure_type: Maß
     action_option_group_axes: Achsen
     action_option_group_paneling_joint_type: Verbindung
     action_option_group_paneling_direction: Ausrichtung
     action_option_group_csg_operation: Operation
+    # @no-translate
+    action_option_group_slice_mode: Modus
+    # @no-translate
+    action_option_group_slice_reference: Referenz
     action_option_group_options: Optionen
     action_option_thickness_thickness: Dicke
     action_option_thickness_thickness_status: Definiert die Dicke der Platten
@@ -2901,6 +2929,14 @@ tool:
     action_option_paneling_joint_type_miter_status: Gehrungsverbindung
     action_option_paneling_direction_inward_status: Nach innen
     action_option_paneling_direction_outward_status: Nach außen
+    # @no-translate
+    action_option_slice_mode_slice_status: Teile trennen und alle Stücke behalten
+    # @no-translate
+    action_option_slice_mode_cut_status: Teile abschneiden und nur ein Stück behalten
+    # @no-translate
+    action_option_slice_reference_face_status: Referenzebene von einer Fläche übernommen
+    # @no-translate
+    action_option_slice_reference_points_status: Referenzebene durch 3 Punkte
     action_option_options_centered_status: Auf die gestreckten Elemente zentrieren
     action_option_options_make_unique_status: Umgestaltete Elemente eindeutig machen
     action_option_options_keep_a: A behalten
@@ -2917,6 +2953,8 @@ tool:
       validate_b: Bestätigen Sie, um den Vorgang auszuführen
     error:
       curve_intersect: Eine der Schnittebenen verläuft durch eine nicht dehnbare Kurve
+      # @no-translate
+      slice_number_overflow: "{{ number }} Stücke können nicht auf die Auswahl verteilt werden"
   smart_paint:
     title: Einfärben
     default_material: Ohne Material
