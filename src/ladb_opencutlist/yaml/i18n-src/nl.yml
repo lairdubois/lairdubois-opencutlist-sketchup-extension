@@ -372,7 +372,7 @@ tab:
         Doorsnede toevoegen *{{ std_dimension }}*
         aan materiaal '{{ material_name }}'
       rounded_std_width: |
-        De breedte *{{ std_dimension }}* wordt afgerond door de zoals ingesteld in modelinfo.
+        De breedte *{{ std_dimension }}* wordt afgerond door de precisie van de modeleenheden (Modelinfo).
         Werkelijke breedte: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
@@ -580,9 +580,9 @@ tab:
         - de **lengte** komt op de <strong style='color:red'>rode</strong> as
         - de **breedte** op de <strong style='color:green'>groene</strong> as
         - de **dikte** op de <strong style='color:blue'>blauwe</strong> as
-      axes_origin_position_none: Verander het nulpunt niet
-      axes_origin_position_min: Plaats het nulpunt in een hoek
-      axes_origin_position_center: Plaats het nulpunt in het midden
+      axes_origin_position_none: Verander het oorsprong niet
+      axes_origin_position_min: Plaats het oorsprong in een hoek
+      axes_origin_position_center: Plaats het oorsprong in het midden
       axes_origin_position_front_min: Plaats de oorsprong op een hoek van de voorkant
       axes_origin_position_front_center: Plaats de oorsprong in het midden van de voorkant
       over_length: Over de lengte
@@ -989,7 +989,7 @@ tab:
         parts_plural: "{{ count }} onderdelen"
         settings: Instellingen
       write:
-        title: De lay-out exporteren
+        title: Zaagschema exporteren
         info_0: |
           Met deze module kunt u de **geometrie** van de *lay-out* exporteren als een lijst met bestanden in [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) of [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
         option_file_format: $t(tab.cutlist.write.option_file_format)
@@ -1295,7 +1295,7 @@ tab:
         option_bin_sheet_good: Paneel
         option_bin_sheet_good_help: |
           Hiermee kunt u de export van het paneel activeren en de kleuren ervan kiezen.
-        option_bin_veneer: Blad
+        option_bin_veneer: Fineervel
         option_bin_veneer_help: |
           Hiermee kunt u de export van het blad activeren en de kleuren ervan kiezen.
         option_bin_dimensional: Plank
@@ -1372,7 +1372,7 @@ tab:
       option_margin_right: Rechts
       option_margin_bottom: Onder
       option_margin_left: Links
-      option_spacing: Kolomwit
+      option_spacing: Tussenruimte
       option_spacing_h: Horizontaal
       option_spacing_v: Verticaal
       option_grid: Aantal etiketten per pagina
@@ -1442,7 +1442,7 @@ tab:
       to_layout: Exporteren naar Layout
       options_layout: Layout
       options_settings: Configuratie
-      option_parts: Stukken
+      option_parts: Onderdelen
       option_parts_colored: Kleur
       option_parts_colored_0: Zonder kleur
       option_parts_colored_1: Kleur van materiaal
@@ -1492,7 +1492,7 @@ tab:
       option_camera: Camera
       option_camera_view: Weergave
       option_camera_view_custom: Gepersonaliseerd
-      option_camera_zoom: Ladder
+      option_camera_zoom: Schaal
       option_camera_zoom_auto: Automatisch
       option_camera_zoom_custom: Gepersonaliseerd
       option_camera_target: Positie
@@ -1581,7 +1581,7 @@ tab:
         De linkerbenedenhoek van de omhullende doos van de geëxporteerde geometrie wordt gebruikt als ankerpunt.
 
         **Oorsprong van het stuk projecteren**
-        Maakt het mogelijk de oorsprong van de assen van het stuk te projecteren als ankerpunt.
+        Maakt het mogelijk de oorsprong van de assen van het onderdeel te projecteren als ankerpunt.
       option_switch_yz: Verticale as
       option_switch_yz_0: Z verticaal
       option_switch_yz_1: Y verticaal
@@ -1589,7 +1589,7 @@ tab:
         Wisselt de Y- en Z-as om de verticale as van het onderdeel te definiëren.
       option_smoothing: Gladmaken
       option_smoothing_0: $t(default.no)
-      option_smoothing_1: Gladde cirkels en bogen (experimenteel)
+      option_smoothing_1: Cirkels en bogen gladmaken (experimenteel)
       option_smoothing_help: |
         Hiermee kunt u de detectie van cirkels en bogen activeren.
 
@@ -1606,7 +1606,7 @@ tab:
       option_merge_holes_overflow: Verspaningsoverschot
       option_merge_holes_overflow_help: |
         Maakt het mogelijk de afstand van de bewerkingsoverslag te bepalen die wordt toegepast op de oppervlakken langs de contour en de uitsparingen.
-      option_include_paths: Sporen
+      option_include_paths: Paden
       option_include_paths_0: $t(default.no)
       option_include_paths_1: Gebruik randen die niet aan een gezicht zijn gekoppeld
       option_include_paths_help: |
@@ -1744,7 +1744,7 @@ tab:
         *Als er geen eenheid is opgegeven, wordt de eenheid van het model toegepast.*
       std_widths: Standaard breedtes
       std_widths_help: |
-        Beschikbare standaardlengtes voor dit materiaal.
+        Beschikbare standaardbreedtes voor dit materiaal.
 
         *Als er geen eenheid is opgegeven, wordt de eenheid van het model toegepast.*
       std_thicknesses: Standaard diktes
@@ -1769,7 +1769,7 @@ tab:
       edge_decremented: Reductie
       edge_decremented_help: Laat toe om aan te geven dat de afmetingen van de stuklijst verminderd moeten worden met de diktes van de kantenband.
       edge_decremented_0: Geen reductie
-      edge_decremented_1: Veminder de afmeting met de dikte van de kantenband
+      edge_decremented_1: Verminder de afmeting met de dikte van de kantenband
       raw_estimated: Gebruikt volume
       raw_estimated_help: |
         Hiermee kunt u het volume definiëren dat wordt gebruikt om de massa en de totale kosten van de onderdelen van dit materiaal te schatten.
@@ -1847,7 +1847,7 @@ tab:
     toggle_hidden: Verborgen instanties
     type_0: Model
     type_1: Groep
-    type_2: Onderdeel
+    type_2: Component
     type_3: Onderdeel
     tooltip:
       hide_node: Verbergen
@@ -1904,7 +1904,7 @@ tab:
       info_0: |
         Met deze functie kunt u de onderdelen in de geselecteerde set hernoemen door onderstaande formule op elke instantie toe te passen.
       formula: Formule
-      old_name: Naam van oorsprong
+      old_name: Oorspronkelijke naam
       new_name: Nieuwe naam
       count: Aant.
     create_container:
@@ -2026,7 +2026,7 @@ tab:
       success:
         imported_title: Import voltooid
     csv:
-      label: komma-gescheiden waarden csv
+      label: CSV
       title: Onderdelen importeren
       help: |
         Op deze pagina kunt u een reeks ruwe stukken of panelen (met rechthoekige vorm) in uw model importeren vanuit een [CSV](https://nl.wikipedia.org/wiki/Kommagescheiden_bestand) bestand
