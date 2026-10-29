@@ -1187,7 +1187,7 @@ tab:
         Hiermee kunt u panelen combineren die dezelfde onderdelen en sneden bevatten.
       option_bin_folding_warning: |
         *Deze optie wordt uitgeschakeld als u instantie-eigenschappen gebruikt in de formule voor het aanpassen van de identificatietekst.*
-      option_hide_part_list: Onderdelen lijst
+      option_hide_part_list: Onderdelenlijst
       option_hide_part_list_1d_dimensional_0: Weergegeven voor elke plank
       option_hide_part_list_1d_edge_0: Weergegeven voor elke kantenband
       option_hide_part_list_2d_sheet_good_0: Weergegeven voor elk paneel
@@ -1372,7 +1372,7 @@ tab:
       option_margin_right: Rechts
       option_margin_bottom: Onder
       option_margin_left: Links
-      option_spacing: Tussenruimte
+      option_spacing: Kolomwit
       option_spacing_h: Horizontaal
       option_spacing_v: Verticaal
       option_grid: Aantal etiketten per pagina
@@ -1622,7 +1622,7 @@ tab:
       option_parts_holes: Boringen
       option_parts_holes_help: |
         Hiermee kunt u de kleuren van de onderdeelgaten kiezen.
-      option_parts_paths: Sporen
+      option_parts_paths: Paden
       option_parts_paths_help: |
         Hiermee kun je de padkleuren kiezen.
 
@@ -1630,7 +1630,7 @@ tab:
       error:
         no_part: Geen onderdelen om te exporteren.
       warning:
-        is_group_selection: Onderdelen in de **gemaskeerde groepen** van uw stuklijst worden niet geëxporteerd.
+        is_group_selection: Onderdelen in de **gemaskeerde groepen** van uw onderdelenlijst worden niet geëxporteerd.
         is_part_selection: Exporteren is beperkt tot **geselecteerde onderdelen**.
     snippet:
       hello: Hallo
@@ -2045,7 +2045,7 @@ tab:
         option_col_sep: Scheidingsteken
         option_col_sep_tab: TAB-teken
         option_col_sep_comma: Komma
-        option_col_sep_semicolon: Punt komma
+        option_col_sep_semicolon: Puntkomma
         option_first_line_headers: Eerste lijn
         option_first_line_headers_0: Gegevens
         option_first_line_headers_1: Kolom titels
@@ -2139,7 +2139,7 @@ tab:
         option_hardware_layer_name_help: Tag die moet worden toegepast op de accessoires.
         option_no_material_help: "*Laat dit veld leeg om geen materiaal toe te passen.*"
         option_default_material_help: "*Er wordt een standaardmateriaal aangemaakt als dit veld leeg is*."
-        option_no_layer_help: "*Laat dit veld leeg om geen tag toe te passen.*"
+        option_no_layer_help: "*Laat dit veld leeg om geen tag toe te passen*."
         option_subtract_machinings: Bewerkingen uitfrezen in onderdelen
         option_subtract_machinings_help: De **groeven**, **sponningen** en **afschuiningen** van de onderdelen, ook die van accessoires, worden uit het volume verwijderd in plaats van getekend. Boorgaten blijven getekend.
         warning:
@@ -2366,7 +2366,7 @@ tool:
     vcb_radius: Radius
     vcb_diameter: Diameter
     vcb_distance: Afstand
-    vcb_spacings: Kolomwit
+    vcb_spacings: Tussenruimte
     vcb_angle: Hoek
     locked_on_last_measure_status: Vergrendelen op de laatste meting
     library_choose: Kies een bibliotheek
@@ -2617,7 +2617,7 @@ tool:
     action_option_group_move_measure_type: Meten
     action_option_group_axes: Assen
     action_option_group_options: Opties
-    action_option_copy_measure_type_outside_status: Aan de buitenkant meten
+    action_option_copy_measure_type_outside_status: Aan de buitenzijde meten
     action_option_copy_measure_type_centered_status: Van centrum tot centrum meten
     action_option_copy_measure_type_inside_status: Tussen de stukken meten
     action_option_axes_active_status: Verplaatsen langs de actieve assen

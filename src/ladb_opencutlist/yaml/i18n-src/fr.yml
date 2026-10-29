@@ -99,7 +99,7 @@ default:
   fill_color: Couleur de remplissage
   length: Longueur
   width: Largeur
-  thickness: Epaisseur
+  thickness: Épaisseur
   height: Hauteur
   deprecated: Obsolète
 core:
@@ -115,7 +115,7 @@ core:
       edit_parent_part_instance: Modifier le groupe/composant contenant l'instance
       hide_part_instance: Masquer l'instance
       unhide_part_instance: Révéler l'instance
-      edit_part_instance_properties: Editer les propriétés de l'instance
+      edit_part_instance_properties: Éditer les propriétés de l'instance
       smart_draw: $t(core.toolbar.command.smart_draw)
       smart_build: $t(core.toolbar.command.smart_build)
       smart_handle: $t(core.toolbar.command.smart_handle)
@@ -295,7 +295,7 @@ core:
       view_back: Arrière
       view_left: Gauche
       view_right: Droite
-      zoom: Echelle {{ zoom }}
+      zoom: Échelle {{ zoom }}
       explode_factor: Amplitude de l'éclaté
       toggle_box_helper: Afficher ou masquer la boîte capable
       toggle_box_dimensions_helper: Afficher ou masquer les dimensions capables
@@ -791,7 +791,7 @@ tab:
         - le même Plan
         - la même Orientation
         - la même Matière avec fil
-        - la même Epaisseur
+        - la même Épaisseur
       follow_grain_direction_0: $t(default.no)
       follow_grain_direction_1: Détection de Continuité de fil activée
       axes: Axes
@@ -1565,7 +1565,7 @@ tab:
         cutting_dimensions_increase_2d: Dimensions majorées par les surcotes configurées sur la matière '{{ material_name }}' en longueur (**{{ length_increase }}**) et en largeur (**{{ width_increase }}**).
         cutting_dimensions_edge_decrement: Dimensions réduites de l'épaisseur des chants. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
-      title: Etiquettes
+      title: Étiquettes
       options_layout: Composition
       options_settings: Configuration
       options_part_order_strategy: Tri
@@ -1596,7 +1596,7 @@ tab:
       option_spacing: Espacements
       option_spacing_h: Horizontal
       option_spacing_v: Vertical
-      option_grid: Etiquettes par page
+      option_grid: Étiquettes par page
       option_col_count: Colonnes
       option_row_count: Lignes
       option_cutting_marks: Repères
@@ -1713,7 +1713,7 @@ tab:
       option_camera: Camera
       option_camera_view: Vue
       option_camera_view_custom: Personnalisée
-      option_camera_zoom: Echelle
+      option_camera_zoom: Échelle
       option_camera_zoom_auto: Automatique
       option_camera_zoom_custom: Personnalisée
       option_camera_target: Position
@@ -2075,9 +2075,9 @@ tab:
       unhide_node: Révéler
       locked_node: Verrouillée
       is_active_node: Instance active dans le modèle
-      set_active_node: Editer dans le modèle
-      edit_node_properties: Editer les propriétés
-      select_active_nodes: Sélectionner / Déselectionner toutes les instances actives
+      set_active_node: Éditer dans le modèle
+      edit_node_properties: Éditer les propriétés
+      select_active_nodes: Sélectionner / Désélectionner toutes les instances actives
       select_node: Sélectionner
       unselect_node: Désélectionner
       open_node_url: Ouvrir l'URL de la pièce
@@ -2106,7 +2106,7 @@ tab:
       cuts_opening: Découper l'ouverture
       always_face_camera: Toujours faire face à la caméra
       shadows_face_sun: Ombre face au soleil
-      no_scale_mask: Echelle et Etirement
+      no_scale_mask: Échelle et Étirement
       no_scale_mask_0: Déformable le long de l'axe rouge (X)
       no_scale_mask_1: Déformable le long de l'axe vert (Y)
       no_scale_mask_2: Déformable le long de l'axe bleu (Z)
@@ -2114,7 +2114,7 @@ tab:
       no_scale_mask_4: Déformable sur le plan vert/bleu (Y+Z)
       no_scale_mask_5: Déformable sur le plan rouge/vert (X+Y)
       no_scale_mask_6: Déformable à partir des coins (XYZ)
-      explode: Eclater
+      explode: Éclater
       explode_message: Confirmez-vous l'éclatement de **{{ name }}** ?
       erase: Effacer
       erase_message: Confirmez-vous l'effacement de **{{ name }}** ?
@@ -2582,7 +2582,7 @@ tool:
     middle_point: Point du milieu
     third_point: Point au tiers
     vcb_length: Longueur
-    vcb_thickness: Epaisseur
+    vcb_thickness: Épaisseur
     vcb_size: Cotations
     vcb_radius: Rayon
     vcb_diameter: Diamètre
@@ -2716,7 +2716,7 @@ tool:
     action_3_state_0_merge_status: Glissez jusqu'aux cavités voisines pour un fond commun
     action_option_group_groove: Rainure
     action_2_option_group_offset: Jeu
-    action_option_group_thickness: Epaisseur
+    action_option_group_thickness: Épaisseur
     action_option_group_overlay: Pose
     action_option_group_axes: Axes
     action_option_group_measure_type: Mesure
@@ -2735,7 +2735,7 @@ tool:
     action_option_groove_groove_setback_status: Définit de combien le fond recule vers l'intérieur du caisson, et donc où la rainure est usinée
     action_option_groove_groove_through: Rainure filante
     action_option_groove_groove_through_status: Prolonger la rainure jusqu'au bout des pièces qui couvrent leur voisine, lorsqu'elle y débouche sans être visible
-    action_option_thickness_thickness: Epaisseur
+    action_option_thickness_thickness: Épaisseur
     action_option_thickness_thickness_status: Définit l'épaisseur des panneaux
     action_option_overlay_inset_status: "Façade encastrée : posée dans l'ouverture, au nu de la face avant"
     action_3_option_overlay_inset_status: "Fond en rainure : engagé dans une rainure usinée dans les pièces qui bordent l'ouverture"
@@ -2853,8 +2853,8 @@ tool:
       incoherent_door: Les charnières de cette porte ne tournent pas autour d'un même axe
   smart_reshape:
     title: Remodeler
-    action_0: Etirer
-    action_0_status: Etirer une pièce
+    action_0: Étirer
+    action_0_status: Étirer une pièce
     action_0_state_1_status: Cliquez sur une poignée pour étirer
     action_0_state_1a_status: Cliquez sur un plan de coupe pour le déplacer
     action_0_state_1b_status: Ajouter un plan de coupe
@@ -2907,7 +2907,7 @@ tool:
     action_5_state_3_status: Cliquez du côté de la partie à conserver
     # @no-translate
     action_5_state_4_status: Cliquez pour trancher les pièces en {{ number }} morceaux ou entrez des espacements
-    action_option_group_thickness: Epaisseur
+    action_option_group_thickness: Épaisseur
     action_option_group_stretch_measure_type: Mesure
     action_option_group_axes: Axes
     action_option_group_paneling_joint_type: Assemblage
@@ -2918,7 +2918,7 @@ tool:
     # @no-translate
     action_option_group_slice_reference: Référence
     action_option_group_options: Options
-    action_option_thickness_thickness: Epaisseur
+    action_option_thickness_thickness: Épaisseur
     action_option_thickness_thickness_status: Définit l'épaisseur des panneaux
     action_option_stretch_measure_type_outside_status: Mesurer à l'extérieur
     action_option_stretch_measure_type_offset_status: Mesurer la différence

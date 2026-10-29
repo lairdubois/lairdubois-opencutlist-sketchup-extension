@@ -659,7 +659,7 @@ tab:
       property_thickness: Espesor
       property_length: Longitud
       property_width: Anchura
-      property_name: Designación
+      property_name: Denominación
       property_count: Cantidad
       property_edge_pattern: Número de cantos
       property_tags: Distintivos
@@ -686,7 +686,7 @@ tab:
       area_short: Área
       volume: Volumen
       number: No.
-      name: Designación
+      name: Denominación
       count: Cant.
       cutting: Bruto
       bbox: Finales
@@ -737,7 +737,7 @@ tab:
       number: No.
       path: Ruta
       instance_name: Instancia
-      name: Designación
+      name: Denominación
       total_cutting_length: Longitud total - crudo
       total_cutting_area: Área total - cruda
       total_cutting_volume: Volumen total - cruda
@@ -747,7 +747,7 @@ tab:
       cutting_thickness: Espesor - crudo
       edge_cutting_length: Longitud cruda cantos
       edge_cutting_width: Ancho crudo cantos
-      bbox_length: Longitud capaz
+      bbox_length: Longitud
       bbox_width: Anchura
       bbox_thickness: Espesor
       final_area: Área - final
@@ -1895,7 +1895,7 @@ tab:
       no_scale_mask_6: Deformable desde las esquinas (XYZ)
       explode: Explotar
       explode_message: ¿Confirma hacer explotar **{{ name }}**?
-      erase: Eliminación
+      erase: Borrar
       erase_message: ¿Confirma la eliminación de **{{ name }}**?
     deep_make_unique:
       title: Hacer único
