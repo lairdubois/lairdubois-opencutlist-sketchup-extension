@@ -5401,6 +5401,13 @@ module Ladb::OpenCutList
       nil
     end
 
+    # The degrees of freedom of the inference behind #picked_point : 0 on a
+    # vertex, a midpoint..., 1 on an edge, 2 on a face. nil without a point.
+    def picked_point_degrees_of_freedom
+      return nil if @picked_point.nil? || @pick_ip.nil?
+      @pick_ip.degrees_of_freedom
+    end
+
     def picked_plane_manipulator
       return FaceManipulator.new(@picked_face, Sketchup::InstancePath.new(@picked_face_path).transformation) unless @picked_face.nil? || @picked_face_path.nil?
       return PlaneManipulator.new([ @picked_edge.start.position, Z_AXIS ], Sketchup::InstancePath.new(@picked_edge_path).transformation) unless @picked_edge.nil? || @picked_edge_path.nil? || !@picked_edge.line[1].perpendicular?(Z_AXIS)

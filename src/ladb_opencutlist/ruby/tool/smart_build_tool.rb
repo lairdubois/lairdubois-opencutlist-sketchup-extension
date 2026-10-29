@@ -2804,6 +2804,7 @@ module Ladb::OpenCutList
       @spacings = previous_action_handler.is_a?(self.class) ? previous_action_handler.spacings : []
 
       @picked_point = nil
+      @picked_inference_point = nil
 
     end
 
@@ -3302,9 +3303,13 @@ module Ladb::OpenCutList
     # #_snap_point_through_cavities. A divider is fitted INSIDE a compartment,
     # so whatever closes it is precisely what stands in the way.
     #
-    # The inference lost on the way costs nothing here : a divider is placed at
-    # a distance or by distribution, not on a vertex.
+    # SketchUp's inference does not take part in that pick, but the picker
+    # still runs it - and draws it. A real snap (a vertex, a midpoint, an
+    # edge : not a mere face) is kept in @picked_inference_point, for
+    # #_compute_dividers to place the free divider at its offset.
     def _snap_point(picker)
+      dof = picker.picked_point_degrees_of_freedom
+      @picked_inference_point = !dof.nil? && dof <= 1 ? picker.picked_point : nil
       _snap_point_through_cavities(picker)
     end
 
@@ -4177,6 +4182,18 @@ module Ladb::OpenCutList
       n0, n1 = _get_divider_mesh_extent(fragment_def.vertices, normal_3f)
       o0, o1 = _get_divider_measure_origins(cavities_def, fragment_def, normal_3f, n0, n1)
       d = normal_3f[0] * point.x + normal_3f[1] * point.y + normal_3f[2] * point.z
+
+      # The inference the picker snapped to (see #_snap_point) gives the free
+      # divider its offset : the point slides along the normal onto it - so
+      # it stays inside the picked face. Ignored when it lies outside the
+      # cavity's own extent, a snap on some other carcass in the background.
+      if @number == 0 && point == @picked_point && @picked_inference_point.is_a?(Geom::Point3d)
+        inference_d = normal_3f[0] * @picked_inference_point.x + normal_3f[1] * @picked_inference_point.y + normal_3f[2] * @picked_inference_point.z
+        if inference_d >= n0 && inference_d <= n1
+          point = point.offset(Geom::Vector3d.new(normal_3f), inference_d - d) unless inference_d == d
+          d = inference_d
+        end
+      end
 
       # [ d0, d1, reference offset, distance to measure ] per slab, all
       # expressed as offsets along the normal.
