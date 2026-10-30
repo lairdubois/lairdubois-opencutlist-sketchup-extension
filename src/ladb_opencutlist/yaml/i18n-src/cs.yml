@@ -89,9 +89,9 @@ default:
   # this should be the name for the key as seen on the keyboard or if it is an arrow, the name used for it.
   constrain_key: Shift
   copy_key_win: Ctrl
-  copy_key_mac: Nastavení
+  copy_key_mac: Option
   alt_key_win: Alt
-  alt_key_mac: Příkaz
+  alt_key_mac: Command
   tab_key: Tab
   file: Soubor
   file_plural: Soubory

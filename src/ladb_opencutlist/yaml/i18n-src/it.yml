@@ -135,7 +135,7 @@ core:
       smart_handle: Gestire parti
       smart_reshape: Rimodellare le parti
       smart_paint: Colorare parti
-      smart_axes: Orientare i parti
+      smart_axes: Orientare le parti
       smart_join: Assemblare le parti
       smart_export: Esporta parti
   messagebox:
@@ -596,7 +596,7 @@ tab:
       auto_orient_help: |
         Selezionando questa opzione, le 3 dimensioni delle parti vengono ordinate in modo che la più grande rappresenti la *lunghezza* e la più piccola rappresenti lo *spessore*.
 
-        Se questa opzione è deselezionata, gli assi locali della parte definiscono la dimensioni in questo modo:
+        Se questa opzione è deselezionata, gli assi locali della parte definiscono le dimensioni in questo modo:
          - *lunghezza* è sull'asse <span style='color:red'>rosso</span>
          - *larghezza* è sull'asse <span style='color:green'>verde</span>
          - *spessore* è sull'asse <span style='color:blue'>blu</span>
@@ -616,7 +616,7 @@ tab:
       part_number_sequence_by_group_help: Selezionando questa opzione, la numerazione delle parti viene fatta ripartire da 1 (o A) per ogni gruppo (parti con materiale e spessore identico).
       part_folding: Raggruppa parti uguali
       part_folding_help: |
-        Selezionando questa opzione, gli elementi di **materiale Legno massello, Pannello o Barre**, che hanno la **stessa dimensione grezza**, gli **stessi badge** e la **stessa superficie finita** *(se la visualizzazione di tale superficie on è nascosta)* sarrano raggruppati sulla stessa linea nella *distinta*.
+        Selezionando questa opzione, gli elementi di **materiale Legno massello, Pannello o Barre**, che hanno la **stessa dimensione grezza**, gli **stessi badge** e la **stessa superficie finita** *(se la visualizzazione di tale superficie non è nascosta)* saranno raggruppati sulla stessa linea nella *distinta*.
 
         Gli elementi vengono comunque considerarti differenti per la stampa delle etichette e lo schema di taglio.
       hide_entity_names: Nascondi i nomi delle occorrenze
@@ -624,7 +624,7 @@ tab:
       hide_descriptions: Nascondere le descrizioni
       hide_descriptions_help: Selezionando questa opzione, le **descrizioni** poste sulle parti non vengono visualizzate.
       hide_tags: Nascondi i badge
-      hide_tags_help: Selezionando questa opzione, i **badge** posizionati sulle parti non verrano visualizzati.
+      hide_tags_help: Selezionando questa opzione, i **badge** posizionati sulle parti non verranno visualizzati.
       hide_cutting_dimensions: Nascondi le dimensioni grezze
       hide_cutting_dimensions_help: Selezionando questa opzione, verranno escluse le dimensioni **semilavorate**.
       hide_bbox_dimensions: Nascondi le dimensioni finite
@@ -1202,7 +1202,7 @@ tab:
       option_part_drawing_type_help: |
         Mostra o nasconde la l'effettiva forma degli elementi e la loro lavorazione sul diagramma.
 
-        *Questa opzione deve essere abilitata per poermettere l'esportazione delle forme.*
+        *Questa opzione deve essere abilitata per permettere l'esportazione delle forme.*
       option_colorization: Colorare parti
       option_colorization_0: $t(default.no)
       option_colorization_1: $t(default.yes) - Schermo
@@ -1902,7 +1902,7 @@ tab:
     deep_rename_parts:
       title: Rinominare le parti
       info_0: |
-        Questa funzione consente di rinominare i parti presenti nel set selezionato applicando la formula riportata di seguito a ciascuna istanza.
+        Questa funzione consente di rinominare le parti presenti nel set selezionato applicando la formula riportata di seguito a ciascuna istanza.
       formula: Formula
       old_name: Nome originale
       new_name: Nuovo nome
@@ -1917,7 +1917,7 @@ tab:
       hide_descriptions: Nascondere le descrizioni
       hide_descriptions_help: Selezionando questa opzione, le **descrizioni** poste sulle parti non vengono visualizzate.
       hide_tags: Nascondi i badge
-      hide_tags_help: Selezionando questa opzione, i **badge** posizionati sulle parti non verrano visualizzati.
+      hide_tags_help: Selezionando questa opzione, i **badge** posizionati sulle parti non verranno visualizzati.
       minimize_on_set_active: Minimizza dopo '$t(tab.outliner.tooltip.set_active_node)'
       minimize_on_set_active_help: Selezionando questa opzione, la finestra di OpenCutList verrà minimizzata dopo aver opzionato *'$t(tab.outliner.tooltip.set_active_node)'* .
     snippet:

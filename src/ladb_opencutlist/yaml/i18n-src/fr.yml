@@ -2383,7 +2383,7 @@ tab:
         depth: Profondeur
       article:
         list: Liste des articles
-        total_quantity: Qte.
+        total_quantity: Qté
         article_number: Ref.
         description: Description
         material: Matière

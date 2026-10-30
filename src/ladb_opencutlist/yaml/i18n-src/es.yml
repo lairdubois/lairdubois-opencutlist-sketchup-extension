@@ -407,7 +407,7 @@ tab:
       ignore_grain_direction: Se ignora la orientación de la veta en esta pieza
       follow_grain_direction: La detección de Continuidad de veta está activada en esta pieza
       auto_oriented: Esta pieza se ha reorientado automáticamente
-      oko_label_filter: Incluir / Excluir esta distintivo
+      oko_label_filter: Incluir / Excluir este distintivo
       add_label_filter: Filtrar por '{{ label }}'
       remove_label_filter: No filtrar por '{{ label }}'
       add_edge_material_name_filter: Filtrar por '{{ material_name }}'
@@ -543,7 +543,7 @@ tab:
       tags: Distintivos
       tags_help: |
         Con los *Distintivos* se pueden agregar palabras clave personalizadas para las definiciones de las piezas.
-        Se pueden agregar tantas distintivos como se desee.
+        Se pueden agregar tantos distintivos como se desee.
         Se pueden usar para filtrar las piezas visibles de la lista de piezas.
       tags_multiple_info: Solo se muestran los distintivos comunes
       orientation: Orientación
@@ -616,7 +616,7 @@ tab:
       part_number_sequence_by_group_help: Si esta opción está activada, la numeración de las piezas se restablece a 1 (o A) para cada grupo (lista de piezas del mismo material y espesor bruto).
       part_folding: Agrupar piezas similares
       part_folding_help: |
-        Si esta opción está habilitada, las piezas de **material Madera Maciza, Tablero o Liston** de **mismo tamaño**, con **los mismos distintivos** y **la misma superficie terminada** *(si la visualización de esta superficie no está oculta)* se agruparán en la misma línea en el *lista de piezas*.
+        Si esta opción está habilitada, las piezas de **material Madera Maciza, Tablero o Listón** de **mismo tamaño**, con **los mismos distintivos** y **la misma superficie terminada** *(si la visualización de esta superficie no está oculta)* se agruparán en la misma línea en la *lista de piezas*.
 
         Las piezas seguirán considerándose diferentes para los rótulos y el diagrama de corte.
       hide_entity_names: Ocultar nombres de instancias
@@ -666,7 +666,7 @@ tab:
       property_thickness_layer_count: Número de capas
       tags: Distintivos
       tags_help: Lista personalizada de distintivos propuestos en la ventana de propiedades de las piezas.
-      tags_placeholder: Añadir una distintivo
+      tags_placeholder: Añadir un distintivo
     list:
       filters: Filtros
       filters_warning_0: ¡Este filtro oculta todas las piezas!
@@ -791,7 +791,7 @@ tab:
     estimate:
       title: Estimación
       info_0: |
-        Esta función le permite generar una estimación de las **masas** y los **costes** de las **materias primas** necesarias para fabricar las piezas del *lista de piezas*.
+        Esta función le permite generar una estimación de las **masas** y los **costes** de las **materias primas** necesarias para fabricar las piezas de la *lista de piezas*.
       options_general: General
       total: Total
       total_used: Usado
@@ -1261,7 +1261,7 @@ tab:
         total_part_count: Σ Piezas
         total_used: Total utilizado
         bin_1d_dimensional: Listón
-        bin_1d_dimensional_type_0: Liston estándar
+        bin_1d_dimensional_type_0: Listón estándar
         bin_1d_dimensional_type_1: Resto de listón
         bin_1d_edge: Tira de canto
         bin_1d_edge_type_0: Canto estándar
@@ -1548,7 +1548,7 @@ tab:
       option_dxf_structure_help: |
         Permite elegir la estructura del archivo DXF:
 
-        - La estructura **Capas** dibuja todos los trazos en plano distinguiendo los diferentes tipos de trazo únicamente por los capas. *Esta estructura ofrece una mejor compatibilidad con los programas de terceros.*
+        - La estructura **Capas** dibuja todos los trazos en plano distinguiendo los diferentes tipos de trazo únicamente por las capas. *Esta estructura ofrece una mejor compatibilidad con los programas de terceros.*
         - La estructura **Capas + Bloques** crea un bloque por pieza e inserta estos bloques tantas veces como se repiten las piezas. *Esta estructura ofrece mayor flexibilidad para modificar el archivo.*
       option_dxf_depth_to_z: Profundidades en Z
       option_dxf_depth_to_z_0: $t(default.no)

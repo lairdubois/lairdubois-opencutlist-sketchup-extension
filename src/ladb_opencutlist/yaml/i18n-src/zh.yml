@@ -241,6 +241,8 @@ core:
       cutlist_estimate_options: $t(tab.cutlist.label) / $t(tab.cutlist.estimate.title)
       cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
       cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
+      importers_csv_load_options: $t(tab.importers.csv.label) / $t(default.open)
+      importers_bxf2_import_options: $t(tab.importers.bxf2.label) / $t(default.import)
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       outliner_options: $t(tab.outliner.label) / $t(default.options)
