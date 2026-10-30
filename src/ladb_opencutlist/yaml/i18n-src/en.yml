@@ -732,7 +732,7 @@ tab:
       instance_count_by_part: Packaging
       instance_count_by_part_help: |
         Allows the part to be considered as a *package* of one or more *units*.
-        The quantity associated with the part in the parts list will therefore represent the number of whole packages needed to obtain the number of units actually present in the model.
+        Therefore, the quantity associated with the part in the parts list will represent the number of whole packages needed to obtain the actual number of units present in the model.
 
         *Example: To count only 1 part for a pair of drawer runners:
         Packaging = 2 units / part*
@@ -815,7 +815,7 @@ tab:
     option:
       auto_orient: Automatic orientation of parts
       auto_orient_help: |
-        If this option is selected, the three dimensions of parts are sorted so that the largest represents *length* and the smallest *thickness*.
+        If this option is selected, the parts are sorted by dimension so that the largest represents *length* and the smallest represents *thickness*.
 
         Otherwise,
          - the *length* is read on the <span style='color:red'>red</span> axis,
@@ -834,7 +834,7 @@ tab:
       part_number_with_letters: Use letters to enumerate parts
       part_number_with_letters_help: If this option is selected, parts are enumerated using letters (A, B, C, ... Z, AA, AB, ...).
       part_number_sequence_by_group: Reset the enumeration of parts for each group
-      part_number_sequence_by_group_help: If this option is selected, the enumeration of parts is reset to 1 (or A) for each group (list of parts with same material and rough thickness).
+      part_number_sequence_by_group_help: If this option is selected, the enumeration of the parts in each group (list of parts with same material and same rough thickness) is reset to 1 (or A).
       part_folding: Group identical parts
       part_folding_help: |
         If this option is selected, parts made of **material Solid Wood, Sheet Goods or Dimensional**, having the **same finished size**, with the **same badges** and the **same finished surface** *(if the display of this surface is not hidden)* will be grouped on the same line in the *parts list*.

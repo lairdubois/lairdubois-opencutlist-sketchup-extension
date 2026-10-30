@@ -1156,7 +1156,7 @@ tab:
       option_irregular_allowed_rotations_free: Безкоштовно
       option_irregular_allow_mirroring: Дозволити відзеркалювання
       option_irregular_allow_mirroring_help: |
-        Визначає, чи дозволено відзеркалювання деталі деталі.
+        Визначає, чи дозволено відзеркалювання деталі.
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
       option_irregular_leftover_mode: Напрямок поширення
@@ -1887,8 +1887,8 @@ tab:
       shadows_face_sun: Тінь перед сонцем
       no_scale_mask: Масштабування та розтягування
       no_scale_mask_0: Розтягування вздовж червоної осі (X)
-      no_scale_mask_1: Розтягування вздовж червоної осі (Y)
-      no_scale_mask_2: Розтягування вздовж червоної осі (Z)
+      no_scale_mask_1: Розтягування вздовж зеленої осі (Y)
+      no_scale_mask_2: Розтягування вздовж синьої осі (Z)
       no_scale_mask_3: Розтягування по червоній/синій площині (X+Z)
       no_scale_mask_4: Розтягування по зеленій/синій площині (Y+Z)
       no_scale_mask_5: Розтягування по червоній/зеленій площині (X+Y)
@@ -1906,7 +1906,7 @@ tab:
       formula: Формула
       old_name: Оригінальна назва
       new_name: Нове ім'я
-      count: Примітка
+      count: Кількість
     create_container:
       title_group: Створення групи
       title_component: Створення компонента
@@ -2046,7 +2046,7 @@ tab:
         option_col_sep_tab: Табулятор
         option_col_sep_comma: Кома
         option_col_sep_semicolon: Крапка з комою
-        option_first_line_headers: Заголовок рядка
+        option_first_line_headers: Рядок заголовків
         option_first_line_headers_0: Дані
         option_first_line_headers_1: Заголовки стовпців
       import:
@@ -2146,7 +2146,7 @@ tab:
           subtract_machinings_failed: "Не вдалося вирізати обробку в цих деталях, тому її намальовано: {{ names }}"
         old_name: Оригінальна назва
         new_name: Нове ім'я
-        count: Примітка
+        count: Кількість
         formula:
           part: Деталь
           project: Проєкт
@@ -2249,7 +2249,7 @@ tab:
     font_size: Розмір тексту
     font_size_auto: $t(default.automatic)
     font_size_normal: Нормальний
-    font_size_small: Мала
+    font_size_small: Малий
     font_size_tiny: Дуже малий
     print_margin: Поля друку
     print_margin_normal: Нормальні
@@ -2315,10 +2315,10 @@ tab:
         failed_to_import_invalid_hexdigest: Цей файл було змінено. Його не можна імпортувати.
         failed_to_import_bad_file_format: Недійсний формат файлу.
   about:
-    label: Пропозиції
+    label: Про програму
     title: Пропозиції
     version: Версія
-    credits: Технічні характеристики
+    credits: Технічні подяки
     credits_authors: |
       *OpenCutList* розроблений [Борис Болант](https://www.lairdubois.fr/@borisbeaulant) і [Мартін Мюллер](https://www.lairdubois.fr/@mobilarte). *Список [співавторів](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translations: Переклади
@@ -2336,9 +2336,9 @@ tab:
       - Soul Issam (*арабська*), без інтерфейсу зправа на ліво
       - Nguyen Ngoc Tan (*в’єтнамська*)
       - [刘涛](https://www.liutao91.cn), Martin Pan Chiu Ng (*спрощена китайська*)
-      - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*голландський*)
+      - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*голландська*)
       - Zoltán Nagy, Roland Kovács (*угорська*)
-      - Milan Divovic (*сербський*)
+      - Milan Divovic (*сербська*)
     credits_description: |
       Розробка цього розширення є частиною проекту платформи спільного доступу [L'Air du Bois](https://www.lairdubois.fr).
       І як такий, він також є *Open Source* і доступний під [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) на своєму [репозиторій GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
@@ -2444,7 +2444,7 @@ tool:
     action_option_options_pull_centered: Центроване видавлювання
     action_option_options_pull_centered_status: Центроване видавлювання на першій точці
     action_option_options_pull_locked_status: Блокування підйому по осі
-    action_option_options_draw_in: Втягнути
+    action_option_options_draw_in: Малювати в
     action_option_options_draw_in_0: Малювати в активному елементі
     action_option_options_draw_in_1: Намалювати деталь у батьківському контейнері у початковій точці
     action_option_options_draw_in_status: Намалювати деталь у батьківському контейнері, на який вказує перша точка
@@ -2459,7 +2459,7 @@ tool:
       part_created_plural: "Створено {{ count }} нових деталей: {{ name }}"
   smart_build:
     title: Створити
-    action_0: Створити розділювачі
+    action_0: Розмістити модуль
     action_0_status: Побудуйте розділювач у порожнині, утвореній групою наявних деталей
     action_0_state_0_status: Натисніть на стінку, щоб створити перегородку
     action_0_state_1_status: Натисніть на стінку, щоб створити перегородки

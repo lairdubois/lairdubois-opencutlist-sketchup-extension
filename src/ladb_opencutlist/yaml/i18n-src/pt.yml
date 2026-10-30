@@ -142,7 +142,7 @@ core:
     dir_override: |
       « {{ target }} » já existe. Deseja substituir ?
 
-      Uma pasta com o mesmo nome já está na pasta {{ parent }}. Se você substituí-lo, o conteúdo original será perdido.
+      Uma pasta com o mesmo nome já está na pasta {{ parent }}. Se você substituí-la, o conteúdo original será perdido.
   savepanel:
     export_to_file: Exportar para o arquivo {{ file_format }}
   dialog:
@@ -372,22 +372,22 @@ tab:
         Acrescentar seção *{{ std_dimension }}*
         ao material '{{ material_name }}'
       rounded_std_width: |
-        A largura *{{ std_dimension }}* é arredondada pela precisão da unidade modelo.
+        A largura *{{ std_dimension }}* é arredondada pela precisão da unidade do modelo.
         Largura real: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
       rounded_std_thickness: |
-        A espessura *{{ std_dimension }}* é arredondada pela precisão da unidade modelo.
+        A espessura *{{ std_dimension }}* é arredondada pela precisão da unidade do modelo.
         Espessura real: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
       rounded_std_section: |
-        A seção transversal *{{ std_dimension }}* é arredondada pela precisão da unidade modelo.
+        A seção transversal *{{ std_dimension }}* é arredondada pela precisão da unidade do modelo.
         Seção cruzada real: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
       # "Model Info" refers to the SketchUp menu to change the units
-      rounded_std_footer: Defina a precisão na *Informações do modelo* ou verifique as dimensões das peças deste grupo.
+      rounded_std_footer: Defina a precisão em *Informações do modelo* ou verifique as dimensões das peças deste grupo.
       highlight_part: $t(tab.cutlist.highlight_part)
       highlight_parts: $t(tab.cutlist.highlight_parts)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
@@ -504,7 +504,7 @@ tab:
       material: Material
       cumulable: Pode somar
       cumulable_help: |
-        Se esta opção for selecionada, o **comprimento** ou o **largura** serão considerados **comprimento** ou **largura** multiplicados pela contagem ao ordenar a Lista de Peças.
+        Se esta opção for selecionada, o **comprimento** ou a **largura** serão considerados **comprimento** ou **largura** multiplicados pela contagem ao ordenar a Lista de Peças.
       cumulable_0: Não somam
       cumulable_1: Soma ao comprimento
       cumulable_2: Soma à largura
@@ -923,7 +923,7 @@ tab:
       option_scrap_bar_lengths_placeholder: comprimento x quantidade ; ...
       option_scrap_bar_lengths_help: |
         Indique aqui a lista das sobras da sua barra ou fita de borda consideradas prioritárias para o layout.
-        Formato esperado : **L**x**Q**. Onde **L** é o *comprimento* da sobra e **Q** a quantidade.
+        Formato esperado: **L**x**Q**. Onde **L** é o *comprimento* da sobra e **Q** a quantidade.
         A quantidade é opcional.
         *Se não for especificada nenhuma unidade, será utilizada a unidade modelo.*
       option_std_sheet_good: Chapa de tamanho padrão
@@ -1249,7 +1249,7 @@ tab:
         time: Tempo
         total_efficiency: Eficiência global
         total_fill_rate: Taxa de preenchimento
-        total_cut_count: Numero de cortes
+        total_cut_count: Número de cortes
         total_cut_length: Comprimento dos cortes
         efficiency: Eficiência
         count: Qtd.

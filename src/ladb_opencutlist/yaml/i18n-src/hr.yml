@@ -1,3 +1,10 @@
+# this label must be your language
+_label: Hrvatski
+# the disabled message will be displayed when the language is not fully translated
+_disabled_msg: |
+  Ovaj jezik još nije **u potpunosti preveden**.
+
+  Ako želite pomoći dovršiti prijevod, posjetite [OpenCutList dokumentaciju](https://docs.opencutlist.org/for-translators/general).
 core:
   menu:
     item:
