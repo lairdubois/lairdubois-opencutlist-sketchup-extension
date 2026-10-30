@@ -37,6 +37,10 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 ## Lab
 
 ### 2026-10-29
+  * Unhide Smart Slice Tool
+  * Improved translations
+  * Updated PackingSolver dependency
+### 2026-10-29
   * Fixed Smart Build Divider snap
   * Improved translations
 ### 2026-10-28

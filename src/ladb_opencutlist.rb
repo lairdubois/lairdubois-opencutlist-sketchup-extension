@@ -30,6 +30,8 @@ module Ladb
       ## DESCRIPTION_START ##
       when 'ar'
         ex.description = 'مولد لرسومات التقطيع التخطيطية و قوائم القَطع موجه للنجارين. مفتوح المصدر و ممول جماهيريا و سهل الاستخدام ;)'
+      when 'bg'
+        ex.description = 'Генератор на спецификация и разкрой на детайли за мебелисти. Отворен код, групово финансиране и лесен за използване ;)'
       when 'cs'
         ex.description = 'Kusovník a nářezový plán pro truhláře. Zdarma, financován z darů a snadno použitelný ;)'
       when 'de'
@@ -45,7 +47,7 @@ module Ladb
       when 'it'
         ex.description = 'Generatore di Distinte Materiali e Schemi di Taglio per falegnami. Open Source, crowdfunded e facile da usare ;)'
       when 'nl'
-        ex.description = 'Genereer materiaallijsten, zaagschema\'s voor panelen en balken voor houtbewerkers. Open Source, crowdfunded en gebruiksvriendelijk ;)'
+        ex.description = 'Genereer onderdelenlijst, zaagschema\'s voor panelen en balken voor houtbewerkers. Open Source, crowdfunded en gebruiksvriendelijk ;)'
       when 'pl'
         ex.description = 'Generator listy cięć i diagramów cięcia dla stolarzy. Open Source, finansowany społecznościowo i łatwy w użyciu ;)'
       when 'pt'
